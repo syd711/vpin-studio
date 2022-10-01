@@ -8,6 +8,8 @@ import edu.umd.cs.findbugs.annotations.Nullable;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -17,6 +19,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Pattern;
 
+@Service
 public class RomManager {
   private final static Logger LOG = LoggerFactory.getLogger(RomManager.class);
 
@@ -27,6 +30,9 @@ public class RomManager {
   private final PropertiesStore store;
 
   private final List<Pattern> patternList = new ArrayList<>();
+
+  @Autowired
+  private SystemInfo systemInfo;
 
   public RomManager() {
     this.store = PropertiesStore.create("repository.properties");
@@ -52,7 +58,7 @@ public class RomManager {
       game.setRom(romName);
       LOG.info("Update of " + game.getGameFile().getName() + " successful, written ROM name '" + romName + "'");
 
-      File romFile = new File(SystemInfo.getInstance().getMameRomFolder(), romName + ".zip");
+      File romFile = new File(systemInfo.getMameRomFolder(), romName + ".zip");
       if (romFile.exists()) {
         game.setRomFile(romFile);
       }

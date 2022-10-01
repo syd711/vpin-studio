@@ -1,11 +1,13 @@
 package de.mephisto.vpin.server.dof;
 
 import de.mephisto.vpin.server.util.JSON;
+import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Service
 public class DOFCommandData {
 
   public static final String DOF_COMMANDS = "dofCommands";

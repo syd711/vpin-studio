@@ -10,6 +10,9 @@ import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.InitializingBean;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.io.File;
 import java.sql.*;
@@ -17,25 +20,25 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
-public class SqliteConnector {
+@Service
+public class SqliteConnector implements InitializingBean {
   private final static Logger LOG = LoggerFactory.getLogger(SqliteConnector.class);
 
   public static final String POST_SCRIPT = "PostScript";
   public static final String LAUNCH_SCRIPT = "LaunchScript";
   public static final String ROM = "ROM";
-  private final String dbFilePath;
+  private String dbFilePath;
 
   private Connection conn;
+
+  @Autowired
   private RomManager romManager;
 
-  public SqliteConnector(RomManager romManager) {
-    this(SystemInfo.getInstance().getPinUPDatabaseFile());
-    this.romManager = romManager;
-  }
+  @Autowired
+  private SystemInfo systemInfo;
 
-  public SqliteConnector(File file) {
-    dbFilePath = file.getAbsolutePath().replaceAll("\\\\", "/");
-  }
+  @Autowired
+  private VPinService service;
 
   /**
    * Connect to a database
@@ -60,14 +63,14 @@ public class SqliteConnector {
   }
 
   @Nullable
-  public GameInfo getGame(@NonNull VPinService service, int id) {
+  public GameInfo getGame(int id) {
     this.connect();
     GameInfo info = null;
     try {
       Statement statement = conn.createStatement();
       ResultSet rs = statement.executeQuery("SELECT * FROM Games where GameID = " + id + ";");
       while (rs.next()) {
-        info = createGameInfo(service, rs);
+        info = createGameInfo(rs);
       }
       rs.close();
       statement.close();
@@ -80,7 +83,7 @@ public class SqliteConnector {
   }
 
   @Nullable
-  public GameInfo getGameByFilename(@NonNull VPinService service, String filename) {
+  public GameInfo getGameByFilename(String filename) {
     this.connect();
     GameInfo info = null;
     try {
@@ -88,7 +91,7 @@ public class SqliteConnector {
       Statement statement = conn.createStatement();
       ResultSet rs = statement.executeQuery("SELECT * FROM Games where GameFileName = '" + gameName + "';");
       while (rs.next()) {
-        info = createGameInfo(service, rs);
+        info = createGameInfo(rs);
       }
 
       rs.close();
@@ -102,7 +105,7 @@ public class SqliteConnector {
   }
 
   @Nullable
-  public GameInfo getGameByName(@NonNull VPinService service, String table) {
+  public GameInfo getGameByName(String table) {
     this.connect();
     GameInfo info = null;
     try {
@@ -110,7 +113,7 @@ public class SqliteConnector {
       Statement statement = conn.createStatement();
       ResultSet rs = statement.executeQuery("SELECT * FROM Games where GameDisplay = '" + gameName + "';");
       while (rs.next()) {
-        info = createGameInfo(service, rs);
+        info = createGameInfo(rs);
       }
 
       rs.close();
@@ -196,14 +199,14 @@ public class SqliteConnector {
   }
 
   @NonNull
-  public List<GameInfo> getGames(@NonNull VPinService service) {
+  public List<GameInfo> getGames() {
     this.connect();
     List<GameInfo> results = new ArrayList<>();
     try {
       Statement statement = conn.createStatement();
       ResultSet rs = statement.executeQuery("SELECT * FROM Games WHERE EMUID = 1;");
       while (rs.next()) {
-        GameInfo info = createGameInfo(service, rs);
+        GameInfo info = createGameInfo(rs);
         if (info != null) {
           results.add(info);
         }
@@ -312,8 +315,8 @@ public class SqliteConnector {
   }
 
   @Nullable
-  private GameInfo createGameInfo(@NonNull VPinService service, @NonNull ResultSet rs) throws SQLException {
-    GameInfo info = new GameInfo(service);
+  private GameInfo createGameInfo(@NonNull ResultSet rs) throws SQLException {
+    GameInfo info = new GameInfo(service, systemInfo);
 
     int id = rs.getInt("GameID");
     info.setId(id);
@@ -324,10 +327,10 @@ public class SqliteConnector {
     String gameDisplayName = rs.getString("GameDisplay");
     info.setGameDisplayName(gameDisplayName);
 
-    File wheelIconFile = new File(SystemInfo.getInstance().getPinUPSystemFolder() + "/POPMedia/Visual Pinball X/Wheel/", FilenameUtils.getBaseName(gameFileName) + ".png");
+    File wheelIconFile = new File(systemInfo.getPinUPSystemFolder() + "/POPMedia/Visual Pinball X/Wheel/", FilenameUtils.getBaseName(gameFileName) + ".png");
     info.setWheelIconFile(wheelIconFile);
 
-    File vpxFile = new File(SystemInfo.getInstance().getVPXTablesFolder(), gameFileName);
+    File vpxFile = new File(systemInfo.getVPXTablesFolder(), gameFileName);
     if (!vpxFile.exists()) {
       LOG.warn("No vpx file " + vpxFile.getAbsolutePath() + " found, ignoring game.");
       return null;
@@ -338,9 +341,9 @@ public class SqliteConnector {
     String rom = romManager.getRomName(id);
     File romFile = null;
     File nvRamFile = null;
-    File nvRamFolder = new File(SystemInfo.getInstance().getMameFolder(), "nvram");
+    File nvRamFolder = new File(systemInfo.getMameFolder(), "nvram");
     if (!StringUtils.isEmpty(rom)) {
-      romFile = new File(SystemInfo.getInstance().getMameRomFolder(), rom + ".zip");
+      romFile = new File(systemInfo.getMameRomFolder(), rom + ".zip");
       nvRamFile = new File(nvRamFolder, rom + ".nv");
     }
     else if (!romManager.wasScanned(id)) {
@@ -353,5 +356,11 @@ public class SqliteConnector {
 
     loadStats(info);
     return info;
+  }
+
+  @Override
+  public void afterPropertiesSet() throws Exception {
+    File file = systemInfo.getPinUPDatabaseFile();
+    dbFilePath = file.getAbsolutePath().replaceAll("\\\\", "/");
   }
 }

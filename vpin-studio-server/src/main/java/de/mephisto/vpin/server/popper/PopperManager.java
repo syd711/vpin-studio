@@ -5,24 +5,30 @@ import de.mephisto.vpin.server.highscores.HighscoreManager;
 import de.mephisto.vpin.server.util.SqliteConnector;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.InitializingBean;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class PopperManager {
+@Service
+public class PopperManager implements InitializingBean {
   private final static Logger LOG = LoggerFactory.getLogger(PopperManager.class);
 
 //  private final static String CURL_COMMAND_TABLE_START = "curl -X POST --data-urlencode \"table=[GAMEFULLNAME]\" http://localhost:" + HttpServer.PORT + "/service/gameLaunch";
 //  private final static String CURL_COMMAND_TABLE_EXIT = "curl -X POST --data-urlencode \"table=[GAMEFULLNAME]\" http://localhost:" + HttpServer.PORT + "/service/gameExit";
 
-  private final SqliteConnector connector;
-  private final HighscoreManager highscoreManager;
-
   private final List<TableStatusChangeListener> listeners = new ArrayList<>();
 
-  public PopperManager(SqliteConnector connector, HighscoreManager highscoreManager) {
-    this.connector = connector;
-    this.highscoreManager = highscoreManager;
+  @Autowired
+  private SqliteConnector connector;
+
+  @Autowired
+  private HighscoreManager highscoreManager;
+
+  @Override
+  public void afterPropertiesSet() throws Exception {
     this.runConfigCheck();
   }
 

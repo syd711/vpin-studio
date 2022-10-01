@@ -11,22 +11,26 @@ import org.jnativehook.keyboard.NativeKeyEvent;
 import org.jnativehook.keyboard.NativeKeyListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.InitializingBean;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-public class DOFManager implements TableStatusChangeListener, NativeKeyListener {
+@Service
+public class DOFManager implements TableStatusChangeListener, NativeKeyListener, InitializingBean {
   private final static Logger LOG = LoggerFactory.getLogger(DOFManager.class);
-
-  private final DOFCommandData dofCommandData;
 
   private List<Unit> units;
 
+  @Autowired
+  private DOFCommandData dofCommandData;
+
   public DOFManager(DOFCommandData dofCommandData) {
-    this.dofCommandData = dofCommandData;
-    this.units = DOFCommandExecutor.scanUnits();
+
   }
 
-  public void startRuleEngine() {
+  private void startRuleEngine() {
     GlobalScreen.addNativeKeyListener(this);
     LOG.info("Starting Rule Engine");
     List<DOFCommand> startupRules = this.dofCommandData.getCommandsFor(Trigger.SystemStart);
@@ -90,5 +94,11 @@ public class DOFManager implements TableStatusChangeListener, NativeKeyListener 
   @Override
   public void nativeKeyReleased(NativeKeyEvent nativeKeyEvent) {
 
+  }
+
+  @Override
+  public void afterPropertiesSet() throws Exception {
+    this.units = DOFCommandExecutor.scanUnits();
+    this.startRuleEngine();
   }
 }

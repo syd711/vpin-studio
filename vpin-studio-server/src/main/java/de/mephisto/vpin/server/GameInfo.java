@@ -27,9 +27,11 @@ public class GameInfo {
   private int numberPlays;
 
   private final VPinService service;
+  private final SystemInfo systemInfo;
 
-  public GameInfo(VPinService service) {
+  public GameInfo(VPinService service, SystemInfo systemInfo) {
     this.service = service;
+    this.systemInfo = systemInfo;
   }
 
   public Highscore resolveHighscore() {
@@ -51,7 +53,7 @@ public class GameInfo {
   @SuppressWarnings("unused")
   @NonNull
   public File getPopperScreenMedia(@NonNull PopperScreen screen) {
-    File emuMedia = new File(SystemInfo.getInstance().getPinUPMediaFolder(), getEmulatorName());
+    File emuMedia = new File(systemInfo.getPinUPMediaFolder(), getEmulatorName());
     File mediaFolder = new File(emuMedia, screen.name());
     return new File(mediaFolder, FilenameUtils.getBaseName(this.getGameFile().getName()) + ".png");
   }
@@ -71,7 +73,7 @@ public class GameInfo {
   @Nullable
   public File getVPRegFolder() {
     if (!StringUtils.isEmpty(this.getRom())) {
-      return new File(SystemInfo.getInstance().getExtractedVPRegFolder(), getRom());
+      return new File(systemInfo.getExtractedVPRegFolder(), getRom());
     }
     return null;
   }
@@ -172,13 +174,13 @@ public class GameInfo {
   @NonNull
   public File getDirectB2SFile() {
     String baseName = FilenameUtils.getBaseName(this.getGameFileName());
-    return new File(SystemInfo.getInstance().getDirectB2SFolder(), baseName + ".directb2s");
+    return new File(systemInfo.getDirectB2SFolder(), baseName + ".directb2s");
   }
 
   @NonNull
   public File getDirectB2SImage() {
     String targetName = FilenameUtils.getBaseName(getGameFileName()) + ".png";
-    return new File(SystemInfo.getInstance().getB2SImageExtractionFolder(), targetName);
+    return new File(systemInfo.getB2SImageExtractionFolder(), targetName);
   }
 
   @Override

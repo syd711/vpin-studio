@@ -9,7 +9,7 @@ public class SystemInfoTest {
 
   @Test
   public void testSystemInfo() {
-    SystemInfo info = SystemInfo.getInstance();
+    SystemInfo info = new SystemInfo();
     assertNotNull(info.get7ZipCommand());
     assertNotNull(info.getMameRomFolder());
     assertTrue(info.getMameRomFolder().exists());

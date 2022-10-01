@@ -5,6 +5,8 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.InitializingBean;
+import org.springframework.stereotype.Service;
 
 import java.awt.*;
 import java.io.*;
@@ -16,7 +18,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
-public class SystemInfo {
+@Service
+public class SystemInfo implements InitializingBean  {
   private final static Logger LOG = LoggerFactory.getLogger(SystemInfo.class);
 
   private final static String VPX_REG_KEY = "HKEY_CURRENT_USER\\SOFTWARE\\Visual Pinball\\VP10\\RecentDir";
@@ -31,7 +34,6 @@ public class SystemInfo {
   private final static String PINEMHI_COMMAND = "PINemHi.exe";
   private final static String PINEMHI_INI = "pinemhi.ini";
 
-
   public static final String RESOURCES = "./resources/";
 
   private File pinUPSystemInstallationFolder;
@@ -40,9 +42,8 @@ public class SystemInfo {
 
   private File pinemhiNvRamFolder;
 
-  private static SystemInfo instance;
-
-  private SystemInfo() throws VPinServiceException {
+  @Override
+  public void afterPropertiesSet() throws Exception {
     initBaseFolders();
     initPinemHiFolders();
     logSystemInfo();
@@ -111,9 +112,6 @@ public class SystemInfo {
     LOG.info(formatPathLog("Extracted VPReg Folder", this.getExtractedVPRegFolder()));
     LOG.info(formatPathLog("B2S Extraction Folder", this.getB2SImageExtractionFolder()));
     LOG.info(formatPathLog("VPX Files", String.valueOf(this.getVPXTables().length)));
-    if (this.getPinUPDatabaseFile().exists()) {
-      LOG.info(formatPathLog("Database Game Count (VPX)", String.valueOf(new SqliteConnector(this.getPinUPDatabaseFile()).getGameCount())));
-    }
     LOG.info("*******************************************************************************************************");
   }
 
@@ -135,7 +133,7 @@ public class SystemInfo {
           String vpValue = line.split("=")[1];
           pinemhiNvRamFolder = new File(vpValue);
           if (!pinemhiNvRamFolder.exists()) {
-            pinemhiNvRamFolder = SystemInfo.getInstance().getNvramFolder();
+            pinemhiNvRamFolder = getNvramFolder();
             line = "VP=" + pinemhiNvRamFolder.getAbsolutePath() + "\\";
             writeUpdates = true;
           }
@@ -231,17 +229,6 @@ public class SystemInfo {
       }
     }
     return file;
-  }
-
-  public static SystemInfo getInstance() {
-    if (instance == null) {
-      try {
-        instance = new SystemInfo();
-      } catch (VPinServiceException e) {
-        System.exit(0);
-      }
-    }
-    return instance;
   }
 
   public File getPinemhiCommandFile() {

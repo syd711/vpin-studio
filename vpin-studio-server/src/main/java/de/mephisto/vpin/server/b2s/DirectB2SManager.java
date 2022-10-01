@@ -7,14 +7,20 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Service;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 
+@Service
 public class DirectB2SManager {
   private final static Logger LOG = LoggerFactory.getLogger(DirectB2SManager.class);
+
+  public DirectB2SManager() {
+
+  }
 
   @Nullable
   public File extractDirectB2SBackgroundImage(@NonNull GameInfo game) throws VPinServiceException {

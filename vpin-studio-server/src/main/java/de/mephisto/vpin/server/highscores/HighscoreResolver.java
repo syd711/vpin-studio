@@ -20,8 +20,10 @@ class HighscoreResolver {
 
   private final HighscoreParser parser;
   private List<String> supportedRoms;
+  private final SystemInfo systemInfo;
 
-  public HighscoreResolver() {
+  public HighscoreResolver(SystemInfo systemInfo) {
+    this.systemInfo = systemInfo;
     this.parser = new HighscoreParser();
     this.loadSupportedScores();
     this.refresh();
@@ -77,7 +79,7 @@ class HighscoreResolver {
    * Refreshes the extraction of the VPReg.stg file.
    */
   public void refresh() {
-    File targetFolder = SystemInfo.getInstance().getExtractedVPRegFolder();
+    File targetFolder = systemInfo.getExtractedVPRegFolder();
     if (!targetFolder.exists()) {
       boolean mkdirs = targetFolder.mkdirs();
       if (!mkdirs) {
@@ -140,13 +142,13 @@ class HighscoreResolver {
    * @param vpRegFolderFile the VPReg file to expand
    */
   private void updateUserScores(File vpRegFolderFile) {
-    if (!SystemInfo.getInstance().getVPRegFile().exists()) {
+    if (!systemInfo.getVPRegFile().exists()) {
       LOG.info("Skipped VPReg extraction, file does not exists yet.");
       return;
     }
 
-    String unzipCommand = SystemInfo.getInstance().get7ZipCommand();
-    List<String> commands = Arrays.asList("\"" + unzipCommand + "\"", "-aoa", "x", "\"" + SystemInfo.getInstance().getVPRegFile().getAbsolutePath() + "\"", "-o\"" + vpRegFolderFile.getAbsolutePath() + "\"");
+    String unzipCommand = systemInfo.get7ZipCommand();
+    List<String> commands = Arrays.asList("\"" + unzipCommand + "\"", "-aoa", "x", "\"" + systemInfo.getVPRegFile().getAbsolutePath() + "\"", "-o\"" + vpRegFolderFile.getAbsolutePath() + "\"");
     try {
       SystemCommandExecutor executor = new SystemCommandExecutor(commands, false);
       executor.setDir(vpRegFolderFile);
@@ -198,7 +200,7 @@ class HighscoreResolver {
   }
 
   private String executePINemHi(String param) throws Exception {
-    File commandFile = SystemInfo.getInstance().getPinemhiCommandFile();
+    File commandFile = systemInfo.getPinemhiCommandFile();
     try {
       List<String> commands = Arrays.asList(commandFile.getName(), param);
       SystemCommandExecutor executor = new SystemCommandExecutor(commands);

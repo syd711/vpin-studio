@@ -20,105 +20,70 @@ import edu.umd.cs.findbugs.annotations.Nullable;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.InitializingBean;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
 
 @Service
-public class VPinService {
+public class VPinService implements InitializingBean {
   private final static Logger LOG = LoggerFactory.getLogger(VPinService.class);
 
+  @Autowired
   private SqliteConnector sqliteConnector;
 
+  @Autowired
   private RomManager romManager;
 
+  @Autowired
   private HighscoreManager highscoreManager;
 
-  private ExecutorService executor = Executors.newSingleThreadExecutor();
-
-  private static VPinService instance;
-
+  @Autowired
   private DOFManager dofManager;
 
+  @Autowired
   private PopperManager popperManager;
 
+  @Autowired
   private DOFCommandData dofCommandData;
 
+  @Autowired
   private DirectB2SManager directB2SManager;
+
+  @Autowired
+  private SystemInfo systemInfo;
 
   private List<GameInfo> gameInfos = new ArrayList<>();
 
   public VPinService() {
-    init(true);
   }
 
-  private void init(boolean headless) {
-    try {
-      if (!SystemInfo.getInstance().getPinUPSystemFolder().exists()) {
-        throw new FileNotFoundException("Wrong PinUP Popper installation folder: " + SystemInfo.getInstance().getPinUPSystemFolder().getAbsolutePath() + ".\nPlease fix the PinUP Popper installation path in file ./resources/env.properties");
-      }
-      if (!SystemInfo.getInstance().getVisualPinballInstallationFolder().exists()) {
-        throw new FileNotFoundException("Wrong Visual Pinball installation folder: " + SystemInfo.getInstance().getVisualPinballInstallationFolder().getAbsolutePath() + ".\nPlease fix the Visual Pinball installation path in file ./resources/env.properties");
-      }
-
-      this.romManager = new RomManager();
-      this.sqliteConnector = new SqliteConnector(romManager);
-      this.highscoreManager = new HighscoreManager();
-      this.directB2SManager = new DirectB2SManager();
-      this.popperManager = new PopperManager(sqliteConnector, highscoreManager);
-
-      dofCommandData = DOFCommandData.create();
-      this.dofManager = new DOFManager(dofCommandData);
-
-//      if (headless) {
-//        if (!SystemInfo.isAvailable(HttpServer.PORT)) {
-//          LOG.warn("VPinService already running, exiting.");
-//          System.exit(0);
-//        }
-//
-//        this.httpServer = new HttpServer(popperManager);
-//        this.dofManager.startRuleEngine();
-//      }
-
-
-      new Thread() {
-        public void run() {
-          OverlayWindowFX.main(new String[]{});
-          LOG.info("Overlay listener started.");
-        }
-      }.start();
-
-      new ApplicationTray(this);
-      LOG.info("Application tray created.");
-      if (headless) {
-        LOG.info("VPinService created [headless-mode]");
-      }
-      else {
-        LOG.info("VPinService created [config-mode]");
-      }
-
-    } catch (Exception e) {
-      LOG.error("VPin Service failed to start: " + e.getMessage(), e);
-//      throw new VPinServiceException(e);
+  @Override
+  public void afterPropertiesSet() throws Exception {
+    if (!systemInfo.getPinUPSystemFolder().exists()) {
+      throw new FileNotFoundException("Wrong PinUP Popper installation folder: " + systemInfo.getPinUPSystemFolder().getAbsolutePath() + ".\nPlease fix the PinUP Popper installation path in file ./resources/env.properties");
     }
+    if (!systemInfo.getVisualPinballInstallationFolder().exists()) {
+      throw new FileNotFoundException("Wrong Visual Pinball installation folder: " + systemInfo.getVisualPinballInstallationFolder().getAbsolutePath() + ".\nPlease fix the Visual Pinball installation path in file ./resources/env.properties");
+    }
+
+    new Thread(() -> {
+      OverlayWindowFX.main(new String[]{});
+      LOG.info("Overlay listener started.");
+    }).start();
+
+    new ApplicationTray(this);
+    LOG.info("Application tray created.");
+    LOG.info("VPinService created");
   }
 
   public void restart() throws VPinServiceException {
-    this.shutdown();
-    this.init(true);
-  }
-
-  @SuppressWarnings("unused")
-  public void shutdown() {
-    gameInfos.clear();
-    this.executor.shutdown();
-//    this.httpServer.stop();
+//    this.shutdown();
   }
 
   @SuppressWarnings("unused")
@@ -152,7 +117,7 @@ public class VPinService {
 
   @SuppressWarnings("unused")
   public GameInfo getGameInfo(int id) {
-    return sqliteConnector.getGame(this, id);
+    return sqliteConnector.getGame(id);
   }
 
   @SuppressWarnings("unused")
@@ -190,14 +155,14 @@ public class VPinService {
   @SuppressWarnings("unused")
   public List<GameInfo> getActiveGameInfos() {
     List<Integer> gameIdsFromPlaylists = this.sqliteConnector.getGameIdsFromPlaylists();
-    List<GameInfo> games = sqliteConnector.getGames(this);
+    List<GameInfo> games = sqliteConnector.getGames();
     return games.stream().filter(g -> gameIdsFromPlaylists.contains(g.getId())).collect(Collectors.toList());
   }
 
   public List<GameInfo> getGameInfos() {
     if (this.gameInfos.isEmpty()) {
       LOG.info("Starting Game Scan...");
-      this.gameInfos.addAll(sqliteConnector.getGames(this));
+      this.gameInfos.addAll(sqliteConnector.getGames());
       LOG.info("Loading of all GameInfo finished, loaded " + this.gameInfos.size() + " games.");
     }
     return this.gameInfos;
@@ -218,7 +183,7 @@ public class VPinService {
   @SuppressWarnings("unused")
   @Nullable
   public GameInfo getGameByVpxFilename(@NonNull String filename) {
-    List<GameInfo> games = sqliteConnector.getGames(this);
+    List<GameInfo> games = sqliteConnector.getGames();
     for (GameInfo gameInfo : games) {
       if (gameInfo.getGameFile().getName().equals(filename)) {
         return gameInfo;
@@ -229,7 +194,7 @@ public class VPinService {
 
   @NonNull
   public List<GameInfo> getGamesWithEmptyRoms() {
-    List<GameInfo> games = sqliteConnector.getGames(this);
+    List<GameInfo> games = sqliteConnector.getGames();
     List<GameInfo> result = new ArrayList<>();
     for (GameInfo gameInfo : games) {
       if (StringUtils.isEmpty(gameInfo.getRom())) {
@@ -241,7 +206,7 @@ public class VPinService {
 
   @Nullable
   public GameInfo getGameByRom(@NonNull String romName) {
-    List<GameInfo> games = sqliteConnector.getGames(this);
+    List<GameInfo> games = sqliteConnector.getGames();
     for (GameInfo gameInfo : games) {
       if (gameInfo.getRom() != null && gameInfo.getRom().equals(romName)) {
         return gameInfo;
@@ -257,10 +222,10 @@ public class VPinService {
 
   @SuppressWarnings("unused")
   public GameInfo getGameByName(String table) {
-    return this.sqliteConnector.getGameByName(this, table);
+    return this.sqliteConnector.getGameByName(table);
   }
 
   public GameInfo getGameByFile(File file) {
-    return this.sqliteConnector.getGameByFilename(this, file.getName());
+    return this.sqliteConnector.getGameByFilename(file.getName());
   }
 }

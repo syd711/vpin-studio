@@ -10,7 +10,7 @@ public class SqliteConnectorTest {
 
   @Test
   public void testSqliteConnector() throws FileNotFoundException, VPinServiceException {
-    SqliteConnector sqliteConnector = new SqliteConnector(new RomManager());
+//    SqliteConnector sqliteConnector = new SqliteConnector(new RomManager());
 //    assertFalse(sqliteConnector.getGames(service).isEmpty());
   }
 

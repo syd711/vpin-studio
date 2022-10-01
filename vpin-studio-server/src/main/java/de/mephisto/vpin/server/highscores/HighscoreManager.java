@@ -1,24 +1,28 @@
 package de.mephisto.vpin.server.highscores;
 
 import de.mephisto.vpin.server.GameInfo;
+import de.mephisto.vpin.server.util.SystemInfo;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.InitializingBean;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
 import java.util.Map;
 
-public class HighscoreManager {
+@Service
+public class HighscoreManager implements InitializingBean {
   private final static Logger LOG = LoggerFactory.getLogger(HighscoreManager.class);
 
   private final Map<Integer, Highscore> cache = new HashMap<>();
-  private final HighscoreResolver highscoreResolver;
+  private HighscoreResolver highscoreResolver;
 
-  public HighscoreManager() {
-    this.highscoreResolver = new HighscoreResolver();
-  }
+  @Autowired
+  private SystemInfo systemInfo;
 
   @Nullable
   public Highscore getHighscore(@NonNull GameInfo game) {
@@ -38,5 +42,10 @@ public class HighscoreManager {
     highscoreResolver.refresh();
     cache.remove(game.getId());
     LOG.info("Invalidated cached highscore of " + game);
+  }
+
+  @Override
+  public void afterPropertiesSet() throws Exception {
+    this.highscoreResolver = new HighscoreResolver(systemInfo);
   }
 }
