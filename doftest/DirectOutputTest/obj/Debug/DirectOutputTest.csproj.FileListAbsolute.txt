@@ -1,0 +1,11 @@
+E:\downloads\doftest\DirectOutputTest\obj\Debug\DirectOutputTest.csproj.AssemblyReference.cache
+E:\downloads\doftest\DirectOutputTest\obj\Debug\DirectOutputTest.csproj.SuggestedBindingRedirects.cache
+E:\downloads\doftest\DirectOutputTest\obj\Debug\DirectOutputTest.csproj.CoreCompileInputs.cache
+E:\downloads\doftest\DirectOutputTest\bin\Debug\DirectOutputTest.exe.config
+E:\downloads\doftest\DirectOutputTest\bin\Debug\DirectOutputTest.exe
+E:\downloads\doftest\DirectOutputTest\bin\Debug\DirectOutputTest.pdb
+E:\downloads\doftest\DirectOutputTest\bin\Debug\DirectOutput.dll
+E:\downloads\doftest\DirectOutputTest\bin\Debug\DirectOutputComObject.dll
+E:\downloads\doftest\DirectOutputTest\obj\Debug\DirectOutputTest.csproj.CopyComplete
+E:\downloads\doftest\DirectOutputTest\obj\Debug\DirectOutputTest.exe
+E:\downloads\doftest\DirectOutputTest\obj\Debug\DirectOutputTest.pdb
