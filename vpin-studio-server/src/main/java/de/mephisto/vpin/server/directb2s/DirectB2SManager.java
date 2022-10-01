@@ -1,4 +1,4 @@
-package de.mephisto.vpin.server.b2s;
+package de.mephisto.vpin.server.directb2s;
 
 import de.mephisto.vpin.server.GameInfo;
 import de.mephisto.vpin.server.VPinServiceException;

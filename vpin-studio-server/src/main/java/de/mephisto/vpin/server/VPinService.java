@@ -1,7 +1,7 @@
 package de.mephisto.vpin.server;
 
-import de.mephisto.vpin.server.b2s.B2SImageRatio;
-import de.mephisto.vpin.server.b2s.DirectB2SManager;
+import de.mephisto.vpin.server.directb2s.B2SImageRatio;
+import de.mephisto.vpin.server.directb2s.DirectB2SManager;
 import de.mephisto.vpin.server.dof.DOFCommand;
 import de.mephisto.vpin.server.dof.DOFCommandData;
 import de.mephisto.vpin.server.dof.DOFManager;
@@ -53,9 +53,6 @@ public class VPinService implements InitializingBean {
   private DOFCommandData dofCommandData;
 
   @Autowired
-  private DirectB2SManager directB2SManager;
-
-  @Autowired
   private SystemInfo systemInfo;
 
   private List<GameInfo> gameInfos = new ArrayList<>();
@@ -84,19 +81,6 @@ public class VPinService implements InitializingBean {
 
   public void restart() throws VPinServiceException {
 //    this.shutdown();
-  }
-
-  @SuppressWarnings("unused")
-  @NonNull
-  public File createDirectB2SImage(@NonNull GameInfo info, @NonNull B2SImageRatio ratio, int cropWidth) throws VPinServiceException {
-    directB2SManager.generateB2SImage(info, ratio, cropWidth);
-    return info.getDirectB2SImage();
-  }
-
-  @SuppressWarnings("unused")
-  @Nullable
-  public File extractDirectB2SBackgroundImage(@NonNull GameInfo info) throws VPinServiceException {
-    return directB2SManager.extractDirectB2SBackgroundImage(info);
   }
 
   @SuppressWarnings("unused")

@@ -1,4 +1,4 @@
-package de.mephisto.vpin.server.b2s;
+package de.mephisto.vpin.server.directb2s;
 
 import de.mephisto.vpin.server.GameInfo;
 import de.mephisto.vpin.server.VPinServiceException;
@@ -35,7 +35,7 @@ public class B2SThumbnailExtractor extends DefaultHandler {
         SAXParser saxParser = factory.newSAXParser();
         saxParser.parse(file.getAbsolutePath(), this);
 
-        File target = File.createTempFile(FilenameUtils.getBaseName(file.getName()), ".png");
+        File target = File.createTempFile(FilenameUtils.getBaseName(file.getName()), ".jpg");
         target.deleteOnExit();
 
         byte[] bytes = DatatypeConverter.parseBase64Binary(imageData);
