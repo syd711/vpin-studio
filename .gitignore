@@ -1,6 +1,21 @@
 # Compiled class file
 *.class
 
+
+# dependencies
+node_modules
+.pnp
+.pnp.js
+
+
+# testing
+coverage
+# production
+build
+.idea/
+local/
+target/
+
 # Log file
 *.log
 
@@ -20,6 +35,8 @@
 *.rar
 *.iml
 *.ini
+*.gz
+*.log
 
 
 /*.jar
@@ -39,3 +56,11 @@ hs_err_pid*
 /doftest/DirectOutputTest/obj/Debug/
 /doftest/.vs/DirectOutputTest/
 /resources/b2s/
+
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.vs/devine-web/v16/.suo
+.vs/VSWorkspaceState.json
+.vs/slnx.sqlite
+
