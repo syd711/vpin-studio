@@ -2,7 +2,7 @@ package de.mephisto.vpin.server;
 
 import de.mephisto.vpin.server.highscores.Highscore;
 import de.mephisto.vpin.server.popper.PopperScreen;
-import de.mephisto.vpin.server.util.SystemInfo;
+import de.mephisto.vpin.server.system.SystemInfo;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import org.apache.commons.io.FilenameUtils;

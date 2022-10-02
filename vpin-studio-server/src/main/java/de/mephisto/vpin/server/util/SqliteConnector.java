@@ -2,8 +2,10 @@ package de.mephisto.vpin.server.util;
 
 import de.mephisto.vpin.server.GameInfo;
 import de.mephisto.vpin.server.VPinService;
+import de.mephisto.vpin.server.popper.Emulators;
 import de.mephisto.vpin.server.popper.PinUPControl;
 import de.mephisto.vpin.server.roms.RomManager;
+import de.mephisto.vpin.server.system.SystemInfo;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import org.apache.commons.io.FilenameUtils;
@@ -24,6 +26,9 @@ import java.util.List;
 public class SqliteConnector implements InitializingBean {
   private final static Logger LOG = LoggerFactory.getLogger(SqliteConnector.class);
 
+  private final static String CURL_COMMAND_TABLE_START = "curl -X POST --data-urlencode \"table=[GAMEFULLNAME]\" http://localhost:" + SystemInfo.SERVER_PORT + "/service/gameLaunch";
+  private final static String CURL_COMMAND_TABLE_EXIT = "curl -X POST --data-urlencode \"table=[GAMEFULLNAME]\" http://localhost:" + SystemInfo.SERVER_PORT + "/service/gameExit";
+
   public static final String POST_SCRIPT = "PostScript";
   public static final String LAUNCH_SCRIPT = "LaunchScript";
   public static final String ROM = "ROM";
@@ -39,6 +44,31 @@ public class SqliteConnector implements InitializingBean {
 
   @Autowired
   private VPinService service;
+
+  @Override
+  public void afterPropertiesSet() throws Exception {
+    File file = systemInfo.getPinUPDatabaseFile();
+    dbFilePath = file.getAbsolutePath().replaceAll("\\\\", "/");
+    runConfigCheck();
+  }
+
+  private void runConfigCheck() {
+    Emulators[] values = Emulators.values();
+    for (Emulators value : values) {
+      String emulatorName = Emulators.getEmulatorName(value);
+      String startupScript = this.getEmulatorStartupScript(emulatorName);
+      if (!startupScript.contains(CURL_COMMAND_TABLE_START)) {
+        startupScript = startupScript + "\n\n" + CURL_COMMAND_TABLE_START;
+        this.updateScript(emulatorName, "LaunchScript", startupScript);
+      }
+      String emulatorExitScript = this.getEmulatorExitScript(Emulators.getEmulatorName(value));
+      if (!emulatorExitScript.contains(CURL_COMMAND_TABLE_EXIT)) {
+        emulatorExitScript = emulatorExitScript + "\n\n" + CURL_COMMAND_TABLE_EXIT;
+        this.updateScript(emulatorName, "PostScript", emulatorExitScript);
+      }
+    }
+    LOG.info("Finished Popper scripts configuration check.");
+  }
 
   /**
    * Connect to a database
@@ -356,11 +386,5 @@ public class SqliteConnector implements InitializingBean {
 
     loadStats(info);
     return info;
-  }
-
-  @Override
-  public void afterPropertiesSet() throws Exception {
-    File file = systemInfo.getPinUPDatabaseFile();
-    dbFilePath = file.getAbsolutePath().replaceAll("\\\\", "/");
   }
 }

@@ -1,6 +1,7 @@
-package de.mephisto.vpin.server.util;
+package de.mephisto.vpin.server.system;
 
 import de.mephisto.vpin.server.VPinServiceException;
+import de.mephisto.vpin.server.util.PropertiesStore;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -21,6 +22,8 @@ import java.util.Locale;
 @Service
 public class SystemInfo implements InitializingBean  {
   private final static Logger LOG = LoggerFactory.getLogger(SystemInfo.class);
+
+  public final static int SERVER_PORT = 8089;
 
   private final static String VPX_REG_KEY = "HKEY_CURRENT_USER\\SOFTWARE\\Visual Pinball\\VP10\\RecentDir";
   private final static String POPPER_REG_KEY = "HKEY_LOCAL_MACHINE\\SYSTEM\\ControlSet001\\Control\\Session Manager\\Environment";

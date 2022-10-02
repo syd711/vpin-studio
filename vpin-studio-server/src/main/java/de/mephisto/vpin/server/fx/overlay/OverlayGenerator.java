@@ -2,7 +2,7 @@ package de.mephisto.vpin.server.fx.overlay;
 
 import de.mephisto.vpin.server.VPinService;
 import de.mephisto.vpin.server.util.ImageUtil;
-import de.mephisto.vpin.server.util.SystemInfo;
+import de.mephisto.vpin.server.system.SystemInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

@@ -6,7 +6,7 @@ import de.mephisto.vpin.server.highscores.Highscore;
 import de.mephisto.vpin.server.highscores.Score;
 import de.mephisto.vpin.server.util.Config;
 import de.mephisto.vpin.server.util.ImageUtil;
-import de.mephisto.vpin.server.util.SystemInfo;
+import de.mephisto.vpin.server.system.SystemInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

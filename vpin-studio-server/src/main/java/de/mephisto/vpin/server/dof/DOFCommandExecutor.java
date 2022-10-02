@@ -2,7 +2,7 @@ package de.mephisto.vpin.server.dof;
 
 import com.google.common.annotations.VisibleForTesting;
 import de.mephisto.vpin.server.util.SystemCommandExecutor;
-import de.mephisto.vpin.server.util.SystemInfo;
+import de.mephisto.vpin.server.system.SystemInfo;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

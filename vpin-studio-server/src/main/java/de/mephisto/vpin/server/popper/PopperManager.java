@@ -5,7 +5,6 @@ import de.mephisto.vpin.server.highscores.HighscoreManager;
 import de.mephisto.vpin.server.util.SqliteConnector;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -13,11 +12,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Service
-public class PopperManager implements InitializingBean {
+public class PopperManager {
   private final static Logger LOG = LoggerFactory.getLogger(PopperManager.class);
-
-//  private final static String CURL_COMMAND_TABLE_START = "curl -X POST --data-urlencode \"table=[GAMEFULLNAME]\" http://localhost:" + HttpServer.PORT + "/service/gameLaunch";
-//  private final static String CURL_COMMAND_TABLE_EXIT = "curl -X POST --data-urlencode \"table=[GAMEFULLNAME]\" http://localhost:" + HttpServer.PORT + "/service/gameExit";
 
   private final List<TableStatusChangeListener> listeners = new ArrayList<>();
 
@@ -26,11 +22,6 @@ public class PopperManager implements InitializingBean {
 
   @Autowired
   private HighscoreManager highscoreManager;
-
-  @Override
-  public void afterPropertiesSet() throws Exception {
-    this.runConfigCheck();
-  }
 
   public void notifyTableStatusChange(final GameInfo game, final boolean started) {
     new Thread(() -> {
@@ -71,24 +62,6 @@ public class PopperManager implements InitializingBean {
   public void executeTableExitCommands(GameInfo game) {
     LOG.info("Executing table exit commands for '" + game + "'");
     highscoreManager.invalidateHighscore(game);
-  }
-
-  private void runConfigCheck() {
-//    Emulators[] values = Emulators.values();
-//    for (Emulators value : values) {
-//      String emulatorName = Emulators.getEmulatorName(value);
-//      String startupScript = this.connector.getEmulatorStartupScript(emulatorName);
-//      if (!startupScript.contains(CURL_COMMAND_TABLE_START)) {
-//        startupScript = startupScript + "\n\n" + CURL_COMMAND_TABLE_START;
-//        this.connector.updateScript(emulatorName, "LaunchScript", startupScript);
-//      }
-//      String emulatorExitScript = this.connector.getEmulatorExitScript(Emulators.getEmulatorName(value));
-//      if (!emulatorExitScript.contains(CURL_COMMAND_TABLE_EXIT)) {
-//        emulatorExitScript = emulatorExitScript + "\n\n" + CURL_COMMAND_TABLE_EXIT;
-//        this.connector.updateScript(emulatorName, "PostScript", emulatorExitScript);
-//      }
-//    }
-//    LOG.info("Finished Popper configuration check.");
   }
 
   public String validateScreenConfiguration(PopperScreen screen) {

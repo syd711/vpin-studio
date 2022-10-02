@@ -12,7 +12,7 @@ import de.mephisto.vpin.server.popper.PopperScreen;
 import de.mephisto.vpin.server.popper.TableStatusChangeListener;
 import de.mephisto.vpin.server.roms.RomManager;
 import de.mephisto.vpin.server.util.SqliteConnector;
-import de.mephisto.vpin.server.util.SystemInfo;
+import de.mephisto.vpin.server.system.SystemInfo;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import org.apache.commons.lang3.StringUtils;

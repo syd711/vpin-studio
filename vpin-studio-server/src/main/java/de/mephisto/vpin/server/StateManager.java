@@ -1,8 +1,5 @@
 package de.mephisto.vpin.server;
 
-import de.mephisto.vpin.server.http.AsyncServlet;
-import de.mephisto.vpin.server.http.HttpServer;
-import de.mephisto.vpin.server.util.RequestUtil;
 import de.mephisto.vpin.server.util.SystemCommandExecutor;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
