@@ -17,13 +17,13 @@ import javax.xml.parsers.SAXParserFactory;
 import java.io.File;
 import java.io.FileOutputStream;
 
-public class B2SThumbnailExtractor extends DefaultHandler {
-  private final static Logger LOG = LoggerFactory.getLogger(B2SThumbnailExtractor.class);
+public class B2SImageExtractor extends DefaultHandler {
+  private final static Logger LOG = LoggerFactory.getLogger(B2SImageExtractor.class);
 
   private String imageData;
   private GameInfo game;
 
-  public B2SThumbnailExtractor(GameInfo game) {
+  public B2SImageExtractor(GameInfo game) {
     this.game = game;
   }
 
@@ -42,7 +42,6 @@ public class B2SThumbnailExtractor extends DefaultHandler {
         FileOutputStream out = new FileOutputStream(target);
         IOUtils.write(bytes, out);
         out.close();
-        LOG.info("Written uncropped directb2s image " + target.getAbsolutePath());
         return target;
       }
     } catch (Exception e) {

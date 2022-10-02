@@ -27,8 +27,6 @@ public class RestClient implements ClientHttpRequestInterceptor {
   public static final String SCHEME = "http";
   public static final String HOST = "localhost";
   public static final int PORT = 8089;
-  public static final String API_VERSION = "v1";
-  public static final String API_PATH = "api/" + API_VERSION + "/";
 
   private String baseUrl;
   private String authenticationToken;
@@ -38,20 +36,20 @@ public class RestClient implements ClientHttpRequestInterceptor {
 
   public static RestClient getInstance(String scheme, String host, int port) {
     if(INSTANCE == null) {
-      INSTANCE = new RestClient(scheme, host, port, API_VERSION);
+      INSTANCE = new RestClient(scheme, host, port);
     }
     return INSTANCE;
   }
 
   public static RestClient getInstance() {
     if(INSTANCE == null) {
-      INSTANCE = new RestClient(SCHEME, HOST, PORT, API_VERSION);
+      INSTANCE = new RestClient(SCHEME, HOST, PORT);
     }
     return INSTANCE;
   }
 
-  private RestClient(String scheme, String host, int port, String apiVersion) {
-    baseUrl = scheme + "://" + host + ":" + port + "/api/" + apiVersion;
+  private RestClient(String scheme, String host, int port) {
+    baseUrl = scheme + "://" + host + ":" + port + "/";
   }
 
   public void login(String username, String password) {

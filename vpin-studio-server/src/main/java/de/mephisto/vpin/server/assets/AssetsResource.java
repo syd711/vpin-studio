@@ -2,7 +2,9 @@ package de.mephisto.vpin.server.assets;
 
 import de.mephisto.vpin.server.GameInfo;
 import de.mephisto.vpin.server.VPinService;
-import de.mephisto.vpin.server.directb2s.DirectB2SManager;
+import de.mephisto.vpin.server.directb2s.B2SImageRatio;
+import de.mephisto.vpin.server.directb2s.B2SManager;
+import edu.umd.cs.findbugs.annotations.Nullable;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,10 +17,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.io.BufferedInputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
+import java.io.*;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -30,46 +29,82 @@ public class AssetsResource {
   private final static Logger LOG = LoggerFactory.getLogger(AssetsResource.class);
 
   @Autowired
-  private DirectB2SManager directB2SManager;
+  private B2SManager directB2SManager;
 
   @Autowired
   private VPinService service;
 
-  @GetMapping("/directb2s/{id}")
-  public ResponseEntity<byte[]> get(@PathVariable("id") int id) {
-    BufferedInputStream in = null;
+  @GetMapping("/directb2s/{id}/raw")
+  public ResponseEntity<byte[]> getRaw(@PathVariable("id") int id) {
+    File file = null;
     try {
       GameInfo gameInfo = service.getGameInfo(id);
       if (gameInfo != null) {
-        File file = directB2SManager.extractDirectB2SBackgroundImage(gameInfo);
-        if (file != null) {
-          in = new BufferedInputStream(new FileInputStream(file));
-          return ResponseEntity.ok()
-              .lastModified(file.lastModified())
-              .contentType(MediaType.parseMediaType("image/jpeg"))
-              .contentLength(file.length())
-              .cacheControl(CacheControl.maxAge(3600 * 24 * 7, TimeUnit.SECONDS).cachePublic())
-              .body(IOUtils.toByteArray(in));
-        }
-        else {
-          LOG.warn(gameInfo + " does not provide a directb2s background.");
-        }
+        file = directB2SManager.extractDirectB2SBackgroundImage(gameInfo);
+        return serializeImage(file);
       }
       else {
         LOG.warn("No GameInfo found for id " + id);
       }
     } catch (Exception e) {
       LOG.error("Failed to load directb2s image: " + e.getMessage(), e);
-    } finally {
-      if (in != null) {
-        try {
-          in.close();
-        } catch (IOException e) {
-          //ignore
+    }
+    finally {
+      if(file != null) {
+        file.delete();
+      }
+    }
+    return null;
+  }
+
+  @GetMapping("/directb2s/{id}/cropped/{ratio}")
+  public ResponseEntity<byte[]> getCropped(@PathVariable("id") int id, @PathVariable("ratio") String ratio) {
+    try {
+      GameInfo gameInfo = service.getGameInfo(id);
+      if (gameInfo != null) {
+        B2SImageRatio r = B2SImageRatio.valueOf(ratio.toUpperCase());
+        File file = directB2SManager.generateB2SImage(gameInfo, r, 1280);
+        return serializeImage(file);
+      }
+      else {
+        LOG.warn("No GameInfo found for id " + id);
+      }
+    } catch (Exception e) {
+      LOG.error("Failed to load directb2s image: " + e.getMessage(), e);
+    }
+    return null;
+  }
+
+
+  private ResponseEntity<byte[]> serializeImage(@Nullable File file) throws Exception {
+    BufferedInputStream in = null;
+    if (file != null && file.exists()) {
+      try {
+        in = new BufferedInputStream(new FileInputStream(file));
+        return ResponseEntity.ok()
+            .lastModified(file.lastModified())
+            .contentType(MediaType.parseMediaType("image/jpeg"))
+            .contentLength(file.length())
+            .cacheControl(CacheControl.maxAge(3600 * 24 * 7, TimeUnit.SECONDS).cachePublic())
+            .body(IOUtils.toByteArray(in));
+      } catch (Exception e) {
+        LOG.error("Failed to serialize image " + file.getAbsolutePath() + ": " + e.getMessage(), e);
+        throw e;
+      } finally {
+        if (in != null) {
+          try {
+            in.close();
+          } catch (IOException e) {
+            //ignore
+          }
         }
       }
     }
-
+    else {
+      if(file != null) {
+        LOG.info("Image " + file.getAbsolutePath() + " not found.");
+      }
+    }
     return null;
   }
 }

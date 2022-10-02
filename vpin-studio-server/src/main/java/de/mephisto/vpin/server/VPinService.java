@@ -1,7 +1,5 @@
 package de.mephisto.vpin.server;
 
-import de.mephisto.vpin.server.directb2s.B2SImageRatio;
-import de.mephisto.vpin.server.directb2s.DirectB2SManager;
 import de.mephisto.vpin.server.dof.DOFCommand;
 import de.mephisto.vpin.server.dof.DOFCommandData;
 import de.mephisto.vpin.server.dof.DOFManager;
@@ -100,11 +98,6 @@ public class VPinService implements InitializingBean {
   }
 
   @SuppressWarnings("unused")
-  public GameInfo getGameInfo(int id) {
-    return sqliteConnector.getGame(id);
-  }
-
-  @SuppressWarnings("unused")
   public void updateDOFCommand(@NonNull DOFCommand command) {
     this.dofCommandData.updateDOFCommand(command);
   }
@@ -134,6 +127,11 @@ public class VPinService implements InitializingBean {
   @SuppressWarnings("unused")
   public Unit getUnit(int id) {
     return dofManager.getUnit(id);
+  }
+
+  @SuppressWarnings("unused")
+  public GameInfo getGameInfo(int id) {
+    return sqliteConnector.getGame(id);
   }
 
   @SuppressWarnings("unused")

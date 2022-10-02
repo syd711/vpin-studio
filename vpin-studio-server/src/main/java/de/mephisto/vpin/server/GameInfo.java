@@ -178,7 +178,7 @@ public class GameInfo {
   }
 
   @NonNull
-  public File getDirectB2SImage() {
+  public File getDirectB2SBackgroundImage() {
     String targetName = FilenameUtils.getBaseName(getGameFileName()) + ".png";
     return new File(systemInfo.getB2SImageExtractionFolder(), targetName);
   }

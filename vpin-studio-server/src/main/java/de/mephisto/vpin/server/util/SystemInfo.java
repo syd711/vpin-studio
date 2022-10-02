@@ -25,16 +25,15 @@ public class SystemInfo implements InitializingBean  {
   private final static String VPX_REG_KEY = "HKEY_CURRENT_USER\\SOFTWARE\\Visual Pinball\\VP10\\RecentDir";
   private final static String POPPER_REG_KEY = "HKEY_LOCAL_MACHINE\\SYSTEM\\ControlSet001\\Control\\Session Manager\\Environment";
   private final static String VPREG_STG = "VPReg.stg";
+  public static final String RESOURCES = "./resources/";
 
   private final static String PINUP_SYSTEM_INSTALLATION_DIR_INST_DIR = "pinupSystem.installationDir";
   private final static String VISUAL_PINBALL_INST_DIR = "visualPinball.installationDir";
   private final static String DIRECTB2S_DIR = "directb2s.directory";
-
-  private final static String PINEMHI_FOLDER = "pinemhi";
+  private final static String PINEMHI_FOLDER = RESOURCES + "pinemhi";
   private final static String PINEMHI_COMMAND = "PINemHi.exe";
   private final static String PINEMHI_INI = "pinemhi.ini";
 
-  public static final String RESOURCES = "./resources/";
 
   private File pinUPSystemInstallationFolder;
   private File visualPinballInstallationFolder;
@@ -258,7 +257,7 @@ public class SystemInfo implements InitializingBean  {
   }
 
   public File getExtractedVPRegFolder() {
-    return new File("./", "VPReg");
+    return new File(RESOURCES, "VPReg");
   }
 
   public File[] getVPXTables() {
