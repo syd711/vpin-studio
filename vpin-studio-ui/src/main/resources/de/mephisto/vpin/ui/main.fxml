@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.VBox?>
+
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="1056.0" prefWidth="1429.0" style="-fx-background-color: #0f0606;" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1">
+   <children>
+      <VBox prefHeight="1054.0" prefWidth="300.0" style="-fx-background-color: #490000;">
+         <children>
+            <Button mnemonicParsing="false" prefHeight="60.0" prefWidth="330.0" text="Button" />
+         </children>
+      </VBox>
+   </children>
+</AnchorPane>
