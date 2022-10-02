@@ -1,12 +1,16 @@
 package de.mephisto.vpin.server.util;
 
 import de.mephisto.vpin.server.games.Game;
+import de.mephisto.vpin.server.jpa.GameDetails;
+import de.mephisto.vpin.server.jpa.GameDetailsRepository;
 import de.mephisto.vpin.server.popper.Emulators;
 import de.mephisto.vpin.server.popper.PinUPControl;
+import de.mephisto.vpin.server.roms.RomService;
 import de.mephisto.vpin.server.system.SystemInfo;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
@@ -20,21 +24,23 @@ import java.util.Comparator;
 import java.util.List;
 
 @Service
-public class SqliteConnector implements InitializingBean {
-  private final static Logger LOG = LoggerFactory.getLogger(SqliteConnector.class);
+public class PinUPConnector implements InitializingBean {
+  private final static Logger LOG = LoggerFactory.getLogger(PinUPConnector.class);
 
   private final static String CURL_COMMAND_TABLE_START = "curl -X POST --data-urlencode \"table=[GAMEFULLNAME]\" http://localhost:" + SystemInfo.SERVER_PORT + "/service/gameLaunch";
   private final static String CURL_COMMAND_TABLE_EXIT = "curl -X POST --data-urlencode \"table=[GAMEFULLNAME]\" http://localhost:" + SystemInfo.SERVER_PORT + "/service/gameExit";
 
   public static final String POST_SCRIPT = "PostScript";
   public static final String LAUNCH_SCRIPT = "LaunchScript";
-  public static final String ROM = "ROM";
   private String dbFilePath;
 
   private Connection conn;
 
   @Autowired
   private SystemInfo systemInfo;
+
+  @Autowired
+  private GameDetailsRepository gameDetailsRepository;
 
   @Override
   public void afterPropertiesSet() {
@@ -48,12 +54,12 @@ public class SqliteConnector implements InitializingBean {
     for (Emulators value : values) {
       String emulatorName = Emulators.getEmulatorName(value);
       String startupScript = this.getEmulatorStartupScript(emulatorName);
-      if (!startupScript.contains(CURL_COMMAND_TABLE_START)) {
+      if (startupScript != null && !startupScript.contains(CURL_COMMAND_TABLE_START)) {
         startupScript = startupScript + "\n\n" + CURL_COMMAND_TABLE_START;
         this.updateScript(emulatorName, "LaunchScript", startupScript);
       }
       String emulatorExitScript = this.getEmulatorExitScript(Emulators.getEmulatorName(value));
-      if (!emulatorExitScript.contains(CURL_COMMAND_TABLE_EXIT)) {
+      if (emulatorExitScript != null && !emulatorExitScript.contains(CURL_COMMAND_TABLE_EXIT)) {
         emulatorExitScript = emulatorExitScript + "\n\n" + CURL_COMMAND_TABLE_EXIT;
         this.updateScript(emulatorName, "PostScript", emulatorExitScript);
       }
@@ -90,8 +96,8 @@ public class SqliteConnector implements InitializingBean {
     try {
       Statement statement = conn.createStatement();
       ResultSet rs = statement.executeQuery("SELECT * FROM Games where GameID = " + id + ";");
-      while (rs.next()) {
-        info = createGameInfo(rs);
+      if (rs.next()) {
+        info = createGame(rs);
       }
       rs.close();
       statement.close();
@@ -112,7 +118,7 @@ public class SqliteConnector implements InitializingBean {
       Statement statement = conn.createStatement();
       ResultSet rs = statement.executeQuery("SELECT * FROM Games where GameFileName = '" + gameName + "';");
       while (rs.next()) {
-        info = createGameInfo(rs);
+        info = createGame(rs);
       }
 
       rs.close();
@@ -134,7 +140,7 @@ public class SqliteConnector implements InitializingBean {
       Statement statement = conn.createStatement();
       ResultSet rs = statement.executeQuery("SELECT * FROM Games where GameDisplay = '" + gameName + "';");
       while (rs.next()) {
-        info = createGameInfo(rs);
+        info = createGame(rs);
       }
 
       rs.close();
@@ -155,13 +161,12 @@ public class SqliteConnector implements InitializingBean {
       Statement statement = conn.createStatement();
       description = description.replaceAll("'", "''");
       ResultSet rs = statement.executeQuery("SELECT * FROM PinUPFunctions WHERE Descript = '" + description + "';");
-      while (rs.next()) {
+      if (rs.next()) {
         f = new PinUPControl();
         f.setActive(rs.getInt("Active") == 1);
         f.setDescription(rs.getString("Descript"));
         f.setCtrlKey(rs.getInt("CntrlCodes"));
         f.setId(rs.getInt("uniqueID"));
-        break;
       }
 
       rs.close();
@@ -227,7 +232,7 @@ public class SqliteConnector implements InitializingBean {
       Statement statement = conn.createStatement();
       ResultSet rs = statement.executeQuery("SELECT * FROM Games WHERE EMUID = 1;");
       while (rs.next()) {
-        Game info = createGameInfo(rs);
+        Game info = createGame(rs);
         if (info != null) {
           results.add(info);
         }
@@ -319,6 +324,32 @@ public class SqliteConnector implements InitializingBean {
     }
   }
 
+  @Nullable
+  private Game createGame(@NonNull ResultSet rs) throws SQLException {
+    Game game = new Game(systemInfo);
+    int id = rs.getInt("GameID");
+    game.setId(id);
+
+    String gameFileName = rs.getString("GameFileName");
+    game.setGameFileName(gameFileName);
+
+    String gameDisplayName = rs.getString("GameDisplay");
+    game.setGameDisplayName(gameDisplayName);
+
+    File wheelIconFile = new File(systemInfo.getPinUPSystemFolder() + "/POPMedia/Visual Pinball X/Wheel/", FilenameUtils.getBaseName(gameFileName) + ".png");
+    game.setWheelIconFile(wheelIconFile);
+
+    File vpxFile = new File(systemInfo.getVPXTablesFolder(), gameFileName);
+    if (!vpxFile.exists()) {
+      LOG.warn("No vpx file " + vpxFile.getAbsolutePath() + " found, ignoring game.");
+      return null;
+    }
+    game.setGameFile(vpxFile);
+    loadStats(game);
+    loadDetails(game);
+    return game;
+  }
+
   private void loadStats(@NonNull Game game) {
     try {
       Statement statement = conn.createStatement();
@@ -335,28 +366,34 @@ public class SqliteConnector implements InitializingBean {
     }
   }
 
-  @Nullable
-  private Game createGameInfo(@NonNull ResultSet rs) throws SQLException {
-    Game info = new Game(systemInfo);
-    int id = rs.getInt("GameID");
-    info.setId(id);
+  private void loadDetails(@NonNull Game game) {
+    try {
+      GameDetails details = gameDetailsRepository.findByPupId(game.getId());
+      String rom = null;
+      if (details == null) {
+        RomService scanner = new RomService();
+        rom = scanner.scanRom(game);
+        GameDetails gameDetails = new GameDetails();
+        gameDetails.setPupId(game.getId());
+        gameDetails.setRomName(rom);
+        gameDetails.setCreatedAt(new java.util.Date());
+        gameDetails.setUpdatedAt(new java.util.Date());
+        gameDetailsRepository.saveAndFlush(gameDetails);
+      }
+      else {
+        rom = details.getRomName();
+      }
 
-    String gameFileName = rs.getString("GameFileName");
-    info.setGameFileName(gameFileName);
+      game.setRom(rom);
+      if (!StringUtils.isEmpty(rom)) {
+        File romFile = new File(systemInfo.getMameRomFolder(), rom + ".zip");
+        game.setRomFile(romFile);
 
-    String gameDisplayName = rs.getString("GameDisplay");
-    info.setGameDisplayName(gameDisplayName);
-
-    File wheelIconFile = new File(systemInfo.getPinUPSystemFolder() + "/POPMedia/Visual Pinball X/Wheel/", FilenameUtils.getBaseName(gameFileName) + ".png");
-    info.setWheelIconFile(wheelIconFile);
-
-    File vpxFile = new File(systemInfo.getVPXTablesFolder(), gameFileName);
-    if (!vpxFile.exists()) {
-      LOG.warn("No vpx file " + vpxFile.getAbsolutePath() + " found, ignoring game.");
-      return null;
+        File nvRamFolder = new File(systemInfo.getMameFolder(), "nvram");
+        game.setNvRamFile(new File(nvRamFolder, rom + ".nv"));
+      }
+    } catch (Exception e) {
+      LOG.error("Failed to parse ROM data of " + game + ": " + e.getMessage(), e);
     }
-    info.setGameFile(vpxFile);
-    loadStats(info);
-    return info;
   }
 }

@@ -1,8 +1,8 @@
 package de.mephisto.vpin.server.dof;
 
+import de.mephisto.vpin.server.jpa.DOFCommand;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -14,7 +14,7 @@ import java.util.List;
 public class DOFCommandResource {
 
   @Autowired
-  private DOFManager dofManager;
+  private DOFCommandService dofCommandService;
 
   @SuppressWarnings("unused")
   @NonNull
@@ -41,11 +41,11 @@ public class DOFCommandResource {
   @SuppressWarnings("unused")
   @NonNull
   public List<Unit> getUnits() {
-    return dofManager.getUnits();
+    return dofCommandService.getUnits();
   }
 
   @SuppressWarnings("unused")
   public Unit getUnit(int id) {
-    return dofManager.getUnit(id);
+    return dofCommandService.getUnit(id);
   }
 }

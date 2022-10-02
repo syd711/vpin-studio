@@ -1,30 +1,29 @@
-package de.mephisto.vpin.server.dof;
+package de.mephisto.vpin.server.jpa;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import de.mephisto.vpin.server.dof.DOFCommandExecutor;
+import de.mephisto.vpin.server.dof.Trigger;
+
+import javax.persistence.*;
+
+@Entity
+@Table(name = "DOFCommands")
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class DOFCommand {
 
+  @Id
+  @GeneratedValue(strategy = GenerationType.AUTO)
+  @Column(name = "pupId", nullable = false)
   private int id;
   private int unit;
   private int portNumber;
   private int value;
   private int durationMs;
-  private Trigger trigger;
+  private String trigger;
   private String keyBinding;
   private boolean toggle;
   private String description;
-
-  private transient boolean toggled;
-
-  public DOFCommand(int id, int unit, int portNumber, int value, int durationMs, Trigger trigger, String keyBinding, boolean toggle, String description) {
-    this.id = id;
-    this.unit = unit;
-    this.portNumber = portNumber;
-    this.value = value;
-    this.durationMs = durationMs;
-    this.trigger = trigger;
-    this.keyBinding = keyBinding;
-    this.toggle = toggle;
-    this.description = description;
-  }
+  private boolean toggled;
 
   public boolean isToggled() {
     return toggled;
@@ -58,7 +57,7 @@ public class DOFCommand {
     this.durationMs = durationMs;
   }
 
-  public void setTrigger(Trigger trigger) {
+  public void setTrigger(String trigger) {
     this.trigger = trigger;
   }
 
@@ -94,7 +93,7 @@ public class DOFCommand {
     return durationMs;
   }
 
-  public Trigger getTrigger() {
+  public String getTrigger() {
     return trigger;
   }
 

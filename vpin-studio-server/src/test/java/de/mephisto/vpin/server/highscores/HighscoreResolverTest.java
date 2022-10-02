@@ -3,9 +3,6 @@ package de.mephisto.vpin.server.highscores;
 import de.mephisto.vpin.server.VPinStudioException;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-
 public class HighscoreResolverTest {
 
   @Test

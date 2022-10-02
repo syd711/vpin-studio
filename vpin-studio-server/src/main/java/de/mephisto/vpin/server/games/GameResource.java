@@ -1,8 +1,6 @@
 package de.mephisto.vpin.server.games;
 
-import de.mephisto.vpin.server.jpa.GameDetails;
-import de.mephisto.vpin.server.jpa.GameDetailsRepository;
-import de.mephisto.vpin.server.util.SqliteConnector;
+import de.mephisto.vpin.server.util.PinUPConnector;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -17,10 +15,8 @@ import java.util.List;
 public class GameResource {
 
   @Autowired
-  private SqliteConnector connector;
+  private PinUPConnector connector;
 
-  @Autowired
-  private GameDetailsRepository gameDetailsRepository;
 
   @GetMapping
   public List<Game> getGame() {
@@ -37,22 +33,6 @@ public class GameResource {
 
   @GetMapping("/{id}")
   public Game getGame(@PathVariable("id") int pupId) {
-    Game game = connector.getGame(pupId);
-    GameDetails details = gameDetailsRepository.findByPupId(pupId);
-//
-//    String rom = romScanner.getRomName(id);
-//    File romFile = null;
-//    File nvRamFile = null;
-//    File nvRamFolder = new File(systemInfo.getMameFolder(), "nvram");
-//    if (!StringUtils.isEmpty(rom)) {
-//      romFile = new File(systemInfo.getMameRomFolder(), rom + ".zip");
-//      nvRamFile = new File(nvRamFolder, rom + ".nv");
-//    }
-//    else if (!romScanner.wasScanned(id)) {
-//      rom = romScanner.scanRom(info);
-//    }
-//
-//    info.setRom(rom);
-    return game;
+    return connector.getGame(pupId);
   }
 }

@@ -1,5 +1,10 @@
 package de.mephisto.vpin.server.dof;
 
+import de.mephisto.vpin.server.highscores.HighscoreChangeEvent;
+import de.mephisto.vpin.server.highscores.HighscoreChangeListener;
+import de.mephisto.vpin.server.highscores.HighscoreService;
+import de.mephisto.vpin.server.jpa.DOFCommand;
+import de.mephisto.vpin.server.jpa.DOFCommandRepository;
 import de.mephisto.vpin.server.popper.TableStatusChangeListener;
 import de.mephisto.vpin.server.popper.TableStatusChangedEvent;
 import de.mephisto.vpin.server.util.KeyChecker;
@@ -18,26 +23,16 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
-public class DOFManager implements TableStatusChangeListener, NativeKeyListener, InitializingBean {
-  private final static Logger LOG = LoggerFactory.getLogger(DOFManager.class);
+public class DOFCommandService implements TableStatusChangeListener, HighscoreChangeListener, NativeKeyListener, InitializingBean {
+  private final static Logger LOG = LoggerFactory.getLogger(DOFCommandService.class);
 
   private List<Unit> units;
 
   @Autowired
-  private DOFCommandData dofCommandData;
+  private DOFCommandRepository repository;
 
-  public DOFManager(DOFCommandData dofCommandData) {
-
-  }
-
-  private void startRuleEngine() {
-    GlobalScreen.addNativeKeyListener(this);
-    LOG.info("Starting Rule Engine");
-    List<DOFCommand> startupRules = this.dofCommandData.getCommandsFor(Trigger.SystemStart);
-    for (DOFCommand startupRule : startupRules) {
-      startupRule.execute();
-    }
-  }
+  @Autowired
+  private HighscoreService highscoreService;
 
   @NonNull
   public List<Unit> getUnits() {
@@ -58,7 +53,7 @@ public class DOFManager implements TableStatusChangeListener, NativeKeyListener,
 
   @Override
   public void tableLaunched(TableStatusChangedEvent event) {
-    List<DOFCommand> rules = this.dofCommandData.getCommandsFor(Trigger.TableStart);
+    List<DOFCommand> rules = this.repository.findByTrigger(Trigger.TableStart.name());
     for (DOFCommand rule : rules) {
       rule.execute();
     }
@@ -66,7 +61,15 @@ public class DOFManager implements TableStatusChangeListener, NativeKeyListener,
 
   @Override
   public void tableExited(TableStatusChangedEvent event) {
-    List<DOFCommand> rules = this.dofCommandData.getCommandsFor(Trigger.TableStart);
+    List<DOFCommand> rules = this.repository.findByTrigger(Trigger.TableStart.name());
+    for (DOFCommand rule : rules) {
+      rule.execute();
+    }
+  }
+
+  @Override
+  public void highscoreChanged(@NonNull HighscoreChangeEvent event) {
+    List<DOFCommand> rules = this.repository.findByTrigger(Trigger.HighscoreCreated.name());
     for (DOFCommand rule : rules) {
       rule.execute();
     }
@@ -79,7 +82,7 @@ public class DOFManager implements TableStatusChangeListener, NativeKeyListener,
 
   @Override
   public void nativeKeyPressed(NativeKeyEvent nativeKeyEvent) {
-    List<DOFCommand> rules = this.dofCommandData.getCommandsFor(Trigger.KeyEvent);
+    List<DOFCommand> rules = this.repository.findByTrigger(Trigger.KeyEvent.name());
     for (DOFCommand rule : rules) {
       String keyBinding = rule.getKeyBinding();
       if (!StringUtils.isEmpty(keyBinding)) {
@@ -96,9 +99,20 @@ public class DOFManager implements TableStatusChangeListener, NativeKeyListener,
 
   }
 
+  private void startRuleEngine() {
+    GlobalScreen.addNativeKeyListener(this);
+    LOG.info("Starting Rule Engine");
+    List<DOFCommand> startupRules = this.repository.findByTrigger(Trigger.SystemStart.name());
+    for (DOFCommand startupRule : startupRules) {
+      startupRule.execute();
+    }
+  }
+
   @Override
   public void afterPropertiesSet() throws Exception {
     this.units = DOFCommandExecutor.scanUnits();
     this.startRuleEngine();
+
+    this.highscoreService.addHighscoreChangeListener(this);
   }
 }

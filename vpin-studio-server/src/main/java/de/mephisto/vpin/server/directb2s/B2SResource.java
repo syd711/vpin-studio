@@ -1,10 +1,9 @@
-package de.mephisto.vpin.server.assets;
+package de.mephisto.vpin.server.directb2s;
 
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameService;
-import de.mephisto.vpin.server.directb2s.B2SImageRatio;
-import de.mephisto.vpin.server.directb2s.B2SManager;
 import edu.umd.cs.findbugs.annotations.Nullable;
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,16 +16,19 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.io.*;
+import java.io.BufferedInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
 /**
  *
  */
 @RestController
-@RequestMapping("/assets")
-public class AssetsResource {
-  private final static Logger LOG = LoggerFactory.getLogger(AssetsResource.class);
+@RequestMapping("/directb2s")
+public class B2SResource {
+  private final static Logger LOG = LoggerFactory.getLogger(B2SResource.class);
 
   @Autowired
   private B2SManager directB2SManager;
@@ -34,7 +36,7 @@ public class AssetsResource {
   @Autowired
   private GameService service;
 
-  @GetMapping("/directb2s/{id}/raw")
+  @GetMapping("/{id}/raw")
   public ResponseEntity<byte[]> getRaw(@PathVariable("id") int id) {
     File file = null;
     try {
@@ -57,7 +59,7 @@ public class AssetsResource {
     return null;
   }
 
-  @GetMapping("/directb2s/{id}/cropped/{ratio}")
+  @GetMapping("/{id}/cropped/{ratio}")
   public ResponseEntity<byte[]> getCropped(@PathVariable("id") int id, @PathVariable("ratio") String ratio) {
     try {
       Game game = service.getGame(id);
@@ -76,14 +78,14 @@ public class AssetsResource {
   }
 
 
-  private ResponseEntity<byte[]> serializeImage(@Nullable File file) throws Exception {
+  public static ResponseEntity<byte[]> serializeImage(@Nullable File file) throws Exception {
     BufferedInputStream in = null;
     if (file != null && file.exists()) {
       try {
         in = new BufferedInputStream(new FileInputStream(file));
         return ResponseEntity.ok()
             .lastModified(file.lastModified())
-            .contentType(MediaType.parseMediaType("image/jpeg"))
+            .contentType(MediaType.parseMediaType("image/" + FilenameUtils.getExtension(file.getName())))
             .contentLength(file.length())
             .cacheControl(CacheControl.maxAge(3600 * 24 * 7, TimeUnit.SECONDS).cachePublic())
             .body(IOUtils.toByteArray(in));

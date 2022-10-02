@@ -36,7 +36,7 @@ public class ApplicationTray {
     MenuItem logsItem = new MenuItem("Show Logs");
     logsItem.addActionListener(e -> {
       try {
-        File file = new File("./vpin-extensions.log");
+        File file = new File("./vpin-studio-server.log");
         if (file.exists()) {
           Desktop.getDesktop().open(file);
         }

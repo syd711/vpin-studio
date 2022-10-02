@@ -18,6 +18,7 @@
 
     <modules>
         <module>vpin-studio-server</module>
+        <module>vpin-studio-ui</module>
     </modules>
 
 </project>

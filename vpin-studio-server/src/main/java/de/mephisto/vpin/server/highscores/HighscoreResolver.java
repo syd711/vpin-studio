@@ -1,8 +1,9 @@
 package de.mephisto.vpin.server.highscores;
 
 import de.mephisto.vpin.server.games.Game;
-import de.mephisto.vpin.server.util.SystemCommandExecutor;
+import de.mephisto.vpin.server.jpa.Highscore;
 import de.mephisto.vpin.server.system.SystemInfo;
+import de.mephisto.vpin.server.util.SystemCommandExecutor;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -13,6 +14,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 
 class HighscoreResolver {
@@ -38,14 +40,10 @@ class HighscoreResolver {
     }
   }
 
-  public boolean isRomSupported(String rom) {
-    return this.supportedRoms.contains(rom);
-  }
-
   /**
    * Return a highscore object for the given table or null if no highscore has been achieved or created yet.
    */
-  public Highscore loadHighscore(Game game) {
+  public Highscore parseHighscore(Game game) {
     try {
       String romName = game.getRom();
       if (StringUtils.isEmpty(romName)) {
@@ -105,9 +103,9 @@ class HighscoreResolver {
         highScoreValue = HighscoreParser.formatScore(highScoreValue);
         String initials = readFileString(tableHighscoreNameFile);
 
-        Highscore highscore = new Highscore(highScoreValue);
-        highscore.setUserInitials(initials);
-        highscore.setScore(highScoreValue);
+        Highscore highscore = Highscore.forGame(game, highScoreValue);
+        highscore.setInitials1(initials);
+        highscore.setScore1(highScoreValue);
 
         for (int i = 1; i <= 4; i++) {
           tableHighscoreFile = new File(tableHighscoreFolder, "HighScore" + i);
@@ -118,8 +116,18 @@ class HighscoreResolver {
               highScoreValue = HighscoreParser.formatScore(highScoreValue);
               initials = readFileString(tableHighscoreNameFile);
 
-              Score score = new Score(initials, highScoreValue, i);
-              highscore.getScores().add(score);
+              if (i == 1) {
+                highscore.setScore1(highScoreValue);
+                highscore.setInitials1(initials);
+              }
+              else if (i == 2) {
+                highscore.setScore2(highScoreValue);
+                highscore.setInitials2(initials);
+              }
+              else if (i == 3) {
+                highscore.setScore3(highScoreValue);
+                highscore.setInitials3(initials);
+              }
             }
           }
         }
@@ -189,7 +197,7 @@ class HighscoreResolver {
       String output = executePINemHi(nvRam.getName());
       if (output != null) {
         highscore = parser.parseHighscore(game, nvRam, output);
-        if (highscore == null || highscore.getScores().isEmpty()) {
+        if (highscore == null || StringUtils.isEmpty(highscore.getScore1())) {
           return null;
         }
       }

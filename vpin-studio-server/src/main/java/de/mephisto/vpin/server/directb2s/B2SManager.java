@@ -1,7 +1,7 @@
 package de.mephisto.vpin.server.directb2s;
 
-import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.VPinStudioException;
+import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.util.ImageUtil;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;

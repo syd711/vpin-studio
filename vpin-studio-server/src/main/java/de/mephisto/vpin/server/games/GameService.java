@@ -1,10 +1,9 @@
 package de.mephisto.vpin.server.games;
 
-import de.mephisto.vpin.server.fx.overlay.OverlayWindowFX;
-import de.mephisto.vpin.server.util.SqliteConnector;
+import de.mephisto.vpin.server.fx.OverlayWindowFX;
+import de.mephisto.vpin.server.util.PinUPConnector;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
@@ -20,7 +19,7 @@ public class GameService implements InitializingBean {
   private final static Logger LOG = LoggerFactory.getLogger(GameService.class);
 
   @Autowired
-  private SqliteConnector sqliteConnector;
+  private PinUPConnector pinUPConnector;
 
   @Override
   public void afterPropertiesSet() {
@@ -33,23 +32,23 @@ public class GameService implements InitializingBean {
 
   @SuppressWarnings("unused")
   public Game getGame(int id) {
-    return sqliteConnector.getGame(id);
+    return pinUPConnector.getGame(id);
   }
 
   @SuppressWarnings("unused")
   public List<Game> getActiveGameInfos() {
-    List<Integer> gameIdsFromPlaylists = this.sqliteConnector.getGameIdsFromPlaylists();
-    List<Game> games = sqliteConnector.getGames();
+    List<Integer> gameIdsFromPlaylists = this.pinUPConnector.getGameIdsFromPlaylists();
+    List<Game> games = pinUPConnector.getGames();
     return games.stream().filter(g -> gameIdsFromPlaylists.contains(g.getId())).collect(Collectors.toList());
   }
 
   public List<Game> getGameInfos() {
-    return sqliteConnector.getGames();
+    return pinUPConnector.getGames();
   }
   @SuppressWarnings("unused")
   @Nullable
   public Game getGameByVpxFilename(@NonNull String filename) {
-    List<Game> games = sqliteConnector.getGames();
+    List<Game> games = pinUPConnector.getGames();
     for (Game game : games) {
       if (game.getGameFile().getName().equals(filename)) {
         return game;
@@ -60,7 +59,7 @@ public class GameService implements InitializingBean {
 
   @Nullable
   public Game getGameByRom(@NonNull String romName) {
-    List<Game> games = sqliteConnector.getGames();
+    List<Game> games = pinUPConnector.getGames();
     for (Game game : games) {
       if (game.getRom() != null && game.getRom().equals(romName)) {
         return game;
@@ -71,10 +70,10 @@ public class GameService implements InitializingBean {
 
   @SuppressWarnings("unused")
   public Game getGameByName(String table) {
-    return this.sqliteConnector.getGameByName(table);
+    return this.pinUPConnector.getGameByName(table);
   }
 
   public Game getGameByFile(File file) {
-    return this.sqliteConnector.getGameByFilename(file.getName());
+    return this.pinUPConnector.getGameByFilename(file.getName());
   }
 }

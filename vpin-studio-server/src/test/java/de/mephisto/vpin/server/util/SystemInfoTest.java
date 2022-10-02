@@ -2,9 +2,6 @@ package de.mephisto.vpin.server.util;
 
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 public class SystemInfoTest {
 
   @Test

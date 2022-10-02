@@ -17,8 +17,8 @@ import java.util.List;
 import java.util.regex.Pattern;
 
 @Service
-public class RomScanner {
-  private final static Logger LOG = LoggerFactory.getLogger(RomScanner.class);
+public class RomService {
+  private final static Logger LOG = LoggerFactory.getLogger(RomService.class);
 
   private final static int MAX_ROM_FILENAME_LENGTH = 16;
 
@@ -26,7 +26,7 @@ public class RomScanner {
 
   private final List<Pattern> patternList = new ArrayList<>();
 
-  public RomScanner() {
+  public RomService() {
     PATTERNS.forEach(p -> patternList.add(Pattern.compile(".*" + p + ".*=.*\".*\".*")));
   }
 

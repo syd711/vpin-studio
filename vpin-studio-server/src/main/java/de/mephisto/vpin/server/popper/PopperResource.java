@@ -2,6 +2,7 @@ package de.mephisto.vpin.server.popper;
 
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameService;
+import de.mephisto.vpin.server.util.PinUPConnector;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,7 +27,10 @@ public class PopperResource {
   private GameService service;
 
   @Autowired
-  private PopperManager popperManager;
+  private PinUPConnector connector;
+
+  @Autowired
+  private PopperService popperManager;
 
   @PostMapping("/gameLaunch")
   public boolean gameLaunch(@PathVariable("table") String table) {
@@ -50,5 +54,38 @@ public class PopperResource {
     }
     popperManager.notifyTableStatusChange(game, false);
     return true;
+  }
+
+  @PostMapping("/validateScreen/{screen}")
+  public String validateScreenConfiguration(@PathVariable("screen") String screenName) {
+    PopperScreen screen = PopperScreen.valueOf(screenName);
+    PinUPControl fn = null;
+    switch (screen) {
+      case Other2: {
+        fn = connector.getFunction(PinUPControl.FUNCTION_SHOW_OTHER);
+        break;
+      }
+      case GameHelp: {
+        fn = connector.getFunction(PinUPControl.FUNCTION_SHOW_HELP);
+        break;
+      }
+      case GameInfo: {
+        fn = connector.getFunction(PinUPControl.FUNCTION_SHOW_FLYER);
+        break;
+      }
+      default: {
+
+      }
+    }
+
+    if (fn != null) {
+      if (!fn.isActive()) {
+        return "The screen has not been activated.";
+      }
+      if (fn.getCtrlKey() == 0) {
+        return "The screen is not bound to any key.";
+      }
+    }
+    return null;
   }
 }

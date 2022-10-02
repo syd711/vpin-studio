@@ -5,7 +5,7 @@ import org.junit.jupiter.api.Test;
 
 import java.io.FileNotFoundException;
 
-public class SqliteConnectorTest {
+public class PinUPConnectorTest {
 
   @Test
   public void testSqliteConnector() throws FileNotFoundException, VPinStudioException {

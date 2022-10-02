@@ -1,12 +1,13 @@
-package de.mephisto.vpin.server.fx.overlay;
+package de.mephisto.vpin.server.generators;
 
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameService;
-import de.mephisto.vpin.server.highscores.Highscore;
+import de.mephisto.vpin.server.highscores.HighscoreService;
+import de.mephisto.vpin.server.jpa.Highscore;
 import de.mephisto.vpin.server.highscores.Score;
+import de.mephisto.vpin.server.system.SystemInfo;
 import de.mephisto.vpin.server.util.Config;
 import de.mephisto.vpin.server.util.ImageUtil;
-import de.mephisto.vpin.server.system.SystemInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -43,6 +44,9 @@ public class OverlayGraphics {
 
   private static int BLUR_PIXELS = Config.getOverlayGeneratorConfig().getInt("overlay.blur");
 
+  private final GameService service;
+  private final HighscoreService highscoreService;
+
   private static void initValues() {
     HIGHSCORE_TEXT = Config.getOverlayGeneratorConfig().getString("overlay.highscores.text");
     TITLE_TEXT = Config.getOverlayGeneratorConfig().getString("overlay.title.text");
@@ -67,7 +71,12 @@ public class OverlayGraphics {
     BLUR_PIXELS = Config.getOverlayGeneratorConfig().getInt("overlay.blur");
   }
 
-  public BufferedImage drawGames(GameService service) throws Exception {
+  public OverlayGraphics(GameService service, HighscoreService highscoreService) {
+    this.service = service;
+    this.highscoreService = highscoreService;
+  }
+
+  public BufferedImage drawGames() throws Exception {
     initValues();
     int selection = Config.getOverlayGeneratorConfig().getInt("overlay.challengedTable");
     Game gameOfTheMonth = null;
@@ -90,7 +99,7 @@ public class OverlayGraphics {
       highscoreListYOffset = renderTableChallenge(rotated, gameOfTheMonth);
     }
 
-    renderHighscoreList(rotated, gameOfTheMonth, service, highscoreListYOffset);
+    renderHighscoreList(rotated, gameOfTheMonth, highscoreListYOffset);
 
     return ImageUtil.rotateLeft(rotated);
   }
@@ -98,8 +107,8 @@ public class OverlayGraphics {
   /**
    * The upper section, usually with the three topscores.
    */
-  private static int renderTableChallenge(BufferedImage image, Game challengedGame) throws Exception {
-    Highscore highscore = null;//challengedGame.resolveHighscore();
+  private int renderTableChallenge(BufferedImage image, Game challengedGame) throws Exception {
+    Highscore highscore = highscoreService.getHighscore(challengedGame);
     Graphics g = image.getGraphics();
     ImageUtil.setDefaultColor(g, Config.getOverlayGeneratorConfig().getString("overlay.font.color"));
     int imageWidth = image.getWidth();
@@ -127,7 +136,7 @@ public class OverlayGraphics {
 
     List<String> scores = new ArrayList<>();
     if (highscore != null) {
-      for (Score score : highscore.getScores()) {
+      for (Score score : highscore.toScores()) {
         String scoreString = score.getPosition() + ". " + score.getUserInitials() + " " + score.getScore();
         scores.add(scoreString);
 
@@ -174,7 +183,7 @@ public class OverlayGraphics {
     return wheelY * 2 + SCORE_FONT_SIZE * 2;
   }
 
-  private static void renderHighscoreList(BufferedImage image, Game gameOfTheMonth, GameService service, int highscoreListYOffset) throws Exception {
+  private void renderHighscoreList(BufferedImage image, Game gameOfTheMonth, int highscoreListYOffset) throws Exception {
     Graphics g = image.getGraphics();
     ImageUtil.setDefaultColor(g, Config.getOverlayGeneratorConfig().getString("overlay.font.color"));
     int imageWidth = image.getWidth();
@@ -197,7 +206,7 @@ public class OverlayGraphics {
     sorted.addAll(gamesWithOutDate);
 
     for (Game game : sorted) {
-      Highscore highscore = null;//game.resolveHighscore();
+      Highscore highscore = highscoreService.getHighscore(game);
       if (highscore == null) {
         LOG.info("Skipped highscore rendering of " + game.getGameDisplayName() + ", no highscore info found");
         continue;
@@ -223,7 +232,7 @@ public class OverlayGraphics {
       g.drawString(game.getGameDisplayName(), x, yStart + SCORE_FONT_SIZE);
 
       g.setFont(new Font(SCORE_FONT_NAME, SCORE_FONT_STYLE, SCORE_FONT_SIZE));
-      g.drawString(highscore.getUserInitials() + " " + highscore.getScore(), x,
+      g.drawString(highscore.getInitials1() + " " + highscore.getScore1(), x,
           yStart + SCORE_FONT_SIZE + ((ROW_HEIGHT - SCORE_FONT_SIZE) / 2) + SCORE_FONT_SIZE / 2);
 
       yStart = yStart + ROW_HEIGHT + ROW_SEPARATOR;

@@ -2,8 +2,6 @@ package de.mephisto.vpin.server.dof;
 
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
-
 public class DOFCommandDataTest {
 
   @Test

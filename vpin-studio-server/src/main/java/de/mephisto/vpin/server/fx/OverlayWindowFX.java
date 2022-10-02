@@ -1,5 +1,7 @@
-package de.mephisto.vpin.server.fx.overlay;
+package de.mephisto.vpin.server.fx;
 
+import de.mephisto.vpin.server.generators.GeneratorResource;
+import de.mephisto.vpin.server.generators.OverlayGraphics;
 import de.mephisto.vpin.server.resources.ResourceLoader;
 import de.mephisto.vpin.server.util.Config;
 import de.mephisto.vpin.server.util.KeyChecker;
@@ -44,7 +46,7 @@ public class OverlayWindowFX extends Application implements NativeKeyListener {
 
     Platform.setImplicitExit(false);
 
-    FileInputStream inputstream = new FileInputStream(OverlayGenerator.GENERATED_OVERLAY_FILE);
+    FileInputStream inputstream = new FileInputStream(GeneratorResource.GENERATED_OVERLAY_FILE);
     Image image = new Image(inputstream);
     ImageView imageView = new ImageView(image);
     imageView.setPreserveRatio(true);

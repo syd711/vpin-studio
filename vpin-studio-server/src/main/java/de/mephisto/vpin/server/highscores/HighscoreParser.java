@@ -1,12 +1,15 @@
 package de.mephisto.vpin.server.highscores;
 
 import de.mephisto.vpin.server.games.Game;
+import de.mephisto.vpin.server.jpa.Highscore;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.text.DecimalFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -31,51 +34,57 @@ import java.util.stream.Collectors;
 public class HighscoreParser {
   private final static Logger LOG = LoggerFactory.getLogger(HighscoreParser.class);
 
-  public Highscore parseHighscore(Game game, File file, String cmdOutput) throws Exception {
-    Highscore highscore = new Highscore(cmdOutput);
+  public Highscore parseHighscore(Game game, File file, String cmdOutput) {
+    Highscore highscore = Highscore.forGame(game, cmdOutput);
 
     try {
       LOG.debug("Parsing Highscore text for " + game.getGameDisplayName() + "\n" + cmdOutput);
       String[] lines = cmdOutput.split("\\n");
       if (lines.length == 2) {
-        return parseTwoLineOutput(highscore, lines[1]);
+        parseTwoLineOutput(highscore, lines[1]);
+        return highscore;
       }
 
       int index = 1;
+      List<Score> scores = new ArrayList<>();
       for (String line : lines) {
         if (line.startsWith(index + ")") || line.startsWith("#" + index) || line.startsWith(index + "#")) {
           Score score = createScore(line);
-          highscore.getScores().add(score);
+
+          if (index == 1) {
+            highscore.setScore1(score.getScore());
+            highscore.setInitials1(score.getUserInitials());
+          }
+          else if (index == 2) {
+            highscore.setScore2(score.getScore());
+            highscore.setInitials2(score.getUserInitials());
+          }
+          else if (index == 3) {
+            highscore.setScore3(score.getScore());
+            highscore.setInitials3(score.getUserInitials());
+          }
+
+          scores.add(score);
           index++;
         }
 
-        if (highscore.getScores().size() == 3) {
+        if (scores.size() == 3) {
           break;
         }
-      }
-
-      if (!highscore.getScores().isEmpty()) {
-        Score score = highscore.getScores().get(0);
-        highscore.setScore(score.getScore());
-        highscore.setUserInitials(score.getUserInitials());
       }
     } catch (Exception e) {
       LOG.error("Failed to parse highscore file '" + file.getAbsolutePath() + "': " + e.getMessage() + "\nPinemhi Command Output:\n==================================\n" + cmdOutput, e);
       throw e;
     }
 
-    if (highscore.getScores().isEmpty()) {
-      throw new Exception("Failed to read scores from output: " + cmdOutput);
-    }
-
     return highscore;
   }
 
-  private Highscore parseTwoLineOutput(Highscore highscore, String line) {
+  private void parseTwoLineOutput(Highscore highscore, String line) {
     Score score = new Score(null, line.trim(), 1);
-    highscore.setScore(score.getScore());
-    highscore.getScores().add(score);
-    return highscore;
+    highscore.setRaw(line);
+    highscore.setInitials1(score.getUserInitials());
+    highscore.setScore1(score.getScore());
   }
 
   private static Score createScore(String line) {
@@ -91,7 +100,8 @@ public class HighscoreParser {
     else if (collect.size() > 3) {
       StringBuilder initials = new StringBuilder();
       for (int i = 1; i < collect.size() - 1; i++) {
-        initials.append(collect.get(i) + " ");
+        initials.append(collect.get(i));
+        initials.append(" ");
       }
       return new Score(initials.toString().trim(), collect.get(collect.size() - 1), index);
     }

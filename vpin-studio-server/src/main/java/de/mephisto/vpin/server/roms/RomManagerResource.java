@@ -11,12 +11,12 @@ import org.springframework.web.bind.annotation.RestController;
 public class RomManagerResource {
 
   @Autowired
-  private RomScanner romScanner;
+  private RomService romService;
 
   @SuppressWarnings("unused")
   @Nullable
   public String rescanRom(Game game) {
-    return this.romScanner.scanRom(game);
+    return this.romService.scanRom(game);
   }
 
 }

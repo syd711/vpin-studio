@@ -5,7 +5,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface GameDetailsRepository extends JpaRepository<GameDetails, Long> {
+public interface HighscoreRepository extends JpaRepository<Highscore, Long> {
 
-  GameDetails findByPupId(int pupId);
+  Highscore findByPupId(int pupId);
 }
