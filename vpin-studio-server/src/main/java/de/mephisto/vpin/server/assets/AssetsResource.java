@@ -1,7 +1,7 @@
 package de.mephisto.vpin.server.assets;
 
-import de.mephisto.vpin.server.GameInfo;
-import de.mephisto.vpin.server.VPinService;
+import de.mephisto.vpin.server.games.Game;
+import de.mephisto.vpin.server.games.GameService;
 import de.mephisto.vpin.server.directb2s.B2SImageRatio;
 import de.mephisto.vpin.server.directb2s.B2SManager;
 import edu.umd.cs.findbugs.annotations.Nullable;
@@ -32,15 +32,15 @@ public class AssetsResource {
   private B2SManager directB2SManager;
 
   @Autowired
-  private VPinService service;
+  private GameService service;
 
   @GetMapping("/directb2s/{id}/raw")
   public ResponseEntity<byte[]> getRaw(@PathVariable("id") int id) {
     File file = null;
     try {
-      GameInfo gameInfo = service.getGameInfo(id);
-      if (gameInfo != null) {
-        file = directB2SManager.extractDirectB2SBackgroundImage(gameInfo);
+      Game game = service.getGame(id);
+      if (game != null) {
+        file = directB2SManager.extractDirectB2SBackgroundImage(game);
         return serializeImage(file);
       }
       else {
@@ -60,10 +60,10 @@ public class AssetsResource {
   @GetMapping("/directb2s/{id}/cropped/{ratio}")
   public ResponseEntity<byte[]> getCropped(@PathVariable("id") int id, @PathVariable("ratio") String ratio) {
     try {
-      GameInfo gameInfo = service.getGameInfo(id);
-      if (gameInfo != null) {
+      Game game = service.getGame(id);
+      if (game != null) {
         B2SImageRatio r = B2SImageRatio.valueOf(ratio.toUpperCase());
-        File file = directB2SManager.generateB2SImage(gameInfo, r, 1280);
+        File file = directB2SManager.generateB2SImage(game, r, 1280);
         return serializeImage(file);
       }
       else {

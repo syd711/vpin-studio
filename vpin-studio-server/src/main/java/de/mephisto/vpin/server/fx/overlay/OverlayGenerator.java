@@ -1,6 +1,6 @@
 package de.mephisto.vpin.server.fx.overlay;
 
-import de.mephisto.vpin.server.VPinService;
+import de.mephisto.vpin.server.games.GameService;
 import de.mephisto.vpin.server.util.ImageUtil;
 import de.mephisto.vpin.server.system.SystemInfo;
 import org.slf4j.Logger;
@@ -14,19 +14,18 @@ public class OverlayGenerator {
 
   public final static File GENERATED_OVERLAY_FILE = new File(SystemInfo.RESOURCES, "overlay.jpg");
 
-  private final VPinService service;
+  private final GameService service;
 
-  public static void generateOverlay(VPinService service) throws Exception {
+  public static void generateOverlay(GameService service) throws Exception {
     new OverlayGenerator(service).generate();
   }
 
-  OverlayGenerator(VPinService service) {
+  OverlayGenerator(GameService service) {
     this.service = service;
   }
 
   public BufferedImage generate() throws Exception {
     try {
-      service.refreshGameInfos();
       BufferedImage bufferedImage = new OverlayGraphics().drawGames(service);
       ImageUtil.write(bufferedImage, GENERATED_OVERLAY_FILE);
       return bufferedImage;

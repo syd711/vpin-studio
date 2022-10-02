@@ -1,6 +1,6 @@
 package de.mephisto.vpin.server.highscores;
 
-import de.mephisto.vpin.server.GameInfo;
+import de.mephisto.vpin.server.games.Game;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -31,7 +31,7 @@ import java.util.stream.Collectors;
 public class HighscoreParser {
   private final static Logger LOG = LoggerFactory.getLogger(HighscoreParser.class);
 
-  public Highscore parseHighscore(GameInfo game, File file, String cmdOutput) throws Exception {
+  public Highscore parseHighscore(Game game, File file, String cmdOutput) throws Exception {
     Highscore highscore = new Highscore(cmdOutput);
 
     try {

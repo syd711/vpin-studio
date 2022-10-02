@@ -1,6 +1,6 @@
 package de.mephisto.vpin.server.popper;
 
-import de.mephisto.vpin.server.GameInfo;
+import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.highscores.HighscoreManager;
 import de.mephisto.vpin.server.util.SqliteConnector;
 import org.slf4j.Logger;
@@ -23,7 +23,7 @@ public class PopperManager {
   @Autowired
   private HighscoreManager highscoreManager;
 
-  public void notifyTableStatusChange(final GameInfo game, final boolean started) {
+  public void notifyTableStatusChange(final Game game, final boolean started) {
     new Thread(() -> {
       if (started) {
         this.executeTableLaunchCommands(game);
@@ -55,11 +55,11 @@ public class PopperManager {
   }
 
 
-  public void executeTableLaunchCommands(GameInfo game) {
+  public void executeTableLaunchCommands(Game game) {
     LOG.info("Executing table launch commands for '" + game + "'");
   }
 
-  public void executeTableExitCommands(GameInfo game) {
+  public void executeTableExitCommands(Game game) {
     LOG.info("Executing table exit commands for '" + game + "'");
     highscoreManager.invalidateHighscore(game);
   }

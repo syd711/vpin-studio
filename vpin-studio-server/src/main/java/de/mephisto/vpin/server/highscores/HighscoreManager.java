@@ -1,6 +1,6 @@
 package de.mephisto.vpin.server.highscores;
 
-import de.mephisto.vpin.server.GameInfo;
+import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.system.SystemInfo;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
@@ -11,6 +11,7 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -25,7 +26,7 @@ public class HighscoreManager implements InitializingBean {
   private SystemInfo systemInfo;
 
   @Nullable
-  public Highscore getHighscore(@NonNull GameInfo game) {
+  public Highscore getHighscore(@NonNull Game game) {
     if (StringUtils.isEmpty(game.getRom())) {
       return null;
     }
@@ -38,7 +39,7 @@ public class HighscoreManager implements InitializingBean {
     return cache.get(game.getId());
   }
 
-  public void invalidateHighscore(@NonNull GameInfo game) {
+  public void invalidateHighscore(@NonNull Game game) {
     highscoreResolver.refresh();
     cache.remove(game.getId());
     LOG.info("Invalidated cached highscore of " + game);

@@ -1,11 +1,8 @@
 package de.mephisto.vpin.server.popper;
 
-import de.mephisto.vpin.server.roms.RomManager;
-import de.mephisto.vpin.server.util.SqliteConnector;
 import org.junit.jupiter.api.Test;
 
 import java.io.FileNotFoundException;
-import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;

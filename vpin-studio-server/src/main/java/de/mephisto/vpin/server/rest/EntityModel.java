@@ -3,7 +3,10 @@ package de.mephisto.vpin.server.rest;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
 
+import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.Objects;
@@ -15,15 +18,26 @@ import java.util.Objects;
 abstract public class EntityModel<T> implements Serializable {
   private final static Logger LOG = LoggerFactory.getLogger(EntityModel.class);
 
-  private String id;
+  @Id
+  @GeneratedValue(strategy = GenerationType.AUTO)
+  @Column(name = "id", nullable = false)
+  private Long id;
+
+  @Column(nullable = false, updatable = false)
+  @Temporal(TemporalType.TIMESTAMP)
+  @CreatedDate
   private Date createdAt;
+
+  @Column(nullable = false)
+  @Temporal(TemporalType.TIMESTAMP)
+  @LastModifiedDate
   private Date updatedAt;
 
-  public String getId() {
+  public Long getId() {
     return id;
   }
 
-  public void setId(String id) {
+  public void setId(Long id) {
     this.id = id;
   }
 
@@ -52,7 +66,7 @@ abstract public class EntityModel<T> implements Serializable {
   @Override
   public boolean equals(Object obj) {
     if(obj instanceof EntityModel) {
-      return ((EntityModel) obj).getId().equals(this.getId());
+      return ((EntityModel) obj).getId() == this.getId();
     }
     return false;
   }

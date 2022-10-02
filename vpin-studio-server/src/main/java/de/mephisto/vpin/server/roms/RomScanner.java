@@ -1,14 +1,11 @@
 package de.mephisto.vpin.server.roms;
 
-import de.mephisto.vpin.server.GameInfo;
-import de.mephisto.vpin.server.util.PropertiesStore;
+import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.util.ReverseLineInputStream;
-import de.mephisto.vpin.server.system.SystemInfo;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.BufferedReader;
@@ -20,67 +17,29 @@ import java.util.List;
 import java.util.regex.Pattern;
 
 @Service
-public class RomManager {
-  private final static Logger LOG = LoggerFactory.getLogger(RomManager.class);
+public class RomScanner {
+  private final static Logger LOG = LoggerFactory.getLogger(RomScanner.class);
 
   private final static int MAX_ROM_FILENAME_LENGTH = 16;
 
   private final static List<String> PATTERNS = Arrays.asList("cGameName", "cgamename", "RomSet1", "GameName");
 
-  private final PropertiesStore store;
-
   private final List<Pattern> patternList = new ArrayList<>();
 
-  @Autowired
-  private SystemInfo systemInfo;
-
-  public RomManager() {
-    this.store = PropertiesStore.create("repository.properties");
+  public RomScanner() {
     PATTERNS.forEach(p -> patternList.add(Pattern.compile(".*" + p + ".*=.*\".*\".*")));
   }
 
   @Nullable
-  public String scanRom(GameInfo gameInfo) {
-    String romName = scanRomName(gameInfo.getGameFile());
-    gameInfo.setRom(romName);
-    writeGameInfo(gameInfo);
+  public String scanRom(Game game) {
+    String romName = scanRomName(game.getGameFile());
+    game.setRom(romName);
     if (!StringUtils.isEmpty(romName)) {
-      LOG.info("Finished scan of table " + gameInfo + ", found ROM '" + romName + "'.");
+      LOG.info("Finished scan of table " + game + ", found ROM '" + romName + "'.");
       return romName;
     }
-    LOG.info("Finished scan of table " + gameInfo + ", no ROM found.");
+    LOG.info("Finished scan of table " + game + ", no ROM found.");
     return null;
-  }
-
-  private void writeGameInfo(GameInfo game) {
-    String romName = game.getRom();
-    if (romName != null && romName.length() > 0) {
-      game.setRom(romName);
-      LOG.info("Update of " + game.getGameFile().getName() + " successful, written ROM name '" + romName + "'");
-
-      File romFile = new File(systemInfo.getMameRomFolder(), romName + ".zip");
-      if (romFile.exists()) {
-        game.setRomFile(romFile);
-      }
-    }
-    else {
-      LOG.info("Skipped Update of " + game.getGameFile().getName() + ", no rom name found.");
-    }
-    this.store.set(formatGameKey(game.getId()) + ".rom", romName != null ? romName : "");
-    this.store.set(formatGameKey(game.getId()) + ".displayName", game.getGameDisplayName());
-  }
-
-  public String getRomName(int id) {
-    return this.store.getString(formatGameKey(id) + ".rom");
-  }
-
-
-  private String formatGameKey(int id) {
-    return "gameId." + id;
-  }
-
-  public boolean wasScanned(int id) {
-    return store.containsKey(formatGameKey(id) + ".rom");
   }
 
   /**

@@ -1,6 +1,6 @@
 package de.mephisto.vpin.server.system;
 
-import de.mephisto.vpin.server.VPinServiceException;
+import de.mephisto.vpin.server.VPinStudioException;
 import de.mephisto.vpin.server.util.PropertiesStore;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -48,10 +48,17 @@ public class SystemInfo implements InitializingBean  {
   public void afterPropertiesSet() throws Exception {
     initBaseFolders();
     initPinemHiFolders();
+
+    if (!getPinUPSystemFolder().exists()) {
+      throw new FileNotFoundException("Wrong PinUP Popper installation folder: " + getPinUPSystemFolder().getAbsolutePath() + ".\nPlease fix the PinUP Popper installation path in file ./resources/env.properties");
+    }
+    if (!getVisualPinballInstallationFolder().exists()) {
+      throw new FileNotFoundException("Wrong Visual Pinball installation folder: " + getVisualPinballInstallationFolder().getAbsolutePath() + ".\nPlease fix the Visual Pinball installation path in file ./resources/env.properties");
+    }
     logSystemInfo();
   }
 
-  private void initBaseFolders() throws VPinServiceException {
+  private void initBaseFolders() throws VPinStudioException {
     try {
       PropertiesStore store = PropertiesStore.create("env");
 
@@ -91,7 +98,7 @@ public class SystemInfo implements InitializingBean  {
     } catch (Exception e) {
       String msg = "Failed to initialize base folders: " + e.getMessage();
       LOG.error(msg, e);
-      throw new VPinServiceException(msg, e);
+      throw new VPinStudioException(msg, e);
     }
   }
 
@@ -117,7 +124,7 @@ public class SystemInfo implements InitializingBean  {
     LOG.info("*******************************************************************************************************");
   }
 
-  private void initPinemHiFolders() throws VPinServiceException {
+  private void initPinemHiFolders() throws VPinStudioException {
     try {
       File file = new File(PINEMHI_FOLDER, PINEMHI_INI);
       if (!file.exists()) {
@@ -154,7 +161,7 @@ public class SystemInfo implements InitializingBean  {
     } catch (Exception e) {
       String msg = "Failed to run installation for pinemhi: " + e.getMessage();
       LOG.error(msg, e);
-      throw new VPinServiceException(msg, e);
+      throw new VPinStudioException(msg, e);
     }
   }
 

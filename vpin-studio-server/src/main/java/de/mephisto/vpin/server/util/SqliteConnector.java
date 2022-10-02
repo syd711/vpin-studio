@@ -1,15 +1,12 @@
 package de.mephisto.vpin.server.util;
 
-import de.mephisto.vpin.server.GameInfo;
-import de.mephisto.vpin.server.VPinService;
+import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.popper.Emulators;
 import de.mephisto.vpin.server.popper.PinUPControl;
-import de.mephisto.vpin.server.roms.RomManager;
 import de.mephisto.vpin.server.system.SystemInfo;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import org.apache.commons.io.FilenameUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
@@ -37,16 +34,10 @@ public class SqliteConnector implements InitializingBean {
   private Connection conn;
 
   @Autowired
-  private RomManager romManager;
-
-  @Autowired
   private SystemInfo systemInfo;
 
-  @Autowired
-  private VPinService service;
-
   @Override
-  public void afterPropertiesSet() throws Exception {
+  public void afterPropertiesSet() {
     File file = systemInfo.getPinUPDatabaseFile();
     dbFilePath = file.getAbsolutePath().replaceAll("\\\\", "/");
     runConfigCheck();
@@ -93,9 +84,9 @@ public class SqliteConnector implements InitializingBean {
   }
 
   @Nullable
-  public GameInfo getGame(int id) {
+  public Game getGame(int id) {
     this.connect();
-    GameInfo info = null;
+    Game info = null;
     try {
       Statement statement = conn.createStatement();
       ResultSet rs = statement.executeQuery("SELECT * FROM Games where GameID = " + id + ";");
@@ -113,9 +104,9 @@ public class SqliteConnector implements InitializingBean {
   }
 
   @Nullable
-  public GameInfo getGameByFilename(String filename) {
+  public Game getGameByFilename(String filename) {
     this.connect();
-    GameInfo info = null;
+    Game info = null;
     try {
       String gameName = filename.replaceAll("'", "''");
       Statement statement = conn.createStatement();
@@ -135,9 +126,9 @@ public class SqliteConnector implements InitializingBean {
   }
 
   @Nullable
-  public GameInfo getGameByName(String table) {
+  public Game getGameByName(String table) {
     this.connect();
-    GameInfo info = null;
+    Game info = null;
     try {
       String gameName = table.replaceAll("'", "''");
       Statement statement = conn.createStatement();
@@ -229,14 +220,14 @@ public class SqliteConnector implements InitializingBean {
   }
 
   @NonNull
-  public List<GameInfo> getGames() {
+  public List<Game> getGames() {
     this.connect();
-    List<GameInfo> results = new ArrayList<>();
+    List<Game> results = new ArrayList<>();
     try {
       Statement statement = conn.createStatement();
       ResultSet rs = statement.executeQuery("SELECT * FROM Games WHERE EMUID = 1;");
       while (rs.next()) {
-        GameInfo info = createGameInfo(rs);
+        Game info = createGameInfo(rs);
         if (info != null) {
           results.add(info);
         }
@@ -249,7 +240,7 @@ public class SqliteConnector implements InitializingBean {
       this.disconnect();
     }
 
-    results.sort(Comparator.comparing(GameInfo::getGameDisplayName));
+    results.sort(Comparator.comparing(Game::getGameDisplayName));
     return results;
   }
 
@@ -328,7 +319,7 @@ public class SqliteConnector implements InitializingBean {
     }
   }
 
-  private void loadStats(@NonNull GameInfo game) {
+  private void loadStats(@NonNull Game game) {
     try {
       Statement statement = conn.createStatement();
       ResultSet rs = statement.executeQuery("SELECT * FROM GamesStats where GameID = " + game.getId() + ";");
@@ -345,9 +336,8 @@ public class SqliteConnector implements InitializingBean {
   }
 
   @Nullable
-  private GameInfo createGameInfo(@NonNull ResultSet rs) throws SQLException {
-    GameInfo info = new GameInfo(service, systemInfo);
-
+  private Game createGameInfo(@NonNull ResultSet rs) throws SQLException {
+    Game info = new Game(systemInfo);
     int id = rs.getInt("GameID");
     info.setId(id);
 
@@ -366,24 +356,6 @@ public class SqliteConnector implements InitializingBean {
       return null;
     }
     info.setGameFile(vpxFile);
-
-
-    String rom = romManager.getRomName(id);
-    File romFile = null;
-    File nvRamFile = null;
-    File nvRamFolder = new File(systemInfo.getMameFolder(), "nvram");
-    if (!StringUtils.isEmpty(rom)) {
-      romFile = new File(systemInfo.getMameRomFolder(), rom + ".zip");
-      nvRamFile = new File(nvRamFolder, rom + ".nv");
-    }
-    else if (!romManager.wasScanned(id)) {
-      rom = romManager.scanRom(info);
-    }
-
-    info.setRom(rom);
-    info.setNvRamFile(nvRamFile);
-    info.setRomFile(romFile);
-
     loadStats(info);
     return info;
   }

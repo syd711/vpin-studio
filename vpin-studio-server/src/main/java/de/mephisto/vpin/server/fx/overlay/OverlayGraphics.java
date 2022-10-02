@@ -1,7 +1,7 @@
 package de.mephisto.vpin.server.fx.overlay;
 
-import de.mephisto.vpin.server.GameInfo;
-import de.mephisto.vpin.server.VPinService;
+import de.mephisto.vpin.server.games.Game;
+import de.mephisto.vpin.server.games.GameService;
 import de.mephisto.vpin.server.highscores.Highscore;
 import de.mephisto.vpin.server.highscores.Score;
 import de.mephisto.vpin.server.util.Config;
@@ -67,12 +67,12 @@ public class OverlayGraphics {
     BLUR_PIXELS = Config.getOverlayGeneratorConfig().getInt("overlay.blur");
   }
 
-  public BufferedImage drawGames(VPinService service) throws Exception {
+  public BufferedImage drawGames(GameService service) throws Exception {
     initValues();
     int selection = Config.getOverlayGeneratorConfig().getInt("overlay.challengedTable");
-    GameInfo gameOfTheMonth = null;
+    Game gameOfTheMonth = null;
     if (selection > 0) {
-      gameOfTheMonth = service.getGameInfo(selection);
+      gameOfTheMonth = service.getGame(selection);
     }
 
     BufferedImage backgroundImage = ImageUtil.loadBackground(new File(SystemInfo.RESOURCES, Config.getOverlayGeneratorConfig().getString("overlay.background")));
@@ -98,8 +98,8 @@ public class OverlayGraphics {
   /**
    * The upper section, usually with the three topscores.
    */
-  private static int renderTableChallenge(BufferedImage image, GameInfo challengedGame) throws Exception {
-    Highscore highscore = challengedGame.resolveHighscore();
+  private static int renderTableChallenge(BufferedImage image, Game challengedGame) throws Exception {
+    Highscore highscore = null;//challengedGame.resolveHighscore();
     Graphics g = image.getGraphics();
     ImageUtil.setDefaultColor(g, Config.getOverlayGeneratorConfig().getString("overlay.font.color"));
     int imageWidth = image.getWidth();
@@ -174,7 +174,7 @@ public class OverlayGraphics {
     return wheelY * 2 + SCORE_FONT_SIZE * 2;
   }
 
-  private static void renderHighscoreList(BufferedImage image, GameInfo gameOfTheMonth, VPinService service, int highscoreListYOffset) throws Exception {
+  private static void renderHighscoreList(BufferedImage image, Game gameOfTheMonth, GameService service, int highscoreListYOffset) throws Exception {
     Graphics g = image.getGraphics();
     ImageUtil.setDefaultColor(g, Config.getOverlayGeneratorConfig().getString("overlay.font.color"));
     int imageWidth = image.getWidth();
@@ -188,16 +188,16 @@ public class OverlayGraphics {
 
     int yStart = highscoreListYOffset + ROW_SEPARATOR + TITLE_FONT_SIZE / 2;
 
-    List<GameInfo> gameInfosWithDate = service.getGameInfos().stream().filter(game -> game.getLastPlayed() != null).collect(Collectors.toList());
-    List<GameInfo> gameInfosWithOutDate = service.getGameInfos().stream().filter(game -> game.getLastPlayed() == null).collect(Collectors.toList());
+    List<Game> gamesWithDate = service.getGameInfos().stream().filter(game -> game.getLastPlayed() != null).collect(Collectors.toList());
+    List<Game> gamesWithOutDate = service.getGameInfos().stream().filter(game -> game.getLastPlayed() == null).collect(Collectors.toList());
 
-    List<GameInfo> sorted = new ArrayList<>();
-    gameInfosWithDate.sort((o1, o2) -> Long.compare(o2.getLastPlayed().getTime(), o1.getLastPlayed().getTime()));
-    sorted.addAll(gameInfosWithDate);
-    sorted.addAll(gameInfosWithOutDate);
+    List<Game> sorted = new ArrayList<>();
+    gamesWithDate.sort((o1, o2) -> Long.compare(o2.getLastPlayed().getTime(), o1.getLastPlayed().getTime()));
+    sorted.addAll(gamesWithDate);
+    sorted.addAll(gamesWithOutDate);
 
-    for (GameInfo game : sorted) {
-      Highscore highscore = game.resolveHighscore();
+    for (Game game : sorted) {
+      Highscore highscore = null;//game.resolveHighscore();
       if (highscore == null) {
         LOG.info("Skipped highscore rendering of " + game.getGameDisplayName() + ", no highscore info found");
         continue;

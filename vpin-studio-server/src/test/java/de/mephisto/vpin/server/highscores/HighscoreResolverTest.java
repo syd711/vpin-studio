@@ -1,12 +1,7 @@
 package de.mephisto.vpin.server.highscores;
 
-import de.mephisto.vpin.server.GameInfo;
-import de.mephisto.vpin.server.VPinService;
-import de.mephisto.vpin.server.VPinServiceException;
+import de.mephisto.vpin.server.VPinStudioException;
 import org.junit.jupiter.api.Test;
-
-import java.util.ArrayList;
-import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -31,7 +26,7 @@ public class HighscoreResolverTest {
 
 
   @Test
-  public void testHighscore() throws VPinServiceException {
+  public void testHighscore() throws VPinStudioException {
 //    HighscoreResolver highscoreResolver = new HighscoreResolver();
 //    highscoreResolver.refresh();
 //

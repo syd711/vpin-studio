@@ -1,7 +1,7 @@
 package de.mephisto.vpin.server.popper;
 
-import de.mephisto.vpin.server.GameInfo;
-import de.mephisto.vpin.server.VPinService;
+import de.mephisto.vpin.server.games.Game;
+import de.mephisto.vpin.server.games.GameService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,7 +23,7 @@ public class PopperResource {
   private final static Logger LOG = LoggerFactory.getLogger(PopperResource.class);
 
   @Autowired
-  private VPinService service;
+  private GameService service;
 
   @Autowired
   private PopperManager popperManager;
@@ -31,7 +31,7 @@ public class PopperResource {
   @PostMapping("/gameLaunch")
   public boolean gameLaunch(@PathVariable("table") String table) {
     File tableFile = new File(table);
-    GameInfo game = service.getGameByFile(tableFile);
+    Game game = service.getGameByFile(tableFile);
     if (game == null) {
       LOG.warn("No game found for name '" + table);
       return false;
@@ -43,7 +43,7 @@ public class PopperResource {
   @PostMapping("/gameExit")
   public boolean gameExit(@PathVariable("table") String table) {
     File tableFile = new File(table);
-    GameInfo game = service.getGameByFile(tableFile);
+    Game game = service.getGameByFile(tableFile);
     if (game == null) {
       LOG.warn("No game found for name '" + table);
       return false;

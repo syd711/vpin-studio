@@ -107,7 +107,6 @@ public class Asset extends EntityModel<Asset> {
 
     Asset exchange = RestClient.getInstance().exchange(url, HttpMethod.POST, requestEntity, Asset.class);
     if(exchange != null) {
-      this.setId(exchange.getId());
       return exchange;
     }
     LOG.error("Failed to upload picture " + url + ", check server log for details.");
@@ -116,11 +115,6 @@ public class Asset extends EntityModel<Asset> {
 
   public Map<String, String> getUrls() {
     return urls;
-  }
-
-  @Override
-  public boolean equals(Object obj) {
-    return ((Asset) obj).getId().equals(this.getId());
   }
 
   public String getName() {

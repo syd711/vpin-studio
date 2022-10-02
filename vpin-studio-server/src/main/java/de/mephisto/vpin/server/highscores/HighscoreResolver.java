@@ -1,6 +1,6 @@
 package de.mephisto.vpin.server.highscores;
 
-import de.mephisto.vpin.server.GameInfo;
+import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.util.SystemCommandExecutor;
 import de.mephisto.vpin.server.system.SystemInfo;
 import edu.umd.cs.findbugs.annotations.Nullable;
@@ -45,32 +45,32 @@ class HighscoreResolver {
   /**
    * Return a highscore object for the given table or null if no highscore has been achieved or created yet.
    */
-  public Highscore loadHighscore(GameInfo gameInfo) {
+  public Highscore loadHighscore(Game game) {
     try {
-      String romName = gameInfo.getRom();
+      String romName = game.getRom();
       if (StringUtils.isEmpty(romName)) {
-        String msg = "Skipped highscore reading for '" + gameInfo.getGameDisplayName() + "' failed, no rom name found.";
+        String msg = "Skipped highscore reading for '" + game.getGameDisplayName() + "' failed, no rom name found.";
         LOG.info(msg);
         return null;
       }
 
 
-      Highscore highscore = parseNvHighscore(gameInfo);
+      Highscore highscore = parseNvHighscore(game);
       if (highscore == null) {
-        highscore = parseVRegHighscore(gameInfo);
+        highscore = parseVRegHighscore(game);
       }
 
       if (highscore == null) {
-        String msg = "Reading highscore for '" + gameInfo.getGameDisplayName() + "' failed, no nvram file and no VPReg.stg entry found for rom name '" + romName + "'";
+        String msg = "Reading highscore for '" + game.getGameDisplayName() + "' failed, no nvram file and no VPReg.stg entry found for rom name '" + romName + "'";
         LOG.info(msg);
       }
       else {
-        LOG.debug("Successfully read highscore for " + gameInfo.getGameDisplayName());
+        LOG.debug("Successfully read highscore for " + game.getGameDisplayName());
         return highscore;
       }
 
     } catch (Exception e) {
-      LOG.error("Failed to find highscore for table {}: {}", gameInfo.getGameFileName(), e.getMessage(), e);
+      LOG.error("Failed to find highscore for table {}: {}", game.getGameFileName(), e.getMessage(), e);
     }
     return null;
   }
@@ -94,10 +94,10 @@ class HighscoreResolver {
   /**
    * We use the manual set rom name to find the highscore in the "/User/VPReg.stg" file.
    */
-  private Highscore parseVRegHighscore(GameInfo gameInfo) throws IOException {
-    File tableHighscoreFolder = gameInfo.getVPRegFolder();
+  private Highscore parseVRegHighscore(Game game) throws IOException {
+    File tableHighscoreFolder = game.getVPRegFolder();
 
-    if (tableHighscoreFolder != null && gameInfo.getVPRegFolder().exists()) {
+    if (tableHighscoreFolder != null && game.getVPRegFolder().exists()) {
       File tableHighscoreFile = new File(tableHighscoreFolder, "HighScore1");
       File tableHighscoreNameFile = new File(tableHighscoreFolder, "HighScore1Name");
       if (tableHighscoreFile.exists() && tableHighscoreNameFile.exists()) {
@@ -168,27 +168,27 @@ class HighscoreResolver {
   /**
    * Executes a single PINemHi command for the given game.
    *
-   * @param gameInfo the game to parse the highscore for
+   * @param game the game to parse the highscore for
    * @return the Highscore object or null if no highscore could be parsed.
    */
   @Nullable
-  private Highscore parseNvHighscore(GameInfo gameInfo) {
+  private Highscore parseNvHighscore(Game game) {
     Highscore highscore = null;
     try {
-      File nvRam = gameInfo.getNvRamFile();
+      File nvRam = game.getNvRamFile();
       if (nvRam == null || !nvRam.exists()) {
         return null;
       }
 
-      String romName = gameInfo.getRom();
+      String romName = game.getRom();
       if (!this.supportedRoms.contains(romName)) {
-        LOG.warn("The resolved rom name '" + romName + "' of game '" + gameInfo.getGameDisplayName() + "' is not supported by PINemHi.");
+        LOG.warn("The resolved rom name '" + romName + "' of game '" + game.getGameDisplayName() + "' is not supported by PINemHi.");
         return null;
       }
 
       String output = executePINemHi(nvRam.getName());
       if (output != null) {
-        highscore = parser.parseHighscore(gameInfo, nvRam, output);
+        highscore = parser.parseHighscore(game, nvRam, output);
         if (highscore == null || highscore.getScores().isEmpty()) {
           return null;
         }

@@ -1,7 +1,7 @@
 package de.mephisto.vpin.server.directb2s;
 
-import de.mephisto.vpin.server.GameInfo;
-import de.mephisto.vpin.server.VPinServiceException;
+import de.mephisto.vpin.server.games.Game;
+import de.mephisto.vpin.server.VPinStudioException;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import org.apache.commons.io.FilenameUtils;
@@ -21,14 +21,14 @@ public class B2SImageExtractor extends DefaultHandler {
   private final static Logger LOG = LoggerFactory.getLogger(B2SImageExtractor.class);
 
   private String imageData;
-  private GameInfo game;
+  private Game game;
 
-  public B2SImageExtractor(GameInfo game) {
+  public B2SImageExtractor(Game game) {
     this.game = game;
   }
 
   @Nullable
-  public File extractImage(@NonNull File file) throws VPinServiceException {
+  public File extractImage(@NonNull File file) throws VPinStudioException {
     try {
       if (file.exists()) {
         SAXParserFactory factory = SAXParserFactory.newInstance();
@@ -47,7 +47,7 @@ public class B2SImageExtractor extends DefaultHandler {
     } catch (Exception e) {
       String msg = "Failed to parse directb2s file '" + file.getAbsolutePath() + "': " + e.getMessage();
       LOG.error(msg, e);
-      throw new VPinServiceException(msg, e);
+      throw new VPinStudioException(msg, e);
     }
     return null;
   }

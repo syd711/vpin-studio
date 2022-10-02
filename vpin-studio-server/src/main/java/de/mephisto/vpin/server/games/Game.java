@@ -1,6 +1,5 @@
-package de.mephisto.vpin.server;
+package de.mephisto.vpin.server.games;
 
-import de.mephisto.vpin.server.highscores.Highscore;
 import de.mephisto.vpin.server.popper.PopperScreen;
 import de.mephisto.vpin.server.system.SystemInfo;
 import edu.umd.cs.findbugs.annotations.NonNull;
@@ -11,7 +10,7 @@ import org.apache.commons.lang3.StringUtils;
 import java.io.File;
 import java.util.Date;
 
-public class GameInfo {
+public class Game {
 
   private String rom;
   private String gameDisplayName;
@@ -25,17 +24,10 @@ public class GameInfo {
 
   private Date lastPlayed;
   private int numberPlays;
-
-  private final VPinService service;
   private final SystemInfo systemInfo;
 
-  public GameInfo(VPinService service, SystemInfo systemInfo) {
-    this.service = service;
+  public Game(SystemInfo systemInfo) {
     this.systemInfo = systemInfo;
-  }
-
-  public Highscore resolveHighscore() {
-    return this.service.getHighscore(this);
   }
 
   @SuppressWarnings("unused")
@@ -85,10 +77,6 @@ public class GameInfo {
 
   public void setNumberPlays(int numberPlays) {
     this.numberPlays = numberPlays;
-  }
-
-  public void rescanRom() {
-    service.rescanRom(this);
   }
 
   @SuppressWarnings("unused")
@@ -193,9 +181,9 @@ public class GameInfo {
     if (this == o) return true;
     if (o == null || getClass() != o.getClass()) return false;
 
-    GameInfo gameInfo = (GameInfo) o;
+    Game game = (Game) o;
 
-    return id == gameInfo.id;
+    return id == game.id;
   }
 
   @Override

@@ -1,7 +1,7 @@
 package de.mephisto.vpin.server.directb2s;
 
-import de.mephisto.vpin.server.GameInfo;
-import de.mephisto.vpin.server.VPinServiceException;
+import de.mephisto.vpin.server.games.Game;
+import de.mephisto.vpin.server.VPinStudioException;
 import de.mephisto.vpin.server.util.ImageUtil;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
@@ -23,7 +23,7 @@ public class B2SManager {
   }
 
   @Nullable
-  public File extractDirectB2SBackgroundImage(@NonNull GameInfo game) throws VPinServiceException {
+  public File extractDirectB2SBackgroundImage(@NonNull Game game) throws VPinStudioException {
     if (game.getDirectB2SFile().exists()) {
       B2SImageExtractor extractor = new B2SImageExtractor(game);
       return extractor.extractImage(game.getDirectB2SFile());
@@ -32,7 +32,7 @@ public class B2SManager {
   }
 
   @Nullable
-  public File generateB2SImage(@NonNull GameInfo game, @NonNull B2SImageRatio ratio, int cropWidth) throws VPinServiceException {
+  public File generateB2SImage(@NonNull Game game, @NonNull B2SImageRatio ratio, int cropWidth) throws VPinStudioException {
     try {
       if (game.getDirectB2SFile().exists()) {
         B2SImageExtractor extractor = new B2SImageExtractor(game);
@@ -55,9 +55,9 @@ public class B2SManager {
       }
     } catch (IOException e) {
       LOG.error("Error extracting directb2s image: " + e.getMessage(), e);
-      throw new VPinServiceException(e);
+      throw new VPinStudioException(e);
     } catch (Exception e) {
-      throw new VPinServiceException(e);
+      throw new VPinStudioException(e);
     }
     return null;
   }

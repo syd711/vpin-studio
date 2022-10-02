@@ -12,7 +12,7 @@ import java.io.IOException;
 public class ApplicationTray {
   private final static Logger LOG = LoggerFactory.getLogger(ApplicationTray.class);
 
-  public ApplicationTray(VPinService service) {
+  public ApplicationTray() {
     //Check the SystemTray is supported
     if (!SystemTray.isSupported()) {
       LOG.info("SystemTray is not supported");
@@ -26,11 +26,10 @@ public class ApplicationTray {
       try {
         Config.reloadAll();
         restartItem.setEnabled(false);
-        service.restart();
+        new ApplicationStateManager().restart();
       } catch (Exception ex) {
         LOG.error("Failed to restart VPin Studio Server: " + ex.getMessage());
-      }
-      finally {
+      } finally {
         restartItem.setEnabled(true);
       }
     });
@@ -38,7 +37,7 @@ public class ApplicationTray {
     logsItem.addActionListener(e -> {
       try {
         File file = new File("./vpin-extensions.log");
-        if(file.exists()) {
+        if (file.exists()) {
           Desktop.getDesktop().open(file);
         }
       } catch (IOException ex) {
