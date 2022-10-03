@@ -1,10 +1,8 @@
-package de.mephisto.vpin.server.util;
+package de.mephisto.vpin.server.popper;
 
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.jpa.GameDetails;
 import de.mephisto.vpin.server.jpa.GameDetailsRepository;
-import de.mephisto.vpin.server.popper.Emulators;
-import de.mephisto.vpin.server.popper.PinUPControl;
 import de.mephisto.vpin.server.roms.RomService;
 import de.mephisto.vpin.server.system.SystemInfo;
 import edu.umd.cs.findbugs.annotations.NonNull;

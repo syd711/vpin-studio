@@ -1,7 +1,7 @@
 package de.mephisto.vpin.server.games;
 
 import de.mephisto.vpin.server.fx.OverlayWindowFX;
-import de.mephisto.vpin.server.util.PinUPConnector;
+import de.mephisto.vpin.server.popper.PinUPConnector;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import org.slf4j.Logger;

@@ -1,16 +1,215 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.Cursor?>
 <?import javafx.scene.control.Button?>
-<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
 
-
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="1056.0" prefWidth="1429.0" style="-fx-background-color: #0f0606;" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1">
-   <children>
-      <VBox prefHeight="1054.0" prefWidth="300.0" style="-fx-background-color: #490000;">
+<BorderPane xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.MainController">
+   <left>
+      <VBox alignment="TOP_CENTER" prefHeight="1353.0" prefWidth="300.0" style="-fx-background-color: #272b2f;" BorderPane.alignment="CENTER">
          <children>
-            <Button mnemonicParsing="false" prefHeight="60.0" prefWidth="330.0" text="Button" />
+            <BorderPane fx:id="avatarPane" prefHeight="200.0" prefWidth="200.0">
+               <padding>
+                  <Insets bottom="12.0" top="12.0" />
+               </padding></BorderPane>
+            <Button fx:id="dashboardBtn" alignment="BASELINE_LEFT" graphicTextGap="12.0" mnemonicParsing="false" onAction="#onDashboardClick" prefHeight="60.0" prefWidth="330.0" style="-fx-background-color: #272b2f;" text="Dashboard" textFill="WHITE">
+               <graphic>
+                  <ImageView fitHeight="18.0" fitWidth="18.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@dashboard.png" />
+                     </image>
+                  </ImageView>
+               </graphic>
+               <font>
+                  <Font name="Tahoma" size="18.0" />
+               </font>
+               <opaqueInsets>
+                  <Insets />
+               </opaqueInsets>
+               <padding>
+                  <Insets left="47.0" />
+               </padding>
+               <cursor>
+                  <Cursor fx:constant="HAND" />
+               </cursor>
+            </Button>
+            <Button alignment="BASELINE_LEFT" graphicTextGap="12.0" layoutX="10.0" layoutY="210.0" mnemonicParsing="false" prefHeight="60.0" prefWidth="330.0" style="-fx-background-color: #272b2f;" text="Overlay Settings" textFill="WHITE">
+               <font>
+                  <Font name="Tahoma" size="18.0" />
+               </font>
+               <graphic>
+                  <ImageView fitHeight="18.0" fitWidth="18.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@dashboard.png" />
+                     </image>
+                  </ImageView>
+               </graphic>
+               <opaqueInsets>
+                  <Insets />
+               </opaqueInsets>
+               <padding>
+                  <Insets left="47.0" />
+               </padding>
+               <cursor>
+                  <Cursor fx:constant="HAND" />
+               </cursor>
+            </Button>
+            <Button alignment="BASELINE_LEFT" graphicTextGap="12.0" layoutX="10.0" layoutY="210.0" mnemonicParsing="false" prefHeight="60.0" prefWidth="330.0" style="-fx-background-color: #272b2f;" text="Highscore Cards" textFill="WHITE">
+               <font>
+                  <Font name="Tahoma" size="18.0" />
+               </font>
+               <graphic>
+                  <ImageView fitHeight="18.0" fitWidth="18.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@dashboard.png" />
+                     </image>
+                  </ImageView>
+               </graphic>
+               <opaqueInsets>
+                  <Insets />
+               </opaqueInsets>
+               <padding>
+                  <Insets left="47.0" />
+               </padding>
+               <cursor>
+                  <Cursor fx:constant="HAND" />
+               </cursor>
+            </Button>
+            <Button alignment="BASELINE_LEFT" graphicTextGap="12.0" layoutX="10.0" layoutY="210.0" mnemonicParsing="false" prefHeight="60.0" prefWidth="330.0" style="-fx-background-color: #272b2f;" text="DOF Commands" textFill="WHITE">
+               <font>
+                  <Font name="Tahoma" size="18.0" />
+               </font>
+               <graphic>
+                  <ImageView fitHeight="18.0" fitWidth="18.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@dashboard.png" />
+                     </image>
+                  </ImageView>
+               </graphic>
+               <opaqueInsets>
+                  <Insets />
+               </opaqueInsets>
+               <padding>
+                  <Insets left="47.0" />
+               </padding>
+               <cursor>
+                  <Cursor fx:constant="HAND" />
+               </cursor>
+            </Button>
+            <Button alignment="BASELINE_LEFT" graphicTextGap="12.0" layoutX="10.0" layoutY="210.0" mnemonicParsing="false" prefHeight="60.0" prefWidth="330.0" style="-fx-background-color: #272b2f;" text="Competitions" textFill="WHITE">
+               <font>
+                  <Font name="Tahoma" size="18.0" />
+               </font>
+               <graphic>
+                  <ImageView fitHeight="18.0" fitWidth="18.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@dashboard.png" />
+                     </image>
+                  </ImageView>
+               </graphic>
+               <opaqueInsets>
+                  <Insets />
+               </opaqueInsets>
+               <padding>
+                  <Insets left="47.0" />
+               </padding>
+               <cursor>
+                  <Cursor fx:constant="HAND" />
+               </cursor>
+            </Button>
+            <Button alignment="BASELINE_LEFT" graphicTextGap="12.0" layoutX="10.0" layoutY="450.0" mnemonicParsing="false" prefHeight="60.0" prefWidth="330.0" style="-fx-background-color: #272b2f;" text="Players" textFill="WHITE">
+               <font>
+                  <Font name="Tahoma" size="18.0" />
+               </font>
+               <graphic>
+                  <ImageView fitHeight="18.0" fitWidth="18.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@dashboard.png" />
+                     </image>
+                  </ImageView>
+               </graphic>
+               <opaqueInsets>
+                  <Insets />
+               </opaqueInsets>
+               <padding>
+                  <Insets left="47.0" />
+               </padding>
+               <cursor>
+                  <Cursor fx:constant="HAND" />
+               </cursor>
+            </Button>
          </children>
       </VBox>
-   </children>
-</AnchorPane>
+   </left>
+   <right>
+      <VBox prefHeight="1354.0" prefWidth="300.0" style="-fx-background-color: #272b2f;" BorderPane.alignment="CENTER" />
+   </right>
+   <center>
+      <BorderPane BorderPane.alignment="CENTER">
+         <center>
+            <BorderPane prefHeight="1354.0" prefWidth="1114.0" style="-fx-background-color: #212529;" BorderPane.alignment="CENTER">
+               <center>
+                  <GridPane BorderPane.alignment="CENTER">
+                    <columnConstraints>
+                      <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                      <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                    </columnConstraints>
+                    <rowConstraints>
+                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                    </rowConstraints>
+                     <children>
+                        <BorderPane fx:id="widget1" prefHeight="200.0" prefWidth="200.0">
+                           <padding>
+                              <Insets bottom="12.0" left="24.0" right="12.0" top="24.0" />
+                           </padding>
+                        </BorderPane>
+                        <BorderPane fx:id="widget2" prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1">
+                           <padding>
+                              <Insets bottom="12.0" left="12.0" right="24.0" top="24.0" />
+                           </padding>
+                        </BorderPane>
+                        <BorderPane fx:id="widget3" prefHeight="200.0" prefWidth="200.0" GridPane.rowIndex="1">
+                           <padding>
+                              <Insets bottom="12.0" left="24.0" right="12.0" top="12.0" />
+                           </padding>
+                        </BorderPane>
+                        <BorderPane fx:id="widget4" prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                           <padding>
+                              <Insets bottom="12.0" left="12.0" right="24.0" top="12.0" />
+                           </padding>
+                        </BorderPane>
+                        <BorderPane fx:id="widget5" prefHeight="200.0" prefWidth="200.0" GridPane.rowIndex="2">
+                           <padding>
+                              <Insets bottom="24.0" left="24.0" right="12.0" top="12.0" />
+                           </padding>
+                        </BorderPane>
+                        <BorderPane fx:id="widget6" prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                           <padding>
+                              <Insets bottom="24.0" left="12.0" right="24.0" top="12.0" />
+                           </padding>
+                        </BorderPane>
+                     </children>
+                     <opaqueInsets>
+                        <Insets />
+                     </opaqueInsets>
+                  </GridPane>
+               </center>
+            </BorderPane>
+         </center>
+         <top>
+            <Label prefHeight="202.0" prefWidth="340.0" text="Label" BorderPane.alignment="CENTER" />
+         </top>
+      </BorderPane>
+   </center>
+</BorderPane>

@@ -7,6 +7,7 @@ module de.mephisto.vpin.ui {
   requires com.dlsc.formsfx;
   requires org.kordamp.ikonli.javafx;
   requires org.kordamp.bootstrapfx.core;
+  requires eu.hansolo.tilesfx;
 
   opens de.mephisto.vpin.ui to javafx.fxml;
   exports de.mephisto.vpin.ui;
