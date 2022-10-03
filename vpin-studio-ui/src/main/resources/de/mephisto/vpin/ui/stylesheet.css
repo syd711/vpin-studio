@@ -1,0 +1,70 @@
+.navigation-button {
+    -fx-background-color: #272B2F;
+    -fx-border-style: hidden hidden hidden solid;
+    -fx-border-width: 3;
+    -fx-border-color: #272b2f;
+    -fx-text-fill: #DDDDDD;
+}
+
+.navigation-button:hover {
+    -fx-background-color: #364057;
+    -fx-border-style: hidden hidden hidden solid;
+    -fx-border-width: 3;
+    -fx-border-color: #567af6;
+    -fx-text-fill: #fff8f8;
+}
+
+.submit-button {
+    -fx-border-style: solid solid solid solid;
+    -fx-border-color: #272B2F;
+    -fx-border-width: 1;
+    -fx-background-color: #364057;
+    -fx-text-fill: #fff8f8;
+}
+
+.submit-button:hover {
+    -fx-border-style: solid solid solid solid;
+    -fx-border-color: #567af6;
+    -fx-border-width: 1;
+    -fx-background-color: #364057;
+    -fx-text-fill: #fff8f8;
+}
+
+.warn-button {
+    -fx-border-style: solid solid solid solid;
+    -fx-border-color: #663333;
+    -fx-border-width: 1;
+    -fx-background-color: #CC3333;
+    -fx-text-fill: #DDDDDD;
+}
+
+.warn-button:hover {
+    -fx-border-style: solid solid solid solid;
+    -fx-border-color: #663333;
+    -fx-border-width: 1;
+    -fx-background-color: #FF3333;
+    -fx-text-fill: #DDDDDD;
+}
+
+
+
+
+
+.widget-default {
+    -fx-background-color: #6d6d6f;
+}
+
+
+.check-box .box {
+    -fx-background-color: #6d6d6f;
+    -fx-border-color:grey;
+    -fx-border-radius:3px;
+}
+
+.check-box:selected .mark {
+    -fx-background-color: #6d6d6f;
+}
+
+.check-box:selected .box {
+    -fx-background-color: #567af6;
+}

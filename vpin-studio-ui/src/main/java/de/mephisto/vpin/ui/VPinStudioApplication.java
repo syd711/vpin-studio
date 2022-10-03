@@ -11,14 +11,12 @@ public class VPinStudioApplication extends Application {
   @Override
   public void start(Stage stage) throws IOException {
     FXMLLoader fxmlLoader = new FXMLLoader(VPinStudioApplication.class.getResource("main.fxml"));
-    Scene scene = new Scene(fxmlLoader.load(), 320, 240);
+    Scene scene = new Scene(fxmlLoader.load(), 1920, 1280);
     stage.setTitle("VPin Studio");
     stage.setScene(scene);
 
-    stage.setMinWidth(1900);
-    stage.setMinHeight(1200);
     stage.setX(400);
-    stage.setY(400);
+    stage.setY(200);
     stage.show();
   }
 

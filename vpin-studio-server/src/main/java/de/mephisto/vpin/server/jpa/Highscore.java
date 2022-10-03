@@ -30,7 +30,6 @@ public class Highscore {
   private Date updatedAt;
 
   @Id
-  @GeneratedValue(strategy = GenerationType.AUTO)
   @Column(name = "pupId", nullable = false)
   private int pupId;
 

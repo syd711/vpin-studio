@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.text.Font?>
+
+<BorderPane minHeight="200.0" style="-fx-background-color: #212529;" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1">
+   <bottom>
+      <Label alignment="BASELINE_LEFT" text="Version 1.0.1" textFill="WHITE" BorderPane.alignment="TOP_LEFT">
+         <padding>
+            <Insets bottom="73.0" />
+         </padding></Label>
+   </bottom>
+   <center>
+      <Label maxHeight="50.0" text="VPin Studio" textFill="WHITE" BorderPane.alignment="TOP_LEFT">
+         <font>
+            <Font name="DejaVu Sans Mono Bold" size="48.0" />
+         </font>
+      </Label>
+   </center>
+   <padding>
+      <Insets bottom="24.0" left="24.0" right="24.0" top="24.0" />
+   </padding>
+</BorderPane>

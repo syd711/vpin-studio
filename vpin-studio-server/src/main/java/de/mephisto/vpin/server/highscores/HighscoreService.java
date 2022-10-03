@@ -44,7 +44,7 @@ public class HighscoreService implements InitializingBean {
       if (initialHighscore == null) {
         initialHighscore = Highscore.forGame(game, null);
       }
-      highscoreRepository.saveAndFlush(initialHighscore);
+      highscoreRepository.save(initialHighscore);
       highscore = initialHighscore;
     }
 
@@ -88,7 +88,7 @@ public class HighscoreService implements InitializingBean {
         }
         updatedHighscore.setCreatedAt(existingHighscore.getCreatedAt());
       }
-      highscoreRepository.saveAndFlush(updatedHighscore);
+      highscoreRepository.save(updatedHighscore);
       LOG.info("Invalidated highscore of " + game);
     }
   }

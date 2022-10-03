@@ -12,7 +12,6 @@ import javax.persistence.*;
 public class DOFCommand {
 
   @Id
-  @GeneratedValue(strategy = GenerationType.AUTO)
   @Column(name = "pupId", nullable = false)
   private int id;
   private int unit;
