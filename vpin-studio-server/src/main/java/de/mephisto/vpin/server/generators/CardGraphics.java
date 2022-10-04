@@ -23,16 +23,12 @@ import java.util.List;
 public class CardGraphics {
   private final static Logger LOG = LoggerFactory.getLogger(CardGraphics.class);
 
-  private final GameService gameService;
-  private final SystemService systemService;
   private final HighscoreService highscoreService;
   private final DirectB2SService directB2SService;
   private final Game game;
 
-  public CardGraphics(GameService gameService, SystemService systemService, HighscoreService highscoreService, DirectB2SService directB2SService, Game game){
-    this.gameService = gameService;
-    this.systemService = systemService;
-    this.highscoreService = highscoreService;
+  public CardGraphics(HighscoreService highscoreService, DirectB2SService directB2SService, Game game){
+     this.highscoreService = highscoreService;
     this.directB2SService = directB2SService;
     this.game = game;
   }

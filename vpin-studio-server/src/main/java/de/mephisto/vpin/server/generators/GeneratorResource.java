@@ -35,9 +35,6 @@ public class GeneratorResource {
   private HighscoreService highscoreService;
 
   @Autowired
-  private SystemService systemService;
-
-  @Autowired
   private DirectB2SService directB2SService;
 
   @GetMapping("/overlay")
@@ -66,7 +63,7 @@ public class GeneratorResource {
   private File onCardGeneration(int gameId) throws Exception {
     try {
       Game game = gameService.getGame(gameId);
-      BufferedImage bufferedImage = new CardGraphics(gameService, systemService, highscoreService, directB2SService, game).draw();
+      BufferedImage bufferedImage = new CardGraphics(highscoreService, directB2SService, game).draw();
       File sampleFile = new File(SystemService.RESOURCES, "highscore-card-sample.png");
       ImageUtil.write(bufferedImage, sampleFile);
       return sampleFile;
