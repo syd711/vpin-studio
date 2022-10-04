@@ -20,8 +20,8 @@ import java.util.List;
 import java.util.Locale;
 
 @Service
-public class SystemInfo implements InitializingBean  {
-  private final static Logger LOG = LoggerFactory.getLogger(SystemInfo.class);
+public class SystemService implements InitializingBean  {
+  private final static Logger LOG = LoggerFactory.getLogger(SystemService.class);
 
   public final static int SERVER_PORT = 8089;
 
@@ -279,7 +279,7 @@ public class SystemInfo implements InitializingBean  {
   }
 
   public String get7ZipCommand() {
-    return new File(SystemInfo.RESOURCES, "7z.exe").getAbsolutePath();
+    return new File(SystemService.RESOURCES, "7z.exe").getAbsolutePath();
   }
 
   public File getVPXTablesFolder() {

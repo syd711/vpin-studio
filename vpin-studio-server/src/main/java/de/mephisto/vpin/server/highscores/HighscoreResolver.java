@@ -2,7 +2,7 @@ package de.mephisto.vpin.server.highscores;
 
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.jpa.Highscore;
-import de.mephisto.vpin.server.system.SystemInfo;
+import de.mephisto.vpin.server.system.SystemService;
 import de.mephisto.vpin.server.util.SystemCommandExecutor;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import org.apache.commons.lang3.StringUtils;
@@ -14,7 +14,6 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.List;
 
 class HighscoreResolver {
@@ -22,10 +21,10 @@ class HighscoreResolver {
 
   private final HighscoreParser parser;
   private List<String> supportedRoms;
-  private final SystemInfo systemInfo;
+  private final SystemService systemService;
 
-  public HighscoreResolver(SystemInfo systemInfo) {
-    this.systemInfo = systemInfo;
+  public HighscoreResolver(SystemService systemService) {
+    this.systemService = systemService;
     this.parser = new HighscoreParser();
     this.loadSupportedScores();
     this.refresh();
@@ -77,7 +76,7 @@ class HighscoreResolver {
    * Refreshes the extraction of the VPReg.stg file.
    */
   public void refresh() {
-    File targetFolder = systemInfo.getExtractedVPRegFolder();
+    File targetFolder = systemService.getExtractedVPRegFolder();
     if (!targetFolder.exists()) {
       boolean mkdirs = targetFolder.mkdirs();
       if (!mkdirs) {
@@ -150,13 +149,13 @@ class HighscoreResolver {
    * @param vpRegFolderFile the VPReg file to expand
    */
   private void updateUserScores(File vpRegFolderFile) {
-    if (!systemInfo.getVPRegFile().exists()) {
+    if (!systemService.getVPRegFile().exists()) {
       LOG.info("Skipped VPReg extraction, file does not exists yet.");
       return;
     }
 
-    String unzipCommand = systemInfo.get7ZipCommand();
-    List<String> commands = Arrays.asList("\"" + unzipCommand + "\"", "-aoa", "x", "\"" + systemInfo.getVPRegFile().getAbsolutePath() + "\"", "-o\"" + vpRegFolderFile.getAbsolutePath() + "\"");
+    String unzipCommand = systemService.get7ZipCommand();
+    List<String> commands = Arrays.asList("\"" + unzipCommand + "\"", "-aoa", "x", "\"" + systemService.getVPRegFile().getAbsolutePath() + "\"", "-o\"" + vpRegFolderFile.getAbsolutePath() + "\"");
     try {
       SystemCommandExecutor executor = new SystemCommandExecutor(commands, false);
       executor.setDir(vpRegFolderFile);
@@ -208,7 +207,7 @@ class HighscoreResolver {
   }
 
   private String executePINemHi(String param) throws Exception {
-    File commandFile = systemInfo.getPinemhiCommandFile();
+    File commandFile = systemService.getPinemhiCommandFile();
     try {
       List<String> commands = Arrays.asList(commandFile.getName(), param);
       SystemCommandExecutor executor = new SystemCommandExecutor(commands);

@@ -1,6 +1,6 @@
 package de.mephisto.vpin.server;
 
-import de.mephisto.vpin.server.system.SystemInfo;
+import de.mephisto.vpin.server.system.SystemService;
 import de.mephisto.vpin.server.util.RequestUtil;
 import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
@@ -10,8 +10,8 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
 
-public class ApplicationStateManager {
-  private final static Logger LOG = LoggerFactory.getLogger(ApplicationStateManager.class);
+public class VPinStudioServerStateManager {
+  private final static Logger LOG = LoggerFactory.getLogger(VPinStudioServerStateManager.class);
 
   private static final String SERVICE_NAME = "vpin-studio-server";
   private static final String SERVICE_JAR = SERVICE_NAME + ".jar";
@@ -21,15 +21,15 @@ public class ApplicationStateManager {
   }
 
   public boolean isRunning() {
-    return RequestUtil.doGet("http://localhost:" + SystemInfo.SERVER_PORT + "/system/ping");
+    return RequestUtil.doGet("http://localhost:" + SystemService.SERVER_PORT + "/system/ping");
   }
 
   public boolean shutdown() {
-    return RequestUtil.doGet("http://localhost:" + SystemInfo.SERVER_PORT + "/system/exit");
+    return RequestUtil.doGet("http://localhost:" + SystemService.SERVER_PORT + "/system/exit");
   }
 
   public boolean restart() {
-    return RequestUtil.doGet("http://localhost:" + SystemInfo.SERVER_PORT + "/system/restart");
+    return RequestUtil.doGet("http://localhost:" + SystemService.SERVER_PORT + "/system/restart");
   }
 
   public void install() throws IOException {

@@ -18,7 +18,7 @@ import java.io.File;
  * "curl -X POST --data-urlencode \"table=[GAMEFULLNAME]\" http://localhost:" + HttpServer.PORT + "/service/gameExit";
  */
 @RestController
-@RequestMapping("/service")
+@RequestMapping("/service") //do not add api version
 public class PopperResource {
   private final static Logger LOG = LoggerFactory.getLogger(PopperResource.class);
 

@@ -2,7 +2,7 @@ package de.mephisto.vpin.server.dof;
 
 import com.google.common.annotations.VisibleForTesting;
 import de.mephisto.vpin.server.jpa.DOFCommand;
-import de.mephisto.vpin.server.system.SystemInfo;
+import de.mephisto.vpin.server.system.SystemService;
 import de.mephisto.vpin.server.util.SystemCommandExecutor;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -20,7 +20,7 @@ public class DOFCommandExecutor {
   }
 
   private static File getTesterExe() {
-    return new File(SystemInfo.RESOURCES + "DOFTest/", "DirectOutputTest.exe");
+    return new File(SystemService.RESOURCES + "DOFTest/", "DirectOutputTest.exe");
   }
 
   public static void execute(DOFCommand command) {

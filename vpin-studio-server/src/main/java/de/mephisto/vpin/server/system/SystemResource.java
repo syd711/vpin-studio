@@ -6,8 +6,10 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import static de.mephisto.vpin.server.VPinStudioServer.API_SEGMENT;
+
 @RestController
-@RequestMapping("/system")
+@RequestMapping(API_SEGMENT + "system")
 public class SystemResource {
   private final static Logger LOG = LoggerFactory.getLogger(SystemResource.class);
 

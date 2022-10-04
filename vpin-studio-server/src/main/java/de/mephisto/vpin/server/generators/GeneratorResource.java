@@ -1,45 +1,75 @@
 package de.mephisto.vpin.server.generators;
 
-import de.mephisto.vpin.server.directb2s.B2SResource;
+import de.mephisto.vpin.server.directb2s.DirectB2SResource;
+import de.mephisto.vpin.server.directb2s.DirectB2SService;
+import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameService;
 import de.mephisto.vpin.server.highscores.HighscoreService;
-import de.mephisto.vpin.server.system.SystemInfo;
+import de.mephisto.vpin.server.system.SystemService;
 import de.mephisto.vpin.server.util.ImageUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.awt.image.BufferedImage;
 import java.io.File;
 
+import static de.mephisto.vpin.server.VPinStudioServer.API_SEGMENT;
+
 @RestController
-@RequestMapping("/generator")
+@RequestMapping(API_SEGMENT + "generator")
 public class GeneratorResource {
   private final static Logger LOG = LoggerFactory.getLogger(GeneratorResource.class);
 
-  public final static File GENERATED_OVERLAY_FILE = new File(SystemInfo.RESOURCES, "overlay.jpg");
+  public final static File GENERATED_OVERLAY_FILE = new File(SystemService.RESOURCES, "overlay.jpg");
 
   @Autowired
-  private GameService service;
+  private GameService gameService;
 
   @Autowired
   private HighscoreService highscoreService;
 
+  @Autowired
+  private SystemService systemService;
+
+  @Autowired
+  private DirectB2SService directB2SService;
+
   @GetMapping("/overlay")
   public ResponseEntity<byte[]> generateOverlay() throws Exception {
-    generate();
-    return B2SResource.serializeImage(GENERATED_OVERLAY_FILE);
+    onOverlayGeneration();
+    return DirectB2SResource.serializeImage(GENERATED_OVERLAY_FILE);
   }
 
-  private BufferedImage generate() throws Exception {
+  @GetMapping("/card/{gameId}")
+  public ResponseEntity<byte[]> generateCard(@PathVariable("gameId") int gameId) throws Exception {
+    File sampleCard = onCardGeneration(gameId);
+    return DirectB2SResource.serializeImage(sampleCard);
+  }
+
+  private BufferedImage onOverlayGeneration() throws Exception {
     try {
-      BufferedImage bufferedImage = new OverlayGraphics(service, highscoreService).drawGames();
+      BufferedImage bufferedImage = new OverlayGraphics(gameService, highscoreService).draw();
       ImageUtil.write(bufferedImage, GENERATED_OVERLAY_FILE);
       return bufferedImage;
+    } catch (Exception e) {
+      LOG.error("Failed to generate overlay: " + e.getMessage(), e);
+      throw e;
+    }
+  }
+
+  private File onCardGeneration(int gameId) throws Exception {
+    try {
+      Game game = gameService.getGame(gameId);
+      BufferedImage bufferedImage = new CardGraphics(gameService, systemService, highscoreService, directB2SService, game).draw();
+      File sampleFile = new File(SystemService.RESOURCES, "highscore-card-sample.png");
+      ImageUtil.write(bufferedImage, sampleFile);
+      return sampleFile;
     } catch (Exception e) {
       LOG.error("Failed to generate overlay: " + e.getMessage(), e);
       throw e;

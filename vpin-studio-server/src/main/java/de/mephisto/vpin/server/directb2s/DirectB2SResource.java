@@ -1,5 +1,6 @@
 package de.mephisto.vpin.server.directb2s;
 
+import de.mephisto.vpin.server.VPinStudioServer;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameService;
 import edu.umd.cs.findbugs.annotations.Nullable;
@@ -26,12 +27,12 @@ import java.util.concurrent.TimeUnit;
  *
  */
 @RestController
-@RequestMapping("/directb2s")
-public class B2SResource {
-  private final static Logger LOG = LoggerFactory.getLogger(B2SResource.class);
+@RequestMapping(VPinStudioServer.API_SEGMENT + "directb2s")
+public class DirectB2SResource {
+  private final static Logger LOG = LoggerFactory.getLogger(DirectB2SResource.class);
 
   @Autowired
-  private B2SManager directB2SManager;
+  private DirectB2SService directB2SManager;
 
   @Autowired
   private GameService service;
@@ -64,7 +65,7 @@ public class B2SResource {
     try {
       Game game = service.getGame(id);
       if (game != null) {
-        B2SImageRatio r = B2SImageRatio.valueOf(ratio.toUpperCase());
+        DirectB2SImageRatio r = DirectB2SImageRatio.valueOf(ratio.toUpperCase());
         File file = directB2SManager.generateB2SImage(game, r, 1280);
         return serializeImage(file);
       }

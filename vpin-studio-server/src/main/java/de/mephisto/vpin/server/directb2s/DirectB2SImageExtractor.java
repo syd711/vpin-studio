@@ -17,13 +17,13 @@ import javax.xml.parsers.SAXParserFactory;
 import java.io.File;
 import java.io.FileOutputStream;
 
-public class B2SImageExtractor extends DefaultHandler {
-  private final static Logger LOG = LoggerFactory.getLogger(B2SImageExtractor.class);
+public class DirectB2SImageExtractor extends DefaultHandler {
+  private final static Logger LOG = LoggerFactory.getLogger(DirectB2SImageExtractor.class);
 
   private String imageData;
   private Game game;
 
-  public B2SImageExtractor(Game game) {
+  public DirectB2SImageExtractor(Game game) {
     this.game = game;
   }
 

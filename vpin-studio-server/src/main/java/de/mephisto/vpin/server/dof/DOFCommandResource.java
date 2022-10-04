@@ -1,5 +1,6 @@
 package de.mephisto.vpin.server.dof;
 
+import de.mephisto.vpin.server.VPinStudioServer;
 import de.mephisto.vpin.server.jpa.DOFCommand;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,7 +11,7 @@ import java.util.Collections;
 import java.util.List;
 
 @RestController
-@RequestMapping("/dof")
+@RequestMapping(VPinStudioServer.API_SEGMENT + "dof")
 public class DOFCommandResource {
 
   @Autowired

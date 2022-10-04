@@ -1,7 +1,8 @@
 package de.mephisto.vpin.server.games;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import de.mephisto.vpin.server.popper.PopperScreen;
-import de.mephisto.vpin.server.system.SystemInfo;
+import de.mephisto.vpin.server.system.SystemService;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import org.apache.commons.io.FilenameUtils;
@@ -24,10 +25,10 @@ public class Game {
 
   private Date lastPlayed;
   private int numberPlays;
-  private final SystemInfo systemInfo;
+  private final SystemService systemService;
 
-  public Game(SystemInfo systemInfo) {
-    this.systemInfo = systemInfo;
+  public Game(SystemService systemService) {
+    this.systemService = systemService;
   }
 
   @SuppressWarnings("unused")
@@ -44,8 +45,9 @@ public class Game {
 
   @SuppressWarnings("unused")
   @NonNull
+  @JsonIgnore
   public File getPopperScreenMedia(@NonNull PopperScreen screen) {
-    File emuMedia = new File(systemInfo.getPinUPMediaFolder(), getEmulatorName());
+    File emuMedia = new File(systemService.getPinUPMediaFolder(), getEmulatorName());
     File mediaFolder = new File(emuMedia, screen.name());
     return new File(mediaFolder, FilenameUtils.getBaseName(this.getGameFile().getName()) + ".png");
   }
@@ -63,9 +65,10 @@ public class Game {
   }
 
   @Nullable
+  @JsonIgnore
   public File getVPRegFolder() {
     if (!StringUtils.isEmpty(this.getRom())) {
-      return new File(systemInfo.getExtractedVPRegFolder(), getRom());
+      return new File(systemService.getExtractedVPRegFolder(), getRom());
     }
     return null;
   }
@@ -91,6 +94,7 @@ public class Game {
 
   @SuppressWarnings("unused")
   @NonNull
+  @JsonIgnore
   public File getWheelIconFile() {
     return wheelIconFile;
   }
@@ -100,6 +104,7 @@ public class Game {
   }
 
   @Nullable
+  @JsonIgnore
   public File getNvRamFile() {
     return nvRamFile;
   }
@@ -109,6 +114,7 @@ public class Game {
   }
 
   @NonNull
+  @JsonIgnore
   public File getGameFile() {
     return gameFile;
   }
@@ -151,6 +157,7 @@ public class Game {
 
   @SuppressWarnings("unused")
   @Nullable
+  @JsonIgnore
   public File getRomFile() {
     return romFile;
   }
@@ -160,15 +167,17 @@ public class Game {
   }
 
   @NonNull
+  @JsonIgnore
   public File getDirectB2SFile() {
     String baseName = FilenameUtils.getBaseName(this.getGameFileName());
-    return new File(systemInfo.getDirectB2SFolder(), baseName + ".directb2s");
+    return new File(systemService.getDirectB2SFolder(), baseName + ".directb2s");
   }
 
   @NonNull
+  @JsonIgnore
   public File getDirectB2SBackgroundImage() {
     String targetName = FilenameUtils.getBaseName(getGameFileName()) + ".png";
-    return new File(systemInfo.getB2SImageExtractionFolder(), targetName);
+    return new File(systemService.getB2SImageExtractionFolder(), targetName);
   }
 
   @Override

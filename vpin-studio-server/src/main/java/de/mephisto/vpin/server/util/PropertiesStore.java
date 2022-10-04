@@ -1,12 +1,14 @@
 package de.mephisto.vpin.server.util;
 
-import de.mephisto.vpin.server.system.SystemInfo;
+import de.mephisto.vpin.server.system.SystemService;
+import edu.umd.cs.findbugs.annotations.NonNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.util.Map;
 import java.util.Properties;
 
 public class PropertiesStore {
@@ -20,35 +22,31 @@ public class PropertiesStore {
     return new PropertiesStore();
   }
 
+  @NonNull
   public static PropertiesStore create(File file) {
     PropertiesStore store = new PropertiesStore();
     try {
-      if (!file.getParentFile().exists()) {
-        file.getParentFile().mkdirs();
-      }
-
       store.propertiesFile = file;
-      if (!store.propertiesFile.exists()) {
-        FileOutputStream fileOutputStream = new FileOutputStream(store.propertiesFile);
-        store.properties.store(fileOutputStream, null);
-        LOG.info("Created " + store.propertiesFile.getAbsolutePath());
-        fileOutputStream.close();
+      if (store.propertiesFile.exists()) {
+        FileInputStream fileInputStream = new FileInputStream(store.propertiesFile);
+        store.properties.load(fileInputStream);
+        fileInputStream.close();
       }
-
-      FileInputStream fileInputStream = new FileInputStream(store.propertiesFile);
-      store.properties.load(fileInputStream);
-      fileInputStream.close();
+      else {
+        LOG.error("No properties file found " + file.getAbsolutePath());
+      }
     } catch (Exception e) {
       LOG.error("Failed to load data store: " + e.getMessage(), e);
     }
     return store;
   }
 
+  @NonNull
   public static PropertiesStore create(String name) {
     if (!name.endsWith(".properties")) {
       name = name + ".properties";
     }
-    File file = new File(SystemInfo.RESOURCES, name);
+    File file = new File(SystemService.RESOURCES, name);
     return create(file);
   }
 
@@ -122,8 +120,17 @@ public class PropertiesStore {
     this.set(key, String.valueOf(value));
   }
 
+  public void set(Map<String, String> values) {
+    properties.putAll(values);
+    save();
+  }
+
   public void set(String key, String value) {
     properties.setProperty(key, value);
+    save();
+  }
+
+  private void save() {
     try {
       if (propertiesFile != null) {
         FileOutputStream fileOutputStream = new FileOutputStream(propertiesFile);
@@ -133,5 +140,9 @@ public class PropertiesStore {
     } catch (Exception e) {
       LOG.error("Failed to store data store: " + e.getMessage(), e);
     }
+  }
+
+  public Properties getProperties() {
+    return properties;
   }
 }

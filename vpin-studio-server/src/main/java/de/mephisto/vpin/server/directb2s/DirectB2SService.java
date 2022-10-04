@@ -15,27 +15,27 @@ import java.io.File;
 import java.io.IOException;
 
 @Service
-public class B2SManager {
-  private final static Logger LOG = LoggerFactory.getLogger(B2SManager.class);
+public class DirectB2SService {
+  private final static Logger LOG = LoggerFactory.getLogger(DirectB2SService.class);
 
-  public B2SManager() {
+  public DirectB2SService() {
 
   }
 
   @Nullable
   public File extractDirectB2SBackgroundImage(@NonNull Game game) throws VPinStudioException {
     if (game.getDirectB2SFile().exists()) {
-      B2SImageExtractor extractor = new B2SImageExtractor(game);
+      DirectB2SImageExtractor extractor = new DirectB2SImageExtractor(game);
       return extractor.extractImage(game.getDirectB2SFile());
     }
     return null;
   }
 
   @Nullable
-  public File generateB2SImage(@NonNull Game game, @NonNull B2SImageRatio ratio, int cropWidth) throws VPinStudioException {
+  public File generateB2SImage(@NonNull Game game, @NonNull DirectB2SImageRatio ratio, int cropWidth) throws VPinStudioException {
     try {
       if (game.getDirectB2SFile().exists()) {
-        B2SImageExtractor extractor = new B2SImageExtractor(game);
+        DirectB2SImageExtractor extractor = new DirectB2SImageExtractor(game);
         File tempFile = extractor.extractImage(game.getDirectB2SFile());
         if (tempFile != null) {
           BufferedImage image = ImageIO.read(tempFile);

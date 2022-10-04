@@ -1,6 +1,5 @@
-package de.mephisto.vpin.server.rest;
+package de.mephisto.vpin.restclient;
 
-import org.apache.tomcat.util.codec.binary.Base64;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpEntity;
@@ -53,15 +52,6 @@ public class RestClient implements ClientHttpRequestInterceptor {
 
   private RestClient(String scheme, String host, int port) {
     baseUrl = scheme + "://" + host + ":" + port + "/";
-  }
-
-  public void login(String username, String password) {
-    String plainCreds = username + ":" + password;
-    byte[] plainCredsBytes = plainCreds.getBytes();
-    byte[] base64CredsBytes = Base64.encodeBase64(plainCredsBytes);
-    String base64Creds = new String(base64CredsBytes);
-
-    authenticationToken = "Basic " + base64Creds;
     List<ClientHttpRequestInterceptor> interceptors = new ArrayList<>();
     interceptors.add(this);
     restTemplate = new RestTemplate();
@@ -96,9 +86,14 @@ public class RestClient implements ClientHttpRequestInterceptor {
     return restTemplate.postForObject(url, entity, entityType);
   }
 
-  public <T> T exchange(String path, HttpMethod post, HttpEntity requestEntity, Class<T> entityClass) {
+  public Boolean put(String url, Map<String, String> model) {
+    HttpEntity<Map> entity = new HttpEntity<>(model);
+    return exchange(url, HttpMethod.PUT, entity, Boolean.class);
+  }
+
+  public <T> T exchange(String path, HttpMethod method, HttpEntity requestEntity, Class<T> entityClass) {
     String url = baseUrl + path;
-    ResponseEntity<T> response = restTemplate.exchange(url, post, requestEntity, entityClass);
+    ResponseEntity<T> response = restTemplate.exchange(url, method, requestEntity, entityClass);
     return response.getBody();
   }
 

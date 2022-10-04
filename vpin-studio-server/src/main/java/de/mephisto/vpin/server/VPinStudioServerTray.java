@@ -9,10 +9,10 @@ import java.awt.*;
 import java.io.File;
 import java.io.IOException;
 
-public class ApplicationTray {
-  private final static Logger LOG = LoggerFactory.getLogger(ApplicationTray.class);
+public class VPinStudioServerTray {
+  private final static Logger LOG = LoggerFactory.getLogger(VPinStudioServerTray.class);
 
-  public ApplicationTray() {
+  public VPinStudioServerTray() {
     //Check the SystemTray is supported
     if (!SystemTray.isSupported()) {
       LOG.info("SystemTray is not supported");
@@ -26,7 +26,7 @@ public class ApplicationTray {
       try {
         Config.reloadAll();
         restartItem.setEnabled(false);
-        new ApplicationStateManager().restart();
+        new VPinStudioServerStateManager().restart();
       } catch (Exception ex) {
         LOG.error("Failed to restart VPin Studio Server: " + ex.getMessage());
       } finally {

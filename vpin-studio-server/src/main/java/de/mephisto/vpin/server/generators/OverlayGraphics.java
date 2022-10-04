@@ -5,7 +5,7 @@ import de.mephisto.vpin.server.games.GameService;
 import de.mephisto.vpin.server.highscores.HighscoreService;
 import de.mephisto.vpin.server.jpa.Highscore;
 import de.mephisto.vpin.server.highscores.Score;
-import de.mephisto.vpin.server.system.SystemInfo;
+import de.mephisto.vpin.server.system.SystemService;
 import de.mephisto.vpin.server.util.Config;
 import de.mephisto.vpin.server.util.ImageUtil;
 import org.slf4j.Logger;
@@ -76,7 +76,7 @@ public class OverlayGraphics {
     this.highscoreService = highscoreService;
   }
 
-  public BufferedImage drawGames() throws Exception {
+  public BufferedImage draw() throws Exception {
     initValues();
     int selection = Config.getOverlayGeneratorConfig().getInt("overlay.challengedTable");
     Game gameOfTheMonth = null;
@@ -84,7 +84,7 @@ public class OverlayGraphics {
       gameOfTheMonth = service.getGame(selection);
     }
 
-    BufferedImage backgroundImage = ImageUtil.loadBackground(new File(SystemInfo.RESOURCES, Config.getOverlayGeneratorConfig().getString("overlay.background")));
+    BufferedImage backgroundImage = ImageUtil.loadBackground(new File(SystemService.RESOURCES, Config.getOverlayGeneratorConfig().getString("overlay.background")));
     BufferedImage rotated = ImageUtil.rotateRight(backgroundImage);
     if (BLUR_PIXELS > 0) {
       rotated = ImageUtil.blurImage(rotated, BLUR_PIXELS);

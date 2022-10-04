@@ -10,8 +10,10 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.ArrayList;
 import java.util.List;
 
+import static de.mephisto.vpin.server.VPinStudioServer.API_SEGMENT;
+
 @RestController
-@RequestMapping("/games")
+@RequestMapping(API_SEGMENT + "games")
 public class GameResource {
 
   @Autowired

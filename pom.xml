@@ -19,6 +19,7 @@
     <modules>
         <module>vpin-studio-server</module>
         <module>vpin-studio-ui</module>
+        <module>vpin-studio-rest-client</module>
     </modules>
 
 </project>

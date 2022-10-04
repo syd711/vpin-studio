@@ -8,6 +8,7 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.Slider?>
 <?import javafx.scene.control.Spinner?>
+<?import javafx.scene.control.TextField?>
 <?import javafx.scene.control.ToolBar?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.BorderPane?>
@@ -31,7 +32,7 @@
                   <Font size="14.0" />
                </font>
             </Label>
-            <ComboBox layoutX="22.0" layoutY="265.0" prefHeight="26.0" prefWidth="294.0" stylesheets="@stylesheet.css">
+            <ComboBox fx:id="tableCombo" layoutX="22.0" layoutY="265.0" onAction="#onTableSelect" prefHeight="26.0" prefWidth="294.0" stylesheets="@stylesheet.css">
                <padding>
                   <Insets top="6.0" />
                </padding>
@@ -44,7 +45,7 @@
                   <Insets top="12.0" />
                </padding>
             </Label>
-            <ComboBox layoutX="22.0" layoutY="265.0" prefHeight="26.0" prefWidth="294.0" styleClass="widget-default" stylesheets="@stylesheet.css">
+            <ComboBox fx:id="popperScreenCombo" layoutX="22.0" layoutY="265.0" prefHeight="26.0" prefWidth="294.0" styleClass="widget-default" stylesheets="@stylesheet.css">
                <padding>
                   <Insets top="6.0" />
                </padding>
@@ -57,13 +58,16 @@
                   <Insets top="48.0" />
                </padding>
             </Label>
-            <CheckBox mnemonicParsing="false" stylesheets="@stylesheet.css" text="User DirectB2S Backgrounds:" textFill="WHITE">
+            <CheckBox fx:id="useDirectB2SCheckbox" mnemonicParsing="false" stylesheets="@stylesheet.css" text="Use DirectB2S Backgrounds" textFill="WHITE">
                <VBox.margin>
                   <Insets />
                </VBox.margin>
                <padding>
                   <Insets top="12.0" />
                </padding>
+               <font>
+                  <Font size="14.0" />
+               </font>
             </CheckBox>
             <Label text="Image Ratio:" textFill="WHITE">
                <font>
@@ -73,7 +77,7 @@
                   <Insets top="12.0" />
                </padding>
             </Label>
-            <ComboBox prefHeight="26.0" prefWidth="294.0" stylesheets="@stylesheet.css">
+            <ComboBox fx:id="imageRatioCombo" prefHeight="26.0" prefWidth="294.0" stylesheets="@stylesheet.css">
                <padding>
                   <Insets top="6.0" />
                </padding>
@@ -86,7 +90,7 @@
                   <Insets top="12.0" />
                </VBox.margin>
             </Label>
-            <ComboBox prefHeight="26.0" prefWidth="294.0" stylesheets="@stylesheet.css">
+            <ComboBox fx:id="backgroundImageCombo" prefHeight="26.0" prefWidth="294.0" stylesheets="@stylesheet.css">
                <padding>
                   <Insets top="6.0" />
                </padding>
@@ -99,6 +103,19 @@
                   <Insets top="48.0" />
                </VBox.margin>
             </Label>
+            <Label layoutX="22.0" layoutY="711.0" text="Title:" textFill="WHITE">
+               <font>
+                  <Font size="14.0" />
+               </font>
+               <padding>
+                  <Insets top="12.0" />
+               </padding>
+            </Label>
+            <TextField fx:id="titleText">
+               <font>
+                  <Font size="14.0" />
+               </font>
+            </TextField>
             <Label text="Brighten Background:" textFill="WHITE">
                <font>
                   <Font size="14.0" />
@@ -107,7 +124,7 @@
                   <Insets top="12.0" />
                </padding>
             </Label>
-            <Slider>
+            <Slider fx:id="brightenSlider">
                <padding>
                   <Insets bottom="12.0" top="6.0" />
                </padding></Slider>
@@ -119,7 +136,7 @@
                   <Insets top="12.0" />
                </padding>
             </Label>
-            <Slider layoutX="22.0" layoutY="230.0">
+            <Slider fx:id="darkenSlider" layoutX="22.0" layoutY="230.0">
                <padding>
                   <Insets bottom="12.0" top="6.0" />
                </padding>
@@ -132,7 +149,7 @@
                   <Insets top="12.0" />
                </padding>
             </Label>
-            <Slider layoutX="22.0" layoutY="359.0">
+            <Slider fx:id="blurSlider" layoutX="22.0" layoutY="359.0">
                <padding>
                   <Insets bottom="12.0" top="6.0" />
                </padding>
@@ -145,7 +162,7 @@
                   <Insets top="12.0" />
                </padding>
             </Label>
-            <Slider layoutX="22.0" layoutY="424.0" stylesheets="@stylesheet.css">
+            <Slider fx:id="borderSlider" layoutX="22.0" layoutY="424.0" stylesheets="@stylesheet.css">
                <padding>
                   <Insets bottom="12.0" top="6.0" />
                </padding>
@@ -158,7 +175,7 @@
                   <Insets top="12.0" />
                </padding>
             </Label>
-            <Spinner editable="true" prefHeight="26.0" prefWidth="303.0" styleClass="widget-default" stylesheets="@stylesheet.css">
+            <Spinner fx:id="marginTopSpinner" editable="true" prefHeight="26.0" prefWidth="303.0" styleClass="widget-default" stylesheets="@stylesheet.css">
                <VBox.margin>
                   <Insets top="6.0" />
                </VBox.margin>
@@ -171,7 +188,7 @@
                   <Insets top="12.0" />
                </padding>
             </Label>
-            <Spinner editable="true" layoutX="22.0" layoutY="474.0" prefHeight="26.0" prefWidth="303.0" styleClass="widget-default" />
+            <Spinner fx:id="wheelImageSpinner" editable="true" layoutX="22.0" layoutY="474.0" prefHeight="26.0" prefWidth="303.0" styleClass="widget-default" />
             <Label layoutX="22.0" layoutY="500.0" text="Row Separator:" textFill="WHITE">
                <font>
                   <Font size="14.0" />
@@ -180,7 +197,7 @@
                   <Insets top="12.0" />
                </padding>
             </Label>
-            <Spinner editable="true" layoutX="22.0" layoutY="532.0" prefHeight="26.0" prefWidth="303.0" styleClass="widget-default" />
+            <Spinner fx:id="rowSeparatorSpinner" editable="true" layoutX="22.0" layoutY="532.0" prefHeight="26.0" prefWidth="303.0" styleClass="widget-default" />
          </children>
          <padding>
             <Insets bottom="12.0" left="12.0" right="12.0" top="200.0" />
@@ -194,7 +211,7 @@
          <bottom>
             <ToolBar nodeOrientation="RIGHT_TO_LEFT" prefHeight="70.0" prefWidth="1195.0" style="-fx-background-color: #212529;" BorderPane.alignment="BOTTOM_RIGHT">
               <items>
-                <Button mnemonicParsing="false" stylesheets="@stylesheet.css" text="Generate">
+                <Button fx:id="generateBtn" mnemonicParsing="false" onAction="#onGenerateClick" stylesheets="@stylesheet.css" text="Generate">
                      <font>
                         <Font size="18.0" />
                      </font>
@@ -203,7 +220,7 @@
                         <String fx:value="submit-button" />
                      </styleClass>
                   </Button>
-                  <Button layoutX="117.0" layoutY="18.0" mnemonicParsing="false" stylesheets="@stylesheet.css" text="Open Image">
+                  <Button fx:id="openBtn" layoutX="117.0" layoutY="18.0" mnemonicParsing="false" stylesheets="@stylesheet.css" text="Open Image">
                      <font>
                         <Font size="18.0" />
                      </font>
@@ -212,7 +229,7 @@
                         <String fx:value="submit-button" />
                      </styleClass>
                   </Button>
-                  <Button layoutX="10.0" layoutY="18.0" mnemonicParsing="false" stylesheets="@stylesheet.css" text="Generate All">
+                  <Button fx:id="generateAllBtn" layoutX="10.0" layoutY="18.0" mnemonicParsing="false" stylesheets="@stylesheet.css" text="Generate All">
                      <font>
                         <Font size="18.0" />
                      </font>
@@ -227,12 +244,12 @@
          <center>
             <BorderPane BorderPane.alignment="CENTER">
                <center>
-                  <ImageView fx:id="cardPreview" fitHeight="879.0" fitWidth="1089.0" pickOnBounds="true" preserveRatio="true" />
+                  <ImageView fx:id="cardPreview" fitHeight="756.0" fitWidth="1089.0" pickOnBounds="true" preserveRatio="true" />
                </center>
                <top>
                   <VBox prefHeight="77.0" prefWidth="1195.0" BorderPane.alignment="CENTER">
                      <children>
-                        <Label text="Table:" textFill="WHITE">
+                        <Label fx:id="selectedTableLabel" text="Table: -" textFill="WHITE">
                            <font>
                               <Font name="System Bold" size="24.0" />
                            </font>
@@ -243,7 +260,7 @@
                               <Insets left="24.0" />
                            </padding>
                         </Label>
-                        <Label text="Resolution:" textFill="WHITE">
+                        <Label fx:id="resolutionLabel" text="Resolution: -" textFill="WHITE">
                            <font>
                               <Font size="14.0" />
                            </font>

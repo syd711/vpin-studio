@@ -1,6 +1,6 @@
 package de.mephisto.vpin.server.directb2s;
 
-public enum B2SImageRatio {
+public enum DirectB2SImageRatio {
   RATIO_16X9,
   RATIO_4X3;
 

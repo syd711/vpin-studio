@@ -4,7 +4,7 @@ import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.jpa.GameDetails;
 import de.mephisto.vpin.server.jpa.GameDetailsRepository;
 import de.mephisto.vpin.server.roms.RomService;
-import de.mephisto.vpin.server.system.SystemInfo;
+import de.mephisto.vpin.server.system.SystemService;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import org.apache.commons.io.FilenameUtils;
@@ -25,8 +25,8 @@ import java.util.List;
 public class PinUPConnector implements InitializingBean {
   private final static Logger LOG = LoggerFactory.getLogger(PinUPConnector.class);
 
-  private final static String CURL_COMMAND_TABLE_START = "curl -X POST --data-urlencode \"table=[GAMEFULLNAME]\" http://localhost:" + SystemInfo.SERVER_PORT + "/service/gameLaunch";
-  private final static String CURL_COMMAND_TABLE_EXIT = "curl -X POST --data-urlencode \"table=[GAMEFULLNAME]\" http://localhost:" + SystemInfo.SERVER_PORT + "/service/gameExit";
+  private final static String CURL_COMMAND_TABLE_START = "curl -X POST --data-urlencode \"table=[GAMEFULLNAME]\" http://localhost:" + SystemService.SERVER_PORT + "/service/gameLaunch";
+  private final static String CURL_COMMAND_TABLE_EXIT = "curl -X POST --data-urlencode \"table=[GAMEFULLNAME]\" http://localhost:" + SystemService.SERVER_PORT + "/service/gameExit";
 
   public static final String POST_SCRIPT = "PostScript";
   public static final String LAUNCH_SCRIPT = "LaunchScript";
@@ -35,14 +35,14 @@ public class PinUPConnector implements InitializingBean {
   private Connection conn;
 
   @Autowired
-  private SystemInfo systemInfo;
+  private SystemService systemService;
 
   @Autowired
   private GameDetailsRepository gameDetailsRepository;
 
   @Override
   public void afterPropertiesSet() {
-    File file = systemInfo.getPinUPDatabaseFile();
+    File file = systemService.getPinUPDatabaseFile();
     dbFilePath = file.getAbsolutePath().replaceAll("\\\\", "/");
     runConfigCheck();
   }
@@ -92,8 +92,9 @@ public class PinUPConnector implements InitializingBean {
     this.connect();
     Game info = null;
     try {
-      Statement statement = conn.createStatement();
-      ResultSet rs = statement.executeQuery("SELECT * FROM Games where GameID = " + id + ";");
+      PreparedStatement statement = conn.prepareStatement("SELECT * FROM Games where GameID = ?");
+      statement.setInt(1, id);
+      ResultSet rs = statement.executeQuery();
       if (rs.next()) {
         info = createGame(rs);
       }
@@ -156,9 +157,9 @@ public class PinUPConnector implements InitializingBean {
     PinUPControl f = null;
     this.connect();
     try {
-      Statement statement = conn.createStatement();
-      description = description.replaceAll("'", "''");
-      ResultSet rs = statement.executeQuery("SELECT * FROM PinUPFunctions WHERE Descript = '" + description + "';");
+      PreparedStatement statement = conn.prepareStatement("SELECT * FROM PinUPFunctions WHERE Descript = ?");
+      statement.setString(1, description);
+      ResultSet rs = statement.executeQuery();
       if (rs.next()) {
         f = new PinUPControl();
         f.setActive(rs.getInt("Active") == 1);
@@ -324,7 +325,7 @@ public class PinUPConnector implements InitializingBean {
 
   @Nullable
   private Game createGame(@NonNull ResultSet rs) throws SQLException {
-    Game game = new Game(systemInfo);
+    Game game = new Game(systemService);
     int id = rs.getInt("GameID");
     game.setId(id);
 
@@ -334,10 +335,10 @@ public class PinUPConnector implements InitializingBean {
     String gameDisplayName = rs.getString("GameDisplay");
     game.setGameDisplayName(gameDisplayName);
 
-    File wheelIconFile = new File(systemInfo.getPinUPSystemFolder() + "/POPMedia/Visual Pinball X/Wheel/", FilenameUtils.getBaseName(gameFileName) + ".png");
+    File wheelIconFile = new File(systemService.getPinUPSystemFolder() + "/POPMedia/Visual Pinball X/Wheel/", FilenameUtils.getBaseName(gameFileName) + ".png");
     game.setWheelIconFile(wheelIconFile);
 
-    File vpxFile = new File(systemInfo.getVPXTablesFolder(), gameFileName);
+    File vpxFile = new File(systemService.getVPXTablesFolder(), gameFileName);
     if (!vpxFile.exists()) {
       LOG.warn("No vpx file " + vpxFile.getAbsolutePath() + " found, ignoring game.");
       return null;
@@ -384,10 +385,10 @@ public class PinUPConnector implements InitializingBean {
 
       game.setRom(rom);
       if (!StringUtils.isEmpty(rom)) {
-        File romFile = new File(systemInfo.getMameRomFolder(), rom + ".zip");
+        File romFile = new File(systemService.getMameRomFolder(), rom + ".zip");
         game.setRomFile(romFile);
 
-        File nvRamFolder = new File(systemInfo.getMameFolder(), "nvram");
+        File nvRamFolder = new File(systemService.getMameFolder(), "nvram");
         game.setNvRamFile(new File(nvRamFolder, rom + ".nv"));
       }
     } catch (Exception e) {

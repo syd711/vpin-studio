@@ -2,7 +2,7 @@ package de.mephisto.vpin.server.util;
 
 import org.junit.jupiter.api.Test;
 
-public class SystemInfoTest {
+public class SystemServiceTest {
 
   @Test
   public void testSystemInfo() throws Exception {

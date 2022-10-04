@@ -1,4 +1,4 @@
-package de.mephisto.vpin.server.rest;
+package de.mephisto.vpin.server.util;
 
 /**
  *

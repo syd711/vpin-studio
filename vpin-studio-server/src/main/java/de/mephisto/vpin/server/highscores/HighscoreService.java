@@ -3,7 +3,7 @@ package de.mephisto.vpin.server.highscores;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.jpa.Highscore;
 import de.mephisto.vpin.server.jpa.HighscoreRepository;
-import de.mephisto.vpin.server.system.SystemInfo;
+import de.mephisto.vpin.server.system.SystemService;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import org.apache.commons.lang3.StringUtils;
@@ -14,7 +14,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 @Service
@@ -22,7 +21,7 @@ public class HighscoreService implements InitializingBean {
   private final static Logger LOG = LoggerFactory.getLogger(HighscoreService.class);
 
   @Autowired
-  private SystemInfo systemInfo;
+  private SystemService systemService;
 
   @Autowired
   private HighscoreRepository highscoreRepository;
@@ -103,6 +102,6 @@ public class HighscoreService implements InitializingBean {
 
   @Override
   public void afterPropertiesSet() {
-    this.highscoreResolver = new HighscoreResolver(systemInfo);
+    this.highscoreResolver = new HighscoreResolver(systemService);
   }
 }

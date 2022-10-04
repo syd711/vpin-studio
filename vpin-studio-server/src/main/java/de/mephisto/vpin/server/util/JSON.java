@@ -2,7 +2,7 @@ package de.mephisto.vpin.server.util;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import de.mephisto.vpin.server.system.SystemInfo;
+import de.mephisto.vpin.server.system.SystemService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -22,7 +22,7 @@ public class JSON {
       if (!filename.endsWith(".json")) {
         filename += ".json";
       }
-      File file = new File(SystemInfo.RESOURCES, filename);
+      File file = new File(SystemService.RESOURCES, filename);
       FileWriter fileWriter = new FileWriter(file);
       gson.toJson(object, fileWriter);
       fileWriter.flush();
@@ -37,7 +37,7 @@ public class JSON {
       if (!filename.endsWith(".json")) {
         filename += ".json";
       }
-      File file = new File(SystemInfo.RESOURCES, filename);
+      File file = new File(SystemService.RESOURCES, filename);
       if (file.exists()) {
         Reader reader = Files.newBufferedReader(file.toPath());
         LOG.info("Reading " + file.getAbsolutePath());

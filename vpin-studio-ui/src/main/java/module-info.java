@@ -9,7 +9,9 @@ module de.mephisto.vpin.ui {
   requires java.desktop;
   requires org.slf4j;
   requires imgscalr.lib;
+  requires com.github.spotbugs.annotations;
   requires filters;
+  requires de.mephisto.vpin.restclient;
 
   opens de.mephisto.vpin.ui to javafx.fxml;
   exports de.mephisto.vpin.ui;
