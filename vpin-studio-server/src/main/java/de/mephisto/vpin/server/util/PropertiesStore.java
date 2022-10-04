@@ -8,6 +8,7 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.Map;
 import java.util.Properties;
 
@@ -48,6 +49,16 @@ public class PropertiesStore {
     }
     File file = new File(SystemService.RESOURCES, name);
     return create(file);
+  }
+
+  public void reload() {
+    try {
+      FileInputStream fileInputStream = new FileInputStream(propertiesFile);
+      properties.load(fileInputStream);
+      fileInputStream.close();
+    } catch (IOException e) {
+      LOG.error("Failed to reload " + propertiesFile.getAbsolutePath() + ": " + e.getMessage(), e);
+    }
   }
 
   public boolean containsKey(String key) {
@@ -133,6 +144,7 @@ public class PropertiesStore {
   private void save() {
     try {
       if (propertiesFile != null) {
+        System.out.println("Written " + propertiesFile.getAbsolutePath());
         FileOutputStream fileOutputStream = new FileOutputStream(propertiesFile);
         properties.store(fileOutputStream, null);
         fileOutputStream.close();

@@ -38,6 +38,8 @@ public class CardGraphics {
   }
 
   public BufferedImage draw() throws Exception {
+    Config.getCardGeneratorConfig().reload();
+
     boolean USE_DIRECTB2S = Config.getCardGeneratorConfig().getBoolean("card.useDirectB2S");
     String cardRatio = Config.getCardGeneratorConfig().getString("card.ratio", DirectB2SImageRatio.RATIO_16X9.name());
     DirectB2SImageRatio DIRECTB2S_RATIO = DirectB2SImageRatio.valueOf(cardRatio.toUpperCase());
