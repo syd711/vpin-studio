@@ -7,6 +7,7 @@ import de.mephisto.vpin.server.games.GameService;
 import de.mephisto.vpin.server.highscores.HighscoreService;
 import de.mephisto.vpin.server.system.SystemService;
 import de.mephisto.vpin.server.util.ImageUtil;
+import de.mephisto.vpin.server.util.RequestUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,13 +41,13 @@ public class GeneratorResource {
   @GetMapping("/overlay")
   public ResponseEntity<byte[]> generateOverlay() throws Exception {
     onOverlayGeneration();
-    return DirectB2SResource.serializeImage(GENERATED_OVERLAY_FILE);
+    return RequestUtil.serializeImage(GENERATED_OVERLAY_FILE);
   }
 
   @GetMapping("/card/{gameId}")
   public ResponseEntity<byte[]> generateCard(@PathVariable("gameId") int gameId) throws Exception {
     File sampleCard = onCardGeneration(gameId);
-    return DirectB2SResource.serializeImage(sampleCard);
+    return RequestUtil.serializeImage(sampleCard);
   }
 
   private BufferedImage onOverlayGeneration() throws Exception {

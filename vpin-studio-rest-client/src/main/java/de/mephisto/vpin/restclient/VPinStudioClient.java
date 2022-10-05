@@ -1,5 +1,6 @@
 package de.mephisto.vpin.restclient;
 
+import de.mephisto.vpin.restclient.representations.GameMedia;
 import de.mephisto.vpin.restclient.representations.GameRepresentation;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
@@ -30,6 +31,11 @@ public class VPinStudioClient implements ObservedPropertyChangeListener {
     return Arrays.asList(RestClient.getInstance().get(API + "games", GameRepresentation[].class));
   }
 
+  public byte[] getGameMedia(GameRepresentation game, GameMedia gameMedia) {
+    String url = API + "games/" + game.getId() + "/media/" + gameMedia.name();
+    return RestClient.getInstance().readBinary(url);
+  }
+
   public InputStream getHighscoreCard(int id) {
     try {
       URL url = new URL("/generator/overlay");
@@ -47,7 +53,7 @@ public class VPinStudioClient implements ObservedPropertyChangeListener {
       Properties properties = new Properties();
       properties.putAll(result);
       ObservedProperties observedProperties = new ObservedProperties(propertiesName, properties);
-      observedProperties.setObservedPropertyChangeListener(this);
+      observedProperties.addObservedPropertyChangeListener(this);
       this.observedProperties.put(propertiesName, observedProperties);
     }
 

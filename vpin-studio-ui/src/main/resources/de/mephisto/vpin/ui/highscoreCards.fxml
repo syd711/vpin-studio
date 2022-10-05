@@ -12,6 +12,9 @@
 <?import javafx.scene.control.ToolBar?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
@@ -27,29 +30,6 @@
                   <Font name="System Bold" size="24.0" />
                </font>
             </Label>
-            <Label layoutX="22.0" layoutY="245.0" text="Sample Table:" textFill="WHITE">
-               <font>
-                  <Font size="14.0" />
-               </font>
-            </Label>
-            <ComboBox fx:id="tableCombo" layoutX="22.0" layoutY="265.0" onAction="#onTableSelect" prefHeight="26.0" prefWidth="294.0" stylesheets="@stylesheet.css">
-               <padding>
-                  <Insets top="6.0" />
-               </padding>
-            </ComboBox>
-            <Label layoutX="22.0" layoutY="245.0" text="PinUP Popper Screen:" textFill="WHITE">
-               <font>
-                  <Font size="14.0" />
-               </font>
-               <padding>
-                  <Insets top="12.0" />
-               </padding>
-            </Label>
-            <ComboBox fx:id="popperScreenCombo" layoutX="22.0" layoutY="265.0" prefHeight="26.0" prefWidth="294.0" styleClass="widget-default" stylesheets="@stylesheet.css">
-               <padding>
-                  <Insets top="6.0" />
-               </padding>
-            </ComboBox>
             <Label layoutX="22.0" layoutY="374.0" text="Background Settings" textFill="WHITE">
                <font>
                   <Font name="System Bold" size="24.0" />
@@ -77,11 +57,7 @@
                   <Insets top="12.0" />
                </padding>
             </Label>
-            <ComboBox fx:id="imageRatioCombo" prefHeight="26.0" prefWidth="294.0" stylesheets="@stylesheet.css">
-               <padding>
-                  <Insets top="6.0" />
-               </padding>
-            </ComboBox>
+            <ComboBox fx:id="imageRatioCombo" prefWidth="150.0" />
             <Label layoutX="22.0" layoutY="236.0" text="Default Background Image:" textFill="WHITE">
                <font>
                   <Font size="14.0" />
@@ -90,11 +66,7 @@
                   <Insets top="12.0" />
                </VBox.margin>
             </Label>
-            <ComboBox fx:id="backgroundImageCombo" prefHeight="26.0" prefWidth="294.0" stylesheets="@stylesheet.css">
-               <padding>
-                  <Insets top="6.0" />
-               </padding>
-            </ComboBox>
+            <ComboBox fx:id="backgroundImageCombo" prefWidth="150.0" />
             <Label text="Render Properties" textFill="WHITE">
                <font>
                   <Font name="System Bold" size="24.0" />
@@ -247,29 +219,40 @@
                   <ImageView fx:id="cardPreview" fitHeight="756.0" fitWidth="1089.0" pickOnBounds="true" preserveRatio="true" />
                </center>
                <top>
-                  <VBox prefHeight="77.0" prefWidth="1195.0" BorderPane.alignment="CENTER">
-                     <children>
-                        <Label fx:id="selectedTableLabel" text="Table: -" textFill="WHITE">
-                           <font>
-                              <Font name="System Bold" size="24.0" />
-                           </font>
-                           <opaqueInsets>
-                              <Insets />
-                           </opaqueInsets>
-                           <padding>
-                              <Insets left="24.0" />
-                           </padding>
-                        </Label>
-                        <Label fx:id="resolutionLabel" text="Resolution: -" textFill="WHITE">
-                           <font>
-                              <Font size="14.0" />
-                           </font>
-                           <VBox.margin>
-                              <Insets left="24.0" />
-                           </VBox.margin>
-                        </Label>
-                     </children>
-                  </VBox>
+                  <BorderPane prefHeight="136.0" prefWidth="1117.0" style="-fx-background-color: #2a2a2a; -fx-border-radius: 12px; -fx-border-color: #2a2a2a;" BorderPane.alignment="CENTER">
+                     <left>
+                        <GridPane alignment="CENTER_LEFT" prefHeight="67.0" prefWidth="586.0" BorderPane.alignment="CENTER">
+                          <columnConstraints>
+                            <ColumnConstraints hgrow="SOMETIMES" maxWidth="321.5999755859375" minWidth="10.0" prefWidth="210.0000244140625" />
+                            <ColumnConstraints hgrow="SOMETIMES" maxWidth="377.5999755859375" minWidth="0.0" prefWidth="375.5999755859375" />
+                          </columnConstraints>
+                          <rowConstraints>
+                            <RowConstraints maxHeight="44.000006103515624" minHeight="10.0" prefHeight="32.6" vgrow="SOMETIMES" />
+                            <RowConstraints maxHeight="42.99999084472656" minHeight="10.0" prefHeight="34.2" vgrow="SOMETIMES" />
+                          </rowConstraints>
+                           <children>
+                              <Label text="Sample Table:" textFill="WHITE">
+                                 <font>
+                                    <Font name="System Bold" size="18.0" />
+                                 </font>
+                              </Label>
+                              <Label text="PinUP Popper Screen:" textFill="WHITE" GridPane.rowIndex="1">
+                                 <font>
+                                    <Font name="System Bold" size="18.0" />
+                                 </font>
+                              </Label>
+                              <ComboBox fx:id="tableCombo" stylesheets="@stylesheet.css" GridPane.columnIndex="1" />
+                              <ComboBox fx:id="popperScreenCombo" prefWidth="150.0" stylesheets="@stylesheet.css" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                           </children>
+                        </GridPane>
+                     </left>
+                     <BorderPane.margin>
+                        <Insets left="24.0" right="24.0" />
+                     </BorderPane.margin>
+                     <padding>
+                        <Insets bottom="24.0" left="24.0" right="24.0" top="24.0" />
+                     </padding>
+                  </BorderPane>
                </top>
             </BorderPane>
          </center>

@@ -144,7 +144,6 @@ public class PropertiesStore {
   private void save() {
     try {
       if (propertiesFile != null) {
-        System.out.println("Written " + propertiesFile.getAbsolutePath());
         FileOutputStream fileOutputStream = new FileOutputStream(propertiesFile);
         properties.store(fileOutputStream, null);
         fileOutputStream.close();
