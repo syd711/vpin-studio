@@ -48,10 +48,13 @@ public class HighscoreCardsController implements Initializable, ObservedProperty
   private Button openBtn;
 
   @FXML
-  private Label resolutionLabel;
+  private Label titleFontLabel;
 
   @FXML
-  private Label selectedTableLabel;
+  private Label scoreFontLabel;
+
+  @FXML
+  private Label tableFontLabel;
 
   @FXML
   private ComboBox<String> popperScreenCombo;
@@ -124,7 +127,17 @@ public class HighscoreCardsController implements Initializable, ObservedProperty
 
   @FXML
   private void onFontTitleSelect() {
-   BindingUtil.bindFontSelector(properties, "card");
+    BindingUtil.bindFontSelector(properties, "card.title", titleFontLabel);
+  }
+
+  @FXML
+  private void onFontTableSelect() {
+    BindingUtil.bindFontSelector(properties, "card.table", tableFontLabel);
+  }
+
+  @FXML
+  private void onFontScoreSelect() {
+    BindingUtil.bindFontSelector(properties, "card.score", scoreFontLabel);
   }
 
   @FXML
@@ -142,7 +155,17 @@ public class HighscoreCardsController implements Initializable, ObservedProperty
   public HighscoreCardsController() {
   }
 
-  private void initFields() throws Exception {
+  private void initFields() {
+    titleFontLabel.setText(properties.getProperty("card.title.font.name", "Arial")
+        + ", " + properties.getProperty("card.title.font.style", "Regular")
+        + ", " + properties.getProperty("card.title.font.size", "32") + "px");
+    tableFontLabel.setText(properties.getProperty("card.table.font.name", "Arial")
+        + ", " + properties.getProperty("card.table.font.style", "Regular")
+        + ", " + properties.getProperty("card.table.font.size", "32") + "px");
+    scoreFontLabel.setText(properties.getProperty("card.score.font.name", "Arial")
+        + ", " + properties.getProperty("card.score.font.style", "Regular")
+        + ", " + properties.getProperty("card.score.font.size", "32") + "px");
+
     BindingUtil.bindTableComboBox(client, tableCombo, properties, "card.sampleTable");
 
     popperScreenCombo.setItems(FXCollections.observableList(Arrays.asList("Other2", "GameInfo", "GameHelp")));

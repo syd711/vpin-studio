@@ -3,6 +3,7 @@ package de.mephisto.vpin.ui.util;
 import de.mephisto.vpin.restclient.ObservedProperties;
 import de.mephisto.vpin.restclient.VPinStudioClient;
 import de.mephisto.vpin.restclient.representations.GameRepresentation;
+import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.*;
 import javafx.beans.value.ChangeListener;
@@ -65,10 +66,10 @@ public class BindingUtil {
     }, 1000));
   }
 
-  public static void bindFontSelector(ObservedProperties properties, String key) {
-    String name = properties.getProperty(key + ".table.font.name", "Arial");
-    int size = properties.getProperty(key + ".table.font.size", 72);
-    String style = properties.getProperty(key + ".table.font.style", FontPosture.REGULAR.name());
+  public static void bindFontSelector(ObservedProperties properties, String key, Label label) {
+    String name = properties.getProperty(key + ".font.name", "Arial");
+    int size = properties.getProperty(key + ".font.size", 72);
+    String style = properties.getProperty(key + ".font.style", FontPosture.REGULAR.name());
 
     Font font = Font.font(name, FontPosture.findByName(style), size);
 
@@ -82,9 +83,11 @@ public class BindingUtil {
       if (fs.getResult() != null) {
         Font result = fs.getResult();
         debouncer.debounce("font", () -> {
-          properties.set(key + ".table.font.name", result.getName());
-          properties.set(key + ".table.font.size", String.valueOf((int)result.getSize()));
-          properties.set(key + ".table.font.style", result.getStyle());
+          properties.set(key + ".font.name", result.getName());
+          properties.set(key + ".font.size", String.valueOf((int)result.getSize()));
+          properties.set(key + ".font.style", result.getStyle());
+
+          Platform.runLater(() -> label.setText(result.getName() + ", " + result.getStyle() + ", " + result.getSize() + "px"));
         }, 100);
 
       }

@@ -28,24 +28,92 @@
    <right>
       <VBox prefHeight="1354.0" prefWidth="300.0" style="-fx-background-color: #272b2f;" BorderPane.alignment="CENTER">
          <children>
-            <Label layoutX="22.0" layoutY="262.0" text="Presets" textFill="WHITE">
+            <Label layoutX="22.0" layoutY="262.0" text="Font Settings" textFill="WHITE">
                <font>
                   <Font name="System Bold" size="24.0" />
                </font>
             </Label>
-            <HBox prefHeight="32.0" prefWidth="276.0" />
-            <Button mnemonicParsing="false" onAction="#onFontTitleSelect" text="Select Font...">
+            <Label text="Title Font:" textFill="WHITE">
                <font>
                   <Font size="14.0" />
                </font>
-            </Button>
+            </Label>
+            <HBox alignment="CENTER_LEFT" prefHeight="32.0" prefWidth="276.0">
+               <children>
+                  <Label fx:id="titleFontLabel" prefHeight="20.0" prefWidth="260.0" textFill="WHITE">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                  </Label>
+                  <Button mnemonicParsing="false" onAction="#onFontTitleSelect" prefHeight="30.0" prefWidth="30.0">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                     <graphic>
+                        <FontIcon iconLiteral="bi-fonts" />
+                     </graphic>
+                  </Button>
+               </children>
+               <VBox.margin>
+                  <Insets bottom="12.0" />
+               </VBox.margin></HBox>
+            <Label layoutX="22.0" layoutY="245.0" text="Table Font:" textFill="WHITE">
+               <font>
+                  <Font size="14.0" />
+               </font>
+            </Label>
+            <HBox alignment="CENTER_LEFT" layoutX="22.0" layoutY="265.0" prefHeight="32.0" prefWidth="276.0">
+               <children>
+                  <Label fx:id="tableFontLabel" prefHeight="20.0" prefWidth="271.0" textFill="WHITE">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                  </Label>
+                  <Button mnemonicParsing="false" onAction="#onFontTitleSelect" prefHeight="30.0" prefWidth="30.0">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                     <graphic>
+                        <FontIcon iconLiteral="bi-fonts" onDragDetected="#onFontTableSelect" />
+                     </graphic>
+                  </Button>
+               </children>
+               <padding>
+                  <Insets bottom="12.0" />
+               </padding>
+            </HBox>
+            <Label layoutX="22.0" layoutY="309.0" text="Score Font:" textFill="WHITE">
+               <font>
+                  <Font size="14.0" />
+               </font>
+            </Label>
+            <HBox alignment="CENTER_LEFT" layoutX="22.0" layoutY="309.0" prefHeight="32.0" prefWidth="276.0">
+               <children>
+                  <Label fx:id="scoreFontLabel" prefHeight="20.0" prefWidth="266.0" textFill="WHITE">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                  </Label>
+                  <Button mnemonicParsing="false" onAction="#onFontScoreSelect" prefHeight="30.0" prefWidth="30.0">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                     <graphic>
+                        <FontIcon iconLiteral="bi-fonts" />
+                     </graphic>
+                  </Button>
+               </children>
+               <padding>
+                  <Insets bottom="12.0" />
+               </padding>
+            </HBox>
             <ColorPicker />
             <Label layoutX="22.0" layoutY="374.0" text="Background Settings" textFill="WHITE">
                <font>
                   <Font name="System Bold" size="24.0" />
                </font>
                <padding>
-                  <Insets top="48.0" />
+                  <Insets top="32.0" />
                </padding>
             </Label>
             <CheckBox fx:id="useDirectB2SCheckbox" mnemonicParsing="false" stylesheets="@stylesheet.css" text="Use DirectB2S Backgrounds" textFill="WHITE">
@@ -92,12 +160,12 @@
                   </Button>
                </children>
             </HBox>
-            <Label text="Render Properties" textFill="WHITE">
+            <Label text="Render Settings" textFill="WHITE">
                <font>
                   <Font name="System Bold" size="24.0" />
                </font>
                <VBox.margin>
-                  <Insets top="48.0" />
+                  <Insets top="32.0" />
                </VBox.margin>
             </Label>
             <Label layoutX="22.0" layoutY="711.0" text="Title:" textFill="WHITE">

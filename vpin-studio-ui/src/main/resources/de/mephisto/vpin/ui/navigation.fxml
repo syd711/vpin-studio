@@ -3,15 +3,14 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.Cursor?>
 <?import javafx.scene.control.Button?>
-<?import javafx.scene.image.Image?>
-<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
+<?import org.kordamp.ikonli.javafx.FontIcon?>
 
-<BorderPane xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.NavigationController">
+<BorderPane style="-fx-background-color: #272b2f;" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.NavigationController">
 <center>
-      <BorderPane BorderPane.alignment="CENTER">
+      <BorderPane style="-fx-background-color: #272b2f;" BorderPane.alignment="CENTER">
          <center>
           <VBox alignment="TOP_CENTER" prefHeight="1353.0" prefWidth="300.0" style="-fx-background-color: #272b2f;">
               <children>
@@ -21,13 +20,6 @@
                       </padding>
                   </BorderPane>
                   <Button fx:id="dashboardBtn" alignment="BASELINE_LEFT" graphicTextGap="12.0" mnemonicParsing="false" onAction="#onDashboardClick" prefHeight="60.0" prefWidth="330.0" styleClass="navigation-button" stylesheets="@stylesheet.css" text="Dashboard" textFill="WHITE">
-                      <graphic>
-                          <ImageView fitHeight="18.0" fitWidth="18.0" pickOnBounds="true" preserveRatio="true">
-                              <image>
-                                  <Image url="@dashboard.png" />
-                              </image>
-                          </ImageView>
-                      </graphic>
                       <font>
                           <Font size="18.0" />
                       </font>
@@ -40,18 +32,14 @@
                       <cursor>
                           <Cursor fx:constant="HAND" />
                       </cursor>
+                     <graphic>
+                        <FontIcon iconColor="WHITE" iconLiteral="bi-grid" />
+                     </graphic>
                   </Button>
                   <Button alignment="BASELINE_LEFT" graphicTextGap="12.0" layoutX="10.0" layoutY="210.0" mnemonicParsing="false" prefHeight="60.0" prefWidth="330.0" styleClass="navigation-button" stylesheets="@stylesheet.css" text="Overlay Settings" textFill="WHITE">
                       <font>
                           <Font name="Tahoma" size="18.0" />
                       </font>
-                      <graphic>
-                          <ImageView fitHeight="18.0" fitWidth="18.0" pickOnBounds="true" preserveRatio="true">
-                              <image>
-                                  <Image url="@dashboard.png" />
-                              </image>
-                          </ImageView>
-                      </graphic>
                       <opaqueInsets>
                           <Insets />
                       </opaqueInsets>
@@ -61,18 +49,14 @@
                       <cursor>
                           <Cursor fx:constant="HAND" />
                       </cursor>
+                     <graphic>
+                        <FontIcon iconColor="WHITE" iconLiteral="bi-list" />
+                     </graphic>
                   </Button>
                   <Button alignment="BASELINE_LEFT" graphicTextGap="12.0" layoutX="10.0" layoutY="210.0" mnemonicParsing="false" onAction="#onHighscoreCardsClick" prefHeight="60.0" prefWidth="330.0" styleClass="navigation-button" stylesheets="@stylesheet.css" text="Highscore Cards" textFill="WHITE">
                       <font>
                           <Font size="18.0" />
                       </font>
-                      <graphic>
-                          <ImageView fitHeight="18.0" fitWidth="18.0" pickOnBounds="true" preserveRatio="true">
-                              <image>
-                                  <Image url="@dashboard.png" />
-                              </image>
-                          </ImageView>
-                      </graphic>
                       <opaqueInsets>
                           <Insets />
                       </opaqueInsets>
@@ -82,18 +66,14 @@
                       <cursor>
                           <Cursor fx:constant="HAND" />
                       </cursor>
+                     <graphic>
+                        <FontIcon iconColor="WHITE" iconLiteral="bi-list-ol" />
+                     </graphic>
                   </Button>
                   <Button alignment="BASELINE_LEFT" graphicTextGap="12.0" layoutX="10.0" layoutY="210.0" mnemonicParsing="false" prefHeight="60.0" prefWidth="330.0" styleClass="navigation-button" stylesheets="@stylesheet.css" text="DOF Commands" textFill="WHITE">
                       <font>
                           <Font size="18.0" />
                       </font>
-                      <graphic>
-                          <ImageView fitHeight="18.0" fitWidth="18.0" pickOnBounds="true" preserveRatio="true">
-                              <image>
-                                  <Image url="@dashboard.png" />
-                              </image>
-                          </ImageView>
-                      </graphic>
                       <opaqueInsets>
                           <Insets />
                       </opaqueInsets>
@@ -103,18 +83,14 @@
                       <cursor>
                           <Cursor fx:constant="HAND" />
                       </cursor>
+                     <graphic>
+                        <FontIcon iconColor="WHITE" iconLiteral="bi-command" />
+                     </graphic>
                   </Button>
                   <Button alignment="BASELINE_LEFT" graphicTextGap="12.0" layoutX="10.0" layoutY="210.0" mnemonicParsing="false" prefHeight="60.0" prefWidth="330.0" styleClass="navigation-button" stylesheets="@stylesheet.css" text="Competitions" textFill="WHITE">
                       <font>
                           <Font size="18.0" />
                       </font>
-                      <graphic>
-                          <ImageView fitHeight="18.0" fitWidth="18.0" pickOnBounds="true" preserveRatio="true">
-                              <image>
-                                  <Image url="@dashboard.png" />
-                              </image>
-                          </ImageView>
-                      </graphic>
                       <opaqueInsets>
                           <Insets />
                       </opaqueInsets>
@@ -124,18 +100,14 @@
                       <cursor>
                           <Cursor fx:constant="HAND" />
                       </cursor>
+                     <graphic>
+                        <FontIcon iconColor="WHITE" iconLiteral="bi-list-stars" />
+                     </graphic>
                   </Button>
                   <Button alignment="BASELINE_LEFT" graphicTextGap="12.0" layoutX="10.0" layoutY="450.0" mnemonicParsing="false" prefHeight="60.0" prefWidth="330.0" styleClass="navigation-button" stylesheets="@stylesheet.css" text="Players" textFill="WHITE">
                       <font>
                           <Font size="18.0" />
                       </font>
-                      <graphic>
-                          <ImageView fitHeight="18.0" fitWidth="18.0" pickOnBounds="true" preserveRatio="true">
-                              <image>
-                                  <Image url="@dashboard.png" />
-                              </image>
-                          </ImageView>
-                      </graphic>
                       <opaqueInsets>
                           <Insets />
                       </opaqueInsets>
@@ -145,6 +117,9 @@
                       <cursor>
                           <Cursor fx:constant="HAND" />
                       </cursor>
+                     <graphic>
+                        <FontIcon iconColor="WHITE" iconLiteral="bi-person" />
+                     </graphic>
                   </Button>
               </children>
           </VBox>
@@ -156,13 +131,6 @@
          <font>
             <Font size="18.0" />
          </font>
-         <graphic>
-            <ImageView fitHeight="18.0" fitWidth="18.0" pickOnBounds="true" preserveRatio="true">
-               <image>
-                  <Image url="@dashboard.png" />
-               </image>
-            </ImageView>
-         </graphic>
          <opaqueInsets>
             <Insets />
          </opaqueInsets>
@@ -172,6 +140,9 @@
          <cursor>
             <Cursor fx:constant="HAND" />
          </cursor>
+         <graphic>
+            <FontIcon iconColor="WHITE" iconLiteral="sil-settings" />
+         </graphic>
       </Button>
    </bottom>
 </BorderPane>
