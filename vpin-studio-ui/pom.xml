@@ -79,6 +79,16 @@
             <version>12.3.1</version>
         </dependency>
         <dependency>
+            <groupId>org.kordamp.ikonli</groupId>
+            <artifactId>ikonli-simplelineicons-pack</artifactId>
+            <version>12.3.1</version>
+        </dependency>
+        <dependency>
+            <groupId>org.kordamp.ikonli</groupId>
+            <artifactId>ikonli-bootstrapicons-pack</artifactId>
+            <version>12.3.1</version>
+        </dependency>
+        <dependency>
             <groupId>eu.hansolo</groupId>
             <artifactId>tilesfx</artifactId>
             <version>11.48</version>

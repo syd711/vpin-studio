@@ -19,6 +19,10 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontPosture;
+import org.controlsfx.dialog.FontSelectorDialog;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -107,6 +111,26 @@ public class HighscoreCardsController implements Initializable, ObservedProperty
     } catch (Exception e) {
       LOG.error("Failed to init highscores: " + e.getMessage(), e);
     }
+  }
+
+  @FXML
+  private void onTableRefresh() {
+    List<GameRepresentation> games = client.getGames();
+    tableCombo.getItems().clear();
+    ObservableList<GameRepresentation> gameRepresentations = FXCollections.observableArrayList(games);
+    tableCombo.getItems().addAll(gameRepresentations);
+    onGenerateClick();
+  }
+
+  @FXML
+  private void onFontTitleSelect() {
+   BindingUtil.bindFontSelector(properties, "card");
+  }
+
+  @FXML
+  private void onColorSelect() {
+    ColorPicker p = new ColorPicker(Color.WHITE);
+    p.show();
   }
 
   @FXML

@@ -9,6 +9,8 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.scene.control.*;
 import javafx.scene.control.TextField;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontPosture;
 import org.apache.commons.lang3.StringUtils;
 
 public class BindingUtil {
@@ -62,6 +64,33 @@ public class BindingUtil {
       properties.set(property, String.valueOf(value1));
     }, 1000));
   }
+
+  public static void bindFontSelector(ObservedProperties properties, String key) {
+    String name = properties.getProperty(key + ".table.font.name", "Arial");
+    int size = properties.getProperty(key + ".table.font.size", 72);
+    String style = properties.getProperty(key + ".table.font.style", FontPosture.REGULAR.name());
+
+    Font font = Font.font(name, FontPosture.findByName(style), size);
+
+    FontSelectorDialog fs = new FontSelectorDialog(font);
+    fs.setHeight(500);
+    fs.setTitle("Select Font");
+    fs.setHeaderText("");
+    fs.show();
+
+    fs.setOnCloseRequest(e -> {
+      if (fs.getResult() != null) {
+        Font result = fs.getResult();
+        debouncer.debounce("font", () -> {
+          properties.set(key + ".table.font.name", result.getName());
+          properties.set(key + ".table.font.size", String.valueOf((int)result.getSize()));
+          properties.set(key + ".table.font.style", result.getStyle());
+        }, 100);
+
+      }
+    });
+  }
+
 
   public static void bindSlider(Slider slider, ObservedProperties properties, String property) {
     int value = properties.getProperty(property, 0);

@@ -3,13 +3,13 @@ package de.mephisto.vpin.server.generators;
 import de.mephisto.vpin.server.directb2s.DirectB2SImageRatio;
 import de.mephisto.vpin.server.directb2s.DirectB2SService;
 import de.mephisto.vpin.server.games.Game;
-import de.mephisto.vpin.server.games.GameService;
 import de.mephisto.vpin.server.highscores.HighscoreService;
 import de.mephisto.vpin.server.highscores.Score;
 import de.mephisto.vpin.server.jpa.Highscore;
 import de.mephisto.vpin.server.system.SystemService;
 import de.mephisto.vpin.server.util.Config;
 import de.mephisto.vpin.server.util.ImageUtil;
+import javafx.scene.text.FontPosture;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -27,8 +27,8 @@ public class CardGraphics {
   private final DirectB2SService directB2SService;
   private final Game game;
 
-  public CardGraphics(HighscoreService highscoreService, DirectB2SService directB2SService, Game game){
-     this.highscoreService = highscoreService;
+  public CardGraphics(HighscoreService highscoreService, DirectB2SService directB2SService, Game game) {
+    this.highscoreService = highscoreService;
     this.directB2SService = directB2SService;
     this.game = game;
   }
@@ -79,15 +79,15 @@ public class CardGraphics {
     String TITLE_TEXT = Config.getCardGeneratorConfig().getString("card.title.text");
 
     String SCORE_FONT_NAME = Config.getCardGeneratorConfig().getString("card.score.font.name");
-    int SCORE_FONT_STYLE = Config.getCardGeneratorConfig().getInt("card.score.font.style");
+    int SCORE_FONT_STYLE = ImageUtil.convertFontPosture(Config.getCardGeneratorConfig().getString("card.score.font.style"));
     int SCORE_FONT_SIZE = Config.getCardGeneratorConfig().getInt("card.score.font.size");
 
     String TITLE_FONT_NAME = Config.getCardGeneratorConfig().getString("card.title.font.name");
-    int TITLE_FONT_STYLE = Config.getCardGeneratorConfig().getInt("card.title.font.style");
+    int TITLE_FONT_STYLE = ImageUtil.convertFontPosture(Config.getCardGeneratorConfig().getString("card.title.font.style"));
     int TITLE_FONT_SIZE = Config.getCardGeneratorConfig().getInt("card.title.font.size");
 
     String TABLE_FONT_NAME = Config.getCardGeneratorConfig().getString("card.table.font.name");
-    int TABLE_FONT_STYLE = Config.getCardGeneratorConfig().getInt("card.table.font.style");
+    int TABLE_FONT_STYLE = ImageUtil.convertFontPosture(Config.getCardGeneratorConfig().getString("card.table.font.style"));
     int TABLE_FONT_SIZE = Config.getCardGeneratorConfig().getInt("card.table.font.size");
 
     int TITLE_Y_OFFSET = Config.getCardGeneratorConfig().getInt("card.title.y.offset");

@@ -1,6 +1,7 @@
 package de.mephisto.vpin.server.util;
 
 import com.jhlabs.image.GaussianFilter;
+import javafx.scene.text.FontPosture;
 import org.imgscalr.Scalr;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,6 +22,20 @@ public class ImageUtil {
     g2d.setRenderingHint(
         RenderingHints.KEY_TEXT_ANTIALIASING,
         RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+  }
+
+  public static int convertFontPosture(String posture) {
+    if(posture.toLowerCase().contains("italic")) {
+      return Font.ITALIC;
+    }
+    if(posture.toLowerCase().contains("regular") || posture.toLowerCase().contains("plain")) {
+      return Font.PLAIN;
+    }
+    if(posture.toLowerCase().contains("bold")) {
+      return Font.BOLD;
+    }
+
+    return Font.PLAIN;
   }
 
   @SuppressWarnings("unused")

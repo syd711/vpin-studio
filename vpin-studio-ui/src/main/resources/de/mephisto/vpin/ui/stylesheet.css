@@ -49,6 +49,14 @@
     -fx-cursor: hand;
 }
 
+/**
+ * Subpanels
+ */
+.subpanel {
+    -fx-background-radius: 6 6 6 6;
+    -fx-border-radius: 6 6 6 6;
+    -fx-background-color: #2a2a2a;
+}
 
 /**
  * Common Component Theme

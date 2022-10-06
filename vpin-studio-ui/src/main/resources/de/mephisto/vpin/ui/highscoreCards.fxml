@@ -4,6 +4,7 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.ColorPicker?>
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.Slider?>
@@ -14,9 +15,11 @@
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
+<?import org.kordamp.ikonli.javafx.FontIcon?>
 
 <BorderPane prefHeight="1293.0" prefWidth="1795.0" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.HighscoreCardsController">
    <left>
@@ -30,6 +33,13 @@
                   <Font name="System Bold" size="24.0" />
                </font>
             </Label>
+            <HBox prefHeight="32.0" prefWidth="276.0" />
+            <Button mnemonicParsing="false" onAction="#onFontTitleSelect" text="Select Font...">
+               <font>
+                  <Font size="14.0" />
+               </font>
+            </Button>
+            <ColorPicker />
             <Label layoutX="22.0" layoutY="374.0" text="Background Settings" textFill="WHITE">
                <font>
                   <Font name="System Bold" size="24.0" />
@@ -66,7 +76,22 @@
                   <Insets top="12.0" />
                </VBox.margin>
             </Label>
-            <ComboBox fx:id="backgroundImageCombo" prefWidth="150.0" />
+            <HBox prefHeight="31.0" prefWidth="276.0">
+               <children>
+                  <ComboBox fx:id="backgroundImageCombo" prefWidth="150.0" stylesheets="@stylesheet.css" />
+                  <Button mnemonicParsing="false" onAction="#onTableRefresh">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                     <graphic>
+                        <FontIcon iconLiteral="bi-cloud-upload" iconSize="14" />
+                     </graphic>
+                     <HBox.margin>
+                        <Insets left="12.0" />
+                     </HBox.margin>
+                  </Button>
+               </children>
+            </HBox>
             <Label text="Render Properties" textFill="WHITE">
                <font>
                   <Font name="System Bold" size="24.0" />
@@ -211,15 +236,32 @@
                      </styleClass>
                   </Button>
               </items>
+               <BorderPane.margin>
+                  <Insets right="24.0" />
+               </BorderPane.margin>
             </ToolBar>
          </bottom>
          <center>
             <BorderPane BorderPane.alignment="CENTER">
                <center>
-                  <ImageView fx:id="cardPreview" fitHeight="756.0" fitWidth="1089.0" pickOnBounds="true" preserveRatio="true" />
+                  <BorderPane styleClass="subpanel" stylesheets="@stylesheet.css">
+                     <center>
+                        <ImageView fx:id="cardPreview" fitHeight="756.0" fitWidth="1089.0" pickOnBounds="true" preserveRatio="true">
+                           <BorderPane.margin>
+                              <Insets bottom="24.0" left="24.0" right="24.0" top="24.0" />
+                           </BorderPane.margin>
+                        </ImageView>
+                     </center>
+                     <padding>
+                        <Insets left="4.0" />
+                     </padding>
+                     <BorderPane.margin>
+                        <Insets bottom="24.0" left="24.0" right="24.0" top="24.0" />
+                     </BorderPane.margin>
+                  </BorderPane>
                </center>
                <top>
-                  <BorderPane prefHeight="136.0" prefWidth="1117.0" style="-fx-background-color: #2a2a2a; -fx-border-radius: 12px; -fx-border-color: #2a2a2a;" BorderPane.alignment="CENTER">
+                  <BorderPane prefHeight="136.0" prefWidth="1117.0" styleClass="subpanel" stylesheets="@stylesheet.css" BorderPane.alignment="CENTER">
                      <left>
                         <GridPane alignment="CENTER_LEFT" prefHeight="67.0" prefWidth="586.0" BorderPane.alignment="CENTER">
                           <columnConstraints>
@@ -241,7 +283,24 @@
                                     <Font name="System Bold" size="18.0" />
                                  </font>
                               </Label>
-                              <ComboBox fx:id="tableCombo" stylesheets="@stylesheet.css" GridPane.columnIndex="1" />
+                              <HBox alignment="CENTER_LEFT" GridPane.columnIndex="1">
+                                 <children>
+                                    <ComboBox fx:id="tableCombo" stylesheets="@stylesheet.css" />
+                                    <Button mnemonicParsing="false" onAction="#onTableRefresh">
+                                       <font>
+                                          <Font size="14.0" />
+                                       </font>
+                                       <HBox.margin>
+                                          <Insets left="12.0" />
+                                       </HBox.margin>
+                                       <graphic>
+                                       </graphic>
+                                       <graphic>
+                                          <FontIcon iconLiteral="sil-refresh" wrappingWidth="12.800048828125" />
+                                       </graphic>
+                                    </Button>
+                                 </children>
+                              </HBox>
                               <ComboBox fx:id="popperScreenCombo" prefWidth="150.0" stylesheets="@stylesheet.css" GridPane.columnIndex="1" GridPane.rowIndex="1" />
                            </children>
                         </GridPane>

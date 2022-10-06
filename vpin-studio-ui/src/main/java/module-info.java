@@ -10,6 +10,9 @@ module de.mephisto.vpin.ui {
   requires org.slf4j;
   requires imgscalr.lib;
   requires org.apache.commons.lang3;
+
+  // add icon pack modules
+  requires org.kordamp.ikonli.simplelineicons;
   requires com.github.spotbugs.annotations;
   requires filters;
   requires de.mephisto.vpin.restclient;
