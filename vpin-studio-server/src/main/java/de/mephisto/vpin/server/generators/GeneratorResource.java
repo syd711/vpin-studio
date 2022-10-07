@@ -65,9 +65,12 @@ public class GeneratorResource {
     try {
       Game game = gameService.getGame(gameId);
       BufferedImage bufferedImage = new CardGraphics(highscoreService, directB2SService, game).draw();
-      File sampleFile = new File(SystemService.RESOURCES, "highscore-card-sample.png");
-      ImageUtil.write(bufferedImage, sampleFile);
-      return sampleFile;
+      if(bufferedImage != null) {
+        File sampleFile = new File(SystemService.RESOURCES, "highscore-card-sample.png");
+        ImageUtil.write(bufferedImage, sampleFile);
+        return sampleFile;
+      }
+      return new File(SystemService.RESOURCES, "empty-preview.png");
     } catch (Exception e) {
       LOG.error("Failed to generate overlay: " + e.getMessage(), e);
       throw e;

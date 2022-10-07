@@ -112,7 +112,7 @@
                   <Font size="14.0" />
                </font>
             </Label>
-            <ColorPicker prefWidth="134.0" />
+            <ColorPicker fx:id="fontColorSelector" prefWidth="134.0" />
             <Label layoutX="22.0" layoutY="374.0" text="Background Settings" textFill="WHITE">
                <font>
                   <Font name="System Bold" size="24.0" />
@@ -278,7 +278,7 @@
          <bottom>
             <ToolBar nodeOrientation="RIGHT_TO_LEFT" prefHeight="70.0" prefWidth="1195.0" style="-fx-background-color: #212529;" BorderPane.alignment="BOTTOM_RIGHT">
               <items>
-                <Button fx:id="generateBtn" mnemonicParsing="false" onAction="#onGenerateClick" stylesheets="@stylesheet.css" text="Generate">
+                <Button mnemonicParsing="false" onAction="#onGenerateClick" stylesheets="@stylesheet.css" text="Generate">
                      <font>
                         <Font size="18.0" />
                      </font>
@@ -287,7 +287,7 @@
                         <String fx:value="submit-button" />
                      </styleClass>
                   </Button>
-                  <Button fx:id="openBtn" layoutX="117.0" layoutY="18.0" mnemonicParsing="false" stylesheets="@stylesheet.css" text="Open Image">
+                  <Button layoutX="117.0" layoutY="18.0" mnemonicParsing="false" stylesheets="@stylesheet.css" text="Open Image">
                      <font>
                         <Font size="18.0" />
                      </font>
@@ -296,7 +296,7 @@
                         <String fx:value="submit-button" />
                      </styleClass>
                   </Button>
-                  <Button fx:id="generateAllBtn" layoutX="10.0" layoutY="18.0" mnemonicParsing="false" stylesheets="@stylesheet.css" text="Generate All">
+                  <Button layoutX="10.0" layoutY="18.0" mnemonicParsing="false" stylesheets="@stylesheet.css" text="Generate All">
                      <font>
                         <Font size="18.0" />
                      </font>
@@ -340,8 +340,8 @@
                           </columnConstraints>
                           <rowConstraints>
                             <RowConstraints maxHeight="44.000006103515624" minHeight="10.0" prefHeight="32.6" vgrow="SOMETIMES" />
-                            <RowConstraints maxHeight="42.99999084472656" minHeight="10.0" prefHeight="34.2" vgrow="SOMETIMES" />
                               <RowConstraints maxHeight="42.99999084472656" minHeight="10.0" prefHeight="34.2" vgrow="SOMETIMES" />
+                            <RowConstraints maxHeight="42.99999084472656" minHeight="10.0" prefHeight="34.2" vgrow="SOMETIMES" />
                           </rowConstraints>
                            <children>
                               <Label text="Sample Table:" textFill="WHITE">
@@ -349,7 +349,7 @@
                                     <Font name="System Bold" size="18.0" />
                                  </font>
                               </Label>
-                              <Label text="PinUP Popper Screen:" textFill="WHITE" GridPane.rowIndex="1">
+                              <Label text="PinUP Popper Screen:" textFill="WHITE" GridPane.rowIndex="2">
                                  <font>
                                     <Font name="System Bold" size="18.0" />
                                  </font>
@@ -372,13 +372,13 @@
                                     </Button>
                                  </children>
                               </HBox>
-                              <ComboBox fx:id="popperScreenCombo" prefWidth="150.0" stylesheets="@stylesheet.css" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-                              <Label layoutX="10.0" layoutY="47.0" text="Card Generation Enabled:" textFill="WHITE" GridPane.rowIndex="2">
+                              <ComboBox fx:id="popperScreenCombo" prefWidth="150.0" stylesheets="@stylesheet.css" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                              <Label layoutX="10.0" layoutY="47.0" text="Card Generation Enabled:" textFill="WHITE" GridPane.rowIndex="1">
                                  <font>
                                     <Font name="System Bold" size="18.0" />
                                  </font>
                               </Label>
-                              <CheckBox mnemonicParsing="false" text="CheckBox" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                              <CheckBox fx:id="enableCardGenerationCheckbox" mnemonicParsing="false" text="CheckBox" GridPane.columnIndex="1" GridPane.rowIndex="1" />
                            </children>
                         </GridPane>
                      </left>

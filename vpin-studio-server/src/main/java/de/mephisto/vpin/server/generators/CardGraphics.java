@@ -41,15 +41,18 @@ public class CardGraphics {
     DirectB2SImageRatio DIRECTB2S_RATIO = DirectB2SImageRatio.valueOf(cardRatio.toUpperCase());
     int BLUR_PIXELS = Config.getCardGeneratorConfig().getInt("card.blur");
 
-    File sourceFile = new File(SystemService.RESOURCES + "backgrounds", Config.getCardGeneratorConfig().get("card.background"));
+    File sourceImage = new File(SystemService.RESOURCES + "backgrounds", Config.getCardGeneratorConfig().get("card.background"));
     if (USE_DIRECTB2S && game.getDirectB2SFile().exists()) {
-      sourceFile = game.getDirectB2SFile();
-      if (!sourceFile.exists()) {
-        sourceFile = directB2SService.generateB2SImage(game, DIRECTB2S_RATIO, 1280);
+      File directB2SImage = game.getDirectB2SBackgroundImage();
+      if (!directB2SImage.exists()) {
+        directB2SImage = directB2SService.generateB2SImage(game, DIRECTB2S_RATIO, 1280);
+      }
+      if(directB2SImage != null && directB2SImage.exists()) {
+        sourceImage = directB2SImage;
       }
     }
 
-    BufferedImage backgroundImage = ImageUtil.loadBackground(sourceFile);
+    BufferedImage backgroundImage = ImageUtil.loadBackground(sourceImage);
     if (USE_DIRECTB2S) {
       backgroundImage = ImageUtil.crop(backgroundImage, DIRECTB2S_RATIO.getXRatio(), DIRECTB2S_RATIO.getYRatio());
     }

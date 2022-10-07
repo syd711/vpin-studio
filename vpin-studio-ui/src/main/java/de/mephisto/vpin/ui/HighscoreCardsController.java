@@ -28,6 +28,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.InputStream;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.ResourceBundle;
@@ -39,15 +40,6 @@ public class HighscoreCardsController implements Initializable, ObservedProperty
   private ImageView cardPreview;
 
   @FXML
-  private Button generateBtn;
-
-  @FXML
-  private Button generateAllBtn;
-
-  @FXML
-  private Button openBtn;
-
-  @FXML
   private Label titleFontLabel;
 
   @FXML
@@ -57,6 +49,9 @@ public class HighscoreCardsController implements Initializable, ObservedProperty
   private Label tableFontLabel;
 
   @FXML
+  private CheckBox enableCardGenerationCheckbox;
+
+  @FXML
   private ComboBox<String> popperScreenCombo;
 
   @FXML
@@ -64,6 +59,9 @@ public class HighscoreCardsController implements Initializable, ObservedProperty
 
   @FXML
   private ComboBox<String> imageRatioCombo;
+
+  @FXML
+  private ColorPicker fontColorSelector;
 
   @FXML
   private ComboBox backgroundImageCombo;
@@ -99,11 +97,14 @@ public class HighscoreCardsController implements Initializable, ObservedProperty
 
   private ObservedProperties properties;
 
+  private List<String> ignoreList = new ArrayList<>();
+
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
     try {
       client = new VPinStudioClient();
       properties = client.getProperties("card-generator");
+      ignoreList.addAll(Arrays.asList("card.generation.enabled", "popper.screen"));
       properties.addObservedPropertyChangeListener(this);
 
       List<GameRepresentation> games = client.getGames();
@@ -141,12 +142,6 @@ public class HighscoreCardsController implements Initializable, ObservedProperty
   }
 
   @FXML
-  private void onColorSelect() {
-    ColorPicker p = new ColorPicker(Color.WHITE);
-    p.show();
-  }
-
-  @FXML
   private void onGenerateClick() {
     GameRepresentation value = tableCombo.getValue();
     refreshPreview(value);
@@ -156,9 +151,15 @@ public class HighscoreCardsController implements Initializable, ObservedProperty
   }
 
   private void initFields() {
+    BindingUtil.bindCheckbox(enableCardGenerationCheckbox, properties, "card.generation.enabled");
+    enableCardGenerationCheckbox.selectedProperty().addListener((observableValue, aBoolean, t1) -> popperScreenCombo.setDisable(!t1));
+    popperScreenCombo.setDisable(!enableCardGenerationCheckbox.selectedProperty().get());
+
     BindingUtil.bindFontLabel(titleFontLabel, properties, "card.title");
     BindingUtil.bindFontLabel(tableFontLabel, properties, "card.table");
     BindingUtil.bindFontLabel(scoreFontLabel, properties, "card.score");
+
+    BindingUtil.bindColorPicker(fontColorSelector, properties, "card.font.color");
 
     BindingUtil.bindTableComboBox(client, tableCombo, properties, "card.sampleTable");
 
@@ -166,19 +167,14 @@ public class HighscoreCardsController implements Initializable, ObservedProperty
     BindingUtil.bindComboBox(popperScreenCombo, properties, "popper.screen");
 
     BindingUtil.bindCheckbox(useDirectB2SCheckbox, properties, "card.useDirectB2S");
-    useDirectB2SCheckbox.selectedProperty().addListener(new ChangeListener<Boolean>() {
-      @Override
-      public void changed(ObservableValue<? extends Boolean> observableValue, Boolean aBoolean, Boolean t1) {
-        imageRatioCombo.setDisable(!t1);
-      }
-    });
+    useDirectB2SCheckbox.selectedProperty().addListener((observableValue, aBoolean, t1) -> imageRatioCombo.setDisable(!t1));
 
     imageRatioCombo.setItems(FXCollections.observableList(Arrays.asList("RATIO_16x9", "RATIO_4x3")));
     imageRatioCombo.setDisable(!useDirectB2SCheckbox.selectedProperty().get());
 
     BindingUtil.bindComboBox(imageRatioCombo, properties, "card.ratio");
 
-// backgroundImageCombo;
+//    backgroundImageCombo;
     BindingUtil.bindTextField(titleText, properties, "card.title.text");
     BindingUtil.bindSlider(brightenSlider, properties, "card.alphacomposite.white");
     BindingUtil.bindSlider(darkenSlider, properties, "card.alphacomposite.black");
@@ -215,6 +211,8 @@ public class HighscoreCardsController implements Initializable, ObservedProperty
 
   @Override
   public void changed(@NonNull String propertiesName, @NonNull String key, @Nullable String updatedValue) {
-    this.onGenerateClick();
+    if(!ignoreList.contains(key)) {
+      this.onGenerateClick();
+    }
   }
 }

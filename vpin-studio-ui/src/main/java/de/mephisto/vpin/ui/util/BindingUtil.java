@@ -10,6 +10,7 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.scene.control.*;
 import javafx.scene.control.TextField;
+import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontPosture;
 import org.apache.commons.lang3.StringUtils;
@@ -43,16 +44,16 @@ public class BindingUtil {
   public static void bindComboBox(ComboBox<String> comboBox, ObservedProperties properties, String property) {
     String value = properties.getProperty(property, "");
     StringProperty stringProperty = new SimpleStringProperty();
-    comboBox.setValue(value);
     Bindings.bindBidirectional(stringProperty, comboBox.valueProperty());
+    comboBox.setValue(value);
     comboBox.valueProperty().addListener((observableValue, s, t1) -> properties.set(property, t1));
   }
 
   public static void bindCheckbox(CheckBox checkbox, ObservedProperties properties, String property) {
     boolean value = properties.getProperty(property, false);
     BooleanProperty booleanProperty = new SimpleBooleanProperty();
-    booleanProperty.set(value);
     Bindings.bindBidirectional(booleanProperty, checkbox.selectedProperty());
+    booleanProperty.set(value);
     checkbox.selectedProperty().addListener((observableValue, s, t1) -> properties.set(property, String.valueOf(t1)));
   }
 
@@ -112,7 +113,6 @@ public class BindingUtil {
     });
   }
 
-
   public static void bindSlider(Slider slider, ObservedProperties properties, String property) {
     int value = properties.getProperty(property, 0);
     slider.setValue(value);
@@ -125,5 +125,24 @@ public class BindingUtil {
         }, 100);
       }
     });
+  }
+
+  public static void bindColorPicker(ColorPicker colorPicker, ObservedProperties properties, String property) {
+    String value = properties.getProperty(property, "#FFFFFF");
+    Color colorValue = Color.web(value);
+    colorPicker.setValue(colorValue);
+    colorPicker.valueProperty().addListener((observableValue, color, t1) -> {
+      String hex = toHexString(t1);
+      properties.set(property, hex);
+    });
+  }
+
+  private static String format(double val) {
+    String in = Integer.toHexString((int) Math.round(val * 255));
+    return in.length() == 1 ? "0" + in : in;
+  }
+
+  private static String toHexString(Color value) {
+    return "#" + (format(value.getRed()) + format(value.getGreen()) + format(value.getBlue()));
   }
 }

@@ -138,10 +138,10 @@ public class Highscore {
       result.add(new Score(initials1, score1, 1));
     }
     if (!StringUtils.isEmpty(this.score2)) {
-      result.add(new Score(initials2, score2, 1));
+      result.add(new Score(initials2, score2, 2));
     }
     if (!StringUtils.isEmpty(this.score3)) {
-      result.add(new Score(initials3, score3, 1));
+      result.add(new Score(initials3, score3, 3));
     }
     return result;
   }
