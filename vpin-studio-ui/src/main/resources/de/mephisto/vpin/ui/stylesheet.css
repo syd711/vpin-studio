@@ -62,6 +62,12 @@
     -fx-cursor: hand;
 }
 
+.thumbnail-preview {
+    -fx-border-style: solid solid solid solid;
+    -fx-border-color: #FFFFFF;
+    -fx-border-width: 3;
+}
+
 /**
  * Navigation
  */

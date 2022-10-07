@@ -6,6 +6,7 @@ import de.mephisto.vpin.restclient.ObservedPropertyChangeListener;
 import de.mephisto.vpin.restclient.VPinStudioClient;
 import de.mephisto.vpin.restclient.representations.GameRepresentation;
 import de.mephisto.vpin.ui.util.BindingUtil;
+import de.mephisto.vpin.ui.util.ImageUtil;
 import de.mephisto.vpin.ui.util.TransitionUtil;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
@@ -17,16 +18,21 @@ import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
+import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontPosture;
+import org.apache.commons.io.IOUtils;
 import org.controlsfx.dialog.FontSelectorDialog;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.InputStream;
+import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.io.*;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -47,6 +53,9 @@ public class HighscoreCardsController implements Initializable, ObservedProperty
 
   @FXML
   private Label tableFontLabel;
+
+  @FXML
+  private ImageView rawDirectB2SImage;
 
   @FXML
   private CheckBox enableCardGenerationCheckbox;
@@ -118,6 +127,30 @@ public class HighscoreCardsController implements Initializable, ObservedProperty
   }
 
   @FXML
+  private void onOpenImage() {
+    GameRepresentation game = tableCombo.getValue();
+    if(game != null) {
+      try {
+        ByteArrayInputStream s = client.getHighscoreCard(game);
+        byte[] bytes = s.readAllBytes();
+        File png = File.createTempFile("vpin-studio", ".png");
+        png.deleteOnExit();
+        IOUtils.write(bytes, new FileOutputStream(png));
+        s.close();
+
+        Desktop.getDesktop().open(png);
+      } catch (IOException e) {
+        LOG.error("Failed to create image temp file: " + e.getMessage(), e);
+      }
+    }
+  }
+
+  @FXML
+  private void onGenerateAll() {
+
+  }
+
+  @FXML
   private void onTableRefresh() {
     List<GameRepresentation> games = client.getGames();
     tableCombo.getItems().clear();
@@ -172,6 +205,9 @@ public class HighscoreCardsController implements Initializable, ObservedProperty
     imageRatioCombo.setItems(FXCollections.observableList(Arrays.asList("RATIO_16x9", "RATIO_4x3")));
     imageRatioCombo.setDisable(!useDirectB2SCheckbox.selectedProperty().get());
 
+    imageRatioCombo.setCellFactory(c -> new BindingUtil.RationListCell());
+    imageRatioCombo.setButtonCell(new BindingUtil.RationListCell());
+
     BindingUtil.bindComboBox(imageRatioCombo, properties, "card.ratio");
 
 //    backgroundImageCombo;
@@ -184,7 +220,23 @@ public class HighscoreCardsController implements Initializable, ObservedProperty
     BindingUtil.bindSpinner(wheelImageSpinner, properties, "card.highscores.row.padding.left");
     BindingUtil.bindSpinner(rowSeparatorSpinner, properties, "card.highscores.row.separator");
 
+    tableCombo.valueProperty().addListener((observableValue, gameRepresentation, t1) -> refreshRawPreview(t1));
+
+    GameRepresentation value = tableCombo.getValue();
+    refreshRawPreview(value);
+
     this.onGenerateClick();
+  }
+
+  private void refreshRawPreview(@Nullable GameRepresentation game) {
+    try {
+      InputStream input = client.getDirectB2SImage(game);
+      Image image = new Image(input);
+      rawDirectB2SImage.setImage(image);
+      input.close();
+    } catch (IOException e) {
+      LOG.error("Failed to load raw b2s: " + e.getMessage(), e);
+    }
   }
 
   private void refreshPreview(@Nullable GameRepresentation game) {
@@ -196,8 +248,7 @@ public class HighscoreCardsController implements Initializable, ObservedProperty
     Platform.runLater(() -> {
       try {
         TransitionUtil.createOutFader(cardPreview, 300).play();
-        String url = "http://localhost:8089/api/v1/generator/card/" + game.getId();
-        InputStream input = new URL(url).openStream();
+        InputStream input = client.getHighscoreCard(game);
         Image image = new Image(input);
         cardPreview.setImage(image);
         input.close();

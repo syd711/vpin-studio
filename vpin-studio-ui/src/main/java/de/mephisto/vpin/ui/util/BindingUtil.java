@@ -15,6 +15,8 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontPosture;
 import org.apache.commons.lang3.StringUtils;
 
+import java.util.List;
+
 public class BindingUtil {
 
   private static Debouncer debouncer = new Debouncer();
@@ -144,5 +146,19 @@ public class BindingUtil {
 
   private static String toHexString(Color value) {
     return "#" + (format(value.getRed()) + format(value.getGreen()) + format(value.getBlue()));
+  }
+
+  public static class RationListCell extends ListCell<String> {
+    protected void updateItem(String item, boolean empty){
+      super.updateItem(item, empty);
+      setText(null);
+      if(item!=null){
+        setText(item
+            .replaceAll("_", " ")
+            .replaceAll("ATIO", "atio")
+            .replaceAll("x", " x ")
+        );
+      }
+    }
   }
 }

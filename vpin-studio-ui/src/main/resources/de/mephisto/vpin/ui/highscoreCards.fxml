@@ -2,6 +2,7 @@
 
 <?import java.lang.String?>
 <?import javafx.geometry.Insets?>
+<?import javafx.geometry.Rectangle2D?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.ColorPicker?>
@@ -270,7 +271,7 @@
             <Spinner fx:id="rowSeparatorSpinner" editable="true" layoutX="22.0" layoutY="532.0" prefHeight="26.0" prefWidth="303.0" styleClass="widget-default" />
          </children>
          <padding>
-            <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
+            <Insets bottom="12.0" left="12.0" right="12.0" />
          </padding></VBox>
    </right>
    <center>
@@ -287,7 +288,7 @@
                         <String fx:value="submit-button" />
                      </styleClass>
                   </Button>
-                  <Button layoutX="117.0" layoutY="18.0" mnemonicParsing="false" stylesheets="@stylesheet.css" text="Open Image">
+                  <Button layoutX="117.0" layoutY="18.0" mnemonicParsing="false" onAction="#onOpenImage" stylesheets="@stylesheet.css" text="Open Image">
                      <font>
                         <Font size="18.0" />
                      </font>
@@ -296,7 +297,7 @@
                         <String fx:value="submit-button" />
                      </styleClass>
                   </Button>
-                  <Button layoutX="10.0" layoutY="18.0" mnemonicParsing="false" stylesheets="@stylesheet.css" text="Generate All">
+                  <Button layoutX="10.0" layoutY="18.0" mnemonicParsing="false" onAction="#onGenerateAll" stylesheets="@stylesheet.css" text="Generate All">
                      <font>
                         <Font size="18.0" />
                      </font>
@@ -386,8 +387,15 @@
                         <Insets left="24.0" right="24.0" />
                      </BorderPane.margin>
                      <padding>
-                        <Insets bottom="24.0" left="24.0" right="24.0" top="24.0" />
+                        <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
                      </padding>
+                     <right>
+                        <ImageView fx:id="rawDirectB2SImage" fitHeight="108.0" fitWidth="186.0" pickOnBounds="true" preserveRatio="true" styleClass="thumbnail-preview" BorderPane.alignment="CENTER">
+                           <viewport>
+                              <Rectangle2D />
+                           </viewport>
+                        </ImageView>
+                     </right>
                   </BorderPane>
                </top>
             </BorderPane>

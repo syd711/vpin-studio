@@ -5,6 +5,7 @@ import de.mephisto.vpin.restclient.representations.GameRepresentation;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
@@ -14,13 +15,11 @@ import java.util.*;
 public class VPinStudioClient implements ObservedPropertyChangeListener {
   private final static String API = "api/v1/";
 
-  private Map<String,ObservedProperties> observedProperties = new HashMap<>();
+  private Map<String, ObservedProperties> observedProperties = new HashMap<>();
 
-  public byte[] getDirectB2SImage(int gameId) {
-//    http://localhost:8089/assets/directb2s/7/cropped/RATIO_4x3
-    //http://localhost:8089/games/7
-//    http://localhost:8089/generator/overlay
-    return RestClient.getInstance().readBinary(API + "assets/directb2s/" + gameId + "/raw");
+  public InputStream getDirectB2SImage(GameRepresentation gameId) {
+    byte[] bytes = RestClient.getInstance().readBinary(API + "directb2s/" + gameId.getId());
+    return new ByteArrayInputStream(bytes);
   }
 
   public GameRepresentation getGame(int id) {
@@ -31,25 +30,20 @@ public class VPinStudioClient implements ObservedPropertyChangeListener {
     return Arrays.asList(RestClient.getInstance().get(API + "games", GameRepresentation[].class));
   }
 
+  public ByteArrayInputStream getHighscoreCard(GameRepresentation game) {
+    int gameId = game.getId();
+    byte[] bytes = RestClient.getInstance().readBinary(API + "generator/card/" + gameId);
+    return new ByteArrayInputStream(bytes);
+  }
+
   public byte[] getGameMedia(GameRepresentation game, GameMedia gameMedia) {
     String url = API + "games/" + game.getId() + "/media/" + gameMedia.name();
     return RestClient.getInstance().readBinary(url);
   }
 
-  public InputStream getHighscoreCard(int id) {
-    try {
-      URL url = new URL("/generator/overlay");
-      HttpURLConnection con =(HttpURLConnection)url.openConnection();
-      return con.getInputStream();
-    } catch (IOException e) {
-
-    }
-    return null;
-  }
-
   public ObservedProperties getProperties(String propertiesName) {
-    if(!observedProperties.containsKey(propertiesName)) {
-      Map<String,Object> result = RestClient.getInstance().get(API + "properties/" + propertiesName, Map.class);
+    if (!observedProperties.containsKey(propertiesName)) {
+      Map<String, Object> result = RestClient.getInstance().get(API + "properties/" + propertiesName, Map.class);
       Properties properties = new Properties();
       properties.putAll(result);
       ObservedProperties observedProperties = new ObservedProperties(propertiesName, properties);
@@ -61,7 +55,7 @@ public class VPinStudioClient implements ObservedPropertyChangeListener {
   }
 
   public void setBundleProperty(String bundle, String key, String value) {
-    Map<String,String> model = new HashMap<>();
+    Map<String, String> model = new HashMap<>();
     model.put(key, value);
     RestClient.getInstance().put(API + "properties/" + bundle, model);
   }

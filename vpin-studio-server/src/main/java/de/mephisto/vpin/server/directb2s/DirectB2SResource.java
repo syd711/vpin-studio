@@ -3,6 +3,7 @@ package de.mephisto.vpin.server.directb2s;
 import de.mephisto.vpin.server.VPinStudioServer;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameService;
+import de.mephisto.vpin.server.system.SystemService;
 import de.mephisto.vpin.server.util.RequestUtil;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import org.apache.commons.io.FilenameUtils;
@@ -38,14 +39,16 @@ public class DirectB2SResource {
   @Autowired
   private GameService service;
 
-  @GetMapping("/{id}/raw")
-  public ResponseEntity<byte[]> getRaw(@PathVariable("id") int id) {
+  @GetMapping("/{id}")
+  public ResponseEntity<byte[]> getRaw(@PathVariable("id") int id) throws Exception {
     File file = null;
     try {
       Game game = service.getGame(id);
       if (game != null) {
         file = directB2SManager.extractDirectB2SBackgroundImage(game);
-        return RequestUtil.serializeImage(file);
+        if(file != null && file.exists()) {
+          return RequestUtil.serializeImage(file);
+        }
       }
       else {
         LOG.warn("No GameInfo found for id " + id);
@@ -58,7 +61,7 @@ public class DirectB2SResource {
         file.delete();
       }
     }
-    return null;
+    return  RequestUtil.serializeImage(new File(SystemService.RESOURCES, "empty-b2s-preview.png"));
   }
 
   @GetMapping("/{id}/cropped/{ratio}")

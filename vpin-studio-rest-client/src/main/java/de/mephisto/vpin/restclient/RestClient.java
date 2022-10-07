@@ -25,7 +25,7 @@ import java.util.Map;
  *
  */
 public class RestClient implements ClientHttpRequestInterceptor {
-  private final static Logger LOG = LoggerFactory.getLogger(RestClient.class);
+  private final static Logger LOG = LoggerFactory.getLogger(RestTemplate.class);
   public static final String SCHEME = "http";
   public static final String HOST = "localhost";
   public static final int PORT = 8089;
@@ -111,7 +111,8 @@ public class RestClient implements ClientHttpRequestInterceptor {
     ByteArrayOutputStream baos = new ByteArrayOutputStream();
     InputStream is = null;
     try {
-      URL url = new URL(resource);
+      URL url = new URL(baseUrl + resource);
+      LOG.info("HTTP GET " + url);
       HttpURLConnection con =(HttpURLConnection)url.openConnection();
       is = con.getInputStream();
       byte[] byteChunk = new byte[4096]; // Or whatever size you want to read in at a time.
