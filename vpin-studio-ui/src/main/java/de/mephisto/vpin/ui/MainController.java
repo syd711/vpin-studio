@@ -22,9 +22,6 @@ public class MainController implements Initializable {
   private final static int TILE_HEIGHT = 500;
 
   @FXML
-  private BorderPane avatarPane;
-
-  @FXML
   private BorderPane widget1;
 
   @FXML

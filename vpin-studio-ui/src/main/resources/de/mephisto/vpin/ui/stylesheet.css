@@ -1,3 +1,16 @@
+.header-button {
+    -fx-background-color: #272B2F;
+    -fx-border-style: hidden hidden hidden hidden;
+    -fx-text-fill: #DDDDDD;
+}
+
+.header-button:hover {
+    -fx-background-color: #333366;
+    -fx-border-style: hidden hidden hidden hidden;
+    -fx-text-fill: #fff8f8;
+    -fx-cursor: hand;
+}
+
 .navigation-button {
     -fx-background-color: #272B2F;
     -fx-border-style: hidden hidden hidden solid;
@@ -47,6 +60,14 @@
     -fx-background-color: #FF3333;
     -fx-text-fill: #DDDDDD;
     -fx-cursor: hand;
+}
+
+/**
+ * Navigation
+ */
+.navigation-panel {
+    -fx-width: 300px;
+    -fx-background-color: #272b2f;
 }
 
 /**

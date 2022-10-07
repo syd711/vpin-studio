@@ -84,13 +84,13 @@ public class HighscoreCardsController implements Initializable, ObservedProperty
   private Slider borderSlider;
 
   @FXML
-  private Spinner marginTopSpinner;
+  private Spinner<Integer> marginTopSpinner;
 
   @FXML
-  private Spinner wheelImageSpinner;
+  private Spinner<Integer> wheelImageSpinner;
 
   @FXML
-  private Spinner rowSeparatorSpinner;
+  private Spinner<Integer> rowSeparatorSpinner;
 
   @FXML
   private ComboBox<GameRepresentation> tableCombo;
@@ -156,15 +156,9 @@ public class HighscoreCardsController implements Initializable, ObservedProperty
   }
 
   private void initFields() {
-    titleFontLabel.setText(properties.getProperty("card.title.font.name", "Arial")
-        + ", " + properties.getProperty("card.title.font.style", "Regular")
-        + ", " + properties.getProperty("card.title.font.size", "32") + "px");
-    tableFontLabel.setText(properties.getProperty("card.table.font.name", "Arial")
-        + ", " + properties.getProperty("card.table.font.style", "Regular")
-        + ", " + properties.getProperty("card.table.font.size", "32") + "px");
-    scoreFontLabel.setText(properties.getProperty("card.score.font.name", "Arial")
-        + ", " + properties.getProperty("card.score.font.style", "Regular")
-        + ", " + properties.getProperty("card.score.font.size", "32") + "px");
+    BindingUtil.bindFontLabel(titleFontLabel, properties, "card.title");
+    BindingUtil.bindFontLabel(tableFontLabel, properties, "card.table");
+    BindingUtil.bindFontLabel(scoreFontLabel, properties, "card.score");
 
     BindingUtil.bindTableComboBox(client, tableCombo, properties, "card.sampleTable");
 

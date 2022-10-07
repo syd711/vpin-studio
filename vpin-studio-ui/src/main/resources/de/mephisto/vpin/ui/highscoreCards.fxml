@@ -21,14 +21,14 @@
 <?import javafx.scene.text.Font?>
 <?import org.kordamp.ikonli.javafx.FontIcon?>
 
-<BorderPane prefHeight="1293.0" prefWidth="1795.0" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.HighscoreCardsController">
+<BorderPane prefHeight="1267.0" prefWidth="1510.0" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.HighscoreCardsController">
    <left>
-       <fx:include fx:id="navigation" source="navigation.fxml" />
+       <fx:include fx:id="navigation" prefWidth="300.0" source="navigation.fxml" />
    </left>
    <right>
       <VBox prefHeight="1354.0" prefWidth="300.0" style="-fx-background-color: #272b2f;" BorderPane.alignment="CENTER">
          <children>
-            <Label layoutX="22.0" layoutY="262.0" text="Font Settings" textFill="WHITE">
+            <Label layoutX="22.0" layoutY="215.0" text="Font Settings" textFill="WHITE">
                <font>
                   <Font name="System Bold" size="24.0" />
                </font>
@@ -69,7 +69,7 @@
                         <Font size="14.0" />
                      </font>
                   </Label>
-                  <Button mnemonicParsing="false" onAction="#onFontTitleSelect" prefHeight="30.0" prefWidth="30.0">
+                  <Button mnemonicParsing="false" onAction="#onFontTableSelect" prefHeight="30.0" prefWidth="30.0">
                      <font>
                         <Font size="14.0" />
                      </font>
@@ -107,13 +107,18 @@
                   <Insets bottom="12.0" />
                </padding>
             </HBox>
-            <ColorPicker />
+            <Label layoutX="22.0" layoutY="57.0" text="Font Color:" textFill="WHITE">
+               <font>
+                  <Font size="14.0" />
+               </font>
+            </Label>
+            <ColorPicker prefWidth="134.0" />
             <Label layoutX="22.0" layoutY="374.0" text="Background Settings" textFill="WHITE">
                <font>
                   <Font name="System Bold" size="24.0" />
                </font>
                <padding>
-                  <Insets top="32.0" />
+                  <Insets top="24.0" />
                </padding>
             </Label>
             <CheckBox fx:id="useDirectB2SCheckbox" mnemonicParsing="false" stylesheets="@stylesheet.css" text="Use DirectB2S Backgrounds" textFill="WHITE">
@@ -165,7 +170,7 @@
                   <Font name="System Bold" size="24.0" />
                </font>
                <VBox.margin>
-                  <Insets top="32.0" />
+                  <Insets top="24.0" />
                </VBox.margin>
             </Label>
             <Label layoutX="22.0" layoutY="711.0" text="Title:" textFill="WHITE">
@@ -265,14 +270,11 @@
             <Spinner fx:id="rowSeparatorSpinner" editable="true" layoutX="22.0" layoutY="532.0" prefHeight="26.0" prefWidth="303.0" styleClass="widget-default" />
          </children>
          <padding>
-            <Insets bottom="12.0" left="12.0" right="12.0" top="200.0" />
+            <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
          </padding></VBox>
    </right>
    <center>
       <BorderPane style="-fx-background-color: #212529;" BorderPane.alignment="CENTER">
-         <top>
-            <fx:include fx:id="header" source="header.fxml" />
-         </top>
          <bottom>
             <ToolBar nodeOrientation="RIGHT_TO_LEFT" prefHeight="70.0" prefWidth="1195.0" style="-fx-background-color: #212529;" BorderPane.alignment="BOTTOM_RIGHT">
               <items>
@@ -329,16 +331,17 @@
                   </BorderPane>
                </center>
                <top>
-                  <BorderPane prefHeight="136.0" prefWidth="1117.0" styleClass="subpanel" stylesheets="@stylesheet.css" BorderPane.alignment="CENTER">
+                  <BorderPane prefHeight="150.0" prefWidth="1117.0" styleClass="subpanel" stylesheets="@stylesheet.css" BorderPane.alignment="CENTER">
                      <left>
                         <GridPane alignment="CENTER_LEFT" prefHeight="67.0" prefWidth="586.0" BorderPane.alignment="CENTER">
                           <columnConstraints>
-                            <ColumnConstraints hgrow="SOMETIMES" maxWidth="321.5999755859375" minWidth="10.0" prefWidth="210.0000244140625" />
-                            <ColumnConstraints hgrow="SOMETIMES" maxWidth="377.5999755859375" minWidth="0.0" prefWidth="375.5999755859375" />
+                            <ColumnConstraints hgrow="SOMETIMES" maxWidth="321.5999755859375" minWidth="10.0" prefWidth="235.200048828125" />
+                            <ColumnConstraints hgrow="SOMETIMES" maxWidth="377.5999755859375" minWidth="0.0" prefWidth="351.199951171875" />
                           </columnConstraints>
                           <rowConstraints>
                             <RowConstraints maxHeight="44.000006103515624" minHeight="10.0" prefHeight="32.6" vgrow="SOMETIMES" />
                             <RowConstraints maxHeight="42.99999084472656" minHeight="10.0" prefHeight="34.2" vgrow="SOMETIMES" />
+                              <RowConstraints maxHeight="42.99999084472656" minHeight="10.0" prefHeight="34.2" vgrow="SOMETIMES" />
                           </rowConstraints>
                            <children>
                               <Label text="Sample Table:" textFill="WHITE">
@@ -370,6 +373,12 @@
                                  </children>
                               </HBox>
                               <ComboBox fx:id="popperScreenCombo" prefWidth="150.0" stylesheets="@stylesheet.css" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                              <Label layoutX="10.0" layoutY="47.0" text="Card Generation Enabled:" textFill="WHITE" GridPane.rowIndex="2">
+                                 <font>
+                                    <Font name="System Bold" size="18.0" />
+                                 </font>
+                              </Label>
+                              <CheckBox mnemonicParsing="false" text="CheckBox" GridPane.columnIndex="1" GridPane.rowIndex="2" />
                            </children>
                         </GridPane>
                      </left>
@@ -385,4 +394,7 @@
          </center>
       </BorderPane>
    </center>
+   <top>
+      <fx:include fx:id="header" source="header.fxml" />
+   </top>
 </BorderPane>

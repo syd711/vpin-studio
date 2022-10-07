@@ -12,6 +12,7 @@ module de.mephisto.vpin.ui {
   requires org.apache.commons.lang3;
 
   // add icon pack modules
+  requires org.kordamp.ikonli.materialdesign2;
   requires org.kordamp.ikonli.simplelineicons;
   requires com.github.spotbugs.annotations;
   requires filters;

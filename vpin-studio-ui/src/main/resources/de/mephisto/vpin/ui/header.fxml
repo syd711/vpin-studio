@@ -1,25 +1,79 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
+<?import org.kordamp.ikonli.javafx.FontIcon?>
 
-<BorderPane minHeight="200.0" style="-fx-background-color: #212529;" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1">
-   <bottom>
-      <Label alignment="BASELINE_LEFT" text="Version 1.0.1" textFill="WHITE" BorderPane.alignment="TOP_LEFT">
-         <padding>
-            <Insets bottom="73.0" />
-         </padding></Label>
-   </bottom>
+<BorderPane minHeight="200.0" prefHeight="200.0" prefWidth="1215.0" style="-fx-background-color: #212529;" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.HeaderController">
    <center>
-      <Label maxHeight="50.0" text="VPin Studio" textFill="WHITE" BorderPane.alignment="TOP_LEFT">
-         <font>
-            <Font name="DejaVu Sans Mono Bold" size="48.0" />
-         </font>
-      </Label>
+      <BorderPane BorderPane.alignment="TOP_LEFT">
+         <left>
+            <VBox BorderPane.alignment="CENTER">
+               <children>
+                  <Label maxHeight="50.0" text="VPin Studio" textFill="WHITE">
+                     <font>
+                        <Font name="DejaVu Sans Mono Bold" size="48.0" />
+                     </font>
+                  </Label>
+                  <Label alignment="BASELINE_LEFT" text="Version 1.0.1" textFill="WHITE">
+                     <padding>
+                        <Insets bottom="73.0" />
+                     </padding>
+                  </Label>
+               </children>
+            </VBox>
+         </left>
+         <BorderPane.margin>
+            <Insets left="24.0" top="24.0" />
+         </BorderPane.margin>
+      </BorderPane>
    </center>
-   <padding>
-      <Insets bottom="24.0" left="24.0" right="24.0" top="24.0" />
-   </padding>
+   <left>
+      <BorderPane fx:id="avatarPane" prefHeight="150.0" prefWidth="300.0" styleClass="navigation-panel" stylesheets="@stylesheet.css" BorderPane.alignment="CENTER">
+         <padding>
+            <Insets bottom="24.0" left="24.0" right="24.0" top="24.0" />
+         </padding></BorderPane>
+   </left>
+   <right>
+      <BorderPane prefHeight="200.0" prefWidth="300.0" styleClass="navigation-panel" stylesheets="@stylesheet.css" BorderPane.alignment="CENTER">
+         <BorderPane.margin>
+            <Insets />
+         </BorderPane.margin>
+         <padding>
+            <Insets right="6.0" top="6.0" />
+         </padding>
+         <top>
+            <HBox alignment="BASELINE_RIGHT" prefHeight="60.0" prefWidth="298.0">
+               <children>
+                  <Button mnemonicParsing="false" onAction="#onHideClick" prefHeight="34.0" prefWidth="34.0" styleClass="header-button" stylesheets="@stylesheet.css">
+                     <graphic>
+                        <FontIcon iconColor="#6666ff" iconLiteral="mdi2w-window-minimize" iconSize="14" />
+                     </graphic>
+                  </Button>
+                  <Button mnemonicParsing="false" onAction="#onMaximize" prefHeight="34.0" prefWidth="34.0" styleClass="header-button" stylesheets="@stylesheet.css">
+                     <graphic>
+                        <FontIcon iconColor="#6666ff" iconLiteral="mdi2w-window-maximize" iconSize="14" />
+                     </graphic>
+                     <HBox.margin>
+                        <Insets left="6.0" />
+                     </HBox.margin>
+                  </Button>
+                  <Button mnemonicParsing="false" onAction="#onCloseClick" prefHeight="34.0" prefWidth="34.0" styleClass="header-button" stylesheets="@stylesheet.css">
+                     <graphic>
+                        <FontIcon iconColor="#6666ff" iconLiteral="mdi2w-window-close" iconSize="14" />
+                     </graphic>
+                     <HBox.margin>
+                        <Insets left="6.0" />
+                     </HBox.margin>
+                  </Button>
+               </children>
+            </HBox>
+         </top>
+      </BorderPane>
+   </right>
 </BorderPane>

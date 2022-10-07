@@ -43,17 +43,6 @@ public class NavigationController implements Initializable {
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
-    Tile avatar = TileBuilder.create()
-        .skinType(Tile.SkinType.IMAGE)
-        .prefSize(300, 300)
-        .backgroundColor(Color.TRANSPARENT)
-        .image(new Image(MainController.class.getResourceAsStream("dashboard.png")))
-        .imageMask(Tile.ImageMask.ROUND)
-        .text("Whatever text")
-        .textSize(Tile.TextSize.BIGGER)
-        .textAlignment(TextAlignment.CENTER)
-        .build();
-    avatarPane.setCenter(avatar);
 
   }
 }

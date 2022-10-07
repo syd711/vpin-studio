@@ -66,6 +66,18 @@ public class BindingUtil {
     }, 1000));
   }
 
+  public static void bindFontLabel(Label label, ObservedProperties properties, String key) {
+    String name = properties.getProperty(key + ".font.name", "Arial");
+    int size = properties.getProperty(key + ".font.size", 72);
+    String style = properties.getProperty(key + ".font.style", FontPosture.REGULAR.name());
+
+    String text = name + ", " + style + ", " + size + "px";
+    Font font = Font.font(name, FontPosture.findByName(style), 14);
+    label.setFont(font);
+    label.setText(text);
+    label.setTooltip(new Tooltip(text));
+  }
+
   public static void bindFontSelector(ObservedProperties properties, String key, Label label) {
     String name = properties.getProperty(key + ".font.name", "Arial");
     int size = properties.getProperty(key + ".font.size", 72);
@@ -87,7 +99,13 @@ public class BindingUtil {
           properties.set(key + ".font.size", String.valueOf((int)result.getSize()));
           properties.set(key + ".font.style", result.getStyle());
 
-          Platform.runLater(() -> label.setText(result.getName() + ", " + result.getStyle() + ", " + result.getSize() + "px"));
+          Font labelFont = Font.font(result.getName(), FontPosture.findByName(result.getStyle()), 14);
+          label.setFont(labelFont);
+          String labelText = result.getName() + ", " + result.getStyle() + ", " + result.getSize() + "px";
+          Platform.runLater(() -> {
+            label.setText(labelText);
+            label.setTooltip(new Tooltip(labelText));
+          });
         }, 100);
 
       }
