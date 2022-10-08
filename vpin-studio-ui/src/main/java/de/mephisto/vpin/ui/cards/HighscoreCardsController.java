@@ -17,6 +17,7 @@ import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
@@ -35,6 +36,12 @@ import java.util.ResourceBundle;
 
 public class HighscoreCardsController implements Initializable, ObservedPropertyChangeListener {
   private final static Logger LOG = LoggerFactory.getLogger(HighscoreCardsController.class);
+
+  @FXML
+  private Label resolutionLabel;
+
+  @FXML
+  private Button openDirectB2SImageButton;
 
   @FXML
   private ImageView cardPreview;
@@ -67,7 +74,7 @@ public class HighscoreCardsController implements Initializable, ObservedProperty
   private ColorPicker fontColorSelector;
 
   @FXML
-  private ComboBox backgroundImageCombo;
+  private ComboBox<String> backgroundImageCombo;
 
   @FXML
   private TextField titleText;
@@ -95,6 +102,7 @@ public class HighscoreCardsController implements Initializable, ObservedProperty
 
   @FXML
   private ComboBox<GameRepresentation> tableCombo;
+
 
   private VPinStudioClient client;
 
@@ -141,8 +149,7 @@ public class HighscoreCardsController implements Initializable, ObservedProperty
 
   @FXML
   private void onGenerateAll() throws IOException {
-    String screen = properties.getProperty("popper.screen", "Other2");
-    WidgetFactory.createProgressDialog(new HighscoreGeneratorProgressModel(client, screen, "Generating Highscore Cards"), VPinStudioApplication.stage);
+    WidgetFactory.createProgressDialog(new HighscoreGeneratorProgressModel(client, "Generating Highscore Cards"), VPinStudioApplication.stage);
   }
 
   @FXML
@@ -167,6 +174,25 @@ public class HighscoreCardsController implements Initializable, ObservedProperty
   @FXML
   private void onFontScoreSelect() {
     BindingUtil.bindFontSelector(properties, "card.score", scoreFontLabel);
+  }
+
+  @FXML
+  private void onOpenDirectB2SBackground() {
+    GameRepresentation game = tableCombo.getValue();
+    if(game != null) {
+      try {
+        ByteArrayInputStream s = client.getDirectB2SImage(game);
+        byte[] bytes = s.readAllBytes();
+        File png = File.createTempFile("vpin-studio-directb2s-", ".png");
+        png.deleteOnExit();
+        IOUtils.write(bytes, new FileOutputStream(png));
+        s.close();
+
+        Desktop.getDesktop().open(png);
+      } catch (IOException e) {
+        LOG.error("Failed to create image temp file: " + e.getMessage(), e);
+      }
+    }
   }
 
   @FXML
@@ -200,12 +226,16 @@ public class HighscoreCardsController implements Initializable, ObservedProperty
     imageRatioCombo.setItems(FXCollections.observableList(Arrays.asList("RATIO_16x9", "RATIO_4x3")));
     imageRatioCombo.setDisable(!useDirectB2SCheckbox.selectedProperty().get());
 
-    imageRatioCombo.setCellFactory(c -> new BindingUtil.RationListCell());
-    imageRatioCombo.setButtonCell(new BindingUtil.RationListCell());
+    imageRatioCombo.setCellFactory(c -> new WidgetFactory.RationListCell());
+    imageRatioCombo.setButtonCell(new WidgetFactory.RationListCell());
 
     BindingUtil.bindComboBox(imageRatioCombo, properties, "card.ratio");
 
-//    backgroundImageCombo;
+    backgroundImageCombo.setItems(FXCollections.observableList(client.getBackgroundImages()));
+    backgroundImageCombo.setCellFactory(c -> new WidgetFactory.ImageListCell(client));
+    backgroundImageCombo.setButtonCell(new WidgetFactory.ImageListCell(client));
+    BindingUtil.bindComboBox(backgroundImageCombo, properties, "card.background");
+
     BindingUtil.bindTextField(titleText, properties, "card.title.text");
     BindingUtil.bindSlider(brightenSlider, properties, "card.alphacomposite.white");
     BindingUtil.bindSlider(darkenSlider, properties, "card.alphacomposite.black");
@@ -225,10 +255,20 @@ public class HighscoreCardsController implements Initializable, ObservedProperty
 
   private void refreshRawPreview(@Nullable GameRepresentation game) {
     try {
+      openDirectB2SImageButton.setVisible(false);
+      openDirectB2SImageButton.setTooltip(new Tooltip("Open directb2s image"));
       InputStream input = client.getDirectB2SImage(game);
       Image image = new Image(input);
       rawDirectB2SImage.setImage(image);
       input.close();
+
+      if(image.getWidth() > 300) {
+        openDirectB2SImageButton.setVisible(true);
+        resolutionLabel.setText("Resolution: " + (int)image.getWidth() + " x " + (int)image.getHeight());
+      }
+      else {
+        resolutionLabel.setText("");
+      }
     } catch (IOException e) {
       LOG.error("Failed to load raw b2s: " + e.getMessage(), e);
     }

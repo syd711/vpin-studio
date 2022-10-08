@@ -9,6 +9,7 @@ import de.mephisto.vpin.server.system.SystemService;
 import de.mephisto.vpin.server.util.Config;
 import de.mephisto.vpin.server.util.ImageUtil;
 import de.mephisto.vpin.server.util.RequestUtil;
+import org.apache.commons.io.FilenameUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +21,11 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.FilenameFilter;
+import java.net.URLEncoder;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import static de.mephisto.vpin.server.VPinStudioServer.API_SEGMENT;
 
@@ -57,6 +63,20 @@ public class GeneratorResource {
   @GetMapping("/cards/{gameId}")
   public boolean generateCards(@PathVariable("gameId") int gameId) throws Exception {
     return onCardGeneration(gameId, false);
+  }
+
+  @GetMapping("/backgrounds")
+  public List<String> getBackgrounds() {
+    File folder = new File(SystemService.RESOURCES, "backgrounds");
+    File[] files = folder.listFiles((dir, name) -> name.endsWith("jpg") || name.endsWith("png"));
+    return Arrays.stream(files).sorted().map(f -> FilenameUtils.getBaseName(f.getName())).collect(Collectors.toList());
+  }
+
+  @GetMapping("/background/{name}")
+  public ResponseEntity<byte[]> getBackground(@PathVariable("name") String imageName) throws Exception {
+    File folder = new File(SystemService.RESOURCES, "backgrounds");
+    File[] files = folder.listFiles((dir, name) -> URLEncoder.encode(FilenameUtils.getBaseName(name)).equals(imageName));
+    return RequestUtil.serializeImage(files[0]);
   }
 
   private BufferedImage onOverlayGeneration() throws Exception {

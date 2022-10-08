@@ -1,5 +1,6 @@
 package de.mephisto.vpin.ui.util;
 
+import de.mephisto.vpin.restclient.VPinStudioClient;
 import de.mephisto.vpin.ui.VPinStudioApplication;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
@@ -11,6 +12,9 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.layout.HBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
@@ -37,7 +41,7 @@ public class WidgetFactory {
           @Override
           protected Object call() throws Exception {
             Iterator iterator = model.getIterator();
-            int index = 1;
+            int index = 0;
             while (iterator.hasNext() && !this.isCancelled()) {
               String result = model.processNext(progressResultModel);
               long percent = index * 100 / model.getMax();
@@ -90,6 +94,45 @@ public class WidgetFactory {
     alert.setHeaderText(null);
     alert.setGraphic(null);
     alert.showAndWait();
+  }
+
+  public static class RationListCell extends ListCell<String> {
+    protected void updateItem(String item, boolean empty){
+      super.updateItem(item, empty);
+      setText(null);
+      if(item!=null){
+        setText(item
+            .replaceAll("_", " ")
+            .replaceAll("ATIO", "atio")
+            .replaceAll("x", " x ")
+        );
+      }
+    }
+  }
+
+  public static class ImageListCell extends ListCell<String> {
+    private final VPinStudioClient client;
+
+    public ImageListCell(VPinStudioClient client) {
+      this.client = client;
+    }
+
+    protected void updateItem(String item, boolean empty){
+      super.updateItem(item, empty);
+      setGraphic(null);
+      setText(null);
+      if(item!=null){
+        Image image = new Image(client.getBackgroundImage(item));
+        ImageView imageView = new ImageView(image);
+        imageView.setFitWidth(80);
+
+        int percentageWidth = (int) (80*100 / image.getWidth());
+        int height = (int) (image.getHeight() * percentageWidth / 100);
+        imageView.setFitHeight(height);
+        setGraphic(imageView);
+        setText(item);
+      }
+    }
 
   }
 }

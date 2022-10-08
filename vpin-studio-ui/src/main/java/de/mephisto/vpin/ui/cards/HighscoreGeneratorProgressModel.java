@@ -17,7 +17,7 @@ public class HighscoreGeneratorProgressModel extends ProgressModel {
 
   private final VPinStudioClient client;
 
-  public HighscoreGeneratorProgressModel(VPinStudioClient client, String screen, String title) {
+  public HighscoreGeneratorProgressModel(VPinStudioClient client, String title) {
     super(title);
     this.client = client;
     this.gameInfos = client.getGames();
@@ -37,8 +37,13 @@ public class HighscoreGeneratorProgressModel extends ProgressModel {
   public String processNext(ProgressResultModel progressResultModel) {
     try {
       GameRepresentation game = iterator.next();
-      client.generateHighscoreCard(game);
-      progressResultModel.addProcessed();
+      boolean result = client.generateHighscoreCard(game);
+      if (result) {
+        progressResultModel.addProcessed();
+      }
+      else {
+        progressResultModel.addSkipped();
+      }
       return game.getGameDisplayName();
     } catch (Exception e) {
       LOG.error("Generate card error: " + e.getMessage(), e);

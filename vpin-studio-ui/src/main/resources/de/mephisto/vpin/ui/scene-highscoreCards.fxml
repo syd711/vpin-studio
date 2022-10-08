@@ -65,7 +65,7 @@
                              </Label>
                              <HBox prefHeight="31.0" prefWidth="276.0">
                                 <children>
-                                   <ComboBox fx:id="backgroundImageCombo" prefWidth="150.0" stylesheets="@stylesheet.css" />
+                                   <ComboBox fx:id="backgroundImageCombo" prefHeight="30.0" prefWidth="254.0" stylesheets="@stylesheet.css" />
                                    <Button mnemonicParsing="false" onAction="#onTableRefresh">
                                       <font>
                                          <Font size="14.0" />
@@ -287,20 +287,45 @@
             </Accordion>
          </center>
          <top>
-            <TitledPane collapsible="false" prefHeight="205.0" prefWidth="300.0" styleClass="accordion-container" stylesheets="@stylesheet.css" text="B2S Background" BorderPane.alignment="CENTER">
+            <TitledPane collapsible="false" prefWidth="300.0" styleClass="accordion-container" stylesheets="@stylesheet.css" text="B2S Background" BorderPane.alignment="CENTER">
                <BorderPane.margin>
                   <Insets />
                </BorderPane.margin>
                <content>
-                  <TilePane alignment="CENTER" prefHeight="168.0" prefWidth="288.0" styleClass="thumbnail-preview" stylesheets="@stylesheet.css">
+                  <VBox prefHeight="151.0" prefWidth="298.0" styleClass="accordion-container">
                      <children>
-                        <ImageView fx:id="rawDirectB2SImage" fitHeight="145.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true" styleClass="thumbnail-preview">
-                           <viewport>
-                              <Rectangle2D />
-                           </viewport>
-                        </ImageView>
+                        <TilePane alignment="CENTER" prefHeight="232.0" prefWidth="298.0" styleClass="thumbnail-preview" stylesheets="@stylesheet.css">
+                           <children>
+                              <ImageView fx:id="rawDirectB2SImage" fitHeight="145.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true" styleClass="thumbnail-preview">
+                                 <viewport>
+                                    <Rectangle2D />
+                                 </viewport>
+                              </ImageView>
+                           </children>
+                           <padding>
+                              <Insets bottom="6.0" left="6.0" right="6.0" top="6.0" />
+                           </padding>
+                        </TilePane>
+                        <BorderPane>
+                           <VBox.margin>
+                              <Insets top="6.0" />
+                           </VBox.margin>
+                           <left>
+                              <Label fx:id="resolutionLabel" text="Label" BorderPane.alignment="CENTER" />
+                           </left>
+                           <right>
+                              <Button fx:id="openDirectB2SImageButton" mnemonicParsing="false" onAction="#onOpenDirectB2SBackground" BorderPane.alignment="CENTER">
+                                 <graphic>
+                                    <FontIcon iconColor="WHITE" iconLiteral="mdi2e-eye" />
+                                 </graphic>
+                                 <font>
+                                    <Font size="10.0" />
+                                 </font>
+                              </Button>
+                           </right>
+                        </BorderPane>
                      </children>
-                  </TilePane>
+                  </VBox>
                </content>
                <font>
                   <Font size="14.0" />
@@ -387,12 +412,12 @@
                                  <children>
                                     <Label text="Sample Table:" textFill="WHITE">
                                        <font>
-                                          <Font name="System Bold" size="18.0" />
+                                          <Font size="18.0" />
                                        </font>
                                     </Label>
                                     <Label text="PinUP Popper Screen:" textFill="WHITE" GridPane.rowIndex="2">
                                        <font>
-                                          <Font name="System Bold" size="18.0" />
+                                          <Font size="18.0" />
                                        </font>
                                     </Label>
                                     <HBox alignment="CENTER_LEFT" GridPane.columnIndex="1">
@@ -416,7 +441,7 @@
                                     <ComboBox fx:id="popperScreenCombo" prefWidth="150.0" stylesheets="@stylesheet.css" GridPane.columnIndex="1" GridPane.rowIndex="2" />
                                     <Label layoutX="10.0" layoutY="47.0" text="Card Generation Enabled:" textFill="WHITE" GridPane.rowIndex="1">
                                        <font>
-                                          <Font name="System Bold" size="18.0" />
+                                          <Font size="18.0" />
                                        </font>
                                     </Label>
                                     <CheckBox fx:id="enableCardGenerationCheckbox" mnemonicParsing="false" GridPane.columnIndex="1" GridPane.rowIndex="1" />

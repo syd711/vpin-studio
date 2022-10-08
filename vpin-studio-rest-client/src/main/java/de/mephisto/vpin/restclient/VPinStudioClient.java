@@ -6,10 +6,8 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 
 import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.HttpURLConnection;
-import java.net.URL;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.*;
 
 public class VPinStudioClient implements ObservedPropertyChangeListener {
@@ -17,8 +15,10 @@ public class VPinStudioClient implements ObservedPropertyChangeListener {
 
   private Map<String, ObservedProperties> observedProperties = new HashMap<>();
 
-  public InputStream getDirectB2SImage(GameRepresentation gameId) {
-    byte[] bytes = RestClient.getInstance().readBinary(API + "directb2s/" + gameId.getId());
+  private static Map<String, byte[]> imageCache = new HashMap<>();
+
+  public ByteArrayInputStream getDirectB2SImage(GameRepresentation game) {
+    byte[] bytes = RestClient.getInstance().readBinary(API + "directb2s/" + game.getId());
     return new ByteArrayInputStream(bytes);
   }
 
@@ -39,6 +39,26 @@ public class VPinStudioClient implements ObservedPropertyChangeListener {
   public boolean generateHighscoreCard(GameRepresentation game) {
     int gameId = game.getId();
     return RestClient.getInstance().get(API + "generator/cards/" + gameId, Boolean.class);
+  }
+
+  public List<String> getBackgroundImages() {
+    return Arrays.asList(RestClient.getInstance().get(API + "generator/backgrounds", String[].class));
+  }
+
+  public ByteArrayInputStream getBackgroundImage(String name) {
+    try {
+      if (!imageCache.containsKey(name)) {
+        String encodedName = URLEncoder.encode(name, "utf8");
+        byte[] bytes = RestClient.getInstance().readBinary(API + "generator/background/" + encodedName);
+        imageCache.put(name, bytes);
+      }
+
+      byte[] imageBytes = imageCache.get(name);
+      return new ByteArrayInputStream(imageBytes);
+    } catch (UnsupportedEncodingException e) {
+      e.printStackTrace();
+    }
+    return null;
   }
 
   public byte[] getGameMedia(GameRepresentation game, GameMedia gameMedia) {
