@@ -10,17 +10,17 @@ import org.slf4j.LoggerFactory;
 import java.util.Iterator;
 import java.util.List;
 
-public class GeneratorProgressModel extends ProgressModel {
-  private final static Logger LOG = LoggerFactory.getLogger(GeneratorProgressModel.class);
+public class HighscoreGeneratorProgressModel extends ProgressModel {
+  private final static Logger LOG = LoggerFactory.getLogger(HighscoreGeneratorProgressModel.class);
   private final Iterator<GameRepresentation> iterator;
   private final List<GameRepresentation> gameInfos;
 
   private final VPinStudioClient client;
 
-  public GeneratorProgressModel(VPinStudioClient client, String screen, String title) {
+  public HighscoreGeneratorProgressModel(VPinStudioClient client, String screen, String title) {
     super(title);
     this.client = client;
-    gameInfos = new VPinStudioClient().getGames();
+    this.gameInfos = client.getGames();
     iterator = gameInfos.iterator();
   }
 
@@ -30,14 +30,14 @@ public class GeneratorProgressModel extends ProgressModel {
   }
 
   @Override
-  public Iterator getIterator() {
+  public Iterator<GameRepresentation> getIterator() {
     return iterator;
   }
 
   public String processNext(ProgressResultModel progressResultModel) {
     try {
       GameRepresentation game = iterator.next();
-      client.getHighscoreCard(game);
+      client.generateHighscoreCard(game);
       progressResultModel.addProcessed();
       return game.getGameDisplayName();
     } catch (Exception e) {

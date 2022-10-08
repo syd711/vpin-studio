@@ -1,6 +1,5 @@
 package de.mephisto.vpin.server.generators;
 
-import de.mephisto.vpin.server.directb2s.DirectB2SResource;
 import de.mephisto.vpin.server.directb2s.DirectB2SService;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameService;
@@ -46,17 +45,18 @@ public class GeneratorResource {
     return RequestUtil.serializeImage(GENERATED_OVERLAY_FILE);
   }
 
-  @GetMapping("/card/{gameId}/")
+  @GetMapping("/card/{gameId}")
   public ResponseEntity<byte[]> generateCard(@PathVariable("gameId") int gameId) throws Exception {
-    File sampleCard = onCardGeneration(gameId, true);
-    return RequestUtil.serializeImage(sampleCard);
+    if(onCardGeneration(gameId, true)) {
+      return RequestUtil.serializeImage(getCardSampleFile());
+    }
+
+    return RequestUtil.serializeImage(new File(SystemService.RESOURCES, "empty-preview.png"));
   }
 
-  @GetMapping("/cards/{gameId}/")
+  @GetMapping("/cards/{gameId}")
   public boolean generateCards(@PathVariable("gameId") int gameId) throws Exception {
-    File sampleCard = onCardGeneration(gameId, false);
-    RequestUtil.serializeImage(sampleCard);
-    return true;
+    return onCardGeneration(gameId, false);
   }
 
   private BufferedImage onOverlayGeneration() throws Exception {
@@ -70,27 +70,35 @@ public class GeneratorResource {
     }
   }
 
-  private File onCardGeneration(int gameId, boolean sampleCard) throws Exception {
+  private boolean onCardGeneration(int gameId, boolean sampleCard) throws Exception {
     try {
       Game game = gameService.getGame(gameId);
       BufferedImage bufferedImage = new CardGraphics(highscoreService, directB2SService, game).draw();
       if(bufferedImage != null) {
         if(sampleCard) {
-          File sampleFile = new File(SystemService.RESOURCES, "highscore-card-sample.png");
-          ImageUtil.write(bufferedImage, sampleFile);
-          return sampleFile;
+          ImageUtil.write(bufferedImage, getCardSampleFile());
+          return true;
         }
         else {
-          PopperScreen screen = PopperScreen.valueOf(Config.getCardGeneratorConfig().getString("popper.screen", PopperScreen.Other2.name()));
-          File sampleFile = game.getPopperScreenMedia(screen);
+          File sampleFile = getCardFile(gameId);
           ImageUtil.write(bufferedImage, sampleFile);
-          return sampleFile;
+          return true;
         }
       }
     } catch (Exception e) {
       LOG.error("Failed to generate overlay: " + e.getMessage(), e);
       throw e;
     }
-    return new File(SystemService.RESOURCES, "empty-preview.png");
+    return false;
+  }
+
+  private File getCardSampleFile() {
+    return new File(SystemService.RESOURCES, "highscore-card-sample.png");
+  }
+
+  private File getCardFile(int gameId) {
+    Game game = gameService.getGame(gameId);
+    PopperScreen screen = PopperScreen.valueOf(Config.getCardGeneratorConfig().getString("popper.screen", PopperScreen.Other2.name()));
+    return game.getPopperScreenMedia(screen);
   }
 }

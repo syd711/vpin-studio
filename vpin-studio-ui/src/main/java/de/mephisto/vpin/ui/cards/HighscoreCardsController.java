@@ -11,7 +11,6 @@ import de.mephisto.vpin.ui.util.TransitionUtil;
 import de.mephisto.vpin.ui.util.WidgetFactory;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
-import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -22,7 +21,6 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.stage.Stage;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -142,8 +140,9 @@ public class HighscoreCardsController implements Initializable, ObservedProperty
   }
 
   @FXML
-  private void onGenerateAll() {
-    WidgetFactory.createProgressDialog(null, VPinStudioApplication.stage);
+  private void onGenerateAll() throws IOException {
+    String screen = properties.getProperty("popper.screen", "Other2");
+    WidgetFactory.createProgressDialog(new HighscoreGeneratorProgressModel(client, screen, "Generating Highscore Cards"), VPinStudioApplication.stage);
   }
 
   @FXML

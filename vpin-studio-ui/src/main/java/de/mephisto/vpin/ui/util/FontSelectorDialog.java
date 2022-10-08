@@ -74,6 +74,7 @@ public class FontSelectorDialog extends Dialog<Font> {
 //    dialogPane.setHeaderText(localize(asKey("font.dlg.header"))); //$NON-NLS-1$
     dialogPane.getStyleClass().add("font-selector-dialog"); //$NON-NLS-1$
     dialogPane.getButtonTypes().addAll(ButtonType.OK, ButtonType.CANCEL);
+//    dialogPane.setStyle("-fx-base : #111111;");
     dialogPane.setContent(fontPanel);
   }
 
