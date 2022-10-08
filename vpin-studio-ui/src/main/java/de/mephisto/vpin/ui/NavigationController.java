@@ -29,14 +29,14 @@ public class NavigationController implements Initializable {
 
   @FXML
   private void onDashboardClick(ActionEvent event) throws IOException {
-    Parent root = FXMLLoader.load(getClass().getResource("main.fxml"));
+    Parent root = FXMLLoader.load(getClass().getResource("scene-main.fxml"));
     Scene scene = ((Node) event.getSource()).getScene();
     scene.setRoot(root);
   }
 
   @FXML
   private void onHighscoreCardsClick(ActionEvent event) throws IOException {
-    Parent root = FXMLLoader.load(getClass().getResource("highscoreCards.fxml"));
+    Parent root = FXMLLoader.load(getClass().getResource("scene-highscoreCards.fxml"));
     Scene scene = ((Node) event.getSource()).getScene();
     scene.setRoot(root);
   }

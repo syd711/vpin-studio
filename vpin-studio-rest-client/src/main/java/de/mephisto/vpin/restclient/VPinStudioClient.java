@@ -36,6 +36,11 @@ public class VPinStudioClient implements ObservedPropertyChangeListener {
     return new ByteArrayInputStream(bytes);
   }
 
+  public boolean generateHighscoreCard(GameRepresentation game) {
+    int gameId = game.getId();
+    return RestClient.getInstance().get(API + "generator/cards/" + gameId, Boolean.class);
+  }
+
   public byte[] getGameMedia(GameRepresentation game, GameMedia gameMedia) {
     String url = API + "games/" + game.getId() + "/media/" + gameMedia.name();
     return RestClient.getInstance().readBinary(url);

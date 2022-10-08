@@ -9,7 +9,7 @@
 
 <BorderPane xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.MainController">
    <left>
-       <fx:include fx:id="navigation" prefWidth="300.0" source="navigation.fxml" />
+       <fx:include fx:id="navigation" prefWidth="300.0" source="scene-navigation.fxml" />
    </left>
    <right>
       <VBox prefHeight="1354.0" prefWidth="300.0" style="-fx-background-color: #272b2f;" BorderPane.alignment="CENTER" />
@@ -71,6 +71,6 @@
       </BorderPane>
    </center>
    <top>
-       <fx:include fx:id="header" source="header.fxml" />
+       <fx:include fx:id="header" source="scene-header.fxml" />
    </top>
 </BorderPane>

@@ -73,7 +73,6 @@ public class FontSelectorDialog extends Dialog<Font> {
 //    setTitle(localize(asKey("font.dlg.title"))); //$NON-NLS-1$
 //    dialogPane.setHeaderText(localize(asKey("font.dlg.header"))); //$NON-NLS-1$
     dialogPane.getStyleClass().add("font-selector-dialog"); //$NON-NLS-1$
-//    dialogPane.getStylesheets().add(FontSelectorDialog.class.getResource("dialogs.css").toExternalForm()); //$NON-NLS-1$
     dialogPane.getButtonTypes().addAll(ButtonType.OK, ButtonType.CANCEL);
     dialogPane.setContent(fontPanel);
   }

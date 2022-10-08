@@ -20,7 +20,7 @@ public class VPinStudioApplication extends Application {
   @Override
   public void start(Stage stage) throws IOException {
     VPinStudioApplication.stage = stage;
-    FXMLLoader fxmlLoader = new FXMLLoader(VPinStudioApplication.class.getResource("main.fxml"));
+    FXMLLoader fxmlLoader = new FXMLLoader(VPinStudioApplication.class.getResource("scene-highscoreCards.fxml"));
     Scene scene = new Scene(fxmlLoader.load(), 1920, 1280);
     stage.setTitle("VPin Studio");
     stage.setScene(scene);

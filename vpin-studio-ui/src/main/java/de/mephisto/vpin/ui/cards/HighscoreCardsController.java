@@ -1,18 +1,18 @@
 
-package de.mephisto.vpin.ui;
+package de.mephisto.vpin.ui.cards;
 
 import de.mephisto.vpin.restclient.ObservedProperties;
 import de.mephisto.vpin.restclient.ObservedPropertyChangeListener;
 import de.mephisto.vpin.restclient.VPinStudioClient;
 import de.mephisto.vpin.restclient.representations.GameRepresentation;
+import de.mephisto.vpin.ui.VPinStudioApplication;
 import de.mephisto.vpin.ui.util.BindingUtil;
-import de.mephisto.vpin.ui.util.ImageUtil;
 import de.mephisto.vpin.ui.util.TransitionUtil;
+import de.mephisto.vpin.ui.util.WidgetFactory;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
+import javafx.application.Application;
 import javafx.application.Platform;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -22,16 +22,12 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.paint.Color;
-import javafx.scene.text.Font;
-import javafx.scene.text.FontPosture;
+import javafx.stage.Stage;
 import org.apache.commons.io.IOUtils;
-import org.controlsfx.dialog.FontSelectorDialog;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.awt.*;
-import java.awt.image.BufferedImage;
 import java.io.*;
 import java.net.URL;
 import java.util.ArrayList;
@@ -147,7 +143,7 @@ public class HighscoreCardsController implements Initializable, ObservedProperty
 
   @FXML
   private void onGenerateAll() {
-
+    WidgetFactory.createProgressDialog(null, VPinStudioApplication.stage);
   }
 
   @FXML

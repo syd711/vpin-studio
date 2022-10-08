@@ -18,13 +18,14 @@
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.TilePane?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 <?import org.kordamp.ikonli.javafx.FontIcon?>
 
-<BorderPane prefHeight="1267.0" prefWidth="1510.0" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.HighscoreCardsController">
+<BorderPane prefHeight="1267.0" prefWidth="1510.0" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.cards.HighscoreCardsController">
    <left>
-       <fx:include fx:id="navigation" prefWidth="300.0" source="navigation.fxml" />
+       <fx:include fx:id="navigation" prefWidth="300.0" source="scene-navigation.fxml" />
    </left>
    <right>
       <VBox prefHeight="1354.0" prefWidth="300.0" style="-fx-background-color: #272b2f;" BorderPane.alignment="CENTER">
@@ -332,56 +333,60 @@
                   </BorderPane>
                </center>
                <top>
-                  <BorderPane prefHeight="150.0" prefWidth="1117.0" styleClass="subpanel" stylesheets="@stylesheet.css" BorderPane.alignment="CENTER">
+                  <BorderPane prefHeight="182.0" prefWidth="1142.0" styleClass="subpanel" stylesheets="@stylesheet.css" BorderPane.alignment="CENTER">
                      <left>
-                        <GridPane alignment="CENTER_LEFT" prefHeight="67.0" prefWidth="586.0" BorderPane.alignment="CENTER">
-                          <columnConstraints>
-                            <ColumnConstraints hgrow="SOMETIMES" maxWidth="321.5999755859375" minWidth="10.0" prefWidth="235.200048828125" />
-                            <ColumnConstraints hgrow="SOMETIMES" maxWidth="377.5999755859375" minWidth="0.0" prefWidth="351.199951171875" />
-                          </columnConstraints>
-                          <rowConstraints>
-                            <RowConstraints maxHeight="44.000006103515624" minHeight="10.0" prefHeight="32.6" vgrow="SOMETIMES" />
-                              <RowConstraints maxHeight="42.99999084472656" minHeight="10.0" prefHeight="34.2" vgrow="SOMETIMES" />
-                            <RowConstraints maxHeight="42.99999084472656" minHeight="10.0" prefHeight="34.2" vgrow="SOMETIMES" />
-                          </rowConstraints>
+                        <VBox BorderPane.alignment="CENTER">
                            <children>
-                              <Label text="Sample Table:" textFill="WHITE">
-                                 <font>
-                                    <Font name="System Bold" size="18.0" />
-                                 </font>
-                              </Label>
-                              <Label text="PinUP Popper Screen:" textFill="WHITE" GridPane.rowIndex="2">
-                                 <font>
-                                    <Font name="System Bold" size="18.0" />
-                                 </font>
-                              </Label>
-                              <HBox alignment="CENTER_LEFT" GridPane.columnIndex="1">
+                              <GridPane alignment="CENTER_LEFT" prefHeight="132.0" prefWidth="586.0">
+                                <columnConstraints>
+                                  <ColumnConstraints hgrow="SOMETIMES" maxWidth="321.5999755859375" minWidth="10.0" prefWidth="235.200048828125" />
+                                  <ColumnConstraints hgrow="SOMETIMES" maxWidth="377.5999755859375" minWidth="0.0" prefWidth="351.199951171875" />
+                                </columnConstraints>
+                                <rowConstraints>
+                                  <RowConstraints maxHeight="44.000006103515624" minHeight="10.0" prefHeight="32.6" vgrow="SOMETIMES" />
+                                    <RowConstraints maxHeight="42.99999084472656" minHeight="10.0" prefHeight="34.2" vgrow="SOMETIMES" />
+                                  <RowConstraints maxHeight="42.99999084472656" minHeight="10.0" prefHeight="34.2" vgrow="SOMETIMES" />
+                                </rowConstraints>
                                  <children>
-                                    <ComboBox fx:id="tableCombo" stylesheets="@stylesheet.css" />
-                                    <Button mnemonicParsing="false" onAction="#onTableRefresh">
+                                    <Label text="Sample Table:" textFill="WHITE">
                                        <font>
-                                          <Font size="14.0" />
+                                          <Font name="System Bold" size="18.0" />
                                        </font>
-                                       <HBox.margin>
-                                          <Insets left="12.0" />
-                                       </HBox.margin>
-                                       <graphic>
+                                    </Label>
+                                    <Label text="PinUP Popper Screen:" textFill="WHITE" GridPane.rowIndex="2">
+                                       <font>
+                                          <Font name="System Bold" size="18.0" />
+                                       </font>
+                                    </Label>
+                                    <HBox alignment="CENTER_LEFT" GridPane.columnIndex="1">
+                                       <children>
+                                          <ComboBox fx:id="tableCombo" stylesheets="@stylesheet.css" />
+                                          <Button mnemonicParsing="false" onAction="#onTableRefresh">
+                                             <font>
+                                                <Font size="14.0" />
+                                             </font>
+                                             <HBox.margin>
+                                                <Insets left="12.0" />
+                                             </HBox.margin>
+                                             <graphic>
                                        </graphic>
-                                       <graphic>
-                                          <FontIcon iconLiteral="sil-refresh" wrappingWidth="12.800048828125" />
-                                       </graphic>
-                                    </Button>
+                                             <graphic>
+                                                <FontIcon iconLiteral="sil-refresh" wrappingWidth="12.800048828125" />
+                                             </graphic>
+                                          </Button>
+                                       </children>
+                                    </HBox>
+                                    <ComboBox fx:id="popperScreenCombo" prefWidth="150.0" stylesheets="@stylesheet.css" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                                    <Label layoutX="10.0" layoutY="47.0" text="Card Generation Enabled:" textFill="WHITE" GridPane.rowIndex="1">
+                                       <font>
+                                          <Font name="System Bold" size="18.0" />
+                                       </font>
+                                    </Label>
+                                    <CheckBox fx:id="enableCardGenerationCheckbox" mnemonicParsing="false" text="CheckBox" GridPane.columnIndex="1" GridPane.rowIndex="1" />
                                  </children>
-                              </HBox>
-                              <ComboBox fx:id="popperScreenCombo" prefWidth="150.0" stylesheets="@stylesheet.css" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-                              <Label layoutX="10.0" layoutY="47.0" text="Card Generation Enabled:" textFill="WHITE" GridPane.rowIndex="1">
-                                 <font>
-                                    <Font name="System Bold" size="18.0" />
-                                 </font>
-                              </Label>
-                              <CheckBox fx:id="enableCardGenerationCheckbox" mnemonicParsing="false" text="CheckBox" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                              </GridPane>
                            </children>
-                        </GridPane>
+                        </VBox>
                      </left>
                      <BorderPane.margin>
                         <Insets left="24.0" right="24.0" />
@@ -390,11 +395,15 @@
                         <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
                      </padding>
                      <right>
-                        <ImageView fx:id="rawDirectB2SImage" fitHeight="108.0" fitWidth="186.0" pickOnBounds="true" preserveRatio="true" styleClass="thumbnail-preview" BorderPane.alignment="CENTER">
-                           <viewport>
-                              <Rectangle2D />
-                           </viewport>
-                        </ImageView>
+                        <TilePane alignment="CENTER" prefHeight="300.0" prefWidth="200.0" styleClass="thumbnail-preview" stylesheets="@stylesheet.css" BorderPane.alignment="CENTER">
+                           <children>
+                              <ImageView fx:id="rawDirectB2SImage" fitHeight="145.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true" styleClass="thumbnail-preview">
+                                 <viewport>
+                                    <Rectangle2D />
+                                 </viewport>
+                              </ImageView>
+                           </children>
+                        </TilePane>
                      </right>
                   </BorderPane>
                </top>
@@ -403,6 +412,6 @@
       </BorderPane>
    </center>
    <top>
-      <fx:include fx:id="header" source="header.fxml" />
+      <fx:include fx:id="header" source="scene-header.fxml" />
    </top>
 </BorderPane>

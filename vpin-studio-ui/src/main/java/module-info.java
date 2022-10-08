@@ -21,4 +21,6 @@ module de.mephisto.vpin.ui {
 
   opens de.mephisto.vpin.ui to javafx.fxml;
   exports de.mephisto.vpin.ui;
+  exports de.mephisto.vpin.ui.cards;
+  opens de.mephisto.vpin.ui.cards to javafx.fxml;
 }
