@@ -16,7 +16,7 @@
          <children>
             <Label fx:id="titleLabel" text="Label" textFill="WHITE">
                <font>
-                  <Font size="24.0" />
+                  <Font size="18.0" />
                </font>
                <VBox.margin>
                   <Insets bottom="24.0" />
