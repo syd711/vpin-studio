@@ -10,17 +10,17 @@ import de.mephisto.vpin.server.util.Config;
 import de.mephisto.vpin.server.util.ImageUtil;
 import de.mephisto.vpin.server.util.RequestUtil;
 import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.FilenameFilter;
 import java.net.URLEncoder;
 import java.util.Arrays;
@@ -33,6 +33,7 @@ import static de.mephisto.vpin.server.VPinStudioServer.API_SEGMENT;
 @RequestMapping(API_SEGMENT + "generator")
 public class GeneratorResource {
   private final static Logger LOG = LoggerFactory.getLogger(GeneratorResource.class);
+  public final int MAX_PACKET_SIZE = 4194304;
 
   public final static File GENERATED_OVERLAY_FILE = new File(SystemService.RESOURCES, "overlay.jpg");
 
@@ -77,6 +78,30 @@ public class GeneratorResource {
     File folder = new File(SystemService.RESOURCES, "backgrounds");
     File[] files = folder.listFiles((dir, name) -> URLEncoder.encode(FilenameUtils.getBaseName(name)).equals(imageName));
     return RequestUtil.serializeImage(files[0]);
+  }
+
+  @PostMapping("/upload")
+  public Boolean upload(@RequestParam("file") MultipartFile file) {
+    byte[] bytes = new byte[0];
+    String name = file.getOriginalFilename().replaceAll("/", "").replaceAll("\\\\", "");
+    try {
+      bytes = file.getBytes();
+      if(bytes.length > MAX_PACKET_SIZE) {
+        LOG.warn("Failed to store upload, because max packet size exceeded, size is " + bytes.length);
+        return false;
+      }
+
+      File backgroundsFolder = new File(SystemService.RESOURCES, "backgrounds");
+      File out = new File(backgroundsFolder, name);
+      FileOutputStream fileOutputStream = new FileOutputStream(out);
+      IOUtils.write(bytes, fileOutputStream);
+      fileOutputStream.close();
+
+      return true;
+    } catch (Exception e) {
+      LOG.error("Failed to store asset: " + e.getMessage() + ", byte size was " + bytes.length, e);
+    }
+    return null;
   }
 
   private BufferedImage onOverlayGeneration() throws Exception {

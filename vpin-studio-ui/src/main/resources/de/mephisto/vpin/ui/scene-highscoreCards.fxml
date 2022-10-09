@@ -55,6 +55,15 @@
                                 </padding>
                              </Label>
                              <ComboBox fx:id="imageRatioCombo" prefWidth="150.0" />
+                              <Label layoutX="20.0" layoutY="40.0" text="Scaling Width (Pixel):" textFill="WHITE">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                                 <padding>
+                                    <Insets top="12.0" />
+                                 </padding>
+                              </Label>
+                              <ComboBox fx:id="imageScalingCombo" layoutX="20.0" layoutY="72.0" prefWidth="150.0" />
                              <Label text="Default Background Image:" textFill="WHITE">
                                 <font>
                                    <Font size="14.0" />
@@ -66,19 +75,19 @@
                              <HBox prefHeight="31.0" prefWidth="276.0">
                                 <children>
                                    <ComboBox fx:id="backgroundImageCombo" prefHeight="30.0" prefWidth="254.0" stylesheets="@stylesheet.css" />
-                                   <Button mnemonicParsing="false" onAction="#onTableRefresh">
-                                      <font>
-                                         <Font size="14.0" />
-                                      </font>
-                                      <graphic>
-                                         <FontIcon iconColor="WHITE" iconLiteral="bi-cloud-upload" iconSize="14" />
-                                      </graphic>
-                                      <HBox.margin>
-                                         <Insets left="12.0" />
-                                      </HBox.margin>
-                                   </Button>
                                 </children>
                              </HBox>
+                             <Button mnemonicParsing="false" onAction="#onTableRefresh" text="  Upload Background">
+                                <font>
+                                   <Font size="14.0" />
+                                </font>
+                                <graphic>
+                                   <FontIcon iconColor="WHITE" iconLiteral="bi-cloud-upload" iconSize="14" />
+                                </graphic>
+                                 <VBox.margin>
+                                    <Insets top="12.0" />
+                                 </VBox.margin>
+                             </Button>
                           </children>
                        </VBox>
                     </content>
@@ -378,9 +387,9 @@
          <center>
             <BorderPane BorderPane.alignment="CENTER">
                <center>
-                  <BorderPane styleClass="subpanel" stylesheets="@stylesheet.css">
+                  <BorderPane fx:id="imageCenter" styleClass="subpanel" stylesheets="@stylesheet.css">
                      <center>
-                        <ImageView fx:id="cardPreview" fitHeight="756.0" fitWidth="1089.0" pickOnBounds="true" preserveRatio="true">
+                        <ImageView fx:id="cardPreview" fitHeight="416.0" fitWidth="746.0" pickOnBounds="true" preserveRatio="true">
                            <BorderPane.margin>
                               <Insets bottom="24.0" left="24.0" right="24.0" top="24.0" />
                            </BorderPane.margin>

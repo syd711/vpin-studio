@@ -47,10 +47,11 @@ public class CardGraphics {
     }
 
 
+    int scaling = Config.getCardGeneratorConfig().getInt("card.scaling", 1280);
     if (USE_DIRECTB2S && game.getDirectB2SFile().exists()) {
       File directB2SImage = game.getDirectB2SBackgroundImage();
       if (!directB2SImage.exists()) {
-        directB2SImage = directB2SService.generateB2SImage(game, DIRECTB2S_RATIO, 1280);
+        directB2SImage = directB2SService.generateB2SImage(game, DIRECTB2S_RATIO, scaling);
       }
       if(directB2SImage != null && directB2SImage.exists()) {
         sourceImage = directB2SImage;
@@ -60,6 +61,7 @@ public class CardGraphics {
     BufferedImage backgroundImage = ImageUtil.loadBackground(sourceImage);
     if (USE_DIRECTB2S) {
       backgroundImage = ImageUtil.crop(backgroundImage, DIRECTB2S_RATIO.getXRatio(), DIRECTB2S_RATIO.getYRatio());
+      backgroundImage = ImageUtil.resizeImage(backgroundImage, scaling);
     }
 
     if (BLUR_PIXELS > 0) {

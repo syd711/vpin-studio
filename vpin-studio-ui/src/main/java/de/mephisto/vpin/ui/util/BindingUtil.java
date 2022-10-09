@@ -9,13 +9,10 @@ import javafx.beans.property.*;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.scene.control.*;
-import javafx.scene.control.TextField;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontPosture;
 import org.apache.commons.lang3.StringUtils;
-
-import java.util.List;
 
 public class BindingUtil {
 
@@ -24,7 +21,7 @@ public class BindingUtil {
   public static void bindTableComboBox(VPinStudioClient client, ComboBox<GameRepresentation> comboBox, ObservedProperties properties, String property) {
     String pupId = properties.getProperty(property, null);
     GameRepresentation game = null;
-    if(!StringUtils.isEmpty(pupId)) {
+    if (!StringUtils.isEmpty(pupId)) {
       game = client.getGame(Integer.parseInt(pupId));
     }
     ObjectProperty objectProperty = new SimpleObjectProperty<GameRepresentation>();
@@ -40,11 +37,15 @@ public class BindingUtil {
     Bindings.bindBidirectional(stringProperty, textField.textProperty());
     textField.textProperty().addListener((observableValue, s, t1) -> debouncer.debounce(property, () -> {
       properties.set(property, textField.getText());
-    }, 400));
+    }, 1000));
   }
 
   public static void bindComboBox(ComboBox<String> comboBox, ObservedProperties properties, String property) {
-    String value = properties.getProperty(property, "");
+    bindComboBox(comboBox, properties, property, "");
+  }
+
+  public static void bindComboBox(ComboBox<String> comboBox, ObservedProperties properties, String property, String defaultValue) {
+    String value = properties.getProperty(property, defaultValue);
     StringProperty stringProperty = new SimpleStringProperty();
     Bindings.bindBidirectional(stringProperty, comboBox.valueProperty());
     comboBox.setValue(value);
@@ -99,7 +100,7 @@ public class BindingUtil {
         Font result = fs.getResult();
         debouncer.debounce("font", () -> {
           properties.set(key + ".font.name", result.getName());
-          properties.set(key + ".font.size", String.valueOf((int)result.getSize()));
+          properties.set(key + ".font.size", String.valueOf((int) result.getSize()));
           properties.set(key + ".font.style", result.getStyle());
 
           Font labelFont = Font.font(result.getName(), FontPosture.findByName(result.getStyle()), 14);
@@ -109,7 +110,7 @@ public class BindingUtil {
             label.setText(labelText);
             label.setTooltip(new Tooltip(labelText));
           });
-        }, 100);
+        }, 1000);
 
       }
     });
@@ -124,7 +125,7 @@ public class BindingUtil {
         debouncer.debounce(property, () -> {
           int value1 = ((Double) t1).intValue();
           properties.set(property, String.valueOf(value1));
-        }, 100);
+        }, 1000);
       }
     });
   }

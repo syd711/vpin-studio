@@ -7,14 +7,12 @@ import javafx.beans.value.ChangeListener;
 import javafx.concurrent.Service;
 import javafx.concurrent.Task;
 import javafx.concurrent.Worker;
-import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.HBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
@@ -122,7 +120,7 @@ public class WidgetFactory {
       setGraphic(null);
       setText(null);
       if(item!=null){
-        Image image = new Image(client.getBackgroundImage(item));
+        Image image = new Image(client.getHighscoreBackgroundImage(item));
         ImageView imageView = new ImageView(image);
         imageView.setFitWidth(80);
 

@@ -40,7 +40,7 @@ public class DirectB2SService {
         if (tempFile != null) {
           BufferedImage image = ImageIO.read(tempFile);
           BufferedImage crop = ImageUtil.crop(image, ratio.getXRatio(), ratio.getYRatio());
-          BufferedImage resized = ImageUtil.resizeImage(crop, cropWidth, cropWidth / ratio.getXRatio() * ratio.getYRatio());
+          BufferedImage resized = ImageUtil.resizeImage(crop, cropWidth);
           File target = game.getDirectB2SBackgroundImage();
           if(target.getParentFile().exists() && target.getParentFile().canWrite()) {
             ImageUtil.write(resized, target);

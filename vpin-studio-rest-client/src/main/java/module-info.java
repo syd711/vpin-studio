@@ -4,6 +4,7 @@ open module de.mephisto.vpin.restclient {
   requires spring.web;
   requires com.github.spotbugs.annotations;
   requires org.apache.commons.lang3;
+  requires spring.core;
 
   exports de.mephisto.vpin.restclient;
   exports de.mephisto.vpin.restclient.representations;

@@ -124,8 +124,8 @@ public class ImageUtil {
     }
   }
 
-  public static BufferedImage resizeImage(BufferedImage originalImage, int targetWidth, int targetHeight) {
-    return Scalr.resize(originalImage, Scalr.Method.QUALITY, Scalr.Mode.AUTOMATIC, targetWidth, targetHeight, Scalr.OP_ANTIALIAS);
+  public static BufferedImage resizeImage(BufferedImage originalImage, int targetWidth) {
+    return Scalr.resize(originalImage, Scalr.Method.QUALITY, Scalr.Mode.AUTOMATIC, targetWidth, Scalr.OP_ANTIALIAS);
   }
 
   public static BufferedImage crop(BufferedImage image, int xRatio, int yRatio) {

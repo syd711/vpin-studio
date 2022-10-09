@@ -193,7 +193,8 @@ public class FontSelectorDialog extends Dialog<Font> {
       }
     };
 
-    private static final Double[] fontSizes = new Double[] {20d,22d,24d,26d,28d,36d,48d,72d,80d,90d,100d,110d,120d,130d,140d,150d,160d,170d,200d,210d,220d,230d,240d};
+    private static final Double[] fontSizes = new Double[] {20d,22d,24d,26d,28d,36d,48d,72d,80d,90d,100d,110d,120d,
+        130d,140d,150d,160d,170d,200d,210d,220d,230d,240d,250d,260d,270d,280d,290d,300d,310d,320d,330d,340d,350d };
 
     private static List<FontSelectorDialog.FontStyle> getFontStyles(String fontFamily ) {
       Set<FontSelectorDialog.FontStyle> set = new HashSet<>();

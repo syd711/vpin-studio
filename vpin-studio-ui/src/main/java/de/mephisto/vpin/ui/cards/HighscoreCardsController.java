@@ -5,7 +5,6 @@ import de.mephisto.vpin.restclient.ObservedProperties;
 import de.mephisto.vpin.restclient.ObservedPropertyChangeListener;
 import de.mephisto.vpin.restclient.VPinStudioClient;
 import de.mephisto.vpin.restclient.representations.GameRepresentation;
-import de.mephisto.vpin.ui.VPinStudioApplication;
 import de.mephisto.vpin.ui.util.BindingUtil;
 import de.mephisto.vpin.ui.util.TransitionUtil;
 import de.mephisto.vpin.ui.util.WidgetFactory;
@@ -16,12 +15,15 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.*;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.BorderPane;
+import javafx.stage.FileChooser;
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,6 +35,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.ResourceBundle;
+
+import static de.mephisto.vpin.ui.VPinStudioApplication.stage;
 
 public class HighscoreCardsController implements Initializable, ObservedPropertyChangeListener {
   private final static Logger LOG = LoggerFactory.getLogger(HighscoreCardsController.class);
@@ -71,6 +75,9 @@ public class HighscoreCardsController implements Initializable, ObservedProperty
   private ComboBox<String> imageRatioCombo;
 
   @FXML
+  private ComboBox<String> imageScalingCombo;
+
+  @FXML
   private ColorPicker fontColorSelector;
 
   @FXML
@@ -103,12 +110,15 @@ public class HighscoreCardsController implements Initializable, ObservedProperty
   @FXML
   private ComboBox<GameRepresentation> tableCombo;
 
+  @FXML
+  private BorderPane imageCenter;
 
   private VPinStudioClient client;
 
   private ObservedProperties properties;
 
   private List<String> ignoreList = new ArrayList<>();
+  private ObservableList<String> imageList;
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -123,15 +133,48 @@ public class HighscoreCardsController implements Initializable, ObservedProperty
       tableCombo.getItems().addAll(gameRepresentations);
 
       initFields();
+
+      cardPreview.setPreserveRatio(true);
+      stage.widthProperty().addListener((obs, oldVal, newVal) -> {
+        cardPreview.setFitWidth(newVal.intValue() / 2);
+        refreshPreview(tableCombo.getValue(), false);
+      });
+
+      stage.heightProperty().addListener((obs, oldVal, newVal) -> {
+
+      });
     } catch (Exception e) {
       LOG.error("Failed to init highscores: " + e.getMessage(), e);
     }
   }
 
   @FXML
+  private void onUploadButton() throws IOException {
+    FileChooser fileChooser = new FileChooser();
+    fileChooser.setTitle("Select Image");
+    fileChooser.getExtensionFilters().addAll(
+        new FileChooser.ExtensionFilter("All Images", "*.jpg", "*.png", "*.jepg"),
+        new FileChooser.ExtensionFilter("JPG", "*.jpg"),
+        new FileChooser.ExtensionFilter("PNG", "*.png"));
+    File file = fileChooser.showOpenDialog(stage);
+    if (file != null && file.exists()) {
+      boolean result = client.uploadHighscoreBackgroundImage(file);
+      if (result) {
+        String baseName = FilenameUtils.getBaseName(file.getName());
+        if (!imageList.contains(baseName)) {
+          imageList.add(baseName);
+        }
+      }
+      else {
+        WidgetFactory.showAlert("Uploading image failed, check log file for details.");
+      }
+    }
+  }
+
+  @FXML
   private void onOpenImage() {
     GameRepresentation game = tableCombo.getValue();
-    if(game != null) {
+    if (game != null) {
       try {
         ByteArrayInputStream s = client.getHighscoreCard(game);
         byte[] bytes = s.readAllBytes();
@@ -149,7 +192,7 @@ public class HighscoreCardsController implements Initializable, ObservedProperty
 
   @FXML
   private void onGenerateAll() throws IOException {
-    WidgetFactory.createProgressDialog(new HighscoreGeneratorProgressModel(client, "Generating Highscore Cards"), VPinStudioApplication.stage);
+    WidgetFactory.createProgressDialog(new HighscoreGeneratorProgressModel(client, "Generating Highscore Cards"), stage);
   }
 
   @FXML
@@ -179,7 +222,7 @@ public class HighscoreCardsController implements Initializable, ObservedProperty
   @FXML
   private void onOpenDirectB2SBackground() {
     GameRepresentation game = tableCombo.getValue();
-    if(game != null) {
+    if (game != null) {
       try {
         ByteArrayInputStream s = client.getDirectB2SImage(game);
         byte[] bytes = s.readAllBytes();
@@ -198,7 +241,7 @@ public class HighscoreCardsController implements Initializable, ObservedProperty
   @FXML
   private void onGenerateClick() {
     GameRepresentation value = tableCombo.getValue();
-    refreshPreview(value);
+    refreshPreview(value, true);
   }
 
   public HighscoreCardsController() {
@@ -222,16 +265,21 @@ public class HighscoreCardsController implements Initializable, ObservedProperty
 
     BindingUtil.bindCheckbox(useDirectB2SCheckbox, properties, "card.useDirectB2S");
     useDirectB2SCheckbox.selectedProperty().addListener((observableValue, aBoolean, t1) -> imageRatioCombo.setDisable(!t1));
+    useDirectB2SCheckbox.selectedProperty().addListener((observableValue, aBoolean, t1) -> imageScalingCombo.setDisable(!t1));
 
     imageRatioCombo.setItems(FXCollections.observableList(Arrays.asList("RATIO_16x9", "RATIO_4x3")));
     imageRatioCombo.setDisable(!useDirectB2SCheckbox.selectedProperty().get());
 
     imageRatioCombo.setCellFactory(c -> new WidgetFactory.RationListCell());
     imageRatioCombo.setButtonCell(new WidgetFactory.RationListCell());
-
     BindingUtil.bindComboBox(imageRatioCombo, properties, "card.ratio");
 
-    backgroundImageCombo.setItems(FXCollections.observableList(client.getBackgroundImages()));
+    imageScalingCombo.setItems(FXCollections.observableList(Arrays.asList("1024", "1280", "1920", "2560", "3840")));
+    imageScalingCombo.setDisable(!useDirectB2SCheckbox.selectedProperty().get());
+    BindingUtil.bindComboBox(imageScalingCombo, properties, "card.scaling", "1280");
+
+    imageList = FXCollections.observableList(new ArrayList<>(client.getHighscoreBackgroundImages()));
+    backgroundImageCombo.setItems(imageList);
     backgroundImageCombo.setCellFactory(c -> new WidgetFactory.ImageListCell(client));
     backgroundImageCombo.setButtonCell(new WidgetFactory.ImageListCell(client));
     BindingUtil.bindComboBox(backgroundImageCombo, properties, "card.background");
@@ -249,8 +297,7 @@ public class HighscoreCardsController implements Initializable, ObservedProperty
 
     GameRepresentation value = tableCombo.getValue();
     refreshRawPreview(value);
-
-    this.onGenerateClick();
+    onGenerateClick();
   }
 
   private void refreshRawPreview(@Nullable GameRepresentation game) {
@@ -262,9 +309,9 @@ public class HighscoreCardsController implements Initializable, ObservedProperty
       rawDirectB2SImage.setImage(image);
       input.close();
 
-      if(image.getWidth() > 300) {
+      if (image.getWidth() > 300) {
         openDirectB2SImageButton.setVisible(true);
-        resolutionLabel.setText("Resolution: " + (int)image.getWidth() + " x " + (int)image.getHeight());
+        resolutionLabel.setText("Resolution: " + (int) image.getWidth() + " x " + (int) image.getHeight());
       }
       else {
         resolutionLabel.setText("");
@@ -274,21 +321,26 @@ public class HighscoreCardsController implements Initializable, ObservedProperty
     }
   }
 
-  private void refreshPreview(@Nullable GameRepresentation game) {
-    cardPreview.setOpacity(1);
-    if(game == null) {
+  private void refreshPreview(@Nullable GameRepresentation game, boolean regenerate) {
+    if (game == null) {
       return;
     }
-
     Platform.runLater(() -> {
       try {
-        TransitionUtil.createOutFader(cardPreview, 300).play();
-        InputStream input = client.getHighscoreCard(game);
-        Image image = new Image(input);
-        cardPreview.setImage(image);
-        input.close();
-
-        TransitionUtil.createInFader(cardPreview, 300).play();
+        setBusy(true);
+        if (regenerate) {
+          new Thread(() -> {
+            setBusy(true);
+            InputStream input = client.getHighscoreCard(game);
+            Image image = new Image(input);
+            cardPreview.setImage(image);
+            cardPreview.setVisible(true);
+            setBusy(false);
+          }).start();
+        }
+        cardPreview.setFitWidth(imageCenter.getWidth() - 60);
+        cardPreview.setFitHeight(imageCenter.getHeight() - 60);
+        setBusy(false);
       } catch (Exception e) {
         LOG.error("Failed to refresh card preview: " + e.getMessage(), e);
       }
@@ -297,8 +349,13 @@ public class HighscoreCardsController implements Initializable, ObservedProperty
 
   @Override
   public void changed(@NonNull String propertiesName, @NonNull String key, @Nullable String updatedValue) {
-    if(!ignoreList.contains(key)) {
-      this.onGenerateClick();
+    if (!ignoreList.contains(key)) {
+      onGenerateClick();
     }
+  }
+
+  private void setBusy(boolean b) {
+    System.out.println("Busy " + b);
+    cardPreview.setVisible(!b);
   }
 }

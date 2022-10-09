@@ -4,10 +4,18 @@ import de.mephisto.vpin.restclient.representations.GameMedia;
 import de.mephisto.vpin.restclient.representations.GameRepresentation;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
+import org.apache.tomcat.util.http.fileupload.FileUtils;
+import org.apache.tomcat.util.http.fileupload.IOUtils;
+import org.springframework.core.io.ByteArrayResource;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.MediaType;
+import org.springframework.util.LinkedMultiValueMap;
 
-import java.io.ByteArrayInputStream;
-import java.io.UnsupportedEncodingException;
+import java.io.*;
 import java.net.URLEncoder;
+import java.nio.file.Files;
 import java.util.*;
 
 public class VPinStudioClient implements ObservedPropertyChangeListener {
@@ -41,11 +49,11 @@ public class VPinStudioClient implements ObservedPropertyChangeListener {
     return RestClient.getInstance().get(API + "generator/cards/" + gameId, Boolean.class);
   }
 
-  public List<String> getBackgroundImages() {
+  public List<String> getHighscoreBackgroundImages() {
     return Arrays.asList(RestClient.getInstance().get(API + "generator/backgrounds", String[].class));
   }
 
-  public ByteArrayInputStream getBackgroundImage(String name) {
+  public ByteArrayInputStream getHighscoreBackgroundImage(String name) {
     try {
       if (!imageCache.containsKey(name)) {
         String encodedName = URLEncoder.encode(name, "utf8");
@@ -61,9 +69,25 @@ public class VPinStudioClient implements ObservedPropertyChangeListener {
     return null;
   }
 
-  public byte[] getGameMedia(GameRepresentation game, GameMedia gameMedia) {
-    String url = API + "games/" + game.getId() + "/media/" + gameMedia.name();
-    return RestClient.getInstance().readBinary(url);
+  public boolean uploadHighscoreBackgroundImage(File file) throws IOException {
+    LinkedMultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
+    HttpHeaders headers = new HttpHeaders();
+    headers.setContentType(MediaType.MULTIPART_FORM_DATA);
+
+    byte[] bFile = new byte[(int) file.length()];
+    FileInputStream fileInputStream = new FileInputStream(file);
+    fileInputStream.read(bFile);
+    fileInputStream.close();
+
+    ByteArrayResource contentsAsResource = new ByteArrayResource(bFile) {
+      @Override
+      public String getFilename() {
+        return file.getName();
+      }
+    };
+    map.add("file", contentsAsResource);
+    HttpEntity<LinkedMultiValueMap<String, Object>> requestEntity = new HttpEntity<>(map, headers);
+    return RestClient.getInstance().exchange(API + "generator/upload", HttpMethod.POST, requestEntity, Boolean.class);
   }
 
   public ObservedProperties getProperties(String propertiesName) {
