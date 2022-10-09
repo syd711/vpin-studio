@@ -65,6 +65,27 @@ public class TransitionUtil {
   }
 
   /**
+   * Creates a blink out effect without playing it
+   */
+  public static FadeTransition createPulse(Node node) {
+    FadeTransition fadeTransition = new FadeTransition(Duration.millis(500), node);
+    fadeTransition.setFromValue(0.1);
+    fadeTransition.setCycleCount(3);
+    fadeTransition.setToValue(1);
+    applyDefaults(node, fadeTransition);
+    return fadeTransition;
+  }
+
+  public static RotateTransition rotate(Node node) {
+    RotateTransition rotateTransition = new RotateTransition(Duration.INDEFINITE, node);
+    rotateTransition.setByAngle(180f);
+    rotateTransition.setCycleCount(4);
+    rotateTransition.setAutoReverse(false);
+    applyDefaults(node, rotateTransition);
+    return rotateTransition;
+  }
+
+  /**
    * Expands the width of the given Pane to the target width.
    *
    * @param node   the pane to expand

@@ -5,11 +5,13 @@ import de.mephisto.vpin.restclient.ObservedProperties;
 import de.mephisto.vpin.restclient.ObservedPropertyChangeListener;
 import de.mephisto.vpin.restclient.VPinStudioClient;
 import de.mephisto.vpin.restclient.representations.GameRepresentation;
+import de.mephisto.vpin.ui.VPinStudioApplication;
 import de.mephisto.vpin.ui.util.BindingUtil;
 import de.mephisto.vpin.ui.util.TransitionUtil;
 import de.mephisto.vpin.ui.util.WidgetFactory;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
+import javafx.animation.RotateTransition;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -327,7 +329,6 @@ public class HighscoreCardsController implements Initializable, ObservedProperty
     }
     Platform.runLater(() -> {
       try {
-        setBusy(true);
         if (regenerate) {
           new Thread(() -> {
             setBusy(true);
@@ -340,7 +341,6 @@ public class HighscoreCardsController implements Initializable, ObservedProperty
         }
         cardPreview.setFitWidth(imageCenter.getWidth() - 60);
         cardPreview.setFitHeight(imageCenter.getHeight() - 60);
-        setBusy(false);
       } catch (Exception e) {
         LOG.error("Failed to refresh card preview: " + e.getMessage(), e);
       }
@@ -354,8 +354,17 @@ public class HighscoreCardsController implements Initializable, ObservedProperty
     }
   }
 
+  private RotateTransition transition;
+
   private void setBusy(boolean b) {
-    System.out.println("Busy " + b);
-    cardPreview.setVisible(!b);
+    if(b) {
+      Image image = new Image(VPinStudioApplication.class.getResourceAsStream("loading.png"));
+      cardPreview.setImage(image);
+      cardPreview.setFitWidth(300);
+    }
+    else {
+      cardPreview.setFitWidth(imageCenter.getWidth() - 60);
+      cardPreview.setFitHeight(imageCenter.getHeight() - 60);
+    }
   }
 }
