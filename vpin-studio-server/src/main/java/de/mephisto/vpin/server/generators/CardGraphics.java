@@ -9,7 +9,6 @@ import de.mephisto.vpin.server.jpa.Highscore;
 import de.mephisto.vpin.server.system.SystemService;
 import de.mephisto.vpin.server.util.Config;
 import de.mephisto.vpin.server.util.ImageUtil;
-import javafx.scene.text.FontPosture;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -71,7 +70,7 @@ public class CardGraphics {
     float alphaWhite = Config.getCardGeneratorConfig().getFloat("card.alphacomposite.white");
     float alphaBlack = Config.getCardGeneratorConfig().getFloat("card.alphacomposite.black");
     ImageUtil.applyAlphaComposites(backgroundImage, alphaWhite, alphaBlack);
-    renderTableChallenge(backgroundImage);
+    renderCardData(backgroundImage);
 
     int borderWidth = Config.getCardGeneratorConfig().getInt("card.border.width");
     ImageUtil.drawBorder(backgroundImage, borderWidth);
@@ -82,7 +81,7 @@ public class CardGraphics {
   /**
    * The upper section, usually with the three topscores.
    */
-  private void renderTableChallenge(BufferedImage image) throws Exception {
+  private void renderCardData(BufferedImage image) throws Exception {
     int ROW_SEPARATOR = Config.getCardGeneratorConfig().getInt("card.highscores.row.separator");
     int WHEEL_PADDING = Config.getCardGeneratorConfig().getInt("card.highscores.row.padding.left");
 
@@ -101,6 +100,7 @@ public class CardGraphics {
     int TABLE_FONT_SIZE = Config.getCardGeneratorConfig().getInt("card.table.font.size");
 
     int TITLE_Y_OFFSET = Config.getCardGeneratorConfig().getInt("card.title.y.offset");
+    boolean RAW_SCORE_DATA = Config.getCardGeneratorConfig().getBoolean("card.rawScoreData");
 
     Highscore highscore = highscoreService.getHighscore(game);
     if (highscore != null) {
@@ -156,9 +156,20 @@ public class CardGraphics {
       //the wheelsize should match the height of three score entries
       int scoreX = WHEEL_PADDING + wheelSize + WHEEL_PADDING;
       int scoreY = tableNameY;
-      for (String score : scores) {
-        scoreY = scoreY + SCORE_FONT_SIZE + ROW_SEPARATOR;
-        g.drawString(score, scoreX, scoreY);
+
+      if(RAW_SCORE_DATA) {
+        String raw = highscore.getRaw();
+        String[] split = raw.split("\n");
+        for (String s : split) {
+          scoreY = scoreY + SCORE_FONT_SIZE + ROW_SEPARATOR;
+          g.drawString(s, scoreX, scoreY);
+        }
+      }
+      else {
+        for (String score : scores) {
+          scoreY = scoreY + SCORE_FONT_SIZE + ROW_SEPARATOR;
+          g.drawString(score, scoreX, scoreY);
+        }
       }
     }
   }

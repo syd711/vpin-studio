@@ -15,6 +15,7 @@ public class PopperService {
   private final static Logger LOG = LoggerFactory.getLogger(PopperService.class);
 
   private final List<TableStatusChangeListener> listeners = new ArrayList<>();
+  private final List<PopperLaunchListener> launchListeners = new ArrayList<>();
 
   @Autowired
   private HighscoreService highscoreService;
@@ -41,6 +42,11 @@ public class PopperService {
   }
 
   @SuppressWarnings("unused")
+  public void addPopperLaunchListener(PopperLaunchListener listener) {
+    this.launchListeners.add(listener);
+  }
+
+  @SuppressWarnings("unused")
   public void addTableStatusChangeListener(TableStatusChangeListener listener) {
     this.listeners.add(listener);
   }
@@ -58,5 +64,11 @@ public class PopperService {
   public void executeTableExitCommands(Game game) {
     LOG.info("Executing table exit commands for '" + game + "'");
     highscoreService.updateHighscore(game);
+  }
+
+  public void notifyPopperLaunch() {
+    for (PopperLaunchListener launchListener : launchListeners) {
+      launchListener.popperLaunched();
+    }
   }
 }

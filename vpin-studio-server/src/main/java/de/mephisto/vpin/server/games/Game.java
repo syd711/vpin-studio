@@ -1,9 +1,7 @@
 package de.mephisto.vpin.server.games;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import de.mephisto.vpin.server.VPinStudioServer;
 import de.mephisto.vpin.server.popper.PopperScreen;
-import de.mephisto.vpin.server.system.SystemResource;
 import de.mephisto.vpin.server.system.SystemService;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
@@ -16,13 +14,14 @@ import java.util.Date;
 public class Game {
 
   private String rom;
+  private String originalRom;
   private String gameDisplayName;
   private String gameFileName;
   private int id;
+  private int nvOffset;
 
   private File gameFile;
   private File romFile;
-  private File nvRamFile;
   private File wheelIconFile;
 
   private Date lastPlayed;
@@ -108,11 +107,27 @@ public class Game {
   @Nullable
   @JsonIgnore
   public File getNvRamFile() {
-    return nvRamFile;
-  }
+    File nvRamFolder = new File(systemService.getMameFolder(), "nvram");
 
-  public void setNvRamFile(@Nullable File nvRamFile) {
-    this.nvRamFile = nvRamFile;
+    String originalRom = getOriginalRom() != null ? this.getOriginalRom() : this.getRom();
+    File defaultNVFile = new File(nvRamFolder, originalRom +  ".nv");
+    if(this.getNvOffset() == 0) {
+      return defaultNVFile;
+    }
+
+    //if the text file exists, the current nv file contains the highscore of this table
+    File versionTextFile = new File(systemService.getMameFolder(), this.getRom() + " v" + getNvOffset() + ".txt");
+    if(versionTextFile.exists()) {
+      return defaultNVFile;
+    }
+
+    //else, we can check if a nv file with the alias and version exists
+    File versionNVAliasedFile = new File(systemService.getMameFolder(), originalRom + " v" + getNvOffset() + ".nv");
+    if(versionNVAliasedFile.exists()) {
+      return versionNVAliasedFile;
+    }
+
+    return defaultNVFile;
   }
 
   @NonNull
@@ -155,6 +170,22 @@ public class Game {
 
   public void setId(int id) {
     this.id = id;
+  }
+
+  public String getOriginalRom() {
+    return originalRom;
+  }
+
+  public void setOriginalRom(String originalRom) {
+    this.originalRom = originalRom;
+  }
+
+  public int getNvOffset() {
+    return nvOffset;
+  }
+
+  public void setNvOffset(int nvOffset) {
+    this.nvOffset = nvOffset;
   }
 
   @SuppressWarnings("unused")

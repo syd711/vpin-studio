@@ -1,6 +1,7 @@
 package de.mephisto.vpin.server.jpa;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import edu.umd.cs.findbugs.annotations.Nullable;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 
@@ -29,6 +30,8 @@ public class GameDetails {
   private String romName;
 
   private int pupId;
+
+  private int nvOffset;
 
   public Date getCreatedAt() {
     return createdAt;
@@ -62,11 +65,20 @@ public class GameDetails {
     this.id = id;
   }
 
+  @Nullable
   public String getRomName() {
     return romName;
   }
 
-  public void setRomName(String romName) {
+  public void setRomName(@Nullable String romName) {
     this.romName = romName;
+  }
+
+  public int getNvOffset() {
+    return nvOffset;
+  }
+
+  public void setNvOffset(int nvOffset) {
+    this.nvOffset = nvOffset;
   }
 }

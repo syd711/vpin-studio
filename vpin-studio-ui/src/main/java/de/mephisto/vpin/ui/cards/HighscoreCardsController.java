@@ -110,6 +110,9 @@ public class HighscoreCardsController implements Initializable, ObservedProperty
   private Spinner<Integer> rowSeparatorSpinner;
 
   @FXML
+  private CheckBox renderRawHighscore;
+
+  @FXML
   private ComboBox<GameRepresentation> tableCombo;
 
   @FXML
@@ -155,7 +158,7 @@ public class HighscoreCardsController implements Initializable, ObservedProperty
     FileChooser fileChooser = new FileChooser();
     fileChooser.setTitle("Select Image");
     fileChooser.getExtensionFilters().addAll(
-        new FileChooser.ExtensionFilter("All Images", "*.jpg", "*.png", "*.jepg"),
+        new FileChooser.ExtensionFilter("All Images", "*.jpg", "*.png", "*.jpeg"),
         new FileChooser.ExtensionFilter("JPG", "*.jpg"),
         new FileChooser.ExtensionFilter("PNG", "*.png"));
     File file = fileChooser.showOpenDialog(stage);
@@ -294,6 +297,8 @@ public class HighscoreCardsController implements Initializable, ObservedProperty
     BindingUtil.bindSpinner(marginTopSpinner, properties, "card.title.y.offset");
     BindingUtil.bindSpinner(wheelImageSpinner, properties, "card.highscores.row.padding.left");
     BindingUtil.bindSpinner(rowSeparatorSpinner, properties, "card.highscores.row.separator");
+
+    BindingUtil.bindCheckbox(renderRawHighscore, properties, "card.rawScoreData");
 
     tableCombo.valueProperty().addListener((observableValue, gameRepresentation, t1) -> refreshRawPreview(t1));
 

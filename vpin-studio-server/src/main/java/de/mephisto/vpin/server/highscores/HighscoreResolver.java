@@ -106,35 +106,45 @@ class HighscoreResolver {
         highscore.setInitials1(initials);
         highscore.setScore1(highScoreValue);
 
-        for (int i = 1; i <= 4; i++) {
-          tableHighscoreFile = new File(tableHighscoreFolder, "HighScore" + i);
-          tableHighscoreNameFile = new File(tableHighscoreFolder, "HighScore" + i + "Name");
-          if (tableHighscoreFile.exists() && tableHighscoreNameFile.exists()) {
-            highScoreValue = readFileString(tableHighscoreFile);
-            if (highScoreValue != null) {
-              highScoreValue = HighscoreParser.formatScore(highScoreValue);
-              initials = readFileString(tableHighscoreNameFile);
+        int index = 1;
+        tableHighscoreFile = new File(tableHighscoreFolder, "HighScore" + index);
+        tableHighscoreNameFile = new File(tableHighscoreFolder, "HighScore" + index + "Name");
+        while (tableHighscoreFile.exists() && tableHighscoreNameFile.exists()) {
+          highScoreValue = readFileString(tableHighscoreFile);
+          if (highScoreValue != null) {
+            highScoreValue = HighscoreParser.formatScore(highScoreValue);
+            initials = readFileString(tableHighscoreNameFile);
 
-              if (i == 1) {
-                highscore.setScore1(highScoreValue);
-                highscore.setInitials1(initials);
-              }
-              else if (i == 2) {
-                highscore.setScore2(highScoreValue);
-                highscore.setInitials2(initials);
-              }
-              else if (i == 3) {
-                highscore.setScore3(highScoreValue);
-                highscore.setInitials3(initials);
-              }
+            if (index == 1) {
+              highscore.setScore1(highScoreValue);
+              highscore.setInitials1(initials);
+            }
+            else if (index == 2) {
+              highscore.setScore2(highScoreValue);
+              highscore.setInitials2(initials);
+            }
+            else if (index == 3) {
+              highscore.setScore3(highScoreValue);
+              highscore.setInitials3(initials);
             }
           }
+          index++;
+          tableHighscoreFile = new File(tableHighscoreFolder, "HighScore" + index);
+          tableHighscoreNameFile = new File(tableHighscoreFolder, "HighScore" + index + "Name");
         }
 
+
+        StringBuilder rawBuilder = new StringBuilder();
+        List<Score> scores = highscore.toScores();
+        for (Score score : scores) {
+          rawBuilder.append(score.toString());
+          rawBuilder.append("\n");
+        }
+        highscore.setRaw(rawBuilder.toString());
         return highscore;
       }
       else {
-        LOG.debug("No VPReg highscore file found: " + tableHighscoreFile.getAbsolutePath());
+        LOG.debug("No VPReg highscore file found for '" + game.getRom() + "'");
       }
     }
     else {

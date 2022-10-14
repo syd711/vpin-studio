@@ -18,6 +18,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Optional;
 
 @Service
 public class SystemService implements InitializingBean  {
@@ -36,6 +37,7 @@ public class SystemService implements InitializingBean  {
   private final static String PINEMHI_FOLDER = RESOURCES + "pinemhi";
   private final static String PINEMHI_COMMAND = "PINemHi.exe";
   private final static String PINEMHI_INI = "pinemhi.ini";
+  private final static String VPM_ALIAS = "VPMAlias.txt";
 
 
   private File pinUPSystemInstallationFolder;
@@ -173,6 +175,10 @@ public class SystemService implements InitializingBean  {
     return formatPathLog(label, file.getAbsolutePath(), file.exists(), file.canRead());
   }
 
+  public File getVPMAliasFile() {
+    return new File(this.getMameFolder(), VPM_ALIAS);
+  }
+
   public File getB2SImageExtractionFolder() {
     return new File(RESOURCES, "b2s/");
   }
@@ -238,6 +244,11 @@ public class SystemService implements InitializingBean  {
       }
     }
     return file;
+  }
+
+  public boolean isPinUPRunning() {
+    Optional<ProcessHandle> pinUP = ProcessHandle.allProcesses().filter(p -> p.info().command().isPresent() && p.info().command().get().contains("PinUP")).findFirst();
+    return pinUP.isPresent();
   }
 
   public File getPinemhiCommandFile() {

@@ -77,7 +77,7 @@
                                    <ComboBox fx:id="backgroundImageCombo" prefHeight="30.0" prefWidth="254.0" stylesheets="@stylesheet.css" />
                                 </children>
                              </HBox>
-                             <Button mnemonicParsing="false" onAction="#onTableRefresh" text="  Upload Background">
+                             <Button mnemonicParsing="false" onAction="#onUploadButton" text="  Upload Background">
                                 <font>
                                    <Font size="14.0" />
                                 </font>
@@ -188,7 +188,7 @@
                         </VBox>
                      </content>
                 </TitledPane>
-                <TitledPane animated="false" text="Render Settings">
+                <TitledPane animated="false" text="Layout and Effects">
                      <content>
                         <VBox prefHeight="200.0" prefWidth="100.0" styleClass="accordion-container" stylesheets="@stylesheet.css">
                            <children>
@@ -285,6 +285,14 @@
                                  </padding>
                               </Label>
                               <Spinner fx:id="rowSeparatorSpinner" editable="true" prefHeight="26.0" prefWidth="303.0" styleClass="widget-default" />
+                              <CheckBox fx:id="renderRawHighscore" mnemonicParsing="false" stylesheets="@stylesheet.css" text="Render Raw Highscore Data" textFill="WHITE">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                                 <VBox.margin>
+                                    <Insets top="12.0" />
+                                 </VBox.margin>
+                              </CheckBox>
                            </children>
                         </VBox>
                      </content>

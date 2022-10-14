@@ -15,8 +15,9 @@ public class RomManagerResource {
 
   @SuppressWarnings("unused")
   @Nullable
-  public String rescanRom(Game game) {
-    return this.romService.scanRom(game);
+  public boolean rescanRom(Game game) {
+    this.romService.scanGameFile(game);
+    return true;
   }
 
 }

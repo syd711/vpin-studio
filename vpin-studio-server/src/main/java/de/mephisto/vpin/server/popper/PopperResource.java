@@ -5,15 +5,13 @@ import de.mephisto.vpin.server.games.GameService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.io.File;
 
 /**
  * Legacy URls:
+ * "curl -X POST --data-urlencode \"info=\" http://localhost:" + HttpServer.PORT + "/service/popperLaunch";
  * "curl -X POST --data-urlencode \"table=[GAMEFULLNAME]\" http://localhost:" + HttpServer.PORT + "/service/gameLaunch";
  * "curl -X POST --data-urlencode \"table=[GAMEFULLNAME]\" http://localhost:" + HttpServer.PORT + "/service/gameExit";
  */
@@ -52,6 +50,12 @@ public class PopperResource {
       return false;
     }
     popperManager.notifyTableStatusChange(game, false);
+    return true;
+  }
+
+  @PostMapping("/popperLaunch")
+  public boolean popperLaunch() {
+    popperManager.notifyPopperLaunch();
     return true;
   }
 

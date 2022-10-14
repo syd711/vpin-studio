@@ -4,6 +4,7 @@ import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.jpa.GameDetails;
 import de.mephisto.vpin.server.jpa.GameDetailsRepository;
 import de.mephisto.vpin.server.roms.RomService;
+import de.mephisto.vpin.server.roms.ScanResult;
 import de.mephisto.vpin.server.system.SystemService;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
@@ -25,6 +26,7 @@ import java.util.List;
 public class PinUPConnector implements InitializingBean {
   private final static Logger LOG = LoggerFactory.getLogger(PinUPConnector.class);
 
+  private final static String CURL_COMMAND_POPPER_START = "curl -X POST --data-urlencode \"system=\" http://localhost:" + SystemService.SERVER_PORT + "/service/popperLaunch";
   private final static String CURL_COMMAND_TABLE_START = "curl -X POST --data-urlencode \"table=[GAMEFULLNAME]\" http://localhost:" + SystemService.SERVER_PORT + "/service/gameLaunch";
   private final static String CURL_COMMAND_TABLE_EXIT = "curl -X POST --data-urlencode \"table=[GAMEFULLNAME]\" http://localhost:" + SystemService.SERVER_PORT + "/service/gameExit";
 
@@ -36,6 +38,9 @@ public class PinUPConnector implements InitializingBean {
 
   @Autowired
   private SystemService systemService;
+
+  @Autowired
+  private RomService romService;
 
   @Autowired
   private GameDetailsRepository gameDetailsRepository;
@@ -51,15 +56,21 @@ public class PinUPConnector implements InitializingBean {
     Emulators[] values = Emulators.values();
     for (Emulators value : values) {
       String emulatorName = Emulators.getEmulatorName(value);
-      String startupScript = this.getEmulatorStartupScript(emulatorName);
-      if (startupScript != null && !startupScript.contains(CURL_COMMAND_TABLE_START)) {
-        startupScript = startupScript + "\n\n" + CURL_COMMAND_TABLE_START;
-        this.updateScript(emulatorName, "LaunchScript", startupScript);
+      String emulatorStartupScript = this.getEmulatorStartupScript(emulatorName);
+      if (emulatorStartupScript != null && !emulatorStartupScript.contains(CURL_COMMAND_TABLE_START)) {
+        emulatorStartupScript = emulatorStartupScript + "\n\n" + CURL_COMMAND_TABLE_START;
+        this.updateScript(emulatorName, "LaunchScript", emulatorStartupScript);
       }
       String emulatorExitScript = this.getEmulatorExitScript(Emulators.getEmulatorName(value));
       if (emulatorExitScript != null && !emulatorExitScript.contains(CURL_COMMAND_TABLE_EXIT)) {
         emulatorExitScript = emulatorExitScript + "\n\n" + CURL_COMMAND_TABLE_EXIT;
         this.updateScript(emulatorName, "PostScript", emulatorExitScript);
+      }
+
+      String startupScript = this.getStartupScript();
+      if (!startupScript.contains(CURL_COMMAND_POPPER_START)) {
+        startupScript = startupScript + "\n" + CURL_COMMAND_POPPER_START + "\n";
+        this.updateStartupScript(startupScript);
       }
     }
     LOG.info("Finished Popper scripts configuration check.");
@@ -150,6 +161,44 @@ public class PinUPConnector implements InitializingBean {
       this.disconnect();
     }
     return info;
+  }
+
+  @NonNull
+  public String getStartupScript() {
+    String script = null;
+    this.connect();
+    try {
+      Statement statement = conn.createStatement();
+      ResultSet rs = statement.executeQuery("SELECT * FROM GlobalSettings;");
+      rs.next();
+      script = rs.getString("StartupBatch");
+      rs.close();
+      statement.close();
+    } catch (SQLException e) {
+      LOG.error("Failed to read startup script: " + e.getMessage(), e);
+    } finally {
+      this.disconnect();
+    }
+
+    if(script == null) {
+      script = "";
+    }
+    return script;
+  }
+
+  public void updateStartupScript(@NonNull String content) {
+    this.connect();
+    try {
+      PreparedStatement preparedStatement = conn.prepareStatement("UPDATE GlobalSettings SET 'StartupBatch'=?");
+      preparedStatement.setString(1, content);
+      preparedStatement.executeUpdate();
+      preparedStatement.close();
+      LOG.info("Update of startup script successful.");
+    } catch (Exception e) {
+      LOG.error("Failed to update startup script script:" + e.getMessage(), e);
+    } finally {
+      this.disconnect();
+    }
   }
 
   @Nullable
@@ -367,32 +416,23 @@ public class PinUPConnector implements InitializingBean {
 
   private void loadDetails(@NonNull Game game) {
     try {
-      GameDetails details = gameDetailsRepository.findByPupId(game.getId());
-      String rom = null;
-      if (details == null) {
-        RomService scanner = new RomService();
-        rom = scanner.scanRom(game);
-        GameDetails gameDetails = new GameDetails();
+      GameDetails gameDetails = gameDetailsRepository.findByPupId(game.getId());
+      if (gameDetails == null) {
+        ScanResult scanResult = romService.scanGameFile(game);
+
+        gameDetails = new GameDetails();
         gameDetails.setPupId(game.getId());
-        gameDetails.setRomName(rom);
+        gameDetails.setRomName(scanResult.getRom());
+        gameDetails.setNvOffset(scanResult.getNvOffset());
         gameDetails.setCreatedAt(new java.util.Date());
         gameDetails.setUpdatedAt(new java.util.Date());
         gameDetailsRepository.saveAndFlush(gameDetails);
       }
-      else {
-        rom = details.getRomName();
-      }
 
-      game.setRom(rom);
-      if (!StringUtils.isEmpty(rom)) {
-        File romFile = new File(systemService.getMameRomFolder(), rom + ".zip");
-        game.setRomFile(romFile);
-
-        File nvRamFolder = new File(systemService.getMameFolder(), "nvram");
-        game.setNvRamFile(new File(nvRamFolder, rom + ".nv"));
-      }
+      game.setRom(gameDetails.getRomName());
+      game.setNvOffset(gameDetails.getNvOffset());
     } catch (Exception e) {
-      LOG.error("Failed to parse ROM data of " + game + ": " + e.getMessage(), e);
+      LOG.error("Failed to load details for " + game + ": " + e.getMessage(), e);
     }
   }
 }

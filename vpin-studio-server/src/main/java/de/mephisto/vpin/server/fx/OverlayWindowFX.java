@@ -2,6 +2,7 @@ package de.mephisto.vpin.server.fx;
 
 import de.mephisto.vpin.server.generators.GeneratorResource;
 import de.mephisto.vpin.server.generators.OverlayGraphics;
+import de.mephisto.vpin.server.popper.PopperLaunchListener;
 import de.mephisto.vpin.server.resources.ResourceLoader;
 import de.mephisto.vpin.server.util.Config;
 import de.mephisto.vpin.server.util.KeyChecker;
@@ -25,7 +26,7 @@ import java.io.FileInputStream;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class OverlayWindowFX extends Application implements NativeKeyListener {
+public class OverlayWindowFX extends Application implements NativeKeyListener, PopperLaunchListener {
   private final static org.slf4j.Logger LOG = LoggerFactory.getLogger(OverlayGraphics.class);
 
   private boolean visible = false;
@@ -73,6 +74,17 @@ public class OverlayWindowFX extends Application implements NativeKeyListener {
     logger.setLevel(Level.OFF);
     logger.setUseParentHandlers(false);
     GlobalScreen.addNativeKeyListener(this);
+
+    boolean pinUPRunning = false;//TODO SystemInfo.getInstance().isPinUPRunning();
+    if(pinUPRunning) {
+      popperLaunched();
+    }
+    else {
+      LOG.info("Added VPin service popper status listener.");
+//      VPinService service = VPinService.create(true);
+//      service.addPopperLaunchListener(this);
+      //TODO
+    }
   }
 
   @Override
@@ -84,7 +96,7 @@ public class OverlayWindowFX extends Application implements NativeKeyListener {
   public void nativeKeyPressed(NativeKeyEvent nativeKeyEvent) {
     String hotkey = Config.getOverlayGeneratorConfig().getString("overlay.hotkey");
     KeyChecker keyChecker = new KeyChecker(hotkey);
-    if (keyChecker.matches(nativeKeyEvent)) {
+    if (keyChecker.matches(nativeKeyEvent) || visible) {
       this.visible = !visible;
       Platform.runLater(() -> {
         LOG.info("Toggle show");
@@ -101,5 +113,23 @@ public class OverlayWindowFX extends Application implements NativeKeyListener {
   @Override
   public void nativeKeyReleased(NativeKeyEvent nativeKeyEvent) {
 
+  }
+
+  @Override
+  public void popperLaunched() {
+    boolean launch = Config.getOverlayGeneratorConfig().getBoolean("overlay.launchOnStartup");
+    if (launch) {
+      int delay = Config.getOverlayGeneratorConfig().getInt("overlay.launchDelay", 0);
+      if (delay > 0) {
+        try {
+          Thread.sleep(delay * 1000L);
+        } catch (InterruptedException e) {
+          LOG.error("Failed to wait for delay: " + e.getMessage(), e);
+        }
+      }
+
+      this.visible = !visible;
+      stage.show();
+    }
   }
 }
