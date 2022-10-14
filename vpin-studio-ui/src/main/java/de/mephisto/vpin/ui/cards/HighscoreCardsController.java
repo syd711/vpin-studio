@@ -7,7 +7,6 @@ import de.mephisto.vpin.restclient.VPinStudioClient;
 import de.mephisto.vpin.restclient.representations.GameRepresentation;
 import de.mephisto.vpin.ui.VPinStudioApplication;
 import de.mephisto.vpin.ui.util.BindingUtil;
-import de.mephisto.vpin.ui.util.TransitionUtil;
 import de.mephisto.vpin.ui.util.WidgetFactory;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
@@ -27,6 +26,7 @@ import javafx.scene.layout.BorderPane;
 import javafx.stage.FileChooser;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
+import org.kordamp.ikonli.javafx.FontIcon;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -118,6 +118,9 @@ public class HighscoreCardsController implements Initializable, ObservedProperty
   @FXML
   private BorderPane imageCenter;
 
+  @FXML
+  private FontIcon rawHighscoreHelp;
+
   private VPinStudioClient client;
 
   private ObservedProperties properties;
@@ -141,6 +144,11 @@ public class HighscoreCardsController implements Initializable, ObservedProperty
 
       cardPreview.setPreserveRatio(true);
       stage.widthProperty().addListener((obs, oldVal, newVal) -> {
+        try {
+          Thread.sleep(400);
+        } catch (InterruptedException e) {
+          e.printStackTrace();
+        }
         cardPreview.setFitWidth(newVal.intValue() / 2);
         refreshPreview(tableCombo.getValue(), false);
       });
@@ -302,6 +310,11 @@ public class HighscoreCardsController implements Initializable, ObservedProperty
 
     tableCombo.valueProperty().addListener((observableValue, gameRepresentation, t1) -> refreshRawPreview(t1));
 
+    rawHighscoreHelp.setCursor(javafx.scene.Cursor.HAND);
+    Tooltip tooltip = new Tooltip();
+    tooltip.setGraphic(rawHighscoreHelp);
+    Tooltip.install(rawHighscoreHelp, new Tooltip("The font size of the highscore text will be adapted according to the number of lines."));
+
     GameRepresentation value = tableCombo.getValue();
     refreshRawPreview(value);
     onGenerateClick();
@@ -344,8 +357,8 @@ public class HighscoreCardsController implements Initializable, ObservedProperty
             setBusy(false);
           }).start();
         }
-        cardPreview.setFitWidth(imageCenter.getWidth() - 60);
-        cardPreview.setFitHeight(imageCenter.getHeight() - 60);
+        cardPreview.setFitHeight(imageCenter.getHeight() - 200);
+        cardPreview.setFitWidth(imageCenter.getWidth() - 200);
       } catch (Exception e) {
         LOG.error("Failed to refresh card preview: " + e.getMessage(), e);
       }

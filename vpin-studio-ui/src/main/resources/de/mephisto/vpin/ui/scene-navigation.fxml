@@ -29,111 +29,139 @@
       </Button>
    </bottom>
    <top>
-    <VBox alignment="TOP_CENTER" prefHeight="1000.0" prefWidth="300.0" styleClass="navigation-panel" stylesheets="@stylesheet.css" BorderPane.alignment="CENTER">
-        <children>
-            <Button fx:id="dashboardBtn" alignment="BASELINE_LEFT" graphicTextGap="12.0" mnemonicParsing="false" onAction="#onDashboardClick" prefHeight="60.0" prefWidth="330.0" styleClass="navigation-button" stylesheets="@stylesheet.css" text="Dashboard" textFill="WHITE">
-                <font>
-                    <Font size="18.0" />
-                </font>
-                <opaqueInsets>
-                    <Insets />
-                </opaqueInsets>
-                <padding>
-                    <Insets left="47.0" />
-                </padding>
-                <cursor>
-                    <Cursor fx:constant="HAND" />
-                </cursor>
-               <graphic>
-                  <FontIcon iconColor="WHITE" iconLiteral="bi-grid" />
-               </graphic>
-            </Button>
-            <Button alignment="BASELINE_LEFT" graphicTextGap="12.0" layoutX="10.0" layoutY="210.0" mnemonicParsing="false" prefHeight="60.0" prefWidth="330.0" styleClass="navigation-button" stylesheets="@stylesheet.css" text="Overlay Settings" textFill="WHITE">
-                <font>
-                    <Font name="Tahoma" size="18.0" />
-                </font>
-                <opaqueInsets>
-                    <Insets />
-                </opaqueInsets>
-                <padding>
-                    <Insets left="47.0" />
-                </padding>
-                <cursor>
-                    <Cursor fx:constant="HAND" />
-                </cursor>
-               <graphic>
-                  <FontIcon iconColor="WHITE" iconLiteral="bi-list" />
-               </graphic>
-            </Button>
-            <Button alignment="BASELINE_LEFT" graphicTextGap="12.0" layoutX="10.0" layoutY="210.0" mnemonicParsing="false" onAction="#onHighscoreCardsClick" prefHeight="60.0" prefWidth="330.0" styleClass="navigation-button" stylesheets="@stylesheet.css" text="Highscore Cards" textFill="WHITE">
-                <font>
-                    <Font size="18.0" />
-                </font>
-                <opaqueInsets>
-                    <Insets />
-                </opaqueInsets>
-                <padding>
-                    <Insets left="47.0" />
-                </padding>
-                <cursor>
-                    <Cursor fx:constant="HAND" />
-                </cursor>
-               <graphic>
-                  <FontIcon iconColor="WHITE" iconLiteral="bi-list-ol" />
-               </graphic>
-            </Button>
-            <Button alignment="BASELINE_LEFT" graphicTextGap="12.0" layoutX="10.0" layoutY="210.0" mnemonicParsing="false" prefHeight="60.0" prefWidth="330.0" styleClass="navigation-button" stylesheets="@stylesheet.css" text="DOF Commands" textFill="WHITE">
-                <font>
-                    <Font size="18.0" />
-                </font>
-                <opaqueInsets>
-                    <Insets />
-                </opaqueInsets>
-                <padding>
-                    <Insets left="47.0" />
-                </padding>
-                <cursor>
-                    <Cursor fx:constant="HAND" />
-                </cursor>
-               <graphic>
-                  <FontIcon iconColor="WHITE" iconLiteral="bi-command" />
-               </graphic>
-            </Button>
-            <Button alignment="BASELINE_LEFT" graphicTextGap="12.0" layoutX="10.0" layoutY="210.0" mnemonicParsing="false" prefHeight="60.0" prefWidth="330.0" styleClass="navigation-button" stylesheets="@stylesheet.css" text="Competitions" textFill="WHITE">
-                <font>
-                    <Font size="18.0" />
-                </font>
-                <opaqueInsets>
-                    <Insets />
-                </opaqueInsets>
-                <padding>
-                    <Insets left="47.0" />
-                </padding>
-                <cursor>
-                    <Cursor fx:constant="HAND" />
-                </cursor>
-               <graphic>
-                  <FontIcon iconColor="WHITE" iconLiteral="bi-list-stars" />
-               </graphic>
-            </Button>
-            <Button alignment="BASELINE_LEFT" graphicTextGap="12.0" layoutX="10.0" layoutY="450.0" mnemonicParsing="false" prefHeight="60.0" prefWidth="330.0" styleClass="navigation-button" stylesheets="@stylesheet.css" text="Players" textFill="WHITE">
-                <font>
-                    <Font size="18.0" />
-                </font>
-                <opaqueInsets>
-                    <Insets />
-                </opaqueInsets>
-                <padding>
-                    <Insets left="47.0" />
-                </padding>
-                <cursor>
-                    <Cursor fx:constant="HAND" />
-                </cursor>
-               <graphic>
-                  <FontIcon iconColor="WHITE" iconLiteral="bi-person" />
-               </graphic>
-            </Button>
-        </children>
-    </VBox>
+      <BorderPane BorderPane.alignment="CENTER">
+         <center>
+          <VBox alignment="TOP_CENTER" prefHeight="1000.0" prefWidth="300.0" styleClass="navigation-panel" stylesheets="@stylesheet.css">
+              <children>
+                  <Button fx:id="dashboardBtn" alignment="BASELINE_LEFT" graphicTextGap="12.0" mnemonicParsing="false" onAction="#onDashboardClick" prefHeight="60.0" prefWidth="330.0" styleClass="navigation-button" stylesheets="@stylesheet.css" text="Dashboard" textFill="WHITE">
+                      <font>
+                          <Font size="18.0" />
+                      </font>
+                      <opaqueInsets>
+                          <Insets />
+                      </opaqueInsets>
+                      <padding>
+                          <Insets left="47.0" />
+                      </padding>
+                      <cursor>
+                          <Cursor fx:constant="HAND" />
+                      </cursor>
+                     <graphic>
+                        <FontIcon iconColor="WHITE" iconLiteral="bi-grid" />
+                     </graphic>
+                  </Button>
+                  <Button alignment="BASELINE_LEFT" graphicTextGap="12.0" layoutX="10.0" layoutY="70.0" mnemonicParsing="false" onAction="#onTablesClick" prefHeight="60.0" prefWidth="330.0" styleClass="navigation-button" stylesheets="@stylesheet.css" text="Tables" textFill="WHITE">
+                     <font>
+                        <Font name="Tahoma" size="18.0" />
+                     </font>
+                     <opaqueInsets>
+                        <Insets />
+                     </opaqueInsets>
+                     <padding>
+                        <Insets left="47.0" />
+                     </padding>
+                     <cursor>
+                        <Cursor fx:constant="HAND" />
+                     </cursor>
+                     <graphic>
+                        <FontIcon iconColor="WHITE" iconLiteral="bi-card-list" />
+                     </graphic>
+                  </Button>
+                  <Button alignment="BASELINE_LEFT" graphicTextGap="12.0" layoutX="10.0" layoutY="210.0" mnemonicParsing="false" onAction="#onHighscoreCardsClick" prefHeight="60.0" prefWidth="330.0" styleClass="navigation-button" stylesheets="@stylesheet.css" text="Highscore Cards" textFill="WHITE">
+                      <font>
+                          <Font size="18.0" />
+                      </font>
+                      <opaqueInsets>
+                          <Insets />
+                      </opaqueInsets>
+                      <padding>
+                          <Insets left="47.0" />
+                      </padding>
+                      <cursor>
+                          <Cursor fx:constant="HAND" />
+                      </cursor>
+                     <graphic>
+                        <FontIcon iconColor="WHITE" iconLiteral="bi-list-ol" />
+                     </graphic>
+                  </Button>
+                  <Button alignment="BASELINE_LEFT" graphicTextGap="12.0" layoutX="10.0" layoutY="210.0" mnemonicParsing="false" prefHeight="60.0" prefWidth="330.0" styleClass="navigation-button" stylesheets="@stylesheet.css" text="Overlay Settings" textFill="WHITE">
+                      <font>
+                          <Font name="Tahoma" size="18.0" />
+                      </font>
+                      <opaqueInsets>
+                          <Insets />
+                      </opaqueInsets>
+                      <padding>
+                          <Insets left="47.0" />
+                      </padding>
+                      <cursor>
+                          <Cursor fx:constant="HAND" />
+                      </cursor>
+                     <graphic>
+                        <FontIcon iconColor="WHITE" iconLiteral="bi-layers" />
+                     </graphic>
+                  </Button>
+                  <Button alignment="BASELINE_LEFT" graphicTextGap="12.0" layoutX="10.0" layoutY="210.0" mnemonicParsing="false" prefHeight="60.0" prefWidth="330.0" styleClass="navigation-button" stylesheets="@stylesheet.css" text="DOF Commands" textFill="WHITE">
+                      <font>
+                          <Font size="18.0" />
+                      </font>
+                      <opaqueInsets>
+                          <Insets />
+                      </opaqueInsets>
+                      <padding>
+                          <Insets left="47.0" />
+                      </padding>
+                      <cursor>
+                          <Cursor fx:constant="HAND" />
+                      </cursor>
+                     <graphic>
+                        <FontIcon iconColor="WHITE" iconLiteral="bi-command" />
+                     </graphic>
+                  </Button>
+                  <Button alignment="BASELINE_LEFT" graphicTextGap="12.0" layoutX="10.0" layoutY="210.0" mnemonicParsing="false" prefHeight="60.0" prefWidth="330.0" styleClass="navigation-button" stylesheets="@stylesheet.css" text="Competitions" textFill="WHITE">
+                      <font>
+                          <Font size="18.0" />
+                      </font>
+                      <opaqueInsets>
+                          <Insets />
+                      </opaqueInsets>
+                      <padding>
+                          <Insets left="47.0" />
+                      </padding>
+                      <cursor>
+                          <Cursor fx:constant="HAND" />
+                      </cursor>
+                     <graphic>
+                        <FontIcon iconColor="WHITE" iconLiteral="bi-trophy" />
+                     </graphic>
+                  </Button>
+                  <Button alignment="BASELINE_LEFT" graphicTextGap="12.0" layoutX="10.0" layoutY="450.0" mnemonicParsing="false" prefHeight="60.0" prefWidth="330.0" styleClass="navigation-button" stylesheets="@stylesheet.css" text="Players" textFill="WHITE">
+                      <font>
+                          <Font size="18.0" />
+                      </font>
+                      <opaqueInsets>
+                          <Insets />
+                      </opaqueInsets>
+                      <padding>
+                          <Insets left="47.0" />
+                      </padding>
+                      <cursor>
+                          <Cursor fx:constant="HAND" />
+                      </cursor>
+                     <graphic>
+                        <FontIcon iconColor="WHITE" iconLiteral="bi-person" />
+                     </graphic>
+                  </Button>
+              </children>
+          </VBox>
+         </center>
+         <top>
+            <BorderPane fx:id="avatarPane" prefHeight="200.0" prefWidth="300.0" BorderPane.alignment="CENTER">
+               <padding>
+                  <Insets bottom="24.0" left="24.0" right="24.0" top="24.0" />
+               </padding>
+            </BorderPane>
+         </top>
+      </BorderPane>
    </top>
 </BorderPane>

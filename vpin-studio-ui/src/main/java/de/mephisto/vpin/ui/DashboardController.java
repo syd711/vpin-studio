@@ -10,14 +10,13 @@ import javafx.fxml.Initializable;
 import javafx.scene.chart.XYChart;
 import javafx.scene.image.Image;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.paint.Color;
 import javafx.scene.text.TextAlignment;
 
 import java.net.URL;
 import java.time.LocalTime;
 import java.util.ResourceBundle;
 
-public class MainController implements Initializable {
+public class DashboardController implements Initializable {
   private final static int TILE_WIDTH = 600;
   private final static int TILE_HEIGHT = 500;
 
@@ -41,7 +40,7 @@ public class MainController implements Initializable {
   private Tile turnoverTile;
 
   // Add a public no-args constructor
-  public MainController() {
+  public DashboardController() {
   }
 
 
@@ -104,7 +103,7 @@ public class MainController implements Initializable {
         .text("Gerrit Grunwald")
         .decimals(0)
         .unit("")
-        .image(new Image(MainController.class.getResourceAsStream("dashboard.png")))
+        .image(new Image(DashboardController.class.getResourceAsStream("dashboard.png")))
         .animated(true)
         .checkThreshold(true)
         .onTileEvent(e -> {
@@ -126,7 +125,7 @@ public class MainController implements Initializable {
 
     Tile activeChallenge = TileBuilder.create()
         .skinType(Tile.SkinType.IMAGE)
-        .image(new Image(MainController.class.getResourceAsStream("dashboard.png")))
+        .image(new Image(DashboardController.class.getResourceAsStream("dashboard.png")))
         .imageMask(Tile.ImageMask.ROUND)
         .text("Active Challange: Funhouse")
         .textSize(Tile.TextSize.BIGGER)

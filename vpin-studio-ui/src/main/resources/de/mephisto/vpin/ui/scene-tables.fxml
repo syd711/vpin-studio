@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Slider?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TitledPane?>
+<?import javafx.scene.control.ToolBar?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<BorderPane prefHeight="1354.0" prefWidth="1951.0" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.tables.TablesController">
+   <left>
+       <fx:include fx:id="navigation" prefWidth="300.0" source="scene-navigation.fxml" />
+   </left>
+   <center>
+      <BorderPane BorderPane.alignment="CENTER">
+         <center>
+            <BorderPane prefHeight="1354.0" prefWidth="1114.0" style="-fx-background-color: #212529;" BorderPane.alignment="CENTER">
+               <top>
+                   <fx:include fx:id="header" source="scene-header.fxml" />
+               </top>
+               <center>
+                  <BorderPane prefHeight="200.0" prefWidth="200.0" styleClass="subpanel" stylesheets="@stylesheet.css" BorderPane.alignment="CENTER">
+                     <center>
+                        <BorderPane styleClass="subpanel" stylesheets="@stylesheet.css" BorderPane.alignment="CENTER">
+                           <center>
+                              <TableView fx:id="tableView" prefHeight="200.0" prefWidth="200.0" styleClass="base-component" stylesheets="@stylesheet.css">
+                                <columns>
+                                  <TableColumn fx:id="columnDisplayName" minWidth="100.0" prefWidth="300.0" text="Display Name" />
+                                  <TableColumn fx:id="columnFilename" minWidth="100.0" prefWidth="300.0" text="Filename" />
+                                    <TableColumn fx:id="columnLastPlayed" minWidth="100.0" prefWidth="150.0" text="Last Played" />
+                                    <TableColumn fx:id="columnStatus" minWidth="100.0" prefWidth="100.0" text="Status" />
+                                </columns>
+                                 <BorderPane.margin>
+                                    <Insets bottom="24.0" />
+                                 </BorderPane.margin>
+                              </TableView>
+                           </center>
+                           <BorderPane.margin>
+                              <Insets left="24.0" right="24.0" top="24.0" />
+                           </BorderPane.margin>
+                           <top>
+                              <ToolBar prefHeight="40.0" prefWidth="200.0" styleClass="base-component" stylesheets="@stylesheet.css" BorderPane.alignment="CENTER">
+                                <items>
+                                  <Button mnemonicParsing="false" text="Button">
+                                       <font>
+                                          <Font size="14.0" />
+                                       </font>
+                                    </Button>
+                                </items>
+                              </ToolBar>
+                           </top>
+                        </BorderPane>
+                     </center>
+                     <BorderPane.margin>
+                        <Insets left="24.0" right="24.0" />
+                     </BorderPane.margin>
+                  </BorderPane>
+               </center>
+               <right>
+                  <VBox prefHeight="1224.0" prefWidth="600.0" styleClass="subpanel" stylesheets="@stylesheet.css" BorderPane.alignment="CENTER">
+                     <children>
+                        <TitledPane animated="false" prefHeight="650.0" prefWidth="567.0" text="Media">
+                          <content>
+                            <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
+                          </content>
+                        </TitledPane>
+                        <TitledPane animated="false" text="Media Settings">
+                           <content>
+                              <BorderPane prefHeight="200.0" prefWidth="200.0">
+                                 <center>
+                                    <VBox prefHeight="200.0" prefWidth="100.0" BorderPane.alignment="CENTER">
+                                       <children>
+                                          <Label text="Table Volume">
+                                             <font>
+                                                <Font size="14.0" />
+                                             </font>
+                                          </Label>
+                                          <Slider>
+                                             <VBox.margin>
+                                                <Insets top="6.0" />
+                                             </VBox.margin>
+                                          </Slider>
+                                       </children>
+                                    </VBox>
+                                 </center>
+                                 <padding>
+                                    <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
+                                 </padding>
+                              </BorderPane>
+                           </content>
+                        </TitledPane>
+                     </children></VBox>
+               </right>
+            </BorderPane>
+         </center>
+      </BorderPane>
+   </center>
+</BorderPane>

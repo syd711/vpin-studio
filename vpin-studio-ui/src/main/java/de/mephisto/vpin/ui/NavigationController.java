@@ -13,7 +13,6 @@ import javafx.scene.image.Image;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.paint.Color;
 import javafx.scene.text.TextAlignment;
-import javafx.stage.Stage;
 
 import java.io.IOException;
 import java.net.URL;
@@ -29,7 +28,7 @@ public class NavigationController implements Initializable {
 
   @FXML
   private void onDashboardClick(ActionEvent event) throws IOException {
-    Parent root = FXMLLoader.load(getClass().getResource("scene-main.fxml"));
+    Parent root = FXMLLoader.load(getClass().getResource("scene-dashboard.fxml"));
     Scene scene = ((Node) event.getSource()).getScene();
     scene.setRoot(root);
   }
@@ -41,8 +40,27 @@ public class NavigationController implements Initializable {
     scene.setRoot(root);
   }
 
+  @FXML
+  private void onTablesClick(ActionEvent event) throws IOException {
+    Parent root = FXMLLoader.load(getClass().getResource("scene-tables.fxml"));
+    Scene scene = ((Node) event.getSource()).getScene();
+    scene.setRoot(root);
+  }
+
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
+
+    Tile avatar = TileBuilder.create()
+        .skinType(Tile.SkinType.IMAGE)
+        .prefSize(300, 300)
+        .backgroundColor(Color.TRANSPARENT)
+        .image(new Image(DashboardController.class.getResourceAsStream("dashboard.png")))
+        .imageMask(Tile.ImageMask.ROUND)
+        .text("Whatever text")
+        .textSize(Tile.TextSize.BIGGER)
+        .textAlignment(TextAlignment.CENTER)
+        .build();
+    avatarPane.setCenter(avatar);
 
   }
 }

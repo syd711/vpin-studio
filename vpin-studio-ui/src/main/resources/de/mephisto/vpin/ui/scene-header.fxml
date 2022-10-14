@@ -9,7 +9,7 @@
 <?import javafx.scene.text.Font?>
 <?import org.kordamp.ikonli.javafx.FontIcon?>
 
-<BorderPane minHeight="200.0" prefHeight="200.0" prefWidth="1215.0" style="-fx-background-color: #212529;" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.HeaderController">
+<BorderPane minHeight="130.0" prefHeight="130.0" prefWidth="1215.0" style="-fx-background-color: #212529;" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.HeaderController">
    <center>
       <BorderPane BorderPane.alignment="TOP_LEFT">
          <left>
@@ -33,14 +33,8 @@
          </BorderPane.margin>
       </BorderPane>
    </center>
-   <left>
-      <BorderPane fx:id="avatarPane" prefHeight="150.0" prefWidth="300.0" styleClass="navigation-panel" stylesheets="@stylesheet.css" BorderPane.alignment="CENTER">
-         <padding>
-            <Insets bottom="24.0" left="24.0" right="24.0" top="24.0" />
-         </padding></BorderPane>
-   </left>
    <right>
-      <BorderPane prefHeight="200.0" prefWidth="300.0" styleClass="navigation-panel" stylesheets="@stylesheet.css" BorderPane.alignment="CENTER">
+      <BorderPane prefHeight="200.0" prefWidth="300.0" stylesheets="@stylesheet.css" BorderPane.alignment="CENTER">
          <BorderPane.margin>
             <Insets />
          </BorderPane.margin>

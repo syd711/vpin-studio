@@ -5,15 +5,11 @@
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.RowConstraints?>
-<?import javafx.scene.layout.VBox?>
 
-<BorderPane xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.MainController">
+<BorderPane xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.DashboardController">
    <left>
        <fx:include fx:id="navigation" prefWidth="300.0" source="scene-navigation.fxml" />
    </left>
-   <right>
-      <VBox prefHeight="1354.0" prefWidth="300.0" style="-fx-background-color: #272b2f;" BorderPane.alignment="CENTER" />
-   </right>
    <center>
       <BorderPane BorderPane.alignment="CENTER">
          <center>
@@ -66,11 +62,11 @@
                      </opaqueInsets>
                   </GridPane>
                </center>
+               <top>
+                   <fx:include fx:id="header" source="scene-header.fxml" />
+               </top>
             </BorderPane>
          </center>
       </BorderPane>
    </center>
-   <top>
-       <fx:include fx:id="header" source="scene-header.fxml" />
-   </top>
 </BorderPane>
