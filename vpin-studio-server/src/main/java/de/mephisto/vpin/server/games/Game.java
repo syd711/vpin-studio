@@ -1,7 +1,7 @@
 package de.mephisto.vpin.server.games;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import de.mephisto.vpin.server.popper.PopperScreen;
+import de.mephisto.vpin.server.popper.Emulator;
 import de.mephisto.vpin.server.system.SystemService;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
@@ -19,16 +19,17 @@ public class Game {
   private String gameFileName;
   private int id;
   private int nvOffset;
+  private Emulator emulator;
 
   private File gameFile;
   private File romFile;
-  private File wheelIconFile;
 
   private Date lastPlayed;
   private int numberPlays;
+
   private final SystemService systemService;
 
-  public Game(SystemService systemService) {
+  public Game(@NonNull SystemService systemService) {
     this.systemService = systemService;
   }
 
@@ -44,27 +45,6 @@ public class Game {
     return false;
   }
 
-  @SuppressWarnings("unused")
-  @NonNull
-  @JsonIgnore
-  public File getPopperScreenMedia(@NonNull PopperScreen screen) {
-    File emuMedia = new File(systemService.getPinUPMediaFolder(), getEmulatorName());
-    File mediaFolder = new File(emuMedia, screen.name());
-    return new File(mediaFolder, FilenameUtils.getBaseName(this.getGameFile().getName()) + ".png");
-  }
-
-  @NonNull
-  public String getEmulatorName() {
-    File gameFile = getGameFile();
-    if (gameFile.getName().endsWith(".vpx")) {
-      return "Visual Pinball X";
-    }
-    else if (gameFile.getName().endsWith(".fp")) {
-      return "Future Pinball";
-    }
-    return "Visual Pinball X";
-  }
-
   @Nullable
   @JsonIgnore
   public File getVPRegFolder() {
@@ -72,6 +52,18 @@ public class Game {
       return new File(systemService.getExtractedVPRegFolder(), getRom());
     }
     return null;
+  }
+
+  public Emulator getEmulator() {
+    return emulator;
+  }
+
+  public void setEmulator(Emulator emulator) {
+    this.emulator = emulator;
+  }
+
+  public SystemService getSystemService() {
+    return systemService;
   }
 
   @SuppressWarnings("unused")
@@ -93,37 +85,26 @@ public class Game {
     this.lastPlayed = lastPlayed;
   }
 
-  @SuppressWarnings("unused")
-  @NonNull
-  @JsonIgnore
-  public File getWheelIconFile() {
-    return wheelIconFile;
-  }
-
-  public void setWheelIconFile(@NonNull File wheelIconFile) {
-    this.wheelIconFile = wheelIconFile;
-  }
-
   @Nullable
   @JsonIgnore
   public File getNvRamFile() {
     File nvRamFolder = new File(systemService.getMameFolder(), "nvram");
 
     String originalRom = getOriginalRom() != null ? this.getOriginalRom() : this.getRom();
-    File defaultNVFile = new File(nvRamFolder, originalRom +  ".nv");
-    if(this.getNvOffset() == 0) {
+    File defaultNVFile = new File(nvRamFolder, originalRom + ".nv");
+    if (this.getNvOffset() == 0) {
       return defaultNVFile;
     }
 
     //if the text file exists, the current nv file contains the highscore of this table
     File versionTextFile = new File(systemService.getMameFolder(), this.getRom() + " v" + getNvOffset() + ".txt");
-    if(versionTextFile.exists()) {
+    if (versionTextFile.exists()) {
       return defaultNVFile;
     }
 
     //else, we can check if a nv file with the alias and version exists
     File versionNVAliasedFile = new File(systemService.getMameFolder(), originalRom + " v" + getNvOffset() + ".nv");
-    if(versionNVAliasedFile.exists()) {
+    if (versionNVAliasedFile.exists()) {
       return versionNVAliasedFile;
     }
 

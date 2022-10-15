@@ -5,6 +5,7 @@ import de.mephisto.vpin.server.games.GameService;
 import de.mephisto.vpin.server.highscores.HighscoreService;
 import de.mephisto.vpin.server.jpa.Highscore;
 import de.mephisto.vpin.server.highscores.Score;
+import de.mephisto.vpin.server.popper.PopperScreen;
 import de.mephisto.vpin.server.system.SystemService;
 import de.mephisto.vpin.server.util.Config;
 import de.mephisto.vpin.server.util.ImageUtil;
@@ -172,10 +173,10 @@ public class OverlayGraphics {
       g.drawString(score, imageWidth / 2 - totalScoreAndWheelWidth / 2 + wheelWidth + ROW_SEPARATOR, scoreY);
     }
 
-    File wheelIconFile = challengedGame.getWheelIconFile();
+    File wheelIconFile = challengedGame.getEmulator().getPinUPMedia(PopperScreen.Wheel);
     int wheelY = tableNameY + ROW_SEPARATOR;
 
-    if (wheelIconFile.exists()) {
+    if (wheelIconFile != null && wheelIconFile.exists()) {
       BufferedImage wheelImage = ImageIO.read(wheelIconFile);
       g.drawImage(wheelImage, imageWidth / 2 - totalScoreAndWheelWidth / 2, wheelY, wheelWidth, wheelWidth, null);
     }
@@ -216,8 +217,9 @@ public class OverlayGraphics {
         continue;
       }
 
-      File wheelIconFile = game.getWheelIconFile();
-      if (!wheelIconFile.exists() && Config.getOverlayGeneratorConfig().getBoolean("overlay.skipWithMissingWheels")) {
+
+      File wheelIconFile = game.getEmulator().getPinUPMedia(PopperScreen.Wheel);
+      if (wheelIconFile != null && !wheelIconFile.exists() && Config.getOverlayGeneratorConfig().getBoolean("overlay.skipWithMissingWheels")) {
         continue;
       }
 

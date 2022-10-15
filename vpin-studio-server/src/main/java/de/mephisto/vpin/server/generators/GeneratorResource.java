@@ -9,6 +9,7 @@ import de.mephisto.vpin.server.system.SystemService;
 import de.mephisto.vpin.server.util.Config;
 import de.mephisto.vpin.server.util.ImageUtil;
 import de.mephisto.vpin.server.util.RequestUtil;
+import edu.umd.cs.findbugs.annotations.NonNull;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
@@ -21,7 +22,6 @@ import org.springframework.web.multipart.MultipartFile;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.FilenameFilter;
 import java.net.URLEncoder;
 import java.util.Arrays;
 import java.util.List;
@@ -54,7 +54,7 @@ public class GeneratorResource {
 
   @GetMapping("/card/{gameId}")
   public ResponseEntity<byte[]> generateCard(@PathVariable("gameId") int gameId) throws Exception {
-    if(onCardGeneration(gameId, true)) {
+    if (onCardGeneration(gameId, true)) {
       return RequestUtil.serializeImage(getCardSampleFile());
     }
 
@@ -77,7 +77,10 @@ public class GeneratorResource {
   public ResponseEntity<byte[]> getBackground(@PathVariable("name") String imageName) throws Exception {
     File folder = new File(SystemService.RESOURCES, "backgrounds");
     File[] files = folder.listFiles((dir, name) -> URLEncoder.encode(FilenameUtils.getBaseName(name)).equals(imageName));
-    return RequestUtil.serializeImage(files[0]);
+    if (files != null) {
+      return RequestUtil.serializeImage(files[0]);
+    }
+    return ResponseEntity.notFound().build();
   }
 
   @PostMapping("/upload")
@@ -86,7 +89,7 @@ public class GeneratorResource {
     String name = file.getOriginalFilename().replaceAll("/", "").replaceAll("\\\\", "");
     try {
       bytes = file.getBytes();
-      if(bytes.length > MAX_PACKET_SIZE) {
+      if (bytes.length > MAX_PACKET_SIZE) {
         LOG.warn("Failed to store upload, because max packet size exceeded, size is " + bytes.length);
         return false;
       }
@@ -115,18 +118,18 @@ public class GeneratorResource {
     }
   }
 
-  private boolean onCardGeneration(int gameId, boolean sampleCard) throws Exception {
+  private boolean onCardGeneration(int gameId, boolean generateSampleCard) throws Exception {
     try {
       Game game = gameService.getGame(gameId);
       BufferedImage bufferedImage = new CardGraphics(highscoreService, directB2SService, game).draw();
-      if(bufferedImage != null) {
-        if(sampleCard) {
+      if (bufferedImage != null) {
+        if (generateSampleCard) {
           ImageUtil.write(bufferedImage, getCardSampleFile());
           return true;
         }
         else {
-          File sampleFile = getCardFile(gameId);
-          ImageUtil.write(bufferedImage, sampleFile);
+          File highscoreCard = getCardFile(game);
+          ImageUtil.write(bufferedImage, highscoreCard);
           return true;
         }
       }
@@ -141,9 +144,8 @@ public class GeneratorResource {
     return new File(SystemService.RESOURCES, "highscore-card-sample.png");
   }
 
-  private File getCardFile(int gameId) {
-    Game game = gameService.getGame(gameId);
+  private File getCardFile(@NonNull Game game) {
     PopperScreen screen = PopperScreen.valueOf(Config.getCardGeneratorConfig().getString("popper.screen", PopperScreen.Other2.name()));
-    return game.getPopperScreenMedia(screen);
+    return new File(game.getEmulator().getPinUPMedia(screen), FilenameUtils.getBaseName(game.getGameFileName()) + ".png");
   }
 }

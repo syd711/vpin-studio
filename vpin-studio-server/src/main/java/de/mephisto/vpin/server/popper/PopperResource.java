@@ -29,8 +29,8 @@ public class PopperResource {
   @Autowired
   private PopperService popperManager;
 
-  @PostMapping("/gameLaunch")
-  public boolean gameLaunch(@PathVariable("table") String table) {
+  @PostMapping("/gameLaunch/")
+  public boolean gameLaunch(@RequestParam("table") String table) {
     File tableFile = new File(table);
     Game game = service.getGameByFile(tableFile);
     if (game == null) {
@@ -42,7 +42,7 @@ public class PopperResource {
   }
 
   @PostMapping("/gameExit")
-  public boolean gameExit(@PathVariable("table") String table) {
+  public boolean gameExit(@RequestParam("table") String table) {
     File tableFile = new File(table);
     Game game = service.getGameByFile(tableFile);
     if (game == null) {

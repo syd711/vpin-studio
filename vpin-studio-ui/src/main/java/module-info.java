@@ -18,6 +18,7 @@ module de.mephisto.vpin.ui {
   requires com.github.spotbugs.annotations;
   requires filters;
   requires de.mephisto.vpin.restclient;
+  requires javafx.media;
 
   opens de.mephisto.vpin.ui to javafx.fxml;
   exports de.mephisto.vpin.ui;

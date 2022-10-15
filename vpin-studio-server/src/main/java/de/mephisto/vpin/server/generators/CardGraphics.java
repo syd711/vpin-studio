@@ -6,6 +6,7 @@ import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.highscores.HighscoreService;
 import de.mephisto.vpin.server.highscores.Score;
 import de.mephisto.vpin.server.jpa.Highscore;
+import de.mephisto.vpin.server.popper.PopperScreen;
 import de.mephisto.vpin.server.system.SystemService;
 import de.mephisto.vpin.server.util.Config;
 import de.mephisto.vpin.server.util.ImageUtil;
@@ -144,10 +145,10 @@ public class CardGraphics {
       tableNameY = tableNameY + TABLE_FONT_SIZE / 2;
 
       //draw wheel icon
-      File wheelIconFile = game.getWheelIconFile();
+      File wheelIconFile = game.getEmulator().getPinUPMedia(PopperScreen.Wheel);
       int wheelY = tableNameY + ROW_SEPARATOR;
       int wheelSize = 3 * SCORE_FONT_SIZE + 3 * ROW_SEPARATOR;
-      if (wheelIconFile.exists()) {
+      if (wheelIconFile != null && wheelIconFile.exists()) {
         BufferedImage wheelImage = ImageIO.read(wheelIconFile);
         g.drawImage(wheelImage, WHEEL_PADDING, wheelY, wheelSize, wheelSize, null);
       }

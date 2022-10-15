@@ -1,7 +1,11 @@
 package de.mephisto.vpin.server.system;
 
 import de.mephisto.vpin.server.VPinStudioException;
+import de.mephisto.vpin.server.games.Game;
+import de.mephisto.vpin.server.popper.PopperScreen;
 import de.mephisto.vpin.server.util.PropertiesStore;
+import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -109,7 +113,6 @@ public class SystemService implements InitializingBean  {
     LOG.info(formatPathLog("Locale", Locale.getDefault().getDisplayName()));
     LOG.info(formatPathLog("Charset", Charset.defaultCharset().displayName()));
     LOG.info(formatPathLog("PinUP System Folder", this.getPinUPSystemFolder()));
-    LOG.info(formatPathLog("PinUP Media Folder", this.getPinUPMediaFolder()));
     LOG.info(formatPathLog("PinUP Database File", this.getPinUPDatabaseFile()));
     LOG.info(formatPathLog("Visual Pinball Folder", this.getVisualPinballInstallationFolder()));
     LOG.info(formatPathLog("Visual Pinball Tables Folder", this.getVPXTablesFolder()));
@@ -246,11 +249,6 @@ public class SystemService implements InitializingBean  {
     return file;
   }
 
-  public boolean isPinUPRunning() {
-    Optional<ProcessHandle> pinUP = ProcessHandle.allProcesses().filter(p -> p.info().command().isPresent() && p.info().command().get().contains("PinUP")).findFirst();
-    return pinUP.isPresent();
-  }
-
   public File getPinemhiCommandFile() {
     return new File(PINEMHI_FOLDER, PINEMHI_COMMAND);
   }
@@ -305,9 +303,6 @@ public class SystemService implements InitializingBean  {
     return pinUPSystemInstallationFolder;
   }
 
-  public File getPinUPMediaFolder() {
-    return new File(getPinUPSystemFolder(), "POPMedia");
-  }
 
   /**
    * Checks to see if a specific port is available.

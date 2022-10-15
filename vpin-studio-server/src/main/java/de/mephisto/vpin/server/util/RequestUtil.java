@@ -20,6 +20,12 @@ import java.util.concurrent.TimeUnit;
 public class RequestUtil {
   private final static Logger LOG = LoggerFactory.getLogger(RequestUtil.class);
 
+  public static final String CONTENT_TYPE = "Content-Type";
+  public static final String CONTENT_LENGTH = "Content-Length";
+  public static final String VIDEO_CONTENT = "video/";
+  public static final String CONTENT_RANGE = "Content-Range";
+  public static final String ACCEPT_RANGES = "Accept-Ranges";
+
   public static boolean doGet(String url) {
     try {
       HttpURLConnection connection = (HttpURLConnection) new URL(url).openConnection();

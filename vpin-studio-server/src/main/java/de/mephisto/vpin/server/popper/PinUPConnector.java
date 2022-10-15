@@ -8,8 +8,6 @@ import de.mephisto.vpin.server.roms.ScanResult;
 import de.mephisto.vpin.server.system.SystemService;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
-import org.apache.commons.io.FilenameUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
@@ -18,9 +16,8 @@ import org.springframework.stereotype.Service;
 
 import java.io.File;
 import java.sql.*;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
+import java.sql.Date;
+import java.util.*;
 
 @Service
 public class PinUPConnector implements InitializingBean {
@@ -53,27 +50,33 @@ public class PinUPConnector implements InitializingBean {
   }
 
   private void runConfigCheck() {
-    Emulators[] values = Emulators.values();
-    for (Emulators value : values) {
-      String emulatorName = Emulators.getEmulatorName(value);
-      String emulatorStartupScript = this.getEmulatorStartupScript(emulatorName);
-      if (emulatorStartupScript != null && !emulatorStartupScript.contains(CURL_COMMAND_TABLE_START)) {
-        emulatorStartupScript = emulatorStartupScript + "\n\n" + CURL_COMMAND_TABLE_START;
-        this.updateScript(emulatorName, "LaunchScript", emulatorStartupScript);
-      }
-      String emulatorExitScript = this.getEmulatorExitScript(Emulators.getEmulatorName(value));
-      if (emulatorExitScript != null && !emulatorExitScript.contains(CURL_COMMAND_TABLE_EXIT)) {
-        emulatorExitScript = emulatorExitScript + "\n\n" + CURL_COMMAND_TABLE_EXIT;
-        this.updateScript(emulatorName, "PostScript", emulatorExitScript);
-      }
-
-      String startupScript = this.getStartupScript();
-      if (!startupScript.contains(CURL_COMMAND_POPPER_START)) {
-        startupScript = startupScript + "\n" + CURL_COMMAND_POPPER_START + "\n";
-        this.updateStartupScript(startupScript);
+    List<Emulator> ems = this.getEmulators();
+    for (Emulator emulator : ems) {
+      if(emulator.getName().equals(Emulator.VISUAL_PINBALL_X)) {
+        initVisualPinballXScripts(emulator);
       }
     }
     LOG.info("Finished Popper scripts configuration check.");
+  }
+
+  private void initVisualPinballXScripts(Emulator emulator) {
+    String emulatorName = emulator.getName();
+    String emulatorStartupScript = this.getEmulatorStartupScript(emulatorName);
+    if (emulatorStartupScript != null && !emulatorStartupScript.contains(CURL_COMMAND_TABLE_START)) {
+      emulatorStartupScript = emulatorStartupScript + "\n\n" + CURL_COMMAND_TABLE_START;
+      this.updateScript(emulatorName, "LaunchScript", emulatorStartupScript);
+    }
+    String emulatorExitScript = this.getEmulatorExitScript(emulatorName);
+    if (emulatorExitScript != null && !emulatorExitScript.contains(CURL_COMMAND_TABLE_EXIT)) {
+      emulatorExitScript = emulatorExitScript + "\n\n" + CURL_COMMAND_TABLE_EXIT;
+      this.updateScript(emulatorName, "PostScript", emulatorExitScript);
+    }
+
+    String startupScript = this.getStartupScript();
+    if (!startupScript.contains(CURL_COMMAND_POPPER_START)) {
+      startupScript = startupScript + "\n" + CURL_COMMAND_POPPER_START + "\n";
+      this.updateStartupScript(startupScript);
+    }
   }
 
   /**
@@ -199,6 +202,30 @@ public class PinUPConnector implements InitializingBean {
     } finally {
       this.disconnect();
     }
+  }
+
+  @NonNull
+  public List<Emulator> getEmulators() {
+    this.connect();
+    List<Emulator> result = new ArrayList<>();
+    try {
+      Statement statement = conn.createStatement();
+      ResultSet rs = statement.executeQuery("SELECT * FROM Emulators;");
+      while (rs.next()) {
+        Emulator e = new Emulator(null);
+        e.setId(rs.getInt("EMUID"));
+        e.setName(rs.getString("EmuName"));
+        e.setMediaDir(rs.getString("DirMedia"));
+        result.add(e);
+      }
+      rs.close();
+      statement.close();
+    } catch (SQLException e) {
+      LOG.error("Failed to get function: " + e.getMessage(), e);
+    } finally {
+      this.disconnect();
+    }
+    return result;
   }
 
   @Nullable
@@ -384,8 +411,7 @@ public class PinUPConnector implements InitializingBean {
     String gameDisplayName = rs.getString("GameDisplay");
     game.setGameDisplayName(gameDisplayName);
 
-    File wheelIconFile = new File(systemService.getPinUPSystemFolder() + "/POPMedia/Visual Pinball X/Wheel/", FilenameUtils.getBaseName(gameFileName) + ".png");
-    game.setWheelIconFile(wheelIconFile);
+    int emuId = rs.getInt("EMUID");
 
     File vpxFile = new File(systemService.getVPXTablesFolder(), gameFileName);
     if (!vpxFile.exists()) {
@@ -395,7 +421,28 @@ public class PinUPConnector implements InitializingBean {
     game.setGameFile(vpxFile);
     loadStats(game);
     loadDetails(game);
+    loadEmulator(game, emuId);
     return game;
+  }
+
+  private void loadEmulator(@NonNull Game game, int emuId) {
+    try {
+      PreparedStatement statement = conn.prepareStatement("SELECT * FROM Emulators WHERE EMUID = ?");
+      statement.setInt(1, emuId);
+      ResultSet rs = statement.executeQuery();
+      Emulator emulator = new Emulator(game);
+      game.setEmulator(emulator);
+
+      if (rs.next()) {
+        emulator.setId(rs.getInt("EMUID"));
+        emulator.setName(rs.getString("EmuName"));
+        emulator.setMediaDir(rs.getString("DirMedia"));
+      }
+      rs.close();
+      statement.close();
+    } catch (SQLException e) {
+      LOG.error("Failed to read emulator info: " + e.getMessage(), e);
+    }
   }
 
   private void loadStats(@NonNull Game game) {

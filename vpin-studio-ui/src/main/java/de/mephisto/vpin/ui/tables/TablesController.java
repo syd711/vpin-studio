@@ -10,6 +10,12 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 
+import javafx.scene.media.Media;
+import javafx.scene.media.MediaPlayer;
+import javafx.scene.media.MediaView;
+import javafx.scene.web.WebEngine;
+import javafx.scene.web.WebView;
+
 import java.net.URL;
 import java.util.ResourceBundle;
 
@@ -23,6 +29,10 @@ public class TablesController implements Initializable {
 
   @FXML
   private TableView tableView;
+
+  @FXML
+  private MediaView screenPlayfield;
+
 
   private VPinStudioClient client;
 
@@ -43,5 +53,17 @@ public class TablesController implements Initializable {
     );
 
     tableView.setItems(data);
+
+    Media media = new Media("http://localhost:8089/api/v1/poppermedia/60/PlayField");
+    MediaPlayer mediaPlayer = new MediaPlayer(media);
+    mediaPlayer.setAutoPlay(true);
+    mediaPlayer.setCycleCount(-1);
+    mediaPlayer.setMute(true);
+    mediaPlayer.setOnError(() -> {
+      System.out.println("Current error: "+mediaPlayer.getError());
+      mediaPlayer.getError().printStackTrace();
+    });
+    screenPlayfield.rotateProperty().set(90);
+    screenPlayfield.setMediaPlayer(mediaPlayer);
   }
 }

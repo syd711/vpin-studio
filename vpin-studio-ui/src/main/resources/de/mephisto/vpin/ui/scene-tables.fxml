@@ -8,9 +8,11 @@
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.control.TitledPane?>
 <?import javafx.scene.control.ToolBar?>
-<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.VBox?>
+<?import javafx.scene.media.MediaView?>
 <?import javafx.scene.text.Font?>
 
 <BorderPane prefHeight="1354.0" prefWidth="1951.0" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.tables.TablesController">
@@ -65,12 +67,22 @@
                <right>
                   <VBox prefHeight="1224.0" prefWidth="600.0" styleClass="subpanel" stylesheets="@stylesheet.css" BorderPane.alignment="CENTER">
                      <children>
-                        <TitledPane animated="false" prefHeight="650.0" prefWidth="567.0" text="Media">
-                          <content>
-                            <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
-                          </content>
+                        <TitledPane animated="false" collapsible="false" prefHeight="650.0" prefWidth="567.0" text="Media">
+                           <content>
+                              <BorderPane prefHeight="200.0" prefWidth="200.0">
+                                 <center>
+                                    <Pane prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+                                       <children>
+                                          <MediaView fx:id="screenPlayfield" fitHeight="340.0" fitWidth="200.0" layoutX="190.0" layoutY="239.0" />
+                                          <ImageView fitHeight="109.0" fitWidth="155.0" layoutX="21.0" layoutY="307.0" pickOnBounds="true" preserveRatio="true" />
+                                          <MediaView fitHeight="200.0" fitWidth="200.0" layoutX="190.0" layoutY="107.0" />
+                                       </children>
+                                    </Pane>
+                                 </center>
+                              </BorderPane>
+                           </content>
                         </TitledPane>
-                        <TitledPane animated="false" text="Media Settings">
+                        <TitledPane animated="false" collapsible="false" text="Media Settings">
                            <content>
                               <BorderPane prefHeight="200.0" prefWidth="200.0">
                                  <center>
