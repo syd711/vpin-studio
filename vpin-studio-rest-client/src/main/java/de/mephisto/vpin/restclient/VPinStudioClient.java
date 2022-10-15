@@ -1,11 +1,9 @@
 package de.mephisto.vpin.restclient;
 
-import de.mephisto.vpin.restclient.representations.GameMedia;
+import de.mephisto.vpin.restclient.representations.GameMediaRepresentation;
 import de.mephisto.vpin.restclient.representations.GameRepresentation;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
-import org.apache.tomcat.util.http.fileupload.FileUtils;
-import org.apache.tomcat.util.http.fileupload.IOUtils;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -15,7 +13,6 @@ import org.springframework.util.LinkedMultiValueMap;
 
 import java.io.*;
 import java.net.URLEncoder;
-import java.nio.file.Files;
 import java.util.*;
 
 public class VPinStudioClient implements ObservedPropertyChangeListener {
@@ -30,8 +27,16 @@ public class VPinStudioClient implements ObservedPropertyChangeListener {
     return new ByteArrayInputStream(bytes);
   }
 
+  public String getURL(@NonNull String segment) {
+    return RestClient.getInstance().getBaseUrl() + API + segment;
+  }
+
   public GameRepresentation getGame(int id) {
     return RestClient.getInstance().get(API + "games/" + id, GameRepresentation.class);
+  }
+
+  public GameMediaRepresentation getGameMedia(int id) {
+    return RestClient.getInstance().get(API + "poppermedia/" + id, GameMediaRepresentation.class);
   }
 
   public List<GameRepresentation> getGames() {

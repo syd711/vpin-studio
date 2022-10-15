@@ -6,6 +6,7 @@ import edu.umd.cs.findbugs.annotations.Nullable;
 import org.apache.commons.io.FilenameUtils;
 
 import java.io.File;
+import java.io.IOException;
 
 public class Emulator {
   public final static String VISUAL_PINBALL_X = "Visual Pinball X";
@@ -59,5 +60,18 @@ public class Emulator {
      return mediaFiles[0];
     }
     return null;
+  }
+
+  public GameMedia getGameMedia() throws IOException {
+    GameMedia gameMedia = new GameMedia();
+    PopperScreen[] screens = PopperScreen.values();
+    for (PopperScreen screen : screens) {
+      File mediaFile = getPinUPMedia(screen);
+      if(mediaFile != null) {
+        GameMediaItem item = new GameMediaItem(game, screen, mediaFile);
+        gameMedia.getMedia().put(screen.name(), item);
+      }
+    }
+    return gameMedia;
   }
 }

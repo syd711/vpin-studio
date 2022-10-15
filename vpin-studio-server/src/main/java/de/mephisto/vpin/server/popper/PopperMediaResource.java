@@ -13,6 +13,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -21,6 +22,7 @@ import java.io.IOException;
 import static de.mephisto.vpin.server.VPinStudioServer.API_SEGMENT;
 import static de.mephisto.vpin.server.util.RequestUtil.CONTENT_LENGTH;
 import static de.mephisto.vpin.server.util.RequestUtil.CONTENT_TYPE;
+import static org.springframework.http.HttpStatus.NOT_FOUND;
 
 @RestController
 @RequestMapping(API_SEGMENT + "poppermedia")
@@ -30,26 +32,18 @@ public class PopperMediaResource {
   @Autowired
   private GameService gameService;
 
-  @Autowired
-  private SystemService systemService;
 
-//  @GetMapping("/{id}/{screen}")
-//  public ResponseEntity<byte[]> handleRequest(@PathVariable("id") int id,
-//                                              @PathVariable("screen") String screen,
-//                                              @RequestHeader(value = "Range", required = false) String httpRangeList) {
-//    PopperScreen popperScreen = PopperScreen.valueOf(screen);
-//    Game game = gameService.getGame(id);
-//    LOG.info("Requested " + game);
-//
-////    File screenMediaFolder = new File(systemService.getPinUPMediaFolder()+ "/Visual Pinball X", popperScreen.name());
-//    File mediaFile = new File("C:\\vPinball\\PinUPSystem\\POPMedia\\Visual Pinball X\\PlayField\\AC'DC (Stern 2012).mp4");
-//    return videoStreamService.prepareContent("AC'DC (Stern 2012)", "mp4", httpRangeList);
-//  }
+  @GetMapping("/{id}")
+  public GameMedia getGameMedia(@PathVariable("id") int id) throws IOException {
+    Game game = gameService.getGame(id);
+    if(game == null) {
+      throw new ResponseStatusException(NOT_FOUND, "Not game found for id " + id);
+    }
+    return game.getEmulator().getGameMedia();
+  }
 
   @GetMapping("/{id}/{screen}")
-  public ResponseEntity<Resource> handleRequest(@PathVariable("id") int id,
-                                              @PathVariable("screen") String screen,
-                                              @RequestHeader(value = "Range", required = false) String httpRangeList) throws IOException {
+  public ResponseEntity<Resource> handleRequest(@PathVariable("id") int id, @PathVariable("screen") String screen) throws IOException {
     PopperScreen popperScreen = PopperScreen.valueOf(screen);
     Game game = gameService.getGame(id);
     LOG.info("Requested " + game);
@@ -69,9 +63,4 @@ public class PopperMediaResource {
     responseHeaders.set(CONTENT_TYPE, "video/mp4");
     return ResponseEntity.ok().headers(responseHeaders).body(bytesResource);
   }
-
-//  @GetMapping("{name}")
-//  public ResponseEntity<Resource> getVideoByName(@PathVariable("name") String name){
-//
-//  }
 }
