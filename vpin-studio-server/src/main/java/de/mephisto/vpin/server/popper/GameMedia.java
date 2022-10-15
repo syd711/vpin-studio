@@ -10,4 +10,8 @@ public class GameMedia {
   public Map<String, GameMediaItem> getMedia() {
     return media;
   }
+
+  public GameMediaItem get(PopperScreen screen) {
+    return media.get(screen.name());
+  }
 }

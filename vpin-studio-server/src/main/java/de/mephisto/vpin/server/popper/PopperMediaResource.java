@@ -46,21 +46,20 @@ public class PopperMediaResource {
   public ResponseEntity<Resource> handleRequest(@PathVariable("id") int id, @PathVariable("screen") String screen) throws IOException {
     PopperScreen popperScreen = PopperScreen.valueOf(screen);
     Game game = gameService.getGame(id);
-    LOG.info("Requested " + game);
+    GameMediaItem gameMediaItem = game.getEmulator().getGameMedia().get(popperScreen);
+    if(gameMediaItem != null) {
+      File file = gameMediaItem.getFile();
+      byte[] bytes = IOUtils.toByteArray(new FileInputStream(file));
+      ByteArrayResource bytesResource = new ByteArrayResource(bytes);
 
-//    File screenMediaFolder = new File(systemService.getPinUPMediaFolder()+ "/Visual Pinball X", popperScreen.name());
-    File mediaFile = new File("C:\\vPinball\\PinUPSystem\\POPMedia\\Visual Pinball X\\PlayField\\AC'DC (Stern 2012).mp4");
-
-    byte[] bytes = IOUtils.toByteArray(new FileInputStream(mediaFile));
-    ByteArrayResource bytesResource = new ByteArrayResource(bytes);
-
-    HttpHeaders responseHeaders = new HttpHeaders();
-    responseHeaders.set(CONTENT_LENGTH, String.valueOf(mediaFile.length()));
-
-    responseHeaders.set("Access-Control-Allow-Origin", "*");
-    responseHeaders.set("Access-Control-Expose-Headers", "origin, range");
-    responseHeaders.set("Cache-Control", "public, max-age=3600");
-    responseHeaders.set(CONTENT_TYPE, "video/mp4");
-    return ResponseEntity.ok().headers(responseHeaders).body(bytesResource);
+      HttpHeaders responseHeaders = new HttpHeaders();
+      responseHeaders.set(CONTENT_LENGTH, String.valueOf(file.length()));
+      responseHeaders.set(CONTENT_TYPE, gameMediaItem.getMimeType());
+      responseHeaders.set("Access-Control-Allow-Origin", "*");
+      responseHeaders.set("Access-Control-Expose-Headers", "origin, range");
+      responseHeaders.set("Cache-Control", "public, max-age=3600");
+      return ResponseEntity.ok().headers(responseHeaders).body(bytesResource);
+    }
+    return ResponseEntity.notFound().build();
   }
 }

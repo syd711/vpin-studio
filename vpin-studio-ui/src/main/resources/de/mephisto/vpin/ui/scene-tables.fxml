@@ -67,15 +67,15 @@
                <right>
                   <VBox prefHeight="1224.0" prefWidth="600.0" styleClass="subpanel" stylesheets="@stylesheet.css" BorderPane.alignment="CENTER">
                      <children>
-                        <TitledPane animated="false" collapsible="false" prefHeight="650.0" prefWidth="567.0" text="Media">
+                        <TitledPane animated="false" collapsible="false" prefHeight="754.0" prefWidth="600.0" text="Media">
                            <content>
                               <BorderPane prefHeight="200.0" prefWidth="200.0">
                                  <center>
                                     <Pane prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
                                        <children>
-                                          <MediaView fx:id="screenPlayfield" fitHeight="340.0" fitWidth="200.0" layoutX="190.0" layoutY="239.0" />
+                                          <MediaView fx:id="screenPlayfield" fitHeight="300.0" fitWidth="440.0" layoutX="70.0" layoutY="352.0" styleClass="media-container" />
                                           <ImageView fitHeight="109.0" fitWidth="155.0" layoutX="21.0" layoutY="307.0" pickOnBounds="true" preserveRatio="true" />
-                                          <MediaView fitHeight="200.0" fitWidth="200.0" layoutX="190.0" layoutY="107.0" />
+                                          <MediaView fx:id="screenTopper" fitHeight="63.0" fitWidth="250.0" layoutX="165.0" layoutY="159.0" />
                                        </children>
                                     </Pane>
                                  </center>

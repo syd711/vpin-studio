@@ -33,6 +33,8 @@ public class TablesController implements Initializable {
   @FXML
   private MediaView screenPlayfield;
 
+  @FXML
+  private MediaView screenTopper;
 
   private VPinStudioClient client;
 
@@ -69,5 +71,19 @@ public class TablesController implements Initializable {
     });
     screenPlayfield.rotateProperty().set(90);
     screenPlayfield.setMediaPlayer(mediaPlayer);
+
+    GameMediaItemRepresentation dmdItem = gameMedia.getItem(PopperScreen.DMD);
+    String dmdUri = client.getURL(dmdItem.getUri());
+    System.out.println(dmdUri);
+    Media media2 = new Media("file:///C:/vPinball/PinUPSystem/POPMedia/Visual%20Pinball%20X/DMD/AC'DC%20(Stern%202012).mp4");
+    MediaPlayer mediaPlayer2 = new MediaPlayer(media2);
+    mediaPlayer2.setAutoPlay(true);
+    mediaPlayer2.setCycleCount(-1);
+    mediaPlayer2.setMute(true);
+    mediaPlayer2.setOnError(() -> {
+      System.out.println("Current error: " + mediaPlayer2.getError());
+      mediaPlayer2.getError().printStackTrace();
+    });
+    screenTopper.setMediaPlayer(mediaPlayer2);
   }
 }
