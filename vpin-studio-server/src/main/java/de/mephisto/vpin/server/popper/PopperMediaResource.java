@@ -19,6 +19,7 @@ import org.springframework.web.server.ResponseStatusException;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 
 import static de.mephisto.vpin.server.VPinStudioServer.API_SEGMENT;
 import static de.mephisto.vpin.server.util.RequestUtil.CONTENT_LENGTH;
@@ -47,20 +48,25 @@ public class PopperMediaResource {
   public ResponseEntity<Resource> handleRequest(@PathVariable("id") int id, @PathVariable("screen") String screen) throws IOException {
     PopperScreen popperScreen = PopperScreen.valueOf(screen);
     Game game = gameService.getGame(id);
-    GameMediaItem gameMediaItem = game.getEmulator().getGameMedia().get(popperScreen);
-    if(gameMediaItem != null) {
-      File file = gameMediaItem.getFile();
-      byte[] bytes = IOUtils.toByteArray(new FileInputStream(file));
-      ByteArrayResource bytesResource = new ByteArrayResource(bytes);
+    if(game != null) {
+      Emulator emulator = game.getEmulator();
+      GameMedia gameMedia = emulator.getGameMedia();
+      GameMediaItem gameMediaItem = gameMedia.get(popperScreen);
+      if(gameMediaItem != null) {
+        File file = gameMediaItem.getFile();
+        byte[] bytes = IOUtils.toByteArray(new FileInputStream(file));
+        ByteArrayResource bytesResource = new ByteArrayResource(bytes);
 
-      HttpHeaders responseHeaders = new HttpHeaders();
-      responseHeaders.set(CONTENT_LENGTH, String.valueOf(file.length()));
-      responseHeaders.set(CONTENT_TYPE, gameMediaItem.getMimeType());
-      responseHeaders.set("Access-Control-Allow-Origin", "*");
-      responseHeaders.set("Access-Control-Expose-Headers", "origin, range");
-      responseHeaders.set("Cache-Control", "public, max-age=3600");
-      return ResponseEntity.ok().headers(responseHeaders).body(bytesResource);
+        HttpHeaders responseHeaders = new HttpHeaders();
+        responseHeaders.set(CONTENT_LENGTH, String.valueOf(file.length()));
+        responseHeaders.set(CONTENT_TYPE, gameMediaItem.getMimeType());
+        responseHeaders.set("Access-Control-Allow-Origin", "*");
+        responseHeaders.set("Access-Control-Expose-Headers", "origin, range");
+        responseHeaders.set("Cache-Control", "public, max-age=3600");
+        return ResponseEntity.ok().headers(responseHeaders).body(bytesResource);
+      }
     }
+
     return ResponseEntity.notFound().build();
   }
 }

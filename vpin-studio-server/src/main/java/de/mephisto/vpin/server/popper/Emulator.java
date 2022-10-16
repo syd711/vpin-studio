@@ -62,6 +62,7 @@ public class Emulator {
     return null;
   }
 
+  @NonNull
   public GameMedia getGameMedia() throws IOException {
     GameMedia gameMedia = new GameMedia();
     PopperScreen[] screens = PopperScreen.values();

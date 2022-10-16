@@ -137,19 +137,34 @@
 /**
  * Table View
  */
-.table-view .table-cell {
-    -fx-background-color: #333333;
-    -fx-text-fill: white;
-}
-
-.table-view:focused {
-    -fx-background-color: transparent;
-}
 
 .table-view {
+    -fx-background-color: #333366;
     -fx-font-size : 14px;
-    -fx-background-color: #111111;
+    -fx-text-fill: white;
+    -fx-text-background-color: #DDDDDD;
 }
+
+.table-view .table-cell{
+    -fx-border-color: transparent;
+}
+.table-row-cell: hover {
+    -fx-background-color: #33333311;
+    -fx-text-background-color: #6666FF;
+}
+.table-row-cell: selected {
+    -fx-background-color: #333366;
+    -fx-text-background-color: #FFFFFF;
+    -fx-font-weight: bold;
+}
+.table-row-cell: odd{
+    -fx-background-color: #93f9b911;
+}
+.table-row-cell: even{
+    -fx-background-color: #1dbbdd11;
+}
+
+
 
 /**
  * Accordion & Titled Pane

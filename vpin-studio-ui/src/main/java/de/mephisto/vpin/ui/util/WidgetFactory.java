@@ -2,8 +2,10 @@ package de.mephisto.vpin.ui.util;
 
 import de.mephisto.vpin.restclient.RestClient;
 import de.mephisto.vpin.restclient.VPinStudioClient;
+import de.mephisto.vpin.restclient.representations.GameMediaItemRepresentation;
 import de.mephisto.vpin.ui.VPinStudioApplication;
 import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.concurrent.Service;
@@ -120,12 +122,20 @@ public class WidgetFactory {
     }
   }
 
-  public static Node createMediaContainer(@NonNull BorderPane parent, @NonNull String mimeType, @NonNull String url) {
+  public static Node createMediaContainer(@NonNull BorderPane parent, @NonNull VPinStudioClient client, @Nullable GameMediaItemRepresentation item) {
+    if(item == null) {
+      parent.setCenter(null);
+      parent.setTop(null);
+      return parent;
+    }
+
+    String mimeType = item.getMimeType();
+    String url = client.getURL(item.getUri());
     String baseType = mimeType.split("/")[0];
     if (baseType.equals("image")) {
       ImageView imageView = new ImageView();
       imageView.setFitWidth(parent.getPrefWidth() - 10);
-      imageView.setFitHeight(parent.getPrefWidth() - 10);
+      imageView.setFitHeight(parent.getPrefWidth() - 20);
       imageView.setPreserveRatio(true);
 
       byte[] bytes = RestClient.getInstance().readBinary(url);
@@ -148,9 +158,18 @@ public class WidgetFactory {
       });
 
       MediaView mediaView = new MediaView(mediaPlayer);
-      mediaView.setFitWidth(parent.getPrefWidth() - 10);
-      mediaView.setFitHeight(parent.getPrefHeight() - 10);
       mediaView.setPreserveRatio(true);
+
+      if(parent.getId().equals("screenPlayfield")) {
+        mediaView.setFitWidth(parent.getPrefWidth() - 10);
+        mediaView.setFitHeight(parent.getPrefHeight() - 20);
+        mediaView.rotateProperty().set(90);
+      }
+      else {
+        mediaView.setFitWidth(parent.getPrefWidth() - 10);
+        mediaView.setFitHeight(parent.getPrefHeight() - 20);
+      }
+
       parent.setCenter(mediaView);
 
       return mediaView;

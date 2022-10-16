@@ -54,11 +54,12 @@ public class Game {
     return null;
   }
 
+  @NonNull
   public Emulator getEmulator() {
     return emulator;
   }
 
-  public void setEmulator(Emulator emulator) {
+  public void setEmulator(@NonNull Emulator emulator) {
     this.emulator = emulator;
   }
 

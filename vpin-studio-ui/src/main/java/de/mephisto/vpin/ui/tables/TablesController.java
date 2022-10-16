@@ -10,14 +10,18 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.Node;
+import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
+import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.Pane;
 
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.ResourceBundle;
 
 public class TablesController implements Initializable {
@@ -30,6 +34,9 @@ public class TablesController implements Initializable {
 
   @FXML
   private TableView tableView;
+
+  @FXML
+  private TextField textfieldSearch;
 
   @FXML
   private BorderPane screenTopper;
@@ -49,17 +56,51 @@ public class TablesController implements Initializable {
   @FXML
   private BorderPane screenHelp;
 
+  @FXML
+  private Label labelTableCount;
 
-  private VPinStudioClient client;
 
   // Add a public no-args constructor
   public TablesController() {
   }
 
+  private VPinStudioClient client;
+  private ObservableList<GameRepresentation> data;
+  private List<GameRepresentation> games;
+
+  @FXML
+  private void onSearchKeyPressed(KeyEvent e) {
+    if(e.getCode().equals(KeyCode.ENTER)) {
+      tableView.getSelectionModel().select(0);
+      tableView.requestFocus();
+    }
+  }
+
+
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
     client = new VPinStudioClient();
-    final ObservableList<GameRepresentation> data = FXCollections.observableArrayList(client.getGames());
+
+    bindTable();
+    bindSearchField();
+  }
+
+  private void bindSearchField() {
+    textfieldSearch.textProperty().addListener((observableValue, s, filterValue) -> {
+      List<GameRepresentation> filtered = new ArrayList<>();
+      for (GameRepresentation game : games) {
+        if(game.getGameDisplayName().toLowerCase().contains(filterValue.toLowerCase())) {
+          filtered.add(game);
+        }
+      }
+      data.setAll(filtered);
+    });
+  }
+
+  private void bindTable() {
+    games = client.getGames();
+    data = FXCollections.observableArrayList(games);
+    labelTableCount.setText(data.size() + " tables");
 
     columnDisplayName.setCellValueFactory(
         new PropertyValueFactory<GameRepresentation, String>("gameDisplayName")
@@ -69,26 +110,36 @@ public class TablesController implements Initializable {
     );
 
     tableView.setItems(data);
+    tableView.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
+      if (newSelection != null) {
+        GameRepresentation game = (GameRepresentation) newSelection;
+        updateMedia(game);
+      }
+    });
 
-    GameMediaRepresentation gameMedia = client.getGameMedia(60);
+    if(!data.isEmpty()) {
+      tableView.getSelectionModel().select(0);
+    }
+  }
 
+  private void updateMedia(GameRepresentation game) {
+    GameMediaRepresentation gameMedia = client.getGameMedia(game.getId());
     GameMediaItemRepresentation item = gameMedia.getItem(PopperScreen.Topper);
-    WidgetFactory.createMediaContainer(screenTopper, item.getMimeType(), client.getURL(item.getUri()));
+    WidgetFactory.createMediaContainer(screenTopper, client, item);
 
     item = gameMedia.getItem(PopperScreen.BackGlass);
-    WidgetFactory.createMediaContainer(screenBackglass, item.getMimeType(), client.getURL(item.getUri()));
-//
-//    item = gameMedia.getItem(PopperScreen.DMD);
-//    WidgetFactory.createMediaContainer(screenDMD, item.getMimeType(), client.getURL(item.getUri()));
+    WidgetFactory.createMediaContainer(screenBackglass, client, item);
+
+    item = gameMedia.getItem(PopperScreen.DMD);
+    WidgetFactory.createMediaContainer(screenDMD, client, item);
 
     item = gameMedia.getItem(PopperScreen.GameInfo);
-    WidgetFactory.createMediaContainer(screenInfo, item.getMimeType(), client.getURL(item.getUri()));
+    WidgetFactory.createMediaContainer(screenInfo, client, item);
 
     item = gameMedia.getItem(PopperScreen.GameHelp);
-    WidgetFactory.createMediaContainer(screenHelp, item.getMimeType(), client.getURL(item.getUri()));
+    WidgetFactory.createMediaContainer(screenHelp, client, item);
 
     item = gameMedia.getItem(PopperScreen.PlayField);
-    Node mediaContainer = WidgetFactory.createMediaContainer(screenPlayfield, item.getMimeType(), client.getURL(item.getUri()));
-    mediaContainer.rotateProperty().set(90);
+    WidgetFactory.createMediaContainer(screenPlayfield, client, item);
   }
 }

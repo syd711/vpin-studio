@@ -31,8 +31,6 @@ public class PinUPConnector implements InitializingBean {
   public static final String LAUNCH_SCRIPT = "LaunchScript";
   private String dbFilePath;
 
-  private Connection conn;
-
   @Autowired
   private SystemService systemService;
 
@@ -82,19 +80,20 @@ public class PinUPConnector implements InitializingBean {
   /**
    * Connect to a database
    */
-  private void connect() {
+  private Connection connect() {
     try {
       String url = "jdbc:sqlite:" + dbFilePath;
-      conn = DriverManager.getConnection(url);
+      return DriverManager.getConnection(url);
     } catch (SQLException e) {
       LOG.error("Failed to connect to sqlite: " + e.getMessage(), e);
     }
+    return null;
   }
 
-  private void disconnect() {
-    if (this.conn != null) {
+  private void disconnect(Connection conn) {
+    if (conn != null) {
       try {
-        this.conn.close();
+        conn.close();
       } catch (SQLException e) {
         LOG.error("Error disconnecting from sqlite: " + e.getMessage());
       }
@@ -103,35 +102,35 @@ public class PinUPConnector implements InitializingBean {
 
   @Nullable
   public Game getGame(int id) {
-    this.connect();
+    Connection connect = connect();
     Game info = null;
     try {
-      PreparedStatement statement = conn.prepareStatement("SELECT * FROM Games where GameID = ?");
+      PreparedStatement statement = connect.prepareStatement("SELECT * FROM Games where GameID = ?");
       statement.setInt(1, id);
       ResultSet rs = statement.executeQuery();
       if (rs.next()) {
-        info = createGame(rs);
+        info = createGame(connect, rs);
       }
       rs.close();
       statement.close();
     } catch (SQLException e) {
       LOG.error("Failed to get game for id '" + id + "': " + e.getMessage(), e);
     } finally {
-      this.disconnect();
+      disconnect(connect);
     }
     return info;
   }
 
   @Nullable
   public Game getGameByFilename(String filename) {
-    this.connect();
+    Connection connect = this.connect();
     Game info = null;
     try {
       String gameName = filename.replaceAll("'", "''");
-      Statement statement = conn.createStatement();
+      Statement statement = connect.createStatement();
       ResultSet rs = statement.executeQuery("SELECT * FROM Games where GameFileName = '" + gameName + "';");
       while (rs.next()) {
-        info = createGame(rs);
+        info = createGame(connect, rs);
       }
 
       rs.close();
@@ -139,21 +138,21 @@ public class PinUPConnector implements InitializingBean {
     } catch (SQLException e) {
       LOG.error("Failed to read game by filename '" + filename + "': " + e.getMessage(), e);
     } finally {
-      this.disconnect();
+      this.disconnect(connect);
     }
     return info;
   }
 
   @Nullable
   public Game getGameByName(String table) {
-    this.connect();
+    Connection connect = this.connect();
     Game info = null;
     try {
       String gameName = table.replaceAll("'", "''");
-      Statement statement = conn.createStatement();
+      Statement statement = connect.createStatement();
       ResultSet rs = statement.executeQuery("SELECT * FROM Games where GameDisplay = '" + gameName + "';");
       while (rs.next()) {
-        info = createGame(rs);
+        info = createGame(connect, rs);
       }
 
       rs.close();
@@ -161,7 +160,7 @@ public class PinUPConnector implements InitializingBean {
     } catch (SQLException e) {
       LOG.error("Failed to get game by name '" + table + "': " + e.getMessage(), e);
     } finally {
-      this.disconnect();
+      this.disconnect(connect);
     }
     return info;
   }
@@ -169,9 +168,9 @@ public class PinUPConnector implements InitializingBean {
   @NonNull
   public String getStartupScript() {
     String script = null;
-    this.connect();
+    Connection connect = this.connect();
     try {
-      Statement statement = conn.createStatement();
+      Statement statement = connect.createStatement();
       ResultSet rs = statement.executeQuery("SELECT * FROM GlobalSettings;");
       rs.next();
       script = rs.getString("StartupBatch");
@@ -180,7 +179,7 @@ public class PinUPConnector implements InitializingBean {
     } catch (SQLException e) {
       LOG.error("Failed to read startup script: " + e.getMessage(), e);
     } finally {
-      this.disconnect();
+      this.disconnect(connect);
     }
 
     if(script == null) {
@@ -190,9 +189,9 @@ public class PinUPConnector implements InitializingBean {
   }
 
   public void updateStartupScript(@NonNull String content) {
-    this.connect();
+    Connection connect = this.connect();
     try {
-      PreparedStatement preparedStatement = conn.prepareStatement("UPDATE GlobalSettings SET 'StartupBatch'=?");
+      PreparedStatement preparedStatement = connect.prepareStatement("UPDATE GlobalSettings SET 'StartupBatch'=?");
       preparedStatement.setString(1, content);
       preparedStatement.executeUpdate();
       preparedStatement.close();
@@ -200,16 +199,16 @@ public class PinUPConnector implements InitializingBean {
     } catch (Exception e) {
       LOG.error("Failed to update startup script script:" + e.getMessage(), e);
     } finally {
-      this.disconnect();
+      this.disconnect(connect);
     }
   }
 
   @NonNull
   public List<Emulator> getEmulators() {
-    this.connect();
+    Connection connect = this.connect();
     List<Emulator> result = new ArrayList<>();
     try {
-      Statement statement = conn.createStatement();
+      Statement statement = connect.createStatement();
       ResultSet rs = statement.executeQuery("SELECT * FROM Emulators;");
       while (rs.next()) {
         Emulator e = new Emulator(null);
@@ -223,7 +222,7 @@ public class PinUPConnector implements InitializingBean {
     } catch (SQLException e) {
       LOG.error("Failed to get function: " + e.getMessage(), e);
     } finally {
-      this.disconnect();
+      this.disconnect(connect);
     }
     return result;
   }
@@ -231,9 +230,9 @@ public class PinUPConnector implements InitializingBean {
   @Nullable
   public PinUPControl getFunction(@NonNull String description) {
     PinUPControl f = null;
-    this.connect();
+    Connection connect = this.connect();
     try {
-      PreparedStatement statement = conn.prepareStatement("SELECT * FROM PinUPFunctions WHERE Descript = ?");
+      PreparedStatement statement = connect.prepareStatement("SELECT * FROM PinUPFunctions WHERE Descript = ?");
       statement.setString(1, description);
       ResultSet rs = statement.executeQuery();
       if (rs.next()) {
@@ -249,17 +248,17 @@ public class PinUPConnector implements InitializingBean {
     } catch (SQLException e) {
       LOG.error("Failed to get function: " + e.getMessage(), e);
     } finally {
-      this.disconnect();
+      this.disconnect(connect);
     }
     return f;
   }
 
   @NonNull
   public List<PinUPControl> getControls() {
-    this.connect();
+    Connection connect = this.connect();
     List<PinUPControl> results = new ArrayList<>();
     try {
-      Statement statement = conn.createStatement();
+      Statement statement = connect.createStatement();
       ResultSet rs = statement.executeQuery("SELECT * FROM PinUPFunctions;");
       while (rs.next()) {
         PinUPControl f = new PinUPControl();
@@ -275,16 +274,16 @@ public class PinUPConnector implements InitializingBean {
     } catch (SQLException e) {
       LOG.error("Failed to functions: " + e.getMessage(), e);
     } finally {
-      this.disconnect();
+      this.disconnect(connect);
     }
     return results;
   }
 
   public int getGameCount() {
     int count = 0;
-    this.connect();
+    Connection connect = this.connect();
     try {
-      Statement statement = conn.createStatement();
+      Statement statement = connect.createStatement();
       ResultSet rs = statement.executeQuery("SELECT count(*) as count FROM Games WHERE EMUID = 1;");
       while (rs.next()) {
         count = rs.getInt("count");
@@ -294,20 +293,20 @@ public class PinUPConnector implements InitializingBean {
     } catch (SQLException e) {
       LOG.error("Failed to read game count: " + e.getMessage(), e);
     } finally {
-      this.disconnect();
+      this.disconnect(connect);
     }
     return count;
   }
 
   @NonNull
   public List<Game> getGames() {
-    this.connect();
+    Connection connect = this.connect();
     List<Game> results = new ArrayList<>();
     try {
-      Statement statement = conn.createStatement();
+      Statement statement = connect.createStatement();
       ResultSet rs = statement.executeQuery("SELECT * FROM Games WHERE EMUID = 1;");
       while (rs.next()) {
-        Game info = createGame(rs);
+        Game info = createGame(connect, rs);
         if (info != null) {
           results.add(info);
         }
@@ -317,7 +316,7 @@ public class PinUPConnector implements InitializingBean {
     } catch (SQLException e) {
       LOG.error("Failed to get games: " + e.getMessage(), e);
     } finally {
-      this.disconnect();
+      this.disconnect(connect);
     }
 
     results.sort(Comparator.comparing(Game::getGameDisplayName));
@@ -327,19 +326,22 @@ public class PinUPConnector implements InitializingBean {
   @NonNull
   public List<Integer> getGameIdsFromPlaylists() {
     List<Integer> result = new ArrayList<>();
-    connect();
+    Connection connect = connect();
     try {
-      Statement statement = conn.createStatement();
+      Statement statement = connect.createStatement();
       ResultSet rs = statement.executeQuery("SELECT * FROM PlayListDetails;");
 
       while (rs.next()) {
         int gameId = rs.getInt("GameID");
         result.add(gameId);
       }
+
+      rs.close();
+      statement.close();
     } catch (SQLException e) {
       LOG.error("Failed to read playlists: " + e.getMessage(), e);
     } finally {
-      disconnect();
+      disconnect(connect);
     }
     return result;
   }
@@ -347,10 +349,10 @@ public class PinUPConnector implements InitializingBean {
   @Nullable
   public String getEmulatorStartupScript(@NonNull String emuName) {
     String script = null;
-    this.connect();
+    Connection connect = this.connect();
     try {
       emuName = emuName.replaceAll("'", "''");
-      Statement statement = conn.createStatement();
+      Statement statement = connect.createStatement();
       ResultSet rs = statement.executeQuery("SELECT * FROM Emulators where EmuName = '" + emuName + "';");
       rs.next();
       script = rs.getString(LAUNCH_SCRIPT);
@@ -359,7 +361,7 @@ public class PinUPConnector implements InitializingBean {
     } catch (SQLException e) {
       LOG.error("Failed to read startup script or " + emuName + ": " + e.getMessage(), e);
     } finally {
-      this.disconnect();
+      this.disconnect(connect);
     }
     return script;
   }
@@ -367,10 +369,10 @@ public class PinUPConnector implements InitializingBean {
   @Nullable
   public String getEmulatorExitScript(@NonNull String emuName) {
     String script = null;
-    this.connect();
+    Connection connect = this.connect();
     try {
       emuName = emuName.replaceAll("'", "''");
-      Statement statement = conn.createStatement();
+      Statement statement = connect.createStatement();
       ResultSet rs = statement.executeQuery("SELECT * FROM Emulators where EmuName = '" + emuName + "';");
       rs.next();
       script = rs.getString(POST_SCRIPT);
@@ -379,28 +381,28 @@ public class PinUPConnector implements InitializingBean {
     } catch (SQLException e) {
       LOG.error("Failed to read exit script or " + emuName + ": " + e.getMessage(), e);
     } finally {
-      this.disconnect();
+      this.disconnect(connect);
     }
     return script;
   }
 
   public void updateScript(@NonNull String emuName, @NonNull String scriptName, @NonNull String content) {
-    this.connect();
+    Connection connect = this.connect();
     String sql = "UPDATE Emulators SET '" + scriptName + "'='" + content + "' WHERE EmuName = '" + emuName + "';";
     try {
-      Statement stmt = conn.createStatement();
+      Statement stmt = connect.createStatement();
       stmt.executeUpdate(sql);
       stmt.close();
       LOG.info("Update of " + scriptName + " successful.");
     } catch (Exception e) {
       LOG.error("Failed to update script script " + scriptName + " [" + sql + "]: " + e.getMessage(), e);
     } finally {
-      this.disconnect();
+      this.disconnect(connect);
     }
   }
 
   @Nullable
-  private Game createGame(@NonNull ResultSet rs) throws SQLException {
+  private Game createGame(@NonNull Connection connection, @NonNull ResultSet rs) throws SQLException {
     Game game = new Game(systemService);
     int id = rs.getInt("GameID");
     game.setId(id);
@@ -419,15 +421,15 @@ public class PinUPConnector implements InitializingBean {
       return null;
     }
     game.setGameFile(vpxFile);
-    loadStats(game);
+    loadStats(connection, game);
+    loadEmulator(connection, game, emuId);
     loadDetails(game);
-    loadEmulator(game, emuId);
     return game;
   }
 
-  private void loadEmulator(@NonNull Game game, int emuId) {
+  private void loadEmulator(@NonNull Connection connection, @NonNull Game game, int emuId) {
     try {
-      PreparedStatement statement = conn.prepareStatement("SELECT * FROM Emulators WHERE EMUID = ?");
+      PreparedStatement statement = connection.prepareStatement("SELECT * FROM Emulators WHERE EMUID = ?");
       statement.setInt(1, emuId);
       ResultSet rs = statement.executeQuery();
       Emulator emulator = new Emulator(game);
@@ -445,9 +447,9 @@ public class PinUPConnector implements InitializingBean {
     }
   }
 
-  private void loadStats(@NonNull Game game) {
+  private void loadStats(@NonNull Connection connection, @NonNull Game game) {
     try {
-      Statement statement = conn.createStatement();
+      Statement statement = connection.createStatement();
       ResultSet rs = statement.executeQuery("SELECT * FROM GamesStats where GameID = " + game.getId() + ";");
       while (rs.next()) {
         int numberPlays = rs.getInt("NumberPlays");
@@ -456,6 +458,8 @@ public class PinUPConnector implements InitializingBean {
         game.setLastPlayed(lastPlayed);
         game.setNumberPlays(numberPlays);
       }
+      rs.close();
+      statement.close();
     } catch (SQLException e) {
       LOG.error("Failed to read game info: " + e.getMessage(), e);
     }
