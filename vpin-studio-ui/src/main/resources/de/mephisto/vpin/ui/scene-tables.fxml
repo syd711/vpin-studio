@@ -6,13 +6,12 @@
 <?import javafx.scene.control.Slider?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
 <?import javafx.scene.control.TitledPane?>
 <?import javafx.scene.control.ToolBar?>
-<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.VBox?>
-<?import javafx.scene.media.MediaView?>
 <?import javafx.scene.text.Font?>
 
 <BorderPane prefHeight="1354.0" prefWidth="1951.0" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.tables.TablesController">
@@ -49,6 +48,7 @@
                            <top>
                               <ToolBar prefHeight="40.0" prefWidth="200.0" styleClass="base-component" stylesheets="@stylesheet.css" BorderPane.alignment="CENTER">
                                 <items>
+                                    <TextField prefHeight="26.0" prefWidth="234.0" promptText="Table Search..." />
                                   <Button mnemonicParsing="false" text="Button">
                                        <font>
                                           <Font size="14.0" />
@@ -73,9 +73,36 @@
                                  <center>
                                     <Pane prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
                                        <children>
-                                          <MediaView fx:id="screenPlayfield" fitHeight="300.0" fitWidth="440.0" layoutX="70.0" layoutY="352.0" styleClass="media-container" />
-                                          <ImageView fitHeight="109.0" fitWidth="155.0" layoutX="21.0" layoutY="307.0" pickOnBounds="true" preserveRatio="true" />
-                                          <MediaView fx:id="screenTopper" fitHeight="63.0" fitWidth="250.0" layoutX="165.0" layoutY="159.0" />
+                                          <BorderPane fx:id="screenHelp" layoutY="484.0" prefHeight="160.0" prefWidth="160.0" styleClass="media-container" stylesheets="@stylesheet.css">
+                                             <bottom>
+                                                <Label text="Help" textFill="WHITE" BorderPane.alignment="CENTER" />
+                                             </bottom>
+                                          </BorderPane>
+                                          <BorderPane fx:id="screenPlayfield" layoutX="165.0" layoutY="369.0" prefHeight="330.0" prefWidth="250.0" styleClass="media-container" stylesheets="@stylesheet.css">
+                                             <bottom>
+                                                <Label text="PlayField" textFill="WHITE" BorderPane.alignment="CENTER" />
+                                             </bottom>
+                                          </BorderPane>
+                                          <BorderPane fx:id="screenInfo" layoutY="295.0" prefHeight="160.0" prefWidth="160.0" styleClass="media-container" stylesheets="@stylesheet.css">
+                                             <bottom>
+                                                <Label text="Info / Flyer" textFill="WHITE" BorderPane.alignment="CENTER" />
+                                             </bottom>
+                                          </BorderPane>
+                                          <BorderPane fx:id="screenDMD" layoutX="165.0" layoutY="263.0" prefHeight="102.0" prefWidth="250.0" styleClass="media-container" stylesheets="@stylesheet.css">
+                                             <bottom>
+                                                <Label text="DMD" textFill="WHITE" BorderPane.alignment="CENTER" />
+                                             </bottom>
+                                          </BorderPane>
+                                          <BorderPane fx:id="screenTopper" layoutX="165.0" layoutY="4.0" prefHeight="63.0" prefWidth="250.0" styleClass="media-container" stylesheets="@stylesheet.css">
+                                             <bottom>
+                                                <Label text="Topper" textFill="WHITE" BorderPane.alignment="CENTER" />
+                                             </bottom>
+                                          </BorderPane>
+                                          <BorderPane fx:id="screenBackglass" layoutX="165.0" layoutY="71.0" prefHeight="188.0" prefWidth="250.0" styleClass="media-container" stylesheets="@stylesheet.css">
+                                             <bottom>
+                                                <Label text="Backglass" textFill="WHITE" BorderPane.alignment="CENTER" />
+                                             </bottom>
+                                          </BorderPane>
                                        </children>
                                     </Pane>
                                  </center>
@@ -98,6 +125,26 @@
                                                 <Insets top="6.0" />
                                              </VBox.margin>
                                           </Slider>
+                                       </children>
+                                    </VBox>
+                                 </center>
+                                 <padding>
+                                    <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
+                                 </padding>
+                              </BorderPane>
+                           </content>
+                        </TitledPane>
+                        <TitledPane animated="false" collapsible="false" layoutX="10.0" layoutY="764.0" prefHeight="241.0" prefWidth="600.0" text="Table Metadata">
+                           <content>
+                              <BorderPane prefHeight="200.0" prefWidth="200.0">
+                                 <center>
+                                    <VBox prefHeight="200.0" prefWidth="100.0" BorderPane.alignment="CENTER">
+                                       <children>
+                                          <Label text="Rom Name:">
+                                             <font>
+                                                <Font size="14.0" />
+                                             </font>
+                                          </Label>
                                        </children>
                                     </VBox>
                                  </center>

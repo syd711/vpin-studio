@@ -1,26 +1,38 @@
 package de.mephisto.vpin.ui.util;
 
+import de.mephisto.vpin.restclient.RestClient;
 import de.mephisto.vpin.restclient.VPinStudioClient;
 import de.mephisto.vpin.ui.VPinStudioApplication;
+import edu.umd.cs.findbugs.annotations.NonNull;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.concurrent.Service;
 import javafx.concurrent.Task;
 import javafx.concurrent.Worker;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.media.Media;
+import javafx.scene.media.MediaPlayer;
+import javafx.scene.media.MediaView;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.util.Iterator;
 
 public class WidgetFactory {
+  private final static Logger LOG = LoggerFactory.getLogger(WidgetFactory.class);
+
   public static void createProgressDialog(ProgressModel model,
                                           Stage owner) throws IOException {
     Parent root = FXMLLoader.load(VPinStudioApplication.class.getResource("dialog-progress.fxml"));
@@ -68,7 +80,7 @@ public class WidgetFactory {
           || newValue == Worker.State.SUCCEEDED) {
         stage.hide();
 
-        String msg = model.getTitle() + " finished.\n\nProcessed "  + progressResultModel.getProcessed() + " of " + model.getMax() + " elements.";
+        String msg = model.getTitle() + " finished.\n\nProcessed " + progressResultModel.getProcessed() + " of " + model.getMax() + " elements.";
         WidgetFactory.showAlert(msg);
       }
     });
@@ -95,16 +107,56 @@ public class WidgetFactory {
   }
 
   public static class RationListCell extends ListCell<String> {
-    protected void updateItem(String item, boolean empty){
+    protected void updateItem(String item, boolean empty) {
       super.updateItem(item, empty);
       setText(null);
-      if(item!=null){
+      if (item != null) {
         setText(item
             .replaceAll("_", " ")
             .replaceAll("ATIO", "atio")
             .replaceAll("x", " x ")
         );
       }
+    }
+  }
+
+  public static Node createMediaContainer(@NonNull BorderPane parent, @NonNull String mimeType, @NonNull String url) {
+    String baseType = mimeType.split("/")[0];
+    if (baseType.equals("image")) {
+      ImageView imageView = new ImageView();
+      imageView.setFitWidth(parent.getPrefWidth() - 10);
+      imageView.setFitHeight(parent.getPrefWidth() - 10);
+      imageView.setPreserveRatio(true);
+
+      byte[] bytes = RestClient.getInstance().readBinary(url);
+      ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(bytes);
+      Image image = new Image(byteArrayInputStream);
+      imageView.setImage(image);
+
+      parent.setCenter(imageView);
+      return imageView;
+    }
+    else if (baseType.equals("video")) {
+      Media media = new Media(url);
+      MediaPlayer mediaPlayer = new MediaPlayer(media);
+      mediaPlayer.setAutoPlay(true);
+      mediaPlayer.setCycleCount(-1);
+      mediaPlayer.setMute(true);
+      mediaPlayer.setOnError(() -> {
+        LOG.error("Media player error: " + mediaPlayer.getError());
+        mediaPlayer.getError().printStackTrace();
+      });
+
+      MediaView mediaView = new MediaView(mediaPlayer);
+      mediaView.setFitWidth(parent.getPrefWidth() - 10);
+      mediaView.setFitHeight(parent.getPrefHeight() - 10);
+      mediaView.setPreserveRatio(true);
+      parent.setCenter(mediaView);
+
+      return mediaView;
+    }
+    else {
+      throw new UnsupportedOperationException("Invalid media mime type " + mimeType);
     }
   }
 
@@ -115,16 +167,16 @@ public class WidgetFactory {
       this.client = client;
     }
 
-    protected void updateItem(String item, boolean empty){
+    protected void updateItem(String item, boolean empty) {
       super.updateItem(item, empty);
       setGraphic(null);
       setText(null);
-      if(item!=null){
+      if (item != null) {
         Image image = new Image(client.getHighscoreBackgroundImage(item));
         ImageView imageView = new ImageView(image);
         imageView.setFitWidth(80);
 
-        int percentageWidth = (int) (80*100 / image.getWidth());
+        int percentageWidth = (int) (80 * 100 / image.getWidth());
         int height = (int) (image.getHeight() * percentageWidth / 100);
         imageView.setFitHeight(height);
         setGraphic(imageView);

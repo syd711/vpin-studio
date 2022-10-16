@@ -184,10 +184,8 @@
  * Media Styling
  */
 .media-container {
-    -fx-background-color: #333333;
-    -fx-border-style: solid solid solid solid;
-    -fx-border-color: #000000;
-    -fx-border-width: 1;
+    -fx-padding: 3 3 3 3;
+    -fx-background-color: #111111;
 }
 
 

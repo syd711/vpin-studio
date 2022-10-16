@@ -4,6 +4,8 @@ import de.mephisto.vpin.restclient.representations.GameMediaRepresentation;
 import de.mephisto.vpin.restclient.representations.GameRepresentation;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -16,6 +18,8 @@ import java.net.URLEncoder;
 import java.util.*;
 
 public class VPinStudioClient implements ObservedPropertyChangeListener {
+  private final static Logger LOG = LoggerFactory.getLogger(VPinStudioClient.class);
+
   private final static String API = "api/v1/";
 
   private Map<String, ObservedProperties> observedProperties = new HashMap<>();
@@ -28,7 +32,10 @@ public class VPinStudioClient implements ObservedPropertyChangeListener {
   }
 
   public String getURL(@NonNull String segment) {
-    return RestClient.getInstance().getBaseUrl() + API + segment;
+    if(!segment.startsWith("http") && !segment.contains(API)) {
+      return RestClient.getInstance().getBaseUrl() + API + segment;
+    }
+    return segment;
   }
 
   public GameRepresentation getGame(int id) {
@@ -69,7 +76,7 @@ public class VPinStudioClient implements ObservedPropertyChangeListener {
       byte[] imageBytes = imageCache.get(name);
       return new ByteArrayInputStream(imageBytes);
     } catch (UnsupportedEncodingException e) {
-      e.printStackTrace();
+      LOG.error("Failed to read highscore background image: " + e.getMessage(), e);
     }
     return null;
   }

@@ -5,16 +5,17 @@ import de.mephisto.vpin.restclient.VPinStudioClient;
 import de.mephisto.vpin.restclient.representations.GameMediaItemRepresentation;
 import de.mephisto.vpin.restclient.representations.GameMediaRepresentation;
 import de.mephisto.vpin.restclient.representations.GameRepresentation;
+import de.mephisto.vpin.ui.util.WidgetFactory;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.Node;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.media.Media;
-import javafx.scene.media.MediaPlayer;
-import javafx.scene.media.MediaView;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.Pane;
 
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -31,10 +32,23 @@ public class TablesController implements Initializable {
   private TableView tableView;
 
   @FXML
-  private MediaView screenPlayfield;
+  private BorderPane screenTopper;
 
   @FXML
-  private MediaView screenTopper;
+  private BorderPane screenBackglass;
+
+  @FXML
+  private BorderPane screenDMD;
+
+  @FXML
+  private BorderPane screenPlayfield;
+
+  @FXML
+  private BorderPane screenInfo;
+
+  @FXML
+  private BorderPane screenHelp;
+
 
   private VPinStudioClient client;
 
@@ -57,33 +71,24 @@ public class TablesController implements Initializable {
     tableView.setItems(data);
 
     GameMediaRepresentation gameMedia = client.getGameMedia(60);
-    GameMediaItemRepresentation item = gameMedia.getItem(PopperScreen.PlayField);
-    String uri = client.getURL(item.getUri());
 
-    Media media = new Media(uri);
-    MediaPlayer mediaPlayer = new MediaPlayer(media);
-    mediaPlayer.setAutoPlay(true);
-    mediaPlayer.setCycleCount(-1);
-    mediaPlayer.setMute(true);
-    mediaPlayer.setOnError(() -> {
-      System.out.println("Current error: " + mediaPlayer.getError());
-      mediaPlayer.getError().printStackTrace();
-    });
-    screenPlayfield.rotateProperty().set(90);
-    screenPlayfield.setMediaPlayer(mediaPlayer);
+    GameMediaItemRepresentation item = gameMedia.getItem(PopperScreen.Topper);
+    WidgetFactory.createMediaContainer(screenTopper, item.getMimeType(), client.getURL(item.getUri()));
 
-    GameMediaItemRepresentation dmdItem = gameMedia.getItem(PopperScreen.DMD);
-    String dmdUri = client.getURL(dmdItem.getUri());
-    System.out.println(dmdUri);
-    Media media2 = new Media("file:///C:/vPinball/PinUPSystem/POPMedia/Visual%20Pinball%20X/DMD/AC'DC%20(Stern%202012).mp4");
-    MediaPlayer mediaPlayer2 = new MediaPlayer(media2);
-    mediaPlayer2.setAutoPlay(true);
-    mediaPlayer2.setCycleCount(-1);
-    mediaPlayer2.setMute(true);
-    mediaPlayer2.setOnError(() -> {
-      System.out.println("Current error: " + mediaPlayer2.getError());
-      mediaPlayer2.getError().printStackTrace();
-    });
-    screenTopper.setMediaPlayer(mediaPlayer2);
+    item = gameMedia.getItem(PopperScreen.BackGlass);
+    WidgetFactory.createMediaContainer(screenBackglass, item.getMimeType(), client.getURL(item.getUri()));
+//
+//    item = gameMedia.getItem(PopperScreen.DMD);
+//    WidgetFactory.createMediaContainer(screenDMD, item.getMimeType(), client.getURL(item.getUri()));
+
+    item = gameMedia.getItem(PopperScreen.GameInfo);
+    WidgetFactory.createMediaContainer(screenInfo, item.getMimeType(), client.getURL(item.getUri()));
+
+    item = gameMedia.getItem(PopperScreen.GameHelp);
+    WidgetFactory.createMediaContainer(screenHelp, item.getMimeType(), client.getURL(item.getUri()));
+
+    item = gameMedia.getItem(PopperScreen.PlayField);
+    Node mediaContainer = WidgetFactory.createMediaContainer(screenPlayfield, item.getMimeType(), client.getURL(item.getUri()));
+    mediaContainer.rotateProperty().set(90);
   }
 }

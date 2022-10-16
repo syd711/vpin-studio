@@ -108,10 +108,14 @@ public class RestClient implements ClientHttpRequestInterceptor {
   }
 
   public byte[] readBinary(String resource) {
+    if(!resource.startsWith(baseUrl)) {
+      resource = baseUrl + resource;
+    }
+
     ByteArrayOutputStream baos = new ByteArrayOutputStream();
     InputStream is = null;
     try {
-      URL url = new URL(baseUrl + resource);
+      URL url = new URL(resource);
       LOG.info("HTTP GET " + url);
       HttpURLConnection con =(HttpURLConnection)url.openConnection();
       is = con.getInputStream();
