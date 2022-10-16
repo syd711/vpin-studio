@@ -160,7 +160,7 @@
                      <center>
                         <Accordion prefHeight="866.0" prefWidth="300.0" stylesheets="@stylesheet.css" BorderPane.alignment="CENTER">
                           <panes>
-                             <TitledPane animated="false" prefHeight="747.0" prefWidth="300.0" stylesheets="@stylesheet.css" text="Background Settings">
+                             <TitledPane prefHeight="747.0" prefWidth="300.0" stylesheets="@stylesheet.css" text="Background Settings">
                                 <content>
                                    <VBox prefHeight="200.0" prefWidth="100.0" styleClass="accordion-container" stylesheets="@stylesheet.css">
                                       <children>
@@ -218,7 +218,7 @@
                                    </VBox>
                                 </content>
                           </TitledPane>
-                            <TitledPane animated="false" prefHeight="851.0" prefWidth="300.0" stylesheets="@stylesheet.css" text="Font Settings">
+                            <TitledPane prefHeight="851.0" prefWidth="300.0" stylesheets="@stylesheet.css" text="Font Settings">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
@@ -314,7 +314,7 @@
                                     </VBox>
                                  </content>
                             </TitledPane>
-                            <TitledPane animated="false" text="Layout and Effects">
+                            <TitledPane text="Layout and Effects">
                                  <content>
                                     <VBox prefHeight="200.0" prefWidth="100.0" styleClass="accordion-container" stylesheets="@stylesheet.css">
                                        <children>

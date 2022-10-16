@@ -165,7 +165,7 @@ public class WidgetFactory {
         mediaView.setFitWidth(445);
         mediaView.setX(0);
         mediaView.setY(0);
-        mediaView.translateXProperty().set(mediaView.translateXProperty().get()-97);
+        mediaView.translateXProperty().set(mediaView.translateXProperty().get()-98);
       }
       else if(parent.getId().equals("screenLoading")) {
         mediaView.rotateProperty().set(90);
