@@ -5,11 +5,13 @@ import de.mephisto.vpin.restclient.VPinStudioClient;
 import de.mephisto.vpin.restclient.representations.GameMediaItemRepresentation;
 import de.mephisto.vpin.restclient.representations.GameMediaRepresentation;
 import de.mephisto.vpin.restclient.representations.GameRepresentation;
+import de.mephisto.vpin.ui.util.TransitionUtil;
 import de.mephisto.vpin.ui.util.WidgetFactory;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
@@ -17,6 +19,8 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.input.MouseButton;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 
 import java.net.URL;
@@ -57,8 +61,13 @@ public class TablesController implements Initializable {
   private BorderPane screenHelp;
 
   @FXML
+  private BorderPane screenLoading;
+
+  @FXML
   private Label labelTableCount;
 
+  @FXML
+  private Node main;
 
   // Add a public no-args constructor
   public TablesController() {
@@ -70,9 +79,18 @@ public class TablesController implements Initializable {
 
   @FXML
   private void onSearchKeyPressed(KeyEvent e) {
-    if(e.getCode().equals(KeyCode.ENTER)) {
+    if (e.getCode().equals(KeyCode.ENTER)) {
       tableView.getSelectionModel().select(0);
       tableView.requestFocus();
+    }
+  }
+
+  @FXML
+  private void onTableMouseClicked(MouseEvent mouseEvent) {
+    if (mouseEvent.getButton().equals(MouseButton.PRIMARY)) {
+      if (mouseEvent.getClickCount() == 2) {
+        TransitionUtil.createTranslateByXTransition(main, 300, 600).playFromStart();
+      }
     }
   }
 
@@ -89,7 +107,7 @@ public class TablesController implements Initializable {
     textfieldSearch.textProperty().addListener((observableValue, s, filterValue) -> {
       List<GameRepresentation> filtered = new ArrayList<>();
       for (GameRepresentation game : games) {
-        if(game.getGameDisplayName().toLowerCase().contains(filterValue.toLowerCase())) {
+        if (game.getGameDisplayName().toLowerCase().contains(filterValue.toLowerCase())) {
           filtered.add(game);
         }
       }
@@ -106,7 +124,7 @@ public class TablesController implements Initializable {
         new PropertyValueFactory<GameRepresentation, String>("gameDisplayName")
     );
     columnFilename.setCellValueFactory(
-        new PropertyValueFactory<GameRepresentation, String>("gameDisplayName")
+        new PropertyValueFactory<GameRepresentation, String>("rom")
     );
 
     tableView.setItems(data);
@@ -117,7 +135,7 @@ public class TablesController implements Initializable {
       }
     });
 
-    if(!data.isEmpty()) {
+    if (!data.isEmpty()) {
       tableView.getSelectionModel().select(0);
     }
   }
@@ -141,5 +159,8 @@ public class TablesController implements Initializable {
 
     item = gameMedia.getItem(PopperScreen.PlayField);
     WidgetFactory.createMediaContainer(screenPlayfield, client, item);
+
+    item = gameMedia.getItem(PopperScreen.Loading);
+    WidgetFactory.createMediaContainer(screenLoading, client, item);
   }
 }

@@ -161,9 +161,17 @@ public class WidgetFactory {
       mediaView.setPreserveRatio(true);
 
       if(parent.getId().equals("screenPlayfield")) {
-        mediaView.setFitWidth(parent.getPrefWidth() - 10);
-        mediaView.setFitHeight(parent.getPrefHeight() - 20);
         mediaView.rotateProperty().set(90);
+        mediaView.setFitWidth(445);
+        mediaView.setX(0);
+        mediaView.setY(0);
+        mediaView.translateXProperty().set(mediaView.translateXProperty().get()-97);
+      }
+      else if(parent.getId().equals("screenLoading")) {
+        mediaView.rotateProperty().set(90);
+        mediaView.setFitWidth(76);
+        mediaView.setX(0);
+        mediaView.setY(0);
       }
       else {
         mediaView.setFitWidth(parent.getPrefWidth() - 10);
