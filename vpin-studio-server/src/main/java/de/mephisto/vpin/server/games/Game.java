@@ -63,10 +63,6 @@ public class Game {
     this.emulator = emulator;
   }
 
-  public SystemService getSystemService() {
-    return systemService;
-  }
-
   @SuppressWarnings("unused")
   public int getNumberPlays() {
     return numberPlays;

@@ -15,7 +15,10 @@ import java.util.Date;
  */
 public class GameRepresentation {
   private String rom;
+  private String originalRom;
+  private int nvOffset;
   private String gameDisplayName;
+  private String gameFileName;
   private int id;
   private Date lastPlayed;
   private int numberPlays;
@@ -69,8 +72,33 @@ public class GameRepresentation {
     this.emulatorName = emulatorName;
   }
 
+  public int getNvOffset() {
+    return nvOffset;
+  }
+
+  public void setNvOffset(int nvOffset) {
+    this.nvOffset = nvOffset;
+  }
+
+  public String getOriginalRom() {
+    return originalRom;
+  }
+
+  public void setOriginalRom(String originalRom) {
+    this.originalRom = originalRom;
+  }
+
+  public String getGameFileName() {
+    return gameFileName;
+  }
+
+  public void setGameFileName(String gameFileName) {
+    this.gameFileName = gameFileName;
+  }
+
   @Override
   public String toString() {
     return this.getGameDisplayName();
   }
+
 }

@@ -35,10 +35,15 @@ import java.util.Iterator;
 public class WidgetFactory {
   private final static Logger LOG = LoggerFactory.getLogger(WidgetFactory.class);
 
-  public static void createProgressDialog(ProgressModel model,
-                                          Stage owner) throws IOException {
-    Parent root = FXMLLoader.load(VPinStudioApplication.class.getResource("dialog-progress.fxml"));
+  public static void createProgressDialog(ProgressModel model) {
+    Parent root = null;
+    try {
+      root = FXMLLoader.load(VPinStudioApplication.class.getResource("dialog-progress.fxml"));
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
 
+    Stage owner = VPinStudioApplication.stage;
     final Label titleLabel = (Label) root.lookup("#titleLabel");
     final Label progressBarLabel = (Label) root.lookup("#progressBarLabel");
     final ToolBar toolBar = (ToolBar) root.lookup("#bottomToolbar");
@@ -123,9 +128,17 @@ public class WidgetFactory {
   }
 
   public static Node createMediaContainer(@NonNull BorderPane parent, @NonNull VPinStudioClient client, @Nullable GameMediaItemRepresentation item) {
-    if(item == null) {
+    if (parent.getCenter() != null) {
+      dispose(parent.getCenter());
+    }
+
+    Node top = parent.getTop();
+    if (top != null) {
+      top.setVisible(item != null);
+    }
+
+    if (item == null) {
       parent.setCenter(null);
-      parent.setTop(null);
       return parent;
     }
 
@@ -142,14 +155,15 @@ public class WidgetFactory {
       ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(bytes);
       Image image = new Image(byteArrayInputStream);
       imageView.setImage(image);
+      imageView.setUserData(url);
 
       parent.setCenter(imageView);
       return imageView;
     }
-    else if (baseType.equals("video")) {
+    else if (baseType.equals("video") || baseType.equals("audio")) {
       Media media = new Media(url);
       MediaPlayer mediaPlayer = new MediaPlayer(media);
-      mediaPlayer.setAutoPlay(true);
+      mediaPlayer.setAutoPlay(baseType.equals("video"));
       mediaPlayer.setCycleCount(-1);
       mediaPlayer.setMute(true);
       mediaPlayer.setOnError(() -> {
@@ -160,20 +174,20 @@ public class WidgetFactory {
       MediaView mediaView = new MediaView(mediaPlayer);
       mediaView.setPreserveRatio(true);
 
-      if(parent.getId().equals("screenPlayfield")) {
+      if (parent.getId().equals("screenPlayfield")) {
         mediaView.rotateProperty().set(90);
         mediaView.setFitWidth(445);
         mediaView.setX(0);
         mediaView.setY(0);
-        mediaView.translateXProperty().set(mediaView.translateXProperty().get()-98);
+        mediaView.translateXProperty().set(mediaView.translateXProperty().get() - 98);
       }
-      else if(parent.getId().equals("screenLoading")) {
+      else if (parent.getId().equals("screenLoading")) {
         mediaView.rotateProperty().set(90);
         mediaView.setFitWidth(76);
         mediaView.setX(0);
         mediaView.setY(0);
       }
-      else {
+      else if (baseType.equals("video")) {
         mediaView.setFitWidth(parent.getPrefWidth() - 10);
         mediaView.setFitHeight(parent.getPrefHeight() - 20);
       }
@@ -184,6 +198,14 @@ public class WidgetFactory {
     }
     else {
       throw new UnsupportedOperationException("Invalid media mime type " + mimeType);
+    }
+  }
+
+  private static void dispose(Node node) {
+    if (node instanceof MediaView) {
+      MediaView view = (MediaView) node;
+      view.getMediaPlayer().stop();
+      view.getMediaPlayer().dispose();
     }
   }
 

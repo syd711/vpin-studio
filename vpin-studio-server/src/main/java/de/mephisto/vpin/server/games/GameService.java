@@ -1,9 +1,14 @@
 package de.mephisto.vpin.server.games;
 
 import de.mephisto.vpin.server.fx.OverlayWindowFX;
+import de.mephisto.vpin.server.jpa.GameDetails;
+import de.mephisto.vpin.server.jpa.GameDetailsRepository;
 import de.mephisto.vpin.server.popper.PinUPConnector;
+import de.mephisto.vpin.server.roms.RomService;
+import de.mephisto.vpin.server.roms.ScanResult;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
@@ -21,6 +26,12 @@ public class GameService implements InitializingBean {
   @Autowired
   private PinUPConnector pinUPConnector;
 
+  @Autowired
+  private RomService romService;
+
+  @Autowired
+  private GameDetailsRepository gameDetailsRepository;
+
   @Override
   public void afterPropertiesSet() {
     new Thread(() -> {
@@ -31,8 +42,34 @@ public class GameService implements InitializingBean {
 
 
   @SuppressWarnings("unused")
+  public List<Game> getGames() {
+    List<Game> games = pinUPConnector.getGames();
+    for (Game game : games) {
+      loadGameDetails(game);
+    }
+    return games;
+  }
+
+  @SuppressWarnings("unused")
   public Game getGame(int id) {
-    return pinUPConnector.getGame(id);
+    Game game = pinUPConnector.getGame(id);
+    loadGameDetails(game);
+    return game;
+  }
+
+  public boolean scanGame(int gameId) {
+    Game game = getGame(gameId);
+    ScanResult scanResult = romService.scanGameFile(game);
+
+    gameDetailsRepository.findByPupId(gameId);
+    GameDetails gameDetails = loadGameDetails(game);
+    if (gameDetails != null) {
+      gameDetails.setRomName(scanResult.getRom());
+      gameDetails.setNvOffset(scanResult.getNvOffset());
+      gameDetailsRepository.saveAndFlush(gameDetails);
+      return true;
+    }
+    return false;
   }
 
   @SuppressWarnings("unused")
@@ -45,6 +82,7 @@ public class GameService implements InitializingBean {
   public List<Game> getGameInfos() {
     return pinUPConnector.getGames();
   }
+
   @SuppressWarnings("unused")
   @Nullable
   public Game getGameByVpxFilename(@NonNull String filename) {
@@ -75,5 +113,30 @@ public class GameService implements InitializingBean {
 
   public Game getGameByFile(File file) {
     return this.pinUPConnector.getGameByFilename(file.getName());
+  }
+
+  @Nullable
+  private GameDetails loadGameDetails(@NonNull Game game) {
+    try {
+      GameDetails gameDetails = gameDetailsRepository.findByPupId(game.getId());
+      if (gameDetails == null) {
+        gameDetails = new GameDetails();
+        gameDetails.setPupId(game.getId());
+        gameDetails.setCreatedAt(new java.util.Date());
+        gameDetails.setUpdatedAt(new java.util.Date());
+        gameDetailsRepository.saveAndFlush(gameDetails);
+      }
+
+      game.setNvOffset(gameDetails.getNvOffset());
+      if (StringUtils.isEmpty(game.getRom())) {
+        game.setRom(gameDetails.getRomName());
+      }
+      game.setOriginalRom(romService.getOriginalRom(game.getRom()));
+
+      return gameDetails;
+    } catch (Exception e) {
+      LOG.error("Failed to load details for " + game + ": " + e.getMessage(), e);
+    }
+    return null;
   }
 }

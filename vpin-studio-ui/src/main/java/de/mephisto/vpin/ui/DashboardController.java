@@ -16,7 +16,7 @@ import java.net.URL;
 import java.time.LocalTime;
 import java.util.ResourceBundle;
 
-public class DashboardController implements Initializable {
+public class DashboardController implements Initializable, StudioFXController {
   private final static int TILE_WIDTH = 600;
   private final static int TILE_HEIGHT = 500;
 
@@ -144,5 +144,10 @@ public class DashboardController implements Initializable {
         .textVisible(true)
         .build();
     widget5.setCenter(numberTile);
+  }
+
+  @Override
+  public void dispose() {
+
   }
 }

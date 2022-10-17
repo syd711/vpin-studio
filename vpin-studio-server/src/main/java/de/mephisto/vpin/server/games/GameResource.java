@@ -21,27 +21,24 @@ import static org.springframework.http.HttpStatus.NOT_FOUND;
 public class GameResource {
 
   @Autowired
-  private PinUPConnector connector;
+  private GameService gameService;
 
   @GetMapping
   public List<Game> getGame() {
-    List<Game> games = connector.getGames();
-    List<Game> mappedGames = new ArrayList<>();
-    for (Game game : games) {
-      Game mappedGame = connector.getGame(game.getId());
-      if(mappedGame != null) {
-        mappedGames.add(mappedGame);
-      }
-    }
-    return mappedGames;
+    return gameService.getGames();
   }
 
   @GetMapping("/{id}")
   public Game getGame(@PathVariable("id") int pupId) {
-    Game game = connector.getGame(pupId);
+    Game game = gameService.getGame(pupId);
     if(game == null) {
       throw new ResponseStatusException(NOT_FOUND, "Not game found for id " + pupId);
     }
     return game;
+  }
+
+  @GetMapping("/scan/{id}")
+  public boolean scanGame(@PathVariable("id") int pupId) {
+    return gameService.scanGame(pupId);
   }
 }

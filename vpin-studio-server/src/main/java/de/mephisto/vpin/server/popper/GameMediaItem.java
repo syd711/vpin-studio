@@ -3,6 +3,7 @@ package de.mephisto.vpin.server.popper;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import de.mephisto.vpin.server.games.Game;
 import edu.umd.cs.findbugs.annotations.NonNull;
+import org.apache.commons.io.FilenameUtils;
 
 import java.io.File;
 import java.io.IOException;
@@ -16,6 +17,16 @@ public class GameMediaItem {
   public GameMediaItem(@NonNull Game game, @NonNull PopperScreen screen, @NonNull File file) throws IOException {
     this.file = file;
     this.mimeType = Files.probeContentType(file.toPath());
+    if(this.mimeType == null) {
+      String suffix = FilenameUtils.getExtension(file.getName()).toLowerCase();
+      switch (suffix) {
+        case "apng": {
+          this.mimeType = "image/apng";
+          break;
+        }
+      }
+    }
+
     this.uri = "poppermedia/" + game.getId() + "/" + screen.name();
   }
 

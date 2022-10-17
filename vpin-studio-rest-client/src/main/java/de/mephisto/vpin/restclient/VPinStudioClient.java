@@ -61,6 +61,11 @@ public class VPinStudioClient implements ObservedPropertyChangeListener {
     return RestClient.getInstance().get(API + "generator/cards/" + gameId, Boolean.class);
   }
 
+  public boolean scanGame(GameRepresentation game) {
+    int gameId = game.getId();
+    return RestClient.getInstance().get(API + "games/scan/" + gameId, Boolean.class);
+  }
+
   public List<String> getHighscoreBackgroundImages() {
     return Arrays.asList(RestClient.getInstance().get(API + "generator/backgrounds", String[].class));
   }

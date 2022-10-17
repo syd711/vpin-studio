@@ -1,5 +1,6 @@
 package de.mephisto.vpin.ui;
 
+import edu.umd.cs.findbugs.annotations.NonNull;
 import eu.hansolo.tilesfx.Tile;
 import eu.hansolo.tilesfx.TileBuilder;
 import javafx.event.ActionEvent;
@@ -21,6 +22,7 @@ import java.util.ResourceBundle;
 public class NavigationController implements Initializable {
   @FXML
   private BorderPane avatarPane;
+  private StudioFXController activeController;
 
   // Add a public no-args constructor
   public NavigationController() {
@@ -28,21 +30,27 @@ public class NavigationController implements Initializable {
 
   @FXML
   private void onDashboardClick(ActionEvent event) throws IOException {
-    Parent root = FXMLLoader.load(getClass().getResource("scene-dashboard.fxml"));
-    Scene scene = ((Node) event.getSource()).getScene();
-    scene.setRoot(root);
+    this.loadScene(event, "scene-dashboard.fxml");
   }
 
   @FXML
   private void onHighscoreCardsClick(ActionEvent event) throws IOException {
-    Parent root = FXMLLoader.load(getClass().getResource("scene-highscoreCards.fxml"));
-    Scene scene = ((Node) event.getSource()).getScene();
-    scene.setRoot(root);
+    this.loadScene(event, "scene-highscoreCards.fxml");
   }
 
   @FXML
   private void onTablesClick(ActionEvent event) throws IOException {
-    Parent root = FXMLLoader.load(getClass().getResource("scene-tables.fxml"));
+    this.loadScene(event, "scene-tables.fxml");
+  }
+
+  private void loadScene(@NonNull ActionEvent event, @NonNull String name) throws IOException {
+    if(activeController != null) {
+      activeController.dispose();
+    }
+
+    FXMLLoader loader = new FXMLLoader(getClass().getResource(name));
+    Parent root = loader.load();
+    activeController = loader.<StudioFXController>getController();
     Scene scene = ((Node) event.getSource()).getScene();
     scene.setRoot(root);
   }

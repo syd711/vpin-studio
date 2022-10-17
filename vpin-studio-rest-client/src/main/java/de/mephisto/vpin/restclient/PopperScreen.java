@@ -1,6 +1,8 @@
 package de.mephisto.vpin.restclient;
 
 public enum PopperScreen {
+  Audio,
+  AudioLaunch,
   Other2,
   GameInfo,
   GameHelp,
@@ -10,4 +12,5 @@ public enum PopperScreen {
   Loading,
   Wheel,
   PlayField,
+  Menu
 }

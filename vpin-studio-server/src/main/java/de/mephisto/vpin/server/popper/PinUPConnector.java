@@ -34,12 +34,6 @@ public class PinUPConnector implements InitializingBean {
   @Autowired
   private SystemService systemService;
 
-  @Autowired
-  private RomService romService;
-
-  @Autowired
-  private GameDetailsRepository gameDetailsRepository;
-
   @Override
   public void afterPropertiesSet() {
     File file = systemService.getPinUPDatabaseFile();
@@ -410,6 +404,9 @@ public class PinUPConnector implements InitializingBean {
     String gameFileName = rs.getString("GameFileName");
     game.setGameFileName(gameFileName);
 
+    String rom = rs.getString("ROM");
+    game.setRom(rom);
+
     String gameDisplayName = rs.getString("GameDisplay");
     game.setGameDisplayName(gameDisplayName);
 
@@ -423,7 +420,6 @@ public class PinUPConnector implements InitializingBean {
     game.setGameFile(vpxFile);
     loadStats(connection, game);
     loadEmulator(connection, game, emuId);
-    loadDetails(game);
     return game;
   }
 
@@ -462,28 +458,6 @@ public class PinUPConnector implements InitializingBean {
       statement.close();
     } catch (SQLException e) {
       LOG.error("Failed to read game info: " + e.getMessage(), e);
-    }
-  }
-
-  private void loadDetails(@NonNull Game game) {
-    try {
-      GameDetails gameDetails = gameDetailsRepository.findByPupId(game.getId());
-      if (gameDetails == null) {
-        ScanResult scanResult = romService.scanGameFile(game);
-
-        gameDetails = new GameDetails();
-        gameDetails.setPupId(game.getId());
-        gameDetails.setRomName(scanResult.getRom());
-        gameDetails.setNvOffset(scanResult.getNvOffset());
-        gameDetails.setCreatedAt(new java.util.Date());
-        gameDetails.setUpdatedAt(new java.util.Date());
-        gameDetailsRepository.saveAndFlush(gameDetails);
-      }
-
-      game.setRom(gameDetails.getRomName());
-      game.setNvOffset(gameDetails.getNvOffset());
-    } catch (Exception e) {
-      LOG.error("Failed to load details for " + game + ": " + e.getMessage(), e);
     }
   }
 }

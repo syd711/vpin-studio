@@ -5,6 +5,7 @@ import de.mephisto.vpin.restclient.ObservedProperties;
 import de.mephisto.vpin.restclient.ObservedPropertyChangeListener;
 import de.mephisto.vpin.restclient.VPinStudioClient;
 import de.mephisto.vpin.restclient.representations.GameRepresentation;
+import de.mephisto.vpin.ui.StudioFXController;
 import de.mephisto.vpin.ui.VPinStudioApplication;
 import de.mephisto.vpin.ui.util.BindingUtil;
 import de.mephisto.vpin.ui.util.WidgetFactory;
@@ -40,7 +41,7 @@ import java.util.ResourceBundle;
 
 import static de.mephisto.vpin.ui.VPinStudioApplication.stage;
 
-public class HighscoreCardsController implements Initializable, ObservedPropertyChangeListener {
+public class HighscoreCardsController implements Initializable, ObservedPropertyChangeListener, StudioFXController {
   private final static Logger LOG = LoggerFactory.getLogger(HighscoreCardsController.class);
 
   @FXML
@@ -204,8 +205,8 @@ public class HighscoreCardsController implements Initializable, ObservedProperty
   }
 
   @FXML
-  private void onGenerateAll() throws IOException {
-    WidgetFactory.createProgressDialog(new HighscoreGeneratorProgressModel(client, "Generating Highscore Cards"), stage);
+  private void onGenerateAll() {
+    WidgetFactory.createProgressDialog(new HighscoreGeneratorProgressModel(client, "Generating Highscore Cards"));
   }
 
   @FXML
@@ -384,5 +385,10 @@ public class HighscoreCardsController implements Initializable, ObservedProperty
       cardPreview.setFitWidth(imageCenter.getWidth() - 60);
       cardPreview.setFitHeight(imageCenter.getHeight() - 60);
     }
+  }
+
+  @Override
+  public void dispose() {
+
   }
 }
