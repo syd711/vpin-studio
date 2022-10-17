@@ -9,11 +9,14 @@
 <?import javafx.scene.text.Font?>
 <?import org.kordamp.ikonli.javafx.FontIcon?>
 
-<BorderPane minHeight="130.0" prefHeight="130.0" prefWidth="1215.0" style="-fx-background-color: #212529;" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.HeaderController">
+<BorderPane minHeight="110.0" prefHeight="110.0" prefWidth="1215.0" style="-fx-background-color: #212529;" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.HeaderController">
    <center>
       <BorderPane BorderPane.alignment="TOP_LEFT">
-         <left>
-            <VBox BorderPane.alignment="CENTER">
+         <BorderPane.margin>
+            <Insets left="24.0" />
+         </BorderPane.margin>
+         <top>
+            <VBox prefHeight="106.0" prefWidth="891.0" BorderPane.alignment="CENTER">
                <children>
                   <Label maxHeight="50.0" text="VPin Studio" textFill="WHITE">
                      <font>
@@ -27,10 +30,7 @@
                   </Label>
                </children>
             </VBox>
-         </left>
-         <BorderPane.margin>
-            <Insets left="24.0" top="24.0" />
-         </BorderPane.margin>
+         </top>
       </BorderPane>
    </center>
    <right>

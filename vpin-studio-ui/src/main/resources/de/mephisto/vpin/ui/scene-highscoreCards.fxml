@@ -25,7 +25,7 @@
 <?import javafx.scene.text.Font?>
 <?import org.kordamp.ikonli.javafx.FontIcon?>
 
-<BorderPane prefHeight="1267.0" prefWidth="1510.0" styleClass="navigation-panel" stylesheets="@stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.cards.HighscoreCardsController">
+<BorderPane styleClass="navigation-panel" stylesheets="@stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.cards.HighscoreCardsController">
    <left>
        <fx:include fx:id="navigation" prefWidth="300.0" source="scene-navigation.fxml" />
    </left>
@@ -49,7 +49,7 @@
                         <Insets left="24.0" right="24.0" />
                      </BorderPane.margin>
                      <top>
-                        <BorderPane prefHeight="182.0" prefWidth="1142.0" stylesheets="@stylesheet.css" BorderPane.alignment="CENTER">
+                        <BorderPane prefHeight="182.0" stylesheets="@stylesheet.css" BorderPane.alignment="CENTER">
                            <left>
                               <VBox BorderPane.alignment="CENTER">
                                  <children>
@@ -118,7 +118,7 @@
                         </BorderPane>
                      </top>
                      <bottom>
-                        <ToolBar nodeOrientation="RIGHT_TO_LEFT" prefHeight="70.0" prefWidth="1195.0" style="-fx-background-color: #212529;" BorderPane.alignment="CENTER">
+                        <ToolBar nodeOrientation="RIGHT_TO_LEFT" prefHeight="70.0" style="-fx-background-color: #212529;" BorderPane.alignment="CENTER">
                           <items>
                             <Button mnemonicParsing="false" onAction="#onGenerateClick" stylesheets="@stylesheet.css" text="Generate">
                                  <font>
@@ -156,11 +156,11 @@
                   </BorderPane>
                </center>
                <right>
-                  <BorderPane prefHeight="1089.0" prefWidth="300.0" styleClass="navigation-panel" stylesheets="@stylesheet.css" BorderPane.alignment="CENTER">
+                  <BorderPane prefWidth="300.0" styleClass="navigation-panel" stylesheets="@stylesheet.css" BorderPane.alignment="CENTER">
                      <center>
-                        <Accordion prefHeight="866.0" prefWidth="300.0" stylesheets="@stylesheet.css" BorderPane.alignment="CENTER">
+                        <Accordion prefWidth="300.0" stylesheets="@stylesheet.css" BorderPane.alignment="CENTER">
                           <panes>
-                             <TitledPane prefHeight="747.0" prefWidth="300.0" stylesheets="@stylesheet.css" text="Background Settings">
+                             <TitledPane prefWidth="300.0" stylesheets="@stylesheet.css" text="Background Settings">
                                 <content>
                                    <VBox prefHeight="200.0" prefWidth="100.0" styleClass="accordion-container" stylesheets="@stylesheet.css">
                                       <children>
@@ -218,7 +218,7 @@
                                    </VBox>
                                 </content>
                           </TitledPane>
-                            <TitledPane prefHeight="851.0" prefWidth="300.0" stylesheets="@stylesheet.css" text="Font Settings">
+                            <TitledPane prefWidth="300.0" stylesheets="@stylesheet.css" text="Font Settings">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
@@ -444,7 +444,7 @@
                         </Accordion>
                      </center>
                      <top>
-                        <TitledPane collapsible="false" prefWidth="300.0" styleClass="accordion-container" stylesheets="@stylesheet.css" text="B2S Background" BorderPane.alignment="CENTER">
+                        <TitledPane collapsible="false" prefHeight="233.0" prefWidth="300.0" styleClass="accordion-container" stylesheets="@stylesheet.css" text="B2S Background" BorderPane.alignment="CENTER">
                            <BorderPane.margin>
                               <Insets />
                            </BorderPane.margin>

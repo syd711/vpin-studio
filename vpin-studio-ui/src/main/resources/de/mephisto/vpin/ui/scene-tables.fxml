@@ -21,23 +21,23 @@
 <?import javafx.scene.text.Font?>
 <?import org.kordamp.ikonli.javafx.FontIcon?>
 
-<BorderPane prefHeight="1354.0" prefWidth="1951.0" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.tables.TablesController">
+<BorderPane xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.tables.TablesController">
    <left>
        <fx:include fx:id="navigation" prefWidth="300.0" source="scene-navigation.fxml" />
    </left>
    <center>
       <BorderPane BorderPane.alignment="CENTER">
          <center>
-            <BorderPane prefHeight="1354.0" prefWidth="1114.0" style="-fx-background-color: #212529;" BorderPane.alignment="CENTER">
+            <BorderPane style="-fx-background-color: #212529;" BorderPane.alignment="CENTER">
                <top>
                    <fx:include fx:id="header" source="scene-header.fxml" />
                </top>
                <center>
-                  <BorderPane fx:id="main" prefHeight="200.0" prefWidth="200.0" styleClass="subpanel" stylesheets="@stylesheet.css" BorderPane.alignment="CENTER">
+                  <BorderPane fx:id="main" styleClass="subpanel" stylesheets="@stylesheet.css" BorderPane.alignment="CENTER">
                      <center>
                         <BorderPane styleClass="subpanel" stylesheets="@stylesheet.css" BorderPane.alignment="CENTER">
                            <center>
-                              <TableView fx:id="tableView" onMouseClicked="#onTableMouseClicked" prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #2a2a2a;" styleClass="base-component" stylesheets="@stylesheet.css">
+                              <TableView fx:id="tableView" onMouseClicked="#onTableMouseClicked" style="-fx-background-color: #2a2a2a;" styleClass="base-component" stylesheets="@stylesheet.css">
                                 <columns>
                                   <TableColumn fx:id="columnDisplayName" minWidth="100.0" prefWidth="300.0" text="Display Name" />
                                   <TableColumn fx:id="columnRom" minWidth="100.0" prefWidth="114.4000244140625" text="ROM" />
@@ -55,7 +55,7 @@
                               <Insets left="24.0" right="24.0" top="24.0" />
                            </BorderPane.margin>
                            <top>
-                              <ToolBar prefHeight="40.0" prefWidth="200.0" styleClass="base-component" stylesheets="@stylesheet.css" BorderPane.alignment="CENTER">
+                              <ToolBar prefHeight="40.0" styleClass="base-component" stylesheets="@stylesheet.css" BorderPane.alignment="CENTER">
                                 <items>
                                     <TextField fx:id="textfieldSearch" onKeyPressed="#onSearchKeyPressed" prefHeight="26.0" prefWidth="234.0" promptText="Table Search...">
                                        <font>
@@ -106,7 +106,7 @@
                         <Insets left="24.0" right="24.0" />
                      </BorderPane.margin>
                      <bottom>
-                        <HBox alignment="BASELINE_RIGHT" prefHeight="20.0" prefWidth="979.0" BorderPane.alignment="CENTER">
+                        <HBox alignment="BASELINE_RIGHT" prefHeight="20.0" BorderPane.alignment="CENTER">
                            <children>
                               <Label textFill="WHITE" />
                               <Label fx:id="labelTableCount" layoutX="1013.0" layoutY="10.0" textFill="WHITE" />
@@ -119,11 +119,11 @@
                   </BorderPane>
                </center>
                <right>
-                  <VBox prefHeight="1224.0" prefWidth="600.0" styleClass="subpanel" stylesheets="@stylesheet.css" BorderPane.alignment="CENTER">
+                  <VBox prefWidth="600.0" styleClass="subpanel" stylesheets="@stylesheet.css" BorderPane.alignment="CENTER">
                      <children>
                         <Accordion fx:id="accordion">
                            <panes>
-                              <TitledPane fx:id="titledPaneMedia" prefHeight="1197.0" prefWidth="600.0" text="Media">
+                              <TitledPane fx:id="titledPaneMedia" prefWidth="600.0" text="Media">
                                  <content>
                                     <BorderPane prefHeight="862.0" prefWidth="598.0">
                                        <center>
@@ -314,7 +314,7 @@
                                     </BorderPane>
                                  </content>
                               </TitledPane>
-                              <TitledPane expanded="false" prefHeight="1411.0" prefWidth="600.0" text="Media Settings">
+                              <TitledPane expanded="false" prefWidth="600.0" text="Media Settings">
                                  <content>
                                     <BorderPane prefHeight="200.0" prefWidth="200.0">
                                        <center>
@@ -339,7 +339,7 @@
                                     </BorderPane>
                                  </content>
                               </TitledPane>
-                              <TitledPane expanded="false" prefHeight="1655.0" prefWidth="600.0" text="Table Metadata">
+                              <TitledPane expanded="false" prefWidth="600.0" text="Table Metadata">
                                  <content>
                                     <BorderPane prefHeight="246.0" prefWidth="598.0">
                                        <padding>
