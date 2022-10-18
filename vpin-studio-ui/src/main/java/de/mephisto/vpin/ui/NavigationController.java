@@ -1,5 +1,6 @@
 package de.mephisto.vpin.ui;
 
+import de.mephisto.vpin.ui.util.TransitionUtil;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import eu.hansolo.tilesfx.Tile;
 import eu.hansolo.tilesfx.TileBuilder;
@@ -23,6 +24,7 @@ public class NavigationController implements Initializable {
   @FXML
   private BorderPane avatarPane;
   private StudioFXController activeController;
+  private Parent root;
 
   // Add a public no-args constructor
   public NavigationController() {
@@ -39,6 +41,11 @@ public class NavigationController implements Initializable {
   }
 
   @FXML
+  private void onSettingsClicked(ActionEvent event) throws IOException {
+    TransitionUtil.createInFader(root, 300).play();
+  }
+
+  @FXML
   private void onTablesClick(ActionEvent event) throws IOException {
     this.loadScene(event, "scene-tables.fxml");
   }
@@ -49,7 +56,7 @@ public class NavigationController implements Initializable {
     }
 
     FXMLLoader loader = new FXMLLoader(getClass().getResource(name));
-    Parent root = loader.load();
+    root = loader.load();
     activeController = loader.<StudioFXController>getController();
     Scene scene = ((Node) event.getSource()).getScene();
     scene.setRoot(root);

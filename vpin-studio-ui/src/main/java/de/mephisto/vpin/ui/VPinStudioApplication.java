@@ -20,7 +20,7 @@ public class VPinStudioApplication extends Application {
   @Override
   public void start(Stage stage) throws IOException {
     VPinStudioApplication.stage = stage;
-    FXMLLoader fxmlLoader = new FXMLLoader(VPinStudioApplication.class.getResource("scene-dashboard.fxml"));
+    FXMLLoader fxmlLoader = new FXMLLoader(VPinStudioApplication.class.getResource("scene-tables.fxml"));
     Scene scene = new Scene(fxmlLoader.load(), 1920, 1080);
     stage.setTitle("VPin Studio");
     stage.setScene(scene);

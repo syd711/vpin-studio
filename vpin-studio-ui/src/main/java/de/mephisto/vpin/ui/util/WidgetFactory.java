@@ -25,6 +25,7 @@ import javafx.scene.media.MediaView;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
+import org.kordamp.ikonli.javafx.FontIcon;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -138,7 +139,9 @@ public class WidgetFactory {
     }
 
     if (item == null) {
-      parent.setCenter(null);
+      Label label = new Label("No media found.");
+      label.setStyle("-fx-font-size: 14px;-fx-text-fill: #444444;");
+      parent.setCenter(label);
       return parent;
     }
 
@@ -168,7 +171,8 @@ public class WidgetFactory {
       mediaPlayer.setMute(true);
       mediaPlayer.setOnError(() -> {
         LOG.error("Media player error: " + mediaPlayer.getError());
-        mediaPlayer.getError().printStackTrace();
+        mediaPlayer.stop();
+        mediaPlayer.dispose();
       });
 
       MediaView mediaView = new MediaView(mediaPlayer);
@@ -176,20 +180,27 @@ public class WidgetFactory {
 
       if (parent.getId().equals("screenPlayfield")) {
         mediaView.rotateProperty().set(90);
-        mediaView.setFitWidth(445);
+        mediaView.setFitWidth(440);
         mediaView.setX(0);
         mediaView.setY(0);
-        mediaView.translateXProperty().set(mediaView.translateXProperty().get() - 98);
+        mediaView.translateXProperty().set(mediaView.translateXProperty().get() - 96);
       }
       else if (parent.getId().equals("screenLoading")) {
         mediaView.rotateProperty().set(90);
-        mediaView.setFitWidth(76);
+        mediaView.setFitWidth(70);
         mediaView.setX(0);
         mediaView.setY(0);
       }
       else if (baseType.equals("video")) {
-        mediaView.setFitWidth(parent.getPrefWidth() - 10);
-        mediaView.setFitHeight(parent.getPrefHeight() - 20);
+        mediaView.setFitWidth(parent.getPrefWidth() - 12);
+        mediaView.setFitHeight(parent.getPrefHeight() - 50);
+      }
+      else if (baseType.equals("audio")) {
+        mediaPlayer.setOnEndOfMedia(() -> {
+          Button playButton = (Button) parent.getTop();
+          FontIcon icon = (FontIcon) playButton.getChildrenUnmodifiable().get(0);
+          icon.setIconLiteral("bi-play");
+        });
       }
 
       parent.setCenter(mediaView);

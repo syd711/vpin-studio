@@ -10,7 +10,7 @@
 
 <BorderPane prefWidth="330.0" style="-fx-background-color: #272b2f;" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.NavigationController">
    <bottom>
-      <Button alignment="BASELINE_LEFT" graphicTextGap="12.0" mnemonicParsing="false" prefHeight="60.0" prefWidth="330.0" styleClass="navigation-button" stylesheets="@stylesheet.css" text="Settings" textFill="WHITE" BorderPane.alignment="CENTER">
+      <Button alignment="BASELINE_LEFT" graphicTextGap="12.0" mnemonicParsing="false" onAction="#onSettingsClicked" prefHeight="60.0" prefWidth="330.0" styleClass="navigation-button" stylesheets="@stylesheet.css" text="Settings" textFill="WHITE" BorderPane.alignment="CENTER">
          <font>
             <Font size="18.0" />
          </font>

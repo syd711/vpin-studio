@@ -30,6 +30,7 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaView;
 import org.apache.commons.lang3.StringUtils;
+import org.kordamp.ikonli.javafx.FontIcon;
 
 import java.awt.*;
 import java.io.IOException;
@@ -147,9 +148,19 @@ public class TablesController implements Initializable, StudioFXController {
     Button source = (Button) e.getSource();
     BorderPane borderPane = (BorderPane) source.getParent();
     MediaView mediaView = (MediaView) borderPane.getCenter();
-    mediaView.getMediaPlayer().setMute(false);
-    mediaView.getMediaPlayer().setCycleCount(1);
-    mediaView.getMediaPlayer().play();
+
+    FontIcon icon = (FontIcon) source.getChildrenUnmodifiable().get(0);
+    String iconLiteral = icon.getIconLiteral();
+    if(iconLiteral.equals("bi-play")) {
+      mediaView.getMediaPlayer().setMute(false);
+      mediaView.getMediaPlayer().setCycleCount(1);
+      mediaView.getMediaPlayer().play();
+      icon.setIconLiteral("bi-stop");
+    }
+    else {
+      mediaView.getMediaPlayer().stop();
+      icon.setIconLiteral("bi-play");
+    }
   }
 
   @FXML
@@ -157,6 +168,11 @@ public class TablesController implements Initializable, StudioFXController {
     Button source = (Button) e.getSource();
     BorderPane borderPane = (BorderPane) source.getParent();
     Node center = borderPane.getCenter();
+    if (center == null) {
+      center = screenPlayfield.getCenter();
+    }
+
+
     if (center instanceof MediaView) {
       MediaView mediaView = (MediaView) center;
       Media media = mediaView.getMediaPlayer().getMedia();
@@ -167,7 +183,7 @@ public class TablesController implements Initializable, StudioFXController {
         ex.printStackTrace();
       }
     }
-    else if(center instanceof ImageView) {
+    else if (center instanceof ImageView) {
       ImageView imageView = (ImageView) center;
       String url = (String) imageView.getUserData();
       try {
