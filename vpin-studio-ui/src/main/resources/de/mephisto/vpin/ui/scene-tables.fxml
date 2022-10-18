@@ -22,14 +22,14 @@
 <?import javafx.scene.text.Font?>
 <?import org.kordamp.ikonli.javafx.FontIcon?>
 
-<BorderPane xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.tables.TablesController">
+<BorderPane styleClass="main" stylesheets="@stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.tables.TablesController">
    <left>
        <fx:include fx:id="navigation" prefWidth="300.0" source="scene-navigation.fxml" />
    </left>
    <center>
       <BorderPane BorderPane.alignment="CENTER">
          <center>
-            <BorderPane style="-fx-background-color: #212529;" BorderPane.alignment="CENTER">
+            <BorderPane styleClass="main" stylesheets="@stylesheet.css" BorderPane.alignment="CENTER">
                <top>
                    <fx:include fx:id="header" source="scene-header.fxml" />
                </top>
@@ -40,12 +40,14 @@
                            <center>
                               <TableView fx:id="tableView" onMouseClicked="#onTableMouseClicked" style="-fx-background-color: #2a2a2a;" styleClass="base-component" stylesheets="@stylesheet.css">
                                 <columns>
-                                  <TableColumn fx:id="columnDisplayName" minWidth="100.0" prefWidth="300.0" text="Display Name" />
-                                  <TableColumn fx:id="columnRom" minWidth="100.0" prefWidth="114.4000244140625" text="ROM" />
-                                    <TableColumn fx:id="columnRomAlias" minWidth="100.0" prefWidth="114.4000244140625" text="ROM Alias" />
-                                    <TableColumn fx:id="columnNVOffset" minWidth="80.800048828125" prefWidth="80.800048828125" style="-fx-alignment: CENTER;" text="NVOffset" />
-                                    <TableColumn fx:id="columnB2S" minWidth="51.199951171875" prefWidth="111.2000732421875" text="DirectB2S File" />
-                                    <TableColumn fx:id="columnStatus" minWidth="57.5999755859375" prefWidth="200.0" text="Status" />
+                                    <TableColumn fx:id="columnId" minWidth="52.79998779296875" prefWidth="52.79998779296875" style="-fx-alignment: baseline-right;" text="ID" />
+                                  <TableColumn fx:id="columnDisplayName" minWidth="100.0" prefWidth="332.0" text="Display Name" />
+                                  <TableColumn fx:id="columnRom" minWidth="10.4000244140625" prefWidth="83.2000732421875" text="ROM" />
+                                    <TableColumn fx:id="columnRomAlias" minWidth="77.60009765625" prefWidth="77.60009765625" text="ROM Alias" />
+                                    <TableColumn fx:id="columnNVOffset" minWidth="75.199951171875" prefWidth="75.199951171875" style="-fx-alignment: CENTER;" text="NVOffset" />
+                                    <TableColumn fx:id="columnB2S" minWidth="51.199951171875" prefWidth="117.5999755859375" style="-fx-alignment: CENTER;" text="DirectB2S File" />
+                                    <TableColumn fx:id="columnPUPPack" minWidth="57.5999755859375" prefWidth="100.0" style="-fx-alignment: CENTER;" text="PUP Pack" />
+                                    <TableColumn fx:id="columnStatus" minWidth="57.5999755859375" prefWidth="100.0" style="-fx-alignment: CENTER;" text="Status" />
                                 </columns>
                                  <BorderPane.margin>
                                     <Insets bottom="24.0" />

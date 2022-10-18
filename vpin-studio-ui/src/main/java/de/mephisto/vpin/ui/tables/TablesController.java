@@ -9,6 +9,7 @@ import de.mephisto.vpin.ui.StudioFXController;
 import de.mephisto.vpin.ui.util.TransitionUtil;
 import de.mephisto.vpin.ui.util.WidgetFactory;
 import javafx.application.Platform;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -29,6 +30,7 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaView;
+import javafx.scene.paint.Paint;
 import org.apache.commons.lang3.StringUtils;
 import org.kordamp.ikonli.javafx.FontIcon;
 
@@ -41,6 +43,9 @@ import java.util.List;
 import java.util.ResourceBundle;
 
 public class TablesController implements Initializable, StudioFXController {
+
+  @FXML
+  private TableColumn<GameRepresentation, String> columnId;
 
   @FXML
   private TableColumn<GameRepresentation, String> columnDisplayName;
@@ -59,6 +64,9 @@ public class TablesController implements Initializable, StudioFXController {
 
   @FXML
   private TableColumn<GameRepresentation, String> columnStatus;
+
+  @FXML
+  private TableColumn<GameRepresentation, String> columnPUPPack;
 
   @FXML
   private TableView<GameRepresentation> tableView;
@@ -151,7 +159,7 @@ public class TablesController implements Initializable, StudioFXController {
 
     FontIcon icon = (FontIcon) source.getChildrenUnmodifiable().get(0);
     String iconLiteral = icon.getIconLiteral();
-    if(iconLiteral.equals("bi-play")) {
+    if (iconLiteral.equals("bi-play")) {
       mediaView.getMediaPlayer().setMute(false);
       mediaView.getMediaPlayer().setCycleCount(1);
       mediaView.getMediaPlayer().play();
@@ -264,6 +272,10 @@ public class TablesController implements Initializable, StudioFXController {
         new PropertyValueFactory<GameRepresentation, String>("gameDisplayName")
     );
 
+    columnId.setCellValueFactory(
+        new PropertyValueFactory<GameRepresentation, String>("id")
+    );
+
 
     columnRom.setCellValueFactory(cellData -> {
       GameRepresentation value = cellData.getValue();
@@ -286,6 +298,43 @@ public class TablesController implements Initializable, StudioFXController {
       GameRepresentation value = cellData.getValue();
       if (value.getNvOffset() > 0) {
         return new SimpleStringProperty(String.valueOf(value.getNvOffset()));
+      }
+      return new SimpleStringProperty("");
+    });
+
+    columnB2S.setCellValueFactory(cellData -> {
+      GameRepresentation value = cellData.getValue();
+      FontIcon fontIcon = new FontIcon();
+      fontIcon.setIconSize(18);
+      fontIcon.setIconColor(Paint.valueOf("#FFFFFF"));
+      fontIcon.setIconLiteral("bi-check");
+      if (!value.isDirectB2SAvailable()) {
+        fontIcon.setIconLiteral("bi-dash");
+      }
+      return new SimpleObjectProperty(fontIcon);
+    });
+
+    columnPUPPack.setCellValueFactory(cellData -> {
+      GameRepresentation value = cellData.getValue();
+      FontIcon fontIcon = new FontIcon();
+      fontIcon.setIconSize(18);
+      fontIcon.setIconColor(Paint.valueOf("#FFFFFF"));
+      fontIcon.setIconLiteral("bi-check");
+      if (!value.isPupPackAvailable()) {
+        fontIcon.setIconLiteral("bi-dash");
+      }
+      return new SimpleObjectProperty(fontIcon);
+    });
+
+    columnStatus.setCellValueFactory(cellData -> {
+      GameRepresentation value = cellData.getValue();
+      int validationState = value.getValidationState();
+      if (validationState > 0) {
+        FontIcon fontIcon = new FontIcon();
+        fontIcon.setIconSize(18);
+        fontIcon.setIconColor(Paint.valueOf("#FFFFFF"));
+        fontIcon.setIconLiteral("bi-exclamation-circle");
+        return new SimpleObjectProperty(fontIcon);
       }
       return new SimpleStringProperty("");
     });

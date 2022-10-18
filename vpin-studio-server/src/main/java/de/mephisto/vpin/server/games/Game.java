@@ -26,6 +26,7 @@ public class Game {
 
   private Date lastPlayed;
   private int numberPlays;
+  private int validationState;
 
   private final SystemService systemService;
 
@@ -122,6 +123,22 @@ public class Game {
     return rom;
   }
 
+  public boolean isDirectB2SAvailable() {
+    String name = FilenameUtils.getBaseName(this.getGameFileName());
+    String directB2SName = name + ".directb2s";
+    return new File(systemService.getVPXTablesFolder(), directB2SName).exists();
+  }
+
+  public boolean isPupPackAvailable() {
+    if(StringUtils.isEmpty(this.getRom())) {
+      return false;
+    }
+
+    File pupVideos = new File(systemService.getPinUPSystemFolder(), "PUPVideos");
+    File pupPackFolder = new File(pupVideos, getRom());
+    return pupPackFolder.exists() && pupPackFolder.listFiles().length > 1;
+  }
+
   public void setRom(String rom) {
     this.rom = rom;
   }
@@ -166,6 +183,14 @@ public class Game {
     this.nvOffset = nvOffset;
   }
 
+  public int getValidationState() {
+    return validationState;
+  }
+
+  public void setValidationState(int validationState) {
+    this.validationState = validationState;
+  }
+
   @SuppressWarnings("unused")
   @Nullable
   @JsonIgnore
@@ -181,7 +206,7 @@ public class Game {
   @JsonIgnore
   public File getDirectB2SFile() {
     String baseName = FilenameUtils.getBaseName(this.getGameFileName());
-    return new File(systemService.getDirectB2SFolder(), baseName + ".directb2s");
+    return new File(systemService.getVPXTablesFolder(), baseName + ".directb2s");
   }
 
   @NonNull

@@ -23,6 +23,33 @@ public class GameRepresentation {
   private Date lastPlayed;
   private int numberPlays;
   private String emulatorName;
+  private boolean directB2SAvailable;
+  private boolean pupPackAvailable;
+  private int validationState;
+
+  public int getValidationState() {
+    return validationState;
+  }
+
+  public void setValidationState(int validationState) {
+    this.validationState = validationState;
+  }
+
+  public boolean isDirectB2SAvailable() {
+    return directB2SAvailable;
+  }
+
+  public void setDirectB2SAvailable(boolean directB2SAvailable) {
+    this.directB2SAvailable = directB2SAvailable;
+  }
+
+  public boolean isPupPackAvailable() {
+    return pupPackAvailable;
+  }
+
+  public void setPupPackAvailable(boolean pupPackAvailable) {
+    this.pupPackAvailable = pupPackAvailable;
+  }
 
   public String getRom() {
     return rom;

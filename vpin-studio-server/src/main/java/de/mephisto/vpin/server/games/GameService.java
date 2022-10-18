@@ -132,11 +132,15 @@ public class GameService implements InitializingBean {
         game.setRom(gameDetails.getRomName());
       }
       game.setOriginalRom(romService.getOriginalRom(game.getRom()));
-
+      game.setValidationState(calculateValidationState(game));
       return gameDetails;
     } catch (Exception e) {
       LOG.error("Failed to load details for " + game + ": " + e.getMessage(), e);
     }
     return null;
+  }
+
+  private int calculateValidationState(Game game) {
+    return 0;
   }
 }

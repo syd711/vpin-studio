@@ -14,6 +14,7 @@ import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.paint.Color;
+import javafx.scene.paint.Paint;
 import javafx.scene.text.TextAlignment;
 
 import java.io.IOException;
@@ -23,8 +24,9 @@ import java.util.ResourceBundle;
 public class NavigationController implements Initializable {
   @FXML
   private BorderPane avatarPane;
-  private StudioFXController activeController;
-  private Parent root;
+
+  private static StudioFXController activeController;
+  private static Parent root;
 
   // Add a public no-args constructor
   public NavigationController() {
@@ -42,7 +44,7 @@ public class NavigationController implements Initializable {
 
   @FXML
   private void onSettingsClicked(ActionEvent event) throws IOException {
-    TransitionUtil.createInFader(root, 300).play();
+    TransitionUtil.createOutFader(root, 300).play();
   }
 
   @FXML
@@ -59,6 +61,7 @@ public class NavigationController implements Initializable {
     root = loader.load();
     activeController = loader.<StudioFXController>getController();
     Scene scene = ((Node) event.getSource()).getScene();
+    scene.setFill(Paint.valueOf("#212529"));
     scene.setRoot(root);
   }
 

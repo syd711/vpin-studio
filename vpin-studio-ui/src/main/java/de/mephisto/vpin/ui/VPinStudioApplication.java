@@ -5,6 +5,7 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.paint.Paint;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 
@@ -22,6 +23,7 @@ public class VPinStudioApplication extends Application {
     VPinStudioApplication.stage = stage;
     FXMLLoader fxmlLoader = new FXMLLoader(VPinStudioApplication.class.getResource("scene-tables.fxml"));
     Scene scene = new Scene(fxmlLoader.load(), 1920, 1080);
+    scene.setFill(Paint.valueOf("#212529"));
     stage.setTitle("VPin Studio");
     stage.setScene(scene);
     stage.initStyle(StageStyle.UNDECORATED);

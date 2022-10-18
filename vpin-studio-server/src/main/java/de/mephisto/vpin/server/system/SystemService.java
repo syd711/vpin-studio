@@ -46,7 +46,6 @@ public class SystemService implements InitializingBean  {
 
   private File pinUPSystemInstallationFolder;
   private File visualPinballInstallationFolder;
-  private File directB2SFolder;
 
   private File pinemhiNvRamFolder;
 
@@ -86,15 +85,6 @@ public class SystemService implements InitializingBean  {
         this.visualPinballInstallationFolder = new File(store.get(VISUAL_PINBALL_INST_DIR));
       }
 
-      //directb2s folder, provide possibility to change the default folder if they are only used for background generation
-      this.directB2SFolder = new File(getVisualPinballInstallationFolder(), "Tables/");
-      if (!store.containsKey(DIRECTB2S_DIR)) {
-        store.set(DIRECTB2S_DIR, directB2SFolder.getAbsolutePath().replaceAll("\\\\", "/"));
-      }
-      else {
-        this.directB2SFolder = new File(store.get(DIRECTB2S_DIR));
-      }
-
       if(!getB2SImageExtractionFolder().exists()) {
         boolean mkdirs = getB2SImageExtractionFolder().mkdirs();
         if(!mkdirs) {
@@ -116,7 +106,6 @@ public class SystemService implements InitializingBean  {
     LOG.info(formatPathLog("PinUP Database File", this.getPinUPDatabaseFile()));
     LOG.info(formatPathLog("Visual Pinball Folder", this.getVisualPinballInstallationFolder()));
     LOG.info(formatPathLog("Visual Pinball Tables Folder", this.getVPXTablesFolder()));
-    LOG.info(formatPathLog("Visual Pinball DirectB2S Folder", this.getDirectB2SFolder()));
     LOG.info(formatPathLog("Mame Folder", this.getMameFolder()));
     LOG.info(formatPathLog("ROM Folder", this.getMameRomFolder()));
     LOG.info(formatPathLog("NVRam Folder", this.getNvramFolder()));
@@ -293,10 +282,6 @@ public class SystemService implements InitializingBean  {
 
   public File getVPXTablesFolder() {
     return new File(getVisualPinballInstallationFolder(), "Tables/");
-  }
-
-  public File getDirectB2SFolder() {
-    return directB2SFolder;
   }
 
   public File getPinUPSystemFolder() {
