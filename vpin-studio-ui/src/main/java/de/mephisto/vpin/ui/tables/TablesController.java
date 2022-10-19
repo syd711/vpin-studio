@@ -253,10 +253,8 @@ public class TablesController implements Initializable, StudioFXController {
   @FXML
   private void onReload() {
     List<GameRepresentation> games = client.getGames();
-    data.removeAll();
-    for (GameRepresentation game : games) {
-      data.add(game);
-    }
+    data = FXCollections.observableList(games);
+    tableView.setItems(data);
     tableView.refresh();
   }
 

@@ -156,7 +156,9 @@
     -fx-text-fill: white;
     -fx-text-background-color: #DDDDDD;
 }
-
+.table-row-cell {
+    -fx-cell-size: 40px;
+}
 .table-view .table-cell{
     -fx-border-color: transparent;
 }

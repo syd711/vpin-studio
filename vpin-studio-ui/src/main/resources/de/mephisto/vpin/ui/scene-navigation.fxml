@@ -8,9 +8,9 @@
 <?import javafx.scene.text.Font?>
 <?import org.kordamp.ikonli.javafx.FontIcon?>
 
-<BorderPane prefWidth="330.0" style="-fx-background-color: #272b2f;" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.NavigationController">
+<BorderPane prefWidth="250.0" style="-fx-background-color: #272b2f;" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.NavigationController">
    <bottom>
-      <Button alignment="BASELINE_LEFT" graphicTextGap="12.0" mnemonicParsing="false" onAction="#onSettingsClicked" prefHeight="60.0" prefWidth="330.0" styleClass="navigation-button" stylesheets="@stylesheet.css" text="Settings" textFill="WHITE" BorderPane.alignment="CENTER">
+      <Button alignment="BASELINE_LEFT" graphicTextGap="12.0" mnemonicParsing="false" onAction="#onSettingsClicked" prefHeight="60.0" prefWidth="250.0" styleClass="navigation-button" stylesheets="@stylesheet.css" text="Settings" textFill="WHITE" BorderPane.alignment="CENTER">
          <font>
             <Font size="18.0" />
          </font>
@@ -31,9 +31,9 @@
    <top>
       <BorderPane BorderPane.alignment="CENTER">
          <center>
-          <VBox alignment="TOP_CENTER" prefWidth="300.0" styleClass="navigation-panel" stylesheets="@stylesheet.css">
+          <VBox alignment="TOP_CENTER" styleClass="navigation-panel" stylesheets="@stylesheet.css">
               <children>
-                  <Button fx:id="dashboardBtn" alignment="BASELINE_LEFT" graphicTextGap="12.0" mnemonicParsing="false" onAction="#onDashboardClick" prefHeight="60.0" prefWidth="330.0" styleClass="navigation-button" stylesheets="@stylesheet.css" text="Dashboard" textFill="WHITE">
+                  <Button fx:id="dashboardBtn" alignment="BASELINE_LEFT" graphicTextGap="12.0" mnemonicParsing="false" onAction="#onDashboardClick" prefHeight="60.0" prefWidth="250.0" styleClass="navigation-button" stylesheets="@stylesheet.css" text="Dashboard" textFill="WHITE">
                       <font>
                           <Font size="18.0" />
                       </font>
@@ -50,7 +50,7 @@
                         <FontIcon iconColor="WHITE" iconLiteral="bi-grid" />
                      </graphic>
                   </Button>
-                  <Button alignment="BASELINE_LEFT" graphicTextGap="12.0" layoutX="10.0" layoutY="70.0" mnemonicParsing="false" onAction="#onTablesClick" prefHeight="60.0" prefWidth="330.0" styleClass="navigation-button" stylesheets="@stylesheet.css" text="Tables" textFill="WHITE">
+                  <Button alignment="BASELINE_LEFT" graphicTextGap="12.0" layoutX="10.0" layoutY="70.0" mnemonicParsing="false" onAction="#onTablesClick" prefHeight="60.0" prefWidth="250.0" styleClass="navigation-button" stylesheets="@stylesheet.css" text="Tables" textFill="WHITE">
                      <font>
                         <Font name="Tahoma" size="18.0" />
                      </font>
@@ -67,7 +67,7 @@
                         <FontIcon iconColor="WHITE" iconLiteral="bi-card-list" />
                      </graphic>
                   </Button>
-                  <Button alignment="BASELINE_LEFT" graphicTextGap="12.0" layoutX="10.0" layoutY="210.0" mnemonicParsing="false" onAction="#onHighscoreCardsClick" prefHeight="60.0" prefWidth="330.0" styleClass="navigation-button" stylesheets="@stylesheet.css" text="Highscore Cards" textFill="WHITE">
+                  <Button alignment="BASELINE_LEFT" graphicTextGap="12.0" layoutX="10.0" layoutY="210.0" mnemonicParsing="false" onAction="#onHighscoreCardsClick" prefHeight="60.0" prefWidth="250.0" styleClass="navigation-button" stylesheets="@stylesheet.css" text="Highscore Cards" textFill="WHITE">
                       <font>
                           <Font size="18.0" />
                       </font>
@@ -84,7 +84,7 @@
                         <FontIcon iconColor="WHITE" iconLiteral="bi-list-ol" />
                      </graphic>
                   </Button>
-                  <Button alignment="BASELINE_LEFT" graphicTextGap="12.0" layoutX="10.0" layoutY="210.0" mnemonicParsing="false" prefHeight="60.0" prefWidth="330.0" styleClass="navigation-button" stylesheets="@stylesheet.css" text="Overlay Settings" textFill="WHITE">
+                  <Button alignment="BASELINE_LEFT" graphicTextGap="12.0" layoutX="10.0" layoutY="210.0" mnemonicParsing="false" prefHeight="60.0" prefWidth="250.0" styleClass="navigation-button" stylesheets="@stylesheet.css" text="Overlay Settings" textFill="WHITE">
                       <font>
                           <Font name="Tahoma" size="18.0" />
                       </font>
@@ -101,7 +101,7 @@
                         <FontIcon iconColor="WHITE" iconLiteral="bi-layers" />
                      </graphic>
                   </Button>
-                  <Button alignment="BASELINE_LEFT" graphicTextGap="12.0" layoutX="10.0" layoutY="210.0" mnemonicParsing="false" prefHeight="60.0" prefWidth="330.0" styleClass="navigation-button" stylesheets="@stylesheet.css" text="DOF Commands" textFill="WHITE">
+                  <Button alignment="BASELINE_LEFT" graphicTextGap="12.0" layoutX="10.0" layoutY="210.0" mnemonicParsing="false" prefHeight="60.0" prefWidth="250.0" styleClass="navigation-button" stylesheets="@stylesheet.css" text="DOF Commands" textFill="WHITE">
                       <font>
                           <Font size="18.0" />
                       </font>
@@ -118,7 +118,7 @@
                         <FontIcon iconColor="WHITE" iconLiteral="bi-command" />
                      </graphic>
                   </Button>
-                  <Button alignment="BASELINE_LEFT" graphicTextGap="12.0" layoutX="10.0" layoutY="210.0" mnemonicParsing="false" prefHeight="60.0" prefWidth="330.0" styleClass="navigation-button" stylesheets="@stylesheet.css" text="Competitions" textFill="WHITE">
+                  <Button alignment="BASELINE_LEFT" graphicTextGap="12.0" layoutX="10.0" layoutY="210.0" mnemonicParsing="false" prefHeight="60.0" prefWidth="250.0" styleClass="navigation-button" stylesheets="@stylesheet.css" text="Competitions" textFill="WHITE">
                       <font>
                           <Font size="18.0" />
                       </font>
@@ -135,7 +135,7 @@
                         <FontIcon iconColor="WHITE" iconLiteral="bi-trophy" />
                      </graphic>
                   </Button>
-                  <Button alignment="BASELINE_LEFT" graphicTextGap="12.0" layoutX="10.0" layoutY="450.0" mnemonicParsing="false" prefHeight="60.0" prefWidth="330.0" styleClass="navigation-button" stylesheets="@stylesheet.css" text="Players" textFill="WHITE">
+                  <Button alignment="BASELINE_LEFT" graphicTextGap="12.0" layoutX="10.0" layoutY="450.0" mnemonicParsing="false" prefHeight="60.0" prefWidth="250.0" styleClass="navigation-button" stylesheets="@stylesheet.css" text="Players" textFill="WHITE">
                       <font>
                           <Font size="18.0" />
                       </font>
@@ -156,7 +156,7 @@
           </VBox>
          </center>
          <top>
-            <BorderPane fx:id="avatarPane" prefHeight="200.0" prefWidth="300.0" BorderPane.alignment="CENTER">
+            <BorderPane fx:id="avatarPane" prefHeight="200.0" prefWidth="250.0" BorderPane.alignment="CENTER">
                <padding>
                   <Insets bottom="24.0" left="24.0" right="24.0" top="24.0" />
                </padding>

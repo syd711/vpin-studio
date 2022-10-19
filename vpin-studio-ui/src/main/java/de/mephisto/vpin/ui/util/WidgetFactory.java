@@ -12,6 +12,7 @@ import javafx.concurrent.Service;
 import javafx.concurrent.Task;
 import javafx.concurrent.Worker;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Rectangle2D;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -23,6 +24,7 @@ import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.scene.media.MediaView;
 import javafx.stage.Modality;
+import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 import org.kordamp.ikonli.javafx.FontIcon;
@@ -88,8 +90,10 @@ public class WidgetFactory {
           || newValue == Worker.State.SUCCEEDED) {
         stage.hide();
 
-        String msg = model.getTitle() + " finished.\n\nProcessed " + progressResultModel.getProcessed() + " of " + model.getMax() + " elements.";
-        WidgetFactory.showAlert(msg);
+        Platform.runLater(() -> {
+          String msg = model.getTitle() + " finished.\n\nProcessed " + progressResultModel.getProcessed() + " of " + model.getMax() + " elements.";
+          WidgetFactory.showAlert(msg);
+        });
       }
     });
 
@@ -99,9 +103,8 @@ public class WidgetFactory {
     Scene scene = new Scene(root);
     stage.setScene(scene);
     service.start();
-    stage.show();
 
-    scene.getWindow().addEventFilter(WindowEvent.WINDOW_CLOSE_REQUEST, windowEvent -> service.cancel());
+    stage.showAndWait();
   }
 
 
