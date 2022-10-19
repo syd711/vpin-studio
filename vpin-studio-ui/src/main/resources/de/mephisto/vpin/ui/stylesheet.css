@@ -1,10 +1,13 @@
 /**
  * Main
  */
- .main, .root {
+.main, .root {
     -fx-background-color: #212529;
- }
+}
 
+.error {
+    -fx-background-color: #CC3333;    -fx-text-fill: #FFFFFF;
+}
 
 
 .header-button {

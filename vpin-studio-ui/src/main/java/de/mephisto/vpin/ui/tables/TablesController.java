@@ -6,16 +6,20 @@ import de.mephisto.vpin.restclient.representations.GameMediaItemRepresentation;
 import de.mephisto.vpin.restclient.representations.GameMediaRepresentation;
 import de.mephisto.vpin.restclient.representations.GameRepresentation;
 import de.mephisto.vpin.ui.StudioFXController;
-import de.mephisto.vpin.ui.util.TransitionUtil;
+import de.mephisto.vpin.ui.util.BindingUtil;
+import de.mephisto.vpin.ui.util.TextUtil;
 import de.mephisto.vpin.ui.util.WidgetFactory;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.Cursor;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -143,6 +147,9 @@ public class TablesController implements Initializable, StudioFXController {
   @FXML
   private Label labelTimesPlayed;
 
+  @FXML
+  private Slider volumeSlider;
+
   // Add a public no-args constructor
   public TablesController() {
   }
@@ -214,15 +221,15 @@ public class TablesController implements Initializable, StudioFXController {
   private void onTableMouseClicked(MouseEvent mouseEvent) {
     if (mouseEvent.getButton().equals(MouseButton.PRIMARY)) {
       if (mouseEvent.getClickCount() == 2) {
-        TransitionUtil.createTranslateByXTransition(main, 300, 600).playFromStart();
+//        TransitionUtil.createTranslateByXTransition(main, 300, 600).playFromStart();
       }
     }
   }
 
   @FXML
   private void onTableScan() {
-    GameRepresentation gameRepresentation = tableView.getSelectionModel().selectedItemProperty().get();
-    WidgetFactory.createProgressDialog(new TableScanProgressModel(client, "Scanning Table '" + gameRepresentation + "'", gameRepresentation));
+    GameRepresentation game = tableView.getSelectionModel().selectedItemProperty().get();
+    WidgetFactory.createProgressDialog(new TableScanProgressModel(client, "Scanning Table '" + game + "'", game));
     this.onReload();
   }
 
@@ -230,6 +237,17 @@ public class TablesController implements Initializable, StudioFXController {
   private void onTablesScan() {
     WidgetFactory.createProgressDialog(new TablesScanProgressModel(client, "Scanning Tables"));
     this.onReload();
+  }
+
+  @FXML
+  private void onTableEdit() {
+    GameRepresentation gameRepresentation = tableView.getSelectionModel().selectedItemProperty().get();
+    String romName = WidgetFactory.showInputDialog("Enter ROM Name", gameRepresentation.getRom());
+    if (romName != null) {
+      gameRepresentation.setRom(romName);
+      client.saveGame(gameRepresentation);
+      this.onReload();
+    }
   }
 
   @FXML
@@ -304,26 +322,26 @@ public class TablesController implements Initializable, StudioFXController {
 
     columnB2S.setCellValueFactory(cellData -> {
       GameRepresentation value = cellData.getValue();
-      FontIcon fontIcon = new FontIcon();
-      fontIcon.setIconSize(18);
-      fontIcon.setIconColor(Paint.valueOf("#FFFFFF"));
-      fontIcon.setIconLiteral("bi-check");
-      if (!value.isDirectB2SAvailable()) {
-        fontIcon.setIconLiteral("bi-dash");
+      if (value.isDirectB2SAvailable()) {
+        FontIcon fontIcon = new FontIcon();
+        fontIcon.setIconSize(18);
+        fontIcon.setIconColor(Paint.valueOf("#FFFFFF"));
+        fontIcon.setIconLiteral("bi-check-circle");
+        return new SimpleObjectProperty(fontIcon);
       }
-      return new SimpleObjectProperty(fontIcon);
+      return new SimpleStringProperty("");
     });
 
     columnPUPPack.setCellValueFactory(cellData -> {
       GameRepresentation value = cellData.getValue();
-      FontIcon fontIcon = new FontIcon();
-      fontIcon.setIconSize(18);
-      fontIcon.setIconColor(Paint.valueOf("#FFFFFF"));
-      fontIcon.setIconLiteral("bi-check");
-      if (!value.isPupPackAvailable()) {
-        fontIcon.setIconLiteral("bi-dash");
+      if (value.isPupPackAvailable()) {
+        FontIcon fontIcon = new FontIcon();
+        fontIcon.setIconSize(18);
+        fontIcon.setIconColor(Paint.valueOf("#FFFFFF"));
+        fontIcon.setIconLiteral("bi-check-circle");
+        return new SimpleObjectProperty(fontIcon);
       }
-      return new SimpleObjectProperty(fontIcon);
+      return new SimpleStringProperty("");
     });
 
     columnStatus.setCellValueFactory(cellData -> {
@@ -332,9 +350,25 @@ public class TablesController implements Initializable, StudioFXController {
       if (validationState > 0) {
         FontIcon fontIcon = new FontIcon();
         fontIcon.setIconSize(18);
-        fontIcon.setIconColor(Paint.valueOf("#FFFFFF"));
+        fontIcon.setIconColor(Paint.valueOf("#FF3333"));
         fontIcon.setIconLiteral("bi-exclamation-circle");
-        return new SimpleObjectProperty(fontIcon);
+        fontIcon.setCursor(Cursor.HAND);
+
+        CustomMenuItem item = new CustomMenuItem();
+        item.setStyle("-fx-background-color: #CC3333;-fx-text-fill: #FFFFFF;-fx-font-weight: bold;-fx-padding: 0;-fx-background-insets: 0, 0, 0, 0;-fx-background-radius: 0 6 6 6, 0 5 5 5, 0 4 4 4;");
+        BorderPane menu = new BorderPane();
+        menu.setStyle("-fx-background-color: #CC3333;-fx-text-fill: #FFFFFF;-fx-font-weight: bold;-fx-padding: 0;-fx-background-insets: 0, 0, 0, 0;-fx-background-radius: 0 6 6 6, 0 5 5 5, 0 4 4 4;");
+        Label label = new Label(TextUtil.getValidationMessage(value, validationState));
+        label.setStyle("-fx-background-color: #CC3333;-fx-text-fill: #FFFFFF;-fx-font-weight: bold;-fx-padding: 0;-fx-background-insets: 0, 0, 0, 0;-fx-background-radius: 0 6 6 6, 0 5 5 5, 0 4 4 4;");
+        menu.setCenter(label);
+        menu.setPrefHeight(30);
+        menu.setPrefWidth(350);
+        item.setContent(menu);
+
+        MenuButton button = new MenuButton(null, null, item);
+
+        button.setGraphic(fontIcon);
+        return new SimpleObjectProperty(button);
       }
       return new SimpleStringProperty("");
     });
@@ -343,17 +377,34 @@ public class TablesController implements Initializable, StudioFXController {
     tableView.setItems(data);
     tableView.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
       if (newSelection != null) {
-        updateMedia(newSelection);
+        refreshView(newSelection);
       }
     });
 
     if (!data.isEmpty()) {
       tableView.getSelectionModel().select(0);
     }
+
+    volumeSlider.valueProperty().addListener(new ChangeListener<Number>() {
+      @Override
+      public void changed(ObservableValue<? extends Number> observableValue, Number number, Number t1) {
+        GameRepresentation game = tableView.getSelectionModel().selectedItemProperty().get();
+        BindingUtil.debouncer.debounce("tableVolume" + game.getId(), () -> {
+          int value = t1.intValue();
+          if(value == 0) {
+            value = 1;
+          }
+          game.setVolume(value);
+          client.saveGame(game);
+        }, 1000);
+      }
+    });
   }
 
-  private void updateMedia(GameRepresentation game) {
+  private void refreshView(GameRepresentation game) {
     Platform.runLater(() -> {
+      volumeSlider.setValue(game.getVolume());
+
       labelId.setText(String.valueOf(game.getId()));
       labelRom.setText(game.getOriginalRom() != null ? game.getOriginalRom() : game.getRom());
       labelRomAlias.setText(game.getOriginalRom() != null ? game.getRom() : "-");

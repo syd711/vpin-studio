@@ -1,16 +1,9 @@
 package de.mephisto.vpin.server.games;
 
-import de.mephisto.vpin.server.popper.PinUPConnector;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import static de.mephisto.vpin.server.VPinStudioServer.API_SEGMENT;
@@ -40,5 +33,10 @@ public class GameResource {
   @GetMapping("/scan/{id}")
   public boolean scanGame(@PathVariable("id") int pupId) {
     return gameService.scanGame(pupId);
+  }
+
+  @PostMapping("/save")
+  public Game save(@RequestBody Game game) {
+    return gameService.save(game);
   }
 }

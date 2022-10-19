@@ -27,8 +27,13 @@ public class Game {
   private Date lastPlayed;
   private int numberPlays;
   private int validationState;
+  private int volume;
 
-  private final SystemService systemService;
+  private SystemService systemService;
+
+  public Game() {
+
+  }
 
   public Game(@NonNull SystemService systemService) {
     this.systemService = systemService;
@@ -81,6 +86,14 @@ public class Game {
 
   public void setLastPlayed(Date lastPlayed) {
     this.lastPlayed = lastPlayed;
+  }
+
+  public int getVolume() {
+    return volume;
+  }
+
+  public void setVolume(int volume) {
+    this.volume = volume;
   }
 
   @Nullable

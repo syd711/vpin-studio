@@ -23,7 +23,7 @@
                         <Font name="DejaVu Sans Mono Bold" size="48.0" />
                      </font>
                      <VBox.margin>
-                        <Insets left="12.0" top="24.0" />
+                        <Insets top="24.0" />
                      </VBox.margin>
                   </Label>
                   <Label alignment="BASELINE_LEFT" text="Version 1.0.1" textFill="WHITE">

@@ -16,7 +16,7 @@ import org.apache.commons.lang3.StringUtils;
 
 public class BindingUtil {
 
-  private static Debouncer debouncer = new Debouncer();
+  public static Debouncer debouncer = new Debouncer();
 
   public static void bindTableComboBox(VPinStudioClient client, ComboBox<GameRepresentation> comboBox, ObservedProperties properties, String property) {
     String pupId = properties.getProperty(property, null);

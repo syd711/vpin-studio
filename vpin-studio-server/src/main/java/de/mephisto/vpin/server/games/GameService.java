@@ -32,6 +32,9 @@ public class GameService implements InitializingBean {
   @Autowired
   private GameDetailsRepository gameDetailsRepository;
 
+  @Autowired
+  private GameValidator gameValidator;
+
   @Override
   public void afterPropertiesSet() {
     new Thread(() -> {
@@ -132,7 +135,7 @@ public class GameService implements InitializingBean {
         game.setRom(gameDetails.getRomName());
       }
       game.setOriginalRom(romService.getOriginalRom(game.getRom()));
-      game.setValidationState(calculateValidationState(game));
+      game.setValidationState(gameValidator.validate(game));
       return gameDetails;
     } catch (Exception e) {
       LOG.error("Failed to load details for " + game + ": " + e.getMessage(), e);
@@ -140,7 +143,17 @@ public class GameService implements InitializingBean {
     return null;
   }
 
-  private int calculateValidationState(Game game) {
-    return 0;
+  public Game save(Game game) {
+    GameDetails gameDetails = gameDetailsRepository.findByPupId(game.getId());
+    gameDetails.setRomName(game.getRom());
+    gameDetailsRepository.saveAndFlush(gameDetails);
+
+    Game original = getGame(game.getId());
+    if(original.getVolume() != game.getVolume()) {
+      pinUPConnector.updateVolume(game, game.getVolume());
+    }
+
+    LOG.info("Saved " + game);
+    return getGame(game.getId());
   }
 }

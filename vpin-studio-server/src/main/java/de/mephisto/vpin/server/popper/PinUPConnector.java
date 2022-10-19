@@ -197,6 +197,22 @@ public class PinUPConnector implements InitializingBean {
     }
   }
 
+  public void updateVolume(@NonNull Game game, int volume) {
+    Connection connect = this.connect();
+    try {
+      PreparedStatement preparedStatement = connect.prepareStatement("UPDATE Games SET 'sysVolume'=? WHERE GameID=?");
+      preparedStatement.setInt(1, volume);
+      preparedStatement.setInt(2, game.getId());
+      preparedStatement.executeUpdate();
+      preparedStatement.close();
+      LOG.info("Updated of volume of " + game + " to " + volume);
+    } catch (Exception e) {
+      LOG.error("Failed to update volume:" + e.getMessage(), e);
+    } finally {
+      this.disconnect(connect);
+    }
+  }
+
   @NonNull
   public List<Emulator> getEmulators() {
     Connection connect = this.connect();
@@ -406,6 +422,15 @@ public class PinUPConnector implements InitializingBean {
 
     String rom = rs.getString("ROM");
     game.setRom(rom);
+
+    int volume = rs.getInt("sysVolume");
+    if(volume <= 1) {
+      game.setVolume(100);
+    }
+    else {
+      game.setVolume(volume);
+    }
+
 
     String gameDisplayName = rs.getString("GameDisplay");
     game.setGameDisplayName(gameDisplayName);

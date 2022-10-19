@@ -26,6 +26,15 @@ public class GameRepresentation {
   private boolean directB2SAvailable;
   private boolean pupPackAvailable;
   private int validationState;
+  private int volume;
+
+  public int getVolume() {
+    return volume;
+  }
+
+  public void setVolume(int volume) {
+    this.volume = volume;
+  }
 
   public int getValidationState() {
     return validationState;

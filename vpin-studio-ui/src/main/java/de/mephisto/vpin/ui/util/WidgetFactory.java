@@ -114,6 +114,18 @@ public class WidgetFactory {
     alert.showAndWait();
   }
 
+  public static String showInputDialog(String title, String msg) {
+    TextInputDialog td = new TextInputDialog(msg);
+    td.setTitle(title);
+    td.getDialogPane().getStylesheets().add(VPinStudioApplication.class.getResource("stylesheet.css").toExternalForm());
+    td.getDialogPane().getStyleClass().add("base-component");
+    td.setHeaderText(null);
+    td.setGraphic(null);
+    td.showAndWait();
+
+    return td.getResult();
+  }
+
   public static class RationListCell extends ListCell<String> {
     protected void updateItem(String item, boolean empty) {
       super.updateItem(item, empty);

@@ -42,6 +42,10 @@ public class VPinStudioClient implements ObservedPropertyChangeListener {
     return RestClient.getInstance().get(API + "games/" + id, GameRepresentation.class);
   }
 
+  public GameRepresentation saveGame(GameRepresentation game) {
+    return RestClient.getInstance().post(API + "games/save", game, GameRepresentation.class);
+  }
+
   public GameMediaRepresentation getGameMedia(int id) {
     return RestClient.getInstance().get(API + "poppermedia/" + id, GameMediaRepresentation.class);
   }
