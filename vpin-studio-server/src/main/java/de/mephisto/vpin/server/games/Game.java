@@ -28,6 +28,7 @@ public class Game {
   private int numberPlays;
   private int validationState;
   private int volume;
+  private String rawHighscore;
 
   private SystemService systemService;
 
@@ -150,6 +151,14 @@ public class Game {
     File pupVideos = new File(systemService.getPinUPSystemFolder(), "PUPVideos");
     File pupPackFolder = new File(pupVideos, getRom());
     return pupPackFolder.exists() && pupPackFolder.listFiles().length > 1;
+  }
+
+  public String getRawHighscore() {
+    return rawHighscore;
+  }
+
+  public void setRawHighscore(String rawHighscore) {
+    this.rawHighscore = rawHighscore;
   }
 
   public void setRom(String rom) {

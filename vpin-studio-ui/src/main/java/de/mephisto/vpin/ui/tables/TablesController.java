@@ -9,7 +9,8 @@ import de.mephisto.vpin.ui.StudioFXController;
 import de.mephisto.vpin.ui.util.BindingUtil;
 import de.mephisto.vpin.ui.util.TextUtil;
 import de.mephisto.vpin.ui.util.WidgetFactory;
-import javafx.application.Platform;
+import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.value.ChangeListener;
@@ -19,13 +20,14 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.Cursor;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
@@ -35,11 +37,14 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaView;
 import javafx.scene.paint.Paint;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.kordamp.ikonli.javafx.FontIcon;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.awt.*;
-import java.io.IOException;
+import java.io.*;
 import java.net.URI;
 import java.net.URL;
 import java.util.ArrayList;
@@ -47,6 +52,7 @@ import java.util.List;
 import java.util.ResourceBundle;
 
 public class TablesController implements Initializable, StudioFXController {
+  private final static Logger LOG = LoggerFactory.getLogger(TablesController.class);
 
   @FXML
   private TableColumn<GameRepresentation, String> columnId;
@@ -150,6 +156,25 @@ public class TablesController implements Initializable, StudioFXController {
   @FXML
   private Slider volumeSlider;
 
+  @FXML
+  private Label validationErrorLabel;
+
+  @FXML
+  private Node validationError;
+
+  @FXML
+  private TextArea highscoreTextArea;
+
+  @FXML
+  private ImageView rawDirectB2SImage;
+
+  @FXML
+  private Button openDirectB2SImageButton;
+
+  @FXML
+  private Label resolutionLabel;
+
+
   // Add a public no-args constructor
   public TablesController() {
   }
@@ -175,6 +200,25 @@ public class TablesController implements Initializable, StudioFXController {
     else {
       mediaView.getMediaPlayer().stop();
       icon.setIconLiteral("bi-play");
+    }
+  }
+
+  @FXML
+  private void onOpenDirectB2SBackground() {
+    GameRepresentation game = tableView.getSelectionModel().selectedItemProperty().get();
+    if (game != null) {
+      try {
+        ByteArrayInputStream s = client.getDirectB2SImage(game);
+        byte[] bytes = s.readAllBytes();
+        File png = File.createTempFile("vpin-studio-directb2s-", ".png");
+        png.deleteOnExit();
+        IOUtils.write(bytes, new FileOutputStream(png));
+        s.close();
+
+        Desktop.getDesktop().open(png);
+      } catch (IOException e) {
+        LOG.error("Failed to create image temp file: " + e.getMessage(), e);
+      }
     }
   }
 
@@ -350,23 +394,7 @@ public class TablesController implements Initializable, StudioFXController {
         fontIcon.setIconSize(18);
         fontIcon.setIconColor(Paint.valueOf("#FF3333"));
         fontIcon.setIconLiteral("bi-exclamation-circle");
-        fontIcon.setCursor(Cursor.HAND);
-
-        CustomMenuItem item = new CustomMenuItem();
-        item.setStyle("-fx-background-color: #CC3333;-fx-text-fill: #FFFFFF;-fx-font-weight: bold;-fx-padding: 0;-fx-background-insets: 0, 0, 0, 0;-fx-background-radius: 0 6 6 6, 0 5 5 5, 0 4 4 4;");
-        BorderPane menu = new BorderPane();
-        menu.setStyle("-fx-background-color: #CC3333;-fx-text-fill: #FFFFFF;-fx-font-weight: bold;-fx-padding: 0;-fx-background-insets: 0, 0, 0, 0;-fx-background-radius: 0 6 6 6, 0 5 5 5, 0 4 4 4;");
-        Label label = new Label(TextUtil.getValidationMessage(value, validationState));
-        label.setStyle("-fx-background-color: #CC3333;-fx-text-fill: #FFFFFF;-fx-font-weight: bold;-fx-padding: 0;-fx-background-insets: 0, 0, 0, 0;-fx-background-radius: 0 6 6 6, 0 5 5 5, 0 4 4 4;");
-        menu.setCenter(label);
-        menu.setPrefHeight(30);
-        menu.setPrefWidth(350);
-        item.setContent(menu);
-
-        MenuButton button = new MenuButton(null, null, item);
-
-        button.setGraphic(fontIcon);
-        return new SimpleObjectProperty(button);
+        return new SimpleObjectProperty(fontIcon);
       }
       return new SimpleStringProperty("");
     });
@@ -389,7 +417,7 @@ public class TablesController implements Initializable, StudioFXController {
         GameRepresentation game = tableView.getSelectionModel().selectedItemProperty().get();
         BindingUtil.debouncer.debounce("tableVolume" + game.getId(), () -> {
           int value = t1.intValue();
-          if(value == 0) {
+          if (value == 0) {
             value = 1;
           }
           game.setVolume(value);
@@ -397,58 +425,130 @@ public class TablesController implements Initializable, StudioFXController {
         }, 1000);
       }
     });
+
+    titledPaneMedia.expandedProperty().addListener(new ChangeListener<Boolean>() {
+      @Override
+      public void changed(ObservableValue<? extends Boolean> observableValue, Boolean aBoolean, Boolean expanded) {
+        GameRepresentation game = tableView.getSelectionModel().selectedItemProperty().get();
+        if (expanded) {
+          refreshView(game);
+        }
+        else {
+          resetMedia();
+        }
+      }
+    });
   }
 
-  private void refreshView(GameRepresentation game) {
-    Platform.runLater(() -> {
-      volumeSlider.setValue(game.getVolume());
+  private void resetMedia() {
+    disposeMediaPane(screenAudioLaunch);
+    disposeMediaPane(screenAudio);
+    disposeMediaPane(screenLoading);
+    disposeMediaPane(screenHelp);
+    disposeMediaPane(screenInfo);
+    disposeMediaPane(screenDMD);
+    disposeMediaPane(screenBackglass);
+    disposeMediaPane(screenTopper);
+    disposeMediaPane(screenApron);
+    disposeMediaPane(screenPlayfield);
+    disposeMediaPane(screenOther2);
+    disposeMediaPane(screenWheel);
+  }
 
-      labelId.setText(String.valueOf(game.getId()));
-      labelRom.setText(game.getOriginalRom() != null ? game.getOriginalRom() : game.getRom());
-      labelRomAlias.setText(game.getOriginalRom() != null ? game.getRom() : "-");
-      labelNVOffset.setText(game.getNvOffset() > 0 ? String.valueOf(game.getNvOffset()) : "-");
-      labelFilename.setText(game.getGameFileName());
-      labelLastPlayed.setText(game.getLastPlayed() != null ? game.getLastPlayed().toString() : "-");
-      labelTimesPlayed.setText(String.valueOf(game.getNumberPlays()));
+  private void refreshView(@NonNull GameRepresentation game) {
+    volumeSlider.setValue(game.getVolume());
+    labelId.setText(String.valueOf(game.getId()));
+    labelRom.setText(game.getOriginalRom() != null ? game.getOriginalRom() : game.getRom());
+    labelRomAlias.setText(game.getOriginalRom() != null ? game.getRom() : "-");
+    labelNVOffset.setText(game.getNvOffset() > 0 ? String.valueOf(game.getNvOffset()) : "-");
+    labelFilename.setText(game.getGameFileName());
+    labelLastPlayed.setText(game.getLastPlayed() != null ? game.getLastPlayed().toString() : "-");
+    labelTimesPlayed.setText(String.valueOf(game.getNumberPlays()));
 
-      GameMediaRepresentation gameMedia = client.getGameMedia(game.getId());
-      GameMediaItemRepresentation item = gameMedia.getItem(PopperScreen.Topper);
-      WidgetFactory.createMediaContainer(screenTopper, client, item);
+    refreshDirectB2SPreview(game);
 
-      item = gameMedia.getItem(PopperScreen.BackGlass);
-      WidgetFactory.createMediaContainer(screenBackglass, client, item);
+    validationError.setVisible(game.getValidationState() > 0);
+    if (game.getValidationState() > 0) {
+      validationErrorLabel.setText(TextUtil.getValidationMessage(game));
+    }
 
-      item = gameMedia.getItem(PopperScreen.Audio);
-      WidgetFactory.createMediaContainer(screenAudio, client, item);
+    if (titledPaneMedia.isExpanded()) {
+      refreshMedia(game);
+    }
 
-      item = gameMedia.getItem(PopperScreen.AudioLaunch);
-      WidgetFactory.createMediaContainer(screenAudioLaunch, client, item);
+    String rawHighscore = game.getRawHighscore();
+    if (rawHighscore != null) {
+      highscoreTextArea.setText(rawHighscore);
+    }
+    else {
+      highscoreTextArea.setText("");
+    }
+  }
 
-      item = gameMedia.getItem(PopperScreen.DMD);
-      WidgetFactory.createMediaContainer(screenDMD, client, item);
+  private void refreshDirectB2SPreview(@Nullable GameRepresentation game) {
+    try {
+      openDirectB2SImageButton.setVisible(false);
+      openDirectB2SImageButton.setTooltip(new Tooltip("Open directb2s image"));
+      InputStream input = client.getDirectB2SImage(game);
+      javafx.scene.image.Image image = new Image(input);
+      rawDirectB2SImage.setImage(image);
+      input.close();
 
-      item = gameMedia.getItem(PopperScreen.GameInfo);
-      WidgetFactory.createMediaContainer(screenInfo, client, item);
+      if (image.getWidth() > 300) {
+        openDirectB2SImageButton.setVisible(true);
+        resolutionLabel.setText("Resolution: " + (int) image.getWidth() + " x " + (int) image.getHeight());
+      }
+      else {
+        resolutionLabel.setText("");
+      }
+    } catch (IOException e) {
+      LOG.error("Failed to load raw b2s: " + e.getMessage(), e);
+    }
+  }
 
-      item = gameMedia.getItem(PopperScreen.GameHelp);
-      WidgetFactory.createMediaContainer(screenHelp, client, item);
+  private void refreshMedia(GameRepresentation game) {
+    GameMediaRepresentation gameMedia = client.getGameMedia(game.getId());
+    GameMediaItemRepresentation item = gameMedia.getItem(PopperScreen.Topper);
+    WidgetFactory.createMediaContainer(screenTopper, client, item);
 
-      item = gameMedia.getItem(PopperScreen.PlayField);
-      WidgetFactory.createMediaContainer(screenPlayfield, client, item);
+    item = gameMedia.getItem(PopperScreen.BackGlass);
+    WidgetFactory.createMediaContainer(screenBackglass, client, item);
 
-      item = gameMedia.getItem(PopperScreen.Menu);
-      WidgetFactory.createMediaContainer(screenApron, client, item);
+    item = gameMedia.getItem(PopperScreen.Audio);
+    WidgetFactory.createMediaContainer(screenAudio, client, item);
 
-      item = gameMedia.getItem(PopperScreen.Loading);
-      WidgetFactory.createMediaContainer(screenLoading, client, item);
+    item = gameMedia.getItem(PopperScreen.AudioLaunch);
+    WidgetFactory.createMediaContainer(screenAudioLaunch, client, item);
 
-      item = gameMedia.getItem(PopperScreen.Other2);
-      WidgetFactory.createMediaContainer(screenOther2, client, item);
+    item = gameMedia.getItem(PopperScreen.DMD);
+    WidgetFactory.createMediaContainer(screenDMD, client, item);
 
-      item = gameMedia.getItem(PopperScreen.Wheel);
-      WidgetFactory.createMediaContainer(screenWheel, client, item);
-    });
+    item = gameMedia.getItem(PopperScreen.GameInfo);
+    WidgetFactory.createMediaContainer(screenInfo, client, item);
 
+    item = gameMedia.getItem(PopperScreen.GameHelp);
+    WidgetFactory.createMediaContainer(screenHelp, client, item);
+
+    item = gameMedia.getItem(PopperScreen.PlayField);
+    WidgetFactory.createMediaContainer(screenPlayfield, client, item);
+
+    item = gameMedia.getItem(PopperScreen.Menu);
+    WidgetFactory.createMediaContainer(screenApron, client, item);
+
+    item = gameMedia.getItem(PopperScreen.Loading);
+    WidgetFactory.createMediaContainer(screenLoading, client, item);
+
+    item = gameMedia.getItem(PopperScreen.Other2);
+    WidgetFactory.createMediaContainer(screenOther2, client, item);
+
+    item = gameMedia.getItem(PopperScreen.Wheel);
+    WidgetFactory.createMediaContainer(screenWheel, client, item);
+  }
+
+  private void disposeMediaPane(BorderPane parent) {
+    if (parent.getCenter() != null) {
+      WidgetFactory.disposeMediaBorderPane(parent);
+    }
   }
 
   @Override

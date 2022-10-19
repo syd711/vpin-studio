@@ -137,19 +137,19 @@ public class OverlayGraphics {
 
     List<String> scores = new ArrayList<>();
     if (highscore != null) {
-      for (Score score : highscore.toScores()) {
-        String scoreString = score.getPosition() + ". " + score.getUserInitials() + " " + score.getScore();
-        scores.add(scoreString);
-
-        int singleScoreWidth = g.getFontMetrics().stringWidth(scoreString);
-        if (scoreWidth < singleScoreWidth) {
-          scoreWidth = singleScoreWidth;
-        }
-        count++;
-        if (count == 3) {
-          break;
-        }
-      }
+//      for (Score score : highscore.toScores()) {
+//        String scoreString = score.getPosition() + ". " + score.getUserInitials() + " " + score.getScore();
+//        scores.add(scoreString);
+//
+//        int singleScoreWidth = g.getFontMetrics().stringWidth(scoreString);
+//        if (scoreWidth < singleScoreWidth) {
+//          scoreWidth = singleScoreWidth;
+//        }
+//        count++;
+//        if (count == 3) {
+//          break;
+//        }
+//      }
     }
     else {
       for (int i = 1; i <= 3; i++) {
@@ -234,8 +234,8 @@ public class OverlayGraphics {
       g.drawString(game.getGameDisplayName(), x, yStart + SCORE_FONT_SIZE);
 
       g.setFont(new Font(SCORE_FONT_NAME, SCORE_FONT_STYLE, SCORE_FONT_SIZE));
-      g.drawString(highscore.getInitials1() + " " + highscore.getScore1(), x,
-          yStart + SCORE_FONT_SIZE + ((ROW_HEIGHT - SCORE_FONT_SIZE) / 2) + SCORE_FONT_SIZE / 2);
+//      g.drawString(highscore.getInitials1() + " " + highscore.getScore1(), x,
+//          yStart + SCORE_FONT_SIZE + ((ROW_HEIGHT - SCORE_FONT_SIZE) / 2) + SCORE_FONT_SIZE / 2);
 
       yStart = yStart + ROW_HEIGHT + ROW_SEPARATOR;
       if (!isRemainingSpaceAvailable(imageHeight, yStart)) {

@@ -27,6 +27,15 @@ public class GameRepresentation {
   private boolean pupPackAvailable;
   private int validationState;
   private int volume;
+  private String rawHighscore;
+
+  public String getRawHighscore() {
+    return rawHighscore;
+  }
+
+  public void setRawHighscore(String rawHighscore) {
+    this.rawHighscore = rawHighscore;
+  }
 
   public int getVolume() {
     return volume;

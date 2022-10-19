@@ -19,13 +19,11 @@ import java.util.List;
 class HighscoreResolver {
   private final static Logger LOG = LoggerFactory.getLogger(HighscoreResolver.class);
 
-  private final HighscoreParser parser;
   private List<String> supportedRoms;
   private final SystemService systemService;
 
   public HighscoreResolver(SystemService systemService) {
     this.systemService = systemService;
-    this.parser = new HighscoreParser();
     this.loadSupportedScores();
     this.refresh();
   }
@@ -42,7 +40,7 @@ class HighscoreResolver {
   /**
    * Return a highscore object for the given table or null if no highscore has been achieved or created yet.
    */
-  public Highscore parseHighscore(Game game) {
+  public String readHighscore(Game game) {
     try {
       String romName = game.getRom();
       if (StringUtils.isEmpty(romName)) {
@@ -52,9 +50,9 @@ class HighscoreResolver {
       }
 
 
-      Highscore highscore = parseNvHighscore(game);
+      String highscore = readNvHighscore(game);
       if (highscore == null) {
-        highscore = parseVRegHighscore(game);
+        highscore = readVRegHighscore(game);
       }
 
       if (highscore == null) {
@@ -91,64 +89,41 @@ class HighscoreResolver {
   /**
    * We use the manual set rom name to find the highscore in the "/User/VPReg.stg" file.
    */
-  private Highscore parseVRegHighscore(Game game) throws IOException {
+  private String readVRegHighscore(Game game) throws IOException {
     File tableHighscoreFolder = game.getVPRegFolder();
 
     if (tableHighscoreFolder != null && game.getVPRegFolder().exists()) {
-      File tableHighscoreFile = new File(tableHighscoreFolder, "HighScore1");
-      File tableHighscoreNameFile = new File(tableHighscoreFolder, "HighScore1Name");
-      if (tableHighscoreFile.exists() && tableHighscoreNameFile.exists()) {
-        String highScoreValue = readFileString(tableHighscoreFile);
-        highScoreValue = HighscoreParser.formatScore(highScoreValue);
-        String initials = readFileString(tableHighscoreNameFile);
+      StringBuilder builder = new StringBuilder("HIGHEST SCORES\n");
 
-        Highscore highscore = Highscore.forGame(game, highScoreValue);
-        highscore.setInitials1(initials);
-        highscore.setScore1(highScoreValue);
+      int index = 1;
+      String highScoreValue = null;
+      String initials = null;
 
-        int index = 1;
+      File tableHighscoreFile = new File(tableHighscoreFolder, "HighScore" + index);
+      File tableHighscoreNameFile = new File(tableHighscoreFolder, "HighScore" + index + "Name");
+      while (tableHighscoreFile.exists() && tableHighscoreNameFile.exists()) {
+        highScoreValue = readFileString(tableHighscoreFile);
+        if (highScoreValue != null) {
+          highScoreValue = HighscoreParser.formatScore(highScoreValue);
+          initials = readFileString(tableHighscoreNameFile);
+
+          builder.append("#");
+          builder.append(index);
+          builder.append(" ");
+          builder.append(initials);
+          builder.append("   ");
+          builder.append(highScoreValue);
+          builder.append("\n");
+        }
+        index++;
         tableHighscoreFile = new File(tableHighscoreFolder, "HighScore" + index);
         tableHighscoreNameFile = new File(tableHighscoreFolder, "HighScore" + index + "Name");
-        while (tableHighscoreFile.exists() && tableHighscoreNameFile.exists()) {
-          highScoreValue = readFileString(tableHighscoreFile);
-          if (highScoreValue != null) {
-            highScoreValue = HighscoreParser.formatScore(highScoreValue);
-            initials = readFileString(tableHighscoreNameFile);
-
-            if (index == 1) {
-              highscore.setScore1(highScoreValue);
-              highscore.setInitials1(initials);
-            }
-            else if (index == 2) {
-              highscore.setScore2(highScoreValue);
-              highscore.setInitials2(initials);
-            }
-            else if (index == 3) {
-              highscore.setScore3(highScoreValue);
-              highscore.setInitials3(initials);
-            }
-          }
-          index++;
-          tableHighscoreFile = new File(tableHighscoreFolder, "HighScore" + index);
-          tableHighscoreNameFile = new File(tableHighscoreFolder, "HighScore" + index + "Name");
-        }
-
-
-        StringBuilder rawBuilder = new StringBuilder();
-        List<Score> scores = highscore.toScores();
-        for (Score score : scores) {
-          rawBuilder.append(score.toString());
-          rawBuilder.append("\n");
-        }
-        highscore.setRaw(rawBuilder.toString());
-        return highscore;
       }
-      else {
-        LOG.debug("No VPReg highscore file found for '" + game.getRom() + "'");
-      }
+
+      return builder.toString();
     }
     else {
-      LOG.debug("VPReg highscore folder does not exist: " + tableHighscoreFolder.getAbsolutePath());
+      LOG.debug("No VPReg highscore file found for '" + game.getRom() + "'");
     }
     return null;
   }
@@ -189,7 +164,7 @@ class HighscoreResolver {
    * @return the Highscore object or null if no highscore could be parsed.
    */
   @Nullable
-  private Highscore parseNvHighscore(Game game) {
+  private String readNvHighscore(Game game) {
     Highscore highscore = null;
     try {
       File nvRam = game.getNvRamFile();
@@ -203,17 +178,11 @@ class HighscoreResolver {
         return null;
       }
 
-      String output = executePINemHi(nvRam.getName());
-      if (output != null) {
-        highscore = parser.parseHighscore(game, nvRam, output);
-        if (highscore == null || StringUtils.isEmpty(highscore.getScore1())) {
-          return null;
-        }
-      }
+      return executePINemHi(nvRam.getName());
     } catch (Exception e) {
       LOG.error("Failed to parse highscore: " + e.getMessage(), e);
     }
-    return highscore;
+    return null;
   }
 
   private String executePINemHi(String param) throws Exception {

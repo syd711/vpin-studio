@@ -34,58 +34,57 @@ import java.util.stream.Collectors;
 public class HighscoreParser {
   private final static Logger LOG = LoggerFactory.getLogger(HighscoreParser.class);
 
-  public Highscore parseHighscore(Game game, File file, String cmdOutput) {
-    Highscore highscore = Highscore.forGame(game, cmdOutput);
-
+  public List<Score> parseHighscore(Game game, String cmdOutput) {
+    List<Score> scores = new ArrayList<>();
     try {
-      LOG.debug("Parsing Highscore text for " + game.getGameDisplayName() + "\n" + cmdOutput);
-      String[] lines = cmdOutput.split("\\n");
-      if (lines.length == 2) {
-        parseTwoLineOutput(highscore, lines[1]);
-        return highscore;
-      }
-
-      int index = 1;
-      List<Score> scores = new ArrayList<>();
-      for (String line : lines) {
-        if (line.startsWith(index + ")") || line.startsWith("#" + index) || line.startsWith(index + "#")) {
-          Score score = createScore(line);
-
-          if (index == 1) {
-            highscore.setScore1(score.getScore());
-            highscore.setInitials1(score.getUserInitials());
-          }
-          else if (index == 2) {
-            highscore.setScore2(score.getScore());
-            highscore.setInitials2(score.getUserInitials());
-          }
-          else if (index == 3) {
-            highscore.setScore3(score.getScore());
-            highscore.setInitials3(score.getUserInitials());
-          }
-
-          scores.add(score);
-          index++;
-        }
-
-        if (scores.size() == 3) {
-          break;
-        }
-      }
+//      LOG.debug("Parsing Highscore text for " + game.getGameDisplayName() + "\n" + cmdOutput);
+//      String[] lines = cmdOutput.split("\\n");
+//      if (lines.length == 2) {
+//        parseTwoLineOutput(highscore, lines[1]);
+//        return highscore;
+//      }
+//
+//      int index = 1;
+//      List<Score> scores = new ArrayList<>();
+//      for (String line : lines) {
+//        if (line.startsWith(index + ")") || line.startsWith("#" + index) || line.startsWith(index + "#")) {
+//          Score score = createScore(line);
+//
+//          if (index == 1) {
+//            highscore.setScore1(score.getScore());
+//            highscore.setInitials1(score.getUserInitials());
+//          }
+//          else if (index == 2) {
+//            highscore.setScore2(score.getScore());
+//            highscore.setInitials2(score.getUserInitials());
+//          }
+//          else if (index == 3) {
+//            highscore.setScore3(score.getScore());
+//            highscore.setInitials3(score.getUserInitials());
+//          }
+//
+//          scores.add(score);
+//          index++;
+//        }
+//
+//        if (scores.size() == 3) {
+//          break;
+//        }
+//      }
     } catch (Exception e) {
-      LOG.error("Failed to parse highscore file '" + file.getAbsolutePath() + "': " + e.getMessage() + "\nPinemhi Command Output:\n==================================\n" + cmdOutput, e);
+      LOG.error("Failed to parse highscore for '" + game + "': " + e.getMessage() + "\nRaw Data:\n==================================\n" + cmdOutput, e);
       throw e;
     }
 
-    return highscore;
+    return scores;
   }
 
-  private void parseTwoLineOutput(Highscore highscore, String line) {
-    Score score = new Score(null, line.trim(), 1);
-    highscore.setRaw(line);
-    highscore.setInitials1(score.getUserInitials());
-    highscore.setScore1(score.getScore());
-  }
+//  private void parseTwoLineOutput(Highscore highscore, String line) {
+//    Score score = new Score(null, line.trim(), 1);
+//    highscore.setRaw(line);
+//    highscore.setInitials1(score.getUserInitials());
+//    highscore.setScore1(score.getScore());
+//  }
 
   private static Score createScore(String line) {
     List<String> collect = Arrays.stream(line.trim().split(" ")).filter(s -> s.trim().length() > 0).collect(Collectors.toList());

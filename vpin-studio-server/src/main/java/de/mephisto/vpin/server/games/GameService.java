@@ -1,8 +1,10 @@
 package de.mephisto.vpin.server.games;
 
 import de.mephisto.vpin.server.fx.OverlayWindowFX;
+import de.mephisto.vpin.server.highscores.HighscoreService;
 import de.mephisto.vpin.server.jpa.GameDetails;
 import de.mephisto.vpin.server.jpa.GameDetailsRepository;
+import de.mephisto.vpin.server.jpa.Highscore;
 import de.mephisto.vpin.server.popper.PinUPConnector;
 import de.mephisto.vpin.server.roms.RomService;
 import de.mephisto.vpin.server.roms.ScanResult;
@@ -34,6 +36,9 @@ public class GameService implements InitializingBean {
 
   @Autowired
   private GameValidator gameValidator;
+
+  @Autowired
+  private HighscoreService highscoreService;
 
   @Override
   public void afterPropertiesSet() {
@@ -136,6 +141,11 @@ public class GameService implements InitializingBean {
       }
       game.setOriginalRom(romService.getOriginalRom(game.getRom()));
       game.setValidationState(gameValidator.validate(game));
+
+      Highscore highscore = highscoreService.getHighscore(game);
+      if (highscore != null) {
+        game.setRawHighscore(highscore.getRaw());
+      }
       return gameDetails;
     } catch (Exception e) {
       LOG.error("Failed to load details for " + game + ": " + e.getMessage(), e);
@@ -149,7 +159,7 @@ public class GameService implements InitializingBean {
     gameDetailsRepository.saveAndFlush(gameDetails);
 
     Game original = getGame(game.getId());
-    if(original.getVolume() != game.getVolume()) {
+    if (original.getVolume() != game.getVolume()) {
       pinUPConnector.updateVolume(game, game.getVolume());
     }
 

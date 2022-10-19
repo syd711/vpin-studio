@@ -128,19 +128,19 @@ public class CardGraphics {
       int scoreWidth = 0;
 
       List<String> scores = new ArrayList<>();
-      for (Score score : highscore.toScores()) {
-        String scoreString = score.getPosition() + ". " + score.getUserInitials() + " " + score.getScore();
-        scores.add(scoreString);
-
-        int singleScoreWidth = g.getFontMetrics().stringWidth(title);
-        if (scoreWidth < singleScoreWidth) {
-          scoreWidth = singleScoreWidth;
-        }
-        count++;
-        if (count == 3) {
-          break;
-        }
-      }
+//      for (Score score : highscore.toScores()) {
+//        String scoreString = score.getPosition() + ". " + score.getUserInitials() + " " + score.getScore();
+//        scores.add(scoreString);
+//
+//        int singleScoreWidth = g.getFontMetrics().stringWidth(title);
+//        if (scoreWidth < singleScoreWidth) {
+//          scoreWidth = singleScoreWidth;
+//        }
+//        count++;
+//        if (count == 3) {
+//          break;
+//        }
+//      }
 
       tableNameY = tableNameY + TABLE_FONT_SIZE / 2;
 

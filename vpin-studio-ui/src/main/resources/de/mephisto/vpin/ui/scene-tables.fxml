@@ -9,15 +9,17 @@
 <?import javafx.scene.control.Slider?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextArea?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.control.TitledPane?>
 <?import javafx.scene.control.ToolBar?>
+<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
-<?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.TilePane?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 <?import org.kordamp.ikonli.javafx.FontIcon?>
@@ -50,7 +52,7 @@
                                     <TableColumn fx:id="columnStatus" minWidth="57.5999755859375" prefWidth="88.0001220703125" style="-fx-alignment: CENTER;" text="Status" />
                                 </columns>
                                  <BorderPane.margin>
-                                    <Insets bottom="24.0" />
+                                    <Insets bottom="6.0" />
                                  </BorderPane.margin>
                               </TableView>
                            </center>
@@ -103,22 +105,28 @@
                                 </items>
                               </ToolBar>
                            </top>
+                           <bottom>
+                              <BorderPane fx:id="validationError" BorderPane.alignment="CENTER">
+                                 <BorderPane.margin>
+                                    <Insets bottom="12.0" />
+                                 </BorderPane.margin>
+                                 <top>
+                                    <Label fx:id="labelTableCount" textFill="WHITE" BorderPane.alignment="CENTER" />
+                                 </top>
+                                 <center>
+                                    <Label fx:id="validationErrorLabel" text="Label" textFill="WHITE" BorderPane.alignment="BASELINE_LEFT">
+                                       <BorderPane.margin>
+                                          <Insets left="12.0" />
+                                       </BorderPane.margin>
+                                    </Label>
+                                 </center>
+                              </BorderPane>
+                           </bottom>
                         </BorderPane>
                      </center>
                      <BorderPane.margin>
                         <Insets left="24.0" right="24.0" />
                      </BorderPane.margin>
-                     <bottom>
-                        <HBox alignment="BASELINE_RIGHT" prefHeight="20.0" BorderPane.alignment="CENTER">
-                           <children>
-                              <Label textFill="WHITE" />
-                              <Label fx:id="labelTableCount" layoutX="1013.0" layoutY="10.0" textFill="WHITE" />
-                           </children>
-                           <BorderPane.margin>
-                              <Insets bottom="12.0" right="24.0" />
-                           </BorderPane.margin>
-                        </HBox>
-                     </bottom>
                   </BorderPane>
                </center>
                <right>
@@ -360,7 +368,7 @@
                                           <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
                                        </padding>
                                        <center>
-                                          <VBox prefHeight="961.0" prefWidth="574.0" BorderPane.alignment="CENTER">
+                                          <VBox prefHeight="250.0" prefWidth="574.0" BorderPane.alignment="CENTER">
                                              <children>
                                                 <GridPane prefHeight="242.0" prefWidth="574.0">
                                                   <columnConstraints>
@@ -454,6 +462,50 @@
                                           </VBox>
                                        </center>
                                     </BorderPane>
+                                 </content>
+                              </TitledPane>
+                              <TitledPane animated="false" prefHeight="750.0" prefWidth="600.0" text="Highscore">
+                                 <content>
+                                    <BorderPane prefHeight="200.0" prefWidth="200.0">
+                                       <center>
+                                          <TextArea fx:id="highscoreTextArea" prefHeight="400.0" BorderPane.alignment="CENTER">
+                                             <BorderPane.margin>
+                                                <Insets bottom="6.0" left="6.0" right="6.0" top="6.0" />
+                                             </BorderPane.margin>
+                                          </TextArea>
+                                       </center>
+                                    </BorderPane>
+                                 </content>
+                              </TitledPane>
+                              <TitledPane animated="false" layoutX="10.0" layoutY="104.0" prefWidth="600.0" text="DirectB2S">
+                                 <content>
+                                    <VBox prefHeight="200.0" prefWidth="100.0">
+                                       <children>
+                                          <TilePane alignment="CENTER" prefHeight="200.0" prefWidth="200.0" styleClass="thumbnail-preview">
+                                             <children>
+                                                <ImageView fx:id="rawDirectB2SImage" fitHeight="350.0" fitWidth="450.0" pickOnBounds="true" preserveRatio="true" />
+                                             </children>
+                                          </TilePane>
+                                          <BorderPane prefWidth="200.0">
+                                             <left>
+                                                <Label fx:id="resolutionLabel" text="Label" BorderPane.alignment="CENTER" />
+                                             </left>
+                                             <right>
+                                                <Button fx:id="openDirectB2SImageButton" mnemonicParsing="false" onAction="#onOpenDirectB2SBackground" BorderPane.alignment="CENTER">
+                                                   <graphic>
+                                                      <FontIcon iconColor="WHITE" iconLiteral="mdi2e-eye" />
+                                                   </graphic>
+                                                </Button>
+                                             </right>
+                                             <opaqueInsets>
+                                                <Insets />
+                                             </opaqueInsets>
+                                             <VBox.margin>
+                                                <Insets top="6.0" />
+                                             </VBox.margin>
+                                          </BorderPane>
+                                       </children>
+                                    </VBox>
                                  </content>
                               </TitledPane>
                            </panes>

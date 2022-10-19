@@ -12,7 +12,6 @@ import javafx.concurrent.Service;
 import javafx.concurrent.Task;
 import javafx.concurrent.Worker;
 import javafx.fxml.FXMLLoader;
-import javafx.geometry.Rectangle2D;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -24,9 +23,7 @@ import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.scene.media.MediaView;
 import javafx.stage.Modality;
-import javafx.stage.Screen;
 import javafx.stage.Stage;
-import javafx.stage.WindowEvent;
 import org.kordamp.ikonli.javafx.FontIcon;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -145,7 +142,7 @@ public class WidgetFactory {
 
   public static Node createMediaContainer(@NonNull BorderPane parent, @NonNull VPinStudioClient client, @Nullable GameMediaItemRepresentation item) {
     if (parent.getCenter() != null) {
-      dispose(parent.getCenter());
+      disposeMediaBorderPane(parent);
     }
 
     Node top = parent.getTop();
@@ -227,11 +224,17 @@ public class WidgetFactory {
     }
   }
 
-  private static void dispose(Node node) {
-    if (node instanceof MediaView) {
-      MediaView view = (MediaView) node;
-      view.getMediaPlayer().stop();
-      view.getMediaPlayer().dispose();
+  public static void disposeMediaBorderPane(BorderPane node) {
+    Node center = node.getCenter();
+    if (center != null) {
+       if( center instanceof MediaView) {
+         MediaView view = (MediaView) center;
+         if(view.getMediaPlayer() != null) {
+           view.getMediaPlayer().stop();
+           view.getMediaPlayer().dispose();
+         }
+         node.setCenter(null);
+       }
     }
   }
 

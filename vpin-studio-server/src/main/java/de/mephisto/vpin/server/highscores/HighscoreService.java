@@ -39,12 +39,9 @@ public class HighscoreService implements InitializingBean {
     //check if an entry exists, create the first one with empty values otherwise
     Highscore highscore = highscoreRepository.findByPupId(game.getId());
     if (highscore == null) {
-      Highscore initialHighscore = highscoreResolver.parseHighscore(game);
-      if (initialHighscore == null) {
-        initialHighscore = Highscore.forGame(game, null);
-      }
-      highscoreRepository.save(initialHighscore);
-      highscore = initialHighscore;
+      String rawHighscore = highscoreResolver.readHighscore(game);
+      highscore = Highscore.forGame(game, rawHighscore);
+      highscoreRepository.saveAndFlush(highscore);
     }
 
     return highscore;
@@ -62,35 +59,65 @@ public class HighscoreService implements InitializingBean {
   public void updateHighscore(@NonNull Game game) {
     highscoreResolver.refresh();
     HighscoreChangeEvent event = null;
-    Highscore updatedHighscore = highscoreResolver.parseHighscore(game);
+
+    String rawHighscore = highscoreResolver.readHighscore(game);
+    Highscore updatedHighscore = Highscore.forGame(game, rawHighscore);
     Highscore existingHighscore = highscoreRepository.findByPupId(game.getId());
-    if (updatedHighscore != null) {
-      if (existingHighscore != null) {
-        if (updatedHighscore.containsHigherScoreThan(existingHighscore)) {
-          event = new HighscoreChangeEvent() {
-            @Override
-            public Game getGame() {
-              return game;
-            }
 
-            @Override
-            public Highscore getOldHighscore() {
-              return existingHighscore;
-            }
+    if (existingHighscore != null) {
+      if (containsHigherScoreThan(updatedHighscore, existingHighscore)) {
+        event = new HighscoreChangeEvent() {
+          @Override
+          public Game getGame() {
+            return game;
+          }
 
-            @Override
-            public Highscore getNewHighscore() {
-              return updatedHighscore;
-            }
-          };
-          triggerHighscoreChange(event);
-        }
-        updatedHighscore.setCreatedAt(existingHighscore.getCreatedAt());
+          @Override
+          public Highscore getOldHighscore() {
+            return existingHighscore;
+          }
+
+          @Override
+          public Highscore getNewHighscore() {
+            return updatedHighscore;
+          }
+        };
+        triggerHighscoreChange(event);
       }
-      highscoreRepository.save(updatedHighscore);
-      LOG.info("Invalidated highscore of " + game);
+
+      //the updated score contains the new data, so we only need to update the date
+      updatedHighscore.setCreatedAt(existingHighscore.getCreatedAt());
     }
+    highscoreRepository.save(updatedHighscore);
+    LOG.info("Invalidated highscore of " + game);
   }
+
+  public List<Score> convertToScores(Highscore highscore) {
+    List<Score> result = new ArrayList<>();
+//    if (!StringUtils.isEmpty(this.score1)) {
+//      result.add(new Score(initials1, score1, 1));
+//    }
+//    if (!StringUtils.isEmpty(this.score2)) {
+//      result.add(new Score(initials2, score2, 2));
+//    }
+//    if (!StringUtils.isEmpty(this.score3)) {
+//      result.add(new Score(initials3, score3, 3));
+//    }
+    return result;
+  }
+
+  /**
+   * The score has changed, which only happens when a new score is created.
+   * So we only have to check if the actual score changed.
+   *
+   * @param updatedHighscore the new highscore
+   * @param existingScore                the old highscore to compare with
+   * @return true if the compared highscore is higher than this one.
+   */
+  public boolean containsHigherScoreThan(Highscore updatedHighscore, Highscore existingScore) {
+    return false; //TODO
+  }
+
 
   private void triggerHighscoreChange(@NonNull HighscoreChangeEvent event) {
     new Thread(() -> {

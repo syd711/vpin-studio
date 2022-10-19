@@ -7,7 +7,8 @@ import edu.umd.cs.findbugs.annotations.Nullable;
 public class TextUtil {
 
   @Nullable
-  public static String getValidationMessage(@NonNull GameRepresentation game, int code) {
+  public static String getValidationMessage(@NonNull GameRepresentation game) {
+    int code = game.getValidationState();
     if(code == 1) {
       return "No ROM found.";
     }

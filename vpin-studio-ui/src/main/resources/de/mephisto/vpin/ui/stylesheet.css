@@ -5,8 +5,13 @@
     -fx-background-color: #212529;
 }
 
-.error {
-    -fx-background-color: #CC3333;    -fx-text-fill: #FFFFFF;
+
+#validationError {
+    -fx-background-color: #FF3333;
+    -fx-text-fill: #FFFFFF;
+    -fx-background-radius: 6 6 6 6;
+    -fx-font-size : 14px;
+    -fx-font-weight : bold;
 }
 
 
@@ -146,6 +151,11 @@
   -fx-background-radius: 3, 2;
 }
 
+.text-area {
+    -fx-text-fill: white;
+    -fx-font-weight: normal;
+ }
+
 /**
  * Table View
  */
@@ -155,6 +165,9 @@
     -fx-font-size : 14px;
     -fx-text-fill: white;
     -fx-text-background-color: #DDDDDD;
+    -fx-border-style: solid solid solid solid;
+    -fx-border-color: #111111;
+    -fx-border-width: 1;
 }
 .table-row-cell {
     -fx-cell-size: 40px;
