@@ -146,4 +146,8 @@ public class GameRepresentation {
     return this.getGameDisplayName();
   }
 
+  @Override
+  public boolean equals(Object obj) {
+    return (obj instanceof GameRepresentation) && ((GameRepresentation)obj).getId() == this.getId();
+  }
 }

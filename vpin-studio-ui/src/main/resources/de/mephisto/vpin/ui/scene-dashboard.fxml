@@ -8,7 +8,7 @@
 
 <BorderPane xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.DashboardController">
    <left>
-       <fx:include fx:id="navigation" prefWidth="300.0" source="scene-navigation.fxml" />
+       <fx:include fx:id="navigation" source="scene-navigation.fxml" />
    </left>
    <center>
       <BorderPane BorderPane.alignment="CENTER">

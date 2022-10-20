@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.VBox?>
+
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="768.0" prefWidth="1024.0" stylesheets="@stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1">
+   <center>
+      <BorderPane prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+         <top>
+            <fx:include fx:id="header" source="scene-header.fxml" />
+         </top>
+      </BorderPane>
+   </center>
+   <left>
+      <VBox prefWidth="250.0" BorderPane.alignment="TOP_RIGHT">
+         <BorderPane.margin>
+            <Insets top="150.0" />
+         </BorderPane.margin>
+      </VBox>
+   </left>
+</BorderPane>

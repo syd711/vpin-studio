@@ -46,8 +46,8 @@ public class NavigationController implements Initializable {
   }
 
   @FXML
-  private void onSettingsClicked(ActionEvent event) throws IOException {
-    TransitionUtil.createOutFader(root, 300).play();
+  private void onPreferencesClicked(ActionEvent event) throws IOException {
+    this.loadScene(event, "scene-preferences.fxml");
   }
 
   @FXML

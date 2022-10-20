@@ -296,10 +296,13 @@ public class TablesController implements Initializable, StudioFXController {
 
   @FXML
   private void onReload() {
+    GameRepresentation gameRepresentation = tableView.getSelectionModel().selectedItemProperty().get();
     List<GameRepresentation> games = client.getGames();
     data = FXCollections.observableList(games);
     tableView.setItems(data);
     tableView.refresh();
+
+    tableView.getSelectionModel().select(gameRepresentation);
   }
 
   @Override
@@ -367,7 +370,7 @@ public class TablesController implements Initializable, StudioFXController {
       if (value.isDirectB2SAvailable()) {
         FontIcon fontIcon = new FontIcon();
         fontIcon.setIconSize(18);
-        fontIcon.setIconColor(Paint.valueOf("#FFFFFF"));
+        fontIcon.setIconColor(Paint.valueOf("#66FF66"));
         fontIcon.setIconLiteral("bi-check-circle");
         return new SimpleObjectProperty(fontIcon);
       }
@@ -379,7 +382,7 @@ public class TablesController implements Initializable, StudioFXController {
       if (value.isPupPackAvailable()) {
         FontIcon fontIcon = new FontIcon();
         fontIcon.setIconSize(18);
-        fontIcon.setIconColor(Paint.valueOf("#FFFFFF"));
+        fontIcon.setIconColor(Paint.valueOf("#66FF66"));
         fontIcon.setIconLiteral("bi-check-circle");
         return new SimpleObjectProperty(fontIcon);
       }

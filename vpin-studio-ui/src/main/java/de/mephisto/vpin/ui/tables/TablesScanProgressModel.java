@@ -38,8 +38,9 @@ public class TablesScanProgressModel extends ProgressModel {
     try {
       GameRepresentation game = iterator.next();
       boolean result = client.scanGame(game);
+      progressResultModel.addProcessed();
       if (result) {
-        progressResultModel.addProcessed();
+
       }
       else {
         progressResultModel.addSkipped();
