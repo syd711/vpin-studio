@@ -156,6 +156,13 @@
     -fx-font-weight: normal;
  }
 
+.hyperlink, .hyperlink:hover {
+    -fx-font-size : 12px;
+    -fx-border-color: transparent;
+    -fx-font-weight: normal;
+    -fx-underline: true;
+}
+
 /**
  * Table View
  */

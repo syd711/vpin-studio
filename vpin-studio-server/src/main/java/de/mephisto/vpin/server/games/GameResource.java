@@ -5,6 +5,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
+import java.util.Map;
 
 import static de.mephisto.vpin.server.VPinStudioServer.API_SEGMENT;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
@@ -22,12 +23,18 @@ public class GameResource {
   }
 
   @GetMapping("/{id}")
-  public Game getGame(@PathVariable("id") int pupId) {
-    Game game = gameService.getGame(pupId);
+  public Game getGame(@PathVariable("id") int id) {
+    Game game = gameService.getGame(id);
     if(game == null) {
-      throw new ResponseStatusException(NOT_FOUND, "Not game found for id " + pupId);
+      throw new ResponseStatusException(NOT_FOUND, "Not game found for id " + id);
     }
     return game;
+  }
+
+  @PutMapping("/dismiss/{id}")
+  public boolean put(@PathVariable("id") int id, @RequestBody Map<String,String> values) {
+    Game game = gameService.getGame(id);
+    return true;
   }
 
   @GetMapping("/scan/{id}")

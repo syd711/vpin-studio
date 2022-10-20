@@ -27,7 +27,7 @@
 
 <BorderPane styleClass="navigation-panel" stylesheets="@stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.cards.HighscoreCardsController">
    <left>
-       <fx:include fx:id="navigation" prefWidth="300.0" source="scene-navigation.fxml" />
+       <fx:include fx:id="navigation" source="scene-navigation.fxml" />
    </left>
    <center>
       <BorderPane style="-fx-background-color: #212529;" BorderPane.alignment="CENTER">
@@ -41,7 +41,10 @@
                               <Insets top="24.0" />
                            </BorderPane.margin>
                            <center>
-                              <ImageView fx:id="cardPreview" fitHeight="416.0" fitWidth="746.0" pickOnBounds="true" preserveRatio="true" />
+                              <ImageView fx:id="cardPreview" fitHeight="416.0" fitWidth="746.0" pickOnBounds="true" preserveRatio="true">
+                                 <BorderPane.margin>
+                                    <Insets bottom="24.0" left="24.0" right="24.0" top="24.0" />
+                                 </BorderPane.margin></ImageView>
                            </center>
                         </BorderPane>
                      </center>

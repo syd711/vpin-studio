@@ -3,6 +3,7 @@ package de.mephisto.vpin.ui;
 import javafx.application.Application;
 import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Paint;
@@ -21,8 +22,11 @@ public class VPinStudioApplication extends Application {
   @Override
   public void start(Stage stage) throws IOException {
     VPinStudioApplication.stage = stage;
-    FXMLLoader fxmlLoader = new FXMLLoader(VPinStudioApplication.class.getResource("scene-tables.fxml"));
-    Scene scene = new Scene(fxmlLoader.load(), 1920, 1080);
+    FXMLLoader loader = new FXMLLoader(getClass().getResource("scene-tables.fxml"));
+    Parent root = loader.load();
+    NavigationController.activeController = loader.<StudioFXController>getController();
+
+    Scene scene = new Scene(root, 1920, 1080);
     scene.setFill(Paint.valueOf("#212529"));
     stage.setTitle("VPin Studio");
     stage.setScene(scene);

@@ -2,6 +2,8 @@ package de.mephisto.vpin.server.popper;
 
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameService;
+import de.mephisto.vpin.server.util.Config;
+import de.mephisto.vpin.server.util.PropertiesStore;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -10,16 +12,14 @@ import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.util.Map;
 
 import static de.mephisto.vpin.server.VPinStudioServer.API_SEGMENT;
 import static de.mephisto.vpin.server.util.RequestUtil.CONTENT_LENGTH;

@@ -1,5 +1,7 @@
 package de.mephisto.vpin.ui;
 
+import de.mephisto.vpin.ui.DashboardController;
+import de.mephisto.vpin.ui.StudioFXController;
 import de.mephisto.vpin.ui.util.TransitionUtil;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import eu.hansolo.tilesfx.Tile;
@@ -25,7 +27,8 @@ public class NavigationController implements Initializable {
   @FXML
   private BorderPane avatarPane;
 
-  private static StudioFXController activeController;
+  public static StudioFXController activeController;
+
   private static Parent root;
 
   // Add a public no-args constructor

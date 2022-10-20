@@ -553,6 +553,6 @@ public class TablesController implements Initializable, StudioFXController {
 
   @Override
   public void dispose() {
-
+    resetMedia();
   }
 }

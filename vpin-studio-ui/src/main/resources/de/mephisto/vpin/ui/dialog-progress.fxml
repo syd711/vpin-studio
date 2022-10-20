@@ -9,7 +9,6 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-
 <BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="242.0" prefWidth="498.0" styleClass="navigation-panel" stylesheets="@stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1">
    <center>
       <VBox alignment="BASELINE_LEFT" prefHeight="200.0" prefWidth="100.0" BorderPane.alignment="CENTER">
@@ -27,7 +26,7 @@
                   <Insets top="24.0" />
                </VBox.margin>
             </ProgressBar>
-            <Label fx:id="progressBarLabel" text="Label" textFill="WHITE">
+            <Label fx:id="progressBarLabel" textFill="WHITE">
                <font>
                   <Font size="14.0" />
                </font>

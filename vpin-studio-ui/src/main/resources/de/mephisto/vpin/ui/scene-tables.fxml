@@ -3,6 +3,7 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Accordion?>
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Hyperlink?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.Separator?>
@@ -60,7 +61,7 @@
                               <Insets left="24.0" right="24.0" top="24.0" />
                            </BorderPane.margin>
                            <top>
-                              <ToolBar prefHeight="40.0" styleClass="base-component" stylesheets="@stylesheet.css" BorderPane.alignment="CENTER">
+                              <ToolBar prefHeight="40.0" style="-fx-background-radius: 3 3 0 0;" styleClass="base-component" stylesheets="@stylesheet.css" BorderPane.alignment="CENTER">
                                 <items>
                                     <TextField fx:id="textfieldSearch" onKeyPressed="#onSearchKeyPressed" prefHeight="26.0" prefWidth="234.0" promptText="Table Search...">
                                        <font>
@@ -76,7 +77,7 @@
                                           <FontIcon iconColor="WHITE" iconLiteral="sil-reload" />
                                        </graphic>
                                     </Button>
-                                    <Separator orientation="VERTICAL" prefHeight="30.0" prefWidth="13.0" />
+                                    <Separator orientation="VERTICAL" prefHeight="30.0" prefWidth="12.0" />
                                     <Button mnemonicParsing="false" onAction="#onTablesScan" text="Scan All Tables" textFill="WHITE">
                                        <font>
                                           <Font size="14.0" />
@@ -93,7 +94,7 @@
                                           <FontIcon iconColor="WHITE" iconLiteral="mdi2m-map-search" />
                                        </graphic>
                                     </Button>
-                                    <Separator orientation="VERTICAL" prefHeight="30.0" prefWidth="13.0" />
+                                    <Separator orientation="VERTICAL" prefHeight="30.0" prefWidth="12.0" />
                                     <Button layoutX="416.0" layoutY="11.0" mnemonicParsing="false" onAction="#onTableEdit" text="Edit ROM" textFill="WHITE">
                                        <font>
                                           <Font size="14.0" />
@@ -102,24 +103,57 @@
                                           <FontIcon iconColor="WHITE" iconLiteral="mdi2d-database-edit-outline" />
                                        </graphic>
                                     </Button>
+                                    <Separator orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
+                                    <Button mnemonicParsing="false" text="Validate" textFill="WHITE">
+                                       <font>
+                                          <Font size="14.0" />
+                                       </font>
+                                       <graphic>
+                                          <FontIcon iconColor="WHITE" iconLiteral="sil-magnifier" />
+                                       </graphic>
+                                    </Button>
                                 </items>
+                                 <BorderPane.margin>
+                                    <Insets />
+                                 </BorderPane.margin>
                               </ToolBar>
                            </top>
                            <bottom>
-                              <BorderPane fx:id="validationError" BorderPane.alignment="CENTER">
+                              <BorderPane BorderPane.alignment="CENTER">
                                  <BorderPane.margin>
                                     <Insets bottom="12.0" />
                                  </BorderPane.margin>
-                                 <top>
-                                    <Label fx:id="labelTableCount" textFill="WHITE" BorderPane.alignment="CENTER" />
-                                 </top>
                                  <center>
-                                    <Label fx:id="validationErrorLabel" text="Label" textFill="WHITE" BorderPane.alignment="BASELINE_LEFT">
+                                    <BorderPane fx:id="validationError">
+                                       <left>
+                                          <Label fx:id="validationErrorLabel" text="Label" textFill="WHITE" BorderPane.alignment="CENTER">
+                                             <BorderPane.margin>
+                                                <Insets bottom="3.0" left="12.0" top="3.0" />
+                                             </BorderPane.margin>
+                                             <font>
+                                                <Font name="System Bold" size="14.0" />
+                                             </font>
+                                          </Label>
+                                       </left>
+                                       <right>
+                                          <Hyperlink text="Dismiss" textFill="WHITE" BorderPane.alignment="CENTER">
+                                             <BorderPane.margin>
+                                                <Insets right="6.0" />
+                                             </BorderPane.margin>
+                                             <font>
+                                                <Font size="10.0" />
+                                             </font>
+                                          </Hyperlink>
+                                       </right>
+                                    </BorderPane>
+                                 </center>
+                                 <top>
+                                    <Label fx:id="labelTableCount" textFill="WHITE" BorderPane.alignment="TOP_RIGHT">
                                        <BorderPane.margin>
-                                          <Insets left="12.0" />
+                                          <Insets bottom="3.0" />
                                        </BorderPane.margin>
                                     </Label>
-                                 </center>
+                                 </top>
                               </BorderPane>
                            </bottom>
                         </BorderPane>
@@ -154,7 +188,7 @@
                                                             </Button>
                                                          </top>
                                                       </BorderPane>
-                                                      <BorderPane fx:id="screenHelp" layoutY="650.0" prefHeight="180.0" prefWidth="150.0" styleClass="media-container" stylesheets="@stylesheet.css">
+                                                      <BorderPane fx:id="screenHelp" layoutX="3.0" layoutY="650.0" prefHeight="180.0" prefWidth="150.0" styleClass="media-container" stylesheets="@stylesheet.css">
                                                          <bottom>
                                                             <Label text="Help" textFill="WHITE" BorderPane.alignment="CENTER" />
                                                          </bottom>
@@ -170,7 +204,7 @@
                                                          </top>
                                                       </BorderPane>
                                                       <BorderPane fx:id="screenPlayfield" layoutX="158.0" layoutY="594.0" prefHeight="445.0" prefWidth="250.0" stylesheets="@stylesheet.css" />
-                                                      <BorderPane fx:id="screenInfo" layoutY="441.0" prefHeight="180.0" prefWidth="150.0" styleClass="media-container" stylesheets="@stylesheet.css">
+                                                      <BorderPane fx:id="screenInfo" layoutX="3.0" layoutY="441.0" prefHeight="180.0" prefWidth="150.0" styleClass="media-container" stylesheets="@stylesheet.css">
                                                          <bottom>
                                                             <Label text="Info / Flyer" textFill="WHITE" BorderPane.alignment="CENTER" />
                                                          </bottom>
@@ -230,7 +264,7 @@
                                                             </Button>
                                                          </top>
                                                       </BorderPane>
-                                                      <BorderPane fx:id="screenLoading" layoutX="412.0" layoutY="234.0" prefHeight="170.0" prefWidth="150.0" styleClass="media-container" stylesheets="@stylesheet.css">
+                                                      <BorderPane fx:id="screenLoading" layoutX="411.0" layoutY="234.0" prefHeight="170.0" prefWidth="150.0" styleClass="media-container" stylesheets="@stylesheet.css">
                                                          <bottom>
                                                             <Label text="Loading" textFill="WHITE" BorderPane.alignment="CENTER" />
                                                          </bottom>
@@ -245,7 +279,7 @@
                                                             </Button>
                                                          </top>
                                                       </BorderPane>
-                                                      <BorderPane fx:id="screenApron" layoutY="234.0" prefHeight="180.0" prefWidth="150.0" styleClass="media-container" stylesheets="@stylesheet.css">
+                                                      <BorderPane fx:id="screenApron" layoutX="3.0" layoutY="234.0" prefHeight="180.0" prefWidth="150.0" styleClass="media-container" stylesheets="@stylesheet.css">
                                                          <bottom>
                                                             <Label text="Apron/Full DMD" textFill="WHITE" BorderPane.alignment="CENTER" />
                                                          </bottom>
@@ -260,7 +294,7 @@
                                                             </Button>
                                                          </top>
                                                       </BorderPane>
-                                                      <BorderPane fx:id="screenOther2" layoutX="412.0" layoutY="442.0" prefHeight="180.0" prefWidth="150.0" styleClass="media-container" stylesheets="@stylesheet.css">
+                                                      <BorderPane fx:id="screenOther2" layoutX="411.0" layoutY="442.0" prefHeight="180.0" prefWidth="150.0" styleClass="media-container" stylesheets="@stylesheet.css">
                                                          <bottom>
                                                             <Label text="Other2" textFill="WHITE" BorderPane.alignment="CENTER" />
                                                          </bottom>
@@ -290,7 +324,7 @@
                                                             </Button>
                                                          </top>
                                                       </BorderPane>
-                                                      <BorderPane fx:id="screenAudioLaunch" layoutY="19.0" prefHeight="85.0" prefWidth="150.0" styleClass="media-container" stylesheets="@stylesheet.css">
+                                                      <BorderPane fx:id="screenAudioLaunch" layoutX="3.0" layoutY="19.0" prefHeight="85.0" prefWidth="150.0" styleClass="media-container" stylesheets="@stylesheet.css">
                                                          <bottom>
                                                             <Label text="Audio Launch" textFill="WHITE" BorderPane.alignment="CENTER">
                                                                <BorderPane.margin>
@@ -309,7 +343,7 @@
                                                             </Button>
                                                          </top>
                                                       </BorderPane>
-                                                      <BorderPane fx:id="screenAudio" layoutY="121.0" prefHeight="85.0" prefWidth="150.0" styleClass="media-container" stylesheets="@stylesheet.css">
+                                                      <BorderPane fx:id="screenAudio" layoutX="3.0" layoutY="121.0" prefHeight="85.0" prefWidth="150.0" styleClass="media-container" stylesheets="@stylesheet.css">
                                                          <bottom>
                                                             <Label text="Audio" textFill="WHITE" BorderPane.alignment="CENTER">
                                                                <BorderPane.margin>

@@ -356,10 +356,14 @@ public class HighscoreCardsController implements Initializable, ObservedProperty
             cardPreview.setImage(image);
             cardPreview.setVisible(true);
             setBusy(false);
+
+            cardPreview.setFitHeight(imageCenter.getHeight() - 250);
+            cardPreview.setFitWidth(imageCenter.getWidth() - 250);
           }).start();
         }
-        cardPreview.setFitHeight(imageCenter.getHeight() - 200);
-        cardPreview.setFitWidth(imageCenter.getWidth() - 200);
+        cardPreview.setFitHeight(imageCenter.getHeight() - 250);
+        cardPreview.setFitWidth(imageCenter.getWidth() - 250);
+
       } catch (Exception e) {
         LOG.error("Failed to refresh card preview: " + e.getMessage(), e);
       }
