@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.String?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.text.Font?>
+
+
+<BorderPane style="-fx-background-color: transparent;" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.ToolbarController">
+   <center>
+      <BorderPane fx:id="mainToolbar" stylesheets="@stylesheet.css">
+         <right>
+            <BorderPane styleClass="subpanel" stylesheets="@stylesheet.css" BorderPane.alignment="CENTER">
+               <BorderPane.margin>
+                  <Insets />
+               </BorderPane.margin>
+               <padding>
+                  <Insets right="6.0" top="6.0" />
+               </padding>
+               <right>
+                  <HBox BorderPane.alignment="CENTER">
+                     <BorderPane.margin>
+                        <Insets bottom="6.0" />
+                     </BorderPane.margin>
+                     <children>
+                        <ComboBox prefWidth="150.0" />
+                     </children>
+                  </HBox>
+               </right>
+            </BorderPane>
+         </right>
+         <opaqueInsets>
+            <Insets />
+         </opaqueInsets>
+         <padding>
+            <Insets bottom="3.0" left="3.0" right="3.0" top="3.0" />
+         </padding>
+         <BorderPane.margin>
+            <Insets bottom="24.0" left="24.0" />
+         </BorderPane.margin>
+         <left>
+            <Label text="/" textFill="WHITE" BorderPane.alignment="CENTER">
+               <font>
+                  <Font name="System Bold" size="18.0" />
+               </font>
+               <BorderPane.margin>
+                  <Insets left="12.0" />
+               </BorderPane.margin>
+            </Label>
+         </left>
+         <styleClass>
+            <String fx:value="base-component" />
+            <String fx:value="mainToolbar" />
+         </styleClass>
+      </BorderPane>
+   </center>
+</BorderPane>

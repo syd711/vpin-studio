@@ -34,7 +34,7 @@
          <center>
             <BorderPane styleClass="main" stylesheets="@stylesheet.css" BorderPane.alignment="CENTER">
                <top>
-                   <fx:include fx:id="header" source="scene-header.fxml" />
+                  <fx:include fx:id="mainToolbar" source="scene-toolbar.fxml" />
                </top>
                <center>
                   <BorderPane fx:id="main" styleClass="subpanel" stylesheets="@stylesheet.css" BorderPane.alignment="CENTER">
@@ -550,4 +550,7 @@
          </center>
       </BorderPane>
    </center>
+   <top>
+       <fx:include fx:id="header" source="scene-header.fxml" />
+   </top>
 </BorderPane>

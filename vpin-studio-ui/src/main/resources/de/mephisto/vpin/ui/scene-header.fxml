@@ -9,60 +9,44 @@
 <?import javafx.scene.text.Font?>
 <?import org.kordamp.ikonli.javafx.FontIcon?>
 
-<BorderPane minHeight="110.0" prefHeight="110.0" prefWidth="1215.0" style="-fx-background-color: #212529;" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.HeaderController">
+<BorderPane fx:id="header" stylesheets="@stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.HeaderController">
    <center>
       <BorderPane BorderPane.alignment="TOP_LEFT">
          <BorderPane.margin>
             <Insets left="24.0" />
          </BorderPane.margin>
          <top>
-            <VBox prefHeight="106.0" prefWidth="891.0" BorderPane.alignment="CENTER">
-               <children>
-                  <Label maxHeight="50.0" text="VPin Studio" textFill="WHITE">
-                     <font>
-                        <Font name="DejaVu Sans Mono Bold" size="48.0" />
-                     </font>
-                     <VBox.margin>
-                        <Insets top="24.0" />
-                     </VBox.margin>
-                  </Label>
-                  <Label alignment="BASELINE_LEFT" text="Version 1.0.1" textFill="WHITE">
-                     <padding>
-                        <Insets bottom="73.0" />
-                     </padding>
-                  </Label>
-               </children>
-            </VBox>
+            <VBox BorderPane.alignment="CENTER" />
          </top>
       </BorderPane>
    </center>
    <right>
-      <BorderPane prefHeight="200.0" prefWidth="300.0" stylesheets="@stylesheet.css" BorderPane.alignment="CENTER">
+      <BorderPane stylesheets="@stylesheet.css" BorderPane.alignment="CENTER">
          <BorderPane.margin>
             <Insets />
          </BorderPane.margin>
          <padding>
             <Insets right="6.0" top="6.0" />
          </padding>
-         <top>
-            <HBox alignment="BASELINE_RIGHT" prefHeight="60.0" prefWidth="298.0">
+         <left>
+            <HBox alignment="BASELINE_RIGHT" BorderPane.alignment="CENTER">
                <children>
-                  <Button mnemonicParsing="false" onAction="#onHideClick" prefHeight="34.0" prefWidth="34.0" styleClass="header-button" stylesheets="@stylesheet.css">
+                  <Button mnemonicParsing="false" onAction="#onHideClick" prefHeight="24.0" prefWidth="24.0" styleClass="header-button" stylesheets="@stylesheet.css">
                      <graphic>
-                        <FontIcon iconColor="WHITE" iconLiteral="mdi2w-window-minimize" iconSize="14" />
+                        <FontIcon iconColor="WHITE" iconLiteral="mdi2w-window-minimize" iconSize="12" />
                      </graphic>
                   </Button>
-                  <Button mnemonicParsing="false" onAction="#onMaximize" prefHeight="34.0" prefWidth="34.0" styleClass="header-button" stylesheets="@stylesheet.css">
+                  <Button mnemonicParsing="false" onAction="#onMaximize" prefHeight="24.0" prefWidth="24.0" styleClass="header-button" stylesheets="@stylesheet.css">
                      <graphic>
-                        <FontIcon iconColor="WHITE" iconLiteral="mdi2w-window-maximize" iconSize="14" />
+                        <FontIcon iconColor="WHITE" iconLiteral="mdi2w-window-maximize" iconSize="12" />
                      </graphic>
                      <HBox.margin>
                         <Insets left="6.0" />
                      </HBox.margin>
                   </Button>
-                  <Button mnemonicParsing="false" onAction="#onCloseClick" prefHeight="34.0" prefWidth="34.0" styleClass="header-button" stylesheets="@stylesheet.css">
+                  <Button mnemonicParsing="false" onAction="#onCloseClick" prefHeight="24.0" prefWidth="24.0" styleClass="header-button" stylesheets="@stylesheet.css">
                      <graphic>
-                        <FontIcon iconColor="WHITE" iconLiteral="mdi2w-window-close" iconSize="14" />
+                        <FontIcon iconColor="WHITE" iconLiteral="mdi2w-window-close" iconSize="12" />
                      </graphic>
                      <HBox.margin>
                         <Insets left="6.0" />
@@ -70,7 +54,20 @@
                   </Button>
                </children>
             </HBox>
-         </top>
+         </left>
       </BorderPane>
    </right>
+   <left>
+      <Label text="VPin Studio" textFill="WHITE" BorderPane.alignment="TOP_LEFT">
+         <font>
+            <Font name="DejaVu Sans Mono Bold" size="14.0" />
+         </font>
+         <BorderPane.margin>
+            <Insets left="12.0" top="8.0" />
+         </BorderPane.margin>
+      </Label>
+   </left>
+   <padding>
+      <Insets bottom="4.0" />
+   </padding>
 </BorderPane>

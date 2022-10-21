@@ -5,6 +5,14 @@
     -fx-background-color: #212529;
 }
 
+#header {
+    -fx-background-color: #111111;
+}
+
+.mainToolbar {
+    -fx-background-color: #272B2F;
+    -fx-border-radius: 12 12 12 12;
+}
 
 #validationError {
     -fx-background-color: #FF3333;
@@ -16,7 +24,7 @@
 
 
 .header-button {
-    -fx-background-color: #212529;
+    -fx-background-color: #111111;
     -fx-border-style: hidden hidden hidden hidden;
     -fx-text-fill: #DDDDDD;
 }

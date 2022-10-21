@@ -499,9 +499,9 @@
                </right>
             </BorderPane>
          </center>
-         <top>
-            <fx:include fx:id="header" source="scene-header.fxml" />
-         </top>
       </BorderPane>
    </center>
+   <top>
+      <fx:include fx:id="header" source="scene-header.fxml" />
+   </top>
 </BorderPane>
