@@ -51,12 +51,12 @@ public class NavigationController implements Initializable {
     this.loadScreen(event, "scene-tables.fxml");
   }
 
-  private void loadScreen(@NonNull ActionEvent event, @NonNull String name) throws IOException {
+  public static void loadScreen(@NonNull ActionEvent event, @NonNull String name) throws IOException {
     if (activeController != null) {
       activeController.dispose();
     }
 
-    FXMLLoader loader = new FXMLLoader(getClass().getResource(name));
+    FXMLLoader loader = new FXMLLoader(NavigationController.class.getResource(name));
     root = loader.load();
     activeController = loader.<StudioFXController>getController();
 

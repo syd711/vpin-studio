@@ -87,15 +87,6 @@
                                  </graphic>
                               </Button>
                               <Separator orientation="VERTICAL" prefHeight="30.0" prefWidth="12.0" />
-                              <Button layoutX="416.0" layoutY="11.0" mnemonicParsing="false" onAction="#onTableEdit" text="Edit ROM" textFill="WHITE">
-                                 <font>
-                                    <Font size="14.0" />
-                                 </font>
-                                 <graphic>
-                                    <FontIcon iconColor="WHITE" iconLiteral="mdi2d-database-edit-outline" />
-                                 </graphic>
-                              </Button>
-                              <Separator orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
                               <Button mnemonicParsing="false" text="Validate" textFill="WHITE">
                                  <font>
                                     <Font size="14.0" />
@@ -447,8 +438,9 @@
                                  <children>
                                     <GridPane prefHeight="242.0" prefWidth="574.0">
                                       <columnConstraints>
-                                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="282.199951171875" minWidth="10.0" prefWidth="120.0000244140625" />
-                                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="460.800048828125" minWidth="10.0" prefWidth="455.1999755859375" />
+                                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="282.199951171875" minWidth="10.0" prefWidth="127.8" />
+                                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="497.40007324218755" minWidth="10.0" prefWidth="414.99990234375" />
+                                          <ColumnConstraints hgrow="SOMETIMES" maxWidth="460.800048828125" minWidth="10.0" prefWidth="35.800097656250045" />
                                       </columnConstraints>
                                       <rowConstraints>
                                           <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
@@ -531,6 +523,11 @@
                                                 <Font size="14.0" />
                                              </font>
                                           </Label>
+                                          <Button mnemonicParsing="false" onAction="#onTableEdit" GridPane.columnIndex="2" GridPane.rowIndex="2">
+                                             <graphic>
+                                                <FontIcon iconColor="WHITE" iconLiteral="mdi2d-database-edit-outline" />
+                                             </graphic>
+                                          </Button>
                                        </children>
                                     </GridPane>
                                  </children>
