@@ -248,7 +248,11 @@ public class SystemService implements InitializingBean  {
   }
 
   public File getVPRegFile() {
-    return new File(this.getVisualPinballInstallationFolder() + "/User/", VPREG_STG);
+    return new File(this.getVisualPinballUserFolder(), VPREG_STG);
+  }
+
+  public File getVisualPinballUserFolder() {
+    return new File(this.getVisualPinballInstallationFolder(),"User");
   }
 
   public File getMameRomFolder() {

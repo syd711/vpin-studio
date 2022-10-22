@@ -19,6 +19,7 @@ public class Game {
   private String gameFileName;
   private int id;
   private int nvOffset;
+  private String hsFileName;
   private Emulator emulator;
 
   private File gameFile;
@@ -47,6 +48,10 @@ public class Game {
     }
 
     if (this.getVPRegFolder() != null && this.getVPRegFolder().exists()) {
+      return true;
+    }
+
+    if (this.getEMHighscoreFile() != null && this.getEMHighscoreFile().exists()) {
       return true;
     }
     return false;
@@ -123,6 +128,14 @@ public class Game {
     return defaultNVFile;
   }
 
+  @Nullable
+  public File getEMHighscoreFile() {
+    if (!StringUtils.isEmpty(this.getHsFileName())) {
+      return new File(systemService.getVisualPinballUserFolder(), this.getHsFileName());
+    }
+    return null;
+  }
+
   @NonNull
   @JsonIgnore
   public File getGameFile() {
@@ -144,7 +157,7 @@ public class Game {
   }
 
   public boolean isPupPackAvailable() {
-    if(StringUtils.isEmpty(this.getRom())) {
+    if (StringUtils.isEmpty(this.getRom())) {
       return false;
     }
 
@@ -159,6 +172,14 @@ public class Game {
 
   public void setRawHighscore(String rawHighscore) {
     this.rawHighscore = rawHighscore;
+  }
+
+  public String getHsFileName() {
+    return hsFileName;
+  }
+
+  public void setHsFileName(String hsFileName) {
+    this.hsFileName = hsFileName;
   }
 
   public void setRom(String rom) {

@@ -5,6 +5,15 @@ import edu.umd.cs.findbugs.annotations.Nullable;
 public class ScanResult {
   private int nvOffset = 0;
   private String rom;
+  private String hsFileName;
+
+  public String getHsFileName() {
+    return hsFileName;
+  }
+
+  public void setHsFileName(String hsFileName) {
+    this.hsFileName = hsFileName;
+  }
 
   public int getNvOffset() {
     return nvOffset;
@@ -24,6 +33,6 @@ public class ScanResult {
   }
 
   public boolean isScanComplete() {
-    return this.nvOffset > 0 && this.rom != null;
+    return this.nvOffset > 0 && this.rom != null && hsFileName != null;
   }
 }

@@ -13,7 +13,7 @@
    <center>
       <BorderPane fx:id="mainToolbar" stylesheets="@stylesheet.css">
          <right>
-            <BorderPane styleClass="subpanel" stylesheets="@stylesheet.css" BorderPane.alignment="CENTER">
+            <BorderPane stylesheets="@stylesheet.css" BorderPane.alignment="CENTER">
                <BorderPane.margin>
                   <Insets />
                </BorderPane.margin>

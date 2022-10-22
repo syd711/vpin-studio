@@ -8,7 +8,7 @@
 <?import javafx.scene.text.Font?>
 <?import org.kordamp.ikonli.javafx.FontIcon?>
 
-<BorderPane prefWidth="250.0" style="-fx-background-color: #272b2f;" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.NavigationController">
+<BorderPane prefWidth="250.0" stylesheets="@stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.NavigationController">
    <bottom>
       <Button alignment="BASELINE_LEFT" graphicTextGap="12.0" mnemonicParsing="false" onAction="#onPreferencesClicked" prefHeight="60.0" prefWidth="250.0" styleClass="navigation-button" stylesheets="@stylesheet.css" text="Preferences" textFill="WHITE" BorderPane.alignment="CENTER">
          <font>
@@ -31,7 +31,7 @@
    <top>
       <BorderPane BorderPane.alignment="CENTER">
          <center>
-          <VBox alignment="TOP_CENTER" styleClass="navigation-panel" stylesheets="@stylesheet.css">
+          <VBox alignment="TOP_CENTER" stylesheets="@stylesheet.css">
               <children>
                   <Button fx:id="dashboardBtn" alignment="BASELINE_LEFT" graphicTextGap="12.0" mnemonicParsing="false" onAction="#onDashboardClick" prefHeight="60.0" prefWidth="250.0" styleClass="navigation-button" stylesheets="@stylesheet.css" text="Dashboard" textFill="WHITE">
                       <font>

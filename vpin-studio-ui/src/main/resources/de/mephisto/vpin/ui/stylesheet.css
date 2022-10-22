@@ -2,7 +2,7 @@
  * Main
  */
 .main, .root {
-    -fx-background-color: #212529;
+    -fx-background-color: #191919;
 }
 
 #header {
@@ -10,7 +10,7 @@
 }
 
 .mainToolbar {
-    -fx-background-color: #272B2F;
+    -fx-background-color: #191919;
     -fx-border-radius: 12 12 12 12;
 }
 
@@ -31,16 +31,16 @@
 
 .header-button:hover {
     -fx-background-color: #333366;
-    -fx-border-style: hidden hidden hidden hidden;
     -fx-text-fill: #fff8f8;
     -fx-cursor: hand;
 }
 
 .navigation-button {
-    -fx-background-color: #272B2F;
+    -fx-background-color: #191919;
     -fx-border-style: hidden hidden hidden solid;
     -fx-border-width: 3;
-    -fx-border-color: #272b2f;
+    -fx-background-radius: 8 8 8 8;
+    -fx-border-color: #191919;
     -fx-text-fill: #DDDDDD;
 }
 

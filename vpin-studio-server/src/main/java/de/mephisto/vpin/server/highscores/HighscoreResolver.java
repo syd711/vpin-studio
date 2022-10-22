@@ -5,14 +5,12 @@ import de.mephisto.vpin.server.jpa.Highscore;
 import de.mephisto.vpin.server.system.SystemService;
 import de.mephisto.vpin.server.util.SystemCommandExecutor;
 import edu.umd.cs.findbugs.annotations.Nullable;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
 import java.util.Arrays;
 import java.util.List;
 
@@ -49,10 +47,12 @@ class HighscoreResolver {
         return null;
       }
 
-
       String highscore = readNvHighscore(game);
       if (highscore == null) {
         highscore = readVRegHighscore(game);
+      }
+      if (highscore == null) {
+        highscore = parseHSFileHighscore(game);
       }
 
       if (highscore == null) {
@@ -84,6 +84,35 @@ class HighscoreResolver {
 
     //check if we have to unzip the score file using the modified date of the target folder
     updateUserScores(targetFolder);
+  }
+
+  private String parseHSFileHighscore(Game game) throws IOException {
+    File hsFile = game.getEMHighscoreFile();
+    if (hsFile != null && hsFile.exists()) {
+      List<String> lines = IOUtils.readLines(new FileInputStream(hsFile), "utf-8");
+      if (lines.size() >= 15) {
+        StringBuilder builder = new StringBuilder("HIGHEST SCORES\n");
+
+        int index = 5;
+        for (int i = 1; i < 6; i++) {
+          String score = lines.get(index);
+          String initials = lines.get(index + 5);
+
+          builder.append("#");
+          builder.append(i);
+          builder.append(" ");
+          builder.append(initials);
+          builder.append("   ");
+          builder.append(score);
+          builder.append("\n");
+
+          index++;
+        }
+
+        return builder.toString();
+      }
+    }
+    return null;
   }
 
   /**

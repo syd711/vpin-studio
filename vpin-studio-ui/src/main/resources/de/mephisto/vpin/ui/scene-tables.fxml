@@ -58,7 +58,7 @@
                               </TableView>
                            </center>
                            <BorderPane.margin>
-                              <Insets left="24.0" right="24.0" top="24.0" />
+                              <Insets left="12.0" right="12.0" top="12.0" />
                            </BorderPane.margin>
                            <top>
                               <ToolBar prefHeight="40.0" style="-fx-background-radius: 3 3 0 0;" styleClass="base-component" stylesheets="@stylesheet.css" BorderPane.alignment="CENTER">

@@ -23,6 +23,7 @@ public class VPXFileScanner {
   private final static Logger LOG = LoggerFactory.getLogger(VPXFileScanner.class);
 
   private final static int MAX_ROM_FILENAME_LENGTH = 16;
+  private final static int MAX_FILENAME_LENGTH = 128;
 
   private final static List<String> PATTERNS = Arrays.asList("cGameName", "cgamename", "RomSet1", "GameName");
 
@@ -32,7 +33,8 @@ public class VPXFileScanner {
     PATTERNS.forEach(p -> patternList.add(Pattern.compile(".*" + p + ".*=.*\".*\".*")));
   }
 
-  @NonNull
+  private static final Pattern HS_FILENAME_PATTERN = Pattern.compile(".*HSFileName.*=.*\".*\".*");
+
   public static ScanResult scan(@NonNull File gameFile) {
     ScanResult result = new ScanResult();
 
@@ -55,6 +57,7 @@ public class VPXFileScanner {
         if (line != null) {
           lineSearchRom(result, line);
           lineSearchNvOffset(result, line);
+          lineSearchHsFileName(result, line);
         }
       }
 
@@ -81,6 +84,30 @@ public class VPXFileScanner {
     }
 
     return result;
+  }
+
+  private static void lineSearchHsFileName(@NonNull ScanResult result, @NonNull String line) {
+    if(result.getHsFileName() != null) {
+      return;
+    }
+
+    if (HS_FILENAME_PATTERN.matcher(line).matches()) {
+      String pattern = "HSFileName";
+      if (line.contains("'") && line.trim().indexOf("'") < line.indexOf(pattern)) {
+        return;
+      }
+
+      line = line.substring(line.indexOf(pattern) + pattern.length() + 1);
+      int start = line.indexOf("\"") + 1;
+      String hsFileName = line.substring(start);
+      int end = hsFileName.indexOf("\"");
+
+      if (end - start < MAX_FILENAME_LENGTH) {
+        hsFileName = hsFileName.substring(0, end).trim();
+      }
+
+      result.setHsFileName(hsFileName);
+    }
   }
 
   private static void lineSearchNvOffset(@NonNull ScanResult result, @NonNull String line) {
