@@ -31,6 +31,7 @@
 
 .header-button:hover {
     -fx-background-color: #333366;
+    -fx-border-style: hidden hidden hidden hidden;
     -fx-text-fill: #fff8f8;
     -fx-cursor: hand;
 }
