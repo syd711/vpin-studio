@@ -6,63 +6,56 @@
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.RowConstraints?>
 
-<BorderPane xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.DashboardController">
-   <left>
-       <fx:include fx:id="navigation" source="scene-navigation.fxml" />
-   </left>
+<BorderPane stylesheets="@stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.DashboardController">
+    <top>
+        <fx:include fx:id="mainToolbar" source="scene-toolbar.fxml" />
+    </top>
    <center>
-      <BorderPane BorderPane.alignment="CENTER">
-         <center>
-            <GridPane BorderPane.alignment="CENTER">
-              <columnConstraints>
-                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
-                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-              </columnConstraints>
-              <rowConstraints>
-                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-              </rowConstraints>
-               <children>
-                  <BorderPane fx:id="widget1">
-                     <padding>
-                        <Insets bottom="12.0" left="24.0" right="12.0" />
-                     </padding>
-                  </BorderPane>
-                  <BorderPane fx:id="widget2" GridPane.columnIndex="1">
-                     <padding>
-                        <Insets bottom="12.0" left="12.0" right="24.0" />
-                     </padding>
-                  </BorderPane>
-                  <BorderPane fx:id="widget3" GridPane.rowIndex="1">
-                     <padding>
-                        <Insets bottom="12.0" left="24.0" right="12.0" top="12.0" />
-                     </padding>
-                  </BorderPane>
-                  <BorderPane fx:id="widget4" GridPane.columnIndex="1" GridPane.rowIndex="1">
-                     <padding>
-                        <Insets bottom="12.0" left="12.0" right="24.0" top="12.0" />
-                     </padding>
-                  </BorderPane>
-                  <BorderPane fx:id="widget5" GridPane.rowIndex="2">
-                     <padding>
-                        <Insets bottom="24.0" left="24.0" right="12.0" top="12.0" />
-                     </padding>
-                  </BorderPane>
-                  <BorderPane fx:id="widget6" GridPane.columnIndex="1" GridPane.rowIndex="2">
-                     <padding>
-                        <Insets bottom="24.0" left="12.0" right="24.0" top="12.0" />
-                     </padding>
-                  </BorderPane>
-               </children>
-               <opaqueInsets>
-                  <Insets />
-               </opaqueInsets>
-            </GridPane>
-         </center>
-      </BorderPane>
+      <GridPane BorderPane.alignment="CENTER">
+        <columnConstraints>
+          <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
+          <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+        </columnConstraints>
+        <rowConstraints>
+          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+        </rowConstraints>
+         <children>
+            <BorderPane fx:id="widget1">
+               <padding>
+                  <Insets bottom="12.0" right="12.0" />
+               </padding>
+            </BorderPane>
+            <BorderPane fx:id="widget2" GridPane.columnIndex="1">
+               <padding>
+                  <Insets bottom="12.0" left="12.0" right="24.0" />
+               </padding>
+            </BorderPane>
+            <BorderPane fx:id="widget3" GridPane.rowIndex="1">
+               <padding>
+                  <Insets bottom="12.0" right="12.0" top="12.0" />
+               </padding>
+            </BorderPane>
+            <BorderPane fx:id="widget4" GridPane.columnIndex="1" GridPane.rowIndex="1">
+               <padding>
+                  <Insets bottom="12.0" left="12.0" right="24.0" top="12.0" />
+               </padding>
+            </BorderPane>
+            <BorderPane fx:id="widget5" GridPane.rowIndex="2">
+               <padding>
+                  <Insets bottom="24.0" right="12.0" top="12.0" />
+               </padding>
+            </BorderPane>
+            <BorderPane fx:id="widget6" GridPane.columnIndex="1" GridPane.rowIndex="2">
+               <padding>
+                  <Insets bottom="24.0" left="12.0" right="24.0" top="12.0" />
+               </padding>
+            </BorderPane>
+         </children>
+         <opaqueInsets>
+            <Insets />
+         </opaqueInsets>
+      </GridPane>
    </center>
-   <top>
-       <fx:include fx:id="header" source="scene-header.fxml" />
-   </top>
 </BorderPane>

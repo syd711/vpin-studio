@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.BorderPane?>
+
+<BorderPane fx:id="main" styleClass="main" stylesheets="@stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1">
+   <left>
+       <fx:include fx:id="navigation" source="scene-navigation.fxml" />
+   </left>
+   <top>
+       <fx:include fx:id="header" source="scene-header.fxml" />
+   </top>
+    <center>
+        <fx:include fx:id="dashboard" source="scene-dashboard.fxml" />
+    </center>
+</BorderPane>

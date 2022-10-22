@@ -26,531 +26,522 @@
 <?import org.kordamp.ikonli.javafx.FontIcon?>
 
 <BorderPane styleClass="main" stylesheets="@stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.tables.TablesController">
-   <left>
-       <fx:include fx:id="navigation" source="scene-navigation.fxml" />
-   </left>
    <center>
       <BorderPane BorderPane.alignment="CENTER">
          <center>
-            <BorderPane styleClass="main" stylesheets="@stylesheet.css" BorderPane.alignment="CENTER">
-               <top>
-                  <fx:include fx:id="mainToolbar" source="scene-toolbar.fxml" />
-               </top>
+            <BorderPane styleClass="subpanel" stylesheets="@stylesheet.css" BorderPane.alignment="CENTER">
                <center>
-                  <BorderPane fx:id="main" styleClass="subpanel" stylesheets="@stylesheet.css" BorderPane.alignment="CENTER">
+                  <BorderPane styleClass="subpanel" stylesheets="@stylesheet.css" BorderPane.alignment="CENTER">
                      <center>
-                        <BorderPane styleClass="subpanel" stylesheets="@stylesheet.css" BorderPane.alignment="CENTER">
-                           <center>
-                              <TableView fx:id="tableView" onMouseClicked="#onTableMouseClicked" style="-fx-background-color: #2a2a2a;" styleClass="base-component" stylesheets="@stylesheet.css">
-                                <columns>
-                                    <TableColumn fx:id="columnId" minWidth="52.79998779296875" prefWidth="52.79998779296875" style="-fx-alignment: baseline-right;" text="ID" />
-                                  <TableColumn fx:id="columnDisplayName" minWidth="100.0" prefWidth="322.3999938964844" style="-fx-alignment: BASELINE_LEFT;" text="Display Name" />
-                                  <TableColumn fx:id="columnRom" minWidth="10.4000244140625" prefWidth="93.5999755859375" style="-fx-alignment: BASELINE_LEFT;" text="ROM" />
-                                    <TableColumn fx:id="columnRomAlias" minWidth="77.60009765625" prefWidth="91.2000732421875" style="-fx-alignment: BASELINE_LEFT;" text="ROM Alias" />
-                                    <TableColumn fx:id="columnNVOffset" minWidth="62.4000244140625" prefWidth="74.39990234375" style="-fx-alignment: CENTER;" text="NVOffset" />
-                                    <TableColumn fx:id="columnB2S" minWidth="51.199951171875" prefWidth="106.39996337890625" style="-fx-alignment: CENTER;" text="DirectB2S File" />
-                                    <TableColumn fx:id="columnPUPPack" minWidth="57.5999755859375" prefWidth="91.199951171875" style="-fx-alignment: CENTER;" text="PUP Pack" />
-                                    <TableColumn fx:id="columnStatus" minWidth="57.5999755859375" prefWidth="88.0001220703125" style="-fx-alignment: CENTER;" text="Status" />
-                                </columns>
-                                 <BorderPane.margin>
-                                    <Insets bottom="6.0" />
-                                 </BorderPane.margin>
-                              </TableView>
-                           </center>
+                        <TableView fx:id="tableView" onMouseClicked="#onTableMouseClicked" style="-fx-background-color: #2a2a2a;" styleClass="base-component" stylesheets="@stylesheet.css">
+                          <columns>
+                              <TableColumn fx:id="columnId" minWidth="52.79998779296875" prefWidth="52.79998779296875" style="-fx-alignment: baseline-right;" text="ID" />
+                            <TableColumn fx:id="columnDisplayName" minWidth="100.0" prefWidth="322.3999938964844" style="-fx-alignment: BASELINE_LEFT;" text="Display Name" />
+                            <TableColumn fx:id="columnRom" minWidth="10.4000244140625" prefWidth="93.5999755859375" style="-fx-alignment: BASELINE_LEFT;" text="ROM" />
+                              <TableColumn fx:id="columnRomAlias" minWidth="77.60009765625" prefWidth="91.2000732421875" style="-fx-alignment: BASELINE_LEFT;" text="ROM Alias" />
+                              <TableColumn fx:id="columnNVOffset" minWidth="62.4000244140625" prefWidth="74.39990234375" style="-fx-alignment: CENTER;" text="NVOffset" />
+                              <TableColumn fx:id="columnB2S" minWidth="51.199951171875" prefWidth="106.39996337890625" style="-fx-alignment: CENTER;" text="DirectB2S File" />
+                              <TableColumn fx:id="columnPUPPack" minWidth="57.5999755859375" prefWidth="91.199951171875" style="-fx-alignment: CENTER;" text="PUP Pack" />
+                              <TableColumn fx:id="columnStatus" minWidth="57.5999755859375" prefWidth="88.0001220703125" style="-fx-alignment: CENTER;" text="Status" />
+                          </columns>
                            <BorderPane.margin>
-                              <Insets left="12.0" right="12.0" top="12.0" />
+                              <Insets bottom="6.0" />
                            </BorderPane.margin>
-                           <top>
-                              <ToolBar prefHeight="40.0" style="-fx-background-radius: 3 3 0 0;" styleClass="base-component" stylesheets="@stylesheet.css" BorderPane.alignment="CENTER">
-                                <items>
-                                    <TextField fx:id="textfieldSearch" onKeyPressed="#onSearchKeyPressed" prefHeight="26.0" prefWidth="234.0" promptText="Table Search...">
-                                       <font>
-                                          <Font size="14.0" />
-                                       </font>
-                                    </TextField>
-                                    <Separator orientation="VERTICAL" prefHeight="0.0" prefWidth="0.0" />
-                                  <Button mnemonicParsing="false" onAction="#onReload" text="Reload" textFill="WHITE">
-                                       <font>
-                                          <Font size="14.0" />
-                                       </font>
-                                       <graphic>
-                                          <FontIcon iconColor="WHITE" iconLiteral="sil-reload" />
-                                       </graphic>
-                                    </Button>
-                                    <Separator orientation="VERTICAL" prefHeight="30.0" prefWidth="12.0" />
-                                    <Button mnemonicParsing="false" onAction="#onTablesScan" text="Scan All Tables" textFill="WHITE">
-                                       <font>
-                                          <Font size="14.0" />
-                                       </font>
-                                       <graphic>
-                                          <FontIcon iconColor="WHITE" iconLiteral="mdi2m-map-search-outline" />
-                                       </graphic>
-                                    </Button>
-                                    <Button mnemonicParsing="false" onAction="#onTableScan" text="Scan Table" textFill="WHITE">
-                                       <font>
-                                          <Font size="14.0" />
-                                       </font>
-                                       <graphic>
-                                          <FontIcon iconColor="WHITE" iconLiteral="mdi2m-map-search" />
-                                       </graphic>
-                                    </Button>
-                                    <Separator orientation="VERTICAL" prefHeight="30.0" prefWidth="12.0" />
-                                    <Button layoutX="416.0" layoutY="11.0" mnemonicParsing="false" onAction="#onTableEdit" text="Edit ROM" textFill="WHITE">
-                                       <font>
-                                          <Font size="14.0" />
-                                       </font>
-                                       <graphic>
-                                          <FontIcon iconColor="WHITE" iconLiteral="mdi2d-database-edit-outline" />
-                                       </graphic>
-                                    </Button>
-                                    <Separator orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
-                                    <Button mnemonicParsing="false" text="Validate" textFill="WHITE">
-                                       <font>
-                                          <Font size="14.0" />
-                                       </font>
-                                       <graphic>
-                                          <FontIcon iconColor="WHITE" iconLiteral="sil-magnifier" />
-                                       </graphic>
-                                    </Button>
-                                </items>
-                                 <BorderPane.margin>
-                                    <Insets />
-                                 </BorderPane.margin>
-                              </ToolBar>
-                           </top>
-                           <bottom>
-                              <BorderPane BorderPane.alignment="CENTER">
-                                 <BorderPane.margin>
-                                    <Insets bottom="12.0" />
-                                 </BorderPane.margin>
-                                 <center>
-                                    <BorderPane fx:id="validationError">
-                                       <left>
-                                          <Label fx:id="validationErrorLabel" text="Label" textFill="WHITE" BorderPane.alignment="CENTER">
-                                             <BorderPane.margin>
-                                                <Insets bottom="3.0" left="12.0" top="3.0" />
-                                             </BorderPane.margin>
-                                             <font>
-                                                <Font name="System Bold" size="14.0" />
-                                             </font>
-                                          </Label>
-                                       </left>
-                                       <right>
-                                          <Hyperlink text="Dismiss" textFill="WHITE" BorderPane.alignment="CENTER">
-                                             <BorderPane.margin>
-                                                <Insets right="6.0" />
-                                             </BorderPane.margin>
-                                             <font>
-                                                <Font size="10.0" />
-                                             </font>
-                                          </Hyperlink>
-                                       </right>
-                                    </BorderPane>
-                                 </center>
-                                 <top>
-                                    <Label fx:id="labelTableCount" textFill="WHITE" BorderPane.alignment="TOP_RIGHT">
-                                       <BorderPane.margin>
-                                          <Insets bottom="3.0" />
-                                       </BorderPane.margin>
-                                    </Label>
-                                 </top>
-                              </BorderPane>
-                           </bottom>
-                        </BorderPane>
+                        </TableView>
                      </center>
                      <BorderPane.margin>
-                        <Insets left="24.0" right="24.0" />
+                        <Insets left="12.0" right="12.0" top="12.0" />
                      </BorderPane.margin>
+                     <top>
+                        <ToolBar prefHeight="40.0" style="-fx-background-radius: 3 3 0 0;" styleClass="base-component" stylesheets="@stylesheet.css" BorderPane.alignment="CENTER">
+                          <items>
+                              <TextField fx:id="textfieldSearch" onKeyPressed="#onSearchKeyPressed" prefHeight="26.0" prefWidth="234.0" promptText="Table Search...">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </TextField>
+                              <Separator orientation="VERTICAL" prefHeight="0.0" prefWidth="0.0" />
+                            <Button mnemonicParsing="false" onAction="#onReload" text="Reload" textFill="WHITE">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                                 <graphic>
+                                    <FontIcon iconColor="WHITE" iconLiteral="sil-reload" />
+                                 </graphic>
+                              </Button>
+                              <Separator orientation="VERTICAL" prefHeight="30.0" prefWidth="12.0" />
+                              <Button mnemonicParsing="false" onAction="#onTablesScan" text="Scan All Tables" textFill="WHITE">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                                 <graphic>
+                                    <FontIcon iconColor="WHITE" iconLiteral="mdi2m-map-search-outline" />
+                                 </graphic>
+                              </Button>
+                              <Button mnemonicParsing="false" onAction="#onTableScan" text="Scan Table" textFill="WHITE">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                                 <graphic>
+                                    <FontIcon iconColor="WHITE" iconLiteral="mdi2m-map-search" />
+                                 </graphic>
+                              </Button>
+                              <Separator orientation="VERTICAL" prefHeight="30.0" prefWidth="12.0" />
+                              <Button layoutX="416.0" layoutY="11.0" mnemonicParsing="false" onAction="#onTableEdit" text="Edit ROM" textFill="WHITE">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                                 <graphic>
+                                    <FontIcon iconColor="WHITE" iconLiteral="mdi2d-database-edit-outline" />
+                                 </graphic>
+                              </Button>
+                              <Separator orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
+                              <Button mnemonicParsing="false" text="Validate" textFill="WHITE">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                                 <graphic>
+                                    <FontIcon iconColor="WHITE" iconLiteral="sil-magnifier" />
+                                 </graphic>
+                              </Button>
+                          </items>
+                           <BorderPane.margin>
+                              <Insets />
+                           </BorderPane.margin>
+                        </ToolBar>
+                     </top>
+                     <bottom>
+                        <BorderPane BorderPane.alignment="CENTER">
+                           <BorderPane.margin>
+                              <Insets bottom="12.0" />
+                           </BorderPane.margin>
+                           <center>
+                              <BorderPane fx:id="validationError">
+                                 <left>
+                                    <Label fx:id="validationErrorLabel" text="Label" textFill="WHITE" BorderPane.alignment="CENTER">
+                                       <BorderPane.margin>
+                                          <Insets bottom="3.0" left="12.0" top="3.0" />
+                                       </BorderPane.margin>
+                                       <font>
+                                          <Font name="System Bold" size="14.0" />
+                                       </font>
+                                    </Label>
+                                 </left>
+                                 <right>
+                                    <Hyperlink text="Dismiss" textFill="WHITE" BorderPane.alignment="CENTER">
+                                       <BorderPane.margin>
+                                          <Insets right="6.0" />
+                                       </BorderPane.margin>
+                                       <font>
+                                          <Font size="10.0" />
+                                       </font>
+                                    </Hyperlink>
+                                 </right>
+                              </BorderPane>
+                           </center>
+                           <top>
+                              <Label fx:id="labelTableCount" textFill="WHITE" BorderPane.alignment="TOP_RIGHT">
+                                 <BorderPane.margin>
+                                    <Insets bottom="3.0" />
+                                 </BorderPane.margin>
+                              </Label>
+                           </top>
+                        </BorderPane>
+                     </bottom>
                   </BorderPane>
                </center>
-               <right>
-                  <VBox prefWidth="600.0" styleClass="subpanel" stylesheets="@stylesheet.css" BorderPane.alignment="CENTER">
-                     <children>
-                        <Accordion fx:id="accordion">
-                           <panes>
-                              <TitledPane fx:id="titledPaneMedia" prefWidth="600.0" text="Media">
-                                 <content>
-                                    <BorderPane>
-                                       <center>
-                                          <ScrollPane fitToWidth="true" styleClass="accordion-container" stylesheets="@stylesheet.css" BorderPane.alignment="CENTER">
-                                             <content>
-                                                <Pane prefHeight="1070.0" styleClass="accordion-container" stylesheets="@stylesheet.css">
-                                                   <children>
-                                                      <BorderPane layoutX="158.0" layoutY="566.0" prefHeight="490.0" prefWidth="250.0" styleClass="media-container" stylesheets="@stylesheet.css">
-                                                         <bottom>
-                                                            <Label text="Playfield" textFill="WHITE" BorderPane.alignment="CENTER" />
-                                                         </bottom>
-                                                         <top>
-                                                            <Button mnemonicParsing="false" onAction="#onMediaViewClick" BorderPane.alignment="TOP_RIGHT">
-                                                               <graphic>
-                                                                  <FontIcon iconColor="WHITE" iconLiteral="mdi2e-eye" />
-                                                               </graphic>
-                                                            </Button>
-                                                         </top>
-                                                      </BorderPane>
-                                                      <BorderPane fx:id="screenHelp" layoutX="3.0" layoutY="650.0" prefHeight="180.0" prefWidth="150.0" styleClass="media-container" stylesheets="@stylesheet.css">
-                                                         <bottom>
-                                                            <Label text="Help" textFill="WHITE" BorderPane.alignment="CENTER" />
-                                                         </bottom>
-                                                         <top>
-                                                            <Button mnemonicParsing="false" onAction="#onMediaViewClick" BorderPane.alignment="TOP_RIGHT">
-                                                               <graphic>
-                                                                  <FontIcon iconColor="WHITE" iconLiteral="mdi2e-eye" />
-                                                               </graphic>
-                                                               <BorderPane.margin>
-                                                                  <Insets />
-                                                               </BorderPane.margin>
-                                                            </Button>
-                                                         </top>
-                                                      </BorderPane>
-                                                      <BorderPane fx:id="screenPlayfield" layoutX="158.0" layoutY="594.0" prefHeight="445.0" prefWidth="250.0" stylesheets="@stylesheet.css" />
-                                                      <BorderPane fx:id="screenInfo" layoutX="3.0" layoutY="441.0" prefHeight="180.0" prefWidth="150.0" styleClass="media-container" stylesheets="@stylesheet.css">
-                                                         <bottom>
-                                                            <Label text="Info / Flyer" textFill="WHITE" BorderPane.alignment="CENTER" />
-                                                         </bottom>
-                                                         <top>
-                                                            <Button mnemonicParsing="false" onAction="#onMediaViewClick" BorderPane.alignment="TOP_RIGHT">
-                                                               <graphic>
-                                                                  <FontIcon iconColor="WHITE" iconLiteral="mdi2e-eye" />
-                                                               </graphic>
-                                                               <BorderPane.margin>
-                                                                  <Insets />
-                                                               </BorderPane.margin>
-                                                            </Button>
-                                                         </top>
-                                                      </BorderPane>
-                                                      <BorderPane fx:id="screenDMD" layoutX="157.0" layoutY="437.0" prefHeight="120.0" prefWidth="250.0" styleClass="media-container" stylesheets="@stylesheet.css">
-                                                         <bottom>
-                                                            <Label text="DMD" textFill="WHITE" BorderPane.alignment="CENTER" />
-                                                         </bottom>
-                                                         <top>
-                                                            <Button mnemonicParsing="false" onAction="#onMediaViewClick" BorderPane.alignment="TOP_RIGHT">
-                                                               <graphic>
-                                                                  <FontIcon iconColor="WHITE" iconLiteral="mdi2e-eye" />
-                                                               </graphic>
-                                                               <BorderPane.margin>
-                                                                  <Insets />
-                                                               </BorderPane.margin>
-                                                            </Button>
-                                                         </top>
-                                                      </BorderPane>
-                                                      <BorderPane fx:id="screenTopper" layoutX="157.0" layoutY="4.0" maxHeight="208.0" prefHeight="208.0" prefWidth="250.0" styleClass="media-container" stylesheets="@stylesheet.css">
-                                                         <bottom>
-                                                            <Label text="Topper" textFill="WHITE" BorderPane.alignment="CENTER" />
-                                                         </bottom>
-                                                         <top>
-                                                            <Button mnemonicParsing="false" onAction="#onMediaViewClick" BorderPane.alignment="TOP_RIGHT">
-                                                               <graphic>
-                                                                  <FontIcon iconColor="WHITE" iconLiteral="mdi2e-eye" />
-                                                               </graphic>
-                                                               <BorderPane.margin>
-                                                                  <Insets />
-                                                               </BorderPane.margin>
-                                                            </Button>
-                                                         </top>
-                                                      </BorderPane>
-                                                      <BorderPane fx:id="screenBackglass" layoutX="157.0" layoutY="220.0" prefHeight="208.0" prefWidth="250.0" styleClass="media-container" stylesheets="@stylesheet.css">
-                                                         <bottom>
-                                                            <Label text="Backglass" textFill="WHITE" BorderPane.alignment="CENTER" />
-                                                         </bottom>
-                                                         <top>
-                                                            <Button mnemonicParsing="false" onAction="#onMediaViewClick" BorderPane.alignment="TOP_RIGHT">
-                                                               <graphic>
-                                                                  <FontIcon iconColor="WHITE" iconLiteral="mdi2e-eye" />
-                                                               </graphic>
-                                                               <BorderPane.margin>
-                                                                  <Insets />
-                                                               </BorderPane.margin>
-                                                            </Button>
-                                                         </top>
-                                                      </BorderPane>
-                                                      <BorderPane fx:id="screenLoading" layoutX="411.0" layoutY="234.0" prefHeight="170.0" prefWidth="150.0" styleClass="media-container" stylesheets="@stylesheet.css">
-                                                         <bottom>
-                                                            <Label text="Loading" textFill="WHITE" BorderPane.alignment="CENTER" />
-                                                         </bottom>
-                                                         <top>
-                                                            <Button mnemonicParsing="false" onAction="#onMediaViewClick" BorderPane.alignment="TOP_RIGHT">
-                                                               <graphic>
-                                                                  <FontIcon iconColor="WHITE" iconLiteral="mdi2e-eye" />
-                                                               </graphic>
-                                                               <BorderPane.margin>
-                                                                  <Insets />
-                                                               </BorderPane.margin>
-                                                            </Button>
-                                                         </top>
-                                                      </BorderPane>
-                                                      <BorderPane fx:id="screenApron" layoutX="3.0" layoutY="234.0" prefHeight="180.0" prefWidth="150.0" styleClass="media-container" stylesheets="@stylesheet.css">
-                                                         <bottom>
-                                                            <Label text="Apron/Full DMD" textFill="WHITE" BorderPane.alignment="CENTER" />
-                                                         </bottom>
-                                                         <top>
-                                                            <Button mnemonicParsing="false" onAction="#onMediaViewClick" BorderPane.alignment="TOP_RIGHT">
-                                                               <graphic>
-                                                                  <FontIcon iconColor="WHITE" iconLiteral="mdi2e-eye" />
-                                                               </graphic>
-                                                               <BorderPane.margin>
-                                                                  <Insets />
-                                                               </BorderPane.margin>
-                                                            </Button>
-                                                         </top>
-                                                      </BorderPane>
-                                                      <BorderPane fx:id="screenOther2" layoutX="411.0" layoutY="442.0" prefHeight="180.0" prefWidth="150.0" styleClass="media-container" stylesheets="@stylesheet.css">
-                                                         <bottom>
-                                                            <Label text="Other2" textFill="WHITE" BorderPane.alignment="CENTER" />
-                                                         </bottom>
-                                                         <top>
-                                                            <Button mnemonicParsing="false" onAction="#onMediaViewClick" BorderPane.alignment="TOP_RIGHT">
-                                                               <graphic>
-                                                                  <FontIcon iconColor="WHITE" iconLiteral="mdi2e-eye" />
-                                                               </graphic>
-                                                               <BorderPane.margin>
-                                                                  <Insets />
-                                                               </BorderPane.margin>
-                                                            </Button>
-                                                         </top>
-                                                      </BorderPane>
-                                                      <BorderPane fx:id="screenWheel" layoutX="412.0" layoutY="650.0" prefHeight="180.0" prefWidth="150.0" styleClass="media-container" stylesheets="@stylesheet.css">
-                                                         <bottom>
-                                                            <Label text="Wheel Image" textFill="WHITE" BorderPane.alignment="CENTER" />
-                                                         </bottom>
-                                                         <top>
-                                                            <Button mnemonicParsing="false" onAction="#onMediaViewClick" BorderPane.alignment="TOP_RIGHT">
-                                                               <graphic>
-                                                                  <FontIcon iconColor="WHITE" iconLiteral="mdi2e-eye" />
-                                                               </graphic>
-                                                               <BorderPane.margin>
-                                                                  <Insets />
-                                                               </BorderPane.margin>
-                                                            </Button>
-                                                         </top>
-                                                      </BorderPane>
-                                                      <BorderPane fx:id="screenAudioLaunch" layoutX="3.0" layoutY="19.0" prefHeight="85.0" prefWidth="150.0" styleClass="media-container" stylesheets="@stylesheet.css">
-                                                         <bottom>
-                                                            <Label text="Audio Launch" textFill="WHITE" BorderPane.alignment="CENTER">
-                                                               <BorderPane.margin>
-                                                                  <Insets top="6.0" />
-                                                               </BorderPane.margin>
-                                                            </Label>
-                                                         </bottom>
-                                                         <top>
-                                                            <Button mnemonicParsing="false" onAction="#onPlayClick" BorderPane.alignment="CENTER">
-                                                               <graphic>
-                                                                  <FontIcon iconColor="WHITE" iconLiteral="bi-play" iconSize="18" text="" />
-                                                               </graphic>
-                                                               <BorderPane.margin>
-                                                                  <Insets top="6.0" />
-                                                               </BorderPane.margin>
-                                                            </Button>
-                                                         </top>
-                                                      </BorderPane>
-                                                      <BorderPane fx:id="screenAudio" layoutX="3.0" layoutY="121.0" prefHeight="85.0" prefWidth="150.0" styleClass="media-container" stylesheets="@stylesheet.css">
-                                                         <bottom>
-                                                            <Label text="Audio" textFill="WHITE" BorderPane.alignment="CENTER">
-                                                               <BorderPane.margin>
-                                                                  <Insets top="6.0" />
-                                                               </BorderPane.margin>
-                                                            </Label>
-                                                         </bottom>
-                                                         <top>
-                                                            <Button mnemonicParsing="false" onAction="#onPlayClick" BorderPane.alignment="CENTER">
-                                                               <graphic>
-                                                                  <FontIcon iconColor="WHITE" iconLiteral="bi-play" iconSize="18" />
-                                                               </graphic>
-                                                               <BorderPane.margin>
-                                                                  <Insets top="6.0" />
-                                                               </BorderPane.margin>
-                                                            </Button>
-                                                         </top>
-                                                      </BorderPane>
-                                                   </children>
-                                                </Pane>
-                                             </content>
-                                          </ScrollPane>
-                                       </center>
-                                    </BorderPane>
-                                 </content>
-                              </TitledPane>
-                              <TitledPane expanded="false" prefWidth="600.0" text="Media Settings">
-                                 <content>
-                                    <BorderPane prefHeight="200.0" prefWidth="200.0">
-                                       <center>
-                                          <VBox prefHeight="200.0" prefWidth="100.0" BorderPane.alignment="CENTER">
-                                             <children>
-                                                <Label text="Table Volume">
-                                                   <font>
-                                                      <Font size="14.0" />
-                                                   </font>
-                                                </Label>
-                                                <Slider fx:id="volumeSlider" value="100.0">
-                                                   <VBox.margin>
-                                                      <Insets top="6.0" />
-                                                   </VBox.margin>
-                                                </Slider>
-                                             </children>
-                                          </VBox>
-                                       </center>
-                                       <padding>
-                                          <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
-                                       </padding>
-                                    </BorderPane>
-                                 </content>
-                              </TitledPane>
-                              <TitledPane layoutX="10.0" layoutY="104.0" prefWidth="600.0" text="DirectB2S">
-                                 <content>
-                                    <VBox prefHeight="200.0" prefWidth="100.0">
-                                       <children>
-                                          <TilePane alignment="CENTER" prefHeight="200.0" prefWidth="200.0" styleClass="thumbnail-preview">
-                                             <children>
-                                                <ImageView fx:id="rawDirectB2SImage" fitHeight="350.0" fitWidth="450.0" pickOnBounds="true" preserveRatio="true" />
-                                             </children>
-                                          </TilePane>
-                                          <BorderPane prefWidth="200.0">
-                                             <left>
-                                                <Label fx:id="resolutionLabel" text="Label" BorderPane.alignment="CENTER" />
-                                             </left>
-                                             <right>
-                                                <Button fx:id="openDirectB2SImageButton" mnemonicParsing="false" onAction="#onOpenDirectB2SBackground" BorderPane.alignment="CENTER">
-                                                   <graphic>
-                                                      <FontIcon iconColor="WHITE" iconLiteral="mdi2e-eye" />
-                                                   </graphic>
-                                                </Button>
-                                             </right>
-                                             <opaqueInsets>
-                                                <Insets />
-                                             </opaqueInsets>
-                                             <VBox.margin>
-                                                <Insets top="6.0" />
-                                             </VBox.margin>
-                                          </BorderPane>
-                                       </children>
-                                    </VBox>
-                                 </content>
-                              </TitledPane>
-                              <TitledPane prefHeight="750.0" prefWidth="600.0" text="Highscore">
-                                 <content>
-                                    <BorderPane prefHeight="200.0" prefWidth="200.0">
-                                       <center>
-                                          <TextArea fx:id="highscoreTextArea" prefHeight="400.0" BorderPane.alignment="CENTER">
-                                             <BorderPane.margin>
-                                                <Insets bottom="6.0" left="6.0" right="6.0" top="6.0" />
-                                             </BorderPane.margin>
-                                          </TextArea>
-                                       </center>
-                                    </BorderPane>
-                                 </content>
-                              </TitledPane>
-                              <TitledPane expanded="false" prefHeight="300.0" prefWidth="600.0" text="Table Metadata">
-                                 <content>
-                                    <BorderPane prefWidth="598.0">
-                                       <padding>
-                                          <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
-                                       </padding>
-                                       <center>
-                                          <VBox prefHeight="250.0" prefWidth="574.0" BorderPane.alignment="CENTER">
-                                             <children>
-                                                <GridPane prefHeight="242.0" prefWidth="574.0">
-                                                  <columnConstraints>
-                                                    <ColumnConstraints hgrow="SOMETIMES" maxWidth="282.199951171875" minWidth="10.0" prefWidth="120.0000244140625" />
-                                                    <ColumnConstraints hgrow="SOMETIMES" maxWidth="460.800048828125" minWidth="10.0" prefWidth="455.1999755859375" />
-                                                  </columnConstraints>
-                                                  <rowConstraints>
-                                                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                                    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                                    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                                    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                                  </rowConstraints>
-                                                   <children>
-                                                      <Label text="Table Filename:" textFill="WHITE" GridPane.rowIndex="1">
-                                                         <font>
-                                                            <Font name="System Bold" size="14.0" />
-                                                         </font>
-                                                      </Label>
-                                                      <Label layoutX="10.0" layoutY="31.0" text="Rom Name:" textFill="WHITE" GridPane.rowIndex="2">
-                                                         <font>
-                                                            <Font name="System Bold" size="14.0" />
-                                                         </font>
-                                                      </Label>
-                                                      <Label layoutX="10.0" layoutY="45.0" text="NVOffset:" textFill="WHITE" GridPane.rowIndex="4">
-                                                         <font>
-                                                            <Font name="System Bold" size="14.0" />
-                                                         </font>
-                                                      </Label>
-                                                      <Label layoutX="10.0" layoutY="76.0" text="Times Played:" textFill="WHITE" GridPane.rowIndex="6">
-                                                         <font>
-                                                            <Font name="System Bold" size="14.0" />
-                                                         </font>
-                                                      </Label>
-                                                      <Label layoutX="10.0" layoutY="103.0" text="Last Played" textFill="WHITE" GridPane.rowIndex="5">
-                                                         <font>
-                                                            <Font name="System Bold" size="14.0" />
-                                                         </font>
-                                                      </Label>
-                                                      <Label layoutX="10.0" layoutY="38.0" text="ID:" textFill="WHITE">
-                                                         <font>
-                                                            <Font name="System Bold" size="14.0" />
-                                                         </font>
-                                                      </Label>
-                                                      <Label fx:id="labelId" textFill="WHITE" GridPane.columnIndex="1">
-                                                         <font>
-                                                            <Font size="14.0" />
-                                                         </font>
-                                                      </Label>
-                                                      <Label fx:id="labelFilename" layoutX="130.0" layoutY="12.0" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="1">
-                                                         <font>
-                                                            <Font size="14.0" />
-                                                         </font>
-                                                      </Label>
-                                                      <Label fx:id="labelRom" layoutX="130.0" layoutY="38.0" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="2">
-                                                         <font>
-                                                            <Font size="14.0" />
-                                                         </font>
-                                                      </Label>
-                                                      <Label layoutX="10.0" layoutY="56.0" text="Rom Alias:" textFill="WHITE" GridPane.rowIndex="3">
-                                                         <font>
-                                                            <Font name="System Bold" size="14.0" />
-                                                         </font>
-                                                      </Label>
-                                                      <Label fx:id="labelRomAlias" layoutX="130.0" layoutY="56.0" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="3">
-                                                         <font>
-                                                            <Font size="14.0" />
-                                                         </font>
-                                                      </Label>
-                                                      <Label fx:id="labelNVOffset" layoutX="130.0" layoutY="78.0" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="4">
-                                                         <font>
-                                                            <Font size="14.0" />
-                                                         </font>
-                                                      </Label>
-                                                      <Label fx:id="labelLastPlayed" layoutX="130.0" layoutY="101.0" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="5">
-                                                         <font>
-                                                            <Font size="14.0" />
-                                                         </font>
-                                                      </Label>
-                                                      <Label fx:id="labelTimesPlayed" layoutX="130.0" layoutY="124.0" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="6">
-                                                         <font>
-                                                            <Font size="14.0" />
-                                                         </font>
-                                                      </Label>
-                                                   </children>
-                                                </GridPane>
-                                             </children>
-                                          </VBox>
-                                       </center>
-                                    </BorderPane>
-                                 </content>
-                              </TitledPane>
-                           </panes>
-                        </Accordion>
-                     </children></VBox>
-               </right>
+               <BorderPane.margin>
+                  <Insets left="24.0" right="24.0" />
+               </BorderPane.margin>
             </BorderPane>
          </center>
       </BorderPane>
    </center>
    <top>
-       <fx:include fx:id="header" source="scene-header.fxml" />
+      <fx:include fx:id="mainToolbar" source="scene-toolbar.fxml" />
    </top>
+   <right>
+      <VBox prefWidth="600.0" styleClass="subpanel" stylesheets="@stylesheet.css" BorderPane.alignment="CENTER">
+         <children>
+            <Accordion fx:id="accordion">
+               <panes>
+                  <TitledPane fx:id="titledPaneMedia" prefWidth="600.0" text="Media">
+                     <content>
+                        <BorderPane>
+                           <center>
+                              <ScrollPane fitToWidth="true" styleClass="accordion-container" stylesheets="@stylesheet.css" BorderPane.alignment="CENTER">
+                                 <content>
+                                    <Pane prefHeight="1070.0" styleClass="accordion-container" stylesheets="@stylesheet.css">
+                                       <children>
+                                          <BorderPane layoutX="158.0" layoutY="566.0" prefHeight="490.0" prefWidth="250.0" styleClass="media-container" stylesheets="@stylesheet.css">
+                                             <bottom>
+                                                <Label text="Playfield" textFill="WHITE" BorderPane.alignment="CENTER" />
+                                             </bottom>
+                                             <top>
+                                                <Button mnemonicParsing="false" onAction="#onMediaViewClick" BorderPane.alignment="TOP_RIGHT">
+                                                   <graphic>
+                                                      <FontIcon iconColor="WHITE" iconLiteral="mdi2e-eye" />
+                                                   </graphic>
+                                                </Button>
+                                             </top>
+                                          </BorderPane>
+                                          <BorderPane fx:id="screenHelp" layoutX="3.0" layoutY="650.0" prefHeight="180.0" prefWidth="150.0" styleClass="media-container" stylesheets="@stylesheet.css">
+                                             <bottom>
+                                                <Label text="Help" textFill="WHITE" BorderPane.alignment="CENTER" />
+                                             </bottom>
+                                             <top>
+                                                <Button mnemonicParsing="false" onAction="#onMediaViewClick" BorderPane.alignment="TOP_RIGHT">
+                                                   <graphic>
+                                                      <FontIcon iconColor="WHITE" iconLiteral="mdi2e-eye" />
+                                                   </graphic>
+                                                   <BorderPane.margin>
+                                                      <Insets />
+                                                   </BorderPane.margin>
+                                                </Button>
+                                             </top>
+                                          </BorderPane>
+                                          <BorderPane fx:id="screenPlayfield" layoutX="158.0" layoutY="594.0" prefHeight="445.0" prefWidth="250.0" stylesheets="@stylesheet.css" />
+                                          <BorderPane fx:id="screenInfo" layoutX="3.0" layoutY="441.0" prefHeight="180.0" prefWidth="150.0" styleClass="media-container" stylesheets="@stylesheet.css">
+                                             <bottom>
+                                                <Label text="Info / Flyer" textFill="WHITE" BorderPane.alignment="CENTER" />
+                                             </bottom>
+                                             <top>
+                                                <Button mnemonicParsing="false" onAction="#onMediaViewClick" BorderPane.alignment="TOP_RIGHT">
+                                                   <graphic>
+                                                      <FontIcon iconColor="WHITE" iconLiteral="mdi2e-eye" />
+                                                   </graphic>
+                                                   <BorderPane.margin>
+                                                      <Insets />
+                                                   </BorderPane.margin>
+                                                </Button>
+                                             </top>
+                                          </BorderPane>
+                                          <BorderPane fx:id="screenDMD" layoutX="157.0" layoutY="437.0" prefHeight="120.0" prefWidth="250.0" styleClass="media-container" stylesheets="@stylesheet.css">
+                                             <bottom>
+                                                <Label text="DMD" textFill="WHITE" BorderPane.alignment="CENTER" />
+                                             </bottom>
+                                             <top>
+                                                <Button mnemonicParsing="false" onAction="#onMediaViewClick" BorderPane.alignment="TOP_RIGHT">
+                                                   <graphic>
+                                                      <FontIcon iconColor="WHITE" iconLiteral="mdi2e-eye" />
+                                                   </graphic>
+                                                   <BorderPane.margin>
+                                                      <Insets />
+                                                   </BorderPane.margin>
+                                                </Button>
+                                             </top>
+                                          </BorderPane>
+                                          <BorderPane fx:id="screenTopper" layoutX="157.0" layoutY="4.0" maxHeight="208.0" prefHeight="208.0" prefWidth="250.0" styleClass="media-container" stylesheets="@stylesheet.css">
+                                             <bottom>
+                                                <Label text="Topper" textFill="WHITE" BorderPane.alignment="CENTER" />
+                                             </bottom>
+                                             <top>
+                                                <Button mnemonicParsing="false" onAction="#onMediaViewClick" BorderPane.alignment="TOP_RIGHT">
+                                                   <graphic>
+                                                      <FontIcon iconColor="WHITE" iconLiteral="mdi2e-eye" />
+                                                   </graphic>
+                                                   <BorderPane.margin>
+                                                      <Insets />
+                                                   </BorderPane.margin>
+                                                </Button>
+                                             </top>
+                                          </BorderPane>
+                                          <BorderPane fx:id="screenBackglass" layoutX="157.0" layoutY="220.0" prefHeight="208.0" prefWidth="250.0" styleClass="media-container" stylesheets="@stylesheet.css">
+                                             <bottom>
+                                                <Label text="Backglass" textFill="WHITE" BorderPane.alignment="CENTER" />
+                                             </bottom>
+                                             <top>
+                                                <Button mnemonicParsing="false" onAction="#onMediaViewClick" BorderPane.alignment="TOP_RIGHT">
+                                                   <graphic>
+                                                      <FontIcon iconColor="WHITE" iconLiteral="mdi2e-eye" />
+                                                   </graphic>
+                                                   <BorderPane.margin>
+                                                      <Insets />
+                                                   </BorderPane.margin>
+                                                </Button>
+                                             </top>
+                                          </BorderPane>
+                                          <BorderPane fx:id="screenLoading" layoutX="411.0" layoutY="234.0" prefHeight="170.0" prefWidth="150.0" styleClass="media-container" stylesheets="@stylesheet.css">
+                                             <bottom>
+                                                <Label text="Loading" textFill="WHITE" BorderPane.alignment="CENTER" />
+                                             </bottom>
+                                             <top>
+                                                <Button mnemonicParsing="false" onAction="#onMediaViewClick" BorderPane.alignment="TOP_RIGHT">
+                                                   <graphic>
+                                                      <FontIcon iconColor="WHITE" iconLiteral="mdi2e-eye" />
+                                                   </graphic>
+                                                   <BorderPane.margin>
+                                                      <Insets />
+                                                   </BorderPane.margin>
+                                                </Button>
+                                             </top>
+                                          </BorderPane>
+                                          <BorderPane fx:id="screenApron" layoutX="3.0" layoutY="234.0" prefHeight="180.0" prefWidth="150.0" styleClass="media-container" stylesheets="@stylesheet.css">
+                                             <bottom>
+                                                <Label text="Apron/Full DMD" textFill="WHITE" BorderPane.alignment="CENTER" />
+                                             </bottom>
+                                             <top>
+                                                <Button mnemonicParsing="false" onAction="#onMediaViewClick" BorderPane.alignment="TOP_RIGHT">
+                                                   <graphic>
+                                                      <FontIcon iconColor="WHITE" iconLiteral="mdi2e-eye" />
+                                                   </graphic>
+                                                   <BorderPane.margin>
+                                                      <Insets />
+                                                   </BorderPane.margin>
+                                                </Button>
+                                             </top>
+                                          </BorderPane>
+                                          <BorderPane fx:id="screenOther2" layoutX="411.0" layoutY="442.0" prefHeight="180.0" prefWidth="150.0" styleClass="media-container" stylesheets="@stylesheet.css">
+                                             <bottom>
+                                                <Label text="Other2" textFill="WHITE" BorderPane.alignment="CENTER" />
+                                             </bottom>
+                                             <top>
+                                                <Button mnemonicParsing="false" onAction="#onMediaViewClick" BorderPane.alignment="TOP_RIGHT">
+                                                   <graphic>
+                                                      <FontIcon iconColor="WHITE" iconLiteral="mdi2e-eye" />
+                                                   </graphic>
+                                                   <BorderPane.margin>
+                                                      <Insets />
+                                                   </BorderPane.margin>
+                                                </Button>
+                                             </top>
+                                          </BorderPane>
+                                          <BorderPane fx:id="screenWheel" layoutX="412.0" layoutY="650.0" prefHeight="180.0" prefWidth="150.0" styleClass="media-container" stylesheets="@stylesheet.css">
+                                             <bottom>
+                                                <Label text="Wheel Image" textFill="WHITE" BorderPane.alignment="CENTER" />
+                                             </bottom>
+                                             <top>
+                                                <Button mnemonicParsing="false" onAction="#onMediaViewClick" BorderPane.alignment="TOP_RIGHT">
+                                                   <graphic>
+                                                      <FontIcon iconColor="WHITE" iconLiteral="mdi2e-eye" />
+                                                   </graphic>
+                                                   <BorderPane.margin>
+                                                      <Insets />
+                                                   </BorderPane.margin>
+                                                </Button>
+                                             </top>
+                                          </BorderPane>
+                                          <BorderPane fx:id="screenAudioLaunch" layoutX="3.0" layoutY="19.0" prefHeight="85.0" prefWidth="150.0" styleClass="media-container" stylesheets="@stylesheet.css">
+                                             <bottom>
+                                                <Label text="Audio Launch" textFill="WHITE" BorderPane.alignment="CENTER">
+                                                   <BorderPane.margin>
+                                                      <Insets top="6.0" />
+                                                   </BorderPane.margin>
+                                                </Label>
+                                             </bottom>
+                                             <top>
+                                                <Button mnemonicParsing="false" onAction="#onPlayClick" BorderPane.alignment="CENTER">
+                                                   <graphic>
+                                                      <FontIcon iconColor="WHITE" iconLiteral="bi-play" iconSize="18" text="" />
+                                                   </graphic>
+                                                   <BorderPane.margin>
+                                                      <Insets top="6.0" />
+                                                   </BorderPane.margin>
+                                                </Button>
+                                             </top>
+                                          </BorderPane>
+                                          <BorderPane fx:id="screenAudio" layoutX="3.0" layoutY="121.0" prefHeight="85.0" prefWidth="150.0" styleClass="media-container" stylesheets="@stylesheet.css">
+                                             <bottom>
+                                                <Label text="Audio" textFill="WHITE" BorderPane.alignment="CENTER">
+                                                   <BorderPane.margin>
+                                                      <Insets top="6.0" />
+                                                   </BorderPane.margin>
+                                                </Label>
+                                             </bottom>
+                                             <top>
+                                                <Button mnemonicParsing="false" onAction="#onPlayClick" BorderPane.alignment="CENTER">
+                                                   <graphic>
+                                                      <FontIcon iconColor="WHITE" iconLiteral="bi-play" iconSize="18" />
+                                                   </graphic>
+                                                   <BorderPane.margin>
+                                                      <Insets top="6.0" />
+                                                   </BorderPane.margin>
+                                                </Button>
+                                             </top>
+                                          </BorderPane>
+                                       </children>
+                                    </Pane>
+                                 </content>
+                              </ScrollPane>
+                           </center>
+                        </BorderPane>
+                     </content>
+                  </TitledPane>
+                  <TitledPane expanded="false" prefWidth="600.0" text="Media Settings">
+                     <content>
+                        <BorderPane prefHeight="200.0" prefWidth="200.0">
+                           <center>
+                              <VBox prefHeight="200.0" prefWidth="100.0" BorderPane.alignment="CENTER">
+                                 <children>
+                                    <Label text="Table Volume">
+                                       <font>
+                                          <Font size="14.0" />
+                                       </font>
+                                    </Label>
+                                    <Slider fx:id="volumeSlider" value="100.0">
+                                       <VBox.margin>
+                                          <Insets top="6.0" />
+                                       </VBox.margin>
+                                    </Slider>
+                                 </children>
+                              </VBox>
+                           </center>
+                           <padding>
+                              <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
+                           </padding>
+                        </BorderPane>
+                     </content>
+                  </TitledPane>
+                  <TitledPane layoutX="10.0" layoutY="104.0" prefWidth="600.0" text="DirectB2S">
+                     <content>
+                        <VBox prefHeight="200.0" prefWidth="100.0">
+                           <children>
+                              <TilePane alignment="CENTER" prefHeight="200.0" prefWidth="200.0" styleClass="thumbnail-preview">
+                                 <children>
+                                    <ImageView fx:id="rawDirectB2SImage" fitHeight="350.0" fitWidth="450.0" pickOnBounds="true" preserveRatio="true" />
+                                 </children>
+                              </TilePane>
+                              <BorderPane prefWidth="200.0">
+                                 <left>
+                                    <Label fx:id="resolutionLabel" text="Label" BorderPane.alignment="CENTER" />
+                                 </left>
+                                 <right>
+                                    <Button fx:id="openDirectB2SImageButton" mnemonicParsing="false" onAction="#onOpenDirectB2SBackground" BorderPane.alignment="CENTER">
+                                       <graphic>
+                                          <FontIcon iconColor="WHITE" iconLiteral="mdi2e-eye" />
+                                       </graphic>
+                                    </Button>
+                                 </right>
+                                 <opaqueInsets>
+                                    <Insets />
+                                 </opaqueInsets>
+                                 <VBox.margin>
+                                    <Insets top="6.0" />
+                                 </VBox.margin>
+                              </BorderPane>
+                           </children>
+                        </VBox>
+                     </content>
+                  </TitledPane>
+                  <TitledPane prefHeight="750.0" prefWidth="600.0" text="Highscore">
+                     <content>
+                        <BorderPane prefHeight="200.0" prefWidth="200.0">
+                           <center>
+                              <TextArea fx:id="highscoreTextArea" prefHeight="400.0" BorderPane.alignment="CENTER">
+                                 <BorderPane.margin>
+                                    <Insets bottom="6.0" left="6.0" right="6.0" top="6.0" />
+                                 </BorderPane.margin>
+                              </TextArea>
+                           </center>
+                        </BorderPane>
+                     </content>
+                  </TitledPane>
+                  <TitledPane expanded="false" prefHeight="300.0" prefWidth="600.0" text="Table Metadata">
+                     <content>
+                        <BorderPane prefWidth="598.0">
+                           <padding>
+                              <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
+                           </padding>
+                           <center>
+                              <VBox prefHeight="250.0" prefWidth="574.0" BorderPane.alignment="CENTER">
+                                 <children>
+                                    <GridPane prefHeight="242.0" prefWidth="574.0">
+                                      <columnConstraints>
+                                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="282.199951171875" minWidth="10.0" prefWidth="120.0000244140625" />
+                                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="460.800048828125" minWidth="10.0" prefWidth="455.1999755859375" />
+                                      </columnConstraints>
+                                      <rowConstraints>
+                                          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                      </rowConstraints>
+                                       <children>
+                                          <Label text="Table Filename:" textFill="WHITE" GridPane.rowIndex="1">
+                                             <font>
+                                                <Font name="System Bold" size="14.0" />
+                                             </font>
+                                          </Label>
+                                          <Label layoutX="10.0" layoutY="31.0" text="Rom Name:" textFill="WHITE" GridPane.rowIndex="2">
+                                             <font>
+                                                <Font name="System Bold" size="14.0" />
+                                             </font>
+                                          </Label>
+                                          <Label layoutX="10.0" layoutY="45.0" text="NVOffset:" textFill="WHITE" GridPane.rowIndex="4">
+                                             <font>
+                                                <Font name="System Bold" size="14.0" />
+                                             </font>
+                                          </Label>
+                                          <Label layoutX="10.0" layoutY="76.0" text="Times Played:" textFill="WHITE" GridPane.rowIndex="6">
+                                             <font>
+                                                <Font name="System Bold" size="14.0" />
+                                             </font>
+                                          </Label>
+                                          <Label layoutX="10.0" layoutY="103.0" text="Last Played" textFill="WHITE" GridPane.rowIndex="5">
+                                             <font>
+                                                <Font name="System Bold" size="14.0" />
+                                             </font>
+                                          </Label>
+                                          <Label layoutX="10.0" layoutY="38.0" text="ID:" textFill="WHITE">
+                                             <font>
+                                                <Font name="System Bold" size="14.0" />
+                                             </font>
+                                          </Label>
+                                          <Label fx:id="labelId" textFill="WHITE" GridPane.columnIndex="1">
+                                             <font>
+                                                <Font size="14.0" />
+                                             </font>
+                                          </Label>
+                                          <Label fx:id="labelFilename" layoutX="130.0" layoutY="12.0" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                                             <font>
+                                                <Font size="14.0" />
+                                             </font>
+                                          </Label>
+                                          <Label fx:id="labelRom" layoutX="130.0" layoutY="38.0" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                                             <font>
+                                                <Font size="14.0" />
+                                             </font>
+                                          </Label>
+                                          <Label layoutX="10.0" layoutY="56.0" text="Rom Alias:" textFill="WHITE" GridPane.rowIndex="3">
+                                             <font>
+                                                <Font name="System Bold" size="14.0" />
+                                             </font>
+                                          </Label>
+                                          <Label fx:id="labelRomAlias" layoutX="130.0" layoutY="56.0" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="3">
+                                             <font>
+                                                <Font size="14.0" />
+                                             </font>
+                                          </Label>
+                                          <Label fx:id="labelNVOffset" layoutX="130.0" layoutY="78.0" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="4">
+                                             <font>
+                                                <Font size="14.0" />
+                                             </font>
+                                          </Label>
+                                          <Label fx:id="labelLastPlayed" layoutX="130.0" layoutY="101.0" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="5">
+                                             <font>
+                                                <Font size="14.0" />
+                                             </font>
+                                          </Label>
+                                          <Label fx:id="labelTimesPlayed" layoutX="130.0" layoutY="124.0" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="6">
+                                             <font>
+                                                <Font size="14.0" />
+                                             </font>
+                                          </Label>
+                                       </children>
+                                    </GridPane>
+                                 </children>
+                              </VBox>
+                           </center>
+                        </BorderPane>
+                     </content>
+                  </TitledPane>
+               </panes>
+            </Accordion>
+         </children>
+      </VBox>
+   </right>
 </BorderPane>

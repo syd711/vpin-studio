@@ -124,9 +124,6 @@ public class TablesController implements Initializable, StudioFXController {
   private Label labelTableCount;
 
   @FXML
-  private Node main;
-
-  @FXML
   private Accordion accordion;
 
   @FXML

@@ -1,8 +1,5 @@
 package de.mephisto.vpin.ui;
 
-import de.mephisto.vpin.ui.DashboardController;
-import de.mephisto.vpin.ui.StudioFXController;
-import de.mephisto.vpin.ui.util.TransitionUtil;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import eu.hansolo.tilesfx.Tile;
 import eu.hansolo.tilesfx.TileBuilder;
@@ -12,11 +9,9 @@ import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.paint.Color;
-import javafx.scene.paint.Paint;
 import javafx.scene.text.TextAlignment;
 
 import java.io.IOException;
@@ -28,6 +23,7 @@ public class NavigationController implements Initializable {
   private BorderPane avatarPane;
 
   public static StudioFXController activeController;
+  public static StudioFXController navigationController;
 
   private static Parent root;
 
@@ -37,40 +33,40 @@ public class NavigationController implements Initializable {
 
   @FXML
   private void onDashboardClick(ActionEvent event) throws IOException {
-    this.loadScene(event, "scene-dashboard.fxml");
+    this.loadScreen(event, "scene-dashboard.fxml");
   }
 
   @FXML
   private void onHighscoreCardsClick(ActionEvent event) throws IOException {
-    this.loadScene(event, "scene-highscoreCards.fxml");
+    this.loadScreen(event, "scene-highscoreCards.fxml");
   }
 
   @FXML
   private void onPreferencesClicked(ActionEvent event) throws IOException {
-    this.loadScene(event, "scene-preferences.fxml");
+    this.loadScreen(event, "scene-preferences.fxml");
   }
 
   @FXML
   private void onTablesClick(ActionEvent event) throws IOException {
-    this.loadScene(event, "scene-tables.fxml");
+    this.loadScreen(event, "scene-tables.fxml");
   }
 
-  private void loadScene(@NonNull ActionEvent event, @NonNull String name) throws IOException {
-    if(activeController != null) {
+  private void loadScreen(@NonNull ActionEvent event, @NonNull String name) throws IOException {
+    if (activeController != null) {
       activeController.dispose();
     }
 
     FXMLLoader loader = new FXMLLoader(getClass().getResource(name));
     root = loader.load();
     activeController = loader.<StudioFXController>getController();
-    Scene scene = ((Node) event.getSource()).getScene();
-    scene.setFill(Paint.valueOf("#212529"));
-    scene.setRoot(root);
+
+    Node lookup = VPinStudioApplication.stage.getScene().lookup("#main");
+    BorderPane main = (BorderPane) lookup;
+    main.setCenter(root);
   }
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
-
     Tile avatar = TileBuilder.create()
         .skinType(Tile.SkinType.IMAGE)
         .prefSize(300, 300)

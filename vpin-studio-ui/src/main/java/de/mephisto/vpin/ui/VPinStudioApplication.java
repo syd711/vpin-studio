@@ -22,9 +22,9 @@ public class VPinStudioApplication extends Application {
   @Override
   public void start(Stage stage) throws IOException {
     VPinStudioApplication.stage = stage;
-    FXMLLoader loader = new FXMLLoader(getClass().getResource("scene-tables.fxml"));
+    FXMLLoader loader = new FXMLLoader(getClass().getResource("scene-main.fxml"));
     Parent root = loader.load();
-    NavigationController.activeController = loader.<StudioFXController>getController();
+    NavigationController.navigationController = loader.<StudioFXController>getController();
 
     Scene scene = new Scene(root, 1920, 1080);
     scene.setFill(Paint.valueOf("#212529"));
