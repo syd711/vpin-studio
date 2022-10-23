@@ -5,9 +5,10 @@ import de.mephisto.vpin.restclient.VPinStudioClient;
 import de.mephisto.vpin.restclient.representations.GameMediaItemRepresentation;
 import de.mephisto.vpin.restclient.representations.GameMediaRepresentation;
 import de.mephisto.vpin.restclient.representations.GameRepresentation;
+import de.mephisto.vpin.ui.NavigationController;
 import de.mephisto.vpin.ui.StudioFXController;
 import de.mephisto.vpin.ui.util.BindingUtil;
-import de.mephisto.vpin.ui.util.TextUtil;
+import de.mephisto.vpin.ui.util.ValidationTexts;
 import de.mephisto.vpin.ui.util.WidgetFactory;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
@@ -20,6 +21,7 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.Cursor;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -47,9 +49,8 @@ import java.awt.*;
 import java.io.*;
 import java.net.URI;
 import java.net.URL;
-import java.util.ArrayList;
+import java.util.*;
 import java.util.List;
-import java.util.ResourceBundle;
 
 public class TablesController implements Initializable, StudioFXController {
   private final static Logger LOG = LoggerFactory.getLogger(TablesController.class);
@@ -77,6 +78,9 @@ public class TablesController implements Initializable, StudioFXController {
 
   @FXML
   private TableColumn<GameRepresentation, String> columnPUPPack;
+
+  @FXML
+  private TableColumn<GameRepresentation, String> columnHsFile;
 
   @FXML
   private TableView<GameRepresentation> tableView;
@@ -151,6 +155,9 @@ public class TablesController implements Initializable, StudioFXController {
   private Label labelTimesPlayed;
 
   @FXML
+  private Label labelHSFilename;
+
+  @FXML
   private Slider volumeSlider;
 
   @FXML
@@ -170,7 +177,6 @@ public class TablesController implements Initializable, StudioFXController {
 
   @FXML
   private Label resolutionLabel;
-
 
   // Add a public no-args constructor
   public TablesController() {
@@ -281,11 +287,54 @@ public class TablesController implements Initializable, StudioFXController {
   }
 
   @FXML
-  private void onTableEdit() {
+  private void onRomEdit() {
     GameRepresentation gameRepresentation = tableView.getSelectionModel().selectedItemProperty().get();
-    String romName = WidgetFactory.showInputDialog("Enter ROM Name", gameRepresentation.getRom());
+    String romName = WidgetFactory.showInputDialog("Enter ROM Name", null, gameRepresentation.getRom());
     if (romName != null) {
       gameRepresentation.setRom(romName);
+      client.saveGame(gameRepresentation);
+      this.onReload();
+    }
+  }
+
+  @FXML
+  private void onValidate() {
+    GameRepresentation game = tableView.getSelectionModel().selectedItemProperty().get();
+    Optional<ButtonType> result = WidgetFactory.showConfirmation("Re-validate table '" + game.getGameDisplayName() + "?\nThis will reset the dismissed validations for this table too.", null);
+    if(result.isPresent() && result.get().equals(ButtonType.OK)) {
+      game.setIgnoredValidations(null);
+      client.saveGame(game);
+      onReload();
+    }
+  }
+
+  @FXML
+  private void onDismiss() {
+    GameRepresentation game = tableView.getSelectionModel().selectedItemProperty().get();
+    Optional<ButtonType> result = WidgetFactory.showConfirmation("Ignore this warning for future validations of table '" + game.getGameDisplayName() + "?", null);
+    if(result.isPresent() && result.get().equals(ButtonType.OK)) {
+      String validationState = String.valueOf(game.getValidationState());
+      String ignoredValidations = game.getIgnoredValidations();
+      if(ignoredValidations == null) {
+        ignoredValidations = "";
+      }
+      List<String> gameIgnoreList = new ArrayList<>(Arrays.asList(ignoredValidations.split(",")));
+      if(!gameIgnoreList.contains(validationState)) {
+        gameIgnoreList.add(validationState);
+      }
+
+      game.setIgnoredValidations(StringUtils.join(gameIgnoreList, ","));
+      client.saveGame(game);
+      onReload();
+    }
+  }
+
+  @FXML
+  private void onHsFileNameEdit() {
+    GameRepresentation gameRepresentation = tableView.getSelectionModel().selectedItemProperty().get();
+    String fs = WidgetFactory.showInputDialog("EM Highscore Filename", "Enter the name of the highscore file for this table.\nThe file is located in the 'User' folder.", gameRepresentation.getHsFileName());
+    if (fs != null) {
+      gameRepresentation.setHsFileName(fs);
       client.saveGame(gameRepresentation);
       this.onReload();
     }
@@ -295,10 +344,16 @@ public class TablesController implements Initializable, StudioFXController {
   private void onReload() {
     GameRepresentation gameRepresentation = tableView.getSelectionModel().selectedItemProperty().get();
     List<GameRepresentation> games = client.getGames();
-    data = FXCollections.observableList(games);
+    List<GameRepresentation> filtered = new ArrayList<>();
+    String filterValue = textfieldSearch.textProperty().getValue();
+    for (GameRepresentation game : games) {
+      if (game.getGameDisplayName().toLowerCase().contains(filterValue.toLowerCase())) {
+        filtered.add(game);
+      }
+    }
+    data = FXCollections.observableList(filtered);
     tableView.setItems(data);
     tableView.refresh();
-
     tableView.getSelectionModel().select(gameRepresentation);
   }
 
@@ -319,7 +374,8 @@ public class TablesController implements Initializable, StudioFXController {
           filtered.add(game);
         }
       }
-      data.setAll(filtered);
+      data = FXCollections.observableArrayList(filtered);
+      tableView.setItems(data);
     });
   }
 
@@ -341,9 +397,17 @@ public class TablesController implements Initializable, StudioFXController {
       GameRepresentation value = cellData.getValue();
       String rom = value.getRom();
       if (!StringUtils.isEmpty(value.getOriginalRom())) {
-        return new SimpleStringProperty(value.getOriginalRom());
+        rom = value.getOriginalRom();
       }
-      return new SimpleStringProperty(rom);
+
+      if(value.isRomExists()) {
+        return new SimpleStringProperty(rom);
+      }
+
+      Label label = new Label(rom);
+      String color = "#FF3333";
+      label.setStyle("-fx-font-color: " + color + ";-fx-text-fill: " + color + ";-fx-font-weight: bold;");
+      return new SimpleObjectProperty(label);
     });
 
     columnRomAlias.setCellValueFactory(cellData -> {
@@ -392,18 +456,33 @@ public class TablesController implements Initializable, StudioFXController {
       if (validationState > 0) {
         FontIcon fontIcon = new FontIcon();
         fontIcon.setIconSize(18);
+        fontIcon.setCursor(Cursor.HAND);
         fontIcon.setIconColor(Paint.valueOf("#FF3333"));
         fontIcon.setIconLiteral("bi-exclamation-circle");
         return new SimpleObjectProperty(fontIcon);
       }
-      return new SimpleStringProperty("");
+
+      FontIcon fontIcon = new FontIcon();
+      fontIcon.setIconSize(18);
+      fontIcon.setIconColor(Paint.valueOf("#66FF66"));
+      fontIcon.setIconLiteral("bi-check-circle");
+      return new SimpleObjectProperty(fontIcon);
+    });
+
+    columnHsFile.setCellValueFactory(cellData -> {
+      GameRepresentation value = cellData.getValue();
+      String hsFileName = value.getHsFileName();
+      return new SimpleStringProperty(hsFileName);
     });
 
 
     tableView.setItems(data);
     tableView.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
-      if (newSelection != null) {
-        refreshView(newSelection);
+      if (newSelection != null) {//TODO
+        NavigationController.setBreadCrumb(Arrays.asList("Tables", newSelection.getGameDisplayName()));
+      }
+      else {
+        NavigationController.setBreadCrumb(Arrays.asList("Tables"));
       }
     });
 
@@ -464,12 +543,13 @@ public class TablesController implements Initializable, StudioFXController {
     labelFilename.setText(game.getGameFileName());
     labelLastPlayed.setText(game.getLastPlayed() != null ? game.getLastPlayed().toString() : "-");
     labelTimesPlayed.setText(String.valueOf(game.getNumberPlays()));
+    labelHSFilename.setText(game.getHsFileName());
 
     refreshDirectB2SPreview(game);
 
     validationError.setVisible(game.getValidationState() > 0);
     if (game.getValidationState() > 0) {
-      validationErrorLabel.setText(TextUtil.getValidationMessage(game));
+      validationErrorLabel.setText(ValidationTexts.getValidationMessage(game));
     }
 
     if (titledPaneMedia.isExpanded()) {
@@ -483,6 +563,8 @@ public class TablesController implements Initializable, StudioFXController {
     else {
       highscoreTextArea.setText("");
     }
+
+    NavigationController.setBreadCrumb(Arrays.asList("Tables"));
   }
 
   private void refreshDirectB2SPreview(@Nullable GameRepresentation game) {

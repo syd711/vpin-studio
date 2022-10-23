@@ -22,7 +22,7 @@ public class VPinStudioClient implements ObservedPropertyChangeListener {
 
   private final static String API = "api/v1/";
 
-  private Map<String, ObservedProperties> observedProperties = new HashMap<>();
+  private static Map<String, ObservedProperties> observedProperties = new HashMap<>();
 
   private static Map<String, byte[]> imageCache = new HashMap<>();
 
@@ -32,10 +32,22 @@ public class VPinStudioClient implements ObservedPropertyChangeListener {
   }
 
   public String getURL(@NonNull String segment) {
-    if(!segment.startsWith("http") && !segment.contains(API)) {
+    if (!segment.startsWith("http") && !segment.contains(API)) {
       return RestClient.getInstance().getBaseUrl() + API + segment;
     }
     return segment;
+  }
+
+  public String getStringPreference(String key) {
+    return RestClient.getInstance().get(API + "preferences/" + key, String.class);
+  }
+
+  public boolean getBooleanPreference(String key) {
+    return RestClient.getInstance().get(API + "preferences/" + key, Boolean.class);
+  }
+
+  public boolean setPreferences(Map<String, Object> values) {
+    return RestClient.getInstance().put(API + "preferences", values);
   }
 
   public GameRepresentation getGame(int id) {
@@ -125,7 +137,7 @@ public class VPinStudioClient implements ObservedPropertyChangeListener {
   }
 
   public void setBundleProperty(String bundle, String key, String value) {
-    Map<String, String> model = new HashMap<>();
+    Map<String, Object> model = new HashMap<>();
     model.put(key, value);
     RestClient.getInstance().put(API + "properties/" + bundle, model);
   }

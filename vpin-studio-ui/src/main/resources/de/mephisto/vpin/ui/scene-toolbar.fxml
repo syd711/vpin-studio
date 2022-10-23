@@ -8,7 +8,6 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.text.Font?>
 
-
 <BorderPane xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.ToolbarController">
    <center>
       <BorderPane fx:id="mainToolbar" stylesheets="@stylesheet.css">
@@ -42,7 +41,7 @@
             <Insets bottom="24.0" left="12.0" />
          </BorderPane.margin>
          <left>
-            <Label text="/" textFill="WHITE" BorderPane.alignment="CENTER">
+            <Label fx:id="breadcrumb" styleClass="breadcrumb" text="/" textFill="WHITE" BorderPane.alignment="CENTER">
                <font>
                   <Font name="System Bold" size="18.0" />
                </font>

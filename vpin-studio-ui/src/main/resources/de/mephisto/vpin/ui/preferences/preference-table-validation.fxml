@@ -10,9 +10,9 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane stylesheets="@../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.preferences.TablePreferencesController">
+<BorderPane styleClass="base-component" stylesheets="@../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.preferences.TablePreferencesController">
    <top>
-      <VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" styleClass="subpanel" stylesheets="@stylesheet.css" BorderPane.alignment="TOP_LEFT">
+      <VBox fx:id="preferenceList" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" styleClass="subpanel" stylesheets="@stylesheet.css" BorderPane.alignment="TOP_LEFT">
          <children>
             <Label styleClass="preference-title" text="Table Validation" textFill="WHITE" />
             <Label styleClass="preference-subtitle" text="Media Validation">
@@ -51,7 +51,7 @@
                         <Font size="14.0" />
                      </font>
                   </Label>
-                  <CheckBox mnemonicParsing="false" onAction="#onPreferenceChange" text="CheckBox" GridPane.columnIndex="1" />
+                  <CheckBox fx:id="pref_30" mnemonicParsing="false" onAction="#onPreferenceChange" GridPane.columnIndex="1" />
                   <Label layoutX="10.0" layoutY="15.0" prefHeight="20.0" styleClass="preference-label" text="&quot;Audio Launch&quot; Media" textFill="WHITE" GridPane.rowIndex="1">
                      <font>
                         <Font size="14.0" />
@@ -107,17 +107,17 @@
                         <Font size="14.0" />
                      </font>
                   </Label>
-                  <CheckBox layoutX="364.0" layoutY="14.0" mnemonicParsing="false" onAction="#onPreferenceChange" text="CheckBox" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-                  <CheckBox layoutX="364.0" layoutY="40.0" mnemonicParsing="false" onAction="#onPreferenceChange" text="CheckBox" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-                  <CheckBox layoutX="364.0" layoutY="64.0" mnemonicParsing="false" onAction="#onPreferenceChange" text="CheckBox" GridPane.columnIndex="1" GridPane.rowIndex="3" />
-                  <CheckBox layoutX="364.0" layoutY="90.0" mnemonicParsing="false" onAction="#onPreferenceChange" text="CheckBox" GridPane.columnIndex="1" GridPane.rowIndex="4" />
-                  <CheckBox layoutX="364.0" layoutY="116.0" mnemonicParsing="false" onAction="#onPreferenceChange" text="CheckBox" GridPane.columnIndex="1" GridPane.rowIndex="5" />
-                  <CheckBox layoutX="364.0" layoutY="141.0" mnemonicParsing="false" onAction="#onPreferenceChange" text="CheckBox" GridPane.columnIndex="1" GridPane.rowIndex="6" />
-                  <CheckBox layoutX="364.0" layoutY="166.0" mnemonicParsing="false" onAction="#onPreferenceChange" text="CheckBox" GridPane.columnIndex="1" GridPane.rowIndex="7" />
-                  <CheckBox layoutX="364.0" layoutY="192.0" mnemonicParsing="false" onAction="#onPreferenceChange" text="CheckBox" GridPane.columnIndex="1" GridPane.rowIndex="9" />
-                  <CheckBox layoutX="10.0" layoutY="14.0" mnemonicParsing="false" onAction="#onPreferenceChange" text="CheckBox" GridPane.columnIndex="1" GridPane.rowIndex="8" />
-                  <CheckBox layoutX="364.0" layoutY="243.0" mnemonicParsing="false" onAction="#onPreferenceChange" text="CheckBox" GridPane.columnIndex="1" GridPane.rowIndex="10" />
-                  <CheckBox layoutX="364.0" layoutY="268.0" mnemonicParsing="false" onAction="#onPreferenceChange" text="CheckBox" GridPane.columnIndex="1" GridPane.rowIndex="11" />
+                  <CheckBox fx:id="pref_31" layoutX="364.0" layoutY="14.0" mnemonicParsing="false" onAction="#onPreferenceChange" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                  <CheckBox fx:id="pref_32" layoutX="364.0" layoutY="40.0" mnemonicParsing="false" onAction="#onPreferenceChange" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                  <CheckBox fx:id="pref_33" layoutX="364.0" layoutY="64.0" mnemonicParsing="false" onAction="#onPreferenceChange" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                  <CheckBox fx:id="pref_34" layoutX="364.0" layoutY="90.0" mnemonicParsing="false" onAction="#onPreferenceChange" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+                  <CheckBox fx:id="pref_35" layoutX="364.0" layoutY="116.0" mnemonicParsing="false" onAction="#onPreferenceChange" GridPane.columnIndex="1" GridPane.rowIndex="5" />
+                  <CheckBox fx:id="pref_36" layoutX="364.0" layoutY="141.0" mnemonicParsing="false" onAction="#onPreferenceChange" GridPane.columnIndex="1" GridPane.rowIndex="6" />
+                  <CheckBox fx:id="pref_37" layoutX="364.0" layoutY="166.0" mnemonicParsing="false" onAction="#onPreferenceChange" GridPane.columnIndex="1" GridPane.rowIndex="7" />
+                  <CheckBox fx:id="pref_39" layoutX="364.0" layoutY="192.0" mnemonicParsing="false" onAction="#onPreferenceChange" GridPane.columnIndex="1" GridPane.rowIndex="9" />
+                  <CheckBox fx:id="pref_38" layoutX="10.0" layoutY="14.0" mnemonicParsing="false" onAction="#onPreferenceChange" GridPane.columnIndex="1" GridPane.rowIndex="8" />
+                  <CheckBox fx:id="pref_40" layoutX="364.0" layoutY="243.0" mnemonicParsing="false" onAction="#onPreferenceChange" GridPane.columnIndex="1" GridPane.rowIndex="10" />
+                  <CheckBox fx:id="pref_41" layoutX="364.0" layoutY="268.0" mnemonicParsing="false" onAction="#onPreferenceChange" GridPane.columnIndex="1" GridPane.rowIndex="11" />
                </children>
                <opaqueInsets>
                   <Insets />
@@ -128,12 +128,13 @@
             </GridPane>
             <Label layoutX="34.0" layoutY="66.0" styleClass="preference-subtitle" text="Configuration Validation" />
             <Label layoutX="34.0" layoutY="104.0" styleClass="preference-description" text="If enabled the validator will check for configuration issues regarding highscore generation." textFill="WHITE" />
-            <GridPane alignment="BASELINE_RIGHT" layoutX="34.0" layoutY="130.0" prefHeight="150.0" prefWidth="708.0">
+            <GridPane alignment="BASELINE_RIGHT" layoutX="34.0" layoutY="130.0" prefHeight="180.0" prefWidth="708.0">
                <columnConstraints>
                   <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
                   <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
                </columnConstraints>
                <rowConstraints>
+                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                   <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                   <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                   <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
@@ -149,25 +150,31 @@
                         <Insets />
                      </GridPane.margin>
                   </Label>
-                  <CheckBox mnemonicParsing="false" onAction="#onPreferenceChange" text="CheckBox" GridPane.columnIndex="1" />
-                  <Label layoutX="10.0" layoutY="15.0" prefHeight="20.0" styleClass="preference-label" text="Suggest NVOffset for duplicate ROMs" textFill="WHITE" GridPane.rowIndex="1">
+                  <CheckBox fx:id="pref_1" mnemonicParsing="false" onAction="#onPreferenceChange" GridPane.columnIndex="1" />
+                  <Label layoutX="10.0" layoutY="15.0" prefHeight="20.0" styleClass="preference-label" text="Suggest NVOffset for duplicate ROMs" textFill="WHITE" GridPane.rowIndex="2">
                      <font>
                         <Font size="14.0" />
                      </font>
                   </Label>
-                  <Label layoutX="10.0" layoutY="43.0" prefHeight="20.0" styleClass="preference-label" text="DirectB2S or Pup Pack required" textFill="WHITE" GridPane.rowIndex="2">
+                  <Label layoutX="10.0" layoutY="43.0" prefHeight="20.0" styleClass="preference-label" text="DirectB2S or Pup Pack required" textFill="WHITE" GridPane.rowIndex="3">
                      <font>
                         <Font size="14.0" />
                      </font>
                   </Label>
-                  <Label layoutX="10.0" layoutY="73.0" prefHeight="20.0" styleClass="preference-label" text="Check for Highscore files" textFill="WHITE" GridPane.rowIndex="3">
+                  <Label layoutX="10.0" layoutY="73.0" prefHeight="20.0" styleClass="preference-label" text="Check for Highscore files" textFill="WHITE" GridPane.rowIndex="4">
                      <font>
                         <Font size="14.0" />
                      </font>
                   </Label>
-                  <CheckBox layoutX="364.0" layoutY="14.0" mnemonicParsing="false" onAction="#onPreferenceChange" text="CheckBox" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-                  <CheckBox layoutX="364.0" layoutY="40.0" mnemonicParsing="false" onAction="#onPreferenceChange" text="CheckBox" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-                  <CheckBox layoutX="364.0" layoutY="64.0" mnemonicParsing="false" onAction="#onPreferenceChange" text="CheckBox" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                  <CheckBox fx:id="pref_2" layoutX="364.0" layoutY="14.0" mnemonicParsing="false" onAction="#onPreferenceChange" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                  <CheckBox fx:id="pref_20" layoutX="364.0" layoutY="40.0" mnemonicParsing="false" onAction="#onPreferenceChange" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                  <CheckBox fx:id="pref_60" layoutX="364.0" layoutY="64.0" mnemonicParsing="false" onAction="#onPreferenceChange" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+                  <Label layoutX="10.0" layoutY="9.0" prefHeight="18.0" styleClass="preference-label" text="Validate ROM File" textFill="WHITE" GridPane.rowIndex="1">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                  </Label>
+                  <CheckBox fx:id="pref_3" layoutX="364.0" layoutY="13.0" mnemonicParsing="false" onAction="#onPreferenceChange" GridPane.columnIndex="1" GridPane.rowIndex="1" />
                </children>
                <VBox.margin>
                   <Insets top="6.0" />

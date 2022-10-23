@@ -68,7 +68,6 @@ public class RestClient implements ClientHttpRequestInterceptor {
 
   public <T> T get(String path, Class<T> entityType, Map<String,?> urlVariables) {
     String url = baseUrl + path;
-    LOG.info("REST: " + url);
     return restTemplate.getForObject(url, entityType, urlVariables);
   }
 
@@ -86,7 +85,7 @@ public class RestClient implements ClientHttpRequestInterceptor {
     return restTemplate.postForObject(url, entity, entityType);
   }
 
-  public Boolean put(String url, Map<String, String> model) {
+  public Boolean put(String url, Map<String, Object> model) {
     HttpEntity<Map> entity = new HttpEntity<>(model);
     return exchange(url, HttpMethod.PUT, entity, Boolean.class);
   }

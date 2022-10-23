@@ -51,26 +51,32 @@ public class GameService implements InitializingBean {
 
   @SuppressWarnings("unused")
   public List<Game> getGames() {
+    long start = System.currentTimeMillis();
     List<Game> games = pinUPConnector.getGames();
+    LOG.info("Game fetch took " + (System.currentTimeMillis() - start) + "ms.");
+    start = System.currentTimeMillis();
     for (Game game : games) {
-      loadGameDetails(game);
+      loadGameDetails(game, games);
     }
+    LOG.info("Game details fetch took " + (System.currentTimeMillis() - start) + "ms.");
     return games;
   }
 
   @SuppressWarnings("unused")
   public Game getGame(int id) {
     Game game = pinUPConnector.getGame(id);
-    loadGameDetails(game);
+    List<Game> games = pinUPConnector.getGames();
+    loadGameDetails(game, games);
     return game;
   }
 
   public boolean scanGame(int gameId) {
     Game game = getGame(gameId);
+    List<Game> games = pinUPConnector.getGames();
     ScanResult scanResult = romService.scanGameFile(game);
 
     gameDetailsRepository.findByPupId(gameId);
-    GameDetails gameDetails = loadGameDetails(game);
+    GameDetails gameDetails = loadGameDetails(game, games);
     if (gameDetails != null) {
       gameDetails.setRomName(scanResult.getRom());
       gameDetails.setNvOffset(scanResult.getNvOffset());
@@ -125,7 +131,7 @@ public class GameService implements InitializingBean {
   }
 
   @Nullable
-  private GameDetails loadGameDetails(@NonNull Game game) {
+  private GameDetails loadGameDetails(@NonNull Game game, @NonNull List<Game> games) {
     try {
       GameDetails gameDetails = gameDetailsRepository.findByPupId(game.getId());
       if (gameDetails == null) {
@@ -141,7 +147,6 @@ public class GameService implements InitializingBean {
         game.setRom(gameDetails.getRomName());
       }
       game.setOriginalRom(romService.getOriginalRom(game.getRom()));
-      game.setValidationState(gameValidator.validate(game));
       game.setHsFileName(gameDetails.getHsFileName());
       game.setIgnoredValidations(gameDetails.getIgnoredValidations());
 
@@ -149,6 +154,9 @@ public class GameService implements InitializingBean {
       if (highscore != null) {
         game.setRawHighscore(highscore.getRaw());
       }
+
+      //run validations at the end!!!
+      game.setValidationState(gameValidator.validate(game, games));
       return gameDetails;
     } catch (Exception e) {
       LOG.error("Failed to load details for " + game + ": " + e.getMessage(), e);
@@ -159,6 +167,8 @@ public class GameService implements InitializingBean {
   public Game save(Game game) {
     GameDetails gameDetails = gameDetailsRepository.findByPupId(game.getId());
     gameDetails.setRomName(game.getRom());
+    gameDetails.setHsFileName(game.getHsFileName());
+    gameDetails.setIgnoredValidations(game.getIgnoredValidations());
     gameDetailsRepository.saveAndFlush(gameDetails);
 
     Game original = getGame(game.getId());

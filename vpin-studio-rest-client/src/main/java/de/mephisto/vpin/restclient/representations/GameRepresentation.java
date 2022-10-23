@@ -28,6 +28,33 @@ public class GameRepresentation {
   private int validationState;
   private int volume;
   private String rawHighscore;
+  private String hsFileName;
+  private boolean romExists;
+  private String ignoredValidations;
+
+  public String getIgnoredValidations() {
+    return ignoredValidations;
+  }
+
+  public void setIgnoredValidations(String ignoredValidations) {
+    this.ignoredValidations = ignoredValidations;
+  }
+
+  public boolean isRomExists() {
+    return romExists;
+  }
+
+  public void setRomExists(boolean romExists) {
+    this.romExists = romExists;
+  }
+
+  public String getHsFileName() {
+    return hsFileName;
+  }
+
+  public void setHsFileName(String hsFileName) {
+    this.hsFileName = hsFileName;
+  }
 
   public String getRawHighscore() {
     return rawHighscore;

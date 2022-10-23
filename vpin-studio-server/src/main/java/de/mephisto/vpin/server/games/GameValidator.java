@@ -1,21 +1,33 @@
 package de.mephisto.vpin.server.games;
 
+import de.mephisto.vpin.server.jpa.Preferences;
+import de.mephisto.vpin.server.jpa.PreferencesRepository;
 import de.mephisto.vpin.server.popper.PinUPConnector;
 import de.mephisto.vpin.server.popper.PopperScreen;
+import de.mephisto.vpin.server.preferences.PreferencesService;
 import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
+import java.util.Arrays;
 import java.util.List;
 
+/**
+ * See ValidationTexts
+ */
 @Service
-public class GameValidator {
+public class GameValidator implements InitializingBean {
   public static int CODE_NO_ROM = 1;
   public static int CODE_DUPLICATE_ROM = 2;
+  public static int CODE_ROM_NOT_EXISTS = 3;
 
   public static int CODE_NO_DIRECTB2S_OR_PUPPACK = 20;
+
+  public static int CODE_NO_HIGHSCORE_FILES = 60;
 
   public static int CODE_NO_AUDIO = 30;
   public static int CODE_NO_AUDIO_LAUNCH = 31;
@@ -31,27 +43,41 @@ public class GameValidator {
   public static int CODE_NO_WHEEL_IMAGE = 41;
 
   @Autowired
-  private PinUPConnector pinUPConnector;
+  private PreferencesService preferencesService;
 
-  public int validate(@NonNull Game game) {
+  private Preferences preferences;
+
+  public int validate(@NonNull Game game, @NonNull List<Game> games) {
     if(isValidationEnabled(game, CODE_NO_ROM)) {
       if (StringUtils.isEmpty(game.getRom())) {
         return CODE_NO_ROM;
       }
     }
 
-    if(isValidationEnabled(game, CODE_NO_ROM)) {
-      List<Game> games = pinUPConnector.getGames();
+    if(isValidationEnabled(game, CODE_ROM_NOT_EXISTS)) {
+      if (!game.isRomExists()) {
+        return CODE_ROM_NOT_EXISTS;
+      }
+    }
+
+
+    if(isValidationEnabled(game, CODE_DUPLICATE_ROM)) {
       for (Game g : games) {
-        if (g.getId() != game.getId() && StringUtils.isEmpty(g.getRom()) && g.getRom().equals(game.getRom())) {
+        if (g.getId() != game.getId() && !StringUtils.isEmpty(g.getRom()) && g.getRom().equals(game.getRom())) {
           return CODE_DUPLICATE_ROM;
         }
       }
     }
 
-    if(isValidationEnabled(game, CODE_NO_ROM)) {
+    if(isValidationEnabled(game, CODE_NO_DIRECTB2S_OR_PUPPACK)) {
       if (!game.isDirectB2SAvailable() && !game.isPupPackAvailable()) {
         return CODE_NO_DIRECTB2S_OR_PUPPACK;
+      }
+    }
+
+    if(isValidationEnabled(game, CODE_NO_HIGHSCORE_FILES)) {
+      if (!game.hasHighscore()) {
+        return CODE_NO_HIGHSCORE_FILES;
       }
     }
 
@@ -143,7 +169,33 @@ public class GameValidator {
     return -1;
   }
 
-  private boolean isValidationEnabled(Game game, int code) {
+  private boolean isValidationEnabled(@NonNull Game game, int code) {
+    String ignoredValidations = game.getIgnoredValidations();
+    if (containsIgnoreCode(code, ignoredValidations)){
+      return false;
+    }
+
+    String ignoredPrefValidations = preferences.getIgnoredValidations();
+    if (containsIgnoreCode(code, ignoredPrefValidations)){
+      return false;
+    }
+
     return true;
+  }
+
+  private boolean containsIgnoreCode(int code, String ignoredValidations) {
+    if(!StringUtils.isEmpty(ignoredValidations)) {
+      String[] split = ignoredValidations.split(",");
+      List<String> ignoreList = Arrays.asList(split);
+      if(ignoreList.contains(String.valueOf(code))) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  @Override
+  public void afterPropertiesSet() {
+     preferences = preferencesService.getPreferences();
   }
 }

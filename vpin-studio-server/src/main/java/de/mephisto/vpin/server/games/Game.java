@@ -111,6 +111,7 @@ public class Game {
     this.ignoredValidations = ignoredValidations;
   }
 
+  @JsonIgnore
   public SystemService getSystemService() {
     return systemService;
   }
@@ -255,11 +256,14 @@ public class Game {
   @Nullable
   @JsonIgnore
   public File getRomFile() {
-    return romFile;
+    if(!StringUtils.isEmpty(this.getRom())) {
+      return new File(systemService.getMameRomFolder(), this.getRom() + ".zip");
+    }
+    return null;
   }
 
-  public void setRomFile(File romFile) {
-    this.romFile = romFile;
+  public boolean isRomExists() {
+    return getRomFile() != null && getRomFile().exists();
   }
 
   @NonNull

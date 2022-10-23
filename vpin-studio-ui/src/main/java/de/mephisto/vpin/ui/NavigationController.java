@@ -3,20 +3,24 @@ package de.mephisto.vpin.ui;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import eu.hansolo.tilesfx.Tile;
 import eu.hansolo.tilesfx.TileBuilder;
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.Parent;
+import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.text.TextAlignment;
+import org.apache.commons.lang3.StringUtils;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.List;
 import java.util.ResourceBundle;
 
 public class NavigationController implements Initializable {
@@ -85,6 +89,12 @@ public class NavigationController implements Initializable {
         .textAlignment(TextAlignment.CENTER)
         .build();
     avatarPane.setCenter(avatar);
+  }
 
+  public static void setBreadCrumb(List<String> crumbs) {
+    Platform.runLater(() -> {
+      Label breadCrumb = (Label) VPinStudioApplication.stage.getScene().lookup("#breadcrumb");
+      breadCrumb.setText("/ " + StringUtils.join(crumbs, " / "));
+    });
   }
 }

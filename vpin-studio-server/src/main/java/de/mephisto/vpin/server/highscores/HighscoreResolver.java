@@ -56,7 +56,7 @@ class HighscoreResolver {
       }
 
       if (highscore == null) {
-        String msg = "Reading highscore for '" + game.getGameDisplayName() + "' failed, no nvram file and no VPReg.stg entry found for rom name '" + romName + "'";
+        String msg = "Reading highscore for '" + game.getGameDisplayName() + "' failed, no nvram file, VPReg.stg entry or EM highscore file found for rom name '" + romName + "'";
         LOG.info(msg);
       }
       else {

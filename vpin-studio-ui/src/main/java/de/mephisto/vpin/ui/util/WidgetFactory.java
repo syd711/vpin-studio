@@ -31,6 +31,7 @@ import org.slf4j.LoggerFactory;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.util.Iterator;
+import java.util.Optional;
 
 public class WidgetFactory {
   private final static Logger LOG = LoggerFactory.getLogger(WidgetFactory.class);
@@ -104,6 +105,14 @@ public class WidgetFactory {
     stage.showAndWait();
   }
 
+  public static Optional<ButtonType> showConfirmation(String msg, String header) {
+    Alert alert = new Alert(Alert.AlertType.CONFIRMATION, msg, ButtonType.CLOSE, ButtonType.OK);
+    alert.getDialogPane().getStylesheets().add(VPinStudioApplication.class.getResource("stylesheet.css").toExternalForm());
+    alert.getDialogPane().getStyleClass().add("base-component");
+    alert.setHeaderText(header);
+    alert.setGraphic(null);
+    return alert.showAndWait();
+  }
 
   public static void showAlert(String msg) {
     Alert alert = new Alert(Alert.AlertType.INFORMATION, msg, ButtonType.CLOSE);
@@ -114,12 +123,12 @@ public class WidgetFactory {
     alert.showAndWait();
   }
 
-  public static String showInputDialog(String title, String msg) {
+  public static String showInputDialog(String title, String description, String msg) {
     TextInputDialog td = new TextInputDialog(msg);
     td.setTitle(title);
     td.getDialogPane().getStylesheets().add(VPinStudioApplication.class.getResource("stylesheet.css").toExternalForm());
     td.getDialogPane().getStyleClass().add("base-component");
-    td.setHeaderText(null);
+    td.setHeaderText(description);
     td.setGraphic(null);
     td.showAndWait();
 
