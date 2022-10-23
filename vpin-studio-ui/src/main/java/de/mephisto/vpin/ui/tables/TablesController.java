@@ -479,6 +479,7 @@ public class TablesController implements Initializable, StudioFXController {
     tableView.setItems(data);
     tableView.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
       if (newSelection != null) {//TODO
+        refreshView(newSelection);
         NavigationController.setBreadCrumb(Arrays.asList("Tables", newSelection.getGameDisplayName()));
       }
       else {
