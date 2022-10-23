@@ -22,7 +22,7 @@ public class VPinStudioApplication extends Application {
   @Override
   public void start(Stage stage) throws IOException {
     VPinStudioApplication.stage = stage;
-    FXMLLoader loader = new FXMLLoader(getClass().getResource("scene-main.fxml"));
+    FXMLLoader loader = new FXMLLoader(getClass().getResource("scene-root.fxml"));
     Parent root = loader.load();
     NavigationController.navigationController = loader.<StudioFXController>getController();
 

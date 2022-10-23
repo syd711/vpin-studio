@@ -74,6 +74,7 @@ public class GameService implements InitializingBean {
     if (gameDetails != null) {
       gameDetails.setRomName(scanResult.getRom());
       gameDetails.setNvOffset(scanResult.getNvOffset());
+      gameDetails.setHsFileName(scanResult.getHsFileName());
       gameDetailsRepository.saveAndFlush(gameDetails);
       return true;
     }
@@ -141,6 +142,8 @@ public class GameService implements InitializingBean {
       }
       game.setOriginalRom(romService.getOriginalRom(game.getRom()));
       game.setValidationState(gameValidator.validate(game));
+      game.setHsFileName(gameDetails.getHsFileName());
+      game.setIgnoredValidations(gameDetails.getIgnoredValidations());
 
       Highscore highscore = highscoreService.getHighscore(game);
       if (highscore != null) {

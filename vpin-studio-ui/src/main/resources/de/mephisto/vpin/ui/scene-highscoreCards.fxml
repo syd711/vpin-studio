@@ -386,7 +386,7 @@
             </BorderPane>
          </center>
          <BorderPane.margin>
-            <Insets left="24.0" right="24.0" />
+            <Insets left="12.0" right="24.0" />
          </BorderPane.margin>
          <top>
             <BorderPane prefHeight="182.0" stylesheets="@stylesheet.css" BorderPane.alignment="CENTER">

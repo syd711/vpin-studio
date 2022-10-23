@@ -6,32 +6,56 @@
 <?import javafx.scene.layout.VBox?>
 <?import org.kordamp.ikonli.javafx.FontIcon?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="768.0" prefWidth="1024.0" stylesheets="@stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.PreferencesController">
+<BorderPane styleClass="main" stylesheets="@stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.PreferencesController">
    <center>
-      <BorderPane prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER" />
+      <BorderPane fx:id="preferencesMain" styleClass="subpanel" BorderPane.alignment="TOP_LEFT">
+        <center>
+           <fx:include fx:id="preferenceTableValidation" source="preferences/preference-table-validation.fxml" BorderPane.alignment="TOP_LEFT" />
+        </center>
+         <BorderPane.margin>
+            <Insets left="12.0" right="12.0" top="24.0" />
+         </BorderPane.margin>
+      </BorderPane>
    </center>
    <left>
-      <VBox prefWidth="250.0" BorderPane.alignment="CENTER">
+      <VBox alignment="TOP_RIGHT" fillWidth="false" prefWidth="400.0" BorderPane.alignment="TOP_RIGHT">
          <BorderPane.margin>
-            <Insets top="150.0" />
+            <Insets top="42.0" />
          </BorderPane.margin>
          <children>
-            <Button contentDisplay="RIGHT" mnemonicParsing="false" text="Button" />
+            <Button alignment="CENTER_RIGHT" contentDisplay="RIGHT" mnemonicParsing="false" onAction="#onTableValidation" styleClass="preference-button" text="My VPin" />
+            <Button alignment="CENTER_RIGHT" contentDisplay="RIGHT" layoutX="250.0" layoutY="10.0" mnemonicParsing="false" onAction="#onTableValidation" styleClass="preference-button" text="Table Validation" />
+            <Button alignment="CENTER_RIGHT" contentDisplay="RIGHT" layoutX="125.0" layoutY="10.0" mnemonicParsing="false" onAction="#onHighscoreCards" styleClass="preference-button" text="Highscore Cards">
+               <VBox.margin>
+                  <Insets top="4.0" />
+               </VBox.margin>
+            </Button>
+            <Button alignment="CENTER_RIGHT" contentDisplay="RIGHT" layoutX="124.0" layoutY="76.0" mnemonicParsing="false" onAction="#onHighscoreCards" styleClass="preference-button" text="Overlay">
+               <VBox.margin>
+                  <Insets top="4.0" />
+               </VBox.margin>
+            </Button>
          </children>
+         <opaqueInsets>
+            <Insets />
+         </opaqueInsets>
       </VBox>
    </left>
    <right>
       <BorderPane prefWidth="500.0" BorderPane.alignment="CENTER">
          <top>
-            <Button mnemonicParsing="false" onAction="#onClose" BorderPane.alignment="TOP_LEFT">
+            <Button mnemonicParsing="false" onAction="#onClose" styleClass="ghost-button" BorderPane.alignment="TOP_LEFT">
                <BorderPane.margin>
-                  <Insets top="24.0" />
+                  <Insets top="28.0" />
                </BorderPane.margin>
                <graphic>
                   <FontIcon iconColor="WHITE" iconLiteral="sil-close" iconSize="36" />
                </graphic>
             </Button>
          </top>
+         <BorderPane.margin>
+            <Insets />
+         </BorderPane.margin>
       </BorderPane>
    </right>
 </BorderPane>

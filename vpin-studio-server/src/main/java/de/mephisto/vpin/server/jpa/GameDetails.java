@@ -29,6 +29,10 @@ public class GameDetails {
 
   private String romName;
 
+  private String hsFileName;
+
+  private String ignoredValidations;
+
   private int pupId;
 
   private int nvOffset;
@@ -63,6 +67,23 @@ public class GameDetails {
 
   public void setId(Long id) {
     this.id = id;
+  }
+
+  public String getIgnoredValidations() {
+    return ignoredValidations;
+  }
+
+  public void setIgnoredValidations(String ignoredValidations) {
+    this.ignoredValidations = ignoredValidations;
+  }
+
+  @Nullable
+  public String getHsFileName() {
+    return hsFileName;
+  }
+
+  public void setHsFileName(@Nullable String hsFileName) {
+    this.hsFileName = hsFileName;
   }
 
   @Nullable

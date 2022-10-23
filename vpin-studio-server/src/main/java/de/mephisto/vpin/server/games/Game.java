@@ -28,6 +28,7 @@ public class Game {
   private Date lastPlayed;
   private int numberPlays;
   private int validationState;
+  private String ignoredValidations;
   private int volume;
   private String rawHighscore;
 
@@ -100,6 +101,22 @@ public class Game {
 
   public void setVolume(int volume) {
     this.volume = volume;
+  }
+
+  public String getIgnoredValidations() {
+    return ignoredValidations;
+  }
+
+  public void setIgnoredValidations(String ignoredValidations) {
+    this.ignoredValidations = ignoredValidations;
+  }
+
+  public SystemService getSystemService() {
+    return systemService;
+  }
+
+  public void setSystemService(SystemService systemService) {
+    this.systemService = systemService;
   }
 
   @Nullable

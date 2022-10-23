@@ -39,7 +39,7 @@
             <Insets bottom="3.0" left="3.0" right="3.0" top="3.0" />
          </padding>
          <BorderPane.margin>
-            <Insets bottom="24.0" left="24.0" />
+            <Insets bottom="24.0" left="12.0" />
          </BorderPane.margin>
          <left>
             <Label text="/" textFill="WHITE" BorderPane.alignment="CENTER">
@@ -52,7 +52,7 @@
             </Label>
          </left>
          <styleClass>
-            <String fx:value="base-component" />
+            <String fx:value="main-toolbar" />
             <String fx:value="mainToolbar" />
          </styleClass>
       </BorderPane>

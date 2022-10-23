@@ -11,6 +11,7 @@ import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.image.Image;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.text.TextAlignment;
 
@@ -42,13 +43,19 @@ public class NavigationController implements Initializable {
   }
 
   @FXML
-  private void onPreferencesClicked(ActionEvent event) throws IOException {
-    this.loadScreen(event, "scene-preferences.fxml");
+  private void onTablesClick(ActionEvent event) throws IOException {
+    this.loadScreen(event, "scene-tables.fxml");
   }
 
   @FXML
-  private void onTablesClick(ActionEvent event) throws IOException {
-    this.loadScreen(event, "scene-tables.fxml");
+  private void onPreferencesClicked(ActionEvent event) throws IOException {
+    FXMLLoader loader = new FXMLLoader(NavigationController.class.getResource("scene-preferences.fxml"));
+    Node preferencesRoot = loader.load();
+
+    Node lookup = VPinStudioApplication.stage.getScene().lookup("#root");
+    BorderPane main = (BorderPane) lookup;
+    StackPane stack = (StackPane) main.getCenter();
+    stack.getChildren().add(preferencesRoot);
   }
 
   public static void loadScreen(@NonNull ActionEvent event, @NonNull String name) throws IOException {
