@@ -5,6 +5,7 @@ import de.mephisto.vpin.restclient.ObservedProperties;
 import de.mephisto.vpin.restclient.ObservedPropertyChangeListener;
 import de.mephisto.vpin.restclient.VPinStudioClient;
 import de.mephisto.vpin.restclient.representations.GameRepresentation;
+import de.mephisto.vpin.ui.NavigationController;
 import de.mephisto.vpin.ui.StudioFXController;
 import de.mephisto.vpin.ui.VPinStudioApplication;
 import de.mephisto.vpin.ui.util.BindingUtil;
@@ -13,6 +14,8 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import javafx.animation.RotateTransition;
 import javafx.application.Platform;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -64,12 +67,6 @@ public class HighscoreCardsController implements Initializable, ObservedProperty
 
   @FXML
   private ImageView rawDirectB2SImage;
-
-  @FXML
-  private CheckBox enableCardGenerationCheckbox;
-
-  @FXML
-  private ComboBox<String> popperScreenCombo;
 
   @FXML
   private CheckBox useDirectB2SCheckbox;
@@ -262,9 +259,7 @@ public class HighscoreCardsController implements Initializable, ObservedProperty
   }
 
   private void initFields() {
-    BindingUtil.bindCheckbox(enableCardGenerationCheckbox, properties, "card.generation.enabled");
-    enableCardGenerationCheckbox.selectedProperty().addListener((observableValue, aBoolean, t1) -> popperScreenCombo.setDisable(!t1));
-    popperScreenCombo.setDisable(!enableCardGenerationCheckbox.selectedProperty().get());
+    NavigationController.setBreadCrumb(Arrays.asList("Highscore Cards"));
 
     BindingUtil.bindFontLabel(titleFontLabel, properties, "card.title");
     BindingUtil.bindFontLabel(tableFontLabel, properties, "card.table");
@@ -274,8 +269,6 @@ public class HighscoreCardsController implements Initializable, ObservedProperty
 
     BindingUtil.bindTableComboBox(client, tableCombo, properties, "card.sampleTable");
 
-    popperScreenCombo.setItems(FXCollections.observableList(Arrays.asList("Other2", "GameInfo", "GameHelp")));
-    BindingUtil.bindComboBox(popperScreenCombo, properties, "popper.screen");
 
     BindingUtil.bindCheckbox(useDirectB2SCheckbox, properties, "card.useDirectB2S");
     useDirectB2SCheckbox.selectedProperty().addListener((observableValue, aBoolean, t1) -> imageRatioCombo.setDisable(!t1));
@@ -307,7 +300,17 @@ public class HighscoreCardsController implements Initializable, ObservedProperty
     BindingUtil.bindSpinner(wheelImageSpinner, properties, "card.highscores.row.padding.left");
     BindingUtil.bindSpinner(rowSeparatorSpinner, properties, "card.highscores.row.separator");
 
-    BindingUtil.bindCheckbox(renderRawHighscore, properties, "card.rawScoreData");
+    BindingUtil.bindCheckbox(renderRawHighscore, properties, "card.rawHighscore");
+    renderRawHighscore.selectedProperty().addListener(new ChangeListener<Boolean>() {
+      @Override
+      public void changed(ObservableValue<? extends Boolean> observableValue, Boolean aBoolean, Boolean t1) {
+        wheelImageSpinner.setDisable(t1);
+        rowSeparatorSpinner.setDisable(t1);
+      }
+    });
+
+    wheelImageSpinner.setDisable(renderRawHighscore.isSelected());
+    rowSeparatorSpinner.setDisable(renderRawHighscore.isSelected());
 
     tableCombo.valueProperty().addListener((observableValue, gameRepresentation, t1) -> refreshRawPreview(t1));
 
@@ -346,6 +349,8 @@ public class HighscoreCardsController implements Initializable, ObservedProperty
     if (game == null) {
       return;
     }
+
+    int offset = 150;
     Platform.runLater(() -> {
       try {
         if (regenerate) {
@@ -357,12 +362,20 @@ public class HighscoreCardsController implements Initializable, ObservedProperty
             cardPreview.setVisible(true);
             setBusy(false);
 
-            cardPreview.setFitHeight(imageCenter.getHeight() - 250);
-            cardPreview.setFitWidth(imageCenter.getWidth() - 250);
+            int resolution = Integer.parseInt(imageScalingCombo.getValue());
+            if(image.getWidth() >= resolution && image.getWidth() < imageCenter.getWidth()) {
+              cardPreview.setFitHeight(image.getHeight());
+              cardPreview.setFitWidth(image.getWidth());
+            }
+            else {
+              cardPreview.setFitHeight(imageCenter.getHeight() - offset);
+              cardPreview.setFitWidth(imageCenter.getWidth() - offset);
+            }
+
           }).start();
         }
-        cardPreview.setFitHeight(imageCenter.getHeight() - 250);
-        cardPreview.setFitWidth(imageCenter.getWidth() - 250);
+        cardPreview.setFitHeight(imageCenter.getHeight() - offset);
+        cardPreview.setFitWidth(imageCenter.getWidth() - offset);
 
       } catch (Exception e) {
         LOG.error("Failed to refresh card preview: " + e.getMessage(), e);
@@ -377,10 +390,8 @@ public class HighscoreCardsController implements Initializable, ObservedProperty
     }
   }
 
-  private RotateTransition transition;
-
   private void setBusy(boolean b) {
-    if(b) {
+    if (b) {
       Image image = new Image(VPinStudioApplication.class.getResourceAsStream("loading.png"));
       cardPreview.setImage(image);
       cardPreview.setFitWidth(300);

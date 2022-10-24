@@ -9,6 +9,6 @@
    </left>
 
    <center>
-        <fx:include fx:id="tables" source="scene-tables.fxml" />
+        <fx:include fx:id="tables" source="scene-highscoreCards.fxml" />
    </center>
 </BorderPane>

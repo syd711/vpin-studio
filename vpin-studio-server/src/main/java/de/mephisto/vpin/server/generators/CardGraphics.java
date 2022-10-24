@@ -159,7 +159,7 @@ public class CardGraphics {
     File wheelIconFile = game.getEmulator().getPinUPMedia(PopperScreen.Wheel);
     int wheelY = tableNameY + ROW_SEPARATOR;
     int wheelSize = 3 * SCORE_FONT_SIZE + 3 * ROW_SEPARATOR;
-    if (wheelIconFile.exists()) {
+    if (wheelIconFile != null && wheelIconFile.exists()) {
       BufferedImage wheelImage = ImageIO.read(wheelIconFile);
       g.drawImage(wheelImage, WHEEL_PADDING, wheelY, wheelSize, wheelSize, null);
     }

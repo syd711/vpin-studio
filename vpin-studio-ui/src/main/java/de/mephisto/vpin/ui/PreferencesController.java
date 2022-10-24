@@ -1,5 +1,7 @@
 package de.mephisto.vpin.ui;
 
+import de.mephisto.vpin.ui.preferences.CardGenerationPreferencesController;
+import de.mephisto.vpin.ui.preferences.TablePreferencesController;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -31,7 +33,7 @@ public class PreferencesController implements Initializable {
 
   @FXML
   private void onTableValidation(ActionEvent event) throws IOException {
-    FXMLLoader loader = new FXMLLoader(NavigationController.class.getResource("preference-table-validation.fxml"));
+    FXMLLoader loader = new FXMLLoader(TablePreferencesController.class.getResource("preference-table-validation.fxml"));
     Node node = loader.load();
     preferencesMain.setCenter(node);
   }
@@ -43,8 +45,10 @@ public class PreferencesController implements Initializable {
   }
 
   @FXML
-  private void onHighscoreCards(ActionEvent event) {
-
+  private void onHighscoreCards(ActionEvent event) throws IOException {
+    FXMLLoader loader = new FXMLLoader(CardGenerationPreferencesController.class.getResource("preference-highscore-cards.fxml"));
+    Node node = loader.load();
+    preferencesMain.setCenter(node);
   }
 
   @Override
