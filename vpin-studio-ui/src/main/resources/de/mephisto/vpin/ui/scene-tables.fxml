@@ -423,7 +423,7 @@
                      <content>
                         <BorderPane prefHeight="200.0" prefWidth="200.0">
                            <center>
-                              <TextArea fx:id="highscoreTextArea" prefHeight="400.0" BorderPane.alignment="CENTER">
+                              <TextArea fx:id="highscoreTextArea" editable="false" prefHeight="400.0" BorderPane.alignment="CENTER">
                                  <BorderPane.margin>
                                     <Insets bottom="6.0" left="6.0" right="6.0" top="6.0" />
                                  </BorderPane.margin>
@@ -528,7 +528,7 @@
                                                 <Font size="14.0" />
                                              </font>
                                           </Label>
-                                          <Button mnemonicParsing="false" onAction="#onRomEdit" GridPane.columnIndex="2" GridPane.rowIndex="2">
+                                          <Button fx:id="editRomNameBtn" mnemonicParsing="false" onAction="#onRomEdit" GridPane.columnIndex="2" GridPane.rowIndex="2">
                                              <graphic>
                                                 <FontIcon iconColor="WHITE" iconLiteral="mdi2d-database-edit-outline" />
                                              </graphic>
@@ -541,7 +541,7 @@
                                                 <Font name="System Bold" size="14.0" />
                                              </font>
                                           </Label>
-                                          <Button mnemonicParsing="false" onAction="#onHsFileNameEdit" GridPane.columnIndex="2" GridPane.rowIndex="7">
+                                          <Button fx:id="editHsFileNameBtn" mnemonicParsing="false" onAction="#onHsFileNameEdit" GridPane.columnIndex="2" GridPane.rowIndex="7">
                                              <graphic>
                                                 <FontIcon iconColor="WHITE" iconLiteral="mdi2d-database-edit-outline" />
                                              </graphic>

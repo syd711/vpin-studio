@@ -109,6 +109,7 @@ public class WidgetFactory {
     Alert alert = new Alert(Alert.AlertType.CONFIRMATION, msg, ButtonType.CLOSE, ButtonType.OK);
     alert.getDialogPane().getStylesheets().add(VPinStudioApplication.class.getResource("stylesheet.css").toExternalForm());
     alert.getDialogPane().getStyleClass().add("base-component");
+    alert.getDialogPane().setStyle("-fx-font-size: 16fx;");
     alert.setHeaderText(header);
     alert.setGraphic(null);
     return alert.showAndWait();
@@ -118,6 +119,7 @@ public class WidgetFactory {
     Alert alert = new Alert(Alert.AlertType.INFORMATION, msg, ButtonType.CLOSE);
     alert.getDialogPane().getStylesheets().add(VPinStudioApplication.class.getResource("stylesheet.css").toExternalForm());
     alert.getDialogPane().getStyleClass().add("base-component");
+    alert.getDialogPane().setStyle("-fx-font-size: 16px;");
     alert.setHeaderText(null);
     alert.setGraphic(null);
     alert.showAndWait();
@@ -128,6 +130,7 @@ public class WidgetFactory {
     td.setTitle(title);
     td.getDialogPane().getStylesheets().add(VPinStudioApplication.class.getResource("stylesheet.css").toExternalForm());
     td.getDialogPane().getStyleClass().add("base-component");
+    td.getDialogPane().setStyle("-fx-font-size: 16px;");
     td.setHeaderText(description);
     td.setGraphic(null);
     td.showAndWait();
@@ -236,14 +239,26 @@ public class WidgetFactory {
   public static void disposeMediaBorderPane(BorderPane node) {
     Node center = node.getCenter();
     if (center != null) {
-       if( center instanceof MediaView) {
-         MediaView view = (MediaView) center;
-         if(view.getMediaPlayer() != null) {
-           view.getMediaPlayer().stop();
-           view.getMediaPlayer().dispose();
-         }
-         node.setCenter(null);
-       }
+      if (center instanceof MediaView) {
+        MediaView view = (MediaView) center;
+        if (view.getMediaPlayer() != null) {
+          view.getMediaPlayer().stop();
+          view.getMediaPlayer().dispose();
+        }
+        node.setCenter(null);
+      }
+      else if (center instanceof ImageView) {
+        ImageView view = (ImageView) center;
+        view.setImage(null);
+      }
+    }
+
+    Node top = node.getTop();
+    if (top != null) {
+      if(top instanceof Button) {
+        Button button = (Button) top;
+        button.setVisible(false);
+      }
     }
   }
 

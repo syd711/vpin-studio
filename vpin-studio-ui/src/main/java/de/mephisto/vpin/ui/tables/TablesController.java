@@ -10,7 +10,6 @@ import de.mephisto.vpin.ui.StudioFXController;
 import de.mephisto.vpin.ui.util.BindingUtil;
 import de.mephisto.vpin.ui.util.ValidationTexts;
 import de.mephisto.vpin.ui.util.WidgetFactory;
-import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
@@ -49,8 +48,8 @@ import java.awt.*;
 import java.io.*;
 import java.net.URI;
 import java.net.URL;
-import java.util.*;
 import java.util.List;
+import java.util.*;
 
 public class TablesController implements Initializable, StudioFXController {
   private final static Logger LOG = LoggerFactory.getLogger(TablesController.class);
@@ -174,6 +173,12 @@ public class TablesController implements Initializable, StudioFXController {
 
   @FXML
   private Button openDirectB2SImageButton;
+
+  @FXML
+  private Button editHsFileNameBtn;
+
+  @FXML
+  private Button editRomNameBtn;
 
   @FXML
   private Label resolutionLabel;
@@ -301,7 +306,7 @@ public class TablesController implements Initializable, StudioFXController {
   private void onValidate() {
     GameRepresentation game = tableView.getSelectionModel().selectedItemProperty().get();
     Optional<ButtonType> result = WidgetFactory.showConfirmation("Re-validate table '" + game.getGameDisplayName() + "?\nThis will reset the dismissed validations for this table too.", null);
-    if(result.isPresent() && result.get().equals(ButtonType.OK)) {
+    if (result.isPresent() && result.get().equals(ButtonType.OK)) {
       game.setIgnoredValidations(null);
       client.saveGame(game);
       onReload();
@@ -312,14 +317,14 @@ public class TablesController implements Initializable, StudioFXController {
   private void onDismiss() {
     GameRepresentation game = tableView.getSelectionModel().selectedItemProperty().get();
     Optional<ButtonType> result = WidgetFactory.showConfirmation("Ignore this warning for future validations of table '" + game.getGameDisplayName() + "?", null);
-    if(result.isPresent() && result.get().equals(ButtonType.OK)) {
+    if (result.isPresent() && result.get().equals(ButtonType.OK)) {
       String validationState = String.valueOf(game.getValidationState());
       String ignoredValidations = game.getIgnoredValidations();
-      if(ignoredValidations == null) {
+      if (ignoredValidations == null) {
         ignoredValidations = "";
       }
       List<String> gameIgnoreList = new ArrayList<>(Arrays.asList(ignoredValidations.split(",")));
-      if(!gameIgnoreList.contains(validationState)) {
+      if (!gameIgnoreList.contains(validationState)) {
         gameIgnoreList.add(validationState);
       }
 
@@ -400,7 +405,7 @@ public class TablesController implements Initializable, StudioFXController {
         rom = value.getOriginalRom();
       }
 
-      if(value.isRomExists()) {
+      if (value.isRomExists()) {
         return new SimpleStringProperty(rom);
       }
 
@@ -478,13 +483,7 @@ public class TablesController implements Initializable, StudioFXController {
 
     tableView.setItems(data);
     tableView.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
-      if (newSelection != null) {//TODO
-        refreshView(newSelection);
-        NavigationController.setBreadCrumb(Arrays.asList("Tables", newSelection.getGameDisplayName()));
-      }
-      else {
-        NavigationController.setBreadCrumb(Arrays.asList("Tables"));
-      }
+      refreshView(newSelection);
     });
 
     if (!data.isEmpty()) {
@@ -535,51 +534,87 @@ public class TablesController implements Initializable, StudioFXController {
     disposeMediaPane(screenWheel);
   }
 
-  private void refreshView(@NonNull GameRepresentation game) {
-    volumeSlider.setValue(game.getVolume());
-    labelId.setText(String.valueOf(game.getId()));
-    labelRom.setText(game.getOriginalRom() != null ? game.getOriginalRom() : game.getRom());
-    labelRomAlias.setText(game.getOriginalRom() != null ? game.getRom() : "-");
-    labelNVOffset.setText(game.getNvOffset() > 0 ? String.valueOf(game.getNvOffset()) : "-");
-    labelFilename.setText(game.getGameFileName());
-    labelLastPlayed.setText(game.getLastPlayed() != null ? game.getLastPlayed().toString() : "-");
-    labelTimesPlayed.setText(String.valueOf(game.getNumberPlays()));
-    labelHSFilename.setText(game.getHsFileName());
+  private void refreshView(@Nullable GameRepresentation game) {
+    editHsFileNameBtn.setDisable(game == null);
+    editRomNameBtn.setDisable(game == null);
 
-    refreshDirectB2SPreview(game);
+    if (game != null) {
+      volumeSlider.setDisable(false);
+      volumeSlider.setValue(game.getVolume());
 
-    validationError.setVisible(game.getValidationState() > 0);
-    if (game.getValidationState() > 0) {
-      validationErrorLabel.setText(ValidationTexts.getValidationMessage(game));
-    }
+      labelId.setText(String.valueOf(game.getId()));
+      labelRom.setText(game.getOriginalRom() != null ? game.getOriginalRom() : game.getRom());
+      labelRomAlias.setText(game.getOriginalRom() != null ? game.getRom() : "-");
+      labelNVOffset.setText(game.getNvOffset() > 0 ? String.valueOf(game.getNvOffset()) : "-");
+      labelFilename.setText(game.getGameFileName());
+      labelLastPlayed.setText(game.getLastPlayed() != null ? game.getLastPlayed().toString() : "-");
+      labelTimesPlayed.setText(String.valueOf(game.getNumberPlays()));
+      labelHSFilename.setText(game.getHsFileName());
 
-    if (titledPaneMedia.isExpanded()) {
-      refreshMedia(game);
-    }
+      refreshDirectB2SPreview(game);
 
-    String rawHighscore = game.getRawHighscore();
-    if (rawHighscore != null) {
-      highscoreTextArea.setText(rawHighscore);
+      validationError.setVisible(game.getValidationState() > 0);
+      if (game.getValidationState() > 0) {
+        validationErrorLabel.setText(ValidationTexts.getValidationMessage(game));
+      }
+
+      if (titledPaneMedia.isExpanded()) {
+        refreshMedia(game);
+      }
+
+      String rawHighscore = game.getRawHighscore();
+      if (rawHighscore != null) {
+        highscoreTextArea.setText(rawHighscore);
+      }
+      else {
+        highscoreTextArea.setText("");
+      }
+
+      NavigationController.setBreadCrumb(Arrays.asList("Tables", game.getGameDisplayName()));
     }
     else {
-      highscoreTextArea.setText("");
-    }
+      resetMedia();
+      volumeSlider.setValue(100);
+      volumeSlider.setDisable(true);
 
-    NavigationController.setBreadCrumb(Arrays.asList("Tables"));
+      labelId.setText("-");
+      labelRom.setText("-");
+      labelRomAlias.setText("-");
+      labelNVOffset.setText("-");
+      labelFilename.setText("-");
+      labelLastPlayed.setText("-");
+      labelTimesPlayed.setText("-");
+      labelHSFilename.setText("-");
+
+      refreshDirectB2SPreview(null);
+
+      highscoreTextArea.setText("");
+
+      validationError.setVisible(false);
+      NavigationController.setBreadCrumb(Arrays.asList("Tables"));
+    }
   }
 
   private void refreshDirectB2SPreview(@Nullable GameRepresentation game) {
     try {
       openDirectB2SImageButton.setVisible(false);
       openDirectB2SImageButton.setTooltip(new Tooltip("Open directb2s image"));
-      InputStream input = client.getDirectB2SImage(game);
-      javafx.scene.image.Image image = new Image(input);
-      rawDirectB2SImage.setImage(image);
-      input.close();
+      rawDirectB2SImage.setVisible(false);
 
-      if (image.getWidth() > 300) {
-        openDirectB2SImageButton.setVisible(true);
-        resolutionLabel.setText("Resolution: " + (int) image.getWidth() + " x " + (int) image.getHeight());
+      if(game != null) {
+        InputStream input = client.getDirectB2SImage(game);
+        javafx.scene.image.Image image = new Image(input);
+        rawDirectB2SImage.setVisible(true);
+        rawDirectB2SImage.setImage(image);
+        input.close();
+
+        if (image.getWidth() > 300) {
+          openDirectB2SImageButton.setVisible(true);
+          resolutionLabel.setText("Resolution: " + (int) image.getWidth() + " x " + (int) image.getHeight());
+        }
+        else {
+          resolutionLabel.setText("");
+        }
       }
       else {
         resolutionLabel.setText("");

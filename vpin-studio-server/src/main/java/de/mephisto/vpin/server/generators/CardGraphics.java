@@ -26,15 +26,15 @@ public class CardGraphics {
   private final String TITLE_TEXT = Config.getCardGeneratorConfig().getString("card.title.text");
 
   private final String SCORE_FONT_NAME = Config.getCardGeneratorConfig().getString("card.score.font.name");
-  private final int SCORE_FONT_STYLE = Config.getCardGeneratorConfig().getInt("card.score.font.style");
+  private final int SCORE_FONT_STYLE = ImageUtil.convertFontPosture(Config.getCardGeneratorConfig().getString("card.score.font.style"));
   private final int SCORE_FONT_SIZE = Config.getCardGeneratorConfig().getInt("card.score.font.size");
 
   private final String TITLE_FONT_NAME = Config.getCardGeneratorConfig().getString("card.title.font.name");
-  private final int TITLE_FONT_STYLE = Config.getCardGeneratorConfig().getInt("card.title.font.style");
+  private final int TITLE_FONT_STYLE = ImageUtil.convertFontPosture(Config.getCardGeneratorConfig().getString("card.title.font.style"));
   private final int TITLE_FONT_SIZE = Config.getCardGeneratorConfig().getInt("card.title.font.size");
 
   private final String TABLE_FONT_NAME = Config.getCardGeneratorConfig().getString("card.table.font.name");
-  private final int TABLE_FONT_STYLE = Config.getCardGeneratorConfig().getInt("card.table.font.style");
+  private final int TABLE_FONT_STYLE = ImageUtil.convertFontPosture(Config.getCardGeneratorConfig().getString("card.table.font.style"));
   private final int TABLE_FONT_SIZE = Config.getCardGeneratorConfig().getInt("card.table.font.size");
 
   private final int PADDING = Config.getCardGeneratorConfig().getInt("card.title.y.offset");
@@ -42,7 +42,10 @@ public class CardGraphics {
   private final boolean RAW_HIGHSCORE = Config.getCardGeneratorConfig().getBoolean("card.rawHighscore");
 
   private final boolean USE_DIRECTB2S = Config.getCardGeneratorConfig().getBoolean("card.useDirectB2S");
-  private final DirectB2SImageRatio DIRECTB2S_RATIO = DirectB2SImageRatio.valueOf(Config.getCardGeneratorConfig().getString("card.ratio", DirectB2SImageRatio.RATIO_16X9.name()));
+
+  String cardRatio = Config.getCardGeneratorConfig().getString("card.ratio", DirectB2SImageRatio.RATIO_16X9.name());
+  private final DirectB2SImageRatio DIRECTB2S_RATIO = DirectB2SImageRatio.valueOf(cardRatio.toUpperCase());
+
   private final int BLUR_PIXELS = Config.getCardGeneratorConfig().getInt("card.blur");
 
   private final HighscoreService highscoreService;
