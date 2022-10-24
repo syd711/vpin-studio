@@ -124,6 +124,9 @@ public class TablesController implements Initializable, StudioFXController {
   private BorderPane screenAudioLaunch;
 
   @FXML
+  private Button playfieldViewBtn;
+
+  @FXML
   private Label labelTableCount;
 
   @FXML
@@ -539,8 +542,13 @@ public class TablesController implements Initializable, StudioFXController {
     editRomNameBtn.setDisable(game == null);
 
     if (game != null) {
+      GameMediaRepresentation gameMedia = client.getGameMedia(game.getId());
+
       volumeSlider.setDisable(false);
       volumeSlider.setValue(game.getVolume());
+
+      GameMediaItemRepresentation item = gameMedia.getItem(PopperScreen.PlayField);
+      playfieldViewBtn.setVisible(item != null);
 
       labelId.setText(String.valueOf(game.getId()));
       labelRom.setText(game.getOriginalRom() != null ? game.getOriginalRom() : game.getRom());
@@ -559,7 +567,7 @@ public class TablesController implements Initializable, StudioFXController {
       }
 
       if (titledPaneMedia.isExpanded()) {
-        refreshMedia(game);
+        refreshMedia(gameMedia, game);
       }
 
       String rawHighscore = game.getRawHighscore();
@@ -574,6 +582,9 @@ public class TablesController implements Initializable, StudioFXController {
     }
     else {
       resetMedia();
+
+      playfieldViewBtn.setVisible(false);
+
       volumeSlider.setValue(100);
       volumeSlider.setDisable(true);
 
@@ -624,8 +635,7 @@ public class TablesController implements Initializable, StudioFXController {
     }
   }
 
-  private void refreshMedia(GameRepresentation game) {
-    GameMediaRepresentation gameMedia = client.getGameMedia(game.getId());
+  private void refreshMedia(GameMediaRepresentation gameMedia, GameRepresentation game) {
     GameMediaItemRepresentation item = gameMedia.getItem(PopperScreen.Topper);
     WidgetFactory.createMediaContainer(screenTopper, client, item);
 

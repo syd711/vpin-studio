@@ -24,7 +24,7 @@
          </BorderPane.margin>
          <children>
             <Button alignment="CENTER_RIGHT" contentDisplay="RIGHT" mnemonicParsing="false" onAction="#onTableValidation" styleClass="preference-button" text="My VPin" />
-            <Button alignment="CENTER_RIGHT" contentDisplay="RIGHT" layoutX="250.0" layoutY="10.0" mnemonicParsing="false" onAction="#onTableValidation" styleClass="preference-button" text="Table Validation" />
+            <Button alignment="CENTER_RIGHT" contentDisplay="RIGHT" layoutX="250.0" layoutY="10.0" mnemonicParsing="false" onAction="#onTableValidation" styleClass="preference-button" text="Table Settings" />
             <Button alignment="CENTER_RIGHT" contentDisplay="RIGHT" layoutX="125.0" layoutY="10.0" mnemonicParsing="false" onAction="#onHighscoreCards" styleClass="preference-button" text="Highscore Cards">
                <VBox.margin>
                   <Insets top="4.0" />

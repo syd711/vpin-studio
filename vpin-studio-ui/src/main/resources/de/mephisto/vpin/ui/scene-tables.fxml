@@ -174,7 +174,7 @@
                                                 <Label text="Playfield" textFill="WHITE" BorderPane.alignment="CENTER" />
                                              </bottom>
                                              <top>
-                                                <Button mnemonicParsing="false" onAction="#onMediaViewClick" BorderPane.alignment="TOP_RIGHT">
+                                                <Button fx:id="playfieldViewBtn" mnemonicParsing="false" onAction="#onMediaViewClick" BorderPane.alignment="TOP_RIGHT">
                                                    <graphic>
                                                       <FontIcon iconColor="WHITE" iconLiteral="mdi2e-eye" />
                                                    </graphic>

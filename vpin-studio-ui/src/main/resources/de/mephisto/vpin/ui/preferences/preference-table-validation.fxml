@@ -14,7 +14,7 @@
    <top>
       <VBox fx:id="preferenceList" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" styleClass="subpanel" stylesheets="@stylesheet.css" BorderPane.alignment="TOP_LEFT">
          <children>
-            <Label styleClass="preference-title" text="Table Validation" textFill="WHITE" />
+            <Label styleClass="preference-title" text="Table Settings" textFill="WHITE" />
             <Label styleClass="preference-subtitle" text="Media Validation">
                <VBox.margin>
                   <Insets />
