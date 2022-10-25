@@ -58,8 +58,6 @@ public class CardGraphics {
   }
 
   public BufferedImage draw() throws Exception {
-    Config.getCardGeneratorConfig().reload();
-
     File sourceImage = new File(SystemService.RESOURCES + "backgrounds", Config.getCardGeneratorConfig().get("card.background") + ".jpg");
     if (!sourceImage.exists()) {
       sourceImage = new File(SystemService.RESOURCES + "backgrounds", Config.getCardGeneratorConfig().get("card.background") + ".png");

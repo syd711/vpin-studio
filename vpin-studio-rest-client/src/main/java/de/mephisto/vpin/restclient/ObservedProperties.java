@@ -13,9 +13,15 @@ public class ObservedProperties {
 
   private List<ObservedPropertyChangeListener> changeListeners = new ArrayList<>();
 
+  private ObservedPropertyChangeListener observer;
+
   public ObservedProperties(String bundle, Properties properties) {
     this.bundle = bundle;
     this.properties = properties;
+  }
+
+  public void setObserver(ObservedPropertyChangeListener observer) {
+    this.observer = observer;
   }
 
   public void addObservedPropertyChangeListener(ObservedPropertyChangeListener observedPropertyChangeListener) {
@@ -24,6 +30,10 @@ public class ObservedProperties {
 
   public void set(String key, String value) {
     this.properties.put(key, value);
+    this.observer.changed(bundle, key, value);
+  }
+
+  public void notifyChange(String key, String value) {
     for (ObservedPropertyChangeListener changeListener : this.changeListeners) {
       changeListener.changed(bundle, key, value);
     }

@@ -124,6 +124,8 @@ public class GeneratorResource {
       Game game = gameService.getGame(gameId);
       Highscore highscore = highscoreService.getHighscore(game);
       if(highscore != null && highscore.getRaw() != null) {
+        Config.getCardGeneratorConfig().reload();
+
         BufferedImage bufferedImage = new CardGraphics(directB2SService, game, highscore).draw();
         if (bufferedImage != null) {
           if (generateSampleCard) {

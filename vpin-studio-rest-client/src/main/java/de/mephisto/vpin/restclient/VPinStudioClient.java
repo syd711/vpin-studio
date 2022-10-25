@@ -129,21 +129,19 @@ public class VPinStudioClient implements ObservedPropertyChangeListener {
       Properties properties = new Properties();
       properties.putAll(result);
       ObservedProperties observedProperties = new ObservedProperties(propertiesName, properties);
-      observedProperties.addObservedPropertyChangeListener(this);
+      observedProperties.setObserver(this);
       this.observedProperties.put(propertiesName, observedProperties);
     }
 
     return this.observedProperties.get(propertiesName);
   }
 
-  public void setBundleProperty(String bundle, String key, String value) {
-    Map<String, Object> model = new HashMap<>();
-    model.put(key, value);
-    RestClient.getInstance().put(API + "properties/" + bundle, model);
-  }
-
   @Override
   public void changed(@NonNull String propertiesName, @NonNull String key, @Nullable String updatedValue) {
-    setBundleProperty(propertiesName, key, updatedValue);
+    Map<String, Object> model = new HashMap<>();
+    model.put(key, updatedValue);
+    Boolean result = RestClient.getInstance().put(API + "properties/" + propertiesName, model);
+    ObservedProperties observedProperties = VPinStudioClient.observedProperties.get(propertiesName);
+    observedProperties.notifyChange(key, updatedValue);
   }
 }
