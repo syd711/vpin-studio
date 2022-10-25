@@ -3,7 +3,6 @@ package de.mephisto.vpin.server.generators;
 import de.mephisto.vpin.server.directb2s.DirectB2SImageRatio;
 import de.mephisto.vpin.server.directb2s.DirectB2SService;
 import de.mephisto.vpin.server.games.Game;
-import de.mephisto.vpin.server.highscores.HighscoreService;
 import de.mephisto.vpin.server.jpa.Highscore;
 import de.mephisto.vpin.server.popper.PopperScreen;
 import de.mephisto.vpin.server.system.SystemService;
@@ -48,21 +47,21 @@ public class CardGraphics {
 
   private final int BLUR_PIXELS = Config.getCardGeneratorConfig().getInt("card.blur");
 
-  private final HighscoreService highscoreService;
   private final DirectB2SService directB2SService;
+  private final Highscore highscore;
   private final Game game;
 
-  public CardGraphics(HighscoreService highscoreService, DirectB2SService directB2SService, Game game) {
-    this.highscoreService = highscoreService;
+  public CardGraphics(DirectB2SService directB2SService, Game game, Highscore highscore) {
     this.directB2SService = directB2SService;
     this.game = game;
+    this.highscore = highscore;
   }
 
   public BufferedImage draw() throws Exception {
     Config.getCardGeneratorConfig().reload();
 
     File sourceImage = new File(SystemService.RESOURCES + "backgrounds", Config.getCardGeneratorConfig().get("card.background") + ".jpg");
-    if(!sourceImage.exists()) {
+    if (!sourceImage.exists()) {
       sourceImage = new File(SystemService.RESOURCES + "backgrounds", Config.getCardGeneratorConfig().get("card.background") + ".png");
     }
 
@@ -72,7 +71,7 @@ public class CardGraphics {
       if (!directB2SImage.exists()) {
         directB2SImage = directB2SService.generateB2SImage(game, DIRECTB2S_RATIO, scaling);
       }
-      if(directB2SImage != null && directB2SImage.exists()) {
+      if (directB2SImage != null && directB2SImage.exists()) {
         sourceImage = directB2SImage;
       }
     }
@@ -102,38 +101,33 @@ public class CardGraphics {
    * The upper section, usually with the three topscores.
    */
   private void renderCardData(BufferedImage image, Game game) throws Exception {
-    Highscore highscore = highscoreService.getHighscore(game);
-    if (highscore != null) {
-      Graphics g = image.getGraphics();
-      ImageUtil.setDefaultColor(g, Config.getCardGeneratorConfig().getString("card.font.color"));
-      int imageWidth = image.getWidth();
+    Graphics g = image.getGraphics();
+    ImageUtil.setDefaultColor(g, Config.getCardGeneratorConfig().getString("card.font.color"));
+    int imageWidth = image.getWidth();
 
-      g.setFont(new Font(TITLE_FONT_NAME, TITLE_FONT_STYLE, TITLE_FONT_SIZE));
+    g.setFont(new Font(TITLE_FONT_NAME, TITLE_FONT_STYLE, TITLE_FONT_SIZE));
 
-      String title = TITLE_TEXT;
-      int titleWidth = g.getFontMetrics().stringWidth(title);
-      int titleY = TITLE_FONT_SIZE + PADDING;
-      g.drawString(title, imageWidth / 2 - titleWidth / 2, titleY);
+    String title = TITLE_TEXT;
+    int titleWidth = g.getFontMetrics().stringWidth(title);
+    int titleY = TITLE_FONT_SIZE + PADDING;
+    g.drawString(title, imageWidth / 2 - titleWidth / 2, titleY);
 
-      g.setFont(new Font(TABLE_FONT_NAME, TABLE_FONT_STYLE, TABLE_FONT_SIZE));
-      String tableName = game.getGameDisplayName();
-      int width = g.getFontMetrics().stringWidth(tableName);
-      int tableNameY = titleY + TABLE_FONT_SIZE + TABLE_FONT_SIZE / 2;
-      g.drawString(tableName, imageWidth / 2 - width / 2, tableNameY);
+    g.setFont(new Font(TABLE_FONT_NAME, TABLE_FONT_STYLE, TABLE_FONT_SIZE));
+    String tableName = game.getGameDisplayName();
+    int width = g.getFontMetrics().stringWidth(tableName);
+    int tableNameY = titleY + TABLE_FONT_SIZE + TABLE_FONT_SIZE / 2;
+    g.drawString(tableName, imageWidth / 2 - width / 2, tableNameY);
 
-      if (RAW_HIGHSCORE) {
-        int yStart = tableNameY + TABLE_FONT_SIZE;
-        renderRawScore(game, image.getHeight(), image.getWidth(), highscore, g, yStart);
-      }
-      else {
-        renderScorelist(game, highscore, g, title, tableNameY);
-      }
+    if (RAW_HIGHSCORE) {
+      int yStart = tableNameY + TABLE_FONT_SIZE;
+      renderRawScore(game, image.getHeight(), image.getWidth(), g, yStart);
+    }
+    else {
+      renderScorelist(game, g, title, tableNameY);
     }
   }
 
-  private void renderScorelist(Game game,
-                               Highscore highscore,
-                               Graphics g, String title, int tableNameY) throws IOException {
+  private void renderScorelist(Game game, Graphics g, String title, int tableNameY) throws IOException {
     g.setFont(new Font(SCORE_FONT_NAME, SCORE_FONT_STYLE, SCORE_FONT_SIZE));
     int count = 0;
     int scoreWidth = 0;
@@ -174,7 +168,7 @@ public class CardGraphics {
     }
   }
 
-  private void renderRawScore(Game game, int imageHeight, int imageWidth, Highscore highscore, Graphics g, int yStart) throws IOException {
+  private void renderRawScore(Game game, int imageHeight, int imageWidth, Graphics g, int yStart) throws IOException {
     int remainingHeight = imageHeight - yStart - PADDING;
     int remainingWidth = imageWidth - 2 * PADDING;
     String raw = highscore.getRaw().trim();
@@ -194,7 +188,7 @@ public class CardGraphics {
 
     List<TextBlock> textBlocks = createTextBlocks(Arrays.asList(lines), g);
     List<TextColumn> textColumns = createTextColumns(textBlocks, g, remainingHeight);
-    while(fontSize > 20 && textColumns.size() > 1) {
+    while (fontSize > 20 && textColumns.size() > 1) {
       int downScale = g.getFont().getSize() - 1;
       g.setFont(new Font(SCORE_FONT_NAME, SCORE_FONT_STYLE, downScale));
       textColumns = createTextColumns(textBlocks, g, remainingHeight);
@@ -210,12 +204,12 @@ public class CardGraphics {
     int wheelWidth = PADDING * 2 + TABLE_FONT_SIZE * 2;
     File wheelIconFile = game.getEmulator().getPinUPMedia(PopperScreen.Wheel);
     boolean renderWheel = remainingXSpace > (wheelWidth + PADDING);
-    if(remainingXSpace > 250) {
+    if (remainingXSpace > 250) {
       wheelWidth = 250;
     }
 
     //file exists && there is place to render it
-    if (wheelIconFile.exists() && renderWheel) {
+    if (wheelIconFile != null && wheelIconFile.exists() && renderWheel) {
       BufferedImage wheelImage = ImageIO.read(wheelIconFile);
       x = (remainingXSpace - wheelWidth) / 2;
       g.drawImage(wheelImage, x, yStart, wheelWidth, wheelWidth, null);
@@ -389,7 +383,7 @@ public class CardGraphics {
     }
 
     public int getHeight() {
-      return (this.lines.size() + 1) * (g.getFont().getSize() -1); //render extra blank line
+      return (this.lines.size() + 1) * (g.getFont().getSize() - 1); //render extra blank line
     }
 
     public int getWidth() {

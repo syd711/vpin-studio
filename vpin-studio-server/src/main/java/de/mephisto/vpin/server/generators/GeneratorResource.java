@@ -4,6 +4,7 @@ import de.mephisto.vpin.server.directb2s.DirectB2SService;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameService;
 import de.mephisto.vpin.server.highscores.HighscoreService;
+import de.mephisto.vpin.server.jpa.Highscore;
 import de.mephisto.vpin.server.popper.PopperScreen;
 import de.mephisto.vpin.server.system.SystemService;
 import de.mephisto.vpin.server.util.Config;
@@ -121,16 +122,19 @@ public class GeneratorResource {
   private boolean onCardGeneration(int gameId, boolean generateSampleCard) throws Exception {
     try {
       Game game = gameService.getGame(gameId);
-      BufferedImage bufferedImage = new CardGraphics(highscoreService, directB2SService, game).draw();
-      if (bufferedImage != null) {
-        if (generateSampleCard) {
-          ImageUtil.write(bufferedImage, getCardSampleFile());
-          return true;
-        }
-        else {
-          File highscoreCard = getCardFile(game);
-          ImageUtil.write(bufferedImage, highscoreCard);
-          return true;
+      Highscore highscore = highscoreService.getHighscore(game);
+      if(highscore != null && highscore.getRaw() != null) {
+        BufferedImage bufferedImage = new CardGraphics(directB2SService, game, highscore).draw();
+        if (bufferedImage != null) {
+          if (generateSampleCard) {
+            ImageUtil.write(bufferedImage, getCardSampleFile());
+            return true;
+          }
+          else {
+            File highscoreCard = getCardFile(game);
+            ImageUtil.write(bufferedImage, highscoreCard);
+            return true;
+          }
         }
       }
     } catch (Exception e) {
@@ -144,8 +148,10 @@ public class GeneratorResource {
     return new File(SystemService.RESOURCES, "highscore-card-sample.png");
   }
 
+  @NonNull
   private File getCardFile(@NonNull Game game) {
     PopperScreen screen = PopperScreen.valueOf(Config.getCardGeneratorConfig().getString("popper.screen", PopperScreen.Other2.name()));
-    return new File(game.getEmulator().getPinUPMedia(screen), FilenameUtils.getBaseName(game.getGameFileName()) + ".png");
+    File mediaFolder = game.getEmulator().getPinUPMediaFolder(screen);
+    return new File(mediaFolder, FilenameUtils.getBaseName(game.getGameFileName()) + ".png");
   }
 }

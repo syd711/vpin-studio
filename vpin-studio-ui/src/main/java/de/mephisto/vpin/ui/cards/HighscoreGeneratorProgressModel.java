@@ -4,6 +4,7 @@ import de.mephisto.vpin.restclient.VPinStudioClient;
 import de.mephisto.vpin.restclient.representations.GameRepresentation;
 import de.mephisto.vpin.ui.util.ProgressModel;
 import de.mephisto.vpin.ui.util.ProgressResultModel;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -37,12 +38,18 @@ public class HighscoreGeneratorProgressModel extends ProgressModel {
   public String processNext(ProgressResultModel progressResultModel) {
     try {
       GameRepresentation game = iterator.next();
-      boolean result = client.generateHighscoreCard(game);
-      if (result) {
-        progressResultModel.addProcessed();
+      String rawHighscore = game.getRawHighscore();
+      if(StringUtils.isEmpty(rawHighscore)) {
+        progressResultModel.addSkipped();
       }
       else {
-        progressResultModel.addSkipped();
+        boolean result = client.generateHighscoreCard(game);
+        if (result) {
+          progressResultModel.addProcessed();
+        }
+        else {
+          progressResultModel.addSkipped();
+        }
       }
       return game.getGameDisplayName();
     } catch (Exception e) {
