@@ -1,14 +1,17 @@
-package de.mephisto.vpin.server.jpa;
+package de.mephisto.vpin.server.players;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import de.mephisto.vpin.server.assets.Asset;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
 import java.util.Date;
 
 @Entity
 @Table(name = "Players")
+@EntityListeners(AuditingEntityListener.class)
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class Player {
 
@@ -23,7 +26,7 @@ public class Player {
   private Date updatedAt;
 
   @Id
-  @Column(name = "id", nullable = false)
+  @GeneratedValue(strategy = GenerationType.AUTO)
   private int id;
 
   @OneToOne(cascade = CascadeType.ALL)

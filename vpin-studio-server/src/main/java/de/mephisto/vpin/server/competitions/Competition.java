@@ -1,9 +1,12 @@
 
-package de.mephisto.vpin.server.jpa;
+package de.mephisto.vpin.server.competitions;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import de.mephisto.vpin.server.assets.Asset;
+import de.mephisto.vpin.server.highscores.Highscore;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
 import java.util.Date;
@@ -11,6 +14,7 @@ import java.util.Set;
 
 @Entity
 @Table(name = "Competitions")
+@EntityListeners(AuditingEntityListener.class)
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class Competition {
 
@@ -25,7 +29,7 @@ public class Competition {
   private Date updatedAt;
 
   @Id
-  @Column(name = "id", nullable = false)
+  @GeneratedValue(strategy = GenerationType.AUTO)
   private Long id;
 
   private Long gameId;

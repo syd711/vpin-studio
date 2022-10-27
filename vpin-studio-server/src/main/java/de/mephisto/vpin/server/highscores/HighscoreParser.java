@@ -1,15 +1,12 @@
 package de.mephisto.vpin.server.highscores;
 
 import de.mephisto.vpin.server.games.Game;
-import de.mephisto.vpin.server.jpa.Highscore;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.File;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 

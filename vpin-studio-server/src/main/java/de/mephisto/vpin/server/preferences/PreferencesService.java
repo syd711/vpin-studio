@@ -1,7 +1,5 @@
 package de.mephisto.vpin.server.preferences;
 
-import de.mephisto.vpin.server.jpa.Preferences;
-import de.mephisto.vpin.server.jpa.PreferencesRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanWrapper;

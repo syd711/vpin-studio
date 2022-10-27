@@ -1,5 +1,5 @@
 
-package de.mephisto.vpin.server.jpa;
+package de.mephisto.vpin.server.preferences;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;

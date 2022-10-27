@@ -1,18 +1,14 @@
-package de.mephisto.vpin.server.jpa;
+package de.mephisto.vpin.server.highscores;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import de.mephisto.vpin.server.games.Game;
-import de.mephisto.vpin.server.highscores.Score;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 
 import javax.persistence.*;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 
 @Entity
 @Table(name = "Highscores")
@@ -30,8 +26,8 @@ public class Highscore {
   private Date updatedAt;
 
   @Id
-  @Column(name = "id", nullable = false)
-  private int id;
+  @GeneratedValue(strategy = GenerationType.AUTO)
+  private Long id;
 
   private int gameId;
 
@@ -43,11 +39,11 @@ public class Highscore {
     this.gameId = gameId;
   }
 
-  public int getId() {
+  public Long getId() {
     return id;
   }
 
-  public void setId(int id) {
+  public void setId(Long id) {
     this.id = id;
   }
 

@@ -1,7 +1,6 @@
 package de.mephisto.vpin.server.highscores;
 
 import de.mephisto.vpin.server.games.Game;
-import de.mephisto.vpin.server.jpa.Highscore;
 import de.mephisto.vpin.server.system.SystemService;
 import de.mephisto.vpin.server.util.SystemCommandExecutor;
 import edu.umd.cs.findbugs.annotations.Nullable;

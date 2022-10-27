@@ -1,12 +1,9 @@
 package de.mephisto.vpin.server.games;
 
-import de.mephisto.vpin.server.jpa.Preferences;
-import de.mephisto.vpin.server.jpa.PreferencesRepository;
-import de.mephisto.vpin.server.popper.PinUPConnector;
+import de.mephisto.vpin.server.preferences.Preferences;
 import de.mephisto.vpin.server.popper.PopperScreen;
 import de.mephisto.vpin.server.preferences.PreferencesService;
 import edu.umd.cs.findbugs.annotations.NonNull;
-import edu.umd.cs.findbugs.annotations.Nullable;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;

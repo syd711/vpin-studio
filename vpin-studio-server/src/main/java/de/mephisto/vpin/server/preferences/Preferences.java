@@ -1,4 +1,4 @@
-package de.mephisto.vpin.server.jpa;
+package de.mephisto.vpin.server.preferences;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import de.mephisto.vpin.server.games.Game;
@@ -6,12 +6,14 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
 import java.util.Date;
 
 @Entity
 @Table(name = "Preferences")
+@EntityListeners(AuditingEntityListener.class)
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class Preferences {
 

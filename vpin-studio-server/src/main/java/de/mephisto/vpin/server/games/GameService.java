@@ -2,9 +2,7 @@ package de.mephisto.vpin.server.games;
 
 import de.mephisto.vpin.server.fx.OverlayWindowFX;
 import de.mephisto.vpin.server.highscores.HighscoreService;
-import de.mephisto.vpin.server.jpa.GameDetails;
-import de.mephisto.vpin.server.jpa.GameDetailsRepository;
-import de.mephisto.vpin.server.jpa.Highscore;
+import de.mephisto.vpin.server.highscores.Highscore;
 import de.mephisto.vpin.server.popper.PinUPConnector;
 import de.mephisto.vpin.server.roms.RomService;
 import de.mephisto.vpin.server.roms.ScanResult;

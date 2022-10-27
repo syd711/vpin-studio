@@ -1,10 +1,6 @@
 package de.mephisto.vpin.server.popper;
 
 import de.mephisto.vpin.server.games.Game;
-import de.mephisto.vpin.server.jpa.GameDetails;
-import de.mephisto.vpin.server.jpa.GameDetailsRepository;
-import de.mephisto.vpin.server.roms.RomService;
-import de.mephisto.vpin.server.roms.ScanResult;
 import de.mephisto.vpin.server.system.SystemService;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;

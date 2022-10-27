@@ -1,7 +1,6 @@
 package de.mephisto.vpin.server.dof;
 
 import com.google.common.annotations.VisibleForTesting;
-import de.mephisto.vpin.server.jpa.DOFCommand;
 import de.mephisto.vpin.server.system.SystemService;
 import de.mephisto.vpin.server.util.SystemCommandExecutor;
 import org.apache.commons.lang3.StringUtils;

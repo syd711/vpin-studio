@@ -1,19 +1,20 @@
-package de.mephisto.vpin.server.jpa;
+package de.mephisto.vpin.server.dof;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import de.mephisto.vpin.server.dof.DOFCommandExecutor;
-import de.mephisto.vpin.server.dof.Trigger;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
 
 @Entity
 @Table(name = "DOFCommands")
+@EntityListeners(AuditingEntityListener.class)
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class DOFCommand {
 
   @Id
-  @Column(name = "pupId", nullable = false)
-  private int id;
+  @GeneratedValue(strategy = GenerationType.AUTO)
+  private Long id;
+
   private int unit;
   private int portNumber;
   private int value;
@@ -36,7 +37,7 @@ public class DOFCommand {
     return description;
   }
 
-  public void setId(int id) {
+  public void setId(Long id) {
     this.id = id;
   }
 
@@ -72,7 +73,7 @@ public class DOFCommand {
     this.description = description;
   }
 
-  public int getId() {
+  public Long getId() {
     return id;
   }
 

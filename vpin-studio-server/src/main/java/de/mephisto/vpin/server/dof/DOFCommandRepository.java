@@ -1,6 +1,5 @@
-package de.mephisto.vpin.server.jpa;
+package de.mephisto.vpin.server.dof;
 
-import de.mephisto.vpin.server.dof.Trigger;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;

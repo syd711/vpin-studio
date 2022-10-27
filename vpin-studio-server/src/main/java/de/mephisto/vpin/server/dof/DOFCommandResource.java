@@ -1,7 +1,6 @@
 package de.mephisto.vpin.server.dof;
 
 import de.mephisto.vpin.server.VPinStudioServer;
-import de.mephisto.vpin.server.jpa.DOFCommand;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;

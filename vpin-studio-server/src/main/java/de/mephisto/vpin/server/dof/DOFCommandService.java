@@ -3,8 +3,6 @@ package de.mephisto.vpin.server.dof;
 import de.mephisto.vpin.server.highscores.HighscoreChangeEvent;
 import de.mephisto.vpin.server.highscores.HighscoreChangeListener;
 import de.mephisto.vpin.server.highscores.HighscoreService;
-import de.mephisto.vpin.server.jpa.DOFCommand;
-import de.mephisto.vpin.server.jpa.DOFCommandRepository;
 import de.mephisto.vpin.server.popper.TableStatusChangeListener;
 import de.mephisto.vpin.server.popper.TableStatusChangedEvent;
 import de.mephisto.vpin.server.util.KeyChecker;
