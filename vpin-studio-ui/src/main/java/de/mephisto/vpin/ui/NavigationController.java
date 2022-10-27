@@ -1,6 +1,7 @@
 package de.mephisto.vpin.ui;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
 import eu.hansolo.tilesfx.Tile;
 import eu.hansolo.tilesfx.TileBuilder;
 import javafx.application.Platform;
@@ -38,17 +39,31 @@ public class NavigationController implements Initializable {
 
   @FXML
   private void onDashboardClick(ActionEvent event) throws IOException {
-    this.loadScreen(event, "scene-dashboard.fxml");
+    loadScreen(event, "scene-dashboard.fxml");
   }
 
   @FXML
   private void onHighscoreCardsClick(ActionEvent event) throws IOException {
-    this.loadScreen(event, "scene-highscoreCards.fxml");
+    loadScreen(event, "scene-highscoreCards.fxml");
   }
 
   @FXML
   private void onTablesClick(ActionEvent event) throws IOException {
-    this.loadScreen(event, "scene-tables.fxml");
+    loadScreen(event, "scene-tables.fxml");
+  }
+
+  @FXML
+  private void onCompetitionsClick(ActionEvent event) throws IOException {
+    loadScreen(event, "scene-competitions.fxml");
+  }
+
+  @FXML
+  private void onPlayersClick(ActionEvent event) throws IOException {
+    loadScreen(event, "scene-players.fxml");
+  }
+
+  public static void load(@NonNull String fxml) throws IOException {
+    loadScreen(null, fxml);
   }
 
   @FXML
@@ -62,7 +77,7 @@ public class NavigationController implements Initializable {
     stack.getChildren().add(preferencesRoot);
   }
 
-  public static void loadScreen(@NonNull ActionEvent event, @NonNull String name) throws IOException {
+  public static void loadScreen(@Nullable ActionEvent event, @NonNull String name) throws IOException {
     if (activeController != null) {
       activeController.dispose();
     }

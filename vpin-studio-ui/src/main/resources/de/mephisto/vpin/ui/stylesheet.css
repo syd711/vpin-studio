@@ -286,6 +286,42 @@
 }
 
 /**
+ * Tabs
+ */
+.tab-pane .tab-header-area .tab-header-background {
+}
+
+.tab-pane {
+    -fx-tab-min-width:90px;
+    -fx-tab-min-height:30px;
+}
+
+.tab{
+    -fx-background-insets: 0 1 0 1,0,0;
+}
+.tab-pane .tab {
+}
+
+.tab-pane .tab:selected {
+    -fx-text-background-color: #DDDDDD;
+    -fx-border-style: solid solid solid solid;
+    -fx-border-color: #111111;
+}
+
+.tab .tab-label {
+    -fx-alignment: CENTER;
+    -fx-text-fill: -fx-font-2;
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+}
+
+.tab:selected .tab-label {
+    -fx-alignment: CENTER;
+    -fx-text-fill:-fx-font-1;
+}
+
+
+/**
  * Table View
  */
 

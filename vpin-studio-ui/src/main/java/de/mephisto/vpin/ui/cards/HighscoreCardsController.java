@@ -12,12 +12,10 @@ import de.mephisto.vpin.ui.util.BindingUtil;
 import de.mephisto.vpin.ui.util.WidgetFactory;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
-import javafx.animation.RotateTransition;
 import javafx.application.Platform;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
@@ -30,6 +28,7 @@ import javafx.scene.layout.BorderPane;
 import javafx.stage.FileChooser;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.kordamp.ikonli.javafx.FontIcon;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -134,10 +133,7 @@ public class HighscoreCardsController implements Initializable, ObservedProperty
       ignoreList.addAll(Arrays.asList("card.generation.enabled", "popper.screen"));
       properties.addObservedPropertyChangeListener(this);
 
-      List<GameRepresentation> games = client.getGames();
-      ObservableList<GameRepresentation> gameRepresentations = FXCollections.observableArrayList(games);
-      tableCombo.getItems().addAll(gameRepresentations);
-
+      onTableRefresh(null);
       initFields();
 
       cardPreview.setPreserveRatio(true);
@@ -207,10 +203,21 @@ public class HighscoreCardsController implements Initializable, ObservedProperty
   }
 
   @FXML
-  private void onTableRefresh() {
+  private void onTableRefresh(ActionEvent event) throws IOException { {
+    if(event != null) {
+      NavigationController.load("scene-highscoreCards.fxml");
+      return;
+    }
+  }
     List<GameRepresentation> games = client.getGames();
+    List<GameRepresentation> filtered = new ArrayList<>();
+    for (GameRepresentation game : games) {
+      if (!StringUtils.isEmpty(game.getRawHighscore())) {
+        filtered.add(game);
+      }
+    }
+    ObservableList<GameRepresentation> gameRepresentations = FXCollections.observableArrayList(filtered);
     tableCombo.getItems().clear();
-    ObservableList<GameRepresentation> gameRepresentations = FXCollections.observableArrayList(games);
     tableCombo.getItems().addAll(gameRepresentations);
     onGenerateClick();
   }
@@ -301,12 +308,9 @@ public class HighscoreCardsController implements Initializable, ObservedProperty
     BindingUtil.bindSpinner(rowSeparatorSpinner, properties, "card.highscores.row.separator");
 
     BindingUtil.bindCheckbox(renderRawHighscore, properties, "card.rawHighscore");
-    renderRawHighscore.selectedProperty().addListener(new ChangeListener<Boolean>() {
-      @Override
-      public void changed(ObservableValue<? extends Boolean> observableValue, Boolean aBoolean, Boolean t1) {
-        wheelImageSpinner.setDisable(t1);
-        rowSeparatorSpinner.setDisable(t1);
-      }
+    renderRawHighscore.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
+      wheelImageSpinner.setDisable(t1);
+      rowSeparatorSpinner.setDisable(t1);
     });
 
     wheelImageSpinner.setDisable(renderRawHighscore.isSelected());
@@ -326,19 +330,21 @@ public class HighscoreCardsController implements Initializable, ObservedProperty
 
   private void refreshRawPreview(@Nullable GameRepresentation game) {
     try {
+      resolutionLabel.setText("");
       openDirectB2SImageButton.setVisible(false);
-      openDirectB2SImageButton.setTooltip(new Tooltip("Open directb2s image"));
-      InputStream input = client.getDirectB2SImage(game);
-      Image image = new Image(input);
-      rawDirectB2SImage.setImage(image);
-      input.close();
+      rawDirectB2SImage.setImage(null);
 
-      if (image.getWidth() > 300) {
-        openDirectB2SImageButton.setVisible(true);
-        resolutionLabel.setText("Resolution: " + (int) image.getWidth() + " x " + (int) image.getHeight());
-      }
-      else {
-        resolutionLabel.setText("");
+      if(game != null) {
+        openDirectB2SImageButton.setTooltip(new Tooltip("Open directb2s image"));
+        InputStream input = client.getDirectB2SImage(game);
+        Image image = new Image(input);
+        rawDirectB2SImage.setImage(image);
+        input.close();
+
+        if (image.getWidth() > 300) {
+          openDirectB2SImageButton.setVisible(true);
+          resolutionLabel.setText("Resolution: " + (int) image.getWidth() + " x " + (int) image.getHeight());
+        }
       }
     } catch (IOException e) {
       LOG.error("Failed to load raw b2s: " + e.getMessage(), e);
@@ -363,7 +369,7 @@ public class HighscoreCardsController implements Initializable, ObservedProperty
             setBusy(false);
 
             int resolution = Integer.parseInt(imageScalingCombo.getValue());
-            if(image.getWidth() >= resolution && image.getWidth() < imageCenter.getWidth()) {
+            if (image.getWidth() >= resolution && image.getWidth() < imageCenter.getWidth()) {
               cardPreview.setFitHeight(image.getHeight());
               cardPreview.setFitWidth(image.getWidth());
             }

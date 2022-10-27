@@ -372,17 +372,20 @@
             <Insets bottom="12.0" left="12.0" right="24.0" />
          </BorderPane.margin>
          <center>
-            <ImageView fx:id="cardPreview" fitHeight="416.0" fitWidth="746.0" pickOnBounds="true" preserveRatio="true">
+            <BorderPane fx:id="imageCenter" styleClass="media-container">
                <BorderPane.margin>
-                  <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
+                  <Insets />
                </BorderPane.margin>
-            </ImageView>
+               <center>
+                  <ImageView fx:id="cardPreview" fitHeight="416.0" fitWidth="746.0" pickOnBounds="true" preserveRatio="true" />
+               </center>
+            </BorderPane>
          </center>
          <top>
             <ToolBar prefHeight="40.0" prefWidth="200.0" style="-fx-background-radius: 3 3 0 0;" BorderPane.alignment="CENTER">
                <items>
                   <ComboBox fx:id="tableCombo" stylesheets="@stylesheet.css" />
-                  <Button mnemonicParsing="false" onAction="#onTableRefresh">
+                  <Button mnemonicParsing="false" onAction="#onTableRefresh" text=" Reload">
                      <font>
                         <Font size="14.0" />
                      </font>

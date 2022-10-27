@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.control.TabPane?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.StackPane?>
+<?import org.kordamp.ikonli.javafx.FontIcon?>
+
+<BorderPane styleClass="base-component" stylesheets="@stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.competitions.CompetitionsController">
+    <top>
+        <fx:include fx:id="mainToolbar" source="scene-toolbar.fxml" />
+    </top>
+    <center>
+        <BorderPane styleClass="subpanel" BorderPane.alignment="CENTER">
+            <center>
+                <TabPane tabClosingPolicy="UNAVAILABLE" BorderPane.alignment="CENTER">
+                    <tabs>
+                        <Tab closable="false" text=" Offline Competitions">
+                            <content>
+                                <BorderPane prefHeight="200.0" prefWidth="200.0" />
+                            </content>
+                     <graphic>
+                        <FontIcon iconColor="WHITE" iconLiteral="bi-trophy" />
+                     </graphic>
+                     <content>
+                        <BorderPane>
+                           <center>
+                              <TableView style="-fx-background-color: #2a2a2a;" styleClass="base-component" BorderPane.alignment="CENTER">
+                                <columns>
+                                  <TableColumn prefWidth="292.0001335144043" text="Name" />
+                                  <TableColumn minWidth="0.0" prefWidth="75.9998779296875" text="Status" />
+                                    <TableColumn prefWidth="97.60009765625" text="Winner" />
+                                    <TableColumn prefWidth="93.59994506835938" text="Highscore" />
+                                    <TableColumn prefWidth="34.39990234375" text="Submitted Scores" />
+                                </columns>
+                              </TableView>
+                           </center>
+                           <top>
+                              <StackPane prefHeight="150.0" prefWidth="200.0" styleClass="media-container" BorderPane.alignment="CENTER">
+                                 <children>
+                                    <ImageView fitHeight="150.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true" />
+                                    <BorderPane prefHeight="200.0" prefWidth="200.0" />
+                                 </children>
+                              </StackPane>
+                           </top></BorderPane>
+                     </content>
+                        </Tab>
+                        <Tab closable="false" text=" Online Competitions">
+                     <graphic>
+                        <FontIcon iconColor="WHITE" iconLiteral="bi-trophy-fill" />
+                     </graphic>
+                     <content>
+                        <BorderPane prefHeight="200.0" prefWidth="200.0" />
+                     </content>
+                        </Tab>
+                    </tabs>
+                    <BorderPane.margin>
+                        <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
+                    </BorderPane.margin>
+                </TabPane>
+            </center>
+         <BorderPane.margin>
+            <Insets left="12.0" right="12.0" />
+         </BorderPane.margin>
+        </BorderPane>
+    </center>
+</BorderPane>

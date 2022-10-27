@@ -30,8 +30,26 @@ public class Highscore {
   private Date updatedAt;
 
   @Id
-  @Column(name = "pupId", nullable = false)
-  private int pupId;
+  @Column(name = "id", nullable = false)
+  private int id;
+
+  private int gameId;
+
+  public int getGameId() {
+    return gameId;
+  }
+
+  public void setGameId(int gameId) {
+    this.gameId = gameId;
+  }
+
+  public int getId() {
+    return id;
+  }
+
+  public void setId(int id) {
+    this.id = id;
+  }
 
   private String displayName;
 
@@ -61,14 +79,6 @@ public class Highscore {
     this.updatedAt = updatedAt;
   }
 
-  public int getPupId() {
-    return pupId;
-  }
-
-  public void setPupId(int pupId) {
-    this.pupId = pupId;
-  }
-
   public String getRaw() {
     return raw;
   }
@@ -80,7 +90,7 @@ public class Highscore {
   public static Highscore forGame(@NonNull Game game, @Nullable String rawValue) {
     Highscore highscore = new Highscore();
     highscore.setRaw(rawValue);
-    highscore.setPupId(game.getId());
+    highscore.setGameId(game.getId());
     highscore.setCreatedAt(new Date());
     highscore.setUpdatedAt(new Date());
     highscore.setDisplayName(game.getGameDisplayName());

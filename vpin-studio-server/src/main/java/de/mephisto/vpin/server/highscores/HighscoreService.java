@@ -37,7 +37,7 @@ public class HighscoreService implements InitializingBean {
     }
 
     //check if an entry exists, create the first one with empty values otherwise
-    Highscore highscore = highscoreRepository.findByPupId(game.getId());
+    Highscore highscore = highscoreRepository.findByGameId(game.getId());
     if (highscore == null) {
       String rawHighscore = highscoreResolver.readHighscore(game);
       highscore = Highscore.forGame(game, rawHighscore);
@@ -62,7 +62,7 @@ public class HighscoreService implements InitializingBean {
 
     String rawHighscore = highscoreResolver.readHighscore(game);
     Highscore updatedHighscore = Highscore.forGame(game, rawHighscore);
-    Highscore existingHighscore = highscoreRepository.findByPupId(game.getId());
+    Highscore existingHighscore = highscoreRepository.findByGameId(game.getId());
 
     if (existingHighscore != null) {
       if (containsHigherScoreThan(updatedHighscore, existingHighscore)) {

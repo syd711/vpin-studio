@@ -101,7 +101,7 @@
                         <FontIcon iconColor="WHITE" iconLiteral="bi-layers" />
                      </graphic>
                   </Button>
-                  <Button alignment="BASELINE_LEFT" graphicTextGap="12.0" layoutX="10.0" layoutY="210.0" mnemonicParsing="false" prefHeight="60.0" prefWidth="250.0" styleClass="navigation-button" stylesheets="@stylesheet.css" text="Competitions" textFill="WHITE">
+                  <Button alignment="BASELINE_LEFT" graphicTextGap="12.0" layoutX="10.0" layoutY="210.0" mnemonicParsing="false" onAction="#onCompetitionsClick" prefHeight="60.0" prefWidth="250.0" styleClass="navigation-button" stylesheets="@stylesheet.css" text="Competitions" textFill="WHITE">
                       <font>
                           <Font size="18.0" />
                       </font>
@@ -118,7 +118,7 @@
                         <FontIcon iconColor="WHITE" iconLiteral="bi-trophy" />
                      </graphic>
                   </Button>
-                  <Button alignment="BASELINE_LEFT" graphicTextGap="12.0" layoutX="10.0" layoutY="450.0" mnemonicParsing="false" prefHeight="60.0" prefWidth="250.0" styleClass="navigation-button" stylesheets="@stylesheet.css" text="Players" textFill="WHITE">
+                  <Button alignment="BASELINE_LEFT" graphicTextGap="12.0" layoutX="10.0" layoutY="450.0" mnemonicParsing="false" onAction="#onPlayersClick" prefHeight="60.0" prefWidth="250.0" styleClass="navigation-button" stylesheets="@stylesheet.css" text="Players" textFill="WHITE">
                       <font>
                           <Font size="18.0" />
                       </font>
