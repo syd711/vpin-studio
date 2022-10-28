@@ -36,11 +36,31 @@ public class Competition {
 
   private String type;
 
+  private String badge;
+
+  private boolean customizeMedia;
+
   @OneToMany
   private Set<Highscore> highscores;
 
   @OneToOne(cascade = CascadeType.ALL)
   private Asset logo;
+
+  public String getBadge() {
+    return badge;
+  }
+
+  public void setBadge(String badge) {
+    this.badge = badge;
+  }
+
+  public boolean isCustomizeMedia() {
+    return customizeMedia;
+  }
+
+  public void setCustomizeMedia(boolean customizeMedia) {
+    this.customizeMedia = customizeMedia;
+  }
 
   public String getType() {
     return type;
