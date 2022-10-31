@@ -4,6 +4,7 @@ import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.Properties;
 
 public class ObservedProperties {
@@ -30,12 +31,12 @@ public class ObservedProperties {
 
   public void set(String key, String value) {
     this.properties.put(key, value);
-    this.observer.changed(bundle, key, value);
+    this.observer.changed(bundle, key, Optional.of(value));
   }
 
   public void notifyChange(String key, String value) {
     for (ObservedPropertyChangeListener changeListener : this.changeListeners) {
-      changeListener.changed(bundle, key, value);
+      changeListener.changed(bundle, key, Optional.of(value));
     }
   }
 

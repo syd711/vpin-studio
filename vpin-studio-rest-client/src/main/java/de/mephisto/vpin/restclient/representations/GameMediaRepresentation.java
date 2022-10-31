@@ -1,7 +1,6 @@
 package de.mephisto.vpin.restclient.representations;
 
 import de.mephisto.vpin.restclient.PopperScreen;
-import edu.umd.cs.findbugs.annotations.NonNull;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -17,7 +16,7 @@ public class GameMediaRepresentation {
     this.media = media;
   }
 
-  public GameMediaItemRepresentation getItem(@NonNull PopperScreen screen) {
+  public GameMediaItemRepresentation getItem(PopperScreen screen) {
     return this.media.get(screen.name());
   }
 }

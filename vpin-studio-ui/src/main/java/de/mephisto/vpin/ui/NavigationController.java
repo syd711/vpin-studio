@@ -1,7 +1,5 @@
 package de.mephisto.vpin.ui;
 
-import edu.umd.cs.findbugs.annotations.NonNull;
-import edu.umd.cs.findbugs.annotations.Nullable;
 import eu.hansolo.tilesfx.Tile;
 import eu.hansolo.tilesfx.TileBuilder;
 import javafx.application.Platform;
@@ -62,7 +60,7 @@ public class NavigationController implements Initializable {
     loadScreen(event, "scene-players.fxml");
   }
 
-  public static void load(@NonNull String fxml) throws IOException {
+  public static void load(String fxml) throws IOException {
     loadScreen(null, fxml);
   }
 
@@ -77,7 +75,7 @@ public class NavigationController implements Initializable {
     stack.getChildren().add(preferencesRoot);
   }
 
-  public static void loadScreen(@Nullable ActionEvent event, @NonNull String name) throws IOException {
+  public static void loadScreen(ActionEvent event, String name) throws IOException {
     if (activeController != null) {
       activeController.dispose();
     }

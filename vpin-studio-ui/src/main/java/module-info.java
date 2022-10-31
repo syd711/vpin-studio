@@ -15,7 +15,6 @@ module de.mephisto.vpin.ui {
   // add icon pack modules
   requires org.kordamp.ikonli.materialdesign2;
   requires org.kordamp.ikonli.simplelineicons;
-  requires com.github.spotbugs.annotations;
   requires filters;
   requires de.mephisto.vpin.restclient;
   requires javafx.media;

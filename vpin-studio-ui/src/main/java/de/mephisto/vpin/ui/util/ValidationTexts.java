@@ -1,16 +1,13 @@
 package de.mephisto.vpin.ui.util;
 
 import de.mephisto.vpin.restclient.representations.GameRepresentation;
-import edu.umd.cs.findbugs.annotations.NonNull;
-import edu.umd.cs.findbugs.annotations.Nullable;
 
 /**
  * See GameValidator
  */
 public class ValidationTexts {
 
-  @Nullable
-  public static String getValidationMessage(@NonNull GameRepresentation game) {
+  public static String getValidationMessage(GameRepresentation game) {
     int code = game.getValidationState();
     if(code == -1) {
       return null;

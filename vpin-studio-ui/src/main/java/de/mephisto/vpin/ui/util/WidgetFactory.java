@@ -3,9 +3,8 @@ package de.mephisto.vpin.ui.util;
 import de.mephisto.vpin.restclient.RestClient;
 import de.mephisto.vpin.restclient.VPinStudioClient;
 import de.mephisto.vpin.restclient.representations.GameMediaItemRepresentation;
+import de.mephisto.vpin.restclient.representations.GameMediaRepresentation;
 import de.mephisto.vpin.ui.VPinStudioApplication;
-import edu.umd.cs.findbugs.annotations.NonNull;
-import edu.umd.cs.findbugs.annotations.Nullable;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.concurrent.Service;
@@ -152,25 +151,25 @@ public class WidgetFactory {
     }
   }
 
-  public static Node createMediaContainer(@NonNull BorderPane parent, @NonNull VPinStudioClient client, @Nullable GameMediaItemRepresentation item) {
+  public static Node createMediaContainer(BorderPane parent, VPinStudioClient client, GameMediaItemRepresentation mediaItem) {
     if (parent.getCenter() != null) {
       disposeMediaBorderPane(parent);
     }
 
     Node top = parent.getTop();
     if (top != null) {
-      top.setVisible(item != null);
+      top.setVisible(mediaItem != null);
     }
 
-    if (item == null) {
+    if (mediaItem == null) {
       Label label = new Label("No media found.");
       label.setStyle("-fx-font-size: 14px;-fx-text-fill: #444444;");
       parent.setCenter(label);
       return parent;
     }
 
-    String mimeType = item.getMimeType();
-    String url = client.getURL(item.getUri());
+    String mimeType = mediaItem.getMimeType();
+    String url = client.getURL(mediaItem.getUri());
     String baseType = mimeType.split("/")[0];
     if (baseType.equals("image")) {
       ImageView imageView = new ImageView();

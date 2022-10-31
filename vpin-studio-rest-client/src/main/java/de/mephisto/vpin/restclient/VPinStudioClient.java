@@ -2,8 +2,6 @@ package de.mephisto.vpin.restclient;
 
 import de.mephisto.vpin.restclient.representations.GameMediaRepresentation;
 import de.mephisto.vpin.restclient.representations.GameRepresentation;
-import edu.umd.cs.findbugs.annotations.NonNull;
-import edu.umd.cs.findbugs.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.io.ByteArrayResource;
@@ -31,7 +29,7 @@ public class VPinStudioClient implements ObservedPropertyChangeListener {
     return new ByteArrayInputStream(bytes);
   }
 
-  public String getURL(@NonNull String segment) {
+  public String getURL(String segment) {
     if (!segment.startsWith("http") && !segment.contains(API)) {
       return RestClient.getInstance().getBaseUrl() + API + segment;
     }
@@ -137,11 +135,11 @@ public class VPinStudioClient implements ObservedPropertyChangeListener {
   }
 
   @Override
-  public void changed(@NonNull String propertiesName, @NonNull String key, @Nullable String updatedValue) {
+  public void changed(String propertiesName, String key, Optional<String> updatedValue) {
     Map<String, Object> model = new HashMap<>();
     model.put(key, updatedValue);
     Boolean result = RestClient.getInstance().put(API + "properties/" + propertiesName, model);
     ObservedProperties observedProperties = VPinStudioClient.observedProperties.get(propertiesName);
-    observedProperties.notifyChange(key, updatedValue);
+    observedProperties.notifyChange(key, updatedValue.get());
   }
 }

@@ -10,8 +10,6 @@ import de.mephisto.vpin.ui.StudioFXController;
 import de.mephisto.vpin.ui.VPinStudioApplication;
 import de.mephisto.vpin.ui.util.BindingUtil;
 import de.mephisto.vpin.ui.util.WidgetFactory;
-import edu.umd.cs.findbugs.annotations.NonNull;
-import edu.umd.cs.findbugs.annotations.Nullable;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -36,10 +34,8 @@ import org.slf4j.LoggerFactory;
 import java.awt.*;
 import java.io.*;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.*;
 import java.util.List;
-import java.util.ResourceBundle;
 
 import static de.mephisto.vpin.ui.VPinStudioApplication.stage;
 
@@ -144,7 +140,7 @@ public class HighscoreCardsController implements Initializable, ObservedProperty
           e.printStackTrace();
         }
         cardPreview.setFitWidth(newVal.intValue() / 2);
-        refreshPreview(tableCombo.getValue(), false);
+        refreshPreview(Optional.of(tableCombo.getValue()), false);
       });
 
       stage.heightProperty().addListener((obs, oldVal, newVal) -> {
@@ -259,7 +255,7 @@ public class HighscoreCardsController implements Initializable, ObservedProperty
   @FXML
   private void onGenerateClick() {
     GameRepresentation value = tableCombo.getValue();
-    refreshPreview(value, true);
+    refreshPreview(Optional.ofNullable(value), true);
   }
 
   public HighscoreCardsController() {
@@ -316,7 +312,7 @@ public class HighscoreCardsController implements Initializable, ObservedProperty
     wheelImageSpinner.setDisable(renderRawHighscore.isSelected());
     rowSeparatorSpinner.setDisable(renderRawHighscore.isSelected());
 
-    tableCombo.valueProperty().addListener((observableValue, gameRepresentation, t1) -> refreshRawPreview(t1));
+    tableCombo.valueProperty().addListener((observableValue, gameRepresentation, t1) -> refreshRawPreview(Optional.of(t1)));
 
     rawHighscoreHelp.setCursor(javafx.scene.Cursor.HAND);
     Tooltip tooltip = new Tooltip();
@@ -324,19 +320,19 @@ public class HighscoreCardsController implements Initializable, ObservedProperty
     Tooltip.install(rawHighscoreHelp, new Tooltip("The font size of the highscore text will be adapted according to the number of lines."));
 
     GameRepresentation value = tableCombo.getValue();
-    refreshRawPreview(value);
+    refreshRawPreview(Optional.of(value));
     onGenerateClick();
   }
 
-  private void refreshRawPreview(@Nullable GameRepresentation game) {
+  private void refreshRawPreview(Optional<GameRepresentation> game) {
     try {
       resolutionLabel.setText("");
       openDirectB2SImageButton.setVisible(false);
       rawDirectB2SImage.setImage(null);
 
-      if(game != null) {
+      if(game.isPresent()) {
         openDirectB2SImageButton.setTooltip(new Tooltip("Open directb2s image"));
-        InputStream input = client.getDirectB2SImage(game);
+        InputStream input = client.getDirectB2SImage(game.get());
         Image image = new Image(input);
         rawDirectB2SImage.setImage(image);
         input.close();
@@ -351,8 +347,8 @@ public class HighscoreCardsController implements Initializable, ObservedProperty
     }
   }
 
-  private void refreshPreview(@Nullable GameRepresentation game, boolean regenerate) {
-    if (game == null) {
+  private void refreshPreview(Optional<GameRepresentation> game, boolean regenerate) {
+    if (!game.isPresent()) {
       return;
     }
 
@@ -362,7 +358,7 @@ public class HighscoreCardsController implements Initializable, ObservedProperty
         if (regenerate) {
           new Thread(() -> {
             setBusy(true);
-            InputStream input = client.getHighscoreCard(game);
+            InputStream input = client.getHighscoreCard(game.get());
             Image image = new Image(input);
             cardPreview.setImage(image);
             cardPreview.setVisible(true);
@@ -390,7 +386,7 @@ public class HighscoreCardsController implements Initializable, ObservedProperty
   }
 
   @Override
-  public void changed(@NonNull String propertiesName, @NonNull String key, @Nullable String updatedValue) {
+  public void changed(String propertiesName, String key, Optional<String> updatedValue) {
     if (!ignoreList.contains(key)) {
       onGenerateClick();
     }

@@ -10,7 +10,6 @@ import de.mephisto.vpin.ui.StudioFXController;
 import de.mephisto.vpin.ui.util.BindingUtil;
 import de.mephisto.vpin.ui.util.ValidationTexts;
 import de.mephisto.vpin.ui.util.WidgetFactory;
-import edu.umd.cs.findbugs.annotations.Nullable;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.value.ChangeListener;
@@ -486,7 +485,7 @@ public class TablesController implements Initializable, StudioFXController {
 
     tableView.setItems(data);
     tableView.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
-      refreshView(newSelection);
+      refreshView(Optional.of(newSelection));
     });
 
     if (!data.isEmpty()) {
@@ -513,7 +512,7 @@ public class TablesController implements Initializable, StudioFXController {
       public void changed(ObservableValue<? extends Boolean> observableValue, Boolean aBoolean, Boolean expanded) {
         GameRepresentation game = tableView.getSelectionModel().selectedItemProperty().get();
         if (expanded) {
-          refreshView(game);
+          refreshView(Optional.of(game));
         }
         else {
           resetMedia();
@@ -537,11 +536,12 @@ public class TablesController implements Initializable, StudioFXController {
     disposeMediaPane(screenWheel);
   }
 
-  private void refreshView(@Nullable GameRepresentation game) {
-    editHsFileNameBtn.setDisable(game == null);
-    editRomNameBtn.setDisable(game == null);
+  private void refreshView(Optional<GameRepresentation> g) {
+    editHsFileNameBtn.setDisable(g.isEmpty());
+    editRomNameBtn.setDisable(g.isEmpty());
 
-    if (game != null) {
+    if (g.isPresent()) {
+      GameRepresentation game = g.get();
       GameMediaRepresentation gameMedia = client.getGameMedia(game.getId());
 
       volumeSlider.setDisable(false);
@@ -559,7 +559,7 @@ public class TablesController implements Initializable, StudioFXController {
       labelTimesPlayed.setText(String.valueOf(game.getNumberPlays()));
       labelHSFilename.setText(game.getHsFileName());
 
-      refreshDirectB2SPreview(game);
+      refreshDirectB2SPreview(g);
 
       validationError.setVisible(game.getValidationState() > 0);
       if (game.getValidationState() > 0) {
@@ -597,7 +597,7 @@ public class TablesController implements Initializable, StudioFXController {
       labelTimesPlayed.setText("-");
       labelHSFilename.setText("-");
 
-      refreshDirectB2SPreview(null);
+      refreshDirectB2SPreview(Optional.empty());
 
       highscoreTextArea.setText("");
 
@@ -606,14 +606,14 @@ public class TablesController implements Initializable, StudioFXController {
     }
   }
 
-  private void refreshDirectB2SPreview(@Nullable GameRepresentation game) {
+  private void refreshDirectB2SPreview(Optional<GameRepresentation> game) {
     try {
       openDirectB2SImageButton.setVisible(false);
       openDirectB2SImageButton.setTooltip(new Tooltip("Open directb2s image"));
       rawDirectB2SImage.setVisible(false);
 
-      if(game != null) {
-        InputStream input = client.getDirectB2SImage(game);
+      if(game.isPresent()) {
+        InputStream input = client.getDirectB2SImage(game.get());
         javafx.scene.image.Image image = new Image(input);
         rawDirectB2SImage.setVisible(true);
         rawDirectB2SImage.setImage(image);
