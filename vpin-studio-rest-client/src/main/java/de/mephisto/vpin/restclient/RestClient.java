@@ -24,7 +24,7 @@ public class RestClient implements ClientHttpRequestInterceptor {
   private final static Logger LOG = LoggerFactory.getLogger(RestTemplate.class);
   public static final String SCHEME = "http";
   public static final String HOST = "localhost";
-  public static final int PORT = 8089;
+  public static final int PORT = 8099;
 
   private String baseUrl;
   private String authenticationToken;
