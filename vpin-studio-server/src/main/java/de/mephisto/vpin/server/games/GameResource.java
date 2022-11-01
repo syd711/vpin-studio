@@ -31,12 +31,6 @@ public class GameResource {
     return game;
   }
 
-  @PutMapping("/dismiss/{id}")
-  public boolean put(@PathVariable("id") int id, @RequestBody Map<String,String> values) {
-    Game game = gameService.getGame(id);
-    return true;
-  }
-
   @GetMapping("/scan/{id}")
   public boolean scanGame(@PathVariable("id") int pupId) {
     return gameService.scanGame(pupId);

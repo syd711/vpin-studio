@@ -8,6 +8,7 @@ import de.mephisto.vpin.restclient.representations.GameRepresentation;
 import de.mephisto.vpin.ui.NavigationController;
 import de.mephisto.vpin.ui.StudioFXController;
 import de.mephisto.vpin.ui.util.BindingUtil;
+import de.mephisto.vpin.ui.util.MediaUtil;
 import de.mephisto.vpin.ui.util.ValidationTexts;
 import de.mephisto.vpin.ui.util.WidgetFactory;
 import javafx.beans.property.SimpleObjectProperty;
@@ -216,20 +217,7 @@ public class TablesController implements Initializable, StudioFXController {
   @FXML
   private void onOpenDirectB2SBackground() {
     GameRepresentation game = tableView.getSelectionModel().selectedItemProperty().get();
-    if (game != null) {
-      try {
-        ByteArrayInputStream s = client.getDirectB2SImage(game);
-        byte[] bytes = s.readAllBytes();
-        File png = File.createTempFile("vpin-studio-directb2s-", ".png");
-        png.deleteOnExit();
-        IOUtils.write(bytes, new FileOutputStream(png));
-        s.close();
-
-        Desktop.getDesktop().open(png);
-      } catch (IOException e) {
-        LOG.error("Failed to create image temp file: " + e.getMessage(), e);
-      }
-    }
+    MediaUtil.openDirectB2SBackground(game);
   }
 
   @FXML
@@ -485,7 +473,7 @@ public class TablesController implements Initializable, StudioFXController {
 
     tableView.setItems(data);
     tableView.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
-      refreshView(Optional.of(newSelection));
+      refreshView(Optional.ofNullable(newSelection));
     });
 
     if (!data.isEmpty()) {

@@ -137,7 +137,7 @@ public class VPinStudioClient implements ObservedPropertyChangeListener {
   @Override
   public void changed(String propertiesName, String key, Optional<String> updatedValue) {
     Map<String, Object> model = new HashMap<>();
-    model.put(key, updatedValue);
+    model.put(key, updatedValue.get());
     Boolean result = RestClient.getInstance().put(API + "properties/" + propertiesName, model);
     ObservedProperties observedProperties = VPinStudioClient.observedProperties.get(propertiesName);
     observedProperties.notifyChange(key, updatedValue.get());

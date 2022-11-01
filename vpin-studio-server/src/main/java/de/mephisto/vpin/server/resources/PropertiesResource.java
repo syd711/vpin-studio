@@ -31,10 +31,6 @@ public class PropertiesResource {
   @PutMapping("/{properties}")
   public boolean put(@PathVariable("properties") String properties, @RequestBody Map<String,String> values) {
     PropertiesStore store = Config.getConfig(properties);
-    if(store == null) {
-      LOG.error("No properties found for name " + properties);
-      return false;
-    }
     store.set(values);
     return true;
   }

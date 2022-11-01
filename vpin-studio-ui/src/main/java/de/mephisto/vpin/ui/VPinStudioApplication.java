@@ -3,10 +3,12 @@ package de.mephisto.vpin.ui;
 import javafx.application.Application;
 import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Rectangle2D;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Paint;
+import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 
@@ -26,14 +28,24 @@ public class VPinStudioApplication extends Application {
     Parent root = loader.load();
     NavigationController.navigationController = loader.<StudioFXController>getController();
 
-    Scene scene = new Scene(root, 1920, 1080);
+    Rectangle2D screenBounds = Screen.getPrimary().getBounds();
+    int height = 1080;
+    int width = 1920;
+    if(screenBounds.getHeight() >= 1280) {
+      height = 1200;
+    }
+    if(screenBounds.getHeight() >= 1480) {
+      height = 1400;
+    }
+
+    Scene scene = new Scene(root, width, height);
     scene.setFill(Paint.valueOf("#212529"));
     stage.setTitle("VPin Studio");
     stage.setScene(scene);
     stage.initStyle(StageStyle.UNDECORATED);
 
-    stage.setX(400);
-    stage.setY(200);
+    stage.setX((screenBounds.getWidth()/2) - (width/2));
+    stage.setY((screenBounds.getHeight()/2) - (height/2));
 
     scene.setOnMousePressed(new EventHandler<MouseEvent>() {
       @Override

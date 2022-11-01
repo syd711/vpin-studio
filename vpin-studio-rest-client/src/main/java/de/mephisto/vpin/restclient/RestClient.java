@@ -92,7 +92,9 @@ public class RestClient implements ClientHttpRequestInterceptor {
   }
 
   public Boolean put(String url, Map<String, Object> model) {
-    HttpEntity<Map> entity = new HttpEntity<>(model);
+    HttpHeaders headers = new HttpHeaders();
+    headers.setContentType(MediaType.APPLICATION_JSON);
+    HttpEntity<Map> entity = new HttpEntity<>(model, headers);
     return exchange(url, HttpMethod.PUT, entity, Boolean.class);
   }
 

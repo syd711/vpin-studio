@@ -9,6 +9,7 @@ import de.mephisto.vpin.ui.NavigationController;
 import de.mephisto.vpin.ui.StudioFXController;
 import de.mephisto.vpin.ui.VPinStudioApplication;
 import de.mephisto.vpin.ui.util.BindingUtil;
+import de.mephisto.vpin.ui.util.MediaUtil;
 import de.mephisto.vpin.ui.util.WidgetFactory;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
@@ -140,7 +141,7 @@ public class HighscoreCardsController implements Initializable, ObservedProperty
           e.printStackTrace();
         }
         cardPreview.setFitWidth(newVal.intValue() / 2);
-        refreshPreview(Optional.of(tableCombo.getValue()), false);
+        refreshPreview(Optional.ofNullable(tableCombo.getValue()), false);
       });
 
       stage.heightProperty().addListener((obs, oldVal, newVal) -> {
@@ -236,20 +237,7 @@ public class HighscoreCardsController implements Initializable, ObservedProperty
   @FXML
   private void onOpenDirectB2SBackground() {
     GameRepresentation game = tableCombo.getValue();
-    if (game != null) {
-      try {
-        ByteArrayInputStream s = client.getDirectB2SImage(game);
-        byte[] bytes = s.readAllBytes();
-        File png = File.createTempFile("vpin-studio-directb2s-", ".png");
-        png.deleteOnExit();
-        IOUtils.write(bytes, new FileOutputStream(png));
-        s.close();
-
-        Desktop.getDesktop().open(png);
-      } catch (IOException e) {
-        LOG.error("Failed to create image temp file: " + e.getMessage(), e);
-      }
-    }
+    MediaUtil.openDirectB2SBackground(game);
   }
 
   @FXML
@@ -320,7 +308,7 @@ public class HighscoreCardsController implements Initializable, ObservedProperty
     Tooltip.install(rawHighscoreHelp, new Tooltip("The font size of the highscore text will be adapted according to the number of lines."));
 
     GameRepresentation value = tableCombo.getValue();
-    refreshRawPreview(Optional.of(value));
+    refreshRawPreview(Optional.ofNullable(value));
     onGenerateClick();
   }
 
