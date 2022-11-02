@@ -10,17 +10,17 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane styleClass="base-component" stylesheets="@../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.preferences.TablePreferencesController">
+<BorderPane styleClass="base-component" stylesheets="@../stylesheet.css" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.preferences.ValidationsPreferencesController">
    <top>
-      <VBox fx:id="preferenceList" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" styleClass="subpanel" stylesheets="@stylesheet.css" BorderPane.alignment="TOP_LEFT">
+      <VBox fx:id="preferenceList" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" styleClass="subpanel" BorderPane.alignment="TOP_LEFT">
          <children>
-            <Label styleClass="preference-title" text="Table Settings" textFill="WHITE" />
+            <Label styleClass="preference-title" text="Validation Settings" textFill="WHITE" />
             <Label styleClass="preference-subtitle" text="Media Validation">
                <VBox.margin>
                   <Insets />
                </VBox.margin>
             </Label>
-            <Label styleClass="preference-description" text="If enabled the validator will check the configuration for the selected media and show an error if none is configured." textFill="WHITE">
+            <Label styleClass="preference-description" text="If enabled the validator will check if the media has been configured with an asset." textFill="WHITE">
                <VBox.margin>
                   <Insets bottom="6.0" />
                </VBox.margin>
@@ -127,7 +127,7 @@
                </VBox.margin>
             </GridPane>
             <Label layoutX="34.0" layoutY="66.0" styleClass="preference-subtitle" text="Configuration Validation" />
-            <Label layoutX="34.0" layoutY="104.0" styleClass="preference-description" text="If enabled the validator will check for configuration issues regarding highscore generation." textFill="WHITE" />
+            <Label layoutX="34.0" layoutY="104.0" styleClass="preference-description" text="If enabled, the validation is executed for every table. The validators can be disabled for every table individually." textFill="WHITE" />
             <GridPane alignment="BASELINE_RIGHT" layoutX="34.0" layoutY="130.0" prefHeight="180.0" prefWidth="708.0">
                <columnConstraints>
                   <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />

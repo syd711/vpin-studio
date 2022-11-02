@@ -6,7 +6,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import org.kordamp.ikonli.javafx.FontIcon?>
 
-<BorderPane styleClass="main" stylesheets="@stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.PreferencesController">
+<BorderPane styleClass="main" stylesheets="@stylesheet.css" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.PreferencesController">
    <center>
       <BorderPane fx:id="preferencesMain" styleClass="subpanel" BorderPane.alignment="TOP_LEFT">
         <center>
@@ -23,8 +23,9 @@
             <Insets top="42.0" />
          </BorderPane.margin>
          <children>
-            <Button alignment="CENTER_RIGHT" contentDisplay="RIGHT" mnemonicParsing="false" onAction="#onTableValidation" styleClass="preference-button" text="My VPin" />
-            <Button alignment="CENTER_RIGHT" contentDisplay="RIGHT" layoutX="250.0" layoutY="10.0" mnemonicParsing="false" onAction="#onTableValidation" styleClass="preference-button" text="Table Settings" />
+            <Button alignment="CENTER_RIGHT" contentDisplay="RIGHT" mnemonicParsing="false" onAction="#onVPin" styleClass="preference-button" text="My VPin" />
+            <Button alignment="CENTER_RIGHT" contentDisplay="RIGHT" layoutX="250.0" layoutY="45.0" mnemonicParsing="false" onAction="#onPinUPPopper" prefHeight="35.0" prefWidth="212.0" styleClass="preference-button" text="PinUP Popper" />
+            <Button alignment="CENTER_RIGHT" contentDisplay="RIGHT" layoutX="250.0" layoutY="10.0" mnemonicParsing="false" onAction="#onTableValidation" styleClass="preference-button" text="Validation Settings" />
             <Button alignment="CENTER_RIGHT" contentDisplay="RIGHT" layoutX="125.0" layoutY="10.0" mnemonicParsing="false" onAction="#onHighscoreCards" styleClass="preference-button" text="Highscore Cards">
                <VBox.margin>
                   <Insets top="4.0" />

@@ -91,7 +91,7 @@
     -fx-border-style: hidden hidden hidden hidden;
     -fx-background-radius: 4 4 4 4;
     -fx-text-fill: -fx-font-1;
-    -fx-pref-width: 160;
+    -fx-pref-width: 200;
 }
 
 .preference-button:hover {
@@ -103,7 +103,7 @@
     -fx-background-radius: 4 4 4 4;
     -fx-text-fill: #fff8f8;
     -fx-cursor: hand;
-    -fx-pref-width: 160;
+    -fx-pref-width: 200;
 }
 
 .ghost-button {

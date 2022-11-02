@@ -12,7 +12,7 @@ import org.apache.commons.lang3.StringUtils;
 import java.net.URL;
 import java.util.*;
 
-public class TablePreferencesController implements Initializable {
+public class ValidationsPreferencesController implements Initializable {
 
   private VPinStudioClient client;
 
