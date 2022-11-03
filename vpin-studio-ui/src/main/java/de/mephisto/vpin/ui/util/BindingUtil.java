@@ -24,8 +24,11 @@ public class BindingUtil {
     if (!StringUtils.isEmpty(pupId)) {
       game = client.getGame(Integer.parseInt(pupId));
     }
+
+    if(game != null) {
+      comboBox.setValue(game);
+    }
     ObjectProperty objectProperty = new SimpleObjectProperty<GameRepresentation>();
-    comboBox.setValue(game);
     Bindings.bindBidirectional(objectProperty, comboBox.valueProperty());
     comboBox.valueProperty().addListener((observableValue, gameRepresentation, t1) -> properties.set(property, String.valueOf(t1.getId())));
   }

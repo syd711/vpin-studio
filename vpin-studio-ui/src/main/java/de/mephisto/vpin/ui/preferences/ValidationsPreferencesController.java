@@ -1,6 +1,7 @@
 package de.mephisto.vpin.ui.preferences;
 
 import de.mephisto.vpin.restclient.VPinStudioClient;
+import de.mephisto.vpin.restclient.representations.PreferenceEntryRepresentation;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -14,6 +15,7 @@ import java.util.*;
 
 public class ValidationsPreferencesController implements Initializable {
 
+  public static final String IGNORED_VALIDATIONS = "ignoredValidations";
   private VPinStudioClient client;
 
   @FXML
@@ -27,7 +29,8 @@ public class ValidationsPreferencesController implements Initializable {
     String code = id.split("_")[1];
 
 
-    String ignoredValidations = client.getStringPreference("ignoredValidations");
+    PreferenceEntryRepresentation entry = client.getPreference(IGNORED_VALIDATIONS);
+    String ignoredValidations = entry.getValue();
     if (ignoredValidations == null) {
       ignoredValidations = "";
     }
@@ -58,10 +61,12 @@ public class ValidationsPreferencesController implements Initializable {
     List<CheckBox> settingsCheckboxes = new ArrayList<>();
     findAllCheckboxes(parent, settingsCheckboxes);
 
-    String ignoredValidations = client.getStringPreference("ignoredValidations");
-    if(ignoredValidations == null) {
+    PreferenceEntryRepresentation entry = client.getPreference(IGNORED_VALIDATIONS);
+    String ignoredValidations = entry.getValue();
+    if (ignoredValidations == null) {
       ignoredValidations = "";
     }
+
     List<String> ignoreList = new ArrayList<>(Arrays.asList(ignoredValidations.split(",")));
     for (CheckBox checkBox : settingsCheckboxes) {
       String id = checkBox.getId();

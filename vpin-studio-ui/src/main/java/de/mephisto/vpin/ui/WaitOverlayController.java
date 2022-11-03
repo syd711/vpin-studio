@@ -1,22 +1,22 @@
-package de.mephisto.vpin.ui.preferences;
+package de.mephisto.vpin.ui;
 
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
-import javafx.scene.text.Text;
 
 import java.net.URL;
 import java.util.ResourceBundle;
 
-public class MyVPinPreferencesController implements Initializable {
+public class WaitOverlayController implements Initializable {
 
   @FXML
-  private Label ipAddressLabel;
-
-  @FXML
-  private Label vpinNameLabel;
+  private Label messageLabel;
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
+  }
+
+  public void setLoadingMessage(String msg) {
+    this.messageLabel.setText(msg);
   }
 }

@@ -2,6 +2,7 @@ package de.mephisto.vpin.restclient;
 
 import de.mephisto.vpin.restclient.representations.GameMediaRepresentation;
 import de.mephisto.vpin.restclient.representations.GameRepresentation;
+import de.mephisto.vpin.restclient.representations.PreferenceEntryRepresentation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.io.ByteArrayResource;
@@ -36,12 +37,8 @@ public class VPinStudioClient implements ObservedPropertyChangeListener {
     return segment;
   }
 
-  public String getStringPreference(String key) {
-    return RestClient.getInstance().get(API + "preferences/" + key, String.class);
-  }
-
-  public boolean getBooleanPreference(String key) {
-    return RestClient.getInstance().get(API + "preferences/" + key, Boolean.class);
+  public PreferenceEntryRepresentation getPreference(String key) {
+    return RestClient.getInstance().get(API + "preferences/" + key, PreferenceEntryRepresentation.class);
   }
 
   public boolean setPreferences(Map<String, Object> values) {
@@ -49,7 +46,12 @@ public class VPinStudioClient implements ObservedPropertyChangeListener {
   }
 
   public GameRepresentation getGame(int id) {
-    return RestClient.getInstance().get(API + "games/" + id, GameRepresentation.class);
+    try {
+      return RestClient.getInstance().get(API + "games/" + id, GameRepresentation.class);
+    } catch (Exception e) {
+      LOG.error("Failed to read game " + id + ": " + e.getMessage(), e);
+    }
+    return null;
   }
 
   public GameRepresentation saveGame(GameRepresentation game) {

@@ -8,6 +8,7 @@ import de.mephisto.vpin.restclient.representations.GameRepresentation;
 import de.mephisto.vpin.ui.NavigationController;
 import de.mephisto.vpin.ui.StudioFXController;
 import de.mephisto.vpin.ui.VPinStudioApplication;
+import de.mephisto.vpin.ui.WaitOverlayController;
 import de.mephisto.vpin.ui.util.BindingUtil;
 import de.mephisto.vpin.ui.util.MediaUtil;
 import de.mephisto.vpin.ui.util.WidgetFactory;
@@ -16,27 +17,26 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
+import javafx.scene.Parent;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.StackPane;
 import javafx.stage.FileChooser;
 import org.apache.commons.io.FilenameUtils;
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.kordamp.ikonli.javafx.FontIcon;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.awt.*;
-import java.io.*;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
 import java.util.*;
-import java.util.List;
 
 import static de.mephisto.vpin.ui.VPinStudioApplication.stage;
 
@@ -115,12 +115,26 @@ public class HighscoreCardsController implements Initializable, ObservedProperty
   @FXML
   private FontIcon rawHighscoreHelp;
 
+  @FXML
+  private Button openImageBtn;
+
+  @FXML
+  private Button generateBtn;
+
+  @FXML
+  private Label imageMetaDataLabel;
+
+  @FXML
+  private StackPane previewStack;
+
+
   private VPinStudioClient client;
 
   private ObservedProperties properties;
 
   private List<String> ignoreList = new ArrayList<>();
   private ObservableList<String> imageList;
+  private Parent waitOverlay;
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -129,6 +143,11 @@ public class HighscoreCardsController implements Initializable, ObservedProperty
       properties = client.getProperties("card-generator");
       ignoreList.addAll(Arrays.asList("card.generation.enabled", "popper.screen"));
       properties.addObservedPropertyChangeListener(this);
+
+      FXMLLoader loader = new FXMLLoader(WaitOverlayController.class.getResource("overlay-wait.fxml"));
+      waitOverlay = loader.load();
+      WaitOverlayController ctrl = loader.getController();
+      ctrl.setLoadingMessage("Generating Card...");
 
       onTableRefresh(null);
       initFields();
@@ -168,8 +187,7 @@ public class HighscoreCardsController implements Initializable, ObservedProperty
         if (!imageList.contains(baseName)) {
           imageList.add(baseName);
         }
-      }
-      else {
+      } else {
         WidgetFactory.showAlert("Uploading image failed, check log file for details.");
       }
     }
@@ -178,20 +196,7 @@ public class HighscoreCardsController implements Initializable, ObservedProperty
   @FXML
   private void onOpenImage() {
     GameRepresentation game = tableCombo.getValue();
-    if (game != null) {
-      try {
-        ByteArrayInputStream s = client.getHighscoreCard(game);
-        byte[] bytes = s.readAllBytes();
-        File png = File.createTempFile("vpin-studio", ".png");
-        png.deleteOnExit();
-        IOUtils.write(bytes, new FileOutputStream(png));
-        s.close();
-
-        Desktop.getDesktop().open(png);
-      } catch (IOException e) {
-        LOG.error("Failed to create image temp file: " + e.getMessage(), e);
-      }
-    }
+    MediaUtil.openHighscoreSampleCard(game);
   }
 
   @FXML
@@ -200,12 +205,11 @@ public class HighscoreCardsController implements Initializable, ObservedProperty
   }
 
   @FXML
-  private void onTableRefresh(ActionEvent event) throws IOException { {
-    if(event != null) {
+  private void onTableRefresh(ActionEvent event) throws IOException {
+    if (event != null) {
       NavigationController.load("scene-highscoreCards.fxml");
       return;
     }
-  }
     List<GameRepresentation> games = client.getGames();
     List<GameRepresentation> filtered = new ArrayList<>();
     for (GameRepresentation game : games) {
@@ -318,7 +322,7 @@ public class HighscoreCardsController implements Initializable, ObservedProperty
       openDirectB2SImageButton.setVisible(false);
       rawDirectB2SImage.setImage(null);
 
-      if(game.isPresent()) {
+      if (game.isPresent()) {
         openDirectB2SImageButton.setTooltip(new Tooltip("Open directb2s image"));
         InputStream input = client.getDirectB2SImage(game.get());
         Image image = new Image(input);
@@ -336,12 +340,19 @@ public class HighscoreCardsController implements Initializable, ObservedProperty
   }
 
   private void refreshPreview(Optional<GameRepresentation> game, boolean regenerate) {
+    this.generateBtn.setDisable(!game.isPresent());
+    this.openImageBtn.setDisable(!game.isPresent());
+    this.imageMetaDataLabel.setText("");
+
     if (!game.isPresent()) {
       return;
     }
 
     int offset = 150;
     Platform.runLater(() -> {
+      previewStack.getChildren().remove(waitOverlay);
+      previewStack.getChildren().add(waitOverlay);
+
       try {
         if (regenerate) {
           new Thread(() -> {
@@ -356,11 +367,15 @@ public class HighscoreCardsController implements Initializable, ObservedProperty
             if (image.getWidth() >= resolution && image.getWidth() < imageCenter.getWidth()) {
               cardPreview.setFitHeight(image.getHeight());
               cardPreview.setFitWidth(image.getWidth());
-            }
-            else {
+            } else {
               cardPreview.setFitHeight(imageCenter.getHeight() - offset);
               cardPreview.setFitWidth(imageCenter.getWidth() - offset);
             }
+
+            Platform.runLater(() -> {
+              imageMetaDataLabel.setText("Resolution: " + (int) image.getWidth() + " x " + (int) image.getHeight());
+              previewStack.getChildren().remove(waitOverlay);
+            });
 
           }).start();
         }
@@ -385,8 +400,7 @@ public class HighscoreCardsController implements Initializable, ObservedProperty
       Image image = new Image(VPinStudioApplication.class.getResourceAsStream("loading.png"));
       cardPreview.setImage(image);
       cardPreview.setFitWidth(300);
-    }
-    else {
+    } else {
       cardPreview.setFitWidth(imageCenter.getWidth() - 60);
       cardPreview.setFitHeight(imageCenter.getHeight() - 60);
     }

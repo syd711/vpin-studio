@@ -16,6 +16,8 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.text.TextAlignment;
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.net.URL;
@@ -23,6 +25,8 @@ import java.util.List;
 import java.util.ResourceBundle;
 
 public class NavigationController implements Initializable {
+  private final static Logger LOG = LoggerFactory.getLogger(NavigationController.class);
+
   @FXML
   private BorderPane avatarPane;
 
@@ -76,6 +80,8 @@ public class NavigationController implements Initializable {
   }
 
   public static void loadScreen(ActionEvent event, String name) throws IOException {
+    Node lookup = VPinStudioApplication.stage.getScene().lookup("#main");
+    BorderPane main = (BorderPane) lookup;
     if (activeController != null) {
       activeController.dispose();
     }
@@ -83,9 +89,6 @@ public class NavigationController implements Initializable {
     FXMLLoader loader = new FXMLLoader(NavigationController.class.getResource(name));
     root = loader.load();
     activeController = loader.<StudioFXController>getController();
-
-    Node lookup = VPinStudioApplication.stage.getScene().lookup("#main");
-    BorderPane main = (BorderPane) lookup;
     main.setCenter(root);
   }
 

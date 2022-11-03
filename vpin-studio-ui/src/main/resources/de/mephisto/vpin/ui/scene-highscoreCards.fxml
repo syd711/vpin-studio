@@ -17,12 +17,13 @@
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.TilePane?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 <?import org.kordamp.ikonli.javafx.FontIcon?>
 
-<BorderPane styleClass="base-component" stylesheets="@stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.cards.HighscoreCardsController">
+<BorderPane styleClass="base-component" stylesheets="@stylesheet.css" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.cards.HighscoreCardsController">
    <top>
       <fx:include fx:id="mainToolbar" source="scene-toolbar.fxml" />
    </top>
@@ -340,7 +341,7 @@
                               <Insets top="6.0" />
                            </VBox.margin>
                            <left>
-                              <Label fx:id="resolutionLabel" text="Label" BorderPane.alignment="CENTER" />
+                              <Label fx:id="resolutionLabel" BorderPane.alignment="CENTER" />
                            </left>
                            <right>
                               <Button fx:id="openDirectB2SImageButton" mnemonicParsing="false" onAction="#onOpenDirectB2SBackground" BorderPane.alignment="CENTER">
@@ -377,7 +378,11 @@
                   <Insets />
                </BorderPane.margin>
                <center>
-                  <ImageView fx:id="cardPreview" fitHeight="416.0" fitWidth="746.0" pickOnBounds="true" preserveRatio="true" />
+                  <StackPane fx:id="previewStack">
+                     <children>
+                        <ImageView fx:id="cardPreview" fitHeight="416.0" fitWidth="746.0" pickOnBounds="true" preserveRatio="true" />
+                     </children>
+                  </StackPane>
                </center>
             </BorderPane>
          </center>
@@ -408,7 +413,7 @@
                         <FontIcon iconColor="WHITE" iconLiteral="bi-images" />
                      </graphic>
                   </Button>
-                <Button mnemonicParsing="false" onAction="#onGenerateClick" stylesheets="@stylesheet.css" text=" Generate" textFill="WHITE">
+                <Button fx:id="generateBtn" mnemonicParsing="false" onAction="#onGenerateClick" stylesheets="@stylesheet.css" text=" Generate" textFill="WHITE">
                      <font>
                         <Font size="14.0" />
                      </font>
@@ -421,7 +426,7 @@
                         <Insets left="3.0" right="3.0" />
                      </padding>
                   </Separator>
-                  <Button mnemonicParsing="false" onAction="#onOpenImage" stylesheets="@stylesheet.css" text=" Open Image" textFill="WHITE">
+                  <Button fx:id="openImageBtn" mnemonicParsing="false" onAction="#onOpenImage" stylesheets="@stylesheet.css" text=" Open Image" textFill="WHITE">
                      <font>
                         <Font size="14.0" />
                      </font>
@@ -435,6 +440,13 @@
          <padding>
             <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
          </padding>
+         <bottom>
+            <Label fx:id="imageMetaDataLabel" textFill="WHITE" BorderPane.alignment="BOTTOM_LEFT">
+               <BorderPane.margin>
+                  <Insets top="6.0" />
+               </BorderPane.margin>
+            </Label>
+         </bottom>
       </BorderPane>
    </center>
 </BorderPane>

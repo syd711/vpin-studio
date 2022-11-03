@@ -18,12 +18,35 @@ public class PreferenceResource {
   private PreferencesService preferencesService;
 
   @GetMapping("/{key}")
-  public Object get(@PathVariable("key") String key) {
-    return preferencesService.getPreferenceValue(key);
+  public PreferenceEntry get(@PathVariable("key") String key) {
+    Object preferenceValue = preferencesService.getPreferenceValue(key);
+    if (preferenceValue == null) {
+      return new PreferenceEntry(key, null);
+    }
+    return new PreferenceEntry(key, String.valueOf(preferenceValue));
   }
 
   @PutMapping
   public boolean put(@RequestBody Map<String, Object> values) {
     return preferencesService.savePreference(values);
+  }
+
+
+  class PreferenceEntry {
+    private final String key;
+    private final String value;
+
+    PreferenceEntry(String key, String value) {
+      this.key = key;
+      this.value = value;
+    }
+
+    public String getKey() {
+      return key;
+    }
+
+    public String getValue() {
+      return value;
+    }
   }
 }

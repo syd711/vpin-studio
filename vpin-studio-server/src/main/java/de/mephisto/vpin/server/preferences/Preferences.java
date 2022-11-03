@@ -23,9 +23,12 @@ public class Preferences {
   private Long id;
 
   private boolean cardGenerationEnabled;
+
   private String cardGenerationScreen;
 
   private String ignoredValidations;
+
+  private String ignoredMedia;
 
   public Long getId() {
     return id;
@@ -33,6 +36,14 @@ public class Preferences {
 
   public void setId(Long id) {
     this.id = id;
+  }
+
+  public String getIgnoredMedia() {
+    return ignoredMedia;
+  }
+
+  public void setIgnoredMedia(String ignoredMedia) {
+    this.ignoredMedia = ignoredMedia;
   }
 
   public boolean isCardGenerationEnabled() {

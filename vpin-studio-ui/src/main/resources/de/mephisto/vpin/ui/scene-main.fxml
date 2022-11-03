@@ -1,13 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.scene.layout.BorderPane?>
-<?import javafx.scene.layout.StackPane?>
 
-<BorderPane fx:id="main" styleClass="main" stylesheets="@stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1">
+<BorderPane fx:id="main" styleClass="main" stylesheets="@stylesheet.css" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1">
    <left>
        <fx:include fx:id="navigation" source="scene-navigation.fxml" />
    </left>
-
    <center>
         <fx:include fx:id="tables" source="scene-highscoreCards.fxml" />
    </center>
