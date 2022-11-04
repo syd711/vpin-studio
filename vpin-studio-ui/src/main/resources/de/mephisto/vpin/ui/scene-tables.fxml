@@ -26,7 +26,7 @@
 <?import javafx.scene.text.Font?>
 <?import org.kordamp.ikonli.javafx.FontIcon?>
 
-<BorderPane styleClass="main" stylesheets="@stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.tables.TablesController">
+<BorderPane styleClass="main" stylesheets="@stylesheet.css" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.tables.TablesController">
    <center>
       <BorderPane BorderPane.alignment="CENTER">
          <center>
@@ -37,6 +37,7 @@
                         <TableView fx:id="tableView" onMouseClicked="#onTableMouseClicked" style="-fx-background-color: #2a2a2a;" styleClass="base-component" stylesheets="@stylesheet.css">
                           <columns>
                               <TableColumn fx:id="columnId" minWidth="42.400028228759766" prefWidth="42.400028228759766" style="-fx-alignment: baseline-right;" text="ID" />
+                              <TableColumn fx:id="columnActive" minWidth="57.5999755859375" prefWidth="67.199951171875" style="-fx-alignment: CENTER;" text="Active" />
                               <TableColumn fx:id="columnStatus" minWidth="57.5999755859375" prefWidth="67.199951171875" style="-fx-alignment: CENTER;" text="Status" />
                             <TableColumn fx:id="columnDisplayName" minWidth="100.0" prefWidth="298.40000915527344" style="-fx-alignment: BASELINE_LEFT;" text="Display Name" />
                             <TableColumn fx:id="columnRom" minWidth="10.4000244140625" prefWidth="138.39999389648438" style="-fx-alignment: BASELINE_LEFT;" text="ROM" />

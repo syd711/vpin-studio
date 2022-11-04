@@ -38,14 +38,14 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaView;
 import javafx.scene.paint.Paint;
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.kordamp.ikonli.javafx.FontIcon;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.awt.*;
-import java.io.*;
+import java.io.IOException;
+import java.io.InputStream;
 import java.net.URI;
 import java.net.URL;
 import java.util.List;
@@ -56,6 +56,9 @@ public class TablesController implements Initializable, StudioFXController {
 
   @FXML
   private TableColumn<GameRepresentation, String> columnId;
+
+  @FXML
+  private TableColumn<GameRepresentation, String> columnActive;
 
   @FXML
   private TableColumn<GameRepresentation, String> columnDisplayName;
@@ -378,6 +381,8 @@ public class TablesController implements Initializable, StudioFXController {
     games = client.getGames();
     data = FXCollections.observableArrayList(games);
     labelTableCount.setText(data.size() + " tables");
+    tableView.setPlaceholder(new Label("No matching tables found."));
+
 
     columnDisplayName.setCellValueFactory(
         new PropertyValueFactory<GameRepresentation, String>("gameDisplayName")
@@ -484,14 +489,16 @@ public class TablesController implements Initializable, StudioFXController {
       @Override
       public void changed(ObservableValue<? extends Number> observableValue, Number number, Number t1) {
         GameRepresentation game = tableView.getSelectionModel().selectedItemProperty().get();
-        BindingUtil.debouncer.debounce("tableVolume" + game.getId(), () -> {
-          int value = t1.intValue();
-          if (value == 0) {
-            value = 1;
-          }
-          game.setVolume(value);
-          client.saveGame(game);
-        }, 1000);
+        if(game != null) {
+          BindingUtil.debouncer.debounce("tableVolume" + game.getId(), () -> {
+            int value = t1.intValue();
+            if (value == 0) {
+              value = 1;
+            }
+            game.setVolume(value);
+            client.saveGame(game);
+          }, 1000);
+        }
       }
     });
 

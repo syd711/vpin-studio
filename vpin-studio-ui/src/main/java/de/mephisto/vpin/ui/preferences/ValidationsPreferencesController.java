@@ -20,6 +20,7 @@ public class ValidationsPreferencesController implements Initializable {
 
   @FXML
   private Parent preferenceList;
+  private List<String> ignoreList;
 
   @FXML
   private void onPreferenceChange(ActionEvent event) {
@@ -27,15 +28,6 @@ public class ValidationsPreferencesController implements Initializable {
     String id = checkBox.getId();
     boolean checked = checkBox.isSelected();
     String code = id.split("_")[1];
-
-
-    PreferenceEntryRepresentation entry = client.getPreference(IGNORED_VALIDATIONS);
-    String ignoredValidations = entry.getValue();
-    if (ignoredValidations == null) {
-      ignoredValidations = "";
-    }
-
-    List<String> ignoreList = new ArrayList<>(Arrays.asList(ignoredValidations.split(",")));
     if (checked) {
       ignoreList.remove(code);
     }
@@ -48,7 +40,7 @@ public class ValidationsPreferencesController implements Initializable {
 
     String value = StringUtils.join(ignoreList, ",");
     Map<String, Object> prefs = new HashMap<>();
-    prefs.put("ignoredValidations", value);
+    prefs.put(IGNORED_VALIDATIONS, value);
     client.setPreferences(prefs);
   }
 
@@ -62,12 +54,7 @@ public class ValidationsPreferencesController implements Initializable {
     findAllCheckboxes(parent, settingsCheckboxes);
 
     PreferenceEntryRepresentation entry = client.getPreference(IGNORED_VALIDATIONS);
-    String ignoredValidations = entry.getValue();
-    if (ignoredValidations == null) {
-      ignoredValidations = "";
-    }
-
-    List<String> ignoreList = new ArrayList<>(Arrays.asList(ignoredValidations.split(",")));
+    ignoreList = entry.getCSVValue();
     for (CheckBox checkBox : settingsCheckboxes) {
       String id = checkBox.getId();
       String code = id.split("_")[1];

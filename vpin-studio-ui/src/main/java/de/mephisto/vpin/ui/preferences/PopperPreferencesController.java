@@ -17,27 +17,12 @@ import java.util.*;
 public class PopperPreferencesController implements Initializable {
 
   public static final String IGNORED_MEDIA = "ignoredMedia";
-  @FXML
-  private CheckBox pref_Audio;
-  @FXML
-  private CheckBox pref_AudioLaunch;
-  @FXML
-  private CheckBox pref_Other2;
-  @FXML
-  private CheckBox pref_GameInfo;
-  @FXML
-  private CheckBox pref_GameHelp;
-  @FXML
-  private CheckBox pref_Topper;
-  @FXML
-  private CheckBox pref_DMD;
-  @FXML
-  private CheckBox pref_Menu;
 
   @FXML
   private VBox preferenceList;
 
   private VPinStudioClient client;
+  private List<String> ignoreList;
 
   @FXML
   private void onPreferenceChange(ActionEvent event) {
@@ -45,15 +30,6 @@ public class PopperPreferencesController implements Initializable {
     String id = checkBox.getId();
     boolean checked = checkBox.isSelected();
     String screen = id.split("_")[1];
-
-
-    PreferenceEntryRepresentation entry = client.getPreference(IGNORED_MEDIA);
-    String ignoredMediaCsv = entry.getValue();
-    if (ignoredMediaCsv == null) {
-      ignoredMediaCsv = "";
-    }
-
-    List<String> ignoreList = new ArrayList<>(Arrays.asList(ignoredMediaCsv.split(",")));
     if (checked) {
       ignoreList.remove(screen);
     }
@@ -79,11 +55,7 @@ public class PopperPreferencesController implements Initializable {
     findAllCheckboxes(parent, settingsCheckboxes);
 
     PreferenceEntryRepresentation entry = client.getPreference(IGNORED_MEDIA);
-    String ignoredMediaCsv = entry.getValue();
-    if(ignoredMediaCsv == null) {
-      ignoredMediaCsv = "";
-    }
-    List<String> ignoreList = new ArrayList<>(Arrays.asList(ignoredMediaCsv.split(",")));
+    ignoreList = entry.getCSVValue();
     for (CheckBox checkbox : settingsCheckboxes) {
       String id = checkbox.getId();
       if(id.startsWith("pref_")) {

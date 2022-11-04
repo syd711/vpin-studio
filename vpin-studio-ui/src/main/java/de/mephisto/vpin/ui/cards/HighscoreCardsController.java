@@ -340,16 +340,17 @@ public class HighscoreCardsController implements Initializable, ObservedProperty
   }
 
   private void refreshPreview(Optional<GameRepresentation> game, boolean regenerate) {
-    this.generateBtn.setDisable(!game.isPresent());
-    this.openImageBtn.setDisable(!game.isPresent());
-    this.imageMetaDataLabel.setText("");
-
     if (!game.isPresent()) {
       return;
     }
 
     int offset = 150;
     Platform.runLater(() -> {
+      this.generateBtn.setDisable(!game.isPresent());
+      this.openImageBtn.setDisable(!game.isPresent());
+      this.imageMetaDataLabel.setText("");
+
+
       previewStack.getChildren().remove(waitOverlay);
       previewStack.getChildren().add(waitOverlay);
 
