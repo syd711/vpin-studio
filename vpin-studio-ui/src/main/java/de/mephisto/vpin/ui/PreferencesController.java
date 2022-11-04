@@ -26,7 +26,7 @@ public class PreferencesController implements Initializable {
 
   @FXML
   private void onClose(ActionEvent event) {
-    Node lookup = VPinStudioApplication.stage.getScene().lookup("#root");
+    Node lookup = Studio.stage.getScene().lookup("#root");
     BorderPane main = (BorderPane) lookup;
     StackPane stack = (StackPane) main.getCenter();
     stack.getChildren().remove(1);

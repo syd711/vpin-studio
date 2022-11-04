@@ -2,6 +2,7 @@ package de.mephisto.vpin.ui.preferences;
 
 import de.mephisto.vpin.restclient.VPinStudioClient;
 import de.mephisto.vpin.restclient.representations.PreferenceEntryRepresentation;
+import de.mephisto.vpin.ui.Studio;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -15,8 +16,6 @@ import java.net.URL;
 import java.util.*;
 
 public class PopperPreferencesController implements Initializable {
-
-  public static final String IGNORED_MEDIA = "ignoredMedia";
 
   @FXML
   private VBox preferenceList;
@@ -42,19 +41,19 @@ public class PopperPreferencesController implements Initializable {
 
     String value = StringUtils.join(ignoreList, ",");
     Map<String, Object> prefs = new HashMap<>();
-    prefs.put(IGNORED_MEDIA, value);
+    prefs.put(PreferenceNames.IGNORED_MEDIA, value);
     client.setPreferences(prefs);
   }
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
-    client = new VPinStudioClient();
+    client = Studio.client;
 
     Parent parent = preferenceList;
     List<CheckBox> settingsCheckboxes = new ArrayList<>();
     findAllCheckboxes(parent, settingsCheckboxes);
 
-    PreferenceEntryRepresentation entry = client.getPreference(IGNORED_MEDIA);
+    PreferenceEntryRepresentation entry = client.getPreference(PreferenceNames.IGNORED_MEDIA);
     ignoreList = entry.getCSVValue();
     for (CheckBox checkbox : settingsCheckboxes) {
       String id = checkbox.getId();

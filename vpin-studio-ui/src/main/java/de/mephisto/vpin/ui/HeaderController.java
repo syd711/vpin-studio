@@ -21,27 +21,27 @@ public class HeaderController implements Initializable {
   private void onMaximize() {
     if(toggleMaximize) {
       Rectangle2D primaryScreenBounds = Screen.getPrimary().getVisualBounds();
-      VPinStudioApplication.stage.setX(primaryScreenBounds.getMinX());
-      VPinStudioApplication.stage.setY(primaryScreenBounds.getMinY());
-      VPinStudioApplication.stage.setMaxHeight(primaryScreenBounds.getHeight());
-      VPinStudioApplication.stage.setMinHeight(primaryScreenBounds.getHeight());
-      VPinStudioApplication.stage.setMaxWidth(primaryScreenBounds.getWidth());
-      VPinStudioApplication.stage.setMinWidth(primaryScreenBounds.getWidth());
+      Studio.stage.setX(primaryScreenBounds.getMinX());
+      Studio.stage.setY(primaryScreenBounds.getMinY());
+      Studio.stage.setMaxHeight(primaryScreenBounds.getHeight());
+      Studio.stage.setMinHeight(primaryScreenBounds.getHeight());
+      Studio.stage.setMaxWidth(primaryScreenBounds.getWidth());
+      Studio.stage.setMinWidth(primaryScreenBounds.getWidth());
     }
     else {
-      VPinStudioApplication.stage.setX(400);
-      VPinStudioApplication.stage.setY(200);
-      VPinStudioApplication.stage.setMaxHeight(1280);
-      VPinStudioApplication.stage.setMinHeight(1280);
-      VPinStudioApplication.stage.setMaxWidth(1920);
-      VPinStudioApplication.stage.setMinWidth(1920);
+      Studio.stage.setX(400);
+      Studio.stage.setY(200);
+      Studio.stage.setMaxHeight(1280);
+      Studio.stage.setMinHeight(1280);
+      Studio.stage.setMaxWidth(1920);
+      Studio.stage.setMinWidth(1920);
     }
     toggleMaximize = !toggleMaximize;
   }
 
   @FXML
   private void onHideClick() {
-    VPinStudioApplication.stage.setIconified(true);
+    Studio.stage.setIconified(true);
   }
 
 

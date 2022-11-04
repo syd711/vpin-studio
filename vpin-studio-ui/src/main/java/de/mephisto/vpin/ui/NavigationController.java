@@ -73,14 +73,14 @@ public class NavigationController implements Initializable {
     FXMLLoader loader = new FXMLLoader(NavigationController.class.getResource("scene-preferences.fxml"));
     Node preferencesRoot = loader.load();
 
-    Node lookup = VPinStudioApplication.stage.getScene().lookup("#root");
+    Node lookup = Studio.stage.getScene().lookup("#root");
     BorderPane main = (BorderPane) lookup;
     StackPane stack = (StackPane) main.getCenter();
     stack.getChildren().add(preferencesRoot);
   }
 
   public static void loadScreen(ActionEvent event, String name) throws IOException {
-    Node lookup = VPinStudioApplication.stage.getScene().lookup("#main");
+    Node lookup = Studio.stage.getScene().lookup("#main");
     BorderPane main = (BorderPane) lookup;
     if (activeController != null) {
       activeController.dispose();
@@ -109,7 +109,7 @@ public class NavigationController implements Initializable {
 
   public static void setBreadCrumb(List<String> crumbs) {
     Platform.runLater(() -> {
-      Label breadCrumb = (Label) VPinStudioApplication.stage.getScene().lookup("#breadcrumb");
+      Label breadCrumb = (Label) Studio.stage.getScene().lookup("#breadcrumb");
       breadCrumb.setText("/ " + StringUtils.join(crumbs, " / "));
     });
   }

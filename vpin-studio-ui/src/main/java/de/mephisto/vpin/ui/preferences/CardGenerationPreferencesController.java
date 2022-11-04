@@ -2,6 +2,7 @@ package de.mephisto.vpin.ui.preferences;
 
 import de.mephisto.vpin.restclient.ObservedProperties;
 import de.mephisto.vpin.restclient.VPinStudioClient;
+import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.util.BindingUtil;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
@@ -27,7 +28,7 @@ public class CardGenerationPreferencesController implements Initializable {
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
-    client = new VPinStudioClient();
+    client = Studio.client;
     properties = client.getProperties("card-generator");
 
     BindingUtil.bindCheckbox(enableCardGenerationCheckbox, properties, "card.generation.enabled");

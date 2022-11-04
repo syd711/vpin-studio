@@ -139,7 +139,7 @@
                         <id>default-cli</id>
                         <configuration>
                             <mainClass>
-                                de.mephisto.vpin.ui.vpinstudioui/de.mephisto.vpin.ui.VPinStudioApplication
+                                de.mephisto.vpin.ui.vpinstudioui/de.mephisto.vpin.ui.Studio
                             </mainClass>
                             <launcher>app</launcher>
                             <jlinkZipName>app</jlinkZipName>

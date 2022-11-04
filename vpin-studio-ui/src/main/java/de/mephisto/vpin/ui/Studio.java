@@ -1,5 +1,6 @@
 package de.mephisto.vpin.ui;
 
+import de.mephisto.vpin.restclient.VPinStudioClient;
 import javafx.application.Application;
 import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
@@ -14,16 +15,19 @@ import javafx.stage.StageStyle;
 
 import java.io.IOException;
 
-public class VPinStudioApplication extends Application {
+public class Studio extends Application {
 
   private double xOffset;
   private double yOffset;
 
   public static Stage stage;
 
+  public static VPinStudioClient client;
+
   @Override
   public void start(Stage stage) throws IOException {
-    VPinStudioApplication.stage = stage;
+    Studio.stage = stage;
+    Studio.client = VPinStudioClient.create();
     FXMLLoader loader = new FXMLLoader(getClass().getResource("scene-root.fxml"));
     Parent root = loader.load();
     NavigationController.navigationController = loader.<StudioFXController>getController();

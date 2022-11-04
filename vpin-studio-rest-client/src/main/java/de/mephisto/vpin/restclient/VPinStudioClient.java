@@ -21,9 +21,17 @@ public class VPinStudioClient implements ObservedPropertyChangeListener {
 
   private final static String API = "api/v1/";
 
-  private static Map<String, ObservedProperties> observedProperties = new HashMap<>();
+  private Map<String, ObservedProperties> observedProperties = new HashMap<>();
 
-  private static Map<String, byte[]> imageCache = new HashMap<>();
+  private Map<String, byte[]> imageCache = new HashMap<>();
+
+  private VPinStudioClient() {
+
+  }
+
+  public static VPinStudioClient create() {
+    return new VPinStudioClient();
+  }
 
   public ByteArrayInputStream getDirectB2SImage(GameRepresentation game) {
     byte[] bytes = RestClient.getInstance().readBinary(API + "directb2s/" + game.getId());
@@ -141,7 +149,7 @@ public class VPinStudioClient implements ObservedPropertyChangeListener {
     Map<String, Object> model = new HashMap<>();
     model.put(key, updatedValue.get());
     Boolean result = RestClient.getInstance().put(API + "properties/" + propertiesName, model);
-    ObservedProperties observedProperties = VPinStudioClient.observedProperties.get(propertiesName);
-    observedProperties.notifyChange(key, updatedValue.get());
+    ObservedProperties obsprops = this.observedProperties.get(propertiesName);
+    obsprops.notifyChange(key, updatedValue.get());
   }
 }

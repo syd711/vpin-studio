@@ -3,6 +3,7 @@ package de.mephisto.vpin.ui.tables;
 import de.mephisto.vpin.restclient.VPinStudioClient;
 import de.mephisto.vpin.restclient.representations.GameRepresentation;
 import de.mephisto.vpin.ui.NavigationController;
+import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.StudioFXController;
 import de.mephisto.vpin.ui.util.MediaUtil;
 import de.mephisto.vpin.ui.util.ValidationTexts;
@@ -203,7 +204,7 @@ public class TablesController implements Initializable, StudioFXController {
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
-    client = new VPinStudioClient();
+    client = Studio.client;
     tablesSideBarController.setTablesController(this);
 
     bindTable();

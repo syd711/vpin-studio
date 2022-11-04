@@ -5,7 +5,10 @@ import de.mephisto.vpin.restclient.VPinStudioClient;
 import de.mephisto.vpin.restclient.representations.GameMediaItemRepresentation;
 import de.mephisto.vpin.restclient.representations.GameMediaRepresentation;
 import de.mephisto.vpin.restclient.representations.GameRepresentation;
+import de.mephisto.vpin.restclient.representations.PreferenceEntryRepresentation;
+import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.StudioFXController;
+import de.mephisto.vpin.ui.preferences.PreferenceNames;
 import de.mephisto.vpin.ui.util.BindingUtil;
 import de.mephisto.vpin.ui.util.MediaUtil;
 import de.mephisto.vpin.ui.util.WidgetFactory;
@@ -22,6 +25,7 @@ import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.Pane;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaView;
 import org.apache.commons.lang3.StringUtils;
@@ -86,6 +90,9 @@ public class TablesSidebarController implements Initializable, StudioFXControlle
   private TitledPane titledPaneMedia;
 
   @FXML
+  private Pane mediaRootPane;
+
+  @FXML
   private Label labelId;
 
   @FXML
@@ -137,14 +144,19 @@ public class TablesSidebarController implements Initializable, StudioFXControlle
 
   private TablesController tablesController;
 
+  private List<String> ignoreScreenNames;
+
   // Add a public no-args constructor
   public TablesSidebarController() {
   }
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
-    client = new VPinStudioClient();
+    client = Studio.client;
     this.accordion.setExpandedPane(titledPaneMedia);
+
+    PreferenceEntryRepresentation entry = client.getPreference(PreferenceNames.IGNORED_MEDIA);
+    ignoreScreenNames = entry.getCSVValue();
 
     volumeSlider.valueProperty().addListener(new ChangeListener<Number>() {
       @Override
@@ -321,7 +333,7 @@ public class TablesSidebarController implements Initializable, StudioFXControlle
       refreshDirectB2SPreview(g);
 
       if (titledPaneMedia.isExpanded()) {
-        refreshMedia(gameMedia, game);
+        refreshMedia(gameMedia);
       }
 
       String rawHighscore = game.getRawHighscore();
@@ -380,42 +392,26 @@ public class TablesSidebarController implements Initializable, StudioFXControlle
     }
   }
 
-  private void refreshMedia(GameMediaRepresentation gameMedia, GameRepresentation game) {
-    GameMediaItemRepresentation item = gameMedia.getItem(PopperScreen.Topper);
-    WidgetFactory.createMediaContainer(screenTopper, client, item);
+  private void refreshMedia(GameMediaRepresentation gameMedia) {
+    PopperScreen[] values = PopperScreen.values();
+    for (PopperScreen value : values) {
+      BorderPane screen = this.getScreenBorderPaneFor(value);
+      if(ignoreScreenNames.contains(value.name())) {
+        screen.setVisible(false);
+      }
+      else {
+        GameMediaItemRepresentation item = gameMedia.getItem(value);
+        WidgetFactory.createMediaContainer(screen, client, item);
+      }
+    }
+  }
 
-    item = gameMedia.getItem(PopperScreen.BackGlass);
-    WidgetFactory.createMediaContainer(screenBackglass, client, item);
-
-    item = gameMedia.getItem(PopperScreen.Audio);
-    WidgetFactory.createMediaContainer(screenAudio, client, item);
-
-    item = gameMedia.getItem(PopperScreen.AudioLaunch);
-    WidgetFactory.createMediaContainer(screenAudioLaunch, client, item);
-
-    item = gameMedia.getItem(PopperScreen.DMD);
-    WidgetFactory.createMediaContainer(screenDMD, client, item);
-
-    item = gameMedia.getItem(PopperScreen.GameInfo);
-    WidgetFactory.createMediaContainer(screenInfo, client, item);
-
-    item = gameMedia.getItem(PopperScreen.GameHelp);
-    WidgetFactory.createMediaContainer(screenHelp, client, item);
-
-    item = gameMedia.getItem(PopperScreen.PlayField);
-    WidgetFactory.createMediaContainer(screenPlayfield, client, item);
-
-    item = gameMedia.getItem(PopperScreen.Menu);
-    WidgetFactory.createMediaContainer(screenApron, client, item);
-
-    item = gameMedia.getItem(PopperScreen.Loading);
-    WidgetFactory.createMediaContainer(screenLoading, client, item);
-
-    item = gameMedia.getItem(PopperScreen.Other2);
-    WidgetFactory.createMediaContainer(screenOther2, client, item);
-
-    item = gameMedia.getItem(PopperScreen.Wheel);
-    WidgetFactory.createMediaContainer(screenWheel, client, item);
+  private BorderPane getScreenBorderPaneFor(PopperScreen value) {
+    BorderPane lookup = (BorderPane) mediaRootPane.lookup("#screen" + value.name());
+    if(lookup == null) {
+      throw new UnsupportedOperationException("No screen found for id 'screen" + value.name() + "'");
+    }
+    return lookup;
   }
 
   private void disposeMediaPane(BorderPane parent) {

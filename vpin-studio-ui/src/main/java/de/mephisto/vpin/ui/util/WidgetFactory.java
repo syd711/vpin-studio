@@ -3,8 +3,7 @@ package de.mephisto.vpin.ui.util;
 import de.mephisto.vpin.restclient.RestClient;
 import de.mephisto.vpin.restclient.VPinStudioClient;
 import de.mephisto.vpin.restclient.representations.GameMediaItemRepresentation;
-import de.mephisto.vpin.restclient.representations.GameMediaRepresentation;
-import de.mephisto.vpin.ui.VPinStudioApplication;
+import de.mephisto.vpin.ui.Studio;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.concurrent.Service;
@@ -38,12 +37,12 @@ public class WidgetFactory {
   public static void createProgressDialog(ProgressModel model) {
     Parent root = null;
     try {
-      root = FXMLLoader.load(VPinStudioApplication.class.getResource("dialog-progress.fxml"));
+      root = FXMLLoader.load(Studio.class.getResource("dialog-progress.fxml"));
     } catch (IOException e) {
       e.printStackTrace();
     }
 
-    Stage owner = VPinStudioApplication.stage;
+    Stage owner = Studio.stage;
     final Label titleLabel = (Label) root.lookup("#titleLabel");
     final Label progressBarLabel = (Label) root.lookup("#progressBarLabel");
     final ToolBar toolBar = (ToolBar) root.lookup("#bottomToolbar");
@@ -106,7 +105,7 @@ public class WidgetFactory {
 
   public static Optional<ButtonType> showConfirmation(String msg, String header) {
     Alert alert = new Alert(Alert.AlertType.CONFIRMATION, msg, ButtonType.CLOSE, ButtonType.OK);
-    alert.getDialogPane().getStylesheets().add(VPinStudioApplication.class.getResource("stylesheet.css").toExternalForm());
+    alert.getDialogPane().getStylesheets().add(Studio.class.getResource("stylesheet.css").toExternalForm());
     alert.getDialogPane().getStyleClass().add("base-component");
     alert.getDialogPane().setStyle("-fx-font-size: 16fx;");
     alert.setHeaderText(header);
@@ -116,7 +115,7 @@ public class WidgetFactory {
 
   public static void showAlert(String msg) {
     Alert alert = new Alert(Alert.AlertType.INFORMATION, msg, ButtonType.CLOSE);
-    alert.getDialogPane().getStylesheets().add(VPinStudioApplication.class.getResource("stylesheet.css").toExternalForm());
+    alert.getDialogPane().getStylesheets().add(Studio.class.getResource("stylesheet.css").toExternalForm());
     alert.getDialogPane().getStyleClass().add("base-component");
     alert.getDialogPane().setStyle("-fx-font-size: 16px;");
     alert.setHeaderText(null);
@@ -127,7 +126,7 @@ public class WidgetFactory {
   public static String showInputDialog(String title, String description, String msg) {
     TextInputDialog td = new TextInputDialog(msg);
     td.setTitle(title);
-    td.getDialogPane().getStylesheets().add(VPinStudioApplication.class.getResource("stylesheet.css").toExternalForm());
+    td.getDialogPane().getStylesheets().add(Studio.class.getResource("stylesheet.css").toExternalForm());
     td.getDialogPane().getStyleClass().add("base-component");
     td.getDialogPane().setStyle("-fx-font-size: 16px;");
     td.setHeaderText(description);
@@ -201,7 +200,7 @@ public class WidgetFactory {
       MediaView mediaView = new MediaView(mediaPlayer);
       mediaView.setPreserveRatio(true);
 
-      if (parent.getId().equals("screenPlayfield")) {
+      if (parent.getId().equals("screenPlayField")) {
         mediaView.rotateProperty().set(90);
         mediaView.setFitWidth(440);
         mediaView.setX(0);

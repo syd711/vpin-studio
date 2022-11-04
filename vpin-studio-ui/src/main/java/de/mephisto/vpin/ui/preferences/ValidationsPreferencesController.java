@@ -2,6 +2,7 @@ package de.mephisto.vpin.ui.preferences;
 
 import de.mephisto.vpin.restclient.VPinStudioClient;
 import de.mephisto.vpin.restclient.representations.PreferenceEntryRepresentation;
+import de.mephisto.vpin.ui.Studio;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -15,7 +16,6 @@ import java.util.*;
 
 public class ValidationsPreferencesController implements Initializable {
 
-  public static final String IGNORED_VALIDATIONS = "ignoredValidations";
   private VPinStudioClient client;
 
   @FXML
@@ -40,20 +40,20 @@ public class ValidationsPreferencesController implements Initializable {
 
     String value = StringUtils.join(ignoreList, ",");
     Map<String, Object> prefs = new HashMap<>();
-    prefs.put(IGNORED_VALIDATIONS, value);
+    prefs.put(PreferenceNames.IGNORED_VALIDATIONS, value);
     client.setPreferences(prefs);
   }
 
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
-    client = new VPinStudioClient();
+    client = Studio.client;
 
     Parent parent = preferenceList;
     List<CheckBox> settingsCheckboxes = new ArrayList<>();
     findAllCheckboxes(parent, settingsCheckboxes);
 
-    PreferenceEntryRepresentation entry = client.getPreference(IGNORED_VALIDATIONS);
+    PreferenceEntryRepresentation entry = client.getPreference(PreferenceNames.IGNORED_VALIDATIONS);
     ignoreList = entry.getCSVValue();
     for (CheckBox checkBox : settingsCheckboxes) {
       String id = checkBox.getId();

@@ -7,7 +7,7 @@ import de.mephisto.vpin.restclient.VPinStudioClient;
 import de.mephisto.vpin.restclient.representations.GameRepresentation;
 import de.mephisto.vpin.ui.NavigationController;
 import de.mephisto.vpin.ui.StudioFXController;
-import de.mephisto.vpin.ui.VPinStudioApplication;
+import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.WaitOverlayController;
 import de.mephisto.vpin.ui.util.BindingUtil;
 import de.mephisto.vpin.ui.util.MediaUtil;
@@ -38,7 +38,7 @@ import java.io.InputStream;
 import java.net.URL;
 import java.util.*;
 
-import static de.mephisto.vpin.ui.VPinStudioApplication.stage;
+import static de.mephisto.vpin.ui.Studio.stage;
 
 public class HighscoreCardsController implements Initializable, ObservedPropertyChangeListener, StudioFXController {
   private final static Logger LOG = LoggerFactory.getLogger(HighscoreCardsController.class);
@@ -139,7 +139,7 @@ public class HighscoreCardsController implements Initializable, ObservedProperty
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
     try {
-      client = new VPinStudioClient();
+      client = Studio.client;
       properties = client.getProperties("card-generator");
       ignoreList.addAll(Arrays.asList("card.generation.enabled", "popper.screen"));
       properties.addObservedPropertyChangeListener(this);
@@ -398,7 +398,7 @@ public class HighscoreCardsController implements Initializable, ObservedProperty
 
   private void setBusy(boolean b) {
     if (b) {
-      Image image = new Image(VPinStudioApplication.class.getResourceAsStream("loading.png"));
+      Image image = new Image(Studio.class.getResourceAsStream("loading.png"));
       cardPreview.setImage(image);
       cardPreview.setFitWidth(300);
     } else {

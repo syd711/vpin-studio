@@ -1,5 +1,6 @@
 package de.mephisto.vpin.restclient.representations;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -29,10 +30,10 @@ public class PreferenceEntryRepresentation {
 
   public List<String> getCSVValue() {
     if(value == null) {
-      return Collections.emptyList();
+      return new ArrayList<>();
     }
     String[] split = value.split(",");
-    return Arrays.asList(split);
+    return new ArrayList<>(Arrays.asList(split));
   }
 
   public void setValue(String value) {
