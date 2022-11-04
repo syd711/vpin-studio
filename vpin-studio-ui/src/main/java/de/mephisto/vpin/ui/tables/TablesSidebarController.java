@@ -396,19 +396,15 @@ public class TablesSidebarController implements Initializable, StudioFXControlle
     PopperScreen[] values = PopperScreen.values();
     for (PopperScreen value : values) {
       BorderPane screen = this.getScreenBorderPaneFor(value);
-      if(ignoreScreenNames.contains(value.name())) {
-        screen.setVisible(false);
-      }
-      else {
-        GameMediaItemRepresentation item = gameMedia.getItem(value);
-        WidgetFactory.createMediaContainer(screen, client, item);
-      }
+      boolean ignored = ignoreScreenNames.contains(value.name());
+      GameMediaItemRepresentation item = gameMedia.getItem(value);
+      WidgetFactory.createMediaContainer(screen, client, item, ignored);
     }
   }
 
   private BorderPane getScreenBorderPaneFor(PopperScreen value) {
     BorderPane lookup = (BorderPane) mediaRootPane.lookup("#screen" + value.name());
-    if(lookup == null) {
+    if (lookup == null) {
       throw new UnsupportedOperationException("No screen found for id 'screen" + value.name() + "'");
     }
     return lookup;

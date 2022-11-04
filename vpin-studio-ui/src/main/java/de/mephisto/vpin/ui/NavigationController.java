@@ -34,9 +34,14 @@ public class NavigationController implements Initializable {
   public static StudioFXController navigationController;
 
   private static Parent root;
+  private static String activeScreenId;
 
   // Add a public no-args constructor
   public NavigationController() {
+  }
+
+  public static void refresh() throws IOException {
+    loadScreen(null, activeScreenId);
   }
 
   @FXML
@@ -80,6 +85,8 @@ public class NavigationController implements Initializable {
   }
 
   public static void loadScreen(ActionEvent event, String name) throws IOException {
+    activeScreenId = name;
+
     Node lookup = Studio.stage.getScene().lookup("#main");
     BorderPane main = (BorderPane) lookup;
     if (activeController != null) {

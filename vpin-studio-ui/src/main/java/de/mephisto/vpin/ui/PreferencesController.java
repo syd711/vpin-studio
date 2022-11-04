@@ -25,11 +25,12 @@ public class PreferencesController implements Initializable {
   private BorderPane preferencesMain;
 
   @FXML
-  private void onClose(ActionEvent event) {
+  private void onClose(ActionEvent event) throws IOException {
     Node lookup = Studio.stage.getScene().lookup("#root");
     BorderPane main = (BorderPane) lookup;
     StackPane stack = (StackPane) main.getCenter();
     stack.getChildren().remove(1);
+    NavigationController.refresh();
   }
 
   @FXML

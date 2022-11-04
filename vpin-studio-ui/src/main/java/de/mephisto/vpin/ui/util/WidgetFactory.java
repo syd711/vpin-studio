@@ -150,7 +150,7 @@ public class WidgetFactory {
     }
   }
 
-  public static Node createMediaContainer(BorderPane parent, VPinStudioClient client, GameMediaItemRepresentation mediaItem) {
+  public static Node createMediaContainer(BorderPane parent, VPinStudioClient client, GameMediaItemRepresentation mediaItem, boolean ignored) {
     if (parent.getCenter() != null) {
       disposeMediaBorderPane(parent);
     }
@@ -158,6 +158,13 @@ public class WidgetFactory {
     Node top = parent.getTop();
     if (top != null) {
       top.setVisible(mediaItem != null);
+    }
+
+    if (ignored) {
+      Label label = new Label("Screen is ignored.");
+      label.setStyle("-fx-font-size: 14px;-fx-text-fill: #444444;");
+      parent.setCenter(label);
+      return parent;
     }
 
     if (mediaItem == null) {
