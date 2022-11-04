@@ -21,7 +21,9 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.ResourceBundle;
 
 public class NavigationController implements Initializable {
@@ -35,6 +37,9 @@ public class NavigationController implements Initializable {
 
   private static Parent root;
   private static String activeScreenId;
+
+  private static Map<String, Parent> viewCache = new HashMap<>();
+  private static Map<String, StudioFXController> controllerCache = new HashMap<>();
 
   // Add a public no-args constructor
   public NavigationController() {
@@ -86,16 +91,25 @@ public class NavigationController implements Initializable {
 
   public static void loadScreen(ActionEvent event, String name) throws IOException {
     activeScreenId = name;
-
-    Node lookup = Studio.stage.getScene().lookup("#main");
-    BorderPane main = (BorderPane) lookup;
     if (activeController != null) {
       activeController.dispose();
     }
 
-    FXMLLoader loader = new FXMLLoader(NavigationController.class.getResource(name));
-    root = loader.load();
-    activeController = loader.<StudioFXController>getController();
+    Node lookup = Studio.stage.getScene().lookup("#main");
+    BorderPane main = (BorderPane) lookup;
+
+    if (viewCache.containsKey(name)) {
+      root = viewCache.get(name);
+      activeController = controllerCache.get(name);
+    } else {
+      FXMLLoader loader = new FXMLLoader(NavigationController.class.getResource(name));
+      root = loader.load();
+      activeController = loader.<StudioFXController>getController();
+
+      viewCache.put(name, root);
+      controllerCache.put(name, activeController);
+    }
+
     main.setCenter(root);
   }
 
