@@ -13,9 +13,11 @@ public class GameMediaItem {
   private String mimeType;
   private String uri;
   private File file;
+  private PopperScreen screen;
 
   public GameMediaItem(@NonNull Game game, @NonNull PopperScreen screen, @NonNull File file) throws IOException {
     this.file = file;
+    this.screen = screen;
     this.mimeType = Files.probeContentType(file.toPath());
     if(this.mimeType == null) {
       String suffix = FilenameUtils.getExtension(file.getName()).toLowerCase();
@@ -33,6 +35,10 @@ public class GameMediaItem {
   @JsonIgnore
   public File getFile() {
     return file;
+  }
+
+  public PopperScreen getScreen() {
+    return screen;
   }
 
   public String getMimeType() {

@@ -3,7 +3,10 @@ package de.mephisto.vpin.ui.util;
 import de.mephisto.vpin.restclient.RestClient;
 import de.mephisto.vpin.restclient.VPinStudioClient;
 import de.mephisto.vpin.restclient.representations.GameMediaItemRepresentation;
+import de.mephisto.vpin.restclient.representations.GameRepresentation;
 import de.mephisto.vpin.ui.Studio;
+import de.mephisto.vpin.ui.StudioFXController;
+import de.mephisto.vpin.ui.WaitOverlayController;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.concurrent.Service;
@@ -33,6 +36,27 @@ import java.util.Optional;
 
 public class WidgetFactory {
   private final static Logger LOG = LoggerFactory.getLogger(WidgetFactory.class);
+
+  public static void openMediaDialog(GameRepresentation game, GameMediaItemRepresentation item) {
+    Parent root = null;
+    try {
+      root = FXMLLoader.load(Studio.class.getResource("dialog-media.fxml"));
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+
+    Stage owner = Studio.stage;
+    BorderPane mediaView = (BorderPane) root.lookup("#mediaView");
+    WidgetFactory.addMediaItemToBorderPane(item, mediaView);
+    final Stage stage = new Stage();
+    stage.initModality(Modality.WINDOW_MODAL);
+    stage.setTitle(game.getGameDisplayName() + " - " + item.getScreen() + " Screen");
+
+    stage.initOwner(owner);
+    Scene scene = new Scene(root);
+    stage.setScene(scene);
+    stage.showAndWait();
+  }
 
   public static void createProgressDialog(ProgressModel model) {
     Parent root = null;
@@ -150,7 +174,7 @@ public class WidgetFactory {
     }
   }
 
-  public static Node createMediaContainer(BorderPane parent, VPinStudioClient client, GameMediaItemRepresentation mediaItem, boolean ignored) {
+  public static Node createMediaContainer(BorderPane parent, GameMediaItemRepresentation mediaItem, boolean ignored) {
     if (parent.getCenter() != null) {
       disposeMediaBorderPane(parent);
     }
@@ -174,8 +198,12 @@ public class WidgetFactory {
       return parent;
     }
 
+    return addMediaItemToBorderPane(mediaItem, parent);
+  }
+
+  public static Node addMediaItemToBorderPane(GameMediaItemRepresentation mediaItem, BorderPane parent) {
     String mimeType = mediaItem.getMimeType();
-    String url = client.getURL(mediaItem.getUri());
+    String url = Studio.client.getURL(mediaItem.getUri());
     String baseType = mimeType.split("/")[0];
     if (baseType.equals("image")) {
       ImageView imageView = new ImageView();
@@ -187,7 +215,7 @@ public class WidgetFactory {
       ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(bytes);
       Image image = new Image(byteArrayInputStream);
       imageView.setImage(image);
-      imageView.setUserData(url);
+      imageView.setUserData(mediaItem);
 
       parent.setCenter(imageView);
       return imageView;
@@ -205,6 +233,7 @@ public class WidgetFactory {
       });
 
       MediaView mediaView = new MediaView(mediaPlayer);
+      mediaView.setUserData(mediaItem);
       mediaView.setPreserveRatio(true);
 
       if (parent.getId().equals("screenPlayField")) {

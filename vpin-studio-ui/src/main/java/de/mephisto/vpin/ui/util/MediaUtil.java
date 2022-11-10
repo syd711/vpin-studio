@@ -1,6 +1,5 @@
 package de.mephisto.vpin.ui.util;
 
-import de.mephisto.vpin.restclient.VPinStudioClient;
 import de.mephisto.vpin.restclient.representations.GameRepresentation;
 import de.mephisto.vpin.ui.Studio;
 import javafx.application.Platform;
@@ -18,10 +17,6 @@ import java.io.IOException;
 
 public class MediaUtil {
   private final static Logger LOG = LoggerFactory.getLogger(MediaUtil.class);
-
-  public static void openMedia() {
-
-  }
 
   public static void openDirectB2SBackground(GameRepresentation game) {
     if (game != null) {

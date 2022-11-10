@@ -24,17 +24,14 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
-import javafx.scene.media.Media;
 import javafx.scene.media.MediaView;
 import org.apache.commons.lang3.StringUtils;
 import org.kordamp.ikonli.javafx.FontIcon;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.awt.*;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URI;
 import java.net.URL;
 import java.util.List;
 import java.util.*;
@@ -220,24 +217,10 @@ public class TablesSidebarController implements Initializable, StudioFXControlle
       center = screenPlayField.getCenter();
     }
 
-
-    if (center instanceof MediaView) {
-      MediaView mediaView = (MediaView) center;
-      Media media = mediaView.getMediaPlayer().getMedia();
-      String s = media.getSource();
-      try {
-        Desktop.getDesktop().browse(URI.create(s));
-      } catch (IOException ex) {
-        ex.printStackTrace();
-      }
-    } else if (center instanceof ImageView) {
-      ImageView imageView = (ImageView) center;
-      String url = (String) imageView.getUserData();
-      try {
-        Desktop.getDesktop().browse(URI.create(url));
-      } catch (IOException ex) {
-        ex.printStackTrace();
-      }
+    GameMediaItemRepresentation mediaItem = (GameMediaItemRepresentation) center.getUserData();
+    if(mediaItem != null) {
+      GameRepresentation gameRepresentation = game.get();
+      WidgetFactory.openMediaDialog(gameRepresentation, mediaItem);
     }
   }
 
@@ -390,7 +373,7 @@ public class TablesSidebarController implements Initializable, StudioFXControlle
       BorderPane screen = this.getScreenBorderPaneFor(value);
       boolean ignored = ignoreScreenNames.contains(value.name());
       GameMediaItemRepresentation item = gameMedia.getItem(value);
-      WidgetFactory.createMediaContainer(screen, client, item, ignored);
+      WidgetFactory.createMediaContainer(screen, item, ignored);
     }
   }
 
