@@ -406,9 +406,4 @@ public class HighscoreCardsController implements Initializable, ObservedProperty
       cardPreview.setFitHeight(imageCenter.getHeight() - 60);
     }
   }
-
-  @Override
-  public void dispose() {
-
-  }
 }

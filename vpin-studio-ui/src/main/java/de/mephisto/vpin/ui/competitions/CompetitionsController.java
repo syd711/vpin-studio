@@ -31,9 +31,4 @@ public class CompetitionsController implements Initializable, StudioFXController
   public void initialize(URL url, ResourceBundle resourceBundle) {
     NavigationController.setBreadCrumb(Arrays.asList("Competitions", "Offline Competitions"));
   }
-
-  @Override
-  public void dispose() {
-
-  }
 }

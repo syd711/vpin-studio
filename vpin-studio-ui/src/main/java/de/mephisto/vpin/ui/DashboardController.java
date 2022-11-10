@@ -145,9 +145,4 @@ public class DashboardController implements Initializable, StudioFXController {
         .build();
     widget5.setCenter(numberTile);
   }
-
-  @Override
-  public void dispose() {
-
-  }
 }

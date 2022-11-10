@@ -285,6 +285,11 @@
     -fx-underline: true;
 }
 
+.check-box:disabled, .check-box:disabled > * {
+  -fx-opacity: 0.7 ;
+  -fx-background-color: #CCCCCC;
+}
+
 /**
  * Tabs
  */
@@ -392,6 +397,10 @@
  */
 .media-container {
     -fx-padding: 3 3 3 3;
+    -fx-background-color: #111111;
+}
+
+.media-parent {
     -fx-background-color: #111111;
 }
 

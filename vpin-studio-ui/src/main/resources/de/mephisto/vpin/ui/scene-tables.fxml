@@ -1,11 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.*?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
-<?import javafx.scene.text.*?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Hyperlink?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.ToolBar?>
+<?import javafx.scene.control.Tooltip?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
 <?import org.kordamp.ikonli.javafx.FontIcon?>
-<BorderPane styleClass="main" stylesheets="@stylesheet.css" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.tables.TablesController">
+
+<BorderPane styleClass="main" stylesheets="@stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.tables.TablesController">
    <center>
       <BorderPane BorderPane.alignment="CENTER">
          <center>
@@ -13,23 +24,27 @@
                <center>
                   <BorderPane styleClass="subpanel" stylesheets="@stylesheet.css" BorderPane.alignment="CENTER">
                      <center>
-                        <TableView fx:id="tableView" onMouseClicked="#onTableMouseClicked" style="-fx-background-color: #2a2a2a;" styleClass="base-component" stylesheets="@stylesheet.css">
-                          <columns>
-                              <TableColumn fx:id="columnId" minWidth="42.400028228759766" prefWidth="42.400028228759766" style="-fx-alignment: baseline-right;" text="ID" />
-                              <TableColumn fx:id="columnActive" minWidth="57.5999755859375" prefWidth="67.199951171875" style="-fx-alignment: CENTER;" text="Active" />
-                              <TableColumn fx:id="columnStatus" minWidth="57.5999755859375" prefWidth="67.199951171875" style="-fx-alignment: CENTER;" text="Status" />
-                            <TableColumn fx:id="columnDisplayName" minWidth="100.0" prefWidth="298.40000915527344" style="-fx-alignment: BASELINE_LEFT;" text="Display Name" />
-                            <TableColumn fx:id="columnRom" minWidth="10.4000244140625" prefWidth="138.39999389648438" style="-fx-alignment: BASELINE_LEFT;" text="ROM" />
-                              <TableColumn fx:id="columnRomAlias" minWidth="77.60009765625" style="-fx-alignment: BASELINE_LEFT;" text="ROM Alias" />
-                              <TableColumn fx:id="columnNVOffset" minWidth="62.4000244140625" prefWidth="70.39990234375" style="-fx-alignment: CENTER;" text="NVOffset" />
-                              <TableColumn fx:id="columnB2S" minWidth="51.199951171875" prefWidth="103.199951171875" style="-fx-alignment: CENTER;" text="DirectB2S File" />
-                              <TableColumn fx:id="columnPUPPack" minWidth="57.5999755859375" prefWidth="76.800048828125" style="-fx-alignment: CENTER;" text="PUP Pack" />
-                              <TableColumn fx:id="columnHsFile" minWidth="57.5999755859375" prefWidth="140.7999267578125" style="-fx-alignment: BASELINE_LEFT;" text="EM Highscore File" />
-                          </columns>
+                        <StackPane fx:id="tableStack" styleClass="media-parent">
                            <BorderPane.margin>
                               <Insets bottom="6.0" />
                            </BorderPane.margin>
-                        </TableView>
+                           <children>
+                              <TableView fx:id="tableView" onMouseClicked="#onTableMouseClicked" style="-fx-background-color: #2a2a2a;" styleClass="base-component" stylesheets="@stylesheet.css">
+                                <columns>
+                                    <TableColumn fx:id="columnId" minWidth="42.400028228759766" prefWidth="42.400028228759766" style="-fx-alignment: baseline-right;" text="ID" />
+                                    <TableColumn fx:id="columnActive" minWidth="57.5999755859375" prefWidth="67.199951171875" style="-fx-alignment: CENTER;" text="Active" />
+                                    <TableColumn fx:id="columnStatus" minWidth="57.5999755859375" prefWidth="67.199951171875" style="-fx-alignment: CENTER;" text="Status" />
+                                  <TableColumn fx:id="columnDisplayName" minWidth="100.0" prefWidth="298.40000915527344" style="-fx-alignment: BASELINE_LEFT;" text="Display Name" />
+                                  <TableColumn fx:id="columnRom" minWidth="10.4000244140625" prefWidth="138.39999389648438" style="-fx-alignment: BASELINE_LEFT;" text="ROM" />
+                                    <TableColumn fx:id="columnRomAlias" minWidth="77.60009765625" style="-fx-alignment: BASELINE_LEFT;" text="ROM Alias" />
+                                    <TableColumn fx:id="columnNVOffset" minWidth="62.4000244140625" prefWidth="70.39990234375" style="-fx-alignment: CENTER;" text="NVOffset" />
+                                    <TableColumn fx:id="columnB2S" minWidth="51.199951171875" prefWidth="103.199951171875" style="-fx-alignment: CENTER;" text="DirectB2S File" />
+                                    <TableColumn fx:id="columnPUPPack" minWidth="57.5999755859375" prefWidth="76.800048828125" style="-fx-alignment: CENTER;" text="PUP Pack" />
+                                    <TableColumn fx:id="columnHsFile" minWidth="57.5999755859375" prefWidth="140.7999267578125" style="-fx-alignment: BASELINE_LEFT;" text="EM Highscore File" />
+                                </columns>
+                              </TableView>
+                           </children>
+                        </StackPane>
                      </center>
                      <BorderPane.margin>
                         <Insets left="12.0" right="12.0" top="12.0" />
@@ -43,7 +58,7 @@
                                  </font>
                               </TextField>
                               <Separator orientation="VERTICAL" prefHeight="0.0" prefWidth="0.0" />
-                            <Button mnemonicParsing="false" onAction="#onReload" text="Reload" textFill="WHITE">
+                            <Button fx:id="reloadBtn" mnemonicParsing="false" onAction="#onReload" text="Reload" textFill="WHITE">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
@@ -52,7 +67,7 @@
                                  </graphic>
                               </Button>
                               <Separator orientation="VERTICAL" prefHeight="30.0" prefWidth="12.0" />
-                              <Button mnemonicParsing="false" onAction="#onTablesScan" text="Scan All Tables" textFill="WHITE">
+                              <Button fx:id="scanAllBtn" mnemonicParsing="false" onAction="#onTablesScan" text="Scan All Tables" textFill="WHITE">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
@@ -60,7 +75,7 @@
                                     <FontIcon iconColor="WHITE" iconLiteral="mdi2m-map-search-outline" />
                                  </graphic>
                               </Button>
-                              <Button mnemonicParsing="false" onAction="#onTableScan" text="Scan Table" textFill="WHITE">
+                              <Button fx:id="scanBtn" mnemonicParsing="false" onAction="#onTableScan" text="Scan Table" textFill="WHITE">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
@@ -69,7 +84,7 @@
                                  </graphic>
                               </Button>
                               <Separator orientation="VERTICAL" prefHeight="30.0" prefWidth="12.0" />
-                              <Button mnemonicParsing="false" onAction="#onValidate" text="Validate" textFill="WHITE">
+                              <Button fx:id="validateBtn" mnemonicParsing="false" onAction="#onValidate" text="Validate" textFill="WHITE">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
@@ -94,14 +109,23 @@
                            <center>
                               <BorderPane fx:id="validationError">
                                  <left>
-                                    <Label fx:id="validationErrorLabel" text="Label" textFill="WHITE" BorderPane.alignment="CENTER">
+                                    <VBox BorderPane.alignment="CENTER">
                                        <BorderPane.margin>
                                           <Insets bottom="3.0" left="12.0" top="3.0" />
                                        </BorderPane.margin>
-                                       <font>
-                                          <Font name="System Bold" size="14.0" />
-                                       </font>
-                                    </Label>
+                                       <children>
+                                          <Label fx:id="validationErrorLabel" text="Label" textFill="WHITE">
+                                             <font>
+                                                <Font name="System Bold" size="14.0" />
+                                             </font>
+                                          </Label>
+                                          <Label fx:id="validationErrorText" text="Label" textFill="WHITE">
+                                              <font>
+                                                  <Font name="System" size="14.0" />
+                                              </font>
+                                          </Label>
+                                       </children>
+                                    </VBox>
                                  </left>
                                  <right>
                                     <Hyperlink onAction="#onDismiss" text="Dismiss" textFill="WHITE" BorderPane.alignment="CENTER">

@@ -36,7 +36,7 @@ public class NavigationController implements Initializable {
   public static StudioFXController navigationController;
 
   private static Parent root;
-  private static String activeScreenId;
+  private static String activeScreenId = "scene-dashboard.fxml";
 
   private static Map<String, Parent> viewCache = new HashMap<>();
   private static Map<String, StudioFXController> controllerCache = new HashMap<>();
@@ -91,10 +91,6 @@ public class NavigationController implements Initializable {
 
   public static void loadScreen(ActionEvent event, String name) throws IOException {
     activeScreenId = name;
-    if (activeController != null) {
-      activeController.dispose();
-    }
-
     Node lookup = Studio.stage.getScene().lookup("#main");
     BorderPane main = (BorderPane) lookup;
 

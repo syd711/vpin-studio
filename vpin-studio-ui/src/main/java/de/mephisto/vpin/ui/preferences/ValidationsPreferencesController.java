@@ -1,5 +1,6 @@
 package de.mephisto.vpin.ui.preferences;
 
+import de.mephisto.vpin.restclient.PopperScreen;
 import de.mephisto.vpin.restclient.VPinStudioClient;
 import de.mephisto.vpin.restclient.representations.PreferenceEntryRepresentation;
 import de.mephisto.vpin.ui.Studio;
@@ -13,6 +14,7 @@ import org.apache.commons.lang3.StringUtils;
 
 import java.net.URL;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class ValidationsPreferencesController implements Initializable {
 
@@ -49,6 +51,10 @@ public class ValidationsPreferencesController implements Initializable {
   public void initialize(URL url, ResourceBundle resourceBundle) {
     client = Studio.client;
 
+    PreferenceEntryRepresentation ignoredMediaPrefs = client.getPreference(PreferenceNames.IGNORED_MEDIA);
+    List<String> ignoredMediaList = ignoredMediaPrefs.getCSVValue();
+    List<String> screenNames = Arrays.stream(PopperScreen.values()).map(s -> s.name()).collect(Collectors.toList());
+
     Parent parent = preferenceList;
     List<CheckBox> settingsCheckboxes = new ArrayList<>();
     findAllCheckboxes(parent, settingsCheckboxes);
@@ -57,8 +63,13 @@ public class ValidationsPreferencesController implements Initializable {
     ignoreList = entry.getCSVValue();
     for (CheckBox checkBox : settingsCheckboxes) {
       String id = checkBox.getId();
-      String code = id.split("_")[1];
-      checkBox.setSelected(!ignoreList.contains(code));
+      String screenName = id.split("_")[0];
+      String validationCode = id.split("_")[1];
+
+      if(screenNames.contains(screenName)) {
+        checkBox.setSelected(!ignoreList.contains(validationCode));
+        checkBox.setDisable(ignoredMediaList.contains(screenName));
+      }
     }
   }
 
@@ -66,7 +77,7 @@ public class ValidationsPreferencesController implements Initializable {
     for (Node node : parent.getChildrenUnmodifiable()) {
       if (node instanceof CheckBox) {
         CheckBox checkBox = (CheckBox) node;
-        if (checkBox.getId() != null && checkBox.getId().startsWith("pref_")) {
+        if (checkBox.getId() != null) {
           settingsCheckboxes.add(checkBox);
         }
       }

@@ -5,15 +5,19 @@ import de.mephisto.vpin.restclient.representations.GameRepresentation;
 import de.mephisto.vpin.ui.NavigationController;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.StudioFXController;
+import de.mephisto.vpin.ui.WaitOverlayController;
+import de.mephisto.vpin.ui.tables.validation.TableValidation;
+import de.mephisto.vpin.ui.tables.validation.ValidationTexts;
 import de.mephisto.vpin.ui.util.MediaUtil;
-import de.mephisto.vpin.ui.util.ValidationTexts;
 import de.mephisto.vpin.ui.util.WidgetFactory;
+import javafx.application.Platform;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Cursor;
 import javafx.scene.Node;
@@ -25,6 +29,7 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.StackPane;
 import javafx.scene.media.MediaView;
 import javafx.scene.paint.Paint;
 import org.apache.commons.lang3.StringUtils;
@@ -32,6 +37,7 @@ import org.kordamp.ikonli.javafx.FontIcon;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
 import java.net.URL;
 import java.util.*;
 
@@ -78,16 +84,36 @@ public class TablesController implements Initializable, StudioFXController {
   private Label validationErrorLabel;
 
   @FXML
+  private Label validationErrorText;
+
+  @FXML
   private Node validationError;
 
   @FXML
   private Label labelTableCount;
 
   @FXML
+  private Button validateBtn;
+
+  @FXML
+  private Button scanBtn;
+
+  @FXML
+  private Button scanAllBtn;
+
+  @FXML
+  private Button reloadBtn;
+
+  @FXML
   private Parent tablesSideBar;
 
   @FXML
-  private TablesSidebarController tablesSideBarController; //fxml magic!
+  private StackPane tableStack;
+
+  @FXML
+  private TablesSidebarController tablesSideBarController; //fxml magic! Not unused
+
+  private Parent tablesLoadingOverlay;
 
   // Add a public no-args constructor
   public TablesController() {
@@ -187,19 +213,46 @@ public class TablesController implements Initializable, StudioFXController {
 
   @FXML
   public void onReload() {
-    GameRepresentation gameRepresentation = tableView.getSelectionModel().selectedItemProperty().get();
-    List<GameRepresentation> games = client.getGames();
-    List<GameRepresentation> filtered = new ArrayList<>();
-    String filterValue = textfieldSearch.textProperty().getValue();
-    for (GameRepresentation game : games) {
-      if (game.getGameDisplayName().toLowerCase().contains(filterValue.toLowerCase())) {
-        filtered.add(game);
+    this.textfieldSearch.setDisable(true);
+    this.reloadBtn.setDisable(true);
+    this.scanAllBtn.setDisable(true);
+    this.scanBtn.setDisable(true);
+    this.validateBtn.setDisable(true);
+
+    tableView.setVisible(false);
+    validationError.setVisible(false);
+    tableStack.getChildren().add(tablesLoadingOverlay);
+
+    new Thread(() -> {
+      GameRepresentation gameRepresentation = tableView.getSelectionModel().selectedItemProperty().get();
+      List<GameRepresentation> games = client.getGames();
+      List<GameRepresentation> filtered = new ArrayList<>();
+      String filterValue = textfieldSearch.textProperty().getValue();
+      for (GameRepresentation game : games) {
+        if (game.getGameDisplayName().toLowerCase().contains(filterValue.toLowerCase())) {
+          filtered.add(game);
+        }
       }
-    }
-    data = FXCollections.observableList(filtered);
-    tableView.setItems(data);
-    tableView.refresh();
-    tableView.getSelectionModel().select(gameRepresentation);
+      data = FXCollections.observableList(filtered);
+
+      Platform.runLater(() -> {
+        tableView.setItems(data);
+        tableView.refresh();
+        tableView.getSelectionModel().select(gameRepresentation);
+
+
+        tableStack.getChildren().remove(tablesLoadingOverlay);
+
+        this.textfieldSearch.setDisable(false);
+        this.reloadBtn.setDisable(false);
+        this.scanAllBtn.setDisable(false);
+        this.scanBtn.setDisable(false);
+        this.validateBtn.setDisable(false);
+
+        tableView.setVisible(true);
+        validationError.setVisible(true);
+      });
+    }).start();
   }
 
   @Override
@@ -207,12 +260,26 @@ public class TablesController implements Initializable, StudioFXController {
     client = Studio.client;
     tablesSideBarController.setTablesController(this);
 
+
+    try {
+      FXMLLoader loader = new FXMLLoader(WaitOverlayController.class.getResource("overlay-wait.fxml"));
+      tablesLoadingOverlay = loader.load();
+      WaitOverlayController ctrl = loader.getController();
+      ctrl.setLoadingMessage("Reloading Tables...");
+    } catch (IOException e) {
+      LOG.error("Failed to load loading overlay: " + e.getMessage());
+    }
+
+
     bindTable();
     bindSearchField();
   }
 
   private void bindSearchField() {
     textfieldSearch.textProperty().addListener((observableValue, s, filterValue) -> {
+      tableView.getSelectionModel().clearSelection();
+      refreshView(Optional.empty());
+
       List<GameRepresentation> filtered = new ArrayList<>();
       for (GameRepresentation game : games) {
         if (game.getGameDisplayName().toLowerCase().contains(filterValue.toLowerCase())) {
@@ -325,6 +392,9 @@ public class TablesController implements Initializable, StudioFXController {
 
     tableView.setItems(data);
     tableView.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
+      boolean disable = newSelection == null;
+      this.scanBtn.setDisable(disable);
+      this.validateBtn.setDisable(disable);
       refreshView(Optional.ofNullable(newSelection));
     });
 
@@ -335,11 +405,13 @@ public class TablesController implements Initializable, StudioFXController {
 
   private void refreshView(Optional<GameRepresentation> g) {
     tablesSideBarController.setGame(g);
-    GameRepresentation game = g.get();
     if (g.isPresent()) {
+      GameRepresentation game = g.get();
       validationError.setVisible(game.getValidationState() > 0);
       if (game.getValidationState() > 0) {
-        validationErrorLabel.setText(ValidationTexts.getValidationMessage(game));
+        TableValidation validationMessage = ValidationTexts.validate(game);
+        validationErrorLabel.setText(validationMessage.getLabel());
+        validationErrorText.setText(validationMessage.getText());
       }
       NavigationController.setBreadCrumb(Arrays.asList("Tables", game.getGameDisplayName()));
     }
@@ -347,10 +419,5 @@ public class TablesController implements Initializable, StudioFXController {
       validationError.setVisible(false);
       NavigationController.setBreadCrumb(Arrays.asList("Tables"));
     }
-  }
-
-  @Override
-  public void dispose() {
-
   }
 }

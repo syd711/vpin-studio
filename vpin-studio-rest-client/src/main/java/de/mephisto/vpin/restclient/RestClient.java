@@ -86,9 +86,11 @@ public class RestClient implements ClientHttpRequestInterceptor {
     }
   }
 
-  public <T> T post(String path, Object entity, Class<T> entityType) {
-    String url = baseUrl + path;
-    return restTemplate.postForObject(url, entity, entityType);
+  public <T> T post(String path, Object model, Class<T> entityType) {
+    HttpHeaders headers = new HttpHeaders();
+    headers.setContentType(MediaType.APPLICATION_JSON);
+    HttpEntity entity = new HttpEntity<>(model, headers);
+    return exchange(path, HttpMethod.POST, entity, entityType);
   }
 
   public Boolean put(String url, Map<String, Object> model) {

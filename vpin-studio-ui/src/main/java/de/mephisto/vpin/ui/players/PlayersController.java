@@ -20,9 +20,4 @@ public class PlayersController implements Initializable, StudioFXController {
   public void initialize(URL url, ResourceBundle resourceBundle) {
     NavigationController.setBreadCrumb(Arrays.asList("Players", "Offline Players"));
   }
-
-  @Override
-  public void dispose() {
-
-  }
 }

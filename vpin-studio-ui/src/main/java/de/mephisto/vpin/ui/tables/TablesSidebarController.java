@@ -12,8 +12,6 @@ import de.mephisto.vpin.ui.preferences.PreferenceNames;
 import de.mephisto.vpin.ui.util.BindingUtil;
 import de.mephisto.vpin.ui.util.MediaUtil;
 import de.mephisto.vpin.ui.util.WidgetFactory;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -48,16 +46,16 @@ public class TablesSidebarController implements Initializable, StudioFXControlle
   private BorderPane screenTopper;
 
   @FXML
-  private BorderPane screenBackglass;
+  private BorderPane screenBackGlass;
 
   @FXML
   private BorderPane screenDMD;
 
   @FXML
-  private BorderPane screenPlayfield;
+  private BorderPane screenPlayField;
 
   @FXML
-  private BorderPane screenApron;
+  private BorderPane screenMenu;
 
   @FXML
   private BorderPane screenOther2;
@@ -66,10 +64,10 @@ public class TablesSidebarController implements Initializable, StudioFXControlle
   private BorderPane screenWheel;
 
   @FXML
-  private BorderPane screenInfo;
+  private BorderPane screenGameInfo;
 
   @FXML
-  private BorderPane screenHelp;
+  private BorderPane screenGameHelp;
 
   @FXML
   private BorderPane screenLoading;
@@ -158,30 +156,24 @@ public class TablesSidebarController implements Initializable, StudioFXControlle
     PreferenceEntryRepresentation entry = client.getPreference(PreferenceNames.IGNORED_MEDIA);
     ignoreScreenNames = entry.getCSVValue();
 
-    volumeSlider.valueProperty().addListener(new ChangeListener<Number>() {
-      @Override
-      public void changed(ObservableValue<? extends Number> observableValue, Number number, Number t1) {
-        if (game.isPresent()) {
-          BindingUtil.debouncer.debounce("tableVolume" + game.get().getId(), () -> {
-            int value = t1.intValue();
-            if (value == 0) {
-              value = 1;
-            }
-            game.get().setVolume(value);
-            client.saveGame(game.get());
-          }, 1000);
-        }
+    volumeSlider.valueProperty().addListener((observableValue, number, t1) -> {
+      if (game.isPresent()) {
+        BindingUtil.debouncer.debounce("tableVolume" + game.get().getId(), () -> {
+          int value = t1.intValue();
+          if (value == 0) {
+            value = 1;
+          }
+          game.get().setVolume(value);
+          client.saveGame(game.get());
+        }, 1000);
       }
     });
 
-    titledPaneMedia.expandedProperty().addListener(new ChangeListener<Boolean>() {
-      @Override
-      public void changed(ObservableValue<? extends Boolean> observableValue, Boolean aBoolean, Boolean expanded) {
-        if (expanded) {
-          refreshView(game);
-        } else {
-          resetMedia();
-        }
+    titledPaneMedia.expandedProperty().addListener((observableValue, aBoolean, expanded) -> {
+      if (expanded) {
+        refreshView(game);
+      } else {
+        resetMedia();
       }
     });
   }
@@ -225,7 +217,7 @@ public class TablesSidebarController implements Initializable, StudioFXControlle
     BorderPane borderPane = (BorderPane) source.getParent();
     Node center = borderPane.getCenter();
     if (center == null) {
-      center = screenPlayfield.getCenter();
+      center = screenPlayField.getCenter();
     }
 
 
@@ -296,13 +288,13 @@ public class TablesSidebarController implements Initializable, StudioFXControlle
     disposeMediaPane(screenAudioLaunch);
     disposeMediaPane(screenAudio);
     disposeMediaPane(screenLoading);
-    disposeMediaPane(screenHelp);
-    disposeMediaPane(screenInfo);
+    disposeMediaPane(screenGameHelp);
+    disposeMediaPane(screenGameInfo);
     disposeMediaPane(screenDMD);
-    disposeMediaPane(screenBackglass);
+    disposeMediaPane(screenBackGlass);
     disposeMediaPane(screenTopper);
-    disposeMediaPane(screenApron);
-    disposeMediaPane(screenPlayfield);
+    disposeMediaPane(screenMenu);
+    disposeMediaPane(screenPlayField);
     disposeMediaPane(screenOther2);
     disposeMediaPane(screenWheel);
   }
@@ -411,13 +403,8 @@ public class TablesSidebarController implements Initializable, StudioFXControlle
   }
 
   private void disposeMediaPane(BorderPane parent) {
-    if (parent.getCenter() != null) {
+    if (parent != null && parent.getCenter() != null) {
       WidgetFactory.disposeMediaBorderPane(parent);
     }
-  }
-
-  @Override
-  public void dispose() {
-    resetMedia();
   }
 }

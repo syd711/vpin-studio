@@ -19,6 +19,10 @@ import java.io.IOException;
 public class MediaUtil {
   private final static Logger LOG = LoggerFactory.getLogger(MediaUtil.class);
 
+  public static void openMedia() {
+
+  }
+
   public static void openDirectB2SBackground(GameRepresentation game) {
     if (game != null) {
       try {
