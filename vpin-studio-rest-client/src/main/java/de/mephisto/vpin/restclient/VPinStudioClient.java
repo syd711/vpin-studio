@@ -21,7 +21,7 @@ import java.util.*;
 public class VPinStudioClient implements ObservedPropertyChangeListener {
   private final static Logger LOG = LoggerFactory.getLogger(VPinStudioClient.class);
 
-  private final static String API = "api/v1/";
+  public final static String API = "api/v1/";
 
   private Map<String, ObservedProperties> observedProperties = new HashMap<>();
 
@@ -106,10 +106,6 @@ public class VPinStudioClient implements ObservedPropertyChangeListener {
     return Arrays.asList(RestClient.getInstance().get(API + "generator/backgrounds", String[].class));
   }
 
-  public List<String> getCompetitionBadges() {
-    return Arrays.asList(RestClient.getInstance().get(API + "generator/backgrounds", String[].class));
-  }
-
   public ByteArrayInputStream getHighscoreBackgroundImage(String name) {
     try {
       if (!imageCache.containsKey(name)) {
@@ -122,6 +118,26 @@ public class VPinStudioClient implements ObservedPropertyChangeListener {
       return new ByteArrayInputStream(imageBytes);
     } catch (UnsupportedEncodingException e) {
       LOG.error("Failed to read highscore background image: " + e.getMessage(), e);
+    }
+    return null;
+  }
+
+  public List<String> getCompetitionBadges() {
+    return Arrays.asList(RestClient.getInstance().get(API + "competitions/badges", String[].class));
+  }
+
+  public ByteArrayInputStream getCompetitionBadge(String name) {
+    try {
+      if (!imageCache.containsKey(name)) {
+        String encodedName = URLEncoder.encode(name, "utf8");
+        byte[] bytes = RestClient.getInstance().readBinary(API + "competitions/badge/" + encodedName);
+        imageCache.put(name, bytes);
+      }
+
+      byte[] imageBytes = imageCache.get(name);
+      return new ByteArrayInputStream(imageBytes);
+    } catch (UnsupportedEncodingException e) {
+      LOG.error("Failed to read badge image: " + e.getMessage(), e);
     }
     return null;
   }

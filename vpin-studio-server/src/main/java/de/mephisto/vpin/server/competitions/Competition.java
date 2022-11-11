@@ -32,13 +32,19 @@ public class Competition {
   @GeneratedValue(strategy = GenerationType.AUTO)
   private Long id;
 
-  private Long gameId;
+  private int gameId;
 
   private String type;
 
   private String badge;
 
   private boolean customizeMedia;
+
+  private Date startDate;
+
+  private Date endDate;
+
+  private String name;
 
   @OneToMany
   private Set<Highscore> highscores;
@@ -74,20 +80,15 @@ public class Competition {
     return logo;
   }
 
-
   public void setLogo(Asset logo) {
     this.logo = logo;
   }
 
-  private Date startDate;
-
-  private Date endDate;
-
-  public Long getGameId() {
+  public int getGameId() {
     return gameId;
   }
 
-  public void setGameId(Long gameId) {
+  public void setGameId(int gameId) {
     this.gameId = gameId;
   }
 
@@ -122,8 +123,6 @@ public class Competition {
   public void setId(Long id) {
     this.id = id;
   }
-
-  private String name;
 
   public String getName() {
     return name;

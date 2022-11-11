@@ -13,10 +13,11 @@
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="410.0" prefWidth="576.0" styleClass="base-component" stylesheets="@stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.competitions.dialogs.CompetitionDialogController">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="470.0" prefWidth="717.0" styleClass="base-component" stylesheets="@stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.competitions.dialogs.CompetitionDialogController">
    <bottom>
       <HBox alignment="BASELINE_RIGHT" BorderPane.alignment="CENTER">
          <children>
@@ -37,12 +38,12 @@
       </HBox>
    </bottom>
    <center>
-      <VBox prefHeight="437.0" prefWidth="581.0" BorderPane.alignment="CENTER">
+      <VBox prefWidth="581.0" BorderPane.alignment="CENTER">
          <children>
-            <GridPane prefHeight="263.0" prefWidth="552.0">
+            <GridPane prefHeight="290.0" prefWidth="552.0">
               <columnConstraints>
-                <ColumnConstraints hgrow="SOMETIMES" maxWidth="388.2000732421875" minWidth="10.0" prefWidth="128.8000732421875" />
-                <ColumnConstraints hgrow="SOMETIMES" maxWidth="699.3999176025391" minWidth="10.0" prefWidth="423.99992675781243" />
+                <ColumnConstraints hgrow="SOMETIMES" maxWidth="388.2000732421875" minWidth="10.0" prefWidth="166.799951171875" />
+                <ColumnConstraints hgrow="SOMETIMES" maxWidth="699.3999176025391" minWidth="10.0" prefWidth="526.800048828125" />
               </columnConstraints>
               <rowConstraints>
                 <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
@@ -59,7 +60,7 @@
                         <Font size="14.0" />
                      </font>
                   </Label>
-                  <TextField GridPane.columnIndex="1" />
+                  <TextField fx:id="nameField" GridPane.columnIndex="1" />
                   <Label fx:id="titleLabel1" layoutX="10.0" layoutY="33.0" text="Table:" textFill="WHITE" GridPane.rowIndex="1">
                      <font>
                         <Font size="14.0" />
@@ -81,14 +82,14 @@
                         <Font size="14.0" />
                      </font>
                   </Label>
-                  <CheckBox mnemonicParsing="false" text="Add competition icon as badge to table's wheel icon" GridPane.columnIndex="1" GridPane.rowIndex="5">
+                  <CheckBox fx:id="badgeCheckbox" mnemonicParsing="false" onAction="#onBadgeCheck" text="Add competition icon as badge to table's wheel icon" GridPane.columnIndex="1" GridPane.rowIndex="5">
                      <font>
                         <Font size="14.0" />
                      </font>
                   </CheckBox>
-                  <DatePicker GridPane.columnIndex="1" GridPane.rowIndex="2" />
-                  <DatePicker GridPane.columnIndex="1" GridPane.rowIndex="3" />
-                  <Label fx:id="titleLabel11111" layoutX="10.0" layoutY="189.0" text="Icon Preview:" textFill="WHITE" GridPane.rowIndex="6">
+                  <DatePicker fx:id="startDatePicker" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                  <DatePicker fx:id="endDatePicker" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                  <Label fx:id="titleLabel11111" layoutX="10.0" layoutY="189.0" text="Wheel Icon Preview:" textFill="WHITE" GridPane.rowIndex="6">
                      <font>
                         <Font size="14.0" />
                      </font>
@@ -101,11 +102,19 @@
                   <ComboBox fx:id="competitionIconCombo" prefHeight="30.0" prefWidth="210.0" GridPane.columnIndex="1" GridPane.rowIndex="4" />
                </children>
             </GridPane>
-            <ImageView fx:id="iconPreview" fitHeight="150.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true">
+            <StackPane alignment="TOP_LEFT">
                <VBox.margin>
                   <Insets left="130.0" top="-26.0" />
                </VBox.margin>
-            </ImageView>
+               <children>
+                  <ImageView fx:id="iconPreview" fitHeight="200.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true" />
+                  <ImageView fx:id="badgePreview" fitHeight="100.0" fitWidth="100.0" pickOnBounds="true" preserveRatio="true">
+                     <StackPane.margin>
+                        <Insets left="100.0" />
+                     </StackPane.margin>
+                  </ImageView>
+               </children>
+            </StackPane>
          </children>
       </VBox>
    </center>

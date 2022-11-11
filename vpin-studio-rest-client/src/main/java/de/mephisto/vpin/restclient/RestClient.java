@@ -119,6 +119,10 @@ public class RestClient implements ClientHttpRequestInterceptor {
   }
 
   public byte[] readBinary(String resource) {
+    if(!resource.contains("api/")) {
+      resource = VPinStudioClient.API + resource;
+    }
+
     if(!resource.startsWith(baseUrl)) {
       resource = baseUrl + resource;
     }
