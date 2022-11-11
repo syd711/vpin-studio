@@ -174,7 +174,8 @@ public class CompetitionDialogController implements Initializable {
         && competition.getName().length() > 3
         && competition.getStartDate() != null
         && competition.getEndDate() != null
-        && competition.getStartDate().getTime() < competition.getEndDate().getTime();
+        && competition.getStartDate().getTime() < competition.getEndDate().getTime()
+        && competition.getEndDate().getTime() > System.currentTimeMillis();
     this.saveBtn.setDisable(!valid);
   }
 

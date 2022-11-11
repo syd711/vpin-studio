@@ -25,9 +25,12 @@ public class CompetitionService  {
   }
 
   public Competition save(Competition c) {
-    Competition competition = getCompetition(c.getId());
-    competitionsRepository.saveAndFlush(competition);
-    LOG.info("Saved " + competition);
+    if(c.getId() == null) {
+      Competition updated = competitionsRepository.saveAndFlush(c);
+      LOG.info("Saved " + updated);
+      return updated;
+    }
+
     return getCompetition(c.getId());
   }
 }

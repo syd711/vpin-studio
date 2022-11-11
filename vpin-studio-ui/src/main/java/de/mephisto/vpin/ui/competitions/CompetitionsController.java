@@ -2,6 +2,7 @@ package de.mephisto.vpin.ui.competitions;
 
 import de.mephisto.vpin.restclient.representations.CompetitionRepresentation;
 import de.mephisto.vpin.ui.NavigationController;
+import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.StudioFXController;
 import de.mephisto.vpin.ui.util.WidgetFactory;
 import eu.hansolo.tilesfx.Tile;
@@ -34,7 +35,10 @@ public class CompetitionsController implements Initializable, StudioFXController
 
   @FXML
   private void onCompetitionCreate() {
-    WidgetFactory.openCompetitionDialog();
+    CompetitionRepresentation c = WidgetFactory.openCompetitionDialog();
+    if(c != null) {
+      Studio.client.saveCompetition(c);
+    }
   }
 
 

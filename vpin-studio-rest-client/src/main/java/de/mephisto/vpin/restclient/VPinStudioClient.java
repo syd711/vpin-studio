@@ -1,5 +1,6 @@
 package de.mephisto.vpin.restclient;
 
+import de.mephisto.vpin.restclient.representations.CompetitionRepresentation;
 import de.mephisto.vpin.restclient.representations.GameMediaRepresentation;
 import de.mephisto.vpin.restclient.representations.GameRepresentation;
 import de.mephisto.vpin.restclient.representations.PreferenceEntryRepresentation;
@@ -78,12 +79,25 @@ public class VPinStudioClient implements ObservedPropertyChangeListener {
     return null;
   }
 
+  public CompetitionRepresentation saveCompetition(CompetitionRepresentation c) {
+    try {
+      return RestClient.getInstance().post(API + "competitions/save", c, CompetitionRepresentation.class);
+    } catch (Exception e) {
+      LOG.error("Failed to save competition: " + e.getMessage(), e);
+    }
+    return null;
+  }
+
   public GameMediaRepresentation getGameMedia(int id) {
     return RestClient.getInstance().get(API + "poppermedia/" + id, GameMediaRepresentation.class);
   }
 
   public List<GameRepresentation> getGames() {
     return Arrays.asList(RestClient.getInstance().get(API + "games", GameRepresentation[].class));
+  }
+
+  public List<CompetitionRepresentation> getCompetitions() {
+    return Arrays.asList(RestClient.getInstance().get(API + "competitions", CompetitionRepresentation[].class));
   }
 
   public ByteArrayInputStream getHighscoreCard(GameRepresentation game) {
