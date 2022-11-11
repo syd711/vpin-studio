@@ -130,6 +130,9 @@ public class TablesSidebarController implements Initializable, StudioFXControlle
   private Button editRomNameBtn;
 
   @FXML
+  private Button directb2sUploadBtn;
+
+  @FXML
   private Label resolutionLabel;
 
 
@@ -183,6 +186,17 @@ public class TablesSidebarController implements Initializable, StudioFXControlle
     this.game = game;
     this.refreshView(game);
   }
+
+  @FXML
+  private void onDirectb2sUpload() {
+    if(this.game.isPresent()) {
+      boolean uploaded = WidgetFactory.openDirectB2SUploadDialog(this.game.get());
+      if(uploaded) {
+        tablesController.onReload();
+      }
+    }
+  }
+
 
   @FXML
   private void onPlayClick(ActionEvent e) {
@@ -285,6 +299,7 @@ public class TablesSidebarController implements Initializable, StudioFXControlle
   private void refreshView(Optional<GameRepresentation> g) {
     editHsFileNameBtn.setDisable(g.isEmpty());
     editRomNameBtn.setDisable(g.isEmpty());
+    directb2sUploadBtn.setDisable(g.isEmpty());
 
     if (g.isPresent()) {
       GameRepresentation game = g.get();

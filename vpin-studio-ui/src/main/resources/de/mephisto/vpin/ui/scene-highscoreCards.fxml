@@ -23,7 +23,7 @@
 <?import javafx.scene.text.Font?>
 <?import org.kordamp.ikonli.javafx.FontIcon?>
 
-<BorderPane styleClass="base-component" stylesheets="@stylesheet.css" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.cards.HighscoreCardsController">
+<BorderPane styleClass="base-component" stylesheets="@stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.cards.HighscoreCardsController">
    <top>
       <fx:include fx:id="mainToolbar" source="scene-toolbar.fxml" />
    </top>
@@ -81,7 +81,7 @@
                                    <Font size="14.0" />
                                 </font>
                                 <graphic>
-                                   <FontIcon iconColor="WHITE" iconLiteral="bi-cloud-upload" iconSize="14" />
+                                   <FontIcon iconColor="WHITE" iconLiteral="mdi2u-upload" iconSize="14" />
                                 </graphic>
                                  <VBox.margin>
                                     <Insets top="12.0" />

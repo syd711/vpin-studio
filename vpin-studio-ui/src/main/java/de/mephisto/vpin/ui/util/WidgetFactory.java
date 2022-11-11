@@ -5,8 +5,7 @@ import de.mephisto.vpin.restclient.VPinStudioClient;
 import de.mephisto.vpin.restclient.representations.GameMediaItemRepresentation;
 import de.mephisto.vpin.restclient.representations.GameRepresentation;
 import de.mephisto.vpin.ui.Studio;
-import de.mephisto.vpin.ui.StudioFXController;
-import de.mephisto.vpin.ui.WaitOverlayController;
+import de.mephisto.vpin.ui.dialogs.DirectB2SUploadController;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.concurrent.Service;
@@ -36,6 +35,30 @@ import java.util.Optional;
 
 public class WidgetFactory {
   private final static Logger LOG = LoggerFactory.getLogger(WidgetFactory.class);
+
+  public static boolean openDirectB2SUploadDialog(GameRepresentation game) {
+    Parent root = null;
+    FXMLLoader fxmlLoader = new FXMLLoader(Studio.class.getResource("dialog-directb2s-upload.fxml"));
+    try {
+      root = fxmlLoader.load();
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+    DirectB2SUploadController controller = fxmlLoader.getController();
+    controller.setGame(game);
+
+    Stage owner = Studio.stage;
+    final Stage stage = new Stage();
+    stage.initModality(Modality.WINDOW_MODAL);
+    stage.setTitle("DirectB2S File Upload");
+
+    stage.initOwner(owner);
+    Scene scene = new Scene(root);
+    stage.setScene(scene);
+    stage.showAndWait();
+
+    return controller.uploadFinished();
+  }
 
   public static void openMediaDialog(GameRepresentation game, GameMediaItemRepresentation item) {
     Parent root = null;

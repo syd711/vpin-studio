@@ -186,6 +186,25 @@
     -fx-cursor: hand;
 }
 
+.default-button {
+    -fx-border-style: solid solid solid solid;
+    -fx-border-color: #111111;
+    -fx-border-width: 1;
+    -fx-font-size : 14px;
+    -fx-background-color: #272b2f;
+    -fx-text-fill: #fff8f8;
+}
+
+.default-button:hover {
+    -fx-border-style: solid solid solid solid;
+    -fx-border-color: #4D4DB3;
+    -fx-border-width: 1;
+    -fx-font-size : 14px;
+    -fx-background-color: -fx-font-hover;
+    -fx-text-fill: #fff8f8;
+    -fx-cursor: hand;
+}
+
 .warn-button {
     -fx-border-color: #663333;
     -fx-border-width: 1;

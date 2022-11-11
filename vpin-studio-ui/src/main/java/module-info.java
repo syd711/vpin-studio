@@ -11,6 +11,7 @@ module de.mephisto.vpin.ui {
   requires imgscalr.lib;
   requires org.apache.commons.lang3;
   requires org.apache.commons.io;
+  requires com.fasterxml.jackson.databind;
 
   // add icon pack modules
   requires org.kordamp.ikonli.materialdesign2;
@@ -27,6 +28,8 @@ module de.mephisto.vpin.ui {
   opens de.mephisto.vpin.ui.tables to javafx.fxml;
   exports de.mephisto.vpin.ui.competitions;
   opens de.mephisto.vpin.ui.competitions to javafx.fxml;
+  exports de.mephisto.vpin.ui.dialogs;
+  opens de.mephisto.vpin.ui.dialogs to javafx.fxml;
   exports de.mephisto.vpin.ui.players;
   opens de.mephisto.vpin.ui.players to javafx.fxml;
   exports de.mephisto.vpin.ui.preferences;

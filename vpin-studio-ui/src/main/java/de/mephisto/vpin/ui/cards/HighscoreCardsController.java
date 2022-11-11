@@ -181,14 +181,16 @@ public class HighscoreCardsController implements Initializable, ObservedProperty
         new FileChooser.ExtensionFilter("PNG", "*.png"));
     File file = fileChooser.showOpenDialog(stage);
     if (file != null && file.exists()) {
-      boolean result = client.uploadHighscoreBackgroundImage(file);
-      if (result) {
-        String baseName = FilenameUtils.getBaseName(file.getName());
-        if (!imageList.contains(baseName)) {
-          imageList.add(baseName);
+      try {
+        boolean result = client.uploadHighscoreBackgroundImage(file);
+        if (result) {
+          String baseName = FilenameUtils.getBaseName(file.getName());
+          if (!imageList.contains(baseName)) {
+            imageList.add(baseName);
+          }
         }
-      } else {
-        WidgetFactory.showAlert("Uploading image failed, check log file for details.");
+      } catch (Exception e) {
+        WidgetFactory.showAlert("Uploading image failed, check log file for details:\n\n" + e.getMessage());
       }
     }
   }

@@ -13,6 +13,7 @@
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.TilePane?>
@@ -265,11 +266,26 @@
                                         <Label fx:id="resolutionLabel" text="Label" BorderPane.alignment="CENTER" />
                                     </left>
                                     <right>
-                                        <Button fx:id="openDirectB2SImageButton" mnemonicParsing="false" onAction="#onOpenDirectB2SBackground" BorderPane.alignment="CENTER">
-                                            <graphic>
-                                                <FontIcon iconColor="WHITE" iconLiteral="mdi2e-eye" />
-                                            </graphic>
-                                        </Button>
+                              <HBox BorderPane.alignment="CENTER">
+                                 <children>
+                                              <Button fx:id="openDirectB2SImageButton" mnemonicParsing="false" onAction="#onOpenDirectB2SBackground">
+                                                  <graphic>
+                                                      <FontIcon iconColor="WHITE" iconLiteral="mdi2e-eye" />
+                                                  </graphic>
+                                       <HBox.margin>
+                                          <Insets />
+                                       </HBox.margin>
+                                              </Button>
+                                    <Button fx:id="directb2sUploadBtn" mnemonicParsing="false" onAction="#onDirectb2sUpload">
+                                       <graphic>
+                                          <FontIcon iconColor="WHITE" iconLiteral="mdi2u-upload" />
+                                       </graphic>
+                                       <HBox.margin>
+                                          <Insets left="6.0" />
+                                       </HBox.margin>
+                                    </Button>
+                                 </children>
+                              </HBox>
                                     </right>
                                     <opaqueInsets>
                                         <Insets />
