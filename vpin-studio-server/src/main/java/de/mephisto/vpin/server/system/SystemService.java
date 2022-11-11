@@ -288,6 +288,10 @@ public class SystemService implements InitializingBean  {
     return new File(getVisualPinballInstallationFolder(), "Tables/");
   }
 
+  public File getDirectB2SFolder() {
+    return new File(RESOURCES, "directB2S/");
+  }
+
   public File getPinUPSystemFolder() {
     return pinUPSystemInstallationFolder;
   }
