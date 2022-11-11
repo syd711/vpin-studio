@@ -1,0 +1,39 @@
+package de.mephisto.vpin.server.competitions;
+
+import de.mephisto.vpin.server.games.Game;
+import de.mephisto.vpin.server.games.GameService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
+
+import java.util.List;
+
+import static de.mephisto.vpin.server.VPinStudioServer.API_SEGMENT;
+import static org.springframework.http.HttpStatus.NOT_FOUND;
+
+@RestController
+@RequestMapping(API_SEGMENT + "competitions")
+public class CompetitionResource {
+
+  @Autowired
+  private CompetitionService competitionService;
+
+  @GetMapping
+  public List<Competition> getCompetitions() {
+    return competitionService.getCompetitions();
+  }
+
+  @GetMapping("/{id}")
+  public Competition getCompetition(@PathVariable("id") int id) {
+    Competition c = competitionService.getCompetition(id);
+    if(c == null) {
+      throw new ResponseStatusException(NOT_FOUND, "Not game found for id " + id);
+    }
+    return c;
+  }
+
+  @PostMapping("/save")
+  public Competition save(@RequestBody Competition c) {
+    return competitionService.save(c);
+  }
+}

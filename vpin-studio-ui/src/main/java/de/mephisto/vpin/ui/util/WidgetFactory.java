@@ -2,12 +2,14 @@ package de.mephisto.vpin.ui.util;
 
 import de.mephisto.vpin.restclient.RestClient;
 import de.mephisto.vpin.restclient.VPinStudioClient;
+import de.mephisto.vpin.restclient.representations.CompetitionRepresentation;
 import de.mephisto.vpin.restclient.representations.GameMediaItemRepresentation;
 import de.mephisto.vpin.restclient.representations.GameRepresentation;
 import de.mephisto.vpin.ui.Studio;
-import de.mephisto.vpin.ui.dialogs.DirectB2SUploadController;
-import de.mephisto.vpin.ui.dialogs.ROMUploadController;
-import de.mephisto.vpin.ui.dialogs.TableUploadController;
+import de.mephisto.vpin.ui.competitions.dialogs.CompetitionDialogController;
+import de.mephisto.vpin.ui.tables.dialogs.DirectB2SUploadController;
+import de.mephisto.vpin.ui.tables.dialogs.ROMUploadController;
+import de.mephisto.vpin.ui.tables.dialogs.TableUploadController;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.concurrent.Service;
@@ -37,6 +39,29 @@ import java.util.Optional;
 
 public class WidgetFactory {
   private final static Logger LOG = LoggerFactory.getLogger(WidgetFactory.class);
+
+  public static CompetitionRepresentation openCompetitionDialog() {
+    Parent root = null;
+    FXMLLoader fxmlLoader = new FXMLLoader(Studio.class.getResource("dialog-competition-edit.fxml"));
+    try {
+      root = fxmlLoader.load();
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+    CompetitionDialogController controller = fxmlLoader.getController();
+
+    Stage owner = Studio.stage;
+    final Stage stage = new Stage();
+    stage.initModality(Modality.WINDOW_MODAL);
+    stage.setTitle("Create New Competition");
+
+    stage.initOwner(owner);
+    Scene scene = new Scene(root);
+    stage.setScene(scene);
+    stage.showAndWait();
+
+    return controller.getCompetition();
+  }
 
   public static boolean openDirectB2SUploadDialog(GameRepresentation game) {
     Parent root = null;
@@ -369,10 +394,10 @@ public class WidgetFactory {
     }
   }
 
-  public static class ImageListCell extends ListCell<String> {
+  public static class HighscoreBackgroundImageListCell extends ListCell<String> {
     private final VPinStudioClient client;
 
-    public ImageListCell(VPinStudioClient client) {
+    public HighscoreBackgroundImageListCell(VPinStudioClient client) {
       this.client = client;
     }
 
@@ -392,6 +417,5 @@ public class WidgetFactory {
         setText(item);
       }
     }
-
   }
 }

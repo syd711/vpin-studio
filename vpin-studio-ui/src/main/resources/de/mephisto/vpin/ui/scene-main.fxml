@@ -7,6 +7,6 @@
        <fx:include fx:id="navigation" source="scene-navigation.fxml" />
    </left>
    <center>
-        <fx:include fx:id="tables" source="scene-tables.fxml" />
+        <fx:include fx:id="tables" source="scene-competitions.fxml" />
    </center>
 </BorderPane>

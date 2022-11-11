@@ -106,6 +106,10 @@ public class VPinStudioClient implements ObservedPropertyChangeListener {
     return Arrays.asList(RestClient.getInstance().get(API + "generator/backgrounds", String[].class));
   }
 
+  public List<String> getCompetitionBadges() {
+    return Arrays.asList(RestClient.getInstance().get(API + "generator/backgrounds", String[].class));
+  }
+
   public ByteArrayInputStream getHighscoreBackgroundImage(String name) {
     try {
       if (!imageCache.containsKey(name)) {

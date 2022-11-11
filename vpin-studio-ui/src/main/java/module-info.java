@@ -28,10 +28,12 @@ module de.mephisto.vpin.ui {
   opens de.mephisto.vpin.ui.tables to javafx.fxml;
   exports de.mephisto.vpin.ui.competitions;
   opens de.mephisto.vpin.ui.competitions to javafx.fxml;
-  exports de.mephisto.vpin.ui.dialogs;
-  opens de.mephisto.vpin.ui.dialogs to javafx.fxml;
+  exports de.mephisto.vpin.ui.competitions.dialogs;
+  opens de.mephisto.vpin.ui.competitions.dialogs to javafx.fxml;
   exports de.mephisto.vpin.ui.players;
   opens de.mephisto.vpin.ui.players to javafx.fxml;
   exports de.mephisto.vpin.ui.preferences;
   opens de.mephisto.vpin.ui.preferences to javafx.fxml;
+  exports de.mephisto.vpin.ui.tables.dialogs;
+  opens de.mephisto.vpin.ui.tables.dialogs to javafx.fxml;
 }

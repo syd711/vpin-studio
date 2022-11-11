@@ -284,8 +284,8 @@ public class HighscoreCardsController implements Initializable, ObservedProperty
 
     imageList = FXCollections.observableList(new ArrayList<>(client.getHighscoreBackgroundImages()));
     backgroundImageCombo.setItems(imageList);
-    backgroundImageCombo.setCellFactory(c -> new WidgetFactory.ImageListCell(client));
-    backgroundImageCombo.setButtonCell(new WidgetFactory.ImageListCell(client));
+    backgroundImageCombo.setCellFactory(c -> new WidgetFactory.HighscoreBackgroundImageListCell(client));
+    backgroundImageCombo.setButtonCell(new WidgetFactory.HighscoreBackgroundImageListCell(client));
     BindingUtil.bindComboBox(backgroundImageCombo, properties, "card.background");
 
     BindingUtil.bindTextField(titleText, properties, "card.title.text");

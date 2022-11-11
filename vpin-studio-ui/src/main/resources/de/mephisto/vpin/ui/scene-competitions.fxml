@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Tab?>
 <?import javafx.scene.control.TabPane?>
 <?import javafx.scene.control.TableColumn?>
@@ -29,15 +30,28 @@
                      <content>
                         <BorderPane>
                            <center>
-                              <TableView style="-fx-background-color: #2a2a2a;" styleClass="base-component" BorderPane.alignment="CENTER">
-                                <columns>
-                                  <TableColumn prefWidth="292.0001335144043" text="Name" />
-                                  <TableColumn minWidth="0.0" prefWidth="75.9998779296875" text="Status" />
-                                    <TableColumn prefWidth="97.60009765625" text="Winner" />
-                                    <TableColumn prefWidth="93.59994506835938" text="Highscore" />
-                                    <TableColumn prefWidth="34.39990234375" text="Submitted Scores" />
-                                </columns>
-                              </TableView>
+                              <StackPane BorderPane.alignment="CENTER">
+                                 <children>
+                                    <TableView fx:id="tableView" style="-fx-background-color: #2a2a2a;" styleClass="base-component">
+                                      <columns>
+                                        <TableColumn prefWidth="292.0001335144043" text="Name" />
+                                        <TableColumn minWidth="0.0" prefWidth="75.9998779296875" text="Status" />
+                                          <TableColumn prefWidth="97.60009765625" text="Winner" />
+                                          <TableColumn prefWidth="93.59994506835938" text="Highscore" />
+                                          <TableColumn prefWidth="34.39990234375" text="Submitted Scores" />
+                                      </columns>
+                                    </TableView>
+                                    <BorderPane prefHeight="200.0" prefWidth="200.0">
+                                       <right>
+                                          <Button mnemonicParsing="false" onAction="#onCompetitionCreate" styleClass="ghost-button" BorderPane.alignment="BOTTOM_CENTER">
+                                             <graphic>
+                                                <FontIcon iconColor="WHITE" iconLiteral="mdi2p-plus-circle-outline" iconSize="72" />
+                                             </graphic>
+                                          </Button>
+                                       </right>
+                                    </BorderPane>
+                                 </children>
+                              </StackPane>
                            </center>
                            <top>
                               <StackPane prefHeight="150.0" prefWidth="200.0" styleClass="media-container" BorderPane.alignment="CENTER">
