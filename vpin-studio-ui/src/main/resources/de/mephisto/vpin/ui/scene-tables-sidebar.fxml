@@ -323,8 +323,8 @@
                                         <GridPane prefHeight="242.0" prefWidth="574.0">
                                             <columnConstraints>
                                                 <ColumnConstraints hgrow="SOMETIMES" maxWidth="282.199951171875" minWidth="10.0" prefWidth="177.4000244140625" />
-                                                <ColumnConstraints hgrow="SOMETIMES" maxWidth="497.40007324218755" minWidth="10.0" prefWidth="363.79997558593755" />
-                                                <ColumnConstraints hgrow="SOMETIMES" maxWidth="460.800048828125" minWidth="10.0" prefWidth="35.800097656250045" />
+                                                <ColumnConstraints hgrow="SOMETIMES" maxWidth="497.40007324218755" minWidth="10.0" prefWidth="331.0" />
+                                                <ColumnConstraints hgrow="SOMETIMES" maxWidth="460.800048828125" minWidth="10.0" prefWidth="67.0" />
                                             </columnConstraints>
                                             <rowConstraints>
                                                 <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
@@ -407,27 +407,43 @@
                                                         <Font size="14.0" />
                                                     </font>
                                                 </Label>
-                                                <Button fx:id="editRomNameBtn" mnemonicParsing="false" onAction="#onRomEdit" GridPane.columnIndex="2" GridPane.rowIndex="2">
-                                                    <graphic>
-                                                        <FontIcon iconColor="WHITE" iconLiteral="mdi2d-database-edit-outline" />
-                                                    </graphic>
-                                                    <tooltip>
-                                                        <Tooltip text="Update the ROM name for this table." />
-                                                    </tooltip>
-                                                </Button>
+                                    <HBox alignment="BASELINE_RIGHT" GridPane.columnIndex="2" GridPane.rowIndex="2">
+                                       <children>
+                                                      <Button fx:id="editRomNameBtn" mnemonicParsing="false" onAction="#onRomEdit">
+                                                          <graphic>
+                                                              <FontIcon iconColor="WHITE" iconLiteral="mdi2d-database-edit-outline" />
+                                                          </graphic>
+                                                          <tooltip>
+                                                              <Tooltip text="Update the ROM name for this table." />
+                                                          </tooltip>
+                                                      </Button>
+                                          <Button fx:id="romUploadBtn" mnemonicParsing="false" onAction="#onRomUpload">
+                                             <graphic>
+                                                <FontIcon iconColor="WHITE" iconLiteral="mdi2u-upload" />
+                                             </graphic>
+                                             <HBox.margin>
+                                                <Insets left="6.0" />
+                                             </HBox.margin>
+                                          </Button>
+                                       </children>
+                                    </HBox>
                                                 <Label layoutX="10.0" layoutY="198.0" text="EM Highscore Filename:" textFill="WHITE" GridPane.rowIndex="7">
                                                     <font>
                                                         <Font name="System Bold" size="14.0" />
                                                     </font>
                                                 </Label>
-                                                <Button fx:id="editHsFileNameBtn" mnemonicParsing="false" onAction="#onHsFileNameEdit" GridPane.columnIndex="2" GridPane.rowIndex="7">
-                                                    <graphic>
-                                                        <FontIcon iconColor="WHITE" iconLiteral="mdi2d-database-edit-outline" />
-                                                    </graphic>
-                                                    <tooltip>
-                                                        <Tooltip text="Set EM highscore filename manually." />
-                                                    </tooltip>
-                                                </Button>
+                                    <HBox alignment="BASELINE_RIGHT" GridPane.columnIndex="2" GridPane.rowIndex="7">
+                                       <children>
+                                                      <Button fx:id="editHsFileNameBtn" mnemonicParsing="false" onAction="#onHsFileNameEdit">
+                                                          <graphic>
+                                                              <FontIcon iconColor="WHITE" iconLiteral="mdi2d-database-edit-outline" />
+                                                          </graphic>
+                                                          <tooltip>
+                                                              <Tooltip text="Set EM highscore filename manually." />
+                                                          </tooltip>
+                                                      </Button>
+                                       </children>
+                                    </HBox>
                                                 <Label fx:id="labelHSFilename" GridPane.columnIndex="1" GridPane.rowIndex="7" />
                                             </children>
                                         </GridPane>

@@ -67,6 +67,14 @@
                                  </graphic>
                               </Button>
                               <Separator orientation="VERTICAL" prefHeight="30.0" prefWidth="12.0" />
+                              <Button fx:id="uploadTableBtn" layoutX="492.0" layoutY="11.0" mnemonicParsing="false" onAction="#onTableUpload" text="Upload Table" textFill="WHITE">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                                 <graphic>
+                                    <FontIcon iconColor="WHITE" iconLiteral="mdi2u-upload" />
+                                 </graphic>
+                              </Button>
                               <Button fx:id="scanAllBtn" mnemonicParsing="false" onAction="#onTablesScan" text="Scan All Tables" textFill="WHITE">
                                  <font>
                                     <Font size="14.0" />

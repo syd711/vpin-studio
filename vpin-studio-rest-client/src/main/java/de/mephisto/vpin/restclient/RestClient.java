@@ -1,5 +1,6 @@
 package de.mephisto.vpin.restclient;
 
+import com.fasterxml.jackson.databind.SerializationFeature;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.*;
@@ -56,6 +57,7 @@ public class RestClient implements ClientHttpRequestInterceptor {
     List<HttpMessageConverter<?>> messageConverters = new ArrayList<HttpMessageConverter<?>>();
     MappingJackson2HttpMessageConverter converter = new MappingJackson2HttpMessageConverter();
     converter.setPrettyPrint(true);
+    converter.getObjectMapper().configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
 
     // Note: here we are making this converter to process any kind of response,
     // not only application/*json, which is the default behaviour
@@ -86,21 +88,21 @@ public class RestClient implements ClientHttpRequestInterceptor {
     }
   }
 
-  public <T> T post(String path, Object model, Class<T> entityType) {
+  public <T> T post(String path, Object model, Class<T> entityType) throws Exception {
     HttpHeaders headers = new HttpHeaders();
     headers.setContentType(MediaType.APPLICATION_JSON);
     HttpEntity entity = new HttpEntity<>(model, headers);
     return exchange(path, HttpMethod.POST, entity, entityType);
   }
 
-  public Boolean put(String url, Map<String, Object> model) {
+  public Boolean put(String url, Map<String, Object> model) throws Exception {
     HttpHeaders headers = new HttpHeaders();
     headers.setContentType(MediaType.APPLICATION_JSON);
     HttpEntity<Map> entity = new HttpEntity<>(model, headers);
     return exchange(url, HttpMethod.PUT, entity, Boolean.class);
   }
 
-  public <T> T exchange(String path, HttpMethod method, HttpEntity requestEntity, Class<T> entityClass) {
+  public <T> T exchange(String path, HttpMethod method, HttpEntity requestEntity, Class<T> entityClass) throws Exception {
     String url = baseUrl + path;
     ResponseEntity<T> response = restTemplate.exchange(url, method, requestEntity, entityClass);
     return response.getBody();

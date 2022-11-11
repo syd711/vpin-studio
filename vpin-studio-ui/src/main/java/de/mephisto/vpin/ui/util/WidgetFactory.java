@@ -6,6 +6,8 @@ import de.mephisto.vpin.restclient.representations.GameMediaItemRepresentation;
 import de.mephisto.vpin.restclient.representations.GameRepresentation;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.dialogs.DirectB2SUploadController;
+import de.mephisto.vpin.ui.dialogs.ROMUploadController;
+import de.mephisto.vpin.ui.dialogs.TableUploadController;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.concurrent.Service;
@@ -51,6 +53,54 @@ public class WidgetFactory {
     final Stage stage = new Stage();
     stage.initModality(Modality.WINDOW_MODAL);
     stage.setTitle("DirectB2S File Upload");
+
+    stage.initOwner(owner);
+    Scene scene = new Scene(root);
+    stage.setScene(scene);
+    stage.showAndWait();
+
+    return controller.uploadFinished();
+  }
+
+  public static boolean openTableUploadDialog(GameRepresentation game) {
+    Parent root = null;
+    FXMLLoader fxmlLoader = new FXMLLoader(Studio.class.getResource("dialog-table-upload.fxml"));
+    try {
+      root = fxmlLoader.load();
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+    TableUploadController controller = fxmlLoader.getController();
+    controller.setGame(game);
+
+    Stage owner = Studio.stage;
+    final Stage stage = new Stage();
+    stage.initModality(Modality.WINDOW_MODAL);
+    stage.setTitle("Table Upload");
+
+    stage.initOwner(owner);
+    Scene scene = new Scene(root);
+    stage.setScene(scene);
+    stage.showAndWait();
+
+    return controller.uploadFinished();
+  }
+
+  public static boolean openRomUploadDialog(GameRepresentation game) {
+    Parent root = null;
+    FXMLLoader fxmlLoader = new FXMLLoader(Studio.class.getResource("dialog-rom-upload.fxml"));
+    try {
+      root = fxmlLoader.load();
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+    ROMUploadController controller = fxmlLoader.getController();
+    controller.setGame(game);
+
+    Stage owner = Studio.stage;
+    final Stage stage = new Stage();
+    stage.initModality(Modality.WINDOW_MODAL);
+    stage.setTitle("Rom Upload");
 
     stage.initOwner(owner);
     Scene scene = new Scene(root);

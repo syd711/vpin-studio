@@ -6,6 +6,7 @@ import de.mephisto.vpin.restclient.representations.PreferenceEntryRepresentation
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.io.ByteArrayResource;
+import org.springframework.core.io.FileSystemResource;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -13,6 +14,7 @@ import org.springframework.http.MediaType;
 import org.springframework.util.LinkedMultiValueMap;
 
 import java.io.*;
+import java.net.URL;
 import java.net.URLEncoder;
 import java.util.*;
 
@@ -50,7 +52,12 @@ public class VPinStudioClient implements ObservedPropertyChangeListener {
   }
 
   public boolean setPreferences(Map<String, Object> values) {
-    return RestClient.getInstance().put(API + "preferences", values);
+    try {
+      return RestClient.getInstance().put(API + "preferences", values);
+    } catch (Exception e) {
+      LOG.error("Failed to set preferences: " + e.getMessage(), e);
+    }
+    return false;
   }
 
   public GameRepresentation getGame(int id) {
@@ -63,7 +70,12 @@ public class VPinStudioClient implements ObservedPropertyChangeListener {
   }
 
   public GameRepresentation saveGame(GameRepresentation game) {
-    return RestClient.getInstance().post(API + "games/save", game, GameRepresentation.class);
+    try {
+      return RestClient.getInstance().post(API + "games/save", game, GameRepresentation.class);
+    } catch (Exception e) {
+      LOG.error("Failed to save game: " + e.getMessage(), e);
+    }
+    return null;
   }
 
   public GameMediaRepresentation getGameMedia(int id) {
@@ -110,10 +122,33 @@ public class VPinStudioClient implements ObservedPropertyChangeListener {
     return null;
   }
 
-  public boolean uploadHighscoreBackgroundImage(File file) throws IOException {
+  public boolean uploadHighscoreBackgroundImage(File file) throws Exception {
+    String url = "http://localhost:8099/api/v1/generator/backgroundupload";
+
+
+//    try (CloseableHttpClient client = HttpClients.createDefault()) {
+//      HttpPost post = new HttpPost(url);
+//      HttpEntity entity = MultipartEntityBuilder.create().addPart("file", new FileBody(file)).build();
+//      post.setEntity(entity);
+//
+//      try (CloseableHttpResponse response = client.execute(post)) {
+//        // ...
+//      }
+//    }
+    return false; //RestClient.getInstance().exchange(API + "generator/backgroundupload", HttpMethod.POST, createUpload(file, -1, null), Boolean.class);
+  }
+
+  public boolean uploadDirectB2SFile(File file, String uploadType, int gameId) throws Exception {
+    return RestClient.getInstance().exchange(API + "generator/directb2supload", HttpMethod.POST, createUpload(file, gameId, uploadType), Boolean.class);
+  }
+
+  private static HttpEntity createUpload(File file, int gameId, String uploadType) throws Exception {
     LinkedMultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
     HttpHeaders headers = new HttpHeaders();
     headers.setContentType(MediaType.MULTIPART_FORM_DATA);
+    String boundary = Long.toHexString(System.currentTimeMillis());
+    headers.set("Content-Type", "multipart/form-data; boundary=" + boundary);
+    FileSystemResource rsr = new FileSystemResource(file);
 
     byte[] bFile = new byte[(int) file.length()];
     FileInputStream fileInputStream = new FileInputStream(file);
@@ -126,9 +161,11 @@ public class VPinStudioClient implements ObservedPropertyChangeListener {
         return file.getName();
       }
     };
-    map.add("file", contentsAsResource);
-    HttpEntity<LinkedMultiValueMap<String, Object>> requestEntity = new HttpEntity<>(map, headers);
-    return RestClient.getInstance().exchange(API + "generator/upload", HttpMethod.POST, requestEntity, Boolean.class);
+
+    map.add("file", rsr);
+    map.add("gameId", gameId);
+    map.add("uploadType", uploadType);
+    return new HttpEntity<>(map, headers);
   }
 
   public ObservedProperties getProperties(String propertiesName) {
@@ -146,10 +183,14 @@ public class VPinStudioClient implements ObservedPropertyChangeListener {
 
   @Override
   public void changed(String propertiesName, String key, Optional<String> updatedValue) {
-    Map<String, Object> model = new HashMap<>();
-    model.put(key, updatedValue.get());
-    Boolean result = RestClient.getInstance().put(API + "properties/" + propertiesName, model);
-    ObservedProperties obsprops = this.observedProperties.get(propertiesName);
-    obsprops.notifyChange(key, updatedValue.get());
+    try {
+      Map<String, Object> model = new HashMap<>();
+      model.put(key, updatedValue.get());
+      Boolean result = RestClient.getInstance().put(API + "properties/" + propertiesName, model);
+      ObservedProperties obsprops = this.observedProperties.get(propertiesName);
+      obsprops.notifyChange(key, updatedValue.get());
+    } catch (Exception e) {
+      LOG.error("Failed to upload changed properties: " + e.getMessage(), e);
+    }
   }
 }

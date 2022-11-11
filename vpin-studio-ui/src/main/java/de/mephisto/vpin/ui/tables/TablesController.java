@@ -102,6 +102,9 @@ public class TablesController implements Initializable, StudioFXController {
   private Button scanAllBtn;
 
   @FXML
+  private Button uploadTableBtn;
+
+  @FXML
   private Button reloadBtn;
 
   @FXML
@@ -154,6 +157,17 @@ public class TablesController implements Initializable, StudioFXController {
     if (e.getCode().equals(KeyCode.ENTER)) {
       tableView.getSelectionModel().select(0);
       tableView.requestFocus();
+    }
+  }
+
+  @FXML
+  private void onTableUpload() {
+    GameRepresentation game = tableView.getSelectionModel().selectedItemProperty().get();
+    if(game != null) {
+      boolean uploaded = WidgetFactory.openTableUploadDialog(game);
+      if(uploaded) {
+        onReload();
+      }
     }
   }
 
@@ -218,6 +232,7 @@ public class TablesController implements Initializable, StudioFXController {
     this.scanAllBtn.setDisable(true);
     this.scanBtn.setDisable(true);
     this.validateBtn.setDisable(true);
+    this.uploadTableBtn.setDisable(true);
 
     tableView.setVisible(false);
     validationError.setVisible(false);
@@ -248,6 +263,7 @@ public class TablesController implements Initializable, StudioFXController {
         this.scanAllBtn.setDisable(false);
         this.scanBtn.setDisable(false);
         this.validateBtn.setDisable(false);
+        this.uploadTableBtn.setDisable(false);
 
         tableView.setVisible(true);
         validationError.setVisible(true);

@@ -133,6 +133,9 @@ public class TablesSidebarController implements Initializable, StudioFXControlle
   private Button directb2sUploadBtn;
 
   @FXML
+  private Button romUploadBtn;
+
+  @FXML
   private Label resolutionLabel;
 
 
@@ -142,8 +145,6 @@ public class TablesSidebarController implements Initializable, StudioFXControlle
 
   private TablesController tablesController;
 
-  private List<String> ignoreScreenNames;
-
   // Add a public no-args constructor
   public TablesSidebarController() {
   }
@@ -152,9 +153,6 @@ public class TablesSidebarController implements Initializable, StudioFXControlle
   public void initialize(URL url, ResourceBundle resourceBundle) {
     client = Studio.client;
     this.accordion.setExpandedPane(titledPaneMedia);
-
-    PreferenceEntryRepresentation entry = client.getPreference(PreferenceNames.IGNORED_MEDIA);
-    ignoreScreenNames = entry.getCSVValue();
 
     volumeSlider.valueProperty().addListener((observableValue, number, t1) -> {
       if (game.isPresent()) {
@@ -197,6 +195,15 @@ public class TablesSidebarController implements Initializable, StudioFXControlle
     }
   }
 
+  @FXML
+  private void onRomUpload() {
+    if(this.game.isPresent()) {
+      boolean uploaded = WidgetFactory.openRomUploadDialog(this.game.get());
+      if(uploaded) {
+        tablesController.onReload();
+      }
+    }
+  }
 
   @FXML
   private void onPlayClick(ActionEvent e) {
@@ -300,6 +307,7 @@ public class TablesSidebarController implements Initializable, StudioFXControlle
     editHsFileNameBtn.setDisable(g.isEmpty());
     editRomNameBtn.setDisable(g.isEmpty());
     directb2sUploadBtn.setDisable(g.isEmpty());
+    romUploadBtn.setDisable(g.isEmpty());
 
     if (g.isPresent()) {
       GameRepresentation game = g.get();
@@ -383,6 +391,9 @@ public class TablesSidebarController implements Initializable, StudioFXControlle
   }
 
   private void refreshMedia(GameMediaRepresentation gameMedia) {
+    PreferenceEntryRepresentation entry = client.getPreference(PreferenceNames.IGNORED_MEDIA);
+    List<String> ignoreScreenNames = entry.getCSVValue();
+
     PopperScreen[] values = PopperScreen.values();
     for (PopperScreen value : values) {
       BorderPane screen = this.getScreenBorderPaneFor(value);
