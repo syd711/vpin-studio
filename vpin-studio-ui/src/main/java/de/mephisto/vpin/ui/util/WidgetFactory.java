@@ -254,7 +254,7 @@ public class WidgetFactory {
 
     Node top = parent.getTop();
     if (top != null) {
-      top.setVisible(mediaItem != null);
+      top.setVisible(mediaItem != null && !ignored);
     }
 
     if (ignored) {

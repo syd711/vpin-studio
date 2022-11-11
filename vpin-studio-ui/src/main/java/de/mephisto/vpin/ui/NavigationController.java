@@ -40,6 +40,7 @@ public class NavigationController implements Initializable {
 
   private static Map<String, Parent> viewCache = new HashMap<>();
   private static Map<String, StudioFXController> controllerCache = new HashMap<>();
+  private Node preferencesRoot;
 
   // Add a public no-args constructor
   public NavigationController() {
@@ -80,9 +81,6 @@ public class NavigationController implements Initializable {
 
   @FXML
   private void onPreferencesClicked(ActionEvent event) throws IOException {
-    FXMLLoader loader = new FXMLLoader(NavigationController.class.getResource("scene-preferences.fxml"));
-    Node preferencesRoot = loader.load();
-
     Node lookup = Studio.stage.getScene().lookup("#root");
     BorderPane main = (BorderPane) lookup;
     StackPane stack = (StackPane) main.getCenter();
@@ -111,6 +109,13 @@ public class NavigationController implements Initializable {
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
+    try {
+      FXMLLoader loader = new FXMLLoader(NavigationController.class.getResource("scene-preferences.fxml"));
+      preferencesRoot = loader.load();
+    } catch (IOException e) {
+      LOG.error("Failed to load preferences: " + e.getMessage(), e);
+    }
+
     Tile avatar = TileBuilder.create()
         .skinType(Tile.SkinType.IMAGE)
         .prefSize(300, 300)

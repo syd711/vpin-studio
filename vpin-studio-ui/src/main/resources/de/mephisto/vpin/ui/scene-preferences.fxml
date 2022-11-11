@@ -10,7 +10,7 @@
    <center>
       <BorderPane fx:id="preferencesMain" styleClass="subpanel" BorderPane.alignment="TOP_LEFT">
         <center>
-           <fx:include fx:id="preferenceTableValidation" source="preferences/preference-table-validation.fxml" BorderPane.alignment="TOP_LEFT" />
+           <fx:include fx:id="preferenceTableValidation" source="preferences/preference-myvpin.fxml" BorderPane.alignment="TOP_LEFT" />
         </center>
          <BorderPane.margin>
             <Insets left="12.0" right="12.0" top="24.0" />
