@@ -10,6 +10,7 @@ import de.mephisto.vpin.server.system.SystemService;
 import de.mephisto.vpin.server.util.Config;
 import de.mephisto.vpin.server.util.ImageUtil;
 import de.mephisto.vpin.server.util.RequestUtil;
+import de.mephisto.vpin.server.util.UploadUtil;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
@@ -91,24 +92,23 @@ public class GeneratorResource {
 
   @PostMapping("/directb2supload")
   public Boolean directb2supload(@RequestParam(value = "file", required = false) MultipartFile file,
-                                 @RequestParam("uploadType") String uploadType,
-                                 @RequestParam("gameId") int gameId) {
+                                 @RequestParam(value = "uploadType", required = false) String uploadType,
+                                 @RequestParam("gameId") Integer gameId) {
     if (file == null) {
       LOG.error("Upload request did not contain a file object.");
       return false;
     }
 
-    String name = file.getOriginalFilename().replaceAll("/", "").replaceAll("\\\\", "");
-    File out = new File(systemService.getDirectB2SFolder(), name);
-    if (!uploadType.equals("generator")) {
-      Game game = gameService.getGame(gameId);
-      String directb2sFilename = FilenameUtils.getBaseName(game.getGameFileName()) + ".directb2s";
-      out = new File(systemService.getVPXTablesFolder(), directb2sFilename);
+    Game game = gameService.getGame(gameId);
+    String directb2sFilename = FilenameUtils.getBaseName(game.getGameFileName()) + ".directb2s";
+    File out = new File(systemService.getVPXTablesFolder(), directb2sFilename);
+    if (uploadType != null && uploadType.equals("generator")) {
+      out = new File(systemService.getDirectB2SFolder(), directb2sFilename);
     }
 
     out.mkdirs();
     LOG.info("Uploading " + out.getAbsolutePath());
-    return upload(file, out);
+    return UploadUtil.upload(file, out);
   }
 
   @PostMapping(value = "/backgroundupload")
@@ -121,25 +121,7 @@ public class GeneratorResource {
     String name = file.getOriginalFilename().replaceAll("/", "").replaceAll("\\\\", "");
     File backgroundsFolder = new File(SystemService.RESOURCES, "backgrounds");
     File out = new File(backgroundsFolder, name);
-    return upload(file, out);
-  }
-
-  private Boolean upload(MultipartFile file, File target) {
-    byte[] bytes = new byte[0];
-    try {
-      bytes = file.getBytes();
-      if (target.exists() && !target.delete()) {
-        throw new UnsupportedOperationException("Failed to delete existing target file " + target.getAbsolutePath());
-      }
-
-      FileOutputStream fileOutputStream = new FileOutputStream(target);
-      IOUtils.write(bytes, fileOutputStream);
-      fileOutputStream.close();
-      LOG.info("Written uploaded file: " + target.getAbsolutePath() + ", byte size was " + bytes.length);
-    } catch (Exception e) {
-      LOG.error("Failed to store asset: " + e.getMessage() + ", byte size was " + bytes.length, e);
-    }
-    return true;
+    return UploadUtil.upload(file, out);
   }
 
   private BufferedImage onOverlayGeneration() throws Exception {

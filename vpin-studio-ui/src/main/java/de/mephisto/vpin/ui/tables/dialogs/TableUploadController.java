@@ -45,7 +45,7 @@ public class TableUploadController implements Initializable {
     if (selection != null && selection.exists()) {
       result = true;
       try {
-        Studio.client.uploadDirectB2SFile(selection, null, -1);
+        Studio.client.uploadTable(selection);
       } catch (Exception e) {
         LOG.error("Upload failed: " + e.getMessage(), e);
         WidgetFactory.showAlert("Uploading VPX file failed, check log file for details:\n\n" + e.getMessage());

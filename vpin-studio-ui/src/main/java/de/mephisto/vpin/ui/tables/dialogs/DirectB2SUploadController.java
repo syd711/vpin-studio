@@ -54,6 +54,7 @@ public class DirectB2SUploadController implements Initializable {
   @FXML
   private void onUploadClick(ActionEvent event){
     if (selection != null && selection.exists()) {
+      result = true;
       try {
         if (uploadTypeGenerator.isSelected()) {
           uploadTypeGeneratorSelectedLast = true;
@@ -61,7 +62,7 @@ public class DirectB2SUploadController implements Initializable {
         }
         else {
           uploadTypeGeneratorSelectedLast = false;
-          client.uploadDirectB2SFile(selection, null, -1);
+          client.uploadDirectB2SFile(selection, "table", this.game.getId());
         }
       } catch (Exception e) {
         LOG.error("Upload failed: " + e.getMessage(), e);

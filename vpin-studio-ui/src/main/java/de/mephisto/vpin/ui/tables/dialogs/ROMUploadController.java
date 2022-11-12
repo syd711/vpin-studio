@@ -1,6 +1,5 @@
 package de.mephisto.vpin.ui.tables.dialogs;
 
-import de.mephisto.vpin.restclient.representations.GameRepresentation;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.util.WidgetFactory;
 import javafx.event.ActionEvent;
@@ -46,7 +45,7 @@ public class ROMUploadController implements Initializable {
     if (selection != null && selection.exists()) {
       result = true;
       try {
-        Studio.client.uploadDirectB2SFile(selection, null, -1);
+        Studio.client.uploadRom(selection);
       } catch (Exception e) {
         LOG.error("Upload failed: " + e.getMessage(), e);
         WidgetFactory.showAlert("Uploading ROM failed, check log file for details:\n\n" + e.getMessage());

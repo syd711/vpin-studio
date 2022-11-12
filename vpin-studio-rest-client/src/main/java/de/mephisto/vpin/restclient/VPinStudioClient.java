@@ -169,6 +169,28 @@ public class VPinStudioClient implements ObservedPropertyChangeListener {
     }
   }
 
+  public boolean uploadTable(File file) throws Exception {
+    try {
+      String url = RestClient.getInstance().getBaseUrl() + API + "games/upload/table";
+      new RestTemplate().exchange(url, HttpMethod.POST, createUpload(file, -1, null), Boolean.class);
+      return true;
+    } catch (Exception e) {
+      LOG.error("Table upload failed: " + e.getMessage(), e);
+      throw e;
+    }
+  }
+
+  public boolean uploadRom(File file) throws Exception {
+    try {
+      String url = RestClient.getInstance().getBaseUrl() + API + "games/upload/rom";
+      new RestTemplate().exchange(url, HttpMethod.POST, createUpload(file, -1, null), Boolean.class);
+      return true;
+    } catch (Exception e) {
+      LOG.error("Rom upload failed: " + e.getMessage(), e);
+      throw e;
+    }
+  }
+
   public boolean uploadDirectB2SFile(File file, String uploadType, int gameId) throws Exception {
     try {
       String url = RestClient.getInstance().getBaseUrl() + API + "generator/directb2supload";
