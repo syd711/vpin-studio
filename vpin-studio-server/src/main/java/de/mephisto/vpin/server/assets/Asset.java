@@ -29,9 +29,6 @@ public class Asset {
   @GeneratedValue(strategy = GenerationType.AUTO)
   private Long id;
 
-  @Lob
-  @Column(length = 100000)
-  @JsonIgnore
   private byte[] data;
 
   private String uuid;
@@ -93,4 +90,6 @@ public class Asset {
     }
     return false;
   }
+
+
 }

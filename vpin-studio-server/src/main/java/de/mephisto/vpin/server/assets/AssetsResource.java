@@ -9,14 +9,17 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
+
+import static de.mephisto.vpin.server.VPinStudioServer.API_SEGMENT;
 
 /**
  *
  */
 @RestController
-@RequestMapping("/asset")
+@RequestMapping(API_SEGMENT + "asset")
 public class AssetsResource {
   private final static Logger LOG = LoggerFactory.getLogger(AssetsResource.class);
   public final int MAX_PACKET_SIZE = 4194304;
@@ -27,7 +30,7 @@ public class AssetsResource {
   @GetMapping("/{id}")
   public Asset getById(@PathVariable("id") final String id) {
     Optional<Asset> asset = assetRepository.findById(Long.valueOf(id));
-    if(asset.isPresent()) {
+    if (asset.isPresent()) {
       return asset.get();
     }
 
@@ -37,14 +40,10 @@ public class AssetsResource {
   @GetMapping("/data/{uuid}")
   public ResponseEntity<byte[]> get(@PathVariable("uuid") String uuid) {
     try {
-      String id = uuid;
-      if(id.contains(".")) {
-        id = id.substring(0, id.indexOf("."));
-      }
-      Optional<Asset> assetOptional= assetRepository.findByUuid(id);
-      if(assetOptional.isPresent()) {
+      Optional<Asset> assetOptional = assetRepository.findByUuid(uuid);
+      if (assetOptional.isPresent()) {
         Asset asset = assetOptional.get();
-        if(asset.getData() != null) {
+        if (asset.getData() != null) {
           return ResponseEntity.ok()
               .lastModified(asset.getUpdatedAt().getTime())
               .contentType(MediaType.parseMediaType(asset.getMimeType()))
@@ -54,10 +53,9 @@ public class AssetsResource {
         }
       }
       else {
-        LOG.warn("Requested asset '" + id + "', but did not find and asset for it.");
+        LOG.warn("Requested asset '" + uuid + "', but did not find and asset for it.");
       }
-    }
-    catch (Exception e) {
+    } catch (Exception e) {
       LOG.error("Failed to load asset: " + e.getMessage(), e);
     }
 
@@ -83,7 +81,7 @@ public class AssetsResource {
     try {
       bytes = file.getBytes();
       Asset asset = new Asset();
-      if(id != null && !id.equals("null")) {
+      if (id != null && !id.equals("null")) {
         asset = getById(id);
       }
       asset.setData(bytes);
