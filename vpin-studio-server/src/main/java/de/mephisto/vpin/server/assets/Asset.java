@@ -91,5 +91,8 @@ public class Asset {
     return false;
   }
 
-
+  @Override
+  public String toString() {
+    return this.getUuid();
+  }
 }

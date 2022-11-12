@@ -29,14 +29,15 @@ public class Preferences {
 
   private String systemName;
 
-  private String avatarUuid;
+  @OneToOne(cascade = CascadeType.ALL)
+  private Asset avatar;
 
-  public String getAvatarUuid() {
-    return avatarUuid;
+  public Asset getAvatar() {
+    return avatar;
   }
 
-  public void setAvatarUuid(String avatarUuid) {
-    this.avatarUuid = avatarUuid;
+  public void setAvatar(Asset avatar) {
+    this.avatar = avatar;
   }
 
   public String getSystemName() {

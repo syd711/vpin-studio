@@ -10,7 +10,10 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.UUID;
 
 @Service
 public class PreferencesService implements InitializingBean {
@@ -55,24 +58,22 @@ public class PreferencesService implements InitializingBean {
     preferences = all.get(0);
   }
 
-  public String saveAvatar(byte[] bytes, String mimeType) {
-    Asset newAvatar = new Asset();
-    newAvatar.setUuid(UUID.randomUUID().toString());
-
-    String avatarUuid = preferences.getAvatarUuid();
-    Optional<Asset> byUuid = assetRepository.findByUuid(avatarUuid);
-    if(byUuid.isPresent()) {
-      newAvatar = byUuid.get();
+  public Asset saveAvatar(byte[] bytes, String mimeType) {
+    Asset avatar = preferences.getAvatar();
+    if(avatar != null) {
+      assetRepository.delete(avatar);
     }
 
+    Asset newAvatar = new Asset();
     newAvatar.setData(bytes);
+    newAvatar.setUuid(UUID.randomUUID().toString());
     newAvatar.setMimeType(mimeType);
-    LOG.info("Updated asset " + newAvatar);
+    LOG.info("Created asset " + newAvatar);
 
     Asset asset = assetRepository.saveAndFlush(newAvatar);
-    preferences.setAvatarUuid(asset.getUuid());
-    preferencesRepository.saveAndFlush(preferences);
+    preferences.setAvatar(asset);
+    Preferences updatedPreferences = preferencesRepository.saveAndFlush(preferences);
     LOG.info("Updates avatar in preferences.");
-    return asset.getUuid();
+    return updatedPreferences.getAvatar();
   }
 }
