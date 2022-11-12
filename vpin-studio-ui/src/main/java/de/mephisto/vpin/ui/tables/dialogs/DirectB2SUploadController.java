@@ -52,21 +52,24 @@ public class DirectB2SUploadController implements Initializable {
   }
 
   @FXML
-  private void onUploadClick(){
+  private void onUploadClick(ActionEvent event){
     if (selection != null && selection.exists()) {
-      boolean result = false;
       try {
         if (uploadTypeGenerator.isSelected()) {
           uploadTypeGeneratorSelectedLast = true;
-          result = client.uploadDirectB2SFile(selection, "generator", this.game.getId());
+          client.uploadDirectB2SFile(selection, "generator", this.game.getId());
         }
         else {
           uploadTypeGeneratorSelectedLast = false;
-          result = client.uploadDirectB2SFile(selection, null, -1);
+          client.uploadDirectB2SFile(selection, null, -1);
         }
       } catch (Exception e) {
         LOG.error("Upload failed: " + e.getMessage(), e);
         WidgetFactory.showAlert("Uploading directb2s failed, check log file for details:\n\n" + e.getMessage());
+      }
+      finally {
+        Stage stage = (Stage) ((Button) event.getSource()).getScene().getWindow();
+        stage.close();
       }
     }
   }

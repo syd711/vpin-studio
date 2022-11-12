@@ -170,7 +170,8 @@ public class TablesSidebarController implements Initializable, StudioFXControlle
     titledPaneMedia.expandedProperty().addListener((observableValue, aBoolean, expanded) -> {
       if (expanded) {
         refreshView(game);
-      } else {
+      }
+      else {
         resetMedia();
       }
     });
@@ -187,9 +188,9 @@ public class TablesSidebarController implements Initializable, StudioFXControlle
 
   @FXML
   private void onDirectb2sUpload() {
-    if(this.game.isPresent()) {
+    if (this.game.isPresent()) {
       boolean uploaded = WidgetFactory.openDirectB2SUploadDialog(this.game.get());
-      if(uploaded) {
+      if (uploaded) {
         tablesController.onReload();
       }
     }
@@ -197,11 +198,9 @@ public class TablesSidebarController implements Initializable, StudioFXControlle
 
   @FXML
   private void onRomUpload() {
-    if(this.game.isPresent()) {
-      boolean uploaded = WidgetFactory.openRomUploadDialog(this.game.get());
-      if(uploaded) {
-        tablesController.onReload();
-      }
+    boolean uploaded = WidgetFactory.openRomUploadDialog();
+    if (uploaded) {
+      tablesController.onReload();
     }
   }
 
@@ -218,7 +217,8 @@ public class TablesSidebarController implements Initializable, StudioFXControlle
       mediaView.getMediaPlayer().setCycleCount(1);
       mediaView.getMediaPlayer().play();
       icon.setIconLiteral("bi-stop");
-    } else {
+    }
+    else {
       mediaView.getMediaPlayer().stop();
       icon.setIconLiteral("bi-play");
     }
@@ -239,7 +239,7 @@ public class TablesSidebarController implements Initializable, StudioFXControlle
     }
 
     GameMediaItemRepresentation mediaItem = (GameMediaItemRepresentation) center.getUserData();
-    if(mediaItem != null) {
+    if (mediaItem != null) {
       GameRepresentation gameRepresentation = game.get();
       WidgetFactory.openMediaDialog(gameRepresentation, mediaItem);
     }
@@ -337,10 +337,12 @@ public class TablesSidebarController implements Initializable, StudioFXControlle
       String rawHighscore = game.getRawHighscore();
       if (rawHighscore != null) {
         highscoreTextArea.setText(rawHighscore);
-      } else {
+      }
+      else {
         highscoreTextArea.setText("");
       }
-    } else {
+    }
+    else {
       resetMedia();
 
       playfieldViewBtn.setVisible(false);
@@ -379,10 +381,12 @@ public class TablesSidebarController implements Initializable, StudioFXControlle
         if (image.getWidth() > 300) {
           openDirectB2SImageButton.setVisible(true);
           resolutionLabel.setText("Resolution: " + (int) image.getWidth() + " x " + (int) image.getHeight());
-        } else {
+        }
+        else {
           resolutionLabel.setText("");
         }
-      } else {
+      }
+      else {
         resolutionLabel.setText("");
       }
     } catch (IOException e) {

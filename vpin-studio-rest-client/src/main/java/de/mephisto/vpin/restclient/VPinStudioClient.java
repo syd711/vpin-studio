@@ -6,16 +6,18 @@ import de.mephisto.vpin.restclient.representations.GameRepresentation;
 import de.mephisto.vpin.restclient.representations.PreferenceEntryRepresentation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.web.client.RestTemplate;
 
-import java.io.*;
-import java.net.URL;
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.*;
 
@@ -157,23 +159,25 @@ public class VPinStudioClient implements ObservedPropertyChangeListener {
   }
 
   public boolean uploadHighscoreBackgroundImage(File file) throws Exception {
-    String url = "http://localhost:8099/api/v1/generator/backgroundupload";
-
-
-//    try (CloseableHttpClient client = HttpClients.createDefault()) {
-//      HttpPost post = new HttpPost(url);
-//      HttpEntity entity = MultipartEntityBuilder.create().addPart("file", new FileBody(file)).build();
-//      post.setEntity(entity);
-//
-//      try (CloseableHttpResponse response = client.execute(post)) {
-//        // ...
-//      }
-//    }
-    return false; //RestClient.getInstance().exchange(API + "generator/backgroundupload", HttpMethod.POST, createUpload(file, -1, null), Boolean.class);
+    try {
+      String url = RestClient.getInstance().getBaseUrl() + API + "generator/backgroundupload";
+      new RestTemplate().exchange(url, HttpMethod.POST, createUpload(file, -1, null), Boolean.class);
+      return true;
+    } catch (Exception e) {
+      LOG.error("Background upload failed: " + e.getMessage(), e);
+      throw e;
+    }
   }
 
   public boolean uploadDirectB2SFile(File file, String uploadType, int gameId) throws Exception {
-    return RestClient.getInstance().exchange(API + "generator/directb2supload", HttpMethod.POST, createUpload(file, gameId, uploadType), Boolean.class);
+    try {
+      String url = RestClient.getInstance().getBaseUrl() + API + "generator/directb2supload";
+      new RestTemplate().exchange(url, HttpMethod.POST, createUpload(file, gameId, uploadType), Boolean.class);
+      return true;
+    } catch (Exception e) {
+      LOG.error("Directb2s upload failed: " + e.getMessage(), e);
+      throw e;
+    }
   }
 
   private static HttpEntity createUpload(File file, int gameId, String uploadType) throws Exception {
@@ -189,12 +193,6 @@ public class VPinStudioClient implements ObservedPropertyChangeListener {
     fileInputStream.read(bFile);
     fileInputStream.close();
 
-    ByteArrayResource contentsAsResource = new ByteArrayResource(bFile) {
-      @Override
-      public String getFilename() {
-        return file.getName();
-      }
-    };
 
     map.add("file", rsr);
     map.add("gameId", gameId);

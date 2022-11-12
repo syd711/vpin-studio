@@ -162,12 +162,9 @@ public class TablesController implements Initializable, StudioFXController {
 
   @FXML
   private void onTableUpload() {
-    GameRepresentation game = tableView.getSelectionModel().selectedItemProperty().get();
-    if(game != null) {
-      boolean uploaded = WidgetFactory.openTableUploadDialog(game);
-      if(uploaded) {
-        onReload();
-      }
+    boolean updated = WidgetFactory.openTableUploadDialog();
+    if (updated) {
+      onReload();
     }
   }
 

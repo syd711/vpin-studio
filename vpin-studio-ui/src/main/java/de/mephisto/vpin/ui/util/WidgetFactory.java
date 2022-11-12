@@ -87,7 +87,7 @@ public class WidgetFactory {
     return controller.uploadFinished();
   }
 
-  public static boolean openTableUploadDialog(GameRepresentation game) {
+  public static boolean openTableUploadDialog() {
     Parent root = null;
     FXMLLoader fxmlLoader = new FXMLLoader(Studio.class.getResource("dialog-table-upload.fxml"));
     try {
@@ -96,8 +96,6 @@ public class WidgetFactory {
       e.printStackTrace();
     }
     TableUploadController controller = fxmlLoader.getController();
-    controller.setGame(game);
-
     Stage owner = Studio.stage;
     final Stage stage = new Stage();
     stage.initModality(Modality.WINDOW_MODAL);
@@ -111,7 +109,7 @@ public class WidgetFactory {
     return controller.uploadFinished();
   }
 
-  public static boolean openRomUploadDialog(GameRepresentation game) {
+  public static boolean openRomUploadDialog() {
     Parent root = null;
     FXMLLoader fxmlLoader = new FXMLLoader(Studio.class.getResource("dialog-rom-upload.fxml"));
     try {
@@ -120,8 +118,6 @@ public class WidgetFactory {
       e.printStackTrace();
     }
     ROMUploadController controller = fxmlLoader.getController();
-    controller.setGame(game);
-
     Stage owner = Studio.stage;
     final Stage stage = new Stage();
     stage.initModality(Modality.WINDOW_MODAL);

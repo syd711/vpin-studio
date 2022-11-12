@@ -1,6 +1,7 @@
 package de.mephisto.vpin.ui.tables.dialogs;
 
 import de.mephisto.vpin.restclient.representations.GameRepresentation;
+import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.util.WidgetFactory;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -23,7 +24,6 @@ public class TableUploadController implements Initializable {
   private final static Logger LOG = LoggerFactory.getLogger(TableUploadController.class);
 
   private static File lastFolderSelection;
-  private static boolean uploadTypeGeneratorSelectedLast;
 
   @FXML
   private TextField fileNameField;
@@ -32,9 +32,7 @@ public class TableUploadController implements Initializable {
   private Button uploadBtn;
 
   private File selection;
-
   private boolean result = false;
-  private GameRepresentation game;
 
   @FXML
   private void onCancelClick(ActionEvent e) {
@@ -43,21 +41,17 @@ public class TableUploadController implements Initializable {
   }
 
   @FXML
-  private void onUploadClick(){
+  private void onUploadClick(ActionEvent event) {
     if (selection != null && selection.exists()) {
-      boolean result = false;
+      result = true;
       try {
-//        if (uploadTypeGenerator.isSelected()) {
-//          uploadTypeGeneratorSelectedLast = true;
-//          result = client.uploadDirectB2SFile(selection, "generator", this.game.getId());
-//        }
-//        else {
-//          uploadTypeGeneratorSelectedLast = false;
-//          result = client.uploadDirectB2SFile(selection, null, -1);
-//        }
+        Studio.client.uploadDirectB2SFile(selection, null, -1);
       } catch (Exception e) {
         LOG.error("Upload failed: " + e.getMessage(), e);
-        WidgetFactory.showAlert("Uploading directb2s failed, check log file for details:\n\n" + e.getMessage());
+        WidgetFactory.showAlert("Uploading VPX file failed, check log file for details:\n\n" + e.getMessage());
+      } finally {
+        Stage stage = (Stage) ((Button) event.getSource()).getScene().getWindow();
+        stage.close();
       }
     }
   }
@@ -87,16 +81,11 @@ public class TableUploadController implements Initializable {
   public void initialize(URL url, ResourceBundle resourceBundle) {
     this.result = false;
     this.selection = null;
-
     this.uploadBtn.setDisable(true);
     this.fileNameField.textProperty().addListener((observableValue, s, t1) -> uploadBtn.setDisable(StringUtils.isEmpty(t1)));
   }
 
   public boolean uploadFinished() {
     return result;
-  }
-
-  public void setGame(GameRepresentation game) {
-    this.game = game;
   }
 }

@@ -54,6 +54,9 @@ hs_err_pid*
 /resources/repository.properties
 /resources/*.db-journal
 /resources/*.sqbpro
+/resources/b2s/*.png
+/resources/backgrounds/*.directb2s
+/resources/directb2s/*.directb2s
 /deployment/
 /releases/
 /doftest/DirectOutputTest/bin/Debug/
