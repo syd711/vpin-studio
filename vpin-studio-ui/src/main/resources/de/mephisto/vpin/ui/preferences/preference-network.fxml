@@ -11,34 +11,17 @@
 <?import javafx.scene.text.Font?>
 <?import org.kordamp.ikonli.javafx.FontIcon?>
 
-<BorderPane styleClass="base-component" stylesheets="@../stylesheet.css" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.preferences.MyVPinPreferencesController">
+<BorderPane styleClass="base-component" stylesheets="@../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.preferences.NetworkPreferencesController">
    <top>
-      <VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" styleClass="subpanel" stylesheets="@stylesheet.css" BorderPane.alignment="TOP_LEFT">
+      <VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefWidth="600.0" styleClass="subpanel" stylesheets="@stylesheet.css" BorderPane.alignment="TOP_LEFT">
          <children>
-            <Label styleClass="preference-title" text="My VPin" textFill="WHITE" />
-            <Label styleClass="preference-subtitle" text="Avatar">
+            <Label styleClass="preference-title" text="VPIN PREFERENCES" textFill="WHITE" />
+            <Label styleClass="preference-subtitle" text="Network">
                <VBox.margin>
                   <Insets />
                </VBox.margin>
             </Label>
-            <Label styleClass="preference-description" text="If the card generation is enabled, a new highscore card will be generated when exiting a game." textFill="WHITE">
-               <VBox.margin>
-                  <Insets bottom="6.0" top="24.0" />
-               </VBox.margin>
-            </Label>
-            <BorderPane prefHeight="200.0" prefWidth="200.0">
-               <left>
-                  <Label prefHeight="18.0" styleClass="preference-label" text="Upload Avatar:" textFill="WHITE" BorderPane.alignment="TOP_LEFT">
-                     <font>
-                        <Font size="14.0" />
-                     </font>
-                  </Label>
-               </left>
-               <center>
-                  <BorderPane maxHeight="200.0" maxWidth="200.0" prefHeight="200.0" prefWidth="200.0" styleClass="media-container" BorderPane.alignment="CENTER" />
-               </center>
-            </BorderPane>
-            <Label styleClass="preference-description" text="The PinUP Popper screen the highscore cards will be generated for. Ensure that the screen is enabled." textFill="WHITE">
+            <Label styleClass="preference-description" text="Edit the network data here." textFill="WHITE">
                <VBox.margin>
                   <Insets bottom="6.0" top="24.0" />
                </VBox.margin>

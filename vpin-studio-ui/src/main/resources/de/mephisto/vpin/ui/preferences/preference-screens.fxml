@@ -10,11 +10,11 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane styleClass="base-component" stylesheets="@../stylesheet.css" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.preferences.PopperPreferencesController">
+<BorderPane styleClass="base-component" stylesheets="@../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.preferences.ScreensPreferencesController">
    <top>
-      <VBox fx:id="preferenceList" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" styleClass="subpanel" stylesheets="@stylesheet.css" BorderPane.alignment="TOP_LEFT">
+      <VBox fx:id="preferenceList" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" styleClass="subpanel" BorderPane.alignment="TOP_LEFT">
          <children>
-            <Label styleClass="preference-title" text="PinUP Popper Settings" textFill="WHITE" />
+            <Label prefHeight="32.0" prefWidth="310.0" styleClass="preference-title" text="PINUP POPPER SETTINGS" textFill="WHITE" />
             <Label styleClass="preference-subtitle" text="Screens">
                <VBox.margin>
                   <Insets />
@@ -22,7 +22,7 @@
             </Label>
             <Label styleClass="preference-description" text="Screens that are not used on the VPin can be disabled here." textFill="WHITE">
                <VBox.margin>
-                  <Insets />
+                  <Insets top="24.0" />
                </VBox.margin>
             </Label>
             <Label layoutX="34.0" layoutY="103.0" styleClass="preference-description" text="Related validations are ignored for disabled screens and they are not shown in the media preview." textFill="WHITE">

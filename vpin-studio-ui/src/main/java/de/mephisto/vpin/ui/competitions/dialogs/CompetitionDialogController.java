@@ -26,6 +26,8 @@ import java.io.ByteArrayInputStream;
 import java.net.URL;
 import java.time.LocalDate;
 import java.time.ZoneId;
+import java.time.temporal.ChronoUnit;
+import java.time.temporal.TemporalUnit;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -58,6 +60,9 @@ public class CompetitionDialogController implements Initializable {
   private TextField nameField;
 
   @FXML
+  private Label durationLabel;
+
+  @FXML
   private DatePicker startDatePicker;
 
   @FXML
@@ -88,15 +93,24 @@ public class CompetitionDialogController implements Initializable {
   public void initialize(URL url, ResourceBundle resourceBundle) {
     competition = new CompetitionRepresentation();
     competition.setType("offline");
+    competition.setName("My next competition");
+
+    Date end = Date.from(LocalDate.now().plus(7, ChronoUnit.DAYS).atStartOfDay(ZoneId.systemDefault()).toInstant());
+    competition.setStartDate(Date.from(LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant()));
+    competition.setEndDate(end);
+
     badgeCheckbox.setSelected(true);
     competition.setCustomizeMedia(true);
     saveBtn.setDisable(true);
 
+    nameField.setText(competition.getName());
     nameField.textProperty().addListener((observableValue, s, t1) -> {
       competition.setName(t1);
       validate();
     });
 
+
+    startDatePicker.setValue(LocalDate.now());
     startDatePicker.valueProperty().addListener((observableValue, localDate, t1) -> {
       if(t1 != null) {
         Date date = Date.from(t1.atStartOfDay(ZoneId.systemDefault()).toInstant());
@@ -108,6 +122,7 @@ public class CompetitionDialogController implements Initializable {
       validate();
     });
 
+    endDatePicker.setValue(LocalDate.now().plus(7, ChronoUnit.DAYS));
     endDatePicker.valueProperty().addListener((observableValue, localDate, t1) -> {
       if(t1 != null) {
         Date date = Date.from(t1.atStartOfDay(ZoneId.systemDefault()).toInstant());
@@ -142,6 +157,8 @@ public class CompetitionDialogController implements Initializable {
       refreshPreview(tableCombo.getValue(), t1);
       validate();
     });
+
+    validate();
   }
 
   private void refreshPreview(GameRepresentation game, String badge) {
@@ -170,12 +187,18 @@ public class CompetitionDialogController implements Initializable {
   }
 
   private void validate() {
+    LocalDate start = startDatePicker.getValue();
+    LocalDate value = endDatePicker.getValue();
+
+    long diff = ChronoUnit.DAYS.between(start, value);
+    this.durationLabel.setText(diff + " days");
+
     boolean valid = !StringUtils.isEmpty(competition.getName())
         && competition.getName().length() > 3
+        && competition.getGameId() > 0
         && competition.getStartDate() != null
         && competition.getEndDate() != null
-        && competition.getStartDate().getTime() < competition.getEndDate().getTime()
-        && competition.getEndDate().getTime() > System.currentTimeMillis();
+        && competition.getStartDate().getTime() < competition.getEndDate().getTime();
     this.saveBtn.setDisable(!valid);
   }
 

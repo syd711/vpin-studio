@@ -278,7 +278,7 @@ public class HighscoreCardsController implements Initializable, ObservedProperty
     imageRatioCombo.setButtonCell(new WidgetFactory.RationListCell());
     BindingUtil.bindComboBox(imageRatioCombo, properties, "card.ratio");
 
-    imageScalingCombo.setItems(FXCollections.observableList(Arrays.asList("1024", "1280", "1920", "2560", "3840")));
+    imageScalingCombo.setItems(FXCollections.observableList(Arrays.asList("1024", "1280", "1920", "2560")));
     imageScalingCombo.setDisable(!useDirectB2SCheckbox.selectedProperty().get());
     BindingUtil.bindComboBox(imageScalingCombo, properties, "card.scaling", "1280");
 
@@ -359,12 +359,10 @@ public class HighscoreCardsController implements Initializable, ObservedProperty
       try {
         if (regenerate) {
           new Thread(() -> {
-            setBusy(true);
             InputStream input = client.getHighscoreCard(game.get());
             Image image = new Image(input);
             cardPreview.setImage(image);
             cardPreview.setVisible(true);
-            setBusy(false);
 
             int resolution = Integer.parseInt(imageScalingCombo.getValue());
             if (image.getWidth() >= resolution && image.getWidth() < imageCenter.getWidth()) {
@@ -395,17 +393,6 @@ public class HighscoreCardsController implements Initializable, ObservedProperty
   public void changed(String propertiesName, String key, Optional<String> updatedValue) {
     if (!ignoreList.contains(key)) {
       onGenerateClick();
-    }
-  }
-
-  private void setBusy(boolean b) {
-    if (b) {
-      Image image = new Image(Studio.class.getResourceAsStream("loading.png"));
-      cardPreview.setImage(image);
-      cardPreview.setFitWidth(300);
-    } else {
-      cardPreview.setFitWidth(imageCenter.getWidth() - 60);
-      cardPreview.setFitHeight(imageCenter.getHeight() - 60);
     }
   }
 }

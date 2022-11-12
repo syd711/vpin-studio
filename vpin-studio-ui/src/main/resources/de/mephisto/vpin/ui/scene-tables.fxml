@@ -29,7 +29,7 @@
                               <Insets bottom="6.0" />
                            </BorderPane.margin>
                            <children>
-                              <TableView fx:id="tableView" onMouseClicked="#onTableMouseClicked" style="-fx-background-color: #2a2a2a;" styleClass="base-component" stylesheets="@stylesheet.css">
+                              <TableView fx:id="tableView" onMouseClicked="#onTableMouseClicked" style="-fx-background-color: #2a2a2a;" styleClass="base-component">
                                 <columns>
                                     <TableColumn fx:id="columnId" minWidth="42.400028228759766" prefWidth="42.400028228759766" style="-fx-alignment: baseline-right;" text="ID" />
                                     <TableColumn fx:id="columnActive" minWidth="57.5999755859375" prefWidth="67.199951171875" style="-fx-alignment: CENTER;" text="Active" />
@@ -52,7 +52,7 @@
                      <top>
                         <ToolBar prefHeight="40.0" style="-fx-background-radius: 3 3 0 0;" styleClass="base-component" stylesheets="@stylesheet.css" BorderPane.alignment="CENTER">
                           <items>
-                              <TextField fx:id="textfieldSearch" onKeyPressed="#onSearchKeyPressed" prefHeight="26.0" prefWidth="234.0" promptText="Table Search...">
+                              <TextField fx:id="textfieldSearch" onKeyPressed="#onSearchKeyPressed" prefHeight="26.0" prefWidth="250.0" promptText="Table Search...">
                                  <font>
                                     <Font size="14.0" />
                                  </font>

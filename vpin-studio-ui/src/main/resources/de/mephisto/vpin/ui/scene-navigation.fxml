@@ -84,7 +84,7 @@
                         <FontIcon iconColor="WHITE" iconLiteral="bi-list-ol" />
                      </graphic>
                   </Button>
-                  <Button alignment="BASELINE_LEFT" graphicTextGap="12.0" layoutX="10.0" layoutY="210.0" mnemonicParsing="false" prefHeight="60.0" prefWidth="250.0" styleClass="navigation-button" stylesheets="@stylesheet.css" text="Overlay Settings" textFill="WHITE">
+                  <Button alignment="BASELINE_LEFT" graphicTextGap="12.0" layoutX="10.0" layoutY="210.0" mnemonicParsing="false" onAction="#onOverlayClick" prefHeight="60.0" prefWidth="250.0" styleClass="navigation-button" stylesheets="@stylesheet.css" text="Overlay" textFill="WHITE">
                       <font>
                           <Font name="Tahoma" size="18.0" />
                       </font>

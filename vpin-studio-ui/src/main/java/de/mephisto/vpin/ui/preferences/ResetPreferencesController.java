@@ -4,19 +4,16 @@ import de.mephisto.vpin.ui.util.Keys;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.Node;
-import javafx.scene.Parent;
-import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Arrays;
 import java.util.ResourceBundle;
 
-public class OverlayPreferencesController implements Initializable {
+public class ResetPreferencesController implements Initializable {
+
   @FXML
-  private ComboBox<String> overlayKeyCombo;
+  private ComboBox<String> resetKeyCombo;
 
   @FXML
   private void onKeySelection() {
@@ -25,6 +22,6 @@ public class OverlayPreferencesController implements Initializable {
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
-    overlayKeyCombo.setItems(FXCollections.observableList(Keys.getKeyNames()));
+    resetKeyCombo.setItems(FXCollections.observableList(Keys.getKeyNames()));
   }
 }

@@ -1,8 +1,9 @@
 package de.mephisto.vpin.ui;
 
+import de.mephisto.vpin.ui.preferences.AvatarPreferencesController;
 import de.mephisto.vpin.ui.preferences.CardGenerationPreferencesController;
-import de.mephisto.vpin.ui.preferences.PopperPreferencesController;
-import de.mephisto.vpin.ui.preferences.ValidationsPreferencesController;
+import de.mephisto.vpin.ui.preferences.NetworkPreferencesController;
+import de.mephisto.vpin.ui.preferences.ScreensPreferencesController;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -34,35 +35,48 @@ public class PreferencesController implements Initializable {
   }
 
   @FXML
-  private void onVPin(ActionEvent event) throws IOException {
-    FXMLLoader loader = new FXMLLoader(ValidationsPreferencesController.class.getResource("preference-myvpin.fxml"));
-    Node node = loader.load();
-    preferencesMain.setCenter(node);
+  private void onAvatar(ActionEvent event) throws IOException {
+    load("preference-avatar.fxml");
   }
 
   @FXML
-  private void onTableValidation(ActionEvent event) throws IOException {
-    FXMLLoader loader = new FXMLLoader(ValidationsPreferencesController.class.getResource("preference-table-validation.fxml"));
-    Node node = loader.load();
-    preferencesMain.setCenter(node);
+  private void onNetwork(ActionEvent event) throws IOException {
+    load("preference-network.fxml");
   }
 
   @FXML
-  private void onPinUPPopper(ActionEvent event) throws IOException {
-    FXMLLoader loader = new FXMLLoader(PopperPreferencesController.class.getResource("preference-popper.fxml"));
-    Node node = loader.load();
-    preferencesMain.setCenter(node);
+  private void onMediaValidation(ActionEvent event) throws IOException {
+    load("preference-media-validators.fxml");
+  }
+
+  @FXML
+  private void onConfigValidation(ActionEvent event) throws IOException {
+    load("preference-config-validators.fxml");
+  }
+
+  @FXML
+  private void onScreens(ActionEvent event) throws IOException {
+    load("preference-screens.fxml");
+  }
+
+  @FXML
+  private void onReset(ActionEvent event) throws IOException {
+    load("preference-reset.fxml");
   }
 
 
   @FXML
-  private void onOverlay(ActionEvent event) {
-
+  private void onOverlay(ActionEvent event) throws IOException {
+    load("preference-overlay.fxml");
   }
 
   @FXML
   private void onHighscoreCards(ActionEvent event) throws IOException {
-    FXMLLoader loader = new FXMLLoader(CardGenerationPreferencesController.class.getResource("preference-highscore-cards.fxml"));
+    load("preference-highscore-cards.fxml");
+  }
+
+  private void load(String screen) throws IOException {
+    FXMLLoader loader = new FXMLLoader(ScreensPreferencesController.class.getResource(screen));
     Node node = loader.load();
     preferencesMain.setCenter(node);
   }

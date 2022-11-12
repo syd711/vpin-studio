@@ -15,7 +15,7 @@ import org.apache.commons.lang3.StringUtils;
 import java.net.URL;
 import java.util.*;
 
-public class PopperPreferencesController implements Initializable {
+public class ScreensPreferencesController implements Initializable {
 
   @FXML
   private VBox preferenceList;

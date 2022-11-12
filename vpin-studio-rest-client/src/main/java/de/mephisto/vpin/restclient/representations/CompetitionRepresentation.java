@@ -1,6 +1,7 @@
 package de.mephisto.vpin.restclient.representations;
 
 import java.util.Date;
+import java.util.List;
 
 public class CompetitionRepresentation {
   private Long id;
@@ -9,15 +10,27 @@ public class CompetitionRepresentation {
 
   private int gameId;
 
-  private String type;
-
   private String badge;
+
+  private String type;
 
   private Date startDate;
 
   private Date endDate;
 
   private boolean customizeMedia;
+
+  private List<HighscoreRepresentation> highscores;
+
+
+
+  public List<HighscoreRepresentation> getHighscores() {
+    return highscores;
+  }
+
+  public void setHighscores(List<HighscoreRepresentation> highscores) {
+    this.highscores = highscores;
+  }
 
   public Long getId() {
     return id;
@@ -81,5 +94,15 @@ public class CompetitionRepresentation {
 
   public void setEndDate(Date endDate) {
     this.endDate = endDate;
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) return true;
+    if (o == null || getClass() != o.getClass()) return false;
+
+    CompetitionRepresentation that = (CompetitionRepresentation) o;
+
+    return id != null && that.id != null && id.equals(that.id);
   }
 }

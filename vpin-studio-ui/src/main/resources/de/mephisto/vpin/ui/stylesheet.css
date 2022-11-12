@@ -4,7 +4,7 @@
 
 * {
    -fx-base-1: #FFF8F8;
-   -fx-base-2: #D7D2D2;
+   -fx-base-2: #C7C3C3;
    -fx-base-3: #B0ABAB;
    -fx-base-4: #888585;
    -fx-base-5: #605E5E;
@@ -60,11 +60,21 @@
 /**
  * Preferences
  */
+ .preference-section {
+    -fx-font-weight: bold;
+    -fx-font-color: -fx-base-2;
+    -fx-text-fill: -fx-base-2;
+    -fx-font-size : 13px;
+    -fx-padding: 0 12 6 10;
+    -fx-pref-width: 250;
+ }
+
 .preference-title {
     -fx-font-weight: bold;
     -fx-font-color: -fx-base-1;
     -fx-text-fill: -fx-base-1;
     -fx-font-size : 22px;
+    -fx-pref-width: 400;
 }
 
 .preference-subtitle {
@@ -94,7 +104,7 @@
     -fx-border-style: hidden hidden hidden hidden;
     -fx-background-radius: 4 4 4 4;
     -fx-text-fill: -fx-font-1;
-    -fx-pref-width: 200;
+    -fx-pref-width: 250;
 }
 
 .preference-button:hover {
@@ -106,7 +116,7 @@
     -fx-background-radius: 4 4 4 4;
     -fx-text-fill: #fff8f8;
     -fx-cursor: hand;
-    -fx-pref-width: 200;
+    -fx-pref-width: 250;
 }
 
 .ghost-button {
