@@ -51,7 +51,7 @@ hs_err_pid*
 /VPReg/
 /target/
 /dependency-reduced-pom.xml
-/resources/repository.properties
+/resources/*.properties
 /resources/*.db-journal
 /resources/*.sqbpro
 /resources/b2s/*.png

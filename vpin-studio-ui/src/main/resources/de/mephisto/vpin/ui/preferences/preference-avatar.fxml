@@ -7,6 +7,7 @@
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
@@ -14,7 +15,7 @@
 
 <BorderPane styleClass="base-component" stylesheets="@../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.preferences.AvatarPreferencesController">
    <top>
-      <VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="478.0" prefWidth="600.0" styleClass="subpanel" stylesheets="@stylesheet.css" BorderPane.alignment="TOP_LEFT">
+      <VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="478.0" prefWidth="600.0" styleClass="subpanel" BorderPane.alignment="TOP_LEFT">
          <children>
             <Label styleClass="preference-title" text="VPIN PREFERENCES" textFill="WHITE" />
             <Label styleClass="preference-subtitle" text="Avatar">
@@ -28,28 +29,37 @@
                </VBox.margin>
             </Label>
             <BorderPane prefHeight="200.0" prefWidth="400.0">
+               <top>
+                  <HBox BorderPane.alignment="TOP_LEFT">
+                     <children>
+                        <Label prefHeight="18.0" styleClass="preference-label" text="Upload Avatar:" textFill="WHITE">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Label>
+                        <Button mnemonicParsing="false" onAction="#onFileSelect" text="Upload Image">
+                           <graphic>
+                              <FontIcon iconColor="WHITE" iconLiteral="mdi2u-upload" />
+                           </graphic>
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                           <HBox.margin>
+                              <Insets left="24.0" />
+                           </HBox.margin>
+                        </Button>
+                     </children>
+                  </HBox>
+               </top>
+               <VBox.margin>
+                  <Insets top="12.0" />
+               </VBox.margin>
                <left>
-                  <Label prefHeight="18.0" styleClass="preference-label" text="Upload Avatar:" textFill="WHITE" BorderPane.alignment="TOP_LEFT">
-                     <font>
-                        <Font size="14.0" />
-                     </font>
-                  </Label>
-               </left>
-               <center>
-                  <BorderPane maxHeight="200.0" maxWidth="200.0" prefHeight="200.0" prefWidth="200.0" styleClass="media-container" BorderPane.alignment="CENTER">
+                  <BorderPane fx:id="avatarBorderPane" maxHeight="200.0" maxWidth="200.0" prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
                      <BorderPane.margin>
                         <Insets bottom="6.0" left="6.0" right="6.0" top="6.0" />
                      </BorderPane.margin></BorderPane>
-               </center>
-               <bottom>
-                  <Button mnemonicParsing="false" text="Upload Image" BorderPane.alignment="BOTTOM_RIGHT">
-                     <graphic>
-                        <FontIcon iconColor="WHITE" iconLiteral="mdi2u-upload" />
-                     </graphic>
-                     <font>
-                        <Font size="14.0" />
-                     </font></Button>
-               </bottom>
+               </left>
             </BorderPane>
             <Label styleClass="preference-description" text="Set the name that should be shown for this VPin connection." textFill="WHITE">
                <VBox.margin>
@@ -71,7 +81,10 @@
                         <Font size="14.0" />
                      </font>
                   </Label>
-                  <TextField prefWidth="412.0" GridPane.columnIndex="1" />
+                  <TextField fx:id="vpinNameText" prefWidth="412.0" GridPane.columnIndex="1">
+                     <font>
+                        <Font size="14.0" />
+                     </font></TextField>
                </children>
                <opaqueInsets>
                   <Insets />

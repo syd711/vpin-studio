@@ -42,6 +42,7 @@ public class SystemService implements InitializingBean  {
   private final static String PINEMHI_COMMAND = "PINemHi.exe";
   private final static String PINEMHI_INI = "pinemhi.ini";
   private final static String VPM_ALIAS = "VPMAlias.txt";
+  private static final String SYSTEM_PROPERTIES = "system";
 
 
   private File pinUPSystemInstallationFolder;
@@ -55,17 +56,17 @@ public class SystemService implements InitializingBean  {
     initPinemHiFolders();
 
     if (!getPinUPSystemFolder().exists()) {
-      throw new FileNotFoundException("Wrong PinUP Popper installation folder: " + getPinUPSystemFolder().getAbsolutePath() + ".\nPlease fix the PinUP Popper installation path in file ./resources/env.properties");
+      throw new FileNotFoundException("Wrong PinUP Popper installation folder: " + getPinUPSystemFolder().getAbsolutePath() + ".\nPlease fix the PinUP Popper installation path in file ./resources/system.properties");
     }
     if (!getVisualPinballInstallationFolder().exists()) {
-      throw new FileNotFoundException("Wrong Visual Pinball installation folder: " + getVisualPinballInstallationFolder().getAbsolutePath() + ".\nPlease fix the Visual Pinball installation path in file ./resources/env.properties");
+      throw new FileNotFoundException("Wrong Visual Pinball installation folder: " + getVisualPinballInstallationFolder().getAbsolutePath() + ".\nPlease fix the Visual Pinball installation path in file ./resources/system.properties");
     }
     logSystemInfo();
   }
 
   private void initBaseFolders() throws VPinStudioException {
     try {
-      PropertiesStore store = PropertiesStore.create("env");
+      PropertiesStore store = PropertiesStore.create(SYSTEM_PROPERTIES);
 
       //PinUP Popper Folder
       this.pinUPSystemInstallationFolder = this.resolvePinUPSystemInstallationFolder();

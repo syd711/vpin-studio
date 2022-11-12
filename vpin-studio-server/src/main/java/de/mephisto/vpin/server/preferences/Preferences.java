@@ -1,6 +1,7 @@
 package de.mephisto.vpin.server.preferences;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import de.mephisto.vpin.server.assets.Asset;
 import de.mephisto.vpin.server.games.Game;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
@@ -22,13 +23,30 @@ public class Preferences {
   @Column(name = "id", nullable = false)
   private Long id;
 
-  private boolean cardGenerationEnabled;
-
-  private String cardGenerationScreen;
-
   private String ignoredValidations;
 
   private String ignoredMedia;
+
+  private String systemName;
+
+  @OneToOne(cascade = CascadeType.ALL)
+  private Asset avatar;
+
+  public Asset getAvatar() {
+    return avatar;
+  }
+
+  public void setAvatar(Asset avatar) {
+    this.avatar = avatar;
+  }
+
+  public String getSystemName() {
+    return systemName;
+  }
+
+  public void setSystemName(String systemName) {
+    this.systemName = systemName;
+  }
 
   public Long getId() {
     return id;
@@ -44,22 +62,6 @@ public class Preferences {
 
   public void setIgnoredMedia(String ignoredMedia) {
     this.ignoredMedia = ignoredMedia;
-  }
-
-  public boolean isCardGenerationEnabled() {
-    return cardGenerationEnabled;
-  }
-
-  public void setCardGenerationEnabled(boolean cardGenerationEnabled) {
-    this.cardGenerationEnabled = cardGenerationEnabled;
-  }
-
-  public String getCardGenerationScreen() {
-    return cardGenerationScreen;
-  }
-
-  public void setCardGenerationScreen(String cardGenerationScreen) {
-    this.cardGenerationScreen = cardGenerationScreen;
   }
 
   public String getIgnoredValidations() {

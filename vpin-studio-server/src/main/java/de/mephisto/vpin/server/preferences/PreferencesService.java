@@ -1,5 +1,7 @@
 package de.mephisto.vpin.server.preferences;
 
+import de.mephisto.vpin.server.assets.Asset;
+import de.mephisto.vpin.server.assets.AssetRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanWrapper;
@@ -11,6 +13,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.UUID;
 
 @Service
 public class PreferencesService implements InitializingBean {
@@ -18,6 +21,9 @@ public class PreferencesService implements InitializingBean {
 
   @Autowired
   private PreferencesRepository preferencesRepository;
+
+  @Autowired
+  private AssetRepository assetRepository;
 
   private Preferences preferences;
 
@@ -50,5 +56,21 @@ public class PreferencesService implements InitializingBean {
       all = preferencesRepository.findAll();
     }
     preferences = all.get(0);
+  }
+
+  public Asset saveAvatar(byte[] bytes, String mimeType) {
+    Asset avatar = preferences.getAvatar();
+    if(avatar != null) {
+      assetRepository.delete(avatar);
+    }
+
+    Asset newAvatar = new Asset();
+    newAvatar.setData(bytes);
+    newAvatar.setUuid(UUID.randomUUID().toString());
+    newAvatar.setMimeType(mimeType);
+
+    preferences.setAvatar(newAvatar);
+    Preferences updatedPreferences = preferencesRepository.saveAndFlush(preferences);
+    return updatedPreferences.getAvatar();
   }
 }

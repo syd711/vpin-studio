@@ -158,6 +158,17 @@ public class VPinStudioClient implements ObservedPropertyChangeListener {
     return null;
   }
 
+  public boolean uploadAvatar(File file) throws Exception {
+    try {
+      String url = RestClient.getInstance().getBaseUrl() + API + "preferences/avatar";
+      new RestTemplate().exchange(url, HttpMethod.POST, createUpload(file, -1, null), Boolean.class);
+      return true;
+    } catch (Exception e) {
+      LOG.error("Background upload failed: " + e.getMessage(), e);
+      throw e;
+    }
+  }
+
   public boolean uploadHighscoreBackgroundImage(File file) throws Exception {
     try {
       String url = RestClient.getInstance().getBaseUrl() + API + "generator/backgroundupload";

@@ -13,6 +13,7 @@ import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.FilenameFilter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -22,19 +23,21 @@ public class CardGraphics {
   private final int ROW_SEPARATOR = Config.getCardGeneratorConfig().getInt("card.highscores.row.separator");
   private final int WHEEL_PADDING = Config.getCardGeneratorConfig().getInt("card.highscores.row.padding.left");
 
-  private final String TITLE_TEXT = Config.getCardGeneratorConfig().getString("card.title.text");
+  private final String TITLE_TEXT = Config.getCardGeneratorConfig().getString("card.title.text", "Highscores");
 
   private final String SCORE_FONT_NAME = Config.getCardGeneratorConfig().getString("card.score.font.name");
   private final int SCORE_FONT_STYLE = ImageUtil.convertFontPosture(Config.getCardGeneratorConfig().getString("card.score.font.style"));
-  private final int SCORE_FONT_SIZE = Config.getCardGeneratorConfig().getInt("card.score.font.size");
+  private final int SCORE_FONT_SIZE = Config.getCardGeneratorConfig().getInt("card.score.font.size", 24);
 
-  private final String TITLE_FONT_NAME = Config.getCardGeneratorConfig().getString("card.title.font.name");
+  private final String TITLE_FONT_NAME = Config.getCardGeneratorConfig().getString("card.title.font.name", "Arial");
   private final int TITLE_FONT_STYLE = ImageUtil.convertFontPosture(Config.getCardGeneratorConfig().getString("card.title.font.style"));
-  private final int TITLE_FONT_SIZE = Config.getCardGeneratorConfig().getInt("card.title.font.size");
+  private final int TITLE_FONT_SIZE = Config.getCardGeneratorConfig().getInt("card.title.font.size", 28);
 
   private final String TABLE_FONT_NAME = Config.getCardGeneratorConfig().getString("card.table.font.name");
   private final int TABLE_FONT_STYLE = ImageUtil.convertFontPosture(Config.getCardGeneratorConfig().getString("card.table.font.style"));
-  private final int TABLE_FONT_SIZE = Config.getCardGeneratorConfig().getInt("card.table.font.size");
+  private final int TABLE_FONT_SIZE = Config.getCardGeneratorConfig().getInt("card.table.font.size", 24);
+
+  private final String FONT_COLOR = Config.getCardGeneratorConfig().getString("card.font.color", "#FFFFFF");
 
   private final int PADDING = Config.getCardGeneratorConfig().getInt("card.title.y.offset");
 
@@ -58,9 +61,20 @@ public class CardGraphics {
   }
 
   public BufferedImage draw() throws Exception {
-    File sourceImage = new File(SystemService.RESOURCES + "backgrounds", Config.getCardGeneratorConfig().get("card.background") + ".jpg");
+    File backgroundsFolder = new File(SystemService.RESOURCES + "backgrounds");
+    File sourceImage = new File(backgroundsFolder, Config.getCardGeneratorConfig().get("card.background") + ".jpg");
     if (!sourceImage.exists()) {
-      sourceImage = new File(SystemService.RESOURCES + "backgrounds", Config.getCardGeneratorConfig().get("card.background") + ".png");
+      sourceImage = new File(backgroundsFolder, Config.getCardGeneratorConfig().get("card.background") + ".png");
+    }
+    if (!sourceImage.exists()) {
+      File[] backgrounds = backgroundsFolder.listFiles((dir, name) -> name.endsWith(".png") || name.endsWith(".jpg"));
+      if (backgrounds != null && backgrounds.length > 0) {
+        sourceImage = backgrounds[0];
+      }
+    }
+    if (!sourceImage.exists()) {
+      throw new UnsupportedOperationException("No background images have been found, " +
+          "make sure that folder " + backgroundsFolder.getAbsolutePath() + " contains valid images.");
     }
 
     int scaling = Config.getCardGeneratorConfig().getInt("card.scaling", 1280);
@@ -100,7 +114,7 @@ public class CardGraphics {
    */
   private void renderCardData(BufferedImage image, Game game) throws Exception {
     Graphics g = image.getGraphics();
-    ImageUtil.setDefaultColor(g, Config.getCardGeneratorConfig().getString("card.font.color"));
+    ImageUtil.setDefaultColor(g, FONT_COLOR);
     int imageWidth = image.getWidth();
 
     g.setFont(new Font(TITLE_FONT_NAME, TITLE_FONT_STYLE, TITLE_FONT_SIZE));

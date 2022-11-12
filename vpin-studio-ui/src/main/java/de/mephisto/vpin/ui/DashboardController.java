@@ -103,7 +103,7 @@ public class DashboardController implements Initializable, StudioFXController {
         .text("Gerrit Grunwald")
         .decimals(0)
         .unit("")
-        .image(new Image(DashboardController.class.getResourceAsStream("dashboard.png")))
+        .image(new Image(DashboardController.class.getResourceAsStream("black.png")))
         .animated(true)
         .checkThreshold(true)
         .onTileEvent(e -> {
@@ -125,7 +125,7 @@ public class DashboardController implements Initializable, StudioFXController {
 
     Tile activeChallenge = TileBuilder.create()
         .skinType(Tile.SkinType.IMAGE)
-        .image(new Image(DashboardController.class.getResourceAsStream("dashboard.png")))
+        .image(new Image(DashboardController.class.getResourceAsStream("black.png")))
         .imageMask(Tile.ImageMask.ROUND)
         .text("Active Challange: Funhouse")
         .textSize(Tile.TextSize.BIGGER)

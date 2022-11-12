@@ -25,14 +25,16 @@ public class ImageUtil {
   }
 
   public static int convertFontPosture(String posture) {
-    if(posture.toLowerCase().contains("italic")) {
-      return Font.ITALIC;
-    }
-    if(posture.toLowerCase().contains("regular") || posture.toLowerCase().contains("plain")) {
-      return Font.PLAIN;
-    }
-    if(posture.toLowerCase().contains("bold")) {
-      return Font.BOLD;
+    if(posture != null) {
+      if(posture.toLowerCase().contains("italic")) {
+        return Font.ITALIC;
+      }
+      if(posture.toLowerCase().contains("regular") || posture.toLowerCase().contains("plain")) {
+        return Font.PLAIN;
+      }
+      if(posture.toLowerCase().contains("bold")) {
+        return Font.BOLD;
+      }
     }
 
     return Font.PLAIN;

@@ -1,5 +1,6 @@
 package de.mephisto.vpin.ui;
 
+import de.mephisto.vpin.ui.util.UIDefaults;
 import eu.hansolo.tilesfx.Tile;
 import eu.hansolo.tilesfx.TileBuilder;
 import javafx.application.Platform;
@@ -125,9 +126,9 @@ public class NavigationController implements Initializable {
         .skinType(Tile.SkinType.IMAGE)
         .prefSize(300, 300)
         .backgroundColor(Color.TRANSPARENT)
-        .image(new Image(DashboardController.class.getResourceAsStream("dashboard.png")))
+        .image(new Image(DashboardController.class.getResourceAsStream("avatar-default.png")))
         .imageMask(Tile.ImageMask.ROUND)
-        .text("Whatever text")
+        .text(UIDefaults.VPIN_NAME)
         .textSize(Tile.TextSize.BIGGER)
         .textAlignment(TextAlignment.CENTER)
         .build();

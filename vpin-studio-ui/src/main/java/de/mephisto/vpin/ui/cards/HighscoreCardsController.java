@@ -141,7 +141,7 @@ public class HighscoreCardsController implements Initializable, ObservedProperty
     try {
       client = Studio.client;
       properties = client.getProperties("card-generator");
-      ignoreList.addAll(Arrays.asList("card.generation.enabled", "popper.screen"));
+      ignoreList.addAll(Arrays.asList("popper.screen"));
       properties.addObservedPropertyChangeListener(this);
 
       FXMLLoader loader = new FXMLLoader(WaitOverlayController.class.getResource("overlay-wait.fxml"));

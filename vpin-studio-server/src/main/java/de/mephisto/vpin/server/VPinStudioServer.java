@@ -29,8 +29,8 @@ public class VPinStudioServer extends SpringBootServletInitializer {
 
     new VPinStudioServerTray();
 
-    boolean cardGenerationEnabled = Config.getCardGeneratorConfig().getBoolean("card.generation.enabled");
-    if(cardGenerationEnabled) {
+    String targetScreen = Config.getCardGeneratorConfig().getString("popper.screen");
+    if(targetScreen != null) {
 
     }
 

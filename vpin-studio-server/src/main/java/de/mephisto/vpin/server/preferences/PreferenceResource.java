@@ -4,7 +4,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.Map;
 
 import static de.mephisto.vpin.server.VPinStudioServer.API_SEGMENT;
@@ -24,6 +26,21 @@ public class PreferenceResource {
       return new PreferenceEntry(key, null);
     }
     return new PreferenceEntry(key, String.valueOf(preferenceValue));
+  }
+
+  @PostMapping(value = "/avatar")
+  public Boolean upload(@RequestPart(value = "file", required = false) MultipartFile file) throws IOException {
+    if (file == null) {
+      LOG.error("Upload request did not contain a file object.");
+      return false;
+    }
+
+    String mimeType = "image/jpg";
+    if(file.getOriginalFilename().toLowerCase().endsWith(".png")) {
+      mimeType = "image/png";
+    }
+    preferencesService.saveAvatar(file.getBytes(), mimeType);
+    return true;
   }
 
   @PutMapping

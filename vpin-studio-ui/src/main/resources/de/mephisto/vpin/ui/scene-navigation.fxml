@@ -139,7 +139,7 @@
           </VBox>
          </center>
          <top>
-            <BorderPane fx:id="avatarPane" prefHeight="200.0" prefWidth="250.0" BorderPane.alignment="CENTER">
+            <BorderPane fx:id="avatarPane" prefHeight="220.0" prefWidth="250.0" BorderPane.alignment="CENTER">
                <padding>
                   <Insets bottom="24.0" left="24.0" right="24.0" top="24.0" />
                </padding>
