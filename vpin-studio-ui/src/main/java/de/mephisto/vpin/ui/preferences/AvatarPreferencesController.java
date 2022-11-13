@@ -43,11 +43,13 @@ public class AvatarPreferencesController implements Initializable {
         new FileChooser.ExtensionFilter("Image", "*.png", ".jpg", "*.jpeg"));
 
     File selection = fileChooser.showOpenDialog(stage);
-    try {
-      client.uploadAvatar(selection);
-      refreshAvatar();
-    } catch (Exception ex) {
-      WidgetFactory.showAlert("Uploading avatar image failed, check log file for details:\n\n" + ex.getMessage());
+    if (selection != null) {
+      try {
+        client.uploadAvatar(selection);
+        refreshAvatar();
+      } catch (Exception ex) {
+        WidgetFactory.showAlert("Uploading avatar image failed, check log file for details:\n\n" + ex.getMessage());
+      }
     }
   }
 
@@ -64,7 +66,7 @@ public class AvatarPreferencesController implements Initializable {
       image = new Image(client.getAsset(avatarEntry.getValue()));
     }
 
-    if(avatar == null) {
+    if (avatar == null) {
       avatar = TileBuilder.create()
           .skinType(Tile.SkinType.IMAGE)
           .prefSize(300, 300)
