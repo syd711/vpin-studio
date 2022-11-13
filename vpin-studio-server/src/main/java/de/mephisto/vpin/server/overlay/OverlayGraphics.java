@@ -79,7 +79,7 @@ public class OverlayGraphics {
 
     BufferedImage backgroundImage = ImageUtil.loadImage(sourceImage);
     int targetWidth = Integer.parseInt(RESOLUTION.split("x")[0]);
-    if(backgroundImage.getWidth() > targetWidth) {
+    if(backgroundImage.getWidth() != targetWidth) {
       backgroundImage = ImageUtil.resizeImage(backgroundImage, targetWidth);
     }
 
