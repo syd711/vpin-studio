@@ -69,6 +69,9 @@ public class HighscoreCardsController implements Initializable, ObservedProperty
   private CheckBox useDirectB2SCheckbox;
 
   @FXML
+  private CheckBox grayScaleCheckbox;
+
+  @FXML
   private ComboBox<String> imageRatioCombo;
 
   @FXML
@@ -275,6 +278,7 @@ public class HighscoreCardsController implements Initializable, ObservedProperty
 
 
     BindingUtil.bindCheckbox(useDirectB2SCheckbox, properties, "card.useDirectB2S");
+    BindingUtil.bindCheckbox(grayScaleCheckbox, properties, "card.grayScale");
     useDirectB2SCheckbox.selectedProperty().addListener((observableValue, aBoolean, t1) -> imageRatioCombo.setDisable(!t1));
     useDirectB2SCheckbox.selectedProperty().addListener((observableValue, aBoolean, t1) -> imageScalingCombo.setDisable(!t1));
 
@@ -300,7 +304,7 @@ public class HighscoreCardsController implements Initializable, ObservedProperty
     BindingUtil.bindSlider(darkenSlider, properties, "card.alphacomposite.black");
     BindingUtil.bindSlider(blurSlider, properties, "card.blur");
     BindingUtil.bindSlider(borderSlider, properties, "card.border.width");
-    BindingUtil.bindSpinner(marginTopSpinner, properties, "card.title.y.offset");
+    BindingUtil.bindSpinner(marginTopSpinner, properties, "card.padding");
     BindingUtil.bindSpinner(wheelImageSpinner, properties, "card.highscores.row.padding.left");
     BindingUtil.bindSpinner(rowSeparatorSpinner, properties, "card.highscores.row.separator");
 

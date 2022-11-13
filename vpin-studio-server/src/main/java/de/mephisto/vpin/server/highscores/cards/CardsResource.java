@@ -59,7 +59,7 @@ public class CardsResource {
 
   @GetMapping("/generate/{gameId}")
   public boolean generateCards(@PathVariable("gameId") int gameId) throws Exception {
-    return onCardGeneration(gameId, false);
+    return onCardGeneration(gameId, true);
   }
 
   @GetMapping("/backgrounds")

@@ -45,6 +45,14 @@
                                    <Font size="14.0" />
                                 </font>
                              </CheckBox>
+                              <CheckBox fx:id="grayScaleCheckbox" layoutX="20.0" layoutY="20.0" mnemonicParsing="false" stylesheets="@stylesheet.css" text="Grayscale Background" textFill="WHITE">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                                 <VBox.margin>
+                                    <Insets top="12.0" />
+                                 </VBox.margin>
+                              </CheckBox>
                              <Label text="Image Ratio:" textFill="WHITE">
                                 <font>
                                    <Font size="14.0" />
@@ -63,30 +71,98 @@
                                  </padding>
                               </Label>
                               <ComboBox fx:id="imageScalingCombo" layoutX="20.0" layoutY="72.0" prefWidth="150.0" />
-                             <Label text="Default Background Image:" textFill="WHITE">
-                                <font>
-                                   <Font size="14.0" />
-                                </font>
-                                <VBox.margin>
-                                   <Insets top="12.0" />
-                                </VBox.margin>
-                             </Label>
-                             <HBox prefHeight="31.0" prefWidth="276.0">
-                                <children>
-                                   <ComboBox fx:id="backgroundImageCombo" prefHeight="30.0" prefWidth="254.0" stylesheets="@stylesheet.css" />
-                                </children>
-                             </HBox>
-                             <Button mnemonicParsing="false" onAction="#onUploadButton" text="  Upload Background">
-                                <font>
-                                   <Font size="14.0" />
-                                </font>
-                                <graphic>
-                                   <FontIcon iconColor="WHITE" iconLiteral="mdi2u-upload" iconSize="14" />
-                                </graphic>
+                              <BorderPane>
                                  <VBox.margin>
                                     <Insets top="12.0" />
                                  </VBox.margin>
-                             </Button>
+                                 <left>
+                                   <Label text="Default Background Image:" textFill="WHITE" BorderPane.alignment="CENTER">
+                                      <font>
+                                         <Font size="14.0" />
+                                      </font>
+                                   </Label>
+                                 </left>
+                                 <right>
+                                   <Button mnemonicParsing="false" onAction="#onUploadButton" BorderPane.alignment="CENTER">
+                                      <graphic>
+                                         <FontIcon iconColor="WHITE" iconLiteral="mdi2u-upload" iconSize="14" />
+                                      </graphic>
+                                   </Button>
+                                 </right>
+                              </BorderPane>
+                             <HBox prefHeight="31.0" prefWidth="276.0">
+                                <children>
+                                   <ComboBox fx:id="backgroundImageCombo" prefHeight="30.0" prefWidth="300.0" stylesheets="@stylesheet.css">
+                                       <HBox.margin>
+                                          <Insets top="3.0" />
+                                       </HBox.margin></ComboBox>
+                                </children>
+                             </HBox>
+                              <Label text="Brighten Background:" textFill="WHITE">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                                 <padding>
+                                    <Insets top="12.0" />
+                                 </padding>
+                              </Label>
+                              <Slider fx:id="brightenSlider">
+                                 <padding>
+                                    <Insets bottom="12.0" top="6.0" />
+                                 </padding>
+                              </Slider>
+                              <Label text="Darken Background:" textFill="WHITE">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                                 <padding>
+                                    <Insets top="12.0" />
+                                 </padding>
+                              </Label>
+                              <Slider fx:id="darkenSlider">
+                                 <padding>
+                                    <Insets bottom="12.0" top="6.0" />
+                                 </padding>
+                              </Slider>
+                              <Label text="Blur Background:" textFill="WHITE">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                                 <padding>
+                                    <Insets top="12.0" />
+                                 </padding>
+                              </Label>
+                              <Slider fx:id="blurSlider">
+                                 <padding>
+                                    <Insets bottom="12.0" top="6.0" />
+                                 </padding>
+                              </Slider>
+                              <Label text="Border Size:" textFill="WHITE">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                                 <padding>
+                                    <Insets top="12.0" />
+                                 </padding>
+                              </Label>
+                              <Slider fx:id="borderSlider" stylesheets="@stylesheet.css">
+                                 <padding>
+                                    <Insets bottom="12.0" top="6.0" />
+                                 </padding>
+                              </Slider>
+                              <Label text="Padding:" textFill="WHITE">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                                 <padding>
+                                    <Insets top="12.0" />
+                                 </padding>
+                              </Label>
+                              <Spinner fx:id="marginTopSpinner" editable="true" prefHeight="26.0" prefWidth="303.0" styleClass="widget-default" stylesheets="@stylesheet.css">
+                                 <VBox.margin>
+                                    <Insets top="6.0" />
+                                 </VBox.margin>
+                              </Spinner>
                           </children>
                        </VBox>
                     </content>
@@ -187,7 +263,7 @@
                         </VBox>
                      </content>
                 </TitledPane>
-                <TitledPane expanded="false" text="Layout and Effects">
+                <TitledPane expanded="false" text="Layout">
                      <content>
                         <VBox prefHeight="200.0" prefWidth="100.0" styleClass="accordion-container" stylesheets="@stylesheet.css">
                            <children>
@@ -201,71 +277,6 @@
                                     <Font size="14.0" />
                                  </font>
                               </TextField>
-                              <Label text="Brighten Background:" textFill="WHITE">
-                                 <font>
-                                    <Font size="14.0" />
-                                 </font>
-                                 <padding>
-                                    <Insets top="12.0" />
-                                 </padding>
-                              </Label>
-                              <Slider fx:id="brightenSlider">
-                                 <padding>
-                                    <Insets bottom="12.0" top="6.0" />
-                                 </padding>
-                              </Slider>
-                              <Label text="Darken Background:" textFill="WHITE">
-                                 <font>
-                                    <Font size="14.0" />
-                                 </font>
-                                 <padding>
-                                    <Insets top="12.0" />
-                                 </padding>
-                              </Label>
-                              <Slider fx:id="darkenSlider">
-                                 <padding>
-                                    <Insets bottom="12.0" top="6.0" />
-                                 </padding>
-                              </Slider>
-                              <Label text="Blur Background:" textFill="WHITE">
-                                 <font>
-                                    <Font size="14.0" />
-                                 </font>
-                                 <padding>
-                                    <Insets top="12.0" />
-                                 </padding>
-                              </Label>
-                              <Slider fx:id="blurSlider">
-                                 <padding>
-                                    <Insets bottom="12.0" top="6.0" />
-                                 </padding>
-                              </Slider>
-                              <Label text="Border Size:" textFill="WHITE">
-                                 <font>
-                                    <Font size="14.0" />
-                                 </font>
-                                 <padding>
-                                    <Insets top="12.0" />
-                                 </padding>
-                              </Label>
-                              <Slider fx:id="borderSlider" stylesheets="@stylesheet.css">
-                                 <padding>
-                                    <Insets bottom="12.0" top="6.0" />
-                                 </padding>
-                              </Slider>
-                              <Label text="Padding:" textFill="WHITE">
-                                 <font>
-                                    <Font size="14.0" />
-                                 </font>
-                                 <padding>
-                                    <Insets top="12.0" />
-                                 </padding>
-                              </Label>
-                              <Spinner fx:id="marginTopSpinner" editable="true" prefHeight="26.0" prefWidth="303.0" styleClass="widget-default" stylesheets="@stylesheet.css">
-                                 <VBox.margin>
-                                    <Insets top="6.0" />
-                                 </VBox.margin>
-                              </Spinner>
                               <Label text="Wheel Image Padding:" textFill="WHITE">
                                  <font>
                                     <Font size="14.0" />

@@ -230,7 +230,7 @@ public class OverlayController implements Initializable, ObservedPropertyChangeL
     BindingUtil.bindSpinner(marginTopSpinner, properties, "overlay.padding");
     BindingUtil.bindSpinner(rowSeparatorSpinner, properties, "overlay.highscores.row.separator");
 
-    onGenerateClick();
+    refreshPreview(false);
   }
 
   private void refreshPreview(boolean regenerate) {

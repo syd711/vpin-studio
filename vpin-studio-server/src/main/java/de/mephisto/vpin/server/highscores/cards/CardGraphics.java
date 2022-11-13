@@ -38,7 +38,7 @@ public class CardGraphics {
 
   private final String FONT_COLOR = Config.getCardGeneratorConfig().getString("card.font.color", "#FFFFFF");
 
-  private final int PADDING = Config.getCardGeneratorConfig().getInt("card.title.y.offset");
+  private final int PADDING = Config.getCardGeneratorConfig().getInt("card.padding");
 
   private final boolean RAW_HIGHSCORE = Config.getCardGeneratorConfig().getBoolean("card.rawHighscore");
   private final boolean USE_DIRECTB2S = Config.getCardGeneratorConfig().getBoolean("card.useDirectB2S");
