@@ -50,12 +50,14 @@ public class OverlayWindowFX extends Application implements NativeKeyListener, P
 
     Platform.setImplicitExit(false);
 
+    FileInputStream inputstream = new FileInputStream("resources/background4k.jpg");
+    Image image = new Image(inputstream);
+    ImageView imageView = new ImageView(image);
+    imageView.setPreserveRatio(true);
 
-    FXMLLoader loader = new FXMLLoader(OverlayController.class.getResource("overlay.fxml"));
-    Parent node = loader.load();
-
+    Group root = new Group(imageView);
     Screen screen = Screen.getPrimary();
-    final Scene scene = new Scene(node, screen.getVisualBounds().getWidth(), screen.getVisualBounds().getHeight(), true, SceneAntialiasing.BALANCED);
+    final Scene scene = new Scene(root, screen.getVisualBounds().getWidth(), screen.getVisualBounds().getHeight(), true, SceneAntialiasing.BALANCED);
 
     Rectangle2D bounds = screen.getVisualBounds();
     stage.setX(bounds.getMinX());
