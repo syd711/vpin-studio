@@ -2,6 +2,7 @@ package de.mephisto.vpin.server.util;
 
 import de.mephisto.vpin.server.system.SystemService;
 import edu.umd.cs.findbugs.annotations.NonNull;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -118,7 +119,7 @@ public class PropertiesStore {
   }
 
   public String getString(String key, String defaultValue) {
-    if (properties.containsKey(key)) {
+    if (properties.containsKey(key) && !StringUtils.isEmpty(properties.getProperty(key))) {
       return properties.getProperty(key);
     }
     else {

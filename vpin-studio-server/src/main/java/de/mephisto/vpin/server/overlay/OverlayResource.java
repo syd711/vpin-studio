@@ -26,11 +26,16 @@ public class OverlayResource {
   private OverlayService overlayService;
 
   @GetMapping("/generate")
+  public boolean generateOverlayImage() throws Exception {
+    return overlayService.generateOverlay();
+  }
+
+  @GetMapping("/preview")
   public ResponseEntity<byte[]> getOverlayImage() throws Exception {
-    if (overlayService.generateOverlay()) {
-      return RequestUtil.serializeImage(new File(SystemService.RESOURCES, "overlay.jpg"));
+    if (!overlayService.getOverlayFile().exists()) {
+      overlayService.generateOverlay();
     }
-    return ResponseEntity.notFound().build();
+    return RequestUtil.serializeImage(overlayService.getOverlayFile());
   }
 
   @GetMapping("/backgrounds")

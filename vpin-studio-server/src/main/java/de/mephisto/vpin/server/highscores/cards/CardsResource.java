@@ -50,11 +50,11 @@ public class CardsResource {
 
   @GetMapping("/preview/{gameId}")
   public ResponseEntity<byte[]> generateCard(@PathVariable("gameId") int gameId) throws Exception {
-    if (onCardGeneration(gameId, true)) {
-      return RequestUtil.serializeImage(getCardSampleFile());
+    File cardSampleFile = getCardSampleFile();
+    if(!cardSampleFile.exists()) {
+      onCardGeneration(gameId, true);
     }
-
-    return RequestUtil.serializeImage(new File(SystemService.RESOURCES, "empty-preview.png"));
+    return RequestUtil.serializeImage(getCardSampleFile());
   }
 
   @GetMapping("/generate/{gameId}")
@@ -146,7 +146,8 @@ public class CardsResource {
 
   @NonNull
   private File getCardFile(@NonNull Game game) {
-    PopperScreen screen = PopperScreen.valueOf(Config.getCardGeneratorConfig().getString("popper.screen", PopperScreen.Other2.name()));
+    String screenName = Config.getCardGeneratorConfig().getString("popper.screen", PopperScreen.Other2.name());
+    PopperScreen screen = PopperScreen.valueOf(screenName);
     File mediaFolder = game.getEmulator().getPinUPMediaFolder(screen);
     return new File(mediaFolder, FilenameUtils.getBaseName(game.getGameFileName()) + ".png");
   }

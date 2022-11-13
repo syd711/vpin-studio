@@ -27,15 +27,15 @@ public class OverlayGraphics {
   private final String TITLE_TEXT = Config.getOverlayGeneratorConfig().getString("overlay.title.text", "bubu");
 
   private final String SCORE_FONT_NAME = Config.getOverlayGeneratorConfig().getString("overlay.score.font.name", "Arial");
-  private final int SCORE_FONT_STYLE = Config.getOverlayGeneratorConfig().getInt("overlay.score.font.style", FontPosture.REGULAR.ordinal());
+  private final int SCORE_FONT_STYLE = ImageUtil.convertFontPosture(Config.getOverlayGeneratorConfig().getString("overlay.score.font.style"));
   private final int SCORE_FONT_SIZE = Config.getOverlayGeneratorConfig().getInt("overlay.score.font.size", 60);
 
   private final String TITLE_FONT_NAME = Config.getOverlayGeneratorConfig().getString("overlay.title.font.name", "Arial");
-  private final int TITLE_FONT_STYLE = Config.getOverlayGeneratorConfig().getInt("overlay.title.font.style", FontPosture.REGULAR.ordinal());
+  private final int TITLE_FONT_STYLE = ImageUtil.convertFontPosture(Config.getOverlayGeneratorConfig().getString("overlay.title.font.style"));
   private final int TITLE_FONT_SIZE = Config.getOverlayGeneratorConfig().getInt("overlay.title.font.size");
 
   private final String TABLE_FONT_NAME = Config.getOverlayGeneratorConfig().getString("overlay.table.font.name", "Arial");
-  private final int TABLE_FONT_STYLE = Config.getOverlayGeneratorConfig().getInt("overlay.table.font.style", FontPosture.REGULAR.ordinal());
+  private final int TABLE_FONT_STYLE = ImageUtil.convertFontPosture(Config.getOverlayGeneratorConfig().getString("overlay.table.font.style"));
   private final int TABLE_FONT_SIZE = Config.getOverlayGeneratorConfig().getInt("overlay.table.font.size", 60);
 
   private final int PADDING = Config.getOverlayGeneratorConfig().getInt("overlay.padding");

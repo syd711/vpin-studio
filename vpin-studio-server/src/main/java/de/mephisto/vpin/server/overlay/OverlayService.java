@@ -65,7 +65,7 @@ public class OverlayService implements InitializingBean {
     return new File(SystemService.RESOURCES, OVERLAY_BACKGROUNDS);
   }
 
-  private File getOverlayFile() {
+  public File getOverlayFile() {
     return new File(SystemService.RESOURCES, "overlay.jpg");
   }
 

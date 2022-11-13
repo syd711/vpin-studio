@@ -116,8 +116,12 @@ public class VPinStudioClient implements ObservedPropertyChangeListener {
   }
 
   public InputStream getOverlayImage() {
-    byte[] bytes = RestClient.getInstance().readBinary(API + "overlay/generate");
+    byte[] bytes = RestClient.getInstance().readBinary(API + "overlay/preview");
     return new ByteArrayInputStream(bytes);
+  }
+
+  public boolean generateOverlayImage() {
+    return RestClient.getInstance().get(API + "overlay/generate", Boolean.class);
   }
 
   public List<String> getOverlayBackgrounds() {

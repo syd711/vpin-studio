@@ -234,29 +234,34 @@ public class OverlayController implements Initializable, ObservedPropertyChangeL
       previewStack.getChildren().add(waitOverlay);
 
       try {
-        if (regenerate) {
-          new Thread(() -> {
-            InputStream input = client.getOverlayImage();
-            Image image = new Image(input);
-            overlayPreview.setImage(image);
-            overlayPreview.setVisible(true);
+        new Thread(() -> {
+          if (regenerate) {
+            client.generateOverlayImage();
+          }
 
-            int resolution = Integer.parseInt(imageScalingCombo.getValue());
-            if (image.getWidth() >= resolution && image.getWidth() < imageCenter.getWidth()) {
-              overlayPreview.setFitWidth(image.getHeight());
-              overlayPreview.setFitHeight(image.getWidth());
-            } else {
-              overlayPreview.setFitWidth(imageCenter.getHeight() - offset);
-              overlayPreview.setFitHeight(imageCenter.getWidth() - offset);
-            }
+          InputStream input = client.getOverlayImage();
+          Image image = new Image(input);
+          overlayPreview.setImage(image);
+          overlayPreview.setVisible(true);
 
-            Platform.runLater(() -> {
-              imageMetaDataLabel.setText("Resolution: " + (int) image.getWidth() + " x " + (int) image.getHeight());
-              previewStack.getChildren().remove(waitOverlay);
-            });
+          int resolution = Integer.parseInt(imageScalingCombo.getValue());
+          if (image.getWidth() >= resolution && image.getWidth() < imageCenter.getWidth()) {
+            overlayPreview.setFitWidth(image.getHeight());
+            overlayPreview.setFitHeight(image.getWidth());
+          }
+          else {
+            overlayPreview.setFitWidth(imageCenter.getHeight() - offset);
+            overlayPreview.setFitHeight(imageCenter.getWidth() - offset);
+          }
 
-          }).start();
-        }
+          Platform.runLater(() -> {
+            imageMetaDataLabel.setText("Resolution: " + (int) image.getWidth() + " x " + (int) image.getHeight());
+            previewStack.getChildren().remove(waitOverlay);
+            this.generateBtn.setDisable(false);
+            this.openImageBtn.setDisable(false);
+          });
+
+        }).start();
         overlayPreview.setFitHeight(imageCenter.getWidth() - offset);
         overlayPreview.setFitWidth(imageCenter.getHeight() - offset);
 

@@ -315,7 +315,7 @@ public class HighscoreCardsController implements Initializable, ObservedProperty
 
     GameRepresentation value = tableCombo.getValue();
     refreshRawPreview(Optional.ofNullable(value));
-    onGenerateClick();
+    refreshPreview(Optional.ofNullable(value), false);
   }
 
   private void refreshRawPreview(Optional<GameRepresentation> game) {
@@ -357,8 +357,11 @@ public class HighscoreCardsController implements Initializable, ObservedProperty
       previewStack.getChildren().add(waitOverlay);
 
       try {
-        if (regenerate) {
           new Thread(() -> {
+            if (regenerate) {
+              client.generateHighscoreCard(game.get());
+            }
+
             InputStream input = client.getHighscoreCard(game.get());
             Image image = new Image(input);
             cardPreview.setImage(image);
@@ -366,8 +369,8 @@ public class HighscoreCardsController implements Initializable, ObservedProperty
 
             int resolution = Integer.parseInt(imageScalingCombo.getValue());
             if (image.getWidth() >= resolution && image.getWidth() < imageCenter.getWidth()) {
-              cardPreview.setFitHeight(image.getHeight());
-              cardPreview.setFitWidth(image.getWidth());
+//              cardPreview.setFitHeight(image.getHeight());
+//              cardPreview.setFitWidth(image.getWidth());
             } else {
               cardPreview.setFitHeight(imageCenter.getHeight() - offset);
               cardPreview.setFitWidth(imageCenter.getWidth() - offset);
@@ -379,7 +382,6 @@ public class HighscoreCardsController implements Initializable, ObservedProperty
             });
 
           }).start();
-        }
         cardPreview.setFitHeight(imageCenter.getHeight() - offset);
         cardPreview.setFitWidth(imageCenter.getWidth() - offset);
 
