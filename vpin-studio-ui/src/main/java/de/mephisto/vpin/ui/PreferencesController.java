@@ -64,7 +64,6 @@ public class PreferencesController implements Initializable {
     load("preference-reset.fxml");
   }
 
-
   @FXML
   private void onOverlay(ActionEvent event) throws IOException {
     load("preference-overlay.fxml");
@@ -73,6 +72,11 @@ public class PreferencesController implements Initializable {
   @FXML
   private void onHighscoreCards(ActionEvent event) throws IOException {
     load("preference-highscore-cards.fxml");
+  }
+
+  @FXML
+  private void onServiceInfo(ActionEvent event) throws IOException {
+    load("preference-service-info.fxml");
   }
 
   private void load(String screen) throws IOException {
