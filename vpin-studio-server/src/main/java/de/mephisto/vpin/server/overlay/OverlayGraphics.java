@@ -2,13 +2,11 @@ package de.mephisto.vpin.server.overlay;
 
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameService;
-import de.mephisto.vpin.server.highscores.Highscore;
 import de.mephisto.vpin.server.highscores.HighscoreService;
 import de.mephisto.vpin.server.highscores.Score;
 import de.mephisto.vpin.server.popper.PopperScreen;
 import de.mephisto.vpin.server.util.Config;
 import de.mephisto.vpin.server.util.ImageUtil;
-import javafx.scene.text.FontPosture;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -23,8 +21,7 @@ import java.util.stream.Collectors;
 public class OverlayGraphics {
   private final static Logger LOG = LoggerFactory.getLogger(OverlayGraphics.class);
 
-  private final String HIGHSCORE_TEXT = Config.getOverlayGeneratorConfig().getString("overlay.highscores.text", "Highscores");
-  private final String TITLE_TEXT = Config.getOverlayGeneratorConfig().getString("overlay.title.text", "bubu");
+  private final String TITLE_TEXT = Config.getOverlayGeneratorConfig().getString("overlay.title.text", "Highscores");
 
   private final String SCORE_FONT_NAME = Config.getOverlayGeneratorConfig().getString("overlay.score.font.name", "Arial");
   private final int SCORE_FONT_STYLE = ImageUtil.convertFontPosture(Config.getOverlayGeneratorConfig().getString("overlay.score.font.style"));
@@ -40,22 +37,20 @@ public class OverlayGraphics {
 
   private final int PADDING = Config.getOverlayGeneratorConfig().getInt("overlay.padding");
   private final int ROW_SEPARATOR = Config.getOverlayGeneratorConfig().getInt("overlay.highscores.row.separator");
-  private final int ROW_PADDING_LEFT = Config.getOverlayGeneratorConfig().getInt("overlay.highscores.row.padding.left");
   private final int ROW_HEIGHT = TABLE_FONT_SIZE + ROW_SEPARATOR + SCORE_FONT_SIZE;
 
   private final int BLUR_PIXELS = Config.getOverlayGeneratorConfig().getInt("overlay.blur");
 
   private final String BACKGROUND_IMAGE_NAME = Config.getOverlayGeneratorConfig().getString("overlay.background");
   private final String FONT_COLOR = Config.getOverlayGeneratorConfig().getString("overlay.font.color", "#FFFFFF");
+  private final String RESOLUTION = Config.getOverlayGeneratorConfig().getString("overlay.resolution", "2560x1440");
 
   private final OverlayService overlayService;
   private final GameService service;
-  private final HighscoreService highscoreService;
 
   public OverlayGraphics(OverlayService overlayService, GameService service, HighscoreService highscoreService) {
     this.overlayService = overlayService;
     this.service = service;
-    this.highscoreService = highscoreService;
   }
 
   public BufferedImage draw() throws Exception {
@@ -81,6 +76,11 @@ public class OverlayGraphics {
     }
 
     BufferedImage backgroundImage = ImageUtil.loadImage(sourceImage);
+    int targetWidth = Integer.parseInt(RESOLUTION.split("x")[0]);
+    if(backgroundImage.getWidth() > targetWidth) {
+      backgroundImage = ImageUtil.resizeImage(backgroundImage, targetWidth);
+    }
+
     BufferedImage rotated = ImageUtil.rotateRight(backgroundImage);
     if (BLUR_PIXELS > 0) {
       rotated = ImageUtil.blurImage(rotated, BLUR_PIXELS);
@@ -97,93 +97,14 @@ public class OverlayGraphics {
     return ImageUtil.rotateLeft(rotated);
   }
 
-  /**
-   * The upper section, usually with the three topscores.
-   */
-  private int renderTableChallenge(BufferedImage image, Game challengedGame) throws Exception {
-    Highscore highscore = highscoreService.getHighscore(challengedGame);
+  private void renderHighscoreList(BufferedImage image, int highscoreListYOffset) throws Exception {
     Graphics g = image.getGraphics();
     ImageUtil.setDefaultColor(g, FONT_COLOR);
     int imageWidth = image.getWidth();
-
-    g.setFont(new Font(TITLE_FONT_NAME, TITLE_FONT_STYLE, TITLE_FONT_SIZE));
-
-    String title = TITLE_TEXT;
-    int titleWidth = g.getFontMetrics().stringWidth(title);
-    int titleY = ROW_SEPARATOR + TITLE_FONT_SIZE + PADDING;
-    g.drawString(title, imageWidth / 2 - titleWidth / 2, titleY);
-
-    g.setFont(new Font(TABLE_FONT_NAME, TABLE_FONT_STYLE, TABLE_FONT_SIZE));
-    String challengedTable = challengedGame.getGameDisplayName();
-    int width = g.getFontMetrics().stringWidth(challengedTable);
-
-
-    int tableNameY = titleY + (2 * ROW_SEPARATOR) + TITLE_FONT_SIZE;
-    g.drawString(challengedTable, imageWidth / 2 - width / 2, tableNameY);
-
-    g.setFont(new Font(SCORE_FONT_NAME, SCORE_FONT_STYLE, SCORE_FONT_SIZE));
-
-    int count = 0;
-    int scoreWidth = 0;
-
-
-    List<String> scores = new ArrayList<>();
-    if (highscore != null) {
-//      for (Score score : highscore.toScores()) {
-//        String scoreString = score.getPosition() + ". " + score.getUserInitials() + " " + score.getScore();
-//        scores.add(scoreString);
-//
-//        int singleScoreWidth = g.getFontMetrics().stringWidth(scoreString);
-//        if (scoreWidth < singleScoreWidth) {
-//          scoreWidth = singleScoreWidth;
-//        }
-//        count++;
-//        if (count == 3) {
-//          break;
-//        }
-//      }
-    }
-    else {
-      for (int i = 1; i <= 3; i++) {
-        String scoreString = i + ". ??? 000.000.000";
-        int singleScoreWidth = g.getFontMetrics().stringWidth(scoreString);
-        if (scoreWidth < singleScoreWidth) {
-          scoreWidth = singleScoreWidth;
-        }
-        scores.add(scoreString);
-      }
-    }
-
-    int position = 0;
-    int wheelWidth = (3 * SCORE_FONT_SIZE) + (3 * ROW_SEPARATOR);
-    int totalScoreAndWheelWidth = scoreWidth + wheelWidth;
-
-    tableNameY = tableNameY + ROW_SEPARATOR;
-    for (String score : scores) {
-      position++;
-      int scoreY = tableNameY + (position * SCORE_FONT_SIZE) + (position * ROW_SEPARATOR);
-      g.drawString(score, imageWidth / 2 - totalScoreAndWheelWidth / 2 + wheelWidth + ROW_SEPARATOR, scoreY);
-    }
-
-    File wheelIconFile = challengedGame.getEmulator().getPinUPMedia(PopperScreen.Wheel);
-    int wheelY = tableNameY + ROW_SEPARATOR;
-
-    if (wheelIconFile != null && wheelIconFile.exists()) {
-      BufferedImage wheelImage = ImageIO.read(wheelIconFile);
-      g.drawImage(wheelImage, imageWidth / 2 - totalScoreAndWheelWidth / 2, wheelY, wheelWidth, wheelWidth, null);
-    }
-
-    return wheelY * 2 + SCORE_FONT_SIZE * 2;
-  }
-
-  private void renderHighscoreList(BufferedImage image, int highscoreListYOffset) throws Exception {
-    Graphics g = image.getGraphics();
-    ImageUtil.setDefaultColor(g, Config.getOverlayGeneratorConfig().getString("overlay.font.color"));
-    int imageWidth = image.getWidth();
     int imageHeight = image.getHeight();
 
-    g.setFont(new Font(TITLE_FONT_NAME, Font.PLAIN, TITLE_FONT_SIZE));
-    String text = HIGHSCORE_TEXT;
+    g.setFont(new Font(TITLE_FONT_NAME, TITLE_FONT_STYLE, TITLE_FONT_SIZE));
+    String text = TITLE_TEXT;
     int highscoreTextWidth = g.getFontMetrics().stringWidth(text);
 
     g.drawString(text, imageWidth / 2 - highscoreTextWidth / 2, highscoreListYOffset);
@@ -213,11 +134,11 @@ public class OverlayGraphics {
       LOG.info("Rendering row for table " + game + ", last played " + game.getLastPlayed());
       if (wheelIconFile != null && wheelIconFile.exists()) {
         BufferedImage wheelImage = ImageIO.read(wheelIconFile);
-        g.drawImage(wheelImage, ROW_PADDING_LEFT, yStart + 12, ROW_HEIGHT, ROW_HEIGHT, null);
+        g.drawImage(wheelImage, PADDING, yStart + 12, ROW_HEIGHT, ROW_HEIGHT, null);
       }
 
-      int x = ROW_HEIGHT + ROW_PADDING_LEFT + ROW_HEIGHT / 3;
-      g.setFont(new Font(TABLE_FONT_NAME, TABLE_FONT_SIZE, TABLE_FONT_SIZE));
+      int x = ROW_HEIGHT + PADDING + ROW_HEIGHT / 3;
+      g.setFont(new Font(TABLE_FONT_NAME, TABLE_FONT_STYLE, TABLE_FONT_SIZE));
       g.drawString(game.getGameDisplayName(), x, yStart + SCORE_FONT_SIZE);
 
       Score score = game.getScores().get(0);

@@ -31,6 +31,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -164,8 +165,8 @@ public class OverlayController implements Initializable, ObservedPropertyChangeL
 
   @FXML
   private void onOpenImage() {
-//    GameRepresentation game = tableCombo.getValue();
-//    MediaUtil.openHighscoreSampleCard(game);
+    InputStream image = client.getOverlayImage();
+    MediaUtil.openMedia(image);
   }
 
   @FXML
@@ -203,8 +204,8 @@ public class OverlayController implements Initializable, ObservedPropertyChangeL
 
     BindingUtil.bindColorPicker(fontColorSelector, properties, "overlay.font.color");
 
-    imageScalingCombo.setItems(FXCollections.observableList(Arrays.asList("1280", "1920", "2560", "3840")));
-    BindingUtil.bindComboBox(imageScalingCombo, properties, "overlay.screenSize", "2560");
+    imageScalingCombo.setItems(FXCollections.observableList(Arrays.asList("1280x720", "1920x1080", "2560x1440", "3840x2160")));
+    BindingUtil.bindComboBox(imageScalingCombo, properties, "overlay.resolution", "2.560x1.440");
 
     imageList = FXCollections.observableList(new ArrayList<>(client.getOverlayBackgrounds()));
     backgroundImageCombo.setItems(imageList);
@@ -243,16 +244,8 @@ public class OverlayController implements Initializable, ObservedPropertyChangeL
           Image image = new Image(input);
           overlayPreview.setImage(image);
           overlayPreview.setVisible(true);
-
-          int resolution = Integer.parseInt(imageScalingCombo.getValue());
-          if (image.getWidth() >= resolution && image.getWidth() < imageCenter.getWidth()) {
-            overlayPreview.setFitWidth(image.getHeight());
-            overlayPreview.setFitHeight(image.getWidth());
-          }
-          else {
-            overlayPreview.setFitWidth(imageCenter.getHeight() - offset);
-            overlayPreview.setFitHeight(imageCenter.getWidth() - offset);
-          }
+          overlayPreview.setFitWidth(imageCenter.getHeight() - offset);
+          overlayPreview.setFitHeight(imageCenter.getWidth() - offset);
 
           Platform.runLater(() -> {
             imageMetaDataLabel.setText("Resolution: " + (int) image.getWidth() + " x " + (int) image.getHeight());

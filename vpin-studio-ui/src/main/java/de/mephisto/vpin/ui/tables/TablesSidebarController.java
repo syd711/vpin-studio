@@ -30,6 +30,7 @@ import org.kordamp.ikonli.javafx.FontIcon;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
@@ -226,7 +227,10 @@ public class TablesSidebarController implements Initializable, StudioFXControlle
 
   @FXML
   private void onOpenDirectB2SBackground() {
-    MediaUtil.openDirectB2SBackground(game.get());
+    if(game.isPresent()) {
+      ByteArrayInputStream image = client.getDirectB2SImage(game.get());
+      MediaUtil.openMedia(image);
+    }
   }
 
   @FXML

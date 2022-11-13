@@ -37,6 +37,7 @@ import org.kordamp.ikonli.javafx.FontIcon;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.net.URL;
 import java.util.*;
@@ -149,7 +150,10 @@ public class TablesController implements Initializable, StudioFXController {
   @FXML
   private void onOpenDirectB2SBackground() {
     GameRepresentation game = tableView.getSelectionModel().selectedItemProperty().get();
-    MediaUtil.openDirectB2SBackground(game);
+    if(game != null) {
+      ByteArrayInputStream s = client.getDirectB2SImage(game);
+      MediaUtil.openMedia(s);
+    }
   }
 
   @FXML

@@ -34,7 +34,7 @@
                             <content>
                                 <VBox prefHeight="200.0" prefWidth="100.0" styleClass="accordion-container" stylesheets="@stylesheet.css">
                                     <children>
-                                        <Label layoutX="20.0" layoutY="40.0" text="Scaling Width (Pixel):" textFill="WHITE">
+                                        <Label layoutX="20.0" layoutY="40.0" text="Overlay Resolution" textFill="WHITE">
                                             <font>
                                                 <Font size="14.0" />
                                             </font>

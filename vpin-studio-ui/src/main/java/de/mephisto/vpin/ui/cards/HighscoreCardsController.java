@@ -32,6 +32,7 @@ import org.kordamp.ikonli.javafx.FontIcon;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -198,7 +199,10 @@ public class HighscoreCardsController implements Initializable, ObservedProperty
   @FXML
   private void onOpenImage() {
     GameRepresentation game = tableCombo.getValue();
-    MediaUtil.openHighscoreSampleCard(game);
+    if(game != null) {
+      ByteArrayInputStream s = Studio.client.getHighscoreCard(game);
+      MediaUtil.openMedia(s);
+    }
   }
 
   @FXML
@@ -243,7 +247,10 @@ public class HighscoreCardsController implements Initializable, ObservedProperty
   @FXML
   private void onOpenDirectB2SBackground() {
     GameRepresentation game = tableCombo.getValue();
-    MediaUtil.openDirectB2SBackground(game);
+    if(game != null) {
+      ByteArrayInputStream s = Studio.client.getDirectB2SImage(game);
+      MediaUtil.openMedia(s);
+    }
   }
 
   @FXML
