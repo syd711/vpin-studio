@@ -41,7 +41,8 @@ public class RequestUtil {
 
   public static ResponseEntity<byte[]> serializeImage(@Nullable File file) throws Exception {
     if (file != null && file.exists()) {
-      try (BufferedInputStream in = new BufferedInputStream(new FileInputStream(file))) {
+      BufferedInputStream in = new BufferedInputStream(new FileInputStream(file));
+      try {
         return ResponseEntity.ok()
             .lastModified(file.lastModified())
             .contentType(MediaType.parseMediaType("image/" + FilenameUtils.getExtension(file.getName())))
@@ -51,6 +52,9 @@ public class RequestUtil {
       } catch (Exception e) {
         LOG.error("Failed to serialize image " + file.getAbsolutePath() + ": " + e.getMessage(), e);
         throw e;
+      }
+      finally {
+        in.close();
       }
       //ignore
     }

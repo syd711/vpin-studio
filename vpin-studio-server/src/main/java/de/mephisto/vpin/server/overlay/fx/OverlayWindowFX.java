@@ -52,6 +52,8 @@ public class OverlayWindowFX extends Application implements NativeKeyListener, P
 
     FileInputStream inputstream = new FileInputStream("resources/overlay.jpg");
     Image image = new Image(inputstream);
+    inputstream.close();
+
     ImageView imageView = new ImageView(image);
     imageView.setPreserveRatio(true);
 
