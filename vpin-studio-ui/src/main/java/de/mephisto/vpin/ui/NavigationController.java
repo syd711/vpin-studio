@@ -65,7 +65,7 @@ public class NavigationController implements Initializable {
 
   @FXML
   private void onHighscoreCardsClick(ActionEvent event) throws IOException {
-    loadScreen(event, "scene-highscoreCards.fxml");
+    loadScreen(event, "scene-highscore-cards.fxml");
   }
 
   @FXML

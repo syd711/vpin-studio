@@ -213,7 +213,7 @@ public class HighscoreCardsController implements Initializable, ObservedProperty
   @FXML
   private void onTableRefresh(ActionEvent event) throws IOException {
     if (event != null) {
-      NavigationController.load("scene-highscoreCards.fxml");
+      NavigationController.load("scene-highscore-cards.fxml");
       return;
     }
     List<GameRepresentation> games = client.getGames();
