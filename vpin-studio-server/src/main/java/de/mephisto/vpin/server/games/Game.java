@@ -1,6 +1,7 @@
 package de.mephisto.vpin.server.games;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import de.mephisto.vpin.server.highscores.Score;
 import de.mephisto.vpin.server.popper.Emulator;
 import de.mephisto.vpin.server.system.SystemService;
 import edu.umd.cs.findbugs.annotations.NonNull;
@@ -9,7 +10,7 @@ import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.File;
-import java.util.Date;
+import java.util.*;
 
 public class Game {
 
@@ -23,14 +24,15 @@ public class Game {
   private Emulator emulator;
 
   private File gameFile;
-  private File romFile;
 
   private Date lastPlayed;
   private int numberPlays;
   private int validationState;
   private String ignoredValidations;
   private int volume;
+
   private String rawHighscore;
+  private List<Score> scores = new ArrayList<>();
 
   private SystemService systemService;
 
@@ -109,6 +111,15 @@ public class Game {
 
   public void setIgnoredValidations(String ignoredValidations) {
     this.ignoredValidations = ignoredValidations;
+  }
+
+  @NonNull
+  public List<Score> getScores() {
+    return scores;
+  }
+
+  public void setScores(List<Score> scores) {
+    this.scores = scores;
   }
 
   @JsonIgnore

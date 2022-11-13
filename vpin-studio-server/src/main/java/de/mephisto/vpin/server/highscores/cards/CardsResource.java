@@ -33,8 +33,8 @@ import static de.mephisto.vpin.server.VPinStudioServer.API_SEGMENT;
 
 @RestController
 @RequestMapping(API_SEGMENT + "cards")
-public class CardGeneratorResource {
-  private final static Logger LOG = LoggerFactory.getLogger(CardGeneratorResource.class);
+public class CardsResource {
+  private final static Logger LOG = LoggerFactory.getLogger(CardsResource.class);
 
   @Autowired
   private GameService gameService;

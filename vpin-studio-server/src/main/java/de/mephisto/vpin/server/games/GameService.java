@@ -1,18 +1,16 @@
 package de.mephisto.vpin.server.games;
 
-import de.mephisto.vpin.server.overlay.fx.OverlayWindowFX;
-import de.mephisto.vpin.server.highscores.HighscoreService;
 import de.mephisto.vpin.server.highscores.Highscore;
+import de.mephisto.vpin.server.highscores.HighscoreParser;
+import de.mephisto.vpin.server.highscores.HighscoreService;
 import de.mephisto.vpin.server.popper.PinUPConnector;
 import de.mephisto.vpin.server.roms.RomService;
 import de.mephisto.vpin.server.roms.ScanResult;
-import de.mephisto.vpin.server.system.SystemService;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -84,10 +82,6 @@ public class GameService {
     return games.stream().filter(g -> gameIdsFromPlaylists.contains(g.getId())).collect(Collectors.toList());
   }
 
-  public List<Game> getGameInfos() {
-    return pinUPConnector.getGames();
-  }
-
   @SuppressWarnings("unused")
   @Nullable
   public Game getGameByVpxFilename(@NonNull String filename) {
@@ -100,24 +94,9 @@ public class GameService {
     return null;
   }
 
-  @Nullable
-  public Game getGameByRom(@NonNull String romName) {
-    List<Game> games = pinUPConnector.getGames();
-    for (Game game : games) {
-      if (game.getRom() != null && game.getRom().equals(romName)) {
-        return game;
-      }
-    }
-    return null;
-  }
-
-  @SuppressWarnings("unused")
-  public Game getGameByName(String table) {
-    return this.pinUPConnector.getGameByName(table);
-  }
-
   public Game getGameByFile(File file) {
-    return this.pinUPConnector.getGameByFilename(file.getName());
+    Game game = this.pinUPConnector.getGameByFilename(file.getName());
+    return game;
   }
 
   @Nullable
@@ -141,8 +120,9 @@ public class GameService {
       game.setIgnoredValidations(gameDetails.getIgnoredValidations());
 
       Highscore highscore = highscoreService.getHighscore(game);
-      if (highscore != null) {
+      if (highscore != null && !StringUtils.isEmpty(highscore.getRaw())) {
         game.setRawHighscore(highscore.getRaw());
+        game.setScores(HighscoreParser.parseScores(game, highscore.getRaw()));
       }
 
       //run validations at the end!!!

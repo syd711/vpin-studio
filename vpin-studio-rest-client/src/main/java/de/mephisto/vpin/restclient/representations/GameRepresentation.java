@@ -1,6 +1,7 @@
 package de.mephisto.vpin.restclient.representations;
 
 import java.util.Date;
+import java.util.List;
 
 /**
  * {
@@ -31,6 +32,15 @@ public class GameRepresentation {
   private String hsFileName;
   private boolean romExists;
   private String ignoredValidations;
+  private List<ScoreRepresentation> scores;
+
+  public List<ScoreRepresentation> getScores() {
+    return scores;
+  }
+
+  public void setScores(List<ScoreRepresentation> scores) {
+    this.scores = scores;
+  }
 
   public String getIgnoredValidations() {
     return ignoredValidations;

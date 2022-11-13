@@ -3,6 +3,7 @@ package de.mephisto.vpin.server.overlay;
 import de.mephisto.vpin.server.system.SystemService;
 import de.mephisto.vpin.server.util.RequestUtil;
 import de.mephisto.vpin.server.util.UploadUtil;
+import org.apache.commons.io.FilenameUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,7 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
-import java.io.IOException;
+import java.net.URLEncoder;
 import java.util.List;
 
 import static de.mephisto.vpin.server.VPinStudioServer.API_SEGMENT;
@@ -24,19 +25,27 @@ public class OverlayResource {
   @Autowired
   private OverlayService overlayService;
 
-  @GetMapping
-  public ResponseEntity<byte[]> getOverlayImage() throws Exception {
-    return RequestUtil.serializeImage(new File(SystemService.RESOURCES, "overlay.jpg"));
-  }
-
   @GetMapping("/generate")
-  public boolean generateCards() throws Exception {
-    return overlayService.generateOverlay();
+  public ResponseEntity<byte[]> getOverlayImage() throws Exception {
+    if (overlayService.generateOverlay()) {
+      return RequestUtil.serializeImage(new File(SystemService.RESOURCES, "overlay.jpg"));
+    }
+    return ResponseEntity.notFound().build();
   }
 
   @GetMapping("/backgrounds")
   public List<String> getBackgrounds() {
     return overlayService.getBackgrounds();
+  }
+
+  @GetMapping("/background/{name}")
+  public ResponseEntity<byte[]> getBackground(@PathVariable("name") String imageName) throws Exception {
+    File folder = overlayService.getOverlayBackgroundsFolder();
+    File[] files = folder.listFiles((dir, name) -> URLEncoder.encode(FilenameUtils.getBaseName(name)).equals(imageName));
+    if (files != null) {
+      return RequestUtil.serializeImage(files[0]);
+    }
+    return ResponseEntity.notFound().build();
   }
 
   @PostMapping(value = "/backgroundupload")

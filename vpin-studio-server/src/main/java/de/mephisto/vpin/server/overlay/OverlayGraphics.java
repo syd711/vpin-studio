@@ -2,10 +2,10 @@ package de.mephisto.vpin.server.overlay;
 
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameService;
-import de.mephisto.vpin.server.highscores.HighscoreService;
 import de.mephisto.vpin.server.highscores.Highscore;
+import de.mephisto.vpin.server.highscores.HighscoreService;
+import de.mephisto.vpin.server.highscores.Score;
 import de.mephisto.vpin.server.popper.PopperScreen;
-import de.mephisto.vpin.server.system.SystemService;
 import de.mephisto.vpin.server.util.Config;
 import de.mephisto.vpin.server.util.ImageUtil;
 import javafx.scene.text.FontPosture;
@@ -61,7 +61,7 @@ public class OverlayGraphics {
   public BufferedImage draw() throws Exception {
     File backgroundsFolder = overlayService.getOverlayBackgroundsFolder();
     File sourceImage = null;
-    if(BACKGROUND_IMAGE_NAME != null){
+    if (BACKGROUND_IMAGE_NAME != null) {
       sourceImage = new File(backgroundsFolder, BACKGROUND_IMAGE_NAME + ".jpg");
       if (!sourceImage.exists()) {
         sourceImage = new File(backgroundsFolder, BACKGROUND_IMAGE_NAME + ".png");
@@ -190,8 +190,9 @@ public class OverlayGraphics {
 
     int yStart = highscoreListYOffset + ROW_SEPARATOR + TITLE_FONT_SIZE / 2;
 
-    List<Game> gamesWithDate = service.getGameInfos().stream().filter(game -> game.getLastPlayed() != null).collect(Collectors.toList());
-    List<Game> gamesWithOutDate = service.getGameInfos().stream().filter(game -> game.getLastPlayed() == null).collect(Collectors.toList());
+    List<Game> games = service.getGames();
+    List<Game> gamesWithDate = games.stream().filter(game -> game.getLastPlayed() != null).collect(Collectors.toList());
+    List<Game> gamesWithOutDate = games.stream().filter(game -> game.getLastPlayed() == null).collect(Collectors.toList());
 
     List<Game> sorted = new ArrayList<>();
     gamesWithDate.sort((o1, o2) -> Long.compare(o2.getLastPlayed().getTime(), o1.getLastPlayed().getTime()));
@@ -199,19 +200,18 @@ public class OverlayGraphics {
     sorted.addAll(gamesWithOutDate);
 
     for (Game game : sorted) {
-      Highscore highscore = highscoreService.getHighscore(game);
-      if (highscore == null) {
+      if (game.getScores().isEmpty()) {
         LOG.info("Skipped highscore rendering of " + game.getGameDisplayName() + ", no highscore info found");
         continue;
       }
 
       File wheelIconFile = game.getEmulator().getPinUPMedia(PopperScreen.Wheel);
-      if (wheelIconFile != null && !wheelIconFile.exists() && Config.getOverlayGeneratorConfig().getBoolean("overlay.skipWithMissingWheels")) {
+      if ((wheelIconFile == null || !wheelIconFile.exists()) && Config.getOverlayGeneratorConfig().getBoolean("overlay.skipWithMissingWheels")) {
         continue;
       }
 
       LOG.info("Rendering row for table " + game + ", last played " + game.getLastPlayed());
-      if (wheelIconFile.exists()) {
+      if (wheelIconFile != null && wheelIconFile.exists()) {
         BufferedImage wheelImage = ImageIO.read(wheelIconFile);
         g.drawImage(wheelImage, ROW_PADDING_LEFT, yStart + 12, ROW_HEIGHT, ROW_HEIGHT, null);
       }
@@ -220,9 +220,10 @@ public class OverlayGraphics {
       g.setFont(new Font(TABLE_FONT_NAME, TABLE_FONT_SIZE, TABLE_FONT_SIZE));
       g.drawString(game.getGameDisplayName(), x, yStart + SCORE_FONT_SIZE);
 
+      Score score = game.getScores().get(0);
       g.setFont(new Font(SCORE_FONT_NAME, SCORE_FONT_STYLE, SCORE_FONT_SIZE));
-//      g.drawString(highscore.getInitials1() + " " + highscore.getScore1(), x,
-//          yStart + SCORE_FONT_SIZE + ((ROW_HEIGHT - SCORE_FONT_SIZE) / 2) + SCORE_FONT_SIZE / 2);
+      g.drawString(score.getUserInitials() + " " + score.getScore(), x,
+          yStart + SCORE_FONT_SIZE + ((ROW_HEIGHT - SCORE_FONT_SIZE) / 2) + SCORE_FONT_SIZE / 2);
 
       yStart = yStart + ROW_HEIGHT + ROW_SEPARATOR;
       if (!isRemainingSpaceAvailable(imageHeight, yStart)) {

@@ -62,32 +62,31 @@ public class HighscoreService implements InitializingBean {
     Highscore updatedHighscore = Highscore.forGame(game, rawHighscore);
     Highscore existingHighscore = highscoreRepository.findByGameId(game.getId());
 
-    if (existingHighscore != null) {
-      if (containsHigherScoreThan(updatedHighscore, existingHighscore)) {
-        event = new HighscoreChangeEvent() {
-          @Override
-          public Game getGame() {
-            return game;
-          }
+    if (existingHighscore == null || rawHighscore.equals(existingHighscore.getRaw())) {
+      event = new HighscoreChangeEvent() {
+        @Override
+        public Game getGame() {
+          return game;
+        }
 
-          @Override
-          public Highscore getOldHighscore() {
-            return existingHighscore;
-          }
+        @Override
+        public Highscore getOldHighscore() {
+          return existingHighscore;
+        }
 
-          @Override
-          public Highscore getNewHighscore() {
-            return updatedHighscore;
-          }
-        };
-        triggerHighscoreChange(event);
-      }
+        @Override
+        public Highscore getNewHighscore() {
+          return updatedHighscore;
+        }
+      };
 
       //the updated score contains the new data, so we only need to update the date
       updatedHighscore.setCreatedAt(existingHighscore.getCreatedAt());
+      highscoreRepository.save(updatedHighscore);
+      LOG.info("Updated highscore of " + game);
+
+      triggerHighscoreChange(event);
     }
-    highscoreRepository.save(updatedHighscore);
-    LOG.info("Invalidated highscore of " + game);
   }
 
   public List<Score> convertToScores(Highscore highscore) {
@@ -103,19 +102,6 @@ public class HighscoreService implements InitializingBean {
 //    }
     return result;
   }
-
-  /**
-   * The score has changed, which only happens when a new score is created.
-   * So we only have to check if the actual score changed.
-   *
-   * @param updatedHighscore the new highscore
-   * @param existingScore                the old highscore to compare with
-   * @return true if the compared highscore is higher than this one.
-   */
-  public boolean containsHigherScoreThan(Highscore updatedHighscore, Highscore existingScore) {
-    return false; //TODO
-  }
-
 
   private void triggerHighscoreChange(@NonNull HighscoreChangeEvent event) {
     new Thread(() -> {

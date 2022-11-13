@@ -9,6 +9,7 @@ import de.mephisto.vpin.ui.StudioFXController;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.WaitOverlayController;
 import de.mephisto.vpin.ui.util.BindingUtil;
+import de.mephisto.vpin.ui.util.ImageUtil;
 import de.mephisto.vpin.ui.util.MediaUtil;
 import de.mephisto.vpin.ui.util.WidgetFactory;
 import javafx.application.Platform;
@@ -185,14 +186,15 @@ public class OverlayController implements Initializable, ObservedPropertyChangeL
 
   @FXML
   private void onGenerateClick() {
-//    GameRepresentation value = tableCombo.getValue();
-//    refreshPreview(Optional.ofNullable(value), true);
+    refreshPreview(true);
   }
 
   public OverlayController() {
   }
 
   private void initFields() {
+    overlayPreview.rotateProperty().set(90);
+
     NavigationController.setBreadCrumb(Arrays.asList("Overlay Generation"));
 
     BindingUtil.bindFontLabel(titleFontLabel, properties, "overlay.title");
@@ -201,13 +203,13 @@ public class OverlayController implements Initializable, ObservedPropertyChangeL
 
     BindingUtil.bindColorPicker(fontColorSelector, properties, "overlay.font.color");
 
-    imageScalingCombo.setItems(FXCollections.observableList(Arrays.asList("1024", "1280", "1920", "2560")));
-    BindingUtil.bindComboBox(imageScalingCombo, properties, "overlay.screenSize", "1280");
+    imageScalingCombo.setItems(FXCollections.observableList(Arrays.asList("1280", "1920", "2560", "3840")));
+    BindingUtil.bindComboBox(imageScalingCombo, properties, "overlay.screenSize", "2560");
 
-    imageList = FXCollections.observableList(new ArrayList<>(client.getHighscoreBackgroundImages()));
+    imageList = FXCollections.observableList(new ArrayList<>(client.getOverlayBackgrounds()));
     backgroundImageCombo.setItems(imageList);
-    backgroundImageCombo.setCellFactory(c -> new WidgetFactory.HighscoreBackgroundImageListCell(client));
-    backgroundImageCombo.setButtonCell(new WidgetFactory.HighscoreBackgroundImageListCell(client));
+    backgroundImageCombo.setCellFactory(c -> new WidgetFactory.OverlayBackgroundImageListCell(client));
+    backgroundImageCombo.setButtonCell(new WidgetFactory.OverlayBackgroundImageListCell(client));
     BindingUtil.bindComboBox(backgroundImageCombo, properties, "overlay.background");
 
     BindingUtil.bindTextField(titleText, properties, "overlay.title.text");
@@ -221,7 +223,7 @@ public class OverlayController implements Initializable, ObservedPropertyChangeL
   }
 
   private void refreshPreview(boolean regenerate) {
-    int offset = 150;
+    int offset = 70;
     Platform.runLater(() -> {
       this.generateBtn.setDisable(regenerate);
       this.openImageBtn.setDisable(regenerate);
@@ -241,11 +243,11 @@ public class OverlayController implements Initializable, ObservedPropertyChangeL
 
             int resolution = Integer.parseInt(imageScalingCombo.getValue());
             if (image.getWidth() >= resolution && image.getWidth() < imageCenter.getWidth()) {
-              overlayPreview.setFitHeight(image.getHeight());
-              overlayPreview.setFitWidth(image.getWidth());
+              overlayPreview.setFitWidth(image.getHeight());
+              overlayPreview.setFitHeight(image.getWidth());
             } else {
-              overlayPreview.setFitHeight(imageCenter.getHeight() - offset);
-              overlayPreview.setFitWidth(imageCenter.getWidth() - offset);
+              overlayPreview.setFitWidth(imageCenter.getHeight() - offset);
+              overlayPreview.setFitHeight(imageCenter.getWidth() - offset);
             }
 
             Platform.runLater(() -> {
@@ -255,8 +257,8 @@ public class OverlayController implements Initializable, ObservedPropertyChangeL
 
           }).start();
         }
-        overlayPreview.setFitHeight(imageCenter.getHeight() - offset);
-        overlayPreview.setFitWidth(imageCenter.getWidth() - offset);
+        overlayPreview.setFitHeight(imageCenter.getWidth() - offset);
+        overlayPreview.setFitWidth(imageCenter.getHeight() - offset);
 
       } catch (Exception e) {
         LOG.error("Failed to refresh card preview: " + e.getMessage(), e);

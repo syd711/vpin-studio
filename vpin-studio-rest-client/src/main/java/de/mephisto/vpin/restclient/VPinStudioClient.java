@@ -120,9 +120,8 @@ public class VPinStudioClient implements ObservedPropertyChangeListener {
     return new ByteArrayInputStream(bytes);
   }
 
-  public InputStream generateOverlayImage() {
-    byte[] bytes = RestClient.getInstance().readBinary(API + "overlay/generate");
-    return new ByteArrayInputStream(bytes);
+  public List<String> getOverlayBackgrounds() {
+    return Arrays.asList(RestClient.getInstance().get(API + "overlay/backgrounds", String[].class));
   }
 
   public ByteArrayInputStream getHighscoreCard(GameRepresentation game) {
@@ -154,6 +153,22 @@ public class VPinStudioClient implements ObservedPropertyChangeListener {
 
   public List<String> getHighscoreBackgroundImages() {
     return Arrays.asList(RestClient.getInstance().get(API + "cards/backgrounds", String[].class));
+  }
+
+  public ByteArrayInputStream getOverlayBackgroundImage(String name) {
+    try {
+      if (!imageCache.containsKey(name)) {
+        String encodedName = URLEncoder.encode(name, "utf8");
+        byte[] bytes = RestClient.getInstance().readBinary(API + "overlay/background/" + encodedName);
+        imageCache.put(name, bytes);
+      }
+
+      byte[] imageBytes = imageCache.get(name);
+      return new ByteArrayInputStream(imageBytes);
+    } catch (UnsupportedEncodingException e) {
+      LOG.error("Failed to read highscore background image: " + e.getMessage(), e);
+    }
+    return null;
   }
 
   public ByteArrayInputStream getHighscoreBackgroundImage(String name) {

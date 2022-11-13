@@ -31,57 +31,38 @@ import java.util.stream.Collectors;
 public class HighscoreParser {
   private final static Logger LOG = LoggerFactory.getLogger(HighscoreParser.class);
 
-  public List<Score> parseHighscore(Game game, String cmdOutput) {
+  public static List<Score> parseScores(Game game, String raw) {
     List<Score> scores = new ArrayList<>();
     try {
-//      LOG.debug("Parsing Highscore text for " + game.getGameDisplayName() + "\n" + cmdOutput);
-//      String[] lines = cmdOutput.split("\\n");
-//      if (lines.length == 2) {
-//        parseTwoLineOutput(highscore, lines[1]);
-//        return highscore;
-//      }
-//
-//      int index = 1;
-//      List<Score> scores = new ArrayList<>();
-//      for (String line : lines) {
-//        if (line.startsWith(index + ")") || line.startsWith("#" + index) || line.startsWith(index + "#")) {
-//          Score score = createScore(line);
-//
-//          if (index == 1) {
-//            highscore.setScore1(score.getScore());
-//            highscore.setInitials1(score.getUserInitials());
-//          }
-//          else if (index == 2) {
-//            highscore.setScore2(score.getScore());
-//            highscore.setInitials2(score.getUserInitials());
-//          }
-//          else if (index == 3) {
-//            highscore.setScore3(score.getScore());
-//            highscore.setInitials3(score.getUserInitials());
-//          }
-//
-//          scores.add(score);
-//          index++;
-//        }
-//
-//        if (scores.size() == 3) {
-//          break;
-//        }
-//      }
-    } catch (Exception e) {
-      LOG.error("Failed to parse highscore for '" + game + "': " + e.getMessage() + "\nRaw Data:\n==================================\n" + cmdOutput, e);
-      throw e;
-    }
+      LOG.debug("Parsing Highscore text for " + game.getGameDisplayName() + "\n" + raw);
+      String[] lines = raw.split("\\n");
+      if (lines.length == 2) {
+        Score score = new Score(null, lines[1].trim(), 1);
+        scores.add(score);
+        return scores;
+      }
 
+      int index = 1;
+      for (String line : lines) {
+        if (line.startsWith(index + ")") || line.startsWith("#" + index) || line.startsWith(index + "#")) {
+          Score score = createScore(line);
+          scores.add(score);
+          index++;
+        }
+
+        if (scores.size() == 3) {
+          break;
+        }
+      }
+    } catch (Exception e) {
+      LOG.error("Failed to parse highscore for '" + game + "': " + e.getMessage() + "\nRaw Data:\n==================================\n" + raw, e);
+    }
     return scores;
   }
 
-//  private void parseTwoLineOutput(Highscore highscore, String line) {
-//    Score score = new Score(null, line.trim(), 1);
-//    highscore.setRaw(line);
-//    highscore.setInitials1(score.getUserInitials());
-//    highscore.setScore1(score.getScore());
-//  }
+  private void parseTwoLineOutput(Highscore highscore, String line) {
+
+  }
 
   private static Score createScore(String line) {
     List<String> collect = Arrays.stream(line.trim().split(" ")).filter(s -> s.trim().length() > 0).collect(Collectors.toList());

@@ -8,6 +8,6 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface HighscoreRepository extends JpaRepository<Highscore, Long> {
 
-  @Query(value = "SELECT * FROM Highscores c WHERE c.gameId = ?1 ORDER BY createdAt LIMIT 1", nativeQuery = true)
+  @Query(value = "SELECT * FROM Highscores c WHERE c.gameId = ?1 ORDER BY updatedAt LIMIT 1", nativeQuery = true)
   Highscore findByGameId(int gameId);
 }
