@@ -10,7 +10,6 @@
 <?import javafx.scene.control.Separator?>
 <?import javafx.scene.control.Slider?>
 <?import javafx.scene.control.Spinner?>
-<?import javafx.scene.control.TextField?>
 <?import javafx.scene.control.TitledPane?>
 <?import javafx.scene.control.ToolBar?>
 <?import javafx.scene.image.ImageView?>
@@ -41,17 +40,31 @@
                                             </font>
                                         </Label>
                                         <ComboBox fx:id="imageScalingCombo" layoutX="20.0" layoutY="72.0" prefWidth="150.0" />
-                                        <Label text="Default Background Image:" textFill="WHITE">
-                                            <font>
-                                                <Font size="14.0" />
-                                            </font>
-                                            <VBox.margin>
-                                                <Insets top="12.0" />
-                                            </VBox.margin>
-                                        </Label>
+                              <BorderPane>
+                                 <VBox.margin>
+                                    <Insets top="12.0" />
+                                 </VBox.margin>
+                                 <left>
+                                              <Label text="Default Background Image:" textFill="WHITE" BorderPane.alignment="CENTER">
+                                                  <font>
+                                                      <Font size="14.0" />
+                                                  </font>
+                                              </Label>
+                                 </left>
+                                 <right>
+                                              <Button mnemonicParsing="false" onAction="#onUploadButton" BorderPane.alignment="CENTER">
+                                                  <graphic>
+                                                      <FontIcon iconColor="WHITE" iconLiteral="mdi2u-upload" iconSize="14" />
+                                                  </graphic>
+                                              </Button>
+                                 </right>
+                              </BorderPane>
                                         <HBox prefHeight="31.0" prefWidth="276.0">
                                             <children>
-                                                <ComboBox fx:id="backgroundImageCombo" prefHeight="30.0" prefWidth="254.0" stylesheets="@stylesheet.css" />
+                                                <ComboBox fx:id="backgroundImageCombo" prefHeight="30.0" prefWidth="300.0" stylesheets="@stylesheet.css">
+                                       <HBox.margin>
+                                          <Insets top="3.0" />
+                                       </HBox.margin></ComboBox>
                                             </children>
                                         </HBox>
                               <CheckBox fx:id="grayScaleCheckbox" mnemonicParsing="false" text="Grayscale Background" textFill="WHITE">
@@ -59,24 +72,88 @@
                                     <Font size="14.0" />
                                  </font>
                                  <VBox.margin>
-                                    <Insets top="6.0" />
+                                    <Insets bottom="6.0" top="12.0" />
                                  </VBox.margin>
                               </CheckBox>
-                                        <Button mnemonicParsing="false" onAction="#onUploadButton" text="  Upload Background">
+                                        <Label text="Brighten Background:" textFill="WHITE">
                                             <font>
                                                 <Font size="14.0" />
                                             </font>
-                                            <graphic>
-                                                <FontIcon iconColor="WHITE" iconLiteral="mdi2u-upload" iconSize="14" />
-                                            </graphic>
-                                            <VBox.margin>
+                                 <VBox.margin>
+                                    <Insets top="12.0" />
+                                 </VBox.margin>
+                                        </Label>
+                                        <Slider fx:id="brightenSlider">
+                                            <padding>
+                                                <Insets bottom="12.0" top="6.0" />
+                                            </padding>
+                                        </Slider>
+                                        <Label text="Darken Background:" textFill="WHITE">
+                                            <font>
+                                                <Font size="14.0" />
+                                            </font>
+                                            <padding>
                                                 <Insets top="12.0" />
+                                            </padding>
+                                        </Label>
+                                        <Slider fx:id="darkenSlider">
+                                            <padding>
+                                                <Insets bottom="12.0" top="6.0" />
+                                            </padding>
+                                        </Slider>
+                                        <Label text="Blur Background:" textFill="WHITE">
+                                            <font>
+                                                <Font size="14.0" />
+                                            </font>
+                                            <padding>
+                                                <Insets top="12.0" />
+                                            </padding>
+                                        </Label>
+                                        <Slider fx:id="blurSlider">
+                                            <padding>
+                                                <Insets bottom="12.0" top="6.0" />
+                                            </padding>
+                                        </Slider>
+                                        <Label text="Padding:" textFill="WHITE">
+                                            <font>
+                                                <Font size="14.0" />
+                                            </font>
+                                            <padding>
+                                                <Insets top="12.0" />
+                                            </padding>
+                                        </Label>
+                                        <Spinner fx:id="marginTopSpinner" editable="true" prefHeight="26.0" prefWidth="303.0" styleClass="widget-default" stylesheets="@stylesheet.css">
+                                            <VBox.margin>
+                                                <Insets top="6.0" />
                                             </VBox.margin>
-                                        </Button>
+                                        </Spinner>
+                                        <Label text="Row Separator:" textFill="WHITE">
+                                            <font>
+                                                <Font size="14.0" />
+                                            </font>
+                                            <padding>
+                                                <Insets top="12.0" />
+                                            </padding>
+                                        </Label>
+                                        <Spinner fx:id="rowSeparatorSpinner" editable="true" prefHeight="26.0" prefWidth="303.0" styleClass="widget-default" />
                                     </children>
                                 </VBox>
                             </content>
                         </TitledPane>
+                  <TitledPane layoutX="10.0" layoutY="10.0" prefWidth="300.0" stylesheets="@stylesheet.css" text="Widgets">
+                     <content>
+                        <VBox prefHeight="200.0" prefWidth="100.0" styleClass="accordion-container" stylesheets="@stylesheet.css">
+                           <children>
+                              <Label layoutX="20.0" layoutY="40.0" text="Overlay Resolution" textFill="WHITE">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </Label>
+                              <HBox prefHeight="31.0" prefWidth="276.0" />
+                           </children>
+                        </VBox>
+                     </content>
+                  </TitledPane>
                         <TitledPane expanded="false" prefWidth="300.0" stylesheets="@stylesheet.css" text="Font Settings">
                             <font>
                                 <Font size="14.0" />
@@ -169,85 +246,6 @@
                                                 <Insets top="6.0" />
                                             </VBox.margin>
                                         </ColorPicker>
-                                    </children>
-                                </VBox>
-                            </content>
-                        </TitledPane>
-                        <TitledPane expanded="false" text="Layout and Effects">
-                            <content>
-                                <VBox prefHeight="200.0" prefWidth="100.0" styleClass="accordion-container" stylesheets="@stylesheet.css">
-                                    <children>
-                                        <Label text="Title:" textFill="WHITE">
-                                            <font>
-                                                <Font size="14.0" />
-                                            </font>
-                                        </Label>
-                                        <TextField fx:id="titleText">
-                                            <font>
-                                                <Font size="14.0" />
-                                            </font>
-                                        </TextField>
-                                        <Label text="Brighten Background:" textFill="WHITE">
-                                            <font>
-                                                <Font size="14.0" />
-                                            </font>
-                                            <padding>
-                                                <Insets top="12.0" />
-                                            </padding>
-                                        </Label>
-                                        <Slider fx:id="brightenSlider">
-                                            <padding>
-                                                <Insets bottom="12.0" top="6.0" />
-                                            </padding>
-                                        </Slider>
-                                        <Label text="Darken Background:" textFill="WHITE">
-                                            <font>
-                                                <Font size="14.0" />
-                                            </font>
-                                            <padding>
-                                                <Insets top="12.0" />
-                                            </padding>
-                                        </Label>
-                                        <Slider fx:id="darkenSlider">
-                                            <padding>
-                                                <Insets bottom="12.0" top="6.0" />
-                                            </padding>
-                                        </Slider>
-                                        <Label text="Blur Background:" textFill="WHITE">
-                                            <font>
-                                                <Font size="14.0" />
-                                            </font>
-                                            <padding>
-                                                <Insets top="12.0" />
-                                            </padding>
-                                        </Label>
-                                        <Slider fx:id="blurSlider">
-                                            <padding>
-                                                <Insets bottom="12.0" top="6.0" />
-                                            </padding>
-                                        </Slider>
-                                        <Label text="Padding:" textFill="WHITE">
-                                            <font>
-                                                <Font size="14.0" />
-                                            </font>
-                                            <padding>
-                                                <Insets top="12.0" />
-                                            </padding>
-                                        </Label>
-                                        <Spinner fx:id="marginTopSpinner" editable="true" prefHeight="26.0" prefWidth="303.0" styleClass="widget-default" stylesheets="@stylesheet.css">
-                                            <VBox.margin>
-                                                <Insets top="6.0" />
-                                            </VBox.margin>
-                                        </Spinner>
-                                        <Label text="Row Separator:" textFill="WHITE">
-                                            <font>
-                                                <Font size="14.0" />
-                                            </font>
-                                            <padding>
-                                                <Insets top="12.0" />
-                                            </padding>
-                                        </Label>
-                                        <Spinner fx:id="rowSeparatorSpinner" editable="true" prefHeight="26.0" prefWidth="303.0" styleClass="widget-default" />
                                     </children>
                                 </VBox>
                             </content>

@@ -223,7 +223,7 @@ public class OverlayController implements Initializable, ObservedPropertyChangeL
     backgroundImageCombo.setButtonCell(new WidgetFactory.OverlayBackgroundImageListCell(client));
     BindingUtil.bindComboBox(backgroundImageCombo, properties, "overlay.background");
 
-    BindingUtil.bindTextField(titleText, properties, "overlay.title.text");
+//    BindingUtil.bindTextField(titleText, properties, "overlay.title.text");
     BindingUtil.bindSlider(brightenSlider, properties, "overlay.alphacomposite.white");
     BindingUtil.bindSlider(darkenSlider, properties, "overlay.alphacomposite.black");
     BindingUtil.bindSlider(blurSlider, properties, "overlay.blur");
