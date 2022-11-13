@@ -14,10 +14,7 @@ import org.springframework.http.MediaType;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.UnsupportedEncodingException;
+import java.io.*;
 import java.net.URLEncoder;
 import java.util.*;
 
@@ -118,15 +115,36 @@ public class VPinStudioClient implements ObservedPropertyChangeListener {
     return Arrays.asList(RestClient.getInstance().get(API + "competitions", CompetitionRepresentation[].class));
   }
 
+  public InputStream getOverlayImage() {
+    byte[] bytes = RestClient.getInstance().readBinary(API + "overlay/generate");
+    return new ByteArrayInputStream(bytes);
+  }
+
+  public InputStream generateOverlayImage() {
+    byte[] bytes = RestClient.getInstance().readBinary(API + "overlay/generate");
+    return new ByteArrayInputStream(bytes);
+  }
+
   public ByteArrayInputStream getHighscoreCard(GameRepresentation game) {
     int gameId = game.getId();
-    byte[] bytes = RestClient.getInstance().readBinary(API + "generator/card/" + gameId);
+    byte[] bytes = RestClient.getInstance().readBinary(API + "cards/preview/" + gameId);
     return new ByteArrayInputStream(bytes);
   }
 
   public boolean generateHighscoreCard(GameRepresentation game) {
     int gameId = game.getId();
-    return RestClient.getInstance().get(API + "generator/cards/" + gameId, Boolean.class);
+    return RestClient.getInstance().get(API + "cards/generate/" + gameId, Boolean.class);
+  }
+
+  public boolean uploadOverlayBackgroundImage(File file) throws Exception {
+    try {
+      String url = RestClient.getInstance().getBaseUrl() + API + "overlay/backgroundupload";
+      new RestTemplate().exchange(url, HttpMethod.POST, createUpload(file, -1, null), Boolean.class);
+      return true;
+    } catch (Exception e) {
+      LOG.error("Background upload failed: " + e.getMessage(), e);
+      throw e;
+    }
   }
 
   public boolean scanGame(GameRepresentation game) {
@@ -135,14 +153,14 @@ public class VPinStudioClient implements ObservedPropertyChangeListener {
   }
 
   public List<String> getHighscoreBackgroundImages() {
-    return Arrays.asList(RestClient.getInstance().get(API + "generator/backgrounds", String[].class));
+    return Arrays.asList(RestClient.getInstance().get(API + "cards/backgrounds", String[].class));
   }
 
   public ByteArrayInputStream getHighscoreBackgroundImage(String name) {
     try {
       if (!imageCache.containsKey(name)) {
         String encodedName = URLEncoder.encode(name, "utf8");
-        byte[] bytes = RestClient.getInstance().readBinary(API + "generator/background/" + encodedName);
+        byte[] bytes = RestClient.getInstance().readBinary(API + "cards/background/" + encodedName);
         imageCache.put(name, bytes);
       }
 
@@ -187,7 +205,7 @@ public class VPinStudioClient implements ObservedPropertyChangeListener {
 
   public boolean uploadHighscoreBackgroundImage(File file) throws Exception {
     try {
-      String url = RestClient.getInstance().getBaseUrl() + API + "generator/backgroundupload";
+      String url = RestClient.getInstance().getBaseUrl() + API + "cards/backgroundupload";
       new RestTemplate().exchange(url, HttpMethod.POST, createUpload(file, -1, null), Boolean.class);
       return true;
     } catch (Exception e) {
@@ -220,7 +238,7 @@ public class VPinStudioClient implements ObservedPropertyChangeListener {
 
   public boolean uploadDirectB2SFile(File file, String uploadType, int gameId) throws Exception {
     try {
-      String url = RestClient.getInstance().getBaseUrl() + API + "generator/directb2supload";
+      String url = RestClient.getInstance().getBaseUrl() + API + "cards/directb2supload";
       new RestTemplate().exchange(url, HttpMethod.POST, createUpload(file, gameId, uploadType), Boolean.class);
       return true;
     } catch (Exception e) {

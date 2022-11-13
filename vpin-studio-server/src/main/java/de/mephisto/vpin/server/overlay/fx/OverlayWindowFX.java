@@ -43,14 +43,14 @@ public class OverlayWindowFX extends Application implements NativeKeyListener, P
   @Override
   public void start(Stage primaryStage) throws Exception {
     this.stage = primaryStage;
-    String hotkey = Config.getOverlayGeneratorConfig().getString("overlay.hotkey");
+    String hotkey = (String) preferencesService.getPreferenceValue("overlayKey");
     if (StringUtils.isEmpty(hotkey)) {
       LOG.error("No overlay hotkey defined! Define a key binding on the overlay configuration tab and restart the service.");
     }
 
     Platform.setImplicitExit(false);
 
-    FileInputStream inputstream = new FileInputStream("resources/background4k.jpg");
+    FileInputStream inputstream = new FileInputStream("resources/overlay.jpg");
     Image image = new Image(inputstream);
     ImageView imageView = new ImageView(image);
     imageView.setPreserveRatio(true);

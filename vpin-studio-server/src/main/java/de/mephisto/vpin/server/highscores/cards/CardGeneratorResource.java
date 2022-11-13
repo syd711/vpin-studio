@@ -32,7 +32,7 @@ import java.util.stream.Collectors;
 import static de.mephisto.vpin.server.VPinStudioServer.API_SEGMENT;
 
 @RestController
-@RequestMapping(API_SEGMENT + "generator")
+@RequestMapping(API_SEGMENT + "cards")
 public class CardGeneratorResource {
   private final static Logger LOG = LoggerFactory.getLogger(CardGeneratorResource.class);
 
@@ -48,7 +48,7 @@ public class CardGeneratorResource {
   @Autowired
   private SystemService systemService;
 
-  @GetMapping("/card/{gameId}")
+  @GetMapping("/preview/{gameId}")
   public ResponseEntity<byte[]> generateCard(@PathVariable("gameId") int gameId) throws Exception {
     if (onCardGeneration(gameId, true)) {
       return RequestUtil.serializeImage(getCardSampleFile());
@@ -57,7 +57,7 @@ public class CardGeneratorResource {
     return RequestUtil.serializeImage(new File(SystemService.RESOURCES, "empty-preview.png"));
   }
 
-  @GetMapping("/cards/{gameId}")
+  @GetMapping("/generate/{gameId}")
   public boolean generateCards(@PathVariable("gameId") int gameId) throws Exception {
     return onCardGeneration(gameId, false);
   }

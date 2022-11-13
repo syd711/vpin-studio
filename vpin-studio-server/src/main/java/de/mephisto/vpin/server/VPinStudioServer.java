@@ -1,6 +1,5 @@
 package de.mephisto.vpin.server;
 
-import de.mephisto.vpin.server.util.Config;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -28,12 +27,6 @@ public class VPinStudioServer extends SpringBootServletInitializer {
     builder.run(args);
 
     new VPinStudioServerTray();
-
-    String targetScreen = Config.getCardGeneratorConfig().getString("popper.screen");
-    if(targetScreen != null) {
-
-    }
-
     LOG.info("Application tray created.");
   }
 }
