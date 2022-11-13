@@ -1,4 +1,4 @@
-package de.mephisto.vpin.server.generators;
+package de.mephisto.vpin.server.overlay;
 
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameService;

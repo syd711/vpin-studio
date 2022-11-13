@@ -1,17 +1,16 @@
-package de.mephisto.vpin.server.fx;
+package de.mephisto.vpin.server.overlay.fx;
 
-import de.mephisto.vpin.server.highscores.cards.CardGeneratorResource;
-import de.mephisto.vpin.server.generators.OverlayGraphics;
+import de.mephisto.vpin.server.overlay.OverlayGraphics;
 import de.mephisto.vpin.server.popper.PopperLaunchListener;
-import de.mephisto.vpin.server.resources.ResourceLoader;
+import de.mephisto.vpin.server.preferences.PreferencesService;
+import de.mephisto.vpin.server.system.SystemService;
 import de.mephisto.vpin.server.util.Config;
 import de.mephisto.vpin.server.util.KeyChecker;
 import javafx.application.Application;
 import javafx.application.Platform;
+import javafx.fxml.FXMLLoader;
 import javafx.geometry.Rectangle2D;
-import javafx.scene.Group;
-import javafx.scene.Scene;
-import javafx.scene.SceneAntialiasing;
+import javafx.scene.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.stage.Screen;
@@ -33,6 +32,10 @@ public class OverlayWindowFX extends Application implements NativeKeyListener, P
 
   private Stage stage;
 
+  public static SystemService systemService;
+
+  public static PreferencesService preferencesService;
+
   public static void main(String[] args) {
     launch(args);
   }
@@ -47,14 +50,12 @@ public class OverlayWindowFX extends Application implements NativeKeyListener, P
 
     Platform.setImplicitExit(false);
 
-//    FileInputStream inputstream = new FileInputStream(CardGeneratorResource.GENERATED_OVERLAY_FILE);
-//    Image image = new Image(inputstream);
-    ImageView imageView = new ImageView();
-    imageView.setPreserveRatio(true);
 
-    Group root = new Group(imageView);
+    FXMLLoader loader = new FXMLLoader(OverlayController.class.getResource("overlay.fxml"));
+    Parent node = loader.load();
+
     Screen screen = Screen.getPrimary();
-    final Scene scene = new Scene(root, screen.getVisualBounds().getWidth(), screen.getVisualBounds().getHeight(), true, SceneAntialiasing.BALANCED);
+    final Scene scene = new Scene(node, screen.getVisualBounds().getWidth(), screen.getVisualBounds().getHeight(), true, SceneAntialiasing.BALANCED);
 
     Rectangle2D bounds = screen.getVisualBounds();
     stage.setX(bounds.getMinX());
@@ -64,8 +65,6 @@ public class OverlayWindowFX extends Application implements NativeKeyListener, P
     stage.setFullScreenExitHint("");
     stage.setFullScreen(true);
     stage.setAlwaysOnTop(true);
-//    stage.setTitle("Highscore Overlay");
-//    stage.getIcons().add(new Image(ResourceLoader.class.getResourceAsStream("logo-64.png")));
     stage.setHeight(screen.getVisualBounds().getWidth());
     stage.setWidth(screen.getVisualBounds().getHeight());
 
@@ -94,20 +93,22 @@ public class OverlayWindowFX extends Application implements NativeKeyListener, P
 
   @Override
   public void nativeKeyPressed(NativeKeyEvent nativeKeyEvent) {
-//    String hotkey = Config.getOverlayGeneratorConfig().getString("overlay.hotkey");
-//    KeyChecker keyChecker = new KeyChecker(hotkey);
-//    if (keyChecker.matches(nativeKeyEvent) || visible) {
-//      this.visible = !visible;
-//      Platform.runLater(() -> {
-//        LOG.info("Toggle show");
-//        if (this.visible) {
-//          stage.show();
-//        }
-//        else {
-//          stage.hide();
-//        }
-//      });
-//    }
+    String hotkey = (String) preferencesService.getPreferenceValue("overlayKey");
+    if(!StringUtils.isEmpty(hotkey)) {
+      KeyChecker keyChecker = new KeyChecker(hotkey);
+      if (keyChecker.matches(nativeKeyEvent) || visible) {
+        this.visible = !visible;
+        Platform.runLater(() -> {
+          LOG.info("Toggle show");
+          if (this.visible) {
+            stage.show();
+          }
+          else {
+            stage.hide();
+          }
+        });
+      }
+    }
   }
 
   @Override

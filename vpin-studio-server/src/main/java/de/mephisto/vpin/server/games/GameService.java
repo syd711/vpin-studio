@@ -1,11 +1,12 @@
 package de.mephisto.vpin.server.games;
 
-import de.mephisto.vpin.server.fx.OverlayWindowFX;
+import de.mephisto.vpin.server.overlay.fx.OverlayWindowFX;
 import de.mephisto.vpin.server.highscores.HighscoreService;
 import de.mephisto.vpin.server.highscores.Highscore;
 import de.mephisto.vpin.server.popper.PinUPConnector;
 import de.mephisto.vpin.server.roms.RomService;
 import de.mephisto.vpin.server.roms.ScanResult;
+import de.mephisto.vpin.server.system.SystemService;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import org.apache.commons.lang3.StringUtils;
@@ -20,7 +21,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
-public class GameService implements InitializingBean {
+public class GameService {
   private final static Logger LOG = LoggerFactory.getLogger(GameService.class);
 
   @Autowired
@@ -37,15 +38,6 @@ public class GameService implements InitializingBean {
 
   @Autowired
   private HighscoreService highscoreService;
-
-  @Override
-  public void afterPropertiesSet() {
-    new Thread(() -> {
-      OverlayWindowFX.main(new String[]{});
-      LOG.info("Overlay listener started.");
-    }).start();
-  }
-
 
   @SuppressWarnings("unused")
   public List<Game> getGames() {
