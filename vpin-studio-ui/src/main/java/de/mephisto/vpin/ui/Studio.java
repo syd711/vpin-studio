@@ -7,6 +7,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.image.Image;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Paint;
 import javafx.stage.Screen;
@@ -45,6 +46,7 @@ public class Studio extends Application {
     Scene scene = new Scene(root, width, height);
     scene.setFill(Paint.valueOf("#212529"));
     stage.setTitle("VPin Studio");
+    stage.getIcons().add(new Image(Studio.class.getResourceAsStream("logo-128.png")));
     stage.setScene(scene);
     stage.initStyle(StageStyle.UNDECORATED);
 

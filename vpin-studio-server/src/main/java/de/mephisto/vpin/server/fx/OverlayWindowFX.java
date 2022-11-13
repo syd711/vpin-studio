@@ -64,8 +64,8 @@ public class OverlayWindowFX extends Application implements NativeKeyListener, P
     stage.setFullScreenExitHint("");
     stage.setFullScreen(true);
     stage.setAlwaysOnTop(true);
-    stage.setTitle("Highscore Overlay");
-    stage.getIcons().add(new Image(ResourceLoader.class.getResourceAsStream("logo.png")));
+//    stage.setTitle("Highscore Overlay");
+//    stage.getIcons().add(new Image(ResourceLoader.class.getResourceAsStream("logo-64.png")));
     stage.setHeight(screen.getVisualBounds().getWidth());
     stage.setWidth(screen.getVisualBounds().getHeight());
 
