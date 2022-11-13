@@ -1,4 +1,4 @@
-package de.mephisto.vpin.server.generators;
+package de.mephisto.vpin.server.highscores.cards;
 
 import de.mephisto.vpin.server.directb2s.DirectB2SService;
 import de.mephisto.vpin.server.games.Game;
@@ -13,7 +13,6 @@ import de.mephisto.vpin.server.util.RequestUtil;
 import de.mephisto.vpin.server.util.UploadUtil;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import org.apache.commons.io.FilenameUtils;
-import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,8 +23,6 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.servlet.http.HttpServletRequest;
 import java.awt.image.BufferedImage;
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.URLEncoder;
 import java.util.Arrays;
@@ -36,10 +33,8 @@ import static de.mephisto.vpin.server.VPinStudioServer.API_SEGMENT;
 
 @RestController
 @RequestMapping(API_SEGMENT + "generator")
-public class GeneratorResource {
-  private final static Logger LOG = LoggerFactory.getLogger(GeneratorResource.class);
-
-  public final static File GENERATED_OVERLAY_FILE = new File(SystemService.RESOURCES, "overlay.jpg");
+public class CardGeneratorResource {
+  private final static Logger LOG = LoggerFactory.getLogger(CardGeneratorResource.class);
 
   @Autowired
   private GameService gameService;
@@ -52,12 +47,6 @@ public class GeneratorResource {
 
   @Autowired
   private SystemService systemService;
-
-  @GetMapping("/overlay")
-  public ResponseEntity<byte[]> generateOverlay() throws Exception {
-    onOverlayGeneration();
-    return RequestUtil.serializeImage(GENERATED_OVERLAY_FILE);
-  }
 
   @GetMapping("/card/{gameId}")
   public ResponseEntity<byte[]> generateCard(@PathVariable("gameId") int gameId) throws Exception {
@@ -122,17 +111,6 @@ public class GeneratorResource {
     File backgroundsFolder = new File(SystemService.RESOURCES, "backgrounds");
     File out = new File(backgroundsFolder, name);
     return UploadUtil.upload(file, out);
-  }
-
-  private BufferedImage onOverlayGeneration() throws Exception {
-    try {
-      BufferedImage bufferedImage = new OverlayGraphics(gameService, highscoreService).draw();
-      ImageUtil.write(bufferedImage, GENERATED_OVERLAY_FILE);
-      return bufferedImage;
-    } catch (Exception e) {
-      LOG.error("Failed to generate overlay: " + e.getMessage(), e);
-      throw e;
-    }
   }
 
   private boolean onCardGeneration(int gameId, boolean generateSampleCard) throws Exception {

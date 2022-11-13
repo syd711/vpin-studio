@@ -44,7 +44,7 @@
                         <Insets />
                      </GridPane.margin>
                   </Label>
-                  <CheckBox fx:id="enableCardGenerationCheckbox" mnemonicParsing="false" GridPane.columnIndex="1" />
+                  <CheckBox fx:id="showOverlayOnStartupCheckbox" mnemonicParsing="false" GridPane.columnIndex="1" />
                </children>
                <opaqueInsets>
                   <Insets />
@@ -73,7 +73,7 @@
                         <Font size="14.0" />
                      </font>
                   </Label>
-                  <ComboBox fx:id="overlayKeyCombo" onAction="#onKeySelection" prefHeight="30.0" prefWidth="153.0" GridPane.columnIndex="1" />
+                  <ComboBox fx:id="overlayKeyCombo" prefHeight="30.0" prefWidth="153.0" GridPane.columnIndex="1" />
                </children>
                <opaqueInsets>
                   <Insets />

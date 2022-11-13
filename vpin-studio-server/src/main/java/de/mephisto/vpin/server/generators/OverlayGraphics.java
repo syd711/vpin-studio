@@ -84,7 +84,7 @@ public class OverlayGraphics {
       gameOfTheMonth = service.getGame(selection);
     }
 
-    BufferedImage backgroundImage = ImageUtil.loadBackground(new File(SystemService.RESOURCES, Config.getOverlayGeneratorConfig().getString("overlay.background")));
+    BufferedImage backgroundImage = ImageUtil.loadImage(new File(SystemService.RESOURCES, Config.getOverlayGeneratorConfig().getString("overlay.background")));
     BufferedImage rotated = ImageUtil.rotateRight(backgroundImage);
     if (BLUR_PIXELS > 0) {
       rotated = ImageUtil.blurImage(rotated, BLUR_PIXELS);

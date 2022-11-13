@@ -3,6 +3,7 @@ package de.mephisto.vpin.ui.util;
 import de.mephisto.vpin.restclient.ObservedProperties;
 import de.mephisto.vpin.restclient.VPinStudioClient;
 import de.mephisto.vpin.restclient.representations.GameRepresentation;
+import de.mephisto.vpin.restclient.representations.PreferenceEntryRepresentation;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.*;
@@ -13,6 +14,8 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontPosture;
 import org.apache.commons.lang3.StringUtils;
+
+import static de.mephisto.vpin.ui.Studio.client;
 
 public class BindingUtil {
 
@@ -25,7 +28,7 @@ public class BindingUtil {
       game = client.getGame(Integer.parseInt(pupId));
     }
 
-    if(game != null) {
+    if (game != null) {
       comboBox.setValue(game);
     }
     ObjectProperty objectProperty = new SimpleObjectProperty<GameRepresentation>();
@@ -43,6 +46,20 @@ public class BindingUtil {
     }, 1000));
   }
 
+  public static void bindTextField(TextField textField, String preference, String defaultValue) {
+    PreferenceEntryRepresentation systemNameEntry = client.getPreference(preference);
+    StringProperty stringProperty = new SimpleStringProperty();
+    stringProperty.setValue(defaultValue);
+    if (!StringUtils.isEmpty(systemNameEntry.getValue())) {
+      stringProperty.setValue(systemNameEntry.getValue());
+    }
+    textField.setText(stringProperty.getValue());
+    Bindings.bindBidirectional(stringProperty, textField.textProperty());
+    textField.textProperty().addListener((observableValue, s, t1) -> debouncer.debounce(preference, () -> {
+      client.setPreference(preference, t1);
+    }, 500));
+  }
+
   public static void bindComboBox(ComboBox<String> comboBox, ObservedProperties properties, String property) {
     bindComboBox(comboBox, properties, property, "");
   }
@@ -55,12 +72,30 @@ public class BindingUtil {
     comboBox.valueProperty().addListener((observableValue, s, t1) -> properties.set(property, t1));
   }
 
+  public static void bindComboBox(ComboBox<String> comboBox, String preference) {
+    PreferenceEntryRepresentation entry = client.getPreference(preference);
+    String value = entry.getValue();
+    StringProperty stringProperty = new SimpleStringProperty();
+    Bindings.bindBidirectional(stringProperty, comboBox.valueProperty());
+    comboBox.setValue(value);
+    comboBox.valueProperty().addListener((observableValue, s, t1) -> client.setPreference(preference, t1));
+  }
+
   public static void bindCheckbox(CheckBox checkbox, ObservedProperties properties, String property) {
     boolean value = properties.getProperty(property, false);
     BooleanProperty booleanProperty = new SimpleBooleanProperty();
     Bindings.bindBidirectional(booleanProperty, checkbox.selectedProperty());
     booleanProperty.set(value);
     checkbox.selectedProperty().addListener((observableValue, s, t1) -> properties.set(property, String.valueOf(t1)));
+  }
+
+  public static void bindCheckbox(CheckBox checkbox, String preference, boolean defaultValue) {
+    PreferenceEntryRepresentation entry = client.getPreference(preference);
+    boolean checked= entry.getBooleanValue(defaultValue);
+    BooleanProperty booleanProperty = new SimpleBooleanProperty();
+    Bindings.bindBidirectional(booleanProperty, checkbox.selectedProperty());
+    booleanProperty.set(checked);
+    checkbox.selectedProperty().addListener((observableValue, s, t1) -> client.setPreference(preference, t1));
   }
 
   public static void bindSpinner(Spinner spinner, ObservedProperties properties, String property) {

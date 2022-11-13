@@ -1,4 +1,4 @@
-package de.mephisto.vpin.server.generators;
+package de.mephisto.vpin.server.highscores.cards;
 
 import de.mephisto.vpin.server.directb2s.DirectB2SImageRatio;
 import de.mephisto.vpin.server.directb2s.DirectB2SService;
@@ -13,7 +13,6 @@ import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
-import java.io.FilenameFilter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -88,7 +87,7 @@ public class CardGraphics {
       }
     }
 
-    BufferedImage backgroundImage = ImageUtil.loadBackground(sourceImage);
+    BufferedImage backgroundImage = ImageUtil.loadImage(sourceImage);
     if (USE_DIRECTB2S) {
       backgroundImage = ImageUtil.crop(backgroundImage, DIRECTB2S_RATIO.getXRatio(), DIRECTB2S_RATIO.getYRatio());
       backgroundImage = ImageUtil.resizeImage(backgroundImage, scaling);

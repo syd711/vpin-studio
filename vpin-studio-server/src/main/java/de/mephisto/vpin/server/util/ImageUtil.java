@@ -1,7 +1,6 @@
 package de.mephisto.vpin.server.util;
 
 import com.jhlabs.image.GaussianFilter;
-import javafx.scene.text.FontPosture;
 import org.imgscalr.Scalr;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,7 +40,7 @@ public class ImageUtil {
   }
 
   @SuppressWarnings("unused")
-  public static BufferedImage loadBackground(File file) throws Exception {
+  public static BufferedImage loadImage(File file) throws IOException {
     if (!file.exists()) {
       throw new FileNotFoundException("File not found " + file.getAbsolutePath());
     }
@@ -147,6 +146,7 @@ public class ImageUtil {
       x = (width / 2) - (targetWidth / 2);
     }
 
+    LOG.info("Cropping image from " + width + "x" + height + " to " + targetWidth + "x" + targetHeight);
     return image.getSubimage(x, y, targetWidth, targetHeight);
   }
 
@@ -163,6 +163,12 @@ public class ImageUtil {
     if (file.getName().endsWith(".jpg") || file.getName().endsWith(".jpeg")) {
       writeJPG(image, file);
     }
+  }
+
+  public static byte[] toBytes(BufferedImage image) throws IOException {
+    ByteArrayOutputStream out = new ByteArrayOutputStream();
+    ImageIO.write(image, "PNG", out);
+    return out.toByteArray();
   }
 
   private static void writeJPG(BufferedImage image, File file) throws IOException {

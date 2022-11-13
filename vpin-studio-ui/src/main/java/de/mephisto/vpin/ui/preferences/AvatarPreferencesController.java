@@ -1,8 +1,8 @@
 package de.mephisto.vpin.ui.preferences;
 
+import de.mephisto.vpin.restclient.representations.PreferenceEntryRepresentation;
 import de.mephisto.vpin.ui.DashboardController;
-import de.mephisto.vpin.ui.Studio;
-import de.mephisto.vpin.ui.tables.dialogs.ROMUploadController;
+import de.mephisto.vpin.ui.util.BindingUtil;
 import de.mephisto.vpin.ui.util.UIDefaults;
 import de.mephisto.vpin.ui.util.WidgetFactory;
 import eu.hansolo.tilesfx.Tile;
@@ -16,11 +16,13 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.paint.Color;
 import javafx.scene.text.TextAlignment;
 import javafx.stage.FileChooser;
+import org.apache.commons.lang3.StringUtils;
 
 import java.io.File;
 import java.net.URL;
 import java.util.ResourceBundle;
 
+import static de.mephisto.vpin.ui.Studio.client;
 import static de.mephisto.vpin.ui.Studio.stage;
 
 public class AvatarPreferencesController implements Initializable {
@@ -31,6 +33,8 @@ public class AvatarPreferencesController implements Initializable {
   @FXML
   private BorderPane avatarBorderPane;
 
+  private Tile avatar;
+
   @FXML
   private void onFileSelect(ActionEvent e) {
     FileChooser fileChooser = new FileChooser();
@@ -40,7 +44,8 @@ public class AvatarPreferencesController implements Initializable {
 
     File selection = fileChooser.showOpenDialog(stage);
     try {
-      Studio.client.uploadAvatar(selection);
+      client.uploadAvatar(selection);
+      refreshAvatar();
     } catch (Exception ex) {
       WidgetFactory.showAlert("Uploading avatar image failed, check log file for details:\n\n" + ex.getMessage());
     }
@@ -48,17 +53,29 @@ public class AvatarPreferencesController implements Initializable {
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
-    vpinNameText.setText(UIDefaults.VPIN_NAME);
+    BindingUtil.bindTextField(vpinNameText, PreferenceNames.SYSTEM_NAME, UIDefaults.VPIN_NAME);
+    refreshAvatar();
+  }
 
-    Tile avatar = TileBuilder.create()
-        .skinType(Tile.SkinType.IMAGE)
-        .prefSize(300, 300)
-        .backgroundColor(Color.TRANSPARENT)
-        .image(new Image(DashboardController.class.getResourceAsStream("avatar-default.png")))
-        .imageMask(Tile.ImageMask.ROUND)
-        .textSize(Tile.TextSize.BIGGER)
-        .textAlignment(TextAlignment.CENTER)
-        .build();
-    avatarBorderPane.setCenter(avatar);
+  private void refreshAvatar() {
+    PreferenceEntryRepresentation avatarEntry = client.getPreference(PreferenceNames.AVATAR);
+    Image image = new Image(DashboardController.class.getResourceAsStream("avatar-default.png"));
+    if (!StringUtils.isEmpty(avatarEntry.getValue())) {
+      image = new Image(client.getAsset(avatarEntry.getValue()));
+    }
+
+    if(avatar == null) {
+      avatar = TileBuilder.create()
+          .skinType(Tile.SkinType.IMAGE)
+          .prefSize(300, 300)
+          .backgroundColor(Color.TRANSPARENT)
+          .image(image)
+          .imageMask(Tile.ImageMask.ROUND)
+          .textSize(Tile.TextSize.BIGGER)
+          .textAlignment(TextAlignment.CENTER)
+          .build();
+      avatarBorderPane.setCenter(avatar);
+    }
+    avatar.setImage(image);
   }
 }

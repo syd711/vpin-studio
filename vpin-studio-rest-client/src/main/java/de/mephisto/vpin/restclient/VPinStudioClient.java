@@ -43,6 +43,11 @@ public class VPinStudioClient implements ObservedPropertyChangeListener {
     return new ByteArrayInputStream(bytes);
   }
 
+  public ByteArrayInputStream getAsset(String uuid) {
+    byte[] bytes = RestClient.getInstance().readBinary(API + "asset/data/" + uuid);
+    return new ByteArrayInputStream(bytes);
+  }
+
   public String getURL(String segment) {
     if (!segment.startsWith("http") && !segment.contains(API)) {
       return RestClient.getInstance().getBaseUrl() + API + segment;
@@ -59,6 +64,17 @@ public class VPinStudioClient implements ObservedPropertyChangeListener {
       return RestClient.getInstance().put(API + "preferences", values);
     } catch (Exception e) {
       LOG.error("Failed to set preferences: " + e.getMessage(), e);
+    }
+    return false;
+  }
+
+  public boolean setPreference(String key, Object value) {
+    try {
+      Map<String, Object> values = new HashMap<>();
+      values.put(key, value);
+      return setPreferences(values);
+    } catch (Exception e) {
+      LOG.error("Failed to set preference: " + e.getMessage(), e);
     }
     return false;
   }

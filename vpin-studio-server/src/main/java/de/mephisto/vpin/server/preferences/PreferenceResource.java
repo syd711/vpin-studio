@@ -1,5 +1,6 @@
 package de.mephisto.vpin.server.preferences;
 
+import de.mephisto.vpin.server.util.UploadUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,11 +36,13 @@ public class PreferenceResource {
       return false;
     }
 
+    byte[] crop = UploadUtil.resizeImageUpload(file, 300);
     String mimeType = "image/jpg";
     if(file.getOriginalFilename().toLowerCase().endsWith(".png")) {
       mimeType = "image/png";
     }
-    preferencesService.saveAvatar(file.getBytes(), mimeType);
+
+    preferencesService.saveAvatar(crop, mimeType);
     return true;
   }
 
@@ -49,7 +52,7 @@ public class PreferenceResource {
   }
 
 
-  class PreferenceEntry {
+  static class PreferenceEntry {
     private final String key;
     private final String value;
 

@@ -1,5 +1,7 @@
 package de.mephisto.vpin.restclient.representations;
 
+import org.apache.commons.lang3.StringUtils;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -26,6 +28,20 @@ public class PreferenceEntryRepresentation {
       return "";
     }
     return value;
+  }
+
+  public boolean getBooleanValue(boolean defaultValue) {
+    if(StringUtils.isEmpty(value)) {
+      return defaultValue;
+    }
+    return Boolean.parseBoolean(value);
+  }
+
+  public boolean getBooleanValue() {
+    if(StringUtils.isEmpty(value)) {
+      return false;
+    }
+    return Boolean.parseBoolean(value);
   }
 
   public List<String> getCSVValue() {

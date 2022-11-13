@@ -40,7 +40,7 @@
                         <Font size="14.0" />
                      </font>
                   </Label>
-                  <ComboBox fx:id="resetKeyCombo" onAction="#onKeySelection" prefWidth="150.0" GridPane.columnIndex="1" />
+                  <ComboBox fx:id="resetKeyCombo" prefWidth="150.0" GridPane.columnIndex="1" />
                </children>
                <opaqueInsets>
                   <Insets />

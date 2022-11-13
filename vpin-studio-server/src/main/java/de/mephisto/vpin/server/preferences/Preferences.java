@@ -23,14 +23,44 @@ public class Preferences {
   @Column(name = "id", nullable = false)
   private Long id;
 
+  @OneToOne(cascade = CascadeType.ALL)
+  private Asset avatar;
+
   private String ignoredValidations;
 
   private String ignoredMedia;
 
   private String systemName;
 
-  @OneToOne(cascade = CascadeType.ALL)
-  private Asset avatar;
+  private String resetKey;
+
+  private String overlayKey;
+
+  private String showOverlayOnStartup;
+
+  public String getShowOverlayOnStartup() {
+    return showOverlayOnStartup;
+  }
+
+  public void setShowOverlayOnStartup(String showOverlayOnStartup) {
+    this.showOverlayOnStartup = showOverlayOnStartup;
+  }
+
+  public String getResetKey() {
+    return resetKey;
+  }
+
+  public void setResetKey(String resetKey) {
+    this.resetKey = resetKey;
+  }
+
+  public String getOverlayKey() {
+    return overlayKey;
+  }
+
+  public void setOverlayKey(String overlayKey) {
+    this.overlayKey = overlayKey;
+  }
 
   public Asset getAvatar() {
     return avatar;

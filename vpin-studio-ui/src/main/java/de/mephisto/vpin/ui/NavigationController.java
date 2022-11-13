@@ -1,5 +1,7 @@
 package de.mephisto.vpin.ui;
 
+import de.mephisto.vpin.restclient.representations.PreferenceEntryRepresentation;
+import de.mephisto.vpin.ui.preferences.PreferenceNames;
 import de.mephisto.vpin.ui.util.UIDefaults;
 import eu.hansolo.tilesfx.Tile;
 import eu.hansolo.tilesfx.TileBuilder;
@@ -27,8 +29,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
 
+import static de.mephisto.vpin.ui.Studio.client;
+
 public class NavigationController implements Initializable {
   private final static Logger LOG = LoggerFactory.getLogger(NavigationController.class);
+  private static Tile avatar;
 
   @FXML
   private BorderPane avatarPane;
@@ -37,6 +42,7 @@ public class NavigationController implements Initializable {
   public static StudioFXController navigationController;
 
   private static Parent root;
+  private static BorderPane staticAvatarPane;
   private static String activeScreenId = "scene-dashboard.fxml";
 
   private static Map<String, Parent> viewCache = new HashMap<>();
@@ -49,6 +55,7 @@ public class NavigationController implements Initializable {
 
   public static void refresh() throws IOException {
     loadScreen(null, activeScreenId);
+    refreshAvatar();
   }
 
   @FXML
@@ -101,7 +108,8 @@ public class NavigationController implements Initializable {
     if (viewCache.containsKey(name)) {
       root = viewCache.get(name);
       activeController = controllerCache.get(name);
-    } else {
+    }
+    else {
       FXMLLoader loader = new FXMLLoader(NavigationController.class.getResource(name));
       root = loader.load();
       activeController = loader.<StudioFXController>getController();
@@ -115,24 +123,42 @@ public class NavigationController implements Initializable {
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
-    try {
-      FXMLLoader loader = new FXMLLoader(NavigationController.class.getResource("scene-preferences.fxml"));
-      preferencesRoot = loader.load();
-    } catch (IOException e) {
-      LOG.error("Failed to load preferences: " + e.getMessage(), e);
+    staticAvatarPane = this.avatarPane;
+    if (preferencesRoot == null) {
+      try {
+        FXMLLoader loader = new FXMLLoader(NavigationController.class.getResource("scene-preferences.fxml"));
+        preferencesRoot = loader.load();
+      } catch (IOException e) {
+        LOG.error("Failed to load preferences: " + e.getMessage(), e);
+      }
+    }
+    refreshAvatar();
+  }
+
+  private static void refreshAvatar() {
+    PreferenceEntryRepresentation avatarEntry = client.getPreference(PreferenceNames.AVATAR);
+    Image image = new Image(DashboardController.class.getResourceAsStream("avatar-default.png"));
+    if (!StringUtils.isEmpty(avatarEntry.getValue())) {
+      image = new Image(client.getAsset(avatarEntry.getValue()));
     }
 
-    Tile avatar = TileBuilder.create()
+    PreferenceEntryRepresentation systemNameEntry = client.getPreference(PreferenceNames.SYSTEM_NAME);
+    String name = UIDefaults.VPIN_NAME;
+    if (!StringUtils.isEmpty(systemNameEntry.getValue())) {
+      name = systemNameEntry.getValue();
+    }
+
+    avatar = TileBuilder.create()
         .skinType(Tile.SkinType.IMAGE)
         .prefSize(300, 300)
         .backgroundColor(Color.TRANSPARENT)
-        .image(new Image(DashboardController.class.getResourceAsStream("avatar-default.png")))
+        .image(image)
         .imageMask(Tile.ImageMask.ROUND)
-        .text(UIDefaults.VPIN_NAME)
+        .text(name)
         .textSize(Tile.TextSize.BIGGER)
         .textAlignment(TextAlignment.CENTER)
         .build();
-    avatarPane.setCenter(avatar);
+    staticAvatarPane.setCenter(avatar);
   }
 
   public static void setBreadCrumb(List<String> crumbs) {

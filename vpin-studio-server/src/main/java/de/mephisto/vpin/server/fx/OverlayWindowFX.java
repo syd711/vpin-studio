@@ -1,6 +1,6 @@
 package de.mephisto.vpin.server.fx;
 
-import de.mephisto.vpin.server.generators.GeneratorResource;
+import de.mephisto.vpin.server.highscores.cards.CardGeneratorResource;
 import de.mephisto.vpin.server.generators.OverlayGraphics;
 import de.mephisto.vpin.server.popper.PopperLaunchListener;
 import de.mephisto.vpin.server.resources.ResourceLoader;
@@ -47,9 +47,9 @@ public class OverlayWindowFX extends Application implements NativeKeyListener, P
 
     Platform.setImplicitExit(false);
 
-    FileInputStream inputstream = new FileInputStream(GeneratorResource.GENERATED_OVERLAY_FILE);
-    Image image = new Image(inputstream);
-    ImageView imageView = new ImageView(image);
+//    FileInputStream inputstream = new FileInputStream(CardGeneratorResource.GENERATED_OVERLAY_FILE);
+//    Image image = new Image(inputstream);
+    ImageView imageView = new ImageView();
     imageView.setPreserveRatio(true);
 
     Group root = new Group(imageView);
@@ -94,20 +94,20 @@ public class OverlayWindowFX extends Application implements NativeKeyListener, P
 
   @Override
   public void nativeKeyPressed(NativeKeyEvent nativeKeyEvent) {
-    String hotkey = Config.getOverlayGeneratorConfig().getString("overlay.hotkey");
-    KeyChecker keyChecker = new KeyChecker(hotkey);
-    if (keyChecker.matches(nativeKeyEvent) || visible) {
-      this.visible = !visible;
-      Platform.runLater(() -> {
-        LOG.info("Toggle show");
-        if (this.visible) {
-          stage.show();
-        }
-        else {
-          stage.hide();
-        }
-      });
-    }
+//    String hotkey = Config.getOverlayGeneratorConfig().getString("overlay.hotkey");
+//    KeyChecker keyChecker = new KeyChecker(hotkey);
+//    if (keyChecker.matches(nativeKeyEvent) || visible) {
+//      this.visible = !visible;
+//      Platform.runLater(() -> {
+//        LOG.info("Toggle show");
+//        if (this.visible) {
+//          stage.show();
+//        }
+//        else {
+//          stage.hide();
+//        }
+//      });
+//    }
   }
 
   @Override
