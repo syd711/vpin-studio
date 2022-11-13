@@ -41,13 +41,14 @@ public class CardGraphics {
   private final int PADDING = Config.getCardGeneratorConfig().getInt("card.title.y.offset");
 
   private final boolean RAW_HIGHSCORE = Config.getCardGeneratorConfig().getBoolean("card.rawHighscore");
-
   private final boolean USE_DIRECTB2S = Config.getCardGeneratorConfig().getBoolean("card.useDirectB2S");
+  private final boolean GRAY_SCALE = Config.getCardGeneratorConfig().getBoolean("card.grayScale");
+
+  private final int BLUR_PIXELS = Config.getCardGeneratorConfig().getInt("card.blur");
 
   String cardRatio = Config.getCardGeneratorConfig().getString("card.ratio", DirectB2SImageRatio.RATIO_16X9.name());
   private final DirectB2SImageRatio DIRECTB2S_RATIO = DirectB2SImageRatio.valueOf(cardRatio.toUpperCase());
 
-  private final int BLUR_PIXELS = Config.getCardGeneratorConfig().getInt("card.blur");
 
   private final DirectB2SService directB2SService;
   private final Highscore highscore;
@@ -95,6 +96,10 @@ public class CardGraphics {
 
     if (BLUR_PIXELS > 0) {
       backgroundImage = ImageUtil.blurImage(backgroundImage, BLUR_PIXELS);
+    }
+
+    if(GRAY_SCALE) {
+      backgroundImage = ImageUtil.grayScaleImage(backgroundImage);
     }
 
     float alphaWhite = Config.getCardGeneratorConfig().getFloat("card.alphacomposite.white");

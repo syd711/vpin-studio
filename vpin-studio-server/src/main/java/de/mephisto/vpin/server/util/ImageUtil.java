@@ -1,6 +1,7 @@
 package de.mephisto.vpin.server.util;
 
 import com.jhlabs.image.GaussianFilter;
+import com.jhlabs.image.GrayscaleFilter;
 import org.imgscalr.Scalr;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -153,6 +154,11 @@ public class ImageUtil {
   @SuppressWarnings("unused")
   public static BufferedImage blurImage(BufferedImage originalImage, int radius) {
     GaussianFilter filter = new GaussianFilter(radius);
+    return filter.filter(originalImage, null);
+  }
+
+  public static BufferedImage grayScaleImage(BufferedImage originalImage) {
+    GrayscaleFilter filter = new GrayscaleFilter();
     return filter.filter(originalImage, null);
   }
 

@@ -97,6 +97,9 @@ public class OverlayController implements Initializable, ObservedPropertyChangeL
   @FXML
   private StackPane previewStack;
 
+  @FXML
+  private CheckBox grayScaleCheckbox;
+
 
   private VPinStudioClient client;
 
@@ -105,6 +108,7 @@ public class OverlayController implements Initializable, ObservedPropertyChangeL
   private List<String> ignoreList = new ArrayList<>();
   private ObservableList<String> imageList;
   private Parent waitOverlay;
+  private boolean autoRefresh = true;
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -140,7 +144,7 @@ public class OverlayController implements Initializable, ObservedPropertyChangeL
   }
 
   @FXML
-  private void onUploadButton() throws IOException {
+  private void onUploadButton() {
     FileChooser fileChooser = new FileChooser();
     fileChooser.setTitle("Select Image");
     fileChooser.getExtensionFilters().addAll(
@@ -184,6 +188,11 @@ public class OverlayController implements Initializable, ObservedPropertyChangeL
     BindingUtil.bindFontSelector(properties, "overlay.score", scoreFontLabel);
   }
 
+  @FXML
+  private void onAutoRefreshChange(ActionEvent event) {
+    CheckBox autoRefreshCheckbox = (CheckBox) event.getSource();
+    this.autoRefresh = autoRefreshCheckbox.isSelected();
+  }
 
   @FXML
   private void onGenerateClick() {
@@ -201,6 +210,7 @@ public class OverlayController implements Initializable, ObservedPropertyChangeL
     BindingUtil.bindFontLabel(titleFontLabel, properties, "overlay.title");
     BindingUtil.bindFontLabel(tableFontLabel, properties, "overlay.table");
     BindingUtil.bindFontLabel(scoreFontLabel, properties, "overlay.score");
+    BindingUtil.bindCheckbox(grayScaleCheckbox, properties, "overlay.grayScale");
 
     BindingUtil.bindColorPicker(fontColorSelector, properties, "overlay.font.color");
 
@@ -266,7 +276,7 @@ public class OverlayController implements Initializable, ObservedPropertyChangeL
 
   @Override
   public void changed(String propertiesName, String key, Optional<String> updatedValue) {
-    if (!ignoreList.contains(key)) {
+    if (!ignoreList.contains(key) && autoRefresh) {
       onGenerateClick();
     }
   }

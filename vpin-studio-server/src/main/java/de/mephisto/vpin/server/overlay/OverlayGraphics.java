@@ -40,10 +40,12 @@ public class OverlayGraphics {
   private final int ROW_HEIGHT = TABLE_FONT_SIZE + ROW_SEPARATOR + SCORE_FONT_SIZE;
 
   private final int BLUR_PIXELS = Config.getOverlayGeneratorConfig().getInt("overlay.blur");
+  private final boolean GRAY_SCALE = Config.getOverlayGeneratorConfig().getBoolean("overlay.grayScale");
 
   private final String BACKGROUND_IMAGE_NAME = Config.getOverlayGeneratorConfig().getString("overlay.background");
   private final String FONT_COLOR = Config.getOverlayGeneratorConfig().getString("overlay.font.color", "#FFFFFF");
   private final String RESOLUTION = Config.getOverlayGeneratorConfig().getString("overlay.resolution", "2560x1440");
+
 
   private final OverlayService overlayService;
   private final GameService service;
@@ -81,14 +83,19 @@ public class OverlayGraphics {
       backgroundImage = ImageUtil.resizeImage(backgroundImage, targetWidth);
     }
 
-    BufferedImage rotated = ImageUtil.rotateRight(backgroundImage);
     if (BLUR_PIXELS > 0) {
-      rotated = ImageUtil.blurImage(rotated, BLUR_PIXELS);
+      backgroundImage = ImageUtil.blurImage(backgroundImage, BLUR_PIXELS);
+    }
+
+    if(GRAY_SCALE) {
+      backgroundImage = ImageUtil.grayScaleImage(backgroundImage);
     }
 
     float alphaWhite = Config.getOverlayGeneratorConfig().getFloat("overlay.alphacomposite.white");
     float alphaBlack = Config.getOverlayGeneratorConfig().getFloat("overlay.alphacomposite.black");
-    ImageUtil.applyAlphaComposites(rotated, alphaWhite, alphaBlack);
+    ImageUtil.applyAlphaComposites(backgroundImage, alphaWhite, alphaBlack);
+
+    BufferedImage rotated = ImageUtil.rotateRight(backgroundImage);
 
     int highscoreListYOffset = PADDING + TITLE_FONT_SIZE;
 
