@@ -111,6 +111,10 @@ public class VPinStudioClient implements ObservedPropertyChangeListener {
     return Arrays.asList(RestClient.getInstance().get(API + "games", GameRepresentation[].class));
   }
 
+  public List<GameRepresentation> getRecentlyPlayedGames(int count) {
+    return Arrays.asList(RestClient.getInstance().get(API + "/games/recent/" + count, GameRepresentation[].class));
+  }
+
   public List<CompetitionRepresentation> getCompetitions() {
     return Arrays.asList(RestClient.getInstance().get(API + "competitions", CompetitionRepresentation[].class));
   }

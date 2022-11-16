@@ -444,7 +444,7 @@
                                                       </Button>
                                        </children>
                                     </HBox>
-                                                <Label fx:id="labelHSFilename" GridPane.columnIndex="1" GridPane.rowIndex="7" />
+                                                <Label fx:id="labelHSFilename" text="-" GridPane.columnIndex="1" GridPane.rowIndex="7" />
                                             </children>
                                         </GridPane>
                                     </children>

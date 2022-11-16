@@ -36,7 +36,7 @@ public class PopperMediaResource {
 
 
   @GetMapping("/{id}")
-  public GameMedia getGameMedia(@PathVariable("id") int id) throws IOException {
+  public GameMedia getGameMedia(@PathVariable("id") int id) {
     Game game = gameService.getGame(id);
     if(game == null) {
       throw new ResponseStatusException(NOT_FOUND, "Not game found for id " + id);

@@ -3,7 +3,10 @@ package de.mephisto.vpin.server.games;
 import de.mephisto.vpin.server.highscores.Highscore;
 import de.mephisto.vpin.server.highscores.HighscoreParser;
 import de.mephisto.vpin.server.highscores.HighscoreService;
+import de.mephisto.vpin.server.popper.GameMediaItem;
 import de.mephisto.vpin.server.popper.PinUPConnector;
+import de.mephisto.vpin.server.popper.PopperScreen;
+import de.mephisto.vpin.server.popper.PopperService;
 import de.mephisto.vpin.server.roms.RomService;
 import de.mephisto.vpin.server.roms.ScanResult;
 import edu.umd.cs.findbugs.annotations.NonNull;
@@ -15,6 +18,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -56,6 +61,29 @@ public class GameService {
     List<Game> games = pinUPConnector.getGames();
     loadGameDetails(game, games);
     return game;
+  }
+
+
+  public List<Game> getRecentHighscoreGame(int count) {
+    List<Game> games = this.getGames();
+    List<Game> filtered = new ArrayList<>();
+    for (Game game : games) {
+      if(game.getScores().isEmpty() || game.getLastPlayed() == null) {
+        continue;
+      }
+      GameMediaItem gameMediaItem = game.getEmulator().getGameMedia().get(PopperScreen.Wheel);
+      if(gameMediaItem == null) {
+        continue;
+      }
+
+      filtered.add(game);
+    }
+
+    filtered.sort(Comparator.comparing(Game::getLastPlayed));
+    if(filtered.size() > count) {
+      return filtered.subList(0, count);
+    }
+    return filtered;
   }
 
   public boolean scanGame(int gameId) {
@@ -149,4 +177,5 @@ public class GameService {
     LOG.info("Saved " + game);
     return getGame(game.getId());
   }
+
 }

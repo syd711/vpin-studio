@@ -33,7 +33,6 @@ import static de.mephisto.vpin.ui.Studio.client;
 
 public class NavigationController implements Initializable {
   private final static Logger LOG = LoggerFactory.getLogger(NavigationController.class);
-  private static Tile avatar;
 
   @FXML
   private BorderPane avatarPane;
@@ -41,7 +40,6 @@ public class NavigationController implements Initializable {
   public static StudioFXController activeController;
   public static StudioFXController navigationController;
 
-  private static Parent root;
   private static BorderPane staticAvatarPane;
   private static String activeScreenId = "scene-dashboard.fxml";
 
@@ -105,6 +103,7 @@ public class NavigationController implements Initializable {
     Node lookup = Studio.stage.getScene().lookup("#main");
     BorderPane main = (BorderPane) lookup;
 
+    Parent root;
     if (viewCache.containsKey(name)) {
       root = viewCache.get(name);
       activeController = controllerCache.get(name);
@@ -148,7 +147,7 @@ public class NavigationController implements Initializable {
       name = systemNameEntry.getValue();
     }
 
-    avatar = TileBuilder.create()
+    Tile avatar = TileBuilder.create()
         .skinType(Tile.SkinType.IMAGE)
         .prefSize(300, 300)
         .backgroundColor(Color.TRANSPARENT)

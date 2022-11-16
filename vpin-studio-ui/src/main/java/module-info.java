@@ -19,6 +19,7 @@ module de.mephisto.vpin.ui {
   requires filters;
   requires de.mephisto.vpin.restclient;
   requires javafx.media;
+  requires javafx.swing;
 
   opens de.mephisto.vpin.ui to javafx.fxml;
   exports de.mephisto.vpin.ui;
@@ -32,6 +33,8 @@ module de.mephisto.vpin.ui {
   opens de.mephisto.vpin.ui.competitions.dialogs to javafx.fxml;
   exports de.mephisto.vpin.ui.players;
   opens de.mephisto.vpin.ui.players to javafx.fxml;
+  exports de.mephisto.vpin.ui.widgets;
+  opens de.mephisto.vpin.ui.widgets to javafx.fxml;
   exports de.mephisto.vpin.ui.preferences;
   opens de.mephisto.vpin.ui.preferences to javafx.fxml;
   exports de.mephisto.vpin.ui.tables.dialogs;
