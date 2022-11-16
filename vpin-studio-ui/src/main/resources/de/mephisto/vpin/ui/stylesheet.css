@@ -47,6 +47,15 @@
 }
 
 /**
+ * Widgets
+ */
+.widget-title {
+    -fx-font-size : 36px;
+    -fx-font-weight : bold;
+    -fx-text-fill: #FFFFFF;
+}
+
+/**
  * Breadcrumb
  */
 .breadcrumb {

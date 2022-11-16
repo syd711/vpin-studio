@@ -9,12 +9,14 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Parent;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.net.URL;
+import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.ResourceBundle;
 
@@ -26,6 +28,9 @@ public class LatestScoresWidgetController extends WidgetController implements In
   @FXML
   private VBox highscoreVBox;
 
+  @FXML
+  private BorderPane root;
+
   // Add a public no-args constructor
   public LatestScoresWidgetController() {
   }
@@ -33,7 +38,8 @@ public class LatestScoresWidgetController extends WidgetController implements In
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
-    List<GameRepresentation> games = client.getRecentlyPlayedGames(5);
+
+    List<GameRepresentation> games = client.getRecentlyPlayedGames(10);
 
     try {
       int count = 0;
@@ -46,7 +52,8 @@ public class LatestScoresWidgetController extends WidgetController implements In
           }
 
           FXMLLoader loader = new FXMLLoader(LatestScoreItemWidgetController.class.getResource("widget-latest-score-item.fxml"));
-          Parent row = loader.load();
+          BorderPane row = loader.load();
+          row.setPrefWidth(root.getPrefWidth()-48);
           LatestScoreItemWidgetController controller = loader.getController();
           controller.setData(game, game.getScores().get(0), wheelMedia);
 

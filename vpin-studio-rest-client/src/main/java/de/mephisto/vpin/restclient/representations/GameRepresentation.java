@@ -33,6 +33,15 @@ public class GameRepresentation {
   private boolean romExists;
   private String ignoredValidations;
   private List<ScoreRepresentation> scores;
+  private Date scoresChangedDate;
+
+  public Date getScoresChangedDate() {
+    return scoresChangedDate;
+  }
+
+  public void setScoresChangedDate(Date scoresChangedDate) {
+    this.scoresChangedDate = scoresChangedDate;
+  }
 
   public List<ScoreRepresentation> getScores() {
     return scores;

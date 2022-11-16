@@ -1,6 +1,8 @@
 package de.mephisto.vpin.ui;
 
 import de.mephisto.vpin.restclient.VPinStudioClient;
+import de.mephisto.vpin.ui.util.ResizeHelper;
+import eu.hansolo.tilesfx.fonts.Fonts;
 import javafx.application.Application;
 import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
@@ -10,6 +12,7 @@ import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Paint;
+import javafx.scene.text.Font;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
@@ -18,9 +21,6 @@ import java.io.IOException;
 
 public class Studio extends Application {
 
-  private double xOffset;
-  private double yOffset;
-
   public static Stage stage;
 
   public static VPinStudioClient client;
@@ -28,6 +28,7 @@ public class Studio extends Application {
   @Override
   public void start(Stage stage) throws IOException {
     Studio.stage = stage;
+
     Studio.client = VPinStudioClient.create();
     FXMLLoader loader = new FXMLLoader(getClass().getResource("scene-root.fxml"));
     Parent root = loader.load();
@@ -53,20 +54,7 @@ public class Studio extends Application {
     stage.setX((screenBounds.getWidth()/2) - (width/2));
     stage.setY((screenBounds.getHeight()/2) - (height/2));
 
-    scene.setOnMousePressed(new EventHandler<MouseEvent>() {
-      @Override
-      public void handle(MouseEvent event) {
-        xOffset = stage.getX() - event.getScreenX();
-        yOffset = stage.getY() - event.getScreenY();
-      }
-    });
-    scene.setOnMouseDragged(new EventHandler<MouseEvent>() {
-      @Override
-      public void handle(MouseEvent event) {
-        stage.setX(event.getScreenX() + xOffset);
-        stage.setY(event.getScreenY() + yOffset);
-      }
-    });
+    ResizeHelper.addResizeListener(stage);
     stage.show();
   }
 

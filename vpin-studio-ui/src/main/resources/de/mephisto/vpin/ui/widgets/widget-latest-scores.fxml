@@ -6,15 +6,15 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" styleClass="navigation-panel" stylesheets="@../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.widgets.LatestScoresWidgetController">
+<BorderPane fx:id="root" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefWidth="600.0" styleClass="subpanel" stylesheets="@../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.widgets.LatestScoresWidgetController">
    <center>
-      <VBox fx:id="highscoreVBox" BorderPane.alignment="BASELINE_LEFT" />
+      <VBox fx:id="highscoreVBox" BorderPane.alignment="CENTER_LEFT" />
    </center>
    <padding>
-      <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
+      <Insets bottom="24.0" left="24.0" right="24.0" top="12.0" />
    </padding>
    <top>
-      <Label text="Latest Highscores" textFill="WHITE" BorderPane.alignment="TOP_LEFT">
+      <Label styleClass="widget-title" text="Latest Highscores" textFill="WHITE" BorderPane.alignment="TOP_LEFT">
          <font>
             <Font size="14.0" />
          </font>

@@ -26,6 +26,7 @@ public class Game {
   private File gameFile;
 
   private Date lastPlayed;
+  private Date scoresChangedDate;
   private int numberPlays;
   private int validationState;
   private String ignoredValidations;
@@ -95,6 +96,14 @@ public class Game {
 
   public void setLastPlayed(Date lastPlayed) {
     this.lastPlayed = lastPlayed;
+  }
+
+  public Date getScoresChangedDate() {
+    return scoresChangedDate;
+  }
+
+  public void setScoresChangedDate(Date scoresChangedDate) {
+    this.scoresChangedDate = scoresChangedDate;
   }
 
   public int getVolume() {

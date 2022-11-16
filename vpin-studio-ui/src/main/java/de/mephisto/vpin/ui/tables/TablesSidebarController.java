@@ -34,11 +34,13 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.*;
 
 public class TablesSidebarController implements Initializable, StudioFXController {
   private final static Logger LOG = LoggerFactory.getLogger(TablesSidebarController.class);
+  private final static SimpleDateFormat simpleDateFormat = new SimpleDateFormat("MM-dd-yyyy / hh:mm");
 
   @FXML
   private BorderPane screenTopper;
@@ -328,7 +330,7 @@ public class TablesSidebarController implements Initializable, StudioFXControlle
       labelRomAlias.setText(game.getOriginalRom() != null ? game.getRom() : "-");
       labelNVOffset.setText(game.getNvOffset() > 0 ? String.valueOf(game.getNvOffset()) : "-");
       labelFilename.setText(game.getGameFileName());
-      labelLastPlayed.setText(game.getLastPlayed() != null ? game.getLastPlayed().toString() : "-");
+      labelLastPlayed.setText(game.getLastPlayed() != null ? simpleDateFormat.format(game.getLastPlayed()) : "-");
       labelTimesPlayed.setText(String.valueOf(game.getNumberPlays()));
 
       if(!StringUtils.isEmpty(game.getHsFileName())) {

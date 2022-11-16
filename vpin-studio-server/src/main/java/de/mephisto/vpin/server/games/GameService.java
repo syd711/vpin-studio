@@ -77,6 +77,7 @@ public class GameService {
       }
 
       filtered.add(game);
+      filtered.add(game);
     }
 
     filtered.sort(Comparator.comparing(Game::getLastPlayed));
@@ -150,6 +151,7 @@ public class GameService {
       Highscore highscore = highscoreService.getHighscore(game);
       if (highscore != null && !StringUtils.isEmpty(highscore.getRaw())) {
         game.setRawHighscore(highscore.getRaw());
+        game.setScoresChangedDate(highscore.getUpdatedAt());
         game.setScores(HighscoreParser.parseScores(game, highscore.getRaw()));
       }
 

@@ -14,9 +14,11 @@ import javafx.scene.layout.BorderPane;
 
 import java.io.ByteArrayInputStream;
 import java.net.URL;
+import java.text.SimpleDateFormat;
 import java.util.ResourceBundle;
 
 public class LatestScoreItemWidgetController extends WidgetController implements Initializable  {
+  private final static SimpleDateFormat simpleDateFormat = new SimpleDateFormat("MM-dd-yyyy / hh:mm");
 
   @FXML
   private BorderPane root;
@@ -36,6 +38,9 @@ public class LatestScoreItemWidgetController extends WidgetController implements
   @FXML
   private Label scoreLabel;
 
+  @FXML
+  private Label changeDateLabel;
+
   // Add a public no-args constructor
   public LatestScoreItemWidgetController() {
   }
@@ -51,22 +56,17 @@ public class LatestScoreItemWidgetController extends WidgetController implements
     ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(bytes);
     Image image = new Image(byteArrayInputStream);
 
-    wheelImageView.setFitHeight(getTableFont().getSize() + getScoreFont().getSize() * 2);
-    wheelImageView.setFitWidth(getTableFont().getSize() + getScoreFont().getSize() * 2);
-    wheelImageView.setPreserveRatio(true);
     wheelImageView.setImage(image);
 
-    tableLabel.setFont(getTableFont());
     tableLabel.setText(game.getGameDisplayName());
 
-    positionLabel.setFont(getScoreFont());
     positionLabel.setText("#" + score.getPosition());
-
-    nameLabel.setFont(getScoreFont());
     nameLabel.setText(score.getUserInitials());
 
     scoreLabel.setFont(getScoreFont());
     scoreLabel.setText(score.getScore());
 
+    String date = simpleDateFormat.format(game.getScoresChangedDate());
+    changeDateLabel.setText("Updated: " + date);
   }
 }

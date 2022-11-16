@@ -24,7 +24,7 @@ import java.util.ResourceBundle;
 
 public class CompetitionsController implements Initializable, StudioFXController {
 
-  private final static SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+  private final static SimpleDateFormat simpleDateFormat = new SimpleDateFormat("MM-dd-yyyy");
 
   @FXML
   private TableView<CompetitionRepresentation> tableView;
