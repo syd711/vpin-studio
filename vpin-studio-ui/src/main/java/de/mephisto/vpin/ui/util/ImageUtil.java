@@ -3,7 +3,10 @@ package de.mephisto.vpin.ui.util;
 import com.jhlabs.image.GaussianFilter;
 import de.mephisto.vpin.ui.Studio;
 import javafx.embed.swing.SwingFXUtils;
+import javafx.scene.SnapshotParameters;
 import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.image.WritableImage;
 import org.imgscalr.Scalr;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,6 +18,26 @@ import java.io.*;
 
 public class ImageUtil {
   private final static Logger LOG = LoggerFactory.getLogger(ImageUtil.class);
+
+  public static void setClippedImage(ImageView imageView, int radius) {
+    javafx.scene.shape.Rectangle clip = new javafx.scene.shape.Rectangle(
+        imageView.getFitWidth(), imageView.getFitHeight()
+    );
+    clip.setArcWidth(radius);
+    clip.setArcHeight(radius);
+    imageView.setClip(clip);
+
+    // snapshot the rounded image.
+    SnapshotParameters parameters = new SnapshotParameters();
+    parameters.setFill(javafx.scene.paint.Color.TRANSPARENT);
+    WritableImage clipped = imageView.snapshot(parameters, null);
+
+    // remove the rounding clip so that our effect can show through.
+    imageView.setClip(null);
+
+    // store the rounded image in the imageView.
+    imageView.setImage(clipped);
+  }
 
   public static Image createAvatar(String initials) {
     try {

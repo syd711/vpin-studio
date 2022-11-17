@@ -33,4 +33,12 @@ public class CompetitionService  {
 
     return getCompetition(c.getId());
   }
+
+  public Competition getActiveOfflineCompetition() {
+    List<Competition> activeCompetitions = competitionsRepository.findActiveCompetitions();
+    if(!activeCompetitions.isEmpty()) {
+      return activeCompetitions.get(0);
+    }
+    return null;
+  }
 }

@@ -41,6 +41,15 @@ public class CompetitionResource {
     return c;
   }
 
+  @GetMapping("/active/offline")
+  public Competition getActiveOffCompetition() {
+    Competition c = competitionService.getActiveOfflineCompetition();
+    if(c == null) {
+      throw new ResponseStatusException(NOT_FOUND, "Not active offline competition found");
+    }
+    return c;
+  }
+
   @GetMapping("/badges")
   public List<String> getCompetitionBadges() {
     File folder = new File(SystemService.RESOURCES, COMPETITION_BADGES);

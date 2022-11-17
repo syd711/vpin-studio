@@ -2,7 +2,10 @@
 
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
@@ -13,22 +16,142 @@
    <top>
       <VBox BorderPane.alignment="TOP_LEFT">
          <children>
-            <Label alignment="BOTTOM_LEFT" text="Active Offline Competition" textFill="WHITE" />
-            <Label fx:id="competitionLabel" layoutX="10.0" layoutY="10.0" styleClass="widget-title" text="competition" textFill="WHITE">
-               <font>
-                  <Font size="14.0" />
-               </font>
-               <padding>
-                  <Insets bottom="24.0" />
-               </padding>
+            <Label alignment="BOTTOM_LEFT" styleClass="widget-title" text="Active Offline Competition" textFill="WHITE">
+               <VBox.margin>
+                  <Insets bottom="12.0" />
+               </VBox.margin>
             </Label>
          </children>
       </VBox>
    </top>
    <center>
       <BorderPane fx:id="tilesBorderPane" BorderPane.alignment="CENTER">
+         <top>
+            <StackPane fx:id="competitionStack" prefHeight="200.0" BorderPane.alignment="CENTER">
+               <children>
+                  <HBox fx:id="topBox" alignment="CENTER_LEFT">
+                     <children>
+                        <ImageView fx:id="competitionWheelImage" fitHeight="180.0" fitWidth="180.0" pickOnBounds="true" preserveRatio="true">
+                           <HBox.margin>
+                              <Insets left="12.0" right="12.0" />
+                           </HBox.margin>
+                        </ImageView>
+                        <VBox>
+                           <children>
+                              <Label fx:id="competitionLabel" text="competition" textFill="WHITE">
+                                 <font>
+                                    <Font name="System Bold" size="24.0" />
+                                 </font>
+                                 <VBox.margin>
+                                    <Insets top="12.0" />
+                                 </VBox.margin>
+                              </Label>
+                              <Label fx:id="durationLabel" text="duration" textFill="WHITE">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                                 <VBox.margin>
+                                    <Insets bottom="12.0" />
+                                 </VBox.margin>
+                              </Label>
+                              <Label fx:id="tableNameLabel" layoutX="10.0" layoutY="22.0" text="table" textFill="WHITE">
+                                 <font>
+                                    <Font name="System Bold" size="18.0" />
+                                 </font>
+                              </Label>
+                              <BorderPane>
+                                 <left>
+                                    <Label text="#1" textFill="WHITE" BorderPane.alignment="CENTER">
+                                       <font>
+                                          <Font size="18.0" />
+                                       </font>
+                                    </Label>
+                                 </left>
+                                 <right>
+                                    <Label fx:id="score1Label" textFill="WHITE" BorderPane.alignment="CENTER">
+                                       <font>
+                                          <Font size="18.0" />
+                                       </font>
+                                    </Label>
+                                 </right>
+                                 <center>
+                                    <Label fx:id="name1" text="Label" textFill="WHITE" BorderPane.alignment="CENTER_LEFT">
+                                       <BorderPane.margin>
+                                          <Insets left="12.0" />
+                                       </BorderPane.margin>
+                                       <font>
+                                          <Font size="18.0" />
+                                       </font>
+                                    </Label>
+                                 </center>
+                              </BorderPane>
+                              <BorderPane layoutX="10.0" layoutY="116.0">
+                                 <left>
+                                    <Label text="#2" textFill="WHITE" BorderPane.alignment="CENTER">
+                                       <font>
+                                          <Font size="18.0" />
+                                       </font>
+                                    </Label>
+                                 </left>
+                                 <right>
+                                    <Label fx:id="scoreLabel2" textFill="WHITE" BorderPane.alignment="CENTER">
+                                       <font>
+                                          <Font size="18.0" />
+                                       </font>
+                                    </Label>
+                                 </right>
+                                 <center>
+                                    <Label fx:id="name2" text="Label" textFill="WHITE" BorderPane.alignment="CENTER_LEFT">
+                                       <BorderPane.margin>
+                                          <Insets left="12.0" />
+                                       </BorderPane.margin>
+                                       <font>
+                                          <Font size="18.0" />
+                                       </font>
+                                    </Label>
+                                 </center>
+                              </BorderPane>
+                              <BorderPane layoutX="10.0" layoutY="144.0">
+                                 <left>
+                                    <Label text="#3" textFill="WHITE" BorderPane.alignment="CENTER">
+                                       <font>
+                                          <Font size="18.0" />
+                                       </font>
+                                    </Label>
+                                 </left>
+                                 <right>
+                                    <Label fx:id="scoreLabel3" textFill="WHITE" BorderPane.alignment="CENTER">
+                                       <font>
+                                          <Font size="18.0" />
+                                       </font>
+                                    </Label>
+                                 </right>
+                                 <center>
+                                    <Label fx:id="name3" text="Label" textFill="WHITE" BorderPane.alignment="CENTER_LEFT">
+                                       <font>
+                                          <Font size="18.0" />
+                                       </font>
+                                       <BorderPane.margin>
+                                          <Insets left="12.0" />
+                                       </BorderPane.margin>
+                                    </Label>
+                                 </center>
+                              </BorderPane>
+                           </children>
+                        </VBox>
+                     </children>
+                     <StackPane.margin>
+                        <Insets />
+                     </StackPane.margin>
+                  </HBox>
+               </children>
+               <BorderPane.margin>
+                  <Insets bottom="12.0" />
+               </BorderPane.margin>
+            </StackPane>
+         </top>
          <left>
-            <VBox fx:id="firstPlaceWidget" prefHeight="200.0" stylesheets="@../stylesheet.css" BorderPane.alignment="CENTER">
+            <VBox fx:id="firstPlaceWidget" BorderPane.alignment="CENTER">
                <BorderPane.margin>
                   <Insets right="12.0" />
                </BorderPane.margin>

@@ -32,6 +32,12 @@ public class Competition {
   @GeneratedValue(strategy = GenerationType.AUTO)
   private Long id;
 
+  @OneToMany
+  private Set<Highscore> highscores;
+
+  @OneToOne(cascade = CascadeType.ALL)
+  private Asset logo;
+
   private int gameId;
 
   private String type;
@@ -46,11 +52,15 @@ public class Competition {
 
   private String name;
 
-  @OneToMany
-  private Set<Highscore> highscores;
+  private boolean active;
 
-  @OneToOne(cascade = CascadeType.ALL)
-  private Asset logo;
+  public boolean isActive() {
+    return active;
+  }
+
+  public void setActive(boolean active) {
+    this.active = active;
+  }
 
   public String getBadge() {
     return badge;

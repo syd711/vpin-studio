@@ -76,6 +76,15 @@ public class VPinStudioClient implements ObservedPropertyChangeListener {
     return false;
   }
 
+  public CompetitionRepresentation getActiveOfflineCompetition() {
+    try {
+      return RestClient.getInstance().get(API + "competitions/active/offline", CompetitionRepresentation.class);
+    } catch (Exception e) {
+      LOG.error("Failed to read active competition: " + e.getMessage(), e);
+    }
+    return null;
+  }
+
   public GameRepresentation getGame(int id) {
     try {
       return RestClient.getInstance().get(API + "games/" + id, GameRepresentation.class);

@@ -1,5 +1,6 @@
 package de.mephisto.vpin.ui;
 
+import de.mephisto.vpin.restclient.representations.CompetitionRepresentation;
 import de.mephisto.vpin.ui.widgets.LatestScoresWidgetController;
 import de.mephisto.vpin.ui.widgets.OfflineCompetitionWidgetController;
 import javafx.fxml.FXML;
@@ -15,6 +16,8 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.Arrays;
 import java.util.ResourceBundle;
+
+import static de.mephisto.vpin.ui.Studio.client;
 
 public class DashboardController implements Initializable, StudioFXController {
   private final static Logger LOG = LoggerFactory.getLogger(DashboardController.class);
@@ -47,6 +50,9 @@ public class DashboardController implements Initializable, StudioFXController {
       FXMLLoader loader = new FXMLLoader(OfflineCompetitionWidgetController.class.getResource("widget-offline-competition.fxml"));
       BorderPane root = loader.load();
       root.setMaxWidth(Double.MAX_VALUE);
+      OfflineCompetitionWidgetController controller = loader.getController();
+      CompetitionRepresentation activeOfflineCompetition = client.getActiveOfflineCompetition();
+      controller.setCompetition(activeOfflineCompetition);
       widgetTop.setTop(root);
     } catch (IOException e) {
       LOG.error("Failed to load score widget: " + e.getMessage(), e);
