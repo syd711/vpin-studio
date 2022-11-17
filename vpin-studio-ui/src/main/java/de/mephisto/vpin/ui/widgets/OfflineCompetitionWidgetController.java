@@ -1,116 +1,65 @@
 package de.mephisto.vpin.ui.widgets;
 
-import de.mephisto.vpin.restclient.PopperScreen;
-import de.mephisto.vpin.restclient.RestClient;
 import de.mephisto.vpin.restclient.representations.CompetitionRepresentation;
-import de.mephisto.vpin.restclient.representations.GameMediaItemRepresentation;
-import de.mephisto.vpin.restclient.representations.GameMediaRepresentation;
-import de.mephisto.vpin.restclient.representations.GameRepresentation;
+import de.mephisto.vpin.ui.DashboardController;
 import de.mephisto.vpin.ui.Studio;
-import de.mephisto.vpin.ui.util.FxUtil;
-import de.mephisto.vpin.ui.util.ImageUtil;
-import eu.hansolo.tilesfx.Demo;
 import eu.hansolo.tilesfx.Tile;
 import eu.hansolo.tilesfx.TileBuilder;
 import eu.hansolo.tilesfx.events.TileEvent;
-import eu.hansolo.tilesfx.skins.TileSkin;
-import eu.hansolo.tilesfx.skins.TurnoverTileSkin;
 import eu.hansolo.tilesfx.tools.Rank;
 import eu.hansolo.tilesfx.tools.Ranking;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
-import javafx.geometry.Insets;
-import javafx.geometry.Side;
-import javafx.scene.Node;
-import javafx.scene.Parent;
-import javafx.scene.SnapshotParameters;
 import javafx.scene.chart.XYChart;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
-import javafx.scene.image.WritableImage;
-import javafx.scene.layout.*;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Rectangle;
-import javafx.scene.web.WebView;
+import javafx.scene.text.TextAlignment;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.net.URL;
+import java.text.DateFormat;
 import java.text.DecimalFormat;
-import java.text.NumberFormat;
-import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
-import java.util.Arrays;
-import java.util.List;
+import java.util.Date;
 import java.util.ResourceBundle;
-
-import static de.mephisto.vpin.ui.Studio.client;
 
 public class OfflineCompetitionWidgetController extends WidgetController implements Initializable {
   private final static Logger LOG = LoggerFactory.getLogger(OfflineCompetitionWidgetController.class);
-  private final static SimpleDateFormat simpleDateFormat = new SimpleDateFormat("MM-dd-yyyy");
 
   @FXML
-  private Label competitionLabel;
-
-  @FXML
-  private StackPane competitionStack;
-
-  @FXML
-  private BorderPane tilesBorderPane;
+  private VBox statsWidget;
 
   @FXML
   private VBox firstPlaceWidget;
 
   @FXML
-  private BorderPane root;
+  private VBox remainingTimeWidget;
 
   @FXML
-  private ImageView competitionWheelImage;
-
-  @FXML
-  private Label tableNameLabel;
-
-  @FXML
-  private HBox topBox;
-
-  @FXML
-  private Label durationLabel;
+  private BorderPane summaryBorderPane;
 
   private Tile highscoresGraphTile;
-  private CompetitionRepresentation competition;
+  private Tile countdownTile;
+  private Tile turnoverTile;
 
-  // Add a public no-args constructor
+  private CompetitionRepresentation competition;
+  private CompetitionSummaryWidgetController summaryWidgetController;
+
   public OfflineCompetitionWidgetController() {
   }
 
 
-  private Tile turnoverTile;
-
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
     Image image = new Image(Studio.class.getResourceAsStream("competition-bg-default.png"));
-
-    competitionStack.setStyle(" -fx-border-radius: 6 6 6 6;\n" +
-        "    -fx-border-style: solid solid solid solid;\n" +
-        "    -fx-border-color: #111111;\n" +
-        "    -fx-background-color: #111111;\n" +
-        "    -fx-background-radius: 6;" +
-        "    -fx-border-width: 1;");
-    BackgroundImage myBI= new BackgroundImage(image,
-        BackgroundRepeat.NO_REPEAT, BackgroundRepeat.NO_REPEAT, BackgroundPosition.DEFAULT,
-        BackgroundSize.DEFAULT);
-    topBox.setBackground(new Background(myBI));
-
-    image = ImageUtil.createAvatar("MFA");
 
     Rank firstRank = new Rank(Ranking.FIRST, Tile.YELLOW_ORANGE);
     turnoverTile = TileBuilder.create().skinType(Tile.SkinType.TURNOVER)
@@ -118,7 +67,7 @@ public class OfflineCompetitionWidgetController extends WidgetController impleme
         .prefWidth(Double.MAX_VALUE)
         .customDecimalFormatEnabled(true)
         .customDecimalFormat(new DecimalFormat("###,###,###"))
-        .borderWidth(2)
+        .borderWidth(1)
         .borderColor(Color.web("#111111"))
         .text("Gerrit Grunwald")
         .decimals(0)
@@ -143,10 +92,17 @@ public class OfflineCompetitionWidgetController extends WidgetController impleme
         .build();
 
 
-
-
     firstPlaceWidget.getChildren().add(turnoverTile);
 
+
+    countdownTile = TileBuilder.create().skinType(Tile.SkinType.CHARACTER)
+        .title("Remaining Days")
+        .borderWidth(1)
+        .borderColor(Color.web("#111111"))
+        .titleAlignment(TextAlignment.CENTER)
+        .build();
+
+    remainingTimeWidget.getChildren().add(countdownTile);
 
     // LineChart Data
     XYChart.Series<String, Number> series2 = new XYChart.Series();
@@ -164,7 +120,6 @@ public class OfflineCompetitionWidgetController extends WidgetController impleme
     highscoresGraphTile = TileBuilder.create()
         .skinType(Tile.SkinType.SMOOTHED_CHART)
         .maxWidth(Double.MAX_VALUE)
-        .backgroundColor(Color.web("#111111"))
         .title("New Highscores")
         .chartType(Tile.ChartType.LINE)
         .borderWidth(1)
@@ -181,8 +136,18 @@ public class OfflineCompetitionWidgetController extends WidgetController impleme
         .smoothing(false)
         .series(series2)
         .build();
-    tilesBorderPane.setCenter(highscoresGraphTile);
+    statsWidget.getChildren().add(highscoresGraphTile);
 
+
+    try {
+      FXMLLoader loader = new FXMLLoader(LatestScoresWidgetController.class.getResource("widget-competition-summary.fxml"));
+      BorderPane root = loader.load();
+      root.setMaxWidth(Double.MAX_VALUE);
+      summaryWidgetController = loader.getController();
+      summaryBorderPane.setCenter(root);
+    } catch (IOException e) {
+      LOG.error("Failed to load competition summary widget: " + e.getMessage(), e);
+    }
 
     Platform.runLater(() -> {
       turnoverTile.setValue(Double.valueOf("7000000000"));
@@ -191,37 +156,18 @@ public class OfflineCompetitionWidgetController extends WidgetController impleme
   }
 
   public void setCompetition(CompetitionRepresentation competition) {
-    if(competition != null) {
-      GameRepresentation game = client.getGame(competition.getGameId());
-      GameMediaRepresentation gameMedia = client.getGameMedia(game.getId());
+    summaryWidgetController.setCompetition(competition);
 
-      LocalDate start = competition.getStartDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+    if (competition != null) {
       LocalDate end = competition.getEndDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
-      long diff = ChronoUnit.DAYS.between(start, end);
+      LocalDate now = new Date().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
 
-      String duration = "Duration: " + simpleDateFormat.format(competition.getStartDate())
-          + " - " + simpleDateFormat.format(competition.getEndDate())
-          + " (" + diff + " days)";
-      durationLabel.setText(duration);
+      long remainingDays = ChronoUnit.DAYS.between(now, end);
       turnoverTile.setTitle("-");
-      competitionLabel.setText(competition.getName());
-      tableNameLabel.setText(game.getGameDisplayName());
-
-      GameMediaItemRepresentation item = gameMedia.getItem(PopperScreen.Wheel);
-      if(item != null) {
-        String url = item.getUri();
-        byte[] bytes = RestClient.getInstance().readBinary(url);
-        ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(bytes);
-        Image image = new Image(byteArrayInputStream);
-        competitionWheelImage.setImage(image);
-      }
-      else {
-        Image wheel = new Image(Studio.class.getResourceAsStream("avatar-blank.png"));
-        competitionWheelImage.setImage(wheel);
-      }
+      countdownTile.setDescription(String.valueOf(remainingDays));
+      countdownTile.setText("Competition End: " + DateFormat.getDateInstance().format(competition.getEndDate()));
     }
     else {
-      durationLabel.setText("");
     }
   }
 }
