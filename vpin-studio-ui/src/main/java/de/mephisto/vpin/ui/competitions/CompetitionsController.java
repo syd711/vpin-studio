@@ -16,6 +16,7 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 
 import java.net.URL;
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.List;
@@ -23,8 +24,6 @@ import java.util.Optional;
 import java.util.ResourceBundle;
 
 public class CompetitionsController implements Initializable, StudioFXController {
-
-  private final static SimpleDateFormat simpleDateFormat = new SimpleDateFormat("MM-dd-yyyy");
 
   @FXML
   private TableView<CompetitionRepresentation> tableView;
@@ -109,13 +108,13 @@ public class CompetitionsController implements Initializable, StudioFXController
 
     columnStartDate.setCellValueFactory(cellData -> {
       CompetitionRepresentation value = cellData.getValue();
-      Label label = new Label(simpleDateFormat.format(value.getStartDate()));
+      Label label = new Label(DateFormat.getDateInstance().format(value.getStartDate()));
       return new SimpleObjectProperty(label);
     });
 
     columnEndDate.setCellValueFactory(cellData -> {
       CompetitionRepresentation value = cellData.getValue();
-      Label label = new Label(simpleDateFormat.format(value.getEndDate()));
+      Label label = new Label(DateFormat.getDateInstance().format(value.getEndDate()));
       return new SimpleObjectProperty(label);
     });
 
