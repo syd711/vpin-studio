@@ -66,7 +66,6 @@ public class OfflineCompetitionWidgetController extends WidgetController impleme
 
     Rank firstRank = new Rank(Ranking.FIRST, Tile.YELLOW_ORANGE);
     turnoverTile = TileBuilder.create().skinType(Tile.SkinType.TURNOVER)
-        .prefSize(400, 400)
         .title("#1 Place")
         .borderWidth(1)
         .borderColor(Color.web("#111111"))
@@ -110,7 +109,6 @@ public class OfflineCompetitionWidgetController extends WidgetController impleme
     //noinspection unchecked
     highscoresGraphTile = TileBuilder.create()
         .skinType(Tile.SkinType.SMOOTHED_CHART)
-        .prefSize(Double.MAX_VALUE, 400)
         .title("New Highscores")
         .chartType(Tile.ChartType.LINE)
         .borderWidth(1)

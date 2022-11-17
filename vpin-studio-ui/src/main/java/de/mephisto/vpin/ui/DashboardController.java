@@ -25,9 +25,6 @@ public class DashboardController implements Initializable, StudioFXController {
   @FXML
   private BorderPane widgetTop;
 
-  @FXML
-  private WebView webWidget;
-
 
   // Add a public no-args constructor
   public DashboardController() {
@@ -55,7 +52,7 @@ public class DashboardController implements Initializable, StudioFXController {
       LOG.error("Failed to load score widget: " + e.getMessage(), e);
     }
 
-    webWidget.getEngine().load("https://virtualpinballchat.com/#/weekly-rankings/competition-corner");
+//    webWidget.getEngine().load("https://virtualpinballchat.com/#/weekly-rankings/competition-corner");
   }
 
 }
