@@ -77,7 +77,6 @@ public class GameService {
       }
 
       filtered.add(game);
-      filtered.add(game);
     }
 
     filtered.sort(Comparator.comparing(Game::getLastPlayed));

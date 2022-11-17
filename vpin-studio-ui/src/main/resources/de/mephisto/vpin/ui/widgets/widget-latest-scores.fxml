@@ -19,7 +19,7 @@
             <Font size="14.0" />
          </font>
          <padding>
-            <Insets bottom="24.0" />
+            <Insets bottom="12.0" />
          </padding>
       </Label>
    </top>

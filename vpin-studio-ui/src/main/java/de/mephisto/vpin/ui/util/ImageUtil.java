@@ -1,6 +1,9 @@
 package de.mephisto.vpin.ui.util;
 
 import com.jhlabs.image.GaussianFilter;
+import de.mephisto.vpin.ui.Studio;
+import javafx.embed.swing.SwingFXUtils;
+import javafx.scene.image.Image;
 import org.imgscalr.Scalr;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -12,6 +15,28 @@ import java.io.*;
 
 public class ImageUtil {
   private final static Logger LOG = LoggerFactory.getLogger(ImageUtil.class);
+
+  public static Image createAvatar(String initials) {
+    try {
+      BufferedImage image = ImageIO.read(Studio.class.getResourceAsStream("avatar-blank.png"));
+      Graphics2D g = (Graphics2D) image.getGraphics();
+      setRendingHints(g);
+
+      int fontSize = 40;
+      g.setFont(new Font("System", 1, 42));
+      g.setColor(Color.BLACK);
+
+      int y = image.getHeight() / 2 + 14;
+      int x = image.getWidth() / 2 - g.getFontMetrics().stringWidth(initials) / 2;
+      g.drawString(initials, x, y);
+
+
+      return SwingFXUtils.toFXImage(image, null);
+    } catch (IOException e) {
+      LOG.error("Failed to generate avatar image: " + e.getMessage(), e);
+    }
+    return null;
+  }
 
   /**
    * Enables the anti aliasing for fonts

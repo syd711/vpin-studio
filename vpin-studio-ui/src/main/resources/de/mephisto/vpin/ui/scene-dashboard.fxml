@@ -2,6 +2,8 @@
 
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.web.WebView?>
 
 <BorderPane stylesheets="@stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.DashboardController">
     <top>
@@ -10,8 +12,25 @@
     <center>
       <BorderPane fx:id="widgetRoot" BorderPane.alignment="CENTER">
          <BorderPane.margin>
-            <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
+            <Insets bottom="24.0" left="12.0" top="12.0" />
          </BorderPane.margin>
+         <center>
+            <BorderPane fx:id="widgetTop" prefHeight="200.0" prefWidth="200.0" styleClass="subpanel" BorderPane.alignment="TOP_LEFT">
+               <BorderPane.margin>
+                  <Insets left="24.0" right="24.0" />
+               </BorderPane.margin>
+               <center>
+                  <VBox fx:id="footerWidget" BorderPane.alignment="CENTER">
+                     <children>
+                        <WebView fx:id="webWidget" prefHeight="-1.0" prefWidth="-1.0" VBox.vgrow="ALWAYS" />
+                     </children>
+                     <BorderPane.margin>
+                        <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
+                     </BorderPane.margin>
+                  </VBox>
+               </center>
+            </BorderPane>
+         </center>
       </BorderPane>
     </center>
 </BorderPane>
