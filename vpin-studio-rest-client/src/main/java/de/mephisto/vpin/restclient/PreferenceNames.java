@@ -1,4 +1,4 @@
-package de.mephisto.vpin.ui.preferences;
+package de.mephisto.vpin.restclient;
 
 public interface PreferenceNames {
   String IGNORED_VALIDATIONS = "ignoredValidations";
@@ -8,4 +8,7 @@ public interface PreferenceNames {
   String RESET_KEY = "resetKey";
   String OVERLAY_KEY = "overlayKey";
   String SHOW_OVERLAY_ON_STARTUP = "showOverlayOnStartup";
+  String DISCORD_WEBHOOK_URL = "discordWebHookUrl";
+  String DISCORD_BOT_TOKEN = "discordBotToken";
+  String DISCORD_GUILD_ID = "discordGuildId";
 }

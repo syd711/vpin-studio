@@ -8,7 +8,7 @@ import de.mephisto.vpin.restclient.representations.GameRepresentation;
 import de.mephisto.vpin.restclient.representations.PreferenceEntryRepresentation;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.StudioFXController;
-import de.mephisto.vpin.ui.preferences.PreferenceNames;
+import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.ui.util.BindingUtil;
 import de.mephisto.vpin.ui.util.MediaUtil;
 import de.mephisto.vpin.ui.util.WidgetFactory;

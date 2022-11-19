@@ -38,6 +38,36 @@ public class Preferences {
 
   private String showOverlayOnStartup;
 
+  private String discordWebHookUrl;
+
+  private String discordGuildId;
+
+  private String discordBotToken;
+
+  public String getDiscordGuildId() {
+    return discordGuildId;
+  }
+
+  public void setDiscordGuildId(String discordGuildId) {
+    this.discordGuildId = discordGuildId;
+  }
+
+  public String getDiscordBotToken() {
+    return discordBotToken;
+  }
+
+  public void setDiscordBotToken(String discordBotToken) {
+    this.discordBotToken = discordBotToken;
+  }
+
+  public String getDiscordWebHookUrl() {
+    return discordWebHookUrl;
+  }
+
+  public void setDiscordWebHookUrl(String discordWebHookUrl) {
+    this.discordWebHookUrl = discordWebHookUrl;
+  }
+
   public String getShowOverlayOnStartup() {
     return showOverlayOnStartup;
   }
@@ -101,4 +131,6 @@ public class Preferences {
   public void setIgnoredValidations(String ignoredValidations) {
     this.ignoredValidations = ignoredValidations;
   }
+
+
 }

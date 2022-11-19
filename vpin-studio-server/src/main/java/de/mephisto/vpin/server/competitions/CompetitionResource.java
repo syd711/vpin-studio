@@ -77,6 +77,6 @@ public class CompetitionResource {
 
   @DeleteMapping("/delete/{id}")
   public void deleteCompetition(@PathVariable("id") int id) {
-    competitionService.deleteCompetition(id);
+    competitionService.delete(id);
   }
 }

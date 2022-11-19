@@ -6,9 +6,9 @@
 <?import javafx.scene.layout.BorderPane?>
 <?import org.kordamp.ikonli.javafx.FontIcon?>
 
-<BorderPane styleClass="base-component" stylesheets="@../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.players.PlayersController">
+<BorderPane styleClass="base-component" stylesheets="@stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.players.PlayersController">
     <top>
-        <fx:include fx:id="mainToolbar" source="../scene-toolbar.fxml" />
+        <fx:include fx:id="mainToolbar" source="scene-toolbar.fxml" />
     </top>
     <center>
         <BorderPane styleClass="subpanel" BorderPane.alignment="CENTER">
@@ -17,16 +17,13 @@
                     <tabs>
                         <Tab fx:id="buildInUsersTab" closable="false" text="Build-In Users">
                             <content>
+                                <fx:include source="tab-buildin-users.fxml" />
                             </content>
                      <graphic>
                         <FontIcon iconColor="WHITE" iconLiteral="mdi2a-account-details" iconSize="18" />
                      </graphic>
                      <content>
-                        <BorderPane>
-                            <center>
-                                <fx:include source="tab-buildin-users.fxml" />
-                            </center>
-                        </BorderPane>
+                        <BorderPane prefHeight="200.0" prefWidth="200.0" />
                      </content>
                         </Tab>
                         <Tab fx:id="discordTab" closable="false" text="Discord Server">

@@ -5,7 +5,7 @@ import org.junit.jupiter.api.Test;
 public class DiscordClientTest {
 
   @Test
-  public void testDiscordClient() {
-    DiscordClient.create();
+  public void testDiscordClient() throws Exception {
+//    new DiscordClient(token, channelId);
   }
 }

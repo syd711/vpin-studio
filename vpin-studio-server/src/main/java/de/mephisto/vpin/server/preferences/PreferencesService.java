@@ -10,10 +10,7 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 
 @Service
 public class PreferencesService implements InitializingBean {
@@ -27,8 +24,20 @@ public class PreferencesService implements InitializingBean {
 
   private Preferences preferences;
 
+  private List<PreferenceChangedListener> listeners = new ArrayList<>();
+
   public Preferences getPreferences() {
     return preferences;
+  }
+
+  public void addChangeListener(PreferenceChangedListener listener) {
+    this.listeners.add(listener);
+  }
+
+  public void notifyListeners(String key, Object oldValue, Object newValue) {
+    for (PreferenceChangedListener listener : this.listeners) {
+      listener.preferenceChanged(key, oldValue, newValue);
+    }
   }
 
   public Object getPreferenceValue(String key) {
@@ -38,24 +47,26 @@ public class PreferencesService implements InitializingBean {
 
   public boolean savePreference(Map<String, Object> values) {
     BeanWrapper bean = new BeanWrapperImpl(preferences);
+
+    Map<String, Object> oldValues = new HashMap<>();
     Set<Map.Entry<String, Object>> entries = values.entrySet();
     for (Map.Entry<String, Object> entry : entries) {
+      String key = entry.getKey();
+      Object oldValue = bean.getPropertyValue(key);
+      oldValues.put(key, oldValue);
       bean.setPropertyValue(entry.getKey(), entry.getValue());
     }
     preferencesRepository.saveAndFlush(preferences);
     LOG.info("Saved preferences " + values);
-    return true;
-  }
 
-  @Override
-  public void afterPropertiesSet() {
-    List<Preferences> all = preferencesRepository.findAll();
-    if (all.isEmpty()) {
-      Preferences prefs = new Preferences();
-      preferencesRepository.saveAndFlush(prefs);
-      all = preferencesRepository.findAll();
+    //notify change listeners
+    for (Map.Entry<String, Object> entry : oldValues.entrySet()) {
+      String key = entry.getKey();
+      Object oldValue = entry.getValue();
+      Object newValue = values.get(key);
+      notifyListeners(key, oldValue, newValue);
     }
-    preferences = all.get(0);
+    return true;
   }
 
   public Asset saveAvatar(byte[] bytes, String mimeType) {
@@ -78,5 +89,16 @@ public class PreferencesService implements InitializingBean {
     Preferences updatedPreferences = preferencesRepository.saveAndFlush(preferences);
     LOG.info("Updates avatar in preferences.");
     return updatedPreferences.getAvatar();
+  }
+
+  @Override
+  public void afterPropertiesSet() {
+    List<Preferences> all = preferencesRepository.findAll();
+    if (all.isEmpty()) {
+      Preferences prefs = new Preferences();
+      preferencesRepository.saveAndFlush(prefs);
+      all = preferencesRepository.findAll();
+    }
+    preferences = all.get(0);
   }
 }

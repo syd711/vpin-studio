@@ -15,7 +15,7 @@
     <children>
         <BorderPane>
             <center>
-                <TableView BorderPane.alignment="CENTER">
+                <TableView style="-fx-background-color: #2a2a2a;" BorderPane.alignment="CENTER">
                     <columns>
                         <TableColumn prefWidth="75.0" text="ID" />
                         <TableColumn prefWidth="250.0" text="Name" />

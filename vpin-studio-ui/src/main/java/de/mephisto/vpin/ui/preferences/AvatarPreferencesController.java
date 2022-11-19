@@ -1,5 +1,6 @@
 package de.mephisto.vpin.ui.preferences;
 
+import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.representations.PreferenceEntryRepresentation;
 import de.mephisto.vpin.ui.DashboardController;
 import de.mephisto.vpin.ui.util.BindingUtil;

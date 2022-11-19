@@ -38,7 +38,7 @@ public class CompetitionService {
     return null;
   }
 
-  public void deleteCompetition(long id) {
+  public void delete(long id) {
     competitionsRepository.deleteById(id);
   }
 }
