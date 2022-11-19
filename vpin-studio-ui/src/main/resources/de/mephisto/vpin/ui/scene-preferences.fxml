@@ -87,6 +87,16 @@
                </VBox.margin>
             </Label>
             <Button alignment="BASELINE_LEFT" contentDisplay="RIGHT" layoutX="160.0" layoutY="500.0" mnemonicParsing="false" onAction="#onServiceInfo" styleClass="preference-button" text="Service Info" />
+            <Label alignment="BASELINE_LEFT" layoutX="160.0" layoutY="560.0" styleClass="preference-section" text="DISCORD INTEGRATION">
+               <font>
+                  <Font size="13.0" />
+               </font>
+               <VBox.margin>
+                  <Insets top="24.0" />
+               </VBox.margin>
+            </Label>
+            <Button alignment="BASELINE_LEFT" contentDisplay="RIGHT" layoutX="160.0" layoutY="586.0" mnemonicParsing="false" onAction="#onServiceInfo" styleClass="preference-button" text="Webhook" />
+            <Button alignment="BASELINE_LEFT" contentDisplay="RIGHT" layoutX="160.0" layoutY="672.0" mnemonicParsing="false" onAction="#onServiceInfo" styleClass="preference-button" text="Guild Members" />
          </children>
          <opaqueInsets>
             <Insets />

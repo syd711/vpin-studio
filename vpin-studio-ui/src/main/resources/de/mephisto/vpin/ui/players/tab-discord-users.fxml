@@ -17,10 +17,10 @@
             <center>
                 <TableView style="-fx-background-color: #2a2a2a;" BorderPane.alignment="CENTER">
                     <columns>
-                        <TableColumn prefWidth="75.0" text="ID" />
-                        <TableColumn prefWidth="250.0" text="Name" />
-                  <TableColumn minWidth="0.0" text="Initials" />
-                  <TableColumn minWidth="0.0" text="Avatar" />
+                        <TableColumn fx:id="idColumn" prefWidth="75.0" text="ID" />
+                        <TableColumn fx:id="nameColumn" prefWidth="250.0" text="Name" />
+                  <TableColumn fx:id="initialsColumn" minWidth="0.0" text="Initials" />
+                  <TableColumn fx:id="avatarColumn" minWidth="0.0" text="Avatar" />
                     </columns>
                 </TableView>
             </center>

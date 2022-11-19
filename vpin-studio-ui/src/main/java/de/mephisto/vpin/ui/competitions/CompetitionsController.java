@@ -193,6 +193,9 @@ public class CompetitionsController implements Initializable, StudioFXController
       return new SimpleObjectProperty(winner);
     });
 
+
+    tableView.setPlaceholder(new Label("            Mmmh, not up for a challange yet?\n" +
+        "Create a new competition by pressing the '+' button."));
     tableView.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
       boolean disable = newSelection == null;
       editBtn.setDisable(disable || !newSelection.isActive());

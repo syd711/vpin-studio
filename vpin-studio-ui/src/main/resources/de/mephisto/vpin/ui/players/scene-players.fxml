@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
 <?import javafx.scene.control.Tab?>
 <?import javafx.scene.control.TabPane?>
 <?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.text.Font?>
 <?import org.kordamp.ikonli.javafx.FontIcon?>
 
 <BorderPane styleClass="base-component" stylesheets="@../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.players.PlayersController">
@@ -45,4 +47,21 @@
          </BorderPane.margin>
         </BorderPane>
     </center>
+   <right>
+      <BorderPane prefWidth="600.0" styleClass="subpanel" BorderPane.alignment="CENTER">
+         <top>
+            <Label styleClass="widget-title" text="Player Details" textFill="WHITE" BorderPane.alignment="TOP_LEFT">
+               <font>
+                  <Font size="10.0" />
+               </font>
+            </Label>
+         </top>
+         <BorderPane.margin>
+            <Insets />
+         </BorderPane.margin>
+         <padding>
+            <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
+         </padding>
+      </BorderPane>
+   </right>
 </BorderPane>
