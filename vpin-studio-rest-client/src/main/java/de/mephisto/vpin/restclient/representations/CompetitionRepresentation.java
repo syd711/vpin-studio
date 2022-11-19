@@ -1,5 +1,10 @@
 package de.mephisto.vpin.restclient.representations;
 
+import org.springframework.cglib.core.Local;
+
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.time.temporal.ChronoUnit;
 import java.util.Date;
 import java.util.List;
 
@@ -20,9 +25,37 @@ public class CompetitionRepresentation {
 
   private boolean customizeMedia;
 
+  private boolean active;
+
+  private String winnerInitials;
+
+  private PlayerRepresentation winner;
+
   private List<HighscoreRepresentation> highscores;
 
+  public String getWinnerInitials() {
+    return winnerInitials;
+  }
 
+  public void setWinnerInitials(String winnerInitials) {
+    this.winnerInitials = winnerInitials;
+  }
+
+  public PlayerRepresentation getWinner() {
+    return winner;
+  }
+
+  public void setWinner(PlayerRepresentation winner) {
+    this.winner = winner;
+  }
+
+  public boolean isActive() {
+    return active;
+  }
+
+  public void setActive(boolean active) {
+    this.active = active;
+  }
 
   public List<HighscoreRepresentation> getHighscores() {
     return highscores;
@@ -104,5 +137,25 @@ public class CompetitionRepresentation {
     CompetitionRepresentation that = (CompetitionRepresentation) o;
 
     return id != null && that.id != null && id.equals(that.id);
+  }
+
+  public CompetitionRepresentation cloneCompetition() {
+    CompetitionRepresentation clone = new CompetitionRepresentation();
+
+    LocalDate start = LocalDate.now();
+    LocalDate end = getEndDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+    long diff = ChronoUnit.DAYS.between(start, end);
+
+    LocalDate newEndDate = ChronoUnit.DAYS.addTo(end, diff);
+    clone.setStartDate(new Date());
+    clone.setEndDate(Date.from(newEndDate.atStartOfDay(ZoneId.systemDefault()).toInstant()));
+
+    clone.setName(this.getName() + "(1)");
+    clone.setBadge(this.getBadge());
+    clone.setType(this.getType());
+    clone.setActive(true);
+    clone.setCustomizeMedia(this.isCustomizeMedia());
+    clone.setGameId(this.getGameId());
+    return clone;
   }
 }

@@ -17,7 +17,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="500.0" prefWidth="717.0" styleClass="base-component" stylesheets="@stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.competitions.dialogs.CompetitionDialogController">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" styleClass="base-component" stylesheets="@stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.competitions.dialogs.CompetitionDialogController">
    <bottom>
       <HBox alignment="BASELINE_RIGHT" BorderPane.alignment="CENTER">
          <children>
@@ -42,8 +42,8 @@
          <children>
             <GridPane prefHeight="330.0" prefWidth="552.0">
               <columnConstraints>
-                <ColumnConstraints hgrow="SOMETIMES" maxWidth="388.2000732421875" minWidth="10.0" prefWidth="166.799951171875" />
-                <ColumnConstraints hgrow="SOMETIMES" maxWidth="699.3999176025391" minWidth="10.0" prefWidth="526.800048828125" />
+                <ColumnConstraints hgrow="SOMETIMES" maxWidth="388.2000732421875" minWidth="10.0" prefWidth="154.4000732421875" />
+                <ColumnConstraints hgrow="SOMETIMES" maxWidth="699.3999176025391" minWidth="10.0" prefWidth="427.9999267578126" />
               </columnConstraints>
               <rowConstraints>
                 <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
@@ -61,7 +61,10 @@
                         <Font size="14.0" />
                      </font>
                   </Label>
-                  <TextField fx:id="nameField" GridPane.columnIndex="1" />
+                  <TextField fx:id="nameField" GridPane.columnIndex="1">
+                     <font>
+                        <Font size="14.0" />
+                     </font></TextField>
                   <Label fx:id="titleLabel1" layoutX="10.0" layoutY="33.0" text="Table:" textFill="WHITE" GridPane.rowIndex="1">
                      <font>
                         <Font size="14.0" />

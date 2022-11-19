@@ -17,7 +17,7 @@
 
 <BorderPane styleClass="base-component" stylesheets="@stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.competitions.CompetitionsController">
     <top>
-        <fx:include fx:id="mainToolbar" source="scene-toolbar.fxml" />
+        <fx:include fx:id="mainToolbar" source="../scene-toolbar.fxml" />
     </top>
     <center>
         <BorderPane styleClass="subpanel" BorderPane.alignment="CENTER">
@@ -47,12 +47,12 @@
                                     <TableView fx:id="tableView" style="-fx-background-color: #2a2a2a;" styleClass="base-component">
                                       <columns>
                                         <TableColumn fx:id="columnName" prefWidth="292.0001335144043" style="-fx-alignment: CENTER;" text="Name" />
+                                        <TableColumn fx:id="columnStatus" minWidth="0.0" prefWidth="172.0" style="-fx-alignment: CENTER;" text="Status" />
                                           <TableColumn fx:id="columnTable" prefWidth="292.0001335144043" style="-fx-alignment: BASELINE_LEFT;" text="Table" />
                                           <TableColumn fx:id="columnStartDate" prefWidth="150.0" style="-fx-alignment: CENTER;" text="Start Date" />
                                           <TableColumn fx:id="columnEndDate" prefWidth="150.0" style="-fx-alignment: CENTER;" text="End Date" />
-                                        <TableColumn fx:id="columnStatus" minWidth="0.0" prefWidth="172.0" style="-fx-alignment: BASELINE_LEFT;" text="Status" />
-                                          <TableColumn prefWidth="97.60009765625" style="-fx-alignment: BASELINE_LEFT;" text="Winner" />
-                                          <TableColumn fx:id="columnScore" prefWidth="150.0" style="-fx-alignment: BASELINE_LEFT;" text="Highscore" />
+                                          <TableColumn fx:id="columnWinner" prefWidth="97.60009765625" style="-fx-alignment: CENTER;" text="Winner" />
+                                          <TableColumn fx:id="columnScore" prefWidth="150.0" style="-fx-alignment: BASELINE_RIGHT;" text="Highscore" />
                                           <TableColumn fx:id="columnScoreCount" prefWidth="140.0" style="-fx-alignment: CENTER;" text="Submitted Scores" />
                                       </columns>
                                     </TableView>
@@ -75,7 +75,7 @@
                                              </graphic>
                                           </Button>
                                           <Separator orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
-                                          <Button layoutX="280.0" layoutY="11.0" mnemonicParsing="false" onAction="#onCompetitionCreate" text="New Competition" textFill="WHITE">
+                                          <Button layoutX="280.0" layoutY="11.0" mnemonicParsing="false" onAction="#onCompetitionCreate" text="Add" textFill="WHITE">
                                              <font>
                                                 <Font size="14.0" />
                                              </font>
@@ -84,12 +84,28 @@
                                              </graphic>
                                           </Button>
                                           <Separator layoutX="364.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
-                                          <Button layoutX="280.0" layoutY="11.0" mnemonicParsing="false" onAction="#onEdit" text="Edit" textFill="WHITE">
+                                          <Button fx:id="editBtn" layoutX="280.0" layoutY="11.0" mnemonicParsing="false" onAction="#onEdit" text="Edit" textFill="WHITE">
                                              <font>
                                                 <Font size="14.0" />
                                              </font>
                                              <graphic>
                                                 <FontIcon iconColor="WHITE" iconLiteral="mdi2d-database-edit-outline" />
+                                             </graphic>
+                                          </Button>
+                                          <Button fx:id="deleteBtn" layoutX="464.0" layoutY="11.0" mnemonicParsing="false" onAction="#onDelete" text="Delete" textFill="WHITE">
+                                             <font>
+                                                <Font size="14.0" />
+                                             </font>
+                                             <graphic>
+                                                <FontIcon iconColor="WHITE" iconLiteral="mdi2d-delete-outline" />
+                                             </graphic>
+                                          </Button>
+                                          <Button fx:id="duplicateBtn" layoutX="547.0" layoutY="11.0" mnemonicParsing="false" onAction="#onDuplicate" text="Duplicate" textFill="WHITE">
+                                             <font>
+                                                <Font size="14.0" />
+                                             </font>
+                                             <graphic>
+                                                <FontIcon iconColor="WHITE" iconLiteral="mdi2f-forwardburger" />
                                              </graphic>
                                           </Button>
                                       </items>

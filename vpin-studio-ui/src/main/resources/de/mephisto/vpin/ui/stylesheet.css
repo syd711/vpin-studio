@@ -17,6 +17,7 @@
 
    -fx-primary-color: #333366;
    -fx-secondary-color: #111111;
+   -fx-green: #33CC00;
 }
 
 
@@ -462,6 +463,7 @@
 }
 .date-picker .cell {
 	-fx-background-color: white;
+	-fx-font-size : 14px;
 }
 .date-picker .cell:hover {
 	-fx-background-color: -fx-light-grey-color;
@@ -479,6 +481,10 @@
 }
 .date-picker-popup  {
 	-fx-border-color: transparent;
+	-fx-font-size : 14px;
+}
+.date-picker .text-field {
+	-fx-font-size : 14px;
 }
 .date-picker-popup .month-year-pane {
 	-fx-background-color: -fx-primary-color;

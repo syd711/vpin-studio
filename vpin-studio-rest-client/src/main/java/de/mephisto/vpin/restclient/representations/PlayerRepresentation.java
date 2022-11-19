@@ -1,0 +1,76 @@
+package de.mephisto.vpin.restclient.representations;
+
+import java.util.Date;
+
+public class PlayerRepresentation {
+
+  private Date createdAt;
+
+  private Date updatedAt;
+
+  private long id;
+
+  private String avatarUrl;
+
+  private String initials;
+
+  private String name;
+
+  private String type;
+
+  public Date getCreatedAt() {
+    return createdAt;
+  }
+
+  public void setCreatedAt(Date createdAt) {
+    this.createdAt = createdAt;
+  }
+
+  public Date getUpdatedAt() {
+    return updatedAt;
+  }
+
+  public void setUpdatedAt(Date updatedAt) {
+    this.updatedAt = updatedAt;
+  }
+
+  public long getId() {
+    return id;
+  }
+
+  public void setId(long id) {
+    this.id = id;
+  }
+
+  public String getAvatarUrl() {
+    return avatarUrl;
+  }
+
+  public void setAvatarUrl(String avatarUrl) {
+    this.avatarUrl = avatarUrl;
+  }
+
+  public String getInitials() {
+    return initials;
+  }
+
+  public void setInitials(String initials) {
+    this.initials = initials;
+  }
+
+  public String getName() {
+    return name;
+  }
+
+  public void setName(String name) {
+    this.name = name;
+  }
+
+  public String getType() {
+    return type;
+  }
+
+  public void setType(String type) {
+    this.type = type;
+  }
+}

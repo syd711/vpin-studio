@@ -1,7 +1,12 @@
 package de.mephisto.vpin.ui;
 
 import de.mephisto.vpin.restclient.representations.PreferenceEntryRepresentation;
+import de.mephisto.vpin.ui.cards.HighscoreCardsController;
+import de.mephisto.vpin.ui.competitions.CompetitionsController;
+import de.mephisto.vpin.ui.overlay.OverlayController;
+import de.mephisto.vpin.ui.players.PlayersController;
 import de.mephisto.vpin.ui.preferences.PreferenceNames;
+import de.mephisto.vpin.ui.tables.TablesController;
 import de.mephisto.vpin.ui.util.UIDefaults;
 import eu.hansolo.tilesfx.Tile;
 import eu.hansolo.tilesfx.TileBuilder;
@@ -52,42 +57,44 @@ public class NavigationController implements Initializable {
   }
 
   public static void refresh() throws IOException {
-    loadScreen(null, activeScreenId);
+    StudioFXController studioFXController = controllerCache.get(activeScreenId);
+    loadScreen(null, studioFXController.getClass(), activeScreenId);
     refreshAvatar();
   }
 
   @FXML
   private void onDashboardClick(ActionEvent event) throws IOException {
-    loadScreen(event, "scene-dashboard.fxml");
+    loadScreen(event, DashboardController.class, "scene-dashboard.fxml");
   }
 
   @FXML
   private void onHighscoreCardsClick(ActionEvent event) throws IOException {
-    loadScreen(event, "scene-highscore-cards.fxml");
+    loadScreen(event, HighscoreCardsController.class, "scene-highscore-cards.fxml");
   }
 
   @FXML
   private void onTablesClick(ActionEvent event) throws IOException {
-    loadScreen(event, "scene-tables.fxml");
+    loadScreen(event, TablesController.class, "scene-tables.fxml");
   }
 
   @FXML
   private void onCompetitionsClick(ActionEvent event) throws IOException {
-    loadScreen(event, "scene-competitions.fxml");
+    loadScreen(event, CompetitionsController.class, "scene-competitions.fxml");
   }
 
   @FXML
   private void onOverlayClick(ActionEvent event) throws IOException {
-    loadScreen(event, "scene-overlay.fxml");
+    loadScreen(event, NavigationController.class, "scene-overlay.fxml");
   }
 
   @FXML
   private void onPlayersClick(ActionEvent event) throws IOException {
-    loadScreen(event, "scene-players.fxml");
+    loadScreen(event, PlayersController.class, "scene-players.fxml");
   }
 
   public static void load(String fxml) throws IOException {
-    loadScreen(null, fxml);
+    StudioFXController studioFXController = controllerCache.get(fxml);
+    loadScreen(null, studioFXController.getClass(), activeScreenId);
   }
 
   @FXML
@@ -98,7 +105,7 @@ public class NavigationController implements Initializable {
     stack.getChildren().add(preferencesRoot);
   }
 
-  public static void loadScreen(ActionEvent event, String name) throws IOException {
+  public static void loadScreen(ActionEvent event, Class<?> controller, String name) throws IOException {
     activeScreenId = name;
     Node lookup = Studio.stage.getScene().lookup("#main");
     BorderPane main = (BorderPane) lookup;
@@ -109,7 +116,7 @@ public class NavigationController implements Initializable {
       activeController = controllerCache.get(name);
     }
     else {
-      FXMLLoader loader = new FXMLLoader(NavigationController.class.getResource(name));
+      FXMLLoader loader = new FXMLLoader(controller.getResource(name));
       root = loader.load();
       activeController = loader.<StudioFXController>getController();
 

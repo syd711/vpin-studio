@@ -27,7 +27,7 @@ public class Player {
 
   @Id
   @GeneratedValue(strategy = GenerationType.AUTO)
-  private int id;
+  private Long id;
 
   @OneToOne(cascade = CascadeType.ALL)
   private Asset avatar;
@@ -134,11 +134,11 @@ public class Player {
     this.updatedAt = updatedAt;
   }
 
-  public int getId() {
+  public Long getId() {
     return id;
   }
 
-  public void setId(int id) {
+  public void setId(Long id) {
     this.id = id;
   }
 

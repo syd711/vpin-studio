@@ -1,7 +1,5 @@
 package de.mephisto.vpin.server.competitions;
 
-import de.mephisto.vpin.server.games.Game;
-import de.mephisto.vpin.server.games.GameService;
 import de.mephisto.vpin.server.system.SystemService;
 import de.mephisto.vpin.server.util.RequestUtil;
 import org.apache.commons.io.FilenameUtils;
@@ -12,7 +10,9 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.io.File;
 import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -35,7 +35,7 @@ public class CompetitionResource {
   @GetMapping("/{id}")
   public Competition getCompetition(@PathVariable("id") int id) {
     Competition c = competitionService.getCompetition(id);
-    if(c == null) {
+    if (c == null) {
       throw new ResponseStatusException(NOT_FOUND, "Not game found for id " + id);
     }
     return c;
@@ -44,7 +44,7 @@ public class CompetitionResource {
   @GetMapping("/active/offline")
   public Competition getActiveOffCompetition() {
     Competition c = competitionService.getActiveOfflineCompetition();
-    if(c == null) {
+    if (c == null) {
       throw new ResponseStatusException(NOT_FOUND, "Not active offline competition found");
     }
     return c;
@@ -54,13 +54,16 @@ public class CompetitionResource {
   public List<String> getCompetitionBadges() {
     File folder = new File(SystemService.RESOURCES, COMPETITION_BADGES);
     File[] files = folder.listFiles((dir, name) -> name.endsWith("png"));
-    return Arrays.stream(files).sorted().map(f -> FilenameUtils.getBaseName(f.getName())).collect(Collectors.toList());
+    if (files != null) {
+      return Arrays.stream(files).sorted().map(f -> FilenameUtils.getBaseName(f.getName())).collect(Collectors.toList());
+    }
+    return Collections.emptyList();
   }
 
   @GetMapping("/badge/{name}")
   public ResponseEntity<byte[]> getBadge(@PathVariable("name") String imageName) throws Exception {
     File folder = new File(SystemService.RESOURCES, COMPETITION_BADGES);
-    File[] files = folder.listFiles((dir, name) -> URLEncoder.encode(FilenameUtils.getBaseName(name)).equals(imageName));
+    File[] files = folder.listFiles((dir, name) -> URLEncoder.encode(FilenameUtils.getBaseName(name), StandardCharsets.UTF_8).equals(imageName));
     if (files != null) {
       return RequestUtil.serializeImage(files[0]);
     }
@@ -70,5 +73,10 @@ public class CompetitionResource {
   @PostMapping("/save")
   public Competition save(@RequestBody Competition c) {
     return competitionService.save(c);
+  }
+
+  @DeleteMapping("/delete/{id}")
+  public void deleteCompetition(@PathVariable("id") int id) {
+    competitionService.deleteCompetition(id);
   }
 }

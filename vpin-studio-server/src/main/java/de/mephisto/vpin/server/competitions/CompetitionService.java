@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
-public class CompetitionService  {
+public class CompetitionService {
   private final static Logger LOG = LoggerFactory.getLogger(CompetitionService.class);
 
   @Autowired
@@ -25,20 +25,20 @@ public class CompetitionService  {
   }
 
   public Competition save(Competition c) {
-    if(c.getId() == null) {
-      Competition updated = competitionsRepository.saveAndFlush(c);
-      LOG.info("Saved " + updated);
-      return updated;
-    }
-
+    Competition updated = competitionsRepository.saveAndFlush(c);
+    LOG.info("Saved " + updated);
     return getCompetition(c.getId());
   }
 
   public Competition getActiveOfflineCompetition() {
     List<Competition> activeCompetitions = competitionsRepository.findActiveCompetitions();
-    if(!activeCompetitions.isEmpty()) {
+    if (!activeCompetitions.isEmpty()) {
       return activeCompetitions.get(0);
     }
     return null;
+  }
+
+  public void deleteCompetition(long id) {
+    competitionsRepository.deleteById(id);
   }
 }

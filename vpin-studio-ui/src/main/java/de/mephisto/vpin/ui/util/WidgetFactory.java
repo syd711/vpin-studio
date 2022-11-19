@@ -15,6 +15,7 @@ import javafx.beans.value.ChangeListener;
 import javafx.concurrent.Service;
 import javafx.concurrent.Task;
 import javafx.concurrent.Worker;
+import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Parent;
@@ -40,7 +41,7 @@ import java.util.Optional;
 public class WidgetFactory {
   private final static Logger LOG = LoggerFactory.getLogger(WidgetFactory.class);
 
-  public static CompetitionRepresentation openCompetitionDialog() {
+  public static CompetitionRepresentation openCompetitionDialog(CompetitionRepresentation selection) {
     Parent root = null;
     FXMLLoader fxmlLoader = new FXMLLoader(Studio.class.getResource("dialog-competition-edit.fxml"));
     try {
@@ -49,11 +50,17 @@ public class WidgetFactory {
       e.printStackTrace();
     }
     CompetitionDialogController controller = fxmlLoader.getController();
+    controller.setCompetition(selection);
 
     Stage owner = Studio.stage;
     final Stage stage = new Stage();
     stage.initModality(Modality.WINDOW_MODAL);
-    stage.setTitle("Create New Competition");
+    if(selection == null) {
+      stage.setTitle("Create New Competition");
+    }
+    else {
+      stage.setTitle("Edit Competition");
+    }
 
     stage.initOwner(owner);
     Scene scene = new Scene(root);

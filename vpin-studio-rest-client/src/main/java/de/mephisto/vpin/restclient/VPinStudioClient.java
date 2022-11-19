@@ -112,6 +112,14 @@ public class VPinStudioClient implements ObservedPropertyChangeListener {
     return null;
   }
 
+  public void deleteCompetition(CompetitionRepresentation c) {
+    try {
+      RestClient.getInstance().delete(API + "competitions/delete/" + c.getId());
+    } catch (Exception e) {
+      LOG.error("Failed to delete competition: " + e.getMessage(), e);
+    }
+  }
+
   public GameMediaRepresentation getGameMedia(int id) {
     return RestClient.getInstance().get(API + "poppermedia/" + id, GameMediaRepresentation.class);
   }

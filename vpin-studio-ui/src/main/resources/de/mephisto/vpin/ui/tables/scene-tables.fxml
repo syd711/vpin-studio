@@ -16,13 +16,13 @@
 <?import javafx.scene.text.Font?>
 <?import org.kordamp.ikonli.javafx.FontIcon?>
 
-<BorderPane styleClass="main" stylesheets="@stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.tables.TablesController">
+<BorderPane styleClass="main" stylesheets="@../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.tables.TablesController">
    <center>
       <BorderPane BorderPane.alignment="CENTER">
          <center>
-            <BorderPane styleClass="subpanel" stylesheets="@stylesheet.css" BorderPane.alignment="CENTER">
+            <BorderPane styleClass="subpanel" BorderPane.alignment="CENTER">
                <center>
-                  <BorderPane styleClass="subpanel" stylesheets="@stylesheet.css" BorderPane.alignment="CENTER">
+                  <BorderPane styleClass="subpanel" BorderPane.alignment="CENTER">
                      <center>
                         <StackPane fx:id="tableStack" styleClass="media-parent">
                            <BorderPane.margin>
@@ -50,7 +50,7 @@
                         <Insets left="12.0" right="12.0" top="12.0" />
                      </BorderPane.margin>
                      <top>
-                        <ToolBar prefHeight="40.0" style="-fx-background-radius: 3 3 0 0;" styleClass="base-component" stylesheets="@stylesheet.css" BorderPane.alignment="CENTER">
+                        <ToolBar prefHeight="40.0" style="-fx-background-radius: 3 3 0 0;" styleClass="base-component" BorderPane.alignment="CENTER">
                           <items>
                               <TextField fx:id="textfieldSearch" onKeyPressed="#onSearchKeyPressed" prefHeight="26.0" prefWidth="250.0" promptText="Table Search...">
                                  <font>
@@ -166,7 +166,7 @@
       </BorderPane>
    </center>
    <top>
-      <fx:include fx:id="mainToolbar" source="scene-toolbar.fxml" />
+      <fx:include fx:id="mainToolbar" source="../scene-toolbar.fxml" />
    </top>
    <right>
       <fx:include fx:id="tablesSideBar" source="scene-tables-sidebar.fxml" />

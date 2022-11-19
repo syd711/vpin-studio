@@ -4,6 +4,7 @@ package de.mephisto.vpin.server.competitions;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import de.mephisto.vpin.server.assets.Asset;
 import de.mephisto.vpin.server.highscores.Highscore;
+import de.mephisto.vpin.server.players.Player;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -38,6 +39,11 @@ public class Competition {
   @OneToOne(cascade = CascadeType.ALL)
   private Asset logo;
 
+  @OneToOne(cascade = CascadeType.ALL)
+  private Player winner;
+
+  private String winnerInitials;
+
   private int gameId;
 
   private String type;
@@ -53,6 +59,22 @@ public class Competition {
   private String name;
 
   private boolean active;
+
+  public Player getWinner() {
+    return winner;
+  }
+
+  public void setWinner(Player winner) {
+    this.winner = winner;
+  }
+
+  public String getWinnerInitials() {
+    return winnerInitials;
+  }
+
+  public void setWinnerInitials(String winnerInitials) {
+    this.winnerInitials = winnerInitials;
+  }
 
   public boolean isActive() {
     return active;

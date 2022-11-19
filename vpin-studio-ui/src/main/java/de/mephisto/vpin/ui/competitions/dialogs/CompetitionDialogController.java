@@ -7,8 +7,6 @@ import de.mephisto.vpin.restclient.representations.CompetitionRepresentation;
 import de.mephisto.vpin.restclient.representations.GameMediaItemRepresentation;
 import de.mephisto.vpin.restclient.representations.GameMediaRepresentation;
 import de.mephisto.vpin.restclient.representations.GameRepresentation;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -27,7 +25,6 @@ import java.net.URL;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
-import java.time.temporal.TemporalUnit;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -112,7 +109,7 @@ public class CompetitionDialogController implements Initializable {
 
     startDatePicker.setValue(LocalDate.now());
     startDatePicker.valueProperty().addListener((observableValue, localDate, t1) -> {
-      if(t1 != null) {
+      if (t1 != null) {
         Date date = Date.from(t1.atStartOfDay(ZoneId.systemDefault()).toInstant());
         competition.setStartDate(date);
       }
@@ -124,13 +121,19 @@ public class CompetitionDialogController implements Initializable {
 
     endDatePicker.setValue(LocalDate.now().plus(7, ChronoUnit.DAYS));
     endDatePicker.valueProperty().addListener((observableValue, localDate, t1) -> {
-      if(t1 != null) {
+      if (t1 != null) {
         Date date = Date.from(t1.atStartOfDay(ZoneId.systemDefault()).toInstant());
         competition.setEndDate(date);
       }
       else {
         competition.setEndDate(null);
       }
+
+      long diff = ChronoUnit.DAYS.between(LocalDate.now(), t1);
+      if (diff > 0) {
+        competition.setActive(true);
+      }
+
       validate();
     });
 
@@ -204,6 +207,23 @@ public class CompetitionDialogController implements Initializable {
 
   public CompetitionRepresentation getCompetition() {
     return competition;
+  }
+
+  public void setCompetition(CompetitionRepresentation c) {
+    if (c != null) {
+      this.competition = c;
+      GameRepresentation game = client.getGame(c.getGameId());
+
+      nameField.setText(this.competition.getName());
+      this.startDatePicker.setValue(this.competition.getStartDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate());
+      this.endDatePicker.setValue(this.competition.getEndDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate());
+      this.tableCombo.setValue(game);
+
+      this.badgeCheckbox.setSelected(c.isCustomizeMedia());
+      this.competitionIconCombo.setValue(c.getBadge());
+      String badge = c.getBadge();
+      refreshPreview(game, badge);
+    }
   }
 
 

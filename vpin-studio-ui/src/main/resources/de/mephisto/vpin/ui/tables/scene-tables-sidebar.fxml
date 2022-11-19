@@ -21,7 +21,7 @@
 <?import javafx.scene.text.Font?>
 <?import org.kordamp.ikonli.javafx.FontIcon?>
 
-<VBox prefWidth="600.0" styleClass="subpanel" stylesheets="@stylesheet.css" BorderPane.alignment="CENTER" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.tables.TablesSidebarController">
+<VBox prefWidth="600.0" styleClass="subpanel" stylesheets="@../stylesheet.css" BorderPane.alignment="CENTER" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.tables.TablesSidebarController">
     <children>
         <Accordion fx:id="accordion">
             <panes>
@@ -29,11 +29,11 @@
                     <content>
                         <BorderPane>
                             <center>
-                                <ScrollPane fitToWidth="true" styleClass="accordion-container" stylesheets="@stylesheet.css" BorderPane.alignment="CENTER">
+                                <ScrollPane fitToWidth="true" styleClass="accordion-container" BorderPane.alignment="CENTER">
                                     <content>
-                                        <Pane fx:id="mediaRootPane" prefHeight="1070.0" styleClass="accordion-container" stylesheets="@stylesheet.css">
+                                        <Pane fx:id="mediaRootPane" prefHeight="1070.0" styleClass="accordion-container">
                                             <children>
-                                                <BorderPane layoutX="158.0" layoutY="566.0" prefHeight="490.0" prefWidth="250.0" styleClass="media-container" stylesheets="@stylesheet.css">
+                                                <BorderPane layoutX="158.0" layoutY="566.0" prefHeight="490.0" prefWidth="250.0" styleClass="media-container">
                                                     <bottom>
                                                         <Label text="Playfield" textFill="WHITE" BorderPane.alignment="CENTER" />
                                                     </bottom>
@@ -45,7 +45,7 @@
                                                         </Button>
                                                     </top>
                                                 </BorderPane>
-                                                <BorderPane fx:id="screenGameHelp" layoutX="3.0" layoutY="650.0" prefHeight="180.0" prefWidth="150.0" styleClass="media-container" stylesheets="@stylesheet.css">
+                                                <BorderPane fx:id="screenGameHelp" layoutX="3.0" layoutY="650.0" prefHeight="180.0" prefWidth="150.0" styleClass="media-container">
                                                     <bottom>
                                                         <Label text="Help" textFill="WHITE" BorderPane.alignment="CENTER" />
                                                     </bottom>
@@ -60,8 +60,8 @@
                                                         </Button>
                                                     </top>
                                                 </BorderPane>
-                                                <BorderPane fx:id="screenPlayField" layoutX="158.0" layoutY="594.0" prefHeight="445.0" prefWidth="250.0" stylesheets="@stylesheet.css" />
-                                                <BorderPane fx:id="screenGameInfo" layoutX="3.0" layoutY="441.0" prefHeight="180.0" prefWidth="150.0" styleClass="media-container" stylesheets="@stylesheet.css">
+                                                <BorderPane fx:id="screenPlayField" layoutX="158.0" layoutY="594.0" prefHeight="445.0" prefWidth="250.0" />
+                                                <BorderPane fx:id="screenGameInfo" layoutX="3.0" layoutY="441.0" prefHeight="180.0" prefWidth="150.0" styleClass="media-container">
                                                     <bottom>
                                                         <Label text="Info / Flyer" textFill="WHITE" BorderPane.alignment="CENTER" />
                                                     </bottom>
@@ -76,7 +76,7 @@
                                                         </Button>
                                                     </top>
                                                 </BorderPane>
-                                                <BorderPane fx:id="screenDMD" layoutX="157.0" layoutY="437.0" prefHeight="120.0" prefWidth="250.0" styleClass="media-container" stylesheets="@stylesheet.css">
+                                                <BorderPane fx:id="screenDMD" layoutX="157.0" layoutY="437.0" prefHeight="120.0" prefWidth="250.0" styleClass="media-container">
                                                     <bottom>
                                                         <Label text="DMD" textFill="WHITE" BorderPane.alignment="CENTER" />
                                                     </bottom>
@@ -91,7 +91,7 @@
                                                         </Button>
                                                     </top>
                                                 </BorderPane>
-                                                <BorderPane fx:id="screenTopper" layoutX="157.0" layoutY="4.0" maxHeight="208.0" prefHeight="208.0" prefWidth="250.0" styleClass="media-container" stylesheets="@stylesheet.css">
+                                                <BorderPane fx:id="screenTopper" layoutX="157.0" layoutY="4.0" maxHeight="208.0" prefHeight="208.0" prefWidth="250.0" styleClass="media-container">
                                                     <bottom>
                                                         <Label text="Topper" textFill="WHITE" BorderPane.alignment="CENTER" />
                                                     </bottom>
@@ -106,7 +106,7 @@
                                                         </Button>
                                                     </top>
                                                 </BorderPane>
-                                                <BorderPane fx:id="screenBackGlass" layoutX="157.0" layoutY="220.0" prefHeight="208.0" prefWidth="250.0" styleClass="media-container" stylesheets="@stylesheet.css">
+                                                <BorderPane fx:id="screenBackGlass" layoutX="157.0" layoutY="220.0" prefHeight="208.0" prefWidth="250.0" styleClass="media-container">
                                                     <bottom>
                                                         <Label text="Backglass" textFill="WHITE" BorderPane.alignment="CENTER" />
                                                     </bottom>
@@ -121,7 +121,7 @@
                                                         </Button>
                                                     </top>
                                                 </BorderPane>
-                                                <BorderPane fx:id="screenLoading" layoutX="411.0" layoutY="234.0" prefHeight="170.0" prefWidth="150.0" styleClass="media-container" stylesheets="@stylesheet.css">
+                                                <BorderPane fx:id="screenLoading" layoutX="411.0" layoutY="234.0" prefHeight="170.0" prefWidth="150.0" styleClass="media-container">
                                                     <bottom>
                                                         <Label text="Loading" textFill="WHITE" BorderPane.alignment="CENTER" />
                                                     </bottom>
@@ -136,7 +136,7 @@
                                                         </Button>
                                                     </top>
                                                 </BorderPane>
-                                                <BorderPane fx:id="screenMenu" layoutX="3.0" layoutY="234.0" prefHeight="180.0" prefWidth="150.0" styleClass="media-container" stylesheets="@stylesheet.css">
+                                                <BorderPane fx:id="screenMenu" layoutX="3.0" layoutY="234.0" prefHeight="180.0" prefWidth="150.0" styleClass="media-container">
                                                     <bottom>
                                                         <Label text="Apron/Full DMD" textFill="WHITE" BorderPane.alignment="CENTER" />
                                                     </bottom>
@@ -151,7 +151,7 @@
                                                         </Button>
                                                     </top>
                                                 </BorderPane>
-                                                <BorderPane fx:id="screenOther2" layoutX="411.0" layoutY="442.0" prefHeight="180.0" prefWidth="150.0" styleClass="media-container" stylesheets="@stylesheet.css">
+                                                <BorderPane fx:id="screenOther2" layoutX="411.0" layoutY="442.0" prefHeight="180.0" prefWidth="150.0" styleClass="media-container">
                                                     <bottom>
                                                         <Label text="Other2" textFill="WHITE" BorderPane.alignment="CENTER" />
                                                     </bottom>
@@ -166,7 +166,7 @@
                                                         </Button>
                                                     </top>
                                                 </BorderPane>
-                                                <BorderPane fx:id="screenWheel" layoutX="412.0" layoutY="650.0" prefHeight="180.0" prefWidth="150.0" styleClass="media-container" stylesheets="@stylesheet.css">
+                                                <BorderPane fx:id="screenWheel" layoutX="412.0" layoutY="650.0" prefHeight="180.0" prefWidth="150.0" styleClass="media-container">
                                                     <bottom>
                                                         <Label text="Wheel Image" textFill="WHITE" BorderPane.alignment="CENTER" />
                                                     </bottom>
@@ -181,7 +181,7 @@
                                                         </Button>
                                                     </top>
                                                 </BorderPane>
-                                                <BorderPane fx:id="screenAudioLaunch" layoutX="3.0" layoutY="19.0" prefHeight="85.0" prefWidth="150.0" styleClass="media-container" stylesheets="@stylesheet.css">
+                                                <BorderPane fx:id="screenAudioLaunch" layoutX="3.0" layoutY="19.0" prefHeight="85.0" prefWidth="150.0" styleClass="media-container">
                                                     <bottom>
                                                         <Label text="Audio Launch" textFill="WHITE" BorderPane.alignment="CENTER">
                                                             <BorderPane.margin>
@@ -200,7 +200,7 @@
                                                         </Button>
                                                     </top>
                                                 </BorderPane>
-                                                <BorderPane fx:id="screenAudio" layoutX="3.0" layoutY="121.0" prefHeight="85.0" prefWidth="150.0" styleClass="media-container" stylesheets="@stylesheet.css">
+                                                <BorderPane fx:id="screenAudio" layoutX="3.0" layoutY="121.0" prefHeight="85.0" prefWidth="150.0" styleClass="media-container">
                                                     <bottom>
                                                         <Label text="Audio" textFill="WHITE" BorderPane.alignment="CENTER">
                                                             <BorderPane.margin>
