@@ -232,7 +232,17 @@ public class WidgetFactory {
     Alert alert = new Alert(Alert.AlertType.CONFIRMATION, msg, ButtonType.CLOSE, ButtonType.OK);
     alert.getDialogPane().getStylesheets().add(Studio.class.getResource("stylesheet.css").toExternalForm());
     alert.getDialogPane().getStyleClass().add("base-component");
-    alert.getDialogPane().setStyle("-fx-font-size: 16fx;");
+    alert.getDialogPane().setStyle("-fx-font-size: 14px;");
+    alert.setHeaderText(header);
+    alert.setGraphic(null);
+    return alert.showAndWait();
+  }
+
+  public static Optional<ButtonType> showInformation(String msg, String header) {
+    Alert alert = new Alert(Alert.AlertType.INFORMATION, msg, ButtonType.OK);
+    alert.getDialogPane().getStylesheets().add(Studio.class.getResource("stylesheet.css").toExternalForm());
+    alert.getDialogPane().getStyleClass().add("base-component");
+    alert.getDialogPane().setStyle("-fx-font-size: 14px;");
     alert.setHeaderText(header);
     alert.setGraphic(null);
     return alert.showAndWait();
@@ -242,7 +252,7 @@ public class WidgetFactory {
     Alert alert = new Alert(Alert.AlertType.INFORMATION, msg, ButtonType.CLOSE);
     alert.getDialogPane().getStylesheets().add(Studio.class.getResource("stylesheet.css").toExternalForm());
     alert.getDialogPane().getStyleClass().add("base-component");
-    alert.getDialogPane().setStyle("-fx-font-size: 16px;");
+    alert.getDialogPane().setStyle("-fx-font-size: 14px;");
     alert.setHeaderText(null);
     alert.setGraphic(null);
     alert.showAndWait();

@@ -17,9 +17,11 @@ module de.mephisto.vpin.ui {
   requires org.kordamp.ikonli.materialdesign2;
   requires org.kordamp.ikonli.simplelineicons;
   requires filters;
-  requires de.mephisto.vpin.restclient;
   requires javafx.media;
   requires javafx.swing;
+
+  requires de.mephisto.vpin.connectors.discord;
+  requires de.mephisto.vpin.restclient;
 
   opens de.mephisto.vpin.ui to javafx.fxml;
   exports de.mephisto.vpin.ui;

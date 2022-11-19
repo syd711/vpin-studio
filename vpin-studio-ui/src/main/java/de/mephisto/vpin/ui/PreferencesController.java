@@ -79,6 +79,16 @@ public class PreferencesController implements Initializable {
     load("preference-service-info.fxml");
   }
 
+  @FXML
+  private void onDiscordBot(ActionEvent event) throws IOException {
+    load("preference-discord-bot.fxml");
+  }
+
+  @FXML
+  private void onDiscordWebhook(ActionEvent event) throws IOException {
+    load("preference-discord-webhook.fxml");
+  }
+
   private void load(String screen) throws IOException {
     FXMLLoader loader = new FXMLLoader(ScreensPreferencesController.class.getResource(screen));
     Node node = loader.load();

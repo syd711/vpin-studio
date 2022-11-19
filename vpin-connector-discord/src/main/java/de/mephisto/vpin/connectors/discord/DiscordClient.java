@@ -1,8 +1,6 @@
 package de.mephisto.vpin.connectors.discord;
 
 
-import edu.umd.cs.findbugs.annotations.NonNull;
-import edu.umd.cs.findbugs.annotations.Nullable;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.entities.Guild;
@@ -15,7 +13,6 @@ import net.dv8tion.jda.api.events.guild.member.GuildMemberUpdateEvent;
 import net.dv8tion.jda.api.events.guild.member.update.GuildMemberUpdateNicknameEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.requests.GatewayIntent;
-import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -23,10 +20,10 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.function.Consumer;
 
 /**
- * BOT link:
- * https://discord.com/api/oauth2/authorize?client_id=1043190061165989979&permissions=2048&scope=bot
+ *
  */
 public class DiscordClient extends ListenerAdapter {
   private final static Logger LOG = LoggerFactory.getLogger(DiscordClient.class);
@@ -37,8 +34,6 @@ public class DiscordClient extends ListenerAdapter {
 
   public DiscordClient(String botToken, String guildId) throws Exception {
     this.guildId = guildId;
-//    String url = "https://discord.com/api/webhooks/1043202008133423186/zWtLf7jqPi5C8GrNqB-svt9xQSJ6QFzQmPrEGBZ3ugezYy6NqvgK03EvZyJJTOTUlkR0";
-
     jda = JDABuilder.createDefault(botToken, Arrays.asList(GatewayIntent.DIRECT_MESSAGES, GatewayIntent.GUILD_MESSAGES, GatewayIntent.GUILD_MEMBERS))
         .setEventPassthrough(true)
         .build();
@@ -51,7 +46,7 @@ public class DiscordClient extends ListenerAdapter {
     this.jda.shutdownNow();
   }
 
-  public void sendMessage(@NonNull String textChannelName, @NonNull String message) {
+  public void sendMessage(String textChannelName, String message) {
     Guild guild = jda.getGuildById(guildId);
     if (guild != null) {
       List<GuildChannel> channels = guild.getChannels();
@@ -75,6 +70,10 @@ public class DiscordClient extends ListenerAdapter {
   }
 
   public void refreshMembers() {
+    this.refreshMembers(null, null);
+  }
+
+  public void refreshMembers(Consumer<List<DiscordMember>> c, Consumer<Throwable> t) {
     Guild guild = jda.getGuildById(guildId);
     if (guild == null) {
       throw new UnsupportedOperationException("No guild found for id '" + guildId + "'");
@@ -82,15 +81,35 @@ public class DiscordClient extends ListenerAdapter {
 
     guild.loadMembers().onSuccess(members -> {
       this.members.clear();
-      for (Member member : members) {
-        DiscordMember discordMember = new DiscordMember();
-        discordMember.setName(member.getEffectiveName());
-        discordMember.setInitials(resolveInitials(member.getEffectiveName()));
-        discordMember.setAvatarUrl(member.getEffectiveAvatarUrl());
+      this.members.addAll(createMemberList(members));
+      LOG.info("Successfully loaded " + this.members.size() + " members from " + guild.getName());
 
-        this.members.add(discordMember);
+      if (c != null) {
+        c.accept(this.members);
       }
-    }).onError(throwable -> LOG.error("Failed to load members from guildId {}: {}", guildId, throwable.getMessage(), throwable));
+    }).onError(throwable -> {
+      LOG.error("Failed to load members from guildId {}: {}", guildId, throwable.getMessage(), throwable);
+      if(t != null) {
+        t.accept(throwable);
+      }
+    });
+  }
+
+  public void testMemberList(Consumer<List<DiscordMember>> c, Consumer<Throwable> t) {
+    this.refreshMembers(c, t);
+  }
+
+  private List<DiscordMember> createMemberList(List<Member> members) {
+    List<DiscordMember> result = new ArrayList<>();
+    for (Member member : members) {
+      DiscordMember discordMember = new DiscordMember();
+      discordMember.setName(member.getEffectiveName());
+      discordMember.setInitials(resolveInitials(member.getEffectiveName()));
+      discordMember.setAvatarUrl(member.getEffectiveAvatarUrl());
+
+      result.add(discordMember);
+    }
+    return result;
   }
 
   /**
@@ -112,7 +131,7 @@ public class DiscordClient extends ListenerAdapter {
     return initials;
   }
 
-  public void callWebHook(@NonNull String url, @NonNull String message, @Nullable String avatarUrl) throws IOException {
+  public void callWebHook(String url, String message, String avatarUrl) throws IOException {
     DiscordWebhook hook = new DiscordWebhook(url);
     hook.setTts(false);
     hook.setAvatarUrl(avatarUrl);
@@ -122,26 +141,26 @@ public class DiscordClient extends ListenerAdapter {
 
   /******************** Listener Methods ******************************************************************************/
   @Override
-  public void onGuildMemberJoin(@NotNull GuildMemberJoinEvent event) {
+  public void onGuildMemberJoin(GuildMemberJoinEvent event) {
     super.onGuildMemberJoin(event);
     LOG.info("Guild member join event " + event);
     this.refreshMembers();
   }
 
   @Override
-  public void onGuildMemberUpdate(@NotNull GuildMemberUpdateEvent event) {
+  public void onGuildMemberUpdate(GuildMemberUpdateEvent event) {
     super.onGuildMemberUpdate(event);
     this.refreshMembers();
   }
 
   @Override
-  public void onGuildMemberRemove(@NotNull GuildMemberRemoveEvent event) {
+  public void onGuildMemberRemove(GuildMemberRemoveEvent event) {
     super.onGuildMemberRemove(event);
     this.refreshMembers();
   }
 
   @Override
-  public void onGuildMemberUpdateNickname(@NotNull GuildMemberUpdateNicknameEvent event) {
+  public void onGuildMemberUpdateNickname(GuildMemberUpdateNicknameEvent event) {
     super.onGuildMemberUpdateNickname(event);
     this.refreshMembers();
   }
