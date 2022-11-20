@@ -1,5 +1,6 @@
 package de.mephisto.vpin.server.assets;
 
+import de.mephisto.vpin.server.util.UploadUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,33 +9,37 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.server.ResponseStatusException;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
 import static de.mephisto.vpin.server.VPinStudioServer.API_SEGMENT;
+import static org.springframework.http.HttpStatus.NOT_FOUND;
 
 /**
  *
  */
 @RestController
-@RequestMapping(API_SEGMENT + "asset")
+@RequestMapping(API_SEGMENT + "assets")
 public class AssetsResource {
   private final static Logger LOG = LoggerFactory.getLogger(AssetsResource.class);
-  public final int MAX_PACKET_SIZE = 4194304;
 
   @Autowired
   private AssetRepository assetRepository;
 
+  @GetMapping
+  public List<Asset> getAssets() {
+    return assetRepository.findAll();
+  }
+
   @GetMapping("/{id}")
   public Asset getById(@PathVariable("id") final String id) {
     Optional<Asset> asset = assetRepository.findById(Long.valueOf(id));
-    if (asset.isPresent()) {
-      return asset.get();
-    }
-
-    return null;
+    return asset.orElse(null);
   }
 
   @GetMapping("/data/{uuid}")
@@ -74,21 +79,30 @@ public class AssetsResource {
     return assetRepository.save(asset);
   }
 
-  @PostMapping("/{id}/upload")
-  public Asset upload(@PathVariable("id") String id,
-                      @RequestParam("file") MultipartFile file) {
-    byte[] bytes = new byte[0];
-    try {
-      bytes = file.getBytes();
-      Asset asset = new Asset();
-      if (id != null && !id.equals("null")) {
-        asset = getById(id);
-      }
-      asset.setData(bytes);
-      return assetRepository.save(asset);
-    } catch (Exception e) {
-      LOG.error("Failed to store asset: " + e.getMessage() + ", byte size was " + bytes.length, e);
+  @PostMapping("/{id}/upload/{max}")
+  public Asset upload(@PathVariable("id") long id,
+                      @PathVariable("max") int maxSize,
+                      @RequestParam("file") MultipartFile file) throws IOException {
+    if (file == null) {
+      LOG.error("Upload request did not contain a file object.");
+      throw new ResponseStatusException(NOT_FOUND, "Upload request did not contain a file object.");
     }
-    return null;
+
+    byte[] data = file.getBytes();
+    if (maxSize > 0) {
+      data = UploadUtil.resizeImageUpload(file, maxSize);
+    }
+
+    Asset asset = new Asset();
+    asset.setUuid(UUID.randomUUID().toString());
+    if (id > 0) {
+      Optional<Asset> byId = assetRepository.findById(id);
+      if (byId.isPresent()) {
+        asset = byId.get();
+      }
+    }
+    asset.setData(data);
+    asset.setMimeType(file.getContentType());
+    return assetRepository.saveAndFlush(asset);
   }
 }

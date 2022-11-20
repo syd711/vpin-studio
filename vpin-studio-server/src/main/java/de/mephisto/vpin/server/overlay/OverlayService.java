@@ -72,7 +72,7 @@ public class OverlayService implements InitializingBean {
   @Override
   public void afterPropertiesSet() {
     try {
-      onOverlayGeneration();
+//      onOverlayGeneration();
     } catch (Exception e) {
       LOG.info("Initial overlay generation failed: " + e.getMessage(), e);
     }

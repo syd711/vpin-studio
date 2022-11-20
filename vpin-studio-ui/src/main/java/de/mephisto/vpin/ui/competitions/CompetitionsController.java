@@ -69,7 +69,12 @@ public class CompetitionsController implements Initializable, StudioFXController
   private void onCompetitionCreate() {
     CompetitionRepresentation c = Dialogs.openCompetitionDialog(null);
     if (c != null) {
-      CompetitionRepresentation newCmp = client.saveCompetition(c);
+      CompetitionRepresentation newCmp = null;
+      try {
+        newCmp = client.saveCompetition(c);
+      } catch (Exception e) {
+        WidgetFactory.showAlert(e.getMessage());
+      }
       onReload();
       tableView.getSelectionModel().select(newCmp);
     }
@@ -82,9 +87,13 @@ public class CompetitionsController implements Initializable, StudioFXController
       CompetitionRepresentation clone = selection.cloneCompetition();
       CompetitionRepresentation c = Dialogs.openCompetitionDialog(clone);
       if (c != null) {
-        CompetitionRepresentation newCmp = client.saveCompetition(c);
-        onReload();
-        tableView.getSelectionModel().select(newCmp);
+        try {
+          CompetitionRepresentation newCmp = client.saveCompetition(c);
+          onReload();
+          tableView.getSelectionModel().select(newCmp);
+        } catch (Exception e) {
+          WidgetFactory.showAlert(e.getMessage());
+        }
       }
     }
   }
@@ -95,9 +104,13 @@ public class CompetitionsController implements Initializable, StudioFXController
     if (selection != null) {
       CompetitionRepresentation c = Dialogs.openCompetitionDialog(selection);
       if (c != null) {
-        CompetitionRepresentation newCmp = client.saveCompetition(c);
-        onReload();
-        tableView.getSelectionModel().select(newCmp);
+        try {
+          CompetitionRepresentation newCmp = client.saveCompetition(c);
+          onReload();
+          tableView.getSelectionModel().select(newCmp);
+        } catch (Exception e) {
+          WidgetFactory.showAlert(e.getMessage());
+        }
       }
     }
   }

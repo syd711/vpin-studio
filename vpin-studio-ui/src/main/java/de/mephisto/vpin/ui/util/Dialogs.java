@@ -3,8 +3,10 @@ package de.mephisto.vpin.ui.util;
 import de.mephisto.vpin.restclient.representations.CompetitionRepresentation;
 import de.mephisto.vpin.restclient.representations.GameMediaItemRepresentation;
 import de.mephisto.vpin.restclient.representations.GameRepresentation;
+import de.mephisto.vpin.restclient.representations.PlayerRepresentation;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.competitions.CompetitionDialogController;
+import de.mephisto.vpin.ui.players.PlayerDialogController;
 import de.mephisto.vpin.ui.tables.dialogs.DirectB2SUploadController;
 import de.mephisto.vpin.ui.tables.dialogs.ROMUploadController;
 import de.mephisto.vpin.ui.tables.dialogs.TableUploadController;
@@ -28,6 +30,35 @@ import java.io.IOException;
 import java.util.Iterator;
 
 public class Dialogs {
+
+  public static PlayerRepresentation openPlayerDialog(PlayerRepresentation selection) {
+    Parent root = null;
+    FXMLLoader fxmlLoader = new FXMLLoader(PlayerDialogController.class.getResource("dialog-player-edit.fxml"));
+    try {
+      root = fxmlLoader.load();
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+    PlayerDialogController controller = fxmlLoader.getController();
+    controller.setPlayer(selection);
+
+    Stage owner = Studio.stage;
+    final Stage stage = new Stage();
+    stage.initModality(Modality.WINDOW_MODAL);
+    if(selection == null) {
+      stage.setTitle("Create New Competition");
+    }
+    else {
+      stage.setTitle("Edit Competition");
+    }
+
+    stage.initOwner(owner);
+    Scene scene = new Scene(root);
+    stage.setScene(scene);
+    stage.showAndWait();
+
+    return controller.getPlayer();
+  }
 
   public static CompetitionRepresentation openCompetitionDialog(CompetitionRepresentation selection) {
     Parent root = null;

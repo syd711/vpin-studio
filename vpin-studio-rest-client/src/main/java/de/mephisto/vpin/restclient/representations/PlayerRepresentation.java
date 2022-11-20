@@ -10,7 +10,7 @@ public class PlayerRepresentation {
 
   private long id;
 
-  private String avatarUrl;
+  private AssetRepresentation avatar;
 
   private String initials;
 
@@ -34,20 +34,20 @@ public class PlayerRepresentation {
     this.updatedAt = updatedAt;
   }
 
+  public AssetRepresentation getAvatar() {
+    return avatar;
+  }
+
+  public void setAvatar(AssetRepresentation avatar) {
+    this.avatar = avatar;
+  }
+
   public long getId() {
     return id;
   }
 
   public void setId(long id) {
     this.id = id;
-  }
-
-  public String getAvatarUrl() {
-    return avatarUrl;
-  }
-
-  public void setAvatarUrl(String avatarUrl) {
-    this.avatarUrl = avatarUrl;
   }
 
   public String getInitials() {

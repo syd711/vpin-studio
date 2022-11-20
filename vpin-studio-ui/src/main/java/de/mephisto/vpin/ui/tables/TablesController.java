@@ -201,7 +201,12 @@ public class TablesController implements Initializable, StudioFXController {
     Optional<ButtonType> result = WidgetFactory.showConfirmation("Re-validate table '" + game.getGameDisplayName() + "?\nThis will reset the dismissed validations for this table too.", null);
     if (result.isPresent() && result.get().equals(ButtonType.OK)) {
       game.setIgnoredValidations(null);
-      client.saveGame(game);
+
+      try {
+        client.saveGame(game);
+      } catch (Exception e) {
+        WidgetFactory.showAlert(e.getMessage());
+      }
       onReload();
     }
   }
@@ -222,7 +227,12 @@ public class TablesController implements Initializable, StudioFXController {
       }
 
       game.setIgnoredValidations(StringUtils.join(gameIgnoreList, ","));
-      client.saveGame(game);
+
+      try {
+        client.saveGame(game);
+      } catch (Exception e) {
+        WidgetFactory.showAlert(e.getMessage());
+      }
       onReload();
     }
   }

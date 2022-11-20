@@ -47,7 +47,7 @@
                   <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
               </rowConstraints>
                <children>
-                  <Label fx:id="titleLabel" text="Name:" textFill="WHITE">
+                  <Label text="Name:" textFill="WHITE">
                      <font>
                         <Font size="14.0" />
                      </font>
@@ -56,12 +56,12 @@
                      <font>
                         <Font size="14.0" />
                      </font></TextField>
-                  <Label fx:id="titleLabel1" layoutX="10.0" layoutY="33.0" text="Initials:" textFill="WHITE" GridPane.rowIndex="1">
+                  <Label layoutX="10.0" layoutY="33.0" text="Initials:" textFill="WHITE" GridPane.rowIndex="1">
                      <font>
                         <Font size="14.0" />
                      </font>
                   </Label>
-                  <Label fx:id="titleLabel11111" layoutX="10.0" layoutY="189.0" text="Avatar:" textFill="WHITE" GridPane.rowIndex="2">
+                  <Label layoutX="10.0" layoutY="189.0" text="Avatar:" textFill="WHITE" GridPane.rowIndex="2">
                      <font>
                         <Font size="14.0" />
                      </font>
@@ -81,7 +81,18 @@
                   </TextField>
                </children>
             </GridPane>
-            <BorderPane fx:id="avatarPane" prefHeight="200.0" prefWidth="200.0" />
+            <BorderPane fx:id="avatarPane" prefHeight="200.0" prefWidth="200.0">
+               <left>
+                  <Label text="Avatar Preview:" textFill="WHITE" BorderPane.alignment="TOP_LEFT">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                     <BorderPane.margin>
+                        <Insets top="6.0" />
+                     </BorderPane.margin>
+                  </Label>
+               </left>
+            </BorderPane>
          </children>
       </VBox>
    </center>

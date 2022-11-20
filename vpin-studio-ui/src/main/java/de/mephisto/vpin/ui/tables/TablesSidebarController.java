@@ -166,7 +166,12 @@ public class TablesSidebarController implements Initializable, StudioFXControlle
             value = 1;
           }
           game.get().setVolume(value);
-          client.saveGame(game.get());
+
+          try {
+            client.saveGame(game.get());
+          } catch (Exception e) {
+            WidgetFactory.showAlert(e.getMessage());
+          }
         }, 1000);
       }
     });
@@ -258,7 +263,11 @@ public class TablesSidebarController implements Initializable, StudioFXControlle
     String romName = WidgetFactory.showInputDialog("Enter ROM Name", null, gameRepresentation.getRom());
     if (romName != null) {
       gameRepresentation.setRom(romName);
-      client.saveGame(gameRepresentation);
+      try {
+        client.saveGame(gameRepresentation);
+      } catch (Exception e) {
+        WidgetFactory.showAlert(e.getMessage());
+      }
       tablesController.onReload();
     }
   }
@@ -279,7 +288,12 @@ public class TablesSidebarController implements Initializable, StudioFXControlle
       }
 
       gameRepresentation.setIgnoredValidations(StringUtils.join(gameIgnoreList, ","));
-      client.saveGame(gameRepresentation);
+
+      try {
+        client.saveGame(gameRepresentation);
+      } catch (Exception e) {
+        WidgetFactory.showAlert(e.getMessage());
+      }
       tablesController.onReload();
     }
   }
@@ -290,7 +304,12 @@ public class TablesSidebarController implements Initializable, StudioFXControlle
     String fs = WidgetFactory.showInputDialog("EM Highscore Filename", "Enter the name of the highscore file for this table.\nThe file is located in the 'User' folder.", gameRepresentation.getHsFileName());
     if (fs != null) {
       gameRepresentation.setHsFileName(fs);
-      client.saveGame(gameRepresentation);
+
+      try {
+        client.saveGame(gameRepresentation);
+      } catch (Exception e) {
+        WidgetFactory.showAlert(e.getMessage());
+      }
       tablesController.onReload();
     }
   }

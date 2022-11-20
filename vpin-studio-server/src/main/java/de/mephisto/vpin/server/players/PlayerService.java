@@ -1,7 +1,5 @@
 package de.mephisto.vpin.server.players;
 
-import de.mephisto.vpin.server.competitions.Competition;
-import de.mephisto.vpin.server.competitions.CompetitionService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,9 +25,21 @@ public class PlayerService {
   }
 
   public Player save(Player player) {
-    Player updated = playerRepository.saveAndFlush(player);
+    Player model = new Player();
+    if(player.getId() > 0) {
+      model = playerRepository.findById(player.getId()).get();
+    }
+    model.setDomain(player.getDomain());
+    model.setName(player.getName());
+    model.setInitials(player.getInitials());
+
+    if(player.getAvatar() != null) {
+      model.setAvatar(player.getAvatar());
+    }
+
+    Player updated = playerRepository.saveAndFlush(model);
     LOG.info("Saved " + updated);
-    return getBuildInPlayer(player.getId());
+    return updated;
   }
 
   public void delete(long id) {

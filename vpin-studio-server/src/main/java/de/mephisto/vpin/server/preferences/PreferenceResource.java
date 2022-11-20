@@ -37,11 +37,7 @@ public class PreferenceResource {
     }
 
     byte[] crop = UploadUtil.resizeImageUpload(file, 300);
-    String mimeType = "image/jpg";
-    if(file.getOriginalFilename().toLowerCase().endsWith(".png")) {
-      mimeType = "image/png";
-    }
-
+    String mimeType = file.getContentType();
     preferencesService.saveAvatar(crop, mimeType);
     return true;
   }

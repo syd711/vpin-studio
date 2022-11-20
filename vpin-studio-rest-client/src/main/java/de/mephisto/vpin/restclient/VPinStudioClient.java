@@ -1,16 +1,10 @@
 package de.mephisto.vpin.restclient;
 
-import de.mephisto.vpin.restclient.representations.CompetitionRepresentation;
-import de.mephisto.vpin.restclient.representations.GameMediaRepresentation;
-import de.mephisto.vpin.restclient.representations.GameRepresentation;
-import de.mephisto.vpin.restclient.representations.PreferenceEntryRepresentation;
+import de.mephisto.vpin.restclient.representations.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.io.FileSystemResource;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.MediaType;
+import org.springframework.http.*;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
@@ -41,7 +35,7 @@ public class VPinStudioClient implements ObservedPropertyChangeListener {
   }
 
   public ByteArrayInputStream getAsset(String uuid) {
-    byte[] bytes = RestClient.getInstance().readBinary(API + "asset/data/" + uuid);
+    byte[] bytes = RestClient.getInstance().readBinary(API + "assets/data/" + uuid);
     return new ByteArrayInputStream(bytes);
   }
 
@@ -94,22 +88,31 @@ public class VPinStudioClient implements ObservedPropertyChangeListener {
     return null;
   }
 
-  public GameRepresentation saveGame(GameRepresentation game) {
+  public GameRepresentation saveGame(GameRepresentation game) throws Exception {
     try {
       return RestClient.getInstance().post(API + "games/save", game, GameRepresentation.class);
     } catch (Exception e) {
       LOG.error("Failed to save game: " + e.getMessage(), e);
+      throw e;
     }
-    return null;
   }
 
-  public CompetitionRepresentation saveCompetition(CompetitionRepresentation c) {
+  public CompetitionRepresentation saveCompetition(CompetitionRepresentation c) throws Exception {
     try {
       return RestClient.getInstance().post(API + "competitions/save", c, CompetitionRepresentation.class);
     } catch (Exception e) {
       LOG.error("Failed to save competition: " + e.getMessage(), e);
+      throw e;
     }
-    return null;
+  }
+
+  public PlayerRepresentation savePlayer(PlayerRepresentation p) throws Exception {
+    try {
+      return RestClient.getInstance().post(API + "players/save", p, PlayerRepresentation.class);
+    } catch (Exception e) {
+      LOG.error("Failed to save player: " + e.getMessage(), e);
+      throw e;
+    }
   }
 
   public void deleteCompetition(CompetitionRepresentation c) {
@@ -117,6 +120,14 @@ public class VPinStudioClient implements ObservedPropertyChangeListener {
       RestClient.getInstance().delete(API + "competitions/delete/" + c.getId());
     } catch (Exception e) {
       LOG.error("Failed to delete competition: " + e.getMessage(), e);
+    }
+  }
+
+  public void deletePlayer(PlayerRepresentation p) {
+    try {
+      RestClient.getInstance().delete(API + "players/delete/" + p.getId());
+    } catch (Exception e) {
+      LOG.error("Failed to delete player: " + e.getMessage(), e);
     }
   }
 
@@ -134,6 +145,10 @@ public class VPinStudioClient implements ObservedPropertyChangeListener {
 
   public List<CompetitionRepresentation> getCompetitions() {
     return Arrays.asList(RestClient.getInstance().get(API + "competitions", CompetitionRepresentation[].class));
+  }
+
+  public List<PlayerRepresentation> getPlayers() {
+    return Arrays.asList(RestClient.getInstance().get(API + "players", PlayerRepresentation[].class));
   }
 
   public InputStream getOverlayImage() {
@@ -242,6 +257,18 @@ public class VPinStudioClient implements ObservedPropertyChangeListener {
       throw e;
     }
   }
+
+  public AssetRepresentation uploadAsset(File file, long id, int maxSize) throws Exception {
+    try {
+      String url = RestClient.getInstance().getBaseUrl() + API + "assets/" + id + "/upload/" + maxSize;
+      ResponseEntity<AssetRepresentation> exchange = new RestTemplate().exchange(url, HttpMethod.POST, createUpload(file, -1, null), AssetRepresentation.class);
+      return exchange.getBody();
+    } catch (Exception e) {
+      LOG.error("Asset upload failed: " + e.getMessage(), e);
+      throw e;
+    }
+  }
+
 
   public boolean uploadHighscoreBackgroundImage(File file) throws Exception {
     try {

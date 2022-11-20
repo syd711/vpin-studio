@@ -36,23 +36,11 @@ public class Player {
 
   private String name;
 
-  private String type;
+  private String domain;
 
   private String email;
 
-  private String apiKey;
-
   private String discordId;
-
-  private String teamsId;
-
-  private String slackId;
-
-  private String custom1;
-
-  private String custom2;
-
-  private String custom3;
 
   public String getInitials() {
     return initials;
@@ -70,12 +58,12 @@ public class Player {
     this.name = name;
   }
 
-  public String getType() {
-    return type;
+  public String getDomain() {
+    return domain;
   }
 
-  public void setType(String type) {
-    this.type = type;
+  public void setDomain(String domain) {
+    this.domain = domain;
   }
 
   public String getEmail() {
@@ -84,38 +72,6 @@ public class Player {
 
   public void setEmail(String email) {
     this.email = email;
-  }
-
-  public String getApiKey() {
-    return apiKey;
-  }
-
-  public void setApiKey(String apiKey) {
-    this.apiKey = apiKey;
-  }
-
-  public String getCustom1() {
-    return custom1;
-  }
-
-  public void setCustom1(String custom1) {
-    this.custom1 = custom1;
-  }
-
-  public String getCustom2() {
-    return custom2;
-  }
-
-  public void setCustom2(String custom2) {
-    this.custom2 = custom2;
-  }
-
-  public String getCustom3() {
-    return custom3;
-  }
-
-  public void setCustom3(String custom3) {
-    this.custom3 = custom3;
   }
 
   public Date getCreatedAt() {
@@ -153,8 +109,13 @@ public class Player {
   @Override
   public boolean equals(Object obj) {
     if (obj instanceof Player) {
-      return this.id == ((Player) obj).getId();
+      return this.id.equals(((Player) obj).getId());
     }
     return false;
+  }
+
+  @Override
+  public String toString() {
+    return "Player [" + this.getId() + "/" + this.getInitials() + "]";
   }
 }

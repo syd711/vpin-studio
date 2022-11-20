@@ -24,7 +24,7 @@
                         <FontIcon iconColor="WHITE" iconLiteral="mdi2a-account-details" iconSize="18" />
                      </graphic>
                      <content>
-                        <BorderPane>
+                        <BorderPane style="-fx-alignment: CENTER;">
                             <center>
                                 <fx:include source="tab-buildin-users.fxml" />
                             </center>

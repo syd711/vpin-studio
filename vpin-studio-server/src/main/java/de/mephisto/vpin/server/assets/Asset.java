@@ -67,6 +67,7 @@ public class Asset {
     this.id = id;
   }
 
+  @JsonIgnore
   public byte[] getData() {
     return data;
   }

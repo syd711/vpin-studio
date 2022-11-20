@@ -1,9 +1,11 @@
 package de.mephisto.vpin.ui.players;
 
 import de.mephisto.vpin.restclient.PreferenceNames;
+import de.mephisto.vpin.restclient.representations.AssetRepresentation;
 import de.mephisto.vpin.restclient.representations.PlayerRepresentation;
 import de.mephisto.vpin.restclient.representations.PreferenceEntryRepresentation;
 import de.mephisto.vpin.ui.DashboardController;
+import de.mephisto.vpin.ui.util.WidgetFactory;
 import eu.hansolo.tilesfx.Tile;
 import eu.hansolo.tilesfx.TileBuilder;
 import javafx.event.ActionEvent;
@@ -15,15 +17,20 @@ import javafx.scene.image.Image;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.paint.Color;
 import javafx.scene.text.TextAlignment;
+import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
 
 import static de.mephisto.vpin.ui.Studio.client;
+import static de.mephisto.vpin.ui.Studio.stage;
 
 public class PlayerDialogController implements Initializable {
   private final static Logger LOG = LoggerFactory.getLogger(PlayerDialogController.class);
@@ -44,6 +51,8 @@ public class PlayerDialogController implements Initializable {
 
   private Tile avatar;
 
+  private File avatarFile;
+
   @FXML
   private void onCancelClick(ActionEvent e) {
     this.player = null;
@@ -53,42 +62,88 @@ public class PlayerDialogController implements Initializable {
 
   @FXML
   private void onSaveClick(ActionEvent e) {
+    if (this.avatarFile != null) {
+      try {
+        long assetId = 0;
+        if (player.getAvatar() != null) {
+          assetId = player.getAvatar().getId();
+        }
+        AssetRepresentation assetRepresentation = client.uploadAsset(this.avatarFile, assetId, 300);
+        this.player.setAvatar(assetRepresentation);
+      } catch (Exception ex) {
+        WidgetFactory.showAlert(ex.getMessage());
+      }
+    }
     Stage stage = (Stage) ((Button) e.getSource()).getScene().getWindow();
     stage.close();
   }
 
+  @FXML
+  private void onFileSelect() {
+    FileChooser fileChooser = new FileChooser();
+    fileChooser.setTitle("Select Image");
+    fileChooser.getExtensionFilters().addAll(
+        new FileChooser.ExtensionFilter("Image", "*.png", ".jpg", "*.jpeg"));
+
+    this.avatarFile = fileChooser.showOpenDialog(stage);
+    refreshAvatar();
+  }
+
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
+    this.player = new PlayerRepresentation();
+    nameField.setText(player.getName());
+    nameField.textProperty().addListener((observableValue, s, t1) -> {
+      player.setName(t1);
+      validateInput();
+    });
+
+    initialsField.setText(player.getInitials());
+    initialsField.textProperty().addListener((observableValue, s, t1) -> {
+      player.setInitials(t1);
+      validateInput();
+    });
+
     refreshAvatar();
-    validate();
+    this.validateInput();
   }
 
   private void refreshAvatar() {
-    if(this.player != null) {
-      PreferenceEntryRepresentation avatarEntry = client.getPreference(PreferenceNames.AVATAR);
-      Image image = new Image(DashboardController.class.getResourceAsStream("avatar-default.png"));
-      if (!StringUtils.isEmpty(avatarEntry.getValue())) {
-        image = new Image(client.getAsset(avatarEntry.getValue()));
+    if (this.avatarFile != null) {
+      try {
+        FileInputStream fileInputStream = new FileInputStream(this.avatarFile);
+        Image image = new Image(fileInputStream);
+        avatar.setImage(image);
+        fileInputStream.close();
+      } catch (IOException e) {
+        LOG.error("Failed to preview avatar: " + e.getMessage(), e);
       }
+      return;
+    }
 
-      if (avatar == null) {
-        avatar = TileBuilder.create()
-            .skinType(Tile.SkinType.IMAGE)
-            .prefSize(300, 300)
-            .backgroundColor(Color.TRANSPARENT)
-            .image(image)
-            .imageMask(Tile.ImageMask.ROUND)
-            .textSize(Tile.TextSize.BIGGER)
-            .textAlignment(TextAlignment.CENTER)
-            .build();
-        avatarPane.setCenter(avatar);
-      }
+    if (this.avatar == null) {
+      Image image = new Image(DashboardController.class.getResourceAsStream("avatar-default.png"));
+      avatar = TileBuilder.create()
+          .skinType(Tile.SkinType.IMAGE)
+          .maxSize(200, 200)
+          .backgroundColor(Color.TRANSPARENT)
+          .image(image)
+          .imageMask(Tile.ImageMask.ROUND)
+          .textSize(Tile.TextSize.BIGGER)
+          .textAlignment(TextAlignment.CENTER)
+          .build();
+      avatarPane.setCenter(avatar);
+    }
+
+
+    if (this.player.getAvatar() != null) {
+      Image image = new Image(client.getAsset(this.player.getAvatar().getUuid()));
       avatar.setImage(image);
     }
   }
 
-  private void validate() {
-    boolean valid = !StringUtils.isEmpty(nameField.getText()) && !StringUtils.isEmpty(initialsField.getText());
+  private void validateInput() {
+    boolean valid = !StringUtils.isEmpty(nameField.getText()) && !StringUtils.isEmpty(initialsField.getText()) && initialsField.getText().length() == 3;
     this.saveBtn.setDisable(!valid);
   }
 
