@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
@@ -13,18 +15,23 @@
    <top>
       <VBox fx:id="preferenceList" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" styleClass="subpanel" BorderPane.alignment="TOP_LEFT">
          <children>
-            <Label styleClass="preference-title" text="SERVICE INFO" textFill="WHITE" />
-            <Label styleClass="preference-subtitle" text="Process Details">
+            <Label styleClass="preference-title" text="DISCORD INTEGRATION" textFill="WHITE" />
+            <Label styleClass="preference-subtitle" text="Webhook">
                <VBox.margin>
                   <Insets />
                </VBox.margin>
             </Label>
-            <Label styleClass="preference-description" text="Miscellaneous information about the VPin Studio Service." textFill="WHITE">
+            <Label styleClass="preference-description" text="Discord supports webhooks for servers. Go to &quot;Server Settings -&gt; Integrations&quot; to create a new webkook." textFill="WHITE">
+               <VBox.margin>
+                  <Insets />
+               </VBox.margin>
+            </Label>
+            <Label layoutX="34.0" layoutY="104.0" styleClass="preference-description" text="The webhook will be used to publish new highscores and competition events to the selected channel." textFill="WHITE">
                <VBox.margin>
                   <Insets bottom="6.0" />
                </VBox.margin>
             </Label>
-            <GridPane alignment="BASELINE_RIGHT" layoutX="34.0" layoutY="136.0" prefHeight="60.0" prefWidth="708.0">
+            <GridPane alignment="BASELINE_RIGHT" layoutX="34.0" layoutY="136.0" prefHeight="90.0" prefWidth="708.0">
                <columnConstraints>
                   <ColumnConstraints hgrow="SOMETIMES" maxWidth="349.2000732421875" minWidth="10.0" prefWidth="157.2000732421875" />
                   <ColumnConstraints hgrow="SOMETIMES" maxWidth="554.7999267578125" minWidth="10.0" prefWidth="550.7999267578125" />
@@ -32,13 +39,27 @@
                <rowConstraints>
                   <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                   <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                </rowConstraints>
                <children>
-                  <Label prefHeight="20.0" styleClass="preference-label" text="Startup Time:" textFill="WHITE">
+                  <Label prefHeight="20.0" styleClass="preference-label" text="Webhook URL:" textFill="WHITE">
                      <font>
                         <Font size="14.0" />
                      </font>
                   </Label>
+                  <TextField fx:id="webhookText" GridPane.columnIndex="1">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                  </TextField>
+                  <Button fx:id="testBtn" mnemonicParsing="false" onAction="#onTest" text="Send Test Message" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                     <GridPane.margin>
+                        <Insets top="3.0" />
+                     </GridPane.margin>
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                  </Button>
                </children>
                <opaqueInsets>
                   <Insets />

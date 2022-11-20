@@ -23,7 +23,7 @@
 <?import javafx.scene.text.Font?>
 <?import org.kordamp.ikonli.javafx.FontIcon?>
 
-<BorderPane styleClass="base-component" stylesheets="@stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.cards.HighscoreCardsController">
+<BorderPane styleClass="base-component" stylesheets="@../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.cards.HighscoreCardsController">
    <top>
       <fx:include fx:id="mainToolbar" source="../scene-toolbar.fxml" />
    </top>
@@ -297,7 +297,7 @@
                               <Spinner fx:id="rowSeparatorSpinner" editable="true" prefHeight="26.0" prefWidth="303.0" styleClass="widget-default" />
                               <BorderPane prefHeight="36.0" prefWidth="279.0">
                                  <left>
-                                    <CheckBox fx:id="renderRawHighscore" mnemonicParsing="false" stylesheets="@stylesheet.css" text="Render Raw Highscore Data" textFill="WHITE" BorderPane.alignment="CENTER">
+                                    <CheckBox fx:id="renderRawHighscore" mnemonicParsing="false" text="Render Raw Highscore Data" textFill="WHITE" BorderPane.alignment="CENTER">
                                        <font>
                                           <Font size="14.0" />
                                        </font>
@@ -328,14 +328,14 @@
             </Accordion>
          </center>
          <top>
-            <TitledPane collapsible="false" prefHeight="233.0" prefWidth="300.0" styleClass="accordion-container" stylesheets="@stylesheet.css" text="B2S Background" BorderPane.alignment="CENTER">
+            <TitledPane collapsible="false" prefHeight="233.0" prefWidth="300.0" styleClass="accordion-container" text="B2S Background" BorderPane.alignment="CENTER">
                <BorderPane.margin>
                   <Insets />
                </BorderPane.margin>
                <content>
                   <VBox prefHeight="151.0" prefWidth="298.0" styleClass="accordion-container">
                      <children>
-                        <TilePane alignment="CENTER" prefHeight="232.0" prefWidth="298.0" styleClass="thumbnail-preview" stylesheets="@stylesheet.css">
+                        <TilePane alignment="CENTER" prefHeight="232.0" prefWidth="298.0" styleClass="thumbnail-preview">
                            <children>
                               <ImageView fx:id="rawDirectB2SImage" fitHeight="145.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true" styleClass="thumbnail-preview">
                                  <viewport>
@@ -379,7 +379,7 @@
       </BorderPane>
    </right>
    <center>
-      <BorderPane fx:id="imageCenter" styleClass="subpanel" stylesheets="@stylesheet.css" BorderPane.alignment="CENTER">
+      <BorderPane fx:id="imageCenter" styleClass="subpanel" BorderPane.alignment="CENTER">
          <BorderPane.margin>
             <Insets bottom="12.0" left="12.0" right="24.0" />
          </BorderPane.margin>
@@ -400,7 +400,7 @@
          <top>
             <ToolBar prefHeight="40.0" prefWidth="200.0" style="-fx-background-radius: 3 3 0 0;" BorderPane.alignment="CENTER">
                <items>
-                  <ComboBox fx:id="tableCombo" stylesheets="@stylesheet.css" />
+                  <ComboBox fx:id="tableCombo" />
                   <Button mnemonicParsing="false" onAction="#onTableRefresh" text=" Reload">
                      <font>
                         <Font size="14.0" />
@@ -416,7 +416,7 @@
                         <Insets left="3.0" right="3.0" />
                      </padding>
                   </Separator>
-                  <Button mnemonicParsing="false" onAction="#onGenerateAll" stylesheets="@stylesheet.css" text=" Generate All" textFill="WHITE">
+                  <Button mnemonicParsing="false" onAction="#onGenerateAll" text=" Generate All" textFill="WHITE">
                      <font>
                         <Font size="14.0" />
                      </font>
@@ -424,7 +424,7 @@
                         <FontIcon iconColor="WHITE" iconLiteral="bi-images" />
                      </graphic>
                   </Button>
-                <Button fx:id="generateBtn" mnemonicParsing="false" onAction="#onGenerateClick" stylesheets="@stylesheet.css" text=" Generate" textFill="WHITE">
+                <Button fx:id="generateBtn" mnemonicParsing="false" onAction="#onGenerateClick" text=" Generate" textFill="WHITE">
                      <font>
                         <Font size="14.0" />
                      </font>
@@ -437,7 +437,7 @@
                         <Insets left="3.0" right="3.0" />
                      </padding>
                   </Separator>
-                  <Button fx:id="openImageBtn" mnemonicParsing="false" onAction="#onOpenImage" stylesheets="@stylesheet.css" text=" Open Image" textFill="WHITE">
+                  <Button fx:id="openImageBtn" mnemonicParsing="false" onAction="#onOpenImage" text=" Open Image" textFill="WHITE">
                      <font>
                         <Font size="14.0" />
                      </font>

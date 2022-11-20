@@ -24,12 +24,19 @@ public class DiscordWebhook {
   private boolean tts;
   private List<EmbedObject> embeds = new ArrayList<>();
 
+  public static void call(String url, String message) throws IOException {
+    DiscordWebhook hook = new DiscordWebhook(url);
+    hook.setTts(false);
+    hook.setContent(message);
+    hook.execute();
+  }
+
   /**
    * Constructs a new DiscordWebhook instance
    *
    * @param url The webhook URL obtained in Discord
    */
-  public DiscordWebhook(String url) {
+  private DiscordWebhook(String url) {
     this.url = url;
   }
 
@@ -362,13 +369,17 @@ public class DiscordWebhook {
 
         if (val instanceof String) {
           builder.append(quote(String.valueOf(val)));
-        } else if (val instanceof Integer) {
+        }
+        else if (val instanceof Integer) {
           builder.append(Integer.valueOf(String.valueOf(val)));
-        } else if (val instanceof Boolean) {
+        }
+        else if (val instanceof Boolean) {
           builder.append(val);
-        } else if (val instanceof JSONObject) {
+        }
+        else if (val instanceof JSONObject) {
           builder.append(val.toString());
-        } else if (val.getClass().isArray()) {
+        }
+        else if (val.getClass().isArray()) {
           builder.append("[");
           int len = Array.getLength(val);
           for (int j = 0; j < len; j++) {

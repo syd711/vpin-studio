@@ -4,6 +4,8 @@
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
@@ -11,25 +13,27 @@
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
+<?import org.kordamp.ikonli.javafx.FontIcon?>
 
 <BorderPane styleClass="base-component" stylesheets="@../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.preferences.DiscordBotPreferencesController">
    <top>
       <VBox fx:id="preferenceList" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" styleClass="subpanel" BorderPane.alignment="TOP_LEFT">
          <children>
             <Label styleClass="preference-title" text="DISCORD INTEGRATION" textFill="WHITE" />
-            <Label styleClass="preference-subtitle" text="Bot">
+            <Label styleClass="preference-subtitle" text="Member Mapping">
                <VBox.margin>
                   <Insets />
                </VBox.margin>
             </Label>
-            <Label styleClass="preference-description" text="Create a new Discord application with a bot to read the members list from a specific server for you competitions." textFill="WHITE">
+            <Label styleClass="preference-description" text="You can link a Discord server to your VPin, assuming the members on the server are the ones playing on your VPin (e.g. in a company)." textFill="WHITE">
                <VBox.margin>
                   <Insets />
                </VBox.margin>
             </Label>
+            <Label layoutX="34.0" layoutY="104.0" styleClass="preference-description" text="The member names are mapped against the highscore initials and new highscores." textFill="WHITE" />
             <Label layoutX="34.0" layoutY="104.0" styleClass="preference-description" text="Visit https://discord.com/developers/applications to create a new application. " textFill="WHITE">
                <VBox.margin>
-                  <Insets />
+                  <Insets top="12.0" />
                </VBox.margin>
             </Label>
             <Label layoutX="34.0" layoutY="124.0" styleClass="preference-description" text="Enter the Bot token and the ID of the server to connect your VPin with the Discord server." textFill="WHITE">
@@ -86,6 +90,58 @@
                   <Insets />
                </opaqueInsets>
             </GridPane>
+            <Label layoutX="34.0" layoutY="66.0" styleClass="preference-subtitle" text="How are Discord members mapped to highscores?">
+               <graphic>
+                  <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
+               </graphic>
+            </Label>
+            <Label layoutX="34.0" layoutY="104.0" styleClass="preference-description" text="Since the highscore initials are only three digits long, every user has adapt their nickname on the configured server," textFill="WHITE" />
+            <Label layoutX="34.0" layoutY="328.0" styleClass="preference-description" text="so it can be matched against a highscore. The initials must be part of the nickname, separated by a pipe symbol &quot;|&quot; and within " textFill="WHITE" />
+            <Label layoutX="34.0" layoutY="348.0" styleClass="preference-description" text="square brackets, e.g &quot;My Nickname | [ABC]&quot;." textFill="WHITE" />
+            <ImageView fitHeight="150.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@../screenshots/nickname-example.png" />
+               </image>
+               <VBox.margin>
+                  <Insets top="6.0" />
+               </VBox.margin>
+            </ImageView>
+            <Label layoutX="34.0" layoutY="400.0" styleClass="preference-description" text="          (Nickname Example)" textFill="WHITE" />
+            <Label layoutX="34.0" layoutY="290.0" styleClass="preference-subtitle" text="Where can I change my nickname on the server?">
+               <graphic>
+                  <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
+               </graphic>
+               <VBox.margin>
+                  <Insets top="12.0" />
+               </VBox.margin>
+            </Label>
+            <Label layoutX="34.0" layoutY="328.0" styleClass="preference-description" text="Invoke the context menu on your username in the member list. Click on &quot;Edit Server Profile&quot;, update the nickname and save the changes." textFill="WHITE">
+               <VBox.margin>
+                  <Insets />
+               </VBox.margin>
+            </Label>
+            <Label layoutX="34.0" layoutY="572.0" styleClass="preference-description" text="Note that the name is only changed for the specific server." textFill="WHITE">
+               <VBox.margin>
+                  <Insets bottom="6.0" />
+               </VBox.margin>
+            </Label>
+            <HBox>
+               <children>
+                  <ImageView fitHeight="300.0" fitWidth="400.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../screenshots/profile-name-1.png" />
+                     </image>
+                     <HBox.margin>
+                        <Insets right="24.0" />
+                     </HBox.margin>
+                  </ImageView>
+                  <ImageView fitHeight="300.0" fitWidth="400.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../screenshots/profile-name-2.png" />
+                     </image>
+                  </ImageView>
+               </children>
+            </HBox>
          </children>
          <padding>
             <Insets bottom="24.0" left="24.0" right="24.0" top="24.0" />

@@ -96,7 +96,7 @@
                </VBox.margin>
             </Label>
             <Button alignment="BASELINE_LEFT" contentDisplay="RIGHT" layoutX="160.0" layoutY="586.0" mnemonicParsing="false" onAction="#onDiscordWebhook" styleClass="preference-button" text="Webhook" />
-            <Button alignment="BASELINE_LEFT" contentDisplay="RIGHT" layoutX="160.0" layoutY="672.0" mnemonicParsing="false" onAction="#onDiscordBot" styleClass="preference-button" text="Bot" />
+            <Button alignment="BASELINE_LEFT" contentDisplay="RIGHT" layoutX="160.0" layoutY="672.0" mnemonicParsing="false" onAction="#onDiscordBot" styleClass="preference-button" text="Member Mapping" />
          </children>
          <opaqueInsets>
             <Insets />

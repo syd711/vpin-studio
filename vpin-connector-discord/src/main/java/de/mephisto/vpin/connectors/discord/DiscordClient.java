@@ -131,14 +131,6 @@ public class DiscordClient extends ListenerAdapter {
     return initials;
   }
 
-  public void callWebHook(String url, String message, String avatarUrl) throws IOException {
-    DiscordWebhook hook = new DiscordWebhook(url);
-    hook.setTts(false);
-    hook.setAvatarUrl(avatarUrl);
-    hook.setContent(message);
-    hook.execute();
-  }
-
   /******************** Listener Methods ******************************************************************************/
   @Override
   public void onGuildMemberJoin(GuildMemberJoinEvent event) {
