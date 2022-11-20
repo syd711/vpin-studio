@@ -1,4 +1,4 @@
-package de.mephisto.vpin.ui.players.dialogs;
+package de.mephisto.vpin.ui.competitions;
 
 import de.mephisto.vpin.restclient.PopperScreen;
 import de.mephisto.vpin.restclient.RestClient;
@@ -32,8 +32,8 @@ import java.util.ResourceBundle;
 
 import static de.mephisto.vpin.ui.Studio.client;
 
-public class PlayerDialogController implements Initializable {
-  private final static Logger LOG = LoggerFactory.getLogger(PlayerDialogController.class);
+public class CompetitionDialogController implements Initializable {
+  private final static Logger LOG = LoggerFactory.getLogger(CompetitionDialogController.class);
 
   @FXML
   private ImageView iconPreview;

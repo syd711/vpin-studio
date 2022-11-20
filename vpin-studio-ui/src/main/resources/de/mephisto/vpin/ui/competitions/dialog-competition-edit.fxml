@@ -17,16 +17,16 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" styleClass="base-component" stylesheets="@stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.competitions.dialogs.CompetitionDialogController">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" styleClass="base-component" stylesheets="@../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.competitions.CompetitionDialogController">
    <bottom>
       <HBox alignment="BASELINE_RIGHT" BorderPane.alignment="CENTER">
          <children>
-          <Button fx:id="cancelButton" mnemonicParsing="false" onAction="#onCancelClick" styleClass="default-button" stylesheets="@stylesheet.css" text="Cancel">
+          <Button fx:id="cancelButton" mnemonicParsing="false" onAction="#onCancelClick" styleClass="default-button" text="Cancel">
                <HBox.margin>
                   <Insets right="12.0" />
                </HBox.margin>
             </Button>
-            <Button fx:id="saveBtn" layoutX="418.0" layoutY="10.0" mnemonicParsing="false" onAction="#onSaveClick" styleClass="submit-button" stylesheets="@stylesheet.css" text="Save">
+            <Button fx:id="saveBtn" layoutX="418.0" layoutY="10.0" mnemonicParsing="false" onAction="#onSaveClick" styleClass="submit-button" text="Save">
                <HBox.margin>
                   <Insets />
                </HBox.margin>

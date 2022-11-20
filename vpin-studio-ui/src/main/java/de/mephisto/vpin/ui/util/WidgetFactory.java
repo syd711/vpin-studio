@@ -6,7 +6,7 @@ import de.mephisto.vpin.restclient.representations.CompetitionRepresentation;
 import de.mephisto.vpin.restclient.representations.GameMediaItemRepresentation;
 import de.mephisto.vpin.restclient.representations.GameRepresentation;
 import de.mephisto.vpin.ui.Studio;
-import de.mephisto.vpin.ui.competitions.dialogs.CompetitionDialogController;
+import de.mephisto.vpin.ui.competitions.CompetitionDialogController;
 import de.mephisto.vpin.ui.tables.dialogs.DirectB2SUploadController;
 import de.mephisto.vpin.ui.tables.dialogs.ROMUploadController;
 import de.mephisto.vpin.ui.tables.dialogs.TableUploadController;
@@ -15,7 +15,6 @@ import javafx.beans.value.ChangeListener;
 import javafx.concurrent.Service;
 import javafx.concurrent.Task;
 import javafx.concurrent.Worker;
-import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Parent;
@@ -43,7 +42,7 @@ public class WidgetFactory {
 
   public static CompetitionRepresentation openCompetitionDialog(CompetitionRepresentation selection) {
     Parent root = null;
-    FXMLLoader fxmlLoader = new FXMLLoader(Studio.class.getResource("dialog-competition-edit.fxml"));
+    FXMLLoader fxmlLoader = new FXMLLoader(CompetitionDialogController.class.getResource("dialog-competition-edit.fxml"));
     try {
       root = fxmlLoader.load();
     } catch (IOException e) {
