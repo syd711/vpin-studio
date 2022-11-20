@@ -3,8 +3,8 @@ package de.mephisto.vpin.ui.competitions;
 import de.mephisto.vpin.restclient.representations.CompetitionRepresentation;
 import de.mephisto.vpin.restclient.representations.GameRepresentation;
 import de.mephisto.vpin.ui.NavigationController;
-import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.StudioFXController;
+import de.mephisto.vpin.ui.util.Dialogs;
 import de.mephisto.vpin.ui.util.WidgetFactory;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
@@ -67,7 +67,7 @@ public class CompetitionsController implements Initializable, StudioFXController
 
   @FXML
   private void onCompetitionCreate() {
-    CompetitionRepresentation c = WidgetFactory.openCompetitionDialog(null);
+    CompetitionRepresentation c = Dialogs.openCompetitionDialog(null);
     if (c != null) {
       CompetitionRepresentation newCmp = client.saveCompetition(c);
       onReload();
@@ -80,7 +80,7 @@ public class CompetitionsController implements Initializable, StudioFXController
     CompetitionRepresentation selection = tableView.getSelectionModel().selectedItemProperty().get();
     if (selection != null) {
       CompetitionRepresentation clone = selection.cloneCompetition();
-      CompetitionRepresentation c = WidgetFactory.openCompetitionDialog(clone);
+      CompetitionRepresentation c = Dialogs.openCompetitionDialog(clone);
       if (c != null) {
         CompetitionRepresentation newCmp = client.saveCompetition(c);
         onReload();
@@ -93,7 +93,7 @@ public class CompetitionsController implements Initializable, StudioFXController
   private void onEdit() {
     CompetitionRepresentation selection = tableView.getSelectionModel().selectedItemProperty().get();
     if (selection != null) {
-      CompetitionRepresentation c = WidgetFactory.openCompetitionDialog(selection);
+      CompetitionRepresentation c = Dialogs.openCompetitionDialog(selection);
       if (c != null) {
         CompetitionRepresentation newCmp = client.saveCompetition(c);
         onReload();

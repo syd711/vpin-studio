@@ -8,6 +8,7 @@ import de.mephisto.vpin.ui.StudioFXController;
 import de.mephisto.vpin.ui.WaitOverlayController;
 import de.mephisto.vpin.ui.tables.validation.TableValidation;
 import de.mephisto.vpin.ui.tables.validation.ValidationTexts;
+import de.mephisto.vpin.ui.util.Dialogs;
 import de.mephisto.vpin.ui.util.MediaUtil;
 import de.mephisto.vpin.ui.util.WidgetFactory;
 import javafx.application.Platform;
@@ -166,7 +167,7 @@ public class TablesController implements Initializable, StudioFXController {
 
   @FXML
   private void onTableUpload() {
-    boolean updated = WidgetFactory.openTableUploadDialog();
+    boolean updated = Dialogs.openTableUploadDialog();
     if (updated) {
       onReload();
     }
@@ -184,13 +185,13 @@ public class TablesController implements Initializable, StudioFXController {
   @FXML
   private void onTableScan() {
     GameRepresentation game = tableView.getSelectionModel().selectedItemProperty().get();
-    WidgetFactory.createProgressDialog(new TableScanProgressModel(client, "Scanning Table '" + game + "'", game));
+    Dialogs.createProgressDialog(new TableScanProgressModel(client, "Scanning Table '" + game + "'", game));
     this.onReload();
   }
 
   @FXML
   private void onTablesScan() {
-    WidgetFactory.createProgressDialog(new TablesScanProgressModel(client, "Scanning Tables"));
+    Dialogs.createProgressDialog(new TablesScanProgressModel(client, "Scanning Tables"));
     this.onReload();
   }
 

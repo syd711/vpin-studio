@@ -32,12 +32,12 @@
                <top>
                   <HBox BorderPane.alignment="TOP_LEFT">
                      <children>
-                        <Label prefHeight="18.0" styleClass="preference-label" text="Upload Avatar:" textFill="WHITE">
+                        <Label prefHeight="18.0" styleClass="preference-label" text="Avatar:" textFill="WHITE">
                            <font>
                               <Font size="14.0" />
                            </font>
                         </Label>
-                        <Button mnemonicParsing="false" onAction="#onFileSelect" text="Upload Image">
+                        <Button mnemonicParsing="false" onAction="#onFileSelect" text="Select Image...">
                            <graphic>
                               <FontIcon iconColor="WHITE" iconLiteral="mdi2u-upload" />
                            </graphic>

@@ -10,6 +10,7 @@ import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.StudioFXController;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.ui.util.BindingUtil;
+import de.mephisto.vpin.ui.util.Dialogs;
 import de.mephisto.vpin.ui.util.MediaUtil;
 import de.mephisto.vpin.ui.util.WidgetFactory;
 import javafx.event.ActionEvent;
@@ -192,7 +193,7 @@ public class TablesSidebarController implements Initializable, StudioFXControlle
   @FXML
   private void onDirectb2sUpload() {
     if (this.game.isPresent()) {
-      boolean uploaded = WidgetFactory.openDirectB2SUploadDialog(this.game.get());
+      boolean uploaded = Dialogs.openDirectB2SUploadDialog(this.game.get());
       if (uploaded) {
         tablesController.onReload();
       }
@@ -201,7 +202,7 @@ public class TablesSidebarController implements Initializable, StudioFXControlle
 
   @FXML
   private void onRomUpload() {
-    boolean uploaded = WidgetFactory.openRomUploadDialog();
+    boolean uploaded = Dialogs.openRomUploadDialog();
     if (uploaded) {
       tablesController.onReload();
     }
@@ -247,7 +248,7 @@ public class TablesSidebarController implements Initializable, StudioFXControlle
     GameMediaItemRepresentation mediaItem = (GameMediaItemRepresentation) center.getUserData();
     if (mediaItem != null) {
       GameRepresentation gameRepresentation = game.get();
-      WidgetFactory.openMediaDialog(gameRepresentation, mediaItem);
+      Dialogs.openMediaDialog(gameRepresentation, mediaItem);
     }
   }
 
