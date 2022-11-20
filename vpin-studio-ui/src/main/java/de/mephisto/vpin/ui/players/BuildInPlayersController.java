@@ -150,6 +150,8 @@ public class BuildInPlayersController implements Initializable, StudioFXControll
       return new SimpleObjectProperty(value.getInitials().toUpperCase());
     });
 
+    editBtn.setDisable(true);
+    deleteBtn.setDisable(true);
     tableView.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
       boolean disable = newSelection == null;
       editBtn.setDisable(disable);

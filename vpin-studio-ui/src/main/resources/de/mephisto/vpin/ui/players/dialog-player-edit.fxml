@@ -98,10 +98,13 @@
                   </BorderPane>
                   <BorderPane prefHeight="200.0" prefWidth="200.0">
                      <center>
-                        <Label fx:id="initialsOverlayLabel" text="Label" BorderPane.alignment="CENTER">
+                        <Label fx:id="initialsOverlayLabel" style="-fx-text-fill: #000000;" text="???" BorderPane.alignment="CENTER">
                            <font>
                               <Font size="48.0" />
                            </font>
+                           <BorderPane.margin>
+                              <Insets left="90.0" />
+                           </BorderPane.margin>
                         </Label>
                      </center>
                   </BorderPane>

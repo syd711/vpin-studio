@@ -17,6 +17,8 @@ import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontPosture;
 import javafx.scene.text.TextAlignment;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
@@ -108,13 +110,19 @@ public class PlayerDialogController implements Initializable {
       validateInput();
     });
 
+    Font font = Font.font("Impact", FontPosture.findByName("regular"), 60);
+    this.initialsOverlayLabel.setFont(font);
+
     refreshAvatar();
     this.validateInput();
+
+    this.nameField.requestFocus();
   }
 
   private void refreshAvatar() {
     if (this.avatarFile != null) {
       try {
+        this.initialsOverlayLabel.setText("");
         FileInputStream fileInputStream = new FileInputStream(this.avatarFile);
         Image image = new Image(fileInputStream);
         avatar.setImage(image);
@@ -141,14 +149,31 @@ public class PlayerDialogController implements Initializable {
 
 
     if (this.player.getAvatar() != null) {
+      this.initialsOverlayLabel.setText("");
       Image image = new Image(client.getAsset(this.player.getAvatar().getUuid()));
       avatar.setImage(image);
     }
   }
 
   private void validateInput() {
-    boolean valid = !StringUtils.isEmpty(nameField.getText()) && !StringUtils.isEmpty(initialsField.getText()) && initialsField.getText().length() == 3;
+    String name = nameField.getText();
+    String initials = initialsField.getText();
+
+    boolean valid = !StringUtils.isEmpty(name) && !StringUtils.isEmpty(initials) && initials.length() == 3;
     this.saveBtn.setDisable(!valid);
+
+    if(this.avatarFile == null && this.player.getAvatar() == null && !StringUtils.isEmpty(initials)) {
+      if(initials.length() > 3) {
+        initials = initials.substring(0, 3);
+      }
+      this.initialsOverlayLabel.setText(initials.toUpperCase());
+    }
+    else if(!StringUtils.isEmpty(name) && StringUtils.isEmpty(initials) && (this.avatarFile == null && this.player.getAvatar() == null)) {
+      if(name.length() > 3) {
+        name = name.substring(0, 3);
+      }
+      this.initialsOverlayLabel.setText(name.toUpperCase());
+    }
   }
 
   public PlayerRepresentation getPlayer() {
