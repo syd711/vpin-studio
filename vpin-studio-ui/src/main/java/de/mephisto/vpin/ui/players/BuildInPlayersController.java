@@ -91,6 +91,7 @@ public class BuildInPlayersController implements Initializable, StudioFXControll
       Optional<ButtonType> result = WidgetFactory.showConfirmation("Delete Player '" + selection.getName() + "'?", "Delete Player");
       if (result.isPresent() && result.get().equals(ButtonType.OK)) {
         client.deletePlayer(selection);
+        tableView.getSelectionModel().clearSelection();
         onReload();
       }
     }
@@ -123,12 +124,7 @@ public class BuildInPlayersController implements Initializable, StudioFXControll
     avatarColumn.setCellValueFactory(cellData -> {
       PlayerRepresentation value = cellData.getValue();
       if (value.getAvatar() == null) {
-        FontIcon fontIcon = new FontIcon();
-        fontIcon.setIconSize(18);
-        fontIcon.setCursor(Cursor.HAND);
-        fontIcon.setIconColor(Paint.valueOf("#FF3333"));
-        fontIcon.setIconLiteral("bi-exclamation-circle");
-        return new SimpleObjectProperty(fontIcon);
+        return new SimpleObjectProperty("");
       }
 
       FontIcon fontIcon = new FontIcon();
