@@ -12,6 +12,7 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.layout.BorderPane;
@@ -43,6 +44,9 @@ public class PlayerDialogController implements Initializable {
 
   @FXML
   private TextField initialsField;
+
+  @FXML
+  private Label initialsOverlayLabel;
 
   @FXML
   private BorderPane avatarPane;
@@ -100,7 +104,7 @@ public class PlayerDialogController implements Initializable {
 
     initialsField.setText(player.getInitials());
     initialsField.textProperty().addListener((observableValue, s, t1) -> {
-      player.setInitials(t1);
+      player.setInitials(t1.toUpperCase());
       validateInput();
     });
 
@@ -122,7 +126,7 @@ public class PlayerDialogController implements Initializable {
     }
 
     if (this.avatar == null) {
-      Image image = new Image(DashboardController.class.getResourceAsStream("avatar-default.png"));
+      Image image = new Image(DashboardController.class.getResourceAsStream("avatar-blank.png"));
       avatar = TileBuilder.create()
           .skinType(Tile.SkinType.IMAGE)
           .maxSize(200, 200)

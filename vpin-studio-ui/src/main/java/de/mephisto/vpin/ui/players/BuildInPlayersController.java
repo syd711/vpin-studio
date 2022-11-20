@@ -88,7 +88,7 @@ public class BuildInPlayersController implements Initializable, StudioFXControll
   private void onDelete() {
     PlayerRepresentation selection = tableView.getSelectionModel().selectedItemProperty().get();
     if (selection != null) {
-      Optional<ButtonType> result = WidgetFactory.showConfirmation("Delete Player", "Delete Player '" + selection.getName() + "'?");
+      Optional<ButtonType> result = WidgetFactory.showConfirmation("Delete Player '" + selection.getName() + "'?", "Delete Player");
       if (result.isPresent() && result.get().equals(ButtonType.OK)) {
         client.deletePlayer(selection);
         onReload();
@@ -147,7 +147,7 @@ public class BuildInPlayersController implements Initializable, StudioFXControll
         fontIcon.setIconLiteral("bi-exclamation-circle");
         return new SimpleObjectProperty(fontIcon);
       }
-      return new SimpleObjectProperty(value.getInitials());
+      return new SimpleObjectProperty(value.getInitials().toUpperCase());
     });
 
     tableView.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {

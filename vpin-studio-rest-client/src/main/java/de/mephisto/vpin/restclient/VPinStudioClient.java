@@ -36,6 +36,9 @@ public class VPinStudioClient implements ObservedPropertyChangeListener {
 
   public ByteArrayInputStream getAsset(String uuid) {
     byte[] bytes = RestClient.getInstance().readBinary(API + "assets/data/" + uuid);
+    if(bytes == null) {
+      throw new UnsupportedOperationException("No data found for asset with UUID " + uuid);
+    }
     return new ByteArrayInputStream(bytes);
   }
 

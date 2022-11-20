@@ -87,7 +87,7 @@ public class Asset {
   @Override
   public boolean equals(Object obj) {
     if (obj instanceof Asset) {
-      return this.id == ((Asset) obj).getId();
+      return this.id.equals(((Asset) obj).getId());
     }
     return false;
   }

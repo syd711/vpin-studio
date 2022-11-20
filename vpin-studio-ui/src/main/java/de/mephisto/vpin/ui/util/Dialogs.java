@@ -46,10 +46,10 @@ public class Dialogs {
     final Stage stage = new Stage();
     stage.initModality(Modality.WINDOW_MODAL);
     if(selection == null) {
-      stage.setTitle("Create New Competition");
+      stage.setTitle("Add New Player");
     }
     else {
-      stage.setTitle("Edit Competition");
+      stage.setTitle("Edit Player");
     }
 
     stage.initOwner(owner);
@@ -75,7 +75,7 @@ public class Dialogs {
     final Stage stage = new Stage();
     stage.initModality(Modality.WINDOW_MODAL);
     if(selection == null) {
-      stage.setTitle("Create New Competition");
+      stage.setTitle("Add New Competition");
     }
     else {
       stage.setTitle("Edit Competition");

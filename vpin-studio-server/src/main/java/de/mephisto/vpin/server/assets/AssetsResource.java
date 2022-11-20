@@ -93,6 +93,11 @@ public class AssetsResource {
       data = UploadUtil.resizeImageUpload(file, maxSize);
     }
 
+    String mimeType = "image/jpg";
+    if(file.getOriginalFilename().toLowerCase().endsWith(".png")) {
+      mimeType = "image/png";
+    }
+
     Asset asset = new Asset();
     asset.setUuid(UUID.randomUUID().toString());
     if (id > 0) {
@@ -102,7 +107,9 @@ public class AssetsResource {
       }
     }
     asset.setData(data);
-    asset.setMimeType(file.getContentType());
-    return assetRepository.saveAndFlush(asset);
+    asset.setMimeType(mimeType);
+    Asset updated = assetRepository.saveAndFlush(asset);
+    LOG.info("Saved " +updated);
+    return updated;
   }
 }

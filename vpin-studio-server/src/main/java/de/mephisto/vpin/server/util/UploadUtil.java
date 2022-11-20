@@ -41,7 +41,7 @@ public class UploadUtil {
     out.close();
 
     BufferedImage image = ImageUtil.loadImage(tempFile);
-    if(image.getHeight() > size & image.getWidth() > size) {
+    if(image.getHeight() > size && image.getWidth() > size) {
       BufferedImage crop = ImageUtil.resizeImage(image, size);
       return ImageUtil.toBytes(crop);
     }

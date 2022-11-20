@@ -1,5 +1,6 @@
 package de.mephisto.vpin.server.preferences;
 
+import de.mephisto.vpin.server.util.ImageUtil;
 import de.mephisto.vpin.server.util.UploadUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,7 +38,10 @@ public class PreferenceResource {
     }
 
     byte[] crop = UploadUtil.resizeImageUpload(file, 300);
-    String mimeType = file.getContentType();
+    String mimeType = "image/jpg";
+    if(file.getOriginalFilename().toLowerCase().endsWith(".png")) {
+      mimeType = "image/png";
+    }
     preferencesService.saveAvatar(crop, mimeType);
     return true;
   }

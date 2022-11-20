@@ -42,7 +42,7 @@
                      </graphic>
                   </Button>
                   <Separator orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
-                  <Button mnemonicParsing="false" onAction="#onAdd" text="Add User" textFill="WHITE">
+                  <Button mnemonicParsing="false" onAction="#onAdd" text="Add Player" textFill="WHITE">
                      <font>
                         <Font size="14.0" />
                      </font>

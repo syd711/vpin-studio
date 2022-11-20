@@ -81,7 +81,8 @@ public class RestClient implements ClientHttpRequestInterceptor {
 
   public Boolean delete(String path) {
     try {
-      restTemplate.delete(path);
+      String url = baseUrl + path;
+      restTemplate.delete(url);
       return true;
     } catch (NumberFormatException e) {
       return false;

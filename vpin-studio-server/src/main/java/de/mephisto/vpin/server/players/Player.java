@@ -29,7 +29,7 @@ public class Player {
   @GeneratedValue(strategy = GenerationType.AUTO)
   private Long id;
 
-  @OneToOne(cascade = CascadeType.ALL)
+  @OneToOne(cascade = CascadeType.MERGE)
   private Asset avatar;
 
   private String initials;
