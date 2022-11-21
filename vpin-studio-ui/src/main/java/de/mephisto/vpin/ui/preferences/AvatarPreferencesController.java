@@ -41,7 +41,7 @@ public class AvatarPreferencesController implements Initializable {
     FileChooser fileChooser = new FileChooser();
     fileChooser.setTitle("Select Image");
     fileChooser.getExtensionFilters().addAll(
-        new FileChooser.ExtensionFilter("Image", "*.png", ".jpg", "*.jpeg"));
+        new FileChooser.ExtensionFilter("Image", "*.png", "*.jpg", "*.jpeg"));
 
     File selection = fileChooser.showOpenDialog(stage);
     if (selection != null) {

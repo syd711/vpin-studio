@@ -18,9 +18,9 @@
                 <TableView fx:id="tableView" style="-fx-background-color: #2a2a2a;" BorderPane.alignment="CENTER">
                     <columns>
                         <TableColumn fx:id="idColumn" prefWidth="75.0" style="-fx-alignment: CENTER;" text="ID" />
-                        <TableColumn fx:id="nameColumn" prefWidth="348.79991149902344" style="-fx-alignment: BASELINE_RIGHT;" text="Name" />
+                  <TableColumn fx:id="avatarColumn" minWidth="0.0" prefWidth="96.0" style="-fx-alignment: CENTER;" text="Avatar" />
+                        <TableColumn fx:id="nameColumn" prefWidth="327.99998474121094" style="-fx-alignment: BASELINE_LEFT;" text="Name" />
                   <TableColumn fx:id="initialsColumn" minWidth="0.0" prefWidth="96.0" style="-fx-alignment: CENTER;" text="Initials" />
-                  <TableColumn fx:id="avatarColumn" minWidth="0.0" prefWidth="74.4000244140625" style="-fx-alignment: CENTER;" text="Avatar" />
                     </columns>
                 </TableView>
             </center>

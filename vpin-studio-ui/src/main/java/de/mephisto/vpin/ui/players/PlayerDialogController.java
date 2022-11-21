@@ -16,6 +16,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontPosture;
@@ -53,6 +54,10 @@ public class PlayerDialogController implements Initializable {
   @FXML
   private BorderPane avatarPane;
 
+  @FXML
+  private StackPane avatarStack;
+
+
   private PlayerRepresentation player;
 
   private Tile avatar;
@@ -68,17 +73,16 @@ public class PlayerDialogController implements Initializable {
 
   @FXML
   private void onSaveClick(ActionEvent e) {
-    if (this.avatarFile != null) {
-      try {
-        long assetId = 0;
-        if (player.getAvatar() != null) {
-          assetId = player.getAvatar().getId();
-        }
-        AssetRepresentation assetRepresentation = client.uploadAsset(this.avatarFile, assetId, 300);
-        this.player.setAvatar(assetRepresentation);
-      } catch (Exception ex) {
-        WidgetFactory.showAlert(ex.getMessage());
+    try {
+      if(this.player.getAvatar() == null && this.avatarFile == null) {
+        avatarFile = WidgetFactory.snapshot(this.avatarStack);
       }
+
+      if(this.avatarFile != null) {
+        this.uploadAvatar(this.avatarFile);
+      }
+    } catch (Exception ex) {
+      WidgetFactory.showAlert(ex.getMessage());
     }
     Stage stage = (Stage) ((Button) e.getSource()).getScene().getWindow();
     stage.close();
@@ -89,7 +93,7 @@ public class PlayerDialogController implements Initializable {
     FileChooser fileChooser = new FileChooser();
     fileChooser.setTitle("Select Image");
     fileChooser.getExtensionFilters().addAll(
-        new FileChooser.ExtensionFilter("Image", "*.png", ".jpg", "*.jpeg"));
+        new FileChooser.ExtensionFilter("Image", "*.png", "*.jpg", "*.jpeg"));
 
     this.avatarFile = fileChooser.showOpenDialog(stage);
     refreshAvatar();
@@ -117,6 +121,15 @@ public class PlayerDialogController implements Initializable {
     this.validateInput();
 
     this.nameField.requestFocus();
+  }
+
+  private void uploadAvatar(File file) throws Exception {
+    long assetId = 0;
+    if (player.getAvatar() != null) {
+      assetId = player.getAvatar().getId();
+    }
+    AssetRepresentation assetRepresentation = client.uploadAsset(file, assetId, 300);
+    this.player.setAvatar(assetRepresentation);
   }
 
   private void refreshAvatar() {
@@ -162,14 +175,14 @@ public class PlayerDialogController implements Initializable {
     boolean valid = !StringUtils.isEmpty(name) && !StringUtils.isEmpty(initials) && initials.length() == 3;
     this.saveBtn.setDisable(!valid);
 
-    if(this.avatarFile == null && this.player.getAvatar() == null && !StringUtils.isEmpty(initials)) {
-      if(initials.length() > 3) {
+    if (this.avatarFile == null && this.player.getAvatar() == null && !StringUtils.isEmpty(initials)) {
+      if (initials.length() > 3) {
         initials = initials.substring(0, 3);
       }
       this.initialsOverlayLabel.setText(initials.toUpperCase());
     }
-    else if(!StringUtils.isEmpty(name) && StringUtils.isEmpty(initials) && (this.avatarFile == null && this.player.getAvatar() == null)) {
-      if(name.length() > 3) {
+    else if (!StringUtils.isEmpty(name) && StringUtils.isEmpty(initials) && (this.avatarFile == null && this.player.getAvatar() == null)) {
+      if (name.length() > 3) {
         name = name.substring(0, 3);
       }
       this.initialsOverlayLabel.setText(name.toUpperCase());

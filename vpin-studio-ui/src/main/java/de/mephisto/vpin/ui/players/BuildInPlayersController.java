@@ -1,10 +1,14 @@
 package de.mephisto.vpin.ui.players;
 
 import de.mephisto.vpin.restclient.representations.PlayerRepresentation;
+import de.mephisto.vpin.ui.DashboardController;
 import de.mephisto.vpin.ui.NavigationController;
 import de.mephisto.vpin.ui.StudioFXController;
 import de.mephisto.vpin.ui.util.Dialogs;
+import de.mephisto.vpin.ui.util.ImageUtil;
 import de.mephisto.vpin.ui.util.WidgetFactory;
+import eu.hansolo.tilesfx.Tile;
+import eu.hansolo.tilesfx.TileBuilder;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -12,10 +16,15 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Cursor;
 import javafx.scene.control.*;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
+import javafx.scene.text.TextAlignment;
 import org.apache.commons.lang3.StringUtils;
 import org.kordamp.ikonli.javafx.FontIcon;
 
+import java.io.ByteArrayInputStream;
 import java.net.URL;
 import java.util.Arrays;
 import java.util.List;
@@ -127,11 +136,13 @@ public class BuildInPlayersController implements Initializable, StudioFXControll
         return new SimpleObjectProperty("");
       }
 
-      FontIcon fontIcon = new FontIcon();
-      fontIcon.setIconSize(18);
-      fontIcon.setIconColor(Paint.valueOf("#66FF66"));
-      fontIcon.setIconLiteral("bi-check-circle");
-      return new SimpleObjectProperty(fontIcon);
+      Image image = new Image(client.getAsset(value.getAvatar().getUuid()));
+      ImageView view = new ImageView(image);
+      view.setPreserveRatio(true);
+      view.setFitWidth(50);
+      view.setFitHeight(50);
+      ImageUtil.setClippedImage(view, (int) (image.getWidth() / 2));
+      return new SimpleObjectProperty(view);
     });
     initialsColumn.setCellValueFactory(cellData -> {
       PlayerRepresentation value = cellData.getValue();
