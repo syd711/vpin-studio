@@ -1,10 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.geometry.Insets?>
-<?import javafx.scene.control.Label?>
 <?import javafx.scene.control.Tab?>
 <?import javafx.scene.control.TabPane?>
+<?import javafx.scene.control.TitledPane?>
+<?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 <?import org.kordamp.ikonli.javafx.FontIcon?>
 
@@ -31,7 +33,7 @@
                         </BorderPane>
                      </content>
                         </Tab>
-                        <Tab fx:id="discordTab" closable="false" text="Discord Server">
+                        <Tab fx:id="discordTab" closable="false" text="Discord Users">
                      <graphic>
                         <FontIcon iconColor="WHITE" iconLiteral="mdi2a-account-details-outline" iconSize="18" />
                      </graphic>
@@ -48,20 +50,33 @@
         </BorderPane>
     </center>
    <right>
-      <BorderPane prefWidth="600.0" styleClass="subpanel" BorderPane.alignment="CENTER">
-         <top>
-            <Label styleClass="widget-title" text="Player Details" textFill="WHITE" BorderPane.alignment="TOP_LEFT">
+      <VBox prefWidth="600.0" styleClass="subpanel" BorderPane.alignment="CENTER">
+         <children>
+            <TitledPane animated="false" text="Highscores" textFill="WHITE">
+              <content>
+                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
+              </content>
                <font>
-                  <Font size="10.0" />
+                  <Font size="14.0" />
                </font>
-            </Label>
-         </top>
-         <BorderPane.margin>
-            <Insets />
-         </BorderPane.margin>
-         <padding>
-            <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
-         </padding>
-      </BorderPane>
+            </TitledPane>
+            <TitledPane animated="false" layoutX="10.0" layoutY="10.0" text="Competitions" textFill="WHITE">
+               <content>
+                  <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
+               </content>
+               <font>
+                  <Font size="14.0" />
+               </font>
+            </TitledPane>
+            <TitledPane animated="false" layoutX="10.0" layoutY="10.0" text="Achievements" textFill="WHITE">
+               <content>
+                  <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
+               </content>
+               <font>
+                  <Font size="14.0" />
+               </font>
+            </TitledPane>
+         </children>
+      </VBox>
    </right>
 </BorderPane>

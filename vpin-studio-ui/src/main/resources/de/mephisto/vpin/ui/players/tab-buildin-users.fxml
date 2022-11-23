@@ -11,23 +11,24 @@
 <?import javafx.scene.text.Font?>
 <?import org.kordamp.ikonli.javafx.FontIcon?>
 
-<StackPane prefWidth="600.0" styleClass="base-component" stylesheets="@../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.players.BuildInPlayersController">
+<StackPane prefWidth="700.0" styleClass="base-component" stylesheets="@../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.players.BuildInPlayersController">
     <children>
         <BorderPane>
             <center>
                 <TableView fx:id="tableView" style="-fx-background-color: #2a2a2a;" BorderPane.alignment="CENTER">
                     <columns>
-                        <TableColumn fx:id="idColumn" prefWidth="75.0" style="-fx-alignment: CENTER;" text="ID" />
-                  <TableColumn fx:id="avatarColumn" minWidth="0.0" prefWidth="96.0" style="-fx-alignment: CENTER;" text="Avatar" />
-                        <TableColumn fx:id="nameColumn" prefWidth="327.99998474121094" style="-fx-alignment: BASELINE_LEFT;" text="Name" />
-                  <TableColumn fx:id="initialsColumn" minWidth="0.0" prefWidth="96.0" style="-fx-alignment: CENTER;" text="Initials" />
+                        <TableColumn fx:id="idColumn" prefWidth="62.399903774261475" style="-fx-alignment: CENTER;" text="ID" />
+                  <TableColumn fx:id="avatarColumn" minWidth="0.0" prefWidth="90.39989471435547" style="-fx-alignment: CENTER;" text="Avatar" />
+                        <TableColumn fx:id="nameColumn" prefWidth="280.0001220703125" style="-fx-alignment: BASELINE_LEFT;" text="Name" />
+                  <TableColumn fx:id="initialsColumn" minWidth="0.0" prefWidth="76.0" style="-fx-alignment: CENTER;" text="Initials" />
+                  <TableColumn fx:id="columnCreatedAt" minWidth="2.39996337890625" prefWidth="112.00003051757812" style="-fx-alignment: CENTER;" text="Created At" />
                     </columns>
                 </TableView>
             </center>
          <top>
             <ToolBar prefHeight="40.0" prefWidth="200.0" BorderPane.alignment="CENTER">
               <items>
-                  <TextField>
+                  <TextField fx:id="searchTextField" promptText="User Search...">
                      <font>
                         <Font size="14.0" />
                      </font>
