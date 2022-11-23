@@ -82,6 +82,7 @@ public class AssetsResource {
   @PostMapping("/{id}/upload/{max}")
   public Asset upload(@PathVariable("id") long id,
                       @PathVariable("max") int maxSize,
+                      @RequestParam("assetType") String assetType,
                       @RequestParam("file") MultipartFile file) throws IOException {
     if (file == null) {
       LOG.error("Upload request did not contain a file object.");
@@ -99,6 +100,7 @@ public class AssetsResource {
     }
 
     Asset asset = new Asset();
+    asset.setAssetType(assetType);
     asset.setUuid(UUID.randomUUID().toString());
     if (id > 0) {
       Optional<Asset> byId = assetRepository.findById(id);

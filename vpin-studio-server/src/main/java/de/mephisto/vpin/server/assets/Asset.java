@@ -33,6 +33,16 @@ public class Asset {
 
   private String uuid;
 
+  private String assetType;
+
+  public String getAssetType() {
+    return assetType;
+  }
+
+  public void setAssetType(String assetType) {
+    this.assetType = assetType;
+  }
+
   public String getUuid() {
     return uuid;
   }

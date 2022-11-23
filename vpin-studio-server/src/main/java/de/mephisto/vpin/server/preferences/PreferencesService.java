@@ -1,5 +1,6 @@
 package de.mephisto.vpin.server.preferences;
 
+import de.mephisto.vpin.restclient.AssetType;
 import de.mephisto.vpin.server.assets.Asset;
 import de.mephisto.vpin.server.assets.AssetRepository;
 import org.slf4j.Logger;
@@ -79,6 +80,7 @@ public class PreferencesService implements InitializingBean {
     }
 
     Asset newAvatar = new Asset();
+    newAvatar.setAssetType(AssetType.VPIN_AVATAR.name());
     newAvatar.setData(bytes);
     newAvatar.setUuid(UUID.randomUUID().toString());
     newAvatar.setMimeType(mimeType);

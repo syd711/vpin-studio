@@ -36,7 +36,7 @@ public class VPinStudioClient implements ObservedPropertyChangeListener {
 
   public ByteArrayInputStream getAsset(String uuid) {
     byte[] bytes = RestClient.getInstance().readBinary(API + "assets/data/" + uuid);
-    if(bytes == null) {
+    if (bytes == null) {
       throw new UnsupportedOperationException("No data found for asset with UUID " + uuid);
     }
     return new ByteArrayInputStream(bytes);
@@ -181,7 +181,7 @@ public class VPinStudioClient implements ObservedPropertyChangeListener {
   public boolean uploadOverlayBackgroundImage(File file) throws Exception {
     try {
       String url = RestClient.getInstance().getBaseUrl() + API + "overlay/backgroundupload";
-      new RestTemplate().exchange(url, HttpMethod.POST, createUpload(file, -1, null), Boolean.class);
+      new RestTemplate().exchange(url, HttpMethod.POST, createUpload(file, -1, null, AssetType.BACKGOUND), Boolean.class);
       return true;
     } catch (Exception e) {
       LOG.error("Background upload failed: " + e.getMessage(), e);
@@ -250,10 +250,10 @@ public class VPinStudioClient implements ObservedPropertyChangeListener {
     return null;
   }
 
-  public boolean uploadAvatar(File file) throws Exception {
+  public boolean uploadVPinAvatar(File file) throws Exception {
     try {
       String url = RestClient.getInstance().getBaseUrl() + API + "preferences/avatar";
-      new RestTemplate().exchange(url, HttpMethod.POST, createUpload(file, -1, null), Boolean.class);
+      new RestTemplate().exchange(url, HttpMethod.POST, createUpload(file, -1, null, AssetType.VPIN_AVATAR), Boolean.class);
       return true;
     } catch (Exception e) {
       LOG.error("Background upload failed: " + e.getMessage(), e);
@@ -261,10 +261,10 @@ public class VPinStudioClient implements ObservedPropertyChangeListener {
     }
   }
 
-  public AssetRepresentation uploadAsset(File file, long id, int maxSize) throws Exception {
+  public AssetRepresentation uploadAsset(File file, long id, int maxSize, AssetType assetType) throws Exception {
     try {
       String url = RestClient.getInstance().getBaseUrl() + API + "assets/" + id + "/upload/" + maxSize;
-      ResponseEntity<AssetRepresentation> exchange = new RestTemplate().exchange(url, HttpMethod.POST, createUpload(file, -1, null), AssetRepresentation.class);
+      ResponseEntity<AssetRepresentation> exchange = new RestTemplate().exchange(url, HttpMethod.POST, createUpload(file, -1, null, assetType), AssetRepresentation.class);
       return exchange.getBody();
     } catch (Exception e) {
       LOG.error("Asset upload failed: " + e.getMessage(), e);
@@ -276,7 +276,7 @@ public class VPinStudioClient implements ObservedPropertyChangeListener {
   public boolean uploadHighscoreBackgroundImage(File file) throws Exception {
     try {
       String url = RestClient.getInstance().getBaseUrl() + API + "cards/backgroundupload";
-      new RestTemplate().exchange(url, HttpMethod.POST, createUpload(file, -1, null), Boolean.class);
+      new RestTemplate().exchange(url, HttpMethod.POST, createUpload(file, -1, null, AssetType.BACKGOUND), Boolean.class);
       return true;
     } catch (Exception e) {
       LOG.error("Background upload failed: " + e.getMessage(), e);
@@ -287,7 +287,7 @@ public class VPinStudioClient implements ObservedPropertyChangeListener {
   public boolean uploadTable(File file) throws Exception {
     try {
       String url = RestClient.getInstance().getBaseUrl() + API + "games/upload/table";
-      new RestTemplate().exchange(url, HttpMethod.POST, createUpload(file, -1, null), Boolean.class);
+      new RestTemplate().exchange(url, HttpMethod.POST, createUpload(file, -1, null, AssetType.TABLE), Boolean.class);
       return true;
     } catch (Exception e) {
       LOG.error("Table upload failed: " + e.getMessage(), e);
@@ -298,7 +298,7 @@ public class VPinStudioClient implements ObservedPropertyChangeListener {
   public boolean uploadRom(File file) throws Exception {
     try {
       String url = RestClient.getInstance().getBaseUrl() + API + "games/upload/rom";
-      new RestTemplate().exchange(url, HttpMethod.POST, createUpload(file, -1, null), Boolean.class);
+      new RestTemplate().exchange(url, HttpMethod.POST, createUpload(file, -1, null, AssetType.ROM), Boolean.class);
       return true;
     } catch (Exception e) {
       LOG.error("Rom upload failed: " + e.getMessage(), e);
@@ -309,7 +309,7 @@ public class VPinStudioClient implements ObservedPropertyChangeListener {
   public boolean uploadDirectB2SFile(File file, String uploadType, int gameId) throws Exception {
     try {
       String url = RestClient.getInstance().getBaseUrl() + API + "cards/directb2supload";
-      new RestTemplate().exchange(url, HttpMethod.POST, createUpload(file, gameId, uploadType), Boolean.class);
+      new RestTemplate().exchange(url, HttpMethod.POST, createUpload(file, gameId, uploadType, AssetType.DIRECT_B2S), Boolean.class);
       return true;
     } catch (Exception e) {
       LOG.error("Directb2s upload failed: " + e.getMessage(), e);
@@ -317,7 +317,7 @@ public class VPinStudioClient implements ObservedPropertyChangeListener {
     }
   }
 
-  private static HttpEntity createUpload(File file, int gameId, String uploadType) throws Exception {
+  private static HttpEntity createUpload(File file, int gameId, String uploadType, AssetType assetType) throws Exception {
     LinkedMultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
     HttpHeaders headers = new HttpHeaders();
     headers.setContentType(MediaType.MULTIPART_FORM_DATA);
@@ -334,6 +334,7 @@ public class VPinStudioClient implements ObservedPropertyChangeListener {
     map.add("file", rsr);
     map.add("gameId", gameId);
     map.add("uploadType", uploadType);
+    map.add("assetType", assetType.name());
     return new HttpEntity<>(map, headers);
   }
 

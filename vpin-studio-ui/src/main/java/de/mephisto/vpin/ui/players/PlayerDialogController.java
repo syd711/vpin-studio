@@ -1,5 +1,6 @@
 package de.mephisto.vpin.ui.players;
 
+import de.mephisto.vpin.restclient.AssetType;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.representations.AssetRepresentation;
 import de.mephisto.vpin.restclient.representations.PlayerRepresentation;
@@ -128,7 +129,7 @@ public class PlayerDialogController implements Initializable {
     if (player.getAvatar() != null) {
       assetId = player.getAvatar().getId();
     }
-    AssetRepresentation assetRepresentation = client.uploadAsset(file, assetId, 300);
+    AssetRepresentation assetRepresentation = client.uploadAsset(file, assetId, 300, AssetType.AVATAR);
     this.player.setAvatar(assetRepresentation);
   }
 
