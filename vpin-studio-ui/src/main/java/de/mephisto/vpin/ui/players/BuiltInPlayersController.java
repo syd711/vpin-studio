@@ -26,7 +26,7 @@ import java.util.*;
 
 import static de.mephisto.vpin.ui.Studio.client;
 
-public class BuildInPlayersController implements Initializable, StudioFXController {
+public class BuiltInPlayersController implements Initializable, StudioFXController {
 
   @FXML
   private Button editBtn;
@@ -57,9 +57,10 @@ public class BuildInPlayersController implements Initializable, StudioFXControll
 
   private ObservableList<PlayerRepresentation> data;
   private List<PlayerRepresentation> players;
+  private PlayersController playersController;
 
   // Add a public no-args constructor
-  public BuildInPlayersController() {
+  public BuiltInPlayersController() {
   }
 
   @FXML
@@ -157,11 +158,16 @@ public class BuildInPlayersController implements Initializable, StudioFXControll
 
     editBtn.setDisable(true);
     deleteBtn.setDisable(true);
+
     tableView.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
       boolean disable = newSelection == null;
       editBtn.setDisable(disable);
       deleteBtn.setDisable(disable);
+
+      updateSelection(Optional.ofNullable(newSelection));
     });
+
+
     tableView.setRowFactory(tv -> {
       TableRow<PlayerRepresentation> row = new TableRow<>();
       row.setOnMouseClicked(event -> {
@@ -177,6 +183,14 @@ public class BuildInPlayersController implements Initializable, StudioFXControll
     });
 
     onReload();
+  }
+
+  public void setPlayersController(PlayersController playersController) {
+    this.playersController = playersController;
+  }
+
+  private void updateSelection(Optional<PlayerRepresentation> player) {
+    playersController.updateSelection(player);
   }
 
   private List<PlayerRepresentation> filterPlayers(List<PlayerRepresentation> players) {

@@ -1,5 +1,7 @@
 package de.mephisto.vpin.server.players;
 
+import de.mephisto.vpin.connectors.discord.DiscordMember;
+import de.mephisto.vpin.restclient.PlayerDomain;
 import de.mephisto.vpin.server.assets.Asset;
 import de.mephisto.vpin.server.assets.AssetRepository;
 import org.slf4j.Logger;
@@ -7,8 +9,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 public class PlayerService {
@@ -18,15 +19,41 @@ public class PlayerService {
   private PlayerRepository playerRepository;
 
   @Autowired
+  private DiscordPlayerService discordPlayerService;
+
+  @Autowired
   private AssetRepository assetRepository;
 
   public List<Player> getBuildInPlayers() {
-    return playerRepository.findAll();
+    List<Player> all = playerRepository.findAll();
+    all.sort(Comparator.comparing(Player::getName));
+    return all;
   }
 
   public Player getBuildInPlayer(long id) {
     Optional<Player> player = playerRepository.findById(id);
     return player.orElse(null);
+  }
+
+  public List<Player> getPlayersForDomain(PlayerDomain domain) {
+    if (domain.equals(PlayerDomain.DISCORD)) {
+      List<Player> players = new ArrayList<>();
+      List<DiscordMember> members = discordPlayerService.getMembers();
+      for (DiscordMember member : members) {
+        Player player = toPlayer(member);
+        players.add(player);
+      }
+      players.sort(Comparator.comparing(Player::getName));
+      return players;
+    }
+    return Collections.emptyList();
+  }
+
+  public boolean invalidateDomain(PlayerDomain domain) {
+    if (domain.equals(PlayerDomain.DISCORD)) {
+      discordPlayerService.getMembers();
+    }
+    return false;
   }
 
   public Player save(Player player) {
@@ -61,5 +88,14 @@ public class PlayerService {
     }
     playerRepository.deleteById(id);
     LOG.info("Deleted player " + id);
+  }
+
+  private Player toPlayer(DiscordMember member) {
+    Player player = new Player();
+    player.setName(member.getName());
+    player.setInitials(member.getInitials());
+    player.setAvatarUrl(member.getAvatarUrl());
+    player.setDomain(PlayerDomain.DISCORD.name());
+    return player;
   }
 }

@@ -154,6 +154,14 @@ public class VPinStudioClient implements ObservedPropertyChangeListener {
     return Arrays.asList(RestClient.getInstance().get(API + "players", PlayerRepresentation[].class));
   }
 
+  public List<PlayerRepresentation> getPlayers(PlayerDomain domain) {
+    return Arrays.asList(RestClient.getInstance().get(API + "players/domain/" + domain.name(), PlayerRepresentation[].class));
+  }
+
+  public boolean invalidatePlayerDomain(PlayerDomain domain) {
+    return RestClient.getInstance().get(API + "players/invalidate/" + domain.name(), Boolean.class);
+  }
+
   public InputStream getOverlayImage() {
     byte[] bytes = RestClient.getInstance().readBinary(API + "overlay/preview");
     return new ByteArrayInputStream(bytes);

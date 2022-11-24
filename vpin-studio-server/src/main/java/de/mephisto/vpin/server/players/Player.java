@@ -32,6 +32,8 @@ public class Player {
   @OneToOne(cascade = CascadeType.MERGE)
   private Asset avatar;
 
+  private String avatarUrl;
+
   private String initials;
 
   private String name;
@@ -40,7 +42,13 @@ public class Player {
 
   private String email;
 
-  private String discordId;
+  public String getAvatarUrl() {
+    return avatarUrl;
+  }
+
+  public void setAvatarUrl(String avatarUrl) {
+    this.avatarUrl = avatarUrl;
+  }
 
   public String getInitials() {
     return initials;

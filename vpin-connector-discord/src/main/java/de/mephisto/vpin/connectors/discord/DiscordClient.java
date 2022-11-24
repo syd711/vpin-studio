@@ -16,7 +16,6 @@ import net.dv8tion.jda.api.requests.GatewayIntent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -40,6 +39,7 @@ public class DiscordClient extends ListenerAdapter {
     jda.awaitReady();
     jda.addEventListener(this);
     members = new ArrayList<>();
+    this.refreshMembers();
   }
 
   public void shutdown() {
@@ -89,7 +89,7 @@ public class DiscordClient extends ListenerAdapter {
       }
     }).onError(throwable -> {
       LOG.error("Failed to load members from guildId {}: {}", guildId, throwable.getMessage(), throwable);
-      if(t != null) {
+      if (t != null) {
         t.accept(throwable);
       }
     });
@@ -102,11 +102,13 @@ public class DiscordClient extends ListenerAdapter {
   private List<DiscordMember> createMemberList(List<Member> members) {
     List<DiscordMember> result = new ArrayList<>();
     for (Member member : members) {
-      DiscordMember discordMember = new DiscordMember();
-      discordMember.setName(member.getEffectiveName());
-      discordMember.setInitials(resolveInitials(member.getEffectiveName()));
-      discordMember.setAvatarUrl(member.getEffectiveAvatarUrl());
+      String name = member.getEffectiveName();
+      String initials = resolveInitials(name);
 
+      DiscordMember discordMember = new DiscordMember();
+      discordMember.setName(name);
+      discordMember.setInitials(initials);
+      discordMember.setAvatarUrl(member.getEffectiveAvatarUrl());
       result.add(discordMember);
     }
     return result;

@@ -1,6 +1,6 @@
 package de.mephisto.vpin.server.players;
 
-import de.mephisto.vpin.connectors.discord.DiscordMember;
+import de.mephisto.vpin.restclient.PlayerDomain;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
@@ -17,17 +17,20 @@ public class PlayersResource {
   @Autowired
   private PlayerService playerService;
 
-  @Autowired
-  private DiscordPlayerService discordPlayerService;
 
   @GetMapping
   public List<Player> getPlayers() {
     return playerService.getBuildInPlayers();
   }
 
-  @GetMapping("/discord")
-  public List<DiscordMember> getDiscordPlayers() {
-    return discordPlayerService.getMembers();
+  @GetMapping("/invalidate/{domain}")
+  public boolean invalidateDomain(@PathVariable("domain") String domain) {
+    return playerService.invalidateDomain(PlayerDomain.valueOf(domain));
+  }
+
+  @GetMapping("/domain/{domain}")
+  public List<Player> getPlayerForDomain(@PathVariable("domain") String domain) {
+    return playerService.getPlayersForDomain(PlayerDomain.valueOf(domain));
   }
 
   @GetMapping("/{id}")
@@ -48,4 +51,5 @@ public class PlayersResource {
   public void deletePlayer(@PathVariable("id") int id) {
     playerService.delete(id);
   }
+
 }

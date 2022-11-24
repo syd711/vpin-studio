@@ -12,11 +12,21 @@ public class PlayerRepresentation {
 
   private AssetRepresentation avatar;
 
+  private String avatarUrl;
+
   private String initials;
 
   private String name;
 
-  private String type;
+  private String domain;
+
+  public String getAvatarUrl() {
+    return avatarUrl;
+  }
+
+  public void setAvatarUrl(String avatarUrl) {
+    this.avatarUrl = avatarUrl;
+  }
 
   public Date getCreatedAt() {
     return createdAt;
@@ -66,11 +76,11 @@ public class PlayerRepresentation {
     this.name = name;
   }
 
-  public String getType() {
-    return type;
+  public String getDomain() {
+    return domain;
   }
 
-  public void setType(String type) {
-    this.type = type;
+  public void setDomain(String domain) {
+    this.domain = domain;
   }
 }

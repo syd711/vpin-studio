@@ -15,10 +15,10 @@
     <children>
         <BorderPane>
             <center>
-                <TableView style="-fx-background-color: #2a2a2a;" BorderPane.alignment="CENTER">
+                <TableView fx:id="tableView" style="-fx-background-color: #2a2a2a;" BorderPane.alignment="CENTER">
                     <columns>
                   <TableColumn fx:id="avatarColumn" minWidth="0.0" prefWidth="111.20007634162903" style="-fx-alignment: CENTER;" text="Avatar" />
-                        <TableColumn fx:id="nameColumn" prefWidth="358.40000915527344" text="Name" />
+                        <TableColumn fx:id="nameColumn" prefWidth="358.40000915527344" style="-fx-alignment: BASELINE_LEFT;" text="Name" />
                   <TableColumn fx:id="initialsColumn" minWidth="0.0" prefWidth="92.800048828125" style="-fx-alignment: CENTER;" text="Initials" />
                     </columns>
                 </TableView>
@@ -26,13 +26,13 @@
          <top>
             <ToolBar prefHeight="40.0" prefWidth="200.0" BorderPane.alignment="CENTER">
               <items>
-                  <TextField>
+                  <TextField fx:id="searchTextField">
                      <font>
                         <Font size="14.0" />
                      </font>
                   </TextField>
                   <Separator orientation="VERTICAL" prefHeight="0.0" prefWidth="0.0" />
-                <Button mnemonicParsing="false" onAction="#onReload" text="Reload" textFill="WHITE">
+                <Button fx:id="reloadBtn" mnemonicParsing="false" onAction="#onReload" text="Reload" textFill="WHITE">
                      <font>
                         <Font size="14.0" />
                      </font>

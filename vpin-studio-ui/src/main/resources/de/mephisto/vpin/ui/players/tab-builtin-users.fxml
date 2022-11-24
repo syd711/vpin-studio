@@ -11,7 +11,7 @@
 <?import javafx.scene.text.Font?>
 <?import org.kordamp.ikonli.javafx.FontIcon?>
 
-<StackPane prefWidth="700.0" styleClass="base-component" stylesheets="@../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.players.BuildInPlayersController">
+<StackPane prefWidth="700.0" styleClass="base-component" stylesheets="@../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.players.BuiltInPlayersController">
     <children>
         <BorderPane>
             <center>
@@ -34,7 +34,7 @@
                      </font>
                   </TextField>
                   <Separator orientation="VERTICAL" prefHeight="0.0" prefWidth="0.0" />
-                <Button mnemonicParsing="false" onAction="#onReload" text="Reload" textFill="WHITE">
+                <Button fx:id="reloadBtn" mnemonicParsing="false" onAction="#onReload" text="Reload" textFill="WHITE">
                      <font>
                         <Font size="14.0" />
                      </font>

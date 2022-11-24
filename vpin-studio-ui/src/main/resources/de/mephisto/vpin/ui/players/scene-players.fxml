@@ -17,7 +17,7 @@
     <center>
         <BorderPane styleClass="subpanel" BorderPane.alignment="CENTER">
             <center>
-                <TabPane tabClosingPolicy="UNAVAILABLE" BorderPane.alignment="CENTER">
+                <TabPane fx:id="tabPane" tabClosingPolicy="UNAVAILABLE" BorderPane.alignment="CENTER">
                     <tabs>
                         <Tab fx:id="buildInUsersTab" closable="false" text="Build-In Users">
                             <content>
@@ -25,13 +25,6 @@
                      <graphic>
                         <FontIcon iconColor="WHITE" iconLiteral="mdi2a-account-details" iconSize="18" />
                      </graphic>
-                     <content>
-                        <BorderPane>
-                            <center>
-                                <fx:include source="tab-buildin-users.fxml" />
-                            </center>
-                        </BorderPane>
-                     </content>
                         </Tab>
                         <Tab fx:id="discordTab" closable="false" text="Discord Users">
                      <graphic>
