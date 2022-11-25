@@ -158,6 +158,10 @@ public class WidgetFactory {
         LOG.error("Media player error: " + mediaPlayer.getError());
         mediaPlayer.stop();
         mediaPlayer.dispose();
+
+        Label label = new Label("   Media Error\nReselect table.");
+        label.setStyle("-fx-font-size: 14px;-fx-text-fill: #444444;");
+        parent.setCenter(label);
       });
 
       MediaView mediaView = new MediaView(mediaPlayer);

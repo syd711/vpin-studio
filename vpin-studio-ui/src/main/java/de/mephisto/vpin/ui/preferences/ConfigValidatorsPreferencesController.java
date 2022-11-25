@@ -1,6 +1,5 @@
 package de.mephisto.vpin.ui.preferences;
 
-import de.mephisto.vpin.restclient.PopperScreen;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.VPinStudioClient;
 import de.mephisto.vpin.restclient.representations.PreferenceEntryRepresentation;
@@ -15,7 +14,6 @@ import org.apache.commons.lang3.StringUtils;
 
 import java.net.URL;
 import java.util.*;
-import java.util.stream.Collectors;
 
 public class ConfigValidatorsPreferencesController implements Initializable {
 
@@ -52,10 +50,6 @@ public class ConfigValidatorsPreferencesController implements Initializable {
   public void initialize(URL url, ResourceBundle resourceBundle) {
     client = Studio.client;
 
-    PreferenceEntryRepresentation ignoredMediaPrefs = client.getPreference(PreferenceNames.IGNORED_MEDIA);
-    List<String> ignoredMediaList = ignoredMediaPrefs.getCSVValue();
-    List<String> screenNames = Arrays.stream(PopperScreen.values()).map(s -> s.name()).collect(Collectors.toList());
-
     Parent parent = preferenceList;
     List<CheckBox> settingsCheckboxes = new ArrayList<>();
     findAllCheckboxes(parent, settingsCheckboxes);
@@ -64,13 +58,10 @@ public class ConfigValidatorsPreferencesController implements Initializable {
     ignoreList = entry.getCSVValue();
     for (CheckBox checkBox : settingsCheckboxes) {
       String id = checkBox.getId();
-      String screenName = id.split("_")[0];
       String validationCode = id.split("_")[1];
 
-      if(screenNames.contains(screenName)) {
-        checkBox.setSelected(!ignoreList.contains(validationCode));
-        checkBox.setDisable(ignoredMediaList.contains(screenName));
-      }
+      boolean ignored = ignoreList.contains(validationCode);
+      checkBox.setSelected(!ignored);
     }
   }
 

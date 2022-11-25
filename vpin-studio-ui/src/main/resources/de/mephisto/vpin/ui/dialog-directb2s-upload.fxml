@@ -66,7 +66,7 @@
             <Insets left="24.0" top="6.0" />
          </BorderPane.margin>
          <children>
-            <RadioButton fx:id="uploadTypeTable" mnemonicParsing="false" selected="true" text="Upload To &quot;Tables&quot; Folder" textFill="WHITE">
+            <RadioButton fx:id="uploadTypeTable" mnemonicParsing="false" selected="true" text="Upload to &quot;Tables&quot; folder" textFill="WHITE">
                <font>
                   <Font size="14.0" />
                </font>
@@ -74,7 +74,7 @@
                   <ToggleGroup fx:id="group" />
                </toggleGroup>
             </RadioButton>
-            <RadioButton fx:id="uploadTypeGenerator" mnemonicParsing="false" text="Upload For Highscore Card Generator" textFill="WHITE" toggleGroup="$group">
+            <RadioButton fx:id="uploadTypeGenerator" mnemonicParsing="false" text="Upload for highscore card generator and competitions" textFill="WHITE" toggleGroup="$group">
                <font>
                   <Font size="14.0" />
                </font>

@@ -149,7 +149,7 @@ public class TablesController implements Initializable, StudioFXController {
   @FXML
   private void onOpenDirectB2SBackground() {
     GameRepresentation game = tableView.getSelectionModel().selectedItemProperty().get();
-    if(game != null) {
+    if (game != null) {
       ByteArrayInputStream s = client.getDirectB2SImage(game);
       MediaUtil.openMedia(s);
     }
@@ -340,8 +340,11 @@ public class TablesController implements Initializable, StudioFXController {
         rom = value.getOriginalRom();
       }
 
-      List<String> ignoredValidations = Arrays.asList(value.getIgnoredValidations().split(","));
-      if (!value.isRomExists() && !ignoredValidations.contains(String.valueOf(ValidationCode.CODE_NO_ROM))) {
+      List<String> ignoredValidations = Collections.emptyList();
+      if (value.getIgnoredValidations() != null) {
+        ignoredValidations = Arrays.asList(value.getIgnoredValidations().split(","));
+      }
+      if (!value.isRomExists() && !ignoredValidations.contains(String.valueOf(ValidationCode.CODE_ROM_NOT_EXISTS))) {
         Label label = new Label(rom);
         String color = "#FF3333";
         label.setStyle("-fx-font-color: " + color + ";-fx-text-fill: " + color + ";-fx-font-weight: bold;");

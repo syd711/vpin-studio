@@ -1,5 +1,6 @@
 package de.mephisto.vpin.restclient.representations;
 
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
