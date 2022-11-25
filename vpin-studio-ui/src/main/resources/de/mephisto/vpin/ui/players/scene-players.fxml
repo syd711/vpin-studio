@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.Tab?>
 <?import javafx.scene.control.TabPane?>
 <?import javafx.scene.control.TitledPane?>
-<?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
@@ -45,29 +46,53 @@
    <right>
       <VBox prefWidth="600.0" styleClass="subpanel" BorderPane.alignment="CENTER">
          <children>
-            <TitledPane animated="false" text="Highscores" textFill="WHITE">
-              <content>
-                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
-              </content>
+            <TitledPane fx:id="highscoresTitledPane" animated="false" text="Highscores" textFill="WHITE">
                <font>
                   <Font size="14.0" />
                </font>
-            </TitledPane>
-            <TitledPane animated="false" layoutX="10.0" layoutY="10.0" text="Competitions" textFill="WHITE">
                <content>
-                  <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
+                  <ScrollPane>
+                     <content>
+                        <BorderPane>
+                           <center>
+                              <VBox fx:id="highscoreList" />
+                           </center>
+                           <top>
+                              <Label fx:id="noScoreLabel" text="No highscores found for this player." textFill="WHITE" BorderPane.alignment="CENTER">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </Label>
+                           </top>
+                           <padding>
+                              <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
+                           </padding>
+                        </BorderPane>
+                     </content>
+                  </ScrollPane>
                </content>
-               <font>
-                  <Font size="14.0" />
-               </font>
             </TitledPane>
             <TitledPane animated="false" layoutX="10.0" layoutY="10.0" text="Achievements" textFill="WHITE">
-               <content>
-                  <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
-               </content>
                <font>
                   <Font size="14.0" />
                </font>
+               <content>
+                  <BorderPane prefHeight="200.0" prefWidth="200.0">
+                     <padding>
+                        <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
+                     </padding>
+                     <center>
+                        <VBox prefHeight="200.0" prefWidth="100.0" BorderPane.alignment="CENTER" />
+                     </center>
+                     <top>
+                        <Label text="No achievements found for this player (under construction)." textFill="WHITE" BorderPane.alignment="TOP_LEFT">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Label>
+                     </top>
+                  </BorderPane>
+               </content>
             </TitledPane>
          </children>
       </VBox>

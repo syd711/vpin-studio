@@ -1,6 +1,7 @@
 package de.mephisto.vpin.server.players;
 
 import de.mephisto.vpin.restclient.PlayerDomain;
+import de.mephisto.vpin.server.highscores.Highscore;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
@@ -31,6 +32,11 @@ public class PlayersResource {
   @GetMapping("/domain/{domain}")
   public List<Player> getPlayerForDomain(@PathVariable("domain") String domain) {
     return playerService.getPlayersForDomain(PlayerDomain.valueOf(domain));
+  }
+
+  @GetMapping("/highscores/{initials}")
+  public List<PlayerScore> getHighscores(@PathVariable("initials") String initials) {
+    return playerService.getHighscores(initials.toUpperCase());
   }
 
   @GetMapping("/{id}")

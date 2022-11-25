@@ -36,7 +36,7 @@ public class ValidationTexts {
       }
       case CODE_NO_DIRECTB2S_OR_PUPPACK: {
         label = "No PUP pack and no directb2s file found.";
-        text = "No additional media has been found for this table. Consider at least downloading a 'directb2s' file for this table.";
+        text = "No additional media has been found for this table. Download a 'directb2s' file for this table.";
         break;
       }
       case CODE_NO_HIGHSCORE_FILES: {

@@ -2,6 +2,7 @@ package de.mephisto.vpin.server.players;
 
 import de.mephisto.vpin.connectors.discord.DiscordClient;
 import de.mephisto.vpin.connectors.discord.DiscordMember;
+import de.mephisto.vpin.restclient.PlayerDomain;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.server.preferences.PreferenceChangedListener;
 import de.mephisto.vpin.server.preferences.PreferencesService;
@@ -12,10 +13,10 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
+import java.util.Optional;
 import java.util.function.Consumer;
 
 @Service
@@ -62,6 +63,25 @@ public class DiscordPlayerService implements InitializingBean, PreferenceChanged
     return this.discordClient;
   }
 
+  public Optional<Player> getPlayerByInitials(String initials) {
+    for (DiscordMember member : this.getMembers()) {
+      if (!StringUtils.isEmpty(member.getInitials()) && member.getInitials().toUpperCase().equals(initials)) {
+        return Optional.of(toPlayer(member));
+      }
+    }
+    return Optional.empty();
+  }
+
+  public List<Player> getPlayers() {
+    List<Player> players = new ArrayList<>();
+    for (DiscordMember member : this.getMembers()) {
+      Player player = toPlayer(member);
+      players.add(player);
+    }
+    players.sort(Comparator.comparing(Player::getName));
+    return players;
+  }
+
   @Override
   public void afterPropertiesSet() throws Exception {
     preferencesService.addChangeListener(this);
@@ -92,5 +112,14 @@ public class DiscordPlayerService implements InitializingBean, PreferenceChanged
       return this.lastMembers != null;
     }
     return false;
+  }
+
+  private Player toPlayer(DiscordMember member) {
+    Player player = new Player();
+    player.setName(member.getName());
+    player.setInitials(member.getInitials());
+    player.setAvatarUrl(member.getAvatarUrl());
+    player.setDomain(PlayerDomain.DISCORD.name());
+    return player;
   }
 }

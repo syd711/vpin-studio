@@ -1,9 +1,14 @@
 package de.mephisto.vpin.server.players;
 
-import de.mephisto.vpin.connectors.discord.DiscordMember;
 import de.mephisto.vpin.restclient.PlayerDomain;
 import de.mephisto.vpin.server.assets.Asset;
 import de.mephisto.vpin.server.assets.AssetRepository;
+import de.mephisto.vpin.server.games.Game;
+import de.mephisto.vpin.server.games.GameService;
+import de.mephisto.vpin.server.highscores.Score;
+import de.mephisto.vpin.server.popper.GameMediaItem;
+import de.mephisto.vpin.server.popper.PopperScreen;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +29,9 @@ public class PlayerService {
   @Autowired
   private AssetRepository assetRepository;
 
+  @Autowired
+  private GameService gameService;
+
   public List<Player> getBuildInPlayers() {
     List<Player> all = playerRepository.findAll();
     all.sort(Comparator.comparing(Player::getName));
@@ -36,15 +44,8 @@ public class PlayerService {
   }
 
   public List<Player> getPlayersForDomain(PlayerDomain domain) {
-    if (domain.equals(PlayerDomain.DISCORD)) {
-      List<Player> players = new ArrayList<>();
-      List<DiscordMember> members = discordPlayerService.getMembers();
-      for (DiscordMember member : members) {
-        Player player = toPlayer(member);
-        players.add(player);
-      }
-      players.sort(Comparator.comparing(Player::getName));
-      return players;
+    if (domain.equals(PlayerDomain.DISCORD) && discordPlayerService.isEnabled()) {
+      return discordPlayerService.getPlayers();
     }
     return Collections.emptyList();
   }
@@ -58,11 +59,11 @@ public class PlayerService {
 
   public Player save(Player player) {
     Player model = new Player();
-    if(player.getId() > 0) {
+    if (player.getId() > 0) {
       model = playerRepository.findById(player.getId()).get();
     }
 
-    if(player.getAvatar() != null) {
+    if (player.getAvatar() != null) {
       Asset asset = assetRepository.findByUuid(player.getAvatar().getUuid()).get();
       model.setAvatar(asset);
     }
@@ -78,10 +79,10 @@ public class PlayerService {
 
   public void delete(long id) {
     Optional<Player> byId = playerRepository.findById(id);
-    if(byId.isPresent()) {
+    if (byId.isPresent()) {
       Player player = byId.get();
       Asset avatar = player.getAvatar();
-      if(avatar != null) {
+      if (avatar != null) {
         assetRepository.delete(avatar);
         LOG.info("Deleted asset " + avatar);
       }
@@ -90,12 +91,34 @@ public class PlayerService {
     LOG.info("Deleted player " + id);
   }
 
-  private Player toPlayer(DiscordMember member) {
-    Player player = new Player();
-    player.setName(member.getName());
-    player.setInitials(member.getInitials());
-    player.setAvatarUrl(member.getAvatarUrl());
-    player.setDomain(PlayerDomain.DISCORD.name());
-    return player;
+  public List<PlayerScore> getHighscores(String initials) {
+    List<PlayerScore> filtered = new ArrayList<>();
+
+    Optional<Player> player = playerRepository.findByInitials(initials);
+    if(player.isEmpty() && discordPlayerService.isEnabled()) {
+      player = discordPlayerService.getPlayerByInitials(initials);
+    }
+
+    if (player.isPresent() && !StringUtils.isEmpty(player.get().getInitials())) {
+      Player p = player.get();
+      List<Game> games = gameService.getGames();
+      for (Game game : games) {
+        List<Score> scores = game.getScores();
+        for (Score score : scores) {
+          if (score.getUserInitials().equals(p.getInitials())) {
+            String uri = null;
+            GameMediaItem gameMediaItem = game.getEmulator().getGameMedia().get(PopperScreen.Wheel);
+            if(gameMediaItem != null) {
+              uri = gameMediaItem.getUri();
+            }
+            filtered.add(new PlayerScore(score, game.getScoresChangedDate(), game.getGameDisplayName(), uri));
+          }
+        }
+      }
+    }
+    else {
+      LOG.info("No player found with initials '" + initials + "'");
+    }
+    return filtered;
   }
 }

@@ -1,24 +1,34 @@
 package de.mephisto.vpin.ui.players;
 
 import de.mephisto.vpin.restclient.representations.PlayerRepresentation;
+import de.mephisto.vpin.restclient.representations.PlayerScoreRepresentation;
 import de.mephisto.vpin.ui.NavigationController;
 import de.mephisto.vpin.ui.StudioFXController;
+import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Parent;
+import javafx.scene.control.Label;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
+import javafx.scene.control.TitledPane;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.VBox;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.net.URL;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
+
+import static de.mephisto.vpin.ui.Studio.client;
 
 public class PlayersController implements Initializable, StudioFXController {
   private final static Logger LOG = LoggerFactory.getLogger(PlayersController.class);
@@ -32,6 +42,15 @@ public class PlayersController implements Initializable, StudioFXController {
   @FXML
   private TabPane tabPane;
 
+  @FXML
+  private Label noScoreLabel;
+
+  @FXML
+  private VBox highscoreList;
+
+  @FXML
+  private TitledPane highscoresTitledPane;
+
   private BuiltInPlayersController builtInPlayersController;
   private DiscordPlayersController discordPlayersController;
 
@@ -40,7 +59,46 @@ public class PlayersController implements Initializable, StudioFXController {
   }
 
   public void updateSelection(Optional<PlayerRepresentation> player) {
+    highscoreList.getChildren().removeAll();
+    noScoreLabel.setVisible(false);
+    if(player.isPresent()) {
+      PlayerRepresentation p = player.get();
+      if(StringUtils.isEmpty(p.getInitials())) {
+        noScoreLabel.setVisible(true);
+        noScoreLabel.setText("Player has no initials, no highscores could be resolved.");
+        return;
+      }
 
+      new Thread() {
+        @Override
+        public void run() {
+          List<PlayerScoreRepresentation> playerScores = client.getPlayerScores(p.getInitials());
+          Platform.runLater(() -> {
+            if(playerScores.isEmpty()) {
+              noScoreLabel.setVisible(true);
+              noScoreLabel.setText("No scores found for this player.");
+            }
+            else {
+              for (PlayerScoreRepresentation playerScore : playerScores) {
+                try {
+                  FXMLLoader loader = new FXMLLoader(HighscoreWidgetController.class.getResource("widget-highscore.fxml"));
+                  BorderPane row = loader.load();
+                  row.setPrefWidth(600-48);
+                  HighscoreWidgetController controller = loader.getController();
+                  controller.setData(playerScore);
+                  highscoreList.getChildren().add(row);
+                } catch (IOException e) {
+                  LOG.error("failed to load score component: " + e.getMessage(), e);
+                }
+              }
+            }
+          });
+        }
+      }.start();
+    }
+    else {
+      noScoreLabel.setText("");
+    }
   }
 
 
