@@ -6,6 +6,7 @@ module de.mephisto.vpin.ui {
   requires org.controlsfx.controls;
   requires org.kordamp.ikonli.javafx;
   requires eu.hansolo.tilesfx;
+  requires com.github.spotbugs.annotations;
   requires java.desktop;
   requires org.slf4j;
   requires imgscalr.lib;

@@ -1,6 +1,7 @@
 package de.mephisto.vpin.ui.tables;
 
 import de.mephisto.vpin.restclient.VPinStudioClient;
+import de.mephisto.vpin.restclient.ValidationCode;
 import de.mephisto.vpin.restclient.representations.GameRepresentation;
 import de.mephisto.vpin.ui.NavigationController;
 import de.mephisto.vpin.ui.Studio;
@@ -244,7 +245,6 @@ public class TablesController implements Initializable, StudioFXController {
     this.uploadTableBtn.setDisable(true);
 
     tableView.setVisible(false);
-    validationError.setVisible(false);
     tableStack.getChildren().add(tablesLoadingOverlay);
 
     new Thread(() -> {
@@ -259,10 +259,12 @@ public class TablesController implements Initializable, StudioFXController {
       }
       data = FXCollections.observableList(filtered);
 
+      final GameRepresentation updatedGame = client.getGame(gameRepresentation.getId());
+
       Platform.runLater(() -> {
         tableView.setItems(data);
         tableView.refresh();
-        tableView.getSelectionModel().select(gameRepresentation);
+        tableView.getSelectionModel().select(updatedGame);
 
 
         tableStack.getChildren().remove(tablesLoadingOverlay);
@@ -275,7 +277,6 @@ public class TablesController implements Initializable, StudioFXController {
         this.uploadTableBtn.setDisable(false);
 
         tableView.setVisible(true);
-        validationError.setVisible(true);
       });
     }).start();
   }
@@ -339,14 +340,15 @@ public class TablesController implements Initializable, StudioFXController {
         rom = value.getOriginalRom();
       }
 
-      if (value.isRomExists()) {
-        return new SimpleStringProperty(rom);
+      List<String> ignoredValidations = Arrays.asList(value.getIgnoredValidations().split(","));
+      if (!value.isRomExists() && !ignoredValidations.contains(String.valueOf(ValidationCode.CODE_NO_ROM))) {
+        Label label = new Label(rom);
+        String color = "#FF3333";
+        label.setStyle("-fx-font-color: " + color + ";-fx-text-fill: " + color + ";-fx-font-weight: bold;");
+        return new SimpleObjectProperty(label);
       }
 
-      Label label = new Label(rom);
-      String color = "#FF3333";
-      label.setStyle("-fx-font-color: " + color + ";-fx-text-fill: " + color + ";-fx-font-weight: bold;");
-      return new SimpleObjectProperty(label);
+      return new SimpleStringProperty(rom);
     });
 
     columnRomAlias.setCellValueFactory(cellData -> {
@@ -429,6 +431,9 @@ public class TablesController implements Initializable, StudioFXController {
   }
 
   private void refreshView(Optional<GameRepresentation> g) {
+    validationError.setVisible(false);
+    validationErrorLabel.setText("");
+    validationErrorText.setText("");
     tablesSideBarController.setGame(g);
     if (g.isPresent()) {
       GameRepresentation game = g.get();

@@ -1,5 +1,6 @@
 package de.mephisto.vpin.server.games;
 
+import de.mephisto.vpin.restclient.ValidationCode;
 import de.mephisto.vpin.server.preferences.Preferences;
 import de.mephisto.vpin.server.popper.PopperScreen;
 import de.mephisto.vpin.server.preferences.PreferencesService;
@@ -10,34 +11,32 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
+
+import static de.mephisto.vpin.restclient.ValidationCode.*;
 
 /**
  * See ValidationTexts
  */
 @Service
 public class GameValidator implements InitializingBean {
-  public static int CODE_NO_ROM = 1;
-  public static int CODE_DUPLICATE_ROM = 2;
-  public static int CODE_ROM_NOT_EXISTS = 3;
 
-  public static int CODE_NO_DIRECTB2S_OR_PUPPACK = 20;
+  private static Map<Integer,PopperScreen> mediaCodeToScreen = new HashMap<>();
 
-  public static int CODE_NO_HIGHSCORE_FILES = 60;
-
-  public static int CODE_NO_AUDIO = 30;
-  public static int CODE_NO_AUDIO_LAUNCH = 31;
-  public static int CODE_NO_APRON = 32;
-  public static int CODE_NO_INFO = 33;
-  public static int CODE_NO_HELP = 34;
-  public static int CODE_NO_TOPPER = 35;
-  public static int CODE_NO_BACKGLASS = 36;
-  public static int CODE_NO_DMD = 37;
-  public static int CODE_NO_PLAYFIELD = 38;
-  public static int CODE_NO_LOADING = 39;
-  public static int CODE_NO_OTHER2 = 40;
-  public static int CODE_NO_WHEEL_IMAGE = 41;
+  static {
+    mediaCodeToScreen.put(CODE_NO_AUDIO, PopperScreen.Audio);
+    mediaCodeToScreen.put(CODE_NO_AUDIO_LAUNCH, PopperScreen.AudioLaunch);
+    mediaCodeToScreen.put(CODE_NO_APRON, PopperScreen.Menu);
+    mediaCodeToScreen.put(CODE_NO_INFO, PopperScreen.GameInfo);
+    mediaCodeToScreen.put(CODE_NO_HELP, PopperScreen.GameHelp);
+    mediaCodeToScreen.put(CODE_NO_TOPPER, PopperScreen.Topper);
+    mediaCodeToScreen.put(CODE_NO_BACKGLASS, PopperScreen.BackGlass);
+    mediaCodeToScreen.put(CODE_NO_DMD, PopperScreen.DMD);
+    mediaCodeToScreen.put(CODE_NO_PLAYFIELD, PopperScreen.PlayField);
+    mediaCodeToScreen.put(CODE_NO_LOADING, PopperScreen.Loading);
+    mediaCodeToScreen.put(CODE_NO_OTHER2, PopperScreen.Other2);
+    mediaCodeToScreen.put(CODE_NO_WHEEL_IMAGE, PopperScreen.Wheel);
+  }
 
   @Autowired
   private PreferencesService preferencesService;
@@ -45,36 +44,36 @@ public class GameValidator implements InitializingBean {
   private Preferences preferences;
 
   public int validate(@NonNull Game game, @NonNull List<Game> games) {
-    if(isValidationEnabled(game, CODE_NO_ROM)) {
+    if(isValidationEnabled(game, ValidationCode.CODE_NO_ROM)) {
       if (StringUtils.isEmpty(game.getRom())) {
-        return CODE_NO_ROM;
+        return ValidationCode.CODE_NO_ROM;
       }
     }
 
-    if(isValidationEnabled(game, CODE_ROM_NOT_EXISTS)) {
+    if(isValidationEnabled(game, ValidationCode.CODE_ROM_NOT_EXISTS)) {
       if (!game.isRomExists()) {
-        return CODE_ROM_NOT_EXISTS;
+        return ValidationCode.CODE_ROM_NOT_EXISTS;
       }
     }
 
 
-    if(isValidationEnabled(game, CODE_DUPLICATE_ROM)) {
+    if(isValidationEnabled(game, ValidationCode.CODE_DUPLICATE_ROM)) {
       for (Game g : games) {
         if (g.getId() != game.getId() && !StringUtils.isEmpty(g.getRom()) && g.getRom().equals(game.getRom())) {
-          return CODE_DUPLICATE_ROM;
+          return ValidationCode.CODE_DUPLICATE_ROM;
         }
       }
     }
 
-    if(isValidationEnabled(game, CODE_NO_DIRECTB2S_OR_PUPPACK)) {
+    if(isValidationEnabled(game, ValidationCode.CODE_NO_DIRECTB2S_OR_PUPPACK)) {
       if (!game.isDirectB2SAvailable() && !game.isPupPackAvailable()) {
-        return CODE_NO_DIRECTB2S_OR_PUPPACK;
+        return ValidationCode.CODE_NO_DIRECTB2S_OR_PUPPACK;
       }
     }
 
-    if(isValidationEnabled(game, CODE_NO_HIGHSCORE_FILES)) {
+    if(isValidationEnabled(game, ValidationCode.CODE_NO_HIGHSCORE_FILES)) {
       if (!game.hasHighscore()) {
-        return CODE_NO_HIGHSCORE_FILES;
+        return ValidationCode.CODE_NO_HIGHSCORE_FILES;
       }
     }
 
@@ -109,57 +108,57 @@ public class GameValidator implements InitializingBean {
       }
     }
 
-    if(isValidationEnabled(game, CODE_NO_INFO)) {
+    if(isValidationEnabled(game, ValidationCode.CODE_NO_INFO)) {
       if(info == null || !info.exists()) {
-        return CODE_NO_INFO;
+        return ValidationCode.CODE_NO_INFO;
       }
     }
 
-    if(isValidationEnabled(game, CODE_NO_HELP)) {
+    if(isValidationEnabled(game, ValidationCode.CODE_NO_HELP)) {
       if(help == null || !help.exists()) {
-        return CODE_NO_HELP;
+        return ValidationCode.CODE_NO_HELP;
       }
     }
 
-    if(isValidationEnabled(game, CODE_NO_TOPPER)) {
+    if(isValidationEnabled(game, ValidationCode.CODE_NO_TOPPER)) {
       if(topper == null || !topper.exists()) {
-        return CODE_NO_TOPPER;
+        return ValidationCode.CODE_NO_TOPPER;
       }
     }
 
-    if(isValidationEnabled(game, CODE_NO_BACKGLASS)) {
+    if(isValidationEnabled(game, ValidationCode.CODE_NO_BACKGLASS)) {
       if(backglass == null || !backglass.exists()) {
-        return CODE_NO_BACKGLASS;
+        return ValidationCode.CODE_NO_BACKGLASS;
       }
     }
 
-    if(isValidationEnabled(game, CODE_NO_DMD)) {
+    if(isValidationEnabled(game, ValidationCode.CODE_NO_DMD)) {
       if(dmd == null || !dmd.exists()) {
-        return CODE_NO_DMD;
+        return ValidationCode.CODE_NO_DMD;
       }
     }
 
-    if(isValidationEnabled(game, CODE_NO_PLAYFIELD)) {
+    if(isValidationEnabled(game, ValidationCode.CODE_NO_PLAYFIELD)) {
       if(playfield == null || !playfield.exists()) {
-        return CODE_NO_PLAYFIELD;
+        return ValidationCode.CODE_NO_PLAYFIELD;
       }
     }
 
-    if(isValidationEnabled(game, CODE_NO_LOADING)) {
+    if(isValidationEnabled(game, ValidationCode.CODE_NO_LOADING)) {
       if(loading == null || !loading.exists()) {
-        return CODE_NO_LOADING;
+        return ValidationCode.CODE_NO_LOADING;
       }
     }
 
-    if(isValidationEnabled(game, CODE_NO_OTHER2)) {
+    if(isValidationEnabled(game, ValidationCode.CODE_NO_OTHER2)) {
       if(other2 == null || !other2.exists()) {
-        return CODE_NO_OTHER2;
+        return ValidationCode.CODE_NO_OTHER2;
       }
     }
 
-    if(isValidationEnabled(game, CODE_NO_WHEEL_IMAGE)) {
+    if(isValidationEnabled(game, ValidationCode.CODE_NO_WHEEL_IMAGE)) {
       if(wheel == null || !wheel.exists()) {
-        return CODE_NO_WHEEL_IMAGE;
+        return ValidationCode.CODE_NO_WHEEL_IMAGE;
       }
     }
 
@@ -167,6 +166,13 @@ public class GameValidator implements InitializingBean {
   }
 
   private boolean isValidationEnabled(@NonNull Game game, int code) {
+    if(mediaCodeToScreen.containsKey(code)) {
+      PopperScreen popperScreen = mediaCodeToScreen.get(code);
+      if(preferences.getIgnoredMedia() != null && Arrays.asList(preferences.getIgnoredMedia().split(",")).contains(popperScreen.name())) {
+        return false;
+      }
+    }
+
     String ignoredValidations = game.getIgnoredValidations();
     if (containsIgnoreCode(code, ignoredValidations)){
       return false;
