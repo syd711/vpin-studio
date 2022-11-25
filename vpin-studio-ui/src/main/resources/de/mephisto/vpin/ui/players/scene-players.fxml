@@ -20,14 +20,14 @@
             <center>
                 <TabPane fx:id="tabPane" tabClosingPolicy="UNAVAILABLE" BorderPane.alignment="CENTER">
                     <tabs>
-                        <Tab fx:id="buildInUsersTab" closable="false" text="Build-In Users">
+                        <Tab fx:id="buildInUsersTab" closable="false" text="Built-In Players">
                             <content>
                             </content>
                      <graphic>
                         <FontIcon iconColor="WHITE" iconLiteral="mdi2a-account-details" iconSize="18" />
                      </graphic>
                         </Tab>
-                        <Tab fx:id="discordTab" closable="false" text="Discord Users">
+                        <Tab fx:id="discordTab" closable="false" text="Discord Players">
                      <graphic>
                         <FontIcon iconColor="WHITE" iconLiteral="mdi2a-account-details-outline" iconSize="18" />
                      </graphic>
@@ -46,7 +46,7 @@
    <right>
       <VBox prefWidth="600.0" styleClass="subpanel" BorderPane.alignment="CENTER">
          <children>
-            <TitledPane fx:id="highscoresTitledPane" animated="false" text="Highscores" textFill="WHITE">
+            <TitledPane fx:id="highscoresTitledPane" animated="false" prefHeight="600.0" text="Highscores" textFill="WHITE">
                <font>
                   <Font size="14.0" />
                </font>
@@ -58,7 +58,7 @@
                               <VBox fx:id="highscoreList" />
                            </center>
                            <top>
-                              <Label fx:id="noScoreLabel" text="No highscores found for this player." textFill="WHITE" BorderPane.alignment="CENTER">
+                              <Label fx:id="noScoreLabel" text="No highscores found for this player." textFill="WHITE" BorderPane.alignment="TOP_LEFT">
                                  <font>
                                     <Font size="14.0" />
                                  </font>

@@ -20,6 +20,7 @@ import javafx.scene.paint.Paint;
 import org.apache.commons.lang3.StringUtils;
 import org.kordamp.ikonli.javafx.FontIcon;
 
+import javax.swing.text.html.Option;
 import java.net.URL;
 import java.text.DateFormat;
 import java.util.*;
@@ -204,7 +205,7 @@ public class BuiltInPlayersController implements Initializable, StudioFXControll
     return filtered;
   }
 
-  private void refreshView() {
+  public void refreshView() {
     this.searchTextField.setDisable(true);
 
     PlayerRepresentation selection = tableView.getSelectionModel().selectedItemProperty().get();
@@ -221,13 +222,18 @@ public class BuiltInPlayersController implements Initializable, StudioFXControll
         if (data.contains(selection)) {
           tableView.getSelectionModel().select(selection);
         }
-        else if (!data.isEmpty()) {
-          tableView.getSelectionModel().select(0);
-        }
         editBtn.setDisable(false);
         deleteBtn.setDisable(false);
         this.searchTextField.setDisable(false);
       });
     }).start();
+  }
+
+  public Optional<PlayerRepresentation> getSelection() {
+    PlayerRepresentation playerRepresentation = tableView.getSelectionModel().selectedItemProperty().get();
+    if(playerRepresentation != null) {
+      return Optional.of(playerRepresentation);
+    }
+    return Optional.empty();
   }
 }

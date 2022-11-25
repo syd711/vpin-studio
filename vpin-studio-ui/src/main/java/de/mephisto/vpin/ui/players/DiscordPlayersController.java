@@ -126,7 +126,7 @@ public class DiscordPlayersController implements Initializable, StudioFXControll
     return filtered;
   }
 
-  private void refreshView() {
+  public void refreshView() {
     this.searchTextField.setDisable(true);
 
     PlayerRepresentation selection = tableView.getSelectionModel().selectedItemProperty().get();
@@ -140,11 +140,16 @@ public class DiscordPlayersController implements Initializable, StudioFXControll
         if (data.contains(selection)) {
           tableView.getSelectionModel().select(selection);
         }
-        else if (!data.isEmpty()) {
-          tableView.getSelectionModel().select(0);
-        }
         this.searchTextField.setDisable(false);
       });
     }).start();
+  }
+
+  public Optional<PlayerRepresentation> getSelection() {
+    PlayerRepresentation playerRepresentation = tableView.getSelectionModel().selectedItemProperty().get();
+    if(playerRepresentation != null) {
+      return Optional.of(playerRepresentation);
+    }
+    return Optional.empty();
   }
 }

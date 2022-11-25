@@ -94,8 +94,12 @@ public class PlayerService {
   public List<PlayerScore> getHighscores(String initials) {
     List<PlayerScore> filtered = new ArrayList<>();
 
-    Optional<Player> player = playerRepository.findByInitials(initials);
-    if(player.isEmpty() && discordPlayerService.isEnabled()) {
+    List<Player> players = playerRepository.findByInitials(initials);
+    Optional<Player> player = Optional.empty();
+    if (!players.isEmpty()) {
+      player = Optional.of(players.get(0));
+    }
+    else if (discordPlayerService.isEnabled()) {
       player = discordPlayerService.getPlayerByInitials(initials);
     }
 
@@ -108,7 +112,7 @@ public class PlayerService {
           if (score.getUserInitials().equals(p.getInitials())) {
             String uri = null;
             GameMediaItem gameMediaItem = game.getEmulator().getGameMedia().get(PopperScreen.Wheel);
-            if(gameMediaItem != null) {
+            if (gameMediaItem != null) {
               uri = gameMediaItem.getUri();
             }
             filtered.add(new PlayerScore(score, game.getScoresChangedDate(), game.getGameDisplayName(), uri));

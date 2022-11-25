@@ -59,11 +59,13 @@ public class PlayersController implements Initializable, StudioFXController {
   }
 
   public void updateSelection(Optional<PlayerRepresentation> player) {
-    highscoreList.getChildren().removeAll();
+    updateNavBar(player);
+
+    highscoreList.getChildren().removeAll(highscoreList.getChildren());
     noScoreLabel.setVisible(false);
-    if(player.isPresent()) {
+    if (player.isPresent()) {
       PlayerRepresentation p = player.get();
-      if(StringUtils.isEmpty(p.getInitials())) {
+      if (StringUtils.isEmpty(p.getInitials())) {
         noScoreLabel.setVisible(true);
         noScoreLabel.setText("Player has no initials, no highscores could be resolved.");
         return;
@@ -74,16 +76,18 @@ public class PlayersController implements Initializable, StudioFXController {
         public void run() {
           List<PlayerScoreRepresentation> playerScores = client.getPlayerScores(p.getInitials());
           Platform.runLater(() -> {
-            if(playerScores.isEmpty()) {
+            if (playerScores.isEmpty()) {
               noScoreLabel.setVisible(true);
               noScoreLabel.setText("No scores found for this player.");
             }
             else {
+              noScoreLabel.setVisible(true);
+              noScoreLabel.setText("Highscores for player '" + p.getName() + "'");
               for (PlayerScoreRepresentation playerScore : playerScores) {
                 try {
                   FXMLLoader loader = new FXMLLoader(HighscoreWidgetController.class.getResource("widget-highscore.fxml"));
                   BorderPane row = loader.load();
-                  row.setPrefWidth(600-48);
+                  row.setPrefWidth(600 - 48);
                   HighscoreWidgetController controller = loader.getController();
                   controller.setData(playerScore);
                   highscoreList.getChildren().add(row);
@@ -98,6 +102,26 @@ public class PlayersController implements Initializable, StudioFXController {
     }
     else {
       noScoreLabel.setText("");
+    }
+  }
+
+  private void updateNavBar(Optional<PlayerRepresentation> player) {
+    int index = tabPane.getSelectionModel().selectedIndexProperty().get();
+    if (index == 0) {
+      if(player.isPresent()) {
+        NavigationController.setBreadCrumb(Arrays.asList("Players", "Build-In Players", player.get().getName()));
+      }
+      else {
+        NavigationController.setBreadCrumb(Arrays.asList("Players", "Build-In Players"));
+      }
+    }
+    else {
+      if(player.isPresent()) {
+        NavigationController.setBreadCrumb(Arrays.asList("Players", "Discord Players", player.get().getName()));
+      }
+      else {
+        NavigationController.setBreadCrumb(Arrays.asList("Players", "Discord Players"));
+      }
     }
   }
 
@@ -129,7 +153,16 @@ public class PlayersController implements Initializable, StudioFXController {
     tabPane.getSelectionModel().selectedIndexProperty().addListener(new ChangeListener<Number>() {
       @Override
       public void changed(ObservableValue<? extends Number> observableValue, Number number, Number t1) {
-        System.out.println("Selected tab " + t1);
+        if (t1.intValue() == 0) {
+          NavigationController.setBreadCrumb(Arrays.asList("Players", "Build-In Players"));
+          Optional<PlayerRepresentation> selection = builtInPlayersController.getSelection();
+          updateSelection(selection);
+        }
+        else {
+          NavigationController.setBreadCrumb(Arrays.asList("Players", "Discord Players"));
+          Optional<PlayerRepresentation> selection = discordPlayersController.getSelection();
+          updateSelection(selection);
+        }
       }
     });
   }
