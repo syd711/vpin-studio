@@ -439,11 +439,11 @@
  */
 .media-container {
     -fx-padding: 3 3 3 3;
-    -fx-background-color: #111111;
+    -fx-background-color: -fx-base-7;
 }
 
 .media-parent {
-    -fx-background-color: #111111;
+    -fx-background-color: -fx-base-7;
 }
 
 

@@ -99,6 +99,7 @@ public class OfflineCompetitionWidgetController extends WidgetController impleme
         .title("Remaining Days")
         .borderWidth(1)
         .borderColor(Color.web("#111111"))
+        .borderColor(Color.web("#111111"))
         .titleAlignment(TextAlignment.CENTER)
         .build();
 
@@ -163,6 +164,9 @@ public class OfflineCompetitionWidgetController extends WidgetController impleme
       LocalDate now = new Date().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
 
       long remainingDays = ChronoUnit.DAYS.between(now, end);
+      if(remainingDays < 0) {
+        remainingDays = 0;
+      }
       turnoverTile.setTitle("-");
       countdownTile.setDescription(String.valueOf(remainingDays));
       countdownTile.setText("Competition End: " + DateFormat.getDateInstance().format(competition.getEndDate()));

@@ -59,8 +59,6 @@ public class CompetitionSummaryWidgetController extends WidgetController impleme
   @FXML
   private Label durationLabel;
 
-  private CompetitionRepresentation competition;
-
   // Add a public no-args constructor
   public CompetitionSummaryWidgetController() {
   }
@@ -81,8 +79,6 @@ public class CompetitionSummaryWidgetController extends WidgetController impleme
     topBox.setBackground(new Background(myBI));
 
     image = ImageUtil.createAvatar("MFA");
-
-
   }
 
   public void setCompetition(CompetitionRepresentation competition) {
