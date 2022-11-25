@@ -298,7 +298,7 @@
                         </VBox>
                     </content>
                 </TitledPane>
-                <TitledPane prefHeight="750.0" prefWidth="600.0" text="Highscore">
+                <TitledPane prefHeight="750.0" prefWidth="600.0" text="Latest Highscore">
                     <content>
                         <BorderPane prefHeight="200.0" prefWidth="200.0">
                             <center>
