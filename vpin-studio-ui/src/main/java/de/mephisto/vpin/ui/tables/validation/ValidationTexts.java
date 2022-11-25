@@ -9,7 +9,7 @@ public class ValidationTexts {
 
   private final static String NO_MEDIA_TEXT = "Dismiss this message if the table does not support this media or disable the screen in the preferences.";
 
-  public static TableValidation validate(GameRepresentation game) {
+  public static ValidationResult validate(GameRepresentation game) {
     String label = null;
     String text = null;
 
@@ -106,6 +106,6 @@ public class ValidationTexts {
     }
 
 
-    return new TableValidation(label, text);
+    return new ValidationResult(label, text);
   }
 }

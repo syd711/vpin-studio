@@ -32,7 +32,6 @@
                               <TableView fx:id="tableView" onMouseClicked="#onTableMouseClicked" style="-fx-background-color: #2a2a2a;" styleClass="base-component">
                                 <columns>
                                     <TableColumn fx:id="columnId" minWidth="42.400028228759766" prefWidth="42.400028228759766" style="-fx-alignment: baseline-right;" text="ID" />
-                                    <TableColumn fx:id="columnActive" minWidth="57.5999755859375" prefWidth="67.199951171875" style="-fx-alignment: CENTER;" text="Active" />
                                     <TableColumn fx:id="columnStatus" minWidth="57.5999755859375" prefWidth="67.199951171875" style="-fx-alignment: CENTER;" text="Status" />
                                   <TableColumn fx:id="columnDisplayName" minWidth="100.0" prefWidth="298.40000915527344" style="-fx-alignment: BASELINE_LEFT;" text="Display Name" />
                                   <TableColumn fx:id="columnRom" minWidth="10.4000244140625" prefWidth="138.39999389648438" style="-fx-alignment: BASELINE_LEFT;" text="ROM" />
@@ -136,14 +135,18 @@
                                     </VBox>
                                  </left>
                                  <right>
-                                    <Hyperlink onAction="#onDismiss" text="Dismiss" textFill="WHITE" BorderPane.alignment="CENTER">
+                                    <VBox BorderPane.alignment="TOP_RIGHT">
                                        <BorderPane.margin>
                                           <Insets right="6.0" />
                                        </BorderPane.margin>
-                                       <font>
-                                          <Font size="10.0" />
-                                       </font>
-                                    </Hyperlink>
+                                       <children>
+                                          <Hyperlink onAction="#onDismiss" text="Dismiss" textFill="WHITE">
+                                             <font>
+                                                <Font size="10.0" />
+                                             </font>
+                                          </Hyperlink>
+                                       </children>
+                                    </VBox>
                                  </right>
                               </BorderPane>
                            </center>

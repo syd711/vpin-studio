@@ -13,6 +13,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.function.Consumer;
 
 @Service
 public class DiscordPlayerService implements InitializingBean, PreferenceChangedListener {
@@ -22,6 +26,8 @@ public class DiscordPlayerService implements InitializingBean, PreferenceChanged
 
   @Autowired
   private PreferencesService preferencesService;
+
+  private List<DiscordMember> lastMembers;
 
   public List<DiscordMember> getMembers() {
     return this.discordClient.getMembers();
@@ -73,5 +79,18 @@ public class DiscordPlayerService implements InitializingBean, PreferenceChanged
         this.discordClient = createDiscordClient();
       }
     }
+  }
+
+  public boolean refreshMembers() {
+    this.lastMembers = null;
+    if (this.discordClient != null) {
+      Consumer<List<DiscordMember>> consumer = discordMembers -> {
+        lastMembers = discordMembers;
+      };
+
+      this.discordClient.refreshMembers(consumer, throwable -> notify());
+      return this.lastMembers != null;
+    }
+    return false;
   }
 }

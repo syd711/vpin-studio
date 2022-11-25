@@ -40,6 +40,7 @@ public class HighscoreService implements InitializingBean {
       String rawHighscore = highscoreResolver.readHighscore(game);
       highscore = Highscore.forGame(game, rawHighscore);
       highscoreRepository.saveAndFlush(highscore);
+      LOG.info("Written " + highscore);
     }
 
     return highscore;

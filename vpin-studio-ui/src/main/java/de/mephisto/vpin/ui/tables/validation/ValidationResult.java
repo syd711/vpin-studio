@@ -1,10 +1,10 @@
 package de.mephisto.vpin.ui.tables.validation;
 
-public class TableValidation {
+public class ValidationResult {
   private String label;
   private String text;
 
-  public TableValidation(String label, String text) {
+  public ValidationResult(String label, String text) {
     this.label = label;
     this.text = text;
   }

@@ -6,7 +6,7 @@ import de.mephisto.vpin.ui.NavigationController;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.StudioFXController;
 import de.mephisto.vpin.ui.WaitOverlayController;
-import de.mephisto.vpin.ui.tables.validation.TableValidation;
+import de.mephisto.vpin.ui.tables.validation.ValidationResult;
 import de.mephisto.vpin.ui.tables.validation.ValidationTexts;
 import de.mephisto.vpin.ui.util.Dialogs;
 import de.mephisto.vpin.ui.util.MediaUtil;
@@ -48,9 +48,6 @@ public class TablesController implements Initializable, StudioFXController {
 
   @FXML
   private TableColumn<GameRepresentation, String> columnId;
-
-  @FXML
-  private TableColumn<GameRepresentation, String> columnActive;
 
   @FXML
   private TableColumn<GameRepresentation, String> columnDisplayName;
@@ -437,7 +434,7 @@ public class TablesController implements Initializable, StudioFXController {
       GameRepresentation game = g.get();
       validationError.setVisible(game.getValidationState() > 0);
       if (game.getValidationState() > 0) {
-        TableValidation validationMessage = ValidationTexts.validate(game);
+        ValidationResult validationMessage = ValidationTexts.validate(game);
         validationErrorLabel.setText(validationMessage.getLabel());
         validationErrorText.setText(validationMessage.getText());
       }

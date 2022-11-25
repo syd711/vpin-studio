@@ -435,7 +435,6 @@ public class PinUPConnector implements InitializingBean {
 
     File vpxFile = new File(systemService.getVPXTablesFolder(), gameFileName);
     if (!vpxFile.exists()) {
-      LOG.warn("No vpx file " + vpxFile.getAbsolutePath() + " found, ignoring game.");
       return null;
     }
     game.setGameFile(vpxFile);

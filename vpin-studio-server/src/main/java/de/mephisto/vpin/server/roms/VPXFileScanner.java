@@ -47,10 +47,10 @@ public class VPXFileScanner {
 
       bufferedReader.readLine();//skip last line if empty
       int count = 0;
-      while ((line = bufferedReader.readLine()) != null || count < 1000) {
+      while ((line = bufferedReader.readLine()) != null) {
         count++;
 
-        if (result.isScanComplete()) {
+        if (result.isScanComplete() || line.toLowerCase().contains("Option Explicit".toLowerCase())) {
           break;
         }
 

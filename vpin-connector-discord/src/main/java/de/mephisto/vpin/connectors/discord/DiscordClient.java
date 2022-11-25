@@ -13,6 +13,7 @@ import net.dv8tion.jda.api.events.guild.member.GuildMemberUpdateEvent;
 import net.dv8tion.jda.api.events.guild.member.update.GuildMemberUpdateNicknameEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.requests.GatewayIntent;
+import net.dv8tion.jda.api.utils.MemberCachePolicy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -35,6 +36,7 @@ public class DiscordClient extends ListenerAdapter {
     this.guildId = guildId;
     jda = JDABuilder.createDefault(botToken, Arrays.asList(GatewayIntent.DIRECT_MESSAGES, GatewayIntent.GUILD_MESSAGES, GatewayIntent.GUILD_MEMBERS))
         .setEventPassthrough(true)
+        .setMemberCachePolicy(MemberCachePolicy.NONE)
         .build();
     jda.awaitReady();
     jda.addEventListener(this);

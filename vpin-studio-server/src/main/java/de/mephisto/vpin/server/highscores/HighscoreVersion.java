@@ -11,9 +11,9 @@ import javax.persistence.*;
 import java.util.Date;
 
 @Entity
-@Table(name = "Highscores")
+@Table(name = "HighscoreVersions")
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class Highscore {
+public class HighscoreVersion {
 
   @Column(nullable = false, updatable = false)
   @Temporal(TemporalType.TIMESTAMP)
@@ -83,33 +83,13 @@ public class Highscore {
     this.raw = raw;
   }
 
-  public static Highscore forGame(@NonNull Game game, @Nullable String rawValue) {
-    Highscore highscore = new Highscore();
+  public static HighscoreVersion forGame(@NonNull Game game, @Nullable String rawValue) {
+    HighscoreVersion highscore = new HighscoreVersion();
     highscore.setRaw(rawValue);
     highscore.setGameId(game.getId());
     highscore.setCreatedAt(new Date());
     highscore.setUpdatedAt(new Date());
     highscore.setDisplayName(game.getGameDisplayName());
     return highscore;
-  }
-
-  @Override
-  public boolean equals(Object o) {
-    if (this == o) return true;
-    if (o == null || getClass() != o.getClass()) return false;
-
-    Highscore highscore = (Highscore) o;
-
-    return id.equals(highscore.id);
-  }
-
-  @Override
-  public int hashCode() {
-    return id.hashCode();
-  }
-
-  @Override
-  public String toString() {
-    return "Highscore [gameId " + this.getGameId() + "]";
   }
 }

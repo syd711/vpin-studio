@@ -51,7 +51,7 @@ public class PlayerService {
 
   public boolean invalidateDomain(PlayerDomain domain) {
     if (domain.equals(PlayerDomain.DISCORD)) {
-      discordPlayerService.getMembers();
+      return discordPlayerService.refreshMembers();
     }
     return false;
   }

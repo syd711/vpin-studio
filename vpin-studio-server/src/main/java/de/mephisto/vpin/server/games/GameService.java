@@ -137,6 +137,7 @@ public class GameService {
         gameDetails.setCreatedAt(new java.util.Date());
         gameDetails.setUpdatedAt(new java.util.Date());
         gameDetailsRepository.saveAndFlush(gameDetails);
+        LOG.info("Created GameDetails for " + game.getGameDisplayName());
       }
 
       game.setNvOffset(gameDetails.getNvOffset());
