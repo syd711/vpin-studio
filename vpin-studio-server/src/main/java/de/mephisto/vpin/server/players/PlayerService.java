@@ -35,6 +35,15 @@ public class PlayerService {
   public List<Player> getBuildInPlayers() {
     List<Player> all = playerRepository.findAll();
     all.sort(Comparator.comparing(Player::getName));
+
+    PlayerDomain[] domains = PlayerDomain.values();
+    List<Player> allPlayers = new ArrayList<>();
+    allPlayers.addAll(all);
+    for (PlayerDomain domain : domains) {
+      allPlayers.addAll(getPlayersForDomain(domain));
+    }
+
+    duplicatesCheck(allPlayers);
     return all;
   }
 
@@ -45,7 +54,11 @@ public class PlayerService {
 
   public List<Player> getPlayersForDomain(PlayerDomain domain) {
     if (domain.equals(PlayerDomain.DISCORD) && discordPlayerService.isEnabled()) {
-      return discordPlayerService.getPlayers();
+      List<Player> players = discordPlayerService.getPlayers();
+      List<Player> all = new ArrayList<>(playerRepository.findAll());
+      all.addAll(players);
+      duplicatesCheck(all);
+      return players;
     }
     return Collections.emptyList();
   }
@@ -124,5 +137,23 @@ public class PlayerService {
       LOG.info("No player found with initials '" + initials + "'");
     }
     return filtered;
+  }
+
+  private void duplicatesCheck(List<Player> players) {
+    Map<String, Player> initials = new HashMap<>();
+    for (Player player : players) {
+      if (StringUtils.isEmpty(player.getInitials())) {
+        continue;
+      }
+
+      if (initials.containsKey(player.getInitials())) {
+        Player duplicate = initials.get(player.getInitials());
+        duplicate.setDuplicatePlayerName(player.getName());
+        player.setDuplicatePlayerName(duplicate.getName());
+      }
+      else {
+        initials.put(player.getInitials(), player);
+      }
+    }
   }
 }

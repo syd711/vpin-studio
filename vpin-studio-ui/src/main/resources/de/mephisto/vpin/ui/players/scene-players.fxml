@@ -34,13 +34,46 @@
                         </Tab>
                     </tabs>
                     <BorderPane.margin>
-                        <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
+                        <Insets left="12.0" right="12.0" top="12.0" />
                     </BorderPane.margin>
                 </TabPane>
             </center>
          <BorderPane.margin>
             <Insets left="12.0" right="12.0" />
          </BorderPane.margin>
+         <bottom>
+            <BorderPane BorderPane.alignment="CENTER">
+               <BorderPane.margin>
+                  <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
+               </BorderPane.margin>
+               <center>
+                  <BorderPane fx:id="validationError">
+                     <left>
+                        <VBox BorderPane.alignment="CENTER">
+                           <children>
+                              <Label fx:id="errorTitleLabel" text="Duplicate Initials" textFill="WHITE">
+                                 <font>
+                                    <Font name="System Bold" size="14.0" />
+                                 </font>
+                              </Label>
+                              <Label fx:id="errorTextLabel" text="Label" textFill="WHITE">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </Label>
+                           </children>
+                           <BorderPane.margin>
+                              <Insets bottom="3.0" left="12.0" top="3.0" />
+                           </BorderPane.margin>
+                        </VBox>
+                     </left>
+                  </BorderPane>
+               </center>
+               <top>
+                  <Label fx:id="playerCountLabel" text="Label" BorderPane.alignment="TOP_RIGHT" />
+               </top>
+            </BorderPane>
+         </bottom>
         </BorderPane>
     </center>
    <right>

@@ -10,11 +10,11 @@ import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.control.Label;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
-import javafx.scene.control.TitledPane;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 import org.apache.commons.lang3.StringUtils;
@@ -49,7 +49,16 @@ public class PlayersController implements Initializable, StudioFXController {
   private VBox highscoreList;
 
   @FXML
-  private TitledPane highscoresTitledPane;
+  private Node validationError;
+
+  @FXML
+  private Label errorTextLabel;
+
+  @FXML
+  private Label errorTitleLabel;
+
+  @FXML
+  private Label playerCountLabel;
 
   private BuiltInPlayersController builtInPlayersController;
   private DiscordPlayersController discordPlayersController;
@@ -59,7 +68,8 @@ public class PlayersController implements Initializable, StudioFXController {
   }
 
   public void updateSelection(Optional<PlayerRepresentation> player) {
-    updateNavBar(player);
+    updateForTabSelection(player);
+    validationError.setVisible(false);
 
     highscoreList.getChildren().removeAll(highscoreList.getChildren());
     noScoreLabel.setVisible(false);
@@ -71,41 +81,43 @@ public class PlayersController implements Initializable, StudioFXController {
         return;
       }
 
-      new Thread() {
-        @Override
-        public void run() {
-          List<PlayerScoreRepresentation> playerScores = client.getPlayerScores(p.getInitials());
-          Platform.runLater(() -> {
-            if (playerScores.isEmpty()) {
-              noScoreLabel.setVisible(true);
-              noScoreLabel.setText("No scores found for this player.");
-            }
-            else {
-              noScoreLabel.setVisible(true);
-              noScoreLabel.setText("Highscores for player '" + p.getName() + "'");
-              for (PlayerScoreRepresentation playerScore : playerScores) {
-                try {
-                  FXMLLoader loader = new FXMLLoader(HighscoreWidgetController.class.getResource("widget-highscore.fxml"));
-                  BorderPane row = loader.load();
-                  row.setPrefWidth(600 - 48);
-                  HighscoreWidgetController controller = loader.getController();
-                  controller.setData(playerScore);
-                  highscoreList.getChildren().add(row);
-                } catch (IOException e) {
-                  LOG.error("failed to load score component: " + e.getMessage(), e);
-                }
+      if(!StringUtils.isEmpty(p.getDuplicatePlayerName())) {
+        validationError.setVisible(true);
+        errorTextLabel.setText("Player '" + p.getName() + "' has the same initials like user '" + p.getDuplicatePlayerName() + "'. Change the initials from one of them.");
+      }
+
+      new Thread(() -> {
+        List<PlayerScoreRepresentation> playerScores = client.getPlayerScores(p.getInitials());
+        Platform.runLater(() -> {
+          if (playerScores.isEmpty()) {
+            noScoreLabel.setVisible(true);
+            noScoreLabel.setText("No scores found for this player.");
+          }
+          else {
+            noScoreLabel.setVisible(true);
+            noScoreLabel.setText("Highscores for player '" + p.getName() + "'");
+            for (PlayerScoreRepresentation playerScore : playerScores) {
+              try {
+                FXMLLoader loader = new FXMLLoader(HighscoreWidgetController.class.getResource("widget-highscore.fxml"));
+                BorderPane row = loader.load();
+                row.setPrefWidth(600 - 48);
+                HighscoreWidgetController controller = loader.getController();
+                controller.setData(playerScore);
+                highscoreList.getChildren().add(row);
+              } catch (IOException e) {
+                LOG.error("failed to load score component: " + e.getMessage(), e);
               }
             }
-          });
-        }
-      }.start();
+          }
+        });
+      }).start();
     }
     else {
       noScoreLabel.setText("");
     }
   }
 
-  private void updateNavBar(Optional<PlayerRepresentation> player) {
+  private void updateForTabSelection(Optional<PlayerRepresentation> player) {
     int index = tabPane.getSelectionModel().selectedIndexProperty().get();
     if (index == 0) {
       if(player.isPresent()) {
@@ -114,6 +126,8 @@ public class PlayersController implements Initializable, StudioFXController {
       else {
         NavigationController.setBreadCrumb(Arrays.asList("Players", "Build-In Players"));
       }
+
+      playerCountLabel.setText(builtInPlayersController.getCount() + " players");
     }
     else {
       if(player.isPresent()) {
@@ -122,6 +136,8 @@ public class PlayersController implements Initializable, StudioFXController {
       else {
         NavigationController.setBreadCrumb(Arrays.asList("Players", "Discord Players"));
       }
+
+      playerCountLabel.setText(discordPlayersController.getCount() + " players");
     }
   }
 
@@ -129,6 +145,7 @@ public class PlayersController implements Initializable, StudioFXController {
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
     NavigationController.setBreadCrumb(Arrays.asList("Players", "Build-In Players"));
+    validationError.setVisible(false);
 
     try {
       FXMLLoader loader = new FXMLLoader(BuiltInPlayersController.class.getResource("tab-builtin-users.fxml"));
@@ -165,5 +182,7 @@ public class PlayersController implements Initializable, StudioFXController {
         }
       }
     });
+
+    updateForTabSelection(Optional.empty());
   }
 }

@@ -32,6 +32,10 @@ public class Player {
   @OneToOne(cascade = CascadeType.MERGE)
   private Asset avatar;
 
+  @JsonInclude()
+  @Transient
+  private String duplicatePlayerName;
+
   private String avatarUrl;
 
   private String initials;
@@ -41,6 +45,14 @@ public class Player {
   private String domain;
 
   private String email;
+
+  public String getDuplicatePlayerName() {
+    return duplicatePlayerName;
+  }
+
+  public void setDuplicatePlayerName(String duplicatePlayerName) {
+    this.duplicatePlayerName = duplicatePlayerName;
+  }
 
   public String getAvatarUrl() {
     return avatarUrl;

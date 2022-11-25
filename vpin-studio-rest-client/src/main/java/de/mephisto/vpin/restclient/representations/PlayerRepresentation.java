@@ -20,6 +20,16 @@ public class PlayerRepresentation {
 
   private String domain;
 
+  private String duplicatePlayerName;
+
+  public String getDuplicatePlayerName() {
+    return duplicatePlayerName;
+  }
+
+  public void setDuplicatePlayerName(String duplicatePlayerName) {
+    this.duplicatePlayerName = duplicatePlayerName;
+  }
+
   public String getAvatarUrl() {
     return avatarUrl;
   }

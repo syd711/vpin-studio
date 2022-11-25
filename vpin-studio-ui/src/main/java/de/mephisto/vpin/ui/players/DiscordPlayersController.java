@@ -91,6 +91,14 @@ public class DiscordPlayersController implements Initializable, StudioFXControll
       if (StringUtils.isEmpty(value.getInitials())) {
         return new SimpleObjectProperty("");
       }
+
+      if(!StringUtils.isEmpty(value.getDuplicatePlayerName())) {
+        Label label = new Label(value.getInitials());
+        String color = "#FF3333";
+        label.setStyle("-fx-font-color: " + color + ";-fx-text-fill: " + color + ";-fx-font-weight: bold;");
+        return new SimpleObjectProperty(label);
+      }
+
       return new SimpleObjectProperty(value.getInitials().toUpperCase());
     });
 
@@ -151,5 +159,9 @@ public class DiscordPlayersController implements Initializable, StudioFXControll
       return Optional.of(playerRepresentation);
     }
     return Optional.empty();
+  }
+
+  public int getCount() {
+    return this.players.size();
   }
 }

@@ -1,5 +1,6 @@
 package de.mephisto.vpin.ui.players;
 
+import de.mephisto.vpin.restclient.PlayerDomain;
 import de.mephisto.vpin.restclient.representations.PlayerRepresentation;
 import de.mephisto.vpin.ui.NavigationController;
 import de.mephisto.vpin.ui.StudioFXController;
@@ -142,6 +143,13 @@ public class BuiltInPlayersController implements Initializable, StudioFXControll
     });
     initialsColumn.setCellValueFactory(cellData -> {
       PlayerRepresentation value = cellData.getValue();
+      if(!StringUtils.isEmpty(value.getDuplicatePlayerName())) {
+        Label label = new Label(value.getInitials());
+        String color = "#FF3333";
+        label.setStyle("-fx-font-color: " + color + ";-fx-text-fill: " + color + ";-fx-font-weight: bold;");
+        return new SimpleObjectProperty(label);
+      }
+
       if (StringUtils.isEmpty(value.getInitials())) {
         FontIcon fontIcon = new FontIcon();
         fontIcon.setIconSize(18);
@@ -183,7 +191,8 @@ public class BuiltInPlayersController implements Initializable, StudioFXControll
       refreshView();
     });
 
-    onReload();
+    this.players = client.getPlayers();
+    this.refreshView();
   }
 
   public void setPlayersController(PlayersController playersController) {
@@ -235,5 +244,9 @@ public class BuiltInPlayersController implements Initializable, StudioFXControll
       return Optional.of(playerRepresentation);
     }
     return Optional.empty();
+  }
+
+  public int getCount() {
+    return this.players.size();
   }
 }
