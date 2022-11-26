@@ -1,19 +1,26 @@
 package de.mephisto.vpin.server.competitions;
 
+import de.mephisto.vpin.server.ThreadPoolTaskSchedulerConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
+import org.springframework.scheduling.support.CronTrigger;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
 
 @Service
-public class CompetitionService {
+public class CompetitionService implements InitializingBean {
   private final static Logger LOG = LoggerFactory.getLogger(CompetitionService.class);
 
   @Autowired
   private CompetitionsRepository competitionsRepository;
+
+  @Autowired
+  private ThreadPoolTaskScheduler scheduler;
 
   public List<Competition> getCompetitions() {
     return competitionsRepository.findAll();
@@ -40,5 +47,10 @@ public class CompetitionService {
 
   public void delete(long id) {
     competitionsRepository.deleteById(id);
+  }
+
+  @Override
+  public void afterPropertiesSet() throws Exception {
+    scheduler.scheduleAtFixedRate(new CompetitionCleanupRunnableTask(), 1000*60*60);
   }
 }
