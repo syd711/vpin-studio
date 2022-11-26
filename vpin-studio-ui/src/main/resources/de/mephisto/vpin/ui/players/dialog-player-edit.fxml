@@ -87,6 +87,18 @@
                         <Font size="14.0" />
                      </font>
                   </Label>
+                  <HBox alignment="BASELINE_RIGHT" GridPane.columnIndex="1" GridPane.rowIndex="3">
+                     <children>
+                        <Button layoutX="360.0" layoutY="10.0" mnemonicParsing="false" onAction="#onDelete" text="Reset" textFill="WHITE">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                           <graphic>
+                              <FontIcon iconColor="WHITE" iconLiteral="mdi2u-undo" />
+                           </graphic>
+                        </Button>
+                     </children>
+                  </HBox>
                </children>
             </GridPane>
             <VBox alignment="CENTER" prefHeight="200.0">

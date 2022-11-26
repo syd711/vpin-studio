@@ -90,6 +90,15 @@ public class PlayerDialogController implements Initializable {
   }
 
   @FXML
+  private void onDelete() {
+    this.avatarFile = null;
+    this.avatar = null;
+    this.player.setAvatar(null);
+    refreshAvatar();
+    this.validateInput();
+  }
+
+  @FXML
   private void onFileSelect() {
     FileChooser fileChooser = new FileChooser();
     fileChooser.setTitle("Select Image");
