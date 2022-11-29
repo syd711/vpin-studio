@@ -43,7 +43,7 @@ public class PopperResource {
 
   @PostMapping("/gameExit")
   public boolean gameExit(@RequestParam("table") String table) {
-    File tableFile = new File(table);
+    File tableFile = new File(table.trim());
     Game game = service.getGameByFile(tableFile);
     if (game == null) {
       LOG.warn("No game found for name '" + table);

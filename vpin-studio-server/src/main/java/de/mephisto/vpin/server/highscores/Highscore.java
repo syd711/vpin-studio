@@ -93,6 +93,15 @@ public class Highscore {
     return highscore;
   }
 
+  public HighscoreVersion toVersion() {
+    HighscoreVersion version = new HighscoreVersion();
+    version.setCreatedAt(this.getCreatedAt());
+    version.setRaw(this.getRaw());
+    version.setDisplayName(this.getDisplayName());
+    version.setGameId(this.getGameId());
+    return version;
+  }
+
   @Override
   public boolean equals(Object o) {
     if (this == o) return true;

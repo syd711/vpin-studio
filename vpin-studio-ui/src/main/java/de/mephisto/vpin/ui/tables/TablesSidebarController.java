@@ -352,9 +352,11 @@ public class TablesSidebarController implements Initializable, StudioFXControlle
       labelFilename.setText(game.getGameFileName());
       labelLastPlayed.setText(game.getLastPlayed() != null ? simpleDateFormat.format(game.getLastPlayed()) : "-");
       labelTimesPlayed.setText(String.valueOf(game.getNumberPlays()));
-
       if(!StringUtils.isEmpty(game.getHsFileName())) {
         labelHSFilename.setText(game.getHsFileName());
+      }
+      else {
+        labelHSFilename.setText("-");
       }
 
       refreshDirectB2SPreview(g);

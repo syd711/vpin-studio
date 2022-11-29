@@ -50,6 +50,11 @@ public class CompetitionResource {
     return c;
   }
 
+  @GetMapping("/highscores/{id}")
+  public List<Object> getHighscoresForCompetition(@PathVariable("id") int id) {
+    return competitionService.getCompetitionHighscores(id);
+  }
+
   @GetMapping("/badges")
   public List<String> getCompetitionBadges() {
     File folder = new File(SystemService.RESOURCES, COMPETITION_BADGES);

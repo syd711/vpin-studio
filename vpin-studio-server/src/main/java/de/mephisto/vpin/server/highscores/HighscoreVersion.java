@@ -1,11 +1,6 @@
 package de.mephisto.vpin.server.highscores;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import de.mephisto.vpin.server.games.Game;
-import edu.umd.cs.findbugs.annotations.NonNull;
-import edu.umd.cs.findbugs.annotations.Nullable;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedDate;
 
 import javax.persistence.*;
 import java.util.Date;
@@ -17,13 +12,7 @@ public class HighscoreVersion {
 
   @Column(nullable = false, updatable = false)
   @Temporal(TemporalType.TIMESTAMP)
-  @CreatedDate
   private Date createdAt;
-
-  @Column(nullable = false)
-  @Temporal(TemporalType.TIMESTAMP)
-  @LastModifiedDate
-  private Date updatedAt;
 
   @Id
   @GeneratedValue(strategy = GenerationType.AUTO)
@@ -67,29 +56,11 @@ public class HighscoreVersion {
     this.createdAt = createdAt;
   }
 
-  public Date getUpdatedAt() {
-    return updatedAt;
-  }
-
-  public void setUpdatedAt(Date updatedAt) {
-    this.updatedAt = updatedAt;
-  }
-
   public String getRaw() {
     return raw;
   }
 
   public void setRaw(String raw) {
     this.raw = raw;
-  }
-
-  public static HighscoreVersion forGame(@NonNull Game game, @Nullable String rawValue) {
-    HighscoreVersion highscore = new HighscoreVersion();
-    highscore.setRaw(rawValue);
-    highscore.setGameId(game.getId());
-    highscore.setCreatedAt(new Date());
-    highscore.setUpdatedAt(new Date());
-    highscore.setDisplayName(game.getGameDisplayName());
-    return highscore;
   }
 }

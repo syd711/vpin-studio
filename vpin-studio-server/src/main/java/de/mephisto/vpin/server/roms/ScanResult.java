@@ -2,10 +2,23 @@ package de.mephisto.vpin.server.roms;
 
 import edu.umd.cs.findbugs.annotations.Nullable;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class ScanResult {
   private int nvOffset = 0;
   private String rom;
   private String hsFileName;
+
+  private List<String> music = new ArrayList<>();
+
+  public List<String> getMusic() {
+    return music;
+  }
+
+  public void setMusic(List<String> music) {
+    this.music = music;
+  }
 
   public String getHsFileName() {
     return hsFileName;

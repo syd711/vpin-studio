@@ -6,7 +6,6 @@ import de.mephisto.vpin.server.highscores.HighscoreService;
 import de.mephisto.vpin.server.popper.GameMediaItem;
 import de.mephisto.vpin.server.popper.PinUPConnector;
 import de.mephisto.vpin.server.popper.PopperScreen;
-import de.mephisto.vpin.server.popper.PopperService;
 import de.mephisto.vpin.server.roms.RomService;
 import de.mephisto.vpin.server.roms.ScanResult;
 import edu.umd.cs.findbugs.annotations.NonNull;
@@ -19,6 +18,7 @@ import org.springframework.stereotype.Service;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -124,6 +124,9 @@ public class GameService {
 
   public Game getGameByFile(File file) {
     Game game = this.pinUPConnector.getGameByFilename(file.getName());
+    if(game != null) {
+      loadGameDetails(game, Collections.emptyList());
+    }
     return game;
   }
 
@@ -148,7 +151,7 @@ public class GameService {
       game.setHsFileName(gameDetails.getHsFileName());
       game.setIgnoredValidations(gameDetails.getIgnoredValidations());
 
-      Highscore highscore = highscoreService.getHighscore(game);
+      Highscore highscore = highscoreService.getOrCreateHighscore(game);
       if (highscore != null && !StringUtils.isEmpty(highscore.getRaw())) {
         game.setRawHighscore(highscore.getRaw());
         game.setScoresChangedDate(highscore.getUpdatedAt());

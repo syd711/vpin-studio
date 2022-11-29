@@ -137,13 +137,13 @@ public class BindingUtil {
       if (fs.getResult() != null) {
         Font result = fs.getResult();
         debouncer.debounce("font", () -> {
-          properties.set(key + ".font.name", result.getName());
+          properties.set(key + ".font.name", result.getFamily());
           properties.set(key + ".font.size", String.valueOf((int) result.getSize()));
           properties.set(key + ".font.style", result.getStyle());
 
-          Font labelFont = Font.font(result.getName(), FontPosture.findByName(result.getStyle()), 14);
+          Font labelFont = Font.font(result.getFamily(), FontPosture.findByName(result.getStyle()), 14);
           label.setFont(labelFont);
-          String labelText = result.getName() + ", " + result.getStyle() + ", " + result.getSize() + "px";
+          String labelText = result.getFamily() + ", " + result.getStyle() + ", " + result.getSize() + "px";
           Platform.runLater(() -> {
             label.setText(labelText);
             label.setTooltip(new Tooltip(labelText));

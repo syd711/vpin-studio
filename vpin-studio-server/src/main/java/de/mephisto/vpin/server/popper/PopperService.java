@@ -79,7 +79,15 @@ public class PopperService {
 
   public void executeTableExitCommands(Game game) {
     LOG.info("Executing table exit commands for '" + game + "'");
-    highscoreService.updateHighscore(game);
+    new Thread(() -> {
+      try {
+        Thread.sleep(5000);
+      } catch (InterruptedException e) {
+        //ignore
+      }
+      LOG.info("Finished 5 second update delay, updating highscores.");
+      highscoreService.updateHighscore(game);
+    }).start();
   }
 
   public void notifyPopperLaunch() {

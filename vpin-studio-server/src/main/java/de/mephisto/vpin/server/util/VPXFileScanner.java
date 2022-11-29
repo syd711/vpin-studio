@@ -1,6 +1,6 @@
-package de.mephisto.vpin.server.roms;
+package de.mephisto.vpin.server.util;
 
-import de.mephisto.vpin.server.util.ReverseLineInputStream;
+import de.mephisto.vpin.server.roms.ScanResult;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -35,19 +35,32 @@ public class VPXFileScanner {
 
   private static final Pattern HS_FILENAME_PATTERN = Pattern.compile(".*HSFileName.*=.*\".*\".*");
 
+  private VPXFileScanner() {
+    //force scan method
+  }
+
   public static ScanResult scan(@NonNull File gameFile) {
     ScanResult result = new ScanResult();
 
     BufferedReader bufferedReader = null;
     ReverseLineInputStream reverseLineInputStream = null;
     String line = null;
+    int count = 0;
     try {
       reverseLineInputStream = new ReverseLineInputStream(gameFile);
       bufferedReader = new BufferedReader(new InputStreamReader(reverseLineInputStream));
 
       bufferedReader.readLine();//skip last line if empty
-      int count = 0;
-      while ((line = bufferedReader.readLine()) != null) {
+      boolean continueRead = true;
+      while (continueRead) {
+        line = bufferedReader.readLine();
+        if (line == null) {
+          line = bufferedReader.readLine();
+          line = bufferedReader.readLine();
+          if (line == null) {
+            break;
+          }
+        }
         count++;
 
         if (result.isScanComplete() || line.toLowerCase().contains("Option Explicit".toLowerCase())) {
@@ -58,14 +71,8 @@ public class VPXFileScanner {
           lineSearchRom(result, line);
           lineSearchNvOffset(result, line);
           lineSearchHsFileName(result, line);
+          lineSearchMusic(result, line);
         }
-      }
-
-      if (!StringUtils.isEmpty(result.getRom())) {
-        LOG.info("Finished scan of table " + gameFile.getAbsolutePath() + ", found ROM '" + result.getRom() + "'.");
-      }
-      else {
-        LOG.info("Finished scan of table " + gameFile.getAbsolutePath() + ", no ROM found.");
       }
     } catch (Exception e) {
       LOG.error("Failed to read rom line '" + line + "' for  " + gameFile.getAbsolutePath() + ": " + e.getMessage(), e);
@@ -83,11 +90,32 @@ public class VPXFileScanner {
       }
     }
 
+    if (!StringUtils.isEmpty(result.getRom())) {
+      LOG.info("Finished scan of table " + gameFile.getAbsolutePath() + ", found ROM '" + result.getRom() + "'.");
+    }
+    else {
+      LOG.info("Finished scan of table " + gameFile.getAbsolutePath() + ", no ROM found.");
+    }
     return result;
   }
 
+  private static void lineSearchMusic(ScanResult result, String line) {
+    if (line.contains(".mp3")) {
+      String value = line.substring(0, line.indexOf(".mp3") + 4);
+      if (value.contains("\"")) {
+        value = value.substring(value.lastIndexOf("\"") + 1);
+        if (!result.getMusic().contains(value)) {
+          result.getMusic().add(value);
+          if (!value.equals(".mp3")) {
+            LOG.info("Added audio file " + value);
+          }
+        }
+      }
+    }
+  }
+
   private static void lineSearchHsFileName(@NonNull ScanResult result, @NonNull String line) {
-    if(result.getHsFileName() != null) {
+    if (result.getHsFileName() != null) {
       return;
     }
 
@@ -97,15 +125,7 @@ public class VPXFileScanner {
         return;
       }
 
-      line = line.substring(line.indexOf(pattern) + pattern.length() + 1);
-      int start = line.indexOf("\"") + 1;
-      String hsFileName = line.substring(start);
-      int end = hsFileName.indexOf("\"");
-
-      if (end - start < MAX_FILENAME_LENGTH) {
-        hsFileName = hsFileName.substring(0, end).trim();
-      }
-
+      String hsFileName = extractLineValue(line, pattern);
       result.setHsFileName(hsFileName);
     }
   }
@@ -147,6 +167,18 @@ public class VPXFileScanner {
 
       result.setRom(rom);
     }
+  }
+
+  private static String extractLineValue(String line, String key) {
+    line = line.substring(line.indexOf(key) + key.length() + 1);
+    int start = line.indexOf("\"") + 1;
+    String value = line.substring(start);
+    int end = value.indexOf("\"");
+
+    if (end - start < MAX_FILENAME_LENGTH) {
+      value = value.substring(0, end).trim();
+    }
+    return value;
   }
 
   private static int matchesPatterns(String line) {

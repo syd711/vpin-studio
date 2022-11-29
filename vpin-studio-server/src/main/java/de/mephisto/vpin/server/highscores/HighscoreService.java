@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class HighscoreService implements InitializingBean {
@@ -24,26 +25,30 @@ public class HighscoreService implements InitializingBean {
   @Autowired
   private HighscoreRepository highscoreRepository;
 
+  @Autowired
+  private HighscoreVersionRepository highscoreVersionRepository;
+
   private HighscoreResolver highscoreResolver;
 
   private final List<HighscoreChangeListener> listeners = new ArrayList<>();
 
   @Nullable
-  public Highscore getHighscore(@NonNull Game game) {
+  public Highscore getOrCreateHighscore(@NonNull Game game) {
     if (StringUtils.isEmpty(game.getRom())) {
       return null;
     }
 
     //check if an entry exists, create the first one with empty values otherwise
-    Highscore highscore = highscoreRepository.findByGameId(game.getId());
-    if (highscore == null) {
+    Optional<Highscore> highscore = highscoreRepository.findByGameId(game.getId());
+    if (highscore.isEmpty()) {
       String rawHighscore = highscoreResolver.readHighscore(game);
-      highscore = Highscore.forGame(game, rawHighscore);
-      highscoreRepository.saveAndFlush(highscore);
-      LOG.info("Written " + highscore);
+      Highscore h = Highscore.forGame(game, rawHighscore);
+      highscoreRepository.saveAndFlush(h);
+      LOG.info("Written " + h);
+      return h;
     }
 
-    return highscore;
+    return highscore.get();
   }
 
   public void addHighscoreChangeListener(@NonNull HighscoreChangeListener listener) {
@@ -60,10 +65,33 @@ public class HighscoreService implements InitializingBean {
     HighscoreChangeEvent event = null;
 
     String rawHighscore = highscoreResolver.readHighscore(game);
-    Highscore updatedHighscore = Highscore.forGame(game, rawHighscore);
-    Highscore existingHighscore = highscoreRepository.findByGameId(game.getId());
+    if(StringUtils.isEmpty(rawHighscore)) {
+      LOG.info("Skipped highscore changed event for {} because the raw data of the score is empty.", game);
+      return;
+    }
 
-    if (existingHighscore == null || rawHighscore.equals(existingHighscore.getRaw())) {
+    Highscore newHighscore = Highscore.forGame(game, rawHighscore);
+    Optional<Highscore> existingHighscore = highscoreRepository.findByGameId(game.getId());
+
+    if (existingHighscore.isEmpty() || !existingHighscore.get().getRaw().equals(rawHighscore)) {
+      //save the highscore for the first time
+      if (existingHighscore.isEmpty()) {
+        highscoreRepository.saveAndFlush(newHighscore);
+        LOG.info("Saved highscore for " + game);
+      }
+      else {
+        //archive old highscore
+        Highscore highscore = existingHighscore.get();
+        HighscoreVersion version = highscore.toVersion();
+        highscoreVersionRepository.saveAndFlush(version);
+
+        //update existing one
+        highscore.setRaw(rawHighscore);
+        highscoreRepository.saveAndFlush(highscore);
+
+        LOG.info("Archived old highscore and saved updated highscore for " + game);
+      }
+
       event = new HighscoreChangeEvent() {
         @Override
         public Game getGame() {
@@ -72,21 +100,19 @@ public class HighscoreService implements InitializingBean {
 
         @Override
         public Highscore getOldHighscore() {
-          return existingHighscore;
+          return existingHighscore.get();
         }
 
         @Override
         public Highscore getNewHighscore() {
-          return updatedHighscore;
+          return newHighscore;
         }
       };
 
-      //the updated score contains the new data, so we only need to update the date
-      updatedHighscore.setCreatedAt(existingHighscore.getCreatedAt());
-      highscoreRepository.save(updatedHighscore);
-      LOG.info("Updated highscore of " + game);
-
       triggerHighscoreChange(event);
+    }
+    else {
+      LOG.info("Skipped highscore change event for {} because the raw highscore data did not change.", game);
     }
   }
 
