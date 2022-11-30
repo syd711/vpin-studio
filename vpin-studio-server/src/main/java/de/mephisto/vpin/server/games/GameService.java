@@ -3,6 +3,7 @@ package de.mephisto.vpin.server.games;
 import de.mephisto.vpin.server.competitions.ScoreSummary;
 import de.mephisto.vpin.server.highscores.Highscore;
 import de.mephisto.vpin.server.highscores.HighscoreService;
+import de.mephisto.vpin.server.highscores.Score;
 import de.mephisto.vpin.server.popper.GameMediaItem;
 import de.mephisto.vpin.server.popper.PinUPConnector;
 import de.mephisto.vpin.server.popper.PopperScreen;
@@ -17,7 +18,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
@@ -66,28 +69,27 @@ public class GameService {
     return highscoreService.getHighscores(game);
   }
 
-  public List<Game> getRecentHighscoreGame(int count) {
-    List<Game> games = this.getGames();
-    List<Game> filtered = new ArrayList<>();
-    for (Game game : games) {
-      ScoreSummary highscores = highscoreService.getHighscores(game);
-      if (highscores.getScores().isEmpty() || game.getLastPlayed() == null) {
+  public List<Game> getRecentHighscoreGames(int count) {
+    List<Highscore> recentHighscores = highscoreService.getRecentHighscores();
+    List<Game> result = new ArrayList<>();
+    for (Highscore recentHighscore : recentHighscores) {
+      List<Score> scores = highscoreService.parseScores(recentHighscore.getRaw(), recentHighscore.getGameId());
+      if(scores.isEmpty()) {
         continue;
       }
 
+      Game game = getGame(recentHighscore.getGameId());
       GameMediaItem gameMediaItem = game.getEmulator().getGameMedia().get(PopperScreen.Wheel);
       if (gameMediaItem == null) {
         continue;
       }
+      result.add(game);
 
-      filtered.add(game);
+      if(result.size() == count) {
+        break;
+      }
     }
-
-    filtered.sort(Comparator.comparing(Game::getLastPlayed));
-    if (filtered.size() > count) {
-      return filtered.subList(0, count);
-    }
-    return filtered;
+    return result;
   }
 
   public boolean scanGame(int gameId) {

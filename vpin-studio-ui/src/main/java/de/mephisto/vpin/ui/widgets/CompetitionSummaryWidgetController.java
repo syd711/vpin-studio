@@ -2,10 +2,7 @@ package de.mephisto.vpin.ui.widgets;
 
 import de.mephisto.vpin.restclient.PopperScreen;
 import de.mephisto.vpin.restclient.RestClient;
-import de.mephisto.vpin.restclient.representations.CompetitionRepresentation;
-import de.mephisto.vpin.restclient.representations.GameMediaItemRepresentation;
-import de.mephisto.vpin.restclient.representations.GameMediaRepresentation;
-import de.mephisto.vpin.restclient.representations.GameRepresentation;
+import de.mephisto.vpin.restclient.representations.*;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.util.ImageUtil;
 import eu.hansolo.tilesfx.Tile;
@@ -34,6 +31,7 @@ import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
 import java.util.Date;
+import java.util.List;
 import java.util.ResourceBundle;
 
 import static de.mephisto.vpin.ui.Studio.client;
@@ -59,6 +57,24 @@ public class CompetitionSummaryWidgetController extends WidgetController impleme
   @FXML
   private Label durationLabel;
 
+  @FXML
+  private Label name1;
+
+  @FXML
+  private Label name2;
+
+  @FXML
+  private Label name3;
+
+  @FXML
+  private Label scoreLabel1;
+
+  @FXML
+  private Label scoreLabel2;
+
+  @FXML
+  private Label scoreLabel3;
+
   // Add a public no-args constructor
   public CompetitionSummaryWidgetController() {
   }
@@ -73,7 +89,7 @@ public class CompetitionSummaryWidgetController extends WidgetController impleme
         "    -fx-background-color: #111111;\n" +
         "    -fx-background-radius: 6;" +
         "    -fx-border-width: 1;");
-    BackgroundImage myBI= new BackgroundImage(image,
+    BackgroundImage myBI = new BackgroundImage(image,
         BackgroundRepeat.NO_REPEAT, BackgroundRepeat.NO_REPEAT, BackgroundPosition.DEFAULT,
         BackgroundSize.DEFAULT);
     topBox.setBackground(new Background(myBI));
@@ -82,9 +98,10 @@ public class CompetitionSummaryWidgetController extends WidgetController impleme
   }
 
   public void setCompetition(CompetitionRepresentation competition) {
-    if(competition != null) {
+    if (competition != null) {
       GameRepresentation game = client.getGame(competition.getGameId());
       GameMediaRepresentation gameMedia = client.getGameMedia(game.getId());
+      ScoreSummaryRepresentation gameScores = client.getGameScores(game.getId());
 
       LocalDate start = competition.getStartDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
       LocalDate end = competition.getEndDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
@@ -98,8 +115,26 @@ public class CompetitionSummaryWidgetController extends WidgetController impleme
       competitionLabel.setText(competition.getName());
       tableNameLabel.setText(game.getGameDisplayName());
 
+      List<ScoreRepresentation> scores = gameScores.getScores();
+      if (scores.size() == 3) {
+        ScoreRepresentation score1 = scores.get(0);
+        name1.setText(formatScoreText(score1));
+        scoreLabel1.setFont(getScoreFontSmall());
+        scoreLabel1.setText(score1.getScore());
+
+        ScoreRepresentation score2 = scores.get(1);
+        name2.setText(formatScoreText(score2));
+        scoreLabel2.setFont(getScoreFontSmall());
+        scoreLabel2.setText(score2.getScore());
+
+        ScoreRepresentation score3 = scores.get(2);
+        name3.setText(formatScoreText(score3));
+        scoreLabel3.setFont(getScoreFontSmall());
+        scoreLabel3.setText(score3.getScore());
+      }
+
       GameMediaItemRepresentation item = gameMedia.getItem(PopperScreen.Wheel);
-      if(item != null) {
+      if (item != null) {
         String url = item.getUri();
         byte[] bytes = RestClient.getInstance().readBinary(url);
         ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(bytes);
@@ -114,5 +149,18 @@ public class CompetitionSummaryWidgetController extends WidgetController impleme
     else {
       durationLabel.setText("");
     }
+  }
+
+  private String formatScoreText(ScoreRepresentation score) {
+    String name = score.getPlayerInitials();
+    if (score.getPlayer() != null) {
+      name = score.getPlayer().getName();
+    }
+
+    while (name.length() < 40) {
+      name += " ";
+    }
+
+    return name;
   }
 }

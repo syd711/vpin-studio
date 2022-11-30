@@ -1,7 +1,8 @@
 package de.mephisto.vpin.ui.players;
 
 import de.mephisto.vpin.restclient.representations.PlayerRepresentation;
-import de.mephisto.vpin.restclient.representations.PlayerScoreRepresentation;
+import de.mephisto.vpin.restclient.representations.ScoreRepresentation;
+import de.mephisto.vpin.restclient.representations.ScoreSummaryRepresentation;
 import de.mephisto.vpin.ui.NavigationController;
 import de.mephisto.vpin.ui.StudioFXController;
 import javafx.application.Platform;
@@ -24,7 +25,6 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.net.URL;
 import java.util.Arrays;
-import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
 
@@ -87,22 +87,22 @@ public class PlayersController implements Initializable, StudioFXController {
       }
 
       new Thread(() -> {
-        List<PlayerScoreRepresentation> playerScores = client.getPlayerScores(p.getInitials());
+        ScoreSummaryRepresentation playerScores = client.getPlayerScores(p.getInitials());
         Platform.runLater(() -> {
-          if (playerScores.isEmpty()) {
+          if (playerScores.getScores().isEmpty()) {
             noScoreLabel.setVisible(true);
             noScoreLabel.setText("No scores found for this player.");
           }
           else {
             noScoreLabel.setVisible(true);
             noScoreLabel.setText("Highscores for player '" + p.getName() + "'");
-            for (PlayerScoreRepresentation playerScore : playerScores) {
+            for (ScoreRepresentation playerScore : playerScores.getScores()) {
               try {
                 FXMLLoader loader = new FXMLLoader(HighscoreWidgetController.class.getResource("widget-highscore.fxml"));
                 BorderPane row = loader.load();
                 row.setPrefWidth(600 - 48);
                 HighscoreWidgetController controller = loader.getController();
-                controller.setData(playerScore);
+                controller.setData(p, playerScore);
                 highscoreList.getChildren().add(row);
               } catch (IOException e) {
                 LOG.error("failed to load score component: " + e.getMessage(), e);

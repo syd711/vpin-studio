@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class HighscoreService implements InitializingBean {
@@ -124,6 +125,11 @@ public class HighscoreService implements InitializingBean {
       }
     }
     return summary;
+  }
+
+  public List<Highscore> getRecentHighscores() {
+    List<Highscore> highscores = highscoreRepository.findAllByOrderByCreatedAtAsc();
+    return highscores.stream().filter(h -> !StringUtils.isEmpty(h.getRaw())).collect(Collectors.toList());
   }
 
   private ScoreSummary getScoreSummary(String raw, Date createdAt, int gameId) {

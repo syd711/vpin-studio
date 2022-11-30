@@ -6,6 +6,15 @@ public class ScoreRepresentation {
   private String score;
   private int position;
   private double numericScore;
+  private int gameId;
+
+  public int getGameId() {
+    return gameId;
+  }
+
+  public void setGameId(int gameId) {
+    this.gameId = gameId;
+  }
 
   public PlayerRepresentation getPlayer() {
     return player;

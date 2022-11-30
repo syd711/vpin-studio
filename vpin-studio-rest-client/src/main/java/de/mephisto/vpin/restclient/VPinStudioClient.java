@@ -227,8 +227,8 @@ public class VPinStudioClient implements ObservedPropertyChangeListener {
     return Arrays.asList(RestClient.getInstance().get(API + "players/domain/" + domain.name(), PlayerRepresentation[].class));
   }
 
-  public List<PlayerScoreRepresentation> getPlayerScores(String initials) {
-    return Arrays.asList(RestClient.getInstance().get(API + "players/highscores/" + initials, PlayerScoreRepresentation[].class));
+  public ScoreSummaryRepresentation getPlayerScores(String initials) {
+    return RestClient.getInstance().get(API + "players/highscores/" + initials, ScoreSummaryRepresentation.class);
   }
 
   public boolean invalidatePlayerDomain(PlayerDomain domain) {
