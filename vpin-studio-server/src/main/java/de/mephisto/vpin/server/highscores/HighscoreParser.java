@@ -2,6 +2,8 @@ package de.mephisto.vpin.server.highscores;
 
 import de.mephisto.vpin.server.players.Player;
 import de.mephisto.vpin.server.players.PlayerService;
+import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,14 +41,13 @@ public class HighscoreParser {
   @Autowired
   private PlayerService playerService;
 
-  public List<Score> parseScores(String raw, int gameId) {
+  @NonNull
+  public List<Score> parseScores(@NonNull String raw, int gameId) {
     List<Score> scores = new ArrayList<>();
     try {
       LOG.debug("Parsing Highscore text: " + raw);
       String[] lines = raw.split("\\n");
       if (lines.length == 2) {
-        Score score = createScore(lines[1], gameId);
-        scores.add(score);
         return scores;
       }
 
@@ -54,7 +55,10 @@ public class HighscoreParser {
       for (String line : lines) {
         if (line.startsWith(index + ")") || line.startsWith("#" + index) || line.startsWith(index + "#")) {
           Score score = createScore(line, gameId);
-          scores.add(score);
+          if(score != null) {
+            scores.add(score);
+          }
+
           index++;
         }
 
@@ -68,17 +72,22 @@ public class HighscoreParser {
     return scores;
   }
 
-  private Score createScore(String line, int gameId) {
+  @Nullable
+  private Score createScore(@NonNull String line, int gameId) {
     List<String> collect = Arrays.stream(line.trim().split(" ")).filter(s -> s.trim().length() > 0).collect(Collectors.toList());
     String indexString = collect.get(0).replaceAll("[^0-9]", "");
 
-    Player p =  null;
+    Player p = null;
     int index = Integer.parseInt(indexString);
-    if (collect.size() == 3) {
+
+    if (collect.size() == 2) {
+      return null;
+    }
+    else if (collect.size() == 3) {
       String score = collect.get(2);
       String initials = collect.get(1);
       Optional<Player> player = playerService.getPlayerForInitials(initials);
-      if(player.isPresent()) {
+      if (player.isPresent()) {
         p = player.get();
       }
       return new Score(gameId, initials, p, score, toNumericScore(score), index);
@@ -92,13 +101,13 @@ public class HighscoreParser {
       String score = collect.get(collect.size() - 1);
       String playerInitials = initials.toString().trim();
       Optional<Player> player = playerService.getPlayerForInitials(playerInitials);
-      if(player.isPresent()) {
+      if (player.isPresent()) {
         p = player.get();
       }
       return new Score(gameId, playerInitials, p, score, toNumericScore(score), index);
     }
     else {
-      throw new UnsupportedOperationException("Could parse score line '" + line + "'");
+      throw new UnsupportedOperationException("Could parse score line for game " + gameId + " '" + line + "'");
     }
   }
 

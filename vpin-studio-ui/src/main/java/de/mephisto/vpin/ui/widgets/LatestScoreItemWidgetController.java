@@ -59,11 +59,16 @@ public class LatestScoreItemWidgetController extends WidgetController implements
     wheelImageView.setImage(image);
 
     tableLabel.setText(game.getGameDisplayName());
-
     ScoreRepresentation score = scoreSummary.getScores().get(0);
 
     positionLabel.setText("#" + score.getPosition());
-    nameLabel.setText(score.getPlayerInitials());
+
+    if(score.getPlayer() != null) {
+      nameLabel.setText(score.getPlayer().getName());
+    }
+    else {
+      nameLabel.setText(score.getPlayerInitials());
+    }
 
     scoreLabel.setFont(getScoreFont());
     scoreLabel.setText(score.getScore());

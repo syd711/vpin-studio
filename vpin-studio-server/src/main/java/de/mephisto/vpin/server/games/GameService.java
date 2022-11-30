@@ -70,12 +70,13 @@ public class GameService {
     List<Game> games = this.getGames();
     List<Game> filtered = new ArrayList<>();
     for (Game game : games) {
-      Highscore highscore = highscoreService.getOrCreateHighscore(game);
-      if(highscore == null || highscore.getRaw() == null || game.getLastPlayed() == null) {
+      ScoreSummary highscores = highscoreService.getHighscores(game);
+      if (highscores.getScores().isEmpty() || game.getLastPlayed() == null) {
         continue;
       }
+
       GameMediaItem gameMediaItem = game.getEmulator().getGameMedia().get(PopperScreen.Wheel);
-      if(gameMediaItem == null) {
+      if (gameMediaItem == null) {
         continue;
       }
 
@@ -83,7 +84,7 @@ public class GameService {
     }
 
     filtered.sort(Comparator.comparing(Game::getLastPlayed));
-    if(filtered.size() > count) {
+    if (filtered.size() > count) {
       return filtered.subList(0, count);
     }
     return filtered;
@@ -127,7 +128,7 @@ public class GameService {
 
   public Game getGameByFile(File file) {
     Game game = this.pinUPConnector.getGameByFilename(file.getName());
-    if(game != null) {
+    if (game != null) {
       loadGameDetails(game, Collections.emptyList());
     }
     return game;

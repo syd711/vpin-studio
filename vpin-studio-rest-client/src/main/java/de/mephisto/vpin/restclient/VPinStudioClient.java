@@ -132,7 +132,7 @@ public class VPinStudioClient implements ObservedPropertyChangeListener {
   }
   public ScoreListRepresentation getCompetitionScores(int id) {
     try {
-      return RestClient.getInstance().get(API + "competitions/score/" + id, ScoreListRepresentation.class);
+      return RestClient.getInstance().get(API + "competitions/scores/" + id, ScoreListRepresentation.class);
     } catch (Exception e) {
       LOG.error("Failed to read competition scores " + id + ": " + e.getMessage(), e);
     }
@@ -144,19 +144,14 @@ public class VPinStudioClient implements ObservedPropertyChangeListener {
   }
 
   public ByteArrayInputStream getCompetitionBadge(String name) {
-    try {
-      if (!imageCache.containsKey(name)) {
-        String encodedName = URLEncoder.encode(name, "utf8");
-        byte[] bytes = RestClient.getInstance().readBinary(API + "competitions/badge/" + encodedName);
-        imageCache.put(name, bytes);
-      }
-
-      byte[] imageBytes = imageCache.get(name);
-      return new ByteArrayInputStream(imageBytes);
-    } catch (UnsupportedEncodingException e) {
-      LOG.error("Failed to read badge image: " + e.getMessage(), e);
+    if (!imageCache.containsKey(name)) {
+      String encodedName = URLEncoder.encode(name, StandardCharsets.UTF_8);
+      byte[] bytes = RestClient.getInstance().readBinary(API + "competitions/badge/" + encodedName);
+      imageCache.put(name, bytes);
     }
-    return null;
+
+    byte[] imageBytes = imageCache.get(name);
+    return new ByteArrayInputStream(imageBytes);
   }
 
   /*********************************************************************************************************************
@@ -174,7 +169,7 @@ public class VPinStudioClient implements ObservedPropertyChangeListener {
 
   public ScoreSummaryRepresentation getGameScores(int id) {
     try {
-      return RestClient.getInstance().get(API + "games/score/" + id, ScoreSummaryRepresentation.class);
+      return RestClient.getInstance().get(API + "games/scores/" + id, ScoreSummaryRepresentation.class);
     } catch (Exception e) {
       LOG.error("Failed to read game scores " + id + ": " + e.getMessage(), e);
     }

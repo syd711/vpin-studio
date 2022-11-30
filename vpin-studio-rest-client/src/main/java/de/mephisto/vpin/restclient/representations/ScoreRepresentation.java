@@ -2,17 +2,17 @@ package de.mephisto.vpin.restclient.representations;
 
 public class ScoreRepresentation {
   private String playerInitials;
-  private int playerId;
+  private PlayerRepresentation player;
   private String score;
   private int position;
   private double numericScore;
 
-  public int getPlayerId() {
-    return playerId;
+  public PlayerRepresentation getPlayer() {
+    return player;
   }
 
-  public void setPlayerId(int playerId) {
-    this.playerId = playerId;
+  public void setPlayer(PlayerRepresentation player) {
+    this.player = player;
   }
 
   public double getNumericScore() {
