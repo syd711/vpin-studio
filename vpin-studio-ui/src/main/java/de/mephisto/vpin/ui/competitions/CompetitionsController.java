@@ -189,11 +189,6 @@ public class CompetitionsController implements Initializable, StudioFXController
       return new SimpleObjectProperty(label);
     });
 
-    columnScoreCount.setCellValueFactory(cellData -> {
-      CompetitionRepresentation value = cellData.getValue();
-      return new SimpleObjectProperty(String.valueOf(value.getHighscores().size()));
-    });
-
     columnWinner.setCellValueFactory(cellData -> {
       CompetitionRepresentation value = cellData.getValue();
       String winner = "-";

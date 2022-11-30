@@ -1,5 +1,6 @@
 package de.mephisto.vpin.server.competitions;
 
+import de.mephisto.vpin.server.highscores.ScoreList;
 import de.mephisto.vpin.server.system.SystemService;
 import de.mephisto.vpin.server.util.RequestUtil;
 import org.apache.commons.io.FilenameUtils;
@@ -42,17 +43,13 @@ public class CompetitionResource {
   }
 
   @GetMapping("/active/offline")
-  public Competition getActiveOffCompetition() {
-    Competition c = competitionService.getActiveOfflineCompetition();
-    if (c == null) {
-      throw new ResponseStatusException(NOT_FOUND, "Not active offline competition found");
-    }
-    return c;
+  public List<Competition> getActiveOffCompetition() {
+    return competitionService.getActiveOfflineCompetitions();
   }
 
-  @GetMapping("/highscores/{id}")
-  public List<Object> getHighscoresForCompetition(@PathVariable("id") int id) {
-    return competitionService.getCompetitionHighscores(id);
+  @GetMapping("/scores/{id}")
+  public ScoreList getScore(@PathVariable("id") int id) {
+    return competitionService.getCompetitionScores(id);
   }
 
   @GetMapping("/badges")

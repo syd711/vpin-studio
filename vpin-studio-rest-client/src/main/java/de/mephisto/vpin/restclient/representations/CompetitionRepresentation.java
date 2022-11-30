@@ -4,7 +4,6 @@ import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
 import java.util.Date;
-import java.util.List;
 
 public class CompetitionRepresentation {
   private Long id;
@@ -29,8 +28,6 @@ public class CompetitionRepresentation {
 
   private PlayerRepresentation winner;
 
-  private List<HighscoreRepresentation> highscores;
-
   public String getWinnerInitials() {
     return winnerInitials;
   }
@@ -53,14 +50,6 @@ public class CompetitionRepresentation {
 
   public void setActive(boolean active) {
     this.active = active;
-  }
-
-  public List<HighscoreRepresentation> getHighscores() {
-    return highscores;
-  }
-
-  public void setHighscores(List<HighscoreRepresentation> highscores) {
-    this.highscores = highscores;
   }
 
   public Long getId() {

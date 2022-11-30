@@ -29,9 +29,6 @@ public class PlayerService {
   @Autowired
   private AssetRepository assetRepository;
 
-  @Autowired
-  private GameService gameService;
-
   public List<Player> getBuildInPlayers() {
     List<Player> all = playerRepository.findAll();
     all.sort(Comparator.comparing(Player::getName));
@@ -61,6 +58,19 @@ public class PlayerService {
       return players;
     }
     return Collections.emptyList();
+  }
+
+  public Optional<Player> getPlayerForInitials(String initials) {
+    List<Player> players = playerRepository.findByInitials(initials);
+    if(players.size() > 1) {
+      LOG.warn("Found duplicate player for initials '{}', using first one.", initials);
+    }
+
+    if(!players.isEmpty()) {
+      return Optional.of(players.get(0));
+    }
+
+    return discordPlayerService.getPlayerByInitials(initials);
   }
 
   public boolean invalidateDomain(PlayerDomain domain) {
@@ -102,41 +112,6 @@ public class PlayerService {
     }
     playerRepository.deleteById(id);
     LOG.info("Deleted player " + id);
-  }
-
-  public List<PlayerScore> getHighscores(String initials) {
-    List<PlayerScore> filtered = new ArrayList<>();
-
-    List<Player> players = playerRepository.findByInitials(initials);
-    Optional<Player> player = Optional.empty();
-    if (!players.isEmpty()) {
-      player = Optional.of(players.get(0));
-    }
-    else if (discordPlayerService.isEnabled()) {
-      player = discordPlayerService.getPlayerByInitials(initials);
-    }
-
-    if (player.isPresent() && !StringUtils.isEmpty(player.get().getInitials())) {
-      Player p = player.get();
-      List<Game> games = gameService.getGames();
-      for (Game game : games) {
-        List<Score> scores = game.getScores();
-        for (Score score : scores) {
-          if (score.getUserInitials().equals(p.getInitials())) {
-            String uri = null;
-            GameMediaItem gameMediaItem = game.getEmulator().getGameMedia().get(PopperScreen.Wheel);
-            if (gameMediaItem != null) {
-              uri = gameMediaItem.getUri();
-            }
-            filtered.add(new PlayerScore(score, game.getScoresChangedDate(), game.getGameDisplayName(), uri));
-          }
-        }
-      }
-    }
-    else {
-      LOG.info("No player found with initials '" + initials + "'");
-    }
-    return filtered;
   }
 
   private void duplicatesCheck(List<Player> players) {

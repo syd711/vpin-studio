@@ -29,28 +29,9 @@ public class GameRepresentation {
   private boolean pupPackAvailable;
   private int validationState;
   private int volume;
-  private String rawHighscore;
   private String hsFileName;
   private boolean romExists;
   private String ignoredValidations;
-  private List<ScoreRepresentation> scores;
-  private Date scoresChangedDate;
-
-  public Date getScoresChangedDate() {
-    return scoresChangedDate;
-  }
-
-  public void setScoresChangedDate(Date scoresChangedDate) {
-    this.scoresChangedDate = scoresChangedDate;
-  }
-
-  public List<ScoreRepresentation> getScores() {
-    return scores;
-  }
-
-  public void setScores(List<ScoreRepresentation> scores) {
-    this.scores = scores;
-  }
 
   public String getIgnoredValidations() {
     return ignoredValidations;
@@ -74,14 +55,6 @@ public class GameRepresentation {
 
   public void setHsFileName(String hsFileName) {
     this.hsFileName = hsFileName;
-  }
-
-  public String getRawHighscore() {
-    return rawHighscore;
-  }
-
-  public void setRawHighscore(String rawHighscore) {
-    this.rawHighscore = rawHighscore;
   }
 
   public int getVolume() {

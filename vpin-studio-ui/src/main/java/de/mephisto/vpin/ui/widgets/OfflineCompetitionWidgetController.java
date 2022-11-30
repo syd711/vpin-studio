@@ -1,7 +1,9 @@
 package de.mephisto.vpin.ui.widgets;
 
 import de.mephisto.vpin.restclient.representations.CompetitionRepresentation;
-import de.mephisto.vpin.ui.DashboardController;
+import de.mephisto.vpin.restclient.representations.ScoreListRepresentation;
+import de.mephisto.vpin.restclient.representations.ScoreRepresentation;
+import de.mephisto.vpin.restclient.representations.ScoreSummaryRepresentation;
 import de.mephisto.vpin.ui.Studio;
 import eu.hansolo.tilesfx.Tile;
 import eu.hansolo.tilesfx.TileBuilder;
@@ -29,7 +31,10 @@ import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
 import java.util.Date;
+import java.util.List;
 import java.util.ResourceBundle;
+
+import static de.mephisto.vpin.ui.Studio.client;
 
 public class OfflineCompetitionWidgetController extends WidgetController implements Initializable {
   private final static Logger LOG = LoggerFactory.getLogger(OfflineCompetitionWidgetController.class);
@@ -69,11 +74,12 @@ public class OfflineCompetitionWidgetController extends WidgetController impleme
         .customDecimalFormat(new DecimalFormat("###,###,###"))
         .borderWidth(1)
         .borderColor(Color.web("#111111"))
-        .text("Gerrit Grunwald")
+        .text("")
         .decimals(0)
+        .value(0)
         .unit("")
         .image(image)
-        .text("bubu")
+        .text("#1 Place")
         .animated(true)
         .checkThreshold(true)
         .onTileEvent(e -> {
@@ -149,11 +155,6 @@ public class OfflineCompetitionWidgetController extends WidgetController impleme
     } catch (IOException e) {
       LOG.error("Failed to load competition summary widget: " + e.getMessage(), e);
     }
-
-    Platform.runLater(() -> {
-      turnoverTile.setValue(Double.valueOf("7000000000"));
-    });
-
   }
 
   public void setCompetition(CompetitionRepresentation competition) {
@@ -167,9 +168,20 @@ public class OfflineCompetitionWidgetController extends WidgetController impleme
       if(remainingDays < 0) {
         remainingDays = 0;
       }
-      turnoverTile.setTitle("-");
       countdownTile.setDescription(String.valueOf(remainingDays));
       countdownTile.setText("Competition End: " + DateFormat.getDateInstance().format(competition.getEndDate()));
+
+      ScoreListRepresentation competitionScores = client.getCompetitionScores(Math.toIntExact(competition.getId()));
+      if(competitionScores.getLatestScore() != null) {
+        ScoreSummaryRepresentation latestScore = competitionScores.getLatestScore();
+        ScoreRepresentation currentScore = latestScore.getScores().get(0);
+
+        Platform.runLater(() -> {
+          turnoverTile.setTitle("#1 Place");
+          turnoverTile.setValue(currentScore.getNumericScore());
+          turnoverTile.setText(currentScore.getPlayerInitials());
+        });
+      }
     }
     else {
     }

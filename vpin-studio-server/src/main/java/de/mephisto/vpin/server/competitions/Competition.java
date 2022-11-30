@@ -10,7 +10,9 @@ import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -32,9 +34,6 @@ public class Competition {
   @Id
   @GeneratedValue(strategy = GenerationType.AUTO)
   private Long id;
-
-  @OneToMany
-  private Set<Highscore> highscores;
 
   @OneToOne(cascade = CascadeType.ALL)
   private Asset logo;
@@ -124,14 +123,6 @@ public class Competition {
     this.gameId = gameId;
   }
 
-  public Set<Highscore> getHighscores() {
-    return highscores;
-  }
-
-  public void setHighscores(Set<Highscore> highscores) {
-    this.highscores = highscores;
-  }
-
   public Date getStartDate() {
     return startDate;
   }
@@ -178,5 +169,25 @@ public class Competition {
 
   public void setUpdatedAt(Date updatedAt) {
     this.updatedAt = updatedAt;
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) return true;
+    if (o == null || getClass() != o.getClass()) return false;
+
+    Competition that = (Competition) o;
+
+    return id.equals(that.id);
+  }
+
+  @Override
+  public int hashCode() {
+    return id.hashCode();
+  }
+
+  @Override
+  public String toString() {
+    return "Competition '" + this.getName() + "'";
   }
 }

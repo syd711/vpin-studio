@@ -42,4 +42,6 @@ module de.mephisto.vpin.ui {
   opens de.mephisto.vpin.ui.tables.dialogs to javafx.fxml;
   exports de.mephisto.vpin.ui.overlay;
   opens de.mephisto.vpin.ui.overlay to javafx.fxml;
+  exports de.mephisto.vpin.ui.util;
+  opens de.mephisto.vpin.ui.util to javafx.fxml;
 }

@@ -1,31 +1,62 @@
 package de.mephisto.vpin.server.highscores;
 
+import de.mephisto.vpin.server.players.Player;
 import org.apache.commons.lang3.StringUtils;
 
 public class Score {
-  private String userInitials = "???";
+  private String playerInitials = "???";
+  private int gameId;
+  private Player player;
   private String score;
+  private double numericScore;
   private int position;
 
-  public Score(String userInitials, String score, int position) {
+  public Score(int gameId, String playerInitials, Player player, String score, double numericScore, int position) {
+    this.gameId = gameId;
+    this.player = player;
     this.score = score;
+    this.numericScore = numericScore;
     this.position = position;
-    if (userInitials != null) {
-      this.userInitials = userInitials;
+    if (playerInitials != null) {
+      this.playerInitials = playerInitials;
     }
   }
 
-  public String getUserInitials() {
-    while (userInitials.length() < 3) {
-      userInitials += " ";
-    }
-    return userInitials;
+  public int getGameId() {
+    return gameId;
   }
 
-  public void setUserInitials(String userInitials) {
-    if (!StringUtils.isEmpty(userInitials.trim())) {
-      this.userInitials = userInitials;
+  public void setGameId(int gameId) {
+    this.gameId = gameId;
+  }
+
+  public String getPlayerInitials() {
+    while (playerInitials.length() < 3) {
+      playerInitials += " ";
     }
+    return playerInitials;
+  }
+
+  public void setPlayerInitials(String playerInitials) {
+    if (!StringUtils.isEmpty(playerInitials.trim())) {
+      this.playerInitials = playerInitials;
+    }
+  }
+
+  public Player getPlayer() {
+    return player;
+  }
+
+  public void setPlayer(Player player) {
+    this.player = player;
+  }
+
+  public void setNumericScore(double numericScore) {
+    this.numericScore = numericScore;
+  }
+
+  public double getNumericScore() {
+    return numericScore;
   }
 
   public int getPosition() {
@@ -46,6 +77,6 @@ public class Score {
 
   @Override
   public String toString() {
-    return this.getPosition() + ". " + this.getUserInitials() + "   " + this.getScore();
+    return this.getPosition() + ". " + this.getPlayerInitials() + "   " + this.getScore();
   }
 }

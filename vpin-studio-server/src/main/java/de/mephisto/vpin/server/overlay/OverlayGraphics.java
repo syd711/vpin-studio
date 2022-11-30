@@ -1,5 +1,6 @@
 package de.mephisto.vpin.server.overlay;
 
+import de.mephisto.vpin.server.competitions.ScoreSummary;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameService;
 import de.mephisto.vpin.server.highscores.HighscoreService;
@@ -49,10 +50,12 @@ public class OverlayGraphics {
 
   private final OverlayService overlayService;
   private final GameService service;
+  private final HighscoreService highscoreService;
 
   public OverlayGraphics(OverlayService overlayService, GameService service, HighscoreService highscoreService) {
     this.overlayService = overlayService;
     this.service = service;
+    this.highscoreService = highscoreService;
   }
 
   public BufferedImage draw() throws Exception {
@@ -128,7 +131,8 @@ public class OverlayGraphics {
     sorted.addAll(gamesWithOutDate);
 
     for (Game game : sorted) {
-      if (game.getScores().isEmpty()) {
+      ScoreSummary summary = highscoreService.getHighscores(game);
+      if (summary.getScores().isEmpty()) {
         LOG.info("Skipped highscore rendering of " + game.getGameDisplayName() + ", no highscore info found");
         continue;
       }
@@ -148,9 +152,9 @@ public class OverlayGraphics {
       g.setFont(new Font(TABLE_FONT_NAME, TABLE_FONT_STYLE, TABLE_FONT_SIZE));
       g.drawString(game.getGameDisplayName(), x, yStart + SCORE_FONT_SIZE);
 
-      Score score = game.getScores().get(0);
+      Score score = summary.getScores().get(0);
       g.setFont(new Font(SCORE_FONT_NAME, SCORE_FONT_STYLE, SCORE_FONT_SIZE));
-      g.drawString(score.getUserInitials() + " " + score.getScore(), x,
+      g.drawString(score.getPlayerInitials() + " " + score.getScore(), x,
           yStart + SCORE_FONT_SIZE + ((ROW_HEIGHT - SCORE_FONT_SIZE) / 2) + SCORE_FONT_SIZE / 2);
 
       yStart = yStart + ROW_HEIGHT + ROW_SEPARATOR;

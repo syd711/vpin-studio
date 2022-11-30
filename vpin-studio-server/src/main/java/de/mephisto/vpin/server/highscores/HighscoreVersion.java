@@ -10,7 +10,7 @@ import java.util.Date;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class HighscoreVersion {
 
-  @Column(nullable = false, updatable = false)
+  @Column(nullable = false)
   @Temporal(TemporalType.TIMESTAMP)
   private Date createdAt;
 

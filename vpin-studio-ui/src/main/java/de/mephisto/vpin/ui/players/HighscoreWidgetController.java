@@ -1,8 +1,6 @@
 package de.mephisto.vpin.ui.players;
 
 import de.mephisto.vpin.restclient.RestClient;
-import de.mephisto.vpin.restclient.representations.GameMediaItemRepresentation;
-import de.mephisto.vpin.restclient.representations.GameRepresentation;
 import de.mephisto.vpin.restclient.representations.PlayerScoreRepresentation;
 import de.mephisto.vpin.restclient.representations.ScoreRepresentation;
 import de.mephisto.vpin.ui.widgets.WidgetController;
@@ -63,7 +61,7 @@ public class HighscoreWidgetController extends WidgetController implements Initi
 
     ScoreRepresentation score = playerScore.getScore();
     positionLabel.setText("#" + score.getPosition());
-    nameLabel.setText(score.getUserInitials());
+    nameLabel.setText(score.getPlayerInitials());
 
     scoreLabel.setFont(getScoreFont());
     scoreLabel.setText(score.getScore());

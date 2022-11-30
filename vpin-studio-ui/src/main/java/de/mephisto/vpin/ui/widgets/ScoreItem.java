@@ -67,7 +67,7 @@ public class ScoreItem extends BorderPane {
     avatar.setPreserveRatio(true);
     infoRow.getChildren().add(avatar);
 
-    Label nameLabel = new Label(score.getUserInitials());
+    Label nameLabel = new Label(score.getPlayerInitials());
     infoRow.getChildren().add(nameLabel);
 
     HBox scoreRow = new HBox();

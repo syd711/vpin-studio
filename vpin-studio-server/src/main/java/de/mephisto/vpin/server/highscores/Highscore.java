@@ -15,15 +15,9 @@ import java.util.Date;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class Highscore {
 
-  @Column(nullable = false, updatable = false)
-  @Temporal(TemporalType.TIMESTAMP)
-  @CreatedDate
-  private Date createdAt;
-
   @Column(nullable = false)
   @Temporal(TemporalType.TIMESTAMP)
-  @LastModifiedDate
-  private Date updatedAt;
+  private Date createdAt;
 
   @Id
   @GeneratedValue(strategy = GenerationType.AUTO)
@@ -67,14 +61,6 @@ public class Highscore {
     this.createdAt = createdAt;
   }
 
-  public Date getUpdatedAt() {
-    return updatedAt;
-  }
-
-  public void setUpdatedAt(Date updatedAt) {
-    this.updatedAt = updatedAt;
-  }
-
   public String getRaw() {
     return raw;
   }
@@ -88,7 +74,6 @@ public class Highscore {
     highscore.setRaw(rawValue);
     highscore.setGameId(game.getId());
     highscore.setCreatedAt(new Date());
-    highscore.setUpdatedAt(new Date());
     highscore.setDisplayName(game.getGameDisplayName());
     return highscore;
   }

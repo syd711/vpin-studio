@@ -26,14 +26,10 @@ public class Game {
   private File gameFile;
 
   private Date lastPlayed;
-  private Date scoresChangedDate;
   private int numberPlays;
   private int validationState;
   private String ignoredValidations;
   private int volume;
-
-  private String rawHighscore;
-  private List<Score> scores = new ArrayList<>();
 
   private SystemService systemService;
 
@@ -98,14 +94,6 @@ public class Game {
     this.lastPlayed = lastPlayed;
   }
 
-  public Date getScoresChangedDate() {
-    return scoresChangedDate;
-  }
-
-  public void setScoresChangedDate(Date scoresChangedDate) {
-    this.scoresChangedDate = scoresChangedDate;
-  }
-
   public int getVolume() {
     return volume;
   }
@@ -120,15 +108,6 @@ public class Game {
 
   public void setIgnoredValidations(String ignoredValidations) {
     this.ignoredValidations = ignoredValidations;
-  }
-
-  @NonNull
-  public List<Score> getScores() {
-    return scores;
-  }
-
-  public void setScores(List<Score> scores) {
-    this.scores = scores;
   }
 
   @JsonIgnore
@@ -202,14 +181,6 @@ public class Game {
     File pupVideos = new File(systemService.getPinUPSystemFolder(), "PUPVideos");
     File pupPackFolder = new File(pupVideos, getRom());
     return pupPackFolder.exists() && pupPackFolder.listFiles().length > 1;
-  }
-
-  public String getRawHighscore() {
-    return rawHighscore;
-  }
-
-  public void setRawHighscore(String rawHighscore) {
-    this.rawHighscore = rawHighscore;
   }
 
   public String getHsFileName() {

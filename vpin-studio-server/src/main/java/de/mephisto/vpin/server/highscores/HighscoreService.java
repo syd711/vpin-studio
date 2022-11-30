@@ -1,5 +1,6 @@
 package de.mephisto.vpin.server.highscores;
 
+import de.mephisto.vpin.server.competitions.ScoreSummary;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.system.SystemService;
 import edu.umd.cs.findbugs.annotations.NonNull;
@@ -12,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -27,6 +29,9 @@ public class HighscoreService implements InitializingBean {
 
   @Autowired
   private HighscoreVersionRepository highscoreVersionRepository;
+
+  @Autowired
+  private HighscoreParser highscoreParser;
 
   private HighscoreResolver highscoreResolver;
 
@@ -51,6 +56,84 @@ public class HighscoreService implements InitializingBean {
     return highscore.get();
   }
 
+  public List<Score> parseScores(String raw, int gameId) {
+    return highscoreParser.parseScores(raw, gameId);
+  }
+
+  /**
+   * Returns all available scores for the game with the given id and time frame
+   *
+   * @param gameId
+   * @param start
+   * @param end
+   * @return
+   */
+  public ScoreList getScoresBetween(int gameId, Date start, Date end) {
+    ScoreList scoreList = new ScoreList();
+    Optional<Highscore> highscore = highscoreRepository.findByGameIdAndCreatedAtBetween(gameId, start, end);
+    if (highscore.isPresent()) {
+      Highscore h = highscore.get();
+      ScoreSummary scoreSummary = getScoreSummary(h.getRaw(), h.getCreatedAt(), gameId);
+      scoreList.setLatestScore(scoreSummary);
+    }
+
+    List<HighscoreVersion> byGameIdAndCreatedAtBetween = highscoreVersionRepository.findByGameIdAndCreatedAtBetween(gameId, start, end);
+    for (HighscoreVersion version : byGameIdAndCreatedAtBetween) {
+      ScoreSummary scoreSummary = getScoreSummary(version.getRaw(), version.getCreatedAt(), gameId);
+      scoreList.getScores().add(scoreSummary);
+    }
+    return scoreList;
+  }
+
+
+  /**
+   * Returns a list of all scores that are available for the player with the given initials
+   *
+   * @param initials the initials to filter for
+   * @return all highscores of the given player
+   */
+  public ScoreSummary getHighscores(String initials) {
+    ScoreSummary summary = new ScoreSummary(new ArrayList<>(), new Date());
+    List<Highscore> all = highscoreRepository.findAll();
+    for (Highscore highscore : all) {
+      List<Score> scores = parseScores(highscore.getRaw(), highscore.getGameId());
+      for (Score score : scores) {
+        if (score.getPlayerInitials().equalsIgnoreCase(initials)) {
+          summary.getScores().add(score);
+        }
+      }
+    }
+    return summary;
+  }
+
+  /**
+   * Returns a list of all scores for the given game
+   *
+   * @param game the game to retrieve the highscores for
+   * @return all highscores of the given player
+   */
+  public ScoreSummary getHighscores(Game game) {
+    ScoreSummary summary = new ScoreSummary(new ArrayList<>(), new Date());
+    Optional<Highscore> highscore = highscoreRepository.findByGameId(game.getId());
+    if(highscore.isPresent()) {
+      Highscore h = highscore.get();
+      if(!StringUtils.isEmpty(h.getRaw())) {
+        List<Score> scores = parseScores(h.getRaw(), game.getId());
+        summary.setRaw(h.getRaw());
+        summary.getScores().addAll(scores);
+      }
+    }
+    return summary;
+  }
+
+  private ScoreSummary getScoreSummary(String raw, Date createdAt, int gameId) {
+    List<Score> scores = parseScores(raw, gameId);
+    if (scores.size() > 0) {
+      return new ScoreSummary(scores, createdAt);
+    }
+    return null;
+  }
+
   public void addHighscoreChangeListener(@NonNull HighscoreChangeListener listener) {
     this.listeners.add(listener);
   }
@@ -65,7 +148,7 @@ public class HighscoreService implements InitializingBean {
     HighscoreChangeEvent event = null;
 
     String rawHighscore = highscoreResolver.readHighscore(game);
-    if(StringUtils.isEmpty(rawHighscore)) {
+    if (StringUtils.isEmpty(rawHighscore)) {
       LOG.info("Skipped highscore changed event for {} because the raw data of the score is empty.", game);
       return;
     }
@@ -87,6 +170,7 @@ public class HighscoreService implements InitializingBean {
 
         //update existing one
         highscore.setRaw(rawHighscore);
+        highscore.setCreatedAt(new Date());
         highscoreRepository.saveAndFlush(highscore);
 
         LOG.info("Archived old highscore and saved updated highscore for " + game);
@@ -114,20 +198,6 @@ public class HighscoreService implements InitializingBean {
     else {
       LOG.info("Skipped highscore change event for {} because the raw highscore data did not change.", game);
     }
-  }
-
-  public List<Score> convertToScores(Highscore highscore) {
-    List<Score> result = new ArrayList<>();
-//    if (!StringUtils.isEmpty(this.score1)) {
-//      result.add(new Score(initials1, score1, 1));
-//    }
-//    if (!StringUtils.isEmpty(this.score2)) {
-//      result.add(new Score(initials2, score2, 2));
-//    }
-//    if (!StringUtils.isEmpty(this.score3)) {
-//      result.add(new Score(initials3, score3, 3));
-//    }
-    return result;
   }
 
   private void triggerHighscoreChange(@NonNull HighscoreChangeEvent event) {

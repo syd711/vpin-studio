@@ -15,6 +15,7 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.net.URL;
 import java.util.Arrays;
+import java.util.List;
 import java.util.ResourceBundle;
 
 import static de.mephisto.vpin.ui.Studio.client;
@@ -51,9 +52,13 @@ public class DashboardController implements Initializable, StudioFXController {
       BorderPane root = loader.load();
       root.setMaxWidth(Double.MAX_VALUE);
       OfflineCompetitionWidgetController controller = loader.getController();
-      CompetitionRepresentation activeOfflineCompetition = client.getActiveOfflineCompetition();
-      controller.setCompetition(activeOfflineCompetition);
-      widgetTop.setTop(root);
+
+      List<CompetitionRepresentation> activeOfflineCompetitions = client.getActiveOfflineCompetitions();
+      if(!activeOfflineCompetitions.isEmpty()) {
+        controller.setCompetition(activeOfflineCompetitions.get(0));
+        widgetTop.setTop(root);
+      }
+
     } catch (IOException e) {
       LOG.error("Failed to load score widget: " + e.getMessage(), e);
     }

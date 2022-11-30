@@ -28,7 +28,6 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.StackPane;
 import javafx.stage.FileChooser;
 import org.apache.commons.io.FilenameUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.kordamp.ikonli.javafx.FontIcon;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -203,7 +202,7 @@ public class HighscoreCardsController implements Initializable, ObservedProperty
   @FXML
   private void onOpenImage() {
     GameRepresentation game = tableCombo.getValue();
-    if(game != null) {
+    if (game != null) {
       ByteArrayInputStream s = Studio.client.getHighscoreCard(game);
       MediaUtil.openMedia(s);
     }
@@ -221,13 +220,7 @@ public class HighscoreCardsController implements Initializable, ObservedProperty
       return;
     }
     List<GameRepresentation> games = client.getGames();
-    List<GameRepresentation> filtered = new ArrayList<>();
-    for (GameRepresentation game : games) {
-      if (!StringUtils.isEmpty(game.getRawHighscore())) {
-        filtered.add(game);
-      }
-    }
-    ObservableList<GameRepresentation> gameRepresentations = FXCollections.observableArrayList(filtered);
+    ObservableList<GameRepresentation> gameRepresentations = FXCollections.observableArrayList(games);
     tableCombo.getItems().clear();
     tableCombo.getItems().addAll(gameRepresentations);
     onGenerateClick();
@@ -251,7 +244,7 @@ public class HighscoreCardsController implements Initializable, ObservedProperty
   @FXML
   private void onOpenDirectB2SBackground() {
     GameRepresentation game = tableCombo.getValue();
-    if(game != null) {
+    if (game != null) {
       ByteArrayInputStream s = Studio.client.getDirectB2SImage(game);
       MediaUtil.openMedia(s);
     }
@@ -369,31 +362,32 @@ public class HighscoreCardsController implements Initializable, ObservedProperty
       previewStack.getChildren().add(waitOverlay);
 
       try {
-          new Thread(() -> {
-            if (regenerate) {
-              client.generateHighscoreCard(game.get());
-            }
+        new Thread(() -> {
+          if (regenerate) {
+            client.generateHighscoreCard(game.get());
+          }
 
-            InputStream input = client.getHighscoreCard(game.get());
-            Image image = new Image(input);
-            cardPreview.setImage(image);
-            cardPreview.setVisible(true);
+          InputStream input = client.getHighscoreCard(game.get());
+          Image image = new Image(input);
+          cardPreview.setImage(image);
+          cardPreview.setVisible(true);
 
-            int resolution = Integer.parseInt(imageScalingCombo.getValue());
-            if (image.getWidth() >= resolution && image.getWidth() < imageCenter.getWidth()) {
+          int resolution = Integer.parseInt(imageScalingCombo.getValue());
+          if (image.getWidth() >= resolution && image.getWidth() < imageCenter.getWidth()) {
 //              cardPreview.setFitHeight(image.getHeight());
 //              cardPreview.setFitWidth(image.getWidth());
-            } else {
-              cardPreview.setFitHeight(imageCenter.getHeight() - offset);
-              cardPreview.setFitWidth(imageCenter.getWidth() - offset);
-            }
+          }
+          else {
+            cardPreview.setFitHeight(imageCenter.getHeight() - offset);
+            cardPreview.setFitWidth(imageCenter.getWidth() - offset);
+          }
 
-            Platform.runLater(() -> {
-              imageMetaDataLabel.setText("Resolution: " + (int) image.getWidth() + " x " + (int) image.getHeight());
-              previewStack.getChildren().remove(waitOverlay);
-            });
+          Platform.runLater(() -> {
+            imageMetaDataLabel.setText("Resolution: " + (int) image.getWidth() + " x " + (int) image.getHeight());
+            previewStack.getChildren().remove(waitOverlay);
+          });
 
-          }).start();
+        }).start();
         cardPreview.setFitHeight(imageCenter.getHeight() - offset);
         cardPreview.setFitWidth(imageCenter.getWidth() - offset);
 

@@ -1,7 +1,10 @@
 package de.mephisto.vpin.server.players;
 
 import de.mephisto.vpin.restclient.PlayerDomain;
+import de.mephisto.vpin.server.competitions.ScoreSummary;
 import de.mephisto.vpin.server.highscores.Highscore;
+import de.mephisto.vpin.server.highscores.HighscoreService;
+import de.mephisto.vpin.server.highscores.ScoreList;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
@@ -18,6 +21,8 @@ public class PlayersResource {
   @Autowired
   private PlayerService playerService;
 
+  @Autowired
+  private HighscoreService highscoreService;
 
   @GetMapping
   public List<Player> getPlayers() {
@@ -35,8 +40,8 @@ public class PlayersResource {
   }
 
   @GetMapping("/highscores/{initials}")
-  public List<PlayerScore> getHighscores(@PathVariable("initials") String initials) {
-    return playerService.getHighscores(initials.toUpperCase());
+  public ScoreSummary getHighscores(@PathVariable("initials") String initials) {
+    return highscoreService.getHighscores(initials);
   }
 
   @GetMapping("/{id}")

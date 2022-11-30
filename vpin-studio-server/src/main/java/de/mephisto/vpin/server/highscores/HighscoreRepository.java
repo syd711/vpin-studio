@@ -13,5 +13,5 @@ public interface HighscoreRepository extends JpaRepository<Highscore, Long> {
 
   Optional<Highscore> findByGameId(int gameId);
 
-  Optional<Highscore> findByGameIdAndUpdatedAtBetween(int gameId, Date start, Date end);
+  Optional<Highscore> findByGameIdAndCreatedAtBetween(int gameId, Date start, Date end);
 }

@@ -1,13 +1,17 @@
 package de.mephisto.vpin.server.highscores;
 
-import de.mephisto.vpin.server.games.Game;
+import de.mephisto.vpin.server.players.Player;
+import de.mephisto.vpin.server.players.PlayerService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
@@ -28,16 +32,20 @@ import java.util.stream.Collectors;
  * PARTY CHAMPION
  * PAB      20.000.000
  */
+@Service
 public class HighscoreParser {
   private final static Logger LOG = LoggerFactory.getLogger(HighscoreParser.class);
 
-  public static List<Score> parseScores(Game game, String raw) {
+  @Autowired
+  private PlayerService playerService;
+
+  public List<Score> parseScores(String raw, int gameId) {
     List<Score> scores = new ArrayList<>();
     try {
-      LOG.debug("Parsing Highscore text for " + game.getGameDisplayName() + "\n" + raw);
+      LOG.debug("Parsing Highscore text: " + raw);
       String[] lines = raw.split("\\n");
       if (lines.length == 2) {
-        Score score = new Score(null, lines[1].trim(), 1);
+        Score score = createScore(lines[1], gameId);
         scores.add(score);
         return scores;
       }
@@ -45,7 +53,7 @@ public class HighscoreParser {
       int index = 1;
       for (String line : lines) {
         if (line.startsWith(index + ")") || line.startsWith("#" + index) || line.startsWith(index + "#")) {
-          Score score = createScore(line);
+          Score score = createScore(line, gameId);
           scores.add(score);
           index++;
         }
@@ -55,24 +63,25 @@ public class HighscoreParser {
         }
       }
     } catch (Exception e) {
-      LOG.error("Failed to parse highscore for '" + game + "': " + e.getMessage() + "\nRaw Data:\n==================================\n" + raw, e);
+      LOG.error("Failed to parse highscore: " + e.getMessage() + "\nRaw Data:\n==================================\n" + raw, e);
     }
     return scores;
   }
 
-  private void parseTwoLineOutput(Highscore highscore, String line) {
-
-  }
-
-  private static Score createScore(String line) {
+  private Score createScore(String line, int gameId) {
     List<String> collect = Arrays.stream(line.trim().split(" ")).filter(s -> s.trim().length() > 0).collect(Collectors.toList());
     String indexString = collect.get(0).replaceAll("[^0-9]", "");
+
+    Player p =  null;
     int index = Integer.parseInt(indexString);
-    if (collect.size() == 2) {
-      return new Score(null, collect.get(1), index);
-    }
-    else if (collect.size() == 3) {
-      return new Score(collect.get(1), collect.get(2), index);
+    if (collect.size() == 3) {
+      String score = collect.get(2);
+      String initials = collect.get(1);
+      Optional<Player> player = playerService.getPlayerForInitials(initials);
+      if(player.isPresent()) {
+        p = player.get();
+      }
+      return new Score(gameId, initials, p, score, toNumericScore(score), index);
     }
     else if (collect.size() > 3) {
       StringBuilder initials = new StringBuilder();
@@ -80,17 +89,21 @@ public class HighscoreParser {
         initials.append(collect.get(i));
         initials.append(" ");
       }
-      return new Score(initials.toString().trim(), collect.get(collect.size() - 1), index);
+      String score = collect.get(collect.size() - 1);
+      String playerInitials = initials.toString().trim();
+      Optional<Player> player = playerService.getPlayerForInitials(playerInitials);
+      if(player.isPresent()) {
+        p = player.get();
+      }
+      return new Score(gameId, playerInitials, p, score, toNumericScore(score), index);
     }
     else {
       throw new UnsupportedOperationException("Could parse score line '" + line + "'");
     }
   }
 
-  public static String formatScore(String score) {
-    DecimalFormat decimalFormat = new DecimalFormat("#.##");
-    decimalFormat.setGroupingUsed(true);
-    decimalFormat.setGroupingSize(3);
-    return decimalFormat.format(Long.parseLong(score));
+  private static double toNumericScore(String score) {
+    String cleanScore = score.trim().replaceAll("\\.", "").replaceAll(",", "");
+    return Double.parseDouble(cleanScore);
   }
 }

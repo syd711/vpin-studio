@@ -4,11 +4,10 @@ import de.mephisto.vpin.restclient.PopperScreen;
 import de.mephisto.vpin.restclient.representations.GameMediaItemRepresentation;
 import de.mephisto.vpin.restclient.representations.GameMediaRepresentation;
 import de.mephisto.vpin.restclient.representations.GameRepresentation;
-import de.mephisto.vpin.ui.StudioFXController;
+import de.mephisto.vpin.restclient.representations.ScoreSummaryRepresentation;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
-import javafx.scene.Parent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 import org.slf4j.Logger;
@@ -16,7 +15,6 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.net.URL;
-import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.ResourceBundle;
 
@@ -38,31 +36,30 @@ public class LatestScoresWidgetController extends WidgetController implements In
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
-
     List<GameRepresentation> games = client.getRecentlyPlayedGames(10);
 
     try {
       int count = 0;
       for (GameRepresentation game : games) {
-        if (!game.getScores().isEmpty()) {
-          GameMediaRepresentation gameMedia = client.getGameMedia(game.getId());
-          GameMediaItemRepresentation wheelMedia = gameMedia.getMedia().get(PopperScreen.Wheel.name());
-          if (wheelMedia == null) {
-            continue;
-          }
+        ScoreSummaryRepresentation scores = client.getGameScores(game.getId());
+        GameMediaRepresentation gameMedia = client.getGameMedia(game.getId());
 
-          FXMLLoader loader = new FXMLLoader(LatestScoreItemWidgetController.class.getResource("widget-latest-score-item.fxml"));
-          BorderPane row = loader.load();
-          row.setPrefWidth(root.getPrefWidth()-48);
-          LatestScoreItemWidgetController controller = loader.getController();
-          controller.setData(game, game.getScores().get(0), wheelMedia);
+        GameMediaItemRepresentation wheelMedia = gameMedia.getMedia().get(PopperScreen.Wheel.name());
+        if (wheelMedia == null) {
+          continue;
+        }
 
-          highscoreVBox.getChildren().add(row);
-          count++;
+        FXMLLoader loader = new FXMLLoader(LatestScoreItemWidgetController.class.getResource("widget-latest-score-item.fxml"));
+        BorderPane row = loader.load();
+        row.setPrefWidth(root.getPrefWidth() - 48);
+        LatestScoreItemWidgetController controller = loader.getController();
+        controller.setData(game, scores, wheelMedia);
 
-          if (count == 10) {
-            break;
-          }
+        highscoreVBox.getChildren().add(row);
+        count++;
+
+        if (count == 10) {
+          break;
         }
       }
     } catch (IOException e) {

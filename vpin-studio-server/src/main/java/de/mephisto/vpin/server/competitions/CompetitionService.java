@@ -1,9 +1,7 @@
 package de.mephisto.vpin.server.competitions;
 
-import de.mephisto.vpin.server.highscores.Highscore;
-import de.mephisto.vpin.server.highscores.HighscoreRepository;
-import de.mephisto.vpin.server.highscores.HighscoreVersion;
-import de.mephisto.vpin.server.highscores.HighscoreVersionRepository;
+import de.mephisto.vpin.server.highscores.HighscoreService;
+import de.mephisto.vpin.server.highscores.ScoreList;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
@@ -11,7 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -24,10 +21,7 @@ public class CompetitionService implements InitializingBean {
   private CompetitionsRepository competitionsRepository;
 
   @Autowired
-  private HighscoreRepository highscoreRepository;
-
-  @Autowired
-  private HighscoreVersionRepository highscoreVersionRepository;
+  private HighscoreService highscoreService;
 
   @Autowired
   private ThreadPoolTaskScheduler scheduler;
@@ -41,23 +35,12 @@ public class CompetitionService implements InitializingBean {
     return competition.orElse(null);
   }
 
-  public List<Object> getCompetitionHighscores(long id) {
-    List<Object> result = new ArrayList<>();
-    Optional<Competition> competition = competitionsRepository.findById(id);
-    if(competition.isPresent()) {
-      Competition c = competition.get();
-      Date start = c.getStartDate();
-      Date end = c.getEndDate();
-
-      Optional<Highscore> highscore = highscoreRepository.findByGameIdAndUpdatedAtBetween(c.getGameId(), start, end);
-      if(highscore.isPresent()) {
-        result.add(highscore);
-      }
-
-      List<HighscoreVersion> byGameIdAndCreatedAtBetween = highscoreVersionRepository.findByGameIdAndCreatedAtBetween(c.getGameId(), start, end);
-      result.addAll(byGameIdAndCreatedAtBetween);
-    }
-    return result;
+  public ScoreList getCompetitionScores(int id) {
+    Competition competition = getCompetition(id);
+    Date start = competition.getStartDate();
+    Date end= competition.getEndDate();
+    int gameId = competition.getGameId();
+    return highscoreService.getScoresBetween(gameId, start, end);
   }
 
   public Competition save(Competition c) {
@@ -66,20 +49,17 @@ public class CompetitionService implements InitializingBean {
     return getCompetition(c.getId());
   }
 
-  public Competition getActiveOfflineCompetition() {
-    List<Competition> activeCompetitions = competitionsRepository.findActiveCompetitions();
-    if (!activeCompetitions.isEmpty()) {
-      return activeCompetitions.get(0);
-    }
-    return null;
+  public List<Competition> getActiveOfflineCompetitions() {
+    return competitionsRepository.findByStartDateLessThanEqualAndEndDateGreaterThanEqual(new Date(), new Date());
   }
 
   public void delete(long id) {
     competitionsRepository.deleteById(id);
   }
 
+
   @Override
   public void afterPropertiesSet() throws Exception {
-    scheduler.scheduleAtFixedRate(new CompetitionCleanupRunnableTask(), 1000*60*60);
+    scheduler.scheduleAtFixedRate(new CompetitionCleanupRunnableTask(), 1000 * 60 * 60);
   }
 }

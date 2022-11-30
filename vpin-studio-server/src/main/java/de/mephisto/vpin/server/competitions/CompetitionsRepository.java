@@ -4,11 +4,13 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDate;
+import java.time.OffsetDateTime;
+import java.util.Date;
 import java.util.List;
 
 @Repository
 public interface CompetitionsRepository extends JpaRepository<Competition, Long> {
 
-  @Query(value = "SELECT * FROM Competitions c WHERE c.active = \"true\" ORDER BY updatedAt LIMIT 1", nativeQuery = true)
-  List<Competition> findActiveCompetitions();
+  List<Competition> findByStartDateLessThanEqualAndEndDateGreaterThanEqual(Date now1, Date now2);
 }

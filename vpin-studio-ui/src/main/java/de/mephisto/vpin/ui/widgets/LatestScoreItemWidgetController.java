@@ -4,7 +4,7 @@ import de.mephisto.vpin.restclient.RestClient;
 import de.mephisto.vpin.restclient.representations.GameMediaItemRepresentation;
 import de.mephisto.vpin.restclient.representations.GameRepresentation;
 import de.mephisto.vpin.restclient.representations.ScoreRepresentation;
-import javafx.application.Platform;
+import de.mephisto.vpin.restclient.representations.ScoreSummaryRepresentation;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
@@ -50,7 +50,7 @@ public class LatestScoreItemWidgetController extends WidgetController implements
   public void initialize(URL url, ResourceBundle resourceBundle) {
   }
 
-  public void setData(GameRepresentation game, ScoreRepresentation score, GameMediaItemRepresentation wheel) {
+  public void setData(GameRepresentation game, ScoreSummaryRepresentation scoreSummary, GameMediaItemRepresentation wheel) {
     String url = wheel.getUri();
     byte[] bytes = RestClient.getInstance().readBinary(url);
     ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(bytes);
@@ -60,13 +60,15 @@ public class LatestScoreItemWidgetController extends WidgetController implements
 
     tableLabel.setText(game.getGameDisplayName());
 
+    ScoreRepresentation score = scoreSummary.getScores().get(0);
+
     positionLabel.setText("#" + score.getPosition());
-    nameLabel.setText(score.getUserInitials());
+    nameLabel.setText(score.getPlayerInitials());
 
     scoreLabel.setFont(getScoreFont());
     scoreLabel.setText(score.getScore());
 
-    String date = simpleDateFormat.format(game.getScoresChangedDate());
+    String date = simpleDateFormat.format(scoreSummary.getCreatedAt());
     changeDateLabel.setText("Updated: " + date);
   }
 }

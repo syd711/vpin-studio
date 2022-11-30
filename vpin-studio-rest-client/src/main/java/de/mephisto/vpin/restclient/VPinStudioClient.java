@@ -10,6 +10,7 @@ import org.springframework.web.client.RestTemplate;
 
 import java.io.*;
 import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 
 public class VPinStudioClient implements ObservedPropertyChangeListener {
@@ -17,9 +18,9 @@ public class VPinStudioClient implements ObservedPropertyChangeListener {
 
   public final static String API = "api/v1/";
 
-  private Map<String, ObservedProperties> observedProperties = new HashMap<>();
+  private final Map<String, ObservedProperties> observedProperties = new HashMap<>();
 
-  private Map<String, byte[]> imageCache = new HashMap<>();
+  private final Map<String, byte[]> imageCache = new HashMap<>();
 
   private VPinStudioClient() {
 
@@ -29,9 +30,23 @@ public class VPinStudioClient implements ObservedPropertyChangeListener {
     return new VPinStudioClient();
   }
 
-  public ByteArrayInputStream getDirectB2SImage(GameRepresentation game) {
-    byte[] bytes = RestClient.getInstance().readBinary(API + "directb2s/" + game.getId());
-    return new ByteArrayInputStream(bytes);
+  /*********************************************************************************************************************
+   * Assets / Popper
+   ********************************************************************************************************************/
+
+  public GameMediaRepresentation getGameMedia(int id) {
+    return RestClient.getInstance().get(API + "poppermedia/" + id, GameMediaRepresentation.class);
+  }
+
+  public AssetRepresentation uploadAsset(File file, long id, int maxSize, AssetType assetType) throws Exception {
+    try {
+      String url = RestClient.getInstance().getBaseUrl() + API + "assets/" + id + "/upload/" + maxSize;
+      ResponseEntity<AssetRepresentation> exchange = new RestTemplate().exchange(url, HttpMethod.POST, createUpload(file, -1, null, assetType), AssetRepresentation.class);
+      return exchange.getBody();
+    } catch (Exception e) {
+      LOG.error("Asset upload failed: " + e.getMessage(), e);
+      throw e;
+    }
   }
 
   public ByteArrayInputStream getAsset(String uuid) {
@@ -42,12 +57,9 @@ public class VPinStudioClient implements ObservedPropertyChangeListener {
     return new ByteArrayInputStream(bytes);
   }
 
-  public String getURL(String segment) {
-    if (!segment.startsWith("http") && !segment.contains(API)) {
-      return RestClient.getInstance().getBaseUrl() + API + segment;
-    }
-    return segment;
-  }
+  /*********************************************************************************************************************
+   * Preferences
+   ********************************************************************************************************************/
 
   public PreferenceEntryRepresentation getPreference(String key) {
     return RestClient.getInstance().get(API + "preferences/" + key, PreferenceEntryRepresentation.class);
@@ -73,31 +85,33 @@ public class VPinStudioClient implements ObservedPropertyChangeListener {
     return false;
   }
 
-  public CompetitionRepresentation getActiveOfflineCompetition() {
+  public boolean uploadVPinAvatar(File file) throws Exception {
     try {
-      return RestClient.getInstance().get(API + "competitions/active/offline", CompetitionRepresentation.class);
+      String url = RestClient.getInstance().getBaseUrl() + API + "preferences/avatar";
+      new RestTemplate().exchange(url, HttpMethod.POST, createUpload(file, -1, null, AssetType.VPIN_AVATAR), Boolean.class);
+      return true;
+    } catch (Exception e) {
+      LOG.error("Background upload failed: " + e.getMessage(), e);
+      throw e;
+    }
+  }
+
+
+  /*********************************************************************************************************************
+   * Competitions
+   ********************************************************************************************************************/
+
+  public List<CompetitionRepresentation> getCompetitions() {
+    return Arrays.asList(RestClient.getInstance().get(API + "competitions", CompetitionRepresentation[].class));
+  }
+
+  public List<CompetitionRepresentation> getActiveOfflineCompetitions() {
+    try {
+      return Arrays.asList(RestClient.getInstance().get(API + "competitions/active/offline", CompetitionRepresentation[].class));
     } catch (Exception e) {
       LOG.error("Failed to read active competition: " + e.getMessage(), e);
     }
     return null;
-  }
-
-  public GameRepresentation getGame(int id) {
-    try {
-      return RestClient.getInstance().get(API + "games/" + id, GameRepresentation.class);
-    } catch (Exception e) {
-      LOG.error("Failed to read game " + id + ": " + e.getMessage(), e);
-    }
-    return null;
-  }
-
-  public GameRepresentation saveGame(GameRepresentation game) throws Exception {
-    try {
-      return RestClient.getInstance().post(API + "games/save", game, GameRepresentation.class);
-    } catch (Exception e) {
-      LOG.error("Failed to save game: " + e.getMessage(), e);
-      throw e;
-    }
   }
 
   public CompetitionRepresentation saveCompetition(CompetitionRepresentation c) throws Exception {
@@ -109,15 +123,6 @@ public class VPinStudioClient implements ObservedPropertyChangeListener {
     }
   }
 
-  public PlayerRepresentation savePlayer(PlayerRepresentation p) throws Exception {
-    try {
-      return RestClient.getInstance().post(API + "players/save", p, PlayerRepresentation.class);
-    } catch (Exception e) {
-      LOG.error("Failed to save player: " + e.getMessage(), e);
-      throw e;
-    }
-  }
-
   public void deleteCompetition(CompetitionRepresentation c) {
     try {
       RestClient.getInstance().delete(API + "competitions/delete/" + c.getId());
@@ -125,119 +130,11 @@ public class VPinStudioClient implements ObservedPropertyChangeListener {
       LOG.error("Failed to delete competition: " + e.getMessage(), e);
     }
   }
-
-  public void deletePlayer(PlayerRepresentation p) {
+  public ScoreListRepresentation getCompetitionScores(int id) {
     try {
-      RestClient.getInstance().delete(API + "players/delete/" + p.getId());
+      return RestClient.getInstance().get(API + "competitions/score/" + id, ScoreListRepresentation.class);
     } catch (Exception e) {
-      LOG.error("Failed to delete player: " + e.getMessage(), e);
-    }
-  }
-
-  public GameMediaRepresentation getGameMedia(int id) {
-    return RestClient.getInstance().get(API + "poppermedia/" + id, GameMediaRepresentation.class);
-  }
-
-  public List<GameRepresentation> getGames() {
-    return Arrays.asList(RestClient.getInstance().get(API + "games", GameRepresentation[].class));
-  }
-
-  public List<GameRepresentation> getRecentlyPlayedGames(int count) {
-    return Arrays.asList(RestClient.getInstance().get(API + "/games/recent/" + count, GameRepresentation[].class));
-  }
-
-  public List<CompetitionRepresentation> getCompetitions() {
-    return Arrays.asList(RestClient.getInstance().get(API + "competitions", CompetitionRepresentation[].class));
-  }
-
-  public List<PlayerRepresentation> getPlayers() {
-    return Arrays.asList(RestClient.getInstance().get(API + "players", PlayerRepresentation[].class));
-  }
-
-  public List<PlayerRepresentation> getPlayers(PlayerDomain domain) {
-    return Arrays.asList(RestClient.getInstance().get(API + "players/domain/" + domain.name(), PlayerRepresentation[].class));
-  }
-
-  public List<PlayerScoreRepresentation> getPlayerScores(String initials) {
-    return Arrays.asList(RestClient.getInstance().get(API + "players/highscores/" + initials, PlayerScoreRepresentation[].class));
-  }
-
-  public boolean invalidatePlayerDomain(PlayerDomain domain) {
-    return RestClient.getInstance().get(API + "players/invalidate/" + domain.name(), Boolean.class);
-  }
-
-  public InputStream getOverlayImage() {
-    byte[] bytes = RestClient.getInstance().readBinary(API + "overlay/preview");
-    return new ByteArrayInputStream(bytes);
-  }
-
-  public boolean generateOverlayImage() {
-    return RestClient.getInstance().get(API + "overlay/generate", Boolean.class);
-  }
-
-  public List<String> getOverlayBackgrounds() {
-    return Arrays.asList(RestClient.getInstance().get(API + "overlay/backgrounds", String[].class));
-  }
-
-  public ByteArrayInputStream getHighscoreCard(GameRepresentation game) {
-    int gameId = game.getId();
-    byte[] bytes = RestClient.getInstance().readBinary(API + "cards/preview/" + gameId);
-    return new ByteArrayInputStream(bytes);
-  }
-
-  public boolean generateHighscoreCard(GameRepresentation game) {
-    int gameId = game.getId();
-    return RestClient.getInstance().get(API + "cards/generate/" + gameId, Boolean.class);
-  }
-
-  public boolean uploadOverlayBackgroundImage(File file) throws Exception {
-    try {
-      String url = RestClient.getInstance().getBaseUrl() + API + "overlay/backgroundupload";
-      new RestTemplate().exchange(url, HttpMethod.POST, createUpload(file, -1, null, AssetType.BACKGOUND), Boolean.class);
-      return true;
-    } catch (Exception e) {
-      LOG.error("Background upload failed: " + e.getMessage(), e);
-      throw e;
-    }
-  }
-
-  public boolean scanGame(GameRepresentation game) {
-    int gameId = game.getId();
-    return RestClient.getInstance().get(API + "games/scan/" + gameId, Boolean.class);
-  }
-
-  public List<String> getHighscoreBackgroundImages() {
-    return Arrays.asList(RestClient.getInstance().get(API + "cards/backgrounds", String[].class));
-  }
-
-  public ByteArrayInputStream getOverlayBackgroundImage(String name) {
-    try {
-      if (!imageCache.containsKey(name)) {
-        String encodedName = URLEncoder.encode(name, "utf8");
-        byte[] bytes = RestClient.getInstance().readBinary(API + "overlay/background/" + encodedName);
-        imageCache.put(name, bytes);
-      }
-
-      byte[] imageBytes = imageCache.get(name);
-      return new ByteArrayInputStream(imageBytes);
-    } catch (UnsupportedEncodingException e) {
-      LOG.error("Failed to read highscore background image: " + e.getMessage(), e);
-    }
-    return null;
-  }
-
-  public ByteArrayInputStream getHighscoreBackgroundImage(String name) {
-    try {
-      if (!imageCache.containsKey(name)) {
-        String encodedName = URLEncoder.encode(name, "utf8");
-        byte[] bytes = RestClient.getInstance().readBinary(API + "cards/background/" + encodedName);
-        imageCache.put(name, bytes);
-      }
-
-      byte[] imageBytes = imageCache.get(name);
-      return new ByteArrayInputStream(imageBytes);
-    } catch (UnsupportedEncodingException e) {
-      LOG.error("Failed to read highscore background image: " + e.getMessage(), e);
+      LOG.error("Failed to read competition scores " + id + ": " + e.getMessage(), e);
     }
     return null;
   }
@@ -262,10 +159,125 @@ public class VPinStudioClient implements ObservedPropertyChangeListener {
     return null;
   }
 
-  public boolean uploadVPinAvatar(File file) throws Exception {
+  /*********************************************************************************************************************
+   * Games
+   ********************************************************************************************************************/
+
+  public GameRepresentation getGame(int id) {
     try {
-      String url = RestClient.getInstance().getBaseUrl() + API + "preferences/avatar";
-      new RestTemplate().exchange(url, HttpMethod.POST, createUpload(file, -1, null, AssetType.VPIN_AVATAR), Boolean.class);
+      return RestClient.getInstance().get(API + "games/" + id, GameRepresentation.class);
+    } catch (Exception e) {
+      LOG.error("Failed to read game " + id + ": " + e.getMessage(), e);
+    }
+    return null;
+  }
+
+  public ScoreSummaryRepresentation getGameScores(int id) {
+    try {
+      return RestClient.getInstance().get(API + "games/score/" + id, ScoreSummaryRepresentation.class);
+    } catch (Exception e) {
+      LOG.error("Failed to read game scores " + id + ": " + e.getMessage(), e);
+    }
+    return null;
+  }
+
+  public boolean scanGame(GameRepresentation game) {
+    int gameId = game.getId();
+    return RestClient.getInstance().get(API + "games/scan/" + gameId, Boolean.class);
+  }
+
+  public GameRepresentation saveGame(GameRepresentation game) throws Exception {
+    try {
+      return RestClient.getInstance().post(API + "games/save", game, GameRepresentation.class);
+    } catch (Exception e) {
+      LOG.error("Failed to save game: " + e.getMessage(), e);
+      throw e;
+    }
+  }
+
+  public List<GameRepresentation> getGames() {
+    return Arrays.asList(RestClient.getInstance().get(API + "games", GameRepresentation[].class));
+  }
+
+  public List<GameRepresentation> getRecentlyPlayedGames(int count) {
+    return Arrays.asList(RestClient.getInstance().get(API + "/games/recent/" + count, GameRepresentation[].class));
+  }
+
+  /*********************************************************************************************************************
+   * Player
+   ********************************************************************************************************************/
+
+  public PlayerRepresentation savePlayer(PlayerRepresentation p) throws Exception {
+    try {
+      return RestClient.getInstance().post(API + "players/save", p, PlayerRepresentation.class);
+    } catch (Exception e) {
+      LOG.error("Failed to save player: " + e.getMessage(), e);
+      throw e;
+    }
+  }
+
+  public void deletePlayer(PlayerRepresentation p) {
+    try {
+      RestClient.getInstance().delete(API + "players/delete/" + p.getId());
+    } catch (Exception e) {
+      LOG.error("Failed to delete player: " + e.getMessage(), e);
+    }
+  }
+
+  public List<PlayerRepresentation> getPlayers() {
+    return Arrays.asList(RestClient.getInstance().get(API + "players", PlayerRepresentation[].class));
+  }
+
+  public List<PlayerRepresentation> getPlayers(PlayerDomain domain) {
+    return Arrays.asList(RestClient.getInstance().get(API + "players/domain/" + domain.name(), PlayerRepresentation[].class));
+  }
+
+  public List<PlayerScoreRepresentation> getPlayerScores(String initials) {
+    return Arrays.asList(RestClient.getInstance().get(API + "players/highscores/" + initials, PlayerScoreRepresentation[].class));
+  }
+
+  public boolean invalidatePlayerDomain(PlayerDomain domain) {
+    return RestClient.getInstance().get(API + "players/invalidate/" + domain.name(), Boolean.class);
+  }
+
+
+  /*********************************************************************************************************************
+   * Overlay
+   ********************************************************************************************************************/
+
+  public InputStream getOverlayImage() {
+    byte[] bytes = RestClient.getInstance().readBinary(API + "overlay/preview");
+    return new ByteArrayInputStream(bytes);
+  }
+
+  public boolean generateOverlayImage() {
+    return RestClient.getInstance().get(API + "overlay/generate", Boolean.class);
+  }
+
+  public List<String> getOverlayBackgrounds() {
+    return Arrays.asList(RestClient.getInstance().get(API + "overlay/backgrounds", String[].class));
+  }
+
+
+  /*********************************************************************************************************************
+   * Highscore Cards
+   ********************************************************************************************************************/
+
+  public ByteArrayInputStream getHighscoreCard(GameRepresentation game) {
+    int gameId = game.getId();
+    byte[] bytes = RestClient.getInstance().readBinary(API + "cards/preview/" + gameId);
+    return new ByteArrayInputStream(bytes);
+  }
+
+  public boolean generateHighscoreCard(GameRepresentation game) {
+    int gameId = game.getId();
+    return RestClient.getInstance().get(API + "cards/generate/" + gameId, Boolean.class);
+  }
+
+  public boolean uploadOverlayBackgroundImage(File file) throws Exception {
+    try {
+      String url = RestClient.getInstance().getBaseUrl() + API + "overlay/backgroundupload";
+      new RestTemplate().exchange(url, HttpMethod.POST, createUpload(file, -1, null, AssetType.BACKGOUND), Boolean.class);
       return true;
     } catch (Exception e) {
       LOG.error("Background upload failed: " + e.getMessage(), e);
@@ -273,17 +285,31 @@ public class VPinStudioClient implements ObservedPropertyChangeListener {
     }
   }
 
-  public AssetRepresentation uploadAsset(File file, long id, int maxSize, AssetType assetType) throws Exception {
-    try {
-      String url = RestClient.getInstance().getBaseUrl() + API + "assets/" + id + "/upload/" + maxSize;
-      ResponseEntity<AssetRepresentation> exchange = new RestTemplate().exchange(url, HttpMethod.POST, createUpload(file, -1, null, assetType), AssetRepresentation.class);
-      return exchange.getBody();
-    } catch (Exception e) {
-      LOG.error("Asset upload failed: " + e.getMessage(), e);
-      throw e;
-    }
+  public List<String> getHighscoreBackgroundImages() {
+    return Arrays.asList(RestClient.getInstance().get(API + "cards/backgrounds", String[].class));
   }
 
+  public ByteArrayInputStream getOverlayBackgroundImage(String name) {
+    if (!imageCache.containsKey(name)) {
+      String encodedName = URLEncoder.encode(name, StandardCharsets.UTF_8);
+      byte[] bytes = RestClient.getInstance().readBinary(API + "overlay/background/" + encodedName);
+      imageCache.put(name, bytes);
+    }
+
+    byte[] imageBytes = imageCache.get(name);
+    return new ByteArrayInputStream(imageBytes);
+  }
+
+  public ByteArrayInputStream getHighscoreBackgroundImage(String name) {
+    if (!imageCache.containsKey(name)) {
+      String encodedName = URLEncoder.encode(name, StandardCharsets.UTF_8);
+      byte[] bytes = RestClient.getInstance().readBinary(API + "cards/background/" + encodedName);
+      imageCache.put(name, bytes);
+    }
+
+    byte[] imageBytes = imageCache.get(name);
+    return new ByteArrayInputStream(imageBytes);
+  }
 
   public boolean uploadHighscoreBackgroundImage(File file) throws Exception {
     try {
@@ -318,6 +344,16 @@ public class VPinStudioClient implements ObservedPropertyChangeListener {
     }
   }
 
+
+  /*********************************************************************************************************************
+   * Direct2B
+   ********************************************************************************************************************/
+
+  public ByteArrayInputStream getDirectB2SImage(GameRepresentation game) {
+    byte[] bytes = RestClient.getInstance().readBinary(API + "directb2s/" + game.getId());
+    return new ByteArrayInputStream(bytes);
+  }
+
   public boolean uploadDirectB2SFile(File file, String uploadType, int gameId) throws Exception {
     try {
       String url = RestClient.getInstance().getBaseUrl() + API + "cards/directb2supload";
@@ -328,6 +364,11 @@ public class VPinStudioClient implements ObservedPropertyChangeListener {
       throw e;
     }
   }
+
+  /*********************************************************************************************************************
+   * Utils
+   */
+
 
   private static HttpEntity createUpload(File file, int gameId, String uploadType, AssetType assetType) throws Exception {
     LinkedMultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
@@ -361,6 +402,13 @@ public class VPinStudioClient implements ObservedPropertyChangeListener {
     }
 
     return this.observedProperties.get(propertiesName);
+  }
+
+  public String getURL(String segment) {
+    if (!segment.startsWith("http") && !segment.contains(API)) {
+      return RestClient.getInstance().getBaseUrl() + API + segment;
+    }
+    return segment;
   }
 
   @Override

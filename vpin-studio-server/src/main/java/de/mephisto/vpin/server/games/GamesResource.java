@@ -1,5 +1,6 @@
 package de.mephisto.vpin.server.games;
 
+import de.mephisto.vpin.server.competitions.ScoreSummary;
 import de.mephisto.vpin.server.system.SystemService;
 import de.mephisto.vpin.server.util.UploadUtil;
 import org.slf4j.Logger;
@@ -43,6 +44,11 @@ public class GamesResource {
       throw new ResponseStatusException(NOT_FOUND, "Not game found for id " + id);
     }
     return game;
+  }
+
+  @GetMapping("/scores/{id}")
+  public ScoreSummary getScores(@PathVariable("id") int id) {
+    return gameService.getScores(id);
   }
 
   @GetMapping("/scan/{id}")

@@ -10,6 +10,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.*;
+import java.text.DecimalFormat;
 import java.util.Arrays;
 import java.util.List;
 
@@ -132,7 +133,7 @@ class HighscoreResolver {
       while (tableHighscoreFile.exists() && tableHighscoreNameFile.exists()) {
         highScoreValue = readFileString(tableHighscoreFile);
         if (highScoreValue != null) {
-          highScoreValue = HighscoreParser.formatScore(highScoreValue);
+          highScoreValue = formatScore(highScoreValue);
           initials = readFileString(tableHighscoreNameFile);
 
           builder.append("#");
@@ -154,6 +155,13 @@ class HighscoreResolver {
       LOG.debug("No VPReg highscore file found for '" + game.getRom() + "'");
     }
     return null;
+  }
+
+  public static String formatScore(String score) {
+    DecimalFormat decimalFormat = new DecimalFormat("#.##");
+    decimalFormat.setGroupingUsed(true);
+    decimalFormat.setGroupingSize(3);
+    return decimalFormat.format(Long.parseLong(score));
   }
 
   /**

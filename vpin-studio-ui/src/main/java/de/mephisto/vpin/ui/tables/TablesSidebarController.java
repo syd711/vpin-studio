@@ -1,14 +1,11 @@
 package de.mephisto.vpin.ui.tables;
 
 import de.mephisto.vpin.restclient.PopperScreen;
+import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.VPinStudioClient;
-import de.mephisto.vpin.restclient.representations.GameMediaItemRepresentation;
-import de.mephisto.vpin.restclient.representations.GameMediaRepresentation;
-import de.mephisto.vpin.restclient.representations.GameRepresentation;
-import de.mephisto.vpin.restclient.representations.PreferenceEntryRepresentation;
+import de.mephisto.vpin.restclient.representations.*;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.StudioFXController;
-import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.ui.util.BindingUtil;
 import de.mephisto.vpin.ui.util.Dialogs;
 import de.mephisto.vpin.ui.util.MediaUtil;
@@ -17,9 +14,6 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextArea;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -36,7 +30,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.text.SimpleDateFormat;
-import java.util.List;
 import java.util.*;
 
 public class TablesSidebarController implements Initializable, StudioFXController {
@@ -235,7 +228,7 @@ public class TablesSidebarController implements Initializable, StudioFXControlle
 
   @FXML
   private void onOpenDirectB2SBackground() {
-    if(game.isPresent()) {
+    if (game.isPresent()) {
       ByteArrayInputStream image = client.getDirectB2SImage(game.get());
       MediaUtil.openMedia(image);
     }
@@ -352,7 +345,7 @@ public class TablesSidebarController implements Initializable, StudioFXControlle
       labelFilename.setText(game.getGameFileName());
       labelLastPlayed.setText(game.getLastPlayed() != null ? simpleDateFormat.format(game.getLastPlayed()) : "-");
       labelTimesPlayed.setText(String.valueOf(game.getNumberPlays()));
-      if(!StringUtils.isEmpty(game.getHsFileName())) {
+      if (!StringUtils.isEmpty(game.getHsFileName())) {
         labelHSFilename.setText(game.getHsFileName());
       }
       else {
@@ -365,9 +358,9 @@ public class TablesSidebarController implements Initializable, StudioFXControlle
         refreshMedia(gameMedia);
       }
 
-      String rawHighscore = game.getRawHighscore();
-      if (rawHighscore != null) {
-        highscoreTextArea.setText(rawHighscore);
+      ScoreSummaryRepresentation gameScores = client.getGameScores(game.getId());
+      if (!gameScores.getScores().isEmpty()) {
+        highscoreTextArea.setText(gameScores.getRaw());
       }
       else {
         highscoreTextArea.setText("");

@@ -1,7 +1,7 @@
 package de.mephisto.vpin.server.games;
 
+import de.mephisto.vpin.server.competitions.ScoreSummary;
 import de.mephisto.vpin.server.highscores.Highscore;
-import de.mephisto.vpin.server.highscores.HighscoreParser;
 import de.mephisto.vpin.server.highscores.HighscoreService;
 import de.mephisto.vpin.server.popper.GameMediaItem;
 import de.mephisto.vpin.server.popper.PinUPConnector;
@@ -17,10 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -41,6 +38,7 @@ public class GameService {
 
   @Autowired
   private HighscoreService highscoreService;
+
 
   @SuppressWarnings("unused")
   public List<Game> getGames() {
@@ -63,12 +61,17 @@ public class GameService {
     return game;
   }
 
+  public ScoreSummary getScores(int id) {
+    Game game = getGame(id);
+    return highscoreService.getHighscores(game);
+  }
 
   public List<Game> getRecentHighscoreGame(int count) {
     List<Game> games = this.getGames();
     List<Game> filtered = new ArrayList<>();
     for (Game game : games) {
-      if(game.getScores().isEmpty() || game.getLastPlayed() == null) {
+      Highscore highscore = highscoreService.getOrCreateHighscore(game);
+      if(highscore == null || highscore.getRaw() == null || game.getLastPlayed() == null) {
         continue;
       }
       GameMediaItem gameMediaItem = game.getEmulator().getGameMedia().get(PopperScreen.Wheel);
@@ -151,13 +154,6 @@ public class GameService {
       game.setHsFileName(gameDetails.getHsFileName());
       game.setIgnoredValidations(gameDetails.getIgnoredValidations());
 
-      Highscore highscore = highscoreService.getOrCreateHighscore(game);
-      if (highscore != null && !StringUtils.isEmpty(highscore.getRaw())) {
-        game.setRawHighscore(highscore.getRaw());
-        game.setScoresChangedDate(highscore.getUpdatedAt());
-        game.setScores(HighscoreParser.parseScores(game, highscore.getRaw()));
-      }
-
       //run validations at the end!!!
       game.setValidationState(gameValidator.validate(game, games));
       return gameDetails;
@@ -182,5 +178,4 @@ public class GameService {
     LOG.info("Saved " + game);
     return getGame(game.getId());
   }
-
 }
