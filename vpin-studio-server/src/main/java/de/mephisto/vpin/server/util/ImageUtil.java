@@ -7,7 +7,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.imageio.ImageIO;
+import javax.swing.*;
 import java.awt.*;
+import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.io.*;
 
@@ -25,14 +27,14 @@ public class ImageUtil {
   }
 
   public static int convertFontPosture(String posture) {
-    if(posture != null) {
-      if(posture.toLowerCase().contains("italic")) {
+    if (posture != null) {
+      if (posture.toLowerCase().contains("italic")) {
         return Font.ITALIC;
       }
-      if(posture.toLowerCase().contains("regular") || posture.toLowerCase().contains("plain")) {
+      if (posture.toLowerCase().contains("regular") || posture.toLowerCase().contains("plain")) {
         return Font.PLAIN;
       }
-      if(posture.toLowerCase().contains("bold")) {
+      if (posture.toLowerCase().contains("bold")) {
         return Font.BOLD;
       }
     }
@@ -124,6 +126,14 @@ public class ImageUtil {
       graphics.setColor(Color.WHITE);
       graphics.drawRect(strokeWidth / 2, strokeWidth / 2, width - strokeWidth, height - strokeWidth);
     }
+  }
+
+  public static void gradient(BufferedImage gradientImage, int height, int xStart, int width, Color start, Color end) {
+    GradientPaint gradient = new GradientPaint(0, 0, start, width, 0, end, false);
+    Graphics2D g2 = (Graphics2D) gradientImage.getGraphics();
+    g2.setPaint(gradient);
+    g2.fillRect(0, 0, width, height);
+    g2.dispose();
   }
 
   public static BufferedImage resizeImage(BufferedImage originalImage, int targetWidth) {

@@ -1,29 +1,25 @@
 package de.mephisto.vpin.server.directb2s;
 
+import de.mephisto.vpin.restclient.AssetType;
 import de.mephisto.vpin.server.VPinStudioServer;
+import de.mephisto.vpin.server.assets.Asset;
+import de.mephisto.vpin.server.assets.AssetRepository;
+import de.mephisto.vpin.server.assets.AssetsResource;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameService;
 import de.mephisto.vpin.server.system.SystemService;
 import de.mephisto.vpin.server.util.RequestUtil;
-import edu.umd.cs.findbugs.annotations.Nullable;
-import org.apache.commons.io.FilenameUtils;
-import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.CacheControl;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.io.BufferedInputStream;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.util.concurrent.TimeUnit;
+import java.util.Optional;
 
 /**
  *
@@ -39,6 +35,9 @@ public class DirectB2SResource {
   @Autowired
   private GameService service;
 
+  @Autowired
+  private AssetRepository assetRepository;
+
   @GetMapping("/{id}")
   public ResponseEntity<byte[]> getRaw(@PathVariable("id") int id) throws Exception {
     File file = null;
@@ -46,7 +45,7 @@ public class DirectB2SResource {
       Game game = service.getGame(id);
       if (game != null) {
         file = directB2SManager.extractDirectB2SBackgroundImage(game);
-        if(file != null && file.exists()) {
+        if (file != null && file.exists()) {
           return RequestUtil.serializeImage(file);
         }
       }
@@ -55,29 +54,32 @@ public class DirectB2SResource {
       }
     } catch (Exception e) {
       LOG.error("Failed to load directb2s image: " + e.getMessage(), e);
-    }
-    finally {
-      if(file != null) {
+    } finally {
+      if (file != null) {
         file.delete();
       }
     }
-    return  RequestUtil.serializeImage(new File(SystemService.RESOURCES, "empty-b2s-preview.png"));
+    return RequestUtil.serializeImage(new File(SystemService.RESOURCES, "empty-b2s-preview.png"));
   }
 
-  @GetMapping("/{id}/cropped/{ratio}")
-  public ResponseEntity<byte[]> getCropped(@PathVariable("id") int id, @PathVariable("ratio") String ratio) {
+  @GetMapping("/competition/{gameId}")
+  public ResponseEntity<byte[]> getCompetitionBackground(@PathVariable("gameId") int gameId) {
     try {
-      Game game = service.getGame(id);
+      Game game = service.getGame(gameId);
       if (game != null) {
-        DirectB2SImageRatio r = DirectB2SImageRatio.valueOf(ratio.toUpperCase());
-        File file = directB2SManager.generateB2SImage(game, r, 1280);
+        Optional<Asset> asset = assetRepository.findByExternalIdAndAssetType(String.valueOf(gameId), AssetType.COMPETITION.name());
+        if (asset.isPresent()) {
+          return AssetsResource.serializeAsset(asset.get());
+        }
+
+        File file = directB2SManager.generateB2SCompetitionImage(game, 800, 340);
         return RequestUtil.serializeImage(file);
       }
       else {
-        LOG.warn("No GameInfo found for id " + id);
+        LOG.warn("No GameInfo found for id " + gameId);
       }
     } catch (Exception e) {
-      LOG.error("Failed to load directb2s image: " + e.getMessage(), e);
+      LOG.error("Failed generate competition image: " + e.getMessage(), e);
     }
     return null;
   }

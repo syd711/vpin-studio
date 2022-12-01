@@ -114,4 +114,13 @@ public class AssetsResource {
     LOG.info("Saved " +updated);
     return updated;
   }
+
+  public static ResponseEntity serializeAsset(Asset asset) {
+    return ResponseEntity.ok()
+        .lastModified(asset.getUpdatedAt().getTime())
+        .contentType(MediaType.parseMediaType(asset.getMimeType()))
+        .contentLength(asset.getData().length)
+        .cacheControl(CacheControl.maxAge(3600 * 24 * 7, TimeUnit.SECONDS).cachePublic())
+        .body(asset.getData());
+  }
 }

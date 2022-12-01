@@ -33,6 +33,17 @@ public class Asset {
 
   private String uuid;
 
+  @Column(nullable = true)
+  private String externalId;
+
+  public String getExternalId() {
+    return externalId;
+  }
+
+  public void setExternalId(String externalId) {
+    this.externalId = externalId;
+  }
+
   private String assetType;
 
   public String getAssetType() {

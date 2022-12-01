@@ -272,7 +272,7 @@ public class VPinStudioClient implements ObservedPropertyChangeListener {
   public boolean uploadOverlayBackgroundImage(File file) throws Exception {
     try {
       String url = RestClient.getInstance().getBaseUrl() + API + "overlay/backgroundupload";
-      new RestTemplate().exchange(url, HttpMethod.POST, createUpload(file, -1, null, AssetType.BACKGOUND), Boolean.class);
+      new RestTemplate().exchange(url, HttpMethod.POST, createUpload(file, -1, null, AssetType.OVERLAY_BACKGROUND), Boolean.class);
       return true;
     } catch (Exception e) {
       LOG.error("Background upload failed: " + e.getMessage(), e);
@@ -309,7 +309,7 @@ public class VPinStudioClient implements ObservedPropertyChangeListener {
   public boolean uploadHighscoreBackgroundImage(File file) throws Exception {
     try {
       String url = RestClient.getInstance().getBaseUrl() + API + "cards/backgroundupload";
-      new RestTemplate().exchange(url, HttpMethod.POST, createUpload(file, -1, null, AssetType.BACKGOUND), Boolean.class);
+      new RestTemplate().exchange(url, HttpMethod.POST, createUpload(file, -1, null, AssetType.CARD_BACKGROUND), Boolean.class);
       return true;
     } catch (Exception e) {
       LOG.error("Background upload failed: " + e.getMessage(), e);
