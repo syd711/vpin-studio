@@ -64,26 +64,24 @@ public class DirectB2SService {
   }
 
   @Nullable
-  public File generateB2SCompetitionImage(@NonNull Game game, int cropWidth, int cropHeight) throws VPinStudioException {
+  public BufferedImage generateB2SCompetitionImage(@NonNull Game game, int cropWidth, int cropHeight) throws VPinStudioException {
     try {
       if (game.getDirectB2SFile().exists()) {
         DirectB2SImageExtractor extractor = new DirectB2SImageExtractor(game);
         File tempFile = extractor.extractImage(game.getDirectB2SFile());
         if (tempFile != null) {
           BufferedImage image = ImageIO.read(tempFile);
+          tempFile.delete();
+
           BufferedImage resized = ImageUtil.resizeImage(image, cropWidth);
           BufferedImage crop = resized.getSubimage(0, 0, cropWidth, cropHeight);
           BufferedImage blurred= ImageUtil.blurImage(crop, 10);
-          ImageUtil.applyAlphaComposites(blurred, 0f, 10f);
+//          ImageUtil.applyAlphaComposites(blurred, 0f, 10f);
 
           Color start=new Color(0f,0f,0f,.1f );
           Color end= Color.decode("#111111");
-          ImageUtil.gradient(blurred, cropHeight, cropWidth-200, cropWidth, start, end);
-          File target = File.createTempFile("competition-crop", ".png");
-          ImageUtil.write(blurred, target);
-          LOG.info("Written competition background " + target.getAbsolutePath());
-          tempFile.delete();
-          return target;
+          ImageUtil.gradient(blurred, cropHeight, cropWidth, start, end);
+          return blurred;
         }
       }
     } catch (IOException e) {

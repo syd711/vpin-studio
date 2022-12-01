@@ -36,10 +36,10 @@ public class CompetitionResource {
   @GetMapping("/{id}")
   public Competition getCompetition(@PathVariable("id") int id) {
     Competition c = competitionService.getCompetition(id);
-    if (c == null) {
-      throw new ResponseStatusException(NOT_FOUND, "Not game found for id " + id);
+    if (c != null) {
+      return c;
     }
-    return c;
+    throw new ResponseStatusException(NOT_FOUND, "Not competition found for id " + id);
   }
 
   @GetMapping("/active/offline")

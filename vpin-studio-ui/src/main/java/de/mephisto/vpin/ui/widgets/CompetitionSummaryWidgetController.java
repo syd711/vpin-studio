@@ -81,7 +81,6 @@ public class CompetitionSummaryWidgetController extends WidgetController impleme
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
-    Image image = new Image(Studio.class.getResourceAsStream("competition-bg-default.png"));
 
     competitionStack.setStyle(" -fx-border-radius: 6 6 6 6;\n" +
         "    -fx-border-style: solid solid solid solid;\n" +
@@ -89,12 +88,6 @@ public class CompetitionSummaryWidgetController extends WidgetController impleme
         "    -fx-background-color: #111111;\n" +
         "    -fx-background-radius: 6;" +
         "    -fx-border-width: 1;");
-    BackgroundImage myBI = new BackgroundImage(image,
-        BackgroundRepeat.NO_REPEAT, BackgroundRepeat.NO_REPEAT, BackgroundPosition.DEFAULT,
-        BackgroundSize.DEFAULT);
-    topBox.setBackground(new Background(myBI));
-
-    image = ImageUtil.createAvatar("MFA");
   }
 
   public void setCompetition(CompetitionRepresentation competition) {
@@ -145,6 +138,12 @@ public class CompetitionSummaryWidgetController extends WidgetController impleme
         Image wheel = new Image(Studio.class.getResourceAsStream("avatar-blank.png"));
         competitionWheelImage.setImage(wheel);
       }
+
+      Image image = new Image(client.getCompetitionBackground(competition.getGameId()));
+      BackgroundImage myBI = new BackgroundImage(image,
+          BackgroundRepeat.NO_REPEAT, BackgroundRepeat.NO_REPEAT, BackgroundPosition.DEFAULT,
+          BackgroundSize.DEFAULT);
+      topBox.setBackground(new Background(myBI));
     }
     else {
       durationLabel.setText("");

@@ -154,6 +154,14 @@ public class VPinStudioClient implements ObservedPropertyChangeListener {
     return new ByteArrayInputStream(imageBytes);
   }
 
+  public ByteArrayInputStream getCompetitionBackground(long gameId) {
+    byte[] bytes = RestClient.getInstance().readBinary(API + "directb2s/competition/" + gameId);
+    if (bytes == null) {
+      throw new UnsupportedOperationException("No data found for competition with gameId " + gameId);
+    }
+    return new ByteArrayInputStream(bytes);
+  }
+
   /*********************************************************************************************************************
    * Games
    ********************************************************************************************************************/

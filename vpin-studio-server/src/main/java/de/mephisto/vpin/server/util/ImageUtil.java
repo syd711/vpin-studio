@@ -128,7 +128,7 @@ public class ImageUtil {
     }
   }
 
-  public static void gradient(BufferedImage gradientImage, int height, int xStart, int width, Color start, Color end) {
+  public static void gradient(BufferedImage gradientImage, int height, int width, Color start, Color end) {
     GradientPaint gradient = new GradientPaint(0, 0, start, width, 0, end, false);
     Graphics2D g2 = (Graphics2D) gradientImage.getGraphics();
     g2.setPaint(gradient);

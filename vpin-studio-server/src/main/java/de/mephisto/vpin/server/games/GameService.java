@@ -59,9 +59,12 @@ public class GameService {
   @SuppressWarnings("unused")
   public Game getGame(int id) {
     Game game = pinUPConnector.getGame(id);
-    List<Game> games = pinUPConnector.getGames();
-    loadGameDetails(game, games);
-    return game;
+    if(game != null) {
+      List<Game> games = pinUPConnector.getGames();
+      loadGameDetails(game, games);
+      return game;
+    }
+    return null;
   }
 
   public ScoreSummary getScores(int id) {
