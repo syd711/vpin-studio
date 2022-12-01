@@ -20,8 +20,8 @@ import java.util.ResourceBundle;
 
 import static de.mephisto.vpin.ui.Studio.client;
 
-public class LatestScoresWidgetController extends WidgetController implements Initializable {
-  private final static Logger LOG = LoggerFactory.getLogger(LatestScoresWidgetController.class);
+public class WidgetFinishedCompetitionsController extends WidgetController implements Initializable {
+  private final static Logger LOG = LoggerFactory.getLogger(WidgetFinishedCompetitionsController.class);
 
   @FXML
   private VBox highscoreVBox;
@@ -30,7 +30,7 @@ public class LatestScoresWidgetController extends WidgetController implements In
   private BorderPane root;
 
   // Add a public no-args constructor
-  public LatestScoresWidgetController() {
+  public WidgetFinishedCompetitionsController() {
   }
 
 
@@ -49,10 +49,10 @@ public class LatestScoresWidgetController extends WidgetController implements In
           continue;
         }
 
-        FXMLLoader loader = new FXMLLoader(LatestScoreItemWidgetController.class.getResource("widget-latest-score-item.fxml"));
+        FXMLLoader loader = new FXMLLoader(WidgetLatestScoreItemController.class.getResource("widget-latest-score-item.fxml"));
         BorderPane row = loader.load();
         row.setPrefWidth(root.getPrefWidth() - 48);
-        LatestScoreItemWidgetController controller = loader.getController();
+        WidgetLatestScoreItemController controller = loader.getController();
         controller.setData(game, scores, wheelMedia);
 
         highscoreVBox.getChildren().add(row);

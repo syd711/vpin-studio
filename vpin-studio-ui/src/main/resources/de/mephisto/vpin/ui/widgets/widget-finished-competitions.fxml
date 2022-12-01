@@ -14,7 +14,7 @@
       <Insets bottom="24.0" left="24.0" right="24.0" top="12.0" />
    </padding>
    <top>
-      <Label styleClass="widget-title" text="Latest Highscores" textFill="WHITE" BorderPane.alignment="TOP_LEFT">
+      <Label styleClass="widget-title" text="Finished Competitions" textFill="WHITE" BorderPane.alignment="TOP_LEFT">
          <font>
             <Font size="14.0" />
          </font>

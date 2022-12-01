@@ -17,7 +17,7 @@ import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.ResourceBundle;
 
-public class LatestScoreItemWidgetController extends WidgetController implements Initializable  {
+public class WidgetLatestScoreItemController extends WidgetController implements Initializable  {
   private final static SimpleDateFormat simpleDateFormat = new SimpleDateFormat("MM-dd-yyyy / hh:mm");
 
   @FXML
@@ -42,7 +42,7 @@ public class LatestScoreItemWidgetController extends WidgetController implements
   private Label changeDateLabel;
 
   // Add a public no-args constructor
-  public LatestScoreItemWidgetController() {
+  public WidgetLatestScoreItemController() {
   }
 
 

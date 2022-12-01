@@ -4,29 +4,18 @@ import de.mephisto.vpin.restclient.PopperScreen;
 import de.mephisto.vpin.restclient.RestClient;
 import de.mephisto.vpin.restclient.representations.*;
 import de.mephisto.vpin.ui.Studio;
-import de.mephisto.vpin.ui.util.ImageUtil;
-import eu.hansolo.tilesfx.Tile;
-import eu.hansolo.tilesfx.TileBuilder;
-import eu.hansolo.tilesfx.events.TileEvent;
-import eu.hansolo.tilesfx.tools.Rank;
-import eu.hansolo.tilesfx.tools.Ranking;
-import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.chart.XYChart;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
-import javafx.scene.paint.Color;
-import javafx.scene.text.TextAlignment;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.ByteArrayInputStream;
 import java.net.URL;
 import java.text.DateFormat;
-import java.text.DecimalFormat;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
@@ -36,8 +25,8 @@ import java.util.ResourceBundle;
 
 import static de.mephisto.vpin.ui.Studio.client;
 
-public class CompetitionSummaryWidgetController extends WidgetController implements Initializable {
-  private final static Logger LOG = LoggerFactory.getLogger(CompetitionSummaryWidgetController.class);
+public class WidgetCompetitionSummaryController extends WidgetController implements Initializable {
+  private final static Logger LOG = LoggerFactory.getLogger(WidgetCompetitionSummaryController.class);
 
   @FXML
   private Label competitionLabel;
@@ -76,7 +65,7 @@ public class CompetitionSummaryWidgetController extends WidgetController impleme
   private Label scoreLabel3;
 
   // Add a public no-args constructor
-  public CompetitionSummaryWidgetController() {
+  public WidgetCompetitionSummaryController() {
   }
 
   @Override

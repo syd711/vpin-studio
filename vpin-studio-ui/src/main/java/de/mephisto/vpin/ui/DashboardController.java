@@ -1,14 +1,12 @@
 package de.mephisto.vpin.ui;
 
 import de.mephisto.vpin.restclient.representations.CompetitionRepresentation;
-import de.mephisto.vpin.ui.widgets.LatestScoresWidgetController;
-import de.mephisto.vpin.ui.widgets.OfflineCompetitionWidgetController;
+import de.mephisto.vpin.ui.widgets.WidgetLatestScoresController;
+import de.mephisto.vpin.ui.widgets.WidgetOfflineCompetitionController;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
-import javafx.scene.Parent;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.web.WebView;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -39,7 +37,7 @@ public class DashboardController implements Initializable, StudioFXController {
     NavigationController.setBreadCrumb(Arrays.asList("Dashboard"));
 
     try {
-      FXMLLoader loader = new FXMLLoader(LatestScoresWidgetController.class.getResource("widget-latest-scores.fxml"));
+      FXMLLoader loader = new FXMLLoader(WidgetLatestScoresController.class.getResource("widget-latest-scores.fxml"));
       BorderPane root = loader.load();
       root.setMaxHeight(Double.MAX_VALUE);
       widgetRoot.setLeft(root);
@@ -48,10 +46,10 @@ public class DashboardController implements Initializable, StudioFXController {
     }
 
     try {
-      FXMLLoader loader = new FXMLLoader(OfflineCompetitionWidgetController.class.getResource("widget-offline-competition.fxml"));
+      FXMLLoader loader = new FXMLLoader(WidgetOfflineCompetitionController.class.getResource("widget-offline-competition.fxml"));
       BorderPane root = loader.load();
       root.setMaxWidth(Double.MAX_VALUE);
-      OfflineCompetitionWidgetController controller = loader.getController();
+      WidgetOfflineCompetitionController controller = loader.getController();
 
       List<CompetitionRepresentation> activeOfflineCompetitions = client.getActiveOfflineCompetitions();
       if(!activeOfflineCompetitions.isEmpty()) {

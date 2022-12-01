@@ -35,8 +35,8 @@ import java.util.ResourceBundle;
 
 import static de.mephisto.vpin.ui.Studio.client;
 
-public class OfflineCompetitionWidgetController extends WidgetController implements Initializable {
-  private final static Logger LOG = LoggerFactory.getLogger(OfflineCompetitionWidgetController.class);
+public class WidgetOfflineCompetitionController extends WidgetController implements Initializable {
+  private final static Logger LOG = LoggerFactory.getLogger(WidgetOfflineCompetitionController.class);
 
   @FXML
   private VBox statsWidget;
@@ -55,9 +55,9 @@ public class OfflineCompetitionWidgetController extends WidgetController impleme
   private Tile turnoverTile;
 
   private CompetitionRepresentation competition;
-  private CompetitionSummaryWidgetController summaryWidgetController;
+  private WidgetCompetitionSummaryController summaryWidgetController;
 
-  public OfflineCompetitionWidgetController() {
+  public WidgetOfflineCompetitionController() {
   }
 
 
@@ -134,7 +134,7 @@ public class OfflineCompetitionWidgetController extends WidgetController impleme
     statsWidget.getChildren().add(highscoresGraphTile);
 
     try {
-      FXMLLoader loader = new FXMLLoader(LatestScoresWidgetController.class.getResource("widget-competition-summary.fxml"));
+      FXMLLoader loader = new FXMLLoader(WidgetLatestScoresController.class.getResource("widget-competition-summary.fxml"));
       BorderPane root = loader.load();
       root.setMaxWidth(Double.MAX_VALUE);
       summaryWidgetController = loader.getController();
