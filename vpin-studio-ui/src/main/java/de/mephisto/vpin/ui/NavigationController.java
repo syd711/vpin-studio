@@ -82,11 +82,6 @@ public class NavigationController implements Initializable {
   }
 
   @FXML
-  private void onOverlayClick(ActionEvent event) throws IOException {
-    loadScreen(event, NavigationController.class, "scene-overlay.fxml");
-  }
-
-  @FXML
   private void onPlayersClick(ActionEvent event) throws IOException {
     loadScreen(event, PlayersController.class, "scene-players.fxml");
   }

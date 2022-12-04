@@ -1,9 +1,9 @@
 package de.mephisto.vpin.ui;
 
+import de.mephisto.vpin.commons.fx.widgets.WidgetFinishedCompetitionsController;
+import de.mephisto.vpin.commons.fx.widgets.WidgetLatestScoresController;
+import de.mephisto.vpin.commons.fx.widgets.WidgetOfflineCompetitionController;
 import de.mephisto.vpin.restclient.representations.CompetitionRepresentation;
-import de.mephisto.vpin.ui.widgets.WidgetFinishedCompetitionsController;
-import de.mephisto.vpin.ui.widgets.WidgetLatestScoresController;
-import de.mephisto.vpin.ui.widgets.WidgetOfflineCompetitionController;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;

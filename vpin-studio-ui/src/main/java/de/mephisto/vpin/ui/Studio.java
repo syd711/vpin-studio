@@ -1,5 +1,6 @@
 package de.mephisto.vpin.ui;
 
+import de.mephisto.vpin.commons.fx.OverlayWindowFX;
 import de.mephisto.vpin.restclient.VPinStudioClient;
 import de.mephisto.vpin.ui.util.ResizeHelper;
 import eu.hansolo.tilesfx.fonts.Fonts;
@@ -29,7 +30,10 @@ public class Studio extends Application {
   public void start(Stage stage) throws IOException {
     Studio.stage = stage;
 
+    //replace the OverlayFX client with the Studio one
     Studio.client = VPinStudioClient.create();
+    OverlayWindowFX.client = Studio.client;
+
     FXMLLoader loader = new FXMLLoader(getClass().getResource("scene-root.fxml"));
     Parent root = loader.load();
     NavigationController.navigationController = loader.<StudioFXController>getController();

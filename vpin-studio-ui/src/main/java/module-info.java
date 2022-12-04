@@ -23,6 +23,7 @@ module de.mephisto.vpin.ui {
 
   requires de.mephisto.vpin.connectors.discord;
   requires de.mephisto.vpin.restclient;
+  requires de.mephisto.vpin.commons;
 
   opens de.mephisto.vpin.ui to javafx.fxml;
   exports de.mephisto.vpin.ui;
@@ -34,14 +35,10 @@ module de.mephisto.vpin.ui {
   opens de.mephisto.vpin.ui.competitions to javafx.fxml;
   exports de.mephisto.vpin.ui.players;
   opens de.mephisto.vpin.ui.players to javafx.fxml;
-  exports de.mephisto.vpin.ui.widgets;
-  opens de.mephisto.vpin.ui.widgets to javafx.fxml;
   exports de.mephisto.vpin.ui.preferences;
   opens de.mephisto.vpin.ui.preferences to javafx.fxml;
   exports de.mephisto.vpin.ui.tables.dialogs;
   opens de.mephisto.vpin.ui.tables.dialogs to javafx.fxml;
-  exports de.mephisto.vpin.ui.overlay;
-  opens de.mephisto.vpin.ui.overlay to javafx.fxml;
   exports de.mephisto.vpin.ui.util;
   opens de.mephisto.vpin.ui.util to javafx.fxml;
 }
