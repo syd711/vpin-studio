@@ -1,6 +1,7 @@
 package de.mephisto.vpin.ui;
 
 import de.mephisto.vpin.restclient.representations.CompetitionRepresentation;
+import de.mephisto.vpin.ui.widgets.WidgetFinishedCompetitionsController;
 import de.mephisto.vpin.ui.widgets.WidgetLatestScoresController;
 import de.mephisto.vpin.ui.widgets.WidgetOfflineCompetitionController;
 import javafx.fxml.FXML;
@@ -27,6 +28,9 @@ public class DashboardController implements Initializable, StudioFXController {
   @FXML
   private BorderPane widgetTop;
 
+  @FXML
+  private BorderPane widgetBottom;
+
 
   // Add a public no-args constructor
   public DashboardController() {
@@ -36,14 +40,14 @@ public class DashboardController implements Initializable, StudioFXController {
   public void initialize(URL url, ResourceBundle resourceBundle) {
     NavigationController.setBreadCrumb(Arrays.asList("Dashboard"));
 
-    try {
-      FXMLLoader loader = new FXMLLoader(WidgetLatestScoresController.class.getResource("widget-latest-scores.fxml"));
-      BorderPane root = loader.load();
-      root.setMaxHeight(Double.MAX_VALUE);
-      widgetRoot.setLeft(root);
-    } catch (IOException e) {
-      LOG.error("Failed to load score widget: " + e.getMessage(), e);
-    }
+//    try {
+//      FXMLLoader loader = new FXMLLoader(WidgetLatestScoresController.class.getResource("widget-latest-scores.fxml"));
+//      BorderPane root = loader.load();
+//      root.setMaxHeight(Double.MAX_VALUE);
+//      widgetRoot.setLeft(root);
+//    } catch (IOException e) {
+//      LOG.error("Failed to load score widget: " + e.getMessage(), e);
+//    }
 
     try {
       FXMLLoader loader = new FXMLLoader(WidgetOfflineCompetitionController.class.getResource("widget-offline-competition.fxml"));
@@ -58,10 +62,17 @@ public class DashboardController implements Initializable, StudioFXController {
       }
 
     } catch (IOException e) {
-      LOG.error("Failed to load score widget: " + e.getMessage(), e);
+      LOG.error("Failed to load competitions widget: " + e.getMessage(), e);
     }
 
-//    webWidget.getEngine().load("https://virtualpinballchat.com/#/weekly-rankings/competition-corner");
+    try {
+      FXMLLoader loader = new FXMLLoader(WidgetFinishedCompetitionsController.class.getResource("widget-finished-competitions.fxml"));
+      BorderPane root = loader.load();
+      root.setMaxWidth(Double.MAX_VALUE);
+      widgetBottom.setTop(root);
+    } catch (IOException e) {
+      LOG.error("Failed to load finished competitions widget: " + e.getMessage(), e);
+    }
   }
 
 }

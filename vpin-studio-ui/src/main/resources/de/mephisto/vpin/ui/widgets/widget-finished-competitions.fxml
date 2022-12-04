@@ -3,24 +3,17 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.layout.BorderPane?>
-<?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane fx:id="root" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefWidth="600.0" styleClass="subpanel" stylesheets="@../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.widgets.WidgetLatestScoresController">
-   <center>
-      <VBox fx:id="highscoreVBox" BorderPane.alignment="CENTER_LEFT" />
-   </center>
+<BorderPane fx:id="root" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" styleClass="subpanel" stylesheets="@../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.widgets.WidgetFinishedCompetitionsController">
    <padding>
-      <Insets bottom="24.0" left="24.0" right="24.0" top="12.0" />
+      <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
    </padding>
    <top>
       <Label styleClass="widget-title" text="Finished Competitions" textFill="WHITE" BorderPane.alignment="TOP_LEFT">
          <font>
             <Font size="14.0" />
          </font>
-         <padding>
-            <Insets bottom="12.0" />
-         </padding>
       </Label>
    </top>
 </BorderPane>

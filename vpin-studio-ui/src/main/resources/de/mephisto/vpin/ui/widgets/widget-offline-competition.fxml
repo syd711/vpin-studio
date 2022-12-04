@@ -16,7 +16,7 @@
                <children>
                   <Label alignment="BOTTOM_LEFT" styleClass="widget-title" text="Active Offline Competition" textFill="WHITE">
                      <VBox.margin>
-                        <Insets bottom="12.0" />
+                        <Insets />
                      </VBox.margin>
                   </Label>
                </children>

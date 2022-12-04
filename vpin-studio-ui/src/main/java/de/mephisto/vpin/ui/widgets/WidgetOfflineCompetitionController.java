@@ -54,7 +54,6 @@ public class WidgetOfflineCompetitionController extends WidgetController impleme
   private Tile countdownTile;
   private Tile turnoverTile;
 
-  private CompetitionRepresentation competition;
   private WidgetCompetitionSummaryController summaryWidgetController;
 
   public WidgetOfflineCompetitionController() {

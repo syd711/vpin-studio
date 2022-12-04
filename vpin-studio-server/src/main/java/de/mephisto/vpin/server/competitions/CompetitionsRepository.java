@@ -13,4 +13,6 @@ import java.util.List;
 public interface CompetitionsRepository extends JpaRepository<Competition, Long> {
 
   List<Competition> findByStartDateLessThanEqualAndEndDateGreaterThanEqual(Date now1, Date now2);
+
+  List<Competition> findByEndDateLessThanEqual(Date now1);
 }

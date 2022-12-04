@@ -42,6 +42,11 @@ public class CompetitionResource {
     throw new ResponseStatusException(NOT_FOUND, "Not competition found for id " + id);
   }
 
+  @GetMapping("/finished/{limit}")
+  public List<Competition> getFinishedCompetitions(@PathVariable("limit") int limit) {
+    return competitionService.getFinishedCompetitions(limit);
+  }
+
   @GetMapping("/active/offline")
   public List<Competition> getActiveOffCompetition() {
     return competitionService.getActiveOfflineCompetitions();

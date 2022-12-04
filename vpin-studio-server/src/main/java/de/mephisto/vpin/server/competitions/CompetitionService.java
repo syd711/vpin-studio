@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 import org.springframework.stereotype.Service;
 
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -33,6 +34,15 @@ public class CompetitionService implements InitializingBean {
   public Competition getCompetition(long id) {
     Optional<Competition> competition = competitionsRepository.findById(id);
     return competition.orElse(null);
+  }
+
+  public List<Competition> getFinishedCompetitions(int limit) {
+    List<Competition> competitions = competitionsRepository.findByEndDateLessThanEqual(new Date());
+    competitions.sort(Comparator.comparing(Competition::getEndDate));
+    if(competitions.size() > limit) {
+      return competitions.subList(0, limit);
+    }
+    return competitions;
   }
 
   public ScoreList getCompetitionScores(int id) {

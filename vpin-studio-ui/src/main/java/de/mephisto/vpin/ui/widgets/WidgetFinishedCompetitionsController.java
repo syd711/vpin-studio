@@ -1,10 +1,7 @@
 package de.mephisto.vpin.ui.widgets;
 
-import de.mephisto.vpin.restclient.PopperScreen;
-import de.mephisto.vpin.restclient.representations.GameMediaItemRepresentation;
-import de.mephisto.vpin.restclient.representations.GameMediaRepresentation;
-import de.mephisto.vpin.restclient.representations.GameRepresentation;
-import de.mephisto.vpin.restclient.representations.ScoreSummaryRepresentation;
+import de.mephisto.vpin.restclient.representations.CompetitionRepresentation;
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -24,7 +21,7 @@ public class WidgetFinishedCompetitionsController extends WidgetController imple
   private final static Logger LOG = LoggerFactory.getLogger(WidgetFinishedCompetitionsController.class);
 
   @FXML
-  private VBox highscoreVBox;
+  private VBox competitionsVBox;
 
   @FXML
   private BorderPane root;
@@ -36,31 +33,16 @@ public class WidgetFinishedCompetitionsController extends WidgetController imple
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
-    List<GameRepresentation> games = client.getRecentlyPlayedGames(10);
-
+    List<CompetitionRepresentation> competitions = client.getFinishedCompetitions(10);
     try {
-      int count = 0;
-      for (GameRepresentation game : games) {
-        ScoreSummaryRepresentation scores = client.getGameScores(game.getId());
-        GameMediaRepresentation gameMedia = client.getGameMedia(game.getId());
-
-        GameMediaItemRepresentation wheelMedia = gameMedia.getMedia().get(PopperScreen.Wheel.name());
-        if (wheelMedia == null) {
-          continue;
-        }
-
-        FXMLLoader loader = new FXMLLoader(WidgetLatestScoreItemController.class.getResource("widget-latest-score-item.fxml"));
+      for (CompetitionRepresentation c : competitions) {
+        FXMLLoader loader = new FXMLLoader(WidgetLatestScoreItemController.class.getResource("widget-competition-summary.fxml"));
         BorderPane row = loader.load();
-        row.setPrefWidth(root.getPrefWidth() - 48);
-        WidgetLatestScoreItemController controller = loader.getController();
-        controller.setData(game, scores, wheelMedia);
-
-        highscoreVBox.getChildren().add(row);
-        count++;
-
-        if (count == 10) {
-          break;
-        }
+        WidgetCompetitionSummaryController controller = loader.getController();
+        root.setMaxWidth(Double.MAX_VALUE);
+        root.setBottom(row);
+        controller.setCompetition(c);
+        break;
       }
     } catch (IOException e) {
       LOG.error("Failed to create widget: " + e.getMessage(), e);
