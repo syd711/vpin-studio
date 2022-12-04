@@ -40,14 +40,14 @@ public class DashboardController implements Initializable, StudioFXController {
   public void initialize(URL url, ResourceBundle resourceBundle) {
     NavigationController.setBreadCrumb(Arrays.asList("Dashboard"));
 
-//    try {
-//      FXMLLoader loader = new FXMLLoader(WidgetLatestScoresController.class.getResource("widget-latest-scores.fxml"));
-//      BorderPane root = loader.load();
-//      root.setMaxHeight(Double.MAX_VALUE);
-//      widgetRoot.setLeft(root);
-//    } catch (IOException e) {
-//      LOG.error("Failed to load score widget: " + e.getMessage(), e);
-//    }
+    try {
+      FXMLLoader loader = new FXMLLoader(WidgetLatestScoresController.class.getResource("widget-latest-scores.fxml"));
+      BorderPane root = loader.load();
+      root.setMaxHeight(Double.MAX_VALUE);
+      widgetRoot.setLeft(root);
+    } catch (IOException e) {
+      LOG.error("Failed to load score widget: " + e.getMessage(), e);
+    }
 
     try {
       FXMLLoader loader = new FXMLLoader(WidgetOfflineCompetitionController.class.getResource("widget-offline-competition.fxml"));

@@ -131,9 +131,9 @@ public class CompetitionRepresentation {
 
     LocalDate start = LocalDate.now();
     LocalDate end = getEndDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
-    long diff = ChronoUnit.DAYS.between(start, end);
+    long diff = ChronoUnit.DAYS.between(end, start);
 
-    LocalDate newEndDate = ChronoUnit.DAYS.addTo(end, diff);
+    LocalDate newEndDate = ChronoUnit.DAYS.addTo(start, diff);
     clone.setStartDate(new Date());
     clone.setEndDate(Date.from(newEndDate.atStartOfDay(ZoneId.systemDefault()).toInstant()));
 

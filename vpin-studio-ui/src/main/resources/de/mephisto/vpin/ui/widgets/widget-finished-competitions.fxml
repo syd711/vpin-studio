@@ -3,6 +3,7 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
 <BorderPane fx:id="root" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" styleClass="subpanel" stylesheets="@../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.widgets.WidgetFinishedCompetitionsController">
@@ -16,4 +17,7 @@
          </font>
       </Label>
    </top>
+   <bottom>
+      <VBox fx:id="competitionsVBox" BorderPane.alignment="CENTER" />
+   </bottom>
 </BorderPane>

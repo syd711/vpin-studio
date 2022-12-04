@@ -39,10 +39,9 @@ public class WidgetFinishedCompetitionsController extends WidgetController imple
         FXMLLoader loader = new FXMLLoader(WidgetLatestScoreItemController.class.getResource("widget-competition-summary.fxml"));
         BorderPane row = loader.load();
         WidgetCompetitionSummaryController controller = loader.getController();
-        root.setMaxWidth(Double.MAX_VALUE);
-        root.setBottom(row);
+        row.setMaxWidth(Double.MAX_VALUE);
+        competitionsVBox.getChildren().add(row);
         controller.setCompetition(c);
-        break;
       }
     } catch (IOException e) {
       LOG.error("Failed to create widget: " + e.getMessage(), e);
