@@ -8,6 +8,8 @@ import java.util.List;
 public interface OverlayClient {
   List<CompetitionRepresentation> getFinishedCompetitions(int limit);
 
+  List<CompetitionRepresentation> getActiveOfflineCompetitions();
+
   GameRepresentation getGame(int id);
 
   ScoreSummaryRepresentation getGameScores(int id);

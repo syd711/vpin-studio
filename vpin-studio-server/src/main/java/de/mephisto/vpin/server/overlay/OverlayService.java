@@ -1,6 +1,7 @@
 package de.mephisto.vpin.server.overlay;
 
 import de.mephisto.vpin.commons.fx.OverlayWindowFX;
+import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.server.popper.PopperLaunchListener;
 import de.mephisto.vpin.server.popper.PopperService;
 import de.mephisto.vpin.server.preferences.PreferencesService;
@@ -19,7 +20,6 @@ import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
 
-import java.io.IOException;
 import java.util.logging.Level;
 
 @Service
@@ -68,7 +68,7 @@ public class OverlayService implements InitializingBean, NativeKeyListener, Popp
 
   @Override
   public void nativeKeyPressed(NativeKeyEvent nativeKeyEvent) {
-    String hotkey = (String) preferencesService.getPreferenceValue("overlayKey");
+    String hotkey = (String) preferencesService.getPreferenceValue(PreferenceNames.OVERLAY_KEY);
     if (!StringUtils.isEmpty(hotkey)) {
       KeyChecker keyChecker = new KeyChecker(hotkey);
       if (keyChecker.matches(nativeKeyEvent) || visible) {
@@ -90,16 +90,16 @@ public class OverlayService implements InitializingBean, NativeKeyListener, Popp
   @Override
   public void popperLaunched() {
     Platform.runLater(() -> {
-      Boolean startupLaunch = (Boolean) preferencesService.getPreferenceValue("overlayOnStartup");
-      if (startupLaunch) {
+//      Boolean startupLaunch = (Boolean) preferencesService.getPreferenceValue(PreferenceNames.SHOW_OVERLAY_ON_STARTUP);
+//      if (startupLaunch) {
         this.visible = !visible;
         overlayWindowFX.setVisible(visible);
-      }
+//      }
     });
   }
 
   @EventListener(ApplicationReadyEvent.class)
-  public void afterStartup() throws IOException {
+  public void afterStartup() {
     overlayWindowFX.initDashboard();
 
     boolean pinUPRunning = popperService.isPinUPRunning();
@@ -111,10 +111,6 @@ public class OverlayService implements InitializingBean, NativeKeyListener, Popp
       popperService.addPopperLaunchListener(this);
     }
 
-
-    Platform.runLater(() -> {
-      this.visible = !visible;
-      overlayWindowFX.setVisible(visible); //TODO3
-    });
+    popperLaunched();
   }
 }

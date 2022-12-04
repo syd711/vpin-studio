@@ -16,6 +16,7 @@ import de.mephisto.vpin.server.highscores.ScoreList;
 import de.mephisto.vpin.server.popper.Emulator;
 import de.mephisto.vpin.server.popper.GameMedia;
 import de.mephisto.vpin.server.popper.GameMediaItem;
+import de.mephisto.vpin.server.system.SystemService;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,6 +27,7 @@ import org.springframework.stereotype.Service;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 
@@ -49,6 +51,18 @@ public class OverlayClientImpl implements OverlayClient, InitializingBean {
     try {
       List<Competition> finishedCompetitions = competitionService.getFinishedCompetitions(limit);
       String s = mapper.writeValueAsString(finishedCompetitions);
+      return List.of(mapper.readValue(s, CompetitionRepresentation[].class));
+    } catch (Exception e) {
+      LOG.error("Error during conversion: " + e.getMessage(), e);
+    }
+    return Collections.emptyList();
+  }
+
+  @Override
+  public List<CompetitionRepresentation> getActiveOfflineCompetitions() {
+    try {
+      List<Competition> competitions = competitionService.getActiveOfflineCompetitions();
+      String s = mapper.writeValueAsString(competitions);
       return List.of(mapper.readValue(s, CompetitionRepresentation[].class));
     } catch (Exception e) {
       LOG.error("Error during conversion: " + e.getMessage(), e);
@@ -107,8 +121,20 @@ public class OverlayClientImpl implements OverlayClient, InitializingBean {
 
   @Override
   public ByteArrayInputStream getCompetitionBackground(long gameId) {
-    Asset asset = assetService.getCompetitionBackground(gameId);
-    return new ByteArrayInputStream(asset.getData());
+    try {
+      Asset asset = assetService.getCompetitionBackground(gameId);
+      if (asset == null) {
+        File background = new File(SystemService.RESOURCES, "competition-bg-default.png");
+        FileInputStream fileInputStream = new FileInputStream(background);
+        byte[] bytes = IOUtils.toByteArray(fileInputStream);
+        fileInputStream.close();
+        return new ByteArrayInputStream(bytes);
+      }
+      return new ByteArrayInputStream(asset.getData());
+    } catch (IOException e) {
+      LOG.error("Failed to read competition background: " + e.getMessage(), e);
+    }
+    return null;
   }
 
   @Override
@@ -126,7 +152,9 @@ public class OverlayClientImpl implements OverlayClient, InitializingBean {
       GameMediaItem gameMediaItem = gameMedia.get(screen);
       if (gameMediaItem != null) {
         File file = gameMediaItem.getFile();
-        byte[] bytes = IOUtils.toByteArray(new FileInputStream(file));
+        FileInputStream fileInputStream = new FileInputStream(file);
+        byte[] bytes = IOUtils.toByteArray(fileInputStream);
+        fileInputStream.close();
         return new ByteArrayInputStream(bytes);
       }
     } catch (Exception e) {

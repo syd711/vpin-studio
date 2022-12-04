@@ -75,10 +75,14 @@ public class OverlayWindowFX extends Application {
     latch.countDown();
   }
 
-  public void initDashboard() throws IOException {
-    FXMLLoader loader = new FXMLLoader(OverlayController.class.getResource("scene-overlay.fxml"));
-    BorderPane widgetRoot = loader.load();
-    widgetRoot.setMaxHeight(Double.MAX_VALUE);
-    root.setCenter(widgetRoot);
+  public void initDashboard() {
+    try {
+      FXMLLoader loader = new FXMLLoader(OverlayController.class.getResource("scene-overlay.fxml"));
+      BorderPane widgetRoot = loader.load();
+      widgetRoot.setMaxHeight(Double.MAX_VALUE);
+      root.setCenter(widgetRoot);
+    } catch (IOException e) {
+      LOG.error("Failed to init dashboard: " + e.getMessage(), e);
+    }
   }
 }
