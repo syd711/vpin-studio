@@ -4,6 +4,15 @@ public class GameMediaItemRepresentation {
   private String mimeType;
   private String uri;
   private String screen;
+  private int gameId;
+
+  public int getGameId() {
+    return gameId;
+  }
+
+  public void setGameId(int gameId) {
+    this.gameId = gameId;
+  }
 
   public String getMimeType() {
     return mimeType;

@@ -1,5 +1,6 @@
 package de.mephisto.vpin.server.highscores.cards;
 
+import de.mephisto.vpin.restclient.PopperScreen;
 import de.mephisto.vpin.server.directb2s.DirectB2SService;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameService;
@@ -7,7 +8,6 @@ import de.mephisto.vpin.server.highscores.Highscore;
 import de.mephisto.vpin.server.highscores.HighscoreChangeEvent;
 import de.mephisto.vpin.server.highscores.HighscoreChangeListener;
 import de.mephisto.vpin.server.highscores.HighscoreService;
-import de.mephisto.vpin.server.popper.PopperScreen;
 import de.mephisto.vpin.server.system.SystemService;
 import de.mephisto.vpin.server.util.Config;
 import de.mephisto.vpin.server.util.ImageUtil;
@@ -52,7 +52,7 @@ public class CardService implements HighscoreChangeListener, InitializingBean {
 
   public File generateSampleCard(int gameId) throws Exception {
     File cardSampleFile = getCardSampleFile();
-    if(!cardSampleFile.exists()) {
+    if (!cardSampleFile.exists()) {
       Game game = gameService.getGame(gameId);
       generateCard(game, true);
     }

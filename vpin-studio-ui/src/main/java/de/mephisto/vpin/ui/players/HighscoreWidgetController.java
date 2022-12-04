@@ -1,5 +1,6 @@
 package de.mephisto.vpin.ui.players;
 
+import de.mephisto.vpin.commons.fx.OverlayWindowFX;
 import de.mephisto.vpin.restclient.PopperScreen;
 import de.mephisto.vpin.restclient.RestClient;
 import de.mephisto.vpin.restclient.representations.*;
@@ -56,10 +57,8 @@ public class HighscoreWidgetController extends WidgetController implements Initi
     GameMediaRepresentation gameMedia = client.getGameMedia(score.getGameId());
     GameMediaItemRepresentation item = gameMedia.getItem(PopperScreen.Wheel);
     if(item != null) {
-      String url = item.getUri();
-      byte[] bytes = RestClient.getInstance().readBinary(url);
-      ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(bytes);
-      Image image = new Image(byteArrayInputStream);
+      ByteArrayInputStream gameMediaItem = OverlayWindowFX.client.getGameMediaItem(score.getGameId(), PopperScreen.Wheel);
+      Image image = new Image(gameMediaItem);
       wheelImageView.setImage(image);
     }
 //    else {

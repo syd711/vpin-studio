@@ -115,10 +115,8 @@ public class WidgetCompetitionSummaryController extends WidgetController impleme
 
       GameMediaItemRepresentation item = gameMedia.getItem(PopperScreen.Wheel);
       if (item != null) {
-        String url = item.getUri();
-        byte[] bytes = RestClient.getInstance().readBinary(url);
-        ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(bytes);
-        Image image = new Image(byteArrayInputStream);
+        ByteArrayInputStream gameMediaItem = OverlayWindowFX.client.getGameMediaItem(competition.getGameId(), PopperScreen.Wheel);
+        Image image = new Image(gameMediaItem);
         competitionWheelImage.setImage(image);
       }
       else {

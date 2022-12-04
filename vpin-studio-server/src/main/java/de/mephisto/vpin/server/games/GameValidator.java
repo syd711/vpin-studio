@@ -1,8 +1,8 @@
 package de.mephisto.vpin.server.games;
 
+import de.mephisto.vpin.restclient.PopperScreen;
 import de.mephisto.vpin.restclient.ValidationCode;
 import de.mephisto.vpin.server.preferences.Preferences;
-import de.mephisto.vpin.server.popper.PopperScreen;
 import de.mephisto.vpin.server.preferences.PreferencesService;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import org.apache.commons.lang3.StringUtils;
@@ -21,7 +21,7 @@ import static de.mephisto.vpin.restclient.ValidationCode.*;
 @Service
 public class GameValidator implements InitializingBean {
 
-  private static Map<Integer,PopperScreen> mediaCodeToScreen = new HashMap<>();
+  private static Map<Integer, PopperScreen> mediaCodeToScreen = new HashMap<>();
 
   static {
     mediaCodeToScreen.put(CODE_NO_AUDIO, PopperScreen.Audio);

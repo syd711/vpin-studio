@@ -1,5 +1,7 @@
 package de.mephisto.vpin.server.popper;
 
+import de.mephisto.vpin.restclient.PopperScreen;
+
 import java.util.HashMap;
 import java.util.Map;
 

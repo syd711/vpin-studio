@@ -1,15 +1,11 @@
 package de.mephisto.vpin.server.overlay;
 
 import de.mephisto.vpin.commons.fx.OverlayWindowFX;
-import de.mephisto.vpin.server.games.GameService;
-import de.mephisto.vpin.server.highscores.HighscoreService;
 import de.mephisto.vpin.server.popper.PopperLaunchListener;
 import de.mephisto.vpin.server.popper.PopperService;
 import de.mephisto.vpin.server.preferences.PreferencesService;
-import de.mephisto.vpin.server.system.SystemService;
 import de.mephisto.vpin.server.util.KeyChecker;
 import javafx.application.Platform;
-import javafx.stage.Stage;
 import org.apache.commons.lang3.StringUtils;
 import org.jnativehook.GlobalScreen;
 import org.jnativehook.NativeHookException;
@@ -19,8 +15,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.context.event.ApplicationReadyEvent;
+import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
 import java.util.logging.Level;
 
 @Service
@@ -28,16 +27,10 @@ public class OverlayService implements InitializingBean, NativeKeyListener, Popp
   private final static Logger LOG = LoggerFactory.getLogger(OverlayService.class);
 
   @Autowired
-  private SystemService systemService;
-
-  @Autowired
   private PopperService popperService;
 
   @Autowired
-  private GameService gameService;
-
-  @Autowired
-  private HighscoreService highscoreService;
+  private OverlayClientImpl overlayClient;
 
   @Autowired
   private PreferencesService preferencesService;
@@ -64,16 +57,7 @@ public class OverlayService implements InitializingBean, NativeKeyListener, Popp
       LOG.info("Overlay listener started.");
     }).start();
     overlayWindowFX = OverlayWindowFX.waitForOverlay();
-
-
-    boolean pinUPRunning = popperService.isPinUPRunning();
-    if (pinUPRunning) {
-      popperLaunched();
-    }
-    else {
-      LOG.info("Added VPin service popper status listener.");
-      popperService.addPopperLaunchListener(this);
-    }
+    overlayWindowFX.client = overlayClient;
   }
 
 
@@ -105,10 +89,32 @@ public class OverlayService implements InitializingBean, NativeKeyListener, Popp
 
   @Override
   public void popperLaunched() {
-    Boolean startupLaunch = (Boolean) preferencesService.getPreferenceValue("overlayOnStartup");
-    if (startupLaunch) {
-      this.visible = !visible;
-      overlayWindowFX.setVisible(visible);
+    Platform.runLater(() -> {
+      Boolean startupLaunch = (Boolean) preferencesService.getPreferenceValue("overlayOnStartup");
+      if (startupLaunch) {
+        this.visible = !visible;
+        overlayWindowFX.setVisible(visible);
+      }
+    });
+  }
+
+  @EventListener(ApplicationReadyEvent.class)
+  public void afterStartup() throws IOException {
+    overlayWindowFX.initDashboard();
+
+    boolean pinUPRunning = popperService.isPinUPRunning();
+    if (pinUPRunning) {
+      popperLaunched();
     }
+    else {
+      LOG.info("Added VPin service popper status listener.");
+      popperService.addPopperLaunchListener(this);
+    }
+
+
+    Platform.runLater(() -> {
+      this.visible = !visible;
+      overlayWindowFX.setVisible(visible); //TODO3
+    });
   }
 }

@@ -1,0 +1,103 @@
+/**
+ * Colors
+ */
+
+* {
+   -fx-base-1: #FFF8F8;
+   -fx-base-2: #C7C3C3;
+   -fx-base-3: #B0ABAB;
+   -fx-base-4: #888585;
+   -fx-base-5: #605E5E;
+   -fx-base-6: #222222;
+   -fx-base-7: #111111;
+
+   -fx-font-1: #FFF8F8;
+   -fx-font-2: #B0ABAB;
+   -fx-font-hover: #333366;
+
+   -fx-primary-color: #333366;
+   -fx-secondary-color: #111111;
+   -fx-green: #33CC00;
+}
+
+
+/**
+ * Main
+ */
+.main, .root {
+    -fx-background-color: -fx-base-6;
+}
+
+.window-header {
+    -fx-background-color: -fx-base-7;
+}
+
+.main-toolbar {
+    -fx-background-color: -fx-base-6;
+    -fx-border-radius: 12 12 12 12;
+    -fx-base : -fx-base-7;
+}
+
+
+#validationError {
+    -fx-background-color: #FF3333;
+    -fx-text-fill: #FFFFFF;
+    -fx-background-radius: 4 4 4 4;
+    -fx-font-size : 14px;
+    -fx-font-weight : bold;
+}
+
+/**
+ * Widgets
+ */
+.widget-title {
+    -fx-font-size : 28px;
+    -fx-font-weight : bold;
+    -fx-text-fill: #FFFFFF;
+}
+
+
+.thumbnail-preview {
+    -fx-background-color: #000000;
+    -fx-border-width: 0;
+}
+
+/**
+ * Navigation
+ */
+.navigation-panel {
+    -fx-width: 300px;
+    -fx-background-color: #272b2f;
+}
+
+/**
+ * Subpanels
+ */
+.subpanel {
+    -fx-background-radius: 6 6 6 6;
+    -fx-border-radius: 6 6 6 6;
+    -fx-background-color: #2a2a2a;
+}
+
+/**
+ * Common Component Theme
+ */
+.base-component {
+    -fx-text-fill: #FFFFFF;
+    -fx-base : #111111;
+}
+
+
+
+/**
+ * Media Styling
+ */
+.media-container {
+    -fx-padding: 3 3 3 3;
+    -fx-background-color: -fx-base-7;
+}
+
+.media-parent {
+    -fx-background-color: -fx-base-7;
+}
+

@@ -134,6 +134,11 @@ public class RestClient implements ClientHttpRequestInterceptor {
       URL url = new URL(resource);
       LOG.info("HTTP GET " + url);
       HttpURLConnection con =(HttpURLConnection)url.openConnection();
+      int responseCode = con.getResponseCode();
+      if(responseCode == 404) {
+        return null;
+      }
+
       is = con.getInputStream();
       byte[] byteChunk = new byte[4096]; // Or whatever size you want to read in at a time.
       int n;

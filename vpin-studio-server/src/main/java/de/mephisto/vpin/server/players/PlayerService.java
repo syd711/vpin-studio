@@ -3,11 +3,6 @@ package de.mephisto.vpin.server.players;
 import de.mephisto.vpin.restclient.PlayerDomain;
 import de.mephisto.vpin.server.assets.Asset;
 import de.mephisto.vpin.server.assets.AssetRepository;
-import de.mephisto.vpin.server.games.Game;
-import de.mephisto.vpin.server.games.GameService;
-import de.mephisto.vpin.server.highscores.Score;
-import de.mephisto.vpin.server.popper.GameMediaItem;
-import de.mephisto.vpin.server.popper.PopperScreen;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -62,11 +57,11 @@ public class PlayerService {
 
   public Optional<Player> getPlayerForInitials(String initials) {
     List<Player> players = playerRepository.findByInitials(initials);
-    if(players.size() > 1) {
+    if (players.size() > 1) {
       LOG.warn("Found duplicate player for initials '{}', using first one.", initials);
     }
 
-    if(!players.isEmpty()) {
+    if (!players.isEmpty()) {
       return Optional.of(players.get(0));
     }
 

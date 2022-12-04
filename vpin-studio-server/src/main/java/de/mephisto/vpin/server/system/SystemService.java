@@ -1,11 +1,7 @@
 package de.mephisto.vpin.server.system;
 
 import de.mephisto.vpin.server.VPinStudioException;
-import de.mephisto.vpin.server.games.Game;
-import de.mephisto.vpin.server.popper.PopperScreen;
 import de.mephisto.vpin.server.util.PropertiesStore;
-import edu.umd.cs.findbugs.annotations.NonNull;
-import edu.umd.cs.findbugs.annotations.Nullable;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -22,10 +18,9 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
-import java.util.Optional;
 
 @Service
-public class SystemService implements InitializingBean  {
+public class SystemService implements InitializingBean {
   private final static Logger LOG = LoggerFactory.getLogger(SystemService.class);
 
   public final static int SERVER_PORT = 8089;
@@ -86,9 +81,9 @@ public class SystemService implements InitializingBean  {
         this.visualPinballInstallationFolder = new File(store.get(VISUAL_PINBALL_INST_DIR));
       }
 
-      if(!getB2SImageExtractionFolder().exists()) {
+      if (!getB2SImageExtractionFolder().exists()) {
         boolean mkdirs = getB2SImageExtractionFolder().mkdirs();
-        if(!mkdirs) {
+        if (!mkdirs) {
           LOG.error("Failed to create image directory " + getB2SImageExtractionFolder().getAbsolutePath());
         }
       }
@@ -253,7 +248,7 @@ public class SystemService implements InitializingBean  {
   }
 
   public File getVisualPinballUserFolder() {
-    return new File(this.getVisualPinballInstallationFolder(),"User");
+    return new File(this.getVisualPinballInstallationFolder(), "User");
   }
 
   public File getMameRomFolder() {

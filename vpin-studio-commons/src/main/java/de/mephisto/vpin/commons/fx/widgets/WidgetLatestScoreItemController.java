@@ -1,5 +1,7 @@
 package de.mephisto.vpin.commons.fx.widgets;
 
+import de.mephisto.vpin.commons.fx.OverlayWindowFX;
+import de.mephisto.vpin.restclient.PopperScreen;
 import de.mephisto.vpin.restclient.RestClient;
 import de.mephisto.vpin.restclient.representations.GameMediaItemRepresentation;
 import de.mephisto.vpin.restclient.representations.GameRepresentation;
@@ -51,10 +53,8 @@ public class WidgetLatestScoreItemController extends WidgetController implements
   }
 
   public void setData(GameRepresentation game, ScoreSummaryRepresentation scoreSummary, GameMediaItemRepresentation wheel) {
-    String url = wheel.getUri();
-    byte[] bytes = RestClient.getInstance().readBinary(url);
-    ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(bytes);
-    Image image = new Image(byteArrayInputStream);
+    ByteArrayInputStream gameMediaItem = OverlayWindowFX.client.getGameMediaItem(game.getId(), PopperScreen.Wheel);
+    Image image = new Image(gameMediaItem);
 
     wheelImageView.setImage(image);
 

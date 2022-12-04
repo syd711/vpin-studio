@@ -1,16 +1,19 @@
 package de.mephisto.vpin.commons.fx;
 
+import de.mephisto.vpin.restclient.OverlayClient;
 import de.mephisto.vpin.restclient.VPinStudioClient;
 import javafx.application.Application;
 import javafx.application.Platform;
+import javafx.fxml.FXMLLoader;
 import javafx.geometry.Rectangle2D;
-import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.SceneAntialiasing;
+import javafx.scene.layout.BorderPane;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
 import java.util.concurrent.CountDownLatch;
 
 public class OverlayWindowFX extends Application {
@@ -21,7 +24,9 @@ public class OverlayWindowFX extends Application {
 
   private Stage stage;
 
-  public static VPinStudioClient client;
+  private BorderPane root;
+
+  public static OverlayClient client;
 
   public static void main(String[] args) {
     Application.launch(args);
@@ -48,12 +53,10 @@ public class OverlayWindowFX extends Application {
 
   @Override
   public void start(Stage primaryStage) throws Exception {
-    OverlayWindowFX.client = VPinStudioClient.create();
-
     this.stage = primaryStage;
     Platform.setImplicitExit(false);
 
-    Group root = new Group();
+    root = new BorderPane();
     Screen screen = Screen.getPrimary();
     final Scene scene = new Scene(root, screen.getVisualBounds().getWidth(), screen.getVisualBounds().getHeight(), true, SceneAntialiasing.BALANCED);
 
@@ -63,12 +66,20 @@ public class OverlayWindowFX extends Application {
 
     stage.setScene(scene);
     stage.setFullScreenExitHint("");
-    stage.setFullScreen(true);
     stage.setAlwaysOnTop(true);
-    stage.setHeight(screen.getVisualBounds().getWidth());
-    stage.setWidth(screen.getVisualBounds().getHeight());
+    stage.setFullScreen(true);
+//    stage.initStyle(StageStyle.UNDECORATED);
+//    scene.setFill(Color.web("#272b2f"));
+    stage.getScene().getStylesheets().add(OverlayWindowFX.class.getResource("stylesheet.css").toExternalForm());
 
     overlayFX = this;
     latch.countDown();
+  }
+
+  public void initDashboard() throws IOException {
+    FXMLLoader loader = new FXMLLoader(OverlayController.class.getResource("scene-overlay.fxml"));
+    BorderPane widgetRoot = loader.load();
+    widgetRoot.setMaxHeight(Double.MAX_VALUE);
+    root.setCenter(widgetRoot);
   }
 }

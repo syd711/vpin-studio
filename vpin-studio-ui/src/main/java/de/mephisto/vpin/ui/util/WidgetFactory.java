@@ -1,6 +1,6 @@
 package de.mephisto.vpin.ui.util;
 
-import de.mephisto.vpin.restclient.RestClient;
+import de.mephisto.vpin.restclient.PopperScreen;
 import de.mephisto.vpin.restclient.VPinStudioClient;
 import de.mephisto.vpin.restclient.representations.GameMediaItemRepresentation;
 import de.mephisto.vpin.ui.Studio;
@@ -131,17 +131,17 @@ public class WidgetFactory {
 
   public static Node addMediaItemToBorderPane(GameMediaItemRepresentation mediaItem, BorderPane parent) {
     String mimeType = mediaItem.getMimeType();
-    String url = Studio.client.getURL(mediaItem.getUri());
     String baseType = mimeType.split("/")[0];
+    String url = Studio.client.getURL(mediaItem.getUri());
+
     if (baseType.equals("image")) {
       ImageView imageView = new ImageView();
       imageView.setFitWidth(parent.getPrefWidth() - 10);
       imageView.setFitHeight(parent.getPrefWidth() - 20);
       imageView.setPreserveRatio(true);
 
-      byte[] bytes = RestClient.getInstance().readBinary(url);
-      ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(bytes);
-      Image image = new Image(byteArrayInputStream);
+      ByteArrayInputStream gameMediaItem = Studio.client.getGameMediaItem(mediaItem.getGameId(), PopperScreen.valueOf(mediaItem.getScreen()));
+      Image image = new Image(gameMediaItem);
       imageView.setImage(image);
       imageView.setUserData(mediaItem);
 

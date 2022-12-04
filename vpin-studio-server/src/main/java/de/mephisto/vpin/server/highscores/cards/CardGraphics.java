@@ -1,10 +1,10 @@
 package de.mephisto.vpin.server.highscores.cards;
 
+import de.mephisto.vpin.restclient.PopperScreen;
 import de.mephisto.vpin.server.directb2s.DirectB2SImageRatio;
 import de.mephisto.vpin.server.directb2s.DirectB2SService;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.highscores.Highscore;
-import de.mephisto.vpin.server.popper.PopperScreen;
 import de.mephisto.vpin.server.system.SystemService;
 import de.mephisto.vpin.server.util.Config;
 import de.mephisto.vpin.server.util.ImageUtil;
@@ -98,7 +98,7 @@ public class CardGraphics {
       backgroundImage = ImageUtil.blurImage(backgroundImage, BLUR_PIXELS);
     }
 
-    if(GRAY_SCALE) {
+    if (GRAY_SCALE) {
       backgroundImage = ImageUtil.grayScaleImage(backgroundImage);
     }
 

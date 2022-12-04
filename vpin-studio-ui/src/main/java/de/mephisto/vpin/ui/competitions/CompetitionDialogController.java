@@ -7,6 +7,7 @@ import de.mephisto.vpin.restclient.representations.CompetitionRepresentation;
 import de.mephisto.vpin.restclient.representations.GameMediaItemRepresentation;
 import de.mephisto.vpin.restclient.representations.GameMediaRepresentation;
 import de.mephisto.vpin.restclient.representations.GameRepresentation;
+import de.mephisto.vpin.ui.Studio;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -169,10 +170,8 @@ public class CompetitionDialogController implements Initializable {
       GameMediaRepresentation gameMedia = client.getGameMedia(game.getId());
       GameMediaItemRepresentation mediaItem = gameMedia.getMedia().get(PopperScreen.Wheel.name());
       if (mediaItem != null) {
-        String url1 = mediaItem.getUri();
-        byte[] bytes = RestClient.getInstance().readBinary(url1);
-        ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(bytes);
-        Image image = new Image(byteArrayInputStream);
+        ByteArrayInputStream gameMediaItem = client.getGameMediaItem(game.getId(), PopperScreen.Wheel);
+        Image image = new Image(gameMediaItem);
         iconPreview.setImage(image);
 
         if (badge != null && badgeCheckbox.isSelected()) {

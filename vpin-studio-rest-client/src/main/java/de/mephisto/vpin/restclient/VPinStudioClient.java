@@ -13,7 +13,7 @@ import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 
-public class VPinStudioClient implements ObservedPropertyChangeListener {
+public class VPinStudioClient implements ObservedPropertyChangeListener, OverlayClient {
   private final static Logger LOG = LoggerFactory.getLogger(VPinStudioClient.class);
 
   public final static String API = "api/v1/";
@@ -36,6 +36,15 @@ public class VPinStudioClient implements ObservedPropertyChangeListener {
 
   public GameMediaRepresentation getGameMedia(int id) {
     return RestClient.getInstance().get(API + "poppermedia/" + id, GameMediaRepresentation.class);
+  }
+
+  public ByteArrayInputStream getGameMediaItem(int id, PopperScreen screen) {
+    byte[] bytes = RestClient.getInstance().readBinary(API + "poppermedia/" + id + "/" + screen.name());
+    if (bytes == null) {
+//      throw new UnsupportedOperationException("No media item found for with " + screen + " of game " + id);
+      bytes = new byte[]{};
+    }
+    return new ByteArrayInputStream(bytes);
   }
 
   public AssetRepresentation uploadAsset(File file, long id, int maxSize, AssetType assetType) throws Exception {
