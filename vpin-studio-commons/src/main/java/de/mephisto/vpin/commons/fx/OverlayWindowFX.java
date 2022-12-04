@@ -1,7 +1,6 @@
 package de.mephisto.vpin.commons.fx;
 
 import de.mephisto.vpin.restclient.OverlayClient;
-import de.mephisto.vpin.restclient.VPinStudioClient;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
@@ -43,7 +42,7 @@ public class OverlayWindowFX extends Application {
   }
 
   public void setVisible(boolean b) {
-    if(b) {
+    if (b) {
       stage.show();
     }
     else {

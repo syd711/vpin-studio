@@ -8,7 +8,10 @@ import org.springframework.http.*;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
-import java.io.*;
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.InputStream;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
@@ -144,6 +147,7 @@ public class VPinStudioClient implements ObservedPropertyChangeListener, Overlay
       LOG.error("Failed to delete competition: " + e.getMessage(), e);
     }
   }
+
   public ScoreListRepresentation getCompetitionScores(int id) {
     try {
       return RestClient.getInstance().get(API + "competitions/scores/" + id, ScoreListRepresentation.class);

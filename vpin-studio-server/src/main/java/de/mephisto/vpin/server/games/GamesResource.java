@@ -40,7 +40,7 @@ public class GamesResource {
   @GetMapping("/{id}")
   public Game getGame(@PathVariable("id") int id) {
     Game game = gameService.getGame(id);
-    if(game == null) {
+    if (game == null) {
       throw new ResponseStatusException(NOT_FOUND, "Not game found for id " + id);
     }
     return game;

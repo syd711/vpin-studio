@@ -39,7 +39,7 @@ public class CompetitionService implements InitializingBean {
   public List<Competition> getFinishedCompetitions(int limit) {
     List<Competition> competitions = competitionsRepository.findByEndDateLessThanEqual(new Date());
     competitions.sort(Comparator.comparing(Competition::getEndDate));
-    if(competitions.size() > limit) {
+    if (competitions.size() > limit) {
       return competitions.subList(0, limit);
     }
     return competitions;
@@ -48,7 +48,7 @@ public class CompetitionService implements InitializingBean {
   public ScoreList getCompetitionScores(int id) {
     Competition competition = getCompetition(id);
     Date start = competition.getStartDate();
-    Date end= competition.getEndDate();
+    Date end = competition.getEndDate();
     int gameId = competition.getGameId();
     return highscoreService.getScoresBetween(gameId, start, end);
   }

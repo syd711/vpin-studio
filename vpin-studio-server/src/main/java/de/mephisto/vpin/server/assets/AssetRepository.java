@@ -1,6 +1,5 @@
 package de.mephisto.vpin.server.assets;
 
-import de.mephisto.vpin.restclient.AssetType;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

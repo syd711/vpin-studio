@@ -59,7 +59,7 @@ public class GameService {
   @SuppressWarnings("unused")
   public Game getGame(int id) {
     Game game = pinUPConnector.getGame(id);
-    if(game != null) {
+    if (game != null) {
       List<Game> games = pinUPConnector.getGames();
       loadGameDetails(game, games);
       return game;
@@ -77,7 +77,7 @@ public class GameService {
     List<Game> result = new ArrayList<>();
     for (Highscore recentHighscore : recentHighscores) {
       List<Score> scores = highscoreService.parseScores(recentHighscore.getRaw(), recentHighscore.getGameId());
-      if(scores.isEmpty()) {
+      if (scores.isEmpty()) {
         continue;
       }
 
@@ -88,7 +88,7 @@ public class GameService {
       }
       result.add(game);
 
-      if(result.size() == count) {
+      if (result.size() == count) {
         break;
       }
     }

@@ -2,7 +2,6 @@ package de.mephisto.vpin.commons.fx.widgets;
 
 import de.mephisto.vpin.commons.fx.OverlayWindowFX;
 import de.mephisto.vpin.restclient.PopperScreen;
-import de.mephisto.vpin.restclient.RestClient;
 import de.mephisto.vpin.restclient.representations.*;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;

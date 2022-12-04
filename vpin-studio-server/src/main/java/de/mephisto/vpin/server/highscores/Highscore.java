@@ -4,8 +4,6 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import de.mephisto.vpin.server.games.Game;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedDate;
 
 import javax.persistence.*;
 import java.util.Date;

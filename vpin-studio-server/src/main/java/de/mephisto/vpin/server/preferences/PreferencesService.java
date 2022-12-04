@@ -72,7 +72,7 @@ public class PreferencesService implements InitializingBean {
 
   public Asset saveAvatar(byte[] bytes, String mimeType) {
     Asset avatar = preferences.getAvatar();
-    if(avatar != null) {
+    if (avatar != null) {
       avatar.setData(bytes);
       avatar.setMimeType(mimeType);
       assetRepository.saveAndFlush(avatar);

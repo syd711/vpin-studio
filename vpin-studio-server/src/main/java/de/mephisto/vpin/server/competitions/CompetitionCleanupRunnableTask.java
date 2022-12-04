@@ -2,14 +2,14 @@ package de.mephisto.vpin.server.competitions;
 
 import java.util.Date;
 
-public class CompetitionCleanupRunnableTask implements Runnable{
+public class CompetitionCleanupRunnableTask implements Runnable {
 
-  public CompetitionCleanupRunnableTask(){
+  public CompetitionCleanupRunnableTask() {
   }
 
   @Override
   public void run() {
-    System.out.println(new Date()+" Runnable Task with "
-        +" on thread "+Thread.currentThread().getName());
+    System.out.println(new Date() + " Runnable Task with "
+        + " on thread " + Thread.currentThread().getName());
   }
 }

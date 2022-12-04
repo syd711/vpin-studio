@@ -11,7 +11,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
-import java.util.*;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import static de.mephisto.vpin.restclient.ValidationCode.*;
 
@@ -44,20 +47,20 @@ public class GameValidator implements InitializingBean {
   private Preferences preferences;
 
   public int validate(@NonNull Game game, @NonNull List<Game> games) {
-    if(isValidationEnabled(game, ValidationCode.CODE_NO_ROM)) {
+    if (isValidationEnabled(game, ValidationCode.CODE_NO_ROM)) {
       if (StringUtils.isEmpty(game.getRom())) {
         return ValidationCode.CODE_NO_ROM;
       }
     }
 
-    if(isValidationEnabled(game, ValidationCode.CODE_ROM_NOT_EXISTS)) {
+    if (isValidationEnabled(game, ValidationCode.CODE_ROM_NOT_EXISTS)) {
       if (!game.isRomExists()) {
         return ValidationCode.CODE_ROM_NOT_EXISTS;
       }
     }
 
 
-    if(isValidationEnabled(game, ValidationCode.CODE_DUPLICATE_ROM)) {
+    if (isValidationEnabled(game, ValidationCode.CODE_DUPLICATE_ROM)) {
       for (Game g : games) {
         if (g.getId() != game.getId() && !StringUtils.isEmpty(g.getRom()) && g.getRom().equals(game.getRom())) {
           return ValidationCode.CODE_DUPLICATE_ROM;
@@ -65,13 +68,13 @@ public class GameValidator implements InitializingBean {
       }
     }
 
-    if(isValidationEnabled(game, ValidationCode.CODE_NO_DIRECTB2S_OR_PUPPACK)) {
+    if (isValidationEnabled(game, ValidationCode.CODE_NO_DIRECTB2S_OR_PUPPACK)) {
       if (!game.isDirectB2SAvailable() && !game.isPupPackAvailable()) {
         return ValidationCode.CODE_NO_DIRECTB2S_OR_PUPPACK;
       }
     }
 
-    if(isValidationEnabled(game, ValidationCode.CODE_NO_HIGHSCORE_FILES)) {
+    if (isValidationEnabled(game, ValidationCode.CODE_NO_HIGHSCORE_FILES)) {
       if (!game.hasHighscore()) {
         return ValidationCode.CODE_NO_HIGHSCORE_FILES;
       }
@@ -90,74 +93,74 @@ public class GameValidator implements InitializingBean {
     File other2 = game.getEmulator().getPinUPMedia(PopperScreen.Other2);
     File wheel = game.getEmulator().getPinUPMedia(PopperScreen.Wheel);
 
-    if(isValidationEnabled(game, CODE_NO_AUDIO)) {
-      if(audio == null || !audio.exists()) {
+    if (isValidationEnabled(game, CODE_NO_AUDIO)) {
+      if (audio == null || !audio.exists()) {
         return CODE_NO_AUDIO;
       }
     }
 
-    if(isValidationEnabled(game, CODE_NO_AUDIO_LAUNCH)) {
-      if(audioLaunch == null || !audioLaunch.exists()) {
+    if (isValidationEnabled(game, CODE_NO_AUDIO_LAUNCH)) {
+      if (audioLaunch == null || !audioLaunch.exists()) {
         return CODE_NO_AUDIO_LAUNCH;
       }
     }
 
-    if(isValidationEnabled(game, CODE_NO_APRON)) {
-      if(apron == null || !apron.exists()) {
+    if (isValidationEnabled(game, CODE_NO_APRON)) {
+      if (apron == null || !apron.exists()) {
         return CODE_NO_APRON;
       }
     }
 
-    if(isValidationEnabled(game, ValidationCode.CODE_NO_INFO)) {
-      if(info == null || !info.exists()) {
+    if (isValidationEnabled(game, ValidationCode.CODE_NO_INFO)) {
+      if (info == null || !info.exists()) {
         return ValidationCode.CODE_NO_INFO;
       }
     }
 
-    if(isValidationEnabled(game, ValidationCode.CODE_NO_HELP)) {
-      if(help == null || !help.exists()) {
+    if (isValidationEnabled(game, ValidationCode.CODE_NO_HELP)) {
+      if (help == null || !help.exists()) {
         return ValidationCode.CODE_NO_HELP;
       }
     }
 
-    if(isValidationEnabled(game, ValidationCode.CODE_NO_TOPPER)) {
-      if(topper == null || !topper.exists()) {
+    if (isValidationEnabled(game, ValidationCode.CODE_NO_TOPPER)) {
+      if (topper == null || !topper.exists()) {
         return ValidationCode.CODE_NO_TOPPER;
       }
     }
 
-    if(isValidationEnabled(game, ValidationCode.CODE_NO_BACKGLASS)) {
-      if(backglass == null || !backglass.exists()) {
+    if (isValidationEnabled(game, ValidationCode.CODE_NO_BACKGLASS)) {
+      if (backglass == null || !backglass.exists()) {
         return ValidationCode.CODE_NO_BACKGLASS;
       }
     }
 
-    if(isValidationEnabled(game, ValidationCode.CODE_NO_DMD)) {
-      if(dmd == null || !dmd.exists()) {
+    if (isValidationEnabled(game, ValidationCode.CODE_NO_DMD)) {
+      if (dmd == null || !dmd.exists()) {
         return ValidationCode.CODE_NO_DMD;
       }
     }
 
-    if(isValidationEnabled(game, ValidationCode.CODE_NO_PLAYFIELD)) {
-      if(playfield == null || !playfield.exists()) {
+    if (isValidationEnabled(game, ValidationCode.CODE_NO_PLAYFIELD)) {
+      if (playfield == null || !playfield.exists()) {
         return ValidationCode.CODE_NO_PLAYFIELD;
       }
     }
 
-    if(isValidationEnabled(game, ValidationCode.CODE_NO_LOADING)) {
-      if(loading == null || !loading.exists()) {
+    if (isValidationEnabled(game, ValidationCode.CODE_NO_LOADING)) {
+      if (loading == null || !loading.exists()) {
         return ValidationCode.CODE_NO_LOADING;
       }
     }
 
-    if(isValidationEnabled(game, ValidationCode.CODE_NO_OTHER2)) {
-      if(other2 == null || !other2.exists()) {
+    if (isValidationEnabled(game, ValidationCode.CODE_NO_OTHER2)) {
+      if (other2 == null || !other2.exists()) {
         return ValidationCode.CODE_NO_OTHER2;
       }
     }
 
-    if(isValidationEnabled(game, ValidationCode.CODE_NO_WHEEL_IMAGE)) {
-      if(wheel == null || !wheel.exists()) {
+    if (isValidationEnabled(game, ValidationCode.CODE_NO_WHEEL_IMAGE)) {
+      if (wheel == null || !wheel.exists()) {
         return ValidationCode.CODE_NO_WHEEL_IMAGE;
       }
     }
@@ -166,20 +169,20 @@ public class GameValidator implements InitializingBean {
   }
 
   private boolean isValidationEnabled(@NonNull Game game, int code) {
-    if(mediaCodeToScreen.containsKey(code)) {
+    if (mediaCodeToScreen.containsKey(code)) {
       PopperScreen popperScreen = mediaCodeToScreen.get(code);
-      if(preferences.getIgnoredMedia() != null && Arrays.asList(preferences.getIgnoredMedia().split(",")).contains(popperScreen.name())) {
+      if (preferences.getIgnoredMedia() != null && Arrays.asList(preferences.getIgnoredMedia().split(",")).contains(popperScreen.name())) {
         return false;
       }
     }
 
     String ignoredValidations = game.getIgnoredValidations();
-    if (containsIgnoreCode(code, ignoredValidations)){
+    if (containsIgnoreCode(code, ignoredValidations)) {
       return false;
     }
 
     String ignoredPrefValidations = preferences.getIgnoredValidations();
-    if (containsIgnoreCode(code, ignoredPrefValidations)){
+    if (containsIgnoreCode(code, ignoredPrefValidations)) {
       return false;
     }
 
@@ -187,10 +190,10 @@ public class GameValidator implements InitializingBean {
   }
 
   private boolean containsIgnoreCode(int code, String ignoredValidations) {
-    if(!StringUtils.isEmpty(ignoredValidations)) {
+    if (!StringUtils.isEmpty(ignoredValidations)) {
       String[] split = ignoredValidations.split(",");
       List<String> ignoreList = Arrays.asList(split);
-      if(ignoreList.contains(String.valueOf(code))) {
+      if (ignoreList.contains(String.valueOf(code))) {
         return true;
       }
     }
@@ -199,6 +202,6 @@ public class GameValidator implements InitializingBean {
 
   @Override
   public void afterPropertiesSet() {
-     preferences = preferencesService.getPreferences();
+    preferences = preferencesService.getPreferences();
   }
 }

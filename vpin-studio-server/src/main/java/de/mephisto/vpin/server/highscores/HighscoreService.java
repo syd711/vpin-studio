@@ -98,7 +98,7 @@ public class HighscoreService implements InitializingBean {
     ScoreSummary summary = new ScoreSummary(new ArrayList<>(), new Date());
     List<Highscore> all = highscoreRepository.findAll();
     for (Highscore highscore : all) {
-      if(StringUtils.isEmpty(highscore.getRaw())) {
+      if (StringUtils.isEmpty(highscore.getRaw())) {
         continue;
       }
 
@@ -121,9 +121,9 @@ public class HighscoreService implements InitializingBean {
   public ScoreSummary getHighscores(Game game) {
     ScoreSummary summary = new ScoreSummary(new ArrayList<>(), new Date());
     Optional<Highscore> highscore = highscoreRepository.findByGameId(game.getId());
-    if(highscore.isPresent()) {
+    if (highscore.isPresent()) {
       Highscore h = highscore.get();
-      if(!StringUtils.isEmpty(h.getRaw())) {
+      if (!StringUtils.isEmpty(h.getRaw())) {
         List<Score> scores = parseScores(h.getRaw(), game.getId());
         summary.setRaw(h.getRaw());
         summary.getScores().addAll(scores);

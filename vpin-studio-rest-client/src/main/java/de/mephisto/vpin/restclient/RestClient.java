@@ -34,14 +34,14 @@ public class RestClient implements ClientHttpRequestInterceptor {
   private static RestClient INSTANCE;
 
   public static RestClient getInstance(String scheme, String host, int port) {
-    if(INSTANCE == null) {
+    if (INSTANCE == null) {
       INSTANCE = new RestClient(scheme, host, port);
     }
     return INSTANCE;
   }
 
   public static RestClient getInstance() {
-    if(INSTANCE == null) {
+    if (INSTANCE == null) {
       INSTANCE = new RestClient(SCHEME, HOST, PORT);
     }
     return INSTANCE;
@@ -74,7 +74,7 @@ public class RestClient implements ClientHttpRequestInterceptor {
     return get(path, entityType, new HashMap<>());
   }
 
-  public <T> T get(String path, Class<T> entityType, Map<String,?> urlVariables) {
+  public <T> T get(String path, Class<T> entityType, Map<String, ?> urlVariables) {
     String url = baseUrl + path;
     return restTemplate.getForObject(url, entityType, urlVariables);
   }
@@ -120,11 +120,11 @@ public class RestClient implements ClientHttpRequestInterceptor {
   }
 
   public byte[] readBinary(String resource) {
-    if(!resource.contains("api/")) {
+    if (!resource.contains("api/")) {
       resource = VPinStudioClient.API + resource;
     }
 
-    if(!resource.startsWith(baseUrl)) {
+    if (!resource.startsWith(baseUrl)) {
       resource = baseUrl + resource;
     }
 
@@ -133,9 +133,9 @@ public class RestClient implements ClientHttpRequestInterceptor {
     try {
       URL url = new URL(resource);
       LOG.info("HTTP GET " + url);
-      HttpURLConnection con =(HttpURLConnection)url.openConnection();
+      HttpURLConnection con = (HttpURLConnection) url.openConnection();
       int responseCode = con.getResponseCode();
-      if(responseCode == 404) {
+      if (responseCode == 404) {
         return null;
       }
 
@@ -143,7 +143,7 @@ public class RestClient implements ClientHttpRequestInterceptor {
       byte[] byteChunk = new byte[4096]; // Or whatever size you want to read in at a time.
       int n;
 
-      while((n = is.read(byteChunk)) > 0) {
+      while ((n = is.read(byteChunk)) > 0) {
         baos.write(byteChunk, 0, n);
       }
       return baos.toByteArray();

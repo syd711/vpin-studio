@@ -4,14 +4,12 @@ import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.highscores.HighscoreService;
 import de.mephisto.vpin.server.system.SystemService;
 import de.mephisto.vpin.server.util.SystemCommandExecutor;
-import edu.umd.cs.findbugs.annotations.NonNull;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -110,7 +108,7 @@ public class PopperService {
                     p.info().command().get().contains("DOF")))
         .collect(Collectors.toList());
 
-    if(pinUpProcesses.isEmpty()) {
+    if (pinUpProcesses.isEmpty()) {
       LOG.info("No PinUP processes found, restart canceled.");
       return;
     }

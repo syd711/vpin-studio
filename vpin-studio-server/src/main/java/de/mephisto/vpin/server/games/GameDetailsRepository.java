@@ -1,4 +1,3 @@
-
 package de.mephisto.vpin.server.games;
 
 import org.springframework.data.jpa.repository.JpaRepository;

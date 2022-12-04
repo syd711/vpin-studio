@@ -40,7 +40,7 @@ public class ResourceHandler {
       MediaType mimeType = getMimeType(requestURI);
       FileInputStream inputStream = new FileInputStream(indexFile);
 
-      if(mimeType.getType().equals("image")) {
+      if (mimeType.getType().equals("image")) {
         byte[] media = IOUtils.toByteArray(inputStream);
         inputStream.close();
         return ResponseEntity.ok().contentType(mimeType).body(media);
@@ -68,13 +68,13 @@ public class ResourceHandler {
     if (requestURI.endsWith(".json")) {
       return MediaType.APPLICATION_JSON;
     }
-    if(requestURI.endsWith(".ico")) {
+    if (requestURI.endsWith(".ico")) {
       return MediaType.valueOf("image/x-icon");
     }
-    if(requestURI.equals(".jpg")) {
+    if (requestURI.equals(".jpg")) {
       return MediaType.IMAGE_JPEG;
     }
-    if(requestURI.equals(".png")) {
+    if (requestURI.equals(".png")) {
       return MediaType.IMAGE_PNG;
     }
     return MediaType.TEXT_PLAIN;

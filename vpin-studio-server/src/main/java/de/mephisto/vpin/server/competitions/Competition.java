@@ -1,19 +1,14 @@
-
 package de.mephisto.vpin.server.competitions;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import de.mephisto.vpin.server.assets.Asset;
-import de.mephisto.vpin.server.highscores.Highscore;
 import de.mephisto.vpin.server.players.Player;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
-import java.util.Set;
 
 @Entity
 @Table(name = "Competitions")

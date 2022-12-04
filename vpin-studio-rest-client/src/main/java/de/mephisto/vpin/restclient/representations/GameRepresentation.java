@@ -1,8 +1,6 @@
 package de.mephisto.vpin.restclient.representations;
 
-import java.util.Collections;
 import java.util.Date;
-import java.util.List;
 
 /**
  * {
@@ -168,6 +166,6 @@ public class GameRepresentation {
 
   @Override
   public boolean equals(Object obj) {
-    return (obj instanceof GameRepresentation) && ((GameRepresentation)obj).getId() == this.getId();
+    return (obj instanceof GameRepresentation) && ((GameRepresentation) obj).getId() == this.getId();
   }
 }

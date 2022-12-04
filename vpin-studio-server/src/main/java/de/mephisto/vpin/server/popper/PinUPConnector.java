@@ -12,8 +12,9 @@ import org.springframework.stereotype.Service;
 
 import java.io.File;
 import java.sql.*;
-import java.sql.Date;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
 
 @Service
 public class PinUPConnector implements InitializingBean {
@@ -40,7 +41,7 @@ public class PinUPConnector implements InitializingBean {
   private void runConfigCheck() {
     List<Emulator> ems = this.getEmulators();
     for (Emulator emulator : ems) {
-      if(emulator.getName().equals(Emulator.VISUAL_PINBALL_X)) {
+      if (emulator.getName().equals(Emulator.VISUAL_PINBALL_X)) {
         initVisualPinballXScripts(emulator);
       }
     }
@@ -172,7 +173,7 @@ public class PinUPConnector implements InitializingBean {
       this.disconnect(connect);
     }
 
-    if(script == null) {
+    if (script == null) {
       script = "";
     }
     return script;
@@ -420,7 +421,7 @@ public class PinUPConnector implements InitializingBean {
     game.setRom(rom);
 
     int volume = rs.getInt("sysVolume");
-    if(volume <= 1) {
+    if (volume <= 1) {
       game.setVolume(100);
     }
     else {

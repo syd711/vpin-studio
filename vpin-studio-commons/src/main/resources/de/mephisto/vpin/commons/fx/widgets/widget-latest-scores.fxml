@@ -5,22 +5,24 @@
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
-
-<BorderPane fx:id="root" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefWidth="600.0" styleClass="subpanel" stylesheets="@../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.commons.fx.widgets.WidgetLatestScoresController">
-   <center>
-      <VBox fx:id="highscoreVBox" BorderPane.alignment="CENTER_LEFT" />
-   </center>
-   <padding>
-      <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
-   </padding>
-   <top>
-      <Label styleClass="widget-title" text="Latest Highscores" textFill="WHITE" BorderPane.alignment="TOP_LEFT">
-         <font>
-            <Font size="14.0" />
-         </font>
-         <padding>
-            <Insets bottom="12.0" />
-         </padding>
-      </Label>
-   </top>
+<BorderPane fx:id="root" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity"
+            prefWidth="600.0" styleClass="subpanel" stylesheets="@../stylesheet.css" xmlns="http://javafx.com/javafx/18"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="de.mephisto.vpin.commons.fx.widgets.WidgetLatestScoresController">
+    <center>
+        <VBox fx:id="highscoreVBox" BorderPane.alignment="CENTER_LEFT"/>
+    </center>
+    <padding>
+        <Insets bottom="12.0" left="12.0" right="12.0" top="12.0"/>
+    </padding>
+    <top>
+        <Label styleClass="widget-title" text="Latest Highscores" textFill="WHITE" BorderPane.alignment="TOP_LEFT">
+            <font>
+                <Font size="14.0"/>
+            </font>
+            <padding>
+                <Insets bottom="12.0"/>
+            </padding>
+        </Label>
+    </top>
 </BorderPane>

@@ -42,7 +42,7 @@ public class ObservedProperties {
 
   public int getProperty(String s, int defaultValue) {
     String value = this.properties.getProperty(s);
-    if(!StringUtils.isEmpty(value)) {
+    if (!StringUtils.isEmpty(value)) {
       return Integer.parseInt(value);
     }
     return defaultValue;
@@ -50,7 +50,7 @@ public class ObservedProperties {
 
   public boolean getProperty(String s, boolean defaultValue) {
     String value = this.properties.getProperty(s);
-    if(!StringUtils.isEmpty(value)) {
+    if (!StringUtils.isEmpty(value)) {
       return Boolean.parseBoolean(value);
     }
     return defaultValue;
@@ -58,7 +58,7 @@ public class ObservedProperties {
 
   public String getProperty(String s, String defaultValue) {
     String value = this.properties.getProperty(s);
-    if(!StringUtils.isEmpty(value)) {
+    if (!StringUtils.isEmpty(value)) {
       return value;
     }
     return defaultValue;

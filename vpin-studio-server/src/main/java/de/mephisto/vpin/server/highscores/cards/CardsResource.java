@@ -5,7 +5,6 @@ import de.mephisto.vpin.server.games.GameService;
 import de.mephisto.vpin.server.system.SystemService;
 import de.mephisto.vpin.server.util.RequestUtil;
 import de.mephisto.vpin.server.util.UploadUtil;
-import org.apache.commons.io.Charsets;
 import org.apache.commons.io.FilenameUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,7 +17,6 @@ import javax.servlet.http.HttpServletRequest;
 import java.io.File;
 import java.io.IOException;
 import java.net.URLEncoder;
-import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 

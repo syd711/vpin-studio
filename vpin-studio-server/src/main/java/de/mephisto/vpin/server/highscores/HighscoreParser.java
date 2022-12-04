@@ -9,7 +9,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -55,7 +54,7 @@ public class HighscoreParser {
       for (String line : lines) {
         if (line.startsWith(index + ")") || line.startsWith("#" + index) || line.startsWith(index + "#")) {
           Score score = createScore(line, gameId);
-          if(score != null) {
+          if (score != null) {
             scores.add(score);
           }
 

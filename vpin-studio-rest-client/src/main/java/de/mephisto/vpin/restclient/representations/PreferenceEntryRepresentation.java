@@ -4,7 +4,6 @@ import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 public class PreferenceEntryRepresentation {
@@ -31,21 +30,21 @@ public class PreferenceEntryRepresentation {
   }
 
   public boolean getBooleanValue(boolean defaultValue) {
-    if(StringUtils.isEmpty(value)) {
+    if (StringUtils.isEmpty(value)) {
       return defaultValue;
     }
     return Boolean.parseBoolean(value);
   }
 
   public boolean getBooleanValue() {
-    if(StringUtils.isEmpty(value)) {
+    if (StringUtils.isEmpty(value)) {
       return false;
     }
     return Boolean.parseBoolean(value);
   }
 
   public List<String> getCSVValue() {
-    if(value == null) {
+    if (value == null) {
       return new ArrayList<>();
     }
     String[] split = value.split(",");

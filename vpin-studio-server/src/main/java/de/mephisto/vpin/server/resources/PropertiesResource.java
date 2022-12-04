@@ -18,9 +18,9 @@ public class PropertiesResource {
   private final static Logger LOG = LoggerFactory.getLogger(PropertiesResource.class);
 
   @GetMapping("/{properties}")
-  public Map<String, String> bundle(@PathVariable("properties") String properties){
+  public Map<String, String> bundle(@PathVariable("properties") String properties) {
     PropertiesStore store = Config.getConfig(properties);
-    if(store == null) {
+    if (store == null) {
       LOG.error("No properties found for name " + properties);
       return Collections.emptyMap();
     }
@@ -29,7 +29,7 @@ public class PropertiesResource {
   }
 
   @PutMapping("/{properties}")
-  public boolean put(@PathVariable("properties") String properties, @RequestBody Map<String,String> values) {
+  public boolean put(@PathVariable("properties") String properties, @RequestBody Map<String, String> values) {
     PropertiesStore store = Config.getConfig(properties);
     store.set(values);
     return true;

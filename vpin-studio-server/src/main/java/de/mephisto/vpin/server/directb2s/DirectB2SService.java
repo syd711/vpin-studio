@@ -43,7 +43,7 @@ public class DirectB2SService {
           BufferedImage crop = ImageUtil.crop(image, ratio.getXRatio(), ratio.getYRatio());
           BufferedImage resized = ImageUtil.resizeImage(crop, cropWidth);
           File target = game.getDirectB2SBackgroundImage();
-          if(target.getParentFile().exists() && target.getParentFile().canWrite()) {
+          if (target.getParentFile().exists() && target.getParentFile().canWrite()) {
             ImageUtil.write(resized, target);
           }
           else {
@@ -75,11 +75,11 @@ public class DirectB2SService {
 
           BufferedImage resized = ImageUtil.resizeImage(image, cropWidth);
           BufferedImage crop = resized.getSubimage(0, 0, cropWidth, cropHeight);
-          BufferedImage blurred= ImageUtil.blurImage(crop, 10);
+          BufferedImage blurred = ImageUtil.blurImage(crop, 10);
 //          ImageUtil.applyAlphaComposites(blurred, 0f, 10f);
 
-          Color start=new Color(0f,0f,0f,.1f );
-          Color end= Color.decode("#111111");
+          Color start = new Color(0f, 0f, 0f, .1f);
+          Color end = Color.decode("#111111");
           ImageUtil.gradient(blurred, cropHeight, cropWidth, start, end);
           return blurred;
         }

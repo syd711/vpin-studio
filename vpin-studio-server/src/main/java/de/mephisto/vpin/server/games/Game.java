@@ -1,7 +1,6 @@
 package de.mephisto.vpin.server.games;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import de.mephisto.vpin.server.highscores.Score;
 import de.mephisto.vpin.server.popper.Emulator;
 import de.mephisto.vpin.server.system.SystemService;
 import edu.umd.cs.findbugs.annotations.NonNull;
@@ -10,7 +9,7 @@ import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.File;
-import java.util.*;
+import java.util.Date;
 
 public class Game {
 
@@ -247,7 +246,7 @@ public class Game {
   @Nullable
   @JsonIgnore
   public File getRomFile() {
-    if(!StringUtils.isEmpty(this.getRom())) {
+    if (!StringUtils.isEmpty(this.getRom())) {
       return new File(systemService.getMameRomFolder(), this.getRom() + ".zip");
     }
     return null;

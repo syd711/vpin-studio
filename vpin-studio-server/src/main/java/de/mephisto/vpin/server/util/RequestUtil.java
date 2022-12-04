@@ -52,14 +52,13 @@ public class RequestUtil {
       } catch (Exception e) {
         LOG.error("Failed to serialize image " + file.getAbsolutePath() + ": " + e.getMessage(), e);
         throw e;
-      }
-      finally {
+      } finally {
         in.close();
       }
       //ignore
     }
     else {
-      if(file != null) {
+      if (file != null) {
         LOG.info("Image " + file.getAbsolutePath() + " not found.");
       }
     }

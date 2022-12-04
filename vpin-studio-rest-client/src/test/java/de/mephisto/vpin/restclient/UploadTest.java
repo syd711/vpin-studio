@@ -2,8 +2,6 @@ package de.mephisto.vpin.restclient;
 
 import org.junit.jupiter.api.Test;
 
-import java.io.File;
-
 public class UploadTest {
 
   @Test

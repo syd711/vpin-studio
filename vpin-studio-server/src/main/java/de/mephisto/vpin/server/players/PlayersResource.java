@@ -2,9 +2,7 @@ package de.mephisto.vpin.server.players;
 
 import de.mephisto.vpin.restclient.PlayerDomain;
 import de.mephisto.vpin.server.competitions.ScoreSummary;
-import de.mephisto.vpin.server.highscores.Highscore;
 import de.mephisto.vpin.server.highscores.HighscoreService;
-import de.mephisto.vpin.server.highscores.ScoreList;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;

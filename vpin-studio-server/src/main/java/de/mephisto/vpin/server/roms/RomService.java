@@ -12,8 +12,13 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.io.*;
-import java.util.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Service
 public class RomService implements InitializingBean {
@@ -34,7 +39,7 @@ public class RomService implements InitializingBean {
 
   @Nullable
   public String getOriginalRom(@Nullable String rom) {
-    if(rom != null && this.aliasMapping.containsKey(rom)) {
+    if (rom != null && this.aliasMapping.containsKey(rom)) {
       return aliasMapping.get(rom);
     }
     return null;
