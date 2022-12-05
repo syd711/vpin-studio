@@ -16,7 +16,7 @@ public class OverlayController implements Initializable {
   private final static Logger LOG = LoggerFactory.getLogger(OverlayController.class);
 
   @FXML
-  private BorderPane widgetTop;
+  private BorderPane rotatedRoot;
 
   @FXML
   private WidgetOfflineCompetitionController offlineCompetitionController; //fxml magic! Not unused -> id + "Controller"

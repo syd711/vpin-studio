@@ -1,37 +1,39 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
 <?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.text.Font?>
 
 <BorderPane stylesheets="@stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.commons.fx.OverlayController">
-    <center>
-        <BorderPane fx:id="widgetRoot" BorderPane.alignment="CENTER">
-            <left>
-                <fx:include fx:id="latestScores" rotate="-90.0" scaleX="1.5" scaleY="1.5" source="widgets/widget-latest-scores.fxml" translateX="600.0" translateY="800.0" />
-            </left>
-            <BorderPane.margin>
-                <Insets bottom="12.0" left="12.0" top="12.0" />
-            </BorderPane.margin>
-            <center>
-                <BorderPane fx:id="widgetTop" BorderPane.alignment="TOP_LEFT">
-                    <top>
-                        <fx:include fx:id="offlineCompetition" prefWidth="1050.0" rotate="-90.0" source="widgets/widget-offline-competition.fxml" translateX="-528.0" translateY="236.0" />
-                    </top>
-                    <BorderPane.margin>
-                        <Insets bottom="12.0" left="12.0" right="12.0" />
-                    </BorderPane.margin>
-                    <center>
-                        <BorderPane fx:id="widgetBottom" BorderPane.alignment="CENTER">
-                            <top>
-                                <fx:include fx:id="finishedCompetitions" prefWidth="1700.0" rotate="-90.0" source="widgets/widget-finished-competitions.fxml" translateX="600.0" translateY="-300.0" />
-                            </top>
-                            <BorderPane.margin>
-                                <Insets top="12.0" />
-                            </BorderPane.margin>
-                        </BorderPane>
-                    </center>
-                </BorderPane>
-            </center>
-        </BorderPane>
-    </center>
+   <center>
+      <BorderPane fx:id="rotatedRoot" maxHeight="1.7976931348623157E308" rotate="-90.0" translateX="-840.0">
+          <center>
+              <BorderPane fx:id="widgetRoot" maxHeight="1.7976931348623157E308" BorderPane.alignment="CENTER">
+                  <BorderPane.margin>
+                      <Insets bottom="12.0" left="12.0" top="12.0" />
+                  </BorderPane.margin>
+               <right>
+                        <fx:include fx:id="offlineCompetition" scaleX="1.5" scaleY="1.5" source="widgets/widget-offline-competition.fxml" translateX="-1080.0" translateY="400.0" />
+               </right>
+               <bottom>
+                          <fx:include fx:id="finishedCompetitions" maxWidth="1280.0" scaleX="1.5" scaleY="1.5" source="widgets/widget-finished-competitions.fxml" translateX="500.0" translateY="1420.0" />
+               </bottom>
+               <center>
+                      <fx:include fx:id="latestScores" scaleX="1.5" scaleY="1.5" source="widgets/widget-latest-scores.fxml" translateY="500.0" />
+               </center>
+              </BorderPane>
+          </center>
+         <top>
+            <Label text="Label" textFill="WHITE" BorderPane.alignment="CENTER">
+               <font>
+                  <Font size="36.0" />
+               </font>
+            </Label>
+         </top>
+         <padding>
+            <Insets bottom="24.0" left="24.0" right="24.0" top="24.0" />
+         </padding>
+      </BorderPane>
+   </center>
 </BorderPane>
