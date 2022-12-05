@@ -7,7 +7,7 @@
     <center>
         <BorderPane fx:id="widgetRoot" BorderPane.alignment="CENTER">
             <left>
-                <fx:include fx:id="latestScores" rotate="-90.0" source="widgets/widget-latest-scores.fxml" translateX="600.0" translateY="800.0" />
+                <fx:include fx:id="latestScores" rotate="-90.0" scaleX="1.5" scaleY="1.5" source="widgets/widget-latest-scores.fxml" translateX="600.0" translateY="800.0" />
             </left>
             <BorderPane.margin>
                 <Insets bottom="12.0" left="12.0" top="12.0" />
@@ -15,13 +15,16 @@
             <center>
                 <BorderPane fx:id="widgetTop" BorderPane.alignment="TOP_LEFT">
                     <top>
-                        <fx:include fx:id="offlineCompetition" rotate="-90.0" source="widgets/widget-offline-competition.fxml" translateX="94.0" translateY="300.0" />
+                        <fx:include fx:id="offlineCompetition" prefWidth="1050.0" rotate="-90.0" source="widgets/widget-offline-competition.fxml" translateX="-528.0" translateY="236.0" />
                     </top>
                     <BorderPane.margin>
                         <Insets bottom="12.0" left="12.0" right="12.0" />
                     </BorderPane.margin>
                     <center>
                         <BorderPane fx:id="widgetBottom" BorderPane.alignment="CENTER">
+                            <top>
+                                <fx:include fx:id="finishedCompetitions" prefWidth="1700.0" rotate="-90.0" source="widgets/widget-finished-competitions.fxml" translateX="600.0" translateY="-300.0" />
+                            </top>
                             <BorderPane.margin>
                                 <Insets top="12.0" />
                             </BorderPane.margin>
