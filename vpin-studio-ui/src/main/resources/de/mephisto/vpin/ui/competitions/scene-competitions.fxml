@@ -10,6 +10,7 @@
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.control.ToolBar?>
 <?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.text.Font?>
 <?import org.kordamp.ikonli.javafx.FontIcon?>
 
@@ -34,18 +35,22 @@
                            <center>
                               <BorderPane BorderPane.alignment="CENTER">
                                  <center>
-                                    <TableView fx:id="tableView" style="-fx-background-color: #2a2a2a;" styleClass="base-component">
-                                      <columns>
-                                        <TableColumn fx:id="columnName" prefWidth="292.0001335144043" style="-fx-alignment: CENTER;" text="Name" />
-                                        <TableColumn fx:id="columnStatus" minWidth="0.0" prefWidth="172.0" style="-fx-alignment: CENTER;" text="Status" />
-                                          <TableColumn fx:id="columnTable" prefWidth="292.0001335144043" style="-fx-alignment: BASELINE_LEFT;" text="Table" />
-                                          <TableColumn fx:id="columnStartDate" prefWidth="150.0" style="-fx-alignment: CENTER;" text="Start Date" />
-                                          <TableColumn fx:id="columnEndDate" prefWidth="150.0" style="-fx-alignment: CENTER;" text="End Date" />
-                                          <TableColumn fx:id="columnWinner" prefWidth="97.60009765625" style="-fx-alignment: CENTER;" text="Winner" />
-                                          <TableColumn fx:id="columnScore" prefWidth="150.0" style="-fx-alignment: BASELINE_RIGHT;" text="Highscore" />
-                                          <TableColumn fx:id="columnScoreCount" prefWidth="140.0" style="-fx-alignment: CENTER;" text="Submitted Scores" />
-                                      </columns>
-                                    </TableView>
+                                    <StackPane fx:id="tableStack">
+                                       <children>
+                                          <TableView fx:id="tableView" style="-fx-background-color: #2a2a2a;" styleClass="base-component">
+                                            <columns>
+                                              <TableColumn fx:id="columnName" prefWidth="292.0001335144043" style="-fx-alignment: CENTER;" text="Name" />
+                                              <TableColumn fx:id="columnStatus" minWidth="0.0" prefWidth="172.0" style="-fx-alignment: CENTER;" text="Status" />
+                                                <TableColumn fx:id="columnTable" prefWidth="292.0001335144043" style="-fx-alignment: BASELINE_LEFT;" text="Table" />
+                                                <TableColumn fx:id="columnStartDate" prefWidth="150.0" style="-fx-alignment: CENTER;" text="Start Date" />
+                                                <TableColumn fx:id="columnEndDate" prefWidth="150.0" style="-fx-alignment: CENTER;" text="End Date" />
+                                                <TableColumn fx:id="columnWinner" prefWidth="97.60009765625" style="-fx-alignment: CENTER;" text="Winner" />
+                                                <TableColumn fx:id="columnScore" prefWidth="150.0" style="-fx-alignment: BASELINE_RIGHT;" text="Highscore" />
+                                                <TableColumn fx:id="columnScoreCount" prefWidth="140.0" style="-fx-alignment: CENTER;" text="Submitted Scores" />
+                                            </columns>
+                                          </TableView>
+                                       </children>
+                                    </StackPane>
                                  </center>
                                  <top>
                                     <ToolBar prefHeight="40.0" prefWidth="200.0" BorderPane.alignment="CENTER">
@@ -56,7 +61,7 @@
                                              </font>
                                           </TextField>
                                           <Separator layoutX="320.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
-                                          <Button layoutX="280.0" layoutY="12.0" mnemonicParsing="false" text="Reload" textFill="WHITE">
+                                          <Button layoutX="280.0" layoutY="12.0" mnemonicParsing="false" onAction="#onReload" text="Reload" textFill="WHITE">
                                              <font>
                                                 <Font size="14.0" />
                                              </font>

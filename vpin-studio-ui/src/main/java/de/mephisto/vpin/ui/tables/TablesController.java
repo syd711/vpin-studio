@@ -259,13 +259,18 @@ public class TablesController implements Initializable, StudioFXController {
       }
       data = FXCollections.observableList(filtered);
 
-      final GameRepresentation updatedGame = client.getGame(gameRepresentation.getId());
 
       Platform.runLater(() -> {
         tableView.setItems(data);
         tableView.refresh();
-        tableView.getSelectionModel().select(updatedGame);
 
+        if(gameRepresentation != null) {
+          final GameRepresentation updatedGame = client.getGame(gameRepresentation.getId());
+          tableView.getSelectionModel().select(updatedGame);
+        }
+        else {
+          tableView.getSelectionModel().select(0);
+        }
 
         tableStack.getChildren().remove(tablesLoadingOverlay);
 
@@ -286,12 +291,11 @@ public class TablesController implements Initializable, StudioFXController {
     client = Studio.client;
     tablesSideBarController.setTablesController(this);
 
-
     try {
       FXMLLoader loader = new FXMLLoader(WaitOverlayController.class.getResource("overlay-wait.fxml"));
       tablesLoadingOverlay = loader.load();
       WaitOverlayController ctrl = loader.getController();
-      ctrl.setLoadingMessage("Reloading Tables...");
+      ctrl.setLoadingMessage("Loading Tables...");
     } catch (IOException e) {
       LOG.error("Failed to load loading overlay: " + e.getMessage());
     }
@@ -318,20 +322,18 @@ public class TablesController implements Initializable, StudioFXController {
   }
 
   private void bindTable() {
-    games = client.getGames();
-    data = FXCollections.observableArrayList(games);
+    data = FXCollections.observableArrayList(Collections.emptyList());
     labelTableCount.setText(data.size() + " tables");
     tableView.setPlaceholder(new Label("No matching tables found."));
 
 
     columnDisplayName.setCellValueFactory(
-        new PropertyValueFactory<GameRepresentation, String>("gameDisplayName")
+        new PropertyValueFactory<>("gameDisplayName")
     );
 
     columnId.setCellValueFactory(
-        new PropertyValueFactory<GameRepresentation, String>("id")
+        new PropertyValueFactory<>("id")
     );
-
 
     columnRom.setCellValueFactory(cellData -> {
       GameRepresentation value = cellData.getValue();
@@ -428,9 +430,8 @@ public class TablesController implements Initializable, StudioFXController {
       refreshView(Optional.ofNullable(newSelection));
     });
 
-    if (!data.isEmpty()) {
-      tableView.getSelectionModel().select(0);
-    }
+    refreshView(Optional.empty());
+    this.onReload();
   }
 
   private void refreshView(Optional<GameRepresentation> g) {

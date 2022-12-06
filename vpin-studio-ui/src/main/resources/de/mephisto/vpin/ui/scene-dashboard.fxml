@@ -2,29 +2,35 @@
 
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.StackPane?>
 
 <BorderPane stylesheets="@stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.DashboardController">
     <top>
         <fx:include fx:id="mainToolbar" source="scene-toolbar.fxml" />
     </top>
     <center>
-      <BorderPane fx:id="widgetRoot" BorderPane.alignment="CENTER">
+      <StackPane fx:id="dashboardStack" BorderPane.alignment="TOP_CENTER">
          <BorderPane.margin>
             <Insets bottom="12.0" left="12.0" top="12.0" />
          </BorderPane.margin>
-         <center>
-            <BorderPane fx:id="widgetTop" BorderPane.alignment="TOP_LEFT">
-               <BorderPane.margin>
-                  <Insets bottom="12.0" left="12.0" right="12.0" />
-               </BorderPane.margin>
+         <children>
+            <BorderPane fx:id="widgetRoot">
                <center>
-                  <BorderPane fx:id="widgetBottom" BorderPane.alignment="CENTER">
+                  <BorderPane fx:id="widgetTop" BorderPane.alignment="TOP_LEFT">
                      <BorderPane.margin>
-                        <Insets top="12.0" />
-                     </BorderPane.margin></BorderPane>
+                        <Insets bottom="12.0" left="12.0" right="12.0" />
+                     </BorderPane.margin>
+                     <center>
+                        <BorderPane fx:id="widgetBottom" BorderPane.alignment="CENTER">
+                           <BorderPane.margin>
+                              <Insets top="12.0" />
+                           </BorderPane.margin>
+                        </BorderPane>
+                     </center>
+                  </BorderPane>
                </center>
             </BorderPane>
-         </center>
-      </BorderPane>
+         </children>
+      </StackPane>
     </center>
 </BorderPane>

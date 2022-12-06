@@ -1,9 +1,9 @@
 package de.mephisto.vpin.ui.players;
 
-import de.mephisto.vpin.restclient.PlayerDomain;
 import de.mephisto.vpin.restclient.representations.PlayerRepresentation;
 import de.mephisto.vpin.ui.NavigationController;
 import de.mephisto.vpin.ui.StudioFXController;
+import de.mephisto.vpin.ui.WaitOverlayController;
 import de.mephisto.vpin.ui.util.Dialogs;
 import de.mephisto.vpin.ui.util.ImageUtil;
 import de.mephisto.vpin.ui.util.WidgetFactory;
@@ -12,16 +12,21 @@ import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Cursor;
+import javafx.scene.Parent;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Paint;
 import org.apache.commons.lang3.StringUtils;
 import org.kordamp.ikonli.javafx.FontIcon;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import javax.swing.text.html.Option;
+import java.io.IOException;
 import java.net.URL;
 import java.text.DateFormat;
 import java.util.*;
@@ -29,6 +34,7 @@ import java.util.*;
 import static de.mephisto.vpin.ui.Studio.client;
 
 public class BuiltInPlayersController implements Initializable, StudioFXController {
+  private final static Logger LOG = LoggerFactory.getLogger(BuiltInPlayersController.class);
 
   @FXML
   private Button editBtn;
@@ -57,6 +63,12 @@ public class BuiltInPlayersController implements Initializable, StudioFXControll
   @FXML
   private TableColumn<PlayerRepresentation, String> columnCreatedAt;
 
+  @FXML
+  private StackPane tableStack;
+
+  private Parent playersLoadingOverlay;
+
+
   private ObservableList<PlayerRepresentation> data;
   private List<PlayerRepresentation> players;
   private PlayersController playersController;
@@ -67,8 +79,36 @@ public class BuiltInPlayersController implements Initializable, StudioFXControll
 
   @FXML
   private void onReload() {
-    this.players = client.getPlayers();
-    this.refreshView();
+    this.searchTextField.setDisable(true);
+
+    PlayerRepresentation selection = tableView.getSelectionModel().selectedItemProperty().get();
+    tableView.getSelectionModel().clearSelection();
+    boolean disable = selection == null;
+    editBtn.setDisable(disable);
+    deleteBtn.setDisable(disable);
+
+    tableView.setVisible(false);
+    tableStack.getChildren().add(playersLoadingOverlay);
+
+    new Thread(() -> {
+      players = client.getPlayers();
+
+      Platform.runLater(() -> {
+        data = FXCollections.observableList(filterPlayers(players));
+        tableView.setItems(data);
+        tableView.refresh();
+        if (data.contains(selection)) {
+          tableView.getSelectionModel().select(selection);
+        }
+        editBtn.setDisable(false);
+        deleteBtn.setDisable(false);
+        this.searchTextField.setDisable(false);
+
+        tableStack.getChildren().remove(playersLoadingOverlay);
+        tableView.setVisible(true);
+
+      });
+    }).start();
   }
 
   @FXML
@@ -119,6 +159,16 @@ public class BuiltInPlayersController implements Initializable, StudioFXControll
     tableView.setPlaceholder(new Label("            No one want's to play with you?\n" +
         "Add new players or connect a Discord server."));
 
+
+    try {
+      FXMLLoader loader = new FXMLLoader(WaitOverlayController.class.getResource("overlay-wait.fxml"));
+      playersLoadingOverlay = loader.load();
+      WaitOverlayController ctrl = loader.getController();
+      ctrl.setLoadingMessage("Loading Players...");
+    } catch (IOException e) {
+      LOG.error("Failed to load loading overlay: " + e.getMessage());
+    }
+
     idColumn.setCellValueFactory(cellData -> {
       PlayerRepresentation value = cellData.getValue();
       return new SimpleObjectProperty(String.valueOf(value.getId()));
@@ -143,7 +193,7 @@ public class BuiltInPlayersController implements Initializable, StudioFXControll
     });
     initialsColumn.setCellValueFactory(cellData -> {
       PlayerRepresentation value = cellData.getValue();
-      if(!StringUtils.isEmpty(value.getDuplicatePlayerName())) {
+      if (!StringUtils.isEmpty(value.getDuplicatePlayerName())) {
         Label label = new Label(value.getInitials());
         String color = "#FF3333";
         label.setStyle("-fx-font-color: " + color + ";-fx-text-fill: " + color + ";-fx-font-weight: bold;");
@@ -188,11 +238,10 @@ public class BuiltInPlayersController implements Initializable, StudioFXControll
     });
 
     searchTextField.textProperty().addListener((observableValue, s, filterValue) -> {
-      refreshView();
+      onReload();
     });
 
-    this.players = client.getPlayers();
-    this.refreshView();
+    this.onReload();
   }
 
   public void setPlayersController(PlayersController playersController) {
@@ -214,39 +263,15 @@ public class BuiltInPlayersController implements Initializable, StudioFXControll
     return filtered;
   }
 
-  public void refreshView() {
-    this.searchTextField.setDisable(true);
-
-    PlayerRepresentation selection = tableView.getSelectionModel().selectedItemProperty().get();
-    tableView.getSelectionModel().clearSelection();
-    boolean disable = selection == null;
-    editBtn.setDisable(disable);
-    deleteBtn.setDisable(disable);
-
-    new Thread(() -> {
-      Platform.runLater(() -> {
-        data = FXCollections.observableList(filterPlayers(players));
-        tableView.setItems(data);
-        tableView.refresh();
-        if (data.contains(selection)) {
-          tableView.getSelectionModel().select(selection);
-        }
-        editBtn.setDisable(false);
-        deleteBtn.setDisable(false);
-        this.searchTextField.setDisable(false);
-      });
-    }).start();
-  }
-
   public Optional<PlayerRepresentation> getSelection() {
     PlayerRepresentation playerRepresentation = tableView.getSelectionModel().selectedItemProperty().get();
-    if(playerRepresentation != null) {
+    if (playerRepresentation != null) {
       return Optional.of(playerRepresentation);
     }
     return Optional.empty();
   }
 
   public int getCount() {
-    return this.players.size();
+    return this.players != null ? this.players.size() : 0;
   }
 }

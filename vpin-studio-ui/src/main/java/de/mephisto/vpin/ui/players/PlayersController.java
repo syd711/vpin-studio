@@ -5,6 +5,7 @@ import de.mephisto.vpin.restclient.representations.ScoreRepresentation;
 import de.mephisto.vpin.restclient.representations.ScoreSummaryRepresentation;
 import de.mephisto.vpin.ui.NavigationController;
 import de.mephisto.vpin.ui.StudioFXController;
+import de.mephisto.vpin.ui.WaitOverlayController;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;

@@ -6,16 +6,20 @@ import de.mephisto.vpin.restclient.representations.GameRepresentation;
 import de.mephisto.vpin.restclient.representations.ScoreListRepresentation;
 import de.mephisto.vpin.ui.NavigationController;
 import de.mephisto.vpin.ui.StudioFXController;
+import de.mephisto.vpin.ui.WaitOverlayController;
 import de.mephisto.vpin.ui.util.Dialogs;
 import de.mephisto.vpin.ui.util.WidgetFactory;
+import javafx.application.Platform;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Parent;
 import javafx.scene.control.*;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.StackPane;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -72,7 +76,12 @@ public class CompetitionsController implements Initializable, StudioFXController
   @FXML
   private BorderPane competitionWidget;
 
+  @FXML
+  private StackPane tableStack;
+
+  private Parent loadingOverlay;
   private WidgetCompetitionSummaryController competitionWidgetController;
+  private BorderPane competitionWidgetRoot;
 
   // Add a public no-args constructor
   public CompetitionsController() {
@@ -143,24 +152,55 @@ public class CompetitionsController implements Initializable, StudioFXController
   @FXML
   private void onReload() {
     CompetitionRepresentation selection = tableView.getSelectionModel().selectedItemProperty().get();
-    List<CompetitionRepresentation> competitions = client.getCompetitions();
-    ObservableList<CompetitionRepresentation> data = FXCollections.observableList(competitions);
-    tableView.setItems(data);
-    tableView.refresh();
-    tableView.getSelectionModel().select(selection);
 
-    if (selection == null && !data.isEmpty()) {
-      tableView.getSelectionModel().select(0);
-    }
-    else {
-      refreshView(Optional.empty());
-    }
+    tableView.setVisible(false);
+    tableStack.getChildren().add(loadingOverlay);
+
+    new Thread(() -> {
+      List<CompetitionRepresentation> competitions = client.getCompetitions();
+      ObservableList<CompetitionRepresentation> data = FXCollections.observableList(competitions);
+
+      Platform.runLater(() -> {
+        if (competitions.isEmpty()) {
+        }
+        else {
+          if (competitionWidget.getTop() == null) {
+            competitionWidget.setTop(competitionWidgetRoot);
+          }
+        }
+
+        tableView.setItems(data);
+        tableView.refresh();
+        if (selection != null) {
+          tableView.getSelectionModel().select(selection);
+        }
+        else if(!data.isEmpty()) {
+          tableView.getSelectionModel().select(0);
+        }
+        else {
+          refreshView(Optional.empty());
+        }
+
+        tableView.setVisible(true);
+        tableStack.getChildren().remove(loadingOverlay);
+      });
+    }).start();
+
   }
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
     NavigationController.setBreadCrumb(Arrays.asList("Competitions", "Offline Competitions"));
     tableView.setPlaceholder(new Label("            No competitions found.\nClick the '+' button to create a new one."));
+
+    try {
+      FXMLLoader loader = new FXMLLoader(WaitOverlayController.class.getResource("overlay-wait.fxml"));
+      loadingOverlay = loader.load();
+      WaitOverlayController ctrl = loader.getController();
+      ctrl.setLoadingMessage("Loading Competitions...");
+    } catch (IOException e) {
+      LOG.error("Failed to load loading overlay: " + e.getMessage());
+    }
 
     columnName.setCellValueFactory(cellData -> {
       CompetitionRepresentation value = cellData.getValue();
@@ -236,10 +276,9 @@ public class CompetitionsController implements Initializable, StudioFXController
 
     try {
       FXMLLoader loader = new FXMLLoader(WidgetCompetitionSummaryController.class.getResource("widget-competition-summary.fxml"));
-      BorderPane summaryRoot = loader.load();
+      competitionWidgetRoot = loader.load();
       competitionWidgetController = loader.getController();
-      summaryRoot.setMaxWidth(Double.MAX_VALUE);
-      competitionWidget.setTop(summaryRoot);
+      competitionWidgetRoot.setMaxWidth(Double.MAX_VALUE);
     } catch (IOException e) {
       LOG.error("Failed to load c-widget: " + e.getMessage(), e);
     }
@@ -248,18 +287,16 @@ public class CompetitionsController implements Initializable, StudioFXController
   }
 
   private void refreshView(Optional<CompetitionRepresentation> competition) {
-    if(competition.isPresent()) {
-      competitionWidget.getTop().setVisible(true);
+    if (competition.isPresent()) {
+      if (competitionWidget.getTop() != null) {
+        competitionWidget.getTop().setVisible(true);
+      }
       competitionWidgetController.setCompetition(competition.get());
     }
     else {
-      competitionWidget.getTop().setVisible(false);
-//      Label label = new Label("bubu");
-//      String color = "#FF3333";
-//      label.setStyle("-fx-font-color: " + color + ";-fx-text-fill: " + color + ";-fx-font-weight: bold;");
-
-//      competitionWidget.getCenter().setVisible(false);
-//      competitionWidget.setTop(label);
+      if (competitionWidget.getTop() != null) {
+        competitionWidget.getTop().setVisible(false);
+      }
       competitionWidgetController.setCompetition(null);
     }
   }

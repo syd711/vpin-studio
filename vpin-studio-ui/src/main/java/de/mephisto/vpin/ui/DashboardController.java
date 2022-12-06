@@ -1,5 +1,6 @@
 package de.mephisto.vpin.ui;
 
+import de.mephisto.vpin.commons.fx.OverlayWindowFX;
 import de.mephisto.vpin.commons.fx.widgets.WidgetFinishedCompetitionsController;
 import de.mephisto.vpin.commons.fx.widgets.WidgetLatestScoresController;
 import de.mephisto.vpin.commons.fx.widgets.WidgetOfflineCompetitionController;
@@ -8,6 +9,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.StackPane;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -30,6 +32,9 @@ public class DashboardController implements Initializable, StudioFXController {
 
   @FXML
   private BorderPane widgetBottom;
+
+  @FXML
+  private StackPane dashboardStack;
 
 
   // Add a public no-args constructor
@@ -66,10 +71,14 @@ public class DashboardController implements Initializable, StudioFXController {
     }
 
     try {
-      FXMLLoader loader = new FXMLLoader(WidgetFinishedCompetitionsController.class.getResource("widget-finished-competitions.fxml"));
-      BorderPane root = loader.load();
-      root.setMaxWidth(Double.MAX_VALUE);
-      widgetBottom.setTop(root);
+      List<CompetitionRepresentation> competitions = OverlayWindowFX.client.getFinishedCompetitions(10);
+      if(!competitions.isEmpty()) {
+        FXMLLoader loader = new FXMLLoader(WidgetFinishedCompetitionsController.class.getResource("widget-finished-competitions.fxml"));
+        BorderPane root = loader.load();
+        root.setMaxWidth(Double.MAX_VALUE);
+        widgetBottom.setTop(root);
+      }
+
     } catch (IOException e) {
       LOG.error("Failed to load finished competitions widget: " + e.getMessage(), e);
     }
