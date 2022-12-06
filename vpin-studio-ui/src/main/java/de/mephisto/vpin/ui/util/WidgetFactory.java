@@ -102,7 +102,7 @@ public class WidgetFactory {
     }
   }
 
-  public static Node createMediaContainer(BorderPane parent, GameMediaItemRepresentation mediaItem, boolean ignored) {
+  public static Node createMediaContainer(BorderPane parent, GameMediaItemRepresentation mediaItem, boolean ignored, boolean mediaPreview) {
     if (parent.getCenter() != null) {
       disposeMediaBorderPane(parent);
     }
@@ -126,7 +126,15 @@ public class WidgetFactory {
       return parent;
     }
 
-    return addMediaItemToBorderPane(mediaItem, parent);
+    if(mediaPreview) {
+      return addMediaItemToBorderPane(mediaItem, parent);
+    }
+
+    Label label = new Label("Preview disabled.");
+    label.setUserData(mediaItem);
+    label.setStyle("-fx-font-size: 14px;-fx-text-fill: #444444;");
+    parent.setCenter(label);
+    return parent;
   }
 
   public static Node addMediaItemToBorderPane(GameMediaItemRepresentation mediaItem, BorderPane parent) {
@@ -161,6 +169,7 @@ public class WidgetFactory {
 
         Label label = new Label("  Media Error\nReselect table.");
         label.setStyle("-fx-font-size: 14px;-fx-text-fill: #444444;");
+        label.setUserData(mediaItem);
         parent.setCenter(label);
       });
 

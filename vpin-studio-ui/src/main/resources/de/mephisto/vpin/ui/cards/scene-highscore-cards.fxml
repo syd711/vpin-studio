@@ -355,14 +355,29 @@
                               <Label fx:id="resolutionLabel" BorderPane.alignment="CENTER" />
                            </left>
                            <right>
-                              <Button fx:id="openDirectB2SImageButton" mnemonicParsing="false" onAction="#onOpenDirectB2SBackground" BorderPane.alignment="CENTER">
-                                 <graphic>
-                                    <FontIcon iconColor="WHITE" iconLiteral="mdi2e-eye" />
-                                 </graphic>
-                                 <font>
-                                    <Font size="10.0" />
-                                 </font>
-                              </Button>
+                              <HBox alignment="BASELINE_RIGHT" BorderPane.alignment="CENTER">
+                                 <children>
+                                    <Button fx:id="openDirectB2SImageButton" mnemonicParsing="false" onAction="#onOpenDirectB2SBackground">
+                                       <graphic>
+                                          <FontIcon iconColor="WHITE" iconLiteral="mdi2e-eye" />
+                                       </graphic>
+                                       <font>
+                                          <Font size="10.0" />
+                                       </font>
+                                       <HBox.margin>
+                                          <Insets right="3.0" />
+                                       </HBox.margin>
+                                    </Button>
+                                    <Button fx:id="onDirectB2SUpload" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" onAction="#onDirectB2SUpload">
+                                       <graphic>
+                                          <FontIcon iconColor="WHITE" iconLiteral="mdi2u-upload" />
+                                       </graphic>
+                                       <font>
+                                          <Font size="10.0" />
+                                       </font>
+                                    </Button>
+                                 </children>
+                              </HBox>
                            </right>
                         </BorderPane>
                      </children>

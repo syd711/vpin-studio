@@ -30,7 +30,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.*;
 
 public class TablesSidebarController implements Initializable, StudioFXController {
@@ -135,6 +134,9 @@ public class TablesSidebarController implements Initializable, StudioFXControlle
   @FXML
   private Label resolutionLabel;
 
+  @FXML
+  private CheckBox mediaPreviewCheckbox;
+
 
   private VPinStudioClient client;
 
@@ -177,6 +179,8 @@ public class TablesSidebarController implements Initializable, StudioFXControlle
         resetMedia();
       }
     });
+
+    mediaPreviewCheckbox.selectedProperty().addListener((observable, oldValue, newValue) -> refreshView(game));
   }
 
   public void setTablesController(TablesController tablesController) {
@@ -427,7 +431,7 @@ public class TablesSidebarController implements Initializable, StudioFXControlle
       BorderPane screen = this.getScreenBorderPaneFor(value);
       boolean ignored = ignoreScreenNames.contains(value.name());
       GameMediaItemRepresentation item = gameMedia.getItem(value);
-      WidgetFactory.createMediaContainer(screen, item, ignored);
+      WidgetFactory.createMediaContainer(screen, item, ignored, mediaPreviewCheckbox.isSelected());
     }
   }
 

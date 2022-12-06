@@ -21,7 +21,7 @@ public class BindingUtil {
 
   public static Debouncer debouncer = new Debouncer();
 
-  public static void bindTableComboBox(VPinStudioClient client, ComboBox<GameRepresentation> comboBox, ObservedProperties properties, String property) {
+  public static void bindHighscoreTablesComboBox(VPinStudioClient client, ComboBox<GameRepresentation> comboBox, ObservedProperties properties, String property) {
     String pupId = properties.getProperty(property, null);
     GameRepresentation game = null;
     if (!StringUtils.isEmpty(pupId)) {

@@ -232,8 +232,12 @@ public class VPinStudioClient implements ObservedPropertyChangeListener, Overlay
     return Arrays.asList(RestClient.getInstance().get(API + "games", GameRepresentation[].class));
   }
 
+  public List<GameRepresentation> getGamesWithScores() {
+    return Arrays.asList(RestClient.getInstance().get(API + "games/scoredgames", GameRepresentation[].class));
+  }
+
   public List<GameRepresentation> getRecentlyPlayedGames(int count) {
-    return Arrays.asList(RestClient.getInstance().get(API + "/games/recent/" + count, GameRepresentation[].class));
+    return Arrays.asList(RestClient.getInstance().get(API + "games/recent/" + count, GameRepresentation[].class));
   }
 
   /*********************************************************************************************************************

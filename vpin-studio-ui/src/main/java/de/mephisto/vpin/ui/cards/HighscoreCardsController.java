@@ -153,7 +153,7 @@ public class HighscoreCardsController implements Initializable, ObservedProperty
       WaitOverlayController ctrl = loader.getController();
       ctrl.setLoadingMessage("Generating Card...");
 
-      onTableRefresh(null);
+      onTableRefresh();
       initFields();
 
       cardPreview.setPreserveRatio(true);
@@ -209,17 +209,23 @@ public class HighscoreCardsController implements Initializable, ObservedProperty
   }
 
   @FXML
+  private void onDirectB2SUpload() {
+    GameRepresentation game = tableCombo.getValue();
+    boolean uploaded = Dialogs.openDirectB2SUploadDialog(game);
+    if (uploaded) {
+      refreshRawPreview(Optional.of(game));
+      onGenerateClick();
+    }
+  }
+
+  @FXML
   private void onGenerateAll() {
     Dialogs.createProgressDialog(new HighscoreGeneratorProgressModel(client, "Generating Highscore Cards"));
   }
 
   @FXML
-  private void onTableRefresh(ActionEvent event) throws IOException {
-    if (event != null) {
-      NavigationController.load("scene-highscore-cards.fxml");
-      return;
-    }
-    List<GameRepresentation> games = client.getGames();
+  private void onTableRefresh() {
+    List<GameRepresentation> games = client.getGamesWithScores();
     ObservableList<GameRepresentation> gameRepresentations = FXCollections.observableArrayList(games);
     tableCombo.getItems().clear();
     tableCombo.getItems().addAll(gameRepresentations);
@@ -268,7 +274,7 @@ public class HighscoreCardsController implements Initializable, ObservedProperty
 
     BindingUtil.bindColorPicker(fontColorSelector, properties, "card.font.color");
 
-    BindingUtil.bindTableComboBox(client, tableCombo, properties, "card.sampleTable");
+    BindingUtil.bindHighscoreTablesComboBox(client, tableCombo, properties, "card.sampleTable");
 
 
     BindingUtil.bindCheckbox(useDirectB2SCheckbox, properties, "card.useDirectB2S");

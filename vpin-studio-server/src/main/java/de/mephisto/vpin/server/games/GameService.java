@@ -56,6 +56,11 @@ public class GameService {
     return games;
   }
 
+  public List<Game> getGamesWithScore() {
+    List<Game> games = getGames();
+    return games.stream().filter(g -> !StringUtils.isEmpty(highscoreService.getHighscores(g).getRaw())).collect(Collectors.toList());
+  }
+
   @SuppressWarnings("unused")
   public Game getGame(int id) {
     Game game = pinUPConnector.getGame(id);
