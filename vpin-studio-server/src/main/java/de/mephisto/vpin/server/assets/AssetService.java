@@ -54,7 +54,7 @@ public class AssetService {
     return false;
   }
 
-  public Asset saveOrUpdate(byte[] data, long id, String assetName, String assetType) {
+  public Asset saveOrUpdate(byte[] data, long id, String assetName, String assetType, String externalId) {
     String mimeType = "image/jpg";
     if (assetName.toLowerCase().endsWith(".png")) {
       mimeType = "image/png";
@@ -72,6 +72,7 @@ public class AssetService {
     }
     asset.setData(data);
     asset.setMimeType(mimeType);
+    asset.setExternalId(externalId);
     Asset updated = assetRepository.saveAndFlush(asset);
     LOG.info("Saved " + updated);
     return updated;

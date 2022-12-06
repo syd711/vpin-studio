@@ -74,6 +74,7 @@ public class Dialogs {
     Stage owner = Studio.stage;
     final Stage stage = new Stage();
     stage.initModality(Modality.WINDOW_MODAL);
+    stage.setResizable(false);
     if(selection == null) {
       stage.setTitle("Add New Competition");
     }

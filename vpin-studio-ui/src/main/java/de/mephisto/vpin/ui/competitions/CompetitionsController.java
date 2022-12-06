@@ -1,5 +1,6 @@
 package de.mephisto.vpin.ui.competitions;
 
+import de.mephisto.vpin.commons.fx.widgets.WidgetCompetitionSummaryController;
 import de.mephisto.vpin.restclient.representations.CompetitionRepresentation;
 import de.mephisto.vpin.restclient.representations.GameRepresentation;
 import de.mephisto.vpin.ui.NavigationController;
@@ -10,10 +11,15 @@ import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
+import javafx.scene.layout.BorderPane;
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
 import java.net.URL;
 import java.text.DateFormat;
 import java.util.Arrays;
@@ -24,6 +30,7 @@ import java.util.ResourceBundle;
 import static de.mephisto.vpin.ui.Studio.client;
 
 public class CompetitionsController implements Initializable, StudioFXController {
+  private final static Logger LOG = LoggerFactory.getLogger(CompetitionsController.class);
 
   @FXML
   private TableView<CompetitionRepresentation> tableView;
@@ -60,6 +67,11 @@ public class CompetitionsController implements Initializable, StudioFXController
 
   @FXML
   private Button duplicateBtn;
+
+  @FXML
+  private BorderPane competitionWidget;
+
+  private WidgetCompetitionSummaryController competitionWidgetController;
 
   // Add a public no-args constructor
   public CompetitionsController() {
@@ -139,6 +151,9 @@ public class CompetitionsController implements Initializable, StudioFXController
     if (selection == null && !data.isEmpty()) {
       tableView.getSelectionModel().select(0);
     }
+    else {
+      refreshView(Optional.empty());
+    }
   }
 
   @Override
@@ -195,7 +210,7 @@ public class CompetitionsController implements Initializable, StudioFXController
       if (value.getWinner() != null) {
         winner = value.getWinner().getName();
       }
-      else if(!StringUtils.isEmpty(value.getWinnerInitials())) {
+      else if (!StringUtils.isEmpty(value.getWinnerInitials())) {
         winner = value.getWinnerInitials();
       }
       return new SimpleObjectProperty(winner);
@@ -212,10 +227,31 @@ public class CompetitionsController implements Initializable, StudioFXController
       refreshView(Optional.ofNullable(newSelection));
     });
 
+    try {
+      FXMLLoader loader = new FXMLLoader(WidgetCompetitionSummaryController.class.getResource("widget-competition-summary.fxml"));
+      BorderPane summaryRoot = loader.load();
+      competitionWidgetController = loader.getController();
+      summaryRoot.setMaxWidth(Double.MAX_VALUE);
+      competitionWidget.setTop(summaryRoot);
+    } catch (IOException e) {
+      LOG.error("Failed to load c-widget: " + e.getMessage(), e);
+    }
+
     onReload();
   }
 
   private void refreshView(Optional<CompetitionRepresentation> competition) {
+    if(competition.isPresent()) {
+      competitionWidgetController.setCompetition(competition.get());
+    }
+    else {
+//      Label label = new Label("bubu");
+//      String color = "#FF3333";
+//      label.setStyle("-fx-font-color: " + color + ";-fx-text-fill: " + color + ";-fx-font-weight: bold;");
 
+//      competitionWidget.getCenter().setVisible(false);
+//      competitionWidget.setTop(label);
+      competitionWidgetController.setCompetition(null);
+    }
   }
 }

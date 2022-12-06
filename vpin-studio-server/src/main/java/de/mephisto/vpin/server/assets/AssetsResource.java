@@ -69,6 +69,6 @@ public class AssetsResource {
     if (maxSize > 0) {
       data = UploadUtil.resizeImageUpload(file, maxSize);
     }
-    return assetService.saveOrUpdate(data, id, file.getOriginalFilename(), assetType);
+    return assetService.saveOrUpdate(data, id, file.getOriginalFilename(), assetType, null);
   }
 }

@@ -72,7 +72,7 @@ public class DirectB2SResource {
           BufferedImage background = directB2SManager.generateB2SCompetitionImage(game, 800, 340);
           if (background != null) {
             byte[] bytes = ImageUtil.toBytes(background);
-            asset = assetService.saveOrUpdate(bytes, -1, "image.png", AssetType.COMPETITION.name());
+            asset = assetService.saveOrUpdate(bytes, -1, "image.png", AssetType.COMPETITION.name(), String.valueOf(game.getId()));
             LOG.info("Generated new competition background asset " + asset.getId());
 
             return assetService.serializeAsset(asset);

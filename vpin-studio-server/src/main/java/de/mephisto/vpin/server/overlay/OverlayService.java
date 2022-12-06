@@ -111,6 +111,6 @@ public class OverlayService implements InitializingBean, NativeKeyListener, Popp
       popperService.addPopperLaunchListener(this);
     }
 
-    popperLaunched();
+//    popperLaunched();
   }
 }

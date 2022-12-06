@@ -7,6 +7,7 @@
 <?import javafx.scene.control.DatePicker?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.Tooltip?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.ColumnConstraints?>
@@ -16,6 +17,7 @@
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
+<?import org.kordamp.ikonli.javafx.FontIcon?>
 
 <BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" styleClass="base-component" stylesheets="@../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.competitions.CompetitionDialogController">
    <bottom>
@@ -86,11 +88,29 @@
                         <Font size="14.0" />
                      </font>
                   </Label>
-                  <CheckBox fx:id="badgeCheckbox" mnemonicParsing="false" onAction="#onBadgeCheck" text="Add competition icon as badge to table's wheel icon" GridPane.columnIndex="1" GridPane.rowIndex="6">
-                     <font>
-                        <Font size="14.0" />
-                     </font>
-                  </CheckBox>
+                  <HBox alignment="CENTER_LEFT" GridPane.columnIndex="1" GridPane.rowIndex="6">
+                     <children>
+                        <CheckBox fx:id="badgeCheckbox" mnemonicParsing="false" onAction="#onBadgeCheck" text="Add competition icon as badge to table's wheel icon">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </CheckBox>
+                        <Label textFill="WHITE">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                           <graphic>
+                              <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
+                           </graphic>
+                           <HBox.margin>
+                              <Insets left="6.0" />
+                           </HBox.margin>
+                           <tooltip>
+                              <Tooltip text="The competition icon will be added to the wheel icon. After the competition is finished, the original icon will be restored." />
+                           </tooltip>
+                        </Label>
+                     </children>
+                  </HBox>
                   <DatePicker fx:id="startDatePicker" GridPane.columnIndex="1" GridPane.rowIndex="2" />
                   <DatePicker fx:id="endDatePicker" GridPane.columnIndex="1" GridPane.rowIndex="3" />
                   <Label fx:id="titleLabel11111" layoutX="10.0" layoutY="189.0" text="Wheel Icon Preview:" textFill="WHITE" GridPane.rowIndex="7">
@@ -103,7 +123,11 @@
                         <Font size="14.0" />
                      </font>
                   </Label>
-                  <ComboBox fx:id="competitionIconCombo" prefHeight="30.0" prefWidth="210.0" GridPane.columnIndex="1" GridPane.rowIndex="5" />
+                  <HBox alignment="CENTER_LEFT" GridPane.columnIndex="1" GridPane.rowIndex="5">
+                     <children>
+                        <ComboBox fx:id="competitionIconCombo" prefHeight="30.0" prefWidth="210.0" />
+                     </children>
+                  </HBox>
                   <Label fx:id="titleLabel1113" layoutX="10.0" layoutY="120.0" text="Duration:" textFill="WHITE" GridPane.rowIndex="4">
                      <font>
                         <Font size="14.0" />

@@ -34,7 +34,7 @@ public class WidgetFinishedCompetitionsController extends WidgetController imple
     List<CompetitionRepresentation> competitions = OverlayWindowFX.client.getFinishedCompetitions(10);
     try {
       for (CompetitionRepresentation c : competitions) {
-        FXMLLoader loader = new FXMLLoader(WidgetLatestScoreItemController.class.getResource("widget-competition-summary.fxml"));
+        FXMLLoader loader = new FXMLLoader(WidgetCompetitionSummaryController.class.getResource("widget-competition-summary.fxml"));
         BorderPane row = loader.load();
         WidgetCompetitionSummaryController controller = loader.getController();
         row.setMaxWidth(Double.MAX_VALUE);

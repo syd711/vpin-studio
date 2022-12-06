@@ -130,11 +130,6 @@ public class CompetitionDialogController implements Initializable {
         competition.setEndDate(null);
       }
 
-      long diff = ChronoUnit.DAYS.between(LocalDate.now(), t1);
-      if (diff > 0) {
-        competition.setActive(true);
-      }
-
       validate();
     });
 

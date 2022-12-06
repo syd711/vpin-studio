@@ -1,73 +1,70 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.*?>
-<?import javafx.scene.control.*?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
 <?import javafx.scene.image.ImageView?>
-<?import javafx.scene.layout.*?>
-<?import javafx.scene.text.*?>
-<BorderPane fx:id="root" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity"
-            styleClass="subpanel" stylesheets="@../stylesheet.css" xmlns="http://javafx.com/javafx/18"
-            xmlns:fx="http://javafx.com/fxml/1"
-            fx:controller="de.mephisto.vpin.commons.fx.widgets.WidgetCompetitionSummaryController">
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<BorderPane fx:id="root" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" styleClass="subpanel" stylesheets="@../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.commons.fx.widgets.WidgetCompetitionSummaryController">
     <center>
         <StackPane fx:id="competitionStack" BorderPane.alignment="CENTER">
             <children>
                 <HBox fx:id="topBox" alignment="CENTER_LEFT">
                     <children>
-                        <ImageView fx:id="competitionWheelImage" fitHeight="180.0" fitWidth="180.0" pickOnBounds="true"
-                                   preserveRatio="true">
+                        <ImageView fx:id="competitionWheelImage" fitHeight="180.0" fitWidth="180.0" pickOnBounds="true" preserveRatio="true">
                             <HBox.margin>
-                                <Insets left="12.0" right="12.0"/>
+                                <Insets left="12.0" right="12.0" />
                             </HBox.margin>
                         </ImageView>
                         <VBox>
                             <children>
                                 <Label fx:id="competitionLabel" text="competition" textFill="WHITE">
                                     <font>
-                                        <Font name="System Bold" size="36.0"/>
+                                        <Font name="System Bold" size="36.0" />
                                     </font>
                                     <VBox.margin>
-                                        <Insets/>
+                                        <Insets />
                                     </VBox.margin>
                                 </Label>
                                 <Label fx:id="durationLabel" text="duration" textFill="WHITE">
                                     <font>
-                                        <Font size="24.0"/>
+                                        <Font size="24.0" />
                                     </font>
                                     <VBox.margin>
-                                        <Insets bottom="12.0"/>
+                                        <Insets bottom="12.0" />
                                     </VBox.margin>
                                 </Label>
-                                <Label fx:id="tableNameLabel" layoutX="10.0" layoutY="22.0" text="table"
-                                       textFill="WHITE">
+                                <Label fx:id="tableNameLabel" layoutX="10.0" layoutY="22.0" text="table" textFill="WHITE">
                                     <font>
-                                        <Font name="System Bold" size="24.0"/>
+                                        <Font name="System Bold" size="24.0" />
                                     </font>
                                 </Label>
                                 <BorderPane>
                                     <left>
                                         <Label text="#1" textFill="WHITE" BorderPane.alignment="CENTER">
                                             <font>
-                                                <Font size="24.0"/>
+                                                <Font size="24.0" />
                                             </font>
                                         </Label>
                                     </left>
                                     <right>
-                                        <Label fx:id="scoreLabel1" text="score" textFill="WHITE"
-                                               BorderPane.alignment="CENTER">
+                                        <Label fx:id="scoreLabel1" text="score" textFill="WHITE" BorderPane.alignment="CENTER">
                                             <font>
-                                                <Font size="18.0"/>
+                                                <Font size="18.0" />
                                             </font>
                                         </Label>
                                     </right>
                                     <center>
-                                        <Label fx:id="name1" minWidth="200.0" text="Label" textFill="WHITE"
-                                               BorderPane.alignment="CENTER_LEFT">
+                                        <Label fx:id="name1" minWidth="200.0" text="Label" textFill="WHITE" BorderPane.alignment="CENTER_LEFT">
                                             <BorderPane.margin>
-                                                <Insets left="12.0"/>
+                                                <Insets left="12.0" />
                                             </BorderPane.margin>
                                             <font>
-                                                <Font size="24.0"/>
+                                                <Font size="24.0" />
                                             </font>
                                         </Label>
                                     </center>
@@ -76,26 +73,24 @@
                                     <left>
                                         <Label text="#2" textFill="WHITE" BorderPane.alignment="CENTER">
                                             <font>
-                                                <Font size="24.0"/>
+                                                <Font size="24.0" />
                                             </font>
                                         </Label>
                                     </left>
                                     <right>
-                                        <Label fx:id="scoreLabel2" text="score" textFill="WHITE"
-                                               BorderPane.alignment="CENTER">
+                                        <Label fx:id="scoreLabel2" text="score" textFill="WHITE" BorderPane.alignment="CENTER">
                                             <font>
-                                                <Font size="18.0"/>
+                                                <Font size="18.0" />
                                             </font>
                                         </Label>
                                     </right>
                                     <center>
-                                        <Label fx:id="name2" minWidth="200.0" text="Label" textFill="WHITE"
-                                               BorderPane.alignment="CENTER_LEFT">
+                                        <Label fx:id="name2" minWidth="200.0" text="Label" textFill="WHITE" BorderPane.alignment="CENTER_LEFT">
                                             <BorderPane.margin>
-                                                <Insets left="12.0"/>
+                                                <Insets left="12.0" />
                                             </BorderPane.margin>
                                             <font>
-                                                <Font size="24.0"/>
+                                                <Font size="24.0" />
                                             </font>
                                         </Label>
                                     </center>
@@ -104,44 +99,42 @@
                                     <left>
                                         <Label text="#3" textFill="WHITE" BorderPane.alignment="CENTER">
                                             <font>
-                                                <Font size="24.0"/>
+                                                <Font size="24.0" />
                                             </font>
                                         </Label>
                                     </left>
                                     <right>
-                                        <Label fx:id="scoreLabel3" text="score" textFill="WHITE"
-                                               BorderPane.alignment="CENTER">
+                                        <Label fx:id="scoreLabel3" text="score" textFill="WHITE" BorderPane.alignment="CENTER">
                                             <font>
-                                                <Font size="18.0"/>
+                                                <Font size="18.0" />
                                             </font>
                                         </Label>
                                     </right>
                                     <center>
-                                        <Label fx:id="name3" minWidth="200.0" text="Label" textFill="WHITE"
-                                               BorderPane.alignment="CENTER_LEFT">
+                                        <Label fx:id="name3" minWidth="200.0" text="Label" textFill="WHITE" BorderPane.alignment="CENTER_LEFT">
                                             <font>
-                                                <Font size="24.0"/>
+                                                <Font size="24.0" />
                                             </font>
                                             <BorderPane.margin>
-                                                <Insets left="12.0"/>
+                                                <Insets left="12.0" />
                                             </BorderPane.margin>
                                         </Label>
                                     </center>
                                 </BorderPane>
                             </children>
                             <HBox.margin>
-                                <Insets bottom="12.0" top="12.0"/>
+                                <Insets bottom="12.0" top="12.0" />
                             </HBox.margin>
                         </VBox>
                     </children>
                     <StackPane.margin>
-                        <Insets/>
+                        <Insets />
                     </StackPane.margin>
                 </HBox>
             </children>
         </StackPane>
     </center>
     <padding>
-        <Insets bottom="12.0" top="12.0"/>
+        <Insets bottom="12.0" top="12.0" />
     </padding>
 </BorderPane>

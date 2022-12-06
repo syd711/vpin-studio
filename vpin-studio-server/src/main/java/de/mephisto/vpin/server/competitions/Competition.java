@@ -31,9 +31,6 @@ public class Competition {
   private Long id;
 
   @OneToOne(cascade = CascadeType.ALL)
-  private Asset logo;
-
-  @OneToOne(cascade = CascadeType.ALL)
   private Player winner;
 
   private String winnerInitials;
@@ -52,8 +49,6 @@ public class Competition {
 
   private String name;
 
-  private boolean active;
-
   public Player getWinner() {
     return winner;
   }
@@ -68,14 +63,6 @@ public class Competition {
 
   public void setWinnerInitials(String winnerInitials) {
     this.winnerInitials = winnerInitials;
-  }
-
-  public boolean isActive() {
-    return active;
-  }
-
-  public void setActive(boolean active) {
-    this.active = active;
   }
 
   public String getBadge() {
@@ -100,14 +87,6 @@ public class Competition {
 
   public void setType(String type) {
     this.type = type;
-  }
-
-  public Asset getLogo() {
-    return logo;
-  }
-
-  public void setLogo(Asset logo) {
-    this.logo = logo;
   }
 
   public int getGameId() {

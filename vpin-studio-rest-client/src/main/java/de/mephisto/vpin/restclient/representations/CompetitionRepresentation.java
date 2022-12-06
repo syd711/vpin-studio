@@ -22,8 +22,6 @@ public class CompetitionRepresentation {
 
   private boolean customizeMedia;
 
-  private boolean active;
-
   private String winnerInitials;
 
   private PlayerRepresentation winner;
@@ -42,14 +40,6 @@ public class CompetitionRepresentation {
 
   public void setWinner(PlayerRepresentation winner) {
     this.winner = winner;
-  }
-
-  public boolean isActive() {
-    return active;
-  }
-
-  public void setActive(boolean active) {
-    this.active = active;
   }
 
   public Long getId() {
@@ -131,18 +121,22 @@ public class CompetitionRepresentation {
 
     LocalDate start = LocalDate.now();
     LocalDate end = getEndDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
-    long diff = ChronoUnit.DAYS.between(end, start);
+    long diff = Math.abs(ChronoUnit.DAYS.between(end, start));
 
-    LocalDate newEndDate = ChronoUnit.DAYS.addTo(start, diff);
-    clone.setStartDate(new Date());
+    LocalDate newEndDate = ChronoUnit.DAYS.addTo(end, diff);
+    clone.setStartDate(Date.from(end.atStartOfDay(ZoneId.systemDefault()).toInstant()));
     clone.setEndDate(Date.from(newEndDate.atStartOfDay(ZoneId.systemDefault()).toInstant()));
 
     clone.setName(this.getName() + "(1)");
     clone.setBadge(this.getBadge());
     clone.setType(this.getType());
-    clone.setActive(true);
     clone.setCustomizeMedia(this.isCustomizeMedia());
     clone.setGameId(this.getGameId());
     return clone;
+  }
+
+  public boolean isActive() {
+    LocalDate end = getEndDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+    return LocalDate.now().isBefore(end);
   }
 }

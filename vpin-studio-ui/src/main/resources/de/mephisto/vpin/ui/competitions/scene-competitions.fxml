@@ -30,7 +30,7 @@
                         <FontIcon iconColor="WHITE" iconLiteral="bi-trophy" />
                      </graphic>
                      <content>
-                        <BorderPane>
+                        <BorderPane fx:id="competitionWidget">
                            <center>
                               <BorderPane BorderPane.alignment="CENTER">
                                  <center>
@@ -102,10 +102,7 @@
                                     </ToolBar>
                                  </top>
                               </BorderPane>
-                           </center>
-                           <top>
-                              <BorderPane prefHeight="340.0" prefWidth="200.0" BorderPane.alignment="CENTER" />
-                           </top></BorderPane>
+                           </center></BorderPane>
                      </content>
                         </Tab>
                         <Tab closable="false" text=" Online Competitions">
