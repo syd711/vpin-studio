@@ -45,7 +45,7 @@ public class CompetitionService implements InitializingBean {
     return competitions;
   }
 
-  public ScoreList getCompetitionScores(int id) {
+  public ScoreList getCompetitionScores(long id) {
     Competition competition = getCompetition(id);
     Date start = competition.getStartDate();
     Date end = competition.getEndDate();

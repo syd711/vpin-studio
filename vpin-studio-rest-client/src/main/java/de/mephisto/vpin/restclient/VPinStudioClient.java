@@ -148,7 +148,7 @@ public class VPinStudioClient implements ObservedPropertyChangeListener, Overlay
     }
   }
 
-  public ScoreListRepresentation getCompetitionScores(int id) {
+  public ScoreListRepresentation getCompetitionScores(long id) {
     try {
       return RestClient.getInstance().get(API + "competitions/scores/" + id, ScoreListRepresentation.class);
     } catch (Exception e) {

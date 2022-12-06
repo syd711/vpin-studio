@@ -18,7 +18,7 @@ public interface OverlayClient {
 
   ByteArrayInputStream getCompetitionBackground(long gameId);
 
-  ScoreListRepresentation getCompetitionScores(int id);
+  ScoreListRepresentation getCompetitionScores(long id);
 
   ByteArrayInputStream getAsset(String uuid);
 

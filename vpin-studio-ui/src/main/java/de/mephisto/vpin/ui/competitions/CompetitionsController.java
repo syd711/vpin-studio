@@ -3,6 +3,7 @@ package de.mephisto.vpin.ui.competitions;
 import de.mephisto.vpin.commons.fx.widgets.WidgetCompetitionSummaryController;
 import de.mephisto.vpin.restclient.representations.CompetitionRepresentation;
 import de.mephisto.vpin.restclient.representations.GameRepresentation;
+import de.mephisto.vpin.restclient.representations.ScoreListRepresentation;
 import de.mephisto.vpin.ui.NavigationController;
 import de.mephisto.vpin.ui.StudioFXController;
 import de.mephisto.vpin.ui.util.Dialogs;
@@ -216,6 +217,12 @@ public class CompetitionsController implements Initializable, StudioFXController
       return new SimpleObjectProperty(winner);
     });
 
+    columnScoreCount.setCellValueFactory(cellData -> {
+      CompetitionRepresentation value = cellData.getValue();
+      ScoreListRepresentation competitionScores = client.getCompetitionScores(value.getId());
+      return new SimpleObjectProperty(competitionScores.getScores().size());
+    });
+
 
     tableView.setPlaceholder(new Label("            Mmmh, not up for a challange yet?\n" +
         "Create a new competition by pressing the '+' button."));
@@ -242,9 +249,11 @@ public class CompetitionsController implements Initializable, StudioFXController
 
   private void refreshView(Optional<CompetitionRepresentation> competition) {
     if(competition.isPresent()) {
+      competitionWidget.getTop().setVisible(true);
       competitionWidgetController.setCompetition(competition.get());
     }
     else {
+      competitionWidget.getTop().setVisible(false);
 //      Label label = new Label("bubu");
 //      String color = "#FF3333";
 //      label.setStyle("-fx-font-color: " + color + ";-fx-text-fill: " + color + ";-fx-font-weight: bold;");

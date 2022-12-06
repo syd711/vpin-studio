@@ -108,7 +108,7 @@ public class OverlayClientImpl implements OverlayClient, InitializingBean {
   }
 
   @Override
-  public ScoreListRepresentation getCompetitionScores(int id) {
+  public ScoreListRepresentation getCompetitionScores(long id) {
     try {
       ScoreList competitionScores = competitionService.getCompetitionScores(id);
       String s = mapper.writeValueAsString(competitionScores);
