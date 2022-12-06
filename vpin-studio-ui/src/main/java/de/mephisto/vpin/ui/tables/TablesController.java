@@ -148,7 +148,7 @@ public class TablesController implements Initializable, StudioFXController {
 
   @FXML
   private void onOpenDirectB2SBackground() {
-    GameRepresentation game = tableView.getSelectionModel().selectedItemProperty().get();
+    GameRepresentation game = tableView.getSelectionModel().getSelectedItem();
     if (game != null) {
       ByteArrayInputStream s = client.getDirectB2SImage(game);
       MediaUtil.openMedia(s);
@@ -182,7 +182,7 @@ public class TablesController implements Initializable, StudioFXController {
 
   @FXML
   private void onTableScan() {
-    GameRepresentation game = tableView.getSelectionModel().selectedItemProperty().get();
+    GameRepresentation game = tableView.getSelectionModel().getSelectedItem();
     Dialogs.createProgressDialog(new TableScanProgressModel(client, "Scanning Table '" + game + "'", game));
     this.onReload();
   }
@@ -195,7 +195,7 @@ public class TablesController implements Initializable, StudioFXController {
 
   @FXML
   private void onValidate() {
-    GameRepresentation game = tableView.getSelectionModel().selectedItemProperty().get();
+    GameRepresentation game = tableView.getSelectionModel().getSelectedItem();
     Optional<ButtonType> result = WidgetFactory.showConfirmation("Re-validate table '" + game.getGameDisplayName() + "?\nThis will reset the dismissed validations for this table too.", null);
     if (result.isPresent() && result.get().equals(ButtonType.OK)) {
       game.setIgnoredValidations(null);
@@ -211,7 +211,7 @@ public class TablesController implements Initializable, StudioFXController {
 
   @FXML
   private void onDismiss() {
-    GameRepresentation game = tableView.getSelectionModel().selectedItemProperty().get();
+    GameRepresentation game = tableView.getSelectionModel().getSelectedItem();
     Optional<ButtonType> result = WidgetFactory.showConfirmation("Ignore this warning for future validations of table '" + game.getGameDisplayName() + "?", null);
     if (result.isPresent() && result.get().equals(ButtonType.OK)) {
       String validationState = String.valueOf(game.getValidationState());
@@ -248,7 +248,7 @@ public class TablesController implements Initializable, StudioFXController {
     tableStack.getChildren().add(tablesLoadingOverlay);
 
     new Thread(() -> {
-      GameRepresentation gameRepresentation = tableView.getSelectionModel().selectedItemProperty().get();
+      GameRepresentation selection = tableView.getSelectionModel().getSelectedItem();
       List<GameRepresentation> games = client.getGames();
       List<GameRepresentation> filtered = new ArrayList<>();
       String filterValue = textfieldSearch.textProperty().getValue();
@@ -264,8 +264,8 @@ public class TablesController implements Initializable, StudioFXController {
         tableView.setItems(data);
         tableView.refresh();
 
-        if(gameRepresentation != null) {
-          final GameRepresentation updatedGame = client.getGame(gameRepresentation.getId());
+        if(selection != null) {
+          final GameRepresentation updatedGame = client.getGame(selection.getId());
           tableView.getSelectionModel().select(updatedGame);
         }
         else {

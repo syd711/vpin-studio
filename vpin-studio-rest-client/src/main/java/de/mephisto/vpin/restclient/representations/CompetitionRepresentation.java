@@ -116,11 +116,6 @@ public class CompetitionRepresentation {
     return id != null && that.id != null && id.equals(that.id);
   }
 
-  @Override
-  public int hashCode() {
-    return id.hashCode();
-  }
-
   public CompetitionRepresentation cloneCompetition() {
     CompetitionRepresentation clone = new CompetitionRepresentation();
 

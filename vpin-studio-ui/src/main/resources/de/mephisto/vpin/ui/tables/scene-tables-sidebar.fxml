@@ -25,13 +25,13 @@
     <children>
         <Accordion fx:id="accordion">
             <panes>
-                <TitledPane fx:id="titledPaneMedia" prefWidth="600.0" text="Media">
+                <TitledPane fx:id="titledPaneMedia" prefHeight="1070.0" prefWidth="600.0" text="Media">
                     <content>
                         <BorderPane>
                             <center>
                                 <ScrollPane fitToWidth="true" styleClass="accordion-container" BorderPane.alignment="CENTER">
                                     <content>
-                                        <Pane fx:id="mediaRootPane" prefHeight="1070.0" styleClass="accordion-container">
+                                        <Pane fx:id="mediaRootPane" styleClass="accordion-container">
                                             <children>
                                                 <BorderPane layoutX="158.0" layoutY="566.0" prefHeight="490.0" prefWidth="250.0" styleClass="media-container">
                                                     <bottom>

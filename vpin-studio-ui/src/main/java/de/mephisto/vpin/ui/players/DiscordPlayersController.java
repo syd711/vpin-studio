@@ -137,7 +137,7 @@ public class DiscordPlayersController implements Initializable, StudioFXControll
   public void refreshView() {
     this.searchTextField.setDisable(true);
 
-    PlayerRepresentation selection = tableView.getSelectionModel().selectedItemProperty().get();
+    PlayerRepresentation playerRepresentation = tableView.getSelectionModel().getSelectedItem();
     tableView.getSelectionModel().clearSelection();
 
     new Thread(() -> {
@@ -145,8 +145,8 @@ public class DiscordPlayersController implements Initializable, StudioFXControll
         data = FXCollections.observableList(filterPlayers(players));
         tableView.setItems(data);
         tableView.refresh();
-        if (data.contains(selection)) {
-          tableView.getSelectionModel().select(selection);
+        if (data.contains(playerRepresentation)) {
+          tableView.getSelectionModel().select(playerRepresentation);
         }
         this.searchTextField.setDisable(false);
       });
@@ -154,7 +154,7 @@ public class DiscordPlayersController implements Initializable, StudioFXControll
   }
 
   public Optional<PlayerRepresentation> getSelection() {
-    PlayerRepresentation playerRepresentation = tableView.getSelectionModel().selectedItemProperty().get();
+    PlayerRepresentation playerRepresentation = tableView.getSelectionModel().getSelectedItem();
     if(playerRepresentation != null) {
       return Optional.of(playerRepresentation);
     }

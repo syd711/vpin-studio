@@ -3,6 +3,7 @@ package de.mephisto.vpin.ui.competitions;
 import de.mephisto.vpin.commons.fx.widgets.WidgetCompetitionSummaryController;
 import de.mephisto.vpin.restclient.representations.CompetitionRepresentation;
 import de.mephisto.vpin.restclient.representations.GameRepresentation;
+import de.mephisto.vpin.restclient.representations.PlayerRepresentation;
 import de.mephisto.vpin.restclient.representations.ScoreListRepresentation;
 import de.mephisto.vpin.ui.NavigationController;
 import de.mephisto.vpin.ui.StudioFXController;
@@ -104,7 +105,7 @@ public class CompetitionsController implements Initializable, StudioFXController
 
   @FXML
   private void onDuplicate() {
-    CompetitionRepresentation selection = tableView.getSelectionModel().selectedItemProperty().get();
+    CompetitionRepresentation selection = tableView.getSelectionModel().getSelectedItem();
     if (selection != null) {
       CompetitionRepresentation clone = selection.cloneCompetition();
       CompetitionRepresentation c = Dialogs.openCompetitionDialog(clone);
@@ -122,7 +123,7 @@ public class CompetitionsController implements Initializable, StudioFXController
 
   @FXML
   private void onEdit() {
-    CompetitionRepresentation selection = tableView.getSelectionModel().selectedItemProperty().get();
+    CompetitionRepresentation selection = tableView.getSelectionModel().getSelectedItem();
     if (selection != null) {
       CompetitionRepresentation c = Dialogs.openCompetitionDialog(selection);
       if (c != null) {
@@ -139,10 +140,11 @@ public class CompetitionsController implements Initializable, StudioFXController
 
   @FXML
   private void onDelete() {
-    CompetitionRepresentation selection = tableView.getSelectionModel().selectedItemProperty().get();
+    CompetitionRepresentation selection = tableView.getSelectionModel().getSelectedItem();
     if (selection != null) {
       Optional<ButtonType> result = WidgetFactory.showConfirmation("Delete Competition", "Delete Competition '" + selection.getName() + "'?");
       if (result.isPresent() && result.get().equals(ButtonType.OK)) {
+        tableView.getSelectionModel().clearSelection();
         client.deleteCompetition(selection);
         onReload();
       }
@@ -151,7 +153,7 @@ public class CompetitionsController implements Initializable, StudioFXController
 
   @FXML
   private void onReload() {
-    CompetitionRepresentation selection = tableView.getSelectionModel().selectedItemProperty().get();
+    CompetitionRepresentation selection = tableView.getSelectionModel().getSelectedItem();
 
     tableView.setVisible(false);
     tableStack.getChildren().add(loadingOverlay);
@@ -162,6 +164,7 @@ public class CompetitionsController implements Initializable, StudioFXController
 
       Platform.runLater(() -> {
         if (competitions.isEmpty()) {
+          competitionWidget.setTop(null);
         }
         else {
           if (competitionWidget.getTop() == null) {
@@ -282,6 +285,16 @@ public class CompetitionsController implements Initializable, StudioFXController
     } catch (IOException e) {
       LOG.error("Failed to load c-widget: " + e.getMessage(), e);
     }
+
+    tableView.setRowFactory(tv -> {
+      TableRow<CompetitionRepresentation> row = new TableRow<>();
+      row.setOnMouseClicked(event -> {
+        if (event.getClickCount() == 2 && (!row.isEmpty())) {
+          onEdit();
+        }
+      });
+      return row;
+    });
 
     onReload();
   }

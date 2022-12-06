@@ -81,7 +81,7 @@ public class BuiltInPlayersController implements Initializable, StudioFXControll
   private void onReload() {
     this.searchTextField.setDisable(true);
 
-    PlayerRepresentation selection = tableView.getSelectionModel().selectedItemProperty().get();
+    PlayerRepresentation selection = tableView.getSelectionModel().getSelectedItem();
     tableView.getSelectionModel().clearSelection();
     boolean disable = selection == null;
     editBtn.setDisable(disable);
@@ -121,7 +121,7 @@ public class BuiltInPlayersController implements Initializable, StudioFXControll
 
   @FXML
   private void onEdit() {
-    PlayerRepresentation selection = tableView.getSelectionModel().selectedItemProperty().get();
+    PlayerRepresentation selection = tableView.getSelectionModel().getSelectedItem();
     if (selection != null) {
       PlayerRepresentation player = Dialogs.openPlayerDialog(selection);
       if (player != null) {
@@ -132,7 +132,7 @@ public class BuiltInPlayersController implements Initializable, StudioFXControll
 
   @FXML
   private void onDelete() {
-    PlayerRepresentation selection = tableView.getSelectionModel().selectedItemProperty().get();
+    PlayerRepresentation selection = tableView.getSelectionModel().getSelectedItem();
     if (selection != null) {
       Optional<ButtonType> result = WidgetFactory.showConfirmation("Delete Player '" + selection.getName() + "'?", "Delete Player");
       if (result.isPresent() && result.get().equals(ButtonType.OK)) {
@@ -264,9 +264,9 @@ public class BuiltInPlayersController implements Initializable, StudioFXControll
   }
 
   public Optional<PlayerRepresentation> getSelection() {
-    PlayerRepresentation playerRepresentation = tableView.getSelectionModel().selectedItemProperty().get();
-    if (playerRepresentation != null) {
-      return Optional.of(playerRepresentation);
+    PlayerRepresentation selection = tableView.getSelectionModel().getSelectedItem();
+    if (selection != null) {
+      return Optional.of(selection);
     }
     return Optional.empty();
   }

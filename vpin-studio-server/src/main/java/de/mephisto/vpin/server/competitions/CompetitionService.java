@@ -37,7 +37,7 @@ public class CompetitionService implements InitializingBean {
   }
 
   public List<Competition> getFinishedCompetitions(int limit) {
-    List<Competition> competitions = competitionsRepository.findByEndDateLessThanEqual(new Date());
+    List<Competition> competitions = competitionsRepository.findByEndDateLessThanEqualOrderByEndDate(new Date());
     competitions.sort(Comparator.comparing(Competition::getEndDate));
     if (competitions.size() > limit) {
       return competitions.subList(0, limit);
@@ -64,9 +64,14 @@ public class CompetitionService implements InitializingBean {
   }
 
   public void delete(long id) {
-    competitionsRepository.deleteById(id);
+    Optional<Competition> c = competitionsRepository.findById(id);
+    if(c.isPresent()) {
+      competitionsRepository.deleteById(id);
+    }
+    else {
+      LOG.error("No competition exists for id " + id);
+    }
   }
-
 
   @Override
   public void afterPropertiesSet() throws Exception {

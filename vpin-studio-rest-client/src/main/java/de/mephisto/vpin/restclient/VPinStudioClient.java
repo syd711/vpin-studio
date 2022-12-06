@@ -25,6 +25,9 @@ public class VPinStudioClient implements ObservedPropertyChangeListener, Overlay
 
   private final Map<String, byte[]> imageCache = new HashMap<>();
 
+
+  private Map<String, AssetRepresentation> assetCache = new HashMap<>();
+
   private VPinStudioClient() {
 
   }
@@ -42,11 +45,20 @@ public class VPinStudioClient implements ObservedPropertyChangeListener, Overlay
   }
 
   public ByteArrayInputStream getGameMediaItem(int id, PopperScreen screen) {
-    byte[] bytes = RestClient.getInstance().readBinary(API + "poppermedia/" + id + "/" + screen.name());
-    if (bytes == null) {
-//      throw new UnsupportedOperationException("No media item found for with " + screen + " of game " + id);
-      bytes = new byte[]{};
+    if (!imageCache.containsKey(String.valueOf(id)) && screen.equals(PopperScreen.Wheel)) {
+      byte[] bytes = RestClient.getInstance().readBinary(API + "poppermedia/" + id + "/" + screen.name());
+      if (bytes == null) {
+        bytes = new byte[]{};
+      }
+      imageCache.put(String.valueOf(id), bytes);
     }
+
+    if (screen.equals(PopperScreen.Wheel)) {
+      byte[] imageBytes = imageCache.get(String.valueOf(id));
+      return new ByteArrayInputStream(imageBytes);
+    }
+
+    byte[] bytes = RestClient.getInstance().readBinary(API + "poppermedia/" + id + "/" + screen.name());
     return new ByteArrayInputStream(bytes);
   }
 

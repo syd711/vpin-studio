@@ -55,6 +55,7 @@ public class Dialogs {
     stage.initOwner(owner);
     Scene scene = new Scene(root);
     stage.setScene(scene);
+    stage.setResizable(false);
     stage.showAndWait();
 
     return controller.getPlayer();
@@ -105,6 +106,7 @@ public class Dialogs {
     Stage owner = Studio.stage;
     final Stage stage = new Stage();
     stage.initModality(Modality.WINDOW_MODAL);
+    stage.setResizable(false);
     stage.setTitle("DirectB2S File Upload");
 
     stage.initOwner(owner);
@@ -127,6 +129,7 @@ public class Dialogs {
     Stage owner = Studio.stage;
     final Stage stage = new Stage();
     stage.initModality(Modality.WINDOW_MODAL);
+    stage.setResizable(false);
     stage.setTitle("Table Upload");
 
     stage.initOwner(owner);
@@ -149,6 +152,7 @@ public class Dialogs {
     Stage owner = Studio.stage;
     final Stage stage = new Stage();
     stage.initModality(Modality.WINDOW_MODAL);
+    stage.setResizable(false);
     stage.setTitle("Rom Upload");
 
     stage.initOwner(owner);
@@ -225,6 +229,7 @@ public class Dialogs {
 
     final Stage stage = new Stage();
     stage.initModality(Modality.WINDOW_MODAL);
+    stage.setResizable(false);
     stage.initOwner(owner);
 
     final ProgressBar progressBar = (ProgressBar) root.lookup("#progressBar");

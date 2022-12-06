@@ -2,6 +2,7 @@
 
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
 <?import javafx.scene.control.Separator?>
 <?import javafx.scene.control.Tab?>
 <?import javafx.scene.control.TabPane?>
@@ -39,7 +40,7 @@
                                        <children>
                                           <TableView fx:id="tableView" style="-fx-background-color: #2a2a2a;" styleClass="base-component">
                                             <columns>
-                                              <TableColumn fx:id="columnName" prefWidth="292.0001335144043" style="-fx-alignment: CENTER;" text="Name" />
+                                              <TableColumn fx:id="columnName" prefWidth="292.0001335144043" style="-fx-alignment: BASELINE_LEFT;" text="Name" />
                                               <TableColumn fx:id="columnStatus" minWidth="0.0" prefWidth="172.0" style="-fx-alignment: CENTER;" text="Status" />
                                                 <TableColumn fx:id="columnTable" prefWidth="292.0001335144043" style="-fx-alignment: BASELINE_LEFT;" text="Table" />
                                                 <TableColumn fx:id="columnStartDate" prefWidth="150.0" style="-fx-alignment: CENTER;" text="Start Date" />
@@ -115,7 +116,13 @@
                         <FontIcon iconColor="WHITE" iconLiteral="bi-trophy-fill" />
                      </graphic>
                      <content>
-                        <BorderPane prefHeight="200.0" prefWidth="200.0" />
+                        <BorderPane prefHeight="200.0" prefWidth="200.0">
+                           <center>
+                              <Label text="Some day, you and I will play together." textFill="WHITE" BorderPane.alignment="CENTER" />
+                           </center>
+                           <top>
+                              <Label text="Work in progress..." textFill="WHITE" BorderPane.alignment="CENTER" />
+                           </top></BorderPane>
                      </content>
                         </Tab>
                     </tabs>

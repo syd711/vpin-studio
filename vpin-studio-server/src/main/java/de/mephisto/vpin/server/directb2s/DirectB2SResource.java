@@ -78,6 +78,9 @@ public class DirectB2SResource {
             return assetService.serializeAsset(asset);
           }
         }
+        else {
+          return assetService.serializeAsset(asset);
+        }
       }
     } catch (Exception e) {
       LOG.error("Failed generate competition image: " + e.getMessage(), e);
