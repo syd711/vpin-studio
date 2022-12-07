@@ -164,15 +164,15 @@ public class OverlayClientImpl implements OverlayClient, InitializingBean {
   }
 
   @Override
-  public List<GameRepresentation> getRecentlyPlayedGames(int count) {
+  public ScoreSummaryRepresentation getRecentlyPlayedGames(int count) {
     try {
-      List<Game> games = gameService.getRecentHighscoreGames(count);
-      String s = mapper.writeValueAsString(games);
-      return List.of(mapper.readValue(s, GameRepresentation[].class));
+      ScoreSummary summary = gameService.getRecentHighscores(count);
+      String s = mapper.writeValueAsString(summary);
+      return mapper.readValue(s, ScoreSummaryRepresentation.class);
     } catch (Exception e) {
       LOG.error("Error during conversion: " + e.getMessage(), e);
     }
-    return Collections.emptyList();
+    return null;
   }
 
   @Override

@@ -2,10 +2,7 @@ package de.mephisto.vpin.commons.fx.widgets;
 
 import de.mephisto.vpin.commons.fx.OverlayWindowFX;
 import de.mephisto.vpin.restclient.PopperScreen;
-import de.mephisto.vpin.restclient.representations.GameMediaItemRepresentation;
-import de.mephisto.vpin.restclient.representations.GameMediaRepresentation;
-import de.mephisto.vpin.restclient.representations.GameRepresentation;
-import de.mephisto.vpin.restclient.representations.ScoreSummaryRepresentation;
+import de.mephisto.vpin.restclient.representations.*;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -35,12 +32,14 @@ public class WidgetLatestScoresController extends WidgetController implements In
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
-    List<GameRepresentation> games = OverlayWindowFX.client.getRecentlyPlayedGames(10);
+  }
 
+  public void setScoreSummary(ScoreSummaryRepresentation scoreSummary) {
     try {
       int count = 0;
-      for (GameRepresentation game : games) {
-        ScoreSummaryRepresentation scores = OverlayWindowFX.client.getGameScores(game.getId());
+      List<ScoreRepresentation> scores = scoreSummary.getScores();
+      for (ScoreRepresentation score : scores) {
+        GameRepresentation game = OverlayWindowFX.client.getGame(score.getGameId());
         GameMediaRepresentation gameMedia = OverlayWindowFX.client.getGameMedia(game.getId());
 
         GameMediaItemRepresentation wheelMedia = gameMedia.getMedia().get(PopperScreen.Wheel.name());
@@ -52,7 +51,7 @@ public class WidgetLatestScoresController extends WidgetController implements In
         BorderPane row = loader.load();
         row.setPrefWidth(root.getPrefWidth() - 48);
         WidgetLatestScoreItemController controller = loader.getController();
-        controller.setData(game, scores, wheelMedia);
+        controller.setData(game, score, wheelMedia);
 
         highscoreVBox.getChildren().add(row);
         count++;

@@ -32,7 +32,7 @@ import java.net.URL;
 import java.text.DateFormat;
 import java.util.*;
 
-public class TablesSidebarController implements Initializable, StudioFXController {
+public class TablesSidebarController implements Initializable {
   private final static Logger LOG = LoggerFactory.getLogger(TablesSidebarController.class);
 
   @FXML

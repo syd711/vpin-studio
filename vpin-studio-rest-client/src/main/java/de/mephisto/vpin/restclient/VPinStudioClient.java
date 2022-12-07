@@ -38,7 +38,9 @@ public class VPinStudioClient implements ObservedPropertyChangeListener, Overlay
 
   public void clearCache() {
     this.assetCache.clear();
+    int size = this.imageCache.size();
     this.imageCache.clear();
+    LOG.info("Cleared " + size + " resources from cache.");
   }
 
   /*********************************************************************************************************************
@@ -254,8 +256,8 @@ public class VPinStudioClient implements ObservedPropertyChangeListener, Overlay
     return Arrays.asList(RestClient.getInstance().get(API + "games/scoredgames", GameRepresentation[].class));
   }
 
-  public List<GameRepresentation> getRecentlyPlayedGames(int count) {
-    return Arrays.asList(RestClient.getInstance().get(API + "games/recent/" + count, GameRepresentation[].class));
+  public ScoreSummaryRepresentation getRecentlyPlayedGames(int count) {
+    return RestClient.getInstance().get(API + "games/recent/" + count, ScoreSummaryRepresentation.class);
   }
 
   /*********************************************************************************************************************

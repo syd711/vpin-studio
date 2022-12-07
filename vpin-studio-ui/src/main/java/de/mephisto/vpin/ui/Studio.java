@@ -3,17 +3,13 @@ package de.mephisto.vpin.ui;
 import de.mephisto.vpin.commons.fx.OverlayWindowFX;
 import de.mephisto.vpin.restclient.VPinStudioClient;
 import de.mephisto.vpin.ui.util.ResizeHelper;
-import eu.hansolo.tilesfx.fonts.Fonts;
 import javafx.application.Application;
-import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Paint;
-import javafx.scene.text.Font;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
@@ -36,8 +32,6 @@ public class Studio extends Application {
 
     FXMLLoader loader = new FXMLLoader(getClass().getResource("scene-root.fxml"));
     Parent root = loader.load();
-    NavigationController.navigationController = loader.<StudioFXController>getController();
-
     Rectangle2D screenBounds = Screen.getPrimary().getBounds();
     int height = 1080;
     int width = 1920;

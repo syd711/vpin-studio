@@ -5,7 +5,6 @@ import de.mephisto.vpin.restclient.representations.ScoreRepresentation;
 import de.mephisto.vpin.restclient.representations.ScoreSummaryRepresentation;
 import de.mephisto.vpin.ui.NavigationController;
 import de.mephisto.vpin.ui.StudioFXController;
-import de.mephisto.vpin.ui.WaitOverlayController;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -82,7 +81,7 @@ public class PlayersController implements Initializable, StudioFXController {
         return;
       }
 
-      if(!StringUtils.isEmpty(p.getDuplicatePlayerName())) {
+      if (!StringUtils.isEmpty(p.getDuplicatePlayerName())) {
         validationError.setVisible(true);
         errorTextLabel.setText("Player '" + p.getName() + "' has the same initials like user '" + p.getDuplicatePlayerName() + "'. Change the initials from one of them.");
       }
@@ -121,7 +120,7 @@ public class PlayersController implements Initializable, StudioFXController {
   private void updateForTabSelection(Optional<PlayerRepresentation> player) {
     int index = tabPane.getSelectionModel().selectedIndexProperty().get();
     if (index == 0) {
-      if(player.isPresent()) {
+      if (player.isPresent()) {
         NavigationController.setBreadCrumb(Arrays.asList("Players", "Build-In Players", player.get().getName()));
       }
       else {
@@ -131,7 +130,7 @@ public class PlayersController implements Initializable, StudioFXController {
       playerCountLabel.setText(builtInPlayersController.getCount() + " players");
     }
     else {
-      if(player.isPresent()) {
+      if (player.isPresent()) {
         NavigationController.setBreadCrumb(Arrays.asList("Players", "Discord Players", player.get().getName()));
       }
       else {
@@ -185,5 +184,10 @@ public class PlayersController implements Initializable, StudioFXController {
     });
 
     updateForTabSelection(Optional.empty());
+  }
+
+  @Override
+  public void onViewActivated() {
+
   }
 }

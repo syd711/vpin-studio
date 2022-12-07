@@ -409,4 +409,9 @@ public class HighscoreCardsController implements Initializable, ObservedProperty
       onGenerateClick();
     }
   }
+
+  @Override
+  public void onViewActivated() {
+
+  }
 }

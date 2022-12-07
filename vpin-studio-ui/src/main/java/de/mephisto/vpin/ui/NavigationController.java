@@ -42,7 +42,6 @@ public class NavigationController implements Initializable {
   private BorderPane avatarPane;
 
   public static StudioFXController activeController;
-  public static StudioFXController navigationController;
 
   private static BorderPane staticAvatarPane;
   private static String activeScreenId = "scene-dashboard.fxml";
@@ -112,6 +111,7 @@ public class NavigationController implements Initializable {
     if (viewCache.containsKey(name)) {
       root = viewCache.get(name);
       activeController = controllerCache.get(name);
+      activeController.onViewActivated();
     }
     else {
       FXMLLoader loader = new FXMLLoader(controller.getResource(name));

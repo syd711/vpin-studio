@@ -33,7 +33,7 @@ import java.util.*;
 
 import static de.mephisto.vpin.ui.Studio.client;
 
-public class BuiltInPlayersController implements Initializable, StudioFXController {
+public class BuiltInPlayersController implements Initializable {
   private final static Logger LOG = LoggerFactory.getLogger(BuiltInPlayersController.class);
 
   @FXML

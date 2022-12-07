@@ -1,11 +1,7 @@
 package de.mephisto.vpin.server.games;
 
-import de.mephisto.vpin.restclient.PopperScreen;
 import de.mephisto.vpin.server.competitions.ScoreSummary;
-import de.mephisto.vpin.server.highscores.Highscore;
 import de.mephisto.vpin.server.highscores.HighscoreService;
-import de.mephisto.vpin.server.highscores.Score;
-import de.mephisto.vpin.server.popper.GameMediaItem;
 import de.mephisto.vpin.server.popper.PinUPConnector;
 import de.mephisto.vpin.server.roms.RomService;
 import de.mephisto.vpin.server.roms.ScanResult;
@@ -18,7 +14,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -77,27 +72,8 @@ public class GameService {
     return highscoreService.getHighscores(game);
   }
 
-  public List<Game> getRecentHighscoreGames(int count) {
-    List<Highscore> recentHighscores = highscoreService.getRecentHighscores();
-    List<Game> result = new ArrayList<>();
-    for (Highscore recentHighscore : recentHighscores) {
-      List<Score> scores = highscoreService.parseScores(recentHighscore.getCreatedAt(), recentHighscore.getRaw(), recentHighscore.getGameId());
-      if (scores.isEmpty()) {
-        continue;
-      }
-
-      Game game = getGame(recentHighscore.getGameId());
-      GameMediaItem gameMediaItem = game.getEmulator().getGameMedia().get(PopperScreen.Wheel);
-      if (gameMediaItem == null) {
-        continue;
-      }
-      result.add(game);
-
-      if (result.size() == count) {
-        break;
-      }
-    }
-    return result;
+  public ScoreSummary getRecentHighscores(int count) {
+    return highscoreService.getRecentHighscores();
   }
 
   public boolean scanGame(int gameId) {

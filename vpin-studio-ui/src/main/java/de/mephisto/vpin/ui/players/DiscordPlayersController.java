@@ -24,7 +24,7 @@ import java.util.*;
 
 import static de.mephisto.vpin.ui.Studio.client;
 
-public class DiscordPlayersController implements Initializable, StudioFXController {
+public class DiscordPlayersController implements Initializable {
   @FXML
   private TextField searchTextField;
 

@@ -31,7 +31,12 @@ public class WidgetFinishedCompetitionsController extends WidgetController imple
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
-    List<CompetitionRepresentation> competitions = OverlayWindowFX.client.getFinishedCompetitions(10);
+  }
+
+  public void setCompetitions(List<CompetitionRepresentation> competitions) {
+    root.setVisible(!competitions.isEmpty());
+    competitionsVBox.getChildren().removeAll(competitionsVBox.getChildren());
+
     try {
       for (CompetitionRepresentation c : competitions) {
         FXMLLoader loader = new FXMLLoader(WidgetCompetitionSummaryController.class.getResource("widget-competition-summary.fxml"));

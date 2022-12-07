@@ -313,4 +313,9 @@ public class CompetitionsController implements Initializable, StudioFXController
       competitionWidgetController.setCompetition(null);
     }
   }
+
+  @Override
+  public void onViewActivated() {
+
+  }
 }

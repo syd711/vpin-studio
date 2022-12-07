@@ -7,7 +7,7 @@ import javafx.scene.layout.StackPane;
 import java.net.URL;
 import java.util.ResourceBundle;
 
-public class RootController implements Initializable, StudioFXController {
+public class RootController implements Initializable {
 
   @FXML
   private StackPane rootStack;

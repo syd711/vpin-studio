@@ -22,7 +22,7 @@ public interface OverlayClient {
 
   ByteArrayInputStream getAsset(String uuid);
 
-  List<GameRepresentation> getRecentlyPlayedGames(int count);
+  ScoreSummaryRepresentation getRecentlyPlayedGames(int count);
 
   ByteArrayInputStream getGameMediaItem(int id, PopperScreen screen);
 }

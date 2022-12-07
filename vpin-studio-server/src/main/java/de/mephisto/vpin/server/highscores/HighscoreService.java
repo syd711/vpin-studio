@@ -12,11 +12,7 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
+import java.util.*;
 
 @Service
 public class HighscoreService implements InitializingBean {
@@ -132,9 +128,28 @@ public class HighscoreService implements InitializingBean {
     return summary;
   }
 
-  public List<Highscore> getRecentHighscores() {
-    List<Highscore> highscores = highscoreRepository.findAllByOrderByCreatedAtAsc();
-    return highscores.stream().filter(h -> !StringUtils.isEmpty(h.getRaw())).collect(Collectors.toList());
+  /**
+   * Used for the dashboard widget to show the list of newly created highscores
+   */
+  public ScoreSummary getRecentHighscores() {
+    int TARGET_COUNT = 10;
+    List<Score> scores = new ArrayList<>();
+    ScoreSummary summary = new ScoreSummary(scores, null);
+
+    List<HighscoreVersion> all = highscoreVersionRepository.findAllByOrderByCreatedAtDesc();
+    for (HighscoreVersion version : all) {
+      List<Score> versionScores = highscoreParser.parseScores(version.getCreatedAt(), version.getRaw(), version.getGameId());
+      scores.add(versionScores.get(version.getChangedPosition()-1));
+    }
+
+    List<Highscore> highscores = highscoreRepository.findRecent(TARGET_COUNT - scores.size());
+    for (Highscore highscore : highscores) {
+      List<Score> versionScores = highscoreParser.parseScores(highscore.getCreatedAt(), highscore.getRaw(), highscore.getGameId());
+      scores.add(versionScores.get(0));
+    }
+    scores.sort(Comparator.comparing(Score::getCreatedAt));
+    Collections.reverse(scores);
+    return summary;
   }
 
   public void addHighscoreChangeListener(@NonNull HighscoreChangeListener listener) {

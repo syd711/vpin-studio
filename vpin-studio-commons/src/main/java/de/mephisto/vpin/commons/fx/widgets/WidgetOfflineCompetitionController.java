@@ -13,6 +13,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.chart.XYChart;
 import javafx.scene.image.Image;
+import javafx.scene.layout.Border;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
@@ -44,6 +45,9 @@ public class WidgetOfflineCompetitionController extends WidgetController impleme
 
   @FXML
   private VBox remainingTimeWidget;
+
+  @FXML
+  private BorderPane root;
 
   @FXML
   private BorderPane summaryBorderPane;
@@ -143,6 +147,7 @@ public class WidgetOfflineCompetitionController extends WidgetController impleme
 
   public void setCompetition(CompetitionRepresentation competition) {
     summaryWidgetController.setCompetition(competition);
+    root.setVisible(competition != null);
 
     if (competition != null) {
       LocalDate end = competition.getEndDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();

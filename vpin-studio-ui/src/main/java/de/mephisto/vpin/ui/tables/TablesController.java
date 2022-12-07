@@ -454,4 +454,9 @@ public class TablesController implements Initializable, StudioFXController {
       NavigationController.setBreadCrumb(Arrays.asList("Tables"));
     }
   }
+
+  @Override
+  public void onViewActivated() {
+
+  }
 }

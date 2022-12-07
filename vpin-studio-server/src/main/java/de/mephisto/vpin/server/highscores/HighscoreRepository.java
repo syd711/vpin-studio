@@ -1,6 +1,7 @@
 package de.mephisto.vpin.server.highscores;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.Date;
@@ -14,5 +15,6 @@ public interface HighscoreRepository extends JpaRepository<Highscore, Long> {
 
   Optional<Highscore> findByGameIdAndCreatedAtBetween(int gameId, Date start, Date end);
 
-  List<Highscore> findAllByOrderByCreatedAtAsc();
+  @Query(value = "SELECT * FROM Highscores h WHERE h.raw NOT NULL ORDER BY createdAt DESC LIMIT ?1", nativeQuery = true)
+  List<Highscore> findRecent(int limit);
 }

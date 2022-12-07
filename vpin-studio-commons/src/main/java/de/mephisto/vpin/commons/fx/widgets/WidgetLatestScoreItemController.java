@@ -51,15 +51,13 @@ public class WidgetLatestScoreItemController extends WidgetController implements
   public void initialize(URL url, ResourceBundle resourceBundle) {
   }
 
-  public void setData(GameRepresentation game, ScoreSummaryRepresentation scoreSummary, GameMediaItemRepresentation wheel) {
+  public void setData(GameRepresentation game, ScoreRepresentation score, GameMediaItemRepresentation wheel) {
     ByteArrayInputStream gameMediaItem = OverlayWindowFX.client.getGameMediaItem(game.getId(), PopperScreen.Wheel);
     Image image = new Image(gameMediaItem);
 
     wheelImageView.setImage(image);
 
     tableLabel.setText(game.getGameDisplayName());
-    ScoreRepresentation score = scoreSummary.getScores().get(0);
-
     positionLabel.setText("#" + score.getPosition());
 
     if (score.getPlayer() != null) {
@@ -72,7 +70,7 @@ public class WidgetLatestScoreItemController extends WidgetController implements
     scoreLabel.setFont(getScoreFont());
     scoreLabel.setText(score.getScore());
 
-    String date = simpleDateFormat.format(scoreSummary.getCreatedAt());
+    String date = simpleDateFormat.format(score.getCreatedAt());
     changeDateLabel.setText("Updated: " + date);
   }
 }
