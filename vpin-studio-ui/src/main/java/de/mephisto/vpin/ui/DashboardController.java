@@ -5,6 +5,7 @@ import de.mephisto.vpin.commons.fx.widgets.WidgetFinishedCompetitionsController;
 import de.mephisto.vpin.commons.fx.widgets.WidgetLatestScoresController;
 import de.mephisto.vpin.commons.fx.widgets.WidgetOfflineCompetitionController;
 import de.mephisto.vpin.restclient.representations.CompetitionRepresentation;
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -62,8 +63,11 @@ public class DashboardController implements Initializable, StudioFXController {
 
       List<CompetitionRepresentation> activeOfflineCompetitions = client.getActiveOfflineCompetitions();
       if(!activeOfflineCompetitions.isEmpty()) {
-        controller.setCompetition(activeOfflineCompetitions.get(0));
         widgetTop.setTop(root);
+
+        Platform.runLater(() -> {
+          controller.setCompetition(activeOfflineCompetitions.get(0));
+        });
       }
 
     } catch (IOException e) {

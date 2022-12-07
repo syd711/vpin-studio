@@ -1,6 +1,7 @@
 package de.mephisto.vpin.server.system;
 
 import de.mephisto.vpin.server.VPinStudioException;
+import de.mephisto.vpin.server.VPinStudioServer;
 import de.mephisto.vpin.server.util.PropertiesStore;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -111,6 +112,7 @@ public class SystemService implements InitializingBean {
     LOG.info(formatPathLog("Extracted VPReg Folder", this.getExtractedVPRegFolder()));
     LOG.info(formatPathLog("B2S Extraction Folder", this.getB2SImageExtractionFolder()));
     LOG.info(formatPathLog("VPX Files", String.valueOf(this.getVPXTables().length)));
+    LOG.info(formatPathLog("Service Version", VPinStudioServer.class.getPackage().getImplementationVersion()));
     LOG.info("*******************************************************************************************************");
   }
 

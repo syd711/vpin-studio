@@ -37,6 +37,19 @@ public class VPinStudioClient implements ObservedPropertyChangeListener, Overlay
   }
 
   /*********************************************************************************************************************
+   * System
+   ********************************************************************************************************************/
+
+  public Date getStartupTime() {
+    return RestClient.getInstance().get(API + "system/startupTime", Date.class);
+  }
+
+  public String logs() {
+    final RestTemplate restTemplate = new RestTemplate();
+    return restTemplate.getForObject(RestClient.getInstance().getBaseUrl() + API + "system/logs", String.class);
+  }
+
+  /*********************************************************************************************************************
    * Assets / Popper
    ********************************************************************************************************************/
 

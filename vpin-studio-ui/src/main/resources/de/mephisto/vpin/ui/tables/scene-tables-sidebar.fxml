@@ -233,7 +233,7 @@
                         <Label text="Media" BorderPane.alignment="CENTER" />
                      </left>
                      <right>
-                        <CheckBox fx:id="mediaPreviewCheckbox" mnemonicParsing="false" selected="true" text="Media Preview" textFill="WHITE" BorderPane.alignment="CENTER">
+                        <CheckBox fx:id="mediaPreviewCheckbox" mnemonicParsing="false" selected="true" text="Preview" textFill="WHITE" BorderPane.alignment="CENTER">
                            <font>
                               <Font size="10.0" />
                            </font>

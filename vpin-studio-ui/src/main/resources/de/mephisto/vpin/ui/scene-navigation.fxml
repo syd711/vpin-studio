@@ -67,23 +67,6 @@
                         <FontIcon iconColor="WHITE" iconLiteral="bi-card-list" />
                      </graphic>
                   </Button>
-                  <Button alignment="BASELINE_LEFT" graphicTextGap="12.0" layoutX="10.0" layoutY="210.0" mnemonicParsing="false" onAction="#onHighscoreCardsClick" prefHeight="60.0" prefWidth="250.0" styleClass="navigation-button" stylesheets="@stylesheet.css" text="Highscore Cards" textFill="WHITE">
-                      <font>
-                          <Font size="18.0" />
-                      </font>
-                      <opaqueInsets>
-                          <Insets />
-                      </opaqueInsets>
-                      <padding>
-                          <Insets left="47.0" />
-                      </padding>
-                      <cursor>
-                          <Cursor fx:constant="HAND" />
-                      </cursor>
-                     <graphic>
-                        <FontIcon iconColor="WHITE" iconLiteral="bi-list-ol" />
-                     </graphic>
-                  </Button>
                   <Button alignment="BASELINE_LEFT" graphicTextGap="12.0" layoutX="10.0" layoutY="210.0" mnemonicParsing="false" onAction="#onCompetitionsClick" prefHeight="60.0" prefWidth="250.0" styleClass="navigation-button" stylesheets="@stylesheet.css" text="Competitions" textFill="WHITE">
                       <font>
                           <Font size="18.0" />
@@ -116,6 +99,23 @@
                       </cursor>
                      <graphic>
                         <FontIcon iconColor="WHITE" iconLiteral="bi-person" />
+                     </graphic>
+                  </Button>
+                  <Button alignment="BASELINE_LEFT" graphicTextGap="12.0" layoutX="10.0" layoutY="210.0" mnemonicParsing="false" onAction="#onHighscoreCardsClick" prefHeight="60.0" prefWidth="250.0" styleClass="navigation-button" stylesheets="@stylesheet.css" text="Highscore Cards" textFill="WHITE">
+                      <font>
+                          <Font size="18.0" />
+                      </font>
+                      <opaqueInsets>
+                          <Insets />
+                      </opaqueInsets>
+                      <padding>
+                          <Insets left="47.0" />
+                      </padding>
+                      <cursor>
+                          <Cursor fx:constant="HAND" />
+                      </cursor>
+                     <graphic>
+                        <FontIcon iconColor="WHITE" iconLiteral="bi-list-ol" />
                      </graphic>
                   </Button>
               </children>
