@@ -9,10 +9,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -41,7 +38,7 @@ public class HighscoreParser {
   private PlayerService playerService;
 
   @NonNull
-  public List<Score> parseScores(@NonNull String raw, int gameId) {
+  public List<Score> parseScores(@NonNull Date createdAt, @NonNull String raw, int gameId) {
     List<Score> scores = new ArrayList<>();
     try {
       LOG.debug("Parsing Highscore text: " + raw);
@@ -53,7 +50,7 @@ public class HighscoreParser {
       int index = 1;
       for (String line : lines) {
         if (line.startsWith(index + ")") || line.startsWith("#" + index) || line.startsWith(index + "#")) {
-          Score score = createScore(line, gameId);
+          Score score = createScore(createdAt, line, gameId);
           if (score != null) {
             scores.add(score);
           }
@@ -72,7 +69,7 @@ public class HighscoreParser {
   }
 
   @Nullable
-  private Score createScore(@NonNull String line, int gameId) {
+  private Score createScore(@NonNull Date createdAt, @NonNull String line, int gameId) {
     List<String> collect = Arrays.stream(line.trim().split(" ")).filter(s -> s.trim().length() > 0).collect(Collectors.toList());
     String indexString = collect.get(0).replaceAll("[^0-9]", "");
 
@@ -89,7 +86,7 @@ public class HighscoreParser {
       if (player.isPresent()) {
         p = player.get();
       }
-      return new Score(gameId, initials, p, score, toNumericScore(score), index);
+      return new Score(createdAt, gameId, initials, p, score, toNumericScore(score), index);
     }
     else if (collect.size() > 3) {
       StringBuilder initials = new StringBuilder();
@@ -103,7 +100,7 @@ public class HighscoreParser {
       if (player.isPresent()) {
         p = player.get();
       }
-      return new Score(gameId, playerInitials, p, score, toNumericScore(score), index);
+      return new Score(createdAt, gameId, playerInitials, p, score, toNumericScore(score), index);
     }
     else {
       throw new UnsupportedOperationException("Could parse score line for game " + gameId + " '" + line + "'");

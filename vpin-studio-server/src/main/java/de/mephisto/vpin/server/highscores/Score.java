@@ -3,6 +3,8 @@ package de.mephisto.vpin.server.highscores;
 import de.mephisto.vpin.server.players.Player;
 import org.apache.commons.lang3.StringUtils;
 
+import java.util.Date;
+
 public class Score {
   private String playerInitials = "???";
   private int gameId;
@@ -10,8 +12,10 @@ public class Score {
   private String score;
   private double numericScore;
   private int position;
+  private Date createdAt;
 
-  public Score(int gameId, String playerInitials, Player player, String score, double numericScore, int position) {
+  public Score(Date createdAt, int gameId, String playerInitials, Player player, String score, double numericScore, int position) {
+    this.createdAt = createdAt;
     this.gameId = gameId;
     this.player = player;
     this.score = score;
@@ -20,6 +24,14 @@ public class Score {
     if (playerInitials != null) {
       this.playerInitials = playerInitials;
     }
+  }
+
+  public Date getCreatedAt() {
+    return createdAt;
+  }
+
+  public void setCreatedAt(Date createdAt) {
+    this.createdAt = createdAt;
   }
 
   public int getGameId() {

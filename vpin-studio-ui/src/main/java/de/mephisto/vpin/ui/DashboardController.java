@@ -86,6 +86,8 @@ public class DashboardController implements Initializable, StudioFXController {
     } catch (IOException e) {
       LOG.error("Failed to load finished competitions widget: " + e.getMessage(), e);
     }
+
+    NavigationController.setInitialController("scene-dashboard.fxml", this);
   }
 
 }

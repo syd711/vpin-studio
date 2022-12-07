@@ -36,6 +36,11 @@ public class VPinStudioClient implements ObservedPropertyChangeListener, Overlay
     return new VPinStudioClient();
   }
 
+  public void clearCache() {
+    this.assetCache.clear();
+    this.imageCache.clear();
+  }
+
   /*********************************************************************************************************************
    * System
    ********************************************************************************************************************/

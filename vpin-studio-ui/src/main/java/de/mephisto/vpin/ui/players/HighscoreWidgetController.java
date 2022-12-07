@@ -5,6 +5,7 @@ import de.mephisto.vpin.restclient.PopperScreen;
 import de.mephisto.vpin.restclient.RestClient;
 import de.mephisto.vpin.restclient.representations.*;
 import de.mephisto.vpin.commons.fx.widgets.WidgetController;
+import de.mephisto.vpin.ui.Studio;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
@@ -14,13 +15,13 @@ import javafx.scene.layout.BorderPane;
 
 import java.io.ByteArrayInputStream;
 import java.net.URL;
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ResourceBundle;
 
 import static de.mephisto.vpin.ui.Studio.client;
 
 public class HighscoreWidgetController extends WidgetController implements Initializable  {
-  private final static SimpleDateFormat simpleDateFormat = new SimpleDateFormat("MM-dd-yyyy / hh:mm");
 
   @FXML
   private BorderPane root;
@@ -61,10 +62,10 @@ public class HighscoreWidgetController extends WidgetController implements Initi
       Image image = new Image(gameMediaItem);
       wheelImageView.setImage(image);
     }
-//    else {
-//      Image wheel = new Image(Studio.class.getResourceAsStream("avatar-blank.png"));
-//      wheelImageView.setImage(wheel);
-//    }
+    else {
+      Image wheel = new Image(Studio.class.getResourceAsStream("avatar-blank.png"));
+      wheelImageView.setImage(wheel);
+    }
 
     tableLabel.setText(game.getGameDisplayName());
 
@@ -74,7 +75,7 @@ public class HighscoreWidgetController extends WidgetController implements Initi
     scoreLabel.setFont(getScoreFont());
     scoreLabel.setText(score.getScore());
 
-//    String date = simpleDateFormat.format(score.getUpdatedAt());
-//    changeDateLabel.setText("Updated: " + date);
+    String date = DateFormat.getDateTimeInstance().format(score.getCreatedAt());
+    changeDateLabel.setText("Updated: " + date);
   }
 }

@@ -20,6 +20,16 @@ public class HighscoreVersion {
 
   private int gameId;
 
+  private int changedPosition;
+
+  public int getChangedPosition() {
+    return changedPosition;
+  }
+
+  public void setChangedPosition(int changedPosition) {
+    this.changedPosition = changedPosition;
+  }
+
   public int getGameId() {
     return gameId;
   }

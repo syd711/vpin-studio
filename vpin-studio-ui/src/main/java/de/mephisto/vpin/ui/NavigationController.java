@@ -99,6 +99,10 @@ public class NavigationController implements Initializable {
     stack.getChildren().add(preferencesRoot);
   }
 
+  public static void setInitialController(String key, StudioFXController controller) {
+    controllerCache.put(key, controller);
+  }
+
   public static void loadScreen(ActionEvent event, Class<?> controller, String name) throws IOException {
     activeScreenId = name;
     Node lookup = Studio.stage.getScene().lookup("#main");
@@ -124,6 +128,7 @@ public class NavigationController implements Initializable {
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
     staticAvatarPane = this.avatarPane;
+
     if (preferencesRoot == null) {
       try {
         FXMLLoader loader = new FXMLLoader(NavigationController.class.getResource("scene-preferences.fxml"));

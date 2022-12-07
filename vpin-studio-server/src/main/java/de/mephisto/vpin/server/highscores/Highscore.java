@@ -76,8 +76,9 @@ public class Highscore {
     return highscore;
   }
 
-  public HighscoreVersion toVersion() {
+  public HighscoreVersion toVersion(int changedPosition) {
     HighscoreVersion version = new HighscoreVersion();
+    version.setChangedPosition(changedPosition);
     version.setCreatedAt(this.getCreatedAt());
     version.setRaw(this.getRaw());
     version.setDisplayName(this.getDisplayName());

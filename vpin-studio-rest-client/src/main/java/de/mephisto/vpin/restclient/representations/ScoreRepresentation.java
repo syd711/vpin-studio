@@ -1,5 +1,7 @@
 package de.mephisto.vpin.restclient.representations;
 
+import java.util.Date;
+
 public class ScoreRepresentation {
   private String playerInitials;
   private PlayerRepresentation player;
@@ -7,6 +9,15 @@ public class ScoreRepresentation {
   private int position;
   private double numericScore;
   private int gameId;
+  private Date createdAt;
+
+  public Date getCreatedAt() {
+    return createdAt;
+  }
+
+  public void setCreatedAt(Date createdAt) {
+    this.createdAt = createdAt;
+  }
 
   public int getGameId() {
     return gameId;

@@ -81,7 +81,7 @@ public class GameService {
     List<Highscore> recentHighscores = highscoreService.getRecentHighscores();
     List<Game> result = new ArrayList<>();
     for (Highscore recentHighscore : recentHighscores) {
-      List<Score> scores = highscoreService.parseScores(recentHighscore.getRaw(), recentHighscore.getGameId());
+      List<Score> scores = highscoreService.parseScores(recentHighscore.getCreatedAt(), recentHighscore.getRaw(), recentHighscore.getGameId());
       if (scores.isEmpty()) {
         continue;
       }

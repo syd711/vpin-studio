@@ -57,8 +57,8 @@ public class HighscoreService implements InitializingBean {
     return highscore.get();
   }
 
-  public List<Score> parseScores(String raw, int gameId) {
-    return highscoreParser.parseScores(raw, gameId);
+  public List<Score> parseScores(Date createdAt, String raw, int gameId) {
+    return highscoreParser.parseScores(createdAt, raw, gameId);
   }
 
   /**
@@ -74,14 +74,14 @@ public class HighscoreService implements InitializingBean {
     Optional<Highscore> highscore = highscoreRepository.findByGameIdAndCreatedAtBetween(gameId, start, end);
     if (highscore.isPresent()) {
       Highscore h = highscore.get();
-      ScoreSummary scoreSummary = getScoreSummary(h.getRaw(), h.getCreatedAt(), gameId);
+      ScoreSummary scoreSummary = getScoreSummary(h.getCreatedAt(), h.getRaw(), gameId);
       scoreList.setLatestScore(scoreSummary);
       scoreList.getScores().add(scoreSummary);
     }
 
     List<HighscoreVersion> byGameIdAndCreatedAtBetween = highscoreVersionRepository.findByGameIdAndCreatedAtBetween(gameId, start, end);
     for (HighscoreVersion version : byGameIdAndCreatedAtBetween) {
-      ScoreSummary scoreSummary = getScoreSummary(version.getRaw(), version.getCreatedAt(), gameId);
+      ScoreSummary scoreSummary = getScoreSummary(version.getCreatedAt(), version.getRaw(), gameId);
       scoreList.getScores().add(scoreSummary);
     }
     return scoreList;
@@ -102,7 +102,7 @@ public class HighscoreService implements InitializingBean {
         continue;
       }
 
-      List<Score> scores = parseScores(highscore.getRaw(), highscore.getGameId());
+      List<Score> scores = parseScores(highscore.getCreatedAt(), highscore.getRaw(), highscore.getGameId());
       for (Score score : scores) {
         if (score.getPlayerInitials().equalsIgnoreCase(initials)) {
           summary.getScores().add(score);
@@ -124,7 +124,7 @@ public class HighscoreService implements InitializingBean {
     if (highscore.isPresent()) {
       Highscore h = highscore.get();
       if (!StringUtils.isEmpty(h.getRaw())) {
-        List<Score> scores = parseScores(h.getRaw(), game.getId());
+        List<Score> scores = parseScores(h.getCreatedAt(), h.getRaw(), game.getId());
         summary.setRaw(h.getRaw());
         summary.getScores().addAll(scores);
       }
@@ -135,14 +135,6 @@ public class HighscoreService implements InitializingBean {
   public List<Highscore> getRecentHighscores() {
     List<Highscore> highscores = highscoreRepository.findAllByOrderByCreatedAtAsc();
     return highscores.stream().filter(h -> !StringUtils.isEmpty(h.getRaw())).collect(Collectors.toList());
-  }
-
-  private ScoreSummary getScoreSummary(String raw, Date createdAt, int gameId) {
-    List<Score> scores = parseScores(raw, gameId);
-    if (scores.size() > 0) {
-      return new ScoreSummary(scores, createdAt);
-    }
-    return null;
   }
 
   public void addHighscoreChangeListener(@NonNull HighscoreChangeListener listener) {
@@ -176,7 +168,8 @@ public class HighscoreService implements InitializingBean {
       else {
         //archive old highscore
         Highscore highscore = existingHighscore.get();
-        HighscoreVersion version = highscore.toVersion();
+        int changedPosition = calculateChangedPosition(highscore, newHighscore, game.getId());
+        HighscoreVersion version = highscore.toVersion(changedPosition);
         highscoreVersionRepository.saveAndFlush(version);
 
         //update existing one
@@ -209,6 +202,32 @@ public class HighscoreService implements InitializingBean {
     else {
       LOG.info("Skipped highscore change event for {} because the raw highscore data did not change.", game);
     }
+  }
+
+  /**
+   * Collects a list of highscores for serialization
+   *
+   * @param createdAt the date the highscores have been created
+   * @param raw       the raw data
+   * @param gameId    the gameId of the game
+   */
+  private ScoreSummary getScoreSummary(Date createdAt, String raw, int gameId) {
+    List<Score> scores = parseScores(createdAt, raw, gameId);
+    if (scores.size() > 0) {
+      return new ScoreSummary(scores, createdAt);
+    }
+    return null;
+  }
+
+  private int calculateChangedPosition(Highscore oldHighscore, Highscore newHighscore, int gameId) {
+    List<Score> oldScores = highscoreParser.parseScores(oldHighscore.getCreatedAt(), oldHighscore.getRaw(), gameId);
+    List<Score> newScores = highscoreParser.parseScores(newHighscore.getCreatedAt(), newHighscore.getRaw(), gameId);
+    for (int i = 0; i < oldScores.size(); i++) {
+      if (oldScores.get(i).getScore().equalsIgnoreCase(newScores.get(i).getScore())) {
+        return (i + 1);
+      }
+    }
+    return 0;
   }
 
   private void triggerHighscoreChange(@NonNull HighscoreChangeEvent event) {
