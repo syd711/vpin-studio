@@ -2,7 +2,7 @@ package de.mephisto.vpin.server.resources;
 
 import com.google.common.collect.Maps;
 import de.mephisto.vpin.server.util.Config;
-import de.mephisto.vpin.server.util.PropertiesStore;
+import de.mephisto.vpin.commons.utils.PropertiesStore;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.*;

@@ -2,6 +2,7 @@ package de.mephisto.vpin.ui;
 
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.stage.Stage;
 
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -16,6 +17,8 @@ public class ToolbarController implements Initializable {
 
   @FXML
   private void onDisconnect() {
+    Studio.stage.close();
+    Studio.loadLauncher(new Stage());
   }
 
   @FXML

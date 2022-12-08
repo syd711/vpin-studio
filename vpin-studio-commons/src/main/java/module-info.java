@@ -1,6 +1,7 @@
 open module de.mephisto.vpin.commons {
   requires org.slf4j;
   requires org.apache.commons.lang3;
+  requires com.github.spotbugs.annotations;
 
   requires javafx.controls;
   requires javafx.fxml;

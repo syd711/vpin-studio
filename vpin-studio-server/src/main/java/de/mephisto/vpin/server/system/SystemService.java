@@ -2,7 +2,7 @@ package de.mephisto.vpin.server.system;
 
 import de.mephisto.vpin.server.VPinStudioException;
 import de.mephisto.vpin.server.VPinStudioServer;
-import de.mephisto.vpin.server.util.PropertiesStore;
+import de.mephisto.vpin.commons.utils.PropertiesStore;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -19,6 +19,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Properties;
 
 @Service
 public class SystemService implements InitializingBean {
@@ -62,7 +63,7 @@ public class SystemService implements InitializingBean {
 
   private void initBaseFolders() throws VPinStudioException {
     try {
-      PropertiesStore store = PropertiesStore.create(SYSTEM_PROPERTIES);
+      PropertiesStore store = PropertiesStore.create(SystemService.RESOURCES, SYSTEM_PROPERTIES);
 
       //PinUP Popper Folder
       this.pinUPSystemInstallationFolder = this.resolvePinUPSystemInstallationFolder();
@@ -356,6 +357,19 @@ public class SystemService implements InitializingBean {
 
   public File getPinUPDatabaseFile() {
     return new File(getPinUPSystemFolder(), "PUPDatabase.db");
+  }
+
+  public String getVersion() {
+    try {
+      final Properties properties = new Properties();
+      InputStream resourceAsStream = VPinStudioServer.class.getResourceAsStream("version.properties");
+      properties.load(resourceAsStream);
+      resourceAsStream.close();
+      return properties.getProperty("vpin.studio.version");
+    } catch (IOException e) {
+      LOG.error("Failed to read version number: " + e.getMessage(), e);
+    }
+    return null;
   }
 
   static class StreamReader extends Thread {

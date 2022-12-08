@@ -1,6 +1,5 @@
-package de.mephisto.vpin.server.util;
+package de.mephisto.vpin.commons.utils;
 
-import de.mephisto.vpin.server.system.SystemService;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -44,11 +43,11 @@ public class PropertiesStore {
   }
 
   @NonNull
-  public static PropertiesStore create(String name) {
+  public static PropertiesStore create(String folder, String name) {
     if (!name.endsWith(".properties")) {
       name = name + ".properties";
     }
-    File file = new File(SystemService.RESOURCES, name);
+    File file = new File(folder, name);
     return create(file);
   }
 

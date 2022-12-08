@@ -3,13 +3,16 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
-<?import javafx.scene.control.ListView?>
 <?import javafx.scene.control.MenuButton?>
 <?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
 <?import javafx.scene.control.ToolBar?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 <?import org.kordamp.ikonli.javafx.FontIcon?>
@@ -17,7 +20,7 @@
 
 <BorderPane fx:id="mediaView" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="800.0" styleClass="base-component" stylesheets="@../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.launcher.LauncherController">
    <left>
-      <BorderPane prefHeight="350.0" prefWidth="300.0" styleClass="navigation-panel" BorderPane.alignment="CENTER">
+      <BorderPane prefHeight="350.0" prefWidth="260.0" styleClass="navigation-panel" BorderPane.alignment="CENTER">
          <bottom>
             <MenuButton mnemonicParsing="false" BorderPane.alignment="BOTTOM_LEFT">
               <items>
@@ -64,7 +67,7 @@
          <top>
             <ToolBar nodeOrientation="RIGHT_TO_LEFT" prefHeight="40.0" prefWidth="200.0" BorderPane.alignment="CENTER_RIGHT">
               <items>
-                  <BorderPane layoutX="10.0" layoutY="10.0" prefWidth="487.0">
+                  <BorderPane layoutX="10.0" layoutY="10.0" prefWidth="526.0">
                      <left>
                         <Button mnemonicParsing="false" onAction="#onNewConnection" text="New Connection" textFill="WHITE" BorderPane.alignment="CENTER">
                            <font>
@@ -73,21 +76,44 @@
                         </Button>
                      </left>
                      <right>
-                        <Button mnemonicParsing="false" onAction="#onUpdateCheck" textFill="WHITE" BorderPane.alignment="CENTER">
-                           <font>
-                              <Font size="14.0" />
-                           </font>
-                           <graphic>
-                              <FontIcon iconColor="WHITE" iconLiteral="sil-refresh" iconSize="16" />
-                           </graphic>
-                        </Button>
+                        <HBox alignment="CENTER_LEFT" nodeOrientation="LEFT_TO_RIGHT" BorderPane.alignment="CENTER">
+                           <children>
+                              <Button mnemonicParsing="false" onAction="#onUpdateCheck" textFill="WHITE">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                                 <graphic>
+                                    <FontIcon iconColor="WHITE" iconLiteral="sil-refresh" iconSize="16" />
+                                 </graphic>
+                              </Button>
+                              <Separator orientation="VERTICAL" prefHeight="0.0" prefWidth="0.0">
+                                 <HBox.margin>
+                                    <Insets left="3.0" right="3.0" />
+                                 </HBox.margin>
+                              </Separator>
+                              <Button fx:id="connectBtn" mnemonicParsing="false" onAction="#onConnect" text=" Connect" textFill="WHITE">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                                 <graphic>
+                                    <FontIcon iconColor="WHITE" iconLiteral="bi-box-arrow-up-right" iconSize="16" />
+                                 </graphic>
+                              </Button>
+                           </children>
+                        </HBox>
                      </right>
                   </BorderPane>
               </items>
             </ToolBar>
          </top>
          <center>
-            <ListView fx:id="listView" prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER" />
+            <TableView fx:id="tableView" prefHeight="200.0" prefWidth="200.0" styleClass="accordion-container" BorderPane.alignment="CENTER">
+              <columns>
+                <TableColumn fx:id="avatarColumn" prefWidth="88.0" style="-fx-alignment: BASELINE-CENTER;" />
+                <TableColumn fx:id="nameColumn" prefWidth="257.5999755859375" style="-fx-alignment: BASELINE_LEFT;" text="Name" />
+                  <TableColumn fx:id="hostColumn" prefWidth="241.5999755859375" style="-fx-alignment: BASELINE_LEFT;" text="Host" />
+              </columns>
+            </TableView>
          </center>
       </BorderPane>
    </center>

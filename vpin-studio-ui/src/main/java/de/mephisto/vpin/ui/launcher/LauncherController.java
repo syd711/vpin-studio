@@ -4,21 +4,22 @@ import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.VPinStudioClient;
 import de.mephisto.vpin.restclient.representations.PreferenceEntryRepresentation;
 import de.mephisto.vpin.ui.Studio;
+import de.mephisto.vpin.ui.util.ImageUtil;
 import eu.hansolo.tilesfx.Tile;
 import eu.hansolo.tilesfx.TileBuilder;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.Label;
-import javafx.scene.control.ListCell;
-import javafx.scene.control.ListView;
+import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontPosture;
 import javafx.scene.text.TextAlignment;
+import javafx.stage.Stage;
 import org.apache.commons.lang3.StringUtils;
 
 import java.net.URL;
@@ -35,13 +36,27 @@ public class LauncherController implements Initializable {
   private Label versionLabel;
 
   @FXML
-  private ListView<VPinConnection> listView;
-  private ObservableList<VPinConnection> data;
+  private Button connectBtn;
 
+  @FXML
+  private TableColumn<VPinConnection, String> avatarColumn;
+
+  @FXML
+  private TableColumn<VPinConnection, String> nameColumn;
+
+  @FXML
+  private TableColumn<VPinConnection, String> hostColumn;
+
+  @FXML
+  private TableView<VPinConnection> tableView;
+
+  private ObservableList<VPinConnection> data;
+  private Stage stage;
 
   @FXML
   private void onUpdateCheck() {
     VPinConnection connection = checkConnection("localhost");
+    data.clear();
     if (connection != null) {
       data.add(connection);
     }
@@ -53,18 +68,59 @@ public class LauncherController implements Initializable {
   }
 
 
+  @FXML
+  private void onConnect() {
+    VPinConnection selectedItem = tableView.getSelectionModel().getSelectedItem();
+    VPinStudioClient client = new VPinStudioClient(selectedItem.getHost());
+    if (client.ping()) {
+      stage.close();
+      Studio.loadStudio(new Stage(), client);
+    }
+  }
+
+  public void setStage(Stage stage) {
+    this.stage = stage;
+  }
+
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
+    tableView.setPlaceholder(new Label("                 No connections found.\n" +
+        "Install the service or connect to another system."));
+
+    connectBtn.setDisable(true);
+    tableView.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> connectBtn.setDisable(newValue == null));
+
     Font font = Font.font("Impact", FontPosture.findByName("regular"), 28);
     studioLabel.setFont(font);
+//    versionLabel.setText(Studio.getVersion());
 
-    versionLabel.setText("bubu");
-
-    listView.setCellFactory(list -> new ColorRectCell());
     List<VPinConnection> connections = new ArrayList<>();
     data = FXCollections.observableList(connections);
-    listView.setItems(data);
+    tableView.setItems(data);
+
+    nameColumn.setCellValueFactory(cellData -> {
+      VPinConnection value = cellData.getValue();
+      return new SimpleObjectProperty(value.getName());
+    });
+
+    hostColumn.setCellValueFactory(cellData -> {
+      VPinConnection value = cellData.getValue();
+      return new SimpleObjectProperty(value.getHost());
+    });
+
+    avatarColumn.setCellValueFactory(cellData -> {
+      VPinConnection value = cellData.getValue();
+      ImageView view = new ImageView(value.getAvatar());
+      view.setPreserveRatio(true);
+      view.setFitWidth(50);
+      view.setFitHeight(50);
+      ImageUtil.setClippedImage(view, (int) (value.getAvatar().getWidth() / 2));
+      return new SimpleObjectProperty(view);
+    });
+
+    onUpdateCheck();
   }
+
 
   static class ColorRectCell extends ListCell<VPinConnection> {
     @Override
@@ -74,7 +130,7 @@ public class LauncherController implements Initializable {
 
         Tile build = TileBuilder.create()
             .skinType(Tile.SkinType.IMAGE)
-            .prefSize(100, 100)
+            .prefSize(75, 75)
             .backgroundColor(Color.TRANSPARENT)
             .image(item.getAvatar())
             .imageMask(Tile.ImageMask.ROUND)
