@@ -17,4 +17,6 @@ public interface HighscoreRepository extends JpaRepository<Highscore, Long> {
 
   @Query(value = "SELECT * FROM Highscores h WHERE h.raw NOT NULL ORDER BY createdAt DESC LIMIT ?1", nativeQuery = true)
   List<Highscore> findRecent(int limit);
+
+  List<Highscore> findAllByOrderByCreatedAtDesc();
 }

@@ -10,6 +10,7 @@ import java.io.File;
 
 public class Emulator {
   public final static String VISUAL_PINBALL_X = "Visual Pinball X";
+  public final static String PINBALL_FX3 = "Pinball FX3";
   public final static String FUTURE_PINBALL = "Future Pinball";
 
   private final Game game;

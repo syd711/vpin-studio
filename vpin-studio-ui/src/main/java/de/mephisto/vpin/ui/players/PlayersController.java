@@ -167,19 +167,16 @@ public class PlayersController implements Initializable, StudioFXController {
       LOG.error("failed to load buildIn players: " + e.getMessage(), e);
     }
 
-    tabPane.getSelectionModel().selectedIndexProperty().addListener(new ChangeListener<Number>() {
-      @Override
-      public void changed(ObservableValue<? extends Number> observableValue, Number number, Number t1) {
-        if (t1.intValue() == 0) {
-          NavigationController.setBreadCrumb(Arrays.asList("Players", "Build-In Players"));
-          Optional<PlayerRepresentation> selection = builtInPlayersController.getSelection();
-          updateSelection(selection);
-        }
-        else {
-          NavigationController.setBreadCrumb(Arrays.asList("Players", "Discord Players"));
-          Optional<PlayerRepresentation> selection = discordPlayersController.getSelection();
-          updateSelection(selection);
-        }
+    tabPane.getSelectionModel().selectedIndexProperty().addListener((observableValue, number, t1) -> {
+      if (t1.intValue() == 0) {
+        NavigationController.setBreadCrumb(Arrays.asList("Players", "Build-In Players"));
+        Optional<PlayerRepresentation> selection = builtInPlayersController.getSelection();
+        updateSelection(selection);
+      }
+      else {
+        NavigationController.setBreadCrumb(Arrays.asList("Players", "Discord Players"));
+        Optional<PlayerRepresentation> selection = discordPlayersController.getSelection();
+        updateSelection(selection);
       }
     });
 

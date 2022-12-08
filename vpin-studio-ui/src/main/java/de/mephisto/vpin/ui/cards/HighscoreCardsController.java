@@ -16,7 +16,6 @@ import de.mephisto.vpin.ui.util.WidgetFactory;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -227,8 +226,14 @@ public class HighscoreCardsController implements Initializable, ObservedProperty
   private void onTableRefresh() {
     List<GameRepresentation> games = client.getGamesWithScores();
     ObservableList<GameRepresentation> gameRepresentations = FXCollections.observableArrayList(games);
+
+    GameRepresentation game = tableCombo.getSelectionModel().getSelectedItem();
     tableCombo.getItems().clear();
     tableCombo.getItems().addAll(gameRepresentations);
+
+    if(game != null) {
+      tableCombo.getSelectionModel().select(game);
+    }
     onGenerateClick();
   }
 
@@ -317,7 +322,14 @@ public class HighscoreCardsController implements Initializable, ObservedProperty
     wheelImageSpinner.setDisable(renderRawHighscore.isSelected());
     rowSeparatorSpinner.setDisable(renderRawHighscore.isSelected());
 
-    tableCombo.valueProperty().addListener((observableValue, gameRepresentation, t1) -> refreshRawPreview(Optional.of(t1)));
+    tableCombo.valueProperty().addListener((observableValue, gameRepresentation, t1) -> {
+      if (t1 == null) {
+        refreshRawPreview(Optional.empty());
+      }
+      else {
+        refreshRawPreview(Optional.of(t1));
+      }
+    });
 
     rawHighscoreHelp.setCursor(javafx.scene.Cursor.HAND);
     Tooltip tooltip = new Tooltip();

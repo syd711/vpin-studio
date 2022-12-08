@@ -35,6 +35,7 @@ public class WidgetLatestScoresController extends WidgetController implements In
   }
 
   public void setScoreSummary(ScoreSummaryRepresentation scoreSummary) {
+    highscoreVBox.getChildren().removeAll(highscoreVBox.getChildren());
     try {
       int count = 0;
       List<ScoreRepresentation> scores = scoreSummary.getScores();

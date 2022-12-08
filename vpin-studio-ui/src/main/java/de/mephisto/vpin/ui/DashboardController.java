@@ -37,6 +37,7 @@ public class DashboardController implements Initializable, StudioFXController {
 
   @FXML
   private StackPane dashboardStack;
+
   private WidgetOfflineCompetitionController offlineCompetitionController;
   private WidgetFinishedCompetitionsController finishedCompetitionsController;
   private WidgetLatestScoresController latestScoresController;
@@ -102,6 +103,5 @@ public class DashboardController implements Initializable, StudioFXController {
       List<CompetitionRepresentation> competitions = OverlayWindowFX.client.getFinishedCompetitions(10);
       finishedCompetitionsController.setCompetitions(competitions);
     });
-
   }
 }

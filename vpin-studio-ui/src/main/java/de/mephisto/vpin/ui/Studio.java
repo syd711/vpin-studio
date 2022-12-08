@@ -52,7 +52,7 @@ public class Studio extends Application {
     stage.setX((screenBounds.getWidth()/2) - (width/2));
     stage.setY((screenBounds.getHeight()/2) - (height/2));
 
-    ResizeHelper.addResizeListener(stage);
+    ResizeHelper.addResizeListener(stage, width, 1080, width*2, height*2);
     stage.show();
   }
 

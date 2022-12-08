@@ -15,6 +15,8 @@ import java.util.ResourceBundle;
 public class OverlayController implements Initializable {
   private final static Logger LOG = LoggerFactory.getLogger(OverlayController.class);
 
+  public static Debouncer debouncer = new Debouncer();
+
   @FXML
   private BorderPane rotatedRoot;
 

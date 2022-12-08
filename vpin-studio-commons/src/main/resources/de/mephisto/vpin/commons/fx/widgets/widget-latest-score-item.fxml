@@ -1,13 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.geometry.Insets?>
-<?import javafx.scene.control.*?>
+<?import javafx.scene.control.Label?>
 <?import javafx.scene.image.ImageView?>
-<?import javafx.scene.layout.*?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
-<BorderPane fx:id="root" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity"
-            stylesheets="@../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1"
-            fx:controller="de.mephisto.vpin.commons.fx.widgets.WidgetLatestScoreItemController">
+
+<BorderPane fx:id="root" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="110.0" stylesheets="@../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.commons.fx.widgets.WidgetLatestScoreItemController">
     <center>
         <VBox fx:id="highscoreVBox" BorderPane.alignment="TOP_LEFT">
             <children>
@@ -15,10 +16,10 @@
                     <bottom>
                         <VBox alignment="CENTER_RIGHT" BorderPane.alignment="BOTTOM_RIGHT">
                             <children>
-                                <Label fx:id="scoreLabel" text="score" textFill="WHITE"/>
+                                <Label fx:id="scoreLabel" text="score" textFill="WHITE" />
                                 <Label fx:id="changeDateLabel" text="Label" textFill="WHITE">
                                     <font>
-                                        <Font size="10.0"/>
+                                        <Font size="10.0" />
                                     </font>
                                 </Label>
                             </children>
@@ -27,7 +28,7 @@
                     <top>
                         <Label fx:id="tableLabel" text="table" textFill="WHITE" BorderPane.alignment="CENTER_LEFT">
                             <font>
-                                <Font name="System Bold" size="24.0"/>
+                                <Font name="System Bold" size="24.0" />
                             </font>
                         </Label>
                     </top>
@@ -36,15 +37,15 @@
                             <children>
                                 <Label fx:id="positionLabel" text="#" textFill="WHITE">
                                     <HBox.margin>
-                                        <Insets right="12.0"/>
+                                        <Insets right="12.0" />
                                     </HBox.margin>
                                     <font>
-                                        <Font size="18.0"/>
+                                        <Font size="18.0" />
                                     </font>
                                 </Label>
                                 <Label fx:id="nameLabel" text="name" textFill="WHITE">
                                     <font>
-                                        <Font size="18.0"/>
+                                        <Font size="18.0" />
                                     </font>
                                 </Label>
                             </children>
@@ -55,13 +56,12 @@
         </VBox>
     </center>
     <padding>
-        <Insets top="6.0"/>
+        <Insets top="6.0" />
     </padding>
     <left>
-        <ImageView fx:id="wheelImageView" fitHeight="100.0" fitWidth="100.0" pickOnBounds="true" preserveRatio="true"
-                   BorderPane.alignment="CENTER_LEFT">
+        <ImageView fx:id="wheelImageView" fitHeight="100.0" fitWidth="100.0" pickOnBounds="true" preserveRatio="true" BorderPane.alignment="CENTER_LEFT">
             <BorderPane.margin>
-                <Insets right="24.0"/>
+                <Insets right="24.0" />
             </BorderPane.margin>
         </ImageView>
     </left>

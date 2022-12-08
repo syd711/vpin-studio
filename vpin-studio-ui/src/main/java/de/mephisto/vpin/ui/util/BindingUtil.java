@@ -1,5 +1,6 @@
 package de.mephisto.vpin.ui.util;
 
+import de.mephisto.vpin.commons.fx.Debouncer;
 import de.mephisto.vpin.restclient.ObservedProperties;
 import de.mephisto.vpin.restclient.VPinStudioClient;
 import de.mephisto.vpin.restclient.representations.GameRepresentation;
@@ -33,7 +34,11 @@ public class BindingUtil {
     }
     ObjectProperty objectProperty = new SimpleObjectProperty<GameRepresentation>();
     Bindings.bindBidirectional(objectProperty, comboBox.valueProperty());
-    comboBox.valueProperty().addListener((observableValue, gameRepresentation, t1) -> properties.set(property, String.valueOf(t1.getId())));
+    comboBox.valueProperty().addListener((observableValue, gameRepresentation, t1) -> {
+      if (t1 != null) {
+        properties.set(property, String.valueOf(t1.getId()));
+      }
+    });
   }
 
   public static void bindTextField(TextField textField, ObservedProperties properties, String property) {
@@ -91,7 +96,7 @@ public class BindingUtil {
 
   public static void bindCheckbox(CheckBox checkbox, String preference, boolean defaultValue) {
     PreferenceEntryRepresentation entry = client.getPreference(preference);
-    boolean checked= entry.getBooleanValue(defaultValue);
+    boolean checked = entry.getBooleanValue(defaultValue);
     BooleanProperty booleanProperty = new SimpleBooleanProperty();
     Bindings.bindBidirectional(booleanProperty, checkbox.selectedProperty());
     booleanProperty.set(checked);

@@ -92,7 +92,7 @@ public class HighscoreService implements InitializingBean {
    */
   public ScoreSummary getHighscores(String initials) {
     ScoreSummary summary = new ScoreSummary(new ArrayList<>(), new Date());
-    List<Highscore> all = highscoreRepository.findAll();
+    List<Highscore> all = highscoreRepository.findAllByOrderByCreatedAtDesc();
     for (Highscore highscore : all) {
       if (StringUtils.isEmpty(highscore.getRaw())) {
         continue;

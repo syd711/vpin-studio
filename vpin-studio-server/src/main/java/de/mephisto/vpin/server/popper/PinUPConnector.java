@@ -41,7 +41,8 @@ public class PinUPConnector implements InitializingBean {
   private void runConfigCheck() {
     List<Emulator> ems = this.getEmulators();
     for (Emulator emulator : ems) {
-      if (emulator.getName().equals(Emulator.VISUAL_PINBALL_X)) {
+      String name = emulator.getName();
+      if (name.equals(Emulator.VISUAL_PINBALL_X) || name.equals(Emulator.FUTURE_PINBALL) || name.equals(Emulator.PINBALL_FX3)) {
         initVisualPinballXScripts(emulator);
       }
     }
@@ -400,7 +401,7 @@ public class PinUPConnector implements InitializingBean {
       Statement stmt = connect.createStatement();
       stmt.executeUpdate(sql);
       stmt.close();
-      LOG.info("Update of " + scriptName + " successful.");
+      LOG.info("Update of " + scriptName + " for '" + emuName + "' successful.");
     } catch (Exception e) {
       LOG.error("Failed to update script script " + scriptName + " [" + sql + "]: " + e.getMessage(), e);
     } finally {
