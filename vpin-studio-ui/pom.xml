@@ -19,6 +19,28 @@
 
     <dependencies>
         <dependency>
+            <groupId>org.kordamp.ikonli</groupId>
+            <artifactId>ikonli-javafx</artifactId>
+            <version>12.3.1</version>
+        </dependency>
+        <dependency>
+            <groupId>org.kordamp.ikonli</groupId>
+            <artifactId>ikonli-simplelineicons-pack</artifactId>
+            <version>12.3.1</version>
+        </dependency>
+        <dependency>
+            <groupId>org.kordamp.ikonli</groupId>
+            <artifactId>ikonli-bootstrapicons-pack</artifactId>
+            <version>12.3.1</version>
+        </dependency>
+        <dependency>
+            <groupId>org.kordamp.ikonli</groupId>
+            <artifactId>ikonli-materialdesign2-pack</artifactId>
+            <version>12.3.1</version>
+        </dependency>
+
+
+        <dependency>
             <groupId>de.mephisto.vpin</groupId>
             <artifactId>vpin-studio-rest-client</artifactId>
             <version>1.0-SNAPSHOT</version>
@@ -33,6 +55,10 @@
             <artifactId>vpin-connector-discord</artifactId>
             <version>1.0-SNAPSHOT</version>
         </dependency>
+
+
+
+
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
@@ -94,11 +120,7 @@
             <version>11-ea+24</version>
         </dependency>
 
-        <dependency>
-            <groupId>org.kordamp.ikonli</groupId>
-            <artifactId>ikonli-javafx</artifactId>
-            <version>12.3.1</version>
-        </dependency>
+
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
@@ -109,21 +131,7 @@
             <artifactId>jackson-core</artifactId>
             <version>2.11.4</version>
         </dependency>
-        <dependency>
-            <groupId>org.kordamp.ikonli</groupId>
-            <artifactId>ikonli-simplelineicons-pack</artifactId>
-            <version>12.3.1</version>
-        </dependency>
-        <dependency>
-            <groupId>org.kordamp.ikonli</groupId>
-            <artifactId>ikonli-bootstrapicons-pack</artifactId>
-            <version>12.3.1</version>
-        </dependency>
-        <dependency>
-            <groupId>org.kordamp.ikonli</groupId>
-            <artifactId>ikonli-materialdesign2-pack</artifactId>
-            <version>12.3.1</version>
-        </dependency>
+
         <dependency>
             <groupId>eu.hansolo</groupId>
             <artifactId>tilesfx</artifactId>
@@ -147,6 +155,13 @@
             <version>${junit.version}</version>
             <scope>test</scope>
         </dependency>
+
+        <dependency>
+            <groupId>com.akathist.maven.plugins.launch4j</groupId>
+            <artifactId>launch4j-maven-plugin</artifactId>
+            <version>2.2.0</version>
+        </dependency>
+
     </dependencies>
 
     <build>
@@ -156,6 +171,7 @@
                 <filtering>true</filtering>
             </resource>
         </resources>
+
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -167,6 +183,28 @@
                 </configuration>
             </plugin>
             <plugin>
+                <artifactId>maven-shade-plugin</artifactId>
+                <version>3.2.1</version>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>shade</goal>
+                        </goals>
+                        <configuration>
+                            <transformers>
+                                <transformer
+                                        implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                                    <mainClass>de.mephisto.vpin.ui.Launcher</mainClass>
+                                </transformer>
+                                <transformer implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer"/>
+                            </transformers>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
                 <groupId>org.openjfx</groupId>
                 <artifactId>javafx-maven-plugin</artifactId>
                 <version>0.0.8</version>
@@ -175,9 +213,7 @@
                         <!-- Default configuration for running with: mvn clean javafx:run -->
                         <id>default-cli</id>
                         <configuration>
-                            <mainClass>
-                                de.mephisto.vpin.ui.vpinstudioui/de.mephisto.vpin.ui.Studio
-                            </mainClass>
+                            <mainClass>de.mephisto.vpin.ui/de.mephisto.vpin.ui.Launcher</mainClass>
                             <launcher>app</launcher>
                             <jlinkZipName>app</jlinkZipName>
                             <jlinkImageName>app</jlinkImageName>
@@ -188,6 +224,133 @@
                     </execution>
                 </executions>
             </plugin>
+
+<!--            <plugin>-->
+<!--                <groupId>org.openjfx</groupId>-->
+<!--                <artifactId>javafx-maven-plugin</artifactId>-->
+<!--                <version>0.0.8</version>-->
+<!--                <executions>-->
+<!--                    <execution>-->
+<!--                        &lt;!&ndash; Default configuration for running with: mvn clean javafx:run &ndash;&gt;-->
+<!--                        <id>default-cli</id>-->
+<!--                        <configuration>-->
+<!--                            <mainClass>de.mephisto.vpin.ui.Studio</mainClass>-->
+<!--                            <launcher>app</launcher>-->
+<!--                            <jlinkZipName>app</jlinkZipName>-->
+<!--                            <jlinkImageName>app</jlinkImageName>-->
+<!--                            <noManPages>true</noManPages>-->
+<!--                            <stripDebug>true</stripDebug>-->
+<!--                            <noHeaderFiles>true</noHeaderFiles>-->
+<!--                        </configuration>-->
+<!--                    </execution>-->
+<!--                </executions>-->
+<!--            </plugin>-->
+
+
+
+            <plugin>
+                <!-- This copies the JRE used to do the build from java.home - should be 32 bit Windows JRE -->
+                <artifactId>maven-resources-plugin</artifactId>
+                <version>2.6</version>
+                <executions>
+                    <execution>
+                        <id>copy-resources</id>
+                        <!-- here the phase you need -->
+                        <phase>package</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${basedir}/target/win32/java</outputDirectory>
+                            <resources>
+                                <resource>
+                                    <directory>${java.home}</directory>
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <!-- This calls launch4j to create the program EXE -->
+                <groupId>com.akathist.maven.plugins.launch4j</groupId>
+                <artifactId>launch4j-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>l4j-clui</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>launch4j</goal>
+                        </goals>
+                        <configuration>
+                            <headerType>gui</headerType>
+                            <outfile>target/encc.exe</outfile>
+                            <jar>target/vpin-studio-ui-1.0-SNAPSHOT.jar</jar>
+                            <errTitle>encc</errTitle>
+                            <classPath>
+                                <mainClass>de.mephisto.vpin.ui.Launcher</mainClass>
+                                <addDependencies>true</addDependencies>
+                                <preCp>anything</preCp>
+                            </classPath>
+                            <jre>
+                                <path>./win32/java</path>
+                            </jre>
+                            <versionInfo>
+                                <fileVersion>1.2.3.4</fileVersion>
+                                <txtFileVersion>txt file version?</txtFileVersion>
+                                <fileDescription>a description</fileDescription>
+                                <copyright>my copyright</copyright>
+                                <productVersion>4.3.2.1</productVersion>
+                                <txtProductVersion>txt product version</txtProductVersion>
+                                <productName>E-N-C-C</productName>
+                                <internalName>ccne</internalName>
+                                <originalFilename>original.exe</originalFilename>
+                            </versionInfo>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+
         </plugins>
+
+
+
+
+
+
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-resources-plugin</artifactId>
+                    <version>3.2.0</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.codehaus.mojo</groupId>
+                    <artifactId>license-maven-plugin</artifactId>
+                    <version>2.0.0</version>
+                    <executions>
+                        <execution>
+                            <id>download-licenses</id>
+                            <goals>
+                                <goal>download-licenses</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                    <configuration>
+                        <cleanLicensesOutputDirectory>true</cleanLicensesOutputDirectory>
+                        <errorRemedy>ignore</errorRemedy>
+                        <excludeTransitiveDependencies>true</excludeTransitiveDependencies>
+                        <includeTransitiveDependencies>false</includeTransitiveDependencies>
+                        <licensesOutputFile>${docs.directory}/third-party-licenses/licenses.xml</licensesOutputFile>
+                        <licensesOutputDirectory>${docs.directory}/third-party-licenses</licensesOutputDirectory>
+                        <outputDirectory>${docs.directory}</outputDirectory>
+                        <sortByGroupIdAndArtifactId>true</sortByGroupIdAndArtifactId>
+                    </configuration>
+                </plugin>
+            </plugins>
+        </pluginManagement>
     </build>
 </project>

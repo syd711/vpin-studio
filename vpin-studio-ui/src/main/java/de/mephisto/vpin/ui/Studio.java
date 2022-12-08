@@ -28,6 +28,10 @@ public class Studio extends Application {
 
   public static VPinStudioClient client;
 
+  public static void main(String[] args) {
+    launch(args);
+  }
+
   @Override
   public void start(Stage stage) throws IOException {
     Studio.stage = stage;
@@ -117,9 +121,5 @@ public class Studio extends Application {
     } catch (IOException e) {
       LOG.error("Failed to load Studio: " + e.getMessage(), e);
     }
-  }
-
-  public static void main(String[] args) {
-    launch();
   }
 }
