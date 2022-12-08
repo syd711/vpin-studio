@@ -25,15 +25,12 @@ public class VPinStudioClient implements ObservedPropertyChangeListener, Overlay
 
   private final Map<String, byte[]> imageCache = new HashMap<>();
 
-
   private Map<String, AssetRepresentation> assetCache = new HashMap<>();
 
-  private VPinStudioClient() {
+  private RestClient restClient;
 
-  }
-
-  public static VPinStudioClient create() {
-    return new VPinStudioClient();
+  public VPinStudioClient(String host) {
+    restClient = RestClient.createInstance(host);
   }
 
   public void clearCache() {
@@ -48,12 +45,21 @@ public class VPinStudioClient implements ObservedPropertyChangeListener, Overlay
    ********************************************************************************************************************/
 
   public Date getStartupTime() {
-    return RestClient.getInstance().get(API + "system/startupTime", Date.class);
+    return restClient.get(API + "system/startupTime", Date.class);
   }
 
   public String logs() {
     final RestTemplate restTemplate = new RestTemplate();
-    return restTemplate.getForObject(RestClient.getInstance().getBaseUrl() + API + "system/logs", String.class);
+    return restTemplate.getForObject(restClient.getBaseUrl() + API + "system/logs", String.class);
+  }
+
+  public boolean ping() {
+    try {
+      return restClient.get(API + "system/ping", Boolean.class);
+    } catch (Exception e) {
+      LOG.error("Ping failed for " + restClient.getBaseUrl());
+    }
+    return false;
   }
 
   /*********************************************************************************************************************
@@ -61,12 +67,12 @@ public class VPinStudioClient implements ObservedPropertyChangeListener, Overlay
    ********************************************************************************************************************/
 
   public GameMediaRepresentation getGameMedia(int id) {
-    return RestClient.getInstance().get(API + "poppermedia/" + id, GameMediaRepresentation.class);
+    return restClient.get(API + "poppermedia/" + id, GameMediaRepresentation.class);
   }
 
   public ByteArrayInputStream getGameMediaItem(int id, PopperScreen screen) {
     if (!imageCache.containsKey(String.valueOf(id)) && screen.equals(PopperScreen.Wheel)) {
-      byte[] bytes = RestClient.getInstance().readBinary(API + "poppermedia/" + id + "/" + screen.name());
+      byte[] bytes = restClient.readBinary(API + "poppermedia/" + id + "/" + screen.name());
       if (bytes == null) {
         bytes = new byte[]{};
       }
@@ -78,13 +84,13 @@ public class VPinStudioClient implements ObservedPropertyChangeListener, Overlay
       return new ByteArrayInputStream(imageBytes);
     }
 
-    byte[] bytes = RestClient.getInstance().readBinary(API + "poppermedia/" + id + "/" + screen.name());
+    byte[] bytes = restClient.readBinary(API + "poppermedia/" + id + "/" + screen.name());
     return new ByteArrayInputStream(bytes);
   }
 
   public AssetRepresentation uploadAsset(File file, long id, int maxSize, AssetType assetType) throws Exception {
     try {
-      String url = RestClient.getInstance().getBaseUrl() + API + "assets/" + id + "/upload/" + maxSize;
+      String url = restClient.getBaseUrl() + API + "assets/" + id + "/upload/" + maxSize;
       ResponseEntity<AssetRepresentation> exchange = new RestTemplate().exchange(url, HttpMethod.POST, createUpload(file, -1, null, assetType), AssetRepresentation.class);
       return exchange.getBody();
     } catch (Exception e) {
@@ -94,7 +100,7 @@ public class VPinStudioClient implements ObservedPropertyChangeListener, Overlay
   }
 
   public ByteArrayInputStream getAsset(String uuid) {
-    byte[] bytes = RestClient.getInstance().readBinary(API + "assets/data/" + uuid);
+    byte[] bytes = restClient.readBinary(API + "assets/data/" + uuid);
     if (bytes == null) {
       throw new UnsupportedOperationException("No data found for asset with UUID " + uuid);
     }
@@ -106,12 +112,12 @@ public class VPinStudioClient implements ObservedPropertyChangeListener, Overlay
    ********************************************************************************************************************/
 
   public PreferenceEntryRepresentation getPreference(String key) {
-    return RestClient.getInstance().get(API + "preferences/" + key, PreferenceEntryRepresentation.class);
+    return restClient.get(API + "preferences/" + key, PreferenceEntryRepresentation.class);
   }
 
   public boolean setPreferences(Map<String, Object> values) {
     try {
-      return RestClient.getInstance().put(API + "preferences", values);
+      return restClient.put(API + "preferences", values);
     } catch (Exception e) {
       LOG.error("Failed to set preferences: " + e.getMessage(), e);
     }
@@ -131,7 +137,7 @@ public class VPinStudioClient implements ObservedPropertyChangeListener, Overlay
 
   public boolean uploadVPinAvatar(File file) throws Exception {
     try {
-      String url = RestClient.getInstance().getBaseUrl() + API + "preferences/avatar";
+      String url = restClient.getBaseUrl() + API + "preferences/avatar";
       new RestTemplate().exchange(url, HttpMethod.POST, createUpload(file, -1, null, AssetType.VPIN_AVATAR), Boolean.class);
       return true;
     } catch (Exception e) {
@@ -146,17 +152,17 @@ public class VPinStudioClient implements ObservedPropertyChangeListener, Overlay
    ********************************************************************************************************************/
 
   public List<CompetitionRepresentation> getCompetitions() {
-    return Arrays.asList(RestClient.getInstance().get(API + "competitions", CompetitionRepresentation[].class));
+    return Arrays.asList(restClient.get(API + "competitions", CompetitionRepresentation[].class));
   }
 
   public List<CompetitionRepresentation> getFinishedCompetitions(int limit) {
-    return Arrays.asList(RestClient.getInstance().get(API + "competitions/finished/" + limit, CompetitionRepresentation[].class));
+    return Arrays.asList(restClient.get(API + "competitions/finished/" + limit, CompetitionRepresentation[].class));
   }
 
 
   public List<CompetitionRepresentation> getActiveOfflineCompetitions() {
     try {
-      return Arrays.asList(RestClient.getInstance().get(API + "competitions/active/offline", CompetitionRepresentation[].class));
+      return Arrays.asList(restClient.get(API + "competitions/active/offline", CompetitionRepresentation[].class));
     } catch (Exception e) {
       LOG.error("Failed to read active competition: " + e.getMessage(), e);
     }
@@ -165,7 +171,7 @@ public class VPinStudioClient implements ObservedPropertyChangeListener, Overlay
 
   public CompetitionRepresentation saveCompetition(CompetitionRepresentation c) throws Exception {
     try {
-      return RestClient.getInstance().post(API + "competitions/save", c, CompetitionRepresentation.class);
+      return restClient.post(API + "competitions/save", c, CompetitionRepresentation.class);
     } catch (Exception e) {
       LOG.error("Failed to save competition: " + e.getMessage(), e);
       throw e;
@@ -174,7 +180,7 @@ public class VPinStudioClient implements ObservedPropertyChangeListener, Overlay
 
   public void deleteCompetition(CompetitionRepresentation c) {
     try {
-      RestClient.getInstance().delete(API + "competitions/delete/" + c.getId());
+      restClient.delete(API + "competitions/delete/" + c.getId());
     } catch (Exception e) {
       LOG.error("Failed to delete competition: " + e.getMessage(), e);
     }
@@ -182,7 +188,7 @@ public class VPinStudioClient implements ObservedPropertyChangeListener, Overlay
 
   public ScoreListRepresentation getCompetitionScores(long id) {
     try {
-      return RestClient.getInstance().get(API + "competitions/scores/" + id, ScoreListRepresentation.class);
+      return restClient.get(API + "competitions/scores/" + id, ScoreListRepresentation.class);
     } catch (Exception e) {
       LOG.error("Failed to read competition scores " + id + ": " + e.getMessage(), e);
     }
@@ -190,13 +196,13 @@ public class VPinStudioClient implements ObservedPropertyChangeListener, Overlay
   }
 
   public List<String> getCompetitionBadges() {
-    return Arrays.asList(RestClient.getInstance().get(API + "competitions/badges", String[].class));
+    return Arrays.asList(restClient.get(API + "competitions/badges", String[].class));
   }
 
   public ByteArrayInputStream getCompetitionBadge(String name) {
     if (!imageCache.containsKey(name)) {
       String encodedName = URLEncoder.encode(name, StandardCharsets.UTF_8);
-      byte[] bytes = RestClient.getInstance().readBinary(API + "competitions/badge/" + encodedName);
+      byte[] bytes = restClient.readBinary(API + "competitions/badge/" + encodedName);
       imageCache.put(name, bytes);
     }
 
@@ -205,7 +211,7 @@ public class VPinStudioClient implements ObservedPropertyChangeListener, Overlay
   }
 
   public ByteArrayInputStream getCompetitionBackground(long gameId) {
-    byte[] bytes = RestClient.getInstance().readBinary(API + "directb2s/competition/" + gameId);
+    byte[] bytes = restClient.readBinary(API + "directb2s/competition/" + gameId);
     if (bytes == null) {
       throw new UnsupportedOperationException("No data found for competition with gameId " + gameId);
     }
@@ -218,7 +224,7 @@ public class VPinStudioClient implements ObservedPropertyChangeListener, Overlay
 
   public GameRepresentation getGame(int id) {
     try {
-      return RestClient.getInstance().get(API + "games/" + id, GameRepresentation.class);
+      return restClient.get(API + "games/" + id, GameRepresentation.class);
     } catch (Exception e) {
       LOG.error("Failed to read game " + id + ": " + e.getMessage(), e);
     }
@@ -227,7 +233,7 @@ public class VPinStudioClient implements ObservedPropertyChangeListener, Overlay
 
   public ScoreSummaryRepresentation getGameScores(int id) {
     try {
-      return RestClient.getInstance().get(API + "games/scores/" + id, ScoreSummaryRepresentation.class);
+      return restClient.get(API + "games/scores/" + id, ScoreSummaryRepresentation.class);
     } catch (Exception e) {
       LOG.error("Failed to read game scores " + id + ": " + e.getMessage(), e);
     }
@@ -236,12 +242,12 @@ public class VPinStudioClient implements ObservedPropertyChangeListener, Overlay
 
   public boolean scanGame(GameRepresentation game) {
     int gameId = game.getId();
-    return RestClient.getInstance().get(API + "games/scan/" + gameId, Boolean.class);
+    return restClient.get(API + "games/scan/" + gameId, Boolean.class);
   }
 
   public GameRepresentation saveGame(GameRepresentation game) throws Exception {
     try {
-      return RestClient.getInstance().post(API + "games/save", game, GameRepresentation.class);
+      return restClient.post(API + "games/save", game, GameRepresentation.class);
     } catch (Exception e) {
       LOG.error("Failed to save game: " + e.getMessage(), e);
       throw e;
@@ -249,15 +255,15 @@ public class VPinStudioClient implements ObservedPropertyChangeListener, Overlay
   }
 
   public List<GameRepresentation> getGames() {
-    return Arrays.asList(RestClient.getInstance().get(API + "games", GameRepresentation[].class));
+    return Arrays.asList(restClient.get(API + "games", GameRepresentation[].class));
   }
 
   public List<GameRepresentation> getGamesWithScores() {
-    return Arrays.asList(RestClient.getInstance().get(API + "games/scoredgames", GameRepresentation[].class));
+    return Arrays.asList(restClient.get(API + "games/scoredgames", GameRepresentation[].class));
   }
 
   public ScoreSummaryRepresentation getRecentlyPlayedGames(int count) {
-    return RestClient.getInstance().get(API + "games/recent/" + count, ScoreSummaryRepresentation.class);
+    return restClient.get(API + "games/recent/" + count, ScoreSummaryRepresentation.class);
   }
 
   /*********************************************************************************************************************
@@ -266,7 +272,7 @@ public class VPinStudioClient implements ObservedPropertyChangeListener, Overlay
 
   public PlayerRepresentation savePlayer(PlayerRepresentation p) throws Exception {
     try {
-      return RestClient.getInstance().post(API + "players/save", p, PlayerRepresentation.class);
+      return restClient.post(API + "players/save", p, PlayerRepresentation.class);
     } catch (Exception e) {
       LOG.error("Failed to save player: " + e.getMessage(), e);
       throw e;
@@ -275,26 +281,26 @@ public class VPinStudioClient implements ObservedPropertyChangeListener, Overlay
 
   public void deletePlayer(PlayerRepresentation p) {
     try {
-      RestClient.getInstance().delete(API + "players/delete/" + p.getId());
+      restClient.delete(API + "players/delete/" + p.getId());
     } catch (Exception e) {
       LOG.error("Failed to delete player: " + e.getMessage(), e);
     }
   }
 
   public List<PlayerRepresentation> getPlayers() {
-    return Arrays.asList(RestClient.getInstance().get(API + "players", PlayerRepresentation[].class));
+    return Arrays.asList(restClient.get(API + "players", PlayerRepresentation[].class));
   }
 
   public List<PlayerRepresentation> getPlayers(PlayerDomain domain) {
-    return Arrays.asList(RestClient.getInstance().get(API + "players/domain/" + domain.name(), PlayerRepresentation[].class));
+    return Arrays.asList(restClient.get(API + "players/domain/" + domain.name(), PlayerRepresentation[].class));
   }
 
   public ScoreSummaryRepresentation getPlayerScores(String initials) {
-    return RestClient.getInstance().get(API + "players/highscores/" + initials, ScoreSummaryRepresentation.class);
+    return restClient.get(API + "players/highscores/" + initials, ScoreSummaryRepresentation.class);
   }
 
   public boolean invalidatePlayerDomain(PlayerDomain domain) {
-    return RestClient.getInstance().get(API + "players/invalidate/" + domain.name(), Boolean.class);
+    return restClient.get(API + "players/invalidate/" + domain.name(), Boolean.class);
   }
 
 
@@ -303,16 +309,16 @@ public class VPinStudioClient implements ObservedPropertyChangeListener, Overlay
    ********************************************************************************************************************/
 
   public InputStream getOverlayImage() {
-    byte[] bytes = RestClient.getInstance().readBinary(API + "overlay/preview");
+    byte[] bytes = restClient.readBinary(API + "overlay/preview");
     return new ByteArrayInputStream(bytes);
   }
 
   public boolean generateOverlayImage() {
-    return RestClient.getInstance().get(API + "overlay/generate", Boolean.class);
+    return restClient.get(API + "overlay/generate", Boolean.class);
   }
 
   public List<String> getOverlayBackgrounds() {
-    return Arrays.asList(RestClient.getInstance().get(API + "overlay/backgrounds", String[].class));
+    return Arrays.asList(restClient.get(API + "overlay/backgrounds", String[].class));
   }
 
 
@@ -322,18 +328,18 @@ public class VPinStudioClient implements ObservedPropertyChangeListener, Overlay
 
   public ByteArrayInputStream getHighscoreCard(GameRepresentation game) {
     int gameId = game.getId();
-    byte[] bytes = RestClient.getInstance().readBinary(API + "cards/preview/" + gameId);
+    byte[] bytes = restClient.readBinary(API + "cards/preview/" + gameId);
     return new ByteArrayInputStream(bytes);
   }
 
   public boolean generateHighscoreCard(GameRepresentation game) {
     int gameId = game.getId();
-    return RestClient.getInstance().get(API + "cards/generate/" + gameId, Boolean.class);
+    return restClient.get(API + "cards/generate/" + gameId, Boolean.class);
   }
 
   public boolean uploadOverlayBackgroundImage(File file) throws Exception {
     try {
-      String url = RestClient.getInstance().getBaseUrl() + API + "overlay/backgroundupload";
+      String url = restClient.getBaseUrl() + API + "overlay/backgroundupload";
       new RestTemplate().exchange(url, HttpMethod.POST, createUpload(file, -1, null, AssetType.OVERLAY_BACKGROUND), Boolean.class);
       return true;
     } catch (Exception e) {
@@ -343,13 +349,13 @@ public class VPinStudioClient implements ObservedPropertyChangeListener, Overlay
   }
 
   public List<String> getHighscoreBackgroundImages() {
-    return Arrays.asList(RestClient.getInstance().get(API + "cards/backgrounds", String[].class));
+    return Arrays.asList(restClient.get(API + "cards/backgrounds", String[].class));
   }
 
   public ByteArrayInputStream getOverlayBackgroundImage(String name) {
     if (!imageCache.containsKey(name)) {
       String encodedName = URLEncoder.encode(name, StandardCharsets.UTF_8);
-      byte[] bytes = RestClient.getInstance().readBinary(API + "overlay/background/" + encodedName);
+      byte[] bytes = restClient.readBinary(API + "overlay/background/" + encodedName);
       imageCache.put(name, bytes);
     }
 
@@ -360,7 +366,7 @@ public class VPinStudioClient implements ObservedPropertyChangeListener, Overlay
   public ByteArrayInputStream getHighscoreBackgroundImage(String name) {
     if (!imageCache.containsKey(name)) {
       String encodedName = URLEncoder.encode(name, StandardCharsets.UTF_8);
-      byte[] bytes = RestClient.getInstance().readBinary(API + "cards/background/" + encodedName);
+      byte[] bytes = restClient.readBinary(API + "cards/background/" + encodedName);
       imageCache.put(name, bytes);
     }
 
@@ -370,7 +376,7 @@ public class VPinStudioClient implements ObservedPropertyChangeListener, Overlay
 
   public boolean uploadHighscoreBackgroundImage(File file) throws Exception {
     try {
-      String url = RestClient.getInstance().getBaseUrl() + API + "cards/backgroundupload";
+      String url = restClient.getBaseUrl() + API + "cards/backgroundupload";
       new RestTemplate().exchange(url, HttpMethod.POST, createUpload(file, -1, null, AssetType.CARD_BACKGROUND), Boolean.class);
       return true;
     } catch (Exception e) {
@@ -381,7 +387,7 @@ public class VPinStudioClient implements ObservedPropertyChangeListener, Overlay
 
   public boolean uploadTable(File file) throws Exception {
     try {
-      String url = RestClient.getInstance().getBaseUrl() + API + "games/upload/table";
+      String url = restClient.getBaseUrl() + API + "games/upload/table";
       new RestTemplate().exchange(url, HttpMethod.POST, createUpload(file, -1, null, AssetType.TABLE), Boolean.class);
       return true;
     } catch (Exception e) {
@@ -392,7 +398,7 @@ public class VPinStudioClient implements ObservedPropertyChangeListener, Overlay
 
   public boolean uploadRom(File file) throws Exception {
     try {
-      String url = RestClient.getInstance().getBaseUrl() + API + "games/upload/rom";
+      String url = restClient.getBaseUrl() + API + "games/upload/rom";
       new RestTemplate().exchange(url, HttpMethod.POST, createUpload(file, -1, null, AssetType.ROM), Boolean.class);
       return true;
     } catch (Exception e) {
@@ -407,13 +413,13 @@ public class VPinStudioClient implements ObservedPropertyChangeListener, Overlay
    ********************************************************************************************************************/
 
   public ByteArrayInputStream getDirectB2SImage(GameRepresentation game) {
-    byte[] bytes = RestClient.getInstance().readBinary(API + "directb2s/" + game.getId());
+    byte[] bytes = restClient.readBinary(API + "directb2s/" + game.getId());
     return new ByteArrayInputStream(bytes);
   }
 
   public boolean uploadDirectB2SFile(File file, String uploadType, int gameId) throws Exception {
     try {
-      String url = RestClient.getInstance().getBaseUrl() + API + "cards/directb2supload";
+      String url = restClient.getBaseUrl() + API + "cards/directb2supload";
       new RestTemplate().exchange(url, HttpMethod.POST, createUpload(file, gameId, uploadType, AssetType.DIRECT_B2S), Boolean.class);
       return true;
     } catch (Exception e) {
@@ -450,7 +456,7 @@ public class VPinStudioClient implements ObservedPropertyChangeListener, Overlay
 
   public ObservedProperties getProperties(String propertiesName) {
     if (!observedProperties.containsKey(propertiesName)) {
-      Map<String, Object> result = RestClient.getInstance().get(API + "properties/" + propertiesName, Map.class);
+      Map<String, Object> result = restClient.get(API + "properties/" + propertiesName, Map.class);
       Properties properties = new Properties();
       properties.putAll(result);
       ObservedProperties observedProperties = new ObservedProperties(propertiesName, properties);
@@ -463,7 +469,7 @@ public class VPinStudioClient implements ObservedPropertyChangeListener, Overlay
 
   public String getURL(String segment) {
     if (!segment.startsWith("http") && !segment.contains(API)) {
-      return RestClient.getInstance().getBaseUrl() + API + segment;
+      return restClient.getBaseUrl() + API + segment;
     }
     return segment;
   }
@@ -473,7 +479,7 @@ public class VPinStudioClient implements ObservedPropertyChangeListener, Overlay
     try {
       Map<String, Object> model = new HashMap<>();
       model.put(key, updatedValue.get());
-      Boolean result = RestClient.getInstance().put(API + "properties/" + propertiesName, model);
+      Boolean result = restClient.put(API + "properties/" + propertiesName, model);
       ObservedProperties obsprops = this.observedProperties.get(propertiesName);
       obsprops.notifyChange(key, updatedValue.get());
     } catch (Exception e) {

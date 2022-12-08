@@ -6,7 +6,7 @@ public class UploadTest {
 
   @Test
   public void testUpload() throws Exception {
-    VPinStudioClient client = VPinStudioClient.create();
+    VPinStudioClient client = new VPinStudioClient("localhost");
 //    client.uploadHighscoreBackgroundImage(new File("E:\\downloads\\Back To The Future.directb2s"));
   }
 }

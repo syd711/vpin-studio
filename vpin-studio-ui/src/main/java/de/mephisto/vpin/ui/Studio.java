@@ -2,6 +2,7 @@ package de.mephisto.vpin.ui;
 
 import de.mephisto.vpin.commons.fx.OverlayWindowFX;
 import de.mephisto.vpin.restclient.VPinStudioClient;
+import de.mephisto.vpin.ui.launcher.LauncherController;
 import de.mephisto.vpin.ui.util.ResizeHelper;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
@@ -27,32 +28,56 @@ public class Studio extends Application {
     Studio.stage = stage;
 
     //replace the OverlayFX client with the Studio one
-    Studio.client = VPinStudioClient.create();
+    Studio.client = new VPinStudioClient("localhost");
     OverlayWindowFX.client = Studio.client;
 
-    FXMLLoader loader = new FXMLLoader(getClass().getResource("scene-root.fxml"));
-    Parent root = loader.load();
-    Rectangle2D screenBounds = Screen.getPrimary().getBounds();
-    int height = 1080;
     int width = 1920;
-    if(screenBounds.getHeight() >= 1280) {
-      height = 1200;
+    int height = 1080;
+    Parent root = null;
+    boolean resizeable = true;
+    String title = "VPin Studio";
+    Rectangle2D screenBounds = Screen.getPrimary().getBounds();
+
+    boolean localPingResult = false; //client.ping();
+    if (localPingResult) {
+      FXMLLoader loader = new FXMLLoader(getClass().getResource("scene-root.fxml"));
+      root = loader.load();
+
+      if (screenBounds.getHeight() >= 1280) {
+        height = 1200;
+      }
+      if (screenBounds.getHeight() >= 1480) {
+        height = 1400;
+      }
     }
-    if(screenBounds.getHeight() >= 1480) {
-      height = 1400;
+    else {
+      FXMLLoader loader = new FXMLLoader(LauncherController.class.getResource("scene-launcher.fxml"));
+      root = loader.load();
+      title = "VPin Studio Launcher";
+      width = 800;
+      height = 400;
+      resizeable = false;
     }
+
 
     Scene scene = new Scene(root, width, height);
     scene.setFill(Paint.valueOf("#212529"));
-    stage.setTitle("VPin Studio");
+    stage.setTitle(title);
     stage.getIcons().add(new Image(Studio.class.getResourceAsStream("logo-128.png")));
     stage.setScene(scene);
-    stage.initStyle(StageStyle.UNDECORATED);
+    stage.setResizable(resizeable);
 
-    stage.setX((screenBounds.getWidth()/2) - (width/2));
-    stage.setY((screenBounds.getHeight()/2) - (height/2));
+    if(resizeable) {
+      stage.initStyle(StageStyle.UNDECORATED);
+    }
 
-    ResizeHelper.addResizeListener(stage, width, 1080, width*2, height*2);
+    stage.setX((screenBounds.getWidth() / 2) - (width / 2));
+    stage.setY((screenBounds.getHeight() / 2) - (height / 2));
+
+    if(resizeable) {
+      ResizeHelper.addResizeListener(stage, width, 1080, width * 2, height * 2);
+    }
+
     stage.show();
   }
 

@@ -31,20 +31,8 @@ public class RestClient implements ClientHttpRequestInterceptor {
   private String authenticationToken;
   private RestTemplate restTemplate;
 
-  private static RestClient INSTANCE;
-
-  public static RestClient getInstance(String scheme, String host, int port) {
-    if (INSTANCE == null) {
-      INSTANCE = new RestClient(scheme, host, port);
-    }
-    return INSTANCE;
-  }
-
-  public static RestClient getInstance() {
-    if (INSTANCE == null) {
-      INSTANCE = new RestClient(SCHEME, HOST, PORT);
-    }
-    return INSTANCE;
+  public static RestClient createInstance(String host) {
+    return new RestClient(SCHEME, host, PORT);
   }
 
   private RestClient(String scheme, String host, int port) {

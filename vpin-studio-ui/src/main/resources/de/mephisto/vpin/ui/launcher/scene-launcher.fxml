@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.MenuButton?>
+<?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.control.ToolBar?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+<?import org.kordamp.ikonli.javafx.FontIcon?>
+
+
+<BorderPane fx:id="mediaView" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="800.0" styleClass="base-component" stylesheets="@../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.launcher.LauncherController">
+   <left>
+      <BorderPane prefHeight="350.0" prefWidth="300.0" styleClass="navigation-panel" BorderPane.alignment="CENTER">
+         <bottom>
+            <MenuButton mnemonicParsing="false" BorderPane.alignment="BOTTOM_LEFT">
+              <items>
+                <MenuItem mnemonicParsing="false" onAction="#onUpdateCheck" text="Check for Update..." />
+              </items>
+               <BorderPane.margin>
+                  <Insets bottom="6.0" left="6.0" right="6.0" top="6.0" />
+               </BorderPane.margin>
+               <graphic>
+                  <FontIcon iconColor="WHITE" iconLiteral="sil-settings" iconSize="16" />
+               </graphic>
+            </MenuButton>
+         </bottom>
+         <top>
+            <BorderPane BorderPane.alignment="CENTER">
+               <left>
+                  <ImageView fitHeight="100.0" fitWidth="100.0" pickOnBounds="true" preserveRatio="true" BorderPane.alignment="TOP_LEFT">
+                     <image>
+                        <Image url="@../logo-512.png" />
+                     </image>
+                  </ImageView>
+               </left>
+               <BorderPane.margin>
+                  <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
+               </BorderPane.margin>
+               <center>
+                  <VBox alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="100.0" BorderPane.alignment="CENTER">
+                     <children>
+                        <Label fx:id="studioLabel" text="VPin Studio">
+                           <font>
+                              <Font size="24.0" />
+                           </font>
+                        </Label>
+                        <Label fx:id="versionLabel" text="version" />
+                     </children>
+                  </VBox>
+               </center>
+            </BorderPane>
+         </top>
+      </BorderPane>
+   </left>
+   <center>
+      <BorderPane prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+         <top>
+            <ToolBar nodeOrientation="RIGHT_TO_LEFT" prefHeight="40.0" prefWidth="200.0" BorderPane.alignment="CENTER_RIGHT">
+              <items>
+                  <BorderPane layoutX="10.0" layoutY="10.0" prefWidth="487.0">
+                     <left>
+                        <Button mnemonicParsing="false" onAction="#onNewConnection" text="New Connection" textFill="WHITE" BorderPane.alignment="CENTER">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Button>
+                     </left>
+                     <right>
+                        <Button mnemonicParsing="false" onAction="#onUpdateCheck" textFill="WHITE" BorderPane.alignment="CENTER">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                           <graphic>
+                              <FontIcon iconColor="WHITE" iconLiteral="sil-refresh" iconSize="16" />
+                           </graphic>
+                        </Button>
+                     </right>
+                  </BorderPane>
+              </items>
+            </ToolBar>
+         </top>
+         <center>
+            <ListView fx:id="listView" prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER" />
+         </center>
+      </BorderPane>
+   </center>
+</BorderPane>
