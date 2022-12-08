@@ -4,7 +4,6 @@ import de.mephisto.vpin.commons.fx.OverlayWindowFX;
 import de.mephisto.vpin.restclient.VPinStudioClient;
 import de.mephisto.vpin.ui.launcher.LauncherController;
 import de.mephisto.vpin.ui.util.ResizeHelper;
-import de.mephisto.vpin.ui.util.UIDefaults;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Rectangle2D;
@@ -71,7 +70,7 @@ public class Studio extends Application {
   public static String getVersion() {
     try {
       final Properties properties = new Properties();
-      InputStream resourceAsStream = UIDefaults.class.getResourceAsStream("version.properties");
+      InputStream resourceAsStream = Studio.class.getClassLoader().getResourceAsStream("version.properties");
       properties.load(resourceAsStream);
       resourceAsStream.close();
       return properties.getProperty("vpin.studio.version");

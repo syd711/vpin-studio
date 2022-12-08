@@ -92,7 +92,7 @@ public class LauncherController implements Initializable {
 
     Font font = Font.font("Impact", FontPosture.findByName("regular"), 28);
     studioLabel.setFont(font);
-//    versionLabel.setText(Studio.getVersion());
+    versionLabel.setText(Studio.getVersion());
 
     List<VPinConnection> connections = new ArrayList<>();
     data = FXCollections.observableList(connections);
