@@ -47,10 +47,10 @@
    <left>
       <Label fx:id="titleLabel" text="VPin Studio Launcher" textFill="WHITE" BorderPane.alignment="TOP_LEFT">
          <font>
-            <Font name="Impact" size="16.0" />
+            <Font name="Impact" size="18.0" />
          </font>
          <BorderPane.margin>
-            <Insets left="12.0" top="8.0" />
+            <Insets left="12.0" top="6.0" />
          </BorderPane.margin>
       </Label>
    </left>

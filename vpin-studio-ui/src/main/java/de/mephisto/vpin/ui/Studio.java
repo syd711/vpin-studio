@@ -65,6 +65,7 @@ public class Studio extends Application {
       stage.setResizable(false);
       stage.setX((screenBounds.getWidth() / 2) - (800 / 2));
       stage.setY((screenBounds.getHeight() / 2) - (400 / 2));
+      ResizeHelper.addResizeListener(stage);
 
       LauncherController controller = loader.getController();
       controller.setStage(stage);

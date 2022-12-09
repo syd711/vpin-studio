@@ -100,7 +100,7 @@ public class ResizeHelper {
           sceneWidth = scene.getWidth(),
           sceneHeight = scene.getHeight();
 
-      if (MouseEvent.MOUSE_MOVED.equals(mouseEventType)) {
+      if (MouseEvent.MOUSE_MOVED.equals(mouseEventType) && stage.isResizable()) {
         if (mouseEventX < border && mouseEventY < border) {
           cursorEvent = Cursor.NW_RESIZE;
         } else if (mouseEventX < border && mouseEventY > sceneHeight - border) {
@@ -138,7 +138,10 @@ public class ResizeHelper {
               }
             } else {
               if (stage.getHeight() > minHeight || mouseEventY + startY - stage.getHeight() > 0) {
-                setStageHeight(mouseEventY + startY);
+                if(stage.isResizable()) {
+                  setStageHeight(mouseEventY + startY);
+                }
+
               }
             }
           }
@@ -153,7 +156,9 @@ public class ResizeHelper {
               }
             } else {
               if (stage.getWidth() > minWidth || mouseEventX + startX - stage.getWidth() > 0) {
-                setStageWidth(mouseEventX + startX);
+                if(stage.isResizable()) {
+                  setStageWidth(mouseEventX + startX);
+                }
               }
             }
           }

@@ -3,6 +3,7 @@ package de.mephisto.vpin.ui.launcher;
 import de.mephisto.vpin.commons.utils.Updater;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.VPinStudioClient;
+import de.mephisto.vpin.restclient.representations.CompetitionRepresentation;
 import de.mephisto.vpin.restclient.representations.PreferenceEntryRepresentation;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.util.ImageUtil;
@@ -14,10 +15,7 @@ import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Cursor;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
+import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.text.Font;
@@ -93,10 +91,10 @@ public class LauncherController implements Initializable {
       Platform.runLater(() -> {
         stage.getScene().setCursor(Cursor.DEFAULT);
 
-        if(s == null) {
+        if (s == null) {
           WidgetFactory.showAlert("Unable to retrieve update information. Please check log files.");
         }
-        else if(!s.equalsIgnoreCase(Studio.getVersion())) {
+        else if (!s.equalsIgnoreCase(Studio.getVersion())) {
           WidgetFactory.showConfirmation("Download and install version " + s + "?", "Update available");
         }
       });
@@ -105,7 +103,30 @@ public class LauncherController implements Initializable {
 
   @FXML
   private void onNewConnection() {
+    String host = WidgetFactory.showInputDialog("New VPin Studio Connection", "Enter the IP address or the hostname to connect to.", "IP or hostname");
+    if (!StringUtils.isEmpty(host)) {
+      refreshBtn.setDisable(true);
+      connectBtn.setDisable(true);
+      newConnectionBtn.setDisable(true);
 
+      stage.getScene().setCursor(Cursor.WAIT);
+      new Thread(() -> {
+        VPinConnection connection = checkConnection(host);
+        Platform.runLater(() -> {
+          stage.getScene().setCursor(Cursor.DEFAULT);
+          data.clear();
+          if (connection != null) {
+            data.add(connection);
+          }
+          else {
+            WidgetFactory.showAlert("No service found for '" + host + "'");
+          }
+
+          refreshBtn.setDisable(false);
+          newConnectionBtn.setDisable(false);
+        });
+      }).start();
+    }
   }
 
 
@@ -158,6 +179,16 @@ public class LauncherController implements Initializable {
       view.setFitHeight(50);
       ImageUtil.setClippedImage(view, (int) (value.getAvatar().getWidth() / 2));
       return new SimpleObjectProperty(view);
+    });
+
+    tableView.setRowFactory(tv -> {
+      TableRow<VPinConnection> row = new TableRow<>();
+      row.setOnMouseClicked(event -> {
+        if (event.getClickCount() == 2 && (!row.isEmpty())) {
+          onConnect();
+        }
+      });
+      return row;
     });
   }
 

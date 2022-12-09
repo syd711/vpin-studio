@@ -80,7 +80,7 @@ public class WidgetFactory {
     td.setTitle(title);
     td.getDialogPane().getStylesheets().add(Studio.class.getResource("stylesheet.css").toExternalForm());
     td.getDialogPane().getStyleClass().add("base-component");
-    td.getDialogPane().setStyle("-fx-font-size: 16px;");
+    td.getDialogPane().setStyle("-fx-font-size: 14px;");
     td.setHeaderText(description);
     td.setGraphic(null);
     td.showAndWait();

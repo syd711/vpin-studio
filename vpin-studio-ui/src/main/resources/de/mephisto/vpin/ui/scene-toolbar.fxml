@@ -3,7 +3,6 @@
 <?import java.lang.String?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
-<?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
@@ -27,7 +26,14 @@
                         <Insets bottom="6.0" />
                      </BorderPane.margin>
                      <children>
-                        <ComboBox prefWidth="150.0" />
+                        <Button layoutX="164.0" layoutY="10.0" mnemonicParsing="false" onAction="#onClearCache" text=" Clear Cache" textFill="WHITE">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                           <graphic>
+                              <FontIcon iconColor="WHITE" iconLiteral="sil-refresh" />
+                           </graphic>
+                        </Button>
                         <Button mnemonicParsing="false" onAction="#onDisconnect" text=" Disconnect" textFill="WHITE">
                            <font>
                               <Font size="14.0" />
@@ -37,14 +43,6 @@
                            </HBox.margin>
                            <graphic>
                               <FontIcon iconColor="WHITE" iconLiteral="sil-logout" />
-                           </graphic>
-                        </Button>
-                        <Button layoutX="164.0" layoutY="10.0" mnemonicParsing="false" onAction="#onClearCache" text=" Clear Cache" textFill="WHITE">
-                           <font>
-                              <Font size="14.0" />
-                           </font>
-                           <graphic>
-                              <FontIcon iconColor="WHITE" iconLiteral="sil-refresh" />
                            </graphic>
                         </Button>
                      </children>
