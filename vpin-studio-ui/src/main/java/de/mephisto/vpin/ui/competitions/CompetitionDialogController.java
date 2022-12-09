@@ -1,13 +1,11 @@
 package de.mephisto.vpin.ui.competitions;
 
 import de.mephisto.vpin.restclient.PopperScreen;
-import de.mephisto.vpin.restclient.RestClient;
 import de.mephisto.vpin.restclient.VPinStudioClient;
 import de.mephisto.vpin.restclient.representations.CompetitionRepresentation;
 import de.mephisto.vpin.restclient.representations.GameMediaItemRepresentation;
 import de.mephisto.vpin.restclient.representations.GameMediaRepresentation;
 import de.mephisto.vpin.restclient.representations.GameRepresentation;
-import de.mephisto.vpin.ui.Studio;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -162,7 +160,7 @@ public class CompetitionDialogController implements Initializable {
 
   private void refreshPreview(GameRepresentation game, String badge) {
     if (game != null) {
-      GameMediaRepresentation gameMedia = client.getGameMedia(game.getId());
+      GameMediaRepresentation gameMedia = game.getGameMedia();
       GameMediaItemRepresentation mediaItem = gameMedia.getMedia().get(PopperScreen.Wheel.name());
       if (mediaItem != null) {
         ByteArrayInputStream gameMediaItem = client.getGameMediaItem(game.getId(), PopperScreen.Wheel);

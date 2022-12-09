@@ -41,7 +41,7 @@ public class PopperMediaResource {
     if (game == null) {
       throw new ResponseStatusException(NOT_FOUND, "Not game found for id " + id);
     }
-    return game.getEmulator().getGameMedia();
+    return game.getGameMedia();
   }
 
   @GetMapping("/{id}/{screen}")
@@ -49,8 +49,7 @@ public class PopperMediaResource {
     PopperScreen popperScreen = PopperScreen.valueOf(screen);
     Game game = gameService.getGame(id);
     if (game != null) {
-      Emulator emulator = game.getEmulator();
-      GameMedia gameMedia = emulator.getGameMedia();
+      GameMedia gameMedia = game.getGameMedia();
       GameMediaItem gameMediaItem = gameMedia.get(popperScreen);
       if (gameMediaItem != null) {
         File file = gameMediaItem.getFile();

@@ -2,6 +2,7 @@ package de.mephisto.vpin.server.games;
 
 import de.mephisto.vpin.server.competitions.ScoreSummary;
 import de.mephisto.vpin.server.highscores.HighscoreService;
+import de.mephisto.vpin.server.popper.Emulator;
 import de.mephisto.vpin.server.popper.PinUPConnector;
 import de.mephisto.vpin.server.roms.RomService;
 import de.mephisto.vpin.server.roms.ScanResult;
@@ -42,7 +43,7 @@ public class GameService {
   public List<Game> getGames() {
     long start = System.currentTimeMillis();
     List<Game> games = pinUPConnector.getGames();
-    LOG.info("Game fetch took " + (System.currentTimeMillis() - start) + "ms.");
+    LOG.info("Game fetch took " + (System.currentTimeMillis() - start) + "ms., returned " + games.size() + " tables.");
     start = System.currentTimeMillis();
     for (Game game : games) {
       loadGameDetails(game, games);
@@ -78,6 +79,10 @@ public class GameService {
 
   public boolean scanGame(int gameId) {
     Game game = getGame(gameId);
+    if(!game.getEmulator().getName().equalsIgnoreCase(Emulator.VISUAL_PINBALL_X)) {
+      return false;
+    }
+
     List<Game> games = pinUPConnector.getGames();
     ScanResult scanResult = romService.scanGameFile(game);
 

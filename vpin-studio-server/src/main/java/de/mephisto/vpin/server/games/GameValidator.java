@@ -2,6 +2,7 @@ package de.mephisto.vpin.server.games;
 
 import de.mephisto.vpin.restclient.PopperScreen;
 import de.mephisto.vpin.restclient.ValidationCode;
+import de.mephisto.vpin.server.popper.Emulator;
 import de.mephisto.vpin.server.preferences.Preferences;
 import de.mephisto.vpin.server.preferences.PreferencesService;
 import edu.umd.cs.findbugs.annotations.NonNull;
@@ -47,20 +48,23 @@ public class GameValidator implements InitializingBean {
   private Preferences preferences;
 
   public int validate(@NonNull Game game, @NonNull List<Game> games) {
-    if (isValidationEnabled(game, ValidationCode.CODE_NO_ROM)) {
+    boolean isVPX = game.getEmulator().getName().equals(Emulator.VISUAL_PINBALL_X);
+    boolean isFP = game.getEmulator().getName().equals(Emulator.FUTURE_PINBALL);
+
+    if (isVPX && isValidationEnabled(game, ValidationCode.CODE_NO_ROM)) {
       if (StringUtils.isEmpty(game.getRom())) {
         return ValidationCode.CODE_NO_ROM;
       }
     }
 
-    if (isValidationEnabled(game, ValidationCode.CODE_ROM_NOT_EXISTS)) {
+    if (isVPX && isValidationEnabled(game, ValidationCode.CODE_ROM_NOT_EXISTS)) {
       if (!game.isRomExists()) {
         return ValidationCode.CODE_ROM_NOT_EXISTS;
       }
     }
 
 
-    if (isValidationEnabled(game, ValidationCode.CODE_DUPLICATE_ROM)) {
+    if (isVPX && isValidationEnabled(game, ValidationCode.CODE_DUPLICATE_ROM)) {
       for (Game g : games) {
         if (g.getId() != game.getId() && !StringUtils.isEmpty(g.getRom()) && g.getRom().equals(game.getRom())) {
           return ValidationCode.CODE_DUPLICATE_ROM;
@@ -74,24 +78,24 @@ public class GameValidator implements InitializingBean {
       }
     }
 
-    if (isValidationEnabled(game, ValidationCode.CODE_NO_HIGHSCORE_FILES)) {
+    if ((isVPX || isFP) && isValidationEnabled(game, ValidationCode.CODE_NO_HIGHSCORE_FILES)) {
       if (!game.hasHighscore()) {
         return ValidationCode.CODE_NO_HIGHSCORE_FILES;
       }
     }
 
-    File audio = game.getEmulator().getPinUPMedia(PopperScreen.Audio);
-    File audioLaunch = game.getEmulator().getPinUPMedia(PopperScreen.AudioLaunch);
-    File apron = game.getEmulator().getPinUPMedia(PopperScreen.Menu);
-    File info = game.getEmulator().getPinUPMedia(PopperScreen.GameInfo);
-    File help = game.getEmulator().getPinUPMedia(PopperScreen.GameHelp);
-    File topper = game.getEmulator().getPinUPMedia(PopperScreen.Topper);
-    File backglass = game.getEmulator().getPinUPMedia(PopperScreen.BackGlass);
-    File dmd = game.getEmulator().getPinUPMedia(PopperScreen.DMD);
-    File playfield = game.getEmulator().getPinUPMedia(PopperScreen.PlayField);
-    File loading = game.getEmulator().getPinUPMedia(PopperScreen.Loading);
-    File other2 = game.getEmulator().getPinUPMedia(PopperScreen.Other2);
-    File wheel = game.getEmulator().getPinUPMedia(PopperScreen.Wheel);
+    File audio = game.getPinUPMedia(PopperScreen.Audio);
+    File audioLaunch = game.getPinUPMedia(PopperScreen.AudioLaunch);
+    File apron = game.getPinUPMedia(PopperScreen.Menu);
+    File info = game.getPinUPMedia(PopperScreen.GameInfo);
+    File help = game.getPinUPMedia(PopperScreen.GameHelp);
+    File topper = game.getPinUPMedia(PopperScreen.Topper);
+    File backglass = game.getPinUPMedia(PopperScreen.BackGlass);
+    File dmd = game.getPinUPMedia(PopperScreen.DMD);
+    File playfield = game.getPinUPMedia(PopperScreen.PlayField);
+    File loading = game.getPinUPMedia(PopperScreen.Loading);
+    File other2 = game.getPinUPMedia(PopperScreen.Other2);
+    File wheel = game.getPinUPMedia(PopperScreen.Wheel);
 
     if (isValidationEnabled(game, CODE_NO_AUDIO)) {
       if (audio == null || !audio.exists()) {

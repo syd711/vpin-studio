@@ -34,6 +34,7 @@ public class SystemService implements InitializingBean {
 
   private final static String PINUP_SYSTEM_INSTALLATION_DIR_INST_DIR = "pinupSystem.installationDir";
   private final static String VISUAL_PINBALL_INST_DIR = "visualPinball.installationDir";
+  private final static String FUTURE_PINBALL_INST_DIR = "futurePinball.installationDir";
   private final static String DIRECTB2S_DIR = "directb2s.directory";
   private final static String PINEMHI_FOLDER = RESOURCES + "pinemhi";
   private final static String PINEMHI_COMMAND = "PINemHi.exe";
@@ -44,6 +45,7 @@ public class SystemService implements InitializingBean {
 
   private File pinUPSystemInstallationFolder;
   private File visualPinballInstallationFolder;
+  private File futurePinballInstallationFolder;
 
   private File pinemhiNvRamFolder;
 
@@ -81,6 +83,15 @@ public class SystemService implements InitializingBean {
       }
       else {
         this.visualPinballInstallationFolder = new File(store.get(VISUAL_PINBALL_INST_DIR));
+      }
+
+      //Future Pinball Folder
+      this.futurePinballInstallationFolder = this.resolveFuturePinballInstallationFolder();
+      if (!store.containsKey(FUTURE_PINBALL_INST_DIR)) {
+        store.set(FUTURE_PINBALL_INST_DIR, futurePinballInstallationFolder.getAbsolutePath().replaceAll("\\\\", "/"));
+      }
+      else {
+        this.futurePinballInstallationFolder = new File(store.get(FUTURE_PINBALL_INST_DIR));
       }
 
       if (!getB2SImageExtractionFolder().exists()) {
@@ -237,6 +248,14 @@ public class SystemService implements InitializingBean {
     return file;
   }
 
+  private File resolveFuturePinballInstallationFolder() {
+    File file = new File(pinUPSystemInstallationFolder.getParent(), "FuturePinball");
+    if (!file.exists()) {
+      LOG.info("The system info could not derive the Future Pinball installation folder from the PinUP Popper installation, checking windows registry next.");
+    }
+    return file;
+  }
+
   public File getPinemhiCommandFile() {
     return new File(PINEMHI_FOLDER, PINEMHI_COMMAND);
   }
@@ -279,12 +298,20 @@ public class SystemService implements InitializingBean {
     return visualPinballInstallationFolder;
   }
 
+  public File getFuturePinballInstallationFolder() {
+    return futurePinballInstallationFolder;
+  }
+
   public String get7ZipCommand() {
     return new File(SystemService.RESOURCES, "7z.exe").getAbsolutePath();
   }
 
   public File getVPXTablesFolder() {
     return new File(getVisualPinballInstallationFolder(), "Tables/");
+  }
+
+  public File getFuturePinballTablesFolder() {
+    return new File(getFuturePinballInstallationFolder(), "Tables/");
   }
 
   public File getDirectB2SFolder() {

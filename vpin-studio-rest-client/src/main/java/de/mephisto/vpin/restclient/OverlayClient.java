@@ -14,8 +14,6 @@ public interface OverlayClient {
 
   ScoreSummaryRepresentation getGameScores(int id);
 
-  GameMediaRepresentation getGameMedia(int id);
-
   ByteArrayInputStream getCompetitionBackground(long gameId);
 
   ScoreListRepresentation getCompetitionScores(long id);

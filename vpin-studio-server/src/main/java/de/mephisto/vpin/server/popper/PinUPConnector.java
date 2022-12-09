@@ -12,9 +12,8 @@ import org.springframework.stereotype.Service;
 
 import java.io.File;
 import java.sql.*;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
+import java.sql.Date;
+import java.util.*;
 
 @Service
 public class PinUPConnector implements InitializingBean {
@@ -31,6 +30,8 @@ public class PinUPConnector implements InitializingBean {
   @Autowired
   private SystemService systemService;
 
+  private Map<Integer, Emulator> emulators = new HashMap<>();
+
   @Override
   public void afterPropertiesSet() {
     File file = systemService.getPinUPDatabaseFile();
@@ -43,6 +44,7 @@ public class PinUPConnector implements InitializingBean {
     for (Emulator emulator : ems) {
       String name = emulator.getName();
       if (name.equals(Emulator.VISUAL_PINBALL_X) || name.equals(Emulator.FUTURE_PINBALL) || name.equals(Emulator.PINBALL_FX3)) {
+        emulators.put(emulator.getId(), emulator);
         initVisualPinballXScripts(emulator);
       }
     }
@@ -219,7 +221,7 @@ public class PinUPConnector implements InitializingBean {
       Statement statement = connect.createStatement();
       ResultSet rs = statement.executeQuery("SELECT * FROM Emulators;");
       while (rs.next()) {
-        Emulator e = new Emulator(null);
+        Emulator e = new Emulator();
         e.setId(rs.getInt("EMUID"));
         e.setName(rs.getString("EmuName"));
         e.setMediaDir(rs.getString("DirMedia"));
@@ -312,7 +314,7 @@ public class PinUPConnector implements InitializingBean {
     List<Game> results = new ArrayList<>();
     try {
       Statement statement = connect.createStatement();
-      ResultSet rs = statement.executeQuery("SELECT * FROM Games WHERE EMUID = 1;");
+      ResultSet rs = statement.executeQuery("SELECT * FROM Games WHERE EMUID = 4;");
       while (rs.next()) {
         Game info = createGame(connect, rs);
         if (info != null) {
@@ -434,35 +436,26 @@ public class PinUPConnector implements InitializingBean {
     game.setGameDisplayName(gameDisplayName);
 
     int emuId = rs.getInt("EMUID");
+    Emulator emulator = emulators.get(emuId);
+    game.setEmulator(emulator);
 
-    File vpxFile = new File(systemService.getVPXTablesFolder(), gameFileName);
-    if (!vpxFile.exists()) {
-      return null;
-    }
-    game.setGameFile(vpxFile);
-    loadStats(connection, game);
-    loadEmulator(connection, game, emuId);
-    return game;
-  }
-
-  private void loadEmulator(@NonNull Connection connection, @NonNull Game game, int emuId) {
-    try {
-      PreparedStatement statement = connection.prepareStatement("SELECT * FROM Emulators WHERE EMUID = ?");
-      statement.setInt(1, emuId);
-      ResultSet rs = statement.executeQuery();
-      Emulator emulator = new Emulator(game);
-      game.setEmulator(emulator);
-
-      if (rs.next()) {
-        emulator.setId(rs.getInt("EMUID"));
-        emulator.setName(rs.getString("EmuName"));
-        emulator.setMediaDir(rs.getString("DirMedia"));
+    if(emulator.getName().equalsIgnoreCase(Emulator.VISUAL_PINBALL_X)) {
+      File vpxFile = new File(systemService.getVPXTablesFolder(), gameFileName);
+      if (!vpxFile.exists()) {
+        return null;
       }
-      rs.close();
-      statement.close();
-    } catch (SQLException e) {
-      LOG.error("Failed to read emulator info: " + e.getMessage(), e);
+      game.setGameFile(vpxFile);
     }
+    else if(emulator.getName().equalsIgnoreCase(Emulator.FUTURE_PINBALL)) {
+      File fpFile = new File(systemService.getFuturePinballTablesFolder(), gameFileName);
+      if (!fpFile.exists()) {
+        return null;
+      }
+      game.setGameFile(fpFile);
+    }
+
+    loadStats(connection, game);
+    return game;
   }
 
   private void loadStats(@NonNull Connection connection, @NonNull Game game) {

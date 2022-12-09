@@ -271,7 +271,6 @@ public class TablesController implements Initializable, StudioFXController {
         this.textfieldSearch.setDisable(false);
         this.reloadBtn.setDisable(false);
         this.scanAllBtn.setDisable(false);
-        this.scanBtn.setDisable(false);
         this.validateBtn.setDisable(false);
         this.uploadTableBtn.setDisable(false);
 
@@ -352,7 +351,7 @@ public class TablesController implements Initializable, StudioFXController {
 
     columnEmulator.setCellValueFactory(cellData -> {
       GameRepresentation value = cellData.getValue();
-      return new SimpleStringProperty(value.getId());
+      return new SimpleStringProperty(value.getEmulator().getName());
     });
 
     columnB2S.setCellValueFactory(cellData -> {
@@ -402,7 +401,7 @@ public class TablesController implements Initializable, StudioFXController {
     tableView.setItems(data);
     tableView.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
       boolean disable = newSelection == null;
-      this.scanBtn.setDisable(disable);
+      this.scanBtn.setDisable(newSelection == null || !newSelection.getEmulator().isVisualPinball());
       this.validateBtn.setDisable(disable);
       refreshView(Optional.ofNullable(newSelection));
     });

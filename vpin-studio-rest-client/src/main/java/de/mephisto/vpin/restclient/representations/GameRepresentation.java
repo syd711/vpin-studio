@@ -22,6 +22,8 @@ public class GameRepresentation {
   private int id;
   private Date lastPlayed;
   private int numberPlays;
+  private GameMediaRepresentation gameMedia;
+  private EmulatorRepresentation emulator;
   private boolean directB2SAvailable;
   private boolean pupPackAvailable;
   private int validationState;
@@ -29,6 +31,22 @@ public class GameRepresentation {
   private String hsFileName;
   private boolean romExists;
   private String ignoredValidations;
+
+  public GameMediaRepresentation getGameMedia() {
+    return gameMedia;
+  }
+
+  public void setGameMedia(GameMediaRepresentation gameMedia) {
+    this.gameMedia = gameMedia;
+  }
+
+  public EmulatorRepresentation getEmulator() {
+    return emulator;
+  }
+
+  public void setEmulator(EmulatorRepresentation emulator) {
+    this.emulator = emulator;
+  }
 
   public String getIgnoredValidations() {
     return ignoredValidations;

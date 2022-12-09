@@ -79,8 +79,8 @@ public class WidgetCompetitionSummaryController extends WidgetController impleme
   public void setCompetition(CompetitionRepresentation competition) {
     if (competition != null) {
       GameRepresentation game = OverlayWindowFX.client.getGame(competition.getGameId());
-      GameMediaRepresentation gameMedia = OverlayWindowFX.client.getGameMedia(game.getId());
       ScoreSummaryRepresentation gameScores = OverlayWindowFX.client.getGameScores(game.getId());
+      GameMediaRepresentation gameMedia = game.getGameMedia();
 
       LocalDate start = competition.getStartDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
       LocalDate end = competition.getEndDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();

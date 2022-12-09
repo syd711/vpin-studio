@@ -166,7 +166,7 @@ public class CardGraphics {
     tableNameY = tableNameY + TABLE_FONT_SIZE / 2;
 
     //draw wheel icon
-    File wheelIconFile = game.getEmulator().getPinUPMedia(PopperScreen.Wheel);
+    File wheelIconFile = game.getPinUPMedia(PopperScreen.Wheel);
     int wheelY = tableNameY + ROW_SEPARATOR;
     int wheelSize = 3 * SCORE_FONT_SIZE + 3 * ROW_SEPARATOR;
     if (wheelIconFile != null && wheelIconFile.exists()) {
@@ -218,7 +218,7 @@ public class CardGraphics {
 
     int x = 0;
     int wheelWidth = PADDING * 2 + TABLE_FONT_SIZE * 2;
-    File wheelIconFile = game.getEmulator().getPinUPMedia(PopperScreen.Wheel);
+    File wheelIconFile = game.getPinUPMedia(PopperScreen.Wheel);
     boolean renderWheel = remainingXSpace > (wheelWidth + PADDING);
     if (remainingXSpace > 250) {
       wheelWidth = 250;

@@ -41,7 +41,7 @@ public class WidgetLatestScoresController extends WidgetController implements In
       List<ScoreRepresentation> scores = scoreSummary.getScores();
       for (ScoreRepresentation score : scores) {
         GameRepresentation game = OverlayWindowFX.client.getGame(score.getGameId());
-        GameMediaRepresentation gameMedia = OverlayWindowFX.client.getGameMedia(game.getId());
+        GameMediaRepresentation gameMedia = game.getGameMedia();
 
         GameMediaItemRepresentation wheelMedia = gameMedia.getMedia().get(PopperScreen.Wheel.name());
         if (wheelMedia == null) {

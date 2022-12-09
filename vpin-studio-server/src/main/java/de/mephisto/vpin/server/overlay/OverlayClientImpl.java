@@ -95,19 +95,6 @@ public class OverlayClientImpl implements OverlayClient, InitializingBean {
   }
 
   @Override
-  public GameMediaRepresentation getGameMedia(int id) {
-    try {
-      Game game = gameService.getGame(id);
-      GameMedia gameMedia = game.getEmulator().getGameMedia();
-      String s = mapper.writeValueAsString(gameMedia);
-      return mapper.readValue(s, GameMediaRepresentation.class);
-    } catch (Exception e) {
-      LOG.error("Error during conversion: " + e.getMessage(), e);
-    }
-    return null;
-  }
-
-  @Override
   public ScoreListRepresentation getCompetitionScores(long id) {
     try {
       ScoreList competitionScores = competitionService.getCompetitionScores(id);
@@ -147,9 +134,7 @@ public class OverlayClientImpl implements OverlayClient, InitializingBean {
   public ByteArrayInputStream getGameMediaItem(int id, PopperScreen screen) {
     try {
       Game game = gameService.getGame(id);
-      Emulator emulator = game.getEmulator();
-      GameMedia gameMedia = emulator.getGameMedia();
-      GameMediaItem gameMediaItem = gameMedia.get(screen);
+      GameMediaItem gameMediaItem = game.getGameMedia().get(screen);
       if (gameMediaItem != null) {
         File file = gameMediaItem.getFile();
         FileInputStream fileInputStream = new FileInputStream(file);

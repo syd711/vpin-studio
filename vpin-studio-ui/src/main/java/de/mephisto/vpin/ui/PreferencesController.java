@@ -1,8 +1,5 @@
 package de.mephisto.vpin.ui;
 
-import de.mephisto.vpin.ui.preferences.AvatarPreferencesController;
-import de.mephisto.vpin.ui.preferences.CardGenerationPreferencesController;
-import de.mephisto.vpin.ui.preferences.NetworkPreferencesController;
 import de.mephisto.vpin.ui.preferences.ScreensPreferencesController;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -40,8 +37,8 @@ public class PreferencesController implements Initializable {
   }
 
   @FXML
-  private void onNetwork(ActionEvent event) throws IOException {
-    load("preference-network.fxml");
+  private void onVPinName(ActionEvent event) throws IOException {
+    load("preference-vpin-name.fxml");
   }
 
   @FXML

@@ -334,7 +334,7 @@ public class TablesSidebarController implements Initializable {
 
     if (g.isPresent()) {
       GameRepresentation game = g.get();
-      GameMediaRepresentation gameMedia = client.getGameMedia(game.getId());
+      GameMediaRepresentation gameMedia = game.getGameMedia();
 
       volumeSlider.setDisable(false);
       volumeSlider.setValue(game.getVolume());

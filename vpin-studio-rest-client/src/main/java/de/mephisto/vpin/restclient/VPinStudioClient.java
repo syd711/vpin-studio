@@ -67,10 +67,6 @@ public class VPinStudioClient implements ObservedPropertyChangeListener, Overlay
    * Assets / Popper
    ********************************************************************************************************************/
 
-  public GameMediaRepresentation getGameMedia(int id) {
-    return restClient.get(API + "poppermedia/" + id, GameMediaRepresentation.class);
-  }
-
   public ByteArrayInputStream getGameMediaItem(int id, PopperScreen screen) {
     if (!imageCache.containsKey(String.valueOf(id)) && screen.equals(PopperScreen.Wheel)) {
       byte[] bytes = restClient.readBinary(API + "poppermedia/" + id + "/" + screen.name());
@@ -336,17 +332,6 @@ public class VPinStudioClient implements ObservedPropertyChangeListener, Overlay
   public boolean generateHighscoreCard(GameRepresentation game) {
     int gameId = game.getId();
     return restClient.get(API + "cards/generate/" + gameId, Boolean.class);
-  }
-
-  public boolean uploadOverlayBackgroundImage(File file) throws Exception {
-    try {
-      String url = restClient.getBaseUrl() + API + "overlay/backgroundupload";
-      new RestTemplate().exchange(url, HttpMethod.POST, createUpload(file, -1, null, AssetType.OVERLAY_BACKGROUND), Boolean.class);
-      return true;
-    } catch (Exception e) {
-      LOG.error("Background upload failed: " + e.getMessage(), e);
-      throw e;
-    }
   }
 
   public List<String> getHighscoreBackgroundImages() {

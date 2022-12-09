@@ -1,7 +1,10 @@
 package de.mephisto.vpin.server.games;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import de.mephisto.vpin.restclient.PopperScreen;
 import de.mephisto.vpin.server.popper.Emulator;
+import de.mephisto.vpin.server.popper.GameMedia;
+import de.mephisto.vpin.server.popper.GameMediaItem;
 import de.mephisto.vpin.server.system.SystemService;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
@@ -142,6 +145,38 @@ public class Game {
     }
 
     return defaultNVFile;
+  }
+
+
+
+  @NonNull
+  public File getPinUPMediaFolder(@NonNull PopperScreen screen) {
+    File emulatorMediaFolder = new File(this.emulator.getMediaDir());
+    return new File(emulatorMediaFolder, screen.name());
+  }
+
+  @Nullable
+  public File getPinUPMedia(@NonNull PopperScreen screen) {
+    String baseName = FilenameUtils.getBaseName(getGameFileName());
+    File[] mediaFiles = getPinUPMediaFolder(screen).listFiles((dir, name) -> FilenameUtils.getBaseName(name).equals(baseName));
+    if (mediaFiles != null && mediaFiles.length > 0) {
+      return mediaFiles[0];
+    }
+    return null;
+  }
+
+  @NonNull
+  public GameMedia getGameMedia() {
+    GameMedia gameMedia = new GameMedia();
+    PopperScreen[] screens = PopperScreen.values();
+    for (PopperScreen screen : screens) {
+      File mediaFile = getPinUPMedia(screen);
+      if (mediaFile != null) {
+        GameMediaItem item = new GameMediaItem(this, screen, mediaFile);
+        gameMedia.getMedia().put(screen.name(), item);
+      }
+    }
+    return gameMedia;
   }
 
   @Nullable

@@ -55,7 +55,7 @@ public class HighscoreWidgetController extends WidgetController implements Initi
 
   public void setData(PlayerRepresentation player, ScoreRepresentation score) {
     GameRepresentation game = client.getGame(score.getGameId());
-    GameMediaRepresentation gameMedia = client.getGameMedia(score.getGameId());
+    GameMediaRepresentation gameMedia = game.getGameMedia();
     GameMediaItemRepresentation item = gameMedia.getItem(PopperScreen.Wheel);
     if(item != null) {
       ByteArrayInputStream gameMediaItem = OverlayWindowFX.client.getGameMediaItem(score.getGameId(), PopperScreen.Wheel);
