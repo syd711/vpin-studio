@@ -15,7 +15,7 @@ import org.apache.commons.lang3.StringUtils;
 import java.net.URL;
 import java.util.*;
 
-public class ConfigValidatorsPreferencesController implements Initializable {
+public class ValidatorsVPXPreferencesController implements Initializable {
 
   private VPinStudioClient client;
 

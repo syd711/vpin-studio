@@ -43,12 +43,12 @@ public class PreferencesController implements Initializable {
 
   @FXML
   private void onMediaValidation(ActionEvent event) throws IOException {
-    load("preference-media-validators.fxml");
+    load("preference-validators-pinuppopper.fxml");
   }
 
   @FXML
-  private void onConfigValidation(ActionEvent event) throws IOException {
-    load("preference-config-validators.fxml");
+  private void onVPXValidation(ActionEvent event) throws IOException {
+    load("preference-validators-vpx.fxml");
   }
 
   @FXML

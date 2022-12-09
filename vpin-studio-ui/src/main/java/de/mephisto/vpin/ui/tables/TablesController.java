@@ -404,7 +404,7 @@ public class TablesController implements Initializable, StudioFXController {
       refreshView(Optional.ofNullable(newSelection));
     });
 
-    emulatorTypeCombo.setItems(FXCollections.observableList(Arrays.asList("", EmulatorTypes.VISUAL_PINBALL_X, EmulatorTypes.FUTURE_PINBALL, EmulatorTypes.PINBALL_FX3)));
+    emulatorTypeCombo.setItems(FXCollections.observableList(Arrays.asList("", EmulatorTypes.VISUAL_PINBALL_X, EmulatorTypes.PINBALL_FX3)));
     emulatorTypeCombo.valueProperty().addListener((observable, oldValue, newValue) -> onReload());
 
     refreshView(Optional.empty());

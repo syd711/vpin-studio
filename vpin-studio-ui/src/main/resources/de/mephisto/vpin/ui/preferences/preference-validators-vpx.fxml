@@ -10,13 +10,13 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane styleClass="base-component" stylesheets="@../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.preferences.ConfigValidatorsPreferencesController">
+<BorderPane styleClass="base-component" stylesheets="@../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.preferences.ValidatorsVPXPreferencesController">
    <top>
       <VBox fx:id="preferenceList" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" styleClass="subpanel" BorderPane.alignment="TOP_LEFT">
          <children>
             <Label styleClass="preference-title" text="TABLE PREFERENCES" textFill="WHITE" />
-            <Label layoutX="34.0" layoutY="66.0" styleClass="preference-subtitle" text="Configuration Validators" />
-            <Label layoutX="34.0" layoutY="104.0" styleClass="preference-description" text="If enabled, the validation is executed for every table. The validators can be disabled for every table individually." textFill="WHITE">
+            <Label layoutX="34.0" layoutY="66.0" styleClass="preference-subtitle" text="VPX Validators" />
+            <Label layoutX="34.0" layoutY="104.0" styleClass="preference-description" text="If enabled, the validation is executed for every VPX table. The validators can be disabled for every table individually." textFill="WHITE">
                <VBox.margin>
                   <Insets top="24.0" />
                </VBox.margin></Label>

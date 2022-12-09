@@ -17,7 +17,7 @@ import java.net.URL;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class MediaValidatorsPreferencesController implements Initializable {
+public class ValidatorsPinUPPopperPreferencesController implements Initializable {
 
   private VPinStudioClient client;
 
