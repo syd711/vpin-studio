@@ -17,7 +17,6 @@
 <?import javafx.scene.text.Font?>
 <?import org.kordamp.ikonli.javafx.FontIcon?>
 
-
 <BorderPane fx:id="mediaView" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="800.0" styleClass="base-component" stylesheets="@../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.launcher.LauncherController">
    <left>
       <BorderPane prefHeight="350.0" prefWidth="260.0" styleClass="navigation-panel" BorderPane.alignment="CENTER">
@@ -39,7 +38,7 @@
                <left>
                   <ImageView fitHeight="100.0" fitWidth="100.0" pickOnBounds="true" preserveRatio="true" BorderPane.alignment="TOP_LEFT">
                      <image>
-                        <Image url="@../logo-512.png" />
+                        <Image url="@../logo-128.png" />
                      </image>
                   </ImageView>
                </left>
@@ -56,6 +55,9 @@
                         </Label>
                         <Label fx:id="versionLabel" text="version" />
                      </children>
+                     <BorderPane.margin>
+                        <Insets left="6.0" />
+                     </BorderPane.margin>
                   </VBox>
                </center>
             </BorderPane>

@@ -124,9 +124,9 @@
             </goals>
             <configuration>
               <headerType>gui</headerType>
-              <outfile>target/encc.exe</outfile>
+              <outfile>target/VPin-Studio.exe</outfile>
               <jar>target/vpin-studio-ui-1.0-SNAPSHOT.jar</jar>
-              <errTitle>encc</errTitle>
+              <errTitle>VPin-Studio</errTitle>
               <classPath>
                 <mainClass>de.mephisto.vpin.ui.Launcher</mainClass>
                 <addDependencies>true</addDependencies>
@@ -136,14 +136,14 @@
                 <path>./win32/java</path>
               </jre>
               <versionInfo>
-                <fileVersion>1.2.3.4</fileVersion>
-                <txtFileVersion>txt file version?</txtFileVersion>
-                <fileDescription>a description</fileDescription>
-                <copyright>my copyright</copyright>
-                <productVersion>4.3.2.1</productVersion>
-                <txtProductVersion>txt product version</txtProductVersion>
-                <productName>E-N-C-C</productName>
-                <internalName>ccne</internalName>
+                <fileVersion>1.0.0.0</fileVersion>
+                <txtFileVersion>1.0.0.0</txtFileVersion>
+                <fileDescription>VPin Studio</fileDescription>
+                <copyright>2023 https://github.com/syd711</copyright>
+                <productVersion>1.0.0.0</productVersion>
+                <txtProductVersion>1.0.0.0</txtProductVersion>
+                <productName>VPin Studio</productName>
+                <internalName>VPin-Studio</internalName>
                 <originalFilename>original.exe</originalFilename>
               </versionInfo>
             </configuration>
