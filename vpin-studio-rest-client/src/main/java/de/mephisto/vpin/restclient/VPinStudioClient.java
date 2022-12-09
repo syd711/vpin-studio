@@ -54,8 +54,13 @@ public class VPinStudioClient implements ObservedPropertyChangeListener, Overlay
   }
 
   public String version() {
-    final RestTemplate restTemplate = new RestTemplate();
-    return restTemplate.getForObject(restClient.getBaseUrl() + API + "system/version", String.class);
+    try {
+      final RestTemplate restTemplate = new RestTemplate();
+      return restTemplate.getForObject(restClient.getBaseUrl() + API + "system/version", String.class);
+    } catch (Exception e) {
+      LOG.error("Get version failed for " + restClient.getBaseUrl());
+    }
+    return null;
   }
 
   /*********************************************************************************************************************

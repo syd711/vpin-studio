@@ -52,7 +52,7 @@ public class Updater {
       conn.addRequestProperty("Accept-Language", "en-US,en;q=0.8");
       conn.addRequestProperty("User-Agent", "Mozilla");
       conn.addRequestProperty("Referer", "google.com");
-      conn.getResponseCode();
+      int responseCode = conn.getResponseCode();
 
       String s = conn.getURL().toString();
       String versionSegment = s.substring(s.lastIndexOf("/") + 1);
