@@ -329,12 +329,16 @@ public class TablesSidebarController implements Initializable {
   private void refreshView(Optional<GameRepresentation> g) {
     editHsFileNameBtn.setDisable(g.isEmpty());
     editRomNameBtn.setDisable(g.isEmpty());
-    directb2sUploadBtn.setDisable(g.isEmpty());
     romUploadBtn.setDisable(g.isEmpty());
+    directb2sUploadBtn.setDisable(g.isEmpty());
 
     if (g.isPresent()) {
       GameRepresentation game = g.get();
       GameMediaRepresentation gameMedia = game.getGameMedia();
+
+      editHsFileNameBtn.setDisable(!game.getEmulator().isVisualPinball());
+      editRomNameBtn.setDisable(!game.getEmulator().isVisualPinball());
+      romUploadBtn.setDisable(!game.getEmulator().isVisualPinball());
 
       volumeSlider.setDisable(false);
       volumeSlider.setValue(game.getVolume());
