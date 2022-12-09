@@ -57,10 +57,7 @@ public class TablesController implements Initializable, StudioFXController {
   private TableColumn<GameRepresentation, String> columnRom;
 
   @FXML
-  private TableColumn<GameRepresentation, String> columnRomAlias;
-
-  @FXML
-  private TableColumn<GameRepresentation, String> columnNVOffset;
+  private TableColumn<GameRepresentation, String> columnEmulator;
 
   @FXML
   private TableColumn<GameRepresentation, String> columnB2S;
@@ -70,9 +67,6 @@ public class TablesController implements Initializable, StudioFXController {
 
   @FXML
   private TableColumn<GameRepresentation, String> columnPUPPack;
-
-  @FXML
-  private TableColumn<GameRepresentation, String> columnHsFile;
 
   @FXML
   private TableView<GameRepresentation> tableView;
@@ -356,20 +350,9 @@ public class TablesController implements Initializable, StudioFXController {
       return new SimpleStringProperty(rom);
     });
 
-    columnRomAlias.setCellValueFactory(cellData -> {
+    columnEmulator.setCellValueFactory(cellData -> {
       GameRepresentation value = cellData.getValue();
-      if (!StringUtils.isEmpty(value.getOriginalRom())) {
-        return new SimpleStringProperty(value.getRom());
-      }
-      return new SimpleStringProperty("-");
-    });
-
-    columnNVOffset.setCellValueFactory(cellData -> {
-      GameRepresentation value = cellData.getValue();
-      if (value.getNvOffset() > 0) {
-        return new SimpleStringProperty(String.valueOf(value.getNvOffset()));
-      }
-      return new SimpleStringProperty("");
+      return new SimpleStringProperty(value.getId());
     });
 
     columnB2S.setCellValueFactory(cellData -> {
@@ -413,12 +396,6 @@ public class TablesController implements Initializable, StudioFXController {
       fontIcon.setIconColor(Paint.valueOf("#66FF66"));
       fontIcon.setIconLiteral("bi-check-circle");
       return new SimpleObjectProperty(fontIcon);
-    });
-
-    columnHsFile.setCellValueFactory(cellData -> {
-      GameRepresentation value = cellData.getValue();
-      String hsFileName = value.getHsFileName();
-      return new SimpleStringProperty(hsFileName);
     });
 
 

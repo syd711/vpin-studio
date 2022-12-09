@@ -22,7 +22,6 @@ public class GameRepresentation {
   private int id;
   private Date lastPlayed;
   private int numberPlays;
-  private String emulatorName;
   private boolean directB2SAvailable;
   private boolean pupPackAvailable;
   private int validationState;
@@ -125,14 +124,6 @@ public class GameRepresentation {
 
   public void setNumberPlays(int numberPlays) {
     this.numberPlays = numberPlays;
-  }
-
-  public String getEmulatorName() {
-    return emulatorName;
-  }
-
-  public void setEmulatorName(String emulatorName) {
-    this.emulatorName = emulatorName;
   }
 
   public int getNvOffset() {

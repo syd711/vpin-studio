@@ -35,11 +35,9 @@
                                     <TableColumn fx:id="columnStatus" minWidth="57.5999755859375" prefWidth="67.199951171875" style="-fx-alignment: CENTER;" text="Status" />
                                   <TableColumn fx:id="columnDisplayName" minWidth="100.0" prefWidth="298.40000915527344" style="-fx-alignment: BASELINE_LEFT;" text="Display Name" />
                                   <TableColumn fx:id="columnRom" minWidth="10.4000244140625" prefWidth="138.39999389648438" style="-fx-alignment: BASELINE_LEFT;" text="ROM" />
-                                    <TableColumn fx:id="columnRomAlias" minWidth="77.60009765625" style="-fx-alignment: BASELINE_LEFT;" text="ROM Alias" />
-                                    <TableColumn fx:id="columnNVOffset" minWidth="62.4000244140625" prefWidth="70.39990234375" style="-fx-alignment: CENTER;" text="NVOffset" />
+                                    <TableColumn fx:id="columnEmulator" minWidth="10.4000244140625" prefWidth="138.39999389648438" style="-fx-alignment: BASELINE_LEFT;" text="Emulator" />
                                     <TableColumn fx:id="columnB2S" minWidth="51.199951171875" prefWidth="103.199951171875" style="-fx-alignment: CENTER;" text="DirectB2S File" />
                                     <TableColumn fx:id="columnPUPPack" minWidth="57.5999755859375" prefWidth="76.800048828125" style="-fx-alignment: CENTER;" text="PUP Pack" />
-                                    <TableColumn fx:id="columnHsFile" minWidth="57.5999755859375" prefWidth="140.7999267578125" style="-fx-alignment: BASELINE_LEFT;" text="EM Highscore File" />
                                 </columns>
                               </TableView>
                            </children>

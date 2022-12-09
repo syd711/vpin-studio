@@ -14,6 +14,7 @@ import javafx.scene.paint.Paint;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -40,8 +41,8 @@ public class Studio extends Application {
     Studio.client = new VPinStudioClient("localhost");
     OverlayWindowFX.client = Studio.client;
 
-    boolean localPingResult = false; //client.ping();
-    if (localPingResult) {
+    String version = client.version();
+    if (!StringUtils.isEmpty(version)) {
       loadStudio(stage, Studio.client);
     }
     else {
