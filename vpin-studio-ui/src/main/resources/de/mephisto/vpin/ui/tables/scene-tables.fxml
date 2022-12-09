@@ -2,6 +2,7 @@
 
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Hyperlink?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.Separator?>
@@ -63,6 +64,7 @@
                                     <FontIcon iconColor="WHITE" iconLiteral="sil-reload" />
                                  </graphic>
                               </Button>
+                              <ComboBox fx:id="emulatorTypeCombo" onAction="#onEmulatorSelect" prefWidth="150.0" />
                               <Separator orientation="VERTICAL" prefHeight="30.0" prefWidth="12.0" />
                               <Button fx:id="uploadTableBtn" layoutX="492.0" layoutY="11.0" mnemonicParsing="false" onAction="#onTableUpload" text="Upload Table" textFill="WHITE">
                                  <font>
@@ -72,7 +74,7 @@
                                     <FontIcon iconColor="WHITE" iconLiteral="mdi2u-upload" />
                                  </graphic>
                               </Button>
-                              <Button fx:id="scanAllBtn" mnemonicParsing="false" onAction="#onTablesScan" text="Scan All Tables" textFill="WHITE">
+                              <Button fx:id="scanAllBtn" mnemonicParsing="false" onAction="#onTablesScan" text="Scan All " textFill="WHITE">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
@@ -80,7 +82,7 @@
                                     <FontIcon iconColor="WHITE" iconLiteral="mdi2m-map-search-outline" />
                                  </graphic>
                               </Button>
-                              <Button fx:id="scanBtn" mnemonicParsing="false" onAction="#onTableScan" text="Scan Table" textFill="WHITE">
+                              <Button fx:id="scanBtn" mnemonicParsing="false" onAction="#onTableScan" text="Scan" textFill="WHITE">
                                  <font>
                                     <Font size="14.0" />
                                  </font>

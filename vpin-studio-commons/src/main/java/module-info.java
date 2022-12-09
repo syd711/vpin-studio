@@ -16,6 +16,7 @@ open module de.mephisto.vpin.commons {
 
   requires de.mephisto.vpin.restclient;
 
+  exports de.mephisto.vpin.commons;
   exports de.mephisto.vpin.commons.fx;
   exports de.mephisto.vpin.commons.fx.widgets;
   exports de.mephisto.vpin.commons.utils;

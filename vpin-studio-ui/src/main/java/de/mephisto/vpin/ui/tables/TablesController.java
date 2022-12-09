@@ -1,7 +1,9 @@
 package de.mephisto.vpin.ui.tables;
 
+import de.mephisto.vpin.commons.EmulatorTypes;
 import de.mephisto.vpin.restclient.VPinStudioClient;
 import de.mephisto.vpin.restclient.ValidationCode;
+import de.mephisto.vpin.restclient.representations.EmulatorRepresentation;
 import de.mephisto.vpin.restclient.representations.GameRepresentation;
 import de.mephisto.vpin.ui.NavigationController;
 import de.mephisto.vpin.ui.Studio;
@@ -15,6 +17,8 @@ import de.mephisto.vpin.ui.util.WidgetFactory;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -102,6 +106,9 @@ public class TablesController implements Initializable, StudioFXController {
   private Button reloadBtn;
 
   @FXML
+  private ComboBox<String> emulatorTypeCombo;
+
+  @FXML
   private Parent tablesSideBar;
 
   @FXML
@@ -138,6 +145,11 @@ public class TablesController implements Initializable, StudioFXController {
       mediaView.getMediaPlayer().stop();
       icon.setIconLiteral("bi-play");
     }
+  }
+
+  @FXML
+  private void onEmulatorSelect() {
+
   }
 
   @FXML
@@ -243,16 +255,8 @@ public class TablesController implements Initializable, StudioFXController {
 
     new Thread(() -> {
       GameRepresentation selection = tableView.getSelectionModel().getSelectedItem();
-      List<GameRepresentation> games = client.getGames();
-      List<GameRepresentation> filtered = new ArrayList<>();
-      String filterValue = textfieldSearch.textProperty().getValue();
-      for (GameRepresentation game : games) {
-        if (game.getGameDisplayName().toLowerCase().contains(filterValue.toLowerCase())) {
-          filtered.add(game);
-        }
-      }
-      data = FXCollections.observableList(filtered);
-
+      games = client.getGames();
+      filterGames(games);
 
       Platform.runLater(() -> {
         tableView.setItems(data);
@@ -303,13 +307,7 @@ public class TablesController implements Initializable, StudioFXController {
       tableView.getSelectionModel().clearSelection();
       refreshView(Optional.empty());
 
-      List<GameRepresentation> filtered = new ArrayList<>();
-      for (GameRepresentation game : games) {
-        if (game.getGameDisplayName().toLowerCase().contains(filterValue.toLowerCase())) {
-          filtered.add(game);
-        }
-      }
-      data = FXCollections.observableArrayList(filtered);
+      filterGames(games);
       tableView.setItems(data);
     });
   }
@@ -406,8 +404,28 @@ public class TablesController implements Initializable, StudioFXController {
       refreshView(Optional.ofNullable(newSelection));
     });
 
+    emulatorTypeCombo.setItems(FXCollections.observableList(Arrays.asList("", EmulatorTypes.VISUAL_PINBALL_X, EmulatorTypes.FUTURE_PINBALL, EmulatorTypes.PINBALL_FX3)));
+    emulatorTypeCombo.valueProperty().addListener((observable, oldValue, newValue) -> onReload());
+
     refreshView(Optional.empty());
     this.onReload();
+  }
+
+  private void filterGames(List<GameRepresentation> games) {
+    List<GameRepresentation> filtered = new ArrayList<>();
+    String filterValue = textfieldSearch.textProperty().getValue();
+    String emulatorValue = emulatorTypeCombo.getValue();
+    for (GameRepresentation game : games) {
+      if (!game.getGameDisplayName().toLowerCase().contains(filterValue.toLowerCase())) {
+        continue;
+      }
+      if(!StringUtils.isEmpty(emulatorValue) && !game.getEmulator().getName().equals(emulatorValue)) {
+        continue;
+      }
+
+      filtered.add(game);
+    }
+    data = FXCollections.observableList(filtered);
   }
 
   private void refreshView(Optional<GameRepresentation> g) {

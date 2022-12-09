@@ -31,7 +31,7 @@ public class ValidationTexts {
       }
       case CODE_ROM_NOT_EXISTS: {
         label = "ROM file does not exist.";
-        text = "Dismiss this message if this table does not require a ROM. Otherwise search for a download of this ROM file.";
+        text = "Dismiss this message if this table does not require a ROM. Otherwise upload the required ROM under \"Table Metadata\".";
         break;
       }
       case CODE_NO_DIRECTB2S_OR_PUPPACK: {
