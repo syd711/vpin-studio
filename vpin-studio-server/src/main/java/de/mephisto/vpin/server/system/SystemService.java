@@ -362,7 +362,7 @@ public class SystemService implements InitializingBean {
   public String getVersion() {
     try {
       final Properties properties = new Properties();
-      InputStream resourceAsStream = VPinStudioServer.class.getResourceAsStream("version.properties");
+      InputStream resourceAsStream = VPinStudioServer.class.getClassLoader().getResourceAsStream("version.properties");
       properties.load(resourceAsStream);
       resourceAsStream.close();
       return properties.getProperty("vpin.studio.version");

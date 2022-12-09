@@ -54,17 +54,21 @@ public class Studio extends Application {
       Rectangle2D screenBounds = Screen.getPrimary().getBounds();
       FXMLLoader loader = new FXMLLoader(LauncherController.class.getResource("scene-launcher.fxml"));
       Parent root = loader.load();
-      LauncherController controller = loader.getController();
-      controller.setStage(stage);
 
-      Scene scene = new Scene(root, 800, 400);
+
+      Scene scene = new Scene(root, 800, 500);
       scene.setFill(Paint.valueOf("#212529"));
       stage.setTitle("VPin Studio Launcher");
       stage.getIcons().add(new Image(Studio.class.getResourceAsStream("logo-128.png")));
       stage.setScene(scene);
+      stage.initStyle(StageStyle.UNDECORATED);
       stage.setResizable(false);
       stage.setX((screenBounds.getWidth() / 2) - (800 / 2));
       stage.setY((screenBounds.getHeight() / 2) - (400 / 2));
+
+      LauncherController controller = loader.getController();
+      controller.setStage(stage);
+
       stage.show();
     } catch (IOException e) {
       LOG.error("Failed to load launcher: " + e.getMessage(), e);

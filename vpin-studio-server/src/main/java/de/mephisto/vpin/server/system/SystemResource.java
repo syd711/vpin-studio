@@ -33,11 +33,6 @@ public class SystemResource {
     return startupTime;
   }
 
-  @GetMapping("/ping")
-  public boolean ping() {
-    return true;
-  }
-
   @GetMapping("/logs")
   @ResponseBody
   public String logs() throws IOException {

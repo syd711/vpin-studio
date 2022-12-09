@@ -58,15 +58,6 @@ public class VPinStudioClient implements ObservedPropertyChangeListener, Overlay
     return restTemplate.getForObject(restClient.getBaseUrl() + API + "system/version", String.class);
   }
 
-  public boolean ping() {
-    try {
-      return restClient.get(API + "system/ping", Boolean.class);
-    } catch (Exception e) {
-      LOG.error("Ping failed for " + restClient.getBaseUrl());
-    }
-    return false;
-  }
-
   /*********************************************************************************************************************
    * Assets / Popper
    ********************************************************************************************************************/

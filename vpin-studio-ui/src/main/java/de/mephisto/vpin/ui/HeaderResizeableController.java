@@ -13,12 +13,18 @@ import java.util.ResourceBundle;
 
 import static de.mephisto.vpin.ui.Studio.stage;
 
-public class HeaderController implements Initializable {
+public class HeaderResizeableController implements Initializable {
 
   private static boolean toggleMaximize = true;
 
   private double xOffset;
   private double yOffset;
+
+  @FXML
+  private Button maximizeBtn;
+
+  @FXML
+  private Button minimizeBtn;
 
   @FXML
   private Label titleLabel;

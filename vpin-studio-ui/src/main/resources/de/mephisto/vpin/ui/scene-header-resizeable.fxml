@@ -9,7 +9,7 @@
 <?import javafx.scene.text.Font?>
 <?import org.kordamp.ikonli.javafx.FontIcon?>
 
-<BorderPane fx:id="header" styleClass="window-header" stylesheets="@stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.HeaderController">
+<BorderPane fx:id="header" styleClass="window-header" stylesheets="@stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.HeaderResizeableController">
    <center>
       <BorderPane BorderPane.alignment="TOP_LEFT">
          <BorderPane.margin>
@@ -31,6 +31,19 @@
          <left>
             <HBox alignment="BASELINE_RIGHT" BorderPane.alignment="CENTER">
                <children>
+                  <Button fx:id="minimizeBtn" mnemonicParsing="false" onAction="#onHideClick" prefHeight="24.0" prefWidth="24.0" styleClass="header-button" stylesheets="@stylesheet.css">
+                     <graphic>
+                        <FontIcon iconColor="WHITE" iconLiteral="mdi2w-window-minimize" iconSize="12" />
+                     </graphic>
+                  </Button>
+                  <Button fx:id="maximizeBtn" mnemonicParsing="false" onAction="#onMaximize" prefHeight="24.0" prefWidth="24.0" styleClass="header-button" stylesheets="@stylesheet.css">
+                     <graphic>
+                        <FontIcon iconColor="WHITE" iconLiteral="mdi2w-window-maximize" iconSize="12" />
+                     </graphic>
+                     <HBox.margin>
+                        <Insets left="6.0" />
+                     </HBox.margin>
+                  </Button>
                   <Button mnemonicParsing="false" onAction="#onCloseClick" prefHeight="24.0" prefWidth="24.0" styleClass="header-button" stylesheets="@stylesheet.css">
                      <graphic>
                         <FontIcon iconColor="WHITE" iconLiteral="mdi2w-window-close" iconSize="12" />
@@ -45,9 +58,9 @@
       </BorderPane>
    </right>
    <left>
-      <Label fx:id="titleLabel" text="VPin Studio Launcher" textFill="WHITE" BorderPane.alignment="TOP_LEFT">
+      <Label fx:id="titleLabel" text="VPin Studio" textFill="WHITE" BorderPane.alignment="TOP_LEFT">
          <font>
-            <Font name="Impact" size="16.0" />
+            <Font name="Impact" size="14.0" />
          </font>
          <BorderPane.margin>
             <Insets left="12.0" top="8.0" />

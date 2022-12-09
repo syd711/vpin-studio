@@ -17,9 +17,12 @@
 <?import javafx.scene.text.Font?>
 <?import org.kordamp.ikonli.javafx.FontIcon?>
 
-<BorderPane fx:id="mediaView" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="800.0" styleClass="base-component" stylesheets="@../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.launcher.LauncherController">
+<BorderPane fx:id="root" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="500.0" prefWidth="800.0" styleClass="base-component" stylesheets="@../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.launcher.LauncherController">
+   <top>
+      <fx:include fx:id="header" source="../scene-header.fxml" />
+   </top>
    <left>
-      <BorderPane prefHeight="350.0" prefWidth="260.0" styleClass="navigation-panel" BorderPane.alignment="CENTER">
+      <BorderPane prefWidth="270.0" styleClass="navigation-panel" BorderPane.alignment="CENTER">
          <bottom>
             <MenuButton mnemonicParsing="false" BorderPane.alignment="BOTTOM_LEFT">
               <items>
@@ -69,9 +72,9 @@
          <top>
             <ToolBar nodeOrientation="RIGHT_TO_LEFT" prefHeight="40.0" prefWidth="200.0" BorderPane.alignment="CENTER_RIGHT">
               <items>
-                  <BorderPane layoutX="10.0" layoutY="10.0" prefWidth="526.0">
+                  <BorderPane layoutX="10.0" layoutY="10.0" prefWidth="516.0">
                      <left>
-                        <Button mnemonicParsing="false" onAction="#onNewConnection" text="New Connection" textFill="WHITE" BorderPane.alignment="CENTER">
+                        <Button fx:id="newConnectionBtn" mnemonicParsing="false" onAction="#onNewConnection" text="New Connection" textFill="WHITE" BorderPane.alignment="CENTER">
                            <font>
                               <Font size="14.0" />
                            </font>
@@ -80,7 +83,7 @@
                      <right>
                         <HBox alignment="CENTER_LEFT" nodeOrientation="LEFT_TO_RIGHT" BorderPane.alignment="CENTER">
                            <children>
-                              <Button mnemonicParsing="false" onAction="#onUpdateCheck" textFill="WHITE">
+                              <Button fx:id="refreshBtn" mnemonicParsing="false" onAction="#onConnectionRefresh" textFill="WHITE">
                                  <font>
                                     <Font size="14.0" />
                                  </font>

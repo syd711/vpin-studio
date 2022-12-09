@@ -12,9 +12,8 @@ import java.net.URL;
 public class Updater {
   private final static Logger LOG = LoggerFactory.getLogger(Updater.class);
 
-  private final static String VERSION = "1.0.11";
   private final static String BASE_URL = "https://github.com/syd711/vpin-studio/releases/download/%s/";
-  private final static String VERSION_PROPERTIES = "https://raw.githubusercontent.com/syd711/vpin-studio/main/version.properties";
+  private final static String LATEST_RELEASE_URL = "https://github.com/syd711/vpin-studio/releases/latest";
 
   public static void update(String versionSegment) throws Exception {
     File out = new File("./vpin-extensions.jar");
@@ -43,21 +42,26 @@ public class Updater {
     }
   }
 
-  public static String getCurrentVersion() {
-    return VERSION;
-  }
+  public static String checkForUpdate(String referenceVersion) {
+    try {
+      URL obj = new URL(LATEST_RELEASE_URL);
+      HttpURLConnection conn = (HttpURLConnection) obj.openConnection();
+      conn.setInstanceFollowRedirects(true);
+      HttpURLConnection.setFollowRedirects(true);
+      conn.setReadTimeout(5000);
+      conn.addRequestProperty("Accept-Language", "en-US,en;q=0.8");
+      conn.addRequestProperty("User-Agent", "Mozilla");
+      conn.addRequestProperty("Referer", "google.com");
+      conn.getResponseCode();
 
-  public static String checkForUpdate() throws Exception {
-    File target = File.createTempFile("vpin-version", ".properties");
-    target.deleteOnExit();
-    download(VERSION_PROPERTIES, target);
-    PropertiesStore store = PropertiesStore.create(target);
-    String latestVersion = store.getString("version");
-    LOG.info("Latest version available is " + latestVersion);
-    target.delete();
-    if (latestVersion.equals(VERSION)) {
-      return null;
+      String s = conn.getURL().toString();
+      String versionSegment = s.substring(s.lastIndexOf("/") + 1);
+      if (!referenceVersion.equalsIgnoreCase(versionSegment)) {
+        return versionSegment;
+      }
+    } catch (Exception e) {
+      LOG.error("Update check failed: " + e.getMessage(), e);
     }
-    return latestVersion;
+    return null;
   }
 }
