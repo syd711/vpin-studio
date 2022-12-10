@@ -12,7 +12,7 @@
 
 <BorderPane styleClass="base-component" stylesheets="@../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.preferences.CardGenerationPreferencesController">
    <top>
-      <VBox fx:id="preferenceList" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" styleClass="subpanel" stylesheets="@stylesheet.css" BorderPane.alignment="TOP_LEFT">
+      <VBox fx:id="preferenceList" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" styleClass="subpanel" BorderPane.alignment="TOP_LEFT">
          <children>
             <Label styleClass="preference-title" text="HIGHSCORE CARDS" textFill="WHITE" />
             <Label styleClass="preference-subtitle" text="Target Screen &amp; Settings">

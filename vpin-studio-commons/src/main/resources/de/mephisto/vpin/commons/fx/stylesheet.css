@@ -38,6 +38,11 @@
     -fx-base : -fx-base-7;
 }
 
+.widget-item {
+    -fx-background-radius: 6 6 6 6;
+    -fx-border-radius: 6 6 6 6;
+}
+
 
 #validationError {
     -fx-background-color: #FF3333;
