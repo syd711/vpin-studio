@@ -25,7 +25,7 @@ public class WidgetLatestScoreItemController extends WidgetController implements
   private BorderPane root;
 
   @FXML
-  private BorderPane widgetRoot;
+  private VBox highscoreVBox;
 
   @FXML
   private ImageView wheelImageView;
@@ -54,7 +54,7 @@ public class WidgetLatestScoreItemController extends WidgetController implements
   public void initialize(URL url, ResourceBundle resourceBundle) {
   }
 
-  public void setData(GameRepresentation game, ScoreRepresentation score, GameMediaItemRepresentation wheel) {
+  public void setData(GameRepresentation game, ScoreRepresentation score) {
     ByteArrayInputStream gameMediaItem = OverlayWindowFX.client.getGameMediaItem(game.getId(), PopperScreen.Wheel);
     Image image = new Image(gameMediaItem);
 

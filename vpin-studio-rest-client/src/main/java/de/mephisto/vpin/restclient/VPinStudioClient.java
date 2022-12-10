@@ -410,7 +410,7 @@ public class VPinStudioClient implements ObservedPropertyChangeListener, Overlay
 
   public boolean uploadDirectB2SFile(File file, String uploadType, int gameId) throws Exception {
     try {
-      String url = restClient.getBaseUrl() + API + "cards/directb2supload";
+      String url = restClient.getBaseUrl() + API + "directb2s/upload";
       new RestTemplate().exchange(url, HttpMethod.POST, createUpload(file, gameId, uploadType, AssetType.DIRECT_B2S), Boolean.class);
       return true;
     } catch (Exception e) {

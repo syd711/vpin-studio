@@ -43,7 +43,6 @@ public class WidgetLatestScoresController extends WidgetController implements In
       for (ScoreRepresentation score : scores) {
         GameRepresentation game = OverlayWindowFX.client.getGame(score.getGameId());
         GameMediaRepresentation gameMedia = game.getGameMedia();
-
         GameMediaItemRepresentation wheelMedia = gameMedia.getMedia().get(PopperScreen.Wheel.name());
         if (wheelMedia == null) {
           continue;
@@ -53,7 +52,7 @@ public class WidgetLatestScoresController extends WidgetController implements In
         Pane row = loader.load();
         row.setPrefWidth(root.getPrefWidth() - 24);
         WidgetLatestScoreItemController controller = loader.getController();
-        controller.setData(game, score, wheelMedia);
+        controller.setData(game, score);
 
         highscoreVBox.getChildren().add(row);
         count++;

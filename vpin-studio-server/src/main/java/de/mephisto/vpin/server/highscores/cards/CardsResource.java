@@ -33,9 +33,6 @@ public class CardsResource {
   @Autowired
   private CardService cardService;
 
-  @Autowired
-  private SystemService systemService;
-
   @GetMapping("/preview/{gameId}")
   public ResponseEntity<byte[]> generateCard(@PathVariable("gameId") int gameId) throws Exception {
     return RequestUtil.serializeImage(cardService.generateSampleCard(gameId));
@@ -66,33 +63,6 @@ public class CardsResource {
       return RequestUtil.serializeImage(files[0]);
     }
     return ResponseEntity.notFound().build();
-  }
-
-  @PostMapping("/directb2supload")
-  public Boolean directb2supload(@RequestParam(value = "file", required = false) MultipartFile file,
-                                 @RequestParam(value = "uploadType", required = false) String uploadType,
-                                 @RequestParam("gameId") Integer gameId) {
-    if (file == null) {
-      LOG.error("Upload request did not contain a file object.");
-      return false;
-    }
-
-    Game game = gameService.getGame(gameId);
-    if (game.getCroppedDirectB2SBackgroundImage().exists()) {
-      game.getRawDirectB2SBackgroundImage().delete();
-    }
-    if (game.getRawDirectB2SBackgroundImage().exists()) {
-      game.getCroppedDirectB2SBackgroundImage().delete();
-    }
-
-    File out = game.getDirectB2SFile();
-    if (uploadType != null && uploadType.equals("generator")) {
-      out = game.getDirectB2SMediaFile();
-    }
-
-    out.mkdirs();
-    LOG.info("Uploading " + out.getAbsolutePath());
-    return UploadUtil.upload(file, out);
   }
 
   @PostMapping(value = "/backgroundupload")
