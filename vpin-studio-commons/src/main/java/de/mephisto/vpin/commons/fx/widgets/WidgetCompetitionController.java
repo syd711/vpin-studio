@@ -159,6 +159,10 @@ public class WidgetCompetitionController extends WidgetController implements Ini
           scoreGraph3.getData().add(new XYChart.Data(SimpleDateFormat.getDateTimeInstance().format(score.getCreatedAt()), s.getNumericScore()));
         }
 
+        if(highscoresGraphTile != null) {
+          statsWidget.getChildren().remove(highscoresGraphTile);
+        }
+
         //noinspection unchecked
         highscoresGraphTile = TileBuilder.create()
             .skinType(Tile.SkinType.SMOOTHED_CHART)
