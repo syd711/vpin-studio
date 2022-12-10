@@ -382,7 +382,7 @@ public class HighscoreCardsController implements Initializable, ObservedProperty
       try {
         new Thread(() -> {
           if (regenerate) {
-            client.generateHighscoreCard(game.get());
+            client.generateHighscoreCardSample(game.get());
           }
 
           InputStream input = client.getHighscoreCard(game.get());

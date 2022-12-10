@@ -4,7 +4,6 @@ import de.mephisto.vpin.server.VPinStudioException;
 import de.mephisto.vpin.server.games.Game;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
-import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,35 +20,27 @@ public class DirectB2SImageExtractor extends DefaultHandler {
   private final static Logger LOG = LoggerFactory.getLogger(DirectB2SImageExtractor.class);
 
   private String imageData;
-  private Game game;
 
-  public DirectB2SImageExtractor(Game game) {
-    this.game = game;
+  public DirectB2SImageExtractor() {
   }
 
-  @Nullable
-  public File extractImage(@NonNull File file) throws VPinStudioException {
+  public void extractImage(@NonNull File directB2S, @NonNull File target) throws VPinStudioException {
     try {
-      if (file.exists()) {
+      if (directB2S.exists()) {
         SAXParserFactory factory = SAXParserFactory.newInstance();
         SAXParser saxParser = factory.newSAXParser();
-        saxParser.parse(file.getAbsolutePath(), this);
-
-        File target = File.createTempFile(FilenameUtils.getBaseName(file.getName()), ".jpg");
-        target.deleteOnExit();
+        saxParser.parse(directB2S.getAbsolutePath(), this);
 
         byte[] bytes = DatatypeConverter.parseBase64Binary(imageData);
         FileOutputStream out = new FileOutputStream(target);
         IOUtils.write(bytes, out);
         out.close();
-        return target;
       }
     } catch (Exception e) {
-      String msg = "Failed to parse directb2s file '" + file.getAbsolutePath() + "': " + e.getMessage();
+      String msg = "Failed to parse directb2s directB2S '" + directB2S.getAbsolutePath() + "': " + e.getMessage();
       LOG.error(msg, e);
       throw new VPinStudioException(msg, e);
     }
-    return null;
   }
 
   @Override

@@ -6,6 +6,7 @@ import de.mephisto.vpin.restclient.VPinStudioClient;
 import de.mephisto.vpin.restclient.representations.CompetitionRepresentation;
 import de.mephisto.vpin.restclient.representations.PreferenceEntryRepresentation;
 import de.mephisto.vpin.ui.Studio;
+import de.mephisto.vpin.ui.util.Dialogs;
 import de.mephisto.vpin.ui.util.ImageUtil;
 import de.mephisto.vpin.ui.util.WidgetFactory;
 import javafx.application.Platform;
@@ -136,7 +137,7 @@ public class LauncherController implements Initializable {
     VPinStudioClient client = new VPinStudioClient(selectedItem.getHost());
     if (client.version() != null) {
       stage.close();
-      Studio.loadStudio(new Stage(), client);
+      Studio.loadStudio(Dialogs.createStage(), client);
     }
   }
 

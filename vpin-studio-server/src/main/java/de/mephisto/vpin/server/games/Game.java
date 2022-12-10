@@ -207,6 +207,12 @@ public class Game {
     return new File(systemService.getVPXTablesFolder(), directB2SName).exists();
   }
 
+  public boolean isDirectB2SAsMediaAvailable() {
+    String name = FilenameUtils.getBaseName(this.getGameFileName());
+    String directB2SName = name + ".directb2s";
+    return new File(systemService.getDirectB2SMediaFolder(), directB2SName).exists();
+  }
+
   public boolean isPupPackAvailable() {
     if (StringUtils.isEmpty(this.getRom())) {
       return false;
@@ -300,7 +306,22 @@ public class Game {
 
   @NonNull
   @JsonIgnore
-  public File getDirectB2SBackgroundImage() {
+  public File getDirectB2SMediaFile() {
+    String baseName = FilenameUtils.getBaseName(this.getGameFileName());
+    return new File(systemService.getDirectB2SMediaFolder(), baseName + ".directb2s");
+  }
+
+  @NonNull
+  @JsonIgnore
+  public File getCroppedDirectB2SBackgroundImage() {
+    String targetName = FilenameUtils.getBaseName(getGameFileName()) + ".png";
+    return new File(systemService.getB2SCroppedImageFolder(), targetName);
+  }
+
+
+  @NonNull
+  @JsonIgnore
+  public File getRawDirectB2SBackgroundImage() {
     String targetName = FilenameUtils.getBaseName(getGameFileName()) + ".png";
     return new File(systemService.getB2SImageExtractionFolder(), targetName);
   }

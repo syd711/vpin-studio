@@ -78,13 +78,16 @@ public class CardGraphics {
     }
 
     int scaling = Config.getCardGeneratorConfig().getInt("card.scaling", 1280);
-    if (USE_DIRECTB2S && game.getDirectB2SFile().exists()) {
-      File directB2SImage = game.getDirectB2SBackgroundImage();
-      if (!directB2SImage.exists()) {
-        directB2SImage = directB2SService.generateB2SImage(game, DIRECTB2S_RATIO, scaling);
+    if (USE_DIRECTB2S) {
+      //poor workaround: we delete the existing crop in case the scaling was changed
+      File croppedDirectB2SBackgroundImage = game.getCroppedDirectB2SBackgroundImage();
+      if (!croppedDirectB2SBackgroundImage.exists()) {
+        croppedDirectB2SBackgroundImage.delete();
       }
-      if (directB2SImage != null && directB2SImage.exists()) {
-        sourceImage = directB2SImage;
+
+      croppedDirectB2SBackgroundImage = directB2SService.generateCroppedB2SImage(game, DIRECTB2S_RATIO, scaling);
+      if (croppedDirectB2SBackgroundImage != null && croppedDirectB2SBackgroundImage.exists()) {
+        sourceImage = croppedDirectB2SBackgroundImage;
       }
     }
 

@@ -182,7 +182,11 @@ public class SystemService implements InitializingBean {
   }
 
   public File getB2SImageExtractionFolder() {
-    return new File(RESOURCES, "b2s/");
+    return new File(RESOURCES, "b2s-raw/");
+  }
+
+  public File getB2SCroppedImageFolder() {
+    return new File(RESOURCES, "b2s-cropped/");
   }
 
   private String formatPathLog(String label, String value, Boolean exists, Boolean readable) {
@@ -314,7 +318,7 @@ public class SystemService implements InitializingBean {
     return new File(getFuturePinballInstallationFolder(), "Tables/");
   }
 
-  public File getDirectB2SFolder() {
+  public File getDirectB2SMediaFolder() {
     return new File(RESOURCES, "directB2S/");
   }
 

@@ -22,7 +22,7 @@
             </Label>
             <Label styleClass="preference-description" text="If a screen is selected, a new highscore card will be generated when exiting a game." textFill="WHITE">
                <VBox.margin>
-                  <Insets bottom="6.0" top="24.0" />
+                  <Insets top="24.0" />
                </VBox.margin>
             </Label>
             <Label styleClass="preference-description" text="Select the PinUP Popper screen the highscore cards will be generated for. Ensure that the screen is enabled." textFill="WHITE">

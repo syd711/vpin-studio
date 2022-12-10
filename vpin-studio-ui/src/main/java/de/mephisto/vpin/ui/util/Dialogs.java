@@ -22,6 +22,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.control.ToolBar;
+import javafx.scene.image.Image;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
@@ -30,6 +31,12 @@ import java.io.IOException;
 import java.util.Iterator;
 
 public class Dialogs {
+
+  public static Stage createStage() {
+    Stage stage = new Stage();
+    stage.getIcons().add(new Image(Studio.class.getResourceAsStream("logo-64.png")));
+    return stage;
+  }
 
   public static PlayerRepresentation openPlayerDialog(PlayerRepresentation selection) {
     Parent root = null;
@@ -43,9 +50,9 @@ public class Dialogs {
     controller.setPlayer(selection);
 
     Stage owner = Studio.stage;
-    final Stage stage = new Stage();
+    final Stage stage = createStage();
     stage.initModality(Modality.WINDOW_MODAL);
-    if(selection == null) {
+    if (selection == null) {
       stage.setTitle("Add New Player");
     }
     else {
@@ -73,10 +80,10 @@ public class Dialogs {
     controller.setCompetition(selection);
 
     Stage owner = Studio.stage;
-    final Stage stage = new Stage();
+    final Stage stage = createStage();
     stage.initModality(Modality.WINDOW_MODAL);
     stage.setResizable(false);
-    if(selection == null) {
+    if (selection == null) {
       stage.setTitle("Add New Competition");
     }
     else {
@@ -104,7 +111,7 @@ public class Dialogs {
     controller.setGame(game);
 
     Stage owner = Studio.stage;
-    final Stage stage = new Stage();
+    final Stage stage = createStage();
     stage.initModality(Modality.WINDOW_MODAL);
     stage.setResizable(false);
     stage.setTitle("DirectB2S File Upload");
@@ -127,7 +134,7 @@ public class Dialogs {
     }
     TableUploadController controller = fxmlLoader.getController();
     Stage owner = Studio.stage;
-    final Stage stage = new Stage();
+    final Stage stage = createStage();
     stage.initModality(Modality.WINDOW_MODAL);
     stage.setResizable(false);
     stage.setTitle("Table Upload");
@@ -150,7 +157,7 @@ public class Dialogs {
     }
     ROMUploadController controller = fxmlLoader.getController();
     Stage owner = Studio.stage;
-    final Stage stage = new Stage();
+    final Stage stage = createStage();
     stage.initModality(Modality.WINDOW_MODAL);
     stage.setResizable(false);
     stage.setTitle("Rom Upload");
@@ -174,7 +181,7 @@ public class Dialogs {
     Stage owner = Studio.stage;
     BorderPane mediaView = (BorderPane) root.lookup("#mediaView");
     WidgetFactory.addMediaItemToBorderPane(item, mediaView);
-    final Stage stage = new Stage();
+    final Stage stage = createStage();
     stage.initModality(Modality.WINDOW_MODAL);
     stage.setTitle(game.getGameDisplayName() + " - " + item.getScreen() + " Screen");
 
@@ -184,7 +191,25 @@ public class Dialogs {
     stage.showAndWait();
   }
 
+  public static void openBotTutorial() {
+    Parent root = null;
+    try {
+      root = FXMLLoader.load(Studio.class.getResource("dialog-bot-tutorial.fxml"));
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
 
+    Stage owner = Studio.stage;
+    final Stage stage = createStage();
+    stage.initOwner(owner);
+    stage.initModality(Modality.WINDOW_MODAL);
+    stage.setTitle("Discord Bot Instructions");
+
+    stage.initOwner(owner);
+    Scene scene = new Scene(root);
+    stage.setScene(scene);
+    stage.showAndWait();
+  }
 
   public static void createProgressDialog(ProgressModel model) {
     Parent root = null;
@@ -227,7 +252,7 @@ public class Dialogs {
       }
     };
 
-    final Stage stage = new Stage();
+    final Stage stage = createStage();
     stage.initModality(Modality.WINDOW_MODAL);
     stage.setResizable(false);
     stage.initOwner(owner);

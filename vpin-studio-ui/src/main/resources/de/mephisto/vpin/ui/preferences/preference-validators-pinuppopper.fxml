@@ -22,7 +22,7 @@
             </Label>
             <Label styleClass="preference-description" text="If enabled the validator will check if the media has been configured with an asset." textFill="WHITE">
                <VBox.margin>
-                  <Insets bottom="6.0" top="24.0" />
+                  <Insets top="24.0" />
                </VBox.margin>
             </Label>
             <Label layoutX="34.0" layoutY="104.0" styleClass="preference-description" text="If the screen has been disabled in the PinUP Popper settings, the validator is disabled." textFill="WHITE" />

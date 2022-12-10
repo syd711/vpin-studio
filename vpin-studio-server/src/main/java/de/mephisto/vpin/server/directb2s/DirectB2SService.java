@@ -23,36 +23,45 @@ public class DirectB2SService {
 
   }
 
-  @Nullable
-  public File extractDirectB2SBackgroundImage(@NonNull Game game) throws VPinStudioException {
-    if (game.getDirectB2SFile().exists()) {
-      DirectB2SImageExtractor extractor = new DirectB2SImageExtractor(game);
-      return extractor.extractImage(game.getDirectB2SFile());
+  public void extractDirectB2SBackgroundImage(@NonNull Game game) throws VPinStudioException {
+    DirectB2SImageExtractor extractor = new DirectB2SImageExtractor();
+
+    //always prefer the media file
+    if (game.getDirectB2SMediaFile().exists()) {
+      extractor.extractImage(game.getDirectB2SMediaFile(), game.getRawDirectB2SBackgroundImage());
     }
-    return null;
+    else if (game.getDirectB2SFile().exists()) {
+      extractor.extractImage(game.getDirectB2SFile(), game.getRawDirectB2SBackgroundImage());
+    }
   }
 
   @Nullable
-  public File generateB2SImage(@NonNull Game game, @NonNull DirectB2SImageRatio ratio, int cropWidth) throws VPinStudioException {
+  public File generateCroppedB2SImage(@NonNull Game game, @NonNull DirectB2SImageRatio ratio, int cropWidth) throws VPinStudioException {
     try {
-      if (game.getDirectB2SFile().exists()) {
-        DirectB2SImageExtractor extractor = new DirectB2SImageExtractor(game);
-        File tempFile = extractor.extractImage(game.getDirectB2SFile());
-        if (tempFile != null) {
-          BufferedImage image = ImageIO.read(tempFile);
-          BufferedImage crop = ImageUtil.crop(image, ratio.getXRatio(), ratio.getYRatio());
-          BufferedImage resized = ImageUtil.resizeImage(crop, cropWidth);
-          File target = game.getDirectB2SBackgroundImage();
-          if (target.getParentFile().exists() && target.getParentFile().canWrite()) {
-            ImageUtil.write(resized, target);
-          }
-          else {
-            LOG.error("No permission to write " + target.getAbsolutePath() + ", folder exists: " + target.getParentFile().exists());
-          }
-          LOG.info("Written cropped directb2s background " + target.getAbsolutePath());
-          tempFile.delete();
-          return target;
+      if (!game.getRawDirectB2SBackgroundImage().exists()) {
+        extractDirectB2SBackgroundImage(game);
+      }
+
+      if (game.getRawDirectB2SBackgroundImage().exists()) {
+        File backgroundImageFile = game.getRawDirectB2SBackgroundImage();
+
+        BufferedImage image = ImageIO.read(backgroundImageFile);
+        BufferedImage crop = ImageUtil.crop(image, ratio.getXRatio(), ratio.getYRatio());
+        BufferedImage resized = ImageUtil.resizeImage(crop, cropWidth);
+
+        File target = game.getCroppedDirectB2SBackgroundImage();
+        if (target.exists()) {
+          target.delete();
         }
+
+        if (target.getParentFile().exists() && target.getParentFile().canWrite()) {
+          ImageUtil.write(resized, target);
+        }
+        else {
+          LOG.error("No permission to write " + target.getAbsolutePath() + ", folder exists: " + target.getParentFile().exists());
+        }
+        LOG.info("Written cropped directb2s background " + target.getAbsolutePath());
+        return target;
       }
     } catch (IOException e) {
       LOG.error("Error extracting directb2s image: " + e.getMessage(), e);
@@ -66,30 +75,31 @@ public class DirectB2SService {
   @Nullable
   public BufferedImage generateB2SCompetitionImage(@NonNull Game game, int cropWidth, int cropHeight) throws VPinStudioException {
     try {
-      if (game.getDirectB2SFile().exists()) {
-        DirectB2SImageExtractor extractor = new DirectB2SImageExtractor(game);
-        File tempFile = extractor.extractImage(game.getDirectB2SFile());
-        if (tempFile != null) {
-          BufferedImage image = ImageIO.read(tempFile);
-          tempFile.delete();
+      if (!game.getRawDirectB2SBackgroundImage().exists()) {
+        extractDirectB2SBackgroundImage(game);
+      }
 
-          BufferedImage resized = ImageUtil.resizeImage(image, cropWidth);
-          BufferedImage crop = resized.getSubimage(0, 0, cropWidth, cropHeight);
-          BufferedImage blurred = ImageUtil.blurImage(crop, 10);
+      File backgroundImageFile = game.getRawDirectB2SBackgroundImage();
+      if(!backgroundImageFile.exists()) {
+        return null;
+      }
+
+      BufferedImage image = ImageIO.read(backgroundImageFile);
+
+      BufferedImage resized = ImageUtil.resizeImage(image, cropWidth);
+      BufferedImage crop = resized.getSubimage(0, 0, cropWidth, cropHeight);
+      BufferedImage blurred = ImageUtil.blurImage(crop, 8);
 //          ImageUtil.applyAlphaComposites(blurred, 0f, 10f);
 
-          Color start = new Color(0f, 0f, 0f, .1f);
-          Color end = Color.decode("#111111");
-          ImageUtil.gradient(blurred, cropHeight, cropWidth, start, end);
-          return blurred;
-        }
-      }
+      Color start = new Color(0f, 0f, 0f, .1f);
+      Color end = Color.decode("#111111");
+      ImageUtil.gradient(blurred, cropHeight, cropWidth, start, end);
+      return blurred;
     } catch (IOException e) {
       LOG.error("Error creating competition image: " + e.getMessage(), e);
       throw new VPinStudioException(e);
     } catch (Exception e) {
       throw new VPinStudioException(e);
     }
-    return null;
   }
 }

@@ -44,6 +44,12 @@ public class CardsResource {
   @GetMapping("/generate/{gameId}")
   public boolean generateCards(@PathVariable("gameId") int gameId) throws Exception {
     Game game = gameService.getGame(gameId);
+    return cardService.generateCard(game, false);
+  }
+
+  @GetMapping("/generatesample/{gameId}")
+  public boolean generateSampleCard(@PathVariable("gameId") int gameId) throws Exception {
+    Game game = gameService.getGame(gameId);
     return cardService.generateCard(game, true);
   }
 
@@ -72,10 +78,16 @@ public class CardsResource {
     }
 
     Game game = gameService.getGame(gameId);
-    String directb2sFilename = FilenameUtils.getBaseName(game.getGameFileName()) + ".directb2s";
-    File out = new File(systemService.getVPXTablesFolder(), directb2sFilename);
+    if (game.getCroppedDirectB2SBackgroundImage().exists()) {
+      game.getRawDirectB2SBackgroundImage().delete();
+    }
+    if (game.getRawDirectB2SBackgroundImage().exists()) {
+      game.getCroppedDirectB2SBackgroundImage().delete();
+    }
+
+    File out = game.getDirectB2SFile();
     if (uploadType != null && uploadType.equals("generator")) {
-      out = new File(systemService.getDirectB2SFolder(), directb2sFilename);
+      out = game.getDirectB2SMediaFile();
     }
 
     out.mkdirs();

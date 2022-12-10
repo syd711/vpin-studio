@@ -42,7 +42,7 @@ public class Studio extends Application {
     OverlayWindowFX.client = Studio.client;
 
     String version = client.version();
-    if (StringUtils.isEmpty(version)) {
+    if (!StringUtils.isEmpty(version)) {
       loadStudio(stage, Studio.client);
     }
     else {
@@ -61,7 +61,7 @@ public class Studio extends Application {
       Scene scene = new Scene(root, 800, 500);
       scene.setFill(Paint.valueOf("#212529"));
       stage.setTitle("VPin Studio Launcher");
-      stage.getIcons().add(new Image(Studio.class.getResourceAsStream("logo-128.png")));
+      stage.getIcons().add(new Image(Studio.class.getResourceAsStream("logo-64.png")));
       stage.setScene(scene);
       stage.initStyle(StageStyle.UNDECORATED);
       stage.setX((screenBounds.getWidth() / 2) - (800 / 2));

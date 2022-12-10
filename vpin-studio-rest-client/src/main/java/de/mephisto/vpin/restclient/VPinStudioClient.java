@@ -334,6 +334,11 @@ public class VPinStudioClient implements ObservedPropertyChangeListener, Overlay
     return restClient.get(API + "cards/generate/" + gameId, Boolean.class);
   }
 
+  public boolean generateHighscoreCardSample(GameRepresentation game) {
+    int gameId = game.getId();
+    return restClient.get(API + "cards/generatesample/" + gameId, Boolean.class);
+  }
+
   public List<String> getHighscoreBackgroundImages() {
     return Arrays.asList(restClient.get(API + "cards/backgrounds", String[].class));
   }

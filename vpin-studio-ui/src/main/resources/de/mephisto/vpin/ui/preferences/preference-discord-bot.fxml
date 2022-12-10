@@ -90,6 +90,18 @@
                   <Insets />
                </opaqueInsets>
             </GridPane>
+            <Label layoutX="34.0" layoutY="322.0" styleClass="preference-subtitle" text="How to create this Discord bot?">
+               <graphic>
+                  <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
+               </graphic>
+            </Label>
+            <Label layoutX="34.0" layoutY="397.0" styleClass="preference-description" text="Creating a Discord bot requires a few more steps, but: Don't panic! " textFill="WHITE" />
+            <Label layoutX="34.0" layoutY="360.0" styleClass="preference-description" text="Follow the step-by-step instruction that will setup your bot in no time!" textFill="WHITE" />
+            <Button mnemonicParsing="false" onAction="#onBotTutorial" text="Discord Bot Setup Guide">
+               <VBox.margin>
+                  <Insets top="6.0" />
+               </VBox.margin>
+            </Button>
             <Label layoutX="34.0" layoutY="66.0" styleClass="preference-subtitle" text="How are Discord server members mapped to highscores?">
                <graphic>
                   <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
@@ -107,7 +119,14 @@
                </VBox.margin>
             </ImageView>
             <Label layoutX="34.0" layoutY="400.0" styleClass="preference-description" text="          (Nickname Example)" textFill="WHITE" />
-            <Label layoutX="34.0" layoutY="290.0" styleClass="preference-subtitle" text="But I don't want to change my nickname on Discord?">
+            <Label layoutX="34.0" layoutY="612.0" styleClass="preference-subtitle" text="But what if two players have the same initials?">
+               <graphic>
+                  <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
+               </graphic>
+            </Label>
+            <Label layoutX="34.0" layoutY="688.0" styleClass="preference-description" text="When you open the &quot;Players&quot; section, you should see a warning when two players have the same initials." textFill="WHITE" />
+            <Label layoutX="34.0" layoutY="638.0" styleClass="preference-description" text="Ask them to change their nickname or use your administrator-rights to change it for them." textFill="WHITE" />
+            <Label layoutX="34.0" layoutY="290.0" styleClass="preference-subtitle" text="But I don't want to change my name on Discord!">
                <graphic>
                   <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
                </graphic>
@@ -115,13 +134,13 @@
                   <Insets top="12.0" />
                </VBox.margin>
             </Label>
-            <Label layoutX="34.0" layoutY="328.0" styleClass="preference-description" text="No worries! Discord supports different the assignment of different nicknames, depending on the server. " textFill="WHITE">
+            <Label layoutX="34.0" layoutY="328.0" styleClass="preference-description" text="No worries! Discord allows to assign you a different name for every server. " textFill="WHITE">
                <VBox.margin>
                   <Insets />
                </VBox.margin>
             </Label>
             <Label layoutX="34.0" layoutY="592.0" styleClass="preference-description" text="Invoke the context menu on your username in the member list. Click on &quot;Edit Server Profile&quot;, update the nickname and save the changes." textFill="WHITE" />
-            <Label layoutX="34.0" layoutY="572.0" styleClass="preference-description" text="Note that the name is only changed for the specific server." textFill="WHITE">
+            <Label layoutX="34.0" layoutY="572.0" styleClass="preference-description" text="The name is only changed for the specific server." textFill="WHITE">
                <VBox.margin>
                   <Insets bottom="6.0" />
                </VBox.margin>

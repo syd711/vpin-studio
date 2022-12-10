@@ -63,7 +63,7 @@ hs_err_pid*
 /doftest/DirectOutputTest/bin/Debug/
 /doftest/DirectOutputTest/obj/Debug/
 /doftest/.vs/DirectOutputTest/
-/resources/b2s/
+/resources/b2s-raw/
 
 npm-debug.log*
 yarn-debug.log*

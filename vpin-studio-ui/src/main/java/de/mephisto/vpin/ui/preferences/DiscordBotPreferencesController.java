@@ -2,11 +2,14 @@ package de.mephisto.vpin.ui.preferences;
 
 import de.mephisto.vpin.connectors.discord.DiscordClient;
 import de.mephisto.vpin.restclient.PreferenceNames;
+import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.util.BindingUtil;
+import de.mephisto.vpin.ui.util.Dialogs;
 import de.mephisto.vpin.ui.util.WidgetFactory;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.Cursor;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import org.apache.commons.lang3.StringUtils;
@@ -26,25 +29,36 @@ public class DiscordBotPreferencesController implements Initializable {
   private Button connectionTestBtn;
 
   @FXML
+  private void onBotTutorial() {
+    Dialogs.openBotTutorial();
+  }
+
+  @FXML
   private void onConnectionTest() {
-    try {
-      String token = botTokenText.getText();
-      String serverId = serverIdText.getText();
-      DiscordClient client = new DiscordClient(token, serverId);
-      client.refreshMembers(discordMembers -> {
-        Platform.runLater(() -> {
-          WidgetFactory.showInformation("Read " + discordMembers.size() + " members.", "Test Successful");
+    new Thread(() -> {
+      try {
+        String token = botTokenText.getText();
+        String serverId = serverIdText.getText();
+        Studio.stage.getScene().setCursor(Cursor.WAIT);
+        DiscordClient client = new DiscordClient(token, serverId);
+        client.refreshMembers(discordMembers -> {
+          Platform.runLater(() -> {
+            Studio.stage.getScene().setCursor(Cursor.DEFAULT);
+            WidgetFactory.showInformation("Read " + discordMembers.size() + " members.", "Test Successful");
+          });
+        }, throwable -> {
+          Platform.runLater(() -> {
+            Studio.stage.getScene().setCursor(Cursor.DEFAULT);
+            WidgetFactory.showAlert(throwable.getMessage());
+          });
         });
-      }, throwable -> {
+      } catch (Exception e) {
         Platform.runLater(() -> {
-          WidgetFactory.showAlert(throwable.getMessage());
+          Studio.stage.getScene().setCursor(Cursor.DEFAULT);
+          WidgetFactory.showAlert(e.getMessage());
         });
-      });
-    } catch (Exception e) {
-      Platform.runLater(() -> {
-        WidgetFactory.showAlert(e.getMessage());
-      });
-    }
+      }
+    }).start();
   }
 
   @Override

@@ -67,6 +67,9 @@ public class TablesController implements Initializable, StudioFXController {
   private TableColumn<GameRepresentation, String> columnB2S;
 
   @FXML
+  private TableColumn<GameRepresentation, String> columnMediaB2S;
+
+  @FXML
   private TableColumn<GameRepresentation, String> columnStatus;
 
   @FXML
@@ -355,6 +358,18 @@ public class TablesController implements Initializable, StudioFXController {
     columnB2S.setCellValueFactory(cellData -> {
       GameRepresentation value = cellData.getValue();
       if (value.isDirectB2SAvailable()) {
+        FontIcon fontIcon = new FontIcon();
+        fontIcon.setIconSize(18);
+        fontIcon.setIconColor(Paint.valueOf("#66FF66"));
+        fontIcon.setIconLiteral("bi-check-circle");
+        return new SimpleObjectProperty(fontIcon);
+      }
+      return new SimpleStringProperty("");
+    });
+
+    columnMediaB2S.setCellValueFactory(cellData -> {
+      GameRepresentation value = cellData.getValue();
+      if (value.isDirectB2SAsMediaAvailable()) {
         FontIcon fontIcon = new FontIcon();
         fontIcon.setIconSize(18);
         fontIcon.setIconColor(Paint.valueOf("#66FF66"));

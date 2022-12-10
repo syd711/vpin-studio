@@ -40,13 +40,16 @@ public class DirectB2SResource {
 
   @GetMapping("/{id}")
   public ResponseEntity<byte[]> getRaw(@PathVariable("id") int id) throws Exception {
-    File file = null;
     try {
       Game game = service.getGame(id);
       if (game != null) {
-        file = directB2SManager.extractDirectB2SBackgroundImage(game);
-        if (file != null && file.exists()) {
-          return RequestUtil.serializeImage(file);
+        File target = game.getRawDirectB2SBackgroundImage();
+        if (!target.exists()) {
+          directB2SManager.extractDirectB2SBackgroundImage(game);
+        }
+
+        if (target.exists()) {
+          return RequestUtil.serializeImage(target);
         }
       }
       else {
@@ -54,10 +57,6 @@ public class DirectB2SResource {
       }
     } catch (Exception e) {
       LOG.error("Failed to load directb2s image: " + e.getMessage(), e);
-    } finally {
-      if (file != null) {
-        file.delete();
-      }
     }
     return RequestUtil.serializeImage(new File(SystemService.RESOURCES, "empty-b2s-preview.png"));
   }
