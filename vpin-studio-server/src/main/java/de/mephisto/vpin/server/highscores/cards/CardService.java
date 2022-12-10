@@ -5,18 +5,14 @@ import de.mephisto.vpin.server.directb2s.DirectB2SService;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameService;
 import de.mephisto.vpin.server.highscores.Highscore;
-import de.mephisto.vpin.server.highscores.HighscoreChangeEvent;
-import de.mephisto.vpin.server.highscores.HighscoreChangeListener;
 import de.mephisto.vpin.server.highscores.HighscoreService;
 import de.mephisto.vpin.server.system.SystemService;
 import de.mephisto.vpin.server.util.Config;
 import de.mephisto.vpin.server.util.ImageUtil;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import org.apache.commons.io.FilenameUtils;
-import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -27,7 +23,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
-public class CardService implements HighscoreChangeListener, InitializingBean {
+public class CardService {
   private final static Logger LOG = LoggerFactory.getLogger(CardService.class);
 
   @Autowired
@@ -38,17 +34,6 @@ public class CardService implements HighscoreChangeListener, InitializingBean {
 
   @Autowired
   private DirectB2SService directB2SService;
-
-  @Override
-  public void highscoreChanged(@NotNull HighscoreChangeEvent event) {
-    try {
-      Game game = event.getGame();
-      LOG.info("Refreshing highscore card for {}", game);
-      generateCard(game, false);
-    } catch (Exception e) {
-      LOG.error("Failed to generate card after highscore change event for table " + event.getGame() + ": " + e.getMessage(), e);
-    }
-  }
 
   public File generateSampleCard(int gameId) throws Exception {
     File cardSampleFile = getCardSampleFile();
@@ -101,11 +86,5 @@ public class CardService implements HighscoreChangeListener, InitializingBean {
     PopperScreen screen = PopperScreen.valueOf(screenName);
     File mediaFolder = game.getPinUPMediaFolder(screen);
     return new File(mediaFolder, FilenameUtils.getBaseName(game.getGameFileName()) + ".png");
-  }
-
-
-  @Override
-  public void afterPropertiesSet() throws Exception {
-    highscoreService.addHighscoreChangeListener(this);
   }
 }

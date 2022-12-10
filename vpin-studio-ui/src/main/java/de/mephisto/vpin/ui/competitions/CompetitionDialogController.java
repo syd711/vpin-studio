@@ -50,6 +50,9 @@ public class CompetitionDialogController implements Initializable {
   private CheckBox badgeCheckbox;
 
   @FXML
+  private CheckBox discordCheckbox;
+
+  @FXML
   private Button saveBtn;
 
   @FXML
@@ -73,6 +76,11 @@ public class CompetitionDialogController implements Initializable {
   }
 
   @FXML
+  private void onDiscordCheck() {
+    competition.setDiscordNotifications(this.discordCheckbox.isSelected());
+  }
+
+  @FXML
   private void onCancelClick(ActionEvent e) {
     this.competition = null;
     Stage stage = (Stage) ((Button) e.getSource()).getScene().getWindow();
@@ -89,6 +97,7 @@ public class CompetitionDialogController implements Initializable {
   public void initialize(URL url, ResourceBundle resourceBundle) {
     competition = new CompetitionRepresentation();
     competition.setType("offline");
+    competition.setDiscordNotifications(true);
     competition.setName("My next competition");
 
     Date end = Date.from(LocalDate.now().plus(7, ChronoUnit.DAYS).atStartOfDay(ZoneId.systemDefault()).toInstant());
@@ -96,6 +105,7 @@ public class CompetitionDialogController implements Initializable {
     competition.setEndDate(end);
 
     badgeCheckbox.setSelected(true);
+    discordCheckbox.setSelected(true);
     competition.setCustomizeMedia(true);
     saveBtn.setDisable(true);
 
@@ -212,6 +222,7 @@ public class CompetitionDialogController implements Initializable {
       this.tableCombo.setValue(game);
 
       this.badgeCheckbox.setSelected(c.isCustomizeMedia());
+      this.discordCheckbox.setSelected(c.isDiscordNotifications());
       this.competitionIconCombo.setValue(c.getBadge());
       String badge = c.getBadge();
       refreshPreview(game, badge);

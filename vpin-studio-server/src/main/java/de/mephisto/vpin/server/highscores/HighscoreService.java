@@ -116,16 +116,16 @@ public class HighscoreService implements InitializingBean {
   /**
    * Returns a list of all scores for the given game
    *
-   * @param game the game to retrieve the highscores for
+   * @param gameId the game to retrieve the highscores for
    * @return all highscores of the given player
    */
-  public ScoreSummary getHighscores(Game game) {
+  public ScoreSummary getHighscores(int gameId) {
     ScoreSummary summary = new ScoreSummary(new ArrayList<>(), new Date());
-    Optional<Highscore> highscore = highscoreRepository.findByGameId(game.getId());
+    Optional<Highscore> highscore = highscoreRepository.findByGameId(gameId);
     if (highscore.isPresent()) {
       Highscore h = highscore.get();
       if (!StringUtils.isEmpty(h.getRaw())) {
-        List<Score> scores = parseScores(h.getCreatedAt(), h.getRaw(), game.getId());
+        List<Score> scores = parseScores(h.getCreatedAt(), h.getRaw(), gameId);
         summary.setRaw(h.getRaw());
         summary.getScores().addAll(scores);
       }

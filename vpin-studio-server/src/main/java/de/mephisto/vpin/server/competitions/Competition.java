@@ -43,6 +43,8 @@ public class Competition {
 
   private boolean customizeMedia;
 
+  private boolean discordNotifications;
+
   private Date startDate;
 
   private Date endDate;
@@ -143,6 +145,18 @@ public class Competition {
 
   public void setUpdatedAt(Date updatedAt) {
     this.updatedAt = updatedAt;
+  }
+
+  public boolean isDiscordNotifications() {
+    return discordNotifications;
+  }
+
+  public void setDiscordNotifications(boolean discordNotifications) {
+    this.discordNotifications = discordNotifications;
+  }
+
+  public boolean isActive() {
+    return this.getEndDate().after(new Date()) && this.startDate.before(new Date());
   }
 
   @Override

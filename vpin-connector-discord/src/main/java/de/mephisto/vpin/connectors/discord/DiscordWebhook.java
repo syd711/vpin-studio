@@ -1,21 +1,22 @@
 package de.mephisto.vpin.connectors.discord;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import javax.net.ssl.HttpsURLConnection;
-import java.awt.Color;
+import java.awt.*;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.lang.reflect.Array;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Class used to execute Discord Webhooks with low effort
  */
 public class DiscordWebhook {
+  private final static Logger LOG = LoggerFactory.getLogger(DiscordWebhook.class);
 
   private final String url;
   private String content;
@@ -24,11 +25,15 @@ public class DiscordWebhook {
   private boolean tts;
   private List<EmbedObject> embeds = new ArrayList<>();
 
-  public static void call(String url, String message) throws IOException {
-    DiscordWebhook hook = new DiscordWebhook(url);
-    hook.setTts(false);
-    hook.setContent(message);
-    hook.execute();
+  public static void call(String url, String message) {
+    try {
+      DiscordWebhook hook = new DiscordWebhook(url);
+      hook.setTts(false);
+      hook.setContent(message);
+      hook.execute();
+    } catch (IOException e) {
+      LOG.error("Failed to send hook message: " + e.getMessage(), e);
+    }
   }
 
   /**

@@ -22,6 +22,8 @@ public class CompetitionRepresentation {
 
   private boolean customizeMedia;
 
+  private boolean discordNotifications;
+
   private String winnerInitials;
 
   private PlayerRepresentation winner;
@@ -104,6 +106,14 @@ public class CompetitionRepresentation {
 
   public void setEndDate(Date endDate) {
     this.endDate = endDate;
+  }
+
+  public boolean isDiscordNotifications() {
+    return discordNotifications;
+  }
+
+  public void setDiscordNotifications(boolean discordNotifications) {
+    this.discordNotifications = discordNotifications;
   }
 
   @Override

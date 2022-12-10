@@ -2,7 +2,6 @@
 
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
-<?import javafx.scene.control.Label?>
 <?import javafx.scene.control.Separator?>
 <?import javafx.scene.control.Tab?>
 <?import javafx.scene.control.TabPane?>
@@ -24,7 +23,7 @@
             <center>
                 <TabPane tabClosingPolicy="UNAVAILABLE" BorderPane.alignment="CENTER">
                     <tabs>
-                        <Tab closable="false" text=" Offline Competitions">
+                        <Tab closable="false" text="Competition List">
                             <content>
                                 <BorderPane prefHeight="200.0" prefWidth="200.0" />
                             </content>
@@ -109,20 +108,6 @@
                                  </top>
                               </BorderPane>
                            </center></BorderPane>
-                     </content>
-                        </Tab>
-                        <Tab closable="false" text=" Online Competitions">
-                     <graphic>
-                        <FontIcon iconColor="WHITE" iconLiteral="bi-trophy-fill" />
-                     </graphic>
-                     <content>
-                        <BorderPane prefHeight="200.0" prefWidth="200.0">
-                           <center>
-                              <Label text="Some day, you and I will play together." textFill="WHITE" BorderPane.alignment="CENTER" />
-                           </center>
-                           <top>
-                              <Label text="Work in progress..." textFill="WHITE" BorderPane.alignment="CENTER" />
-                           </top></BorderPane>
                      </content>
                         </Tab>
                     </tabs>

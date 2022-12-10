@@ -1,7 +1,10 @@
 package de.mephisto.vpin.server.competitions;
 
 import de.mephisto.vpin.server.highscores.HighscoreService;
+import de.mephisto.vpin.server.highscores.Score;
 import de.mephisto.vpin.server.highscores.ScoreList;
+import de.mephisto.vpin.server.players.Player;
+import de.mephisto.vpin.server.players.PlayerService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
@@ -9,7 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 import org.springframework.stereotype.Service;
 
-import java.util.Comparator;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -25,7 +28,35 @@ public class CompetitionService implements InitializingBean {
   private HighscoreService highscoreService;
 
   @Autowired
+  private PlayerService playerService;
+
+  @Autowired
   private ThreadPoolTaskScheduler scheduler;
+
+  private final List<CompetitionChangeListener> listeners = new ArrayList<>();
+
+  public void addCompetitionChangeListener(CompetitionChangeListener c) {
+    this.listeners.add(c);
+  }
+
+  public void notifyCompetitionCreation(Competition c) {
+    for (CompetitionChangeListener listener : this.listeners) {
+      listener.competitionCreated(c);
+    }
+  }
+
+  public void notifyCompetitionChanged(Competition c) {
+    for (CompetitionChangeListener listener : this.listeners) {
+      listener.competitionChanged(c);
+    }
+  }
+
+  public void notifyCompetitionFinished(Competition c) {
+    for (CompetitionChangeListener listener : this.listeners) {
+      listener.competitionFinished(c);
+    }
+  }
+
 
   public List<Competition> getCompetitions() {
     return competitionsRepository.findAll();
@@ -37,12 +68,15 @@ public class CompetitionService implements InitializingBean {
   }
 
   public List<Competition> getFinishedCompetitions(int limit) {
-    List<Competition> competitions = competitionsRepository.findByEndDateLessThanEqualOrderByEndDate(new Date());
-    competitions.sort(Comparator.comparing(Competition::getEndDate));
+    List<Competition> competitions = competitionsRepository.findByWinnerInitialsIsNotNullAndEndDateLessThanEqualOrderByEndDate(new Date());
     if (competitions.size() > limit) {
       return competitions.subList(0, limit);
     }
     return competitions;
+  }
+
+  public List<Competition> getCompetitionToBeFinished() {
+    return competitionsRepository.findByWinnerInitialsIsNullAndEndDateLessThanEqualOrderByEndDate(new Date());
   }
 
   public ScoreList getCompetitionScores(long id) {
@@ -54,9 +88,44 @@ public class CompetitionService implements InitializingBean {
   }
 
   public Competition save(Competition c) {
+    boolean isNew = c.getId() == null;
     Competition updated = competitionsRepository.saveAndFlush(c);
     LOG.info("Saved " + updated);
+    if (isNew) {
+      notifyCompetitionCreation(updated);
+    }
+    else {
+      notifyCompetitionChanged(updated);
+      runFinishedCompetitionsCheck();
+    }
     return getCompetition(c.getId());
+  }
+
+  public void runFinishedCompetitionsCheck() {
+    List<Competition> openCompetitions = getCompetitionToBeFinished();
+    for (Competition openCompetition : openCompetitions) {
+      finishCompetition(openCompetition);
+    }
+  }
+
+  public void finishCompetition(Competition competition) {
+    ScoreSummary highscores = highscoreService.getHighscores(competition.getGameId());
+    if (highscores.getScores().isEmpty()) {
+      LOG.error("Failed to finished " + competition + " correctly, no score could be determined, using John Doe.");
+      competition.setWinnerInitials("???");
+    }
+    else {
+      Score score = highscores.getScores().get(0);
+      competition.setWinnerInitials(score.getPlayerInitials());
+
+      Optional<Player> playerForInitials = playerService.getPlayerForInitials(score.getPlayerInitials());
+      if (playerForInitials.isPresent()) {
+        LOG.info(playerForInitials.get() + " is announced as winner of " + competition);
+        competition.setWinner(playerForInitials.get());
+      }
+    }
+    save(competition);
+    notifyCompetitionFinished(competition);
   }
 
   public List<Competition> getActiveOfflineCompetitions() {
@@ -65,7 +134,7 @@ public class CompetitionService implements InitializingBean {
 
   public void delete(long id) {
     Optional<Competition> c = competitionsRepository.findById(id);
-    if(c.isPresent()) {
+    if (c.isPresent()) {
       competitionsRepository.deleteById(id);
     }
     else {
@@ -75,6 +144,6 @@ public class CompetitionService implements InitializingBean {
 
   @Override
   public void afterPropertiesSet() throws Exception {
-    scheduler.scheduleAtFixedRate(new CompetitionCleanupRunnableTask(), 1000 * 60 * 60);
+    scheduler.scheduleAtFixedRate(new CompetitionCheckRunnable(this), 1000 * 60 * 60);
   }
 }

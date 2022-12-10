@@ -32,25 +32,30 @@ public class PopperResource {
 
   @PostMapping("/gameLaunch/")
   public boolean gameLaunch(@RequestParam("table") String table) {
-    File tableFile = new File(table);
-    Game game = service.getGameByFile(tableFile);
-    if (game == null) {
-      LOG.warn("No game found for name '" + table);
-      return false;
-    }
-    popperManager.notifyTableStatusChange(game, true);
+    new Thread(() -> {
+      Thread.currentThread().setName("Popper Game Launch Thread");
+      File tableFile = new File(table);
+      Game game = service.getGameByFile(tableFile);
+      if (game == null) {
+        LOG.warn("No game found for name '" + table);
+      }
+      popperManager.notifyTableStatusChange(game, true);
+    }).start();
     return true;
   }
 
   @PostMapping("/gameExit")
   public boolean gameExit(@RequestParam("table") String table) {
-    File tableFile = new File(table.trim());
-    Game game = service.getGameByFile(tableFile);
-    if (game == null) {
-      LOG.warn("No game found for name '" + table);
-      return false;
-    }
-    popperManager.notifyTableStatusChange(game, false);
+    new Thread(() -> {
+      Thread.currentThread().setName("Popper Game Exit Thread");
+      File tableFile = new File(table.trim());
+      Game game = service.getGameByFile(tableFile);
+      if (game == null) {
+        LOG.warn("No game found for name '" + table);
+      }
+      popperManager.notifyTableStatusChange(game, false);
+    }).start();
+
     return true;
   }
 

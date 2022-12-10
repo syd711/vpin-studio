@@ -13,10 +13,12 @@ import net.dv8tion.jda.api.events.guild.member.GuildMemberUpdateEvent;
 import net.dv8tion.jda.api.events.guild.member.update.GuildMemberUpdateNicknameEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.requests.GatewayIntent;
+import net.dv8tion.jda.api.utils.FileUpload;
 import net.dv8tion.jda.api.utils.MemberCachePolicy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -48,6 +50,27 @@ public class DiscordClient extends ListenerAdapter {
     this.jda.shutdownNow();
   }
 
+  public void sendMessage(String textChannelName, File file) {
+    Guild guild = jda.getGuildById(guildId);
+    if (guild != null) {
+      List<GuildChannel> channels = guild.getChannels();
+      for (GuildChannel channel : channels) {
+        if (channel.getName().equals(textChannelName)) {
+          if (!(channel instanceof TextChannel)) {
+            continue;
+          }
+          TextChannel textChannel = (TextChannel) channel;
+          textChannel.sendMessage("bubu").addFiles(FileUpload.fromData(file)).queue();
+          return;
+        }
+      }
+      throw new UnsupportedOperationException("No matching channel found for name " + textChannelName);
+    }
+    else {
+      throw new UnsupportedOperationException("No guild found for guildId '" + this.guildId + "'");
+    }
+  }
+
   public void sendMessage(String textChannelName, String message) {
     Guild guild = jda.getGuildById(guildId);
     if (guild != null) {
@@ -55,12 +78,14 @@ public class DiscordClient extends ListenerAdapter {
       for (GuildChannel channel : channels) {
         if (channel.getName().equals(textChannelName)) {
           if (!(channel instanceof TextChannel)) {
-            throw new UnsupportedOperationException("Channel '" + textChannelName + "' is not a text channel.");
+            continue;
           }
           TextChannel textChannel = (TextChannel) channel;
           textChannel.sendMessage(message).queue();
+          return;
         }
       }
+      throw new UnsupportedOperationException("No matching channel found for name " + textChannelName);
     }
     else {
       throw new UnsupportedOperationException("No guild found for guildId '" + this.guildId + "'");

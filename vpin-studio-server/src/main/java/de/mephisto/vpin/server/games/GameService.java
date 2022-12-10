@@ -54,7 +54,7 @@ public class GameService {
 
   public List<Game> getGamesWithScore() {
     List<Game> games = getGames();
-    return games.stream().filter(g -> !StringUtils.isEmpty(highscoreService.getHighscores(g).getRaw())).collect(Collectors.toList());
+    return games.stream().filter(g -> !StringUtils.isEmpty(highscoreService.getHighscores(g.getId()).getRaw())).collect(Collectors.toList());
   }
 
   @SuppressWarnings("unused")
@@ -68,9 +68,8 @@ public class GameService {
     return null;
   }
 
-  public ScoreSummary getScores(int id) {
-    Game game = getGame(id);
-    return highscoreService.getHighscores(game);
+  public ScoreSummary getScores(int gameId) {
+    return highscoreService.getHighscores(gameId);
   }
 
   public ScoreSummary getRecentHighscores(int count) {
