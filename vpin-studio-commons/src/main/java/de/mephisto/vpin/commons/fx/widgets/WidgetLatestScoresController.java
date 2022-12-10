@@ -7,6 +7,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -49,7 +50,7 @@ public class WidgetLatestScoresController extends WidgetController implements In
         }
 
         FXMLLoader loader = new FXMLLoader(WidgetLatestScoreItemController.class.getResource("widget-latest-score-item.fxml"));
-        BorderPane row = loader.load();
+        Pane row = loader.load();
         row.setPrefWidth(root.getPrefWidth() - 24);
         WidgetLatestScoreItemController controller = loader.getController();
         controller.setData(game, score, wheelMedia);
