@@ -64,6 +64,7 @@ public class RestClient implements ClientHttpRequestInterceptor {
 
   public <T> T get(String path, Class<T> entityType, Map<String, ?> urlVariables) {
     String url = baseUrl + path;
+    LOG.info("HTTP GET " + url);
     return restTemplate.getForObject(url, entityType, urlVariables);
   }
 
@@ -120,7 +121,7 @@ public class RestClient implements ClientHttpRequestInterceptor {
     InputStream is = null;
     try {
       URL url = new URL(resource);
-      LOG.info("HTTP GET " + url);
+      LOG.info("HTTP GET Binary: " + url);
       HttpURLConnection con = (HttpURLConnection) url.openConnection();
       int responseCode = con.getResponseCode();
       if (responseCode == 404) {

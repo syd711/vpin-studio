@@ -68,6 +68,10 @@ public class HighscoreService implements InitializingBean {
   public ScoreList getScoresBetween(int gameId, Date start, Date end) {
     ScoreList scoreList = new ScoreList();
     Optional<Highscore> highscore = highscoreRepository.findByGameIdAndCreatedAtBetween(gameId, start, end);
+    if(end.after(new Date())) {
+      highscore = highscoreRepository.findByGameId(gameId);
+    }
+
     if (highscore.isPresent()) {
       Highscore h = highscore.get();
       ScoreSummary scoreSummary = getScoreSummary(h.getCreatedAt(), h.getRaw(), gameId);
@@ -76,6 +80,7 @@ public class HighscoreService implements InitializingBean {
     }
 
     List<HighscoreVersion> byGameIdAndCreatedAtBetween = highscoreVersionRepository.findByGameIdAndCreatedAtBetween(gameId, start, end);
+//    List<HighscoreVersion> byGameIdAndCreatedAtBetween = highscoreVersionRepository.findByGameId(gameId);
     for (HighscoreVersion version : byGameIdAndCreatedAtBetween) {
       ScoreSummary scoreSummary = getScoreSummary(version.getCreatedAt(), version.getRaw(), gameId);
       scoreList.getScores().add(scoreSummary);

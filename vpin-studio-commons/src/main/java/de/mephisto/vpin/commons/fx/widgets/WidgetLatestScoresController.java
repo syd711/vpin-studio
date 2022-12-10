@@ -57,7 +57,7 @@ public class WidgetLatestScoresController extends WidgetController implements In
         highscoreVBox.getChildren().add(row);
         count++;
 
-        if (count == 10) {
+        if (count == 8) {
           break;
         }
       }

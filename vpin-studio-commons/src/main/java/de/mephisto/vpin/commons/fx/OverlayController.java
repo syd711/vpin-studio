@@ -1,6 +1,6 @@
 package de.mephisto.vpin.commons.fx;
 
-import de.mephisto.vpin.commons.fx.widgets.WidgetOfflineCompetitionController;
+import de.mephisto.vpin.commons.fx.widgets.WidgetCompetitionController;
 import de.mephisto.vpin.restclient.representations.CompetitionRepresentation;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -21,7 +21,7 @@ public class OverlayController implements Initializable {
   private BorderPane rotatedRoot;
 
   @FXML
-  private WidgetOfflineCompetitionController offlineCompetitionController; //fxml magic! Not unused -> id + "Controller"
+  private WidgetCompetitionController offlineCompetitionController; //fxml magic! Not unused -> id + "Controller"
 
   // Add a public no-args constructor
   public OverlayController() {

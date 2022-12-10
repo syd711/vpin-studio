@@ -13,7 +13,6 @@ import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.chart.XYChart;
 import javafx.scene.image.Image;
-import javafx.scene.layout.Border;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
@@ -34,8 +33,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.ResourceBundle;
 
-public class WidgetOfflineCompetitionController extends WidgetController implements Initializable {
-  private final static Logger LOG = LoggerFactory.getLogger(WidgetOfflineCompetitionController.class);
+public class WidgetCompetitionController extends WidgetController implements Initializable {
+  private final static Logger LOG = LoggerFactory.getLogger(WidgetCompetitionController.class);
 
   @FXML
   private VBox statsWidget;
@@ -58,7 +57,7 @@ public class WidgetOfflineCompetitionController extends WidgetController impleme
 
   private WidgetCompetitionSummaryController summaryWidgetController;
 
-  public WidgetOfflineCompetitionController() {
+  public WidgetCompetitionController() {
   }
 
 
@@ -112,27 +111,7 @@ public class WidgetOfflineCompetitionController extends WidgetController impleme
     remainingTimeWidget.getChildren().add(countdownTile);
 
 
-    //noinspection unchecked
-    highscoresGraphTile = TileBuilder.create()
-        .skinType(Tile.SkinType.SMOOTHED_CHART)
-        .maxWidth(Double.MAX_VALUE)
-        .title("Competition Scores")
-        .textSize(Tile.TextSize.BIGGER)
-        .chartType(Tile.ChartType.LINE)
-        .borderWidth(1)
-        .snapToTicks(true)
-        .maxValue(10)
-        .checkSectionsForValue(true)
-        .startFromZero(true)
-        .description("")
-        .tickLabelsYVisible(true)
-        .dataPointsVisible(true)
-        .decimals(1)
-        .borderColor(Color.web("#111111"))
-        .animated(true)
-        .smoothing(false)
-        .build();
-    statsWidget.getChildren().add(highscoresGraphTile);
+
 
     try {
       FXMLLoader loader = new FXMLLoader(WidgetLatestScoresController.class.getResource("widget-competition-summary.fxml"));
@@ -165,9 +144,9 @@ public class WidgetOfflineCompetitionController extends WidgetController impleme
         XYChart.Series<String, Number> scoreGraph1 = new XYChart.Series();
         scoreGraph1.setName("#1");
         XYChart.Series<String, Number> scoreGraph2 = new XYChart.Series();
-        scoreGraph1.setName("#2");
+        scoreGraph2.setName("#2");
         XYChart.Series<String, Number> scoreGraph3 = new XYChart.Series();
-        scoreGraph1.setName("#3");
+        scoreGraph3.setName("#3");
 
         //every summary is one history version
         List<ScoreSummaryRepresentation> scores = competitionScores.getScores();
@@ -179,7 +158,29 @@ public class WidgetOfflineCompetitionController extends WidgetController impleme
           s = score.getScores().get(2);
           scoreGraph3.getData().add(new XYChart.Data(SimpleDateFormat.getDateTimeInstance().format(score.getCreatedAt()), s.getNumericScore()));
         }
-        highscoresGraphTile.setSeries(scoreGraph1, scoreGraph2, scoreGraph3);
+
+        //noinspection unchecked
+        highscoresGraphTile = TileBuilder.create()
+            .skinType(Tile.SkinType.SMOOTHED_CHART)
+            .maxWidth(Double.MAX_VALUE)
+            .title("Competition Scores")
+            .textSize(Tile.TextSize.BIGGER)
+            .chartType(Tile.ChartType.LINE)
+            .borderWidth(1)
+            .snapToTicks(true)
+            .maxValue(10)
+            .checkSectionsForValue(true)
+            .startFromZero(true)
+            .description("")
+            .tickLabelsYVisible(true)
+            .dataPointsVisible(true)
+            .decimals(1)
+            .borderColor(Color.web("#111111"))
+            .animated(true)
+            .smoothing(false)
+            .series(scoreGraph1, scoreGraph2, scoreGraph3)
+            .build();
+        statsWidget.getChildren().add(highscoresGraphTile);
       }
 
       if (competitionScores.getLatestScore() != null) {

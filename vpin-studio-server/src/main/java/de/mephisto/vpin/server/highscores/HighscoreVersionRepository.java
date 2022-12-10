@@ -13,4 +13,5 @@ public interface HighscoreVersionRepository extends JpaRepository<HighscoreVersi
 
   List<HighscoreVersion> findByGameIdAndCreatedAtBetween(int gameId, Date startDate, Date endDate);
 
+  List<HighscoreVersion> findByGameId(int gameId);
 }

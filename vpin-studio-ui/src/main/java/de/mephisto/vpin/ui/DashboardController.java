@@ -3,7 +3,7 @@ package de.mephisto.vpin.ui;
 import de.mephisto.vpin.commons.fx.OverlayWindowFX;
 import de.mephisto.vpin.commons.fx.widgets.WidgetFinishedCompetitionsController;
 import de.mephisto.vpin.commons.fx.widgets.WidgetLatestScoresController;
-import de.mephisto.vpin.commons.fx.widgets.WidgetOfflineCompetitionController;
+import de.mephisto.vpin.commons.fx.widgets.WidgetCompetitionController;
 import de.mephisto.vpin.restclient.representations.CompetitionRepresentation;
 import de.mephisto.vpin.restclient.representations.ScoreSummaryRepresentation;
 import javafx.application.Platform;
@@ -38,7 +38,7 @@ public class DashboardController implements Initializable, StudioFXController {
   @FXML
   private StackPane dashboardStack;
 
-  private WidgetOfflineCompetitionController offlineCompetitionController;
+  private WidgetCompetitionController offlineCompetitionController;
   private WidgetFinishedCompetitionsController finishedCompetitionsController;
   private WidgetLatestScoresController latestScoresController;
 
@@ -62,7 +62,7 @@ public class DashboardController implements Initializable, StudioFXController {
     }
 
     try {
-      FXMLLoader loader = new FXMLLoader(WidgetOfflineCompetitionController.class.getResource("widget-offline-competition.fxml"));
+      FXMLLoader loader = new FXMLLoader(WidgetCompetitionController.class.getResource("widget-offline-competition.fxml"));
       BorderPane root = loader.load();
       root.setMaxWidth(Double.MAX_VALUE);
       offlineCompetitionController = loader.getController();

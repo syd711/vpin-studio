@@ -208,11 +208,15 @@ public class VPinStudioClient implements ObservedPropertyChangeListener, Overlay
   }
 
   public ByteArrayInputStream getCompetitionBackground(long gameId) {
-    byte[] bytes = restClient.readBinary(API + "directb2s/competition/" + gameId);
-    if (bytes == null) {
-      throw new UnsupportedOperationException("No data found for competition with gameId " + gameId);
+    String name = "competition-bg-game-" + gameId;
+
+    if (!imageCache.containsKey(name)) {
+      byte[] bytes = restClient.readBinary(API + "directb2s/competition/" + gameId);
+      imageCache.put(name, bytes);
     }
-    return new ByteArrayInputStream(bytes);
+
+    byte[] imageBytes = imageCache.get(name);
+    return new ByteArrayInputStream(imageBytes);
   }
 
   /*********************************************************************************************************************
