@@ -90,7 +90,7 @@
                   <Insets />
                </opaqueInsets>
             </GridPane>
-            <Label layoutX="34.0" layoutY="66.0" styleClass="preference-subtitle" text="How are Discord members mapped to highscores?">
+            <Label layoutX="34.0" layoutY="66.0" styleClass="preference-subtitle" text="How are Discord server members mapped to highscores?">
                <graphic>
                   <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
                </graphic>
@@ -107,7 +107,7 @@
                </VBox.margin>
             </ImageView>
             <Label layoutX="34.0" layoutY="400.0" styleClass="preference-description" text="          (Nickname Example)" textFill="WHITE" />
-            <Label layoutX="34.0" layoutY="290.0" styleClass="preference-subtitle" text="Where can I change my nickname on the server?">
+            <Label layoutX="34.0" layoutY="290.0" styleClass="preference-subtitle" text="But I don't want to change my nickname on Discord?">
                <graphic>
                   <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
                </graphic>
@@ -115,11 +115,12 @@
                   <Insets top="12.0" />
                </VBox.margin>
             </Label>
-            <Label layoutX="34.0" layoutY="328.0" styleClass="preference-description" text="Invoke the context menu on your username in the member list. Click on &quot;Edit Server Profile&quot;, update the nickname and save the changes." textFill="WHITE">
+            <Label layoutX="34.0" layoutY="328.0" styleClass="preference-description" text="No worries! Discord supports different the assignment of different nicknames, depending on the server. " textFill="WHITE">
                <VBox.margin>
                   <Insets />
                </VBox.margin>
             </Label>
+            <Label layoutX="34.0" layoutY="592.0" styleClass="preference-description" text="Invoke the context menu on your username in the member list. Click on &quot;Edit Server Profile&quot;, update the nickname and save the changes." textFill="WHITE" />
             <Label layoutX="34.0" layoutY="572.0" styleClass="preference-description" text="Note that the name is only changed for the specific server." textFill="WHITE">
                <VBox.margin>
                   <Insets bottom="6.0" />

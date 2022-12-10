@@ -4,12 +4,15 @@
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
+<?import org.kordamp.ikonli.javafx.FontIcon?>
 
 <BorderPane styleClass="base-component" stylesheets="@../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.preferences.DiscordWebhookPreferencesController">
    <top>
@@ -65,6 +68,47 @@
                   <Insets />
                </opaqueInsets>
             </GridPane>
+            <Label styleClass="preference-subtitle" text="How to create a Discord webhook?">
+               <graphic>
+                  <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
+               </graphic>
+            </Label>
+            <Label styleClass="preference-description" text="Open the context menu of the server and select &quot;Server Settings&quot;" textFill="WHITE" />
+            <ImageView fitHeight="316.0" fitWidth="182.0" pickOnBounds="true" preserveRatio="true">
+               <VBox.margin>
+                  <Insets top="6.0" />
+               </VBox.margin>
+               <image>
+                  <Image url="@../screenshots/webhook1.png" />
+               </image>
+            </ImageView>
+            <Label layoutX="34.0" layoutY="278.0" styleClass="preference-description" text="Under group &quot;Apps&quot;, select entry &quot;Integrations&quot;." textFill="WHITE">
+               <VBox.margin>
+                  <Insets top="6.0" />
+               </VBox.margin>
+            </Label>
+            <ImageView fitHeight="250.0" fitWidth="600.0" pickOnBounds="true" preserveRatio="true">
+               <VBox.margin>
+                  <Insets top="6.0" />
+               </VBox.margin>
+               <image>
+                  <Image url="@../screenshots/webhook2.png" />
+               </image>
+            </ImageView>
+            <Label layoutX="34.0" layoutY="611.0" styleClass="preference-description" text="Next, click on &quot;View Webhooks&quot;." textFill="WHITE">
+               <VBox.margin>
+                  <Insets top="6.0" />
+               </VBox.margin>
+            </Label>
+            <ImageView fitHeight="300.0" fitWidth="500.0" pickOnBounds="true" preserveRatio="true">
+               <VBox.margin>
+                  <Insets top="6.0" />
+               </VBox.margin>
+               <image>
+                  <Image url="@../screenshots/webhook3.png" />
+               </image>
+            </ImageView>
+            <Label layoutX="34.0" layoutY="894.0" styleClass="preference-description" text="You are now on the webhooks overview page where you can create a new webhook." textFill="WHITE" />
          </children>
          <padding>
             <Insets bottom="24.0" left="24.0" right="24.0" top="24.0" />
