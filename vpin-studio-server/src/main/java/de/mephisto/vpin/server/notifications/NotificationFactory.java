@@ -35,6 +35,14 @@ public class NotificationFactory {
       "%s\\n" +
       "```";
 
+  private static final String COMPETITION_CANCELLED_TEMPLATE = "```" +
+      "The competition '%s' has been cancelled." +
+      "```";
+
+  public static String createDiscordCompetitionCancelledMessage(Competition competition) {
+    return String.format(COMPETITION_CANCELLED_TEMPLATE, competition.getName());
+  }
+
   public static String createDiscordCompetitionCreatedMessage(Competition competition, Game game) {
     LocalDate start = competition.getStartDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
     LocalDate end = competition.getEndDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();

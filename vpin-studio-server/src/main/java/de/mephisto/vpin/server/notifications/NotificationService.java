@@ -71,7 +71,7 @@ public class NotificationService implements InitializingBean, HighscoreChangeLis
         Game game = gameService.getGame(competition.getGameId());
         ScoreSummary summary = highscoreService.getHighscores(competition.getGameId());
 
-        if(!summary.getScores().isEmpty()) {
+        if (!summary.getScores().isEmpty()) {
           String message = NotificationFactory.createDiscordCompetitionFinishedMessage(competition, game, summary);
           DiscordWebhook.call(webhookUrl, message);
           LOG.info("Called Discord webhook for completion of " + competition);
@@ -79,6 +79,18 @@ public class NotificationService implements InitializingBean, HighscoreChangeLis
         else {
           LOG.warn("Skipped calling Discord webhook for completion of " + competition + ", game has no highscore.");
         }
+      }
+    }
+  }
+
+  @Override
+  public void competitionDeleted(Competition competition) {
+    if (competition.isDiscordNotifications() && competition.isActive()) {
+      String webhookUrl = (String) preferencesService.getPreferenceValue(PreferenceNames.DISCORD_WEBHOOK_URL);
+      if (!StringUtils.isEmpty(webhookUrl)) {
+        String message = NotificationFactory.createDiscordCompetitionCancelledMessage(competition);
+        DiscordWebhook.call(webhookUrl, message);
+        LOG.info("Called Discord webhook for cancellation of " + competition);
       }
     }
   }

@@ -57,7 +57,11 @@ public class CompetitionService implements InitializingBean {
     }
   }
 
-
+  public void notifyCompetitionDeleted(Competition c) {
+    for (CompetitionChangeListener listener : this.listeners) {
+      listener.competitionDeleted(c);
+    }
+  }
   public List<Competition> getCompetitions() {
     return competitionsRepository.findAll();
   }
@@ -136,6 +140,7 @@ public class CompetitionService implements InitializingBean {
     Optional<Competition> c = competitionsRepository.findById(id);
     if (c.isPresent()) {
       competitionsRepository.deleteById(id);
+      notifyCompetitionDeleted(c.get());
     }
     else {
       LOG.error("No competition exists for id " + id);

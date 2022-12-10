@@ -7,4 +7,6 @@ public interface CompetitionChangeListener {
   void competitionChanged(Competition competition);
 
   void competitionFinished(Competition competition);
+
+  void competitionDeleted(Competition competition);
 }
