@@ -39,7 +39,9 @@
 }
 
 .widget-item {
-
+    -fx-border-radius: 6 6 6 6;
+    -fx-border-style: solid solid solid solid;
+    -fx-border-color: #111111;
 }
 
 
