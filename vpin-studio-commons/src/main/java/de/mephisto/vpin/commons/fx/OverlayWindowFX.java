@@ -44,8 +44,8 @@ public class OverlayWindowFX extends Application {
 
   public void setVisible(boolean b) {
     if (b) {
-      overlayController.refreshData();
       stage.show();
+      overlayController.refreshData();
     }
     else {
       stage.hide();

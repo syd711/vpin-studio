@@ -45,7 +45,6 @@ public class WheelAugmenter {
       clearThumbs();
     } catch (Exception e) {
       LOG.error("Wheel augmentation failed: " + e.getMessage(), e);
-
     }
   }
 
@@ -58,7 +57,6 @@ public class WheelAugmenter {
         clearThumbs();
         LOG.info("Reverted augmented wheelicon " + wheelIcon.getAbsolutePath());
       }
-
     }
   }
 

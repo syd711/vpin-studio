@@ -56,10 +56,11 @@ public class NotificationService implements InitializingBean, HighscoreChangeLis
 
   @Override
   public void competitionCreated(Competition competition) {
+    Game game = gameService.getGame(competition.getGameId());
+
     if (competition.isDiscordNotifications() && competition.isActive()) {
       String webhookUrl = (String) preferencesService.getPreferenceValue(PreferenceNames.DISCORD_WEBHOOK_URL);
       if (!StringUtils.isEmpty(webhookUrl)) {
-        Game game = gameService.getGame(competition.getGameId());
         String message = NotificationFactory.createDiscordCompetitionCreatedMessage(competition, game);
         DiscordWebhook.call(webhookUrl, message);
         LOG.info("Called Discord webhook for creation of " + competition);
@@ -72,10 +73,12 @@ public class NotificationService implements InitializingBean, HighscoreChangeLis
 
   @Override
   public void competitionFinished(Competition competition) {
+    Game game = gameService.getGame(competition.getGameId());
+    popperService.deAugmentWheel(game);
+
     if (competition.isDiscordNotifications()) {
       String webhookUrl = (String) preferencesService.getPreferenceValue(PreferenceNames.DISCORD_WEBHOOK_URL);
       if (!StringUtils.isEmpty(webhookUrl)) {
-        Game game = gameService.getGame(competition.getGameId());
         ScoreSummary summary = highscoreService.getHighscores(competition.getGameId());
 
         if (!summary.getScores().isEmpty()) {
@@ -92,6 +95,9 @@ public class NotificationService implements InitializingBean, HighscoreChangeLis
 
   @Override
   public void competitionDeleted(Competition competition) {
+    Game game = gameService.getGame(competition.getGameId());
+    popperService.deAugmentWheel(game);
+
     if (competition.isDiscordNotifications() && competition.isActive()) {
       String webhookUrl = (String) preferencesService.getPreferenceValue(PreferenceNames.DISCORD_WEBHOOK_URL);
       if (!StringUtils.isEmpty(webhookUrl)) {
@@ -104,7 +110,15 @@ public class NotificationService implements InitializingBean, HighscoreChangeLis
 
   @Override
   public void competitionChanged(Competition competition) {
-    String winner = competition.getWinnerInitials();
+    Game game = gameService.getGame(competition.getGameId());
+
+    boolean customizeMedia = competition.isCustomizeMedia();
+    if(customizeMedia) {
+      popperService.augmentWheel(game, competition.getBadge());
+    }
+    else {
+      popperService.deAugmentWheel(game);
+    }
   }
 
   @Override
