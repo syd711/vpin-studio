@@ -396,7 +396,7 @@
    <center>
       <BorderPane fx:id="imageCenter" styleClass="subpanel" BorderPane.alignment="CENTER">
          <BorderPane.margin>
-            <Insets bottom="12.0" left="12.0" right="12.0" />
+            <Insets left="12.0" right="12.0" />
          </BorderPane.margin>
          <center>
             <BorderPane fx:id="imageCenter" styleClass="media-container">

@@ -80,7 +80,7 @@ public class DashboardController implements Initializable, StudioFXController {
       finishedCompetitionsBorderPane = loader.load();
       finishedCompetitionsController = loader.getController();
       finishedCompetitionsBorderPane.setMaxWidth(Double.MAX_VALUE);
-      widgetFinishedCompetitions.setTop(finishedCompetitionsBorderPane);
+      widgetFinishedCompetitions.setCenter(finishedCompetitionsBorderPane);
     } catch (IOException e) {
       LOG.error("Failed to load finished competitions widget: " + e.getMessage(), e);
     }
@@ -106,13 +106,13 @@ public class DashboardController implements Initializable, StudioFXController {
       List<CompetitionRepresentation> competitions = OverlayWindowFX.client.getFinishedCompetitions(3);
       finishedCompetitionsController.setCompetitions(competitions);
 
-      if (activeCompetitions.isEmpty()) {
-        widgetCompetition.setTop(finishedCompetitionsBorderPane);
-        widgetFinishedCompetitions.setTop(null);
-      }
-      else {
-
-      }
+//      if (activeCompetitions.isEmpty()) {
+//        widgetCompetition.setTop(finishedCompetitionsBorderPane);
+//        widgetFinishedCompetitions.setTop(null);
+//      }
+//      else {
+//
+//      }
     });
   }
 }

@@ -9,7 +9,7 @@
 
 <BorderPane fx:id="root" maxHeight="1.7976931348623157E308" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" styleClass="subpanel" stylesheets="@../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.commons.fx.widgets.WidgetFinishedCompetitionsController">
     <padding>
-        <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
+        <Insets left="12.0" right="12.0" top="12.0" />
     </padding>
     <top>
         <Label styleClass="widget-title" text="Finished Competitions" textFill="WHITE" BorderPane.alignment="TOP_LEFT">
@@ -23,7 +23,7 @@
          <children>
             <ScrollPane hbarPolicy="NEVER" styleClass="base-component">
                <content>
-                  <BorderPane prefHeight="200.0">
+                  <BorderPane>
                      <center>
                           <VBox fx:id="competitionsVBox" BorderPane.alignment="CENTER" />
                      </center>
