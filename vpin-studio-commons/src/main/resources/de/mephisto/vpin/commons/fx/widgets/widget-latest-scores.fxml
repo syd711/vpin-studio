@@ -24,7 +24,7 @@
    <center>
       <VBox prefHeight="200.0" prefWidth="100.0" BorderPane.alignment="CENTER">
          <children>
-            <ScrollPane hbarPolicy="NEVER">
+            <ScrollPane hbarPolicy="NEVER" styleClass="base-component">
                <content>
                   <BorderPane>
                      <center>
