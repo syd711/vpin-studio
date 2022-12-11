@@ -27,7 +27,7 @@
    <center>
       <StackPane fx:id="tableStack" BorderPane.alignment="CENTER">
          <children>
-            <TableView fx:id="tableView" styleClass="base-component">
+            <TableView fx:id="tableView" style="-fx-background-color: #2a2a2a;" styleClass="base-component">
               <columns>
                 <TableColumn fx:id="columnRank" prefWidth="61.60009574890137" style="-fx-alignment: BASELINE_CENTER;" text="Rank" />
                 <TableColumn fx:id="columnName" prefWidth="400.0" style="-fx-alignment: BASELINE_LEFT;" text="Name" />

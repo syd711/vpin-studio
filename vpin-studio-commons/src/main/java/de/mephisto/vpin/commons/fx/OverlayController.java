@@ -3,6 +3,7 @@ package de.mephisto.vpin.commons.fx;
 import de.mephisto.vpin.commons.fx.widgets.WidgetCompetitionController;
 import de.mephisto.vpin.commons.fx.widgets.WidgetFinishedCompetitionsController;
 import de.mephisto.vpin.commons.fx.widgets.WidgetLatestScoresController;
+import de.mephisto.vpin.commons.fx.widgets.WidgetPlayerRankController;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.representations.CompetitionRepresentation;
 import de.mephisto.vpin.restclient.representations.PreferenceEntryRepresentation;
@@ -35,6 +36,9 @@ public class OverlayController implements Initializable {
   @FXML
   private WidgetLatestScoresController latestScoresController; //fxml magic! Not unused -> id + "Controller"
 
+  @FXML
+  private WidgetPlayerRankController playersController; //fxml magic! Not unused -> id + "Controller"
+
   // Add a public no-args constructor
   public OverlayController() {
   }
@@ -45,13 +49,13 @@ public class OverlayController implements Initializable {
   }
 
   public void refreshData() {
+    LOG.info("Refreshing overlay.");
     PreferenceEntryRepresentation systemName = OverlayWindowFX.client.getPreference(PreferenceNames.SYSTEM_NAME);
     titleLabel.setText(systemName.getValue());
 
     activeCompetitionController.refresh();
     latestScoresController.refresh();
-
-    List<CompetitionRepresentation> competitions = OverlayWindowFX.client.getFinishedCompetitions(3);
-    finishedCompetitionsController.setCompetitions(competitions);
+    finishedCompetitionsController.refresh();
+    playersController.refresh();
   }
 }

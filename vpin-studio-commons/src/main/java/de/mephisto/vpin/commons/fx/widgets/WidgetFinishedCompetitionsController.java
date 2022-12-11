@@ -1,11 +1,18 @@
 package de.mephisto.vpin.commons.fx.widgets;
 
+import de.mephisto.vpin.commons.fx.LoadingOverlayController;
 import de.mephisto.vpin.commons.fx.OverlayWindowFX;
 import de.mephisto.vpin.restclient.representations.CompetitionRepresentation;
+import de.mephisto.vpin.restclient.representations.RankedPlayerRepresentation;
+import javafx.application.Platform;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Parent;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,6 +31,11 @@ public class WidgetFinishedCompetitionsController extends WidgetController imple
   @FXML
   private BorderPane root;
 
+  @FXML
+  private StackPane viewStack;
+
+  private Parent loadingOverlay;
+
   // Add a public no-args constructor
   public WidgetFinishedCompetitionsController() {
   }
@@ -31,24 +43,41 @@ public class WidgetFinishedCompetitionsController extends WidgetController imple
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
+    try {
+      FXMLLoader loader = new FXMLLoader(LoadingOverlayController.class.getResource("loading-overlay.fxml"));
+      loadingOverlay = loader.load();
+      LoadingOverlayController ctrl = loader.getController();
+      ctrl.setLoadingMessage("Loading Finished Competitions...");
+    } catch (IOException e) {
+      LOG.error("Failed to load loading overlay: " + e.getMessage());
+    }
   }
 
-  public void setCompetitions(List<CompetitionRepresentation> competitions) {
-    root.setVisible(!competitions.isEmpty());
+  public void refresh() {
+    viewStack.getChildren().add(loadingOverlay);
     competitionsVBox.getChildren().removeAll(competitionsVBox.getChildren());
 
-    try {
-      for (CompetitionRepresentation c : competitions) {
-        FXMLLoader loader = new FXMLLoader(WidgetCompetitionSummaryController.class.getResource("widget-competition-summary.fxml"));
-        BorderPane row = loader.load();
-        WidgetCompetitionSummaryController controller = loader.getController();
-        row.setMaxWidth(Double.MAX_VALUE);
-        controller.setCompetition(c);
+    new Thread(() -> {
+      List<CompetitionRepresentation> competitions = OverlayWindowFX.client.getFinishedCompetitions(3);
 
-        competitionsVBox.getChildren().add(row);
-      }
-    } catch (IOException e) {
-      LOG.error("Failed to create widget: " + e.getMessage(), e);
-    }
+      Platform.runLater(() -> {
+        root.setVisible(!competitions.isEmpty());
+        try {
+          for (CompetitionRepresentation c : competitions) {
+            FXMLLoader loader = new FXMLLoader(WidgetCompetitionSummaryController.class.getResource("widget-competition-summary.fxml"));
+            BorderPane row = loader.load();
+            WidgetCompetitionSummaryController controller = loader.getController();
+            row.setMaxWidth(Double.MAX_VALUE);
+            controller.setCompetition(c);
+
+            competitionsVBox.getChildren().add(row);
+          }
+        } catch (IOException e) {
+          LOG.error("Failed to create widget: " + e.getMessage(), e);
+        }
+
+        viewStack.getChildren().remove(loadingOverlay);
+      });
+    }).start();
   }
 }
