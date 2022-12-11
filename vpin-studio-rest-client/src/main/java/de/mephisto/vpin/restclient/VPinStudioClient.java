@@ -63,6 +63,21 @@ public class VPinStudioClient implements ObservedPropertyChangeListener, Overlay
     return null;
   }
 
+  public List<String> getCompetitionBadges() {
+    return Arrays.asList(restClient.get(API + "system/badges", String[].class));
+  }
+
+  public ByteArrayInputStream getCompetitionBadge(String name) {
+    if (!imageCache.containsKey(name)) {
+      String encodedName = URLEncoder.encode(name, StandardCharsets.UTF_8);
+      byte[] bytes = restClient.readBinary(API + "system/badge/" + encodedName);
+      imageCache.put(name, bytes);
+    }
+
+    byte[] imageBytes = imageCache.get(name);
+    return new ByteArrayInputStream(imageBytes);
+  }
+
   /*********************************************************************************************************************
    * Assets / Popper
    ********************************************************************************************************************/
@@ -190,21 +205,6 @@ public class VPinStudioClient implements ObservedPropertyChangeListener, Overlay
       LOG.error("Failed to read competition scores " + id + ": " + e.getMessage(), e);
     }
     return null;
-  }
-
-  public List<String> getCompetitionBadges() {
-    return Arrays.asList(restClient.get(API + "competitions/badges", String[].class));
-  }
-
-  public ByteArrayInputStream getCompetitionBadge(String name) {
-    if (!imageCache.containsKey(name)) {
-      String encodedName = URLEncoder.encode(name, StandardCharsets.UTF_8);
-      byte[] bytes = restClient.readBinary(API + "competitions/badge/" + encodedName);
-      imageCache.put(name, bytes);
-    }
-
-    byte[] imageBytes = imageCache.get(name);
-    return new ByteArrayInputStream(imageBytes);
   }
 
   public ByteArrayInputStream getCompetitionBackground(long gameId) {

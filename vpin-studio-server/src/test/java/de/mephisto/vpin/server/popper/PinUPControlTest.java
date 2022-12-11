@@ -2,6 +2,7 @@ package de.mephisto.vpin.server.popper;
 
 import org.junit.jupiter.api.Test;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 
 public class PinUPControlTest {
@@ -13,11 +14,14 @@ public class PinUPControlTest {
 //    assertFalse(functions.isEmpty());
   }
 
-//  @Test
-//  public void testFunction() throws FileNotFoundException {
-//    SqliteConnector connector = new SqliteConnector(new RomManager());
-//    PinUPControl function = connector.getFunction(PinUPControl.FUNCTION_SHOW_FLYER);
-//    assertNotNull(function);
-//  }
+  @Test
+  public void testWheelAugmentation() {
+    File wheelIcon = new File("C:\\vPinball\\PinUPSystem\\POPMedia\\Visual Pinball X\\Wheel\\Aliens 2.0.png");
+    File badge = new File("E:\\Development\\workspace\\vpin-studio\\resources\\competition-badges\\trophy-1.png");
+
+    WheelAugmenter augmenter = new WheelAugmenter(wheelIcon);
+    augmenter.deAugment();
+    augmenter.augment(badge);
+  }
 
 }

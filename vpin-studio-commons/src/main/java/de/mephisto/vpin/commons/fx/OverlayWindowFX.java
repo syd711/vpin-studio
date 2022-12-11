@@ -76,7 +76,13 @@ public class OverlayWindowFX extends Application {
     overlayFX = this;
 
     try {
-      FXMLLoader loader = new FXMLLoader(OverlayController.class.getResource("scene-overlay.fxml"));
+      String resource = "scene-overlay.fxml";
+      Rectangle2D screenBounds = Screen.getPrimary().getBounds();
+      if(screenBounds.getWidth() < 3000) {
+        resource = "scene-overlay-wqhd.fxml";
+      }
+
+      FXMLLoader loader = new FXMLLoader(OverlayController.class.getResource(resource));
       BorderPane widgetRoot = loader.load();
       overlayController = loader.getController();
       widgetRoot.setMaxHeight(Double.MAX_VALUE);

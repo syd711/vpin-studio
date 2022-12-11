@@ -3,6 +3,8 @@ package de.mephisto.vpin.server.system;
 import de.mephisto.vpin.server.VPinStudioException;
 import de.mephisto.vpin.server.VPinStudioServer;
 import de.mephisto.vpin.commons.utils.PropertiesStore;
+import de.mephisto.vpin.server.util.SystemCommandExecutor;
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -16,16 +18,17 @@ import java.net.DatagramSocket;
 import java.net.ServerSocket;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
+import java.util.*;
 import java.util.List;
-import java.util.Locale;
-import java.util.Properties;
+import java.util.stream.Collectors;
 
 @Service
 public class SystemService implements InitializingBean {
   private final static Logger LOG = LoggerFactory.getLogger(SystemService.class);
 
   public final static int SERVER_PORT = 8089;
+
+  public static final String COMPETITION_BADGES = "competition-badges";
 
   private final static String VPX_REG_KEY = "HKEY_CURRENT_USER\\SOFTWARE\\Visual Pinball\\VP10\\RecentDir";
   private final static String POPPER_REG_KEY = "HKEY_LOCAL_MACHINE\\SYSTEM\\ControlSet001\\Control\\Session Manager\\Environment";
@@ -401,6 +404,61 @@ public class SystemService implements InitializingBean {
       LOG.error("Failed to read version number: " + e.getMessage(), e);
     }
     return null;
+  }
+
+  public List<String> getCompetitionBadges() {
+    File folder = new File(SystemService.RESOURCES, COMPETITION_BADGES);
+    File[] files = folder.listFiles((dir, name) -> name.endsWith("png"));
+    if (files != null) {
+      return Arrays.stream(files).sorted().map(f -> FilenameUtils.getBaseName(f.getName())).collect(Collectors.toList());
+    }
+    return Collections.emptyList();
+  }
+
+  public File getBagdeFile(String badge) {
+    File folder = new File(SystemService.RESOURCES, COMPETITION_BADGES);
+    return new File(folder, badge + ".png");
+  }
+
+  public void restartPopper() {
+    List<ProcessHandle> pinUpProcesses = ProcessHandle
+        .allProcesses()
+        .filter(p -> p.info().command().isPresent() &&
+            (
+                p.info().command().get().contains("PinUpMenu") ||
+                    p.info().command().get().contains("PinUpDisplay") ||
+                    p.info().command().get().contains("PinUpPlayer") ||
+                    p.info().command().get().contains("VPXStarter") ||
+                    p.info().command().get().contains("VPinballX") ||
+                    p.info().command().get().contains("B2SBackglassServerEXE") ||
+                    p.info().command().get().contains("DOF")))
+        .collect(Collectors.toList());
+
+    if (pinUpProcesses.isEmpty()) {
+      LOG.info("No PinUP processes found, restart canceled.");
+      return;
+    }
+
+    for (ProcessHandle pinUpProcess : pinUpProcesses) {
+      String cmd = pinUpProcess.info().command().get();
+      boolean b = pinUpProcess.destroyForcibly();
+      LOG.info("Destroyed process '" + cmd + "', result: " + b);
+    }
+
+    try {
+      List<String> params = Arrays.asList("cmd", "/c", "start", "PinUpMenu.exe");
+      SystemCommandExecutor executor = new SystemCommandExecutor(params, false);
+      executor.setDir(getPinUPSystemFolder());
+      executor.executeCommandAsync();
+
+      StringBuilder standardOutputFromCommand = executor.getStandardOutputFromCommand();
+      StringBuilder standardErrorFromCommand = executor.getStandardErrorFromCommand();
+      if (!StringUtils.isEmpty(standardErrorFromCommand.toString())) {
+        LOG.error("Popper restart failed: {}", standardErrorFromCommand);
+      }
+    } catch (Exception e) {
+      LOG.error("Failed to start PinUP Popper again: " + e.getMessage(), e);
+    }
   }
 
   static class StreamReader extends Thread {

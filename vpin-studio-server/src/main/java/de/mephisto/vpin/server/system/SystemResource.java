@@ -1,19 +1,24 @@
 package de.mephisto.vpin.server.system;
 
+import de.mephisto.vpin.server.util.RequestUtil;
+import org.apache.commons.io.FilenameUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
+import java.io.File;
 import java.io.IOException;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Date;
+import java.util.List;
 
 import static de.mephisto.vpin.server.VPinStudioServer.API_SEGMENT;
+import static de.mephisto.vpin.server.system.SystemService.COMPETITION_BADGES;
 
 @RestController
 @RequestMapping(API_SEGMENT + "system")
@@ -45,5 +50,20 @@ public class SystemResource {
   @GetMapping("/version")
   public String version() {
     return systemService.getVersion();
+  }
+
+  @GetMapping("/badges")
+  public List<String> getCompetitionBadges() {
+    return systemService.getCompetitionBadges();
+  }
+
+  @GetMapping("/badge/{name}")
+  public ResponseEntity<byte[]> getBadge(@PathVariable("name") String imageName) throws Exception {
+    File folder = new File(SystemService.RESOURCES, COMPETITION_BADGES);
+    File[] files = folder.listFiles((dir, name) -> URLEncoder.encode(FilenameUtils.getBaseName(name), StandardCharsets.UTF_8).equals(imageName));
+    if (files != null) {
+      return RequestUtil.serializeImage(files[0]);
+    }
+    return ResponseEntity.notFound().build();
   }
 }

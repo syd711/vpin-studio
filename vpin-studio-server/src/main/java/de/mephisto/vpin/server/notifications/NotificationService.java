@@ -63,7 +63,9 @@ public class NotificationService implements InitializingBean, HighscoreChangeLis
         String message = NotificationFactory.createDiscordCompetitionCreatedMessage(competition, game);
         DiscordWebhook.call(webhookUrl, message);
         LOG.info("Called Discord webhook for creation of " + competition);
-//        popperService.augmentWheel(competition.getGameId());
+        if(competition.isCustomizeMedia()) {
+          popperService.augmentWheel(game, competition.getBadge());
+        }
       }
     }
   }
