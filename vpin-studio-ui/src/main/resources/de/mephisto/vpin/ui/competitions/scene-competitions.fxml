@@ -45,7 +45,6 @@
                                                 <TableColumn fx:id="columnStartDate" prefWidth="150.0" style="-fx-alignment: CENTER;" text="Start Date" />
                                                 <TableColumn fx:id="columnEndDate" prefWidth="150.0" style="-fx-alignment: CENTER;" text="End Date" />
                                                 <TableColumn fx:id="columnWinner" prefWidth="97.60009765625" style="-fx-alignment: CENTER;" text="Winner" />
-                                                <TableColumn fx:id="columnScore" prefWidth="150.0" style="-fx-alignment: BASELINE_RIGHT;" text="Highscore" />
                                                 <TableColumn fx:id="columnScoreCount" prefWidth="140.0" style="-fx-alignment: CENTER;" text="Submitted Scores" />
                                             </columns>
                                           </TableView>

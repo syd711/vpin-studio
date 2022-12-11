@@ -9,6 +9,8 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
@@ -49,6 +51,10 @@ public class PropertiesStore {
     }
     File file = new File(folder, name);
     return create(file);
+  }
+
+  public List<Object> getEntries() {
+    return new ArrayList<>(this.properties.values());
   }
 
   public void reload() {

@@ -1,5 +1,6 @@
 package de.mephisto.vpin.ui.launcher;
 
+import de.mephisto.vpin.commons.utils.PropertiesStore;
 import de.mephisto.vpin.commons.utils.Updater;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.VPinStudioClient;
@@ -23,13 +24,17 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontPosture;
 import javafx.stage.Stage;
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import java.io.File;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 
 public class LauncherController implements Initializable {
+  private final static Logger LOG = LoggerFactory.getLogger(LauncherController.class);
 
   @FXML
   private Label studioLabel;
@@ -61,6 +66,7 @@ public class LauncherController implements Initializable {
   private ObservableList<VPinConnection> data;
 
   private Stage stage;
+  private PropertiesStore store;
 
   @FXML
   private void onConnectionRefresh() {
@@ -70,13 +76,26 @@ public class LauncherController implements Initializable {
 
     stage.getScene().setCursor(Cursor.WAIT);
     new Thread(() -> {
+      List<VPinConnection> result = new ArrayList<>();
+
       VPinConnection connection = checkConnection("localhost");
+      if (connection != null) {
+        result.add(connection);
+      }
+
+      List<Object> entries = store.getEntries();
+      for (Object entry : entries) {
+        LOG.info("Checking connection to " + entry);
+        connection = checkConnection(String.valueOf(entry));
+        if (connection != null) {
+          result.add(connection);
+        }
+      }
+
       Platform.runLater(() -> {
         stage.getScene().setCursor(Cursor.DEFAULT);
         data.clear();
-        if (connection != null) {
-          data.add(connection);
-        }
+        data.addAll(result);
 
         refreshBtn.setDisable(false);
         newConnectionBtn.setDisable(false);
@@ -117,6 +136,7 @@ public class LauncherController implements Initializable {
           stage.getScene().setCursor(Cursor.DEFAULT);
           data.clear();
           if (connection != null) {
+            store.set(String.valueOf(store.getEntries().size()), host);
             data.add(connection);
           }
           else {
@@ -191,6 +211,8 @@ public class LauncherController implements Initializable {
       });
       return row;
     });
+
+    store = PropertiesStore.create(new File("config/connection.properties"));
   }
 
   private VPinConnection checkConnection(String host) {
