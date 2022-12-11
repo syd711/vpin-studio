@@ -2,6 +2,7 @@
 
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
@@ -17,7 +18,19 @@
             </font>
         </Label>
     </top>
-    <bottom>
-        <VBox fx:id="competitionsVBox" BorderPane.alignment="CENTER" />
-    </bottom>
+   <center>
+      <VBox BorderPane.alignment="CENTER">
+         <children>
+            <ScrollPane hbarPolicy="NEVER" styleClass="base-component">
+               <content>
+                  <BorderPane prefHeight="200.0">
+                     <center>
+                          <VBox fx:id="competitionsVBox" BorderPane.alignment="CENTER" />
+                     </center>
+                  </BorderPane>
+               </content>
+            </ScrollPane>
+         </children>
+      </VBox>
+   </center>
 </BorderPane>
