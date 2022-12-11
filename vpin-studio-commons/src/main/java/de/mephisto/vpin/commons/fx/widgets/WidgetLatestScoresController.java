@@ -1,13 +1,19 @@
 package de.mephisto.vpin.commons.fx.widgets;
 
+import de.mephisto.vpin.commons.fx.LoadingOverlayController;
 import de.mephisto.vpin.commons.fx.OverlayWindowFX;
 import de.mephisto.vpin.restclient.PopperScreen;
 import de.mephisto.vpin.restclient.representations.*;
+import javafx.application.Platform;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Parent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,6 +32,11 @@ public class WidgetLatestScoresController extends WidgetController implements In
   @FXML
   private BorderPane root;
 
+  @FXML
+  private StackPane viewStack;
+
+  private Parent loadingOverlay;
+
   // Add a public no-args constructor
   public WidgetLatestScoresController() {
   }
@@ -33,30 +44,47 @@ public class WidgetLatestScoresController extends WidgetController implements In
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
+    try {
+      FXMLLoader loader = new FXMLLoader(LoadingOverlayController.class.getResource("loading-overlay.fxml"));
+      loadingOverlay = loader.load();
+      LoadingOverlayController ctrl = loader.getController();
+      ctrl.setLoadingMessage("Loading Latest Scores...");
+    } catch (IOException e) {
+      LOG.error("Failed to load loading overlay: " + e.getMessage());
+    }
   }
 
-  public void setScoreSummary(ScoreSummaryRepresentation scoreSummary) {
-    highscoreVBox.getChildren().removeAll(highscoreVBox.getChildren());
-    try {
-      List<ScoreRepresentation> scores = scoreSummary.getScores();
-      for (ScoreRepresentation score : scores) {
-        GameRepresentation game = OverlayWindowFX.client.getGame(score.getGameId());
-        GameMediaRepresentation gameMedia = game.getGameMedia();
-        GameMediaItemRepresentation wheelMedia = gameMedia.getMedia().get(PopperScreen.Wheel.name());
-        if (wheelMedia == null) {
-          continue;
+  public void refresh() {
+    viewStack.getChildren().add(loadingOverlay);
+    new Thread(() -> {
+      ScoreSummaryRepresentation scoreSummary = OverlayWindowFX.client.getRecentlyPlayedGames(10);
+      Platform.runLater(() -> {
+        highscoreVBox.getChildren().removeAll(highscoreVBox.getChildren());
+
+        try {
+          List<ScoreRepresentation> scores = scoreSummary.getScores();
+          for (ScoreRepresentation score : scores) {
+            GameRepresentation game = OverlayWindowFX.client.getGame(score.getGameId());
+            GameMediaRepresentation gameMedia = game.getGameMedia();
+            GameMediaItemRepresentation wheelMedia = gameMedia.getMedia().get(PopperScreen.Wheel.name());
+            if (wheelMedia == null) {
+              continue;
+            }
+
+            FXMLLoader loader = new FXMLLoader(WidgetLatestScoreItemController.class.getResource("widget-latest-score-item.fxml"));
+            Pane row = loader.load();
+            row.setPrefWidth(root.getPrefWidth() - 24);
+            WidgetLatestScoreItemController controller = loader.getController();
+            controller.setData(game, score);
+
+            highscoreVBox.getChildren().add(row);
+          }
+        } catch (IOException e) {
+          LOG.error("Failed to create widget: " + e.getMessage(), e);
         }
 
-        FXMLLoader loader = new FXMLLoader(WidgetLatestScoreItemController.class.getResource("widget-latest-score-item.fxml"));
-        Pane row = loader.load();
-        row.setPrefWidth(root.getPrefWidth() - 24);
-        WidgetLatestScoreItemController controller = loader.getController();
-        controller.setData(game, score);
-
-        highscoreVBox.getChildren().add(row);
-      }
-    } catch (IOException e) {
-      LOG.error("Failed to create widget: " + e.getMessage(), e);
-    }
+        viewStack.getChildren().remove(loadingOverlay);
+      });
+    }).start();
   }
 }

@@ -4,6 +4,7 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
@@ -22,18 +23,22 @@
         </Label>
     </top>
    <center>
-      <VBox prefHeight="200.0" prefWidth="100.0" BorderPane.alignment="CENTER">
+      <StackPane fx:id="viewStack" BorderPane.alignment="CENTER">
          <children>
-            <ScrollPane hbarPolicy="NEVER" styleClass="base-component">
-               <content>
-                  <BorderPane>
-                     <center>
-                          <VBox fx:id="highscoreVBox" alignment="TOP_CENTER" spacing="6.0" />
-                     </center>
-                  </BorderPane>
-               </content>
-            </ScrollPane>
+            <VBox prefHeight="200.0" prefWidth="100.0">
+               <children>
+                  <ScrollPane hbarPolicy="NEVER" styleClass="base-component">
+                     <content>
+                        <BorderPane>
+                           <center>
+                                <VBox fx:id="highscoreVBox" alignment="TOP_CENTER" spacing="6.0" />
+                           </center>
+                        </BorderPane>
+                     </content>
+                  </ScrollPane>
+               </children>
+            </VBox>
          </children>
-      </VBox>
+      </StackPane>
    </center>
 </BorderPane>

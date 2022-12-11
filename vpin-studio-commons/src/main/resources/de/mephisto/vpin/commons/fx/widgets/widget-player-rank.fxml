@@ -7,6 +7,7 @@
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.text.Font?>
 
 <BorderPane fx:id="root" maxHeight="1.7976931348623157E308" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" styleClass="subpanel" stylesheets="@../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.commons.fx.widgets.WidgetPlayerRankController">
@@ -24,38 +25,42 @@
         </Label>
     </top>
    <center>
-      <TableView fx:id="tableView" styleClass="base-component" BorderPane.alignment="CENTER">
-        <columns>
-          <TableColumn prefWidth="61.60009574890137" style="-fx-alignment: BASELINE_CENTER;" text="Rank" />
-          <TableColumn prefWidth="400.0" style="-fx-alignment: BASELINE_LEFT;" text="Name" />
-            <TableColumn minWidth="0.0" prefWidth="66.4000244140625">
-               <graphic>
-                  <ImageView fitHeight="40.0" fitWidth="40.0" pickOnBounds="true" preserveRatio="true" style="-fx-alignment: BASELINE_CENTER;">
-                     <image>
-                        <Image url="@../medal%20(1).png" />
-                     </image>
-                  </ImageView>
-               </graphic>
-            </TableColumn>
-            <TableColumn prefWidth="75.0">
-               <graphic>
-                  <ImageView fitHeight="40.0" fitWidth="40.0" pickOnBounds="true" preserveRatio="true" style="-fx-alignment: BASELINE_CENTER;">
-                     <image>
-                        <Image url="@../medal%20(2).png" />
-                     </image>
-                  </ImageView>
-               </graphic>
-            </TableColumn>
-            <TableColumn prefWidth="75.0">
-               <graphic>
-                  <ImageView fitHeight="40.0" fitWidth="40.0" pickOnBounds="true" preserveRatio="true" style="-fx-alignment: BASELINE_CENTER;">
-                     <image>
-                        <Image url="@../medal%20(3).png" />
-                     </image>
-                  </ImageView>
-               </graphic>
-            </TableColumn>
-        </columns>
-      </TableView>
+      <StackPane fx:id="tableStack" BorderPane.alignment="CENTER">
+         <children>
+            <TableView fx:id="tableView" styleClass="base-component">
+              <columns>
+                <TableColumn fx:id="columnRank" prefWidth="61.60009574890137" style="-fx-alignment: BASELINE_CENTER;" text="Rank" />
+                <TableColumn fx:id="columnName" prefWidth="400.0" style="-fx-alignment: BASELINE_LEFT;" text="Name" />
+                  <TableColumn fx:id="columnFirst" minWidth="0.0" prefWidth="60.0" style="-fx-alignment: CENTER;">
+                     <graphic>
+                        <ImageView fitHeight="40.0" fitWidth="40.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../medal%20(1).png" />
+                           </image>
+                        </ImageView>
+                     </graphic>
+                  </TableColumn>
+                  <TableColumn fx:id="columnSecond" prefWidth="60.0" style="-fx-alignment: CENTER;">
+                     <graphic>
+                        <ImageView fitHeight="40.0" fitWidth="40.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../medal%20(2).png" />
+                           </image>
+                        </ImageView>
+                     </graphic>
+                  </TableColumn>
+                  <TableColumn fx:id="columnThird" prefWidth="60.0" style="-fx-alignment: CENTER;">
+                     <graphic>
+                        <ImageView fitHeight="40.0" fitWidth="40.0" pickOnBounds="true" preserveRatio="true" style="-fx-alignment: BASELINE_CENTER;">
+                           <image>
+                              <Image url="@../medal%20(3).png" />
+                           </image>
+                        </ImageView>
+                     </graphic>
+                  </TableColumn>
+              </columns>
+            </TableView>
+         </children>
+      </StackPane>
    </center>
 </BorderPane>

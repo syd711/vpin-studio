@@ -6,6 +6,7 @@ import de.mephisto.vpin.commons.fx.widgets.WidgetFinishedCompetitionsController;
 import de.mephisto.vpin.commons.fx.widgets.WidgetLatestScoresController;
 import de.mephisto.vpin.commons.fx.widgets.WidgetPlayerRankController;
 import de.mephisto.vpin.restclient.representations.CompetitionRepresentation;
+import de.mephisto.vpin.restclient.representations.RankedPlayerRepresentation;
 import de.mephisto.vpin.restclient.representations.ScoreSummaryRepresentation;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
@@ -45,6 +46,7 @@ public class DashboardController implements Initializable, StudioFXController {
 
   private BorderPane activeCompetitionBorderPane;
   private BorderPane playersBorderPane;
+  private WidgetPlayerRankController playerRankController;
 
 
   // Add a public no-args constructor
@@ -79,6 +81,7 @@ public class DashboardController implements Initializable, StudioFXController {
     try {
       FXMLLoader loader = new FXMLLoader(WidgetPlayerRankController.class.getResource("widget-player-rank.fxml"));
       playersBorderPane = loader.load();
+      playerRankController = loader.getController();
       playersBorderPane.setMaxWidth(Double.MAX_VALUE);
       widgetFinishedCompetitions.setCenter(playersBorderPane);
     } catch (IOException e) {
@@ -92,8 +95,8 @@ public class DashboardController implements Initializable, StudioFXController {
   @Override
   public void onViewActivated() {
     Platform.runLater(() -> {
-      ScoreSummaryRepresentation scoreSummary = OverlayWindowFX.client.getRecentlyPlayedGames(10);
-      latestScoresController.setScoreSummary(scoreSummary);
+      latestScoresController.refresh();
+      playerRankController.refresh();
 
       List<CompetitionRepresentation> activeCompetitions = client.getActiveCompetitions();
       if (!activeCompetitions.isEmpty()) {

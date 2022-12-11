@@ -2,14 +2,17 @@ open module de.mephisto.vpin.commons {
   requires org.slf4j;
   requires org.apache.commons.lang3;
   requires com.github.spotbugs.annotations;
+  requires java.desktop;
+  requires imgscalr.lib;
+  requires filters;
 
   requires javafx.controls;
   requires javafx.fxml;
   requires javafx.web;
+  requires javafx.swing;
 
   requires org.controlsfx.controls;
   requires eu.hansolo.tilesfx;
-  requires java.desktop;
 
   // add icon pack modules
   requires javafx.media;

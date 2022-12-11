@@ -2,10 +2,9 @@ package de.mephisto.vpin.ui.players;
 
 import de.mephisto.vpin.restclient.representations.PlayerRepresentation;
 import de.mephisto.vpin.ui.NavigationController;
-import de.mephisto.vpin.ui.StudioFXController;
 import de.mephisto.vpin.ui.WaitOverlayController;
 import de.mephisto.vpin.ui.util.Dialogs;
-import de.mephisto.vpin.ui.util.ImageUtil;
+import de.mephisto.vpin.commons.utils.ImageUtil;
 import de.mephisto.vpin.ui.util.WidgetFactory;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleObjectProperty;

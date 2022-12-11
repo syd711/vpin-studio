@@ -1,7 +1,7 @@
-package de.mephisto.vpin.ui.util;
+package de.mephisto.vpin.commons.utils;
 
 import com.jhlabs.image.GaussianFilter;
-import de.mephisto.vpin.ui.Studio;
+import de.mephisto.vpin.commons.fx.OverlayWindowFX;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.SnapshotParameters;
 import javafx.scene.image.Image;
@@ -41,7 +41,7 @@ public class ImageUtil {
 
   public static Image createAvatar(String initials) {
     try {
-      BufferedImage image = ImageIO.read(Studio.class.getResourceAsStream("avatar-blank.png"));
+      BufferedImage image = ImageIO.read(OverlayWindowFX.class.getResourceAsStream("avatar-blank.png"));
       Graphics2D g = (Graphics2D) image.getGraphics();
       setRendingHints(g);
 

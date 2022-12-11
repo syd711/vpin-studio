@@ -54,8 +54,7 @@ public class OverlayController implements Initializable {
       activeCompetitionController.setCompetition(activeCompetitions.get(0));
     }
 
-    ScoreSummaryRepresentation scoreSummary = OverlayWindowFX.client.getRecentlyPlayedGames(10);
-    latestScoresController.setScoreSummary(scoreSummary);
+    latestScoresController.refresh();
 
     List<CompetitionRepresentation> competitions = OverlayWindowFX.client.getFinishedCompetitions(3);
     finishedCompetitionsController.setCompetitions(competitions);
