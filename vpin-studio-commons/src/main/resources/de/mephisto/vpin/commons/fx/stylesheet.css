@@ -39,7 +39,7 @@
 }
 
 .widget-item {
-    -fx-border-radius: 6 6 6 6;
+    -fx-border-radius: 3 3 3 3;
     -fx-border-style: solid solid solid solid;
     -fx-border-color: #111111;
     -fx-border-width: 1;

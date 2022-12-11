@@ -1,9 +1,15 @@
 package de.mephisto.vpin.commons.fx;
 
 import de.mephisto.vpin.commons.fx.widgets.WidgetCompetitionController;
+import de.mephisto.vpin.commons.fx.widgets.WidgetFinishedCompetitionsController;
+import de.mephisto.vpin.commons.fx.widgets.WidgetLatestScoresController;
+import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.representations.CompetitionRepresentation;
+import de.mephisto.vpin.restclient.representations.PreferenceEntryRepresentation;
+import de.mephisto.vpin.restclient.representations.ScoreSummaryRepresentation;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.Label;
 import javafx.scene.layout.BorderPane;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,13 +21,20 @@ import java.util.ResourceBundle;
 public class OverlayController implements Initializable {
   private final static Logger LOG = LoggerFactory.getLogger(OverlayController.class);
 
-  public static Debouncer debouncer = new Debouncer();
-
   @FXML
   private BorderPane rotatedRoot;
 
   @FXML
-  private WidgetCompetitionController offlineCompetitionController; //fxml magic! Not unused -> id + "Controller"
+  private Label titleLabel;
+
+  @FXML
+  private WidgetFinishedCompetitionsController finishedCompetitionsController; //fxml magic! Not unused -> id + "Controller"@FXML
+
+  @FXML
+  private WidgetCompetitionController activeCompetitionController; //fxml magic! Not unused -> id + "Controller"
+
+  @FXML
+  private WidgetLatestScoresController latestScoresController; //fxml magic! Not unused -> id + "Controller"
 
   // Add a public no-args constructor
   public OverlayController() {
@@ -29,10 +42,22 @@ public class OverlayController implements Initializable {
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
-    List<CompetitionRepresentation> activeOfflineCompetitions = OverlayWindowFX.client.getActiveOfflineCompetitions();
-    if (!activeOfflineCompetitions.isEmpty()) {
-      offlineCompetitionController.setCompetition(activeOfflineCompetitions.get(0));
-    }
+
   }
 
+  public void refreshData() {
+    PreferenceEntryRepresentation systemName = OverlayWindowFX.client.getPreference(PreferenceNames.SYSTEM_NAME);
+    titleLabel.setText(systemName.getValue());
+
+    List<CompetitionRepresentation> activeCompetitions = OverlayWindowFX.client.getActiveCompetitions();
+    if (!activeCompetitions.isEmpty()) {
+      activeCompetitionController.setCompetition(activeCompetitions.get(0));
+    }
+
+    ScoreSummaryRepresentation scoreSummary = OverlayWindowFX.client.getRecentlyPlayedGames(10);
+    latestScoresController.setScoreSummary(scoreSummary);
+
+    List<CompetitionRepresentation> competitions = OverlayWindowFX.client.getFinishedCompetitions(3);
+    finishedCompetitionsController.setCompetitions(competitions);
+  }
 }

@@ -56,8 +56,9 @@ public class OverlayService implements InitializingBean, NativeKeyListener, Popp
       OverlayWindowFX.main(new String[]{});
       LOG.info("Overlay listener started.");
     }).start();
-    overlayWindowFX = OverlayWindowFX.waitForOverlay();
+
     overlayWindowFX.client = overlayClient;
+    overlayWindowFX = OverlayWindowFX.waitForOverlay();
   }
 
 
@@ -100,8 +101,6 @@ public class OverlayService implements InitializingBean, NativeKeyListener, Popp
 
   @EventListener(ApplicationReadyEvent.class)
   public void afterStartup() {
-    overlayWindowFX.initDashboard();
-
     boolean pinUPRunning = popperService.isPinUPRunning();
     if (pinUPRunning) {
       popperLaunched();

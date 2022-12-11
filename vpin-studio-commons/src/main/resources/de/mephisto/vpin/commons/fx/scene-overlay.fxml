@@ -7,27 +7,27 @@
 
 <BorderPane stylesheets="@stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.commons.fx.OverlayController">
    <center>
-      <BorderPane fx:id="rotatedRoot" maxHeight="1.7976931348623157E308" rotate="-90.0" translateX="-840.0">
+      <BorderPane fx:id="rotatedRoot" maxHeight="1.7976931348623157E308" rotate="-90.0" translateX="-700.0" translateY="-30.0">
           <center>
               <BorderPane fx:id="widgetRoot" maxHeight="1.7976931348623157E308" BorderPane.alignment="CENTER">
                   <BorderPane.margin>
                       <Insets bottom="12.0" left="12.0" top="12.0" />
                   </BorderPane.margin>
                <right>
-                        <fx:include fx:id="offlineCompetition" scaleX="1.5" scaleY="1.5" source="widgets/widget-active-competition.fxml" translateX="-1080.0" translateY="400.0" />
+                        <fx:include fx:id="activeCompetition" scaleX="1.5" scaleY="1.5" source="widgets/widget-active-competition.fxml" translateX="-934.0" translateY="360.0" />
                </right>
                <bottom>
-                          <fx:include fx:id="finishedCompetitions" maxWidth="1280.0" scaleX="1.5" scaleY="1.5" source="widgets/widget-finished-competitions.fxml" translateX="500.0" translateY="1420.0" />
+                          <fx:include fx:id="finishedCompetitions" maxWidth="-Infinity" prefHeight="900.0" prefWidth="1410.0" scaleX="1.5" scaleY="1.5" source="widgets/widget-finished-competitions.fxml" translateX="1284.0" translateY="1122.0" />
                </bottom>
                <center>
-                      <fx:include fx:id="latestScores" scaleX="1.5" scaleY="1.5" source="widgets/widget-latest-scores.fxml" translateY="500.0" />
+                      <fx:include fx:id="latestScores" prefHeight="1350.0" scaleX="1.5" scaleY="1.5" source="widgets/widget-latest-scores.fxml" translateX="-110.0" translateY="546.0" />
                </center>
               </BorderPane>
           </center>
          <top>
-            <Label text="Label" textFill="WHITE" BorderPane.alignment="CENTER">
+            <Label fx:id="titleLabel" text="Label" textFill="WHITE" BorderPane.alignment="CENTER">
                <font>
-                  <Font size="36.0" />
+                  <Font name="System Bold" size="72.0" />
                </font>
             </Label>
          </top>

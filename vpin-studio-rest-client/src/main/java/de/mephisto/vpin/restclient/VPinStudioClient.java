@@ -157,7 +157,7 @@ public class VPinStudioClient implements ObservedPropertyChangeListener, Overlay
   }
 
 
-  public List<CompetitionRepresentation> getActiveOfflineCompetitions() {
+  public List<CompetitionRepresentation> getActiveCompetitions() {
     try {
       return Arrays.asList(restClient.get(API + "competitions/active/offline", CompetitionRepresentation[].class));
     } catch (Exception e) {

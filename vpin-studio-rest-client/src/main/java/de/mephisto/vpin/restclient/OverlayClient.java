@@ -8,7 +8,7 @@ import java.util.List;
 public interface OverlayClient {
   List<CompetitionRepresentation> getFinishedCompetitions(int limit);
 
-  List<CompetitionRepresentation> getActiveOfflineCompetitions();
+  List<CompetitionRepresentation> getActiveCompetitions();
 
   GameRepresentation getGame(int id);
 
@@ -23,4 +23,6 @@ public interface OverlayClient {
   ScoreSummaryRepresentation getRecentlyPlayedGames(int count);
 
   ByteArrayInputStream getGameMediaItem(int id, PopperScreen screen);
+
+  PreferenceEntryRepresentation getPreference(String key);
 }

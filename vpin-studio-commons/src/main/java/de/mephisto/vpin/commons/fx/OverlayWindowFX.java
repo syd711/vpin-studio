@@ -26,6 +26,7 @@ public class OverlayWindowFX extends Application {
   private BorderPane root;
 
   public static OverlayClient client;
+  private OverlayController overlayController;
 
   public static void main(String[] args) {
     Application.launch(args);
@@ -43,6 +44,7 @@ public class OverlayWindowFX extends Application {
 
   public void setVisible(boolean b) {
     if (b) {
+      overlayController.refreshData();
       stage.show();
     }
     else {
@@ -72,17 +74,17 @@ public class OverlayWindowFX extends Application {
     stage.getScene().getStylesheets().add(OverlayWindowFX.class.getResource("stylesheet.css").toExternalForm());
 
     overlayFX = this;
-    latch.countDown();
-  }
 
-  public void initDashboard() {
     try {
       FXMLLoader loader = new FXMLLoader(OverlayController.class.getResource("scene-overlay.fxml"));
       BorderPane widgetRoot = loader.load();
+      overlayController = loader.getController();
       widgetRoot.setMaxHeight(Double.MAX_VALUE);
       root.setCenter(widgetRoot);
     } catch (IOException e) {
       LOG.error("Failed to init dashboard: " + e.getMessage(), e);
     }
+
+    latch.countDown();
   }
 }

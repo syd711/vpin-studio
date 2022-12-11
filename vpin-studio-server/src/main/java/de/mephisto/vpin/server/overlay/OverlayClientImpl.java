@@ -16,6 +16,7 @@ import de.mephisto.vpin.server.highscores.ScoreList;
 import de.mephisto.vpin.server.popper.Emulator;
 import de.mephisto.vpin.server.popper.GameMedia;
 import de.mephisto.vpin.server.popper.GameMediaItem;
+import de.mephisto.vpin.server.preferences.PreferencesService;
 import de.mephisto.vpin.server.system.SystemService;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
@@ -44,6 +45,9 @@ public class OverlayClientImpl implements OverlayClient, InitializingBean {
   @Autowired
   private AssetService assetService;
 
+  @Autowired
+  private PreferencesService preferencesService;
+
   private ObjectMapper mapper;
 
   @Override
@@ -59,7 +63,7 @@ public class OverlayClientImpl implements OverlayClient, InitializingBean {
   }
 
   @Override
-  public List<CompetitionRepresentation> getActiveOfflineCompetitions() {
+  public List<CompetitionRepresentation> getActiveCompetitions() {
     try {
       List<Competition> competitions = competitionService.getActiveOfflineCompetitions();
       String s = mapper.writeValueAsString(competitions);
@@ -158,6 +162,15 @@ public class OverlayClientImpl implements OverlayClient, InitializingBean {
       LOG.error("Error during conversion: " + e.getMessage(), e);
     }
     return null;
+  }
+
+  @Override
+  public PreferenceEntryRepresentation getPreference(String key) {
+    Object preferenceValue = preferencesService.getPreferenceValue(key);
+    PreferenceEntryRepresentation entry = new PreferenceEntryRepresentation();
+    entry.setKey(key);
+    entry.setValue(String.valueOf(preferenceValue));
+    return entry;
   }
 
   @Override

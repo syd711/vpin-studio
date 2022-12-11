@@ -95,7 +95,7 @@ public class DashboardController implements Initializable, StudioFXController {
       ScoreSummaryRepresentation scoreSummary = OverlayWindowFX.client.getRecentlyPlayedGames(10);
       latestScoresController.setScoreSummary(scoreSummary);
 
-      List<CompetitionRepresentation> activeCompetitions = client.getActiveOfflineCompetitions();
+      List<CompetitionRepresentation> activeCompetitions = client.getActiveCompetitions();
       if (!activeCompetitions.isEmpty()) {
         offlineCompetitionController.setCompetition(activeCompetitions.get(0));
       }
