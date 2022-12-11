@@ -91,8 +91,6 @@
     -fx-base : #111111;
 }
 
-
-
 /**
  * Media Styling
  */
@@ -103,5 +101,13 @@
 
 .media-parent {
     -fx-background-color: -fx-base-7;
+}
+
+.scroll-pane > .viewport {
+   -fx-background-color: transparent;
+}
+
+.scroll-pane {
+   -fx-background-color: transparent;
 }
 

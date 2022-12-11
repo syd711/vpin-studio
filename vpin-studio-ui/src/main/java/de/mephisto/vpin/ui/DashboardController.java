@@ -1,9 +1,9 @@
 package de.mephisto.vpin.ui;
 
 import de.mephisto.vpin.commons.fx.OverlayWindowFX;
+import de.mephisto.vpin.commons.fx.widgets.WidgetCompetitionController;
 import de.mephisto.vpin.commons.fx.widgets.WidgetFinishedCompetitionsController;
 import de.mephisto.vpin.commons.fx.widgets.WidgetLatestScoresController;
-import de.mephisto.vpin.commons.fx.widgets.WidgetCompetitionController;
 import de.mephisto.vpin.restclient.representations.CompetitionRepresentation;
 import de.mephisto.vpin.restclient.representations.ScoreSummaryRepresentation;
 import javafx.application.Platform;
@@ -27,13 +27,13 @@ public class DashboardController implements Initializable, StudioFXController {
   private final static Logger LOG = LoggerFactory.getLogger(DashboardController.class);
 
   @FXML
-  private BorderPane widgetRoot;
+  private BorderPane widgetLatestScore;
 
   @FXML
-  private BorderPane widgetTop;
+  private BorderPane widgetCompetition;
 
   @FXML
-  private BorderPane widgetBottom;
+  private BorderPane widgetFinishedCompetitions;
 
   @FXML
   private StackPane dashboardStack;
@@ -41,6 +41,9 @@ public class DashboardController implements Initializable, StudioFXController {
   private WidgetCompetitionController offlineCompetitionController;
   private WidgetFinishedCompetitionsController finishedCompetitionsController;
   private WidgetLatestScoresController latestScoresController;
+
+  private BorderPane activeCompetitionBorderPane;
+  private BorderPane finishedCompetitionsBorderPane;
 
 
   // Add a public no-args constructor
@@ -56,17 +59,17 @@ public class DashboardController implements Initializable, StudioFXController {
       BorderPane root = loader.load();
       latestScoresController = loader.getController();
       root.setMaxHeight(Double.MAX_VALUE);
-      widgetRoot.setLeft(root);
+      widgetLatestScore.setLeft(root);
     } catch (IOException e) {
       LOG.error("Failed to load score widget: " + e.getMessage(), e);
     }
 
     try {
-      FXMLLoader loader = new FXMLLoader(WidgetCompetitionController.class.getResource("widget-offline-competition.fxml"));
-      BorderPane root = loader.load();
-      root.setMaxWidth(Double.MAX_VALUE);
+      FXMLLoader loader = new FXMLLoader(WidgetCompetitionController.class.getResource("widget-active-competition.fxml"));
+      activeCompetitionBorderPane = loader.load();
+      activeCompetitionBorderPane.setMaxWidth(Double.MAX_VALUE);
       offlineCompetitionController = loader.getController();
-      widgetTop.setTop(root);
+      widgetCompetition.setTop(activeCompetitionBorderPane);
 
     } catch (IOException e) {
       LOG.error("Failed to load competitions widget: " + e.getMessage(), e);
@@ -74,10 +77,10 @@ public class DashboardController implements Initializable, StudioFXController {
 
     try {
       FXMLLoader loader = new FXMLLoader(WidgetFinishedCompetitionsController.class.getResource("widget-finished-competitions.fxml"));
-      BorderPane root = loader.load();
+      finishedCompetitionsBorderPane = loader.load();
       finishedCompetitionsController = loader.getController();
-      root.setMaxWidth(Double.MAX_VALUE);
-      widgetBottom.setTop(root);
+      finishedCompetitionsBorderPane.setMaxWidth(Double.MAX_VALUE);
+      widgetFinishedCompetitions.setTop(finishedCompetitionsBorderPane);
     } catch (IOException e) {
       LOG.error("Failed to load finished competitions widget: " + e.getMessage(), e);
     }
@@ -92,16 +95,24 @@ public class DashboardController implements Initializable, StudioFXController {
       ScoreSummaryRepresentation scoreSummary = OverlayWindowFX.client.getRecentlyPlayedGames(10);
       latestScoresController.setScoreSummary(scoreSummary);
 
-      List<CompetitionRepresentation> activeOfflineCompetitions = client.getActiveOfflineCompetitions();
-      if(!activeOfflineCompetitions.isEmpty()) {
-        offlineCompetitionController.setCompetition(activeOfflineCompetitions.get(0));
+      List<CompetitionRepresentation> activeCompetitions = client.getActiveOfflineCompetitions();
+      if (!activeCompetitions.isEmpty()) {
+        offlineCompetitionController.setCompetition(activeCompetitions.get(0));
       }
       else {
         offlineCompetitionController.setCompetition(null);
       }
 
-      List<CompetitionRepresentation> competitions = OverlayWindowFX.client.getFinishedCompetitions(10);
+      List<CompetitionRepresentation> competitions = OverlayWindowFX.client.getFinishedCompetitions(3);
       finishedCompetitionsController.setCompetitions(competitions);
+
+      if (activeCompetitions.isEmpty()) {
+        widgetCompetition.setTop(finishedCompetitionsBorderPane);
+        widgetFinishedCompetitions.setTop(null);
+      }
+      else {
+
+      }
     });
   }
 }

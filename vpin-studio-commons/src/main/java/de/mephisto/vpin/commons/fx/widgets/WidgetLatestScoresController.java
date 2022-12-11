@@ -38,7 +38,6 @@ public class WidgetLatestScoresController extends WidgetController implements In
   public void setScoreSummary(ScoreSummaryRepresentation scoreSummary) {
     highscoreVBox.getChildren().removeAll(highscoreVBox.getChildren());
     try {
-      int count = 0;
       List<ScoreRepresentation> scores = scoreSummary.getScores();
       for (ScoreRepresentation score : scores) {
         GameRepresentation game = OverlayWindowFX.client.getGame(score.getGameId());
@@ -50,16 +49,11 @@ public class WidgetLatestScoresController extends WidgetController implements In
 
         FXMLLoader loader = new FXMLLoader(WidgetLatestScoreItemController.class.getResource("widget-latest-score-item.fxml"));
         Pane row = loader.load();
-        row.setPrefWidth(root.getPrefWidth() - 24);
+        row.setPrefWidth(root.getPrefWidth() - 36);
         WidgetLatestScoreItemController controller = loader.getController();
         controller.setData(game, score);
 
         highscoreVBox.getChildren().add(row);
-        count++;
-
-        if (count == 8) {
-          break;
-        }
       }
     } catch (IOException e) {
       LOG.error("Failed to create widget: " + e.getMessage(), e);

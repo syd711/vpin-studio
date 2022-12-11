@@ -2,23 +2,21 @@
 
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Label?>
-<?import javafx.scene.layout.*?>
-<BorderPane fx:id="root" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity"
-            styleClass="subpanel" stylesheets="@../stylesheet.css" xmlns="http://javafx.com/javafx/18"
-            xmlns:fx="http://javafx.com/fxml/1"
-            fx:controller="de.mephisto.vpin.commons.fx.widgets.WidgetCompetitionController">
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.VBox?>
+
+<BorderPane fx:id="root" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" styleClass="subpanel" stylesheets="@../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.commons.fx.widgets.WidgetCompetitionController">
     <padding>
-        <Insets bottom="12.0" left="12.0" right="12.0" top="12.0"/>
+        <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
     </padding>
     <top>
         <BorderPane fx:id="summaryBorderPane" BorderPane.alignment="TOP_LEFT">
             <top>
                 <VBox BorderPane.alignment="CENTER">
                     <children>
-                        <Label alignment="BOTTOM_LEFT" styleClass="widget-title" text="Active Offline Competition"
-                               textFill="WHITE">
+                        <Label alignment="BOTTOM_LEFT" styleClass="widget-title" text="Active Competition" textFill="WHITE">
                             <VBox.margin>
-                                <Insets/>
+                                <Insets />
                             </VBox.margin>
                         </Label>
                     </children>
@@ -31,17 +29,17 @@
             <left>
                 <VBox fx:id="firstPlaceWidget" BorderPane.alignment="CENTER">
                     <BorderPane.margin>
-                        <Insets right="12.0"/>
+                        <Insets right="12.0" />
                     </BorderPane.margin>
                 </VBox>
             </left>
             <center>
-                <VBox fx:id="statsWidget" BorderPane.alignment="CENTER"/>
+                <VBox fx:id="statsWidget" BorderPane.alignment="CENTER" />
             </center>
             <right>
                 <VBox fx:id="remainingTimeWidget" BorderPane.alignment="CENTER">
                     <BorderPane.margin>
-                        <Insets left="12.0"/>
+                        <Insets left="12.0" />
                     </BorderPane.margin>
                 </VBox>
             </right>

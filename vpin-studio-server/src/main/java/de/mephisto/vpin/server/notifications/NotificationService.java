@@ -12,6 +12,7 @@ import de.mephisto.vpin.server.highscores.HighscoreChangeEvent;
 import de.mephisto.vpin.server.highscores.HighscoreChangeListener;
 import de.mephisto.vpin.server.highscores.HighscoreService;
 import de.mephisto.vpin.server.highscores.cards.CardService;
+import de.mephisto.vpin.server.popper.PopperService;
 import de.mephisto.vpin.server.preferences.PreferencesService;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
@@ -40,6 +41,9 @@ public class NotificationService implements InitializingBean, HighscoreChangeLis
   @Autowired
   private PreferencesService preferencesService;
 
+  @Autowired
+  private PopperService popperService;
+
   @Override
   public void highscoreChanged(@NotNull HighscoreChangeEvent event) {
     try {
@@ -59,6 +63,7 @@ public class NotificationService implements InitializingBean, HighscoreChangeLis
         String message = NotificationFactory.createDiscordCompetitionCreatedMessage(competition, game);
         DiscordWebhook.call(webhookUrl, message);
         LOG.info("Called Discord webhook for creation of " + competition);
+//        popperService.augmentWheel(competition.getGameId());
       }
     }
   }

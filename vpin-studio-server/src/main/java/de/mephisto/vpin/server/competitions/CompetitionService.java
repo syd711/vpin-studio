@@ -40,28 +40,37 @@ public class CompetitionService implements InitializingBean {
   }
 
   public void notifyCompetitionCreation(Competition c) {
-    for (CompetitionChangeListener listener : this.listeners) {
-      listener.competitionCreated(c);
-    }
+    new Thread(() -> {
+      for (CompetitionChangeListener listener : this.listeners) {
+        listener.competitionCreated(c);
+      }
+    }).start();
   }
 
   public void notifyCompetitionChanged(Competition c) {
-    for (CompetitionChangeListener listener : this.listeners) {
-      listener.competitionChanged(c);
-    }
+    new Thread(() -> {
+      for (CompetitionChangeListener listener : this.listeners) {
+        listener.competitionChanged(c);
+      }
+    }).start();
   }
 
   public void notifyCompetitionFinished(Competition c) {
-    for (CompetitionChangeListener listener : this.listeners) {
-      listener.competitionFinished(c);
-    }
+    new Thread(() -> {
+      for (CompetitionChangeListener listener : this.listeners) {
+        listener.competitionFinished(c);
+      }
+    }).start();
   }
 
   public void notifyCompetitionDeleted(Competition c) {
-    for (CompetitionChangeListener listener : this.listeners) {
-      listener.competitionDeleted(c);
-    }
+    new Thread(() -> {
+      for (CompetitionChangeListener listener : this.listeners) {
+        listener.competitionDeleted(c);
+      }
+    }).start();
   }
+
   public List<Competition> getCompetitions() {
     return competitionsRepository.findAll();
   }
