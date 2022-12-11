@@ -1,13 +1,10 @@
 package de.mephisto.vpin.ui;
 
-import de.mephisto.vpin.commons.fx.OverlayWindowFX;
 import de.mephisto.vpin.commons.fx.widgets.WidgetCompetitionController;
 import de.mephisto.vpin.commons.fx.widgets.WidgetFinishedCompetitionsController;
 import de.mephisto.vpin.commons.fx.widgets.WidgetLatestScoresController;
 import de.mephisto.vpin.commons.fx.widgets.WidgetPlayerRankController;
 import de.mephisto.vpin.restclient.representations.CompetitionRepresentation;
-import de.mephisto.vpin.restclient.representations.RankedPlayerRepresentation;
-import de.mephisto.vpin.restclient.representations.ScoreSummaryRepresentation;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -37,17 +34,9 @@ public class DashboardController implements Initializable, StudioFXController {
   @FXML
   private BorderPane widgetFinishedCompetitions;
 
-  @FXML
-  private StackPane dashboardStack;
-
-  private WidgetCompetitionController offlineCompetitionController;
-  private WidgetFinishedCompetitionsController finishedCompetitionsController;
+  private WidgetCompetitionController activeCompetitionController;
   private WidgetLatestScoresController latestScoresController;
-
-  private BorderPane activeCompetitionBorderPane;
-  private BorderPane playersBorderPane;
   private WidgetPlayerRankController playerRankController;
-
 
   // Add a public no-args constructor
   public DashboardController() {
@@ -69,9 +58,9 @@ public class DashboardController implements Initializable, StudioFXController {
 
     try {
       FXMLLoader loader = new FXMLLoader(WidgetCompetitionController.class.getResource("widget-active-competition.fxml"));
-      activeCompetitionBorderPane = loader.load();
+      BorderPane activeCompetitionBorderPane = loader.load();
       activeCompetitionBorderPane.setMaxWidth(Double.MAX_VALUE);
-      offlineCompetitionController = loader.getController();
+      activeCompetitionController = loader.getController();
       widgetCompetition.setTop(activeCompetitionBorderPane);
 
     } catch (IOException e) {
@@ -80,7 +69,7 @@ public class DashboardController implements Initializable, StudioFXController {
 
     try {
       FXMLLoader loader = new FXMLLoader(WidgetPlayerRankController.class.getResource("widget-player-rank.fxml"));
-      playersBorderPane = loader.load();
+      BorderPane playersBorderPane = loader.load();
       playerRankController = loader.getController();
       playersBorderPane.setMaxWidth(Double.MAX_VALUE);
       widgetFinishedCompetitions.setCenter(playersBorderPane);
@@ -97,14 +86,7 @@ public class DashboardController implements Initializable, StudioFXController {
     Platform.runLater(() -> {
       latestScoresController.refresh();
       playerRankController.refresh();
-
-      List<CompetitionRepresentation> activeCompetitions = client.getActiveCompetitions();
-      if (!activeCompetitions.isEmpty()) {
-        offlineCompetitionController.setCompetition(activeCompetitions.get(0));
-      }
-      else {
-        offlineCompetitionController.setCompetition(null);
-      }
+      activeCompetitionController.refresh();
     });
   }
 }

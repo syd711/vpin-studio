@@ -1,5 +1,6 @@
 package de.mephisto.vpin.commons.fx.widgets;
 
+import de.mephisto.vpin.commons.fx.LoadingOverlayController;
 import de.mephisto.vpin.commons.fx.OverlayWindowFX;
 import de.mephisto.vpin.restclient.representations.*;
 import eu.hansolo.tilesfx.Tile;
@@ -8,12 +9,16 @@ import eu.hansolo.tilesfx.events.TileEvent;
 import eu.hansolo.tilesfx.tools.Rank;
 import eu.hansolo.tilesfx.tools.Ranking;
 import javafx.application.Platform;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Parent;
 import javafx.scene.chart.XYChart;
 import javafx.scene.image.Image;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.TextAlignment;
@@ -54,6 +59,11 @@ public class WidgetCompetitionController extends WidgetController implements Ini
   private Tile highscoresGraphTile;
   private Tile countdownTile;
   private Tile turnoverTile;
+
+  @FXML
+  private StackPane viewStack;
+
+  private Parent loadingOverlay;
 
   private WidgetCompetitionSummaryController summaryWidgetController;
 
@@ -110,9 +120,6 @@ public class WidgetCompetitionController extends WidgetController implements Ini
 
     remainingTimeWidget.getChildren().add(countdownTile);
 
-
-
-
     try {
       FXMLLoader loader = new FXMLLoader(WidgetLatestScoresController.class.getResource("widget-competition-summary.fxml"));
       BorderPane root = loader.load();
@@ -122,9 +129,18 @@ public class WidgetCompetitionController extends WidgetController implements Ini
     } catch (IOException e) {
       LOG.error("Failed to load competition summary widget: " + e.getMessage(), e);
     }
+
+    try {
+      FXMLLoader loader = new FXMLLoader(LoadingOverlayController.class.getResource("loading-overlay.fxml"));
+      loadingOverlay = loader.load();
+      LoadingOverlayController ctrl = loader.getController();
+      ctrl.setLoadingMessage("Loading Competition...");
+    } catch (IOException e) {
+      LOG.error("Failed to load loading overlay: " + e.getMessage());
+    }
   }
 
-  public void setCompetition(CompetitionRepresentation competition) {
+  private void setCompetition(CompetitionRepresentation competition) {
     summaryWidgetController.setCompetition(competition);
     root.setVisible(competition != null);
 
@@ -214,5 +230,21 @@ public class WidgetCompetitionController extends WidgetController implements Ini
     }
     else {
     }
+  }
+
+  public void refresh() {
+    viewStack.getChildren().add(loadingOverlay);
+    new Thread(() -> {
+      List<CompetitionRepresentation> activeCompetitions = OverlayWindowFX.client.getActiveCompetitions();
+      Platform.runLater(() -> {
+        if (!activeCompetitions.isEmpty()) {
+          setCompetition(activeCompetitions.get(0));
+        }
+        else {
+          setCompetition(null);
+        }
+        viewStack.getChildren().remove(loadingOverlay);
+      });
+    }).start();
   }
 }

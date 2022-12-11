@@ -6,7 +6,6 @@ import de.mephisto.vpin.commons.fx.widgets.WidgetLatestScoresController;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.representations.CompetitionRepresentation;
 import de.mephisto.vpin.restclient.representations.PreferenceEntryRepresentation;
-import de.mephisto.vpin.restclient.representations.ScoreSummaryRepresentation;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
@@ -49,11 +48,7 @@ public class OverlayController implements Initializable {
     PreferenceEntryRepresentation systemName = OverlayWindowFX.client.getPreference(PreferenceNames.SYSTEM_NAME);
     titleLabel.setText(systemName.getValue());
 
-    List<CompetitionRepresentation> activeCompetitions = OverlayWindowFX.client.getActiveCompetitions();
-    if (!activeCompetitions.isEmpty()) {
-      activeCompetitionController.setCompetition(activeCompetitions.get(0));
-    }
-
+    activeCompetitionController.refresh();
     latestScoresController.refresh();
 
     List<CompetitionRepresentation> competitions = OverlayWindowFX.client.getFinishedCompetitions(3);
