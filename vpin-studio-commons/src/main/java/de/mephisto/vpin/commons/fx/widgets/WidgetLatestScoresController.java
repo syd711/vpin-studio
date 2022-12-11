@@ -49,7 +49,7 @@ public class WidgetLatestScoresController extends WidgetController implements In
 
         FXMLLoader loader = new FXMLLoader(WidgetLatestScoreItemController.class.getResource("widget-latest-score-item.fxml"));
         Pane row = loader.load();
-        row.setPrefWidth(root.getPrefWidth() - 36);
+        row.setPrefWidth(root.getPrefWidth() - 24);
         WidgetLatestScoreItemController controller = loader.getController();
         controller.setData(game, score);
 

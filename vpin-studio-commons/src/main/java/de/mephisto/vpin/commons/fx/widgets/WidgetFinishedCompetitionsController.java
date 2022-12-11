@@ -43,8 +43,9 @@ public class WidgetFinishedCompetitionsController extends WidgetController imple
         BorderPane row = loader.load();
         WidgetCompetitionSummaryController controller = loader.getController();
         row.setMaxWidth(Double.MAX_VALUE);
-        competitionsVBox.getChildren().add(row);
         controller.setCompetition(c);
+
+        competitionsVBox.getChildren().add(row);
       }
     } catch (IOException e) {
       LOG.error("Failed to create widget: " + e.getMessage(), e);

@@ -134,7 +134,4 @@
             </children>
         </StackPane>
     </center>
-    <padding>
-        <Insets bottom="12.0" top="12.0" />
-    </padding>
 </BorderPane>

@@ -11,14 +11,14 @@
     <center>
       <StackPane fx:id="dashboardStack" BorderPane.alignment="TOP_CENTER">
          <BorderPane.margin>
-            <Insets bottom="12.0" left="12.0" top="12.0" />
+            <Insets bottom="12.0" left="12.0" />
          </BorderPane.margin>
          <children>
             <BorderPane fx:id="widgetLatestScore">
                <center>
                   <BorderPane fx:id="widgetCompetition" BorderPane.alignment="TOP_LEFT">
                      <BorderPane.margin>
-                        <Insets bottom="12.0" left="12.0" right="12.0" />
+                        <Insets left="12.0" right="12.0" />
                      </BorderPane.margin>
                      <center>
                         <BorderPane fx:id="widgetFinishedCompetitions" BorderPane.alignment="CENTER">
