@@ -19,4 +19,6 @@ public interface HighscoreRepository extends JpaRepository<Highscore, Long> {
   List<Highscore> findRecent(int limit);
 
   List<Highscore> findAllByOrderByCreatedAtDesc();
+
+  List<Highscore> findByRawIsNotNull();
 }

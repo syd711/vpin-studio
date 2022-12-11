@@ -163,6 +163,10 @@ public class VPinStudioClient implements ObservedPropertyChangeListener, Overlay
    * Competitions
    ********************************************************************************************************************/
 
+  public List<RankedPlayerRepresentation> getRankedPlayers() {
+    return Arrays.asList(restClient.get(API + "competitions/rankedplayers", RankedPlayerRepresentation[].class));
+  }
+
   public List<CompetitionRepresentation> getCompetitions() {
     return Arrays.asList(restClient.get(API + "competitions", CompetitionRepresentation[].class));
   }

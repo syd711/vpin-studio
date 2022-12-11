@@ -3,6 +3,7 @@ package de.mephisto.vpin.restclient;
 import de.mephisto.vpin.restclient.representations.*;
 
 import java.io.ByteArrayInputStream;
+import java.util.Arrays;
 import java.util.List;
 
 public interface OverlayClient {
@@ -25,4 +26,6 @@ public interface OverlayClient {
   ByteArrayInputStream getGameMediaItem(int id, PopperScreen screen);
 
   PreferenceEntryRepresentation getPreference(String key);
+
+  List<RankedPlayerRepresentation> getRankedPlayers();
 }

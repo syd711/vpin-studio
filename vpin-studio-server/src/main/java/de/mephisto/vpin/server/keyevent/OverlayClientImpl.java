@@ -9,6 +9,7 @@ import de.mephisto.vpin.server.assets.Asset;
 import de.mephisto.vpin.server.assets.AssetService;
 import de.mephisto.vpin.server.competitions.Competition;
 import de.mephisto.vpin.server.competitions.CompetitionService;
+import de.mephisto.vpin.server.competitions.RankedPlayer;
 import de.mephisto.vpin.server.competitions.ScoreSummary;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameService;
@@ -63,7 +64,7 @@ public class OverlayClientImpl implements OverlayClient, InitializingBean {
   @Override
   public List<CompetitionRepresentation> getActiveCompetitions() {
     try {
-      List<Competition> competitions = competitionService.getActiveOfflineCompetitions();
+      List<Competition> competitions = competitionService.getActiveCompetitions();
       String s = mapper.writeValueAsString(competitions);
       return List.of(mapper.readValue(s, CompetitionRepresentation[].class));
     } catch (Exception e) {
@@ -169,6 +170,18 @@ public class OverlayClientImpl implements OverlayClient, InitializingBean {
     entry.setKey(key);
     entry.setValue(String.valueOf(preferenceValue));
     return entry;
+  }
+
+  @Override
+  public List<RankedPlayerRepresentation> getRankedPlayers() {
+    try {
+      List<RankedPlayer> rankedPlayers = competitionService.getPlayersByRanks();
+      String s = mapper.writeValueAsString(rankedPlayers);
+      return List.of(mapper.readValue(s, RankedPlayerRepresentation[].class));
+    } catch (Exception e) {
+      LOG.error("Error during conversion: " + e.getMessage(), e);
+    }
+    return Collections.emptyList();
   }
 
   @Override

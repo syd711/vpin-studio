@@ -17,7 +17,6 @@ public class CompetitionResource {
   @Autowired
   private CompetitionService competitionService;
 
-
   @GetMapping
   public List<Competition> getCompetitions() {
     return competitionService.getCompetitions();
@@ -39,7 +38,7 @@ public class CompetitionResource {
 
   @GetMapping("/active/offline")
   public List<Competition> getActiveOffCompetition() {
-    return competitionService.getActiveOfflineCompetitions();
+    return competitionService.getActiveCompetitions();
   }
 
   @GetMapping("/scores/{id}")
@@ -56,5 +55,10 @@ public class CompetitionResource {
   @DeleteMapping("/delete/{id}")
   public void deleteCompetition(@PathVariable("id") int id) {
     competitionService.delete(id);
+  }
+
+  @GetMapping("/rankedplayers")
+  public List<RankedPlayer> getPlayerByRanks() {
+    return competitionService.getPlayersByRanks();
   }
 }

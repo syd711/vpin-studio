@@ -141,8 +141,12 @@ public class CompetitionService implements InitializingBean {
     notifyCompetitionFinished(competition);
   }
 
-  public List<Competition> getActiveOfflineCompetitions() {
+  public List<Competition> getActiveCompetitions() {
     return competitionsRepository.findByStartDateLessThanEqualAndEndDateGreaterThanEqual(new Date(), new Date());
+  }
+
+  public List<RankedPlayer> getPlayersByRanks() {
+    return highscoreService.getPlayersByRanks();
   }
 
   public void delete(long id) {

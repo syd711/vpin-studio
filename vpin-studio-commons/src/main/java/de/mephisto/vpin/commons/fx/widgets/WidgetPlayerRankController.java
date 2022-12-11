@@ -1,42 +1,30 @@
 package de.mephisto.vpin.commons.fx.widgets;
 
-import de.mephisto.vpin.commons.fx.OverlayWindowFX;
-import de.mephisto.vpin.restclient.PopperScreen;
-import de.mephisto.vpin.restclient.representations.GameMediaItemRepresentation;
-import de.mephisto.vpin.restclient.representations.GameRepresentation;
-import de.mephisto.vpin.restclient.representations.ScoreRepresentation;
+import de.mephisto.vpin.restclient.representations.CompetitionRepresentation;
+import de.mephisto.vpin.restclient.representations.PlayerRepresentation;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.Label;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
+import javafx.scene.control.TableColumn;
 import javafx.scene.layout.BorderPane;
 
-import java.io.ByteArrayInputStream;
 import java.net.URL;
-import java.text.SimpleDateFormat;
+import java.util.List;
 import java.util.ResourceBundle;
 
 public class WidgetPlayerRankController extends WidgetController implements Initializable {
-  private final static SimpleDateFormat simpleDateFormat = new SimpleDateFormat("MM-dd-yyyy / hh:mm");
 
   @FXML
   private BorderPane root;
 
   @FXML
-  private ImageView wheelImageView;
+  private TableColumn<CompetitionRepresentation, String> columnName;
 
   @FXML
-  private Label nameLabel;
+  private TableColumn<CompetitionRepresentation, String> columnTable;
 
   @FXML
-  private Label positionLabel;
+  private TableColumn<CompetitionRepresentation, String> columnStatus;
 
-  @FXML
-  private Label scoreLabel;
-
-  @FXML
-  private Label changeDateLabel;
 
   // Add a public no-args constructor
   public WidgetPlayerRankController() {
@@ -47,26 +35,7 @@ public class WidgetPlayerRankController extends WidgetController implements Init
   public void initialize(URL url, ResourceBundle resourceBundle) {
   }
 
-  public void setData(GameRepresentation game, ScoreRepresentation score, GameMediaItemRepresentation wheel) {
-    ByteArrayInputStream gameMediaItem = OverlayWindowFX.client.getGameMediaItem(game.getId(), PopperScreen.Wheel);
-    Image image = new Image(gameMediaItem);
+  public void setData(List<PlayerRepresentation> players) {
 
-    wheelImageView.setImage(image);
-
-    nameLabel.setText(game.getGameDisplayName());
-    positionLabel.setText("#" + score.getPosition());
-
-    if (score.getPlayer() != null) {
-      nameLabel.setText(score.getPlayer().getName());
-    }
-    else {
-      nameLabel.setText(score.getPlayerInitials());
-    }
-
-    scoreLabel.setFont(getScoreFont());
-    scoreLabel.setText(score.getScore());
-
-    String date = simpleDateFormat.format(score.getCreatedAt());
-    changeDateLabel.setText("Updated: " + date);
   }
 }

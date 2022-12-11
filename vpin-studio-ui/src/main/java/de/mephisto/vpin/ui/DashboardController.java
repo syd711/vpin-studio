@@ -4,6 +4,7 @@ import de.mephisto.vpin.commons.fx.OverlayWindowFX;
 import de.mephisto.vpin.commons.fx.widgets.WidgetCompetitionController;
 import de.mephisto.vpin.commons.fx.widgets.WidgetFinishedCompetitionsController;
 import de.mephisto.vpin.commons.fx.widgets.WidgetLatestScoresController;
+import de.mephisto.vpin.commons.fx.widgets.WidgetPlayerRankController;
 import de.mephisto.vpin.restclient.representations.CompetitionRepresentation;
 import de.mephisto.vpin.restclient.representations.ScoreSummaryRepresentation;
 import javafx.application.Platform;
@@ -43,7 +44,7 @@ public class DashboardController implements Initializable, StudioFXController {
   private WidgetLatestScoresController latestScoresController;
 
   private BorderPane activeCompetitionBorderPane;
-  private BorderPane finishedCompetitionsBorderPane;
+  private BorderPane playersBorderPane;
 
 
   // Add a public no-args constructor
@@ -76,13 +77,12 @@ public class DashboardController implements Initializable, StudioFXController {
     }
 
     try {
-      FXMLLoader loader = new FXMLLoader(WidgetFinishedCompetitionsController.class.getResource("widget-finished-competitions.fxml"));
-      finishedCompetitionsBorderPane = loader.load();
-      finishedCompetitionsController = loader.getController();
-      finishedCompetitionsBorderPane.setMaxWidth(Double.MAX_VALUE);
-      widgetFinishedCompetitions.setCenter(finishedCompetitionsBorderPane);
+      FXMLLoader loader = new FXMLLoader(WidgetPlayerRankController.class.getResource("widget-player-rank.fxml"));
+      playersBorderPane = loader.load();
+      playersBorderPane.setMaxWidth(Double.MAX_VALUE);
+      widgetFinishedCompetitions.setCenter(playersBorderPane);
     } catch (IOException e) {
-      LOG.error("Failed to load finished competitions widget: " + e.getMessage(), e);
+      LOG.error("Failed to load finished players widget: " + e.getMessage(), e);
     }
 
     NavigationController.setInitialController("scene-dashboard.fxml", this);
@@ -102,17 +102,6 @@ public class DashboardController implements Initializable, StudioFXController {
       else {
         offlineCompetitionController.setCompetition(null);
       }
-
-      List<CompetitionRepresentation> competitions = OverlayWindowFX.client.getFinishedCompetitions(3);
-      finishedCompetitionsController.setCompetitions(competitions);
-
-//      if (activeCompetitions.isEmpty()) {
-//        widgetCompetition.setTop(finishedCompetitionsBorderPane);
-//        widgetFinishedCompetitions.setTop(null);
-//      }
-//      else {
-//
-//      }
     });
   }
 }

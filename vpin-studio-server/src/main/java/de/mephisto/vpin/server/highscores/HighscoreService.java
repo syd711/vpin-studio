@@ -2,6 +2,8 @@ package de.mephisto.vpin.server.highscores;
 
 import de.mephisto.vpin.server.competitions.ScoreSummary;
 import de.mephisto.vpin.server.games.Game;
+import de.mephisto.vpin.server.players.Player;
+import de.mephisto.vpin.server.competitions.RankedPlayer;
 import de.mephisto.vpin.server.system.SystemService;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
@@ -55,6 +57,66 @@ public class HighscoreService implements InitializingBean {
 
   public List<Score> parseScores(Date createdAt, String raw, int gameId) {
     return highscoreParser.parseScores(createdAt, raw, gameId);
+  }
+
+
+  public List<RankedPlayer> getPlayersByRanks() {
+    Map<String, RankedPlayer> playerMap = new HashMap<>();
+    List<ScoreSummary> highscoresWithScore = getHighscoresWithScore();
+    for (ScoreSummary summary : highscoresWithScore) {
+      if (summary.getScores().size() >= 3) {
+        List<Score> scores = summary.getScores();
+        for (int i = 0; i < scores.size(); i++) {
+          Score score = scores.get(i);
+          if (score.getPlayer() == null) {
+            continue;
+          }
+
+          if (!playerMap.containsKey(score.getPlayerInitials())) {
+            RankedPlayer p = new RankedPlayer();
+            Player player = score.getPlayer();
+            p.setAvatarUrl(player.getAvatarUrl());
+            if(player.getAvatar() != null) {
+              p.setAvatarUuid(player.getAvatar().getUuid());
+            }
+            p.setName(player.getName());
+            playerMap.put(score.getPlayerInitials(), p);
+          }
+
+          RankedPlayer player = playerMap.get(score.getPlayerInitials());
+          player.addBy(i);
+        }
+      }
+    }
+
+    List<RankedPlayer> rankedPlayers = new ArrayList<>(playerMap.values());
+    Collections.sort(rankedPlayers, (o2, o1) -> {
+      if(o1.getFirst() == o2.getFirst()) {
+        if(o1.getSecond() == o2.getSecond()) {
+          return o1.getThird() - o2.getThird();
+        }
+        else {
+          return o1.getSecond() - o2.getSecond();
+        }
+      }
+      return o1.getFirst() - o2.getFirst();
+    });
+
+    for (int i = 1; i <= rankedPlayers.size(); i++) {
+      rankedPlayers.get(i-1).setRank(i);
+    }
+
+    return rankedPlayers;
+  }
+
+  public List<ScoreSummary> getHighscoresWithScore() {
+    List<ScoreSummary> result = new ArrayList<>();
+    List<Highscore> byRawIsNotNull = highscoreRepository.findByRawIsNotNull();
+    for (Highscore highscore : byRawIsNotNull) {
+      List<Score> scores = highscoreParser.parseScores(highscore.getCreatedAt(), highscore.getRaw(), highscore.getGameId());
+      result.add(new ScoreSummary(scores, highscore.getCreatedAt()));
+    }
+    return result;
   }
 
   /**
