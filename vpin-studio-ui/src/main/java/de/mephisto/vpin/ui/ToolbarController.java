@@ -1,13 +1,16 @@
 package de.mephisto.vpin.ui;
 
 import de.mephisto.vpin.commons.utils.Updater;
+import de.mephisto.vpin.ui.util.WidgetFactory;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
 import javafx.stage.Stage;
 import org.apache.commons.lang3.StringUtils;
 
 import java.net.URL;
+import java.util.Optional;
 import java.util.ResourceBundle;
 
 import static de.mephisto.vpin.ui.Studio.client;
@@ -23,7 +26,16 @@ public class ToolbarController implements Initializable {
 
   @FXML
   private void onUpdate() {
-
+    String version = Studio.getVersion();
+    String newVersion = Updater.checkForUpdate(version);
+    if(!StringUtils.isEmpty(newVersion)) {
+      Optional<ButtonType> result = WidgetFactory.showConfirmation("Update to version " + newVersion + "?", "New Version available.");
+      if (result.isPresent() && result.get().equals(ButtonType.OK)) {
+        onDisconnect();
+        client.update();
+        onDisconnect();
+      }
+    }
   }
 
   @FXML

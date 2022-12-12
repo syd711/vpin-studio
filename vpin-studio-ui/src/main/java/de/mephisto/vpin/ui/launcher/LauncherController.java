@@ -2,7 +2,6 @@ package de.mephisto.vpin.ui.launcher;
 
 import de.mephisto.vpin.commons.utils.ImageUtil;
 import de.mephisto.vpin.commons.utils.PropertiesStore;
-import de.mephisto.vpin.commons.utils.SystemCommandExecutor;
 import de.mephisto.vpin.commons.utils.Updater;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.VPinStudioClient;
@@ -10,6 +9,7 @@ import de.mephisto.vpin.restclient.representations.PreferenceEntryRepresentation
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.util.Dialogs;
 import de.mephisto.vpin.ui.util.Services;
+import de.mephisto.vpin.ui.util.UIDefaults;
 import de.mephisto.vpin.ui.util.WidgetFactory;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleObjectProperty;
@@ -31,7 +31,6 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.ResourceBundle;
 
@@ -77,17 +76,13 @@ public class LauncherController implements Initializable {
   private void onInstall() {
     try {
       Services.install();
-      if(!Services.getAutostartFile().exists()) {
+      if (!Services.getAutostartFile().exists()) {
         throw new UnsupportedOperationException("Installation failed: " + Services.getAutostartFile().getAbsolutePath() + " does not exist.");
       }
 
       try {
-        List<String> commands = Arrays.asList("VPin-Studio-Server.exe");
-        SystemCommandExecutor executor = new SystemCommandExecutor(commands);
-        executor.setDir(new File("./"));
-        executor.executeCommandAsync();
-        LOG.info("Startup command finished.");
-        WidgetFactory.showInformation("Service Started", "The VPin Studio Server has been installed and is starting.");
+        Updater.startServer();
+        WidgetFactory.showInformation("The VPin Studio Server has been installed and is starting.", "Service Installation Finished");
       } catch (Exception ex) {
         WidgetFactory.showAlert("Failed to install Service: " + ex.getMessage());
       }
@@ -252,8 +247,13 @@ public class LauncherController implements Initializable {
       VPinConnection connection = new VPinConnection();
       PreferenceEntryRepresentation avatarEntry = client.getPreference(PreferenceNames.AVATAR);
       PreferenceEntryRepresentation systemName = client.getPreference(PreferenceNames.SYSTEM_NAME);
+
+      String name = systemName.getValue();
+      if (StringUtils.isEmpty(name)) {
+        name = UIDefaults.VPIN_NAME;
+      }
       connection.setHost(host);
-      connection.setName(systemName.getValue());
+      connection.setName(name);
 
       if (!StringUtils.isEmpty(avatarEntry.getValue())) {
         connection.setAvatar(new Image(client.getAsset(avatarEntry.getValue())));

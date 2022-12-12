@@ -58,6 +58,11 @@ public class VPinStudioClient implements ObservedPropertyChangeListener, Overlay
     restTemplate.getForObject(restClient.getBaseUrl() + API + "system/shutdown", Boolean.class);
   }
 
+  public void update() {
+    final RestTemplate restTemplate = new RestTemplate();
+    restTemplate.getForObject(restClient.getBaseUrl() + API + "system/update", Boolean.class);
+  }
+
   public String version() {
     try {
       final RestTemplate restTemplate = new RestTemplate();

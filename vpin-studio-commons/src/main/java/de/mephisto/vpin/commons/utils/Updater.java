@@ -8,6 +8,8 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.Arrays;
+import java.util.List;
 
 public class Updater {
   private final static Logger LOG = LoggerFactory.getLogger(Updater.class);
@@ -15,10 +17,19 @@ public class Updater {
   private final static String BASE_URL = "https://github.com/syd711/vpin-studio/releases/download/%s/";
   private final static String LATEST_RELEASE_URL = "https://github.com/syd711/vpin-studio/releases/latest";
 
-  public static void updateServer(String versionSegment) throws Exception {
+  public static File updateServer(String versionSegment) throws Exception {
     File out = new File("./vpin-studio-server.jar");
     String url = String.format(BASE_URL, versionSegment) + "vpin-studio-server.jar";
     download(url, out);
+    return out;
+  }
+
+  public static void startServer() {
+    List<String> commands = Arrays.asList("VPin-Studio-Server.exe");
+    SystemCommandExecutor executor = new SystemCommandExecutor(commands);
+    executor.setDir(new File("./"));
+    executor.executeCommandAsync();
+    LOG.info("Startup command finished.");
   }
 
   public static void updateUI(String versionSegment) throws Exception {
