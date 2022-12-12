@@ -6,8 +6,6 @@ import de.mephisto.vpin.restclient.representations.ScoreSummaryRepresentation;
 import de.mephisto.vpin.ui.NavigationController;
 import de.mephisto.vpin.ui.StudioFXController;
 import javafx.application.Platform;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -98,10 +96,10 @@ public class PlayersController implements Initializable, StudioFXController {
             noScoreLabel.setText("Highscores for player '" + p.getName() + "'");
             for (ScoreRepresentation playerScore : playerScores.getScores()) {
               try {
-                FXMLLoader loader = new FXMLLoader(HighscoreWidgetController.class.getResource("widget-highscore.fxml"));
+                FXMLLoader loader = new FXMLLoader(WidgetPlayerScoreController.class.getResource("widget-highscore.fxml"));
                 BorderPane row = loader.load();
                 row.setPrefWidth(600 - 48);
-                HighscoreWidgetController controller = loader.getController();
+                WidgetPlayerScoreController controller = loader.getController();
                 controller.setData(p, playerScore);
                 highscoreList.getChildren().add(row);
               } catch (IOException e) {

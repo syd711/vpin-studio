@@ -2,7 +2,6 @@ package de.mephisto.vpin.ui.players;
 
 import de.mephisto.vpin.commons.fx.OverlayWindowFX;
 import de.mephisto.vpin.restclient.PopperScreen;
-import de.mephisto.vpin.restclient.RestClient;
 import de.mephisto.vpin.restclient.representations.*;
 import de.mephisto.vpin.commons.fx.widgets.WidgetController;
 import de.mephisto.vpin.ui.Studio;
@@ -16,12 +15,11 @@ import javafx.scene.layout.BorderPane;
 import java.io.ByteArrayInputStream;
 import java.net.URL;
 import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.ResourceBundle;
 
 import static de.mephisto.vpin.ui.Studio.client;
 
-public class HighscoreWidgetController extends WidgetController implements Initializable  {
+public class WidgetPlayerScoreController extends WidgetController implements Initializable  {
 
   @FXML
   private BorderPane root;
@@ -45,7 +43,7 @@ public class HighscoreWidgetController extends WidgetController implements Initi
   private Label changeDateLabel;
 
   // Add a public no-args constructor
-  public HighscoreWidgetController() {
+  public WidgetPlayerScoreController() {
   }
 
 
@@ -70,7 +68,7 @@ public class HighscoreWidgetController extends WidgetController implements Initi
     tableLabel.setText(game.getGameDisplayName());
 
     positionLabel.setText("#" + score.getPosition());
-    nameLabel.setText(score.getPlayerInitials());
+    nameLabel.setText(score.getPlayer().getName());
 
     scoreLabel.setFont(getScoreFont());
     scoreLabel.setText(score.getScore());

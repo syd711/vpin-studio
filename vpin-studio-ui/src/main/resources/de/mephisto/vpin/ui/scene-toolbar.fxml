@@ -4,6 +4,7 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Tooltip?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.text.Font?>
@@ -26,24 +27,41 @@
                         <Insets bottom="6.0" />
                      </BorderPane.margin>
                      <children>
-                        <Button layoutX="164.0" layoutY="10.0" mnemonicParsing="false" onAction="#onClearCache" text=" Clear Cache" textFill="WHITE">
+                        <Button layoutX="164.0" layoutY="10.0" mnemonicParsing="false" onAction="#onClearCache" textFill="WHITE">
                            <font>
                               <Font size="14.0" />
                            </font>
                            <graphic>
-                              <FontIcon iconColor="WHITE" iconLiteral="sil-refresh" />
+                              <FontIcon iconColor="WHITE" iconLiteral="sil-refresh" iconSize="16" />
                            </graphic>
+                           <tooltip>
+                              <Tooltip text="Clear cache" />
+                           </tooltip>
                         </Button>
-                        <Button mnemonicParsing="false" onAction="#onDisconnect" text=" Disconnect" textFill="WHITE">
+                        <Button mnemonicParsing="false" onAction="#onDisconnect" textFill="WHITE">
                            <font>
                               <Font size="14.0" />
                            </font>
                            <HBox.margin>
-                              <Insets left="3.0" right="6.0" />
+                              <Insets left="3.0" right="3.0" />
                            </HBox.margin>
                            <graphic>
-                              <FontIcon iconColor="WHITE" iconLiteral="sil-logout" />
+                              <FontIcon iconColor="WHITE" iconLiteral="sil-logout" iconSize="16" />
                            </graphic>
+                           <tooltip>
+                              <Tooltip text="Disconnect" />
+                           </tooltip>
+                        </Button>
+                        <Button fx:id="updateBtn" mnemonicParsing="false" onAction="#onUpdate" textFill="WHITE">
+                           <graphic>
+                              <FontIcon iconColor="#03a905" iconLiteral="mdi2a-arrow-down-bold" iconSize="16" />
+                           </graphic>
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                           <tooltip>
+                              <Tooltip text="Update available" />
+                           </tooltip>
                         </Button>
                      </children>
                   </HBox>
