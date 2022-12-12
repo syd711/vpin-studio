@@ -51,17 +51,23 @@ public class SystemResource {
   }
 
   @GetMapping("/update")
-  public boolean update() throws Exception {
+  public boolean update() {
     String s = Updater.checkForUpdate(systemService.getVersion());
-    if(!StringUtils.isEmpty(s)) {
-      File file = Updater.updateServer(s);
-      if(file.exists()) {
-        Updater.startServer();
-        System.exit(0);
-      }
-      else {
-        LOG.error("Updating server failed: update file " + file.getAbsolutePath() + " does not exist.");
-      }
+    if (!StringUtils.isEmpty(s)) {
+      new Thread(() -> {
+        try {
+          File file = Updater.updateServer(s);
+          if (file.exists()) {
+            Updater.startServer();
+            System.exit(0);
+          }
+          else {
+            LOG.error("Updating server failed: update file " + file.getAbsolutePath() + " does not exist.");
+          }
+        } catch (Exception e) {
+          LOG.error("Updating server failed: " + e.getMessage(), e);
+        }
+      }).start();
     }
     return true;
   }

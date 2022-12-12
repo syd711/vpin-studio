@@ -49,11 +49,11 @@ public class Studio extends Application {
       loadStudio(stage, Studio.client);
     }
     else {
-      loadLauncher(stage);
+      loadLauncher(stage, false);
     }
   }
 
-  public static void loadLauncher(Stage stage) {
+  public static void loadLauncher(Stage stage, boolean runUpdate) {
     try {
       Studio.stage = stage;
       Rectangle2D screenBounds = Screen.getPrimary().getBounds();
@@ -71,8 +71,7 @@ public class Studio extends Application {
       stage.setY((screenBounds.getHeight() / 2) - (400 / 2));
 
       LauncherController controller = loader.getController();
-      controller.setStage(stage);
-
+      controller.setStage(stage, runUpdate);
       stage.show();
     } catch (IOException e) {
       LOG.error("Failed to load launcher: " + e.getMessage(), e);
@@ -106,6 +105,8 @@ public class Studio extends Application {
       stage.getIcons().add(new Image(Studio.class.getResourceAsStream("logo-128.png")));
       stage.setScene(scene);
       stage.setResizable(true);
+      stage.setMinWidth(1780);
+      stage.setMinHeight(1200);
       stage.initStyle(StageStyle.UNDECORATED);
 
       stage.setX((screenBounds.getWidth() / 2) - (width / 2));

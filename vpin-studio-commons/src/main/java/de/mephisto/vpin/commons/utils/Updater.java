@@ -17,6 +17,8 @@ public class Updater {
   private final static String BASE_URL = "https://github.com/syd711/vpin-studio/releases/download/%s/";
   private final static String LATEST_RELEASE_URL = "https://github.com/syd711/vpin-studio/releases/latest";
 
+  public static String LATEST_VERSION = null;
+
   public static File updateServer(String versionSegment) throws Exception {
     File out = new File("./vpin-studio-server.jar");
     String url = String.format(BASE_URL, versionSegment) + "vpin-studio-server.jar";
@@ -32,6 +34,14 @@ public class Updater {
     LOG.info("Startup command finished.");
   }
 
+  public static void restartClient() {
+    List<String> commands = Arrays.asList("VPin-Studio.exe");
+    SystemCommandExecutor executor = new SystemCommandExecutor(commands);
+    executor.setDir(new File("./"));
+    executor.executeCommandAsync();
+    System.exit(0);
+  }
+
   public static void updateUI(String versionSegment) throws Exception {
     File out = new File("./vpin-studio-ui.jar");
     String url = String.format(BASE_URL, versionSegment) + "vpin-studio-ui.jar";
@@ -40,6 +50,7 @@ public class Updater {
 
   private static void download(String downloadUrl, File target) throws Exception {
     try {
+      LOG.info("Downloading " + downloadUrl);
       URL url = new URL(downloadUrl);
       HttpURLConnection connection = (HttpURLConnection) url.openConnection();
       connection.setDoOutput(true);
@@ -74,6 +85,7 @@ public class Updater {
       String s = conn.getURL().toString();
       String versionSegment = s.substring(s.lastIndexOf("/") + 1);
       if (!referenceVersion.equalsIgnoreCase(versionSegment)) {
+        LATEST_VERSION = versionSegment;
         return versionSegment;
       }
     } catch (Exception e) {

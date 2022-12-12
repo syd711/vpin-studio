@@ -67,6 +67,7 @@ public class HeaderResizeableController implements Initializable {
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
+    titleLabel.setText("VPin Studio - " + Studio.getVersion());
     header.setOnMousePressed(event -> {
       xOffset = stage.getX() - event.getScreenX();
       yOffset = stage.getY() - event.getScreenY();

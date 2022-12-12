@@ -29,19 +29,15 @@ public class ToolbarController implements Initializable {
     String version = Studio.getVersion();
     String newVersion = Updater.checkForUpdate(version);
     if(!StringUtils.isEmpty(newVersion)) {
-      Optional<ButtonType> result = WidgetFactory.showConfirmation("Update to version " + newVersion + "?", "New Version available.");
-      if (result.isPresent() && result.get().equals(ButtonType.OK)) {
-        onDisconnect();
-        client.update();
-        onDisconnect();
-      }
+      Studio.stage.close();
+      Studio.loadLauncher(new Stage(), true);
     }
   }
 
   @FXML
   private void onDisconnect() {
     Studio.stage.close();
-    Studio.loadLauncher(new Stage());
+    Studio.loadLauncher(new Stage(), false);
   }
 
   @FXML

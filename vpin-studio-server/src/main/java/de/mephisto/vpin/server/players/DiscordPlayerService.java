@@ -13,10 +13,7 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.function.Consumer;
 
 @Service
@@ -31,7 +28,10 @@ public class DiscordPlayerService implements InitializingBean, PreferenceChanged
   private List<DiscordMember> lastMembers;
 
   public List<DiscordMember> getMembers() {
-    return this.discordClient.getMembers();
+    if(this.discordClient != null) {
+      return this.discordClient.getMembers();
+    }
+    return Collections.emptyList();
   }
 
   public boolean isEnabled() {

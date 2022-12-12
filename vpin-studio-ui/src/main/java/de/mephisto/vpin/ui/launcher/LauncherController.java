@@ -1,5 +1,6 @@
 package de.mephisto.vpin.ui.launcher;
 
+import de.mephisto.vpin.commons.fx.LoadingOverlayController;
 import de.mephisto.vpin.commons.utils.ImageUtil;
 import de.mephisto.vpin.commons.utils.PropertiesStore;
 import de.mephisto.vpin.commons.utils.Updater;
@@ -16,11 +17,13 @@ import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Cursor;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontPosture;
 import javafx.stage.Stage;
@@ -29,10 +32,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
+import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.ResourceBundle;
+
+import static de.mephisto.vpin.ui.Studio.client;
 
 public class LauncherController implements Initializable {
   private final static Logger LOG = LoggerFactory.getLogger(LauncherController.class);
@@ -54,6 +61,9 @@ public class LauncherController implements Initializable {
 
   @FXML
   private Button newConnectionBtn;
+
+  @FXML
+  private BorderPane main;
 
   @FXML
   private TableColumn<VPinConnection, String> avatarColumn;
@@ -82,7 +92,7 @@ public class LauncherController implements Initializable {
 
       try {
         Updater.startServer();
-        WidgetFactory.showInformation("The VPin Studio Server has been installed and is starting.", "Service Installation Finished");
+        WidgetFactory.showInformation("The VPin Studio Server has been installed and is starting.\nIt will be available in a few seconds.", "Service Installation Finished");
       } catch (Exception ex) {
         WidgetFactory.showAlert("Failed to install Service: " + ex.getMessage());
       }
@@ -138,7 +148,10 @@ public class LauncherController implements Initializable {
           WidgetFactory.showAlert("Unable to retrieve update information. Please check log files.");
         }
         else if (!s.equalsIgnoreCase(Studio.getVersion())) {
-          WidgetFactory.showConfirmation("Download and install version " + s + "?", "Update available");
+          Optional<ButtonType> result = WidgetFactory.showConfirmation("Download and install version " + s + "?", "Update available");
+          if (result.isPresent() && result.get().equals(ButtonType.OK)) {
+            runUpdate();
+          }
         }
       });
     }).start();
@@ -184,9 +197,57 @@ public class LauncherController implements Initializable {
     }
   }
 
-  public void setStage(Stage stage) {
+  public void setStage(Stage stage, boolean runUpdate) {
     this.stage = stage;
-    this.onConnectionRefresh();
+    if (runUpdate) {
+      runUpdate();
+    }
+    else {
+      this.onConnectionRefresh();
+    }
+  }
+
+  private void runUpdate() {
+    try {
+      main.getTop().setVisible(false);
+      FXMLLoader loader = new FXMLLoader(LoadingOverlayController.class.getResource("loading-overlay.fxml"));
+      BorderPane loadingOverlay = loader.load();
+      LoadingOverlayController ctrl = loader.getController();
+      ctrl.setLoadingMessage("Updating Server...");
+
+      main.setCenter(loadingOverlay);
+
+      new Thread(() -> {
+        try {
+          String version = client.version();
+          if(version != null && !version.equals(Updater.LATEST_VERSION)) {
+            client.update();
+          }
+
+          Platform.runLater(() -> {
+            ctrl.setLoadingMessage("Updating Client...");
+            new Thread(() -> {
+              try {
+                Updater.updateUI(Updater.LATEST_VERSION);
+                Updater.restartClient();
+              } catch (Exception e) {
+                Platform.runLater(() -> {
+                  LOG.error("UI update failed: " + e.getMessage(), e);
+                  WidgetFactory.showAlert(e.getMessage());
+                });
+              }
+            }).start();
+          });
+        } catch (Exception e) {
+          LOG.error("Client update failed: " + e.getMessage(), e);
+          Platform.runLater(() -> {
+            WidgetFactory.showAlert(e.getMessage());
+          });
+        }
+      }).start();
+    } catch (IOException e) {
+      WidgetFactory.showAlert(e.getMessage());
+    }
   }
 
   @Override

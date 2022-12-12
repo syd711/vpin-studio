@@ -128,5 +128,7 @@ public class KeyEventService implements InitializingBean, NativeKeyListener, Pop
       LOG.info("Added VPin service popper status listener.");
       popperService.addPopperLaunchListener(this);
     }
+
+    LOG.info("Server startup finished, running version is " + systemService.getVersion());
   }
 }
