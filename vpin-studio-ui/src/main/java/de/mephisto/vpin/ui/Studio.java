@@ -4,16 +4,19 @@ import de.mephisto.vpin.commons.fx.OverlayWindowFX;
 import de.mephisto.vpin.restclient.VPinStudioClient;
 import de.mephisto.vpin.ui.launcher.LauncherController;
 import de.mephisto.vpin.ui.util.ResizeHelper;
+import javafx.animation.FadeTransition;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
+import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Paint;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
+import javafx.util.Duration;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -76,19 +79,6 @@ public class Studio extends Application {
     }
   }
 
-  public static String getVersion() {
-    try {
-      final Properties properties = new Properties();
-      InputStream resourceAsStream = Studio.class.getClassLoader().getResourceAsStream("version.properties");
-      properties.load(resourceAsStream);
-      resourceAsStream.close();
-      return properties.getProperty("vpin.studio.version");
-    } catch (IOException e) {
-      LOG.error("Failed to read version number: " + e.getMessage(), e);
-    }
-    return null;
-  }
-
   public static void loadStudio(Stage stage, VPinStudioClient client) {
     try {
       Studio.stage = stage;
@@ -112,7 +102,7 @@ public class Studio extends Application {
 
       Scene scene = new Scene(root, width, height);
       scene.setFill(Paint.valueOf("#212529"));
-      stage.setTitle("VPin Studio");
+      stage.setTitle("VPin Studio - " + Studio.getVersion());
       stage.getIcons().add(new Image(Studio.class.getResourceAsStream("logo-128.png")));
       stage.setScene(scene);
       stage.setResizable(true);
@@ -126,5 +116,58 @@ public class Studio extends Application {
     } catch (IOException e) {
       LOG.error("Failed to load Studio: " + e.getMessage(), e);
     }
+  }
+
+//  private void loadSplashScreen() {
+//    try {
+//      //Load splash screen view FXML
+//      StackPane pane = FXMLLoader.load(getClass().getResource(("myAwesomeSplashDesign.fxml")));
+//      //Add it to root container (Can be StackPane, AnchorPane etc)
+//      root.getChildren().setAll(pane);
+//
+//      //Load splash screen with fade in effect
+//      FadeTransition fadeIn = new FadeTransition(Duration.seconds(3), pane);
+//      fadeIn.setFromValue(0);
+//      fadeIn.setToValue(1);
+//      fadeIn.setCycleCount(1);
+//
+//      //Finish splash with fade out effect
+//      FadeTransition fadeOut = new FadeTransition(Duration.seconds(3), pane);
+//      fadeOut.setFromValue(1);
+//      fadeOut.setToValue(0);
+//      fadeOut.setCycleCount(1);
+//
+//      fadeIn.play();
+//
+//      //After fade in, start fade out
+//      fadeIn.setOnFinished((e) -> {
+//        fadeOut.play();
+//      });
+//
+//      //After fade out, load actual content
+//      fadeOut.setOnFinished((e) -> {
+//        try {
+//          AnchorPane parentContent = FXMLLoader.load(getClass().getResource(("/main.fxml")));
+//          root.getChildren().setAll(parentContent);
+//        } catch (IOException ex) {
+//          Logger.getLogger(MainController.class.getName()).log(Level.SEVERE, null, ex);
+//        }
+//      });
+//    } catch (IOException ex) {
+//      Logger.getLogger(MainController.class.getName()).log(Level.SEVERE, null, ex);
+//    }
+//  }
+
+  public static String getVersion() {
+    try {
+      final Properties properties = new Properties();
+      InputStream resourceAsStream = Studio.class.getClassLoader().getResourceAsStream("version.properties");
+      properties.load(resourceAsStream);
+      resourceAsStream.close();
+      return properties.getProperty("vpin.studio.version");
+    } catch (IOException e) {
+      LOG.error("Failed to read version number: " + e.getMessage(), e);
+    }
+    return null;
   }
 }
