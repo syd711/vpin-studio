@@ -54,7 +54,7 @@
                                  <top>
                                     <ToolBar prefHeight="40.0" prefWidth="200.0" BorderPane.alignment="CENTER">
                                       <items>
-                                          <TextField prefHeight="26.0" prefWidth="250.0" promptText="Competition Search...">
+                                          <TextField fx:id="textfieldSearch" prefHeight="26.0" prefWidth="250.0" promptText="Competition Search...">
                                              <font>
                                                 <Font size="14.0" />
                                              </font>

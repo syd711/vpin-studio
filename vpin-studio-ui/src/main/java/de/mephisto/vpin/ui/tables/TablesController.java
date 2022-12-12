@@ -300,7 +300,6 @@ public class TablesController implements Initializable, StudioFXController {
       LOG.error("Failed to load loading overlay: " + e.getMessage());
     }
 
-
     bindTable();
     bindSearchField();
   }

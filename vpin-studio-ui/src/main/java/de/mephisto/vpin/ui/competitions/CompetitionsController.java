@@ -28,10 +28,7 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.net.URL;
 import java.text.DateFormat;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
-import java.util.ResourceBundle;
+import java.util.*;
 
 import static de.mephisto.vpin.ui.Studio.client;
 
@@ -75,6 +72,9 @@ public class CompetitionsController implements Initializable, StudioFXController
   private Button duplicateBtn;
 
   @FXML
+  private TextField textfieldSearch;
+
+  @FXML
   private BorderPane competitionWidget;
 
   @FXML
@@ -83,6 +83,10 @@ public class CompetitionsController implements Initializable, StudioFXController
   private Parent loadingOverlay;
   private WidgetCompetitionSummaryController competitionWidgetController;
   private BorderPane competitionWidgetRoot;
+
+
+  private ObservableList<CompetitionRepresentation> data;
+  private List<CompetitionRepresentation> competitions;
 
   // Add a public no-args constructor
   public CompetitionsController() {
@@ -159,8 +163,9 @@ public class CompetitionsController implements Initializable, StudioFXController
     tableStack.getChildren().add(loadingOverlay);
 
     new Thread(() -> {
-      List<CompetitionRepresentation> competitions = client.getCompetitions();
-      ObservableList<CompetitionRepresentation> data = FXCollections.observableList(competitions);
+      competitions = client.getCompetitions();
+      filterCompetitions(competitions);
+      data = FXCollections.observableList(competitions);
 
       Platform.runLater(() -> {
         if (competitions.isEmpty()) {
@@ -296,7 +301,31 @@ public class CompetitionsController implements Initializable, StudioFXController
       return row;
     });
 
+    bindSearchField();
     onReload();
+  }
+
+  private void bindSearchField() {
+    textfieldSearch.textProperty().addListener((observableValue, s, filterValue) -> {
+      tableView.getSelectionModel().clearSelection();
+      refreshView(Optional.empty());
+
+      filterCompetitions(this.competitions);
+      tableView.setItems(data);
+    });
+  }
+
+  private void filterCompetitions(List<CompetitionRepresentation> competitions) {
+    List<CompetitionRepresentation> filtered = new ArrayList<>();
+    String filterValue = textfieldSearch.textProperty().getValue();
+    for (CompetitionRepresentation c : competitions) {
+      if (!c.getName().toLowerCase().contains(filterValue.toLowerCase())) {
+        continue;
+      }
+
+      filtered.add(c);
+    }
+    data = FXCollections.observableList(filtered);
   }
 
   private void refreshView(Optional<CompetitionRepresentation> competition) {
