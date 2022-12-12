@@ -26,7 +26,7 @@
          <top>
             <ToolBar prefHeight="40.0" prefWidth="200.0" BorderPane.alignment="CENTER">
               <items>
-                  <TextField fx:id="searchTextField">
+                  <TextField fx:id="searchTextField" promptText="Search Player...">
                      <font>
                         <Font size="14.0" />
                      </font>
