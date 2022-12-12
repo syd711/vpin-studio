@@ -236,6 +236,7 @@
                         </goals>
                         <configuration>
                             <headerType>console</headerType>
+                            <icon>target/classes/logo.ico</icon>
                             <outfile>target/VPin-Studio-Server.exe</outfile>
                             <jar>target/vpin-studio-server.jar</jar>
                             <errTitle>encc</errTitle>

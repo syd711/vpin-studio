@@ -42,6 +42,12 @@ public class SystemResource {
     return Files.readString(filePath);
   }
 
+  @GetMapping("/shutdown")
+  public boolean shutdown() {
+    System.exit(0);
+    return true;
+  }
+
   @GetMapping("/restart")
   public boolean restart() {
     return true;

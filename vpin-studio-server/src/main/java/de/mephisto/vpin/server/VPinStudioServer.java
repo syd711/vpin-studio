@@ -25,8 +25,5 @@ public class VPinStudioServer extends SpringBootServletInitializer {
     SpringApplicationBuilder builder = new SpringApplicationBuilder(VPinStudioServer.class);
     builder.headless(false);
     builder.run(args);
-
-    new VPinStudioServerTray();
-    LOG.info("Application tray created.");
   }
 }

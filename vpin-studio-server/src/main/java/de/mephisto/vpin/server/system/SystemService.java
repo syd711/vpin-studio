@@ -3,7 +3,7 @@ package de.mephisto.vpin.server.system;
 import de.mephisto.vpin.server.VPinStudioException;
 import de.mephisto.vpin.server.VPinStudioServer;
 import de.mephisto.vpin.commons.utils.PropertiesStore;
-import de.mephisto.vpin.server.util.SystemCommandExecutor;
+import de.mephisto.vpin.commons.utils.SystemCommandExecutor;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;

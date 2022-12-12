@@ -2,6 +2,7 @@ package de.mephisto.vpin.server.keyevent;
 
 import de.mephisto.vpin.commons.fx.OverlayWindowFX;
 import de.mephisto.vpin.restclient.PreferenceNames;
+import de.mephisto.vpin.server.VPinStudioServerTray;
 import de.mephisto.vpin.server.popper.PopperLaunchListener;
 import de.mephisto.vpin.server.popper.PopperService;
 import de.mephisto.vpin.server.preferences.PreferencesService;
@@ -63,6 +64,9 @@ public class KeyEventService implements InitializingBean, NativeKeyListener, Pop
 
     overlayWindowFX.client = overlayClient;
     overlayWindowFX = OverlayWindowFX.waitForOverlay();
+    LOG.info("Finished initialization of OverlayWindowFX");
+
+    afterStartup();
   }
 
 
@@ -112,8 +116,10 @@ public class KeyEventService implements InitializingBean, NativeKeyListener, Pop
     });
   }
 
-  @EventListener(ApplicationReadyEvent.class)
-  public void afterStartup() {
+  private void afterStartup() {
+    new VPinStudioServerTray();
+    LOG.info("Application tray created.");
+
     boolean pinUPRunning = popperService.isPinUPRunning();
     if (pinUPRunning) {
       popperLaunched();

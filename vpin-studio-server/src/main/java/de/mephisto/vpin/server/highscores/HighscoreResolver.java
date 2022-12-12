@@ -2,7 +2,7 @@ package de.mephisto.vpin.server.highscores;
 
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.system.SystemService;
-import de.mephisto.vpin.server.util.SystemCommandExecutor;
+import de.mephisto.vpin.commons.utils.SystemCommandExecutor;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;

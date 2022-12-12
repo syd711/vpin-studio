@@ -250,6 +250,7 @@
                         </goals>
                         <configuration>
                             <headerType>gui</headerType>
+                            <icon>src/main/resources/de/mephisto/vpin/ui/logo.ico</icon>
                             <outfile>target/VPin-Studio.exe</outfile>
                             <jar>target/vpin-studio-ui.jar</jar>
                             <errTitle>VPin-Studio</errTitle>
@@ -294,6 +295,9 @@
                             <resources>
                                 <resource>
                                     <directory>${java.home}</directory>
+                                    <excludes>
+                                        <exclude>**/*.zip</exclude>
+                                    </excludes>
                                 </resource>
                             </resources>
                         </configuration>

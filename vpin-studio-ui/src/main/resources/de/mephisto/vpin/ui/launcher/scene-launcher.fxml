@@ -70,32 +70,12 @@
    <center>
       <BorderPane prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
          <top>
-            <ToolBar nodeOrientation="RIGHT_TO_LEFT" prefHeight="40.0" prefWidth="200.0" BorderPane.alignment="CENTER_RIGHT">
+            <ToolBar nodeOrientation="LEFT_TO_RIGHT" prefHeight="40.0" prefWidth="200.0" BorderPane.alignment="CENTER_RIGHT">
               <items>
                   <BorderPane layoutX="10.0" layoutY="10.0" prefWidth="516.0">
-                     <left>
-                        <Button fx:id="newConnectionBtn" mnemonicParsing="false" onAction="#onNewConnection" text="New Connection" textFill="WHITE" BorderPane.alignment="CENTER">
-                           <font>
-                              <Font size="14.0" />
-                           </font>
-                        </Button>
-                     </left>
                      <right>
                         <HBox alignment="CENTER_LEFT" nodeOrientation="LEFT_TO_RIGHT" BorderPane.alignment="CENTER">
                            <children>
-                              <Button fx:id="refreshBtn" mnemonicParsing="false" onAction="#onConnectionRefresh" textFill="WHITE">
-                                 <font>
-                                    <Font size="14.0" />
-                                 </font>
-                                 <graphic>
-                                    <FontIcon iconColor="WHITE" iconLiteral="sil-refresh" iconSize="16" />
-                                 </graphic>
-                              </Button>
-                              <Separator orientation="VERTICAL" prefHeight="0.0" prefWidth="0.0">
-                                 <HBox.margin>
-                                    <Insets left="3.0" right="3.0" />
-                                 </HBox.margin>
-                              </Separator>
                               <Button fx:id="connectBtn" mnemonicParsing="false" onAction="#onConnect" text=" Connect" textFill="WHITE">
                                  <font>
                                     <Font size="14.0" />
@@ -104,9 +84,40 @@
                                     <FontIcon iconColor="WHITE" iconLiteral="bi-box-arrow-up-right" iconSize="16" />
                                  </graphic>
                               </Button>
+                              <Button fx:id="newConnectionBtn" mnemonicParsing="false" onAction="#onNewConnection" text="New Connection" textFill="WHITE">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                                 <HBox.margin>
+                                    <Insets left="3.0" />
+                                 </HBox.margin>
+                              </Button>
+                              <Separator orientation="VERTICAL" prefHeight="0.0" prefWidth="0.0">
+                                 <HBox.margin>
+                                    <Insets left="3.0" right="3.0" />
+                                 </HBox.margin>
+                              </Separator>
+                              <Button fx:id="refreshBtn" mnemonicParsing="false" onAction="#onConnectionRefresh" textFill="WHITE">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                                 <graphic>
+                                    <FontIcon iconColor="WHITE" iconLiteral="sil-refresh" iconSize="16" />
+                                 </graphic>
+                              </Button>
                            </children>
                         </HBox>
                      </right>
+                     <left>
+                        <Button fx:id="installBtn" mnemonicParsing="false" onAction="#onInstall" text="Install Service" textFill="WHITE" BorderPane.alignment="CENTER">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                           <graphic>
+                              <FontIcon iconColor="WHITE" iconLiteral="bi-gear" iconSize="16" />
+                           </graphic>
+                        </Button>
+                     </left>
                   </BorderPane>
               </items>
             </ToolBar>

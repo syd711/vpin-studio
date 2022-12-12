@@ -1,6 +1,5 @@
-package de.mephisto.vpin.server.util;
+package de.mephisto.vpin.commons.utils;
 
-import com.google.common.base.Joiner;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

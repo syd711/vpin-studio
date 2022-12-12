@@ -1,13 +1,15 @@
 package de.mephisto.vpin.ui.launcher;
 
+import de.mephisto.vpin.commons.utils.ImageUtil;
 import de.mephisto.vpin.commons.utils.PropertiesStore;
+import de.mephisto.vpin.commons.utils.SystemCommandExecutor;
 import de.mephisto.vpin.commons.utils.Updater;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.VPinStudioClient;
 import de.mephisto.vpin.restclient.representations.PreferenceEntryRepresentation;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.util.Dialogs;
-import de.mephisto.vpin.commons.utils.ImageUtil;
+import de.mephisto.vpin.ui.util.Services;
 import de.mephisto.vpin.ui.util.WidgetFactory;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleObjectProperty;
@@ -29,6 +31,7 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.ResourceBundle;
 
@@ -46,6 +49,9 @@ public class LauncherController implements Initializable {
 
   @FXML
   private Button refreshBtn;
+
+  @FXML
+  private Button installBtn;
 
   @FXML
   private Button newConnectionBtn;
@@ -66,6 +72,29 @@ public class LauncherController implements Initializable {
 
   private Stage stage;
   private PropertiesStore store;
+
+  @FXML
+  private void onInstall() {
+    try {
+      Services.install();
+      if(!Services.getAutostartFile().exists()) {
+        throw new UnsupportedOperationException("Installation failed: " + Services.getAutostartFile().getAbsolutePath() + " does not exist.");
+      }
+
+      try {
+        List<String> commands = Arrays.asList("VPin-Studio-Server.exe");
+        SystemCommandExecutor executor = new SystemCommandExecutor(commands);
+        executor.setDir(new File("./"));
+        executor.executeCommandAsync();
+        LOG.info("Startup command finished.");
+        WidgetFactory.showInformation("Service Started", "The VPin Studio Server has been installed and is starting.");
+      } catch (Exception ex) {
+        WidgetFactory.showAlert("Failed to install Service: " + ex.getMessage());
+      }
+    } catch (Exception e) {
+      WidgetFactory.showAlert("Failed to install Service: " + e.getMessage());
+    }
+  }
 
   @FXML
   private void onConnectionRefresh() {
@@ -169,6 +198,8 @@ public class LauncherController implements Initializable {
   public void initialize(URL url, ResourceBundle resourceBundle) {
     tableView.setPlaceholder(new Label("                 No connections found.\n" +
         "Install the service or connect to another system."));
+
+    this.installBtn.setVisible(Services.SERVER_EXE.exists());
 
     connectBtn.setDisable(true);
     tableView.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> connectBtn.setDisable(newValue == null));
