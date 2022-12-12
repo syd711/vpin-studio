@@ -184,6 +184,10 @@
                 <directory>src/main/resources</directory>
                 <filtering>true</filtering>
             </resource>
+            <resource>
+                <directory>src/main/resources</directory>
+                <filtering>true</filtering>
+            </resource>
         </resources>
 
         <plugins>
@@ -292,7 +296,7 @@
                             <goal>copy-resources</goal>
                         </goals>
                         <configuration>
-                            <outputDirectory>${basedir}/../Output/VPin-Studio-Server/resources/</outputDirectory>
+                            <outputDirectory>${basedir}/../Output/VPin-Studio/resources/</outputDirectory>
                             <resources>
                                 <resource>
                                     <directory>../resources/</directory>
@@ -312,23 +316,6 @@
                     </execution>
 
                     <execution>
-                        <id>copy-from-jdk</id>
-                        <!-- here the phase you need -->
-                        <phase>package</phase>
-                        <goals>
-                            <goal>copy-resources</goal>
-                        </goals>
-                        <configuration>
-                            <outputDirectory>${basedir}/../Output/VPin-Studio-Server/win32/java</outputDirectory>
-                            <resources>
-                                <resource>
-                                    <directory>${java.home}</directory>
-                                </resource>
-                            </resources>
-                        </configuration>
-                    </execution>
-
-                    <execution>
                         <id>copy-exe</id>
                         <!-- here the phase you need -->
                         <phase>package</phase>
@@ -336,7 +323,7 @@
                             <goal>copy-resources</goal>
                         </goals>
                         <configuration>
-                            <outputDirectory>${basedir}/../Output/VPin-Studio-Server/</outputDirectory>
+                            <outputDirectory>${basedir}/../Output/VPin-Studio/</outputDirectory>
                             <resources>
                                 <resource>
                                     <directory>${basedir}/target/</directory>

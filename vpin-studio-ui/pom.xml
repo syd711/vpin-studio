@@ -324,6 +324,39 @@
                 </executions>
             </plugin>
 
+            <plugin>
+                <artifactId>exec-maven-plugin</artifactId>
+                <groupId>org.codehaus.mojo</groupId>
+                <executions>
+                    <execution>
+                        <id>full-installer-creation</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>exec</goal>
+                        </goals>
+                        <configuration>
+                            <executable>ISCC.exe</executable>
+                            <arguments>
+                                <argument>${basedir}/target/classes/inno-installer-studio-full.iss</argument>
+                            </arguments>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>client-installer-creation</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>exec</goal>
+                        </goals>
+                        <configuration>
+                            <executable>ISCC.exe</executable>
+                            <arguments>
+                                <argument>${basedir}/target/classes/inno-installer-studio-client.iss</argument>
+                            </arguments>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
         </plugins>
 
 
