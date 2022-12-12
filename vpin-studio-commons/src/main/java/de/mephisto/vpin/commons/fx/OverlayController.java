@@ -5,7 +5,6 @@ import de.mephisto.vpin.commons.fx.widgets.WidgetFinishedCompetitionsController;
 import de.mephisto.vpin.commons.fx.widgets.WidgetLatestScoresController;
 import de.mephisto.vpin.commons.fx.widgets.WidgetPlayerRankController;
 import de.mephisto.vpin.restclient.PreferenceNames;
-import de.mephisto.vpin.restclient.representations.CompetitionRepresentation;
 import de.mephisto.vpin.restclient.representations.PreferenceEntryRepresentation;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -15,7 +14,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.net.URL;
-import java.util.List;
 import java.util.ResourceBundle;
 
 public class OverlayController implements Initializable {

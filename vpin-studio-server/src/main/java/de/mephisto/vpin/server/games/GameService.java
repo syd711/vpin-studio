@@ -52,6 +52,10 @@ public class GameService {
     return games;
   }
 
+  public int getGameCount() {
+    return this.pinUPConnector.getGameCount();
+  }
+
   public List<Game> getGamesWithScore() {
     List<Game> games = getGames();
     return games.stream().filter(g -> !StringUtils.isEmpty(highscoreService.getHighscores(g.getId()).getRaw())).collect(Collectors.toList());
@@ -81,6 +85,8 @@ public class GameService {
     if(!game.getEmulator().getName().equalsIgnoreCase(Emulator.VISUAL_PINBALL_X)) {
       return false;
     }
+
+    this.highscoreService.getOrCreateHighscore(game);
 
     List<Game> games = pinUPConnector.getGames();
     ScanResult scanResult = romService.scanGameFile(game);

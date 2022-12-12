@@ -294,7 +294,7 @@ public class PinUPConnector implements InitializingBean {
     Connection connect = this.connect();
     try {
       Statement statement = connect.createStatement();
-      ResultSet rs = statement.executeQuery("SELECT count(*) as count FROM Games WHERE EMUID = 1;");
+      ResultSet rs = statement.executeQuery("SELECT count(*) as count FROM Games WHERE EMUID = 1 OR EMUID = 3 OR EMUID = 4;");
       while (rs.next()) {
         count = rs.getInt("count");
       }

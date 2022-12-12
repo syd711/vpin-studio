@@ -84,21 +84,7 @@ public class LauncherController implements Initializable {
 
   @FXML
   private void onInstall() {
-    try {
-      Services.install();
-      if (!Services.getAutostartFile().exists()) {
-        throw new UnsupportedOperationException("Installation failed: " + Services.getAutostartFile().getAbsolutePath() + " does not exist.");
-      }
-
-      try {
-        Updater.startServer();
-        WidgetFactory.showInformation("The VPin Studio Server has been installed and is starting.\nIt will be available in a few seconds.", "Service Installation Finished");
-      } catch (Exception ex) {
-        WidgetFactory.showAlert("Failed to install Service: " + ex.getMessage());
-      }
-    } catch (Exception e) {
-      WidgetFactory.showAlert("Failed to install Service: " + e.getMessage());
-    }
+    this.installServer();
   }
 
   @FXML
@@ -207,6 +193,47 @@ public class LauncherController implements Initializable {
     }
   }
 
+  private void installServer() {
+    try {
+      Services.install();
+      if (!Services.getAutostartFile().exists()) {
+        throw new UnsupportedOperationException("Installation failed: " + Services.getAutostartFile().getAbsolutePath() + " does not exist.");
+      }
+
+      Updater.startServer();
+      main.getTop().setVisible(false);
+
+      FXMLLoader loader = new FXMLLoader(LoadingOverlayController.class.getResource("loading-overlay.fxml"));
+      BorderPane loadingOverlay = loader.load();
+      LoadingOverlayController ctrl = loader.getController();
+      ctrl.setLoadingMessage("Installing Server, waiting for initial connect...");
+
+      main.setCenter(loadingOverlay);
+
+      new Thread(() -> {
+        while(client.version() == null) {
+          try {
+            LOG.info("Waiting for server...");
+            Thread.sleep(2000);
+          } catch (InterruptedException e) {
+            LOG.error("server wait error");
+          }
+        }
+
+        LOG.info("Running initial tasks.");
+        Platform.runLater(()-> {
+          stage.close();
+          Dialogs.createProgressDialog(new ServiceInstallationProgressModel(Studio.client));
+          Studio.loadStudio(Dialogs.createStage(), client);
+        });
+      }).start();
+    }
+    catch (Exception e) {
+      LOG.error("Server installation failed: " + e.getMessage(), e );
+      WidgetFactory.showAlert("Server installation failed: " + e.getMessage());
+    }
+  }
+
   private void runUpdate() {
     try {
       main.getTop().setVisible(false);
@@ -220,7 +247,7 @@ public class LauncherController implements Initializable {
       new Thread(() -> {
         try {
           String version = client.version();
-          if(version != null && !version.equals(Updater.LATEST_VERSION)) {
+          if (version != null && !version.equals(Updater.LATEST_VERSION)) {
             client.update();
           }
 
@@ -256,6 +283,7 @@ public class LauncherController implements Initializable {
         "Install the service or connect to another system."));
 
     this.installBtn.setVisible(Services.SERVER_EXE.exists());
+    this.installBtn.setDisable(client.version() != null);
 
     connectBtn.setDisable(true);
     tableView.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> connectBtn.setDisable(newValue == null));

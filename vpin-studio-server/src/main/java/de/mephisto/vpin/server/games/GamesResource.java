@@ -32,6 +32,11 @@ public class GamesResource {
     return gameService.getGames();
   }
 
+  @GetMapping("/count")
+  public int getGameCount() {
+    return gameService.getGameCount();
+  }
+
   @GetMapping("/recent/{count}")
   public ScoreSummary getRecentHighscores(@PathVariable("count") int count) {
     return gameService.getRecentHighscores(count);

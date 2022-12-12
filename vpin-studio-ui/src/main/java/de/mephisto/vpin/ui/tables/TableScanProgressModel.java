@@ -14,14 +14,12 @@ import java.util.List;
 public class TableScanProgressModel extends ProgressModel {
   private final static Logger LOG = LoggerFactory.getLogger(TableScanProgressModel.class);
   private final Iterator<GameRepresentation> iterator;
-  private final GameRepresentation gameRepresentation;
 
   private final VPinStudioClient client;
 
   public TableScanProgressModel(VPinStudioClient client, String title, GameRepresentation gameRepresentation) {
     super(title);
     this.client = client;
-    this.gameRepresentation = gameRepresentation;
     iterator = Arrays.asList(gameRepresentation).iterator();
   }
 

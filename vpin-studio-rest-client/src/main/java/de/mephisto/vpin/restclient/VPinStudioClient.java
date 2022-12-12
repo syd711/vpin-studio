@@ -246,6 +246,16 @@ public class VPinStudioClient implements ObservedPropertyChangeListener, Overlay
     return null;
   }
 
+  public int getGameCount() {
+    try {
+      final RestTemplate restTemplate = new RestTemplate();
+      return restTemplate.getForObject(restClient.getBaseUrl() + API + "games/count", Integer.class);
+    } catch (Exception e) {
+      LOG.error("Failed to read game count: " + e.getMessage(), e);
+    }
+    return 0;
+  }
+
   public ScoreSummaryRepresentation getGameScores(int id) {
     try {
       return restClient.get(API + "games/scores/" + id, ScoreSummaryRepresentation.class);
