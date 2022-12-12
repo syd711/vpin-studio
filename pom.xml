@@ -14,6 +14,7 @@
         <maven.compiler.target>11</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+        <docs.directory>${project.basedir}/documentation</docs.directory>
     </properties>
 
     <modules>
@@ -23,5 +24,42 @@
         <module>vpin-studio-ui</module>
         <module>vpin-studio-rest-client</module>
     </modules>
+
+    <build>
+
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-resources-plugin</artifactId>
+                    <version>3.2.0</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.codehaus.mojo</groupId>
+                    <artifactId>license-maven-plugin</artifactId>
+                    <version>2.0.0</version>
+                    <executions>
+                        <execution>
+                            <id>download-licenses</id>
+                            <goals>
+                                <goal>download-licenses</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                    <configuration>
+                        <cleanLicensesOutputDirectory>true</cleanLicensesOutputDirectory>
+                        <errorRemedy>ignore</errorRemedy>
+                        <excludeTransitiveDependencies>true</excludeTransitiveDependencies>
+                        <includeTransitiveDependencies>false</includeTransitiveDependencies>
+                        <licensesOutputFile>${docs.directory}/third-party-licenses/licenses.xml</licensesOutputFile>
+                        <licensesOutputDirectory>${docs.directory}/third-party-licenses</licensesOutputDirectory>
+                        <outputDirectory>${docs.directory}</outputDirectory>
+                        <sortByGroupIdAndArtifactId>true</sortByGroupIdAndArtifactId>
+                    </configuration>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+
+    </build>
 
 </project>
