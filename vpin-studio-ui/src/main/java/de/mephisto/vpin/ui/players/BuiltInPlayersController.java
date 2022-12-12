@@ -155,7 +155,7 @@ public class BuiltInPlayersController implements Initializable {
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
     NavigationController.setBreadCrumb(Arrays.asList("Players", "Build-In Players"));
-    tableView.setPlaceholder(new Label("            No one want's to play with you?\n" +
+    tableView.setPlaceholder(new Label("          No one want's to play with you?\n" +
         "Add new players or connect a Discord server."));
 
 

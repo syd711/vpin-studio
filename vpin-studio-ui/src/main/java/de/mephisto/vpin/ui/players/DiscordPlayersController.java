@@ -54,8 +54,8 @@ public class DiscordPlayersController implements Initializable {
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
     NavigationController.setBreadCrumb(Arrays.asList("Players", "Discord Members"));
-    tableView.setPlaceholder(new Label("            No one want's to play with you?\n" +
-        "Edit your preferences to connect your Discord server with this VPin."));
+    tableView.setPlaceholder(new Label("                           No one wants to play with you?\n" +
+        "Edit your preferences to connect a Discord server with your VPin."));
 
     nameColumn.setCellValueFactory(cellData -> {
       PlayerRepresentation value = cellData.getValue();
