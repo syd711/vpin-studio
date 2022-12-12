@@ -282,7 +282,6 @@
                 <artifactId>maven-resources-plugin</artifactId>
                 <version>2.6</version>
                 <executions>
-
                     <execution>
                         <id>copy-from-jdk</id>
                         <!-- here the phase you need -->
@@ -357,40 +356,58 @@
                 </executions>
             </plugin>
 
+            <plugin>
+                <!-- This copies the JRE used to do the build from java.home - should be 32 bit Windows JRE -->
+                <artifactId>maven-resources-plugin</artifactId>
+                <version>2.6</version>
+                <executions>
+                    <execution>
+                        <id>copy-installers</id>
+                        <!-- here the phase you need -->
+                        <phase>package</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${basedir}/../Output/VPin-Studio/</outputDirectory>
+                            <resources>
+                                <resource>
+                                    <directory>${basedir}/target/</directory>
+                                    <includes>
+                                        <include>vpin-studio-ui.jar</include>
+                                        <include>VPin-Studio.exe</include>
+                                    </includes>
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </execution>
+
+                    <execution>
+                        <id>copy-installer-exe</id>
+                        <!-- here the phase you need -->
+                        <phase>package</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${basedir}/../Output/VPin-Studio/</outputDirectory>
+                            <resources>
+                                <resource>
+                                    <directory>${basedir}/target/classes/Output/</directory>
+                                    <includes>
+                                        <include>VPin-Studio-Client-Installer-${project.version}.exe</include>
+                                        <include>VPin-Studio-Full-Installer-${project.version}.exe</include>
+                                    </includes>
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </execution>
+
+                </executions>
+            </plugin>
+
         </plugins>
 
 
-        <pluginManagement>
-            <plugins>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-resources-plugin</artifactId>
-                    <version>3.2.0</version>
-                </plugin>
-                <plugin>
-                    <groupId>org.codehaus.mojo</groupId>
-                    <artifactId>license-maven-plugin</artifactId>
-                    <version>2.0.0</version>
-                    <executions>
-                        <execution>
-                            <id>download-licenses</id>
-                            <goals>
-                                <goal>download-licenses</goal>
-                            </goals>
-                        </execution>
-                    </executions>
-                    <configuration>
-                        <cleanLicensesOutputDirectory>true</cleanLicensesOutputDirectory>
-                        <errorRemedy>ignore</errorRemedy>
-                        <excludeTransitiveDependencies>true</excludeTransitiveDependencies>
-                        <includeTransitiveDependencies>false</includeTransitiveDependencies>
-                        <licensesOutputFile>${docs.directory}/third-party-licenses/licenses.xml</licensesOutputFile>
-                        <licensesOutputDirectory>${docs.directory}/third-party-licenses</licensesOutputDirectory>
-                        <outputDirectory>${docs.directory}</outputDirectory>
-                        <sortByGroupIdAndArtifactId>true</sortByGroupIdAndArtifactId>
-                    </configuration>
-                </plugin>
-            </plugins>
-        </pluginManagement>
     </build>
 </project>
