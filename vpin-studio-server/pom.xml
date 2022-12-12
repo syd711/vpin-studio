@@ -219,30 +219,6 @@
             </plugin>
 
             <plugin>
-                <!-- This copies the JRE used to do the build from java.home - should be 32 bit Windows JRE -->
-                <artifactId>maven-resources-plugin</artifactId>
-                <version>2.6</version>
-                <executions>
-                    <execution>
-                        <id>copy-resources</id>
-                        <!-- here the phase you need -->
-                        <phase>package</phase>
-                        <goals>
-                            <goal>copy-resources</goal>
-                        </goals>
-                        <configuration>
-                            <outputDirectory>${basedir}/target/win32/java</outputDirectory>
-                            <resources>
-                                <resource>
-                                    <directory>${java.home}</directory>
-                                </resource>
-                            </resources>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-
-            <plugin>
                 <!-- This calls launch4j to create the program EXE -->
                 <groupId>com.akathist.maven.plugins.launch4j</groupId>
                 <artifactId>launch4j-maven-plugin</artifactId>
@@ -311,27 +287,62 @@
                 <executions>
                     <execution>
                         <id>copy-resources</id>
-                        <phase>generate-sources</phase>
+                        <phase>package</phase>
                         <goals>
                             <goal>copy-resources</goal>
                         </goals>
                         <configuration>
-                            <outputDirectory>
-                                ${basedir}/../Output/
-                            </outputDirectory>
+                            <outputDirectory>${basedir}/../Output/VPin-Studio-Server/resources/</outputDirectory>
                             <resources>
                                 <resource>
-                                    <directory>resources/</directory>
+                                    <directory>../resources/</directory>
                                     <includes>
                                         <include>backgrounds/*</include>
                                         <include>pinemhi/*</include>
                                         <include>competition-badges/*</include>
                                         <include>*.exe</include>
                                         <include>highscore-card-background-*.jpg</include>
-                                        <include>DOFTest/*</include>
                                         <include>system.properties</include>
                                         <include>card-generator.properties</include>
                                         <include>empty-b2s-preview.png</include>
+                                    </includes>
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </execution>
+
+                    <execution>
+                        <id>copy-from-jdk</id>
+                        <!-- here the phase you need -->
+                        <phase>package</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${basedir}/../Output/VPin-Studio-Server/win32/java</outputDirectory>
+                            <resources>
+                                <resource>
+                                    <directory>${java.home}</directory>
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </execution>
+
+                    <execution>
+                        <id>copy-exe</id>
+                        <!-- here the phase you need -->
+                        <phase>package</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${basedir}/../Output/VPin-Studio-Server/</outputDirectory>
+                            <resources>
+                                <resource>
+                                    <directory>${basedir}/target/</directory>
+                                    <includes>
+                                        <include>vpin-studio-server.jar</include>
+                                        <include>VPin-Studio-Server.exe</include>
                                     </includes>
                                 </resource>
                             </resources>
