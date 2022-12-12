@@ -15,9 +15,15 @@ public class Updater {
   private final static String BASE_URL = "https://github.com/syd711/vpin-studio/releases/download/%s/";
   private final static String LATEST_RELEASE_URL = "https://github.com/syd711/vpin-studio/releases/latest";
 
-  public static void update(String versionSegment) throws Exception {
-    File out = new File("./vpin-extensions.jar");
-    String url = String.format(BASE_URL, versionSegment) + "vpin-extensions.jar";
+  public static void updateServer(String versionSegment) throws Exception {
+    File out = new File("./vpin-studio-server.jar");
+    String url = String.format(BASE_URL, versionSegment) + "vpin-studio-server.jar";
+    download(url, out);
+  }
+
+  public static void updateUI(String versionSegment) throws Exception {
+    File out = new File("./vpin-studio-ui.jar");
+    String url = String.format(BASE_URL, versionSegment) + "vpin-studio-ui.jar";
     download(url, out);
   }
 

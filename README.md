@@ -17,9 +17,13 @@ and their media configuration.
 
 ### Documentation
 
+wip
 
 
 ### Resources Used
+
+Third Party Licenses:
+see documentation folder
 
 Icons:
 

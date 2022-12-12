@@ -23,6 +23,8 @@ DisableProgramGroupPage=yes
 LicenseFile=E:\Development\workspace\vpin-studio\LICENSE
 ; Uncomment the following line to run in non administrative install mode (install for current user only.)
 ;PrivilegesRequired=lowest
+OutputDir=${project.basedir}/../Output/VPin-Studio
+SetupIconFile=${project.basedir}/src/main/resources/de/mephisto/vpin/ui/logo.ico
 OutputBaseFilename=VPin-Studio-Full-Installer-{#MyAppVersion}
 Compression=lzma
 SolidCompression=yes
