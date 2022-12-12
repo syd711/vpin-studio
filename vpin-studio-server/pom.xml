@@ -6,8 +6,7 @@
 
     <groupId>de.mephisto.vpin</groupId>
     <artifactId>vpin-studio-server</artifactId>
-    <version>1.0-SNAPSHOT</version>
-<!--    <packaging>war</packaging>-->
+    <version>1.2-SNAPSHOT</version>
 
     <parent>
         <groupId>org.springframework.boot</groupId>
@@ -36,17 +35,17 @@
         <dependency>
             <groupId>de.mephisto.vpin</groupId>
             <artifactId>vpin-studio-rest-client</artifactId>
-            <version>1.0-SNAPSHOT</version>
+            <version>1.2-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>de.mephisto.vpin</groupId>
             <artifactId>vpin-connector-discord</artifactId>
-            <version>1.0-SNAPSHOT</version>
+            <version>1.2-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>de.mephisto.vpin</groupId>
             <artifactId>vpin-studio-commons</artifactId>
-            <version>1.0-SNAPSHOT</version>
+            <version>1.2-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -201,6 +200,25 @@
             </plugin>
 
             <plugin>
+                <groupId>com.coderplus.maven.plugins</groupId>
+                <artifactId>copy-rename-maven-plugin</artifactId>
+                <version>1.0.1</version>
+                <executions>
+                    <execution>
+                        <id>rename-jar1</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>copy</goal>
+                        </goals>
+                        <configuration>
+                            <sourceFile>${basedir}/target/vpin-studio-server-${project.version}.jar</sourceFile>
+                            <destinationFile>${basedir}/target/vpin-studio-server.jar</destinationFile>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
                 <!-- This copies the JRE used to do the build from java.home - should be 32 bit Windows JRE -->
                 <artifactId>maven-resources-plugin</artifactId>
                 <version>2.6</version>
@@ -239,7 +257,7 @@
                         <configuration>
                             <headerType>console</headerType>
                             <outfile>target/VPin-Studio-Server.exe</outfile>
-                            <jar>target/vpin-studio-server-1.0-SNAPSHOT.jar</jar>
+                            <jar>target/vpin-studio-server.jar</jar>
                             <errTitle>encc</errTitle>
                             <classPath>
                                 <mainClass>org.springframework.boot.loader.JarLauncher</mainClass>
@@ -260,6 +278,63 @@
                                 <internalName>VPin-Studio Server</internalName>
                                 <originalFilename>original.exe</originalFilename>
                             </versionInfo>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+
+
+            <plugin>
+                <artifactId>maven-clean-plugin</artifactId>
+                <version>2.5</version>
+                <executions>
+                    <execution>
+                        <id>auto-clean</id>
+                        <phase>initialize</phase>
+                        <goals>
+                            <goal>clean</goal>
+                        </goals>
+                        <configuration>
+                            <filesets>
+                                <fileset>
+                                    <directory>${basedir}/../Output/</directory>
+                                </fileset>
+                            </filesets>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <artifactId>maven-resources-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>copy-resources</id>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>
+                                ${basedir}/../Output/
+                            </outputDirectory>
+                            <resources>
+                                <resource>
+                                    <directory>resources/</directory>
+                                    <includes>
+                                        <include>backgrounds/*</include>
+                                        <include>pinemhi/*</include>
+                                        <include>competition-badges/*</include>
+                                        <include>*.exe</include>
+                                        <include>highscore-card-background-*.jpg</include>
+                                        <include>DOFTest/*</include>
+                                        <include>system.properties</include>
+                                        <include>card-generator.properties</include>
+                                        <include>empty-b2s-preview.png</include>
+                                    </includes>
+                                </resource>
+                            </resources>
                         </configuration>
                     </execution>
                 </executions>
