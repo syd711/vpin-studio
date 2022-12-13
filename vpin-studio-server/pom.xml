@@ -318,6 +318,26 @@
                     </execution>
 
                     <execution>
+                        <id>copy-scripts</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${basedir}/../Output/VPin-Studio/</outputDirectory>
+                            <resources>
+                                <resource>
+                                    <directory>./</directory>
+                                    <includes>
+                                        <include>server.bat</include>
+                                        <include>server.vbs</include>
+                                    </includes>
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </execution>
+
+                    <execution>
                         <id>copy-exe</id>
                         <!-- here the phase you need -->
                         <phase>package</phase>

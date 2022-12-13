@@ -17,7 +17,7 @@ public class Services {
   public static void install() throws IOException {
     File root = new File("./");
     String script = "cd /D " + root.getAbsolutePath() +
-        "\nstart VPin-Studio-Server.exe";
+        "\nserver.bat";
     FileUtils.writeStringToFile(getAutostartFile(), script, Charset.forName("UTF-8"));
     LOG.info("Written autostart file " + getAutostartFile().getAbsolutePath());
   }
