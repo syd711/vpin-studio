@@ -1,15 +1,18 @@
 package de.mephisto.vpin.commons.utils;
 
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.BufferedInputStream;
-import java.io.File;
-import java.io.FileOutputStream;
+import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.Arrays;
+import java.util.Enumeration;
 import java.util.List;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
 
 public class Updater {
   private final static Logger LOG = LoggerFactory.getLogger(Updater.class);
@@ -20,9 +23,10 @@ public class Updater {
   public static String LATEST_VERSION = null;
 
   public static File updateServer(String versionSegment) throws Exception {
-    File out = new File("./vpin-studio-server.jar");
-    String url = String.format(BASE_URL, versionSegment) + "vpin-studio-server.jar";
+    File out = new File("./VPin-Studio-Server.zip");
+    String url = String.format(BASE_URL, versionSegment) + "VPin-Studio-Server.zip";
     download(url, out);
+    unzip(out);
     return out;
   }
 
@@ -43,9 +47,33 @@ public class Updater {
   }
 
   public static void updateUI(String versionSegment) throws Exception {
-    File out = new File("./vpin-studio-ui.jar");
-    String url = String.format(BASE_URL, versionSegment) + "vpin-studio-ui.jar";
+    File out = new File("./VPin-Studio.zip");
+    String url = String.format(BASE_URL, versionSegment) + "VPin-Studio.zip";
     download(url, out);
+    unzip(out);
+  }
+
+  private static void unzip(File zip) {
+    String unzipCommand = "7z.exe";
+    List<String> commands = Arrays.asList("\"" + unzipCommand + "\"", "-aoa", "x", "\"" + zip.getAbsolutePath() + "\"", "-o\"" + zip.getParentFile().getAbsolutePath() + "\"");
+    try {
+      SystemCommandExecutor executor = new SystemCommandExecutor(commands, false);
+      executor.setDir(zip.getParentFile());
+      executor.executeCommand();
+
+      StringBuilder standardOutputFromCommand = executor.getStandardOutputFromCommand();
+      StringBuilder standardErrorFromCommand = executor.getStandardErrorFromCommand();
+      if (!StringUtils.isEmpty(standardErrorFromCommand.toString())) {
+        LOG.error("7zip command '" + String.join(" ", commands) + "' failed: {}", standardErrorFromCommand);
+      }
+      LOG.info("Finished extraction of " + zip.getAbsolutePath());
+    } catch (Exception e) {
+      LOG.info("Failed extract zip: " + e.getMessage(), e);
+    }
+  }
+
+  public static void main(String[] args) {
+    Updater.unzip(new File("E:\\Development\\workspace\\vpin-studio\\Output\\VPin-Studio\\VPin-Studio-Server.zip"));
   }
 
   private static void download(String downloadUrl, File target) throws Exception {
