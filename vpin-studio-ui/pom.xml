@@ -6,7 +6,7 @@
 
     <groupId>de.mephisto.vpin.ui</groupId>
     <artifactId>vpin-studio-ui</artifactId>
-    <version>1.2-SNAPSHOT</version>
+    <version>1.2.2</version>
     <name>vpin-studio-ui</name>
 
     <properties>
@@ -153,12 +153,6 @@
     </dependencies>
 
     <build>
-        <resources>
-            <resource>
-                <directory>src/main/resources</directory>
-                <filtering>true</filtering>
-            </resource>
-        </resources>
 
         <plugins>
             <plugin>
@@ -169,6 +163,25 @@
                     <source>11</source>
                     <target>11</target>
                 </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>com.coderplus.maven.plugins</groupId>
+                <artifactId>copy-rename-maven-plugin</artifactId>
+                <version>1.0.1</version>
+                <executions>
+                    <execution>
+                        <id>copy-version</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>copy</goal>
+                        </goals>
+                        <configuration>
+                            <sourceFile>${basedir}/../vpin-studio-server/target/classes/version.properties</sourceFile>
+                            <destinationFile>${basedir}/target/classes/version.properties</destinationFile>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
 
             <plugin>
