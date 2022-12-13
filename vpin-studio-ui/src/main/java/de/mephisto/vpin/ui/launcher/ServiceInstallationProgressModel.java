@@ -44,7 +44,6 @@ public class ServiceInstallationProgressModel extends ProgressModel {
         games = client.getGames();
         this.max = games.size();
         gamesIterator = games.iterator();
-        progressResultModel.addProcessed();
         return "Preparing initial table scan...";
       }
 
