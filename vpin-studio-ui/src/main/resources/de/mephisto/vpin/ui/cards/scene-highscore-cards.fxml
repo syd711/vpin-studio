@@ -439,7 +439,12 @@
                         <FontIcon iconColor="WHITE" iconLiteral="bi-images" />
                      </graphic>
                   </Button>
-                <Button fx:id="generateBtn" mnemonicParsing="false" onAction="#onGenerateClick" text=" Generate" textFill="WHITE">
+                  <Separator orientation="VERTICAL" prefHeight="0.0" prefWidth="0.0">
+                     <padding>
+                        <Insets left="3.0" right="3.0" />
+                     </padding>
+                  </Separator>
+                <Button fx:id="generateBtn" mnemonicParsing="false" onAction="#onGenerateClick" text="Refresh" textFill="WHITE">
                      <font>
                         <Font size="14.0" />
                      </font>
@@ -447,11 +452,6 @@
                         <FontIcon iconColor="WHITE" iconLiteral="bi-image" />
                      </graphic>
                   </Button>
-                  <Separator orientation="VERTICAL" prefHeight="0.0" prefWidth="0.0">
-                     <padding>
-                        <Insets left="3.0" right="3.0" />
-                     </padding>
-                  </Separator>
                   <Button fx:id="openImageBtn" mnemonicParsing="false" onAction="#onOpenImage" text=" Open Image" textFill="WHITE">
                      <font>
                         <Font size="14.0" />

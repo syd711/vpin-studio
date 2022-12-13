@@ -27,6 +27,7 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.StackPane;
 import javafx.stage.FileChooser;
 import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.kordamp.ikonli.javafx.FontIcon;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -219,7 +220,14 @@ public class HighscoreCardsController implements Initializable, ObservedProperty
 
   @FXML
   private void onGenerateAll() {
-    Dialogs.createProgressDialog(new HighscoreGeneratorProgressModel(client, "Generating Highscore Cards"));
+    ObservedProperties properties = Studio.client.getProperties("card-generator");
+    String targetScreen = properties.getProperty("popper.screen", null);
+    if(StringUtils.isEmpty(targetScreen)) {
+      WidgetFactory.showAlert("Not target screen selected.\nSelect a target screen in the preferences.");
+    }
+    else {
+      Dialogs.createProgressDialog(new HighscoreGeneratorProgressModel(client, "Generating Highscore Cards"));
+    }
   }
 
   @FXML

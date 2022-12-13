@@ -93,4 +93,19 @@ public class PlayerRepresentation {
   public void setDomain(String domain) {
     this.domain = domain;
   }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) return true;
+    if (o == null || getClass() != o.getClass()) return false;
+
+    PlayerRepresentation that = (PlayerRepresentation) o;
+
+    return id == that.id;
+  }
+
+  @Override
+  public int hashCode() {
+    return (int) (id ^ (id >>> 32));
+  }
 }

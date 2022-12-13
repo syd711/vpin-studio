@@ -116,6 +116,7 @@ public class DiscordPlayerService implements InitializingBean, PreferenceChanged
 
   private Player toPlayer(DiscordMember member) {
     Player player = new Player();
+    player.setId(member.getId());
     player.setName(member.getName());
     player.setInitials(member.getInitials());
     player.setAvatarUrl(member.getAvatarUrl());

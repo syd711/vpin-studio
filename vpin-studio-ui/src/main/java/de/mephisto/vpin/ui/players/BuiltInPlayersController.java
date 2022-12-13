@@ -98,9 +98,10 @@ public class BuiltInPlayersController implements Initializable {
         tableView.refresh();
         if (data.contains(selection)) {
           tableView.getSelectionModel().select(selection);
+          editBtn.setDisable(false);
+          deleteBtn.setDisable(false);
         }
-        editBtn.setDisable(false);
-        deleteBtn.setDisable(false);
+
         this.searchTextField.setDisable(false);
 
         tableStack.getChildren().remove(playersLoadingOverlay);

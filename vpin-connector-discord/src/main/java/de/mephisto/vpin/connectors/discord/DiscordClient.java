@@ -133,6 +133,7 @@ public class DiscordClient extends ListenerAdapter {
       String initials = resolveInitials(name);
 
       DiscordMember discordMember = new DiscordMember();
+      discordMember.setId(member.getIdLong());
       discordMember.setName(name);
       discordMember.setInitials(initials);
       discordMember.setAvatarUrl(member.getEffectiveAvatarUrl());

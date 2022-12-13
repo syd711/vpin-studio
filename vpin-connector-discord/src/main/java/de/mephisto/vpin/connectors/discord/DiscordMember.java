@@ -1,6 +1,7 @@
 package de.mephisto.vpin.connectors.discord;
 
 public class DiscordMember {
+  private long id;
   private String name;
   private String initials;
   private String avatarUrl;
@@ -27,5 +28,28 @@ public class DiscordMember {
 
   public void setAvatarUrl(String avatarUrl) {
     this.avatarUrl = avatarUrl;
+  }
+
+  public long getId() {
+    return id;
+  }
+
+  public void setId(long id) {
+    this.id = id;
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) return true;
+    if (o == null || getClass() != o.getClass()) return false;
+
+    DiscordMember that = (DiscordMember) o;
+
+    return id == that.id;
+  }
+
+  @Override
+  public int hashCode() {
+    return (int) (id ^ (id >>> 32));
   }
 }
