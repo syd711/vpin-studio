@@ -36,7 +36,7 @@ public class CompetitionResource {
     return competitionService.getFinishedCompetitions(limit);
   }
 
-  @GetMapping("/active/offline")
+  @GetMapping("/active")
   public List<Competition> getActiveOffCompetition() {
     return competitionService.getActiveCompetitions();
   }

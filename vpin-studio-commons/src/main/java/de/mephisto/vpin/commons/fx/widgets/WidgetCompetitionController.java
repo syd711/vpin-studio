@@ -9,8 +9,6 @@ import eu.hansolo.tilesfx.events.TileEvent;
 import eu.hansolo.tilesfx.tools.Rank;
 import eu.hansolo.tilesfx.tools.Ranking;
 import javafx.application.Platform;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -228,8 +226,6 @@ public class WidgetCompetitionController extends WidgetController implements Ini
         });
       }
     }
-    else {
-    }
   }
 
   public void refresh() {
@@ -239,8 +235,10 @@ public class WidgetCompetitionController extends WidgetController implements Ini
       Platform.runLater(() -> {
         if (!activeCompetitions.isEmpty()) {
           setCompetition(activeCompetitions.get(0));
+          root.setVisible(true);
         }
         else {
+          root.setVisible(false);
           setCompetition(null);
         }
         viewStack.getChildren().remove(loadingOverlay);

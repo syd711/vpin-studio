@@ -307,6 +307,7 @@
                                         <include>competition-badges/*</include>
                                         <include>*.exe</include>
                                         <include>highscore-card-background-*.jpg</include>
+                                        <include>competition-bg-default.png</include>
                                         <include>system.properties</include>
                                         <include>card-generator.properties</include>
                                         <include>empty-b2s-preview.png</include>

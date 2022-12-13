@@ -80,14 +80,16 @@ public class GameService {
     return highscoreService.getRecentHighscores();
   }
 
+  /**
+   * Returns true if game details are available
+   * @param gameId the game to scan
+   * @return
+   */
   public boolean scanGame(int gameId) {
     Game game = getGame(gameId);
     if(!game.getEmulator().getName().equalsIgnoreCase(Emulator.VISUAL_PINBALL_X)) {
       return false;
     }
-
-    this.highscoreService.getOrCreateHighscore(game);
-
     List<Game> games = pinUPConnector.getGames();
     ScanResult scanResult = romService.scanGameFile(game);
 
@@ -98,9 +100,15 @@ public class GameService {
       gameDetails.setNvOffset(scanResult.getNvOffset());
       gameDetails.setHsFileName(scanResult.getHsFileName());
       gameDetailsRepository.saveAndFlush(gameDetails);
-      return true;
+
+      game.setRom(scanResult.getRom());
+      game.setNvOffset(scanResult.getNvOffset());
+      game.setHsFileName(scanResult.getHsFileName());
     }
-    return false;
+
+    //we have the rom now, so create the initial highscore data
+    this.highscoreService.getOrCreateHighscore(game);
+    return gameDetails != null;
   }
 
   @SuppressWarnings("unused")

@@ -30,8 +30,8 @@ public class TablesScanProgressModel extends ProgressModel {
   }
 
   @Override
-  public Iterator<GameRepresentation> getIterator() {
-    return iterator;
+  public boolean hasNext() {
+    return this.iterator.hasNext();
   }
 
   public String processNext(ProgressResultModel progressResultModel) {

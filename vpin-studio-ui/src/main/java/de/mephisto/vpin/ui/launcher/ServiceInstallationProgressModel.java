@@ -7,7 +7,6 @@ import de.mephisto.vpin.ui.util.ProgressResultModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
@@ -15,26 +14,17 @@ public class ServiceInstallationProgressModel extends ProgressModel {
   private final static Logger LOG = LoggerFactory.getLogger(ServiceInstallationProgressModel.class);
 
   private VPinStudioClient client;
-  private Iterator<String> iterator;
   private Iterator<GameRepresentation> gamesIterator;
 
   private int max;
-
-  private int index = 0;
+  private boolean hasNext = true;
   private List<GameRepresentation> games;
 
   public ServiceInstallationProgressModel(VPinStudioClient client) {
-    super("Installing VPin Studio Server");
+    super("Initial Table Scan");
     this.client = client;
     int gameCount = this.client.getGameCount();
-    this.max = 1 + gameCount;
-
-    LOG.info(gameCount + " tables found for initial setup.");
-    List<String> iteratorList = new ArrayList<>();
-    for (int i = 0; i < this.max; i++) {
-      iteratorList.add("");
-    }
-    this.iterator = iteratorList.iterator();
+    this.max = gameCount;
   }
 
   @Override
@@ -43,24 +33,23 @@ public class ServiceInstallationProgressModel extends ProgressModel {
   }
 
   @Override
-  public Iterator getIterator() {
-    return this.iterator;
+  public boolean hasNext() {
+    return hasNext;
   }
 
   @Override
   public String processNext(ProgressResultModel progressResultModel) {
     try {
-      if (index == 0) {
-        index++;
-        iterator.next();
+      if (games == null) {
         games = client.getGames();
+        this.max = games.size();
         gamesIterator = games.iterator();
         progressResultModel.addProcessed();
         return "Preparing initial table scan...";
       }
 
-      iterator.next();
-      if (gamesIterator.hasNext()) {
+      this.hasNext = gamesIterator.hasNext();
+      if (hasNext) {
         GameRepresentation next = gamesIterator.next();
         client.scanGame(next);
         progressResultModel.addProcessed();

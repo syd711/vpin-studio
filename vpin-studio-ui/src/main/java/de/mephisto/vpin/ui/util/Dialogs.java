@@ -233,9 +233,8 @@ public class Dialogs {
         return new Task() {
           @Override
           protected Object call() throws Exception {
-            Iterator iterator = model.getIterator();
             int index = 0;
-            while (iterator.hasNext() && !this.isCancelled()) {
+            while (model.hasNext() && !this.isCancelled()) {
               String result = model.processNext(progressResultModel);
               long percent = index * 100 / model.getMax();
               updateProgress(percent, 100);
