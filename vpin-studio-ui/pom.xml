@@ -294,7 +294,7 @@
                             <outputDirectory>${basedir}/../Output/VPin-Studio/win32/java</outputDirectory>
                             <resources>
                                 <resource>
-<!--                                    <directory>${java.home}</directory>-->
+                                    <!--                                    <directory>${java.home}</directory>-->
                                     <directory>E:/Development/tools/jdk-11.0.17+8-jre</directory>
                                     <excludes>
                                         <exclude>**/*.zip</exclude>
@@ -360,6 +360,34 @@
                     </execution>
                 </executions>
             </plugin>
+
+
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>exec-maven-plugin</artifactId>
+                <version>1.4.0</version>
+                <executions>
+                    <execution>
+                        <id>zip-exe</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>exec</goal>
+                        </goals>
+                        <configuration>
+                            <!-- define the command to execute -->
+                            <executable>7z</executable>
+                            <workingDirectory>${basedir}/../Output/VPin-Studio/</workingDirectory>
+                            <arguments>
+                                <argument>a</argument>
+                                <argument>-t7z</argument>
+                                <argument>VPin-Studio.zip</argument>
+                                <argument>VPin-Studio.exe</argument>
+                            </arguments>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
         </plugins>
 
 

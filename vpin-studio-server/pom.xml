@@ -264,7 +264,31 @@
                 </executions>
             </plugin>
 
-
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>exec-maven-plugin</artifactId>
+                <version>1.4.0</version>
+                <executions>
+                    <execution>
+                        <id>zip-exe</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>exec</goal>
+                        </goals>
+                        <configuration>
+                            <!-- define the command to execute -->
+                            <executable>7z</executable>
+                            <workingDirectory>target/</workingDirectory>
+                            <arguments>
+                                <argument>a</argument>
+                                <argument>-t7z</argument>
+                                <argument>VPin-Studio-Server.zip</argument>
+                                <argument>VPin-Studio-Server.exe</argument>
+                            </arguments>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
 
             <plugin>
                 <artifactId>maven-clean-plugin</artifactId>
@@ -352,6 +376,7 @@
                                     <includes>
                                         <include>vpin-studio-server.jar</include>
                                         <include>VPin-Studio-Server.exe</include>
+                                        <include>VPin-Studio-Server.zip</include>
                                     </includes>
                                 </resource>
                             </resources>
@@ -362,26 +387,6 @@
             </plugin>
 
 
-
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-assembly-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>single</goal>
-                        </goals>
-                        <configuration>
-                            <finalName>VPin-Studio-Server</finalName>
-                            <appendAssemblyId>false</appendAssemblyId>
-                            <descriptors>
-                                <descriptor>src/main/assembly/assembly.xml</descriptor>
-                            </descriptors>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
 
         </plugins>
 

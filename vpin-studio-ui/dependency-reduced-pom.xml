@@ -193,6 +193,30 @@
           </execution>
         </executions>
       </plugin>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>exec-maven-plugin</artifactId>
+        <version>1.4.0</version>
+        <executions>
+          <execution>
+            <id>zip-exe</id>
+            <phase>package</phase>
+            <goals>
+              <goal>exec</goal>
+            </goals>
+            <configuration>
+              <executable>7z</executable>
+              <workingDirectory>${basedir}/../Output/VPin-Studio/</workingDirectory>
+              <arguments>
+                <argument>a</argument>
+                <argument>-t7z</argument>
+                <argument>VPin-Studio.zip</argument>
+                <argument>VPin-Studio.exe</argument>
+              </arguments>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
     </plugins>
   </build>
   <dependencies>
