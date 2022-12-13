@@ -29,6 +29,9 @@ public class GameDetails {
   @LastModifiedDate
   private Date updatedAt;
 
+  @Column(length = 4096)
+  public String assets;
+
   private String romName;
 
   private String hsFileName;
@@ -38,6 +41,14 @@ public class GameDetails {
   private int pupId;
 
   private int nvOffset;
+
+  public String getAssets() {
+    return assets;
+  }
+
+  public void setAssets(String assets) {
+    this.assets = assets;
+  }
 
   public Date getCreatedAt() {
     return createdAt;
