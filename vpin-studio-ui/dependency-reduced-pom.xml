@@ -1,11 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <parent>
+    <artifactId>studio</artifactId>
+    <groupId>de.mephisto.vpin</groupId>
+    <version>1.2.3</version>
+  </parent>
   <modelVersion>4.0.0</modelVersion>
-  <groupId>de.mephisto.vpin.ui</groupId>
   <artifactId>vpin-studio-ui</artifactId>
   <name>vpin-studio-ui</name>
-  <version>1.2-SNAPSHOT</version>
   <build>
+    <resources>
+      <resource>
+        <filtering>true</filtering>
+        <directory>src/main/resources</directory>
+      </resource>
+    </resources>
     <plugins>
       <plugin>
         <artifactId>maven-compiler-plugin</artifactId>
@@ -14,24 +23,6 @@
           <source>11</source>
           <target>11</target>
         </configuration>
-      </plugin>
-      <plugin>
-        <groupId>com.coderplus.maven.plugins</groupId>
-        <artifactId>copy-rename-maven-plugin</artifactId>
-        <version>1.0.1</version>
-        <executions>
-          <execution>
-            <id>copy-version</id>
-            <phase>package</phase>
-            <goals>
-              <goal>copy</goal>
-            </goals>
-            <configuration>
-              <sourceFile>${basedir}/../vpin-studio-server/target/classes/version.properties</sourceFile>
-              <destinationFile>${basedir}/target/classes/version.properties</destinationFile>
-            </configuration>
-          </execution>
-        </executions>
       </plugin>
       <plugin>
         <artifactId>maven-shade-plugin</artifactId>
@@ -187,19 +178,6 @@
               <executable>ISCC.exe</executable>
               <arguments>
                 <argument>${basedir}/target/classes/inno-installer-studio-full.iss</argument>
-              </arguments>
-            </configuration>
-          </execution>
-          <execution>
-            <id>client-installer-creation</id>
-            <phase>package</phase>
-            <goals>
-              <goal>exec</goal>
-            </goals>
-            <configuration>
-              <executable>ISCC.exe</executable>
-              <arguments>
-                <argument>${basedir}/target/classes/inno-installer-studio-client.iss</argument>
               </arguments>
             </configuration>
           </execution>

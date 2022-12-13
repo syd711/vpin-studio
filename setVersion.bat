@@ -5,3 +5,5 @@ cd ..
 cd vpin-studio-ui
 mvn versions:set -DnewVersion="%1" -DgenerateBackupPoms=false -DprocessAllModules
 cd ..
+mvn license:aggregate-download-licenses
+generateLicenses.bat

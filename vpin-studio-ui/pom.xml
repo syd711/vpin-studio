@@ -2,11 +2,14 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <artifactId>studio</artifactId>
+        <groupId>de.mephisto.vpin</groupId>
+        <version>1.2.3</version>
+    </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>de.mephisto.vpin.ui</groupId>
     <artifactId>vpin-studio-ui</artifactId>
-    <version>1.2.2</version>
     <name>vpin-studio-ui</name>
 
     <properties>
@@ -43,17 +46,17 @@
         <dependency>
             <groupId>de.mephisto.vpin</groupId>
             <artifactId>vpin-studio-rest-client</artifactId>
-            <version>1.2-SNAPSHOT</version>
+            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>de.mephisto.vpin</groupId>
             <artifactId>vpin-studio-commons</artifactId>
-            <version>1.2-SNAPSHOT</version>
+            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>de.mephisto.vpin</groupId>
             <artifactId>vpin-connector-discord</artifactId>
-            <version>1.2-SNAPSHOT</version>
+            <version>${project.version}</version>
         </dependency>
 
 
@@ -153,6 +156,12 @@
     </dependencies>
 
     <build>
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+                <filtering>true</filtering>
+            </resource>
+        </resources>
 
         <plugins>
             <plugin>
@@ -163,25 +172,6 @@
                     <source>11</source>
                     <target>11</target>
                 </configuration>
-            </plugin>
-
-            <plugin>
-                <groupId>com.coderplus.maven.plugins</groupId>
-                <artifactId>copy-rename-maven-plugin</artifactId>
-                <version>1.0.1</version>
-                <executions>
-                    <execution>
-                        <id>copy-version</id>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>copy</goal>
-                        </goals>
-                        <configuration>
-                            <sourceFile>${basedir}/../vpin-studio-server/target/classes/version.properties</sourceFile>
-                            <destinationFile>${basedir}/target/classes/version.properties</destinationFile>
-                        </configuration>
-                    </execution>
-                </executions>
             </plugin>
 
             <plugin>
