@@ -32,12 +32,8 @@ public class CardGenerationPreferencesController implements Initializable {
 
     popperScreenCombo.setItems(FXCollections.observableList(Arrays.asList("", "Other2", "GameInfo", "GameHelp")));
     BindingUtil.bindComboBox(popperScreenCombo, properties, "popper.screen");
-    popperScreenCombo.valueProperty().addListener(new ChangeListener<String>() {
-      @Override
-      public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
-        onScreenChange();
-      }
-    });
+    popperScreenCombo.valueProperty().addListener((observable, oldValue, newValue) -> onScreenChange());
+
     onScreenChange();
   }
 
