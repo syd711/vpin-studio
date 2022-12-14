@@ -1,5 +1,6 @@
 package de.mephisto.vpin.server.popper;
 
+import de.mephisto.vpin.restclient.PinUPControl;
 import de.mephisto.vpin.restclient.PopperScreen;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.highscores.HighscoreService;
@@ -26,6 +27,13 @@ public class PopperService {
 
   @Autowired
   private SystemService systemService;
+
+  @Autowired
+  private PinUPConnector pinUPConnector;
+
+  public PinUPControl getPinUPControlFor(PopperScreen screen) {
+    return pinUPConnector.getPinUPControlFor(screen);
+  }
 
   public void notifyTableStatusChange(final Game game, final boolean started) {
     new Thread(() -> {

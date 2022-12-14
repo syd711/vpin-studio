@@ -130,8 +130,8 @@ public class GameService {
     return null;
   }
 
-  public Game getGameByFile(File file) {
-    Game game = this.pinUPConnector.getGameByFilename(file.getName());
+  public Game getGameByFilename(String name) {
+    Game game = this.pinUPConnector.getGameByFilename(name);
     if (game != null) {
       loadGameDetails(game, Collections.emptyList());
     }

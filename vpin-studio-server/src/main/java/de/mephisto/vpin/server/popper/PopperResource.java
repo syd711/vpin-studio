@@ -1,5 +1,6 @@
 package de.mephisto.vpin.server.popper;
 
+import de.mephisto.vpin.restclient.PinUPControl;
 import de.mephisto.vpin.restclient.PopperScreen;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameService;
@@ -22,24 +23,23 @@ public class PopperResource {
   private final static Logger LOG = LoggerFactory.getLogger(PopperResource.class);
 
   @Autowired
-  private GameService service;
+  private GameService gameService;
 
   @Autowired
-  private PinUPConnector connector;
-
-  @Autowired
-  private PopperService popperManager;
+  private PopperService popperService;
 
   @PostMapping("/gameLaunch/")
   public boolean gameLaunch(@RequestParam("table") String table) {
     new Thread(() -> {
       Thread.currentThread().setName("Popper Game Launch Thread");
       File tableFile = new File(table);
-      Game game = service.getGameByFile(tableFile);
+      Game game = gameService.getGameByFilename(tableFile.getName());
       if (game == null) {
         LOG.warn("No game found for name '" + table);
       }
-      popperManager.notifyTableStatusChange(game, true);
+      else {
+        popperService.notifyTableStatusChange(game, true);
+      }
     }).start();
     return true;
   }
@@ -49,11 +49,13 @@ public class PopperResource {
     new Thread(() -> {
       Thread.currentThread().setName("Popper Game Exit Thread");
       File tableFile = new File(table.trim());
-      Game game = service.getGameByFile(tableFile);
+      Game game = gameService.getGameByFilename(tableFile.getName());
       if (game == null) {
         LOG.warn("No game found for name '" + table);
       }
-      popperManager.notifyTableStatusChange(game, false);
+      else {
+        popperService.notifyTableStatusChange(game, false);
+      }
     }).start();
 
     return true;
@@ -61,40 +63,12 @@ public class PopperResource {
 
   @PostMapping("/popperLaunch")
   public boolean popperLaunch() {
-    popperManager.notifyPopperLaunch();
+    popperService.notifyPopperLaunch();
     return true;
   }
 
-  @PostMapping("/validateScreen/{screen}")
-  public String validateScreenConfiguration(@PathVariable("screen") String screenName) {
-    PopperScreen screen = PopperScreen.valueOf(screenName);
-    PinUPControl fn = null;
-    switch (screen) {
-      case Other2: {
-        fn = connector.getFunction(PinUPControl.FUNCTION_SHOW_OTHER);
-        break;
-      }
-      case GameHelp: {
-        fn = connector.getFunction(PinUPControl.FUNCTION_SHOW_HELP);
-        break;
-      }
-      case GameInfo: {
-        fn = connector.getFunction(PinUPControl.FUNCTION_SHOW_FLYER);
-        break;
-      }
-      default: {
-
-      }
-    }
-
-    if (fn != null) {
-      if (!fn.isActive()) {
-        return "The screen has not been activated.";
-      }
-      if (fn.getCtrlKey() == 0) {
-        return "The screen is not bound to any key.";
-      }
-    }
-    return null;
+  @GetMapping("/pincontrol/{screen}")
+  public PinUPControl getPinUPControlFor(@PathVariable("screen") String screenName) {
+    return popperService.getPinUPControlFor(PopperScreen.valueOf(screenName));
   }
 }

@@ -1,9 +1,10 @@
 package de.mephisto.vpin.server.system;
 
-import de.mephisto.vpin.server.VPinStudioException;
-import de.mephisto.vpin.server.VPinStudioServer;
 import de.mephisto.vpin.commons.utils.PropertiesStore;
 import de.mephisto.vpin.commons.utils.SystemCommandExecutor;
+import de.mephisto.vpin.restclient.RestClient;
+import de.mephisto.vpin.server.VPinStudioException;
+import de.mephisto.vpin.server.VPinStudioServer;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -18,15 +19,15 @@ import java.net.DatagramSocket;
 import java.net.ServerSocket;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
-import java.util.*;
 import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
 public class SystemService implements InitializingBean {
   private final static Logger LOG = LoggerFactory.getLogger(SystemService.class);
 
-  public final static int SERVER_PORT = 8089;
+  public final static int SERVER_PORT = RestClient.PORT;
 
   public static final String COMPETITION_BADGES = "competition-badges";
 
@@ -38,7 +39,6 @@ public class SystemService implements InitializingBean {
   private final static String PINUP_SYSTEM_INSTALLATION_DIR_INST_DIR = "pinupSystem.installationDir";
   private final static String VISUAL_PINBALL_INST_DIR = "visualPinball.installationDir";
   private final static String FUTURE_PINBALL_INST_DIR = "futurePinball.installationDir";
-  private final static String DIRECTB2S_DIR = "directb2s.directory";
   private final static String PINEMHI_FOLDER = RESOURCES + "pinemhi";
   private final static String PINEMHI_COMMAND = "PINemHi.exe";
   private final static String PINEMHI_INI = "pinemhi.ini";

@@ -41,6 +41,14 @@ public class VPinStudioClient implements ObservedPropertyChangeListener, Overlay
   }
 
   /*********************************************************************************************************************
+   * Popper
+   ********************************************************************************************************************/
+  public PinUPControl getPinUPControlFor(PopperScreen screen) {
+    final RestTemplate restTemplate = new RestTemplate();
+    return restTemplate.getForObject(restClient.getBaseUrl() + "service/pincontrol/" + screen.name(), PinUPControl.class);
+  }
+
+  /*********************************************************************************************************************
    * System
    ********************************************************************************************************************/
 

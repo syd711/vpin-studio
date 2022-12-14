@@ -25,15 +25,16 @@
                   <Insets top="24.0" />
                </VBox.margin>
             </Label>
-            <Label styleClass="preference-description" text="Select the PinUP Popper screen the highscore cards will be generated for. Ensure that the screen is enabled." textFill="WHITE">
+            <Label layoutX="34.0" layoutY="148.0" styleClass="preference-description" text="Select the PinUP Popper screen the highscore cards will be generated for. " textFill="WHITE" />
+            <Label styleClass="preference-description" text="Ensure that the screen is enabled and bound to a key." textFill="WHITE">
                <VBox.margin>
                   <Insets bottom="6.0" />
                </VBox.margin>
             </Label>
             <GridPane alignment="BASELINE_RIGHT" layoutX="34.0" layoutY="136.0" prefHeight="60.0" prefWidth="708.0">
                <columnConstraints>
-                  <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                  <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                  <ColumnConstraints hgrow="SOMETIMES" maxWidth="349.199951171875" minWidth="10.0" prefWidth="285.6" />
+                  <ColumnConstraints hgrow="SOMETIMES" maxWidth="438.800048828125" minWidth="10.0" prefWidth="423.19999999999993" />
                </columnConstraints>
                <rowConstraints>
                   <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
@@ -46,6 +47,17 @@
                      </font>
                   </Label>
                   <ComboBox fx:id="popperScreenCombo" prefWidth="150.0" GridPane.columnIndex="1" />
+                  <Label fx:id="validationError" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                     <font>
+                        <Font name="System Bold" size="14.0" />
+                     </font>
+                     <padding>
+                        <Insets bottom="3.0" left="3.0" right="3.0" top="3.0" />
+                     </padding>
+                     <GridPane.margin>
+                        <Insets top="6.0" />
+                     </GridPane.margin>
+                  </Label>
                </children>
                <opaqueInsets>
                   <Insets />

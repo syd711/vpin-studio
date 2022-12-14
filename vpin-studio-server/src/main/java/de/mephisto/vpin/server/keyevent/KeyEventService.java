@@ -109,11 +109,13 @@ public class KeyEventService implements InitializingBean, NativeKeyListener, Pop
   public void popperLaunched() {
     Platform.runLater(() -> {
       Boolean startupLaunch = (Boolean) preferencesService.getPreferenceValue(PreferenceNames.SHOW_OVERLAY_ON_STARTUP);
-      if (startupLaunch) {
+      if (startupLaunch != null && startupLaunch) {
         this.visible = !visible;
         overlayWindowFX.setVisible(visible);
       }
     });
+
+
   }
 
   private void afterStartup() {

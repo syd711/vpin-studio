@@ -1,5 +1,7 @@
 package de.mephisto.vpin.server.popper;
 
+import de.mephisto.vpin.restclient.PinUPControl;
+import de.mephisto.vpin.restclient.PopperScreen;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.system.SystemService;
 import edu.umd.cs.findbugs.annotations.NonNull;
@@ -11,8 +13,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
-import java.sql.*;
 import java.sql.Date;
+import java.sql.*;
 import java.util.*;
 
 @Service
@@ -238,7 +240,7 @@ public class PinUPConnector implements InitializingBean {
   }
 
   @Nullable
-  public PinUPControl getFunction(@NonNull String description) {
+  private PinUPControl getFunction(@NonNull String description) {
     PinUPControl f = null;
     Connection connect = this.connect();
     try {
@@ -261,6 +263,27 @@ public class PinUPConnector implements InitializingBean {
       this.disconnect(connect);
     }
     return f;
+  }
+
+
+  public PinUPControl getPinUPControlFor(PopperScreen screen) {
+    PinUPControl fn = null;
+    switch (screen) {
+      case Other2: {
+        return getFunction(PinUPControl.FUNCTION_SHOW_OTHER);
+      }
+      case GameHelp: {
+        return getFunction(PinUPControl.FUNCTION_SHOW_HELP);
+      }
+      case GameInfo: {
+        return getFunction(PinUPControl.FUNCTION_SHOW_FLYER);
+      }
+      default: {
+
+      }
+    }
+
+    return new PinUPControl();
   }
 
   @NonNull
@@ -439,14 +462,14 @@ public class PinUPConnector implements InitializingBean {
     Emulator emulator = emulators.get(emuId);
     game.setEmulator(emulator);
 
-    if(emulator.getName().equalsIgnoreCase(Emulator.VISUAL_PINBALL_X)) {
+    if (emulator.getName().equalsIgnoreCase(Emulator.VISUAL_PINBALL_X)) {
       File vpxFile = new File(systemService.getVPXTablesFolder(), gameFileName);
       if (!vpxFile.exists()) {
         return null;
       }
       game.setGameFile(vpxFile);
     }
-    else if(emulator.getName().equalsIgnoreCase(Emulator.FUTURE_PINBALL)) {
+    else if (emulator.getName().equalsIgnoreCase(Emulator.FUTURE_PINBALL)) {
       File fpFile = new File(systemService.getFuturePinballTablesFolder(), gameFileName);
       if (!fpFile.exists()) {
         return null;
