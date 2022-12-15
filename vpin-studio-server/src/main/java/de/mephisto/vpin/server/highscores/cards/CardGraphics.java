@@ -1,10 +1,12 @@
 package de.mephisto.vpin.server.highscores.cards;
 
 import de.mephisto.vpin.restclient.PopperScreen;
+import de.mephisto.vpin.server.competitions.ScoreSummary;
 import de.mephisto.vpin.server.directb2s.DirectB2SImageRatio;
 import de.mephisto.vpin.server.directb2s.DirectB2SService;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.highscores.Highscore;
+import de.mephisto.vpin.server.highscores.Score;
 import de.mephisto.vpin.server.system.SystemService;
 import de.mephisto.vpin.server.util.Config;
 import de.mephisto.vpin.server.util.ImageUtil;
@@ -51,13 +53,13 @@ public class CardGraphics {
 
 
   private final DirectB2SService directB2SService;
-  private final Highscore highscore;
+  private final ScoreSummary summary;
   private final Game game;
 
-  public CardGraphics(DirectB2SService directB2SService, Game game, Highscore highscore) {
+  public CardGraphics(DirectB2SService directB2SService, Game game, ScoreSummary summary) {
     this.directB2SService = directB2SService;
     this.game = game;
-    this.highscore = highscore;
+    this.summary = summary;
   }
 
   public BufferedImage draw() throws Exception {
@@ -152,19 +154,19 @@ public class CardGraphics {
     int scoreWidth = 0;
 
     List<String> scores = new ArrayList<>();
-//    for (Score score : highscore.getScores()) {
-//      String scoreString = score.getPosition() + ". " + score.getUserInitials() + " " + score.getScore();
-//      scores.add(scoreString);
-//
-//      int singleScoreWidth = g.getFontMetrics().stringWidth(title);
-//      if (scoreWidth < singleScoreWidth) {
-//        scoreWidth = singleScoreWidth;
-//      }
-//      count++;
-//      if (count == 3) {
-//        break;
-//      }
-//    }
+    for (Score score : summary.getScores()) {
+      String scoreString = score.getPosition() + ". " + score.getPlayerInitials() + " " + score.getScore();
+      scores.add(scoreString);
+
+      int singleScoreWidth = g.getFontMetrics().stringWidth(title);
+      if (scoreWidth < singleScoreWidth) {
+        scoreWidth = singleScoreWidth;
+      }
+      count++;
+      if (count == 3) {
+        break;
+      }
+    }
 
     tableNameY = tableNameY + TABLE_FONT_SIZE / 2;
 
@@ -190,7 +192,7 @@ public class CardGraphics {
   private void renderRawScore(Game game, int imageHeight, int imageWidth, Graphics g, int yStart) throws IOException {
     int remainingHeight = imageHeight - yStart - PADDING;
     int remainingWidth = imageWidth - 2 * PADDING;
-    String raw = highscore.getRaw().trim();
+    String raw = summary.getRaw().trim();
     String[] lines = raw.split("\n");
 
     int fontSize = remainingHeight / lines.length;

@@ -1,6 +1,7 @@
 package de.mephisto.vpin.server.highscores.cards;
 
 import de.mephisto.vpin.restclient.PopperScreen;
+import de.mephisto.vpin.server.competitions.ScoreSummary;
 import de.mephisto.vpin.server.directb2s.DirectB2SService;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameService;
@@ -11,6 +12,7 @@ import de.mephisto.vpin.server.util.Config;
 import de.mephisto.vpin.server.util.ImageUtil;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,11 +54,12 @@ public class CardService {
 
   public boolean generateCard(Game game, boolean generateSampleCard) throws Exception {
     try {
-      Highscore highscore = highscoreService.getOrCreateHighscore(game);
-      if (highscore != null && highscore.getRaw() != null) {
+      ScoreSummary summary = highscoreService.getHighscores(game.getId());
+      if (!summary.getScores().isEmpty() && !StringUtils.isEmpty(summary.getRaw())) {
         Config.getCardGeneratorConfig().reload();
 
-        BufferedImage bufferedImage = new CardGraphics(directB2SService, game, highscore).draw();
+
+        BufferedImage bufferedImage = new CardGraphics(directB2SService, game, summary).draw();
         if (bufferedImage != null) {
           if (generateSampleCard) {
             ImageUtil.write(bufferedImage, getCardSampleFile());
