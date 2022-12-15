@@ -54,4 +54,21 @@ public class PreferenceEntryRepresentation {
   public void setValue(String value) {
     this.value = value;
   }
+
+  public String getOptionValue(String optionName) {
+    if(!StringUtils.isEmpty(value)) {
+      String[] split = value.split(";");
+      for (String optionEntry : split) {
+        String[] entry = optionEntry.split("=");
+        if(entry.length == 2) {
+          String key = entry[0];
+          if(key.equals(optionName)) {
+            return entry[1];
+          }
+        }
+      }
+
+    }
+    return null;
+  }
 }

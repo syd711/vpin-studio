@@ -338,11 +338,10 @@
 }
 
 .text-area .content {
-    -fx-background-color: transparent, white, transparent, white;
+
 }
 
 .text-area:focused .content {
-    -fx-background-color: transparent, white, transparent, white;
 }
 
 .hyperlink, .hyperlink:hover {

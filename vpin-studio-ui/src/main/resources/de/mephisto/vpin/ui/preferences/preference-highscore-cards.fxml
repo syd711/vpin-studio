@@ -14,8 +14,8 @@
    <top>
       <VBox fx:id="preferenceList" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" styleClass="subpanel" BorderPane.alignment="TOP_LEFT">
          <children>
-            <Label styleClass="preference-title" text="HIGHSCORE CARDS" textFill="WHITE" />
-            <Label styleClass="preference-subtitle" text="Target Screen &amp; Settings">
+            <Label styleClass="preference-title" text="HIGHSCORE PREFERENCES" textFill="WHITE" />
+            <Label styleClass="preference-subtitle" text="Card Settings">
                <VBox.margin>
                   <Insets />
                </VBox.margin>

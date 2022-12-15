@@ -38,6 +38,17 @@ public class Preferences {
 
   private String discordBotToken;
 
+  @Column(length = 1024)
+  private String highscoreTitles;
+
+  public String getHighscoreTitles() {
+    return highscoreTitles;
+  }
+
+  public void setHighscoreTitles(String highscoreTitles) {
+    this.highscoreTitles = highscoreTitles;
+  }
+
   public String getDiscordGuildId() {
     return discordGuildId;
   }

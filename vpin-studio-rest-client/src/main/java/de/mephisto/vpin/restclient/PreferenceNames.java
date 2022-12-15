@@ -4,6 +4,7 @@ public interface PreferenceNames {
   String IGNORED_VALIDATIONS = "ignoredValidations";
   String IGNORED_MEDIA = "ignoredMedia";
   String SYSTEM_NAME = "systemName";
+  String HIGHSCORE_TITLES = "highscoreTitles";
   String AVATAR = "avatar";
   String RESET_KEY = "resetKey";
   String OVERLAY_KEY = "overlayKey";

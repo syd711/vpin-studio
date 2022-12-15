@@ -72,6 +72,11 @@ public class PreferencesController implements Initializable {
   }
 
   @FXML
+  private void onScoreFormat(ActionEvent event) throws IOException {
+    load("preference-highscores.fxml");
+  }
+
+  @FXML
   private void onServiceInfo(ActionEvent event) throws IOException {
     load("preference-service-info.fxml");
   }

@@ -322,7 +322,7 @@
                               <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
                            </BorderPane.margin>
                            <center>
-                                      <TextArea fx:id="highscoreTextArea" disable="true" editable="false" focusTraversable="false" prefHeight="400.0">
+                                      <TextArea fx:id="highscoreTextArea" editable="false" focusTraversable="false" prefHeight="400.0">
                                  <BorderPane.margin>
                                     <Insets />
                                  </BorderPane.margin>
@@ -353,7 +353,7 @@
                      <bottom>
                         <BorderPane BorderPane.alignment="CENTER">
                            <center>
-                              <TextArea fx:id="highscoreFormattedTextArea" disable="true" focusTraversable="false" prefHeight="200.0" prefWidth="200.0" />
+                              <TextArea fx:id="highscoreFormattedTextArea" editable="false" focusTraversable="false" prefHeight="200.0" prefWidth="200.0" />
                            </center>
                            <top>
                               <Label text="Formatted List" textFill="WHITE" BorderPane.alignment="TOP_LEFT">
