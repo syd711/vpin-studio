@@ -17,6 +17,10 @@ public class Highscore {
   @Temporal(TemporalType.TIMESTAMP)
   private Date createdAt;
 
+  private Date lastModified;
+
+  private Date lastScanned;
+
   @Id
   @GeneratedValue(strategy = GenerationType.AUTO)
   private Long id;
@@ -43,6 +47,63 @@ public class Highscore {
 
   private String raw;
 
+  private String filename;
+
+  private String status;
+
+  private String type;
+
+  @Column(length = 1024)
+  private String options;
+
+  public String getOptions() {
+    return options;
+  }
+
+  public void setOptions(String options) {
+    this.options = options;
+  }
+
+  public Date getLastScanned() {
+    return lastScanned;
+  }
+
+  public void setLastScanned(Date lastScanned) {
+    this.lastScanned = lastScanned;
+  }
+
+  public Date getLastModified() {
+    return lastModified;
+  }
+
+  public void setLastModified(Date lastModified) {
+    this.lastModified = lastModified;
+  }
+
+  public String getFilename() {
+    return filename;
+  }
+
+  public void setFilename(String filename) {
+    this.filename = filename;
+  }
+
+  public String getStatus() {
+    return status;
+  }
+
+  public void setStatus(String status) {
+    this.status = status;
+  }
+
+  public String getType() {
+    return type;
+  }
+
+  public void setType(String type) {
+    this.type = type;
+  }
+
   public String getDisplayName() {
     return displayName;
   }
@@ -67,11 +128,16 @@ public class Highscore {
     this.raw = raw;
   }
 
-  public static Highscore forGame(@NonNull Game game, @Nullable String rawValue) {
+  public static Highscore forGame(@NonNull Game game, @Nullable HighscoreMetadata metadata) {
     Highscore highscore = new Highscore();
-    highscore.setRaw(rawValue);
+    highscore.setRaw(metadata.getRaw());
+    highscore.setFilename(metadata.getFilename());
+    highscore.setType(metadata.getType());
     highscore.setGameId(game.getId());
+    highscore.setStatus(metadata.getStatus());
+    highscore.setLastScanned(metadata.getScanned());
     highscore.setCreatedAt(new Date());
+    highscore.setLastModified(metadata.getModified());
     highscore.setDisplayName(game.getGameDisplayName());
     return highscore;
   }

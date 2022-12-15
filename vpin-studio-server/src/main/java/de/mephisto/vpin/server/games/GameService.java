@@ -1,6 +1,7 @@
 package de.mephisto.vpin.server.games;
 
 import de.mephisto.vpin.server.competitions.ScoreSummary;
+import de.mephisto.vpin.server.highscores.HighscoreMetadata;
 import de.mephisto.vpin.server.highscores.HighscoreService;
 import de.mephisto.vpin.server.popper.Emulator;
 import de.mephisto.vpin.server.popper.PinUPConnector;
@@ -14,7 +15,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.io.File;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -82,12 +82,13 @@ public class GameService {
 
   /**
    * Returns true if game details are available
+   *
    * @param gameId the game to scan
    * @return
    */
   public boolean scanGame(int gameId) {
     Game game = getGame(gameId);
-    if(!game.getEmulator().getName().equalsIgnoreCase(Emulator.VISUAL_PINBALL_X)) {
+    if (!game.getEmulator().getName().equalsIgnoreCase(Emulator.VISUAL_PINBALL_X)) {
       return false;
     }
     List<Game> games = pinUPConnector.getGames();
@@ -109,6 +110,11 @@ public class GameService {
     //we have the rom now, so create the initial highscore data
     this.highscoreService.getOrCreateHighscore(game);
     return gameDetails != null;
+  }
+
+  public HighscoreMetadata scanScore(int gameId) {
+    Game game = getGame(gameId);
+    return highscoreService.scanScore(game);
   }
 
   @SuppressWarnings("unused")

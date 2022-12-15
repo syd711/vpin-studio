@@ -12,6 +12,7 @@ import org.slf4j.LoggerFactory;
 import java.io.*;
 import java.text.DecimalFormat;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 
 class HighscoreResolver {
@@ -28,7 +29,7 @@ class HighscoreResolver {
 
   private void loadSupportedScores() {
     try {
-      String roms = executePINemHi("-lr");
+      String roms = executePINemHi("-lr", new HighscoreMetadata());
       this.supportedRoms = Arrays.asList(roms.split("\n"));
     } catch (Exception e) {
       LOG.error("Failed to load supported rom names from PINemHi: " + e.getMessage(), e);
@@ -38,7 +39,9 @@ class HighscoreResolver {
   /**
    * Return a highscore object for the given table or null if no highscore has been achieved or created yet.
    */
-  public String readHighscore(Game game) {
+  public HighscoreMetadata readHighscore(Game game) {
+    HighscoreMetadata metadata = new HighscoreMetadata();
+    metadata.setScanned(new Date());
     try {
       String romName = game.getRom();
       if (StringUtils.isEmpty(romName)) {
@@ -47,27 +50,30 @@ class HighscoreResolver {
         return null;
       }
 
-      String highscore = readNvHighscore(game);
-      if (highscore == null) {
-        highscore = readVRegHighscore(game);
+      metadata.setRom(romName);
+
+      String rawScore = readNvHighscore(game, metadata);
+      if (rawScore == null) {
+        rawScore = readVRegHighscore(game, metadata);
       }
-      if (highscore == null) {
-        highscore = parseHSFileHighscore(game);
+      if (rawScore == null) {
+        rawScore = parseHSFileHighscore(game, metadata);
       }
 
-      if (highscore == null) {
+      if (rawScore == null) {
         String msg = "Reading highscore for '" + game.getGameDisplayName() + "' failed, no nvram file, VPReg.stg entry or EM highscore file found for rom name '" + romName + "'";
+        metadata.setStatus("No nvram file, VPReg.stg entry or EM highscore file found.");
         LOG.info(msg);
       }
       else {
         LOG.debug("Successfully read highscore for " + game.getGameDisplayName());
-        return highscore;
+        metadata.setRaw(rawScore);
       }
 
     } catch (Exception e) {
       LOG.error("Failed to find highscore for table {}: {}", game.getGameFileName(), e.getMessage(), e);
     }
-    return null;
+    return metadata;
   }
 
   /**
@@ -86,9 +92,13 @@ class HighscoreResolver {
     updateUserScores(targetFolder);
   }
 
-  private String parseHSFileHighscore(Game game) throws IOException {
+  private String parseHSFileHighscore(Game game, HighscoreMetadata metadata) throws IOException {
     File hsFile = game.getEMHighscoreFile();
     if (hsFile != null && hsFile.exists()) {
+      metadata.setType(HighscoreMetadata.TYPE_EM);
+      metadata.setFilename(hsFile.getCanonicalPath());
+      metadata.setModified(new Date(hsFile.lastModified()));
+
       List<String> lines = IOUtils.readLines(new FileInputStream(hsFile), "utf-8");
       if (lines.size() >= 15) {
         StringBuilder builder = new StringBuilder("HIGHEST SCORES\n");
@@ -118,10 +128,14 @@ class HighscoreResolver {
   /**
    * We use the manual set rom name to find the highscore in the "/User/VPReg.stg" file.
    */
-  private String readVRegHighscore(Game game) throws IOException {
+  private String readVRegHighscore(Game game, HighscoreMetadata metadata) throws IOException {
     File tableHighscoreFolder = game.getVPRegFolder();
 
     if (tableHighscoreFolder != null && game.getVPRegFolder().exists()) {
+      metadata.setType(HighscoreMetadata.TYPE_VREG);
+      metadata.setFilename(game.getVPRegFolder().getCanonicalPath());
+      metadata.setModified(new Date(game.getVPRegFolder().lastModified()));
+
       StringBuilder builder = new StringBuilder("HIGHEST SCORES\n");
 
       int index = 1;
@@ -176,8 +190,8 @@ class HighscoreResolver {
     }
 
     String unzipCommand = systemService.get7ZipCommand();
-    List<String> commands = Arrays.asList("\"" + unzipCommand + "\"", "-aoa", "x", "\"" + systemService.getVPRegFile().getAbsolutePath() + "\"", "-o\"" + vpRegFolderFile.getAbsolutePath() + "\"");
     try {
+      List<String> commands = Arrays.asList("\"" + unzipCommand + "\"", "-aoa", "x", "\"" + systemService.getVPRegFile().getCanonicalPath() + "\"", "-o\"" + vpRegFolderFile.getCanonicalPath() + "\"");
       SystemCommandExecutor executor = new SystemCommandExecutor(commands, false);
       executor.setDir(vpRegFolderFile);
       executor.executeCommand();
@@ -187,7 +201,7 @@ class HighscoreResolver {
       if (!StringUtils.isEmpty(standardErrorFromCommand.toString())) {
         LOG.error("7zip command '" + String.join(" ", commands) + "' failed: {}", standardErrorFromCommand);
       }
-      LOG.info("Finished VPReg folder refresh of " + vpRegFolderFile.getAbsolutePath());
+      LOG.info("Finished VPReg folder refresh of " + vpRegFolderFile.getCanonicalPath());
     } catch (Exception e) {
       LOG.info("Failed to init VPReg: " + e.getMessage(), e);
     }
@@ -196,11 +210,12 @@ class HighscoreResolver {
   /**
    * Executes a single PINemHi command for the given game.
    *
-   * @param game the game to parse the highscore for
+   * @param game     the game to parse the highscore for
+   * @param metadata the metadata that are collected while parsing
    * @return the Highscore object or null if no highscore could be parsed.
    */
   @Nullable
-  private String readNvHighscore(Game game) {
+  private String readNvHighscore(Game game, HighscoreMetadata metadata) {
     Highscore highscore = null;
     try {
       File nvRam = game.getNvRamFile();
@@ -208,20 +223,26 @@ class HighscoreResolver {
         return null;
       }
 
+      metadata.setFilename(nvRam.getCanonicalPath());
+      metadata.setModified(new Date(nvRam.lastModified()));
+
       String romName = game.getRom();
       if (!this.supportedRoms.contains(romName)) {
-        LOG.warn("The resolved rom name '" + romName + "' of game '" + game.getGameDisplayName() + "' is not supported by PINemHi.");
+        String msg = "The resolved rom name '" + romName + "' of game '" + game.getGameDisplayName() + "' is not supported by PINemHi.";
+        LOG.warn(msg);
+        metadata.setStatus(msg);
         return null;
       }
 
-      return executePINemHi(nvRam.getName());
+      return executePINemHi(nvRam.getName(), metadata);
     } catch (Exception e) {
       LOG.error("Failed to parse highscore: " + e.getMessage(), e);
     }
     return null;
   }
 
-  private String executePINemHi(String param) throws Exception {
+  private String executePINemHi(String param, HighscoreMetadata metadata) throws Exception {
+    metadata.setType(HighscoreMetadata.TYPE_NVRAM);
     File commandFile = systemService.getPinemhiCommandFile();
     try {
       List<String> commands = Arrays.asList(commandFile.getName(), param);
@@ -231,13 +252,16 @@ class HighscoreResolver {
       StringBuilder standardOutputFromCommand = executor.getStandardOutputFromCommand();
       StringBuilder standardErrorFromCommand = executor.getStandardErrorFromCommand();
       if (!StringUtils.isEmpty(standardErrorFromCommand.toString())) {
-        String error = "Pinemhi command (" + commandFile.getAbsolutePath() + ") failed: " + standardErrorFromCommand;
+        String error = "Pinemhi command (" + commandFile.getCanonicalPath() + ") failed: " + standardErrorFromCommand;
         LOG.error(error);
+        metadata.setStatus(error);
         throw new Exception(error);
       }
       return standardOutputFromCommand.toString();
     } catch (Exception e) {
-      LOG.error(commandFile.getAbsolutePath() + " command failed for directory " + commandFile.getAbsolutePath() + ": " + e.getMessage());
+      String msg = commandFile.getCanonicalPath() + " command failed for directory " + commandFile.getCanonicalPath() + ": " + e.getMessage();
+      metadata.setStatus(msg);
+      LOG.error(msg);
       throw e;
     }
   }
@@ -253,7 +277,7 @@ class HighscoreResolver {
         return text.replace("\0", "").trim();
       }
       else {
-        LOG.debug("Error reading highscore file " + file.getAbsolutePath() + ", reader returned null.");
+        LOG.debug("Error reading highscore file " + file.getCanonicalPath() + ", reader returned null.");
       }
       return null;
     } catch (IOException e) {

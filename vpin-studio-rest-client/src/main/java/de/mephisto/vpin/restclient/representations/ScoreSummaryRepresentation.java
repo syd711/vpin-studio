@@ -9,6 +9,16 @@ public class ScoreSummaryRepresentation {
 
   private String raw;
 
+  private HighscoreMetadataRepresentation metadata;
+
+  public HighscoreMetadataRepresentation getMetadata() {
+    return metadata;
+  }
+
+  public void setMetadata(HighscoreMetadataRepresentation metadata) {
+    this.metadata = metadata;
+  }
+
   public String getRaw() {
     return raw;
   }

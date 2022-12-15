@@ -175,11 +175,6 @@
             <artifactId>launch4j-maven-plugin</artifactId>
             <version>2.2.0</version>
         </dependency>
-<!--        <dependency>-->
-<!--            <groupId>org.springframework.shell</groupId>-->
-<!--            <artifactId>spring-shell-starter</artifactId>-->
-<!--            <version>2.1.3</version>-->
-<!--        </dependency>-->
     </dependencies>
 
     <build>
@@ -336,7 +331,6 @@
                                         <include>*.exe</include>
                                         <include>highscore-card-background-*.jpg</include>
                                         <include>competition-bg-default.png</include>
-                                        <include>system.properties</include>
                                         <include>card-generator.properties</include>
                                         <include>empty-b2s-preview.png</include>
                                     </includes>

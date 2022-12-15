@@ -30,6 +30,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 public class TablesSidebarController implements Initializable {
@@ -114,6 +115,9 @@ public class TablesSidebarController implements Initializable {
   private TextArea highscoreTextArea;
 
   @FXML
+  private TextArea highscoreFormattedTextArea;
+
+  @FXML
   private ImageView rawDirectB2SImage;
 
   @FXML
@@ -136,6 +140,21 @@ public class TablesSidebarController implements Initializable {
 
   @FXML
   private CheckBox mediaPreviewCheckbox;
+
+  @FXML
+  private Label hsTypeLabel;
+
+  @FXML
+  private Label hsFileLabel;
+
+  @FXML
+  private Label hsLastModifiedLabel;
+
+  @FXML
+  private Label hsStatusLabel;
+
+  @FXML
+  private Label hsLastScannedLabel;
 
 
   private VPinStudioClient client;
@@ -270,28 +289,63 @@ public class TablesSidebarController implements Initializable {
   }
 
   @FXML
-  private void onDismiss() {
-    GameRepresentation gameRepresentation = game.get();
-    Optional<ButtonType> result = WidgetFactory.showConfirmation("Ignore this warning for future validations of table '" + gameRepresentation.getGameDisplayName() + "?", null);
-    if (result.isPresent() && result.get().equals(ButtonType.OK)) {
-      String validationState = String.valueOf(gameRepresentation.getValidationState());
-      String ignoredValidations = gameRepresentation.getIgnoredValidations();
-      if (ignoredValidations == null) {
-        ignoredValidations = "";
-      }
-      List<String> gameIgnoreList = new ArrayList<>(Arrays.asList(ignoredValidations.split(",")));
-      if (!gameIgnoreList.contains(validationState)) {
-        gameIgnoreList.add(validationState);
+  private void onScan() {
+    refreshHighscore(game, true);
+  }
+
+  private void refreshHighscore(Optional<GameRepresentation> gameRepresentation, boolean forceRescan) {
+    highscoreTextArea.setText("");
+    highscoreFormattedTextArea.setText("");
+
+    this.hsFileLabel.setText("-");
+    this.hsStatusLabel.setText("-");
+    this.hsTypeLabel.setText("-");
+    this.hsLastModifiedLabel.setText("-");
+    this.hsLastScannedLabel.setText("-");
+
+    if (gameRepresentation.isPresent()) {
+      GameRepresentation game = gameRepresentation.get();
+      if(forceRescan) {
+        client.scanGameScore(game.getId());
       }
 
-      gameRepresentation.setIgnoredValidations(StringUtils.join(gameIgnoreList, ","));
-
-      try {
-        client.saveGame(gameRepresentation);
-      } catch (Exception e) {
-        WidgetFactory.showAlert(e.getMessage());
+      ScoreSummaryRepresentation summary = client.getGameScores(game.getId());
+      if(summary.getMetadata().getFilename() != null) {
+        this.hsFileLabel.setText(summary.getMetadata().getFilename());
       }
-      tablesController.onReload();
+
+      if(summary.getMetadata().getStatus() != null) {
+        this.hsStatusLabel.setText(summary.getMetadata().getStatus());
+      }
+
+      if(summary.getMetadata().getType() != null) {
+        this.hsTypeLabel.setText(summary.getMetadata().getType());
+      }
+
+      if(summary.getMetadata().getModified() != null) {
+        this.hsLastModifiedLabel.setText(SimpleDateFormat.getDateTimeInstance().format(summary.getMetadata().getModified()));
+      }
+
+      if(summary.getMetadata().getScanned() != null) {
+        this.hsLastScannedLabel.setText(SimpleDateFormat.getDateTimeInstance().format(summary.getMetadata().getScanned()));
+      }
+
+
+      if (!summary.getScores().isEmpty()) {
+        highscoreTextArea.setText(summary.getRaw());
+        List<ScoreRepresentation> scores = summary.getScores();
+        StringBuilder builder = new StringBuilder();
+        for (ScoreRepresentation score : scores) {
+          builder.append("#");
+          builder.append(score.getPosition());
+          builder.append(" ");
+          builder.append(score.getPlayerInitials());
+          builder.append("   ");
+          builder.append(score.getScore());
+          builder.append("\n");
+        }
+        highscoreFormattedTextArea.setText(builder.toString());
+      }
     }
   }
 
@@ -366,13 +420,7 @@ public class TablesSidebarController implements Initializable {
         refreshMedia(gameMedia);
       }
 
-      ScoreSummaryRepresentation gameScores = client.getGameScores(game.getId());
-      if (!gameScores.getScores().isEmpty()) {
-        highscoreTextArea.setText(gameScores.getRaw());
-      }
-      else {
-        highscoreTextArea.setText("");
-      }
+      refreshHighscore(g, false);
     }
     else {
       resetMedia();

@@ -423,7 +423,7 @@
                      <graphic>
                                        </graphic>
                      <graphic>
-                        <FontIcon iconColor="WHITE" iconLiteral="sil-refresh" wrappingWidth="12.800048828125" />
+                        <FontIcon iconColor="WHITE" iconLiteral="sil-reload" wrappingWidth="12.800048828125" />
                      </graphic>
                   </Button>
                   <Separator orientation="VERTICAL" prefHeight="0.0" prefWidth="0.0">

@@ -316,9 +316,34 @@
 }
 
 .text-area {
+    -fx-background-color: transparent, white, transparent, white;
+    -fx-background-insets: 0;
+    -fx-focus-color: transparent;
+    -fx-border-color: #111111;
     -fx-text-fill: white;
     -fx-font-weight: normal;
+    -fx-background-radius: 3 3 3 3;
  }
+
+.text-area:disabled {
+ -fx-background-insets: 0;
+    -fx-opacity: 1.0;
+    -fx-background-radius: 3 3 3 3;
+}
+
+.text-area:focused {
+ -fx-background-insets: 0;
+    -fx-focus-color: transparent;
+    -fx-background-radius: 3 3 3 3;
+}
+
+.text-area .content {
+    -fx-background-color: transparent, white, transparent, white;
+}
+
+.text-area:focused .content {
+    -fx-background-color: transparent, white, transparent, white;
+}
 
 .hyperlink, .hyperlink:hover {
     -fx-font-size : 12px;
@@ -406,8 +431,6 @@
 /**
  * Accordion & Titled Pane
  */
-.accordion {
-}
 
 .titled-pane {
     -fx-text-fill: #FFFFFF;

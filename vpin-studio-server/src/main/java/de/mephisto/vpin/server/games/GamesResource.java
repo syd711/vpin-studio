@@ -1,6 +1,7 @@
 package de.mephisto.vpin.server.games;
 
 import de.mephisto.vpin.server.competitions.ScoreSummary;
+import de.mephisto.vpin.server.highscores.HighscoreMetadata;
 import de.mephisto.vpin.server.system.SystemService;
 import de.mephisto.vpin.server.util.UploadUtil;
 import org.slf4j.Logger;
@@ -65,6 +66,12 @@ public class GamesResource {
   public boolean scanGame(@PathVariable("id") int pupId) {
     return gameService.scanGame(pupId);
   }
+
+  @GetMapping("/scanscore/{id}")
+  public HighscoreMetadata scanGameScore(@PathVariable("id") int pupId) {
+    return gameService.scanScore(pupId);
+  }
+
 
   @PostMapping("/save")
   public Game save(@RequestBody Game game) {

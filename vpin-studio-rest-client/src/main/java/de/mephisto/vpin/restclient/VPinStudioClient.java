@@ -273,6 +273,15 @@ public class VPinStudioClient implements ObservedPropertyChangeListener, Overlay
     return null;
   }
 
+  public HighscoreMetadataRepresentation scanGameScore(int id) {
+    try {
+      return restClient.get(API + "games/scanscore/" + id, HighscoreMetadataRepresentation.class);
+    } catch (Exception e) {
+      LOG.error("Failed to read game scores " + id + ": " + e.getMessage(), e);
+    }
+    return null;
+  }
+
   public boolean scanGame(GameRepresentation game) {
     int gameId = game.getId();
     return restClient.get(API + "games/scan/" + gameId, Boolean.class);
