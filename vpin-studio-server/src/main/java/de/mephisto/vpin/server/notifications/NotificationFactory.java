@@ -15,12 +15,12 @@ public class NotificationFactory {
   private static final String COMPETITION_CREATED_TEMPLATE = "A new competition has been started!\\n" +
       "```\\n" +
       "%s\\n" +
-      "----------------------------------------------------------------------\\n" +
+      "------------------------------------------------------------\\n" +
       "Table:       %s\\n" +
       "Start Date:  %s\\n" +
       "End Date:    %s\\n" +
       "Duration:    %s days\\n" +
-      "----------------------------------------------------------------------```";
+      "------------------------------------------------------------```";
 
   private static final String COMPETITION_FINISHED_TEMPLATE = "```" +
       "The competition '%s' has been finished!\\n" +
@@ -37,6 +37,11 @@ public class NotificationFactory {
 
   private static final String COMPETITION_CANCELLED_TEMPLATE = "```" +
       "The competition '%s' has been cancelled." +
+      "```";
+
+  private static final String HIGHSCORE_TEMPLATE = "```" +
+      "A new highscore for '%s' has been created:\\n" +
+      "%s\\n" +
       "```";
 
   public static String createDiscordCompetitionCancelledMessage(Competition competition) {
@@ -72,6 +77,10 @@ public class NotificationFactory {
         summary.getScores().get(0).getScore(),
         second,
         third);
+  }
+
+  public static String createDiscordHighscoreMessage(Game game, Score changedScore) {
+    return String.format(HIGHSCORE_TEMPLATE,game.getGameDisplayName(), changedScore.toString());
   }
 
   private static String formatScoreEntry(ScoreSummary summary, int index) {

@@ -89,6 +89,10 @@ public class Score {
 
   @Override
   public String toString() {
-    return this.getPosition() + ". " + this.getPlayerInitials() + "   " + this.getScore();
+    String name = this.getPlayerInitials();
+    if(this.player != null) {
+      name = this.player.getName();
+    }
+    return "#" + this.getPosition() + " " + name + "   " + this.getScore();
   }
 }

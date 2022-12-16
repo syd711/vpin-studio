@@ -52,6 +52,13 @@ public class NotificationService implements InitializingBean, HighscoreChangeLis
     } catch (Exception e) {
       LOG.error("Error updating card after highscore change event: " + e.getMessage(), e);
     }
+
+    String webhookUrl = (String) preferencesService.getPreferenceValue(PreferenceNames.DISCORD_WEBHOOK_URL);
+    if (!StringUtils.isEmpty(webhookUrl) && event.getChangedScore() != null) {
+      String message = NotificationFactory.createDiscordHighscoreMessage(event.getGame(), event.getChangedScore());
+      DiscordWebhook.call(webhookUrl, message);
+      LOG.info("Called Discord webhook for update of " + event.getChangedScore());
+    }
   }
 
   @Override
@@ -64,7 +71,7 @@ public class NotificationService implements InitializingBean, HighscoreChangeLis
         String message = NotificationFactory.createDiscordCompetitionCreatedMessage(competition, game);
         DiscordWebhook.call(webhookUrl, message);
         LOG.info("Called Discord webhook for creation of " + competition);
-        if(competition.isCustomizeMedia()) {
+        if (competition.isCustomizeMedia()) {
           popperService.augmentWheel(game, competition.getBadge());
         }
       }
@@ -113,7 +120,7 @@ public class NotificationService implements InitializingBean, HighscoreChangeLis
     Game game = gameService.getGame(competition.getGameId());
 
     boolean customizeMedia = competition.isCustomizeMedia();
-    if(customizeMedia) {
+    if (customizeMedia) {
       popperService.augmentWheel(game, competition.getBadge());
     }
     else {
