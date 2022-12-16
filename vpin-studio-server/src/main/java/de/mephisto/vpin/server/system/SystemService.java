@@ -100,7 +100,14 @@ public class SystemService implements InitializingBean {
       if (!getB2SImageExtractionFolder().exists()) {
         boolean mkdirs = getB2SImageExtractionFolder().mkdirs();
         if (!mkdirs) {
-          LOG.error("Failed to create image directory " + getB2SImageExtractionFolder().getAbsolutePath());
+          LOG.error("Failed to create b2s image directory " + getB2SImageExtractionFolder().getAbsolutePath());
+        }
+      }
+
+      if (!getB2SCroppedImageFolder().exists()) {
+        boolean mkdirs = getB2SCroppedImageFolder().mkdirs();
+        if (!mkdirs) {
+          LOG.error("Failed to create b2s crops directory " + getB2SCroppedImageFolder().getAbsolutePath());
         }
       }
     } catch (Exception e) {
@@ -126,6 +133,7 @@ public class SystemService implements InitializingBean {
     LOG.info(formatPathLog("VPReg File", this.getVPRegFile()));
     LOG.info(formatPathLog("Extracted VPReg Folder", this.getExtractedVPRegFolder()));
     LOG.info(formatPathLog("B2S Extraction Folder", this.getB2SImageExtractionFolder()));
+    LOG.info(formatPathLog("B2S Cropped Folder", this.getB2SCroppedImageFolder()));
     LOG.info(formatPathLog("VPX Files", String.valueOf(this.getVPXTables().length)));
     LOG.info(formatPathLog("Service Version", VPinStudioServer.class.getPackage().getImplementationVersion()));
     LOG.info("*******************************************************************************************************");

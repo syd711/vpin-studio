@@ -98,10 +98,10 @@ public class DirectB2SResource {
 
     Game game = gameService.getGame(gameId);
     if (game.getCroppedDirectB2SBackgroundImage().exists()) {
-      game.getRawDirectB2SBackgroundImage().delete();
+      game.getCroppedDirectB2SBackgroundImage().delete();
     }
     if (game.getRawDirectB2SBackgroundImage().exists()) {
-      game.getCroppedDirectB2SBackgroundImage().delete();
+      game.getRawDirectB2SBackgroundImage().delete();
     }
 
     File out = game.getDirectB2SFile();
