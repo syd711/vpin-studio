@@ -66,6 +66,21 @@ public class VPinStudioClient implements ObservedPropertyChangeListener, Overlay
     restTemplate.getForObject(restClient.getBaseUrl() + API + "system/shutdown", Boolean.class);
   }
 
+  public boolean autostartInstalled() {
+    final RestTemplate restTemplate = new RestTemplate();
+    return restTemplate.getForObject(restClient.getBaseUrl() + API + "system/autostart/installed", Boolean.class);
+  }
+
+  public boolean autostartInstall() {
+    final RestTemplate restTemplate = new RestTemplate();
+    return restTemplate.getForObject(restClient.getBaseUrl() + API + "system/autostart/install", Boolean.class);
+  }
+
+  public boolean autostartUninstall() {
+    final RestTemplate restTemplate = new RestTemplate();
+    return restTemplate.getForObject(restClient.getBaseUrl() + API + "system/autostart/uninstall", Boolean.class);
+  }
+
   public void update() {
     final RestTemplate restTemplate = new RestTemplate();
     restTemplate.getForObject(restClient.getBaseUrl() + API + "system/update", Boolean.class);
@@ -344,25 +359,6 @@ public class VPinStudioClient implements ObservedPropertyChangeListener, Overlay
   public boolean invalidatePlayerDomain(PlayerDomain domain) {
     return restClient.get(API + "players/invalidate/" + domain.name(), Boolean.class);
   }
-
-
-  /*********************************************************************************************************************
-   * Overlay
-   ********************************************************************************************************************/
-
-  public InputStream getOverlayImage() {
-    byte[] bytes = restClient.readBinary(API + "overlay/preview");
-    return new ByteArrayInputStream(bytes);
-  }
-
-  public boolean generateOverlayImage() {
-    return restClient.get(API + "overlay/generate", Boolean.class);
-  }
-
-  public List<String> getOverlayBackgrounds() {
-    return Arrays.asList(restClient.get(API + "overlay/backgrounds", String[].class));
-  }
-
 
   /*********************************************************************************************************************
    * Highscore Cards

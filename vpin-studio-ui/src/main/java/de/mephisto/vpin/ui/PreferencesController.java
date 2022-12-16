@@ -82,6 +82,11 @@ public class PreferencesController implements Initializable {
   }
 
   @FXML
+  private void onServiceOptions(ActionEvent event) throws IOException {
+    load("preference-service-options.fxml");
+  }
+
+  @FXML
   private void onDiscordBot(ActionEvent event) throws IOException {
     load("preference-discord-bot.fxml");
   }

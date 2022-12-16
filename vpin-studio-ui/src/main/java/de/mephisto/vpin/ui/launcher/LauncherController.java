@@ -9,7 +9,7 @@ import de.mephisto.vpin.restclient.VPinStudioClient;
 import de.mephisto.vpin.restclient.representations.PreferenceEntryRepresentation;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.util.Dialogs;
-import de.mephisto.vpin.ui.util.Services;
+import de.mephisto.vpin.commons.Services;
 import de.mephisto.vpin.ui.util.UIDefaults;
 import de.mephisto.vpin.ui.util.WidgetFactory;
 import javafx.application.Platform;

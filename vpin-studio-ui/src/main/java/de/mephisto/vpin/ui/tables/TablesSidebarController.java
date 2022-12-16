@@ -310,41 +310,42 @@ public class TablesSidebarController implements Initializable {
       }
 
       ScoreSummaryRepresentation summary = client.getGameScores(game.getId());
-      if(summary.getMetadata().getFilename() != null) {
-        this.hsFileLabel.setText(summary.getMetadata().getFilename());
-      }
-
-      if(summary.getMetadata().getStatus() != null) {
-        this.hsStatusLabel.setText(summary.getMetadata().getStatus());
-      }
-
-      if(summary.getMetadata().getType() != null) {
-        this.hsTypeLabel.setText(summary.getMetadata().getType());
-      }
-
-      if(summary.getMetadata().getModified() != null) {
-        this.hsLastModifiedLabel.setText(SimpleDateFormat.getDateTimeInstance().format(summary.getMetadata().getModified()));
-      }
-
-      if(summary.getMetadata().getScanned() != null) {
-        this.hsLastScannedLabel.setText(SimpleDateFormat.getDateTimeInstance().format(summary.getMetadata().getScanned()));
-      }
-
-
-      if (!summary.getScores().isEmpty()) {
-        highscoreTextArea.setText(summary.getRaw());
-        List<ScoreRepresentation> scores = summary.getScores();
-        StringBuilder builder = new StringBuilder();
-        for (ScoreRepresentation score : scores) {
-          builder.append("#");
-          builder.append(score.getPosition());
-          builder.append(" ");
-          builder.append(score.getPlayerInitials());
-          builder.append("   ");
-          builder.append(score.getScore());
-          builder.append("\n");
+      if(summary != null) {
+        if(summary.getMetadata().getFilename() != null) {
+          this.hsFileLabel.setText(summary.getMetadata().getFilename());
         }
-        highscoreFormattedTextArea.setText(builder.toString());
+
+        if(summary.getMetadata().getStatus() != null) {
+          this.hsStatusLabel.setText(summary.getMetadata().getStatus());
+        }
+
+        if(summary.getMetadata().getType() != null) {
+          this.hsTypeLabel.setText(summary.getMetadata().getType());
+        }
+
+        if(summary.getMetadata().getModified() != null) {
+          this.hsLastModifiedLabel.setText(SimpleDateFormat.getDateTimeInstance().format(summary.getMetadata().getModified()));
+        }
+
+        if(summary.getMetadata().getScanned() != null) {
+          this.hsLastScannedLabel.setText(SimpleDateFormat.getDateTimeInstance().format(summary.getMetadata().getScanned()));
+        }
+
+        if (!summary.getScores().isEmpty()) {
+          highscoreTextArea.setText(summary.getRaw());
+          List<ScoreRepresentation> scores = summary.getScores();
+          StringBuilder builder = new StringBuilder();
+          for (ScoreRepresentation score : scores) {
+            builder.append("#");
+            builder.append(score.getPosition());
+            builder.append(" ");
+            builder.append(score.getPlayerInitials());
+            builder.append("   ");
+            builder.append(score.getScore());
+            builder.append("\n");
+          }
+          highscoreFormattedTextArea.setText(builder.toString());
+        }
       }
     }
   }

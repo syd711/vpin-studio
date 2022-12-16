@@ -16,8 +16,8 @@
    <top>
       <VBox fx:id="preferenceList" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" styleClass="subpanel" BorderPane.alignment="TOP_LEFT">
          <children>
-            <Label styleClass="preference-title" text="SERVICE INFO" textFill="WHITE" />
-            <Label styleClass="preference-subtitle" text="Service Details">
+            <Label styleClass="preference-title" text="SERVICE PREFERENCES" textFill="WHITE" />
+            <Label styleClass="preference-subtitle" text="Service Info">
                <VBox.margin>
                   <Insets />
                </VBox.margin>

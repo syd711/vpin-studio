@@ -9,10 +9,7 @@ public class SystemServiceTest {
 
   @Test
   public void testSystemInfo() throws Exception {
-//    SystemCommandExecutor executor =new SystemCommandExecutor(Arrays.asList("shutdown", "-s"));
-//    executor.executeCommand();
-//    System.out.println(executor.getStandardErrorFromCommand());
-//    System.out.println(executor.getStandardOutputFromCommand());
+
   }
 
 }

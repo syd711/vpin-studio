@@ -18,8 +18,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.context.event.ApplicationReadyEvent;
-import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
 
 import java.util.logging.Level;
@@ -44,6 +42,8 @@ public class KeyEventService implements InitializingBean, NativeKeyListener, Pop
 
   private OverlayWindowFX overlayWindowFX;
 
+  private ShutdownThread shutdownThread;
+
   @Override
   public void afterPropertiesSet() throws NativeHookException {
     GlobalScreen.registerNativeHook();
@@ -62,6 +62,9 @@ public class KeyEventService implements InitializingBean, NativeKeyListener, Pop
       LOG.info("Overlay listener started.");
     }).start();
 
+    shutdownThread = new ShutdownThread(preferencesService);
+    shutdownThread.start();
+
     overlayWindowFX.client = overlayClient;
     overlayWindowFX = OverlayWindowFX.waitForOverlay();
     LOG.info("Finished initialization of OverlayWindowFX");
@@ -77,6 +80,8 @@ public class KeyEventService implements InitializingBean, NativeKeyListener, Pop
 
   @Override
   public void nativeKeyPressed(NativeKeyEvent nativeKeyEvent) {
+    shutdownThread.notifyKeyEvent();
+
     String hotkey = (String) preferencesService.getPreferenceValue(PreferenceNames.OVERLAY_KEY);
     String resetKey = (String) preferencesService.getPreferenceValue(PreferenceNames.RESET_KEY);
 

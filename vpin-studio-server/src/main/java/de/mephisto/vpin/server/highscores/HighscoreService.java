@@ -268,7 +268,6 @@ public class HighscoreService implements InitializingBean {
    */
   public void updateHighscore(@NonNull Game game) {
     highscoreResolver.refresh();
-    HighscoreChangeEvent event = null;
 
     HighscoreMetadata metadata = highscoreResolver.readHighscore(game);
     String rawHighscore = metadata.getRaw();
@@ -289,8 +288,8 @@ public class HighscoreService implements InitializingBean {
       else {
         //archive old existingScore
         Highscore existingScore = existingHighscore.get();
-        int changedPosition = calculateChangedPosition(existingScore, newHighscore, game.getId());
-        HighscoreVersion version = existingScore.toVersion(changedPosition);
+        Score changedScore = calculateChangedPosition(existingScore, newHighscore, game.getId());
+        HighscoreVersion version = existingScore.toVersion(changedScore.getPosition());
         highscoreVersionRepository.saveAndFlush(version);
 
         //update existing one
@@ -299,26 +298,10 @@ public class HighscoreService implements InitializingBean {
         highscoreRepository.saveAndFlush(existingScore);
 
         LOG.info("Archived old existingScore and saved updated existingScore for " + game);
+
+        HighscoreChangeEvent event = createEvent(game, existingHighscore.get(), newHighscore, changedScore);
+        triggerHighscoreChange(event);
       }
-
-      event = new HighscoreChangeEvent() {
-        @Override
-        public Game getGame() {
-          return game;
-        }
-
-        @Override
-        public Highscore getOldHighscore() {
-          return existingHighscore.get();
-        }
-
-        @Override
-        public Highscore getNewHighscore() {
-          return newHighscore;
-        }
-      };
-
-      triggerHighscoreChange(event);
     }
     else {
       LOG.info("Skipped highscore change event for {} because the raw highscore data did not change.", game);
@@ -340,15 +323,15 @@ public class HighscoreService implements InitializingBean {
     return null;
   }
 
-  private int calculateChangedPosition(Highscore oldHighscore, Highscore newHighscore, int gameId) {
+  private Score calculateChangedPosition(Highscore oldHighscore, Highscore newHighscore, int gameId) {
     List<Score> oldScores = highscoreParser.parseScores(oldHighscore.getCreatedAt(), oldHighscore.getRaw(), gameId);
     List<Score> newScores = highscoreParser.parseScores(newHighscore.getCreatedAt(), newHighscore.getRaw(), gameId);
     for (int i = 0; i < oldScores.size(); i++) {
-      if (oldScores.get(i).getScore().equalsIgnoreCase(newScores.get(i).getScore())) {
-        return (i + 1);
+      if (!oldScores.get(i).getScore().equalsIgnoreCase(newScores.get(i).getScore())) {
+        return newScores.get(i);
       }
     }
-    return 0;
+    return null;
   }
 
   private void triggerHighscoreChange(@NonNull HighscoreChangeEvent event) {
@@ -357,6 +340,30 @@ public class HighscoreService implements InitializingBean {
         listener.highscoreChanged(event);
       }
     }).start();
+  }
+
+  private HighscoreChangeEvent createEvent(Game game, Highscore existingHighscore, Highscore newHighscore, Score changedScore) {
+    return new HighscoreChangeEvent() {
+      @Override
+      public Game getGame() {
+        return game;
+      }
+
+      @Override
+      public Highscore getOldHighscore() {
+        return existingHighscore;
+      }
+
+      @Override
+      public Highscore getNewHighscore() {
+        return newHighscore;
+      }
+
+      @Override
+      public Score getChangedScore() {
+        return changedScore;
+      }
+    };
   }
 
   @Override

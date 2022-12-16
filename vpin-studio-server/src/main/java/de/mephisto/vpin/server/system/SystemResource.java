@@ -1,5 +1,6 @@
 package de.mephisto.vpin.server.system;
 
+import de.mephisto.vpin.commons.Services;
 import de.mephisto.vpin.commons.utils.Updater;
 import de.mephisto.vpin.server.util.RequestUtil;
 import org.apache.commons.io.FilenameUtils;
@@ -75,6 +76,21 @@ public class SystemResource {
   @GetMapping("/restart")
   public boolean restart() {
     return true;
+  }
+
+  @GetMapping("/autostart/installed")
+  public boolean autostart() {
+    return Services.isInstalled();
+  }
+
+  @GetMapping("/autostart/install")
+  public boolean installServie() {
+    return Services.install();
+  }
+
+  @GetMapping("/autostart/uninstall")
+  public boolean uninstallServie() {
+    return Services.uninstall();
   }
 
   @GetMapping("/version")

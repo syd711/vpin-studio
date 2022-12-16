@@ -41,6 +41,16 @@ public class Preferences {
   @Column(length = 1024)
   private String highscoreTitles;
 
+  private int idleTimeout;
+
+  public int getIdleTimeout() {
+    return idleTimeout;
+  }
+
+  public void setIdleTimeout(int idleTimeout) {
+    this.idleTimeout = idleTimeout;
+  }
+
   public String getHighscoreTitles() {
     return highscoreTitles;
   }

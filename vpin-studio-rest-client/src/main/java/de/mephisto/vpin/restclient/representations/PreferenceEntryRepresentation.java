@@ -22,6 +22,18 @@ public class PreferenceEntryRepresentation {
     return value;
   }
 
+  public int getIntValue() {
+    try {
+      if(value != null) {
+        return Integer.parseInt(value);
+      }
+    }
+    catch (Exception e) {
+      //ignore
+    }
+    return 0;
+  }
+
   public String getNotNullValue() {
     if (value == null) {
       return "";

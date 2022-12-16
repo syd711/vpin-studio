@@ -4,9 +4,13 @@ import de.mephisto.vpin.server.games.Game;
 
 public interface HighscoreChangeEvent {
 
+
+
   Game getGame();
 
   Highscore getOldHighscore();
 
   Highscore getNewHighscore();
+
+  Score getChangedScore();
 }
