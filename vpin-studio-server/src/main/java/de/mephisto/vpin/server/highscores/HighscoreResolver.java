@@ -4,6 +4,7 @@ import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.system.SystemService;
 import de.mephisto.vpin.commons.utils.SystemCommandExecutor;
 import edu.umd.cs.findbugs.annotations.Nullable;
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -62,7 +63,9 @@ class HighscoreResolver {
 
       if (rawScore == null) {
         String msg = "Reading highscore for '" + game.getGameDisplayName() + "' failed, no nvram file, VPReg.stg entry or EM highscore file found for rom name '" + romName + "'";
-        metadata.setStatus("No nvram file, VPReg.stg entry or EM highscore file found.");
+        if(metadata.getStatus() == null) {
+          metadata.setStatus("No nvram file, VPReg.stg entry or EM highscore file found.");
+        }
         LOG.info(msg);
       }
       else {
@@ -223,20 +226,23 @@ class HighscoreResolver {
         return null;
       }
 
+      String nvRamFileName = nvRam.getCanonicalFile().getName();
+      String nvRamName = FilenameUtils.getBaseName(nvRamFileName);
       metadata.setFilename(nvRam.getCanonicalPath());
       metadata.setModified(new Date(nvRam.lastModified()));
 
-      String romName = game.getRom();
-      if (!this.supportedRoms.contains(romName)) {
-        String msg = "The resolved rom name '" + romName + "' of game '" + game.getGameDisplayName() + "' is not supported by PINemHi.";
+      if (!this.supportedRoms.contains(nvRamName)) {
+        String msg = "The resolved NV ram file '" + nvRamName + "' of game '" + game.getGameDisplayName() + "' is not supported by PINemHi.";
         LOG.warn(msg);
         metadata.setStatus(msg);
         return null;
       }
 
-      return executePINemHi(nvRam.getName(), metadata);
+      return executePINemHi(nvRamFileName, metadata);
     } catch (Exception e) {
-      LOG.error("Failed to parse highscore: " + e.getMessage(), e);
+      String msg = "Failed to parse highscore: " + e.getMessage();
+      metadata.setStatus(msg);
+      LOG.error(msg, e);
     }
     return null;
   }

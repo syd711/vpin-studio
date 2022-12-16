@@ -1,19 +1,18 @@
 package de.mephisto.vpin.server.util;
 
+import de.mephisto.vpin.commons.utils.SystemCommandExecutor;
 import org.junit.jupiter.api.Test;
+
+import java.util.Arrays;
 
 public class SystemServiceTest {
 
   @Test
   public void testSystemInfo() throws Exception {
-//    SystemInfo info = new SystemInfo();
-//    info.afterPropertiesSet();
-//    assertNotNull(info.get7ZipCommand());
-//    assertNotNull(info.getMameRomFolder());
-//    assertTrue(info.getMameRomFolder().exists(), "Folder: " + info.getMameFolder().getAbsolutePath());
-//    assertTrue(info.getVPXTables().length > 0);
-//    assertTrue(info.getPinUPSystemFolder().exists());
-//    assertTrue(info.getVisualPinballInstallationFolder().exists());
+//    SystemCommandExecutor executor =new SystemCommandExecutor(Arrays.asList("shutdown", "-s"));
+//    executor.executeCommand();
+//    System.out.println(executor.getStandardErrorFromCommand());
+//    System.out.println(executor.getStandardOutputFromCommand());
   }
 
 }
