@@ -1,5 +1,6 @@
 package de.mephisto.vpin.ui.tables;
 
+import de.mephisto.vpin.commons.fx.widgets.WidgetController;
 import de.mephisto.vpin.restclient.PopperScreen;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.VPinStudioClient;
@@ -112,10 +113,16 @@ public class TablesSidebarController implements Initializable {
   private Slider volumeSlider;
 
   @FXML
-  private TextArea highscoreTextArea;
+  private Label rawScoreLabel;
 
   @FXML
-  private TextArea highscoreFormattedTextArea;
+  private Label formattedScoreLabel;
+
+  @FXML
+  private Label formattedTitleLabel;
+
+  @FXML
+  private Label rawTitleLabel;
 
   @FXML
   private ImageView rawDirectB2SImage;
@@ -294,60 +301,69 @@ public class TablesSidebarController implements Initializable {
   }
 
   private void refreshHighscore(Optional<GameRepresentation> gameRepresentation, boolean forceRescan) {
-    highscoreTextArea.setText("");
-    highscoreFormattedTextArea.setText("");
-
-    this.hsFileLabel.setText("-");
-    this.hsStatusLabel.setText("-");
-    this.hsTypeLabel.setText("-");
-    this.hsLastModifiedLabel.setText("-");
-    this.hsLastScannedLabel.setText("-");
-
-    if (gameRepresentation.isPresent()) {
-      GameRepresentation game = gameRepresentation.get();
-      if(forceRescan) {
-        client.scanGameScore(game.getId());
-      }
-
-      ScoreSummaryRepresentation summary = client.getGameScores(game.getId());
-      if(summary != null) {
-        if(summary.getMetadata().getFilename() != null) {
-          this.hsFileLabel.setText(summary.getMetadata().getFilename());
-        }
-
-        if(summary.getMetadata().getStatus() != null) {
-          this.hsStatusLabel.setText(summary.getMetadata().getStatus());
-        }
-
-        if(summary.getMetadata().getType() != null) {
-          this.hsTypeLabel.setText(summary.getMetadata().getType());
-        }
-
-        if(summary.getMetadata().getModified() != null) {
-          this.hsLastModifiedLabel.setText(SimpleDateFormat.getDateTimeInstance().format(summary.getMetadata().getModified()));
-        }
-
-        if(summary.getMetadata().getScanned() != null) {
-          this.hsLastScannedLabel.setText(SimpleDateFormat.getDateTimeInstance().format(summary.getMetadata().getScanned()));
-        }
-
-        if (!summary.getScores().isEmpty()) {
-          highscoreTextArea.setText(summary.getRaw());
-          List<ScoreRepresentation> scores = summary.getScores();
-          StringBuilder builder = new StringBuilder();
-          for (ScoreRepresentation score : scores) {
-            builder.append("#");
-            builder.append(score.getPosition());
-            builder.append(" ");
-            builder.append(score.getPlayerInitials());
-            builder.append("   ");
-            builder.append(score.getScore());
-            builder.append("\n");
-          }
-          highscoreFormattedTextArea.setText(builder.toString());
-        }
-      }
-    }
+//    rawScoreLabel.setText("");
+//    formattedScoreLabel.setText("");
+//
+//    this.hsFileLabel.setText("-");
+//    this.hsStatusLabel.setText("-");
+//    this.hsTypeLabel.setText("-");
+//    this.hsLastModifiedLabel.setText("-");
+//    this.hsLastScannedLabel.setText("-");
+//
+//    rawTitleLabel.setVisible(false);
+//    formattedTitleLabel.setVisible(false);
+//
+//    if (gameRepresentation.isPresent()) {
+//      GameRepresentation game = gameRepresentation.get();
+//      if(forceRescan) {
+//        client.scanGameScore(game.getId());
+//      }
+//
+//      ScoreSummaryRepresentation summary = client.getGameScores(game.getId());
+//      if(summary != null) {
+//        if(summary.getMetadata().getFilename() != null) {
+//          this.hsFileLabel.setText(summary.getMetadata().getFilename());
+//        }
+//
+//        if(summary.getMetadata().getStatus() != null) {
+//          this.hsStatusLabel.setText(summary.getMetadata().getStatus());
+//        }
+//
+//        if(summary.getMetadata().getType() != null) {
+//          this.hsTypeLabel.setText(summary.getMetadata().getType());
+//        }
+//
+//        if(summary.getMetadata().getModified() != null) {
+//          this.hsLastModifiedLabel.setText(SimpleDateFormat.getDateTimeInstance().format(summary.getMetadata().getModified()));
+//        }
+//
+//        if(summary.getMetadata().getScanned() != null) {
+//          this.hsLastScannedLabel.setText(SimpleDateFormat.getDateTimeInstance().format(summary.getMetadata().getScanned()));
+//        }
+//
+//        if (!summary.getScores().isEmpty()) {
+//          rawTitleLabel.setVisible(true);
+//          rawScoreLabel.setFont(WidgetController.getScoreFontText());
+//          rawScoreLabel.setText(summary.getRaw());
+//
+//          List<ScoreRepresentation> scores = summary.getScores();
+//          StringBuilder builder = new StringBuilder();
+//          for (ScoreRepresentation score : scores) {
+//            builder.append("#");
+//            builder.append(score.getPosition());
+//            builder.append(" ");
+//            builder.append(score.getPlayerInitials());
+//            builder.append("   ");
+//            builder.append(score.getScore());
+//            builder.append("\n");
+//          }
+//
+//          formattedTitleLabel.setVisible(true);
+//          formattedScoreLabel.setFont(WidgetController.getScoreFontText());
+//          formattedScoreLabel.setText(builder.toString());
+//        }
+//      }
+//    }
   }
 
   @FXML
@@ -420,8 +436,6 @@ public class TablesSidebarController implements Initializable {
       if (titledPaneMedia.isExpanded()) {
         refreshMedia(gameMedia);
       }
-
-      refreshHighscore(g, false);
     }
     else {
       resetMedia();
@@ -441,9 +455,8 @@ public class TablesSidebarController implements Initializable {
       labelHSFilename.setText("-");
 
       refreshDirectB2SPreview(Optional.empty());
-
-      highscoreTextArea.setText("");
     }
+    refreshHighscore(g, false);
   }
 
   private void refreshDirectB2SPreview(Optional<GameRepresentation> game) {

@@ -130,15 +130,18 @@ public class Highscore {
 
   public static Highscore forGame(@NonNull Game game, @Nullable HighscoreMetadata metadata) {
     Highscore highscore = new Highscore();
-    highscore.setRaw(metadata.getRaw());
-    highscore.setFilename(metadata.getFilename());
-    highscore.setType(metadata.getType());
     highscore.setGameId(game.getId());
-    highscore.setStatus(metadata.getStatus());
-    highscore.setLastScanned(metadata.getScanned());
     highscore.setCreatedAt(new Date());
-    highscore.setLastModified(metadata.getModified());
     highscore.setDisplayName(game.getGameDisplayName());
+
+    if(metadata != null) {
+      highscore.setRaw(metadata.getRaw());
+      highscore.setFilename(metadata.getFilename());
+      highscore.setType(metadata.getType());
+      highscore.setStatus(metadata.getStatus());
+      highscore.setLastScanned(metadata.getScanned());
+      highscore.setLastModified(metadata.getModified());
+    }
     return highscore;
   }
 

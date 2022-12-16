@@ -3,6 +3,7 @@ package de.mephisto.vpin.server.highscores;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.system.SystemService;
 import de.mephisto.vpin.commons.utils.SystemCommandExecutor;
+import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
@@ -40,15 +41,17 @@ class HighscoreResolver {
   /**
    * Return a highscore object for the given table or null if no highscore has been achieved or created yet.
    */
+  @NonNull
   public HighscoreMetadata readHighscore(Game game) {
     HighscoreMetadata metadata = new HighscoreMetadata();
     metadata.setScanned(new Date());
     try {
       String romName = game.getRom();
       if (StringUtils.isEmpty(romName)) {
-        String msg = "Skipped highscore reading for '" + game.getGameDisplayName() + "' failed, no rom name found.";
+        String msg = "No rom name found.";
+        metadata.setStatus(msg);
         LOG.info(msg);
-        return null;
+        return metadata;
       }
 
       metadata.setRom(romName);

@@ -9,14 +9,21 @@ public class WidgetController {
   private static Font scoreFont;
   private static Font scoreFontBold;
   private static Font scoreFontSmall;
+  private static Font scoreFontText;
 
   static {
+    Font.loadFont(OverlayWindowFX.class.getResourceAsStream("MonospaceBold.ttf"), 22);
     Font.loadFont(OverlayWindowFX.class.getResourceAsStream("digital-7.ttf"), 22);
     Font.loadFont(OverlayWindowFX.class.getResourceAsStream("impact.ttf"), 22);
-    String SCORE_FONT_NAME = "Digital-7"; //widgetProperties.getProperty("overlay.score.font.name", "Arial");
+
+    String SCORE_FONT_NAME = "Digital-7";
+    String SCORE_TEXT_FONT_NAME = "Monospace";
+
     scoreFont = Font.font(SCORE_FONT_NAME, FontPosture.findByName("regular"), 34);
     scoreFontBold = Font.font(SCORE_FONT_NAME, FontPosture.findByName("bold"), 34);
     scoreFontSmall = Font.font(SCORE_FONT_NAME, FontPosture.findByName("regular"), 28);
+
+    scoreFontText = Font.font(SCORE_TEXT_FONT_NAME, FontPosture.findByName("regular"), 16);
   }
 
   public WidgetController() {
@@ -30,7 +37,12 @@ public class WidgetController {
     return scoreFontBold;
   }
 
-  protected Font getScoreFont() {
+  public Font getScoreFont() {
     return scoreFont;
+  }
+
+
+  public static Font getScoreFontText() {
+    return scoreFontText;
   }
 }

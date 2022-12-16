@@ -7,7 +7,6 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.Slider?>
-<?import javafx.scene.control.TextArea?>
 <?import javafx.scene.control.TitledPane?>
 <?import javafx.scene.control.Tooltip?>
 <?import javafx.scene.image.ImageView?>
@@ -313,66 +312,9 @@
                         </VBox>
                     </content>
                 </TitledPane>
-                <TitledPane prefHeight="750.0" prefWidth="600.0" text="Highscore">
+                <TitledPane prefWidth="600.0" text="Highscore">
                     <content>
-                        <BorderPane prefHeight="200.0" prefWidth="200.0">
-                            <center>
-                        <BorderPane BorderPane.alignment="CENTER">
-                           <BorderPane.margin>
-                              <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
-                           </BorderPane.margin>
-                           <center>
-                                      <TextArea fx:id="highscoreTextArea" editable="false" focusTraversable="false" prefHeight="400.0">
-                                 <BorderPane.margin>
-                                    <Insets />
-                                 </BorderPane.margin>
-                                      </TextArea>
-                           </center>
-                           <top>
-                              <Label text="Raw Highscore" BorderPane.alignment="TOP_LEFT">
-                                 <font>
-                                    <Font name="System Bold" size="14.0" />
-                                 </font>
-                                 <BorderPane.margin>
-                                    <Insets bottom="3.0" />
-                                 </BorderPane.margin>
-                              </Label>
-                           </top>
-                           <bottom>
-                            <Button mnemonicParsing="false" onAction="#onScan" text="Scan" textFill="WHITE" BorderPane.alignment="CENTER_RIGHT">
-                                 <graphic>
-                                    <FontIcon iconColor="WHITE" iconLiteral="sil-refresh" />
-                                 </graphic>
-                                 <BorderPane.margin>
-                                    <Insets top="3.0" />
-                                 </BorderPane.margin>
-                              </Button>
-                           </bottom>
-                        </BorderPane>
-                            </center>
-                     <bottom>
-                        <BorderPane BorderPane.alignment="CENTER">
-                           <center>
-                              <TextArea fx:id="highscoreFormattedTextArea" editable="false" focusTraversable="false" prefHeight="200.0" prefWidth="200.0" />
-                           </center>
-                           <top>
-                              <Label text="Formatted List" textFill="WHITE" BorderPane.alignment="TOP_LEFT">
-                                 <BorderPane.margin>
-                                    <Insets bottom="3.0" />
-                                 </BorderPane.margin>
-                                 <font>
-                                    <Font name="System Bold" size="14.0" />
-                                 </font>
-                              </Label>
-                           </top>
-                           <opaqueInsets>
-                              <Insets />
-                           </opaqueInsets>
-                           <BorderPane.margin>
-                              <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
-                           </BorderPane.margin>
-                        </BorderPane>
-                     </bottom>
+                        <BorderPane>
                      <top>
                         <VBox BorderPane.alignment="CENTER">
                            <children>
@@ -383,13 +325,14 @@
                               </Label>
                               <GridPane>
                                 <columnConstraints>
-                                  <ColumnConstraints hgrow="SOMETIMES" maxWidth="123.99995117187501" minWidth="10.0" prefWidth="100.0" />
-                                  <ColumnConstraints hgrow="SOMETIMES" maxWidth="482.4000488281251" minWidth="10.0" prefWidth="475.20000000000005" />
+                                  <ColumnConstraints hgrow="SOMETIMES" maxWidth="297.4000732421875" minWidth="104.8000244140625" prefWidth="104.8000244140625" />
+                                  <ColumnConstraints hgrow="SOMETIMES" maxWidth="469.1999755859375" minWidth="277.39992675781247" prefWidth="469.1999755859375" />
                                 </columnConstraints>
                                 <rowConstraints>
                                   <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                   <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                   <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                     <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                     <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                 </rowConstraints>
@@ -444,8 +387,53 @@
                                           <Font size="14.0" />
                                        </font>
                                     </Label>
+                                    <HBox alignment="BASELINE_RIGHT" GridPane.columnIndex="1" GridPane.rowIndex="5">
+                                       <children>
+                                        <Button mnemonicParsing="false" onAction="#onScan" text="Scan" textFill="WHITE">
+                                             <graphic>
+                                                <FontIcon iconColor="WHITE" iconLiteral="sil-refresh" />
+                                             </graphic>
+                                          </Button>
+                                       </children>
+                                    </HBox>
                                  </children>
                               </GridPane>
+                              <Label fx:id="rawTitleLabel" text="Raw Highscore">
+                                 <font>
+                                    <Font name="System Bold" size="14.0" />
+                                 </font>
+                                 <VBox.margin>
+                                    <Insets top="24.0" />
+                                 </VBox.margin>
+                              </Label>
+                              <ScrollPane prefHeight="350.0">
+                                 <VBox.margin>
+                                    <Insets top="12.0" />
+                                 </VBox.margin>
+                                 <content>
+                                    <Label fx:id="rawScoreLabel" text="Label" textFill="WHITE">
+                                       <font>
+                                          <Font size="14.0" />
+                                       </font>
+                                    </Label>
+                                 </content>
+                              </ScrollPane>
+                              <Label fx:id="formattedTitleLabel" text="Formatted List" textFill="WHITE">
+                                 <font>
+                                    <Font name="System Bold" size="14.0" />
+                                 </font>
+                                 <VBox.margin>
+                                    <Insets top="24.0" />
+                                 </VBox.margin>
+                              </Label>
+                              <Label fx:id="formattedScoreLabel" layoutX="22.0" layoutY="226.0" text="Label" textFill="WHITE">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                                 <VBox.margin>
+                                    <Insets top="12.0" />
+                                 </VBox.margin>
+                              </Label>
                            </children>
                            <padding>
                               <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />

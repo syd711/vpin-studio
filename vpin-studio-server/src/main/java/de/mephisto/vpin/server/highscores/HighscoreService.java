@@ -1,9 +1,9 @@
 package de.mephisto.vpin.server.highscores;
 
+import de.mephisto.vpin.server.competitions.RankedPlayer;
 import de.mephisto.vpin.server.competitions.ScoreSummary;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.players.Player;
-import de.mephisto.vpin.server.competitions.RankedPlayer;
 import de.mephisto.vpin.server.system.SystemService;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
@@ -98,7 +98,7 @@ public class HighscoreService implements InitializingBean {
             RankedPlayer p = new RankedPlayer();
             Player player = score.getPlayer();
             p.setAvatarUrl(player.getAvatarUrl());
-            if(player.getAvatar() != null) {
+            if (player.getAvatar() != null) {
               p.setAvatarUuid(player.getAvatar().getUuid());
             }
             p.setName(player.getName());
@@ -113,8 +113,8 @@ public class HighscoreService implements InitializingBean {
 
     List<RankedPlayer> rankedPlayers = new ArrayList<>(playerMap.values());
     Collections.sort(rankedPlayers, (o2, o1) -> {
-      if(o1.getFirst() == o2.getFirst()) {
-        if(o1.getSecond() == o2.getSecond()) {
+      if (o1.getFirst() == o2.getFirst()) {
+        if (o1.getSecond() == o2.getSecond()) {
           return o1.getThird() - o2.getThird();
         }
         else {
@@ -125,7 +125,7 @@ public class HighscoreService implements InitializingBean {
     });
 
     for (int i = 1; i <= rankedPlayers.size(); i++) {
-      rankedPlayers.get(i-1).setRank(i);
+      rankedPlayers.get(i - 1).setRank(i);
     }
 
     return rankedPlayers;
@@ -152,7 +152,7 @@ public class HighscoreService implements InitializingBean {
   public ScoreList getScoresBetween(int gameId, Date start, Date end) {
     ScoreList scoreList = new ScoreList();
     Optional<Highscore> highscore = highscoreRepository.findByGameIdAndCreatedAtBetween(gameId, start, end);
-    if(end.after(new Date())) {
+    if (end.after(new Date())) {
       highscore = highscoreRepository.findByGameId(gameId);
     }
 
@@ -236,16 +236,16 @@ public class HighscoreService implements InitializingBean {
     List<HighscoreVersion> all = highscoreVersionRepository.findAllByOrderByCreatedAtDesc();
     for (HighscoreVersion version : all) {
       List<Score> versionScores = highscoreParser.parseScores(version.getCreatedAt(), version.getRaw(), version.getGameId());
-      scores.add(versionScores.get(version.getChangedPosition()-1));
+      scores.add(versionScores.get(version.getChangedPosition() - 1));
     }
 
-    if(scores.size() < TARGET_COUNT) {
+    if (scores.size() < TARGET_COUNT) {
       List<Highscore> highscores = highscoreRepository.findRecent();
       for (Highscore highscore : highscores) {
         List<Score> versionScores = highscoreParser.parseScores(highscore.getCreatedAt(), highscore.getRaw(), highscore.getGameId());
-        if(!versionScores.isEmpty()) {
+        if (!versionScores.isEmpty()) {
           scores.add(versionScores.get(0));
-          if(scores.size() == TARGET_COUNT) {
+          if (scores.size() == TARGET_COUNT) {
             break;
           }
         }

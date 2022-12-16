@@ -282,6 +282,7 @@ public class TablesController implements Initializable, StudioFXController {
         this.uploadTableBtn.setDisable(false);
 
         tableView.setVisible(true);
+        labelTableCount.setText(games.size() + " tables");
       });
     }).start();
   }
