@@ -16,6 +16,8 @@ import javafx.application.Platform;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -24,10 +26,12 @@ import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.paint.Paint;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontPosture;
 import javafx.stage.Stage;
 import org.apache.commons.lang3.StringUtils;
+import org.kordamp.ikonli.javafx.FontIcon;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -73,6 +77,9 @@ public class LauncherController implements Initializable {
 
   @FXML
   private TableColumn<VPinConnection, String> hostColumn;
+
+  @FXML
+  private TableColumn<VPinConnection, String> actionColumn;
 
   @FXML
   private TableView<VPinConnection> tableView;
@@ -314,6 +321,24 @@ public class LauncherController implements Initializable {
       view.setFitHeight(50);
       ImageUtil.setClippedImage(view, (int) (value.getAvatar().getWidth() / 2));
       return new SimpleObjectProperty(view);
+    });
+
+    actionColumn.setCellValueFactory(cellData -> {
+      VPinConnection value = cellData.getValue();
+      Button button = new Button();
+      button.setStyle("-fx-border-radius: 6px;");
+      FontIcon icon = new FontIcon("mdi2d-delete-outline");
+      icon.setIconSize(8);
+      icon.setIconColor(Paint.valueOf("#FFFFFF"));
+      button.setGraphic(icon);
+      button.setOnAction(event -> {
+        Optional<ButtonType> result = WidgetFactory.showConfirmation("Delete connection to '" + value + "'?", "Delete Connection");
+        if (result.isPresent() && result.get().equals(ButtonType.OK)) {
+          store.removeValue(String.valueOf(value.getHost()));
+          onConnectionRefresh();
+        }
+      });
+      return new SimpleObjectProperty(button);
     });
 
     tableView.setRowFactory(tv -> {

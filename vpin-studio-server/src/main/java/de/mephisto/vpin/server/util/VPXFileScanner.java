@@ -73,7 +73,7 @@ public class VPXFileScanner {
         lineSearchRom(result, line);
         lineSearchNvOffset(result, line);
         lineSearchHsFileName(result, line);
-        lineSearchAsset(result, line);
+//        lineSearchAsset(result, line);
       }
     } catch (Exception e) {
       LOG.error("Failed to read rom line '" + line + "' for  " + gameFile.getAbsolutePath() + ": " + e.getMessage(), e);

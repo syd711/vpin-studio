@@ -9,10 +9,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
+import java.util.*;
 
 public class PropertiesStore {
   private final static Logger LOG = LoggerFactory.getLogger(PropertiesStore.class);
@@ -145,6 +142,22 @@ public class PropertiesStore {
   public void set(String key, String value) {
     properties.setProperty(key, value);
     save();
+  }
+
+  public void removeValue(String value) {
+    Object key = null;
+    Set<Map.Entry<Object, Object>> entries = properties.entrySet();
+    for (Map.Entry<Object, Object> entry : entries) {
+      if (entry.getValue().equals(value)) {
+        key = entry.getKey();
+        break;
+      }
+    }
+
+    if (key != null) {
+      properties.remove(key);
+      save();
+    }
   }
 
   private void save() {

@@ -223,7 +223,9 @@ public class BuiltInPlayersController implements Initializable {
       editBtn.setDisable(disable);
       deleteBtn.setDisable(disable);
 
-      updateSelection(Optional.ofNullable(newSelection));
+      if(oldSelection == null || !oldSelection.equals(newSelection)) {
+        updateSelection(Optional.ofNullable(newSelection));
+      }
     });
 
 

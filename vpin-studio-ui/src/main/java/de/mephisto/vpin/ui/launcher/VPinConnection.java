@@ -45,4 +45,9 @@ public class VPinConnection {
   public int hashCode() {
     return host.hashCode();
   }
+
+  @Override
+  public String toString() {
+    return this.host;
+  }
 }

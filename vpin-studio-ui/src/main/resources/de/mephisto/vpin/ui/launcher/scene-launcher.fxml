@@ -110,9 +110,10 @@
          <center>
             <TableView fx:id="tableView" prefHeight="200.0" prefWidth="200.0" styleClass="accordion-container" BorderPane.alignment="CENTER">
               <columns>
-                <TableColumn fx:id="avatarColumn" prefWidth="88.0" style="-fx-alignment: BASELINE-CENTER;" />
-                <TableColumn fx:id="nameColumn" prefWidth="257.5999755859375" style="-fx-alignment: BASELINE_LEFT;" text="Name" />
-                  <TableColumn fx:id="hostColumn" prefWidth="241.5999755859375" style="-fx-alignment: BASELINE_LEFT;" text="Host" />
+                <TableColumn fx:id="avatarColumn" prefWidth="78.39990091323853" style="-fx-alignment: BASELINE-CENTER;" />
+                <TableColumn fx:id="nameColumn" prefWidth="244.79993438720703" style="-fx-alignment: BASELINE_LEFT;" text="Name" />
+                  <TableColumn fx:id="hostColumn" prefWidth="149.60009765625" style="-fx-alignment: BASELINE_LEFT;" text="Host" />
+                  <TableColumn fx:id="actionColumn" prefWidth="53.60003051757815" style="-fx-alignment: BASELINE_LEFT;" />
               </columns>
             </TableView>
          </center>

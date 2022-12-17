@@ -20,6 +20,8 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.util.logging.Level;
 
 @Service
@@ -119,8 +121,6 @@ public class KeyEventService implements InitializingBean, NativeKeyListener, Pop
         overlayWindowFX.setVisible(visible);
       }
     });
-
-
   }
 
   private void afterStartup() {
@@ -137,5 +137,12 @@ public class KeyEventService implements InitializingBean, NativeKeyListener, Pop
     }
 
     LOG.info("Server startup finished, running version is " + systemService.getVersion());
+
+    try {
+      InetAddress localHost = InetAddress.getLocalHost();
+      LOG.info("Server Address: " + localHost.getHostName() + "/" + localHost.getHostAddress());
+    } catch (UnknownHostException e) {
+      //
+    }
   }
 }
