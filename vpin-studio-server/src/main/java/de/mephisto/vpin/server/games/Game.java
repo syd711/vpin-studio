@@ -12,7 +12,9 @@ import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 public class Game {
 
@@ -32,6 +34,8 @@ public class Game {
   private int validationState;
   private String ignoredValidations;
   private int volume;
+
+  private List<GameAsset> assets = new ArrayList<>();
 
   private SystemService systemService;
 
@@ -66,6 +70,14 @@ public class Game {
       return new File(systemService.getExtractedVPRegFolder(), getRom());
     }
     return null;
+  }
+
+  public List<GameAsset> getAssets() {
+    return assets;
+  }
+
+  public void setAssets(List<GameAsset> assets) {
+    this.assets = assets;
   }
 
   @NonNull

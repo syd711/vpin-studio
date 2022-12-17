@@ -458,7 +458,7 @@
                   </AnchorPane>
               </content>
             </TitledPane>
-                <TitledPane expanded="false" prefHeight="400.0" prefWidth="600.0" text="Table Metadata">
+                <TitledPane expanded="false" prefHeight="400.0" prefWidth="600.0" text="Metadata">
                     <content>
                         <BorderPane prefWidth="598.0">
                             <padding>

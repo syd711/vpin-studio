@@ -87,6 +87,7 @@ public class PlayersController implements Initializable, StudioFXController {
       new Thread(() -> {
         ScoreSummaryRepresentation playerScores = client.getPlayerScores(p.getInitials());
         Platform.runLater(() -> {
+          highscoreList.getChildren().removeAll(highscoreList.getChildren());
           if (playerScores.getScores().isEmpty()) {
             noScoreLabel.setVisible(true);
             noScoreLabel.setText("No scores found for this player.");

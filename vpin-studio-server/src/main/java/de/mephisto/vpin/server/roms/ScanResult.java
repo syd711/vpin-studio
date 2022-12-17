@@ -10,14 +10,14 @@ public class ScanResult {
   private String rom;
   private String hsFileName;
 
-  private List<String> music = new ArrayList<>();
+  private List<String> assets = new ArrayList<>();
 
-  public List<String> getMusic() {
-    return music;
+  public List<String> getAssets() {
+    return assets;
   }
 
-  public void setMusic(List<String> music) {
-    this.music = music;
+  public void setAssets(List<String> assets) {
+    this.assets = assets;
   }
 
   public String getHsFileName() {

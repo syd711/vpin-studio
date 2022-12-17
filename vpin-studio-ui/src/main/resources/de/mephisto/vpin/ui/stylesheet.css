@@ -42,7 +42,7 @@
 #validationError {
     -fx-background-color: #FF3333;
     -fx-text-fill: #FFFFFF;
-    -fx-background-radius: 4 4 4 4;
+    -fx-background-radius: 3 3 3 3;
     -fx-font-size : 14px;
     -fx-font-weight : bold;
 }

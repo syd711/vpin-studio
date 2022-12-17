@@ -145,6 +145,7 @@ public class GameService {
       gameDetails.setNvOffset(scanResult.getNvOffset());
       gameDetails.setHsFileName(scanResult.getHsFileName());
       gameDetails.setPupId(game.getId());
+      gameDetails.setAssets(StringUtils.join(scanResult.getAssets(), "|"));
       gameDetails.setCreatedAt(new java.util.Date());
       gameDetails.setUpdatedAt(new java.util.Date());
 
@@ -162,6 +163,14 @@ public class GameService {
     game.setOriginalRom(romService.getOriginalRom(game.getRom()));
     game.setHsFileName(gameDetails.getHsFileName());
     game.setIgnoredValidations(gameDetails.getIgnoredValidations());
+
+//    String assets = gameDetails.getAssets();
+//    if(!StringUtils.isEmpty(assets)) {
+//      String[] assetNames = assets.split("\\|");
+//      for (String assetName : assetNames) {
+//        game.getAssets().add(new GameAsset(assetName, false));
+//      }
+//    }
 
     //run validations at the end!!!
     game.setValidationState(gameValidator.validate(game, games));

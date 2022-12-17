@@ -170,6 +170,8 @@ public class TablesSidebarController implements Initializable {
   @FXML
   private VBox rawScoreWrapper;
 
+  @FXML
+  private VBox assetList;
 
   private VPinStudioClient client;
 

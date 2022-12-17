@@ -2,6 +2,7 @@ package de.mephisto.vpin.server.util;
 
 import de.mephisto.vpin.server.roms.ScanResult;
 import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,6 +27,8 @@ public class VPXFileScanner {
   private final static int MAX_FILENAME_LENGTH = 128;
 
   private final static List<String> PATTERNS = Arrays.asList("cGameName", "cgamename", "RomSet1", "GameName");
+  private final static List<String> ASSET_TYPES = Arrays.asList("mp3", "png", "jpeg", "jpeg", "ogg");
+
 
   private final static List<Pattern> patternList = new ArrayList<>();
 
@@ -67,12 +70,10 @@ public class VPXFileScanner {
           break;
         }
 
-        if (line != null) {
-          lineSearchRom(result, line);
-          lineSearchNvOffset(result, line);
-          lineSearchHsFileName(result, line);
-          lineSearchMusic(result, line);
-        }
+        lineSearchRom(result, line);
+        lineSearchNvOffset(result, line);
+        lineSearchHsFileName(result, line);
+        lineSearchAsset(result, line);
       }
     } catch (Exception e) {
       LOG.error("Failed to read rom line '" + line + "' for  " + gameFile.getAbsolutePath() + ": " + e.getMessage(), e);
@@ -99,19 +100,44 @@ public class VPXFileScanner {
     return result;
   }
 
-  private static void lineSearchMusic(ScanResult result, String line) {
-    if (line.contains(".mp3")) {
-      String value = line.substring(0, line.indexOf(".mp3") + 4);
-      if (value.contains("\"")) {
-        value = value.substring(value.lastIndexOf("\"") + 1);
-        if (!result.getMusic().contains(value)) {
-          result.getMusic().add(value);
-          if (!value.equals(".mp3")) {
-            LOG.info("Added audio file " + value);
-          }
+  /**
+   * Searches the given line for assets.
+   *
+   * @param result the current scan result to add the asset info to
+   * @param line   the line that is currently parsed
+   */
+  private static void lineSearchAsset(@NonNull ScanResult result, @NonNull String line) {
+    for (String assetType : ASSET_TYPES) {
+      if (line.contains("." + assetType + "\"")) {
+        String asset = extractAsset(line, assetType);
+        if (asset != null && !result.getAssets().contains(asset)) {
+          LOG.info("Added asset '" + asset + "'");
+          result.getAssets().add(asset);
         }
       }
     }
+  }
+
+  /**
+   * Extracts an asset filename from the given line.
+   * The asset may have a leading path info which is formatted too
+   *
+   * @param line      the line to check for assets
+   * @param assetType the asset type to check
+   * @return the asset filename or null if it could not be extracted
+   */
+  @Nullable
+  private static String extractAsset(@NonNull String line, @NonNull String assetType) {
+    String value = line.substring(0, line.indexOf("." + assetType) + (assetType.length() + 1));
+    if (value.contains("\"")) {
+      String asset = value.substring(value.lastIndexOf("\"") + 1);
+      asset = asset.replaceAll("\\\\", "/");
+      asset = asset.replaceAll("//", "/");
+      if(!asset.startsWith(".")) {
+        return asset;
+      }
+    }
+    return null;
   }
 
   private static void lineSearchHsFileName(@NonNull ScanResult result, @NonNull String line) {

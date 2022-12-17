@@ -2,6 +2,7 @@ package de.mephisto.vpin.restclient.representations;
 
 import java.io.File;
 import java.util.Date;
+import java.util.List;
 
 /**
  * {
@@ -33,6 +34,15 @@ public class GameRepresentation {
   private String hsFileName;
   private boolean romExists;
   private String ignoredValidations;
+  private List<GameAssetRepresentation> assets;
+
+  public List<GameAssetRepresentation> getAssets() {
+    return assets;
+  }
+
+  public void setAssets(List<GameAssetRepresentation> assets) {
+    this.assets = assets;
+  }
 
   public GameMediaRepresentation getGameMedia() {
     return gameMedia;

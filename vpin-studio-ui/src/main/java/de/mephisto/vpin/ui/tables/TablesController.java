@@ -419,7 +419,7 @@ public class TablesController implements Initializable, StudioFXController {
       refreshView(Optional.ofNullable(newSelection));
     });
 
-    emulatorTypeCombo.setItems(FXCollections.observableList(Arrays.asList("", EmulatorTypes.VISUAL_PINBALL_X, EmulatorTypes.PINBALL_FX3)));
+    emulatorTypeCombo.setItems(FXCollections.observableList(Arrays.asList("", EmulatorTypes.VISUAL_PINBALL_X)));
     emulatorTypeCombo.valueProperty().addListener((observable, oldValue, newValue) -> onReload());
 
     refreshView(Optional.empty());
@@ -431,14 +431,12 @@ public class TablesController implements Initializable, StudioFXController {
     String filterValue = textfieldSearch.textProperty().getValue();
     String emulatorValue = emulatorTypeCombo.getValue();
     for (GameRepresentation game : games) {
-      if (!game.getGameDisplayName().toLowerCase().contains(filterValue.toLowerCase())) {
-        continue;
+      if (game.getGameDisplayName().toLowerCase().contains(filterValue.toLowerCase())) {
+        filtered.add(game);
       }
-      if(!StringUtils.isEmpty(emulatorValue) && !game.getEmulator().getName().equals(emulatorValue)) {
-        continue;
+      else if(!StringUtils.isEmpty(game.getRom()) && game.getRom().toLowerCase().contains(filterValue.toLowerCase())) {
+        filtered.add(game);
       }
-
-      filtered.add(game);
     }
     data = FXCollections.observableList(filtered);
   }
