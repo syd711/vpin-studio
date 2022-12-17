@@ -10,6 +10,7 @@
 <?import javafx.scene.control.TitledPane?>
 <?import javafx.scene.control.Tooltip?>
 <?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
@@ -312,11 +313,11 @@
                         </VBox>
                     </content>
                 </TitledPane>
-                <TitledPane prefWidth="600.0" text="Highscore">
-                    <content>
-                        <BorderPane>
-                     <top>
-                        <VBox BorderPane.alignment="CENTER">
+            <TitledPane text="Highscore">
+              <content>
+                <AnchorPane minHeight="0.0" minWidth="0.0" prefWidth="200.0">
+                     <children>
+                        <VBox>
                            <children>
                               <Label text="Metadata">
                                  <font>
@@ -406,18 +407,25 @@
                                     <Insets top="24.0" />
                                  </VBox.margin>
                               </Label>
-                              <ScrollPane prefHeight="350.0">
+                              <VBox fx:id="rawScoreWrapper" styleClass="media-container">
                                  <VBox.margin>
                                     <Insets top="12.0" />
                                  </VBox.margin>
-                                 <content>
-                                    <Label fx:id="rawScoreLabel" text="Label" textFill="WHITE">
-                                       <font>
-                                          <Font size="14.0" />
-                                       </font>
-                                    </Label>
-                                 </content>
-                              </ScrollPane>
+                                 <children>
+                                    <ScrollPane prefHeight="350.0" styleClass="media-parent">
+                                       <content>
+                                          <Label fx:id="rawScoreLabel" text="Label" textFill="WHITE">
+                                             <font>
+                                                <Font size="14.0" />
+                                             </font>
+                                          </Label>
+                                       </content>
+                                       <padding>
+                                          <Insets bottom="6.0" left="6.0" right="6.0" top="6.0" />
+                                       </padding>
+                                    </ScrollPane>
+                                 </children>
+                              </VBox>
                               <Label fx:id="formattedTitleLabel" text="Formatted List" textFill="WHITE">
                                  <font>
                                     <Font name="System Bold" size="14.0" />
@@ -426,23 +434,30 @@
                                     <Insets top="24.0" />
                                  </VBox.margin>
                               </Label>
-                              <Label fx:id="formattedScoreLabel" layoutX="22.0" layoutY="226.0" text="Label" textFill="WHITE">
-                                 <font>
-                                    <Font size="14.0" />
-                                 </font>
+                              <VBox fx:id="formattedScoreWrapper" styleClass="media-container">
                                  <VBox.margin>
                                     <Insets top="12.0" />
                                  </VBox.margin>
-                              </Label>
+                                 <children>
+                                    <Label fx:id="formattedScoreLabel" text="Label" textFill="WHITE">
+                                       <font>
+                                          <Font size="14.0" />
+                                       </font>
+                                    </Label>
+                                 </children>
+                                 <padding>
+                                    <Insets bottom="6.0" left="6.0" right="6.0" top="6.0" />
+                                 </padding>
+                              </VBox>
                            </children>
                            <padding>
                               <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
                            </padding>
                         </VBox>
-                     </top>
-                        </BorderPane>
-                    </content>
-                </TitledPane>
+                     </children>
+                  </AnchorPane>
+              </content>
+            </TitledPane>
                 <TitledPane expanded="false" prefHeight="400.0" prefWidth="600.0" text="Table Metadata">
                     <content>
                         <BorderPane prefWidth="598.0">

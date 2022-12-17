@@ -20,6 +20,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.VBox;
 import javafx.scene.media.MediaView;
 import org.apache.commons.lang3.StringUtils;
 import org.kordamp.ikonli.javafx.FontIcon;
@@ -163,6 +164,12 @@ public class TablesSidebarController implements Initializable {
   @FXML
   private Label hsLastScannedLabel;
 
+  @FXML
+  private VBox formattedScoreWrapper;
+
+  @FXML
+  private VBox rawScoreWrapper;
+
 
   private VPinStudioClient client;
 
@@ -301,69 +308,76 @@ public class TablesSidebarController implements Initializable {
   }
 
   private void refreshHighscore(Optional<GameRepresentation> gameRepresentation, boolean forceRescan) {
-//    rawScoreLabel.setText("");
-//    formattedScoreLabel.setText("");
-//
-//    this.hsFileLabel.setText("-");
-//    this.hsStatusLabel.setText("-");
-//    this.hsTypeLabel.setText("-");
-//    this.hsLastModifiedLabel.setText("-");
-//    this.hsLastScannedLabel.setText("-");
-//
-//    rawTitleLabel.setVisible(false);
-//    formattedTitleLabel.setVisible(false);
-//
-//    if (gameRepresentation.isPresent()) {
-//      GameRepresentation game = gameRepresentation.get();
-//      if(forceRescan) {
-//        client.scanGameScore(game.getId());
-//      }
-//
-//      ScoreSummaryRepresentation summary = client.getGameScores(game.getId());
-//      if(summary != null) {
-//        if(summary.getMetadata().getFilename() != null) {
-//          this.hsFileLabel.setText(summary.getMetadata().getFilename());
-//        }
-//
-//        if(summary.getMetadata().getStatus() != null) {
-//          this.hsStatusLabel.setText(summary.getMetadata().getStatus());
-//        }
-//
-//        if(summary.getMetadata().getType() != null) {
-//          this.hsTypeLabel.setText(summary.getMetadata().getType());
-//        }
-//
-//        if(summary.getMetadata().getModified() != null) {
-//          this.hsLastModifiedLabel.setText(SimpleDateFormat.getDateTimeInstance().format(summary.getMetadata().getModified()));
-//        }
-//
-//        if(summary.getMetadata().getScanned() != null) {
-//          this.hsLastScannedLabel.setText(SimpleDateFormat.getDateTimeInstance().format(summary.getMetadata().getScanned()));
-//        }
-//
-//        if (!summary.getScores().isEmpty()) {
-//          rawTitleLabel.setVisible(true);
-//          rawScoreLabel.setFont(WidgetController.getScoreFontText());
-//          rawScoreLabel.setText(summary.getRaw());
-//
-//          List<ScoreRepresentation> scores = summary.getScores();
-//          StringBuilder builder = new StringBuilder();
-//          for (ScoreRepresentation score : scores) {
-//            builder.append("#");
-//            builder.append(score.getPosition());
-//            builder.append(" ");
-//            builder.append(score.getPlayerInitials());
-//            builder.append("   ");
-//            builder.append(score.getScore());
-//            builder.append("\n");
-//          }
-//
-//          formattedTitleLabel.setVisible(true);
-//          formattedScoreLabel.setFont(WidgetController.getScoreFontText());
-//          formattedScoreLabel.setText(builder.toString());
-//        }
-//      }
-//    }
+    rawScoreLabel.setText("");
+    formattedScoreLabel.setText("");
+
+    this.hsFileLabel.setText("-");
+    this.hsStatusLabel.setText("-");
+    this.hsTypeLabel.setText("-");
+    this.hsLastModifiedLabel.setText("-");
+    this.hsLastScannedLabel.setText("-");
+
+    rawTitleLabel.setVisible(false);
+    formattedTitleLabel.setVisible(false);
+
+    rawScoreWrapper.setVisible(false);
+    formattedScoreWrapper.setVisible(false);
+
+    if (gameRepresentation.isPresent()) {
+      GameRepresentation game = gameRepresentation.get();
+      if(forceRescan) {
+        client.scanGameScore(game.getId());
+      }
+
+      ScoreSummaryRepresentation summary = client.getGameScores(game.getId());
+      if(summary != null && summary.getMetadata() != null) {
+        if(summary.getMetadata().getFilename() != null) {
+          this.hsFileLabel.setText(summary.getMetadata().getFilename());
+        }
+
+        if(summary.getMetadata().getStatus() != null) {
+          this.hsStatusLabel.setText(summary.getMetadata().getStatus());
+        }
+
+        if(summary.getMetadata().getType() != null) {
+          this.hsTypeLabel.setText(summary.getMetadata().getType());
+        }
+
+        if(summary.getMetadata().getModified() != null) {
+          this.hsLastModifiedLabel.setText(SimpleDateFormat.getDateTimeInstance().format(summary.getMetadata().getModified()));
+        }
+
+        if(summary.getMetadata().getScanned() != null) {
+          this.hsLastScannedLabel.setText(SimpleDateFormat.getDateTimeInstance().format(summary.getMetadata().getScanned()));
+        }
+
+        if (!summary.getScores().isEmpty()) {
+          rawTitleLabel.setVisible(true);
+          rawScoreWrapper.setVisible(true);
+
+          rawScoreLabel.setFont(WidgetController.getScoreFontText());
+          rawScoreLabel.setText(summary.getRaw());
+
+          List<ScoreRepresentation> scores = summary.getScores();
+          StringBuilder builder = new StringBuilder();
+          for (ScoreRepresentation score : scores) {
+            builder.append("#");
+            builder.append(score.getPosition());
+            builder.append(" ");
+            builder.append(score.getPlayerInitials());
+            builder.append("   ");
+            builder.append(score.getScore());
+            builder.append("\n");
+          }
+
+          formattedTitleLabel.setVisible(true);
+          formattedScoreWrapper.setVisible(true);
+
+          formattedScoreLabel.setFont(WidgetController.getScoreFontText());
+          formattedScoreLabel.setText(builder.toString());
+        }
+      }
+    }
   }
 
   @FXML

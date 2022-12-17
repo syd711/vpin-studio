@@ -15,7 +15,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -46,7 +45,7 @@ public class GameService {
     LOG.info("Game fetch took " + (System.currentTimeMillis() - start) + "ms., returned " + games.size() + " tables.");
     start = System.currentTimeMillis();
     for (Game game : games) {
-      loadGameDetails(game, games);
+      applyGameDetails(game, games, false);
     }
     LOG.info("Game details fetch took " + (System.currentTimeMillis() - start) + "ms.");
     return games;
@@ -66,7 +65,7 @@ public class GameService {
     Game game = pinUPConnector.getGame(id);
     if (game != null) {
       List<Game> games = pinUPConnector.getGames();
-      loadGameDetails(game, games);
+      applyGameDetails(game, games, false);
       return game;
     }
     return null;
@@ -92,24 +91,12 @@ public class GameService {
       return false;
     }
     List<Game> games = pinUPConnector.getGames();
-    ScanResult scanResult = romService.scanGameFile(game);
 
     gameDetailsRepository.findByPupId(gameId);
-    GameDetails gameDetails = loadGameDetails(game, games);
-    if (gameDetails != null) {
-      gameDetails.setRomName(scanResult.getRom());
-      gameDetails.setNvOffset(scanResult.getNvOffset());
-      gameDetails.setHsFileName(scanResult.getHsFileName());
-      gameDetailsRepository.saveAndFlush(gameDetails);
+    applyGameDetails(game, games, true);
+    highscoreService.scanScore(game);
 
-      game.setRom(scanResult.getRom());
-      game.setNvOffset(scanResult.getNvOffset());
-      game.setHsFileName(scanResult.getHsFileName());
-    }
-
-    //we have the rom now, so create the initial highscore data
-    this.highscoreService.getOrCreateHighscore(game);
-    return gameDetails != null;
+    return true;
   }
 
   public HighscoreMetadata scanScore(int gameId) {
@@ -139,39 +126,45 @@ public class GameService {
   public Game getGameByFilename(String name) {
     Game game = this.pinUPConnector.getGameByFilename(name);
     if (game != null) {
-      loadGameDetails(game, Collections.emptyList());
+      //this will ensure that a scanned table is fetched
+      game = this.getGame(game.getId());
     }
     return game;
   }
 
-  @Nullable
-  private GameDetails loadGameDetails(@NonNull Game game, @NonNull List<Game> games) {
-    try {
-      GameDetails gameDetails = gameDetailsRepository.findByPupId(game.getId());
-      if (gameDetails == null) {
+  private void applyGameDetails(@NonNull Game game, @NonNull List<Game> games, boolean forceScan) {
+    GameDetails gameDetails = gameDetailsRepository.findByPupId(game.getId());
+    if (gameDetails == null || forceScan) {
+      ScanResult scanResult = romService.scanGameFile(game);
+
+      if(gameDetails == null) {
         gameDetails = new GameDetails();
-        gameDetails.setPupId(game.getId());
-        gameDetails.setCreatedAt(new java.util.Date());
-        gameDetails.setUpdatedAt(new java.util.Date());
-        gameDetailsRepository.saveAndFlush(gameDetails);
-        LOG.info("Created GameDetails for " + game.getGameDisplayName());
       }
 
-      game.setNvOffset(gameDetails.getNvOffset());
-      if (StringUtils.isEmpty(game.getRom())) {
-        game.setRom(gameDetails.getRomName());
-      }
-      game.setOriginalRom(romService.getOriginalRom(game.getRom()));
-      game.setHsFileName(gameDetails.getHsFileName());
-      game.setIgnoredValidations(gameDetails.getIgnoredValidations());
+      gameDetails.setRomName(scanResult.getRom());
+      gameDetails.setNvOffset(scanResult.getNvOffset());
+      gameDetails.setHsFileName(scanResult.getHsFileName());
+      gameDetails.setPupId(game.getId());
+      gameDetails.setCreatedAt(new java.util.Date());
+      gameDetails.setUpdatedAt(new java.util.Date());
 
-      //run validations at the end!!!
-      game.setValidationState(gameValidator.validate(game, games));
-      return gameDetails;
-    } catch (Exception e) {
-      LOG.error("Failed to load details for " + game + ": " + e.getMessage(), e);
+      gameDetailsRepository.saveAndFlush(gameDetails);
+      LOG.info("Created GameDetails for " + game.getGameDisplayName());
     }
-    return null;
+
+    game.setNvOffset(gameDetails.getNvOffset());
+    if (StringUtils.isEmpty(game.getRom()) && !StringUtils.isEmpty(gameDetails.getRomName())) {
+      game.setRom(gameDetails.getRomName());
+
+      //re-fetch highscore since the ROM may be set
+      this.highscoreService.getOrCreateHighscore(game);
+    }
+    game.setOriginalRom(romService.getOriginalRom(game.getRom()));
+    game.setHsFileName(gameDetails.getHsFileName());
+    game.setIgnoredValidations(gameDetails.getIgnoredValidations());
+
+    //run validations at the end!!!
+    game.setValidationState(gameValidator.validate(game, games));
   }
 
   public Game save(Game game) {
