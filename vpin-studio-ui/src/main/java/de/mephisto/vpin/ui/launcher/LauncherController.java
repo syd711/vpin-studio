@@ -325,6 +325,10 @@ public class LauncherController implements Initializable {
 
     actionColumn.setCellValueFactory(cellData -> {
       VPinConnection value = cellData.getValue();
+      if(value.getHost().equals("localhost")) {
+        return new SimpleObjectProperty("");
+      }
+
       Button button = new Button();
       button.setStyle("-fx-border-radius: 6px;");
       FontIcon icon = new FontIcon("mdi2d-delete-outline");

@@ -438,7 +438,7 @@ public class TablesSidebarController implements Initializable {
       labelRomAlias.setText(game.getOriginalRom() != null ? game.getRom() : "-");
       labelNVOffset.setText(game.getNvOffset() > 0 ? String.valueOf(game.getNvOffset()) : "-");
       labelFilename.setText(game.getGameFileName());
-      labelLastPlayed.setText(game.getLastPlayed() != null ? DateFormat.getTimeInstance().format(game.getLastPlayed()) : "-");
+      labelLastPlayed.setText(game.getLastPlayed() != null ? DateFormat.getDateTimeInstance().format(game.getLastPlayed()) : "-");
       labelTimesPlayed.setText(String.valueOf(game.getNumberPlays()));
       if (!StringUtils.isEmpty(game.getHsFileName())) {
         labelHSFilename.setText(game.getHsFileName());

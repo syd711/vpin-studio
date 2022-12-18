@@ -46,7 +46,7 @@ public class VPinStudioServerTray {
     });
     MenuItem exitItem = new MenuItem("Terminate");
     exitItem.addActionListener(e -> System.exit(0));
-    popup.add(restartItem);
+//    popup.add(restartItem);
     popup.add(logsItem);
     popup.addSeparator();
     popup.add(exitItem);
