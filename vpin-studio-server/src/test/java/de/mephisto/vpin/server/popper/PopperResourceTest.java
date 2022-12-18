@@ -24,7 +24,7 @@ public class PopperResourceTest extends VPinServerTest {
     result = popperResource.gameExit("bubu");
     assertFalse(result);
 
-    result = popperResource.gameLaunch("Attack from Mars 2.0.1.vpx");
+    result = popperResource.gameLaunch(VPinServerTest.TEST_GAME_FILENAME);
     assertTrue(result);
 
     assertTrue(popperResource.popperLaunch());

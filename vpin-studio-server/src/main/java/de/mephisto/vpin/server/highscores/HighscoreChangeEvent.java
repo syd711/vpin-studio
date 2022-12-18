@@ -9,5 +9,7 @@ public interface HighscoreChangeEvent {
 
   Highscore getNewHighscore();
 
-  Score getChangedScore();
+  Score getOldScore();
+
+  Score getNewScore();
 }

@@ -3,6 +3,7 @@ package de.mephisto.vpin.server.notifications;
 import de.mephisto.vpin.server.competitions.Competition;
 import de.mephisto.vpin.server.competitions.ScoreSummary;
 import de.mephisto.vpin.server.games.Game;
+import de.mephisto.vpin.server.highscores.HighscoreChangeEvent;
 import de.mephisto.vpin.server.highscores.Score;
 
 import java.text.DateFormat;
@@ -79,8 +80,10 @@ public class NotificationFactory {
         third);
   }
 
-  public static String createDiscordHighscoreMessage(Game game, Score changedScore) {
-    return String.format(HIGHSCORE_TEMPLATE,game.getGameDisplayName(), changedScore.toString());
+  public static String createDiscordHighscoreMessage(HighscoreChangeEvent event) {
+    Game game = event.getGame();
+    Score newScore = event.getNewScore();
+    return String.format(HIGHSCORE_TEMPLATE, game.getGameDisplayName(), newScore.toString());
   }
 
   private static String formatScoreEntry(ScoreSummary summary, int index) {

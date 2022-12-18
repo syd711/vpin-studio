@@ -48,7 +48,17 @@ public class HighscoreVersion {
 
   private String displayName;
 
-  private String raw;
+  private String oldRaw;
+
+  private String newRaw;
+
+  public String getNewRaw() {
+    return newRaw;
+  }
+
+  public void setNewRaw(String newRaw) {
+    this.newRaw = newRaw;
+  }
 
   public String getDisplayName() {
     return displayName;
@@ -66,11 +76,11 @@ public class HighscoreVersion {
     this.createdAt = createdAt;
   }
 
-  public String getRaw() {
-    return raw;
+  public String getOldRaw() {
+    return oldRaw;
   }
 
-  public void setRaw(String raw) {
-    this.raw = raw;
+  public void setOldRaw(String oldRaw) {
+    this.oldRaw = oldRaw;
   }
 }

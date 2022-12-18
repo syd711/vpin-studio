@@ -54,10 +54,10 @@ public class NotificationService implements InitializingBean, HighscoreChangeLis
     }
 
     String webhookUrl = (String) preferencesService.getPreferenceValue(PreferenceNames.DISCORD_WEBHOOK_URL);
-    if (!StringUtils.isEmpty(webhookUrl) && event.getChangedScore() != null) {
-      String message = NotificationFactory.createDiscordHighscoreMessage(event.getGame(), event.getChangedScore());
+    if (!StringUtils.isEmpty(webhookUrl)) {
+      String message = NotificationFactory.createDiscordHighscoreMessage(event);
       DiscordWebhook.call(webhookUrl, message);
-      LOG.info("Called Discord webhook for update of " + event.getChangedScore());
+      LOG.info("Called Discord webhook for update of score " + event.getNewHighscore());
     }
   }
 

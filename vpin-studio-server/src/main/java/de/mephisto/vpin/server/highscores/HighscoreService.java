@@ -1,5 +1,6 @@
 package de.mephisto.vpin.server.highscores;
 
+import com.google.common.annotations.VisibleForTesting;
 import de.mephisto.vpin.server.competitions.RankedPlayer;
 import de.mephisto.vpin.server.competitions.ScoreSummary;
 import de.mephisto.vpin.server.games.Game;
@@ -15,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class HighscoreService implements InitializingBean {
@@ -55,8 +57,8 @@ public class HighscoreService implements InitializingBean {
     return highscore.get();
   }
 
-
-  public HighscoreMetadata scanScore(Game game) {
+  @NonNull
+  public HighscoreMetadata scanScore(@NonNull Game game) {
     Optional<Highscore> highscore = highscoreRepository.findByGameId(game.getId());
     HighscoreMetadata metadata = highscoreResolver.readHighscore(game);
     Highscore h = null;
@@ -77,11 +79,12 @@ public class HighscoreService implements InitializingBean {
     return metadata;
   }
 
+  @NonNull
   public List<Score> parseScores(Date createdAt, String raw, int gameId) {
     return highscoreParser.parseScores(createdAt, raw, gameId);
   }
 
-
+  @NonNull
   public List<RankedPlayer> getPlayersByRanks() {
     Map<String, RankedPlayer> playerMap = new HashMap<>();
     List<ScoreSummary> highscoresWithScore = getHighscoresWithScore();
@@ -135,7 +138,7 @@ public class HighscoreService implements InitializingBean {
     List<ScoreSummary> result = new ArrayList<>();
     List<Highscore> byRawIsNotNull = highscoreRepository.findByRawIsNotNull();
     for (Highscore highscore : byRawIsNotNull) {
-      List<Score> scores = highscoreParser.parseScores(highscore.getCreatedAt(), highscore.getRaw(), highscore.getGameId());
+      List<Score> scores = highscoreParser.parseScores(highscore.getLastModified(), highscore.getRaw(), highscore.getGameId());
       result.add(new ScoreSummary(scores, highscore.getCreatedAt()));
     }
     return result;
@@ -166,7 +169,7 @@ public class HighscoreService implements InitializingBean {
     List<HighscoreVersion> byGameIdAndCreatedAtBetween = highscoreVersionRepository.findByGameIdAndCreatedAtBetween(gameId, start, end);
 //    List<HighscoreVersion> byGameIdAndCreatedAtBetween = highscoreVersionRepository.findByGameId(gameId);
     for (HighscoreVersion version : byGameIdAndCreatedAtBetween) {
-      ScoreSummary scoreSummary = getScoreSummary(version.getCreatedAt(), version.getRaw(), gameId);
+      ScoreSummary scoreSummary = getScoreSummary(version.getCreatedAt(), version.getOldRaw(), gameId);
       scoreList.getScores().add(scoreSummary);
     }
     return scoreList;
@@ -235,25 +238,27 @@ public class HighscoreService implements InitializingBean {
 
     List<HighscoreVersion> all = highscoreVersionRepository.findAllByOrderByCreatedAtDesc();
     for (HighscoreVersion version : all) {
-      List<Score> versionScores = highscoreParser.parseScores(version.getCreatedAt(), version.getRaw(), version.getGameId());
-      scores.add(versionScores.get(version.getChangedPosition() - 1));
+      List<Score> versionScores = highscoreParser.parseScores(version.getCreatedAt(), version.getNewRaw(), version.getGameId());
+      scores.add(versionScores.get(version.getChangedPosition()));
     }
 
     if (scores.size() < TARGET_COUNT) {
       List<Highscore> highscores = highscoreRepository.findRecent();
       for (Highscore highscore : highscores) {
-        List<Score> versionScores = highscoreParser.parseScores(highscore.getCreatedAt(), highscore.getRaw(), highscore.getGameId());
-        if (!versionScores.isEmpty()) {
-          scores.add(versionScores.get(0));
-          if (scores.size() == TARGET_COUNT) {
-            break;
+        int gameId = highscore.getGameId();
+        List<Score> collect = scores.stream().filter(s -> s.getGameId() == gameId).collect(Collectors.toList());
+        if(collect.isEmpty()) {
+          List<Score> versionScores = highscoreParser.parseScores(highscore.getLastModified(), highscore.getRaw(), highscore.getGameId());
+          if (!versionScores.isEmpty()) {
+            scores.add(versionScores.get(0));
+            if (scores.size() == TARGET_COUNT) {
+              break;
+            }
           }
         }
       }
     }
 
-    scores.sort(Comparator.comparing(Score::getCreatedAt));
-    Collections.reverse(scores);
     return summary;
   }
 
@@ -276,36 +281,7 @@ public class HighscoreService implements InitializingBean {
       return;
     }
 
-    Highscore newHighscore = Highscore.forGame(game, metadata);
-    Optional<Highscore> existingHighscore = highscoreRepository.findByGameId(game.getId());
-
-    if (existingHighscore.isEmpty() || !existingHighscore.get().getRaw().equals(rawHighscore)) {
-      //save the highscore for the first time
-      if (existingHighscore.isEmpty()) {
-        highscoreRepository.saveAndFlush(newHighscore);
-        LOG.info("Saved highscore for " + game);
-      }
-      else {
-        //archive old existingScore
-        Highscore existingScore = existingHighscore.get();
-        Score changedScore = calculateChangedPosition(existingScore, newHighscore, game.getId());
-        HighscoreVersion version = existingScore.toVersion(changedScore.getPosition());
-        highscoreVersionRepository.saveAndFlush(version);
-
-        //update existing one
-        existingScore.setRaw(rawHighscore);
-        existingScore.setCreatedAt(new Date());
-        highscoreRepository.saveAndFlush(existingScore);
-
-        LOG.info("Archived old existingScore and saved updated existingScore for " + game);
-
-        HighscoreChangeEvent event = createEvent(game, existingHighscore.get(), newHighscore, changedScore);
-        triggerHighscoreChange(event);
-      }
-    }
-    else {
-      LOG.info("Skipped highscore change event for {} because the raw highscore data did not change.", game);
-    }
+    this.updateHighscore(game, metadata);
   }
 
   /**
@@ -323,15 +299,56 @@ public class HighscoreService implements InitializingBean {
     return null;
   }
 
-  private Score calculateChangedPosition(Highscore oldHighscore, Highscore newHighscore, int gameId) {
-    List<Score> oldScores = highscoreParser.parseScores(oldHighscore.getCreatedAt(), oldHighscore.getRaw(), gameId);
-    List<Score> newScores = highscoreParser.parseScores(newHighscore.getCreatedAt(), newHighscore.getRaw(), gameId);
-    for (int i = 0; i < oldScores.size(); i++) {
-      if (!oldScores.get(i).getScore().equalsIgnoreCase(newScores.get(i).getScore())) {
-        return newScores.get(i);
+  @VisibleForTesting
+  protected void updateHighscore(@NonNull Game game, @NonNull HighscoreMetadata metadata) {
+    String rawHighscore = metadata.getRaw();
+    Highscore newHighscore = Highscore.forGame(game, metadata);
+    Optional<Highscore> existingHighscore = highscoreRepository.findByGameId(game.getId());
+
+    if (existingHighscore.isEmpty() || !existingHighscore.get().getRaw().equals(rawHighscore)) {
+      //save the highscore for the first time
+      if (existingHighscore.isEmpty()) {
+        highscoreRepository.saveAndFlush(newHighscore);
+        LOG.info("Saved highscore for " + game);
+      }
+      else {
+        //archive old existingScore
+        Highscore existingScore = existingHighscore.get();
+
+        List<Score> oldScores = highscoreParser.parseScores(existingScore.getLastModified(), existingScore.getRaw(), game.getId());
+        List<Score> newScores = highscoreParser.parseScores(newHighscore.getLastModified(), newHighscore.getRaw(), game.getId());
+
+        int position = calculateChangedPosition(oldScores, newScores);
+        HighscoreVersion version = existingScore.toVersion(position);
+        version.setNewRaw(rawHighscore);
+        highscoreVersionRepository.saveAndFlush(version);
+
+        //update existing one
+        existingScore.setRaw(rawHighscore);
+        existingScore.setCreatedAt(new Date());
+        highscoreRepository.saveAndFlush(existingScore);
+
+        LOG.info("Archived old existingScore and saved updated existingScore for " + game);
+
+        Score oldScore = oldScores.get(position);
+        Score newScore = newScores.get(position);
+        HighscoreChangeEvent event = createEvent(game, existingHighscore.get(), newHighscore, oldScore, newScore);
+        triggerHighscoreChange(event);
       }
     }
-    return null;
+    else {
+      LOG.info("Skipped highscore change event for {} because the raw highscore data did not change.", game);
+    }
+  }
+
+  private int calculateChangedPosition(@NonNull List<Score> oldScores, @NonNull List<Score> newScores) {
+    for (int i = 0; i < oldScores.size(); i++) {
+      if (!oldScores.get(i).getScore().equalsIgnoreCase(newScores.get(i).getScore())) {
+        LOG.info("Calculated changed score: " + newScores.get(i) + ", old score was " + oldScores.get(i));
+        return i;
+      }
+    }
+    return -1;
   }
 
   private void triggerHighscoreChange(@NonNull HighscoreChangeEvent event) {
@@ -342,7 +359,7 @@ public class HighscoreService implements InitializingBean {
     }).start();
   }
 
-  private HighscoreChangeEvent createEvent(Game game, Highscore existingHighscore, Highscore newHighscore, Score changedScore) {
+  private HighscoreChangeEvent createEvent(@NonNull Game game, @NonNull Highscore existingHighscore, @NonNull Highscore newHighscore, @NonNull Score oldScore, @NonNull Score newScore) {
     return new HighscoreChangeEvent() {
       @Override
       public Game getGame() {
@@ -360,8 +377,13 @@ public class HighscoreService implements InitializingBean {
       }
 
       @Override
-      public Score getChangedScore() {
-        return changedScore;
+      public Score getOldScore() {
+        return oldScore;
+      }
+
+      @Override
+      public Score getNewScore() {
+        return newScore;
       }
     };
   }

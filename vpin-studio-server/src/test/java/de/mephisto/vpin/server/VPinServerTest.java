@@ -5,6 +5,8 @@ import org.junit.jupiter.api.BeforeAll;
 
 abstract public class VPinServerTest {
 
+  public final static String TEST_GAME_FILENAME = "Attack from Mars 2.0.1.vpx";
+
   @BeforeAll
   public static void before() {
     SystemService.RESOURCES = "../resources/";
