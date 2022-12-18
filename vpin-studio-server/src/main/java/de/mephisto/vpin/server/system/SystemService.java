@@ -34,12 +34,12 @@ public class SystemService implements InitializingBean {
   private final static String VPX_REG_KEY = "HKEY_CURRENT_USER\\SOFTWARE\\Visual Pinball\\VP10\\RecentDir";
   private final static String POPPER_REG_KEY = "HKEY_LOCAL_MACHINE\\SYSTEM\\ControlSet001\\Control\\Session Manager\\Environment";
   private final static String VPREG_STG = "VPReg.stg";
-  public static final String RESOURCES = "./resources/";
+  public static String RESOURCES = "./resources/";
 
   private final static String PINUP_SYSTEM_INSTALLATION_DIR_INST_DIR = "pinupSystem.installationDir";
   private final static String VISUAL_PINBALL_INST_DIR = "visualPinball.installationDir";
   private final static String FUTURE_PINBALL_INST_DIR = "futurePinball.installationDir";
-  private final static String PINEMHI_FOLDER = RESOURCES + "pinemhi";
+  public static String PINEMHI_FOLDER = RESOURCES + "pinemhi";
   private final static String PINEMHI_COMMAND = "PINemHi.exe";
   private final static String PINEMHI_INI = "pinemhi.ini";
   private final static String VPM_ALIAS = "VPMAlias.txt";
