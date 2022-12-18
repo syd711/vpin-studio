@@ -239,7 +239,7 @@ public class HighscoreService implements InitializingBean {
     List<HighscoreVersion> all = highscoreVersionRepository.findAllByOrderByCreatedAtDesc();
     for (HighscoreVersion version : all) {
       List<Score> versionScores = highscoreParser.parseScores(version.getCreatedAt(), version.getNewRaw(), version.getGameId());
-      scores.add(versionScores.get(version.getChangedPosition()));
+      scores.add(versionScores.get(version.getChangedPosition() - 1));
     }
 
     if (scores.size() < TARGET_COUNT) {
@@ -247,7 +247,7 @@ public class HighscoreService implements InitializingBean {
       for (Highscore highscore : highscores) {
         int gameId = highscore.getGameId();
         List<Score> collect = scores.stream().filter(s -> s.getGameId() == gameId).collect(Collectors.toList());
-        if(collect.isEmpty()) {
+        if (collect.isEmpty()) {
           List<Score> versionScores = highscoreParser.parseScores(highscore.getLastModified(), highscore.getRaw(), highscore.getGameId());
           if (!versionScores.isEmpty()) {
             scores.add(versionScores.get(0));
@@ -330,8 +330,8 @@ public class HighscoreService implements InitializingBean {
 
         LOG.info("Archived old existingScore and saved updated existingScore for " + game);
 
-        Score oldScore = oldScores.get(position);
-        Score newScore = newScores.get(position);
+        Score oldScore = oldScores.get(position - 1);
+        Score newScore = newScores.get(position - 1);
         HighscoreChangeEvent event = createEvent(game, existingHighscore.get(), newHighscore, oldScore, newScore);
         triggerHighscoreChange(event);
       }
@@ -345,7 +345,7 @@ public class HighscoreService implements InitializingBean {
     for (int i = 0; i < oldScores.size(); i++) {
       if (!oldScores.get(i).getScore().equalsIgnoreCase(newScores.get(i).getScore())) {
         LOG.info("Calculated changed score: " + newScores.get(i) + ", old score was " + oldScores.get(i));
-        return i;
+        return i + 1;
       }
     }
     return -1;
