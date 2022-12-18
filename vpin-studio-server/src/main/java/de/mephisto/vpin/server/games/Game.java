@@ -22,6 +22,7 @@ public class Game {
   private String originalRom;
   private String gameDisplayName;
   private String gameFileName;
+  private String tableName;
   private int id;
   private int nvOffset;
   private String hsFileName;
@@ -47,29 +48,13 @@ public class Game {
     this.systemService = systemService;
   }
 
-  @SuppressWarnings("unused")
-  public boolean hasHighscore() {
-    if (this.getNvRamFile() != null && this.getNvRamFile().exists()) {
-      return true;
-    }
 
-    if (this.getVPRegFolder() != null && this.getVPRegFolder().exists()) {
-      return true;
-    }
-
-    if (this.getEMHighscoreFile() != null && this.getEMHighscoreFile().exists()) {
-      return true;
-    }
-    return false;
+  public String getTableName() {
+    return tableName;
   }
 
-  @Nullable
-  @JsonIgnore
-  public File getVPRegFolder() {
-    if (!StringUtils.isEmpty(this.getRom())) {
-      return new File(systemService.getExtractedVPRegFolder(), getRom());
-    }
-    return null;
+  public void setTableName(String tableName) {
+    this.tableName = tableName;
   }
 
   public List<GameAsset> getAssets() {
@@ -132,34 +117,6 @@ public class Game {
   public void setSystemService(SystemService systemService) {
     this.systemService = systemService;
   }
-
-  @Nullable
-  @JsonIgnore
-  public File getNvRamFile() {
-    File nvRamFolder = new File(systemService.getMameFolder(), "nvram");
-
-    String originalRom = getOriginalRom() != null ? this.getOriginalRom() : this.getRom();
-    File defaultNVFile = new File(nvRamFolder, originalRom + ".nv");
-    if (this.getNvOffset() == 0) {
-      return defaultNVFile;
-    }
-
-    //if the text file exists, the current nv file contains the highscore of this table
-    File versionTextFile = new File(systemService.getMameFolder(), this.getRom() + " v" + getNvOffset() + ".txt");
-    if (versionTextFile.exists()) {
-      return defaultNVFile;
-    }
-
-    //else, we can check if a nv file with the alias and version exists
-    File versionNVAliasedFile = new File(systemService.getMameFolder(), originalRom + " v" + getNvOffset() + ".nv");
-    if (versionNVAliasedFile.exists()) {
-      return versionNVAliasedFile;
-    }
-
-    return defaultNVFile;
-  }
-
-
 
   @NonNull
   public File getPinUPMediaFolder(@NonNull PopperScreen screen) {

@@ -15,6 +15,12 @@ and their media configuration.
 - player ranking overview
 - highscore card generation
 
+### TODO List
+- Fix WQHD dashboard
+- Add PUP-pack validator
+- Reenable GameValidators
+- Update Tablename
+
 ### Documentation
 
 wip

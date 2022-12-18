@@ -1,23 +1,21 @@
 package de.mephisto.vpin.ui.launcher;
 
+import de.mephisto.vpin.commons.Services;
 import de.mephisto.vpin.commons.fx.LoadingOverlayController;
 import de.mephisto.vpin.commons.utils.ImageUtil;
 import de.mephisto.vpin.commons.utils.PropertiesStore;
 import de.mephisto.vpin.commons.utils.Updater;
+import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.VPinStudioClient;
 import de.mephisto.vpin.restclient.representations.PreferenceEntryRepresentation;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.util.Dialogs;
-import de.mephisto.vpin.commons.Services;
 import de.mephisto.vpin.ui.util.UIDefaults;
-import de.mephisto.vpin.ui.util.WidgetFactory;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -36,7 +34,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
-import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
@@ -130,27 +127,6 @@ public class LauncherController implements Initializable {
   }
 
   @FXML
-  private void onUpdateCheck() {
-    stage.getScene().setCursor(Cursor.WAIT);
-    new Thread(() -> {
-      String s = Updater.checkForUpdate(Studio.getVersion());
-      Platform.runLater(() -> {
-        stage.getScene().setCursor(Cursor.DEFAULT);
-
-        if (s == null) {
-          WidgetFactory.showAlert("Unable to retrieve update information. Please check log files.");
-        }
-        else if (!s.equalsIgnoreCase(Studio.getVersion())) {
-          Optional<ButtonType> result = WidgetFactory.showConfirmation("Download and install version " + s + "?", "Update available");
-          if (result.isPresent() && result.get().equals(ButtonType.OK)) {
-            runUpdate();
-          }
-        }
-      });
-    }).start();
-  }
-
-  @FXML
   private void onNewConnection() {
     String host = WidgetFactory.showInputDialog("New VPin Studio Connection", "Enter the IP address or the hostname to connect to.", "IP or hostname");
     if (!StringUtils.isEmpty(host)) {
@@ -190,14 +166,9 @@ public class LauncherController implements Initializable {
     }
   }
 
-  public void setStage(Stage stage, boolean runUpdate) {
+  public void setStage(Stage stage) {
     this.stage = stage;
-    if (runUpdate) {
-      runUpdate();
-    }
-    else {
-      this.onConnectionRefresh();
-    }
+    this.onConnectionRefresh();
   }
 
   private void installServer() {
@@ -207,7 +178,7 @@ public class LauncherController implements Initializable {
         throw new UnsupportedOperationException("Installation failed: " + Services.getAutostartFile().getAbsolutePath() + " does not exist.");
       }
 
-      Updater.startServer();
+      Updater.restartServer();
       main.getTop().setVisible(false);
 
       FXMLLoader loader = new FXMLLoader(LoadingOverlayController.class.getResource("loading-overlay.fxml"));
@@ -218,7 +189,7 @@ public class LauncherController implements Initializable {
       main.setCenter(loadingOverlay);
 
       new Thread(() -> {
-        while(client.version() == null) {
+        while (client.version() == null) {
           try {
             LOG.info("Waiting for server...");
             Thread.sleep(2000);
@@ -228,59 +199,15 @@ public class LauncherController implements Initializable {
         }
 
         LOG.info("Running initial tasks.");
-        Platform.runLater(()-> {
+        Platform.runLater(() -> {
           stage.close();
           Dialogs.createProgressDialog(new ServiceInstallationProgressModel(Studio.client));
           Studio.loadStudio(Dialogs.createStage(), client);
         });
       }).start();
-    }
-    catch (Exception e) {
-      LOG.error("Server installation failed: " + e.getMessage(), e );
+    } catch (Exception e) {
+      LOG.error("Server installation failed: " + e.getMessage(), e);
       WidgetFactory.showAlert("Server installation failed: " + e.getMessage());
-    }
-  }
-
-  private void runUpdate() {
-    try {
-      main.getTop().setVisible(false);
-      FXMLLoader loader = new FXMLLoader(LoadingOverlayController.class.getResource("loading-overlay.fxml"));
-      BorderPane loadingOverlay = loader.load();
-      LoadingOverlayController ctrl = loader.getController();
-      ctrl.setLoadingMessage("Updating Server...");
-
-      main.setCenter(loadingOverlay);
-
-      new Thread(() -> {
-        try {
-          String version = client.version();
-          if (version != null && !version.equals(Updater.LATEST_VERSION)) {
-            client.update();
-          }
-
-          Platform.runLater(() -> {
-            ctrl.setLoadingMessage("Updating Client...");
-            new Thread(() -> {
-              try {
-                Updater.updateUI(Updater.LATEST_VERSION);
-                Updater.restartClient();
-              } catch (Exception e) {
-                Platform.runLater(() -> {
-                  LOG.error("UI update failed: " + e.getMessage(), e);
-                  WidgetFactory.showAlert(e.getMessage());
-                });
-              }
-            }).start();
-          });
-        } catch (Exception e) {
-          LOG.error("Client update failed: " + e.getMessage(), e);
-          Platform.runLater(() -> {
-            WidgetFactory.showAlert(e.getMessage());
-          });
-        }
-      }).start();
-    } catch (IOException e) {
-      WidgetFactory.showAlert(e.getMessage());
     }
   }
 
@@ -325,7 +252,7 @@ public class LauncherController implements Initializable {
 
     actionColumn.setCellValueFactory(cellData -> {
       VPinConnection value = cellData.getValue();
-      if(value.getHost().equals("localhost")) {
+      if (value.getHost().equals("localhost")) {
         return new SimpleObjectProperty("");
       }
 

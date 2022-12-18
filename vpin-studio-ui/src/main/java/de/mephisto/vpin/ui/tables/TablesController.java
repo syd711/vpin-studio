@@ -1,9 +1,9 @@
 package de.mephisto.vpin.ui.tables;
 
 import de.mephisto.vpin.commons.EmulatorTypes;
+import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.VPinStudioClient;
 import de.mephisto.vpin.restclient.ValidationCode;
-import de.mephisto.vpin.restclient.representations.EmulatorRepresentation;
 import de.mephisto.vpin.restclient.representations.GameRepresentation;
 import de.mephisto.vpin.ui.NavigationController;
 import de.mephisto.vpin.ui.Studio;
@@ -13,12 +13,9 @@ import de.mephisto.vpin.ui.tables.validation.ValidationResult;
 import de.mephisto.vpin.ui.tables.validation.ValidationTexts;
 import de.mephisto.vpin.ui.util.Dialogs;
 import de.mephisto.vpin.ui.util.MediaUtil;
-import de.mephisto.vpin.ui.util.WidgetFactory;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -265,7 +262,7 @@ public class TablesController implements Initializable, StudioFXController {
         tableView.setItems(data);
         tableView.refresh();
 
-        if(selection != null) {
+        if (selection != null) {
           final GameRepresentation updatedGame = client.getGame(selection.getId());
           tableView.getSelectionModel().select(updatedGame);
         }
@@ -321,9 +318,10 @@ public class TablesController implements Initializable, StudioFXController {
     tableView.setPlaceholder(new Label("No matching tables found."));
 
 
-    columnDisplayName.setCellValueFactory(
-        new PropertyValueFactory<>("gameDisplayName")
-    );
+    columnDisplayName.setCellValueFactory(cellData -> {
+      GameRepresentation value = cellData.getValue();
+      return new SimpleStringProperty(value.getGameDisplayName());
+    });
 
     columnId.setCellValueFactory(
         new PropertyValueFactory<>("id")
@@ -434,7 +432,7 @@ public class TablesController implements Initializable, StudioFXController {
       if (game.getGameDisplayName().toLowerCase().contains(filterValue.toLowerCase())) {
         filtered.add(game);
       }
-      else if(!StringUtils.isEmpty(game.getRom()) && game.getRom().toLowerCase().contains(filterValue.toLowerCase())) {
+      else if (!StringUtils.isEmpty(game.getRom()) && game.getRom().toLowerCase().contains(filterValue.toLowerCase())) {
         filtered.add(game);
       }
     }

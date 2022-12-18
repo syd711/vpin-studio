@@ -9,6 +9,15 @@ public class ScanResult {
   private int nvOffset = 0;
   private String rom;
   private String hsFileName;
+  private String tableName;
+
+  public String getTableName() {
+    return tableName;
+  }
+
+  public void setTableName(String tableName) {
+    this.tableName = tableName;
+  }
 
   private List<String> assets = new ArrayList<>();
 

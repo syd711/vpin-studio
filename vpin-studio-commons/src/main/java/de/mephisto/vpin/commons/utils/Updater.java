@@ -1,25 +1,22 @@
 package de.mephisto.vpin.commons.utils;
 
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.*;
+import java.io.BufferedInputStream;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.Arrays;
-import java.util.Enumeration;
 import java.util.List;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipFile;
 
 public class Updater {
   private final static Logger LOG = LoggerFactory.getLogger(Updater.class);
 
   private final static String BASE_URL = "https://github.com/syd711/vpin-studio/releases/download/%s/";
   private final static String LATEST_RELEASE_URL = "https://github.com/syd711/vpin-studio/releases/latest";
-
   public static String LATEST_VERSION = null;
 
   public static File updateServer(String versionSegment) throws Exception {
@@ -30,12 +27,19 @@ public class Updater {
     return out;
   }
 
-  public static void startServer() {
+  public static void startUpdater(String args) {
+    List<String> commands = Arrays.asList("VPin-Studio-Updater.exe", args);
+    SystemCommandExecutor executor = new SystemCommandExecutor(commands);
+    executor.setDir(new File("./"));
+    executor.executeCommandAsync();
+    System.exit(0);
+  }
+
+  public static void restartServer() {
     List<String> commands = Arrays.asList("VPin-Studio-Server.exe");
     SystemCommandExecutor executor = new SystemCommandExecutor(commands);
     executor.setDir(new File("./"));
     executor.executeCommandAsync();
-    LOG.info("Startup command finished.");
   }
 
   public static void restartClient() {

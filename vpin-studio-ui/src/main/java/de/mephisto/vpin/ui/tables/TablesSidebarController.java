@@ -6,11 +6,10 @@ import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.VPinStudioClient;
 import de.mephisto.vpin.restclient.representations.*;
 import de.mephisto.vpin.ui.Studio;
-import de.mephisto.vpin.ui.StudioFXController;
 import de.mephisto.vpin.ui.util.BindingUtil;
 import de.mephisto.vpin.ui.util.Dialogs;
 import de.mephisto.vpin.ui.util.MediaUtil;
-import de.mephisto.vpin.ui.util.WidgetFactory;
+import de.mephisto.vpin.commons.utils.WidgetFactory;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -285,7 +284,7 @@ public class TablesSidebarController implements Initializable {
     GameMediaItemRepresentation mediaItem = (GameMediaItemRepresentation) center.getUserData();
     if (mediaItem != null) {
       GameRepresentation gameRepresentation = game.get();
-      Dialogs.openMediaDialog(gameRepresentation, mediaItem);
+      Dialogs.openMediaDialog(client, gameRepresentation, mediaItem);
     }
   }
 
@@ -513,7 +512,7 @@ public class TablesSidebarController implements Initializable {
       BorderPane screen = this.getScreenBorderPaneFor(value);
       boolean ignored = ignoreScreenNames.contains(value.name());
       GameMediaItemRepresentation item = gameMedia.getItem(value);
-      WidgetFactory.createMediaContainer(screen, item, ignored, mediaPreviewCheckbox.isSelected());
+      WidgetFactory.createMediaContainer(Studio.client, screen, item, ignored, mediaPreviewCheckbox.isSelected());
     }
   }
 

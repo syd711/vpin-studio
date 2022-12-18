@@ -19,6 +19,11 @@ public class ValidationTexts {
 
     int code = game.getValidationState();
     switch (code) {
+      case CODE_VPX_NOT_EXISTS: {
+        label = "VPX file '" + game.getGameFileName() + "' does not exist.";
+        text = "Fix the configuration for this table in PinUP Popper.";
+        break;
+      }
       case CODE_NO_ROM: {
         label = "No ROM name could be resolved.";
         text = "Consider setting the ROM name in the \"Table Metadata\" section or PinUP popper. Otherwise no highscore can be evaluated for this table.";

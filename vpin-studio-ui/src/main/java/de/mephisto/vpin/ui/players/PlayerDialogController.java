@@ -1,12 +1,10 @@
 package de.mephisto.vpin.ui.players;
 
 import de.mephisto.vpin.restclient.AssetType;
-import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.representations.AssetRepresentation;
 import de.mephisto.vpin.restclient.representations.PlayerRepresentation;
-import de.mephisto.vpin.restclient.representations.PreferenceEntryRepresentation;
 import de.mephisto.vpin.ui.DashboardController;
-import de.mephisto.vpin.ui.util.WidgetFactory;
+import de.mephisto.vpin.commons.utils.WidgetFactory;
 import eu.hansolo.tilesfx.Tile;
 import eu.hansolo.tilesfx.TileBuilder;
 import javafx.event.ActionEvent;

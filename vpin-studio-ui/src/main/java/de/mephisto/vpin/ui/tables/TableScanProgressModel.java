@@ -9,7 +9,6 @@ import org.slf4j.LoggerFactory;
 
 import java.util.Arrays;
 import java.util.Iterator;
-import java.util.List;
 
 public class TableScanProgressModel extends ProgressModel {
   private final static Logger LOG = LoggerFactory.getLogger(TableScanProgressModel.class);
@@ -36,13 +35,8 @@ public class TableScanProgressModel extends ProgressModel {
   public String processNext(ProgressResultModel progressResultModel) {
     try {
       GameRepresentation game = iterator.next();
-      boolean result = client.scanGame(game);
-      if (result) {
-        progressResultModel.addProcessed();
-      }
-      else {
-        progressResultModel.addSkipped();
-      }
+      client.scanGame(game.getId());
+      progressResultModel.addProcessed();
       return game.getGameDisplayName();
     } catch (Exception e) {
       LOG.error("Generate card error: " + e.getMessage(), e);

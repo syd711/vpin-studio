@@ -14,11 +14,11 @@ public class ServiceInstallationProgressModel extends ProgressModel {
   private final static Logger LOG = LoggerFactory.getLogger(ServiceInstallationProgressModel.class);
 
   private VPinStudioClient client;
-  private Iterator<GameRepresentation> gamesIterator;
+  private Iterator<Integer> gamesIterator;
 
   private int max;
   private boolean hasNext = true;
-  private List<GameRepresentation> games;
+  private List<Integer> gameIds;
 
   public ServiceInstallationProgressModel(VPinStudioClient client) {
     super("Initial Table Scan");
@@ -40,19 +40,19 @@ public class ServiceInstallationProgressModel extends ProgressModel {
   @Override
   public String processNext(ProgressResultModel progressResultModel) {
     try {
-      if (games == null) {
-        games = client.getGames();
-        this.max = games.size();
-        gamesIterator = games.iterator();
+      if (gameIds == null) {
+        gameIds = client.getGameIds();
+        this.max = gameIds.size();
+        gamesIterator = gameIds.iterator();
         return "Preparing initial table scan...";
       }
 
       this.hasNext = gamesIterator.hasNext();
       if (hasNext) {
-        GameRepresentation next = gamesIterator.next();
-        client.scanGame(next);
+        Integer next = gamesIterator.next();
+        GameRepresentation gameRepresentation = client.scanGame(next);
         progressResultModel.addProcessed();
-        return next.getGameDisplayName();
+        return gameRepresentation.getGameDisplayName();
       }
     } catch (Exception e) {
       LOG.error("Generate card error: " + e.getMessage(), e);

@@ -1,9 +1,10 @@
-package de.mephisto.vpin.ui.util;
+package de.mephisto.vpin.commons.utils;
 
+import de.mephisto.vpin.commons.Services;
+import de.mephisto.vpin.commons.fx.OverlayWindowFX;
 import de.mephisto.vpin.restclient.PopperScreen;
 import de.mephisto.vpin.restclient.VPinStudioClient;
 import de.mephisto.vpin.restclient.representations.GameMediaItemRepresentation;
-import de.mephisto.vpin.ui.Studio;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Node;
@@ -47,7 +48,7 @@ public class WidgetFactory {
 
   public static Optional<ButtonType> showConfirmation(String msg, String header) {
     Alert alert = new Alert(Alert.AlertType.CONFIRMATION, msg, ButtonType.CLOSE, ButtonType.OK);
-    alert.getDialogPane().getStylesheets().add(Studio.class.getResource("stylesheet.css").toExternalForm());
+    alert.getDialogPane().getStylesheets().add(OverlayWindowFX.class.getResource("stylesheet.css").toExternalForm());
     alert.getDialogPane().getStyleClass().add("base-component");
     alert.getDialogPane().setStyle("-fx-font-size: 14px;");
     alert.setHeaderText(header);
@@ -57,7 +58,7 @@ public class WidgetFactory {
 
   public static Optional<ButtonType> showInformation(String msg, String header) {
     Alert alert = new Alert(Alert.AlertType.INFORMATION, msg, ButtonType.OK);
-    alert.getDialogPane().getStylesheets().add(Studio.class.getResource("stylesheet.css").toExternalForm());
+    alert.getDialogPane().getStylesheets().add(OverlayWindowFX.class.getResource("stylesheet.css").toExternalForm());
     alert.getDialogPane().getStyleClass().add("base-component");
     alert.getDialogPane().setStyle("-fx-font-size: 14px;");
     alert.setHeaderText(header);
@@ -67,7 +68,7 @@ public class WidgetFactory {
 
   public static void showAlert(String msg) {
     Alert alert = new Alert(Alert.AlertType.INFORMATION, msg, ButtonType.CLOSE);
-    alert.getDialogPane().getStylesheets().add(Studio.class.getResource("stylesheet.css").toExternalForm());
+    alert.getDialogPane().getStylesheets().add(OverlayWindowFX.class.getResource("stylesheet.css").toExternalForm());
     alert.getDialogPane().getStyleClass().add("base-component");
     alert.getDialogPane().setStyle("-fx-font-size: 14px;");
     alert.setHeaderText(null);
@@ -78,7 +79,7 @@ public class WidgetFactory {
   public static String showInputDialog(String title, String description, String msg) {
     TextInputDialog td = new TextInputDialog(msg);
     td.setTitle(title);
-    td.getDialogPane().getStylesheets().add(Studio.class.getResource("stylesheet.css").toExternalForm());
+    td.getDialogPane().getStylesheets().add(OverlayWindowFX.class.getResource("stylesheet.css").toExternalForm());
     td.getDialogPane().getStyleClass().add("base-component");
     td.getDialogPane().setStyle("-fx-font-size: 14px;");
     td.setHeaderText(description);
@@ -102,7 +103,7 @@ public class WidgetFactory {
     }
   }
 
-  public static Node createMediaContainer(BorderPane parent, GameMediaItemRepresentation mediaItem, boolean ignored, boolean mediaPreview) {
+  public static Node createMediaContainer(VPinStudioClient client, BorderPane parent, GameMediaItemRepresentation mediaItem, boolean ignored, boolean mediaPreview) {
     if (parent.getCenter() != null) {
       disposeMediaBorderPane(parent);
     }
@@ -127,7 +128,7 @@ public class WidgetFactory {
     }
 
     if(mediaPreview) {
-      return addMediaItemToBorderPane(mediaItem, parent);
+      return addMediaItemToBorderPane(client, mediaItem, parent);
     }
 
     Label label = new Label("Preview disabled");
@@ -137,10 +138,10 @@ public class WidgetFactory {
     return parent;
   }
 
-  public static Node addMediaItemToBorderPane(GameMediaItemRepresentation mediaItem, BorderPane parent) {
+  public static Node addMediaItemToBorderPane(VPinStudioClient client, GameMediaItemRepresentation mediaItem, BorderPane parent) {
     String mimeType = mediaItem.getMimeType();
     String baseType = mimeType.split("/")[0];
-    String url = Studio.client.getURL(mediaItem.getUri());
+    String url = client.getURL(mediaItem.getUri());
 
     if (baseType.equals("image")) {
       ImageView imageView = new ImageView();
@@ -148,7 +149,7 @@ public class WidgetFactory {
       imageView.setFitHeight(parent.getPrefWidth() - 20);
       imageView.setPreserveRatio(true);
 
-      ByteArrayInputStream gameMediaItem = Studio.client.getGameMediaItem(mediaItem.getGameId(), PopperScreen.valueOf(mediaItem.getScreen()));
+      ByteArrayInputStream gameMediaItem = client.getGameMediaItem(mediaItem.getGameId(), PopperScreen.valueOf(mediaItem.getScreen()));
       Image image = new Image(gameMediaItem);
       imageView.setImage(image);
       imageView.setUserData(mediaItem);

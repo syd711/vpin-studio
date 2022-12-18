@@ -2,6 +2,7 @@ open module de.mephisto.vpin.commons {
   requires org.slf4j;
   requires org.apache.commons.lang3;
   requires org.apache.commons.io;
+  requires org.kordamp.ikonli.javafx;
   requires com.github.spotbugs.annotations;
   requires java.desktop;
   requires imgscalr.lib;

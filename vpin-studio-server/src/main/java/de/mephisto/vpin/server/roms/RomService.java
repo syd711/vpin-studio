@@ -36,9 +36,15 @@ public class RomService implements InitializingBean {
   @NonNull
   public ScanResult scanGameFile(@NonNull Game game) {
     if(game.getEmulator().getName().equalsIgnoreCase(Emulator.VISUAL_PINBALL_X)) {
-      return VPXFileScanner.scan(game.getGameFile());
+      if(game.getGameFile().exists()) {
+        return VPXFileScanner.scan(game.getGameFile());
+      }
+
+      LOG.info("Skipped reading of " + game.getGameDisplayName() + ", VPX file '" + game.getGameFile().getAbsolutePath() + "' does not exist.");
+      return new ScanResult();
     }
-    throw new UnsupportedOperationException("Only VPX tables can be scanned.");
+    LOG.info("Skipped reading of " + game.getGameDisplayName() + ", only VPX tables can be scanned.");
+    return new ScanResult();
   }
 
   @Nullable

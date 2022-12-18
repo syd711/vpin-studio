@@ -34,6 +34,8 @@ public class GameDetails {
 
   private String romName;
 
+  private String tableName;
+
   private String hsFileName;
 
   private String ignoredValidations;
@@ -41,6 +43,14 @@ public class GameDetails {
   private int pupId;
 
   private int nvOffset;
+
+  public String getTableName() {
+    return tableName;
+  }
+
+  public void setTableName(String tableName) {
+    this.tableName = tableName;
+  }
 
   public String getAssets() {
     return assets;

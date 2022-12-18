@@ -11,7 +11,6 @@ import org.springframework.web.client.RestTemplate;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.InputStream;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
@@ -29,8 +28,15 @@ public class VPinStudioClient implements ObservedPropertyChangeListener, Overlay
 
   private RestClient restClient;
 
+  private String host;
+
   public VPinStudioClient(String host) {
+    this.host = host;
     restClient = RestClient.createInstance(host);
+  }
+
+  public String getHost() {
+    return host;
   }
 
   public void clearCache() {
@@ -84,6 +90,16 @@ public class VPinStudioClient implements ObservedPropertyChangeListener, Overlay
   public void update() {
     final RestTemplate restTemplate = new RestTemplate();
     restTemplate.getForObject(restClient.getBaseUrl() + API + "system/update", Boolean.class);
+  }
+
+  public String waitForUpdate() {
+    try {
+      final RestTemplate restTemplate = new RestTemplate();
+      return restTemplate.getForObject(restClient.getBaseUrl() + API + "system/version", String.class);
+    } catch (Exception e) {
+      //ignore
+    }
+    return null;
   }
 
   public String version() {
@@ -279,6 +295,16 @@ public class VPinStudioClient implements ObservedPropertyChangeListener, Overlay
     return 0;
   }
 
+  public List<Integer> getGameIds() {
+    try {
+      final RestTemplate restTemplate = new RestTemplate();
+      return Arrays.asList(restTemplate.getForObject(restClient.getBaseUrl() + API + "games/ids", Integer[].class));
+    } catch (Exception e) {
+      LOG.error("Failed to read game ids: " + e.getMessage(), e);
+    }
+    return Collections.emptyList();
+  }
+
   public ScoreSummaryRepresentation getGameScores(int id) {
     try {
       return restClient.get(API + "games/scores/" + id, ScoreSummaryRepresentation.class);
@@ -297,9 +323,8 @@ public class VPinStudioClient implements ObservedPropertyChangeListener, Overlay
     return null;
   }
 
-  public boolean scanGame(GameRepresentation game) {
-    int gameId = game.getId();
-    return restClient.get(API + "games/scan/" + gameId, Boolean.class);
+  public GameRepresentation scanGame(int gameId) {
+    return restClient.get(API + "games/scan/" + gameId, GameRepresentation.class);
   }
 
   public GameRepresentation saveGame(GameRepresentation game) throws Exception {

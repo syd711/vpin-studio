@@ -26,7 +26,8 @@ public class VPXFileScanner {
   private final static int MAX_ROM_FILENAME_LENGTH = 16;
   private final static int MAX_FILENAME_LENGTH = 128;
 
-  private final static List<String> PATTERNS = Arrays.asList("cGameName", "cgamename", "RomSet1", "GameName");
+  private final static String PATTERN_TABLENAME = "TableName";
+  private final static List<String> PATTERNS = Arrays.asList("cGameName", "cgamename", "RomSet1", "GameName", PATTERN_TABLENAME);
   private final static List<String> ASSET_TYPES = Arrays.asList("mp3", "png", "jpeg", "jpeg", "ogg");
 
 
@@ -133,7 +134,7 @@ public class VPXFileScanner {
       String asset = value.substring(value.lastIndexOf("\"") + 1);
       asset = asset.replaceAll("\\\\", "/");
       asset = asset.replaceAll("//", "/");
-      if(!asset.startsWith(".")) {
+      if (!asset.startsWith(".")) {
         return asset;
       }
     }
@@ -171,10 +172,6 @@ public class VPXFileScanner {
    * Single line eval for rom name
    */
   private static void lineSearchRom(@NonNull ScanResult result, @NonNull String line) {
-    if (result.getRom() != null) {
-      return;
-    }
-
     int patternMatch = matchesPatterns(line);
     if (patternMatch != -1) {
       String pattern = PATTERNS.get(patternMatch);
@@ -191,7 +188,12 @@ public class VPXFileScanner {
         rom = rom.substring(0, end).trim();
       }
 
-      result.setRom(rom);
+      if (pattern.equals(PATTERN_TABLENAME)) {
+        result.setTableName(rom);
+      }
+      else if (result.getRom() == null) {
+        result.setRom(rom);
+      }
     }
   }
 

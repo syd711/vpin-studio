@@ -47,9 +47,15 @@ public class GameValidator implements InitializingBean {
 
   private Preferences preferences;
 
-  public int validate(@NonNull Game game, @NonNull List<Game> games) {
+  public int validate(@NonNull Game game) {
     boolean isVPX = game.getEmulator().getName().equals(Emulator.VISUAL_PINBALL_X);
     boolean isFP = game.getEmulator().getName().equals(Emulator.FUTURE_PINBALL);
+
+    if (isVPX && isValidationEnabled(game, CODE_VPX_NOT_EXISTS)) {
+      if (!game.getGameFile().exists()) {
+        return ValidationCode.CODE_VPX_NOT_EXISTS;
+      }
+    }
 
     if (isVPX && isValidationEnabled(game, ValidationCode.CODE_NO_ROM)) {
       if (StringUtils.isEmpty(game.getRom())) {
@@ -64,13 +70,13 @@ public class GameValidator implements InitializingBean {
     }
 
 
-    if (isVPX && isValidationEnabled(game, ValidationCode.CODE_DUPLICATE_ROM)) {
-      for (Game g : games) {
-        if (g.getId() != game.getId() && !StringUtils.isEmpty(g.getRom()) && g.getRom().equals(game.getRom())) {
-          return ValidationCode.CODE_DUPLICATE_ROM;
-        }
-      }
-    }
+//    if (isVPX && isValidationEnabled(game, ValidationCode.CODE_DUPLICATE_ROM)) {
+//      for (Game g : games) {
+//        if (g.getId() != game.getId() && !StringUtils.isEmpty(g.getRom()) && g.getRom().equals(game.getRom())) {
+//          return ValidationCode.CODE_DUPLICATE_ROM;
+//        }
+//      }
+//    }
 
     if (isValidationEnabled(game, ValidationCode.CODE_NO_DIRECTB2S_OR_PUPPACK)) {
       if (!game.isDirectB2SAvailable() && !game.isPupPackAvailable()) {
@@ -78,11 +84,11 @@ public class GameValidator implements InitializingBean {
       }
     }
 
-    if ((isVPX || isFP) && isValidationEnabled(game, ValidationCode.CODE_NO_HIGHSCORE_FILES)) {
-      if (!game.hasHighscore()) {
-        return ValidationCode.CODE_NO_HIGHSCORE_FILES;
-      }
-    }
+//    if ((isVPX || isFP) && isValidationEnabled(game, ValidationCode.CODE_NO_HIGHSCORE_FILES)) {
+//      if (!game.hasHighscore()) {
+//        return ValidationCode.CODE_NO_HIGHSCORE_FILES;
+//      }
+//    }
 
     File audio = game.getPinUPMedia(PopperScreen.Audio);
     File audioLaunch = game.getPinUPMedia(PopperScreen.AudioLaunch);

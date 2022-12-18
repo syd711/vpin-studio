@@ -3,7 +3,7 @@ package de.mephisto.vpin.ui.preferences;
 import de.mephisto.vpin.connectors.discord.DiscordWebhook;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.ui.util.BindingUtil;
-import de.mephisto.vpin.ui.util.WidgetFactory;
+import de.mephisto.vpin.commons.utils.WidgetFactory;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -11,7 +11,6 @@ import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import org.apache.commons.lang3.StringUtils;
 
-import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
 

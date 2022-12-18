@@ -1,5 +1,7 @@
 package de.mephisto.vpin.ui.util;
 
+import de.mephisto.vpin.commons.utils.WidgetFactory;
+import de.mephisto.vpin.restclient.VPinStudioClient;
 import de.mephisto.vpin.restclient.representations.CompetitionRepresentation;
 import de.mephisto.vpin.restclient.representations.GameMediaItemRepresentation;
 import de.mephisto.vpin.restclient.representations.GameRepresentation;
@@ -28,7 +30,6 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 
 import java.io.IOException;
-import java.util.Iterator;
 
 public class Dialogs {
 
@@ -170,7 +171,7 @@ public class Dialogs {
     return controller.uploadFinished();
   }
 
-  public static void openMediaDialog(GameRepresentation game, GameMediaItemRepresentation item) {
+  public static void openMediaDialog(VPinStudioClient client, GameRepresentation game, GameMediaItemRepresentation item) {
     Parent root = null;
     try {
       root = FXMLLoader.load(Studio.class.getResource("dialog-media.fxml"));
@@ -180,7 +181,7 @@ public class Dialogs {
 
     Stage owner = Studio.stage;
     BorderPane mediaView = (BorderPane) root.lookup("#mediaView");
-    WidgetFactory.addMediaItemToBorderPane(item, mediaView);
+    WidgetFactory.addMediaItemToBorderPane(client, item, mediaView);
     final Stage stage = createStage();
     stage.initModality(Modality.WINDOW_MODAL);
     stage.setTitle(game.getGameDisplayName() + " - " + item.getScreen() + " Screen");

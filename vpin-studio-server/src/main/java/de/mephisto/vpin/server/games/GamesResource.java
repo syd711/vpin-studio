@@ -1,5 +1,6 @@
 package de.mephisto.vpin.server.games;
 
+import de.mephisto.vpin.restclient.representations.GameRepresentation;
 import de.mephisto.vpin.server.competitions.ScoreSummary;
 import de.mephisto.vpin.server.highscores.HighscoreMetadata;
 import de.mephisto.vpin.server.system.SystemService;
@@ -38,6 +39,12 @@ public class GamesResource {
     return gameService.getGameCount();
   }
 
+  @GetMapping("/ids")
+  public List<Integer> getGameId() {
+    return gameService.getGameId();
+  }
+
+
   @GetMapping("/recent/{count}")
   public ScoreSummary getRecentHighscores(@PathVariable("count") int count) {
     return gameService.getRecentHighscores(count);
@@ -63,7 +70,7 @@ public class GamesResource {
   }
 
   @GetMapping("/scan/{id}")
-  public boolean scanGame(@PathVariable("id") int pupId) {
+  public Game scanGame(@PathVariable("id") int pupId) {
     return gameService.scanGame(pupId);
   }
 

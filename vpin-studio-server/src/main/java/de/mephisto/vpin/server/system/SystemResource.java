@@ -4,7 +4,6 @@ import de.mephisto.vpin.commons.Services;
 import de.mephisto.vpin.commons.utils.Updater;
 import de.mephisto.vpin.server.util.RequestUtil;
 import org.apache.commons.io.FilenameUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -53,28 +52,7 @@ public class SystemResource {
 
   @GetMapping("/update")
   public boolean update() {
-    String s = Updater.checkForUpdate(systemService.getVersion());
-    if (!StringUtils.isEmpty(s)) {
-      new Thread(() -> {
-        try {
-          File file = Updater.updateServer(s);
-          if (file.exists()) {
-            Updater.startServer();
-            System.exit(0);
-          }
-          else {
-            LOG.error("Updating server failed: update file " + file.getAbsolutePath() + " does not exist.");
-          }
-        } catch (Exception e) {
-          LOG.error("Updating server failed: " + e.getMessage(), e);
-        }
-      }).start();
-    }
-    return true;
-  }
-
-  @GetMapping("/restart")
-  public boolean restart() {
+    Updater.startUpdater("-server");
     return true;
   }
 

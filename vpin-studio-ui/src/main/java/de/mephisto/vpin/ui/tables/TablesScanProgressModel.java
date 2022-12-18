@@ -12,21 +12,21 @@ import java.util.List;
 
 public class TablesScanProgressModel extends ProgressModel {
   private final static Logger LOG = LoggerFactory.getLogger(TablesScanProgressModel.class);
-  private final Iterator<GameRepresentation> iterator;
-  private final List<GameRepresentation> gameInfos;
+  private final Iterator<Integer> iterator;
+  private final List<Integer> gameIds;
 
   private final VPinStudioClient client;
 
   public TablesScanProgressModel(VPinStudioClient client, String title) {
     super(title);
     this.client = client;
-    this.gameInfos = client.getGames();
-    iterator = gameInfos.iterator();
+    this.gameIds = client.getGameIds();
+    iterator = gameIds.iterator();
   }
 
   @Override
   public int getMax() {
-    return gameInfos.size();
+    return gameIds.size();
   }
 
   @Override
@@ -36,16 +36,13 @@ public class TablesScanProgressModel extends ProgressModel {
 
   public String processNext(ProgressResultModel progressResultModel) {
     try {
-      GameRepresentation game = iterator.next();
-      boolean result = client.scanGame(game);
-      progressResultModel.addProcessed();
-      if (result) {
-
+      Integer id = iterator.next();
+      GameRepresentation game = client.scanGame(id);
+      if(game != null) {
+        progressResultModel.addProcessed();
+        return game.getGameDisplayName();
       }
-      else {
-        progressResultModel.addSkipped();
-      }
-      return game.getGameDisplayName();
+      return "Unknown Game";
     } catch (Exception e) {
       LOG.error("Generate card error: " + e.getMessage(), e);
     }

@@ -28,6 +28,9 @@ public class PinUPConnectorTest extends VPinServerTest {
     List<Game> games = connector.getGames();
     assertFalse(games.isEmpty());
 
+    List<Integer> gameIds = connector.getGameIds();
+    assertFalse(gameIds.isEmpty());
+
     Game game = connector.getGame(games.get(0).getId());
     assertNotNull(game);
 

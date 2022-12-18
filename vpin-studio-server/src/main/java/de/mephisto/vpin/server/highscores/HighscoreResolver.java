@@ -1,8 +1,8 @@
 package de.mephisto.vpin.server.highscores;
 
+import de.mephisto.vpin.commons.utils.SystemCommandExecutor;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.system.SystemService;
-import de.mephisto.vpin.commons.utils.SystemCommandExecutor;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import org.apache.commons.io.FilenameUtils;
@@ -66,7 +66,7 @@ class HighscoreResolver {
 
       if (rawScore == null) {
         String msg = "Reading highscore for '" + game.getGameDisplayName() + "' failed, no nvram file, VPReg.stg entry or EM highscore file found for rom name '" + romName + "'";
-        if(metadata.getStatus() == null) {
+        if (metadata.getStatus() == null) {
           metadata.setStatus("No nvram file, VPReg.stg entry or EM highscore file found.");
         }
         LOG.info(msg);
@@ -135,12 +135,12 @@ class HighscoreResolver {
    * We use the manual set rom name to find the highscore in the "/User/VPReg.stg" file.
    */
   private String readVRegHighscore(Game game, HighscoreMetadata metadata) throws IOException {
-    File tableHighscoreFolder = game.getVPRegFolder();
+    File tableHighscoreFolder = getVPRegFolder(game);
 
-    if (tableHighscoreFolder != null && game.getVPRegFolder().exists()) {
+    if (tableHighscoreFolder != null && tableHighscoreFolder.exists()) {
       metadata.setType(HighscoreMetadata.TYPE_VREG);
-      metadata.setFilename(game.getVPRegFolder().getCanonicalPath());
-      metadata.setModified(new Date(game.getVPRegFolder().lastModified()));
+      metadata.setFilename(tableHighscoreFolder.getCanonicalPath());
+      metadata.setModified(new Date(tableHighscoreFolder.lastModified()));
 
       StringBuilder builder = new StringBuilder("HIGHEST SCORES\n");
 
@@ -224,7 +224,7 @@ class HighscoreResolver {
   private String readNvHighscore(Game game, HighscoreMetadata metadata) {
     Highscore highscore = null;
     try {
-      File nvRam = game.getNvRamFile();
+      File nvRam = getNvRamFile(game);
       if (nvRam == null || !nvRam.exists()) {
         return null;
       }
@@ -294,5 +294,44 @@ class HighscoreResolver {
     } finally {
       brTest.close();
     }
+  }
+
+
+  @Nullable
+  public File getVPRegFolder(Game game) {
+    String rom = game.getRom();
+    if (!StringUtils.isEmpty(rom)) {
+      File file = new File(systemService.getExtractedVPRegFolder(), rom);
+      if (!file.exists() && !StringUtils.isEmpty(game.getTableName())) {
+        file = new File(systemService.getExtractedVPRegFolder(), game.getTableName());
+      }
+      return file;
+    }
+    return null;
+  }
+
+  @NonNull
+  private File getNvRamFile(Game game) {
+    File nvRamFolder = new File(systemService.getMameFolder(), "nvram");
+
+    String originalRom = game.getOriginalRom() != null ? game.getOriginalRom() : game.getRom();
+    File defaultNVFile = new File(nvRamFolder, originalRom + ".nv");
+    if (game.getNvOffset() == 0) {
+      return defaultNVFile;
+    }
+
+    //if the text file exists, the current nv file contains the highscore of this table
+    File versionTextFile = new File(systemService.getMameFolder(), game.getRom() + " v" + game.getNvOffset() + ".txt");
+    if (versionTextFile.exists()) {
+      return defaultNVFile;
+    }
+
+    //else, we can check if a nv file with the alias and version exists
+    File versionNVAliasedFile = new File(systemService.getMameFolder(), originalRom + " v" + game.getNvOffset() + ".nv");
+    if (versionNVAliasedFile.exists()) {
+      return versionNVAliasedFile;
+    }
+
+    return defaultNVFile;
   }
 }

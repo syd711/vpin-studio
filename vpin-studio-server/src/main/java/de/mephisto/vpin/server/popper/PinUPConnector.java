@@ -331,6 +331,25 @@ public class PinUPConnector implements InitializingBean {
     return count;
   }
 
+  public List<Integer> getGameIds() {
+    List<Integer> result = new ArrayList<>();
+    Connection connect = this.connect();
+    try {
+      Statement statement = connect.createStatement();
+      ResultSet rs = statement.executeQuery("SELECT GameID FROM Games WHERE EMUID = 1 OR EMUID = 3 OR EMUID = 4;");
+      while (rs.next()) {
+        result.add(rs.getInt("GameID"));
+      }
+      rs.close();
+      statement.close();
+    } catch (SQLException e) {
+      LOG.error("Failed to read game count: " + e.getMessage(), e);
+    } finally {
+      this.disconnect(connect);
+    }
+    return result;
+  }
+
   @NonNull
   public List<Game> getGames() {
     Connection connect = this.connect();
@@ -465,7 +484,7 @@ public class PinUPConnector implements InitializingBean {
     if (emulator.getName().equalsIgnoreCase(Emulator.VISUAL_PINBALL_X)) {
       File vpxFile = new File(systemService.getVPXTablesFolder(), gameFileName);
       if (!vpxFile.exists()) {
-        return null;
+        LOG.warn("Game file " + vpxFile.getAbsolutePath() + " does not exist.");
       }
       game.setGameFile(vpxFile);
     }

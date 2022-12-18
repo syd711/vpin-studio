@@ -45,7 +45,7 @@ public class GameService {
     LOG.info("Game fetch took " + (System.currentTimeMillis() - start) + "ms., returned " + games.size() + " tables.");
     start = System.currentTimeMillis();
     for (Game game : games) {
-      applyGameDetails(game, games, false);
+      applyGameDetails(game, false);
     }
     LOG.info("Game details fetch took " + (System.currentTimeMillis() - start) + "ms.");
     return games;
@@ -55,17 +55,21 @@ public class GameService {
     return this.pinUPConnector.getGameCount();
   }
 
+  public List<Integer> getGameId() {
+    return this.pinUPConnector.getGameIds();
+  }
+
   public List<Game> getGamesWithScore() {
     List<Game> games = getGames();
     return games.stream().filter(g -> !StringUtils.isEmpty(highscoreService.getHighscores(g.getId()).getRaw())).collect(Collectors.toList());
   }
 
   @SuppressWarnings("unused")
+  @Nullable
   public Game getGame(int id) {
     Game game = pinUPConnector.getGame(id);
     if (game != null) {
-      List<Game> games = pinUPConnector.getGames();
-      applyGameDetails(game, games, false);
+      applyGameDetails(game, false);
       return game;
     }
     return null;
@@ -85,18 +89,21 @@ public class GameService {
    * @param gameId the game to scan
    * @return
    */
-  public boolean scanGame(int gameId) {
+  @Nullable
+  public Game scanGame(int gameId) {
     Game game = getGame(gameId);
-    if (!game.getEmulator().getName().equalsIgnoreCase(Emulator.VISUAL_PINBALL_X)) {
-      return false;
+    if(game != null) {
+      Emulator emulator = game.getEmulator();
+      if (!emulator.getName().equalsIgnoreCase(Emulator.VISUAL_PINBALL_X)) {
+        return game;
+      }
+      gameDetailsRepository.findByPupId(gameId);
+      applyGameDetails(game, true);
+      highscoreService.scanScore(game);
+
+      return getGame(gameId);
     }
-    List<Game> games = pinUPConnector.getGames();
-
-    gameDetailsRepository.findByPupId(gameId);
-    applyGameDetails(game, games, true);
-    highscoreService.scanScore(game);
-
-    return true;
+    return null;
   }
 
   public HighscoreMetadata scanScore(int gameId) {
@@ -132,7 +139,7 @@ public class GameService {
     return game;
   }
 
-  private void applyGameDetails(@NonNull Game game, @NonNull List<Game> games, boolean forceScan) {
+  private void applyGameDetails(@NonNull Game game, boolean forceScan) {
     GameDetails gameDetails = gameDetailsRepository.findByPupId(game.getId());
     if (gameDetails == null || forceScan) {
       ScanResult scanResult = romService.scanGameFile(game);
@@ -142,6 +149,7 @@ public class GameService {
       }
 
       gameDetails.setRomName(scanResult.getRom());
+      gameDetails.setTableName(scanResult.getTableName());
       gameDetails.setNvOffset(scanResult.getNvOffset());
       gameDetails.setHsFileName(scanResult.getHsFileName());
       gameDetails.setPupId(game.getId());
@@ -162,6 +170,7 @@ public class GameService {
     }
     game.setOriginalRom(romService.getOriginalRom(game.getRom()));
     game.setHsFileName(gameDetails.getHsFileName());
+    game.setTableName(gameDetails.getTableName());
     game.setIgnoredValidations(gameDetails.getIgnoredValidations());
 
 //    String assets = gameDetails.getAssets();
@@ -173,7 +182,7 @@ public class GameService {
 //    }
 
     //run validations at the end!!!
-    game.setValidationState(gameValidator.validate(game, games));
+    game.setValidationState(gameValidator.validate(game));
   }
 
   public Game save(Game game) {
