@@ -83,4 +83,24 @@ public class HighscoreVersion {
   public void setOldRaw(String oldRaw) {
     this.oldRaw = oldRaw;
   }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) return true;
+    if (o == null || getClass() != o.getClass()) return false;
+
+    HighscoreVersion version = (HighscoreVersion) o;
+
+    return id.equals(version.id);
+  }
+
+  @Override
+  public int hashCode() {
+    return id.hashCode();
+  }
+
+  @Override
+  public String toString() {
+    return "Highscore Version " + this.id + " for game " + this.gameId;
+  }
 }

@@ -1,8 +1,7 @@
 package de.mephisto.vpin.server.games;
 
 import de.mephisto.vpin.server.competitions.ScoreSummary;
-import de.mephisto.vpin.server.highscores.HighscoreMetadata;
-import de.mephisto.vpin.server.highscores.HighscoreService;
+import de.mephisto.vpin.server.highscores.*;
 import de.mephisto.vpin.server.popper.Emulator;
 import de.mephisto.vpin.server.popper.PinUPConnector;
 import de.mephisto.vpin.server.roms.RomService;
@@ -15,6 +14,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -80,7 +81,41 @@ public class GameService {
   }
 
   public ScoreSummary getRecentHighscores(int count) {
-    return highscoreService.getRecentHighscores();
+    int TARGET_COUNT = 10;
+    List<Score> scores = new ArrayList<>();
+    ScoreSummary summary = new ScoreSummary(scores, null);
+    List<Score> allHighscoreVersions = highscoreService.getAllHighscoreVersions();
+
+    //check if the actual game still exists
+    for (Score version : allHighscoreVersions) {
+      Game game = getGame(version.getGameId());
+      if(game != null) {
+        scores.add(version);
+      }
+    }
+
+    if (scores.size() < TARGET_COUNT) {
+      List<Highscore> highscores = highscoreService.getRecentHighscores();
+      for (Highscore highscore : highscores) {
+        int gameId = highscore.getGameId();
+        Game game = getGame(gameId);
+        //check if the actual game still exists
+        if(game != null) {
+          List<Score> collect = scores.stream().filter(s -> s.getGameId() == gameId).collect(Collectors.toList());
+          if (collect.isEmpty()) {
+            List<Score> versionScores = highscoreService.parseScores(highscore);
+            if (!versionScores.isEmpty()) {
+              scores.add(versionScores.get(0));
+              if (scores.size() == TARGET_COUNT) {
+                break;
+              }
+            }
+          }
+        }
+      }
+    }
+
+    return summary;
   }
 
   /**

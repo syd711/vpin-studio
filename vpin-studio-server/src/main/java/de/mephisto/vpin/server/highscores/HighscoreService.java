@@ -231,35 +231,29 @@ public class HighscoreService implements InitializingBean {
   /**
    * Used for the dashboard widget to show the list of newly created highscores
    */
-  public ScoreSummary getRecentHighscores() {
-    int TARGET_COUNT = 10;
+  public List<Score> getAllHighscoreVersions() {
     List<Score> scores = new ArrayList<>();
-    ScoreSummary summary = new ScoreSummary(scores, null);
-
     List<HighscoreVersion> all = highscoreVersionRepository.findAllByOrderByCreatedAtDesc();
     for (HighscoreVersion version : all) {
       List<Score> versionScores = highscoreParser.parseScores(version.getCreatedAt(), version.getNewRaw(), version.getGameId());
-      scores.add(versionScores.get(version.getChangedPosition() - 1));
-    }
-
-    if (scores.size() < TARGET_COUNT) {
-      List<Highscore> highscores = highscoreRepository.findRecent();
-      for (Highscore highscore : highscores) {
-        int gameId = highscore.getGameId();
-        List<Score> collect = scores.stream().filter(s -> s.getGameId() == gameId).collect(Collectors.toList());
-        if (collect.isEmpty()) {
-          List<Score> versionScores = highscoreParser.parseScores(highscore.getLastModified(), highscore.getRaw(), highscore.getGameId());
-          if (!versionScores.isEmpty()) {
-            scores.add(versionScores.get(0));
-            if (scores.size() == TARGET_COUNT) {
-              break;
-            }
-          }
-        }
+      int changedPos = version.getChangedPosition() - 1;
+      if(version.getChangedPosition() < 0 || version.getChangedPosition() >= versionScores.size()) {
+        LOG.error("Found invalid change position " + version.getChangedPosition() + "' for " + version);
       }
-    }
+      else {
+        scores.add(versionScores.get(changedPos));
+      }
 
-    return summary;
+    }
+    return scores;
+  }
+
+  public List<Score> parseScores(Highscore highscore) {
+    return highscoreParser.parseScores(highscore.getLastModified(), highscore.getRaw(), highscore.getGameId());
+  }
+
+  public List<Highscore> getRecentHighscores() {
+    return highscoreRepository.findRecent();
   }
 
   public void addHighscoreChangeListener(@NonNull HighscoreChangeListener listener) {
@@ -319,6 +313,11 @@ public class HighscoreService implements InitializingBean {
         List<Score> newScores = highscoreParser.parseScores(newHighscore.getLastModified(), newHighscore.getRaw(), game.getId());
 
         int position = calculateChangedPosition(oldScores, newScores);
+        if(position == -1) {
+          LOG.info("No highscore change detected for " + game + ", skipping highscore notification event.");
+          return;
+        }
+
         HighscoreVersion version = existingScore.toVersion(position);
         version.setNewRaw(rawHighscore);
         highscoreVersionRepository.saveAndFlush(version);
