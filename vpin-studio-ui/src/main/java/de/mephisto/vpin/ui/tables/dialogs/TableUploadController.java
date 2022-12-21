@@ -1,5 +1,6 @@
 package de.mephisto.vpin.ui.tables.dialogs;
 
+import de.mephisto.vpin.ui.DialogController;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import javafx.event.ActionEvent;
@@ -19,7 +20,7 @@ import java.util.ResourceBundle;
 
 import static de.mephisto.vpin.ui.Studio.stage;
 
-public class TableUploadController implements Initializable {
+public class TableUploadController implements Initializable, DialogController {
   private final static Logger LOG = LoggerFactory.getLogger(TableUploadController.class);
 
   private static File lastFolderSelection;
@@ -82,6 +83,11 @@ public class TableUploadController implements Initializable {
     this.selection = null;
     this.uploadBtn.setDisable(true);
     this.fileNameField.textProperty().addListener((observableValue, s, t1) -> uploadBtn.setDisable(StringUtils.isEmpty(t1)));
+  }
+
+  @Override
+  public void onDialogCancel() {
+    result = false;
   }
 
   public boolean uploadFinished() {

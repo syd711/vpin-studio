@@ -8,25 +8,17 @@ import de.mephisto.vpin.restclient.representations.GameRepresentation;
 import de.mephisto.vpin.restclient.representations.PlayerRepresentation;
 import de.mephisto.vpin.ui.DialogController;
 import de.mephisto.vpin.ui.DialogHeaderController;
+import de.mephisto.vpin.ui.ProgressDialogController;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.competitions.CompetitionDialogController;
 import de.mephisto.vpin.ui.players.PlayerDialogController;
 import de.mephisto.vpin.ui.tables.dialogs.DirectB2SUploadController;
 import de.mephisto.vpin.ui.tables.dialogs.ROMUploadController;
 import de.mephisto.vpin.ui.tables.dialogs.TableUploadController;
-import javafx.application.Platform;
-import javafx.beans.value.ChangeListener;
-import javafx.concurrent.Service;
-import javafx.concurrent.Task;
-import javafx.concurrent.Worker;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.ProgressBar;
-import javafx.scene.control.ToolBar;
 import javafx.scene.image.Image;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
@@ -60,7 +52,7 @@ public class Dialogs {
       e.printStackTrace();
     }
 
-    Object controller = fxmlLoader.getController();
+    DialogController controller = fxmlLoader.getController();
 
     Node header = root.lookup("#header");
     DialogHeaderController dialogHeaderController = (DialogHeaderController) header.getUserData();
@@ -81,7 +73,7 @@ public class Dialogs {
     scene.getRoot().setStyle("-fx-border-width: 1;-fx-border-color: #605E5E;");
     scene.addEventHandler(KeyEvent.KEY_PRESSED, t -> {
       if (t.getCode() == KeyCode.ESCAPE) {
-        ((DialogController)controller).onDialogCancel();
+        ((DialogController) controller).onDialogCancel();
         stage.close();
       }
     });
@@ -135,28 +127,8 @@ public class Dialogs {
   }
 
   public static boolean openRomUploadDialog() {
-    Parent root = null;
-    FXMLLoader fxmlLoader = new FXMLLoader(Studio.class.getResource("dialog-rom-upload.fxml"));
-    try {
-      root = fxmlLoader.load();
-    } catch (IOException e) {
-      e.printStackTrace();
-    }
-    ROMUploadController controller = fxmlLoader.getController();
-    Stage owner = Studio.stage;
-    final Stage stage = createStage();
-    stage.initModality(Modality.WINDOW_MODAL);
-    stage.setResizable(false);
-    stage.setTitle("Rom Upload");
-
-    stage.initOwner(owner);
-    Scene scene = new Scene(root);
-    stage.setScene(scene);
-    scene.addEventHandler(KeyEvent.KEY_PRESSED, t -> {
-      if (t.getCode() == KeyCode.ESCAPE) {
-        stage.close();
-      }
-    });
+    Stage stage = createDialogStage("Rom Upload", "dialog-rom-upload.fxml");
+    ROMUploadController controller = (ROMUploadController) stage.getUserData();
     stage.showAndWait();
 
     return controller.uploadFinished();
@@ -204,71 +176,9 @@ public class Dialogs {
   }
 
   public static void createProgressDialog(ProgressModel model) {
-    Parent root = null;
-    try {
-      root = FXMLLoader.load(Studio.class.getResource("dialog-progress.fxml"));
-    } catch (IOException e) {
-      e.printStackTrace();
-    }
-
-    Stage owner = Studio.stage;
-    final Label titleLabel = (Label) root.lookup("#titleLabel");
-    final Label progressBarLabel = (Label) root.lookup("#progressBarLabel");
-    final ToolBar toolBar = (ToolBar) root.lookup("#bottomToolbar");
-    final Button cancelButton = (Button) toolBar.getItems().get(0);
-    titleLabel.setText(model.getTitle());
-
-    final ProgressResultModel progressResultModel = new ProgressResultModel();
-    final Service service = new Service() {
-      @Override
-      protected Task createTask() {
-        return new Task() {
-          @Override
-          protected Object call() throws Exception {
-            int index = 0;
-            while (model.hasNext() && !this.isCancelled()) {
-              String result = model.processNext(progressResultModel);
-              long percent = index * 100 / model.getMax();
-              updateProgress(percent, 100);
-              final int uiIndex = index;
-              Platform.runLater(() -> {
-                titleLabel.setText(model.getTitle() + " (" + uiIndex + "/" + model.getMax() + ")");
-                progressBarLabel.setText("Processing: " + result);
-              });
-              index++;
-            }
-            return null;
-          }
-        };
-      }
-    };
-
-    final Stage stage = createStage();
-    stage.initModality(Modality.WINDOW_MODAL);
-    stage.setResizable(false);
-    stage.initOwner(owner);
-
-    final ProgressBar progressBar = (ProgressBar) root.lookup("#progressBar");
-    progressBar.progressProperty().bind(service.progressProperty());
-    service.stateProperty().addListener((ChangeListener<Worker.State>) (observable, oldValue, newValue) -> {
-      if (newValue == Worker.State.CANCELLED || newValue == Worker.State.FAILED
-          || newValue == Worker.State.SUCCEEDED) {
-        stage.hide();
-
-        Platform.runLater(() -> {
-          String msg = model.getTitle() + " finished.\n\nProcessed " + progressResultModel.getProcessed() + " of " + model.getMax() + " elements.";
-          WidgetFactory.showAlert(msg);
-        });
-      }
-    });
-
-    cancelButton.setOnAction(event -> service.cancel());
-    stage.onHidingProperty().addListener((observableValue, windowEventEventHandler, t1) -> service.cancel());
-
-    Scene scene = new Scene(root);
-    stage.setScene(scene);
-    service.start();
-
+    Stage stage = createDialogStage(model.getTitle(), "dialog-progress.fxml");
+    ProgressDialogController controller = (ProgressDialogController) stage.getUserData();
+    controller.setProgressModel(stage, model);
     stage.showAndWait();
   }
 }
