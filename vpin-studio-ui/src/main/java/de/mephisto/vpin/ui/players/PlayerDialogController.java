@@ -5,6 +5,7 @@ import de.mephisto.vpin.restclient.representations.AssetRepresentation;
 import de.mephisto.vpin.restclient.representations.PlayerRepresentation;
 import de.mephisto.vpin.ui.DashboardController;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
+import de.mephisto.vpin.ui.DialogController;
 import eu.hansolo.tilesfx.Tile;
 import eu.hansolo.tilesfx.TileBuilder;
 import javafx.event.ActionEvent;
@@ -35,7 +36,7 @@ import java.util.ResourceBundle;
 import static de.mephisto.vpin.ui.Studio.client;
 import static de.mephisto.vpin.ui.Studio.stage;
 
-public class PlayerDialogController implements Initializable {
+public class PlayerDialogController implements Initializable, DialogController {
   private final static Logger LOG = LoggerFactory.getLogger(PlayerDialogController.class);
 
   @FXML
@@ -55,7 +56,6 @@ public class PlayerDialogController implements Initializable {
 
   @FXML
   private StackPane avatarStack;
-
 
   private PlayerRepresentation player;
 
@@ -197,16 +197,23 @@ public class PlayerDialogController implements Initializable {
     }
   }
 
+  @Override
+  public void onDialogCancel() {
+    this.player = null;
+  }
+
+
   public PlayerRepresentation getPlayer() {
     return player;
   }
 
   public void setPlayer(PlayerRepresentation p) {
+    this.player = p;
     if (p != null) {
-      this.player = p;
       nameField.setText(this.player.getName());
       initialsField.setText(this.player.getInitials());
       refreshAvatar();
     }
+
   }
 }

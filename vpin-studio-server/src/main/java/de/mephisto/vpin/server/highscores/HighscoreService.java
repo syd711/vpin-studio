@@ -154,7 +154,7 @@ public class HighscoreService implements InitializingBean {
    */
   public ScoreList getScoresBetween(int gameId, Date start, Date end) {
     ScoreList scoreList = new ScoreList();
-    Optional<Highscore> highscore = highscoreRepository.findByGameIdAndCreatedAtBetween(gameId, start, end);
+    Optional<Highscore> highscore = highscoreRepository.findByGameIdAndCreatedAtBetweenAndRawIsNotNull(gameId, start, end);
     if (end.after(new Date())) {
       highscore = highscoreRepository.findByGameId(gameId);
     }

@@ -6,6 +6,7 @@ import de.mephisto.vpin.restclient.representations.CompetitionRepresentation;
 import de.mephisto.vpin.restclient.representations.GameMediaItemRepresentation;
 import de.mephisto.vpin.restclient.representations.GameMediaRepresentation;
 import de.mephisto.vpin.restclient.representations.GameRepresentation;
+import de.mephisto.vpin.ui.DialogController;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -31,7 +32,7 @@ import java.util.ResourceBundle;
 
 import static de.mephisto.vpin.ui.Studio.client;
 
-public class CompetitionDialogController implements Initializable {
+public class CompetitionDialogController implements Initializable, DialogController {
   private final static Logger LOG = LoggerFactory.getLogger(CompetitionDialogController.class);
 
   @FXML
@@ -207,13 +208,18 @@ public class CompetitionDialogController implements Initializable {
     this.saveBtn.setDisable(!valid);
   }
 
+  @Override
+  public void onDialogCancel() {
+    this.competition = null;
+  }
+
   public CompetitionRepresentation getCompetition() {
     return competition;
   }
 
   public void setCompetition(CompetitionRepresentation c) {
+    this.competition = c;
     if (c != null) {
-      this.competition = c;
       GameRepresentation game = client.getGame(c.getGameId());
 
       nameField.setText(this.competition.getName());

@@ -36,7 +36,7 @@
                   <Insets top="12.0" />
                </VBox.margin>
             </Label>
-            <Label layoutX="34.0" layoutY="124.0" styleClass="preference-description" text="Enter the Bot token and the ID of the server to connect your VPin with the Discord server." textFill="WHITE">
+            <Label layoutX="34.0" layoutY="124.0" styleClass="preference-description" text="Enter the bot token and the ID of the server to connect your VPin with the Discord server." textFill="WHITE">
                <VBox.margin>
                   <Insets bottom="6.0" />
                </VBox.margin>
@@ -53,7 +53,7 @@
                   <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                </rowConstraints>
                <children>
-                  <Label prefHeight="20.0" styleClass="preference-label" text="BOT Token:" textFill="WHITE">
+                  <Label prefHeight="20.0" styleClass="preference-label" text="Bot Token:" textFill="WHITE">
                      <font>
                         <Font size="14.0" />
                      </font>
@@ -104,23 +104,40 @@
             </HBox>
             <GridPane>
                <columnConstraints>
-                  <ColumnConstraints hgrow="SOMETIMES" maxWidth="454.399951171875" minWidth="10.0" prefWidth="186.4" />
-                  <ColumnConstraints hgrow="SOMETIMES" maxWidth="660.0000244140625" minWidth="10.0" prefWidth="657.6" />
+                  <ColumnConstraints hgrow="SOMETIMES" maxWidth="454.399951171875" minWidth="10.0" prefWidth="224.00009765625" />
+                  <ColumnConstraints hgrow="SOMETIMES" maxWidth="660.0000244140625" minWidth="10.0" prefWidth="619.99990234375" />
                </columnConstraints>
                <rowConstraints>
                   <RowConstraints />
                   <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
                   <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                </rowConstraints>
                <children>
-                  <Button mnemonicParsing="false" onAction="#onBotTutorial" text="Discord Bot Credentials Guide" GridPane.rowIndex="2" />
-                  <Button mnemonicParsing="false" onAction="#onBotTutorial" text="Discord Bot Setup Guide" GridPane.rowIndex="1" />
+                  <Button mnemonicParsing="false" onAction="#onBotServerIdTutorial" text="How To: Get the Server ID" GridPane.rowIndex="3">
+                     <font>
+                        <Font size="14.0" />
+                     </font></Button>
+                  <Button mnemonicParsing="false" onAction="#onBotTutorial" text="How To: Create a Discord Bot" GridPane.rowIndex="1">
+                     <font>
+                        <Font size="14.0" />
+                     </font></Button>
                   <Label text="-&gt; Explain how to setup a new bot for your Discord server." GridPane.columnIndex="1" GridPane.rowIndex="1">
                      <font>
                         <Font size="14.0" />
                      </font>
                   </Label>
-                  <Label prefWidth="351.0" text="-&gt; Explains how to link this new bot to your VPin." textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                  <Label text="-&gt; Explains how to get the token for the &quot;Bot Token&quot; field." textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                  </Label>
+                  <Button layoutX="10.0" layoutY="38.0" mnemonicParsing="false" onAction="#onBotTokenTutorial" text="How To: Get the BOT Token" GridPane.rowIndex="2">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                  </Button>
+                  <Label layoutX="235.0" layoutY="76.0" text="-&gt; Explains how to get the server ID for the &quot;Server ID&quot; field." textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="3">
                      <font>
                         <Font size="14.0" />
                      </font>

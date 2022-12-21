@@ -16,6 +16,9 @@
 <?import org.kordamp.ikonli.javafx.FontIcon?>
 
 <BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" styleClass="base-component" stylesheets="@../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.players.PlayerDialogController">
+   <top>
+      <fx:include fx:id="header" source="../scene-dialog-header.fxml" />
+   </top>
    <bottom>
       <HBox alignment="BASELINE_RIGHT" BorderPane.alignment="CENTER">
          <children>
@@ -31,7 +34,7 @@
             </Button>
          </children>
          <BorderPane.margin>
-            <Insets />
+            <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
          </BorderPane.margin>
       </HBox>
    </bottom>
@@ -140,9 +143,9 @@
                </VBox.margin>
             </VBox>
          </children>
+         <BorderPane.margin>
+            <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
+         </BorderPane.margin>
       </VBox>
    </center>
-   <padding>
-      <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
-   </padding>
 </BorderPane>

@@ -34,6 +34,16 @@ public class DiscordBotPreferencesController implements Initializable {
   }
 
   @FXML
+  private void onBotServerIdTutorial() {
+    Dialogs.openBotServerIdTutorial();
+  }
+
+  @FXML
+  private void onBotTokenTutorial() {
+    Dialogs.openBotTokenTutorial();
+  }
+
+  @FXML
   private void onConnectionTest() {
     new Thread(() -> {
       try {

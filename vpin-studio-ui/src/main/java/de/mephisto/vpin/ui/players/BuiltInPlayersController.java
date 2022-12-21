@@ -1,11 +1,11 @@
 package de.mephisto.vpin.ui.players;
 
+import de.mephisto.vpin.commons.utils.ImageUtil;
+import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.representations.PlayerRepresentation;
 import de.mephisto.vpin.ui.NavigationController;
 import de.mephisto.vpin.ui.WaitOverlayController;
 import de.mephisto.vpin.ui.util.Dialogs;
-import de.mephisto.vpin.commons.utils.ImageUtil;
-import de.mephisto.vpin.commons.utils.WidgetFactory;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
@@ -223,7 +223,7 @@ public class BuiltInPlayersController implements Initializable {
       editBtn.setDisable(disable);
       deleteBtn.setDisable(disable);
 
-      if(oldSelection == null || !oldSelection.equals(newSelection)) {
+      if (oldSelection == null || !oldSelection.equals(newSelection)) {
         updateSelection(Optional.ofNullable(newSelection));
       }
     });
@@ -257,7 +257,15 @@ public class BuiltInPlayersController implements Initializable {
   private List<PlayerRepresentation> filterPlayers(List<PlayerRepresentation> players) {
     List<PlayerRepresentation> filtered = new ArrayList<>();
     String filterValue = searchTextField.textProperty().getValue();
+    if (filterValue == null) {
+      filterValue = "";
+    }
+
     for (PlayerRepresentation player : players) {
+      if (player.getName() == null || player.getInitials() == null) {
+        continue;
+      }
+
       if (player.getName().toLowerCase().contains(filterValue.toLowerCase()) || player.getInitials().toLowerCase().contains(filterValue)) {
         filtered.add(player);
       }

@@ -168,7 +168,7 @@ public class DiscordClient extends ListenerAdapter {
       this.jda.getPresence().setActivity(null);
     }
     else {
-      this.jda.getPresence().setActivity(Activity.playing(status));
+      this.jda.getPresence().setActivity(Activity.playing("\"" + status + "\""));
     }
   }
 

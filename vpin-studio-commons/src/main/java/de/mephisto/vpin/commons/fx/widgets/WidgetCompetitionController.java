@@ -164,16 +164,20 @@ public class WidgetCompetitionController extends WidgetController implements Ini
 
         //every summary is one history version
         List<ScoreSummaryRepresentation> scores = competitionScores.getScores();
+
         for (ScoreSummaryRepresentation score : scores) {
-          ScoreRepresentation s = score.getScores().get(0);
-          scoreGraph1.getData().add(new XYChart.Data(SimpleDateFormat.getDateTimeInstance().format(score.getCreatedAt()), s.getNumericScore()));
-          s = score.getScores().get(1);
-          scoreGraph2.getData().add(new XYChart.Data(SimpleDateFormat.getDateTimeInstance().format(score.getCreatedAt()), s.getNumericScore()));
-          s = score.getScores().get(2);
-          scoreGraph3.getData().add(new XYChart.Data(SimpleDateFormat.getDateTimeInstance().format(score.getCreatedAt()), s.getNumericScore()));
+          if (score.getScores().size() >= 3) {
+            ScoreRepresentation s = score.getScores().get(0);
+            scoreGraph1.getData().add(new XYChart.Data(SimpleDateFormat.getDateTimeInstance().format(score.getCreatedAt()), s.getNumericScore()));
+            s = score.getScores().get(1);
+            scoreGraph2.getData().add(new XYChart.Data(SimpleDateFormat.getDateTimeInstance().format(score.getCreatedAt()), s.getNumericScore()));
+            s = score.getScores().get(2);
+            scoreGraph3.getData().add(new XYChart.Data(SimpleDateFormat.getDateTimeInstance().format(score.getCreatedAt()), s.getNumericScore()));
+          }
         }
 
-        if(highscoresGraphTile != null) {
+
+        if (highscoresGraphTile != null) {
           statsWidget.getChildren().remove(highscoresGraphTile);
         }
 
@@ -226,6 +230,7 @@ public class WidgetCompetitionController extends WidgetController implements Ini
         });
       }
     }
+
   }
 
   public void refresh() {

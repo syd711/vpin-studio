@@ -6,6 +6,8 @@ import de.mephisto.vpin.restclient.representations.CompetitionRepresentation;
 import de.mephisto.vpin.restclient.representations.GameMediaItemRepresentation;
 import de.mephisto.vpin.restclient.representations.GameRepresentation;
 import de.mephisto.vpin.restclient.representations.PlayerRepresentation;
+import de.mephisto.vpin.ui.DialogController;
+import de.mephisto.vpin.ui.DialogHeaderController;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.competitions.CompetitionDialogController;
 import de.mephisto.vpin.ui.players.PlayerDialogController;
@@ -18,6 +20,7 @@ import javafx.concurrent.Service;
 import javafx.concurrent.Task;
 import javafx.concurrent.Worker;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -25,9 +28,12 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.control.ToolBar;
 import javafx.scene.image.Image;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 
 import java.io.IOException;
 
@@ -39,61 +45,72 @@ public class Dialogs {
     return stage;
   }
 
-  public static PlayerRepresentation openPlayerDialog(PlayerRepresentation selection) {
+  public static Stage createDialogStage(String title, String fxml) {
+    return createDialogStage(Studio.class, title, fxml);
+  }
+
+  public static Stage createDialogStage(Class clazz, String title, String fxml) {
     Parent root = null;
-    FXMLLoader fxmlLoader = new FXMLLoader(PlayerDialogController.class.getResource("dialog-player-edit.fxml"));
+
+    FXMLLoader fxmlLoader = new FXMLLoader(clazz.getResource(fxml));
     try {
       root = fxmlLoader.load();
+
     } catch (IOException e) {
       e.printStackTrace();
     }
-    PlayerDialogController controller = fxmlLoader.getController();
-    controller.setPlayer(selection);
+
+    Object controller = fxmlLoader.getController();
+
+    Node header = root.lookup("#header");
+    DialogHeaderController dialogHeaderController = (DialogHeaderController) header.getUserData();
+    dialogHeaderController.setTitle(title);
 
     Stage owner = Studio.stage;
     final Stage stage = createStage();
+    dialogHeaderController.setStage(stage);
+    stage.initOwner(owner);
     stage.initModality(Modality.WINDOW_MODAL);
-    if (selection == null) {
-      stage.setTitle("Add New Player");
-    }
-    else {
-      stage.setTitle("Edit Player");
-    }
+    stage.initStyle(StageStyle.UNDECORATED);
+    stage.setTitle(title);
+    stage.setUserData(controller);
 
     stage.initOwner(owner);
     Scene scene = new Scene(root);
     stage.setScene(scene);
-    stage.setResizable(false);
+    scene.getRoot().setStyle("-fx-border-width: 1;-fx-border-color: #605E5E;");
+    scene.addEventHandler(KeyEvent.KEY_PRESSED, t -> {
+      if (t.getCode() == KeyCode.ESCAPE) {
+        ((DialogController)controller).onDialogCancel();
+        stage.close();
+      }
+    });
+    return stage;
+  }
+
+  public static PlayerRepresentation openPlayerDialog(PlayerRepresentation selection) {
+    String title = "Add New Player";
+    if (selection != null) {
+      title = "Edit Player";
+    }
+
+    Stage stage = createDialogStage(PlayerDialogController.class, title, "dialog-player-edit.fxml");
+    PlayerDialogController controller = (PlayerDialogController) stage.getUserData();
+    controller.setPlayer(selection);
     stage.showAndWait();
 
     return controller.getPlayer();
   }
 
   public static CompetitionRepresentation openCompetitionDialog(CompetitionRepresentation selection) {
-    Parent root = null;
-    FXMLLoader fxmlLoader = new FXMLLoader(CompetitionDialogController.class.getResource("dialog-competition-edit.fxml"));
-    try {
-      root = fxmlLoader.load();
-    } catch (IOException e) {
-      e.printStackTrace();
+    String title = "Add New Competition";
+    if (selection != null) {
+      title = "Edit Competition";
     }
-    CompetitionDialogController controller = fxmlLoader.getController();
+
+    Stage stage = createDialogStage(CompetitionDialogController.class, title, "dialog-competition-edit.fxml");
+    CompetitionDialogController controller = (CompetitionDialogController) stage.getUserData();
     controller.setCompetition(selection);
-
-    Stage owner = Studio.stage;
-    final Stage stage = createStage();
-    stage.initModality(Modality.WINDOW_MODAL);
-    stage.setResizable(false);
-    if (selection == null) {
-      stage.setTitle("Add New Competition");
-    }
-    else {
-      stage.setTitle("Edit Competition");
-    }
-
-    stage.initOwner(owner);
-    Scene scene = new Scene(root);
-    stage.setScene(scene);
     stage.showAndWait();
 
     return controller.getCompetition();
@@ -120,6 +137,11 @@ public class Dialogs {
     stage.initOwner(owner);
     Scene scene = new Scene(root);
     stage.setScene(scene);
+    scene.addEventHandler(KeyEvent.KEY_PRESSED, t -> {
+      if (t.getCode() == KeyCode.ESCAPE) {
+        stage.close();
+      }
+    });
     stage.showAndWait();
 
     return controller.uploadFinished();
@@ -143,6 +165,11 @@ public class Dialogs {
     stage.initOwner(owner);
     Scene scene = new Scene(root);
     stage.setScene(scene);
+    scene.addEventHandler(KeyEvent.KEY_PRESSED, t -> {
+      if (t.getCode() == KeyCode.ESCAPE) {
+        stage.close();
+      }
+    });
     stage.showAndWait();
 
     return controller.uploadFinished();
@@ -166,6 +193,11 @@ public class Dialogs {
     stage.initOwner(owner);
     Scene scene = new Scene(root);
     stage.setScene(scene);
+    scene.addEventHandler(KeyEvent.KEY_PRESSED, t -> {
+      if (t.getCode() == KeyCode.ESCAPE) {
+        stage.close();
+      }
+    });
     stage.showAndWait();
 
     return controller.uploadFinished();
@@ -189,26 +221,26 @@ public class Dialogs {
     stage.initOwner(owner);
     Scene scene = new Scene(root);
     stage.setScene(scene);
+    scene.addEventHandler(KeyEvent.KEY_PRESSED, t -> {
+      if (t.getCode() == KeyCode.ESCAPE) {
+        stage.close();
+      }
+    });
+    stage.showAndWait();
+  }
+
+  public static void openBotServerIdTutorial() {
+    Stage stage = createDialogStage("Server ID Instructions", "dialog-bot-server-id-tutorial.fxml");
+    stage.showAndWait();
+  }
+
+  public static void openBotTokenTutorial() {
+    Stage stage = createDialogStage("Bot Token Instructions", "dialog-bot-token-tutorial.fxml");
     stage.showAndWait();
   }
 
   public static void openBotTutorial() {
-    Parent root = null;
-    try {
-      root = FXMLLoader.load(Studio.class.getResource("dialog-bot-tutorial.fxml"));
-    } catch (IOException e) {
-      e.printStackTrace();
-    }
-
-    Stage owner = Studio.stage;
-    final Stage stage = createStage();
-    stage.initOwner(owner);
-    stage.initModality(Modality.WINDOW_MODAL);
-    stage.setTitle("Discord Bot Instructions");
-
-    stage.initOwner(owner);
-    Scene scene = new Scene(root);
-    stage.setScene(scene);
+    Stage stage = createDialogStage("Discord Bot Instructions", "dialog-bot-tutorial.fxml");
     stage.showAndWait();
   }
 

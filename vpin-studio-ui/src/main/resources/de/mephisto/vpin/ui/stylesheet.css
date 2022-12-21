@@ -32,6 +32,10 @@
     -fx-background-color: -fx-base-7;
 }
 
+.dialog-header {
+    -fx-background-color: -fx-base-5;
+}
+
 .main-toolbar {
     -fx-background-color: -fx-base-6;
     -fx-border-radius: 12 12 12 12;
@@ -163,7 +167,6 @@
     -fx-text-fill: #fff8f8;
     -fx-cursor: hand;
 }
-
 
 /**
  * Navigation Buttons

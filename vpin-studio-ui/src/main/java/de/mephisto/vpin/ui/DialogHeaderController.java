@@ -2,14 +2,14 @@ package de.mephisto.vpin.ui;
 
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.Label;
 import javafx.scene.layout.BorderPane;
+import javafx.stage.Stage;
 
 import java.net.URL;
 import java.util.ResourceBundle;
 
-import static de.mephisto.vpin.ui.Studio.stage;
-
-public class HeaderController implements Initializable {
+public class DialogHeaderController implements Initializable {
 
   private double xOffset;
   private double yOffset;
@@ -18,12 +18,18 @@ public class HeaderController implements Initializable {
   private BorderPane header;
 
   @FXML
+  private Label titleLabel;
+
+  private Stage stage;
+
+  @FXML
   private void onCloseClick() {
-    System.exit(0);
+    stage.close();
   }
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
+    header.setUserData(this);
     header.setOnMousePressed(event -> {
       xOffset = stage.getX() - event.getScreenX();
       yOffset = stage.getY() - event.getScreenY();
@@ -32,5 +38,13 @@ public class HeaderController implements Initializable {
       stage.setX(event.getScreenX() + xOffset);
       stage.setY(event.getScreenY() + yOffset);
     });
+  }
+
+  public void setStage(Stage stage) {
+    this.stage = stage;
+  }
+
+  public void setTitle(String title) {
+    titleLabel.setText(title);
   }
 }
