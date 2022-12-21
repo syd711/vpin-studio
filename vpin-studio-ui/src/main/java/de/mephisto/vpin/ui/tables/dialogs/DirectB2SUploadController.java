@@ -2,6 +2,7 @@ package de.mephisto.vpin.ui.tables.dialogs;
 
 import de.mephisto.vpin.restclient.representations.GameRepresentation;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
+import de.mephisto.vpin.ui.DialogController;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -22,7 +23,7 @@ import java.util.ResourceBundle;
 import static de.mephisto.vpin.ui.Studio.client;
 import static de.mephisto.vpin.ui.Studio.stage;
 
-public class DirectB2SUploadController implements Initializable {
+public class DirectB2SUploadController implements Initializable, DialogController {
   private final static Logger LOG = LoggerFactory.getLogger(DirectB2SUploadController.class);
 
   private static File lastFolderSelection;
@@ -106,6 +107,11 @@ public class DirectB2SUploadController implements Initializable {
 
     this.uploadTypeGenerator.setSelected(DirectB2SUploadController.uploadTypeGeneratorSelectedLast);
     this.uploadTypeTable.setSelected(!DirectB2SUploadController.uploadTypeGeneratorSelectedLast);
+  }
+
+  @Override
+  public void onDialogCancel() {
+    result = false;
   }
 
   public boolean uploadFinished() {

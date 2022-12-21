@@ -118,58 +118,17 @@ public class Dialogs {
 
 
   public static boolean openDirectB2SUploadDialog(GameRepresentation game) {
-    Parent root = null;
-    FXMLLoader fxmlLoader = new FXMLLoader(Studio.class.getResource("dialog-directb2s-upload.fxml"));
-    try {
-      root = fxmlLoader.load();
-    } catch (IOException e) {
-      e.printStackTrace();
-    }
-    DirectB2SUploadController controller = fxmlLoader.getController();
+    Stage stage = createDialogStage("DirectB2S File Upload", "dialog-directb2s-upload.fxml");
+    DirectB2SUploadController controller = (DirectB2SUploadController) stage.getUserData();
     controller.setGame(game);
-
-    Stage owner = Studio.stage;
-    final Stage stage = createStage();
-    stage.initModality(Modality.WINDOW_MODAL);
-    stage.setResizable(false);
-    stage.setTitle("DirectB2S File Upload");
-
-    stage.initOwner(owner);
-    Scene scene = new Scene(root);
-    stage.setScene(scene);
-    scene.addEventHandler(KeyEvent.KEY_PRESSED, t -> {
-      if (t.getCode() == KeyCode.ESCAPE) {
-        stage.close();
-      }
-    });
     stage.showAndWait();
 
     return controller.uploadFinished();
   }
 
   public static boolean openTableUploadDialog() {
-    Parent root = null;
-    FXMLLoader fxmlLoader = new FXMLLoader(Studio.class.getResource("dialog-table-upload.fxml"));
-    try {
-      root = fxmlLoader.load();
-    } catch (IOException e) {
-      e.printStackTrace();
-    }
-    TableUploadController controller = fxmlLoader.getController();
-    Stage owner = Studio.stage;
-    final Stage stage = createStage();
-    stage.initModality(Modality.WINDOW_MODAL);
-    stage.setResizable(false);
-    stage.setTitle("Table Upload");
-
-    stage.initOwner(owner);
-    Scene scene = new Scene(root);
-    stage.setScene(scene);
-    scene.addEventHandler(KeyEvent.KEY_PRESSED, t -> {
-      if (t.getCode() == KeyCode.ESCAPE) {
-        stage.close();
-      }
-    });
+    Stage stage = createDialogStage("VPX Table Upload", "dialog-table-upload.fxml");
+    TableUploadController controller = (TableUploadController) stage.getUserData();
     stage.showAndWait();
 
     return controller.uploadFinished();
