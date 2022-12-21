@@ -1,11 +1,13 @@
-package de.mephisto.vpin.server.players;
+package de.mephisto.vpin.server.discord;
 
 import de.mephisto.vpin.connectors.discord.DiscordClient;
 import de.mephisto.vpin.connectors.discord.DiscordMember;
 import de.mephisto.vpin.restclient.PlayerDomain;
 import de.mephisto.vpin.restclient.PreferenceNames;
+import de.mephisto.vpin.server.players.Player;
 import de.mephisto.vpin.server.preferences.PreferenceChangedListener;
 import de.mephisto.vpin.server.preferences.PreferencesService;
+import edu.umd.cs.findbugs.annotations.Nullable;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,8 +19,8 @@ import java.util.*;
 import java.util.function.Consumer;
 
 @Service
-public class DiscordPlayerService implements InitializingBean, PreferenceChangedListener {
-  private final static Logger LOG = LoggerFactory.getLogger(DiscordPlayerService.class);
+public class DiscordService implements InitializingBean, PreferenceChangedListener {
+  private final static Logger LOG = LoggerFactory.getLogger(DiscordService.class);
 
   private DiscordClient discordClient;
 
@@ -38,7 +40,7 @@ public class DiscordPlayerService implements InitializingBean, PreferenceChanged
     return this.discordClient != null;
   }
 
-  private DiscordClient createDiscordClient() {
+  private DiscordClient recreateDiscordClient() {
     String botToken = (String) preferencesService.getPreferenceValue(PreferenceNames.DISCORD_BOT_TOKEN);
     String guildId = (String) preferencesService.getPreferenceValue(PreferenceNames.DISCORD_GUILD_ID);
     try {
@@ -63,6 +65,12 @@ public class DiscordPlayerService implements InitializingBean, PreferenceChanged
     return this.discordClient;
   }
 
+  public void setStatus(@Nullable String status) {
+    if(this.discordClient != null) {
+      this.discordClient.setStatus(status);
+    }
+  }
+
   public Optional<Player> getPlayerByInitials(String initials) {
     for (DiscordMember member : this.getMembers()) {
       if (!StringUtils.isEmpty(member.getInitials()) && member.getInitials().toUpperCase().equals(initials)) {
@@ -83,20 +91,15 @@ public class DiscordPlayerService implements InitializingBean, PreferenceChanged
   }
 
   @Override
-  public void afterPropertiesSet() throws Exception {
-    preferencesService.addChangeListener(this);
-    this.createDiscordClient();
-  }
-
-  @Override
   public void preferenceChanged(String propertyName, Object oldValue, Object newValue) {
     if (propertyName.equals(PreferenceNames.DISCORD_GUILD_ID) || propertyName.equals(PreferenceNames.DISCORD_BOT_TOKEN)) {
+      LOG.info("Detected Discord config change, updating BOT.");
       String botToken = (String) preferencesService.getPreferenceValue(PreferenceNames.DISCORD_BOT_TOKEN);
       String guildId = (String) preferencesService.getPreferenceValue(PreferenceNames.DISCORD_GUILD_ID);
 
       if (!StringUtils.isEmpty(botToken) && !StringUtils.isEmpty(guildId)) {
         LOG.info("Re-creating discord client because of preference changes.");
-        this.discordClient = createDiscordClient();
+        this.discordClient = recreateDiscordClient();
       }
     }
   }
@@ -112,6 +115,12 @@ public class DiscordPlayerService implements InitializingBean, PreferenceChanged
       return this.lastMembers != null;
     }
     return false;
+  }
+
+  @Override
+  public void afterPropertiesSet() throws Exception {
+    preferencesService.addChangeListener(this);
+    this.recreateDiscordClient();
   }
 
   private Player toPlayer(DiscordMember member) {

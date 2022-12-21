@@ -17,7 +17,7 @@ public class PopperResourceTest extends VPinServerTest {
   private PopperResource popperResource;
 
   @Test
-  public void testStarExit() {
+  public void testStartExit() {
     boolean result = popperResource.gameLaunch("bubu");
     assertFalse(result);
 

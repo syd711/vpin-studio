@@ -101,7 +101,7 @@ public class Studio extends Application {
 
       Scene scene = new Scene(root, width, height);
       scene.setFill(Paint.valueOf("#212529"));
-      stage.setTitle("VPin Studio - " + Studio.getVersion());
+      stage.setTitle("VPin Studio - Version " + Studio.getVersion());
       stage.getIcons().add(new Image(Studio.class.getResourceAsStream("logo-128.png")));
       stage.setScene(scene);
       stage.setResizable(true);

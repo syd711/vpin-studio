@@ -85,7 +85,7 @@ public class HighscoreTest extends VPinServerTest {
     });
     highscoreService.updateHighscore(game, metadata);
 
-    ScoreSummary recentHighscores = highscoreService.getRecentHighscores();
+    ScoreSummary recentHighscores = gameService.getRecentHighscores(10);
     assertFalse(recentHighscores.getScores().isEmpty());
 
     Score score = recentHighscores.getScores().get(0);

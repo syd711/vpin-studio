@@ -21,6 +21,7 @@ public class GameRepresentation {
   private int nvOffset;
   private String gameDisplayName;
   private String gameFileName;
+  private String tableName;
   private int id;
   private Date lastPlayed;
   private int numberPlays;
@@ -35,6 +36,14 @@ public class GameRepresentation {
   private boolean romExists;
   private String ignoredValidations;
   private List<GameAssetRepresentation> assets;
+
+  public String getTableName() {
+    return tableName;
+  }
+
+  public void setTableName(String tableName) {
+    this.tableName = tableName;
+  }
 
   public List<GameAssetRepresentation> getAssets() {
     return assets;

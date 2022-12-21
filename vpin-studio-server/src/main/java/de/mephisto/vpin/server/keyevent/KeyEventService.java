@@ -3,6 +3,7 @@ package de.mephisto.vpin.server.keyevent;
 import de.mephisto.vpin.commons.fx.OverlayWindowFX;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.server.VPinStudioServerTray;
+import de.mephisto.vpin.server.notifications.NotificationService;
 import de.mephisto.vpin.server.popper.PopperLaunchListener;
 import de.mephisto.vpin.server.popper.PopperService;
 import de.mephisto.vpin.server.preferences.PreferencesService;
@@ -39,6 +40,9 @@ public class KeyEventService implements InitializingBean, NativeKeyListener, Pop
 
   @Autowired
   private SystemService systemService;
+
+  @Autowired
+  private NotificationService notificationService;
 
   private boolean visible;
 
@@ -101,7 +105,11 @@ public class KeyEventService implements InitializingBean, NativeKeyListener, Pop
     if(!StringUtils.isEmpty(resetKey)) {
       KeyChecker keyChecker = new KeyChecker(resetKey);
       if (keyChecker.matches(nativeKeyEvent)) {
-        systemService.restartPopper();
+        new Thread(() -> {
+          systemService.restartPopper();
+          notificationService.notifyPopperRestart();
+        }).start();
+
       }
     }
   }

@@ -3,6 +3,7 @@ package de.mephisto.vpin.connectors.discord;
 
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
+import net.dv8tion.jda.api.entities.Activity;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
@@ -159,6 +160,16 @@ public class DiscordClient extends ListenerAdapter {
       }
     }
     return initials;
+  }
+
+
+  public void setStatus(String status) {
+    if(status == null) {
+      this.jda.getPresence().setActivity(null);
+    }
+    else {
+      this.jda.getPresence().setActivity(Activity.playing(status));
+    }
   }
 
   /******************** Listener Methods ******************************************************************************/

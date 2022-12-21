@@ -110,6 +110,9 @@ public class TablesSidebarController implements Initializable {
   private Label labelHSFilename;
 
   @FXML
+  private Label labelTableName;
+
+  @FXML
   private Slider volumeSlider;
 
   @FXML
@@ -137,7 +140,13 @@ public class TablesSidebarController implements Initializable {
   private Button editRomNameBtn;
 
   @FXML
+  private Button editTableNameBtn;
+
+  @FXML
   private Button directb2sUploadBtn;
+
+  @FXML
+  private Button scanBtn;
 
   @FXML
   private Button romUploadBtn;
@@ -304,6 +313,21 @@ public class TablesSidebarController implements Initializable {
   }
 
   @FXML
+  private void onTableNameEdit() {
+    GameRepresentation gameRepresentation = game.get();
+    String tableName = WidgetFactory.showInputDialog("Enter Table Name", null, gameRepresentation.getTableName());
+    if (tableName != null) {
+      gameRepresentation.setTableName(tableName);
+      try {
+        client.saveGame(gameRepresentation);
+      } catch (Exception e) {
+        WidgetFactory.showAlert(e.getMessage());
+      }
+      tablesController.onReload();
+    }
+  }
+
+  @FXML
   private void onScan() {
     refreshHighscore(game, true);
   }
@@ -415,7 +439,9 @@ public class TablesSidebarController implements Initializable {
   private void refreshView(Optional<GameRepresentation> g) {
     editHsFileNameBtn.setDisable(g.isEmpty());
     editRomNameBtn.setDisable(g.isEmpty());
+    editTableNameBtn.setDisable(g.isEmpty());
     romUploadBtn.setDisable(g.isEmpty());
+    scanBtn.setDisable(g.isEmpty());
     directb2sUploadBtn.setDisable(g.isEmpty());
 
     if (g.isPresent()) {
@@ -424,7 +450,9 @@ public class TablesSidebarController implements Initializable {
 
       editHsFileNameBtn.setDisable(!game.getEmulator().isVisualPinball());
       editRomNameBtn.setDisable(!game.getEmulator().isVisualPinball());
+      editTableNameBtn.setDisable(!game.getEmulator().isVisualPinball());
       romUploadBtn.setDisable(!game.getEmulator().isVisualPinball());
+      scanBtn.setDisable(!game.getEmulator().isVisualPinball());
 
       volumeSlider.setDisable(false);
       volumeSlider.setValue(game.getVolume());
@@ -436,7 +464,8 @@ public class TablesSidebarController implements Initializable {
       labelRom.setText(game.getOriginalRom() != null ? game.getOriginalRom() : game.getRom());
       labelRomAlias.setText(game.getOriginalRom() != null ? game.getRom() : "-");
       labelNVOffset.setText(game.getNvOffset() > 0 ? String.valueOf(game.getNvOffset()) : "-");
-      labelFilename.setText(game.getGameFileName());
+      labelFilename.setText(game.getGameFileName() != null ? game.getGameFileName() : "-");
+      labelTableName.setText(game.getTableName() != null ? game.getTableName() : "-");
       labelLastPlayed.setText(game.getLastPlayed() != null ? DateFormat.getDateTimeInstance().format(game.getLastPlayed()) : "-");
       labelTimesPlayed.setText(String.valueOf(game.getNumberPlays()));
       if (!StringUtils.isEmpty(game.getHsFileName())) {
@@ -466,6 +495,7 @@ public class TablesSidebarController implements Initializable {
       labelNVOffset.setText("-");
       labelFilename.setText("-");
       labelLastPlayed.setText("-");
+      labelTableName.setText("-");
       labelTimesPlayed.setText("-");
       labelHSFilename.setText("-");
 

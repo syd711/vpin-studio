@@ -10,11 +10,12 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class TableScanTest {
 
   @Test
-  public void testTableScan1() throws Exception {
+  public void testTableScan1()  {
     File table = new File("C:\\vPinball\\VisualPinball\\Tables\\Hayburners (WIlliams 1951).vpx");
     ScanResult scan = VPXFileScanner.scan(table);
     assertEquals("Hayburners_51VPX.txt", scan.getHsFileName());
     assertEquals("Hayburners_1951", scan.getRom());
+    assertEquals("Hayburners_1951", scan.getTableName());
   }
 
   @Test

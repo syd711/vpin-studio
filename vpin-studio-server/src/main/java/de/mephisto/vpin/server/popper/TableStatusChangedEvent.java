@@ -5,5 +5,5 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 
 public interface TableStatusChangedEvent {
   @NonNull
-  Game getGameInfo();
+  Game getGame();
 }

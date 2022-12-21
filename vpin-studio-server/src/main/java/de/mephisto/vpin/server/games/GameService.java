@@ -224,6 +224,7 @@ public class GameService {
     GameDetails gameDetails = gameDetailsRepository.findByPupId(game.getId());
     gameDetails.setRomName(game.getRom());
     gameDetails.setHsFileName(game.getHsFileName());
+    gameDetails.setTableName(game.getTableName());
     gameDetails.setIgnoredValidations(game.getIgnoredValidations());
     gameDetailsRepository.saveAndFlush(gameDetails);
 

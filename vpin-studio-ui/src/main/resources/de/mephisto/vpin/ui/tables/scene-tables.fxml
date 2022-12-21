@@ -33,16 +33,16 @@
                               <TableView fx:id="tableView" onMouseClicked="#onTableMouseClicked" style="-fx-background-color: #2a2a2a;" styleClass="base-component">
                                 <columns>
                                     <TableColumn fx:id="columnId" minWidth="42.400028228759766" prefWidth="42.400028228759766" style="-fx-alignment: baseline-right;" text="ID" />
-                                    <TableColumn fx:id="columnStatus" minWidth="57.5999755859375" prefWidth="67.199951171875" style="-fx-alignment: CENTER;" text="Status" />
-                                  <TableColumn fx:id="columnDisplayName" minWidth="100.0" prefWidth="298.40000915527344" style="-fx-alignment: BASELINE_LEFT;" text="Display Name" />
-                                    <TableColumn fx:id="columnEmulator" minWidth="10.4000244140625" prefWidth="138.39999389648438" style="-fx-alignment: BASELINE_LEFT;" text="Emulator" />
-                                    <TableColumn minWidth="51.199951171875" prefWidth="186.4000244140625" style="-fx-alignment: CENTER;" text="DirectB2S">
+                                    <TableColumn fx:id="columnStatus" minWidth="32.79998779296875" prefWidth="60.0" style="-fx-alignment: CENTER;" text="Status" />
+                                  <TableColumn fx:id="columnDisplayName" minWidth="100.0" prefWidth="306.40003204345703" style="-fx-alignment: BASELINE_LEFT;" text="Display Name" />
+                                    <TableColumn fx:id="columnEmulator" minWidth="10.4000244140625" prefWidth="126.4000244140625" style="-fx-alignment: BASELINE_LEFT;" text="Emulator" />
+                                    <TableColumn minWidth="51.199951171875" prefWidth="176.800048828125" style="-fx-alignment: CENTER;" text="DirectB2S">
                                        <columns>
                                           <TableColumn fx:id="columnB2S" minWidth="51.199951171875" prefWidth="86.39990234375" style="-fx-alignment: CENTER;" text="Table" />
                                           <TableColumn fx:id="columnMediaB2S" minWidth="51.199951171875" prefWidth="78.39990234375" style="-fx-alignment: CENTER;" text="Media" />
                                        </columns></TableColumn>
-                                    <TableColumn fx:id="columnPUPPack" minWidth="57.5999755859375" prefWidth="97.5999755859375" style="-fx-alignment: CENTER;" text="PUP Pack" />
-                                  <TableColumn fx:id="columnRom" minWidth="10.4000244140625" prefWidth="138.39999389648438" style="-fx-alignment: BASELINE_LEFT;" text="ROM" />
+                                    <TableColumn fx:id="columnPUPPack" minWidth="57.5999755859375" prefWidth="90.39990234375" style="-fx-alignment: CENTER;" text="PUP Pack" />
+                                  <TableColumn fx:id="columnRom" minWidth="10.4000244140625" prefWidth="126.4000244140625" style="-fx-alignment: BASELINE_LEFT;" text="ROM" />
                                 </columns>
                               </TableView>
                            </children>

@@ -41,6 +41,7 @@ public class CompetitionService implements InitializingBean {
 
   public void notifyCompetitionCreation(Competition c) {
     new Thread(() -> {
+      Thread.currentThread().setName("Competition Notification Thread [" + c.toString()+ "]");
       for (CompetitionChangeListener listener : this.listeners) {
         listener.competitionCreated(c);
       }
@@ -49,6 +50,7 @@ public class CompetitionService implements InitializingBean {
 
   public void notifyCompetitionChanged(Competition c) {
     new Thread(() -> {
+      Thread.currentThread().setName("Competition Notification Thread [" + c.toString()+ "]");
       for (CompetitionChangeListener listener : this.listeners) {
         listener.competitionChanged(c);
       }
@@ -57,6 +59,7 @@ public class CompetitionService implements InitializingBean {
 
   public void notifyCompetitionFinished(Competition c) {
     new Thread(() -> {
+      Thread.currentThread().setName("Competition Notification Thread [" + c.toString()+ "]");
       for (CompetitionChangeListener listener : this.listeners) {
         listener.competitionFinished(c);
       }
@@ -65,6 +68,7 @@ public class CompetitionService implements InitializingBean {
 
   public void notifyCompetitionDeleted(Competition c) {
     new Thread(() -> {
+      Thread.currentThread().setName("Competition Notification Thread [" + c.toString()+ "]");
       for (CompetitionChangeListener listener : this.listeners) {
         listener.competitionDeleted(c);
       }
@@ -149,15 +153,17 @@ public class CompetitionService implements InitializingBean {
     return highscoreService.getPlayersByRanks();
   }
 
-  public void delete(long id) {
+  public boolean delete(long id) {
     Optional<Competition> c = competitionsRepository.findById(id);
     if (c.isPresent()) {
       competitionsRepository.deleteById(id);
       notifyCompetitionDeleted(c.get());
+      return true;
     }
     else {
       LOG.error("No competition exists for id " + id);
     }
+    return false;
   }
 
   @Override

@@ -6,6 +6,7 @@ import de.mephisto.vpin.server.competitions.Competition;
 import de.mephisto.vpin.server.competitions.CompetitionChangeListener;
 import de.mephisto.vpin.server.competitions.CompetitionService;
 import de.mephisto.vpin.server.competitions.ScoreSummary;
+import de.mephisto.vpin.server.discord.DiscordService;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameService;
 import de.mephisto.vpin.server.highscores.HighscoreChangeEvent;
@@ -13,6 +14,8 @@ import de.mephisto.vpin.server.highscores.HighscoreChangeListener;
 import de.mephisto.vpin.server.highscores.HighscoreService;
 import de.mephisto.vpin.server.highscores.cards.CardService;
 import de.mephisto.vpin.server.popper.PopperService;
+import de.mephisto.vpin.server.popper.TableStatusChangeListener;
+import de.mephisto.vpin.server.popper.TableStatusChangedEvent;
 import de.mephisto.vpin.server.preferences.PreferencesService;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
@@ -23,7 +26,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
-public class NotificationService implements InitializingBean, HighscoreChangeListener, CompetitionChangeListener {
+public class NotificationService implements InitializingBean, HighscoreChangeListener, CompetitionChangeListener, TableStatusChangeListener {
   private final static Logger LOG = LoggerFactory.getLogger(NotificationService.class);
 
   @Autowired
@@ -43,6 +46,35 @@ public class NotificationService implements InitializingBean, HighscoreChangeLis
 
   @Autowired
   private PopperService popperService;
+
+  @Autowired
+  private DiscordService discordService;
+
+  public void notifyPopperRestart() {
+    discordService.setStatus(null);
+  }
+
+  @Override
+  public void tableLaunched(TableStatusChangedEvent event) {
+    Game game = event.getGame();
+    discordService.setStatus(game.getGameDisplayName());
+  }
+
+  @Override
+  public void tableExited(TableStatusChangedEvent event) {
+    Game game = event.getGame();
+    LOG.info("Executing table exit commands for '" + game + "'");
+    discordService.setStatus(null);
+    new Thread(() -> {
+      try {
+        Thread.sleep(5000);
+      } catch (InterruptedException e) {
+        //ignore
+      }
+      LOG.info("Finished 5 second update delay, updating highscores.");
+      highscoreService.updateHighscore(game);
+    }).start();
+  }
 
   @Override
   public void highscoreChanged(@NotNull HighscoreChangeEvent event) {
@@ -132,5 +164,7 @@ public class NotificationService implements InitializingBean, HighscoreChangeLis
   public void afterPropertiesSet() throws Exception {
     highscoreService.addHighscoreChangeListener(this);
     competitionService.addCompetitionChangeListener(this);
+    popperService.addTableStatusChangeListener(this);
+    discordService.setStatus(null);
   }
 }

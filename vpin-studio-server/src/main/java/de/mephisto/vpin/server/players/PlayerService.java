@@ -3,6 +3,7 @@ package de.mephisto.vpin.server.players;
 import de.mephisto.vpin.restclient.PlayerDomain;
 import de.mephisto.vpin.server.assets.Asset;
 import de.mephisto.vpin.server.assets.AssetRepository;
+import de.mephisto.vpin.server.discord.DiscordService;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,7 +20,7 @@ public class PlayerService {
   private PlayerRepository playerRepository;
 
   @Autowired
-  private DiscordPlayerService discordPlayerService;
+  private DiscordService discordService;
 
   @Autowired
   private AssetRepository assetRepository;
@@ -45,8 +46,8 @@ public class PlayerService {
   }
 
   public List<Player> getPlayersForDomain(PlayerDomain domain) {
-    if (domain.equals(PlayerDomain.DISCORD) && discordPlayerService.isEnabled()) {
-      List<Player> players = discordPlayerService.getPlayers();
+    if (domain.equals(PlayerDomain.DISCORD) && discordService.isEnabled()) {
+      List<Player> players = discordService.getPlayers();
       List<Player> all = new ArrayList<>(playerRepository.findAll());
       all.addAll(players);
       duplicatesCheck(all);
@@ -65,12 +66,12 @@ public class PlayerService {
       return Optional.of(players.get(0));
     }
 
-    return discordPlayerService.getPlayerByInitials(initials);
+    return discordService.getPlayerByInitials(initials);
   }
 
   public boolean invalidateDomain(PlayerDomain domain) {
     if (domain.equals(PlayerDomain.DISCORD)) {
-      return discordPlayerService.refreshMembers();
+      return discordService.refreshMembers();
     }
     return false;
   }

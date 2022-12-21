@@ -3,7 +3,6 @@ package de.mephisto.vpin.server.popper;
 import de.mephisto.vpin.restclient.PinUPControl;
 import de.mephisto.vpin.restclient.PopperScreen;
 import de.mephisto.vpin.server.games.Game;
-import de.mephisto.vpin.server.highscores.HighscoreService;
 import de.mephisto.vpin.server.system.SystemService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,9 +22,6 @@ public class PopperService {
   private final List<PopperLaunchListener> launchListeners = new ArrayList<>();
 
   @Autowired
-  private HighscoreService highscoreService;
-
-  @Autowired
   private SystemService systemService;
 
   @Autowired
@@ -36,24 +32,15 @@ public class PopperService {
   }
 
   public void notifyTableStatusChange(final Game game, final boolean started) {
-    new Thread(() -> {
+    TableStatusChangedEvent event = () -> game;
+    for (TableStatusChangeListener listener : this.listeners) {
       if (started) {
-        this.executeTableLaunchCommands(game);
+        listener.tableLaunched(event);
       }
       else {
-        this.executeTableExitCommands(game);
+        listener.tableExited(event);
       }
-
-      TableStatusChangedEvent event = () -> game;
-      for (TableStatusChangeListener listener : this.listeners) {
-        if (started) {
-          listener.tableLaunched(event);
-        }
-        else {
-          listener.tableExited(event);
-        }
-      }
-    }).start();
+    }
   }
 
   public boolean isPinUPRunning() {
@@ -74,24 +61,6 @@ public class PopperService {
   @SuppressWarnings("unused")
   public void removeTableStatusChangeListener(TableStatusChangeListener listener) {
     this.listeners.remove(listener);
-  }
-
-
-  public void executeTableLaunchCommands(Game game) {
-    LOG.info("Executing table launch commands for '" + game + "'");
-  }
-
-  public void executeTableExitCommands(Game game) {
-    LOG.info("Executing table exit commands for '" + game + "'");
-    new Thread(() -> {
-      try {
-        Thread.sleep(5000);
-      } catch (InterruptedException e) {
-        //ignore
-      }
-      LOG.info("Finished 5 second update delay, updating highscores.");
-      highscoreService.updateHighscore(game);
-    }).start();
   }
 
   public void notifyPopperLaunch() {
