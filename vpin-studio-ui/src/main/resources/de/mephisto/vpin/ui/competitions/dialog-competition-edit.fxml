@@ -86,7 +86,25 @@
                         <Font size="14.0" />
                      </font>
                   </Label>
-                  <ComboBox fx:id="tableCombo" prefHeight="30.0" prefWidth="281.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                  <HBox alignment="CENTER_LEFT" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                     <children>
+                        <ComboBox fx:id="tableCombo" prefHeight="30.0" prefWidth="281.0" />
+                        <Label textFill="WHITE">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                           <tooltip>
+                              <Tooltip text="Because of the highscore extraction, only VPX tables are allowed for competitions." />
+                           </tooltip>
+                           <graphic>
+                              <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
+                           </graphic>
+                           <HBox.margin>
+                              <Insets left="6.0" />
+                           </HBox.margin>
+                        </Label>
+                     </children>
+                  </HBox>
                   <Label fx:id="titleLabel1111" layoutX="10.0" layoutY="150.0" text="Wheel Icon Badge:" textFill="WHITE" GridPane.rowIndex="7">
                      <font>
                         <Font size="14.0" />

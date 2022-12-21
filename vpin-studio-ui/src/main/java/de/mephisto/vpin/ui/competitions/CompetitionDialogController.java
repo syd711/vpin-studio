@@ -1,5 +1,6 @@
 package de.mephisto.vpin.ui.competitions;
 
+import de.mephisto.vpin.commons.EmulatorTypes;
 import de.mephisto.vpin.restclient.PopperScreen;
 import de.mephisto.vpin.restclient.VPinStudioClient;
 import de.mephisto.vpin.restclient.representations.CompetitionRepresentation;
@@ -145,7 +146,9 @@ public class CompetitionDialogController implements Initializable, DialogControl
     List<GameRepresentation> games = client.getGames();
     List<GameRepresentation> filtered = new ArrayList<>();
     for (GameRepresentation game : games) {
-      filtered.add(game);
+      if(game.getEmulator().getName().equals(EmulatorTypes.VISUAL_PINBALL_X)) {
+        filtered.add(game);
+      }
     }
 
     ObservableList<GameRepresentation> gameRepresentations = FXCollections.observableArrayList(filtered);
@@ -218,8 +221,8 @@ public class CompetitionDialogController implements Initializable, DialogControl
   }
 
   public void setCompetition(CompetitionRepresentation c) {
-    this.competition = c;
     if (c != null) {
+      this.competition = c;
       GameRepresentation game = client.getGame(c.getGameId());
 
       nameField.setText(this.competition.getName());

@@ -29,11 +29,6 @@ public class ValidationTexts {
         text = "Consider setting the ROM name in the \"Table Metadata\" section or PinUP popper. Otherwise no highscore can be evaluated for this table.";
         break;
       }
-      case CODE_DUPLICATE_ROM: {
-        label = "Another table with the same ROM exists.";
-        text = "If you are playing different versions of the same table, consider setting a NVOffset for each table.";
-        break;
-      }
       case CODE_ROM_NOT_EXISTS: {
         label = "ROM file does not exist.";
         text = "Dismiss this message if this table does not require a ROM. Otherwise upload the required ROM under \"Table Metadata\".";
@@ -42,11 +37,6 @@ public class ValidationTexts {
       case CODE_NO_DIRECTB2S_OR_PUPPACK: {
         label = "No PUP pack and no directb2s file found.";
         text = "No additional media has been found for this table. Download a 'directb2s' file for this table.";
-        break;
-      }
-      case CODE_NO_HIGHSCORE_FILES: {
-        label = "No highscore files found.";
-        text = "Maybe this table has not been played yet.";
         break;
       }
       case CODE_NO_AUDIO: {

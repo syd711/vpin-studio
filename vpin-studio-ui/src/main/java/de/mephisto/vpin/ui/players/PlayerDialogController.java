@@ -208,12 +208,10 @@ public class PlayerDialogController implements Initializable, DialogController {
   }
 
   public void setPlayer(PlayerRepresentation p) {
-    this.player = p;
     if (p != null) {
       nameField.setText(this.player.getName());
       initialsField.setText(this.player.getInitials());
       refreshAvatar();
     }
-
   }
 }

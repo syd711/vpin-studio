@@ -2,6 +2,7 @@ package de.mephisto.vpin.server.games;
 
 import de.mephisto.vpin.restclient.PopperScreen;
 import de.mephisto.vpin.restclient.ValidationCode;
+import de.mephisto.vpin.server.highscores.HighscoreService;
 import de.mephisto.vpin.server.popper.Emulator;
 import de.mephisto.vpin.server.preferences.Preferences;
 import de.mephisto.vpin.server.preferences.PreferencesService;
@@ -45,6 +46,9 @@ public class GameValidator implements InitializingBean {
   @Autowired
   private PreferencesService preferencesService;
 
+  @Autowired
+  private HighscoreService highscoreService;
+
   private Preferences preferences;
 
   public int validate(@NonNull Game game) {
@@ -69,26 +73,11 @@ public class GameValidator implements InitializingBean {
       }
     }
 
-
-//    if (isVPX && isValidationEnabled(game, ValidationCode.CODE_DUPLICATE_ROM)) {
-//      for (Game g : games) {
-//        if (g.getId() != game.getId() && !StringUtils.isEmpty(g.getRom()) && g.getRom().equals(game.getRom())) {
-//          return ValidationCode.CODE_DUPLICATE_ROM;
-//        }
-//      }
-//    }
-
     if (isValidationEnabled(game, ValidationCode.CODE_NO_DIRECTB2S_OR_PUPPACK)) {
       if (!game.isDirectB2SAvailable() && !game.isPupPackAvailable()) {
         return ValidationCode.CODE_NO_DIRECTB2S_OR_PUPPACK;
       }
     }
-
-//    if ((isVPX || isFP) && isValidationEnabled(game, ValidationCode.CODE_NO_HIGHSCORE_FILES)) {
-//      if (!game.hasHighscore()) {
-//        return ValidationCode.CODE_NO_HIGHSCORE_FILES;
-//      }
-//    }
 
     File audio = game.getPinUPMedia(PopperScreen.Audio);
     File audioLaunch = game.getPinUPMedia(PopperScreen.AudioLaunch);

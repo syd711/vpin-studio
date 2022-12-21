@@ -19,7 +19,6 @@ and their media configuration.
 - Fix WQHD dashboard
 - Add PUP-pack validator
 - Reenable GameValidators
-- Update Tablename
 
 ### Documentation
 

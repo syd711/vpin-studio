@@ -2,13 +2,10 @@ package de.mephisto.vpin.restclient;
 
 public interface ValidationCode {
   int CODE_NO_ROM = 1;
-  int CODE_DUPLICATE_ROM = 2;
   int CODE_ROM_NOT_EXISTS = 3;
   int CODE_VPX_NOT_EXISTS = 4;
 
   int CODE_NO_DIRECTB2S_OR_PUPPACK = 20;
-
-  int CODE_NO_HIGHSCORE_FILES = 60;
 
   int CODE_NO_AUDIO = 30;
   int CODE_NO_AUDIO_LAUNCH = 31;

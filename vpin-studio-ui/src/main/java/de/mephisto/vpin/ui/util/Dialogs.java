@@ -73,7 +73,9 @@ public class Dialogs {
     scene.getRoot().setStyle("-fx-border-width: 1;-fx-border-color: #605E5E;");
     scene.addEventHandler(KeyEvent.KEY_PRESSED, t -> {
       if (t.getCode() == KeyCode.ESCAPE) {
-        ((DialogController) controller).onDialogCancel();
+        if(controller != null) {
+          controller.onDialogCancel();
+        }
         stage.close();
       }
     });
@@ -134,6 +136,28 @@ public class Dialogs {
     return controller.uploadFinished();
   }
 
+  public static void openBotServerIdTutorial() {
+    Stage stage = createDialogStage("Server ID Instructions", "dialog-bot-server-id-tutorial.fxml");
+    stage.showAndWait();
+  }
+
+  public static void openBotTokenTutorial() {
+    Stage stage = createDialogStage("Bot Token Instructions", "dialog-bot-token-tutorial.fxml");
+    stage.showAndWait();
+  }
+
+  public static void openBotTutorial() {
+    Stage stage = createDialogStage("Discord Bot Instructions", "dialog-bot-tutorial.fxml");
+    stage.showAndWait();
+  }
+
+  public static void createProgressDialog(ProgressModel model) {
+    Stage stage = createDialogStage(model.getTitle(), "dialog-progress.fxml");
+    ProgressDialogController controller = (ProgressDialogController) stage.getUserData();
+    controller.setProgressModel(stage, model);
+    stage.showAndWait();
+  }
+
   public static void openMediaDialog(VPinStudioClient client, GameRepresentation game, GameMediaItemRepresentation item) {
     Parent root = null;
     try {
@@ -157,28 +181,6 @@ public class Dialogs {
         stage.close();
       }
     });
-    stage.showAndWait();
-  }
-
-  public static void openBotServerIdTutorial() {
-    Stage stage = createDialogStage("Server ID Instructions", "dialog-bot-server-id-tutorial.fxml");
-    stage.showAndWait();
-  }
-
-  public static void openBotTokenTutorial() {
-    Stage stage = createDialogStage("Bot Token Instructions", "dialog-bot-token-tutorial.fxml");
-    stage.showAndWait();
-  }
-
-  public static void openBotTutorial() {
-    Stage stage = createDialogStage("Discord Bot Instructions", "dialog-bot-tutorial.fxml");
-    stage.showAndWait();
-  }
-
-  public static void createProgressDialog(ProgressModel model) {
-    Stage stage = createDialogStage(model.getTitle(), "dialog-progress.fxml");
-    ProgressDialogController controller = (ProgressDialogController) stage.getUserData();
-    controller.setProgressModel(stage, model);
     stage.showAndWait();
   }
 }

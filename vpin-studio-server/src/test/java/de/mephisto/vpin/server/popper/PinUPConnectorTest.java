@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import java.io.File;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -57,15 +58,5 @@ public class PinUPConnectorTest extends VPinServerTest {
     volgame = connector.getGame(games.get(0).getId());
     assertEquals(volume, volgame.getVolume());
   }
-
-//  @Test
-//  public void testWheelAugmentation() {
-//    File wheelIcon = new File("C:\\vPinball\\PinUPSystem\\POPMedia\\Visual Pinball X\\Wheel\\Aliens 2.0.png");
-//    File badge = new File("E:\\Development\\workspace\\vpin-studio\\resources\\competition-badges\\trophy-1.png");
-//
-//    WheelAugmenter augmenter = new WheelAugmenter(wheelIcon);
-//    augmenter.deAugment();
-//    augmenter.augment(badge);
-//  }
 
 }
