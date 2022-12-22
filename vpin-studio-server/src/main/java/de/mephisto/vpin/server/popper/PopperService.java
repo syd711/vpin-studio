@@ -71,17 +71,21 @@ public class PopperService {
 
   public void augmentWheel(Game game, String badge) {
     GameMediaItem gameMediaItem = game.getGameMedia().get(PopperScreen.Wheel);
-    File wheelIcon = gameMediaItem.getFile();
-    WheelAugmenter augmenter = new WheelAugmenter(wheelIcon);
+    if(gameMediaItem != null) {
+      File wheelIcon = gameMediaItem.getFile();
+      WheelAugmenter augmenter = new WheelAugmenter(wheelIcon);
 
-    File badgeFile = systemService.getBagdeFile(badge);
-    augmenter.augment(badgeFile);
+      File badgeFile = systemService.getBagdeFile(badge);
+      augmenter.augment(badgeFile);
+    }
   }
 
   public void deAugmentWheel(Game game) {
     GameMediaItem gameMediaItem = game.getGameMedia().get(PopperScreen.Wheel);
-    File wheelIcon = gameMediaItem.getFile();
-    WheelAugmenter augmenter = new WheelAugmenter(wheelIcon);
-    augmenter.deAugment();
+    if(gameMediaItem != null) {
+      File wheelIcon = gameMediaItem.getFile();
+      WheelAugmenter augmenter = new WheelAugmenter(wheelIcon);
+      augmenter.deAugment();
+    }
   }
 }

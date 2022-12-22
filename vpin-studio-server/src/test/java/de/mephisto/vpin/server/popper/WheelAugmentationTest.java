@@ -8,12 +8,13 @@ public class WheelAugmentationTest {
 
   @Test
   public void testWheelAugmentation() {
-    File wheelIcon = new File("C:\\vPinball\\PinUPSystem\\POPMedia\\Visual Pinball X\\Wheel\\Aliens 2.0.png");
+    File wheelIcon = new File("C:\\vPinball\\PinUPSystem\\POPMedia\\Visual Pinball X\\Wheel\\AC-DC (2012).png");
     File badge = new File("E:\\Development\\workspace\\vpin-studio\\resources\\competition-badges\\trophy-1.png");
 
     WheelAugmenter augmenter = new WheelAugmenter(wheelIcon);
     augmenter.deAugment();
     augmenter.augment(badge);
+    augmenter.deAugment();
   }
 
 }

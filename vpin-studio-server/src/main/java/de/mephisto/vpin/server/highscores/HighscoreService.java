@@ -16,7 +16,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Service
 public class HighscoreService implements InitializingBean {
@@ -161,13 +160,14 @@ public class HighscoreService implements InitializingBean {
 
     if (highscore.isPresent()) {
       Highscore h = highscore.get();
-      ScoreSummary scoreSummary = getScoreSummary(h.getCreatedAt(), h.getRaw(), gameId);
-      scoreList.setLatestScore(scoreSummary);
-      scoreList.getScores().add(scoreSummary);
+      if (h.getRaw() != null) {
+        ScoreSummary scoreSummary = getScoreSummary(h.getCreatedAt(), h.getRaw(), gameId);
+        scoreList.setLatestScore(scoreSummary);
+        scoreList.getScores().add(scoreSummary);
+      }
     }
 
     List<HighscoreVersion> byGameIdAndCreatedAtBetween = highscoreVersionRepository.findByGameIdAndCreatedAtBetween(gameId, start, end);
-//    List<HighscoreVersion> byGameIdAndCreatedAtBetween = highscoreVersionRepository.findByGameId(gameId);
     for (HighscoreVersion version : byGameIdAndCreatedAtBetween) {
       ScoreSummary scoreSummary = getScoreSummary(version.getCreatedAt(), version.getOldRaw(), gameId);
       scoreList.getScores().add(scoreSummary);
@@ -237,7 +237,7 @@ public class HighscoreService implements InitializingBean {
     for (HighscoreVersion version : all) {
       List<Score> versionScores = highscoreParser.parseScores(version.getCreatedAt(), version.getNewRaw(), version.getGameId());
       int changedPos = version.getChangedPosition() - 1;
-      if(version.getChangedPosition() < 0 || version.getChangedPosition() >= versionScores.size()) {
+      if (version.getChangedPosition() < 0 || version.getChangedPosition() >= versionScores.size()) {
         LOG.error("Found invalid change position " + version.getChangedPosition() + "' for " + version);
       }
       else {
@@ -313,7 +313,7 @@ public class HighscoreService implements InitializingBean {
         List<Score> newScores = highscoreParser.parseScores(newHighscore.getLastModified(), newHighscore.getRaw(), game.getId());
 
         int position = calculateChangedPosition(oldScores, newScores);
-        if(position == -1) {
+        if (position == -1) {
           LOG.info("No highscore change detected for " + game + ", skipping highscore notification event.");
           return;
         }

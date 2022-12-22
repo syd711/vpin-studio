@@ -186,20 +186,36 @@ public class ImageUtil {
   }
 
   private static void writeJPG(BufferedImage image, File file) throws IOException {
-    long writeDuration = System.currentTimeMillis();
-    BufferedOutputStream imageOutputStream = new BufferedOutputStream(new FileOutputStream(file));
-    ImageIO.write(image, "JPG", imageOutputStream);
-    imageOutputStream.close();
-    long duration = System.currentTimeMillis() - writeDuration;
-    LOG.info("Writing " + file.getAbsolutePath() + " took " + duration + "ms.");
+    FileOutputStream fileOutputStream = null;
+    try {
+      long writeDuration = System.currentTimeMillis();
+      fileOutputStream = new FileOutputStream(file);
+      BufferedOutputStream imageOutputStream = new BufferedOutputStream(fileOutputStream);
+      ImageIO.write(image, "JPG", imageOutputStream);
+      imageOutputStream.close();
+      long duration = System.currentTimeMillis() - writeDuration;
+      LOG.info("Writing " + file.getAbsolutePath() + " took " + duration + "ms.");
+    } finally {
+      if (fileOutputStream != null) {
+        fileOutputStream.close();
+      }
+    }
   }
 
   private static void writePNG(BufferedImage image, File file) throws IOException {
-    long writeDuration = System.currentTimeMillis();
-    BufferedOutputStream imageOutputStream = new BufferedOutputStream(new FileOutputStream(file));
-    ImageIO.write(image, "PNG", imageOutputStream);
-    imageOutputStream.close();
-    long duration = System.currentTimeMillis() - writeDuration;
-    LOG.info("Writing " + file.getAbsolutePath() + " took " + duration + "ms.");
+    FileOutputStream fileOutputStream = null;
+    try {
+      long writeDuration = System.currentTimeMillis();
+      fileOutputStream = new FileOutputStream(file);
+      BufferedOutputStream imageOutputStream = new BufferedOutputStream(fileOutputStream);
+      ImageIO.write(image, "PNG", imageOutputStream);
+      imageOutputStream.close();
+      long duration = System.currentTimeMillis() - writeDuration;
+      LOG.info("Writing " + file.getAbsolutePath() + " took " + duration + "ms.");
+    } finally {
+      if (fileOutputStream != null) {
+        fileOutputStream.close();
+      }
+    }
   }
 }

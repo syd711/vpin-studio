@@ -11,11 +11,26 @@ import java.io.File;
 
 public class WheelAugmenter {
   private final static Logger LOG = LoggerFactory.getLogger(WheelAugmenter.class);
+  private final File thumbsFolder;
 
   private File wheelIcon;
+  private File wheelIconThumbnail;
+  private File wheelIconThumbnailSm;
+
+  private File backupWheelIcon;
+  private File backupWheelIconThumbnail;
+  private File backupWheelIconThumbnailSm;
 
   public WheelAugmenter(File wheelIcon) {
     this.wheelIcon = wheelIcon;
+
+    thumbsFolder = new File(wheelIcon.getParentFile(), "pthumbs");
+    this.wheelIconThumbnail = new File(thumbsFolder, FilenameUtils.getBaseName(wheelIcon.getName()) + "_thumb.png");
+    this.wheelIconThumbnailSm = new File(thumbsFolder, FilenameUtils.getBaseName(wheelIcon.getName()) + "_thumb_sm.png");
+
+    this.backupWheelIcon = new File(wheelIcon.getParentFile(), FilenameUtils.getBaseName(wheelIcon.getName()) + "_orig.png");
+    this.backupWheelIconThumbnail = new File(thumbsFolder, FilenameUtils.getBaseName(wheelIcon.getName()) + "_thumb_orig.png");
+    this.backupWheelIconThumbnailSm = new File(thumbsFolder, FilenameUtils.getBaseName(wheelIcon.getName()) + "_thumb_sm_orig.png");
   }
 
   public void augment(File badgeFile) {
@@ -23,15 +38,31 @@ public class WheelAugmenter {
       LOG.error("Could not augment wheel icon " + wheelIcon.getAbsolutePath() + ", file does not exist.");
     }
 
-    File original = new File(wheelIcon.getParentFile(), wheelIcon.getName() + ".orig");
+    if (!thumbsFolder.exists()) {
+      thumbsFolder.mkdirs();
+    }
 
     try {
-      //always re-cretaed
-      if (original.exists()) {
-        original.delete();
+      //always re-create
+      if (backupWheelIcon.exists()) {
+        backupWheelIcon.delete();
+      }
+      if (backupWheelIconThumbnail.exists()) {
+        backupWheelIconThumbnail.delete();
+      }
+      if (backupWheelIconThumbnailSm.exists()) {
+        backupWheelIconThumbnailSm.delete();
       }
 
-      FileUtils.copyFile(wheelIcon, original);
+      if(wheelIcon.exists()) {
+        FileUtils.copyFile(wheelIcon, backupWheelIcon);
+      }
+      if(wheelIconThumbnail.exists()) {
+        FileUtils.copyFile(wheelIconThumbnail, backupWheelIconThumbnail);
+      }
+      if(wheelIconThumbnailSm.exists()) {
+        FileUtils.copyFile(wheelIconThumbnailSm, backupWheelIconThumbnailSm);
+      }
 
       BufferedImage bufferedImage = ImageUtil.loadImage(wheelIcon);
       BufferedImage badgeIcon = ImageUtil.loadImage(badgeFile);
@@ -42,42 +73,53 @@ public class WheelAugmenter {
       bufferedImage.getGraphics().drawImage(badgeIcon, width / 2, 0, null);
       ImageUtil.write(bufferedImage, wheelIcon);
 
-      clearThumbs();
+
+      //write large thumbnail
+      BufferedImage thumbnail = ImageUtil.resizeImage(bufferedImage, 225);
+      thumbnail = ImageUtil.rotateLeft(thumbnail);
+      ImageUtil.write(thumbnail, wheelIconThumbnail);
+
+      //write small thumbnail
+      BufferedImage thumbnailSm = ImageUtil.resizeImage(thumbnail, 90);
+      ImageUtil.write(thumbnailSm, wheelIconThumbnailSm);
+
     } catch (Exception e) {
       LOG.error("Wheel augmentation failed: " + e.getMessage(), e);
     }
   }
 
   public void deAugment() {
-    File original = new File(wheelIcon.getParentFile(), wheelIcon.getName() + ".orig");
-    if (original.exists()) {
+    if (backupWheelIcon.exists()) {
       wheelIcon.delete();
-      boolean result = original.renameTo(wheelIcon);
+      boolean result = backupWheelIcon.renameTo(wheelIcon);
       if (result) {
-        clearThumbs();
-        LOG.info("Reverted augmented wheelicon " + wheelIcon.getAbsolutePath());
+        LOG.info("Reverted augmented wheel icon " + wheelIcon.getAbsolutePath());
+      }
+      else {
+        LOG.warn("Failed to reverted augmented wheel icon " + wheelIcon.getAbsolutePath());
       }
     }
-  }
 
-  private void clearThumbs() {
-    File thumbsFolder = new File(wheelIcon.getParentFile(), "pthumbs");
-    File thumb = new File(thumbsFolder, FilenameUtils.getBaseName(wheelIcon.getName()) + "_thumb." + FilenameUtils.getExtension(wheelIcon.getName()));
-    if (thumb.exists()) {
-      LOG.info("Deleted thumb " + thumb.getAbsolutePath());
-      thumb.delete();
-    }
-    else {
-      LOG.info("No thumb image found " + thumb.getAbsolutePath());
+    if (backupWheelIconThumbnail.exists()) {
+      wheelIconThumbnail.delete();
+      boolean result = backupWheelIconThumbnail.renameTo(wheelIconThumbnail);
+      if (result) {
+        LOG.info("Reverted augmented wheel icon " + wheelIconThumbnail.getAbsolutePath());
+      }
+      else {
+        LOG.warn("Failed to reverted augmented wheel icon " + wheelIconThumbnail.getAbsolutePath());
+      }
     }
 
-    File thumbSm = new File(thumbsFolder, FilenameUtils.getBaseName(wheelIcon.getName()) + "_thumb_sm." + FilenameUtils.getExtension(wheelIcon.getName()));
-    if (thumbSm.exists()) {
-      LOG.info("Deleted thumb " + thumbSm.getAbsolutePath());
-      thumbSm.delete();
-    }
-    else {
-      LOG.info("No thumb sm image found " + thumb.getAbsolutePath());
+    if (backupWheelIconThumbnailSm.exists()) {
+      wheelIconThumbnailSm.delete();
+      boolean result = backupWheelIconThumbnailSm.renameTo(wheelIconThumbnailSm);
+      if (result) {
+        LOG.info("Reverted augmented wheel icon " + wheelIconThumbnailSm.getAbsolutePath());
+      }
+      else {
+        LOG.warn("Failed to reverted augmented wheel icon " + wheelIconThumbnailSm.getAbsolutePath());
+      }
     }
   }
 }

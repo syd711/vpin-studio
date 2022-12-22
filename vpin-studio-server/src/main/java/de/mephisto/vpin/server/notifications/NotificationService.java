@@ -25,6 +25,9 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 @Service
 public class NotificationService implements InitializingBean, HighscoreChangeListener, CompetitionChangeListener, TableStatusChangeListener {
   private final static Logger LOG = LoggerFactory.getLogger(NotificationService.class);
@@ -97,15 +100,16 @@ public class NotificationService implements InitializingBean, HighscoreChangeLis
   public void competitionCreated(Competition competition) {
     Game game = gameService.getGame(competition.getGameId());
 
+    if (competition.isCustomizeMedia()) {
+      popperService.augmentWheel(game, competition.getBadge());
+    }
+
     if (competition.isDiscordNotifications() && competition.isActive()) {
       String webhookUrl = (String) preferencesService.getPreferenceValue(PreferenceNames.DISCORD_WEBHOOK_URL);
       if (!StringUtils.isEmpty(webhookUrl)) {
         String message = NotificationFactory.createDiscordCompetitionCreatedMessage(competition, game);
         DiscordWebhook.call(webhookUrl, message);
         LOG.info("Called Discord webhook for creation of " + competition);
-        if (competition.isCustomizeMedia()) {
-          popperService.augmentWheel(game, competition.getBadge());
-        }
       }
     }
   }
@@ -130,6 +134,7 @@ public class NotificationService implements InitializingBean, HighscoreChangeLis
         }
       }
     }
+    runAugmentationCheck();
   }
 
   @Override
@@ -157,6 +162,18 @@ public class NotificationService implements InitializingBean, HighscoreChangeLis
     }
     else {
       popperService.deAugmentWheel(game);
+    }
+    runAugmentationCheck();
+  }
+
+  private void runAugmentationCheck() {
+    List<Integer> competedGameIds = competitionService.getActiveCompetitions().stream().map(Competition::getGameId).collect(Collectors.toList());
+
+    List<Game> games = gameService.getGames();
+    for (Game game : games) {
+      if(!competedGameIds.contains(game.getId())) {
+        popperService.deAugmentWheel(game);
+      }
     }
   }
 

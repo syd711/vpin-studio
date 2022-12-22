@@ -484,7 +484,7 @@ public class PinUPConnector implements InitializingBean {
     if (emulator.getName().equalsIgnoreCase(Emulator.VISUAL_PINBALL_X)) {
       File vpxFile = new File(systemService.getVPXTablesFolder(), gameFileName);
       if (!vpxFile.exists()) {
-        LOG.warn("Game file " + vpxFile.getAbsolutePath() + " does not exist.");
+//        LOG.warn("Game file " + vpxFile.getAbsolutePath() + " does not exist.");
       }
       game.setGameFile(vpxFile);
     }

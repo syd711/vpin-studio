@@ -53,8 +53,10 @@ public class PopperMediaResource {
       GameMediaItem gameMediaItem = gameMedia.get(popperScreen);
       if (gameMediaItem != null) {
         File file = gameMediaItem.getFile();
-        byte[] bytes = IOUtils.toByteArray(new FileInputStream(file));
+        FileInputStream in = new FileInputStream(file);
+        byte[] bytes = IOUtils.toByteArray(in);
         ByteArrayResource bytesResource = new ByteArrayResource(bytes);
+        in.close();
 
         HttpHeaders responseHeaders = new HttpHeaders();
         responseHeaders.set(CONTENT_LENGTH, String.valueOf(file.length()));
