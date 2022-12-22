@@ -6,7 +6,7 @@ import de.mephisto.vpin.ui.competitions.CompetitionsController;
 import de.mephisto.vpin.ui.players.PlayersController;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.ui.tables.TablesController;
-import de.mephisto.vpin.ui.util.UIDefaults;
+import de.mephisto.vpin.commons.fx.UIDefaults;
 import eu.hansolo.tilesfx.Tile;
 import eu.hansolo.tilesfx.TileBuilder;
 import javafx.application.Platform;

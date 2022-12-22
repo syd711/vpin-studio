@@ -1,6 +1,5 @@
 package de.mephisto.vpin.commons.utils;
 
-import de.mephisto.vpin.commons.Services;
 import de.mephisto.vpin.commons.fx.OverlayWindowFX;
 import de.mephisto.vpin.restclient.PopperScreen;
 import de.mephisto.vpin.restclient.VPinStudioClient;
@@ -35,7 +34,7 @@ public class WidgetFactory {
   public static File snapshot(Pane root) throws IOException {
     int offset = 7;
     SnapshotParameters snapshotParameters = new SnapshotParameters();
-    Rectangle2D rectangle2D = new Rectangle2D(offset, offset, root.getWidth() - offset - offset, root.getHeight() - offset- offset);
+    Rectangle2D rectangle2D = new Rectangle2D(offset, offset, root.getWidth() - offset - offset, root.getHeight() - offset - offset);
     snapshotParameters.setViewport(rectangle2D);
     WritableImage snapshot = root.snapshot(snapshotParameters, null);
     BufferedImage bufferedImage = new BufferedImage((int) rectangle2D.getWidth(), (int) rectangle2D.getHeight(), BufferedImage.TYPE_INT_ARGB);
@@ -127,7 +126,7 @@ public class WidgetFactory {
       return parent;
     }
 
-    if(mediaPreview) {
+    if (mediaPreview) {
       return addMediaItemToBorderPane(client, mediaItem, parent);
     }
 

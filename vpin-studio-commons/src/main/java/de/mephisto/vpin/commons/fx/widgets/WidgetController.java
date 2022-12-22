@@ -7,8 +7,7 @@ import javafx.scene.text.FontPosture;
 public class WidgetController {
 
   private static Font scoreFont;
-  private static Font scoreFontBold;
-  private static Font scoreFontSmall;
+  private static Font competitionScoreFont;
   private static Font scoreFontText;
 
   static {
@@ -17,12 +16,10 @@ public class WidgetController {
     Font.loadFont(OverlayWindowFX.class.getResourceAsStream("impact.ttf"), 22);
 
     String SCORE_FONT_NAME = "Digital Counter 7";
-//    String SCORE_FONT_NAME = "Monospace";
     String SCORE_TEXT_FONT_NAME = "Monospace";
 
-    scoreFont = Font.font(SCORE_FONT_NAME, FontPosture.findByName("regular"), 34);
-    scoreFontBold = Font.font(SCORE_FONT_NAME, FontPosture.findByName("bold"), 34);
-    scoreFontSmall = Font.font(SCORE_FONT_NAME, FontPosture.findByName("regular"), 28);
+    scoreFont = Font.font(SCORE_FONT_NAME, FontPosture.findByName("regular"), 36);
+    competitionScoreFont = Font.font(SCORE_FONT_NAME, FontPosture.findByName("regular"), 28);
 
     scoreFontText = Font.font(SCORE_TEXT_FONT_NAME, FontPosture.findByName("regular"), 16);
   }
@@ -30,12 +27,8 @@ public class WidgetController {
   public WidgetController() {
   }
 
-  public static Font getScoreFontSmall() {
-    return scoreFont;
-  }
-
-  public static Font getScoreFontBold() {
-    return scoreFontBold;
+  public static Font getCompetitionScoreFont() {
+    return competitionScoreFont;
   }
 
   public Font getScoreFont() {

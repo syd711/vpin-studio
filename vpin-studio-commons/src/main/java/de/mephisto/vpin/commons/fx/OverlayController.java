@@ -10,6 +10,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
 import javafx.scene.layout.BorderPane;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -24,9 +25,6 @@ public class OverlayController implements Initializable {
 
   @FXML
   private Label titleLabel;
-
-  @FXML
-  private WidgetFinishedCompetitionsController finishedCompetitionsController; //fxml magic! Not unused -> id + "Controller"@FXML
 
   @FXML
   private WidgetCompetitionController activeCompetitionController; //fxml magic! Not unused -> id + "Controller"
@@ -49,11 +47,15 @@ public class OverlayController implements Initializable {
   public void refreshData() {
     LOG.info("Refreshing overlay.");
     PreferenceEntryRepresentation systemName = OverlayWindowFX.client.getPreference(PreferenceNames.SYSTEM_NAME);
-    titleLabel.setText(systemName.getValue());
+    String name = systemName.getValue();
+    if(StringUtils.isEmpty(name) || name.equals("null") ) {
+      name = UIDefaults.VPIN_NAME;
+    }
+    titleLabel.setText(name);
 
     activeCompetitionController.refresh();
     latestScoresController.refresh();
-    finishedCompetitionsController.refresh();
+//    finishedCompetitionsController.refresh();
     playersController.refresh();
   }
 }

@@ -98,17 +98,17 @@ public class WidgetCompetitionSummaryController extends WidgetController impleme
       if (scores.size() == 3) {
         ScoreRepresentation score1 = scores.get(0);
         name1.setText(formatScoreText(score1));
-        scoreLabel1.setFont(getScoreFontSmall());
+        scoreLabel1.setFont(getCompetitionScoreFont());
         scoreLabel1.setText(score1.getScore());
 
         ScoreRepresentation score2 = scores.get(1);
         name2.setText(formatScoreText(score2));
-        scoreLabel2.setFont(getScoreFontSmall());
+        scoreLabel2.setFont(getCompetitionScoreFont());
         scoreLabel2.setText(score2.getScore());
 
         ScoreRepresentation score3 = scores.get(2);
         name3.setText(formatScoreText(score3));
-        scoreLabel3.setFont(getScoreFontSmall());
+        scoreLabel3.setFont(getCompetitionScoreFont());
         scoreLabel3.setText(score3.getScore());
       }
 

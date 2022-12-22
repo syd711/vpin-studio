@@ -1,4 +1,4 @@
-package de.mephisto.vpin.ui.util;
+package de.mephisto.vpin.commons.fx;
 
 public interface UIDefaults {
   String VPIN_NAME = "My VPin";
