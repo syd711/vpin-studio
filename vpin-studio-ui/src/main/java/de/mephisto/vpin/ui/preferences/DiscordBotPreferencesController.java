@@ -50,7 +50,7 @@ public class DiscordBotPreferencesController implements Initializable {
         String token = botTokenText.getText();
         String serverId = serverIdText.getText();
         Studio.stage.getScene().setCursor(Cursor.WAIT);
-        DiscordClient client = new DiscordClient(token, serverId);
+        DiscordClient client = new DiscordClient(token, serverId, null);
         client.refreshMembers(discordMembers -> {
           Platform.runLater(() -> {
             Studio.stage.getScene().setCursor(Cursor.DEFAULT);

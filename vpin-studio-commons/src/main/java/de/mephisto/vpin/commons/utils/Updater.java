@@ -27,12 +27,20 @@ public class Updater {
     return out;
   }
 
-  public static void startUpdater(String args) {
-    List<String> commands = Arrays.asList("VPin-Studio-Updater.exe", args);
+  public static void startUpdater(String args, String activeVersion) {
+    List<String> commands = Arrays.asList("VPin-Studio-Updater.exe", args, activeVersion);
     SystemCommandExecutor executor = new SystemCommandExecutor(commands);
     executor.setDir(new File("./"));
     executor.executeCommandAsync();
-    System.exit(0);
+
+    new Thread(() -> {
+      try {
+        Thread.sleep(2000);
+        System.exit(0);
+      } catch (InterruptedException e) {
+        //ignore
+      }
+    }).start();
   }
 
   public static void restartServer() {
@@ -58,6 +66,7 @@ public class Updater {
   }
 
   private static void unzip(File zip) {
+    LOG.info("Unzipping update file " + zip.getAbsolutePath());
     String unzipCommand = "7z.exe";
     List<String> commands = Arrays.asList("\"" + unzipCommand + "\"", "-aoa", "x", "\"" + zip.getAbsolutePath() + "\"", "-o\"" + zip.getParentFile().getAbsolutePath() + "\"");
     try {
@@ -71,13 +80,13 @@ public class Updater {
         LOG.error("7zip command '" + String.join(" ", commands) + "' failed: {}", standardErrorFromCommand);
       }
       LOG.info("Finished extraction of " + zip.getAbsolutePath());
+      boolean deleted = zip.delete();
+      if(!deleted) {
+        LOG.error("Failed to delete update file " + zip.getAbsolutePath());
+      }
     } catch (Exception e) {
       LOG.info("Failed extract zip: " + e.getMessage(), e);
     }
-  }
-
-  public static void main(String[] args) {
-    Updater.unzip(new File("E:\\Development\\workspace\\vpin-studio\\Output\\VPin-Studio\\VPin-Studio-Server.zip"));
   }
 
   private static void download(String downloadUrl, File target) throws Exception {

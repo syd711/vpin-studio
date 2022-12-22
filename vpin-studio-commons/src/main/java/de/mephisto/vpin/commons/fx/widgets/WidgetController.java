@@ -13,10 +13,11 @@ public class WidgetController {
 
   static {
     Font.loadFont(OverlayWindowFX.class.getResourceAsStream("MonospaceBold.ttf"), 22);
-    Font.loadFont(OverlayWindowFX.class.getResourceAsStream("digital-7.ttf"), 22);
+    Font.loadFont(OverlayWindowFX.class.getResourceAsStream("digital_counter_7.ttf"), 22);
     Font.loadFont(OverlayWindowFX.class.getResourceAsStream("impact.ttf"), 22);
 
-    String SCORE_FONT_NAME = "Digital-7";
+    String SCORE_FONT_NAME = "Digital Counter 7";
+//    String SCORE_FONT_NAME = "Monospace";
     String SCORE_TEXT_FONT_NAME = "Monospace";
 
     scoreFont = Font.font(SCORE_FONT_NAME, FontPosture.findByName("regular"), 34);

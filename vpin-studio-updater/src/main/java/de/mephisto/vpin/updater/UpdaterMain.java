@@ -27,9 +27,8 @@ public class UpdaterMain extends Application {
   public static void main(String[] args) throws Exception {
     if (args != null && args.length > 0) {
       if (args[0].equals("-server")) {
-        UpdaterMain.client = new VPinStudioClient("localhost");
-
-        String serverVersion = client.version();
+        String serverVersion = args[1];
+        LOG.info("Starting server update, updating from version " + serverVersion);
         String updateVersion = Updater.checkForUpdate(serverVersion);
         if (updateVersion != null && !updateVersion.equals(serverVersion)) {
           LOG.info("Server updated process found updater " + updateVersion + " and is running on " + serverVersion);
@@ -70,6 +69,7 @@ public class UpdaterMain extends Application {
       stage.setY((screenBounds.getHeight() / 2) - (400 / 2));
 
       UpdateController controller = loader.getController();
+      controller.setStage(stage);
       stage.show();
     } catch (IOException e) {
       LOG.error("Failed to load launcher: " + e.getMessage(), e);

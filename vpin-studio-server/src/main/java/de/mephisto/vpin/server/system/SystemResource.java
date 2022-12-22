@@ -52,7 +52,8 @@ public class SystemResource {
 
   @GetMapping("/update")
   public boolean update() {
-    Updater.startUpdater("-server");
+    LOG.info("Updating server: shutting down service and starting updater.");
+    Updater.startUpdater("-server", version());
     return true;
   }
 

@@ -6,12 +6,15 @@ import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.entities.Activity;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
+import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.entities.channel.middleman.GuildChannel;
+import net.dv8tion.jda.api.entities.channel.middleman.MessageChannel;
 import net.dv8tion.jda.api.events.guild.member.GuildMemberJoinEvent;
 import net.dv8tion.jda.api.events.guild.member.GuildMemberRemoveEvent;
 import net.dv8tion.jda.api.events.guild.member.GuildMemberUpdateEvent;
 import net.dv8tion.jda.api.events.guild.member.update.GuildMemberUpdateNicknameEvent;
+import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.requests.GatewayIntent;
 import net.dv8tion.jda.api.utils.FileUpload;
@@ -32,15 +35,17 @@ public class DiscordClient extends ListenerAdapter {
   private final static Logger LOG = LoggerFactory.getLogger(DiscordClient.class);
 
   private final JDA jda;
+  private final DiscordCommandResolver commandResolver;
   private final String guildId;
-  private List<DiscordMember> members;
+  private final List<DiscordMember> members;
 
-  public DiscordClient(String botToken, String guildId) throws Exception {
-    this.guildId = guildId;
-    jda = JDABuilder.createDefault(botToken, Arrays.asList(GatewayIntent.DIRECT_MESSAGES, GatewayIntent.GUILD_MESSAGES, GatewayIntent.GUILD_MEMBERS))
+  public DiscordClient(String botToken, String guildId, DiscordCommandResolver commandResolver) throws Exception {
+    this.guildId = guildId.trim();
+    jda = JDABuilder.createDefault(botToken.trim(), Arrays.asList(GatewayIntent.DIRECT_MESSAGES, GatewayIntent.GUILD_MESSAGES, GatewayIntent.GUILD_MEMBERS, GatewayIntent.MESSAGE_CONTENT))
         .setEventPassthrough(true)
         .setMemberCachePolicy(MemberCachePolicy.NONE)
         .build();
+    this.commandResolver = commandResolver;
     jda.awaitReady();
     jda.addEventListener(this);
     members = new ArrayList<>();
@@ -123,10 +128,6 @@ public class DiscordClient extends ListenerAdapter {
     });
   }
 
-  public void testMemberList(Consumer<List<DiscordMember>> c, Consumer<Throwable> t) {
-    this.refreshMembers(c, t);
-  }
-
   private List<DiscordMember> createMemberList(List<Member> members) {
     List<DiscordMember> result = new ArrayList<>();
     for (Member member : members) {
@@ -164,7 +165,7 @@ public class DiscordClient extends ListenerAdapter {
 
 
   public void setStatus(String status) {
-    if(status == null) {
+    if (status == null) {
       this.jda.getPresence().setActivity(null);
     }
     else {
@@ -196,5 +197,37 @@ public class DiscordClient extends ListenerAdapter {
   public void onGuildMemberUpdateNickname(GuildMemberUpdateNicknameEvent event) {
     super.onGuildMemberUpdateNickname(event);
     this.refreshMembers();
+  }
+
+  @Override
+  public void onMessageReceived(MessageReceivedEvent event) {
+    if (event.getAuthor().isBot()) {
+      return;
+    }
+
+    Message message = event.getMessage();
+    String content = message.getContentRaw();
+    if (content.startsWith("/")) {
+      if (content.startsWith("/commands")) {
+        MessageChannel channel = event.getChannel();
+        channel.sendMessage("List of available commands:\n" +
+            "**/hs <TABLE NAME>**: Returns the highscore for the table matching the give name.\n" +
+            "**/ranking **: Returns the overall player ranking.\n" +
+            "**/ranking <PLAYER_INITIALS> **: Returns all highscores of this player.\n" +
+            "**/competitions **: Returns the list and status of active competitions.\n" +
+            "").queue();
+      }
+      else if (commandResolver != null) {
+        BotCommand command = new BotCommand(content, commandResolver);
+        BotCommandResponse response = command.execute();
+        if (response != null) {
+          MessageChannel channel = event.getChannel();
+          channel.sendMessage(response.toDiscordMarkup()).queue();
+        }
+        else {
+          LOG.info("Unknown bot command '" + content + "'");
+        }
+      }
+    }
   }
 }

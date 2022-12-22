@@ -1,7 +1,6 @@
 package de.mephisto.vpin.server.discord;
 
-import de.mephisto.vpin.connectors.discord.DiscordClient;
-import de.mephisto.vpin.connectors.discord.DiscordMember;
+import de.mephisto.vpin.connectors.discord.*;
 import de.mephisto.vpin.restclient.PlayerDomain;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.server.players.Player;
@@ -19,7 +18,7 @@ import java.util.*;
 import java.util.function.Consumer;
 
 @Service
-public class DiscordService implements InitializingBean, PreferenceChangedListener {
+public class DiscordService implements InitializingBean, PreferenceChangedListener, DiscordCommandResolver {
   private final static Logger LOG = LoggerFactory.getLogger(DiscordService.class);
 
   private DiscordClient discordClient;
@@ -54,7 +53,7 @@ public class DiscordService implements InitializingBean, PreferenceChangedListen
 
     try {
       if (!StringUtils.isEmpty(botToken) && !StringUtils.isEmpty(guildId)) {
-        this.discordClient = new DiscordClient(botToken, guildId);
+        this.discordClient = new DiscordClient(botToken, guildId, this);
       }
       else {
         LOG.info("Skipped discord client creation, no botId or guildId set.");
@@ -63,6 +62,11 @@ public class DiscordService implements InitializingBean, PreferenceChangedListen
       LOG.error("Failed to create discord client: " + e.getMessage() + ". Try to update your settings to create a valid client.");
     }
     return this.discordClient;
+  }
+
+  @Override
+  public BotCommandResponse resolveCommand(BotCommand cmd) {
+    return null;
   }
 
   public void setStatus(@Nullable String status) {

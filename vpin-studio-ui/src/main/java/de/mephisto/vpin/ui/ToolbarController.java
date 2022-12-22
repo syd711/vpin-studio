@@ -26,7 +26,7 @@ public class ToolbarController implements Initializable {
     String version = Studio.getVersion();
     String newVersion = Updater.checkForUpdate(version);
     if(!StringUtils.isEmpty(newVersion)) {
-      Updater.startUpdater(client.getHost());
+      Updater.startUpdater(client.getHost(), version);
     }
   }
 
