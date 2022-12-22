@@ -81,7 +81,6 @@ public class GameService {
   }
 
   public ScoreSummary getRecentHighscores(int count) {
-    int TARGET_COUNT = 10;
     List<Score> scores = new ArrayList<>();
     ScoreSummary summary = new ScoreSummary(scores, null);
     List<Score> allHighscoreVersions = highscoreService.getAllHighscoreVersions();
@@ -94,7 +93,7 @@ public class GameService {
       }
     }
 
-    if (scores.size() < TARGET_COUNT) {
+    if (scores.size() < count) {
       List<Highscore> highscores = highscoreService.getRecentHighscores();
       for (Highscore highscore : highscores) {
         int gameId = highscore.getGameId();
@@ -106,7 +105,7 @@ public class GameService {
             List<Score> versionScores = highscoreService.parseScores(highscore);
             if (!versionScores.isEmpty()) {
               scores.add(versionScores.get(0));
-              if (scores.size() == TARGET_COUNT) {
+              if (scores.size() == count) {
                 break;
               }
             }

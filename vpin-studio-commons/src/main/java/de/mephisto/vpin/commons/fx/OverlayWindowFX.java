@@ -5,6 +5,7 @@ import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Rectangle2D;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.SceneAntialiasing;
 import javafx.scene.layout.BorderPane;
@@ -76,16 +77,15 @@ public class OverlayWindowFX extends Application {
     overlayFX = this;
 
     try {
-      String resource = "scene-overlay.fxml";
+      String resource = "scene-overlay-uhd.fxml";
       Rectangle2D screenBounds = Screen.getPrimary().getBounds();
       if(screenBounds.getWidth() < 3000) {
         resource = "scene-overlay-wqhd.fxml";
       }
 
       FXMLLoader loader = new FXMLLoader(OverlayController.class.getResource(resource));
-      BorderPane widgetRoot = loader.load();
+      Parent widgetRoot = loader.load();
       overlayController = loader.getController();
-      widgetRoot.setMaxHeight(Double.MAX_VALUE);
       root.setCenter(widgetRoot);
     } catch (IOException e) {
       LOG.error("Failed to init dashboard: " + e.getMessage(), e);

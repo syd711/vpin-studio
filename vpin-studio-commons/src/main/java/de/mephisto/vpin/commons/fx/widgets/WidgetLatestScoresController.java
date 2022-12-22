@@ -57,7 +57,7 @@ public class WidgetLatestScoresController extends WidgetController implements In
   public void refresh() {
     viewStack.getChildren().add(loadingOverlay);
     new Thread(() -> {
-      ScoreSummaryRepresentation scoreSummary = OverlayWindowFX.client.getRecentlyPlayedGames(10);
+      ScoreSummaryRepresentation scoreSummary = OverlayWindowFX.client.getRecentlyPlayedGames(12);
       Platform.runLater(() -> {
         highscoreVBox.getChildren().removeAll(highscoreVBox.getChildren());
 

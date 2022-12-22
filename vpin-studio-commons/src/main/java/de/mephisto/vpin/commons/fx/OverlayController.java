@@ -1,7 +1,6 @@
 package de.mephisto.vpin.commons.fx;
 
 import de.mephisto.vpin.commons.fx.widgets.WidgetCompetitionController;
-import de.mephisto.vpin.commons.fx.widgets.WidgetFinishedCompetitionsController;
 import de.mephisto.vpin.commons.fx.widgets.WidgetLatestScoresController;
 import de.mephisto.vpin.commons.fx.widgets.WidgetPlayerRankController;
 import de.mephisto.vpin.restclient.PreferenceNames;
@@ -9,7 +8,6 @@ import de.mephisto.vpin.restclient.representations.PreferenceEntryRepresentation
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
-import javafx.scene.layout.BorderPane;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,9 +17,6 @@ import java.util.ResourceBundle;
 
 public class OverlayController implements Initializable {
   private final static Logger LOG = LoggerFactory.getLogger(OverlayController.class);
-
-  @FXML
-  private BorderPane rotatedRoot;
 
   @FXML
   private Label titleLabel;
