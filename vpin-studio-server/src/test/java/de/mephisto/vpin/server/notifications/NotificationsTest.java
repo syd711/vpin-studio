@@ -2,7 +2,6 @@ package de.mephisto.vpin.server.notifications;
 
 import de.mephisto.vpin.server.VPinServerTest;
 import de.mephisto.vpin.server.competitions.Competition;
-import de.mephisto.vpin.server.competitions.CompetitionChangeListener;
 import de.mephisto.vpin.server.competitions.CompetitionService;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameService;

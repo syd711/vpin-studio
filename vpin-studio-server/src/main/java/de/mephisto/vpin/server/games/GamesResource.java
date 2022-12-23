@@ -1,6 +1,5 @@
 package de.mephisto.vpin.server.games;
 
-import de.mephisto.vpin.restclient.representations.GameRepresentation;
 import de.mephisto.vpin.server.competitions.ScoreSummary;
 import de.mephisto.vpin.server.highscores.HighscoreMetadata;
 import de.mephisto.vpin.server.system.SystemService;

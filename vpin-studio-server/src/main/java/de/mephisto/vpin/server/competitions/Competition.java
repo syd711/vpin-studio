@@ -1,7 +1,6 @@
 package de.mephisto.vpin.server.competitions;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import de.mephisto.vpin.server.assets.Asset;
 import de.mephisto.vpin.server.players.Player;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
