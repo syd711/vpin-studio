@@ -12,6 +12,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.geometry.Pos;
+import javafx.geometry.Rectangle2D;
 import javafx.scene.Parent;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
@@ -23,6 +24,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
+import javafx.stage.Screen;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -106,6 +108,11 @@ public class WidgetPlayerRankController extends WidgetController implements Init
 
       return new SimpleObjectProperty(hBox);
     });
+
+    Rectangle2D screenBounds = Screen.getPrimary().getBounds();
+    if(screenBounds.getWidth() < 2000) {
+      columnName.setPrefWidth(300);
+    }
 
     columnFirst.setCellValueFactory(cellData -> {
       RankedPlayerRepresentation value = cellData.getValue();

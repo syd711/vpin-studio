@@ -61,8 +61,11 @@ public class WidgetLatestScoresController extends WidgetController implements In
     new Thread(() -> {
       int limit = 12;
       Rectangle2D screenBounds = Screen.getPrimary().getBounds();
-      if(screenBounds.getWidth() < 3000) {
+      if(screenBounds.getWidth() > 2000 && screenBounds.getWidth() < 3000) {
         limit = 10;
+      }
+      else if(screenBounds.getWidth() < 2000) {
+        limit = 8;
       }
 
       ScoreSummaryRepresentation scoreSummary = OverlayWindowFX.client.getRecentlyPlayedGames(limit);
