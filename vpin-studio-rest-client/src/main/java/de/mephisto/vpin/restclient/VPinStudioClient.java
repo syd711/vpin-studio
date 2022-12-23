@@ -251,6 +251,14 @@ public class VPinStudioClient implements ObservedPropertyChangeListener, Overlay
     }
   }
 
+  public void finishCompetition(CompetitionRepresentation c) {
+    try {
+      restClient.put(API + "competitions/finish/" + c.getId(), Collections.emptyMap());
+    } catch (Exception e) {
+      LOG.error("Failed to finish competition: " + e.getMessage(), e);
+    }
+  }
+
   public ScoreListRepresentation getCompetitionScores(long id) {
     try {
       return restClient.get(API + "competitions/scores/" + id, ScoreListRepresentation.class);

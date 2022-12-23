@@ -1,6 +1,7 @@
 package de.mephisto.vpin.ui.competitions;
 
 import de.mephisto.vpin.commons.fx.widgets.WidgetCompetitionSummaryController;
+import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.representations.CompetitionRepresentation;
 import de.mephisto.vpin.restclient.representations.GameRepresentation;
 import de.mephisto.vpin.restclient.representations.ScoreListRepresentation;
@@ -8,7 +9,6 @@ import de.mephisto.vpin.ui.NavigationController;
 import de.mephisto.vpin.ui.StudioFXController;
 import de.mephisto.vpin.ui.WaitOverlayController;
 import de.mephisto.vpin.ui.util.Dialogs;
-import de.mephisto.vpin.commons.utils.WidgetFactory;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
@@ -66,6 +66,8 @@ public class CompetitionsController implements Initializable, StudioFXController
 
   @FXML
   private Button deleteBtn;
+  @FXML
+  private Button finishBtn;
 
   @FXML
   private Button duplicateBtn;
@@ -155,6 +157,18 @@ public class CompetitionsController implements Initializable, StudioFXController
   }
 
   @FXML
+  private void onFinish() {
+    CompetitionRepresentation selection = tableView.getSelectionModel().getSelectedItem();
+    if (selection != null && selection.isActive()) {
+      Optional<ButtonType> result = WidgetFactory.showConfirmation("Finish Competition '" + selection.getName() + "'?", "Finish Competition?");
+      if (result.isPresent() && result.get().equals(ButtonType.OK)) {
+        client.finishCompetition(selection);
+        onReload();
+      }
+    }
+  }
+
+  @FXML
   private void onReload() {
     CompetitionRepresentation selection = tableView.getSelectionModel().getSelectedItem();
 
@@ -181,7 +195,7 @@ public class CompetitionsController implements Initializable, StudioFXController
         if (selection != null) {
           tableView.getSelectionModel().select(selection);
         }
-        else if(!data.isEmpty()) {
+        else if (!data.isEmpty()) {
           tableView.getSelectionModel().select(0);
         }
         else {
@@ -276,6 +290,7 @@ public class CompetitionsController implements Initializable, StudioFXController
     tableView.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
       boolean disable = newSelection == null;
       editBtn.setDisable(disable || !newSelection.isActive());
+      finishBtn.setDisable(disable || !newSelection.isActive());
       deleteBtn.setDisable(disable);
       duplicateBtn.setDisable(disable);
       refreshView(Optional.ofNullable(newSelection));

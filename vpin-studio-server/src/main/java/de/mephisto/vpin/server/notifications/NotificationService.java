@@ -175,6 +175,7 @@ public class NotificationService implements InitializingBean, HighscoreChangeLis
   public void competitionFinished(Competition competition) {
     Game game = gameService.getGame(competition.getGameId());
     if (game != null) {
+      LOG.info("Finishing " + competition);
       popperService.deAugmentWheel(game);
 
       if (competition.isDiscordNotifications()) {
@@ -193,8 +194,6 @@ public class NotificationService implements InitializingBean, HighscoreChangeLis
         }
       }
     }
-
-    runAugmentationCheck();
   }
 
   @Override

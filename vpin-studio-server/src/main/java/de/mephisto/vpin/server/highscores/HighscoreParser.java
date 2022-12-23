@@ -109,7 +109,8 @@ public class HighscoreParser {
 
     Player p = null;
     if (collect.size() == 2) {
-      return null;
+      String score = collect.get(1);
+      return new Score(createdAt, gameId, "", null, score, toNumericScore(score), -1, displayName);
     }
     else if (collect.size() == 3) {
       String score = collect.get(2);
@@ -158,7 +159,12 @@ public class HighscoreParser {
   }
 
   private static double toNumericScore(String score) {
-    String cleanScore = score.trim().replaceAll("\\.", "").replaceAll(",", "");
-    return Double.parseDouble(cleanScore);
+    try {
+      String cleanScore = score.trim().replaceAll("\\.", "").replaceAll(",", "");
+      return Double.parseDouble(cleanScore);
+    } catch (NumberFormatException e) {
+      LOG.error("Failed to parse highscore string '" + score + "'");
+      return 0;
+    }
   }
 }

@@ -102,6 +102,15 @@
                                                 <FontIcon iconColor="WHITE" iconLiteral="mdi2f-forwardburger" />
                                              </graphic>
                                           </Button>
+                                          <Separator layoutX="448.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
+                                          <Button fx:id="finishBtn" layoutX="610.0" layoutY="11.0" mnemonicParsing="false" onAction="#onFinish" text="Finish" textFill="WHITE">
+                                             <font>
+                                                <Font size="14.0" />
+                                             </font>
+                                             <graphic>
+                                                <FontIcon iconColor="WHITE" iconLiteral="bi-stop" />
+                                             </graphic>
+                                          </Button>
                                       </items>
                                     </ToolBar>
                                  </top>

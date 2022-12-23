@@ -9,6 +9,8 @@ import de.mephisto.vpin.server.highscores.Score;
 import de.mephisto.vpin.server.system.SystemService;
 import de.mephisto.vpin.server.util.Config;
 import de.mephisto.vpin.server.util.ImageUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
@@ -20,6 +22,8 @@ import java.util.Arrays;
 import java.util.List;
 
 public class CardGraphics {
+  private final static Logger LOG = LoggerFactory.getLogger(CardGraphics.class);
+
   private final int ROW_SEPARATOR = Config.getCardGeneratorConfig().getInt("card.highscores.row.separator");
   private final int WHEEL_PADDING = Config.getCardGeneratorConfig().getInt("card.highscores.row.padding.left");
 
@@ -80,13 +84,25 @@ public class CardGraphics {
 
     int scaling = Config.getCardGeneratorConfig().getInt("card.scaling", 1280);
     if (USE_DIRECTB2S) {
-      //poor workaround: we delete the existing crop in case the scaling was changed
+
       File croppedDirectB2SBackgroundImage = game.getCroppedDirectB2SBackgroundImage();
-      if (!croppedDirectB2SBackgroundImage.exists()) {
-        croppedDirectB2SBackgroundImage.delete();
+
+      //check if the existing directb2s exists and has the correct scaling
+      if (croppedDirectB2SBackgroundImage.exists()) {
+        BufferedImage croppedDirectb2s = ImageUtil.loadImage(croppedDirectB2SBackgroundImage);
+        int width = croppedDirectb2s.getWidth();
+        if(width != scaling) {
+          LOG.info("Deleting existing cropped directb2s background '" + croppedDirectB2SBackgroundImage.getAbsolutePath() + "', because is has the wrong ratio.");
+          if(!croppedDirectB2SBackgroundImage.delete()) {
+            LOG.error("Failed to delete " + croppedDirectB2SBackgroundImage.getAbsolutePath());
+          }
+          croppedDirectB2SBackgroundImage = directB2SService.generateCroppedB2SImage(game, DIRECTB2S_RATIO, scaling);
+        }
+      }
+      else {
+        croppedDirectB2SBackgroundImage = directB2SService.generateCroppedB2SImage(game, DIRECTB2S_RATIO, scaling);
       }
 
-      croppedDirectB2SBackgroundImage = directB2SService.generateCroppedB2SImage(game, DIRECTB2S_RATIO, scaling);
       if (croppedDirectB2SBackgroundImage != null && croppedDirectB2SBackgroundImage.exists()) {
         sourceImage = croppedDirectB2SBackgroundImage;
       }

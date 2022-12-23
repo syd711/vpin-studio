@@ -40,39 +40,27 @@ public class CompetitionService implements InitializingBean {
   }
 
   public void notifyCompetitionCreation(Competition c) {
-    new Thread(() -> {
-      Thread.currentThread().setName("Competition Notification Thread [" + c.toString()+ "]");
-      for (CompetitionChangeListener listener : this.listeners) {
-        listener.competitionCreated(c);
-      }
-    }).start();
+    for (CompetitionChangeListener listener : this.listeners) {
+      listener.competitionCreated(c);
+    }
   }
 
   public void notifyCompetitionChanged(Competition c) {
-    new Thread(() -> {
-      Thread.currentThread().setName("Competition Notification Thread [" + c.toString()+ "]");
-      for (CompetitionChangeListener listener : this.listeners) {
-        listener.competitionChanged(c);
-      }
-    }).start();
+    for (CompetitionChangeListener listener : this.listeners) {
+      listener.competitionChanged(c);
+    }
   }
 
   public void notifyCompetitionFinished(Competition c) {
-    new Thread(() -> {
-      Thread.currentThread().setName("Competition Notification Thread [" + c.toString()+ "]");
-      for (CompetitionChangeListener listener : this.listeners) {
-        listener.competitionFinished(c);
-      }
-    }).start();
+    for (CompetitionChangeListener listener : this.listeners) {
+      listener.competitionFinished(c);
+    }
   }
 
   public void notifyCompetitionDeleted(Competition c) {
-    new Thread(() -> {
-      Thread.currentThread().setName("Competition Notification Thread [" + c.toString()+ "]");
-      for (CompetitionChangeListener listener : this.listeners) {
-        listener.competitionDeleted(c);
-      }
-    }).start();
+    for (CompetitionChangeListener listener : this.listeners) {
+      listener.competitionDeleted(c);
+    }
   }
 
   public List<Competition> getCompetitions() {
@@ -125,7 +113,11 @@ public class CompetitionService implements InitializingBean {
     }
   }
 
-  public void finishCompetition(Competition competition) {
+  public Competition finishCompetition(int id) {
+    return finishCompetition(getCompetition(id));
+  }
+
+  public Competition finishCompetition(Competition competition) {
     ScoreSummary highscores = highscoreService.getHighscores(competition.getGameId(), null);
     if (highscores.getScores().isEmpty()) {
       LOG.error("Failed to finished " + competition + " correctly, no score could be determined, using John Doe.");
@@ -141,8 +133,10 @@ public class CompetitionService implements InitializingBean {
         competition.setWinner(playerForInitials.get());
       }
     }
-    save(competition);
+    competition.setEndDate(new Date()); //always the current date
+    Competition save = save(competition);
     notifyCompetitionFinished(competition);
+    return save;
   }
 
   public List<Competition> getActiveCompetitions() {

@@ -46,6 +46,10 @@ public class CompetitionResource {
     return competitionService.getCompetitionScores(id);
   }
 
+  @PutMapping("/finish/{id}")
+  public boolean save(@PathVariable("id") int id) {
+    return competitionService.finishCompetition(id) != null;
+  }
 
   @PostMapping("/save")
   public Competition save(@RequestBody Competition c) {
