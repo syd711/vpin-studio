@@ -81,6 +81,10 @@ public class OverlayWindowFX extends Application {
       Rectangle2D screenBounds = Screen.getPrimary().getBounds();
       if(screenBounds.getWidth() < 3000) {
         resource = "scene-overlay-wqhd.fxml";
+        LOG.info("Using WQHD Dashboard");
+      }
+      else {
+        LOG.info("Using UHD Dashboard");
       }
 
       FXMLLoader loader = new FXMLLoader(OverlayController.class.getResource(resource));

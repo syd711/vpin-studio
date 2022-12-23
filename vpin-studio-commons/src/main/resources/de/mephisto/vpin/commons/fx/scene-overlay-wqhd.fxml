@@ -1,39 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Label?>
-<?import javafx.scene.layout.BorderPane?>
-<?import javafx.scene.text.Font?>
+<?import javafx.scene.layout.StackPane?>
 
-<BorderPane stylesheets="@stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.commons.fx.OverlayController">
-   <center>
-      <BorderPane fx:id="rotatedRoot" maxHeight="1.7976931348623157E308" rotate="-90.0" translateX="-700.0" translateY="-30.0">
-          <center>
-              <BorderPane fx:id="widgetRoot" maxHeight="1.7976931348623157E308" BorderPane.alignment="CENTER">
-                  <BorderPane.margin>
-                      <Insets bottom="12.0" left="12.0" top="12.0" />
-                  </BorderPane.margin>
-               <right>
-                        <fx:include fx:id="activeCompetition" scaleX="1" scaleY="1" source="widgets/widget-active-competition.fxml" translateX="-934.0" translateY="360.0" />
-               </right>
-               <bottom>
-                          <fx:include fx:id="finishedCompetitions" maxWidth="-Infinity" prefHeight="900.0" prefWidth="1410.0" scaleX="1" scaleY="1" source="widgets/widget-finished-competitions.fxml" translateX="1284.0" translateY="1122.0" />
-               </bottom>
-               <center>
-                      <fx:include fx:id="latestScores" prefHeight="1350.0" scaleX="1" scaleY="1" source="widgets/widget-latest-scores.fxml" translateX="-110.0" translateY="546.0" />
-               </center>
-              </BorderPane>
-          </center>
-         <top>
-            <Label fx:id="titleLabel" text="Label" textFill="WHITE" BorderPane.alignment="CENTER">
-               <font>
-                  <Font name="System Bold" size="72.0" />
-               </font>
-            </Label>
-         </top>
-         <padding>
-            <Insets bottom="24.0" left="24.0" right="24.0" top="24.0" />
-         </padding>
-      </BorderPane>
-   </center>
-</BorderPane>
+
+<?import javafx.scene.text.Font?>
+<StackPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" rotate="-90.0" stylesheets="@stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.commons.fx.OverlayController">
+    <children>
+        <Label fx:id="titleLabel" text="Label" textFill="WHITE" translateY="-1140.0" >
+            <font>
+                <Font name="System Bold" size="96.0" />
+            </font>
+        </Label>
+        <fx:include fx:id="players" prefWidth="670.0" prefHeight="1410.0" scaleX="1.1" scaleY="1.1" source="widgets/widget-player-rank.fxml" translateX="330.0" translateY="-240.0" />
+        <fx:include fx:id="latestScores" prefWidth="570.0" prefHeight="1410.0" scaleX="1.1" scaleY="1.1" source="widgets/widget-latest-scores.fxml" translateX="-385.0" translateY="-240.0" />
+
+        <fx:include fx:id="activeCompetition" scaleX="1.1" prefWidth="1270.0" scaleY="1.1" source="widgets/widget-active-competition.fxml" translateX="0.0" translateY="900.0" />
+    </children>
+</StackPane>

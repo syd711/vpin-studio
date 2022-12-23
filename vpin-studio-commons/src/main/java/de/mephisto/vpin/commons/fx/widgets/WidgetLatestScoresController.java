@@ -10,11 +10,13 @@ import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.geometry.Rectangle2D;
 import javafx.scene.Parent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+import javafx.stage.Screen;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -57,7 +59,13 @@ public class WidgetLatestScoresController extends WidgetController implements In
   public void refresh() {
     viewStack.getChildren().add(loadingOverlay);
     new Thread(() -> {
-      ScoreSummaryRepresentation scoreSummary = OverlayWindowFX.client.getRecentlyPlayedGames(12);
+      int limit = 12;
+      Rectangle2D screenBounds = Screen.getPrimary().getBounds();
+      if(screenBounds.getWidth() < 3000) {
+        limit = 10;
+      }
+
+      ScoreSummaryRepresentation scoreSummary = OverlayWindowFX.client.getRecentlyPlayedGames(limit);
       Platform.runLater(() -> {
         highscoreVBox.getChildren().removeAll(highscoreVBox.getChildren());
 
