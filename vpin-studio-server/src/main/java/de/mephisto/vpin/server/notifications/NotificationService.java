@@ -6,8 +6,9 @@ import de.mephisto.vpin.connectors.discord.DiscordWebhook;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.server.competitions.*;
 import de.mephisto.vpin.server.discord.DiscordBotCommandListener;
-import de.mephisto.vpin.server.discord.DiscordNotificationFactory;
+import de.mephisto.vpin.server.discord.DiscordBotCommandResponseFactory;
 import de.mephisto.vpin.server.discord.DiscordService;
+import de.mephisto.vpin.server.discord.DiscordWebhookMessageFactory;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameService;
 import de.mephisto.vpin.server.highscores.HighscoreChangeEvent;
@@ -73,19 +74,21 @@ public class NotificationService implements InitializingBean, HighscoreChangeLis
         List<Competition> activeCompetitions = competitionService.getActiveCompetitions();
         for (Competition activeCompetition : activeCompetitions) {
           Game game = gameService.getGame(activeCompetition.getGameId());
-          ScoreSummary highscores = highscoreService.getHighscores(game.getId(), game.getGameDisplayName());
-          String msg = DiscordNotificationFactory.createActiveCompetitionMessage(activeCompetition, game, highscores);
-          builder.append(msg);
+          if (game != null) {
+            ScoreSummary highscores = highscoreService.getHighscores(game.getId(), game.getGameDisplayName());
+            String msg = DiscordBotCommandResponseFactory.createActiveCompetitionMessage(activeCompetition, game, highscores);
+            builder.append(msg);
+          }
         }
-        return () -> builder.toString();
+        return builder::toString;
       }
       case BotCommand.CMD_HS: {
-        if(cmd.getParameter() != null) {
+        if (cmd.getParameter() != null) {
           List<Game> games = gameService.getGames();
           for (Game game : games) {
-            if(game.getGameDisplayName().toLowerCase().contains(cmd.getParameter())) {
+            if (game.getGameDisplayName().toLowerCase().contains(cmd.getParameter())) {
               ScoreSummary highscores = highscoreService.getHighscores(game.getId(), game.getGameDisplayName());
-              return () -> DiscordNotificationFactory.createHighscoreMessage(game, highscores);
+              return () -> DiscordBotCommandResponseFactory.createHighscoreMessage(game, highscores);
             }
           }
           LOG.info("No matching game found for '" + cmd);
@@ -93,21 +96,21 @@ public class NotificationService implements InitializingBean, HighscoreChangeLis
         return null;
       }
       case BotCommand.CMD_RANKING: {
-        if(cmd.getParameter() == null) {
+        if (cmd.getParameter() == null) {
           List<RankedPlayer> playersByRanks = highscoreService.getPlayersByRanks();
-          return () -> DiscordNotificationFactory.createRanksMessage(playersByRanks);
+          return () -> DiscordBotCommandResponseFactory.createRanksMessage(playersByRanks);
         }
         else {
           Optional<Player> playerForInitials = playerService.getPlayerForInitials(cmd.getParameter());
-          if(playerForInitials.isPresent()) {
+          if (playerForInitials.isPresent()) {
             ScoreSummary highscores = highscoreService.getHighscores(cmd.getParameter());
-            return () -> DiscordNotificationFactory.createRanksMessageFor(playerForInitials.get(), highscores);
+            return () -> DiscordBotCommandResponseFactory.createRanksMessageFor(playerForInitials.get(), highscores);
           }
         }
         return () -> "No player found with initials '" + cmd.getParameter().toUpperCase() + "'";
       }
     }
-    return null;
+    return () -> "Unknown bot command '" + cmd.getContent() + "'";
   }
 
   @Override
@@ -143,7 +146,7 @@ public class NotificationService implements InitializingBean, HighscoreChangeLis
 
     String webhookUrl = (String) preferencesService.getPreferenceValue(PreferenceNames.DISCORD_WEBHOOK_URL);
     if (!StringUtils.isEmpty(webhookUrl)) {
-      String message = DiscordNotificationFactory.createHighscoreCreatedMessage(event);
+      String message = DiscordWebhookMessageFactory.createHighscoreCreatedMessage(event);
       DiscordWebhook.call(webhookUrl, message);
       LOG.info("Called Discord webhook for update of score " + event.getNewHighscore());
     }
@@ -152,17 +155,18 @@ public class NotificationService implements InitializingBean, HighscoreChangeLis
   @Override
   public void competitionCreated(Competition competition) {
     Game game = gameService.getGame(competition.getGameId());
+    if (game != null) {
+      if (competition.isCustomizeMedia()) {
+        popperService.augmentWheel(game, competition.getBadge());
+      }
 
-    if (competition.isCustomizeMedia()) {
-      popperService.augmentWheel(game, competition.getBadge());
-    }
-
-    if (competition.isDiscordNotifications() && competition.isActive()) {
-      String webhookUrl = (String) preferencesService.getPreferenceValue(PreferenceNames.DISCORD_WEBHOOK_URL);
-      if (!StringUtils.isEmpty(webhookUrl)) {
-        String message = DiscordNotificationFactory.createCompetitionCreatedMessage(competition, game);
-        DiscordWebhook.call(webhookUrl, message);
-        LOG.info("Called Discord webhook for creation of " + competition);
+      if (competition.isDiscordNotifications() && competition.isActive()) {
+        String webhookUrl = (String) preferencesService.getPreferenceValue(PreferenceNames.DISCORD_WEBHOOK_URL);
+        if (!StringUtils.isEmpty(webhookUrl)) {
+          String message = DiscordWebhookMessageFactory.createCompetitionCreatedMessage(competition, game);
+          DiscordWebhook.call(webhookUrl, message);
+          LOG.info("Called Discord webhook for creation of " + competition);
+        }
       }
     }
   }
@@ -170,37 +174,42 @@ public class NotificationService implements InitializingBean, HighscoreChangeLis
   @Override
   public void competitionFinished(Competition competition) {
     Game game = gameService.getGame(competition.getGameId());
-    popperService.deAugmentWheel(game);
+    if (game != null) {
+      popperService.deAugmentWheel(game);
 
-    if (competition.isDiscordNotifications()) {
-      String webhookUrl = (String) preferencesService.getPreferenceValue(PreferenceNames.DISCORD_WEBHOOK_URL);
-      if (!StringUtils.isEmpty(webhookUrl)) {
-        ScoreSummary summary = highscoreService.getHighscores(competition.getGameId(), game.getGameDisplayName());
+      if (competition.isDiscordNotifications()) {
+        String webhookUrl = (String) preferencesService.getPreferenceValue(PreferenceNames.DISCORD_WEBHOOK_URL);
+        if (!StringUtils.isEmpty(webhookUrl)) {
+          ScoreSummary summary = highscoreService.getHighscores(competition.getGameId(), game.getGameDisplayName());
 
-        if (!summary.getScores().isEmpty()) {
-          String message = DiscordNotificationFactory.createCompetitionFinishedMessage(competition, game, summary);
-          DiscordWebhook.call(webhookUrl, message);
-          LOG.info("Called Discord webhook for completion of " + competition);
-        }
-        else {
-          LOG.warn("Skipped calling Discord webhook for completion of " + competition + ", game has no highscore.");
+          if (!summary.getScores().isEmpty()) {
+            String message = DiscordWebhookMessageFactory.createCompetitionFinishedMessage(competition, game, summary);
+            DiscordWebhook.call(webhookUrl, message);
+            LOG.info("Called Discord webhook for completion of " + competition);
+          }
+          else {
+            LOG.warn("Skipped calling Discord webhook for completion of " + competition + ", game has no highscore.");
+          }
         }
       }
     }
+
     runAugmentationCheck();
   }
 
   @Override
   public void competitionDeleted(Competition competition) {
     Game game = gameService.getGame(competition.getGameId());
-    popperService.deAugmentWheel(game);
+    if (game != null) {
+      popperService.deAugmentWheel(game);
 
-    if (competition.isDiscordNotifications() && competition.isActive()) {
-      String webhookUrl = (String) preferencesService.getPreferenceValue(PreferenceNames.DISCORD_WEBHOOK_URL);
-      if (!StringUtils.isEmpty(webhookUrl)) {
-        String message = DiscordNotificationFactory.createCompetitionCancelledMessage(competition);
-        DiscordWebhook.call(webhookUrl, message);
-        LOG.info("Called Discord webhook for cancellation of " + competition);
+      if (competition.isDiscordNotifications() && competition.isActive()) {
+        String webhookUrl = (String) preferencesService.getPreferenceValue(PreferenceNames.DISCORD_WEBHOOK_URL);
+        if (!StringUtils.isEmpty(webhookUrl)) {
+          String message = DiscordWebhookMessageFactory.createCompetitionCancelledMessage(competition);
+          DiscordWebhook.call(webhookUrl, message);
+          LOG.info("Called Discord webhook for cancellation of " + competition);
+        }
       }
     }
   }
@@ -208,13 +217,14 @@ public class NotificationService implements InitializingBean, HighscoreChangeLis
   @Override
   public void competitionChanged(Competition competition) {
     Game game = gameService.getGame(competition.getGameId());
-
-    boolean customizeMedia = competition.isCustomizeMedia();
-    if (customizeMedia) {
-      popperService.augmentWheel(game, competition.getBadge());
-    }
-    else {
-      popperService.deAugmentWheel(game);
+    if (game != null) {
+      boolean customizeMedia = competition.isCustomizeMedia();
+      if (customizeMedia) {
+        popperService.augmentWheel(game, competition.getBadge());
+      }
+      else {
+        popperService.deAugmentWheel(game);
+      }
     }
     runAugmentationCheck();
   }

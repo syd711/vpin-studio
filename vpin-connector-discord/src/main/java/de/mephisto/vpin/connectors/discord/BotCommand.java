@@ -5,9 +5,9 @@ public class BotCommand {
   public final static String CMD_HS = "hs";
   public final static String CMD_RANKING = "rank";
 
-  private String content;
   private DiscordCommandResolver commandResolver;
 
+  private String content;
   private String command;
   private String parameter;
 
@@ -19,6 +19,10 @@ public class BotCommand {
       command = content.substring(1, content.indexOf(" ")).trim();
       parameter = content.substring(content.indexOf(" ")).trim();
     }
+  }
+
+  public String getContent() {
+    return content;
   }
 
   public String getParameter() {
