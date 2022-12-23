@@ -57,7 +57,7 @@ public class PlayerService {
   }
 
   public Optional<Player> getPlayerForInitials(String initials) {
-    List<Player> players = playerRepository.findByInitials(initials);
+    List<Player> players = playerRepository.findByInitials(initials.toUpperCase());
     if (players.size() > 1) {
       LOG.warn("Found duplicate player for initials '{}', using first one.", initials);
     }

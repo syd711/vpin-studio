@@ -52,7 +52,7 @@ public class HighscoreTest extends VPinServerTest {
   @Test
   public void testHighscores() {
     Game game = gameService.getGameByFilename(VPinServerTest.TEST_GAME_FILENAME);
-    ScoreSummary highscores = highscoreService.getHighscores(game.getId());
+    ScoreSummary highscores = highscoreService.getHighscores(game.getId(), game.getGameDisplayName());
 
     assertNotNull(highscores);
     assertNotNull(highscores.getRaw());

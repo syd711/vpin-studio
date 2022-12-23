@@ -20,7 +20,7 @@ public class ShutdownThread extends Thread {
 
   public void run() {
     Thread.currentThread().setName("System Shutdown Listener");
-    LOG.info("Started " + Thread.currentThread().getName() + " (" +  preferencesService.getPreferenceValue(PreferenceNames.IDLE_TIMEOUT) + " minutes timeout)");
+    LOG.info("Started " + Thread.currentThread().getName() + " (" + preferencesService.getPreferenceValue(PreferenceNames.IDLE_TIMEOUT) + " minutes timeout)");
     while (true) {
       try {
         Thread.sleep(60 * 1000);
@@ -29,7 +29,7 @@ public class ShutdownThread extends Thread {
         Object preferenceValue = preferencesService.getPreferenceValue(PreferenceNames.IDLE_TIMEOUT);
         if (preferenceValue != null) {
           int idlePreference = Integer.parseInt(String.valueOf(preferenceValue));
-          if(idlePreference > 0) {
+          if (idlePreference > 0) {
             LOG.info("Current timeout minutes: " + idleMinutes + " of " + preferenceValue);
           }
 

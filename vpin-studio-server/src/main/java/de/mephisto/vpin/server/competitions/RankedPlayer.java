@@ -5,6 +5,7 @@ public class RankedPlayer {
   private int second;
   private int third;
   private String name;
+  private String initials;
   private int rank;
   private String avatarUuid;
   private String avatarUrl;
@@ -19,6 +20,14 @@ public class RankedPlayer {
     else if(id == 2) {
       third++;
     }
+  }
+
+  public String getInitials() {
+    return initials;
+  }
+
+  public void setInitials(String initials) {
+    this.initials = initials;
   }
 
   public String getAvatarUrl() {

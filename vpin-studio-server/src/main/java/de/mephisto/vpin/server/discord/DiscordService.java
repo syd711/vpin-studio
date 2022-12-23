@@ -28,8 +28,10 @@ public class DiscordService implements InitializingBean, PreferenceChangedListen
 
   private List<DiscordMember> lastMembers;
 
+  private DiscordBotCommandListener botCommandListener;
+
   public List<DiscordMember> getMembers() {
-    if(this.discordClient != null) {
+    if (this.discordClient != null) {
       return this.discordClient.getMembers();
     }
     return Collections.emptyList();
@@ -64,20 +66,31 @@ public class DiscordService implements InitializingBean, PreferenceChangedListen
     return this.discordClient;
   }
 
-  @Override
-  public BotCommandResponse resolveCommand(BotCommand cmd) {
+  public void setBotCommandListener(DiscordBotCommandListener listener) {
+    this.botCommandListener = listener;
+  }
+
+  private BotCommandResponse notifyBotCommandListener(BotCommand botCommand) {
+    if(this.botCommandListener != null) {
+      return this.botCommandListener.onBotCommand(botCommand);
+    }
     return null;
   }
 
+  @Override
+  public BotCommandResponse resolveCommand(BotCommand cmd) {
+    return notifyBotCommandListener(cmd);
+  }
+
   public void setStatus(@Nullable String status) {
-    if(this.discordClient != null) {
+    if (this.discordClient != null) {
       this.discordClient.setStatus(status);
     }
   }
 
   public Optional<Player> getPlayerByInitials(String initials) {
     for (DiscordMember member : this.getMembers()) {
-      if (!StringUtils.isEmpty(member.getInitials()) && member.getInitials().toUpperCase().equals(initials)) {
+      if (!StringUtils.isEmpty(member.getInitials()) && member.getInitials().toUpperCase().equals(initials.toUpperCase())) {
         return Optional.of(toPlayer(member));
       }
     }

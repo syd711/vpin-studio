@@ -3,7 +3,7 @@ package de.mephisto.vpin.connectors.discord;
 public class BotCommand {
   public final static String CMD_COMPETITIONS = "competitions";
   public final static String CMD_HS = "hs";
-  public final static String CMD_RANKING = "ranking";
+  public final static String CMD_RANKING = "rank";
 
   private String content;
   private DiscordCommandResolver commandResolver;
@@ -16,19 +16,20 @@ public class BotCommand {
     this.commandResolver = commandResolver;
     command = content.trim().substring(1);
     if (content.contains(" ")) {
-      String[] s = content.split(" ");
-      if (s.length == 2) {
-        command = s[0];
-        parameter = s[1];
-      }
+      command = content.substring(1, content.indexOf(" ")).trim();
+      parameter = content.substring(content.indexOf(" ")).trim();
     }
+  }
+
+  public String getParameter() {
+    return parameter;
   }
 
   public BotCommandResponse execute() {
     return commandResolver.resolveCommand(this);
   }
 
-  public String getName() {
+  public String getCommand() {
     return command;
   }
 

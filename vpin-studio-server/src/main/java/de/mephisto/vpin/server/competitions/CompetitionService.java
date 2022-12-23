@@ -126,7 +126,7 @@ public class CompetitionService implements InitializingBean {
   }
 
   public void finishCompetition(Competition competition) {
-    ScoreSummary highscores = highscoreService.getHighscores(competition.getGameId());
+    ScoreSummary highscores = highscoreService.getHighscores(competition.getGameId(), null);
     if (highscores.getScores().isEmpty()) {
       LOG.error("Failed to finished " + competition + " correctly, no score could be determined, using John Doe.");
       competition.setWinnerInitials("???");

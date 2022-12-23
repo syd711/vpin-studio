@@ -1,11 +1,12 @@
 package de.mephisto.vpin.server.notifications;
 
+import de.mephisto.vpin.connectors.discord.BotCommand;
+import de.mephisto.vpin.connectors.discord.BotCommandResponse;
 import de.mephisto.vpin.connectors.discord.DiscordWebhook;
 import de.mephisto.vpin.restclient.PreferenceNames;
-import de.mephisto.vpin.server.competitions.Competition;
-import de.mephisto.vpin.server.competitions.CompetitionChangeListener;
-import de.mephisto.vpin.server.competitions.CompetitionService;
-import de.mephisto.vpin.server.competitions.ScoreSummary;
+import de.mephisto.vpin.server.competitions.*;
+import de.mephisto.vpin.server.discord.DiscordBotCommandListener;
+import de.mephisto.vpin.server.discord.DiscordNotificationFactory;
 import de.mephisto.vpin.server.discord.DiscordService;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameService;
@@ -13,6 +14,8 @@ import de.mephisto.vpin.server.highscores.HighscoreChangeEvent;
 import de.mephisto.vpin.server.highscores.HighscoreChangeListener;
 import de.mephisto.vpin.server.highscores.HighscoreService;
 import de.mephisto.vpin.server.highscores.cards.CardService;
+import de.mephisto.vpin.server.players.Player;
+import de.mephisto.vpin.server.players.PlayerService;
 import de.mephisto.vpin.server.popper.PopperService;
 import de.mephisto.vpin.server.popper.TableStatusChangeListener;
 import de.mephisto.vpin.server.popper.TableStatusChangedEvent;
@@ -26,10 +29,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
-public class NotificationService implements InitializingBean, HighscoreChangeListener, CompetitionChangeListener, TableStatusChangeListener {
+public class NotificationService implements InitializingBean, HighscoreChangeListener, CompetitionChangeListener, TableStatusChangeListener, DiscordBotCommandListener {
   private final static Logger LOG = LoggerFactory.getLogger(NotificationService.class);
 
   @Autowired
@@ -53,8 +57,57 @@ public class NotificationService implements InitializingBean, HighscoreChangeLis
   @Autowired
   private DiscordService discordService;
 
+  @Autowired
+  private PlayerService playerService;
+
   public void notifyPopperRestart() {
     discordService.setStatus(null);
+  }
+
+  @Override
+  public BotCommandResponse onBotCommand(BotCommand cmd) {
+    String name = cmd.getCommand();
+    switch (name) {
+      case BotCommand.CMD_COMPETITIONS: {
+        StringBuilder builder = new StringBuilder();
+        List<Competition> activeCompetitions = competitionService.getActiveCompetitions();
+        for (Competition activeCompetition : activeCompetitions) {
+          Game game = gameService.getGame(activeCompetition.getGameId());
+          ScoreSummary highscores = highscoreService.getHighscores(game.getId(), game.getGameDisplayName());
+          String msg = DiscordNotificationFactory.createActiveCompetitionMessage(activeCompetition, game, highscores);
+          builder.append(msg);
+        }
+        return () -> builder.toString();
+      }
+      case BotCommand.CMD_HS: {
+        if(cmd.getParameter() != null) {
+          List<Game> games = gameService.getGames();
+          for (Game game : games) {
+            if(game.getGameDisplayName().toLowerCase().contains(cmd.getParameter())) {
+              ScoreSummary highscores = highscoreService.getHighscores(game.getId(), game.getGameDisplayName());
+              return () -> DiscordNotificationFactory.createHighscoreMessage(game, highscores);
+            }
+          }
+          LOG.info("No matching game found for '" + cmd);
+        }
+        return null;
+      }
+      case BotCommand.CMD_RANKING: {
+        if(cmd.getParameter() == null) {
+          List<RankedPlayer> playersByRanks = highscoreService.getPlayersByRanks();
+          return () -> DiscordNotificationFactory.createRanksMessage(playersByRanks);
+        }
+        else {
+          Optional<Player> playerForInitials = playerService.getPlayerForInitials(cmd.getParameter());
+          if(playerForInitials.isPresent()) {
+            ScoreSummary highscores = highscoreService.getHighscores(cmd.getParameter());
+            return () -> DiscordNotificationFactory.createRanksMessageFor(playerForInitials.get(), highscores);
+          }
+        }
+        return () -> "No player found with initials '" + cmd.getParameter().toUpperCase() + "'";
+      }
+    }
+    return null;
   }
 
   @Override
@@ -90,7 +143,7 @@ public class NotificationService implements InitializingBean, HighscoreChangeLis
 
     String webhookUrl = (String) preferencesService.getPreferenceValue(PreferenceNames.DISCORD_WEBHOOK_URL);
     if (!StringUtils.isEmpty(webhookUrl)) {
-      String message = NotificationFactory.createDiscordHighscoreMessage(event);
+      String message = DiscordNotificationFactory.createHighscoreCreatedMessage(event);
       DiscordWebhook.call(webhookUrl, message);
       LOG.info("Called Discord webhook for update of score " + event.getNewHighscore());
     }
@@ -107,7 +160,7 @@ public class NotificationService implements InitializingBean, HighscoreChangeLis
     if (competition.isDiscordNotifications() && competition.isActive()) {
       String webhookUrl = (String) preferencesService.getPreferenceValue(PreferenceNames.DISCORD_WEBHOOK_URL);
       if (!StringUtils.isEmpty(webhookUrl)) {
-        String message = NotificationFactory.createDiscordCompetitionCreatedMessage(competition, game);
+        String message = DiscordNotificationFactory.createCompetitionCreatedMessage(competition, game);
         DiscordWebhook.call(webhookUrl, message);
         LOG.info("Called Discord webhook for creation of " + competition);
       }
@@ -122,10 +175,10 @@ public class NotificationService implements InitializingBean, HighscoreChangeLis
     if (competition.isDiscordNotifications()) {
       String webhookUrl = (String) preferencesService.getPreferenceValue(PreferenceNames.DISCORD_WEBHOOK_URL);
       if (!StringUtils.isEmpty(webhookUrl)) {
-        ScoreSummary summary = highscoreService.getHighscores(competition.getGameId());
+        ScoreSummary summary = highscoreService.getHighscores(competition.getGameId(), game.getGameDisplayName());
 
         if (!summary.getScores().isEmpty()) {
-          String message = NotificationFactory.createDiscordCompetitionFinishedMessage(competition, game, summary);
+          String message = DiscordNotificationFactory.createCompetitionFinishedMessage(competition, game, summary);
           DiscordWebhook.call(webhookUrl, message);
           LOG.info("Called Discord webhook for completion of " + competition);
         }
@@ -145,7 +198,7 @@ public class NotificationService implements InitializingBean, HighscoreChangeLis
     if (competition.isDiscordNotifications() && competition.isActive()) {
       String webhookUrl = (String) preferencesService.getPreferenceValue(PreferenceNames.DISCORD_WEBHOOK_URL);
       if (!StringUtils.isEmpty(webhookUrl)) {
-        String message = NotificationFactory.createDiscordCompetitionCancelledMessage(competition);
+        String message = DiscordNotificationFactory.createCompetitionCancelledMessage(competition);
         DiscordWebhook.call(webhookUrl, message);
         LOG.info("Called Discord webhook for cancellation of " + competition);
       }
@@ -171,7 +224,7 @@ public class NotificationService implements InitializingBean, HighscoreChangeLis
 
     List<Game> games = gameService.getGames();
     for (Game game : games) {
-      if(!competedGameIds.contains(game.getId())) {
+      if (!competedGameIds.contains(game.getId())) {
         popperService.deAugmentWheel(game);
       }
     }
@@ -183,5 +236,6 @@ public class NotificationService implements InitializingBean, HighscoreChangeLis
     competitionService.addCompetitionChangeListener(this);
     popperService.addTableStatusChangeListener(this);
     discordService.setStatus(null);
+    discordService.setBotCommandListener(this);
   }
 }

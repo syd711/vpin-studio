@@ -1,7 +1,10 @@
 package de.mephisto.vpin.server.games;
 
 import de.mephisto.vpin.server.competitions.ScoreSummary;
-import de.mephisto.vpin.server.highscores.*;
+import de.mephisto.vpin.server.highscores.Highscore;
+import de.mephisto.vpin.server.highscores.HighscoreMetadata;
+import de.mephisto.vpin.server.highscores.HighscoreService;
+import de.mephisto.vpin.server.highscores.Score;
 import de.mephisto.vpin.server.popper.Emulator;
 import de.mephisto.vpin.server.popper.PinUPConnector;
 import de.mephisto.vpin.server.roms.RomService;
@@ -15,7 +18,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -62,7 +64,7 @@ public class GameService {
 
   public List<Game> getGamesWithScore() {
     List<Game> games = getGames();
-    return games.stream().filter(g -> !StringUtils.isEmpty(highscoreService.getHighscores(g.getId()).getRaw())).collect(Collectors.toList());
+    return games.stream().filter(g -> !StringUtils.isEmpty(highscoreService.getHighscores(g.getId(), g.getGameDisplayName()).getRaw())).collect(Collectors.toList());
   }
 
   @SuppressWarnings("unused")
@@ -77,7 +79,7 @@ public class GameService {
   }
 
   public ScoreSummary getScores(int gameId) {
-    return highscoreService.getHighscores(gameId);
+    return highscoreService.getHighscores(gameId, null);
   }
 
   public ScoreSummary getRecentHighscores(int count) {

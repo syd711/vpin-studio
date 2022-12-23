@@ -54,7 +54,7 @@ public class CardService {
 
   public boolean generateCard(Game game, boolean generateSampleCard) throws Exception {
     try {
-      ScoreSummary summary = highscoreService.getHighscores(game.getId());
+      ScoreSummary summary = highscoreService.getHighscores(game.getId(), game.getGameDisplayName());
       if (!summary.getScores().isEmpty() && !StringUtils.isEmpty(summary.getRaw())) {
         Config.getCardGeneratorConfig().reload();
 

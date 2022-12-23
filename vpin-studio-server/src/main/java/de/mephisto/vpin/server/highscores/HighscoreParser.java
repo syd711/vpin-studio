@@ -44,7 +44,7 @@ public class HighscoreParser {
   private PreferencesService preferencesService;
 
   @NonNull
-  public List<Score> parseScores(@NonNull Date createdAt, @NonNull String raw, int gameId) {
+  public List<Score> parseScores(@NonNull Date createdAt, @NonNull String raw, int gameId, @Nullable String displayName) {
     List<String> titles = getTitleList();
     List<Score> scores = new ArrayList<>();
 
@@ -60,7 +60,7 @@ public class HighscoreParser {
         String line = lines[i];
         if (titles.contains(line.trim())) {
           String scoreLine = lines[i + 1];
-          Score score = createTitledScore(createdAt, scoreLine, gameId);
+          Score score = createTitledScore(createdAt, scoreLine, gameId, displayName);
           if (score != null) {
             scores.add(score);
           }
@@ -69,7 +69,7 @@ public class HighscoreParser {
         }
 
         if (line.startsWith(index + ")") || line.startsWith("#" + index) || line.startsWith(index + "#")) {
-          Score score = createScore(createdAt, line, gameId);
+          Score score = createScore(createdAt, line, gameId, displayName);
           if (score != null) {
             score.setPosition(scores.size() + 1);
             scores.add(score);
@@ -89,7 +89,7 @@ public class HighscoreParser {
   }
 
   @NonNull
-  private Score createTitledScore(@NonNull Date createdAt, @NonNull String line, int gameId) {
+  private Score createTitledScore(@NonNull Date createdAt, @NonNull String line, int gameId, @Nullable String displayName) {
     String initials = line.trim().substring(0, 3);
     String scoreString = line.substring(4).trim();
     double scoreValue = toNumericScore(scoreString);
@@ -99,11 +99,11 @@ public class HighscoreParser {
     if (player.isPresent()) {
       p = player.get();
     }
-    return new Score(createdAt, gameId, initials, p, scoreString, scoreValue, 1);
+    return new Score(createdAt, gameId, initials, p, scoreString, scoreValue, 1, displayName);
   }
 
   @Nullable
-  private Score createScore(@NonNull Date createdAt, @NonNull String line, int gameId) {
+  private Score createScore(@NonNull Date createdAt, @NonNull String line, int gameId, @Nullable String displayName) {
     List<String> collect = Arrays.stream(line.trim().split(" ")).filter(s -> s.trim().length() > 0).collect(Collectors.toList());
     String indexString = collect.get(0).replaceAll("[^0-9]", "");
 
@@ -118,7 +118,7 @@ public class HighscoreParser {
       if (player.isPresent()) {
         p = player.get();
       }
-      return new Score(createdAt, gameId, initials, p, score, toNumericScore(score), -1);
+      return new Score(createdAt, gameId, initials, p, score, toNumericScore(score), -1, displayName);
     }
     else if (collect.size() > 3) {
       StringBuilder initials = new StringBuilder();
@@ -132,7 +132,7 @@ public class HighscoreParser {
       if (player.isPresent()) {
         p = player.get();
       }
-      return new Score(createdAt, gameId, playerInitials, p, score, toNumericScore(score), -1);
+      return new Score(createdAt, gameId, playerInitials, p, score, toNumericScore(score), -1, displayName);
     }
     else {
       throw new UnsupportedOperationException("Could parse score line for game " + gameId + " '" + line + "'");

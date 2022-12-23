@@ -211,10 +211,10 @@ public class DiscordClient extends ListenerAdapter {
       if (content.startsWith("/commands")) {
         MessageChannel channel = event.getChannel();
         channel.sendMessage("List of available commands:\n" +
-            "**/hs <TABLE NAME>**: Returns the highscore for the table matching the give name.\n" +
-            "**/ranking **: Returns the overall player ranking.\n" +
-            "**/ranking <PLAYER_INITIALS> **: Returns all highscores of this player.\n" +
             "**/competitions **: Returns the list and status of active competitions.\n" +
+            "**/hs <TABLE NAME>**: Returns the highscore for the table matching the give name.\n" +
+            "**/rank **: Returns the overall player ranking.\n" +
+            "**/rank <PLAYER_INITIALS> **: Returns all highscores of this player.\n" +
             "").queue();
       }
       else if (commandResolver != null) {

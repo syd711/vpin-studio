@@ -79,8 +79,8 @@ public class HighscoreService implements InitializingBean {
   }
 
   @NonNull
-  public List<Score> parseScores(Date createdAt, String raw, int gameId) {
-    return highscoreParser.parseScores(createdAt, raw, gameId);
+  public List<Score> parseScores(Date createdAt, String raw, int gameId, String displayName) {
+    return highscoreParser.parseScores(createdAt, raw, gameId, displayName);
   }
 
   @NonNull
@@ -104,6 +104,7 @@ public class HighscoreService implements InitializingBean {
               p.setAvatarUuid(player.getAvatar().getUuid());
             }
             p.setName(player.getName());
+            p.setInitials(player.getInitials());
             playerMap.put(score.getPlayerInitials(), p);
           }
 
@@ -137,7 +138,7 @@ public class HighscoreService implements InitializingBean {
     List<ScoreSummary> result = new ArrayList<>();
     List<Highscore> byRawIsNotNull = highscoreRepository.findByRawIsNotNull();
     for (Highscore highscore : byRawIsNotNull) {
-      List<Score> scores = highscoreParser.parseScores(highscore.getLastModified(), highscore.getRaw(), highscore.getGameId());
+      List<Score> scores = highscoreParser.parseScores(highscore.getLastModified(), highscore.getRaw(), highscore.getGameId(), highscore.getDisplayName());
       result.add(new ScoreSummary(scores, highscore.getCreatedAt()));
     }
     return result;
@@ -161,7 +162,7 @@ public class HighscoreService implements InitializingBean {
     if (highscore.isPresent()) {
       Highscore h = highscore.get();
       if (h.getRaw() != null) {
-        ScoreSummary scoreSummary = getScoreSummary(h.getCreatedAt(), h.getRaw(), gameId);
+        ScoreSummary scoreSummary = getScoreSummary(h.getCreatedAt(), h.getRaw(), gameId, h.getDisplayName());
         scoreList.setLatestScore(scoreSummary);
         scoreList.getScores().add(scoreSummary);
       }
@@ -169,9 +170,11 @@ public class HighscoreService implements InitializingBean {
 
     List<HighscoreVersion> byGameIdAndCreatedAtBetween = highscoreVersionRepository.findByGameIdAndCreatedAtBetween(gameId, start, end);
     for (HighscoreVersion version : byGameIdAndCreatedAtBetween) {
-      ScoreSummary scoreSummary = getScoreSummary(version.getCreatedAt(), version.getOldRaw(), gameId);
+      ScoreSummary scoreSummary = getScoreSummary(version.getCreatedAt(), version.getOldRaw(), gameId, version.getDisplayName());
       scoreList.getScores().add(scoreSummary);
     }
+
+    Collections.sort(scoreList.getScores(), Comparator.comparing(ScoreSummary::getCreatedAt));
     return scoreList;
   }
 
@@ -190,7 +193,7 @@ public class HighscoreService implements InitializingBean {
         continue;
       }
 
-      List<Score> scores = parseScores(highscore.getCreatedAt(), highscore.getRaw(), highscore.getGameId());
+      List<Score> scores = parseScores(highscore.getCreatedAt(), highscore.getRaw(), highscore.getGameId(), highscore.getDisplayName());
       for (Score score : scores) {
         if (score.getPlayerInitials().equalsIgnoreCase(initials)) {
           summary.getScores().add(score);
@@ -206,13 +209,13 @@ public class HighscoreService implements InitializingBean {
    * @param gameId the game to retrieve the highscores for
    * @return all highscores of the given player
    */
-  public ScoreSummary getHighscores(int gameId) {
+  public ScoreSummary getHighscores(int gameId, @Nullable String displayName) {
     ScoreSummary summary = new ScoreSummary(new ArrayList<>(), new Date());
     Optional<Highscore> highscore = highscoreRepository.findByGameId(gameId);
     if (highscore.isPresent()) {
       Highscore h = highscore.get();
       if (!StringUtils.isEmpty(h.getRaw())) {
-        List<Score> scores = parseScores(h.getCreatedAt(), h.getRaw(), gameId);
+        List<Score> scores = parseScores(h.getCreatedAt(), h.getRaw(), gameId, displayName);
         summary.setRaw(h.getRaw());
         summary.getScores().addAll(scores);
       }
@@ -235,7 +238,7 @@ public class HighscoreService implements InitializingBean {
     List<Score> scores = new ArrayList<>();
     List<HighscoreVersion> all = highscoreVersionRepository.findAllByOrderByCreatedAtDesc();
     for (HighscoreVersion version : all) {
-      List<Score> versionScores = highscoreParser.parseScores(version.getCreatedAt(), version.getNewRaw(), version.getGameId());
+      List<Score> versionScores = highscoreParser.parseScores(version.getCreatedAt(), version.getNewRaw(), version.getGameId(), version.getDisplayName());
       int changedPos = version.getChangedPosition() - 1;
       if (version.getChangedPosition() < 0 || version.getChangedPosition() >= versionScores.size()) {
         LOG.error("Found invalid change position " + version.getChangedPosition() + "' for " + version);
@@ -249,7 +252,7 @@ public class HighscoreService implements InitializingBean {
   }
 
   public List<Score> parseScores(Highscore highscore) {
-    return highscoreParser.parseScores(highscore.getLastModified(), highscore.getRaw(), highscore.getGameId());
+    return highscoreParser.parseScores(highscore.getLastModified(), highscore.getRaw(), highscore.getGameId(), highscore.getDisplayName());
   }
 
   public List<Highscore> getRecentHighscores() {
@@ -285,8 +288,8 @@ public class HighscoreService implements InitializingBean {
    * @param raw       the raw data
    * @param gameId    the gameId of the game
    */
-  private ScoreSummary getScoreSummary(Date createdAt, String raw, int gameId) {
-    List<Score> scores = parseScores(createdAt, raw, gameId);
+  private ScoreSummary getScoreSummary(Date createdAt, String raw, int gameId, String displayName) {
+    List<Score> scores = parseScores(createdAt, raw, gameId, displayName);
     if (scores.size() > 0) {
       return new ScoreSummary(scores, createdAt);
     }
@@ -309,8 +312,8 @@ public class HighscoreService implements InitializingBean {
         //archive old existingScore
         Highscore existingScore = existingHighscore.get();
 
-        List<Score> oldScores = highscoreParser.parseScores(existingScore.getLastModified(), existingScore.getRaw(), game.getId());
-        List<Score> newScores = highscoreParser.parseScores(newHighscore.getLastModified(), newHighscore.getRaw(), game.getId());
+        List<Score> oldScores = highscoreParser.parseScores(existingScore.getLastModified(), existingScore.getRaw(), game.getId(), existingScore.getDisplayName());
+        List<Score> newScores = highscoreParser.parseScores(newHighscore.getLastModified(), newHighscore.getRaw(), game.getId(), existingScore.getDisplayName());
 
         int position = calculateChangedPosition(oldScores, newScores);
         if (position == -1) {
