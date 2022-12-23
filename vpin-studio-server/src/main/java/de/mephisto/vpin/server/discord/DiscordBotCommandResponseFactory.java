@@ -18,7 +18,7 @@ public class DiscordBotCommandResponseFactory {
   private static final String COMPETITION_ACTIVE_TEMPLATE = "" +
       "```\n" +
       "%s\n" +
-      "------------------------------------------------------------\n" +
+      "------------------------------------------------------\n" +
       "Table:       %s\n" +
       "Start Date:  %s\n" +
       "End Date:    %s\n" +
@@ -27,7 +27,7 @@ public class DiscordBotCommandResponseFactory {
       "%s\n" +
       "%s\n" +
       "%s\n" +
-      "------------------------------------------------------------```";
+      "------------------------------------------------------```";
 
 
   public static String createHighscoreMessage(Game game, ScoreSummary scoreSummary) {
@@ -67,7 +67,7 @@ public class DiscordBotCommandResponseFactory {
 
   private static String formatScoreEntry(ScoreSummary summary, int index) {
     StringBuilder builder = new StringBuilder("#");
-    builder.append(String.valueOf(index + 1));
+    builder.append(index + 1);
     builder.append(" ");
 
     if (summary.getScores().size() > index) {
