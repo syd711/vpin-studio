@@ -32,6 +32,10 @@
     -fx-background-color: -fx-base-7;
 }
 
+.dialog-header {
+    -fx-background-color: -fx-base-7;
+}
+
 .main-toolbar {
     -fx-background-color: -fx-base-6;
     -fx-border-radius: 12 12 12 12;
@@ -92,13 +96,13 @@
     -fx-font-weight: bold;
     -fx-font-color: -fx-font-1;
     -fx-text-fill: -fx-font-1;
-    -fx-font-size : 16px;
+    -fx-font-size : 17px;
 }
 
 .preference-description {
     -fx-font-color: -fx-font-2;
     -fx-text-fill: -fx-font-2;
-    -fx-font-size : 14px;
+    -fx-font-size : 15px;
 }
 
 .preference-label {

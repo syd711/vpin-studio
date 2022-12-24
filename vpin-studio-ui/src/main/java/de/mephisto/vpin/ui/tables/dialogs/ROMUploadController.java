@@ -1,7 +1,7 @@
 package de.mephisto.vpin.ui.tables.dialogs;
 
 import de.mephisto.vpin.commons.utils.WidgetFactory;
-import de.mephisto.vpin.ui.DialogController;
+import de.mephisto.vpin.commons.fx.DialogController;
 import de.mephisto.vpin.ui.Studio;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;

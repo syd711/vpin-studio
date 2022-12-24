@@ -37,6 +37,7 @@ public class UpdateController implements Initializable {
 
   @FXML
   private BorderPane header;
+  private Stage stage;
 
   @FXML
   private void onCloseClick() {
@@ -52,7 +53,8 @@ public class UpdateController implements Initializable {
           System.exit(0);
         }
         else if (!s.equalsIgnoreCase(version)) {
-          Optional<ButtonType> result = WidgetFactory.showConfirmation("Download and install version " + s + "?", "Update available");
+          Optional<ButtonType> result = WidgetFactory.showConfirmation(stage, "Download and install version " + s + "?",
+              "The server and the UI will be updated afterwards.");
           if (result.isPresent() && result.get().equals(ButtonType.OK)) {
             runUpdate();
           }
@@ -132,6 +134,7 @@ public class UpdateController implements Initializable {
   }
 
   public void setStage(Stage stage) {
+    this.stage = stage;
     header.setOnMousePressed(event -> {
       xOffset = stage.getX() - event.getScreenX();
       yOffset = stage.getY() - event.getScreenY();

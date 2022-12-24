@@ -1,22 +1,33 @@
 package de.mephisto.vpin.commons.utils;
 
+import de.mephisto.vpin.commons.fx.ConfirmationDialogController;
+import de.mephisto.vpin.commons.fx.DialogController;
+import de.mephisto.vpin.commons.fx.DialogHeaderController;
 import de.mephisto.vpin.commons.fx.OverlayWindowFX;
 import de.mephisto.vpin.restclient.PopperScreen;
 import de.mephisto.vpin.restclient.VPinStudioClient;
 import de.mephisto.vpin.restclient.representations.GameMediaItemRepresentation;
 import javafx.embed.swing.SwingFXUtils;
+import javafx.fxml.FXMLLoader;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Node;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.SnapshotParameters;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.image.WritableImage;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.scene.media.MediaView;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 import org.kordamp.ikonli.javafx.FontIcon;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -45,15 +56,71 @@ public class WidgetFactory {
     return file;
   }
 
-  public static Optional<ButtonType> showConfirmation(String msg, String header) {
-    Alert alert = new Alert(Alert.AlertType.CONFIRMATION, msg, ButtonType.CLOSE, ButtonType.OK);
-    alert.getDialogPane().getStylesheets().add(OverlayWindowFX.class.getResource("stylesheet.css").toExternalForm());
-    alert.getDialogPane().getStyleClass().add("base-component");
-    alert.getDialogPane().setStyle("-fx-font-size: 14px;");
-    alert.setHeaderText(header);
-    alert.setGraphic(null);
-    return alert.showAndWait();
+  public static Stage createStage() {
+    Stage stage = new Stage();
+    stage.getIcons().add(new Image(OverlayWindowFX.class.getResourceAsStream("logo-64.png")));
+    return stage;
   }
+
+  public static Stage createDialogStage(Class clazz, Stage owner, String title, String fxml) {
+    FXMLLoader fxmlLoader = new FXMLLoader(clazz.getResource(fxml));
+    return createDialogStage(fxmlLoader, owner, title);
+  }
+
+  public static Stage createDialogStage(FXMLLoader fxmlLoader, Stage owner, String title) {
+    Parent root = null;
+
+    try {
+      root = fxmlLoader.load();
+    } catch (IOException e) {
+      LOG.error("Error loading: " + e.getMessage(), e);
+    }
+
+    DialogController controller = fxmlLoader.getController();
+
+    Node header = root.lookup("#header");
+    DialogHeaderController dialogHeaderController = (DialogHeaderController) header.getUserData();
+    dialogHeaderController.setTitle(title);
+
+    final Stage stage = createStage();
+    dialogHeaderController.setStage(stage);
+    stage.initOwner(owner);
+    stage.initModality(Modality.WINDOW_MODAL);
+    stage.initStyle(StageStyle.UNDECORATED);
+    stage.setTitle(title);
+    stage.setUserData(controller);
+
+    stage.initOwner(owner);
+    Scene scene = new Scene(root);
+    stage.setScene(scene);
+    scene.getRoot().setStyle("-fx-border-width: 1;-fx-border-color: #605E5E;");
+    scene.addEventHandler(KeyEvent.KEY_PRESSED, t -> {
+      if (t.getCode() == KeyCode.ESCAPE) {
+        if(controller != null) {
+          controller.onDialogCancel();
+        }
+        stage.close();
+      }
+    });
+    return stage;
+  }
+
+  public static Optional<ButtonType> showConfirmation(Stage owner, String text) {
+    return showConfirmation(owner, text, null, null);
+  }
+
+  public static Optional<ButtonType> showConfirmation(Stage owner, String text, String help1) {
+    return showConfirmation(owner, text, help1, null);
+  }
+
+  public static Optional<ButtonType> showConfirmation(Stage owner, String text, String help1, String help2) {
+    Stage stage = createDialogStage(ConfirmationDialogController.class, owner, "Confirmation", "dialog-confirmation.fxml");
+    ConfirmationDialogController controller = (ConfirmationDialogController) stage.getUserData();
+    controller.initDialog(stage, text, help1, help2);
+    stage.showAndWait();
+    return controller.getResult();
+  }
+
 
   public static Optional<ButtonType> showInformation(String msg, String header) {
     Alert alert = new Alert(Alert.AlertType.INFORMATION, msg, ButtonType.OK);

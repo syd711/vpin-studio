@@ -202,7 +202,8 @@ public class TablesController implements Initializable, StudioFXController {
   @FXML
   private void onValidate() {
     GameRepresentation game = tableView.getSelectionModel().getSelectedItem();
-    Optional<ButtonType> result = WidgetFactory.showConfirmation("Re-validate table '" + game.getGameDisplayName() + "?\nThis will reset the dismissed validations for this table too.", null);
+    Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Re-validate table '" + game.getGameDisplayName() + "'?",
+        "This will reset the dismissed validations for this table too.", null);
     if (result.isPresent() && result.get().equals(ButtonType.OK)) {
       game.setIgnoredValidations(null);
 
@@ -218,7 +219,8 @@ public class TablesController implements Initializable, StudioFXController {
   @FXML
   private void onDismiss() {
     GameRepresentation game = tableView.getSelectionModel().getSelectedItem();
-    Optional<ButtonType> result = WidgetFactory.showConfirmation("Ignore this warning for future validations of table '" + game.getGameDisplayName() + "?", null);
+    Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Ignore this warning for future validations of table '" + game.getGameDisplayName() + "?",
+        "The warning can be re-enabled by validating the table again.");
     if (result.isPresent() && result.get().equals(ButtonType.OK)) {
       String validationState = String.valueOf(game.getValidationState());
       String ignoredValidations = game.getIgnoredValidations();

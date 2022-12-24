@@ -6,6 +6,7 @@ import de.mephisto.vpin.restclient.representations.CompetitionRepresentation;
 import de.mephisto.vpin.restclient.representations.GameRepresentation;
 import de.mephisto.vpin.restclient.representations.ScoreListRepresentation;
 import de.mephisto.vpin.ui.NavigationController;
+import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.StudioFXController;
 import de.mephisto.vpin.ui.WaitOverlayController;
 import de.mephisto.vpin.ui.util.Dialogs;
@@ -140,6 +141,9 @@ public class CompetitionsController implements Initializable, StudioFXController
           WidgetFactory.showAlert(e.getMessage());
         }
       }
+      else {
+        onReload();
+      }
     }
   }
 
@@ -147,7 +151,7 @@ public class CompetitionsController implements Initializable, StudioFXController
   private void onDelete() {
     CompetitionRepresentation selection = tableView.getSelectionModel().getSelectedItem();
     if (selection != null) {
-      Optional<ButtonType> result = WidgetFactory.showConfirmation("Delete Competition", "Delete Competition '" + selection.getName() + "'?");
+      Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Delete Competition '" + selection.getName() + "'?");
       if (result.isPresent() && result.get().equals(ButtonType.OK)) {
         tableView.getSelectionModel().clearSelection();
         client.deleteCompetition(selection);
@@ -160,7 +164,10 @@ public class CompetitionsController implements Initializable, StudioFXController
   private void onFinish() {
     CompetitionRepresentation selection = tableView.getSelectionModel().getSelectedItem();
     if (selection != null && selection.isActive()) {
-      Optional<ButtonType> result = WidgetFactory.showConfirmation("Finish Competition '" + selection.getName() + "'?", "Finish Competition?");
+      String helpText1 = "The competition is active for another " + selection.remainingDays() + " days.";
+      String helpText2 = "Finishing the competition will set the current leader as winner.";
+
+      Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Finish Competition '" + selection.getName() + "'?", helpText1, helpText2);
       if (result.isPresent() && result.get().equals(ButtonType.OK)) {
         client.finishCompetition(selection);
         onReload();

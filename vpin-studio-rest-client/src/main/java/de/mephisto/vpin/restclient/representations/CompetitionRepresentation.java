@@ -149,4 +149,10 @@ public class CompetitionRepresentation {
     LocalDate end = getEndDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
     return LocalDate.now().isBefore(end);
   }
+
+  public int remainingDays() {
+    LocalDate start = LocalDate.now();
+    LocalDate end = getEndDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+    return (int) Math.abs(ChronoUnit.DAYS.between(end, start));
+  }
 }

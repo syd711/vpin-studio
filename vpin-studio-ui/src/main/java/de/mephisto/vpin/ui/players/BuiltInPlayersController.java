@@ -4,6 +4,7 @@ import de.mephisto.vpin.commons.utils.ImageUtil;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.representations.PlayerRepresentation;
 import de.mephisto.vpin.ui.NavigationController;
+import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.WaitOverlayController;
 import de.mephisto.vpin.ui.util.Dialogs;
 import javafx.application.Platform;
@@ -127,6 +128,9 @@ public class BuiltInPlayersController implements Initializable {
       if (player != null) {
         doSave(player);
       }
+      else {
+        onReload();
+      }
     }
   }
 
@@ -134,7 +138,7 @@ public class BuiltInPlayersController implements Initializable {
   private void onDelete() {
     PlayerRepresentation selection = tableView.getSelectionModel().getSelectedItem();
     if (selection != null) {
-      Optional<ButtonType> result = WidgetFactory.showConfirmation("Delete Player '" + selection.getName() + "'?", "Delete Player");
+      Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Delete Player '" + selection.getName() + "'?");
       if (result.isPresent() && result.get().equals(ButtonType.OK)) {
         client.deletePlayer(selection);
         tableView.getSelectionModel().clearSelection();

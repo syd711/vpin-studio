@@ -162,7 +162,7 @@ public class LauncherController implements Initializable {
     VPinStudioClient client = new VPinStudioClient(selectedItem.getHost());
     if (client.version() != null) {
       stage.close();
-      Studio.loadStudio(Dialogs.createStage(), client);
+      Studio.loadStudio(WidgetFactory.createStage(), client);
     }
   }
 
@@ -202,7 +202,7 @@ public class LauncherController implements Initializable {
         Platform.runLater(() -> {
           stage.close();
           Dialogs.createProgressDialog(new ServiceInstallationProgressModel(Studio.client));
-          Studio.loadStudio(Dialogs.createStage(), client);
+          Studio.loadStudio(WidgetFactory.createStage(), client);
         });
       }).start();
     } catch (Exception e) {
@@ -253,7 +253,7 @@ public class LauncherController implements Initializable {
     actionColumn.setCellValueFactory(cellData -> {
       VPinConnection value = cellData.getValue();
       if (value.getHost().equals("localhost")) {
-        return new SimpleObjectProperty("");
+        return new SimpleObjectProperty<>("");
       }
 
       Button button = new Button();
@@ -263,7 +263,7 @@ public class LauncherController implements Initializable {
       icon.setIconColor(Paint.valueOf("#FFFFFF"));
       button.setGraphic(icon);
       button.setOnAction(event -> {
-        Optional<ButtonType> result = WidgetFactory.showConfirmation("Delete connection to '" + value + "'?", "Delete Connection");
+        Optional<ButtonType> result = WidgetFactory.showConfirmation(stage, "Delete connection to '" + value + "'?");
         if (result.isPresent() && result.get().equals(ButtonType.OK)) {
           store.removeValue(String.valueOf(value.getHost()));
           onConnectionRefresh();

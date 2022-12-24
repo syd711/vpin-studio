@@ -1,4 +1,4 @@
-package de.mephisto.vpin.ui;
+package de.mephisto.vpin.commons.fx;
 
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;

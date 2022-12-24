@@ -5,7 +5,7 @@ import de.mephisto.vpin.restclient.representations.AssetRepresentation;
 import de.mephisto.vpin.restclient.representations.PlayerRepresentation;
 import de.mephisto.vpin.ui.DashboardController;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
-import de.mephisto.vpin.ui.DialogController;
+import de.mephisto.vpin.commons.fx.DialogController;
 import eu.hansolo.tilesfx.Tile;
 import eu.hansolo.tilesfx.TileBuilder;
 import javafx.event.ActionEvent;
@@ -118,7 +118,12 @@ public class PlayerDialogController implements Initializable, DialogController {
 
     initialsField.setText(player.getInitials());
     initialsField.textProperty().addListener((observableValue, s, t1) -> {
-      player.setInitials(t1.toUpperCase());
+      String initials = t1.toUpperCase();
+      if(initials.length() > 3) {
+        initials = initials.substring(0, 3);
+        initialsField.setText(initials);
+      }
+      player.setInitials(initials);
       validateInput();
     });
 
@@ -209,6 +214,7 @@ public class PlayerDialogController implements Initializable, DialogController {
 
   public void setPlayer(PlayerRepresentation p) {
     if (p != null) {
+      this.player = p;
       nameField.setText(this.player.getName());
       initialsField.setText(this.player.getInitials());
       refreshAvatar();

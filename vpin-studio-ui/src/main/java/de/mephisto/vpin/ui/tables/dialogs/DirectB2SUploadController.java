@@ -2,7 +2,7 @@ package de.mephisto.vpin.ui.tables.dialogs;
 
 import de.mephisto.vpin.restclient.representations.GameRepresentation;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
-import de.mephisto.vpin.ui.DialogController;
+import de.mephisto.vpin.commons.fx.DialogController;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;

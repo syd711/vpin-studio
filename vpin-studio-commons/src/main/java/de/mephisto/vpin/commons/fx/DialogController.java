@@ -1,4 +1,4 @@
-package de.mephisto.vpin.ui;
+package de.mephisto.vpin.commons.fx;
 
 public interface DialogController {
 

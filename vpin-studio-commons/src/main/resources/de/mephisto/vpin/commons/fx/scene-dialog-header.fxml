@@ -7,7 +7,7 @@
 <?import javafx.scene.text.Font?>
 <?import org.kordamp.ikonli.javafx.FontIcon?>
 
-<BorderPane fx:id="header" styleClass="dialog-header" stylesheets="@stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.DialogHeaderController">
+<BorderPane fx:id="header" styleClass="dialog-header" stylesheets="@stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.commons.fx.DialogHeaderController">
    <left>
       <Label fx:id="titleLabel" text="VPin Studio Launcher" textFill="WHITE" BorderPane.alignment="TOP_LEFT">
          <font>
