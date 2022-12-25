@@ -22,18 +22,21 @@ and their media configuration.
 
 ### Screenshots
 
-<img src="./documentation/tables1.png" width="800">
-
 __Table Management__
 
-<img src="./documentation/dashboard1.png" width="800">
+<img src="./documentation/tables1.png" width="800">
 
 __Dashboard__
 
-<img src="./documentation/players-discord.png" width="800">
+<img src="./documentation/dashboard1.png" width="800">
 
 __Discord Players__
 
+<img src="./documentation/players-discord.png" width="800">
+
+__BOT Support__
+
+<img src="./documentation/bot-support.png" width="800">
 
 ### Documentation
 
@@ -51,5 +54,4 @@ Icons:
 <a href="https://www.flaticon.com/free-icons/trophy" title="trophy icons">Trophy icons created by Freepik - Flaticon</a>
 <a href="https://www.flaticon.com/free-icons/medal" title="medal icons">Medal icons created by Freepik - Flaticon</a>
 
-Fonts:
-https://www.1001fonts.com/digital-7-font.html#license
+Fonts: https://www.1001fonts.com/digital-7-font.html#license

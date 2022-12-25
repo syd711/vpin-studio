@@ -26,12 +26,12 @@ public class ValidationTexts {
       }
       case CODE_NO_ROM: {
         label = "No ROM name could be resolved.";
-        text = "Consider setting the ROM name in the \"Table Metadata\" section or PinUP popper. Otherwise no highscore can be evaluated for this table.";
+        text = "Consider setting the ROM name in the \"Metadata\" section or PinUP popper. Otherwise no highscore can be evaluated for this table.";
         break;
       }
       case CODE_ROM_NOT_EXISTS: {
         label = "ROM file does not exist.";
-        text = "Dismiss this message if this table does not require a ROM. Otherwise upload the required ROM under \"Table Metadata\".";
+        text = "Dismiss this message if this table does not require a ROM. Otherwise upload the required ROM under \"Metadata\".";
         break;
       }
       case CODE_NO_DIRECTB2S_OR_PUPPACK: {
