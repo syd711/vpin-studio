@@ -1,10 +1,10 @@
 package de.mephisto.vpin.ui.preferences;
 
+import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.connectors.discord.DiscordWebhook;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.util.BindingUtil;
-import de.mephisto.vpin.commons.utils.WidgetFactory;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -26,8 +26,8 @@ public class DiscordWebhookPreferencesController implements Initializable {
   @FXML
   private void onTest() {
     Platform.runLater(() -> {
-      String msg = WidgetFactory.showInputDialog("Webhook Test", "The given text will be passed to the configured Discord channel.", "Test Message");
-      if(!StringUtils.isEmpty(msg)) {
+      String msg = WidgetFactory.showInputDialog(Studio.stage, "Webhook Test", "Test Message", "The given text will be passed to the configured Discord channel.", null, null);
+      if (!StringUtils.isEmpty(msg)) {
         try {
           DiscordWebhook.call(this.webhookText.getText(), msg);
         } catch (Exception e) {

@@ -300,7 +300,7 @@ public class TablesSidebarController implements Initializable {
   @FXML
   private void onRomEdit() {
     GameRepresentation gameRepresentation = game.get();
-    String romName = WidgetFactory.showInputDialog("Enter ROM Name", null, gameRepresentation.getRom());
+    String romName = WidgetFactory.showInputDialog(Studio.stage, "ROM Name", "ROM Name", "The ROM name will be used for highscore and PUP pack resolving.", "Open the VPX table script editor to search for the ROM name.", gameRepresentation.getRom());
     if (romName != null) {
       gameRepresentation.setRom(romName);
       try {
@@ -315,7 +315,10 @@ public class TablesSidebarController implements Initializable {
   @FXML
   private void onTableNameEdit() {
     GameRepresentation gameRepresentation = game.get();
-    String tableName = WidgetFactory.showInputDialog("Enter Table Name", null, gameRepresentation.getTableName());
+    String tableName = WidgetFactory.showInputDialog(Studio.stage, "Table Name", "Enter Table Name",
+        "Enter the value for the 'TableName' property.",
+        "The value is configured for some tables and used during highscore extraction.",
+        gameRepresentation.getTableName());
     if (tableName != null) {
       gameRepresentation.setTableName(tableName);
       try {
@@ -408,7 +411,8 @@ public class TablesSidebarController implements Initializable {
   @FXML
   private void onHsFileNameEdit() {
     GameRepresentation gameRepresentation = game.get();
-    String fs = WidgetFactory.showInputDialog("EM Highscore Filename", "Enter the name of the highscore file for this table.\nThe file is located in the 'User' folder.", gameRepresentation.getHsFileName());
+    String fs = WidgetFactory.showInputDialog(Studio.stage, "EM Highscore Filename","Enter EM Highscore Filename",
+        "Enter the name of the highscore file for this table.", "If available, the file is located in the 'VisualPinball\\User' folder.", gameRepresentation.getHsFileName());
     if (fs != null) {
       gameRepresentation.setHsFileName(fs);
 

@@ -1,9 +1,6 @@
 package de.mephisto.vpin.commons.utils;
 
-import de.mephisto.vpin.commons.fx.ConfirmationDialogController;
-import de.mephisto.vpin.commons.fx.DialogController;
-import de.mephisto.vpin.commons.fx.DialogHeaderController;
-import de.mephisto.vpin.commons.fx.OverlayWindowFX;
+import de.mephisto.vpin.commons.fx.*;
 import de.mephisto.vpin.restclient.PopperScreen;
 import de.mephisto.vpin.restclient.VPinStudioClient;
 import de.mephisto.vpin.restclient.representations.GameMediaItemRepresentation;
@@ -150,17 +147,17 @@ public class WidgetFactory {
     stage.showAndWait();
   }
 
-  public static String showInputDialog(String title, String description, String msg) {
-    TextInputDialog td = new TextInputDialog(msg);
-    td.setTitle(title);
-    td.getDialogPane().getStylesheets().add(OverlayWindowFX.class.getResource("stylesheet.css").toExternalForm());
-    td.getDialogPane().getStyleClass().add("base-component");
-    td.getDialogPane().setStyle("-fx-font-size: 14px;");
-    td.setHeaderText(description);
-    td.setGraphic(null);
-    td.showAndWait();
+  public static String showInputDialog(Stage owner, String dialogTitle, String innerTitle, String description, String helpText, String defaultValue) {
+    Stage stage = createDialogStage(ConfirmationDialogController.class, owner, dialogTitle, "dialog-input.fxml");
+    InputDialogController controller = (InputDialogController) stage.getUserData();
+    controller.initDialog(stage, innerTitle, description, helpText, defaultValue);
+    stage.showAndWait();
+    Optional<ButtonType> result = controller.getResult();
+    if(result.get().equals(ButtonType.OK)) {
+      return controller.getText();
+    }
 
-    return td.getResult();
+    return null;
   }
 
   public static class RationListCell extends ListCell<String> {

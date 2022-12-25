@@ -128,7 +128,7 @@ public class LauncherController implements Initializable {
 
   @FXML
   private void onNewConnection() {
-    String host = WidgetFactory.showInputDialog("New VPin Studio Connection", "Enter the IP address or the hostname to connect to.", "IP or hostname");
+    String host = WidgetFactory.showInputDialog(stage, "New VPin Studio Connection", "IP or Hostname", "Enter the IP address or the hostname to connect to.", null, null);
     if (!StringUtils.isEmpty(host)) {
       refreshBtn.setDisable(true);
       connectBtn.setDisable(true);
