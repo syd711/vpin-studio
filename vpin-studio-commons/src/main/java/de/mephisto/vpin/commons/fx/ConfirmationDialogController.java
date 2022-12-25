@@ -1,8 +1,10 @@
 package de.mephisto.vpin.commons.fx;
 
 import javafx.fxml.FXML;
+import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
+import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 
 import java.util.Optional;
@@ -17,6 +19,9 @@ public class ConfirmationDialogController implements DialogController {
 
   @FXML
   private Label helpLabel2;
+
+  @FXML
+  private Button cancelButton;
 
   private Optional<ButtonType> result = Optional.of(ButtonType.CANCEL);
 
@@ -54,5 +59,9 @@ public class ConfirmationDialogController implements DialogController {
 
   public Optional<ButtonType> getResult() {
     return result;
+  }
+
+  public void hideCancel() {
+    this.cancelButton.setVisible(false);
   }
 }

@@ -49,7 +49,7 @@ public class ROMUploadController implements Initializable, DialogController {
         Studio.client.uploadRom(selection);
       } catch (Exception e) {
         LOG.error("Upload failed: " + e.getMessage(), e);
-        WidgetFactory.showAlert("Uploading ROM failed, check log file for details:\n\n" + e.getMessage());
+        WidgetFactory.showAlert(stage, "Uploading ROM failed", "Please check the log file for details", "Error: " + e.getMessage());
       } finally {
         Stage stage = (Stage) ((Button) event.getSource()).getScene().getWindow();
         stage.close();

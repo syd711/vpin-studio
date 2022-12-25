@@ -208,7 +208,7 @@ public class TablesSidebarController implements Initializable {
           try {
             client.saveGame(game.get());
           } catch (Exception e) {
-            WidgetFactory.showAlert(e.getMessage());
+            WidgetFactory.showAlert(Studio.stage, e.getMessage());
           }
         }, 1000);
       }
@@ -306,7 +306,7 @@ public class TablesSidebarController implements Initializable {
       try {
         client.saveGame(gameRepresentation);
       } catch (Exception e) {
-        WidgetFactory.showAlert(e.getMessage());
+        WidgetFactory.showAlert(Studio.stage, e.getMessage());
       }
       tablesController.onReload();
     }
@@ -321,7 +321,7 @@ public class TablesSidebarController implements Initializable {
       try {
         client.saveGame(gameRepresentation);
       } catch (Exception e) {
-        WidgetFactory.showAlert(e.getMessage());
+        WidgetFactory.showAlert(Studio.stage, e.getMessage());
       }
       tablesController.onReload();
     }
@@ -415,7 +415,7 @@ public class TablesSidebarController implements Initializable {
       try {
         client.saveGame(gameRepresentation);
       } catch (Exception e) {
-        WidgetFactory.showAlert(e.getMessage());
+        WidgetFactory.showAlert(Studio.stage, e.getMessage());
       }
       tablesController.onReload();
     }

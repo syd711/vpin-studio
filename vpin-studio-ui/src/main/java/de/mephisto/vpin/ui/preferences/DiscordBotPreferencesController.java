@@ -54,18 +54,18 @@ public class DiscordBotPreferencesController implements Initializable {
         client.refreshMembers(discordMembers -> {
           Platform.runLater(() -> {
             Studio.stage.getScene().setCursor(Cursor.DEFAULT);
-            WidgetFactory.showInformation("Read " + discordMembers.size() + " members.", "Test Successful");
+            WidgetFactory.showInformation(Studio.stage, "Test Successful", "The connection test was successful.", discordMembers.size() + " members have been found.");
           });
         }, throwable -> {
           Platform.runLater(() -> {
             Studio.stage.getScene().setCursor(Cursor.DEFAULT);
-            WidgetFactory.showAlert(throwable.getMessage());
+            WidgetFactory.showAlert(Studio.stage, throwable.getMessage());
           });
         });
       } catch (Exception e) {
         Platform.runLater(() -> {
           Studio.stage.getScene().setCursor(Cursor.DEFAULT);
-          WidgetFactory.showAlert(e.getMessage());
+          WidgetFactory.showAlert(Studio.stage, e.getMessage());
         });
       }
     }).start();

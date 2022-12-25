@@ -145,7 +145,7 @@ public class LauncherController implements Initializable {
             data.add(connection);
           }
           else {
-            WidgetFactory.showAlert("No service found for '" + host + "'");
+            WidgetFactory.showAlert(stage, "No service found for '" + host + "'.", "Please check the IP or hostname and try again.");
           }
 
           refreshBtn.setDisable(false);
@@ -207,7 +207,7 @@ public class LauncherController implements Initializable {
       }).start();
     } catch (Exception e) {
       LOG.error("Server installation failed: " + e.getMessage(), e);
-      WidgetFactory.showAlert("Server installation failed: " + e.getMessage());
+      WidgetFactory.showAlert(stage, "Server installation failed.", "Error: " + e.getMessage());
     }
   }
 

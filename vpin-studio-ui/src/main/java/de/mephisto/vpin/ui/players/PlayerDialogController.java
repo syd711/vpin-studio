@@ -6,6 +6,7 @@ import de.mephisto.vpin.restclient.representations.PlayerRepresentation;
 import de.mephisto.vpin.ui.DashboardController;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.commons.fx.DialogController;
+import de.mephisto.vpin.ui.Studio;
 import eu.hansolo.tilesfx.Tile;
 import eu.hansolo.tilesfx.TileBuilder;
 import javafx.event.ActionEvent;
@@ -81,7 +82,7 @@ public class PlayerDialogController implements Initializable, DialogController {
         this.uploadAvatar(this.avatarFile);
       }
     } catch (Exception ex) {
-      WidgetFactory.showAlert(ex.getMessage());
+      WidgetFactory.showAlert(Studio.stage, ex.getMessage());
     }
     Stage stage = (Stage) ((Button) e.getSource()).getScene().getWindow();
     stage.close();
@@ -206,7 +207,6 @@ public class PlayerDialogController implements Initializable, DialogController {
   public void onDialogCancel() {
     this.player = null;
   }
-
 
   public PlayerRepresentation getPlayer() {
     return player;

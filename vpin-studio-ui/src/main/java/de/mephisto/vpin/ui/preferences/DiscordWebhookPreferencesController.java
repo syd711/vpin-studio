@@ -2,6 +2,7 @@ package de.mephisto.vpin.ui.preferences;
 
 import de.mephisto.vpin.connectors.discord.DiscordWebhook;
 import de.mephisto.vpin.restclient.PreferenceNames;
+import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.util.BindingUtil;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import javafx.application.Platform;
@@ -30,7 +31,7 @@ public class DiscordWebhookPreferencesController implements Initializable {
         try {
           DiscordWebhook.call(this.webhookText.getText(), msg);
         } catch (Exception e) {
-          WidgetFactory.showAlert(e.getMessage());
+          WidgetFactory.showAlert(Studio.stage, e.getMessage());
         }
       }
     });

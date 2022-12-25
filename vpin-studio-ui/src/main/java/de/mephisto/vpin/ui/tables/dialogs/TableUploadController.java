@@ -48,7 +48,7 @@ public class TableUploadController implements Initializable, DialogController {
         Studio.client.uploadTable(selection);
       } catch (Exception e) {
         LOG.error("Upload failed: " + e.getMessage(), e);
-        WidgetFactory.showAlert("Uploading VPX file failed, check log file for details:\n\n" + e.getMessage());
+        WidgetFactory.showAlert(stage, "Uploading VPX file failed." ,"Please check the log file for details.", "Error: " + e.getMessage());
       } finally {
         Stage stage = (Stage) ((Button) event.getSource()).getScene().getWindow();
         stage.close();

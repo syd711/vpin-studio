@@ -121,25 +121,33 @@ public class WidgetFactory {
     return controller.getResult();
   }
 
-
-  public static Optional<ButtonType> showInformation(String msg, String header) {
-    Alert alert = new Alert(Alert.AlertType.INFORMATION, msg, ButtonType.OK);
-    alert.getDialogPane().getStylesheets().add(OverlayWindowFX.class.getResource("stylesheet.css").toExternalForm());
-    alert.getDialogPane().getStyleClass().add("base-component");
-    alert.getDialogPane().setStyle("-fx-font-size: 14px;");
-    alert.setHeaderText(header);
-    alert.setGraphic(null);
-    return alert.showAndWait();
+  public static Optional<ButtonType> showInformation(Stage owner, String text, String help1) {
+    return showInformation(owner, text, help1, null);
   }
 
-  public static void showAlert(String msg) {
-    Alert alert = new Alert(Alert.AlertType.INFORMATION, msg, ButtonType.CLOSE);
-    alert.getDialogPane().getStylesheets().add(OverlayWindowFX.class.getResource("stylesheet.css").toExternalForm());
-    alert.getDialogPane().getStyleClass().add("base-component");
-    alert.getDialogPane().setStyle("-fx-font-size: 14px;");
-    alert.setHeaderText(null);
-    alert.setGraphic(null);
-    alert.showAndWait();
+  public static Optional<ButtonType> showInformation(Stage owner, String text, String help1, String help2) {
+    Stage stage = createDialogStage(ConfirmationDialogController.class, owner, "Information", "dialog-confirmation.fxml");
+    ConfirmationDialogController controller = (ConfirmationDialogController) stage.getUserData();
+    controller.hideCancel();
+    controller.initDialog(stage, text, help1, help2);
+    stage.showAndWait();
+    return controller.getResult();
+  }
+
+  public static void showAlert(Stage owner, String msg) {
+    showAlert(owner, msg, null, null);
+  }
+
+  public static void showAlert(Stage owner, String msg, String help1) {
+    showAlert(owner, msg, help1, null);
+  }
+
+  public static void showAlert(Stage owner, String msg, String help1, String help2) {
+    Stage stage = createDialogStage(ConfirmationDialogController.class, owner, "Information", "dialog-alert.fxml");
+    ConfirmationDialogController controller = (ConfirmationDialogController) stage.getUserData();
+    controller.hideCancel();
+    controller.initDialog(stage, msg, help1, help2);
+    stage.showAndWait();
   }
 
   public static String showInputDialog(String title, String description, String msg) {

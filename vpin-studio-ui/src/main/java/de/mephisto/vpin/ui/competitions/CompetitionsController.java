@@ -102,7 +102,7 @@ public class CompetitionsController implements Initializable, StudioFXController
       try {
         newCmp = client.saveCompetition(c);
       } catch (Exception e) {
-        WidgetFactory.showAlert(e.getMessage());
+        WidgetFactory.showAlert(Studio.stage, e.getMessage());
       }
       onReload();
       tableView.getSelectionModel().select(newCmp);
@@ -121,7 +121,7 @@ public class CompetitionsController implements Initializable, StudioFXController
           onReload();
           tableView.getSelectionModel().select(newCmp);
         } catch (Exception e) {
-          WidgetFactory.showAlert(e.getMessage());
+          WidgetFactory.showAlert(Studio.stage, e.getMessage());
         }
       }
     }
@@ -138,7 +138,7 @@ public class CompetitionsController implements Initializable, StudioFXController
           onReload();
           tableView.getSelectionModel().select(newCmp);
         } catch (Exception e) {
-          WidgetFactory.showAlert(e.getMessage());
+          WidgetFactory.showAlert(Studio.stage, e.getMessage());
         }
       }
       else {

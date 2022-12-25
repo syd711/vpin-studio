@@ -7,6 +7,7 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
+<?import org.kordamp.ikonli.javafx.FontIcon?>
 
 <BorderPane fx:id="root" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="400.0" styleClass="navigation-panel" stylesheets="@stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.commons.fx.ConfirmationDialogController">
    <top>
@@ -48,4 +49,14 @@
          </BorderPane.margin>
       </HBox>
    </bottom>
+   <left>
+      <Label fx:id="alertLabel" textFill="#ff3333" BorderPane.alignment="TOP_LEFT">
+         <graphic>
+            <FontIcon iconColor="#ff3333" iconLiteral="bi-exclamation-circle-fill" iconSize="48" />
+         </graphic>
+         <BorderPane.margin>
+            <Insets bottom="24.0" left="24.0" top="24.0" />
+         </BorderPane.margin>
+      </Label>
+   </left>
 </BorderPane>

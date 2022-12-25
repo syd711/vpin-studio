@@ -64,8 +64,8 @@ public class ProgressDialogController implements Initializable, DialogController
               stage.close();
 
               Platform.runLater(() -> {
-                String msg = model.getTitle() + " finished.\n\nProcessed " + progressResultModel.getProcessed() + " of " + model.getMax() + " elements.";
-                WidgetFactory.showAlert(msg);
+                String msg = model.getTitle() + " finished.";
+                WidgetFactory.showInformation(Studio.stage, msg, "Processed " + progressResultModel.getProcessed() + " of " + model.getMax() + " elements.");
               });
             });
 

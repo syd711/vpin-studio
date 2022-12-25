@@ -210,7 +210,7 @@ public class TablesController implements Initializable, StudioFXController {
       try {
         client.saveGame(game);
       } catch (Exception e) {
-        WidgetFactory.showAlert(e.getMessage());
+        WidgetFactory.showAlert(Studio.stage, e.getMessage());
       }
       onReload();
     }
@@ -237,7 +237,7 @@ public class TablesController implements Initializable, StudioFXController {
       try {
         client.saveGame(game);
       } catch (Exception e) {
-        WidgetFactory.showAlert(e.getMessage());
+        WidgetFactory.showAlert(Studio.stage, e.getMessage());
       }
       onReload();
     }

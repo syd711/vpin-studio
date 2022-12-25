@@ -3,6 +3,7 @@ package de.mephisto.vpin.ui.tables.dialogs;
 import de.mephisto.vpin.restclient.representations.GameRepresentation;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.commons.fx.DialogController;
+import de.mephisto.vpin.ui.Studio;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -67,7 +68,7 @@ public class DirectB2SUploadController implements Initializable, DialogControlle
         }
       } catch (Exception e) {
         LOG.error("Upload failed: " + e.getMessage(), e);
-        WidgetFactory.showAlert("Uploading directb2s failed, check log file for details:\n\n" + e.getMessage());
+        WidgetFactory.showAlert(Studio.stage, "Uploading directb2s failed.", "Please check the log file for details.", "Error: " + e.getMessage());
       }
       finally {
         Stage stage = (Stage) ((Button) event.getSource()).getScene().getWindow();

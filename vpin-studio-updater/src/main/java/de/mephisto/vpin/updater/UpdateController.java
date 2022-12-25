@@ -49,7 +49,7 @@ public class UpdateController implements Initializable {
       String s = Updater.checkForUpdate(version);
       Platform.runLater(() -> {
         if (s == null) {
-          WidgetFactory.showAlert("Unable to retrieve update information. Please check log files.");
+          WidgetFactory.showAlert(stage, "Unable to retrieve update information.", "Please check the log files or download the latest installer.");
           System.exit(0);
         }
         else if (!s.equalsIgnoreCase(version)) {
@@ -90,7 +90,7 @@ public class UpdateController implements Initializable {
           Platform.runLater(() -> {
             String version = client.waitForUpdate();
             if(version == null) {
-              WidgetFactory.showAlert("Update failed. Please check the server log for details.");
+              WidgetFactory.showAlert(stage, "Update failed", "Please check the server log for details.");
               System.exit(0);
             }
 
@@ -102,7 +102,7 @@ public class UpdateController implements Initializable {
               } catch (Exception e) {
                 Platform.runLater(() -> {
                   LOG.error("UI update failed: " + e.getMessage(), e);
-                  WidgetFactory.showAlert(e.getMessage());
+                  WidgetFactory.showAlert(stage, e.getMessage());
                   System.exit(0);
                 });
               }
@@ -111,13 +111,13 @@ public class UpdateController implements Initializable {
         } catch (Exception e) {
           LOG.error("Client update failed: " + e.getMessage(), e);
           Platform.runLater(() -> {
-            WidgetFactory.showAlert(e.getMessage());
+            WidgetFactory.showAlert(stage, e.getMessage());
             System.exit(0);
           });
         }
       }).start();
     } catch (Exception e) {
-      WidgetFactory.showAlert(e.getMessage());
+      WidgetFactory.showAlert(stage, e.getMessage());
     }
   }
 

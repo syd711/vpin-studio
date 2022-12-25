@@ -153,7 +153,7 @@ public class BuiltInPlayersController implements Initializable {
       onReload();
       tableView.getSelectionModel().select(newPlayer);
     } catch (Exception e) {
-      WidgetFactory.showAlert(e.getMessage());
+      WidgetFactory.showAlert(Studio.stage, e.getMessage());
     }
   }
 

@@ -1,23 +1,37 @@
 package de.mephisto.vpin.ui;
 
 import de.mephisto.vpin.ui.preferences.ScreensPreferencesController;
+import de.mephisto.vpin.ui.tables.TablesController;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
+import javafx.scene.control.Label;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.StackPane;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import java.awt.*;
 import java.io.IOException;
+import java.net.URI;
 import java.net.URL;
+import java.util.Locale;
 import java.util.ResourceBundle;
 
 public class PreferencesController implements Initializable {
+  private final static Logger LOG = LoggerFactory.getLogger(PreferencesController.class);
 
   // Add a public no-args constructor
   public PreferencesController() {
   }
+
+  @FXML
+  private Label versionLabel;
+
+  @FXML
+  private Label hostLabel;
 
   @FXML
   private BorderPane preferencesMain;
@@ -96,6 +110,18 @@ public class PreferencesController implements Initializable {
     load("preference-discord-webhook.fxml");
   }
 
+  @FXML
+  private void onDiscordLink() {
+    Desktop desktop = Desktop.isDesktopSupported() ? Desktop.getDesktop() : null;
+    if (desktop != null && desktop.isSupported(Desktop.Action.BROWSE)) {
+      try {
+        desktop.browse(new URI("https://discord.gg/69YqHYd3wD"));
+      } catch (Exception e) {
+        LOG.error("Failed to open discord link: " + e.getMessage(), e);
+      }
+    }
+  }
+
   private void load(String screen) throws IOException {
     FXMLLoader loader = new FXMLLoader(ScreensPreferencesController.class.getResource(screen));
     Node node = loader.load();
@@ -104,6 +130,7 @@ public class PreferencesController implements Initializable {
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
-
+    versionLabel.setText("VPin Studio Version " + Studio.getVersion());
+    hostLabel.setText(System.getProperty("os.name"));
   }
 }

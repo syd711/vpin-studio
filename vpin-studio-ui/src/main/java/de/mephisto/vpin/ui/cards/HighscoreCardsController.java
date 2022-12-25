@@ -194,7 +194,7 @@ public class HighscoreCardsController implements Initializable, ObservedProperty
           }
         }
       } catch (Exception e) {
-        WidgetFactory.showAlert("Uploading image failed, check log file for details:\n\n" + e.getMessage());
+        WidgetFactory.showAlert(Studio.stage, "Uploading image failed.", "Please check the log file for details.", "Error: " + e.getMessage());
       }
     }
   }
@@ -223,7 +223,7 @@ public class HighscoreCardsController implements Initializable, ObservedProperty
     ObservedProperties properties = Studio.client.getProperties("card-generator");
     String targetScreen = properties.getProperty("popper.screen", null);
     if(StringUtils.isEmpty(targetScreen)) {
-      WidgetFactory.showAlert("Not target screen selected.\nSelect a target screen in the preferences.");
+      WidgetFactory.showAlert(Studio.stage, "Not target screen selected.", "Select a target screen in the preferences.");
     }
     else {
       Dialogs.createProgressDialog(new HighscoreGeneratorProgressModel(client, "Generating Highscore Cards"));

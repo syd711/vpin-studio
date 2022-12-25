@@ -79,7 +79,7 @@
    <right>
       <VBox prefWidth="600.0" styleClass="subpanel" BorderPane.alignment="CENTER">
          <children>
-            <TitledPane fx:id="highscoresTitledPane" animated="false" text="Highscores (limited to the first three places)" textFill="WHITE">
+            <TitledPane fx:id="highscoresTitledPane" animated="false" text="Player Highscores" textFill="WHITE">
                <font>
                   <Font size="14.0" />
                </font>

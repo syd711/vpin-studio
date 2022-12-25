@@ -94,7 +94,7 @@ public class PlayersController implements Initializable, StudioFXController {
           }
           else {
             noScoreLabel.setVisible(true);
-            noScoreLabel.setText("Highscores for player '" + p.getName() + "'");
+            noScoreLabel.setText("Highscores for player '" + p.getName() + "' (limited to the first three places)");
             for (ScoreRepresentation playerScore : playerScores.getScores()) {
               try {
                 FXMLLoader loader = new FXMLLoader(WidgetPlayerScoreController.class.getResource("widget-highscore.fxml"));

@@ -42,6 +42,13 @@
     -fx-base : -fx-base-7;
 }
 
+.version-label {
+    -fx-font-color: -fx-font-2;
+    -fx-text-fill: -fx-font-2;
+    -fx-font-size : 12px;
+}
+
+
 
 #validationError {
     -fx-background-color: #FF3333;
