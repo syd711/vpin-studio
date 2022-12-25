@@ -22,7 +22,12 @@
             </Label>
             <Label styleClass="preference-description" text="Set the name that should be shown for this VPin connection." textFill="WHITE">
                <VBox.margin>
-                  <Insets bottom="6.0" top="24.0" />
+                  <Insets top="24.0" />
+               </VBox.margin>
+            </Label>
+            <Label layoutX="34.0" layoutY="128.0" styleClass="preference-description" text="This name will also be shown as title for the dashboard overlay." textFill="WHITE">
+               <VBox.margin>
+                  <Insets bottom="6.0" />
                </VBox.margin>
             </Label>
             <GridPane alignment="BASELINE_RIGHT" layoutX="34.0" layoutY="136.0" prefHeight="60.0" prefWidth="300.0">

@@ -21,7 +21,7 @@
                   <Insets />
                </VBox.margin>
             </Label>
-            <Label styleClass="preference-description" text="The overlay cards can be shown on startup. Use the flipper buttons to navigate through the available overlay cards." textFill="WHITE">
+            <Label styleClass="preference-description" text="The dashboard overlay can be shown on startup. It will hide once any button is pressed." textFill="WHITE">
                <VBox.margin>
                   <Insets bottom="6.0" top="24.0" />
                </VBox.margin>
@@ -53,7 +53,7 @@
                   <Insets />
                </VBox.margin>
             </GridPane>
-            <Label styleClass="preference-description" text="The key to press to show the overlay cards." textFill="WHITE">
+            <Label styleClass="preference-description" text="The key mapping to show the dashboard overlay." textFill="WHITE">
                <VBox.margin>
                   <Insets bottom="6.0" />
                </VBox.margin>

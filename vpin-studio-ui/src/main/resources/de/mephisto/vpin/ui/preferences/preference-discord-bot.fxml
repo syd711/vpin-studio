@@ -27,7 +27,7 @@
             </Label>
             <Label styleClass="preference-description" text="You can link a Discord server to your VPin, assuming the members on the server are the ones playing on your VPin (e.g. in a company)." textFill="WHITE">
                <VBox.margin>
-                  <Insets />
+                  <Insets top="24.0" />
                </VBox.margin>
             </Label>
             <Label layoutX="34.0" layoutY="104.0" styleClass="preference-description" text="The member names are mapped against the highscore initials and new highscores." textFill="WHITE" />
@@ -96,7 +96,7 @@
                </graphic>
             </Label>
             <Label layoutX="34.0" layoutY="397.0" styleClass="preference-description" text="Creating a Discord bot requires a few more steps, but: Don't panic! " textFill="WHITE" />
-            <Label layoutX="34.0" layoutY="360.0" styleClass="preference-description" text="Follow the step-by-step instruction that will setup your bot in no time!" textFill="WHITE" />
+            <Label layoutX="34.0" layoutY="360.0" styleClass="preference-description" text="Follow the step-by-step instructions that will setup your bot in no time!" textFill="WHITE" />
             <HBox spacing="6.0">
                <VBox.margin>
                   <Insets top="6.0" />
@@ -149,8 +149,8 @@
                   <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
                </graphic>
             </Label>
-            <Label layoutX="34.0" layoutY="104.0" styleClass="preference-description" text="Since the highscore initials are only three digits long, every user has adapt their nickname on the configured server," textFill="WHITE" />
-            <Label layoutX="34.0" layoutY="328.0" styleClass="preference-description" text="so it can be matched against a highscore. The initials must be part of the nickname, separated by a pipe symbol &quot;|&quot; and within " textFill="WHITE" />
+            <Label layoutX="34.0" layoutY="104.0" styleClass="preference-description" text="Since the highscore initials are only three characters long, every user has adapt their nickname on the configured server," textFill="WHITE" />
+            <Label layoutX="34.0" layoutY="328.0" styleClass="preference-description" text="so it can be matched against a highscore. The initials must be part of the nickname, separated by the pipe symbol &quot;|&quot; and within " textFill="WHITE" />
             <Label layoutX="34.0" layoutY="348.0" styleClass="preference-description" text="square brackets, e.g &quot;My Nickname | [ABC]&quot;." textFill="WHITE" />
             <ImageView fitHeight="150.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true">
                <image>

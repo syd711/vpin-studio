@@ -118,6 +118,9 @@
                      <graphic>
                         <FontIcon iconColor="#c7c3c3" iconLiteral="mdi2d-discord" iconSize="24" />
                      </graphic>
+                     <VBox.margin>
+                        <Insets bottom="6.0" />
+                     </VBox.margin>
                   </Hyperlink>
                   <Label fx:id="versionLabel" styleClass="version-label" text="Label" />
                   <Label fx:id="hostLabel" layoutX="358.0" layoutY="10.0" styleClass="version-label" text="Label" />

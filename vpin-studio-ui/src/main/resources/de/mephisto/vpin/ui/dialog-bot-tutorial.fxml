@@ -95,12 +95,12 @@
                         <Insets bottom="12.0" top="12.0" />
                      </VBox.margin>
                   </ImageView>
-                  <Label layoutX="34.0" layoutY="1879.0" styleClass="preference-description" text="You have created a new bot. Choose an icon and username here. ">
+                  <Label layoutX="34.0" layoutY="1879.0" styleClass="preference-description" text="You have created a new bot. Choose an icon and name here. ">
                      <font>
                         <Font size="14.0" />
                      </font>
                   </Label>
-                  <Label layoutX="34.0" layoutY="2389.0" styleClass="preference-description" text="These values are the one are later shown for the bot after it has been added to a server.">
+                  <Label layoutX="34.0" layoutY="2389.0" styleClass="preference-description" text="These values are the ones which are later shown for the bot after it has been added to a server.">
                      <font>
                         <Font size="14.0" />
                      </font>
@@ -191,11 +191,6 @@
                      <VBox.margin>
                         <Insets top="24.0" />
                      </VBox.margin>
-                  </Label>
-                  <Label layoutX="34.0" layoutY="3972.0" styleClass="preference-description" text="The detailed steps for this are explained in the &quot;Discord Bot Credentials Guide&quot;.">
-                     <font>
-                        <Font size="14.0" />
-                     </font>
                   </Label>
                </children>
                <padding>

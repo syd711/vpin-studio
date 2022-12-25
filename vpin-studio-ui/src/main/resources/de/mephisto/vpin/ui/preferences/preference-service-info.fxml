@@ -24,7 +24,7 @@
             </Label>
             <Label styleClass="preference-description" text="Miscellaneous information about the VPin Studio Service." textFill="WHITE">
                <VBox.margin>
-                  <Insets bottom="6.0" />
+                  <Insets bottom="6.0" top="24.0" />
                </VBox.margin>
             </Label>
             <GridPane alignment="BASELINE_RIGHT" layoutX="34.0" layoutY="136.0" prefWidth="708.0">

@@ -26,7 +26,7 @@
             </Label>
             <Label styleClass="preference-description" text="Discord supports webhooks for servers. Go to &quot;Server Settings -&gt; Integrations&quot; to create a new webkook." textFill="WHITE">
                <VBox.margin>
-                  <Insets />
+                  <Insets top="24.0" />
                </VBox.margin>
             </Label>
             <Label layoutX="34.0" layoutY="104.0" styleClass="preference-description" text="The webhook will be used to publish new highscores and competition events to the selected channel." textFill="WHITE">
@@ -73,7 +73,7 @@
                   <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
                </graphic>
             </Label>
-            <Label styleClass="preference-description" text="Open the context menu of the server and select &quot;Server Settings&quot;" textFill="WHITE" />
+            <Label styleClass="preference-description" text="Open the context menu of the server and select &quot;Server Settings&quot;." textFill="WHITE" />
             <ImageView fitHeight="316.0" fitWidth="182.0" pickOnBounds="true" preserveRatio="true">
                <VBox.margin>
                   <Insets top="6.0" />
@@ -82,7 +82,7 @@
                   <Image url="@../screenshots/webhook1.png" />
                </image>
             </ImageView>
-            <Label layoutX="34.0" layoutY="278.0" styleClass="preference-description" text="Under group &quot;Apps&quot;, select entry &quot;Integrations&quot;." textFill="WHITE">
+            <Label layoutX="34.0" layoutY="278.0" styleClass="preference-description" text="Below the group &quot;Apps&quot;, select the entry &quot;Integrations&quot;." textFill="WHITE">
                <VBox.margin>
                   <Insets top="6.0" />
                </VBox.margin>
@@ -109,6 +109,7 @@
                </image>
             </ImageView>
             <Label layoutX="34.0" layoutY="894.0" styleClass="preference-description" text="You are now on the webhooks overview page where you can create a new webhook." textFill="WHITE" />
+            <Label layoutX="34.0" layoutY="1213.0" styleClass="preference-description" text="Paste the generated URL into the upper textfield." textFill="WHITE" />
          </children>
          <padding>
             <Insets bottom="24.0" left="24.0" right="24.0" top="24.0" />

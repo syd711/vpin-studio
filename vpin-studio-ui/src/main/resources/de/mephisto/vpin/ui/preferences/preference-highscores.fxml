@@ -20,12 +20,12 @@
                   <Insets />
                </VBox.margin>
             </Label>
-            <Label styleClass="preference-description" text="Some highscores separate list the leading player separate from the top-n litst." textFill="WHITE">
+            <Label styleClass="preference-description" text="Some highscores separate the leading player from the top-n list." textFill="WHITE">
                <VBox.margin>
                   <Insets top="24.0" />
                </VBox.margin>
             </Label>
-            <Label styleClass="preference-description" text="The titles of these scores can be added here so that they are listed as #1." textFill="WHITE">
+            <Label styleClass="preference-description" text="The titles of these scores can be added here, so that leading players are listed as #1." textFill="WHITE">
                <VBox.margin>
                   <Insets bottom="6.0" />
                </VBox.margin>

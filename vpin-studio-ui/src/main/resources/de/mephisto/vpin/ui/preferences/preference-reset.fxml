@@ -20,9 +20,9 @@
                   <Insets />
                </VBox.margin>
             </Label>
-            <Label styleClass="preference-description" text="If configured, the reset event will kill all PinUP Popper process and restart the UI. " textFill="WHITE">
+            <Label styleClass="preference-description" text="If configured, the reset event will kill all PinUP Popper process (including VPX) and restart the UI. " textFill="WHITE">
                <VBox.margin>
-                  <Insets bottom="6.0" />
+                  <Insets bottom="6.0" top="24.0" />
                </VBox.margin>
             </Label>
             <GridPane alignment="BASELINE_RIGHT" layoutX="34.0" layoutY="136.0" prefHeight="60.0" prefWidth="708.0">
