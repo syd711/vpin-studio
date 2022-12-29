@@ -73,8 +73,12 @@ public class NotificationService implements InitializingBean, HighscoreChangeLis
     String name = cmd.getCommand();
     switch (name) {
       case BotCommand.CMD_COMPETITIONS: {
-        StringBuilder builder = new StringBuilder();
         List<Competition> activeCompetitions = competitionService.getActiveCompetitions();
+        if(activeCompetitions.isEmpty()) {
+          return () -> "No active competitions found.";
+        }
+
+        StringBuilder builder = new StringBuilder();
         for (Competition activeCompetition : activeCompetitions) {
           Game game = gameService.getGame(activeCompetition.getGameId());
           if (game != null) {
