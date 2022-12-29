@@ -89,6 +89,18 @@ public class Score {
     return score;
   }
 
+  @Override
+  public boolean equals(Object obj) {
+    if(!(obj instanceof Score)) {
+      return false;
+    }
+
+    Score score = (Score) obj;
+    return score.getPlayerInitials().equalsIgnoreCase(this.getPlayerInitials())
+        && score.getPosition() == this.getPosition()
+        && score.getScore().equalsIgnoreCase(this.getScore());
+  }
+
   public void setScore(String score) {
     this.score = score;
   }

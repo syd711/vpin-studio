@@ -344,7 +344,7 @@ public class HighscoreService implements InitializingBean {
 
   private int calculateChangedPosition(@NonNull List<Score> oldScores, @NonNull List<Score> newScores) {
     for (int i = 0; i < oldScores.size(); i++) {
-      if (!oldScores.get(i).getScore().equalsIgnoreCase(newScores.get(i).getScore())) {
+      if (!oldScores.get(i).equals(newScores.get(i))) {
         LOG.info("Calculated changed score: " + newScores.get(i) + ", old score was " + oldScores.get(i));
         return i + 1;
       }

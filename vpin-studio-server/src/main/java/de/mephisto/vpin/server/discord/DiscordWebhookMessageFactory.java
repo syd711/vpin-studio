@@ -1,6 +1,5 @@
 package de.mephisto.vpin.server.discord;
 
-import de.mephisto.vpin.connectors.discord.DiscordWebhook;
 import de.mephisto.vpin.restclient.PlayerDomain;
 import de.mephisto.vpin.server.competitions.Competition;
 import de.mephisto.vpin.server.competitions.ScoreSummary;
@@ -46,11 +45,6 @@ public class DiscordWebhookMessageFactory {
   private static final String COMPETITION_CANCELLED_TEMPLATE = "```" +
       "The competition '%s' has been cancelled." +
       "```";
-
-  private static final String HIGHSCORE_CREATED_TEMPLATE = "%s created a new highscore for '%s'.\\n" +
-      "```%s\\n" +
-      "```\\n%s, your highscore of %s points has been beaten.";
-
 
   public static String createCompetitionCancelledMessage(Competition competition) {
     return String.format(COMPETITION_CANCELLED_TEMPLATE, competition.getName());
@@ -116,9 +110,20 @@ public class DiscordWebhookMessageFactory {
       }
     }
 
-    String msg = String.format(HIGHSCORE_CREATED_TEMPLATE, newName, game.getGameDisplayName(), newScore, oldName, oldScore.getScore());
-    LOG.info("Hook message: " + msg);
-    return msg;
+    String template = "%s created a new highscore for '%s'.\\n" +
+        "```%s\\n" +
+        "```";
+    String otherPlayerTemplate = "\\n%s, your highscore of %s points has been beaten.";
+
+    String msg = String.format(template, newName, game.getGameDisplayName(), newScore);
+    String suffix = String.format(otherPlayerTemplate, oldName, oldScore.getScore());
+
+    String result = msg;
+    if (!oldName.equals(newName)) {
+      result = result + suffix;
+    }
+    LOG.info("Hook message: " + result);
+    return result;
   }
 
   private static String formatScoreEntry(ScoreSummary summary, int index) {
