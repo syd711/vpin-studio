@@ -10,6 +10,7 @@ import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.entities.channel.middleman.GuildChannel;
 import net.dv8tion.jda.api.entities.channel.middleman.MessageChannel;
+import net.dv8tion.jda.api.entities.channel.unions.MessageChannelUnion;
 import net.dv8tion.jda.api.events.guild.member.GuildMemberJoinEvent;
 import net.dv8tion.jda.api.events.guild.member.GuildMemberRemoveEvent;
 import net.dv8tion.jda.api.events.guild.member.GuildMemberUpdateEvent;
@@ -38,6 +39,8 @@ public class DiscordClient extends ListenerAdapter {
   private final DiscordCommandResolver commandResolver;
   private final String guildId;
   private final List<DiscordMember> members;
+
+  private List<String> channelWhitelist = new ArrayList<>();
 
   public DiscordClient(String botToken, String guildId, DiscordCommandResolver commandResolver) throws Exception {
     this.guildId = guildId.trim();
@@ -163,7 +166,10 @@ public class DiscordClient extends ListenerAdapter {
     return initials;
   }
 
-
+  /**
+   * Updates the online status with the active game info.
+   * @param status
+   */
   public void setStatus(String status) {
     if (status == null) {
       this.jda.getPresence().setActivity(null);
@@ -171,6 +177,27 @@ public class DiscordClient extends ListenerAdapter {
     else {
       this.jda.getPresence().setActivity(Activity.playing("\"" + status + "\""));
     }
+  }
+
+  public void setChannelWhitelist(List<String> whitelist) {
+    this.channelWhitelist = whitelist;
+  }
+
+
+  /**
+   * Checks if the given channel is configured for returning bot commands.
+   */
+  private boolean isValidChannel(MessageChannelUnion channel) {
+    if (channelWhitelist.isEmpty()) {
+      return true;
+    }
+
+    for (String whiteListEntry : channelWhitelist) {
+      if (channel.getName().equalsIgnoreCase(whiteListEntry.trim())) {
+        return true;
+      }
+    }
+    return false;
   }
 
   /******************** Listener Methods ******************************************************************************/
@@ -207,7 +234,7 @@ public class DiscordClient extends ListenerAdapter {
 
     Message message = event.getMessage();
     String content = message.getContentRaw();
-    if (content.startsWith("/")) {
+    if (content.startsWith("/") && isValidChannel(message.getChannel())) {
       if (content.startsWith("/commands")) {
         MessageChannel channel = event.getChannel();
         channel.sendMessage("List of available commands:\n" +

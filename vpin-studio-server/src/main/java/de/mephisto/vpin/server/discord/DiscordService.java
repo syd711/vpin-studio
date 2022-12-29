@@ -44,6 +44,7 @@ public class DiscordService implements InitializingBean, PreferenceChangedListen
   private DiscordClient recreateDiscordClient() {
     String botToken = (String) preferencesService.getPreferenceValue(PreferenceNames.DISCORD_BOT_TOKEN);
     String guildId = (String) preferencesService.getPreferenceValue(PreferenceNames.DISCORD_GUILD_ID);
+    String whiteList = (String) preferencesService.getPreferenceValue(PreferenceNames.DISCORD_BOT_WHITELIST);
     try {
       if (this.discordClient != null) {
         this.discordClient.shutdown();
@@ -56,6 +57,10 @@ public class DiscordService implements InitializingBean, PreferenceChangedListen
     try {
       if (!StringUtils.isEmpty(botToken) && !StringUtils.isEmpty(guildId)) {
         this.discordClient = new DiscordClient(botToken, guildId, this);
+        if(!StringUtils.isEmpty(whiteList)) {
+          String[] split = whiteList.split(",");
+          this.discordClient.setChannelWhitelist(Arrays.asList(split));
+        }
       }
       else {
         LOG.info("Skipped discord client creation, no botId or guildId set.");
@@ -109,10 +114,11 @@ public class DiscordService implements InitializingBean, PreferenceChangedListen
 
   @Override
   public void preferenceChanged(String propertyName, Object oldValue, Object newValue) {
-    if (propertyName.equals(PreferenceNames.DISCORD_GUILD_ID) || propertyName.equals(PreferenceNames.DISCORD_BOT_TOKEN)) {
+    if (propertyName.equals(PreferenceNames.DISCORD_GUILD_ID) || propertyName.equals(PreferenceNames.DISCORD_BOT_TOKEN)  || propertyName.equals(PreferenceNames.DISCORD_BOT_WHITELIST)) {
       LOG.info("Detected Discord config change, updating BOT.");
       String botToken = (String) preferencesService.getPreferenceValue(PreferenceNames.DISCORD_BOT_TOKEN);
       String guildId = (String) preferencesService.getPreferenceValue(PreferenceNames.DISCORD_GUILD_ID);
+      String whiteList = (String) preferencesService.getPreferenceValue(PreferenceNames.DISCORD_BOT_WHITELIST);
 
       if (!StringUtils.isEmpty(botToken) && !StringUtils.isEmpty(guildId)) {
         LOG.info("Re-creating discord client because of preference changes.");
