@@ -70,7 +70,7 @@
                               </Button>
                               <ComboBox fx:id="emulatorTypeCombo" onAction="#onEmulatorSelect" prefWidth="150.0" promptText="Emulator Type" />
                               <Separator orientation="VERTICAL" prefHeight="30.0" prefWidth="12.0" />
-                              <Button fx:id="uploadTableBtn" layoutX="492.0" layoutY="11.0" mnemonicParsing="false" onAction="#onTableUpload" text="Upload Table" textFill="WHITE">
+                              <Button fx:id="uploadTableBtn" layoutX="492.0" layoutY="11.0" mnemonicParsing="false" onAction="#onTableUpload" text="VPX Upload" textFill="WHITE">
                                  <font>
                                     <Font size="14.0" />
                                  </font>

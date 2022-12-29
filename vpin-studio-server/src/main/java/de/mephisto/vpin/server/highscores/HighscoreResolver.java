@@ -149,6 +149,11 @@ class HighscoreResolver {
       String initials = null;
 
       File tableHighscoreFile = new File(tableHighscoreFolder, "HighScore" + index);
+      if(!tableHighscoreFile.exists()) {
+        metadata.setStatus("Found VReg entry, but no highscore entries in it.");
+        return null;
+      }
+
       File tableHighscoreNameFile = new File(tableHighscoreFolder, "HighScore" + index + "Name");
       while (tableHighscoreFile.exists() && tableHighscoreNameFile.exists()) {
         highScoreValue = readFileString(tableHighscoreFile);

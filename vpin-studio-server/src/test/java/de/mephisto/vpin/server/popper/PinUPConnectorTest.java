@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import java.io.File;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -21,6 +22,22 @@ public class PinUPConnectorTest extends VPinServerTest {
   public void testControls() {
     List<PinUPControl> controls = connector.getControls();
     assertFalse(controls.isEmpty());
+  }
+
+  @Test
+  public void testPlaylists() {
+    List<Playlist> playLists = connector.getPlayLists();
+    assertFalse(playLists.isEmpty());
+  }
+
+  @Test
+  public void testGameAdding() {
+    File file = new File("C:\\vPinball\\VisualPinball\\Tables\\Agents 777.vpx");
+    int l = connector.importVPXFile(file);
+    if (l > 0) {
+      connector.deleteGame(l);
+    }
+    assertTrue(l > 0);
   }
 
   @Test

@@ -50,8 +50,11 @@ public class VPinStudioClient implements ObservedPropertyChangeListener, Overlay
    * Popper
    ********************************************************************************************************************/
   public PinUPControl getPinUPControlFor(PopperScreen screen) {
-    final RestTemplate restTemplate = new RestTemplate();
-    return restTemplate.getForObject(restClient.getBaseUrl() + "service/pincontrol/" + screen.name(), PinUPControl.class);
+    return restClient.get(API + "popper/pincontrol/" + screen.name(), PinUPControl.class);
+  }
+
+  public List<PlaylistRepresentation> getPlaylists() {
+    return Arrays.asList(restClient.get(API + "popper/playlists", PlaylistRepresentation[].class));
   }
 
   /*********************************************************************************************************************
@@ -454,10 +457,15 @@ public class VPinStudioClient implements ObservedPropertyChangeListener, Overlay
     }
   }
 
-  public boolean uploadTable(File file) throws Exception {
+  public boolean uploadTables(List<File> files, boolean importToPopper, int playlistId) throws Exception {
     try {
-      String url = restClient.getBaseUrl() + API + "games/upload/table";
-      new RestTemplate().exchange(url, HttpMethod.POST, createUpload(file, -1, null, AssetType.TABLE), Boolean.class);
+      for (File file : files) {
+        String url = restClient.getBaseUrl() + API + "games/upload/table";
+        LinkedMultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
+        map.add("importToPopper", importToPopper);
+        map.add("playlistId", playlistId);
+        new RestTemplate().exchange(url, HttpMethod.POST, createUpload(map, file, -1, null, AssetType.TABLE), Boolean.class);
+      }
       return true;
     } catch (Exception e) {
       LOG.error("Table upload failed: " + e.getMessage(), e);
@@ -500,10 +508,11 @@ public class VPinStudioClient implements ObservedPropertyChangeListener, Overlay
   /*********************************************************************************************************************
    * Utils
    */
-
-
   private static HttpEntity createUpload(File file, int gameId, String uploadType, AssetType assetType) throws Exception {
     LinkedMultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
+    return createUpload(map, file, gameId, uploadType, assetType);
+  }
+  private static HttpEntity createUpload(LinkedMultiValueMap<String, Object> map, File file, int gameId, String uploadType, AssetType assetType) throws Exception {
     HttpHeaders headers = new HttpHeaders();
     headers.setContentType(MediaType.MULTIPART_FORM_DATA);
     String boundary = Long.toHexString(System.currentTimeMillis());

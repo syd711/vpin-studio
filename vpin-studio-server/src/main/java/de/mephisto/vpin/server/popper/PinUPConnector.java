@@ -6,6 +6,7 @@ import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.system.SystemService;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
+import org.apache.commons.io.FilenameUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
@@ -210,6 +211,102 @@ public class PinUPConnector implements InitializingBean {
       LOG.info("Updated of volume of " + game + " to " + volume);
     } catch (Exception e) {
       LOG.error("Failed to update volume:" + e.getMessage(), e);
+    } finally {
+      this.disconnect(connect);
+    }
+  }
+
+  /**
+   * Creates a new entry in the PinUP Popper database.
+   * Returns the id of the new entry.
+   *
+   * @param vpxFile the VPX file to create the game info for
+   * @return the generated game id.
+   */
+  public int importVPXFile(@NonNull File vpxFile) {
+    String name = FilenameUtils.getBaseName(vpxFile.getName());
+    Connection connect = this.connect();
+    try {
+      PreparedStatement preparedStatement = connect.prepareStatement("INSERT INTO Games (EMUID, GameName, GameFileName, GameDisplay, Visible) VALUES (?,?,?,?,?)", Statement.RETURN_GENERATED_KEYS);
+      preparedStatement.setInt(1, 1);
+      preparedStatement.setString(2, name);
+      preparedStatement.setString(3, vpxFile.getName());
+      preparedStatement.setString(4, name);
+      preparedStatement.setInt(5, 1);
+//      preparedStatement.setTimestamp(6, new java.sql.Timestamp(System.currentTimeMillis()));
+      int affectedRows = preparedStatement.executeUpdate();
+      preparedStatement.close();
+
+      LOG.info("Added game entry for '" + vpxFile.getAbsolutePath() + "'");
+      try (ResultSet keys = preparedStatement.getGeneratedKeys()) {
+        if (keys.next()) {
+          return keys.getInt(1);
+        }
+      }
+    } catch (Exception e) {
+      LOG.error("Failed to update game table:" + e.getMessage(), e);
+    } finally {
+      this.disconnect(connect);
+    }
+    return -1;
+  }
+
+  public boolean deleteGame(int id) {
+    Connection connect = this.connect();
+    try {
+      PreparedStatement preparedStatement = connect.prepareStatement("DELETE FROM Games where GameID = ?");
+      preparedStatement.setInt(1, id);
+      preparedStatement.executeUpdate();
+      preparedStatement.close();
+
+      LOG.info("Deleted game entry with id " + id);
+      return true;
+    } catch (Exception e) {
+      LOG.error("Failed to update game table:" + e.getMessage(), e);
+    } finally {
+      this.disconnect(connect);
+    }
+    return false;
+  }
+
+  @NonNull
+  public List<Playlist> getPlayLists() {
+    Connection connect = this.connect();
+    List<Playlist> result = new ArrayList<>();
+    try {
+      Statement statement = connect.createStatement();
+      ResultSet rs = statement.executeQuery("SELECT * FROM Playlists WHERE Visible = 1;");
+      while (rs.next()) {
+        Playlist playlist = new Playlist();
+        playlist.setId(rs.getInt("PlayListID"));
+        playlist.setName(rs.getString("PlayName"));
+        result.add(playlist);
+      }
+      rs.close();
+      statement.close();
+    } catch (SQLException e) {
+      LOG.error("Failed to get playlist: " + e.getMessage(), e);
+    } finally {
+      this.disconnect(connect);
+    }
+    return result;
+  }
+
+  public void addToPlaylist(int gameId, int playlistId) {
+    Connection connect = this.connect();
+    try {
+      PreparedStatement preparedStatement = connect.prepareStatement("INSERT INTO PlayListDetails (PlayListID, GameID, Visible, DisplayOrder, NumPlayed) VALUES (?,?,?,?,?)");
+      preparedStatement.setInt(1, playlistId);
+      preparedStatement.setInt(2, gameId);
+      preparedStatement.setInt(3, 1);
+      preparedStatement.setInt(4, 0);
+      preparedStatement.setInt(5, 0);
+      preparedStatement.executeUpdate();
+      preparedStatement.close();
+
+      LOG.info("Added play list entry for " + playlistId);
+    } catch (SQLException e) {
+      LOG.error("Failed to update playlist details: " + e.getMessage(), e);
     } finally {
       this.disconnect(connect);
     }

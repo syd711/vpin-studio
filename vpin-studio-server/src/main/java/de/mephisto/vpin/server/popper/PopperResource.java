@@ -1,13 +1,14 @@
 package de.mephisto.vpin.server.popper;
 
-import de.mephisto.vpin.restclient.PinUPControl;
-import de.mephisto.vpin.restclient.PopperScreen;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.io.File;
 
@@ -68,10 +69,5 @@ public class PopperResource {
   public boolean popperLaunch() {
     popperService.notifyPopperLaunch();
     return true;
-  }
-
-  @GetMapping("/pincontrol/{screen}")
-  public PinUPControl getPinUPControlFor(@PathVariable("screen") String screenName) {
-    return popperService.getPinUPControlFor(PopperScreen.valueOf(screenName));
   }
 }

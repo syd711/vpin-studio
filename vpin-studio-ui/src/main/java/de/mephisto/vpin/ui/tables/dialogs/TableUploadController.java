@@ -1,12 +1,19 @@
 package de.mephisto.vpin.ui.tables.dialogs;
 
 import de.mephisto.vpin.commons.fx.DialogController;
-import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
+import de.mephisto.vpin.restclient.representations.PlaylistRepresentation;
+import de.mephisto.vpin.ui.Studio;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextField;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
@@ -16,8 +23,11 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.net.URL;
+import java.util.List;
 import java.util.ResourceBundle;
+import java.util.stream.Collectors;
 
+import static de.mephisto.vpin.ui.Studio.client;
 import static de.mephisto.vpin.ui.Studio.stage;
 
 public class TableUploadController implements Initializable, DialogController {
@@ -29,9 +39,15 @@ public class TableUploadController implements Initializable, DialogController {
   private TextField fileNameField;
 
   @FXML
+  private CheckBox importCheckbox;
+
+  @FXML
+  private ComboBox<PlaylistRepresentation> playlistCombo;
+
+  @FXML
   private Button uploadBtn;
 
-  private File selection;
+  private List<File> selection;
   private boolean result = false;
 
   @FXML
@@ -42,13 +58,19 @@ public class TableUploadController implements Initializable, DialogController {
 
   @FXML
   private void onUploadClick(ActionEvent event) {
-    if (selection != null && selection.exists()) {
+    if (selection != null && !selection.isEmpty()) {
       result = true;
       try {
-        Studio.client.uploadTable(selection);
+        boolean importToPopper = this.importCheckbox.isSelected();
+        int playListId = -1;
+        PlaylistRepresentation value = this.playlistCombo.getValue();
+        if(value != null) {
+          playListId = value.getId();
+        }
+        Studio.client.uploadTables(selection, importToPopper, playListId);
       } catch (Exception e) {
         LOG.error("Upload failed: " + e.getMessage(), e);
-        WidgetFactory.showAlert(stage, "Uploading VPX file failed." ,"Please check the log file for details.", "Error: " + e.getMessage());
+        WidgetFactory.showAlert(stage, "Uploading VPX file failed.", "Please check the log file for details.", "Error: " + e.getMessage());
       } finally {
         Stage stage = (Stage) ((Button) event.getSource()).getScene().getWindow();
         stage.close();
@@ -59,7 +81,7 @@ public class TableUploadController implements Initializable, DialogController {
   @FXML
   private void onFileSelect() {
     FileChooser fileChooser = new FileChooser();
-    fileChooser.setTitle("Select VPX File");
+    fileChooser.setTitle("Select VPX Files");
     fileChooser.getExtensionFilters().addAll(
         new FileChooser.ExtensionFilter("VPX File", "*.vpx"));
 
@@ -67,10 +89,10 @@ public class TableUploadController implements Initializable, DialogController {
       fileChooser.setInitialDirectory(TableUploadController.lastFolderSelection);
     }
 
-    this.selection = fileChooser.showOpenDialog(stage);
-    if (this.selection != null) {
-      TableUploadController.lastFolderSelection = this.selection.getParentFile();
-      this.fileNameField.setText(this.selection.getAbsolutePath());
+    this.selection = fileChooser.showOpenMultipleDialog(stage);
+    if (this.selection != null && !this.selection.isEmpty()) {
+      TableUploadController.lastFolderSelection = this.selection.get(0).getParentFile();
+      this.fileNameField.setText(this.selection.stream().map(f -> f.getName()).collect(Collectors.joining()));
     }
     else {
       this.fileNameField.setText("");
@@ -83,6 +105,12 @@ public class TableUploadController implements Initializable, DialogController {
     this.selection = null;
     this.uploadBtn.setDisable(true);
     this.fileNameField.textProperty().addListener((observableValue, s, t1) -> uploadBtn.setDisable(StringUtils.isEmpty(t1)));
+
+    List<PlaylistRepresentation> playlists = client.getPlaylists();
+    ObservableList<PlaylistRepresentation> data = FXCollections.observableList(playlists);
+    this.playlistCombo.setItems(data);
+
+    importCheckbox.selectedProperty().addListener((observable, oldValue, newValue) -> playlistCombo.setDisable(!newValue));
   }
 
   @Override

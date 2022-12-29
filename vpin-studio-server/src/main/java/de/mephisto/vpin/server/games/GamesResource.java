@@ -2,6 +2,7 @@ package de.mephisto.vpin.server.games;
 
 import de.mephisto.vpin.server.competitions.ScoreSummary;
 import de.mephisto.vpin.server.highscores.HighscoreMetadata;
+import de.mephisto.vpin.server.popper.PopperService;
 import de.mephisto.vpin.server.system.SystemService;
 import de.mephisto.vpin.server.util.UploadUtil;
 import org.slf4j.Logger;
@@ -15,6 +16,7 @@ import java.io.File;
 import java.util.List;
 
 import static de.mephisto.vpin.server.VPinStudioServer.API_SEGMENT;
+import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 
 @RestController
@@ -27,6 +29,9 @@ public class GamesResource {
 
   @Autowired
   private SystemService systemService;
+
+  @Autowired
+  private PopperService popperService;
 
   @GetMapping
   public List<Game> getGame() {
@@ -95,12 +100,21 @@ public class GamesResource {
   }
 
   @PostMapping("/upload/table")
-  public Boolean uploadTable(@RequestParam(value = "file", required = false) MultipartFile file) {
+  public Boolean uploadTable(@RequestParam(value = "file") MultipartFile file,
+                             @RequestParam(value = "importToPopper") boolean importToPopper,
+                             @RequestParam(value = "playlistId") int playlistId) {
     if (file == null) {
       LOG.error("Table upload request did not contain a file object.");
       return false;
     }
     File out = new File(systemService.getVPXTablesFolder(), file.getOriginalFilename());
-    return UploadUtil.upload(file, out);
+    if (UploadUtil.upload(file, out)) {
+      int gameId = popperService.importVPXGame(out, importToPopper, playlistId);
+      if (gameId >= 0) {
+        gameService.scanGame(gameId);
+      }
+      return true;
+    }
+    throw new ResponseStatusException(INTERNAL_SERVER_ERROR, "Table upload failed.");
   }
 }

@@ -31,6 +31,21 @@ public class PopperService {
     return pinUPConnector.getPinUPControlFor(screen);
   }
 
+  public List<Playlist> getPlaylists() {
+    return pinUPConnector.getPlayLists();
+  }
+
+  public int importVPXGame(File file, boolean importToPopper, int playListId) {
+    if(importToPopper) {
+      int gameId = pinUPConnector.importVPXFile(file);
+      if(gameId >= 0 && playListId >= 0) {
+        pinUPConnector.addToPlaylist(gameId, playListId);
+      }
+      return gameId;
+    }
+    return -1;
+  }
+
   public void notifyTableStatusChange(final Game game, final boolean started) {
     TableStatusChangedEvent event = () -> game;
     for (TableStatusChangeListener listener : this.listeners) {
