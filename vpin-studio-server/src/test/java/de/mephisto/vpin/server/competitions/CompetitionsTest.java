@@ -3,6 +3,9 @@ package de.mephisto.vpin.server.competitions;
 import de.mephisto.vpin.server.VPinServerTest;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameService;
+import de.mephisto.vpin.server.players.Player;
+import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -26,22 +29,22 @@ public class CompetitionsTest extends VPinServerTest {
 
     competitionService.addCompetitionChangeListener(new CompetitionChangeListener() {
       @Override
-      public void competitionCreated(Competition competition) {
+      public void competitionCreated(@NonNull Competition competition) {
         assertNotNull(competition);
       }
 
       @Override
-      public void competitionChanged(Competition competition) {
+      public void competitionChanged(@NonNull Competition competition) {
         assertNotNull(competition);
       }
 
       @Override
-      public void competitionFinished(Competition competition) {
+      public void competitionFinished(@NonNull Competition competition, @Nullable Player player) {
         assertNotNull(competition);
       }
 
       @Override
-      public void competitionDeleted(Competition competition) {
+      public void competitionDeleted(@NonNull Competition competition) {
         assertNotNull(competition);
       }
     });

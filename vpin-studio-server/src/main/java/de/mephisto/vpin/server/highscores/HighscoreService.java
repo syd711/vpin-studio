@@ -268,17 +268,18 @@ public class HighscoreService implements InitializingBean {
    *
    * @param game the game that should be updated
    */
-  public void updateHighscore(@NonNull Game game) {
+  public HighscoreMetadata updateHighscore(@NonNull Game game) {
     highscoreResolver.refresh();
 
     HighscoreMetadata metadata = highscoreResolver.readHighscore(game);
     String rawHighscore = metadata.getRaw();
     if (StringUtils.isEmpty(rawHighscore)) {
       LOG.info("Skipped highscore changed event for {} because the raw data of the score is empty.", game);
-      return;
+      return metadata;
     }
 
     this.updateHighscore(game, metadata);
+    return metadata;
   }
 
   /**
@@ -302,45 +303,43 @@ public class HighscoreService implements InitializingBean {
     Highscore newHighscore = Highscore.forGame(game, metadata);
     Optional<Highscore> existingHighscore = highscoreRepository.findByGameId(game.getId());
 
-    if (existingHighscore.isEmpty() || !existingHighscore.get().getRaw().equals(rawHighscore)) {
-      //save the highscore for the first time
-      if (existingHighscore.isEmpty()) {
-        highscoreRepository.saveAndFlush(newHighscore);
-        LOG.info("Saved highscore for " + game);
-      }
-      else {
-        //archive old existingScore
-        Highscore existingScore = existingHighscore.get();
-
-        List<Score> oldScores = highscoreParser.parseScores(existingScore.getLastModified(), existingScore.getRaw(), game.getId(), existingScore.getDisplayName());
-        List<Score> newScores = highscoreParser.parseScores(newHighscore.getLastModified(), newHighscore.getRaw(), game.getId(), existingScore.getDisplayName());
-
-        int position = calculateChangedPosition(oldScores, newScores);
-        if (position == -1) {
-          LOG.info("No highscore change detected for " + game + ", skipping highscore notification event.");
-          return;
-        }
-
-        HighscoreVersion version = existingScore.toVersion(position);
-        version.setNewRaw(rawHighscore);
-        highscoreVersionRepository.saveAndFlush(version);
-
-        //update existing one
-        existingScore.setRaw(rawHighscore);
-        existingScore.setCreatedAt(new Date());
-        highscoreRepository.saveAndFlush(existingScore);
-
-        LOG.info("Archived old existingScore and saved updated existingScore for " + game);
-
-        Score oldScore = oldScores.get(position - 1);
-        Score newScore = newScores.get(position - 1);
-        HighscoreChangeEvent event = createEvent(game, existingHighscore.get(), newHighscore, oldScore, newScore);
-        triggerHighscoreChange(event);
-      }
+    if (existingHighscore.isEmpty()) {
+      highscoreRepository.saveAndFlush(newHighscore);
+      LOG.info("Saved highscore for " + game);
+      return;
     }
-    else {
-      LOG.info("Skipped highscore change event for {} because the raw highscore data did not change.", game);
+
+    Highscore existingScore = existingHighscore.get();
+    if(StringUtils.isEmpty(existingHighscore.get().getRaw())) {
+      LOG.info("Skipped highscore change event for {} because the raw highscore data does not exist.", game);
+      return;
     }
+
+    //archive old existingScore
+    List<Score> oldScores = highscoreParser.parseScores(existingScore.getLastModified(), existingScore.getRaw(), game.getId(), existingScore.getDisplayName());
+    List<Score> newScores = highscoreParser.parseScores(newHighscore.getLastModified(), newHighscore.getRaw(), game.getId(), existingScore.getDisplayName());
+
+    int position = calculateChangedPosition(oldScores, newScores);
+    if (position == -1) {
+      LOG.info("No highscore change detected for " + game + ", skipping highscore notification event.");
+      return;
+    }
+
+    HighscoreVersion version = existingScore.toVersion(position);
+    version.setNewRaw(rawHighscore);
+    highscoreVersionRepository.saveAndFlush(version);
+
+    //update existing one
+    existingScore.setRaw(rawHighscore);
+    existingScore.setCreatedAt(new Date());
+    highscoreRepository.saveAndFlush(existingScore);
+
+    LOG.info("Archived old existingScore and saved updated existingScore for " + game);
+
+    Score oldScore = oldScores.get(position - 1);
+    Score newScore = newScores.get(position - 1);
+    HighscoreChangeEvent event = createEvent(game, existingHighscore.get(), newHighscore, oldScore, newScore);
+    triggerHighscoreChange(event);
   }
 
   private int calculateChangedPosition(@NonNull List<Score> oldScores, @NonNull List<Score> newScores) {

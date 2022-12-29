@@ -26,22 +26,12 @@ public class CompetitionRepresentation {
 
   private String winnerInitials;
 
-  private PlayerRepresentation winner;
-
   public String getWinnerInitials() {
     return winnerInitials;
   }
 
   public void setWinnerInitials(String winnerInitials) {
     this.winnerInitials = winnerInitials;
-  }
-
-  public PlayerRepresentation getWinner() {
-    return winner;
-  }
-
-  public void setWinner(PlayerRepresentation winner) {
-    this.winner = winner;
   }
 
   public Long getId() {

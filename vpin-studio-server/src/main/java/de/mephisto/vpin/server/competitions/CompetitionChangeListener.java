@@ -1,12 +1,16 @@
 package de.mephisto.vpin.server.competitions;
 
+import de.mephisto.vpin.server.players.Player;
+import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
+
 public interface CompetitionChangeListener {
 
-  void competitionCreated(Competition competition);
+  void competitionCreated(@NonNull Competition competition);
 
-  void competitionChanged(Competition competition);
+  void competitionChanged(@NonNull Competition competition);
 
-  void competitionFinished(Competition competition);
+  void competitionFinished(@NonNull Competition competition, @Nullable Player winner);
 
-  void competitionDeleted(Competition competition);
+  void competitionDeleted(@NonNull Competition competition);
 }

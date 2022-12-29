@@ -4,6 +4,7 @@ import de.mephisto.vpin.commons.fx.widgets.WidgetCompetitionSummaryController;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.representations.CompetitionRepresentation;
 import de.mephisto.vpin.restclient.representations.GameRepresentation;
+import de.mephisto.vpin.restclient.representations.PlayerRepresentation;
 import de.mephisto.vpin.restclient.representations.ScoreListRepresentation;
 import de.mephisto.vpin.ui.NavigationController;
 import de.mephisto.vpin.ui.Studio;
@@ -276,11 +277,12 @@ public class CompetitionsController implements Initializable, StudioFXController
     columnWinner.setCellValueFactory(cellData -> {
       CompetitionRepresentation value = cellData.getValue();
       String winner = "-";
-      if (value.getWinner() != null) {
-        winner = value.getWinner().getName();
-      }
-      else if (!StringUtils.isEmpty(value.getWinnerInitials())) {
-        winner = value.getWinnerInitials();
+
+      if (!StringUtils.isEmpty(value.getWinnerInitials())) {
+        PlayerRepresentation player = client.getPlayer(value.getWinnerInitials());
+        if(player != null) {
+          winner = player.getName();
+        }
       }
       return new SimpleObjectProperty(winner);
     });

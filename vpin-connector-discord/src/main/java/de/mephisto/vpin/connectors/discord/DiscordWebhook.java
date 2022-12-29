@@ -163,6 +163,11 @@ public class DiscordWebhook {
     stream.flush();
     stream.close();
 
+    int responseCode = connection.getResponseCode();
+    if(responseCode > 300) {
+      LOG.error("Discord webhook call failed: " + connection.getResponseMessage());
+    }
+
     connection.getInputStream().close(); //I'm not sure why but it doesn't work without getting the InputStream
     connection.disconnect();
   }

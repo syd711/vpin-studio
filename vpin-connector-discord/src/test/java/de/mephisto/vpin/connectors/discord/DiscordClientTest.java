@@ -13,15 +13,17 @@ public class DiscordClientTest {
     String token = System.getenv("TOKEN");
     String id = System.getenv("ID");
 
-    DiscordClient client = new DiscordClient(token, id, null);
-    client.refreshMembers();
-    client.setStatus("testing");
+    if(token != null) {
+      DiscordClient client = new DiscordClient(token, id, null);
+      client.refreshMembers();
+      client.setStatus("testing");
 
-    Thread.sleep(2000);
-    List<DiscordMember> members = client.getMembers();
-    assertFalse(members.isEmpty());
+      Thread.sleep(2000);
+      List<DiscordMember> members = client.getMembers();
+      assertFalse(members.isEmpty());
 
-    Thread.sleep(20000);
-    client.shutdown();
+      Thread.sleep(20000);
+      client.shutdown();
+    }
   }
 }

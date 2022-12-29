@@ -9,6 +9,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import java.util.Calendar;
 import java.util.Date;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -25,8 +26,9 @@ public class NotificationsTest extends VPinServerTest {
   @Autowired
   private NotificationService notificationService;
 
+
   @Test
-  public void testNotifications() {
+  public void testDisabledNotifications() {
     Game game = gameService.getGameByFilename(VPinServerTest.TEST_GAME_FILENAME);
 
     Competition competition = new Competition();
@@ -37,10 +39,38 @@ public class NotificationsTest extends VPinServerTest {
 
     Competition save = competitionService.save(competition);
     assertNotNull(save);
-    assertFalse(save.isActive());
+    assertTrue(save.isActive());
     assertNotNull(save.getCreatedAt());
 
-//    notificationService.competitionChanged(save);
+    boolean delete = competitionService.delete(save.getId());
+    assertTrue(delete);
+  }
+
+  @Test
+  public void testNotifications() throws InterruptedException {
+    Game game = gameService.getGameByFilename(VPinServerTest.TEST_GAME_FILENAME);
+
+    Competition competition = new Competition();
+    competition.setGameId(game.getId());
+    competition.setName(String.valueOf(new Date().getTime()));
+    competition.setStartDate(new Date());
+
+    // convert date to calendar
+    Calendar c = Calendar.getInstance();
+    c.setTime(new Date());
+
+    c.add(Calendar.DATE, 1); //same with c.add(Calendar.DAY_OF_MONTH, 1);
+    competition.setEndDate(c.getTime());
+
+
+//    competition.setDiscordNotifications(true);
+
+    Competition save = competitionService.save(competition);
+    assertNotNull(save);
+    assertTrue(save.isActive());
+    assertNotNull(save.getCreatedAt());
+
+    Thread.sleep(3000);
 
     boolean delete = competitionService.delete(save.getId());
     assertTrue(delete);

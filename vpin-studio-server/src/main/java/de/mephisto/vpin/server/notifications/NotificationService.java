@@ -13,6 +13,7 @@ import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameService;
 import de.mephisto.vpin.server.highscores.HighscoreChangeEvent;
 import de.mephisto.vpin.server.highscores.HighscoreChangeListener;
+import de.mephisto.vpin.server.highscores.HighscoreMetadata;
 import de.mephisto.vpin.server.highscores.HighscoreService;
 import de.mephisto.vpin.server.highscores.cards.CardService;
 import de.mephisto.vpin.server.players.Player;
@@ -21,6 +22,8 @@ import de.mephisto.vpin.server.popper.PopperService;
 import de.mephisto.vpin.server.popper.TableStatusChangeListener;
 import de.mephisto.vpin.server.popper.TableStatusChangedEvent;
 import de.mephisto.vpin.server.preferences.PreferencesService;
+import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
@@ -87,6 +90,10 @@ public class NotificationService implements InitializingBean, HighscoreChangeLis
           List<Game> games = gameService.getGames();
           for (Game game : games) {
             if (game.getGameDisplayName().toLowerCase().contains(cmd.getParameter())) {
+              HighscoreMetadata metadata = highscoreService.updateHighscore(game);
+              if(StringUtils.isEmpty(metadata.getRaw()) && !StringUtils.isEmpty(metadata.getStatus())) {
+                return () -> "Highscore for '" + game.getGameDisplayName() + "' retrieval failed: " + metadata.getStatus();
+              }
               ScoreSummary highscores = highscoreService.getHighscores(game.getId(), game.getGameDisplayName());
               return () -> DiscordBotCommandResponseFactory.createHighscoreMessage(game, highscores);
             }
@@ -153,7 +160,7 @@ public class NotificationService implements InitializingBean, HighscoreChangeLis
   }
 
   @Override
-  public void competitionCreated(Competition competition) {
+  public void competitionCreated(@NonNull Competition competition) {
     Game game = gameService.getGame(competition.getGameId());
     if (game != null) {
       if (competition.isCustomizeMedia()) {
@@ -172,7 +179,7 @@ public class NotificationService implements InitializingBean, HighscoreChangeLis
   }
 
   @Override
-  public void competitionFinished(Competition competition) {
+  public void competitionFinished(@NonNull Competition competition, @Nullable Player winner) {
     Game game = gameService.getGame(competition.getGameId());
     if (game != null) {
       LOG.info("Finishing " + competition);
@@ -184,7 +191,7 @@ public class NotificationService implements InitializingBean, HighscoreChangeLis
           ScoreSummary summary = highscoreService.getHighscores(competition.getGameId(), game.getGameDisplayName());
 
           if (!summary.getScores().isEmpty()) {
-            String message = DiscordWebhookMessageFactory.createCompetitionFinishedMessage(competition, game, summary);
+            String message = DiscordWebhookMessageFactory.createCompetitionFinishedMessage(competition, winner, game, summary);
             DiscordWebhook.call(webhookUrl, message);
             LOG.info("Called Discord webhook for completion of " + competition);
           }
@@ -197,7 +204,7 @@ public class NotificationService implements InitializingBean, HighscoreChangeLis
   }
 
   @Override
-  public void competitionDeleted(Competition competition) {
+  public void competitionDeleted(@NonNull Competition competition) {
     Game game = gameService.getGame(competition.getGameId());
     if (game != null) {
       popperService.deAugmentWheel(game);
@@ -214,7 +221,7 @@ public class NotificationService implements InitializingBean, HighscoreChangeLis
   }
 
   @Override
-  public void competitionChanged(Competition competition) {
+  public void competitionChanged(@NonNull Competition competition) {
     Game game = gameService.getGame(competition.getGameId());
     if (game != null) {
       boolean customizeMedia = competition.isCustomizeMedia();

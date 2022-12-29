@@ -24,6 +24,16 @@ public class HighscoreTest extends VPinServerTest {
   @Autowired
   private GameService gameService;
 
+  @Test
+  public void testHighscore() {
+    Game game = gameService.getGameByFilename("Game of Thrones LE (Stern 2015) VPW v1.0.1.vpx");
+    ScoreSummary highscores = highscoreService.getHighscores(game.getId(), game.getGameDisplayName());
+
+    assertNotNull(highscores);
+    assertNotNull(highscores.getRaw());
+    assertFalse(highscores.getScores().isEmpty());
+  }
+
   /**
    * GRAND CHAMPION
    * SLL     7.500.000.000
@@ -50,7 +60,7 @@ public class HighscoreTest extends VPinServerTest {
    * 4) MOO     3.500.000.000
    */
   @Test
-  public void testHighscores() {
+  public void testHighscores() throws InterruptedException {
     Game game = gameService.getGameByFilename(VPinServerTest.TEST_GAME_FILENAME);
     ScoreSummary highscores = highscoreService.getHighscores(game.getId(), game.getGameDisplayName());
 
@@ -71,7 +81,7 @@ public class HighscoreTest extends VPinServerTest {
 
     HighscoreMetadata metadata = highscoreService.scanScore(game);
     String raw = metadata.getRaw();
-    raw = raw.replace("BRE     7.000.000.000", "BRE     7.100.000.000");
+    raw = raw.replace("BRE     7.000.000.000", "MFA     7.100.000.000");
     metadata.setRaw(raw);
 
     highscoreService.addHighscoreChangeListener(new HighscoreChangeListener() {
@@ -91,5 +101,6 @@ public class HighscoreTest extends VPinServerTest {
     Score score = recentHighscores.getScores().get(0);
     assertEquals(score.getGameId(), game.getId());
     assertEquals("7.100.000.000", score.getScore());
+    Thread.sleep(3000);
   }
 }

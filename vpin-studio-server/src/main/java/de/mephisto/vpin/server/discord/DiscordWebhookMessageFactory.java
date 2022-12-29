@@ -1,10 +1,15 @@
 package de.mephisto.vpin.server.discord;
 
+import de.mephisto.vpin.connectors.discord.DiscordWebhook;
+import de.mephisto.vpin.restclient.PlayerDomain;
 import de.mephisto.vpin.server.competitions.Competition;
 import de.mephisto.vpin.server.competitions.ScoreSummary;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.highscores.HighscoreChangeEvent;
 import de.mephisto.vpin.server.highscores.Score;
+import de.mephisto.vpin.server.players.Player;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.text.DateFormat;
 import java.time.LocalDate;
@@ -12,6 +17,7 @@ import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
 
 public class DiscordWebhookMessageFactory {
+  private final static Logger LOG = LoggerFactory.getLogger(DiscordWebhookMessageFactory.class);
 
   private static final String COMPETITION_CREATED_TEMPLATE = "A new competition has been started!\\n" +
       "```\\n" +
@@ -23,21 +29,8 @@ public class DiscordWebhookMessageFactory {
       "Duration:    %s days\\n" +
       "------------------------------------------------------------```";
 
-  private static final String COMPETITION_ACTIVE_TEMPLATE = "" +
-      "```\n" +
-      "%s\n" +
-      "------------------------------------------------------------\n" +
-      "Table:       %s\n" +
-      "Start Date:  %s\n" +
-      "End Date:    %s\n" +
-      "Duration:    %s days\n" +
-      "\n" +
-      "%s\n" +
-      "%s\n" +
-      "%s\n" +
-      "------------------------------------------------------------```";
-
-  private static final String COMPETITION_FINISHED_TEMPLATE = "```" +
+  private static final String COMPETITION_FINISHED_TEMPLATE = "Congratulation %s!\\n" +
+      "```" +
       "The competition '%s' has been finished!\\n" +
       "And the winner is...\\n" +
       "\\n" +
@@ -54,10 +47,9 @@ public class DiscordWebhookMessageFactory {
       "The competition '%s' has been cancelled." +
       "```";
 
-  private static final String HIGHSCORE_CREATED_TEMPLATE = "```" +
-      "A new highscore for '%s' has been created:\\n" +
-      "%s\\n" +
-      "```";
+  private static final String HIGHSCORE_CREATED_TEMPLATE = "%s created a new highscore for '%s'.\\n" +
+      "```%s\\n" +
+      "```\\n%s, your highscore of %s points has been beaten.";
 
 
   public static String createCompetitionCancelledMessage(Competition competition) {
@@ -77,18 +69,24 @@ public class DiscordWebhookMessageFactory {
         diff);
   }
 
-  public static String createCompetitionFinishedMessage(Competition competition, Game game, ScoreSummary summary) {
-    String playerName = competition.getWinnerInitials();
-    if (competition.getWinner() != null) {
-      playerName = competition.getWinner().getName();
+  public static String createCompetitionFinishedMessage(Competition competition, Player winner, Game game, ScoreSummary summary) {
+    String winnerName = competition.getWinnerInitials();
+    String winnerRaw = competition.getWinnerInitials();
+    if (winner != null) {
+      winnerName = winner.getName();
+      winnerRaw = winner.getName();
+      if (winner.getDomain().equals(PlayerDomain.DISCORD.name())) {
+        winnerName = "<@" + winner.getId() + ">";
+      }
     }
 
     String second = formatScoreEntry(summary, 1);
     String third = formatScoreEntry(summary, 2);
 
     return String.format(COMPETITION_FINISHED_TEMPLATE,
+        winnerName,
         competition.getName(),
-        playerName,
+        winnerRaw,
         game.getGameDisplayName(),
         summary.getScores().get(0).getScore(),
         second,
@@ -98,7 +96,29 @@ public class DiscordWebhookMessageFactory {
   public static String createHighscoreCreatedMessage(HighscoreChangeEvent event) {
     Game game = event.getGame();
     Score newScore = event.getNewScore();
-    return String.format(HIGHSCORE_CREATED_TEMPLATE, game.getGameDisplayName(), newScore.toString());
+    Score oldScore = event.getOldScore();
+
+    String newName = newScore.getPlayerInitials();
+    if (newScore.getPlayer() != null) {
+      Player player = newScore.getPlayer();
+      newName = newScore.getPlayer().getName();
+      if (player.getDomain().equals(PlayerDomain.DISCORD.name())) {
+        newName = "<@" + player.getId() + ">";
+      }
+    }
+
+    String oldName = oldScore.getPlayerInitials();
+    if (oldScore.getPlayer() != null) {
+      Player player = oldScore.getPlayer();
+      oldName = oldScore.getPlayer().getName();
+      if (player.getDomain().equals(PlayerDomain.DISCORD.name())) {
+        oldName = "<@" + player.getId() + ">";
+      }
+    }
+
+    String msg = String.format(HIGHSCORE_CREATED_TEMPLATE, newName, game.getGameDisplayName(), newScore, oldName, oldScore.getScore());
+    LOG.info("Hook message: " + msg);
+    return msg;
   }
 
   private static String formatScoreEntry(ScoreSummary summary, int index) {

@@ -29,9 +29,6 @@ public class Competition {
   @GeneratedValue(strategy = GenerationType.AUTO)
   private Long id;
 
-  @OneToOne(cascade = CascadeType.ALL)
-  private Player winner;
-
   private String winnerInitials;
 
   private int gameId;
@@ -49,14 +46,6 @@ public class Competition {
   private Date endDate;
 
   private String name;
-
-  public Player getWinner() {
-    return winner;
-  }
-
-  public void setWinner(Player winner) {
-    this.winner = winner;
-  }
 
   public String getWinnerInitials() {
     return winnerInitials;

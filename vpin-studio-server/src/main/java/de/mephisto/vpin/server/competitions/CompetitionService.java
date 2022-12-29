@@ -53,7 +53,8 @@ public class CompetitionService implements InitializingBean {
 
   public void notifyCompetitionFinished(Competition c) {
     for (CompetitionChangeListener listener : this.listeners) {
-      listener.competitionFinished(c);
+      Optional<Player> playerForInitials = playerService.getPlayerForInitials(c.getWinnerInitials());
+      listener.competitionFinished(c, playerForInitials.get());
     }
   }
 
@@ -126,12 +127,6 @@ public class CompetitionService implements InitializingBean {
     else {
       Score score = highscores.getScores().get(0);
       competition.setWinnerInitials(score.getPlayerInitials());
-
-      Optional<Player> playerForInitials = playerService.getPlayerForInitials(score.getPlayerInitials());
-      if (playerForInitials.isPresent()) {
-        LOG.info(playerForInitials.get() + " is announced as winner of " + competition);
-        competition.setWinner(playerForInitials.get());
-      }
     }
     competition.setEndDate(new Date()); //always the current date
     Competition save = save(competition);
