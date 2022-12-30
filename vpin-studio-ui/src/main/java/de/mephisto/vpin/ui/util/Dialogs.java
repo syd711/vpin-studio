@@ -108,11 +108,12 @@ public class Dialogs {
     stage.showAndWait();
   }
 
-  public static void createProgressDialog(ProgressModel model) {
+  public static ProgressResultModel createProgressDialog(ProgressModel model) {
     Stage stage = createStudioDialogStage("dialog-progress.fxml", model.getTitle());
     ProgressDialogController controller = (ProgressDialogController) stage.getUserData();
     controller.setProgressModel(stage, model);
     stage.showAndWait();
+    return controller.getProgressResult();
   }
 
   public static void openMediaDialog(VPinStudioClient client, GameRepresentation game, GameMediaItemRepresentation item) {

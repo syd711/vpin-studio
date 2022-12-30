@@ -97,6 +97,17 @@
                                     <Tooltip text="Resets the dismissed validations and revalidates the table configuration." />
                                  </tooltip>
                               </Button>
+                              <Button fx:id="inspectBtn" layoutX="654.0" layoutY="11.0" mnemonicParsing="false" onAction="#onInspect" text="Inspect" textFill="WHITE">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                                 <graphic>
+                                    <FontIcon iconColor="WHITE" iconLiteral="bi-file-earmark-arrow-up" />
+                                 </graphic>
+                                 <tooltip>
+                                    <Tooltip text="Resets the dismissed validations and revalidates the table configuration." />
+                                 </tooltip>
+                              </Button>
                               <Separator layoutX="768.0" layoutY="10.0" orientation="VERTICAL" prefHeight="30.0" prefWidth="12.0" />
                               <Button fx:id="uploadTableBtn" layoutX="492.0" layoutY="11.0" mnemonicParsing="false" onAction="#onTableUpload" text="VPX Upload" textFill="WHITE">
                                  <font>

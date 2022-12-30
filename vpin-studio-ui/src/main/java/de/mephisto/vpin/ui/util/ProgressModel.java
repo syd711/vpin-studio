@@ -12,6 +12,14 @@ abstract public class ProgressModel {
     return title;
   }
 
+  public boolean isShowSummary() {
+    return true;
+  }
+
+  public boolean isIndeterminate() {
+    return false;
+  }
+
   abstract public int getMax();
 
   abstract public String processNext(ProgressResultModel progressResultModel);

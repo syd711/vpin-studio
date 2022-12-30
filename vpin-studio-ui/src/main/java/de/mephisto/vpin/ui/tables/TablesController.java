@@ -9,9 +9,11 @@ import de.mephisto.vpin.ui.NavigationController;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.StudioFXController;
 import de.mephisto.vpin.ui.WaitOverlayController;
+import de.mephisto.vpin.ui.tables.dialogs.ScriptDownloadProgressModel;
 import de.mephisto.vpin.ui.tables.validation.ValidationResult;
 import de.mephisto.vpin.ui.tables.validation.ValidationTexts;
 import de.mephisto.vpin.ui.util.Dialogs;
+import de.mephisto.vpin.ui.util.ProgressResultModel;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
@@ -24,6 +26,9 @@ import javafx.fxml.Initializable;
 import javafx.scene.Cursor;
 import javafx.scene.Node;
 import javafx.scene.Parent;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.KeyCode;
@@ -39,8 +44,11 @@ import org.kordamp.ikonli.javafx.FontIcon;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.awt.*;
+import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+import java.util.List;
 import java.util.*;
 
 public class TablesController implements Initializable, StudioFXController {
@@ -93,6 +101,9 @@ public class TablesController implements Initializable, StudioFXController {
 
   @FXML
   private Button deleteBtn;
+
+  @FXML
+  private Button inspectBtn;
 
   @FXML
   private Button scanBtn;
@@ -163,7 +174,7 @@ public class TablesController implements Initializable, StudioFXController {
 
   @FXML
   private void onTableUpload() {
-    if(client.isPinUPPopperRunning()) {
+    if (client.isPinUPPopperRunning()) {
       Dialogs.openPopperRunningWarning(Studio.stage);
       return;
     }
@@ -176,7 +187,7 @@ public class TablesController implements Initializable, StudioFXController {
 
   @FXML
   private void onDelete() {
-    if(client.isPinUPPopperRunning()) {
+    if (client.isPinUPPopperRunning()) {
       Dialogs.openPopperRunningWarning(Studio.stage);
       return;
     }
@@ -231,6 +242,22 @@ public class TablesController implements Initializable, StudioFXController {
   }
 
   @FXML
+  private void onInspect() {
+    GameRepresentation game = tableView.getSelectionModel().getSelectedItem();
+    if (game != null) {
+      ProgressResultModel resultModel = Dialogs.createProgressDialog(new ScriptDownloadProgressModel(client, "Extracting Table Script", game));
+      if (!resultModel.getResults().isEmpty()) {
+        File file = (File) resultModel.getResults().get(0);
+        try {
+          Desktop.getDesktop().open(file);
+        } catch (IOException e) {
+          WidgetFactory.showAlert(Studio.stage, "Failed to open script file " + file.getAbsolutePath() + ": " + e.getMessage());
+        }
+      }
+    }
+  }
+
+  @FXML
   private void onDismiss() {
     GameRepresentation game = tableView.getSelectionModel().getSelectedItem();
     Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Ignore this warning for future validations of table '" + game.getGameDisplayName() + "?",
@@ -266,6 +293,7 @@ public class TablesController implements Initializable, StudioFXController {
     this.validateBtn.setDisable(true);
     this.deleteBtn.setDisable(true);
     this.uploadTableBtn.setDisable(true);
+    this.inspectBtn.setDisable(true);
 
     tableView.setVisible(false);
     tableStack.getChildren().add(tablesLoadingOverlay);
@@ -292,6 +320,7 @@ public class TablesController implements Initializable, StudioFXController {
         if (!games.isEmpty()) {
           this.validateBtn.setDisable(false);
           this.deleteBtn.setDisable(false);
+          this.inspectBtn.setDisable(false);
         }
 
         this.textfieldSearch.setDisable(false);
@@ -436,6 +465,7 @@ public class TablesController implements Initializable, StudioFXController {
       this.scanBtn.setDisable(newSelection == null || !newSelection.getEmulator().isVisualPinball());
       this.validateBtn.setDisable(disable);
       this.deleteBtn.setDisable(disable);
+      this.inspectBtn.setDisable(disable);
       refreshView(Optional.ofNullable(newSelection));
     });
 

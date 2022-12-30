@@ -1,6 +1,7 @@
 package de.mephisto.vpin.restclient;
 
 import de.mephisto.vpin.restclient.representations.*;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.io.FileSystemResource;
@@ -11,8 +12,12 @@ import org.springframework.web.client.RestTemplate;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.IOException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.*;
 
 public class VPinStudioClient implements ObservedPropertyChangeListener, OverlayClient {
@@ -59,6 +64,30 @@ public class VPinStudioClient implements ObservedPropertyChangeListener, Overlay
 
   public boolean isPinUPPopperRunning() {
     return restClient.get(API + "popper/running", Boolean.class);
+  }
+
+
+  /*********************************************************************************************************************
+   * VPX
+   ********************************************************************************************************************/
+  public File getTableScript(int gameId) {
+    final RestTemplate restTemplate = new RestTemplate();
+    String src = restTemplate.getForObject(restClient.getBaseUrl() + API + "vpx/script/" + gameId, String.class);
+    if(!StringUtils.isEmpty(src)) {
+      try {
+        File tmp = File.createTempFile("script-src-" + gameId, ".txt");
+
+        Path path = Paths.get(tmp.toURI());
+        byte[] strToBytes = src.getBytes();
+        Files.write(path, strToBytes);
+
+        tmp.deleteOnExit();
+        return tmp;
+      } catch (IOException e) {
+        LOG.error("Failed to create temp file for script: " + e.getMessage(), e);
+      }
+    }
+    return null;
   }
 
   /*********************************************************************************************************************

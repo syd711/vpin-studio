@@ -32,6 +32,7 @@ public class ProgressDialogController implements Initializable, DialogController
   private Button cancelButton;
 
   private Service service;
+  private ProgressResultModel progressResultModel;
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -41,7 +42,12 @@ public class ProgressDialogController implements Initializable, DialogController
   public void setProgressModel(Stage stage, ProgressModel model) {
     titleLabel.setText(model.getTitle());
 
-    final ProgressResultModel progressResultModel = new ProgressResultModel();
+    if (model.isIndeterminate()) {
+      progressBar.setProgress(ProgressBar.INDETERMINATE_PROGRESS);
+    }
+
+
+    progressResultModel = new ProgressResultModel();
     service = new Service() {
       @Override
       protected Task createTask() {
@@ -51,8 +57,11 @@ public class ProgressDialogController implements Initializable, DialogController
             int index = 0;
             while (model.hasNext() && !this.isCancelled()) {
               String result = model.processNext(progressResultModel);
-              long percent = index * 100 / model.getMax();
-              updateProgress(percent, 100);
+              if (!model.isIndeterminate()) {
+                long percent = index * 100 / model.getMax();
+                updateProgress(percent, 100);
+              }
+
               final int uiIndex = index;
               Platform.runLater(() -> {
                 titleLabel.setText(model.getTitle() + " (" + uiIndex + "/" + model.getMax() + ")");
@@ -63,10 +72,12 @@ public class ProgressDialogController implements Initializable, DialogController
             Platform.runLater(() -> {
               stage.close();
 
-              Platform.runLater(() -> {
-                String msg = model.getTitle() + " finished.";
-                WidgetFactory.showInformation(Studio.stage, msg, "Processed " + progressResultModel.getProcessed() + " of " + model.getMax() + " elements.");
-              });
+              if (model.isShowSummary()) {
+                Platform.runLater(() -> {
+                  String msg = model.getTitle() + " finished.";
+                  WidgetFactory.showInformation(Studio.stage, msg, "Processed " + progressResultModel.getProcessed() + " of " + model.getMax() + " elements.");
+                });
+              }
             });
 
             return null;
@@ -80,5 +91,9 @@ public class ProgressDialogController implements Initializable, DialogController
   @Override
   public void onDialogCancel() {
     service.cancel();
+  }
+
+  public ProgressResultModel getProgressResult() {
+    return this.progressResultModel;
   }
 }
