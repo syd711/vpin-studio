@@ -26,7 +26,8 @@ public class HighscoreTest extends VPinServerTest {
 
   @Test
   public void testHighscore() {
-    Game game = gameService.getGameByFilename("Game of Thrones LE (Stern 2015) VPW v1.0.1.vpx");
+//    Game game = gameService.getGameByFilename("Game of Thrones LE (Stern 2015) VPW v1.0.1.vpx");
+    Game game = gameService.getGameByFilename(VPinServerTest.TEST_GAME_FILENAME);
     ScoreSummary highscores = highscoreService.getHighscores(game.getId(), game.getGameDisplayName());
 
     assertNotNull(highscores);

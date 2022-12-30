@@ -23,10 +23,6 @@ public class NotificationsTest extends VPinServerTest {
   @Autowired
   private GameService gameService;
 
-  @Autowired
-  private NotificationService notificationService;
-
-
   @Test
   public void testDisabledNotifications() {
     Game game = gameService.getGameByFilename(VPinServerTest.TEST_GAME_FILENAME);
@@ -35,7 +31,13 @@ public class NotificationsTest extends VPinServerTest {
     competition.setGameId(game.getId());
     competition.setName(String.valueOf(new Date().getTime()));
     competition.setStartDate(new Date());
-    competition.setEndDate(new Date());
+
+
+    Calendar c = Calendar.getInstance();
+    c.setTime(competition.getStartDate());
+    c.add(Calendar.DATE, 1);
+    Date newEndDate = c.getTime();
+    competition.setEndDate(newEndDate);
 
     Competition save = competitionService.save(competition);
     assertNotNull(save);
