@@ -66,7 +66,7 @@ public class PlayersResource {
     return playerService.save(c);
   }
 
-  @DeleteMapping("/delete/{id}")
+  @DeleteMapping("/{id}")
   public void deletePlayer(@PathVariable("id") int id) {
     playerService.delete(id);
   }

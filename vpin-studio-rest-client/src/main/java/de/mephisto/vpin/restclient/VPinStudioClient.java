@@ -57,6 +57,10 @@ public class VPinStudioClient implements ObservedPropertyChangeListener, Overlay
     return Arrays.asList(restClient.get(API + "popper/playlists", PlaylistRepresentation[].class));
   }
 
+  public boolean isPinUPPopperRunning() {
+    return restClient.get(API + "popper/running", Boolean.class);
+  }
+
   /*********************************************************************************************************************
    * System
    ********************************************************************************************************************/
@@ -248,7 +252,7 @@ public class VPinStudioClient implements ObservedPropertyChangeListener, Overlay
 
   public void deleteCompetition(CompetitionRepresentation c) {
     try {
-      restClient.delete(API + "competitions/delete/" + c.getId());
+      restClient.delete(API + "competitions/" + c.getId());
     } catch (Exception e) {
       LOG.error("Failed to delete competition: " + e.getMessage(), e);
     }
@@ -286,6 +290,10 @@ public class VPinStudioClient implements ObservedPropertyChangeListener, Overlay
   /*********************************************************************************************************************
    * Games
    ********************************************************************************************************************/
+
+  public void deleteGame(int id, boolean vpxDelete, boolean directb2sDelete, boolean popperDelete) {
+    restClient.delete(API + "games/" + id + "/" + vpxDelete + "/" + directb2sDelete + "/" + popperDelete);
+  }
 
   public GameRepresentation getGame(int id) {
     try {
@@ -374,7 +382,7 @@ public class VPinStudioClient implements ObservedPropertyChangeListener, Overlay
 
   public void deletePlayer(PlayerRepresentation p) {
     try {
-      restClient.delete(API + "players/delete/" + p.getId());
+      restClient.delete(API + "players/" + p.getId());
     } catch (Exception e) {
       LOG.error("Failed to delete player: " + e.getMessage(), e);
     }
@@ -519,6 +527,7 @@ public class VPinStudioClient implements ObservedPropertyChangeListener, Overlay
     LinkedMultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
     return createUpload(map, file, gameId, uploadType, assetType);
   }
+
   private static HttpEntity createUpload(LinkedMultiValueMap<String, Object> map, File file, int gameId, String uploadType, AssetType assetType) throws Exception {
     HttpHeaders headers = new HttpHeaders();
     headers.setContentType(MediaType.MULTIPART_FORM_DATA);

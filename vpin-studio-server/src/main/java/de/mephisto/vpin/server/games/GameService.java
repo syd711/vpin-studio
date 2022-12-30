@@ -17,6 +17,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -40,7 +41,6 @@ public class GameService {
   @Autowired
   private HighscoreService highscoreService;
 
-
   @SuppressWarnings("unused")
   public List<Game> getGames() {
     long start = System.currentTimeMillis();
@@ -52,6 +52,38 @@ public class GameService {
     }
     LOG.info("Game details fetch took " + (System.currentTimeMillis() - start) + "ms.");
     return games;
+  }
+
+  public boolean deleteGame(int id, boolean vpxDelete, boolean directb2sDelete, boolean popperDelete) {
+    Game game = this.getGame(id);
+    if(vpxDelete) {
+      File gameFile = game.getGameFile();
+      if(gameFile.exists()) {
+        if(gameFile.delete()) {
+          LOG.info("Deleted " + gameFile.getAbsolutePath());
+        }
+      }
+    }
+
+    if(directb2sDelete) {
+      if(game.getDirectB2SFile().exists()) {
+        if(game.getDirectB2SFile().delete()) {
+          LOG.info("Deleted " + game.getDirectB2SFile().getAbsolutePath());
+        }
+      }
+
+      if(game.getDirectB2SMediaFile().exists()) {
+        if(game.getDirectB2SMediaFile().delete()) {
+          LOG.info("Deleted " + game.getDirectB2SMediaFile().getAbsolutePath());
+        }
+      }
+    }
+
+    if(popperDelete) {
+      pinUPConnector.deleteGame(id);
+    }
+
+    return true;
   }
 
   public int getGameCount() {
@@ -237,4 +269,5 @@ public class GameService {
     LOG.info("Saved " + game);
     return getGame(game.getId());
   }
+
 }

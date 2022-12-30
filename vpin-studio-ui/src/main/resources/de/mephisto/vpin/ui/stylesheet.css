@@ -182,7 +182,6 @@
     -fx-background-color: -fx-base-6;
     -fx-border-style: hidden hidden hidden solid;
     -fx-border-width: 4;
-    -fx-background-radius: 8 8 8 8;
     -fx-border-color:-fx-base-6;
     -fx-text-fill: #DDDDDD;
 }

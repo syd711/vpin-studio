@@ -12,7 +12,6 @@ import de.mephisto.vpin.ui.WaitOverlayController;
 import de.mephisto.vpin.ui.tables.validation.ValidationResult;
 import de.mephisto.vpin.ui.tables.validation.ValidationTexts;
 import de.mephisto.vpin.ui.util.Dialogs;
-import de.mephisto.vpin.ui.util.MediaUtil;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
@@ -40,7 +39,6 @@ import org.kordamp.ikonli.javafx.FontIcon;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.net.URL;
 import java.util.*;
@@ -165,6 +163,11 @@ public class TablesController implements Initializable, StudioFXController {
 
   @FXML
   private void onTableUpload() {
+    if(client.isPinUPPopperRunning()) {
+      Dialogs.openPopperRunningWarning(Studio.stage);
+      return;
+    }
+
     boolean updated = Dialogs.openTableUploadDialog();
     if (updated) {
       onReload();
@@ -173,7 +176,19 @@ public class TablesController implements Initializable, StudioFXController {
 
   @FXML
   private void onDelete() {
+    if(client.isPinUPPopperRunning()) {
+      Dialogs.openPopperRunningWarning(Studio.stage);
+      return;
+    }
 
+    GameRepresentation game = tableView.getSelectionModel().getSelectedItem();
+    if (game != null) {
+      tableView.getSelectionModel().clearSelection();
+      boolean b = Dialogs.openTableDeleteDialog(game);
+      if (b) {
+        this.onReload();
+      }
+    }
   }
 
   @FXML
@@ -249,6 +264,7 @@ public class TablesController implements Initializable, StudioFXController {
     this.scanAllBtn.setDisable(true);
     this.scanBtn.setDisable(true);
     this.validateBtn.setDisable(true);
+    this.deleteBtn.setDisable(true);
     this.uploadTableBtn.setDisable(true);
 
     tableView.setVisible(false);
@@ -267,16 +283,20 @@ public class TablesController implements Initializable, StudioFXController {
           final GameRepresentation updatedGame = client.getGame(selection.getId());
           tableView.getSelectionModel().select(updatedGame);
         }
-        else {
+        else if (!games.isEmpty()) {
           tableView.getSelectionModel().select(0);
         }
 
         tableStack.getChildren().remove(tablesLoadingOverlay);
 
+        if (!games.isEmpty()) {
+          this.validateBtn.setDisable(false);
+          this.deleteBtn.setDisable(false);
+        }
+
         this.textfieldSearch.setDisable(false);
         this.reloadBtn.setDisable(false);
         this.scanAllBtn.setDisable(false);
-        this.validateBtn.setDisable(false);
         this.uploadTableBtn.setDisable(false);
 
         tableView.setVisible(true);
@@ -415,6 +435,7 @@ public class TablesController implements Initializable, StudioFXController {
       boolean disable = newSelection == null;
       this.scanBtn.setDisable(newSelection == null || !newSelection.getEmulator().isVisualPinball());
       this.validateBtn.setDisable(disable);
+      this.deleteBtn.setDisable(disable);
       refreshView(Optional.ofNullable(newSelection));
     });
 
@@ -431,7 +452,7 @@ public class TablesController implements Initializable, StudioFXController {
     String filterValue = textfieldSearch.textProperty().getValue();
     String emulatorValue = emulatorTypeCombo.getValue();
     for (GameRepresentation game : games) {
-      if(!StringUtils.isEmpty(emulatorValue) && !game.getEmulator().getName().equals(emulatorValue)) {
+      if (!StringUtils.isEmpty(emulatorValue) && !game.getEmulator().getName().equals(emulatorValue)) {
         continue;
       }
 

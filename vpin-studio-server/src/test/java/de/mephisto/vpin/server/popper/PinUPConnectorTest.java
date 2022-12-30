@@ -3,6 +3,7 @@ package de.mephisto.vpin.server.popper;
 import de.mephisto.vpin.restclient.PinUPControl;
 import de.mephisto.vpin.server.VPinServerTest;
 import de.mephisto.vpin.server.games.Game;
+import de.mephisto.vpin.server.games.GameService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -17,6 +18,10 @@ public class PinUPConnectorTest extends VPinServerTest {
 
   @Autowired
   private PinUPConnector connector;
+
+
+  @Autowired
+  private GameService gameService;
 
   @Test
   public void testControls() {
@@ -35,7 +40,7 @@ public class PinUPConnectorTest extends VPinServerTest {
     File file = new File("C:\\vPinball\\VisualPinball\\Tables\\Agents 777.vpx");
     int l = connector.importVPXFile(file);
     if (l > 0) {
-      connector.deleteGame(l);
+      gameService.deleteGame(l, true, true, true);
     }
     assertTrue(l > 0);
   }

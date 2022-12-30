@@ -14,6 +14,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.io.File;
 import java.util.List;
+import java.util.Map;
 
 import static de.mephisto.vpin.server.VPinStudioServer.API_SEGMENT;
 import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
@@ -83,6 +84,13 @@ public class GamesResource {
     return gameService.scanScore(pupId);
   }
 
+  @DeleteMapping("/{id}/{vpxDelete}/{directb2sDelete}/{popperDelete}")
+  public boolean delete(@PathVariable("id") int id,
+                        @PathVariable("vpxDelete") boolean vpxDelete,
+                        @PathVariable("vpxDelete") boolean directb2sDelete,
+                        @PathVariable("vpxDelete") boolean popperDelete) {
+    return gameService.deleteGame(id, vpxDelete, directb2sDelete, popperDelete);
+  }
 
   @PostMapping("/save")
   public Game save(@RequestBody Game game) {

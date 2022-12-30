@@ -69,13 +69,15 @@ public class RestClient implements ClientHttpRequestInterceptor {
   }
 
   public Boolean delete(String path) {
-    try {
-      String url = baseUrl + path;
-      restTemplate.delete(url);
-      return true;
-    } catch (NumberFormatException e) {
-      return false;
-    }
+    String url = baseUrl + path;
+    restTemplate.delete(url);
+    return true;
+  }
+
+  public Boolean delete(String path, Map<String, Object> values) {
+    String url = baseUrl + path;
+    restTemplate.delete(url, values);
+    return true;
   }
 
   public <T> T post(String path, Object model, Class<T> entityType) throws Exception {
