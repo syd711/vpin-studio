@@ -23,6 +23,11 @@ public class TableScanProgressModel extends ProgressModel {
   }
 
   @Override
+  public boolean isIndeterminate() {
+    return true;
+  }
+
+  @Override
   public int getMax() {
     return 1;
   }
