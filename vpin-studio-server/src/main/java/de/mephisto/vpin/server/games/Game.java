@@ -29,6 +29,7 @@ public class Game {
   private Emulator emulator;
 
   private File gameFile;
+  private File povFile;
 
   private Date lastPlayed;
   private int numberPlays;
@@ -160,6 +161,16 @@ public class Game {
   @JsonIgnore
   public File getGameFile() {
     return gameFile;
+  }
+
+  @NonNull
+  @JsonIgnore
+  public File getPOVFile() {
+    return povFile;
+  }
+
+  public void setPOVFile(File povFile) {
+    this.povFile = povFile;
   }
 
   public void setGameFile(@NonNull File gameFile) {

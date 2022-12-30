@@ -255,8 +255,7 @@ public class PinUPConnector implements InitializingBean {
     deleteFromPlaylists(id);
     deleteFromGames(id);
     deleteStats(id);
-
-    return false;
+    return true;
   }
 
   private void deleteFromGames(int gameId) {
@@ -618,10 +617,10 @@ public class PinUPConnector implements InitializingBean {
 
     if (emulator.getName().equalsIgnoreCase(Emulator.VISUAL_PINBALL_X)) {
       File vpxFile = new File(systemService.getVPXTablesFolder(), gameFileName);
-      if (!vpxFile.exists()) {
-//        LOG.warn("Game file " + vpxFile.getAbsolutePath() + " does not exist.");
-      }
       game.setGameFile(vpxFile);
+
+      File povFile = new File(systemService.getVPXTablesFolder(), FilenameUtils.getBaseName(gameFileName) + ".pov");
+      game.setPOVFile(povFile);
     }
     else if (emulator.getName().equalsIgnoreCase(Emulator.FUTURE_PINBALL)) {
       File fpFile = new File(systemService.getFuturePinballTablesFolder(), gameFileName);

@@ -76,7 +76,7 @@
                      <children>
                         <HBox alignment="CENTER_LEFT" GridPane.columnIndex="1">
                            <children>
-                              <CheckBox fx:id="importCheckbox" mnemonicParsing="false">
+                              <CheckBox fx:id="importCheckbox" mnemonicParsing="false" selected="true">
                                  <font>
                                     <Font size="14.0" />
                                  </font>

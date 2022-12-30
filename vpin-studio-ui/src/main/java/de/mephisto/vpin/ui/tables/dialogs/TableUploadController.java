@@ -4,6 +4,8 @@ import de.mephisto.vpin.commons.fx.DialogController;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.representations.PlaylistRepresentation;
 import de.mephisto.vpin.ui.Studio;
+import de.mephisto.vpin.ui.util.Dialogs;
+import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
@@ -58,22 +60,29 @@ public class TableUploadController implements Initializable, DialogController {
 
   @FXML
   private void onUploadClick(ActionEvent event) {
+    Stage stage = (Stage) ((Button) event.getSource()).getScene().getWindow();
     if (selection != null && !selection.isEmpty()) {
+      uploadBtn.setDisable(true);
       result = true;
       try {
         boolean importToPopper = this.importCheckbox.isSelected();
+        final PlaylistRepresentation value = this.playlistCombo.getValue();
+
         int playListId = -1;
-        PlaylistRepresentation value = this.playlistCombo.getValue();
         if(value != null) {
           playListId = value.getId();
         }
-        Studio.client.uploadTables(selection, importToPopper, playListId);
+
+        Platform.runLater(() -> {
+          stage.close();
+        });
+
+        TableUploadProgressModel model = new TableUploadProgressModel(client, "VPX Upload", selection, importToPopper, playListId);
+        Dialogs.createProgressDialog(model);
       } catch (Exception e) {
         LOG.error("Upload failed: " + e.getMessage(), e);
-        WidgetFactory.showAlert(stage, "Uploading VPX file failed.", "Please check the log file for details.", "Error: " + e.getMessage());
-      } finally {
-        Stage stage = (Stage) ((Button) event.getSource()).getScene().getWindow();
         stage.close();
+        WidgetFactory.showAlert(stage, "Uploading VPX file failed.", "Please check the log file for details.", "Error: " + e.getMessage());
       }
     }
   }
@@ -109,6 +118,7 @@ public class TableUploadController implements Initializable, DialogController {
     List<PlaylistRepresentation> playlists = client.getPlaylists();
     ObservableList<PlaylistRepresentation> data = FXCollections.observableList(playlists);
     this.playlistCombo.setItems(data);
+    this.playlistCombo.setDisable(false);
 
     importCheckbox.selectedProperty().addListener((observable, oldValue, newValue) -> playlistCombo.setDisable(!newValue));
   }

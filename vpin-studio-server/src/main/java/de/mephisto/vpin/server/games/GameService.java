@@ -1,5 +1,6 @@
 package de.mephisto.vpin.server.games;
 
+import de.mephisto.vpin.commons.utils.FileUtils;
 import de.mephisto.vpin.server.competitions.ScoreSummary;
 import de.mephisto.vpin.server.highscores.Highscore;
 import de.mephisto.vpin.server.highscores.HighscoreMetadata;
@@ -56,34 +57,31 @@ public class GameService {
 
   public boolean deleteGame(int id, boolean vpxDelete, boolean directb2sDelete, boolean popperDelete) {
     Game game = this.getGame(id);
-    if(vpxDelete) {
-      File gameFile = game.getGameFile();
-      if(gameFile.exists()) {
-        if(gameFile.delete()) {
-          LOG.info("Deleted " + gameFile.getAbsolutePath());
-        }
+    boolean success = true;
+    if (vpxDelete) {
+      if(!FileUtils.delete(game.getGameFile())) {
+        success = false;
       }
     }
 
-    if(directb2sDelete) {
-      if(game.getDirectB2SFile().exists()) {
-        if(game.getDirectB2SFile().delete()) {
-          LOG.info("Deleted " + game.getDirectB2SFile().getAbsolutePath());
-        }
+    if (directb2sDelete) {
+      if(!FileUtils.delete(game.getPOVFile())) {
+        success = false;
       }
-
-      if(game.getDirectB2SMediaFile().exists()) {
-        if(game.getDirectB2SMediaFile().delete()) {
-          LOG.info("Deleted " + game.getDirectB2SMediaFile().getAbsolutePath());
-        }
+      if(!FileUtils.delete(game.getDirectB2SFile())) {
+        success = false;
+      }
+      if(!FileUtils.delete(game.getDirectB2SMediaFile())) {
+        success = false;
       }
     }
 
-    if(popperDelete) {
-      pinUPConnector.deleteGame(id);
+    if (popperDelete) {
+      if(!pinUPConnector.deleteGame(id)) {
+        success = false;
+      }
     }
-
-    return true;
+    return success;
   }
 
   public int getGameCount() {
@@ -122,7 +120,7 @@ public class GameService {
     //check if the actual game still exists
     for (Score version : allHighscoreVersions) {
       Game game = getGame(version.getGameId());
-      if(game != null) {
+      if (game != null) {
         scores.add(version);
       }
     }
@@ -133,7 +131,7 @@ public class GameService {
         int gameId = highscore.getGameId();
         Game game = getGame(gameId);
         //check if the actual game still exists
-        if(game != null) {
+        if (game != null) {
           List<Score> collect = scores.stream().filter(s -> s.getGameId() == gameId).collect(Collectors.toList());
           if (collect.isEmpty()) {
             List<Score> versionScores = highscoreService.parseScores(highscore);
@@ -160,7 +158,7 @@ public class GameService {
   @Nullable
   public Game scanGame(int gameId) {
     Game game = getGame(gameId);
-    if(game != null) {
+    if (game != null) {
       Emulator emulator = game.getEmulator();
       if (!emulator.getName().equalsIgnoreCase(Emulator.VISUAL_PINBALL_X)) {
         return game;
@@ -212,7 +210,7 @@ public class GameService {
     if (gameDetails == null || forceScan) {
       ScanResult scanResult = romService.scanGameFile(game);
 
-      if(gameDetails == null) {
+      if (gameDetails == null) {
         gameDetails = new GameDetails();
       }
 

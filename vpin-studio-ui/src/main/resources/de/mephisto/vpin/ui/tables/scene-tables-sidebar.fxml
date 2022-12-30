@@ -319,11 +319,6 @@
                      <children>
                         <VBox>
                            <children>
-                              <Label text="Metadata">
-                                 <font>
-                                    <Font name="System Bold" size="14.0" />
-                                 </font>
-                              </Label>
                               <GridPane>
                                 <columnConstraints>
                                   <ColumnConstraints hgrow="SOMETIMES" maxWidth="297.4000732421875" minWidth="104.8000244140625" prefWidth="104.8000244140625" />

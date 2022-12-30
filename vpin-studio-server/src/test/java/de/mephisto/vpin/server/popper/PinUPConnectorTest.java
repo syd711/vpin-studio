@@ -37,10 +37,10 @@ public class PinUPConnectorTest extends VPinServerTest {
 
   @Test
   public void testGameAdding() {
-    File file = new File("C:\\vPinball\\VisualPinball\\Tables\\Agents 777.vpx");
+    File file = new File("src/test/resources/Aces High (1965).vpx");
     int l = connector.importVPXFile(file);
     if (l > 0) {
-      gameService.deleteGame(l, true, true, true);
+      assertTrue(connector.deleteGame(l));
     }
     assertTrue(l > 0);
   }
