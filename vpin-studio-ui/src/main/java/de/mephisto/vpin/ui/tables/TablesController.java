@@ -94,6 +94,9 @@ public class TablesController implements Initializable, StudioFXController {
   private Button validateBtn;
 
   @FXML
+  private Button deleteBtn;
+
+  @FXML
   private Button scanBtn;
 
   @FXML
@@ -153,15 +156,6 @@ public class TablesController implements Initializable, StudioFXController {
   }
 
   @FXML
-  private void onOpenDirectB2SBackground() {
-    GameRepresentation game = tableView.getSelectionModel().getSelectedItem();
-    if (game != null) {
-      ByteArrayInputStream s = client.getDirectB2SImage(game);
-      MediaUtil.openMedia(s);
-    }
-  }
-
-  @FXML
   private void onSearchKeyPressed(KeyEvent e) {
     if (e.getCode().equals(KeyCode.ENTER)) {
       tableView.getSelectionModel().select(0);
@@ -175,6 +169,11 @@ public class TablesController implements Initializable, StudioFXController {
     if (updated) {
       onReload();
     }
+  }
+
+  @FXML
+  private void onDelete() {
+
   }
 
   @FXML

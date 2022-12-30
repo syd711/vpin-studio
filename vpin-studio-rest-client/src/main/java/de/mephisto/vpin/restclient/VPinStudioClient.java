@@ -473,10 +473,12 @@ public class VPinStudioClient implements ObservedPropertyChangeListener, Overlay
     }
   }
 
-  public boolean uploadRom(File file) throws Exception {
+  public boolean uploadRom(List<File> files) throws Exception {
     try {
-      String url = restClient.getBaseUrl() + API + "games/upload/rom";
-      new RestTemplate().exchange(url, HttpMethod.POST, createUpload(file, -1, null, AssetType.ROM), Boolean.class);
+      for (File file : files) {
+        String url = restClient.getBaseUrl() + API + "games/upload/rom";
+        new RestTemplate().exchange(url, HttpMethod.POST, createUpload(file, -1, null, AssetType.ROM), Boolean.class);
+      }
       return true;
     } catch (Exception e) {
       LOG.error("Rom upload failed: " + e.getMessage(), e);

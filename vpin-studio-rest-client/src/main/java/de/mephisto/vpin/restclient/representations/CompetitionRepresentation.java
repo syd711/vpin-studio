@@ -3,6 +3,7 @@ package de.mephisto.vpin.restclient.representations;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
+import java.util.Calendar;
 import java.util.Date;
 
 public class CompetitionRepresentation {
@@ -119,13 +120,17 @@ public class CompetitionRepresentation {
   public CompetitionRepresentation cloneCompetition() {
     CompetitionRepresentation clone = new CompetitionRepresentation();
 
-    LocalDate start = LocalDate.now();
+    LocalDate start = getStartDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
     LocalDate end = getEndDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
-    long diff = Math.abs(ChronoUnit.DAYS.between(end, start));
+    int diff = (int) Math.abs(ChronoUnit.DAYS.between(end, start));
 
-    LocalDate newEndDate = ChronoUnit.DAYS.addTo(end, diff);
+    Calendar c = Calendar.getInstance();
+    c.setTime(getEndDate());
+    c.add(Calendar.DATE, diff);
+    Date newEndDate = c.getTime();
+
     clone.setStartDate(Date.from(end.atStartOfDay(ZoneId.systemDefault()).toInstant()));
-    clone.setEndDate(Date.from(newEndDate.atStartOfDay(ZoneId.systemDefault()).toInstant()));
+    clone.setEndDate(newEndDate);
 
     clone.setName(this.getName() + "(1)");
     clone.setBadge(this.getBadge());

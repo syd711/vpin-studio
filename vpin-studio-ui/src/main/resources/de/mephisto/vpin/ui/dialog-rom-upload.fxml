@@ -38,10 +38,16 @@
                <children>
                   <TextField fx:id="fileNameField" prefHeight="26.0" prefWidth="375.0">
                      <HBox.margin>
-                        <Insets left="12.0" right="12.0" />
+                        <Insets right="12.0" />
                      </HBox.margin>
+                     <font>
+                        <Font size="14.0" />
+                     </font>
                   </TextField>
-                  <Button mnemonicParsing="false" onAction="#onFileSelect" prefHeight="26.0" prefWidth="99.0" text="Select File..." />
+                  <Button mnemonicParsing="false" onAction="#onFileSelect" prefHeight="26.0" prefWidth="99.0" text="Select File...">
+                     <font>
+                        <Font size="14.0" />
+                     </font></Button>
                </children>
             </HBox>
          </center>
@@ -51,12 +57,12 @@
                   <Font size="14.0" />
                </font>
                <BorderPane.margin>
-                  <Insets bottom="6.0" left="12.0" />
+                  <Insets bottom="6.0" />
                </BorderPane.margin>
             </Label>
          </top>
          <BorderPane.margin>
-            <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
+            <Insets bottom="24.0" left="24.0" right="24.0" top="24.0" />
          </BorderPane.margin>
       </BorderPane>
    </center>

@@ -54,7 +54,7 @@
                      <top>
                         <ToolBar prefHeight="40.0" style="-fx-background-radius: 3 3 0 0;" styleClass="base-component" BorderPane.alignment="CENTER">
                           <items>
-                              <TextField fx:id="textfieldSearch" onKeyPressed="#onSearchKeyPressed" prefHeight="26.0" prefWidth="250.0" promptText="Table Search...">
+                              <TextField fx:id="textfieldSearch" onKeyPressed="#onSearchKeyPressed" prefHeight="30.0" prefWidth="215.0" promptText="Table Search...">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
@@ -78,6 +78,7 @@
                                     <FontIcon iconColor="WHITE" iconLiteral="mdi2u-upload" />
                                  </graphic>
                               </Button>
+                              <Separator orientation="VERTICAL" prefHeight="30.0" prefWidth="12.0" />
                               <Button fx:id="scanAllBtn" mnemonicParsing="false" onAction="#onTablesScan" text="Scan All " textFill="WHITE">
                                  <font>
                                     <Font size="14.0" />
@@ -94,7 +95,6 @@
                                     <FontIcon iconColor="WHITE" iconLiteral="mdi2m-map-search" />
                                  </graphic>
                               </Button>
-                              <Separator orientation="VERTICAL" prefHeight="30.0" prefWidth="12.0" />
                               <Button fx:id="validateBtn" mnemonicParsing="false" onAction="#onValidate" text="Validate" textFill="WHITE">
                                  <font>
                                     <Font size="14.0" />
@@ -105,6 +105,15 @@
                                  <tooltip>
                                     <Tooltip text="Resets the dismissed validations and revalidates the table configuration." />
                                  </tooltip>
+                              </Button>
+                              <Separator layoutX="768.0" layoutY="10.0" orientation="VERTICAL" prefHeight="30.0" prefWidth="12.0" />
+                              <Button fx:id="deleteBtn" mnemonicParsing="false" onAction="#onDelete" text="Delete" textFill="WHITE">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                                 <graphic>
+                                    <FontIcon iconColor="WHITE" iconLiteral="mdi2d-delete-outline" text="󰧧" />
+                                 </graphic>
                               </Button>
                           </items>
                            <BorderPane.margin>

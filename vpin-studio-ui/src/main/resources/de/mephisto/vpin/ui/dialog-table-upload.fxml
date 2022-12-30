@@ -132,7 +132,7 @@
             </Label>
          </top>
          <BorderPane.margin>
-            <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
+            <Insets bottom="24.0" left="24.0" right="24.0" top="24.0" />
          </BorderPane.margin>
       </BorderPane>
    </center>

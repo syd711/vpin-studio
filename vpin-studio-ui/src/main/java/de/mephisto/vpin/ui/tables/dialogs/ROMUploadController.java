@@ -16,7 +16,9 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.net.URL;
+import java.util.List;
 import java.util.ResourceBundle;
+import java.util.stream.Collectors;
 
 import static de.mephisto.vpin.ui.Studio.stage;
 
@@ -31,7 +33,7 @@ public class ROMUploadController implements Initializable, DialogController {
   @FXML
   private Button uploadBtn;
 
-  private File selection;
+  private List<File> selection;
 
   private boolean result = false;
 
@@ -43,7 +45,7 @@ public class ROMUploadController implements Initializable, DialogController {
 
   @FXML
   private void onUploadClick(ActionEvent event) {
-    if (selection != null && selection.exists()) {
+    if (selection != null && !selection.isEmpty()) {
       result = true;
       try {
         Studio.client.uploadRom(selection);
@@ -68,10 +70,10 @@ public class ROMUploadController implements Initializable, DialogController {
       fileChooser.setInitialDirectory(ROMUploadController.lastFolderSelection);
     }
 
-    this.selection = fileChooser.showOpenDialog(stage);
-    if (this.selection != null) {
-      ROMUploadController.lastFolderSelection = this.selection.getParentFile();
-      this.fileNameField.setText(this.selection.getAbsolutePath());
+    this.selection = fileChooser.showOpenMultipleDialog(stage);
+    if (this.selection != null && !this.selection.isEmpty()) {
+      ROMUploadController.lastFolderSelection = this.selection.get(0).getParentFile();
+      this.fileNameField.setText(this.selection.stream().map(f -> f.getName()).collect(Collectors.joining()));
     }
     else {
       this.fileNameField.setText("");

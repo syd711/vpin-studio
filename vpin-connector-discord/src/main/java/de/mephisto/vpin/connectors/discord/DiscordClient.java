@@ -134,8 +134,13 @@ public class DiscordClient extends ListenerAdapter {
   private List<DiscordMember> createMemberList(List<Member> members) {
     List<DiscordMember> result = new ArrayList<>();
     for (Member member : members) {
+      if(member.getUser().isBot()) {
+        continue;
+      }
+
       String name = member.getEffectiveName();
       String initials = resolveInitials(name);
+
 
       DiscordMember discordMember = new DiscordMember();
       discordMember.setId(member.getIdLong());
