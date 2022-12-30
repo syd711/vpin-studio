@@ -252,21 +252,43 @@ public class PinUPConnector implements InitializingBean {
   }
 
   public boolean deleteGame(int id) {
+    deleteFromPlaylists(id);
+    deleteFromGames(id);
+    deleteStats(id);
+
+    return false;
+  }
+
+  private void deleteFromGames(int gameId) {
     Connection connect = this.connect();
     try {
       PreparedStatement preparedStatement = connect.prepareStatement("DELETE FROM Games where GameID = ?");
-      preparedStatement.setInt(1, id);
+      preparedStatement.setInt(1, gameId);
       preparedStatement.executeUpdate();
       preparedStatement.close();
 
-      LOG.info("Deleted game entry with id " + id);
-      return true;
+      LOG.info("Deleted game entry with id " + gameId);
     } catch (Exception e) {
       LOG.error("Failed to update game table:" + e.getMessage(), e);
     } finally {
       this.disconnect(connect);
     }
-    return false;
+  }
+
+  private void deleteStats(int gameId) {
+    Connection connect = this.connect();
+    try {
+      PreparedStatement preparedStatement = connect.prepareStatement("DELETE FROM GamesStats where GameID = ?");
+      preparedStatement.setInt(1, gameId);
+      preparedStatement.executeUpdate();
+      preparedStatement.close();
+
+      LOG.info("Deleted game stats entry with id " + gameId);
+    } catch (Exception e) {
+      LOG.error("Failed to update game stats table:" + e.getMessage(), e);
+    } finally {
+      this.disconnect(connect);
+    }
   }
 
   @NonNull
@@ -305,6 +327,22 @@ public class PinUPConnector implements InitializingBean {
       preparedStatement.close();
 
       LOG.info("Added play list entry for " + playlistId);
+    } catch (SQLException e) {
+      LOG.error("Failed to update playlist details: " + e.getMessage(), e);
+    } finally {
+      this.disconnect(connect);
+    }
+  }
+
+  public void deleteFromPlaylists(int gameId) {
+    Connection connect = this.connect();
+    try {
+      PreparedStatement preparedStatement = connect.prepareStatement("DELETE FROM PlayListDetails WHERE GameID = ?");
+      preparedStatement.setInt(1, gameId);
+      preparedStatement.executeUpdate();
+      preparedStatement.close();
+
+      LOG.info("Removed game " + gameId + " from playlist list");
     } catch (SQLException e) {
       LOG.error("Failed to update playlist details: " + e.getMessage(), e);
     } finally {
