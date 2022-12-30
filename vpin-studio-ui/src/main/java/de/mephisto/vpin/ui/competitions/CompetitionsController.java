@@ -279,6 +279,7 @@ public class CompetitionsController implements Initializable, StudioFXController
       String winner = "-";
 
       if (!StringUtils.isEmpty(value.getWinnerInitials())) {
+        winner = value.getWinnerInitials();
         PlayerRepresentation player = client.getPlayer(value.getWinnerInitials());
         if(player != null) {
           winner = player.getName();

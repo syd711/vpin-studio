@@ -10,12 +10,14 @@ import de.mephisto.vpin.commons.fx.UIDefaults;
 import eu.hansolo.tilesfx.Tile;
 import eu.hansolo.tilesfx.TileBuilder;
 import javafx.application.Platform;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.Parent;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.layout.BorderPane;
@@ -40,6 +42,9 @@ public class NavigationController implements Initializable {
 
   @FXML
   private BorderPane avatarPane;
+
+  @FXML
+  private Button dashboardBtn;
 
   public static StudioFXController activeController;
 
@@ -103,6 +108,18 @@ public class NavigationController implements Initializable {
   }
 
   public static void loadScreen(ActionEvent event, Class<?> controller, String name) throws IOException {
+    if(event != null) {
+      Button b = (Button) event.getSource();
+      ObservableList<Node> childrenUnmodifiable = b.getParent().getChildrenUnmodifiable();
+      for (Node node : childrenUnmodifiable) {
+        node.getStyleClass().remove("navigation-button-selected");
+      }
+      b.getStyleClass().add("navigation-button-selected");
+    }
+    else {
+
+    }
+
     activeScreenId = name;
     Node lookup = Studio.stage.getScene().lookup("#main");
     BorderPane main = (BorderPane) lookup;
@@ -138,6 +155,8 @@ public class NavigationController implements Initializable {
       }
     }
     refreshAvatar();
+
+    dashboardBtn.getStyleClass().add("navigation-button-selected");
   }
 
   private static void refreshAvatar() {
