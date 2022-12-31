@@ -65,7 +65,7 @@ public class GameService {
     }
 
     if (directb2sDelete) {
-      if(!FileUtils.delete(game.getPOVFile())) {
+      if(game.getPOVFile() != null && !FileUtils.delete(game.getPOVFile())) {
         success = false;
       }
       if(!FileUtils.delete(game.getDirectB2SFile())) {

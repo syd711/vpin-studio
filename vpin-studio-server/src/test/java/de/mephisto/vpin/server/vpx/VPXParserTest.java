@@ -1,5 +1,6 @@
 package de.mephisto.vpin.server.vpx;
 
+import de.mephisto.vpin.commons.POV;
 import de.mephisto.vpin.server.VPinStudioException;
 import org.junit.jupiter.api.Test;
 

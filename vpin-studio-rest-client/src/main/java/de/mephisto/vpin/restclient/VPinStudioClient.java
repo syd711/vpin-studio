@@ -70,10 +70,38 @@ public class VPinStudioClient implements ObservedPropertyChangeListener, Overlay
   /*********************************************************************************************************************
    * VPX
    ********************************************************************************************************************/
+  public POVRepresentation getPOV(int gameId) {
+    return restClient.get(API + "vpx/pov/" + gameId, POVRepresentation.class);
+  }
+
+  public boolean setPOVPreference(int gameId, String property, Object value) {
+    try {
+      Map<String, Object> values = new HashMap<>();
+      values.put("property", property);
+      values.put("value", value);
+      return restClient.put(API + "vpx/pov/" + gameId, values);
+    } catch (Exception e) {
+      LOG.error("Failed to set preferences: " + e.getMessage(), e);
+    }
+    return false;
+  }
+
+
+  public POVRepresentation createPOV(int gameId) throws Exception {
+    try {
+      POVRepresentation pov = new POVRepresentation();
+      pov.setGameId(gameId);
+      return restClient.post(API + "vpx/pov", pov, POVRepresentation.class);
+    } catch (Exception e) {
+      LOG.error("Failed to create POV representation: " + e.getMessage(), e);
+      throw e;
+    }
+  }
+
   public File getTableScript(int gameId) {
     final RestTemplate restTemplate = new RestTemplate();
     String src = restTemplate.getForObject(restClient.getBaseUrl() + API + "vpx/script/" + gameId, String.class);
-    if(!StringUtils.isEmpty(src)) {
+    if (!StringUtils.isEmpty(src)) {
       try {
         File tmp = File.createTempFile("script-src-" + gameId, ".txt");
 

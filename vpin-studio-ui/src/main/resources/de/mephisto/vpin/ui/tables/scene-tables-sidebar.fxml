@@ -4,6 +4,7 @@
 <?import javafx.scene.control.Accordion?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.Slider?>
@@ -242,47 +243,7 @@
                   </BorderPane>
                </graphic>
                 </TitledPane>
-                <TitledPane expanded="false" prefWidth="600.0" text="Audio Settings">
-                    <content>
-                        <BorderPane prefHeight="200.0" prefWidth="200.0">
-                            <center>
-                                <VBox prefHeight="200.0" prefWidth="100.0" BorderPane.alignment="CENTER">
-                                    <children>
-                              <HBox alignment="CENTER_LEFT" spacing="6.0">
-                                 <children>
-                                              <Label text="PinUP Popper Table Volume">
-                                                  <font>
-                                                      <Font size="14.0" />
-                                                  </font>
-                                              </Label>
-                                    <Label>
-                                       <font>
-                                          <Font size="14.0" />
-                                       </font>
-                                       <graphic>
-                                          <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
-                                       </graphic>
-                                       <tooltip>
-                                          <Tooltip text="Launches the game at the given volume level (%based on current Popper PC Volume)" />
-                                       </tooltip>
-                                    </Label>
-                                 </children>
-                              </HBox>
-                                        <Slider fx:id="volumeSlider" value="100.0">
-                                            <VBox.margin>
-                                                <Insets top="6.0" />
-                                            </VBox.margin>
-                                        </Slider>
-                                    </children>
-                                </VBox>
-                            </center>
-                            <padding>
-                                <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
-                            </padding>
-                        </BorderPane>
-                    </content>
-                </TitledPane>
-                <TitledPane layoutX="10.0" layoutY="104.0" prefWidth="600.0" text="DirectB2S">
+                <TitledPane expanded="false" layoutX="10.0" layoutY="104.0" prefWidth="600.0" text="DirectB2S">
                     <content>
                         <VBox prefHeight="200.0" prefWidth="100.0">
                             <children>
@@ -328,7 +289,7 @@
                         </VBox>
                     </content>
                 </TitledPane>
-            <TitledPane text="Highscore">
+            <TitledPane expanded="false" text="Highscore">
               <content>
                 <AnchorPane minHeight="0.0" minWidth="0.0" prefWidth="200.0">
                      <children>
@@ -471,16 +432,16 @@
                   </AnchorPane>
               </content>
             </TitledPane>
-            <TitledPane animated="false" text="Point Of View">
+            <TitledPane expanded="false" text="Point Of View">
                <content>
                   <BorderPane>
                      <center>
-                        <VBox BorderPane.alignment="CENTER">
+                        <VBox fx:id="povSettingsPane" BorderPane.alignment="CENTER">
                            <children>
                               <GridPane>
                                 <columnConstraints>
-                                  <ColumnConstraints hgrow="SOMETIMES" maxWidth="282.20001220703125" minWidth="10.0" prefWidth="233.3999481201172" />
-                                  <ColumnConstraints hgrow="SOMETIMES" maxWidth="340.6000518798828" minWidth="10.0" prefWidth="340.6000518798828" />
+                                  <ColumnConstraints hgrow="SOMETIMES" maxWidth="282.20001220703125" minWidth="10.0" prefWidth="246.4000030517578" />
+                                  <ColumnConstraints hgrow="SOMETIMES" maxWidth="340.6000518798828" minWidth="10.0" prefWidth="327.99999694824214" />
                                 </columnConstraints>
                                 <rowConstraints>
                                   <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
@@ -575,6 +536,11 @@
                                           <Font name="System Bold" size="14.0" />
                                        </font>
                                     </Label>
+                                    <ComboBox fx:id="povSSAACombo" prefWidth="150.0" GridPane.columnIndex="1" />
+                                    <ComboBox fx:id="povPostprocAACombo" layoutX="244.0" layoutY="10.0" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                                    <ComboBox fx:id="povIngameAOCombo" layoutX="244.0" layoutY="41.0" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                                    <ComboBox fx:id="povScSpReflectCombo" layoutX="244.0" layoutY="72.0" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                                    <ComboBox fx:id="povFpsLimiterCombo" layoutX="244.0" layoutY="102.0" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="4" />
                                  </children>
                               </GridPane>
                            </children>
@@ -586,9 +552,68 @@
                      <padding>
                         <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
                      </padding>
+                     <top>
+                        <VBox fx:id="povCreatePane" BorderPane.alignment="TOP_LEFT">
+                           <children>
+                              <Label text="This table does not have a POV file.">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </Label>
+                              <Button mnemonicParsing="false" onAction="#onPOVExport" text="Export POV File">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                                 <VBox.margin>
+                                    <Insets top="12.0" />
+                                 </VBox.margin>
+                              </Button>
+                           </children>
+                        </VBox>
+                     </top>
                   </BorderPane>
                </content>
             </TitledPane>
+                <TitledPane expanded="false" prefWidth="600.0" text="Audio Settings">
+                    <content>
+                        <BorderPane prefHeight="200.0" prefWidth="200.0">
+                            <center>
+                                <VBox prefHeight="200.0" prefWidth="100.0" BorderPane.alignment="CENTER">
+                                    <children>
+                              <HBox alignment="CENTER_LEFT" spacing="6.0">
+                                 <children>
+                                              <Label text="PinUP Popper Table Volume">
+                                                  <font>
+                                                      <Font size="14.0" />
+                                                  </font>
+                                              </Label>
+                                    <Label>
+                                       <font>
+                                          <Font size="14.0" />
+                                       </font>
+                                       <graphic>
+                                          <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
+                                       </graphic>
+                                       <tooltip>
+                                          <Tooltip text="Launches the game at the given volume level (%based on current Popper PC Volume)" />
+                                       </tooltip>
+                                    </Label>
+                                 </children>
+                              </HBox>
+                                        <Slider fx:id="volumeSlider" value="100.0">
+                                            <VBox.margin>
+                                                <Insets top="6.0" />
+                                            </VBox.margin>
+                                        </Slider>
+                                    </children>
+                                </VBox>
+                            </center>
+                            <padding>
+                                <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
+                            </padding>
+                        </BorderPane>
+                    </content>
+                </TitledPane>
                 <TitledPane expanded="false" prefHeight="400.0" prefWidth="600.0" text="Metadata">
                     <content>
                         <BorderPane prefWidth="598.0">

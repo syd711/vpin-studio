@@ -1,6 +1,6 @@
-package de.mephisto.vpin.server.vpx;
+package de.mephisto.vpin.restclient.representations;
 
-public class POV {
+public class POVRepresentation {
   private int gameId;
 
   private int ssaa;

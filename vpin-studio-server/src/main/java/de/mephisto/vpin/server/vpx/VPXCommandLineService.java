@@ -27,7 +27,7 @@ public class VPXCommandLineService {
     File target = new File(gameFile.getParentFile(), FilenameUtils.getBaseName(gameFile.getName()) + "." + fileSuffix);
 
     try {
-      LOG.info("Extracting VBS for " + gameFile.getAbsolutePath());
+      LOG.info("Executing VPX " + commandParam + "command for " + gameFile.getAbsolutePath());
       SystemCommandExecutor executor = new SystemCommandExecutor(Arrays.asList(vpxExe.getAbsolutePath(), commandParam, gameFile.getAbsolutePath()));
       executor.executeCommandAsync();
 
@@ -36,7 +36,7 @@ public class VPXCommandLineService {
         LOG.error("VPX command failed:\n" + standardErrorFromCommand);
       }
     } catch (Exception e) {
-      LOG.error("Error executing shutdown: " + e.getMessage(), e);
+      LOG.error("Error executing VPX command: " + e.getMessage(), e);
     }
 
     int count = 0;

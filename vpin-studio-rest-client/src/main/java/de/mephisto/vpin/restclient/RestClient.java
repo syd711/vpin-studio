@@ -81,6 +81,7 @@ public class RestClient implements ClientHttpRequestInterceptor {
   }
 
   public <T> T post(String path, Object model, Class<T> entityType) throws Exception {
+    LOG.info("HTTP POST " + path);
     HttpHeaders headers = new HttpHeaders();
     headers.setContentType(MediaType.APPLICATION_JSON);
     HttpEntity entity = new HttpEntity<>(model, headers);
@@ -88,6 +89,7 @@ public class RestClient implements ClientHttpRequestInterceptor {
   }
 
   public Boolean put(String url, Map<String, Object> model) throws Exception {
+    LOG.info("HTTP PUT " + url);
     HttpHeaders headers = new HttpHeaders();
     headers.setContentType(MediaType.APPLICATION_JSON);
     HttpEntity<Map> entity = new HttpEntity<>(model, headers);

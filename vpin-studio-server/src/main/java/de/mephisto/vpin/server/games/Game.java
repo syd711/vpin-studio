@@ -163,10 +163,14 @@ public class Game {
     return gameFile;
   }
 
-  @NonNull
+  @Nullable
   @JsonIgnore
   public File getPOVFile() {
     return povFile;
+  }
+
+  public boolean isPOV() {
+    return this.povFile != null && this.povFile.exists();
   }
 
   public void setPOVFile(File povFile) {

@@ -1,11 +1,14 @@
 package de.mephisto.vpin.server.vpx;
 
+import de.mephisto.vpin.commons.POV;
 import de.mephisto.vpin.commons.utils.FileUtils;
 import de.mephisto.vpin.server.VPinStudioException;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.BeanWrapper;
+import org.springframework.beans.BeanWrapperImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -14,6 +17,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Map;
 
 import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 
@@ -42,10 +46,28 @@ public class VPXService {
     }
   }
 
+  public boolean savePOVPreference(int gameId, Map<String, Object> values) {
+    POV pov = getPOV(gameId);
+    if (pov != null) {
+      BeanWrapper bean = new BeanWrapperImpl(pov);
+      String property = (String) values.get("property");
+      Object value = values.get("value");
+      bean.setPropertyValue(property, value);
+      save(pov);
+      return true;
+    }
+    return false;
+  }
+
   public POV save(POV pov) {
     try {
       Game game = gameService.getGame(pov.getGameId());
       if (game != null) {
+        if (!game.getPOVFile().exists()) {
+          createPOV(game.getId());
+          return getPOV(game.getId());
+        }
+
         POVSerializer.serialize(pov, game);
       }
       return pov;

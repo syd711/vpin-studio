@@ -1,15 +1,19 @@
 package de.mephisto.vpin.ui.tables;
 
+import de.mephisto.vpin.commons.POV;
 import de.mephisto.vpin.commons.fx.widgets.WidgetController;
+import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.PopperScreen;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.VPinStudioClient;
 import de.mephisto.vpin.restclient.representations.*;
 import de.mephisto.vpin.ui.Studio;
+import de.mephisto.vpin.ui.tables.dialogs.POVExportProgressModel;
 import de.mephisto.vpin.ui.util.BindingUtil;
 import de.mephisto.vpin.ui.util.Dialogs;
 import de.mephisto.vpin.ui.util.MediaUtil;
-import de.mephisto.vpin.commons.utils.WidgetFactory;
+import de.mephisto.vpin.ui.util.ProgressResultModel;
+import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -32,7 +36,10 @@ import java.io.InputStream;
 import java.net.URL;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Optional;
+import java.util.ResourceBundle;
 
 public class TablesSidebarController implements Initializable {
   private final static Logger LOG = LoggerFactory.getLogger(TablesSidebarController.class);
@@ -84,6 +91,12 @@ public class TablesSidebarController implements Initializable {
 
   @FXML
   private Pane mediaRootPane;
+
+  @FXML
+  private VBox povSettingsPane;
+
+  @FXML
+  private VBox povCreatePane;
 
   @FXML
   private Label labelId;
@@ -181,6 +194,21 @@ public class TablesSidebarController implements Initializable {
   @FXML
   private VBox assetList;
 
+  @FXML
+  private ComboBox<POVComboModel> povSSAACombo;
+
+  @FXML
+  private ComboBox<POVComboModel> povPostprocAACombo;
+
+  @FXML
+  private ComboBox<POVComboModel> povIngameAOCombo;
+
+  @FXML
+  private ComboBox<POVComboModel> povScSpReflectCombo;
+
+  @FXML
+  private ComboBox<POVComboModel> povFpsLimiterCombo;
+
   private VPinStudioClient client;
 
   private Optional<GameRepresentation> game = Optional.empty();
@@ -195,6 +223,7 @@ public class TablesSidebarController implements Initializable {
   public void initialize(URL url, ResourceBundle resourceBundle) {
     client = Studio.client;
     this.accordion.setExpandedPane(titledPaneMedia);
+    povCreatePane.managedProperty().bind(povCreatePane.visibleProperty());
 
     volumeSlider.valueProperty().addListener((observableValue, number, t1) -> {
       if (game.isPresent()) {
@@ -224,6 +253,9 @@ public class TablesSidebarController implements Initializable {
     });
 
     mediaPreviewCheckbox.selectedProperty().addListener((observable, oldValue, newValue) -> refreshView(game));
+
+    povSSAACombo.setItems(FXCollections.observableList(POVComboModel.MODELS));
+    povSSAACombo.valueProperty().addListener((observable, oldValue, newValue) -> client.setPOVPreference(game.get().getId(), POV.SSAA, newValue.getValue()));
   }
 
   public void setTablesController(TablesController tablesController) {
@@ -331,6 +363,20 @@ public class TablesSidebarController implements Initializable {
   }
 
   @FXML
+  private void onPOVExport() {
+    if(game.isPresent()) {
+      GameRepresentation g = game.get();
+      ProgressResultModel resultModel = Dialogs.createProgressDialog(new POVExportProgressModel(client, "Export POV Settings", g));
+      if (!resultModel.getResults().isEmpty()) {
+        tablesController.onReload();
+      }
+      else {
+        WidgetFactory.showAlert(Studio.stage, "POV export failed, check log for details.");
+      }
+    }
+  }
+
+  @FXML
   private void onScan() {
     refreshHighscore(game, true);
   }
@@ -353,29 +399,29 @@ public class TablesSidebarController implements Initializable {
 
     if (gameRepresentation.isPresent()) {
       GameRepresentation game = gameRepresentation.get();
-      if(forceRescan) {
+      if (forceRescan) {
         client.scanGameScore(game.getId());
       }
 
       ScoreSummaryRepresentation summary = client.getGameScores(game.getId());
-      if(summary != null && summary.getMetadata() != null) {
-        if(summary.getMetadata().getFilename() != null) {
+      if (summary != null && summary.getMetadata() != null) {
+        if (summary.getMetadata().getFilename() != null) {
           this.hsFileLabel.setText(summary.getMetadata().getFilename());
         }
 
-        if(summary.getMetadata().getStatus() != null) {
+        if (summary.getMetadata().getStatus() != null) {
           this.hsStatusLabel.setText(summary.getMetadata().getStatus());
         }
 
-        if(summary.getMetadata().getType() != null) {
+        if (summary.getMetadata().getType() != null) {
           this.hsTypeLabel.setText(summary.getMetadata().getType());
         }
 
-        if(summary.getMetadata().getModified() != null) {
+        if (summary.getMetadata().getModified() != null) {
           this.hsLastModifiedLabel.setText(SimpleDateFormat.getDateTimeInstance().format(summary.getMetadata().getModified()));
         }
 
-        if(summary.getMetadata().getScanned() != null) {
+        if (summary.getMetadata().getScanned() != null) {
           this.hsLastScannedLabel.setText(SimpleDateFormat.getDateTimeInstance().format(summary.getMetadata().getScanned()));
         }
 
@@ -411,7 +457,7 @@ public class TablesSidebarController implements Initializable {
   @FXML
   private void onHsFileNameEdit() {
     GameRepresentation gameRepresentation = game.get();
-    String fs = WidgetFactory.showInputDialog(Studio.stage, "EM Highscore Filename","Enter EM Highscore Filename",
+    String fs = WidgetFactory.showInputDialog(Studio.stage, "EM Highscore Filename", "Enter EM Highscore Filename",
         "Enter the name of the highscore file for this table.", "If available, the file is located in the 'VisualPinball\\User' folder.", gameRepresentation.getHsFileName());
     if (fs != null) {
       gameRepresentation.setHsFileName(fs);
@@ -441,6 +487,9 @@ public class TablesSidebarController implements Initializable {
   }
 
   private void refreshView(Optional<GameRepresentation> g) {
+    povSettingsPane.setVisible(g.isEmpty());
+    povCreatePane.setVisible(g.isEmpty());
+
     editHsFileNameBtn.setDisable(g.isEmpty());
     editRomNameBtn.setDisable(g.isEmpty());
     editTableNameBtn.setDisable(g.isEmpty());
@@ -452,11 +501,15 @@ public class TablesSidebarController implements Initializable {
       GameRepresentation game = g.get();
       GameMediaRepresentation gameMedia = game.getGameMedia();
 
+      povSettingsPane.setVisible(game.isPov());
+      povCreatePane.setVisible(!game.isPov());
+
       editHsFileNameBtn.setDisable(!game.getEmulator().isVisualPinball());
       editRomNameBtn.setDisable(!game.getEmulator().isVisualPinball());
       editTableNameBtn.setDisable(!game.getEmulator().isVisualPinball());
       romUploadBtn.setDisable(!game.getEmulator().isVisualPinball());
       scanBtn.setDisable(!game.getEmulator().isVisualPinball());
+
 
       volumeSlider.setDisable(false);
       volumeSlider.setValue(game.getVolume());
@@ -480,6 +533,7 @@ public class TablesSidebarController implements Initializable {
       }
 
       refreshDirectB2SPreview(g);
+      refreshPOV(g);
 
       if (titledPaneMedia.isExpanded()) {
         refreshMedia(gameMedia);
@@ -506,6 +560,17 @@ public class TablesSidebarController implements Initializable {
       refreshDirectB2SPreview(Optional.empty());
     }
     refreshHighscore(g, false);
+  }
+
+  private void refreshPOV(Optional<GameRepresentation> g) {
+    if(g.isPresent()) {
+      GameRepresentation game = g.get();
+      if(game.isPov()) {
+        POVRepresentation pov = client.getPOV(game.getId());
+
+        povSSAACombo.valueProperty().setValue(POVComboModel.forValue(pov.getSsaa()));
+      }
+    }
   }
 
   private void refreshDirectB2SPreview(Optional<GameRepresentation> game) {

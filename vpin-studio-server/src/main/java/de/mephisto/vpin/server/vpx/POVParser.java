@@ -1,5 +1,6 @@
 package de.mephisto.vpin.server.vpx;
 
+import de.mephisto.vpin.commons.POV;
 import de.mephisto.vpin.server.VPinStudioException;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import org.slf4j.Logger;

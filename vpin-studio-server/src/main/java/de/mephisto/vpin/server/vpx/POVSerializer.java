@@ -1,5 +1,6 @@
 package de.mephisto.vpin.server.vpx;
 
+import de.mephisto.vpin.commons.POV;
 import de.mephisto.vpin.server.VPinStudioException;
 import de.mephisto.vpin.server.games.Game;
 import edu.umd.cs.findbugs.annotations.NonNull;
@@ -15,11 +16,13 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import java.io.File;
 import java.io.FileWriter;
+import java.io.IOException;
 
 public class POVSerializer {
   private final static Logger LOG = LoggerFactory.getLogger(POVSerializer.class);
@@ -53,16 +56,7 @@ public class POVSerializer {
         }
       }
 
-      TransformerFactory transformerFactory = TransformerFactory.newInstance();
-      Transformer transformer = transformerFactory.newTransformer();
-      transformer.setOutputProperty(OutputKeys.INDENT, "yes");
-      transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "4");
-      DOMSource source = new DOMSource(doc);
-      FileWriter writer = new FileWriter(povFile);
-      StreamResult result = new StreamResult(writer);
-      transformer.transform(source, result);
-
-      LOG.info("Written " + povFile.getAbsolutePath());
+      write(povFile, doc);
     } catch (Exception e) {
       String msg = "Failed to parse pov file '" + povFile.getAbsolutePath() + "': " + e.getMessage();
       LOG.error(msg, e);
@@ -70,6 +64,15 @@ public class POVSerializer {
     }
   }
 
+  private static void write(File povFile, Document doc) throws IOException, TransformerException {
+    TransformerFactory transformerFactory = TransformerFactory.newInstance();
+    Transformer transformer = transformerFactory.newTransformer();
+    DOMSource source = new DOMSource(doc);
+    FileWriter writer = new FileWriter(povFile);
+    StreamResult result = new StreamResult(writer);
+    transformer.transform(source, result);
+    LOG.info("Written " + povFile.getAbsolutePath());
+  }
 
   private static void writeNode(POV pov, String qName, Node node) {
     switch (qName) {

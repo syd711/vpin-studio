@@ -37,6 +37,16 @@ public class GameRepresentation {
   private String ignoredValidations;
   private List<GameAssetRepresentation> assets;
 
+  private boolean pov;
+
+  public boolean isPov() {
+    return pov;
+  }
+
+  public void setPov(boolean pov) {
+    this.pov = pov;
+  }
+
   public String getTableName() {
     return tableName;
   }

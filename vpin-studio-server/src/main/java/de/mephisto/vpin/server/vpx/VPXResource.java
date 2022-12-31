@@ -1,16 +1,16 @@
 package de.mephisto.vpin.server.vpx;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import de.mephisto.vpin.commons.POV;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Map;
 
 import static de.mephisto.vpin.server.VPinStudioServer.API_SEGMENT;
 
 @RestController
 @RequestMapping(API_SEGMENT + "vpx")
 public class VPXResource {
-  private final static Logger LOG = LoggerFactory.getLogger(VPXResource.class);
 
   @Autowired
   private VPXService vpxService;
@@ -25,13 +25,8 @@ public class VPXResource {
     return vpxService.getPOV(id);
   }
 
-  @PostMapping("/pov/{id}")
-  public POV createPov(@PathVariable("id") int id) {
-    return vpxService.createPOV(id);
-  }
-
-  @PostMapping("/pov/save")
-  public POV save(@RequestBody POV pov) {
-    return vpxService.save(pov);
+  @PutMapping("/pov/{id}")
+  public boolean put(@PathVariable("id") int id, @RequestBody Map<String, Object> values) {
+    return vpxService.savePOVPreference(id, values);
   }
 }
