@@ -256,6 +256,18 @@ public class TablesSidebarController implements Initializable {
 
     povSSAACombo.setItems(FXCollections.observableList(POVComboModel.MODELS));
     povSSAACombo.valueProperty().addListener((observable, oldValue, newValue) -> client.setPOVPreference(game.get().getId(), POV.SSAA, newValue.getValue()));
+
+    povPostprocAACombo.setItems(FXCollections.observableList(POVComboModel.MODELS));
+    povPostprocAACombo.valueProperty().addListener((observable, oldValue, newValue) -> client.setPOVPreference(game.get().getId(), POV.POSTPROCAA, newValue.getValue()));
+
+    povIngameAOCombo.setItems(FXCollections.observableList(POVComboModel.MODELS));
+    povIngameAOCombo.valueProperty().addListener((observable, oldValue, newValue) -> client.setPOVPreference(game.get().getId(), POV.INGAMEAO, newValue.getValue()));
+
+    povScSpReflectCombo.setItems(FXCollections.observableList(POVComboModel.MODELS));
+    povScSpReflectCombo.valueProperty().addListener((observable, oldValue, newValue) -> client.setPOVPreference(game.get().getId(), POV.SCSPREFLECT, newValue.getValue()));
+
+    povFpsLimiterCombo.setItems(FXCollections.observableList(POVComboModel.MODELS));
+    povFpsLimiterCombo.valueProperty().addListener((observable, oldValue, newValue) -> client.setPOVPreference(game.get().getId(), POV.FPSLIMITER, newValue.getValue()));
   }
 
   public void setTablesController(TablesController tablesController) {
@@ -569,6 +581,10 @@ public class TablesSidebarController implements Initializable {
         POVRepresentation pov = client.getPOV(game.getId());
 
         povSSAACombo.valueProperty().setValue(POVComboModel.forValue(pov.getSsaa()));
+        povPostprocAACombo.valueProperty().setValue(POVComboModel.forValue(pov.getPostprocAA()));
+        povIngameAOCombo.valueProperty().setValue(POVComboModel.forValue(pov.getIngameAO()));
+        povScSpReflectCombo.valueProperty().setValue(POVComboModel.forValue(pov.getScSpReflect()));
+        povFpsLimiterCombo.valueProperty().setValue(POVComboModel.forValue(pov.getFpsLimiter()));
       }
     }
   }

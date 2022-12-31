@@ -8,6 +8,7 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.Slider?>
+<?import javafx.scene.control.Spinner?>
 <?import javafx.scene.control.TitledPane?>
 <?import javafx.scene.control.Tooltip?>
 <?import javafx.scene.image.ImageView?>
@@ -440,10 +441,11 @@
                            <children>
                               <GridPane>
                                 <columnConstraints>
-                                  <ColumnConstraints hgrow="SOMETIMES" maxWidth="282.20001220703125" minWidth="10.0" prefWidth="246.4000030517578" />
-                                  <ColumnConstraints hgrow="SOMETIMES" maxWidth="340.6000518798828" minWidth="10.0" prefWidth="327.99999694824214" />
+                                  <ColumnConstraints hgrow="SOMETIMES" maxWidth="282.20001220703125" minWidth="10.0" prefWidth="205.5999755859375" />
+                                  <ColumnConstraints hgrow="SOMETIMES" maxWidth="436.0000152587891" minWidth="10.0" prefWidth="368.8000244140625" />
                                 </columnConstraints>
                                 <rowConstraints>
+                                    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                   <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                   <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                   <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
@@ -452,96 +454,138 @@
                                     <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                     <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                     <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                    <RowConstraints minHeight="10.0" prefHeight="44.0" vgrow="SOMETIMES" />
+                                    <RowConstraints maxHeight="25.600012207031227" minHeight="10.0" prefHeight="18.400030517578102" vgrow="SOMETIMES" />
                                     <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                     <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                     <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                     <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                     <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                    <RowConstraints minHeight="10.0" prefHeight="44.0" vgrow="SOMETIMES" />
                                     <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                     <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                 </rowConstraints>
                                  <children>
-                                    <Label text="4x AA (SSAA):" textFill="WHITE">
+                                    <Label text="4x AA (SSAA):" textFill="WHITE" GridPane.rowIndex="1">
+                                       <font>
+                                          <Font size="14.0" />
+                                       </font>
+                                    </Label>
+                                    <Label layoutX="10.0" layoutY="15.0" text="Post Proc AA:" textFill="WHITE" GridPane.rowIndex="2">
+                                       <font>
+                                          <Font size="14.0" />
+                                       </font>
+                                    </Label>
+                                    <Label layoutX="10.0" layoutY="45.0" text="In-game AO:" textFill="WHITE" GridPane.rowIndex="3">
+                                       <font>
+                                          <Font size="14.0" />
+                                       </font>
+                                    </Label>
+                                    <Label layoutX="10.0" layoutY="76.0" text="ScSp. Reflect.:" textFill="WHITE" GridPane.rowIndex="4">
+                                       <font>
+                                          <Font size="14.0" />
+                                       </font>
+                                    </Label>
+                                    <Label layoutX="10.0" layoutY="106.0" text="FPS Limiter:" textFill="WHITE" GridPane.rowIndex="5">
+                                       <font>
+                                          <Font size="14.0" />
+                                       </font>
+                                    </Label>
+                                    <Label layoutX="10.0" layoutY="289.0" text="Overwrite Night / Day Cycle:" textFill="WHITE" GridPane.rowIndex="17">
+                                       <font>
+                                          <Font size="14.0" />
+                                       </font>
+                                    </Label>
+                                    <Label layoutX="10.0" layoutY="320.0" text="Night / Day Level:" textFill="WHITE" GridPane.rowIndex="18">
+                                       <font>
+                                          <Font size="14.0" />
+                                       </font>
+                                    </Label>
+                                    <Label layoutX="10.0" layoutY="349.0" text="Game Difficulty:" textFill="WHITE" GridPane.rowIndex="20">
                                        <font>
                                           <Font name="System Bold" size="14.0" />
                                        </font>
                                     </Label>
-                                    <Label layoutX="10.0" layoutY="15.0" text="Post Proc AA:" textFill="WHITE" GridPane.rowIndex="1">
+                                    <ComboBox fx:id="povSSAACombo" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                                    <ComboBox fx:id="povPostprocAACombo" layoutX="244.0" layoutY="10.0" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                                    <ComboBox fx:id="povIngameAOCombo" layoutX="244.0" layoutY="41.0" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                                    <ComboBox fx:id="povScSpReflectCombo" layoutX="244.0" layoutY="72.0" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+                                    <ComboBox fx:id="povFpsLimiterCombo" layoutX="244.0" layoutY="102.0" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="5" />
+                                    <Label layoutX="10.0" layoutY="45.0" text="Graphic Settings" textFill="WHITE">
                                        <font>
                                           <Font name="System Bold" size="14.0" />
                                        </font>
                                     </Label>
-                                    <Label layoutX="10.0" layoutY="45.0" text="In-game AO:" textFill="WHITE" GridPane.rowIndex="2">
+                                    <Label layoutX="10.0" layoutY="259.0" text="Night / Day Cycle" textFill="WHITE" GridPane.rowIndex="16">
                                        <font>
                                           <Font name="System Bold" size="14.0" />
                                        </font>
                                     </Label>
-                                    <Label layoutX="10.0" layoutY="76.0" text="ScSp. Reflect.:" textFill="WHITE" GridPane.rowIndex="3">
+                                    <Label text="Overwrite Detail Level:" textFill="WHITE" GridPane.rowIndex="8">
+                                       <font>
+                                          <Font size="14.0" />
+                                       </font>
+                                    </Label>
+                                    <Label text="Details Level:" textFill="WHITE" GridPane.rowIndex="9">
+                                       <font>
+                                          <Font size="14.0" />
+                                       </font>
+                                    </Label>
+                                    <Label layoutX="10.0" layoutY="15.0" text="Element Details" textFill="WHITE" GridPane.rowIndex="7">
                                        <font>
                                           <Font name="System Bold" size="14.0" />
                                        </font>
                                     </Label>
-                                    <Label layoutX="10.0" layoutY="106.0" text="FPS Limiter:" textFill="WHITE" GridPane.rowIndex="4">
+                                    <Label text="Ball" textFill="WHITE" GridPane.rowIndex="11">
                                        <font>
                                           <Font name="System Bold" size="14.0" />
                                        </font>
                                     </Label>
-                                    <Label layoutX="10.0" layoutY="137.0" text="Overwrite Detail Level:" textFill="WHITE" GridPane.rowIndex="5">
+                                    <Label text="Ball Reflection:" textFill="WHITE" GridPane.rowIndex="12">
                                        <font>
-                                          <Font name="System Bold" size="14.0" />
+                                          <Font size="14.0" />
                                        </font>
                                     </Label>
-                                    <Label layoutX="10.0" layoutY="168.0" text="Details Level:" textFill="WHITE" GridPane.rowIndex="6">
+                                    <Label text="Ball Trail:" textFill="WHITE" GridPane.rowIndex="13">
                                        <font>
-                                          <Font name="System Bold" size="14.0" />
+                                          <Font size="14.0" />
                                        </font>
                                     </Label>
-                                    <Label layoutX="10.0" layoutY="198.0" text="Ball Reflection:" textFill="WHITE" GridPane.rowIndex="7">
+                                    <Label text="Ball Trail Strength:" textFill="WHITE" GridPane.rowIndex="14">
                                        <font>
-                                          <Font name="System Bold" size="14.0" />
+                                          <Font size="14.0" />
                                        </font>
                                     </Label>
-                                    <Label layoutX="10.0" layoutY="228.0" text="Ball Trail:" textFill="WHITE" GridPane.rowIndex="8">
+                                    <CheckBox mnemonicParsing="false" GridPane.columnIndex="1" GridPane.rowIndex="8">
                                        <font>
-                                          <Font name="System Bold" size="14.0" />
+                                          <Font size="14.0" />
                                        </font>
-                                    </Label>
-                                    <Label layoutX="10.0" layoutY="259.0" text="Ball Trail Strength:" textFill="WHITE" GridPane.rowIndex="9">
+                                    </CheckBox>
+                                    <ComboBox fx:id="povFpsLimiterCombo1" layoutX="246.0" layoutY="163.0" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="12" />
+                                    <ComboBox fx:id="povFpsLimiterCombo11" layoutX="246.0" layoutY="375.0" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="13" />
+                                    <CheckBox layoutX="246.0" layoutY="259.0" mnemonicParsing="false" GridPane.columnIndex="1" GridPane.rowIndex="17">
                                        <font>
-                                          <Font name="System Bold" size="14.0" />
+                                          <Font size="14.0" />
                                        </font>
-                                    </Label>
-                                    <Label layoutX="10.0" layoutY="289.0" text="Overwrite Night / Day Cycle:" textFill="WHITE" GridPane.rowIndex="10">
-                                       <font>
-                                          <Font name="System Bold" size="14.0" />
-                                       </font>
-                                    </Label>
-                                    <Label layoutX="10.0" layoutY="320.0" text="Night / Day Level:" textFill="WHITE" GridPane.rowIndex="11">
-                                       <font>
-                                          <Font name="System Bold" size="14.0" />
-                                       </font>
-                                    </Label>
-                                    <Label layoutX="10.0" layoutY="349.0" text="Game Difficulty:" textFill="WHITE" GridPane.rowIndex="12">
-                                       <font>
-                                          <Font name="System Bold" size="14.0" />
-                                       </font>
-                                    </Label>
-                                    <Label layoutX="10.0" layoutY="380.0" text="Overwrite Physics by Global Set:" textFill="WHITE" GridPane.rowIndex="13">
-                                       <font>
-                                          <Font name="System Bold" size="14.0" />
-                                       </font>
-                                    </Label>
-                                    <Label layoutX="10.0" layoutY="410.0" text="Include Flipper Physics:" textFill="WHITE" GridPane.rowIndex="14">
-                                       <font>
-                                          <Font name="System Bold" size="14.0" />
-                                       </font>
-                                    </Label>
-                                    <ComboBox fx:id="povSSAACombo" prefWidth="150.0" GridPane.columnIndex="1" />
-                                    <ComboBox fx:id="povPostprocAACombo" layoutX="244.0" layoutY="10.0" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-                                    <ComboBox fx:id="povIngameAOCombo" layoutX="244.0" layoutY="41.0" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-                                    <ComboBox fx:id="povScSpReflectCombo" layoutX="244.0" layoutY="72.0" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="3" />
-                                    <ComboBox fx:id="povFpsLimiterCombo" layoutX="244.0" layoutY="102.0" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+                                    </CheckBox>
+                                    <Slider blockIncrement="1.0" majorTickUnit="1.0" max="10.0" minorTickCount="0" showTickLabels="true" showTickMarks="true" snapToTicks="true" GridPane.columnIndex="1" GridPane.rowIndex="9">
+                                       <GridPane.margin>
+                                          <Insets top="6.0" />
+                                       </GridPane.margin>
+                                    </Slider>
+                                    <Slider blockIncrement="1.0" layoutX="212.0" layoutY="289.0" majorTickUnit="1.0" max="10.0" minorTickCount="0" showTickLabels="true" showTickMarks="true" snapToTicks="true" GridPane.columnIndex="1" GridPane.rowIndex="18">
+                                       <GridPane.margin>
+                                          <Insets top="6.0" />
+                                       </GridPane.margin>
+                                    </Slider>
+                                    <Spinner GridPane.columnIndex="1" GridPane.rowIndex="14" />
+                                    <Spinner layoutX="212.0" layoutY="440.0" GridPane.columnIndex="1" GridPane.rowIndex="20" />
                                  </children>
+                                 <VBox.margin>
+                                    <Insets bottom="12.0" />
+                                 </VBox.margin>
                               </GridPane>
                            </children>
                            <BorderPane.margin>
@@ -550,7 +594,7 @@
                         </VBox>
                      </center>
                      <padding>
-                        <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
+                        <Insets bottom="12.0" left="12.0" right="18.0" top="12.0" />
                      </padding>
                      <top>
                         <VBox fx:id="povCreatePane" BorderPane.alignment="TOP_LEFT">
@@ -600,7 +644,7 @@
                                     </Label>
                                  </children>
                               </HBox>
-                                        <Slider fx:id="volumeSlider" value="100.0">
+                                        <Slider fx:id="volumeSlider" majorTickUnit="10.0" minorTickCount="1" showTickLabels="true" showTickMarks="true" snapToTicks="true" value="100.0">
                                             <VBox.margin>
                                                 <Insets top="6.0" />
                                             </VBox.margin>

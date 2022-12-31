@@ -1,26 +1,24 @@
 package de.mephisto.vpin.commons;
 
-import java.util.Arrays;
-
 public class POV {
 
-  public static String SSAA ="ssaa";
-  public static String POSTPROCAA = "postprocaa";
-//  public static String ingameAO;
-//  public static String scSpReflect;
-//  public static String fpsLimiter;
-//  public static String overwriteDetailsLevel;
-//  public static String detailsLevel;
-//  public static String ballReflection;
-//  public static String ballTrail;
-//  public static String ballTrailStrength;
-//  public static String overwriteNightDay;
-//  public static String nightDayLevel;
-//  public static String gameplayDifficulty;
-//  public static String physicsSet;
-//  public static String includeFlipperPhysics;
-//  public static String soundVolume;
-//  public static String musicVolume;
+  public static String SSAA = "ssaa";
+  public static String POSTPROCAA = "postprocAA";
+  public static String INGAMEAO = "ingameAO";
+  public static String SCSPREFLECT = "scSpReflect";
+  public static String FPSLIMITER = "fpsLimiter";
+  public static String OVERWRITEDETAILSLEVEL = "overwriteDetailsLevel";
+  public static String DETAILSLEVEL = "detailsLevel";
+  public static String BALLREFLECTION = "ballReflection";
+  public static String BALLTRAIL = "ballTrail2";
+  public static String BALLTRAILSTRENGTH = "ballTrailStrength";
+  public static String OVERWRITENIGHTDAY = "overwriteNightDay";
+  public static String NIGHTDAYLEVEL = "nightDayLevel";
+  public static String GAMEPLAYDIFFICULTY = "gameplayDifficulty";
+  public static String PHYSICSSET = "physicsSet";
+  public static String INCLUDEFLIPPERPHYSICS = "includeFlipperPhysics";
+  public static String SOUNDVOLUME = "soundVolume";
+  public static String MUSICVOLUME = "musicVolume";
 
   private int gameId;
 
