@@ -1,0 +1,39 @@
+Crash report VPX rev388 (f6d9f7b)
+============
+Process: VPinballX.exe
+Reason: 0xC0000005 - EXCEPTION_ACCESS_VIOLATION at 0023:005BD98F
+Attempt to read from 0x00000540
+Thread ID: 0x306C [12396]
+
+Call stack
+==========
+005BD98F VPinballX.exe (0x0021E000 0x005BCC27 0x00000000 0x00400000)
+005BCC27 VPinballX.exe (0x00000000 0x007A77A8 0x0021E000 0x00774070)
+005BDD79 VPinballX.exe (0x00400000 0x00000000 0x03314A39 0x0000000a)
+005E62C9 VPinballX.exe (0x0021E000 0x76A600E0 0x0019FFDC 0x77977bbe)
+76A600F9 KERNEL32.DLL BaseThreadInitThunk + 0x19 (0x0021E000 0x0BB478E4 0x00000000 0x00000000)
+77977BBE ntdll.dll RtlGetAppContainerNamedObjectPath + 0x11E (0xFFFFFFFFFFFFFFFF 0x77998D11 0x00000000 0x00000000)
+77977B8E ntdll.dll RtlGetAppContainerNamedObjectPath + 0xEE (0x005E634D 0x0021E000 0x00000000 0x78746341)
+
+Environment
+===========
+Date/time: 31/12/2022, 11:35:25:909
+Number of CPUs: 16
+Processor type: 586
+System: Windows 10 (10.0 19044)
+
+Memory status
+=============
+Total Reserved: 51288K (50M) bytes
+Total Commited: 230764K (225M) bytes
+Total Free: 3912188K (3820M) bytes
+Largest Free: 2095436K (2046M) bytes
+
+Registers
+=========
+EAX=00000000 EBX=0019E910 ECX=00000000 EDX=0000000F
+ESI=0019F2DC EDI=0019F3CC EBP=0019FFEC ESP=0019FFE4 EIP=77977B8E
+FLG=00010202 CS=0023 DS=002B SS=002B ES=002B FS=0053 GS=002B
+
+
+Mini dump saved successfully.

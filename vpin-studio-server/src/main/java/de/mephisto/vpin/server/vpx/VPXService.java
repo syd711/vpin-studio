@@ -1,22 +1,21 @@
 package de.mephisto.vpin.server.vpx;
 
 import de.mephisto.vpin.commons.utils.FileUtils;
-import de.mephisto.vpin.commons.utils.SystemCommandExecutor;
+import de.mephisto.vpin.server.VPinStudioException;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameService;
-import de.mephisto.vpin.server.system.SystemService;
-import org.apache.commons.io.FilenameUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Arrays;
+
+import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 
 @Service
 public class VPXService {
@@ -26,41 +25,55 @@ public class VPXService {
   private GameService gameService;
 
   @Autowired
-  private SystemService systemService;
+  private VPXCommandLineService vpxCommandLineService;
 
-  public String getScript(int gameId) {
+  public POV getPOV(int gameId) {
+    try {
+      Game game = gameService.getGame(gameId);
+      if (game != null) {
+        File povFile = game.getPOVFile();
+        if (povFile.exists()) {
+          return POVParser.parse(povFile, gameId);
+        }
+      }
+      return null;
+    } catch (VPinStudioException e) {
+      throw new ResponseStatusException(INTERNAL_SERVER_ERROR, e.getMessage());
+    }
+  }
+
+  public POV save(POV pov) {
+    try {
+      Game game = gameService.getGame(pov.getGameId());
+      if (game != null) {
+        POVSerializer.serialize(pov, game);
+      }
+      return pov;
+    } catch (VPinStudioException e) {
+      throw new ResponseStatusException(INTERNAL_SERVER_ERROR, e.getMessage());
+    }
+  }
+
+  public POV createPOV(int gameId) {
     Game game = gameService.getGame(gameId);
     if (game != null) {
-      File gameFile = game.getGameFile();
-      File vpxExe = systemService.getVPXExe();
-      File target = new File(gameFile.getParentFile(), FilenameUtils.getBaseName(gameFile.getName()) + ".vbs");
-
       try {
-        LOG.info("Extracting VBS for " + gameFile.getAbsolutePath());
-        SystemCommandExecutor executor = new SystemCommandExecutor(Arrays.asList(vpxExe.getAbsolutePath(), "-ExtractVBS", gameFile.getAbsolutePath()));
-        executor.executeCommand();
-
-        StringBuilder standardErrorFromCommand = executor.getStandardErrorFromCommand();
-        if (standardErrorFromCommand != null && !StringUtils.isEmpty(standardErrorFromCommand.toString())) {
-          LOG.error("VPX command failed:\n" + standardErrorFromCommand);
+        File target = vpxCommandLineService.execute(game, "-Pov", "pov");
+        if (target.exists()) {
+          return getPOV(gameId);
         }
       } catch (Exception e) {
         LOG.error("Error executing shutdown: " + e.getMessage(), e);
       }
+    }
+    LOG.error("No game found for pov creation with id " + gameId);
+    return null;
+  }
 
-      int count = 0;
-      while (!target.exists()) {
-        count++;
-        try {
-          Thread.sleep(500);
-        } catch (InterruptedException e) {
-          //ignore
-        }
-        if (count > 40) {
-          LOG.error("Timeout waiting for the generation of " + target.getAbsolutePath());
-        }
-      }
-
+  public String getScript(int gameId) {
+    Game game = gameService.getGame(gameId);
+    if (game != null) {
+      File target = vpxCommandLineService.execute(game, "-ExtractVBS", "vbs");
       if (target.exists()) {
         try {
           LOG.info("Reading vbs file " + target.getAbsolutePath() + " (" + FileUtils.readableFileSize(target.length()) + ")");
@@ -75,7 +88,7 @@ public class VPXService {
         }
       }
     }
-    LOG.error("No game found for id " + gameId);
+    LOG.error("No game found for script extraction, id " + gameId);
     return null;
   }
 }

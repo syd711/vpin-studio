@@ -3,10 +3,7 @@ package de.mephisto.vpin.server.vpx;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import static de.mephisto.vpin.server.VPinStudioServer.API_SEGMENT;
 
@@ -21,5 +18,20 @@ public class VPXResource {
   @GetMapping("/script/{id}")
   public String script(@PathVariable("id") int id) {
     return vpxService.getScript(id);
+  }
+
+  @GetMapping("/pov/{id}")
+  public POV getPov(@PathVariable("id") int id) {
+    return vpxService.getPOV(id);
+  }
+
+  @PostMapping("/pov/{id}")
+  public POV createPov(@PathVariable("id") int id) {
+    return vpxService.createPOV(id);
+  }
+
+  @PostMapping("/pov/save")
+  public POV save(@RequestBody POV pov) {
+    return vpxService.save(pov);
   }
 }

@@ -242,17 +242,32 @@
                   </BorderPane>
                </graphic>
                 </TitledPane>
-                <TitledPane expanded="false" prefWidth="600.0" text="Media Settings">
+                <TitledPane expanded="false" prefWidth="600.0" text="Audio Settings">
                     <content>
                         <BorderPane prefHeight="200.0" prefWidth="200.0">
                             <center>
                                 <VBox prefHeight="200.0" prefWidth="100.0" BorderPane.alignment="CENTER">
                                     <children>
-                                        <Label text="Table Volume">
-                                            <font>
-                                                <Font size="14.0" />
-                                            </font>
-                                        </Label>
+                              <HBox alignment="CENTER_LEFT" spacing="6.0">
+                                 <children>
+                                              <Label text="PinUP Popper Table Volume">
+                                                  <font>
+                                                      <Font size="14.0" />
+                                                  </font>
+                                              </Label>
+                                    <Label>
+                                       <font>
+                                          <Font size="14.0" />
+                                       </font>
+                                       <graphic>
+                                          <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
+                                       </graphic>
+                                       <tooltip>
+                                          <Tooltip text="Launches the game at the given volume level (%based on current Popper PC Volume)" />
+                                       </tooltip>
+                                    </Label>
+                                 </children>
+                              </HBox>
                                         <Slider fx:id="volumeSlider" value="100.0">
                                             <VBox.margin>
                                                 <Insets top="6.0" />
@@ -455,6 +470,124 @@
                      </children>
                   </AnchorPane>
               </content>
+            </TitledPane>
+            <TitledPane animated="false" text="Point Of View">
+               <content>
+                  <BorderPane>
+                     <center>
+                        <VBox BorderPane.alignment="CENTER">
+                           <children>
+                              <GridPane>
+                                <columnConstraints>
+                                  <ColumnConstraints hgrow="SOMETIMES" maxWidth="282.20001220703125" minWidth="10.0" prefWidth="233.3999481201172" />
+                                  <ColumnConstraints hgrow="SOMETIMES" maxWidth="340.6000518798828" minWidth="10.0" prefWidth="340.6000518798828" />
+                                </columnConstraints>
+                                <rowConstraints>
+                                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                </rowConstraints>
+                                 <children>
+                                    <Label text="4x AA (SSAA):" textFill="WHITE">
+                                       <font>
+                                          <Font name="System Bold" size="14.0" />
+                                       </font>
+                                    </Label>
+                                    <Label layoutX="10.0" layoutY="15.0" text="Post Proc AA:" textFill="WHITE" GridPane.rowIndex="1">
+                                       <font>
+                                          <Font name="System Bold" size="14.0" />
+                                       </font>
+                                    </Label>
+                                    <Label layoutX="10.0" layoutY="45.0" text="In-game AO:" textFill="WHITE" GridPane.rowIndex="2">
+                                       <font>
+                                          <Font name="System Bold" size="14.0" />
+                                       </font>
+                                    </Label>
+                                    <Label layoutX="10.0" layoutY="76.0" text="ScSp. Reflect.:" textFill="WHITE" GridPane.rowIndex="3">
+                                       <font>
+                                          <Font name="System Bold" size="14.0" />
+                                       </font>
+                                    </Label>
+                                    <Label layoutX="10.0" layoutY="106.0" text="FPS Limiter:" textFill="WHITE" GridPane.rowIndex="4">
+                                       <font>
+                                          <Font name="System Bold" size="14.0" />
+                                       </font>
+                                    </Label>
+                                    <Label layoutX="10.0" layoutY="137.0" text="Overwrite Detail Level:" textFill="WHITE" GridPane.rowIndex="5">
+                                       <font>
+                                          <Font name="System Bold" size="14.0" />
+                                       </font>
+                                    </Label>
+                                    <Label layoutX="10.0" layoutY="168.0" text="Details Level:" textFill="WHITE" GridPane.rowIndex="6">
+                                       <font>
+                                          <Font name="System Bold" size="14.0" />
+                                       </font>
+                                    </Label>
+                                    <Label layoutX="10.0" layoutY="198.0" text="Ball Reflection:" textFill="WHITE" GridPane.rowIndex="7">
+                                       <font>
+                                          <Font name="System Bold" size="14.0" />
+                                       </font>
+                                    </Label>
+                                    <Label layoutX="10.0" layoutY="228.0" text="Ball Trail:" textFill="WHITE" GridPane.rowIndex="8">
+                                       <font>
+                                          <Font name="System Bold" size="14.0" />
+                                       </font>
+                                    </Label>
+                                    <Label layoutX="10.0" layoutY="259.0" text="Ball Trail Strength:" textFill="WHITE" GridPane.rowIndex="9">
+                                       <font>
+                                          <Font name="System Bold" size="14.0" />
+                                       </font>
+                                    </Label>
+                                    <Label layoutX="10.0" layoutY="289.0" text="Overwrite Night / Day Cycle:" textFill="WHITE" GridPane.rowIndex="10">
+                                       <font>
+                                          <Font name="System Bold" size="14.0" />
+                                       </font>
+                                    </Label>
+                                    <Label layoutX="10.0" layoutY="320.0" text="Night / Day Level:" textFill="WHITE" GridPane.rowIndex="11">
+                                       <font>
+                                          <Font name="System Bold" size="14.0" />
+                                       </font>
+                                    </Label>
+                                    <Label layoutX="10.0" layoutY="349.0" text="Game Difficulty:" textFill="WHITE" GridPane.rowIndex="12">
+                                       <font>
+                                          <Font name="System Bold" size="14.0" />
+                                       </font>
+                                    </Label>
+                                    <Label layoutX="10.0" layoutY="380.0" text="Overwrite Physics by Global Set:" textFill="WHITE" GridPane.rowIndex="13">
+                                       <font>
+                                          <Font name="System Bold" size="14.0" />
+                                       </font>
+                                    </Label>
+                                    <Label layoutX="10.0" layoutY="410.0" text="Include Flipper Physics:" textFill="WHITE" GridPane.rowIndex="14">
+                                       <font>
+                                          <Font name="System Bold" size="14.0" />
+                                       </font>
+                                    </Label>
+                                 </children>
+                              </GridPane>
+                           </children>
+                           <BorderPane.margin>
+                              <Insets />
+                           </BorderPane.margin>
+                        </VBox>
+                     </center>
+                     <padding>
+                        <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
+                     </padding>
+                  </BorderPane>
+               </content>
             </TitledPane>
                 <TitledPane expanded="false" prefHeight="400.0" prefWidth="600.0" text="Metadata">
                     <content>

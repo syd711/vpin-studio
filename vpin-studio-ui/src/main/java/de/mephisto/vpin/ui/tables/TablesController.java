@@ -254,6 +254,9 @@ public class TablesController implements Initializable, StudioFXController {
           WidgetFactory.showAlert(Studio.stage, "Failed to open script file " + file.getAbsolutePath() + ": " + e.getMessage());
         }
       }
+      else {
+        WidgetFactory.showAlert(Studio.stage, "Script extraction failed, check log for details.");
+      }
     }
   }
 
@@ -471,9 +474,9 @@ public class TablesController implements Initializable, StudioFXController {
 
 //    emulatorTypeCombo.setItems(FXCollections.observableList(Arrays.asList("", EmulatorTypes.VISUAL_PINBALL_X, EmulatorTypes.PINBALL_FX3, EmulatorTypes.FUTURE_PINBALL)));
 //    emulatorTypeCombo.setItems(FXCollections.observableList(Arrays.asList("", EmulatorTypes.VISUAL_PINBALL_X)));
-    emulatorTypeCombo.setItems(FXCollections.observableList(Arrays.asList(EmulatorTypes.VISUAL_PINBALL_X)));
-    emulatorTypeCombo.valueProperty().setValue(EmulatorTypes.VISUAL_PINBALL_X);
-    emulatorTypeCombo.valueProperty().addListener((observable, oldValue, newValue) -> onReload());
+//    emulatorTypeCombo.setItems(FXCollections.observableList(Arrays.asList(EmulatorTypes.VISUAL_PINBALL_X)));
+//    emulatorTypeCombo.valueProperty().setValue(EmulatorTypes.VISUAL_PINBALL_X);
+//    emulatorTypeCombo.valueProperty().addListener((observable, oldValue, newValue) -> onReload());
 
     refreshView(Optional.empty());
     this.onReload();
@@ -482,7 +485,7 @@ public class TablesController implements Initializable, StudioFXController {
   private void filterGames(List<GameRepresentation> games) {
     List<GameRepresentation> filtered = new ArrayList<>();
     String filterValue = textfieldSearch.textProperty().getValue();
-    String emulatorValue = emulatorTypeCombo.getValue();
+    String emulatorValue = EmulatorTypes.VISUAL_PINBALL_X;//emulatorTypeCombo.getValue();
     for (GameRepresentation game : games) {
       if (!StringUtils.isEmpty(emulatorValue) && !game.getEmulator().getName().equals(emulatorValue)) {
         continue;

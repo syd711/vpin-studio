@@ -45,8 +45,14 @@ public class ScriptDownloadProgressModel extends ProgressModel {
   public String processNext(ProgressResultModel progressResultModel) {
     try {
       GameRepresentation next = iterator.next();
-      File tableScript = Studio.client.getTableScript(next.getId());
-      progressResultModel.addProcessed(tableScript);
+      File tableScript = client.getTableScript(next.getId());
+      if(tableScript != null) {
+        progressResultModel.addProcessed(tableScript);
+      }
+      else {
+        progressResultModel.addProcessed();
+      }
+
       return next.getGameDisplayName();
     } catch (Exception e) {
       LOG.error("Table upload failed: " + e.getMessage(), e);
