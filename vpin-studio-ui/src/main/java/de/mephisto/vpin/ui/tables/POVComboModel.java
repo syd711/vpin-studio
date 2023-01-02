@@ -14,7 +14,13 @@ public class POVComboModel {
   private String label;
   private int value;
 
-  public static POVComboModel forValue(int value) {
+  public static POVComboModel forValue(Object v) {
+    if (!(v instanceof Integer)) {
+      return DEFAULT_MODEL;
+    }
+
+    int value = (int) v;
+
     if (value == -1) {
       return DEFAULT_MODEL;
     }

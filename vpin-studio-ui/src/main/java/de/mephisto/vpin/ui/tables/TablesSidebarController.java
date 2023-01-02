@@ -9,12 +9,9 @@ import de.mephisto.vpin.restclient.VPinStudioClient;
 import de.mephisto.vpin.restclient.representations.*;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.tables.dialogs.POVExportProgressModel;
-import de.mephisto.vpin.ui.util.BindingUtil;
 import de.mephisto.vpin.ui.util.Dialogs;
 import de.mephisto.vpin.ui.util.MediaUtil;
 import de.mephisto.vpin.ui.util.ProgressResultModel;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -38,10 +35,11 @@ import java.io.InputStream;
 import java.net.URL;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
+
+import static de.mephisto.vpin.ui.util.BindingUtil.debouncer;
 
 public class TablesSidebarController implements Initializable {
   private final static Logger LOG = LoggerFactory.getLogger(TablesSidebarController.class);
@@ -220,11 +218,27 @@ public class TablesSidebarController implements Initializable {
   @FXML
   private ComboBox<POVComboModel> povBallReflectionCombobox;
 
+  @FXML
+  private ComboBox<POVComboModel> povBallTrailCombobox;
+
+  @FXML
+  private Spinner<Integer> povBallTrailStrengthSpinner;
+
+  @FXML
+  private CheckBox povOverwriteNightDayCheckbox;
+
+  @FXML
+  private Slider povNighDaySlider;
+
+  @FXML
+  private Spinner<Integer> povGameDifficultySpinner;
+
   private VPinStudioClient client;
 
   private Optional<GameRepresentation> game = Optional.empty();
 
   private TablesController tablesController;
+  private POVRepresentation pov;
 
   // Add a public no-args constructor
   public TablesSidebarController() {
@@ -238,7 +252,7 @@ public class TablesSidebarController implements Initializable {
 
     volumeSlider.valueProperty().addListener((observableValue, number, t1) -> {
       if (game.isPresent()) {
-        BindingUtil.debouncer.debounce("tableVolume" + game.get().getId(), () -> {
+        debouncer.debounce("tableVolume" + game.get().getId(), () -> {
           int value = t1.intValue();
           if (value == 0) {
             value = 1;
@@ -266,27 +280,70 @@ public class TablesSidebarController implements Initializable {
     mediaPreviewCheckbox.selectedProperty().addListener((observable, oldValue, newValue) -> refreshView(game));
 
 
-
     povSSAACombo.setItems(FXCollections.observableList(POVComboModel.MODELS));
-    povSSAACombo.valueProperty().addListener((observable, oldValue, newValue) -> client.setPOVPreference(game.get().getId(), POV.SSAA, newValue.getValue()));
+    povSSAACombo.valueProperty().addListener((observable, oldValue, newValue) -> client.setPOVPreference(game.get().getId(), getPOV(), POV.SSAA, newValue.getValue()));
 
     povPostprocAACombo.setItems(FXCollections.observableList(POVComboModel.MODELS));
-    povPostprocAACombo.valueProperty().addListener((observable, oldValue, newValue) -> client.setPOVPreference(game.get().getId(), POV.POSTPROCAA, newValue.getValue()));
+    povPostprocAACombo.valueProperty().addListener((observable, oldValue, newValue) -> client.setPOVPreference(game.get().getId(), getPOV(), POV.POST_PROC_AA, newValue.getValue()));
 
     povIngameAOCombo.setItems(FXCollections.observableList(POVComboModel.MODELS));
-    povIngameAOCombo.valueProperty().addListener((observable, oldValue, newValue) -> client.setPOVPreference(game.get().getId(), POV.INGAMEAO, newValue.getValue()));
+    povIngameAOCombo.valueProperty().addListener((observable, oldValue, newValue) -> client.setPOVPreference(game.get().getId(), getPOV(), POV.INGAME_AO, newValue.getValue()));
 
     povScSpReflectCombo.setItems(FXCollections.observableList(POVComboModel.MODELS));
-    povScSpReflectCombo.valueProperty().addListener((observable, oldValue, newValue) -> client.setPOVPreference(game.get().getId(), POV.SCSPREFLECT, newValue.getValue()));
+    povScSpReflectCombo.valueProperty().addListener((observable, oldValue, newValue) -> client.setPOVPreference(game.get().getId(), getPOV(), POV.SCSP_REFLECT, newValue.getValue()));
 
     povFpsLimiterCombo.setItems(FXCollections.observableList(POVComboModel.MODELS));
-    povFpsLimiterCombo.valueProperty().addListener((observable, oldValue, newValue) -> client.setPOVPreference(game.get().getId(), POV.FPSLIMITER, newValue.getValue()));
+    povFpsLimiterCombo.valueProperty().addListener((observable, oldValue, newValue) -> client.setPOVPreference(game.get().getId(), getPOV(), POV.FPS_LIMITER, newValue.getValue()));
 
     povOverwriteDetailCheckbox.selectedProperty().addListener((observable, oldValue, newValue) -> {
-      client.setPOVPreference(game.get().getId(), POV.OVERWRITEDETAILSLEVEL, newValue);
+      int result = 0;
+      if (newValue) {
+        result = 1;
+      }
+      client.setPOVPreference(game.get().getId(), getPOV(), POV.OVERWRITE_DETAILS_LEVEL, result);
       povDetailsSlider.setDisable(!newValue);
     });
-    povDetailsSlider.valueProperty().addListener((observable, oldValue, newValue) -> client.setPOVPreference(game.get().getId(), POV.DETAILSLEVEL, newValue));
+
+    povDetailsSlider.valueProperty().addListener((observable, oldValue, newValue) -> {
+      debouncer.debounce(POV.DETAILS_LEVEL, () -> {
+        int value1 = ((Double) newValue).intValue();
+        client.setPOVPreference(game.get().getId(), getPOV(), POV.DETAILS_LEVEL, value1);
+      }, 500);
+    });
+
+    povBallReflectionCombobox.setItems(FXCollections.observableList(POVComboModel.MODELS));
+    povBallReflectionCombobox.valueProperty().addListener((observable, oldValue, newValue) -> client.setPOVPreference(game.get().getId(), getPOV(), POV.BALL_REFLECTION, newValue.getValue()));
+
+    povBallTrailCombobox.setItems(FXCollections.observableList(POVComboModel.MODELS));
+    povBallTrailCombobox.valueProperty().addListener((observable, oldValue, newValue) -> client.setPOVPreference(game.get().getId(), getPOV(), POV.BALL_TRAIL, newValue.getValue()));
+
+    SpinnerValueFactory.IntegerSpinnerValueFactory factory = new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 100, 0);
+    povBallTrailStrengthSpinner.setValueFactory(factory);
+    povBallTrailStrengthSpinner.valueProperty().addListener((observable, oldValue, newValue) -> {
+      double formattedValue = newValue/100;
+      client.setPOVPreference(game.get().getId(), getPOV(), POV.BALL_TRAIL_STRENGTH, formattedValue);
+    });
+
+    povOverwriteNightDayCheckbox.selectedProperty().addListener((observable, oldValue, newValue) -> {
+      int result = 0;
+      if (newValue) {
+        result = 1;
+      }
+      client.setPOVPreference(game.get().getId(), getPOV(), POV.OVERWRITE_NIGHTDAY, result);
+      povNighDaySlider.setDisable(!newValue);
+    });
+    povNighDaySlider.valueProperty().addListener((observable, oldValue, newValue) -> {
+      debouncer.debounce(POV.NIGHTDAY_LEVEL, () -> {
+        int value1 = ((Double) newValue).intValue();
+        client.setPOVPreference(game.get().getId(), getPOV(), POV.NIGHTDAY_LEVEL, value1);
+      }, 500);
+    });
+
+    SpinnerValueFactory.IntegerSpinnerValueFactory factoryDifficulty = new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 100, 0);
+    povGameDifficultySpinner.setValueFactory(factoryDifficulty);
+    povGameDifficultySpinner.valueProperty().addListener((observable, oldValue, newValue) -> {
+      client.setPOVPreference(game.get().getId(), getPOV(), POV.GAMEPLAY_DIFFICULTY, newValue);
+    });
   }
 
   public void setTablesController(TablesController tablesController) {
@@ -294,6 +351,7 @@ public class TablesSidebarController implements Initializable {
   }
 
   public void setGame(Optional<GameRepresentation> game) {
+    this.pov = null;
     this.game = game;
     this.refreshView(game);
   }
@@ -395,7 +453,7 @@ public class TablesSidebarController implements Initializable {
 
   @FXML
   private void onPOVExport() {
-    if(game.isPresent()) {
+    if (game.isPresent()) {
       GameRepresentation g = game.get();
       ProgressResultModel resultModel = Dialogs.createProgressDialog(new POVExportProgressModel(client, "Export POV Settings", g));
       if (!resultModel.getResults().isEmpty()) {
@@ -405,6 +463,10 @@ public class TablesSidebarController implements Initializable {
         WidgetFactory.showAlert(Studio.stage, "POV export failed, check log for details.");
       }
     }
+  }
+
+  private POVRepresentation getPOV() {
+    return this.pov;
   }
 
   @FXML
@@ -594,20 +656,30 @@ public class TablesSidebarController implements Initializable {
   }
 
   private void refreshPOV(Optional<GameRepresentation> g) {
-    if(g.isPresent()) {
+    if (g.isPresent()) {
       GameRepresentation game = g.get();
-      if(game.isPov()) {
-        POVRepresentation pov = client.getPOV(game.getId());
+      if (game.isPov()) {
+        pov = client.getPOV(game.getId());
 
-        povSSAACombo.valueProperty().setValue(POVComboModel.forValue(pov.getSsaa()));
-        povPostprocAACombo.valueProperty().setValue(POVComboModel.forValue(pov.getPostprocAA()));
-        povIngameAOCombo.valueProperty().setValue(POVComboModel.forValue(pov.getIngameAO()));
-        povScSpReflectCombo.valueProperty().setValue(POVComboModel.forValue(pov.getScSpReflect()));
-        povFpsLimiterCombo.valueProperty().setValue(POVComboModel.forValue(pov.getFpsLimiter()));
+        povSSAACombo.valueProperty().setValue(POVComboModel.forValue(pov.getValue(POV.SSAA)));
+        povPostprocAACombo.valueProperty().setValue(POVComboModel.forValue(pov.getValue(POV.POST_PROC_AA)));
+        povIngameAOCombo.valueProperty().setValue(POVComboModel.forValue(pov.getValue(POV.INGAME_AO)));
+        povScSpReflectCombo.valueProperty().setValue(POVComboModel.forValue(pov.getValue(POV.SCSP_REFLECT)));
+        povFpsLimiterCombo.valueProperty().setValue(POVComboModel.forValue(pov.getValue(POV.FPS_LIMITER)));
 
-        povDetailsSlider.setValue(pov.getDetailsLevel());
-        povOverwriteDetailCheckbox.setSelected(pov.getOverwriteDetailsLevel() == 1);
-        povDetailsSlider.setDisable(pov.getOverwriteDetailsLevel() != 1);
+        povOverwriteDetailCheckbox.setSelected(pov.getBooleanValue(POV.OVERWRITE_DETAILS_LEVEL));
+        povDetailsSlider.setValue(pov.getIntValue(POV.DETAILS_LEVEL));
+        povDetailsSlider.setDisable(!pov.getBooleanValue(POV.OVERWRITE_DETAILS_LEVEL));
+
+        povBallReflectionCombobox.setValue(POVComboModel.forValue(pov.getValue(POV.BALL_REFLECTION)));
+        povBallTrailCombobox.setValue(POVComboModel.forValue(pov.getValue(POV.BALL_TRAIL)));
+        povBallTrailStrengthSpinner.getValueFactory().setValue(pov.getIntValue(POV.BALL_TRAIL_STRENGTH));
+
+        povNighDaySlider.setDisable(!pov.getBooleanValue(POV.OVERWRITE_NIGHTDAY));
+        povNighDaySlider.setValue(pov.getIntValue(POV.NIGHTDAY_LEVEL));
+        povBallTrailStrengthSpinner.getValueFactory().setValue(pov.getIntValue(POV.BALL_TRAIL_STRENGTH));
+
+        povGameDifficultySpinner.getValueFactory().setValue(pov.getIntValue(POV.GAMEPLAY_DIFFICULTY));
       }
     }
   }

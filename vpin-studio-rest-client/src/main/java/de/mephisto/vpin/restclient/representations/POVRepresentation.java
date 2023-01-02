@@ -1,25 +1,14 @@
 package de.mephisto.vpin.restclient.representations;
 
+import java.util.Map;
+
 public class POVRepresentation {
   private int gameId;
+  private Map<String, Object> values;
 
-  private int ssaa;
-  private int postprocAA;
-  private int ingameAO;
-  private int scSpReflect;
-  private int fpsLimiter;
-  private int overwriteDetailsLevel;
-  private int detailsLevel;
-  private int ballReflection;
-  private int ballTrail;
-  private double ballTrailStrength;
-  private int overwriteNightDay;
-  private int nightDayLevel;
-  private double gameplayDifficulty;
-  private int physicsSet;
-  private int includeFlipperPhysics;
-  private int soundVolume;
-  private int musicVolume;
+  public POVRepresentation() {
+
+  }
 
   public int getGameId() {
     return gameId;
@@ -29,139 +18,19 @@ public class POVRepresentation {
     this.gameId = gameId;
   }
 
-  public int getSsaa() {
-    return ssaa;
+  public POVRepresentation(Map<String, Object> values) {
+    this.values = values;
   }
 
-  public void setSsaa(int ssaa) {
-    this.ssaa = ssaa;
+  public Object getValue(String property) {
+    return this.values.get(property);
   }
 
-  public int getPostprocAA() {
-    return postprocAA;
+  public int getIntValue(String property) {
+    return (int) this.values.get(property);
   }
 
-  public void setPostprocAA(int postprocAA) {
-    this.postprocAA = postprocAA;
-  }
-
-  public int getIngameAO() {
-    return ingameAO;
-  }
-
-  public void setIngameAO(int ingameAO) {
-    this.ingameAO = ingameAO;
-  }
-
-  public int getScSpReflect() {
-    return scSpReflect;
-  }
-
-  public void setScSpReflect(int scSpReflect) {
-    this.scSpReflect = scSpReflect;
-  }
-
-  public int getFpsLimiter() {
-    return fpsLimiter;
-  }
-
-  public void setFpsLimiter(int fpsLimiter) {
-    this.fpsLimiter = fpsLimiter;
-  }
-
-  public int getOverwriteDetailsLevel() {
-    return overwriteDetailsLevel;
-  }
-
-  public void setOverwriteDetailsLevel(int overwriteDetailsLevel) {
-    this.overwriteDetailsLevel = overwriteDetailsLevel;
-  }
-
-  public int getDetailsLevel() {
-    return detailsLevel;
-  }
-
-  public void setDetailsLevel(int detailsLevel) {
-    this.detailsLevel = detailsLevel;
-  }
-
-  public int getBallReflection() {
-    return ballReflection;
-  }
-
-  public void setBallReflection(int ballReflection) {
-    this.ballReflection = ballReflection;
-  }
-
-  public int getBallTrail() {
-    return ballTrail;
-  }
-
-  public void setBallTrail(int ballTrail) {
-    this.ballTrail = ballTrail;
-  }
-
-  public double getBallTrailStrength() {
-    return ballTrailStrength;
-  }
-
-  public void setBallTrailStrength(double ballTrailStrength) {
-    this.ballTrailStrength = ballTrailStrength;
-  }
-
-  public int getOverwriteNightDay() {
-    return overwriteNightDay;
-  }
-
-  public void setOverwriteNightDay(int overwriteNightDay) {
-    this.overwriteNightDay = overwriteNightDay;
-  }
-
-  public int getNightDayLevel() {
-    return nightDayLevel;
-  }
-
-  public void setNightDayLevel(int nightDayLevel) {
-    this.nightDayLevel = nightDayLevel;
-  }
-
-  public double getGameplayDifficulty() {
-    return gameplayDifficulty;
-  }
-
-  public void setGameplayDifficulty(double gameplayDifficulty) {
-    this.gameplayDifficulty = gameplayDifficulty;
-  }
-
-  public int getPhysicsSet() {
-    return physicsSet;
-  }
-
-  public void setPhysicsSet(int physicsSet) {
-    this.physicsSet = physicsSet;
-  }
-
-  public int getIncludeFlipperPhysics() {
-    return includeFlipperPhysics;
-  }
-
-  public void setIncludeFlipperPhysics(int includeFlipperPhysics) {
-    this.includeFlipperPhysics = includeFlipperPhysics;
-  }
-
-  public int getSoundVolume() {
-    return soundVolume;
-  }
-
-  public void setSoundVolume(int soundVolume) {
-    this.soundVolume = soundVolume;
-  }
-
-  public int getMusicVolume() {
-    return musicVolume;
-  }
-
-  public void setMusicVolume(int musicVolume) {
-    this.musicVolume = musicVolume;
+  public boolean getBooleanValue(String property) {
+    return ((int) this.values.get(property)) == 1;
   }
 }

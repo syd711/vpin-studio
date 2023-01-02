@@ -3,22 +3,22 @@ package de.mephisto.vpin.commons;
 public class POV {
 
   public static String SSAA = "ssaa";
-  public static String POSTPROCAA = "postprocAA";
-  public static String INGAMEAO = "ingameAO";
-  public static String SCSPREFLECT = "scSpReflect";
-  public static String FPSLIMITER = "fpsLimiter";
-  public static String OVERWRITEDETAILSLEVEL = "overwriteDetailsLevel";
-  public static String DETAILSLEVEL = "detailsLevel";
-  public static String BALLREFLECTION = "ballReflection";
-  public static String BALLTRAIL = "ballTrail2";
-  public static String BALLTRAILSTRENGTH = "ballTrailStrength";
-  public static String OVERWRITENIGHTDAY = "overwriteNightDay";
-  public static String NIGHTDAYLEVEL = "nightDayLevel";
-  public static String GAMEPLAYDIFFICULTY = "gameplayDifficulty";
-  public static String PHYSICSSET = "physicsSet";
-  public static String INCLUDEFLIPPERPHYSICS = "includeFlipperPhysics";
-  public static String SOUNDVOLUME = "soundVolume";
-  public static String MUSICVOLUME = "musicVolume";
+  public static String POST_PROC_AA = "postprocAA";
+  public static String INGAME_AO = "ingameAO";
+  public static String SCSP_REFLECT = "scSpReflect";
+  public static String FPS_LIMITER = "fpsLimiter";
+  public static String OVERWRITE_DETAILS_LEVEL = "overwriteDetailsLevel";
+  public static String DETAILS_LEVEL = "detailsLevel";
+  public static String BALL_REFLECTION = "ballReflection";
+  public static String BALL_TRAIL = "ballTrail";
+  public static String BALL_TRAIL_STRENGTH = "ballTrailStrength";
+  public static String OVERWRITE_NIGHTDAY = "overwriteNightDay";
+  public static String NIGHTDAY_LEVEL = "nightDayLevel";
+  public static String GAMEPLAY_DIFFICULTY = "gameplayDifficulty";
+  public static String PHYSICS_SET = "physicsSet";
+  public static String INCLUDE_FLIPPER_PHYSICS = "includeFlipperPhysics";
+  public static String SOUND_VOLUME = "soundVolume";
+  public static String MUSIC_VOLUME = "musicVolume";
 
   private int gameId;
 

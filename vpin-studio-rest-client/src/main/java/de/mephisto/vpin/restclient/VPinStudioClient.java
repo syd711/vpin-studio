@@ -71,15 +71,23 @@ public class VPinStudioClient implements ObservedPropertyChangeListener, Overlay
    * VPX
    ********************************************************************************************************************/
   public POVRepresentation getPOV(int gameId) {
-    return restClient.get(API + "vpx/pov/" + gameId, POVRepresentation.class);
+    Map<String, Object> povData = restClient.get(API + "vpx/pov/" + gameId, Map.class);
+    return new POVRepresentation(povData);
   }
 
-  public boolean setPOVPreference(int gameId, String property, Object value) {
+  public boolean setPOVPreference(int gameId, POVRepresentation pov, String property, Object value) {
     try {
+      if(pov == null) {
+        return true;
+      }
+      Object existingValue = pov.getValue(property);
+      if (!existingValue.equals(value)) {
         Map<String, Object> values = new HashMap<>();
         values.put("property", property);
         values.put("value", value);
         return restClient.put(API + "vpx/pov/" + gameId, values);
+      }
+      return true;
     } catch (Exception e) {
       LOG.error("Failed to set preferences: " + e.getMessage(), e);
     }
