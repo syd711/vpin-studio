@@ -13,6 +13,8 @@ import de.mephisto.vpin.ui.util.BindingUtil;
 import de.mephisto.vpin.ui.util.Dialogs;
 import de.mephisto.vpin.ui.util.MediaUtil;
 import de.mephisto.vpin.ui.util.ProgressResultModel;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -209,6 +211,15 @@ public class TablesSidebarController implements Initializable {
   @FXML
   private ComboBox<POVComboModel> povFpsLimiterCombo;
 
+  @FXML
+  private CheckBox povOverwriteDetailCheckbox;
+
+  @FXML
+  private Slider povDetailsSlider;
+
+  @FXML
+  private ComboBox<POVComboModel> povBallReflectionCombobox;
+
   private VPinStudioClient client;
 
   private Optional<GameRepresentation> game = Optional.empty();
@@ -254,6 +265,8 @@ public class TablesSidebarController implements Initializable {
 
     mediaPreviewCheckbox.selectedProperty().addListener((observable, oldValue, newValue) -> refreshView(game));
 
+
+
     povSSAACombo.setItems(FXCollections.observableList(POVComboModel.MODELS));
     povSSAACombo.valueProperty().addListener((observable, oldValue, newValue) -> client.setPOVPreference(game.get().getId(), POV.SSAA, newValue.getValue()));
 
@@ -268,6 +281,12 @@ public class TablesSidebarController implements Initializable {
 
     povFpsLimiterCombo.setItems(FXCollections.observableList(POVComboModel.MODELS));
     povFpsLimiterCombo.valueProperty().addListener((observable, oldValue, newValue) -> client.setPOVPreference(game.get().getId(), POV.FPSLIMITER, newValue.getValue()));
+
+    povOverwriteDetailCheckbox.selectedProperty().addListener((observable, oldValue, newValue) -> {
+      client.setPOVPreference(game.get().getId(), POV.OVERWRITEDETAILSLEVEL, newValue);
+      povDetailsSlider.setDisable(!newValue);
+    });
+    povDetailsSlider.valueProperty().addListener((observable, oldValue, newValue) -> client.setPOVPreference(game.get().getId(), POV.DETAILSLEVEL, newValue));
   }
 
   public void setTablesController(TablesController tablesController) {
@@ -585,6 +604,10 @@ public class TablesSidebarController implements Initializable {
         povIngameAOCombo.valueProperty().setValue(POVComboModel.forValue(pov.getIngameAO()));
         povScSpReflectCombo.valueProperty().setValue(POVComboModel.forValue(pov.getScSpReflect()));
         povFpsLimiterCombo.valueProperty().setValue(POVComboModel.forValue(pov.getFpsLimiter()));
+
+        povDetailsSlider.setValue(pov.getDetailsLevel());
+        povOverwriteDetailCheckbox.setSelected(pov.getOverwriteDetailsLevel() == 1);
+        povDetailsSlider.setDisable(pov.getOverwriteDetailsLevel() != 1);
       }
     }
   }

@@ -76,10 +76,10 @@ public class VPinStudioClient implements ObservedPropertyChangeListener, Overlay
 
   public boolean setPOVPreference(int gameId, String property, Object value) {
     try {
-      Map<String, Object> values = new HashMap<>();
-      values.put("property", property);
-      values.put("value", value);
-      return restClient.put(API + "vpx/pov/" + gameId, values);
+        Map<String, Object> values = new HashMap<>();
+        values.put("property", property);
+        values.put("value", value);
+        return restClient.put(API + "vpx/pov/" + gameId, values);
     } catch (Exception e) {
       LOG.error("Failed to set preferences: " + e.getMessage(), e);
     }

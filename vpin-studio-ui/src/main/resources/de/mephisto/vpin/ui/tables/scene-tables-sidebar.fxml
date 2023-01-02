@@ -558,19 +558,19 @@
                                           <Font size="14.0" />
                                        </font>
                                     </Label>
-                                    <CheckBox mnemonicParsing="false" GridPane.columnIndex="1" GridPane.rowIndex="8">
+                                    <CheckBox fx:id="povOverwriteDetailCheckbox" mnemonicParsing="false" GridPane.columnIndex="1" GridPane.rowIndex="8">
                                        <font>
                                           <Font size="14.0" />
                                        </font>
                                     </CheckBox>
-                                    <ComboBox fx:id="povFpsLimiterCombo1" layoutX="246.0" layoutY="163.0" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="12" />
+                                    <ComboBox fx:id="povBallReflectionCombobox" layoutX="246.0" layoutY="163.0" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="12" />
                                     <ComboBox fx:id="povFpsLimiterCombo11" layoutX="246.0" layoutY="375.0" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="13" />
                                     <CheckBox layoutX="246.0" layoutY="259.0" mnemonicParsing="false" GridPane.columnIndex="1" GridPane.rowIndex="17">
                                        <font>
                                           <Font size="14.0" />
                                        </font>
                                     </CheckBox>
-                                    <Slider blockIncrement="1.0" majorTickUnit="1.0" max="10.0" minorTickCount="0" showTickLabels="true" showTickMarks="true" snapToTicks="true" GridPane.columnIndex="1" GridPane.rowIndex="9">
+                                    <Slider fx:id="povDetailsSlider" blockIncrement="1.0" majorTickUnit="1.0" max="10.0" minorTickCount="0" showTickLabels="true" showTickMarks="true" snapToTicks="true" GridPane.columnIndex="1" GridPane.rowIndex="9">
                                        <GridPane.margin>
                                           <Insets top="6.0" />
                                        </GridPane.margin>
