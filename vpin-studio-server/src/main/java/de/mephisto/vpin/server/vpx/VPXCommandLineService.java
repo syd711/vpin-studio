@@ -47,8 +47,9 @@ public class VPXCommandLineService {
       } catch (InterruptedException e) {
         //ignore
       }
-      if (count > 30) {
+      if (count > 20) {
         LOG.error("Timeout waiting for the generation of " + target.getAbsolutePath());
+        systemService.killProcesses("VPinballX");
         break;
       }
     }

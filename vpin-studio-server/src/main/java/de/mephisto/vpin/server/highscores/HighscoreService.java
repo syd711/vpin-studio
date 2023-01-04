@@ -392,6 +392,7 @@ public class HighscoreService implements InitializingBean {
   @Override
   public void afterPropertiesSet() {
     this.highscoreResolver = new HighscoreResolver(systemService);
+//    new HighscoreWatcher(systemService.getVPRegFile().getParentFile(), systemService.getNvramFolder()).watch();
   }
 
 }

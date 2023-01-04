@@ -432,6 +432,17 @@ public class SystemService implements InitializingBean {
     return new File(folder, badge + ".png");
   }
 
+  public void killProcesses(String name) {
+    List<ProcessHandle> pinUpProcesses = ProcessHandle.allProcesses()
+        .filter(p -> p.info().command().isPresent() && (p.info().command().get().contains(name)))
+        .collect(Collectors.toList());
+    for (ProcessHandle pinUpProcess : pinUpProcesses) {
+      String cmd = pinUpProcess.info().command().get();
+      boolean b = pinUpProcess.destroyForcibly();
+      LOG.info("Destroyed process '" + cmd + "', result: " + b);
+    }
+  }
+
   public void restartPopper() {
     List<ProcessHandle> pinUpProcesses = ProcessHandle
         .allProcesses()
