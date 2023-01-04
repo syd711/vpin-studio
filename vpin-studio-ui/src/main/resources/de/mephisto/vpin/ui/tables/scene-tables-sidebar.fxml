@@ -463,7 +463,7 @@
                                     <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                     <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                     <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                    <RowConstraints minHeight="10.0" prefHeight="44.0" vgrow="SOMETIMES" />
+                                    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                     <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                     <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                 </rowConstraints>
@@ -564,7 +564,7 @@
                                        </font>
                                     </CheckBox>
                                     <ComboBox fx:id="povBallReflectionCombobox" layoutX="246.0" layoutY="163.0" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="12" />
-                                    <ComboBox fx:id="povBallTrailCombobox" layoutX="246.0" layoutY="375.0" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="13" />
+                                    <ComboBox fx:id="povBallTrailCombobox" layoutX="246.0" layoutY="375.0" GridPane.columnIndex="1" GridPane.rowIndex="13" />
                                     <CheckBox fx:id="povOverwriteNightDayCheckbox" layoutX="246.0" layoutY="259.0" mnemonicParsing="false" GridPane.columnIndex="1" GridPane.rowIndex="17">
                                        <font>
                                           <Font size="14.0" />
@@ -575,13 +575,18 @@
                                           <Insets top="6.0" />
                                        </GridPane.margin>
                                     </Slider>
-                                    <Slider fx:id="povNighDaySlider" blockIncrement="1.0" layoutX="212.0" layoutY="289.0" majorTickUnit="1.0" max="10.0" minorTickCount="0" showTickLabels="true" showTickMarks="true" snapToTicks="true" GridPane.columnIndex="1" GridPane.rowIndex="18">
-                                       <GridPane.margin>
-                                          <Insets top="6.0" />
-                                       </GridPane.margin>
-                                    </Slider>
                                     <Spinner fx:id="povBallTrailStrengthSpinner" GridPane.columnIndex="1" GridPane.rowIndex="14" />
-                                    <Spinner fx:id="povGameDifficultySpinner" layoutX="212.0" layoutY="440.0" GridPane.columnIndex="1" GridPane.rowIndex="20" />
+                                    <HBox alignment="CENTER_LEFT" spacing="6.0" GridPane.columnIndex="1" GridPane.rowIndex="20">
+                                       <children>
+                                          <Spinner fx:id="povGameDifficultySpinner" />
+                                          <Label text="(0..100)">
+                                             <font>
+                                                <Font size="14.0" />
+                                             </font>
+                                          </Label>
+                                       </children>
+                                    </HBox>
+                                    <Spinner fx:id="povNighDaySpinner" layoutX="212.0" layoutY="440.0" GridPane.columnIndex="1" GridPane.rowIndex="18" />
                                  </children>
                                  <VBox.margin>
                                     <Insets bottom="12.0" />

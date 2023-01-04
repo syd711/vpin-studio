@@ -179,9 +179,9 @@ public class VPXFileScanner {
         return;
       }
 
-      line = line.substring(line.indexOf(pattern) + pattern.length() + 1);
-      int start = line.indexOf("\"") + 1;
-      String rom = line.substring(start);
+      String extract = line.substring(line.indexOf(pattern) + pattern.length() + 1);
+      int start = extract.indexOf("\"") + 1;
+      String rom = extract.substring(start);
       int end = rom.indexOf("\"");
 
       if (end - start < MAX_ROM_FILENAME_LENGTH) {
@@ -191,9 +191,7 @@ public class VPXFileScanner {
       if (pattern.equals(PATTERN_TABLENAME)) {
         result.setTableName(rom);
       }
-      else if (result.getRom() == null) {
-        result.setRom(rom);
-      }
+      result.setRom(rom);
     }
   }
 

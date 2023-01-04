@@ -93,7 +93,7 @@ public class GamesResource {
   }
 
   @PostMapping("/save")
-  public Game save(@RequestBody Game game) {
+  public Game save(@RequestBody Game game) throws Exception {
     return gameService.save(game);
   }
 

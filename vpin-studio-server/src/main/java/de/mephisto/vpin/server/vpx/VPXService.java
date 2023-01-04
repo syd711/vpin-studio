@@ -5,6 +5,7 @@ import de.mephisto.vpin.commons.utils.FileUtils;
 import de.mephisto.vpin.server.VPinStudioException;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameService;
+import edu.umd.cs.findbugs.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanWrapper;
@@ -57,6 +58,24 @@ public class VPXService {
       return true;
     }
     return false;
+  }
+
+  @Nullable
+  public POV create(int gameId) {
+    Game game = gameService.getGame(gameId);
+    if (game != null) {
+      if(game.getPOVFile().exists()) {
+        if(!game.getPOVFile().delete()) {
+          throw new UnsupportedOperationException("Failed to delete " + game.getPOVFile().getAbsolutePath());
+        }
+      }
+
+      if (!game.getPOVFile().exists()) {
+        createPOV(game.getId());
+        return getPOV(game.getId());
+      }
+    }
+    return null;
   }
 
   public POV save(POV pov) {

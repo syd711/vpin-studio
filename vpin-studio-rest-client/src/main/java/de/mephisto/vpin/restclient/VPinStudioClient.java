@@ -97,9 +97,7 @@ public class VPinStudioClient implements ObservedPropertyChangeListener, Overlay
 
   public POVRepresentation createPOV(int gameId) throws Exception {
     try {
-      POVRepresentation pov = new POVRepresentation();
-      pov.setGameId(gameId);
-      return restClient.post(API + "vpx/pov", pov, POVRepresentation.class);
+      return restClient.post(API + "vpx/pov/" + gameId, new HashMap<>(), POVRepresentation.class);
     } catch (Exception e) {
       LOG.error("Failed to create POV representation: " + e.getMessage(), e);
       throw e;

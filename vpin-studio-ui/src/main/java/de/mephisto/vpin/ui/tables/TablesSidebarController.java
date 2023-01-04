@@ -198,7 +198,7 @@ public class TablesSidebarController implements Initializable {
   private ComboBox<POVComboModel> povSSAACombo;
 
   @FXML
-  private ComboBox<POVComboModel> povPostprocAACombo;
+  private ComboBox<POVPostProcComboModel> povPostprocAACombo;
 
   @FXML
   private ComboBox<POVComboModel> povIngameAOCombo;
@@ -228,7 +228,7 @@ public class TablesSidebarController implements Initializable {
   private CheckBox povOverwriteNightDayCheckbox;
 
   @FXML
-  private Slider povNighDaySlider;
+  private Spinner<Integer> povNighDaySpinner;
 
   @FXML
   private Spinner<Integer> povGameDifficultySpinner;
@@ -283,7 +283,7 @@ public class TablesSidebarController implements Initializable {
     povSSAACombo.setItems(FXCollections.observableList(POVComboModel.MODELS));
     povSSAACombo.valueProperty().addListener((observable, oldValue, newValue) -> client.setPOVPreference(game.get().getId(), getPOV(), POV.SSAA, newValue.getValue()));
 
-    povPostprocAACombo.setItems(FXCollections.observableList(POVComboModel.MODELS));
+    povPostprocAACombo.setItems(FXCollections.observableList(POVPostProcComboModel.MODELS));
     povPostprocAACombo.valueProperty().addListener((observable, oldValue, newValue) -> client.setPOVPreference(game.get().getId(), getPOV(), POV.POST_PROC_AA, newValue.getValue()));
 
     povIngameAOCombo.setItems(FXCollections.observableList(POVComboModel.MODELS));
@@ -320,8 +320,10 @@ public class TablesSidebarController implements Initializable {
     SpinnerValueFactory.IntegerSpinnerValueFactory factory = new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 100, 0);
     povBallTrailStrengthSpinner.setValueFactory(factory);
     povBallTrailStrengthSpinner.valueProperty().addListener((observable, oldValue, newValue) -> {
-      double formattedValue = newValue/100;
-      client.setPOVPreference(game.get().getId(), getPOV(), POV.BALL_TRAIL_STRENGTH, formattedValue);
+      debouncer.debounce(POV.GAMEPLAY_DIFFICULTY, () -> {
+        double formattedValue = newValue / 100;
+        client.setPOVPreference(game.get().getId(), getPOV(), POV.BALL_TRAIL_STRENGTH, formattedValue);
+      }, 1000);
     });
 
     povOverwriteNightDayCheckbox.selectedProperty().addListener((observable, oldValue, newValue) -> {
@@ -330,19 +332,23 @@ public class TablesSidebarController implements Initializable {
         result = 1;
       }
       client.setPOVPreference(game.get().getId(), getPOV(), POV.OVERWRITE_NIGHTDAY, result);
-      povNighDaySlider.setDisable(!newValue);
+      povNighDaySpinner.setDisable(!newValue);
     });
-    povNighDaySlider.valueProperty().addListener((observable, oldValue, newValue) -> {
+
+    SpinnerValueFactory.IntegerSpinnerValueFactory factoryNightDay = new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 100, 0);
+    povNighDaySpinner.setValueFactory(factoryNightDay);
+    factoryNightDay.valueProperty().addListener((observable, oldValue, newValue) -> {
       debouncer.debounce(POV.NIGHTDAY_LEVEL, () -> {
-        int value1 = ((Double) newValue).intValue();
-        client.setPOVPreference(game.get().getId(), getPOV(), POV.NIGHTDAY_LEVEL, value1);
-      }, 500);
+        client.setPOVPreference(game.get().getId(), getPOV(), POV.NIGHTDAY_LEVEL, newValue);
+      }, 1000);
     });
 
     SpinnerValueFactory.IntegerSpinnerValueFactory factoryDifficulty = new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 100, 0);
     povGameDifficultySpinner.setValueFactory(factoryDifficulty);
     povGameDifficultySpinner.valueProperty().addListener((observable, oldValue, newValue) -> {
-      client.setPOVPreference(game.get().getId(), getPOV(), POV.GAMEPLAY_DIFFICULTY, newValue);
+      debouncer.debounce(POV.GAMEPLAY_DIFFICULTY, () -> {
+        client.setPOVPreference(game.get().getId(), getPOV(), POV.GAMEPLAY_DIFFICULTY, newValue);
+      }, 1000);
     });
   }
 
@@ -662,7 +668,7 @@ public class TablesSidebarController implements Initializable {
         pov = client.getPOV(game.getId());
 
         povSSAACombo.valueProperty().setValue(POVComboModel.forValue(pov.getValue(POV.SSAA)));
-        povPostprocAACombo.valueProperty().setValue(POVComboModel.forValue(pov.getValue(POV.POST_PROC_AA)));
+        povPostprocAACombo.valueProperty().setValue(POVPostProcComboModel.forValue(pov.getValue(POV.POST_PROC_AA)));
         povIngameAOCombo.valueProperty().setValue(POVComboModel.forValue(pov.getValue(POV.INGAME_AO)));
         povScSpReflectCombo.valueProperty().setValue(POVComboModel.forValue(pov.getValue(POV.SCSP_REFLECT)));
         povFpsLimiterCombo.valueProperty().setValue(POVComboModel.forValue(pov.getValue(POV.FPS_LIMITER)));
@@ -673,13 +679,13 @@ public class TablesSidebarController implements Initializable {
 
         povBallReflectionCombobox.setValue(POVComboModel.forValue(pov.getValue(POV.BALL_REFLECTION)));
         povBallTrailCombobox.setValue(POVComboModel.forValue(pov.getValue(POV.BALL_TRAIL)));
-        povBallTrailStrengthSpinner.getValueFactory().setValue(pov.getIntValue(POV.BALL_TRAIL_STRENGTH));
 
-        povNighDaySlider.setDisable(!pov.getBooleanValue(POV.OVERWRITE_NIGHTDAY));
-        povNighDaySlider.setValue(pov.getIntValue(POV.NIGHTDAY_LEVEL));
-        povBallTrailStrengthSpinner.getValueFactory().setValue(pov.getIntValue(POV.BALL_TRAIL_STRENGTH));
+        int ballStrengthValue = (int) (pov.getDoubleValue(POV.BALL_TRAIL_STRENGTH) * 100);
+        povBallTrailStrengthSpinner.getValueFactory().setValue(ballStrengthValue);
+        povNighDaySpinner.setDisable(!pov.getBooleanValue(POV.OVERWRITE_NIGHTDAY));
+        povNighDaySpinner.getValueFactory().setValue(pov.getIntValue(POV.NIGHTDAY_LEVEL));
 
-        povGameDifficultySpinner.getValueFactory().setValue(pov.getIntValue(POV.GAMEPLAY_DIFFICULTY));
+        povGameDifficultySpinner.getValueFactory().setValue((int) pov.getDoubleValue(POV.GAMEPLAY_DIFFICULTY));
       }
     }
   }

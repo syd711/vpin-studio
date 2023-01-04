@@ -71,6 +71,7 @@ public class POVSerializer {
     FileWriter writer = new FileWriter(povFile);
     StreamResult result = new StreamResult(writer);
     transformer.transform(source, result);
+    writer.close();
     LOG.info("Written " + povFile.getAbsolutePath());
   }
 

@@ -30,6 +30,11 @@ public class POVRepresentation {
     return (int) this.values.get(property);
   }
 
+
+  public double getDoubleValue(String property) {
+    return (double) this.values.get(property);
+  }
+
   public boolean getBooleanValue(String property) {
     return ((int) this.values.get(property)) == 1;
   }

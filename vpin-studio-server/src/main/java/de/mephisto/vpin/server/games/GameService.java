@@ -6,6 +6,7 @@ import de.mephisto.vpin.server.highscores.Highscore;
 import de.mephisto.vpin.server.highscores.HighscoreMetadata;
 import de.mephisto.vpin.server.highscores.HighscoreService;
 import de.mephisto.vpin.server.highscores.Score;
+import de.mephisto.vpin.server.highscores.cards.CardService;
 import de.mephisto.vpin.server.popper.Emulator;
 import de.mephisto.vpin.server.popper.PinUPConnector;
 import de.mephisto.vpin.server.roms.RomService;
@@ -41,6 +42,9 @@ public class GameService {
 
   @Autowired
   private HighscoreService highscoreService;
+
+  @Autowired
+  private CardService cardService;
 
   @SuppressWarnings("unused")
   public List<Game> getGames() {
@@ -251,8 +255,10 @@ public class GameService {
     game.setValidationState(gameValidator.validate(game));
   }
 
-  public Game save(Game game) {
+  public Game save(Game game) throws Exception {
     GameDetails gameDetails = gameDetailsRepository.findByPupId(game.getId());
+    boolean romChanged = !String.valueOf(game.getRom()).equalsIgnoreCase(String.valueOf(gameDetails.getRomName()));
+
     gameDetails.setRomName(game.getRom());
     gameDetails.setHsFileName(game.getHsFileName());
     gameDetails.setTableName(game.getTableName());
@@ -265,7 +271,12 @@ public class GameService {
     }
 
     LOG.info("Saved " + game);
-    return getGame(game.getId());
+    Game updated = getGame(game.getId());
+    if(romChanged) {
+      highscoreService.updateHighscore(updated);
+      cardService.generateCard(updated, false);
+    }
+    return updated;
   }
 
 }

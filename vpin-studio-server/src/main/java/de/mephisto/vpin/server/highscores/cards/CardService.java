@@ -28,18 +28,14 @@ public class CardService {
   private final static Logger LOG = LoggerFactory.getLogger(CardService.class);
 
   @Autowired
-  private GameService gameService;
-
-  @Autowired
   private HighscoreService highscoreService;
 
   @Autowired
   private DirectB2SService directB2SService;
 
-  public File generateSampleCard(int gameId) throws Exception {
+  public File generateSampleCard(Game game) throws Exception {
     File cardSampleFile = getCardSampleFile();
     if (!cardSampleFile.exists()) {
-      Game game = gameService.getGame(gameId);
       generateCard(game, true);
     }
     return getCardSampleFile();
@@ -70,6 +66,9 @@ public class CardService {
             return true;
           }
         }
+      }
+      else {
+        LOG.info("Skipped card generation for " + game.getGameDisplayName() + ", no scores found.");
       }
     } catch (Exception e) {
       LOG.error("Failed to generate overlay: " + e.getMessage(), e);

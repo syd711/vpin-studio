@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.server.ResponseStatusException;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.File;
@@ -21,6 +22,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 import static de.mephisto.vpin.server.VPinStudioServer.API_SEGMENT;
+import static org.springframework.http.HttpStatus.NOT_FOUND;
 
 @RestController
 @RequestMapping(API_SEGMENT + "cards")
@@ -35,7 +37,11 @@ public class CardsResource {
 
   @GetMapping("/preview/{gameId}")
   public ResponseEntity<byte[]> generateCard(@PathVariable("gameId") int gameId) throws Exception {
-    return RequestUtil.serializeImage(cardService.generateSampleCard(gameId));
+    Game game = gameService.getGame(gameId);
+    if (game != null) {
+      return RequestUtil.serializeImage(cardService.generateSampleCard(game));
+    }
+    throw new ResponseStatusException(NOT_FOUND, "Not game found for id " + gameId);
   }
 
   @GetMapping("/generate/{gameId}")

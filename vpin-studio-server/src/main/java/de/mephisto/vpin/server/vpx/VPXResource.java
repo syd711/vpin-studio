@@ -29,4 +29,9 @@ public class VPXResource {
   public boolean put(@PathVariable("id") int id, @RequestBody Map<String, Object> values) {
     return vpxService.savePOVPreference(id, values);
   }
+
+  @PostMapping("/pov/{id}")
+  public POV create(@PathVariable("id") int id, @RequestBody Map<String, Object> values) {
+    return vpxService.create(id);
+  }
 }
