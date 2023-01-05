@@ -752,7 +752,7 @@
                                     </Label>
                                  </children>
                               </HBox>
-                                        <Slider fx:id="volumeSlider" majorTickUnit="10.0" minorTickCount="1" showTickLabels="true" showTickMarks="true" snapToTicks="true" value="100.0">
+                                        <Slider fx:id="volumeSlider" blockIncrement="1.0" majorTickUnit="10.0" minorTickCount="10" showTickLabels="true" showTickMarks="true" snapToTicks="true" value="100.0">
                                             <VBox.margin>
                                                 <Insets top="6.0" />
                                             </VBox.margin>
@@ -780,7 +780,7 @@
                                     <Insets top="12.0" />
                                  </VBox.margin>
                               </HBox>
-                              <Slider fx:id="povSoundVolumeSlider" disable="true" layoutX="10.0" layoutY="36.0" majorTickUnit="10.0" minorTickCount="1" showTickLabels="true" showTickMarks="true" snapToTicks="true" value="100.0" />
+                              <Slider fx:id="povSoundVolumeSlider" blockIncrement="1.0" disable="true" layoutX="10.0" layoutY="36.0" majorTickUnit="10.0" minorTickCount="10" showTickLabels="true" showTickMarks="true" snapToTicks="true" value="100.0" />
                               <HBox alignment="CENTER_LEFT" layoutX="10.0" layoutY="86.0" spacing="6.0">
                                  <children>
                                     <Label text="POV Music Volume">
@@ -804,7 +804,7 @@
                                     <Insets top="12.0" />
                                  </VBox.margin>
                               </HBox>
-                              <Slider fx:id="povMusicVolumeSlider" disable="true" layoutX="10.0" layoutY="106.0" majorTickUnit="10.0" minorTickCount="1" showTickLabels="true" showTickMarks="true" snapToTicks="true" value="100.0" />
+                              <Slider fx:id="povMusicVolumeSlider" blockIncrement="1.0" disable="true" layoutX="10.0" layoutY="106.0" majorTickUnit="10.0" minorTickCount="10" showTickLabels="true" showTickMarks="true" snapToTicks="true" value="100.0" />
                                     </children>
                                 </VBox>
                             </center>

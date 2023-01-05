@@ -233,6 +233,12 @@ public class TablesSidebarController implements Initializable {
   @FXML
   private Spinner<Integer> povGameDifficultySpinner;
 
+  @FXML
+  private Slider povSoundVolumeSlider;
+
+  @FXML
+  private Slider povMusicVolumeSlider;
+
   private VPinStudioClient client;
 
   private Optional<GameRepresentation> game = Optional.empty();
@@ -348,6 +354,17 @@ public class TablesSidebarController implements Initializable {
     povGameDifficultySpinner.valueProperty().addListener((observable, oldValue, newValue) -> {
       debouncer.debounce(POV.GAMEPLAY_DIFFICULTY, () -> {
         client.setPOVPreference(game.get().getId(), getPOV(), POV.GAMEPLAY_DIFFICULTY, newValue);
+      }, 500);
+    });
+
+    povSoundVolumeSlider.valueProperty().addListener((observable, oldValue, newValue) -> {
+      debouncer.debounce(POV.SOUND_VOLUME, () -> {
+        client.setPOVPreference(game.get().getId(), getPOV(), POV.SOUND_VOLUME, newValue);
+      }, 500);
+    });
+    povMusicVolumeSlider.valueProperty().addListener((observable, oldValue, newValue) -> {
+      debouncer.debounce(POV.MUSIC_VOLUME, () -> {
+        client.setPOVPreference(game.get().getId(), getPOV(), POV.MUSIC_VOLUME, newValue);
       }, 500);
     });
   }
@@ -686,6 +703,9 @@ public class TablesSidebarController implements Initializable {
   }
 
   private void refreshPOV(Optional<GameRepresentation> g) {
+    povSoundVolumeSlider.setDisable(true);
+    povMusicVolumeSlider.setDisable(true);
+
     if (g.isPresent()) {
       GameRepresentation game = g.get();
       if (game.isPov()) {
@@ -711,6 +731,15 @@ public class TablesSidebarController implements Initializable {
         povNighDaySpinner.getValueFactory().setValue(pov.getIntValue(POV.NIGHTDAY_LEVEL));
 
         povGameDifficultySpinner.getValueFactory().setValue((int) pov.getDoubleValue(POV.GAMEPLAY_DIFFICULTY));
+
+        povSoundVolumeSlider.setDisable(false);
+        povSoundVolumeSlider.setValue(pov.getIntValue(POV.SOUND_VOLUME));
+        povMusicVolumeSlider.setDisable(false);
+        povMusicVolumeSlider.setValue(pov.getIntValue(POV.MUSIC_VOLUME));
+      }
+      else {
+        povSoundVolumeSlider.setValue(100);
+        povMusicVolumeSlider.setValue(100);
       }
     }
   }
