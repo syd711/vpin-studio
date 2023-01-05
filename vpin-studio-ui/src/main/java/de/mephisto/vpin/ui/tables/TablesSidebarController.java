@@ -323,7 +323,7 @@ public class TablesSidebarController implements Initializable {
       debouncer.debounce(POV.BALL_TRAIL_STRENGTH, () -> {
         double formattedValue = Double.valueOf(newValue) / 100;
         client.setPOVPreference(game.get().getId(), getPOV(), POV.BALL_TRAIL_STRENGTH, formattedValue);
-      }, 1000);
+      }, 500);
     });
 
     povOverwriteNightDayCheckbox.selectedProperty().addListener((observable, oldValue, newValue) -> {
@@ -340,7 +340,7 @@ public class TablesSidebarController implements Initializable {
     factoryNightDay.valueProperty().addListener((observable, oldValue, newValue) -> {
       debouncer.debounce(POV.NIGHTDAY_LEVEL, () -> {
         client.setPOVPreference(game.get().getId(), getPOV(), POV.NIGHTDAY_LEVEL, newValue);
-      }, 1000);
+      }, 500);
     });
 
     SpinnerValueFactory.IntegerSpinnerValueFactory factoryDifficulty = new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 100, 0);
@@ -348,7 +348,7 @@ public class TablesSidebarController implements Initializable {
     povGameDifficultySpinner.valueProperty().addListener((observable, oldValue, newValue) -> {
       debouncer.debounce(POV.GAMEPLAY_DIFFICULTY, () -> {
         client.setPOVPreference(game.get().getId(), getPOV(), POV.GAMEPLAY_DIFFICULTY, newValue);
-      }, 1000);
+      }, 500);
     });
   }
 

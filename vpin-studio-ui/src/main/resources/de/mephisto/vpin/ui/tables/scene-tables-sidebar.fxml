@@ -248,194 +248,225 @@
                 </TitledPane>
                 <TitledPane expanded="false" layoutX="10.0" layoutY="104.0" prefWidth="600.0" text="DirectB2S">
                     <content>
-                        <VBox prefHeight="200.0" prefWidth="100.0">
-                            <children>
-                                <TilePane alignment="CENTER" prefHeight="200.0" prefWidth="200.0" styleClass="thumbnail-preview">
-                                    <children>
-                                        <ImageView fx:id="rawDirectB2SImage" fitHeight="350.0" fitWidth="450.0" pickOnBounds="true" preserveRatio="true" />
-                                    </children>
-                                </TilePane>
-                                <BorderPane prefWidth="200.0">
-                                    <left>
-                                        <Label fx:id="resolutionLabel" text="Label" BorderPane.alignment="CENTER" />
-                                    </left>
-                                    <right>
-                              <HBox BorderPane.alignment="CENTER">
-                                 <children>
-                                              <Button fx:id="openDirectB2SImageButton" mnemonicParsing="false" onAction="#onOpenDirectB2SBackground">
-                                                  <graphic>
-                                                      <FontIcon iconColor="WHITE" iconLiteral="mdi2e-eye" />
-                                                  </graphic>
-                                       <HBox.margin>
+                  <BorderPane>
+                     <center>
+                              <VBox prefHeight="200.0" prefWidth="100.0">
+                                  <children>
+                                      <TilePane alignment="CENTER" prefHeight="200.0" prefWidth="200.0" styleClass="thumbnail-preview">
+                                          <children>
+                                              <ImageView fx:id="rawDirectB2SImage" fitHeight="350.0" fitWidth="450.0" pickOnBounds="true" preserveRatio="true" />
+                                          </children>
+                                      </TilePane>
+                                      <BorderPane prefWidth="200.0">
+                                          <left>
+                                              <Label fx:id="resolutionLabel" text="Label" BorderPane.alignment="CENTER_LEFT">
+                                       <BorderPane.margin>
+                                          <Insets bottom="6.0" left="6.0" />
+                                       </BorderPane.margin>
+                                    </Label>
+                                          </left>
+                                          <right>
+                                    <HBox BorderPane.alignment="CENTER">
+                                       <BorderPane.margin>
                                           <Insets />
-                                       </HBox.margin>
-                                              </Button>
-                                    <Button fx:id="directb2sUploadBtn" mnemonicParsing="false" onAction="#onDirectb2sUpload">
-                                       <graphic>
-                                          <FontIcon iconColor="WHITE" iconLiteral="mdi2u-upload" />
-                                       </graphic>
-                                       <HBox.margin>
-                                          <Insets left="6.0" />
-                                       </HBox.margin>
-                                    </Button>
-                                 </children>
-                              </HBox>
-                                    </right>
-                                    <opaqueInsets>
-                                        <Insets />
-                                    </opaqueInsets>
-                                    <VBox.margin>
-                                        <Insets top="6.0" />
-                                    </VBox.margin>
-                                </BorderPane>
-                            </children>
-                        </VBox>
+                                       </BorderPane.margin>
+                                    </HBox>
+                                          </right>
+                                          <opaqueInsets>
+                                              <Insets />
+                                          </opaqueInsets>
+                                          <VBox.margin>
+                                              <Insets top="6.0" />
+                                          </VBox.margin>
+                                      </BorderPane>
+                                  </children>
+                              </VBox>
+                     </center>
+                     <top>
+                        <ToolBar prefHeight="40.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+                           <items>
+                              <Button fx:id="directb2sUploadBtn" mnemonicParsing="false" onAction="#onDirectb2sUpload" text="Upload">
+                                 <graphic>
+                                    <FontIcon iconColor="WHITE" iconLiteral="mdi2u-upload" />
+                                 </graphic>
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </Button>
+                                        <Button fx:id="openDirectB2SImageButton" mnemonicParsing="false" onAction="#onOpenDirectB2SBackground" text="View">
+                                 <graphic>
+                                                <FontIcon iconColor="WHITE" iconLiteral="mdi2e-eye" />
+                                 </graphic>
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                                        </Button>
+                           </items>
+                        </ToolBar>
+                     </top>
+                     <padding>
+                        <Insets left="1.0" right="1.0" />
+                     </padding>
+                  </BorderPane>
                     </content>
                 </TitledPane>
             <TitledPane expanded="false" text="Highscore">
               <content>
-                <AnchorPane minHeight="0.0" minWidth="0.0" prefWidth="200.0">
-                     <children>
-                        <VBox>
+                  <BorderPane>
+                     <center>
+                      <AnchorPane minHeight="0.0" minWidth="0.0" prefWidth="200.0">
                            <children>
-                              <GridPane>
-                                <columnConstraints>
-                                  <ColumnConstraints hgrow="SOMETIMES" maxWidth="297.4000732421875" minWidth="104.8000244140625" prefWidth="104.8000244140625" />
-                                  <ColumnConstraints hgrow="SOMETIMES" maxWidth="469.1999755859375" minWidth="277.39992675781247" prefWidth="469.1999755859375" />
-                                </columnConstraints>
-                                <rowConstraints>
-                                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                </rowConstraints>
+                              <VBox>
                                  <children>
-                                    <Label text="Type:" textFill="WHITE">
-                                       <font>
-                                          <Font size="14.0" />
-                                       </font>
-                                    </Label>
-                                    <Label layoutX="10.0" layoutY="15.0" text="File:" textFill="WHITE" GridPane.rowIndex="1">
-                                       <font>
-                                          <Font size="14.0" />
-                                       </font>
-                                    </Label>
-                                    <Label layoutX="10.0" layoutY="45.0" text="Last Modified:" textFill="WHITE" GridPane.rowIndex="2">
-                                       <font>
-                                          <Font size="14.0" />
-                                       </font>
-                                    </Label>
-                                    <Label layoutX="10.0" layoutY="76.0" text="Status:" textFill="WHITE" GridPane.rowIndex="4">
-                                       <font>
-                                          <Font size="14.0" />
-                                       </font>
-                                    </Label>
-                                    <Label fx:id="hsTypeLabel" layoutX="10.0" layoutY="15.0" text="-" textFill="WHITE" GridPane.columnIndex="1">
-                                       <font>
-                                          <Font size="14.0" />
-                                       </font>
-                                    </Label>
-                                    <Label fx:id="hsFileLabel" layoutX="102.0" layoutY="15.0" text="-" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="1">
-                                       <font>
-                                          <Font size="14.0" />
-                                       </font>
-                                    </Label>
-                                    <Label fx:id="hsLastModifiedLabel" layoutX="102.0" layoutY="45.0" text="-" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="2">
-                                       <font>
-                                          <Font size="14.0" />
-                                       </font>
-                                    </Label>
-                                    <Label fx:id="hsStatusLabel" layoutX="102.0" layoutY="76.0" text="-" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="4">
-                                       <font>
-                                          <Font size="14.0" />
-                                       </font>
-                                    </Label>
-                                    <Label layoutX="10.0" layoutY="76.0" text="Last Scanned:" textFill="WHITE" GridPane.rowIndex="3">
-                                       <font>
-                                          <Font size="14.0" />
-                                       </font>
-                                    </Label>
-                                    <Label fx:id="hsLastScannedLabel" layoutX="110.0" layoutY="76.0" text="-" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="3">
-                                       <font>
-                                          <Font size="14.0" />
-                                       </font>
-                                    </Label>
-                                    <HBox alignment="BASELINE_RIGHT" GridPane.columnIndex="1" GridPane.rowIndex="5">
+                                    <GridPane>
+                                      <columnConstraints>
+                                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="297.4000732421875" minWidth="104.8000244140625" prefWidth="104.8000244140625" />
+                                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="469.1999755859375" minWidth="277.39992675781247" prefWidth="469.1999755859375" />
+                                      </columnConstraints>
+                                      <rowConstraints>
+                                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                      </rowConstraints>
                                        <children>
-                                        <Button fx:id="scanBtn" mnemonicParsing="false" onAction="#onScan" text="Scan" textFill="WHITE">
-                                             <graphic>
-                                                <FontIcon iconColor="WHITE" iconLiteral="sil-refresh" />
-                                             </graphic>
-                                          </Button>
-                                       </children>
-                                    </HBox>
-                                 </children>
-                              </GridPane>
-                              <Label fx:id="rawTitleLabel" text="Raw Highscore">
-                                 <font>
-                                    <Font name="System Bold" size="14.0" />
-                                 </font>
-                                 <VBox.margin>
-                                    <Insets top="24.0" />
-                                 </VBox.margin>
-                              </Label>
-                              <VBox fx:id="rawScoreWrapper" styleClass="media-container">
-                                 <VBox.margin>
-                                    <Insets top="12.0" />
-                                 </VBox.margin>
-                                 <children>
-                                    <ScrollPane prefHeight="350.0" styleClass="media-parent">
-                                       <content>
-                                          <Label fx:id="rawScoreLabel" text="Label" textFill="WHITE">
+                                          <Label text="Type:" textFill="WHITE">
                                              <font>
                                                 <Font size="14.0" />
                                              </font>
                                           </Label>
-                                       </content>
-                                       <padding>
-                                          <Insets bottom="6.0" left="6.0" right="6.0" top="6.0" />
-                                       </padding>
-                                    </ScrollPane>
-                                 </children>
-                              </VBox>
-                              <Label fx:id="formattedTitleLabel" text="Formatted List" textFill="WHITE">
-                                 <font>
-                                    <Font name="System Bold" size="14.0" />
-                                 </font>
-                                 <VBox.margin>
-                                    <Insets top="24.0" />
-                                 </VBox.margin>
-                              </Label>
-                              <VBox fx:id="formattedScoreWrapper" styleClass="media-container">
-                                 <VBox.margin>
-                                    <Insets top="12.0" />
-                                 </VBox.margin>
-                                 <children>
-                                    <Label fx:id="formattedScoreLabel" text="Label" textFill="WHITE">
+                                          <Label layoutX="10.0" layoutY="15.0" text="File:" textFill="WHITE" GridPane.rowIndex="1">
+                                             <font>
+                                                <Font size="14.0" />
+                                             </font>
+                                          </Label>
+                                          <Label layoutX="10.0" layoutY="45.0" text="Last Modified:" textFill="WHITE" GridPane.rowIndex="2">
+                                             <font>
+                                                <Font size="14.0" />
+                                             </font>
+                                          </Label>
+                                          <Label layoutX="10.0" layoutY="76.0" text="Status:" textFill="WHITE" GridPane.rowIndex="4">
+                                             <font>
+                                                <Font size="14.0" />
+                                             </font>
+                                          </Label>
+                                          <Label fx:id="hsTypeLabel" layoutX="10.0" layoutY="15.0" text="-" textFill="WHITE" GridPane.columnIndex="1">
+                                             <font>
+                                                <Font size="14.0" />
+                                             </font>
+                                          </Label>
+                                          <Label fx:id="hsFileLabel" layoutX="102.0" layoutY="15.0" text="-" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                                             <font>
+                                                <Font size="14.0" />
+                                             </font>
+                                          </Label>
+                                          <Label fx:id="hsLastModifiedLabel" layoutX="102.0" layoutY="45.0" text="-" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                                             <font>
+                                                <Font size="14.0" />
+                                             </font>
+                                          </Label>
+                                          <Label fx:id="hsStatusLabel" layoutX="102.0" layoutY="76.0" text="-" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="4">
+                                             <font>
+                                                <Font size="14.0" />
+                                             </font>
+                                          </Label>
+                                          <Label layoutX="10.0" layoutY="76.0" text="Last Scanned:" textFill="WHITE" GridPane.rowIndex="3">
+                                             <font>
+                                                <Font size="14.0" />
+                                             </font>
+                                          </Label>
+                                          <Label fx:id="hsLastScannedLabel" layoutX="110.0" layoutY="76.0" text="-" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="3">
+                                             <font>
+                                                <Font size="14.0" />
+                                             </font>
+                                          </Label>
+                                          <HBox alignment="BASELINE_RIGHT" GridPane.columnIndex="1" GridPane.rowIndex="5" />
+                                       </children>
+                                    </GridPane>
+                                    <Label fx:id="rawTitleLabel" text="Raw Highscore">
                                        <font>
-                                          <Font size="14.0" />
+                                          <Font name="System Bold" size="14.0" />
                                        </font>
+                                       <VBox.margin>
+                                          <Insets top="24.0" />
+                                       </VBox.margin>
+                                    </Label>
+                                    <VBox fx:id="rawScoreWrapper" styleClass="media-container">
+                                       <VBox.margin>
+                                          <Insets top="12.0" />
+                                       </VBox.margin>
+                                       <children>
+                                          <ScrollPane prefHeight="350.0" styleClass="media-parent">
+                                             <content>
+                                                <Label fx:id="rawScoreLabel" text="Label" textFill="WHITE">
+                                                   <font>
+                                                      <Font size="14.0" />
+                                                   </font>
+                                                </Label>
+                                             </content>
+                                             <padding>
+                                                <Insets bottom="6.0" left="6.0" right="6.0" top="6.0" />
+                                             </padding>
+                                          </ScrollPane>
+                                       </children>
+                                    </VBox>
+                                    <Label fx:id="formattedTitleLabel" text="Formatted List" textFill="WHITE">
+                                       <font>
+                                          <Font name="System Bold" size="14.0" />
+                                       </font>
+                                       <VBox.margin>
+                                          <Insets top="24.0" />
+                                       </VBox.margin>
+                                    </Label>
+                                    <VBox fx:id="formattedScoreWrapper" styleClass="media-container">
+                                       <VBox.margin>
+                                          <Insets top="12.0" />
+                                       </VBox.margin>
+                                       <children>
+                                          <Label fx:id="formattedScoreLabel" text="Label" textFill="WHITE">
+                                             <font>
+                                                <Font size="14.0" />
+                                             </font>
+                                             <padding>
+                                                <Insets bottom="6.0" left="6.0" right="6.0" top="6.0" />
+                                             </padding>
+                                          </Label>
+                                       </children>
                                        <padding>
                                           <Insets bottom="6.0" left="6.0" right="6.0" top="6.0" />
                                        </padding>
-                                    </Label>
+                                    </VBox>
                                  </children>
                                  <padding>
-                                    <Insets bottom="6.0" left="6.0" right="6.0" top="6.0" />
+                                    <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
                                  </padding>
                               </VBox>
                            </children>
-                           <padding>
-                              <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
-                           </padding>
-                        </VBox>
-                     </children>
-                  </AnchorPane>
+                        </AnchorPane>
+                     </center>
+                     <top>
+                        <ToolBar prefHeight="40.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+                           <items>
+                            <Button fx:id="scanBtn" mnemonicParsing="false" onAction="#onScan" text="Scan" textFill="WHITE">
+                                 <graphic>
+                                    <FontIcon iconColor="WHITE" iconLiteral="sil-refresh" />
+                                 </graphic>
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </Button>
+                           </items>
+                        </ToolBar>
+                     </top>
+                     <padding>
+                        <Insets left="1.0" right="1.0" />
+                     </padding>
+                  </BorderPane>
               </content>
             </TitledPane>
-            <TitledPane expanded="false" text="Point Of View">
+            <TitledPane expanded="false" text="Point Of View (POV)">
                <content>
                   <BorderPane>
                      <center>
@@ -697,7 +728,7 @@
             </TitledPane>
                 <TitledPane expanded="false" prefWidth="600.0" text="Audio Settings">
                     <content>
-                        <BorderPane prefHeight="200.0" prefWidth="200.0">
+                        <BorderPane>
                             <center>
                                 <VBox prefHeight="200.0" prefWidth="100.0" BorderPane.alignment="CENTER">
                                     <children>
@@ -726,6 +757,54 @@
                                                 <Insets top="6.0" />
                                             </VBox.margin>
                                         </Slider>
+                              <HBox alignment="CENTER_LEFT" layoutX="10.0" layoutY="10.0" spacing="6.0">
+                                 <children>
+                                    <Label text="POV Sound Volume">
+                                       <font>
+                                          <Font size="14.0" />
+                                       </font>
+                                    </Label>
+                                    <Label>
+                                       <font>
+                                          <Font size="14.0" />
+                                       </font>
+                                       <graphic>
+                                          <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
+                                       </graphic>
+                                       <tooltip>
+                                          <Tooltip text="Only enabled if a POV file exists for this table." />
+                                       </tooltip>
+                                    </Label>
+                                 </children>
+                                 <VBox.margin>
+                                    <Insets top="12.0" />
+                                 </VBox.margin>
+                              </HBox>
+                              <Slider fx:id="povSoundVolumeSlider" disable="true" layoutX="10.0" layoutY="36.0" majorTickUnit="10.0" minorTickCount="1" showTickLabels="true" showTickMarks="true" snapToTicks="true" value="100.0" />
+                              <HBox alignment="CENTER_LEFT" layoutX="10.0" layoutY="86.0" spacing="6.0">
+                                 <children>
+                                    <Label text="POV Music Volume">
+                                       <font>
+                                          <Font size="14.0" />
+                                       </font>
+                                    </Label>
+                                    <Label>
+                                       <font>
+                                          <Font size="14.0" />
+                                       </font>
+                                       <graphic>
+                                          <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
+                                       </graphic>
+                                       <tooltip>
+                                          <Tooltip text="Only enabled if a POV file exists for this table." />
+                                       </tooltip>
+                                    </Label>
+                                 </children>
+                                 <VBox.margin>
+                                    <Insets top="12.0" />
+                                 </VBox.margin>
+                              </HBox>
+                              <Slider fx:id="povMusicVolumeSlider" disable="true" layoutX="10.0" layoutY="106.0" majorTickUnit="10.0" minorTickCount="1" showTickLabels="true" showTickMarks="true" snapToTicks="true" value="100.0" />
                                     </children>
                                 </VBox>
                             </center>
