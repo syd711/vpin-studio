@@ -34,4 +34,9 @@ public class VPXResource {
   public POV create(@PathVariable("id") int id, @RequestBody Map<String, Object> values) {
     return vpxService.create(id);
   }
+
+  @DeleteMapping("/pov/{id}")
+  public boolean delete(@PathVariable("id") int id) {
+    return vpxService.delete(id);
+  }
 }

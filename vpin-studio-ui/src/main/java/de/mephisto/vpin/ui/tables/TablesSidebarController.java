@@ -93,7 +93,7 @@ public class TablesSidebarController implements Initializable {
   private Pane mediaRootPane;
 
   @FXML
-  private VBox povSettingsPane;
+  private Pane povSettingsPane;
 
   @FXML
   private VBox povCreatePane;
@@ -361,6 +361,30 @@ public class TablesSidebarController implements Initializable {
     this.game = game;
     this.refreshView(game);
   }
+
+  @FXML
+  private void onPOVReload() {
+    this.refreshView(this.game);
+  }
+
+  @FXML
+  private void onPOVReExport() {
+    Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Re-Export POV file for table '" + this.game.get().getGameDisplayName() + "'?", "This will overwrite the POV file with the table values.");
+    if (result.isPresent() && result.get().equals(ButtonType.OK)) {
+      client.deletePOV(this.game.get().getId());
+      this.onPOVExport();
+    }
+  }
+
+  @FXML
+  private void onPOVDelete() {
+    Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Delete POV file for table '" + this.game.get().getGameDisplayName() + "'?");
+    if (result.isPresent() && result.get().equals(ButtonType.OK)) {
+      client.deletePOV(this.game.get().getId());
+      tablesController.onReload();
+    }
+  }
+
 
   @FXML
   private void onDirectb2sUpload() {

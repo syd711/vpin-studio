@@ -137,4 +137,20 @@ public class VPXService {
     LOG.error("No game found for script extraction, id " + gameId);
     return null;
   }
+
+  public boolean delete(int id) {
+    Game game = gameService.getGame(id);
+    if (game != null) {
+      File povFile = game.getPOVFile();
+      if(povFile.exists()) {
+        LOG.info("Deleting " + povFile.getAbsolutePath());
+        return povFile.delete();
+      }
+      else {
+        LOG.info("POV file " + povFile.getAbsolutePath() + " does not exist for deletion");
+      }
+    }
+    LOG.error("No game found for pov creation with id " + id);
+    return false;
+  }
 }

@@ -104,6 +104,10 @@ public class VPinStudioClient implements ObservedPropertyChangeListener, Overlay
     }
   }
 
+  public boolean deletePOV(int gameId) {
+    return restClient.delete(API + "vpx/pov/" + gameId);
+  }
+
   public File getTableScript(int gameId) {
     final RestTemplate restTemplate = new RestTemplate();
     String src = restTemplate.getForObject(restClient.getBaseUrl() + API + "vpx/script/" + gameId, String.class);
