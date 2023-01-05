@@ -457,6 +457,15 @@
                                     <Font size="14.0" />
                                  </font>
                               </Button>
+                              <Separator orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
+                              <Button layoutX="10.0" layoutY="11.0" mnemonicParsing="false" onAction="#onCard" text="Card" textFill="WHITE">
+                                 <graphic>
+                                    <FontIcon iconColor="WHITE" iconLiteral="bi-list-ol" />
+                                 </graphic>
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </Button>
                            </items>
                         </ToolBar>
                      </top>
@@ -842,8 +851,8 @@
                                         <GridPane>
                                             <columnConstraints>
                                                 <ColumnConstraints hgrow="SOMETIMES" maxWidth="282.199951171875" minWidth="10.0" prefWidth="177.4000244140625" />
-                                                <ColumnConstraints hgrow="SOMETIMES" maxWidth="497.40007324218755" minWidth="10.0" prefWidth="331.0" />
-                                                <ColumnConstraints hgrow="SOMETIMES" maxWidth="460.800048828125" minWidth="10.0" prefWidth="67.0" />
+                                                <ColumnConstraints hgrow="SOMETIMES" maxWidth="497.40007324218755" minWidth="10.0" prefWidth="298.39995117187493" />
+                                                <ColumnConstraints hgrow="SOMETIMES" maxWidth="460.800048828125" minWidth="10.0" prefWidth="100.00004882812505" />
                                             </columnConstraints>
                                             <rowConstraints>
                                                 <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
@@ -928,7 +937,7 @@
                                                         <Font size="14.0" />
                                                     </font>
                                                 </Label>
-                                    <HBox alignment="BASELINE_RIGHT" GridPane.columnIndex="2" GridPane.rowIndex="3">
+                                    <HBox alignment="CENTER_RIGHT" spacing="6.0" GridPane.columnIndex="2" GridPane.rowIndex="3">
                                        <children>
                                                       <Button fx:id="editRomNameBtn" mnemonicParsing="false" onAction="#onRomEdit">
                                                           <graphic>
@@ -943,9 +952,20 @@
                                                 <FontIcon iconColor="WHITE" iconLiteral="mdi2u-upload" />
                                              </graphic>
                                              <HBox.margin>
-                                                <Insets left="6.0" />
+                                                <Insets />
                                              </HBox.margin>
                                           </Button>
+                                          <Label>
+                                             <font>
+                                                <Font size="14.0" />
+                                             </font>
+                                             <graphic>
+                                                <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
+                                             </graphic>
+                                             <tooltip>
+                                                <Tooltip prefWidth="300.0" text="The ROM name usually also defines the folder name of the PUP pack and the highscore file. Check the table sources if this value does not match." wrapText="true" />
+                                             </tooltip>
+                                          </Label>
                                        </children>
                                     </HBox>
                                                 <Label layoutX="10.0" layoutY="198.0" text="EM Highscore Filename:" textFill="WHITE" GridPane.rowIndex="9">
@@ -953,7 +973,7 @@
                                                         <Font name="System Bold" size="14.0" />
                                                     </font>
                                                 </Label>
-                                    <HBox alignment="BASELINE_RIGHT" GridPane.columnIndex="2" GridPane.rowIndex="9">
+                                    <HBox alignment="CENTER_RIGHT" spacing="6.0" GridPane.columnIndex="2" GridPane.rowIndex="9">
                                        <children>
                                                       <Button fx:id="editHsFileNameBtn" mnemonicParsing="false" onAction="#onHsFileNameEdit">
                                                           <graphic>
@@ -963,6 +983,17 @@
                                                               <Tooltip text="Set EM highscore filename manually." />
                                                           </tooltip>
                                                       </Button>
+                                          <Label>
+                                             <font>
+                                                <Font size="14.0" />
+                                             </font>
+                                             <tooltip>
+                                                <Tooltip prefWidth="300.0" text="The value is read from EM table scripts and defines the highscore filename, located in &quot;VisualPinball\User&quot;." wrapText="true" />
+                                             </tooltip>
+                                             <graphic>
+                                                <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
+                                             </graphic>
+                                          </Label>
                                        </children>
                                     </HBox>
                                                 <Label fx:id="labelHSFilename" text="-" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="9">
@@ -979,7 +1010,7 @@
                                           <Font size="14.0" />
                                        </font>
                                     </Label>
-                                    <HBox alignment="CENTER_RIGHT" prefHeight="100.0" prefWidth="200.0" GridPane.columnIndex="2" GridPane.rowIndex="5">
+                                    <HBox alignment="CENTER_RIGHT" spacing="6.0" GridPane.columnIndex="2" GridPane.rowIndex="5">
                                        <children>
                                           <Button fx:id="editTableNameBtn" mnemonicParsing="false" onAction="#onTableNameEdit">
                                              <graphic>
@@ -989,6 +1020,17 @@
                                                 <Tooltip text="Update the table name of this game. This value may match the VReg highscore filename value." />
                                              </tooltip>
                                           </Button>
+                                          <Label>
+                                             <font>
+                                                <Font size="14.0" />
+                                             </font>
+                                             <tooltip>
+                                                <Tooltip prefWidth="300.0" text="This property is defined for some tables and used as an alternative ROM name during the highscore lookup." wrapText="true" />
+                                             </tooltip>
+                                             <graphic>
+                                                <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
+                                             </graphic>
+                                          </Label>
                                        </children>
                                     </HBox>
                                     <Label layoutX="10.0" layoutY="45.0" text="Last Modified:" textFill="WHITE" GridPane.rowIndex="2">

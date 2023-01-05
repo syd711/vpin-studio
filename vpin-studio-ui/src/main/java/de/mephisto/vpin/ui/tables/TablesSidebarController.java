@@ -438,6 +438,16 @@ public class TablesSidebarController implements Initializable {
   }
 
   @FXML
+  private void onCard() {
+    if (this.game.isPresent()) {
+      GameRepresentation g = this.game.get();
+      client.generateHighscoreCardSample(g);
+      ByteArrayInputStream s = Studio.client.getHighscoreCard(g);
+      MediaUtil.openMedia(s);
+    }
+  }
+
+  @FXML
   private void onPlayClick(ActionEvent e) {
     Button source = (Button) e.getSource();
     BorderPane borderPane = (BorderPane) source.getParent();
