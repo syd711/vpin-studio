@@ -126,6 +126,9 @@ public class TablesSidebarController implements Initializable {
   private Label labelTableName;
 
   @FXML
+  private Label labelLastModified;
+
+  @FXML
   private Slider volumeSlider;
 
   @FXML
@@ -231,13 +234,16 @@ public class TablesSidebarController implements Initializable {
   private Spinner<Integer> povNighDaySpinner;
 
   @FXML
-  private Spinner<Integer> povGameDifficultySpinner;
+  private Spinner<Double> povGameDifficultySpinner;
 
   @FXML
   private Slider povSoundVolumeSlider;
 
   @FXML
   private Slider povMusicVolumeSlider;
+
+  @FXML
+  private Spinner<Integer>  povRotationFullscreenSpinner;
 
   private VPinStudioClient client;
 
@@ -349,7 +355,7 @@ public class TablesSidebarController implements Initializable {
       }, 500);
     });
 
-    SpinnerValueFactory.IntegerSpinnerValueFactory factoryDifficulty = new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 100, 0);
+    SpinnerValueFactory.DoubleSpinnerValueFactory factoryDifficulty = new SpinnerValueFactory.DoubleSpinnerValueFactory(0, 100, 0);
     povGameDifficultySpinner.setValueFactory(factoryDifficulty);
     povGameDifficultySpinner.valueProperty().addListener((observable, oldValue, newValue) -> {
       debouncer.debounce(POV.GAMEPLAY_DIFFICULTY, () -> {
@@ -359,12 +365,22 @@ public class TablesSidebarController implements Initializable {
 
     povSoundVolumeSlider.valueProperty().addListener((observable, oldValue, newValue) -> {
       debouncer.debounce(POV.SOUND_VOLUME, () -> {
-        client.setPOVPreference(game.get().getId(), getPOV(), POV.SOUND_VOLUME, newValue);
+        int v = (int) newValue;
+        client.setPOVPreference(game.get().getId(), getPOV(), POV.SOUND_VOLUME, v);
       }, 500);
     });
     povMusicVolumeSlider.valueProperty().addListener((observable, oldValue, newValue) -> {
       debouncer.debounce(POV.MUSIC_VOLUME, () -> {
-        client.setPOVPreference(game.get().getId(), getPOV(), POV.MUSIC_VOLUME, newValue);
+        int v = (int) newValue;
+        client.setPOVPreference(game.get().getId(), getPOV(), POV.MUSIC_VOLUME, v);
+      }, 500);
+    });
+
+    SpinnerValueFactory.IntegerSpinnerValueFactory factoryRotation = new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 360, 0);
+    povRotationFullscreenSpinner.setValueFactory(factoryRotation);
+    povRotationFullscreenSpinner.valueProperty().addListener((observable, oldValue, newValue) -> {
+      debouncer.debounce(POV.FULLSCREEN_ROTATION, () -> {
+        client.setPOVPreference(game.get().getId(), getPOV(), POV.FULLSCREEN_ROTATION, newValue);
       }, 500);
     });
   }
@@ -663,6 +679,7 @@ public class TablesSidebarController implements Initializable {
       labelNVOffset.setText(game.getNvOffset() > 0 ? String.valueOf(game.getNvOffset()) : "-");
       labelFilename.setText(game.getGameFileName() != null ? game.getGameFileName() : "-");
       labelTableName.setText(game.getTableName() != null ? game.getTableName() : "-");
+      labelLastModified.setText(game.getModified() != null ? DateFormat.getDateTimeInstance().format(game.getModified()) : "-");
       labelLastPlayed.setText(game.getLastPlayed() != null ? DateFormat.getDateTimeInstance().format(game.getLastPlayed()) : "-");
       labelTimesPlayed.setText(String.valueOf(game.getNumberPlays()));
       if (!StringUtils.isEmpty(game.getHsFileName())) {
@@ -692,6 +709,7 @@ public class TablesSidebarController implements Initializable {
       labelRomAlias.setText("-");
       labelNVOffset.setText("-");
       labelFilename.setText("-");
+      labelLastModified.setText("-");
       labelLastPlayed.setText("-");
       labelTableName.setText("-");
       labelTimesPlayed.setText("-");
@@ -730,12 +748,14 @@ public class TablesSidebarController implements Initializable {
         povNighDaySpinner.setDisable(!pov.getBooleanValue(POV.OVERWRITE_NIGHTDAY));
         povNighDaySpinner.getValueFactory().setValue(pov.getIntValue(POV.NIGHTDAY_LEVEL));
 
-        povGameDifficultySpinner.getValueFactory().setValue((int) pov.getDoubleValue(POV.GAMEPLAY_DIFFICULTY));
+        povGameDifficultySpinner.getValueFactory().setValue(pov.getDoubleValue(POV.GAMEPLAY_DIFFICULTY));
 
         povSoundVolumeSlider.setDisable(false);
         povSoundVolumeSlider.setValue(pov.getIntValue(POV.SOUND_VOLUME));
         povMusicVolumeSlider.setDisable(false);
         povMusicVolumeSlider.setValue(pov.getIntValue(POV.MUSIC_VOLUME));
+
+        povRotationFullscreenSpinner.getValueFactory().setValue(pov.getIntValue(POV.FULLSCREEN_ROTATION));
       }
       else {
         povSoundVolumeSlider.setValue(100);

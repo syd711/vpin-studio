@@ -49,6 +49,24 @@ public class POVParser extends DefaultHandler {
           }
         }
       }
+
+
+      list = doc.getElementsByTagName("fullscreen");
+      for (int temp = 0; temp < list.getLength(); temp++) {
+        Node node = list.item(temp);
+        if (node.getNodeType() == Node.ELEMENT_NODE) {
+          Element element = (Element) node;
+          NodeList childNodes = element.getChildNodes();
+          for (int i = 0; i < childNodes.getLength(); i++) {
+            Node settingsNode = childNodes.item(i);
+            if (settingsNode.getNodeType() == Node.ELEMENT_NODE) {
+              String name = settingsNode.getNodeName();
+              readNode(pov, name, settingsNode);
+            }
+          }
+        }
+      }
+
       LOG.info("Finished parsing of " + povFile.getAbsolutePath());
     } catch (Exception e) {
       String msg = "Failed to parse pov file '" + povFile.getAbsolutePath() + "': " + e.getMessage();
@@ -126,6 +144,10 @@ public class POVParser extends DefaultHandler {
       }
       case "MusicVolume": {
         pov.setMusicVolume(Integer.parseInt(node.getTextContent().trim()));
+        break;
+      }
+      case "rotation": {
+        pov.setRotationFullscreen((int) Double.parseDouble(node.getTextContent().trim()));
         break;
       }
     }

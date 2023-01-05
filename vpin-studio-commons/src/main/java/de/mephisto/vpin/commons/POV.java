@@ -2,23 +2,24 @@ package de.mephisto.vpin.commons;
 
 public class POV {
 
-  public static String SSAA = "ssaa";
-  public static String POST_PROC_AA = "postprocAA";
-  public static String INGAME_AO = "ingameAO";
-  public static String SCSP_REFLECT = "scSpReflect";
-  public static String FPS_LIMITER = "fpsLimiter";
-  public static String OVERWRITE_DETAILS_LEVEL = "overwriteDetailsLevel";
-  public static String DETAILS_LEVEL = "detailsLevel";
-  public static String BALL_REFLECTION = "ballReflection";
-  public static String BALL_TRAIL = "ballTrail";
-  public static String BALL_TRAIL_STRENGTH = "ballTrailStrength";
-  public static String OVERWRITE_NIGHTDAY = "overwriteNightDay";
-  public static String NIGHTDAY_LEVEL = "nightDayLevel";
-  public static String GAMEPLAY_DIFFICULTY = "gameplayDifficulty";
-  public static String PHYSICS_SET = "physicsSet";
-  public static String INCLUDE_FLIPPER_PHYSICS = "includeFlipperPhysics";
-  public static String SOUND_VOLUME = "soundVolume";
-  public static String MUSIC_VOLUME = "musicVolume";
+  public static final String SSAA = "ssaa";
+  public static final String POST_PROC_AA = "postprocAA";
+  public static final String INGAME_AO = "ingameAO";
+  public static final String SCSP_REFLECT = "scSpReflect";
+  public static final String FPS_LIMITER = "fpsLimiter";
+  public static final String OVERWRITE_DETAILS_LEVEL = "overwriteDetailsLevel";
+  public static final String DETAILS_LEVEL = "detailsLevel";
+  public static final String BALL_REFLECTION = "ballReflection";
+  public static final String BALL_TRAIL = "ballTrail";
+  public static final String BALL_TRAIL_STRENGTH = "ballTrailStrength";
+  public static final String OVERWRITE_NIGHTDAY = "overwriteNightDay";
+  public static final String NIGHTDAY_LEVEL = "nightDayLevel";
+  public static final String GAMEPLAY_DIFFICULTY = "gameplayDifficulty";
+  public static final String PHYSICS_SET = "physicsSet";
+  public static final String INCLUDE_FLIPPER_PHYSICS = "includeFlipperPhysics";
+  public static final String SOUND_VOLUME = "soundVolume";
+  public static final String MUSIC_VOLUME = "musicVolume";
+  public static final String FULLSCREEN_ROTATION = "rotationFullscreen";
 
   private int gameId;
 
@@ -39,6 +40,15 @@ public class POV {
   private int includeFlipperPhysics;
   private int soundVolume;
   private int musicVolume;
+  private int rotationFullscreen;
+
+  public int getRotationFullscreen() {
+    return rotationFullscreen;
+  }
+
+  public void setRotationFullscreen(int rotationFullscreen) {
+    this.rotationFullscreen = rotationFullscreen;
+  }
 
   public int getGameId() {
     return gameId;

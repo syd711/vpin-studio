@@ -89,7 +89,7 @@ public class RestClient implements ClientHttpRequestInterceptor {
   }
 
   public Boolean put(String url, Map<String, Object> model) throws Exception {
-    LOG.info("HTTP PUT " + url);
+    LOG.info("HTTP PUT " + url + " " + model);
     HttpHeaders headers = new HttpHeaders();
     headers.setContentType(MediaType.APPLICATION_JSON);
     HttpEntity<Map> entity = new HttpEntity<>(model, headers);

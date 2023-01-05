@@ -39,13 +39,27 @@ public class POVSerializer {
       doc.getDocumentElement().normalize();
 
       NodeList list = doc.getElementsByTagName("customsettings");
-
       for (int temp = 0; temp < list.getLength(); temp++) {
         Node node = list.item(temp);
         if (node.getNodeType() == Node.ELEMENT_NODE) {
           Element element = (Element) node;
           NodeList childNodes = element.getChildNodes();
+          for (int i = 0; i < childNodes.getLength(); i++) {
+            Node settingsNode = childNodes.item(i);
+            if (settingsNode.getNodeType() == Node.ELEMENT_NODE) {
+              String name = settingsNode.getNodeName();
+              writeNode(pov, name, settingsNode);
+            }
+          }
+        }
+      }
 
+      list = doc.getElementsByTagName("fullscreen");
+      for (int temp = 0; temp < list.getLength(); temp++) {
+        Node node = list.item(temp);
+        if (node.getNodeType() == Node.ELEMENT_NODE) {
+          Element element = (Element) node;
+          NodeList childNodes = element.getChildNodes();
           for (int i = 0; i < childNodes.getLength(); i++) {
             Node settingsNode = childNodes.item(i);
             if (settingsNode.getNodeType() == Node.ELEMENT_NODE) {
@@ -143,6 +157,10 @@ public class POVSerializer {
       }
       case "MusicVolume": {
         node.setTextContent(String.valueOf(pov.getMusicVolume()));
+        break;
+      }
+      case "rotation": {
+        node.setTextContent(String.valueOf(pov.getRotationFullscreen()));
         break;
       }
     }

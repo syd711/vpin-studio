@@ -23,6 +23,7 @@ public class GameRepresentation {
   private String gameFileName;
   private String tableName;
   private int id;
+  private Date modified;
   private Date lastPlayed;
   private int numberPlays;
   private GameMediaRepresentation gameMedia;
@@ -38,6 +39,14 @@ public class GameRepresentation {
   private List<GameAssetRepresentation> assets;
 
   private boolean pov;
+
+  public Date getModified() {
+    return modified;
+  }
+
+  public void setModified(Date modified) {
+    this.modified = modified;
+  }
 
   public boolean isPov() {
     return pov;

@@ -157,6 +157,13 @@ public class Game {
     return null;
   }
 
+  public Date getModified() {
+    if(this.gameFile != null && this.gameFile.lastModified() > 0) {
+      return new Date(this.gameFile.lastModified());
+    }
+    return null;
+  }
+
   @NonNull
   @JsonIgnore
   public File getGameFile() {

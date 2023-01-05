@@ -28,5 +28,6 @@ public class VPXParserTest {
     assertTrue(settings.getSoundVolume() > 0);
     assertTrue(settings.getScSpReflect() > 0);
     assertTrue(settings.getSsaa() > 0);
+    assertTrue(settings.getRotationFullscreen() > 0);
   }
 }
