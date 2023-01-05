@@ -320,8 +320,8 @@ public class TablesSidebarController implements Initializable {
     SpinnerValueFactory.IntegerSpinnerValueFactory factory = new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 100, 0);
     povBallTrailStrengthSpinner.setValueFactory(factory);
     povBallTrailStrengthSpinner.valueProperty().addListener((observable, oldValue, newValue) -> {
-      debouncer.debounce(POV.GAMEPLAY_DIFFICULTY, () -> {
-        double formattedValue = newValue / 100;
+      debouncer.debounce(POV.BALL_TRAIL_STRENGTH, () -> {
+        double formattedValue = Double.valueOf(newValue) / 100;
         client.setPOVPreference(game.get().getId(), getPOV(), POV.BALL_TRAIL_STRENGTH, formattedValue);
       }, 1000);
     });
@@ -333,7 +333,7 @@ public class TablesSidebarController implements Initializable {
       }
       client.setPOVPreference(game.get().getId(), getPOV(), POV.OVERWRITE_NIGHTDAY, result);
       povNighDaySpinner.setDisable(!newValue);
-    });
+    });;
 
     SpinnerValueFactory.IntegerSpinnerValueFactory factoryNightDay = new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 100, 0);
     povNighDaySpinner.setValueFactory(factoryNightDay);
@@ -703,9 +703,10 @@ public class TablesSidebarController implements Initializable {
 
         povBallReflectionCombobox.setValue(POVComboModel.forValue(pov.getValue(POV.BALL_REFLECTION)));
         povBallTrailCombobox.setValue(POVComboModel.forValue(pov.getValue(POV.BALL_TRAIL)));
-
         int ballStrengthValue = (int) (pov.getDoubleValue(POV.BALL_TRAIL_STRENGTH) * 100);
         povBallTrailStrengthSpinner.getValueFactory().setValue(ballStrengthValue);
+
+        povOverwriteNightDayCheckbox.setSelected(pov.getBooleanValue(POV.OVERWRITE_NIGHTDAY));
         povNighDaySpinner.setDisable(!pov.getBooleanValue(POV.OVERWRITE_NIGHTDAY));
         povNighDaySpinner.getValueFactory().setValue(pov.getIntValue(POV.NIGHTDAY_LEVEL));
 

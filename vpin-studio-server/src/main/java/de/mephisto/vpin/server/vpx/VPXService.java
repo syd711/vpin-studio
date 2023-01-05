@@ -5,7 +5,6 @@ import de.mephisto.vpin.commons.utils.FileUtils;
 import de.mephisto.vpin.server.VPinStudioException;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameService;
-import de.mephisto.vpin.server.system.SystemService;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,9 +28,6 @@ public class VPXService {
 
   @Autowired
   private GameService gameService;
-
-  @Autowired
-  private SystemService systemService;
 
   @Autowired
   private VPXCommandLineService vpxCommandLineService;
@@ -68,8 +64,8 @@ public class VPXService {
   public POV create(int gameId) {
     Game game = gameService.getGame(gameId);
     if (game != null) {
-      if(game.getPOVFile().exists()) {
-        if(!game.getPOVFile().delete()) {
+      if (game.getPOVFile().exists()) {
+        if (!game.getPOVFile().delete()) {
           throw new UnsupportedOperationException("Failed to delete " + game.getPOVFile().getAbsolutePath());
         }
       }
@@ -142,7 +138,7 @@ public class VPXService {
     Game game = gameService.getGame(id);
     if (game != null) {
       File povFile = game.getPOVFile();
-      if(povFile.exists()) {
+      if (povFile.exists()) {
         LOG.info("Deleting " + povFile.getAbsolutePath());
         return povFile.delete();
       }

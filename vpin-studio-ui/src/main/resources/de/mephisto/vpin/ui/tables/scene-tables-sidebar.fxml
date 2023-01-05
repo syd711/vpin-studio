@@ -582,7 +582,16 @@
                                                 <Insets top="6.0" />
                                              </GridPane.margin>
                                           </Slider>
-                                          <Spinner fx:id="povBallTrailStrengthSpinner" GridPane.columnIndex="1" GridPane.rowIndex="14" />
+                                          <HBox alignment="CENTER_LEFT" spacing="6.0" GridPane.columnIndex="1" GridPane.rowIndex="14">
+                                             <children>
+                                                <Spinner fx:id="povBallTrailStrengthSpinner" />
+                                                <Label text="(0..100)">
+                                                   <font>
+                                                      <Font size="14.0" />
+                                                   </font>
+                                                </Label>
+                                             </children>
+                                          </HBox>
                                           <HBox alignment="CENTER_LEFT" spacing="6.0" GridPane.columnIndex="1" GridPane.rowIndex="20">
                                              <children>
                                                 <Spinner fx:id="povGameDifficultySpinner" />
@@ -593,7 +602,16 @@
                                                 </Label>
                                              </children>
                                           </HBox>
-                                          <Spinner fx:id="povNighDaySpinner" layoutX="212.0" layoutY="440.0" GridPane.columnIndex="1" GridPane.rowIndex="18" />
+                                          <HBox alignment="CENTER_LEFT" spacing="6.0" GridPane.columnIndex="1" GridPane.rowIndex="18">
+                                             <children>
+                                                <Spinner fx:id="povNighDaySpinner" />
+                                                <Label text="(0..100)">
+                                                   <font>
+                                                      <Font size="14.0" />
+                                                   </font>
+                                                </Label>
+                                             </children>
+                                          </HBox>
                                        </children>
                                        <VBox.margin>
                                           <Insets bottom="12.0" />
@@ -641,7 +659,12 @@
                      <top>
                         <VBox fx:id="povCreatePane" BorderPane.alignment="TOP_LEFT">
                            <children>
-                              <Label text="This table does not have a POV file.">
+                              <Label layoutX="22.0" layoutY="22.0" text="This table does not have a POV file.">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </Label>
+                              <Label text="You can export a POV file to customize settings of the table without modifying the VPX file.">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
