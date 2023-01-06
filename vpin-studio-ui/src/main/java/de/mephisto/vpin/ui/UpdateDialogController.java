@@ -34,7 +34,7 @@ public class UpdateDialogController implements Initializable, DialogController {
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
-    String newVersion = "1.2.7"; //Updater.checkForUpdate(Studio.getVersion());
+    String newVersion = Updater.checkForUpdate(Studio.getVersion());
     clientLabel.setText("Downloading " + String.format(Updater.BASE_URL, newVersion) + Updater.UI_ZIP);
     serverLabel.setText("Downloading " + String.format(Updater.BASE_URL, newVersion) + Updater.SERVER_ZIP);
 

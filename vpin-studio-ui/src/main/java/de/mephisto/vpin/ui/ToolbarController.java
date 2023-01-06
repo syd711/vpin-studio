@@ -8,6 +8,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.stage.Stage;
+import org.apache.commons.lang3.StringUtils;
 
 import java.net.URL;
 import java.util.Optional;
@@ -48,6 +49,6 @@ public class ToolbarController implements Initializable {
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
     String s = Updater.checkForUpdate(Studio.getVersion());
-//    updateBtn.setVisible(!StringUtils.isEmpty(s));
+    updateBtn.setVisible(!StringUtils.isEmpty(s));
   }
 }

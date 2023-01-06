@@ -31,9 +31,9 @@
    <top>
       <BorderPane BorderPane.alignment="CENTER">
          <center>
-          <VBox alignment="TOP_CENTER" stylesheets="@stylesheet.css">
+          <VBox alignment="TOP_CENTER">
               <children>
-                  <Button fx:id="dashboardBtn" alignment="BASELINE_LEFT" graphicTextGap="12.0" mnemonicParsing="false" onAction="#onDashboardClick" prefHeight="60.0" prefWidth="250.0" styleClass="navigation-button" stylesheets="@stylesheet.css" text="Dashboard" textFill="WHITE">
+                  <Button fx:id="dashboardBtn" alignment="BASELINE_LEFT" graphicTextGap="12.0" mnemonicParsing="false" onAction="#onDashboardClick" prefHeight="60.0" prefWidth="250.0" styleClass="navigation-button" text="Dashboard" textFill="WHITE">
                       <font>
                           <Font size="18.0" />
                       </font>
@@ -50,7 +50,7 @@
                         <FontIcon iconColor="WHITE" iconLiteral="bi-grid" />
                      </graphic>
                   </Button>
-                  <Button alignment="BASELINE_LEFT" graphicTextGap="12.0" layoutX="10.0" layoutY="70.0" mnemonicParsing="false" onAction="#onTablesClick" prefHeight="60.0" prefWidth="250.0" styleClass="navigation-button" stylesheets="@stylesheet.css" text="Tables" textFill="WHITE">
+                  <Button alignment="BASELINE_LEFT" graphicTextGap="12.0" layoutX="10.0" layoutY="70.0" mnemonicParsing="false" onAction="#onTablesClick" prefHeight="60.0" prefWidth="250.0" styleClass="navigation-button" text="Tables" textFill="WHITE">
                      <font>
                         <Font name="Tahoma" size="18.0" />
                      </font>
