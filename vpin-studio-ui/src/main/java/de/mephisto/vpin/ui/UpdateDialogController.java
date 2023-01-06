@@ -2,8 +2,6 @@ package de.mephisto.vpin.ui;
 
 import de.mephisto.vpin.commons.fx.DialogController;
 import de.mephisto.vpin.commons.utils.Updater;
-import de.mephisto.vpin.ui.util.ProgressModel;
-import de.mephisto.vpin.ui.util.ProgressResultModel;
 import javafx.application.Platform;
 import javafx.concurrent.Service;
 import javafx.concurrent.Task;
@@ -11,7 +9,6 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
-import javafx.stage.Stage;
 
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -53,7 +50,7 @@ public class UpdateDialogController implements Initializable, DialogController {
               updateProgress(progress, 100);
               Thread.sleep(1000);
               Platform.runLater(() -> {
-                double p =Double.valueOf(progress)/100.0;
+                double p = Double.valueOf(progress) / 100.0;
 
                 System.out.println(p);
                 serverProgress.setProgress(p);
@@ -61,7 +58,7 @@ public class UpdateDialogController implements Initializable, DialogController {
 //                progressBarLabel.setText("Processing: " + result);
               });
 
-              if(progress == 100) {
+              if (progress == 100) {
                 break;
               }
             }
@@ -75,13 +72,15 @@ public class UpdateDialogController implements Initializable, DialogController {
 
             while (true) {
               Thread.sleep(1000);
-              if(client.version() != null) {
+              if (client.version() != null) {
                 break;
               }
             }
 
-            serverLabel.setText("Update Finished");
-            serverProgress.setProgress(1f);
+            Platform.runLater(() -> {
+              serverLabel.setText("Update is running on version " + client.version());
+              serverProgress.setProgress(1f);
+            });
 
             //finished
             return null;
