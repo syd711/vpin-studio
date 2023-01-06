@@ -4,6 +4,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.text.DecimalFormat;
 
 public class FileUtils {
@@ -27,5 +30,10 @@ public class FileUtils {
     final String[] units = new String[] { "B", "kB", "MB", "GB", "TB" };
     int digitGroups = (int) (Math.log10(size)/Math.log10(1024));
     return new DecimalFormat("#,##0.#").format(size/Math.pow(1024, digitGroups)) + " " + units[digitGroups];
+  }
+
+  public static void writeBatch(String name, String content) throws IOException {
+    File path = new File("./" + name);
+    Files.write( path.toPath(), content.getBytes());
   }
 }

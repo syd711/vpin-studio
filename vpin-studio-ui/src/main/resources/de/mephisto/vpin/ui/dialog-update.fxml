@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ProgressBar?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="242.0" prefWidth="640.0" styleClass="navigation-panel" stylesheets="@stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.UpdateDialogController">
+   <top>
+      <fx:include fx:id="header" source="/de/mephisto/vpin/commons/fx/scene-dialog-header-no-close.fxml" />
+   </top>
+   <center>
+      <VBox alignment="BASELINE_LEFT" spacing="6.0" BorderPane.alignment="CENTER">
+         <children>
+            <Label fx:id="titleLabel" text="Server Update Progress" textFill="WHITE">
+               <font>
+                  <Font size="14.0" />
+               </font>
+               <VBox.margin>
+                  <Insets />
+               </VBox.margin>
+            </Label>
+            <ProgressBar fx:id="serverProgress" prefHeight="18.0" prefWidth="642.0" progress="0.0">
+               <VBox.margin>
+                  <Insets />
+               </VBox.margin>
+            </ProgressBar>
+            <HBox alignment="TOP_RIGHT" layoutX="10.0" layoutY="124.0">
+               <children>
+                  <Label fx:id="serverLabel" text="-" textFill="WHITE" />
+               </children>
+            </HBox>
+            <Label fx:id="titleLabel1" layoutX="10.0" layoutY="15.0" text="Client Update Progress" textFill="WHITE">
+               <font>
+                  <Font size="14.0" />
+               </font>
+               <VBox.margin>
+                  <Insets top="12.0" />
+               </VBox.margin>
+            </Label>
+            <ProgressBar fx:id="clientProgress" prefHeight="18.0" prefWidth="630.0" progress="0.0" />
+            <HBox alignment="TOP_RIGHT">
+               <children>
+                  <Label fx:id="clientLabel" text="-" textFill="WHITE" />
+               </children>
+            </HBox>
+         </children>
+         <BorderPane.margin>
+            <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
+         </BorderPane.margin>
+      </VBox>
+   </center>
+</BorderPane>

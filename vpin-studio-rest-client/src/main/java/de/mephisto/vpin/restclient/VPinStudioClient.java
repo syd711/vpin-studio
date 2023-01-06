@@ -161,19 +161,19 @@ public class VPinStudioClient implements ObservedPropertyChangeListener, Overlay
     return restTemplate.getForObject(restClient.getBaseUrl() + API + "system/autostart/uninstall", Boolean.class);
   }
 
-  public void update() {
+  public void startServerUpdate(String version) {
     final RestTemplate restTemplate = new RestTemplate();
-    restTemplate.getForObject(restClient.getBaseUrl() + API + "system/update", Boolean.class);
+    restTemplate.getForObject(restClient.getBaseUrl() + API + "system/update/" + version + "/download/start", Boolean.class);
   }
 
-  public String waitForUpdate() {
-    try {
-      final RestTemplate restTemplate = new RestTemplate();
-      return restTemplate.getForObject(restClient.getBaseUrl() + API + "system/version", String.class);
-    } catch (Exception e) {
-      //ignore
-    }
-    return null;
+  public int getServerUpdateProgress() {
+    final RestTemplate restTemplate = new RestTemplate();
+    return restTemplate.getForObject(restClient.getBaseUrl() + API + "system/update/download/status", Integer.class);
+  }
+
+  public boolean installServerUpdate() {
+    final RestTemplate restTemplate = new RestTemplate();
+    return restTemplate.getForObject(restClient.getBaseUrl() + API + "system/update/install", Boolean.class);
   }
 
   public String version() {

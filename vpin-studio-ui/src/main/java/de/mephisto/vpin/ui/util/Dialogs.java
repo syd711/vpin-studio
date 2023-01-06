@@ -8,6 +8,7 @@ import de.mephisto.vpin.restclient.representations.GameRepresentation;
 import de.mephisto.vpin.restclient.representations.PlayerRepresentation;
 import de.mephisto.vpin.ui.ProgressDialogController;
 import de.mephisto.vpin.ui.Studio;
+import de.mephisto.vpin.ui.UpdateDialogController;
 import de.mephisto.vpin.ui.competitions.CompetitionDialogController;
 import de.mephisto.vpin.ui.players.PlayerDialogController;
 import de.mephisto.vpin.ui.tables.dialogs.DirectB2SUploadController;
@@ -106,6 +107,13 @@ public class Dialogs {
   public static void openBotTutorial() {
     Stage stage = createStudioDialogStage("dialog-bot-tutorial.fxml", "Discord Bot Instructions");
     stage.showAndWait();
+  }
+
+  public static boolean openUpdateDialog() {
+    Stage stage = createStudioDialogStage("dialog-update.fxml", "VPin Studio Updater");
+    UpdateDialogController controller = (UpdateDialogController) stage.getUserData();
+    stage.showAndWait();
+    return true;
   }
 
   public static ProgressResultModel createProgressDialog(ProgressModel model) {

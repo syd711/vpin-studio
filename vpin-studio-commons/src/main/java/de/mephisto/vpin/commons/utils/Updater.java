@@ -1,12 +1,12 @@
 package de.mephisto.vpin.commons.utils;
 
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.Arrays;
@@ -15,22 +15,74 @@ import java.util.List;
 public class Updater {
   private final static Logger LOG = LoggerFactory.getLogger(Updater.class);
 
-  private final static String BASE_URL = "https://github.com/syd711/vpin-studio/releases/download/%s/";
+  public final static String BASE_URL = "https://github.com/syd711/vpin-studio/releases/download/%s/";
   private final static String LATEST_RELEASE_URL = "https://github.com/syd711/vpin-studio/releases/latest";
   public static String LATEST_VERSION = null;
 
-  public static File updateServer(String versionSegment) throws Exception {
-    File out = new File("./VPin-Studio-Server.zip");
-    String url = String.format(BASE_URL, versionSegment) + "VPin-Studio-Server.zip";
+  public final static String SERVER_ZIP = "VPin-Studio-Server.zip";
+  public final static String SERVER_EXE = "VPin-Studio-Server.exe";
+
+  public final static String UI_ZIP = "VPin-Studio.zip";
+  public final static String UI_EXE = "VPin-Studio.exe";
+
+  private final static String DOWNLOAD_SUFFIX = ".bak";
+
+  public static boolean downloadUpdate(String versionSegment, String targetZip) {
+    File out = new File(getBasePath(), targetZip);
+    if(out.exists()) {
+      out.delete();
+    }
+    String url = String.format(BASE_URL, versionSegment) + targetZip;
     download(url, out);
-    unzip(out);
-    return out;
+    return true;
   }
 
-  public static void startUpdater(String args, String activeVersion) {
-    List<String> commands = Arrays.asList("VPin-Studio-Updater.exe", args, activeVersion);
+  public static int getDownloadProgress(String targetZip, String targetExe) {
+    File tmp = new File(getBasePath(), targetZip + DOWNLOAD_SUFFIX);
+    File zip = new File(getBasePath(), targetZip);
+    if (zip.exists()) {
+      return 100;
+    }
+
+    File exe = new File(getBasePath(), targetExe);
+    int percentage = (int) (tmp.length() * 100 / exe.length());
+    LOG.info(tmp.getAbsolutePath() + " download at " + percentage + "%");
+    return percentage;
+  }
+
+  private static void download(String downloadUrl, File target) {
+    new Thread(() -> {
+      try {
+        LOG.info("Downloading " + downloadUrl);
+        URL url = new URL(downloadUrl);
+        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+        connection.setDoOutput(true);
+        BufferedInputStream in = new BufferedInputStream(url.openStream());
+        File tmp = new File(getBasePath(), target.getName() + DOWNLOAD_SUFFIX);
+        if (tmp.exists()) {
+          tmp.delete();
+        }
+        FileOutputStream fileOutputStream = new FileOutputStream(tmp);
+        byte dataBuffer[] = new byte[1024];
+        int bytesRead;
+        while ((bytesRead = in.read(dataBuffer, 0, 1024)) != -1) {
+          fileOutputStream.write(dataBuffer, 0, bytesRead);
+        }
+        in.close();
+        fileOutputStream.close();
+        tmp.renameTo(target);
+        LOG.info("Downloaded update file " + target.getAbsolutePath());
+      } catch (Exception e) {
+        LOG.error("Failed to execute update: " + e.getMessage(), e);
+      }
+    }).start();
+  }
+
+  public static boolean installServerUpdate() throws IOException {
+    FileUtils.writeBatch("update-server.bat", "resources\\7z.exe -aoa x \"VPin-Studio-Server.zip\"\ndel VPin-Studio-Server.zip\nserver.vbs\ndel update-server.bat");
+    List<String> commands = Arrays.asList("update-server.bat");
     SystemCommandExecutor executor = new SystemCommandExecutor(commands);
-    executor.setDir(new File("./"));
+    executor.setDir(getBasePath());
     executor.executeCommandAsync();
 
     new Thread(() -> {
@@ -41,74 +93,24 @@ public class Updater {
         //ignore
       }
     }).start();
+    return true;
+  }
+
+  public static boolean installClientUpdate() throws IOException {
+    FileUtils.writeBatch("update-client.bat", "resources\\7z.exe -aoa x \"VPin-Studio.zip\"\ndel VPin-Studio.zip\nVPin-Studio.exe\ndel update-client.bat");
+    List<String> commands = Arrays.asList("update-client.bat");
+    SystemCommandExecutor executor = new SystemCommandExecutor(commands);
+    executor.setDir(getBasePath());
+    executor.executeCommandAsync();
+    System.exit(0);
+    return true;
   }
 
   public static void restartServer() {
     List<String> commands = Arrays.asList("VPin-Studio-Server.exe");
     SystemCommandExecutor executor = new SystemCommandExecutor(commands);
-    executor.setDir(new File("./"));
+    executor.setDir(getBasePath());
     executor.executeCommandAsync();
-  }
-
-  public static void restartClient() {
-    List<String> commands = Arrays.asList("VPin-Studio.exe");
-    SystemCommandExecutor executor = new SystemCommandExecutor(commands);
-    executor.setDir(new File("./"));
-    executor.executeCommandAsync();
-    System.exit(0);
-  }
-
-  public static void updateUI(String versionSegment) throws Exception {
-    File out = new File("./VPin-Studio.zip");
-    String url = String.format(BASE_URL, versionSegment) + "VPin-Studio.zip";
-    download(url, out);
-    unzip(out);
-  }
-
-  private static void unzip(File zip) {
-    LOG.info("Unzipping update file " + zip.getAbsolutePath());
-    String unzipCommand = "7z.exe";
-    List<String> commands = Arrays.asList("\"" + unzipCommand + "\"", "-aoa", "x", "\"" + zip.getAbsolutePath() + "\"", "-o\"" + zip.getParentFile().getAbsolutePath() + "\"");
-    try {
-      SystemCommandExecutor executor = new SystemCommandExecutor(commands, false);
-      executor.setDir(zip.getParentFile());
-      executor.executeCommand();
-
-      StringBuilder standardOutputFromCommand = executor.getStandardOutputFromCommand();
-      StringBuilder standardErrorFromCommand = executor.getStandardErrorFromCommand();
-      if (!StringUtils.isEmpty(standardErrorFromCommand.toString())) {
-        LOG.error("7zip command '" + String.join(" ", commands) + "' failed: {}", standardErrorFromCommand);
-      }
-      LOG.info("Finished extraction of " + zip.getAbsolutePath());
-      boolean deleted = zip.delete();
-      if(!deleted) {
-        LOG.error("Failed to delete update file " + zip.getAbsolutePath());
-      }
-    } catch (Exception e) {
-      LOG.info("Failed extract zip: " + e.getMessage(), e);
-    }
-  }
-
-  private static void download(String downloadUrl, File target) throws Exception {
-    try {
-      LOG.info("Downloading " + downloadUrl);
-      URL url = new URL(downloadUrl);
-      HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-      connection.setDoOutput(true);
-      BufferedInputStream in = new BufferedInputStream(url.openStream());
-      FileOutputStream fileOutputStream = new FileOutputStream(target);
-      byte dataBuffer[] = new byte[1024];
-      int bytesRead;
-      while ((bytesRead = in.read(dataBuffer, 0, 1024)) != -1) {
-        fileOutputStream.write(dataBuffer, 0, bytesRead);
-      }
-      in.close();
-      fileOutputStream.close();
-      LOG.info("Downloaded update file " + target.getAbsolutePath());
-    } catch (Exception e) {
-      LOG.error("Failed to execute update: " + e.getMessage(), e);
-      throw e;
-    }
   }
 
   public static String checkForUpdate(String referenceVersion) {
@@ -133,5 +135,12 @@ public class Updater {
       LOG.error("Update check failed: " + e.getMessage(), e);
     }
     return null;
+  }
+
+  private static File getBasePath() {
+    if (!new File("./" + SERVER_EXE).exists()) {
+      return new File("C:\\vPinball\\VPin-Studio");
+    }
+    return new File("./");
   }
 }

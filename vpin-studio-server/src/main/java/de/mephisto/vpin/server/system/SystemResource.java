@@ -50,11 +50,19 @@ public class SystemResource {
     return true;
   }
 
-  @GetMapping("/update")
-  public boolean update() {
-    LOG.info("Updating server: shutting down service and starting updater.");
-    Updater.startUpdater("-server", version());
-    return true;
+  @GetMapping("/update/{version}/download/start")
+  public boolean downloadUpdate(@PathVariable("version") String version) {
+    return Updater.downloadUpdate(version, Updater.SERVER_ZIP);
+  }
+
+  @GetMapping("/update/download/status")
+  public int updateDownloadStatus() {
+    return Updater.getDownloadProgress(Updater.SERVER_ZIP, Updater.SERVER_EXE);
+  }
+
+  @GetMapping("/update/install")
+  public boolean installUpdate() throws IOException {
+    return Updater.installServerUpdate();
   }
 
   @GetMapping("/autostart/installed")
@@ -63,12 +71,12 @@ public class SystemResource {
   }
 
   @GetMapping("/autostart/install")
-  public boolean installServie() {
+  public boolean installService() {
     return Services.install();
   }
 
   @GetMapping("/autostart/uninstall")
-  public boolean uninstallServie() {
+  public boolean uninstallService() {
     return Services.uninstall();
   }
 

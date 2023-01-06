@@ -27,7 +27,6 @@
         <module>vpin-connector-discord</module>
         <module>vpin-studio-commons</module>
         <module>vpin-studio-server</module>
-        <module>vpin-studio-updater</module>
         <module>vpin-studio-rest-client</module>
         <module>vpin-studio-ui</module>
     </modules>
