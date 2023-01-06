@@ -38,6 +38,10 @@ public class UpdateDialogController implements Initializable, DialogController {
     clientLabel.setText("Downloading " + String.format(Updater.BASE_URL, newVersion) + Updater.UI_ZIP);
     serverLabel.setText("Downloading " + String.format(Updater.BASE_URL, newVersion) + Updater.SERVER_ZIP);
 
+    startServerUpdate(newVersion);
+  }
+
+  private void startServerUpdate(String newVersion) {
     serverService = new Service() {
       @Override
       protected Task createTask() {
@@ -51,11 +55,7 @@ public class UpdateDialogController implements Initializable, DialogController {
               Thread.sleep(1000);
               Platform.runLater(() -> {
                 double p = Double.valueOf(progress) / 100.0;
-
-                System.out.println(p);
                 serverProgress.setProgress(p);
-//                titleLabel.setText(model.getTitle() + " (" + uiIndex + "/" + model.getMax() + ")");
-//                progressBarLabel.setText("Processing: " + result);
               });
 
               if (progress == 100) {
@@ -68,7 +68,7 @@ public class UpdateDialogController implements Initializable, DialogController {
             });
 
             client.installServerUpdate();
-            Thread.sleep(1000);
+            Thread.sleep(5000);
 
             while (true) {
               Thread.sleep(1000);
@@ -78,17 +78,55 @@ public class UpdateDialogController implements Initializable, DialogController {
             }
 
             Platform.runLater(() -> {
-              serverLabel.setText("Update is running on version " + client.version());
+              serverLabel.setText("Server is running on version " + client.version());
               serverProgress.setProgress(1f);
             });
 
             //finished
+            startClientUpdate(newVersion);
+
             return null;
           }
         };
       }
     };
     serverService.start();
+  }
+
+  private void startClientUpdate(String newVersion) {
+    clientService = new Service() {
+      @Override
+      protected Task createTask() {
+        return new Task() {
+          @Override
+          protected Object call() throws Exception {
+            Updater.downloadUpdate(newVersion, Updater.UI_ZIP);
+            while (true) {
+              int progress = Updater.getDownloadProgress(Updater.UI_ZIP, Updater.UI_EXE);
+              updateProgress(progress, 100);
+              Thread.sleep(1000);
+              Platform.runLater(() -> {
+                double p = Double.valueOf(progress) / 100.0;
+                clientProgress.setProgress(p);
+              });
+
+              if (progress == 100) {
+                break;
+              }
+            }
+            Platform.runLater(() -> {
+              clientLabel.setText("Installing Update");
+              clientProgress.setProgress(ProgressBar.INDETERMINATE_PROGRESS);
+            });
+
+            Thread.sleep(2000);
+            Updater.installClientUpdate();
+            return null;
+          }
+        };
+      }
+    };
+    clientService.start();
   }
 
   @Override
