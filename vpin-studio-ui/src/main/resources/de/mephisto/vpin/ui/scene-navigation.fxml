@@ -33,20 +33,20 @@
                         </Label>
                      </children>
                   </VBox>
-                  <VBox alignment="CENTER" onMousePressed="#onCompetitionsClick" styleClass="navigation-button">
+                  <VBox alignment="CENTER" onMousePressed="#onPlayersClick" styleClass="navigation-button">
                      <children>
-                        <FontIcon iconColor="WHITE" iconLiteral="bi-trophy" iconSize="24" />
-                        <Label text="Competitions" textFill="WHITE">
+                        <FontIcon iconColor="WHITE" iconLiteral="bi-person" iconSize="24" />
+                        <Label text="Players" textFill="WHITE">
                            <font>
                               <Font size="14.0" />
                            </font>
                         </Label>
                      </children>
                   </VBox>
-                  <VBox alignment="CENTER" onMousePressed="#onPlayersClick" styleClass="navigation-button">
+                  <VBox alignment="CENTER" onMousePressed="#onCompetitionsClick" styleClass="navigation-button">
                      <children>
-                        <FontIcon iconColor="WHITE" iconLiteral="bi-person" iconSize="24" />
-                        <Label text="Players" textFill="WHITE">
+                        <FontIcon iconColor="WHITE" iconLiteral="bi-trophy" iconSize="24" />
+                        <Label text="Competitions" textFill="WHITE">
                            <font>
                               <Font size="14.0" />
                            </font>

@@ -28,7 +28,7 @@
       <fx:include fx:id="mainToolbar" source="../scene-toolbar.fxml" />
    </top>
    <right>
-      <BorderPane prefWidth="300.0" styleClass="navigation-panel" BorderPane.alignment="CENTER">
+      <BorderPane prefWidth="300.0" styleClass="subpanel" BorderPane.alignment="CENTER">
 
          <center>
             <Accordion prefWidth="300.0" BorderPane.alignment="CENTER">
