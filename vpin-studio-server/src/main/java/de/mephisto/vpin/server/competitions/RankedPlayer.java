@@ -4,6 +4,7 @@ public class RankedPlayer {
   private int first;
   private int second;
   private int third;
+  private int competitionsWon;
   private String name;
   private String initials;
   private int rank;
@@ -20,6 +21,14 @@ public class RankedPlayer {
     else if(id == 2) {
       third++;
     }
+  }
+
+  public int getCompetitionsWon() {
+    return competitionsWon;
+  }
+
+  public void setCompetitionsWon(int competitionsWon) {
+    this.competitionsWon = competitionsWon;
   }
 
   public String getInitials() {

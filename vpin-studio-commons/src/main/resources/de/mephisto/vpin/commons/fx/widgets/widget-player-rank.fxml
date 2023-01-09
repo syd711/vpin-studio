@@ -30,7 +30,7 @@
             <TableView fx:id="tableView" style="-fx-background-color: #2a2a2a;" styleClass="base-component">
               <columns>
                 <TableColumn fx:id="columnRank" prefWidth="61.60009574890137" style="-fx-alignment: BASELINE_CENTER;" text="Rank" />
-                <TableColumn fx:id="columnName" prefWidth="400.0" style="-fx-alignment: BASELINE_LEFT;" text="Name" />
+                <TableColumn fx:id="columnName" prefWidth="340.0" style="-fx-alignment: BASELINE_LEFT;" text="Name" />
                   <TableColumn fx:id="columnFirst" minWidth="0.0" prefWidth="60.0" style="-fx-alignment: CENTER;">
                      <graphic>
                         <ImageView fitHeight="40.0" fitWidth="40.0" pickOnBounds="true" preserveRatio="true">
@@ -54,6 +54,15 @@
                         <ImageView fitHeight="40.0" fitWidth="40.0" pickOnBounds="true" preserveRatio="true" style="-fx-alignment: BASELINE_CENTER;">
                            <image>
                               <Image url="@../medal%20(3).png" />
+                           </image>
+                        </ImageView>
+                     </graphic>
+                  </TableColumn>
+                  <TableColumn fx:id="columnComps" prefWidth="60.0" style="-fx-alignment: CENTER;">
+                     <graphic>
+                        <ImageView fitHeight="40.0" fitWidth="40.0" pickOnBounds="true" preserveRatio="true" style="-fx-alignment: BASELINE_CENTER;">
+                           <image>
+                              <Image url="@../competitions.png" />
                            </image>
                         </ImageView>
                      </graphic>

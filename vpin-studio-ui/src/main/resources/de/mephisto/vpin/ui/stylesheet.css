@@ -280,11 +280,6 @@
     -fx-cursor: hand;
 }
 
-.thumbnail-preview {
-    -fx-background-color: #000000;
-    -fx-border-width: 0;
-}
-
 /**
  * Navigation
  */

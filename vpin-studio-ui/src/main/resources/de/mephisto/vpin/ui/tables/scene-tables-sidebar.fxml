@@ -252,7 +252,7 @@
                      <center>
                               <VBox prefHeight="200.0" prefWidth="100.0">
                                   <children>
-                                      <TilePane alignment="CENTER" prefHeight="200.0" prefWidth="200.0" styleClass="thumbnail-preview">
+                                      <TilePane alignment="CENTER" prefHeight="200.0" prefWidth="200.0" styleClass="media-container">
                                           <children>
                                               <ImageView fx:id="rawDirectB2SImage" fitHeight="350.0" fitWidth="450.0" pickOnBounds="true" preserveRatio="true" />
                                           </children>
@@ -708,6 +708,9 @@
                                        </graphic>
                                     </Button>
                                 </items>
+                                 <BorderPane.margin>
+                                    <Insets />
+                                 </BorderPane.margin>
                               </ToolBar>
                            </top>
                         </BorderPane>

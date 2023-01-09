@@ -4,10 +4,19 @@ public class RankedPlayerRepresentation {
   private int first;
   private int second;
   private int third;
+  private int competitionsWon;
   private String name;
   private int rank;
   private String avatarUuid;
   private String avatarUrl;
+
+  public int getCompetitionsWon() {
+    return competitionsWon;
+  }
+
+  public void setCompetitionsWon(int competitionsWon) {
+    this.competitionsWon = competitionsWon;
+  }
 
   public int getFirst() {
     return first;

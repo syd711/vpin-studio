@@ -59,6 +59,9 @@ public class WidgetPlayerRankController extends WidgetController implements Init
   private TableColumn<RankedPlayerRepresentation, String> columnThird;
 
   @FXML
+  private TableColumn<RankedPlayerRepresentation, String> columnComps;
+
+  @FXML
   private StackPane tableStack;
 
   private Parent loadingOverlay;
@@ -134,6 +137,14 @@ public class WidgetPlayerRankController extends WidgetController implements Init
       RankedPlayerRepresentation value = cellData.getValue();
       Font defaultFont = Font.font(Font.getDefault().getFamily(), FontWeight.NORMAL, 18);
       Label label = new Label(String.valueOf(value.getThird()));
+      label.setFont(defaultFont);
+      return new SimpleObjectProperty(label);
+    });
+
+    columnComps.setCellValueFactory(cellData -> {
+      RankedPlayerRepresentation value = cellData.getValue();
+      Font defaultFont = Font.font(Font.getDefault().getFamily(), FontWeight.NORMAL, 18);
+      Label label = new Label(String.valueOf(value.getCompetitionsWon()));
       label.setFont(defaultFont);
       return new SimpleObjectProperty(label);
     });
