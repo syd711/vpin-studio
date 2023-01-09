@@ -7,6 +7,7 @@ import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.highscores.HighscoreChangeEvent;
 import de.mephisto.vpin.server.highscores.Score;
 import de.mephisto.vpin.server.players.Player;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -119,7 +120,10 @@ public class DiscordWebhookMessageFactory {
     String suffix = String.format(otherPlayerTemplate, oldName, oldScore.getScore());
 
     String result = msg;
-    if (!oldName.equals(newName)) {
+    if(StringUtils.isEmpty(oldName)) {
+      result = result + "\\nThe previous highscore of " + oldScore.getScore() + " has been beaten.";
+    }
+    else if (!oldName.equals(newName)) {
       result = result + suffix;
     }
     LOG.info("Hook message: " + result);
