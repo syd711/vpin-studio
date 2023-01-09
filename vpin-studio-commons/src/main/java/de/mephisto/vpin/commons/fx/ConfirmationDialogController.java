@@ -4,7 +4,6 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
-import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 
 import java.util.Optional;
@@ -41,14 +40,14 @@ public class ConfirmationDialogController implements DialogController {
     this.stage = stage;
     this.textLabel.setText(text);
 
-    if(helpText1 != null) {
+    if (helpText1 != null) {
       this.helpLabel1.setText(helpText1);
     }
     else {
       this.helpLabel1.setText("");
     }
 
-    if(helpText2 != null) {
+    if (helpText2 != null) {
       this.helpLabel2.setText(helpText2);
     }
     else {

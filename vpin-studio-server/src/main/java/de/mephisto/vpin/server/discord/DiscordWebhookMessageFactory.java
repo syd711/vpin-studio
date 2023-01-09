@@ -7,6 +7,8 @@ import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.highscores.HighscoreChangeEvent;
 import de.mephisto.vpin.server.highscores.Score;
 import de.mephisto.vpin.server.players.Player;
+import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -64,7 +66,7 @@ public class DiscordWebhookMessageFactory {
         diff);
   }
 
-  public static String createCompetitionFinishedMessage(Competition competition, Player winner, Game game, ScoreSummary summary) {
+  public static String createCompetitionFinishedMessage(@NonNull Competition competition, @Nullable Player winner, Game game, ScoreSummary summary) {
     String winnerName = competition.getWinnerInitials();
     String winnerRaw = competition.getWinnerInitials();
     if (winner != null) {

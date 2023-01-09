@@ -54,7 +54,12 @@ public class CompetitionService implements InitializingBean {
   public void notifyCompetitionFinished(Competition c) {
     for (CompetitionChangeListener listener : this.listeners) {
       Optional<Player> playerForInitials = playerService.getPlayerForInitials(c.getWinnerInitials());
-      listener.competitionFinished(c, playerForInitials.get());
+      if(playerForInitials.isPresent()) {
+        listener.competitionFinished(c, playerForInitials.get());
+      }
+      else {
+        listener.competitionFinished(c, null);
+      }
     }
   }
 
@@ -102,8 +107,8 @@ public class CompetitionService implements InitializingBean {
     }
     else {
       notifyCompetitionChanged(updated);
-      runFinishedCompetitionsCheck();
     }
+    runFinishedCompetitionsCheck();
     return getCompetition(c.getId());
   }
 

@@ -152,7 +152,13 @@ public class CompetitionsController implements Initializable, StudioFXController
   private void onDelete() {
     CompetitionRepresentation selection = tableView.getSelectionModel().getSelectedItem();
     if (selection != null) {
-      Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Delete Competition '" + selection.getName() + "'?");
+      String help = null;
+      if (!StringUtils.isEmpty(selection.getWinnerInitials())) {
+        help = "The player '" + selection.getWinnerInitials() + "' will have one less won competition.";
+      }
+
+      Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Delete Competition '" + selection.getName() + "'?",
+          help);
       if (result.isPresent() && result.get().equals(ButtonType.OK)) {
         tableView.getSelectionModel().clearSelection();
         client.deleteCompetition(selection);
@@ -281,7 +287,7 @@ public class CompetitionsController implements Initializable, StudioFXController
       if (!StringUtils.isEmpty(value.getWinnerInitials())) {
         winner = value.getWinnerInitials();
         PlayerRepresentation player = client.getPlayer(value.getWinnerInitials());
-        if(player != null) {
+        if (player != null) {
           winner = player.getName();
         }
       }
