@@ -9,6 +9,7 @@ import de.mephisto.vpin.ui.NavigationController;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.StudioFXController;
 import de.mephisto.vpin.ui.WaitOverlayController;
+import de.mephisto.vpin.ui.tables.dialogs.TableUploadProgressModel;
 import de.mephisto.vpin.ui.util.BindingUtil;
 import de.mephisto.vpin.ui.util.Dialogs;
 import de.mephisto.vpin.ui.util.MediaUtil;
@@ -39,6 +40,7 @@ import java.io.InputStream;
 import java.net.URL;
 import java.util.*;
 
+import static de.mephisto.vpin.ui.Studio.client;
 import static de.mephisto.vpin.ui.Studio.stage;
 
 public class HighscoreCardsController implements Initializable, ObservedPropertyChangeListener, StudioFXController {
@@ -176,7 +178,7 @@ public class HighscoreCardsController implements Initializable, ObservedProperty
   }
 
   @FXML
-  private void onUploadButton() throws IOException {
+  private void onUploadButton() {
     FileChooser fileChooser = new FileChooser();
     fileChooser.setTitle("Select Image");
     fileChooser.getExtensionFilters().addAll(
@@ -186,7 +188,7 @@ public class HighscoreCardsController implements Initializable, ObservedProperty
     File file = fileChooser.showOpenDialog(stage);
     if (file != null && file.exists()) {
       try {
-        boolean result = client.uploadHighscoreBackgroundImage(file);
+        boolean result = client.uploadHighscoreBackgroundImage(file, null);
         if (result) {
           String baseName = FilenameUtils.getBaseName(file.getName());
           if (!imageList.contains(baseName)) {

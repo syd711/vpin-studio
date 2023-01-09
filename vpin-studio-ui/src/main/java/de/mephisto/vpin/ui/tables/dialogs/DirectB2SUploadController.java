@@ -4,6 +4,7 @@ import de.mephisto.vpin.restclient.representations.GameRepresentation;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.commons.fx.DialogController;
 import de.mephisto.vpin.ui.Studio;
+import de.mephisto.vpin.ui.util.Dialogs;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -56,22 +57,24 @@ public class DirectB2SUploadController implements Initializable, DialogControlle
   @FXML
   private void onUploadClick(ActionEvent event){
     if (selection != null && selection.exists()) {
+      Stage stage = (Stage) ((Button) event.getSource()).getScene().getWindow();
       result = true;
       try {
         if (uploadTypeGenerator.isSelected()) {
           uploadTypeGeneratorSelectedLast = true;
-          client.uploadDirectB2SFile(selection, "generator", this.game.getId());
+          DirectB2SUploadProgressModel model = new DirectB2SUploadProgressModel(client, this.game.getId(), "DirectB2S Upload", selection, "generator");
+          Dialogs.createProgressDialog(model);
         }
         else {
           uploadTypeGeneratorSelectedLast = false;
-          client.uploadDirectB2SFile(selection, "table", this.game.getId());
+          DirectB2SUploadProgressModel model = new DirectB2SUploadProgressModel(client, this.game.getId(), "DirectB2S Upload", selection, "table");
+          Dialogs.createProgressDialog(model);
         }
       } catch (Exception e) {
         LOG.error("Upload failed: " + e.getMessage(), e);
         WidgetFactory.showAlert(Studio.stage, "Uploading directb2s failed.", "Please check the log file for details.", "Error: " + e.getMessage());
       }
       finally {
-        Stage stage = (Stage) ((Button) event.getSource()).getScene().getWindow();
         stage.close();
       }
     }

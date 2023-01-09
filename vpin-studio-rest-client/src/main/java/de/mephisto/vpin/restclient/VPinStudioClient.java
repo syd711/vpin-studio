@@ -4,14 +4,12 @@ import de.mephisto.vpin.restclient.representations.*;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.core.io.FileSystemResource;
 import org.springframework.http.*;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
@@ -77,7 +75,7 @@ public class VPinStudioClient implements ObservedPropertyChangeListener, Overlay
 
   public boolean setPOVPreference(int gameId, POVRepresentation pov, String property, Object value) {
     try {
-      if(pov == null) {
+      if (pov == null) {
         return true;
       }
       Object existingValue = pov.getValue(property);
@@ -148,17 +146,17 @@ public class VPinStudioClient implements ObservedPropertyChangeListener, Overlay
 
   public boolean autostartInstalled() {
     final RestTemplate restTemplate = new RestTemplate();
-    return restTemplate.getForObject(restClient.getBaseUrl() + API + "system/autostart/installed", Boolean.class);
+    return Boolean.TRUE.equals(restTemplate.getForObject(restClient.getBaseUrl() + API + "system/autostart/installed", Boolean.class));
   }
 
   public boolean autostartInstall() {
     final RestTemplate restTemplate = new RestTemplate();
-    return restTemplate.getForObject(restClient.getBaseUrl() + API + "system/autostart/install", Boolean.class);
+    return Boolean.TRUE.equals(restTemplate.getForObject(restClient.getBaseUrl() + API + "system/autostart/install", Boolean.class));
   }
 
   public boolean autostartUninstall() {
     final RestTemplate restTemplate = new RestTemplate();
-    return restTemplate.getForObject(restClient.getBaseUrl() + API + "system/autostart/uninstall", Boolean.class);
+    return Boolean.TRUE.equals(restTemplate.getForObject(restClient.getBaseUrl() + API + "system/autostart/uninstall", Boolean.class));
   }
 
   public void startServerUpdate(String version) {
@@ -223,10 +221,10 @@ public class VPinStudioClient implements ObservedPropertyChangeListener, Overlay
     return new ByteArrayInputStream(bytes);
   }
 
-  public AssetRepresentation uploadAsset(File file, long id, int maxSize, AssetType assetType) throws Exception {
+  public AssetRepresentation uploadAsset(File file, long id, int maxSize, AssetType assetType, FileUploadProgressListener listener) throws Exception {
     try {
       String url = restClient.getBaseUrl() + API + "assets/" + id + "/upload/" + maxSize;
-      ResponseEntity<AssetRepresentation> exchange = new RestTemplate().exchange(url, HttpMethod.POST, createUpload(file, -1, null, assetType), AssetRepresentation.class);
+      ResponseEntity<AssetRepresentation> exchange = new RestTemplate().exchange(url, HttpMethod.POST, createUpload(file, -1, null, assetType, listener), AssetRepresentation.class);
       return exchange.getBody();
     } catch (Exception e) {
       LOG.error("Asset upload failed: " + e.getMessage(), e);
@@ -273,7 +271,7 @@ public class VPinStudioClient implements ObservedPropertyChangeListener, Overlay
   public boolean uploadVPinAvatar(File file) throws Exception {
     try {
       String url = restClient.getBaseUrl() + API + "preferences/avatar";
-      new RestTemplate().exchange(url, HttpMethod.POST, createUpload(file, -1, null, AssetType.VPIN_AVATAR), Boolean.class);
+      new RestTemplate().exchange(url, HttpMethod.POST, createUpload(file, -1, null, AssetType.VPIN_AVATAR, null), Boolean.class);
       return true;
     } catch (Exception e) {
       LOG.error("Background upload failed: " + e.getMessage(), e);
@@ -526,10 +524,10 @@ public class VPinStudioClient implements ObservedPropertyChangeListener, Overlay
     return new ByteArrayInputStream(imageBytes);
   }
 
-  public boolean uploadHighscoreBackgroundImage(File file) throws Exception {
+  public boolean uploadHighscoreBackgroundImage(File file, FileUploadProgressListener listener) throws Exception {
     try {
       String url = restClient.getBaseUrl() + API + "cards/backgroundupload";
-      new RestTemplate().exchange(url, HttpMethod.POST, createUpload(file, -1, null, AssetType.CARD_BACKGROUND), Boolean.class);
+      new RestTemplate().exchange(url, HttpMethod.POST, createUpload(file, -1, null, AssetType.CARD_BACKGROUND, listener), Boolean.class);
       return true;
     } catch (Exception e) {
       LOG.error("Background upload failed: " + e.getMessage(), e);
@@ -537,13 +535,13 @@ public class VPinStudioClient implements ObservedPropertyChangeListener, Overlay
     }
   }
 
-  public boolean uploadTable(File file, boolean importToPopper, int playlistId) throws Exception {
+  public boolean uploadTable(File file, boolean importToPopper, int playlistId, FileUploadProgressListener listener) throws Exception {
     try {
       String url = restClient.getBaseUrl() + API + "games/upload/table";
       LinkedMultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
       map.add("importToPopper", importToPopper);
       map.add("playlistId", playlistId);
-      new RestTemplate().exchange(url, HttpMethod.POST, createUpload(map, file, -1, null, AssetType.TABLE), Boolean.class);
+      new RestTemplate().exchange(url, HttpMethod.POST, createUpload(map, file, -1, null, AssetType.TABLE, listener), Boolean.class);
       return true;
     } catch (Exception e) {
       LOG.error("Table upload failed: " + e.getMessage(), e);
@@ -551,13 +549,10 @@ public class VPinStudioClient implements ObservedPropertyChangeListener, Overlay
     }
   }
 
-  public boolean uploadRom(List<File> files) throws Exception {
+  public boolean uploadRom(File file, FileUploadProgressListener listener) throws Exception {
     try {
-      for (File file : files) {
-        String url = restClient.getBaseUrl() + API + "games/upload/rom";
-        new RestTemplate().exchange(url, HttpMethod.POST, createUpload(file, -1, null, AssetType.ROM), Boolean.class);
-      }
-      return true;
+      String url = restClient.getBaseUrl() + API + "games/upload/rom";
+      return Boolean.TRUE.equals(new RestTemplate().exchange(url, HttpMethod.POST, createUpload(file, -1, null, AssetType.ROM, listener), Boolean.class).getBody());
     } catch (Exception e) {
       LOG.error("Rom upload failed: " + e.getMessage(), e);
       throw e;
@@ -574,10 +569,10 @@ public class VPinStudioClient implements ObservedPropertyChangeListener, Overlay
     return new ByteArrayInputStream(bytes);
   }
 
-  public boolean uploadDirectB2SFile(File file, String uploadType, int gameId) throws Exception {
+  public boolean uploadDirectB2SFile(File file, String uploadType, int gameId, FileUploadProgressListener listener) throws Exception {
     try {
       String url = restClient.getBaseUrl() + API + "directb2s/upload";
-      new RestTemplate().exchange(url, HttpMethod.POST, createUpload(file, gameId, uploadType, AssetType.DIRECT_B2S), Boolean.class);
+      new RestTemplate().exchange(url, HttpMethod.POST, createUpload(file, gameId, uploadType, AssetType.DIRECT_B2S, listener), Boolean.class);
       return true;
     } catch (Exception e) {
       LOG.error("Directb2s upload failed: " + e.getMessage(), e);
@@ -588,22 +583,17 @@ public class VPinStudioClient implements ObservedPropertyChangeListener, Overlay
   /*********************************************************************************************************************
    * Utils
    */
-  private static HttpEntity createUpload(File file, int gameId, String uploadType, AssetType assetType) throws Exception {
+  private static HttpEntity createUpload(File file, int gameId, String uploadType, AssetType assetType, FileUploadProgressListener listener) throws Exception {
     LinkedMultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
-    return createUpload(map, file, gameId, uploadType, assetType);
+    return createUpload(map, file, gameId, uploadType, assetType, listener);
   }
 
-  private static HttpEntity createUpload(LinkedMultiValueMap<String, Object> map, File file, int gameId, String uploadType, AssetType assetType) throws Exception {
+  private static HttpEntity createUpload(LinkedMultiValueMap<String, Object> map, File file, int gameId, String uploadType, AssetType assetType, FileUploadProgressListener listener) {
     HttpHeaders headers = new HttpHeaders();
     headers.setContentType(MediaType.MULTIPART_FORM_DATA);
     String boundary = Long.toHexString(System.currentTimeMillis());
     headers.set("Content-Type", "multipart/form-data; boundary=" + boundary);
-    FileSystemResource rsr = new FileSystemResource(file);
-
-    byte[] bFile = new byte[(int) file.length()];
-    FileInputStream fileInputStream = new FileInputStream(file);
-    fileInputStream.read(bFile);
-    fileInputStream.close();
+    ProgressableFileSystemResource rsr = new ProgressableFileSystemResource(file, listener);
 
 
     map.add("file", rsr);

@@ -3,6 +3,7 @@ package de.mephisto.vpin.ui.tables.dialogs;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.commons.fx.DialogController;
 import de.mephisto.vpin.ui.Studio;
+import de.mephisto.vpin.ui.util.Dialogs;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -20,6 +21,7 @@ import java.util.List;
 import java.util.ResourceBundle;
 import java.util.stream.Collectors;
 
+import static de.mephisto.vpin.ui.Studio.client;
 import static de.mephisto.vpin.ui.Studio.stage;
 
 public class ROMUploadController implements Initializable, DialogController {
@@ -48,7 +50,10 @@ public class ROMUploadController implements Initializable, DialogController {
     if (selection != null && !selection.isEmpty()) {
       result = true;
       try {
-        Studio.client.uploadRom(selection);
+        for (File file : selection) {
+          RomUploadProgressModel model = new RomUploadProgressModel(client, "ROM Upload", file);
+          Dialogs.createProgressDialog(model);
+        }
       } catch (Exception e) {
         LOG.error("Upload failed: " + e.getMessage(), e);
         WidgetFactory.showAlert(stage, "Uploading ROM failed", "Please check the log file for details", "Error: " + e.getMessage());

@@ -1,5 +1,7 @@
 package de.mephisto.vpin.ui.util;
 
+import javafx.scene.control.ProgressBar;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -8,8 +10,14 @@ public class ProgressResultModel {
   private int skipped;
 
   public List<Object> results = new ArrayList<>();
+  private ProgressBar progressBar;
 
-  public ProgressResultModel() {
+  public ProgressResultModel(ProgressBar progressBar) {
+    this.progressBar = progressBar;
+  }
+
+  public void setProgress(double progress) {
+    this.progressBar.setProgress(progress);
   }
 
   public void addProcessed() {

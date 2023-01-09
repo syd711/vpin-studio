@@ -142,7 +142,7 @@ public class PlayerDialogController implements Initializable, DialogController {
     if (player.getAvatar() != null) {
       assetId = player.getAvatar().getId();
     }
-    AssetRepresentation assetRepresentation = client.uploadAsset(file, assetId, 300, AssetType.AVATAR);
+    AssetRepresentation assetRepresentation = client.uploadAsset(file, assetId, 300, AssetType.AVATAR, null);
     this.player.setAvatar(assetRepresentation);
   }
 

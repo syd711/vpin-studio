@@ -47,7 +47,7 @@ public class ProgressDialogController implements Initializable, DialogController
     }
 
 
-    progressResultModel = new ProgressResultModel();
+    progressResultModel = new ProgressResultModel(progressBar);
     service = new Service() {
       @Override
       protected Task createTask() {
