@@ -441,9 +441,16 @@ public class TablesSidebarController implements Initializable {
   private void onCard() {
     if (this.game.isPresent()) {
       GameRepresentation g = this.game.get();
-      client.generateHighscoreCardSample(g);
-      ByteArrayInputStream s = Studio.client.getHighscoreCard(g);
-      MediaUtil.openMedia(s);
+      boolean b = client.generateHighscoreCardSample(g);
+      if(b) {
+        ByteArrayInputStream s = Studio.client.getHighscoreCard(g);
+        MediaUtil.openMedia(s);
+      }
+      else {
+        ScoreSummaryRepresentation summary = client.getGameScores(g.getId());
+        String status = summary.getMetadata().getStatus();
+        WidgetFactory.showAlert(Studio.stage, "Card Generation Failed.", "The card generation failed: " + status);
+      }
     }
   }
 
