@@ -1,130 +1,83 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.geometry.Insets?>
-<?import javafx.scene.Cursor?>
-<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 <?import org.kordamp.ikonli.javafx.FontIcon?>
 
-<BorderPane prefWidth="250.0" stylesheets="@stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.NavigationController">
-   <bottom>
-      <Button alignment="BASELINE_LEFT" graphicTextGap="12.0" mnemonicParsing="false" onAction="#onPreferencesClicked" prefHeight="60.0" prefWidth="250.0" styleClass="navigation-button" stylesheets="@stylesheet.css" text="Preferences" textFill="WHITE" BorderPane.alignment="CENTER">
-         <font>
-            <Font size="18.0" />
-         </font>
-         <opaqueInsets>
-            <Insets />
-         </opaqueInsets>
-         <padding>
-            <Insets left="47.0" />
-         </padding>
-         <cursor>
-            <Cursor fx:constant="HAND" />
-         </cursor>
-         <graphic>
-            <FontIcon iconColor="WHITE" iconLiteral="sil-settings" />
-         </graphic>
-      </Button>
-   </bottom>
+<BorderPane prefWidth="130.0" stylesheets="@stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.NavigationController">
    <top>
       <BorderPane BorderPane.alignment="CENTER">
          <center>
-          <VBox alignment="TOP_CENTER">
+          <VBox alignment="TOP_CENTER" spacing="12.0">
               <children>
-                  <Button fx:id="dashboardBtn" alignment="BASELINE_LEFT" graphicTextGap="12.0" mnemonicParsing="false" onAction="#onDashboardClick" prefHeight="60.0" prefWidth="250.0" styleClass="navigation-button" text="Dashboard" textFill="WHITE">
-                      <font>
-                          <Font size="18.0" />
-                      </font>
-                      <opaqueInsets>
-                          <Insets />
-                      </opaqueInsets>
-                      <padding>
-                          <Insets left="47.0" />
-                      </padding>
-                      <cursor>
-                          <Cursor fx:constant="HAND" />
-                      </cursor>
-                     <graphic>
-                        <FontIcon iconColor="WHITE" iconLiteral="bi-grid" />
-                     </graphic>
-                  </Button>
-                  <Button alignment="BASELINE_LEFT" graphicTextGap="12.0" layoutX="10.0" layoutY="70.0" mnemonicParsing="false" onAction="#onTablesClick" prefHeight="60.0" prefWidth="250.0" styleClass="navigation-button" text="Tables" textFill="WHITE">
-                     <font>
-                        <Font name="Tahoma" size="18.0" />
-                     </font>
-                     <opaqueInsets>
-                        <Insets />
-                     </opaqueInsets>
-                     <padding>
-                        <Insets left="47.0" />
-                     </padding>
-                     <cursor>
-                        <Cursor fx:constant="HAND" />
-                     </cursor>
-                     <graphic>
-                        <FontIcon iconColor="WHITE" iconLiteral="bi-card-list" />
-                     </graphic>
-                  </Button>
-                  <Button alignment="BASELINE_LEFT" graphicTextGap="12.0" layoutX="10.0" layoutY="210.0" mnemonicParsing="false" onAction="#onCompetitionsClick" prefHeight="60.0" prefWidth="250.0" styleClass="navigation-button" stylesheets="@stylesheet.css" text="Competitions" textFill="WHITE">
-                      <font>
-                          <Font size="18.0" />
-                      </font>
-                      <opaqueInsets>
-                          <Insets />
-                      </opaqueInsets>
-                      <padding>
-                          <Insets left="47.0" />
-                      </padding>
-                      <cursor>
-                          <Cursor fx:constant="HAND" />
-                      </cursor>
-                     <graphic>
-                        <FontIcon iconColor="WHITE" iconLiteral="bi-trophy" />
-                     </graphic>
-                  </Button>
-                  <Button alignment="BASELINE_LEFT" graphicTextGap="12.0" layoutX="10.0" layoutY="450.0" mnemonicParsing="false" onAction="#onPlayersClick" prefHeight="60.0" prefWidth="250.0" styleClass="navigation-button" stylesheets="@stylesheet.css" text="Players" textFill="WHITE">
-                      <font>
-                          <Font size="18.0" />
-                      </font>
-                      <opaqueInsets>
-                          <Insets />
-                      </opaqueInsets>
-                      <padding>
-                          <Insets left="47.0" />
-                      </padding>
-                      <cursor>
-                          <Cursor fx:constant="HAND" />
-                      </cursor>
-                     <graphic>
-                        <FontIcon iconColor="WHITE" iconLiteral="bi-person" />
-                     </graphic>
-                  </Button>
-                  <Button alignment="BASELINE_LEFT" graphicTextGap="12.0" layoutX="10.0" layoutY="210.0" mnemonicParsing="false" onAction="#onHighscoreCardsClick" prefHeight="60.0" prefWidth="250.0" styleClass="navigation-button" stylesheets="@stylesheet.css" text="Highscore Cards" textFill="WHITE">
-                      <font>
-                          <Font size="18.0" />
-                      </font>
-                      <opaqueInsets>
-                          <Insets />
-                      </opaqueInsets>
-                      <padding>
-                          <Insets left="47.0" />
-                      </padding>
-                      <cursor>
-                          <Cursor fx:constant="HAND" />
-                      </cursor>
-                     <graphic>
-                        <FontIcon iconColor="WHITE" iconLiteral="bi-list-ol" />
-                     </graphic>
-                  </Button>
+                  <VBox fx:id="dashboardBtn" alignment="CENTER" onMousePressed="#onDashboardClick" styleClass="navigation-button">
+                     <children>
+                        <FontIcon iconColor="WHITE" iconLiteral="bi-grid" iconSize="24" />
+                        <Label text="Dashboard" textFill="WHITE">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Label>
+                     </children>
+                  </VBox>
+                  <VBox alignment="CENTER" onMousePressed="#onTablesClick" styleClass="navigation-button">
+                     <children>
+                        <FontIcon iconColor="WHITE" iconLiteral="bi-card-list" iconSize="24" />
+                        <Label text="Tables" textFill="WHITE">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Label>
+                     </children>
+                  </VBox>
+                  <VBox alignment="CENTER" onMousePressed="#onCompetitionsClick" styleClass="navigation-button">
+                     <children>
+                        <FontIcon iconColor="WHITE" iconLiteral="bi-trophy" iconSize="24" />
+                        <Label text="Competitions" textFill="WHITE">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Label>
+                     </children>
+                  </VBox>
+                  <VBox alignment="CENTER" onMousePressed="#onPlayersClick" styleClass="navigation-button">
+                     <children>
+                        <FontIcon iconColor="WHITE" iconLiteral="bi-person" iconSize="24" />
+                        <Label text="Players" textFill="WHITE">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Label>
+                     </children>
+                  </VBox>
+                  <VBox alignment="CENTER" onMousePressed="#onHighscoreCardsClick" styleClass="navigation-button">
+                     <children>
+                        <FontIcon iconColor="WHITE" iconLiteral="bi-list-ol" iconSize="24" />
+                        <Label text="Highscore" textFill="WHITE">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Label>
+                        <Label layoutX="30.0" layoutY="34.0" text="Cards" textFill="WHITE">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Label>
+                     </children>
+                  </VBox>
               </children>
+               <BorderPane.margin>
+                  <Insets top="24.0" />
+               </BorderPane.margin>
           </VBox>
          </center>
          <top>
-            <BorderPane fx:id="avatarPane" prefHeight="220.0" prefWidth="250.0" BorderPane.alignment="CENTER">
+            <BorderPane fx:id="avatarPane" prefHeight="150.0" BorderPane.alignment="CENTER">
                <padding>
-                  <Insets bottom="24.0" left="24.0" right="24.0" top="24.0" />
+                  <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
                </padding>
             </BorderPane>
          </top>

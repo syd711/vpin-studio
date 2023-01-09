@@ -79,7 +79,7 @@ public class Updater {
   }
 
   public static boolean installServerUpdate() throws IOException {
-    FileUtils.writeBatch("update-server.bat", "resources\\7z.exe -aoa x \"VPin-Studio-Server.zip\"\ndel VPin-Studio-Server.zip\nserver.vbs\ndel update-server.bat");
+    FileUtils.writeBatch("update-server.bat", "timeout /T 4 /nobreak\\nresources\\7z.exe -aoa x \"VPin-Studio-Server.zip\"\ndel VPin-Studio-Server.zip\nserver.vbs\ndel update-server.bat");
     List<String> commands = Arrays.asList("update-server.bat");
     SystemCommandExecutor executor = new SystemCommandExecutor(commands);
     executor.setDir(getBasePath());
@@ -97,7 +97,7 @@ public class Updater {
   }
 
   public static boolean installClientUpdate() throws IOException {
-    FileUtils.writeBatch("update-client.bat", "resources\\7z.exe -aoa x \"VPin-Studio.zip\"\ndel VPin-Studio.zip\nVPin-Studio.exe\ndel update-client.bat");
+    FileUtils.writeBatch("update-client.bat", "timeout /T 4 /nobreak\\nresources\\7z.exe -aoa x \"VPin-Studio.zip\"\ndel VPin-Studio.zip\nVPin-Studio.exe\ndel update-client.bat");
     List<String> commands = Arrays.asList("update-client.bat");
     SystemCommandExecutor executor = new SystemCommandExecutor(commands);
     executor.setDir(getBasePath());

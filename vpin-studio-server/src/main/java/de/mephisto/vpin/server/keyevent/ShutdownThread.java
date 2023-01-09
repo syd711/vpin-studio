@@ -56,4 +56,8 @@ public class ShutdownThread extends Thread {
       LOG.error("Error executing shutdown: " + e.getMessage(), e);
     }
   }
+
+  public void reset() {
+    idleMinutes = 0;
+  }
 }

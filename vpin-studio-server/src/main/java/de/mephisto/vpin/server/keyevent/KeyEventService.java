@@ -131,6 +131,10 @@ public class KeyEventService implements InitializingBean, NativeKeyListener, Pop
     });
   }
 
+  public void resetShutdownTimer() {
+    shutdownThread.reset();
+  }
+
   private void afterStartup() {
     new VPinStudioServerTray();
     LOG.info("Application tray created.");

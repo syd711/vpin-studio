@@ -179,28 +179,43 @@
  * Navigation Buttons
  */
 .navigation-button {
+    -fx-min-width: 96px;
+    -fx-max-width: 96px;
+    -fx-min-height: 76px;
+    -fx-max-height: 76px;
     -fx-background-color: -fx-base-6;
-    -fx-border-style: hidden hidden hidden solid;
-    -fx-border-width: 4;
+    -fx-border-style: solid solid solid solid;
+    -fx-border-color: transparent;
+    -fx-border-width: 1;
+    -fx-font-size: 14px;
     -fx-border-color:-fx-base-6;
     -fx-text-fill: #DDDDDD;
 }
 
 .navigation-button:hover {
+    -fx-min-width: 96px;
+    -fx-max-width: 96px;
+    -fx-min-height: 76px;
+    -fx-max-height: 76px;
     -fx-background-color: -fx-font-hover;
     -fx-border-style: solid solid solid solid;
-    -fx-border-width: 1 1 1 4;
-    -fx-border-radius: 0 6 6 0;
+    -fx-border-width: 1 1 1 1;
+    -fx-font-size: 14px;
+    -fx-border-radius: 6 6 6 6;
     -fx-border-color: #6666FF;
     -fx-text-fill: #fff8f8;
     -fx-cursor: hand;
 }
 
 .navigation-button-selected {
+    -fx-min-width: 96px;
+    -fx-max-width: 96px;
+    -fx-min-height: 76px;
+    -fx-max-height: 76px;
     -fx-background-color: -fx-font-hover;
     -fx-border-style: solid solid solid solid;
-    -fx-border-width: 1 1 1 4;
-    -fx-border-radius: 0 6 6 0;
+    -fx-border-width: 1 1 1 1;
+    -fx-border-radius: 6 6 6 6;
     -fx-border-color: #6666FF;
     -fx-text-fill: #fff8f8;
     -fx-cursor: hand;

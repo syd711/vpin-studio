@@ -78,7 +78,7 @@ public class UpdateDialogController implements Initializable, DialogController {
             }
 
             Platform.runLater(() -> {
-              serverLabel.setText("Server is running on version " + client.version());
+              serverLabel.setText("Update successful, server is running on version " + client.version());
               serverProgress.setProgress(1f);
             });
 

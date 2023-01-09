@@ -39,7 +39,7 @@
                 </TabPane>
             </center>
          <BorderPane.margin>
-            <Insets left="12.0" right="12.0" />
+            <Insets right="12.0" />
          </BorderPane.margin>
          <bottom>
             <BorderPane BorderPane.alignment="CENTER">

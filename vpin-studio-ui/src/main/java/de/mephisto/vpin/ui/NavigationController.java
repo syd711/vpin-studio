@@ -1,27 +1,26 @@
 package de.mephisto.vpin.ui;
 
+import de.mephisto.vpin.commons.fx.UIDefaults;
+import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.representations.PreferenceEntryRepresentation;
 import de.mephisto.vpin.ui.cards.HighscoreCardsController;
 import de.mephisto.vpin.ui.competitions.CompetitionsController;
 import de.mephisto.vpin.ui.players.PlayersController;
-import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.ui.tables.TablesController;
-import de.mephisto.vpin.commons.fx.UIDefaults;
 import eu.hansolo.tilesfx.Tile;
 import eu.hansolo.tilesfx.TileBuilder;
 import javafx.application.Platform;
 import javafx.collections.ObservableList;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.Parent;
-import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.StackPane;
+import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.text.TextAlignment;
 import org.apache.commons.lang3.StringUtils;
@@ -38,13 +37,12 @@ import java.util.ResourceBundle;
 import static de.mephisto.vpin.ui.Studio.client;
 
 public class NavigationController implements Initializable {
-  private final static Logger LOG = LoggerFactory.getLogger(NavigationController.class);
 
   @FXML
   private BorderPane avatarPane;
 
   @FXML
-  private Button dashboardBtn;
+  private Pane dashboardBtn;
 
   public static StudioFXController activeController;
 
@@ -53,7 +51,6 @@ public class NavigationController implements Initializable {
 
   private static Map<String, Parent> viewCache = new HashMap<>();
   private static Map<String, StudioFXController> controllerCache = new HashMap<>();
-  private Node preferencesRoot;
 
   // Add a public no-args constructor
   public NavigationController() {
@@ -66,27 +63,27 @@ public class NavigationController implements Initializable {
   }
 
   @FXML
-  private void onDashboardClick(ActionEvent event) throws IOException {
+  private void onDashboardClick(MouseEvent event) throws IOException {
     loadScreen(event, DashboardController.class, "scene-dashboard.fxml");
   }
 
   @FXML
-  private void onHighscoreCardsClick(ActionEvent event) throws IOException {
+  private void onHighscoreCardsClick(MouseEvent event) throws IOException {
     loadScreen(event, HighscoreCardsController.class, "scene-highscore-cards.fxml");
   }
 
   @FXML
-  private void onTablesClick(ActionEvent event) throws IOException {
+  private void onTablesClick(MouseEvent event) throws IOException {
     loadScreen(event, TablesController.class, "scene-tables.fxml");
   }
 
   @FXML
-  private void onCompetitionsClick(ActionEvent event) throws IOException {
+  private void onCompetitionsClick(MouseEvent event) throws IOException {
     loadScreen(event, CompetitionsController.class, "scene-competitions.fxml");
   }
 
   @FXML
-  private void onPlayersClick(ActionEvent event) throws IOException {
+  private void onPlayersClick(MouseEvent event) throws IOException {
     loadScreen(event, PlayersController.class, "scene-players.fxml");
   }
 
@@ -95,21 +92,13 @@ public class NavigationController implements Initializable {
     loadScreen(null, studioFXController.getClass(), activeScreenId);
   }
 
-  @FXML
-  private void onPreferencesClicked(ActionEvent event) throws IOException {
-    Node lookup = Studio.stage.getScene().lookup("#root");
-    BorderPane main = (BorderPane) lookup;
-    StackPane stack = (StackPane) main.getCenter();
-    stack.getChildren().add(preferencesRoot);
-  }
-
   public static void setInitialController(String key, StudioFXController controller) {
     controllerCache.put(key, controller);
   }
 
-  public static void loadScreen(ActionEvent event, Class<?> controller, String name) throws IOException {
-    if(event != null) {
-      Button b = (Button) event.getSource();
+  public static void loadScreen(MouseEvent event, Class<?> controller, String name) throws IOException {
+    if (event != null) {
+      Pane b = (Pane) event.getSource();
       ObservableList<Node> childrenUnmodifiable = b.getParent().getChildrenUnmodifiable();
       for (Node node : childrenUnmodifiable) {
         node.getStyleClass().remove("navigation-button-selected");
@@ -145,15 +134,6 @@ public class NavigationController implements Initializable {
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
     staticAvatarPane = this.avatarPane;
-
-    if (preferencesRoot == null) {
-      try {
-        FXMLLoader loader = new FXMLLoader(NavigationController.class.getResource("scene-preferences.fxml"));
-        preferencesRoot = loader.load();
-      } catch (IOException e) {
-        LOG.error("Failed to load preferences: " + e.getMessage(), e);
-      }
-    }
     refreshAvatar();
 
     dashboardBtn.getStyleClass().add("navigation-button-selected");
