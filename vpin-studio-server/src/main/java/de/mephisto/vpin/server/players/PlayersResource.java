@@ -1,6 +1,8 @@
 package de.mephisto.vpin.server.players;
 
 import de.mephisto.vpin.restclient.PlayerDomain;
+import de.mephisto.vpin.server.competitions.CompetitionsRepository;
+import de.mephisto.vpin.server.competitions.RankedPlayer;
 import de.mephisto.vpin.server.competitions.ScoreSummary;
 import de.mephisto.vpin.server.highscores.HighscoreService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -71,4 +73,8 @@ public class PlayersResource {
     playerService.delete(id);
   }
 
+  @GetMapping("/ranked")
+  public List<RankedPlayer> getPlayerByRanks() {
+    return highscoreService.getPlayersByRanks();
+  }
 }

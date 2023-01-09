@@ -1,6 +1,7 @@
 package de.mephisto.vpin.server.highscores;
 
 import com.google.common.annotations.VisibleForTesting;
+import de.mephisto.vpin.server.competitions.CompetitionsRepository;
 import de.mephisto.vpin.server.competitions.RankedPlayer;
 import de.mephisto.vpin.server.competitions.ScoreSummary;
 import de.mephisto.vpin.server.games.Game;
@@ -29,6 +30,9 @@ public class HighscoreService implements InitializingBean {
 
   @Autowired
   private HighscoreVersionRepository highscoreVersionRepository;
+
+  @Autowired
+  private CompetitionsRepository competitionsRepository;
 
   @Autowired
   private HighscoreParser highscoreParser;
@@ -105,6 +109,7 @@ public class HighscoreService implements InitializingBean {
             }
             p.setName(player.getName());
             p.setInitials(player.getInitials());
+            p.setCompetitionsWon(competitionsRepository.findByWinnerInitials(player.getInitials()).size());
             playerMap.put(score.getPlayerInitials(), p);
           }
 

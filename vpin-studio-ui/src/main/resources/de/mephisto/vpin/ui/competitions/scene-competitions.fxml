@@ -42,9 +42,9 @@
                                               <TableColumn fx:id="columnName" prefWidth="292.0001335144043" style="-fx-alignment: BASELINE_LEFT;" text="Name" />
                                               <TableColumn fx:id="columnStatus" minWidth="0.0" prefWidth="172.0" style="-fx-alignment: CENTER;" text="Status" />
                                                 <TableColumn fx:id="columnTable" prefWidth="292.0001335144043" style="-fx-alignment: BASELINE_LEFT;" text="Table" />
-                                                <TableColumn fx:id="columnStartDate" prefWidth="150.0" style="-fx-alignment: CENTER;" text="Start Date" />
-                                                <TableColumn fx:id="columnEndDate" prefWidth="150.0" style="-fx-alignment: CENTER;" text="End Date" />
-                                                <TableColumn fx:id="columnWinner" prefWidth="97.60009765625" style="-fx-alignment: CENTER;" text="Winner" />
+                                                <TableColumn fx:id="columnStartDate" prefWidth="120.0" style="-fx-alignment: CENTER;" text="Start Date" />
+                                                <TableColumn fx:id="columnEndDate" prefWidth="120.0" style="-fx-alignment: CENTER;" text="End Date" />
+                                                <TableColumn fx:id="columnWinner" prefWidth="200.0" style="-fx-alignment: CENTER;" text="Winner" />
                                                 <TableColumn fx:id="columnScoreCount" prefWidth="140.0" style="-fx-alignment: CENTER;" text="Submitted Scores" />
                                             </columns>
                                           </TableView>

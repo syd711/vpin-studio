@@ -61,8 +61,4 @@ public class CompetitionResource {
     competitionService.delete(id);
   }
 
-  @GetMapping("/rankedplayers")
-  public List<RankedPlayer> getPlayerByRanks() {
-    return competitionService.getPlayersByRanks();
-  }
 }

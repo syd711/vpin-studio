@@ -132,7 +132,7 @@ public class DiscordWebhookMessageFactory {
 
   private static String formatScoreEntry(ScoreSummary summary, int index) {
     StringBuilder builder = new StringBuilder("#");
-    builder.append(String.valueOf(index + 1));
+    builder.append((index + 1));
     builder.append(" ");
 
     if (summary.getScores().size() > index) {

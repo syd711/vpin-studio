@@ -13,6 +13,7 @@ import de.mephisto.vpin.server.competitions.RankedPlayer;
 import de.mephisto.vpin.server.competitions.ScoreSummary;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameService;
+import de.mephisto.vpin.server.highscores.HighscoreService;
 import de.mephisto.vpin.server.highscores.ScoreList;
 import de.mephisto.vpin.server.popper.GameMediaItem;
 import de.mephisto.vpin.server.preferences.PreferencesService;
@@ -46,6 +47,9 @@ public class OverlayClientImpl implements OverlayClient, InitializingBean {
 
   @Autowired
   private PreferencesService preferencesService;
+
+  @Autowired
+  private HighscoreService highscoreService;
 
   private ObjectMapper mapper;
 
@@ -175,7 +179,7 @@ public class OverlayClientImpl implements OverlayClient, InitializingBean {
   @Override
   public List<RankedPlayerRepresentation> getRankedPlayers() {
     try {
-      List<RankedPlayer> rankedPlayers = competitionService.getPlayersByRanks();
+      List<RankedPlayer> rankedPlayers = highscoreService.getPlayersByRanks();
       String s = mapper.writeValueAsString(rankedPlayers);
       return List.of(mapper.readValue(s, RankedPlayerRepresentation[].class));
     } catch (Exception e) {

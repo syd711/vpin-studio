@@ -138,10 +138,6 @@ public class CompetitionService implements InitializingBean {
     return competitionsRepository.findByStartDateLessThanEqualAndEndDateGreaterThanEqual(new Date(), new Date());
   }
 
-  public List<RankedPlayer> getPlayersByRanks() {
-    return highscoreService.getPlayersByRanks();
-  }
-
   public boolean delete(long id) {
     Optional<Competition> c = competitionsRepository.findById(id);
     if (c.isPresent()) {
