@@ -1,5 +1,6 @@
 package de.mephisto.vpin.ui;
 
+import de.mephisto.vpin.commons.fx.DialogHeaderController;
 import de.mephisto.vpin.commons.fx.UIDefaults;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.representations.PreferenceEntryRepresentation;
@@ -24,8 +25,6 @@ import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.text.TextAlignment;
 import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.net.URL;
@@ -158,11 +157,19 @@ public class NavigationController implements Initializable {
         .backgroundColor(Color.TRANSPARENT)
         .image(image)
         .imageMask(Tile.ImageMask.ROUND)
-        .text(name)
+        .text("")
         .textSize(Tile.TextSize.BIGGER)
         .textAlignment(TextAlignment.CENTER)
         .build();
     staticAvatarPane.setCenter(avatar);
+
+    Studio.stage.setTitle("VPin Studio - " + name);
+
+    if(Studio.stage != null && Studio.stage.getScene() != null) {
+      Node header = Studio.stage.getScene().lookup("#header");
+      HeaderResizeableController dialogHeaderController = (HeaderResizeableController) header.getUserData();
+      dialogHeaderController.setTitle(Studio.stage.getTitle());
+    }
   }
 
   public static void setBreadCrumb(List<String> crumbs) {

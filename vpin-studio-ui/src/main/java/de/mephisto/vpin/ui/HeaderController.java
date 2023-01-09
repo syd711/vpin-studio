@@ -2,6 +2,7 @@ package de.mephisto.vpin.ui;
 
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.Label;
 import javafx.scene.layout.BorderPane;
 
 import java.net.URL;
@@ -16,6 +17,9 @@ public class HeaderController implements Initializable {
 
   @FXML
   private BorderPane header;
+
+  @FXML
+  private Label titleLabel;
 
   @FXML
   private void onCloseClick() {

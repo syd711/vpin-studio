@@ -1,5 +1,8 @@
 package de.mephisto.vpin.ui;
 
+import de.mephisto.vpin.commons.fx.UIDefaults;
+import de.mephisto.vpin.restclient.PreferenceNames;
+import de.mephisto.vpin.restclient.representations.PreferenceEntryRepresentation;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Rectangle2D;
@@ -7,10 +10,12 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Screen;
+import org.apache.commons.lang3.StringUtils;
 
 import java.net.URL;
 import java.util.ResourceBundle;
 
+import static de.mephisto.vpin.ui.Studio.client;
 import static de.mephisto.vpin.ui.Studio.stage;
 
 public class HeaderResizeableController implements Initializable {
@@ -64,9 +69,13 @@ public class HeaderResizeableController implements Initializable {
     stage.setIconified(true);
   }
 
+  public void setTitle(String title) {
+    titleLabel.setText(title);
+  }
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
+    header.setUserData(this);
     titleLabel.setText("VPin Studio");
     header.setOnMousePressed(event -> {
       xOffset = stage.getX() - event.getScreenX();
@@ -76,5 +85,12 @@ public class HeaderResizeableController implements Initializable {
       stage.setX(event.getScreenX() + xOffset);
       stage.setY(event.getScreenY() + yOffset);
     });
+
+    PreferenceEntryRepresentation systemNameEntry = client.getPreference(PreferenceNames.SYSTEM_NAME);
+    String name = UIDefaults.VPIN_NAME;
+    if (!StringUtils.isEmpty(systemNameEntry.getValue())) {
+      name = systemNameEntry.getValue();
+    }
+    titleLabel.setText("VPin Studio - " + name);
   }
 }
