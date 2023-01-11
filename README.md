@@ -104,7 +104,7 @@ __BOT Support (Example Chat)__
 
 __VPin Overlay__
 
-(this is what you will see on you VPin when you have mapped the overlay key)
+(this is what you will see on your VPin when the overlay key is mapped)
 
 <img src="./documentation/vpin-dashboard.png" width="800">
 
