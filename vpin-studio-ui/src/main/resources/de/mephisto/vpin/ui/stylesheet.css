@@ -560,5 +560,21 @@
    -fx-background-color: transparent;
 }
 
+.menu-item {
+    -fx-padding: 6 6 6 6;
+    -fx-text-fill: #FFFFFF;
+    -fx-background: #111111;
+}
+
+.menu-item .label {
+    -fx-font-size: 14px;
+    -fx-text-fill: #FFFFFF;
+}
+
+.menu-item .label:hover {
+    -fx-font-size: 14px;
+    -fx-background: #111111;
+    -fx-text-fill: #FFFFFF;
+}
 
 

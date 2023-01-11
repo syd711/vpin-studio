@@ -28,6 +28,7 @@ import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.MenuItem;
 import javafx.scene.control.TextField;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
@@ -112,7 +113,13 @@ public class TablesController implements Initializable, StudioFXController {
   private Button scanAllBtn;
 
   @FXML
-  private Button uploadTableBtn;
+  private MenuItem uploadTableItem;
+
+  @FXML
+  private MenuItem uploadRomItem;
+
+  @FXML
+  private MenuItem uploadDirectB2SItem;
 
   @FXML
   private Button reloadBtn;
@@ -157,6 +164,16 @@ public class TablesController implements Initializable, StudioFXController {
       mediaView.getMediaPlayer().stop();
       icon.setIconLiteral("bi-play");
     }
+  }
+
+  @FXML
+  private void onRomUpload() {
+    this.tablesSideBarController.onRomUpload();
+  }
+
+  @FXML
+  private void onDirectb2sUpload() {
+    this.tablesSideBarController.onDirectb2sUpload();
   }
 
   @FXML
@@ -303,7 +320,9 @@ public class TablesController implements Initializable, StudioFXController {
     this.scanBtn.setDisable(true);
     this.validateBtn.setDisable(true);
     this.deleteBtn.setDisable(true);
-    this.uploadTableBtn.setDisable(true);
+    this.uploadTableItem.setDisable(true);
+    this.uploadRomItem.setDisable(true);
+    this.uploadDirectB2SItem.setDisable(true);
     this.inspectBtn.setDisable(true);
 
     tableView.setVisible(false);
@@ -332,12 +351,15 @@ public class TablesController implements Initializable, StudioFXController {
           this.validateBtn.setDisable(false);
           this.deleteBtn.setDisable(false);
           this.inspectBtn.setDisable(false);
+
+          this.uploadDirectB2SItem.setDisable(false);
+          this.uploadRomItem.setDisable(false);
         }
 
         this.textfieldSearch.setDisable(false);
         this.reloadBtn.setDisable(false);
         this.scanAllBtn.setDisable(false);
-        this.uploadTableBtn.setDisable(false);
+        this.uploadTableItem.setDisable(false);
 
         tableView.setVisible(true);
         labelTableCount.setText(games.size() + " tables");

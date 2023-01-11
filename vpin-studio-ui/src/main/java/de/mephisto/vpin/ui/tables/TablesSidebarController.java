@@ -420,7 +420,7 @@ public class TablesSidebarController implements Initializable {
 
 
   @FXML
-  private void onDirectb2sUpload() {
+  public void onDirectb2sUpload() {
     if (this.game.isPresent()) {
       boolean uploaded = Dialogs.openDirectB2SUploadDialog(this.game.get());
       if (uploaded) {
@@ -430,7 +430,7 @@ public class TablesSidebarController implements Initializable {
   }
 
   @FXML
-  private void onRomUpload() {
+  public void onRomUpload() {
     boolean uploaded = Dialogs.openRomUploadDialog();
     if (uploaded) {
       tablesController.onReload();

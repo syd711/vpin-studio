@@ -168,11 +168,11 @@ public class WidgetCompetitionController extends WidgetController implements Ini
         for (ScoreSummaryRepresentation score : scores) {
           if (score.getScores().size() >= 3) {
             ScoreRepresentation s = score.getScores().get(0);
-            scoreGraph1.getData().add(new XYChart.Data(SimpleDateFormat.getDateTimeInstance().format(score.getCreatedAt()), s.getNumericScore()));
+            scoreGraph1.getData().add(new XYChart.Data(SimpleDateFormat.getDateInstance().format(score.getCreatedAt()), s.getNumericScore()));
             s = score.getScores().get(1);
-            scoreGraph2.getData().add(new XYChart.Data(SimpleDateFormat.getDateTimeInstance().format(score.getCreatedAt()), s.getNumericScore()));
+            scoreGraph2.getData().add(new XYChart.Data(SimpleDateFormat.getDateInstance().format(score.getCreatedAt()), s.getNumericScore()));
             s = score.getScores().get(2);
-            scoreGraph3.getData().add(new XYChart.Data(SimpleDateFormat.getDateTimeInstance().format(score.getCreatedAt()), s.getNumericScore()));
+            scoreGraph3.getData().add(new XYChart.Data(SimpleDateFormat.getDateInstance().format(score.getCreatedAt()), s.getNumericScore()));
           }
         }
 

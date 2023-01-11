@@ -4,6 +4,8 @@
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Hyperlink?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.MenuButton?>
+<?import javafx.scene.control.MenuItem?>
 <?import javafx.scene.control.Separator?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
@@ -107,14 +109,27 @@
                                  </tooltip>
                               </Button>
                               <Separator layoutX="768.0" layoutY="10.0" orientation="VERTICAL" prefHeight="30.0" prefWidth="12.0" />
-                              <Button fx:id="uploadTableBtn" layoutX="492.0" layoutY="11.0" mnemonicParsing="false" onAction="#onTableUpload" text="VPX Upload" textFill="WHITE">
+                              <MenuButton mnemonicParsing="false" text="Upload">
+                                <items>
+                                  <MenuItem fx:id="uploadTableItem" mnemonicParsing="false" onAction="#onTableUpload" text="Upload VPX Table">
+                                       <graphic>
+                                          <FontIcon iconColor="WHITE" iconLiteral="mdi2u-upload" />
+                                       </graphic>
+                                    </MenuItem>
+                                  <MenuItem fx:id="uploadDirectB2SItem" mnemonicParsing="false" onAction="#onDirectb2sUpload" text="Upload DirectB2S">
+                                       <graphic>
+                                          <FontIcon iconColor="WHITE" iconLiteral="mdi2u-upload" />
+                                       </graphic></MenuItem>
+                                    <MenuItem fx:id="uploadRomItem" mnemonicParsing="false" onAction="#onRomUpload" text="Upload ROM">
+                                       <graphic>
+                                          <FontIcon iconColor="WHITE" iconLiteral="mdi2u-upload" />
+                                       </graphic>
+                                    </MenuItem>
+                                </items>
                                  <font>
                                     <Font size="14.0" />
                                  </font>
-                                 <graphic>
-                                    <FontIcon iconColor="WHITE" iconLiteral="mdi2u-upload" />
-                                 </graphic>
-                              </Button>
+                              </MenuButton>
                               <Separator layoutX="682.0" layoutY="10.0" orientation="VERTICAL" prefHeight="30.0" prefWidth="12.0" />
                               <Button fx:id="deleteBtn" mnemonicParsing="false" onAction="#onDelete" text="Delete" textFill="#ff3333">
                                  <font>

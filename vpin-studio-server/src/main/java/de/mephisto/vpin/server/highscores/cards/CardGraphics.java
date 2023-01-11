@@ -6,6 +6,7 @@ import de.mephisto.vpin.server.directb2s.DirectB2SImageRatio;
 import de.mephisto.vpin.server.directb2s.DirectB2SService;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.highscores.Score;
+import de.mephisto.vpin.server.popper.WheelAugmenter;
 import de.mephisto.vpin.server.system.SystemService;
 import de.mephisto.vpin.server.util.Config;
 import de.mephisto.vpin.server.util.ImageUtil;
@@ -190,6 +191,10 @@ public class CardGraphics {
     int wheelY = tableNameY + ROW_SEPARATOR;
     int wheelSize = 3 * SCORE_FONT_SIZE + 3 * ROW_SEPARATOR;
     if (wheelIconFile != null && wheelIconFile.exists()) {
+      WheelAugmenter augmenter = new WheelAugmenter(wheelIconFile);
+      if(augmenter.getBackupWheelIcon().exists()) {
+        wheelIconFile = augmenter.getBackupWheelIcon();
+      }
       BufferedImage wheelImage = ImageIO.read(wheelIconFile);
       g.drawImage(wheelImage, WHEEL_PADDING, wheelY, wheelSize, wheelSize, null);
     }
@@ -246,6 +251,10 @@ public class CardGraphics {
 
     //file exists && there is place to render it
     if (wheelIconFile != null && wheelIconFile.exists() && renderWheel) {
+      WheelAugmenter augmenter = new WheelAugmenter(wheelIconFile);
+      if(augmenter.getBackupWheelIcon().exists()) {
+        wheelIconFile = augmenter.getBackupWheelIcon();
+      }
       BufferedImage wheelImage = ImageIO.read(wheelIconFile);
       x = (remainingXSpace - wheelWidth) / 2;
       g.drawImage(wheelImage, x, yStart, wheelWidth, wheelWidth, null);

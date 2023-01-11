@@ -4,27 +4,82 @@ The VPin Studio is a util to manage VPin users and competitions.
 It depends on PinUP Popper and gives the user an overview about installed tables
 and their media configuration.
 
+
+The given overview shows the key features and roadmap of the VPin Studio
+In general, the VPin Studio has a client/server architecture, 
+supporting the configuration of multiple VPin with one client
+
+
 ### Key Features
 
-- Storing and versioning of VPin highscores (depending on pinemhi)
-- Table media validation
-- Table assets validation
-- Build-in user managment
-- Discord integration:
-  - user name to highscore mapping
-  - Webhook support for publishing new highscores and competitions
-  - BOT support to ask for highscores and player ranks
-- Competition management
-- VPin dashboard support
-- Highscore card generation
+
+- _TBA: to-be-announced (development not started yet)_ 
+- _WIP: work-in-progress (development has been started)_
+
+
+#### Highscores
+  - extraction and versioning of different highscores
+  - highscore card generator (including style editing)
+
+#### Table Management
+  - table media validation
+  - table ROM validation
+  - POV export
+  - POV editing
+  - table script preview
+  - table volume control
+  - "alt-sound" editor (_TBA_) (not sure about this yet,but it would be nice to have an actual UI for this)
+
+#### User Management
+  - build in user management
+  - Discord user management
+
+#### Discord Integration
+  - Discord channel to VPin mapping (1:1 connection) (when a group of people using 1x VPin for competitions)
+  - Discord channel to VPin**s** mapping (n:1 connection) (when VPin owners want to compete against each other) (_TBA_)
+  - Discord user name to highscore mapping
+  - Webhook support for publishing new highscores and competitions events
+  - BOT support:
+    - request table highscore
+    - request player rank
+    - request player rankings
+    - request active competition
+    - 
+#### Competition Management
+ - Offline Competitions (these are used for when multiple people using one VPin)
+ - Online Competitions (_TBA_, these will work together with the n:1 Discord support)
+
+### Dashboard Support
+ - "Recent Scores Widget": shows the latest n highscores that have been created with player name info
+ - "Active Competition Widget": shows the status of the active competition including a highscore graph
+ - "Player Ranking Widget": shows a leader board of all players
+
+### Highscore Card Generation
+  - updates highscore cards on table-exit with the latest highscore
+  - editor support for styling highscore cards
+  - directb2s background image support
+
+### Miscellaneous
 - Automatic shutdown support for VPins
 - PinUP Popper reset support
 
 ### Screenshots
 
-__Table Management__
+__Table Media Overview__
 
 <img src="./documentation/tables1.png" width="800">
+
+__Table Highscore Overview__
+
+<img src="./documentation/tables-highscores.png" width="800">
+
+__Table POV Extraction & Editing__
+
+<img src="./documentation/tables-pov.png" width="800">
+
+__Table Volume Control__
+
+<img src="./documentation/tables-volume.png" width="800">
 
 __Dashboard__
 
@@ -33,6 +88,10 @@ __Dashboard__
 __Discord Players__
 
 <img src="./documentation/players-discord.png" width="800">
+
+__Highscore Card Editor__
+
+<img src="./documentation/higscore-cards.png" width="800">
 
 __BOT Support__
 

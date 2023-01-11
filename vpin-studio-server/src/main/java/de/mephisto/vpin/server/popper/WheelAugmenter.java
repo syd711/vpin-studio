@@ -46,6 +46,10 @@ public class WheelAugmenter {
     this.backupWheelIconThumbnailSm = new File(vsThumbsFolder, wheelIconThumbnailSm.getName());
   }
 
+  public File getBackupWheelIcon() {
+    return backupWheelIcon;
+  }
+
   public void augment(File badgeFile) {
     if (!wheelIcon.exists()) {
       LOG.error("Could not augment wheel icon " + wheelIcon.getAbsolutePath() + ", file does not exist.");
