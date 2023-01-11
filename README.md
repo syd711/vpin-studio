@@ -28,7 +28,11 @@ supporting the configuration of multiple VPin with one client
   - POV editing
   - table script preview
   - table volume control
-  - "alt-sound" editor (_TBA_) (not sure about this yet,but it would be nice to have an actual UI for this)
+  - table upload
+  - rom upload
+  - directb2s upload
+  - VPA export/import (_VPA = visual pinball archive_ - contains all related file for a table (music, vpx file, rom, nvram, directb2s, popper metadata, ...)) (_WIP_)
+  - "alt-sound" editor (_TBA_) (not sure about this yet, but it would be nice to have an actual UI instead of cumbersome CSV editing)
 
 #### User Management
   - build in user management
