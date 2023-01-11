@@ -49,17 +49,17 @@ supporting the configuration of multiple VPin with one client
  - Offline Competitions (these are used for when multiple people using one VPin)
  - Online Competitions (_TBA_, these will work together with the n:1 Discord support)
 
-### Dashboard Support
+#### Dashboard Support
  - "Recent Scores Widget": shows the latest n highscores that have been created with player name info
  - "Active Competition Widget": shows the status of the active competition including a highscore graph
  - "Player Ranking Widget": shows a leader board of all players
 
-### Highscore Card Generation
+#### Highscore Card Generation
   - updates highscore cards on table-exit with the latest highscore
   - editor support for styling highscore cards
   - directb2s background image support
 
-### Miscellaneous
+#### Miscellaneous
 - Automatic shutdown support for VPins
 - PinUP Popper reset support
 
@@ -68,6 +68,11 @@ supporting the configuration of multiple VPin with one client
 __Table Media Overview__
 
 <img src="./documentation/tables1.png" width="800">
+
+
+__Table Validation__
+
+<img src="./documentation/tables-validation.png" width="800">
 
 __Table Highscore Overview__
 
@@ -91,11 +96,17 @@ __Discord Players__
 
 __Highscore Card Editor__
 
-<img src="./documentation/higscore-cards.png" width="800">
+<img src="./documentation/highscore-cards.png" width="800">
 
-__BOT Support__
+__BOT Support (Example Chat)__
 
 <img src="./documentation/bot-support.png" width="800">
+
+__VPin Overlay__
+
+(this is what you will see on you VPin when you have mapped the overlay key)
+
+<img src="./documentation/vpin-dashboard.png" width="800">
 
 ### Documentation
 
