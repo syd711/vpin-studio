@@ -15,6 +15,7 @@ import de.mephisto.vpin.ui.tables.validation.ValidationTexts;
 import de.mephisto.vpin.ui.util.Dialogs;
 import de.mephisto.vpin.ui.util.ProgressResultModel;
 import javafx.application.Platform;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
@@ -31,6 +32,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.TextField;
 import javafx.scene.control.*;
+import javafx.scene.control.cell.CheckBoxTableCell;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
@@ -54,6 +56,9 @@ import java.util.*;
 
 public class TablesController implements Initializable, StudioFXController {
   private final static Logger LOG = LoggerFactory.getLogger(TablesController.class);
+
+  @FXML
+  private TableColumn<GameRepresentation, Boolean> columnSelect;
 
   @FXML
   private TableColumn<GameRepresentation, String> columnId;
@@ -422,6 +427,11 @@ public class TablesController implements Initializable, StudioFXController {
     tableView.setPlaceholder(new Label("No matching tables found."));
 
 
+    columnSelect.setCellValueFactory(cellData -> {
+      return new SimpleBooleanProperty(false);
+    });
+    columnSelect.setCellFactory(tc -> new CheckBoxTableCell<>());
+
     columnDisplayName.setCellValueFactory(cellData -> {
       GameRepresentation value = cellData.getValue();
       return new SimpleStringProperty(value.getGameDisplayName());
@@ -514,6 +524,7 @@ public class TablesController implements Initializable, StudioFXController {
 
 
     tableView.setItems(data);
+    tableView.setEditable(true);
     tableView.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
       boolean disable = newSelection == null;
       this.scanBtn.setDisable(newSelection == null || !newSelection.getEmulator().isVisualPinball());
