@@ -229,7 +229,7 @@ class HighscoreResolver {
   private String readNvHighscore(Game game, HighscoreMetadata metadata) {
     Highscore highscore = null;
     try {
-      File nvRam = getNvRamFile(game);
+      File nvRam = game.getNvRamFile();
       if (nvRam == null || !nvRam.exists()) {
         return null;
       }
@@ -313,30 +313,5 @@ class HighscoreResolver {
       return file;
     }
     return null;
-  }
-
-  @NonNull
-  private File getNvRamFile(Game game) {
-    File nvRamFolder = new File(systemService.getMameFolder(), "nvram");
-
-    String originalRom = game.getOriginalRom() != null ? game.getOriginalRom() : game.getRom();
-    File defaultNVFile = new File(nvRamFolder, originalRom + ".nv");
-    if (game.getNvOffset() == 0) {
-      return defaultNVFile;
-    }
-
-    //if the text file exists, the current nv file contains the highscore of this table
-    File versionTextFile = new File(systemService.getMameFolder(), game.getRom() + " v" + game.getNvOffset() + ".txt");
-    if (versionTextFile.exists()) {
-      return defaultNVFile;
-    }
-
-    //else, we can check if a nv file with the alias and version exists
-    File versionNVAliasedFile = new File(systemService.getMameFolder(), originalRom + " v" + game.getNvOffset() + ".nv");
-    if (versionNVAliasedFile.exists()) {
-      return versionNVAliasedFile;
-    }
-
-    return defaultNVFile;
   }
 }

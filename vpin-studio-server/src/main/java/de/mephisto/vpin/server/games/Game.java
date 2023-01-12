@@ -119,11 +119,27 @@ public class Game {
     this.systemService = systemService;
   }
 
+  @JsonIgnore
   @NonNull
   public File getPinUPMediaFolder(@NonNull PopperScreen screen) {
     File emulatorMediaFolder = new File(this.emulator.getMediaDir());
     return new File(emulatorMediaFolder, screen.name());
   }
+
+  @JsonIgnore
+  @NonNull
+  public File getUltraDMDFolder() {
+    String folderName = this.getRom() + ".UltraDMD";
+    return new File(this.getGameFile().getParentFile(), folderName);
+  }
+
+  @JsonIgnore
+  @NonNull
+  public File getFlexDMDFolder() {
+    String folderName = getRom() + ".FlexDMD";
+    return new File(this.getGameFile().getParentFile(), folderName);
+  }
+
 
   @Nullable
   public File getPinUPMedia(@NonNull PopperScreen screen) {
@@ -149,6 +165,7 @@ public class Game {
     return gameMedia;
   }
 
+  @JsonIgnore
   @Nullable
   public File getEMHighscoreFile() {
     if (!StringUtils.isEmpty(this.getHsFileName())) {
@@ -158,7 +175,7 @@ public class Game {
   }
 
   public Date getModified() {
-    if(this.gameFile != null && this.gameFile.lastModified() > 0) {
+    if (this.gameFile != null && this.gameFile.lastModified() > 0) {
       return new Date(this.gameFile.lastModified());
     }
     return null;
@@ -274,7 +291,6 @@ public class Game {
     this.validationState = validationState;
   }
 
-  @SuppressWarnings("unused")
   @Nullable
   @JsonIgnore
   public File getRomFile() {
@@ -283,6 +299,25 @@ public class Game {
     }
     return null;
   }
+
+  @NonNull
+  @JsonIgnore
+  public File getAltSoundFolder() {
+    return new File(new File(systemService.getMameFolder(), "altsound"), this.getRom());
+  }
+
+  @NonNull
+  @JsonIgnore
+  public File getMusicFolder() {
+    return new File(new File(systemService.getMameFolder(), "altsound"), this.getRom());
+  }
+
+  @NonNull
+  @JsonIgnore
+  public File getPupPackFolder() {
+    return new File(new File(systemService.getPinUPSystemFolder(),"PUPVideos"), this.getRom());
+  }
+
 
   public boolean isRomExists() {
     return getRomFile() != null && getRomFile().exists();
@@ -307,6 +342,32 @@ public class Game {
   public File getCroppedDirectB2SBackgroundImage() {
     String targetName = FilenameUtils.getBaseName(getGameFileName()) + ".png";
     return new File(systemService.getB2SCroppedImageFolder(), targetName);
+  }
+
+  @NonNull
+  @JsonIgnore
+  public File getNvRamFile() {
+    File nvRamFolder = new File(systemService.getMameFolder(), "nvram");
+
+    String originalRom = getOriginalRom() != null ? getOriginalRom() : getRom();
+    File defaultNVFile = new File(nvRamFolder, originalRom + ".nv");
+    if (getNvOffset() == 0) {
+      return defaultNVFile;
+    }
+
+    //if the text file exists, the current nv file contains the highscore of this table
+    File versionTextFile = new File(systemService.getMameFolder(), getRom() + " v" + getNvOffset() + ".txt");
+    if (versionTextFile.exists()) {
+      return defaultNVFile;
+    }
+
+    //else, we can check if a nv file with the alias and version exists
+    File versionNVAliasedFile = new File(systemService.getMameFolder(), originalRom + " v" + getNvOffset() + ".nv");
+    if (versionNVAliasedFile.exists()) {
+      return versionNVAliasedFile;
+    }
+
+    return defaultNVFile;
   }
 
 

@@ -1,6 +1,7 @@
 package de.mephisto.vpin.server.popper;
 
 import de.mephisto.vpin.restclient.PopperScreen;
+import edu.umd.cs.findbugs.annotations.Nullable;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -13,6 +14,7 @@ public class GameMedia {
     return media;
   }
 
+  @Nullable
   public GameMediaItem get(PopperScreen screen) {
     return media.get(screen.name());
   }

@@ -405,6 +405,14 @@ public class SystemService implements InitializingBean {
     return new File(getPinUPSystemFolder(), "PUPDatabase.db");
   }
 
+  public File getVpaArchiveFolder() {
+    File file = new File(RESOURCES, "vpa/");
+    if(!file.exists()) {
+      file.mkdirs();
+    }
+    return file;
+  }
+
   public String getVersion() {
     try {
       final Properties properties = new Properties();

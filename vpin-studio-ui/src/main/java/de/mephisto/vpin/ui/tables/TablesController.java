@@ -113,6 +113,12 @@ public class TablesController implements Initializable, StudioFXController {
   private Button scanAllBtn;
 
   @FXML
+  private Button importBtn;
+
+  @FXML
+  private Button exportBtn;
+
+  @FXML
   private MenuItem uploadTableItem;
 
   @FXML
@@ -174,6 +180,16 @@ public class TablesController implements Initializable, StudioFXController {
   @FXML
   private void onDirectb2sUpload() {
     this.tablesSideBarController.onDirectb2sUpload();
+  }
+
+  @FXML
+  private void onExport() {
+
+  }
+
+  @FXML
+  private void onImport() {
+
   }
 
   @FXML
@@ -324,6 +340,8 @@ public class TablesController implements Initializable, StudioFXController {
     this.uploadRomItem.setDisable(true);
     this.uploadDirectB2SItem.setDisable(true);
     this.inspectBtn.setDisable(true);
+    this.exportBtn.setDisable(true);
+    this.importBtn.setDisable(true);
 
     tableView.setVisible(false);
     tableStack.getChildren().add(tablesLoadingOverlay);
@@ -354,6 +372,9 @@ public class TablesController implements Initializable, StudioFXController {
 
           this.uploadDirectB2SItem.setDisable(false);
           this.uploadRomItem.setDisable(false);
+
+          this.exportBtn.setDisable(false);
+          this.importBtn.setDisable(false);
         }
 
         this.textfieldSearch.setDisable(false);
@@ -499,6 +520,8 @@ public class TablesController implements Initializable, StudioFXController {
       this.validateBtn.setDisable(disable);
       this.deleteBtn.setDisable(disable);
       this.inspectBtn.setDisable(disable);
+      this.exportBtn.setDisable(disable);
+      this.importBtn.setDisable(disable);
       refreshView(Optional.ofNullable(newSelection));
     });
 
