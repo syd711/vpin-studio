@@ -2,10 +2,7 @@ package de.mephisto.vpin.server.games;
 
 import de.mephisto.vpin.commons.utils.FileUtils;
 import de.mephisto.vpin.server.competitions.ScoreSummary;
-import de.mephisto.vpin.server.highscores.Highscore;
-import de.mephisto.vpin.server.highscores.HighscoreMetadata;
-import de.mephisto.vpin.server.highscores.HighscoreService;
-import de.mephisto.vpin.server.highscores.Score;
+import de.mephisto.vpin.server.highscores.*;
 import de.mephisto.vpin.server.highscores.cards.CardService;
 import de.mephisto.vpin.server.popper.Emulator;
 import de.mephisto.vpin.server.popper.PinUPConnector;
@@ -114,6 +111,10 @@ public class GameService {
 
   public ScoreSummary getScores(int gameId) {
     return highscoreService.getHighscores(gameId, null);
+  }
+
+  public ScoreList getScoreHistory(int gameId) {
+    return highscoreService.getScoreHistory(gameId);
   }
 
   public ScoreSummary getRecentHighscores(int count) {

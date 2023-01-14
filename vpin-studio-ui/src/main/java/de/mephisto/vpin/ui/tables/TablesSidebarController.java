@@ -1,6 +1,7 @@
 package de.mephisto.vpin.ui.tables;
 
 import de.mephisto.vpin.commons.POV;
+import de.mephisto.vpin.commons.fx.OverlayWindowFX;
 import de.mephisto.vpin.commons.fx.widgets.WidgetController;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.PopperScreen;
@@ -12,11 +13,14 @@ import de.mephisto.vpin.ui.tables.dialogs.POVExportProgressModel;
 import de.mephisto.vpin.ui.util.Dialogs;
 import de.mephisto.vpin.ui.util.MediaUtil;
 import de.mephisto.vpin.ui.util.ProgressResultModel;
+import eu.hansolo.tilesfx.Tile;
+import eu.hansolo.tilesfx.TileBuilder;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
+import javafx.scene.chart.XYChart;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -24,6 +28,7 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.scene.media.MediaView;
+import javafx.scene.paint.Color;
 import org.apache.commons.lang3.StringUtils;
 import org.kordamp.ikonli.javafx.FontIcon;
 import org.slf4j.Logger;
@@ -189,10 +194,16 @@ public class TablesSidebarController implements Initializable {
   private Label hsLastScannedLabel;
 
   @FXML
+  private Label hsRecordLabel;
+
+  @FXML
   private VBox formattedScoreWrapper;
 
   @FXML
   private VBox rawScoreWrapper;
+
+  @FXML
+  private VBox scoreGraphWrapper;
 
   @FXML
   private VBox assetList;
@@ -241,6 +252,9 @@ public class TablesSidebarController implements Initializable {
 
   @FXML
   private Slider povMusicVolumeSlider;
+
+  @FXML
+  private BorderPane scoreGraph;
 
   @FXML
   private Spinner<Integer>  povRotationFullscreenSpinner;
@@ -569,11 +583,57 @@ public class TablesSidebarController implements Initializable {
 
     rawScoreWrapper.setVisible(false);
     formattedScoreWrapper.setVisible(false);
+    scoreGraphWrapper.setVisible(false);
 
     if (gameRepresentation.isPresent()) {
       GameRepresentation game = gameRepresentation.get();
       if (forceRescan) {
         client.scanGameScore(game.getId());
+      }
+
+      ScoreListRepresentation scoreHistory = Studio.client.getScoreHistory(game.getId());
+      hsRecordLabel.setText(String.valueOf(scoreHistory.getScores().size()));
+      if (!scoreHistory.getScores().isEmpty()) {
+        XYChart.Series<String, Number> scoreGraph1 = new XYChart.Series();
+        scoreGraph1.setName("#1");
+        XYChart.Series<String, Number> scoreGraph2 = new XYChart.Series();
+        scoreGraph2.setName("#2");
+        XYChart.Series<String, Number> scoreGraph3 = new XYChart.Series();
+        scoreGraph3.setName("#3");
+
+        //every summary is one history version
+        List<ScoreSummaryRepresentation> scores = scoreHistory.getScores();
+        for (ScoreSummaryRepresentation score : scores) {
+          if (score.getScores().size() >= 3) {
+            ScoreRepresentation s = score.getScores().get(0);
+            scoreGraph1.getData().add(new XYChart.Data(SimpleDateFormat.getDateInstance().format(score.getCreatedAt()), s.getNumericScore()));
+            s = score.getScores().get(1);
+            scoreGraph2.getData().add(new XYChart.Data(SimpleDateFormat.getDateInstance().format(score.getCreatedAt()), s.getNumericScore()));
+            s = score.getScores().get(2);
+            scoreGraph3.getData().add(new XYChart.Data(SimpleDateFormat.getDateInstance().format(score.getCreatedAt()), s.getNumericScore()));
+          }
+        }
+
+        Tile highscoresGraphTile = TileBuilder.create()
+            .skinType(Tile.SkinType.SMOOTHED_CHART)
+            .maxWidth(Double.MAX_VALUE)
+            .textSize(Tile.TextSize.SMALL)
+            .chartType(Tile.ChartType.LINE)
+            .borderWidth(1)
+            .snapToTicks(true)
+            .maxValue(10)
+            .checkSectionsForValue(true)
+            .startFromZero(true)
+            .description("")
+            .tickLabelsYVisible(true)
+            .dataPointsVisible(true)
+            .decimals(1)
+            .borderColor(Color.web("#111111"))
+            .animated(true)
+            .smoothing(false)
+            .series(scoreGraph1, scoreGraph2, scoreGraph3)
+            .build();
+        scoreGraph.setCenter(highscoresGraphTile);
       }
 
       ScoreSummaryRepresentation summary = client.getGameScores(game.getId());
@@ -601,6 +661,7 @@ public class TablesSidebarController implements Initializable {
         if (!summary.getScores().isEmpty()) {
           rawTitleLabel.setVisible(true);
           rawScoreWrapper.setVisible(true);
+          scoreGraphWrapper.setVisible(true);
 
           rawScoreLabel.setFont(WidgetController.getScoreFontText());
           rawScoreLabel.setText(summary.getRaw());

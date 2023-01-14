@@ -2,6 +2,7 @@ package de.mephisto.vpin.server.games;
 
 import de.mephisto.vpin.server.competitions.ScoreSummary;
 import de.mephisto.vpin.server.highscores.HighscoreMetadata;
+import de.mephisto.vpin.server.highscores.ScoreList;
 import de.mephisto.vpin.server.popper.PopperService;
 import de.mephisto.vpin.server.system.SystemService;
 import de.mephisto.vpin.server.util.UploadUtil;
@@ -73,6 +74,12 @@ public class GamesResource {
   public ScoreSummary getScores(@PathVariable("id") int id) {
     return gameService.getScores(id);
   }
+
+  @GetMapping("/scorehistory/{id}")
+  public ScoreList getScoreHistory(@PathVariable("id") int id) {
+    return gameService.getScoreHistory(id);
+  }
+
 
   @GetMapping("/scan/{id}")
   public Game scanGame(@PathVariable("id") int pupId) {

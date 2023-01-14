@@ -406,6 +406,10 @@ public class VPinStudioClient implements ObservedPropertyChangeListener, Overlay
     return null;
   }
 
+  public ScoreListRepresentation getScoreHistory(int gameId) {
+    return restClient.get(API + "games/scorehistory/" + gameId, ScoreListRepresentation.class);
+  }
+
   public HighscoreMetadataRepresentation scanGameScore(int id) {
     try {
       return restClient.get(API + "games/scanscore/" + id, HighscoreMetadataRepresentation.class);

@@ -2,6 +2,7 @@ package de.mephisto.vpin.ui.tables.dialogs;
 
 import de.mephisto.vpin.commons.fx.DialogController;
 import de.mephisto.vpin.commons.fx.OverlayWindowFX;
+import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.ExportDescriptor;
 import de.mephisto.vpin.restclient.PopperScreen;
 import de.mephisto.vpin.restclient.VpaManifest;
@@ -99,6 +100,9 @@ public class TableExportController implements Initializable, DialogController {
   private CheckBox exportPopperMedia;
 
   @FXML
+  private CheckBox overwriteCheckbox;
+
+  @FXML
   private TextField notes;
 
   private boolean result = false;
@@ -113,10 +117,13 @@ public class TableExportController implements Initializable, DialogController {
     descriptor.setExportPupPack(this.exportPupPackCheckbox.isSelected());
     descriptor.setExportRom(this.exportRomCheckbox.isSelected());
     descriptor.setExportPopperMedia(this.exportPopperMedia.isSelected());
+    descriptor.setOverwrite(this.overwriteCheckbox.isSelected());
     Studio.client.export(descriptor);
 
     Stage stage = (Stage) ((Button) e.getSource()).getScene().getWindow();
     stage.close();
+
+    WidgetFactory.showInformation(Studio.stage, "Export Started", "The export of '" + game.getGameDisplayName() + "' has been started.", "The archived state will update once the export is finished.");
   }
 
   @FXML

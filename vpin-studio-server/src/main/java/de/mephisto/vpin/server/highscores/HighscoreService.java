@@ -149,6 +149,11 @@ public class HighscoreService implements InitializingBean {
     return result;
   }
 
+
+  public ScoreList getScoreHistory(int gameId) {
+    return getScoresBetween(gameId, new Date(0), new Date());
+  }
+
   /**
    * Returns all available scores for the game with the given id and time frame
    *
@@ -400,5 +405,4 @@ public class HighscoreService implements InitializingBean {
     this.highscoreResolver = new HighscoreResolver(systemService);
 //    new HighscoreWatcher(systemService.getVPRegFile().getParentFile(), systemService.getNvramFolder()).watch();
   }
-
 }

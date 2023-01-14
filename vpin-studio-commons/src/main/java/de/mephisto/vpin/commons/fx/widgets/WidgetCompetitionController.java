@@ -185,7 +185,6 @@ public class WidgetCompetitionController extends WidgetController implements Ini
         highscoresGraphTile = TileBuilder.create()
             .skinType(Tile.SkinType.SMOOTHED_CHART)
             .maxWidth(Double.MAX_VALUE)
-            .title("Competition Scores")
             .textSize(Tile.TextSize.BIGGER)
             .chartType(Tile.ChartType.LINE)
             .borderWidth(1)
