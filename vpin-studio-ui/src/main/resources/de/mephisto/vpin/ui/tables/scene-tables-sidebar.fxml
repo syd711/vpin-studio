@@ -541,12 +541,12 @@
                                                 <Font size="14.0" />
                                              </font>
                                           </Label>
-                                          <Label layoutX="10.0" layoutY="289.0" text="Overwrite Night / Day Cycle:" textFill="WHITE" GridPane.rowIndex="17">
+                                          <Label layoutX="10.0" layoutY="289.0" text="Overwrite Night -&gt; Day Cycle:" textFill="WHITE" GridPane.rowIndex="17">
                                              <font>
                                                 <Font size="14.0" />
                                              </font>
                                           </Label>
-                                          <Label layoutX="10.0" layoutY="320.0" text="Night / Day Level:" textFill="WHITE" GridPane.rowIndex="18">
+                                          <Label layoutX="10.0" layoutY="320.0" text="Night -&gt; Day Level:" textFill="WHITE" GridPane.rowIndex="18">
                                              <font>
                                                 <Font size="14.0" />
                                              </font>

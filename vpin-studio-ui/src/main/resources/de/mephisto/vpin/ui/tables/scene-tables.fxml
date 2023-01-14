@@ -2,6 +2,7 @@
 
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.Hyperlink?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.MenuButton?>
@@ -33,7 +34,10 @@
                            <children>
                               <TableView fx:id="tableView" onMouseClicked="#onTableMouseClicked" style="-fx-background-color: #2a2a2a;" styleClass="base-component">
                                 <columns>
-                                    <TableColumn fx:id="columnSelect" minWidth="36.000000953674316" prefWidth="36.000000953674316" style="-fx-alignment: baseline-center;" />
+                                    <TableColumn fx:id="columnSelect" minWidth="36.000000953674316" prefWidth="36.000000953674316" style="-fx-alignment: baseline-center;">
+                                       <graphic>
+                                          <CheckBox fx:id="checkAllCheckbox" mnemonicParsing="false" onAction="#onCheckAll" />
+                                       </graphic></TableColumn>
                                     <TableColumn fx:id="columnId" minWidth="35.99993896484375" prefWidth="58.399959564208984" style="-fx-alignment: baseline-right;" text="ID" />
                                     <TableColumn fx:id="columnStatus" minWidth="32.79998779296875" prefWidth="53.5999755859375" style="-fx-alignment: CENTER;" text="Status" />
                                   <TableColumn fx:id="columnDisplayName" minWidth="100.0" prefWidth="306.40003204345703" style="-fx-alignment: BASELINE_LEFT;" text="Display Name" />

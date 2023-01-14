@@ -23,7 +23,7 @@ public class Score {
     this.numericScore = numericScore;
     this.position = position;
     this.displayName = displayName;
-    if (playerInitials != null) {
+    if (!StringUtils.isEmpty(playerInitials)) {
       this.playerInitials = playerInitials;
     }
   }

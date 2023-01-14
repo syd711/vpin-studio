@@ -244,11 +244,12 @@ public class HighscoreService implements InitializingBean {
     List<HighscoreVersion> all = highscoreVersionRepository.findAllByOrderByCreatedAtDesc();
     for (HighscoreVersion version : all) {
       List<Score> versionScores = highscoreParser.parseScores(version.getCreatedAt(), version.getNewRaw(), version.getGameId(), version.getDisplayName());
-      int changedPos = version.getChangedPosition() - 1;
-      if (version.getChangedPosition() < 0 || version.getChangedPosition() >= versionScores.size()) {
-        LOG.error("Found invalid change position " + version.getChangedPosition() + "' for " + version);
+      //change positions start with 1!
+      if (version.getChangedPosition() < 0 || version.getChangedPosition() > versionScores.size()) {
+        LOG.error("Found invalid change position '" + version.getChangedPosition() + "' for " + version);
       }
       else {
+        int changedPos = version.getChangedPosition() - 1;
         scores.add(versionScores.get(changedPos));
       }
 

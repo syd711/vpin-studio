@@ -16,6 +16,15 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.util.concurrent.CountDownLatch;
 
+/**
+ * Coordinates Fixing:
+ *
+ *        x
+ *        |
+ *  -y ------- +y
+ *        |
+ *       -x
+ */
 public class OverlayWindowFX extends Application {
   private final static org.slf4j.Logger LOG = LoggerFactory.getLogger(OverlayWindowFX.class);
 

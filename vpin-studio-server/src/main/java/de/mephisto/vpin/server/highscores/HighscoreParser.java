@@ -73,9 +73,8 @@ public class HighscoreParser {
           if (score != null) {
             score.setPosition(scores.size() + 1);
             scores.add(score);
+            index++;
           }
-
-          index++;
         }
 
         if (scores.size() == 3) {
@@ -88,11 +87,14 @@ public class HighscoreParser {
     return scores;
   }
 
-  @NonNull
+  @Nullable
   private Score createTitledScore(@NonNull Date createdAt, @NonNull String line, int gameId, @Nullable String displayName) {
     String initials = line.trim().substring(0, 3);
     String scoreString = line.substring(4).trim();
     double scoreValue = toNumericScore(scoreString);
+    if (scoreValue == -1) {
+      return null;
+    }
 
     Player p = null;
     Optional<Player> player = playerService.getPlayerForInitials(initials);
@@ -110,18 +112,30 @@ public class HighscoreParser {
     Player p = null;
     if (collect.size() == 2) {
       String score = collect.get(1);
-      return new Score(createdAt, gameId, "", null, score, toNumericScore(score), -1, displayName);
+      double v = toNumericScore(score);
+      if (v == -1) {
+        return null;
+      }
+
+      return new Score(createdAt, gameId, "", null, score, v, -1, displayName);
     }
-    else if (collect.size() == 3) {
+
+    if (collect.size() == 3) {
       String score = collect.get(2);
       String initials = collect.get(1);
       Optional<Player> player = playerService.getPlayerForInitials(initials);
       if (player.isPresent()) {
         p = player.get();
       }
-      return new Score(createdAt, gameId, initials, p, score, toNumericScore(score), -1, displayName);
+
+      double v = toNumericScore(score);
+      if (v == -1) {
+        return null;
+      }
+      return new Score(createdAt, gameId, initials, p, score, v, -1, displayName);
     }
-    else if (collect.size() > 3) {
+
+    if (collect.size() > 3) {
       StringBuilder initials = new StringBuilder();
       for (int i = 1; i < collect.size() - 1; i++) {
         initials.append(collect.get(i));
@@ -133,11 +147,15 @@ public class HighscoreParser {
       if (player.isPresent()) {
         p = player.get();
       }
-      return new Score(createdAt, gameId, playerInitials, p, score, toNumericScore(score), -1, displayName);
+
+      double v = toNumericScore(score);
+      if (v == -1) {
+        return null;
+      }
+      return new Score(createdAt, gameId, playerInitials, p, score, v, -1, displayName);
     }
-    else {
-      throw new UnsupportedOperationException("Could parse score line for game " + gameId + " '" + line + "'");
-    }
+
+    throw new UnsupportedOperationException("Could parse score line for game " + gameId + " '" + line + "'");
   }
 
   private List<String> getTitleList() {
@@ -163,8 +181,8 @@ public class HighscoreParser {
       String cleanScore = score.trim().replaceAll("\\.", "").replaceAll(",", "");
       return Double.parseDouble(cleanScore);
     } catch (NumberFormatException e) {
-      LOG.error("Failed to parse highscore string '" + score + "'");
-      return 0;
+      LOG.warn("Failed to parse highscore string '" + score + "', ignoring segment '" + score + "'");
+      return -1;
     }
   }
 }

@@ -18,12 +18,15 @@ import javafx.application.Platform;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.geometry.Pos;
 import javafx.scene.Cursor;
 import javafx.scene.Node;
 import javafx.scene.Parent;
@@ -86,6 +89,9 @@ public class TablesController implements Initializable, StudioFXController {
 
   @FXML
   private TableView<GameRepresentation> tableView;
+
+  @FXML
+  private CheckBox checkAllCheckbox;
 
   @FXML
   private TextField textfieldSearch;
@@ -194,6 +200,11 @@ public class TablesController implements Initializable, StudioFXController {
 
   @FXML
   private void onImport() {
+
+  }
+
+  @FXML
+  private void onCheckAll() {
 
   }
 
@@ -335,6 +346,7 @@ public class TablesController implements Initializable, StudioFXController {
 
   @FXML
   public void onReload() {
+    this.checkAllCheckbox.setSelected(false);
     this.textfieldSearch.setDisable(true);
     this.reloadBtn.setDisable(true);
     this.scanAllBtn.setDisable(true);
@@ -426,11 +438,33 @@ public class TablesController implements Initializable, StudioFXController {
     labelTableCount.setText(data.size() + " tables");
     tableView.setPlaceholder(new Label("No matching tables found."));
 
-
-    columnSelect.setCellValueFactory(cellData -> {
-      return new SimpleBooleanProperty(false);
-    });
-    columnSelect.setCellFactory(tc -> new CheckBoxTableCell<>());
+    columnSelect.setVisible(false);
+//    tableView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
+//    columnSelect.setCellValueFactory(cellData -> {
+//      SimpleBooleanProperty p = new SimpleBooleanProperty(cellData.getValue().isSelected());
+//      p.addListener(new ChangeListener<Boolean>() {
+//        @Override
+//        public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+//          //update model
+//          cellData.getValue().setSelected(newValue);
+//          //update view
+//          if(newValue) {
+//            tableView.getSelectionModel().select(cellData.getValue());
+//          }
+//          else {
+//            tableView.getSelectionModel().clearSelection();
+//          }
+//        }
+//      });
+//      return p;
+//    });
+//
+//    columnSelect.setCellFactory(tc ->{
+//      CheckBoxTableCell<GameRepresentation, Boolean> cell = new CheckBoxTableCell<>();
+//      cell.getStyleClass().add("custom-cell");
+//      cell.setAlignment(Pos.CENTER);
+//      return cell;
+//    });
 
     columnDisplayName.setCellValueFactory(cellData -> {
       GameRepresentation value = cellData.getValue();

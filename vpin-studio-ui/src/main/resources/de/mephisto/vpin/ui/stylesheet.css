@@ -427,10 +427,9 @@
  */
 
 .table-view {
-    -fx-background-color: #333366;
     -fx-font-size : 14px;
     -fx-text-fill: white;
-    -fx-text-background-color: #DDDDDD;
+    -fx-text-background-color: #FFFFFF;
     -fx-border-style: solid solid solid solid;
     -fx-border-color: #111111;
     -fx-border-width: 1;
@@ -446,7 +445,7 @@
     -fx-text-background-color: #6666FF;
 }
 .table-row-cell: selected {
-    -fx-background-color: #333366;
+    -fx-background-color: #FFFFFF;
     -fx-text-background-color: #FFFFFF;
     -fx-font-weight: bold;
 }
@@ -455,6 +454,21 @@
 }
 .table-row-cell: even{
     -fx-background-color: #1dbbdd11;
+}
+
+.custom-cell > .check-box {
+    -fx-text-background-color: #FFFFFF;
+}
+.custom-cell > .check-box:selected {
+    -fx-text-background-color: #FFFFFF;
+}
+
+.custom-cell > .check-box:selected .mark {
+    -fx-text-background-color: #111111;
+}
+
+.custom-cell > .check-box .box {
+    -fx-background-color: #FFFFFFEE;
 }
 
 /**

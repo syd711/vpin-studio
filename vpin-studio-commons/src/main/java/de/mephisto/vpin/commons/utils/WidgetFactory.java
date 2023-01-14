@@ -11,7 +11,10 @@ import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.SnapshotParameters;
-import javafx.scene.control.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
+import javafx.scene.control.Label;
+import javafx.scene.control.ListCell;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.image.WritableImage;
@@ -93,7 +96,7 @@ public class WidgetFactory {
     scene.getRoot().setStyle("-fx-border-width: 1;-fx-border-color: #605E5E;");
     scene.addEventHandler(KeyEvent.KEY_PRESSED, t -> {
       if (t.getCode() == KeyCode.ESCAPE) {
-        if(controller != null) {
+        if (controller != null) {
           controller.onDialogCancel();
         }
         stage.close();
@@ -153,7 +156,7 @@ public class WidgetFactory {
     controller.initDialog(stage, innerTitle, description, helpText, defaultValue);
     stage.showAndWait();
     Optional<ButtonType> result = controller.getResult();
-    if(result.get().equals(ButtonType.OK)) {
+    if (result.get().equals(ButtonType.OK)) {
       return controller.getText();
     }
 
@@ -174,7 +177,7 @@ public class WidgetFactory {
     }
   }
 
-  public static Node createMediaContainer(VPinStudioClient client, BorderPane parent, GameMediaItemRepresentation mediaItem, boolean ignored, boolean mediaPreview) {
+  public static Node createMediaContainer(VPinStudioClient client, BorderPane parent, GameMediaItemRepresentation mediaItem, boolean ignored, boolean previewEnabled) {
     if (parent.getCenter() != null) {
       disposeMediaBorderPane(parent);
     }
@@ -191,22 +194,25 @@ public class WidgetFactory {
       return parent;
     }
 
-    if (mediaItem == null) {
-      Label label = new Label("No media found");
-      label.setStyle("-fx-font-size: 14px;-fx-text-fill: #444444;");
-      parent.setCenter(label);
-      return parent;
-    }
-
-    if (mediaPreview) {
-      return addMediaItemToBorderPane(client, mediaItem, parent);
-    }
-
     Label label = new Label("Preview disabled");
     label.setUserData(mediaItem);
     label.setStyle("-fx-font-size: 14px;-fx-text-fill: #444444;");
     parent.setCenter(label);
-    return parent;
+
+    if (!previewEnabled) {
+      Button playButton = (Button) parent.getTop();
+      if(playButton != null) {
+        playButton.setVisible(false);
+      }
+      return parent;
+    }
+
+    if (mediaItem == null) {
+      label.setText("No media found");
+      return parent;
+    }
+
+    return addMediaItemToBorderPane(client, mediaItem, parent);
   }
 
   public static Node addMediaItemToBorderPane(VPinStudioClient client, GameMediaItemRepresentation mediaItem, BorderPane parent) {
@@ -269,6 +275,7 @@ public class WidgetFactory {
       else if (baseType.equals("audio")) {
         mediaPlayer.setOnEndOfMedia(() -> {
           Button playButton = (Button) parent.getTop();
+          playButton.setVisible(true);
           FontIcon icon = (FontIcon) playButton.getChildrenUnmodifiable().get(0);
           icon.setIconLiteral("bi-play");
         });
