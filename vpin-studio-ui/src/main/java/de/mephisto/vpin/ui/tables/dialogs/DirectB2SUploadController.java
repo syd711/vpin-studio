@@ -9,6 +9,7 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextField;
 import javafx.stage.FileChooser;
@@ -36,6 +37,9 @@ public class DirectB2SUploadController implements Initializable, DialogControlle
 
   @FXML
   private Button uploadBtn;
+
+  @FXML
+  private Label titleLabel;
 
   @FXML
   private RadioButton uploadTypeGenerator;
@@ -124,5 +128,6 @@ public class DirectB2SUploadController implements Initializable, DialogControlle
 
   public void setGame(GameRepresentation game) {
     this.game = game;
+    this.titleLabel.setText("Select directb2s file for '" + game.getGameDisplayName() + "':");
   }
 }
