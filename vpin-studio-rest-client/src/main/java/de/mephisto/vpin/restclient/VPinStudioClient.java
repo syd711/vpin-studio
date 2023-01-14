@@ -50,6 +50,13 @@ public class VPinStudioClient implements ObservedPropertyChangeListener, Overlay
   }
 
   /*********************************************************************************************************************
+   * VPA
+   ********************************************************************************************************************/
+  public VpaManifestRepresentation getVpaManifest(int gameId) {
+    return restClient.get(API + "vpa/manifest/" + gameId, VpaManifestRepresentation.class);
+  }
+
+  /*********************************************************************************************************************
    * Popper
    ********************************************************************************************************************/
   public PinUPControl getPinUPControlFor(PopperScreen screen) {

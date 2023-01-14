@@ -1,6 +1,7 @@
 package de.mephisto.vpin.server.vpa;
 
 import de.mephisto.vpin.server.games.Game;
+import de.mephisto.vpin.server.games.GameService;
 import de.mephisto.vpin.server.popper.PinUPConnector;
 import de.mephisto.vpin.server.system.SystemService;
 import edu.umd.cs.findbugs.annotations.NonNull;
@@ -19,11 +20,18 @@ public class VpaService {
   private SystemService systemService;
 
   @Autowired
+  private GameService gameService;
+
+  @Autowired
   private PinUPConnector pinUPConnector;
 
-  public boolean export(@NonNull Game game) {
-    File target = new File(getArchivePath(), game.getGameDisplayName().replaceAll(" ", "-") + ".vpa");
-    return export(game, target);
+  public boolean export(int gameId) {
+    Game game = gameService.getGame(gameId);
+    if(game != null) {
+      File target = new File(getArchivePath(), game.getGameDisplayName().replaceAll(" ", "-") + ".vpa");
+      return export(game, target);
+    }
+    return false;
   }
 
   public boolean export(@NonNull Game game, @NonNull File target) {
@@ -40,5 +48,9 @@ public class VpaService {
 
   public File getArchivePath() {
     return systemService.getVpaArchiveFolder();
+  }
+
+  public VpaManifest getManifest(int id) {
+    return pinUPConnector.getGameManifest(id);
   }
 }

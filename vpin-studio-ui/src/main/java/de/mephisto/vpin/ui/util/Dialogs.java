@@ -11,10 +11,7 @@ import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.UpdateDialogController;
 import de.mephisto.vpin.ui.competitions.CompetitionDialogController;
 import de.mephisto.vpin.ui.players.PlayerDialogController;
-import de.mephisto.vpin.ui.tables.dialogs.DirectB2SUploadController;
-import de.mephisto.vpin.ui.tables.dialogs.ROMUploadController;
-import de.mephisto.vpin.ui.tables.dialogs.TableDeleteController;
-import de.mephisto.vpin.ui.tables.dialogs.TableUploadController;
+import de.mephisto.vpin.ui.tables.dialogs.*;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -80,6 +77,24 @@ public class Dialogs {
   public static boolean openTableDeleteDialog(GameRepresentation game) {
     Stage stage = createStudioDialogStage(TableDeleteController.class, "dialog-table-delete.fxml", "Delete Table");
     TableDeleteController controller = (TableDeleteController) stage.getUserData();
+    controller.setGame(game);
+    stage.showAndWait();
+
+    return controller.tableDeleted();
+  }
+
+  public static boolean openTableExportDialog(GameRepresentation game) {
+    Stage stage = createStudioDialogStage(TableExportController.class, "dialog-table-export.fxml", "Export Table");
+    TableExportController controller = (TableExportController) stage.getUserData();
+    controller.setGame(game);
+    stage.showAndWait();
+
+    return controller.tableDeleted();
+  }
+
+  public static boolean openTableImportDialog(GameRepresentation game) {
+    Stage stage = createStudioDialogStage(TableImportController.class, "dialog-table-import.fxml", "Import Table");
+    TableImportController controller = (TableImportController) stage.getUserData();
     controller.setGame(game);
     stage.showAndWait();
 

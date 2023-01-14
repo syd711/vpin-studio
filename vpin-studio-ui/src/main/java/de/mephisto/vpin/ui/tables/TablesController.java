@@ -182,17 +182,18 @@ public class TablesController implements Initializable, StudioFXController {
 
   @FXML
   private void onExport() {
-
+    GameRepresentation game = tableView.getSelectionModel().getSelectedItem();
+    if (game != null) {
+      Dialogs.openTableExportDialog(game);
+    }
   }
 
   @FXML
   private void onImport() {
-
-  }
-
-  @FXML
-  private void onCheckAll() {
-
+    GameRepresentation game = tableView.getSelectionModel().getSelectedItem();
+    if (game != null) {
+      Dialogs.openTableImportDialog(game);
+    }
   }
 
   @FXML

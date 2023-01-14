@@ -14,21 +14,18 @@ import static de.mephisto.vpin.server.VPinStudioServer.API_SEGMENT;
 @RestController
 @RequestMapping(API_SEGMENT + "vpa")
 public class VpaResource {
-  private final static Logger LOG = LoggerFactory.getLogger(VpaResource.class);
 
   @Autowired
   private VpaService vpaService;
 
-  @Autowired
-  private GameService gameService;
-
   @PostMapping("/export/{id}")
   public Boolean export(@PathVariable("id") int id, @RequestBody Map<String, Object> values) {
-    Game game = gameService.getGame(id);
-    if (game != null) {
-      return vpaService.export(game);
-    }
-    return false;
+    return vpaService.export(id);
+  }
+
+  @GetMapping("/manifest/{id}")
+  public VpaManifest getManifest(@PathVariable("id") int id) {
+    return vpaService.getManifest(id);
   }
 
 }
