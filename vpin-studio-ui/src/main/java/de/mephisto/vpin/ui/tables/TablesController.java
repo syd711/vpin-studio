@@ -15,18 +15,15 @@ import de.mephisto.vpin.ui.tables.validation.ValidationTexts;
 import de.mephisto.vpin.ui.util.Dialogs;
 import de.mephisto.vpin.ui.util.ProgressResultModel;
 import javafx.application.Platform;
-import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
+import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
-import javafx.geometry.Pos;
 import javafx.scene.Cursor;
 import javafx.scene.Node;
 import javafx.scene.Parent;
@@ -35,7 +32,6 @@ import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.TextField;
 import javafx.scene.control.*;
-import javafx.scene.control.cell.CheckBoxTableCell;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
@@ -59,9 +55,6 @@ import java.util.*;
 
 public class TablesController implements Initializable, StudioFXController {
   private final static Logger LOG = LoggerFactory.getLogger(TablesController.class);
-
-  @FXML
-  private TableColumn<GameRepresentation, Boolean> columnSelect;
 
   @FXML
   private TableColumn<GameRepresentation, String> columnId;
@@ -91,9 +84,6 @@ public class TablesController implements Initializable, StudioFXController {
   private TableView<GameRepresentation> tableView;
 
   @FXML
-  private CheckBox checkAllCheckbox;
-
-  @FXML
   private TextField textfieldSearch;
 
   @FXML
@@ -119,9 +109,6 @@ public class TablesController implements Initializable, StudioFXController {
 
   @FXML
   private Button scanBtn;
-
-  @FXML
-  private Button scanAllBtn;
 
   @FXML
   private Button importBtn;
@@ -261,22 +248,11 @@ public class TablesController implements Initializable, StudioFXController {
   }
 
   @FXML
-  private void onTableScan() {
-    GameRepresentation game = tableView.getSelectionModel().getSelectedItem();
-    Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Re-scan table '" + game.getGameDisplayName() + "'?",
-        "Re-scanning will overwrite some of the existing metadata properties.");
-    if (result.isPresent() && result.get().equals(ButtonType.OK)) {
-      Dialogs.createProgressDialog(new TableScanProgressModel(client, "Scanning Table '" + game + "'", game));
-      this.onReload();
-    }
-  }
-
-  @FXML
   private void onTablesScan() {
-    Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Re-scan all tables?",
+    Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Re-scan selected tables?",
         "Re-scanning will overwrite some of the existing metadata properties.");
     if (result.isPresent() && result.get().equals(ButtonType.OK)) {
-      Dialogs.createProgressDialog(new TablesScanProgressModel(client, "Scanning Tables"));
+      Dialogs.createProgressDialog(new TableScanProgressModel(client, "Scanning Tables", tableView.getSelectionModel().getSelectedItems()));
       this.onReload();
     }
   }
@@ -346,10 +322,8 @@ public class TablesController implements Initializable, StudioFXController {
 
   @FXML
   public void onReload() {
-    this.checkAllCheckbox.setSelected(false);
     this.textfieldSearch.setDisable(true);
     this.reloadBtn.setDisable(true);
-    this.scanAllBtn.setDisable(true);
     this.scanBtn.setDisable(true);
     this.validateBtn.setDisable(true);
     this.deleteBtn.setDisable(true);
@@ -396,7 +370,7 @@ public class TablesController implements Initializable, StudioFXController {
 
         this.textfieldSearch.setDisable(false);
         this.reloadBtn.setDisable(false);
-        this.scanAllBtn.setDisable(false);
+        this.scanBtn.setDisable(false);
         this.uploadTableItem.setDisable(false);
 
         tableView.setVisible(true);
@@ -438,33 +412,7 @@ public class TablesController implements Initializable, StudioFXController {
     labelTableCount.setText(data.size() + " tables");
     tableView.setPlaceholder(new Label("No matching tables found."));
 
-    columnSelect.setVisible(false);
-//    tableView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
-//    columnSelect.setCellValueFactory(cellData -> {
-//      SimpleBooleanProperty p = new SimpleBooleanProperty(cellData.getValue().isSelected());
-//      p.addListener(new ChangeListener<Boolean>() {
-//        @Override
-//        public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
-//          //update model
-//          cellData.getValue().setSelected(newValue);
-//          //update view
-//          if(newValue) {
-//            tableView.getSelectionModel().select(cellData.getValue());
-//          }
-//          else {
-//            tableView.getSelectionModel().clearSelection();
-//          }
-//        }
-//      });
-//      return p;
-//    });
-//
-//    columnSelect.setCellFactory(tc ->{
-//      CheckBoxTableCell<GameRepresentation, Boolean> cell = new CheckBoxTableCell<>();
-//      cell.getStyleClass().add("custom-cell");
-//      cell.setAlignment(Pos.CENTER);
-//      return cell;
-//    });
+    tableView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
 
     columnDisplayName.setCellValueFactory(cellData -> {
       GameRepresentation value = cellData.getValue();
@@ -559,16 +507,26 @@ public class TablesController implements Initializable, StudioFXController {
 
     tableView.setItems(data);
     tableView.setEditable(true);
-    tableView.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
-      boolean disable = newSelection == null;
-      this.scanBtn.setDisable(newSelection == null || !newSelection.getEmulator().isVisualPinball());
-      this.validateBtn.setDisable(disable);
-      this.deleteBtn.setDisable(disable);
-      this.inspectBtn.setDisable(disable);
-      this.exportBtn.setDisable(disable);
-      this.importBtn.setDisable(disable);
-      refreshView(Optional.ofNullable(newSelection));
+    tableView.getSelectionModel().getSelectedItems().addListener(new ListChangeListener<GameRepresentation>() {
+      @Override
+      public void onChanged(Change<? extends GameRepresentation> c) {
+        boolean disable = c.getList().isEmpty() ||c.getList().size() > 1;
+        validateBtn.setDisable(disable);
+        deleteBtn.setDisable(disable);
+        inspectBtn.setDisable(disable);
+        exportBtn.setDisable(disable);
+        importBtn.setDisable(disable);
+        uploadDirectB2SItem.setDisable(disable);
+
+        if(c.getList().isEmpty()) {
+          refreshView(Optional.empty());
+        }
+        else {
+          refreshView(Optional.ofNullable(c.getList().get(0)));
+        }
+      }
     });
+
 
 //    emulatorTypeCombo.setItems(FXCollections.observableList(Arrays.asList("", EmulatorTypes.VISUAL_PINBALL_X, EmulatorTypes.PINBALL_FX3, EmulatorTypes.FUTURE_PINBALL)));
 //    emulatorTypeCombo.setItems(FXCollections.observableList(Arrays.asList("", EmulatorTypes.VISUAL_PINBALL_X)));

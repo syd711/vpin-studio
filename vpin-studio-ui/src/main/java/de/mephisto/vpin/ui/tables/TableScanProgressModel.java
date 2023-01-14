@@ -9,27 +9,25 @@ import org.slf4j.LoggerFactory;
 
 import java.util.Arrays;
 import java.util.Iterator;
+import java.util.List;
 
 public class TableScanProgressModel extends ProgressModel {
   private final static Logger LOG = LoggerFactory.getLogger(TableScanProgressModel.class);
   private final Iterator<GameRepresentation> iterator;
+  private List<GameRepresentation> gameRepresentations;
 
   private final VPinStudioClient client;
 
-  public TableScanProgressModel(VPinStudioClient client, String title, GameRepresentation gameRepresentation) {
+  public TableScanProgressModel(VPinStudioClient client, String title, List<GameRepresentation> gameRepresentations) {
     super(title);
     this.client = client;
-    iterator = Arrays.asList(gameRepresentation).iterator();
-  }
-
-  @Override
-  public boolean isIndeterminate() {
-    return true;
+    iterator = gameRepresentations.iterator();
+    this.gameRepresentations = gameRepresentations;
   }
 
   @Override
   public int getMax() {
-    return 1;
+    return gameRepresentations.size();
   }
 
   @Override

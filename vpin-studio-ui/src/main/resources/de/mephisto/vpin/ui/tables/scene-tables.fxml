@@ -2,7 +2,6 @@
 
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
-<?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.Hyperlink?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.MenuButton?>
@@ -34,10 +33,6 @@
                            <children>
                               <TableView fx:id="tableView" onMouseClicked="#onTableMouseClicked" style="-fx-background-color: #2a2a2a;" styleClass="base-component">
                                 <columns>
-                                    <TableColumn fx:id="columnSelect" minWidth="36.000000953674316" prefWidth="36.000000953674316" style="-fx-alignment: baseline-center;">
-                                       <graphic>
-                                          <CheckBox fx:id="checkAllCheckbox" mnemonicParsing="false" onAction="#onCheckAll" />
-                                       </graphic></TableColumn>
                                     <TableColumn fx:id="columnId" minWidth="35.99993896484375" prefWidth="58.399959564208984" style="-fx-alignment: baseline-right;" text="ID" />
                                     <TableColumn fx:id="columnStatus" minWidth="32.79998779296875" prefWidth="53.5999755859375" style="-fx-alignment: CENTER;" text="Status" />
                                   <TableColumn fx:id="columnDisplayName" minWidth="100.0" prefWidth="306.40003204345703" style="-fx-alignment: BASELINE_LEFT;" text="Display Name" />
@@ -74,8 +69,7 @@
                                     <FontIcon iconColor="WHITE" iconLiteral="sil-reload" />
                                  </graphic>
                               </Button>
-                              <Separator orientation="VERTICAL" prefHeight="30.0" prefWidth="12.0" />
-                              <Button fx:id="scanAllBtn" mnemonicParsing="false" onAction="#onTablesScan" text="Scan All " textFill="WHITE">
+                              <Button fx:id="scanBtn" mnemonicParsing="false" onAction="#onTablesScan" text="Scan" textFill="WHITE">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
@@ -83,40 +77,15 @@
                                     <FontIcon iconColor="WHITE" iconLiteral="mdi2m-map-search-outline" />
                                  </graphic>
                               </Button>
-                              <Button fx:id="scanBtn" mnemonicParsing="false" onAction="#onTableScan" text="Scan" textFill="WHITE">
-                                 <font>
-                                    <Font size="14.0" />
-                                 </font>
-                                 <graphic>
-                                    <FontIcon iconColor="WHITE" iconLiteral="mdi2m-map-search" />
-                                 </graphic>
-                              </Button>
-                              <Button fx:id="validateBtn" mnemonicParsing="false" onAction="#onValidate" text="Validate" textFill="WHITE">
-                                 <font>
-                                    <Font size="14.0" />
-                                 </font>
-                                 <graphic>
-                                    <FontIcon iconColor="WHITE" iconLiteral="sil-magnifier" />
-                                 </graphic>
-                                 <tooltip>
-                                    <Tooltip text="Resets the dismissed validations and revalidates the table configuration." />
-                                 </tooltip>
-                              </Button>
-                              <Button fx:id="inspectBtn" layoutX="654.0" layoutY="11.0" mnemonicParsing="false" onAction="#onInspect" text="Inspect" textFill="WHITE">
-                                 <font>
-                                    <Font size="14.0" />
-                                 </font>
-                                 <graphic>
-                                    <FontIcon iconColor="WHITE" iconLiteral="bi-file-earmark-arrow-up" />
-                                 </graphic>
-                                 <tooltip>
-                                    <Tooltip text="Resets the dismissed validations and revalidates the table configuration." />
-                                 </tooltip>
-                              </Button>
-                              <Separator layoutX="768.0" layoutY="10.0" orientation="VERTICAL" prefHeight="30.0" prefWidth="12.0" />
+                              <Separator orientation="VERTICAL" prefHeight="30.0" prefWidth="12.0" />
                               <MenuButton mnemonicParsing="false" text="Upload">
                                 <items>
-                                  <MenuItem fx:id="uploadTableItem" mnemonicParsing="false" onAction="#onTableUpload" text="Upload VPX Table">
+                                  <MenuItem fx:id="uploadTableItem" mnemonicParsing="false" onAction="#onTableUpload" text="Upload VPX Tables">
+                                       <graphic>
+                                          <FontIcon iconColor="WHITE" iconLiteral="mdi2u-upload" />
+                                       </graphic>
+                                    </MenuItem>
+                                    <MenuItem fx:id="uploadRomItem" mnemonicParsing="false" onAction="#onRomUpload" text="Upload ROMs">
                                        <graphic>
                                           <FontIcon iconColor="WHITE" iconLiteral="mdi2u-upload" />
                                        </graphic>
@@ -125,11 +94,6 @@
                                        <graphic>
                                           <FontIcon iconColor="WHITE" iconLiteral="mdi2u-upload" />
                                        </graphic></MenuItem>
-                                    <MenuItem fx:id="uploadRomItem" mnemonicParsing="false" onAction="#onRomUpload" text="Upload ROM">
-                                       <graphic>
-                                          <FontIcon iconColor="WHITE" iconLiteral="mdi2u-upload" />
-                                       </graphic>
-                                    </MenuItem>
                                 </items>
                                  <font>
                                     <Font size="14.0" />
@@ -153,6 +117,29 @@
                                  </font>
                                  <graphic>
                                     <FontIcon iconColor="WHITE" iconLiteral="mdi2a-archive-arrow-up-outline" />
+                                 </graphic>
+                                 <tooltip>
+                                    <Tooltip text="Resets the dismissed validations and revalidates the table configuration." />
+                                 </tooltip>
+                              </Button>
+                              <Separator layoutX="768.0" layoutY="10.0" orientation="VERTICAL" prefHeight="30.0" prefWidth="12.0" />
+                              <Button fx:id="validateBtn" mnemonicParsing="false" onAction="#onValidate" text="Validate" textFill="WHITE">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                                 <graphic>
+                                    <FontIcon iconColor="WHITE" iconLiteral="sil-magnifier" />
+                                 </graphic>
+                                 <tooltip>
+                                    <Tooltip text="Resets the dismissed validations and revalidates the table configuration." />
+                                 </tooltip>
+                              </Button>
+                              <Button fx:id="inspectBtn" layoutX="654.0" layoutY="11.0" mnemonicParsing="false" onAction="#onInspect" text="Inspect" textFill="WHITE">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                                 <graphic>
+                                    <FontIcon iconColor="WHITE" iconLiteral="bi-file-earmark-arrow-up" />
                                  </graphic>
                                  <tooltip>
                                     <Tooltip text="Resets the dismissed validations and revalidates the table configuration." />
