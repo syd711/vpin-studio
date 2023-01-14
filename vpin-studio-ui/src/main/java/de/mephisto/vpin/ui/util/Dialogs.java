@@ -61,7 +61,7 @@ public class Dialogs {
 
 
   public static boolean openDirectB2SUploadDialog(GameRepresentation game) {
-    Stage stage = createStudioDialogStage("dialog-directb2s-upload.fxml", "DirectB2S File Upload");
+    Stage stage = createStudioDialogStage(DirectB2SUploadController.class, "dialog-directb2s-upload.fxml", "DirectB2S File Upload");
     DirectB2SUploadController controller = (DirectB2SUploadController) stage.getUserData();
     controller.setGame(game);
     stage.showAndWait();
@@ -70,7 +70,7 @@ public class Dialogs {
   }
 
   public static boolean openTableUploadDialog() {
-    Stage stage = createStudioDialogStage("dialog-table-upload.fxml", "VPX Table Upload");
+    Stage stage = createStudioDialogStage(TableUploadController.class,"dialog-table-upload.fxml", "VPX Table Upload");
     TableUploadController controller = (TableUploadController) stage.getUserData();
     stage.showAndWait();
 
@@ -78,7 +78,7 @@ public class Dialogs {
   }
 
   public static boolean openTableDeleteDialog(GameRepresentation game) {
-    Stage stage = createStudioDialogStage("dialog-table-delete.fxml", "Delete Table");
+    Stage stage = createStudioDialogStage(TableDeleteController.class, "dialog-table-delete.fxml", "Delete Table");
     TableDeleteController controller = (TableDeleteController) stage.getUserData();
     controller.setGame(game);
     stage.showAndWait();
@@ -87,7 +87,7 @@ public class Dialogs {
   }
 
   public static boolean openRomUploadDialog() {
-    Stage stage = createStudioDialogStage("dialog-rom-upload.fxml", "Rom Upload");
+    Stage stage = createStudioDialogStage(ROMUploadController.class, "dialog-rom-upload.fxml", "Rom Upload");
     ROMUploadController controller = (ROMUploadController) stage.getUserData();
     stage.showAndWait();
 
@@ -152,6 +152,11 @@ public class Dialogs {
 
   private static Stage createStudioDialogStage(String fxml, String title) {
     FXMLLoader fxmlLoader = new FXMLLoader(Studio.class.getResource(fxml));
+    return WidgetFactory.createDialogStage(fxmlLoader, Studio.stage, title);
+  }
+
+  private static Stage createStudioDialogStage(Class clazz, String fxml, String title) {
+    FXMLLoader fxmlLoader = new FXMLLoader(clazz.getResource(fxml));
     return WidgetFactory.createDialogStage(fxmlLoader, Studio.stage, title);
   }
 

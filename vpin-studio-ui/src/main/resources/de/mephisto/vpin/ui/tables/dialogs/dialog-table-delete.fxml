@@ -14,19 +14,19 @@
 <?import javafx.scene.text.Font?>
 <?import org.kordamp.ikonli.javafx.FontIcon?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" styleClass="base-component" stylesheets="@stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.tables.dialogs.TableDeleteController">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" styleClass="base-component" stylesheets="@../../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.tables.dialogs.TableDeleteController">
    <top>
       <fx:include fx:id="header" source="/de/mephisto/vpin/commons/fx/scene-dialog-header.fxml" />
    </top>
    <bottom>
       <HBox alignment="BASELINE_RIGHT" BorderPane.alignment="CENTER">
          <children>
-          <Button fx:id="cancelButton" cancelButton="true" mnemonicParsing="false" onAction="#onCancelClick" styleClass="default-button" stylesheets="@stylesheet.css" text="Cancel">
+          <Button fx:id="cancelButton" cancelButton="true" mnemonicParsing="false" onAction="#onCancelClick" styleClass="default-button" text="Cancel">
                <HBox.margin>
                   <Insets right="12.0" />
                </HBox.margin>
             </Button>
-            <Button fx:id="deleteBtn" defaultButton="true" disable="true" layoutX="418.0" layoutY="10.0" mnemonicParsing="false" onAction="#onDeleteClick" styleClass="submit-button" stylesheets="@stylesheet.css" text="Delete">
+            <Button fx:id="deleteBtn" defaultButton="true" disable="true" layoutX="418.0" layoutY="10.0" mnemonicParsing="false" onAction="#onDeleteClick" styleClass="submit-button" text="Delete">
                <HBox.margin>
                   <Insets />
                </HBox.margin>
