@@ -3,7 +3,6 @@ package de.mephisto.vpin.server.vpa;
 import de.mephisto.vpin.server.VPinServerTest;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameService;
-import de.mephisto.vpin.server.vpa.VpaService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -36,7 +35,7 @@ public class VpaServiceTest extends VPinServerTest {
   private void test(String name) {
     Game game = gameService.getGameByFilename(name);
     File zipFile = new File("E:\\temp\\" + game.getGameDisplayName().replaceAll(" ", "-") + ".vpa");
-    vpaService.export(game, zipFile);
+    vpaService.export(game, exportDescriptor, zipFile);
     System.out.println("Written " + zipFile.getAbsolutePath());
     assertTrue(zipFile.exists());
   }

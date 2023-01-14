@@ -2,7 +2,10 @@ package de.mephisto.vpin.server.vpa;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import com.thoughtworks.xstream.core.util.Base64Encoder;
+import de.mephisto.vpin.restclient.ExportDescriptor;
 import de.mephisto.vpin.restclient.PopperScreen;
+import de.mephisto.vpin.restclient.VpaManifest;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.popper.GameMediaItem;
 import edu.umd.cs.findbugs.annotations.NonNull;
@@ -21,14 +24,14 @@ public class VpaExporter {
   private final static Logger LOG = LoggerFactory.getLogger(VpaService.class);
 
   private final Game game;
-  private VpaManifest manifest;
+  private final ExportDescriptor exportDescriptor;
   private final File target;
   private final VpaExportListener listener;
-  private ObjectMapper objectMapper;
+  private final ObjectMapper objectMapper;
 
-  public VpaExporter(@NonNull Game game, @NonNull VpaManifest manifest, @NonNull File target, @NonNull VpaExportListener listener) {
+  public VpaExporter(@NonNull Game game, @NonNull ExportDescriptor exportDescriptor, @NonNull File target, @NonNull VpaExportListener listener) {
     this.game = game;
-    this.manifest = manifest;
+    this.exportDescriptor = exportDescriptor;
     this.target = target;
     this.listener = listener;
     objectMapper = new ObjectMapper();
@@ -49,7 +52,15 @@ public class VpaExporter {
       fos = new FileOutputStream(target);
       zipOut = new ZipOutputStream(fos);
 
-      String manifestString = objectMapper.writeValueAsString(manifest);
+      GameMediaItem mediaItem = game.getGameMedia().get(PopperScreen.Wheel);
+      if (mediaItem != null) {
+        byte[] bytes = Files.readAllBytes(mediaItem.getFile().toPath());
+        Base64Encoder encoder = new Base64Encoder();
+        String encode = encoder.encode(bytes);
+        exportDescriptor.getManifest().setIcon(encode);
+      }
+
+      String manifestString = objectMapper.writeValueAsString(exportDescriptor.getManifest());
       File manifestFile = File.createTempFile("vpa-manifest", "json");
       manifestFile.deleteOnExit();
       Files.write(manifestFile.toPath(), manifestString.getBytes());
@@ -90,16 +101,16 @@ public class VpaExporter {
       }
 
       // Music and sounds
-      if (game.getAltSoundFolder().exists()) {
+      if (game.getAltSoundFolder() != null && game.getAltSoundFolder().exists()) {
         zipFile(game.getAltSoundFolder(), getGameFolderName() + "/VPinMAME/altsound/" + game.getAltSoundFolder().getName(), zipOut);
       }
 
-      if (game.getMusicFolder().exists()) {
+      if (game.getMusicFolder() != null && game.getMusicFolder().exists()) {
         zipFile(game.getMusicFolder(), getGameFolderName() + "/Music/" + game.getMusicFolder().getName(), zipOut);
       }
 
       // PupPack and Media
-      if (game.getPupPackFolder().exists()) {
+      if (game.getPupPackFolder() != null && game.getPupPackFolder().exists()) {
         LOG.info("Packing " + game.getPupPackFolder().getAbsolutePath());
         zipFile(game.getPupPackFolder(), "PinUPSystem/PUPVideos/" + game.getPupPackFolder().getName(), zipOut);
       }
@@ -150,8 +161,10 @@ public class VpaExporter {
       this.listener.exported(fileToZip, fileName);
 
       File[] children = fileToZip.listFiles();
-      for (File childFile : children) {
-        zipFile(childFile, fileName + "/" + childFile.getName(), zipOut);
+      if (children != null) {
+        for (File childFile : children) {
+          zipFile(childFile, fileName + "/" + childFile.getName(), zipOut);
+        }
       }
       return;
     }

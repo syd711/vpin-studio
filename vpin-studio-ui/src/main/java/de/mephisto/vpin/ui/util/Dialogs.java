@@ -84,7 +84,7 @@ public class Dialogs {
   }
 
   public static boolean openTableExportDialog(GameRepresentation game) {
-    Stage stage = createStudioDialogStage(TableExportController.class, "dialog-table-export.fxml", "Export Table");
+    Stage stage = createStudioDialogStage(TableExportController.class, "dialog-table-export.fxml", "Table Export");
     TableExportController controller = (TableExportController) stage.getUserData();
     controller.setGame(game);
     stage.showAndWait();
@@ -93,7 +93,7 @@ public class Dialogs {
   }
 
   public static boolean openTableImportDialog(GameRepresentation game) {
-    Stage stage = createStudioDialogStage(TableImportController.class, "dialog-table-import.fxml", "Import Table");
+    Stage stage = createStudioDialogStage(TableImportController.class, "dialog-table-import.fxml", "Table Import");
     TableImportController controller = (TableImportController) stage.getUserData();
     controller.setGame(game);
     stage.showAndWait();

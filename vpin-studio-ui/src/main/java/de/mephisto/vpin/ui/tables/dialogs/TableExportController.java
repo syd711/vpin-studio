@@ -1,23 +1,27 @@
 package de.mephisto.vpin.ui.tables.dialogs;
 
 import de.mephisto.vpin.commons.fx.DialogController;
+import de.mephisto.vpin.commons.fx.OverlayWindowFX;
+import de.mephisto.vpin.restclient.ExportDescriptor;
+import de.mephisto.vpin.restclient.PopperScreen;
+import de.mephisto.vpin.restclient.VpaManifest;
+import de.mephisto.vpin.restclient.representations.GameMediaItemRepresentation;
+import de.mephisto.vpin.restclient.representations.GameMediaRepresentation;
 import de.mephisto.vpin.restclient.representations.GameRepresentation;
-import de.mephisto.vpin.restclient.representations.VpaManifestRepresentation;
 import de.mephisto.vpin.ui.Studio;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.stage.Stage;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
+import java.io.ByteArrayInputStream;
 import java.net.URL;
-import java.util.Date;
 import java.util.ResourceBundle;
 
 public class TableExportController implements Initializable, DialogController {
-  private final static Logger LOG = LoggerFactory.getLogger(TableExportController.class);
 
   @FXML
   private Label titleLabel;
@@ -32,7 +36,7 @@ public class TableExportController implements Initializable, DialogController {
   private TextField gameDisplayName;
 
   @FXML
-  private Spinner gameYear;
+  private TextField gameYear;
 
   @FXML
   private TextField romName;
@@ -44,7 +48,7 @@ public class TableExportController implements Initializable, DialogController {
   private TextField manufacturer;
 
   @FXML
-  private Spinner numberOfPlayers;
+  private Spinner<Integer> numberOfPlayers;
 
   @FXML
   private TextField tags;
@@ -56,7 +60,7 @@ public class TableExportController implements Initializable, DialogController {
   private TextField author;
 
   @FXML
-  private Spinner volume;
+  private Spinner<Integer> volume;
 
   @FXML
   private TextField launchCustomVar;
@@ -65,7 +69,7 @@ public class TableExportController implements Initializable, DialogController {
   private TextField keepDisplays;
 
   @FXML
-  private Spinner gameRating;
+  private Spinner<Integer> gameRating;
 
   @FXML
   private TextField dof;
@@ -83,7 +87,7 @@ public class TableExportController implements Initializable, DialogController {
   private TextField designedBy;
 
   @FXML
-  private Button exportBtn;
+  private ImageView imageView;
 
   @FXML
   private CheckBox exportRomCheckbox;
@@ -92,14 +96,25 @@ public class TableExportController implements Initializable, DialogController {
   private CheckBox exportPupPackCheckbox;
 
   @FXML
+  private CheckBox exportPopperMedia;
+
+  @FXML
   private TextField notes;
 
   private boolean result = false;
   private GameRepresentation game;
-  private VpaManifestRepresentation manifest;
+  private VpaManifest manifest;
 
   @FXML
-  private void onExportClick(ActionEvent e) {
+  private void onExportClick(ActionEvent e) throws Exception {
+    ExportDescriptor descriptor = new ExportDescriptor();
+    descriptor.setManifest(manifest);
+    descriptor.setGameId(game.getId());
+    descriptor.setExportPupPack(this.exportPupPackCheckbox.isSelected());
+    descriptor.setExportRom(this.exportRomCheckbox.isSelected());
+    descriptor.setExportPopperMedia(this.exportPopperMedia.isSelected());
+    Studio.client.export(descriptor);
+
     Stage stage = (Stage) ((Button) e.getSource()).getScene().getWindow();
     stage.close();
   }
@@ -130,43 +145,107 @@ public class TableExportController implements Initializable, DialogController {
 
     manifest = Studio.client.getVpaManifest(game.getId());
 
+    GameMediaRepresentation gameMedia = game.getGameMedia();
+    GameMediaItemRepresentation wheelMedia = gameMedia.getMedia().get(PopperScreen.Wheel.name());
+    if (wheelMedia != null) {
+      ByteArrayInputStream gameMediaItem = OverlayWindowFX.client.getGameMediaItem(game.getId(), PopperScreen.Wheel);
+      Image image = new Image(gameMediaItem);
+      imageView.setImage(image);
+    }
+
     exportRomCheckbox.setSelected(true);
     exportPupPackCheckbox.setSelected(true);
 
     gameName.setText(manifest.getGameName());
+    gameName.textProperty().addListener((observable, oldValue, newValue) -> manifest.setGameName(newValue));
     gameFileName.setText(manifest.getGameFileName());
     gameDisplayName.setText(manifest.getGameDisplayName());
+    gameDisplayName.textProperty().addListener((observable, oldValue, newValue) -> manifest.setGameDisplayName(newValue));
 
-    SpinnerValueFactory.IntegerSpinnerValueFactory yearFactory = new SpinnerValueFactory.IntegerSpinnerValueFactory(1900, 2500, new Date().getYear());
-    gameYear.setValueFactory(yearFactory);
-    if(manifest.getGameYear() > 1900) {
-      gameYear.getValueFactory().setValue(manifest.getGameYear());
+
+    gameYear.textProperty().addListener((observable, oldValue, newValue) -> {
+      if (!newValue.matches("\\d*")) {
+        gameYear.setText(newValue.replaceAll("[^\\d]", ""));
+      }
+
+      if (gameYear.getText().length() > 4) {
+        String s = gameYear.getText().substring(0, 4);
+        gameYear.setText(s);
+      }
+    });
+    if (manifest.getGameYear() > 0) {
+      gameYear.setText(String.valueOf(manifest.getGameYear()));
     }
-    romName.setText(manifest.getRomName());
-    romUrl.setText(manifest.getRomUrl());
-    manufacturer.setText(manifest.getManufacturer());
+    gameYear.textProperty().addListener((observable, oldValue, newValue) -> {
+      if (newValue.length() > 0) {
+        manifest.setGameYear(Integer.parseInt(newValue));
+      }
+      else {
+        manifest.setGameYear(0);
+      }
+    });
 
-    SpinnerValueFactory.IntegerSpinnerValueFactory factory = new SpinnerValueFactory.IntegerSpinnerValueFactory(1, 4, 1);
+    romName.setText(manifest.getRomName());
+    romName.textProperty().addListener((observable, oldValue, newValue) -> manifest.setRomName(newValue));
+
+    romUrl.setText(manifest.getRomUrl());
+    romUrl.textProperty().addListener((observable, oldValue, newValue) -> manifest.setRomUrl(newValue));
+
+    manufacturer.setText(manifest.getManufacturer());
+    manufacturer.textProperty().addListener((observable, oldValue, newValue) -> manifest.setManufacturer(newValue));
+
+    SpinnerValueFactory.IntegerSpinnerValueFactory factory = new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 4, 0);
     numberOfPlayers.setValueFactory(factory);
-    numberOfPlayers.getValueFactory().setValue(manifest.getNumberOfPlayers());
+    if (manifest.getNumberOfPlayers() > 0) {
+      numberOfPlayers.getValueFactory().setValue(manifest.getNumberOfPlayers());
+    }
+    numberOfPlayers.getValueFactory().valueProperty().addListener((observable, oldValue, newValue) -> manifest.setNumberOfPlayers(Integer.parseInt(String.valueOf(newValue))));
+
     tags.setText(manifest.getTags());
+    tags.textProperty().addListener((observable, oldValue, newValue) -> manifest.setTags(newValue));
+
     category.setText(manifest.getCategory());
+    category.textProperty().addListener((observable, oldValue, newValue) -> manifest.setCategory(newValue));
+
     author.setText(manifest.getAuthor());
+    author.textProperty().addListener((observable, oldValue, newValue) -> manifest.setAuthor(newValue));
 
     SpinnerValueFactory.IntegerSpinnerValueFactory volumeFactory = new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 100, 0);
     volume.setValueFactory(volumeFactory);
-    volume.getValueFactory().setValue(manifest.getVolume());
+    if (manifest.getVolume() > 0) {
+      volume.getValueFactory().setValue(manifest.getVolume());
+    }
+    volume.getValueFactory().valueProperty().addListener((observable, oldValue, newValue) -> manifest.setVolume(Integer.parseInt(String.valueOf(newValue))));
 
     launchCustomVar.setText(manifest.getLaunchCustomVar());
+    launchCustomVar.textProperty().addListener((observable, oldValue, newValue) -> manifest.setLaunchCustomVar(newValue));
+
     keepDisplays.setText(manifest.getKeepDisplays());
+    keepDisplays.textProperty().addListener((observable, oldValue, newValue) -> manifest.setKeepDisplays(newValue));
 
     SpinnerValueFactory.IntegerSpinnerValueFactory ratingFactory = new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 10, 0);
     gameRating.setValueFactory(ratingFactory);
-    gameRating.getValueFactory().setValue(manifest.getGameRating());
+    if (manifest.getGameRating() > 0) {
+      gameRating.getValueFactory().setValue(manifest.getGameRating());
+    }
+    gameRating.getValueFactory().valueProperty().addListener((observable, oldValue, newValue) -> manifest.setGameRating(Integer.parseInt(String.valueOf(newValue))));
+
     dof.setText(manifest.getDof());
+    dof.textProperty().addListener((observable, oldValue, newValue) -> manifest.setDof(newValue));
+
     IPDBNum.setText(manifest.getIPDBNum());
+    IPDBNum.textProperty().addListener((observable, oldValue, newValue) -> manifest.setIPDBNum(newValue));
+
     altRunMode.setText(manifest.getAltRunMode());
+    altRunMode.textProperty().addListener((observable, oldValue, newValue) -> manifest.setAltRunMode(newValue));
+
     url.setText(manifest.getUrl());
+    url.textProperty().addListener((observable, oldValue, newValue) -> manifest.setUrl(newValue));
+
     designedBy.setText(manifest.getUrl());
+    designedBy.textProperty().addListener((observable, oldValue, newValue) -> manifest.setDesignedBy(newValue));
+
+    notes.setText(manifest.getNotes());
+    notes.textProperty().addListener((observable, oldValue, newValue) -> manifest.setNotes(newValue));
   }
 }

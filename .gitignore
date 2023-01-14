@@ -38,7 +38,7 @@ vpin-studio-ui/target/
 *.iml
 *.gz
 *.log
-
+*.vpa
 
 
 /*.jar
@@ -52,6 +52,7 @@ hs_err_pid*
 /resources/overlay.png
 /resources/overlay.jpg
 /resources/VPReg/*
+/resources/vpa/*
 /.idea/
 /VPReg/
 /target/

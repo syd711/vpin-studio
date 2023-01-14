@@ -300,24 +300,32 @@ public class Game {
     return null;
   }
 
-  @NonNull
+  @Nullable
   @JsonIgnore
   public File getAltSoundFolder() {
-    return new File(new File(systemService.getMameFolder(), "altsound"), this.getRom());
+    if (!StringUtils.isEmpty(this.getRom())) {
+      return new File(new File(systemService.getMameFolder(), "altsound"), this.getRom());
+    }
+    return null;
   }
 
-  @NonNull
+  @Nullable
   @JsonIgnore
   public File getMusicFolder() {
-    return new File(new File(systemService.getVisualPinballInstallationFolder(), "Music"), this.getRom());
+    if (!StringUtils.isEmpty(this.getRom())) {
+      return new File(new File(systemService.getVisualPinballInstallationFolder(), "Music"), this.getRom());
+    }
+    return null;
   }
 
-  @NonNull
+  @Nullable
   @JsonIgnore
   public File getPupPackFolder() {
-    return new File(new File(systemService.getPinUPSystemFolder(),"PUPVideos"), this.getRom());
+    if (!StringUtils.isEmpty(this.getRom())) {
+      return new File(new File(systemService.getPinUPSystemFolder(), "PUPVideos"), this.getRom());
+    }
+    return null;
   }
-
 
   public boolean isRomExists() {
     return getRomFile() != null && getRomFile().exists();

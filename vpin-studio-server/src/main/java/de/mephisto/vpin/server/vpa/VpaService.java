@@ -1,5 +1,7 @@
 package de.mephisto.vpin.server.vpa;
 
+import de.mephisto.vpin.restclient.ExportDescriptor;
+import de.mephisto.vpin.restclient.VpaManifest;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameService;
 import de.mephisto.vpin.server.popper.PinUPConnector;
@@ -25,22 +27,25 @@ public class VpaService {
   @Autowired
   private PinUPConnector pinUPConnector;
 
-  public boolean export(int gameId) {
-    Game game = gameService.getGame(gameId);
-    if(game != null) {
+  public boolean export(@NonNull ExportDescriptor exportDescriptor) {
+    Game game = gameService.getGame(exportDescriptor.getGameId());
+    if (game != null) {
       File target = new File(getArchivePath(), game.getGameDisplayName().replaceAll(" ", "-") + ".vpa");
-      return export(game, target);
+      return export(game, exportDescriptor, target);
     }
     return false;
   }
 
-  public boolean export(@NonNull Game game, @NonNull File target) {
-    VpaManifest manifest = pinUPConnector.getGameManifest(game.getId());
-    if(manifest != null) {
-      VpaExporter exporter = new VpaExporter(game, manifest, target, (file, zipPath) -> {
+  public boolean export(@NonNull Game game, @NonNull ExportDescriptor exportDescriptor, @NonNull File target) {
+    VpaManifest manifest = exportDescriptor.getManifest();
+    if (manifest != null) {
+      new Thread(() -> {
+        Thread.currentThread().setName("VPA Export Thread for " + game.getGameDisplayName());
+        VpaExporter exporter = new VpaExporter(game, exportDescriptor, target, (file, zipPath) -> {
 //        System.out.println(zipPath);
-      });
-      exporter.export();
+        });
+        exporter.export();
+      }).start();
       return true;
     }
     return false;

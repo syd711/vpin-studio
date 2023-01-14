@@ -52,9 +52,14 @@ public class VPinStudioClient implements ObservedPropertyChangeListener, Overlay
   /*********************************************************************************************************************
    * VPA
    ********************************************************************************************************************/
-  public VpaManifestRepresentation getVpaManifest(int gameId) {
-    return restClient.get(API + "vpa/manifest/" + gameId, VpaManifestRepresentation.class);
+  public VpaManifest getVpaManifest(int gameId) {
+    return restClient.get(API + "vpa/manifest/" + gameId, VpaManifest.class);
   }
+
+  public boolean export(ExportDescriptor exportDescriptor) throws Exception {
+    return restClient.post(API + "vpa/export", exportDescriptor, Boolean.class);
+  }
+
 
   /*********************************************************************************************************************
    * Popper

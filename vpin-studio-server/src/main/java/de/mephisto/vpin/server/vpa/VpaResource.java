@@ -1,9 +1,7 @@
 package de.mephisto.vpin.server.vpa;
 
-import de.mephisto.vpin.server.games.Game;
-import de.mephisto.vpin.server.games.GameService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import de.mephisto.vpin.restclient.ExportDescriptor;
+import de.mephisto.vpin.restclient.VpaManifest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -18,9 +16,9 @@ public class VpaResource {
   @Autowired
   private VpaService vpaService;
 
-  @PostMapping("/export/{id}")
-  public Boolean export(@PathVariable("id") int id, @RequestBody Map<String, Object> values) {
-    return vpaService.export(id);
+  @PostMapping("/export")
+  public Boolean export(@RequestBody ExportDescriptor exportDescriptor) {
+    return vpaService.export(exportDescriptor);
   }
 
   @GetMapping("/manifest/{id}")

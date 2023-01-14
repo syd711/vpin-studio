@@ -1,4 +1,4 @@
-package de.mephisto.vpin.server.vpa;
+package de.mephisto.vpin.restclient;
 
 public class VpaManifest {
   private String emulatorType;
@@ -24,6 +24,15 @@ public class VpaManifest {
   private String altRunMode;
   private String url;
   private String designedBy;
+  private String icon;
+
+  public String getIcon() {
+    return icon;
+  }
+
+  public void setIcon(String icon) {
+    this.icon = icon;
+  }
 
   public String getCategory() {
     return category;
