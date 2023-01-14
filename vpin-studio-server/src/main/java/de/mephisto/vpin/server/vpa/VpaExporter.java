@@ -1,5 +1,7 @@
 package de.mephisto.vpin.server.vpa;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import de.mephisto.vpin.restclient.PopperScreen;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.popper.GameMediaItem;
@@ -11,6 +13,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
@@ -18,17 +21,23 @@ public class VpaExporter {
   private final static Logger LOG = LoggerFactory.getLogger(VpaService.class);
 
   private final Game game;
+  private VpaManifest manifest;
   private final File target;
   private final VpaExportListener listener;
+  private ObjectMapper objectMapper;
 
-  public VpaExporter(@NonNull Game game, @NonNull File target, @NonNull VpaExportListener listener) {
+  public VpaExporter(@NonNull Game game, @NonNull VpaManifest manifest, @NonNull File target, @NonNull VpaExportListener listener) {
     this.game = game;
+    this.manifest = manifest;
     this.target = target;
     this.listener = listener;
+    objectMapper = new ObjectMapper();
+    objectMapper.enable(SerializationFeature.INDENT_OUTPUT);
+
   }
 
   public void export() {
-    if(target.exists() && !target.delete()) {
+    if (target.exists() && !target.delete()) {
       throw new UnsupportedOperationException("Couldn't delete existing VPA file " + target.getAbsolutePath());
     }
 
@@ -39,6 +48,12 @@ public class VpaExporter {
     try {
       fos = new FileOutputStream(target);
       zipOut = new ZipOutputStream(fos);
+
+      String manifestString = objectMapper.writeValueAsString(manifest);
+      File manifestFile = File.createTempFile("vpa-manifest", "json");
+      manifestFile.deleteOnExit();
+      Files.write(manifestFile.toPath(), manifestString.getBytes());
+      zipFile(manifestFile, "manifest.json", zipOut);
 
       if (game.getRomFile() != null && game.getRomFile().exists()) {
         zipFile(game.getRomFile(), getGameFolderName() + "/VPinMAME/roms/" + game.getRomFile().getName(), zipOut);
@@ -97,13 +112,12 @@ public class VpaExporter {
           zipFile(gameMediaItem.getFile(), "PinUPSystem/POPMedia/" + getPupUpMediaFolderName() + "/" + value.name() + "/" + gameMediaItem.getFile().getName(), zipOut);
         }
       }
-      LOG.info("Finished packing of " + target.getAbsolutePath() + ", took " + ((System.currentTimeMillis() - start)/ 1000) + " seconds.");
+      LOG.info("Finished packing of " + target.getAbsolutePath() + ", took " + ((System.currentTimeMillis() - start) / 1000) + " seconds.");
     } catch (Exception e) {
       LOG.error("Create VPA for " + game.getGameDisplayName() + " failed: " + e.getMessage(), e);
-    }
-    finally {
+    } finally {
       try {
-        if(zipOut != null) {
+        if (zipOut != null) {
           zipOut.close();
         }
       } catch (IOException e) {
@@ -111,7 +125,7 @@ public class VpaExporter {
       }
 
       try {
-        if(fos != null) {
+        if (fos != null) {
           fos.close();
         }
       } catch (IOException e) {
@@ -134,7 +148,7 @@ public class VpaExporter {
         zipOut.closeEntry();
       }
       this.listener.exported(fileToZip, fileName);
-      
+
       File[] children = fileToZip.listFiles();
       for (File childFile : children) {
         zipFile(childFile, fileName + "/" + childFile.getName(), zipOut);

@@ -1,4 +1,4 @@
-package de.mephisto.vpin.server.popper;
+package de.mephisto.vpin.server.vpa;
 
 import de.mephisto.vpin.server.VPinServerTest;
 import de.mephisto.vpin.server.games.Game;
@@ -27,8 +27,9 @@ public class VpaServiceTest extends VPinServerTest {
   public void testPack() throws IOException {
 //    test(VPinServerTest.TEST_GAME_FILENAME);
     test("Hayburners (WIlliams 1951).vpx");
+    test("Cirqus Voltaire.vpx");
 //    test("The Addams Family.vpx");
-//    test("Jaws.vpx");
+    test("Jaws.vpx");
 //    test("Stranger Things.vpx");
   }
 

@@ -4,6 +4,7 @@ import de.mephisto.vpin.restclient.PinUPControl;
 import de.mephisto.vpin.restclient.PopperScreen;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.system.SystemService;
+import de.mephisto.vpin.server.vpa.VpaManifest;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import org.apache.commons.io.FilenameUtils;
@@ -116,6 +117,49 @@ public class PinUPConnector implements InitializingBean {
       disconnect(connect);
     }
     return info;
+  }
+
+  @Nullable
+  public VpaManifest getGameManifest(int id) {
+    Connection connect = connect();
+    VpaManifest manifest = null;
+    try {
+      PreparedStatement statement = connect.prepareStatement("SELECT * FROM Games where GameID = ?");
+      statement.setInt(1, id);
+      ResultSet rs = statement.executeQuery();
+      if (rs.next()) {
+        manifest = new VpaManifest();
+        manifest.setEmulatorType(rs.getString("GameType"));
+        manifest.setGameName(rs.getString("GameName"));
+        manifest.setGameFileName(rs.getString("GameFileName"));
+        manifest.setGameDisplayName(rs.getString("GameDisplay"));
+        manifest.setNotes(rs.getString("Notes"));
+        manifest.setGameYear(rs.getInt("GameYear"));
+        manifest.setRomName(rs.getString("ROM"));
+        manifest.setManufacturer(rs.getString("Manufact"));
+        manifest.setNumberOfPlayers(rs.getInt("NumPlayers"));
+        manifest.setTags(rs.getString("TAGS"));
+        manifest.setCategory(rs.getString("Category"));
+        manifest.setAuthor(rs.getString("Author"));
+        manifest.setLaunchCustomVar(rs.getString("LaunchCustomVar"));
+        manifest.setKeepDisplays(rs.getString("GKeepDisplays"));
+        manifest.setGameTheme(rs.getString("GameTheme"));
+        manifest.setGameRating(rs.getInt("GameRating"));
+        manifest.setVolume(rs.getInt("sysVolume"));
+        manifest.setDof(rs.getString("DOFStuff"));
+        manifest.setIPDBNum(rs.getString("IPDBNum"));
+        manifest.setAltRunMode(rs.getString("AltRunMode"));
+        manifest.setUrl(rs.getString("WebLinkURL"));
+        manifest.setDesignedBy(rs.getString("DesignedBy"));
+      }
+      rs.close();
+      statement.close();
+    } catch (SQLException e) {
+      LOG.error("Failed to get game for id '" + id + "': " + e.getMessage(), e);
+    } finally {
+      disconnect(connect);
+    }
+    return manifest;
   }
 
   @Nullable
