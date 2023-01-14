@@ -309,7 +309,7 @@ public class Game {
   @NonNull
   @JsonIgnore
   public File getMusicFolder() {
-    return new File(new File(systemService.getMameFolder(), "altsound"), this.getRom());
+    return new File(new File(systemService.getVisualPinballInstallationFolder(), "Music"), this.getRom());
   }
 
   @NonNull

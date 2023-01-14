@@ -365,9 +365,9 @@ public class TablesController implements Initializable, StudioFXController {
           this.uploadRomItem.setDisable(false);
 
           this.exportBtn.setDisable(false);
-          this.importBtn.setDisable(false);
         }
 
+        this.importBtn.setDisable(false);
         this.textfieldSearch.setDisable(false);
         this.reloadBtn.setDisable(false);
         this.scanBtn.setDisable(false);
@@ -515,7 +515,6 @@ public class TablesController implements Initializable, StudioFXController {
         deleteBtn.setDisable(disable);
         inspectBtn.setDisable(disable);
         exportBtn.setDisable(disable);
-        importBtn.setDisable(disable);
         uploadDirectB2SItem.setDisable(disable);
 
         if(c.getList().isEmpty()) {
