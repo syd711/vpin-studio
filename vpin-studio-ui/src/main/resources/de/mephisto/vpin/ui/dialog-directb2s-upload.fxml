@@ -88,7 +88,7 @@
                         <ToggleGroup fx:id="group" />
                      </toggleGroup>
                   </RadioButton>
-                  <RadioButton fx:id="uploadTypeGenerator" mnemonicParsing="false" text="Upload for highscore card generator and competitions only" textFill="WHITE" toggleGroup="$group">
+                  <RadioButton fx:id="uploadTypeGenerator" mnemonicParsing="false" text="Upload as background image for the card generator and competitions only" textFill="WHITE" toggleGroup="$group">
                      <font>
                         <Font size="14.0" />
                      </font>
