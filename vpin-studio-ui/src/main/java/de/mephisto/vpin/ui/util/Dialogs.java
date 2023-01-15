@@ -15,6 +15,7 @@ import de.mephisto.vpin.ui.tables.dialogs.*;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.ButtonType;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.BorderPane;
@@ -23,6 +24,7 @@ import javafx.stage.Stage;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Optional;
 
 public class Dialogs {
 
@@ -178,7 +180,7 @@ public class Dialogs {
     return WidgetFactory.createDialogStage(fxmlLoader, Studio.stage, title);
   }
 
-  public static void openPopperRunningWarning(Stage stage) {
-    WidgetFactory.showAlert(stage, "PinUP Popper is running.", "PinUP Popper is running. To perform this operation, you have to close it.");
+  public static Optional<ButtonType> openPopperRunningWarning(Stage stage) {
+    return WidgetFactory.showAlertOption(stage, "PinUP Popper is running.", "Close PinUP Popper","Cancel", "PinUP Popper is running. To perform this operation, you have to close it.", null);
   }
 }

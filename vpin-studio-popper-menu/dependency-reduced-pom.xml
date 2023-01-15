@@ -7,6 +7,7 @@
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <artifactId>vpin-studio-popper-menu</artifactId>
+  <name>vpin-studio-popper-menu</name>
   <build>
     <resources>
       <resource>
@@ -125,7 +126,7 @@
         <version>2.6</version>
         <executions>
           <execution>
-            <id>copy-exe</id>
+            <id>copy-menu-exe</id>
             <phase>package</phase>
             <goals>
               <goal>copy-resources</goal>

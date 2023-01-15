@@ -150,6 +150,15 @@ public class WidgetFactory {
     stage.showAndWait();
   }
 
+  public static Optional<ButtonType> showAlertOption(Stage owner, String msg, String altOptionText, String okText, String help1, String help2) {
+    Stage stage = createDialogStage(ConfirmationDialogController.class, owner, "Information", "dialog-alert-option.fxml");
+    ConfirmationDialogController controller = (ConfirmationDialogController) stage.getUserData();
+    controller.hideCancel();
+    controller.initDialog(stage, altOptionText, okText, msg, help1, help2);
+    stage.showAndWait();
+    return controller.getResult();
+  }
+
   public static String showInputDialog(Stage owner, String dialogTitle, String innerTitle, String description, String helpText, String defaultValue) {
     Stage stage = createDialogStage(ConfirmationDialogController.class, owner, dialogTitle, "dialog-input.fxml");
     InputDialogController controller = (InputDialogController) stage.getUserData();
@@ -201,7 +210,7 @@ public class WidgetFactory {
 
     if (!previewEnabled) {
       Button playButton = (Button) parent.getTop();
-      if(playButton != null) {
+      if (playButton != null) {
         playButton.setVisible(false);
       }
       return parent;

@@ -20,6 +20,12 @@ public class ConfirmationDialogController implements DialogController {
   private Label helpLabel2;
 
   @FXML
+  private Button altButton;
+
+  @FXML
+  private Button okButton;
+
+  @FXML
   private Button cancelButton;
 
   private Optional<ButtonType> result = Optional.of(ButtonType.CANCEL);
@@ -36,9 +42,23 @@ public class ConfirmationDialogController implements DialogController {
     stage.close();
   }
 
+  @FXML
+  private void onAltButton() {
+    result = Optional.of(ButtonType.APPLY);
+    stage.close();
+  }
+
   public void initDialog(Stage stage, String text, String helpText1, String helpText2) {
+    initDialog(stage, null, null, text, helpText1, helpText2);
+  }
+
+  public void initDialog(Stage stage, String altText, String okText, String text, String helpText1, String helpText2) {
     this.stage = stage;
     this.textLabel.setText(text);
+
+    if(altText != null) {
+      this.altButton.setText(altText);
+    }
 
     if (helpText1 != null) {
       this.helpLabel1.setText(helpText1);
@@ -54,6 +74,9 @@ public class ConfirmationDialogController implements DialogController {
       this.helpLabel2.setText("");
     }
 
+    if(okText != null) {
+      okButton.setText(okText);
+    }
   }
 
   public Optional<ButtonType> getResult() {

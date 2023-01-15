@@ -63,6 +63,10 @@ public class PopperService {
     return pinUP.isPresent();
   }
 
+  public boolean terminate() {
+    return systemService.killPopper();
+  }
+
   @SuppressWarnings("unused")
   public void addPopperLaunchListener(PopperLaunchListener listener) {
     this.launchListeners.add(listener);

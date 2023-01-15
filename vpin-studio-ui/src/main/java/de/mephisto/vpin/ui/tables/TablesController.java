@@ -197,10 +197,15 @@ public class TablesController implements Initializable, StudioFXController {
   @FXML
   private void onImport() {
     if (client.isPinUPPopperRunning()) {
-      Dialogs.openPopperRunningWarning(Studio.stage);
-      return;
+      Optional<ButtonType> buttonType = Dialogs.openPopperRunningWarning(Studio.stage);
+      if (buttonType.isPresent() && buttonType.get().equals(ButtonType.APPLY)) {
+        Studio.client.terminatePopper();
+        Dialogs.openTableImportDialog();
+      }
     }
-    Dialogs.openTableImportDialog();
+    else {
+      Dialogs.openTableImportDialog();
+    }
   }
 
   @FXML
@@ -219,10 +224,18 @@ public class TablesController implements Initializable, StudioFXController {
   @FXML
   private void onTableUpload() {
     if (client.isPinUPPopperRunning()) {
-      Dialogs.openPopperRunningWarning(Studio.stage);
+      Optional<ButtonType> buttonType = Dialogs.openPopperRunningWarning(Studio.stage);
+      if (buttonType.isPresent() && buttonType.get().equals(ButtonType.APPLY)) {
+        Studio.client.terminatePopper();
+        openUploadDialog();
+      }
       return;
     }
 
+    openUploadDialog();
+  }
+
+  private void openUploadDialog() {
     boolean updated = Dialogs.openTableUploadDialog();
     if (updated) {
       onReload();
@@ -232,10 +245,18 @@ public class TablesController implements Initializable, StudioFXController {
   @FXML
   private void onDelete() {
     if (client.isPinUPPopperRunning()) {
-      Dialogs.openPopperRunningWarning(Studio.stage);
+      Optional<ButtonType> buttonType = Dialogs.openPopperRunningWarning(Studio.stage);
+      if (buttonType.isPresent() && buttonType.get().equals(ButtonType.APPLY)) {
+        Studio.client.terminatePopper();
+        deleteSelection();
+      }
       return;
     }
 
+    deleteSelection();
+  }
+
+  private void deleteSelection() {
     GameRepresentation game = tableView.getSelectionModel().getSelectedItem();
     if (game != null) {
       tableView.getSelectionModel().clearSelection();

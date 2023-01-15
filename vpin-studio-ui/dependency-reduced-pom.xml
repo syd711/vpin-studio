@@ -153,6 +153,13 @@
               <outputDirectory>${basedir}/../Output/VPin-Studio/</outputDirectory>
               <resources>
                 <resource>
+                  <directory>${basedir}/../vpin-studio-popper-menu/target/</directory>
+                  <includes>
+                    <include>vpin-studio-popper-menu.jar</include>
+                    <include>VPin-Studio-Popper-Menu.exe</include>
+                  </includes>
+                </resource>
+                <resource>
                   <directory>${basedir}/target/</directory>
                   <includes>
                     <include>vpin-studio-ui.jar</include>

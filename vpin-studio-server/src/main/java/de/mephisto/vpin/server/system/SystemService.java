@@ -407,7 +407,7 @@ public class SystemService implements InitializingBean {
 
   public File getVpaArchiveFolder() {
     File file = new File(RESOURCES, "vpa/");
-    if(!file.exists()) {
+    if (!file.exists()) {
       file.mkdirs();
     }
     return file;
@@ -451,7 +451,7 @@ public class SystemService implements InitializingBean {
     }
   }
 
-  public void restartPopper() {
+  public boolean killPopper() {
     List<ProcessHandle> pinUpProcesses = ProcessHandle
         .allProcesses()
         .filter(p -> p.info().command().isPresent() &&
@@ -466,8 +466,8 @@ public class SystemService implements InitializingBean {
         .collect(Collectors.toList());
 
     if (pinUpProcesses.isEmpty()) {
-      LOG.info("No PinUP processes found, restart canceled.");
-      return;
+      LOG.info("No PinUP processes found, termination canceled.");
+      return false;
     }
 
     for (ProcessHandle pinUpProcess : pinUpProcesses) {
@@ -475,6 +475,11 @@ public class SystemService implements InitializingBean {
       boolean b = pinUpProcess.destroyForcibly();
       LOG.info("Destroyed process '" + cmd + "', result: " + b);
     }
+    return true;
+  }
+
+  public void restartPopper() {
+    killPopper();
 
     try {
       List<String> params = Arrays.asList("cmd", "/c", "start", "PinUpMenu.exe");

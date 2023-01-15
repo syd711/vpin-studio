@@ -39,4 +39,9 @@ public class PopperServiceResource {
   public boolean isRunning() {
     return popperService.isPinUPRunning();
   }
+
+  @GetMapping("/terminate")
+  public boolean terminate() {
+    return popperService.terminate();
+  }
 }
