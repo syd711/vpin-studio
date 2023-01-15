@@ -149,6 +149,9 @@ public class HighscoreService implements InitializingBean {
     return result;
   }
 
+  public List<HighscoreVersion> getAllHighscoreVersions(int gameId) {
+    return highscoreVersionRepository.findByGameIdAndCreatedAtBetween(gameId,  new Date(0), new Date());
+  }
 
   public ScoreList getScoreHistory(int gameId) {
     return getScoresBetween(gameId, new Date(0), new Date());

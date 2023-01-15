@@ -6,14 +6,14 @@ public class ExportDescriptor {
   private boolean exportRom;
   private boolean exportPupPack;
   private boolean exportPopperMedia;
-  private boolean overwrite;
+  private boolean exportHighscores;
 
-  public boolean isOverwrite() {
-    return overwrite;
+  public boolean isExportHighscores() {
+    return exportHighscores;
   }
 
-  public void setOverwrite(boolean overwrite) {
-    this.overwrite = overwrite;
+  public void setExportHighscores(boolean exportHighscores) {
+    this.exportHighscores = exportHighscores;
   }
 
   public int getGameId() {

@@ -316,8 +316,8 @@
                      <children>
                         <GridPane>
                           <columnConstraints>
-                            <ColumnConstraints hgrow="SOMETIMES" maxWidth="221.199951171875" minWidth="10.0" prefWidth="184.0" />
-                            <ColumnConstraints hgrow="SOMETIMES" maxWidth="339.59998321533203" minWidth="10.0" prefWidth="260.8" />
+                            <ColumnConstraints hgrow="SOMETIMES" maxWidth="221.199951171875" minWidth="10.0" prefWidth="193.5999755859375" />
+                            <ColumnConstraints hgrow="SOMETIMES" maxWidth="339.59998321533203" minWidth="10.0" prefWidth="251.2000244140625" />
                           </columnConstraints>
                           <rowConstraints>
                             <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
@@ -356,12 +356,12 @@
                                     <Font size="14.0" />
                                  </font>
                               </CheckBox>
-                              <Label layoutX="10.0" layoutY="76.0" text="Overwrite Existing Archive:" GridPane.rowIndex="3">
+                              <Label layoutX="10.0" layoutY="76.0" text="Export Highscore Recordings:" GridPane.rowIndex="3">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
                               </Label>
-                              <CheckBox fx:id="overwriteCheckbox" layoutX="194.0" layoutY="76.0" mnemonicParsing="false" selected="true" GridPane.columnIndex="1" GridPane.rowIndex="3">
+                              <CheckBox fx:id="highscoresCheckbox" layoutX="194.0" layoutY="76.0" mnemonicParsing="false" selected="true" GridPane.columnIndex="1" GridPane.rowIndex="3">
                                  <font>
                                     <Font size="14.0" />
                                  </font>

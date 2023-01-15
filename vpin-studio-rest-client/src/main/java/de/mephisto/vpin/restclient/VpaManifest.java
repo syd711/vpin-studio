@@ -1,5 +1,8 @@
 package de.mephisto.vpin.restclient;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class VpaManifest {
   private String emulatorType;
   private String gameName;
@@ -25,6 +28,15 @@ public class VpaManifest {
   private String url;
   private String designedBy;
   private String icon;
+  private Map<String,Object> additionalData = new HashMap<>();
+
+  public Map<String, Object> getAdditionalData() {
+    return additionalData;
+  }
+
+  public void setAdditionalData(Map<String, Object> additionalData) {
+    this.additionalData = additionalData;
+  }
 
   public String getIcon() {
     return icon;

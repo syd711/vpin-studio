@@ -182,14 +182,22 @@ public class TablesController implements Initializable, StudioFXController {
 
   @FXML
   private void onExport() {
-    GameRepresentation game = tableView.getSelectionModel().getSelectedItem();
-    if (game != null) {
-      Dialogs.openTableExportDialog(game);
+    ObservableList<GameRepresentation> selectedItems = tableView.getSelectionModel().getSelectedItems();
+    if (selectedItems.size() == 1) {
+      Dialogs.openTableExportDialog(selectedItems.get(0));
+    }
+    else if(selectedItems.size() > 1) {
+      Dialogs.openTablesExportDialog(selectedItems);
     }
   }
 
   @FXML
   private void onImport() {
+    if (client.isPinUPPopperRunning()) {
+      Dialogs.openPopperRunningWarning(Studio.stage);
+      return;
+    }
+
     GameRepresentation game = tableView.getSelectionModel().getSelectedItem();
     if (game != null) {
       Dialogs.openTableImportDialog(game);
@@ -364,9 +372,9 @@ public class TablesController implements Initializable, StudioFXController {
 
           this.uploadDirectB2SItem.setDisable(false);
           this.uploadRomItem.setDisable(false);
-
           this.exportBtn.setDisable(false);
         }
+
 
         this.importBtn.setDisable(false);
         this.textfieldSearch.setDisable(false);
@@ -515,7 +523,6 @@ public class TablesController implements Initializable, StudioFXController {
         validateBtn.setDisable(disable);
         deleteBtn.setDisable(disable);
         inspectBtn.setDisable(disable);
-        exportBtn.setDisable(disable);
         uploadDirectB2SItem.setDisable(disable);
 
         if(c.getList().isEmpty()) {

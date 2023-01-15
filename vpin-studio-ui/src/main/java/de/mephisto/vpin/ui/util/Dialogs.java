@@ -22,6 +22,7 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 
 import java.io.IOException;
+import java.util.List;
 
 public class Dialogs {
 
@@ -83,22 +84,25 @@ public class Dialogs {
     return controller.tableDeleted();
   }
 
-  public static boolean openTableExportDialog(GameRepresentation game) {
+  public static void openTableExportDialog(GameRepresentation game) {
     Stage stage = createStudioDialogStage(TableExportController.class, "dialog-table-export.fxml", "Table Export");
     TableExportController controller = (TableExportController) stage.getUserData();
     controller.setGame(game);
     stage.showAndWait();
-
-    return controller.tableDeleted();
   }
 
-  public static boolean openTableImportDialog(GameRepresentation game) {
+  public static void openTablesExportDialog(List<GameRepresentation> games) {
+    Stage stage = createStudioDialogStage(TableExportController.class, "dialog-tables-export.fxml", "Table Export");
+    TablesExportController controller = (TablesExportController) stage.getUserData();
+    controller.setGames(games);
+    stage.showAndWait();
+  }
+
+  public static void openTableImportDialog(GameRepresentation game) {
     Stage stage = createStudioDialogStage(TableImportController.class, "dialog-table-import.fxml", "Table Import");
     TableImportController controller = (TableImportController) stage.getUserData();
     controller.setGame(game);
     stage.showAndWait();
-
-    return controller.tableDeleted();
   }
 
   public static boolean openRomUploadDialog() {

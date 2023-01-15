@@ -45,7 +45,7 @@ public class RomUploadProgressModel extends ProgressModel {
       progressResultModel.addProcessed();
       return next.getName();
     } catch (Exception e) {
-      LOG.error("Table upload failed: " + e.getMessage(), e);
+      LOG.error("ROM upload failed: " + e.getMessage(), e);
     }
     return null;
   }

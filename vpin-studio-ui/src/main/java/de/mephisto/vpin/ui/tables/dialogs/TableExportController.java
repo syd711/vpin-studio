@@ -100,7 +100,7 @@ public class TableExportController implements Initializable, DialogController {
   private CheckBox exportPopperMedia;
 
   @FXML
-  private CheckBox overwriteCheckbox;
+  private CheckBox highscoresCheckbox;
 
   @FXML
   private TextField notes;
@@ -117,7 +117,7 @@ public class TableExportController implements Initializable, DialogController {
     descriptor.setExportPupPack(this.exportPupPackCheckbox.isSelected());
     descriptor.setExportRom(this.exportRomCheckbox.isSelected());
     descriptor.setExportPopperMedia(this.exportPopperMedia.isSelected());
-    descriptor.setOverwrite(this.overwriteCheckbox.isSelected());
+    descriptor.setExportHighscores(this.highscoresCheckbox.isSelected());
     Studio.client.export(descriptor);
 
     Stage stage = (Stage) ((Button) e.getSource()).getScene().getWindow();
@@ -140,10 +140,6 @@ public class TableExportController implements Initializable, DialogController {
   @Override
   public void onDialogCancel() {
     result = false;
-  }
-
-  public boolean tableDeleted() {
-    return result;
   }
 
   public void setGame(GameRepresentation game) {

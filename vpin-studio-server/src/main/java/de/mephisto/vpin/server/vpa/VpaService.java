@@ -4,6 +4,9 @@ import de.mephisto.vpin.restclient.ExportDescriptor;
 import de.mephisto.vpin.restclient.VpaManifest;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameService;
+import de.mephisto.vpin.server.highscores.HighscoreService;
+import de.mephisto.vpin.server.highscores.HighscoreVersion;
+import de.mephisto.vpin.server.highscores.ScoreList;
 import de.mephisto.vpin.server.popper.PinUPConnector;
 import de.mephisto.vpin.server.system.SystemService;
 import edu.umd.cs.findbugs.annotations.NonNull;
@@ -13,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
+import java.util.List;
 
 @Service
 public class VpaService {
@@ -23,6 +27,9 @@ public class VpaService {
 
   @Autowired
   private GameService gameService;
+
+  @Autowired
+  private HighscoreService highscoreService;
 
   @Autowired
   private PinUPConnector pinUPConnector;
@@ -41,7 +48,8 @@ public class VpaService {
     if (manifest != null) {
       new Thread(() -> {
         Thread.currentThread().setName("VPA Export Thread for " + game.getGameDisplayName());
-        VpaExporter exporter = new VpaExporter(game, exportDescriptor, target, (file, zipPath) -> {
+        List<HighscoreVersion> versions = highscoreService.getAllHighscoreVersions(game.getId());
+        VpaExporter exporter = new VpaExporter(game, exportDescriptor, versions, target, (file, zipPath) -> {
 //        System.out.println(zipPath);
         });
         exporter.export();

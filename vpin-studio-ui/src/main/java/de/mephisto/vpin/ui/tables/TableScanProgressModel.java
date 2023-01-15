@@ -14,7 +14,7 @@ import java.util.List;
 public class TableScanProgressModel extends ProgressModel {
   private final static Logger LOG = LoggerFactory.getLogger(TableScanProgressModel.class);
   private final Iterator<GameRepresentation> iterator;
-  private List<GameRepresentation> gameRepresentations;
+  private final List<GameRepresentation> gameRepresentations;
 
   private final VPinStudioClient client;
 
@@ -28,6 +28,11 @@ public class TableScanProgressModel extends ProgressModel {
   @Override
   public int getMax() {
     return gameRepresentations.size();
+  }
+
+  @Override
+  public boolean isShowSummary() {
+    return false;
   }
 
   @Override
