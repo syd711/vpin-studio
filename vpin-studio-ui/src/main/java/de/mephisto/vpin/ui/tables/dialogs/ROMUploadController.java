@@ -1,8 +1,7 @@
 package de.mephisto.vpin.ui.tables.dialogs;
 
-import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.commons.fx.DialogController;
-import de.mephisto.vpin.ui.Studio;
+import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.ui.util.Dialogs;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -50,10 +49,8 @@ public class ROMUploadController implements Initializable, DialogController {
     if (selection != null && !selection.isEmpty()) {
       result = true;
       try {
-        for (File file : selection) {
-          RomUploadProgressModel model = new RomUploadProgressModel(client, "ROM Upload", file);
-          Dialogs.createProgressDialog(model);
-        }
+        RomUploadProgressModel model = new RomUploadProgressModel(client, "ROM Upload", selection);
+        Dialogs.createProgressDialog(model);
       } catch (Exception e) {
         LOG.error("Upload failed: " + e.getMessage(), e);
         WidgetFactory.showAlert(stage, "Uploading ROM failed", "Please check the log file for details", "Error: " + e.getMessage());

@@ -35,11 +35,7 @@ public class VpaService {
   private PinUPConnector pinUPConnector;
 
   public boolean importVpa(@NonNull ImportDescriptor descriptor) {
-    Game game = gameService.getGame(descriptor.getGameId());
-    if (game != null) {
-      File target = new File(systemService.getVpaArchiveFolder(), game.getGameDisplayName().replaceAll(" ", "-") + ".vpa");
-
-    }
+    LOG.info("Starting import of " + descriptor.getManifest().getGameName());
     return false;
   }
 

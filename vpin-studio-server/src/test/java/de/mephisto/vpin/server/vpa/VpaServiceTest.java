@@ -1,5 +1,6 @@
 package de.mephisto.vpin.server.vpa;
 
+import de.mephisto.vpin.restclient.ExportDescriptor;
 import de.mephisto.vpin.server.VPinServerTest;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameService;
@@ -33,9 +34,13 @@ public class VpaServiceTest extends VPinServerTest {
   }
 
   private void test(String name) {
+    ExportDescriptor descriptor = new ExportDescriptor();
+
     Game game = gameService.getGameByFilename(name);
+    descriptor.setGameId(game.getId());
+
     File zipFile = new File("E:\\temp\\" + game.getGameDisplayName().replaceAll(" ", "-") + ".vpa");
-    vpaService.exportVpa(game, exportDescriptor, zipFile);
+    vpaService.exportVpa(game, descriptor, zipFile);
     System.out.println("Written " + zipFile.getAbsolutePath());
     assertTrue(zipFile.exists());
   }

@@ -78,7 +78,7 @@
                                  </graphic>
                               </Button>
                               <Separator orientation="VERTICAL" prefHeight="30.0" prefWidth="12.0" />
-                              <MenuButton mnemonicParsing="false" text="Upload">
+                              <MenuButton fx:id="uploadMenuBtn" mnemonicParsing="false" text="Upload">
                                 <items>
                                   <MenuItem fx:id="uploadTableItem" mnemonicParsing="false" onAction="#onTableUpload" text="Upload VPX Tables">
                                        <graphic>

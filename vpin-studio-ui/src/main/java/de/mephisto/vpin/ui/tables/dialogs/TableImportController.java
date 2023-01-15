@@ -91,11 +91,15 @@ public class TableImportController implements Initializable, DialogController {
     descriptor.setImportHighscores(this.highscoresCheckbox.isSelected());
     descriptor.setReplaceExisting(this.replaceCheckbox.isSelected());
 
+    if(!this.playlistCombo.getSelectionModel().isEmpty()) {
+      descriptor.setPlaylistId(this.playlistCombo.getSelectionModel().getSelectedItem().getId());
+    }
+
     Stage stage = (Stage) ((Button) e.getSource()).getScene().getWindow();
     stage.close();
 
     Platform.runLater(() -> {
-      TableImportProgressModel model = new TableImportProgressModel("Starting Table Import", descriptor, games);
+      TableImportProgressModel model = new TableImportProgressModel("Starting Table Import", descriptor, this.selection);
       Dialogs.createProgressDialog(model);
     });
   }

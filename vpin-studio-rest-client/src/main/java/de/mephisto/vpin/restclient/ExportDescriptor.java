@@ -3,10 +3,10 @@ package de.mephisto.vpin.restclient;
 public class ExportDescriptor {
   private int gameId;
   private VpaManifest manifest;
-  private boolean exportRom;
-  private boolean exportPupPack;
-  private boolean exportPopperMedia;
-  private boolean exportHighscores;
+  private boolean exportRom = true;
+  private boolean exportPupPack = true;
+  private boolean exportPopperMedia = true;
+  private boolean exportHighscores = true;
 
   public boolean isExportHighscores() {
     return exportHighscores;

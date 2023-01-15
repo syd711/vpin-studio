@@ -117,6 +117,9 @@ public class TablesController implements Initializable, StudioFXController {
   private Button exportBtn;
 
   @FXML
+  private MenuButton uploadMenuBtn;
+
+  @FXML
   private MenuItem uploadTableItem;
 
   @FXML
@@ -338,6 +341,7 @@ public class TablesController implements Initializable, StudioFXController {
     this.inspectBtn.setDisable(true);
     this.exportBtn.setDisable(true);
     this.importBtn.setDisable(true);
+    this.uploadMenuBtn.setDisable(true);
 
     tableView.setVisible(false);
     tableStack.getChildren().add(tablesLoadingOverlay);
@@ -377,6 +381,7 @@ public class TablesController implements Initializable, StudioFXController {
         this.reloadBtn.setDisable(false);
         this.scanBtn.setDisable(false);
         this.uploadTableItem.setDisable(false);
+        this.uploadMenuBtn.setDisable(false);
 
         tableView.setVisible(true);
         labelTableCount.setText(games.size() + " tables");

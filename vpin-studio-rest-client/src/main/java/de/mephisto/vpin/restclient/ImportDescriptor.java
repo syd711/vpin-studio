@@ -1,13 +1,21 @@
 package de.mephisto.vpin.restclient;
 
 public class ImportDescriptor {
-  private int gameId;
   private boolean importRom;
   private boolean importPupPack;
   private boolean importPopperMedia;
   private boolean importHighscores;
   private boolean replaceExisting;
   private VpaManifest manifest;
+  private int playlistId = -1;
+
+  public int getPlaylistId() {
+    return playlistId;
+  }
+
+  public void setPlaylistId(int playlistId) {
+    this.playlistId = playlistId;
+  }
 
   public VpaManifest getManifest() {
     return manifest;
@@ -31,14 +39,6 @@ public class ImportDescriptor {
 
   public void setImportHighscores(boolean importHighscores) {
     this.importHighscores = importHighscores;
-  }
-
-  public int getGameId() {
-    return gameId;
-  }
-
-  public void setGameId(int gameId) {
-    this.gameId = gameId;
   }
 
   public boolean isImportPupPack() {
