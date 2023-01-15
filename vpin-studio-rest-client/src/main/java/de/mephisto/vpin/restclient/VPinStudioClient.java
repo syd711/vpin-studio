@@ -56,10 +56,23 @@ public class VPinStudioClient implements ObservedPropertyChangeListener, Overlay
     return restClient.get(API + "vpa/manifest/" + gameId, VpaManifest.class);
   }
 
-  public boolean export(ExportDescriptor exportDescriptor) throws Exception {
+  public boolean exportVpa(ExportDescriptor exportDescriptor) throws Exception {
     return restClient.post(API + "vpa/export", exportDescriptor, Boolean.class);
   }
 
+  public VpaManifest uploadVpa(File file, FileUploadProgressListener listener) throws Exception {
+    try {
+      String url = restClient.getBaseUrl() + API + "vpa/upload";
+      return new RestTemplate().exchange(url, HttpMethod.POST, createUpload(file, -1, null, AssetType.VPA, listener), VpaManifest.class).getBody();
+    } catch (Exception e) {
+      LOG.error("VPA upload failed: " + e.getMessage(), e);
+      throw e;
+    }
+  }
+
+  public boolean importVpa(ImportDescriptor exportDescriptor) throws Exception {
+    return restClient.post(API + "vpa/import", exportDescriptor, Boolean.class);
+  }
 
   /*********************************************************************************************************************
    * Popper

@@ -45,7 +45,7 @@ public class VpaExporter {
     objectMapper.enable(SerializationFeature.INDENT_OUTPUT);
   }
 
-  public void export() {
+  public void startExport() {
     if (target.exists() && !target.delete()) {
       throw new UnsupportedOperationException("Couldn't delete existing VPA file " + target.getAbsolutePath());
     }

@@ -118,7 +118,7 @@ public class TableExportController implements Initializable, DialogController {
     descriptor.setExportRom(this.exportRomCheckbox.isSelected());
     descriptor.setExportPopperMedia(this.exportPopperMedia.isSelected());
     descriptor.setExportHighscores(this.highscoresCheckbox.isSelected());
-    Studio.client.export(descriptor);
+    Studio.client.exportVpa(descriptor);
 
     Stage stage = (Stage) ((Button) e.getSource()).getScene().getWindow();
     stage.close();

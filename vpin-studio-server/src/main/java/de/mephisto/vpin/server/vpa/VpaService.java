@@ -6,7 +6,6 @@ import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameService;
 import de.mephisto.vpin.server.highscores.HighscoreService;
 import de.mephisto.vpin.server.highscores.HighscoreVersion;
-import de.mephisto.vpin.server.highscores.ScoreList;
 import de.mephisto.vpin.server.popper.PinUPConnector;
 import de.mephisto.vpin.server.system.SystemService;
 import edu.umd.cs.findbugs.annotations.NonNull;
@@ -52,7 +51,7 @@ public class VpaService {
         VpaExporter exporter = new VpaExporter(game, exportDescriptor, versions, target, (file, zipPath) -> {
 //        System.out.println(zipPath);
         });
-        exporter.export();
+        exporter.startExport();
       }).start();
       return true;
     }
@@ -65,5 +64,9 @@ public class VpaService {
 
   public VpaManifest getManifest(int id) {
     return pinUPConnector.getGameManifest(id);
+  }
+
+  public VpaManifest getManifest(File out) {
+    return VpaUtil.readManifest(out);
   }
 }

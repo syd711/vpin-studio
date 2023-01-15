@@ -99,6 +99,7 @@
                                     <Font size="14.0" />
                                  </font>
                               </MenuButton>
+                              <Separator layoutX="682.0" layoutY="10.0" orientation="VERTICAL" prefHeight="30.0" prefWidth="12.0" />
                               <Button fx:id="importBtn" layoutX="796.0" layoutY="11.0" mnemonicParsing="false" onAction="#onImport" text="Import" textFill="WHITE">
                                  <font>
                                     <Font size="14.0" />
@@ -110,7 +111,6 @@
                                     <Tooltip text="Resets the dismissed validations and revalidates the table configuration." />
                                  </tooltip>
                               </Button>
-                              <Separator layoutX="682.0" layoutY="10.0" orientation="VERTICAL" prefHeight="30.0" prefWidth="12.0" />
                               <Button fx:id="exportBtn" layoutX="596.0" layoutY="11.0" mnemonicParsing="false" onAction="#onExport" text="Export" textFill="WHITE">
                                  <font>
                                     <Font size="14.0" />

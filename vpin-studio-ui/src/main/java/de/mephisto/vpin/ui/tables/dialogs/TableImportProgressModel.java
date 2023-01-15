@@ -1,7 +1,6 @@
 package de.mephisto.vpin.ui.tables.dialogs;
 
-import de.mephisto.vpin.restclient.ExportDescriptor;
-import de.mephisto.vpin.restclient.VpaManifest;
+import de.mephisto.vpin.restclient.ImportDescriptor;
 import de.mephisto.vpin.restclient.representations.GameRepresentation;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.util.ProgressModel;
@@ -12,14 +11,14 @@ import org.slf4j.LoggerFactory;
 import java.util.Iterator;
 import java.util.List;
 
-public class TableExportProgressModel extends ProgressModel {
-  private final static Logger LOG = LoggerFactory.getLogger(TableExportProgressModel.class);
+public class TableImportProgressModel extends ProgressModel {
+  private final static Logger LOG = LoggerFactory.getLogger(TableImportProgressModel.class);
 
-  private final ExportDescriptor descriptor;
+  private final ImportDescriptor descriptor;
   private final Iterator<GameRepresentation> iterator;
   private final List<GameRepresentation> games;
 
-  public TableExportProgressModel(String title, ExportDescriptor descriptor, List<GameRepresentation> games) {
+  public TableImportProgressModel(String title, ImportDescriptor descriptor, List<GameRepresentation> games) {
     super(title);
     this.descriptor = descriptor;
     this.iterator = games.iterator();
@@ -40,11 +39,9 @@ public class TableExportProgressModel extends ProgressModel {
   public String processNext(ProgressResultModel progressResultModel) {
     try {
       GameRepresentation next = iterator.next();
-      VpaManifest vpaManifest = Studio.client.getVpaManifest(next.getId());
-      descriptor.setManifest(vpaManifest);
       descriptor.setGameId(next.getId());
 
-      Studio.client.exportVpa(descriptor);
+//      Studio.client.import(descriptor);
       progressResultModel.addProcessed();
       return next.getGameDisplayName();
     } catch (Exception e) {

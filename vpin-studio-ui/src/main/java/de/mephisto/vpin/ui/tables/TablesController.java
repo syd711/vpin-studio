@@ -186,7 +186,7 @@ public class TablesController implements Initializable, StudioFXController {
     if (selectedItems.size() == 1) {
       Dialogs.openTableExportDialog(selectedItems.get(0));
     }
-    else if(selectedItems.size() > 1) {
+    else if (selectedItems.size() > 1) {
       Dialogs.openTablesExportDialog(selectedItems);
     }
   }
@@ -197,11 +197,7 @@ public class TablesController implements Initializable, StudioFXController {
       Dialogs.openPopperRunningWarning(Studio.stage);
       return;
     }
-
-    GameRepresentation game = tableView.getSelectionModel().getSelectedItem();
-    if (game != null) {
-      Dialogs.openTableImportDialog(game);
-    }
+    Dialogs.openTableImportDialog();
   }
 
   @FXML
@@ -519,13 +515,13 @@ public class TablesController implements Initializable, StudioFXController {
     tableView.getSelectionModel().getSelectedItems().addListener(new ListChangeListener<GameRepresentation>() {
       @Override
       public void onChanged(Change<? extends GameRepresentation> c) {
-        boolean disable = c.getList().isEmpty() ||c.getList().size() > 1;
+        boolean disable = c.getList().isEmpty() || c.getList().size() > 1;
         validateBtn.setDisable(disable);
         deleteBtn.setDisable(disable);
         inspectBtn.setDisable(disable);
         uploadDirectB2SItem.setDisable(disable);
 
-        if(c.getList().isEmpty()) {
+        if (c.getList().isEmpty()) {
           refreshView(Optional.empty());
         }
         else {

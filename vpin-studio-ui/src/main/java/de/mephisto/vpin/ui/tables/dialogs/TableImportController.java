@@ -1,17 +1,20 @@
 package de.mephisto.vpin.ui.tables.dialogs;
 
 import de.mephisto.vpin.commons.fx.DialogController;
+import de.mephisto.vpin.restclient.ImportDescriptor;
 import de.mephisto.vpin.restclient.representations.GameRepresentation;
-import de.mephisto.vpin.ui.Studio;
+import de.mephisto.vpin.restclient.representations.PlaylistRepresentation;
+import de.mephisto.vpin.ui.util.Dialogs;
+import javafx.application.Platform;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.Button;
-import javafx.scene.control.CheckBox;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -21,6 +24,7 @@ import java.util.List;
 import java.util.ResourceBundle;
 import java.util.stream.Collectors;
 
+import static de.mephisto.vpin.ui.Studio.client;
 import static de.mephisto.vpin.ui.Studio.stage;
 
 public class TableImportController implements Initializable, DialogController {
@@ -35,19 +39,28 @@ public class TableImportController implements Initializable, DialogController {
   private Button importBtn;
 
   @FXML
-  private CheckBox exportPupPackCheckbox;
+  private CheckBox importRomCheckbox;
 
   @FXML
-  private CheckBox exportPopperMedia;
+  private CheckBox importPupPackCheckbox;
+
+  @FXML
+  private CheckBox importPopperMedia;
 
   @FXML
   private CheckBox highscoresCheckbox;
 
   @FXML
+  private CheckBox replaceCheckbox;
+
+  @FXML
   private TextField fileNameField;
 
+  @FXML
+  private ComboBox<PlaylistRepresentation> playlistCombo;
+
   private boolean result = false;
-  private GameRepresentation game;
+  private List<GameRepresentation> games;
 
   private List<File> selection;
 
@@ -74,9 +87,20 @@ public class TableImportController implements Initializable, DialogController {
 
   @FXML
   private void onImport(ActionEvent e) {
-    Stage stage = (Stage) ((Button) e.getSource()).getScene().getWindow();
+    ImportDescriptor descriptor = new ImportDescriptor();
+    descriptor.setImportRom(this.importRomCheckbox.isSelected());
+    descriptor.setImportPupPack(this.importPupPackCheckbox.isSelected());
+    descriptor.setImportPopperMedia(this.importPopperMedia.isSelected());
+    descriptor.setImportHighscores(this.highscoresCheckbox.isSelected());
+    descriptor.setReplaceExisting(this.replaceCheckbox.isSelected());
 
+    Stage stage = (Stage) ((Button) e.getSource()).getScene().getWindow();
     stage.close();
+
+    Platform.runLater(() -> {
+      TableImportProgressModel model = new TableImportProgressModel("Starting Table Import", descriptor, games);
+      Dialogs.createProgressDialog(model);
+    });
   }
 
   @FXML
@@ -88,12 +112,19 @@ public class TableImportController implements Initializable, DialogController {
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
     this.result = false;
-    this.titleLabel.setText("");
+    this.titleLabel.setText("VPA Table Import");
+
+    this.importBtn.setDisable(true);
+    this.fileNameField.textProperty().addListener((observableValue, s, t1) -> importBtn.setDisable(StringUtils.isEmpty(t1)));
+
+    List<PlaylistRepresentation> playlists = client.getPlaylists();
+    ObservableList<PlaylistRepresentation> data = FXCollections.observableList(playlists);
+    this.playlistCombo.setItems(data);
+    this.playlistCombo.setDisable(false);
   }
 
-  public void setGame(GameRepresentation game) {
-    this.game = game;
-    this.titleLabel.setText("Table Import");
+  public void setGames(List<GameRepresentation> games) {
+    this.games = games;
   }
 
   @Override

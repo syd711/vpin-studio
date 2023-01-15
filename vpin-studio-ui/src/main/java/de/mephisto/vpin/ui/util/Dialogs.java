@@ -98,10 +98,9 @@ public class Dialogs {
     stage.showAndWait();
   }
 
-  public static void openTableImportDialog(GameRepresentation game) {
+  public static void openTableImportDialog() {
     Stage stage = createStudioDialogStage(TableImportController.class, "dialog-table-import.fxml", "Table Import");
     TableImportController controller = (TableImportController) stage.getUserData();
-    controller.setGame(game);
     stage.showAndWait();
   }
 
