@@ -2,8 +2,8 @@ package de.mephisto.vpin.ui.tables.dialogs;
 
 import de.mephisto.vpin.commons.fx.DialogController;
 import de.mephisto.vpin.restclient.ImportDescriptor;
-import de.mephisto.vpin.restclient.representations.GameRepresentation;
 import de.mephisto.vpin.restclient.representations.PlaylistRepresentation;
+import de.mephisto.vpin.ui.tables.TablesController;
 import de.mephisto.vpin.ui.util.Dialogs;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
@@ -11,7 +11,10 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
+import javafx.scene.control.ComboBox;
+import javafx.scene.control.TextField;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import org.apache.commons.lang3.StringUtils;
@@ -48,18 +51,13 @@ public class TableImportController implements Initializable, DialogController {
   private CheckBox highscoresCheckbox;
 
   @FXML
-  private CheckBox replaceCheckbox;
-
-  @FXML
   private TextField fileNameField;
 
   @FXML
   private ComboBox<PlaylistRepresentation> playlistCombo;
 
-  private boolean result = false;
-  private List<GameRepresentation> games;
-
   private List<File> selection;
+  private TablesController tablesController;
 
   @FXML
   private void onFileSelect() {
@@ -89,9 +87,8 @@ public class TableImportController implements Initializable, DialogController {
     descriptor.setImportPupPack(this.importPupPackCheckbox.isSelected());
     descriptor.setImportPopperMedia(this.importPopperMedia.isSelected());
     descriptor.setImportHighscores(this.highscoresCheckbox.isSelected());
-    descriptor.setReplaceExisting(this.replaceCheckbox.isSelected());
 
-    if(!this.playlistCombo.getSelectionModel().isEmpty()) {
+    if (!this.playlistCombo.getSelectionModel().isEmpty()) {
       descriptor.setPlaylistId(this.playlistCombo.getSelectionModel().getSelectedItem().getId());
     }
 
@@ -99,8 +96,9 @@ public class TableImportController implements Initializable, DialogController {
     stage.close();
 
     Platform.runLater(() -> {
-      TableImportProgressModel model = new TableImportProgressModel("Starting Table Import", descriptor, this.selection);
+      TableImportProgressModel model = new TableImportProgressModel("Uploading and Importing Tables", descriptor, this.selection);
       Dialogs.createProgressDialog(model);
+      tablesController.onReload();
     });
   }
 
@@ -112,7 +110,6 @@ public class TableImportController implements Initializable, DialogController {
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
-    this.result = false;
     this.importBtn.setDisable(true);
     this.fileNameField.textProperty().addListener((observableValue, s, t1) -> importBtn.setDisable(StringUtils.isEmpty(t1)));
 
@@ -122,12 +119,12 @@ public class TableImportController implements Initializable, DialogController {
     this.playlistCombo.setDisable(false);
   }
 
-  public void setGames(List<GameRepresentation> games) {
-    this.games = games;
-  }
-
   @Override
   public void onDialogCancel() {
 
+  }
+
+  public void setTablesController(TablesController tablesController) {
+    this.tablesController = tablesController;
   }
 }

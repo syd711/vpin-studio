@@ -60,10 +60,10 @@ public class VPinStudioClient implements ObservedPropertyChangeListener, Overlay
     return restClient.post(API + "vpa/export", exportDescriptor, Boolean.class);
   }
 
-  public VpaManifest uploadVpa(File file, FileUploadProgressListener listener) throws Exception {
+  public String uploadVpa(File file, FileUploadProgressListener listener) throws Exception {
     try {
       String url = restClient.getBaseUrl() + API + "vpa/upload";
-      return new RestTemplate().exchange(url, HttpMethod.POST, createUpload(file, -1, null, AssetType.VPA, listener), VpaManifest.class).getBody();
+      return new RestTemplate().exchange(url, HttpMethod.POST, createUpload(file, -1, null, AssetType.VPA, listener), String.class).getBody();
     } catch (Exception e) {
       LOG.error("VPA upload failed: " + e.getMessage(), e);
       throw e;
@@ -450,7 +450,12 @@ public class VPinStudioClient implements ObservedPropertyChangeListener, Overlay
   }
 
   public List<GameRepresentation> getGames() {
-    return Arrays.asList(restClient.get(API + "games", GameRepresentation[].class));
+    try {
+      return Arrays.asList(restClient.get(API + "games", GameRepresentation[].class));
+    } catch (Exception e) {
+      LOG.error("Failed to save game: " + e.getMessage(), e);
+      throw e;
+    }
   }
 
   public List<GameRepresentation> getGamesWithScores() {

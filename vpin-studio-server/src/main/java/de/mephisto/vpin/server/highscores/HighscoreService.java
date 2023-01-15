@@ -82,6 +82,13 @@ public class HighscoreService implements InitializingBean {
     return metadata;
   }
 
+  public void deleteScores(int id) {
+    Optional<Highscore> byGameId = highscoreRepository.findByGameId(id);
+    byGameId.ifPresent(highscore -> highscoreRepository.delete(highscore));
+    List<HighscoreVersion> versions = highscoreVersionRepository.findByGameId(id);
+    highscoreVersionRepository.deleteAll(versions);
+  }
+
   @NonNull
   public List<Score> parseScores(Date createdAt, String raw, int gameId, String displayName) {
     return highscoreParser.parseScores(createdAt, raw, gameId, displayName);
@@ -408,4 +415,5 @@ public class HighscoreService implements InitializingBean {
     this.highscoreResolver = new HighscoreResolver(systemService);
 //    new HighscoreWatcher(systemService.getVPRegFile().getParentFile(), systemService.getNvramFolder()).watch();
   }
+
 }

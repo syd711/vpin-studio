@@ -37,14 +37,14 @@ public class VpaResource {
   }
 
   @PostMapping("/upload")
-  public VpaManifest uploadVpa(@RequestParam(value = "file", required = false) MultipartFile file) {
+  public String uploadVpa(@RequestParam(value = "file", required = false) MultipartFile file) {
     if (file == null) {
       LOG.error("VPA upload request did not contain a file object.");
       return null;
     }
     File out = new File(systemService.getVpaArchiveFolder(), file.getOriginalFilename());
     if (UploadUtil.upload(file, out)) {
-      return vpaService.getManifest(out);
+      return out.getName();
     }
     return null;
   }

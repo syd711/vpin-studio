@@ -5,9 +5,16 @@ public class ImportDescriptor {
   private boolean importPupPack;
   private boolean importPopperMedia;
   private boolean importHighscores;
-  private boolean replaceExisting;
-  private VpaManifest manifest;
   private int playlistId = -1;
+  private String vpaFileName;
+
+  public String getVpaFileName() {
+    return vpaFileName;
+  }
+
+  public void setVpaFileName(String vpaFileName) {
+    this.vpaFileName = vpaFileName;
+  }
 
   public int getPlaylistId() {
     return playlistId;
@@ -15,22 +22,6 @@ public class ImportDescriptor {
 
   public void setPlaylistId(int playlistId) {
     this.playlistId = playlistId;
-  }
-
-  public VpaManifest getManifest() {
-    return manifest;
-  }
-
-  public void setManifest(VpaManifest manifest) {
-    this.manifest = manifest;
-  }
-
-  public boolean isReplaceExisting() {
-    return replaceExisting;
-  }
-
-  public void setReplaceExisting(boolean replaceExisting) {
-    this.replaceExisting = replaceExisting;
   }
 
   public boolean isImportHighscores() {

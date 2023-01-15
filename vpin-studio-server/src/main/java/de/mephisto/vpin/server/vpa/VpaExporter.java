@@ -3,14 +3,12 @@ package de.mephisto.vpin.server.vpa;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.thoughtworks.xstream.core.util.Base64Encoder;
-import de.mephisto.vpin.commons.EmulatorTypes;
 import de.mephisto.vpin.restclient.ExportDescriptor;
 import de.mephisto.vpin.restclient.PopperScreen;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.highscores.HighscoreVersion;
 import de.mephisto.vpin.server.popper.GameMediaItem;
 import edu.umd.cs.findbugs.annotations.NonNull;
-import org.apache.commons.io.FilenameUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -173,15 +171,7 @@ public class VpaExporter {
       exportDescriptor.getManifest().setIcon(encode);
     }
 
-
-    String extension = FilenameUtils.getExtension(game.getGameFile().getName());
-    if (extension.equals("vpx")) {
-      exportDescriptor.getManifest().setEmulatorType(EmulatorTypes.VISUAL_PINBALL_X);
-    }
-    else if (extension.equals("fp")) {
-      exportDescriptor.getManifest().setEmulatorType(EmulatorTypes.FUTURE_PINBALL);
-    }
-
+    exportDescriptor.getManifest().setEmulatorType(VpaUtil.getEmulatorType(game.getGameFile()));
     String manifestString = objectMapper.writeValueAsString(exportDescriptor.getManifest());
     File manifestFile = File.createTempFile("vpa-manifest", "json");
     manifestFile.deleteOnExit();

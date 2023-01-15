@@ -200,11 +200,11 @@ public class TablesController implements Initializable, StudioFXController {
       Optional<ButtonType> buttonType = Dialogs.openPopperRunningWarning(Studio.stage);
       if (buttonType.isPresent() && buttonType.get().equals(ButtonType.APPLY)) {
         Studio.client.terminatePopper();
-        Dialogs.openTableImportDialog();
+        Dialogs.openTableImportDialog(this);
       }
     }
     else {
-      Dialogs.openTableImportDialog();
+      Dialogs.openTableImportDialog(this);
     }
   }
 

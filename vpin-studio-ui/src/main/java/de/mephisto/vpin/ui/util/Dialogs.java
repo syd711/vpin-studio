@@ -11,6 +11,7 @@ import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.UpdateDialogController;
 import de.mephisto.vpin.ui.competitions.CompetitionDialogController;
 import de.mephisto.vpin.ui.players.PlayerDialogController;
+import de.mephisto.vpin.ui.tables.TablesController;
 import de.mephisto.vpin.ui.tables.dialogs.*;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -100,9 +101,10 @@ public class Dialogs {
     stage.showAndWait();
   }
 
-  public static void openTableImportDialog() {
+  public static void openTableImportDialog(TablesController tablesController) {
     Stage stage = createStudioDialogStage(TableImportController.class, "dialog-table-import.fxml", "Table Import");
     TableImportController controller = (TableImportController) stage.getUserData();
+    controller.setTablesController(tablesController);
     stage.showAndWait();
   }
 

@@ -37,7 +37,7 @@ public class PopperService {
 
   public int importVPXGame(File file, boolean importToPopper, int playListId) {
     if(importToPopper) {
-      int gameId = pinUPConnector.importVPXFile(file);
+      int gameId = pinUPConnector.importGame(file);
       if(gameId >= 0 && playListId >= 0) {
         pinUPConnector.addToPlaylist(gameId, playListId);
       }

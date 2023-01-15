@@ -2,7 +2,9 @@ package de.mephisto.vpin.server.vpa;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import de.mephisto.vpin.commons.EmulatorTypes;
 import de.mephisto.vpin.restclient.VpaManifest;
+import org.apache.commons.io.FilenameUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -39,5 +41,18 @@ public class VpaUtil {
       LOG.error("Failed to read manifest information from " + file.getAbsolutePath() + ": " + e.getMessage(), e);
     }
     return null;
+  }
+
+  public static String getEmulatorType(File gameFile) {
+    String extension = FilenameUtils.getExtension(gameFile.getName());
+    if (extension.equals("vpx")) {
+      return EmulatorTypes.VISUAL_PINBALL_X;
+    }
+
+    if (extension.equals("fp")) {
+      return EmulatorTypes.FUTURE_PINBALL;
+    }
+
+    return EmulatorTypes.VISUAL_PINBALL_X;
   }
 }

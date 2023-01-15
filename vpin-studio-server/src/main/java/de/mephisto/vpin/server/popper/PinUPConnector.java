@@ -5,6 +5,7 @@ import de.mephisto.vpin.restclient.PopperScreen;
 import de.mephisto.vpin.restclient.VpaManifest;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.system.SystemService;
+import de.mephisto.vpin.server.vpa.VpaUtil;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import org.apache.commons.io.FilenameUtils;
@@ -260,28 +261,35 @@ public class PinUPConnector implements InitializingBean {
     }
   }
 
+  public int importGame(@NonNull File file) {
+    String emulator = VpaUtil.getEmulatorType(file);
+    String name = FilenameUtils.getBaseName(emulator);
+    String gameFileName = file.getName();
+    String gameDisplayName = name.replaceAll("-", " ").replaceAll("_", " ");
+    return importGame(emulator, name, gameFileName, gameDisplayName);
+  }
+
   /**
    * Creates a new entry in the PinUP Popper database.
    * Returns the id of the new entry.
    *
-   * @param vpxFile the VPX file to create the game info for
    * @return the generated game id.
    */
-  public int importVPXFile(@NonNull File vpxFile) {
-    String name = FilenameUtils.getBaseName(vpxFile.getName());
+  public int importGame(@NonNull String emulator, @NonNull String gameName, @NonNull String gameFileName, @NonNull String gameDisplayName) {
     Connection connect = this.connect();
+    int emulatorId = getEmulatorId(emulator);
     try {
       PreparedStatement preparedStatement = connect.prepareStatement("INSERT INTO Games (EMUID, GameName, GameFileName, GameDisplay, Visible) VALUES (?,?,?,?,?)", Statement.RETURN_GENERATED_KEYS);
-      preparedStatement.setInt(1, 1);
-      preparedStatement.setString(2, name);
-      preparedStatement.setString(3, vpxFile.getName());
-      preparedStatement.setString(4, name);
+      preparedStatement.setInt(1, emulatorId);
+      preparedStatement.setString(2, gameName);
+      preparedStatement.setString(3, gameFileName);
+      preparedStatement.setString(4, gameDisplayName);
       preparedStatement.setInt(5, 1);
 //      preparedStatement.setTimestamp(6, new java.sql.Timestamp(System.currentTimeMillis()));
       int affectedRows = preparedStatement.executeUpdate();
       preparedStatement.close();
 
-      LOG.info("Added game entry for '" + vpxFile.getAbsolutePath() + "'");
+      LOG.info("Added game entry for '" + gameFileName + "'");
       try (ResultSet keys = preparedStatement.getGeneratedKeys()) {
         if (keys.next()) {
           return keys.getInt(1);
@@ -369,7 +377,7 @@ public class PinUPConnector implements InitializingBean {
       preparedStatement.executeUpdate();
       preparedStatement.close();
 
-      LOG.info("Added play list entry for " + playlistId);
+      LOG.info("Added game " + gameId + " to playlist " + playlistId);
     } catch (SQLException e) {
       LOG.error("Failed to update playlist details: " + e.getMessage(), e);
     } finally {
@@ -694,5 +702,15 @@ public class PinUPConnector implements InitializingBean {
     } catch (SQLException e) {
       LOG.error("Failed to read game info: " + e.getMessage(), e);
     }
+  }
+
+  private int getEmulatorId(@NonNull String name) {
+    Set<Map.Entry<Integer, Emulator>> entries = this.emulators.entrySet();
+    for (Map.Entry<Integer, Emulator> entry : entries) {
+      if (entry.getValue().getName().equals(name)) {
+        return entry.getKey();
+      }
+    }
+    throw new UnsupportedOperationException("Failed to determine emulator id for '" + name + "'");
   }
 }

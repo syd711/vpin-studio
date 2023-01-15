@@ -82,6 +82,14 @@ public class GameService {
         success = false;
       }
     }
+
+    GameDetails byPupId = gameDetailsRepository.findByPupId(game.getId());
+    if(byPupId != null) {
+      gameDetailsRepository.delete(byPupId);
+    }
+
+    highscoreService.deleteScores(game.getId());
+
     return success;
   }
 

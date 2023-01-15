@@ -7,4 +7,6 @@ import org.springframework.stereotype.Repository;
 public interface GameDetailsRepository extends JpaRepository<GameDetails, Long> {
 
   GameDetails findByPupId(int pupId);
+
+  void deleteByPupId(int pupId);
 }

@@ -51,8 +51,6 @@
                       <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                       <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                     </rowConstraints>
                      <children>
                         <HBox alignment="CENTER_LEFT" GridPane.columnIndex="1" GridPane.rowIndex="2">
@@ -101,7 +99,7 @@
                               <Font size="14.0" />
                            </font>
                         </CheckBox>
-                        <Label layoutX="10.0" layoutY="15.0" text="Delete VPX file:">
+                        <Label layoutX="10.0" layoutY="15.0" text="Delete game file:">
                            <font>
                               <Font size="14.0" />
                            </font>
@@ -111,13 +109,34 @@
                               <Font size="14.0" />
                            </font>
                         </CheckBox>
-                        <CheckBox fx:id="confirmationCheckbox" mnemonicParsing="false" text="Yes, I know what I'm doing." GridPane.rowIndex="4">
-                           <font>
-                              <Font size="14.0" />
-                           </font>
-                        </CheckBox>
                      </children>
                   </GridPane>
+                  <Label styleClass="preference-description" text="The table will be removed from the games manager and all playlists. ">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                     <VBox.margin>
+                        <Insets top="24.0" />
+                     </VBox.margin>
+                  </Label>
+                  <Label layoutX="10.0" layoutY="147.0" styleClass="preference-description" text="The version history and all metadata for this table will be deleted.">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                  </Label>
+                  <Label layoutX="10.0" layoutY="132.0" styleClass="preference-description" text="Existing media (PUP pack, audio files...) will be kept.">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                  </Label>
+                  <CheckBox fx:id="confirmationCheckbox" mnemonicParsing="false" text="Yes, I know what I'm doing.">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                     <VBox.margin>
+                        <Insets top="12.0" />
+                     </VBox.margin>
+                  </CheckBox>
                </children>
                <BorderPane.margin>
                   <Insets top="12.0" />

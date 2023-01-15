@@ -42,12 +42,12 @@ public class TableImportProgressModel extends ProgressModel {
   public String processNext(ProgressResultModel progressResultModel) {
     try {
       File next = iterator.next();
-      VpaManifest vpaManifest = Studio.client.uploadVpa(next, percent -> {
+      String vpaFileName = Studio.client.uploadVpa(next, percent -> {
         double total = percentage + percent;
         progressResultModel.setProgress(total / this.vpaFiles.size());
       });
 
-      descriptor.setManifest(vpaManifest);
+      descriptor.setVpaFileName(vpaFileName);
       Studio.client.importVpa(descriptor);
 
       progressResultModel.addProcessed();

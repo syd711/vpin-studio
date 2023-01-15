@@ -38,7 +38,7 @@ public class PinUPConnectorTest extends VPinServerTest {
   @Test
   public void testGameAdding() {
     File file = new File("src/test/resources/Aces High (1965).vpx");
-    int l = connector.importVPXFile(file);
+    int l = connector.importGame(file);
     if (l > 0) {
       assertTrue(connector.deleteGame(l));
     }
