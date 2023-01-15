@@ -160,16 +160,6 @@
                </children>
             </VBox>
          </center>
-         <top>
-            <Label fx:id="titleLabel" text="title" textFill="WHITE" BorderPane.alignment="TOP_LEFT">
-               <font>
-                  <Font size="18.0" />
-               </font>
-               <BorderPane.margin>
-                  <Insets bottom="12.0" />
-               </BorderPane.margin>
-            </Label>
-         </top>
       </BorderPane>
    </center>
 </BorderPane>

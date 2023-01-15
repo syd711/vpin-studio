@@ -1,6 +1,7 @@
 package de.mephisto.vpin.server.vpa;
 
 import de.mephisto.vpin.restclient.ExportDescriptor;
+import de.mephisto.vpin.restclient.ImportDescriptor;
 import de.mephisto.vpin.restclient.VpaManifest;
 import de.mephisto.vpin.server.system.SystemService;
 import de.mephisto.vpin.server.util.UploadUtil;
@@ -26,8 +27,13 @@ public class VpaResource {
   private SystemService systemService;
 
   @PostMapping("/export")
-  public Boolean export(@RequestBody ExportDescriptor exportDescriptor) {
-    return vpaService.export(exportDescriptor);
+  public Boolean exportVpa(@RequestBody ExportDescriptor descriptor) {
+    return vpaService.exportVpa(descriptor);
+  }
+
+  @PostMapping("/import")
+  public Boolean importVpa(@RequestBody ImportDescriptor descriptor) {
+    return vpaService.importVpa(descriptor);
   }
 
   @PostMapping("/upload")

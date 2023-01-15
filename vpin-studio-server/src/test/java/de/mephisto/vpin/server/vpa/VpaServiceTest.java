@@ -35,7 +35,7 @@ public class VpaServiceTest extends VPinServerTest {
   private void test(String name) {
     Game game = gameService.getGameByFilename(name);
     File zipFile = new File("E:\\temp\\" + game.getGameDisplayName().replaceAll(" ", "-") + ".vpa");
-    vpaService.export(game, exportDescriptor, zipFile);
+    vpaService.exportVpa(game, exportDescriptor, zipFile);
     System.out.println("Written " + zipFile.getAbsolutePath());
     assertTrue(zipFile.exists());
   }

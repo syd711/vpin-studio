@@ -33,9 +33,6 @@ public class TableImportController implements Initializable, DialogController {
   private static File lastFolderSelection;
 
   @FXML
-  private Label titleLabel;
-
-  @FXML
   private Button importBtn;
 
   @FXML
@@ -112,8 +109,6 @@ public class TableImportController implements Initializable, DialogController {
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
     this.result = false;
-    this.titleLabel.setText("VPA Table Import");
-
     this.importBtn.setDisable(true);
     this.fileNameField.textProperty().addListener((observableValue, s, t1) -> importBtn.setDisable(StringUtils.isEmpty(t1)));
 
