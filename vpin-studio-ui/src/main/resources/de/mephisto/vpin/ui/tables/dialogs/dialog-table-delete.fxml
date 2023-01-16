@@ -50,6 +50,11 @@
                       <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                       <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                     </rowConstraints>
                      <children>
                         <HBox alignment="CENTER_LEFT" GridPane.columnIndex="1" GridPane.rowIndex="2">
@@ -69,12 +74,12 @@
                               <Tooltip text="Every table will be added to the first playlist that is found." />
                            </tooltip>
                         </Label>
-                        <Label text="Delete directb2s/POV file:" GridPane.rowIndex="1">
+                        <Label text="Delete directb2s File:" GridPane.rowIndex="1">
                            <font>
                               <Font size="14.0" />
                            </font>
                         </Label>
-                        <Label layoutX="10.0" layoutY="15.0" text="Delete game from PinUP Popper:" GridPane.rowIndex="2">
+                        <Label layoutX="10.0" layoutY="15.0" text="Delete from PinUP Popper:" GridPane.rowIndex="2">
                            <font>
                               <Font size="14.0" />
                            </font>
@@ -84,12 +89,62 @@
                               <Font size="14.0" />
                            </font>
                         </CheckBox>
-                        <Label layoutX="10.0" layoutY="15.0" text="Delete game file:">
+                        <Label layoutX="10.0" layoutY="15.0" text="Delete Table File (includes POV): ">
                            <font>
                               <Font size="14.0" />
                            </font>
                         </Label>
                         <CheckBox fx:id="directb2sCheckbox" mnemonicParsing="false" selected="true" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </CheckBox>
+                        <Label layoutX="10.0" layoutY="45.0" text="Delete PUP Pack:" GridPane.rowIndex="3">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Label>
+                        <CheckBox fx:id="pupPackCheckbox" mnemonicParsing="false" GridPane.columnIndex="1" GridPane.rowIndex="3">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </CheckBox>
+                        <Label layoutX="10.0" layoutY="106.0" text="Delete Flex/Ultra DMD Files:" GridPane.rowIndex="4">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Label>
+                        <Label layoutX="10.0" layoutY="137.0" text="Delete Highscore Files:" GridPane.rowIndex="5">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Label>
+                        <Label layoutX="10.0" layoutY="168.0" text="Delete Music Files:" GridPane.rowIndex="6">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Label>
+                        <CheckBox fx:id="dmdCheckbox" layoutX="233.0" layoutY="106.0" mnemonicParsing="false" GridPane.columnIndex="1" GridPane.rowIndex="4">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </CheckBox>
+                        <CheckBox fx:id="highscoreCheckbox" layoutX="233.0" layoutY="137.0" mnemonicParsing="false" GridPane.columnIndex="1" GridPane.rowIndex="5">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </CheckBox>
+                        <CheckBox fx:id="musicCheckbox" layoutX="233.0" layoutY="168.0" mnemonicParsing="false" GridPane.columnIndex="1" GridPane.rowIndex="6">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </CheckBox>
+                        <Label layoutX="10.0" layoutY="198.0" text="Delete altsound Files:" GridPane.rowIndex="7">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Label>
+                        <CheckBox fx:id="altSoundCheckbox" layoutX="233.0" layoutY="198.0" mnemonicParsing="false" GridPane.columnIndex="1" GridPane.rowIndex="7">
                            <font>
                               <Font size="14.0" />
                            </font>
@@ -105,11 +160,6 @@
                      </VBox.margin>
                   </Label>
                   <Label layoutX="10.0" layoutY="147.0" styleClass="preference-description" text="The highscore history and all metadata for this table will be deleted.">
-                     <font>
-                        <Font size="14.0" />
-                     </font>
-                  </Label>
-                  <Label layoutX="10.0" layoutY="132.0" styleClass="preference-description" text="Existing media (PUP pack, audio files...) will be kept.">
                      <font>
                         <Font size="14.0" />
                      </font>

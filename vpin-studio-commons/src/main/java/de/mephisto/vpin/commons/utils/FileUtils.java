@@ -36,4 +36,16 @@ public class FileUtils {
     File path = new File("./" + name);
     Files.write( path.toPath(), content.getBytes());
   }
+
+  public static boolean deleteFolder(File folder) {
+    if(!folder.exists()) {
+      return true;
+    }
+    try {
+      org.apache.commons.io.FileUtils.deleteDirectory(folder);
+    } catch (IOException e) {
+      return false;
+    }
+    return true;
+  }
 }

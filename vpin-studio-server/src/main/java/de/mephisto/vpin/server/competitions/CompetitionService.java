@@ -160,4 +160,8 @@ public class CompetitionService implements InitializingBean {
   public void afterPropertiesSet() throws Exception {
     scheduler.scheduleAtFixedRate(new CompetitionCheckRunnable(this), 1000 * 60 * 60);
   }
+
+  public List<Competition> findCompetitionForGame(int id) {
+    return competitionsRepository.findByGameId(id);
+  }
 }

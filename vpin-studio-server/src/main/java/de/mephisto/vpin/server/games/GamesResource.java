@@ -1,5 +1,6 @@
 package de.mephisto.vpin.server.games;
 
+import de.mephisto.vpin.restclient.DeleteDescriptor;
 import de.mephisto.vpin.server.competitions.ScoreSummary;
 import de.mephisto.vpin.server.highscores.HighscoreMetadata;
 import de.mephisto.vpin.server.highscores.ScoreList;
@@ -50,7 +51,6 @@ public class GamesResource {
     return gameService.getGameId();
   }
 
-
   @GetMapping("/recent/{count}")
   public ScoreSummary getRecentHighscores(@PathVariable("count") int count) {
     return gameService.getRecentHighscores(count);
@@ -91,12 +91,9 @@ public class GamesResource {
     return gameService.scanScore(pupId);
   }
 
-  @DeleteMapping("/{id}/{vpxDelete}/{directb2sDelete}/{popperDelete}")
-  public boolean delete(@PathVariable("id") int id,
-                        @PathVariable("vpxDelete") boolean vpxDelete,
-                        @PathVariable("vpxDelete") boolean directb2sDelete,
-                        @PathVariable("vpxDelete") boolean popperDelete) {
-    return gameService.deleteGame(id, vpxDelete, directb2sDelete, popperDelete);
+  @PostMapping("/delete")
+  public boolean delete(@RequestBody DeleteDescriptor descriptor) {
+    return gameService.deleteGame(descriptor);
   }
 
   @PostMapping("/save")

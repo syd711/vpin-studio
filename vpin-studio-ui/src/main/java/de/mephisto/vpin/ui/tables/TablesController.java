@@ -259,6 +259,12 @@ public class TablesController implements Initializable, StudioFXController {
   private void deleteSelection() {
     GameRepresentation game = tableView.getSelectionModel().getSelectedItem();
     if (game != null) {
+      if(Studio.client.isGameReferencedByCompetitions(game.getId())) {
+        WidgetFactory.showAlert(Studio.stage, "The table '" + game.getGameDisplayName()
+            + "' is used by at least one competition.", "Delete all competitions for this table first.");
+        return;
+      }
+
       tableView.getSelectionModel().clearSelection();
       boolean b = Dialogs.openTableDeleteDialog(game);
       if (b) {
@@ -545,6 +551,7 @@ public class TablesController implements Initializable, StudioFXController {
         validateBtn.setDisable(disable);
         deleteBtn.setDisable(disable);
         inspectBtn.setDisable(disable);
+        exportBtn.setDisable(disable);
         uploadDirectB2SItem.setDisable(disable);
 
         if (c.getList().isEmpty()) {

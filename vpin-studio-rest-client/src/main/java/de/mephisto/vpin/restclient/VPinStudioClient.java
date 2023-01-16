@@ -5,6 +5,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.*;
+import org.springframework.lang.NonNull;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
@@ -213,21 +214,6 @@ public class VPinStudioClient implements ObservedPropertyChangeListener, Overlay
     return null;
   }
 
-  public List<String> getCompetitionBadges() {
-    return Arrays.asList(restClient.get(API + "system/badges", String[].class));
-  }
-
-  public ByteArrayInputStream getCompetitionBadge(String name) {
-    if (!imageCache.containsKey(name)) {
-      String encodedName = URLEncoder.encode(name, StandardCharsets.UTF_8);
-      byte[] bytes = restClient.readBinary(API + "system/badge/" + encodedName);
-      imageCache.put(name, bytes);
-    }
-
-    byte[] imageBytes = imageCache.get(name);
-    return new ByteArrayInputStream(imageBytes);
-  }
-
   /*********************************************************************************************************************
    * Assets / Popper
    ********************************************************************************************************************/
@@ -340,6 +326,11 @@ public class VPinStudioClient implements ObservedPropertyChangeListener, Overlay
     }
   }
 
+  public boolean isGameReferencedByCompetitions(int gameId) {
+    CompetitionRepresentation[] competitionRepresentations = restClient.get(API + "competitions/game/" + gameId, CompetitionRepresentation[].class);
+    return competitionRepresentations.length > 0;
+  }
+
   public void deleteCompetition(CompetitionRepresentation c) {
     try {
       restClient.delete(API + "competitions/" + c.getId());
@@ -377,12 +368,31 @@ public class VPinStudioClient implements ObservedPropertyChangeListener, Overlay
     return new ByteArrayInputStream(imageBytes);
   }
 
+
+  public List<String> getCompetitionBadges() {
+    return Arrays.asList(restClient.get(API + "system/badges", String[].class));
+  }
+
+  public ByteArrayInputStream getCompetitionBadge(String name) {
+    if (!imageCache.containsKey(name)) {
+      String encodedName = URLEncoder.encode(name, StandardCharsets.UTF_8);
+      byte[] bytes = restClient.readBinary(API + "system/badge/" + encodedName);
+      imageCache.put(name, bytes);
+    }
+
+    byte[] imageBytes = imageCache.get(name);
+    return new ByteArrayInputStream(imageBytes);
+  }
+
   /*********************************************************************************************************************
    * Games
    ********************************************************************************************************************/
-
-  public void deleteGame(int id, boolean vpxDelete, boolean directb2sDelete, boolean popperDelete) {
-    restClient.delete(API + "games/" + id + "/" + vpxDelete + "/" + directb2sDelete + "/" + popperDelete);
+  public void deleteGame(@NonNull DeleteDescriptor descriptor) {
+    try {
+      restClient.post(API + "games/delete", descriptor, Boolean.class);
+    } catch (Exception e) {
+      LOG.error("Failed to delete game " + descriptor.getGameId() + ": " + e.getMessage(), e);
+    }
   }
 
   public GameRepresentation getGame(int id) {

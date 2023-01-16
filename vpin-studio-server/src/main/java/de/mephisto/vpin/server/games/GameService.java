@@ -1,6 +1,7 @@
 package de.mephisto.vpin.server.games;
 
 import de.mephisto.vpin.commons.utils.FileUtils;
+import de.mephisto.vpin.restclient.DeleteDescriptor;
 import de.mephisto.vpin.server.competitions.ScoreSummary;
 import de.mephisto.vpin.server.highscores.*;
 import de.mephisto.vpin.server.highscores.cards.CardService;
@@ -16,7 +17,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -56,19 +56,24 @@ public class GameService {
     return games;
   }
 
-  public boolean deleteGame(int id, boolean vpxDelete, boolean directb2sDelete, boolean popperDelete) {
-    Game game = this.getGame(id);
+  public boolean deleteGame(@NonNull DeleteDescriptor descriptor) {
+    Game game = this.getGame(descriptor.getGameId());
+    if(game == null) {
+      return false;
+    }
+
     boolean success = true;
-    if (vpxDelete) {
+    if (descriptor.isDeleteTable()) {
       if(!FileUtils.delete(game.getGameFile())) {
+        success = false;
+      }
+
+      if(game.getPOVFile() != null && !FileUtils.delete(game.getPOVFile())) {
         success = false;
       }
     }
 
-    if (directb2sDelete) {
-      if(game.getPOVFile() != null && !FileUtils.delete(game.getPOVFile())) {
-        success = false;
-      }
+    if (descriptor.isDeleteDirectB2s()) {
       if(!FileUtils.delete(game.getDirectB2SFile())) {
         success = false;
       }
@@ -77,8 +82,47 @@ public class GameService {
       }
     }
 
-    if (popperDelete) {
-      if(!pinUPConnector.deleteGame(id)) {
+    if (descriptor.isDeleteFromPopper()) {
+      if(!pinUPConnector.deleteGame(descriptor.getGameId())) {
+        success = false;
+      }
+    }
+
+
+    if (descriptor.isDeletePupPack()) {
+      if(!FileUtils.deleteFolder(game.getPupPackFolder())) {
+        success = false;
+      }
+    }
+
+    if(descriptor.isDeleteDMDs()) {
+      if(!FileUtils.deleteFolder(game.getFlexDMDFolder())) {
+        success = false;
+      }
+
+      if(!FileUtils.deleteFolder(game.getUltraDMDFolder())) {
+        success = false;
+      }
+    }
+
+    if(descriptor.isDeleteAltSound()) {
+      if(!FileUtils.deleteFolder(game.getAltSoundFolder())) {
+        success = false;
+      }
+    }
+
+    if(descriptor.isDeleteMusic()) {
+      if(!FileUtils.deleteFolder(game.getMusicFolder())) {
+        success = false;
+      }
+    }
+
+    if(descriptor.isDeleteHighscores()) {
+      if(!FileUtils.delete(game.getNvRamFile())) {
+        success = false;
+      }
+
+      if(game.getEMHighscoreFile() != null && !FileUtils.delete(game.getEMHighscoreFile())) {
         success = false;
       }
     }

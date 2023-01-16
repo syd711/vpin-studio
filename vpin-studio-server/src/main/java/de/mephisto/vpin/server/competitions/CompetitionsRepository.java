@@ -16,4 +16,6 @@ public interface CompetitionsRepository extends JpaRepository<Competition, Long>
   List<Competition> findByWinnerInitialsIsNullAndEndDateLessThanEqualOrderByEndDate(Date now);
 
   List<Competition> findByWinnerInitials(String initials);
+
+  List<Competition> findByGameId(int id);
 }
