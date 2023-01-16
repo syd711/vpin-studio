@@ -58,77 +58,77 @@ public class GameService {
 
   public boolean deleteGame(@NonNull DeleteDescriptor descriptor) {
     Game game = this.getGame(descriptor.getGameId());
-    if(game == null) {
+    if (game == null) {
       return false;
     }
 
     boolean success = true;
     if (descriptor.isDeleteTable()) {
-      if(!FileUtils.delete(game.getGameFile())) {
+      if (!FileUtils.delete(game.getGameFile())) {
         success = false;
       }
 
-      if(game.getPOVFile() != null && !FileUtils.delete(game.getPOVFile())) {
+      if (game.getPOVFile() != null && !FileUtils.delete(game.getPOVFile())) {
         success = false;
       }
     }
 
     if (descriptor.isDeleteDirectB2s()) {
-      if(!FileUtils.delete(game.getDirectB2SFile())) {
+      if (!FileUtils.delete(game.getDirectB2SFile())) {
         success = false;
       }
-      if(!FileUtils.delete(game.getDirectB2SMediaFile())) {
+      if (!FileUtils.delete(game.getDirectB2SMediaFile())) {
         success = false;
       }
     }
 
     if (descriptor.isDeleteFromPopper()) {
-      if(!pinUPConnector.deleteGame(descriptor.getGameId())) {
+      if (!pinUPConnector.deleteGame(descriptor.getGameId())) {
         success = false;
       }
     }
 
 
     if (descriptor.isDeletePupPack()) {
-      if(!FileUtils.deleteFolder(game.getPupPackFolder())) {
+      if (game.getPupPackFolder() != null && !FileUtils.deleteFolder(game.getPupPackFolder())) {
         success = false;
       }
     }
 
-    if(descriptor.isDeleteDMDs()) {
-      if(!FileUtils.deleteFolder(game.getFlexDMDFolder())) {
+    if (descriptor.isDeleteDMDs()) {
+      if (!FileUtils.deleteFolder(game.getFlexDMDFolder())) {
         success = false;
       }
 
-      if(!FileUtils.deleteFolder(game.getUltraDMDFolder())) {
-        success = false;
-      }
-    }
-
-    if(descriptor.isDeleteAltSound()) {
-      if(!FileUtils.deleteFolder(game.getAltSoundFolder())) {
+      if (!FileUtils.deleteFolder(game.getUltraDMDFolder())) {
         success = false;
       }
     }
 
-    if(descriptor.isDeleteMusic()) {
-      if(!FileUtils.deleteFolder(game.getMusicFolder())) {
+    if (descriptor.isDeleteAltSound()) {
+      if (game.getAltSoundFolder() != null && !FileUtils.deleteFolder(game.getAltSoundFolder())) {
         success = false;
       }
     }
 
-    if(descriptor.isDeleteHighscores()) {
-      if(!FileUtils.delete(game.getNvRamFile())) {
+    if (descriptor.isDeleteMusic()) {
+      if (game.getMusicFolder() != null && !FileUtils.deleteFolder(game.getMusicFolder())) {
+        success = false;
+      }
+    }
+
+    if (descriptor.isDeleteHighscores()) {
+      if (!FileUtils.delete(game.getNvRamFile())) {
         success = false;
       }
 
-      if(game.getEMHighscoreFile() != null && !FileUtils.delete(game.getEMHighscoreFile())) {
+      if (game.getEMHighscoreFile() != null && !FileUtils.delete(game.getEMHighscoreFile())) {
         success = false;
       }
     }
 
     GameDetails byPupId = gameDetailsRepository.findByPupId(game.getId());
-    if(byPupId != null) {
+    if (byPupId != null) {
       gameDetailsRepository.delete(byPupId);
     }
 
@@ -181,7 +181,7 @@ public class GameService {
         scores.add(version);
       }
 
-      if(scores.size() == count) {
+      if (scores.size() == count) {
         return summary;
       }
     }
@@ -216,7 +216,6 @@ public class GameService {
    * Returns true if game details are available
    *
    * @param gameId the game to scan
-   * @return
    */
   @Nullable
   public Game scanGame(int gameId) {
@@ -235,9 +234,13 @@ public class GameService {
     return null;
   }
 
+  @Nullable
   public HighscoreMetadata scanScore(int gameId) {
     Game game = getGame(gameId);
-    return highscoreService.scanScore(game);
+    if(game != null) {
+      return highscoreService.scanScore(game);
+    }
+    return null;
   }
 
   @SuppressWarnings("unused")
@@ -325,13 +328,13 @@ public class GameService {
     gameDetailsRepository.saveAndFlush(gameDetails);
 
     Game original = getGame(game.getId());
-    if (original.getVolume() != game.getVolume()) {
+    if (original != null && original.getVolume() != game.getVolume()) {
       pinUPConnector.updateVolume(game, game.getVolume());
     }
 
     LOG.info("Saved " + game);
     Game updated = getGame(game.getId());
-    if(romChanged) {
+    if (romChanged) {
       highscoreService.updateHighscore(updated);
       cardService.generateCard(updated, false);
     }

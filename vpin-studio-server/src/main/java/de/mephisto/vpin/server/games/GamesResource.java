@@ -16,7 +16,6 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.io.File;
 import java.util.List;
-import java.util.Map;
 
 import static de.mephisto.vpin.server.VPinStudioServer.API_SEGMENT;
 import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
