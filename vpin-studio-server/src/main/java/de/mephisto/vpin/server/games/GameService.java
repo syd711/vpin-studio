@@ -136,6 +136,10 @@ public class GameService {
       if (game != null) {
         scores.add(version);
       }
+
+      if(scores.size() == count) {
+        return summary;
+      }
     }
 
     if (scores.size() < count) {
@@ -146,6 +150,8 @@ public class GameService {
         //check if the actual game still exists
         if (game != null) {
           List<Score> collect = scores.stream().filter(s -> s.getGameId() == gameId).collect(Collectors.toList());
+
+          //only add an current score if no version has been found for this game
           if (collect.isEmpty()) {
             List<Score> versionScores = highscoreService.parseScores(highscore);
             if (!versionScores.isEmpty()) {

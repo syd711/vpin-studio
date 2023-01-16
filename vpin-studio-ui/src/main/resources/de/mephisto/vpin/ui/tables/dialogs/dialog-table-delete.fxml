@@ -12,7 +12,6 @@
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
-<?import org.kordamp.ikonli.javafx.FontIcon?>
 
 <BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" styleClass="base-component" stylesheets="@../../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.tables.dialogs.TableDeleteController">
    <top>
@@ -60,20 +59,6 @@
                                     <Font size="14.0" />
                                  </font>
                               </CheckBox>
-                              <Label textFill="WHITE">
-                                 <font>
-                                    <Font size="14.0" />
-                                 </font>
-                                 <tooltip>
-                                    <Tooltip text="The table will be removed from the games manager and all playlists. Existing media will be kept." />
-                                 </tooltip>
-                                 <HBox.margin>
-                                    <Insets left="12.0" />
-                                 </HBox.margin>
-                                 <graphic>
-                                    <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
-                                 </graphic>
-                              </Label>
                            </children>
                         </HBox>
                         <Label layoutX="253.0" layoutY="16.0" textFill="WHITE">
@@ -119,7 +104,7 @@
                         <Insets top="24.0" />
                      </VBox.margin>
                   </Label>
-                  <Label layoutX="10.0" layoutY="147.0" styleClass="preference-description" text="The version history and all metadata for this table will be deleted.">
+                  <Label layoutX="10.0" layoutY="147.0" styleClass="preference-description" text="The highscore history and all metadata for this table will be deleted.">
                      <font>
                         <Font size="14.0" />
                      </font>

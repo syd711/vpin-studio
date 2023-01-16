@@ -389,7 +389,7 @@ public class VPinStudioClient implements ObservedPropertyChangeListener, Overlay
     try {
       return restClient.get(API + "games/" + id, GameRepresentation.class);
     } catch (Exception e) {
-      LOG.error("Failed to read game " + id + ": " + e.getMessage(), e);
+      LOG.error("Failed to read game " + id + ": " + e.getMessage());
     }
     return null;
   }
