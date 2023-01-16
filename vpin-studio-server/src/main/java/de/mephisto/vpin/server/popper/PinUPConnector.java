@@ -713,4 +713,48 @@ public class PinUPConnector implements InitializingBean {
     }
     throw new UnsupportedOperationException("Failed to determine emulator id for '" + name + "'");
   }
+
+  public void importManifest(Game game, VpaManifest manifest) {
+    int id = game.getId();
+    importManifestValue(id, "GameName", manifest.getGameName());
+    importManifestValue(id, "GameDisplay", manifest.getGameDisplayName());
+    importManifestValue(id, "GameFileName", manifest.getGameFileName());
+    importManifestValue(id, "GameTheme", manifest.getGameTheme());
+    importManifestValue(id, "Notes", manifest.getNotes());
+    importManifestValue(id, "GameYear", manifest.getGameYear());
+    importManifestValue(id, "ROM", manifest.getRomName());
+    importManifestValue(id, "Manufact", manifest.getManufacturer());
+    importManifestValue(id, "NumPlayers", manifest.getNumberOfPlayers());
+    importManifestValue(id, "TAGS", manifest.getTags());
+    importManifestValue(id, "Category", manifest.getCategory());
+    importManifestValue(id, "Author", manifest.getAuthor());
+    importManifestValue(id, "sysVolume", manifest.getVolume());
+    importManifestValue(id, "LaunchCustomVar", manifest.getLaunchCustomVar());
+    importManifestValue(id, "GKeepDisplays", manifest.getKeepDisplays());
+    importManifestValue(id, "GameRating", manifest.getGameRating());
+    importManifestValue(id, "DOFStuff", manifest.getDof());
+    importManifestValue(id, "IPDBNum", manifest.getIPDBNum());
+    importManifestValue(id, "AltRunMode", manifest.getAltRunMode());
+    importManifestValue(id, "WebLinkURL", manifest.getUrl());
+    importManifestValue(id, "DesignedBy", manifest.getDesignedBy());
+  }
+
+  private void importManifestValue(int gameId, String field, Object value) {
+    if(value == null) {
+      return;
+    }
+
+    Connection connect = this.connect();
+    try {
+      PreparedStatement preparedStatement = connect.prepareStatement("UPDATE Games SET '" + field + "'=? WHERE GameID=?");
+      preparedStatement.setObject(1, value);
+      preparedStatement.setInt(2, gameId);
+      preparedStatement.executeUpdate();
+      preparedStatement.close();
+    } catch (Exception e) {
+      LOG.error("Failed to update game manifest value'" + field + "' (" + value + "):" + e.getMessage(), e);
+    } finally {
+      this.disconnect(connect);
+    }
+  }
 }

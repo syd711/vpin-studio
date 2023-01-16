@@ -91,6 +91,16 @@
                               <Font size="14.0" />
                            </font>
                         </Label>
+                        <Label layoutX="10.0" layoutY="137.0" text="Game File Name:" GridPane.rowIndex="2">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Label>
+                        <Label layoutX="10.0" layoutY="106.0" text="ROM Name:" GridPane.rowIndex="3">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Label>
                         <Label layoutX="10.0" layoutY="15.0" text="ROM URL" GridPane.rowIndex="4">
                            <font>
                               <Font size="14.0" />
@@ -107,6 +117,11 @@
                            </font>
                         </Label>
                         <Label layoutX="10.0" layoutY="106.0" text="Manufacturer:" GridPane.rowIndex="6">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Label>
+                        <Label layoutX="10.0" layoutY="289.0" text="Author:" GridPane.rowIndex="7">
                            <font>
                               <Font size="14.0" />
                            </font>
@@ -136,11 +151,7 @@
                               <Font size="14.0" />
                            </font>
                         </Label>
-                        <Label layoutX="10.0" layoutY="106.0" text="ROM Name:" GridPane.rowIndex="3">
-                           <font>
-                              <Font size="14.0" />
-                           </font>
-                        </Label>
+
                         <Label layoutX="10.0" layoutY="320.0" text="Keep Displays:" GridPane.rowIndex="13">
                            <font>
                               <Font size="14.0" />
@@ -191,21 +202,52 @@
                               <Font size="14.0" />
                            </font>
                         </TextField>
+                        <TextField fx:id="gameFileName" disable="true" editable="false" layoutX="168.0" layoutY="132.0" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </TextField>
                         <TextField fx:id="romName" layoutX="173.0" layoutY="41.0" GridPane.columnIndex="1" GridPane.rowIndex="3">
                            <font>
                               <Font size="14.0" />
                            </font>
                         </TextField>
+                        <TextField fx:id="romUrl" layoutX="173.0" layoutY="72.0" GridPane.columnIndex="1" GridPane.rowIndex="4">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </TextField>
+                        <HBox GridPane.columnIndex="1" GridPane.rowIndex="5">
+                           <children>
+                              <TextField fx:id="gameYear" prefHeight="30.0" prefWidth="125.0">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </TextField>
+                           </children>
+                        </HBox>
                         <TextField fx:id="manufacturer" layoutX="173.0" layoutY="72.0" GridPane.columnIndex="1" GridPane.rowIndex="6">
                            <font>
                               <Font size="14.0" />
                            </font>
                         </TextField>
+                        <TextField fx:id="author" layoutX="173.0" layoutY="284.0" GridPane.columnIndex="1" GridPane.rowIndex="7">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </TextField>
+                        <Spinner fx:id="numberOfPlayers" layoutX="173.0" layoutY="286.0" GridPane.columnIndex="1" GridPane.rowIndex="8" />
                         <TextField fx:id="tags" layoutX="173.0" layoutY="163.0" GridPane.columnIndex="1" GridPane.rowIndex="9">
                            <font>
                               <Font size="14.0" />
                            </font>
                         </TextField>
+                        <TextField fx:id="category" layoutX="173.0" layoutY="224.0" GridPane.columnIndex="1" GridPane.rowIndex="10">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </TextField>
+                        <Spinner fx:id="volume" GridPane.columnIndex="1" GridPane.rowIndex="11" />
                         <TextField fx:id="launchCustomVar" layoutX="173.0" layoutY="224.0" GridPane.columnIndex="1" GridPane.rowIndex="12">
                            <font>
                               <Font size="14.0" />
@@ -216,6 +258,7 @@
                               <Font size="14.0" />
                            </font>
                         </TextField>
+                        <Spinner fx:id="gameRating" layoutX="173.0" layoutY="286.0" GridPane.columnIndex="1" GridPane.rowIndex="14" />
                         <TextField fx:id="dof" layoutX="173.0" layoutY="344.0" GridPane.columnIndex="1" GridPane.rowIndex="15">
                            <font>
                               <Font size="14.0" />
@@ -246,48 +289,9 @@
                               <Font size="14.0" />
                            </font>
                         </TextField>
-                        <Spinner fx:id="volume" GridPane.columnIndex="1" GridPane.rowIndex="11" />
-                        <Spinner fx:id="gameRating" layoutX="173.0" layoutY="286.0" GridPane.columnIndex="1" GridPane.rowIndex="14" />
-                        <TextField fx:id="category" layoutX="173.0" layoutY="224.0" GridPane.columnIndex="1" GridPane.rowIndex="10">
-                           <font>
-                              <Font size="14.0" />
-                           </font>
-                        </TextField>
-                        <Spinner fx:id="numberOfPlayers" layoutX="173.0" layoutY="286.0" GridPane.columnIndex="1" GridPane.rowIndex="8" />
-                        <TextField fx:id="romUrl" layoutX="173.0" layoutY="72.0" GridPane.columnIndex="1" GridPane.rowIndex="4">
-                           <font>
-                              <Font size="14.0" />
-                           </font>
-                        </TextField>
-                        <Label layoutX="10.0" layoutY="289.0" text="Author:" GridPane.rowIndex="7">
-                           <font>
-                              <Font size="14.0" />
-                           </font>
-                        </Label>
-                        <TextField fx:id="author" layoutX="173.0" layoutY="284.0" GridPane.columnIndex="1" GridPane.rowIndex="7">
-                           <font>
-                              <Font size="14.0" />
-                           </font>
-                        </TextField>
-                        <Label layoutX="10.0" layoutY="137.0" text="Game File Name:" GridPane.rowIndex="2">
-                           <font>
-                              <Font size="14.0" />
-                           </font>
-                        </Label>
-                        <TextField fx:id="gameFileName" disable="true" editable="false" layoutX="168.0" layoutY="132.0" GridPane.columnIndex="1" GridPane.rowIndex="2">
-                           <font>
-                              <Font size="14.0" />
-                           </font>
-                        </TextField>
-                        <HBox GridPane.columnIndex="1" GridPane.rowIndex="5">
-                           <children>
-                              <TextField fx:id="gameYear" prefHeight="30.0" prefWidth="125.0">
-                                 <font>
-                                    <Font size="14.0" />
-                                 </font>
-                              </TextField>
-                           </children>
-                        </HBox>
+
+
+
                      </children>
                   </GridPane>
                </children>

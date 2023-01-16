@@ -245,7 +245,7 @@ public class TableExportController implements Initializable, DialogController {
     url.setText(manifest.getUrl());
     url.textProperty().addListener((observable, oldValue, newValue) -> manifest.setUrl(newValue));
 
-    designedBy.setText(manifest.getUrl());
+    designedBy.setText(manifest.getDesignedBy());
     designedBy.textProperty().addListener((observable, oldValue, newValue) -> manifest.setDesignedBy(newValue));
 
     notes.setText(manifest.getNotes());

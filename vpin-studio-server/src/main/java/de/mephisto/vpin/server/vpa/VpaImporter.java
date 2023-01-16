@@ -59,6 +59,8 @@ public class VpaImporter {
         gameByFilename = connector.getGame(newGameId);
       }
 
+      connector.importManifest(gameByFilename, manifest);
+
       if (descriptor.getPlaylistId() != -1) {
         connector.addToPlaylist(gameByFilename.getId(), descriptor.getPlaylistId());
       }
