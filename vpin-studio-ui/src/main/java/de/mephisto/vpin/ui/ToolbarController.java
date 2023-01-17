@@ -10,6 +10,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
+import javafx.scene.control.MenuButton;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
@@ -29,6 +30,9 @@ public class ToolbarController implements Initializable {
 
   @FXML
   private Button updateBtn;
+
+  @FXML
+  private MenuButton jobBtn;
 
   private Node preferencesRoot;
 
