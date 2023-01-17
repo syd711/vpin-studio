@@ -20,6 +20,7 @@ vpin-studio-ui/target/
 
 # Log file
 *.log
+*.dmp
 
 # BlueJ files
 *.ctxt

@@ -5,6 +5,7 @@ import de.mephisto.vpin.restclient.ImportDescriptor;
 import de.mephisto.vpin.restclient.VpaManifest;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameService;
+import de.mephisto.vpin.server.highscores.Highscore;
 import de.mephisto.vpin.server.highscores.HighscoreService;
 import de.mephisto.vpin.server.highscores.HighscoreVersion;
 import de.mephisto.vpin.server.popper.PinUPConnector;
@@ -22,6 +23,9 @@ import java.util.List;
 public class VpaService {
   private final static Logger LOG = LoggerFactory.getLogger(VpaService.class);
 
+  public final static String DATA_HIGHSCORE_HISTORY = "highscores";
+  public final static String DATA_VREG_HIGHSCORE = "VRegHighscore";
+
   @Autowired
   private SystemService systemService;
 
@@ -36,7 +40,7 @@ public class VpaService {
 
   public boolean importVpa(@NonNull ImportDescriptor descriptor) {
     File vpaFile = new File(systemService.getVpaArchiveFolder(), descriptor.getVpaFileName());
-    VpaImporter importer = new VpaImporter(descriptor, vpaFile, pinUPConnector, systemService);
+    VpaImporter importer = new VpaImporter(descriptor, vpaFile, pinUPConnector, systemService, highscoreService);
     int gameId = importer.startImport();
     if(gameId != -1) {
       gameService.scanGame(gameId);
@@ -60,9 +64,8 @@ public class VpaService {
       new Thread(() -> {
         Thread.currentThread().setName("VPA Export Thread for " + game.getGameDisplayName());
         List<HighscoreVersion> versions = highscoreService.getAllHighscoreVersions(game.getId());
-        VpaExporter exporter = new VpaExporter(game, exportDescriptor, versions, target, (file, zipPath) -> {
-//        System.out.println(zipPath);
-        });
+        Highscore highscore = highscoreService.getOrCreateHighscore(game);
+        VpaExporter exporter = new VpaExporter(game, exportDescriptor, highscore, versions, target);
         exporter.startExport();
       }).start();
       return true;

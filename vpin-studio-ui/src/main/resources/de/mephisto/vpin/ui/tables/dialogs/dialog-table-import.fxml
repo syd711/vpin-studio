@@ -106,12 +106,12 @@
                               <Font size="14.0" />
                            </font>
                         </CheckBox>
-                        <Label layoutX="10.0" layoutY="76.0" text="Import Highscore Recordings:" GridPane.rowIndex="5">
+                        <Label layoutX="10.0" layoutY="76.0" text="Import Highscores:" GridPane.rowIndex="5">
                            <font>
                               <Font size="14.0" />
                            </font>
                         </Label>
-                        <CheckBox fx:id="highscoresCheckbox" layoutX="194.0" layoutY="76.0" mnemonicParsing="false" selected="true" GridPane.columnIndex="1" GridPane.rowIndex="5">
+                        <CheckBox fx:id="highscoresCheckbox" layoutX="194.0" layoutY="76.0" mnemonicParsing="false" GridPane.columnIndex="1" GridPane.rowIndex="5">
                            <font>
                               <Font size="14.0" />
                            </font>
@@ -129,6 +129,19 @@
                         </CheckBox>
                      </children>
                   </GridPane>
+                  <Label layoutX="10.0" layoutY="10.0" styleClass="preference-description" text="Importing highscores will overwrite existing ones!" textFill="WHITE">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                     <VBox.margin>
+                        <Insets top="6.0" />
+                     </VBox.margin>
+                  </Label>
+                  <Label layoutX="10.0" layoutY="242.0" styleClass="preference-description" text="Note that the import of VPReg.stg highscore entries is currently not supported." textFill="WHITE">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                  </Label>
                </children>
             </VBox>
          </center>

@@ -1,11 +1,10 @@
 package de.mephisto.vpin.ui.tables.dialogs;
 
 import de.mephisto.vpin.restclient.ImportDescriptor;
-import de.mephisto.vpin.restclient.VpaManifest;
-import de.mephisto.vpin.restclient.representations.GameRepresentation;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.util.ProgressModel;
 import de.mephisto.vpin.ui.util.ProgressResultModel;
+import javafx.application.Platform;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

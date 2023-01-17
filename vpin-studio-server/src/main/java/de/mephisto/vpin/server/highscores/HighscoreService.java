@@ -7,6 +7,7 @@ import de.mephisto.vpin.server.competitions.ScoreSummary;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.players.Player;
 import de.mephisto.vpin.server.system.SystemService;
+import de.mephisto.vpin.server.vpa.VpaExporter;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import org.apache.commons.lang3.StringUtils;
@@ -416,4 +417,15 @@ public class HighscoreService implements InitializingBean {
 //    new HighscoreWatcher(systemService.getVPRegFile().getParentFile(), systemService.getNvramFolder()).watch();
   }
 
+  public void importScoreEntry(Game game, VpaExporter.ScoreVersionEntry score) {
+    HighscoreVersion version = new HighscoreVersion();
+    version.setNewRaw(score.getNewRaw());
+    version.setOldRaw(score.getOldRaw());
+    version.setGameId(game.getId());
+    version.setChangedPosition(score.getChangedPosition());
+    version.setCreatedAt(score.getCreatedAt());
+    version.setDisplayName(game.getGameDisplayName());
+    HighscoreVersion saved = highscoreVersionRepository.saveAndFlush(version);
+    LOG.info("Imported " + saved);
+  }
 }

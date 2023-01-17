@@ -96,7 +96,11 @@ public class TableImportController implements Initializable, DialogController {
     stage.close();
 
     Platform.runLater(() -> {
-      TableImportProgressModel model = new TableImportProgressModel("Uploading and Importing Tables", descriptor, this.selection);
+      String title = "Importing " + this.selection.size() + " tables";
+      if(this.selection.size() == 1) {
+        title = "Importing '" + this.selection.get(0).getName() + "'";
+      }
+      TableImportProgressModel model = new TableImportProgressModel(title, descriptor, this.selection);
       Dialogs.createProgressDialog(model);
       tablesController.onReload();
     });

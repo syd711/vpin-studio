@@ -45,7 +45,7 @@ public class ScriptDownloadProgressModel extends ProgressModel {
   public String processNext(ProgressResultModel progressResultModel) {
     try {
       GameRepresentation next = iterator.next();
-      File tableScript = client.getTableScript(next.getId());
+      File tableScript = client.getTableScript(next);
       if(tableScript != null) {
         progressResultModel.addProcessed(tableScript);
       }

@@ -1,6 +1,7 @@
 package de.mephisto.vpin.ui.util;
 
 import javafx.scene.control.ProgressBar;
+import javafx.scene.control.ProgressIndicator;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,6 +19,10 @@ public class ProgressResultModel {
 
   public void setProgress(double progress) {
     this.progressBar.setProgress(progress);
+  }
+
+  public void setIndeterminate() {
+    this.progressBar.setProgress(ProgressIndicator.INDETERMINATE_PROGRESS);
   }
 
   public void addProcessed() {

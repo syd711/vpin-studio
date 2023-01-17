@@ -110,6 +110,6 @@ public class TableDeleteController implements Initializable, DialogController {
 
   public void setGame(GameRepresentation game) {
     this.game = game;
-    this.titleLabel.setText("Delete table '" + game.getGameDisplayName() + "'?");
+    this.titleLabel.setText(game.getGameDisplayName());
   }
 }

@@ -79,7 +79,7 @@ public class Dialogs {
   }
 
   public static boolean openTableDeleteDialog(GameRepresentation game) {
-    Stage stage = createStudioDialogStage(TableDeleteController.class, "dialog-table-delete.fxml", "Delete Table");
+    Stage stage = createStudioDialogStage(TableDeleteController.class, "dialog-table-delete.fxml", "Delete");
     TableDeleteController controller = (TableDeleteController) stage.getUserData();
     controller.setGame(game);
     stage.showAndWait();

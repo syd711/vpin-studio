@@ -352,6 +352,15 @@ public class Game {
     return new File(systemService.getB2SCroppedImageFolder(), targetName);
   }
 
+  @Nullable
+  @JsonIgnore
+  public File getVPRegFolder() {
+    if (!StringUtils.isEmpty(this.getRom())) {
+      return new File(systemService.getExtractedVPRegFolder(), this.getRom());
+    }
+    return null;
+  }
+
   @NonNull
   @JsonIgnore
   public File getNvRamFile() {

@@ -114,7 +114,7 @@
                               <Font size="14.0" />
                            </font>
                         </Label>
-                        <Label layoutX="10.0" layoutY="137.0" text="Delete Highscore Files:" GridPane.rowIndex="5">
+                        <Label layoutX="10.0" layoutY="137.0" text="Delete Highscores:" GridPane.rowIndex="5">
                            <font>
                               <Font size="14.0" />
                            </font>
@@ -151,20 +151,7 @@
                         </CheckBox>
                      </children>
                   </GridPane>
-                  <Label styleClass="preference-description" text="The table will be removed from the games manager and all playlists. ">
-                     <font>
-                        <Font size="14.0" />
-                     </font>
-                     <VBox.margin>
-                        <Insets top="24.0" />
-                     </VBox.margin>
-                  </Label>
-                  <Label layoutX="10.0" layoutY="147.0" styleClass="preference-description" text="The highscore history and all metadata for this table will be deleted.">
-                     <font>
-                        <Font size="14.0" />
-                     </font>
-                  </Label>
-                  <CheckBox fx:id="confirmationCheckbox" mnemonicParsing="false" text="Yes, I know what I'm doing.">
+                  <CheckBox fx:id="confirmationCheckbox" mnemonicParsing="false" text="Yes, I know what I'm doing!">
                      <font>
                         <Font size="14.0" />
                      </font>

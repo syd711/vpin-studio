@@ -6,9 +6,11 @@ import de.mephisto.vpin.commons.EmulatorTypes;
 import de.mephisto.vpin.restclient.ImportDescriptor;
 import de.mephisto.vpin.restclient.VpaManifest;
 import de.mephisto.vpin.server.games.Game;
+import de.mephisto.vpin.server.highscores.HighscoreService;
 import de.mephisto.vpin.server.popper.PinUPConnector;
 import de.mephisto.vpin.server.system.SystemService;
 import edu.umd.cs.findbugs.annotations.NonNull;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -17,6 +19,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
@@ -27,13 +30,16 @@ public class VpaImporter {
   private final File vpaFile;
   private final PinUPConnector connector;
   private final SystemService systemService;
+  private final HighscoreService highscoreService;
   private final ObjectMapper objectMapper;
 
-  public VpaImporter(@NonNull ImportDescriptor descriptor, @NonNull File file, @NonNull PinUPConnector connector, @NonNull SystemService systemService) {
+  public VpaImporter(@NonNull ImportDescriptor descriptor, @NonNull File file, @NonNull PinUPConnector connector,
+                     @NonNull SystemService systemService, @NonNull HighscoreService highscoreService) {
     this.descriptor = descriptor;
     this.vpaFile = file;
     this.connector = connector;
     this.systemService = systemService;
+    this.highscoreService = highscoreService;
 
     objectMapper = new ObjectMapper();
     objectMapper.enable(SerializationFeature.INDENT_OUTPUT);
@@ -51,6 +57,11 @@ public class VpaImporter {
       LOG.info("Finished unzipping of " + descriptor.getVpaFileName() + ", starting Popper import.");
 
       VpaManifest manifest = VpaUtil.readManifest(vpaFile);
+      if(StringUtils.isEmpty(manifest.getGameFileName())) {
+        LOG.error("The VPA manifest of " + vpaFile.getAbsolutePath() + " does not contain a game filename.");
+        return -1;
+      }
+
       File gameFile = getGameFile(manifest);
       Game gameByFilename = connector.getGameByFilename(manifest.getGameFileName());
       if (gameByFilename == null) {
@@ -66,9 +77,13 @@ public class VpaImporter {
       }
 
       boolean importHighscores = descriptor.isImportHighscores();
-      if (importHighscores && manifest.getAdditionalData().containsKey("highscores")) {
-        List<VpaExporter.ScoreEntry> scores = (List<VpaExporter.ScoreEntry>) manifest.getAdditionalData().get("highscores");
-        LOG.info("Importing " + scores.size() + " scores.");
+      if (importHighscores && manifest.getAdditionalData().containsKey(VpaService.DATA_HIGHSCORE_HISTORY)) {
+        String json = (String) manifest.getAdditionalData().get(VpaService.DATA_HIGHSCORE_HISTORY);
+        VpaExporter.ScoreVersionEntry[] scores = objectMapper.readValue(json, VpaExporter.ScoreVersionEntry[].class);
+        LOG.info("Importing " + scores.length + " scores.");
+        for (VpaExporter.ScoreVersionEntry score : scores) {
+          highscoreService.importScoreEntry(gameByFilename, score);
+        }
       }
 
       return gameByFilename.getId();

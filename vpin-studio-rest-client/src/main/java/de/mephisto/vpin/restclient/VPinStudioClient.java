@@ -136,12 +136,12 @@ public class VPinStudioClient implements ObservedPropertyChangeListener, Overlay
     return restClient.delete(API + "vpx/pov/" + gameId);
   }
 
-  public File getTableScript(int gameId) {
+  public File getTableScript(GameRepresentation game) {
     final RestTemplate restTemplate = new RestTemplate();
-    String src = restTemplate.getForObject(restClient.getBaseUrl() + API + "vpx/script/" + gameId, String.class);
+    String src = restTemplate.getForObject(restClient.getBaseUrl() + API + "vpx/script/" + game.getId(), String.class);
     if (!StringUtils.isEmpty(src)) {
       try {
-        File tmp = File.createTempFile("script-src-" + gameId, ".txt");
+        File tmp = File.createTempFile(game.getGameDisplayName() + "-script-src", ".txt");
 
         Path path = Paths.get(tmp.toURI());
         byte[] strToBytes = src.getBytes();

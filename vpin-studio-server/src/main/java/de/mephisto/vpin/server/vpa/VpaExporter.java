@@ -6,9 +6,11 @@ import com.thoughtworks.xstream.core.util.Base64Encoder;
 import de.mephisto.vpin.restclient.ExportDescriptor;
 import de.mephisto.vpin.restclient.PopperScreen;
 import de.mephisto.vpin.server.games.Game;
+import de.mephisto.vpin.server.highscores.Highscore;
 import de.mephisto.vpin.server.highscores.HighscoreVersion;
 import de.mephisto.vpin.server.popper.GameMediaItem;
 import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -28,17 +30,17 @@ public class VpaExporter {
 
   private final Game game;
   private final ExportDescriptor exportDescriptor;
+  private final Highscore highscore;
   private final List<HighscoreVersion> scoreHistory;
   private final File target;
-  private final VpaExportListener listener;
   private final ObjectMapper objectMapper;
 
-  public VpaExporter(@NonNull Game game, @NonNull ExportDescriptor exportDescriptor, @NonNull List<HighscoreVersion> scoreHistory, @NonNull File target, @NonNull VpaExportListener listener) {
+  public VpaExporter(@NonNull Game game, @NonNull ExportDescriptor exportDescriptor, @Nullable Highscore highscore, @NonNull List<HighscoreVersion> scoreHistory, @NonNull File target) {
     this.game = game;
     this.exportDescriptor = exportDescriptor;
+    this.highscore = highscore;
     this.scoreHistory = scoreHistory;
     this.target = target;
-    this.listener = listener;
     objectMapper = new ObjectMapper();
     objectMapper.enable(SerializationFeature.INDENT_OUTPUT);
   }
@@ -58,13 +60,28 @@ public class VpaExporter {
 
       //store highscore history
       if (exportDescriptor.isExportHighscores()) {
-        List<ScoreEntry> scores = scoreHistory.stream().map(ScoreEntry::new).collect(Collectors.toList());
-        exportDescriptor.getManifest().getAdditionalData().put("highscores", scores);
+        if (game.getEMHighscoreFile() != null && game.getEMHighscoreFile().exists()) {
+          zipFile(game.getEMHighscoreFile(), getGameFolderName() + "/User/" + game.getEMHighscoreFile().getName(), zipOut);
+        }
+
+        if (game.getNvRamFile().exists()) {
+          zipFile(game.getNvRamFile(), getGameFolderName() + "/VPinMAME/nvram/" + game.getNvRamFile().getName(), zipOut);
+        }
+
+        File vpReg = game.getVPRegFolder();
+        if(vpReg != null && vpReg.exists() && highscore != null) {
+          String scoresJson = objectMapper.writeValueAsString(highscore.getRaw());
+          exportDescriptor.getManifest().getAdditionalData().put(VpaService.DATA_VREG_HIGHSCORE, scoresJson);
+        }
+
+        List<ScoreVersionEntry> scores = scoreHistory.stream().map(ScoreVersionEntry::new).collect(Collectors.toList());
+        String scoresJson = objectMapper.writeValueAsString(scores);
+        exportDescriptor.getManifest().getAdditionalData().put(VpaService.DATA_HIGHSCORE_HISTORY, scoresJson);
       }
 
       zipManifest(zipOut);
 
-      if (game.getRomFile() != null && game.getRomFile().exists()) {
+      if (exportDescriptor.isExportRom() && game.getRomFile() != null && game.getRomFile().exists()) {
         zipFile(game.getRomFile(), getGameFolderName() + "/VPinMAME/roms/" + game.getRomFile().getName(), zipOut);
       }
 
@@ -87,15 +104,6 @@ public class VpaExporter {
 
       if (game.getFlexDMDFolder().exists()) {
         zipFile(game.getFlexDMDFolder(), getGameFolderName() + "/Tables/" + game.getFlexDMDFolder().getName(), zipOut);
-      }
-
-      // Highscores
-      if (game.getEMHighscoreFile() != null && game.getEMHighscoreFile().exists()) {
-        zipFile(game.getEMHighscoreFile(), getGameFolderName() + "/User/" + game.getEMHighscoreFile().getName(), zipOut);
-      }
-
-      if (game.getNvRamFile().exists()) {
-        zipFile(game.getNvRamFile(), getGameFolderName() + "/VPinMAME/nvram/" + game.getNvRamFile().getName(), zipOut);
       }
 
       // Music and sounds
@@ -192,7 +200,6 @@ public class VpaExporter {
         zipOut.putNextEntry(new ZipEntry(fileName + "/"));
         zipOut.closeEntry();
       }
-      this.listener.exported(fileToZip, fileName);
 
       File[] children = fileToZip.listFiles();
       if (children != null) {
@@ -239,13 +246,17 @@ public class VpaExporter {
     return "Visual Pinball X";
   }
 
-  static class ScoreEntry {
-    private final String oldRaw;
-    private final String newRaw;
-    private final int changedPosition;
-    private final Date createdAt;
+  public static class ScoreVersionEntry {
+    private String oldRaw;
+    private String newRaw;
+    private int changedPosition;
+    private Date createdAt;
 
-    private ScoreEntry(HighscoreVersion version) {
+    public ScoreVersionEntry() {
+
+    }
+
+    private ScoreVersionEntry(HighscoreVersion version) {
       this.oldRaw = version.getOldRaw();
       this.newRaw = version.getNewRaw();
       this.changedPosition = version.getChangedPosition();

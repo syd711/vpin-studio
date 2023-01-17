@@ -5,6 +5,7 @@ import de.mephisto.vpin.commons.utils.SystemCommandExecutor;
 import de.mephisto.vpin.restclient.RestClient;
 import de.mephisto.vpin.server.VPinStudioException;
 import de.mephisto.vpin.server.VPinStudioServer;
+import edu.umd.cs.findbugs.annotations.NonNull;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -34,6 +35,7 @@ public class SystemService implements InitializingBean {
   private final static String VPX_REG_KEY = "HKEY_CURRENT_USER\\SOFTWARE\\Visual Pinball\\VP10\\RecentDir";
   private final static String POPPER_REG_KEY = "HKEY_LOCAL_MACHINE\\SYSTEM\\ControlSet001\\Control\\Session Manager\\Environment";
   private final static String VPREG_STG = "VPReg.stg";
+  private final static String VPREG_FOLDER = "VPReg";
   public static String RESOURCES = "./resources/";
 
   private final static String PINUP_SYSTEM_INSTALLATION_DIR_INST_DIR = "pinupSystem.installationDir";
@@ -271,6 +273,7 @@ public class SystemService implements InitializingBean {
     return file;
   }
 
+  @NonNull
   public File getPinemhiCommandFile() {
     return new File(PINEMHI_FOLDER, PINEMHI_COMMAND);
   }
@@ -280,10 +283,12 @@ public class SystemService implements InitializingBean {
     return Toolkit.getDefaultToolkit().getScreenSize();
   }
 
+  @NonNull
   public File getVPRegFile() {
     return new File(this.getVisualPinballUserFolder(), VPREG_STG);
   }
 
+  @NonNull
   public File getVisualPinballUserFolder() {
     return new File(this.getVisualPinballInstallationFolder(), "User");
   }
@@ -297,12 +302,14 @@ public class SystemService implements InitializingBean {
     return new File(getMameFolder(), "nvram/");
   }
 
+  @NonNull
   public File getMameFolder() {
     return new File(getVisualPinballInstallationFolder(), "VPinMAME/");
   }
 
+  @NonNull
   public File getExtractedVPRegFolder() {
-    return new File(RESOURCES, "VPReg");
+    return new File(RESOURCES, VPREG_FOLDER);
   }
 
   public File[] getVPXTables() {
