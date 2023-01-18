@@ -291,8 +291,6 @@ public class HighscoreService implements InitializingBean {
    * @param game the game that should be updated
    */
   public HighscoreMetadata updateHighscore(@NonNull Game game) {
-    highscoreResolver.refresh();
-
     HighscoreMetadata metadata = highscoreResolver.readHighscore(game);
     String rawHighscore = metadata.getRaw();
     if (StringUtils.isEmpty(rawHighscore)) {
@@ -333,6 +331,16 @@ public class HighscoreService implements InitializingBean {
 
     Highscore existingScore = existingHighscore.get();
     if(StringUtils.isEmpty(existingHighscore.get().getRaw())) {
+      if(!StringUtils.isEmpty(metadata.getRaw())) {
+        existingScore.setRaw(metadata.getRaw());
+        existingScore.setType(metadata.getType());
+        existingScore.setLastScanned(metadata.getScanned());
+        existingScore.setLastModified(metadata.getModified());
+        existingScore.setFilename(metadata.getFilename());
+        existingScore.setDisplayName(game.getGameDisplayName());
+        existingScore = highscoreRepository.saveAndFlush(existingScore);
+      }
+
       LOG.info("Skipped highscore change event for {} because the raw highscore data does not exist.", game);
       return;
     }

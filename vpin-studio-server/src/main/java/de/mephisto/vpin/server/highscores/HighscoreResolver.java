@@ -43,6 +43,8 @@ class HighscoreResolver {
    */
   @NonNull
   public HighscoreMetadata readHighscore(Game game) {
+    this.refresh();
+
     HighscoreMetadata metadata = new HighscoreMetadata();
     metadata.setScanned(new Date());
     try {
@@ -85,7 +87,7 @@ class HighscoreResolver {
   /**
    * Refreshes the extraction of the VPReg.stg file.
    */
-  public void refresh() {
+  private void refresh() {
     File targetFolder = systemService.getExtractedVPRegFolder();
     if (!targetFolder.exists()) {
       boolean mkdirs = targetFolder.mkdirs();

@@ -128,6 +128,7 @@ public class NotificationService implements InitializingBean, HighscoreChangeLis
   public void tableLaunched(TableStatusChangedEvent event) {
     Game game = event.getGame();
     discordService.setStatus(game.getGameDisplayName());
+    highscoreService.updateHighscore(game);
   }
 
   @Override
