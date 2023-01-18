@@ -338,7 +338,7 @@ public class HighscoreService implements InitializingBean {
         existingScore.setLastModified(metadata.getModified());
         existingScore.setFilename(metadata.getFilename());
         existingScore.setDisplayName(game.getGameDisplayName());
-        existingScore = highscoreRepository.saveAndFlush(existingScore);
+        highscoreRepository.saveAndFlush(existingScore);
       }
 
       LOG.info("Skipped highscore change event for {} because the raw highscore data does not exist.", game);
