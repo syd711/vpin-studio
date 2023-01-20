@@ -283,6 +283,11 @@ public class TablesSidebarController implements Initializable {
           if (value == 0) {
             value = 1;
           }
+
+          if(game.get().getVolume() == value) {
+            return;
+          }
+
           game.get().setVolume(value);
 
           try {

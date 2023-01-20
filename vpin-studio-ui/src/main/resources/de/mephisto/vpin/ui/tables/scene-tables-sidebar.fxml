@@ -474,6 +474,9 @@
                                  </children>
                               </AnchorPane>
                            </content>
+                           <padding>
+                              <Insets right="12.0" />
+                           </padding>
                         </ScrollPane>
                      </center>
                      <top>

@@ -53,8 +53,8 @@ public class VpaServiceTest extends VPinServerTest {
     descriptor.setGameId(game.getId());
     File target = new File("E:\\downloads\\" + game.getGameDisplayName().replaceAll(" ", "-") + ".vpa");
     List<HighscoreVersion> versions = highscoreService.getAllHighscoreVersions(game.getId());
-    VpaExporter exporter = new VpaExporter(game, descriptor, null, versions, target);
-    exporter.startExport();
+    VpaExporterJob exporter = new VpaExporterJob(game, descriptor, null, versions, target);
+    exporter.execute();
     assertTrue(target.exists());
   }
 }

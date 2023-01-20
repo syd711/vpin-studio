@@ -18,8 +18,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.List;
-import java.util.Map;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
@@ -79,9 +77,9 @@ public class VpaImporter {
       boolean importHighscores = descriptor.isImportHighscores();
       if (importHighscores && manifest.getAdditionalData().containsKey(VpaService.DATA_HIGHSCORE_HISTORY)) {
         String json = (String) manifest.getAdditionalData().get(VpaService.DATA_HIGHSCORE_HISTORY);
-        VpaExporter.ScoreVersionEntry[] scores = objectMapper.readValue(json, VpaExporter.ScoreVersionEntry[].class);
+        VpaExporterJob.ScoreVersionEntry[] scores = objectMapper.readValue(json, VpaExporterJob.ScoreVersionEntry[].class);
         LOG.info("Importing " + scores.length + " scores.");
-        for (VpaExporter.ScoreVersionEntry score : scores) {
+        for (VpaExporterJob.ScoreVersionEntry score : scores) {
           highscoreService.importScoreEntry(gameByFilename, score);
         }
       }

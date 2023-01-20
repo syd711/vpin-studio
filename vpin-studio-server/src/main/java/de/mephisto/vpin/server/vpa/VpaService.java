@@ -1,13 +1,13 @@
 package de.mephisto.vpin.server.vpa;
 
-import de.mephisto.vpin.restclient.ExportDescriptor;
-import de.mephisto.vpin.restclient.ImportDescriptor;
-import de.mephisto.vpin.restclient.VpaManifest;
+import de.mephisto.vpin.restclient.*;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameService;
 import de.mephisto.vpin.server.highscores.Highscore;
 import de.mephisto.vpin.server.highscores.HighscoreService;
 import de.mephisto.vpin.server.highscores.HighscoreVersion;
+import de.mephisto.vpin.server.jobs.JobQueue;
+import de.mephisto.vpin.server.popper.GameMediaItem;
 import de.mephisto.vpin.server.popper.PinUPConnector;
 import de.mephisto.vpin.server.system.SystemService;
 import edu.umd.cs.findbugs.annotations.NonNull;
@@ -42,7 +42,7 @@ public class VpaService {
     File vpaFile = new File(systemService.getVpaArchiveFolder(), descriptor.getVpaFileName());
     VpaImporter importer = new VpaImporter(descriptor, vpaFile, pinUPConnector, systemService, highscoreService);
     int gameId = importer.startImport();
-    if(gameId != -1) {
+    if (gameId != -1) {
       gameService.scanGame(gameId);
       return true;
     }
@@ -61,13 +61,37 @@ public class VpaService {
   public boolean exportVpa(@NonNull Game game, @NonNull ExportDescriptor exportDescriptor, @NonNull File target) {
     VpaManifest manifest = exportDescriptor.getManifest();
     if (manifest != null) {
-      new Thread(() -> {
-        Thread.currentThread().setName("VPA Export Thread for " + game.getGameDisplayName());
-        List<HighscoreVersion> versions = highscoreService.getAllHighscoreVersions(game.getId());
-        Highscore highscore = highscoreService.getOrCreateHighscore(game);
-        VpaExporter exporter = new VpaExporter(game, exportDescriptor, highscore, versions, target);
-        exporter.startExport();
-      }).start();
+      List<HighscoreVersion> versions = highscoreService.getAllHighscoreVersions(game.getId());
+      Highscore highscore = highscoreService.getOrCreateHighscore(game);
+
+      JobDescriptor descriptor = new JobDescriptor() {
+        @Override
+        public String getTitle() {
+          return "Export of '" + game.getGameDisplayName() + "'";
+        }
+
+        @Override
+        public String getDescription() {
+          return "Exporting table archive " + target.getName();
+        }
+
+        @Override
+        public Job getJob() {
+          return new VpaExporterJob(game, exportDescriptor, highscore, versions, target);
+        }
+
+        @Override
+        public String getImageUrl() {
+          GameMediaItem mediaItem = game.getGameMedia().get(PopperScreen.Wheel);
+          if(mediaItem != null) {
+            return mediaItem.getUri();
+          }
+          return super.getImageUrl();
+        }
+      };
+
+      JobQueue.getInstance().offer(descriptor);
+      LOG.info("Offered export job for '" + game.getGameDisplayName() + "'");
       return true;
     }
     return false;

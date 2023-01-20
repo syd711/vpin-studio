@@ -4,6 +4,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.thoughtworks.xstream.core.util.Base64Encoder;
 import de.mephisto.vpin.restclient.ExportDescriptor;
+import de.mephisto.vpin.restclient.Job;
+import de.mephisto.vpin.restclient.JobDescriptor;
 import de.mephisto.vpin.restclient.PopperScreen;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.highscores.Highscore;
@@ -25,7 +27,7 @@ import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
-public class VpaExporter {
+public class VpaExporterJob implements Job {
   private final static Logger LOG = LoggerFactory.getLogger(VpaService.class);
 
   private final Game game;
@@ -35,7 +37,7 @@ public class VpaExporter {
   private final File target;
   private final ObjectMapper objectMapper;
 
-  public VpaExporter(@NonNull Game game, @NonNull ExportDescriptor exportDescriptor, @Nullable Highscore highscore, @NonNull List<HighscoreVersion> scoreHistory, @NonNull File target) {
+  public VpaExporterJob(@NonNull Game game, @NonNull ExportDescriptor exportDescriptor, @Nullable Highscore highscore, @NonNull List<HighscoreVersion> scoreHistory, @NonNull File target) {
     this.game = game;
     this.exportDescriptor = exportDescriptor;
     this.highscore = highscore;
@@ -45,7 +47,7 @@ public class VpaExporter {
     objectMapper.enable(SerializationFeature.INDENT_OUTPUT);
   }
 
-  public void startExport() {
+  public void execute() {
     if (target.exists() && !target.delete()) {
       throw new UnsupportedOperationException("Couldn't delete existing VPA file " + target.getAbsolutePath());
     }

@@ -10,6 +10,7 @@ import de.mephisto.vpin.restclient.representations.GameMediaItemRepresentation;
 import de.mephisto.vpin.restclient.representations.GameMediaRepresentation;
 import de.mephisto.vpin.restclient.representations.GameRepresentation;
 import de.mephisto.vpin.ui.Studio;
+import de.mephisto.vpin.ui.jobs.JobPoller;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -122,6 +123,8 @@ public class TableExportController implements Initializable, DialogController {
 
     Stage stage = (Stage) ((Button) e.getSource()).getScene().getWindow();
     stage.close();
+
+    JobPoller.getInstance().setPolling();
 
     WidgetFactory.showInformation(Studio.stage, "Export Started", "The export of '" + game.getGameDisplayName() + "' has been started.", "The archived state will update once the export is finished.");
   }

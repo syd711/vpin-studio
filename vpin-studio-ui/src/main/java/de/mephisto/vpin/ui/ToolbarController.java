@@ -2,6 +2,7 @@ package de.mephisto.vpin.ui;
 
 import de.mephisto.vpin.commons.utils.Updater;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
+import de.mephisto.vpin.ui.jobs.JobPoller;
 import de.mephisto.vpin.ui.util.Dialogs;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -69,9 +70,11 @@ public class ToolbarController implements Initializable {
     client.clearCache();
   }
 
-
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
+    this.jobBtn.setVisible(false);
+    new JobPoller(this.jobBtn);
+
     String s = Updater.checkForUpdate(Studio.getVersion());
     updateBtn.setVisible(!StringUtils.isEmpty(s));
 
