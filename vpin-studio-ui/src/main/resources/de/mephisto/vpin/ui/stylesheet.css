@@ -578,6 +578,7 @@
     -fx-padding: 6 6 6 6;
     -fx-text-fill: #FFFFFF;
     -fx-background: #111111;
+    -fx-background-color: #111111;
 }
 
 .menu-item .label {
@@ -588,6 +589,7 @@
 .menu-item .label:hover {
     -fx-font-size: 14px;
     -fx-background: #111111;
+    -fx-background-color: #111111;
     -fx-text-fill: #FFFFFF;
 }
 

@@ -18,6 +18,7 @@ import org.springframework.stereotype.Service;
 
 import java.io.File;
 import java.util.List;
+import java.util.UUID;
 
 @Service
 public class VpaService {
@@ -90,6 +91,7 @@ public class VpaService {
         }
       };
 
+      descriptor.setUuid(UUID.randomUUID().toString());
       JobQueue.getInstance().offer(descriptor);
       LOG.info("Offered export job for '" + game.getGameDisplayName() + "'");
       return true;

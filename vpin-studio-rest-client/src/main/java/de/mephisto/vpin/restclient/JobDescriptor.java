@@ -3,6 +3,7 @@ package de.mephisto.vpin.restclient;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 public class JobDescriptor {
+  private String uuid;
   private String imageUrl;
   private String title;
   private String description;
@@ -16,6 +17,14 @@ public class JobDescriptor {
 
   public void setJob(Job job) {
     this.job = job;
+  }
+
+  public String getUuid() {
+    return uuid;
+  }
+
+  public void setUuid(String uuid) {
+    this.uuid = uuid;
   }
 
   public String getImageUrl() {
@@ -45,5 +54,20 @@ public class JobDescriptor {
   @Override
   public String toString() {
     return "Job '" + this.getTitle() + "'";
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) return true;
+    if (o == null || getClass() != o.getClass()) return false;
+
+    JobDescriptor that = (JobDescriptor) o;
+
+    return uuid.equals(that.uuid);
+  }
+
+  @Override
+  public int hashCode() {
+    return uuid.hashCode();
   }
 }

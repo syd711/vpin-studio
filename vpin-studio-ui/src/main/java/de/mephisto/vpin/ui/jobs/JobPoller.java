@@ -2,8 +2,11 @@ package de.mephisto.vpin.ui.jobs;
 
 import de.mephisto.vpin.restclient.JobDescriptor;
 import javafx.application.Platform;
+import javafx.concurrent.Service;
+import javafx.concurrent.Task;
 import javafx.scene.control.CustomMenuItem;
 import javafx.scene.control.MenuButton;
+import javafx.scene.control.MenuItem;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -16,11 +19,35 @@ public class JobPoller {
   private static JobPoller instance;
   private MenuButton jobMenu;
 
-  private List<CustomMenuItem> activeContainers = new ArrayList<>();
+  private List<JobDescriptor> activeJobs = new ArrayList<>();
+  private Service service;
 
   public JobPoller(MenuButton jobMenu) {
     this.jobMenu = jobMenu;
+    this.jobMenu.setStyle("-fx-background-color: #111111;");
     instance = this;
+
+    service = new Service() {
+      @Override
+      protected Task createTask() {
+        return new Task() {
+          @Override
+          protected Object call() throws Exception {
+            boolean poll = true;
+            while (poll) {
+              List<JobDescriptor> jobs = new ArrayList<>(client.getJobs());
+              refreshUI(jobs);
+              Thread.sleep(2000);
+              poll = !jobs.isEmpty();
+            }
+            refreshUI(Collections.emptyList());
+            return null;
+          }
+        };
+      }
+    };
+
+    service.onSucceededProperty().addListener((observable, oldValue, newValue) -> service.reset());
   }
 
   public static JobPoller getInstance() {
@@ -29,35 +56,36 @@ public class JobPoller {
 
   public void setPolling() {
     jobMenu.setVisible(true);
-
-    new Thread(() -> {
-      try {
-        List<JobDescriptor> jobs = client.getJobs();
-        boolean poll = !jobs.isEmpty();
-        while(poll) {
-          List<CustomMenuItem> updated = new ArrayList<>();
-          for (JobDescriptor job : jobs) {
-            JobContainer c = new JobContainer(job);
-            CustomMenuItem item = new CustomMenuItem();
-            item.setContent(c);
-            updated.add(item);
-          }
-          Thread.sleep(2000);
-          poll = !jobs.isEmpty();
-          refreshUI(updated);
-        }
-        refreshUI(Collections.emptyList());
-      } catch (InterruptedException e) {
-        throw new RuntimeException(e);
-      }
-    }).start();
+    if (!service.isRunning()) {
+      service.restart();
+    }
   }
 
-  private void refreshUI(List<CustomMenuItem> updated) {
+  private void refreshUI(List<JobDescriptor> updatedJobList) {
     Platform.runLater(() -> {
-      jobMenu.getItems().removeAll(activeContainers);
-      jobMenu.getItems().addAll(updated);
-      jobMenu.setVisible(!updated.isEmpty());
+      List<MenuItem> items = new ArrayList<>(jobMenu.getItems());
+      for (MenuItem item : items) {
+        JobDescriptor descriptor = (JobDescriptor) item.getUserData();
+        if (!updatedJobList.contains(descriptor)) {
+          jobMenu.getItems().remove(item);
+        }
+      }
+
+      activeJobs.clear();
+      activeJobs.addAll(updatedJobList);
+
+      for (JobDescriptor descriptor : updatedJobList) {
+        if(items.stream().anyMatch(c -> c.getUserData().equals(descriptor))) {
+          continue;
+        }
+
+        JobContainer c = new JobContainer(descriptor);
+        CustomMenuItem item = new CustomMenuItem();
+        item.setContent(c);
+        item.setUserData(descriptor);
+        jobMenu.getItems().add(item);
+      }
+      jobMenu.setVisible(!updatedJobList.isEmpty());
     });
   }
 }

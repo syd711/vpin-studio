@@ -7,6 +7,7 @@ import org.slf4j.LoggerFactory;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Queue;
+import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -16,10 +17,9 @@ public class JobQueue {
   private final ExecutorService executor;
 
   private Queue<JobDescriptor> queue = new ConcurrentLinkedQueue();
+  private List<JobDescriptor> statusQueue = new ArrayList<>();
 
   private static JobQueue instance = new JobQueue();
-
-  private Thread jobThread;
 
   public static JobQueue getInstance() {
     return instance;
@@ -27,35 +27,24 @@ public class JobQueue {
 
   private JobQueue() {
     executor = Executors.newSingleThreadExecutor();
-
-
-    jobThread = new Thread(() -> {
-      try {
-        while (true) {
-          if (queue.isEmpty()) {
-            synchronized (jobThread) {
-              wait();
-            }
-          }
-
-          if (!queue.isEmpty()) {
-            JobDescriptor job = queue.poll();
-            LOG.info("Polled " + job);
-            job.getJob().execute();
-          }
-        }
-      } catch (InterruptedException e) {
-        LOG.error("Error in job thread: " + e.getMessage(), e);
-      }
-    });
-    jobThread.start();
   }
 
   public void offer(JobDescriptor descriptor) {
-    this.queue.offer(descriptor);
+    queue.offer(descriptor);
+    statusQueue.add(descriptor);
+    pollQueue();
+  }
 
-    synchronized (jobThread) {
-      jobThread.notifyAll();
+  private void pollQueue() {
+    if (!getInstance().isEmpty()) {
+      JobDescriptor descriptor = queue.poll();
+      Callable<Boolean> exec = () -> {
+        boolean execute = descriptor.getJob().execute();
+        pollQueue();
+        statusQueue.remove(descriptor);
+        return execute;
+      };
+      executor.submit(exec);
     }
   }
 
@@ -64,6 +53,6 @@ public class JobQueue {
   }
 
   public List<JobDescriptor> getElements() {
-    return new ArrayList<>(queue);
+    return new ArrayList<>(statusQueue);
   }
 }

@@ -47,7 +47,7 @@ public class VpaExporterJob implements Job {
     objectMapper.enable(SerializationFeature.INDENT_OUTPUT);
   }
 
-  public void execute() {
+  public boolean execute() {
     if (target.exists() && !target.delete()) {
       throw new UnsupportedOperationException("Couldn't delete existing VPA file " + target.getAbsolutePath());
     }
@@ -140,6 +140,7 @@ public class VpaExporterJob implements Job {
         //ignore
       }
     }
+    return true;
   }
 
   private void zipPopperMedia(ZipOutputStream zipOut) throws IOException {
