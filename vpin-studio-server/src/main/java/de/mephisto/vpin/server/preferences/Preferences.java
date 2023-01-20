@@ -38,19 +38,19 @@ public class Preferences {
 
   private String discordBotToken;
 
-  private String discordBotWhitelist;
+  private String discordBotAllowList;
 
   @Column(length = 1024)
   private String highscoreTitles;
 
   private int idleTimeout;
 
-  public String getDiscordBotWhitelist() {
-    return discordBotWhitelist;
+  public String getDiscordBotAllowList() {
+    return discordBotAllowList;
   }
 
-  public void setDiscordBotWhitelist(String discordBotWhitelist) {
-    this.discordBotWhitelist = discordBotWhitelist;
+  public void setDiscordBotAllowList(String discordBotAllowList) {
+    this.discordBotAllowList = discordBotAllowList;
   }
 
   public int getIdleTimeout() {

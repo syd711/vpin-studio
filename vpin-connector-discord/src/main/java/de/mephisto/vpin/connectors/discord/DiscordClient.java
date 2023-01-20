@@ -40,7 +40,7 @@ public class DiscordClient extends ListenerAdapter {
   private final String guildId;
   private final List<DiscordMember> members;
 
-  private List<String> channelWhitelist = new ArrayList<>();
+  private List<String> channelAllowList = new ArrayList<>();
 
   public DiscordClient(String botToken, String guildId, DiscordCommandResolver commandResolver) throws Exception {
     this.guildId = guildId.trim();
@@ -184,8 +184,8 @@ public class DiscordClient extends ListenerAdapter {
     }
   }
 
-  public void setChannelWhitelist(List<String> whitelist) {
-    this.channelWhitelist = whitelist;
+  public void setChannelAllowList(List<String> channelAllowList) {
+    this.channelAllowList = channelAllowList;
   }
 
 
@@ -193,12 +193,12 @@ public class DiscordClient extends ListenerAdapter {
    * Checks if the given channel is configured for returning bot commands.
    */
   private boolean isValidChannel(MessageChannelUnion channel) {
-    if (channelWhitelist.isEmpty()) {
+    if (channelAllowList.isEmpty()) {
       return true;
     }
 
-    for (String whiteListEntry : channelWhitelist) {
-      if (channel.getName().equalsIgnoreCase(whiteListEntry.trim())) {
+    for (String entry : channelAllowList) {
+      if (channel.getName().equalsIgnoreCase(entry.trim())) {
         return true;
       }
     }

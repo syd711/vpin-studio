@@ -106,12 +106,12 @@
                 <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
               </rowConstraints>
                <children>
-                  <Label prefHeight="20.0" styleClass="preference-label" text="Bot Channel Whitelist:" textFill="WHITE">
+                  <Label prefHeight="20.0" styleClass="preference-label" text="Bot Channel Allow List:" textFill="WHITE">
                      <font>
                         <Font size="14.0" />
                      </font>
                   </Label>
-                  <TextField fx:id="botChannelWhitelist" GridPane.columnIndex="1">
+                  <TextField fx:id="botChannelAllowList" GridPane.columnIndex="1">
                      <font>
                         <Font size="14.0" />
                      </font>

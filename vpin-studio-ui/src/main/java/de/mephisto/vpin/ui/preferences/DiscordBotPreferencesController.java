@@ -26,7 +26,7 @@ public class DiscordBotPreferencesController implements Initializable {
   private TextField botTokenText;
 
   @FXML
-  private TextField botChannelWhitelist;
+  private TextField botChannelAllowList;
 
   @FXML
   private Button connectionTestBtn;
@@ -78,7 +78,7 @@ public class DiscordBotPreferencesController implements Initializable {
   public void initialize(URL url, ResourceBundle resourceBundle) {
     BindingUtil.bindTextField(serverIdText, PreferenceNames.DISCORD_GUILD_ID, null);
     BindingUtil.bindTextField(botTokenText, PreferenceNames.DISCORD_BOT_TOKEN, null);
-    BindingUtil.bindTextField(botChannelWhitelist, PreferenceNames.DISCORD_BOT_WHITELIST, null);
+    BindingUtil.bindTextField(botChannelAllowList, PreferenceNames.DISCORD_BOT_ALLOW_LIST, null);
 
     serverIdText.textProperty().addListener((observableValue, s, t1) -> validateInput());
     botTokenText.textProperty().addListener((observableValue, s, t1) -> validateInput());
