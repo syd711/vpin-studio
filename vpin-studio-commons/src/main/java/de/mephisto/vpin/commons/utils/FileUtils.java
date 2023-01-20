@@ -34,6 +34,9 @@ public class FileUtils {
 
   public static void writeBatch(String name, String content) throws IOException {
     File path = new File("./" + name);
+    if(path.exists()) {
+      path.delete();
+    }
     Files.write( path.toPath(), content.getBytes());
   }
 
