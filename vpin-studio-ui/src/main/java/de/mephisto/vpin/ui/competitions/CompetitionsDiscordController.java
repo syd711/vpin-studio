@@ -4,8 +4,6 @@ import de.mephisto.vpin.commons.fx.widgets.WidgetCompetitionSummaryController;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.representations.CompetitionRepresentation;
 import de.mephisto.vpin.restclient.representations.GameRepresentation;
-import de.mephisto.vpin.restclient.representations.PlayerRepresentation;
-import de.mephisto.vpin.restclient.representations.ScoreListRepresentation;
 import de.mephisto.vpin.ui.NavigationController;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.StudioFXController;
@@ -33,8 +31,8 @@ import java.util.*;
 
 import static de.mephisto.vpin.ui.Studio.client;
 
-public class CompetitionsOnlineController implements Initializable, StudioFXController {
-  private final static Logger LOG = LoggerFactory.getLogger(CompetitionsOnlineController.class);
+public class CompetitionsDiscordController implements Initializable, StudioFXController {
+  private final static Logger LOG = LoggerFactory.getLogger(CompetitionsDiscordController.class);
 
   @FXML
   private TableView<CompetitionRepresentation> tableView;
@@ -49,13 +47,7 @@ public class CompetitionsOnlineController implements Initializable, StudioFXCont
   private TableColumn<CompetitionRepresentation, String> columnStatus;
 
   @FXML
-  private TableColumn<CompetitionRepresentation, String> columnScore;
-
-  @FXML
   private TableColumn<CompetitionRepresentation, String> columnScoreCount;
-
-  @FXML
-  private TableColumn<CompetitionRepresentation, String> columnWinner;
 
   @FXML
   private TableColumn<CompetitionRepresentation, String> columnStartDate;
@@ -92,12 +84,12 @@ public class CompetitionsOnlineController implements Initializable, StudioFXCont
   private List<CompetitionRepresentation> competitions;
 
   // Add a public no-args constructor
-  public CompetitionsOnlineController() {
+  public CompetitionsDiscordController() {
   }
 
   @FXML
   private void onCompetitionCreate() {
-    CompetitionRepresentation c = Dialogs.openOnlineCompetitionDialog(null);
+    CompetitionRepresentation c = Dialogs.openDiscordCompetitionDialog(null);
     if (c != null) {
       CompetitionRepresentation newCmp = null;
       try {
@@ -115,7 +107,7 @@ public class CompetitionsOnlineController implements Initializable, StudioFXCont
     CompetitionRepresentation selection = tableView.getSelectionModel().getSelectedItem();
     if (selection != null) {
       CompetitionRepresentation clone = selection.cloneCompetition();
-      CompetitionRepresentation c = Dialogs.openOnlineCompetitionDialog(clone);
+      CompetitionRepresentation c = Dialogs.openDiscordCompetitionDialog(clone);
       if (c != null) {
         try {
           CompetitionRepresentation newCmp = client.saveCompetition(c);
@@ -132,7 +124,7 @@ public class CompetitionsOnlineController implements Initializable, StudioFXCont
   private void onEdit() {
     CompetitionRepresentation selection = tableView.getSelectionModel().getSelectedItem();
     if (selection != null) {
-      CompetitionRepresentation c = Dialogs.openOnlineCompetitionDialog(selection);
+      CompetitionRepresentation c = Dialogs.openDiscordCompetitionDialog(selection);
       if (c != null) {
         try {
           CompetitionRepresentation newCmp = client.saveCompetition(c);
@@ -190,7 +182,7 @@ public class CompetitionsOnlineController implements Initializable, StudioFXCont
     tableStack.getChildren().add(loadingOverlay);
 
     new Thread(() -> {
-      competitions = client.getCompetitions();
+      competitions = client.getDiscordCompetitions();
       filterCompetitions(competitions);
       data = FXCollections.observableList(competitions);
 
@@ -279,27 +271,6 @@ public class CompetitionsOnlineController implements Initializable, StudioFXCont
       Label label = new Label(DateFormat.getDateInstance().format(value.getEndDate()));
       return new SimpleObjectProperty(label);
     });
-
-    columnWinner.setCellValueFactory(cellData -> {
-      CompetitionRepresentation value = cellData.getValue();
-      String winner = "-";
-
-      if (!StringUtils.isEmpty(value.getWinnerInitials())) {
-        winner = value.getWinnerInitials();
-        PlayerRepresentation player = client.getPlayer(value.getWinnerInitials());
-        if (player != null) {
-          winner = player.getName();
-        }
-      }
-      return new SimpleObjectProperty(winner);
-    });
-
-    columnScoreCount.setCellValueFactory(cellData -> {
-      CompetitionRepresentation value = cellData.getValue();
-      ScoreListRepresentation competitionScores = client.getCompetitionScores(value.getId());
-      return new SimpleObjectProperty(competitionScores.getScores().size());
-    });
-
 
     tableView.setPlaceholder(new Label("            Mmmh, not up for a challange yet?\n" +
         "Create a new competition by pressing the '+' button."));

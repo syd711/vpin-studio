@@ -1,5 +1,6 @@
 package de.mephisto.vpin.server.competitions;
 
+import de.mephisto.vpin.restclient.CompetitionType;
 import de.mephisto.vpin.server.highscores.HighscoreService;
 import de.mephisto.vpin.server.highscores.Score;
 import de.mephisto.vpin.server.highscores.ScoreList;
@@ -69,9 +70,14 @@ public class CompetitionService implements InitializingBean {
     }
   }
 
-  public List<Competition> getCompetitions() {
-    return competitionsRepository.findAll();
+  public List<Competition> getOfflineCompetitions() {
+    return competitionsRepository.findByType(CompetitionType.OFFLINE.name());
   }
+
+  public List<Competition> getDiscordCompetitions() {
+    return competitionsRepository.findByType(CompetitionType.DISCORD.name());
+  }
+
 
   public Competition getCompetition(long id) {
     Optional<Competition> competition = competitionsRepository.findById(id);

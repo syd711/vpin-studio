@@ -51,6 +51,13 @@ public class VPinStudioClient implements ObservedPropertyChangeListener, Overlay
   }
 
   /*********************************************************************************************************************
+   * Discord
+   ********************************************************************************************************************/
+  public boolean isDiscordBotAvailable() {
+    return restClient.get(API + "discord/available", Boolean.class);
+  }
+
+  /*********************************************************************************************************************
    * Jobs
    ********************************************************************************************************************/
   public List<JobDescriptor> getJobs() {
@@ -306,8 +313,12 @@ public class VPinStudioClient implements ObservedPropertyChangeListener, Overlay
    * Competitions
    ********************************************************************************************************************/
 
-  public List<CompetitionRepresentation> getCompetitions() {
-    return Arrays.asList(restClient.get(API + "competitions", CompetitionRepresentation[].class));
+  public List<CompetitionRepresentation> getOfflineCompetitions() {
+    return Arrays.asList(restClient.get(API + "competitions/offline", CompetitionRepresentation[].class));
+  }
+
+  public List<CompetitionRepresentation> getDiscordCompetitions() {
+    return Arrays.asList(restClient.get(API + "competitions/discord", CompetitionRepresentation[].class));
   }
 
   public List<CompetitionRepresentation> getFinishedCompetitions(int limit) {

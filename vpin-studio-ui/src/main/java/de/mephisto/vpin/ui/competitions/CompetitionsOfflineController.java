@@ -49,9 +49,6 @@ public class CompetitionsOfflineController implements Initializable, StudioFXCon
   private TableColumn<CompetitionRepresentation, String> columnStatus;
 
   @FXML
-  private TableColumn<CompetitionRepresentation, String> columnScore;
-
-  @FXML
   private TableColumn<CompetitionRepresentation, String> columnScoreCount;
 
   @FXML
@@ -190,7 +187,7 @@ public class CompetitionsOfflineController implements Initializable, StudioFXCon
     tableStack.getChildren().add(loadingOverlay);
 
     new Thread(() -> {
-      competitions = client.getCompetitions();
+      competitions = client.getOfflineCompetitions();
       filterCompetitions(competitions);
       data = FXCollections.observableList(competitions);
 

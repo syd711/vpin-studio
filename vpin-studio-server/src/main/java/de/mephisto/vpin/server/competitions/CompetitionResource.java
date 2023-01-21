@@ -1,6 +1,5 @@
 package de.mephisto.vpin.server.competitions;
 
-import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.highscores.ScoreList;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -18,9 +17,14 @@ public class CompetitionResource {
   @Autowired
   private CompetitionService competitionService;
 
-  @GetMapping
-  public List<Competition> getCompetitions() {
-    return competitionService.getCompetitions();
+  @GetMapping("/offline")
+  public List<Competition> getOfflineCompetitions() {
+    return competitionService.getOfflineCompetitions();
+  }
+
+  @GetMapping("/discord")
+  public List<Competition> getDiscordCompetitions() {
+    return competitionService.getDiscordCompetitions();
   }
 
   @GetMapping("/{id}")

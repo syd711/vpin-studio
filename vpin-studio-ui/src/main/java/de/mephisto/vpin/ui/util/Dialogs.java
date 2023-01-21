@@ -10,7 +10,7 @@ import de.mephisto.vpin.ui.ProgressDialogController;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.UpdateDialogController;
 import de.mephisto.vpin.ui.competitions.CompetitionOfflineDialogController;
-import de.mephisto.vpin.ui.competitions.CompetitionOnlineDialogController;
+import de.mephisto.vpin.ui.competitions.CompetitionDiscordDialogController;
 import de.mephisto.vpin.ui.players.PlayerDialogController;
 import de.mephisto.vpin.ui.tables.TablesController;
 import de.mephisto.vpin.ui.tables.dialogs.*;
@@ -45,16 +45,16 @@ public class Dialogs {
     return controller.getPlayer();
   }
 
-  public static CompetitionRepresentation openOnlineCompetitionDialog(CompetitionRepresentation selection) {
+  public static CompetitionRepresentation openDiscordCompetitionDialog(CompetitionRepresentation selection) {
     String title = "Add New Competition";
     if (selection != null) {
       title = "Edit Competition";
     }
 
 
-    FXMLLoader fxmlLoader = new FXMLLoader(CompetitionOfflineDialogController.class.getResource("dialog-online-competition-edit.fxml"));
+    FXMLLoader fxmlLoader = new FXMLLoader(CompetitionOfflineDialogController.class.getResource("dialog-discord-competition-edit.fxml"));
     Stage stage = WidgetFactory.createDialogStage(fxmlLoader, Studio.stage, title);
-    CompetitionOnlineDialogController controller = (CompetitionOnlineDialogController) stage.getUserData();
+    CompetitionDiscordDialogController controller = (CompetitionDiscordDialogController) stage.getUserData();
     controller.setCompetition(selection);
     stage.showAndWait();
 

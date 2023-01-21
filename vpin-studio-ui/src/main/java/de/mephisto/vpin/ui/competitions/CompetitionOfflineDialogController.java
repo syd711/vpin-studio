@@ -2,6 +2,7 @@ package de.mephisto.vpin.ui.competitions;
 
 import de.mephisto.vpin.commons.EmulatorTypes;
 import de.mephisto.vpin.commons.fx.DialogController;
+import de.mephisto.vpin.restclient.CompetitionType;
 import de.mephisto.vpin.restclient.PopperScreen;
 import de.mephisto.vpin.restclient.VPinStudioClient;
 import de.mephisto.vpin.restclient.representations.CompetitionRepresentation;
@@ -98,7 +99,7 @@ public class CompetitionOfflineDialogController implements Initializable, Dialog
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
     competition = new CompetitionRepresentation();
-    competition.setType("offline");
+    competition.setType(CompetitionType.OFFLINE.name());
     competition.setDiscordNotifications(true);
     competition.setName("My next competition");
 

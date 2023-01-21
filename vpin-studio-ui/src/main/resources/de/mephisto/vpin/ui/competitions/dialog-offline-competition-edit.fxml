@@ -122,12 +122,12 @@
                   </HBox>
                   <DatePicker fx:id="startDatePicker" GridPane.columnIndex="1" GridPane.rowIndex="2" />
                   <DatePicker fx:id="endDatePicker" GridPane.columnIndex="1" GridPane.rowIndex="3" />
-                  <Label fx:id="titleLabel11111" layoutX="10.0" layoutY="189.0" text="Wheel Icon Preview:" textFill="WHITE" GridPane.rowIndex="8">
+                  <Label layoutX="10.0" layoutY="189.0" text="Wheel Icon Preview:" textFill="WHITE" GridPane.rowIndex="8">
                      <font>
                         <Font size="14.0" />
                      </font>
                   </Label>
-                  <Label fx:id="titleLabel1112" layoutX="10.0" layoutY="117.0" text="Competition Icon:" textFill="WHITE" GridPane.rowIndex="5">
+                  <Label layoutX="10.0" layoutY="117.0" text="Competition Icon:" textFill="WHITE" GridPane.rowIndex="5">
                      <font>
                         <Font size="14.0" />
                      </font>
@@ -137,7 +137,7 @@
                         <ComboBox fx:id="competitionIconCombo" prefHeight="30.0" prefWidth="210.0" />
                      </children>
                   </HBox>
-                  <Label fx:id="titleLabel1113" layoutX="10.0" layoutY="120.0" text="Duration:" textFill="WHITE" GridPane.rowIndex="4">
+                  <Label layoutX="10.0" layoutY="120.0" text="Duration:" textFill="WHITE" GridPane.rowIndex="4">
                      <font>
                         <Font size="14.0" />
                      </font>
@@ -147,7 +147,7 @@
                         <Font size="14.0" />
                      </font>
                   </Label>
-                  <Label fx:id="titleLabel11121" layoutX="10.0" layoutY="222.0" text="Notifications:" textFill="WHITE" GridPane.rowIndex="6">
+                  <Label layoutX="10.0" layoutY="222.0" text="Notifications:" textFill="WHITE" GridPane.rowIndex="6">
                      <font>
                         <Font size="14.0" />
                      </font>
