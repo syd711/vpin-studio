@@ -3,7 +3,8 @@ package de.mephisto.vpin.connectors.discord;
 public class BotCommand {
   public final static String CMD_COMPETITIONS = "competitions";
   public final static String CMD_HS = "hs";
-  public final static String CMD_RANKING = "rank";
+  public final static String CMD_RANKS = "ranks";
+  public final static String CMD_PLAYER = "player";
 
   private DiscordCommandResolver commandResolver;
 

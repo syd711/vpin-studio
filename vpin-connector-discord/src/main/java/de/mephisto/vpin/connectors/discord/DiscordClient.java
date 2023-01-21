@@ -134,7 +134,7 @@ public class DiscordClient extends ListenerAdapter {
   private List<DiscordMember> createMemberList(List<Member> members) {
     List<DiscordMember> result = new ArrayList<>();
     for (Member member : members) {
-      if(member.getUser().isBot()) {
+      if (member.getUser().isBot()) {
         continue;
       }
 
@@ -173,6 +173,7 @@ public class DiscordClient extends ListenerAdapter {
 
   /**
    * Updates the online status with the active game info.
+   *
    * @param status
    */
   public void setStatus(String status) {
@@ -245,16 +246,19 @@ public class DiscordClient extends ListenerAdapter {
         channel.sendMessage("List of available commands:\n" +
             "**/competitions **: Returns the list and status of active competitions.\n" +
             "**/hs <TABLE NAME>**: Returns the highscore for the table matching the give name.\n" +
-            "**/rank **: Returns the overall player ranking.\n" +
-            "**/rank <PLAYER_INITIALS> **: Returns all highscores of this player.\n" +
+            "**/ranks **: Returns the overall player ranking.\n" +
+            "**/player <PLAYER_INITIALS> **: Returns all highscores of this player.\n" +
             "").queue();
       }
       else if (commandResolver != null) {
         BotCommand command = new BotCommand(content, commandResolver);
         BotCommandResponse response = command.execute();
         if (response != null) {
-          MessageChannel channel = event.getChannel();
-          channel.sendMessage(response.toDiscordMarkup()).queue();
+          String result = response.toDiscordMarkup();
+          if (result != null) {
+            MessageChannel channel = event.getChannel();
+            channel.sendMessage(result).queue();
+          }
         }
         else {
           LOG.info("Unknown bot command '" + content + "'");

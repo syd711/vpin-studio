@@ -74,7 +74,7 @@ public class NotificationService implements InitializingBean, HighscoreChangeLis
     switch (name) {
       case BotCommand.CMD_COMPETITIONS: {
         List<Competition> activeCompetitions = competitionService.getActiveCompetitions();
-        if(activeCompetitions.isEmpty()) {
+        if (activeCompetitions.isEmpty()) {
           return () -> "No active competitions found.";
         }
 
@@ -95,7 +95,7 @@ public class NotificationService implements InitializingBean, HighscoreChangeLis
           for (Game game : games) {
             if (game.getGameDisplayName().toLowerCase().contains(cmd.getParameter())) {
               HighscoreMetadata metadata = highscoreService.updateHighscore(game);
-              if(StringUtils.isEmpty(metadata.getRaw()) && !StringUtils.isEmpty(metadata.getStatus())) {
+              if (StringUtils.isEmpty(metadata.getRaw()) && !StringUtils.isEmpty(metadata.getStatus())) {
                 return () -> "Highscore for '" + game.getGameDisplayName() + "' retrieval failed: " + metadata.getStatus();
               }
               ScoreSummary highscores = highscoreService.getHighscores(game.getId(), game.getGameDisplayName());
@@ -106,22 +106,21 @@ public class NotificationService implements InitializingBean, HighscoreChangeLis
         }
         return null;
       }
-      case BotCommand.CMD_RANKING: {
-        if (cmd.getParameter() == null) {
-          List<RankedPlayer> playersByRanks = highscoreService.getPlayersByRanks();
-          return () -> DiscordBotCommandResponseFactory.createRanksMessage(playersByRanks);
-        }
-        else {
-          Optional<Player> playerForInitials = playerService.getPlayerForInitials(cmd.getParameter());
-          if (playerForInitials.isPresent()) {
-            ScoreSummary highscores = highscoreService.getHighscores(cmd.getParameter());
-            return () -> DiscordBotCommandResponseFactory.createRanksMessageFor(playerForInitials.get(), highscores);
-          }
+      case BotCommand.CMD_RANKS: {
+        List<RankedPlayer> playersByRanks = highscoreService.getPlayersByRanks();
+        return () -> DiscordBotCommandResponseFactory.createRanksMessage(playersByRanks);
+      }
+      case BotCommand.CMD_PLAYER: {
+        Optional<Player> playerForInitials = playerService.getPlayerForInitials(cmd.getParameter());
+        if (playerForInitials.isPresent()) {
+          ScoreSummary highscores = highscoreService.getHighscores(cmd.getParameter());
+          return () -> DiscordBotCommandResponseFactory.createRanksMessageFor(playerForInitials.get(), highscores);
         }
         return () -> "No player found with initials '" + cmd.getParameter().toUpperCase() + "'";
       }
     }
-    return () -> "Unknown bot command '" + cmd.getContent() + "'";
+//    return () -> "Unknown bot command '" + cmd.getContent() + "'";
+    return () -> null;
   }
 
   @Override
