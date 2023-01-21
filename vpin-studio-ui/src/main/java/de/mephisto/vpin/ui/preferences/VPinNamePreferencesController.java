@@ -1,8 +1,8 @@
 package de.mephisto.vpin.ui.preferences;
 
+import de.mephisto.vpin.commons.fx.UIDefaults;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.ui.util.BindingUtil;
-import de.mephisto.vpin.commons.fx.UIDefaults;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.TextField;

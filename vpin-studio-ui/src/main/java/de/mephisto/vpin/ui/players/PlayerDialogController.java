@@ -1,11 +1,11 @@
 package de.mephisto.vpin.ui.players;
 
+import de.mephisto.vpin.commons.fx.DialogController;
+import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.AssetType;
 import de.mephisto.vpin.restclient.representations.AssetRepresentation;
 import de.mephisto.vpin.restclient.representations.PlayerRepresentation;
 import de.mephisto.vpin.ui.DashboardController;
-import de.mephisto.vpin.commons.utils.WidgetFactory;
-import de.mephisto.vpin.commons.fx.DialogController;
 import de.mephisto.vpin.ui.Studio;
 import eu.hansolo.tilesfx.Tile;
 import eu.hansolo.tilesfx.TileBuilder;

@@ -1,26 +1,20 @@
 package de.mephisto.vpin.ui;
 
 import de.mephisto.vpin.commons.fx.widgets.WidgetCompetitionController;
-import de.mephisto.vpin.commons.fx.widgets.WidgetFinishedCompetitionsController;
 import de.mephisto.vpin.commons.fx.widgets.WidgetLatestScoresController;
 import de.mephisto.vpin.commons.fx.widgets.WidgetPlayerRankController;
-import de.mephisto.vpin.restclient.representations.CompetitionRepresentation;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.StackPane;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.net.URL;
 import java.util.Arrays;
-import java.util.List;
 import java.util.ResourceBundle;
-
-import static de.mephisto.vpin.ui.Studio.client;
 
 public class DashboardController implements Initializable, StudioFXController {
   private final static Logger LOG = LoggerFactory.getLogger(DashboardController.class);

@@ -1,6 +1,7 @@
 
 package de.mephisto.vpin.ui.cards;
 
+import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.ObservedProperties;
 import de.mephisto.vpin.restclient.ObservedPropertyChangeListener;
 import de.mephisto.vpin.restclient.VPinStudioClient;
@@ -9,11 +10,9 @@ import de.mephisto.vpin.ui.NavigationController;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.StudioFXController;
 import de.mephisto.vpin.ui.WaitOverlayController;
-import de.mephisto.vpin.ui.tables.dialogs.TableUploadProgressModel;
 import de.mephisto.vpin.ui.util.BindingUtil;
 import de.mephisto.vpin.ui.util.Dialogs;
 import de.mephisto.vpin.ui.util.MediaUtil;
-import de.mephisto.vpin.commons.utils.WidgetFactory;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -40,7 +39,6 @@ import java.io.InputStream;
 import java.net.URL;
 import java.util.*;
 
-import static de.mephisto.vpin.ui.Studio.client;
 import static de.mephisto.vpin.ui.Studio.stage;
 
 public class HighscoreCardsController implements Initializable, ObservedPropertyChangeListener, StudioFXController {

@@ -1,7 +1,6 @@
 package de.mephisto.vpin.ui;
 
 import de.mephisto.vpin.ui.preferences.ScreensPreferencesController;
-import de.mephisto.vpin.ui.tables.TablesController;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -17,7 +16,6 @@ import java.awt.*;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URL;
-import java.util.Locale;
 import java.util.ResourceBundle;
 
 public class PreferencesController implements Initializable {

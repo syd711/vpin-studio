@@ -2,7 +2,6 @@
 
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.StackPane?>
-
 <BorderPane fx:id="root" stylesheets="@stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.RootController">
    <top>
        <fx:include fx:id="header" source="scene-header-resizeable.fxml" />

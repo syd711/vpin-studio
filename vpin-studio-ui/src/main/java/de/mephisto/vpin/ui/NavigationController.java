@@ -1,6 +1,5 @@
 package de.mephisto.vpin.ui;
 
-import de.mephisto.vpin.commons.fx.DialogHeaderController;
 import de.mephisto.vpin.commons.fx.UIDefaults;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.representations.PreferenceEntryRepresentation;

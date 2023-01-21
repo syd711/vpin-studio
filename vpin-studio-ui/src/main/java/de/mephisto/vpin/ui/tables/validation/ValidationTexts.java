@@ -1,6 +1,5 @@
 package de.mephisto.vpin.ui.tables.validation;
 
-import de.mephisto.vpin.restclient.ValidationCode;
 import de.mephisto.vpin.restclient.representations.GameRepresentation;
 import edu.umd.cs.findbugs.annotations.NonNull;
 

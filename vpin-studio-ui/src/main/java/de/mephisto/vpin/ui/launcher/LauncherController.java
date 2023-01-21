@@ -2,6 +2,7 @@ package de.mephisto.vpin.ui.launcher;
 
 import de.mephisto.vpin.commons.Services;
 import de.mephisto.vpin.commons.fx.LoadingOverlayController;
+import de.mephisto.vpin.commons.fx.UIDefaults;
 import de.mephisto.vpin.commons.utils.ImageUtil;
 import de.mephisto.vpin.commons.utils.PropertiesStore;
 import de.mephisto.vpin.commons.utils.Updater;
@@ -11,7 +12,6 @@ import de.mephisto.vpin.restclient.VPinStudioClient;
 import de.mephisto.vpin.restclient.representations.PreferenceEntryRepresentation;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.util.Dialogs;
-import de.mephisto.vpin.commons.fx.UIDefaults;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;

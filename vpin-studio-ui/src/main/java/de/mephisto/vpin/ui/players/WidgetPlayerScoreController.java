@@ -1,9 +1,9 @@
 package de.mephisto.vpin.ui.players;
 
 import de.mephisto.vpin.commons.fx.OverlayWindowFX;
+import de.mephisto.vpin.commons.fx.widgets.WidgetController;
 import de.mephisto.vpin.restclient.PopperScreen;
 import de.mephisto.vpin.restclient.representations.*;
-import de.mephisto.vpin.commons.fx.widgets.WidgetController;
 import de.mephisto.vpin.ui.Studio;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;

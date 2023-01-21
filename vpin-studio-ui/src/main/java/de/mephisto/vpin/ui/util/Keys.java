@@ -1,7 +1,8 @@
 package de.mephisto.vpin.ui.util;
 
 import java.awt.event.KeyEvent;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  *
