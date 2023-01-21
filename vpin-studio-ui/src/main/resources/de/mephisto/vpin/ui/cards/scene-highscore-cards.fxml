@@ -421,6 +421,14 @@
          <top>
             <ToolBar prefHeight="40.0" prefWidth="200.0" style="-fx-background-radius: 3 3 0 0;" BorderPane.alignment="CENTER">
                <items>
+                  <Label text="Sample Data:">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                     <padding>
+                        <Insets left="3.0" right="3.0" />
+                     </padding>
+                  </Label>
                   <ComboBox fx:id="tableCombo" />
                   <Button mnemonicParsing="false" onAction="#onTableRefresh" text=" Reload">
                      <font>
@@ -455,7 +463,7 @@
                         <Font size="14.0" />
                      </font>
                      <graphic>
-                        <FontIcon iconColor="WHITE" iconLiteral="bi-image" />
+                        <FontIcon iconColor="WHITE" iconLiteral="sil-refresh" />
                      </graphic>
                   </Button>
                   <Button fx:id="openImageBtn" mnemonicParsing="false" onAction="#onOpenImage" text=" Open Image" textFill="WHITE">

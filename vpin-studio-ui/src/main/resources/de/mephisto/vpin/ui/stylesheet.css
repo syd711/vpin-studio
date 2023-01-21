@@ -574,6 +574,14 @@
    -fx-background-color: transparent;
 }
 
+.scroll-bar:vertical {
+}
+.scroll-bar:vertical .thumb {
+    -fx-background-color:derive(#111111,96%);
+	-fx-background-insets: 2, 2, 2;
+	-fx-background-radius: 1em;
+}
+
 .menu-item {
     -fx-padding: 6 6 6 6;
     -fx-text-fill: #FFFFFF;
