@@ -91,14 +91,16 @@ public class DiscordBotCommandResponseFactory {
   public static String createRanksMessage(List<RankedPlayer> playersByRanks) {
     StringBuilder builder = new StringBuilder();
     builder.append("```");
-    builder.append("Pos  Initials      #1   #2   #3   Competitions\n");
-    builder.append("----------------------------------------------\n");
+    builder.append("Pos  Points  Initials      #1   #2   #3   Competitions\n");
+    builder.append("------------------------------------------------------\n");
     int index = 0;
     for (RankedPlayer playersByRank : playersByRanks) {
       index++;
       builder.append("#");
       builder.append(index);
-      builder.append("   ");
+      builder.append("     ");
+      builder.append(String.format("%4.4s", playersByRank.getPoints()));
+      builder.append("  ");
       builder.append(playersByRank.getInitials());
       builder.append("          ");
       builder.append(String.format("%3.3s", playersByRank.getFirst()));
@@ -106,7 +108,7 @@ public class DiscordBotCommandResponseFactory {
       builder.append(String.format("%3.3s", playersByRank.getSecond()));
       builder.append("  ");
       builder.append(String.format("%3.3s", playersByRank.getThird()));
-      builder.append("        ");
+      builder.append("       ");
       builder.append(String.format("%3.3s", playersByRank.getCompetitionsWon()));
       builder.append("\n");
     }

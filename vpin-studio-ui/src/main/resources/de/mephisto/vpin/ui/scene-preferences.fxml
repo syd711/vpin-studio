@@ -69,6 +69,15 @@
                         <Insets top="4.0" />
                      </VBox.margin>
                   </Button>
+                  <Label alignment="BASELINE_LEFT" layoutX="160.0" layoutY="380.0" styleClass="preference-section" text="PLAYER PREFERENCES">
+                     <font>
+                        <Font size="13.0" />
+                     </font>
+                     <VBox.margin>
+                        <Insets top="24.0" />
+                     </VBox.margin>
+                  </Label>
+                  <Button alignment="BASELINE_LEFT" contentDisplay="RIGHT" layoutX="160.0" layoutY="446.0" mnemonicParsing="false" onAction="#onRankings" styleClass="preference-button" text="Ranking" />
                   <Label alignment="BASELINE_LEFT" layoutX="160.0" layoutY="306.0" styleClass="preference-section" text="OVERLAY PREFERENCES">
                      <font>
                         <Font size="13.0" />

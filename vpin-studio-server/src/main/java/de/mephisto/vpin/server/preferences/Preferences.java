@@ -40,10 +40,20 @@ public class Preferences {
 
   private String discordBotAllowList;
 
+  private String rankingPoints;
+
   @Column(length = 1024)
   private String highscoreTitles;
 
   private int idleTimeout;
+
+  public String getRankingPoints() {
+    return rankingPoints;
+  }
+
+  public void setRankingPoints(String rankingPoints) {
+    this.rankingPoints = rankingPoints;
+  }
 
   public String getDiscordBotAllowList() {
     return discordBotAllowList;

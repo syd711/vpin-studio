@@ -9,6 +9,15 @@ public class RankedPlayerRepresentation {
   private int rank;
   private String avatarUuid;
   private String avatarUrl;
+  private int points;
+
+  public int getPoints() {
+    return points;
+  }
+
+  public void setPoints(int points) {
+    this.points = points;
+  }
 
   public int getCompetitionsWon() {
     return competitionsWon;

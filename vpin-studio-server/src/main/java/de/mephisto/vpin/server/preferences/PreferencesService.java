@@ -46,6 +46,15 @@ public class PreferencesService implements InitializingBean {
     return bean.getPropertyValue(key);
   }
 
+  public Object getPreferenceValue(String key, Object defaultValue) {
+    BeanWrapper bean = new BeanWrapperImpl(preferences);
+    Object value = bean.getPropertyValue(key);
+    if (value == null) {
+      return defaultValue;
+    }
+    return value;
+  }
+
   public boolean savePreference(Map<String, Object> values) {
     BeanWrapper bean = new BeanWrapperImpl(preferences);
 

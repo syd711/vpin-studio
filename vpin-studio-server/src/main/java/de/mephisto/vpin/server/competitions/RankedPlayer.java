@@ -10,6 +10,7 @@ public class RankedPlayer {
   private int rank;
   private String avatarUuid;
   private String avatarUrl;
+  private int points;
 
   public void addBy(int id) {
     if(id == 0) {
@@ -21,6 +22,14 @@ public class RankedPlayer {
     else if(id == 2) {
       third++;
     }
+  }
+
+  public int getPoints() {
+    return points;
+  }
+
+  public void setPoints(int points) {
+    this.points = points;
   }
 
   public int getCompetitionsWon() {

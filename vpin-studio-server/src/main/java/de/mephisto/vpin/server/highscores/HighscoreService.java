@@ -1,11 +1,13 @@
 package de.mephisto.vpin.server.highscores;
 
 import com.google.common.annotations.VisibleForTesting;
+import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.server.competitions.CompetitionsRepository;
 import de.mephisto.vpin.server.competitions.RankedPlayer;
 import de.mephisto.vpin.server.competitions.ScoreSummary;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.players.Player;
+import de.mephisto.vpin.server.preferences.PreferencesService;
 import de.mephisto.vpin.server.system.SystemService;
 import de.mephisto.vpin.server.vpa.VpaExporterJob;
 import edu.umd.cs.findbugs.annotations.NonNull;
@@ -18,6 +20,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class HighscoreService implements InitializingBean {
@@ -37,6 +40,9 @@ public class HighscoreService implements InitializingBean {
 
   @Autowired
   private HighscoreParser highscoreParser;
+
+  @Autowired
+  private PreferencesService preferencesService;
 
   private HighscoreResolver highscoreResolver;
 
@@ -131,23 +137,21 @@ public class HighscoreService implements InitializingBean {
       }
     }
 
-    List<RankedPlayer> rankedPlayers = new ArrayList<>(playerMap.values());
-    Collections.sort(rankedPlayers, (o2, o1) -> {
-      if (o1.getFirst() == o2.getFirst()) {
-        if (o1.getSecond() == o2.getSecond()) {
-          return o1.getThird() - o2.getThird();
-        }
-        else {
-          return o1.getSecond() - o2.getSecond();
-        }
-      }
-      return o1.getFirst() - o2.getFirst();
-    });
+    String rankingPoints = (String) preferencesService.getPreferenceValue(PreferenceNames.RANKING_POINTS, "4,2,1,0");
+    List<Integer> points = Arrays.stream(rankingPoints.split(",")).map(Integer::parseInt).collect(Collectors.toList());
 
+    List<RankedPlayer> rankedPlayers = new ArrayList<>(playerMap.values());
+    for (RankedPlayer rankedPlayer : rankedPlayers) {
+      rankedPlayer.setPoints(rankedPlayer.getPoints() + (points.get(0) * rankedPlayer.getFirst()));
+      rankedPlayer.setPoints(rankedPlayer.getPoints() + (points.get(1) * rankedPlayer.getSecond()));
+      rankedPlayer.setPoints(rankedPlayer.getPoints() + (points.get(2) * rankedPlayer.getThird()));
+      rankedPlayer.setPoints(rankedPlayer.getPoints() + (points.get(3) * rankedPlayer.getCompetitionsWon()));
+    }
+
+    Collections.sort(rankedPlayers, (o2, o1) -> o1.getPoints() - o2.getPoints());
     for (int i = 1; i <= rankedPlayers.size(); i++) {
       rankedPlayers.get(i - 1).setRank(i);
     }
-
     return rankedPlayers;
   }
 

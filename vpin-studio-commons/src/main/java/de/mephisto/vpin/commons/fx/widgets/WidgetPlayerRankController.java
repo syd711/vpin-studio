@@ -47,6 +47,9 @@ public class WidgetPlayerRankController extends WidgetController implements Init
   private TableColumn<RankedPlayerRepresentation, String> columnRank;
 
   @FXML
+  private TableColumn<RankedPlayerRepresentation, String> columnPoints;
+
+  @FXML
   private TableColumn<RankedPlayerRepresentation, String> columnName;
 
   @FXML
@@ -78,6 +81,14 @@ public class WidgetPlayerRankController extends WidgetController implements Init
       RankedPlayerRepresentation value = cellData.getValue();
       Font defaultFont = Font.font(Font.getDefault().getFamily(), FontWeight.BOLD, 18);
       Label label = new Label("#" + value.getRank());
+      label.setFont(defaultFont);
+      return new SimpleObjectProperty(label);
+    });
+
+    columnPoints.setCellValueFactory(cellData -> {
+      RankedPlayerRepresentation value = cellData.getValue();
+      Font defaultFont = Font.font(Font.getDefault().getFamily(), FontWeight.BOLD, 18);
+      Label label = new Label(String.valueOf(value.getPoints()));
       label.setFont(defaultFont);
       return new SimpleObjectProperty(label);
     });
