@@ -1,132 +1,45 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.geometry.Insets?>
-<?import javafx.scene.control.Button?>
-<?import javafx.scene.control.Separator?>
 <?import javafx.scene.control.Tab?>
 <?import javafx.scene.control.TabPane?>
-<?import javafx.scene.control.TableColumn?>
-<?import javafx.scene.control.TableView?>
-<?import javafx.scene.control.TextField?>
-<?import javafx.scene.control.ToolBar?>
-<?import javafx.scene.layout.BorderPane?>
-<?import javafx.scene.layout.StackPane?>
-<?import javafx.scene.text.Font?>
+<?import javafx.scene.layout.*?>
 <?import org.kordamp.ikonli.javafx.FontIcon?>
-
-<BorderPane styleClass="base-component" stylesheets="@../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.competitions.CompetitionsController">
+<BorderPane styleClass="base-component" stylesheets="@../stylesheet.css" xmlns="http://javafx.com/javafx/18"
+            xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.competitions.CompetitionsController">
     <top>
-        <fx:include fx:id="mainToolbar" source="../scene-toolbar.fxml" />
+        <fx:include fx:id="mainToolbar" source="../scene-toolbar.fxml"/>
     </top>
     <center>
         <BorderPane styleClass="subpanel" BorderPane.alignment="CENTER">
             <center>
                 <TabPane tabClosingPolicy="UNAVAILABLE" BorderPane.alignment="CENTER">
                     <tabs>
-                        <Tab closable="false" text="Offline Competitions">
+                        <Tab fx:id="offlineTab" closable="false" text="Offline Competitions">
                             <content>
-                                <BorderPane prefHeight="200.0" prefWidth="200.0" />
+                                <BorderPane prefHeight="200.0" prefWidth="200.0"/>
                             </content>
-                     <graphic>
-                        <FontIcon iconColor="WHITE" iconLiteral="bi-trophy" />
-                     </graphic>
-                     <content>
-                        <BorderPane fx:id="competitionWidget">
-                           <center>
-                              <BorderPane BorderPane.alignment="CENTER">
-                                 <center>
-                                    <StackPane fx:id="tableStack">
-                                       <children>
-                                          <TableView fx:id="tableView" style="-fx-background-color: #2a2a2a;" styleClass="base-component">
-                                            <columns>
-                                              <TableColumn fx:id="columnName" prefWidth="292.0001335144043" style="-fx-alignment: BASELINE_LEFT;" text="Name" />
-                                              <TableColumn fx:id="columnStatus" minWidth="0.0" prefWidth="172.0" style="-fx-alignment: CENTER;" text="Status" />
-                                                <TableColumn fx:id="columnTable" prefWidth="292.0001335144043" style="-fx-alignment: BASELINE_LEFT;" text="Table" />
-                                                <TableColumn fx:id="columnStartDate" prefWidth="120.0" style="-fx-alignment: CENTER;" text="Start Date" />
-                                                <TableColumn fx:id="columnEndDate" prefWidth="120.0" style="-fx-alignment: CENTER;" text="End Date" />
-                                                <TableColumn fx:id="columnWinner" prefWidth="200.0" style="-fx-alignment: CENTER;" text="Winner" />
-                                                <TableColumn fx:id="columnScoreCount" prefWidth="140.0" style="-fx-alignment: CENTER;" text="Submitted Scores" />
-                                            </columns>
-                                          </TableView>
-                                       </children>
-                                    </StackPane>
-                                 </center>
-                                 <top>
-                                    <ToolBar prefHeight="40.0" prefWidth="200.0" BorderPane.alignment="CENTER">
-                                      <items>
-                                          <TextField fx:id="textfieldSearch" prefHeight="26.0" prefWidth="250.0" promptText="Competition Search...">
-                                             <font>
-                                                <Font size="14.0" />
-                                             </font>
-                                          </TextField>
-                                          <Separator layoutX="320.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
-                                          <Button layoutX="280.0" layoutY="12.0" mnemonicParsing="false" onAction="#onReload" text="Reload" textFill="WHITE">
-                                             <font>
-                                                <Font size="14.0" />
-                                             </font>
-                                             <graphic>
-                                                <FontIcon iconColor="WHITE" iconLiteral="sil-reload" />
-                                             </graphic>
-                                          </Button>
-                                          <Separator orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
-                                          <Button layoutX="280.0" layoutY="11.0" mnemonicParsing="false" onAction="#onCompetitionCreate" text="Add" textFill="WHITE">
-                                             <font>
-                                                <Font size="14.0" />
-                                             </font>
-                                             <graphic>
-                                                <FontIcon iconColor="WHITE" iconLiteral="mdi2p-plus-circle-outline" />
-                                             </graphic>
-                                          </Button>
-                                          <Separator layoutX="364.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
-                                          <Button fx:id="editBtn" layoutX="280.0" layoutY="11.0" mnemonicParsing="false" onAction="#onEdit" text="Edit" textFill="WHITE">
-                                             <font>
-                                                <Font size="14.0" />
-                                             </font>
-                                             <graphic>
-                                                <FontIcon iconColor="WHITE" iconLiteral="mdi2d-database-edit-outline" />
-                                             </graphic>
-                                          </Button>
-                                          <Button fx:id="deleteBtn" layoutX="464.0" layoutY="11.0" mnemonicParsing="false" onAction="#onDelete" text="Delete" textFill="WHITE">
-                                             <font>
-                                                <Font size="14.0" />
-                                             </font>
-                                             <graphic>
-                                                <FontIcon iconColor="WHITE" iconLiteral="mdi2d-delete-outline" />
-                                             </graphic>
-                                          </Button>
-                                          <Button fx:id="duplicateBtn" layoutX="547.0" layoutY="11.0" mnemonicParsing="false" onAction="#onDuplicate" text="Duplicate" textFill="WHITE">
-                                             <font>
-                                                <Font size="14.0" />
-                                             </font>
-                                             <graphic>
-                                                <FontIcon iconColor="WHITE" iconLiteral="mdi2f-forwardburger" />
-                                             </graphic>
-                                          </Button>
-                                          <Separator layoutX="448.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
-                                          <Button fx:id="finishBtn" layoutX="610.0" layoutY="11.0" mnemonicParsing="false" onAction="#onFinish" text="Finish" textFill="WHITE">
-                                             <font>
-                                                <Font size="14.0" />
-                                             </font>
-                                             <graphic>
-                                                <FontIcon iconColor="WHITE" iconLiteral="bi-stop" />
-                                             </graphic>
-                                          </Button>
-                                      </items>
-                                    </ToolBar>
-                                 </top>
-                              </BorderPane>
-                           </center></BorderPane>
-                     </content>
+                            <graphic>
+                                <FontIcon iconColor="WHITE" iconLiteral="bi-trophy"/>
+                            </graphic>
+                        </Tab>
+                        <Tab fx:id="onlineTab" text="Online Competitions">
+                            <content>
+                                <BorderPane prefHeight="200.0" prefWidth="200.0"/>
+                            </content>
+                            <graphic>
+                                <FontIcon iconColor="WHITE" iconLiteral="bi-trophy-fill"/>
+                            </graphic>
                         </Tab>
                     </tabs>
                     <BorderPane.margin>
-                        <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
+                        <Insets bottom="12.0" left="12.0" right="12.0" top="12.0"/>
                     </BorderPane.margin>
                 </TabPane>
             </center>
-         <BorderPane.margin>
-            <Insets right="12.0" />
-         </BorderPane.margin>
+            <BorderPane.margin>
+                <Insets right="12.0"/>
+            </BorderPane.margin>
         </BorderPane>
     </center>
 </BorderPane>

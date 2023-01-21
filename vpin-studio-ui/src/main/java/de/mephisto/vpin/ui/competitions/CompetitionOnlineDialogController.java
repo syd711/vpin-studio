@@ -1,13 +1,10 @@
 package de.mephisto.vpin.ui.competitions;
 
 import de.mephisto.vpin.commons.EmulatorTypes;
-import de.mephisto.vpin.restclient.PopperScreen;
+import de.mephisto.vpin.commons.fx.DialogController;
 import de.mephisto.vpin.restclient.VPinStudioClient;
 import de.mephisto.vpin.restclient.representations.CompetitionRepresentation;
-import de.mephisto.vpin.restclient.representations.GameMediaItemRepresentation;
-import de.mephisto.vpin.restclient.representations.GameMediaRepresentation;
 import de.mephisto.vpin.restclient.representations.GameRepresentation;
-import de.mephisto.vpin.commons.fx.DialogController;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -21,7 +18,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.ByteArrayInputStream;
 import java.net.URL;
 import java.time.LocalDate;
 import java.time.ZoneId;
@@ -33,26 +29,14 @@ import java.util.ResourceBundle;
 
 import static de.mephisto.vpin.ui.Studio.client;
 
-public class CompetitionDialogController implements Initializable, DialogController {
-  private final static Logger LOG = LoggerFactory.getLogger(CompetitionDialogController.class);
+public class CompetitionOnlineDialogController implements Initializable, DialogController {
+  private final static Logger LOG = LoggerFactory.getLogger(CompetitionOnlineDialogController.class);
 
   @FXML
-  private ImageView iconPreview;
-
-  @FXML
-  private ImageView badgePreview;
-
-  @FXML
-  private ComboBox<String> competitionIconCombo;
+  private ComboBox<String> channelCombo;
 
   @FXML
   private ComboBox<GameRepresentation> tableCombo;
-
-  @FXML
-  private CheckBox badgeCheckbox;
-
-  @FXML
-  private CheckBox discordCheckbox;
 
   @FXML
   private Button saveBtn;
@@ -71,16 +55,6 @@ public class CompetitionDialogController implements Initializable, DialogControl
 
   private CompetitionRepresentation competition;
 
-  @FXML
-  private void onBadgeCheck() {
-    competition.setCustomizeMedia(this.badgeCheckbox.isSelected());
-    refreshPreview(tableCombo.getValue(), competitionIconCombo.getValue());
-  }
-
-  @FXML
-  private void onDiscordCheck() {
-    competition.setDiscordNotifications(this.discordCheckbox.isSelected());
-  }
 
   @FXML
   private void onCancelClick(ActionEvent e) {
@@ -106,8 +80,6 @@ public class CompetitionDialogController implements Initializable, DialogControl
     competition.setStartDate(Date.from(LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant()));
     competition.setEndDate(end);
 
-    badgeCheckbox.setSelected(true);
-    discordCheckbox.setSelected(true);
     competition.setCustomizeMedia(true);
     saveBtn.setDisable(true);
 
@@ -155,44 +127,10 @@ public class CompetitionDialogController implements Initializable, DialogControl
     tableCombo.getItems().addAll(gameRepresentations);
     tableCombo.valueProperty().addListener((observableValue, gameRepresentation, t1) -> {
       competition.setGameId(t1.getId());
-      refreshPreview(t1, competitionIconCombo.getValue());
-      validate();
-    });
-
-
-    ObservableList<String> imageList = FXCollections.observableList(new ArrayList<>(client.getCompetitionBadges()));
-    competitionIconCombo.setItems(imageList);
-    competitionIconCombo.setCellFactory(c -> new CompetitionImageListCell(client));
-    competitionIconCombo.valueProperty().addListener((observableValue, s, t1) -> {
-      competition.setBadge(t1);
-      refreshPreview(tableCombo.getValue(), t1);
       validate();
     });
 
     validate();
-  }
-
-  private void refreshPreview(GameRepresentation game, String badge) {
-    if (game != null) {
-      GameMediaRepresentation gameMedia = game.getGameMedia();
-      GameMediaItemRepresentation mediaItem = gameMedia.getMedia().get(PopperScreen.Wheel.name());
-      if (mediaItem != null) {
-        ByteArrayInputStream gameMediaItem = client.getGameMediaItem(game.getId(), PopperScreen.Wheel);
-        Image image = new Image(gameMediaItem);
-        iconPreview.setImage(image);
-
-        if (badge != null && badgeCheckbox.isSelected()) {
-          Image badgeIcon = new Image(client.getCompetitionBadge(badge));
-          badgePreview.setImage(badgeIcon);
-        }
-        else {
-          badgePreview.setImage(null);
-        }
-      }
-    }
-    else {
-      iconPreview.setImage(null);
-    }
   }
 
   private void validate() {
@@ -229,12 +167,6 @@ public class CompetitionDialogController implements Initializable, DialogControl
       this.startDatePicker.setValue(this.competition.getStartDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate());
       this.endDatePicker.setValue(this.competition.getEndDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate());
       this.tableCombo.setValue(game);
-
-      this.badgeCheckbox.setSelected(c.isCustomizeMedia());
-      this.discordCheckbox.setSelected(c.isDiscordNotifications());
-      this.competitionIconCombo.setValue(c.getBadge());
-      String badge = c.getBadge();
-      refreshPreview(game, badge);
     }
   }
 
