@@ -34,6 +34,7 @@
                </columnConstraints>
                <rowConstraints>
                   <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                </rowConstraints>
                <children>
                   <Label prefHeight="20.0" styleClass="preference-label" text="Startup Time:" textFill="WHITE">
@@ -42,6 +43,16 @@
                      </font>
                   </Label>
                   <Label fx:id="startupTimeLabel" textFill="WHITE" GridPane.columnIndex="1">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                  </Label>
+                  <Label layoutX="9.0" layoutY="12.0" prefHeight="20.0" styleClass="preference-label" text="Version:" textFill="WHITE" GridPane.rowIndex="1">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                  </Label>
+                  <Label fx:id="versionLabel" layoutX="129.0" layoutY="15.0" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="1">
                      <font>
                         <Font size="14.0" />
                      </font>

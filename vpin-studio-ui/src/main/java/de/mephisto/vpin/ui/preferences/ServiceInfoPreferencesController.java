@@ -18,6 +18,9 @@ public class ServiceInfoPreferencesController implements Initializable {
   private Label startupTimeLabel;
 
   @FXML
+  private Label versionLabel;
+
+  @FXML
   private TextArea logTextArea;
 
   @FXML
@@ -30,6 +33,7 @@ public class ServiceInfoPreferencesController implements Initializable {
   public void initialize(URL url, ResourceBundle resourceBundle) {
     Date startupTime = client.getStartupTime();
     startupTimeLabel.setText(DateFormat.getDateTimeInstance().format(startupTime));
+    versionLabel.setText(client.version());
 
     onReload();
   }

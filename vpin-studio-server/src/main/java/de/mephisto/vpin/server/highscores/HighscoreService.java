@@ -61,6 +61,10 @@ public class HighscoreService implements InitializingBean {
     return highscore.get();
   }
 
+  public Optional<Highscore> getHighscore(int gameId) {
+    return highscoreRepository.findByGameId(gameId);
+  }
+
   @NonNull
   public HighscoreMetadata scanScore(@NonNull Game game) {
     Optional<Highscore> highscore = highscoreRepository.findByGameId(game.getId());

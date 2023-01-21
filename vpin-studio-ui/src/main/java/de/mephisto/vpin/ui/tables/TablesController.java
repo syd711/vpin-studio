@@ -81,6 +81,9 @@ public class TablesController implements Initializable, StudioFXController {
   private TableColumn<GameRepresentation, String> columnPUPPack;
 
   @FXML
+  private TableColumn<GameRepresentation, String> columnHSType;
+
+  @FXML
   private TableView<GameRepresentation> tableView;
 
   @FXML
@@ -484,6 +487,11 @@ public class TablesController implements Initializable, StudioFXController {
     columnEmulator.setCellValueFactory(cellData -> {
       GameRepresentation value = cellData.getValue();
       return new SimpleStringProperty(value.getEmulator().getName());
+    });
+
+    columnHSType.setCellValueFactory(cellData -> {
+      GameRepresentation value = cellData.getValue();
+      return new SimpleStringProperty(value.getHighscoreType());
     });
 
     columnB2S.setCellValueFactory(cellData -> {

@@ -19,6 +19,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -300,6 +301,13 @@ public class GameService {
       //re-fetch highscore since the ROM may be set
       this.highscoreService.getOrCreateHighscore(game);
     }
+
+
+    Optional<Highscore> highscore = this.highscoreService.getHighscore(game.getId());
+    if(highscore.isPresent()) {
+      game.setHighscoreType(highscore.get().getType());
+    }
+
     game.setOriginalRom(romService.getOriginalRom(game.getRom()));
     game.setHsFileName(gameDetails.getHsFileName());
     game.setTableName(gameDetails.getTableName());

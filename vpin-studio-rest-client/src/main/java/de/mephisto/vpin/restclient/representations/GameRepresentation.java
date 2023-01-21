@@ -36,7 +36,16 @@ public class GameRepresentation {
   private String hsFileName;
   private boolean romExists;
   private String ignoredValidations;
+  private String highscoreType;
   private List<GameAssetRepresentation> assets;
+
+  public String getHighscoreType() {
+    return highscoreType;
+  }
+
+  public void setHighscoreType(String highscoreType) {
+    this.highscoreType = highscoreType;
+  }
 
   private boolean pov;
 

@@ -44,6 +44,7 @@
                                        </columns></TableColumn>
                                     <TableColumn fx:id="columnPUPPack" minWidth="57.5999755859375" prefWidth="90.39990234375" style="-fx-alignment: CENTER;" text="PUP Pack" />
                                   <TableColumn fx:id="columnRom" minWidth="10.4000244140625" prefWidth="126.4000244140625" style="-fx-alignment: BASELINE_LEFT;" text="ROM" />
+                                    <TableColumn fx:id="columnHSType" minWidth="10.4000244140625" prefWidth="126.4000244140625" style="-fx-alignment: BASELINE_LEFT;" text="Highscore Type" />
                                 </columns>
                               </TableView>
                            </children>

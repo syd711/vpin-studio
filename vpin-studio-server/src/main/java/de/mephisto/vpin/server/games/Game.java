@@ -36,6 +36,7 @@ public class Game {
   private int validationState;
   private String ignoredValidations;
   private int volume;
+  private String highscoreType;
 
   private List<GameAsset> assets = new ArrayList<>();
 
@@ -49,6 +50,13 @@ public class Game {
     this.systemService = systemService;
   }
 
+  public String getHighscoreType() {
+    return highscoreType;
+  }
+
+  public void setHighscoreType(String highscoreType) {
+    this.highscoreType = highscoreType;
+  }
 
   public String getTableName() {
     return tableName;
