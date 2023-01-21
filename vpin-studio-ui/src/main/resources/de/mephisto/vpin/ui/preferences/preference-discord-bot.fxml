@@ -91,7 +91,7 @@
                </opaqueInsets>
             </GridPane>
             <Label layoutX="34.0" layoutY="205.0" styleClass="preference-description" text="Enter the name of the text channels that should support the bot commands." textFill="WHITE" />
-            <Label layoutX="34.0" layoutY="355.0" styleClass="preference-description" text="By default, all text channels on the server will respond to bot commands." textFill="WHITE">
+            <Label layoutX="34.0" layoutY="355.0" styleClass="preference-description" text="By default, the bot will only respond to direct messages." textFill="WHITE">
                <VBox.margin>
                   <Insets bottom="6.0" />
                </VBox.margin>

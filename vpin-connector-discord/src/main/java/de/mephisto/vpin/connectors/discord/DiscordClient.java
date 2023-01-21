@@ -7,6 +7,7 @@ import net.dv8tion.jda.api.entities.Activity;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
+import net.dv8tion.jda.api.entities.channel.concrete.PrivateChannel;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.entities.channel.middleman.GuildChannel;
 import net.dv8tion.jda.api.entities.channel.middleman.MessageChannel;
@@ -193,9 +194,14 @@ public class DiscordClient extends ListenerAdapter {
   /**
    * Checks if the given channel is configured for returning bot commands.
    */
-  private boolean isValidChannel(MessageChannelUnion channel) {
-    if (channelAllowList.isEmpty()) {
+  private boolean isValidChannel(MessageReceivedEvent event) {
+    MessageChannelUnion channel = event.getChannel();
+    if(channel instanceof PrivateChannel) {
       return true;
+    }
+
+    if (channelAllowList.isEmpty()) {
+      return false;
     }
 
     for (String entry : channelAllowList) {
@@ -240,14 +246,14 @@ public class DiscordClient extends ListenerAdapter {
 
     Message message = event.getMessage();
     String content = message.getContentRaw();
-    if (content.startsWith("/") && isValidChannel(message.getChannel())) {
+    if (content.startsWith("/") && isValidChannel(event)) {
       if (content.startsWith("/commands")) {
         MessageChannel channel = event.getChannel();
         channel.sendMessage("List of available commands:\n" +
             "**/competitions **: Returns the list and status of active competitions.\n" +
             "**/hs <TABLE NAME>**: Returns the highscore for the table matching the give name.\n" +
             "**/ranks **: Returns the overall player ranking.\n" +
-            "**/player <PLAYER_INITIALS> **: Returns all highscores of this player.\n" +
+            "**/player <PLAYER_INITIALS> **: Returns all data of this player.\n" +
             "").queue();
       }
       else if (commandResolver != null) {
@@ -266,4 +272,6 @@ public class DiscordClient extends ListenerAdapter {
       }
     }
   }
+
+
 }

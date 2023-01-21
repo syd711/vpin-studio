@@ -23,7 +23,7 @@
             <center>
                 <TabPane tabClosingPolicy="UNAVAILABLE" BorderPane.alignment="CENTER">
                     <tabs>
-                        <Tab closable="false" text="Competition List">
+                        <Tab closable="false" text="Offline Competitions">
                             <content>
                                 <BorderPane prefHeight="200.0" prefWidth="200.0" />
                             </content>
