@@ -1,11 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.*?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.image.*?>
-<?import javafx.scene.layout.*?>
-<?import javafx.scene.text.*?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
 <?import org.kordamp.ikonli.javafx.FontIcon?>
+
 <BorderPane styleClass="base-component" stylesheets="@../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.preferences.DiscordBotPreferencesController">
    <top>
       <VBox fx:id="preferenceList" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" styleClass="subpanel" BorderPane.alignment="TOP_LEFT">
@@ -81,8 +90,8 @@
                   <Insets />
                </opaqueInsets>
             </GridPane>
-            <Label layoutX="34.0" layoutY="205.0" styleClass="preference-description" text="Enter the name of the text channels that should support the bot commands." textFill="WHITE" />
-            <Label layoutX="34.0" layoutY="355.0" styleClass="preference-description" text="By default, the bot will only respond to direct messages." textFill="WHITE">
+            <Label layoutX="34.0" layoutY="205.0" styleClass="preference-description" text="Enter the name or ID of users that are allowed to write bot commands." textFill="WHITE" />
+            <Label layoutX="34.0" layoutY="355.0" styleClass="preference-description" text="By default, the bot will respond to commands from all users." textFill="WHITE">
                <VBox.margin>
                   <Insets bottom="6.0" />
                </VBox.margin>
@@ -97,7 +106,7 @@
                 <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
               </rowConstraints>
                <children>
-                  <Label prefHeight="20.0" styleClass="preference-label" text="Bot Channel Allow List:" textFill="WHITE">
+                  <Label prefHeight="20.0" styleClass="preference-label" text="Bot Users Allow List:" textFill="WHITE">
                      <font>
                         <Font size="14.0" />
                      </font>
