@@ -3,6 +3,7 @@ package de.mephisto.vpin.ui.competitions;
 import de.mephisto.vpin.commons.EmulatorTypes;
 import de.mephisto.vpin.commons.fx.DialogController;
 import de.mephisto.vpin.restclient.CompetitionType;
+import de.mephisto.vpin.restclient.DiscordChannel;
 import de.mephisto.vpin.restclient.PopperScreen;
 import de.mephisto.vpin.restclient.VPinStudioClient;
 import de.mephisto.vpin.restclient.representations.CompetitionRepresentation;
@@ -27,10 +28,7 @@ import java.net.URL;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.ResourceBundle;
+import java.util.*;
 
 import static de.mephisto.vpin.ui.Studio.client;
 
@@ -53,7 +51,7 @@ public class CompetitionOfflineDialogController implements Initializable, Dialog
   private CheckBox badgeCheckbox;
 
   @FXML
-  private CheckBox discordCheckbox;
+  private ComboBox<DiscordChannel> channelsCombo;
 
   @FXML
   private Button saveBtn;
@@ -72,15 +70,12 @@ public class CompetitionOfflineDialogController implements Initializable, Dialog
 
   private CompetitionRepresentation competition;
 
+  private List<DiscordChannel> discordChannels;
+
   @FXML
   private void onBadgeCheck() {
     competition.setCustomizeMedia(this.badgeCheckbox.isSelected());
     refreshPreview(tableCombo.getValue(), competitionIconCombo.getValue());
-  }
-
-  @FXML
-  private void onDiscordCheck() {
-    competition.setDiscordNotifications(this.discordCheckbox.isSelected());
   }
 
   @FXML
@@ -102,13 +97,13 @@ public class CompetitionOfflineDialogController implements Initializable, Dialog
     competition.setType(CompetitionType.OFFLINE.name());
     competition.setDiscordNotifications(true);
     competition.setName("My next competition");
+    competition.setUuid(UUID.randomUUID().toString());
 
     Date end = Date.from(LocalDate.now().plus(7, ChronoUnit.DAYS).atStartOfDay(ZoneId.systemDefault()).toInstant());
     competition.setStartDate(Date.from(LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant()));
     competition.setEndDate(end);
 
     badgeCheckbox.setSelected(true);
-    discordCheckbox.setSelected(true);
     competition.setCustomizeMedia(true);
     saveBtn.setDisable(true);
 
@@ -157,6 +152,20 @@ public class CompetitionOfflineDialogController implements Initializable, Dialog
     tableCombo.valueProperty().addListener((observableValue, gameRepresentation, t1) -> {
       competition.setGameId(t1.getId());
       refreshPreview(t1, competitionIconCombo.getValue());
+      validate();
+    });
+
+    List<DiscordChannel> channels = new ArrayList<>(getDiscordChannels());
+    channels.add(0, null);
+    ObservableList<DiscordChannel> discordChannels = FXCollections.observableArrayList(channels);
+    channelsCombo.getItems().addAll(discordChannels);
+    channelsCombo.valueProperty().addListener((observableValue, gameRepresentation, t1) -> {
+      if(t1 != null) {
+        competition.setDiscordChannelId(t1.getId());
+      }
+      else {
+        competition.setDiscordChannelId(0);
+      }
       validate();
     });
 
@@ -231,14 +240,15 @@ public class CompetitionOfflineDialogController implements Initializable, Dialog
       this.endDatePicker.setValue(this.competition.getEndDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate());
       this.tableCombo.setValue(game);
 
+      Optional<DiscordChannel> channelOpt = getDiscordChannels().stream().filter(channel -> channel.getId() == c.getDiscordChannelId()).findFirst();
+      channelOpt.ifPresent(discordChannel -> this.channelsCombo.setValue(discordChannel));
+
       this.badgeCheckbox.setSelected(c.isCustomizeMedia());
-      this.discordCheckbox.setSelected(c.isDiscordNotifications());
       this.competitionIconCombo.setValue(c.getBadge());
       String badge = c.getBadge();
       refreshPreview(game, badge);
     }
   }
-
 
   public static class CompetitionImageListCell extends ListCell<String> {
     private final VPinStudioClient client;
@@ -263,5 +273,12 @@ public class CompetitionOfflineDialogController implements Initializable, Dialog
         setText(item);
       }
     }
+  }
+
+  private List<DiscordChannel> getDiscordChannels() {
+    if(this.discordChannels == null) {
+      this.discordChannels = client.getDiscordChannels();
+    }
+    return this.discordChannels;
   }
 }

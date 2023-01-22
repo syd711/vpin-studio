@@ -1,17 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.geometry.Insets?>
-<?import javafx.scene.control.Accordion?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Separator?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.control.TextField?>
-<?import javafx.scene.control.TitledPane?>
 <?import javafx.scene.control.ToolBar?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.StackPane?>
-<?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 <?import org.kordamp.ikonli.javafx.FontIcon?>
 
@@ -111,21 +108,6 @@
         <Insets right="12.0" />
     </BorderPane.margin>
     <top>
-        <BorderPane fx:id="competitionWidget" prefHeight="200.0" BorderPane.alignment="CENTER" />
+        <BorderPane fx:id="competitionWidget" prefHeight="250.0" BorderPane.alignment="CENTER" />
     </top>
-   <right>
-      <VBox prefWidth="600.0" BorderPane.alignment="CENTER">
-         <children>
-            <Accordion>
-              <panes>
-                <TitledPane text="Server Info">
-                     <content>
-                        <BorderPane />
-                     </content>
-                </TitledPane>
-              </panes>
-            </Accordion>
-         </children>
-      </VBox>
-   </right>
 </BorderPane>

@@ -1,5 +1,6 @@
 package de.mephisto.vpin.server.discord;
 
+import de.mephisto.vpin.restclient.DiscordChannel;
 import de.mephisto.vpin.server.competitions.Competition;
 import de.mephisto.vpin.server.competitions.CompetitionService;
 import de.mephisto.vpin.server.highscores.ScoreList;
@@ -24,4 +25,8 @@ public class DiscordResource {
     return discordService.isEnabled();
   }
 
+  @GetMapping("/channels")
+  public List<DiscordChannel> getChannels() {
+    return discordService.getChannels();
+  }
 }

@@ -7,6 +7,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
 import java.util.Date;
+import java.util.UUID;
 
 @Entity
 @Table(name = "Competitions")
@@ -28,6 +29,8 @@ public class Competition {
   @GeneratedValue(strategy = GenerationType.AUTO)
   private Long id;
 
+  private String uuid = UUID.randomUUID().toString();
+
   private String winnerInitials;
 
   private int gameId;
@@ -40,13 +43,29 @@ public class Competition {
 
   private boolean customizeMedia;
 
-  private boolean discordNotifications;
+  private long discordChannelId;
 
   private Date startDate;
 
   private Date endDate;
 
   private String name;
+
+  public String getUuid() {
+    return uuid;
+  }
+
+  public void setUuid(String uuid) {
+    this.uuid = uuid;
+  }
+
+  public long getDiscordChannelId() {
+    return discordChannelId;
+  }
+
+  public void setDiscordChannelId(long discordChannelId) {
+    this.discordChannelId = discordChannelId;
+  }
 
   public String getOwner() {
     return owner;
@@ -142,14 +161,6 @@ public class Competition {
 
   public void setUpdatedAt(Date updatedAt) {
     this.updatedAt = updatedAt;
-  }
-
-  public boolean isDiscordNotifications() {
-    return discordNotifications;
-  }
-
-  public void setDiscordNotifications(boolean discordNotifications) {
-    this.discordNotifications = discordNotifications;
   }
 
   public boolean isActive() {

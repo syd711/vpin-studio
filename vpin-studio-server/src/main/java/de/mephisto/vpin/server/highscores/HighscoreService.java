@@ -232,6 +232,10 @@ public class HighscoreService implements InitializingBean {
     return summary;
   }
 
+  public ScoreSummary getHighscores(int gameId) {
+    return getHighscores(gameId, null);
+  }
+
   /**
    * Returns a list of all scores for the given game
    *

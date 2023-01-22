@@ -49,9 +49,6 @@ public class CompetitionsOfflineController implements Initializable, StudioFXCon
   private TableColumn<CompetitionRepresentation, String> columnStatus;
 
   @FXML
-  private TableColumn<CompetitionRepresentation, String> columnScoreCount;
-
-  @FXML
   private TableColumn<CompetitionRepresentation, String> columnWinner;
 
   @FXML
@@ -290,13 +287,6 @@ public class CompetitionsOfflineController implements Initializable, StudioFXCon
       }
       return new SimpleObjectProperty(winner);
     });
-
-    columnScoreCount.setCellValueFactory(cellData -> {
-      CompetitionRepresentation value = cellData.getValue();
-      ScoreListRepresentation competitionScores = client.getCompetitionScores(value.getId());
-      return new SimpleObjectProperty(competitionScores.getScores().size());
-    });
-
 
     tableView.setPlaceholder(new Label("            Mmmh, not up for a challange yet?\n" +
         "Create a new competition by pressing the '+' button."));

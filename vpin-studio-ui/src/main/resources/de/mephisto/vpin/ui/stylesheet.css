@@ -48,7 +48,12 @@
     -fx-font-size : 12px;
 }
 
-
+#validationContainer {
+    -fx-background-color: #FF3333;
+    -fx-text-fill: #FFFFFF;
+    -fx-font-size : 14px;
+    -fx-font-weight : bold;
+}
 
 #validationError {
     -fx-background-color: #FF3333;

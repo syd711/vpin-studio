@@ -45,7 +45,7 @@ public class CompetitionsController implements Initializable, StudioFXController
   }
 
   private void refreshView() {
-    if(offlineController == null) {
+    if (offlineController == null) {
       try {
         FXMLLoader loader = new FXMLLoader(CompetitionsOfflineController.class.getResource("tab-competitions-offline.fxml"));
         Parent offline = loader.load();
@@ -57,17 +57,19 @@ public class CompetitionsController implements Initializable, StudioFXController
     }
 
     boolean isDiscordBotAvailable = client.isDiscordBotAvailable();
-    if(isDiscordBotAvailable && onlineController == null) {
-      try {
-        FXMLLoader loader = new FXMLLoader(CompetitionsDiscordController.class.getResource("tab-competitions-discord.fxml"));
-        Parent offline = loader.load();
-        onlineController = loader.getController();
-        onlineTab.setContent(offline);
-      } catch (IOException e) {
-        LOG.error("failed to load buildIn players: " + e.getMessage(), e);
+    if (isDiscordBotAvailable) {
+      if (onlineController == null) {
+        try {
+          FXMLLoader loader = new FXMLLoader(CompetitionsDiscordController.class.getResource("tab-competitions-discord.fxml"));
+          Parent offline = loader.load();
+          onlineController = loader.getController();
+          onlineTab.setContent(offline);
+        } catch (IOException e) {
+          LOG.error("failed to load buildIn players: " + e.getMessage(), e);
+        }
       }
     }
-    else {
+    else if(onlineTab.getContent() == null) {
       VBox content = new VBox();
       content.setSpacing(3);
       content.setPadding(new Insets(12, 12, 12, 12));

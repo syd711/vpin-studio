@@ -5,6 +5,7 @@ import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.UUID;
 
 public class CompetitionRepresentation {
   private Long id;
@@ -25,7 +26,37 @@ public class CompetitionRepresentation {
 
   private boolean discordNotifications;
 
+  private String owner;
+
+  private long discordChannelId;
+
   private String winnerInitials;
+
+  private String uuid;
+
+  public String getUuid() {
+    return uuid;
+  }
+
+  public void setUuid(String uuid) {
+    this.uuid = uuid;
+  }
+
+  public String getOwner() {
+    return owner;
+  }
+
+  public void setOwner(String owner) {
+    this.owner = owner;
+  }
+
+  public long getDiscordChannelId() {
+    return discordChannelId;
+  }
+
+  public void setDiscordChannelId(long discordChannelId) {
+    this.discordChannelId = discordChannelId;
+  }
 
   public String getWinnerInitials() {
     return winnerInitials;
@@ -135,6 +166,9 @@ public class CompetitionRepresentation {
     clone.setName(this.getName() + "(1)");
     clone.setBadge(this.getBadge());
     clone.setType(this.getType());
+    clone.setOwner(this.getOwner());
+    clone.setDiscordChannelId(this.getDiscordChannelId());
+    clone.setUuid(UUID.randomUUID().toString());
     clone.setCustomizeMedia(this.isCustomizeMedia());
     clone.setGameId(this.getGameId());
     return clone;

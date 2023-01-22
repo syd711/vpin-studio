@@ -3,10 +3,8 @@ package de.mephisto.vpin.connectors.discord;
 
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
-import net.dv8tion.jda.api.entities.Activity;
-import net.dv8tion.jda.api.entities.Guild;
-import net.dv8tion.jda.api.entities.Member;
-import net.dv8tion.jda.api.entities.Message;
+import net.dv8tion.jda.api.Permission;
+import net.dv8tion.jda.api.entities.*;
 import net.dv8tion.jda.api.entities.channel.concrete.PrivateChannel;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.entities.channel.middleman.GuildChannel;
@@ -19,12 +17,10 @@ import net.dv8tion.jda.api.events.guild.member.update.GuildMemberUpdateNicknameE
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.requests.GatewayIntent;
-import net.dv8tion.jda.api.utils.FileUpload;
 import net.dv8tion.jda.api.utils.MemberCachePolicy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -56,50 +52,72 @@ public class DiscordClient extends ListenerAdapter {
     this.refreshMembers();
   }
 
+  public String getBotId() {
+    return jda.getSelfUser().getId();
+  }
+
+  public void setTopic(long discordChannelId, String topic) {
+    Guild guild = jda.getGuildById(guildId);
+    if (guild != null) {
+      TextChannel channel = guild.getChannelById(TextChannel.class, discordChannelId);
+      if (channel != null) {
+        channel.getManager().setTopic(topic).queue();
+        LOG.info("Updated topic of '" + channel.getName() + "' to: " + topic);
+      }
+      else {
+        LOG.error("No discord channel found for id '" + discordChannelId + "'");
+      }
+    }
+  }
+
+  public List<DiscordTextChannel> getChannels() {
+    Guild guild = jda.getGuildById(guildId);
+    List<DiscordTextChannel> channelList = new ArrayList<>();
+    if (guild != null) {
+      List<GuildChannel> channels = guild.getChannels();
+      for (GuildChannel channel : channels) {
+        if (channel instanceof TextChannel) {
+          PermissionOverride po = channel.getPermissionContainer().getPermissionOverride((IPermissionHolder) guild.getRolesByName("@everyone", true).toArray()[0]);
+          if (po != null && po.getDenied().contains(Permission.VIEW_CHANNEL)) {
+            continue;
+          }
+
+          DiscordTextChannel t = new DiscordTextChannel();
+          t.setId(channel.getIdLong());
+          t.setName(channel.getName());
+          channelList.add(t);
+        }
+      }
+    }
+    return channelList;
+  }
+
   public void shutdown() {
     this.jda.shutdownNow();
   }
 
-  public void sendMessage(String textChannelName, File file) {
+  public void sendMessage(long channelId, String msg) {
     Guild guild = jda.getGuildById(guildId);
     if (guild != null) {
-      List<GuildChannel> channels = guild.getChannels();
-      for (GuildChannel channel : channels) {
-        if (channel.getName().equals(textChannelName)) {
-          if (!(channel instanceof TextChannel)) {
-            continue;
-          }
-          TextChannel textChannel = (TextChannel) channel;
-          textChannel.sendMessage("bubu").addFiles(FileUpload.fromData(file)).queue();
-          return;
-        }
-      }
-      throw new UnsupportedOperationException("No matching channel found for name " + textChannelName);
+      TextChannel textChannel = jda.getChannelById(TextChannel.class, channelId);
+      textChannel.sendMessage(msg).queue(); //.addFiles(FileUpload.fromData(file)).queue();
+      LOG.info("Sent message '" + msg + "' to '" + textChannel.getName() + "'");
     }
     else {
       throw new UnsupportedOperationException("No guild found for guildId '" + this.guildId + "'");
     }
   }
 
-  public void sendMessage(String textChannelName, String message) {
+  public String getTopic(long channelId) {
     Guild guild = jda.getGuildById(guildId);
-    if (guild != null) {
-      List<GuildChannel> channels = guild.getChannels();
-      for (GuildChannel channel : channels) {
-        if (channel.getName().equals(textChannelName)) {
-          if (!(channel instanceof TextChannel)) {
-            continue;
-          }
-          TextChannel textChannel = (TextChannel) channel;
-          textChannel.sendMessage(message).queue();
-          return;
-        }
-      }
-      throw new UnsupportedOperationException("No matching channel found for name " + textChannelName);
+    if (guild == null) {
+      TextChannel textChannel = jda.getChannelById(TextChannel.class, channelId);
+      return textChannel.getTopic();
     }
     else {
-      throw new UnsupportedOperationException("No guild found for guildId '" + this.guildId + "'");
+      LOG.warn("No score summary could be resolved for '" + channelId + "'");
     }
+    return null;
   }
 
   public List<DiscordMember> getMembers() {
@@ -196,7 +214,7 @@ public class DiscordClient extends ListenerAdapter {
    */
   private boolean isValidChannel(MessageReceivedEvent event) {
     MessageChannelUnion channel = event.getChannel();
-    if(channel instanceof PrivateChannel) {
+    if (channel instanceof PrivateChannel) {
       return true;
     }
 
@@ -272,6 +290,4 @@ public class DiscordClient extends ListenerAdapter {
       }
     }
   }
-
-
 }

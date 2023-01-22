@@ -21,6 +21,7 @@ public class GameRepresentation {
   private int nvOffset;
   private String gameDisplayName;
   private String gameFileName;
+  private long gameFileSize;
   private String tableName;
   private int id;
   private Date modified;
@@ -38,6 +39,16 @@ public class GameRepresentation {
   private String ignoredValidations;
   private String highscoreType;
   private List<GameAssetRepresentation> assets;
+  private boolean pov;
+  private boolean selected;
+
+  public long getGameFileSize() {
+    return gameFileSize;
+  }
+
+  public void setGameFileSize(long gameFileSize) {
+    this.gameFileSize = gameFileSize;
+  }
 
   public String getHighscoreType() {
     return highscoreType;
@@ -46,10 +57,6 @@ public class GameRepresentation {
   public void setHighscoreType(String highscoreType) {
     this.highscoreType = highscoreType;
   }
-
-  private boolean pov;
-
-  private boolean selected;
 
   public boolean isSelected() {
     return selected;

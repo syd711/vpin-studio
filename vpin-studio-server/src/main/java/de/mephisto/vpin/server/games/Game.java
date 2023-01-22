@@ -50,6 +50,13 @@ public class Game {
     this.systemService = systemService;
   }
 
+  public long getGameFileSize() {
+    if(this.getGameFile().exists()) {
+      return this.getGameFile().length();
+    }
+    return -1;
+  }
+
   public String getHighscoreType() {
     return highscoreType;
   }
