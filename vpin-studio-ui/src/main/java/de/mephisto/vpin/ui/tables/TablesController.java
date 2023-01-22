@@ -287,10 +287,16 @@ public class TablesController implements Initializable, StudioFXController {
 
   @FXML
   private void onTablesScan() {
-    Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Re-scan selected tables?",
+    List<GameRepresentation> selectedItems = new ArrayList<>(tableView.getSelectionModel().getSelectedItems());
+    String title = "Re-scan selected tables?";
+    if(selectedItems.size() == 1) {
+      title = "Re-scan table '" + selectedItems.get(0).getGameDisplayName() + "'?";
+    }
+
+    Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, title,
         "Re-scanning will overwrite some of the existing metadata properties.");
     if (result.isPresent() && result.get().equals(ButtonType.OK)) {
-      Dialogs.createProgressDialog(new TableScanProgressModel(client, "Scanning Tables", tableView.getSelectionModel().getSelectedItems()));
+      Dialogs.createProgressDialog(new TableScanProgressModel(client, "Scanning Tables", selectedItems));
       this.onReload();
     }
   }

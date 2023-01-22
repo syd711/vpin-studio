@@ -113,7 +113,7 @@ public class DiscordService implements InitializingBean, PreferenceChangedListen
         this.discordClient = new DiscordClient(botToken, guildId, this);
         if (!StringUtils.isEmpty(whiteList)) {
           String[] split = whiteList.split(",");
-          this.discordClient.setChannelAllowList(Arrays.asList(split));
+          this.discordClient.setCommandsAllowList(Arrays.asList(split));
         }
       }
       else {

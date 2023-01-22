@@ -37,7 +37,7 @@ public class DiscordClient extends ListenerAdapter {
   private final String guildId;
   private final List<DiscordMember> members;
 
-  private List<String> channelAllowList = new ArrayList<>();
+  private List<String> commandsAllowList = new ArrayList<>();
 
   public DiscordClient(String botToken, String guildId, DiscordCommandResolver commandResolver) throws Exception {
     this.guildId = guildId.trim();
@@ -204,8 +204,8 @@ public class DiscordClient extends ListenerAdapter {
     }
   }
 
-  public void setChannelAllowList(List<String> channelAllowList) {
-    this.channelAllowList = channelAllowList;
+  public void setCommandsAllowList(List<String> commandsAllowList) {
+    this.commandsAllowList = commandsAllowList;
   }
 
 
@@ -215,18 +215,15 @@ public class DiscordClient extends ListenerAdapter {
   private boolean isValidChannel(MessageReceivedEvent event) {
     MessageChannelUnion channel = event.getChannel();
     if (channel instanceof PrivateChannel) {
-      return true;
-    }
-
-    if (channelAllowList.isEmpty()) {
-      return false;
-    }
-
-    for (String entry : channelAllowList) {
-      if (channel.getName().equalsIgnoreCase(entry.trim())) {
+      if (commandsAllowList.isEmpty()) {
         return true;
       }
+
+      String name = event.getAuthor().getName();
+      String id = event.getAuthor().getId();
+      return commandsAllowList.contains(name) || commandsAllowList.contains(id);
     }
+
     return false;
   }
 

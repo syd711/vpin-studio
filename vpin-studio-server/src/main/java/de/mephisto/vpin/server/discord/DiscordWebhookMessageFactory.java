@@ -21,75 +21,6 @@ import java.time.temporal.ChronoUnit;
 public class DiscordWebhookMessageFactory {
   private final static Logger LOG = LoggerFactory.getLogger(DiscordWebhookMessageFactory.class);
 
-  private static final String COMPETITION_CREATED_TEMPLATE = "A new competition has been started!\\n" +
-      "```\\n" +
-      "%s\\n" +
-      "------------------------------------------------------------\\n" +
-      "Table:       %s\\n" +
-      "Start Date:  %s\\n" +
-      "End Date:    %s\\n" +
-      "Duration:    %s days\\n" +
-      "------------------------------------------------------------```";
-
-  private static final String COMPETITION_FINISHED_TEMPLATE = "Congratulation %s!\\n" +
-      "```" +
-      "The competition '%s' has been finished!\\n" +
-      "And the winner is...\\n" +
-      "\\n" +
-      "        %s\\n" +
-      "\\n" +
-      "Table: %s\\n" +
-      "Score: %s\\n" +
-      "\\n" +
-      "%s\\n" +
-      "%s\\n" +
-      "```";
-
-  private static final String COMPETITION_CANCELLED_TEMPLATE = "```" +
-      "The competition '%s' has been cancelled." +
-      "```";
-
-  public static String createCompetitionCancelledMessage(Competition competition) {
-    return String.format(COMPETITION_CANCELLED_TEMPLATE, competition.getName());
-  }
-
-  public static String createCompetitionCreatedMessage(Competition competition, Game game) {
-    LocalDate start = competition.getStartDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
-    LocalDate end = competition.getEndDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
-    long diff = Math.abs(ChronoUnit.DAYS.between(end, start));
-
-    return String.format(COMPETITION_CREATED_TEMPLATE,
-        competition.getName(),
-        game.getGameDisplayName(),
-        DateFormat.getDateInstance().format(competition.getStartDate()),
-        DateFormat.getDateInstance().format(competition.getEndDate()),
-        diff);
-  }
-
-  public static String createCompetitionFinishedMessage(@NonNull Competition competition, @Nullable Player winner, Game game, ScoreSummary summary) {
-    String winnerName = competition.getWinnerInitials();
-    String winnerRaw = competition.getWinnerInitials();
-    if (winner != null) {
-      winnerName = winner.getName();
-      winnerRaw = winner.getName();
-      if (winner.getDomain().equals(PlayerDomain.DISCORD.name())) {
-        winnerName = "<@" + winner.getId() + ">";
-      }
-    }
-
-    String second = formatScoreEntry(summary, 1);
-    String third = formatScoreEntry(summary, 2);
-
-    return String.format(COMPETITION_FINISHED_TEMPLATE,
-        winnerName,
-        competition.getName(),
-        winnerRaw,
-        game.getGameDisplayName(),
-        summary.getScores().get(0).getScore(),
-        second,
-        third);
-  }
-
   public static String createHighscoreCreatedMessage(HighscoreChangeEvent event) {
     Game game = event.getGame();
     Score newScore = event.getNewScore();
@@ -132,7 +63,7 @@ public class DiscordWebhookMessageFactory {
     return result;
   }
 
-  private static String formatScoreEntry(ScoreSummary summary, int index) {
+  public static String formatScoreEntry(ScoreSummary summary, int index) {
     StringBuilder builder = new StringBuilder("#");
     builder.append((index + 1));
     builder.append(" ");

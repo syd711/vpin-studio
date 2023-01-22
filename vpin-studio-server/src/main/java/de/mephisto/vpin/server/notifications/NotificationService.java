@@ -6,10 +6,7 @@ import de.mephisto.vpin.connectors.discord.DiscordWebhook;
 import de.mephisto.vpin.restclient.CompetitionType;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.server.competitions.*;
-import de.mephisto.vpin.server.discord.DiscordBotCommandListener;
-import de.mephisto.vpin.server.discord.DiscordBotCommandResponseFactory;
-import de.mephisto.vpin.server.discord.DiscordService;
-import de.mephisto.vpin.server.discord.DiscordWebhookMessageFactory;
+import de.mephisto.vpin.server.discord.*;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameService;
 import de.mephisto.vpin.server.highscores.HighscoreChangeEvent;
@@ -149,19 +146,31 @@ public class NotificationService implements InitializingBean, HighscoreChangeLis
 
   @Override
   public void highscoreChanged(@NotNull HighscoreChangeEvent event) {
+    Game game = event.getGame();
     try {
-      Game game = event.getGame();
       cardService.generateCard(game, false);
     } catch (Exception e) {
       LOG.error("Error updating card after highscore change event: " + e.getMessage(), e);
     }
 
+    boolean highscoreNotificationSent = false;
+    List<Competition> competitionForGame = competitionService.findCompetitionForGame(game.getId());
+    for (Competition competition : competitionForGame) {
+      if (competition.getDiscordChannelId() > 0 && competition.isActive()) {
+        long discordChannelId = competition.getDiscordChannelId();
+        discordService.sendMessage(discordChannelId, DiscordChannelMessageFactory.createCompetitionHighscoreCreatedMessage(competition, event));
+        highscoreNotificationSent = true;
+      }
+    }
 
-    String webhookUrl = (String) preferencesService.getPreferenceValue(PreferenceNames.DISCORD_WEBHOOK_URL);
-    if (!StringUtils.isEmpty(webhookUrl)) {
-      String message = DiscordWebhookMessageFactory.createHighscoreCreatedMessage(event);
-      DiscordWebhook.call(webhookUrl, message);
-      LOG.info("Called Discord webhook for update of score " + event.getNewHighscore());
+    //no notification was sent, try at least the webhook
+    if (!highscoreNotificationSent) {
+      String webhookUrl = (String) preferencesService.getPreferenceValue(PreferenceNames.DISCORD_WEBHOOK_URL);
+      if (!StringUtils.isEmpty(webhookUrl)) {
+        String message = DiscordWebhookMessageFactory.createHighscoreCreatedMessage(event);
+        DiscordWebhook.call(webhookUrl, message);
+        LOG.info("Called Discord webhook for update of score " + event.getNewHighscore());
+      }
     }
   }
 
@@ -180,7 +189,7 @@ public class NotificationService implements InitializingBean, HighscoreChangeLis
 
       if (competition.getDiscordChannelId() > 0 && competition.isActive()) {
         long discordChannelId = competition.getDiscordChannelId();
-        discordService.sendMessage(discordChannelId, DiscordWebhookMessageFactory.createCompetitionCreatedMessage(competition, game));
+        discordService.sendMessage(discordChannelId, DiscordChannelMessageFactory.createCompetitionCreatedMessage(competition, game));
       }
     }
   }
@@ -195,8 +204,8 @@ public class NotificationService implements InitializingBean, HighscoreChangeLis
       if (competition.getDiscordChannelId() > 0) {
         long discordChannelId = competition.getDiscordChannelId();
         ScoreSummary summary = discordService.getScoreSummary(discordChannelId);
-        if(summary != null) {
-          discordService.sendMessage(discordChannelId, DiscordWebhookMessageFactory.createCompetitionFinishedMessage(competition, winner, game, summary));
+        if (summary != null) {
+          discordService.sendMessage(discordChannelId, DiscordChannelMessageFactory.createCompetitionFinishedMessage(competition, winner, game, summary));
         }
       }
 
@@ -214,7 +223,7 @@ public class NotificationService implements InitializingBean, HighscoreChangeLis
 
       if (competition.getDiscordChannelId() > 0 && competition.isActive()) {
         long discordChannelId = competition.getDiscordChannelId();
-        String message = DiscordWebhookMessageFactory.createCompetitionCancelledMessage(competition);
+        String message = DiscordChannelMessageFactory.createCompetitionCancelledMessage(competition);
         discordService.sendMessage(discordChannelId, message);
       }
 

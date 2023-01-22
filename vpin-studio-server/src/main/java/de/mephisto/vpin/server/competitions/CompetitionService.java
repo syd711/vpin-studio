@@ -170,4 +170,5 @@ public class CompetitionService implements InitializingBean {
   public List<Competition> findCompetitionForGame(int id) {
     return competitionsRepository.findByGameId(id);
   }
+
 }
