@@ -99,6 +99,7 @@ public class CompetitionDiscordDialogController implements Initializable, Dialog
     competition.setType(CompetitionType.DISCORD.name());
     competition.setName("My next competition");
     competition.setUuid(UUID.randomUUID().toString());
+    competition.setOwner(client.getBotId());
 
     Date end = Date.from(LocalDate.now().plus(7, ChronoUnit.DAYS).atStartOfDay(ZoneId.systemDefault()).toInstant());
     competition.setStartDate(Date.from(LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant()));

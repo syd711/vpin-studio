@@ -61,6 +61,10 @@ public class DiscordService implements InitializingBean, PreferenceChangedListen
     }
   }
 
+  public String getBotId() {
+    return discordClient.getBotId();
+  }
+
   public void saveCompetitionData(@NonNull Competition competition, @NonNull Game game, @NonNull ScoreSummary scoreSummary) {
     String topic = TopicHelper.toTopic(competition, game, scoreSummary);
     if (this.discordClient != null) {

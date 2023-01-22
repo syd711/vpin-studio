@@ -57,6 +57,10 @@ public class VPinStudioClient implements ObservedPropertyChangeListener, Overlay
     return restClient.get(API + "discord/available", Boolean.class);
   }
 
+  public String getBotId() {
+    return restClient.get(API + "discord/botId", String.class);
+  }
+
   public List<DiscordChannel> getDiscordChannels() {
     return Arrays.asList(restClient.get(API + "discord/channels", DiscordChannel[].class));
   }

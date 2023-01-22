@@ -1,6 +1,7 @@
 package de.mephisto.vpin.server.competitions;
 
 import de.mephisto.vpin.restclient.CompetitionType;
+import de.mephisto.vpin.server.discord.DiscordService;
 import de.mephisto.vpin.server.highscores.HighscoreService;
 import de.mephisto.vpin.server.highscores.Score;
 import de.mephisto.vpin.server.highscores.ScoreList;
@@ -30,6 +31,9 @@ public class CompetitionService implements InitializingBean {
 
   @Autowired
   private PlayerService playerService;
+
+  @Autowired
+  private DiscordService discordService;
 
   @Autowired
   private ThreadPoolTaskScheduler scheduler;

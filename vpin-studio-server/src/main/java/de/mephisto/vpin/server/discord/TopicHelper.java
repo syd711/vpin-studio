@@ -38,6 +38,7 @@ public class TopicHelper {
       b.append("\n\n");
 
       TopicData data = new TopicData();
+      data.setName(competition.getName());
       data.setCreatedAt(new Date());
       data.setFileSize(game.getGameFileSize());
       data.setUuid(competition.getUuid());
@@ -114,6 +115,16 @@ public class TopicHelper {
     private String rom;
     private long fileSize;
     private Date createdAt;
+    private String name;
+
+    public String getName() {
+      return name;
+    }
+
+    public void setName(String name) {
+      this.name = name;
+    }
+
     private List<ScoreEntry> scores = new ArrayList<>();
 
     public Date getCreatedAt() {
