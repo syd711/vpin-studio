@@ -4,6 +4,7 @@ import de.mephisto.vpin.restclient.PlayerDomain;
 import de.mephisto.vpin.server.assets.Asset;
 import de.mephisto.vpin.server.assets.AssetRepository;
 import de.mephisto.vpin.server.discord.DiscordService;
+import edu.umd.cs.findbugs.annotations.Nullable;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -56,7 +57,11 @@ public class PlayerService {
     return Collections.emptyList();
   }
 
-  public Optional<Player> getPlayerForInitials(String initials) {
+  public Optional<Player> getPlayerForInitials(@Nullable String initials) {
+    if(StringUtils.isEmpty(initials)) {
+      return Optional.empty();
+    }
+
     List<Player> players = playerRepository.findByInitials(initials.toUpperCase());
     if (players.size() > 1) {
       LOG.warn("Found duplicate player for initials '{}', using first one.", initials);

@@ -48,9 +48,6 @@ public class CompetitionOfflineDialogController implements Initializable, Dialog
   private ComboBox<GameRepresentation> tableCombo;
 
   @FXML
-  private CheckBox badgeCheckbox;
-
-  @FXML
   private ComboBox<DiscordChannel> channelsCombo;
 
   @FXML
@@ -73,12 +70,6 @@ public class CompetitionOfflineDialogController implements Initializable, Dialog
   private List<DiscordChannel> discordChannels;
 
   @FXML
-  private void onBadgeCheck() {
-    competition.setCustomizeMedia(this.badgeCheckbox.isSelected());
-    refreshPreview(tableCombo.getValue(), competitionIconCombo.getValue());
-  }
-
-  @FXML
   private void onCancelClick(ActionEvent e) {
     this.competition = null;
     Stage stage = (Stage) ((Button) e.getSource()).getScene().getWindow();
@@ -95,7 +86,6 @@ public class CompetitionOfflineDialogController implements Initializable, Dialog
   public void initialize(URL url, ResourceBundle resourceBundle) {
     competition = new CompetitionRepresentation();
     competition.setType(CompetitionType.OFFLINE.name());
-    competition.setDiscordNotifications(true);
     competition.setName("My next competition");
     competition.setUuid(UUID.randomUUID().toString());
 
@@ -103,8 +93,6 @@ public class CompetitionOfflineDialogController implements Initializable, Dialog
     competition.setStartDate(Date.from(LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant()));
     competition.setEndDate(end);
 
-    badgeCheckbox.setSelected(true);
-    competition.setCustomizeMedia(true);
     saveBtn.setDisable(true);
 
     nameField.setText(competition.getName());
@@ -142,7 +130,7 @@ public class CompetitionOfflineDialogController implements Initializable, Dialog
     List<GameRepresentation> games = client.getGames();
     List<GameRepresentation> filtered = new ArrayList<>();
     for (GameRepresentation game : games) {
-      if(game.getEmulator().getName().equals(EmulatorTypes.VISUAL_PINBALL_X)) {
+      if (game.getEmulator().getName().equals(EmulatorTypes.VISUAL_PINBALL_X)) {
         filtered.add(game);
       }
     }
@@ -160,7 +148,7 @@ public class CompetitionOfflineDialogController implements Initializable, Dialog
     ObservableList<DiscordChannel> discordChannels = FXCollections.observableArrayList(channels);
     channelsCombo.getItems().addAll(discordChannels);
     channelsCombo.valueProperty().addListener((observableValue, gameRepresentation, t1) -> {
-      if(t1 != null) {
+      if (t1 != null) {
         competition.setDiscordChannelId(t1.getId());
       }
       else {
@@ -169,8 +157,9 @@ public class CompetitionOfflineDialogController implements Initializable, Dialog
       validate();
     });
 
-
-    ObservableList<String> imageList = FXCollections.observableList(new ArrayList<>(client.getCompetitionBadges()));
+    ArrayList<String> badges = new ArrayList<>(client.getCompetitionBadges());
+    badges.add(0, null);
+    ObservableList<String> imageList = FXCollections.observableList(badges);
     competitionIconCombo.setItems(imageList);
     competitionIconCombo.setCellFactory(c -> new CompetitionImageListCell(client));
     competitionIconCombo.valueProperty().addListener((observableValue, s, t1) -> {
@@ -191,7 +180,7 @@ public class CompetitionOfflineDialogController implements Initializable, Dialog
         Image image = new Image(gameMediaItem);
         iconPreview.setImage(image);
 
-        if (badge != null && badgeCheckbox.isSelected()) {
+        if (badge != null) {
           Image badgeIcon = new Image(client.getCompetitionBadge(badge));
           badgePreview.setImage(badgeIcon);
         }
@@ -243,7 +232,6 @@ public class CompetitionOfflineDialogController implements Initializable, Dialog
       Optional<DiscordChannel> channelOpt = getDiscordChannels().stream().filter(channel -> channel.getId() == c.getDiscordChannelId()).findFirst();
       channelOpt.ifPresent(discordChannel -> this.channelsCombo.setValue(discordChannel));
 
-      this.badgeCheckbox.setSelected(c.isCustomizeMedia());
       this.competitionIconCombo.setValue(c.getBadge());
       String badge = c.getBadge();
       refreshPreview(game, badge);
@@ -276,7 +264,7 @@ public class CompetitionOfflineDialogController implements Initializable, Dialog
   }
 
   private List<DiscordChannel> getDiscordChannels() {
-    if(this.discordChannels == null) {
+    if (this.discordChannels == null) {
       this.discordChannels = client.getDiscordChannels();
     }
     return this.discordChannels;

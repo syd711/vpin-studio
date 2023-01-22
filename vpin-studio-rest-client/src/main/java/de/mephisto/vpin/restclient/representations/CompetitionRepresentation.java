@@ -22,10 +22,6 @@ public class CompetitionRepresentation {
 
   private Date endDate;
 
-  private boolean customizeMedia;
-
-  private boolean discordNotifications;
-
   private String owner;
 
   private long discordChannelId;
@@ -72,14 +68,6 @@ public class CompetitionRepresentation {
 
   public void setId(Long id) {
     this.id = id;
-  }
-
-  public boolean isCustomizeMedia() {
-    return customizeMedia;
-  }
-
-  public void setCustomizeMedia(boolean customizeMedia) {
-    this.customizeMedia = customizeMedia;
   }
 
   public String getName() {
@@ -130,14 +118,6 @@ public class CompetitionRepresentation {
     this.endDate = endDate;
   }
 
-  public boolean isDiscordNotifications() {
-    return discordNotifications;
-  }
-
-  public void setDiscordNotifications(boolean discordNotifications) {
-    this.discordNotifications = discordNotifications;
-  }
-
   @Override
   public boolean equals(Object o) {
     if (this == o) return true;
@@ -169,7 +149,6 @@ public class CompetitionRepresentation {
     clone.setOwner(this.getOwner());
     clone.setDiscordChannelId(this.getDiscordChannelId());
     clone.setUuid(UUID.randomUUID().toString());
-    clone.setCustomizeMedia(this.isCustomizeMedia());
     clone.setGameId(this.getGameId());
     return clone;
   }

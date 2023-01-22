@@ -178,7 +178,7 @@ public class NotificationService implements InitializingBean, HighscoreChangeLis
   public void competitionCreated(@NonNull Competition competition) {
     Game game = gameService.getGame(competition.getGameId());
     if (game != null) {
-      if (competition.isCustomizeMedia()) {
+      if (competition.getBadge() != null) {
         popperService.augmentWheel(game, competition.getBadge());
       }
 
@@ -206,6 +206,9 @@ public class NotificationService implements InitializingBean, HighscoreChangeLis
         ScoreSummary summary = discordService.getScoreSummary(discordChannelId);
         if (summary != null) {
           discordService.sendMessage(discordChannelId, DiscordChannelMessageFactory.createCompetitionFinishedMessage(competition, winner, game, summary));
+        }
+        else {
+          LOG.warn("Failed to finished " + competition + " properly, unable to resolve scoring from topic.");
         }
       }
 
@@ -237,8 +240,7 @@ public class NotificationService implements InitializingBean, HighscoreChangeLis
   public void competitionChanged(@NonNull Competition competition) {
     Game game = gameService.getGame(competition.getGameId());
     if (game != null) {
-      boolean customizeMedia = competition.isCustomizeMedia();
-      if (customizeMedia) {
+      if (competition.getBadge() != null) {
         popperService.augmentWheel(game, competition.getBadge());
       }
       else {

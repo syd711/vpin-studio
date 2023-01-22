@@ -110,12 +110,12 @@ public class DiscordClient extends ListenerAdapter {
 
   public String getTopic(long channelId) {
     Guild guild = jda.getGuildById(guildId);
-    if (guild == null) {
+    if (guild != null) {
       TextChannel textChannel = jda.getChannelById(TextChannel.class, channelId);
       return textChannel.getTopic();
     }
     else {
-      LOG.warn("No score summary could be resolved for '" + channelId + "'");
+      LOG.warn("Unable to retrieve topic from channel '" + channelId + "', no connection.");
     }
     return null;
   }

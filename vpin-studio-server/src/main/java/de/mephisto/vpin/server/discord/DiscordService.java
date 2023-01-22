@@ -76,7 +76,7 @@ public class DiscordService implements InitializingBean, PreferenceChangedListen
     if(this.discordClient != null) {
       String topicText = discordClient.getTopic(channelId);
       if(topicText != null) {
-        return TopicHelper.getScores(topicText);
+        return TopicHelper.getScores(this, topicText);
       }
     }
     return null;

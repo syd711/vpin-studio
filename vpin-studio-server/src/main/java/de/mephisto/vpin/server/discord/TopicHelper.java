@@ -8,16 +8,15 @@ import de.mephisto.vpin.server.competitions.Competition;
 import de.mephisto.vpin.server.competitions.ScoreSummary;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.highscores.Score;
+import de.mephisto.vpin.server.players.Player;
+import de.mephisto.vpin.server.players.PlayerService;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 public class TopicHelper {
   private final static Logger LOG = LoggerFactory.getLogger(TopicHelper.class);
@@ -71,14 +70,19 @@ public class TopicHelper {
 
 
   @Nullable
-  public static ScoreSummary getScores(@Nullable String topic) {
+  public static ScoreSummary getScores(@NonNull DiscordService discordService, @Nullable String topic) {
     TopicData topicData = getTopicData(topic);
     if (topicData != null) {
       List<Score> scores = new ArrayList<>();
       ScoreSummary summary = new ScoreSummary(scores, topicData.getCreatedAt());
       List<ScoreEntry> scoresEntries = topicData.getScores();
       for (ScoreEntry scoresEntry : scoresEntries) {
-        Score score = new Score(topicData.getCreatedAt(), -1, scoresEntry.getInitials(), null, scoresEntry.getScore(), scoresEntry.getNumericScore(), scoresEntry.getPosition(), null);
+        Player player = null;
+        Optional<Player> playerForInitials = discordService.getPlayerByInitials(scoresEntry.getInitials());
+        if (playerForInitials.isPresent()) {
+          player = playerForInitials.get();
+        }
+        Score score = new Score(topicData.getCreatedAt(), -1, scoresEntry.getInitials(), player, scoresEntry.getScore(), scoresEntry.getNumericScore(), scoresEntry.getPosition(), null);
         scores.add(score);
       }
       return summary;

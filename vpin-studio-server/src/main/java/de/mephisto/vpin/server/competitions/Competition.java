@@ -41,8 +41,6 @@ public class Competition {
 
   private String badge;
 
-  private boolean customizeMedia;
-
   private long discordChannelId;
 
   private Date startDate;
@@ -89,14 +87,6 @@ public class Competition {
 
   public void setBadge(String badge) {
     this.badge = badge;
-  }
-
-  public boolean isCustomizeMedia() {
-    return customizeMedia;
-  }
-
-  public void setCustomizeMedia(boolean customizeMedia) {
-    this.customizeMedia = customizeMedia;
   }
 
   public String getType() {

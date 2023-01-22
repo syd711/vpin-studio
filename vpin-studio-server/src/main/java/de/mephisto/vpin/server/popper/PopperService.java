@@ -95,7 +95,9 @@ public class PopperService {
       WheelAugmenter augmenter = new WheelAugmenter(wheelIcon);
 
       File badgeFile = systemService.getBagdeFile(badge);
-      augmenter.augment(badgeFile);
+      if(badgeFile.exists()) {
+        augmenter.augment(badgeFile);
+      }
     }
   }
 

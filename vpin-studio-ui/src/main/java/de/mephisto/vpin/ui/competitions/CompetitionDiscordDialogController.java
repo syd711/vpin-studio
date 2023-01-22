@@ -6,11 +6,7 @@ import de.mephisto.vpin.restclient.CompetitionType;
 import de.mephisto.vpin.restclient.DiscordChannel;
 import de.mephisto.vpin.restclient.PopperScreen;
 import de.mephisto.vpin.restclient.VPinStudioClient;
-import de.mephisto.vpin.restclient.representations.CompetitionRepresentation;
-import de.mephisto.vpin.restclient.representations.GameMediaItemRepresentation;
-import de.mephisto.vpin.restclient.representations.GameMediaRepresentation;
-import de.mephisto.vpin.restclient.representations.GameRepresentation;
-import de.mephisto.vpin.ui.Studio;
+import de.mephisto.vpin.restclient.representations.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -19,7 +15,8 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.HBox;
+import javafx.scene.layout.Pane;
+import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -53,9 +50,6 @@ public class CompetitionDiscordDialogController implements Initializable, Dialog
   private ComboBox<DiscordChannel> channelsCombo;
 
   @FXML
-  private CheckBox badgeCheckbox;
-
-  @FXML
   private Button saveBtn;
 
   @FXML
@@ -71,20 +65,20 @@ public class CompetitionDiscordDialogController implements Initializable, Dialog
   private DatePicker endDatePicker;
 
   @FXML
-  private HBox validationContainer;
+  private Pane validationContainer;
 
   @FXML
-  private Label validationLabel;
+  private VBox mainColumn;
+
+  @FXML
+  private Label validationTitle;
+
+  @FXML
+  private Label validationDescription;
 
   private CompetitionRepresentation competition;
 
   private List<DiscordChannel> discordChannels;
-
-  @FXML
-  private void onBadgeCheck() {
-    competition.setCustomizeMedia(this.badgeCheckbox.isSelected());
-    refreshPreview(tableCombo.getValue(), competitionIconCombo.getValue());
-  }
 
   @FXML
   private void onCancelClick(ActionEvent e) {
@@ -103,7 +97,6 @@ public class CompetitionDiscordDialogController implements Initializable, Dialog
   public void initialize(URL url, ResourceBundle resourceBundle) {
     competition = new CompetitionRepresentation();
     competition.setType(CompetitionType.DISCORD.name());
-    competition.setDiscordNotifications(true);
     competition.setName("My next competition");
     competition.setUuid(UUID.randomUUID().toString());
 
@@ -111,8 +104,6 @@ public class CompetitionDiscordDialogController implements Initializable, Dialog
     competition.setStartDate(Date.from(LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant()));
     competition.setEndDate(end);
 
-    badgeCheckbox.setSelected(true);
-    competition.setCustomizeMedia(true);
     saveBtn.setDisable(true);
 
     nameField.setText(competition.getName());
@@ -150,7 +141,7 @@ public class CompetitionDiscordDialogController implements Initializable, Dialog
     List<GameRepresentation> games = client.getGames();
     List<GameRepresentation> filtered = new ArrayList<>();
     for (GameRepresentation game : games) {
-      if(game.getEmulator().getName().equals(EmulatorTypes.VISUAL_PINBALL_X)) {
+      if (game.getEmulator().getName().equals(EmulatorTypes.VISUAL_PINBALL_X)) {
         filtered.add(game);
       }
     }
@@ -171,7 +162,9 @@ public class CompetitionDiscordDialogController implements Initializable, Dialog
       validate();
     });
 
-    ObservableList<String> imageList = FXCollections.observableList(new ArrayList<>(client.getCompetitionBadges()));
+    ArrayList<String> badges = new ArrayList<>(client.getCompetitionBadges());
+    badges.add(0, null);
+    ObservableList<String> imageList = FXCollections.observableList(badges);
     competitionIconCombo.setItems(imageList);
     competitionIconCombo.setCellFactory(c -> new CompetitionImageListCell(client));
     competitionIconCombo.valueProperty().addListener((observableValue, s, t1) -> {
@@ -192,7 +185,7 @@ public class CompetitionDiscordDialogController implements Initializable, Dialog
         Image image = new Image(gameMediaItem);
         iconPreview.setImage(image);
 
-        if (badge != null && badgeCheckbox.isSelected()) {
+        if (badge != null) {
           Image badgeIcon = new Image(client.getCompetitionBadge(badge));
           badgePreview.setImage(badgeIcon);
         }
@@ -207,20 +200,50 @@ public class CompetitionDiscordDialogController implements Initializable, Dialog
   }
 
   private void validate() {
+    validationContainer.setVisible(true);
+    this.saveBtn.setDisable(true);
+
     LocalDate start = startDatePicker.getValue();
     LocalDate value = endDatePicker.getValue();
 
     long diff = ChronoUnit.DAYS.between(start, value);
     this.durationLabel.setText(diff + " days");
 
-    boolean valid = !StringUtils.isEmpty(competition.getName())
-        && competition.getName().length() > 3
-        && competition.getGameId() > 0
-        && competition.getStartDate() != null
-        && competition.getEndDate() != null
-        && competition.getDiscordChannelId() > 0
-        && competition.getStartDate().getTime() < competition.getEndDate().getTime();
-    this.saveBtn.setDisable(!valid);
+    if (StringUtils.isEmpty(competition.getName())) {
+      validationTitle.setText("No competition name set.");
+      validationDescription.setText("Define a meaningful competition name.");
+      return;
+    }
+
+    if (competition.getDiscordChannelId() == 0) {
+      validationTitle.setText("No discord channel selected.");
+      validationDescription.setText("Select a discord channel for competition updates.");
+      return;
+    }
+
+    if (competition.getGameId() <= 0) {
+      validationTitle.setText("No table selected.");
+      validationDescription.setText("Select a table for the competition.");
+      return;
+    }
+    else {
+      ScoreSummaryRepresentation summary = client.getGameScores(competition.getGameId());
+      HighscoreMetadataRepresentation metadata = summary.getMetadata();
+      if(!StringUtils.isEmpty(metadata.getStatus())) {
+        validationTitle.setText("Highscore issues");
+        validationDescription.setText(metadata.getStatus() + " Select a table with a valid highscore record.");
+        return;
+      }
+    }
+
+    if (competition.getStartDate() == null || competition.getEndDate() == null || competition.getStartDate().getTime() > competition.getEndDate().getTime()) {
+      validationTitle.setText("Invalid start/end date set.");
+      validationDescription.setText("Define a valid start and end date.");
+      return;
+    }
+
+    validationContainer.setVisible(false);
+    this.saveBtn.setDisable(false);
   }
 
   @Override
@@ -241,8 +264,6 @@ public class CompetitionDiscordDialogController implements Initializable, Dialog
       this.startDatePicker.setValue(this.competition.getStartDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate());
       this.endDatePicker.setValue(this.competition.getEndDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate());
       this.tableCombo.setValue(game);
-
-      this.badgeCheckbox.setSelected(c.isCustomizeMedia());
 
       Optional<DiscordChannel> channelOpt = getDiscordChannels().stream().filter(channel -> channel.getId() == c.getDiscordChannelId()).findFirst();
       channelOpt.ifPresent(discordChannel -> this.channelsCombo.setValue(discordChannel));
@@ -280,7 +301,7 @@ public class CompetitionDiscordDialogController implements Initializable, Dialog
   }
 
   private List<DiscordChannel> getDiscordChannels() {
-    if(this.discordChannels == null) {
+    if (this.discordChannels == null) {
       this.discordChannels = client.getDiscordChannels();
     }
     return this.discordChannels;

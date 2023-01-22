@@ -91,7 +91,6 @@ public class DiscordChannelMessageFactory {
     else if (!oldName.equals(newName)) {
       result = result + suffix;
     }
-    LOG.info("Channel message: " + result);
     return result;
   }
 
