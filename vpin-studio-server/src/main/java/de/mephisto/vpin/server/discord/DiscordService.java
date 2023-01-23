@@ -43,6 +43,14 @@ public class DiscordService implements InitializingBean, PreferenceChangedListen
     return Collections.emptyList();
   }
 
+  public String getActiveCompetitionName(long channelId) {
+    if (this.discordClient != null) {
+      String topic = this.discordClient.getTopic(channelId);
+      return CompetitionDataHelper.getName(topic);
+    }
+    return null;
+  }
+
   public List<DiscordChannel> getChannels() {
     if (this.discordClient != null) {
       return this.discordClient.getChannels().stream().map(c -> {

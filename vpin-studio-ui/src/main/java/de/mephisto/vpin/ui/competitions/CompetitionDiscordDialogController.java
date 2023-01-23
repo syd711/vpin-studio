@@ -221,6 +221,14 @@ public class CompetitionDiscordDialogController implements Initializable, Dialog
       validationDescription.setText("Select a discord channel for competition updates.");
       return;
     }
+    else {
+      String name = client.getActiveCompetitionName(competition.getDiscordChannelId());
+      if(name != null) {
+        validationTitle.setText("Active competition found.");
+        validationDescription.setText("The selected channel is already running the competition '" + name + "'");
+        return;
+      }
+    }
 
     if (competition.getGameId() <= 0) {
       validationTitle.setText("No table selected.");

@@ -28,11 +28,11 @@ public class VPinStudioClient implements ObservedPropertyChangeListener, Overlay
 
   private final Map<String, byte[]> imageCache = new HashMap<>();
 
-  private Map<String, AssetRepresentation> assetCache = new HashMap<>();
+  private final Map<String, AssetRepresentation> assetCache = new HashMap<>();
 
-  private RestClient restClient;
+  private final RestClient restClient;
 
-  private String host;
+  private final String host;
 
   public VPinStudioClient(String host) {
     this.host = host;
@@ -57,8 +57,14 @@ public class VPinStudioClient implements ObservedPropertyChangeListener, Overlay
     return restClient.get(API + "discord/available", Boolean.class);
   }
 
+  public String getActiveCompetitionName(long channelId) {
+    final RestTemplate restTemplate = new RestTemplate();
+    return restTemplate.getForObject(restClient.getBaseUrl() + API + "discord/channel/" + channelId + "/name", String.class);
+  }
+
   public String getBotId() {
-    return restClient.get(API + "discord/botId", String.class);
+    final RestTemplate restTemplate = new RestTemplate();
+    return restTemplate.getForObject(restClient.getBaseUrl() + API + "discord/botId", String.class);
   }
 
   public List<DiscordChannel> getDiscordChannels() {

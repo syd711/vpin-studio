@@ -82,6 +82,7 @@ public class CompetitionsDiscordController implements Initializable, StudioFXCon
 
   private ObservableList<CompetitionRepresentation> data;
   private List<CompetitionRepresentation> competitions;
+  private CompetitionsController competitionsController;
 
   // Add a public no-args constructor
   public CompetitionsDiscordController() {
@@ -345,10 +346,15 @@ public class CompetitionsDiscordController implements Initializable, StudioFXCon
       }
       competitionWidgetController.setCompetition(null);
     }
+    competitionsController.setCompetition(competition.orElse(null));
   }
 
   @Override
   public void onViewActivated() {
 
+  }
+
+  public void setCompetitionsController(CompetitionsController competitionsController) {
+    this.competitionsController = competitionsController;
   }
 }

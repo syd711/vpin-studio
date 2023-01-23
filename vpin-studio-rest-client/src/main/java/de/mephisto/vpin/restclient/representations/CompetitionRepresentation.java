@@ -18,6 +18,8 @@ public class CompetitionRepresentation {
 
   private String type;
 
+  private Date createdAt;
+
   private Date startDate;
 
   private Date endDate;
@@ -29,6 +31,14 @@ public class CompetitionRepresentation {
   private String winnerInitials;
 
   private String uuid;
+
+  public Date getCreatedAt() {
+    return createdAt;
+  }
+
+  public void setCreatedAt(Date createdAt) {
+    this.createdAt = createdAt;
+  }
 
   public String getUuid() {
     return uuid;

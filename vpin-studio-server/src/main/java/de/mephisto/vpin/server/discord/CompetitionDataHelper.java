@@ -60,11 +60,21 @@ public class CompetitionDataHelper {
     return null;
   }
 
+
+
+  public static String getName(String topic) {
+    DiscordCompetitionData data = getCompetitionData(topic);
+    if (data != null) {
+      return data.getName();
+    }
+    return null;
+  }
+
   @Nullable
   public static UUID getUuid(@Nullable String topic) {
-    DiscordCompetitionData topicData = getCompetitionData(topic);
-    if (topicData != null) {
-      return UUID.fromString(topicData.getUuid());
+    DiscordCompetitionData data = getCompetitionData(topic);
+    if (data != null) {
+      return UUID.fromString(data.getUuid());
     }
     return null;
   }
@@ -103,7 +113,7 @@ public class CompetitionDataHelper {
       }
       return null;
     } catch (JsonProcessingException e) {
-      LOG.error("Failed to read competition data: " + e.getMessage(), e);
+      LOG.info("Failed to read competition data from '" + topic + "'");
     }
     return null;
   }

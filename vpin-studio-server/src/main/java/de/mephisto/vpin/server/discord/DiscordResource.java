@@ -3,6 +3,7 @@ package de.mephisto.vpin.server.discord;
 import de.mephisto.vpin.restclient.DiscordChannel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -24,9 +25,13 @@ public class DiscordResource {
 
   @GetMapping("/botId")
   public String getBotId() {
-    return discordService.getBotId();
+    return String.valueOf(discordService.getBotId());
   }
 
+  @GetMapping("/channel/{channelId}/name")
+  public String getActiveCompetitionName(@PathVariable("channelId") long channelId) {
+    return discordService.getActiveCompetitionName(channelId);
+  }
 
   @GetMapping("/channels")
   public List<DiscordChannel> getChannels() {

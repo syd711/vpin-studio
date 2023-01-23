@@ -84,6 +84,7 @@ public class CompetitionsOfflineController implements Initializable, StudioFXCon
 
   private ObservableList<CompetitionRepresentation> data;
   private List<CompetitionRepresentation> competitions;
+  private CompetitionsController competitionsController;
 
   // Add a public no-args constructor
   public CompetitionsOfflineController() {
@@ -358,10 +359,15 @@ public class CompetitionsOfflineController implements Initializable, StudioFXCon
       }
       competitionWidgetController.setCompetition(null);
     }
+    competitionsController.setCompetition(competition.orElse(null));
   }
 
   @Override
   public void onViewActivated() {
 
+  }
+
+  public void setCompetitionsController(CompetitionsController competitionsController) {
+    this.competitionsController = competitionsController;
   }
 }
