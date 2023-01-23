@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.text.Font?>
+
+<BorderPane fx:id="root" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" styleClass="widget-item" stylesheets="@../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.commons.fx.discord.DiscordUserEntryController">
+    <padding>
+        <Insets bottom="6.0" left="6.0" right="24.0" top="6.0" />
+    </padding>
+    <left>
+        <ImageView fx:id="userImageView" fitHeight="60.0" fitWidth="60.0" pickOnBounds="true" preserveRatio="true" BorderPane.alignment="CENTER_LEFT">
+            <BorderPane.margin>
+                <Insets right="24.0" />
+            </BorderPane.margin>
+        </ImageView>
+    </left>
+   <center>
+            <Label fx:id="userNameLabel" text="-" textFill="WHITE" BorderPane.alignment="CENTER">
+                <font>
+                    <Font name="System Bold" size="24.0" />
+                </font>
+            </Label>
+   </center>
+</BorderPane>
