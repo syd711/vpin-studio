@@ -1,5 +1,6 @@
 package de.mephisto.vpin.server.competitions;
 
+import de.mephisto.vpin.connectors.discord.DiscordMember;
 import de.mephisto.vpin.restclient.CompetitionType;
 import de.mephisto.vpin.server.discord.DiscordService;
 import de.mephisto.vpin.server.highscores.HighscoreService;
@@ -57,14 +58,22 @@ public class CompetitionService implements InitializingBean {
   }
 
   public void notifyCompetitionFinished(Competition c) {
+    Player player = null;
+    if (c.getType().equals(CompetitionType.OFFLINE.name())) {
+      Optional<Player> playerByInitials = playerService.getPlayerForInitials(c.getWinnerInitials());
+      if (playerByInitials.isPresent()) {
+        player = playerByInitials.get();
+      }
+    }
+    else if (c.getType().equals(CompetitionType.DISCORD.name())) {
+      Optional<Player> playerByInitials = discordService.getPlayerByInitials(c.getWinnerInitials());
+      if (playerByInitials.isPresent()) {
+        player = playerByInitials.get();
+      }
+    }
+
     for (CompetitionChangeListener listener : this.listeners) {
-      Optional<Player> playerForInitials = playerService.getPlayerForInitials(c.getWinnerInitials());
-      if(playerForInitials.isPresent()) {
-        listener.competitionFinished(c, playerForInitials.get());
-      }
-      else {
-        listener.competitionFinished(c, null);
-      }
+      listener.competitionFinished(c, player);
     }
   }
 
@@ -72,6 +81,11 @@ public class CompetitionService implements InitializingBean {
     for (CompetitionChangeListener listener : this.listeners) {
       listener.competitionDeleted(c);
     }
+  }
+
+  public List<DiscordMember> getCompetitionMembers(Competition c) {
+    long channelId = c.getDiscordChannelId();
+    return discordService.getCompetitionMembers(channelId);
   }
 
   public List<Competition> getOfflineCompetitions() {

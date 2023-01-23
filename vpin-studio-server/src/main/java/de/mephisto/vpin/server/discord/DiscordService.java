@@ -55,18 +55,27 @@ public class DiscordService implements InitializingBean, PreferenceChangedListen
     return Collections.emptyList();
   }
 
-  public void sendMessage(long channelId, String message) {
-    if(this.discordClient != null) {
-      this.discordClient.sendMessage(channelId, message);
+  public List<DiscordMember> getCompetitionMembers(long channelId) {
+    if (this.discordClient != null) {
+      DiscordCompetitionData competitionData = getCompetitionData(channelId);
+      return this.discordClient.getCompetitionMembers(channelId, competitionData.getStartMessageId(), competitionData.getUuid());
     }
+    return Collections.emptyList();
   }
 
-  public String getBotId() {
+  public String sendMessage(long channelId, String message) {
+    if(this.discordClient != null) {
+      return this.discordClient.sendMessage(channelId, message);
+    }
+    return null;
+  }
+
+  public long getBotId() {
     return discordClient.getBotId();
   }
 
-  public void saveCompetitionData(@NonNull Competition competition, @NonNull Game game, @NonNull ScoreSummary scoreSummary) {
-    String topic = TopicHelper.toTopic(competition, game, scoreSummary);
+  public void saveCompetitionData(@NonNull Competition competition, @NonNull Game game, @NonNull ScoreSummary scoreSummary, @NonNull String messageId) {
+    String topic = CompetitionDataHelper.toDataString(competition, game, scoreSummary, messageId);
     if (this.discordClient != null) {
       this.discordClient.setTopic(competition.getDiscordChannelId(), topic);
     }
@@ -80,7 +89,7 @@ public class DiscordService implements InitializingBean, PreferenceChangedListen
     if(this.discordClient != null) {
       String topicText = discordClient.getTopic(channelId);
       if(topicText != null) {
-        return TopicHelper.getScores(this, topicText);
+        return CompetitionDataHelper.getScores(this, topicText);
       }
     }
     return null;
@@ -97,6 +106,16 @@ public class DiscordService implements InitializingBean, PreferenceChangedListen
 
   public boolean isEnabled() {
     return this.discordClient != null;
+  }
+
+  private DiscordCompetitionData getCompetitionData(long channelId) {
+    if (this.discordClient != null) {
+      String topic = this.discordClient.getTopic(channelId);
+      return CompetitionDataHelper.getCompetitionData(topic);
+    }
+    else {
+      throw new UnsupportedOperationException("No Discord client found.");
+    }
   }
 
   private DiscordClient recreateDiscordClient() {

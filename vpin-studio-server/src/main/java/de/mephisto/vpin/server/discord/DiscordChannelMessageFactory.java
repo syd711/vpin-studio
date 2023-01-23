@@ -10,8 +10,6 @@ import de.mephisto.vpin.server.players.Player;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.text.DateFormat;
 import java.time.LocalDate;
@@ -19,9 +17,18 @@ import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
 
 public class DiscordChannelMessageFactory {
-  private final static Logger LOG = LoggerFactory.getLogger(DiscordChannelMessageFactory.class);
+  private static final String DISCORD_COMPETITION_CREATED_TEMPLATE = "%s started a new competition!\n" +
+      "```\n" +
+      "%s\n" +
+      "(ID: %s)\n" +
+      "------------------------------------------------------------\n" +
+      "Table:       %s\n" +
+      "Start Date:  %s\n" +
+      "End Date:    %s\n" +
+      "Duration:    %s days\n" +
+      "------------------------------------------------------------```";
 
-  private static final String COMPETITION_CREATED_TEMPLATE = "A new competition has been started!\n" +
+  private static final String OFFLINE_COMPETITION_CREATED_TEMPLATE = "A new competition has been started!\n" +
       "```\n" +
       "%s\n" +
       "------------------------------------------------------------\n" +
@@ -76,12 +83,12 @@ public class DiscordChannelMessageFactory {
       }
     }
 
-    String template = "%s created a new highscore for '%s', competed in '%s' .\n" +
+    String template = "%s created a new highscore for '%s', competed in '%s' (ID: %s) .\n" +
         "```%s\n" +
         "```";
     String otherPlayerTemplate = "\n%s, your highscore of %s points has been beaten.";
 
-    String msg = String.format(template, newName, competition.getName(), game.getGameDisplayName(), newScore);
+    String msg = String.format(template, newName, competition.getName(), competition.getUuid(), game.getGameDisplayName(), newScore);
     String suffix = String.format(otherPlayerTemplate, oldName, oldScore.getScore());
 
     String result = msg;
@@ -95,13 +102,29 @@ public class DiscordChannelMessageFactory {
   }
 
   
-  public static String createCompetitionCreatedMessage(Competition competition, Game game) {
+  public static String createOfflineCompetitionCreatedMessage(Competition competition, Game game) {
     LocalDate start = competition.getStartDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
     LocalDate end = competition.getEndDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
     long diff = Math.abs(ChronoUnit.DAYS.between(end, start));
 
-    return String.format(COMPETITION_CREATED_TEMPLATE,
+    return String.format(OFFLINE_COMPETITION_CREATED_TEMPLATE,
         competition.getName(),
+        game.getGameDisplayName(),
+        DateFormat.getDateInstance().format(competition.getStartDate()),
+        DateFormat.getDateInstance().format(competition.getEndDate()),
+        diff);
+  }
+
+  public static String createDiscordCompetitionCreatedMessage(Competition competition, Game game, long initiatorId) {
+    LocalDate start = competition.getStartDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+    LocalDate end = competition.getEndDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+    long diff = Math.abs(ChronoUnit.DAYS.between(end, start));
+    String userId = "<@" + initiatorId + ">";
+
+    return String.format(DISCORD_COMPETITION_CREATED_TEMPLATE,
+        userId,
+        competition.getName(),
+        competition.getUuid(),
         game.getGameDisplayName(),
         DateFormat.getDateInstance().format(competition.getStartDate()),
         DateFormat.getDateInstance().format(competition.getEndDate()),

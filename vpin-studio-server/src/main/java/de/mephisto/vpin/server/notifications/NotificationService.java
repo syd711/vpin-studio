@@ -183,13 +183,17 @@ public class NotificationService implements InitializingBean, HighscoreChangeLis
       }
 
       if (competition.getType().equals(CompetitionType.DISCORD.name())) {
+        long discordChannelId = competition.getDiscordChannelId();
+        long botId = discordService.getBotId();
+        String messageId = discordService.sendMessage(discordChannelId, DiscordChannelMessageFactory.createDiscordCompetitionCreatedMessage(competition, game, botId));
+
         ScoreSummary highscores = highscoreService.getHighscores(game.getId());
-        discordService.saveCompetitionData(competition, game, highscores);
+        discordService.saveCompetitionData(competition, game, highscores, messageId);
       }
 
-      if (competition.getDiscordChannelId() > 0 && competition.isActive()) {
+      if (competition.getType().equals(CompetitionType.OFFLINE.name()) && competition.getDiscordChannelId() > 0 && competition.isActive()) {
         long discordChannelId = competition.getDiscordChannelId();
-        discordService.sendMessage(discordChannelId, DiscordChannelMessageFactory.createCompetitionCreatedMessage(competition, game));
+        discordService.sendMessage(discordChannelId, DiscordChannelMessageFactory.createOfflineCompetitionCreatedMessage(competition, game));
       }
     }
   }

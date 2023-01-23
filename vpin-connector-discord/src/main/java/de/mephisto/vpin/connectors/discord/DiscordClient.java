@@ -25,6 +25,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
 
 /**
  *
@@ -52,8 +53,8 @@ public class DiscordClient extends ListenerAdapter {
     this.refreshMembers();
   }
 
-  public String getBotId() {
-    return jda.getSelfUser().getId();
+  public long getBotId() {
+    return jda.getSelfUser().getIdLong();
   }
 
   public void setTopic(long discordChannelId, String topic) {
@@ -68,6 +69,34 @@ public class DiscordClient extends ListenerAdapter {
         LOG.error("No discord channel found for id '" + discordChannelId + "'");
       }
     }
+  }
+
+  public List<DiscordMember> getCompetitionMembers(long channelId, String afterMessageId, String competitionUuid) {
+    List<DiscordMember> result = new ArrayList<>();
+    Guild guild = jda.getGuildById(guildId);
+    if (guild != null) {
+      TextChannel channel = guild.getChannelById(TextChannel.class, channelId);
+      if (channel != null) {
+        MessageHistory history = MessageHistory.getHistoryAfter(channel, afterMessageId).complete();
+        List<Message> messages = history.getRetrievedHistory();
+        List<Message> botMessages = messages.stream().filter(m -> m.getAuthor().isBot()).collect(Collectors.toList());
+        for (Message botMessage : botMessages) {
+          if (botMessage.getContentRaw().contains(competitionUuid)) {
+            Member member = botMessage.getMember();
+            if(member != null) {
+              DiscordMember discordMember = createMember(member);
+              if(!result.contains(discordMember)) {
+                result.add(discordMember);
+              }
+            }
+          }
+        }
+      }
+      else {
+        LOG.error("No discord channel found for id '" + channelId + "'");
+      }
+    }
+    return result;
   }
 
   public List<DiscordTextChannel> getChannels() {
@@ -96,23 +125,35 @@ public class DiscordClient extends ListenerAdapter {
     this.jda.shutdownNow();
   }
 
-  public void sendMessage(long channelId, String msg) {
+  public String sendMessage(long channelId, String msg) {
     Guild guild = jda.getGuildById(guildId);
     if (guild != null) {
       TextChannel textChannel = jda.getChannelById(TextChannel.class, channelId);
-      textChannel.sendMessage(msg).queue(); //.addFiles(FileUpload.fromData(file)).queue();
-      LOG.info("Sent message '" + msg + "' to '" + textChannel.getName() + "'");
+      if (textChannel != null) {
+        Message complete = textChannel.sendMessage(msg).complete();//.addFiles(FileUpload.fromData(file)).queue();
+        LOG.info("Sent message '" + msg + "' to '" + textChannel.getName() + "'");
+        return complete.getId();
+      }
+      else {
+        LOG.error("No discord channel found for id '" + channelId + "'");
+      }
     }
     else {
       throw new UnsupportedOperationException("No guild found for guildId '" + this.guildId + "'");
     }
+    return null;
   }
 
   public String getTopic(long channelId) {
     Guild guild = jda.getGuildById(guildId);
     if (guild != null) {
       TextChannel textChannel = jda.getChannelById(TextChannel.class, channelId);
-      return textChannel.getTopic();
+      if (textChannel != null) {
+        return textChannel.getTopic();
+      }
+      else {
+        LOG.error("No discord channel found for id '" + channelId + "'");
+      }
     }
     else {
       LOG.warn("Unable to retrieve topic from channel '" + channelId + "', no connection.");
@@ -157,18 +198,21 @@ public class DiscordClient extends ListenerAdapter {
         continue;
       }
 
-      String name = member.getEffectiveName();
-      String initials = resolveInitials(name);
-
-
-      DiscordMember discordMember = new DiscordMember();
-      discordMember.setId(member.getIdLong());
-      discordMember.setName(name);
-      discordMember.setInitials(initials);
-      discordMember.setAvatarUrl(member.getEffectiveAvatarUrl());
-      result.add(discordMember);
+      result.add(createMember(member));
     }
     return result;
+  }
+
+  private DiscordMember createMember(Member member) {
+    String name = member.getEffectiveName();
+    String initials = resolveInitials(name);
+
+    DiscordMember discordMember = new DiscordMember();
+    discordMember.setId(member.getIdLong());
+    discordMember.setName(name);
+    discordMember.setInitials(initials);
+    discordMember.setAvatarUrl(member.getEffectiveAvatarUrl());
+    return discordMember;
   }
 
   /**
@@ -192,8 +236,6 @@ public class DiscordClient extends ListenerAdapter {
 
   /**
    * Updates the online status with the active game info.
-   *
-   * @param status
    */
   public void setStatus(String status) {
     if (status == null) {

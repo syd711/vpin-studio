@@ -1,6 +1,5 @@
 package de.mephisto.vpin.server.discord;
 
-import de.mephisto.vpin.server.competitions.ScoreSummary;
 import org.junit.jupiter.api.Test;
 
 import java.util.UUID;
@@ -15,7 +14,7 @@ public class DiscordTest {
 
   @Test
   public void testTopicHelper() {
-    UUID uuid = TopicHelper.getUuid(testTopic);
+    UUID uuid = CompetitionDataHelper.getUuid(testTopic);
     assertNotNull(uuid);
     System.out.println(testTopic.length());
     assertFalse(testTopic.length() > 1024);
