@@ -47,7 +47,10 @@ public class CompetitionsDiscordController implements Initializable, StudioFXCon
   private TableColumn<CompetitionRepresentation, String> columnStatus;
 
   @FXML
-  private TableColumn<CompetitionRepresentation, String> columnScoreCount;
+  private TableColumn<CompetitionRepresentation, String> columnCompetitionOwner;
+
+  @FXML
+  private TableColumn<CompetitionRepresentation, String> columnServer;
 
   @FXML
   private TableColumn<CompetitionRepresentation, String> columnStartDate;
@@ -356,5 +359,13 @@ public class CompetitionsDiscordController implements Initializable, StudioFXCon
 
   public void setCompetitionsController(CompetitionsController competitionsController) {
     this.competitionsController = competitionsController;
+  }
+
+  public Optional<CompetitionRepresentation> getSelection() {
+    CompetitionRepresentation selection = tableView.getSelectionModel().getSelectedItem();
+    if (selection != null) {
+      return Optional.of(selection);
+    }
+    return Optional.empty();
   }
 }

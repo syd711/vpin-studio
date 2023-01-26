@@ -2,6 +2,7 @@ package de.mephisto.vpin.server.competitions;
 
 import de.mephisto.vpin.connectors.discord.DiscordMember;
 import de.mephisto.vpin.restclient.CompetitionType;
+import de.mephisto.vpin.server.discord.DiscordCompetitionData;
 import de.mephisto.vpin.server.discord.DiscordService;
 import de.mephisto.vpin.server.highscores.HighscoreService;
 import de.mephisto.vpin.server.highscores.Score;
@@ -15,10 +16,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class CompetitionService implements InitializingBean {
@@ -83,11 +82,6 @@ public class CompetitionService implements InitializingBean {
     }
   }
 
-  public List<DiscordMember> getCompetitionMembers(Competition c) {
-    long channelId = c.getDiscordChannelId();
-    return discordService.getCompetitionMembers(channelId);
-  }
-
   public List<Competition> getOfflineCompetitions() {
     return competitionsRepository.findByType(CompetitionType.OFFLINE.name());
   }
@@ -96,6 +90,14 @@ public class CompetitionService implements InitializingBean {
     return competitionsRepository.findByType(CompetitionType.DISCORD.name());
   }
 
+
+  public List<Player> getCompetitionPlayers(long competitionId) {
+    Competition competition = this.getCompetition(competitionId);
+    if(competition != null) {
+      return discordService.getCompetitionPlayers(competition.getDiscordChannelId());
+    }
+    return Collections.emptyList();
+  }
 
   public Competition getCompetition(long id) {
     Optional<Competition> competition = competitionsRepository.findById(id);

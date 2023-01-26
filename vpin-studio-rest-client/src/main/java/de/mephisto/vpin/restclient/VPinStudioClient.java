@@ -331,6 +331,10 @@ public class VPinStudioClient implements ObservedPropertyChangeListener, Overlay
     return Arrays.asList(restClient.get(API + "competitions/offline", CompetitionRepresentation[].class));
   }
 
+  public List<PlayerRepresentation> getDiscordCompetitionPlayers(long competitionId) {
+    return Arrays.asList(restClient.get(API + "competitions/players/" + competitionId, PlayerRepresentation[].class));
+  }
+
   public List<CompetitionRepresentation> getDiscordCompetitions() {
     return Arrays.asList(restClient.get(API + "competitions/discord", CompetitionRepresentation[].class));
   }

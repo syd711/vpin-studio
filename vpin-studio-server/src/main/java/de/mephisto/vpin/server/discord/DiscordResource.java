@@ -1,6 +1,7 @@
 package de.mephisto.vpin.server.discord;
 
 import de.mephisto.vpin.restclient.DiscordChannel;
+import de.mephisto.vpin.server.players.Player;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;

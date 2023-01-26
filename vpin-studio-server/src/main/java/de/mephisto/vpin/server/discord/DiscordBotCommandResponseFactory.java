@@ -119,6 +119,20 @@ public class DiscordBotCommandResponseFactory {
 
   public static String createRanksMessageFor(Player player, ScoreSummary highscores) {
     StringBuilder builder = new StringBuilder();
+
+    if(highscores.getScores().isEmpty()) {
+      builder.append("No highscores for player '");
+      if (player.getName() != null) {
+        builder.append(player.getName());
+      }
+      else {
+        builder.append(player.getInitials());
+      }
+      builder.append("' have been found.");
+      return builder.toString();
+    }
+
+
     builder.append("```");
     builder.append("Highscores of '");
     if (player.getName() != null) {

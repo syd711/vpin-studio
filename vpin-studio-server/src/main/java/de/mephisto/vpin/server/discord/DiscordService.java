@@ -63,10 +63,11 @@ public class DiscordService implements InitializingBean, PreferenceChangedListen
     return Collections.emptyList();
   }
 
-  public List<DiscordMember> getCompetitionMembers(long channelId) {
+  public List<Player> getCompetitionPlayers(long channelId) {
     if (this.discordClient != null) {
       DiscordCompetitionData competitionData = getCompetitionData(channelId);
-      return this.discordClient.getCompetitionMembers(channelId, competitionData.getStartMessageId(), competitionData.getUuid());
+      List<DiscordMember> competitionMembers = this.discordClient.getCompetitionMembers(channelId, competitionData.getStartMessageId(), competitionData.getUuid());
+      return competitionMembers.stream().map(this::toPlayer).collect(Collectors.toList());
     }
     return Collections.emptyList();
   }

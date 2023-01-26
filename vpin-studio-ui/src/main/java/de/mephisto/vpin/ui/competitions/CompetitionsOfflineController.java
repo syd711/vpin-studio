@@ -370,4 +370,12 @@ public class CompetitionsOfflineController implements Initializable, StudioFXCon
   public void setCompetitionsController(CompetitionsController competitionsController) {
     this.competitionsController = competitionsController;
   }
+
+  public Optional<CompetitionRepresentation> getSelection() {
+    CompetitionRepresentation selection = tableView.getSelectionModel().getSelectedItem();
+    if (selection != null) {
+      return Optional.of(selection);
+    }
+    return Optional.empty();
+  }
 }

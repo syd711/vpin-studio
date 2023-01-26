@@ -1,6 +1,7 @@
 package de.mephisto.vpin.server.competitions;
 
 import de.mephisto.vpin.server.highscores.ScoreList;
+import de.mephisto.vpin.server.players.Player;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
@@ -36,7 +37,6 @@ public class CompetitionResource {
     throw new ResponseStatusException(NOT_FOUND, "Not competition found for id " + id);
   }
 
-
   @GetMapping("/game/{id}")
   public List<Competition> existsForGame(@PathVariable("id") int id) {
     return competitionService.findCompetitionForGame(id);
@@ -45,6 +45,11 @@ public class CompetitionResource {
   @GetMapping("/finished/{limit}")
   public List<Competition> getFinishedCompetitions(@PathVariable("limit") int limit) {
     return competitionService.getFinishedCompetitions(limit);
+  }
+
+  @GetMapping("/players/{id}")
+  public List<Player> getCompetitionPlayers(@PathVariable("id") long id) {
+    return competitionService.getCompetitionPlayers(id);
   }
 
   @GetMapping("/active")

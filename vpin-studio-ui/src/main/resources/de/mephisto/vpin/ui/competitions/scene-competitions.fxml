@@ -21,7 +21,7 @@
     <center>
         <BorderPane styleClass="subpanel" BorderPane.alignment="CENTER">
             <center>
-                <TabPane tabClosingPolicy="UNAVAILABLE" BorderPane.alignment="CENTER">
+                <TabPane fx:id="tabPane" tabClosingPolicy="UNAVAILABLE" BorderPane.alignment="CENTER">
                     <tabs>
                         <Tab fx:id="offlineTab" closable="false" text="Offline Competitions">
                             <content>
@@ -31,7 +31,7 @@
                                 <FontIcon iconColor="WHITE" iconLiteral="bi-trophy" />
                             </graphic>
                         </Tab>
-                        <Tab fx:id="onlineTab" text="Online Competitions (Discord)">
+                        <Tab fx:id="onlineTab" text="Discord Competitions">
                             <content>
                                 <BorderPane prefHeight="200.0" prefWidth="200.0" />
                             </content>
@@ -55,9 +55,16 @@
          <children>
             <Accordion prefWidth="600.0">
               <panes>
-                <TitledPane text="Scores" />
-                <TitledPane text="Competition Members" />
-                  <TitledPane fx:id="metaDataBox" animated="false" text="Metadata">
+                <TitledPane expanded="false" text="Scores" />
+                <TitledPane fx:id="competitionMembersPane" expanded="false" text="Competition Members">
+                     <content>
+                        <VBox fx:id="membersBox">
+                           <padding>
+                              <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
+                           </padding>
+                        </VBox>
+                     </content></TitledPane>
+                  <TitledPane fx:id="metaDataPane" text="Metadata">
                      <content>
                         <VBox>
                            <children>
