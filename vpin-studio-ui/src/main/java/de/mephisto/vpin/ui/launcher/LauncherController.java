@@ -7,6 +7,7 @@ import de.mephisto.vpin.commons.utils.ImageUtil;
 import de.mephisto.vpin.commons.utils.PropertiesStore;
 import de.mephisto.vpin.commons.utils.Updater;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
+import de.mephisto.vpin.restclient.AssetType;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.VPinStudioClient;
 import de.mephisto.vpin.restclient.representations.PreferenceEntryRepresentation;
@@ -301,7 +302,7 @@ public class LauncherController implements Initializable {
       connection.setName(name);
 
       if (!StringUtils.isEmpty(avatarEntry.getValue())) {
-        connection.setAvatar(new Image(client.getAsset(avatarEntry.getValue())));
+        connection.setAvatar(new Image(client.getAsset(AssetType.VPIN_AVATAR, avatarEntry.getValue())));
       }
       else {
         Image image = new Image(Studio.class.getResourceAsStream("avatar-default.png"));

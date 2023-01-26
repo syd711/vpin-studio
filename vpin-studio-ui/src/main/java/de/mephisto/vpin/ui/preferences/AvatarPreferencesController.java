@@ -1,6 +1,7 @@
 package de.mephisto.vpin.ui.preferences;
 
 import de.mephisto.vpin.commons.utils.WidgetFactory;
+import de.mephisto.vpin.restclient.AssetType;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.representations.PreferenceEntryRepresentation;
 import de.mephisto.vpin.ui.DashboardController;
@@ -60,7 +61,7 @@ public class AvatarPreferencesController implements Initializable {
     PreferenceEntryRepresentation avatarEntry = client.getPreference(PreferenceNames.AVATAR);
     Image image = new Image(DashboardController.class.getResourceAsStream("avatar-default.png"));
     if (!StringUtils.isEmpty(avatarEntry.getValue())) {
-      image = new Image(client.getAsset(avatarEntry.getValue()));
+      image = new Image(client.getAsset(AssetType.VPIN_AVATAR, avatarEntry.getValue()));
     }
 
     if (avatar == null) {

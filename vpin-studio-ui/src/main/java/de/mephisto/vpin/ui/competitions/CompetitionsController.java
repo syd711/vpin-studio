@@ -62,7 +62,9 @@ public class CompetitionsController implements Initializable, StudioFXController
   private CompetitionsOfflineController offlineController;
   private CompetitionsDiscordController discordController;
 
-  private Optional<CompetitionRepresentation> competition;
+  private Optional<CompetitionRepresentation> competition = Optional.empty();
+
+  private Label noPlayersLabel;
 
   // Add a public no-args constructor
   public CompetitionsController() {
@@ -80,11 +82,15 @@ public class CompetitionsController implements Initializable, StudioFXController
         NavigationController.setBreadCrumb(Arrays.asList("Competitions", "Offline Competitions"));
         Optional<CompetitionRepresentation> selection = offlineController.getSelection();
         updateSelection(selection);
+        offlineController.onReload();
       }
       else {
-        NavigationController.setBreadCrumb(Arrays.asList("Competitions", "Discord Competitions"));
-        Optional<CompetitionRepresentation> selection = discordController.getSelection();
-        updateSelection(selection);
+        if(discordController != null) {
+          NavigationController.setBreadCrumb(Arrays.asList("Competitions", "Discord Competitions"));
+          Optional<CompetitionRepresentation> selection = discordController.getSelection();
+          updateSelection(selection);
+          discordController.onReload();
+        }
       }
     });
 
@@ -149,10 +155,8 @@ public class CompetitionsController implements Initializable, StudioFXController
 
         List<PlayerRepresentation> memberList = client.getDiscordCompetitionPlayers(competition.getId());
         if(memberList.isEmpty()) {
-          membersBox.getChildren().removeAll();
-          Label label = new Label("No discord channel members have joined this competition yet.");
-          label.setStyle("-fx-font-weight: bold;-fx-font-size: 14px;");
-          membersBox.getChildren().add(label);
+          membersBox.getChildren().remove(getNoPlayersLabel());
+          membersBox.getChildren().add(getNoPlayersLabel());
         }
         else {
           for (PlayerRepresentation player : memberList) {
@@ -212,5 +216,13 @@ public class CompetitionsController implements Initializable, StudioFXController
       content.getChildren().addAll(title, description);
       onlineTab.setContent(content);
     }
+  }
+
+  private Label getNoPlayersLabel() {
+    if(this.noPlayersLabel == null) {
+      noPlayersLabel = new Label("No discord channel members have joined this competition yet.");
+      noPlayersLabel.setStyle("-fx-font-weight: bold;-fx-font-size: 14px;");
+    }
+    return this.noPlayersLabel;
   }
 }

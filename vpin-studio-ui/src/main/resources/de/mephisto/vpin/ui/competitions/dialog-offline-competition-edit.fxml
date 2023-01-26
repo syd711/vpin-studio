@@ -46,8 +46,8 @@
          <children>
             <GridPane vgap="3.0">
               <columnConstraints>
-                <ColumnConstraints hgrow="SOMETIMES" maxWidth="388.2000732421875" minWidth="10.0" prefWidth="154.4000732421875" />
-                <ColumnConstraints hgrow="SOMETIMES" maxWidth="699.3999176025391" minWidth="10.0" prefWidth="427.9999267578126" />
+                <ColumnConstraints hgrow="SOMETIMES" maxWidth="388.2000732421875" minWidth="10.0" prefWidth="177.2" />
+                <ColumnConstraints hgrow="SOMETIMES" maxWidth="699.3999176025391" minWidth="10.0" prefWidth="498.00000000000006" />
               </columnConstraints>
               <rowConstraints>
                 <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
@@ -158,11 +158,14 @@
             </GridPane>
             <StackPane alignment="TOP_LEFT">
                <VBox.margin>
-                  <Insets left="130.0" top="-26.0" />
+                  <Insets left="178.0" top="-26.0" />
                </VBox.margin>
                <children>
-                  <ImageView fx:id="iconPreview" fitHeight="200.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true" />
-                  <ImageView fx:id="badgePreview" fitHeight="100.0" fitWidth="100.0" pickOnBounds="true" preserveRatio="true">
+                  <ImageView fx:id="iconPreview" fitHeight="200.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true">
+                     <StackPane.margin>
+                        <Insets left="74.0" />
+                     </StackPane.margin></ImageView>
+                  <ImageView fx:id="badgePreview" fitHeight="80.0" fitWidth="80.0" pickOnBounds="true" preserveRatio="true">
                      <StackPane.margin>
                         <Insets left="100.0" />
                      </StackPane.margin>

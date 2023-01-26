@@ -19,7 +19,7 @@ public interface OverlayClient {
 
   ScoreListRepresentation getCompetitionScores(long id);
 
-  ByteArrayInputStream getAsset(String uuid);
+  ByteArrayInputStream getAsset(AssetType assetType, String uuid);
 
   ScoreSummaryRepresentation getRecentlyPlayedGames(int count);
 

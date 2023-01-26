@@ -2,6 +2,7 @@ package de.mephisto.vpin.server.keyevent;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import de.mephisto.vpin.restclient.AssetType;
 import de.mephisto.vpin.restclient.OverlayClient;
 import de.mephisto.vpin.restclient.PopperScreen;
 import de.mephisto.vpin.restclient.representations.*;
@@ -132,7 +133,7 @@ public class OverlayClientImpl implements OverlayClient, InitializingBean {
   }
 
   @Override
-  public ByteArrayInputStream getAsset(String uuid) {
+  public ByteArrayInputStream getAsset(AssetType assetType, String uuid) {
     Asset asset = assetService.getByUuid(uuid);
     return new ByteArrayInputStream(asset.getData());
   }

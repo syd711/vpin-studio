@@ -28,8 +28,6 @@ public class VPinStudioClient implements ObservedPropertyChangeListener, Overlay
 
   private final Map<String, byte[]> imageCache = new HashMap<>();
 
-  private final Map<String, AssetRepresentation> assetCache = new HashMap<>();
-
   private final RestClient restClient;
 
   private final String host;
@@ -44,7 +42,6 @@ public class VPinStudioClient implements ObservedPropertyChangeListener, Overlay
   }
 
   public void clearCache() {
-    this.assetCache.clear();
     int size = this.imageCache.size();
     this.imageCache.clear();
     LOG.info("Cleared " + size + " resources from cache.");
@@ -275,10 +272,18 @@ public class VPinStudioClient implements ObservedPropertyChangeListener, Overlay
     }
   }
 
-  public ByteArrayInputStream getAsset(String uuid) {
+  public ByteArrayInputStream getAsset(AssetType assetType, String uuid) {
+    if(assetType.equals(AssetType.AVATAR) && imageCache.containsKey(uuid)) {
+      return new ByteArrayInputStream(imageCache.get(uuid));
+    }
+
     byte[] bytes = restClient.readBinary(API + "assets/data/" + uuid);
     if (bytes == null) {
       throw new UnsupportedOperationException("No data found for asset with UUID " + uuid);
+    }
+
+    if(assetType.equals(AssetType.AVATAR)) {
+      imageCache.put(uuid, bytes);
     }
     return new ByteArrayInputStream(bytes);
   }

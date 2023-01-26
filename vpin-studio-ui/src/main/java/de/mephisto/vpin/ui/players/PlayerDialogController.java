@@ -177,7 +177,7 @@ public class PlayerDialogController implements Initializable, DialogController {
 
     if (this.player.getAvatar() != null) {
       this.initialsOverlayLabel.setText("");
-      Image image = new Image(client.getAsset(this.player.getAvatar().getUuid()));
+      Image image = new Image(client.getAsset(AssetType.AVATAR, this.player.getAvatar().getUuid()));
       avatar.setImage(image);
     }
   }

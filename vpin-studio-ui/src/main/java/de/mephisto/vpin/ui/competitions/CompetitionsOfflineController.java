@@ -178,7 +178,7 @@ public class CompetitionsOfflineController implements Initializable, StudioFXCon
   }
 
   @FXML
-  private void onReload() {
+  public void onReload() {
     CompetitionRepresentation selection = tableView.getSelectionModel().getSelectedItem();
 
     tableView.setVisible(false);
@@ -320,7 +320,6 @@ public class CompetitionsOfflineController implements Initializable, StudioFXCon
     });
 
     bindSearchField();
-    onReload();
   }
 
   private void bindSearchField() {

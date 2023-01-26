@@ -2,6 +2,7 @@ package de.mephisto.vpin.commons.fx.widgets;
 
 import de.mephisto.vpin.commons.fx.LoadingOverlayController;
 import de.mephisto.vpin.commons.fx.OverlayWindowFX;
+import de.mephisto.vpin.restclient.AssetType;
 import de.mephisto.vpin.restclient.representations.*;
 import eu.hansolo.tilesfx.Tile;
 import eu.hansolo.tilesfx.TileBuilder;
@@ -220,7 +221,7 @@ public class WidgetCompetitionController extends WidgetController implements Ini
             }
             else if (currentScore.getPlayer().getAvatar() != null) {
               AssetRepresentation avatar = currentScore.getPlayer().getAvatar();
-              turnoverTile.setImage(new Image(OverlayWindowFX.client.getAsset(avatar.getUuid())));
+              turnoverTile.setImage(new Image(OverlayWindowFX.client.getAsset(AssetType.AVATAR, avatar.getUuid())));
             }
           }
           else {

@@ -2,6 +2,7 @@ package de.mephisto.vpin.ui.players;
 
 import de.mephisto.vpin.commons.utils.ImageUtil;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
+import de.mephisto.vpin.restclient.AssetType;
 import de.mephisto.vpin.restclient.representations.PlayerRepresentation;
 import de.mephisto.vpin.ui.NavigationController;
 import de.mephisto.vpin.ui.Studio;
@@ -187,7 +188,7 @@ public class BuiltInPlayersController implements Initializable {
         return new SimpleObjectProperty("");
       }
 
-      Image image = new Image(client.getAsset(value.getAvatar().getUuid()));
+      Image image = new Image(client.getAsset(AssetType.AVATAR, value.getAvatar().getUuid()));
       ImageView view = new ImageView(image);
       view.setPreserveRatio(true);
       view.setFitWidth(50);

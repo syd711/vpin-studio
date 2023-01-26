@@ -3,6 +3,7 @@ package de.mephisto.vpin.commons.fx.widgets;
 import de.mephisto.vpin.commons.fx.LoadingOverlayController;
 import de.mephisto.vpin.commons.fx.OverlayWindowFX;
 import de.mephisto.vpin.commons.utils.ImageUtil;
+import de.mephisto.vpin.restclient.AssetType;
 import de.mephisto.vpin.restclient.representations.RankedPlayerRepresentation;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleObjectProperty;
@@ -102,7 +103,7 @@ public class WidgetPlayerRankController extends WidgetController implements Init
         image = new Image(value.getAvatarUrl());
       }
       else if (value.getAvatarUuid() != null) {
-        image = new Image(OverlayWindowFX.client.getAsset(value.getAvatarUuid()));
+        image = new Image(OverlayWindowFX.client.getAsset(AssetType.AVATAR, value.getAvatarUuid()));
       }
 
       ImageView view = new ImageView(image);

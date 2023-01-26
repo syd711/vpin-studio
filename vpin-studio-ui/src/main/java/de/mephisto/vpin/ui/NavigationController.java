@@ -1,6 +1,7 @@
 package de.mephisto.vpin.ui;
 
 import de.mephisto.vpin.commons.fx.UIDefaults;
+import de.mephisto.vpin.restclient.AssetType;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.representations.PreferenceEntryRepresentation;
 import de.mephisto.vpin.ui.cards.HighscoreCardsController;
@@ -141,7 +142,7 @@ public class NavigationController implements Initializable {
     PreferenceEntryRepresentation avatarEntry = client.getPreference(PreferenceNames.AVATAR);
     Image image = new Image(DashboardController.class.getResourceAsStream("avatar-default.png"));
     if (!StringUtils.isEmpty(avatarEntry.getValue())) {
-      image = new Image(client.getAsset(avatarEntry.getValue()));
+      image = new Image(client.getAsset(AssetType.VPIN_AVATAR, avatarEntry.getValue()));
     }
 
     PreferenceEntryRepresentation systemNameEntry = client.getPreference(PreferenceNames.SYSTEM_NAME);
