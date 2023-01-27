@@ -154,7 +154,7 @@ public class WidgetCompetitionController extends WidgetController implements Ini
       countdownTile.setDescription(String.valueOf(remainingDays));
       countdownTile.setText("Competition End: " + DateFormat.getDateInstance().format(competition.getEndDate()));
 
-      ScoreListRepresentation competitionScores = OverlayWindowFX.client.getCompetitionScores(Math.toIntExact(competition.getId()));
+      ScoreListRepresentation competitionScores = OverlayWindowFX.client.getCompetitionScoreList(Math.toIntExact(competition.getId()));
       if (!competitionScores.getScores().isEmpty()) {
         XYChart.Series<String, Number> scoreGraph1 = new XYChart.Series();
         scoreGraph1.setName("#1");

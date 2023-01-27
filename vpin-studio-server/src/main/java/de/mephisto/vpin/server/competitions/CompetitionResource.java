@@ -49,7 +49,7 @@ public class CompetitionResource {
 
   @GetMapping("/players/{id}")
   public List<Player> getCompetitionPlayers(@PathVariable("id") long id) {
-    return competitionService.getCompetitionPlayers(id);
+    return competitionService.getDiscordCompetitionPlayers(id);
   }
 
   @GetMapping("/active")
@@ -58,8 +58,13 @@ public class CompetitionResource {
   }
 
   @GetMapping("/scores/{id}")
-  public ScoreList getScore(@PathVariable("id") int id) {
+  public ScoreList getScores(@PathVariable("id") int id) {
     return competitionService.getCompetitionScores(id);
+  }
+
+  @GetMapping("/score/{id}")
+  public ScoreSummary getScoreSummary(@PathVariable("id") int id) {
+    return competitionService.getCompetitionScore(id);
   }
 
   @PutMapping("/finish/{id}")

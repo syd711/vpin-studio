@@ -54,9 +54,9 @@ public class VPinStudioClient implements ObservedPropertyChangeListener, Overlay
     return restClient.get(API + "discord/available", Boolean.class);
   }
 
-  public String getActiveCompetitionName(long channelId) {
+  public String getActiveCompetitionName(long serverId, long channelId) {
     final RestTemplate restTemplate = new RestTemplate();
-    return restTemplate.getForObject(restClient.getBaseUrl() + API + "discord/channel/" + channelId + "/name", String.class);
+    return restTemplate.getForObject(restClient.getBaseUrl() + API + "discord/channel/" + serverId + "/" + channelId + "/name", String.class);
   }
 
   public String getBotId() {
@@ -403,9 +403,18 @@ public class VPinStudioClient implements ObservedPropertyChangeListener, Overlay
     }
   }
 
-  public ScoreListRepresentation getCompetitionScores(long id) {
+  public ScoreListRepresentation getCompetitionScoreList(long id) {
     try {
       return restClient.get(API + "competitions/scores/" + id, ScoreListRepresentation.class);
+    } catch (Exception e) {
+      LOG.error("Failed to read competition scores list " + id + ": " + e.getMessage(), e);
+    }
+    return null;
+  }
+
+  public ScoreSummaryRepresentation getCompetitionScore(long id) {
+    try {
+      return restClient.get(API + "competitions/score/" + id, ScoreSummaryRepresentation.class);
     } catch (Exception e) {
       LOG.error("Failed to read competition scores " + id + ": " + e.getMessage(), e);
     }
@@ -576,10 +585,6 @@ public class VPinStudioClient implements ObservedPropertyChangeListener, Overlay
 
   public ScoreSummaryRepresentation getPlayerScores(String initials) {
     return restClient.get(API + "players/highscores/" + initials, ScoreSummaryRepresentation.class);
-  }
-
-  public boolean invalidatePlayerDomain(PlayerDomain domain) {
-    return restClient.get(API + "players/invalidate/" + domain.name(), Boolean.class);
   }
 
   /*********************************************************************************************************************

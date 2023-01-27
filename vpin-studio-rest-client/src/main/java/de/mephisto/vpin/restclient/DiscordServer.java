@@ -5,15 +5,6 @@ public class DiscordServer {
   private long id;
   private String avatarUrl;
   private long ownerId;
-  private boolean owner;
-
-  public boolean isOwner() {
-    return owner;
-  }
-
-  public void setOwner(boolean owner) {
-    this.owner = owner;
-  }
 
   public long getOwnerId() {
     return ownerId;

@@ -91,11 +91,11 @@ public class OverlayClientImpl implements OverlayClient, InitializingBean {
   }
 
   @Override
-  public ScoreSummaryRepresentation getGameScores(int id) {
+  public ScoreListRepresentation getCompetitionScoreList(long id) {
     try {
-      ScoreSummary scores = gameService.getScores(id);
-      String s = mapper.writeValueAsString(scores);
-      return mapper.readValue(s, ScoreSummaryRepresentation.class);
+      ScoreList competitionScores = competitionService.getCompetitionScores(id);
+      String s = mapper.writeValueAsString(competitionScores);
+      return mapper.readValue(s, ScoreListRepresentation.class);
     } catch (Exception e) {
       LOG.error("Error during conversion: " + e.getMessage(), e);
     }
@@ -103,11 +103,11 @@ public class OverlayClientImpl implements OverlayClient, InitializingBean {
   }
 
   @Override
-  public ScoreListRepresentation getCompetitionScores(long id) {
+  public ScoreSummaryRepresentation getCompetitionScore(long id) {
     try {
-      ScoreList competitionScores = competitionService.getCompetitionScores(id);
-      String s = mapper.writeValueAsString(competitionScores);
-      return mapper.readValue(s, ScoreListRepresentation.class);
+      ScoreSummary competitionScore = competitionService.getCompetitionScore(id);
+      String s = mapper.writeValueAsString(competitionScore);
+      return mapper.readValue(s, ScoreSummaryRepresentation.class);
     } catch (Exception e) {
       LOG.error("Error during conversion: " + e.getMessage(), e);
     }

@@ -11,6 +11,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.Parent;
 import javafx.scene.control.Label;
 import javafx.scene.control.Tab;
@@ -18,12 +19,14 @@ import javafx.scene.control.TabPane;
 import javafx.scene.control.TitledPane;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.net.URL;
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.List;
@@ -51,14 +54,16 @@ public class CompetitionsController implements Initializable, StudioFXController
   private Label uuidLabel;
 
   @FXML
-  private Label serverNameLabel;
+  private Label startLabel;
 
   @FXML
-  private ImageView bannerImageView;
-
+  private Label endLabel;
 
   @FXML
-  private Label ownerLabel;
+  private HBox serverBox;
+
+  @FXML
+  private HBox ownerBox;
 
   @FXML
   private TitledPane metaDataPane;
@@ -125,13 +130,35 @@ public class CompetitionsController implements Initializable, StudioFXController
     if (competitionRepresentation.isPresent()) {
       CompetitionRepresentation competition = competitionRepresentation.get();
       if (metaDataPane.isVisible()) {
-        ownerLabel.setText(competition.getOwner());
         uuidLabel.setText(competition.getUuid());
         createdAtLabel.setText(SimpleDateFormat.getDateTimeInstance().format(competition.getCreatedAt()));
 
         DiscordServer discordServer = client.getDiscordServer(competition.getDiscordServerId());
-        serverNameLabel.setText(discordServer.getName());
-        bannerImageView.setImage(new Image(discordServer.getAvatarUrl()));
+        HBox hBox = new HBox(6);
+        hBox.setAlignment(Pos.CENTER_LEFT);
+        Image image = new Image(discordServer.getAvatarUrl());
+        ImageView view = new ImageView(image);
+        view.setPreserveRatio(true);
+        view.setFitWidth(50);
+        view.setFitHeight(50);
+        serverBox.getChildren().removeAll(serverBox.getChildren());
+        Label label = new Label(discordServer.getName());
+        serverBox.getChildren().addAll(view, label);
+
+        PlayerRepresentation discordPlayer = client.getDiscordPlayer(competition.getDiscordServerId(), Long.valueOf(competition.getOwner()));
+        hBox = new HBox(6);
+        hBox.setAlignment(Pos.CENTER_LEFT);
+        image = new Image(discordPlayer.getAvatarUrl());
+        view = new ImageView(image);
+        view.setPreserveRatio(true);
+        view.setFitWidth(50);
+        view.setFitHeight(50);
+        ownerBox.getChildren().removeAll(ownerBox.getChildren());
+        label = new Label(discordPlayer.getName());
+        ownerBox.getChildren().addAll(view, label);
+
+        startLabel.setText(DateFormat.getInstance().format(competition.getStartDate()));
+        endLabel.setText(DateFormat.getInstance().format(competition.getEndDate()));
       }
     }
   }

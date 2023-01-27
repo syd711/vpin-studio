@@ -49,7 +49,6 @@ public class DiscordPlayersController implements Initializable {
 
   @FXML
   private void onReload() {
-    client.invalidatePlayerDomain(PlayerDomain.DISCORD);
     this.players = client.getPlayers(PlayerDomain.DISCORD);
     this.refreshView();
   }

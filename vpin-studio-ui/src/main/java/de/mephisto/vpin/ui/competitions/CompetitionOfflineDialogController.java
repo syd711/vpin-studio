@@ -6,10 +6,7 @@ import de.mephisto.vpin.restclient.CompetitionType;
 import de.mephisto.vpin.restclient.DiscordChannel;
 import de.mephisto.vpin.restclient.PopperScreen;
 import de.mephisto.vpin.restclient.VPinStudioClient;
-import de.mephisto.vpin.restclient.representations.CompetitionRepresentation;
-import de.mephisto.vpin.restclient.representations.GameMediaItemRepresentation;
-import de.mephisto.vpin.restclient.representations.GameMediaRepresentation;
-import de.mephisto.vpin.restclient.representations.GameRepresentation;
+import de.mephisto.vpin.restclient.representations.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -18,6 +15,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -64,6 +62,15 @@ public class CompetitionOfflineDialogController implements Initializable, Dialog
 
   @FXML
   private DatePicker endDatePicker;
+
+  @FXML
+  private Pane validationContainer;
+
+  @FXML
+  private Label validationTitle;
+
+  @FXML
+  private Label validationDescription;
 
   private CompetitionRepresentation competition;
 
@@ -195,19 +202,35 @@ public class CompetitionOfflineDialogController implements Initializable, Dialog
   }
 
   private void validate() {
+    validationContainer.setVisible(true);
+    this.saveBtn.setDisable(true);
+
     LocalDate start = startDatePicker.getValue();
     LocalDate value = endDatePicker.getValue();
 
     long diff = ChronoUnit.DAYS.between(start, value);
     this.durationLabel.setText(diff + " days");
 
-    boolean valid = !StringUtils.isEmpty(competition.getName())
-        && competition.getName().length() > 3
-        && competition.getGameId() > 0
-        && competition.getStartDate() != null
-        && competition.getEndDate() != null
-        && competition.getStartDate().getTime() < competition.getEndDate().getTime();
-    this.saveBtn.setDisable(!valid);
+    if (StringUtils.isEmpty(competition.getName())) {
+      validationTitle.setText("No competition name set.");
+      validationDescription.setText("Define a meaningful competition name.");
+      return;
+    }
+
+    if (competition.getGameId() <= 0) {
+      validationTitle.setText("No table selected.");
+      validationDescription.setText("Select a table for the competition.");
+      return;
+    }
+
+    if (competition.getStartDate() == null || competition.getEndDate() == null || competition.getStartDate().getTime() > competition.getEndDate().getTime()) {
+      validationTitle.setText("Invalid start/end date set.");
+      validationDescription.setText("Define a valid start and end date.");
+      return;
+    }
+
+    validationContainer.setVisible(false);
+    this.saveBtn.setDisable(false);
   }
 
   @Override

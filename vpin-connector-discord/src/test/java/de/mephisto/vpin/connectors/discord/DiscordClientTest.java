@@ -15,7 +15,7 @@ public class DiscordClientTest {
 
     if(token != null) {
       DiscordClient client = new DiscordClient(token, id, null);
-      client.refreshMembers();
+//      client.refreshMembers();
       client.setStatus("testing");
 
       Thread.sleep(2000);

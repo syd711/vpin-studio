@@ -3,7 +3,6 @@ package de.mephisto.vpin.restclient;
 import de.mephisto.vpin.restclient.representations.*;
 
 import java.io.ByteArrayInputStream;
-import java.util.Arrays;
 import java.util.List;
 
 public interface OverlayClient {
@@ -13,11 +12,11 @@ public interface OverlayClient {
 
   GameRepresentation getGame(int id);
 
-  ScoreSummaryRepresentation getGameScores(int id);
+  ScoreSummaryRepresentation getCompetitionScore(long id);
 
   ByteArrayInputStream getCompetitionBackground(long gameId);
 
-  ScoreListRepresentation getCompetitionScores(long id);
+  ScoreListRepresentation getCompetitionScoreList(long id);
 
   ByteArrayInputStream getAsset(AssetType assetType, String uuid);
 

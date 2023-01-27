@@ -80,6 +80,15 @@ public class CompetitionDataHelper {
   }
 
   @Nullable
+  public static String getStartMessageId(@Nullable String topic) {
+    DiscordCompetitionData data = getCompetitionData(topic);
+    if (data != null) {
+      return data.getStartMessageId();
+    }
+    return null;
+  }
+
+  @Nullable
   public static ScoreSummary getScores(@NonNull DiscordService discordService, @Nullable String topic) {
     DiscordCompetitionData topicData = getCompetitionData(topic);
     if (topicData != null) {

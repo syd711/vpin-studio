@@ -30,11 +30,6 @@ public class PlayersResource {
     return playerService.getBuildInPlayers();
   }
 
-  @GetMapping("/invalidate/{domain}")
-  public boolean invalidateDomain(@PathVariable("domain") String domain) {
-    return playerService.invalidateDomain(PlayerDomain.valueOf(domain));
-  }
-
   @GetMapping("/domain/{domain}")
   public List<Player> getPlayerForDomain(@PathVariable("domain") String domain) {
     return playerService.getPlayersForDomain(PlayerDomain.valueOf(domain));

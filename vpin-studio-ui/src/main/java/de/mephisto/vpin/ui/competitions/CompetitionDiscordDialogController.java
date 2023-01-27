@@ -13,7 +13,6 @@ import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
-import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -66,9 +65,6 @@ public class CompetitionDiscordDialogController implements Initializable, Dialog
 
   @FXML
   private Pane validationContainer;
-
-  @FXML
-  private VBox mainColumn;
 
   @FXML
   private Label validationTitle;
@@ -155,7 +151,6 @@ public class CompetitionDiscordDialogController implements Initializable, Dialog
       validate();
     });
 
-
     List<GameRepresentation> games = client.getGames();
     List<GameRepresentation> filtered = new ArrayList<>();
     for (GameRepresentation game : games) {
@@ -218,13 +213,13 @@ public class CompetitionDiscordDialogController implements Initializable, Dialog
     long diff = ChronoUnit.DAYS.between(start, value);
     this.durationLabel.setText(diff + " days");
 
-    if(competition.getId() == null) {
-      if (StringUtils.isEmpty(competition.getName())) {
-        validationTitle.setText("No competition name set.");
-        validationDescription.setText("Define a meaningful competition name.");
-        return;
-      }
+    if (StringUtils.isEmpty(competition.getName())) {
+      validationTitle.setText("No competition name set.");
+      validationDescription.setText("Define a meaningful competition name.");
+      return;
+    }
 
+    if (competition.getId() == null) {
       if (competition.getDiscordServerId() == 0) {
         validationTitle.setText("No discord server selected.");
         validationDescription.setText("Select a discord server where the competition takes place.");
@@ -237,7 +232,7 @@ public class CompetitionDiscordDialogController implements Initializable, Dialog
         return;
       }
       else {
-        String name = client.getActiveCompetitionName(competition.getDiscordChannelId());
+        String name = client.getActiveCompetitionName(competition.getDiscordServerId(), competition.getDiscordChannelId());
         if (name != null) {
           validationTitle.setText("Active competition found.");
           validationDescription.setText("The selected channel is already running the competition '" + name + "'");
@@ -285,29 +280,30 @@ public class CompetitionDiscordDialogController implements Initializable, Dialog
     if (c != null) {
       this.competition = c;
       GameRepresentation game = client.getGame(c.getGameId());
+      DiscordServer discordServer = client.getDiscordServer(competition.getDiscordServerId());
+      String botId = client.getBotId();
+      boolean isOwner= c.getOwner().equals(botId);
 
       channelsCombo.setDisable(true);
       serversCombo.setDisable(true);
 
-      nameField.setText(this.competition.getName());
+      this.nameField.setText(this.competition.getName());
+      this.nameField.setDisable(!isOwner);
 
       this.startDatePicker.setValue(this.competition.getStartDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate());
+      this.startDatePicker.setDisable(!isOwner);
       this.endDatePicker.setValue(this.competition.getEndDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate());
+      this.endDatePicker.setDisable(!isOwner);
       this.tableCombo.setValue(game);
+      this.tableCombo.setDisable(!isOwner);
 
       ObservableList<DiscordServer> servers = this.serversCombo.getItems();
-      for (DiscordServer item : servers) {
-        if(item.getId() == c.getDiscordServerId()) {
-          this.channelsCombo.setItems(FXCollections.observableList(client.getDiscordChannels(item.getId())));
-          this.serversCombo.setValue(item);
-          this.nameField.setDisable(!item.isOwner());
-          break;
-        }
-      }
+      this.channelsCombo.setItems(FXCollections.observableList(client.getDiscordChannels(discordServer.getId())));
+      this.serversCombo.setValue(discordServer);
 
       ObservableList<DiscordChannel> items = this.channelsCombo.getItems();
       for (DiscordChannel item : items) {
-        if(item.getId() == c.getDiscordChannelId()) {
+        if (item.getId() == c.getDiscordChannelId()) {
           this.channelsCombo.setValue(item);
           break;
         }

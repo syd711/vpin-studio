@@ -64,12 +64,15 @@ public class WheelAugmenter {
     try {
       //always re-create
       if (backupWheelIcon.exists()) {
+        deAugment(backupWheelIcon, wheelIcon);
         backupWheelIcon.delete();
       }
       if (backupWheelIconThumbnail.exists()) {
+        deAugment(backupWheelIconThumbnail, wheelIconThumbnail);
         backupWheelIconThumbnail.delete();
       }
       if (backupWheelIconThumbnailSm.exists()) {
+        deAugment(backupWheelIconThumbnailSm, wheelIconThumbnailSm);
         backupWheelIconThumbnailSm.delete();
       }
 

@@ -14,7 +14,7 @@ public class WheelAugmentationTest {
     WheelAugmenter augmenter = new WheelAugmenter(wheelIcon);
     augmenter.deAugment();
     augmenter.augment(badge);
-//    augmenter.deAugment();
+    augmenter.deAugment();
   }
 
 }

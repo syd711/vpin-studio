@@ -52,10 +52,17 @@ public class DiscordService implements InitializingBean, PreferenceChangedListen
     return null;
   }
 
-
-  public String getActiveCompetitionName(long channelId) {
+  public String getStartMessageId(long serverId, long channelId) {
     if (this.discordClient != null) {
-      String topic = this.discordClient.getTopic(channelId);
+      String topic = this.discordClient.getTopic(serverId, channelId);
+      return CompetitionDataHelper.getStartMessageId(topic);
+    }
+    return null;
+  }
+
+  public String getActiveCompetitionName(long serverId, long channelId) {
+    if (this.discordClient != null) {
+      String topic = this.discordClient.getTopic(serverId, channelId);
       return CompetitionDataHelper.getName(topic);
     }
     return null;
@@ -85,18 +92,18 @@ public class DiscordService implements InitializingBean, PreferenceChangedListen
     return Collections.emptyList();
   }
 
-  public List<Player> getCompetitionPlayers(long channelId) {
+  public List<Player> getCompetitionPlayers(long serverId, long channelId) {
     if (this.discordClient != null) {
-      DiscordCompetitionData competitionData = getCompetitionData(channelId);
-      List<DiscordMember> competitionMembers = this.discordClient.getCompetitionMembers(channelId, competitionData.getStartMessageId(), competitionData.getUuid());
+      DiscordCompetitionData competitionData = getCompetitionData(serverId, channelId);
+      List<DiscordMember> competitionMembers = this.discordClient.getCompetitionMembers(serverId, channelId, competitionData.getStartMessageId(), competitionData.getUuid());
       return competitionMembers.stream().map(this::toPlayer).collect(Collectors.toList());
     }
     return Collections.emptyList();
   }
 
-  public String sendMessage(long channelId, String message) {
+  public String sendMessage(long serverId, long channelId, String message) {
     if (this.discordClient != null) {
-      return this.discordClient.sendMessage(channelId, message);
+      return this.discordClient.sendMessage(serverId, channelId, message);
     }
     return null;
   }
@@ -108,7 +115,9 @@ public class DiscordService implements InitializingBean, PreferenceChangedListen
   public void saveCompetitionData(@NonNull Competition competition, @NonNull Game game, @NonNull ScoreSummary scoreSummary, @NonNull String messageId) {
     String topic = CompetitionDataHelper.toDataString(competition, game, scoreSummary, messageId);
     if (this.discordClient != null) {
-      this.discordClient.setTopic(competition.getDiscordChannelId(), topic);
+      long discordServerId = competition.getDiscordServerId();
+      long discordChannelId = competition.getDiscordChannelId();
+      this.discordClient.setTopic(discordServerId, discordChannelId, topic);
     }
     else {
       throw new UnsupportedOperationException("No Discord client found.");
@@ -116,9 +125,9 @@ public class DiscordService implements InitializingBean, PreferenceChangedListen
   }
 
   @Nullable
-  public ScoreSummary getScoreSummary(long channelId) {
+  public ScoreSummary getScoreSummary(long serverId, long channelId) {
     if (this.discordClient != null) {
-      String topicText = discordClient.getTopic(channelId);
+      String topicText = discordClient.getTopic(serverId, channelId);
       if (topicText != null) {
         return CompetitionDataHelper.getScores(this, topicText);
       }
@@ -126,9 +135,9 @@ public class DiscordService implements InitializingBean, PreferenceChangedListen
     return null;
   }
 
-  public void resetCompetition(long channelId) {
+  public void resetCompetition(long serverId, long channelId) {
     if (this.discordClient != null) {
-      this.discordClient.setTopic(channelId, "No active competition.");
+      this.discordClient.setTopic(serverId, channelId, "No active competition.");
     }
     else {
       throw new UnsupportedOperationException("No Discord client found.");
@@ -139,9 +148,9 @@ public class DiscordService implements InitializingBean, PreferenceChangedListen
     return this.discordClient != null;
   }
 
-  private DiscordCompetitionData getCompetitionData(long channelId) {
+  private DiscordCompetitionData getCompetitionData(long serverId, long channelId) {
     if (this.discordClient != null) {
-      String topic = this.discordClient.getTopic(channelId);
+      String topic = this.discordClient.getTopic(serverId, channelId);
       return CompetitionDataHelper.getCompetitionData(topic);
     }
     else {
@@ -201,9 +210,9 @@ public class DiscordService implements InitializingBean, PreferenceChangedListen
     }
   }
 
-  public DiscordServer getServer(long id) {
+  public DiscordServer getServer(long serverId) {
     if (this.discordClient != null) {
-      GuildInfo guild = this.discordClient.getGuild(id);
+      GuildInfo guild = this.discordClient.getGuildById(serverId);
       if (guild != null) {
         return toServer(guild);
       }
@@ -256,19 +265,6 @@ public class DiscordService implements InitializingBean, PreferenceChangedListen
     }
   }
 
-  public boolean refreshMembers() {
-    this.lastMembers = null;
-    if (this.discordClient != null) {
-      Consumer<List<DiscordMember>> consumer = discordMembers -> {
-        lastMembers = discordMembers;
-      };
-
-      this.discordClient.refreshMembers(consumer, throwable -> notify());
-      return this.lastMembers != null;
-    }
-    return false;
-  }
-
   @Override
   public void afterPropertiesSet() throws Exception {
     preferencesService.addChangeListener(this);
@@ -288,7 +284,6 @@ public class DiscordService implements InitializingBean, PreferenceChangedListen
   private DiscordServer toServer(GuildInfo guild) {
     DiscordServer s = new DiscordServer();
     s.setOwnerId(guild.getOwnerId());
-    s.setOwner(discordClient.getBotId() == guild.getOwnerId());
     s.setId(guild.getId());
     s.setName(guild.getName());
     s.setAvatarUrl(guild.getAvatarUrl());

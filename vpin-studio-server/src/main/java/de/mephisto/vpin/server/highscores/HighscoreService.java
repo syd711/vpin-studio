@@ -240,6 +240,7 @@ public class HighscoreService implements InitializingBean {
    * Returns a list of all scores for the given game
    *
    * @param gameId the game to retrieve the highscores for
+   * @param displayName the optional display name/name of the table the summary is for
    * @return all highscores of the given player
    */
   public ScoreSummary getHighscores(int gameId, @Nullable String displayName) {

@@ -31,9 +31,9 @@ public class DiscordResource {
     return String.valueOf(discordService.getBotId());
   }
 
-  @GetMapping("/channel/{channelId}/name")
-  public String getActiveCompetitionName(@PathVariable("channelId") long channelId) {
-    return discordService.getActiveCompetitionName(channelId);
+  @GetMapping("/channel/{serverId}/{channelId}/name")
+  public String getActiveCompetitionName(@PathVariable("serverId") long serverId, @PathVariable("channelId") long channelId) {
+    return discordService.getActiveCompetitionName(serverId, channelId);
   }
 
   @GetMapping("/channels")
@@ -41,9 +41,9 @@ public class DiscordResource {
     return discordService.getChannels();
   }
 
-  @GetMapping("/channels/{guildId}")
-  public List<DiscordChannel> getChannels(@PathVariable("guildId") long guildId) {
-    return discordService.getChannels(guildId);
+  @GetMapping("/channels/{serverId}")
+  public List<DiscordChannel> getChannels(@PathVariable("serverId") long serverId) {
+    return discordService.getChannels(serverId);
   }
 
   @GetMapping("/player/{serverId}/{id}")
@@ -51,8 +51,8 @@ public class DiscordResource {
     return discordService.getPlayer(serverId, id);
   }
 
-  @GetMapping("/server/{id}")
-  public DiscordServer getServers(@PathVariable("id") long serverId) {
+  @GetMapping("/server/{serverId}")
+  public DiscordServer getServers(@PathVariable("serverId") long serverId) {
     return discordService.getServer(serverId);
   }
 

@@ -74,13 +74,6 @@ public class PlayerService {
     return discordService.getPlayerByInitials(initials);
   }
 
-  public boolean invalidateDomain(PlayerDomain domain) {
-    if (domain.equals(PlayerDomain.DISCORD)) {
-      return discordService.refreshMembers();
-    }
-    return false;
-  }
-
   public Player save(Player player) {
     Player model = new Player();
     if (player.getId() > 0) {

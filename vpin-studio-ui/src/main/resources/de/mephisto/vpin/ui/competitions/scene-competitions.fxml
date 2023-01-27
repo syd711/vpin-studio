@@ -10,6 +10,7 @@
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
@@ -71,7 +72,7 @@
                            <children>
                               <BorderPane>
                                  <center>
-                                    <GridPane BorderPane.alignment="CENTER">
+                                    <GridPane vgap="3.0" BorderPane.alignment="CENTER">
                                       <columnConstraints>
                                         <ColumnConstraints hgrow="SOMETIMES" maxWidth="285.199951171875" minWidth="10.0" prefWidth="144.0000244140625" />
                                         <ColumnConstraints hgrow="SOMETIMES" maxWidth="477.3999847412109" minWidth="10.0" prefWidth="435.9999755859375" />
@@ -79,8 +80,10 @@
                                       <rowConstraints>
                                         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                           <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                        <RowConstraints vgrow="SOMETIMES" />
+                                          <RowConstraints vgrow="SOMETIMES" />
                                           <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                       </rowConstraints>
                                        <children>
@@ -94,7 +97,7 @@
                                                 <Font name="System Bold" size="14.0" />
                                              </font>
                                           </Label>
-                                          <Label layoutX="10.0" layoutY="45.0" text="Owner:" GridPane.rowIndex="2">
+                                          <Label layoutX="10.0" layoutY="45.0" text="Competition Owner:" GridPane.rowIndex="4">
                                              <font>
                                                 <Font name="System Bold" size="14.0" />
                                              </font>
@@ -109,22 +112,29 @@
                                                 <Font size="14.0" />
                                              </font>
                                           </Label>
-                                          <Label fx:id="ownerLabel" layoutX="116.0" layoutY="45.0" text="-" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                                          <Label layoutX="10.0" layoutY="76.0" text="Discord Server:" GridPane.rowIndex="5">
+                                             <font>
+                                                <Font name="System Bold" size="14.0" />
+                                             </font>
+                                          </Label>
+                                          <HBox fx:id="ownerBox" alignment="CENTER_LEFT" spacing="6.0" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+                                          <Label layoutX="10.0" layoutY="49.0" text="Start Date:" GridPane.rowIndex="2">
+                                             <font>
+                                                <Font name="System Bold" size="14.0" />
+                                             </font>
+                                          </Label>
+                                          <Label layoutX="10.0" layoutY="83.0" prefHeight="0.0" prefWidth="70.0" text="End Date:" GridPane.rowIndex="3">
+                                             <font>
+                                                <Font name="System Bold" size="14.0" />
+                                             </font>
+                                          </Label>
+                                          <HBox fx:id="serverBox" alignment="CENTER_LEFT" spacing="6.0" GridPane.columnIndex="1" GridPane.rowIndex="5" />
+                                          <Label fx:id="startLabel" layoutX="154.0" layoutY="49.0" text="-" GridPane.columnIndex="1" GridPane.rowIndex="2">
                                              <font>
                                                 <Font size="14.0" />
                                              </font>
                                           </Label>
-                                          <Label layoutX="10.0" layoutY="76.0" text="Server Name:" GridPane.rowIndex="3">
-                                             <font>
-                                                <Font name="System Bold" size="14.0" />
-                                             </font>
-                                          </Label>
-                                          <Label layoutX="10.0" layoutY="106.0" text="Server Icon:" GridPane.rowIndex="4">
-                                             <font>
-                                                <Font name="System Bold" size="14.0" />
-                                             </font>
-                                          </Label>
-                                          <Label fx:id="serverNameLabel" layoutX="154.0" layoutY="76.0" text="-" GridPane.columnIndex="1" GridPane.rowIndex="3">
+                                          <Label fx:id="endLabel" layoutX="154.0" layoutY="83.0" text="-" GridPane.columnIndex="1" GridPane.rowIndex="3">
                                              <font>
                                                 <Font size="14.0" />
                                              </font>

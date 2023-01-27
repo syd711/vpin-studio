@@ -1,8 +1,6 @@
 package de.mephisto.vpin.server.competitions;
 
-import de.mephisto.vpin.connectors.discord.DiscordMember;
 import de.mephisto.vpin.restclient.CompetitionType;
-import de.mephisto.vpin.server.discord.DiscordCompetitionData;
 import de.mephisto.vpin.server.discord.DiscordService;
 import de.mephisto.vpin.server.highscores.HighscoreService;
 import de.mephisto.vpin.server.highscores.Score;
@@ -17,7 +15,6 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Service
 public class CompetitionService implements InitializingBean {
@@ -90,11 +87,10 @@ public class CompetitionService implements InitializingBean {
     return competitionsRepository.findByType(CompetitionType.DISCORD.name());
   }
 
-
-  public List<Player> getCompetitionPlayers(long competitionId) {
+  public List<Player> getDiscordCompetitionPlayers(long competitionId) {
     Competition competition = this.getCompetition(competitionId);
-    if(competition != null) {
-      return discordService.getCompetitionPlayers(competition.getDiscordChannelId());
+    if (competition != null) {
+      return discordService.getCompetitionPlayers(competition.getDiscordServerId(), competition.getDiscordChannelId());
     }
     return Collections.emptyList();
   }
@@ -123,6 +119,24 @@ public class CompetitionService implements InitializingBean {
     int gameId = competition.getGameId();
     return highscoreService.getScoresBetween(gameId, start, end);
   }
+
+
+  public ScoreSummary getCompetitionScore(long id) {
+    Competition competition = getCompetition(id);
+
+    if (competition.getType().equals(CompetitionType.OFFLINE.name())) {
+      return highscoreService.getHighscores(competition.getGameId());
+    }
+    else if (competition.getType().equals(CompetitionType.DISCORD.name())) {
+      long serverId = competition.getDiscordServerId();
+      long channelId = competition.getDiscordChannelId();
+      return discordService.getScoreSummary(serverId, channelId);
+    }
+
+    LOG.error("No competition found for highscore retrieval with id " + id);
+    return null;
+  }
+
 
   public Competition save(Competition c) {
     boolean isNew = c.getId() == null;

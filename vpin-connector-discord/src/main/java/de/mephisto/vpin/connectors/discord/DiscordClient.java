@@ -30,15 +30,13 @@ import java.util.stream.Collectors;
 /**
  *
  */
-public class DiscordClient extends ListenerAdapter {
+public class DiscordClient {
   private final static Logger LOG = LoggerFactory.getLogger(DiscordClient.class);
 
   private final JDA jda;
-  private final DiscordCommandResolver commandResolver;
   private final String guildId;
-  private final List<DiscordMember> members;
+  private DiscordListenerAdapter listenerAdapter;
 
-  private List<String> commandsAllowList = new ArrayList<>();
 
   public DiscordClient(String botToken, String guildId, DiscordCommandResolver commandResolver) throws Exception {
     this.guildId = guildId.trim();
@@ -46,19 +44,27 @@ public class DiscordClient extends ListenerAdapter {
         .setEventPassthrough(true)
         .setMemberCachePolicy(MemberCachePolicy.NONE)
         .build();
-    this.commandResolver = commandResolver;
+    this.listenerAdapter = new DiscordListenerAdapter(jda, commandResolver);
     jda.awaitReady();
-    jda.addEventListener(this);
-    members = new ArrayList<>();
-    this.refreshMembers();
+    jda.addEventListener(this.listenerAdapter);
   }
 
-  public GuildInfo getGuild(long guildId) {
+  public GuildInfo getGuildById(long guildId) {
     Guild guild = jda.getGuildById(guildId);
     if (guild != null) {
       return new GuildInfo(guild);
     }
     return null;
+  }
+
+  public List<DiscordMember> getMembers() {
+    return this.getMembers(Long.valueOf(guildId));
+  }
+
+  public List<DiscordMember> getMembers(long serverId) {
+    Guild guild = getGuild(serverId);
+    List<Member> members = guild.getMembers();
+    return members.stream().map(m -> toMember(m)).collect(Collectors.toList());
   }
 
   public List<GuildInfo> getGuilds() {
@@ -69,23 +75,23 @@ public class DiscordClient extends ListenerAdapter {
     return jda.getSelfUser().getIdLong();
   }
 
-  public void setTopic(long discordChannelId, String topic) {
-    Guild guild = jda.getGuildById(guildId);
+  public void setTopic(long serverId, long channelId, String topic) {
+    Guild guild = getGuild(serverId);
     if (guild != null) {
-      TextChannel channel = guild.getChannelById(TextChannel.class, discordChannelId);
+      TextChannel channel = guild.getChannelById(TextChannel.class, channelId);
       if (channel != null) {
         channel.getManager().setTopic(topic).queue();
         LOG.info("Updated topic of '" + channel.getName() + "' to: " + topic);
       }
       else {
-        LOG.error("No discord channel found for id '" + discordChannelId + "'");
+        LOG.error("No discord channel found for id '" + channelId + "'");
       }
     }
   }
 
-  public List<DiscordMember> getCompetitionMembers(long channelId, String afterMessageId, String competitionUuid) {
+  public List<DiscordMember> getCompetitionMembers(long serverId, long channelId, String afterMessageId, String competitionUuid) {
     List<DiscordMember> result = new ArrayList<>();
-    Guild guild = jda.getGuildById(guildId);
+    Guild guild = getGuild(serverId);
     if (guild != null) {
       TextChannel channel = guild.getChannelById(TextChannel.class, channelId);
       if (channel != null) {
@@ -112,11 +118,7 @@ public class DiscordClient extends ListenerAdapter {
   }
 
   public DiscordMember getMember(long serverId, long memberId) {
-    Guild guild = jda.getGuildById(guildId);
-    if(serverId > 0) {
-      guild = jda.getGuildById(serverId);
-    }
-
+    Guild guild = this.getGuild(serverId);
     if (guild != null) {
       Member member = guild.getMemberById(memberId);
       if(member != null) {
@@ -130,11 +132,8 @@ public class DiscordClient extends ListenerAdapter {
     return getChannels(-1);
   }
 
-  public List<DiscordTextChannel> getChannels(long id) {
-    Guild guild = jda.getGuildById(guildId);
-    if (id > 0) {
-      guild = jda.getGuildById(id);
-    }
+  public List<DiscordTextChannel> getChannels(long serverId) {
+    Guild guild = this.getGuild(serverId);
     List<DiscordTextChannel> channelList = new ArrayList<>();
     if (guild != null) {
       List<GuildChannel> channels = guild.getChannels();
@@ -160,7 +159,11 @@ public class DiscordClient extends ListenerAdapter {
   }
 
   public String sendMessage(long channelId, String msg) {
-    Guild guild = jda.getGuildById(guildId);
+    return sendMessage(-1, channelId, msg);
+  }
+
+  public String sendMessage(long serverId, long channelId, String msg) {
+    Guild guild = getGuild(serverId);
     if (guild != null) {
       TextChannel textChannel = jda.getChannelById(TextChannel.class, channelId);
       if (textChannel != null) {
@@ -178,8 +181,15 @@ public class DiscordClient extends ListenerAdapter {
     return null;
   }
 
-  public String getTopic(long channelId) {
-    Guild guild = jda.getGuildById(guildId);
+  public String getTopic(long serverId, long channelId) {
+    Guild guild = null;
+    if(serverId > 0) {
+      guild = jda.getGuildById(serverId);
+    }
+    else {
+      guild = jda.getGuildById(guildId);
+    }
+
     if (guild != null) {
       TextChannel textChannel = jda.getChannelById(TextChannel.class, channelId);
       if (textChannel != null) {
@@ -193,48 +203,6 @@ public class DiscordClient extends ListenerAdapter {
       LOG.warn("Unable to retrieve topic from channel '" + channelId + "', no connection.");
     }
     return null;
-  }
-
-  public List<DiscordMember> getMembers() {
-    return this.members;
-  }
-
-  public void refreshMembers() {
-    this.refreshMembers(null, null);
-  }
-
-  public void refreshMembers(Consumer<List<DiscordMember>> c, Consumer<Throwable> t) {
-    Guild guild = jda.getGuildById(guildId);
-    if (guild == null) {
-      throw new UnsupportedOperationException("No guild found for id '" + guildId + "'");
-    }
-
-    guild.loadMembers().onSuccess(members -> {
-      this.members.clear();
-      this.members.addAll(createMemberList(members));
-      LOG.info("Successfully loaded " + this.members.size() + " members from " + guild.getName());
-
-      if (c != null) {
-        c.accept(this.members);
-      }
-    }).onError(throwable -> {
-      LOG.error("Failed to load members from guildId {}: {}", guildId, throwable.getMessage(), throwable);
-      if (t != null) {
-        t.accept(throwable);
-      }
-    });
-  }
-
-  private List<DiscordMember> createMemberList(List<Member> members) {
-    List<DiscordMember> result = new ArrayList<>();
-    for (Member member : members) {
-      if (member.getUser().isBot()) {
-        continue;
-      }
-
-      result.add(toMember(member));
-    }
-    return result;
   }
 
   private DiscordMember toMember(Member member) {
@@ -281,86 +249,20 @@ public class DiscordClient extends ListenerAdapter {
   }
 
   public void setCommandsAllowList(List<String> commandsAllowList) {
-    this.commandsAllowList = commandsAllowList;
+    this.listenerAdapter.setCommandsAllowList(commandsAllowList);
   }
 
 
-  /**
-   * Checks if the given channel is configured for returning bot commands.
-   */
-  private boolean isValidChannel(MessageReceivedEvent event) {
-    MessageChannelUnion channel = event.getChannel();
-    if (channel instanceof PrivateChannel) {
-      if (commandsAllowList.isEmpty()) {
-        return true;
-      }
 
-      String name = event.getAuthor().getName();
-      String id = event.getAuthor().getId();
-      return commandsAllowList.contains(name) || commandsAllowList.contains(id);
+  private Guild getGuild(long serverId) {
+    Guild guild = null;
+    if(serverId > 0) {
+      guild = jda.getGuildById(serverId);
     }
-
-    return false;
-  }
-
-  /******************** Listener Methods ******************************************************************************/
-  @Override
-  public void onGuildMemberJoin(GuildMemberJoinEvent event) {
-    super.onGuildMemberJoin(event);
-    LOG.info("Guild member join event " + event);
-    this.refreshMembers();
-  }
-
-  @Override
-  public void onGuildMemberUpdate(GuildMemberUpdateEvent event) {
-    super.onGuildMemberUpdate(event);
-    this.refreshMembers();
-  }
-
-  @Override
-  public void onGuildMemberRemove(GuildMemberRemoveEvent event) {
-    super.onGuildMemberRemove(event);
-    this.refreshMembers();
-  }
-
-  @Override
-  public void onGuildMemberUpdateNickname(GuildMemberUpdateNicknameEvent event) {
-    super.onGuildMemberUpdateNickname(event);
-    this.refreshMembers();
-  }
-
-  @Override
-  public void onMessageReceived(MessageReceivedEvent event) {
-    if (event.getAuthor().isBot()) {
-      return;
+    else {
+      guild = jda.getGuildById(guildId);
     }
-
-    Message message = event.getMessage();
-    String content = message.getContentRaw();
-    if (content.startsWith("/") && isValidChannel(event)) {
-      if (content.startsWith("/commands")) {
-        MessageChannel channel = event.getChannel();
-        channel.sendMessage("List of available commands:\n" +
-            "**/competitions **: Returns the list and status of active competitions.\n" +
-            "**/hs <TABLE NAME>**: Returns the highscore for the table matching the give name.\n" +
-            "**/ranks **: Returns the overall player ranking.\n" +
-            "**/player <PLAYER_INITIALS> **: Returns all data of this player.\n" +
-            "").queue();
-      }
-      else if (commandResolver != null) {
-        BotCommand command = new BotCommand(content, commandResolver);
-        BotCommandResponse response = command.execute();
-        if (response != null) {
-          String result = response.toDiscordMarkup();
-          if (result != null) {
-            MessageChannel channel = event.getChannel();
-            channel.sendMessage(result).queue();
-          }
-        }
-        else {
-          LOG.info("Unknown bot command '" + content + "'");
-        }
-      }
-    }
+    return guild;
   }
+
 }

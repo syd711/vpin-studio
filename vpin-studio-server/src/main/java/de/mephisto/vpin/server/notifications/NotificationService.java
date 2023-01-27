@@ -157,8 +157,9 @@ public class NotificationService implements InitializingBean, HighscoreChangeLis
     List<Competition> competitionForGame = competitionService.findCompetitionForGame(game.getId());
     for (Competition competition : competitionForGame) {
       if (competition.getDiscordChannelId() > 0 && competition.isActive()) {
+        long discordServerId = competition.getDiscordServerId();
         long discordChannelId = competition.getDiscordChannelId();
-        discordService.sendMessage(discordChannelId, DiscordChannelMessageFactory.createCompetitionHighscoreCreatedMessage(competition, event));
+        discordService.sendMessage(discordServerId, discordChannelId, DiscordChannelMessageFactory.createCompetitionHighscoreCreatedMessage(competition, event));
         highscoreNotificationSent = true;
       }
     }
@@ -183,17 +184,19 @@ public class NotificationService implements InitializingBean, HighscoreChangeLis
       }
 
       if (competition.getType().equals(CompetitionType.DISCORD.name())) {
+        long discordServerId = competition.getDiscordServerId();
         long discordChannelId = competition.getDiscordChannelId();
         long botId = discordService.getBotId();
-        String messageId = discordService.sendMessage(discordChannelId, DiscordChannelMessageFactory.createDiscordCompetitionCreatedMessage(competition, game, botId));
+        String messageId = discordService.sendMessage(discordServerId, discordChannelId, DiscordChannelMessageFactory.createDiscordCompetitionCreatedMessage(competition, game, botId));
 
         ScoreSummary highscores = highscoreService.getHighscores(game.getId());
         discordService.saveCompetitionData(competition, game, highscores, messageId);
       }
 
       if (competition.getType().equals(CompetitionType.OFFLINE.name()) && competition.getDiscordChannelId() > 0 && competition.isActive()) {
+        long discordServerId = competition.getDiscordServerId();
         long discordChannelId = competition.getDiscordChannelId();
-        discordService.sendMessage(discordChannelId, DiscordChannelMessageFactory.createOfflineCompetitionCreatedMessage(competition, game));
+        discordService.sendMessage(discordServerId, discordChannelId, DiscordChannelMessageFactory.createOfflineCompetitionCreatedMessage(competition, game));
       }
     }
   }
@@ -206,10 +209,11 @@ public class NotificationService implements InitializingBean, HighscoreChangeLis
       popperService.deAugmentWheel(game);
 
       if (competition.getDiscordChannelId() > 0) {
+        long discordServerId = competition.getDiscordServerId();
         long discordChannelId = competition.getDiscordChannelId();
-        ScoreSummary summary = discordService.getScoreSummary(discordChannelId);
+        ScoreSummary summary = discordService.getScoreSummary(discordServerId, discordChannelId);
         if (summary != null) {
-          discordService.sendMessage(discordChannelId, DiscordChannelMessageFactory.createCompetitionFinishedMessage(competition, winner, game, summary));
+          discordService.sendMessage(discordServerId, discordChannelId, DiscordChannelMessageFactory.createCompetitionFinishedMessage(competition, winner, game, summary));
         }
         else {
           LOG.warn("Failed to finished " + competition + " properly, unable to resolve scoring from topic.");
@@ -217,7 +221,9 @@ public class NotificationService implements InitializingBean, HighscoreChangeLis
       }
 
       if (competition.getType().equals(CompetitionType.DISCORD.name())) {
-        discordService.resetCompetition(competition.getDiscordChannelId());
+        long discordServerId = competition.getDiscordServerId();
+        long discordChannelId = competition.getDiscordChannelId();
+        discordService.resetCompetition(discordServerId, discordChannelId);
       }
     }
   }
@@ -229,13 +235,16 @@ public class NotificationService implements InitializingBean, HighscoreChangeLis
       popperService.deAugmentWheel(game);
 
       if (competition.getDiscordChannelId() > 0 && competition.isActive()) {
+        long discordServerId = competition.getDiscordServerId();
         long discordChannelId = competition.getDiscordChannelId();
         String message = DiscordChannelMessageFactory.createCompetitionCancelledMessage(competition);
-        discordService.sendMessage(discordChannelId, message);
+        discordService.sendMessage(discordServerId, discordChannelId, message);
       }
 
       if (competition.getType().equals(CompetitionType.DISCORD.name())) {
-        discordService.resetCompetition(competition.getDiscordChannelId());
+        long discordServerId = competition.getDiscordServerId();
+        long discordChannelId = competition.getDiscordChannelId();
+        discordService.resetCompetition(discordServerId, discordChannelId);
       }
     }
   }
@@ -251,7 +260,17 @@ public class NotificationService implements InitializingBean, HighscoreChangeLis
         popperService.deAugmentWheel(game);
       }
     }
+
     runAugmentationCheck();
+
+    if (competition.getType().equals(CompetitionType.DISCORD.name())) {
+      ScoreSummary summary = competitionService.getCompetitionScore(competition.getId());
+      long discordServerId = competition.getDiscordServerId();
+      long discordChannelId = competition.getDiscordChannelId();
+
+      String messageId = discordService.getStartMessageId(discordServerId, discordChannelId);
+      discordService.saveCompetitionData(competition, game, summary, messageId);
+    }
   }
 
   private void runAugmentationCheck() {
