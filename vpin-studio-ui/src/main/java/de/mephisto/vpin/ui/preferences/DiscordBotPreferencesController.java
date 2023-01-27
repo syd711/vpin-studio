@@ -51,17 +51,23 @@ public class DiscordBotPreferencesController implements Initializable {
   @FXML
   private void onConnectionTest() {
     new Thread(() -> {
+      DiscordClient client = null;
       try {
         String token = botTokenText.getText();
         String serverId = serverIdText.getText();
         Studio.stage.getScene().setCursor(Cursor.WAIT);
-        DiscordClient client = new DiscordClient(token, serverId, null);
+        client = new DiscordClient(token, serverId, null);
         List<DiscordMember> members = client.getMembers();
         Platform.runLater(() -> {
           Studio.stage.getScene().setCursor(Cursor.DEFAULT);
-          WidgetFactory.showInformation(Studio.stage, "Test Successful", "The connection test was successful.", members.size() + " members have been found.");
+          WidgetFactory.showInformation(Studio.stage, "Test Successful", "The connection test was successful.", members.size() + " member(s) have been found.");
         });
+        client.shutdown();
       } catch (Exception e) {
+        if(client != null) {
+          client.shutdown();
+        }
+
         Platform.runLater(() -> {
           Studio.stage.getScene().setCursor(Cursor.DEFAULT);
           WidgetFactory.showAlert(Studio.stage, e.getMessage());
