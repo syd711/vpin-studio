@@ -2,6 +2,7 @@ package de.mephisto.vpin.ui.competitions;
 
 import de.mephisto.vpin.commons.fx.discord.DiscordUserEntryController;
 import de.mephisto.vpin.restclient.CompetitionType;
+import de.mephisto.vpin.restclient.DiscordServer;
 import de.mephisto.vpin.restclient.representations.CompetitionRepresentation;
 import de.mephisto.vpin.restclient.representations.PlayerRepresentation;
 import de.mephisto.vpin.ui.NavigationController;
@@ -15,6 +16,8 @@ import javafx.scene.control.Label;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.control.TitledPane;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.VBox;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -46,6 +49,13 @@ public class CompetitionsController implements Initializable, StudioFXController
 
   @FXML
   private Label uuidLabel;
+
+  @FXML
+  private Label serverNameLabel;
+
+  @FXML
+  private ImageView bannerImageView;
+
 
   @FXML
   private Label ownerLabel;
@@ -118,6 +128,10 @@ public class CompetitionsController implements Initializable, StudioFXController
         ownerLabel.setText(competition.getOwner());
         uuidLabel.setText(competition.getUuid());
         createdAtLabel.setText(SimpleDateFormat.getDateTimeInstance().format(competition.getCreatedAt()));
+
+        DiscordServer discordServer = client.getDiscordServer(competition.getDiscordServerId());
+        serverNameLabel.setText(discordServer.getName());
+        bannerImageView.setImage(new Image(discordServer.getAvatarUrl()));
       }
     }
   }
@@ -220,7 +234,7 @@ public class CompetitionsController implements Initializable, StudioFXController
 
   private Label getNoPlayersLabel() {
     if(this.noPlayersLabel == null) {
-      noPlayersLabel = new Label("No discord channel members have joined this competition yet.");
+      noPlayersLabel = new Label("No discord members have joined this competition yet.");
       noPlayersLabel.setStyle("-fx-font-weight: bold;-fx-font-size: 14px;");
     }
     return this.noPlayersLabel;

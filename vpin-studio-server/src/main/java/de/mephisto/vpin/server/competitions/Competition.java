@@ -43,11 +43,21 @@ public class Competition {
 
   private long discordChannelId;
 
+  private long discordServerId;
+
   private Date startDate;
 
   private Date endDate;
 
   private String name;
+
+  public long getDiscordServerId() {
+    return discordServerId;
+  }
+
+  public void setDiscordServerId(long discordServerId) {
+    this.discordServerId = discordServerId;
+  }
 
   public String getUuid() {
     return uuid;

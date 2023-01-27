@@ -2,10 +2,7 @@ package de.mephisto.vpin.ui.competitions;
 
 import de.mephisto.vpin.commons.EmulatorTypes;
 import de.mephisto.vpin.commons.fx.DialogController;
-import de.mephisto.vpin.restclient.CompetitionType;
-import de.mephisto.vpin.restclient.DiscordChannel;
-import de.mephisto.vpin.restclient.PopperScreen;
-import de.mephisto.vpin.restclient.VPinStudioClient;
+import de.mephisto.vpin.restclient.*;
 import de.mephisto.vpin.restclient.representations.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -50,6 +47,9 @@ public class CompetitionDiscordDialogController implements Initializable, Dialog
   private ComboBox<DiscordChannel> channelsCombo;
 
   @FXML
+  private ComboBox<DiscordServer> serversCombo;
+
+  @FXML
   private Button saveBtn;
 
   @FXML
@@ -77,8 +77,6 @@ public class CompetitionDiscordDialogController implements Initializable, Dialog
   private Label validationDescription;
 
   private CompetitionRepresentation competition;
-
-  private List<DiscordChannel> discordChannels;
 
   @FXML
   private void onCancelClick(ActionEvent e) {
@@ -114,6 +112,24 @@ public class CompetitionDiscordDialogController implements Initializable, Dialog
     });
 
 
+    List<DiscordServer> servers = client.getDiscordServers();
+    ObservableList<DiscordServer> discordServers = FXCollections.observableArrayList(servers);
+    serversCombo.getItems().addAll(discordServers);
+    serversCombo.valueProperty().addListener((observableValue, gameRepresentation, t1) -> {
+      competition.setDiscordServerId(t1.getId());
+      channelsCombo.setItems(FXCollections.observableArrayList(client.getDiscordChannels(t1.getId())));
+      validate();
+    });
+
+
+    ObservableList<DiscordChannel> discordChannels = FXCollections.observableArrayList(new ArrayList<>());
+    channelsCombo.getItems().addAll(discordChannels);
+    channelsCombo.valueProperty().addListener((observableValue, gameRepresentation, t1) -> {
+      competition.setDiscordChannelId(t1.getId());
+      validate();
+    });
+
+
     startDatePicker.setValue(LocalDate.now());
     startDatePicker.valueProperty().addListener((observableValue, localDate, t1) -> {
       if (t1 != null) {
@@ -139,6 +155,7 @@ public class CompetitionDiscordDialogController implements Initializable, Dialog
       validate();
     });
 
+
     List<GameRepresentation> games = client.getGames();
     List<GameRepresentation> filtered = new ArrayList<>();
     for (GameRepresentation game : games) {
@@ -154,15 +171,6 @@ public class CompetitionDiscordDialogController implements Initializable, Dialog
       refreshPreview(t1, competitionIconCombo.getValue());
       validate();
     });
-
-
-    ObservableList<DiscordChannel> discordChannels = FXCollections.observableArrayList(getDiscordChannels());
-    channelsCombo.getItems().addAll(discordChannels);
-    channelsCombo.valueProperty().addListener((observableValue, gameRepresentation, t1) -> {
-      competition.setDiscordChannelId(t1.getId());
-      validate();
-    });
-
     ArrayList<String> badges = new ArrayList<>(client.getCompetitionBadges());
     badges.add(0, null);
     ObservableList<String> imageList = FXCollections.observableList(badges);
@@ -210,25 +218,34 @@ public class CompetitionDiscordDialogController implements Initializable, Dialog
     long diff = ChronoUnit.DAYS.between(start, value);
     this.durationLabel.setText(diff + " days");
 
-    if (StringUtils.isEmpty(competition.getName())) {
-      validationTitle.setText("No competition name set.");
-      validationDescription.setText("Define a meaningful competition name.");
-      return;
-    }
-
-    if (competition.getDiscordChannelId() == 0) {
-      validationTitle.setText("No discord channel selected.");
-      validationDescription.setText("Select a discord channel for competition updates.");
-      return;
-    }
-    else {
-      String name = client.getActiveCompetitionName(competition.getDiscordChannelId());
-      if(name != null) {
-        validationTitle.setText("Active competition found.");
-        validationDescription.setText("The selected channel is already running the competition '" + name + "'");
+    if(competition.getId() == null) {
+      if (StringUtils.isEmpty(competition.getName())) {
+        validationTitle.setText("No competition name set.");
+        validationDescription.setText("Define a meaningful competition name.");
         return;
       }
+
+      if (competition.getDiscordServerId() == 0) {
+        validationTitle.setText("No discord server selected.");
+        validationDescription.setText("Select a discord server where the competition takes place.");
+        return;
+      }
+
+      if (competition.getDiscordChannelId() == 0) {
+        validationTitle.setText("No discord channel selected.");
+        validationDescription.setText("Select a discord channel for competition updates.");
+        return;
+      }
+      else {
+        String name = client.getActiveCompetitionName(competition.getDiscordChannelId());
+        if (name != null) {
+          validationTitle.setText("Active competition found.");
+          validationDescription.setText("The selected channel is already running the competition '" + name + "'");
+          return;
+        }
+      }
     }
+
 
     if (competition.getGameId() <= 0) {
       validationTitle.setText("No table selected.");
@@ -238,7 +255,7 @@ public class CompetitionDiscordDialogController implements Initializable, Dialog
     else {
       ScoreSummaryRepresentation summary = client.getGameScores(competition.getGameId());
       HighscoreMetadataRepresentation metadata = summary.getMetadata();
-      if(!StringUtils.isEmpty(metadata.getStatus())) {
+      if (!StringUtils.isEmpty(metadata.getStatus())) {
         validationTitle.setText("Highscore issues");
         validationDescription.setText(metadata.getStatus() + " Select a table with a valid highscore record.");
         return;
@@ -269,13 +286,32 @@ public class CompetitionDiscordDialogController implements Initializable, Dialog
       this.competition = c;
       GameRepresentation game = client.getGame(c.getGameId());
 
+      channelsCombo.setDisable(true);
+      serversCombo.setDisable(true);
+
       nameField.setText(this.competition.getName());
+
       this.startDatePicker.setValue(this.competition.getStartDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate());
       this.endDatePicker.setValue(this.competition.getEndDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate());
       this.tableCombo.setValue(game);
 
-      Optional<DiscordChannel> channelOpt = getDiscordChannels().stream().filter(channel -> channel.getId() == c.getDiscordChannelId()).findFirst();
-      channelOpt.ifPresent(discordChannel -> this.channelsCombo.setValue(discordChannel));
+      ObservableList<DiscordServer> servers = this.serversCombo.getItems();
+      for (DiscordServer item : servers) {
+        if(item.getId() == c.getDiscordServerId()) {
+          this.channelsCombo.setItems(FXCollections.observableList(client.getDiscordChannels(item.getId())));
+          this.serversCombo.setValue(item);
+          this.nameField.setDisable(!item.isOwner());
+          break;
+        }
+      }
+
+      ObservableList<DiscordChannel> items = this.channelsCombo.getItems();
+      for (DiscordChannel item : items) {
+        if(item.getId() == c.getDiscordChannelId()) {
+          this.channelsCombo.setValue(item);
+          break;
+        }
+      }
 
       this.competitionIconCombo.setValue(c.getBadge());
       String badge = c.getBadge();
@@ -307,12 +343,5 @@ public class CompetitionDiscordDialogController implements Initializable, Dialog
         setText(item);
       }
     }
-  }
-
-  private List<DiscordChannel> getDiscordChannels() {
-    if (this.discordChannels == null) {
-      this.discordChannels = client.getDiscordChannels();
-    }
-    return this.discordChannels;
   }
 }

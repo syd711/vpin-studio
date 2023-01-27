@@ -8,8 +8,8 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 
-public class Services {
-  private final static Logger LOG = LoggerFactory.getLogger(Services.class);
+public class ServerInstallationUtil {
+  private final static Logger LOG = LoggerFactory.getLogger(ServerInstallationUtil.class);
 
   public static File SERVER_EXE = new File("./VPin-Studio-Server.exe");
 

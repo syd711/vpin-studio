@@ -6,6 +6,7 @@
 <?import javafx.scene.control.Tab?>
 <?import javafx.scene.control.TabPane?>
 <?import javafx.scene.control.TitledPane?>
+<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
@@ -72,13 +73,15 @@
                                  <center>
                                     <GridPane BorderPane.alignment="CENTER">
                                       <columnConstraints>
-                                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="285.199951171875" minWidth="10.0" prefWidth="106.20006408691407" />
-                                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="477.3999847412109" minWidth="10.0" prefWidth="472.5999359130859" />
+                                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="285.199951171875" minWidth="10.0" prefWidth="144.0000244140625" />
+                                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="477.3999847412109" minWidth="10.0" prefWidth="435.9999755859375" />
                                       </columnConstraints>
                                       <rowConstraints>
                                         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                       </rowConstraints>
                                        <children>
                                           <Label text="UUID:">
@@ -111,10 +114,30 @@
                                                 <Font size="14.0" />
                                              </font>
                                           </Label>
+                                          <Label layoutX="10.0" layoutY="76.0" text="Server Name:" GridPane.rowIndex="3">
+                                             <font>
+                                                <Font name="System Bold" size="14.0" />
+                                             </font>
+                                          </Label>
+                                          <Label layoutX="10.0" layoutY="106.0" text="Server Icon:" GridPane.rowIndex="4">
+                                             <font>
+                                                <Font name="System Bold" size="14.0" />
+                                             </font>
+                                          </Label>
+                                          <Label fx:id="serverNameLabel" layoutX="154.0" layoutY="76.0" text="-" GridPane.columnIndex="1" GridPane.rowIndex="3">
+                                             <font>
+                                                <Font size="14.0" />
+                                             </font>
+                                          </Label>
                                        </children>
                                     </GridPane>
                                  </center>
                               </BorderPane>
+                              <ImageView fx:id="bannerImageView" fitHeight="100.0" fitWidth="100.0" pickOnBounds="true" preserveRatio="true">
+                                 <VBox.margin>
+                                    <Insets left="141.0" top="-28.0" />
+                                 </VBox.margin>
+                              </ImageView>
                            </children>
                         </VBox>
                      </content>

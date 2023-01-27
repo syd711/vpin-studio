@@ -83,18 +83,20 @@ public class WheelAugmenter {
         FileUtils.copyFile(wheelIconThumbnailSm, backupWheelIconThumbnailSm);
       }
 
-      BufferedImage bufferedImage = ImageUtil.loadImage(wheelIcon);
+      BufferedImage bufferedWheelImage = ImageUtil.loadImage(wheelIcon);
       BufferedImage badgeIcon = ImageUtil.loadImage(badgeFile);
 
-      int width = bufferedImage.getWidth();
-      badgeIcon = ImageUtil.resizeImage(badgeIcon, width / 2);
+      int width = bufferedWheelImage.getWidth();
+      int targetWidthForBadge = (width * 30 / 100);
+      badgeIcon = ImageUtil.resizeImage(badgeIcon, targetWidthForBadge);
 
-      bufferedImage.getGraphics().drawImage(badgeIcon, width / 2, 0, null);
-      ImageUtil.write(bufferedImage, wheelIcon);
+      int offset = (width * 5 / 100);
+      bufferedWheelImage.getGraphics().drawImage(badgeIcon, width - offset- targetWidthForBadge, offset, null);
+      ImageUtil.write(bufferedWheelImage, wheelIcon);
 
 
       //write large thumbnail
-      BufferedImage thumbnail = ImageUtil.resizeImage(bufferedImage, 225);
+      BufferedImage thumbnail = ImageUtil.resizeImage(bufferedWheelImage, 225);
       thumbnail = ImageUtil.rotateLeft(thumbnail);
       ImageUtil.write(thumbnail, wheelIconThumbnail);
 

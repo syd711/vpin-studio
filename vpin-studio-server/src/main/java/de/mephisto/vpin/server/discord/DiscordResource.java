@@ -1,6 +1,8 @@
 package de.mephisto.vpin.server.discord;
 
 import de.mephisto.vpin.restclient.DiscordChannel;
+import de.mephisto.vpin.restclient.DiscordServer;
+import de.mephisto.vpin.restclient.representations.PlayerRepresentation;
 import de.mephisto.vpin.server.players.Player;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -37,5 +39,25 @@ public class DiscordResource {
   @GetMapping("/channels")
   public List<DiscordChannel> getChannels() {
     return discordService.getChannels();
+  }
+
+  @GetMapping("/channels/{guildId}")
+  public List<DiscordChannel> getChannels(@PathVariable("guildId") long guildId) {
+    return discordService.getChannels(guildId);
+  }
+
+  @GetMapping("/player/{serverId}/{id}")
+  public Player getPlayer(@PathVariable("serverId") long serverId, @PathVariable("id") long id) {
+    return discordService.getPlayer(serverId, id);
+  }
+
+  @GetMapping("/server/{id}")
+  public DiscordServer getServers(@PathVariable("id") long serverId) {
+    return discordService.getServer(serverId);
+  }
+
+  @GetMapping("/servers")
+  public List<DiscordServer> getServers() {
+    return discordService.getServers();
   }
 }

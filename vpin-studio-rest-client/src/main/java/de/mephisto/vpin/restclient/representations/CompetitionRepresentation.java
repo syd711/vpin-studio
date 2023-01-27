@@ -28,9 +28,19 @@ public class CompetitionRepresentation {
 
   private long discordChannelId;
 
+  private long discordServerId;
+
   private String winnerInitials;
 
   private String uuid;
+
+  public long getDiscordServerId() {
+    return discordServerId;
+  }
+
+  public void setDiscordServerId(long discordServerId) {
+    this.discordServerId = discordServerId;
+  }
 
   public Date getCreatedAt() {
     return createdAt;

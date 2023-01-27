@@ -67,6 +67,21 @@ public class VPinStudioClient implements ObservedPropertyChangeListener, Overlay
   public List<DiscordChannel> getDiscordChannels() {
     return Arrays.asList(restClient.get(API + "discord/channels", DiscordChannel[].class));
   }
+  public PlayerRepresentation getDiscordPlayer(long serverId, long memberId) {
+    return restClient.get(API + "discord/player/" + serverId + "/" + memberId, PlayerRepresentation.class);
+  }
+
+  public List<DiscordChannel> getDiscordChannels(long serverId) {
+    return Arrays.asList(restClient.get(API + "discord/channels/" + serverId, DiscordChannel[].class));
+  }
+
+  public DiscordServer getDiscordServer(long serverId) {
+    return restClient.get(API + "discord/server/" + serverId, DiscordServer.class);
+  }
+
+  public List<DiscordServer> getDiscordServers() {
+    return Arrays.asList(restClient.get(API + "discord/servers", DiscordServer[].class));
+  }
 
   /*********************************************************************************************************************
    * Jobs

@@ -53,6 +53,18 @@ public class DiscordClient extends ListenerAdapter {
     this.refreshMembers();
   }
 
+  public GuildInfo getGuild(long guildId) {
+    Guild guild = jda.getGuildById(guildId);
+    if (guild != null) {
+      return new GuildInfo(guild);
+    }
+    return null;
+  }
+
+  public List<GuildInfo> getGuilds() {
+    return jda.getGuilds().stream().map(GuildInfo::new).collect(Collectors.toList());
+  }
+
   public long getBotId() {
     return jda.getSelfUser().getIdLong();
   }
@@ -83,9 +95,9 @@ public class DiscordClient extends ListenerAdapter {
         for (Message botMessage : botMessages) {
           if (botMessage.getContentRaw().contains(competitionUuid)) {
             Member member = botMessage.getMember();
-            if(member != null) {
-              DiscordMember discordMember = createMember(member);
-              if(!result.contains(discordMember)) {
+            if (member != null) {
+              DiscordMember discordMember = toMember(member);
+              if (!result.contains(discordMember)) {
                 result.add(discordMember);
               }
             }
@@ -99,8 +111,30 @@ public class DiscordClient extends ListenerAdapter {
     return result;
   }
 
-  public List<DiscordTextChannel> getChannels() {
+  public DiscordMember getMember(long serverId, long memberId) {
     Guild guild = jda.getGuildById(guildId);
+    if(serverId > 0) {
+      guild = jda.getGuildById(serverId);
+    }
+
+    if (guild != null) {
+      Member member = guild.getMemberById(memberId);
+      if(member != null) {
+        return toMember(member);
+      }
+    }
+    return null;
+  }
+
+  public List<DiscordTextChannel> getChannels() {
+    return getChannels(-1);
+  }
+
+  public List<DiscordTextChannel> getChannels(long id) {
+    Guild guild = jda.getGuildById(guildId);
+    if (id > 0) {
+      guild = jda.getGuildById(id);
+    }
     List<DiscordTextChannel> channelList = new ArrayList<>();
     if (guild != null) {
       List<GuildChannel> channels = guild.getChannels();
@@ -198,12 +232,12 @@ public class DiscordClient extends ListenerAdapter {
         continue;
       }
 
-      result.add(createMember(member));
+      result.add(toMember(member));
     }
     return result;
   }
 
-  private DiscordMember createMember(Member member) {
+  private DiscordMember toMember(Member member) {
     String name = member.getEffectiveName();
     String initials = resolveInitials(name);
 

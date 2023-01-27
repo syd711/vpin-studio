@@ -2,6 +2,7 @@ package de.mephisto.vpin.server.discord;
 
 import de.mephisto.vpin.connectors.discord.*;
 import de.mephisto.vpin.restclient.DiscordChannel;
+import de.mephisto.vpin.restclient.DiscordServer;
 import de.mephisto.vpin.restclient.PlayerDomain;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.server.competitions.Competition;
@@ -43,6 +44,15 @@ public class DiscordService implements InitializingBean, PreferenceChangedListen
     return Collections.emptyList();
   }
 
+
+  public Player getPlayer(long serverId, long memberId) {
+    if (this.discordClient != null) {
+      return toPlayer(this.discordClient.getMember(serverId, memberId));
+    }
+    return null;
+  }
+
+
   public String getActiveCompetitionName(long channelId) {
     if (this.discordClient != null) {
       String topic = this.discordClient.getTopic(channelId);
@@ -63,6 +73,18 @@ public class DiscordService implements InitializingBean, PreferenceChangedListen
     return Collections.emptyList();
   }
 
+  public List<DiscordChannel> getChannels(long guildId) {
+    if (this.discordClient != null) {
+      return this.discordClient.getChannels(guildId).stream().map(c -> {
+        DiscordChannel ct = new DiscordChannel();
+        ct.setName(c.getName());
+        ct.setId(c.getId());
+        return ct;
+      }).collect(Collectors.toList());
+    }
+    return Collections.emptyList();
+  }
+
   public List<Player> getCompetitionPlayers(long channelId) {
     if (this.discordClient != null) {
       DiscordCompetitionData competitionData = getCompetitionData(channelId);
@@ -73,7 +95,7 @@ public class DiscordService implements InitializingBean, PreferenceChangedListen
   }
 
   public String sendMessage(long channelId, String message) {
-    if(this.discordClient != null) {
+    if (this.discordClient != null) {
       return this.discordClient.sendMessage(channelId, message);
     }
     return null;
@@ -95,9 +117,9 @@ public class DiscordService implements InitializingBean, PreferenceChangedListen
 
   @Nullable
   public ScoreSummary getScoreSummary(long channelId) {
-    if(this.discordClient != null) {
+    if (this.discordClient != null) {
       String topicText = discordClient.getTopic(channelId);
-      if(topicText != null) {
+      if (topicText != null) {
         return CompetitionDataHelper.getScores(this, topicText);
       }
     }
@@ -179,6 +201,27 @@ public class DiscordService implements InitializingBean, PreferenceChangedListen
     }
   }
 
+  public DiscordServer getServer(long id) {
+    if (this.discordClient != null) {
+      GuildInfo guild = this.discordClient.getGuild(id);
+      if (guild != null) {
+        return toServer(guild);
+      }
+    }
+    return null;
+  }
+
+  public List<DiscordServer> getServers() {
+    List<DiscordServer> result = new ArrayList<>();
+    if (this.discordClient != null) {
+      List<GuildInfo> guilds = this.discordClient.getGuilds();
+      for (GuildInfo guild : guilds) {
+        result.add(toServer(guild));
+      }
+    }
+    return result;
+  }
+
   public Optional<Player> getPlayerByInitials(String initials) {
     for (DiscordMember member : this.getMembers()) {
       if (!StringUtils.isEmpty(member.getInitials()) && member.getInitials().toUpperCase().equals(initials.toUpperCase())) {
@@ -240,5 +283,15 @@ public class DiscordService implements InitializingBean, PreferenceChangedListen
     player.setAvatarUrl(member.getAvatarUrl());
     player.setDomain(PlayerDomain.DISCORD.name());
     return player;
+  }
+
+  private DiscordServer toServer(GuildInfo guild) {
+    DiscordServer s = new DiscordServer();
+    s.setOwnerId(guild.getOwnerId());
+    s.setOwner(discordClient.getBotId() == guild.getOwnerId());
+    s.setId(guild.getId());
+    s.setName(guild.getName());
+    s.setAvatarUrl(guild.getAvatarUrl());
+    return s;
   }
 }

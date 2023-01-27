@@ -1,9 +1,13 @@
 package de.mephisto.vpin.ui.competitions;
 
 import de.mephisto.vpin.commons.fx.widgets.WidgetCompetitionSummaryController;
+import de.mephisto.vpin.commons.utils.ImageUtil;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
+import de.mephisto.vpin.restclient.AssetType;
+import de.mephisto.vpin.restclient.DiscordServer;
 import de.mephisto.vpin.restclient.representations.CompetitionRepresentation;
 import de.mephisto.vpin.restclient.representations.GameRepresentation;
+import de.mephisto.vpin.restclient.representations.PlayerRepresentation;
 import de.mephisto.vpin.ui.NavigationController;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.StudioFXController;
@@ -16,9 +20,13 @@ import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.geometry.Pos;
 import javafx.scene.Parent;
 import javafx.scene.control.*;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -63,6 +71,7 @@ public class CompetitionsDiscordController implements Initializable, StudioFXCon
 
   @FXML
   private Button deleteBtn;
+
   @FXML
   private Button finishBtn;
 
@@ -255,6 +264,42 @@ public class CompetitionsDiscordController implements Initializable, StudioFXCon
         label = new Label(game.getGameDisplayName());
       }
       return new SimpleObjectProperty(label);
+    });
+
+    columnServer.setCellValueFactory(cellData -> {
+      CompetitionRepresentation value = cellData.getValue();
+
+      DiscordServer discordServer = client.getDiscordServer(value.getDiscordServerId());
+      HBox hBox = new HBox(6);
+      hBox.setAlignment(Pos.CENTER_LEFT);
+      Image image = new Image(discordServer.getAvatarUrl());
+      ImageView view = new ImageView(image);
+      view.setPreserveRatio(true);
+      view.setFitWidth(50);
+      view.setFitHeight(50);
+
+      Label label = new Label(discordServer.getName());
+      hBox.getChildren().addAll(view, label);
+
+      return new SimpleObjectProperty(hBox);
+    });
+
+    columnCompetitionOwner.setCellValueFactory(cellData -> {
+      CompetitionRepresentation value = cellData.getValue();
+
+      PlayerRepresentation discordPlayer = client.getDiscordPlayer(value.getDiscordServerId(), Long.valueOf(value.getOwner()));
+      HBox hBox = new HBox(6);
+      hBox.setAlignment(Pos.CENTER_LEFT);
+      Image image = new Image(discordPlayer.getAvatarUrl());
+      ImageView view = new ImageView(image);
+      view.setPreserveRatio(true);
+      view.setFitWidth(50);
+      view.setFitHeight(50);
+
+      Label label = new Label(discordPlayer.getName());
+      hBox.getChildren().addAll(view, label);
+
+      return new SimpleObjectProperty(hBox);
     });
 
     columnStatus.setCellValueFactory(cellData -> {

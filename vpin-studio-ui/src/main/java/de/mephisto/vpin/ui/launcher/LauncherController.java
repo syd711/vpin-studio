@@ -1,6 +1,6 @@
 package de.mephisto.vpin.ui.launcher;
 
-import de.mephisto.vpin.commons.Services;
+import de.mephisto.vpin.commons.ServerInstallationUtil;
 import de.mephisto.vpin.commons.fx.LoadingOverlayController;
 import de.mephisto.vpin.commons.fx.UIDefaults;
 import de.mephisto.vpin.commons.utils.ImageUtil;
@@ -174,9 +174,9 @@ public class LauncherController implements Initializable {
 
   private void installServer() {
     try {
-      Services.install();
-      if (!Services.getAutostartFile().exists()) {
-        throw new UnsupportedOperationException("Installation failed: " + Services.getAutostartFile().getAbsolutePath() + " does not exist.");
+      ServerInstallationUtil.install();
+      if (!ServerInstallationUtil.getAutostartFile().exists()) {
+        throw new UnsupportedOperationException("Installation failed: " + ServerInstallationUtil.getAutostartFile().getAbsolutePath() + " does not exist.");
       }
 
       Updater.restartServer();
@@ -217,7 +217,7 @@ public class LauncherController implements Initializable {
     tableView.setPlaceholder(new Label("                 No connections found.\n" +
         "Install the service or connect to another system."));
 
-    this.installBtn.setVisible(Services.SERVER_EXE.exists());
+    this.installBtn.setVisible(ServerInstallationUtil.SERVER_EXE.exists());
     this.installBtn.setDisable(client.version() != null);
 
     connectBtn.setDisable(true);
