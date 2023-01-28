@@ -233,21 +233,18 @@ public class WidgetCompetitionController extends WidgetController implements Ini
 
   }
 
-  public void refresh() {
+  public void refresh(CompetitionRepresentation competition) {
     viewStack.getChildren().add(loadingOverlay);
     new Thread(() -> {
-      List<CompetitionRepresentation> activeCompetitions = OverlayWindowFX.client.getActiveCompetitions();
       Platform.runLater(() -> {
-        if (!activeCompetitions.isEmpty()) {
-          setCompetition(activeCompetitions.get(0));
-          root.setVisible(true);
-        }
-        else {
-          root.setVisible(false);
-          setCompetition(null);
-        }
-        viewStack.getChildren().remove(loadingOverlay);
+        setCompetition(competition);
+        root.setVisible(true);
       });
     }).start();
+  }
+
+  public void setCompact() {
+    viewStack.setVisible(false);
+    root.setPrefHeight(346);
   }
 }

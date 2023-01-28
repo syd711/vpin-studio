@@ -3,7 +3,9 @@ package de.mephisto.vpin.commons.fx;
 import de.mephisto.vpin.commons.fx.widgets.WidgetCompetitionController;
 import de.mephisto.vpin.commons.fx.widgets.WidgetLatestScoresController;
 import de.mephisto.vpin.commons.fx.widgets.WidgetPlayerRankController;
+import de.mephisto.vpin.restclient.CompetitionType;
 import de.mephisto.vpin.restclient.PreferenceNames;
+import de.mephisto.vpin.restclient.representations.CompetitionRepresentation;
 import de.mephisto.vpin.restclient.representations.PreferenceEntryRepresentation;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -48,7 +50,9 @@ public class OverlayController implements Initializable {
     }
     titleLabel.setText(name);
 
-    activeCompetitionController.refresh();
+
+    CompetitionRepresentation c = OverlayWindowFX.client.getActiveCompetition(CompetitionType.OFFLINE);
+    activeCompetitionController.refresh(c);
     latestScoresController.refresh();
 //    finishedCompetitionsController.refresh();
     playersController.refresh();

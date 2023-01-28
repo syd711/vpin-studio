@@ -1,5 +1,6 @@
 package de.mephisto.vpin.server.competitions;
 
+import de.mephisto.vpin.restclient.CompetitionType;
 import de.mephisto.vpin.server.highscores.ScoreList;
 import de.mephisto.vpin.server.players.Player;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,9 +53,10 @@ public class CompetitionResource {
     return competitionService.getDiscordCompetitionPlayers(id);
   }
 
-  @GetMapping("/active")
-  public List<Competition> getActiveOffCompetition() {
-    return competitionService.getActiveCompetitions();
+  @GetMapping("/{type}/active")
+  public Competition getActiveCompetition(@PathVariable("type") String type) {
+    CompetitionType ct = CompetitionType.valueOf(type);
+    return competitionService.getActiveCompetition(ct);
   }
 
   @GetMapping("/scores/{id}")

@@ -1,13 +1,17 @@
 package de.mephisto.vpin.ui;
 
+import de.mephisto.vpin.commons.fx.OverlayWindowFX;
 import de.mephisto.vpin.commons.fx.widgets.WidgetCompetitionController;
 import de.mephisto.vpin.commons.fx.widgets.WidgetLatestScoresController;
 import de.mephisto.vpin.commons.fx.widgets.WidgetPlayerRankController;
+import de.mephisto.vpin.restclient.CompetitionType;
+import de.mephisto.vpin.restclient.representations.CompetitionRepresentation;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.VBox;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -16,6 +20,8 @@ import java.net.URL;
 import java.util.Arrays;
 import java.util.ResourceBundle;
 
+import static de.mephisto.vpin.ui.Studio.client;
+
 public class DashboardController implements Initializable, StudioFXController {
   private final static Logger LOG = LoggerFactory.getLogger(DashboardController.class);
 
@@ -23,12 +29,13 @@ public class DashboardController implements Initializable, StudioFXController {
   private BorderPane widgetLatestScore;
 
   @FXML
-  private BorderPane widgetCompetition;
+  private BorderPane widgetRight;
 
   @FXML
-  private BorderPane widgetFinishedCompetitions;
+  private VBox widgetCompetition;
 
-  private WidgetCompetitionController activeCompetitionController;
+  private WidgetCompetitionController offlineCompetitionWidgetController;
+  private WidgetCompetitionController discordCompetitionWidgetController;
   private WidgetLatestScoresController latestScoresController;
   private WidgetPlayerRankController playerRankController;
 
@@ -51,11 +58,24 @@ public class DashboardController implements Initializable, StudioFXController {
     }
 
     try {
-      FXMLLoader loader = new FXMLLoader(WidgetCompetitionController.class.getResource("widget-active-competition.fxml"));
+      FXMLLoader loader = new FXMLLoader(WidgetCompetitionController.class.getResource("widget-competition.fxml"));
       BorderPane activeCompetitionBorderPane = loader.load();
       activeCompetitionBorderPane.setMaxWidth(Double.MAX_VALUE);
-      activeCompetitionController = loader.getController();
-      widgetCompetition.setTop(activeCompetitionBorderPane);
+      offlineCompetitionWidgetController = loader.getController();
+      widgetCompetition.getChildren().add(activeCompetitionBorderPane);
+      offlineCompetitionWidgetController.setCompact();
+
+    } catch (IOException e) {
+      LOG.error("Failed to load competitions widget: " + e.getMessage(), e);
+    }
+
+    try {
+      FXMLLoader loader = new FXMLLoader(WidgetCompetitionController.class.getResource("widget-competition.fxml"));
+      BorderPane activeCompetitionBorderPane = loader.load();
+      activeCompetitionBorderPane.setMaxWidth(Double.MAX_VALUE);
+      discordCompetitionWidgetController = loader.getController();
+      widgetCompetition.getChildren().add(activeCompetitionBorderPane);
+      discordCompetitionWidgetController.setCompact();
 
     } catch (IOException e) {
       LOG.error("Failed to load competitions widget: " + e.getMessage(), e);
@@ -66,7 +86,8 @@ public class DashboardController implements Initializable, StudioFXController {
       BorderPane playersBorderPane = loader.load();
       playerRankController = loader.getController();
       playersBorderPane.setMaxWidth(Double.MAX_VALUE);
-      widgetFinishedCompetitions.setCenter(playersBorderPane);
+      playersBorderPane.setMaxHeight(Double.MAX_VALUE);
+      widgetRight.setCenter(playersBorderPane);
     } catch (IOException e) {
       LOG.error("Failed to load finished players widget: " + e.getMessage(), e);
     }
@@ -80,7 +101,12 @@ public class DashboardController implements Initializable, StudioFXController {
     Platform.runLater(() -> {
       latestScoresController.refresh();
       playerRankController.refresh();
-      activeCompetitionController.refresh();
+
+      CompetitionRepresentation c = client.getActiveCompetition(CompetitionType.OFFLINE);
+      offlineCompetitionWidgetController.refresh(c);
+
+      c = client.getActiveCompetition(CompetitionType.DISCORD);
+      discordCompetitionWidgetController.refresh(c);
     });
   }
 }

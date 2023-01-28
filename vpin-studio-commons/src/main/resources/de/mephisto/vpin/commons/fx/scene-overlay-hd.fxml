@@ -15,6 +15,6 @@
       <fx:include fx:id="players" prefWidth="570.0" prefHeight="1120.0" scaleX="1.0" scaleY="1.0" source="widgets/widget-player-rank.fxml" translateX="263.0" translateY="-240.0" />
       <fx:include fx:id="latestScores" prefWidth="470.0" prefHeight="1120.0" scaleX="1.0" scaleY="1.0" source="widgets/widget-latest-scores.fxml" translateX="-276.0" translateY="-240.0" />
 
-      <fx:include fx:id="activeCompetition" scaleX="1.0" prefWidth="1060.0" scaleY="1.0" source="widgets/widget-active-competition.fxml" translateX="19.0" translateY="640.0" />
+      <fx:include fx:id="activeCompetition" scaleX="1.0" prefWidth="1060.0" scaleY="1.0" source="widgets/widget-competition.fxml" translateX="19.0" translateY="640.0" />
    </children>
 </StackPane>

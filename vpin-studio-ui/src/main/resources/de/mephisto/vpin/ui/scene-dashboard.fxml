@@ -1,7 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.geometry.Insets?>
-<?import javafx.scene.layout.*?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+
 <BorderPane stylesheets="@stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.DashboardController">
     <top>
         <fx:include fx:id="mainToolbar" source="scene-toolbar.fxml" />
@@ -14,17 +17,17 @@
          <children>
             <BorderPane fx:id="widgetLatestScore">
                <center>
-                  <BorderPane fx:id="widgetCompetition" BorderPane.alignment="TOP_LEFT">
+                  <BorderPane fx:id="widgetRight" BorderPane.alignment="TOP_CENTER">
                      <BorderPane.margin>
                         <Insets left="12.0" right="12.0" />
                      </BorderPane.margin>
-                     <center>
-                        <BorderPane fx:id="widgetFinishedCompetitions" BorderPane.alignment="CENTER">
+                     <top>
+                        <VBox fx:id="widgetCompetition" prefHeight="200.0" prefWidth="100.0" spacing="12.0" BorderPane.alignment="CENTER">
                            <BorderPane.margin>
-                              <Insets top="12.0" />
+                              <Insets bottom="12.0" />
                            </BorderPane.margin>
-                        </BorderPane>
-                     </center>
+                        </VBox>
+                     </top>
                   </BorderPane>
                </center>
             </BorderPane>

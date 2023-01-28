@@ -3,6 +3,7 @@ package de.mephisto.vpin.server.keyevent;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.mephisto.vpin.restclient.AssetType;
+import de.mephisto.vpin.restclient.CompetitionType;
 import de.mephisto.vpin.restclient.OverlayClient;
 import de.mephisto.vpin.restclient.PopperScreen;
 import de.mephisto.vpin.restclient.representations.*;
@@ -67,15 +68,15 @@ public class OverlayClientImpl implements OverlayClient, InitializingBean {
   }
 
   @Override
-  public List<CompetitionRepresentation> getActiveCompetitions() {
+  public CompetitionRepresentation getActiveCompetition(CompetitionType type) {
     try {
-      List<Competition> competitions = competitionService.getActiveCompetitions();
-      String s = mapper.writeValueAsString(competitions);
-      return List.of(mapper.readValue(s, CompetitionRepresentation[].class));
+      Competition competition = competitionService.getActiveCompetition(type);
+      String s = mapper.writeValueAsString(competition);
+      return mapper.readValue(s, CompetitionRepresentation.class);
     } catch (Exception e) {
       LOG.error("Error during conversion: " + e.getMessage(), e);
     }
-    return Collections.emptyList();
+    return null;
   }
 
   @Override
