@@ -1,8 +1,9 @@
 package de.mephisto.vpin.server.discord;
 
 import de.mephisto.vpin.connectors.discord.*;
-import de.mephisto.vpin.restclient.DiscordChannel;
-import de.mephisto.vpin.restclient.DiscordServer;
+import de.mephisto.vpin.restclient.discord.DiscordChannel;
+import de.mephisto.vpin.restclient.discord.DiscordCompetitionData;
+import de.mephisto.vpin.restclient.discord.DiscordServer;
 import de.mephisto.vpin.restclient.PlayerDomain;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.server.competitions.Competition;
@@ -21,7 +22,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
-import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 @Service
@@ -56,14 +56,6 @@ public class DiscordService implements InitializingBean, PreferenceChangedListen
     if (this.discordClient != null) {
       String topic = this.discordClient.getTopic(serverId, channelId);
       return CompetitionDataHelper.getStartMessageId(topic);
-    }
-    return null;
-  }
-
-  public String getActiveCompetitionName(long serverId, long channelId) {
-    if (this.discordClient != null) {
-      String topic = this.discordClient.getTopic(serverId, channelId);
-      return CompetitionDataHelper.getName(topic);
     }
     return null;
   }
@@ -148,14 +140,12 @@ public class DiscordService implements InitializingBean, PreferenceChangedListen
     return this.discordClient != null;
   }
 
-  private DiscordCompetitionData getCompetitionData(long serverId, long channelId) {
+  public DiscordCompetitionData getCompetitionData(long serverId, long channelId) {
     if (this.discordClient != null) {
       String topic = this.discordClient.getTopic(serverId, channelId);
       return CompetitionDataHelper.getCompetitionData(topic);
     }
-    else {
-      throw new UnsupportedOperationException("No Discord client found.");
-    }
+    return new DiscordCompetitionData();
   }
 
   private DiscordClient recreateDiscordClient() {

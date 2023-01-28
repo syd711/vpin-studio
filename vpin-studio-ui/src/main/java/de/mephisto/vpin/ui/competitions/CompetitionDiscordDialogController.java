@@ -2,7 +2,12 @@ package de.mephisto.vpin.ui.competitions;
 
 import de.mephisto.vpin.commons.EmulatorTypes;
 import de.mephisto.vpin.commons.fx.DialogController;
-import de.mephisto.vpin.restclient.*;
+import de.mephisto.vpin.restclient.CompetitionType;
+import de.mephisto.vpin.restclient.PopperScreen;
+import de.mephisto.vpin.restclient.VPinStudioClient;
+import de.mephisto.vpin.restclient.discord.DiscordChannel;
+import de.mephisto.vpin.restclient.discord.DiscordCompetitionData;
+import de.mephisto.vpin.restclient.discord.DiscordServer;
 import de.mephisto.vpin.restclient.representations.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -232,10 +237,10 @@ public class CompetitionDiscordDialogController implements Initializable, Dialog
         return;
       }
       else {
-        String name = client.getActiveCompetitionName(competition.getDiscordServerId(), competition.getDiscordChannelId());
-        if (name != null) {
+        DiscordCompetitionData discordCompetitionData = client.getDiscordCompetitionData(competition.getDiscordServerId(), competition.getDiscordChannelId());
+        if (!StringUtils.isEmpty(discordCompetitionData.getUuid())) {
           validationTitle.setText("Active competition found.");
-          validationDescription.setText("The selected channel is already running the competition '" + name + "'");
+          validationDescription.setText("The selected channel is already running the competition '" + discordCompetitionData.getName() + "'");
           return;
         }
       }
@@ -282,7 +287,7 @@ public class CompetitionDiscordDialogController implements Initializable, Dialog
       GameRepresentation game = client.getGame(c.getGameId());
       DiscordServer discordServer = client.getDiscordServer(competition.getDiscordServerId());
       String botId = client.getBotId();
-      boolean isOwner= c.getOwner().equals(botId);
+      boolean isOwner = c.getOwner().equals(botId);
 
       channelsCombo.setDisable(true);
       serversCombo.setDisable(true);

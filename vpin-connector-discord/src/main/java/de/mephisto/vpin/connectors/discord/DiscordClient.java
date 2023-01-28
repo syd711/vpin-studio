@@ -77,7 +77,7 @@ public class DiscordClient {
       TextChannel channel = guild.getChannelById(TextChannel.class, channelId);
       if (channel != null) {
         channel.getManager().setTopic(topic).queue();
-        LOG.info("Updated topic of '" + channel.getName() + "' to: " + topic);
+        LOG.info("Updated topic of '" + channel.getName() + "' (length of " + topic.length() + " characters)");
       }
       else {
         LOG.error("No discord channel found for id '" + channelId + "'");

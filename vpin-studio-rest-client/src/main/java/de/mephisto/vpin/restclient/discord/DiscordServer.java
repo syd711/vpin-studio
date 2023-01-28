@@ -1,4 +1,4 @@
-package de.mephisto.vpin.restclient;
+package de.mephisto.vpin.restclient.discord;
 
 public class DiscordServer {
   private String name;

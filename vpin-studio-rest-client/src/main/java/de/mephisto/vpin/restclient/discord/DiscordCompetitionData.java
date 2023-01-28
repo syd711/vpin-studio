@@ -1,6 +1,4 @@
-package de.mephisto.vpin.server.discord;
-
-import de.mephisto.vpin.server.highscores.Score;
+package de.mephisto.vpin.restclient.discord;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -12,8 +10,36 @@ public class DiscordCompetitionData {
   private String rom;
   private long fileSize;
   private Date createdAt;
+  private Date startDate;
+  private Date endDate;
   private String name;
+  private String tableName;
   private String startMessageId;
+  private List<DiscordCompetitionScoreEntry> scores = new ArrayList<>();
+
+  public String getTableName() {
+    return tableName;
+  }
+
+  public void setTableName(String tableName) {
+    this.tableName = tableName;
+  }
+
+  public Date getStartDate() {
+    return startDate;
+  }
+
+  public void setStartDate(Date startDate) {
+    this.startDate = startDate;
+  }
+
+  public Date getEndDate() {
+    return endDate;
+  }
+
+  public void setEndDate(Date endDate) {
+    this.endDate = endDate;
+  }
 
   public String getStartMessageId() {
     return startMessageId;
@@ -31,8 +57,6 @@ public class DiscordCompetitionData {
     this.name = name;
   }
 
-  private List<ScoreEntry> scores = new ArrayList<>();
-
   public Date getCreatedAt() {
     return createdAt;
   }
@@ -41,11 +65,11 @@ public class DiscordCompetitionData {
     this.createdAt = createdAt;
   }
 
-  public List<ScoreEntry> getScores() {
+  public List<DiscordCompetitionScoreEntry> getScores() {
     return scores;
   }
 
-  public void setScores(List<ScoreEntry> scores) {
+  public void setScores(List<DiscordCompetitionScoreEntry> scores) {
     this.scores = scores;
   }
 
@@ -79,56 +103,5 @@ public class DiscordCompetitionData {
 
   public void setFileSize(long fileSize) {
     this.fileSize = fileSize;
-  }
-
-
-  static class ScoreEntry {
-    private int position;
-    private String initials;
-    private double numericScore;
-    private String score;
-
-    public ScoreEntry() {
-
-    }
-
-    public ScoreEntry(Score score) {
-      this.position = score.getPosition();
-      this.initials = score.getPlayerInitials();
-      this.numericScore = score.getNumericScore();
-      this.score = score.getScore();
-    }
-
-    public int getPosition() {
-      return position;
-    }
-
-    public void setPosition(int position) {
-      this.position = position;
-    }
-
-    public String getInitials() {
-      return initials;
-    }
-
-    public void setInitials(String initials) {
-      this.initials = initials;
-    }
-
-    public double getNumericScore() {
-      return numericScore;
-    }
-
-    public void setNumericScore(double numericScore) {
-      this.numericScore = numericScore;
-    }
-
-    public String getScore() {
-      return score;
-    }
-
-    public void setScore(String score) {
-      this.score = score;
-    }
   }
 }

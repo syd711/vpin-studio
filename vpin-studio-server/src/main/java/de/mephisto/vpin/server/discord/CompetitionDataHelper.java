@@ -4,6 +4,8 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.thoughtworks.xstream.core.util.Base64Encoder;
+import de.mephisto.vpin.restclient.discord.DiscordCompetitionData;
+import de.mephisto.vpin.restclient.discord.DiscordCompetitionScoreEntry;
 import de.mephisto.vpin.server.competitions.Competition;
 import de.mephisto.vpin.server.competitions.ScoreSummary;
 import de.mephisto.vpin.server.games.Game;
@@ -31,14 +33,16 @@ public class CompetitionDataHelper {
   public static String toDataString(@NonNull Competition competition, @NonNull Game game, @NonNull ScoreSummary summary, @NonNull String messageId) {
     try {
       StringBuilder b = new StringBuilder();
-      b.append("Active Competition Table: '");
+      b.append("Active Competition: ");
       b.append(game.getGameDisplayName());
-      b.append("'");
       b.append("\n\n");
 
       DiscordCompetitionData data = new DiscordCompetitionData();
       data.setName(competition.getName());
+      data.setTableName(game.getGameDisplayName());
       data.setCreatedAt(new Date());
+      data.setStartDate(competition.getStartDate());
+      data.setEndDate(competition.getEndDate());
       data.setFileSize(game.getGameFileSize());
       data.setStartMessageId(messageId);
       data.setUuid(competition.getUuid());
@@ -47,7 +51,7 @@ public class CompetitionDataHelper {
 
       List<Score> scores = summary.getScores();
       for (Score score : scores) {
-        data.getScores().add(new DiscordCompetitionData.ScoreEntry(score));
+        data.getScores().add(toScoreEntry(score));
       }
 
       String json = objectMapper.writeValueAsString(data);
@@ -94,8 +98,8 @@ public class CompetitionDataHelper {
     if (topicData != null) {
       List<Score> scores = new ArrayList<>();
       ScoreSummary summary = new ScoreSummary(scores, topicData.getCreatedAt());
-      List<DiscordCompetitionData.ScoreEntry> scoresEntries = topicData.getScores();
-      for (DiscordCompetitionData.ScoreEntry scoresEntry : scoresEntries) {
+      List<DiscordCompetitionScoreEntry> scoresEntries = topicData.getScores();
+      for (DiscordCompetitionScoreEntry scoresEntry : scoresEntries) {
         Player player = null;
         Optional<Player> playerForInitials = discordService.getPlayerByInitials(scoresEntry.getInitials());
         if (playerForInitials.isPresent()) {
@@ -125,5 +129,14 @@ public class CompetitionDataHelper {
       LOG.info("Failed to read competition data from '" + topic + "'");
     }
     return null;
+  }
+
+  private static DiscordCompetitionScoreEntry toScoreEntry(Score score) {
+    DiscordCompetitionScoreEntry entry = new DiscordCompetitionScoreEntry();
+    entry.setScore(score.getScore());
+    entry.setNumericScore(score.getNumericScore());
+    entry.setInitials(score.getPlayerInitials());
+    entry.setPosition(score.getPosition());
+    return entry;
   }
 }

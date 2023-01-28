@@ -1,8 +1,8 @@
 package de.mephisto.vpin.server.discord;
 
-import de.mephisto.vpin.restclient.DiscordChannel;
-import de.mephisto.vpin.restclient.DiscordServer;
-import de.mephisto.vpin.restclient.representations.PlayerRepresentation;
+import de.mephisto.vpin.restclient.discord.DiscordChannel;
+import de.mephisto.vpin.restclient.discord.DiscordCompetitionData;
+import de.mephisto.vpin.restclient.discord.DiscordServer;
 import de.mephisto.vpin.server.players.Player;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -31,9 +31,9 @@ public class DiscordResource {
     return String.valueOf(discordService.getBotId());
   }
 
-  @GetMapping("/channel/{serverId}/{channelId}/name")
-  public String getActiveCompetitionName(@PathVariable("serverId") long serverId, @PathVariable("channelId") long channelId) {
-    return discordService.getActiveCompetitionName(serverId, channelId);
+  @GetMapping("/competition/{serverId}/{channelId}")
+  public DiscordCompetitionData getCompetitionData(@PathVariable("serverId") long serverId, @PathVariable("channelId") long channelId) {
+    return discordService.getCompetitionData(serverId, channelId);
   }
 
   @GetMapping("/channels")

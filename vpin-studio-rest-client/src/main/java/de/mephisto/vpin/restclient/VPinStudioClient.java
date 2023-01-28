@@ -1,5 +1,8 @@
 package de.mephisto.vpin.restclient;
 
+import de.mephisto.vpin.restclient.discord.DiscordChannel;
+import de.mephisto.vpin.restclient.discord.DiscordCompetitionData;
+import de.mephisto.vpin.restclient.discord.DiscordServer;
 import de.mephisto.vpin.restclient.representations.*;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -54,9 +57,9 @@ public class VPinStudioClient implements ObservedPropertyChangeListener, Overlay
     return restClient.get(API + "discord/available", Boolean.class);
   }
 
-  public String getActiveCompetitionName(long serverId, long channelId) {
+  public DiscordCompetitionData getDiscordCompetitionData(long serverId, long channelId) {
     final RestTemplate restTemplate = new RestTemplate();
-    return restTemplate.getForObject(restClient.getBaseUrl() + API + "discord/channel/" + serverId + "/" + channelId + "/name", String.class);
+    return restTemplate.getForObject(restClient.getBaseUrl() + API + "discord/competition/" + serverId + "/" + channelId, DiscordCompetitionData.class);
   }
 
   public String getBotId() {
