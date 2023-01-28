@@ -93,6 +93,11 @@ public class HighscoreTest extends VPinServerTest {
         assertEquals("7.100.000.000", event.getNewScore().getScore());
         assertEquals(2, event.getNewScore().getPosition());
       }
+
+      @Override
+      public void highscoreInitialized(@NotNull HighscoreInitializedEvent event) {
+
+      }
     });
     highscoreService.updateHighscore(game, metadata);
 

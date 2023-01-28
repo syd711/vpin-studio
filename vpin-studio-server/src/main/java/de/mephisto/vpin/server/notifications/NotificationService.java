@@ -13,12 +13,9 @@ import de.mephisto.vpin.server.discord.DiscordService;
 import de.mephisto.vpin.server.discord.DiscordWebhookMessageFactory;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameService;
-import de.mephisto.vpin.server.highscores.HighscoreChangeEvent;
-import de.mephisto.vpin.server.highscores.HighscoreChangeListener;
-import de.mephisto.vpin.server.highscores.HighscoreService;
+import de.mephisto.vpin.server.highscores.*;
 import de.mephisto.vpin.server.highscores.cards.CardService;
 import de.mephisto.vpin.server.players.Player;
-import de.mephisto.vpin.server.players.PlayerService;
 import de.mephisto.vpin.server.popper.PopperService;
 import de.mephisto.vpin.server.popper.TableStatusChangeListener;
 import de.mephisto.vpin.server.popper.TableStatusChangedEvent;
@@ -61,9 +58,6 @@ public class NotificationService implements InitializingBean, HighscoreChangeLis
   @Autowired
   private DiscordService discordService;
 
-  @Autowired
-  private PlayerService playerService;
-
   public void notifyPopperRestart() {
     discordService.setStatus(null);
   }
@@ -89,6 +83,15 @@ public class NotificationService implements InitializingBean, HighscoreChangeLis
       LOG.info("Finished 5 second update delay, updating highscores.");
       highscoreService.updateHighscore(game);
     }).start();
+  }
+
+  @Override
+  public void highscoreInitialized(@NotNull HighscoreInitializedEvent event) {
+    try {
+      cardService.generateCard(event.getGame(), false);
+    } catch (Exception e) {
+      LOG.error("Error updating card after highscore initialized event: " + e.getMessage(), e);
+    }
   }
 
   @Override

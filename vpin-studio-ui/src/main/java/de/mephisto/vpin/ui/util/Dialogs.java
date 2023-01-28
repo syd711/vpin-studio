@@ -201,6 +201,8 @@ public class Dialogs {
   }
 
   public static Optional<ButtonType> openPopperRunningWarning(Stage stage) {
-    return WidgetFactory.showAlertOption(stage, "PinUP Popper is running.", "Close PinUP Popper","Cancel", "PinUP Popper is running. To perform this operation, you have to close it.", null);
+    return WidgetFactory.showAlertOption(stage, "PinUP Popper is running.", "Close PinUP Popper","Cancel",
+        "PinUP Popper is running. To perform this operation, you have to close it.",
+        "This will also KILL the the current emulator process!");
   }
 }

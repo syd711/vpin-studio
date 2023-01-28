@@ -166,7 +166,7 @@ public class HighscoreService implements InitializingBean {
   }
 
   public List<HighscoreVersion> getAllHighscoreVersions(int gameId) {
-    return highscoreVersionRepository.findByGameIdAndCreatedAtBetween(gameId,  new Date(0), new Date());
+    return highscoreVersionRepository.findByGameIdAndCreatedAtBetween(gameId, new Date(0), new Date());
   }
 
   public ScoreList getScoreHistory(int gameId) {
@@ -239,7 +239,7 @@ public class HighscoreService implements InitializingBean {
   /**
    * Returns a list of all scores for the given game
    *
-   * @param gameId the game to retrieve the highscores for
+   * @param gameId      the game to retrieve the highscores for
    * @param displayName the optional display name/name of the table the summary is for
    * @return all highscores of the given player
    */
@@ -337,21 +337,25 @@ public class HighscoreService implements InitializingBean {
     Optional<Highscore> existingHighscore = highscoreRepository.findByGameId(game.getId());
 
     if (existingHighscore.isEmpty()) {
-      highscoreRepository.saveAndFlush(newHighscore);
+      Highscore update = highscoreRepository.saveAndFlush(newHighscore);
       LOG.info("Saved highscore for " + game);
+      triggerHighscoreInitialized(createInitializedEvent(game, update));
       return;
     }
 
     Highscore existingScore = existingHighscore.get();
-    if(StringUtils.isEmpty(existingHighscore.get().getRaw())) {
-      if(!StringUtils.isEmpty(metadata.getRaw())) {
+    if (StringUtils.isEmpty(existingHighscore.get().getRaw())) {
+      if (!StringUtils.isEmpty(metadata.getRaw())) {
         existingScore.setRaw(metadata.getRaw());
         existingScore.setType(metadata.getType());
         existingScore.setLastScanned(metadata.getScanned());
         existingScore.setLastModified(metadata.getModified());
         existingScore.setFilename(metadata.getFilename());
         existingScore.setDisplayName(game.getGameDisplayName());
-        highscoreRepository.saveAndFlush(existingScore);
+
+        Highscore update = highscoreRepository.saveAndFlush(existingScore);
+        LOG.info("Saved highscore for " + game);
+        triggerHighscoreInitialized(createInitializedEvent(game, update));
       }
 
       LOG.info("Skipped highscore change event for {} because the raw highscore data does not exist.", game);
@@ -381,7 +385,7 @@ public class HighscoreService implements InitializingBean {
 
     Score oldScore = oldScores.get(position - 1);
     Score newScore = newScores.get(position - 1);
-    HighscoreChangeEvent event = createEvent(game, existingHighscore.get(), newHighscore, oldScore, newScore);
+    HighscoreChangeEvent event = createChangeEvent(game, existingHighscore.get(), newHighscore, oldScore, newScore);
     triggerHighscoreChange(event);
   }
 
@@ -403,7 +407,29 @@ public class HighscoreService implements InitializingBean {
     }).start();
   }
 
-  private HighscoreChangeEvent createEvent(@NonNull Game game, @NonNull Highscore existingHighscore, @NonNull Highscore newHighscore, @NonNull Score oldScore, @NonNull Score newScore) {
+  private void triggerHighscoreInitialized(@NonNull HighscoreInitializedEvent event) {
+    new Thread(() -> {
+      for (HighscoreChangeListener listener : listeners) {
+        listener.highscoreInitialized(event);
+      }
+    }).start();
+  }
+
+  private HighscoreInitializedEvent createInitializedEvent(@NonNull Game game, @NonNull Highscore highscore) {
+    return new HighscoreInitializedEvent() {
+      @Override
+      public Game getGame() {
+        return game;
+      }
+
+      @Override
+      public Highscore getHighscore() {
+        return highscore;
+      }
+    };
+  }
+
+  private HighscoreChangeEvent createChangeEvent(@NonNull Game game, @NonNull Highscore existingHighscore, @NonNull Highscore newHighscore, @NonNull Score oldScore, @NonNull Score newScore) {
     return new HighscoreChangeEvent() {
       @Override
       public Game getGame() {

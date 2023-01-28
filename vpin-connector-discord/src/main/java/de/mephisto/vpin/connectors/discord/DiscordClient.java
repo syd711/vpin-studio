@@ -114,7 +114,7 @@ public class DiscordClient {
   }
 
   public DiscordMember getMember(long serverId, long memberId) {
-    if(DiscordMemberCache.contains(memberId)) {
+    if (!DiscordMemberCache.contains(memberId)) {
       Guild guild = this.getGuild(serverId);
       if (guild != null) {
         Member member = guild.getMemberById(memberId);

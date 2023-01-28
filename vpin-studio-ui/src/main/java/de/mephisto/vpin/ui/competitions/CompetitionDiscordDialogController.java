@@ -294,10 +294,10 @@ public class CompetitionDiscordDialogController implements Initializable, Dialog
       this.startDatePicker.setDisable(!isOwner);
       this.endDatePicker.setValue(this.competition.getEndDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate());
       this.endDatePicker.setDisable(!isOwner);
-      this.tableCombo.setValue(game);
-      this.tableCombo.setDisable(!isOwner);
 
-      ObservableList<DiscordServer> servers = this.serversCombo.getItems();
+      this.tableCombo.setValue(game);
+      this.tableCombo.setDisable(true);
+
       this.channelsCombo.setItems(FXCollections.observableList(client.getDiscordChannels(discordServer.getId())));
       this.serversCombo.setValue(discordServer);
 
