@@ -184,14 +184,9 @@ public class CompetitionService implements InitializingBean {
   }
 
   public Competition getActiveCompetition(CompetitionType competitionType) {
-    if(competitionType.equals(CompetitionType.OFFLINE)) {
-      List<Competition> result = competitionsRepository.findByStartDateLessThanEqualAndEndDateGreaterThanEqual(new Date(), new Date());
-      if(!result.isEmpty()) {
-        return result.get(0);
-      }
-    }
-    else if(competitionType.equals(CompetitionType.DISCORD)) {
-
+    List<Competition> result = competitionsRepository.findByStartDateLessThanEqualAndEndDateGreaterThanEqualAndType(new Date(), new Date(), competitionType.name());
+    if (!result.isEmpty()) {
+      return result.get(0);
     }
     return null;
   }

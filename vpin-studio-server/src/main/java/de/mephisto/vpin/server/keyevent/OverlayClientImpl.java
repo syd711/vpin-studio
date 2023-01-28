@@ -2,10 +2,7 @@ package de.mephisto.vpin.server.keyevent;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import de.mephisto.vpin.restclient.AssetType;
-import de.mephisto.vpin.restclient.CompetitionType;
-import de.mephisto.vpin.restclient.OverlayClient;
-import de.mephisto.vpin.restclient.PopperScreen;
+import de.mephisto.vpin.restclient.*;
 import de.mephisto.vpin.restclient.representations.*;
 import de.mephisto.vpin.server.assets.Asset;
 import de.mephisto.vpin.server.assets.AssetService;
@@ -13,6 +10,7 @@ import de.mephisto.vpin.server.competitions.Competition;
 import de.mephisto.vpin.server.competitions.CompetitionService;
 import de.mephisto.vpin.server.competitions.RankedPlayer;
 import de.mephisto.vpin.server.competitions.ScoreSummary;
+import de.mephisto.vpin.server.discord.DiscordService;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameService;
 import de.mephisto.vpin.server.highscores.HighscoreService;
@@ -53,7 +51,22 @@ public class OverlayClientImpl implements OverlayClient, InitializingBean {
   @Autowired
   private HighscoreService highscoreService;
 
+  @Autowired
+  private DiscordService discordService;
+
   private ObjectMapper mapper;
+
+  @Override
+  public DiscordServer getDiscordServer(long serverId) {
+    try {
+      DiscordServer server = discordService.getServer(serverId);
+      String s = mapper.writeValueAsString(server);
+      return mapper.readValue(s, DiscordServer.class);
+    } catch (Exception e) {
+      LOG.error("Error during conversion: " + e.getMessage(), e);
+    }
+    return null;
+  }
 
   @Override
   public List<CompetitionRepresentation> getFinishedCompetitions(int limit) {

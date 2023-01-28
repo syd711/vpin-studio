@@ -3,6 +3,8 @@ package de.mephisto.vpin.commons.fx.widgets;
 import de.mephisto.vpin.commons.fx.LoadingOverlayController;
 import de.mephisto.vpin.commons.fx.OverlayWindowFX;
 import de.mephisto.vpin.restclient.AssetType;
+import de.mephisto.vpin.restclient.CompetitionType;
+import de.mephisto.vpin.restclient.DiscordServer;
 import de.mephisto.vpin.restclient.representations.*;
 import eu.hansolo.tilesfx.Tile;
 import eu.hansolo.tilesfx.TileBuilder;
@@ -15,6 +17,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.chart.XYChart;
+import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.StackPane;
@@ -39,6 +42,9 @@ import java.util.ResourceBundle;
 
 public class WidgetCompetitionController extends WidgetController implements Initializable {
   private final static Logger LOG = LoggerFactory.getLogger(WidgetCompetitionController.class);
+
+  @FXML
+  private Label titleLabel;
 
   @FXML
   private VBox statsWidget;
@@ -239,6 +245,15 @@ public class WidgetCompetitionController extends WidgetController implements Ini
       Platform.runLater(() -> {
         setCompetition(competition);
         root.setVisible(true);
+        if(competition.getType().equals(CompetitionType.OFFLINE.name())) {
+          titleLabel.setText("Offline Competition");
+        }
+        else if(competition.getType().equals(CompetitionType.DISCORD.name())) {
+          DiscordServer discordServer = OverlayWindowFX.client.getDiscordServer(competition.getDiscordServerId());
+          titleLabel.setText("\"" + discordServer.getName() + "\" Competition");
+        }
+        viewStack.getChildren().remove(loadingOverlay);
+
       });
     }).start();
   }

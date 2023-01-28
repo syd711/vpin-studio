@@ -6,6 +6,8 @@ import java.io.ByteArrayInputStream;
 import java.util.List;
 
 public interface OverlayClient {
+  DiscordServer getDiscordServer(long serverId);
+
   List<CompetitionRepresentation> getFinishedCompetitions(int limit);
 
   CompetitionRepresentation getActiveCompetition(CompetitionType type);

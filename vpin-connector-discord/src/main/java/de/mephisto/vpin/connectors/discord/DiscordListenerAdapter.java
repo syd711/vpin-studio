@@ -5,6 +5,10 @@ import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.channel.concrete.PrivateChannel;
 import net.dv8tion.jda.api.entities.channel.middleman.MessageChannel;
 import net.dv8tion.jda.api.entities.channel.unions.MessageChannelUnion;
+import net.dv8tion.jda.api.events.guild.member.GuildMemberJoinEvent;
+import net.dv8tion.jda.api.events.guild.member.GuildMemberRemoveEvent;
+import net.dv8tion.jda.api.events.guild.member.GuildMemberUpdateEvent;
+import net.dv8tion.jda.api.events.guild.member.update.GuildMemberUpdateNicknameEvent;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.slf4j.Logger;
@@ -17,11 +21,9 @@ public class DiscordListenerAdapter extends ListenerAdapter {
   private final static Logger LOG = LoggerFactory.getLogger(DiscordListenerAdapter.class);
 
   private List<String> commandsAllowList = new ArrayList<>();
-  private final JDA jda;
   private final DiscordCommandResolver commandResolver;
 
-  public DiscordListenerAdapter(JDA jda, DiscordCommandResolver commandResolver) {
-    this.jda = jda;
+  public DiscordListenerAdapter(DiscordCommandResolver commandResolver) {
     this.commandResolver = commandResolver;
   }
 
@@ -48,6 +50,31 @@ public class DiscordListenerAdapter extends ListenerAdapter {
   }
 
   /******************** Listener Methods ******************************************************************************/
+  @Override
+  public void onGuildMemberJoin(GuildMemberJoinEvent event) {
+    super.onGuildMemberJoin(event);
+    LOG.info("Guild member join event " + event);
+    DiscordCache.invalidate(event.getGuild().getIdLong());
+  }
+
+  @Override
+  public void onGuildMemberUpdate(GuildMemberUpdateEvent event) {
+    super.onGuildMemberUpdate(event);
+    DiscordCache.invalidate(event.getGuild().getIdLong());
+  }
+
+  @Override
+  public void onGuildMemberRemove(GuildMemberRemoveEvent event) {
+    super.onGuildMemberRemove(event);
+    DiscordCache.invalidate(event.getGuild().getIdLong());
+  }
+
+  @Override
+  public void onGuildMemberUpdateNickname(GuildMemberUpdateNicknameEvent event) {
+    super.onGuildMemberUpdateNickname(event);
+    DiscordCache.invalidate(event.getGuild().getIdLong());
+  }
+
   @Override
   public void onMessageReceived(MessageReceivedEvent event) {
     if (event.getAuthor().isBot()) {

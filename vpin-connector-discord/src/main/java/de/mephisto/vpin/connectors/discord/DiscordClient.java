@@ -5,26 +5,14 @@ import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.*;
-import net.dv8tion.jda.api.entities.channel.concrete.PrivateChannel;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.entities.channel.middleman.GuildChannel;
-import net.dv8tion.jda.api.entities.channel.middleman.MessageChannel;
-import net.dv8tion.jda.api.entities.channel.unions.MessageChannelUnion;
-import net.dv8tion.jda.api.events.guild.member.GuildMemberJoinEvent;
-import net.dv8tion.jda.api.events.guild.member.GuildMemberRemoveEvent;
-import net.dv8tion.jda.api.events.guild.member.GuildMemberUpdateEvent;
-import net.dv8tion.jda.api.events.guild.member.update.GuildMemberUpdateNicknameEvent;
-import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
-import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.requests.GatewayIntent;
 import net.dv8tion.jda.api.utils.MemberCachePolicy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.function.Consumer;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -35,8 +23,8 @@ public class DiscordClient {
 
   private final JDA jda;
   private final String guildId;
-  private DiscordListenerAdapter listenerAdapter;
-
+  private final DiscordListenerAdapter listenerAdapter;
+  private final Map<Long, Guild> guilds = new HashMap<>();
 
   public DiscordClient(String botToken, String guildId, DiscordCommandResolver commandResolver) throws Exception {
     this.guildId = guildId.trim();
@@ -44,13 +32,13 @@ public class DiscordClient {
         .setEventPassthrough(true)
         .setMemberCachePolicy(MemberCachePolicy.NONE)
         .build();
-    this.listenerAdapter = new DiscordListenerAdapter(jda, commandResolver);
+    this.listenerAdapter = new DiscordListenerAdapter(commandResolver);
     jda.awaitReady();
     jda.addEventListener(this.listenerAdapter);
   }
 
   public GuildInfo getGuildById(long guildId) {
-    Guild guild = jda.getGuildById(guildId);
+    Guild guild = getGuild(guildId);
     if (guild != null) {
       return new GuildInfo(guild);
     }
@@ -58,13 +46,18 @@ public class DiscordClient {
   }
 
   public List<DiscordMember> getMembers() {
-    return this.getMembers(Long.valueOf(guildId));
+    return this.getMembers(Long.parseLong(guildId));
   }
 
   public List<DiscordMember> getMembers(long serverId) {
     Guild guild = getGuild(serverId);
-    List<Member> members = guild.getMembers();
-    return members.stream().map(m -> toMember(m)).collect(Collectors.toList());
+    if (!DiscordCache.contains(serverId)) {
+      List<Member> members = guild.loadMembers().get();
+      List<DiscordMember> discordMembers = members.stream().map(this::toMember).collect(Collectors.toList());
+      DiscordCache.put(serverId, discordMembers);
+    }
+
+    return DiscordCache.getMembers(serverId);
   }
 
   public List<GuildInfo> getGuilds() {
@@ -121,7 +114,7 @@ public class DiscordClient {
     Guild guild = this.getGuild(serverId);
     if (guild != null) {
       Member member = guild.getMemberById(memberId);
-      if(member != null) {
+      if (member != null) {
         return toMember(member);
       }
     }
@@ -155,11 +148,9 @@ public class DiscordClient {
   }
 
   public void shutdown() {
+    guilds.clear();
+    DiscordCache.invalidateAll();
     this.jda.shutdownNow();
-  }
-
-  public String sendMessage(long channelId, String msg) {
-    return sendMessage(-1, channelId, msg);
   }
 
   public String sendMessage(long serverId, long channelId, String msg) {
@@ -182,14 +173,7 @@ public class DiscordClient {
   }
 
   public String getTopic(long serverId, long channelId) {
-    Guild guild = null;
-    if(serverId > 0) {
-      guild = jda.getGuildById(serverId);
-    }
-    else {
-      guild = jda.getGuildById(guildId);
-    }
-
+    Guild guild = getGuild(serverId);
     if (guild != null) {
       TextChannel textChannel = jda.getChannelById(TextChannel.class, channelId);
       if (textChannel != null) {
@@ -252,17 +236,17 @@ public class DiscordClient {
     this.listenerAdapter.setCommandsAllowList(commandsAllowList);
   }
 
-
-
   private Guild getGuild(long serverId) {
-    Guild guild = null;
-    if(serverId > 0) {
-      guild = jda.getGuildById(serverId);
+    long id = Long.parseLong(guildId);
+    if (serverId > 0) {
+      id = serverId;
     }
-    else {
-      guild = jda.getGuildById(guildId);
+
+    if (!guilds.containsKey(id)) {
+      guilds.put(id, jda.getGuildById(id));
     }
-    return guild;
+
+    return guilds.get(id);
   }
 
 }
