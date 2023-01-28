@@ -59,7 +59,7 @@
                                 <FontIcon iconColor="WHITE" iconLiteral="mdi2p-plus-circle-outline" />
                             </graphic>
                         </Button>
-                  <Button layoutX="380.0" layoutY="11.0" mnemonicParsing="false" onAction="#onCompetitionCreate" text="Join" textFill="WHITE">
+                  <Button layoutX="380.0" layoutY="11.0" mnemonicParsing="false" onAction="#onJoin" text="Join" textFill="WHITE">
                      <font>
                         <Font size="14.0" />
                      </font>

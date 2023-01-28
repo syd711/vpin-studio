@@ -9,6 +9,7 @@ import de.mephisto.vpin.restclient.discord.DiscordCompetitionScoreEntry;
 import de.mephisto.vpin.server.competitions.Competition;
 import de.mephisto.vpin.server.competitions.ScoreSummary;
 import de.mephisto.vpin.server.games.Game;
+import de.mephisto.vpin.server.highscores.HighscoreParser;
 import de.mephisto.vpin.server.highscores.Score;
 import de.mephisto.vpin.server.players.Player;
 import edu.umd.cs.findbugs.annotations.NonNull;
@@ -33,14 +34,18 @@ public class CompetitionDataHelper {
   public static String toDataString(@NonNull Competition competition, @NonNull Game game, @NonNull ScoreSummary summary, @NonNull String messageId) {
     try {
       StringBuilder b = new StringBuilder();
-      b.append("Active Competition: ");
+      b.append("Competition Table: ");
       b.append(game.getGameDisplayName());
       b.append("\n\n");
 
+      String tableName = game.getGameDisplayName();
+      if(tableName.length() > 40) {
+        tableName = tableName.substring(0, 40);
+      }
+
       DiscordCompetitionData data = new DiscordCompetitionData();
       data.setName(competition.getName());
-      data.setTableName(game.getGameDisplayName());
-      data.setCreatedAt(new Date());
+      data.setTableName(tableName);
       data.setStartDate(competition.getStartDate());
       data.setEndDate(competition.getEndDate());
       data.setFileSize(game.getGameFileSize());
@@ -97,7 +102,7 @@ public class CompetitionDataHelper {
     DiscordCompetitionData topicData = getCompetitionData(topic);
     if (topicData != null) {
       List<Score> scores = new ArrayList<>();
-      ScoreSummary summary = new ScoreSummary(scores, topicData.getCreatedAt());
+      ScoreSummary summary = new ScoreSummary(scores, new Date());
       List<DiscordCompetitionScoreEntry> scoresEntries = topicData.getScores();
       for (DiscordCompetitionScoreEntry scoresEntry : scoresEntries) {
         Player player = null;
@@ -105,7 +110,7 @@ public class CompetitionDataHelper {
         if (playerForInitials.isPresent()) {
           player = playerForInitials.get();
         }
-        Score score = new Score(topicData.getCreatedAt(), -1, scoresEntry.getInitials(), player, scoresEntry.getScore(), scoresEntry.getNumericScore(), scoresEntry.getPosition(), null);
+        Score score = new Score(new Date(), -1, scoresEntry.getInitials(), player, scoresEntry.getScore(), HighscoreParser.toNumericScore(scoresEntry.getScore()), scoresEntry.getPosition(), null);
         scores.add(score);
       }
       return summary;
@@ -131,10 +136,9 @@ public class CompetitionDataHelper {
     return null;
   }
 
-  private static DiscordCompetitionScoreEntry toScoreEntry(Score score) {
+  public static DiscordCompetitionScoreEntry toScoreEntry(Score score) {
     DiscordCompetitionScoreEntry entry = new DiscordCompetitionScoreEntry();
     entry.setScore(score.getScore());
-    entry.setNumericScore(score.getNumericScore());
     entry.setInitials(score.getPlayerInitials());
     entry.setPosition(score.getPosition());
     return entry;

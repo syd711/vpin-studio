@@ -176,7 +176,7 @@ public class HighscoreParser {
     return titleList;
   }
 
-  private static double toNumericScore(String score) {
+  public static double toNumericScore(String score) {
     try {
       String cleanScore = score.trim().replaceAll("\\.", "").replaceAll(",", "");
       return Double.parseDouble(cleanScore);

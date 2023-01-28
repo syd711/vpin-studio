@@ -135,6 +135,23 @@ public class CompetitionsDiscordController implements Initializable, StudioFXCon
   }
 
   @FXML
+  private void onJoin() {
+    CompetitionRepresentation c = Dialogs.openDiscordJoinCompetitionDialog();
+    if (c != null) {
+      try {
+        CompetitionRepresentation newCmp = client.saveCompetition(c);
+        onReload();
+        tableView.getSelectionModel().select(newCmp);
+      } catch (Exception e) {
+        WidgetFactory.showAlert(Studio.stage, e.getMessage());
+      }
+    }
+    else {
+      onReload();
+    }
+  }
+
+  @FXML
   private void onEdit() {
     CompetitionRepresentation selection = tableView.getSelectionModel().getSelectedItem();
     if (selection != null) {

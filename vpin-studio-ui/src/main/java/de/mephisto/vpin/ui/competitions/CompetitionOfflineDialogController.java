@@ -104,7 +104,11 @@ public class CompetitionOfflineDialogController implements Initializable, Dialog
 
     nameField.setText(competition.getName());
     nameField.textProperty().addListener((observableValue, s, t1) -> {
-      competition.setName(t1);
+      if (nameField.getText().length() > 40) {
+        String sub = nameField.getText().substring(0, 40);
+        nameField.setText(sub);
+      }
+      competition.setName(nameField.getText());
       validate();
     });
 

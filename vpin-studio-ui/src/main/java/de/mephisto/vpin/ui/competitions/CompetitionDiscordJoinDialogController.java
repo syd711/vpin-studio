@@ -48,6 +48,9 @@ public class CompetitionDiscordJoinDialogController implements Initializable, Di
   private Label ownerLabel;
 
   @FXML
+  private Label tableMatchLabel;
+
+  @FXML
   private ComboBox<DiscordChannel> channelsCombo;
 
   @FXML
@@ -183,7 +186,10 @@ public class CompetitionDiscordJoinDialogController implements Initializable, Di
       return;
     }
 
-    LocalDate end = competition.getEndDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+    long serverId = this.serversCombo.getValue().getId();
+    long channelId = this.channelsCombo.getValue().getId();
+
+    LocalDate end = discordCompetitionData.getEndDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
     LocalDate now = new Date().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
 
     long remainingDays = ChronoUnit.DAYS.between(now, end);
@@ -194,8 +200,13 @@ public class CompetitionDiscordJoinDialogController implements Initializable, Di
     this.tableLabel.setText(this.discordCompetitionData.getTableName());
     this.startDateLabel.setText(DateFormat.getDateInstance().format(this.discordCompetitionData.getStartDate()));
     this.endDateLabel.setText(DateFormat.getDateInstance().format(this.discordCompetitionData.getEndDate()));
-    this.remainingDaysLabel.setText(String.valueOf(remainingDays));
+    this.remainingDaysLabel.setText(remainingDays + " days");
     this.nameLabel.setText(this.discordCompetitionData.getName());
+
+    PlayerRepresentation discordPlayer = client.getDiscordPlayer(serverId, Long.parseLong(this.discordCompetitionData.getOwner()));
+    if(discordPlayer != null) {
+      this.ownerLabel.setText(discordPlayer.getName());
+    }
 
     validationContainer.setVisible(false);
     this.saveBtn.setDisable(false);

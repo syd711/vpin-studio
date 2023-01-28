@@ -2,7 +2,6 @@ package de.mephisto.vpin.server.games;
 
 import de.mephisto.vpin.restclient.PopperScreen;
 import de.mephisto.vpin.restclient.ValidationCode;
-import de.mephisto.vpin.server.highscores.HighscoreService;
 import de.mephisto.vpin.server.popper.Emulator;
 import de.mephisto.vpin.server.preferences.Preferences;
 import de.mephisto.vpin.server.preferences.PreferencesService;
@@ -45,9 +44,6 @@ public class GameValidator implements InitializingBean {
 
   @Autowired
   private PreferencesService preferencesService;
-
-  @Autowired
-  private HighscoreService highscoreService;
 
   private Preferences preferences;
 

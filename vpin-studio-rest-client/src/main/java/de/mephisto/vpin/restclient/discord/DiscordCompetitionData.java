@@ -9,7 +9,6 @@ public class DiscordCompetitionData {
   private String owner;
   private String rom;
   private long fileSize;
-  private Date createdAt;
   private Date startDate;
   private Date endDate;
   private String name;
@@ -55,14 +54,6 @@ public class DiscordCompetitionData {
 
   public void setName(String name) {
     this.name = name;
-  }
-
-  public Date getCreatedAt() {
-    return createdAt;
-  }
-
-  public void setCreatedAt(Date createdAt) {
-    this.createdAt = createdAt;
   }
 
   public List<DiscordCompetitionScoreEntry> getScores() {

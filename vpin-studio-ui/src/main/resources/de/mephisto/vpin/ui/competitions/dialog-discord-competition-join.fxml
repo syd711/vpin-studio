@@ -47,18 +47,28 @@
          <center>
             <VBox fx:id="mainColumn">
                <children>
-                  <Label text="Server Settings">
+                  <Label layoutX="10.0" layoutY="38.0" text="Competition Joining">
                      <font>
                         <Font name="System Bold" size="14.0" />
                      </font>
                   </Label>
-                  <Label layoutX="10.0" layoutY="10.0" styleClass="preference-description" text="Select a Discord server and channel to participate in an existing competition.">
+                  <Label layoutX="10.0" layoutY="30.0" styleClass="preference-description" text="Select a Discord server and channel to participate in an existing competition.">
+                     <font>
+                        <Font name="System Bold" size="14.0" />
+                     </font>
+                  </Label>
+                  <Label layoutX="10.0" layoutY="10.0" styleClass="preference-description" text="The server list is resolved by your VPin bot which must be a member of the server.">
                      <font>
                         <Font name="System Bold" size="14.0" />
                      </font>
                      <VBox.margin>
-                        <Insets bottom="6.0" />
+                        <Insets bottom="12.0" />
                      </VBox.margin>
+                  </Label>
+                  <Label text="Server Settings">
+                     <font>
+                        <Font name="System Bold" size="14.0" />
+                     </font>
                   </Label>
                   <GridPane vgap="3.0">
                     <columnConstraints>
@@ -120,7 +130,7 @@
                               <Font size="14.0" />
                            </font>
                         </Label>
-                        <Label text="Remaining Days:" textFill="WHITE" GridPane.rowIndex="5">
+                        <Label text="Remaining Time:" textFill="WHITE" GridPane.rowIndex="5">
                            <font>
                               <Font size="14.0" />
                            </font>
@@ -130,7 +140,7 @@
                               <Font size="14.0" />
                            </font>
                         </Label>
-                        <Label text="Competition Name:" textFill="WHITE">
+                        <Label text="Name:" textFill="WHITE">
                            <font>
                               <Font size="14.0" />
                            </font>
@@ -155,7 +165,7 @@
                               <Font size="14.0" />
                            </font>
                         </Label>
-                        <Label layoutX="10.0" layoutY="15.0" text="Competition Owner:" textFill="WHITE" GridPane.rowIndex="1">
+                        <Label layoutX="10.0" layoutY="15.0" text="Owner:" textFill="WHITE" GridPane.rowIndex="1">
                            <font>
                               <Font size="14.0" />
                            </font>
@@ -179,20 +189,21 @@
                     </columnConstraints>
                     <rowConstraints>
                         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                         <RowConstraints />
                     </rowConstraints>
                      <children>
-                        <Label layoutX="10.0" layoutY="189.0" text="Wheel Icon Preview:" textFill="WHITE" GridPane.rowIndex="1">
+                        <Label layoutX="10.0" layoutY="189.0" text="Wheel Icon Preview:" textFill="WHITE" GridPane.rowIndex="2">
                            <font>
                               <Font size="14.0" />
                            </font>
                         </Label>
-                        <Label layoutX="10.0" layoutY="117.0" text="Competition Badge:" textFill="WHITE">
+                        <Label layoutX="10.0" layoutY="117.0" text="Competition Badge:" textFill="WHITE" GridPane.rowIndex="1">
                            <font>
                               <Font size="14.0" />
                            </font>
                         </Label>
-                        <HBox alignment="CENTER_LEFT" GridPane.columnIndex="1">
+                        <HBox alignment="CENTER_LEFT" GridPane.columnIndex="1" GridPane.rowIndex="1">
                            <children>
                               <ComboBox fx:id="competitionIconCombo" prefHeight="30.0" prefWidth="210.0" />
                               <Label textFill="WHITE">
@@ -211,6 +222,16 @@
                               </Label>
                            </children>
                         </HBox>
+                        <Label layoutX="10.0" layoutY="49.0" text="Matching Table:" textFill="WHITE">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Label>
+                        <Label fx:id="tableMatchLabel" text="-" textFill="WHITE" GridPane.columnIndex="1">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Label>
                      </children>
                   </GridPane>
                   <StackPane alignment="TOP_LEFT" prefHeight="200.0" prefWidth="578.0">

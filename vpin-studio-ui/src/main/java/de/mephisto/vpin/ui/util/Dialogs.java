@@ -9,6 +9,7 @@ import de.mephisto.vpin.restclient.representations.PlayerRepresentation;
 import de.mephisto.vpin.ui.ProgressDialogController;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.UpdateDialogController;
+import de.mephisto.vpin.ui.competitions.CompetitionDiscordJoinDialogController;
 import de.mephisto.vpin.ui.competitions.CompetitionOfflineDialogController;
 import de.mephisto.vpin.ui.competitions.CompetitionDiscordDialogController;
 import de.mephisto.vpin.ui.players.PlayerDialogController;
@@ -43,6 +44,16 @@ public class Dialogs {
     stage.showAndWait();
 
     return controller.getPlayer();
+  }
+
+  public static CompetitionRepresentation openDiscordJoinCompetitionDialog() {
+    String title = "Join Competition";
+    FXMLLoader fxmlLoader = new FXMLLoader(CompetitionOfflineDialogController.class.getResource("dialog-discord-competition-join.fxml"));
+    Stage stage = WidgetFactory.createDialogStage(fxmlLoader, Studio.stage, title);
+    CompetitionDiscordJoinDialogController controller = (CompetitionDiscordJoinDialogController) stage.getUserData();
+    stage.showAndWait();
+
+    return controller.getCompetition();
   }
 
   public static CompetitionRepresentation openDiscordCompetitionDialog(CompetitionRepresentation selection) {

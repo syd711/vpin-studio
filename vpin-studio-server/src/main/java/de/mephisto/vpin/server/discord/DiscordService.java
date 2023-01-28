@@ -9,6 +9,7 @@ import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.server.competitions.Competition;
 import de.mephisto.vpin.server.competitions.ScoreSummary;
 import de.mephisto.vpin.server.games.Game;
+import de.mephisto.vpin.server.games.GameService;
 import de.mephisto.vpin.server.players.Player;
 import de.mephisto.vpin.server.preferences.PreferenceChangedListener;
 import de.mephisto.vpin.server.preferences.PreferencesService;
@@ -32,8 +33,6 @@ public class DiscordService implements InitializingBean, PreferenceChangedListen
 
   @Autowired
   private PreferencesService preferencesService;
-
-  private List<DiscordMember> lastMembers;
 
   private DiscordBotCommandListener botCommandListener;
 
@@ -143,7 +142,10 @@ public class DiscordService implements InitializingBean, PreferenceChangedListen
   public DiscordCompetitionData getCompetitionData(long serverId, long channelId) {
     if (this.discordClient != null) {
       String topic = this.discordClient.getTopic(serverId, channelId);
-      return CompetitionDataHelper.getCompetitionData(topic);
+      DiscordCompetitionData competitionData = CompetitionDataHelper.getCompetitionData(topic);
+      if(competitionData != null) {
+        return competitionData;
+      }
     }
     return new DiscordCompetitionData();
   }
