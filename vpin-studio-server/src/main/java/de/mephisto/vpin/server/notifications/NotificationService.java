@@ -1,17 +1,20 @@
 package de.mephisto.vpin.server.notifications;
 
-import de.mephisto.vpin.connectors.discord.BotCommand;
-import de.mephisto.vpin.connectors.discord.BotCommandResponse;
 import de.mephisto.vpin.connectors.discord.DiscordWebhook;
 import de.mephisto.vpin.restclient.CompetitionType;
 import de.mephisto.vpin.restclient.PreferenceNames;
-import de.mephisto.vpin.server.competitions.*;
-import de.mephisto.vpin.server.discord.*;
+import de.mephisto.vpin.server.competitions.Competition;
+import de.mephisto.vpin.server.competitions.CompetitionChangeListener;
+import de.mephisto.vpin.server.competitions.CompetitionService;
+import de.mephisto.vpin.server.competitions.ScoreSummary;
+import de.mephisto.vpin.server.discord.DiscordChannelMessageFactory;
+import de.mephisto.vpin.server.discord.DiscordOfflineChannelMessageFactory;
+import de.mephisto.vpin.server.discord.DiscordService;
+import de.mephisto.vpin.server.discord.DiscordWebhookMessageFactory;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameService;
 import de.mephisto.vpin.server.highscores.HighscoreChangeEvent;
 import de.mephisto.vpin.server.highscores.HighscoreChangeListener;
-import de.mephisto.vpin.server.highscores.HighscoreMetadata;
 import de.mephisto.vpin.server.highscores.HighscoreService;
 import de.mephisto.vpin.server.highscores.cards.CardService;
 import de.mephisto.vpin.server.players.Player;
@@ -31,11 +34,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
-public class NotificationService implements InitializingBean, HighscoreChangeListener, CompetitionChangeListener, TableStatusChangeListener, DiscordBotCommandListener {
+public class NotificationService implements InitializingBean, HighscoreChangeListener, CompetitionChangeListener, TableStatusChangeListener {
   private final static Logger LOG = LoggerFactory.getLogger(NotificationService.class);
 
   @Autowired
@@ -64,61 +66,6 @@ public class NotificationService implements InitializingBean, HighscoreChangeLis
 
   public void notifyPopperRestart() {
     discordService.setStatus(null);
-  }
-
-  @Override
-  public BotCommandResponse onBotCommand(BotCommand cmd) {
-    String name = cmd.getCommand();
-    switch (name) {
-      case BotCommand.CMD_COMPETITIONS: {
-        List<Competition> activeCompetitions = competitionService.getActiveCompetitions();
-        if (activeCompetitions.isEmpty()) {
-          return () -> "No active competitions found.";
-        }
-
-        StringBuilder builder = new StringBuilder();
-        for (Competition activeCompetition : activeCompetitions) {
-          Game game = gameService.getGame(activeCompetition.getGameId());
-          if (game != null) {
-            ScoreSummary highscores = highscoreService.getHighscores(game.getId(), game.getGameDisplayName());
-            String msg = DiscordBotCommandResponseFactory.createActiveCompetitionMessage(activeCompetition, game, highscores);
-            builder.append(msg);
-          }
-        }
-        return builder::toString;
-      }
-      case BotCommand.CMD_HS: {
-        if (cmd.getParameter() != null) {
-          List<Game> games = gameService.getGames();
-          for (Game game : games) {
-            if (game.getGameDisplayName().toLowerCase().contains(cmd.getParameter())) {
-              HighscoreMetadata metadata = highscoreService.updateHighscore(game);
-              if (StringUtils.isEmpty(metadata.getRaw()) && !StringUtils.isEmpty(metadata.getStatus())) {
-                return () -> "Highscore for '" + game.getGameDisplayName() + "' retrieval failed: " + metadata.getStatus();
-              }
-              ScoreSummary highscores = highscoreService.getHighscores(game.getId(), game.getGameDisplayName());
-              return () -> DiscordBotCommandResponseFactory.createHighscoreMessage(game, highscores);
-            }
-          }
-          LOG.info("No matching game found for '" + cmd);
-        }
-        return null;
-      }
-      case BotCommand.CMD_RANKS: {
-        List<RankedPlayer> playersByRanks = highscoreService.getPlayersByRanks();
-        return () -> DiscordBotCommandResponseFactory.createRanksMessage(playersByRanks);
-      }
-      case BotCommand.CMD_PLAYER: {
-        Optional<Player> playerForInitials = playerService.getPlayerForInitials(cmd.getParameter());
-        if (playerForInitials.isPresent()) {
-          ScoreSummary highscores = highscoreService.getHighscores(cmd.getParameter());
-          return () -> DiscordBotCommandResponseFactory.createRanksMessageFor(playerForInitials.get(), highscores);
-        }
-        return () -> "No player found with initials '" + cmd.getParameter().toUpperCase() + "'";
-      }
-    }
-//    return () -> "Unknown bot command '" + cmd.getContent() + "'";
-    return () -> null;
   }
 
   @Override
@@ -290,6 +237,5 @@ public class NotificationService implements InitializingBean, HighscoreChangeLis
     competitionService.addCompetitionChangeListener(this);
     popperService.addTableStatusChangeListener(this);
     discordService.setStatus(null);
-    discordService.setBotCommandListener(this);
   }
 }
