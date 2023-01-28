@@ -64,8 +64,10 @@ public class RestClient implements ClientHttpRequestInterceptor {
 
   public <T> T get(String path, Class<T> entityType, Map<String, ?> urlVariables) {
     String url = baseUrl + path;
-    LOG.info("HTTP GET " + url);
-    return restTemplate.getForObject(url, entityType, urlVariables);
+    long start = System.currentTimeMillis();
+    T forObject = restTemplate.getForObject(url, entityType, urlVariables);
+    LOG.info("HTTP GET " + url + " (" + (System.currentTimeMillis() - start) + "ms)");
+    return forObject;
   }
 
   public Boolean delete(String path) {

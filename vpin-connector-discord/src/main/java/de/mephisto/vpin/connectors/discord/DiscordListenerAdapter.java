@@ -1,6 +1,5 @@
 package de.mephisto.vpin.connectors.discord;
 
-import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.channel.concrete.PrivateChannel;
 import net.dv8tion.jda.api.entities.channel.middleman.MessageChannel;
@@ -54,25 +53,29 @@ public class DiscordListenerAdapter extends ListenerAdapter {
   public void onGuildMemberJoin(GuildMemberJoinEvent event) {
     super.onGuildMemberJoin(event);
     LOG.info("Guild member join event " + event);
-    DiscordCache.invalidate(event.getGuild().getIdLong());
+    DiscordMemberCache.invalidateAll();
+    DiscordMembersCache.invalidate(event.getGuild().getIdLong());
   }
 
   @Override
   public void onGuildMemberUpdate(GuildMemberUpdateEvent event) {
     super.onGuildMemberUpdate(event);
-    DiscordCache.invalidate(event.getGuild().getIdLong());
+    DiscordMemberCache.invalidateAll();
+    DiscordMembersCache.invalidate(event.getGuild().getIdLong());
   }
 
   @Override
   public void onGuildMemberRemove(GuildMemberRemoveEvent event) {
     super.onGuildMemberRemove(event);
-    DiscordCache.invalidate(event.getGuild().getIdLong());
+    DiscordMemberCache.invalidateAll();
+    DiscordMembersCache.invalidate(event.getGuild().getIdLong());
   }
 
   @Override
   public void onGuildMemberUpdateNickname(GuildMemberUpdateNicknameEvent event) {
     super.onGuildMemberUpdateNickname(event);
-    DiscordCache.invalidate(event.getGuild().getIdLong());
+    DiscordMemberCache.invalidateAll();
+    DiscordMembersCache.invalidate(event.getGuild().getIdLong());
   }
 
   @Override

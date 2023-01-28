@@ -16,11 +16,10 @@ import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
 
-public class DiscordChannelMessageFactory {
-  private static final String DISCORD_COMPETITION_CREATED_TEMPLATE = "%s started a new competition!\n" +
+public class DiscordOfflineChannelMessageFactory {
+  private static final String OFFLINE_COMPETITION_CREATED_TEMPLATE = "A new competition has been started!\n" +
       "```\n" +
       "%s\n" +
-      "(ID: %s)\n" +
       "------------------------------------------------------------\n" +
       "Table:       %s\n" +
       "Start Date:  %s\n" +
@@ -91,16 +90,14 @@ public class DiscordChannelMessageFactory {
     return result;
   }
 
-  public static String createDiscordCompetitionCreatedMessage(Competition competition, Game game, long initiatorId) {
+  
+  public static String createOfflineCompetitionCreatedMessage(Competition competition, Game game) {
     LocalDate start = competition.getStartDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
     LocalDate end = competition.getEndDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
     long diff = Math.abs(ChronoUnit.DAYS.between(end, start));
-    String userId = "<@" + initiatorId + ">";
 
-    return String.format(DISCORD_COMPETITION_CREATED_TEMPLATE,
-        userId,
+    return String.format(OFFLINE_COMPETITION_CREATED_TEMPLATE,
         competition.getName(),
-        competition.getUuid(),
         game.getGameDisplayName(),
         DateFormat.getDateInstance().format(competition.getStartDate()),
         DateFormat.getDateInstance().format(competition.getEndDate()),

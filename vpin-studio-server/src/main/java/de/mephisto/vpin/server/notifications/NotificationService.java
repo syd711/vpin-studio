@@ -159,7 +159,7 @@ public class NotificationService implements InitializingBean, HighscoreChangeLis
       if (competition.getDiscordChannelId() > 0 && competition.isActive()) {
         long discordServerId = competition.getDiscordServerId();
         long discordChannelId = competition.getDiscordChannelId();
-        discordService.sendMessage(discordServerId, discordChannelId, DiscordChannelMessageFactory.createCompetitionHighscoreCreatedMessage(competition, event));
+        discordService.sendMessage(discordServerId, discordChannelId, DiscordOfflineChannelMessageFactory.createCompetitionHighscoreCreatedMessage(competition, event));
         highscoreNotificationSent = true;
       }
     }
@@ -196,7 +196,7 @@ public class NotificationService implements InitializingBean, HighscoreChangeLis
       if (competition.getType().equals(CompetitionType.OFFLINE.name()) && competition.getDiscordChannelId() > 0 && competition.isActive()) {
         long discordServerId = competition.getDiscordServerId();
         long discordChannelId = competition.getDiscordChannelId();
-        discordService.sendMessage(discordServerId, discordChannelId, DiscordChannelMessageFactory.createOfflineCompetitionCreatedMessage(competition, game));
+        discordService.sendMessage(discordServerId, discordChannelId, DiscordOfflineChannelMessageFactory.createOfflineCompetitionCreatedMessage(competition, game));
       }
     }
   }
@@ -213,7 +213,7 @@ public class NotificationService implements InitializingBean, HighscoreChangeLis
         long discordChannelId = competition.getDiscordChannelId();
         ScoreSummary summary = discordService.getScoreSummary(discordServerId, discordChannelId);
         if (summary != null) {
-          discordService.sendMessage(discordServerId, discordChannelId, DiscordChannelMessageFactory.createCompetitionFinishedMessage(competition, winner, game, summary));
+          discordService.sendMessage(discordServerId, discordChannelId, DiscordOfflineChannelMessageFactory.createCompetitionFinishedMessage(competition, winner, game, summary));
         }
         else {
           LOG.warn("Failed to finished " + competition + " properly, unable to resolve scoring from topic.");
@@ -237,7 +237,7 @@ public class NotificationService implements InitializingBean, HighscoreChangeLis
       if (competition.getDiscordChannelId() > 0 && competition.isActive()) {
         long discordServerId = competition.getDiscordServerId();
         long discordChannelId = competition.getDiscordChannelId();
-        String message = DiscordChannelMessageFactory.createCompetitionCancelledMessage(competition);
+        String message = DiscordOfflineChannelMessageFactory.createCompetitionCancelledMessage(competition);
         discordService.sendMessage(discordServerId, discordChannelId, message);
       }
 

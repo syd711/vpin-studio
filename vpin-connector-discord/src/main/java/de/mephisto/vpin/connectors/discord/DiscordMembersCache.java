@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class DiscordCache {
+public class DiscordMembersCache {
 
   private final static Map<Long, List<DiscordMember>> membersByServer = new ConcurrentHashMap<>();
 

@@ -25,6 +25,7 @@ public class DiscordClient {
   private final String guildId;
   private final DiscordListenerAdapter listenerAdapter;
   private final Map<Long, Guild> guilds = new HashMap<>();
+  private long botId;
 
   public DiscordClient(String botToken, String guildId, DiscordCommandResolver commandResolver) throws Exception {
     this.guildId = guildId.trim();
@@ -35,6 +36,7 @@ public class DiscordClient {
     this.listenerAdapter = new DiscordListenerAdapter(commandResolver);
     jda.awaitReady();
     jda.addEventListener(this.listenerAdapter);
+    this.botId = jda.getSelfUser().getIdLong();
   }
 
   public GuildInfo getGuildById(long guildId) {
@@ -49,15 +51,16 @@ public class DiscordClient {
     return this.getMembers(Long.parseLong(guildId));
   }
 
-  public List<DiscordMember> getMembers(long serverId) {
+  public synchronized List<DiscordMember> getMembers(long serverId) {
     Guild guild = getGuild(serverId);
-    if (!DiscordCache.contains(serverId)) {
+    if (!DiscordMembersCache.contains(serverId)) {
       List<Member> members = guild.loadMembers().get();
       List<DiscordMember> discordMembers = members.stream().map(this::toMember).collect(Collectors.toList());
-      DiscordCache.put(serverId, discordMembers);
+      DiscordMembersCache.put(serverId, discordMembers);
+      LOG.info("Cached " + discordMembers.size() + " members for " + guild.getName() + "/" + serverId);
     }
 
-    return DiscordCache.getMembers(serverId);
+    return DiscordMembersCache.getMembers(serverId);
   }
 
   public List<GuildInfo> getGuilds() {
@@ -65,7 +68,7 @@ public class DiscordClient {
   }
 
   public long getBotId() {
-    return jda.getSelfUser().getIdLong();
+    return botId;
   }
 
   public void setTopic(long serverId, long channelId, String topic) {
@@ -111,14 +114,17 @@ public class DiscordClient {
   }
 
   public DiscordMember getMember(long serverId, long memberId) {
-    Guild guild = this.getGuild(serverId);
-    if (guild != null) {
-      Member member = guild.getMemberById(memberId);
-      if (member != null) {
-        return toMember(member);
+    if(DiscordMemberCache.contains(memberId)) {
+      Guild guild = this.getGuild(serverId);
+      if (guild != null) {
+        Member member = guild.getMemberById(memberId);
+        if (member != null) {
+          DiscordMember discordMember = toMember(member);
+          DiscordMemberCache.put(memberId, discordMember);
+        }
       }
     }
-    return null;
+    return DiscordMemberCache.getMember(memberId);
   }
 
   public List<DiscordTextChannel> getChannels() {
@@ -149,7 +155,8 @@ public class DiscordClient {
 
   public void shutdown() {
     guilds.clear();
-    DiscordCache.invalidateAll();
+    DiscordMemberCache.invalidateAll();
+    DiscordMembersCache.invalidateAll();
     this.jda.shutdownNow();
   }
 
@@ -243,7 +250,9 @@ public class DiscordClient {
     }
 
     if (!guilds.containsKey(id)) {
-      guilds.put(id, jda.getGuildById(id));
+      Guild guildById = jda.getGuildById(id);
+      LOG.info("Cached guild '" + guildById.getName() + "'");
+      guilds.put(id, guildById);
     }
 
     return guilds.get(id);
