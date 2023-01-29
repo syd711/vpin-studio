@@ -3,6 +3,7 @@ package de.mephisto.vpin.server.notifications;
 import de.mephisto.vpin.connectors.discord.DiscordWebhook;
 import de.mephisto.vpin.restclient.CompetitionType;
 import de.mephisto.vpin.restclient.PreferenceNames;
+import de.mephisto.vpin.restclient.discord.DiscordCompetitionData;
 import de.mephisto.vpin.server.competitions.Competition;
 import de.mephisto.vpin.server.competitions.CompetitionChangeListener;
 import de.mephisto.vpin.server.competitions.CompetitionService;
@@ -137,10 +138,17 @@ public class NotificationService implements InitializingBean, HighscoreChangeLis
         long discordServerId = competition.getDiscordServerId();
         long discordChannelId = competition.getDiscordChannelId();
         long botId = discordService.getBotId();
-        String messageId = discordService.sendMessage(discordServerId, discordChannelId, DiscordChannelMessageFactory.createDiscordCompetitionCreatedMessage(competition, game, botId));
 
-        ScoreSummary highscores = highscoreService.getHighscores(game.getId());
-        discordService.saveCompetitionData(competition, game, highscores, messageId);
+        //check if the competition is already set as topic, in this case the user simply re-created the DB entry
+        DiscordCompetitionData competitionData = discordService.getCompetitionData(discordServerId, discordChannelId);
+        if(competitionData == null) {
+          String messageId = discordService.sendMessage(discordServerId, discordChannelId, DiscordChannelMessageFactory.createDiscordCompetitionCreatedMessage(competition, game, botId));
+          ScoreSummary highscores = highscoreService.getHighscores(game.getId());
+          discordService.saveCompetitionData(competition, game, highscores, messageId);
+        }
+        else {
+          LOG.warn("Tried to overwrite an existing competition, skipped notifications and Discord server update.");
+        }
       }
 
       if (competition.getType().equals(CompetitionType.OFFLINE.name()) && competition.getDiscordChannelId() > 0 && competition.isActive()) {
@@ -213,6 +221,7 @@ public class NotificationService implements InitializingBean, HighscoreChangeLis
 
     runAugmentationCheck();
 
+    //only the dates of the competition could have been changed
     if (competition.getType().equals(CompetitionType.DISCORD.name())) {
       ScoreSummary summary = competitionService.getCompetitionScore(competition.getId());
       long discordServerId = competition.getDiscordServerId();
