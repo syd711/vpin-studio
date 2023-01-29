@@ -104,7 +104,7 @@ public class NotificationService implements InitializingBean, HighscoreChangeLis
     }
 
     boolean highscoreNotificationSent = false;
-    List<Competition> competitionForGame = competitionService.findCompetitionForGame(game.getId());
+    List<Competition> competitionForGame = competitionService.getCompetitionForGame(game.getId());
     for (Competition competition : competitionForGame) {
       if (competition.getDiscordChannelId() > 0 && competition.isActive()) {
         long discordServerId = competition.getDiscordServerId();

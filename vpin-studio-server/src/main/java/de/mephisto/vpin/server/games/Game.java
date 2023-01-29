@@ -37,6 +37,7 @@ public class Game {
   private String ignoredValidations;
   private int volume;
   private String highscoreType;
+  private boolean competed;
 
   private List<GameAsset> assets = new ArrayList<>();
 
@@ -48,6 +49,14 @@ public class Game {
 
   public Game(@NonNull SystemService systemService) {
     this.systemService = systemService;
+  }
+
+  public boolean isCompeted() {
+    return competed;
+  }
+
+  public void setCompeted(boolean competed) {
+    this.competed = competed;
   }
 
   public long getGameFileSize() {

@@ -1,6 +1,7 @@
 package de.mephisto.vpin.server.games;
 
 import de.mephisto.vpin.restclient.DeleteDescriptor;
+import de.mephisto.vpin.restclient.discord.DiscordCompetitionData;
 import de.mephisto.vpin.server.competitions.ScoreSummary;
 import de.mephisto.vpin.server.highscores.HighscoreMetadata;
 import de.mephisto.vpin.server.highscores.ScoreList;
@@ -79,7 +80,6 @@ public class GamesResource {
     return gameService.getScoreHistory(id);
   }
 
-
   @GetMapping("/scan/{id}")
   public Game scanGame(@PathVariable("id") int pupId) {
     return gameService.scanGame(pupId);
@@ -98,6 +98,11 @@ public class GamesResource {
   @PostMapping("/save")
   public Game save(@RequestBody Game game) throws Exception {
     return gameService.save(game);
+  }
+
+  @GetMapping("/rom/{rom}")
+  public List<Game> findByRom(@PathVariable("rom") String rom) {
+    return gameService.getGamesByRom(rom);
   }
 
   @PostMapping("/upload/rom")

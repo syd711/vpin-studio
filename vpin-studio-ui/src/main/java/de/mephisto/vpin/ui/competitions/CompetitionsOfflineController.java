@@ -148,12 +148,17 @@ public class CompetitionsOfflineController implements Initializable, StudioFXCon
     CompetitionRepresentation selection = tableView.getSelectionModel().getSelectedItem();
     if (selection != null) {
       String help = null;
+      String help2 = null;
       if (!StringUtils.isEmpty(selection.getWinnerInitials())) {
         help = "The player '" + selection.getWinnerInitials() + "' will have one less won competition.";
       }
+      else if(selection.isActive()) {
+        help  = "The competition is still active for another " + selection.remainingDays() + " days.";
+        help2 = "This will cancel the competition, no winner will be announced.";
+      }
 
       Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Delete Competition '" + selection.getName() + "'?",
-          help);
+          help, help2);
       if (result.isPresent() && result.get().equals(ButtonType.OK)) {
         tableView.getSelectionModel().clearSelection();
         client.deleteCompetition(selection);
@@ -320,6 +325,7 @@ public class CompetitionsOfflineController implements Initializable, StudioFXCon
     });
 
     bindSearchField();
+    onReload();
   }
 
   private void bindSearchField() {

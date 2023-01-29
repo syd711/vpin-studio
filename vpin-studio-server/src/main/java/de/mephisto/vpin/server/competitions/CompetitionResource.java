@@ -40,7 +40,12 @@ public class CompetitionResource {
 
   @GetMapping("/game/{id}")
   public List<Competition> existsForGame(@PathVariable("id") int id) {
-    return competitionService.findCompetitionForGame(id);
+    return competitionService.getCompetitionForGame(id);
+  }
+
+  @GetMapping("/competition/{uuid}")
+  public Competition byUuid(@PathVariable("uuid") String uuid) {
+    return competitionService.getCompetitionForUuid(uuid);
   }
 
   @GetMapping("/finished/{limit}")

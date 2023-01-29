@@ -2,6 +2,7 @@ package de.mephisto.vpin.server.games;
 
 import de.mephisto.vpin.commons.utils.FileUtils;
 import de.mephisto.vpin.restclient.DeleteDescriptor;
+import de.mephisto.vpin.server.competitions.CompetitionService;
 import de.mephisto.vpin.server.competitions.ScoreSummary;
 import de.mephisto.vpin.server.highscores.*;
 import de.mephisto.vpin.server.highscores.cards.CardService;
@@ -42,6 +43,9 @@ public class GameService {
   private HighscoreService highscoreService;
 
   @Autowired
+  private CompetitionService competitionService;
+
+  @Autowired
   private CardService cardService;
 
   @SuppressWarnings("unused")
@@ -55,6 +59,15 @@ public class GameService {
     }
     LOG.info("Game details fetch took " + (System.currentTimeMillis() - start) + "ms.");
     return games;
+  }
+
+  public List<Game> getGamesByRom(String rom) {
+    List<Game> result = new ArrayList<>();
+    List<GameDetails> details = gameDetailsRepository.findByRomNameOrTableName(rom, rom);
+    for (GameDetails detail : details) {
+      result.add(getGame(detail.getPupId()));
+    }
+    return result;
   }
 
   public boolean deleteGame(@NonNull DeleteDescriptor descriptor) {
@@ -309,6 +322,7 @@ public class GameService {
     }
 
     game.setOriginalRom(romService.getOriginalRom(game.getRom()));
+    game.setCompeted(competitionService.isCompeted(game.getId()));
     game.setHsFileName(gameDetails.getHsFileName());
     game.setTableName(gameDetails.getTableName());
     game.setIgnoredValidations(gameDetails.getIgnoredValidations());
@@ -348,5 +362,4 @@ public class GameService {
     }
     return updated;
   }
-
 }

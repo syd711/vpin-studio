@@ -204,13 +204,22 @@ public class CompetitionService implements InitializingBean {
     return false;
   }
 
+  public List<Competition> getCompetitionForGame(int id) {
+    return competitionsRepository.findByGameId(id);
+  }
+
+  public Competition getCompetitionForUuid(String uuid) {
+    Optional<Competition> competition = competitionsRepository.findByUuid(uuid);
+    return competition.orElse(null);
+  }
+
+  public boolean isCompeted(int id) {
+    List<Competition> competedByGameId = competitionsRepository.findByStartDateLessThanEqualAndEndDateGreaterThanEqualAndGameId(new Date(), new Date(), id);
+    return !competedByGameId.isEmpty();
+  }
+
   @Override
   public void afterPropertiesSet() throws Exception {
     scheduler.scheduleAtFixedRate(new CompetitionCheckRunnable(this), 1000 * 60 * 60);
   }
-
-  public List<Competition> findCompetitionForGame(int id) {
-    return competitionsRepository.findByGameId(id);
-  }
-
 }

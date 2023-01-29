@@ -41,6 +41,15 @@ public class GameRepresentation {
   private List<GameAssetRepresentation> assets;
   private boolean pov;
   private boolean selected;
+  private boolean competed;
+
+  public boolean isCompeted() {
+    return competed;
+  }
+
+  public void setCompeted(boolean competed) {
+    this.competed = competed;
+  }
 
   public long getGameFileSize() {
     return gameFileSize;

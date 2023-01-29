@@ -5,11 +5,14 @@ import org.springframework.stereotype.Repository;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface CompetitionsRepository extends JpaRepository<Competition, Long> {
 
   List<Competition> findByStartDateLessThanEqualAndEndDateGreaterThanEqual(Date now1, Date now2);
+
+  List<Competition> findByStartDateLessThanEqualAndEndDateGreaterThanEqualAndGameId(Date now1, Date now2, int gameId);
 
   List<Competition> findByStartDateLessThanEqualAndEndDateGreaterThanEqualAndType(Date now1, Date now2, String type);
 
@@ -22,4 +25,6 @@ public interface CompetitionsRepository extends JpaRepository<Competition, Long>
   List<Competition> findByType(String type);
 
   List<Competition> findByGameId(int id);
+
+  Optional<Competition> findByUuid(String id);
 }

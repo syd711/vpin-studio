@@ -70,6 +70,7 @@ public class VPinStudioClient implements ObservedPropertyChangeListener, Overlay
   public List<DiscordChannel> getDiscordChannels() {
     return Arrays.asList(restClient.get(API + "discord/channels", DiscordChannel[].class));
   }
+
   public PlayerRepresentation getDiscordPlayer(long serverId, long memberId) {
     return restClient.get(API + "discord/player/" + serverId + "/" + memberId, PlayerRepresentation.class);
   }
@@ -291,7 +292,7 @@ public class VPinStudioClient implements ObservedPropertyChangeListener, Overlay
   }
 
   public ByteArrayInputStream getAsset(AssetType assetType, String uuid) {
-    if(assetType.equals(AssetType.AVATAR) && imageCache.containsKey(uuid)) {
+    if (assetType.equals(AssetType.AVATAR) && imageCache.containsKey(uuid)) {
       return new ByteArrayInputStream(imageCache.get(uuid));
     }
 
@@ -300,7 +301,7 @@ public class VPinStudioClient implements ObservedPropertyChangeListener, Overlay
       throw new UnsupportedOperationException("No data found for asset with UUID " + uuid);
     }
 
-    if(assetType.equals(AssetType.AVATAR)) {
+    if (assetType.equals(AssetType.AVATAR)) {
       imageCache.put(uuid, bytes);
     }
     return new ByteArrayInputStream(bytes);
@@ -349,6 +350,10 @@ public class VPinStudioClient implements ObservedPropertyChangeListener, Overlay
   /*********************************************************************************************************************
    * Competitions
    ********************************************************************************************************************/
+
+  public CompetitionRepresentation getCompetitionByUuid(String uuid) {
+    return restClient.get(API + "competitions/competition/" + uuid, CompetitionRepresentation.class);
+  }
 
   public List<CompetitionRepresentation> getOfflineCompetitions() {
     return Arrays.asList(restClient.get(API + "competitions/offline", CompetitionRepresentation[].class));
@@ -462,6 +467,16 @@ public class VPinStudioClient implements ObservedPropertyChangeListener, Overlay
       LOG.error("Failed to delete game " + descriptor.getGameId() + ": " + e.getMessage(), e);
     }
   }
+
+  public List<GameRepresentation> getGamesByRom(String rom) {
+    try {
+      return Arrays.asList(restClient.get(API + "games/rom/" + rom, GameRepresentation[].class));
+    } catch (Exception e) {
+      LOG.error("Failed to read games for " + rom + ": " + e.getMessage());
+    }
+    return null;
+  }
+
 
   public GameRepresentation getGame(int id) {
     try {

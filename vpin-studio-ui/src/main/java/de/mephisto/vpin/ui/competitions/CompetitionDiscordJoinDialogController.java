@@ -1,7 +1,9 @@
 package de.mephisto.vpin.ui.competitions;
 
 import de.mephisto.vpin.commons.fx.DialogController;
-import de.mephisto.vpin.restclient.*;
+import de.mephisto.vpin.restclient.CompetitionType;
+import de.mephisto.vpin.restclient.PopperScreen;
+import de.mephisto.vpin.restclient.VPinStudioClient;
 import de.mephisto.vpin.restclient.discord.DiscordChannel;
 import de.mephisto.vpin.restclient.discord.DiscordCompetitionData;
 import de.mephisto.vpin.restclient.discord.DiscordServer;
@@ -11,7 +13,10 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.ComboBox;
+import javafx.scene.control.Label;
+import javafx.scene.control.ListCell;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
@@ -25,7 +30,10 @@ import java.text.DateFormat;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.ResourceBundle;
 
 import static de.mephisto.vpin.ui.Studio.client;
 
@@ -48,7 +56,7 @@ public class CompetitionDiscordJoinDialogController implements Initializable, Di
   private Label ownerLabel;
 
   @FXML
-  private Label tableMatchLabel;
+  private ComboBox<GameRepresentation> tableCombo;
 
   @FXML
   private ComboBox<DiscordChannel> channelsCombo;
@@ -93,22 +101,26 @@ public class CompetitionDiscordJoinDialogController implements Initializable, Di
 
   @FXML
   private void onSaveClick(ActionEvent e) {
+    competition = new CompetitionRepresentation();
+    competition.setType(CompetitionType.DISCORD.name());
+
+    competition.setName(this.discordCompetitionData.getName());
+    competition.setUuid(this.discordCompetitionData.getUuid());
+    competition.setOwner(this.discordCompetitionData.getOwner());
+    competition.setStartDate(this.discordCompetitionData.getStartDate());
+    competition.setEndDate(this.discordCompetitionData.getEndDate());
+
+    competition.setBadge(this.competitionIconCombo.getValue());
+    competition.setGameId(this.tableCombo.getValue().getId());
+    competition.setDiscordServerId(this.serversCombo.getValue().getId());
+    competition.setDiscordChannelId(this.channelsCombo.getValue().getId());
+
     Stage stage = (Stage) ((Button) e.getSource()).getScene().getWindow();
     stage.close();
   }
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
-    competition = new CompetitionRepresentation();
-    competition.setType(CompetitionType.DISCORD.name());
-    competition.setName("");
-    competition.setUuid("");
-    competition.setOwner("");
-
-    Date end = Date.from(LocalDate.now().plus(7, ChronoUnit.DAYS).atStartOfDay(ZoneId.systemDefault()).toInstant());
-    competition.setStartDate(Date.from(LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant()));
-    competition.setEndDate(end);
-
     saveBtn.setDisable(true);
 
 
@@ -128,6 +140,14 @@ public class CompetitionDiscordJoinDialogController implements Initializable, Di
     channelsCombo.getItems().addAll(discordChannels);
     channelsCombo.valueProperty().addListener((observableValue, gameRepresentation, t1) -> {
       this.discordCompetitionData = client.getDiscordCompetitionData(serversCombo.getValue().getId(), t1.getId());
+      if (this.discordCompetitionData.getUuid() != null) {
+        List<GameRepresentation> gamesByRom = client.getGamesByRom(this.discordCompetitionData.getRom());
+        tableCombo.getItems().addAll(FXCollections.observableList(gamesByRom));
+        if (!gamesByRom.isEmpty()) {
+          tableCombo.setValue(gamesByRom.get(0));
+          refreshPreview(tableCombo.getValue(), null);
+        }
+      }
       validate();
     });
 
@@ -137,8 +157,7 @@ public class CompetitionDiscordJoinDialogController implements Initializable, Di
     competitionIconCombo.setItems(imageList);
     competitionIconCombo.setCellFactory(c -> new CompetitionImageListCell(client));
     competitionIconCombo.valueProperty().addListener((observableValue, s, t1) -> {
-      competition.setBadge(t1);
-//      refreshPreview(tableCombo.getValue(), t1);
+      refreshPreview(tableCombo.getValue(), t1);
       validate();
     });
 
@@ -174,14 +193,17 @@ public class CompetitionDiscordJoinDialogController implements Initializable, Di
     validationContainer.setVisible(true);
     this.saveBtn.setDisable(true);
 
+    this.competitionIconCombo.setDisable(true);
+    this.tableCombo.setDisable(true);
+
     this.tableLabel.setText("-");
     this.startDateLabel.setText("-");
     this.endDateLabel.setText("-");
     this.remainingDaysLabel.setText("-");
     this.nameLabel.setText("-");
 
-    if(this.discordCompetitionData == null) {
-      validationTitle.setText("No competition selected.");
+    if (this.discordCompetitionData == null) {
+      validationTitle.setText("No competition selected");
       validationDescription.setText("Select a discord server and channel where the competition takes place.");
       return;
     }
@@ -204,9 +226,36 @@ public class CompetitionDiscordJoinDialogController implements Initializable, Di
     this.nameLabel.setText(this.discordCompetitionData.getName());
 
     PlayerRepresentation discordPlayer = client.getDiscordPlayer(serverId, Long.parseLong(this.discordCompetitionData.getOwner()));
-    if(discordPlayer != null) {
+    if (discordPlayer != null) {
       this.ownerLabel.setText(discordPlayer.getName());
     }
+
+    CompetitionRepresentation existingEntry = client.getCompetitionByUuid(this.discordCompetitionData.getUuid());
+    if (existingEntry != null && this.discordCompetitionData.getOwner().equals(client.getBotId())) {
+      validationTitle.setText("Invalid competition selected");
+      validationDescription.setText("You are the owner of this competition.");
+      return;
+    }
+
+    GameRepresentation value = this.tableCombo.getValue();
+    if (value.isCompeted()) {
+      validationTitle.setText("Invalid competition selected");
+      validationDescription.setText("This table is already used for another competition.");
+      return;
+    }//TODO add check for offline too
+
+    long tableSize = value.getGameFileSize();
+    long competitionTableSize = this.discordCompetitionData.getFileSize();
+    long min = competitionTableSize - 1024;
+    long max = competitionTableSize + 1024;
+    if (tableSize < min || tableSize > max) {
+      validationTitle.setText("Invalid table version");
+      validationDescription.setText("The file size of the matching table does not match the competed one.");
+      return;
+    }
+
+    this.competitionIconCombo.setDisable(false);
+    this.tableCombo.setDisable(false);
 
     validationContainer.setVisible(false);
     this.saveBtn.setDisable(false);
