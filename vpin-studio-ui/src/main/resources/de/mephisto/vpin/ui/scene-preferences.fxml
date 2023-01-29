@@ -1,10 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.*?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
-<?import javafx.scene.text.*?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Hyperlink?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
 <?import org.kordamp.ikonli.javafx.FontIcon?>
+
 <BorderPane styleClass="main" stylesheets="@stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.PreferencesController">
    <center>
       <BorderPane fx:id="preferencesMain" styleClass="subpanel" BorderPane.alignment="TOP_LEFT">
@@ -105,7 +109,6 @@
                         <Insets top="24.0" />
                      </VBox.margin>
                   </Label>
-                  <Button alignment="BASELINE_LEFT" contentDisplay="RIGHT" layoutX="160.0" layoutY="586.0" mnemonicParsing="false" onAction="#onDiscordWebhook" styleClass="preference-button" text="Webhook" />
                   <Button alignment="BASELINE_LEFT" contentDisplay="RIGHT" layoutX="160.0" layoutY="672.0" mnemonicParsing="false" onAction="#onDiscordBot" styleClass="preference-button" text="Bot Settings" />
                </children>
                <opaqueInsets>

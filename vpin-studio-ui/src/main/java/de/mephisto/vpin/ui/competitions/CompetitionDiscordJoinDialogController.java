@@ -8,6 +8,7 @@ import de.mephisto.vpin.restclient.discord.DiscordChannel;
 import de.mephisto.vpin.restclient.discord.DiscordCompetitionData;
 import de.mephisto.vpin.restclient.discord.DiscordServer;
 import de.mephisto.vpin.restclient.representations.*;
+import edu.umd.cs.findbugs.annotations.Nullable;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -123,7 +124,6 @@ public class CompetitionDiscordJoinDialogController implements Initializable, Di
   public void initialize(URL url, ResourceBundle resourceBundle) {
     saveBtn.setDisable(true);
 
-
     List<DiscordServer> servers = client.getDiscordServers();
     ObservableList<DiscordServer> discordServers = FXCollections.observableArrayList(servers);
     serversCombo.getItems().addAll(discordServers);
@@ -140,13 +140,17 @@ public class CompetitionDiscordJoinDialogController implements Initializable, Di
     channelsCombo.getItems().addAll(discordChannels);
     channelsCombo.valueProperty().addListener((observableValue, gameRepresentation, t1) -> {
       this.discordCompetitionData = client.getDiscordCompetitionData(serversCombo.getValue().getId(), t1.getId());
-      if (this.discordCompetitionData.getUuid() != null) {
+      if (discordCompetitionData != null) {
         List<GameRepresentation> gamesByRom = client.getGamesByRom(this.discordCompetitionData.getRom());
         tableCombo.getItems().addAll(FXCollections.observableList(gamesByRom));
         if (!gamesByRom.isEmpty()) {
           tableCombo.setValue(gamesByRom.get(0));
           refreshPreview(tableCombo.getValue(), null);
         }
+      }
+      else {
+        this.tableCombo.setItems(FXCollections.observableList(new ArrayList<>()));
+        this.refreshPreview(null, null);
       }
       validate();
     });
@@ -164,7 +168,7 @@ public class CompetitionDiscordJoinDialogController implements Initializable, Di
     validate();
   }
 
-  private void refreshPreview(GameRepresentation game, String badge) {
+  private void refreshPreview(@Nullable GameRepresentation game, @Nullable String badge) {
     if (game != null) {
       GameMediaRepresentation gameMedia = game.getGameMedia();
       GameMediaItemRepresentation mediaItem = gameMedia.getMedia().get(PopperScreen.Wheel.name());
@@ -201,6 +205,7 @@ public class CompetitionDiscordJoinDialogController implements Initializable, Di
     this.endDateLabel.setText("-");
     this.remainingDaysLabel.setText("-");
     this.nameLabel.setText("-");
+    this.ownerLabel.setText("-");
 
     if (this.discordCompetitionData == null) {
       validationTitle.setText("No competition selected");
@@ -242,7 +247,7 @@ public class CompetitionDiscordJoinDialogController implements Initializable, Di
       validationTitle.setText("Invalid competition selected");
       validationDescription.setText("This table is already used for another competition.");
       return;
-    }//TODO add check for offline too
+    }
 
     long tableSize = value.getGameFileSize();
     long competitionTableSize = this.discordCompetitionData.getFileSize();

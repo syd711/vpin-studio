@@ -1,8 +1,6 @@
 package de.mephisto.vpin.server.notifications;
 
-import de.mephisto.vpin.connectors.discord.DiscordWebhook;
 import de.mephisto.vpin.restclient.CompetitionType;
-import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.discord.DiscordCompetitionData;
 import de.mephisto.vpin.server.competitions.Competition;
 import de.mephisto.vpin.server.competitions.CompetitionChangeListener;
@@ -11,10 +9,12 @@ import de.mephisto.vpin.server.competitions.ScoreSummary;
 import de.mephisto.vpin.server.discord.DiscordChannelMessageFactory;
 import de.mephisto.vpin.server.discord.DiscordOfflineChannelMessageFactory;
 import de.mephisto.vpin.server.discord.DiscordService;
-import de.mephisto.vpin.server.discord.DiscordWebhookMessageFactory;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameService;
-import de.mephisto.vpin.server.highscores.*;
+import de.mephisto.vpin.server.highscores.HighscoreChangeEvent;
+import de.mephisto.vpin.server.highscores.HighscoreChangeListener;
+import de.mephisto.vpin.server.highscores.HighscoreInitializedEvent;
+import de.mephisto.vpin.server.highscores.HighscoreService;
 import de.mephisto.vpin.server.highscores.cards.CardService;
 import de.mephisto.vpin.server.players.Player;
 import de.mephisto.vpin.server.popper.PopperService;
@@ -23,7 +23,6 @@ import de.mephisto.vpin.server.popper.TableStatusChangedEvent;
 import de.mephisto.vpin.server.preferences.PreferencesService;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
-import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -49,9 +48,6 @@ public class NotificationService implements InitializingBean, HighscoreChangeLis
 
   @Autowired
   private CompetitionService competitionService;
-
-  @Autowired
-  private PreferencesService preferencesService;
 
   @Autowired
   private PopperService popperService;
@@ -104,24 +100,18 @@ public class NotificationService implements InitializingBean, HighscoreChangeLis
       LOG.error("Error updating card after highscore change event: " + e.getMessage(), e);
     }
 
-    boolean highscoreNotificationSent = false;
     List<Competition> competitionForGame = competitionService.getCompetitionForGame(game.getId());
     for (Competition competition : competitionForGame) {
       if (competition.getDiscordChannelId() > 0 && competition.isActive()) {
         long discordServerId = competition.getDiscordServerId();
         long discordChannelId = competition.getDiscordChannelId();
-        discordService.sendMessage(discordServerId, discordChannelId, DiscordOfflineChannelMessageFactory.createCompetitionHighscoreCreatedMessage(competition, event));
-        highscoreNotificationSent = true;
-      }
-    }
 
-    //no notification was sent, try at least the webhook
-    if (!highscoreNotificationSent) {
-      String webhookUrl = (String) preferencesService.getPreferenceValue(PreferenceNames.DISCORD_WEBHOOK_URL);
-      if (!StringUtils.isEmpty(webhookUrl)) {
-        String message = DiscordWebhookMessageFactory.createHighscoreCreatedMessage(event);
-        DiscordWebhook.call(webhookUrl, message);
-        LOG.info("Called Discord webhook for update of score " + event.getNewHighscore());
+        if(competition.getType().equals(CompetitionType.DISCORD.name())) {
+          discordService.sendMessage(discordServerId, discordChannelId, DiscordChannelMessageFactory.createCompetitionHighscoreCreatedMessage(competition, event));
+        }
+        else {
+          discordService.sendMessage(discordServerId, discordChannelId, DiscordOfflineChannelMessageFactory.createCompetitionHighscoreCreatedMessage(competition, event));
+        }
       }
     }
   }
@@ -130,9 +120,6 @@ public class NotificationService implements InitializingBean, HighscoreChangeLis
   public void competitionCreated(@NonNull Competition competition) {
     Game game = gameService.getGame(competition.getGameId());
     if (game != null) {
-      if (competition.getBadge() != null) {
-        popperService.augmentWheel(game, competition.getBadge());
-      }
 
       if (competition.getType().equals(CompetitionType.DISCORD.name())) {
         long discordServerId = competition.getDiscordServerId();
@@ -155,6 +142,10 @@ public class NotificationService implements InitializingBean, HighscoreChangeLis
         long discordServerId = competition.getDiscordServerId();
         long discordChannelId = competition.getDiscordChannelId();
         discordService.sendMessage(discordServerId, discordChannelId, DiscordOfflineChannelMessageFactory.createOfflineCompetitionCreatedMessage(competition, game));
+      }
+
+      if (competition.getBadge() != null) {
+        popperService.augmentWheel(game, competition.getBadge());
       }
     }
   }

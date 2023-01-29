@@ -242,11 +242,18 @@ public class CompetitionDiscordDialogController implements Initializable, Dialog
       }
       else {
         DiscordCompetitionData discordCompetitionData = client.getDiscordCompetitionData(competition.getDiscordServerId(), competition.getDiscordChannelId());
-        if (!StringUtils.isEmpty(discordCompetitionData.getUuid())) {
+        if (discordCompetitionData == null) {
           validationTitle.setText("Active competition found.");
           validationDescription.setText("The selected channel is already running the competition '" + discordCompetitionData.getName() + "'");
           return;
         }
+      }
+
+      GameRepresentation game = this.tableCombo.getValue();
+      if (game.isCompeted()) {
+        validationTitle.setText("Invalid competition selected");
+        validationDescription.setText("This table is already used for another competition.");
+        return;
       }
     }
 

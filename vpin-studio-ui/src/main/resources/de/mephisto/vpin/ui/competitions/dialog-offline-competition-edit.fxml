@@ -222,13 +222,20 @@
             </VBox>
          </center>
          <bottom>
-            <BorderPane fx:id="validationContainer" BorderPane.alignment="CENTER">
+            <BorderPane fx:id="validationContainer" BorderPane.alignment="TOP_LEFT">
                <top>
-                  <Label fx:id="validationTitle" text="Label" BorderPane.alignment="TOP_LEFT" />
+                  <Label fx:id="validationTitle" alignment="TOP_LEFT" text="Label" BorderPane.alignment="TOP_LEFT" />
                </top>
                <bottom>
-                  <Label fx:id="validationDescription" text="Label" BorderPane.alignment="TOP_LEFT" />
+                  <Label fx:id="validationDescription" text="Label" BorderPane.alignment="TOP_LEFT">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                  </Label>
                </bottom>
+               <BorderPane.margin>
+                  <Insets />
+               </BorderPane.margin>
                <padding>
                   <Insets bottom="6.0" left="6.0" right="6.0" top="6.0" />
                </padding>

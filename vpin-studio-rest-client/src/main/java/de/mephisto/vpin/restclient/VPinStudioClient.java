@@ -411,11 +411,11 @@ public class VPinStudioClient implements ObservedPropertyChangeListener, Overlay
     }
   }
 
-  public ScoreListRepresentation getCompetitionScoreList(long id) {
+  public ScoreListRepresentation getCompetitionScoreList(long competitionId) {
     try {
-      return restClient.get(API + "competitions/scores/" + id, ScoreListRepresentation.class);
+      return restClient.get(API + "competitions/scores/" + competitionId, ScoreListRepresentation.class);
     } catch (Exception e) {
-      LOG.error("Failed to read competition scores list " + id + ": " + e.getMessage(), e);
+      LOG.error("Failed to read competition scores list " + competitionId + ": " + e.getMessage(), e);
     }
     return null;
   }

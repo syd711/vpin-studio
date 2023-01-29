@@ -620,7 +620,7 @@ public class TablesSidebarController implements Initializable {
 
         Tile highscoresGraphTile = TileBuilder.create()
             .skinType(Tile.SkinType.SMOOTHED_CHART)
-            .maxWidth(Double.MAX_VALUE)
+            .maxWidth(568)
             .textSize(Tile.TextSize.SMALL)
             .chartType(Tile.ChartType.LINE)
             .borderWidth(1)

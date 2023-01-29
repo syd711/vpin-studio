@@ -227,6 +227,13 @@ public class CompetitionOfflineDialogController implements Initializable, Dialog
       return;
     }
 
+    GameRepresentation game = this.tableCombo.getValue();
+    if (game.isCompeted()) {
+      validationTitle.setText("Invalid competition selected");
+      validationDescription.setText("This table is already used for another competition.");
+      return;
+    }
+
     if (competition.getStartDate() == null || competition.getEndDate() == null || competition.getStartDate().getTime() > competition.getEndDate().getTime()) {
       validationTitle.setText("Invalid start/end date set.");
       validationDescription.setText("Define a valid start and end date.");

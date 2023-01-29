@@ -3,6 +3,7 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Accordion?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.Tab?>
 <?import javafx.scene.control.TabPane?>
 <?import javafx.scene.control.TitledPane?>
@@ -57,14 +58,29 @@
          <children>
             <Accordion prefWidth="600.0">
               <panes>
-                <TitledPane expanded="false" text="Scores" />
+                <TitledPane fx:id="scorePane" text="Recorded Scores">
+                     <content>
+                        <ScrollPane vbarPolicy="NEVER">
+                           <content>
+                              <VBox fx:id="scoresBox" minHeight="200.0" prefWidth="590.0">
+                                 <padding>
+                                    <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
+                                 </padding>
+                              </VBox>
+                           </content>
+                        </ScrollPane>
+                     </content></TitledPane>
                 <TitledPane fx:id="competitionMembersPane" expanded="false" text="Competition Members">
                      <content>
-                        <VBox fx:id="membersBox">
-                           <padding>
-                              <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
-                           </padding>
-                        </VBox>
+                        <ScrollPane vbarPolicy="NEVER">
+                           <content>
+                              <VBox fx:id="membersBox">
+                                 <padding>
+                                    <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
+                                 </padding>
+                              </VBox>
+                           </content>
+                        </ScrollPane>
                      </content></TitledPane>
                   <TitledPane fx:id="metaDataPane" text="Metadata">
                      <content>

@@ -1,18 +1,21 @@
 package de.mephisto.vpin.ui.competitions;
 
+import de.mephisto.vpin.commons.fx.OverlayWindowFX;
 import de.mephisto.vpin.commons.fx.discord.DiscordUserEntryController;
 import de.mephisto.vpin.restclient.CompetitionType;
 import de.mephisto.vpin.restclient.discord.DiscordServer;
-import de.mephisto.vpin.restclient.representations.CompetitionRepresentation;
-import de.mephisto.vpin.restclient.representations.PlayerRepresentation;
+import de.mephisto.vpin.restclient.representations.*;
 import de.mephisto.vpin.ui.NavigationController;
 import de.mephisto.vpin.ui.StudioFXController;
+import eu.hansolo.tilesfx.Tile;
+import eu.hansolo.tilesfx.TileBuilder;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Parent;
+import javafx.scene.chart.XYChart;
 import javafx.scene.control.Label;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
@@ -21,6 +24,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -66,16 +70,25 @@ public class CompetitionsController implements Initializable, StudioFXController
   private HBox ownerBox;
 
   @FXML
+  private TitledPane scorePane;
+
+  @FXML
   private TitledPane metaDataPane;
+
+  @FXML
+  private TitledPane competitionMembersPane;
 
   @FXML
   private VBox membersBox;
 
   @FXML
-  private TitledPane competitionMembersPane;
+  private VBox scoresBox;
+
 
   private CompetitionsOfflineController offlineController;
   private CompetitionsDiscordController discordController;
+
+  private Tile highscoresGraphTile;
 
   private Optional<CompetitionRepresentation> competition = Optional.empty();
 
@@ -88,6 +101,7 @@ public class CompetitionsController implements Initializable, StudioFXController
   @Override
   public void onViewActivated() {
     refreshUsers(competition);
+    scorePane.setExpanded(true);
   }
 
   @Override
@@ -110,6 +124,7 @@ public class CompetitionsController implements Initializable, StudioFXController
     });
 
     updateSelection(Optional.empty());
+    scorePane.setExpanded(true);
   }
 
   public void setCompetition(CompetitionRepresentation competition) {
@@ -121,6 +136,7 @@ public class CompetitionsController implements Initializable, StudioFXController
     checkTabs();
     checkTitledPanes(competitionRepresentation);
 
+    refreshScores(competitionRepresentation);
     refreshUsers(competitionRepresentation);
     refreshMetaData(competitionRepresentation);
     updateForTabSelection(competitionRepresentation);
@@ -157,8 +173,8 @@ public class CompetitionsController implements Initializable, StudioFXController
         label = new Label(discordPlayer.getName());
         ownerBox.getChildren().addAll(view, label);
 
-        startLabel.setText(DateFormat.getInstance().format(competition.getStartDate()));
-        endLabel.setText(DateFormat.getInstance().format(competition.getEndDate()));
+        startLabel.setText(DateFormat.getDateInstance().format(competition.getStartDate()));
+        endLabel.setText(DateFormat.getDateInstance().format(competition.getEndDate()));
       }
     }
   }
@@ -188,15 +204,71 @@ public class CompetitionsController implements Initializable, StudioFXController
     }
   }
 
+  private void refreshScores(Optional<CompetitionRepresentation> cp) {
+    if (cp.isPresent()) {
+      CompetitionRepresentation competition = cp.get();
+      scoresBox.getChildren().removeAll(scoresBox.getChildren());
+
+      ScoreListRepresentation competitionScores = client.getCompetitionScoreList(competition.getId());
+      if (!competitionScores.getScores().isEmpty()) {
+        XYChart.Series<String, Number> scoreGraph1 = new XYChart.Series();
+        scoreGraph1.setName("#1");
+        XYChart.Series<String, Number> scoreGraph2 = new XYChart.Series();
+        scoreGraph2.setName("#2");
+        XYChart.Series<String, Number> scoreGraph3 = new XYChart.Series();
+        scoreGraph3.setName("#3");
+
+        //every summary is one history version
+        List<ScoreSummaryRepresentation> scores = competitionScores.getScores();
+
+        for (ScoreSummaryRepresentation score : scores) {
+          if (score.getScores().size() >= 3) {
+            ScoreRepresentation s = score.getScores().get(0);
+            scoreGraph1.getData().add(new XYChart.Data(SimpleDateFormat.getDateInstance().format(score.getCreatedAt()), s.getNumericScore()));
+            s = score.getScores().get(1);
+            scoreGraph2.getData().add(new XYChart.Data(SimpleDateFormat.getDateInstance().format(score.getCreatedAt()), s.getNumericScore()));
+            s = score.getScores().get(2);
+            scoreGraph3.getData().add(new XYChart.Data(SimpleDateFormat.getDateInstance().format(score.getCreatedAt()), s.getNumericScore()));
+          }
+        }
+
+
+        if (highscoresGraphTile != null) {
+          scoresBox.getChildren().remove(highscoresGraphTile);
+        }
+
+        //noinspection unchecked
+        highscoresGraphTile = TileBuilder.create()
+            .skinType(Tile.SkinType.SMOOTHED_CHART)
+            .maxWidth(Double.MAX_VALUE)
+            .textSize(Tile.TextSize.BIGGER)
+            .chartType(Tile.ChartType.LINE)
+            .borderWidth(1)
+            .snapToTicks(true)
+            .maxValue(10)
+            .checkSectionsForValue(true)
+            .startFromZero(true)
+            .description("")
+            .tickLabelsYVisible(true)
+            .dataPointsVisible(true)
+            .decimals(1)
+            .borderColor(Color.web("#111111"))
+            .animated(true)
+            .smoothing(false)
+            .series(scoreGraph1, scoreGraph2, scoreGraph3)
+            .build();
+        scoresBox.getChildren().add(highscoresGraphTile);
+      }
+    }
+  }
+
   private void refreshUsers(Optional<CompetitionRepresentation> cp) {
     if (cp.isPresent()) {
       CompetitionRepresentation competition = cp.get();
       if (competitionMembersPane.isVisible()) {
-        competitionMembersPane.setExpanded(true);
-
+        membersBox.getChildren().removeAll(membersBox.getChildren());
         List<PlayerRepresentation> memberList = client.getDiscordCompetitionPlayers(competition.getId());
         if(memberList.isEmpty()) {
-          membersBox.getChildren().remove(getNoPlayersLabel());
           membersBox.getChildren().add(getNoPlayersLabel());
         }
         else {

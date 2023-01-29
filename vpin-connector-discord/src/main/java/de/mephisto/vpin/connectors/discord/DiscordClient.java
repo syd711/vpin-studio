@@ -113,6 +113,40 @@ public class DiscordClient {
     return result;
   }
 
+  public List<DiscordMessage> getCompetitionUpdates(long serverId, long channelId, String afterMessageId, String competitionUuid) {
+    List<DiscordMessage> result = new ArrayList<>();
+    Guild guild = getGuild(serverId);
+    if (guild != null) {
+      TextChannel channel = guild.getChannelById(TextChannel.class, channelId);
+      if (channel != null) {
+        MessageHistory history = MessageHistory.getHistoryAfter(channel, afterMessageId).complete();
+        List<Message> messages = history.getRetrievedHistory();
+        List<Message> botMessages = messages.stream().filter(m -> m.getAuthor().isBot()).collect(Collectors.toList());
+        for (Message botMessage : botMessages) {
+          if (botMessage.getContentRaw().contains(competitionUuid)) {
+            Member member = botMessage.getMember();
+            if (member != null) {
+              DiscordMessage message = new DiscordMessage();
+              DiscordMember discordMember = toMember(member);
+              long epochMilli = botMessage.getTimeCreated().toInstant().toEpochMilli();
+              Date createdAt = new Date(epochMilli);
+
+              message.setMember(discordMember);
+              message.setCreatedAt(createdAt);
+              message.setRaw(botMessage.getContentRaw());
+              result.add(message);
+            }
+          }
+        }
+      }
+      else {
+        LOG.error("No discord channel found for id '" + channelId + "'");
+      }
+    }
+    return result;
+  }
+
+
   public DiscordMember getMember(long serverId, long memberId) {
     if (!DiscordMemberCache.contains(memberId)) {
       Guild guild = this.getGuild(serverId);
@@ -166,7 +200,7 @@ public class DiscordClient {
       TextChannel textChannel = jda.getChannelById(TextChannel.class, channelId);
       if (textChannel != null) {
         Message complete = textChannel.sendMessage(msg).complete();//.addFiles(FileUpload.fromData(file)).queue();
-        LOG.info("Sent message '" + msg + "' to '" + textChannel.getName() + "'");
+        LOG.info("Sent message to channel " + textChannel.getName() + " of server " + guild.getName());
         return complete.getId();
       }
       else {

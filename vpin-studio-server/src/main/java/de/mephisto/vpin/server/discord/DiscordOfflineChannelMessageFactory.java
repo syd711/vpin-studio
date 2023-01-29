@@ -7,6 +7,7 @@ import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.highscores.HighscoreChangeEvent;
 import de.mephisto.vpin.server.highscores.Score;
 import de.mephisto.vpin.server.players.Player;
+import de.mephisto.vpin.server.util.ScoreHelper;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import org.apache.commons.lang3.StringUtils;
@@ -115,8 +116,8 @@ public class DiscordOfflineChannelMessageFactory {
       }
     }
 
-    String second = DiscordWebhookMessageFactory.formatScoreEntry(summary, 1);
-    String third = DiscordWebhookMessageFactory.formatScoreEntry(summary, 2);
+    String second = ScoreHelper.formatScoreEntry(summary, 1);
+    String third = ScoreHelper.formatScoreEntry(summary, 2);
 
     return String.format(COMPETITION_FINISHED_TEMPLATE,
         winnerName,

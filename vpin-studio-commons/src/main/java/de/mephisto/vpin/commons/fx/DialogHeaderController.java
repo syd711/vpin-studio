@@ -24,6 +24,10 @@ public class DialogHeaderController implements Initializable {
 
   @FXML
   private void onCloseClick() {
+    Object userData = stage.getUserData();
+    if(userData instanceof DialogController) {
+      ((DialogController)userData).onDialogCancel();
+    }
     stage.close();
   }
 
