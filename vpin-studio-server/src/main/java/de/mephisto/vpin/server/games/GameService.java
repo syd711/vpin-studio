@@ -161,7 +161,7 @@ public class GameService {
 
   public List<Game> getGamesWithScore() {
     List<Game> games = getGames();
-    return games.stream().filter(g -> !StringUtils.isEmpty(highscoreService.getHighscores(g.getId(), g.getGameDisplayName()).getRaw())).collect(Collectors.toList());
+    return games.stream().filter(g -> !StringUtils.isEmpty(highscoreService.getAllHighscoresForPlayer(g.getId(), g.getGameDisplayName()).getRaw())).collect(Collectors.toList());
   }
 
   @SuppressWarnings("unused")
@@ -176,7 +176,7 @@ public class GameService {
   }
 
   public ScoreSummary getScores(int gameId) {
-    return highscoreService.getHighscores(gameId, null);
+    return highscoreService.getAllHighscoresForPlayer(gameId, null);
   }
 
   public ScoreList getScoreHistory(int gameId) {
@@ -197,29 +197,6 @@ public class GameService {
 
       if (scores.size() == count) {
         return summary;
-      }
-    }
-
-    if (scores.size() < count) {
-      List<Highscore> highscores = highscoreService.getRecentHighscores();
-      for (Highscore highscore : highscores) {
-        int gameId = highscore.getGameId();
-        Game game = getGame(gameId);
-        //check if the actual game still exists
-        if (game != null) {
-          List<Score> collect = scores.stream().filter(s -> s.getGameId() == gameId).collect(Collectors.toList());
-
-          //only add an current score if no version has been found for this game
-          if (collect.isEmpty()) {
-            List<Score> versionScores = highscoreService.parseScores(highscore);
-            if (!versionScores.isEmpty()) {
-              scores.add(versionScores.get(0));
-              if (scores.size() == count) {
-                break;
-              }
-            }
-          }
-        }
       }
     }
 

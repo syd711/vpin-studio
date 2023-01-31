@@ -286,7 +286,7 @@ public class CompetitionsOfflineController implements Initializable, StudioFXCon
 
       if (!StringUtils.isEmpty(value.getWinnerInitials())) {
         winner = value.getWinnerInitials();
-        PlayerRepresentation player = client.getPlayer(value.getWinnerInitials());
+        PlayerRepresentation player = client.getPlayer(value.getDiscordServerId(), value.getWinnerInitials());
         if (player != null) {
           winner = player.getName();
         }

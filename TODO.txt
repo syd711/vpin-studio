@@ -1,0 +1,5 @@
+//TODO
+
+- reset thumbnail
+- reset cache
+- use discord bot to reset competitions

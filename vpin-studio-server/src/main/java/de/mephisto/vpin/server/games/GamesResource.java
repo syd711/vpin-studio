@@ -1,7 +1,6 @@
 package de.mephisto.vpin.server.games;
 
 import de.mephisto.vpin.restclient.DeleteDescriptor;
-import de.mephisto.vpin.restclient.discord.DiscordCompetitionData;
 import de.mephisto.vpin.server.competitions.ScoreSummary;
 import de.mephisto.vpin.server.highscores.HighscoreMetadata;
 import de.mephisto.vpin.server.highscores.ScoreList;
@@ -107,30 +106,38 @@ public class GamesResource {
 
   @PostMapping("/upload/rom")
   public Boolean uploadRom(@RequestParam(value = "file", required = false) MultipartFile file) {
-    if (file == null) {
-      LOG.error("Rom upload request did not contain a file object.");
-      return false;
+    try {
+      if (file == null) {
+        LOG.error("Rom upload request did not contain a file object.");
+        return false;
+      }
+      File out = new File(systemService.getMameRomFolder(), file.getOriginalFilename());
+      return UploadUtil.upload(file, out);
+    } catch (Exception e) {
+      throw new ResponseStatusException(INTERNAL_SERVER_ERROR, "ROM upload failed: " + e.getMessage());
     }
-    File out = new File(systemService.getMameRomFolder(), file.getOriginalFilename());
-    return UploadUtil.upload(file, out);
   }
 
   @PostMapping("/upload/table")
   public Boolean uploadTable(@RequestParam(value = "file") MultipartFile file,
                              @RequestParam(value = "importToPopper") boolean importToPopper,
                              @RequestParam(value = "playlistId") int playlistId) {
-    if (file == null) {
-      LOG.error("Table upload request did not contain a file object.");
-      return false;
-    }
-    File out = new File(systemService.getVPXTablesFolder(), file.getOriginalFilename());
-    if (UploadUtil.upload(file, out)) {
-      int gameId = popperService.importVPXGame(out, importToPopper, playlistId);
-      if (gameId >= 0) {
-        gameService.scanGame(gameId);
+    try {
+      if (file == null) {
+        LOG.error("Table upload request did not contain a file object.");
+        return false;
       }
-      return true;
+      File out = new File(systemService.getVPXTablesFolder(), file.getOriginalFilename());
+      if (UploadUtil.upload(file, out)) {
+        int gameId = popperService.importVPXGame(out, importToPopper, playlistId);
+        if (gameId >= 0) {
+          gameService.scanGame(gameId);
+        }
+        return true;
+      }
+    } catch (Exception e) {
+      throw new ResponseStatusException(INTERNAL_SERVER_ERROR, "Table upload failed: " + e.getMessage());
     }
-    throw new ResponseStatusException(INTERNAL_SERVER_ERROR, "Table upload failed.");
+    return false;
   }
 }

@@ -16,9 +16,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.awt.image.BufferedImage;
 import java.io.File;
+
+import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 
 /**
  *
@@ -91,26 +94,35 @@ public class DirectB2SResource {
   public Boolean directb2supload(@RequestParam(value = "file", required = false) MultipartFile file,
                                  @RequestParam(value = "uploadType", required = false) String uploadType,
                                  @RequestParam("gameId") Integer gameId) {
-    if (file == null) {
-      LOG.error("Upload request did not contain a file object.");
-      return false;
-    }
+    try {
+      if (file == null) {
+        LOG.error("Upload request did not contain a file object.");
+        return false;
+      }
 
-    Game game = gameService.getGame(gameId);
-    if (game.getCroppedDirectB2SBackgroundImage().exists()) {
-      game.getCroppedDirectB2SBackgroundImage().delete();
-    }
-    if (game.getRawDirectB2SBackgroundImage().exists()) {
-      game.getRawDirectB2SBackgroundImage().delete();
-    }
+      Game game = gameService.getGame(gameId);
+      if (game == null) {
+        LOG.error("No game found for upload.");
+        return false;
+      }
 
-    File out = game.getDirectB2SFile();
-    if (uploadType != null && uploadType.equals("generator")) {
-      out = game.getDirectB2SMediaFile();
-    }
+      if (game.getCroppedDirectB2SBackgroundImage().exists()) {
+        game.getCroppedDirectB2SBackgroundImage().delete();
+      }
+      if (game.getRawDirectB2SBackgroundImage().exists()) {
+        game.getRawDirectB2SBackgroundImage().delete();
+      }
 
-    out.mkdirs();
-    LOG.info("Uploading " + out.getAbsolutePath());
-    return UploadUtil.upload(file, out);
+      File out = game.getDirectB2SFile();
+      if (uploadType != null && uploadType.equals("generator")) {
+        out = game.getDirectB2SMediaFile();
+      }
+
+      out.mkdirs();
+      LOG.info("Uploading " + out.getAbsolutePath());
+      return UploadUtil.upload(file, out);
+    } catch (Exception e) {
+      throw new ResponseStatusException(INTERNAL_SERVER_ERROR, "DirectB2S upload failed: " + e.getMessage());
+    }
   }
 }

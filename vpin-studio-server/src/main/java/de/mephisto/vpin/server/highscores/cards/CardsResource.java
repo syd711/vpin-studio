@@ -22,6 +22,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 import static de.mephisto.vpin.server.VPinStudioServer.API_SEGMENT;
+import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 
 @RestController
@@ -73,14 +74,18 @@ public class CardsResource {
 
   @PostMapping(value = "/backgroundupload")
   public Boolean upload(@RequestPart(value = "file", required = false) MultipartFile file, HttpServletRequest request) throws IOException {
-    if (file == null) {
-      LOG.error("Upload request did not contain a file object.");
-      return false;
-    }
+    try {
+      if (file == null) {
+        LOG.error("Upload request did not contain a file object.");
+        return false;
+      }
 
-    String name = file.getOriginalFilename().replaceAll("/", "").replaceAll("\\\\", "");
-    File backgroundsFolder = new File(SystemService.RESOURCES, "backgrounds");
-    File out = new File(backgroundsFolder, name);
-    return UploadUtil.upload(file, out);
+      String name = file.getOriginalFilename().replaceAll("/", "").replaceAll("\\\\", "");
+      File backgroundsFolder = new File(SystemService.RESOURCES, "backgrounds");
+      File out = new File(backgroundsFolder, name);
+      return UploadUtil.upload(file, out);
+    } catch (Exception e) {
+      throw new ResponseStatusException(INTERNAL_SERVER_ERROR, "Background upload failed: " + e.getMessage());
+    }
   }
 }

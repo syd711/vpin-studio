@@ -3,15 +3,16 @@ package de.mephisto.vpin.server.discord;
 import de.mephisto.vpin.restclient.PlayerDomain;
 import de.mephisto.vpin.server.competitions.Competition;
 import de.mephisto.vpin.server.games.Game;
-import de.mephisto.vpin.server.highscores.HighscoreChangeEvent;
 import de.mephisto.vpin.server.highscores.Score;
 import de.mephisto.vpin.server.players.Player;
+import edu.umd.cs.findbugs.annotations.NonNull;
 import org.apache.commons.lang3.StringUtils;
 
 import java.text.DateFormat;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
+import java.util.List;
 
 public class DiscordChannelMessageFactory {
   private static final String DISCORD_COMPETITION_CREATED_TEMPLATE = "%s started a new competition!\n" +
@@ -25,17 +26,17 @@ public class DiscordChannelMessageFactory {
       "Duration:    %s days\n" +
       "------------------------------------------------------------```";
 
-  public static String createCompetitionHighscoreCreatedMessage(Competition competition, HighscoreChangeEvent event) {
-    Game game = event.getGame();
-    Score newScore = event.getNewScore();
-    Score oldScore = event.getOldScore();
-
-    String newName = newScore.getPlayerInitials();
+  public static String createCompetitionHighscoreCreatedMessage(@NonNull Game game,
+                                                                @NonNull Competition competition,
+                                                                @NonNull Score oldScore,
+                                                                @NonNull Score newScore,
+                                                                List<Score> scores) {
+    String playerName = newScore.getPlayerInitials();
     if (newScore.getPlayer() != null) {
       Player player = newScore.getPlayer();
-      newName = newScore.getPlayer().getName();
+      playerName = newScore.getPlayer().getName();
       if (player.getDomain().equals(PlayerDomain.DISCORD.name())) {
-        newName = "<@" + player.getId() + ">";
+        playerName = "<@" + player.getId() + ">";
       }
     }
 
@@ -48,22 +49,24 @@ public class DiscordChannelMessageFactory {
       }
     }
 
-    String template = "%s created a new highscore for '%s', competed in '%s' (ID: %s) .\n" +
+    String template = "%s created a new highscore for \"%s\"!\n(ID: %s)\n" +
         "```%s\n" +
         "```";
     String otherPlayerTemplate = "\n%s, your highscore of %s points has been beaten.";
 
-    String msg = String.format(template, newName, competition.getName(), competition.getUuid(), game.getGameDisplayName(), newScore);
+    String msg = String.format(template, playerName, game.getGameDisplayName(), competition.getUuid(), newScore);
     String suffix = String.format(otherPlayerTemplate, oldName, oldScore.getScore());
 
     String result = msg;
     if (StringUtils.isEmpty(oldName)) {
       result = result + "\nThe previous highscore of " + oldScore.getScore() + " has been beaten.";
     }
-    else if (!oldName.equals(newName)) {
+    else if (!oldName.equals(playerName)) {
       result = result + suffix;
     }
-    return result;
+
+
+    return result + createHighscoreList(game, scores);
   }
 
   public static String createDiscordCompetitionCreatedMessage(Competition competition, Game game, long initiatorId) {
@@ -80,5 +83,27 @@ public class DiscordChannelMessageFactory {
         DateFormat.getDateInstance().format(competition.getStartDate()),
         DateFormat.getDateInstance().format(competition.getEndDate()),
         diff);
+  }
+
+  private static String createHighscoreList(Game game, List<Score> scores) {
+    String title = "Highscore for '" + game.getGameDisplayName() + "'";
+    StringBuilder builder = new StringBuilder(title);
+    builder.append("```");
+    builder.append("Pos   Initials          Score\n");
+    builder.append("----------------------------------------\n");
+    int index = 0;
+    for (Score score : scores) {
+      index++;
+      builder.append("#");
+      builder.append(score.getPosition());
+      builder.append("   ");
+      builder.append(String.format("%4.4s", score.getPlayerInitials()));
+      builder.append("       ");
+      builder.append(String.format("%12.12s", score.getScore()));
+      builder.append("\n");
+    }
+    builder.append("```");
+
+    return builder.toString();
   }
 }

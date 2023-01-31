@@ -4,6 +4,7 @@ import de.mephisto.vpin.server.competitions.Competition;
 import de.mephisto.vpin.server.competitions.RankedPlayer;
 import de.mephisto.vpin.server.competitions.ScoreSummary;
 import de.mephisto.vpin.server.games.Game;
+import de.mephisto.vpin.server.games.GameService;
 import de.mephisto.vpin.server.highscores.Score;
 import de.mephisto.vpin.server.players.Player;
 
@@ -117,7 +118,7 @@ public class DiscordBotCommandResponseFactory {
     return builder.toString();
   }
 
-  public static String createRanksMessageFor(Player player, ScoreSummary highscores) {
+  public static String createRanksMessageFor(GameService gameService, Player player, ScoreSummary highscores) {
     StringBuilder builder = new StringBuilder();
 
     if(highscores.getScores().isEmpty()) {
@@ -144,7 +145,7 @@ public class DiscordBotCommandResponseFactory {
     builder.append("'\n");
     builder.append("---------------------------------------------------\n");
     for (Score score : highscores.getScores()) {
-      String table = score.getDisplayName();
+      String table = gameService.getGame(score.getGameId()).getGameDisplayName();
       if (table.length() > 30) {
         table = table.substring(0, 25) + "...";
       }

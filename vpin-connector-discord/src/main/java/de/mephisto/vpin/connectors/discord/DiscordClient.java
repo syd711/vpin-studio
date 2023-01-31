@@ -25,15 +25,17 @@ public class DiscordClient {
   private final String guildId;
   private final DiscordListenerAdapter listenerAdapter;
   private final Map<Long, Guild> guilds = new HashMap<>();
-  private long botId;
+  private final long botId;
+
+  private final DiscordCache<List<DiscordMessage>> messageCache = new DiscordCache<>();
 
   public DiscordClient(String botToken, String guildId, DiscordCommandResolver commandResolver) throws Exception {
     this.guildId = guildId.trim();
     jda = JDABuilder.createDefault(botToken.trim(), Arrays.asList(GatewayIntent.DIRECT_MESSAGES, GatewayIntent.GUILD_MESSAGES, GatewayIntent.GUILD_MEMBERS, GatewayIntent.MESSAGE_CONTENT))
         .setEventPassthrough(true)
-        .setMemberCachePolicy(MemberCachePolicy.NONE)
+        .setMemberCachePolicy(MemberCachePolicy.ALL)
         .build();
-    this.listenerAdapter = new DiscordListenerAdapter(commandResolver);
+    this.listenerAdapter = new DiscordListenerAdapter(this, commandResolver);
     jda.awaitReady();
     jda.addEventListener(this.listenerAdapter);
     this.botId = jda.getSelfUser().getIdLong();
@@ -53,14 +55,8 @@ public class DiscordClient {
 
   public synchronized List<DiscordMember> getMembers(long serverId) {
     Guild guild = getGuild(serverId);
-    if (!DiscordMembersCache.contains(serverId)) {
-      List<Member> members = guild.loadMembers().get();
-      List<DiscordMember> discordMembers = members.stream().map(this::toMember).collect(Collectors.toList());
-      DiscordMembersCache.put(serverId, discordMembers);
-      LOG.info("Cached " + discordMembers.size() + " members for " + guild.getName() + "/" + serverId);
-    }
-
-    return DiscordMembersCache.getMembers(serverId);
+    List<Member> members = guild.loadMembers().get();
+    return members.stream().map(this::toMember).collect(Collectors.toList());
   }
 
   public List<GuildInfo> getGuilds() {
@@ -146,19 +142,19 @@ public class DiscordClient {
     return result;
   }
 
+  public void invalidateMessageCache(long channelId) {
+    messageCache.invalidate(channelId);
+  }
 
   public DiscordMember getMember(long serverId, long memberId) {
-    if (!DiscordMemberCache.contains(memberId)) {
-      Guild guild = this.getGuild(serverId);
-      if (guild != null) {
-        Member member = guild.getMemberById(memberId);
-        if (member != null) {
-          DiscordMember discordMember = toMember(member);
-          DiscordMemberCache.put(memberId, discordMember);
-        }
+    Guild guild = this.getGuild(serverId);
+    if (guild != null) {
+      Member member = guild.getMemberById(memberId);
+      if (member != null) {
+        return toMember(member);
       }
     }
-    return DiscordMemberCache.getMember(memberId);
+    return null;
   }
 
   public List<DiscordTextChannel> getChannels() {
@@ -189,8 +185,6 @@ public class DiscordClient {
 
   public void shutdown() {
     guilds.clear();
-    DiscordMemberCache.invalidateAll();
-    DiscordMembersCache.invalidateAll();
     this.jda.shutdownNow();
   }
 
@@ -291,5 +285,4 @@ public class DiscordClient {
 
     return guilds.get(id);
   }
-
 }

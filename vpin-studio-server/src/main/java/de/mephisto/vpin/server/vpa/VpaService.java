@@ -6,6 +6,7 @@ import de.mephisto.vpin.server.games.GameService;
 import de.mephisto.vpin.server.highscores.Highscore;
 import de.mephisto.vpin.server.highscores.HighscoreService;
 import de.mephisto.vpin.server.highscores.HighscoreVersion;
+import de.mephisto.vpin.server.highscores.cards.CardService;
 import de.mephisto.vpin.server.jobs.JobQueue;
 import de.mephisto.vpin.server.popper.GameMediaItem;
 import de.mephisto.vpin.server.popper.PinUPConnector;
@@ -39,13 +40,22 @@ public class VpaService {
   @Autowired
   private PinUPConnector pinUPConnector;
 
+  @Autowired
+  private CardService cardService;
+
   public boolean importVpa(@NonNull ImportDescriptor descriptor) {
-    File vpaFile = new File(systemService.getVpaArchiveFolder(), descriptor.getVpaFileName());
-    VpaImporter importer = new VpaImporter(descriptor, vpaFile, pinUPConnector, systemService, highscoreService);
-    int gameId = importer.startImport();
-    if (gameId != -1) {
-      gameService.scanGame(gameId);
-      return true;
+    try {
+      File vpaFile = new File(systemService.getVpaArchiveFolder(), descriptor.getVpaFileName());
+      VpaImporter importer = new VpaImporter(descriptor, vpaFile, pinUPConnector, systemService, highscoreService);
+      int gameId = importer.startImport();
+      if (gameId != -1) {
+        gameService.scanGame(gameId);
+        Game game = gameService.getGame(gameId);
+        cardService.generateCard(game, false);
+        return true;
+      }
+    } catch (Exception e) {
+      LOG.error("Import failed: " + e.getMessage(), e);
     }
     return false;
   }

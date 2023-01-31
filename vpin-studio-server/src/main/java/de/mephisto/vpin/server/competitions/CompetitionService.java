@@ -56,16 +56,10 @@ public class CompetitionService implements InitializingBean {
   public void notifyCompetitionFinished(Competition c) {
     Player player = null;
     if (c.getType().equals(CompetitionType.OFFLINE.name())) {
-      Optional<Player> playerByInitials = playerService.getPlayerForInitials(c.getWinnerInitials());
-      if (playerByInitials.isPresent()) {
-        player = playerByInitials.get();
-      }
+      player = playerService.getPlayerForInitials(c.getDiscordServerId(), c.getWinnerInitials());
     }
     else if (c.getType().equals(CompetitionType.DISCORD.name())) {
-      Optional<Player> playerByInitials = discordService.getPlayerByInitials(c.getWinnerInitials());
-      if (playerByInitials.isPresent()) {
-        player = playerByInitials.get();
-      }
+      player = discordService.getPlayerByInitials(c.getDiscordServerId(), c.getWinnerInitials());
     }
 
     for (CompetitionChangeListener listener : this.listeners) {
@@ -114,26 +108,38 @@ public class CompetitionService implements InitializingBean {
 
   public ScoreList getCompetitionScores(long id) {
     Competition competition = getCompetition(id);
-    Date start = competition.getStartDate();
-    Date end = competition.getEndDate();
-    int gameId = competition.getGameId();
-    return highscoreService.getScoresBetween(gameId, start, end);
-  }
-
-
-  public ScoreSummary getCompetitionScore(long id) {
-    Competition competition = getCompetition(id);
 
     if (competition.getType().equals(CompetitionType.OFFLINE.name())) {
-      return highscoreService.getHighscores(competition.getGameId());
+      Date start = competition.getStartDate();
+      Date end = competition.getEndDate();
+      int gameId = competition.getGameId();
+      long serverId = competition.getDiscordServerId();
+      return highscoreService.getScoresBetween(gameId, start, end, serverId);
     }
     else if (competition.getType().equals(CompetitionType.DISCORD.name())) {
       long serverId = competition.getDiscordServerId();
       long channelId = competition.getDiscordChannelId();
-      return discordService.getScoreSummary(serverId, channelId);
+      return discordService.getScoreList(competition.getUuid(), serverId, channelId);
     }
 
-    LOG.error("No competition found for highscore retrieval with id " + id);
+    return null;
+  }
+
+
+  public ScoreSummary getCompetitionScore(long competitionId) {
+    Competition competition = getCompetition(competitionId);
+    long serverId = competition.getDiscordServerId();
+    long channelId = competition.getDiscordChannelId();
+
+    if (competition.getType().equals(CompetitionType.OFFLINE.name())) {
+      return highscoreService.getGameHighscore(serverId, competition.getGameId(), null);
+    }
+    else if (competition.getType().equals(CompetitionType.DISCORD.name())) {
+      ScoreList scoreList = discordService.getScoreList(competition.getUuid(), serverId, channelId);
+      return scoreList.getLatestScore();
+    }
+
+    LOG.error("No competition found for highscore retrieval with competitionId " + competitionId);
     return null;
   }
 
@@ -164,7 +170,10 @@ public class CompetitionService implements InitializingBean {
   }
 
   public Competition finishCompetition(Competition competition) {
-    ScoreSummary highscores = highscoreService.getHighscores(competition.getGameId(), null);
+    long serverId = competition.getDiscordServerId();
+    long channelId = competition.getDiscordChannelId();
+
+    ScoreSummary highscores = highscoreService.getGameHighscore(serverId, competition.getGameId(), null);
     if (highscores.getScores().isEmpty()) {
       LOG.error("Failed to finished " + competition + " correctly, no score could be determined, using John Doe.");
       competition.setWinnerInitials("???");

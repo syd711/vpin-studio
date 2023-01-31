@@ -28,7 +28,7 @@ public class HighscoreTest extends VPinServerTest {
   public void testHighscore() {
 //    Game game = gameService.getGameByFilename("Game of Thrones LE (Stern 2015) VPW v1.0.1.vpx");
     Game game = gameService.getGameByFilename(VPinServerTest.TEST_GAME_FILENAME);
-    ScoreSummary highscores = highscoreService.getHighscores(game.getId(), game.getGameDisplayName());
+    ScoreSummary highscores = highscoreService.getAllHighscoresForPlayer(game.getId(), game.getGameDisplayName());
 
     assertNotNull(highscores);
     assertNotNull(highscores.getRaw());
@@ -63,7 +63,7 @@ public class HighscoreTest extends VPinServerTest {
   @Test
   public void testHighscores() throws InterruptedException {
     Game game = gameService.getGameByFilename(VPinServerTest.TEST_GAME_FILENAME);
-    ScoreSummary highscores = highscoreService.getHighscores(game.getId(), game.getGameDisplayName());
+    ScoreSummary highscores = highscoreService.getAllHighscoresForPlayer(game.getId(), game.getGameDisplayName());
 
     assertNotNull(highscores);
     assertNotNull(highscores.getRaw());
@@ -77,7 +77,7 @@ public class HighscoreTest extends VPinServerTest {
     cal.setTime(new Date());
     cal.add(Calendar.YEAR, -10);
     Date from = cal.getTime();
-    ScoreList scoresBetween = highscoreService.getScoresBetween(game.getId(), from, new Date());
+    ScoreList scoresBetween = highscoreService.getScoresBetween(game.getId(), from, new Date(), -1l);
     assertFalse(scoresBetween.getScores().isEmpty());
 
     HighscoreMetadata metadata = highscoreService.scanScore(game);

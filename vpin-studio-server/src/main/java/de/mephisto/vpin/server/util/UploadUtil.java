@@ -14,7 +14,7 @@ import java.io.IOException;
 public class UploadUtil {
   private final static Logger LOG = LoggerFactory.getLogger(UploadUtil.class);
 
-  public static Boolean upload(MultipartFile file, File target) {
+  public static Boolean upload(MultipartFile file, File target) throws Exception {
     byte[] bytes = new byte[0];
     try {
       bytes = file.getBytes();
@@ -28,6 +28,7 @@ public class UploadUtil {
       LOG.info("Written uploaded file: " + target.getAbsolutePath() + ", byte size was " + bytes.length);
     } catch (Exception e) {
       LOG.error("Failed to store asset: " + e.getMessage() + ", byte size was " + bytes.length, e);
+      throw e;
     }
     return true;
   }

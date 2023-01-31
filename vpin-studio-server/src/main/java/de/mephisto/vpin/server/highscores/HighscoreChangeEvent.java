@@ -1,15 +1,51 @@
 package de.mephisto.vpin.server.highscores;
 
 import de.mephisto.vpin.server.games.Game;
+import edu.umd.cs.findbugs.annotations.NonNull;
 
-public interface HighscoreChangeEvent {
-  Game getGame();
+public class HighscoreChangeEvent {
 
-  Highscore getOldHighscore();
+  @NonNull
+  private final Game game;
+  @NonNull
+  private final Highscore oldHighscore;
+  @NonNull
+  private final Highscore newHighscore;
+  @NonNull
+  private final Score oldScore;
+  @NonNull
+  private final Score newScore;
 
-  Highscore getNewHighscore();
+  public HighscoreChangeEvent(@NonNull Game game, @NonNull Highscore oldHighscore, @NonNull Highscore newHighscore, @NonNull Score oldScore, @NonNull Score newScore) {
+    this.game = game;
+    this.oldHighscore = oldHighscore;
+    this.newHighscore = newHighscore;
+    this.oldScore = oldScore;
+    this.newScore = newScore;
+  }
 
-  Score getOldScore();
+  @NonNull
+  public Game getGame() {
+    return game;
+  }
 
-  Score getNewScore();
+  @NonNull
+  public Highscore getOldHighscore() {
+    return oldHighscore;
+  }
+
+  @NonNull
+  public Highscore getNewHighscore() {
+    return newHighscore;
+  }
+
+  @NonNull
+  public Score getOldScore() {
+    return oldScore;
+  }
+
+  @NonNull
+  public Score getNewScore() {
+    return newScore;
+  }
 }

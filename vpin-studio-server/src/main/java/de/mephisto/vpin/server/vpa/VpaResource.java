@@ -10,10 +10,12 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.io.File;
 
 import static de.mephisto.vpin.server.VPinStudioServer.API_SEGMENT;
+import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 
 @RestController
 @RequestMapping(API_SEGMENT + "vpa")
@@ -38,15 +40,19 @@ public class VpaResource {
 
   @PostMapping("/upload")
   public String uploadVpa(@RequestParam(value = "file", required = false) MultipartFile file) {
-    if (file == null) {
-      LOG.error("VPA upload request did not contain a file object.");
+    try {
+      if (file == null) {
+        LOG.error("VPA upload request did not contain a file object.");
+        return null;
+      }
+      File out = new File(systemService.getVpaArchiveFolder(), file.getOriginalFilename());
+      if (UploadUtil.upload(file, out)) {
+        return out.getName();
+      }
       return null;
+    } catch (Exception e) {
+      throw new ResponseStatusException(INTERNAL_SERVER_ERROR, "VPA upload failed: " + e.getMessage());
     }
-    File out = new File(systemService.getVpaArchiveFolder(), file.getOriginalFilename());
-    if (UploadUtil.upload(file, out)) {
-      return out.getName();
-    }
-    return null;
   }
 
   @GetMapping("/manifest/{id}")

@@ -11,16 +11,12 @@ import de.mephisto.vpin.server.discord.DiscordOfflineChannelMessageFactory;
 import de.mephisto.vpin.server.discord.DiscordService;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameService;
-import de.mephisto.vpin.server.highscores.HighscoreChangeEvent;
-import de.mephisto.vpin.server.highscores.HighscoreChangeListener;
-import de.mephisto.vpin.server.highscores.HighscoreInitializedEvent;
-import de.mephisto.vpin.server.highscores.HighscoreService;
+import de.mephisto.vpin.server.highscores.*;
 import de.mephisto.vpin.server.highscores.cards.CardService;
 import de.mephisto.vpin.server.players.Player;
 import de.mephisto.vpin.server.popper.PopperService;
 import de.mephisto.vpin.server.popper.TableStatusChangeListener;
 import de.mephisto.vpin.server.popper.TableStatusChangedEvent;
-import de.mephisto.vpin.server.preferences.PreferencesService;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import org.jetbrains.annotations.NotNull;
@@ -30,11 +26,13 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
-public class NotificationService implements InitializingBean, HighscoreChangeListener, CompetitionChangeListener, TableStatusChangeListener {
+public class NotificationService implements InitializingBean, HighscoreChangeListener, CompetitionChangeListener, TableStatusChangeListener, DiscordHighscoreChangeListener {
   private final static Logger LOG = LoggerFactory.getLogger(NotificationService.class);
 
   @Autowired
@@ -58,6 +56,7 @@ public class NotificationService implements InitializingBean, HighscoreChangeLis
   public void notifyPopperRestart() {
     discordService.setStatus(null);
   }
+
 
   @Override
   public void tableLaunched(TableStatusChangedEvent event) {
@@ -92,6 +91,41 @@ public class NotificationService implements InitializingBean, HighscoreChangeLis
   }
 
   @Override
+  public void highscoreChanged(@NotNull DiscordHighscoreChangeEvent event) {
+    //up til now we only THAT the score has changed, but not how
+    Competition competition = event.getCompetition();
+    Game game = event.getGame();
+    long discordServerId = competition.getDiscordServerId();
+    long discordChannelId = competition.getDiscordChannelId();
+
+    HighscoreMetadata highscoreMetaData = event.getHighscoreMetaData();
+    String newRaw = highscoreMetaData.getRaw();
+
+    List<Score> newScores = highscoreService.parseScores(new Date(), newRaw, game.getId(), discordServerId);
+    ScoreList scoreList = discordService.getScoreList(competition.getUuid(), discordServerId, discordChannelId);
+    List<Score> oldScores = null;
+    ScoreSummary latestScore = scoreList.getLatestScore();
+    if (latestScore == null) {
+      DiscordCompetitionData competitionData = discordService.getCompetitionData(discordServerId, discordChannelId);
+
+      oldScores = competitionData.getScores().stream().map(score -> {
+        Player player = discordService.getPlayerByInitials(discordServerId, score.getInitials());
+        double numericScore = HighscoreParser.toNumericScore(score.getScore());
+        return new Score(highscoreMetaData.getModified(), game.getId(), score.getInitials(), player, score.getScore(), numericScore, score.getPosition());
+      }).collect(Collectors.toList());
+    }
+    else {
+      oldScores = latestScore.getScores();
+    }
+
+    int position = highscoreService.calculateChangedPosition(oldScores, newScores);
+    Score oldScore = oldScores.get(position - 1);
+    Score newScore = newScores.get(position - 1);
+
+    discordService.sendMessage(discordServerId, discordChannelId, DiscordChannelMessageFactory.createCompetitionHighscoreCreatedMessage(game, competition, oldScore, newScore, newScores));
+  }
+
+  @Override
   public void highscoreChanged(@NotNull HighscoreChangeEvent event) {
     Game game = event.getGame();
     try {
@@ -105,13 +139,7 @@ public class NotificationService implements InitializingBean, HighscoreChangeLis
       if (competition.getDiscordChannelId() > 0 && competition.isActive()) {
         long discordServerId = competition.getDiscordServerId();
         long discordChannelId = competition.getDiscordChannelId();
-
-        if(competition.getType().equals(CompetitionType.DISCORD.name())) {
-          discordService.sendMessage(discordServerId, discordChannelId, DiscordChannelMessageFactory.createCompetitionHighscoreCreatedMessage(competition, event));
-        }
-        else {
-          discordService.sendMessage(discordServerId, discordChannelId, DiscordOfflineChannelMessageFactory.createCompetitionHighscoreCreatedMessage(competition, event));
-        }
+        discordService.sendMessage(discordServerId, discordChannelId, DiscordOfflineChannelMessageFactory.createCompetitionHighscoreCreatedMessage(competition, event));
       }
     }
   }
@@ -128,9 +156,9 @@ public class NotificationService implements InitializingBean, HighscoreChangeLis
 
         //check if the competition is already set as topic, in this case the user simply re-created the DB entry
         DiscordCompetitionData competitionData = discordService.getCompetitionData(discordServerId, discordChannelId);
-        if(competitionData == null) {
+        if (competitionData == null) {
           String messageId = discordService.sendMessage(discordServerId, discordChannelId, DiscordChannelMessageFactory.createDiscordCompetitionCreatedMessage(competition, game, botId));
-          ScoreSummary highscores = highscoreService.getHighscores(game.getId());
+          ScoreSummary highscores = highscoreService.getGameHighscore(discordServerId, game.getId(), game.getGameDisplayName());
           discordService.saveCompetitionData(competition, game, highscores, messageId);
         }
         else {
@@ -160,7 +188,7 @@ public class NotificationService implements InitializingBean, HighscoreChangeLis
       if (competition.getDiscordChannelId() > 0) {
         long discordServerId = competition.getDiscordServerId();
         long discordChannelId = competition.getDiscordChannelId();
-        ScoreSummary summary = discordService.getScoreSummary(discordServerId, discordChannelId);
+        ScoreSummary summary = competitionService.getCompetitionScore(competition.getId());
         if (summary != null) {
           discordService.sendMessage(discordServerId, discordChannelId, DiscordOfflineChannelMessageFactory.createCompetitionFinishedMessage(competition, winner, game, summary));
         }
@@ -237,6 +265,7 @@ public class NotificationService implements InitializingBean, HighscoreChangeLis
   @Override
   public void afterPropertiesSet() throws Exception {
     highscoreService.addHighscoreChangeListener(this);
+    highscoreService.addDiscordHighscoreChangeListener(this);
     competitionService.addCompetitionChangeListener(this);
     popperService.addTableStatusChangeListener(this);
     discordService.setStatus(null);

@@ -57,9 +57,10 @@ public class PlayerService {
     return Collections.emptyList();
   }
 
-  public Optional<Player> getPlayerForInitials(@Nullable String initials) {
+  @Nullable
+  public Player getPlayerForInitials(long serverId, @Nullable String initials) {
     if(StringUtils.isEmpty(initials)) {
-      return Optional.empty();
+      return null;
     }
 
     List<Player> players = playerRepository.findByInitials(initials.toUpperCase());
@@ -68,10 +69,10 @@ public class PlayerService {
     }
 
     if (!players.isEmpty()) {
-      return Optional.of(players.get(0));
+      return players.get(0);
     }
 
-    return discordService.getPlayerByInitials(initials);
+    return discordService.getPlayerByInitials(serverId, initials);
   }
 
   public Player save(Player player) {

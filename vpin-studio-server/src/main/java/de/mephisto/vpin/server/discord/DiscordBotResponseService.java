@@ -20,7 +20,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class DiscordBotResponseService implements DiscordBotCommandListener, InitializingBean {
@@ -55,7 +54,7 @@ public class DiscordBotResponseService implements DiscordBotCommandListener, Ini
         for (Competition activeCompetition : activeCompetitions) {
           Game game = gameService.getGame(activeCompetition.getGameId());
           if (game != null) {
-            ScoreSummary highscores = highscoreService.getHighscores(game.getId(), game.getGameDisplayName());
+            ScoreSummary highscores = highscoreService.getGameHighscore(cmd.getServerId(), game.getId(), game.getGameDisplayName());
             String msg = DiscordBotCommandResponseFactory.createActiveCompetitionMessage(activeCompetition, game, highscores);
             builder.append(msg);
           }
@@ -71,7 +70,7 @@ public class DiscordBotResponseService implements DiscordBotCommandListener, Ini
               if (StringUtils.isEmpty(metadata.getRaw()) && !StringUtils.isEmpty(metadata.getStatus())) {
                 return () -> "Highscore for '" + game.getGameDisplayName() + "' retrieval failed: " + metadata.getStatus();
               }
-              ScoreSummary highscores = highscoreService.getHighscores(game.getId(), game.getGameDisplayName());
+              ScoreSummary highscores = highscoreService.getGameHighscore(cmd.getServerId(), game.getId(), game.getGameDisplayName());
               return () -> DiscordBotCommandResponseFactory.createHighscoreMessage(game, highscores);
             }
           }
@@ -84,10 +83,10 @@ public class DiscordBotResponseService implements DiscordBotCommandListener, Ini
         return () -> DiscordBotCommandResponseFactory.createRanksMessage(playersByRanks);
       }
       case BotCommand.CMD_PLAYER: {
-        Optional<Player> playerForInitials = playerService.getPlayerForInitials(cmd.getParameter());
-        if (playerForInitials.isPresent()) {
-          ScoreSummary highscores = highscoreService.getHighscores(cmd.getParameter());
-          return () -> DiscordBotCommandResponseFactory.createRanksMessageFor(playerForInitials.get(), highscores);
+        Player player = playerService.getPlayerForInitials(cmd.getServerId(), cmd.getParameter());
+        if (player != null) {
+          ScoreSummary highscores = highscoreService.getAllHighscoresForPlayer(cmd.getServerId(), cmd.getParameter());
+          return () -> DiscordBotCommandResponseFactory.createRanksMessageFor(gameService, player, highscores);
         }
         return () -> "No player found with initials '" + cmd.getParameter().toUpperCase() + "'";
       }

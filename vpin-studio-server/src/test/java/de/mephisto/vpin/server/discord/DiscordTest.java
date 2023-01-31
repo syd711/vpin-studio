@@ -42,7 +42,7 @@ public class DiscordTest {
     data.setStartMessageId("1055103322874466365");
     data.setTableName("123456789 123456789 123456789 123456789 ");
 
-    Score score = new Score(new Date(), 1234, "123", null, "100.100.000.000", 100000000000d, 1, "lö dflökajdfj sflö saf");
+    Score score = new Score(new Date(), 1234, "123", null, "100.100.000.000", 100000000000d, 1);
     data.getScores().add(CompetitionDataHelper.toScoreEntry(score));
     score.setPosition(2);
     data.getScores().add(CompetitionDataHelper.toScoreEntry(score));

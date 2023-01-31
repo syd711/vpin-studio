@@ -8,12 +8,21 @@ public class HighscoreMetadata {
   public static final String TYPE_NVRAM = "NVRam";
 
   private String type;
+  private String displayName;
   private String filename;
   private Date modified;
   private Date scanned;
   private String raw;
   private String rom;
   private String status;
+
+  public String getDisplayName() {
+    return displayName;
+  }
+
+  public void setDisplayName(String displayName) {
+    this.displayName = displayName;
+  }
 
   public Date getScanned() {
     return scanned;

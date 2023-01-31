@@ -4,7 +4,6 @@ import de.mephisto.vpin.restclient.PopperScreen;
 import de.mephisto.vpin.server.competitions.ScoreSummary;
 import de.mephisto.vpin.server.directb2s.DirectB2SService;
 import de.mephisto.vpin.server.games.Game;
-import de.mephisto.vpin.server.games.GameService;
 import de.mephisto.vpin.server.highscores.HighscoreService;
 import de.mephisto.vpin.server.system.SystemService;
 import de.mephisto.vpin.server.util.Config;
@@ -49,23 +48,30 @@ public class CardService {
 
   public boolean generateCard(Game game, boolean generateSampleCard) throws Exception {
     try {
-      ScoreSummary summary = highscoreService.getHighscores(game.getId(), game.getGameDisplayName());
+      ScoreSummary summary = highscoreService.getAllHighscoresForPlayer(game.getId(), game.getGameDisplayName());
       if (!summary.getScores().isEmpty() && !StringUtils.isEmpty(summary.getRaw())) {
         Config.getCardGeneratorConfig().reload();
 
-
-        BufferedImage bufferedImage = new CardGraphics(directB2SService, game, summary).draw();
-        if (bufferedImage != null) {
-          if (generateSampleCard) {
+        if (generateSampleCard) {
+          BufferedImage bufferedImage = new CardGraphics(directB2SService, game, summary).draw();
+          if (bufferedImage != null) {
             ImageUtil.write(bufferedImage, getCardSampleFile());
             return true;
           }
-          else {
-            File highscoreCard = getCardFile(game);
+          return false;
+        }
+
+        String screenName = Config.getCardGeneratorConfig().getString("popper.screen", null);
+        if (!StringUtils.isEmpty(screenName)) {
+          BufferedImage bufferedImage = new CardGraphics(directB2SService, game, summary).draw();
+          if (bufferedImage != null) {
+            File highscoreCard = getCardFile(game, screenName);
             ImageUtil.write(bufferedImage, highscoreCard);
             return true;
           }
         }
+
+        return false;
       }
       else {
         LOG.info("Skipped card generation for " + game.getGameDisplayName() + ", no scores found.");
@@ -82,8 +88,7 @@ public class CardService {
   }
 
   @NonNull
-  private File getCardFile(@NonNull Game game) {
-    String screenName = Config.getCardGeneratorConfig().getString("popper.screen", PopperScreen.Other2.name());
+  private File getCardFile(@NonNull Game game, @NonNull String screenName) {
     PopperScreen screen = PopperScreen.valueOf(screenName);
     File mediaFolder = game.getPinUPMediaFolder(screen);
     return new File(mediaFolder, FilenameUtils.getBaseName(game.getGameFileName()) + ".png");

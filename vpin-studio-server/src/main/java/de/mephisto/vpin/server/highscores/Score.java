@@ -13,23 +13,17 @@ public class Score {
   private double numericScore;
   private int position;
   private Date createdAt;
-  private String displayName;
 
-  public Score(Date createdAt, int gameId, String playerInitials, Player player, String score, double numericScore, int position, String displayName) {
+  public Score(Date createdAt, int gameId, String playerInitials, Player player, String score, double numericScore, int position) {
     this.createdAt = createdAt;
     this.gameId = gameId;
     this.player = player;
     this.score = score;
     this.numericScore = numericScore;
     this.position = position;
-    this.displayName = displayName;
     if (!StringUtils.isEmpty(playerInitials)) {
       this.playerInitials = playerInitials;
     }
-  }
-
-  public String getDisplayName() {
-    return displayName;
   }
 
   public Date getCreatedAt() {

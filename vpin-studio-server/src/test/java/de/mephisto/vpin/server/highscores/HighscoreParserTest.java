@@ -143,7 +143,7 @@ public class HighscoreParserTest extends VPinServerTest {
   @Test
   public void testParsing() {
     for (String testling : testlings) {
-      List<Score> test = highscoreParser.parseScores(new Date(), RAW5, -1, "Test");
+      List<Score> test = highscoreParser.parseScores(new Date(), RAW5, -1, -1l);
       assertFalse(test.isEmpty());
       assertTrue(test.size() == 3);
       for (Score score : test) {
@@ -160,7 +160,7 @@ public class HighscoreParserTest extends VPinServerTest {
 
   @Test
   public void testSingleton() {
-    List<Score> test = highscoreParser.parseScores(new Date(), singleton, -1, "Test");
+    List<Score> test = highscoreParser.parseScores(new Date(), singleton, -1, -1l);
     assertFalse(test.isEmpty());
     assertTrue(test.size() == 3);
     for (Score score : test) {

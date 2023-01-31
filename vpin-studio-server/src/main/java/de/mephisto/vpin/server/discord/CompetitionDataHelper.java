@@ -98,19 +98,20 @@ public class CompetitionDataHelper {
   }
 
   @Nullable
-  public static ScoreSummary getScores(@NonNull DiscordService discordService, @Nullable String topic) {
-    DiscordCompetitionData topicData = getCompetitionData(topic);
-    if (topicData != null) {
+  public static ScoreSummary getDiscordCompetitionScore(@NonNull DiscordService discordService, long serverId, @Nullable String topic) {
+    DiscordCompetitionData data = getCompetitionData(topic);
+    return getDiscordCompetitionScore(discordService, serverId, data);
+  }
+
+  @Nullable
+  public static ScoreSummary getDiscordCompetitionScore(@NonNull DiscordService discordService, long serverId, @Nullable DiscordCompetitionData data) {
+    if (data != null) {
       List<Score> scores = new ArrayList<>();
       ScoreSummary summary = new ScoreSummary(scores, new Date());
-      List<DiscordCompetitionScoreEntry> scoresEntries = topicData.getScores();
+      List<DiscordCompetitionScoreEntry> scoresEntries = data.getScores();
       for (DiscordCompetitionScoreEntry scoresEntry : scoresEntries) {
-        Player player = null;
-        Optional<Player> playerForInitials = discordService.getPlayerByInitials(scoresEntry.getInitials());
-        if (playerForInitials.isPresent()) {
-          player = playerForInitials.get();
-        }
-        Score score = new Score(new Date(), -1, scoresEntry.getInitials(), player, scoresEntry.getScore(), HighscoreParser.toNumericScore(scoresEntry.getScore()), scoresEntry.getPosition(), null);
+        Player player = discordService.getPlayerByInitials(serverId, scoresEntry.getInitials());
+        Score score = new Score(new Date(), -1, scoresEntry.getInitials(), player, scoresEntry.getScore(), HighscoreParser.toNumericScore(scoresEntry.getScore()), scoresEntry.getPosition());
         scores.add(score);
       }
       return summary;

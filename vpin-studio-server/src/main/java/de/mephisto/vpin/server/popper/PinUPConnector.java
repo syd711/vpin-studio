@@ -263,7 +263,7 @@ public class PinUPConnector implements InitializingBean {
 
   public int importGame(@NonNull File file) {
     String emulator = VpaUtil.getEmulatorType(file);
-    String name = FilenameUtils.getBaseName(emulator);
+    String name = FilenameUtils.getBaseName(file.getName());
     String gameFileName = file.getName();
     String gameDisplayName = name.replaceAll("-", " ").replaceAll("_", " ");
     return importGame(emulator, name, gameFileName, gameDisplayName);

@@ -44,7 +44,7 @@ public class HighscoreParser {
   private PreferencesService preferencesService;
 
   @NonNull
-  public List<Score> parseScores(@NonNull Date createdAt, @NonNull String raw, int gameId, @Nullable String displayName) {
+  public List<Score> parseScores(@NonNull Date createdAt, @NonNull String raw, int gameId, long serverId) {
     List<String> titles = getTitleList();
     List<Score> scores = new ArrayList<>();
 
@@ -60,7 +60,7 @@ public class HighscoreParser {
         String line = lines[i];
         if (titles.contains(line.trim())) {
           String scoreLine = lines[i + 1];
-          Score score = createTitledScore(createdAt, scoreLine, gameId, displayName);
+          Score score = createTitledScore(createdAt, scoreLine, gameId, serverId);
           if (score != null) {
             scores.add(score);
           }
@@ -69,7 +69,7 @@ public class HighscoreParser {
         }
 
         if (line.startsWith(index + ")") || line.startsWith("#" + index) || line.startsWith(index + "#")) {
-          Score score = createScore(createdAt, line, gameId, displayName);
+          Score score = createScore(createdAt, line, gameId, serverId);
           if (score != null) {
             score.setPosition(scores.size() + 1);
             scores.add(score);
@@ -88,7 +88,7 @@ public class HighscoreParser {
   }
 
   @Nullable
-  private Score createTitledScore(@NonNull Date createdAt, @NonNull String line, int gameId, @Nullable String displayName) {
+  private Score createTitledScore(@NonNull Date createdAt, @NonNull String line, int gameId, long serverId) {
     String initials = line.trim().substring(0, 3);
     String scoreString = line.substring(4).trim();
     double scoreValue = toNumericScore(scoreString);
@@ -96,43 +96,31 @@ public class HighscoreParser {
       return null;
     }
 
-    Player p = null;
-    Optional<Player> player = playerService.getPlayerForInitials(initials);
-    if (player.isPresent()) {
-      p = player.get();
-    }
-    return new Score(createdAt, gameId, initials, p, scoreString, scoreValue, 1, displayName);
+    Player player = playerService.getPlayerForInitials(serverId, initials);
+    return new Score(createdAt, gameId, initials, player, scoreString, scoreValue, 1);
   }
 
   @Nullable
-  private Score createScore(@NonNull Date createdAt, @NonNull String line, int gameId, @Nullable String displayName) {
+  private Score createScore(@NonNull Date createdAt, @NonNull String line, int gameId, long serverId) {
     List<String> collect = Arrays.stream(line.trim().split(" ")).filter(s -> s.trim().length() > 0).collect(Collectors.toList());
-    String indexString = collect.get(0).replaceAll("[^0-9]", "");
-
-    Player p = null;
     if (collect.size() == 2) {
       String score = collect.get(1);
       double v = toNumericScore(score);
       if (v == -1) {
         return null;
       }
-
-      return new Score(createdAt, gameId, "", null, score, v, -1, displayName);
+      return new Score(createdAt, gameId, "", null, score, v, -1);
     }
 
     if (collect.size() == 3) {
       String score = collect.get(2);
       String initials = collect.get(1);
-      Optional<Player> player = playerService.getPlayerForInitials(initials);
-      if (player.isPresent()) {
-        p = player.get();
-      }
-
+      Player player = playerService.getPlayerForInitials(serverId, initials);
       double v = toNumericScore(score);
       if (v == -1) {
         return null;
       }
-      return new Score(createdAt, gameId, initials, p, score, v, -1, displayName);
+      return new Score(createdAt, gameId, initials, player, score, v, -1);
     }
 
     if (collect.size() > 3) {
@@ -143,16 +131,12 @@ public class HighscoreParser {
       }
       String score = collect.get(collect.size() - 1);
       String playerInitials = initials.toString().trim();
-      Optional<Player> player = playerService.getPlayerForInitials(playerInitials);
-      if (player.isPresent()) {
-        p = player.get();
-      }
-
+      Player player = playerService.getPlayerForInitials(serverId, playerInitials);
       double v = toNumericScore(score);
       if (v == -1) {
         return null;
       }
-      return new Score(createdAt, gameId, playerInitials, p, score, v, -1, displayName);
+      return new Score(createdAt, gameId, playerInitials, player, score, v, -1);
     }
 
     throw new UnsupportedOperationException("Could parse score line for game " + gameId + " '" + line + "'");

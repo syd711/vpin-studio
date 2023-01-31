@@ -11,8 +11,9 @@ public class BotCommand {
   private String content;
   private String command;
   private String parameter;
+  private long serverId;
 
-  public BotCommand(String content, DiscordCommandResolver commandResolver) {
+  public BotCommand(long serverId, String content, DiscordCommandResolver commandResolver) {
     this.content = content;
     this.commandResolver = commandResolver;
     command = content.trim().substring(1);
@@ -20,6 +21,10 @@ public class BotCommand {
       command = content.substring(1, content.indexOf(" ")).trim();
       parameter = content.substring(content.indexOf(" ")).trim();
     }
+  }
+
+  public long getServerId() {
+    return serverId;
   }
 
   public String getContent() {

@@ -20,9 +20,11 @@ public class DiscordListenerAdapter extends ListenerAdapter {
   private final static Logger LOG = LoggerFactory.getLogger(DiscordListenerAdapter.class);
 
   private List<String> commandsAllowList = new ArrayList<>();
+  private final DiscordClient discordClient;
   private final DiscordCommandResolver commandResolver;
 
-  public DiscordListenerAdapter(DiscordCommandResolver commandResolver) {
+  public DiscordListenerAdapter(DiscordClient discordClient, DiscordCommandResolver commandResolver) {
+    this.discordClient = discordClient;
     this.commandResolver = commandResolver;
   }
 
@@ -49,38 +51,12 @@ public class DiscordListenerAdapter extends ListenerAdapter {
   }
 
   /******************** Listener Methods ******************************************************************************/
-  @Override
-  public void onGuildMemberJoin(GuildMemberJoinEvent event) {
-    super.onGuildMemberJoin(event);
-    LOG.info("Guild member join event " + event);
-    DiscordMemberCache.invalidateAll();
-    DiscordMembersCache.invalidate(event.getGuild().getIdLong());
-  }
-
-  @Override
-  public void onGuildMemberUpdate(GuildMemberUpdateEvent event) {
-    super.onGuildMemberUpdate(event);
-    DiscordMemberCache.invalidateAll();
-    DiscordMembersCache.invalidate(event.getGuild().getIdLong());
-  }
-
-  @Override
-  public void onGuildMemberRemove(GuildMemberRemoveEvent event) {
-    super.onGuildMemberRemove(event);
-    DiscordMemberCache.invalidateAll();
-    DiscordMembersCache.invalidate(event.getGuild().getIdLong());
-  }
-
-  @Override
-  public void onGuildMemberUpdateNickname(GuildMemberUpdateNicknameEvent event) {
-    super.onGuildMemberUpdateNickname(event);
-    DiscordMemberCache.invalidateAll();
-    DiscordMembersCache.invalidate(event.getGuild().getIdLong());
-  }
 
   @Override
   public void onMessageReceived(MessageReceivedEvent event) {
     if (event.getAuthor().isBot()) {
+      long channelId = event.getMessage().getChannel().getIdLong();
+      discordClient.invalidateMessageCache(channelId);
       return;
     }
 
@@ -97,7 +73,7 @@ public class DiscordListenerAdapter extends ListenerAdapter {
             "").queue();
       }
       else if (commandResolver != null) {
-        BotCommand command = new BotCommand(content, commandResolver);
+        BotCommand command = new BotCommand(message.getGuild().getIdLong(), content, commandResolver);
         BotCommandResponse response = command.execute();
         if (response != null) {
           String result = response.toDiscordMarkup();
