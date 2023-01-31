@@ -2,7 +2,7 @@ package de.mephisto.vpin.server.vpa;
 
 import de.mephisto.vpin.restclient.ExportDescriptor;
 import de.mephisto.vpin.restclient.VpaManifest;
-import de.mephisto.vpin.server.VPinServerTest;
+import de.mephisto.vpin.server.AbstractVPinServerTest;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameService;
 import de.mephisto.vpin.server.highscores.HighscoreService;
@@ -18,7 +18,7 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @SpringBootTest
-public class VpaServiceTest extends VPinServerTest {
+public class VpaServiceTest extends AbstractVPinServerTest {
 
   @Autowired
   private VpaService vpaService;

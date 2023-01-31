@@ -49,24 +49,24 @@ public class DiscordChannelMessageFactory {
       }
     }
 
-    String template = "%s created a new highscore for \"%s\"!\n(ID: %s)\n" +
+    String template = "%s created a new highscore for \"%s\".\n(ID: %s)\n" +
         "```%s\n" +
         "```";
-    String otherPlayerTemplate = "\n%s, your highscore of %s points has been beaten.";
+    String otherPlayerTemplate = "\n%s, your highscore of %s points has been beaten.\nHere is the updated highscore list:";
 
     String msg = String.format(template, playerName, game.getGameDisplayName(), competition.getUuid(), newScore);
     String suffix = String.format(otherPlayerTemplate, oldName, oldScore.getScore());
 
     String result = msg;
     if (StringUtils.isEmpty(oldName)) {
-      result = result + "\nThe previous highscore of " + oldScore.getScore() + " has been beaten.";
+      result = result + "\nThe previous highscore of " + oldScore.getScore() + " has been beaten.\nHere is the updated highscore list:";
     }
     else if (!oldName.equals(playerName)) {
       result = result + suffix;
     }
 
 
-    return result + createHighscoreList(game, scores);
+    return result + createHighscoreList(scores);
   }
 
   public static String createDiscordCompetitionCreatedMessage(Competition competition, Game game, long initiatorId) {
@@ -85,12 +85,11 @@ public class DiscordChannelMessageFactory {
         diff);
   }
 
-  private static String createHighscoreList(Game game, List<Score> scores) {
-    String title = "Highscore for '" + game.getGameDisplayName() + "'";
-    StringBuilder builder = new StringBuilder(title);
+  private static String createHighscoreList(List<Score> scores) {
+    StringBuilder builder = new StringBuilder();
     builder.append("```");
-    builder.append("Pos   Initials          Score\n");
-    builder.append("----------------------------------------\n");
+    builder.append("Pos   Initials      Score\n");
+    builder.append("-----------------------------------\n");
     int index = 0;
     for (Score score : scores) {
       index++;
@@ -98,8 +97,8 @@ public class DiscordChannelMessageFactory {
       builder.append(score.getPosition());
       builder.append("   ");
       builder.append(String.format("%4.4s", score.getPlayerInitials()));
-      builder.append("       ");
-      builder.append(String.format("%12.12s", score.getScore()));
+      builder.append("           ");
+      builder.append(String.format("%14.12s", score.getScore()));
       builder.append("\n");
     }
     builder.append("```");

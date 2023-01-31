@@ -42,9 +42,7 @@ public class DiscordOfflineChannelMessageFactory {
       "%s\n" +
       "```";
 
-  private static final String COMPETITION_CANCELLED_TEMPLATE = "```" +
-      "The competition '%s' has been cancelled." +
-      "```";
+  private static final String COMPETITION_CANCELLED_TEMPLATE = "The competition '%s' has been cancelled.";
 
   public static String createCompetitionCancelledMessage(Competition competition) {
     return String.format(COMPETITION_CANCELLED_TEMPLATE, competition.getName());
@@ -74,11 +72,10 @@ public class DiscordOfflineChannelMessageFactory {
     }
 
     String template = "%s created a new highscore for '%s', competed in '%s' (ID: %s) .\n" +
-        "```%s\n" +
         "```";
     String otherPlayerTemplate = "\n%s, your highscore of %s points has been beaten.";
 
-    String msg = String.format(template, newName, competition.getName(), competition.getUuid(), game.getGameDisplayName(), newScore);
+    String msg = String.format(template, newName, competition.getName(), game.getGameDisplayName(), newScore);
     String suffix = String.format(otherPlayerTemplate, oldName, oldScore.getScore());
 
     String result = msg;

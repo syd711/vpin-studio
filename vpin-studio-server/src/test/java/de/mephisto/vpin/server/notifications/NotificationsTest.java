@@ -1,6 +1,7 @@
 package de.mephisto.vpin.server.notifications;
 
-import de.mephisto.vpin.server.VPinServerTest;
+import de.mephisto.vpin.restclient.CompetitionType;
+import de.mephisto.vpin.server.AbstractVPinServerTest;
 import de.mephisto.vpin.server.competitions.Competition;
 import de.mephisto.vpin.server.competitions.CompetitionService;
 import de.mephisto.vpin.server.games.Game;
@@ -15,7 +16,7 @@ import java.util.Date;
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
-public class NotificationsTest extends VPinServerTest {
+public class NotificationsTest extends AbstractVPinServerTest {
 
   @Autowired
   private CompetitionService competitionService;
@@ -25,9 +26,10 @@ public class NotificationsTest extends VPinServerTest {
 
   @Test
   public void testDisabledNotifications() {
-    Game game = gameService.getGameByFilename(VPinServerTest.TEST_GAME_FILENAME);
+    Game game = gameService.getGameByFilename(AbstractVPinServerTest.TEST_GAME_FILENAME);
 
     Competition competition = new Competition();
+    competition.setType(CompetitionType.OFFLINE.name());
     competition.setGameId(game.getId());
     competition.setName(String.valueOf(new Date().getTime()));
     competition.setStartDate(new Date());
@@ -50,7 +52,7 @@ public class NotificationsTest extends VPinServerTest {
 
   @Test
   public void testNotifications() throws InterruptedException {
-    Game game = gameService.getGameByFilename(VPinServerTest.TEST_GAME_FILENAME);
+    Game game = gameService.getGameByFilename(AbstractVPinServerTest.TEST_GAME_FILENAME);
 
     Competition competition = new Competition();
     competition.setGameId(game.getId());
@@ -64,8 +66,8 @@ public class NotificationsTest extends VPinServerTest {
     c.add(Calendar.DATE, 1); //same with c.add(Calendar.DAY_OF_MONTH, 1);
     competition.setEndDate(c.getTime());
 
-
-//    competition.setDiscordNotifications(true);
+    competition.setDiscordServerId(1043199618172858500l);
+    competition.setDiscordChannelId(1043199618172858503l);
 
     Competition save = competitionService.save(competition);
     assertNotNull(save);

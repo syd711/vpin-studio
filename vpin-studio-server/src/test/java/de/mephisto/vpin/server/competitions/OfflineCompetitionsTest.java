@@ -1,7 +1,7 @@
 package de.mephisto.vpin.server.competitions;
 
 import de.mephisto.vpin.restclient.CompetitionType;
-import de.mephisto.vpin.server.VPinServerTest;
+import de.mephisto.vpin.server.AbstractVPinServerTest;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameService;
 import de.mephisto.vpin.server.players.Player;
@@ -16,7 +16,7 @@ import java.util.Date;
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
-public class OfflineCompetitionsTest extends VPinServerTest {
+public class OfflineCompetitionsTest extends AbstractVPinServerTest {
 
   @Autowired
   private CompetitionService competitionService;
@@ -26,7 +26,7 @@ public class OfflineCompetitionsTest extends VPinServerTest {
 
   @Test
   public void testCompetitions() {
-    Game game = gameService.getGameByFilename(VPinServerTest.TEST_GAME_FILENAME);
+    Game game = gameService.getGameByFilename(AbstractVPinServerTest.TEST_GAME_FILENAME);
 
     competitionService.addCompetitionChangeListener(new CompetitionChangeListener() {
       @Override

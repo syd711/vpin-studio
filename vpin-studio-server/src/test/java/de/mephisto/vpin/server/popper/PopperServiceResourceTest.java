@@ -2,7 +2,7 @@ package de.mephisto.vpin.server.popper;
 
 import de.mephisto.vpin.restclient.PinUPControl;
 import de.mephisto.vpin.restclient.PopperScreen;
-import de.mephisto.vpin.server.VPinServerTest;
+import de.mephisto.vpin.server.AbstractVPinServerTest;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -10,7 +10,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
-public class PopperServiceResourceTest extends VPinServerTest {
+public class PopperServiceResourceTest extends AbstractVPinServerTest {
 
 
   @Autowired

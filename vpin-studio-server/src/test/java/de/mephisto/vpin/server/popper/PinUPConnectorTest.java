@@ -1,9 +1,8 @@
 package de.mephisto.vpin.server.popper;
 
 import de.mephisto.vpin.restclient.PinUPControl;
-import de.mephisto.vpin.server.VPinServerTest;
+import de.mephisto.vpin.server.AbstractVPinServerTest;
 import de.mephisto.vpin.server.games.Game;
-import de.mephisto.vpin.server.games.GameService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -14,14 +13,10 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
-public class PinUPConnectorTest extends VPinServerTest {
+public class PinUPConnectorTest extends AbstractVPinServerTest {
 
   @Autowired
   private PinUPConnector connector;
-
-
-  @Autowired
-  private GameService gameService;
 
   @Test
   public void testControls() {

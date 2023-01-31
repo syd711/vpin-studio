@@ -132,7 +132,7 @@ public class CompetitionService implements InitializingBean {
     long channelId = competition.getDiscordChannelId();
 
     if (competition.getType().equals(CompetitionType.OFFLINE.name())) {
-      return highscoreService.getGameHighscore(serverId, competition.getGameId(), null);
+      return highscoreService.getScoreSummary(serverId, competition.getGameId(), null);
     }
     else if (competition.getType().equals(CompetitionType.DISCORD.name())) {
       ScoreList scoreList = discordService.getScoreList(competition.getUuid(), serverId, channelId);
@@ -146,6 +146,9 @@ public class CompetitionService implements InitializingBean {
 
   public Competition save(Competition c) {
     boolean isNew = c.getId() == null;
+    if(c.getType() == null) {
+      c.setType(CompetitionType.OFFLINE.name());
+    }
     Competition updated = competitionsRepository.saveAndFlush(c);
     LOG.info("Saved " + updated);
     if (isNew) {
@@ -173,7 +176,7 @@ public class CompetitionService implements InitializingBean {
     long serverId = competition.getDiscordServerId();
     long channelId = competition.getDiscordChannelId();
 
-    ScoreSummary highscores = highscoreService.getGameHighscore(serverId, competition.getGameId(), null);
+    ScoreSummary highscores = highscoreService.getScoreSummary(serverId, competition.getGameId(), null);
     if (highscores.getScores().isEmpty()) {
       LOG.error("Failed to finished " + competition + " correctly, no score could be determined, using John Doe.");
       competition.setWinnerInitials("???");

@@ -2,7 +2,7 @@ package de.mephisto.vpin.server.competitions;
 
 import de.mephisto.vpin.restclient.CompetitionType;
 import de.mephisto.vpin.restclient.discord.DiscordCompetitionData;
-import de.mephisto.vpin.server.VPinServerTest;
+import de.mephisto.vpin.server.AbstractVPinServerTest;
 import de.mephisto.vpin.server.discord.DiscordService;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameService;
@@ -23,7 +23,7 @@ import java.util.UUID;
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
-public class DiscordCompetitionsTest extends VPinServerTest {
+public class DiscordCompetitionsTest extends AbstractVPinServerTest {
 
   @Autowired
   private CompetitionService competitionService;
@@ -42,7 +42,7 @@ public class DiscordCompetitionsTest extends VPinServerTest {
 
   @Test
   public void testCompetitions() throws InterruptedException {
-    Game game = gameService.getGameByFilename(VPinServerTest.TEST_GAME_FILENAME);
+    Game game = gameService.getGameByFilename(AbstractVPinServerTest.TEST_GAME_FILENAME);
 
     competitionService.addCompetitionChangeListener(new CompetitionChangeListener() {
       @Override

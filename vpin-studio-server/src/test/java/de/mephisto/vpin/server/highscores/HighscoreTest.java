@@ -1,6 +1,6 @@
 package de.mephisto.vpin.server.highscores;
 
-import de.mephisto.vpin.server.VPinServerTest;
+import de.mephisto.vpin.server.AbstractVPinServerTest;
 import de.mephisto.vpin.server.competitions.ScoreSummary;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameService;
@@ -16,7 +16,7 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
-public class HighscoreTest extends VPinServerTest {
+public class HighscoreTest extends AbstractVPinServerTest {
 
   @Autowired
   private HighscoreService highscoreService;
@@ -27,8 +27,8 @@ public class HighscoreTest extends VPinServerTest {
   @Test
   public void testHighscore() {
 //    Game game = gameService.getGameByFilename("Game of Thrones LE (Stern 2015) VPW v1.0.1.vpx");
-    Game game = gameService.getGameByFilename(VPinServerTest.TEST_GAME_FILENAME);
-    ScoreSummary highscores = highscoreService.getGameHighscore(-1l, game.getId(), game.getGameDisplayName());
+    Game game = gameService.getGameByFilename(AbstractVPinServerTest.TEST_GAME_FILENAME);
+    ScoreSummary highscores = highscoreService.getScoreSummary(-1l, game.getId(), game.getGameDisplayName());
 
     assertNotNull(highscores);
     assertNotNull(highscores.getRaw());
@@ -62,8 +62,8 @@ public class HighscoreTest extends VPinServerTest {
    */
   @Test
   public void testHighscores() throws InterruptedException {
-    Game game = gameService.getGameByFilename(VPinServerTest.TEST_GAME_FILENAME);
-    ScoreSummary highscores = highscoreService.getGameHighscore(-1l, game.getId(), game.getGameDisplayName());
+    Game game = gameService.getGameByFilename(AbstractVPinServerTest.TEST_GAME_FILENAME);
+    ScoreSummary highscores = highscoreService.getScoreSummary(-1l, game.getId(), game.getGameDisplayName());
 
     assertNotNull(highscores);
     assertNotNull(highscores.getRaw());
@@ -101,12 +101,13 @@ public class HighscoreTest extends VPinServerTest {
     });
     highscoreService.updateHighscore(game, metadata);
 
+
+    Thread.sleep(1000);
+
     ScoreSummary recentHighscores = gameService.getRecentHighscores(10);
     assertFalse(recentHighscores.getScores().isEmpty());
-
     Score score = recentHighscores.getScores().get(0);
     assertEquals(score.getGameId(), game.getId());
     assertEquals("7.100.000.000", score.getScore());
-    Thread.sleep(3000);
   }
 }

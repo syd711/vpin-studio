@@ -54,7 +54,7 @@ public class DiscordBotResponseService implements DiscordBotCommandListener, Ini
         for (Competition activeCompetition : activeCompetitions) {
           Game game = gameService.getGame(activeCompetition.getGameId());
           if (game != null) {
-            ScoreSummary highscores = highscoreService.getGameHighscore(cmd.getServerId(), game.getId(), game.getGameDisplayName());
+            ScoreSummary highscores = highscoreService.getScoreSummary(cmd.getServerId(), game.getId(), game.getGameDisplayName());
             String msg = DiscordBotCommandResponseFactory.createActiveCompetitionMessage(activeCompetition, game, highscores);
             builder.append(msg);
           }
@@ -70,7 +70,7 @@ public class DiscordBotResponseService implements DiscordBotCommandListener, Ini
               if (StringUtils.isEmpty(metadata.getRaw()) && !StringUtils.isEmpty(metadata.getStatus())) {
                 return () -> "Highscore for '" + game.getGameDisplayName() + "' retrieval failed: " + metadata.getStatus();
               }
-              ScoreSummary highscores = highscoreService.getGameHighscore(cmd.getServerId(), game.getId(), game.getGameDisplayName());
+              ScoreSummary highscores = highscoreService.getScoreSummary(cmd.getServerId(), game.getId(), game.getGameDisplayName());
               return () -> DiscordBotCommandResponseFactory.createHighscoreMessage(game, highscores);
             }
           }

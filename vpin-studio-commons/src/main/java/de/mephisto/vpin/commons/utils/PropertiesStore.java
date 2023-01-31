@@ -125,6 +125,9 @@ public class PropertiesStore {
       return properties.getProperty(key);
     }
     else {
+      if(defaultValue == null) {
+        defaultValue = "";
+      }
       set(key, defaultValue);
     }
     return defaultValue;

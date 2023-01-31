@@ -1,6 +1,6 @@
 package de.mephisto.vpin.server.highscores;
 
-import de.mephisto.vpin.server.VPinServerTest;
+import de.mephisto.vpin.server.AbstractVPinServerTest;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -13,7 +13,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @SpringBootTest
-public class HighscoreParserTest extends VPinServerTest {
+public class HighscoreParserTest extends AbstractVPinServerTest {
 
   @Autowired
   private HighscoreParser highscoreParser;

@@ -28,7 +28,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.Date;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -119,6 +118,11 @@ public class NotificationService implements InitializingBean, HighscoreChangeLis
     }
 
     int position = highscoreService.calculateChangedPosition(oldScores, newScores);
+    if (position == -1) {
+      LOG.info("No highscore change detected for " + game + " of discord competition '" + competition.getName() + "', skipping highscore message.");
+      return;
+    }
+
     Score oldScore = oldScores.get(position - 1);
     Score newScore = newScores.get(position - 1);
 
@@ -158,7 +162,7 @@ public class NotificationService implements InitializingBean, HighscoreChangeLis
         DiscordCompetitionData competitionData = discordService.getCompetitionData(discordServerId, discordChannelId);
         if (competitionData == null) {
           String messageId = discordService.sendMessage(discordServerId, discordChannelId, DiscordChannelMessageFactory.createDiscordCompetitionCreatedMessage(competition, game, botId));
-          ScoreSummary highscores = highscoreService.getGameHighscore(discordServerId, game.getId(), game.getGameDisplayName());
+          ScoreSummary highscores = highscoreService.getScoreSummary(discordServerId, game.getId(), game.getGameDisplayName());
           discordService.saveCompetitionData(competition, game, highscores, messageId);
         }
         else {

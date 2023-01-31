@@ -189,7 +189,7 @@ public class GameService {
 
   public ScoreSummary getScores(int gameId) {
     long serverId = Long.parseLong(String.valueOf(preferencesService.getPreferenceValue(PreferenceNames.DISCORD_GUILD_ID, -1)));
-    return highscoreService.getGameHighscore(serverId, gameId, null);
+    return highscoreService.getScoreSummary(serverId, gameId, null);
   }
 
   public ScoreList getScoreHistory(int gameId) {
