@@ -2,12 +2,14 @@ package de.mephisto.vpin.server.games;
 
 import de.mephisto.vpin.commons.utils.FileUtils;
 import de.mephisto.vpin.restclient.DeleteDescriptor;
+import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.server.competitions.CompetitionService;
 import de.mephisto.vpin.server.competitions.ScoreSummary;
 import de.mephisto.vpin.server.highscores.*;
 import de.mephisto.vpin.server.highscores.cards.CardService;
 import de.mephisto.vpin.server.popper.Emulator;
 import de.mephisto.vpin.server.popper.PinUPConnector;
+import de.mephisto.vpin.server.preferences.PreferencesService;
 import de.mephisto.vpin.server.roms.RomService;
 import de.mephisto.vpin.server.roms.ScanResult;
 import edu.umd.cs.findbugs.annotations.NonNull;
@@ -44,6 +46,9 @@ public class GameService {
 
   @Autowired
   private CompetitionService competitionService;
+
+  @Autowired
+  private PreferencesService preferencesService;
 
   @Autowired
   private CardService cardService;
@@ -159,9 +164,16 @@ public class GameService {
     return this.pinUPConnector.getGameIds();
   }
 
+  /**
+   * Used for creating the highscore cards combo.
+   * We only want to use tables there, that can show a highscore.
+   */
   public List<Game> getGamesWithScore() {
     List<Game> games = getGames();
-    return games.stream().filter(g -> !StringUtils.isEmpty(highscoreService.getAllHighscoresForPlayer(g.getId(), g.getGameDisplayName()).getRaw())).collect(Collectors.toList());
+    return games.stream().filter(g -> {
+      Optional<Highscore> highscore = highscoreService.getHighscore(g.getId());
+      return highscore.isPresent() && !StringUtils.isEmpty(highscore.get().getRaw());
+    }).collect(Collectors.toList());
   }
 
   @SuppressWarnings("unused")
@@ -176,7 +188,8 @@ public class GameService {
   }
 
   public ScoreSummary getScores(int gameId) {
-    return highscoreService.getAllHighscoresForPlayer(gameId, null);
+    long serverId = Long.parseLong(String.valueOf(preferencesService.getPreferenceValue(PreferenceNames.DISCORD_GUILD_ID, -1)));
+    return highscoreService.getGameHighscore(serverId, gameId, null);
   }
 
   public ScoreList getScoreHistory(int gameId) {

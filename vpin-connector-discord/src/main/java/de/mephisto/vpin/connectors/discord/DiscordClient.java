@@ -279,8 +279,14 @@ public class DiscordClient {
 
     if (!guilds.containsKey(id)) {
       Guild guildById = jda.getGuildById(id);
-      LOG.info("Cached guild '" + guildById.getName() + "'");
-      guilds.put(id, guildById);
+      if(guildById != null) {
+        LOG.info("Cached guild '" + guildById.getName() + "'");
+        guilds.put(id, guildById);
+      }
+      else {
+        throw new UnsupportedOperationException("No guild found for id " + serverId);
+      }
+
     }
 
     return guilds.get(id);

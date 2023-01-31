@@ -1,10 +1,12 @@
 package de.mephisto.vpin.server.highscores.cards;
 
 import de.mephisto.vpin.restclient.PopperScreen;
+import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.server.competitions.ScoreSummary;
 import de.mephisto.vpin.server.directb2s.DirectB2SService;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.highscores.HighscoreService;
+import de.mephisto.vpin.server.preferences.PreferencesService;
 import de.mephisto.vpin.server.system.SystemService;
 import de.mephisto.vpin.server.util.Config;
 import de.mephisto.vpin.server.util.ImageUtil;
@@ -32,6 +34,9 @@ public class CardService {
   @Autowired
   private DirectB2SService directB2SService;
 
+  @Autowired
+  private PreferencesService preferencesService;
+
   public File generateSampleCard(Game game) throws Exception {
     File cardSampleFile = getCardSampleFile();
     if (!cardSampleFile.exists()) {
@@ -48,7 +53,8 @@ public class CardService {
 
   public boolean generateCard(Game game, boolean generateSampleCard) throws Exception {
     try {
-      ScoreSummary summary = highscoreService.getAllHighscoresForPlayer(game.getId(), game.getGameDisplayName());
+      long serverId = Long.parseLong(String.valueOf(preferencesService.getPreferenceValue(PreferenceNames.DISCORD_GUILD_ID, -1)));
+      ScoreSummary summary = highscoreService.getGameHighscore(serverId, game.getId(), game.getGameDisplayName());
       if (!summary.getScores().isEmpty() && !StringUtils.isEmpty(summary.getRaw())) {
         Config.getCardGeneratorConfig().reload();
 

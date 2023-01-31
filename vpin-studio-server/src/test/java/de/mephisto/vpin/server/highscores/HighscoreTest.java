@@ -28,7 +28,7 @@ public class HighscoreTest extends VPinServerTest {
   public void testHighscore() {
 //    Game game = gameService.getGameByFilename("Game of Thrones LE (Stern 2015) VPW v1.0.1.vpx");
     Game game = gameService.getGameByFilename(VPinServerTest.TEST_GAME_FILENAME);
-    ScoreSummary highscores = highscoreService.getAllHighscoresForPlayer(game.getId(), game.getGameDisplayName());
+    ScoreSummary highscores = highscoreService.getGameHighscore(-1l, game.getId(), game.getGameDisplayName());
 
     assertNotNull(highscores);
     assertNotNull(highscores.getRaw());
@@ -63,7 +63,7 @@ public class HighscoreTest extends VPinServerTest {
   @Test
   public void testHighscores() throws InterruptedException {
     Game game = gameService.getGameByFilename(VPinServerTest.TEST_GAME_FILENAME);
-    ScoreSummary highscores = highscoreService.getAllHighscoresForPlayer(game.getId(), game.getGameDisplayName());
+    ScoreSummary highscores = highscoreService.getGameHighscore(-1l, game.getId(), game.getGameDisplayName());
 
     assertNotNull(highscores);
     assertNotNull(highscores.getRaw());

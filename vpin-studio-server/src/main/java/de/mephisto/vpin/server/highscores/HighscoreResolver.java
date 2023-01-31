@@ -253,6 +253,7 @@ class HighscoreResolver {
       String msg = "Failed to parse highscore: " + e.getMessage();
       metadata.setStatus(msg);
       LOG.error(msg, e);
+      e.printStackTrace();
     }
     return null;
   }
