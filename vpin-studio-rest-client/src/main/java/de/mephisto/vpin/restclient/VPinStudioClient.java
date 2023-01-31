@@ -47,6 +47,7 @@ public class VPinStudioClient implements ObservedPropertyChangeListener, Overlay
   public void clearCache() {
     int size = this.imageCache.size();
     this.imageCache.clear();
+    this.restClient.clearCache();
     LOG.info("Cleared " + size + " resources from cache.");
   }
 
@@ -58,8 +59,7 @@ public class VPinStudioClient implements ObservedPropertyChangeListener, Overlay
   }
 
   public DiscordCompetitionData getDiscordCompetitionData(long serverId, long channelId) {
-    final RestTemplate restTemplate = new RestTemplate();
-    return restTemplate.getForObject(restClient.getBaseUrl() + API + "discord/competition/" + serverId + "/" + channelId, DiscordCompetitionData.class);
+    return restClient.get(API + "discord/competition/" + serverId + "/" + channelId, DiscordCompetitionData.class);
   }
 
   public String getBotId() {
@@ -68,23 +68,23 @@ public class VPinStudioClient implements ObservedPropertyChangeListener, Overlay
   }
 
   public List<DiscordChannel> getDiscordChannels() {
-    return Arrays.asList(restClient.get(API + "discord/channels", DiscordChannel[].class));
+    return Arrays.asList(restClient.getCached(API + "discord/channels", DiscordChannel[].class));
   }
 
   public PlayerRepresentation getDiscordPlayer(long serverId, long memberId) {
-    return restClient.get(API + "discord/player/" + serverId + "/" + memberId, PlayerRepresentation.class);
+    return restClient.getCached(API + "discord/player/" + serverId + "/" + memberId, PlayerRepresentation.class);
   }
 
   public List<DiscordChannel> getDiscordChannels(long serverId) {
-    return Arrays.asList(restClient.get(API + "discord/channels/" + serverId, DiscordChannel[].class));
+    return Arrays.asList(restClient.getCached(API + "discord/channels/" + serverId, DiscordChannel[].class));
   }
 
   public DiscordServer getDiscordServer(long serverId) {
-    return restClient.get(API + "discord/server/" + serverId, DiscordServer.class);
+    return restClient.getCached(API + "discord/server/" + serverId, DiscordServer.class);
   }
 
   public List<DiscordServer> getDiscordServers() {
-    return Arrays.asList(restClient.get(API + "discord/servers", DiscordServer[].class));
+    return Arrays.asList(restClient.getCached(API + "discord/servers", DiscordServer[].class));
   }
 
   /*********************************************************************************************************************

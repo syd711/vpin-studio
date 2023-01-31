@@ -30,6 +30,7 @@ public class RestClient implements ClientHttpRequestInterceptor {
   private String baseUrl;
   private String authenticationToken;
   private RestTemplate restTemplate;
+  private ObjectCache cache = new ObjectCache();
 
   public static RestClient createInstance(String host) {
     return new RestClient(SCHEME, host, PORT);
@@ -58,8 +59,24 @@ public class RestClient implements ClientHttpRequestInterceptor {
     return baseUrl;
   }
 
+  public void clearCache() {
+    this.cache.invalidateAll();
+  }
+
   public <T> T get(String path, Class<T> entityType) {
     return get(path, entityType, new HashMap<>());
+  }
+
+
+  public <T> T getCached(String path, Class<T> entityType) {
+    if (cache.contains(path)) {
+      return (T) cache.get(path);
+    }
+    T t = get(path, entityType, new HashMap<>());
+    if (t != null) {
+      cache.put(path, t);
+    }
+    return t;
   }
 
   public <T> T get(String path, Class<T> entityType, Map<String, ?> urlVariables) {

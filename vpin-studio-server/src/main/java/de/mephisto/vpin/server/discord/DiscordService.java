@@ -36,9 +36,6 @@ public class DiscordService implements InitializingBean, PreferenceChangedListen
   @Autowired
   private PreferencesService preferencesService;
 
-  @Autowired
-  private PlayerService playerService;
-
   private DiscordBotCommandListener botCommandListener;
 
   public List<DiscordMember> getMembers() {
