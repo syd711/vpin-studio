@@ -9,10 +9,10 @@ import de.mephisto.vpin.restclient.discord.DiscordServer;
 import de.mephisto.vpin.server.competitions.Competition;
 import de.mephisto.vpin.server.competitions.ScoreSummary;
 import de.mephisto.vpin.server.games.Game;
+import de.mephisto.vpin.server.highscores.HighscoreParser;
 import de.mephisto.vpin.server.highscores.Score;
 import de.mephisto.vpin.server.highscores.ScoreList;
 import de.mephisto.vpin.server.players.Player;
-import de.mephisto.vpin.server.players.PlayerService;
 import de.mephisto.vpin.server.preferences.PreferenceChangedListener;
 import de.mephisto.vpin.server.preferences.PreferencesService;
 import edu.umd.cs.findbugs.annotations.NonNull;
@@ -108,8 +108,21 @@ public class DiscordService implements InitializingBean, PreferenceChangedListen
     return null;
   }
 
+  public void sendDefaultHighscoreMessage(String message) {
+    if (this.discordClient != null) {
+      long serverId = Long.parseLong(String.valueOf(preferencesService.getPreferenceValue(PreferenceNames.DISCORD_GUILD_ID, -1)));
+      long channelId = Long.parseLong(String.valueOf(preferencesService.getPreferenceValue(PreferenceNames.DISCORD_CHANNEL_ID, -1)));
+      if(serverId > 0 && channelId > 0) {
+        this.sendMessage(serverId, channelId, message);
+      }
+    }
+  }
+
   public long getBotId() {
-    return discordClient.getBotId();
+    if(discordClient != null) {
+      return discordClient.getBotId();
+    }
+    return -1;
   }
 
   public void saveCompetitionData(@NonNull Competition competition, @NonNull Game game, @NonNull ScoreSummary scoreSummary, @NonNull String messageId) {
@@ -133,13 +146,13 @@ public class DiscordService implements InitializingBean, PreferenceChangedListen
    * @param channelId the discord channel id
    */
   @NonNull
-  public ScoreList getScoreList(@NonNull String uuid, long serverId, long channelId) {
+  public ScoreList getScoreList(@NonNull HighscoreParser highscoreParser, @NonNull String uuid, long serverId, long channelId) {
     ScoreList result = new ScoreList();
     if (this.discordClient != null) {
       DiscordCompetitionData data = this.getCompetitionData(serverId, channelId);
       if (data != null) {
         List<DiscordMessage> competitionUpdates = discordClient.getCompetitionUpdates(serverId, channelId, data.getStartMessageId(), uuid);
-        List<ScoreSummary> scores = competitionUpdates.stream().map(message -> toScoreSummary(message)).collect(Collectors.toList());
+        List<ScoreSummary> scores = competitionUpdates.stream().map(message -> toScoreSummary(highscoreParser, message)).collect(Collectors.toList());
         if (scores.isEmpty()) {
           //use topic value instead
           ScoreSummary initialScore = CompetitionDataHelper.getDiscordCompetitionScore(this, serverId, data);
@@ -276,7 +289,6 @@ public class DiscordService implements InitializingBean, PreferenceChangedListen
       LOG.info("Detected Discord config change, updating BOT.");
       String botToken = (String) preferencesService.getPreferenceValue(PreferenceNames.DISCORD_BOT_TOKEN);
       String guildId = (String) preferencesService.getPreferenceValue(PreferenceNames.DISCORD_GUILD_ID);
-      String whiteList = (String) preferencesService.getPreferenceValue(PreferenceNames.DISCORD_BOT_ALLOW_LIST);
 
       if (!StringUtils.isEmpty(botToken) && !StringUtils.isEmpty(guildId)) {
         LOG.info("Re-creating discord client because of preference changes.");
@@ -285,13 +297,7 @@ public class DiscordService implements InitializingBean, PreferenceChangedListen
     }
   }
 
-  @Override
-  public void afterPropertiesSet() throws Exception {
-    preferencesService.addChangeListener(this);
-    this.recreateDiscordClient();
-  }
-
-  private Player toPlayer(DiscordMember member) {
+  private Player toPlayer(@NonNull DiscordMember member) {
     Player player = new Player();
     player.setId(member.getId());
     player.setName(member.getName());
@@ -301,7 +307,7 @@ public class DiscordService implements InitializingBean, PreferenceChangedListen
     return player;
   }
 
-  private DiscordServer toServer(GuildInfo guild) {
+  private DiscordServer toServer(@NonNull GuildInfo guild) {
     DiscordServer s = new DiscordServer();
     s.setOwnerId(guild.getOwnerId());
     s.setId(guild.getId());
@@ -310,12 +316,17 @@ public class DiscordService implements InitializingBean, PreferenceChangedListen
     return s;
   }
 
-  private ScoreSummary toScoreSummary(DiscordMessage message) {
+  private ScoreSummary toScoreSummary(@NonNull HighscoreParser highscoreParser, @NonNull DiscordMessage message) {
     List<Score> scores = new ArrayList<>();
     ScoreSummary summary = new ScoreSummary(scores, message.getCreatedAt());
     String raw = message.getRaw();
-
-    
+    scores.addAll(highscoreParser.parseScores(message.getCreatedAt(), raw, -1, message.getServerId()));
     return summary;
+  }
+
+  @Override
+  public void afterPropertiesSet() throws Exception {
+    preferencesService.addChangeListener(this);
+    this.recreateDiscordClient();
   }
 }

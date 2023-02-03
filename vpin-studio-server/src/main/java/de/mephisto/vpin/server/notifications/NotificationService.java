@@ -1,6 +1,7 @@
 package de.mephisto.vpin.server.notifications;
 
 import de.mephisto.vpin.restclient.CompetitionType;
+import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.discord.DiscordCompetitionData;
 import de.mephisto.vpin.server.competitions.Competition;
 import de.mephisto.vpin.server.competitions.CompetitionChangeListener;
@@ -17,6 +18,7 @@ import de.mephisto.vpin.server.players.Player;
 import de.mephisto.vpin.server.popper.PopperService;
 import de.mephisto.vpin.server.popper.TableStatusChangeListener;
 import de.mephisto.vpin.server.popper.TableStatusChangedEvent;
+import de.mephisto.vpin.server.preferences.PreferencesService;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import org.jetbrains.annotations.NotNull;
@@ -26,6 +28,7 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -48,6 +51,9 @@ public class NotificationService implements InitializingBean, HighscoreChangeLis
 
   @Autowired
   private PopperService popperService;
+
+  @Autowired
+  private HighscoreParser highscoreParser;
 
   @Autowired
   private DiscordService discordService;
@@ -100,8 +106,10 @@ public class NotificationService implements InitializingBean, HighscoreChangeLis
     HighscoreMetadata highscoreMetaData = event.getHighscoreMetaData();
     String newRaw = highscoreMetaData.getRaw();
 
+    LOG.info("****** Processing Discord Highscore Change Event for " + game.getGameDisplayName() + " *********");
+
     List<Score> newScores = highscoreService.parseScores(new Date(), newRaw, game.getId(), discordServerId);
-    ScoreList scoreList = discordService.getScoreList(competition.getUuid(), discordServerId, discordChannelId);
+    ScoreList scoreList = discordService.getScoreList(highscoreParser, competition.getUuid(), discordServerId, discordChannelId);
     List<Score> oldScores = null;
     ScoreSummary latestScore = scoreList.getLatestScore();
     if (latestScore == null) {
@@ -126,7 +134,18 @@ public class NotificationService implements InitializingBean, HighscoreChangeLis
     Score oldScore = oldScores.get(position - 1);
     Score newScore = newScores.get(position - 1);
 
-    discordService.sendMessage(discordServerId, discordChannelId, DiscordChannelMessageFactory.createCompetitionHighscoreCreatedMessage(game, competition, oldScore, newScore, newScores));
+    List<Score> updatedScores = new ArrayList<>();
+    for(int i=0; i< newScores.size(); i++) {
+      if(i == (position - 1)) {
+        updatedScores.add(newScore);
+      }
+      else {
+        updatedScores.add(newScores.get(i));
+      }
+    }
+
+    discordService.sendMessage(discordServerId, discordChannelId, DiscordChannelMessageFactory.createCompetitionHighscoreCreatedMessage(game, competition, oldScore, newScore, updatedScores));
+    LOG.info("***************** / Finished Discord Highscore Processing *********************");
   }
 
   @Override
@@ -139,12 +158,18 @@ public class NotificationService implements InitializingBean, HighscoreChangeLis
     }
 
     List<Competition> competitionForGame = competitionService.getCompetitionForGame(game.getId());
+    boolean messageSent = false;
     for (Competition competition : competitionForGame) {
       if (competition.getDiscordChannelId() > 0 && competition.isActive()) {
         long discordServerId = competition.getDiscordServerId();
         long discordChannelId = competition.getDiscordChannelId();
         discordService.sendMessage(discordServerId, discordChannelId, DiscordOfflineChannelMessageFactory.createCompetitionHighscoreCreatedMessage(competition, event));
+        messageSent = true;
       }
+    }
+
+    if (!messageSent) {
+      discordService.sendDefaultHighscoreMessage(DiscordOfflineChannelMessageFactory.createHighscoreCreatedMessage(event));
     }
   }
 

@@ -130,6 +130,7 @@ public class DiscordClient {
               message.setMember(discordMember);
               message.setCreatedAt(createdAt);
               message.setRaw(botMessage.getContentRaw());
+              message.setServerId(serverId);
               result.add(message);
             }
           }
@@ -193,8 +194,7 @@ public class DiscordClient {
     if (guild != null) {
       TextChannel textChannel = jda.getChannelById(TextChannel.class, channelId);
       if (textChannel != null) {
-        Message complete = textChannel.sendMessage(msg).complete();//.addFiles(FileUpload.fromData(file)).queue();
-        LOG.info("Sent message to channel " + textChannel.getName() + " of server " + guild.getName());
+        Message complete = textChannel.sendMessage(msg).complete();
         return complete.getId();
       }
       else {

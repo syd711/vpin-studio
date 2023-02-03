@@ -13,6 +13,7 @@ public interface PreferenceNames {
   String DISCORD_WEBHOOK_URL = "discordWebHookUrl";
   String DISCORD_BOT_TOKEN = "discordBotToken";
   String DISCORD_GUILD_ID = "discordGuildId";
+  String DISCORD_CHANNEL_ID = "discordChannelId";
   String DISCORD_BOT_ALLOW_LIST = "discordBotAllowList";
   String RANKING_POINTS = "rankingPoints";
 }

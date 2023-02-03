@@ -30,12 +30,12 @@ public class DiscordChannelMessageFactory {
                                                                 @NonNull Competition competition,
                                                                 @NonNull Score oldScore,
                                                                 @NonNull Score newScore,
-                                                                List<Score> scores) {
+                                                                List<Score> updatedScores) {
     String playerName = newScore.getPlayerInitials();
     if (newScore.getPlayer() != null) {
       Player player = newScore.getPlayer();
       playerName = newScore.getPlayer().getName();
-      if (player.getDomain().equals(PlayerDomain.DISCORD.name())) {
+      if (PlayerDomain.DISCORD.name().equals(player.getDomain())) {
         playerName = "<@" + player.getId() + ">";
       }
     }
@@ -44,29 +44,29 @@ public class DiscordChannelMessageFactory {
     if (oldScore.getPlayer() != null) {
       Player player = oldScore.getPlayer();
       oldName = oldScore.getPlayer().getName();
-      if (player.getDomain().equals(PlayerDomain.DISCORD.name())) {
+      if (PlayerDomain.DISCORD.name().equals(player.getDomain())) {
         oldName = "<@" + player.getId() + ">";
       }
     }
 
-    String template = "%s created a new highscore for \"%s\".\n(ID: %s)\n" +
+    String template = "**%s created a new highscore for \"%s\"**.\n(ID: %s)\n" +
         "```%s\n" +
         "```";
-    String otherPlayerTemplate = "\n%s, your highscore of %s points has been beaten.\nHere is the updated highscore list:";
+    String otherPlayerTemplate = "\n%s, your highscore of %s points has been beaten.\n";
 
     String msg = String.format(template, playerName, game.getGameDisplayName(), competition.getUuid(), newScore);
     String suffix = String.format(otherPlayerTemplate, oldName, oldScore.getScore());
 
     String result = msg;
     if (StringUtils.isEmpty(oldName)) {
-      result = result + "\nThe previous highscore of " + oldScore.getScore() + " has been beaten.\nHere is the updated highscore list:";
+      result = result + "\nThe previous highscore of " + oldScore.getScore() + " has been beaten.\n";
     }
     else if (!oldName.equals(playerName)) {
       result = result + suffix;
     }
 
 
-    return result + createHighscoreList(scores);
+    return result + "Here is the updated highscore list:" + createHighscoreList(updatedScores);
   }
 
   public static String createDiscordCompetitionCreatedMessage(Competition competition, Game game, long initiatorId) {
@@ -88,8 +88,8 @@ public class DiscordChannelMessageFactory {
   private static String createHighscoreList(List<Score> scores) {
     StringBuilder builder = new StringBuilder();
     builder.append("```");
-    builder.append("Pos   Initials      Score\n");
-    builder.append("-----------------------------------\n");
+    builder.append("Pos   Initials           Score\n");
+    builder.append("------------------------------\n");
     int index = 0;
     for (Score score : scores) {
       index++;
@@ -97,7 +97,7 @@ public class DiscordChannelMessageFactory {
       builder.append(score.getPosition());
       builder.append("   ");
       builder.append(String.format("%4.4s", score.getPlayerInitials()));
-      builder.append("           ");
+      builder.append("       ");
       builder.append(String.format("%14.12s", score.getScore()));
       builder.append("\n");
     }

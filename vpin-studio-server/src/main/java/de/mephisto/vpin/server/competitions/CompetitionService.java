@@ -2,6 +2,7 @@ package de.mephisto.vpin.server.competitions;
 
 import de.mephisto.vpin.restclient.CompetitionType;
 import de.mephisto.vpin.server.discord.DiscordService;
+import de.mephisto.vpin.server.highscores.HighscoreParser;
 import de.mephisto.vpin.server.highscores.HighscoreService;
 import de.mephisto.vpin.server.highscores.Score;
 import de.mephisto.vpin.server.highscores.ScoreList;
@@ -25,6 +26,9 @@ public class CompetitionService implements InitializingBean {
 
   @Autowired
   private HighscoreService highscoreService;
+
+  @Autowired
+  private HighscoreParser highscoreParser;
 
   @Autowired
   private PlayerService playerService;
@@ -108,6 +112,7 @@ public class CompetitionService implements InitializingBean {
 
   public ScoreList getCompetitionScores(long id) {
     Competition competition = getCompetition(id);
+    competition.getGameId();
 
     if (competition.getType().equals(CompetitionType.OFFLINE.name())) {
       Date start = competition.getStartDate();
@@ -119,7 +124,7 @@ public class CompetitionService implements InitializingBean {
     else if (competition.getType().equals(CompetitionType.DISCORD.name())) {
       long serverId = competition.getDiscordServerId();
       long channelId = competition.getDiscordChannelId();
-      return discordService.getScoreList(competition.getUuid(), serverId, channelId);
+      return discordService.getScoreList(highscoreParser, competition.getUuid(), serverId, channelId);
     }
 
     return null;
@@ -135,7 +140,7 @@ public class CompetitionService implements InitializingBean {
       return highscoreService.getScoreSummary(serverId, competition.getGameId(), null);
     }
     else if (competition.getType().equals(CompetitionType.DISCORD.name())) {
-      ScoreList scoreList = discordService.getScoreList(competition.getUuid(), serverId, channelId);
+      ScoreList scoreList = discordService.getScoreList(highscoreParser, competition.getUuid(), serverId, channelId);
       return scoreList.getLatestScore();
     }
 

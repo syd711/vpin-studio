@@ -6,7 +6,7 @@ import de.mephisto.vpin.server.AbstractVPinServerTest;
 import de.mephisto.vpin.server.discord.DiscordService;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameService;
-import de.mephisto.vpin.server.highscores.*;
+import de.mephisto.vpin.server.highscores.HighscoreTestUtil;
 import de.mephisto.vpin.server.notifications.NotificationService;
 import de.mephisto.vpin.server.players.Player;
 import de.mephisto.vpin.server.players.PlayerService;
@@ -20,7 +20,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.UUID;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @SpringBootTest
 public class DiscordCompetitionsTest extends AbstractVPinServerTest {
@@ -39,6 +39,17 @@ public class DiscordCompetitionsTest extends AbstractVPinServerTest {
 
   @Autowired
   private PlayerService playerService;
+
+  private String RAW = "GRAND CHAMPION\n" +
+      "SLL      52.000.000\n" +
+      "\n" +
+      "HIGHEST SCORES\n" +
+      "1) BRE      44.000.000\n" +
+      "2) LFS      40.000.000\n" +
+      "3) ZAP      36.000.000\n" +
+      "4) RCF      32.000.000\n" +
+      "\n" +
+      "CASTLE CHAMPION\n";
 
   @Test
   public void testCompetitions() throws InterruptedException {
@@ -68,10 +79,10 @@ public class DiscordCompetitionsTest extends AbstractVPinServerTest {
 
 
     DiscordCompetitionData competitionData = discordService.getCompetitionData(1043199618172858500l, 1043199618172858503l);
-    if(competitionData == null) {
+    if (competitionData == null) {
       Competition competition = new Competition();
       competition.setGameId(game.getId());
-      competition.setName("Competition for "+ game.getGameDisplayName());
+      competition.setName("Competition for " + game.getGameDisplayName());
       competition.setStartDate(new Date());
       competition.setDiscordChannelId(1043199618172858503l);
       competition.setDiscordServerId(1043199618172858500l);
@@ -91,11 +102,10 @@ public class DiscordCompetitionsTest extends AbstractVPinServerTest {
       competitionData = discordService.getCompetitionData(1043199618172858500l, 1043199618172858503l);
     }
 
-    notificationService.highscoreChanged(HighscoreTestUtil.createHighscoreChangeEvent(playerService, game, 999000, 1, 1043199618172858500l));
-
     Competition storedCompetition = competitionService.getCompetitionForUuid(competitionData.getUuid());
-    ScoreSummary competitionScore = competitionService.getCompetitionScore(storedCompetition.getId());
+    notificationService.highscoreChanged(HighscoreTestUtil.createDiscordHighscoreChangeEvent(storedCompetition, RAW, game));
 
+    ScoreSummary competitionScore = competitionService.getCompetitionScore(storedCompetition.getId());
 
 
 //    boolean delete = competitionService.delete(save.getId());

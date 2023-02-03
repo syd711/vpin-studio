@@ -2,6 +2,8 @@ package de.mephisto.vpin.server.players;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import de.mephisto.vpin.server.assets.Asset;
+import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -78,6 +80,7 @@ public class Player {
     this.name = name;
   }
 
+  @Nullable
   public String getDomain() {
     return domain;
   }

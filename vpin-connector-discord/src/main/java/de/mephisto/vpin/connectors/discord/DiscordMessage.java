@@ -6,6 +6,15 @@ public class DiscordMessage {
   private DiscordMember member;
   private String raw;
   private Date createdAt;
+  private long serverId;
+
+  public long getServerId() {
+    return serverId;
+  }
+
+  public void setServerId(long serverId) {
+    this.serverId = serverId;
+  }
 
   public Date getCreatedAt() {
     return createdAt;

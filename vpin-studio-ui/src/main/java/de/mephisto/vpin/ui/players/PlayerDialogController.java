@@ -3,6 +3,7 @@ package de.mephisto.vpin.ui.players;
 import de.mephisto.vpin.commons.fx.DialogController;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.AssetType;
+import de.mephisto.vpin.restclient.PlayerDomain;
 import de.mephisto.vpin.restclient.representations.AssetRepresentation;
 import de.mephisto.vpin.restclient.representations.PlayerRepresentation;
 import de.mephisto.vpin.ui.DashboardController;

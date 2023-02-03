@@ -18,7 +18,7 @@ import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
 
 public class DiscordOfflineChannelMessageFactory {
-  private static final String OFFLINE_COMPETITION_CREATED_TEMPLATE = "A new competition has been started!\n" +
+  private static final String COMPETITION_CREATED_TEMPLATE = "A new competition has been started!\n" +
       "```\n" +
       "%s\n" +
       "------------------------------------------------------------\n" +
@@ -42,10 +42,52 @@ public class DiscordOfflineChannelMessageFactory {
       "%s\n" +
       "```";
 
-  private static final String COMPETITION_CANCELLED_TEMPLATE = "The competition '%s' has been cancelled.";
+  private static final String COMPETITION_CANCELLED_TEMPLATE = "The competition \"%s\" has been cancelled.";
 
   public static String createCompetitionCancelledMessage(Competition competition) {
     return String.format(COMPETITION_CANCELLED_TEMPLATE, competition.getName());
+  }
+
+
+  public static String createHighscoreCreatedMessage(HighscoreChangeEvent event) {
+    Game game = event.getGame();
+    Score newScore = event.getNewScore();
+    Score oldScore = event.getOldScore();
+
+    String newName = newScore.getPlayerInitials();
+    if (newScore.getPlayer() != null) {
+      Player player = newScore.getPlayer();
+      newName = newScore.getPlayer().getName();
+      if (PlayerDomain.DISCORD.name().equals(player.getDomain())) {
+        newName = "<@" + player.getId() + ">";
+      }
+    }
+
+    String oldName = oldScore.getPlayerInitials();
+    if (oldScore.getPlayer() != null) {
+      Player player = oldScore.getPlayer();
+      oldName = oldScore.getPlayer().getName();
+      if (PlayerDomain.DISCORD.name().equals(player.getDomain())) {
+        oldName = "<@" + player.getId() + ">";
+      }
+    }
+
+    String template = "**%s created a new highscore for \"%s\"**.\n" +
+        "```%s\n" +
+        "```\n";
+    String otherPlayerTemplate = "\n%s, your highscore of %s points has been beaten.";
+
+    String msg = String.format(template, newName, game.getGameDisplayName(), newScore);
+    String suffix = String.format(otherPlayerTemplate, oldName, oldScore.getScore());
+
+    String result = msg;
+    if(StringUtils.isEmpty(oldName)) {
+      result = result + "\nThe previous highscore of " + oldScore.getScore() + " has been beaten.";
+    }
+    else if (!oldName.equals(newName)) {
+      result = result + suffix;
+    }
+    return result;
   }
 
   public static String createCompetitionHighscoreCreatedMessage(Competition competition, HighscoreChangeEvent event) {
@@ -57,7 +99,7 @@ public class DiscordOfflineChannelMessageFactory {
     if (newScore.getPlayer() != null) {
       Player player = newScore.getPlayer();
       newName = newScore.getPlayer().getName();
-      if (player.getDomain().equals(PlayerDomain.DISCORD.name())) {
+      if (PlayerDomain.DISCORD.name().equals(player.getDomain())) {
         newName = "<@" + player.getId() + ">";
       }
     }
@@ -66,16 +108,15 @@ public class DiscordOfflineChannelMessageFactory {
     if (oldScore.getPlayer() != null) {
       Player player = oldScore.getPlayer();
       oldName = oldScore.getPlayer().getName();
-      if (player.getDomain().equals(PlayerDomain.DISCORD.name())) {
+      if (PlayerDomain.DISCORD.name().equals(player.getDomain())) {
         oldName = "<@" + player.getId() + ">";
       }
     }
 
-    String template = "%s created a new highscore for '%s', competed in '%s' (ID: %s) .\n" +
-        "```";
-    String otherPlayerTemplate = "\n%s, your highscore of %s points has been beaten.";
+    String template = "**%s created a new highscore for \"%s\"**.\nCompetition: \"%s\"\n```%s```\n";
+    String otherPlayerTemplate = "%s, your highscore of %s points has been beaten.";
 
-    String msg = String.format(template, newName, competition.getName(), game.getGameDisplayName(), newScore);
+    String msg = String.format(template, newName, game.getGameDisplayName(), competition.getName(), newScore);
     String suffix = String.format(otherPlayerTemplate, oldName, oldScore.getScore());
 
     String result = msg;
@@ -94,7 +135,7 @@ public class DiscordOfflineChannelMessageFactory {
     LocalDate end = competition.getEndDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
     long diff = Math.abs(ChronoUnit.DAYS.between(end, start));
 
-    return String.format(OFFLINE_COMPETITION_CREATED_TEMPLATE,
+    return String.format(COMPETITION_CREATED_TEMPLATE,
         competition.getName(),
         game.getGameDisplayName(),
         DateFormat.getDateInstance().format(competition.getStartDate()),
@@ -108,7 +149,7 @@ public class DiscordOfflineChannelMessageFactory {
     if (winner != null) {
       winnerName = winner.getName();
       winnerRaw = winner.getName();
-      if (winner.getDomain().equals(PlayerDomain.DISCORD.name())) {
+      if (PlayerDomain.DISCORD.name().equals(winner.getDomain())) {
         winnerName = "<@" + winner.getId() + ">";
       }
     }
