@@ -1,15 +1,16 @@
-package de.mephisto.vpin.server.competitions;
+package de.mephisto.vpin.server.highscores;
 
 import de.mephisto.vpin.restclient.CompetitionType;
 import de.mephisto.vpin.restclient.discord.DiscordCompetitionData;
 import de.mephisto.vpin.server.AbstractVPinServerTest;
+import de.mephisto.vpin.server.competitions.Competition;
+import de.mephisto.vpin.server.competitions.CompetitionChangeListener;
+import de.mephisto.vpin.server.competitions.CompetitionService;
 import de.mephisto.vpin.server.discord.DiscordService;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameService;
-import de.mephisto.vpin.server.highscores.HighscoreTestUtil;
 import de.mephisto.vpin.server.notifications.NotificationService;
 import de.mephisto.vpin.server.players.Player;
-import de.mephisto.vpin.server.players.PlayerService;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import org.junit.jupiter.api.Test;
@@ -18,12 +19,14 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 import java.util.UUID;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @SpringBootTest
-public class DiscordCompetitionsTest extends AbstractVPinServerTest {
+public class DiscordHighscoreTest extends AbstractVPinServerTest {
 
   @Autowired
   private CompetitionService competitionService;
@@ -35,21 +38,7 @@ public class DiscordCompetitionsTest extends AbstractVPinServerTest {
   private DiscordService discordService;
 
   @Autowired
-  private NotificationService notificationService;
-
-  @Autowired
-  private PlayerService playerService;
-
-  private String RAW = "GRAND CHAMPION\n" +
-      "SLL      52.000.000\n" +
-      "\n" +
-      "HIGHEST SCORES\n" +
-      "1) BRE      44.000.000\n" +
-      "2) LFS      40.000.000\n" +
-      "3) ZAP      36.000.000\n" +
-      "4) RCF      32.000.000\n" +
-      "\n" +
-      "CASTLE CHAMPION\n";
+  private HighscoreService highscoreService;
 
   @Test
   public void testCompetitions() throws InterruptedException {
@@ -77,10 +66,12 @@ public class DiscordCompetitionsTest extends AbstractVPinServerTest {
       }
     });
 
-
     DiscordCompetitionData competitionData = discordService.getCompetitionData(1043199618172858500l, 1043199618172858503l);
-    if (competitionData == null) {
-      Competition competition = new Competition();
+    String uuid = competitionData.getUuid();
+    Competition competition = competitionService.getCompetitionForUuid(uuid);
+
+    if (competition == null) {
+      competition = new Competition();
       competition.setGameId(game.getId());
       competition.setName("Competition for " + game.getGameDisplayName());
       competition.setStartDate(new Date());
@@ -95,21 +86,28 @@ public class DiscordCompetitionsTest extends AbstractVPinServerTest {
       Date newEndDate = c.getTime();
       competition.setEndDate(newEndDate);
       competition.setCreatedAt(new Date());
-      competition.setUuid(UUID.randomUUID().toString());
+      competition.setUuid(uuid);
 
       Competition save = competitionService.save(competition);
       assertNotNull(save);
-      competitionData = discordService.getCompetitionData(1043199618172858500l, 1043199618172858503l);
     }
 
-    Competition storedCompetition = competitionService.getCompetitionForUuid(competitionData.getUuid());
-    notificationService.highscoreChanged(HighscoreTestUtil.createDiscordHighscoreChangeEvent(storedCompetition, RAW, game));
+    assertNotNull(competitionData);
+    assertEquals(competitionData.getScores().size(), 3);
+    assertEquals(competitionData.getRom(), game.getRom());
 
-    ScoreSummary competitionScore = competitionService.getCompetitionScore(storedCompetition.getId());
+    HighscoreMetadata metadata = highscoreService.scanScore(game);
+    String raw = metadata.getRaw();
+    raw = raw.replace("BRE     7.000.000.000", "BOT     6.900.000.000");
+    metadata.setRaw(raw);
+    highscoreService.updateHighscore(game, metadata);
 
+    Thread.sleep(2000);
 
-//    boolean delete = competitionService.delete(save.getId());
-//    assertTrue(delete);
+    raw = raw.replace("BOT     6.900.000.000", "MFA     7.950.000.000");
+    metadata.setRaw(raw);
+    highscoreService.updateHighscore(game, metadata);
+
     Thread.sleep(4000);
   }
 }

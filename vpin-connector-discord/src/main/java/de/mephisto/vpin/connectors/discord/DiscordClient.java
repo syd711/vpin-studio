@@ -72,8 +72,8 @@ public class DiscordClient {
     if (guild != null) {
       TextChannel channel = guild.getChannelById(TextChannel.class, channelId);
       if (channel != null) {
+        LOG.info("Updating topic of '" + channel.getName() + "' (length of " + topic.length() + " characters)");
         channel.getManager().setTopic(topic).queue();
-        LOG.info("Updated topic of '" + channel.getName() + "' (length of " + topic.length() + " characters)");
       }
       else {
         LOG.error("No discord channel found for id '" + channelId + "'");
@@ -116,7 +116,9 @@ public class DiscordClient {
       TextChannel channel = guild.getChannelById(TextChannel.class, channelId);
       if (channel != null) {
         MessageHistory history = MessageHistory.getHistoryAfter(channel, afterMessageId).complete();
-        List<Message> messages = history.getRetrievedHistory();
+        List<Message> messages = new ArrayList<>(history.getRetrievedHistory());
+        messages.sort((o1, o2) -> o2.getTimeCreated().compareTo(o1.getTimeCreated()));
+
         List<Message> botMessages = messages.stream().filter(m -> m.getAuthor().isBot()).collect(Collectors.toList());
         for (Message botMessage : botMessages) {
           if (botMessage.getContentRaw().contains(competitionUuid)) {

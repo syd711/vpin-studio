@@ -5,11 +5,13 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.thoughtworks.xstream.core.util.Base64Encoder;
 import de.mephisto.vpin.restclient.discord.DiscordCompetitionData;
+import de.mephisto.vpin.restclient.discord.DiscordCompetitionScoreEntry;
 import de.mephisto.vpin.server.highscores.Score;
 import org.junit.jupiter.api.Test;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Date;
+import java.util.List;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -18,7 +20,7 @@ public class DiscordTest {
 
   private final static String testTopic = "Competition Table: Attack from Mars 2.0.1\n" +
       "\n" +
-      "data:ew0KICAidXVpZCIgOiAiODkyOTRhNDgtZDBjMy00ZDFmLThlOWYtNGM1ZmQyZDk2Yzg1IiwNCiAgIm93bmVyIiA6ICIxMDU1MTAzMzIyODc0NDY2MzY1IiwNCiAgInJvbSIgOiAiYWZtXzExM2IiLA0KICAiZmlsZVNpemUiIDogMTQxNjMxNDg4LA0KICAic3RhcnREYXRlIiA6IDE2NzUwMDE3ODc3NzIsDQogICJlbmREYXRlIiA6IDE2NzUzNDczODc3NzIsDQogICJuYW1lIiA6ICJDb21wZXRpdGlvbiBmb3IgQXR0YWNrIGZyb20gTWFycyAyLjAuMSIsDQogICJ0YWJsZU5hbWUiIDogIkF0dGFjayBmcm9tIE1hcnMgMi4wLjEiLA0KICAic3RhcnRNZXNzYWdlSWQiIDogIjEwNjkyNTk3NTQ1ODY3Njc0NTAiLA0KICAic2NvcmVzIiA6IFsgew0KICAgICJwb3NpdGlvbiIgOiAxLA0KICAgICJpbml0aWFscyIgOiAiU0xMIiwNCiAgICAic2NvcmUiIDogIjcuNTAwLjAwMC4wMDAiDQogIH0sIHsNCiAgICAicG9zaXRpb24iIDogMiwNCiAgICAiaW5pdGlhbHMiIDogIkJSRSIsDQogICAgInNjb3JlIiA6ICI3LjAwMC4wMDAuMDAwIg0KICB9LCB7DQogICAgInBvc2l0aW9uIiA6IDMsDQogICAgImluaXRpYWxzIiA6ICJMRlMiLA0KICAgICJzY29yZSIgOiAiNi41MDAuMDAwLjAwMCINCiAgfSBdDQp9";
+      "data:ew0KICAidXVpZCIgOiAiOWJhMjNhMjgtNzVkMi00MTI4LTliZGItMDYyOWRhMDdlZTg1IiwNCiAgIm93bmVyIiA6ICIxMDU1MTAzMzIyODc0NDY2MzY1IiwNCiAgInJvbSIgOiAiYWZtXzExM2IiLA0KICAiZmlsZVNpemUiIDogMTQxNjMxNDg4LA0KICAic3RhcnREYXRlIiA6IDE2NzU0MjgyODk5ODAsDQogICJlbmREYXRlIiA6IDE2NzU3NzM4ODk5ODAsDQogICJuYW1lIiA6ICJDb21wZXRpdGlvbiBmb3IgQXR0YWNrIGZyb20gTWFycyAyLjAuMSIsDQogICJ0YWJsZU5hbWUiIDogIkF0dGFjayBmcm9tIE1hcnMgMi4wLjEiLA0KICAic3RhcnRNZXNzYWdlSWQiIDogIjEwNzEwNDg2OTIyNDY3ODIwNzciLA0KICAic2NvcmVzIiA6IFsgew0KICAgICJwb3NpdGlvbiIgOiAxLA0KICAgICJpbml0aWFscyIgOiAiU0xMIiwNCiAgICAic2NvcmUiIDogIjcuNTAwLjAwMC4wMDAiDQogIH0sIHsNCiAgICAicG9zaXRpb24iIDogMiwNCiAgICAiaW5pdGlhbHMiIDogIk1GQSIsDQogICAgInNjb3JlIiA6ICI3LjEwMC4wMDAuMDAwIg0KICB9LCB7DQogICAgInBvc2l0aW9uIiA6IDMsDQogICAgImluaXRpYWxzIiA6ICJMRlMiLA0KICAgICJzY29yZSIgOiAiNi41MDAuMDAwLjAwMCINCiAgfSBdDQp9";
 
   @Test
   public void testTopicHelper() {
@@ -26,6 +28,13 @@ public class DiscordTest {
     assertNotNull(competitionData);
     System.out.println(competitionData.getTableName());
     System.out.println(competitionData.getName());
+
+    List<DiscordCompetitionScoreEntry> scores = competitionData.getScores();
+    System.out.println("Scores: ");
+    for (DiscordCompetitionScoreEntry score : scores) {
+      System.out.println("\t" + score);
+    }
+
     assertFalse(testTopic.length() > 1024);
   }
 

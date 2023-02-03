@@ -67,6 +67,21 @@ public class DiscordService implements InitializingBean, PreferenceChangedListen
     return null;
   }
 
+  public DiscordChannel getChannel(long serverId, long channelId) {
+    if (this.discordClient != null) {
+      List<DiscordChannel> collect = this.discordClient.getChannels(serverId).stream().filter(c -> c.getId() != channelId).map(c -> {
+        DiscordChannel ct = new DiscordChannel();
+        ct.setName(c.getName());
+        ct.setId(c.getId());
+        return ct;
+      }).collect(Collectors.toList());
+      if (!collect.isEmpty()) {
+        return collect.get(0);
+      }
+    }
+    return null;
+  }
+
   public List<DiscordChannel> getChannels() {
     if (this.discordClient != null) {
       return this.discordClient.getChannels().stream().map(c -> {
@@ -112,14 +127,14 @@ public class DiscordService implements InitializingBean, PreferenceChangedListen
     if (this.discordClient != null) {
       long serverId = Long.parseLong(String.valueOf(preferencesService.getPreferenceValue(PreferenceNames.DISCORD_GUILD_ID, -1)));
       long channelId = Long.parseLong(String.valueOf(preferencesService.getPreferenceValue(PreferenceNames.DISCORD_CHANNEL_ID, -1)));
-      if(serverId > 0 && channelId > 0) {
+      if (serverId > 0 && channelId > 0) {
         this.sendMessage(serverId, channelId, message);
       }
     }
   }
 
   public long getBotId() {
-    if(discordClient != null) {
+    if (discordClient != null) {
       return discordClient.getBotId();
     }
     return -1;
@@ -149,18 +164,22 @@ public class DiscordService implements InitializingBean, PreferenceChangedListen
   public ScoreList getScoreList(@NonNull HighscoreParser highscoreParser, @NonNull String uuid, long serverId, long channelId) {
     ScoreList result = new ScoreList();
     if (this.discordClient != null) {
+      DiscordChannel channel = this.getChannel(serverId, channelId);
       DiscordCompetitionData data = this.getCompetitionData(serverId, channelId);
       if (data != null) {
         List<DiscordMessage> competitionUpdates = discordClient.getCompetitionUpdates(serverId, channelId, data.getStartMessageId(), uuid);
+        LOG.info("Discord message search for " + data.getUuid() + " returned " + competitionUpdates.size() + " messages.");
         List<ScoreSummary> scores = competitionUpdates.stream().map(message -> toScoreSummary(highscoreParser, message)).collect(Collectors.toList());
         if (scores.isEmpty()) {
-          //use topic value instead
           ScoreSummary initialScore = CompetitionDataHelper.getDiscordCompetitionScore(this, serverId, data);
           result.setLatestScore(initialScore);
           result.getScores().add(initialScore);
+          LOG.info("Because no score updated was found, only the initial competition highscore of channel '" + channel.getName() + "' was read.");
         }
         else {
           result.setScores(scores);
+          result.setLatestScore(scores.get(0));
+          LOG.info("Using latest message from channel for the update of '" + data.getName() + "', found " + result.getScores().size() + " highscore messages.");
         }
       }
     }

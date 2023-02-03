@@ -87,6 +87,9 @@ public class DiscordOfflineChannelMessageFactory {
     else if (!oldName.equals(newName)) {
       result = result + suffix;
     }
+    else {
+      result = result + "\nThe player has beaten their own highscore.";
+    }
     return result;
   }
 
@@ -125,6 +128,9 @@ public class DiscordOfflineChannelMessageFactory {
     }
     else if (!oldName.equals(newName)) {
       result = result + suffix;
+    }
+    else {
+      result = result + "\nThe player has beaten their own highscore.";
     }
     return result;
   }

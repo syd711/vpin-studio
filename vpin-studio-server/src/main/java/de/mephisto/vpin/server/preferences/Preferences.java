@@ -36,6 +36,8 @@ public class Preferences {
 
   private String discordGuildId;
 
+  private String discordChannelId;
+
   private String discordBotToken;
 
   private String discordBotAllowList;
@@ -46,6 +48,14 @@ public class Preferences {
   private String highscoreTitles;
 
   private int idleTimeout;
+
+  public String getDiscordChannelId() {
+    return discordChannelId;
+  }
+
+  public void setDiscordChannelId(String discordChannelId) {
+    this.discordChannelId = discordChannelId;
+  }
 
   public String getRankingPoints() {
     return rankingPoints;

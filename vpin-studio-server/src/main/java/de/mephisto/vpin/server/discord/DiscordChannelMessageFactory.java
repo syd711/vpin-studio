@@ -59,10 +59,13 @@ public class DiscordChannelMessageFactory {
 
     String result = msg;
     if (StringUtils.isEmpty(oldName)) {
-      result = result + "\nThe previous highscore of " + oldScore.getScore() + " has been beaten.\n";
+      result = result + "The previous highscore of " + oldScore.getScore() + " has been beaten.\n";
     }
     else if (!oldName.equals(playerName)) {
       result = result + suffix;
+    }
+    else {
+      result = result + "\nThe player has beaten their own highscore.\n";
     }
 
 
