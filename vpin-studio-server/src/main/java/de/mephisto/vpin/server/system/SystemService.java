@@ -35,7 +35,6 @@ public class SystemService implements InitializingBean {
   private final static String VPX_REG_KEY = "HKEY_CURRENT_USER\\SOFTWARE\\Visual Pinball\\VP10\\RecentDir";
   private final static String POPPER_REG_KEY = "HKEY_LOCAL_MACHINE\\SYSTEM\\ControlSet001\\Control\\Session Manager\\Environment";
   private final static String VPREG_STG = "VPReg.stg";
-  private final static String VPREG_FOLDER = "VPReg";
   public static String RESOURCES = "./resources/";
 
   private final static String PINUP_SYSTEM_INSTALLATION_DIR_INST_DIR = "pinupSystem.installationDir";
@@ -133,7 +132,6 @@ public class SystemService implements InitializingBean {
     LOG.info(formatPathLog("Pinemhi NVRam Folder", this.pinemhiNvRamFolder));
     LOG.info(formatPathLog("Pinemhi Command", this.getPinemhiCommandFile()));
     LOG.info(formatPathLog("VPReg File", this.getVPRegFile()));
-    LOG.info(formatPathLog("Extracted VPReg Folder", this.getExtractedVPRegFolder()));
     LOG.info(formatPathLog("B2S Extraction Folder", this.getB2SImageExtractionFolder()));
     LOG.info(formatPathLog("B2S Cropped Folder", this.getB2SCroppedImageFolder()));
     LOG.info(formatPathLog("VPX Files", String.valueOf(this.getVPXTables().length)));
@@ -305,11 +303,6 @@ public class SystemService implements InitializingBean {
   @NonNull
   public File getMameFolder() {
     return new File(getVisualPinballInstallationFolder(), "VPinMAME/");
-  }
-
-  @NonNull
-  public File getExtractedVPRegFolder() {
-    return new File(RESOURCES, VPREG_FOLDER);
   }
 
   public File[] getVPXTables() {

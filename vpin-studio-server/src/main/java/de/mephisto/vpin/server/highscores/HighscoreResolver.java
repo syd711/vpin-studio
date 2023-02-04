@@ -26,7 +26,6 @@ class HighscoreResolver {
   public HighscoreResolver(SystemService systemService) {
     this.systemService = systemService;
     this.loadSupportedScores();
-    this.refresh();
   }
 
   private void loadSupportedScores() {
@@ -43,8 +42,6 @@ class HighscoreResolver {
    */
   @NonNull
   public HighscoreMetadata readHighscore(Game game) {
-    this.refresh();
-
     HighscoreMetadata metadata = new HighscoreMetadata();
     metadata.setScanned(new Date());
     try {
@@ -84,22 +81,6 @@ class HighscoreResolver {
     return metadata;
   }
 
-  /**
-   * Refreshes the extraction of the VPReg.stg file.
-   */
-  private void refresh() {
-    File targetFolder = systemService.getExtractedVPRegFolder();
-    if (!targetFolder.exists()) {
-      boolean mkdirs = targetFolder.mkdirs();
-      if (!mkdirs) {
-        LOG.error("Failed to create VPReg target directory");
-      }
-    }
-
-    //check if we have to unzip the score file using the modified date of the target folder
-    updateUserScores(targetFolder);
-  }
-
   private String parseHSFileHighscore(Game game, HighscoreMetadata metadata) throws IOException {
     File hsFile = game.getEMHighscoreFile();
     if (hsFile != null && hsFile.exists()) {
@@ -137,46 +118,13 @@ class HighscoreResolver {
    * We use the manual set rom name to find the highscore in the "/User/VPReg.stg" file.
    */
   private String readVRegHighscore(Game game, HighscoreMetadata metadata) throws IOException {
-    File tableHighscoreFolder = getVPRegFolder(game);
+    VPReg reg = new VPReg(systemService.getVPRegFile(), game);
 
-    if (tableHighscoreFolder != null && tableHighscoreFolder.exists()) {
+    if (reg.containsGame()) {
       metadata.setType(HighscoreMetadata.TYPE_VREG);
-      metadata.setFilename(tableHighscoreFolder.getCanonicalPath());
-      metadata.setModified(new Date(tableHighscoreFolder.lastModified()));
-
-      StringBuilder builder = new StringBuilder("HIGHEST SCORES\n");
-
-      int index = 1;
-      String highScoreValue = null;
-      String initials = null;
-
-      File tableHighscoreFile = new File(tableHighscoreFolder, "HighScore" + index);
-      if(!tableHighscoreFile.exists()) {
-        metadata.setStatus("Found VReg entry, but no highscore entries in it.");
-        return null;
-      }
-
-      File tableHighscoreNameFile = new File(tableHighscoreFolder, "HighScore" + index + "Name");
-      while (tableHighscoreFile.exists() && tableHighscoreNameFile.exists()) {
-        highScoreValue = readFileString(tableHighscoreFile);
-        if (highScoreValue != null) {
-          highScoreValue = formatScore(highScoreValue);
-          initials = readFileString(tableHighscoreNameFile);
-
-          builder.append("#");
-          builder.append(index);
-          builder.append(" ");
-          builder.append(initials);
-          builder.append("   ");
-          builder.append(highScoreValue);
-          builder.append("\n");
-        }
-        index++;
-        tableHighscoreFile = new File(tableHighscoreFolder, "HighScore" + index);
-        tableHighscoreNameFile = new File(tableHighscoreFolder, "HighScore" + index + "Name");
-      }
-
-      return builder.toString();
+      metadata.setFilename(systemService.getVPRegFile().getCanonicalPath());
+      metadata.setModified(new Date(systemService.getVPRegFile().lastModified()));
+      metadata.setRaw(reg.readHighscores(metadata));
     }
     else {
       LOG.debug("No VPReg highscore file found for '" + game.getRom() + "'");
@@ -192,35 +140,6 @@ class HighscoreResolver {
   }
 
   /**
-   * Uses 7zip to unzip the stg file into the configured target folder.
-   *
-   * @param vpRegFolderFile the VPReg file to expand
-   */
-  private void updateUserScores(File vpRegFolderFile) {
-    if (!systemService.getVPRegFile().exists()) {
-      LOG.info("Skipped VPReg extraction, file does not exists yet.");
-      return;
-    }
-
-    String unzipCommand = systemService.get7ZipCommand();
-    try {
-      List<String> commands = Arrays.asList("\"" + unzipCommand + "\"", "-aoa", "x", "\"" + systemService.getVPRegFile().getCanonicalPath() + "\"", "-o\"" + vpRegFolderFile.getCanonicalPath() + "\"");
-      SystemCommandExecutor executor = new SystemCommandExecutor(commands, false);
-      executor.setDir(vpRegFolderFile);
-      executor.executeCommand();
-
-      StringBuilder standardOutputFromCommand = executor.getStandardOutputFromCommand();
-      StringBuilder standardErrorFromCommand = executor.getStandardErrorFromCommand();
-      if (!StringUtils.isEmpty(standardErrorFromCommand.toString())) {
-        LOG.error("7zip command '" + String.join(" ", commands) + "' failed: {}", standardErrorFromCommand);
-      }
-      LOG.info("Finished VPReg folder refresh of " + vpRegFolderFile.getCanonicalPath());
-    } catch (Exception e) {
-      LOG.info("Failed to init VPReg: " + e.getMessage(), e);
-    }
-  }
-
-  /**
    * Executes a single PINemHi command for the given game.
    *
    * @param game     the game to parse the highscore for
@@ -229,10 +148,9 @@ class HighscoreResolver {
    */
   @Nullable
   private String readNvHighscore(Game game, HighscoreMetadata metadata) {
-    Highscore highscore = null;
     try {
       File nvRam = game.getNvRamFile();
-      if (nvRam == null || !nvRam.exists()) {
+      if (!nvRam.exists()) {
         return null;
       }
 
@@ -302,19 +220,5 @@ class HighscoreResolver {
     } finally {
       brTest.close();
     }
-  }
-
-
-  @Nullable
-  public File getVPRegFolder(Game game) {
-    String rom = game.getRom();
-    if (!StringUtils.isEmpty(rom)) {
-      File file = new File(systemService.getExtractedVPRegFolder(), rom);
-      if (!file.exists() && !StringUtils.isEmpty(game.getTableName())) {
-        file = new File(systemService.getExtractedVPRegFolder(), game.getTableName());
-      }
-      return file;
-    }
-    return null;
   }
 }

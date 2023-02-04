@@ -70,11 +70,11 @@ public class VpaExporterJob implements Job {
           zipFile(game.getNvRamFile(), getGameFolderName() + "/VPinMAME/nvram/" + game.getNvRamFile().getName(), zipOut);
         }
 
-        File vpReg = game.getVPRegFolder();
-        if(vpReg != null && vpReg.exists() && highscore != null) {
-          String scoresJson = objectMapper.writeValueAsString(highscore.getRaw());
-          exportDescriptor.getManifest().getAdditionalData().put(VpaService.DATA_VREG_HIGHSCORE, scoresJson);
-        }
+//        File vpReg = game.getVPRegFolder();
+//        if(vpReg != null && vpReg.exists() && highscore != null) {
+//          String scoresJson = objectMapper.writeValueAsString(highscore.getRaw());
+//          exportDescriptor.getManifest().getAdditionalData().put(VpaService.DATA_VREG_HIGHSCORE, scoresJson);
+//        }
 
         List<ScoreVersionEntry> scores = scoreHistory.stream().map(ScoreVersionEntry::new).collect(Collectors.toList());
         String scoresJson = objectMapper.writeValueAsString(scores);

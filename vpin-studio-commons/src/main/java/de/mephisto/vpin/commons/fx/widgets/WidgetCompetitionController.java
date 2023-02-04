@@ -245,13 +245,16 @@ public class WidgetCompetitionController extends WidgetController implements Ini
       Platform.runLater(() -> {
         setCompetition(competition);
         root.setVisible(true);
-        if(competition.getType().equals(CompetitionType.OFFLINE.name())) {
-          titleLabel.setText("Offline Competition");
+        if(competition != null) {
+          if(competition.getType() == null || competition.getType().equals(CompetitionType.OFFLINE.name())) {
+            titleLabel.setText("Offline Competition");
+          }
+          else if(competition.getType().equals(CompetitionType.DISCORD.name())) {
+            DiscordServer discordServer = OverlayWindowFX.client.getDiscordServer(competition.getDiscordServerId());
+            titleLabel.setText("\"" + discordServer.getName() + "\" Competition");
+          }
         }
-        else if(competition.getType().equals(CompetitionType.DISCORD.name())) {
-          DiscordServer discordServer = OverlayWindowFX.client.getDiscordServer(competition.getDiscordServerId());
-          titleLabel.setText("\"" + discordServer.getName() + "\" Competition");
-        }
+
         viewStack.getChildren().remove(loadingOverlay);
 
       });

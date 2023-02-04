@@ -228,6 +228,7 @@ public class CompetitionDiscordDialogController implements Initializable, Dialog
       return;
     }
 
+    //validation for new tables
     if (competition.getId() == null) {
       if (competition.getDiscordServerId() == 0) {
         validationTitle.setText("No discord server selected.");
@@ -242,7 +243,7 @@ public class CompetitionDiscordDialogController implements Initializable, Dialog
       }
       else {
         DiscordCompetitionData discordCompetitionData = client.getDiscordCompetitionData(competition.getDiscordServerId(), competition.getDiscordChannelId());
-        if (discordCompetitionData == null) {
+        if (discordCompetitionData != null) {
           validationTitle.setText("Active competition found.");
           validationDescription.setText("The selected channel is already running the competition '" + discordCompetitionData.getName() + "'");
           return;
@@ -250,13 +251,12 @@ public class CompetitionDiscordDialogController implements Initializable, Dialog
       }
 
       GameRepresentation game = this.tableCombo.getValue();
-      if (game.isCompeted()) {
+      if (game != null && game.isCompeted()) {
         validationTitle.setText("Invalid competition selected");
         validationDescription.setText("This table is already used for another competition.");
         return;
       }
     }
-
 
     if (competition.getGameId() <= 0) {
       validationTitle.setText("No table selected.");
@@ -316,6 +316,12 @@ public class CompetitionDiscordDialogController implements Initializable, Dialog
 
       this.channelsCombo.setItems(FXCollections.observableList(client.getDiscordChannels(discordServer.getId())));
       this.serversCombo.setValue(discordServer);
+
+      List<DiscordChannel> discordChannels = client.getDiscordChannels(discordServer.getId());
+      Optional<DiscordChannel> first = discordChannels.stream().filter(channel -> channel.getId() != competition.getId()).findFirst();
+      this.channelsCombo.setItems(FXCollections.observableArrayList(discordChannels));
+      first.ifPresent(discordChannel -> this.channelsCombo.setValue(discordChannel));
+
 
       ObservableList<DiscordChannel> items = this.channelsCombo.getItems();
       for (DiscordChannel item : items) {

@@ -19,6 +19,8 @@
     </appender>
 
     <logger name="javafx.fxml" level="ERROR"/>
+    <logger name="javafx" level="ERROR" />
+    <logger name="net.dv8tion.jda.api" level="ERROR" />
 
     <root level="INFO">
         <appender-ref ref="rollingFile"/>
