@@ -109,12 +109,17 @@ public class DiscordService implements InitializingBean, PreferenceChangedListen
   public List<Player> getCompetitionPlayers(long serverId, long channelId) {
     if (this.discordClient != null) {
       DiscordCompetitionData competitionData = getCompetitionData(serverId, channelId);
-      List<DiscordMember> competitionMembers = this.discordClient.getCompetitionMembers(serverId, channelId, competitionData.getStartMessageId(), competitionData.getUuid());
-      DiscordMember owner = this.discordClient.getMember(serverId, this.getBotId());
-      if (!competitionMembers.contains(owner)) {
-        competitionMembers.add(0, owner);
+      if (competitionData != null) {
+        List<DiscordMember> competitionMembers = this.discordClient.getCompetitionMembers(serverId, channelId, competitionData.getStartMessageId(), competitionData.getUuid());
+        DiscordMember owner = this.discordClient.getMember(serverId, this.getBotId());
+        if (!competitionMembers.contains(owner)) {
+          competitionMembers.add(0, owner);
+        }
+        return competitionMembers.stream().map(this::toPlayer).collect(Collectors.toList());
       }
-      return competitionMembers.stream().map(this::toPlayer).collect(Collectors.toList());
+      else {
+        LOG.warn("No competition found for channel " + channelId);
+      }
     }
     return Collections.emptyList();
   }
