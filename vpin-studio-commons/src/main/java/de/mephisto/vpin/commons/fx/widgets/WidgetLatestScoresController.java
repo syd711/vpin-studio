@@ -5,13 +5,13 @@ import de.mephisto.vpin.commons.fx.OverlayWindowFX;
 import de.mephisto.vpin.restclient.PopperScreen;
 import de.mephisto.vpin.restclient.representations.*;
 import javafx.application.Platform;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.geometry.Insets;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Parent;
+import javafx.scene.control.Label;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
@@ -61,10 +61,10 @@ public class WidgetLatestScoresController extends WidgetController implements In
     new Thread(() -> {
       int limit = 12;
       Rectangle2D screenBounds = Screen.getPrimary().getBounds();
-      if(screenBounds.getWidth() > 2000 && screenBounds.getWidth() < 3000) {
+      if (screenBounds.getWidth() > 2000 && screenBounds.getWidth() < 3000) {
         limit = 10;
       }
-      else if(screenBounds.getWidth() < 2000) {
+      else if (screenBounds.getWidth() < 2000) {
         limit = 8;
       }
 
@@ -74,22 +74,31 @@ public class WidgetLatestScoresController extends WidgetController implements In
 
         try {
           List<ScoreRepresentation> scores = scoreSummary.getScores();
-          for (ScoreRepresentation score : scores) {
-            GameRepresentation game = OverlayWindowFX.client.getGame(score.getGameId());
-            GameMediaRepresentation gameMedia = game.getGameMedia();
-            GameMediaItemRepresentation wheelMedia = gameMedia.getMedia().get(PopperScreen.Wheel.name());
-            if (wheelMedia == null) {
-              continue;
-            }
-
-            FXMLLoader loader = new FXMLLoader(WidgetLatestScoreItemController.class.getResource("widget-latest-score-item.fxml"));
-            Pane row = loader.load();
-            row.setPrefWidth(root.getPrefWidth() - 24);
-            WidgetLatestScoreItemController controller = loader.getController();
-            controller.setData(game, score);
-
-            highscoreVBox.getChildren().add(row);
+          if (!scores.isEmpty()) {
+            Label label = new Label("                            No highscore record yet.\nThe history of newly achieved highscores will be shown here.");
+            label.setPadding(new Insets(80, 0, 0, 100));
+            label.getStyleClass().add("preference-description");
+            highscoreVBox.getChildren().add(label);
           }
+          else {
+            for (ScoreRepresentation score : scores) {
+              GameRepresentation game = OverlayWindowFX.client.getGame(score.getGameId());
+              GameMediaRepresentation gameMedia = game.getGameMedia();
+              GameMediaItemRepresentation wheelMedia = gameMedia.getMedia().get(PopperScreen.Wheel.name());
+              if (wheelMedia == null) {
+                continue;
+              }
+
+              FXMLLoader loader = new FXMLLoader(WidgetLatestScoreItemController.class.getResource("widget-latest-score-item.fxml"));
+              Pane row = loader.load();
+              row.setPrefWidth(root.getPrefWidth() - 24);
+              WidgetLatestScoreItemController controller = loader.getController();
+              controller.setData(game, score);
+
+              highscoreVBox.getChildren().add(row);
+            }
+          }
+
         } catch (IOException e) {
           LOG.error("Failed to create widget: " + e.getMessage(), e);
         }

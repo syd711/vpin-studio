@@ -5,6 +5,7 @@ import de.mephisto.vpin.restclient.PopperScreen;
 import de.mephisto.vpin.restclient.representations.*;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.geometry.Insets;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -61,6 +62,8 @@ public class WidgetCompetitionSummaryController extends WidgetController impleme
   @FXML
   private Label scoreLabel3;
 
+  private Label emptylabel;
+
   // Add a public no-args constructor
   public WidgetCompetitionSummaryController() {
   }
@@ -74,10 +77,25 @@ public class WidgetCompetitionSummaryController extends WidgetController impleme
         "    -fx-background-color: #111111;\n" +
         "    -fx-background-radius: 6;" +
         "    -fx-border-width: 1;");
+
+    emptylabel = new Label("                            No competition joined yet.\nStart an offline competition or join an existing one on Discord.");
+    emptylabel.getStyleClass().add("preference-description");
+    emptylabel.setPadding(new Insets(100, 0, 120, 60));
+    competitionStack.getChildren().add(emptylabel);
+
+    emptylabel.setVisible(false);
+    topBox.setVisible(false);
   }
 
   public void setCompetition(CompetitionRepresentation competition) {
-    if (competition != null) {
+    if (competition == null) {
+      durationLabel.setText("");
+      emptylabel.setVisible(true);
+      topBox.setVisible(false);
+    }
+    else {
+      topBox.setVisible(true);
+      emptylabel.setVisible(false);
       GameRepresentation game = OverlayWindowFX.client.getGame(competition.getGameId());
       ScoreSummaryRepresentation latestCompetitionScore = OverlayWindowFX.client.getCompetitionScore(competition.getId());
       GameMediaRepresentation gameMedia = game.getGameMedia();
@@ -128,9 +146,6 @@ public class WidgetCompetitionSummaryController extends WidgetController impleme
           BackgroundRepeat.NO_REPEAT, BackgroundRepeat.NO_REPEAT, BackgroundPosition.DEFAULT,
           BackgroundSize.DEFAULT);
       topBox.setBackground(new Background(myBI));
-    }
-    else {
-      durationLabel.setText("");
     }
   }
 
