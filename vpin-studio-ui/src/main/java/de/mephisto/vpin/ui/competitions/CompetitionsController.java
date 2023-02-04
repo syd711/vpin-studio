@@ -1,7 +1,7 @@
 package de.mephisto.vpin.ui.competitions;
 
-import de.mephisto.vpin.commons.fx.OverlayWindowFX;
 import de.mephisto.vpin.commons.fx.discord.DiscordUserEntryController;
+import de.mephisto.vpin.commons.fx.widgets.WidgetCompetitionScoreItemController;
 import de.mephisto.vpin.restclient.CompetitionType;
 import de.mephisto.vpin.restclient.discord.DiscordServer;
 import de.mephisto.vpin.restclient.representations.*;
@@ -82,7 +82,7 @@ public class CompetitionsController implements Initializable, StudioFXController
   private VBox membersBox;
 
   @FXML
-  private VBox scoresBox;
+  private VBox scoreGraphBox;
 
 
   private CompetitionsOfflineController offlineController;
@@ -136,7 +136,7 @@ public class CompetitionsController implements Initializable, StudioFXController
     checkTabs();
     checkTitledPanes(competitionRepresentation);
 
-    refreshScores(competitionRepresentation);
+    refreshScoreGraph(competitionRepresentation);
     refreshUsers(competitionRepresentation);
     refreshMetaData(competitionRepresentation);
     updateForTabSelection(competitionRepresentation);
@@ -204,10 +204,10 @@ public class CompetitionsController implements Initializable, StudioFXController
     }
   }
 
-  private void refreshScores(Optional<CompetitionRepresentation> cp) {
+  private void refreshScoreGraph(Optional<CompetitionRepresentation> cp) {
     if (cp.isPresent()) {
       CompetitionRepresentation competition = cp.get();
-      scoresBox.getChildren().removeAll(scoresBox.getChildren());
+      scoreGraphBox.getChildren().removeAll(scoreGraphBox.getChildren());
 
       ScoreListRepresentation competitionScores = client.getCompetitionScoreList(competition.getId());
       if (!competitionScores.getScores().isEmpty()) {
@@ -234,7 +234,7 @@ public class CompetitionsController implements Initializable, StudioFXController
 
 
         if (highscoresGraphTile != null) {
-          scoresBox.getChildren().remove(highscoresGraphTile);
+          scoreGraphBox.getChildren().remove(highscoresGraphTile);
         }
 
         //noinspection unchecked
@@ -257,7 +257,7 @@ public class CompetitionsController implements Initializable, StudioFXController
             .smoothing(false)
             .series(scoreGraph1, scoreGraph2, scoreGraph3)
             .build();
-        scoresBox.getChildren().add(highscoresGraphTile);
+        scoreGraphBox.getChildren().add(highscoresGraphTile);
       }
     }
   }

@@ -58,11 +58,11 @@
          <children>
             <Accordion prefWidth="600.0">
               <panes>
-                <TitledPane fx:id="scorePane" text="Recorded Scores">
+                <TitledPane fx:id="scorePane" text="Score Graph">
                      <content>
                         <ScrollPane vbarPolicy="NEVER">
                            <content>
-                              <VBox fx:id="scoresBox" minHeight="200.0" prefWidth="590.0">
+                              <VBox fx:id="scoreGraphBox" minHeight="200.0" prefWidth="590.0">
                                  <padding>
                                     <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
                                  </padding>
