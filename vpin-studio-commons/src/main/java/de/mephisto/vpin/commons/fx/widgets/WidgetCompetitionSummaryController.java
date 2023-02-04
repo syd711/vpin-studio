@@ -1,6 +1,7 @@
 package de.mephisto.vpin.commons.fx.widgets;
 
 import de.mephisto.vpin.commons.fx.OverlayWindowFX;
+import de.mephisto.vpin.restclient.CompetitionType;
 import de.mephisto.vpin.restclient.PopperScreen;
 import de.mephisto.vpin.restclient.representations.*;
 import javafx.fxml.FXML;
@@ -64,6 +65,11 @@ public class WidgetCompetitionSummaryController extends WidgetController impleme
 
   private Label emptylabel;
 
+  private CompetitionType competitionType = CompetitionType.OFFLINE;
+
+  private final static String OFFLINE_EMPTY_TEXT = "                        No offline competition started yet.\nStart an offline competition to compete with friends and family.";
+  private final static String ONLINE_EMPTY_TEXT  = "                            No Discord competition joined yet.\nStart an online competition on your Discord server or join an existing one.";
+
   // Add a public no-args constructor
   public WidgetCompetitionSummaryController() {
   }
@@ -78,17 +84,23 @@ public class WidgetCompetitionSummaryController extends WidgetController impleme
         "    -fx-background-radius: 6;" +
         "    -fx-border-width: 1;");
 
-    emptylabel = new Label("                            No competition joined yet.\nStart an offline competition or join an existing one on Discord.");
+    emptylabel = new Label(OFFLINE_EMPTY_TEXT);
     emptylabel.getStyleClass().add("preference-description");
-    emptylabel.setPadding(new Insets(100, 0, 120, 60));
+    emptylabel.setPadding(new Insets(100, 0, 120, 40));
     competitionStack.getChildren().add(emptylabel);
 
     emptylabel.setVisible(false);
     topBox.setVisible(false);
   }
 
-  public void setCompetition(CompetitionRepresentation competition) {
+  public void setCompetition(CompetitionType competitionType, CompetitionRepresentation competition) {
     if (competition == null) {
+      if(competitionType.equals(CompetitionType.DISCORD)) {
+        emptylabel.setText(ONLINE_EMPTY_TEXT);
+      }
+      else {
+        emptylabel.setText(OFFLINE_EMPTY_TEXT);
+      }
       durationLabel.setText("");
       emptylabel.setVisible(true);
       topBox.setVisible(false);

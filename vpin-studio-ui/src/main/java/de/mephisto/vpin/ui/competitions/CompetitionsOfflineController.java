@@ -2,6 +2,7 @@ package de.mephisto.vpin.ui.competitions;
 
 import de.mephisto.vpin.commons.fx.widgets.WidgetCompetitionSummaryController;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
+import de.mephisto.vpin.restclient.CompetitionType;
 import de.mephisto.vpin.restclient.representations.CompetitionRepresentation;
 import de.mephisto.vpin.restclient.representations.GameRepresentation;
 import de.mephisto.vpin.restclient.representations.PlayerRepresentation;
@@ -356,13 +357,13 @@ public class CompetitionsOfflineController implements Initializable, StudioFXCon
       if (competitionWidget.getTop() != null) {
         competitionWidget.getTop().setVisible(true);
       }
-      competitionWidgetController.setCompetition(competition.get());
+      competitionWidgetController.setCompetition(CompetitionType.OFFLINE, competition.get());
     }
     else {
       if (competitionWidget.getTop() != null) {
         competitionWidget.getTop().setVisible(false);
       }
-      competitionWidgetController.setCompetition(null);
+      competitionWidgetController.setCompetition(CompetitionType.OFFLINE, null);
     }
     competitionsController.setCompetition(competition.orElse(null));
   }

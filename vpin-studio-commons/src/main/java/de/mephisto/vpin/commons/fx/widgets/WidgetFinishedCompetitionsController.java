@@ -68,7 +68,7 @@ public class WidgetFinishedCompetitionsController extends WidgetController imple
             BorderPane row = loader.load();
             WidgetCompetitionSummaryController controller = loader.getController();
             row.setMaxWidth(Double.MAX_VALUE);
-            controller.setCompetition(c);
+            controller.setCompetition(null, c);
 
             competitionsVBox.getChildren().add(row);
           }

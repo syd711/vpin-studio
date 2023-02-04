@@ -63,6 +63,7 @@ public class DashboardController implements Initializable, StudioFXController {
       activeCompetitionBorderPane.setMaxWidth(Double.MAX_VALUE);
       offlineCompetitionWidgetController = loader.getController();
       widgetCompetition.getChildren().add(activeCompetitionBorderPane);
+      offlineCompetitionWidgetController.setCompetitionType(CompetitionType.OFFLINE);
       offlineCompetitionWidgetController.setCompact();
 
     } catch (IOException e) {
@@ -76,6 +77,7 @@ public class DashboardController implements Initializable, StudioFXController {
       discordCompetitionWidgetController = loader.getController();
       widgetCompetition.getChildren().add(activeCompetitionBorderPane);
       discordCompetitionWidgetController.setCompact();
+      discordCompetitionWidgetController.setCompetitionType(CompetitionType.DISCORD);
 
     } catch (IOException e) {
       LOG.error("Failed to load competitions widget: " + e.getMessage(), e);

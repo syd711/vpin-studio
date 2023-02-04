@@ -65,6 +65,8 @@ public class WidgetCompetitionController extends WidgetController implements Ini
   private Tile countdownTile;
   private Tile turnoverTile;
 
+  private CompetitionType competitionType = CompetitionType.OFFLINE;
+
   @FXML
   private StackPane viewStack;
 
@@ -146,7 +148,7 @@ public class WidgetCompetitionController extends WidgetController implements Ini
   }
 
   private void setCompetition(CompetitionRepresentation competition) {
-    summaryWidgetController.setCompetition(competition);
+    summaryWidgetController.setCompetition(competitionType, competition);
     root.setVisible(competition != null);
 
     if (competition != null) {
@@ -245,13 +247,21 @@ public class WidgetCompetitionController extends WidgetController implements Ini
       Platform.runLater(() -> {
         setCompetition(competition);
         root.setVisible(true);
-        if(competition != null) {
-          if(competition.getType() == null || competition.getType().equals(CompetitionType.OFFLINE.name())) {
-            titleLabel.setText("Offline Competition");
-          }
-          else if(competition.getType().equals(CompetitionType.DISCORD.name())) {
+        if (competition != null) {
+          if (competition.getType().equals(CompetitionType.DISCORD.name())) {
             DiscordServer discordServer = OverlayWindowFX.client.getDiscordServer(competition.getDiscordServerId());
-            titleLabel.setText("\"" + discordServer.getName() + "\" Competition");
+            titleLabel.setText("Discord: " + discordServer.getName());
+          }
+          else {
+            titleLabel.setText("Offline: " + competition.getName());
+          }
+        }
+        else {
+          if (competitionType.equals(CompetitionType.DISCORD)) {
+            titleLabel.setText("- No Discord Competition Found - ");
+          }
+          else {
+            titleLabel.setText("- No Offline Competition Found - ");
           }
         }
 
@@ -259,6 +269,10 @@ public class WidgetCompetitionController extends WidgetController implements Ini
 
       });
     }).start();
+  }
+
+  public void setCompetitionType(CompetitionType competitionType) {
+    this.competitionType = competitionType;
   }
 
   public void setCompact() {
