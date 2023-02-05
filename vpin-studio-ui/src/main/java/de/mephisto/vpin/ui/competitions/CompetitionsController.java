@@ -93,6 +93,8 @@ public class CompetitionsController implements Initializable, StudioFXController
   private Optional<CompetitionRepresentation> competition = Optional.empty();
 
   private Label noPlayersLabel;
+  private Label notActiveLabel;
+  private Label notActiveGraphLabel;
 
   // Add a public no-args constructor
   public CompetitionsController() {
@@ -209,6 +211,11 @@ public class CompetitionsController implements Initializable, StudioFXController
       CompetitionRepresentation competition = cp.get();
       scoreGraphBox.getChildren().removeAll(scoreGraphBox.getChildren());
 
+      if(!competition.isActive()) {
+        scoreGraphBox.getChildren().add(getNotActiveGrpahLabel());
+        return;
+      }
+
       ScoreListRepresentation competitionScores = client.getCompetitionScoreList(competition.getId());
       if (!competitionScores.getScores().isEmpty()) {
         XYChart.Series<String, Number> scoreGraph1 = new XYChart.Series();
@@ -267,20 +274,25 @@ public class CompetitionsController implements Initializable, StudioFXController
       CompetitionRepresentation competition = cp.get();
       if (competitionMembersPane.isVisible()) {
         membersBox.getChildren().removeAll(membersBox.getChildren());
-        List<PlayerRepresentation> memberList = client.getDiscordCompetitionPlayers(competition.getId());
-        if(memberList.isEmpty()) {
-          membersBox.getChildren().add(getNoPlayersLabel());
+        if(!competition.isActive()) {
+          membersBox.getChildren().add(getNotActiveLabel());
         }
         else {
-          for (PlayerRepresentation player : memberList) {
-            try {
-              FXMLLoader loader = new FXMLLoader(DiscordUserEntryController.class.getResource("discord-user.fxml"));
-              Parent playerPanel = loader.load();
-              DiscordUserEntryController controller = loader.getController();
-              controller.setData(player);
-              membersBox.getChildren().add(playerPanel);
-            } catch (IOException e) {
-              LOG.error("Failed to load discord player list: " + e.getMessage(), e);
+          List<PlayerRepresentation> memberList = client.getDiscordCompetitionPlayers(competition.getId());
+          if(memberList.isEmpty()) {
+            membersBox.getChildren().add(getNoPlayersLabel());
+          }
+          else {
+            for (PlayerRepresentation player : memberList) {
+              try {
+                FXMLLoader loader = new FXMLLoader(DiscordUserEntryController.class.getResource("discord-user.fxml"));
+                Parent playerPanel = loader.load();
+                DiscordUserEntryController controller = loader.getController();
+                controller.setData(player);
+                membersBox.getChildren().add(playerPanel);
+              } catch (IOException e) {
+                LOG.error("Failed to load discord player list: " + e.getMessage(), e);
+              }
             }
           }
         }
@@ -337,5 +349,21 @@ public class CompetitionsController implements Initializable, StudioFXController
       noPlayersLabel.setStyle("-fx-font-weight: bold;-fx-font-size: 14px;");
     }
     return this.noPlayersLabel;
+  }
+
+  private Label getNotActiveLabel() {
+    if(this.notActiveLabel == null) {
+      notActiveLabel = new Label("The competition is not active.");
+      notActiveLabel.setStyle("-fx-font-weight: bold;-fx-font-size: 14px;");
+    }
+    return this.notActiveLabel;
+  }
+
+  private Label getNotActiveGrpahLabel() {
+    if(this.notActiveGraphLabel == null) {
+      notActiveGraphLabel = new Label("The graph is only calculated for active competitions.");
+      notActiveGraphLabel.setStyle("-fx-font-weight: bold;-fx-font-size: 14px;");
+    }
+    return this.notActiveGraphLabel;
   }
 }

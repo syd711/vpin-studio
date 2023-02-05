@@ -66,6 +66,9 @@ public class CompetitionsDiscordController implements Initializable, StudioFXCon
   private TableColumn<CompetitionRepresentation, String> columnEndDate;
 
   @FXML
+  private TableColumn<CompetitionRepresentation, String> columnWinner;
+
+  @FXML
   private Button editBtn;
 
   @FXML
@@ -343,6 +346,20 @@ public class CompetitionsDiscordController implements Initializable, StudioFXCon
       CompetitionRepresentation value = cellData.getValue();
       Label label = new Label(DateFormat.getDateInstance().format(value.getEndDate()));
       return new SimpleObjectProperty(label);
+    });
+
+    columnWinner.setCellValueFactory(cellData -> {
+      CompetitionRepresentation value = cellData.getValue();
+      String winner = "-";
+
+      if (!StringUtils.isEmpty(value.getWinnerInitials())) {
+        winner = value.getWinnerInitials();
+        PlayerRepresentation player = client.getPlayer(value.getDiscordServerId(), value.getWinnerInitials());
+        if (player != null) {
+          winner = player.getName();
+        }
+      }
+      return new SimpleObjectProperty(winner);
     });
 
     tableView.setPlaceholder(new Label("            Mmmh, not up for a challange yet?\n" +

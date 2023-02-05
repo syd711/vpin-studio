@@ -28,6 +28,7 @@
                         <TableColumn fx:id="columnCompetitionOwner" prefWidth="156.0" style="-fx-alignment: CENTER;" text="Competition Owner" />
                                 <TableColumn fx:id="columnStartDate" prefWidth="137.5999755859375" style="-fx-alignment: CENTER;" text="Start Date" />
                                 <TableColumn fx:id="columnEndDate" prefWidth="120.0" style="-fx-alignment: CENTER;" text="End Date" />
+                        <TableColumn fx:id="columnWinner" prefWidth="180.0" style="-fx-alignment: CENTER;" text="Winner" />
                             </columns>
                         </TableView>
                     </children>
