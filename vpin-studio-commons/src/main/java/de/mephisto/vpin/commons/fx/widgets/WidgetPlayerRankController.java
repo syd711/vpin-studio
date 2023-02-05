@@ -125,8 +125,11 @@ public class WidgetPlayerRankController extends WidgetController implements Init
     });
 
     Rectangle2D screenBounds = Screen.getPrimary().getBounds();
+    if(screenBounds.getWidth() < 2600) {
+      columnName.setPrefWidth(280);
+    }
     if(screenBounds.getWidth() < 2000) {
-      columnName.setPrefWidth(300);
+      columnName.setPrefWidth(260);
     }
 
     columnFirst.setCellValueFactory(cellData -> {
