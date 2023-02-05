@@ -75,13 +75,21 @@ public class VpaImporter {
       }
 
       boolean importHighscores = descriptor.isImportHighscores();
-      if (importHighscores && manifest.getAdditionalData().containsKey(VpaService.DATA_HIGHSCORE_HISTORY)) {
-        String json = (String) manifest.getAdditionalData().get(VpaService.DATA_HIGHSCORE_HISTORY);
-        VpaExporterJob.ScoreVersionEntry[] scores = objectMapper.readValue(json, VpaExporterJob.ScoreVersionEntry[].class);
-        LOG.info("Importing " + scores.length + " scores.");
-        for (VpaExporterJob.ScoreVersionEntry score : scores) {
-          highscoreService.importScoreEntry(gameByFilename, score);
+      if (importHighscores) {
+
+        if(manifest.getAdditionalData().containsKey(VpaService.DATA_HIGHSCORE_HISTORY)) {
+          String json = (String) manifest.getAdditionalData().get(VpaService.DATA_HIGHSCORE_HISTORY);
+          VpaExporterJob.ScoreVersionEntry[] scores = objectMapper.readValue(json, VpaExporterJob.ScoreVersionEntry[].class);
+          LOG.info("Importing " + scores.length + " scores.");
+          for (VpaExporterJob.ScoreVersionEntry score : scores) {
+            highscoreService.importScoreEntry(gameByFilename, score);
+          }
         }
+
+        if(manifest.getAdditionalData().containsKey(VpaService.DATA_HIGHSCORE)) {
+
+        }
+
       }
 
       return gameByFilename.getId();

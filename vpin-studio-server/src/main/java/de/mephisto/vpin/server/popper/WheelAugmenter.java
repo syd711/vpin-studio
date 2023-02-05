@@ -94,7 +94,7 @@ public class WheelAugmenter {
       badgeIcon = ImageUtil.resizeImage(badgeIcon, targetWidthForBadge);
 
       int offset = (width * 5 / 100);
-      bufferedWheelImage.getGraphics().drawImage(badgeIcon, width - offset- targetWidthForBadge, offset, null);
+      bufferedWheelImage.getGraphics().drawImage(badgeIcon, width - offset - targetWidthForBadge, offset, null);
       ImageUtil.write(bufferedWheelImage, wheelIcon);
 
 
@@ -110,12 +110,24 @@ public class WheelAugmenter {
     } catch (Exception e) {
       LOG.error("Wheel augmentation failed: " + e.getMessage(), e);
     }
+    resetThumbs();
+  }
+
+  private void resetThumbs() {
+    try {
+      if (thumbsFolder.exists()) {
+        FileUtils.deleteDirectory(thumbsFolder);
+      }
+    } catch (IOException e) {
+      LOG.info("Failed to reset popper thumbnails: " + e.getMessage(), e);
+    }
   }
 
   public synchronized void deAugment() {
     deAugment(backupWheelIcon, wheelIcon);
     deAugment(backupWheelIconThumbnail, wheelIconThumbnail);
     deAugment(backupWheelIconThumbnailSm, wheelIconThumbnailSm);
+    resetThumbs();
   }
 
   private void deAugment(File backup, File target) {
@@ -130,7 +142,7 @@ public class WheelAugmenter {
       try {
         FileUtils.copyFile(backup, target);
         LOG.info("Copied un-augmented wheel icon '" + backup.getAbsolutePath() + "' back to '" + target.getAbsolutePath() + "'");
-        if(!backup.delete()) {
+        if (!backup.delete()) {
           LOG.error("Failed to delete backup file " + backup.getAbsolutePath());
         }
       } catch (IOException e) {

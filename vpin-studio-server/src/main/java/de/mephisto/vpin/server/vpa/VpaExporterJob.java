@@ -204,6 +204,7 @@ public class VpaExporterJob implements Job {
       return;
     }
     if (fileToZip.isDirectory()) {
+      LOG.info("Zipping " + fileToZip.getCanonicalPath());
       if (fileName.endsWith("/")) {
         zipOut.putNextEntry(new ZipEntry(fileName));
         zipOut.closeEntry();
