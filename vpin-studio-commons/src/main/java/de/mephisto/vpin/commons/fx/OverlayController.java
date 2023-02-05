@@ -24,7 +24,10 @@ public class OverlayController implements Initializable {
   private Label titleLabel;
 
   @FXML
-  private WidgetCompetitionController activeCompetitionController; //fxml magic! Not unused -> id + "Controller"
+  private WidgetCompetitionController offlineCompetitionController; //fxml magic! Not unused -> id + "Controller"
+
+  @FXML
+  private WidgetCompetitionController discordCompetitionController; //fxml magic! Not unused -> id + "Controller"
 
   @FXML
   private WidgetLatestScoresController latestScoresController; //fxml magic! Not unused -> id + "Controller"
@@ -52,7 +55,14 @@ public class OverlayController implements Initializable {
 
 
     CompetitionRepresentation c = OverlayWindowFX.client.getActiveCompetition(CompetitionType.OFFLINE);
-    activeCompetitionController.refresh(c);
+    offlineCompetitionController.setCompetitionType(CompetitionType.OFFLINE);
+    offlineCompetitionController.refresh(c);
+
+    c = OverlayWindowFX.client.getActiveCompetition(CompetitionType.DISCORD);
+    discordCompetitionController.setCompetitionType(CompetitionType.DISCORD);
+    discordCompetitionController.refresh(c);
+
+
     latestScoresController.refresh();
 //    finishedCompetitionsController.refresh();
     playersController.refresh();
