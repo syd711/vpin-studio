@@ -159,6 +159,7 @@ public class GameService {
 
     highscoreService.deleteScores(game.getId());
 
+    LOG.info("Deleted " + game.getGameDisplayName());
     return success;
   }
 

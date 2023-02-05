@@ -13,6 +13,7 @@ import de.mephisto.vpin.server.highscores.HighscoreVersion;
 import de.mephisto.vpin.server.popper.GameMediaItem;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -70,15 +71,13 @@ public class VpaExporterJob implements Job {
           zipFile(game.getNvRamFile(), getGameFolderName() + "/VPinMAME/nvram/" + game.getNvRamFile().getName(), zipOut);
         }
 
-//        File vpReg = game.getVPRegFolder();
-//        if(vpReg != null && vpReg.exists() && highscore != null) {
-//          String scoresJson = objectMapper.writeValueAsString(highscore.getRaw());
-//          exportDescriptor.getManifest().getAdditionalData().put(VpaService.DATA_VREG_HIGHSCORE, scoresJson);
-//        }
-
         List<ScoreVersionEntry> scores = scoreHistory.stream().map(ScoreVersionEntry::new).collect(Collectors.toList());
         String scoresJson = objectMapper.writeValueAsString(scores);
         exportDescriptor.getManifest().getAdditionalData().put(VpaService.DATA_HIGHSCORE_HISTORY, scoresJson);
+
+        if(highscore != null && highscore.getRaw() != null) {
+          exportDescriptor.getManifest().getAdditionalData().put(VpaService.DATA_HIGHSCORE, highscore.getRaw());
+        }
       }
 
       zipManifest(zipOut);
@@ -114,7 +113,7 @@ public class VpaExporterJob implements Job {
       }
 
       if (game.getMusicFolder() != null && game.getMusicFolder().exists()) {
-        zipFile(game.getMusicFolder(), getGameFolderName() + "/Music/" + game.getMusicFolder().getName(), zipOut);
+        zipFile(game.getMusicFolder(), getGameFolderName() + "/Music/", zipOut);
       }
 
       zipPupPack(zipOut);
@@ -183,6 +182,16 @@ public class VpaExporterJob implements Job {
     }
 
     exportDescriptor.getManifest().setEmulatorType(VpaUtil.getEmulatorType(game.getGameFile()));
+
+    if(StringUtils.isEmpty(exportDescriptor.getManifest().getGameFileName())) {
+      exportDescriptor.getManifest().setGameFileName(game.getGameFileName());
+    }
+
+    if(StringUtils.isEmpty(exportDescriptor.getManifest().getGameName())) {
+      exportDescriptor.getManifest().setGameName(game.getGameDisplayName());
+      exportDescriptor.getManifest().setGameDisplayName(game.getGameDisplayName());
+    }
+
     String manifestString = objectMapper.writeValueAsString(exportDescriptor.getManifest());
     File manifestFile = File.createTempFile("vpa-manifest", "json");
     manifestFile.deleteOnExit();

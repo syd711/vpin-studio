@@ -26,6 +26,7 @@ public class VpaService {
   private final static Logger LOG = LoggerFactory.getLogger(VpaService.class);
 
   public final static String DATA_HIGHSCORE_HISTORY = "highscores";
+  public final static String DATA_HIGHSCORE = "highscore";
   public final static String DATA_VREG_HIGHSCORE = "VRegHighscore";
 
   @Autowired

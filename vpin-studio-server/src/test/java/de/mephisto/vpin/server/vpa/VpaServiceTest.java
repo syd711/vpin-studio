@@ -5,6 +5,7 @@ import de.mephisto.vpin.restclient.VpaManifest;
 import de.mephisto.vpin.server.AbstractVPinServerTest;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameService;
+import de.mephisto.vpin.server.highscores.Highscore;
 import de.mephisto.vpin.server.highscores.HighscoreService;
 import de.mephisto.vpin.server.highscores.HighscoreVersion;
 import org.junit.jupiter.api.Test;
@@ -14,6 +15,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -53,7 +55,8 @@ public class VpaServiceTest extends AbstractVPinServerTest {
     descriptor.setGameId(game.getId());
     File target = new File("E:\\downloads\\" + game.getGameDisplayName().replaceAll(" ", "-") + ".vpa");
     List<HighscoreVersion> versions = highscoreService.getAllHighscoreVersions(game.getId());
-    VpaExporterJob exporter = new VpaExporterJob(game, descriptor, null, versions, target);
+    Optional<Highscore> highscore = highscoreService.getHighscore(game.getId());
+    VpaExporterJob exporter = new VpaExporterJob(game, descriptor, highscore.get(), versions, target);
     exporter.execute();
     assertTrue(target.exists());
   }

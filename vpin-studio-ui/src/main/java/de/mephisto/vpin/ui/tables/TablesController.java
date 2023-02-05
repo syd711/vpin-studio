@@ -1,7 +1,6 @@
 package de.mephisto.vpin.ui.tables;
 
 import de.mephisto.vpin.commons.EmulatorTypes;
-import de.mephisto.vpin.commons.HighscoreTypes;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.VPinStudioClient;
 import de.mephisto.vpin.restclient.ValidationCode;
@@ -21,7 +20,6 @@ import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -38,9 +36,7 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.StackPane;
-import javafx.scene.media.MediaView;
 import javafx.scene.paint.Paint;
 import org.apache.commons.lang3.StringUtils;
 import org.kordamp.ikonli.javafx.FontIcon;
@@ -158,26 +154,6 @@ public class TablesController implements Initializable, StudioFXController {
   private List<GameRepresentation> games;
 
   @FXML
-  private void onPlayClick(ActionEvent e) {
-    Button source = (Button) e.getSource();
-    BorderPane borderPane = (BorderPane) source.getParent();
-    MediaView mediaView = (MediaView) borderPane.getCenter();
-
-    FontIcon icon = (FontIcon) source.getChildrenUnmodifiable().get(0);
-    String iconLiteral = icon.getIconLiteral();
-    if (iconLiteral.equals("bi-play")) {
-      mediaView.getMediaPlayer().setMute(false);
-      mediaView.getMediaPlayer().setCycleCount(1);
-      mediaView.getMediaPlayer().play();
-      icon.setIconLiteral("bi-stop");
-    }
-    else {
-      mediaView.getMediaPlayer().stop();
-      icon.setIconLiteral("bi-play");
-    }
-  }
-
-  @FXML
   private void onRomUpload() {
     this.tablesSideBarController.onRomUpload();
   }
@@ -263,7 +239,7 @@ public class TablesController implements Initializable, StudioFXController {
   private void deleteSelection() {
     GameRepresentation game = tableView.getSelectionModel().getSelectedItem();
     if (game != null) {
-      if(Studio.client.isGameReferencedByCompetitions(game.getId())) {
+      if (Studio.client.isGameReferencedByCompetitions(game.getId())) {
         WidgetFactory.showAlert(Studio.stage, "The table '" + game.getGameDisplayName()
             + "' is used by at least one competition.", "Delete all competitions for this table first.");
         return;
@@ -290,7 +266,7 @@ public class TablesController implements Initializable, StudioFXController {
   private void onTablesScan() {
     List<GameRepresentation> selectedItems = new ArrayList<>(tableView.getSelectionModel().getSelectedItems());
     String title = "Re-scan selected tables?";
-    if(selectedItems.size() == 1) {
+    if (selectedItems.size() == 1) {
       title = "Re-scan table '" + selectedItems.get(0).getGameDisplayName() + "'?";
     }
 
@@ -481,7 +457,7 @@ public class TablesController implements Initializable, StudioFXController {
       if (value.getIgnoredValidations() != null) {
         ignoredValidations = Arrays.asList(value.getIgnoredValidations().split(","));
       }
-      if (!value.isRomExists() && (value.getHighscoreType() == null || value.getHighscoreType().equals(HighscoreTypes.TYPE_NVRAM)) && !ignoredValidations.contains(String.valueOf(ValidationCode.CODE_ROM_NOT_EXISTS))) {
+      if (!value.isRomExists() && value.isRomRequired() && !ignoredValidations.contains(String.valueOf(ValidationCode.CODE_ROM_NOT_EXISTS))) {
         Label label = new Label(rom);
         String color = "#FF3333";
         label.setStyle("-fx-font-color: " + color + ";-fx-text-fill: " + color + ";-fx-font-weight: bold;");
@@ -566,7 +542,6 @@ public class TablesController implements Initializable, StudioFXController {
         validateBtn.setDisable(disable);
         deleteBtn.setDisable(disable);
         inspectBtn.setDisable(disable);
-        exportBtn.setDisable(disable);
         uploadDirectB2SItem.setDisable(disable);
 
         if (c.getList().isEmpty()) {

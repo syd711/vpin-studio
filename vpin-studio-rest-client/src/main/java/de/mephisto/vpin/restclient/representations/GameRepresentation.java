@@ -42,6 +42,15 @@ public class GameRepresentation {
   private boolean pov;
   private boolean selected;
   private boolean competed;
+  private boolean romRequired;
+
+  public boolean isRomRequired() {
+    return romRequired;
+  }
+
+  public void setRomRequired(boolean romRequired) {
+    this.romRequired = romRequired;
+  }
 
   public boolean isCompeted() {
     return competed;

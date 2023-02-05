@@ -2,6 +2,7 @@ package de.mephisto.vpin.server.games;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import de.mephisto.vpin.restclient.PopperScreen;
+import de.mephisto.vpin.server.highscores.HighscoreMetadata;
 import de.mephisto.vpin.server.popper.Emulator;
 import de.mephisto.vpin.server.popper.GameMedia;
 import de.mephisto.vpin.server.popper.GameMediaItem;
@@ -164,7 +165,6 @@ public class Game {
     return new File(this.getGameFile().getParentFile(), folderName);
   }
 
-
   @Nullable
   public File getPinUPMedia(@NonNull PopperScreen screen) {
     String baseName = FilenameUtils.getBaseName(getGameFileName());
@@ -198,13 +198,6 @@ public class Game {
     return null;
   }
 
-  public Date getModified() {
-    if (this.gameFile != null && this.gameFile.lastModified() > 0) {
-      return new Date(this.gameFile.lastModified());
-    }
-    return null;
-  }
-
   @NonNull
   @JsonIgnore
   public File getGameFile() {
@@ -215,6 +208,17 @@ public class Game {
   @JsonIgnore
   public File getPOVFile() {
     return povFile;
+  }
+
+  public boolean isRomRequired() {
+    return getHighscoreType() != null && (getHighscoreType().equals(HighscoreMetadata.TYPE_NVRAM));
+  }
+
+  public Date getModified() {
+    if (this.gameFile != null && this.gameFile.lastModified() > 0) {
+      return new Date(this.gameFile.lastModified());
+    }
+    return null;
   }
 
   public boolean isPOV() {

@@ -65,7 +65,7 @@ public class GameValidator implements InitializingBean {
     }
 
     if (isVPX && isValidationEnabled(game, ValidationCode.CODE_ROM_NOT_EXISTS)) {
-      if (!game.isRomExists() && (game.getHighscoreType() == null || game.getHighscoreType().equals(HighscoreMetadata.TYPE_NVRAM))) {
+      if (!game.isRomExists() && game.isRomRequired()) {
         return ValidationCode.CODE_ROM_NOT_EXISTS;
       }
     }
