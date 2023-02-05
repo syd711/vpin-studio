@@ -65,10 +65,8 @@ public class WidgetCompetitionSummaryController extends WidgetController impleme
 
   private Label emptylabel;
 
-  private CompetitionType competitionType = CompetitionType.OFFLINE;
-
-  private final static String OFFLINE_EMPTY_TEXT = "                        No offline competition started yet.\nStart an offline competition to compete with friends and family.";
-  private final static String ONLINE_EMPTY_TEXT  = "                            No Discord competition joined yet.\nStart an online competition on your Discord server or join an existing one.";
+  private final static String OFFLINE_EMPTY_TEXT = "                        No active offline competition found.\nStart an offline competition to compete with friends and family.";
+  private final static String ONLINE_EMPTY_TEXT  = "                            No active Discord competition found.\nStart an online competition on your Discord server or join an existing one.";
 
   // Add a public no-args constructor
   public WidgetCompetitionSummaryController() {

@@ -30,16 +30,16 @@ public class VpaServiceTest extends AbstractVPinServerTest {
   private GameService gameService;
 
   @Test
-  public void testPack() throws IOException {
+  public void testExport() throws IOException {
 //    test(VPinServerTest.TEST_GAME_FILENAME);
 //    test("Hayburners (WIlliams 1951).vpx");
-    test("Attack from Mars 2.0.1.vpx");
+    exportTest("Attack from Mars 2.0.1.vpx");
 //    test("The Addams Family.vpx");
 //    test("Jaws.vpx");
 //    test("Stranger Things.vpx");
   }
 
-  private void test(String name) {
+  private void exportTest(String name) {
     Game game = gameService.getGameByFilename(name);
 
     ExportDescriptor descriptor = new ExportDescriptor();

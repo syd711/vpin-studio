@@ -2,6 +2,7 @@ package de.mephisto.vpin.server.games;
 
 import de.mephisto.vpin.restclient.PopperScreen;
 import de.mephisto.vpin.restclient.ValidationCode;
+import de.mephisto.vpin.server.highscores.HighscoreMetadata;
 import de.mephisto.vpin.server.popper.Emulator;
 import de.mephisto.vpin.server.preferences.Preferences;
 import de.mephisto.vpin.server.preferences.PreferencesService;
@@ -64,7 +65,7 @@ public class GameValidator implements InitializingBean {
     }
 
     if (isVPX && isValidationEnabled(game, ValidationCode.CODE_ROM_NOT_EXISTS)) {
-      if (!game.isRomExists()) {
+      if (!game.isRomExists() && (game.getHighscoreType() == null || game.getHighscoreType().equals(HighscoreMetadata.TYPE_NVRAM))) {
         return ValidationCode.CODE_ROM_NOT_EXISTS;
       }
     }

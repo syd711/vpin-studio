@@ -93,6 +93,12 @@ public class GameService {
     }
 
     if (descriptor.isDeleteDirectB2s()) {
+      if (!FileUtils.delete(game.getCroppedDirectB2SBackgroundImage())) {
+        success = false;
+      }
+      if (!FileUtils.delete(game.getRawDirectB2SBackgroundImage())) {
+        success = false;
+      }
       if (!FileUtils.delete(game.getDirectB2SFile())) {
         success = false;
       }
@@ -241,7 +247,7 @@ public class GameService {
   @Nullable
   public HighscoreMetadata scanScore(int gameId) {
     Game game = getGame(gameId);
-    if(game != null) {
+    if (game != null) {
       return highscoreService.scanScore(game);
     }
     return null;
@@ -307,7 +313,7 @@ public class GameService {
 
 
     Optional<Highscore> highscore = this.highscoreService.getHighscore(game.getId());
-    if(highscore.isPresent()) {
+    if (highscore.isPresent()) {
       game.setHighscoreType(highscore.get().getType());
     }
 

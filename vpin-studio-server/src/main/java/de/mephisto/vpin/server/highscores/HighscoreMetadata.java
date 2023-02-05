@@ -1,11 +1,13 @@
 package de.mephisto.vpin.server.highscores;
 
+import de.mephisto.vpin.commons.HighscoreTypes;
+
 import java.util.Date;
 
 public class HighscoreMetadata {
-  public static final String TYPE_VREG = "VReg";
-  public static final String TYPE_EM = "EM";
-  public static final String TYPE_NVRAM = "NVRam";
+  public static final String TYPE_VREG = HighscoreTypes.TYPE_VREG;
+  public static final String TYPE_EM = HighscoreTypes.TYPE_EM;
+  public static final String TYPE_NVRAM = HighscoreTypes.TYPE_NVRAM;
 
   private String type;
   private String displayName;

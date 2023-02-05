@@ -1,6 +1,7 @@
 package de.mephisto.vpin.ui.tables;
 
 import de.mephisto.vpin.commons.EmulatorTypes;
+import de.mephisto.vpin.commons.HighscoreTypes;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.VPinStudioClient;
 import de.mephisto.vpin.restclient.ValidationCode;
@@ -480,7 +481,7 @@ public class TablesController implements Initializable, StudioFXController {
       if (value.getIgnoredValidations() != null) {
         ignoredValidations = Arrays.asList(value.getIgnoredValidations().split(","));
       }
-      if (!value.isRomExists() && !ignoredValidations.contains(String.valueOf(ValidationCode.CODE_ROM_NOT_EXISTS))) {
+      if (!value.isRomExists() && (value.getHighscoreType() == null || value.getHighscoreType().equals(HighscoreTypes.TYPE_NVRAM)) && !ignoredValidations.contains(String.valueOf(ValidationCode.CODE_ROM_NOT_EXISTS))) {
         Label label = new Label(rom);
         String color = "#FF3333";
         label.setStyle("-fx-font-color: " + color + ";-fx-text-fill: " + color + ";-fx-font-weight: bold;");
