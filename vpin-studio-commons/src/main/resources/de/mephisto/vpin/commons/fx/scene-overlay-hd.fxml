@@ -7,14 +7,13 @@
 <?import javafx.scene.text.Font?>
 <StackPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" rotate="-90.0" stylesheets="@stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.commons.fx.OverlayController">
    <children>
-      <Label fx:id="titleLabel" text="Label" textFill="WHITE" translateY="-890.0" >
+      <Label fx:id="titleLabel" text="Label" textFill="WHITE" translateY="-920.0" >
          <font>
-            <Font name="System Bold" size="76.0" />
+            <Font name="System Bold" size="36.0" />
          </font>
       </Label>
-      <fx:include fx:id="players" prefWidth="570.0" prefHeight="1120.0" scaleX="1.0" scaleY="1.0" source="widgets/widget-player-rank.fxml" translateX="263.0" translateY="-240.0" />
-      <fx:include fx:id="latestScores" prefWidth="470.0" prefHeight="1120.0" scaleX="1.0" scaleY="1.0" source="widgets/widget-latest-scores.fxml" translateX="-276.0" translateY="-240.0" />
-
-      <fx:include fx:id="activeCompetition" scaleX="1.0" prefWidth="1060.0" scaleY="1.0" source="widgets/widget-competition.fxml" translateX="19.0" translateY="640.0" />
+      <fx:include fx:id="players" prefWidth="1060.0" scaleX="1.0" scaleY="1.0" source="widgets/widget-player-rank.fxml" translateX="0" translateY="-578.0" />
+      <fx:include fx:id="offlineCompetition" prefWidth="1060.0" scaleX="1.0" scaleY="1.0" source="widgets/widget-competition.fxml" translateX="0" translateY="36.0" />
+      <fx:include fx:id="discordCompetition" prefWidth="1060.0" scaleX="1.0" scaleY="1.0" source="widgets/widget-competition.fxml" translateX="0" translateY="648.0" />
    </children>
 </StackPane>

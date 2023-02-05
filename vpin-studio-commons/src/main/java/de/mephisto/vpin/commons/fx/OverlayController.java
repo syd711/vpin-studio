@@ -48,7 +48,7 @@ public class OverlayController implements Initializable {
     LOG.info("Refreshing overlay.");
     PreferenceEntryRepresentation systemName = OverlayWindowFX.client.getPreference(PreferenceNames.SYSTEM_NAME);
     String name = systemName.getValue();
-    if(StringUtils.isEmpty(name) || name.equals("null") ) {
+    if (StringUtils.isEmpty(name) || name.equals("null")) {
       name = UIDefaults.VPIN_NAME;
     }
     titleLabel.setText(name);
@@ -63,8 +63,12 @@ public class OverlayController implements Initializable {
     discordCompetitionController.refresh(c);
 
 
-    latestScoresController.refresh();
-//    finishedCompetitionsController.refresh();
-    playersController.refresh();
+    if (latestScoresController != null) {
+      latestScoresController.refresh();
+    }
+
+    if (playersController != null) {
+      playersController.refresh();
+    }
   }
 }
