@@ -4,6 +4,7 @@ import de.mephisto.vpin.commons.fx.DialogController;
 import de.mephisto.vpin.restclient.CompetitionType;
 import de.mephisto.vpin.restclient.PopperScreen;
 import de.mephisto.vpin.restclient.VPinStudioClient;
+import de.mephisto.vpin.restclient.discord.DiscordBotStatus;
 import de.mephisto.vpin.restclient.discord.DiscordChannel;
 import de.mephisto.vpin.restclient.discord.DiscordCompetitionData;
 import de.mephisto.vpin.restclient.discord.DiscordServer;
@@ -236,7 +237,8 @@ public class CompetitionDiscordJoinDialogController implements Initializable, Di
     }
 
     CompetitionRepresentation existingEntry = client.getCompetitionByUuid(this.discordCompetitionData.getUuid());
-    if (existingEntry != null && this.discordCompetitionData.getOwner().equals(client.getBotId())) {
+    DiscordBotStatus discordStatus = client.getDiscordStatus();
+    if (existingEntry != null && this.discordCompetitionData.getOwner().equals(String.valueOf(discordStatus.getBotId()))) {
       validationTitle.setText("Invalid competition selected");
       validationDescription.setText("You are the owner of this competition.");
       return;

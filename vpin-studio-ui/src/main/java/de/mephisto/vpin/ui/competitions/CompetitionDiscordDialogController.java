@@ -5,6 +5,7 @@ import de.mephisto.vpin.commons.fx.DialogController;
 import de.mephisto.vpin.restclient.CompetitionType;
 import de.mephisto.vpin.restclient.PopperScreen;
 import de.mephisto.vpin.restclient.VPinStudioClient;
+import de.mephisto.vpin.restclient.discord.DiscordBotStatus;
 import de.mephisto.vpin.restclient.discord.DiscordChannel;
 import de.mephisto.vpin.restclient.discord.DiscordCompetitionData;
 import de.mephisto.vpin.restclient.discord.DiscordServer;
@@ -79,6 +80,8 @@ public class CompetitionDiscordDialogController implements Initializable, Dialog
 
   private CompetitionRepresentation competition;
 
+  private DiscordBotStatus botStatus = null;
+
   @FXML
   private void onCancelClick(ActionEvent e) {
     this.competition = null;
@@ -94,11 +97,13 @@ public class CompetitionDiscordDialogController implements Initializable, Dialog
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
+    this.botStatus = client.getDiscordStatus();
+
     competition = new CompetitionRepresentation();
     competition.setType(CompetitionType.DISCORD.name());
     competition.setName("My next competition");
     competition.setUuid(UUID.randomUUID().toString());
-    competition.setOwner(client.getBotId());
+    competition.setOwner(String.valueOf(botStatus.getBotId()));
 
     Date end = Date.from(LocalDate.now().plus(7, ChronoUnit.DAYS).atStartOfDay(ZoneId.systemDefault()).toInstant());
     competition.setStartDate(Date.from(LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant()));
@@ -297,7 +302,7 @@ public class CompetitionDiscordDialogController implements Initializable, Dialog
       this.competition = c;
       GameRepresentation game = client.getGame(c.getGameId());
       DiscordServer discordServer = client.getDiscordServer(competition.getDiscordServerId());
-      String botId = client.getBotId();
+      String botId = String.valueOf(botStatus.getBotId());
       boolean isOwner = c.getOwner().equals(botId);
 
       channelsCombo.setDisable(true);

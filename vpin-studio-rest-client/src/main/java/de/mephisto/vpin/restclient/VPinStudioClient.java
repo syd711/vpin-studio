@@ -1,5 +1,6 @@
 package de.mephisto.vpin.restclient;
 
+import de.mephisto.vpin.restclient.discord.DiscordBotStatus;
 import de.mephisto.vpin.restclient.discord.DiscordChannel;
 import de.mephisto.vpin.restclient.discord.DiscordCompetitionData;
 import de.mephisto.vpin.restclient.discord.DiscordServer;
@@ -62,9 +63,8 @@ public class VPinStudioClient implements ObservedPropertyChangeListener, Overlay
     return restClient.get(API + "discord/competition/" + serverId + "/" + channelId, DiscordCompetitionData.class);
   }
 
-  public String getBotId() {
-    final RestTemplate restTemplate = new RestTemplate();
-    return restTemplate.getForObject(restClient.getBaseUrl() + API + "discord/botId", String.class);
+  public DiscordBotStatus getDiscordStatus() {
+    return restClient.get(API + "discord/status", DiscordBotStatus.class);
   }
 
   public List<DiscordChannel> getDiscordChannels() {

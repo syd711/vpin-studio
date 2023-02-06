@@ -3,6 +3,7 @@ package de.mephisto.vpin.server.discord;
 import de.mephisto.vpin.connectors.discord.*;
 import de.mephisto.vpin.restclient.PlayerDomain;
 import de.mephisto.vpin.restclient.PreferenceNames;
+import de.mephisto.vpin.restclient.discord.DiscordBotStatus;
 import de.mephisto.vpin.restclient.discord.DiscordChannel;
 import de.mephisto.vpin.restclient.discord.DiscordCompetitionData;
 import de.mephisto.vpin.restclient.discord.DiscordServer;
@@ -37,6 +38,25 @@ public class DiscordService implements InitializingBean, PreferenceChangedListen
   private PreferencesService preferencesService;
 
   private DiscordBotCommandListener botCommandListener;
+
+
+  public DiscordBotStatus getStatus() {
+    String guildId = (String) preferencesService.getPreferenceValue(PreferenceNames.DISCORD_GUILD_ID);
+    String defaultChannelId = (String) preferencesService.getPreferenceValue(PreferenceNames.DISCORD_CHANNEL_ID);
+    long botId = this.getBotId();
+
+    DiscordBotStatus status = new DiscordBotStatus();
+    status.setBotId(botId);
+    status.setValid(this.discordClient != null && this.discordClient.getChannels().size() > 0);
+    try {
+      long channelId = Long.parseLong(defaultChannelId);
+      long serverId = Long.parseLong(guildId);
+      status.setValidDefaultChannel(!StringUtils.isEmpty(defaultChannelId) && this.discordClient != null && this.getChannel(serverId, channelId) != null);
+    } catch (Exception e) {
+      LOG.error("Failed to calculate discord server status: " + e.getMessage(), e);
+    }
+    return null;
+  }
 
   public List<DiscordMember> getMembers() {
     if (this.discordClient != null) {

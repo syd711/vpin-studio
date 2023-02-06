@@ -1,5 +1,6 @@
 package de.mephisto.vpin.server.discord;
 
+import de.mephisto.vpin.restclient.discord.DiscordBotStatus;
 import de.mephisto.vpin.restclient.discord.DiscordChannel;
 import de.mephisto.vpin.restclient.discord.DiscordCompetitionData;
 import de.mephisto.vpin.restclient.discord.DiscordServer;
@@ -26,9 +27,9 @@ public class DiscordResource {
     return discordService.isEnabled();
   }
 
-  @GetMapping("/botId")
-  public String getBotId() {
-    return String.valueOf(discordService.getBotId());
+  @GetMapping("/status")
+  public DiscordBotStatus getStatus() {
+    return discordService.getStatus();
   }
 
   @GetMapping("/competition/{serverId}/{channelId}")
