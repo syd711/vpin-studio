@@ -77,7 +77,7 @@ public class HighscoreParser {
           }
         }
 
-        if (scores.size() == 3) {
+        if (scores.size() >= 3 && StringUtils.isEmpty(line)) {
           break;
         }
       }
@@ -145,7 +145,7 @@ public class HighscoreParser {
   private List<String> getTitleList() {
     String titles = (String) preferencesService.getPreferenceValue(PreferenceNames.HIGHSCORE_TITLES);
     if (StringUtils.isEmpty(titles)) {
-      titles = "GRAND CHAMPION"; //always valid
+      titles = "GRAND CHAMPION,WORLD RECORD"; //always valid
     }
 
     List<String> titleList = new ArrayList<>();

@@ -26,7 +26,7 @@ public class HighscorePreferencesController implements Initializable {
 
     String titles = entry.getValue();
     if (StringUtils.isEmpty(titles)) {
-      titles = "GRAND CHAMPION"; //always valid
+      titles = "GRAND CHAMPION,WORLD RECORD"; //always valid
     }
     titlesField.setText(titles);
 

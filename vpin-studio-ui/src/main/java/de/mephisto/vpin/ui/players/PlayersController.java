@@ -81,7 +81,7 @@ public class PlayersController implements Initializable, StudioFXController {
 
       if (!StringUtils.isEmpty(p.getDuplicatePlayerName())) {
         validationError.setVisible(true);
-        errorTextLabel.setText("Player '" + p.getName() + "' has the same initials like user '" + p.getDuplicatePlayerName() + "'. Change the initials from one of them.");
+        errorTextLabel.setText("Player '" + p.getName() + "' has the same initials like user \"" + p.getDuplicatePlayerName() + "\". Change the initials from one of them.");
       }
 
       new Thread(() -> {
@@ -94,7 +94,7 @@ public class PlayersController implements Initializable, StudioFXController {
           }
           else {
             noScoreLabel.setVisible(true);
-            noScoreLabel.setText("Highscores for player '" + p.getName() + "' (limited to the first three places)");
+            noScoreLabel.setText("Highscores for player \"" + p.getName() + "\"");
             for (ScoreRepresentation playerScore : playerScores.getScores()) {
               try {
                 FXMLLoader loader = new FXMLLoader(WidgetPlayerScoreController.class.getResource("widget-highscore.fxml"));

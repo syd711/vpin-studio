@@ -240,8 +240,8 @@ public class TablesController implements Initializable, StudioFXController {
     GameRepresentation game = tableView.getSelectionModel().getSelectedItem();
     if (game != null) {
       if (Studio.client.isGameReferencedByCompetitions(game.getId())) {
-        WidgetFactory.showAlert(Studio.stage, "The table '" + game.getGameDisplayName()
-            + "' is used by at least one competition.", "Delete all competitions for this table first.");
+        WidgetFactory.showAlert(Studio.stage, "The table \"" + game.getGameDisplayName()
+            + "\" is used by at least one competition.", "Delete all competitions for this table first.");
         return;
       }
 

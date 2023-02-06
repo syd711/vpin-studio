@@ -601,8 +601,8 @@
 
 .menu-item .label:hover {
     -fx-font-size: 14px;
-    -fx-background: #111111;
-    -fx-background-color: #111111;
+    -fx-background: #222222;
+    -fx-background-color: #222222;
     -fx-text-fill: #FFFFFF;
 }
 

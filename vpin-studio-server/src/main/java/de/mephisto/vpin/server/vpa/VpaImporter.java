@@ -7,6 +7,7 @@ import de.mephisto.vpin.restclient.ImportDescriptor;
 import de.mephisto.vpin.restclient.VpaManifest;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.highscores.HighscoreService;
+import de.mephisto.vpin.server.highscores.Score;
 import de.mephisto.vpin.server.popper.PinUPConnector;
 import de.mephisto.vpin.server.system.SystemService;
 import edu.umd.cs.findbugs.annotations.NonNull;
@@ -18,6 +19,8 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.Date;
+import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
@@ -87,9 +90,10 @@ public class VpaImporter {
         }
 
         if(manifest.getAdditionalData().containsKey(VpaService.DATA_HIGHSCORE)) {
-
+          String raw = (String) manifest.getAdditionalData().get(VpaService.DATA_HIGHSCORE);
+          List<Score> scores = highscoreService.parseScores(new Date(gameFile.lastModified()), raw, -1, -1);
+//          parse all!
         }
-
       }
 
       return gameByFilename.getId();
