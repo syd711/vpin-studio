@@ -7,6 +7,9 @@ import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.*;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.entities.channel.middleman.GuildChannel;
+import net.dv8tion.jda.api.events.GenericEvent;
+import net.dv8tion.jda.api.events.StatusChangeEvent;
+import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.requests.GatewayIntent;
 import net.dv8tion.jda.api.utils.MemberCachePolicy;
 import org.slf4j.Logger;
@@ -21,24 +24,40 @@ import java.util.stream.Collectors;
 public class DiscordClient {
   private final static Logger LOG = LoggerFactory.getLogger(DiscordClient.class);
 
-  private final JDA jda;
-  private final String guildId;
+  private JDA jda;
+
+  private final String defaultGuildId;
   private final DiscordListenerAdapter listenerAdapter;
   private final Map<Long, Guild> guilds = new HashMap<>();
   private final long botId;
 
   private final DiscordCache<List<DiscordMessage>> messageCache = new DiscordCache<>();
 
-  public DiscordClient(String botToken, String guildId, DiscordCommandResolver commandResolver) throws Exception {
-    this.guildId = guildId.trim();
-    jda = JDABuilder.createDefault(botToken.trim(), Arrays.asList(GatewayIntent.DIRECT_MESSAGES, GatewayIntent.GUILD_MESSAGES, GatewayIntent.GUILD_MEMBERS, GatewayIntent.MESSAGE_CONTENT))
+  private DiscordClient(JDA jda, String defaultGuildId, DiscordCommandResolver commandResolver) {
+    this.defaultGuildId = defaultGuildId;
+    this.botId = jda.getSelfUser().getIdLong();
+    this.listenerAdapter = new DiscordListenerAdapter(this, commandResolver);
+
+    jda.addEventListener(this.listenerAdapter);
+  }
+
+  public static DiscordClient create(DiscordStatusListener statusListener, String botToken, String guildId, DiscordCommandResolver commandResolver) throws Exception {
+    JDA jda = JDABuilder.createDefault(botToken.trim(), Arrays.asList(GatewayIntent.DIRECT_MESSAGES, GatewayIntent.GUILD_MESSAGES, GatewayIntent.GUILD_MEMBERS, GatewayIntent.MESSAGE_CONTENT))
         .setEventPassthrough(true)
         .setMemberCachePolicy(MemberCachePolicy.ALL)
-        .build();
-    this.listenerAdapter = new DiscordListenerAdapter(this, commandResolver);
-    jda.awaitReady();
-    jda.addEventListener(this.listenerAdapter);
-    this.botId = jda.getSelfUser().getIdLong();
+        .addEventListeners(new ListenerAdapter() {
+          @Override
+          public void onGenericEvent(GenericEvent event) {
+            super.onGenericEvent(event);
+            if (event instanceof StatusChangeEvent) {
+              StatusChangeEvent e = (StatusChangeEvent) event;
+              if (e.getNewStatus().equals(JDA.Status.SHUTDOWN) && statusListener != null) {
+                statusListener.onDisconnect();
+              }
+            }
+          }
+        }).build();
+    return new DiscordClient(jda, guildId.trim(), commandResolver);
   }
 
   public GuildInfo getGuildById(long guildId) {
@@ -50,7 +69,7 @@ public class DiscordClient {
   }
 
   public List<DiscordMember> getMembers() {
-    return this.getMembers(Long.parseLong(guildId));
+    return this.getMembers(Long.parseLong(defaultGuildId));
   }
 
   public synchronized List<DiscordMember> getMembers(long serverId) {
@@ -204,7 +223,7 @@ public class DiscordClient {
       }
     }
     else {
-      throw new UnsupportedOperationException("No guild found for guildId '" + this.guildId + "'");
+      throw new UnsupportedOperationException("No guild found for guildId '" + this.defaultGuildId + "'");
     }
     return null;
   }
@@ -274,14 +293,14 @@ public class DiscordClient {
   }
 
   private Guild getGuild(long serverId) {
-    long id = Long.parseLong(guildId);
+    long id = Long.parseLong(defaultGuildId);
     if (serverId > 0) {
       id = serverId;
     }
 
     if (!guilds.containsKey(id)) {
       Guild guildById = jda.getGuildById(id);
-      if(guildById != null) {
+      if (guildById != null) {
         LOG.info("Cached guild '" + guildById.getName() + "'");
         guilds.put(id, guildById);
       }

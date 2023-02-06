@@ -43,7 +43,7 @@
                             </font>
                         </TextField>
                         <Separator layoutX="320.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
-                        <Button layoutX="280.0" layoutY="12.0" mnemonicParsing="false" onAction="#onReload" text="Reload" textFill="WHITE">
+                        <Button fx:id="reloadBtn" layoutX="280.0" layoutY="12.0" mnemonicParsing="false" onAction="#onReload" text="Reload" textFill="WHITE">
                             <font>
                                 <Font size="14.0" />
                             </font>
@@ -52,7 +52,7 @@
                             </graphic>
                         </Button>
                         <Separator orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
-                        <Button layoutX="280.0" layoutY="11.0" mnemonicParsing="false" onAction="#onCompetitionCreate" text="Add" textFill="WHITE">
+                        <Button fx:id="addBtn" layoutX="280.0" layoutY="11.0" mnemonicParsing="false" onAction="#onCompetitionCreate" text="Add" textFill="WHITE">
                             <font>
                                 <Font size="14.0" />
                             </font>
@@ -60,7 +60,7 @@
                                 <FontIcon iconColor="WHITE" iconLiteral="mdi2p-plus-circle-outline" />
                             </graphic>
                         </Button>
-                  <Button layoutX="380.0" layoutY="11.0" mnemonicParsing="false" onAction="#onJoin" text="Join" textFill="WHITE">
+                  <Button fx:id="joinBtn" layoutX="380.0" layoutY="11.0" mnemonicParsing="false" onAction="#onJoin" text="Join" textFill="WHITE">
                      <font>
                         <Font size="14.0" />
                      </font>

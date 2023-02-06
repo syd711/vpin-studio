@@ -22,11 +22,6 @@ public class DiscordResource {
   @Autowired
   private DiscordService discordService;
 
-  @GetMapping("/available")
-  public boolean isDiscordBotAvailable() {
-    return discordService.isEnabled();
-  }
-
   @GetMapping("/status")
   public DiscordBotStatus getStatus() {
     return discordService.getStatus();

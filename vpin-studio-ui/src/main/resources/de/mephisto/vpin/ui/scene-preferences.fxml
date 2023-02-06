@@ -110,6 +110,7 @@
                      </VBox.margin>
                   </Label>
                   <Button alignment="BASELINE_LEFT" contentDisplay="RIGHT" layoutX="160.0" layoutY="672.0" mnemonicParsing="false" onAction="#onDiscordBot" styleClass="preference-button" text="Bot Settings" />
+                  <Button alignment="BASELINE_LEFT" contentDisplay="RIGHT" layoutX="160.0" layoutY="832.0" mnemonicParsing="false" onAction="#onDiscordBotFaq" styleClass="preference-button" text="Bot FAQ" />
                </children>
                <opaqueInsets>
                   <Insets />

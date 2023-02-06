@@ -3,6 +3,7 @@ package de.mephisto.vpin.ui.preferences;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.connectors.discord.DiscordClient;
 import de.mephisto.vpin.connectors.discord.DiscordMember;
+import de.mephisto.vpin.connectors.discord.DiscordStatusListener;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.util.BindingUtil;
@@ -34,21 +35,6 @@ public class DiscordBotPreferencesController implements Initializable {
   private Button connectionTestBtn;
 
   @FXML
-  private void onBotTutorial() {
-    Dialogs.openBotTutorial();
-  }
-
-  @FXML
-  private void onBotServerIdTutorial() {
-    Dialogs.openBotServerIdTutorial();
-  }
-
-  @FXML
-  private void onBotTokenTutorial() {
-    Dialogs.openBotTokenTutorial();
-  }
-
-  @FXML
   private void onConnectionTest() {
     new Thread(() -> {
       DiscordClient client = null;
@@ -56,13 +42,21 @@ public class DiscordBotPreferencesController implements Initializable {
         String token = botTokenText.getText();
         String serverId = serverIdText.getText();
         Studio.stage.getScene().setCursor(Cursor.WAIT);
-        client = new DiscordClient(token, serverId, null);
-        List<DiscordMember> members = client.getMembers();
-        Platform.runLater(() -> {
-          Studio.stage.getScene().setCursor(Cursor.DEFAULT);
-          WidgetFactory.showInformation(Studio.stage, "Test Successful", "The connection test was successful.", members.size() + " member(s) have been found.");
-        });
-        client.shutdown();
+        client = DiscordClient.create(new DiscordStatusListener() {
+          @Override
+          public void onDisconnect() {
+            WidgetFactory.showAlert(Studio.stage, "Test Failed", "The connection failed.", "Please re-check the credentials.");
+          }
+        }, token, serverId, null);
+
+        if(client != null) {
+          List<DiscordMember> members = client.getMembers();
+          Platform.runLater(() -> {
+            Studio.stage.getScene().setCursor(Cursor.DEFAULT);
+            WidgetFactory.showInformation(Studio.stage, "Test Successful", "The connection test was successful.", members.size() + " member(s) have been found.");
+          });
+          client.shutdown();
+        }
       } catch (Exception e) {
         if(client != null) {
           client.shutdown();

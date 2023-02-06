@@ -3,6 +3,7 @@ package de.mephisto.vpin.ui.competitions;
 import de.mephisto.vpin.commons.fx.widgets.WidgetCompetitionSummaryController;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.CompetitionType;
+import de.mephisto.vpin.restclient.discord.DiscordBotStatus;
 import de.mephisto.vpin.restclient.discord.DiscordServer;
 import de.mephisto.vpin.restclient.representations.CompetitionRepresentation;
 import de.mephisto.vpin.restclient.representations.GameRepresentation;
@@ -79,6 +80,15 @@ public class CompetitionsDiscordController implements Initializable, StudioFXCon
 
   @FXML
   private Button duplicateBtn;
+
+  @FXML
+  private Button addBtn;
+
+  @FXML
+  private Button reloadBtn;
+
+  @FXML
+  private Button joinBtn;
 
   @FXML
   private TextField textfieldSearch;
@@ -221,6 +231,23 @@ public class CompetitionsDiscordController implements Initializable, StudioFXCon
     tableView.setVisible(false);
     tableStack.getChildren().add(loadingOverlay);
 
+    DiscordBotStatus discordStatus = client.getDiscordStatus();
+    if(!discordStatus.isValid()) {
+      textfieldSearch.setDisable(true);
+      addBtn.setDisable(true);
+      editBtn.setDisable(true);
+      deleteBtn.setDisable(true);
+      duplicateBtn.setDisable(true);
+      finishBtn.setDisable(true);
+      reloadBtn.setDisable(true);
+      joinBtn.setDisable(true);
+
+      tableView.setPlaceholder(new Label("                                         No Discord bot found.\nCreate a Discord bot and add it in the preference section \"Discord Preferences\"."));
+      tableView.setVisible(true);
+      tableStack.getChildren().remove(loadingOverlay);
+      return;
+    }
+
     new Thread(() -> {
       competitions = client.getDiscordCompetitions();
       filterCompetitions(competitions);
@@ -293,17 +320,20 @@ public class CompetitionsDiscordController implements Initializable, StudioFXCon
     columnServer.setCellValueFactory(cellData -> {
       CompetitionRepresentation value = cellData.getValue();
 
-      DiscordServer discordServer = client.getDiscordServer(value.getDiscordServerId());
       HBox hBox = new HBox(6);
       hBox.setAlignment(Pos.CENTER_LEFT);
-      Image image = new Image(discordServer.getAvatarUrl());
-      ImageView view = new ImageView(image);
-      view.setPreserveRatio(true);
-      view.setFitWidth(50);
-      view.setFitHeight(50);
 
-      Label label = new Label(discordServer.getName());
-      hBox.getChildren().addAll(view, label);
+      DiscordServer discordServer = client.getDiscordServer(value.getDiscordServerId());
+      if(discordServer != null) {
+        Image image = new Image(discordServer.getAvatarUrl());
+        ImageView view = new ImageView(image);
+        view.setPreserveRatio(true);
+        view.setFitWidth(50);
+        view.setFitHeight(50);
+
+        Label label = new Label(discordServer.getName());
+        hBox.getChildren().addAll(view, label);
+      }
 
       return new SimpleObjectProperty(hBox);
     });
@@ -311,17 +341,19 @@ public class CompetitionsDiscordController implements Initializable, StudioFXCon
     columnCompetitionOwner.setCellValueFactory(cellData -> {
       CompetitionRepresentation value = cellData.getValue();
 
-      PlayerRepresentation discordPlayer = client.getDiscordPlayer(value.getDiscordServerId(), Long.valueOf(value.getOwner()));
       HBox hBox = new HBox(6);
       hBox.setAlignment(Pos.CENTER_LEFT);
-      Image image = new Image(discordPlayer.getAvatarUrl());
-      ImageView view = new ImageView(image);
-      view.setPreserveRatio(true);
-      view.setFitWidth(50);
-      view.setFitHeight(50);
+      PlayerRepresentation discordPlayer = client.getDiscordPlayer(value.getDiscordServerId(), Long.valueOf(value.getOwner()));
+      if(discordPlayer != null) {
+        Image image = new Image(discordPlayer.getAvatarUrl());
+        ImageView view = new ImageView(image);
+        view.setPreserveRatio(true);
+        view.setFitWidth(50);
+        view.setFitHeight(50);
 
-      Label label = new Label(discordPlayer.getName());
-      hBox.getChildren().addAll(view, label);
+        Label label = new Label(discordPlayer.getName());
+        hBox.getChildren().addAll(view, label);
+      }
 
       return new SimpleObjectProperty(hBox);
     });

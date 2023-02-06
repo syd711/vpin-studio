@@ -18,6 +18,7 @@ import de.mephisto.vpin.server.preferences.PreferenceChangedListener;
 import de.mephisto.vpin.server.preferences.PreferencesService;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
+import net.dv8tion.jda.api.events.StatusChangeEvent;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,7 +30,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
-public class DiscordService implements InitializingBean, PreferenceChangedListener, DiscordCommandResolver {
+public class DiscordService implements InitializingBean, PreferenceChangedListener, DiscordCommandResolver, DiscordStatusListener {
   private final static Logger LOG = LoggerFactory.getLogger(DiscordService.class);
 
   private DiscordClient discordClient;
@@ -40,6 +41,7 @@ public class DiscordService implements InitializingBean, PreferenceChangedListen
   private DiscordBotCommandListener botCommandListener;
 
 
+  @NonNull
   public DiscordBotStatus getStatus() {
     String guildId = (String) preferencesService.getPreferenceValue(PreferenceNames.DISCORD_GUILD_ID);
     String defaultChannelId = (String) preferencesService.getPreferenceValue(PreferenceNames.DISCORD_CHANNEL_ID);
@@ -53,11 +55,12 @@ public class DiscordService implements InitializingBean, PreferenceChangedListen
       long serverId = Long.parseLong(guildId);
       status.setValidDefaultChannel(!StringUtils.isEmpty(defaultChannelId) && this.discordClient != null && this.getChannel(serverId, channelId) != null);
     } catch (Exception e) {
-      LOG.error("Failed to calculate discord server status: " + e.getMessage(), e);
+      status.setValidDefaultChannel(false);
     }
-    return null;
+    return status;
   }
 
+  @NonNull
   public List<DiscordMember> getMembers() {
     if (this.discordClient != null) {
       return this.discordClient.getMembers();
@@ -65,6 +68,7 @@ public class DiscordService implements InitializingBean, PreferenceChangedListen
     return Collections.emptyList();
   }
 
+  @NonNull
   public List<DiscordMember> getMembers(long serverId) {
     if (this.discordClient != null) {
       return this.discordClient.getMembers(serverId);
@@ -72,6 +76,7 @@ public class DiscordService implements InitializingBean, PreferenceChangedListen
     return Collections.emptyList();
   }
 
+  @Nullable
   public Player getPlayer(long serverId, long memberId) {
     if (this.discordClient != null) {
       return toPlayer(this.discordClient.getMember(serverId, memberId));
@@ -79,6 +84,7 @@ public class DiscordService implements InitializingBean, PreferenceChangedListen
     return null;
   }
 
+  @Nullable
   public String getStartMessageId(long serverId, long channelId) {
     if (this.discordClient != null) {
       String topic = this.discordClient.getTopic(serverId, channelId);
@@ -87,6 +93,7 @@ public class DiscordService implements InitializingBean, PreferenceChangedListen
     return null;
   }
 
+  @Nullable
   public DiscordChannel getChannel(long serverId, long channelId) {
     if (this.discordClient != null) {
       List<DiscordChannel> collect = this.discordClient.getChannels(serverId).stream().filter(c -> c.getId() != channelId).map(c -> {
@@ -253,7 +260,7 @@ public class DiscordService implements InitializingBean, PreferenceChangedListen
 
     try {
       if (!StringUtils.isEmpty(botToken) && !StringUtils.isEmpty(guildId)) {
-        this.discordClient = new DiscordClient(botToken, guildId, this);
+        this.discordClient = DiscordClient.create(this, botToken, guildId, this);
         if (!StringUtils.isEmpty(whiteList)) {
           String[] split = whiteList.split(",");
           this.discordClient.setCommandsAllowList(Arrays.asList(split));
@@ -375,5 +382,13 @@ public class DiscordService implements InitializingBean, PreferenceChangedListen
   public void afterPropertiesSet() throws Exception {
     preferencesService.addChangeListener(this);
     this.recreateDiscordClient();
+  }
+
+  @Override
+  public void onDisconnect() {
+    if(this.discordClient != null) {
+      this.discordClient.shutdown();
+      this.discordClient = null;
+    }
   }
 }

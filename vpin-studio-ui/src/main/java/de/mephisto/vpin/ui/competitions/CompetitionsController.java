@@ -13,7 +13,6 @@ import eu.hansolo.tilesfx.Tile;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
-import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Parent;
 import javafx.scene.control.Label;
@@ -115,7 +114,7 @@ public class CompetitionsController implements Initializable, StudioFXController
         offlineController.onReload();
       }
       else {
-        if(discordController != null) {
+        if (discordController != null) {
           NavigationController.setBreadCrumb(Arrays.asList("Competitions", "Discord Competitions"));
           Optional<CompetitionRepresentation> selection = discordController.getSelection();
           updateSelection(selection);
@@ -124,6 +123,7 @@ public class CompetitionsController implements Initializable, StudioFXController
       }
     });
 
+    loadTabs();
     updateSelection(Optional.empty());
     scorePane.setExpanded(true);
   }
@@ -134,9 +134,7 @@ public class CompetitionsController implements Initializable, StudioFXController
   }
 
   private void updateSelection(Optional<CompetitionRepresentation> competitionRepresentation) {
-    checkTabs();
     checkTitledPanes(competitionRepresentation);
-
     refreshScoreGraph(competitionRepresentation);
     refreshUsers(competitionRepresentation);
     refreshMetaData(competitionRepresentation);
@@ -148,31 +146,38 @@ public class CompetitionsController implements Initializable, StudioFXController
       CompetitionRepresentation competition = competitionRepresentation.get();
       if (metaDataPane.isVisible()) {
         uuidLabel.setText(competition.getUuid());
+        serverBox.getChildren().removeAll(serverBox.getChildren());
+        ownerBox.getChildren().removeAll(ownerBox.getChildren());
+
         createdAtLabel.setText(SimpleDateFormat.getDateTimeInstance().format(competition.getCreatedAt()));
 
         DiscordServer discordServer = client.getDiscordServer(competition.getDiscordServerId());
-        HBox hBox = new HBox(6);
-        hBox.setAlignment(Pos.CENTER_LEFT);
-        Image image = new Image(discordServer.getAvatarUrl());
-        ImageView view = new ImageView(image);
-        view.setPreserveRatio(true);
-        view.setFitWidth(50);
-        view.setFitHeight(50);
-        serverBox.getChildren().removeAll(serverBox.getChildren());
-        Label label = new Label(discordServer.getName());
-        serverBox.getChildren().addAll(view, label);
+        if(discordServer != null) {
+          Image image = new Image(discordServer.getAvatarUrl());
+          ImageView view = new ImageView(image);
+          view.setPreserveRatio(true);
+          view.setFitWidth(50);
+          view.setFitHeight(50);
+          serverBox.getChildren().removeAll(serverBox.getChildren());
+          Label label = new Label(discordServer.getName());
+          serverBox.getChildren().addAll(view, label);
+        }
 
         PlayerRepresentation discordPlayer = client.getDiscordPlayer(competition.getDiscordServerId(), Long.valueOf(competition.getOwner()));
-        hBox = new HBox(6);
-        hBox.setAlignment(Pos.CENTER_LEFT);
-        image = new Image(discordPlayer.getAvatarUrl());
-        view = new ImageView(image);
-        view.setPreserveRatio(true);
-        view.setFitWidth(50);
-        view.setFitHeight(50);
-        ownerBox.getChildren().removeAll(ownerBox.getChildren());
-        label = new Label(discordPlayer.getName());
-        ownerBox.getChildren().addAll(view, label);
+        if(discordPlayer != null) {
+          HBox hBox = new HBox(6);
+          hBox.setAlignment(Pos.CENTER_LEFT);
+          hBox = new HBox(6);
+          hBox.setAlignment(Pos.CENTER_LEFT);
+          Image image = new Image(discordPlayer.getAvatarUrl());
+          ImageView view = new ImageView(image);
+          view.setPreserveRatio(true);
+          view.setFitWidth(50);
+          view.setFitHeight(50);
+          ownerBox.getChildren().removeAll(ownerBox.getChildren());
+          Label label = new Label(discordPlayer.getName());
+          ownerBox.getChildren().addAll(view, label);
+        }
 
         startLabel.setText(DateFormat.getDateInstance().format(competition.getStartDate()));
         endLabel.setText(DateFormat.getDateInstance().format(competition.getEndDate()));
@@ -206,11 +211,11 @@ public class CompetitionsController implements Initializable, StudioFXController
   }
 
   private void refreshScoreGraph(Optional<CompetitionRepresentation> cp) {
+    scoreGraphBox.getChildren().removeAll(scoreGraphBox.getChildren());
     if (cp.isPresent()) {
       CompetitionRepresentation competition = cp.get();
-      scoreGraphBox.getChildren().removeAll(scoreGraphBox.getChildren());
 
-      if(!competition.isActive()) {
+      if (!competition.isActive()) {
         scoreGraphBox.getChildren().add(getNotActiveGrpahLabel());
         return;
       }
@@ -227,16 +232,16 @@ public class CompetitionsController implements Initializable, StudioFXController
   }
 
   private void refreshUsers(Optional<CompetitionRepresentation> cp) {
+    membersBox.getChildren().removeAll(membersBox.getChildren());
     if (cp.isPresent()) {
       CompetitionRepresentation competition = cp.get();
       if (competitionMembersPane.isVisible()) {
-        membersBox.getChildren().removeAll(membersBox.getChildren());
-        if(!competition.isActive()) {
+        if (!competition.isActive()) {
           membersBox.getChildren().add(getNotActiveLabel());
         }
         else {
           List<PlayerRepresentation> memberList = client.getDiscordCompetitionPlayers(competition.getId());
-          if(memberList.isEmpty()) {
+          if (memberList.isEmpty()) {
             membersBox.getChildren().add(getNoPlayersLabel());
           }
           else {
@@ -255,53 +260,32 @@ public class CompetitionsController implements Initializable, StudioFXController
         }
       }
     }
-    else {
-      membersBox.getChildren().removeAll(membersBox.getChildren());
-    }
   }
 
-  private void checkTabs() {
-    if (offlineController == null) {
-      try {
-        FXMLLoader loader = new FXMLLoader(CompetitionsOfflineController.class.getResource("tab-competitions-offline.fxml"));
-        Parent offline = loader.load();
-        offlineController = loader.getController();
-        offlineController.setCompetitionsController(this);
-        offlineTab.setContent(offline);
-      } catch (IOException e) {
-        LOG.error("failed to load buildIn players: " + e.getMessage(), e);
-      }
+  private void loadTabs() {
+    try {
+      FXMLLoader loader = new FXMLLoader(CompetitionsOfflineController.class.getResource("tab-competitions-offline.fxml"));
+      Parent offline = loader.load();
+      offlineController = loader.getController();
+      offlineController.setCompetitionsController(this);
+      offlineTab.setContent(offline);
+    } catch (IOException e) {
+      LOG.error("failed to load buildIn players: " + e.getMessage(), e);
     }
 
-    boolean isDiscordBotAvailable = client.isDiscordBotAvailable();
-    if (isDiscordBotAvailable) {
-      if (discordController == null) {
-        try {
-          FXMLLoader loader = new FXMLLoader(CompetitionsDiscordController.class.getResource("tab-competitions-discord.fxml"));
-          Parent offline = loader.load();
-          discordController = loader.getController();
-          discordController.setCompetitionsController(this);
-          onlineTab.setContent(offline);
-        } catch (IOException e) {
-          LOG.error("failed to load buildIn players: " + e.getMessage(), e);
-        }
-      }
-    }
-    else if (onlineTab.getContent() == null) {
-      VBox content = new VBox();
-      content.setSpacing(3);
-      content.setPadding(new Insets(12, 12, 12, 12));
-      Label title = new Label("No Discord bot configured.");
-      title.setStyle("-fx-font-weight: bold;-fx-font-size: 14px;");
-      Label description = new Label("Open the Discord preferences and check how to create and configure a Discord bot.");
-      description.setStyle("-fx-font-size: 14px;");
-      content.getChildren().addAll(title, description);
-      onlineTab.setContent(content);
+    try {
+      FXMLLoader loader = new FXMLLoader(CompetitionsDiscordController.class.getResource("tab-competitions-discord.fxml"));
+      Parent offline = loader.load();
+      discordController = loader.getController();
+      discordController.setCompetitionsController(this);
+      onlineTab.setContent(offline);
+    } catch (IOException e) {
+      LOG.error("failed to load buildIn players: " + e.getMessage(), e);
     }
   }
 
   private Label getNoPlayersLabel() {
-    if(this.noPlayersLabel == null) {
+    if (this.noPlayersLabel == null) {
       noPlayersLabel = new Label("No discord members have joined this competition yet.");
       noPlayersLabel.setStyle("-fx-font-weight: bold;-fx-font-size: 14px;");
     }
@@ -309,7 +293,7 @@ public class CompetitionsController implements Initializable, StudioFXController
   }
 
   private Label getNotActiveLabel() {
-    if(this.notActiveLabel == null) {
+    if (this.notActiveLabel == null) {
       notActiveLabel = new Label("The competition is not active.");
       notActiveLabel.setStyle("-fx-font-weight: bold;-fx-font-size: 14px;");
     }
@@ -317,7 +301,7 @@ public class CompetitionsController implements Initializable, StudioFXController
   }
 
   private Label getNotActiveGrpahLabel() {
-    if(this.notActiveGraphLabel == null) {
+    if (this.notActiveGraphLabel == null) {
       notActiveGraphLabel = new Label("The graph is only calculated for active competitions.");
       notActiveGraphLabel.setStyle("-fx-font-weight: bold;-fx-font-size: 14px;");
     }

@@ -55,10 +55,6 @@ public class VPinStudioClient implements ObservedPropertyChangeListener, Overlay
   /*********************************************************************************************************************
    * Discord
    ********************************************************************************************************************/
-  public boolean isDiscordBotAvailable() {
-    return restClient.get(API + "discord/available", Boolean.class);
-  }
-
   public DiscordCompetitionData getDiscordCompetitionData(long serverId, long channelId) {
     return restClient.get(API + "discord/competition/" + serverId + "/" + channelId, DiscordCompetitionData.class);
   }

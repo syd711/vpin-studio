@@ -4,6 +4,7 @@ import de.mephisto.vpin.commons.utils.Updater;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.ui.jobs.JobPoller;
 import de.mephisto.vpin.ui.util.Dialogs;
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -75,9 +76,6 @@ public class ToolbarController implements Initializable {
     this.jobBtn.setVisible(false);
     new JobPoller(this.jobBtn);
 
-    String s = Updater.checkForUpdate(Studio.getVersion());
-    updateBtn.setVisible(!StringUtils.isEmpty(s));
-
     if (preferencesRoot == null) {
       try {
         FXMLLoader loader = new FXMLLoader(NavigationController.class.getResource("scene-preferences.fxml"));
@@ -86,5 +84,13 @@ public class ToolbarController implements Initializable {
         LOG.error("Failed to load preferences: " + e.getMessage(), e);
       }
     }
+
+    new Thread(() -> {
+      Platform.runLater(() -> {
+        String s = Updater.checkForUpdate(Studio.getVersion());
+        updateBtn.setVisible(!StringUtils.isEmpty(s));
+      });
+    }).start();
+
   }
 }

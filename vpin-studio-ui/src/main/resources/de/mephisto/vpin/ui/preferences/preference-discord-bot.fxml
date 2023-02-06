@@ -4,8 +4,6 @@
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.TextField?>
-<?import javafx.scene.image.Image?>
-<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
@@ -13,7 +11,6 @@
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
-<?import org.kordamp.ikonli.javafx.FontIcon?>
 
 <BorderPane styleClass="base-component" stylesheets="@../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.preferences.DiscordBotPreferencesController">
    <top>
@@ -25,7 +22,7 @@
                   <Insets />
                </VBox.margin>
             </Label>
-            <Label styleClass="preference-description" text="You can link a Discord server to your VPin, assuming the members on the server are the ones playing on your VPin (e.g. in a company)." textFill="WHITE">
+            <Label styleClass="preference-description" text="You can create a Discord bot and add it to Discord servers to receive notifications and join online competitions." textFill="WHITE">
                <VBox.margin>
                   <Insets top="24.0" />
                </VBox.margin>
@@ -36,7 +33,7 @@
                   <Insets top="12.0" />
                </VBox.margin>
             </Label>
-            <Label layoutX="34.0" layoutY="124.0" styleClass="preference-description" text="Enter the bot token and the ID of the server to connect your VPin with the Discord server." textFill="WHITE">
+            <Label layoutX="34.0" layoutY="124.0" styleClass="preference-description" text="Enter the bot token to connect your VPin with a Discord server." textFill="WHITE">
                <VBox.margin>
                   <Insets bottom="6.0" />
                </VBox.margin>
@@ -47,8 +44,6 @@
                   <ColumnConstraints hgrow="SOMETIMES" maxWidth="759.2" minWidth="10.0" prefWidth="716.7999755859375" />
                </columnConstraints>
                <rowConstraints>
-                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                   <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                   <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                </rowConstraints>
@@ -63,37 +58,19 @@
                         <Font size="14.0" />
                      </font>
                   </TextField>
-                  <Label layoutX="9.0" layoutY="12.0" prefHeight="20.0" styleClass="preference-label" text="Server ID:" textFill="WHITE" GridPane.rowIndex="1">
+                  <Button fx:id="connectionTestBtn" mnemonicParsing="false" onAction="#onConnectionTest" text="Test Connection" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="1">
                      <font>
                         <Font size="14.0" />
                      </font>
-                  </Label>
-                  <TextField fx:id="serverIdText" layoutX="167.0" layoutY="10.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
-                     <font>
-                        <Font size="14.0" />
-                     </font>
-                  </TextField>
-                  <HBox GridPane.columnIndex="1" GridPane.rowIndex="2">
-                     <children>
-                        <Button fx:id="connectionTestBtn" mnemonicParsing="false" onAction="#onConnectionTest" text="Test Connection" textFill="WHITE">
-                           <font>
-                              <Font size="14.0" />
-                           </font>
-                           <HBox.margin>
-                              <Insets top="3.0" />
-                           </HBox.margin>
-                        </Button>
-                     </children>
-                  </HBox>
+                  </Button>
                </children>
                <opaqueInsets>
                   <Insets />
                </opaqueInsets>
             </GridPane>
-            <Label layoutX="34.0" layoutY="205.0" styleClass="preference-description" text="Enter the name or ID of users that are allowed to write bot commands." textFill="WHITE" />
-            <Label layoutX="34.0" layoutY="355.0" styleClass="preference-description" text="By default, the bot will respond to commands from all users." textFill="WHITE">
+            <Label layoutX="34.0" layoutY="398.0" styleClass="preference-description" text="Enter the name or ID of users that are allowed to write bot commands." textFill="WHITE">
                <VBox.margin>
-                  <Insets bottom="6.0" />
+                  <Insets top="24.0" />
                </VBox.margin>
             </Label>
             <GridPane>
@@ -102,144 +79,59 @@
                 <ColumnConstraints hgrow="SOMETIMES" maxWidth="763.7999267578125" minWidth="10.0" prefWidth="716.8" />
               </columnConstraints>
               <rowConstraints>
-                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
               </rowConstraints>
                <children>
-                  <Label prefHeight="20.0" styleClass="preference-label" text="Bot Users Allow List:" textFill="WHITE">
+                  <Label prefHeight="20.0" styleClass="preference-label" text="My Server ID:" textFill="WHITE">
                      <font>
                         <Font size="14.0" />
                      </font>
                   </Label>
-                  <TextField fx:id="botChannelAllowList" GridPane.columnIndex="1">
+                  <TextField fx:id="serverIdText" GridPane.columnIndex="1">
                      <font>
                         <Font size="14.0" />
                      </font>
                   </TextField>
-                  <HBox alignment="BASELINE_LEFT" prefHeight="100.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
+               </children>
+            </GridPane>
+            <Label styleClass="preference-description" text="Enter the name or ID of users that are allowed to write bot commands." textFill="WHITE">
+               <VBox.margin>
+                  <Insets top="24.0" />
+               </VBox.margin>
+            </Label>
+            <Label layoutX="34.0" layoutY="355.0" styleClass="preference-description" text="By default, the bot will respond to commands from all users." textFill="WHITE">
+               <VBox.margin>
+                  <Insets bottom="6.0" />
+               </VBox.margin>
+            </Label>
+            <GridPane layoutX="34.0" layoutY="375.0">
+               <columnConstraints>
+                  <ColumnConstraints hgrow="SOMETIMES" maxWidth="446.2000732421875" minWidth="10.0" prefWidth="186.4" />
+                  <ColumnConstraints hgrow="SOMETIMES" maxWidth="763.7999267578125" minWidth="10.0" prefWidth="716.8" />
+               </columnConstraints>
+               <rowConstraints>
+                  <RowConstraints />
+                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+               </rowConstraints>
+               <children>
+                  <Label prefHeight="20.0" styleClass="preference-label" text="Bot Users Allow List:" textFill="WHITE" GridPane.rowIndex="1">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                  </Label>
+                  <TextField fx:id="botChannelAllowList" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                  </TextField>
+                  <HBox alignment="BASELINE_LEFT" prefHeight="100.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="2">
                      <children>
                         <Label text="(comma separated value)" />
                      </children>
                   </HBox>
                </children>
             </GridPane>
-            <Label layoutX="34.0" layoutY="322.0" styleClass="preference-subtitle" text="How to create this Discord bot?">
-               <graphic>
-                  <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
-               </graphic>
-               <VBox.margin>
-                  <Insets top="12.0" />
-               </VBox.margin>
-            </Label>
-            <Label layoutX="34.0" layoutY="397.0" styleClass="preference-description" text="Creating a Discord bot requires a few more steps, but: Don't panic! " textFill="WHITE" />
-            <Label layoutX="34.0" layoutY="360.0" styleClass="preference-description" text="Follow the step-by-step instructions that will setup your bot in no time!" textFill="WHITE" />
-            <HBox spacing="6.0">
-               <VBox.margin>
-                  <Insets top="6.0" />
-               </VBox.margin>
-            </HBox>
-            <GridPane>
-               <columnConstraints>
-                  <ColumnConstraints hgrow="SOMETIMES" maxWidth="454.399951171875" minWidth="10.0" prefWidth="224.00009765625" />
-                  <ColumnConstraints hgrow="SOMETIMES" maxWidth="660.0000244140625" minWidth="10.0" prefWidth="619.99990234375" />
-               </columnConstraints>
-               <rowConstraints>
-                  <RowConstraints />
-                  <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
-                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-               </rowConstraints>
-               <children>
-                  <Button mnemonicParsing="false" onAction="#onBotServerIdTutorial" text="How To: Get the Server ID" GridPane.rowIndex="3">
-                     <font>
-                        <Font size="14.0" />
-                     </font></Button>
-                  <Button mnemonicParsing="false" onAction="#onBotTutorial" text="How To: Create a Discord Bot" GridPane.rowIndex="1">
-                     <font>
-                        <Font size="14.0" />
-                     </font></Button>
-                  <Label text="-&gt; Explain how to setup a new bot for your Discord server." GridPane.columnIndex="1" GridPane.rowIndex="1">
-                     <font>
-                        <Font size="14.0" />
-                     </font>
-                  </Label>
-                  <Label text="-&gt; Explains how to get the token for the &quot;Bot Token&quot; field." textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="2">
-                     <font>
-                        <Font size="14.0" />
-                     </font>
-                  </Label>
-                  <Button layoutX="10.0" layoutY="38.0" mnemonicParsing="false" onAction="#onBotTokenTutorial" text="How To: Get the BOT Token" GridPane.rowIndex="2">
-                     <font>
-                        <Font size="14.0" />
-                     </font>
-                  </Button>
-                  <Label layoutX="235.0" layoutY="76.0" text="-&gt; Explains how to get the server ID for the &quot;Server ID&quot; field." textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="3">
-                     <font>
-                        <Font size="14.0" />
-                     </font>
-                  </Label>
-               </children>
-            </GridPane>
-            <Label layoutX="34.0" layoutY="66.0" styleClass="preference-subtitle" text="How are Discord server members mapped to highscores?">
-               <graphic>
-                  <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
-               </graphic>
-            </Label>
-            <Label layoutX="34.0" layoutY="104.0" styleClass="preference-description" text="Since the highscore initials are only three characters long, every user has adapt their nickname on the configured server," textFill="WHITE" />
-            <Label layoutX="34.0" layoutY="328.0" styleClass="preference-description" text="so it can be matched against a highscore. The initials must be part of the nickname, separated by the pipe symbol &quot;|&quot; and within " textFill="WHITE" />
-            <Label layoutX="34.0" layoutY="348.0" styleClass="preference-description" text="square brackets, e.g &quot;My Nickname | [ABC]&quot;." textFill="WHITE" />
-            <ImageView fitHeight="150.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true">
-               <image>
-                  <Image url="@../screenshots/nickname-example.png" />
-               </image>
-               <VBox.margin>
-                  <Insets top="6.0" />
-               </VBox.margin>
-            </ImageView>
-            <Label layoutX="34.0" layoutY="400.0" styleClass="preference-description" text="          (Nickname Example)" textFill="WHITE" />
-            <Label layoutX="34.0" layoutY="612.0" styleClass="preference-subtitle" text="But what if two players have the same initials?">
-               <graphic>
-                  <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
-               </graphic>
-            </Label>
-            <Label layoutX="34.0" layoutY="688.0" styleClass="preference-description" text="When you open the &quot;Players&quot; section, you should see a warning when two players have the same initials." textFill="WHITE" />
-            <Label layoutX="34.0" layoutY="638.0" styleClass="preference-description" text="Ask them to change their nickname or use your administrator-rights to change it for them." textFill="WHITE" />
-            <Label layoutX="34.0" layoutY="290.0" styleClass="preference-subtitle" text="But I don't want to change my name on Discord!">
-               <graphic>
-                  <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
-               </graphic>
-               <VBox.margin>
-                  <Insets top="12.0" />
-               </VBox.margin>
-            </Label>
-            <Label layoutX="34.0" layoutY="328.0" styleClass="preference-description" text="No worries! Discord allows to assign you a different name for every server. " textFill="WHITE">
-               <VBox.margin>
-                  <Insets />
-               </VBox.margin>
-            </Label>
-            <Label layoutX="34.0" layoutY="592.0" styleClass="preference-description" text="Invoke the context menu on your username in the member list. Click on &quot;Edit Server Profile&quot;, update the nickname and save the changes." textFill="WHITE" />
-            <Label layoutX="34.0" layoutY="572.0" styleClass="preference-description" text="The name is only changed for the specific server." textFill="WHITE">
-               <VBox.margin>
-                  <Insets bottom="6.0" />
-               </VBox.margin>
-            </Label>
-            <HBox>
-               <children>
-                  <ImageView fitHeight="300.0" fitWidth="400.0" pickOnBounds="true" preserveRatio="true">
-                     <image>
-                        <Image url="@../screenshots/profile-name-1.png" />
-                     </image>
-                     <HBox.margin>
-                        <Insets right="24.0" />
-                     </HBox.margin>
-                  </ImageView>
-                  <ImageView fitHeight="300.0" fitWidth="400.0" pickOnBounds="true" preserveRatio="true">
-                     <image>
-                        <Image url="@../screenshots/profile-name-2.png" />
-                     </image>
-                  </ImageView>
-               </children>
-            </HBox>
          </children>
          <padding>
             <Insets bottom="24.0" left="24.0" right="24.0" top="24.0" />

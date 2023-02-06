@@ -109,6 +109,11 @@ public class PreferencesController implements Initializable {
   }
 
   @FXML
+  private void onDiscordBotFaq(ActionEvent event) throws IOException {
+    load("preference-discord-faq.fxml");
+  }
+
+  @FXML
   private void onDiscordWebhook(ActionEvent event) throws IOException {
     load("preference-discord-webhook.fxml");
   }

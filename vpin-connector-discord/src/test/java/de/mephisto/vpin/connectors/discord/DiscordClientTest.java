@@ -14,7 +14,7 @@ public class DiscordClientTest {
     String id = System.getenv("ID");
 
     if(token != null) {
-      DiscordClient client = new DiscordClient(token, id, null);
+      DiscordClient client = DiscordClient.create(null, token, id, null);
 //      client.refreshMembers();
       client.setStatus("testing");
 
