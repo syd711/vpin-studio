@@ -6,9 +6,12 @@ import de.mephisto.vpin.connectors.discord.GuildInfo;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.discord.DiscordChannel;
 import de.mephisto.vpin.restclient.discord.DiscordServer;
+import de.mephisto.vpin.restclient.representations.PreferenceEntryRepresentation;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.util.BindingUtil;
 import javafx.application.Platform;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -76,6 +79,22 @@ public class DiscordBotPreferencesController implements Initializable {
     BindingUtil.bindTextField(botTokenText, PreferenceNames.DISCORD_BOT_TOKEN, null);
     BindingUtil.bindTextField(botChannelAllowList, PreferenceNames.DISCORD_BOT_ALLOW_LIST, null);
 
+
+    List<DiscordServer> servers = client.getDiscordServers();
+    ObservableList<DiscordServer> discordServers = FXCollections.observableArrayList(servers);
+    serverCombo.getItems().addAll(discordServers);
+
+    serverCombo.valueProperty().addListener((observable, oldValue, newValue) -> client.setPreference(PreferenceNames.DISCORD_GUILD_ID, newValue.getId()));
+    channelCombo.valueProperty().addListener((observable, oldValue, newValue) -> client.setPreference(PreferenceNames.DISCORD_CHANNEL_ID, newValue.getId()));
+
+    PreferenceEntryRepresentation preference = client.getPreference(PreferenceNames.DISCORD_GUILD_ID);
+    long longValue = preference.getLongValue();
+    if(longValue > 0) {
+      DiscordServer discordServer = client.getDiscordServer(longValue);
+      List<DiscordChannel> discordChannels = client.getDiscordChannels(discordServer.getId());
+      channelCombo.setItems(FXCollections.observableArrayList(discordChannels));
+    }
+
     botTokenText.textProperty().addListener((observableValue, s, t1) -> validateInput());
     this.validateInput();
   }
@@ -87,13 +106,6 @@ public class DiscordBotPreferencesController implements Initializable {
     if (!this.connectionTestBtn.isDisabled()) {
       serverCombo.setDisable(false);
       channelCombo.setDisable(false);
-
-      List<DiscordServer> servers = client.getDiscordServers();
-      ObservableList<DiscordServer> discordServers = FXCollections.observableArrayList(servers);
-      serverCombo.getItems().addAll(discordServers);
-      serverCombo.valueProperty().addListener((observableValue, gameRepresentation, t1) -> {
-        channelCombo.setItems(FXCollections.observableArrayList(client.getDiscordChannels(t1.getId())));
-      });
     }
     else {
       serverCombo.setDisable(true);

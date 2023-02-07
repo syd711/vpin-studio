@@ -127,6 +127,7 @@ public class CompetitionDiscordDialogController implements Initializable, Dialog
     serversCombo.getItems().addAll(discordServers);
     serversCombo.valueProperty().addListener((observableValue, gameRepresentation, t1) -> {
       competition.setDiscordServerId(t1.getId());
+
       channelsCombo.setItems(FXCollections.observableArrayList(client.getDiscordChannels(t1.getId())));
       validate();
     });

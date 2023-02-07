@@ -34,6 +34,18 @@ public class PreferenceEntryRepresentation {
     return 0;
   }
 
+  public long getLongValue() {
+    try {
+      if(value != null) {
+        return Long.parseLong(value);
+      }
+    }
+    catch (Exception e) {
+      //ignore
+    }
+    return 0;
+  }
+
   public String getNotNullValue() {
     if (value == null) {
       return "";
