@@ -24,6 +24,7 @@ import org.apache.commons.lang3.StringUtils;
 
 import java.net.URL;
 import java.util.List;
+import java.util.Optional;
 import java.util.ResourceBundle;
 
 import static de.mephisto.vpin.ui.Studio.client;
@@ -80,28 +81,12 @@ public class DiscordBotPreferencesController implements Initializable {
     BindingUtil.bindTextField(botChannelAllowList, PreferenceNames.DISCORD_BOT_ALLOW_LIST, null);
 
 
-    List<DiscordServer> servers = client.getDiscordServers();
-    ObservableList<DiscordServer> discordServers = FXCollections.observableArrayList(servers);
-    serverCombo.getItems().addAll(discordServers);
-
-    serverCombo.valueProperty().addListener((observable, oldValue, newValue) -> client.setPreference(PreferenceNames.DISCORD_GUILD_ID, newValue.getId()));
-    channelCombo.valueProperty().addListener((observable, oldValue, newValue) -> client.setPreference(PreferenceNames.DISCORD_CHANNEL_ID, newValue.getId()));
-
-    PreferenceEntryRepresentation preference = client.getPreference(PreferenceNames.DISCORD_GUILD_ID);
-    long longValue = preference.getLongValue();
-    if(longValue > 0) {
-      DiscordServer discordServer = client.getDiscordServer(longValue);
-      List<DiscordChannel> discordChannels = client.getDiscordChannels(discordServer.getId());
-      channelCombo.setItems(FXCollections.observableArrayList(discordChannels));
-    }
-
     botTokenText.textProperty().addListener((observableValue, s, t1) -> validateInput());
     this.validateInput();
   }
 
   private void validateInput() {
-    String token = botTokenText.getText();
-    this.connectionTestBtn.setDisable(StringUtils.isEmpty(token));
+    validateDefaultChannel();
 
     if (!this.connectionTestBtn.isDisabled()) {
       serverCombo.setDisable(false);
@@ -110,6 +95,32 @@ public class DiscordBotPreferencesController implements Initializable {
     else {
       serverCombo.setDisable(true);
       channelCombo.setDisable(true);
+    }
+  }
+
+  private void validateDefaultChannel() {
+    List<DiscordServer> servers = client.getDiscordServers();
+    ObservableList<DiscordServer> discordServers = FXCollections.observableArrayList(servers);
+    serverCombo.setItems(FXCollections.observableList(discordServers));
+
+    serverCombo.valueProperty().addListener((observable, oldValue, newValue) -> client.setPreference(PreferenceNames.DISCORD_GUILD_ID, newValue.getId()));
+    channelCombo.valueProperty().addListener((observable, oldValue, newValue) -> client.setPreference(PreferenceNames.DISCORD_CHANNEL_ID, newValue.getId()));
+
+    PreferenceEntryRepresentation preference = client.getPreference(PreferenceNames.DISCORD_GUILD_ID);
+    long longValue = preference.getLongValue();
+    if(longValue > 0) {
+      DiscordServer discordServer = client.getDiscordServer(longValue);
+      serverCombo.setValue(discordServer);
+
+      List<DiscordChannel> discordChannels = client.getDiscordChannels(discordServer.getId());
+      channelCombo.setItems(FXCollections.observableArrayList(discordChannels));
+
+      PreferenceEntryRepresentation channelPreference = client.getPreference(PreferenceNames.DISCORD_CHANNEL_ID);
+      long channelId = channelPreference.getLongValue();
+      if(channelId > 0) {
+        Optional<DiscordChannel> first = discordChannels.stream().filter(channel -> channel.getId() != channelId).findFirst();
+        first.ifPresent(discordChannel -> channelCombo.setValue(discordChannel));
+      }
     }
   }
 }
