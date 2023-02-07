@@ -6,6 +6,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.StackPane;
@@ -32,7 +33,12 @@ public class PreferencesController implements Initializable {
   private Label hostLabel;
 
   @FXML
+  private Button avatarBtn;
+
+  @FXML
   private BorderPane preferencesMain;
+
+  private Button lastSelection;
 
   @FXML
   private void onClose(ActionEvent event) throws IOException {
@@ -45,77 +51,77 @@ public class PreferencesController implements Initializable {
 
   @FXML
   private void onAvatar(ActionEvent event) throws IOException {
-    load("preference-avatar.fxml");
+    load("preference-avatar.fxml", event);
   }
 
   @FXML
   private void onVPinName(ActionEvent event) throws IOException {
-    load("preference-vpin-name.fxml");
+    load("preference-vpin-name.fxml", event);
   }
 
   @FXML
   private void onMediaValidation(ActionEvent event) throws IOException {
-    load("preference-validators-pinuppopper.fxml");
+    load("preference-validators-pinuppopper.fxml", event);
   }
 
   @FXML
   private void onVPXValidation(ActionEvent event) throws IOException {
-    load("preference-validators-vpx.fxml");
+    load("preference-validators-vpx.fxml", event);
   }
 
   @FXML
   private void onScreens(ActionEvent event) throws IOException {
-    load("preference-screens.fxml");
+    load("preference-screens.fxml", event);
   }
 
   @FXML
   private void onReset(ActionEvent event) throws IOException {
-    load("preference-reset.fxml");
+    load("preference-reset.fxml", event);
   }
 
   @FXML
   private void onOverlay(ActionEvent event) throws IOException {
-    load("preference-overlay.fxml");
+    load("preference-overlay.fxml", event);
   }
 
   @FXML
   private void onHighscoreCards(ActionEvent event) throws IOException {
-    load("preference-highscore-cards.fxml");
+    load("preference-highscore-cards.fxml", event);
   }
 
   @FXML
   private void onScoreFormat(ActionEvent event) throws IOException {
-    load("preference-highscores.fxml");
+    load("preference-highscores.fxml", event);
   }
 
   @FXML
   private void onRankings(ActionEvent event) throws IOException {
-    load("preference-player-rankings.fxml");
+    load("preference-player-rankings.fxml", event);
   }
 
   @FXML
   private void onServiceInfo(ActionEvent event) throws IOException {
-    load("preference-service-info.fxml");
+    load("preference-service-info.fxml", event);
   }
 
   @FXML
   private void onServiceOptions(ActionEvent event) throws IOException {
-    load("preference-service-options.fxml");
+    load("preference-service-options.fxml", event);
   }
 
   @FXML
   private void onDiscordBot(ActionEvent event) throws IOException {
-    load("preference-discord-bot.fxml");
+    load("preference-discord-bot.fxml", event);
   }
 
   @FXML
   private void onDiscordBotFaq(ActionEvent event) throws IOException {
-    load("preference-discord-faq.fxml");
+    load("preference-discord-faq.fxml", event);
   }
 
   @FXML
   private void onDiscordWebhook(ActionEvent event) throws IOException {
-    load("preference-discord-webhook.fxml");
+    load("preference-discord-webhook.fxml", event);
   }
 
   @FXML
@@ -130,7 +136,17 @@ public class PreferencesController implements Initializable {
     }
   }
 
-  private void load(String screen) throws IOException {
+  private void load(String screen, ActionEvent event) throws IOException {
+    if(lastSelection != null) {
+      lastSelection.getStyleClass().remove("preference-button-selected");
+    }
+    else {
+      avatarBtn.getStyleClass().remove("preference-button-selected");
+    }
+
+    lastSelection = (Button) event.getSource();
+    lastSelection.getStyleClass().add("preference-button-selected");
+
     FXMLLoader loader = new FXMLLoader(ScreensPreferencesController.class.getResource(screen));
     Node node = loader.load();
     preferencesMain.setCenter(node);
@@ -138,6 +154,7 @@ public class PreferencesController implements Initializable {
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
+    avatarBtn.getStyleClass().add("preference-button-selected");
     versionLabel.setText("VPin Studio Version " + Studio.getVersion());
     hostLabel.setText(System.getProperty("os.name"));
   }

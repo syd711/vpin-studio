@@ -52,6 +52,7 @@ public class DiscordListenerAdapter extends ListenerAdapter {
   @Override
   public void onMessageReceived(MessageReceivedEvent event) {
     if (event.getAuthor().isBot()) {
+      //a message from another(?) bot was posted, invalidate the message history to detect a new highscore
       long channelId = event.getMessage().getChannel().getIdLong();
       discordClient.invalidateMessageCache(channelId);
       return;

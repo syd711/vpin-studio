@@ -7,9 +7,6 @@ import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.*;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.entities.channel.middleman.GuildChannel;
-import net.dv8tion.jda.api.events.GenericEvent;
-import net.dv8tion.jda.api.events.StatusChangeEvent;
-import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.requests.GatewayIntent;
 import net.dv8tion.jda.api.utils.MemberCachePolicy;
 import org.slf4j.Logger;
@@ -24,40 +21,33 @@ import java.util.stream.Collectors;
 public class DiscordClient {
   private final static Logger LOG = LoggerFactory.getLogger(DiscordClient.class);
 
-  private JDA jda;
-
-  private final String defaultGuildId;
+  private final JDA jda;
   private final DiscordListenerAdapter listenerAdapter;
   private final Map<Long, Guild> guilds = new HashMap<>();
   private final long botId;
+  private long defaultGuildId;
 
   private final DiscordCache<List<DiscordMessage>> messageCache = new DiscordCache<>();
 
-  private DiscordClient(JDA jda, String defaultGuildId, DiscordCommandResolver commandResolver) {
-    this.defaultGuildId = defaultGuildId;
+  private DiscordClient(JDA jda, DiscordCommandResolver commandResolver) {
+    this.jda = jda;
     this.botId = jda.getSelfUser().getIdLong();
     this.listenerAdapter = new DiscordListenerAdapter(this, commandResolver);
 
     jda.addEventListener(this.listenerAdapter);
   }
 
-  public static DiscordClient create(DiscordStatusListener statusListener, String botToken, String guildId, DiscordCommandResolver commandResolver) throws Exception {
+  public static DiscordClient create(String botToken, DiscordCommandResolver commandResolver) throws Exception {
     JDA jda = JDABuilder.createDefault(botToken.trim(), Arrays.asList(GatewayIntent.DIRECT_MESSAGES, GatewayIntent.GUILD_MESSAGES, GatewayIntent.GUILD_MEMBERS, GatewayIntent.MESSAGE_CONTENT))
         .setEventPassthrough(true)
         .setMemberCachePolicy(MemberCachePolicy.ALL)
-        .addEventListeners(new ListenerAdapter() {
-          @Override
-          public void onGenericEvent(GenericEvent event) {
-            super.onGenericEvent(event);
-            if (event instanceof StatusChangeEvent) {
-              StatusChangeEvent e = (StatusChangeEvent) event;
-              if (e.getNewStatus().equals(JDA.Status.SHUTDOWN) && statusListener != null) {
-                statusListener.onDisconnect();
-              }
-            }
-          }
-        }).build();
-    return new DiscordClient(jda, guildId.trim(), commandResolver);
+        .build();
+    jda.awaitReady();
+    return new DiscordClient(jda, commandResolver);
+  }
+
+  public void setDefaultGuildId(long defaultGuildId) {
+    this.defaultGuildId = defaultGuildId;
   }
 
   public GuildInfo getGuildById(long guildId) {
@@ -69,7 +59,10 @@ public class DiscordClient {
   }
 
   public List<DiscordMember> getMembers() {
-    return this.getMembers(Long.parseLong(defaultGuildId));
+    if (defaultGuildId > 0) {
+      return this.getMembers(defaultGuildId);
+    }
+    return Collections.emptyList();
   }
 
   public synchronized List<DiscordMember> getMembers(long serverId) {
@@ -190,11 +183,12 @@ public class DiscordClient {
       List<GuildChannel> channels = guild.getChannels();
       for (GuildChannel channel : channels) {
         if (channel instanceof TextChannel) {
-          PermissionOverride po = channel.getPermissionContainer().getPermissionOverride((IPermissionHolder) guild.getRolesByName("@everyone", true).toArray()[0]);
-          if (po != null && po.getDenied().contains(Permission.VIEW_CHANNEL)) {
-            continue;
+          if(!channel.getName().equals("bot-test-channel")) {
+            PermissionOverride po = channel.getPermissionContainer().getPermissionOverride((IPermissionHolder) guild.getRolesByName("@everyone", true).toArray()[0]);
+            if (po != null && po.getDenied().contains(Permission.VIEW_CHANNEL)) {
+              continue;
+            }
           }
-
           DiscordTextChannel t = new DiscordTextChannel();
           t.setId(channel.getIdLong());
           t.setName(channel.getName());
@@ -223,7 +217,7 @@ public class DiscordClient {
       }
     }
     else {
-      throw new UnsupportedOperationException("No guild found for guildId '" + this.defaultGuildId + "'");
+      throw new UnsupportedOperationException("No guild found for default guildId '" + this.defaultGuildId + "'");
     }
     return null;
   }
@@ -293,7 +287,7 @@ public class DiscordClient {
   }
 
   private Guild getGuild(long serverId) {
-    long id = Long.parseLong(defaultGuildId);
+    long id = defaultGuildId;
     if (serverId > 0) {
       id = serverId;
     }
@@ -305,7 +299,7 @@ public class DiscordClient {
         guilds.put(id, guildById);
       }
       else {
-        throw new UnsupportedOperationException("No guild found for id " + serverId);
+        throw new UnsupportedOperationException("No guild found for id \"" + serverId + "\"");
       }
 
     }

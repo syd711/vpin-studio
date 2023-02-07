@@ -18,7 +18,6 @@ import de.mephisto.vpin.server.preferences.PreferenceChangedListener;
 import de.mephisto.vpin.server.preferences.PreferencesService;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
-import net.dv8tion.jda.api.events.StatusChangeEvent;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,7 +29,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
-public class DiscordService implements InitializingBean, PreferenceChangedListener, DiscordCommandResolver, DiscordStatusListener {
+public class DiscordService implements InitializingBean, PreferenceChangedListener, DiscordCommandResolver {
   private final static Logger LOG = LoggerFactory.getLogger(DiscordService.class);
 
   private DiscordClient discordClient;
@@ -260,10 +259,19 @@ public class DiscordService implements InitializingBean, PreferenceChangedListen
 
     try {
       if (!StringUtils.isEmpty(botToken) && !StringUtils.isEmpty(guildId)) {
-        this.discordClient = DiscordClient.create(this, botToken, guildId, this);
+        this.discordClient = DiscordClient.create(botToken, this);
         if (!StringUtils.isEmpty(whiteList)) {
           String[] split = whiteList.split(",");
           this.discordClient.setCommandsAllowList(Arrays.asList(split));
+        }
+
+        if(!StringUtils.isEmpty(guildId)) {
+          try {
+            this.discordClient.setDefaultGuildId(Long.parseLong(guildId));
+          }
+          catch (Exception e) {
+            LOG.error("Failed to set guildId: " + e.getMessage(), e);
+          }
         }
       }
       else {
@@ -382,13 +390,5 @@ public class DiscordService implements InitializingBean, PreferenceChangedListen
   public void afterPropertiesSet() throws Exception {
     preferencesService.addChangeListener(this);
     this.recreateDiscordClient();
-  }
-
-  @Override
-  public void onDisconnect() {
-    if(this.discordClient != null) {
-      this.discordClient.shutdown();
-      this.discordClient = null;
-    }
   }
 }

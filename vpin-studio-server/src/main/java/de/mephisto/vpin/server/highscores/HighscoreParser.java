@@ -102,9 +102,9 @@ public class HighscoreParser {
 
   @Nullable
   private Score createScore(@NonNull Date createdAt, @NonNull String line, int gameId, long serverId) {
-    List<String> collect = Arrays.stream(line.trim().split(" ")).filter(s -> s.trim().length() > 0).collect(Collectors.toList());
-    if (collect.size() == 2) {
-      String score = collect.get(1);
+    List<String> scoreLineSegments = Arrays.stream(line.trim().split(" ")).filter(s -> s.trim().length() > 0).collect(Collectors.toList());
+    if (scoreLineSegments.size() == 2) {
+      String score = scoreLineSegments.get(1);
       double v = toNumericScore(score);
       if (v == -1) {
         return null;
@@ -112,9 +112,9 @@ public class HighscoreParser {
       return new Score(createdAt, gameId, "", null, score, v, -1);
     }
 
-    if (collect.size() == 3) {
-      String score = collect.get(2);
-      String initials = collect.get(1);
+    if (scoreLineSegments.size() == 3) {
+      String score = scoreLineSegments.get(2);
+      String initials = scoreLineSegments.get(1);
       Player player = playerService.getPlayerForInitials(serverId, initials);
       double v = toNumericScore(score);
       if (v == -1) {
@@ -123,13 +123,13 @@ public class HighscoreParser {
       return new Score(createdAt, gameId, initials, player, score, v, -1);
     }
 
-    if (collect.size() > 3) {
+    if (scoreLineSegments.size() > 3) {
       StringBuilder initials = new StringBuilder();
-      for (int i = 1; i < collect.size() - 1; i++) {
-        initials.append(collect.get(i));
+      for (int i = 1; i < scoreLineSegments.size() - 1; i++) {
+        initials.append(scoreLineSegments.get(i));
         initials.append(" ");
       }
-      String score = collect.get(collect.size() - 1);
+      String score = scoreLineSegments.get(scoreLineSegments.size() - 1);
       String playerInitials = initials.toString().trim();
       Player player = playerService.getPlayerForInitials(serverId, playerInitials);
       double v = toNumericScore(score);

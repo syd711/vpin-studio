@@ -11,10 +11,9 @@ public class DiscordClientTest {
   @Test
   public void testDiscordClient() throws Exception {
     String token = System.getenv("TOKEN");
-    String id = System.getenv("ID");
 
     if(token != null) {
-      DiscordClient client = DiscordClient.create(null, token, id, null);
+      DiscordClient client = DiscordClient.create(token, null);
 //      client.refreshMembers();
       client.setStatus("testing");
 

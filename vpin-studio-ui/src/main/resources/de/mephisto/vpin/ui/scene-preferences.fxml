@@ -33,7 +33,7 @@
                         <Font size="13.0" />
                      </font>
                   </Label>
-                  <Button alignment="BASELINE_LEFT" contentDisplay="RIGHT" mnemonicParsing="false" onAction="#onAvatar" styleClass="preference-button" text="Avatar" />
+                  <Button fx:id="avatarBtn" alignment="BASELINE_LEFT" contentDisplay="RIGHT" mnemonicParsing="false" onAction="#onAvatar" styleClass="preference-button" text="Avatar" />
                   <Button alignment="BASELINE_LEFT" contentDisplay="RIGHT" layoutX="210.0" layoutY="36.0" mnemonicParsing="false" onAction="#onVPinName" styleClass="preference-button" text="Name" />
                   <Label alignment="BASELINE_LEFT" layoutX="210.0" layoutY="10.0" styleClass="preference-section" text="PINUP POPPER SETTINGS">
                      <font>

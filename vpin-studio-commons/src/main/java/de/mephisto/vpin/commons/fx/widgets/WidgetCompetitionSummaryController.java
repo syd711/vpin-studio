@@ -124,7 +124,7 @@ public class WidgetCompetitionSummaryController extends WidgetController impleme
       ScoreSummaryRepresentation latestCompetitionScore = OverlayWindowFX.client.getCompetitionScore(competition.getId());
       if(latestCompetitionScore != null) {
         List<ScoreRepresentation> scores = latestCompetitionScore.getScores();
-        if (scores.size() == 3) {
+        if (scores.size() >= 3) {
           ScoreRepresentation score1 = scores.get(0);
           name1.setText(formatScoreText(score1));
           scoreLabel1.setFont(getCompetitionScoreFont());
