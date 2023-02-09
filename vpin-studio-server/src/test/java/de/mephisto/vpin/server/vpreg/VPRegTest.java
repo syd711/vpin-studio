@@ -1,33 +1,35 @@
 package de.mephisto.vpin.server.vpreg;
 
-import org.apache.poi.poifs.filesystem.*;
+import de.mephisto.vpin.server.AbstractVPinServerTest;
+import de.mephisto.vpin.server.games.Game;
+import de.mephisto.vpin.server.games.GameService;
+import de.mephisto.vpin.server.highscores.HighscoreMetadata;
+import de.mephisto.vpin.server.highscores.VPReg;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 
-import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
-import java.util.Iterator;
 
-public class VPRegTest {
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+
+@SpringBootTest
+public class VPRegTest extends AbstractVPinServerTest {
+
+  @Autowired
+  private GameService gameService;
 
   @Test
-  public void readFile() throws IOException {
-    // This is the most memory efficient way to open the FileSystem
-//    try (POIFSFileSystem fs = new POIFSFileSystem(new File("C:\\vPinball\\VisualPinball\\User\\VPReg.stg"))) {
-//      DirectoryEntry root = fs.getRoot();
-//      System.out.println(root.getName());
-//      Iterator<Entry> entries = root.getEntries();
-//      while (entries.hasNext()) {
-//        Entry next = entries.next();
-//        System.out.println("- " + next.getName());
-//      }
-//
-//      fs.close();
-//    } catch (IOException e) {
-//      e.printStackTrace();
-//    }
+  public void readFile() {
+    File file = new File("C:\\vPinball\\VisualPinball\\User\\VPReg.stg");
+    Game game = gameService.getGameByFilename("Stranger Things.vpx");
 
+    VPReg reg = new VPReg(file, game);
+    reg.resetHighscores();
+    String s = reg.readHighscores();
 
+    System.out.println(s);
+    assertNotNull(s);
   }
 }

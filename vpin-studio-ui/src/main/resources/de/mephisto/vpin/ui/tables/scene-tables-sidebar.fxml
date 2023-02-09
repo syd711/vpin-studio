@@ -491,9 +491,18 @@
                                  </font>
                               </Button>
                               <Separator orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
-                              <Button layoutX="10.0" layoutY="11.0" mnemonicParsing="false" onAction="#onCard" text="Card" textFill="WHITE">
+                              <Button fx:id="cardBtn" layoutX="10.0" layoutY="11.0" mnemonicParsing="false" onAction="#onCard" text="Card" textFill="WHITE">
                                  <graphic>
                                     <FontIcon iconColor="WHITE" iconLiteral="bi-list-ol" />
+                                 </graphic>
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </Button>
+                              <Separator layoutX="80.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
+                              <Button fx:id="resetBtn" layoutX="96.0" layoutY="11.0" mnemonicParsing="false" onAction="#onScoreReset" text="Reset" textFill="#ff3333">
+                                 <graphic>
+                                    <FontIcon iconColor="#ff3333" iconLiteral="mdi2d-delete-outline" />
                                  </graphic>
                                  <font>
                                     <Font size="14.0" />

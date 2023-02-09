@@ -224,8 +224,12 @@ public class CompetitionsController implements Initializable, StudioFXController
   }
 
   private void refreshScoreGraph(Optional<CompetitionRepresentation> cp) {
-    if(scoreGraphBox != null && scoreGraphBox.getChildren() != null) {
-      scoreGraphBox.getChildren().removeAll(scoreGraphBox.getChildren());
+    try {
+      if(scoreGraphBox != null && scoreGraphBox.getChildren() != null) {
+        scoreGraphBox.getChildren().removeAll(scoreGraphBox.getChildren());
+      }
+    } catch (Exception e) {
+      LOG.error("Error refreshing score graph: " + e.getMessage()); //TODO dunno
     }
 
     if (cp.isPresent()) {

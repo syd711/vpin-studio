@@ -203,6 +203,12 @@ public class TablesSidebarController implements Initializable {
   private VBox scoreGraphWrapper;
 
   @FXML
+  private Button resetBtn;
+
+  @FXML
+  private Button cardBtn;
+
+  @FXML
   private VBox assetList;
 
   @FXML
@@ -472,6 +478,11 @@ public class TablesSidebarController implements Initializable {
   }
 
   @FXML
+  private void onScoreReset() {
+
+  }
+
+  @FXML
   private void onPlayClick(ActionEvent e) {
     Button source = (Button) e.getSource();
     BorderPane borderPane = (BorderPane) source.getParent();
@@ -588,6 +599,9 @@ public class TablesSidebarController implements Initializable {
     formattedScoreWrapper.setVisible(false);
     scoreGraphWrapper.setVisible(false);
 
+    cardBtn.setDisable(true);
+    resetBtn.setDisable(true);
+
     if (gameRepresentation.isPresent()) {
       GameRepresentation game = gameRepresentation.get();
       if (forceRescan) {
@@ -624,6 +638,9 @@ public class TablesSidebarController implements Initializable {
         }
 
         if (!summary.getScores().isEmpty()) {
+          cardBtn.setDisable(false);
+          resetBtn.setDisable(false);
+
           rawTitleLabel.setVisible(true);
           rawScoreWrapper.setVisible(true);
           scoreGraphWrapper.setVisible(true);
