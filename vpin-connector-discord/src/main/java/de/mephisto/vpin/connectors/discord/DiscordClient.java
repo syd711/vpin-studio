@@ -67,8 +67,11 @@ public class DiscordClient {
 
   public synchronized List<DiscordMember> getMembers(long serverId) {
     Guild guild = getGuild(serverId);
-    List<Member> members = guild.loadMembers().get();
-    return members.stream().map(this::toMember).collect(Collectors.toList());
+    if (guild != null) {
+      List<Member> members = guild.loadMembers().get();
+      return members.stream().map(this::toMember).collect(Collectors.toList());
+    }
+    return Collections.emptyList();
   }
 
   public List<GuildInfo> getGuilds() {
@@ -93,68 +96,22 @@ public class DiscordClient {
     }
   }
 
-  public List<DiscordMember> getCompetitionMembers(long serverId, long channelId, String afterMessageId, String competitionUuid) {
+  public List<DiscordMember> getCompetitionMembers(long serverId, long channelId, long afterMessageId, String competitionUuid) {
+    List<DiscordMessage> messageHistory = getMessageHistory(serverId, channelId, afterMessageId, competitionUuid);
     List<DiscordMember> result = new ArrayList<>();
-    Guild guild = getGuild(serverId);
-    if (guild != null) {
-      TextChannel channel = guild.getChannelById(TextChannel.class, channelId);
-      if (channel != null) {
-        MessageHistory history = MessageHistory.getHistoryAfter(channel, afterMessageId).complete();
-        List<Message> messages = history.getRetrievedHistory();
-        List<Message> botMessages = messages.stream().filter(m -> m.getAuthor().isBot()).collect(Collectors.toList());
-        for (Message botMessage : botMessages) {
-          if (botMessage.getContentRaw().contains(competitionUuid)) {
-            Member member = botMessage.getMember();
-            if (member != null) {
-              DiscordMember discordMember = toMember(member);
-              if (!result.contains(discordMember)) {
-                result.add(discordMember);
-              }
-            }
-          }
+    for (DiscordMessage discordMessage : messageHistory) {
+      DiscordMember member = discordMessage.getMember();
+      if (member != null) {
+        if (!result.contains(member)) {
+          result.add(member);
         }
-      }
-      else {
-        LOG.error("No discord channel found for id '" + channelId + "'");
       }
     }
     return result;
   }
 
-  public List<DiscordMessage> getCompetitionUpdates(long serverId, long channelId, String afterMessageId, String competitionUuid) {
-    List<DiscordMessage> result = new ArrayList<>();
-    Guild guild = getGuild(serverId);
-    if (guild != null) {
-      TextChannel channel = guild.getChannelById(TextChannel.class, channelId);
-      if (channel != null) {
-        MessageHistory history = MessageHistory.getHistoryAfter(channel, afterMessageId).complete();
-        List<Message> messages = new ArrayList<>(history.getRetrievedHistory());
-        messages.sort((o1, o2) -> o2.getTimeCreated().compareTo(o1.getTimeCreated()));
-
-        List<Message> botMessages = messages.stream().filter(m -> m.getAuthor().isBot()).collect(Collectors.toList());
-        for (Message botMessage : botMessages) {
-          if (botMessage.getContentRaw().contains(competitionUuid)) {
-            Member member = botMessage.getMember();
-            if (member != null) {
-              DiscordMessage message = new DiscordMessage();
-              DiscordMember discordMember = toMember(member);
-              long epochMilli = botMessage.getTimeCreated().toInstant().toEpochMilli();
-              Date createdAt = new Date(epochMilli);
-
-              message.setMember(discordMember);
-              message.setCreatedAt(createdAt);
-              message.setRaw(botMessage.getContentRaw());
-              message.setServerId(serverId);
-              result.add(message);
-            }
-          }
-        }
-      }
-      else {
-        LOG.error("No discord channel found for id '" + channelId + "'");
-      }
-    }
-    return result;
+  public List<DiscordMessage> getCompetitionUpdates(long serverId, long channelId, long afterMessageId, String competitionUuid) {
+    return getMessageHistory(serverId, channelId, afterMessageId, competitionUuid);
   }
 
   public void invalidateMessageCache(long channelId) {
@@ -169,6 +126,7 @@ public class DiscordClient {
         return toMember(member);
       }
     }
+
     return null;
   }
 
@@ -183,7 +141,7 @@ public class DiscordClient {
       List<GuildChannel> channels = guild.getChannels();
       for (GuildChannel channel : channels) {
         if (channel instanceof TextChannel) {
-          if(!channel.getName().equals("bot-test-channel")) {
+          if (!channel.getName().equals("bot-test-channel")) {
             PermissionOverride po = channel.getPermissionContainer().getPermissionOverride((IPermissionHolder) guild.getRolesByName("@everyone", true).toArray()[0]);
             if (po != null && po.getDenied().contains(Permission.VIEW_CHANNEL)) {
               continue;
@@ -204,13 +162,13 @@ public class DiscordClient {
     this.jda.shutdownNow();
   }
 
-  public String sendMessage(long serverId, long channelId, String msg) {
+  public long sendMessage(long serverId, long channelId, String msg) {
     Guild guild = getGuild(serverId);
     if (guild != null) {
       TextChannel textChannel = jda.getChannelById(TextChannel.class, channelId);
       if (textChannel != null) {
         Message complete = textChannel.sendMessage(msg).complete();
-        return complete.getId();
+        return complete.getIdLong();
       }
       else {
         LOG.error("No discord channel found for id '" + channelId + "'");
@@ -219,7 +177,7 @@ public class DiscordClient {
     else {
       throw new UnsupportedOperationException("No guild found for default guildId '" + this.defaultGuildId + "'");
     }
-    return null;
+    return -1;
   }
 
   public String getTopic(long serverId, long channelId) {
@@ -237,6 +195,42 @@ public class DiscordClient {
       LOG.warn("Unable to retrieve topic from channel '" + channelId + "', no connection.");
     }
     return null;
+  }
+
+  private List<DiscordMessage> getMessageHistory(long serverId, long channelId, long afterMessageId, String uuid) {
+    if (!messageCache.contains(channelId)) {
+      Guild guild = getGuild(serverId);
+      if (guild != null) {
+        TextChannel channel = guild.getChannelById(TextChannel.class, channelId);
+        if (channel != null) {
+          MessageHistory history = MessageHistory.getHistoryAfter(channel, String.valueOf(afterMessageId)).complete();
+          List<Message> messages = new ArrayList<>(history.getRetrievedHistory());
+          messages.sort((o1, o2) -> o2.getTimeCreated().compareTo(o1.getTimeCreated()));
+          List<Message> botMessages = messages.stream().filter(m -> m.getAuthor().isBot()).collect(Collectors.toList());
+
+          List<DiscordMessage> result = new ArrayList<>();
+          for (Message botMessage : botMessages) {
+            if (botMessage.getContentRaw().contains(uuid)) {
+              Member member = botMessage.getMember();
+              if (member != null) {
+                DiscordMessage message = new DiscordMessage();
+                DiscordMember discordMember = toMember(member);
+                long epochMilli = botMessage.getTimeCreated().toInstant().toEpochMilli();
+                Date createdAt = new Date(epochMilli);
+
+                message.setMember(discordMember);
+                message.setCreatedAt(createdAt);
+                message.setRaw(botMessage.getContentRaw());
+                message.setServerId(serverId);
+                result.add(message);
+              }
+            }
+          }
+          messageCache.put(channelId, result);
+        }
+      }
+    }
+    return messageCache.get(channelId);
   }
 
   private DiscordMember toMember(Member member) {

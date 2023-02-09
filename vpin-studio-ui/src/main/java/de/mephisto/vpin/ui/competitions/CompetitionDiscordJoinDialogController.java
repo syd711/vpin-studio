@@ -109,8 +109,8 @@ public class CompetitionDiscordJoinDialogController implements Initializable, Di
     competition.setName(this.discordCompetitionData.getName());
     competition.setUuid(this.discordCompetitionData.getUuid());
     competition.setOwner(this.discordCompetitionData.getOwner());
-    competition.setStartDate(this.discordCompetitionData.getStartDate());
-    competition.setEndDate(this.discordCompetitionData.getEndDate());
+    competition.setStartDate(this.discordCompetitionData.getSdt());
+    competition.setEndDate(this.discordCompetitionData.getEdt());
 
     competition.setBadge(this.competitionIconCombo.getValue());
     competition.setGameId(this.tableCombo.getValue().getId());
@@ -217,7 +217,7 @@ public class CompetitionDiscordJoinDialogController implements Initializable, Di
     long serverId = this.serversCombo.getValue().getId();
     long channelId = this.channelsCombo.getValue().getId();
 
-    LocalDate end = discordCompetitionData.getEndDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+    LocalDate end = discordCompetitionData.getEdt().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
     LocalDate now = new Date().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
 
     long remainingDays = ChronoUnit.DAYS.between(now, end);
@@ -225,9 +225,9 @@ public class CompetitionDiscordJoinDialogController implements Initializable, Di
       remainingDays = 0;
     }
 
-    this.tableLabel.setText(this.discordCompetitionData.getTableName());
-    this.startDateLabel.setText(DateFormat.getDateInstance().format(this.discordCompetitionData.getStartDate()));
-    this.endDateLabel.setText(DateFormat.getDateInstance().format(this.discordCompetitionData.getEndDate()));
+    this.tableLabel.setText(this.discordCompetitionData.getTname());
+    this.startDateLabel.setText(DateFormat.getDateInstance().format(this.discordCompetitionData.getSdt()));
+    this.endDateLabel.setText(DateFormat.getDateInstance().format(this.discordCompetitionData.getEdt()));
     this.remainingDaysLabel.setText(remainingDays + " days");
     this.nameLabel.setText(this.discordCompetitionData.getName());
 
@@ -252,7 +252,7 @@ public class CompetitionDiscordJoinDialogController implements Initializable, Di
     }
 
     long tableSize = value.getGameFileSize();
-    long competitionTableSize = this.discordCompetitionData.getFileSize();
+    long competitionTableSize = this.discordCompetitionData.getFs();
     long min = competitionTableSize - 1024;
     long max = competitionTableSize + 1024;
     if (tableSize < min || tableSize > max) {

@@ -34,6 +34,16 @@ public class CompetitionRepresentation {
 
   private String uuid;
 
+  private String score;
+
+  public String getScore() {
+    return score;
+  }
+
+  public void setScore(String score) {
+    this.score = score;
+  }
+
   public long getDiscordServerId() {
     return discordServerId;
   }
@@ -182,5 +192,10 @@ public class CompetitionRepresentation {
     LocalDate start = LocalDate.now();
     LocalDate end = getEndDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
     return (int) Math.abs(ChronoUnit.DAYS.between(end, start));
+  }
+
+  @Override
+  public String toString() {
+    return this.name;
   }
 }

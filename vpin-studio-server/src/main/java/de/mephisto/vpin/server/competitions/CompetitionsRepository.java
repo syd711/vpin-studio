@@ -24,7 +24,7 @@ public interface CompetitionsRepository extends JpaRepository<Competition, Long>
 
   List<Competition> findByWinnerInitials(String initials);
 
-  List<Competition> findByType(String type);
+  List<Competition> findByTypeOrderByEndDateDesc(String type);
 
   List<Competition> findByGameId(int id);
 

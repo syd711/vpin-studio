@@ -83,13 +83,12 @@ public class DiscordService implements InitializingBean, PreferenceChangedListen
     return null;
   }
 
-  @Nullable
-  public String getStartMessageId(long serverId, long channelId) {
+  public long getStartMessageId(long serverId, long channelId) {
     if (this.discordClient != null) {
       String topic = this.discordClient.getTopic(serverId, channelId);
       return CompetitionDataHelper.getStartMessageId(topic);
     }
-    return null;
+    return -1;
   }
 
   @Nullable
@@ -136,7 +135,7 @@ public class DiscordService implements InitializingBean, PreferenceChangedListen
     if (this.discordClient != null) {
       DiscordCompetitionData competitionData = getCompetitionData(serverId, channelId);
       if (competitionData != null) {
-        List<DiscordMember> competitionMembers = this.discordClient.getCompetitionMembers(serverId, channelId, competitionData.getStartMessageId(), competitionData.getUuid());
+        List<DiscordMember> competitionMembers = this.discordClient.getCompetitionMembers(serverId, channelId, competitionData.getMsgId(), competitionData.getUuid());
         DiscordMember owner = this.discordClient.getMember(serverId, this.getBotId());
         if (!competitionMembers.contains(owner)) {
           competitionMembers.add(0, owner);
@@ -150,11 +149,11 @@ public class DiscordService implements InitializingBean, PreferenceChangedListen
     return Collections.emptyList();
   }
 
-  public String sendMessage(long serverId, long channelId, String message) {
+  public long sendMessage(long serverId, long channelId, String message) {
     if (this.discordClient != null) {
       return this.discordClient.sendMessage(serverId, channelId, message);
     }
-    return null;
+    return -1;
   }
 
   public void sendDefaultHighscoreMessage(String message) {
@@ -174,7 +173,7 @@ public class DiscordService implements InitializingBean, PreferenceChangedListen
     return -1;
   }
 
-  public void saveCompetitionData(@NonNull Competition competition, @NonNull Game game, @NonNull ScoreSummary scoreSummary, @NonNull String messageId) {
+  public void saveCompetitionData(@NonNull Competition competition, @NonNull Game game, @NonNull ScoreSummary scoreSummary, long messageId) {
     String topic = CompetitionDataHelper.toDataString(competition, game, scoreSummary, messageId);
     if (this.discordClient != null) {
       long discordServerId = competition.getDiscordServerId();
@@ -201,7 +200,7 @@ public class DiscordService implements InitializingBean, PreferenceChangedListen
       DiscordChannel channel = this.getChannel(serverId, channelId);
       DiscordCompetitionData data = this.getCompetitionData(serverId, channelId);
       if (data != null) {
-        List<DiscordMessage> competitionUpdates = discordClient.getCompetitionUpdates(serverId, channelId, data.getStartMessageId(), uuid);
+        List<DiscordMessage> competitionUpdates = discordClient.getCompetitionUpdates(serverId, channelId, data.getMsgId(), uuid);
         LOG.info("Discord message search for " + data.getUuid() + " returned " + competitionUpdates.size() + " messages.");
         List<ScoreSummary> scores = competitionUpdates.stream().map(message -> toScoreSummary(highscoreParser, message)).collect(Collectors.toList());
         if (scores.isEmpty()) {
@@ -265,11 +264,10 @@ public class DiscordService implements InitializingBean, PreferenceChangedListen
           this.discordClient.setCommandsAllowList(Arrays.asList(split));
         }
 
-        if(!StringUtils.isEmpty(guildId)) {
+        if (!StringUtils.isEmpty(guildId)) {
           try {
             this.discordClient.setDefaultGuildId(Long.parseLong(guildId));
-          }
-          catch (Exception e) {
+          } catch (Exception e) {
             LOG.error("Failed to set guildId: " + e.getMessage(), e);
           }
         }

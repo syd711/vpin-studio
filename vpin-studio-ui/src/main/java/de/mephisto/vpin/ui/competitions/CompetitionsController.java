@@ -1,8 +1,10 @@
 package de.mephisto.vpin.ui.competitions;
 
 import de.mephisto.vpin.commons.fx.discord.DiscordUserEntryController;
+import de.mephisto.vpin.commons.utils.ImageUtil;
 import de.mephisto.vpin.commons.utils.ScoreGraphUtil;
 import de.mephisto.vpin.restclient.CompetitionType;
+import de.mephisto.vpin.restclient.discord.DiscordChannel;
 import de.mephisto.vpin.restclient.discord.DiscordServer;
 import de.mephisto.vpin.restclient.representations.CompetitionRepresentation;
 import de.mephisto.vpin.restclient.representations.PlayerRepresentation;
@@ -60,6 +62,9 @@ public class CompetitionsController implements Initializable, StudioFXController
 
   @FXML
   private Label endLabel;
+
+  @FXML
+  private Label channelLabel;
 
   @FXML
   private HBox serverBox;
@@ -160,8 +165,14 @@ public class CompetitionsController implements Initializable, StudioFXController
           view.setFitHeight(50);
           serverBox.getChildren().removeAll(serverBox.getChildren());
           Label label = new Label(discordServer.getName());
+
+          ImageUtil.setClippedImage(view, (int) (image.getWidth() / 2));
           serverBox.getChildren().addAll(view, label);
         }
+
+        List<DiscordChannel> discordChannels = client.getDiscordChannels(competition.getDiscordServerId());
+        Optional<DiscordChannel> first = discordChannels.stream().filter(channel -> channel.getId() == competition.getDiscordChannelId()).findFirst();
+        first.ifPresent(discordChannel -> channelLabel.setText(discordChannel.getName()));
 
         PlayerRepresentation discordPlayer = client.getDiscordPlayer(competition.getDiscordServerId(), Long.valueOf(competition.getOwner()));
         if(discordPlayer != null) {
@@ -176,6 +187,8 @@ public class CompetitionsController implements Initializable, StudioFXController
           view.setFitHeight(50);
           ownerBox.getChildren().removeAll(ownerBox.getChildren());
           Label label = new Label(discordPlayer.getName());
+
+          ImageUtil.setClippedImage(view, (int) (image.getWidth() / 2));
           ownerBox.getChildren().addAll(view, label);
         }
 
@@ -211,7 +224,10 @@ public class CompetitionsController implements Initializable, StudioFXController
   }
 
   private void refreshScoreGraph(Optional<CompetitionRepresentation> cp) {
-    scoreGraphBox.getChildren().removeAll(scoreGraphBox.getChildren());
+    if(scoreGraphBox != null && scoreGraphBox.getChildren() != null) {
+      scoreGraphBox.getChildren().removeAll(scoreGraphBox.getChildren());
+    }
+
     if (cp.isPresent()) {
       CompetitionRepresentation competition = cp.get();
 

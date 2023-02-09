@@ -182,7 +182,7 @@ public class NotificationService implements InitializingBean, HighscoreChangeLis
         //check if the competition is already set as topic, in this case the user simply re-created the DB entry
         DiscordCompetitionData competitionData = discordService.getCompetitionData(discordServerId, discordChannelId);
         if (competitionData == null) {
-          String messageId = discordService.sendMessage(discordServerId, discordChannelId, DiscordChannelMessageFactory.createDiscordCompetitionCreatedMessage(competition, game, botId));
+          long messageId = discordService.sendMessage(discordServerId, discordChannelId, DiscordChannelMessageFactory.createDiscordCompetitionCreatedMessage(competition, game, botId));
           ScoreSummary highscores = highscoreService.getScoreSummary(discordServerId, game.getId(), game.getGameDisplayName());
           discordService.saveCompetitionData(competition, game, highscores, messageId);
         }
@@ -236,17 +236,22 @@ public class NotificationService implements InitializingBean, HighscoreChangeLis
     if (game != null) {
       popperService.deAugmentWheel(game);
 
-      if (competition.getDiscordChannelId() > 0 && competition.isActive()) {
-        long discordServerId = competition.getDiscordServerId();
-        long discordChannelId = competition.getDiscordChannelId();
+      long discordServerId = competition.getDiscordServerId();
+      long discordChannelId = competition.getDiscordChannelId();
+
+      if (competition.getType().equals(CompetitionType.OFFLINE.name()) && discordChannelId > 0 && competition.isActive()) {
         String message = DiscordOfflineChannelMessageFactory.createCompetitionCancelledMessage(competition);
         discordService.sendMessage(discordServerId, discordChannelId, message);
       }
 
       if (competition.getType().equals(CompetitionType.DISCORD.name())) {
-        long discordServerId = competition.getDiscordServerId();
-        long discordChannelId = competition.getDiscordChannelId();
-        discordService.resetCompetition(discordServerId, discordChannelId);
+        //check if the owner deleted the competition
+        if(competition.getOwner().equals(String.valueOf(discordService.getBotId())) && competition.isActive()) {
+          discordService.resetCompetition(discordServerId, discordChannelId);
+          Player player = discordService.getPlayer(discordServerId, Long.parseLong(competition.getOwner()));
+          String message = DiscordChannelMessageFactory.createCompetitionCancelledMessage(player, competition);
+          discordService.sendMessage(discordServerId, discordChannelId, message);
+        }
       }
     }
   }
@@ -271,7 +276,7 @@ public class NotificationService implements InitializingBean, HighscoreChangeLis
       long discordServerId = competition.getDiscordServerId();
       long discordChannelId = competition.getDiscordChannelId();
 
-      String messageId = discordService.getStartMessageId(discordServerId, discordChannelId);
+      long messageId = discordService.getStartMessageId(discordServerId, discordChannelId);
       discordService.saveCompetitionData(competition, game, summary, messageId);
     }
   }

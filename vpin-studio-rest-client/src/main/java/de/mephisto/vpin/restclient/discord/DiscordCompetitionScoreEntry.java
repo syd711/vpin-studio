@@ -1,32 +1,32 @@
 package de.mephisto.vpin.restclient.discord;
 
 public class DiscordCompetitionScoreEntry {
-  private int position;
-  private String initials;
-  private String score;
+  private int p;
+  private String i;
+  private String s;
 
-  public int getPosition() {
-    return position;
+  public int getP() {
+    return p;
   }
 
-  public void setPosition(int position) {
-    this.position = position;
+  public void setP(int p) {
+    this.p = p;
   }
 
-  public String getInitials() {
-    return initials;
+  public String getI() {
+    return i;
   }
 
-  public void setInitials(String initials) {
-    this.initials = initials;
+  public void setI(String i) {
+    this.i = i;
   }
 
-  public String getScore() {
-    return score;
+  public String getS() {
+    return s;
   }
 
-  public void setScore(String score) {
-    this.score = score;
+  public void setS(String s) {
+    this.s = s;
   }
 
   @Override
@@ -36,21 +36,21 @@ public class DiscordCompetitionScoreEntry {
 
     DiscordCompetitionScoreEntry that = (DiscordCompetitionScoreEntry) o;
 
-    if (position != that.position) return false;
-    if (!initials.equals(that.initials)) return false;
-    return score.equals(that.score);
+    if (p != that.p) return false;
+    if (!i.equals(that.i)) return false;
+    return s.equals(that.s);
   }
 
   @Override
   public int hashCode() {
-    int result = position;
-    result = 31 * result + initials.hashCode();
-    result = 31 * result + score.hashCode();
+    int result = p;
+    result = 31 * result + i.hashCode();
+    result = 31 * result + s.hashCode();
     return result;
   }
 
   @Override
   public String toString() {
-    return position + "# " + getInitials() + "   " + getScore();
+    return p + "# " + getI() + "   " + getS();
   }
 }

@@ -1,6 +1,7 @@
 package de.mephisto.vpin.ui.competitions;
 
 import de.mephisto.vpin.commons.fx.widgets.WidgetCompetitionSummaryController;
+import de.mephisto.vpin.commons.utils.ImageUtil;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.CompetitionType;
 import de.mephisto.vpin.restclient.discord.DiscordBotStatus;
@@ -107,6 +108,7 @@ public class CompetitionsDiscordController implements Initializable, StudioFXCon
   private ObservableList<CompetitionRepresentation> data;
   private List<CompetitionRepresentation> competitions;
   private CompetitionsController competitionsController;
+  private WaitOverlayController loaderController;
 
   // Add a public no-args constructor
   public CompetitionsDiscordController() {
@@ -189,14 +191,17 @@ public class CompetitionsDiscordController implements Initializable, StudioFXCon
   private void onDelete() {
     CompetitionRepresentation selection = tableView.getSelectionModel().getSelectedItem();
     if (selection != null) {
+      boolean isOwner = selection.getOwner().equals(String.valueOf(client.getDiscordStatus().getBotId()));
+
       String help = null;
       String help2 = null;
-      if (!StringUtils.isEmpty(selection.getWinnerInitials())) {
-        help = "The player '" + selection.getWinnerInitials() + "' will have one less won competition.";
-      }
-      else if(selection.isActive()) {
-        help  = "The competition is still active for another " + selection.remainingDays() + " days.";
+      if (isOwner && selection.isActive()) {
+        help = "The competition is still active for another " + selection.remainingDays() + " days.";
         help2 = "This will cancel the competition, no winner will be announced.";
+      }
+      else if (!isOwner && selection.isActive()) {
+        help = "You are a member of this competition. The competition information will be removed from your VPin.";
+        help2 = "The competition will remain active for another \" + selection.remainingDays() + \" days.";
       }
 
       Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Delete Competition '" + selection.getName() + "'?",
@@ -232,7 +237,7 @@ public class CompetitionsDiscordController implements Initializable, StudioFXCon
     tableStack.getChildren().add(loadingOverlay);
 
     DiscordBotStatus discordStatus = client.getDiscordStatus();
-    if(!discordStatus.isValid()) {
+    if (!discordStatus.isValid()) {
       textfieldSearch.setDisable(true);
       addBtn.setDisable(true);
       editBtn.setDisable(true);
@@ -290,8 +295,8 @@ public class CompetitionsDiscordController implements Initializable, StudioFXCon
     try {
       FXMLLoader loader = new FXMLLoader(WaitOverlayController.class.getResource("overlay-wait.fxml"));
       loadingOverlay = loader.load();
-      WaitOverlayController ctrl = loader.getController();
-      ctrl.setLoadingMessage("Loading Competitions...");
+      loaderController = loader.getController();
+      loaderController.setLoadingMessage("Loading Competitions...");
     } catch (IOException e) {
       LOG.error("Failed to load loading overlay: " + e.getMessage());
     }
@@ -324,13 +329,14 @@ public class CompetitionsDiscordController implements Initializable, StudioFXCon
       hBox.setAlignment(Pos.CENTER_LEFT);
 
       DiscordServer discordServer = client.getDiscordServer(value.getDiscordServerId());
-      if(discordServer != null) {
+      if (discordServer != null) {
         Image image = new Image(discordServer.getAvatarUrl());
         ImageView view = new ImageView(image);
         view.setPreserveRatio(true);
         view.setFitWidth(50);
         view.setFitHeight(50);
 
+        ImageUtil.setClippedImage(view, (int) (image.getWidth() / 2));
         Label label = new Label(discordServer.getName());
         hBox.getChildren().addAll(view, label);
       }
@@ -344,12 +350,13 @@ public class CompetitionsDiscordController implements Initializable, StudioFXCon
       HBox hBox = new HBox(6);
       hBox.setAlignment(Pos.CENTER_LEFT);
       PlayerRepresentation discordPlayer = client.getDiscordPlayer(value.getDiscordServerId(), Long.valueOf(value.getOwner()));
-      if(discordPlayer != null) {
+      if (discordPlayer != null) {
         Image image = new Image(discordPlayer.getAvatarUrl());
         ImageView view = new ImageView(image);
         view.setPreserveRatio(true);
         view.setFitWidth(50);
         view.setFitHeight(50);
+        ImageUtil.setClippedImage(view, (int) (image.getWidth() / 2));
 
         Label label = new Label(discordPlayer.getName());
         hBox.getChildren().addAll(view, label);
@@ -397,11 +404,6 @@ public class CompetitionsDiscordController implements Initializable, StudioFXCon
     tableView.setPlaceholder(new Label("            Mmmh, not up for a challange yet?\n" +
         "Create a new competition by pressing the '+' button."));
     tableView.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
-      boolean disable = newSelection == null;
-      editBtn.setDisable(disable || !newSelection.isActive());
-      finishBtn.setDisable(disable || !newSelection.isActive());
-      deleteBtn.setDisable(disable);
-      duplicateBtn.setDisable(disable);
       refreshView(Optional.ofNullable(newSelection));
     });
 
@@ -451,7 +453,24 @@ public class CompetitionsDiscordController implements Initializable, StudioFXCon
   }
 
   private void refreshView(Optional<CompetitionRepresentation> competition) {
+    CompetitionRepresentation newSelection = null;
     if (competition.isPresent()) {
+      newSelection = competition.get();
+    }
+
+    boolean disable = newSelection == null;
+    boolean isOwner = newSelection != null && newSelection.getOwner().equals(String.valueOf(client.getDiscordStatus().getBotId()));
+    editBtn.setDisable(disable || !isOwner);
+    finishBtn.setDisable(disable || !isOwner);
+    joinBtn.setDisable(disable || !newSelection.isActive());
+    deleteBtn.setDisable(disable);
+    duplicateBtn.setDisable(disable);
+
+    if (competition.isPresent()) {
+      if (!tableStack.getChildren().contains(loadingOverlay)) {
+        tableStack.getChildren().add(loadingOverlay);
+      }
+
       if (competitionWidget.getTop() != null) {
         competitionWidget.getTop().setVisible(true);
       }
@@ -464,6 +483,7 @@ public class CompetitionsDiscordController implements Initializable, StudioFXCon
       competitionWidgetController.setCompetition(CompetitionType.DISCORD, null);
     }
     competitionsController.setCompetition(competition.orElse(null));
+
   }
 
   @Override

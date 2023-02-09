@@ -9,7 +9,6 @@ import de.mephisto.vpin.server.competitions.CompetitionService;
 import de.mephisto.vpin.server.discord.DiscordService;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameService;
-import de.mephisto.vpin.server.notifications.NotificationService;
 import de.mephisto.vpin.server.players.Player;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
@@ -19,8 +18,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.Calendar;
 import java.util.Date;
-import java.util.List;
-import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -93,7 +90,7 @@ public class DiscordHighscoreTest extends AbstractVPinServerTest {
     }
 
     assertNotNull(competitionData);
-    assertEquals(competitionData.getScores().size(), 3);
+    assertEquals(competitionData.getScrs().size(), 3);
     assertEquals(competitionData.getRom(), game.getRom());
 
     HighscoreMetadata metadata = highscoreService.scanScore(game);

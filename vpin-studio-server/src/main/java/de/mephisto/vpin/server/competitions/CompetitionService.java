@@ -2,7 +2,6 @@ package de.mephisto.vpin.server.competitions;
 
 import de.mephisto.vpin.restclient.CompetitionType;
 import de.mephisto.vpin.server.discord.DiscordService;
-import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.highscores.HighscoreParser;
 import de.mephisto.vpin.server.highscores.HighscoreService;
 import de.mephisto.vpin.server.highscores.Score;
@@ -79,11 +78,11 @@ public class CompetitionService implements InitializingBean {
   }
 
   public List<Competition> getOfflineCompetitions() {
-    return competitionsRepository.findByType(CompetitionType.OFFLINE.name());
+    return competitionsRepository.findByTypeOrderByEndDateDesc(CompetitionType.OFFLINE.name());
   }
 
   public List<Competition> getDiscordCompetitions() {
-    return competitionsRepository.findByType(CompetitionType.DISCORD.name());
+    return competitionsRepository.findByTypeOrderByEndDateDesc(CompetitionType.DISCORD.name());
   }
 
   public List<Player> getDiscordCompetitionPlayers(long competitionId) {
@@ -193,7 +192,8 @@ public class CompetitionService implements InitializingBean {
     }
     competition.setEndDate(new Date()); //always the current date
     Competition save = save(competition);
-    notifyCompetitionFinished(competition);
+
+    notifyCompetitionFinished(save);
     return save;
   }
 

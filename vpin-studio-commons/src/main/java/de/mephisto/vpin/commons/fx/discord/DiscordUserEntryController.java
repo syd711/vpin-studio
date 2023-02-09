@@ -1,6 +1,7 @@
 package de.mephisto.vpin.commons.fx.discord;
 
 import de.mephisto.vpin.commons.fx.widgets.WidgetController;
+import de.mephisto.vpin.commons.utils.ImageUtil;
 import de.mephisto.vpin.restclient.representations.PlayerRepresentation;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -30,6 +31,7 @@ public class DiscordUserEntryController extends WidgetController implements Init
   public void setData(PlayerRepresentation player) {
     Image image = new Image(player.getAvatarUrl());
     userImageView.setImage(image);
+    ImageUtil.setClippedImage(userImageView, (int) (image.getWidth() / 2));
 
     userNameLabel.setText(player.getName());
   }

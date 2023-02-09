@@ -85,7 +85,7 @@
                         </Label>
                         <HBox alignment="CENTER_LEFT" GridPane.columnIndex="1" GridPane.rowIndex="1">
                            <children>
-                              <ComboBox fx:id="tableCombo" prefHeight="30.0" prefWidth="281.0" />
+                              <ComboBox fx:id="tableCombo" prefHeight="30.0" prefWidth="280.0" />
                               <Label textFill="WHITE">
                                  <font>
                                     <Font size="14.0" />
@@ -145,7 +145,7 @@
                         </Label>
                         <HBox alignment="CENTER_LEFT" spacing="6.0" GridPane.columnIndex="1">
                            <children>
-                              <ComboBox fx:id="channelsCombo" />
+                              <ComboBox fx:id="channelsCombo" prefWidth="240.0" />
                               <Label>
                                  <graphic>
                                     <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />

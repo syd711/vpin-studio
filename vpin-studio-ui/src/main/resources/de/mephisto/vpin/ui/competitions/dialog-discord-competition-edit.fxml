@@ -87,8 +87,8 @@
                               <Font size="14.0" />
                            </font>
                         </TextField>
-                        <ComboBox fx:id="serversCombo" prefHeight="30.0" prefWidth="210.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-                        <ComboBox fx:id="channelsCombo" prefHeight="30.0" prefWidth="210.0" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                        <ComboBox fx:id="serversCombo" prefHeight="30.0" prefWidth="240.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                        <ComboBox fx:id="channelsCombo" prefHeight="30.0" prefWidth="240.0" GridPane.columnIndex="1" GridPane.rowIndex="2" />
                         <Label styleClass="preference-description" text="The selected channel will be used to sync the highscore between the VPins." textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="3" />
                      </children>
                   </GridPane>
@@ -110,7 +110,7 @@
                         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                     </rowConstraints>
                      <children>
-                        <ComboBox fx:id="tableCombo" prefWidth="210.0" GridPane.columnIndex="1" />
+                        <ComboBox fx:id="tableCombo" prefWidth="280.0" GridPane.columnIndex="1" />
                         <Label text="Table:" textFill="WHITE">
                            <font>
                               <Font size="14.0" />

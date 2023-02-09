@@ -57,6 +57,7 @@ public class DiscordBotPreferencesController implements Initializable {
         Platform.runLater(() -> {
           Studio.stage.getScene().setCursor(Cursor.DEFAULT);
           WidgetFactory.showInformation(Studio.stage, "Test Successful", "The connection test was successful.", "The bot is member of " + guilds.size() + " server(s).");
+          validateInput();
         });
         client.shutdown();
       } catch (Exception e) {
@@ -77,49 +78,80 @@ public class DiscordBotPreferencesController implements Initializable {
     serverCombo.setDisable(true);
     channelCombo.setDisable(true);
 
-    BindingUtil.bindTextField(botTokenText, PreferenceNames.DISCORD_BOT_TOKEN, null);
-    BindingUtil.bindTextField(botChannelAllowList, PreferenceNames.DISCORD_BOT_ALLOW_LIST, null);
+    BindingUtil.bindTextField(botTokenText, PreferenceNames.DISCORD_BOT_TOKEN, "");
+    BindingUtil.bindTextField(botChannelAllowList, PreferenceNames.DISCORD_BOT_ALLOW_LIST, "");
 
 
-    botTokenText.textProperty().addListener((observableValue, s, t1) -> validateInput());
+    botTokenText.textProperty().addListener(new ChangeListener<String>() {
+      @Override
+      public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+       validateInput();
+      }
+    });
     this.validateInput();
   }
 
   private void validateInput() {
-    validateDefaultChannel();
-
-    if (!this.connectionTestBtn.isDisabled()) {
-      serverCombo.setDisable(false);
-      channelCombo.setDisable(false);
-    }
-    else {
+    boolean empty = StringUtils.isEmpty(botTokenText.getText());
+    connectionTestBtn.setDisable(empty);
+    if(empty) {
+      connectionTestBtn.setDisable(true);
       serverCombo.setDisable(true);
       channelCombo.setDisable(true);
+      return;
     }
+    validateDefaultChannel();
   }
 
   private void validateDefaultChannel() {
+    serverCombo.setDisable(true);
+    channelCombo.setDisable(true);
     List<DiscordServer> servers = client.getDiscordServers();
     ObservableList<DiscordServer> discordServers = FXCollections.observableArrayList(servers);
     serverCombo.setItems(FXCollections.observableList(discordServers));
 
-    serverCombo.valueProperty().addListener((observable, oldValue, newValue) -> client.setPreference(PreferenceNames.DISCORD_GUILD_ID, newValue.getId()));
-    channelCombo.valueProperty().addListener((observable, oldValue, newValue) -> client.setPreference(PreferenceNames.DISCORD_CHANNEL_ID, newValue.getId()));
+    serverCombo.valueProperty().addListener(new ChangeListener<DiscordServer>() {
+      @Override
+      public void changed(ObservableValue<? extends DiscordServer> observable, DiscordServer oldValue, DiscordServer newValue) {
+        if(newValue != null) {
+          client.setPreference(PreferenceNames.DISCORD_GUILD_ID, newValue.getId());
+        }
+        else {
+          client.setPreference(PreferenceNames.DISCORD_GUILD_ID, "");
+        }
+      }
+    });
+
+    channelCombo.valueProperty().addListener(new ChangeListener<DiscordChannel>() {
+      @Override
+      public void changed(ObservableValue<? extends DiscordChannel> observable, DiscordChannel oldValue, DiscordChannel newValue) {
+        if(newValue != null) {
+          client.setPreference(PreferenceNames.DISCORD_CHANNEL_ID, newValue.getId());
+        }
+        else {
+          client.setPreference(PreferenceNames.DISCORD_CHANNEL_ID, "");
+        }
+      }
+    });
 
     PreferenceEntryRepresentation preference = client.getPreference(PreferenceNames.DISCORD_GUILD_ID);
     long longValue = preference.getLongValue();
-    if(longValue > 0) {
+    if (longValue > 0) {
       DiscordServer discordServer = client.getDiscordServer(longValue);
-      serverCombo.setValue(discordServer);
+      if(discordServer != null) {
+        serverCombo.setDisable(false);
+        channelCombo.setDisable(false);
 
-      List<DiscordChannel> discordChannels = client.getDiscordChannels(discordServer.getId());
-      channelCombo.setItems(FXCollections.observableArrayList(discordChannels));
+        serverCombo.setValue(discordServer);
+        List<DiscordChannel> discordChannels = client.getDiscordChannels(discordServer.getId());
+        channelCombo.setItems(FXCollections.observableArrayList(discordChannels));
 
-      PreferenceEntryRepresentation channelPreference = client.getPreference(PreferenceNames.DISCORD_CHANNEL_ID);
-      long channelId = channelPreference.getLongValue();
-      if(channelId > 0) {
-        Optional<DiscordChannel> first = discordChannels.stream().filter(channel -> channel.getId() != channelId).findFirst();
-        first.ifPresent(discordChannel -> channelCombo.setValue(discordChannel));
+        PreferenceEntryRepresentation channelPreference = client.getPreference(PreferenceNames.DISCORD_CHANNEL_ID);
+        long channelId = channelPreference.getLongValue();
+        if (channelId > 0) {
+          Optional<DiscordChannel> first = discordChannels.stream().filter(channel -> channel.getId() == channelId).findFirst();
+          first.ifPresent(discordChannel -> channelCombo.setValue(discordChannel));
+        }
       }
     }
   }

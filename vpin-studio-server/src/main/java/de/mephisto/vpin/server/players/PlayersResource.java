@@ -39,7 +39,7 @@ public class PlayersResource {
   }
 
   @GetMapping("/{id}")
-  public Player getCompetition(@PathVariable("id") int id) {
+  public Player getPlayerById(@PathVariable("id") int id) {
     Player p = playerService.getBuildInPlayer(id);
     if (p == null) {
       throw new ResponseStatusException(NOT_FOUND, "No player found for id " + id);
@@ -48,7 +48,7 @@ public class PlayersResource {
   }
 
   @GetMapping("/player/{serverId}/{initials}")
-  public Player getCompetition(@PathVariable("serverId") long serverId, @PathVariable("initials") String initials) {
+  public Player getPlayerById(@PathVariable("serverId") long serverId, @PathVariable("initials") String initials) {
     Player player = playerService.getPlayerForInitials(serverId, initials);
     if (player == null) {
       throw new ResponseStatusException(NOT_FOUND, "No player found for initials '" + initials + "'");

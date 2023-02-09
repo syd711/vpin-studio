@@ -31,7 +31,7 @@ public class CompetitionDataHelper {
   }
 
   @NonNull
-  public static String toDataString(@NonNull Competition competition, @NonNull Game game, @NonNull ScoreSummary summary, @NonNull String messageId) {
+  public static String toDataString(@NonNull Competition competition, @NonNull Game game, @NonNull ScoreSummary summary, @NonNull long messageId) {
     try {
       StringBuilder b = new StringBuilder();
       b.append("Competition Table: ");
@@ -45,18 +45,22 @@ public class CompetitionDataHelper {
 
       DiscordCompetitionData data = new DiscordCompetitionData();
       data.setName(competition.getName());
-      data.setTableName(tableName);
-      data.setStartDate(competition.getStartDate());
-      data.setEndDate(competition.getEndDate());
-      data.setFileSize(game.getGameFileSize());
-      data.setStartMessageId(messageId);
+      data.setTname(tableName);
+      data.setSdt(competition.getStartDate());
+      data.setEdt(competition.getEndDate());
+      data.setFs(game.getGameFileSize());
+      data.setMsgId(messageId);
       data.setUuid(competition.getUuid());
       data.setRom(game.getRom());
       data.setOwner(competition.getOwner());
 
       List<Score> scores = summary.getScores();
       for (Score score : scores) {
-        data.getScores().add(toScoreEntry(score));
+        if(data.getScrs().size() >= 5) {
+          //mpf, we have to limit the highscore for the discord topic
+          break;
+        }
+        data.getScrs().add(toScoreEntry(score));
       }
 
       String json = objectMapper.writeValueAsString(data);
@@ -88,13 +92,12 @@ public class CompetitionDataHelper {
     return null;
   }
 
-  @Nullable
-  public static String getStartMessageId(@Nullable String topic) {
+  public static long getStartMessageId(@Nullable String topic) {
     DiscordCompetitionData data = getCompetitionData(topic);
     if (data != null) {
-      return data.getStartMessageId();
+      return data.getMsgId();
     }
-    return null;
+    return -1;
   }
 
   @Nullable
@@ -108,10 +111,10 @@ public class CompetitionDataHelper {
     if (data != null) {
       List<Score> scores = new ArrayList<>();
       ScoreSummary summary = new ScoreSummary(scores, new Date());
-      List<DiscordCompetitionScoreEntry> scoresEntries = data.getScores();
+      List<DiscordCompetitionScoreEntry> scoresEntries = data.getScrs();
       for (DiscordCompetitionScoreEntry scoresEntry : scoresEntries) {
-        Player player = discordService.getPlayerByInitials(serverId, scoresEntry.getInitials());
-        Score score = new Score(new Date(), -1, scoresEntry.getInitials(), player, scoresEntry.getScore(), HighscoreParser.toNumericScore(scoresEntry.getScore()), scoresEntry.getPosition());
+        Player player = discordService.getPlayerByInitials(serverId, scoresEntry.getI());
+        Score score = new Score(new Date(), -1, scoresEntry.getI(), player, scoresEntry.getS(), HighscoreParser.toNumericScore(scoresEntry.getS()), scoresEntry.getP());
         scores.add(score);
       }
       return summary;
@@ -139,9 +142,9 @@ public class CompetitionDataHelper {
 
   public static DiscordCompetitionScoreEntry toScoreEntry(Score score) {
     DiscordCompetitionScoreEntry entry = new DiscordCompetitionScoreEntry();
-    entry.setScore(score.getScore());
-    entry.setInitials(score.getPlayerInitials());
-    entry.setPosition(score.getPosition());
+    entry.setS(score.getScore());
+    entry.setI(score.getPlayerInitials());
+    entry.setP(score.getPosition());
     return entry;
   }
 }

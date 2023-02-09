@@ -51,6 +51,16 @@ public class Competition {
 
   private String name;
 
+  private String score;
+
+  public String getScore() {
+    return score;
+  }
+
+  public void setScore(String score) {
+    this.score = score;
+  }
+
   public long getDiscordServerId() {
     return discordServerId;
   }

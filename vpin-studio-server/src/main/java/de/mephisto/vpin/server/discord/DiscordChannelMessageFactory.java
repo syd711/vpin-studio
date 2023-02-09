@@ -26,6 +26,18 @@ public class DiscordChannelMessageFactory {
       "Duration:    %s days\n" +
       "------------------------------------------------------------```";
 
+
+  private static final String COMPETITION_CANCELLED_TEMPLATE = "%s has cancelled the competition \"%s\".";
+  private static final String COMPETITION_CANCELLED_ANONYMOUS_TEMPLATE = "The competition \"%s\" has been cancelled.";
+
+  public static String createCompetitionCancelledMessage(Player player, Competition competition) {
+    if (player != null) {
+      String playerName = "<@" + player.getId() + ">";
+      return String.format(COMPETITION_CANCELLED_TEMPLATE, playerName, competition.getName());
+    }
+    return String.format(COMPETITION_CANCELLED_ANONYMOUS_TEMPLATE, competition.getName());
+  }
+
   public static String createCompetitionHighscoreCreatedMessage(@NonNull Game game,
                                                                 @NonNull Competition competition,
                                                                 @NonNull Score oldScore,

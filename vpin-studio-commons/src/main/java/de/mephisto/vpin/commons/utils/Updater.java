@@ -139,7 +139,7 @@ public class Updater {
         return versionSegment;
       }
     } catch (Exception e) {
-      LOG.error("Update check failed: " + e.getMessage(), e);
+      LOG.error("Update check failed: " + e.getMessage());
     }
     return null;
   }

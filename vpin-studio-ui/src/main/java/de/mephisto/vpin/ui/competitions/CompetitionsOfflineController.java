@@ -86,6 +86,7 @@ public class CompetitionsOfflineController implements Initializable, StudioFXCon
   private ObservableList<CompetitionRepresentation> data;
   private List<CompetitionRepresentation> competitions;
   private CompetitionsController competitionsController;
+  private WaitOverlayController loaderController;
 
   // Add a public no-args constructor
   public CompetitionsOfflineController() {
@@ -232,8 +233,8 @@ public class CompetitionsOfflineController implements Initializable, StudioFXCon
     try {
       FXMLLoader loader = new FXMLLoader(WaitOverlayController.class.getResource("overlay-wait.fxml"));
       loadingOverlay = loader.load();
-      WaitOverlayController ctrl = loader.getController();
-      ctrl.setLoadingMessage("Loading Competitions...");
+      loaderController = loader.getController();
+      loaderController.setLoadingMessage("Loading Competitions...");
     } catch (IOException e) {
       LOG.error("Failed to load loading overlay: " + e.getMessage());
     }

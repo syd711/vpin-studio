@@ -8,44 +8,44 @@ public class DiscordCompetitionData {
   private String uuid;
   private String owner;
   private String rom;
-  private long fileSize;
-  private Date startDate;
-  private Date endDate;
+  private long fs;
+  private Date sdt;
+  private Date edt;
   private String name;
-  private String tableName;
-  private String startMessageId;
-  private List<DiscordCompetitionScoreEntry> scores = new ArrayList<>();
+  private String tname;
+  private long msgId;
+  private List<DiscordCompetitionScoreEntry> scrs = new ArrayList<>();
 
-  public String getTableName() {
-    return tableName;
+  public String getTname() {
+    return tname;
   }
 
-  public void setTableName(String tableName) {
-    this.tableName = tableName;
+  public void setTname(String tname) {
+    this.tname = tname;
   }
 
-  public Date getStartDate() {
-    return startDate;
+  public Date getSdt() {
+    return sdt;
   }
 
-  public void setStartDate(Date startDate) {
-    this.startDate = startDate;
+  public void setSdt(Date sdt) {
+    this.sdt = sdt;
   }
 
-  public Date getEndDate() {
-    return endDate;
+  public Date getEdt() {
+    return edt;
   }
 
-  public void setEndDate(Date endDate) {
-    this.endDate = endDate;
+  public void setEdt(Date edt) {
+    this.edt = edt;
   }
 
-  public String getStartMessageId() {
-    return startMessageId;
+  public long getMsgId() {
+    return msgId;
   }
 
-  public void setStartMessageId(String startMessageId) {
-    this.startMessageId = startMessageId;
+  public void setMsgId(long msgId) {
+    this.msgId = msgId;
   }
 
   public String getName() {
@@ -56,12 +56,12 @@ public class DiscordCompetitionData {
     this.name = name;
   }
 
-  public List<DiscordCompetitionScoreEntry> getScores() {
-    return scores;
+  public List<DiscordCompetitionScoreEntry> getScrs() {
+    return scrs;
   }
 
-  public void setScores(List<DiscordCompetitionScoreEntry> scores) {
-    this.scores = scores;
+  public void setScrs(List<DiscordCompetitionScoreEntry> scrs) {
+    this.scrs = scrs;
   }
 
   public String getUuid() {
@@ -88,11 +88,11 @@ public class DiscordCompetitionData {
     this.rom = rom;
   }
 
-  public long getFileSize() {
-    return fileSize;
+  public long getFs() {
+    return fs;
   }
 
-  public void setFileSize(long fileSize) {
-    this.fileSize = fileSize;
+  public void setFs(long fs) {
+    this.fs = fs;
   }
 }

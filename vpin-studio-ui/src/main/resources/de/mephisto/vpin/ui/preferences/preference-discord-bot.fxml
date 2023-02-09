@@ -94,8 +94,8 @@
                         <Font size="14.0" />
                      </font>
                   </Label>
-                  <ComboBox fx:id="channelCombo" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-                  <ComboBox fx:id="serverCombo" layoutX="212.0" layoutY="72.0" prefWidth="150.0" GridPane.columnIndex="1" />
+                  <ComboBox fx:id="channelCombo" prefHeight="30.0" prefWidth="240.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                  <ComboBox fx:id="serverCombo" layoutX="212.0" layoutY="72.0" prefHeight="30.0" prefWidth="240.0" GridPane.columnIndex="1" />
                </children>
             </GridPane>
             <Label styleClass="preference-description" text="By default, the bot will respond to commands from all users." textFill="WHITE">
