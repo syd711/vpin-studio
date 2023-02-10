@@ -92,6 +92,13 @@ public class GameService {
       return false;
     }
 
+    if (descriptor.isDeleteHighscores()) {
+      ResetHighscoreDescriptor d = new ResetHighscoreDescriptor();
+      d.setGameId(game.getId());
+      d.setDeleteHistory(true);
+      resetGame(d);
+    }
+
     boolean success = true;
     if (descriptor.isDeleteTable()) {
       if (!FileUtils.delete(game.getGameFile())) {
@@ -117,13 +124,6 @@ public class GameService {
         success = false;
       }
     }
-
-    if (descriptor.isDeleteFromPopper()) {
-      if (!pinUPConnector.deleteGame(descriptor.getGameId())) {
-        success = false;
-      }
-    }
-
 
     if (descriptor.isDeletePupPack()) {
       if (game.getPupPackFolder() != null && !FileUtils.deleteFolder(game.getPupPackFolder())) {
@@ -153,16 +153,15 @@ public class GameService {
       }
     }
 
-    if (descriptor.isDeleteHighscores()) {
-      ResetHighscoreDescriptor d = new ResetHighscoreDescriptor();
-      d.setGameId(game.getId());
-      d.setDeleteHistory(true);
-      resetGame(d);
-    }
-
     GameDetails byPupId = gameDetailsRepository.findByPupId(game.getId());
     if (byPupId != null) {
       gameDetailsRepository.delete(byPupId);
+    }
+
+    if (descriptor.isDeleteFromPopper()) {
+      if (!pinUPConnector.deleteGame(descriptor.getGameId())) {
+        success = false;
+      }
     }
 
     LOG.info("Deleted " + game.getGameDisplayName());
@@ -242,7 +241,6 @@ public class GameService {
       if (!emulator.getName().equalsIgnoreCase(Emulator.VISUAL_PINBALL_X)) {
         return game;
       }
-      gameDetailsRepository.findByPupId(gameId);
       applyGameDetails(game, true);
       highscoreService.scanScore(game);
 
@@ -328,21 +326,14 @@ public class GameService {
     game.setTableName(gameDetails.getTableName());
     game.setIgnoredValidations(gameDetails.getIgnoredValidations());
 
-//    String assets = gameDetails.getAssets();
-//    if(!StringUtils.isEmpty(assets)) {
-//      String[] assetNames = assets.split("\\|");
-//      for (String assetName : assetNames) {
-//        game.getAssets().add(new GameAsset(assetName, false));
-//      }
-//    }
-
     //run validations at the end!!!
     game.setValidationState(gameValidator.validate(game));
   }
 
   public Game save(Game game) throws Exception {
     GameDetails gameDetails = gameDetailsRepository.findByPupId(game.getId());
-    boolean romChanged = !String.valueOf(game.getRom()).equalsIgnoreCase(String.valueOf(gameDetails.getRomName()));
+    String existingRom = String.valueOf(gameDetails.getRomName());
+    boolean romChanged = !String.valueOf(game.getRom()).equalsIgnoreCase(existingRom);
 
     gameDetails.setRomName(game.getRom());
     gameDetails.setHsFileName(game.getHsFileName());

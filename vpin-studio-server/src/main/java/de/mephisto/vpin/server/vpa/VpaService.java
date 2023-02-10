@@ -50,10 +50,9 @@ public class VpaService {
       VpaImporter importer = new VpaImporter(descriptor, vpaFile, pinUPConnector, systemService, highscoreService);
       Game importedGame = importer.startImport();
       if (importedGame != null) {
+        gameService.scanGame(importedGame.getId());
         gameService.save(importedGame);
 
-        gameService.scanGame(importedGame.getId());
-        highscoreService.scanScore(importedGame);
         Game game = gameService.getGame(importedGame.getId());
         cardService.generateCard(game, false);
         return true;
