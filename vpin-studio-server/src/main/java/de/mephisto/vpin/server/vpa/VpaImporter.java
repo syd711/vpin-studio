@@ -191,14 +191,21 @@ public class VpaImporter {
     return new File(systemService.getVPXTablesFolder(), manifest.getGameFileName());
   }
 
-  public static File newFile(File destinationDir, ZipEntry zipEntry) throws IOException {
+  public File newFile(File destinationDir, ZipEntry zipEntry) throws IOException {
     File destFile = new File(destinationDir, zipEntry.getName());
+
+    //copy directb2s file to another folder
+    if(zipEntry.getName().endsWith(".directb2s") && zipEntry.getName().contains("AdditionalFiles")) {
+      String name = zipEntry.getName().substring(zipEntry.getName().lastIndexOf('/') + 1);
+      destFile = new File(systemService.getDirectB2SMediaFolder(), name);
+      LOG.info("Importing media directb2s file \"" + destFile.getCanonicalPath() + "\"");
+    }
 
     String destDirPath = destinationDir.getCanonicalPath();
     String destFilePath = destFile.getCanonicalPath();
 
     if (!destFilePath.startsWith(destDirPath + File.separator)) {
-      throw new IOException("Entry is outside of the target dir: " + zipEntry.getName());
+//      throw new IOException("Entry is outside of the target dir: " + zipEntry.getName());
     }
     return destFile;
   }
