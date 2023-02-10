@@ -699,6 +699,7 @@ public class TablesSidebarController implements Initializable {
 
       try {
         client.saveGame(gameRepresentation);
+        refreshHighscore(game, true);
       } catch (Exception e) {
         WidgetFactory.showAlert(Studio.stage, e.getMessage());
       }
