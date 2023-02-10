@@ -399,8 +399,10 @@
 }
 
 .check-box:disabled, .check-box:disabled > * {
-  -fx-opacity: 0.7 ;
-  -fx-background-color: #CCCCCC;
+  -fx-opacity: 0.8 ;
+  -fx-background-color: #B0ABAB;
+  -fx-background-insets: 2, 2, 2;
+  -fx-background-radius: 2px;
 }
 
 /**

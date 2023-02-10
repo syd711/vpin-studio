@@ -113,7 +113,7 @@ public class VpaService {
 
       @Override
       public Job getJob() {
-        return new VpaExporterJob(vpRegFile, game, exportDescriptor, manifest, highscore, versions, target);
+        return new VpaExporterJob(vpRegFile,  systemService.getVPXMusicFolder(), game, exportDescriptor, manifest, highscore, versions, target);
       }
 
       @Override

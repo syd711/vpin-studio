@@ -325,6 +325,10 @@ public class SystemService implements InitializingBean {
     return new File(getVisualPinballInstallationFolder(), "Tables/");
   }
 
+  public File getVPXMusicFolder() {
+    return new File(getVisualPinballInstallationFolder(), "Music/");
+  }
+
   public File getVPXExe() {
     return new File(getVisualPinballInstallationFolder(), "VPinballX.exe");
   }

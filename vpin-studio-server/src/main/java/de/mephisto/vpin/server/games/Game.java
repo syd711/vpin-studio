@@ -342,7 +342,7 @@ public class Game {
   @JsonIgnore
   public File getMusicFolder() {
     if (!StringUtils.isEmpty(this.getRom())) {
-      return new File(new File(systemService.getVisualPinballInstallationFolder(), "Music"), this.getRom());
+      return new File(systemService.getVPXMusicFolder(), this.getRom());
     }
     return null;
   }

@@ -18,10 +18,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
+import java.io.*;
 import java.nio.file.Files;
 import java.util.Date;
 import java.util.List;
@@ -33,6 +30,7 @@ public class VpaExporterJob implements Job {
   private final static Logger LOG = LoggerFactory.getLogger(VpaService.class);
 
   private final File vprRegFile;
+  private File musicFolder;
   private final Game game;
   private final ExportDescriptor exportDescriptor;
   private final VpaManifest manifest;
@@ -41,7 +39,8 @@ public class VpaExporterJob implements Job {
   private final File target;
   private final ObjectMapper objectMapper;
 
-  public VpaExporterJob(@NonNull File vprRegFile, 
+  public VpaExporterJob(@NonNull File vprRegFile,
+                        @NonNull File musicFolder,
                         @NonNull Game game, 
                         @NonNull ExportDescriptor exportDescriptor, 
                         @NonNull VpaManifest manifest, 
@@ -49,6 +48,7 @@ public class VpaExporterJob implements Job {
                         @NonNull List<HighscoreVersion> scoreHistory,
                         @NonNull File target) {
     this.vprRegFile = vprRegFile;
+    this.musicFolder = musicFolder;
     this.game = game;
     this.exportDescriptor = exportDescriptor;
     this.manifest = manifest;
@@ -121,6 +121,10 @@ public class VpaExporterJob implements Job {
         zipFile(game.getDirectB2SFile(), getGameFolderName() + "/Tables/" + game.getDirectB2SFile().getName(), zipOut);
       }
 
+      if(game.getDirectB2SMediaFile().exists()) {
+        zipFile(game.getDirectB2SMediaFile(), "AdditionalFiles/" + game.getDirectB2SMediaFile().getName(), zipOut);
+      }
+
       // DMDs
       if (game.getUltraDMDFolder().exists()) {
         zipFile(game.getUltraDMDFolder(), getGameFolderName() + "/Tables/" + game.getUltraDMDFolder().getName(), zipOut);
@@ -135,9 +139,18 @@ public class VpaExporterJob implements Job {
         zipFile(game.getAltSoundFolder(), getGameFolderName() + "/VPinMAME/altsound/" + game.getAltSoundFolder().getName(), zipOut);
       }
 
-      //aways pack whole music folder
-      if (exportDescriptor.isExportPupPack() && game.getMusicFolder() != null && game.getMusicFolder().exists()) {
-        zipFile(game.getMusicFolder().getParentFile(), getGameFolderName() + "/Music/", zipOut);
+      //aways pack whole music folder, it may contain gamefiles
+      if (exportDescriptor.isExportPupPack()) {
+        File[] files = musicFolder.listFiles((dir, name) -> name.endsWith(".mp3"));
+        if(files != null) {
+          for (File file : files) {
+            zipFile(file, getGameFolderName() + "/Music/" + file.getName(), zipOut);
+          }
+        }
+
+        if(game.getMusicFolder() != null && game.getMusicFolder().exists()) {
+          zipFile(game.getMusicFolder(), getGameFolderName() + "/Music/" + game.getMusicFolder().getName(), zipOut);
+        }
       }
 
       zipPupPack(zipOut);
@@ -251,6 +264,7 @@ public class VpaExporterJob implements Job {
       }
       return;
     }
+
     FileInputStream fis = new FileInputStream(fileToZip);
     ZipEntry zipEntry = new ZipEntry(fileName);
     zipOut.putNextEntry(zipEntry);
