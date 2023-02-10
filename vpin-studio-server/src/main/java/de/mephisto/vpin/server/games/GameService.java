@@ -1,5 +1,6 @@
 package de.mephisto.vpin.server.games;
 
+import de.mephisto.vpin.commons.HighscoreType;
 import de.mephisto.vpin.commons.utils.FileUtils;
 import de.mephisto.vpin.restclient.DeleteDescriptor;
 import de.mephisto.vpin.restclient.PreferenceNames;
@@ -153,21 +154,16 @@ public class GameService {
     }
 
     if (descriptor.isDeleteHighscores()) {
-      if (!FileUtils.delete(game.getNvRamFile())) {
-        success = false;
-      }
-
-      if (game.getEMHighscoreFile() != null && !FileUtils.delete(game.getEMHighscoreFile())) {
-        success = false;
-      }
+      ResetHighscoreDescriptor d = new ResetHighscoreDescriptor();
+      d.setGameId(game.getId());
+      d.setDeleteHistory(true);
+      resetGame(d);
     }
 
     GameDetails byPupId = gameDetailsRepository.findByPupId(game.getId());
     if (byPupId != null) {
       gameDetailsRepository.delete(byPupId);
     }
-
-    highscoreService.deleteScores(game.getId());
 
     LOG.info("Deleted " + game.getGameDisplayName());
     return success;
@@ -324,9 +320,7 @@ public class GameService {
 
 
     Optional<Highscore> highscore = this.highscoreService.getHighscore(game.getId());
-    if (highscore.isPresent()) {
-      game.setHighscoreType(highscore.get().getType());
-    }
+    highscore.ifPresent(value -> game.setHighscoreType(value.getType() != null ? HighscoreType.valueOf(value.getType()) : null));
 
     game.setOriginalRom(romService.getOriginalRom(game.getRom()));
     game.setCompeted(competitionService.isCompeted(game.getId()));
@@ -359,6 +353,11 @@ public class GameService {
     Game original = getGame(game.getId());
     if (original != null && original.getVolume() != game.getVolume()) {
       pinUPConnector.updateVolume(game, game.getVolume());
+    }
+
+    //check if there is mismatch in the ROM name, overwrite popper value
+    if(original != null && !StringUtils.isEmpty(original.getRom()) && !StringUtils.isEmpty(game.getRom()) && !original.getRom().equals(game.getRom())) {
+      pinUPConnector.updateRom(game, game.getRom());
     }
 
     LOG.info("Saved " + game);

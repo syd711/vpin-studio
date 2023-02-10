@@ -1,6 +1,7 @@
 package de.mephisto.vpin.server.games;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import de.mephisto.vpin.commons.HighscoreType;
 import de.mephisto.vpin.restclient.PopperScreen;
 import de.mephisto.vpin.server.highscores.HighscoreMetadata;
 import de.mephisto.vpin.server.popper.Emulator;
@@ -37,7 +38,7 @@ public class Game {
   private int validationState;
   private String ignoredValidations;
   private int volume;
-  private String highscoreType;
+  private HighscoreType highscoreType;
   private boolean competed;
 
   private List<GameAsset> assets = new ArrayList<>();
@@ -67,11 +68,11 @@ public class Game {
     return -1;
   }
 
-  public String getHighscoreType() {
+  public HighscoreType getHighscoreType() {
     return highscoreType;
   }
 
-  public void setHighscoreType(String highscoreType) {
+  public void setHighscoreType(HighscoreType highscoreType) {
     this.highscoreType = highscoreType;
   }
 
@@ -211,7 +212,7 @@ public class Game {
   }
 
   public boolean isRomRequired() {
-    return getHighscoreType() != null && (getHighscoreType().equals(HighscoreMetadata.TYPE_NVRAM));
+    return getHighscoreType() != null && (getHighscoreType().equals(HighscoreType.NVRam));
   }
 
   public Date getModified() {

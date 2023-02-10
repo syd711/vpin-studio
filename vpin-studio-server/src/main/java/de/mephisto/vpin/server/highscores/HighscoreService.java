@@ -1,7 +1,7 @@
 package de.mephisto.vpin.server.highscores;
 
 import com.google.common.annotations.VisibleForTesting;
-import de.mephisto.vpin.commons.HighscoreTypes;
+import de.mephisto.vpin.commons.HighscoreType;
 import de.mephisto.vpin.restclient.CompetitionType;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.ResetHighscoreDescriptor;
@@ -88,7 +88,7 @@ public class HighscoreService implements InitializingBean {
       h = highscore.get();
       h.setFilename(metadata.getFilename());
       h.setLastModified(metadata.getModified());
-      h.setType(metadata.getType());
+      h.setType(metadata.getType() != null ? metadata.getType().name() : null);
       h.setRaw(metadata.getRaw());
       h.setStatus(metadata.getStatus());
       h.setLastScanned(metadata.getScanned());
@@ -98,27 +98,19 @@ public class HighscoreService implements InitializingBean {
     return metadata;
   }
 
-  public void deleteScores(int gameId) {
-    Optional<Highscore> byGameId = highscoreRepository.findByGameId(gameId);
-    byGameId.ifPresent(highscore -> highscoreRepository.delete(highscore));
-    List<HighscoreVersion> versions = highscoreVersionRepository.findByGameId(gameId);
-    highscoreVersionRepository.deleteAll(versions);
-    LOG.info("Deleted all highscores and versions for " + gameId);
-  }
-
   public boolean resetHighscore(Game game, ResetHighscoreDescriptor descriptor) {
-    String highscoreType = game.getHighscoreType();
+    HighscoreType highscoreType = game.getHighscoreType();
     boolean result = false;
     switch (highscoreType) {
-      case HighscoreTypes.TYPE_EM: {
+      case EM: {
         result = game.getEMHighscoreFile() != null && game.getEMHighscoreFile().exists() && game.getEMHighscoreFile().delete();
         break;
       }
-      case HighscoreTypes.TYPE_NVRAM: {
+      case NVRam: {
         result = game.getNvRamFile().exists() && game.getNvRamFile().delete();//TODO unify game file access
         break;
       }
-      case HighscoreTypes.TYPE_VREG: {
+      case VPReg: {
         VPReg reg = new VPReg(systemService.getVPRegFile(), game);
         result = reg.resetHighscores();
         break;
@@ -128,9 +120,7 @@ public class HighscoreService implements InitializingBean {
       }
     }
 
-    if (descriptor.isDeleteHistory()) {
-      deleteScores(game.getId());
-    }
+    deleteScores(game.getId(), descriptor.isDeleteHistory());
     return result;
   }
 
@@ -290,7 +280,7 @@ public class HighscoreService implements InitializingBean {
       metadata.setModified(h.getLastModified());
       metadata.setScanned(h.getLastScanned());
       metadata.setFilename(h.getFilename());
-      metadata.setType(h.getType());
+      metadata.setType(h.getType() != null ? HighscoreType.valueOf(h.getType()) : null);
       metadata.setStatus(h.getStatus());
       summary.setMetadata(metadata);
     }
@@ -376,7 +366,7 @@ public class HighscoreService implements InitializingBean {
     if (StringUtils.isEmpty(existingHighscore.get().getRaw())) {
       if (!StringUtils.isEmpty(metadata.getRaw())) {
         existingScore.setRaw(metadata.getRaw());
-        existingScore.setType(metadata.getType());
+        existingScore.setType(metadata.getType() != null ? metadata.getType().name() : null);
         existingScore.setLastScanned(metadata.getScanned());
         existingScore.setLastModified(metadata.getModified());
         existingScore.setFilename(metadata.getFilename());
@@ -425,6 +415,18 @@ public class HighscoreService implements InitializingBean {
     //finally, fire the update event to notify all listeners
     HighscoreChangeEvent event = new HighscoreChangeEvent(game, oldScore, newScore);
     triggerHighscoreChange(event);
+  }
+
+  private void deleteScores(int gameId, boolean deleteHistory) {
+    Optional<Highscore> byGameId = highscoreRepository.findByGameId(gameId);
+    byGameId.ifPresent(highscore -> highscoreRepository.delete(highscore));
+    LOG.info("Deleted latest highscore for " + gameId);
+
+    if (deleteHistory) {
+      List<HighscoreVersion> versions = highscoreVersionRepository.findByGameId(gameId);
+      highscoreVersionRepository.deleteAll(versions);
+      LOG.info("Deleted all highscore versions for " + gameId);
+    }
   }
 
   public int calculateChangedPosition(@NonNull List<Score> oldScores, @NonNull List<Score> newScores) {

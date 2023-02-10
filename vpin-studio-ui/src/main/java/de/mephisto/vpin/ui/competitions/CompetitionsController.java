@@ -17,10 +17,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.geometry.Pos;
 import javafx.scene.Parent;
-import javafx.scene.control.Label;
-import javafx.scene.control.Tab;
-import javafx.scene.control.TabPane;
-import javafx.scene.control.TitledPane;
+import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
@@ -87,6 +84,9 @@ public class CompetitionsController implements Initializable, StudioFXController
   @FXML
   private VBox scoreGraphBox;
 
+  @FXML
+  private Accordion accordion;
+
 
   private CompetitionsOfflineController offlineController;
   private CompetitionsDiscordController discordController;
@@ -130,7 +130,8 @@ public class CompetitionsController implements Initializable, StudioFXController
 
     loadTabs();
     updateSelection(Optional.empty());
-    scorePane.setExpanded(true);
+
+    accordion.setExpandedPane(scorePane);
   }
 
   public void setCompetition(CompetitionRepresentation competition) {

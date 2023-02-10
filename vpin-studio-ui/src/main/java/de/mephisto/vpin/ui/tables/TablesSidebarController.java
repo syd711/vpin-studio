@@ -551,6 +551,7 @@ public class TablesSidebarController implements Initializable {
       gameRepresentation.setRom(romName);
       try {
         client.saveGame(gameRepresentation);
+        refreshHighscore(game, true);
       } catch (Exception e) {
         WidgetFactory.showAlert(Studio.stage, e.getMessage());
       }
@@ -569,6 +570,7 @@ public class TablesSidebarController implements Initializable {
       gameRepresentation.setTableName(tableName);
       try {
         client.saveGame(gameRepresentation);
+        refreshHighscore(game, true);
       } catch (Exception e) {
         WidgetFactory.showAlert(Studio.stage, e.getMessage());
       }

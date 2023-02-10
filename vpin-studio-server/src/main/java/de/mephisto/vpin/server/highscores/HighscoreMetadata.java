@@ -1,15 +1,12 @@
 package de.mephisto.vpin.server.highscores;
 
-import de.mephisto.vpin.commons.HighscoreTypes;
+import de.mephisto.vpin.commons.HighscoreType;
 
 import java.util.Date;
 
 public class HighscoreMetadata {
-  public static final String TYPE_VREG = HighscoreTypes.TYPE_VREG;
-  public static final String TYPE_EM = HighscoreTypes.TYPE_EM;
-  public static final String TYPE_NVRAM = HighscoreTypes.TYPE_NVRAM;
 
-  private String type;
+  private HighscoreType type;
   private String displayName;
   private String filename;
   private Date modified;
@@ -50,11 +47,11 @@ public class HighscoreMetadata {
     this.raw = raw;
   }
 
-  public String getType() {
+  public HighscoreType getType() {
     return type;
   }
 
-  public void setType(String type) {
+  public void setType(HighscoreType type) {
     this.type = type;
   }
 

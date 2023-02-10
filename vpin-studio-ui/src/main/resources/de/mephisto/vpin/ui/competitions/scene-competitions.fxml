@@ -56,7 +56,7 @@
    <right>
       <VBox styleClass="subpanel" BorderPane.alignment="CENTER">
          <children>
-            <Accordion prefWidth="600.0">
+            <Accordion fx:id="accordion" prefWidth="600.0">
               <panes>
                 <TitledPane fx:id="scorePane" text="Score Graph">
                      <content>

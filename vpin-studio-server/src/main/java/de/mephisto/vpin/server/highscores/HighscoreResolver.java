@@ -1,5 +1,6 @@
 package de.mephisto.vpin.server.highscores;
 
+import de.mephisto.vpin.commons.HighscoreType;
 import de.mephisto.vpin.commons.utils.SystemCommandExecutor;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.system.SystemService;
@@ -58,7 +59,7 @@ class HighscoreResolver {
 
       String rawScore = readNvHighscore(game, metadata);
       if (rawScore == null) {
-        rawScore = readVRegHighscore(game, metadata);
+        rawScore = readVPRegHighscore(game, metadata);
       }
       if (rawScore == null) {
         rawScore = parseHSFileHighscore(game, metadata);
@@ -85,7 +86,7 @@ class HighscoreResolver {
   private String parseHSFileHighscore(Game game, HighscoreMetadata metadata) throws IOException {
     File hsFile = game.getEMHighscoreFile();
     if (hsFile != null && hsFile.exists()) {
-      metadata.setType(HighscoreMetadata.TYPE_EM);
+      metadata.setType(HighscoreType.EM);
       metadata.setFilename(hsFile.getCanonicalPath());
       metadata.setModified(new Date(hsFile.lastModified()));
 
@@ -118,11 +119,11 @@ class HighscoreResolver {
   /**
    * We use the manual set rom name to find the highscore in the "/User/VPReg.stg" file.
    */
-  private String readVRegHighscore(Game game, HighscoreMetadata metadata) throws IOException {
+  private String readVPRegHighscore(Game game, HighscoreMetadata metadata) throws IOException {
     VPReg reg = new VPReg(systemService.getVPRegFile(), game);
 
     if (reg.containsGame()) {//TODO cleanup metadata usage
-      metadata.setType(HighscoreMetadata.TYPE_VREG);
+      metadata.setType(HighscoreType.VPReg);
       metadata.setFilename(systemService.getVPRegFile().getCanonicalPath());
       metadata.setModified(new Date(systemService.getVPRegFile().lastModified()));
 
@@ -131,7 +132,7 @@ class HighscoreResolver {
         metadata.setRaw(summary.toRaw());
       }
       if (StringUtils.isEmpty(metadata.getRaw())) {
-        metadata.setStatus("Found VReg entry, but no highscore entries in it.");
+        metadata.setStatus("Found VPReg entry, but no highscore entries in it.");
       }
       return metadata.getRaw();
     }
@@ -177,7 +178,7 @@ class HighscoreResolver {
   }
 
   private String executePINemHi(String param, HighscoreMetadata metadata) throws Exception {
-    metadata.setType(HighscoreMetadata.TYPE_NVRAM);
+    metadata.setType(HighscoreType.NVRam);
     File commandFile = systemService.getPinemhiCommandFile();
     try {
       List<String> commands = Arrays.asList(commandFile.getName(), param);

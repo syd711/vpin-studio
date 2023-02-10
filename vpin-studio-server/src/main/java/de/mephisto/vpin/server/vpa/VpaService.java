@@ -27,7 +27,7 @@ public class VpaService {
 
   public final static String DATA_HIGHSCORE_HISTORY = "highscores";
   public final static String DATA_HIGHSCORE = "highscore";
-  public final static String DATA_VREG_HIGHSCORE = "VRegHighscore";
+  public final static String DATA_VPREG_HIGHSCORE = "vpregHighscore";
 
   @Autowired
   private SystemService systemService;
@@ -63,27 +63,39 @@ public class VpaService {
 
   public boolean exportVpa(@NonNull ExportDescriptor exportDescriptor) {
     List<Integer> gameIds = exportDescriptor.getGameIds();
-    boolean result = true;
-    for (Integer gameId : gameIds) {
-      Game game = gameService.getGame(gameId);
+
+    //single export
+    if (gameIds.size() == 1) {
+      VpaManifest manifest = exportDescriptor.getManifest();
+      Game game = gameService.getGame(gameIds.get(0));
       if (game != null) {
         File target = new File(systemService.getVpaArchiveFolder(), game.getGameDisplayName().replaceAll(" ", "-") + ".vpa");
-        if (!exportVpa(game, exportDescriptor, target)) {
-          result = false;
-        }
+        return exportVpa(game, manifest, exportDescriptor, target);
       }
     }
-    return result;
+    else {
+      //multi export
+      boolean result = true;
+      for (Integer gameId : gameIds) {
+        VpaManifest manifest = this.getManifest(gameId);
+        Game game = gameService.getGame(gameId);
+        if (game != null) {
+          File target = new File(systemService.getVpaArchiveFolder(), game.getGameDisplayName().replaceAll(" ", "-") + ".vpa");
+          if(!exportVpa(game, manifest, exportDescriptor, target)) {
+            result = false;
+          }
+        }
+      }
+      return result;
+    }
+
+    return false;
   }
 
-  public boolean exportVpa(@NonNull Game game, @NonNull ExportDescriptor exportDescriptor, @NonNull File target) {
-    VpaManifest manifest = exportDescriptor.getManifest();
-    if (manifest != null && getManifest(game.getId()) == null) {
-      LOG.error("Unable to export " + game.getGameDisplayName() + ": no manifest could be created.");
-      return false;
-    }
+  private boolean exportVpa(@NonNull Game game, @NonNull VpaManifest manifest, @NonNull ExportDescriptor exportDescriptor, @NonNull File target) {
     List<HighscoreVersion> versions = highscoreService.getAllHighscoreVersions(game.getId());
     Highscore highscore = highscoreService.getOrCreateHighscore(game);
+    File vpRegFile = systemService.getVPRegFile();
 
     JobDescriptor descriptor = new JobDescriptor() {
       @Override
@@ -98,7 +110,7 @@ public class VpaService {
 
       @Override
       public Job getJob() {
-        return new VpaExporterJob(game, exportDescriptor, highscore, versions, target);
+        return new VpaExporterJob(vpRegFile, game, exportDescriptor, manifest, highscore, versions, target);
       }
 
       @Override

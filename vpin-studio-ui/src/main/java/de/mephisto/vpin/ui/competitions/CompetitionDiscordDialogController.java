@@ -1,6 +1,6 @@
 package de.mephisto.vpin.ui.competitions;
 
-import de.mephisto.vpin.commons.EmulatorTypes;
+import de.mephisto.vpin.commons.EmulatorType;
 import de.mephisto.vpin.commons.fx.DialogController;
 import de.mephisto.vpin.restclient.CompetitionType;
 import de.mephisto.vpin.restclient.PopperScreen;
@@ -169,7 +169,7 @@ public class CompetitionDiscordDialogController implements Initializable, Dialog
     List<GameRepresentation> games = client.getGames();
     List<GameRepresentation> filtered = new ArrayList<>();
     for (GameRepresentation game : games) {
-      if (game.getEmulator().getName().equals(EmulatorTypes.VISUAL_PINBALL_X)) {
+      if (game.getEmulator().getName().equals(EmulatorType.VISUAL_PINBALL_X)) {
         filtered.add(game);
       }
     }

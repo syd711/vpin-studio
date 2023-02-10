@@ -1,6 +1,6 @@
 package de.mephisto.vpin.ui.tables;
 
-import de.mephisto.vpin.commons.EmulatorTypes;
+import de.mephisto.vpin.commons.EmulatorType;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.VPinStudioClient;
 import de.mephisto.vpin.restclient.ValidationCode;
@@ -567,7 +567,7 @@ public class TablesController implements Initializable, StudioFXController {
   private void filterGames(List<GameRepresentation> games) {
     List<GameRepresentation> filtered = new ArrayList<>();
     String filterValue = textfieldSearch.textProperty().getValue();
-    String emulatorValue = EmulatorTypes.VISUAL_PINBALL_X;//emulatorTypeCombo.getValue();
+    String emulatorValue = EmulatorType.VISUAL_PINBALL_X;//emulatorTypeCombo.getValue();
     for (GameRepresentation game : games) {
       if (!StringUtils.isEmpty(emulatorValue) && !game.getEmulator().getName().equals(emulatorValue)) {
         continue;

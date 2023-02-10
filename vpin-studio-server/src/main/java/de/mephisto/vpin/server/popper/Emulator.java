@@ -1,11 +1,11 @@
 package de.mephisto.vpin.server.popper;
 
-import de.mephisto.vpin.commons.EmulatorTypes;
+import de.mephisto.vpin.commons.EmulatorType;
 
 public class Emulator {
-  public final static String VISUAL_PINBALL_X = EmulatorTypes.VISUAL_PINBALL_X;
-  public final static String PINBALL_FX3 = EmulatorTypes.PINBALL_FX3;
-  public final static String FUTURE_PINBALL = EmulatorTypes.FUTURE_PINBALL;
+  public final static String VISUAL_PINBALL_X = EmulatorType.VISUAL_PINBALL_X;
+  public final static String PINBALL_FX3 = EmulatorType.PINBALL_FX3;
+  public final static String FUTURE_PINBALL = EmulatorType.FUTURE_PINBALL;
 
   private String name;
   private int id;

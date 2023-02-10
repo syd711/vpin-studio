@@ -3,14 +3,14 @@ package de.mephisto.vpin.server.vpa;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.thoughtworks.xstream.core.util.Base64Encoder;
-import de.mephisto.vpin.restclient.ExportDescriptor;
-import de.mephisto.vpin.restclient.Job;
-import de.mephisto.vpin.restclient.JobDescriptor;
-import de.mephisto.vpin.restclient.PopperScreen;
+import de.mephisto.vpin.commons.HighscoreType;
+import de.mephisto.vpin.restclient.*;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.highscores.Highscore;
 import de.mephisto.vpin.server.highscores.HighscoreVersion;
 import de.mephisto.vpin.server.popper.GameMediaItem;
+import de.mephisto.vpin.server.util.vpreg.VPReg;
+import de.mephisto.vpin.server.util.vpreg.VPRegScoreSummary;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import org.apache.commons.lang3.StringUtils;
@@ -31,16 +31,26 @@ import java.util.zip.ZipOutputStream;
 public class VpaExporterJob implements Job {
   private final static Logger LOG = LoggerFactory.getLogger(VpaService.class);
 
+  private final File vprRegFile;
   private final Game game;
   private final ExportDescriptor exportDescriptor;
+  private final VpaManifest manifest;
   private final Highscore highscore;
   private final List<HighscoreVersion> scoreHistory;
   private final File target;
   private final ObjectMapper objectMapper;
 
-  public VpaExporterJob(@NonNull Game game, @NonNull ExportDescriptor exportDescriptor, @Nullable Highscore highscore, @NonNull List<HighscoreVersion> scoreHistory, @NonNull File target) {
+  public VpaExporterJob(@NonNull File vprRegFile, 
+                        @NonNull Game game, 
+                        @NonNull ExportDescriptor exportDescriptor, 
+                        @NonNull VpaManifest manifest, 
+                        @Nullable Highscore highscore, 
+                        @NonNull List<HighscoreVersion> scoreHistory,
+                        @NonNull File target) {
+    this.vprRegFile = vprRegFile;
     this.game = game;
     this.exportDescriptor = exportDescriptor;
+    this.manifest = manifest;
     this.highscore = highscore;
     this.scoreHistory = scoreHistory;
     this.target = target;
@@ -63,20 +73,31 @@ public class VpaExporterJob implements Job {
 
       //store highscore history
       if (exportDescriptor.isExportHighscores()) {
+        //zip EM file
         if (game.getEMHighscoreFile() != null && game.getEMHighscoreFile().exists()) {
           zipFile(game.getEMHighscoreFile(), getGameFolderName() + "/User/" + game.getEMHighscoreFile().getName(), zipOut);
         }
 
+        //zip nvram file
         if (game.getNvRamFile().exists()) {
           zipFile(game.getNvRamFile(), getGameFolderName() + "/VPinMAME/nvram/" + game.getNvRamFile().getName(), zipOut);
         }
 
+        //write highscore history
         List<ScoreVersionEntry> scores = scoreHistory.stream().map(ScoreVersionEntry::new).collect(Collectors.toList());
         String scoresJson = objectMapper.writeValueAsString(scores);
-        exportDescriptor.getManifest().getAdditionalData().put(VpaService.DATA_HIGHSCORE_HISTORY, scoresJson);
+        manifest.getAdditionalData().put(VpaService.DATA_HIGHSCORE_HISTORY, scoresJson);
 
+        //write raw highscore
         if(highscore != null && highscore.getRaw() != null) {
-          exportDescriptor.getManifest().getAdditionalData().put(VpaService.DATA_HIGHSCORE, highscore.getRaw());
+          manifest.getAdditionalData().put(VpaService.DATA_HIGHSCORE, highscore.getRaw());
+        }
+
+        //write VPReg.stg data
+        if(game.getHighscoreType().equals(HighscoreType.VPReg)) {
+          VPReg reg = new VPReg(vprRegFile, game);
+          VPRegScoreSummary summary = reg.readHighscores();
+          manifest.getAdditionalData().put(VpaService.DATA_VPREG_HIGHSCORE, summary);
         }
       }
 
@@ -178,21 +199,21 @@ public class VpaExporterJob implements Job {
       byte[] bytes = Files.readAllBytes(mediaItem.getFile().toPath());
       Base64Encoder encoder = new Base64Encoder();
       String encode = encoder.encode(bytes);
-      exportDescriptor.getManifest().setIcon(encode);
+      manifest.setIcon(encode);
     }
 
-    exportDescriptor.getManifest().setEmulatorType(VpaUtil.getEmulatorType(game.getGameFile()));
+    manifest.setEmulatorType(VpaUtil.getEmulatorType(game.getGameFile()));
 
-    if(StringUtils.isEmpty(exportDescriptor.getManifest().getGameFileName())) {
-      exportDescriptor.getManifest().setGameFileName(game.getGameFileName());
+    if(StringUtils.isEmpty(manifest.getGameFileName())) {
+      manifest.setGameFileName(game.getGameFileName());
     }
 
-    if(StringUtils.isEmpty(exportDescriptor.getManifest().getGameName())) {
-      exportDescriptor.getManifest().setGameName(game.getGameDisplayName());
-      exportDescriptor.getManifest().setGameDisplayName(game.getGameDisplayName());
+    if(StringUtils.isEmpty(manifest.getGameName())) {
+      manifest.setGameName(game.getGameDisplayName());
+      manifest.setGameDisplayName(game.getGameDisplayName());
     }
 
-    String manifestString = objectMapper.writeValueAsString(exportDescriptor.getManifest());
+    String manifestString = objectMapper.writeValueAsString(manifest);
     File manifestFile = File.createTempFile("vpa-manifest", "json");
     manifestFile.deleteOnExit();
     Files.write(manifestFile.toPath(), manifestString.getBytes());

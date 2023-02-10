@@ -137,7 +137,7 @@ public class Highscore {
     if(metadata != null) {
       highscore.setRaw(metadata.getRaw());
       highscore.setFilename(metadata.getFilename());
-      highscore.setType(metadata.getType());
+      highscore.setType(metadata.getType() != null ? metadata.getType().name() : null);
       highscore.setStatus(metadata.getStatus());
       highscore.setLastScanned(metadata.getScanned());
       highscore.setLastModified(metadata.getModified());

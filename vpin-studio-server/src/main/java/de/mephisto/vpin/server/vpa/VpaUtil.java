@@ -2,7 +2,7 @@ package de.mephisto.vpin.server.vpa;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
-import de.mephisto.vpin.commons.EmulatorTypes;
+import de.mephisto.vpin.commons.EmulatorType;
 import de.mephisto.vpin.restclient.VpaManifest;
 import org.apache.commons.io.FilenameUtils;
 import org.slf4j.Logger;
@@ -46,13 +46,13 @@ public class VpaUtil {
   public static String getEmulatorType(File gameFile) {
     String extension = FilenameUtils.getExtension(gameFile.getName());
     if (extension.equals("vpx")) {
-      return EmulatorTypes.VISUAL_PINBALL_X;
+      return EmulatorType.VISUAL_PINBALL_X;
     }
 
     if (extension.equals("fp")) {
-      return EmulatorTypes.FUTURE_PINBALL;
+      return EmulatorType.FUTURE_PINBALL;
     }
 
-    return EmulatorTypes.VISUAL_PINBALL_X;
+    return EmulatorType.VISUAL_PINBALL_X;
   }
 }

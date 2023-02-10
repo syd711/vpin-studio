@@ -8,6 +8,7 @@ import de.mephisto.vpin.server.games.GameService;
 import de.mephisto.vpin.server.highscores.Highscore;
 import de.mephisto.vpin.server.highscores.HighscoreService;
 import de.mephisto.vpin.server.highscores.HighscoreVersion;
+import de.mephisto.vpin.server.system.SystemService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -29,15 +30,18 @@ public class VpaServiceTest extends AbstractVPinServerTest {
   private HighscoreService highscoreService;
 
   @Autowired
+  private SystemService systemService;
+
+  @Autowired
   private GameService gameService;
 
   @Test
   public void testExport() throws IOException {
 //    test(VPinServerTest.TEST_GAME_FILENAME);
 //    test("Hayburners (WIlliams 1951).vpx");
-    exportTest("Attack from Mars 2.0.1.vpx");
+//    exportTest("Attack from Mars 2.0.1.vpx");
 //    test("The Addams Family.vpx");
-//    test("Jaws.vpx");
+    exportTest("Jaws in English.vpx");
 //    test("Stranger Things.vpx");
   }
 
@@ -56,7 +60,7 @@ public class VpaServiceTest extends AbstractVPinServerTest {
     File target = new File("E:\\downloads\\" + game.getGameDisplayName().replaceAll(" ", "-") + ".vpa");
     List<HighscoreVersion> versions = highscoreService.getAllHighscoreVersions(game.getId());
     Optional<Highscore> highscore = highscoreService.getHighscore(game.getId());
-    VpaExporterJob exporter = new VpaExporterJob(game, descriptor, highscore.get(), versions, target);
+    VpaExporterJob exporter = new VpaExporterJob(systemService.getVPRegFile(), game, descriptor, manifest, highscore.get(), versions, target);
     exporter.execute();
     assertTrue(target.exists());
   }

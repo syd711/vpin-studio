@@ -245,6 +245,22 @@ public class PinUPConnector implements InitializingBean {
     }
   }
 
+  public void updateRom(@NonNull Game game, String rom) {
+    Connection connect = this.connect();
+    try {
+      PreparedStatement preparedStatement = connect.prepareStatement("UPDATE Games SET 'ROM'=? WHERE GameID=?");
+      preparedStatement.setString(1, rom);
+      preparedStatement.setInt(2, game.getId());
+      preparedStatement.executeUpdate();
+      preparedStatement.close();
+      LOG.info("Updated of ROM of " + game + " to " + rom);
+    } catch (Exception e) {
+      LOG.error("Failed to update ROM:" + e.getMessage(), e);
+    } finally {
+      this.disconnect(connect);
+    }
+  }
+
   public void updateVolume(@NonNull Game game, int volume) {
     Connection connect = this.connect();
     try {

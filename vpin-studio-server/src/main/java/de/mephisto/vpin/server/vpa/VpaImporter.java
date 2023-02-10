@@ -2,7 +2,7 @@ package de.mephisto.vpin.server.vpa;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
-import de.mephisto.vpin.commons.EmulatorTypes;
+import de.mephisto.vpin.commons.EmulatorType;
 import de.mephisto.vpin.restclient.ImportDescriptor;
 import de.mephisto.vpin.restclient.VpaManifest;
 import de.mephisto.vpin.server.games.Game;
@@ -170,11 +170,11 @@ public class VpaImporter {
 
   private File getGameFile(VpaManifest manifest) {
     String emulator = manifest.getEmulatorType();
-    if (EmulatorTypes.VISUAL_PINBALL_X.equals(emulator)) {
+    if (EmulatorType.VISUAL_PINBALL_X.equals(emulator)) {
       return new File(systemService.getVPXTablesFolder(), manifest.getGameFileName());
     }
 
-    if (EmulatorTypes.FUTURE_PINBALL.equals(emulator)) {
+    if (EmulatorType.FUTURE_PINBALL.equals(emulator)) {
       return new File(systemService.getFuturePinballTablesFolder(), manifest.getGameFileName());
     }
 
