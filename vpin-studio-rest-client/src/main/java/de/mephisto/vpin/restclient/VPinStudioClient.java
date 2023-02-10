@@ -104,7 +104,8 @@ public class VPinStudioClient implements ObservedPropertyChangeListener, Overlay
   public String uploadVpa(File file, FileUploadProgressListener listener) throws Exception {
     try {
       String url = restClient.getBaseUrl() + API + "vpa/upload";
-      return new RestTemplate().exchange(url, HttpMethod.POST, createUpload(file, -1, null, AssetType.VPA, listener), String.class).getBody();
+      HttpEntity upload = createUpload(file, -1, null, AssetType.VPA, listener);
+      return new RestTemplate().exchange(url, HttpMethod.POST, upload, String.class).getBody();
     } catch (Exception e) {
       LOG.error("VPA upload failed: " + e.getMessage(), e);
       throw e;
@@ -721,7 +722,6 @@ public class VPinStudioClient implements ObservedPropertyChangeListener, Overlay
     String boundary = Long.toHexString(System.currentTimeMillis());
     headers.set("Content-Type", "multipart/form-data; boundary=" + boundary);
     ProgressableFileSystemResource rsr = new ProgressableFileSystemResource(file, listener);
-
 
     map.add("file", rsr);
     map.add("gameId", gameId);

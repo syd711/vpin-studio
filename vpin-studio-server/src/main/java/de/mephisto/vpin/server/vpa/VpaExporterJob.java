@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.thoughtworks.xstream.core.util.Base64Encoder;
 import de.mephisto.vpin.commons.HighscoreType;
+import de.mephisto.vpin.commons.utils.FileUtils;
 import de.mephisto.vpin.restclient.*;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.highscores.Highscore;
@@ -94,10 +95,11 @@ public class VpaExporterJob implements Job {
         }
 
         //write VPReg.stg data
-        if(game.getHighscoreType().equals(HighscoreType.VPReg)) {
+        if(HighscoreType.VPReg.equals(game.getHighscoreType())) {
           VPReg reg = new VPReg(vprRegFile, game);
           VPRegScoreSummary summary = reg.readHighscores();
-          manifest.getAdditionalData().put(VpaService.DATA_VPREG_HIGHSCORE, summary);
+          String vpRegJson = objectMapper.writeValueAsString(summary);
+          manifest.getAdditionalData().put(VpaService.DATA_VPREG_HIGHSCORE, vpRegJson);
         }
       }
 
@@ -133,14 +135,15 @@ public class VpaExporterJob implements Job {
         zipFile(game.getAltSoundFolder(), getGameFolderName() + "/VPinMAME/altsound/" + game.getAltSoundFolder().getName(), zipOut);
       }
 
-      if (game.getMusicFolder() != null && game.getMusicFolder().exists()) {
-        zipFile(game.getMusicFolder(), getGameFolderName() + "/Music/", zipOut);
+      //aways pack whole music folder
+      if (exportDescriptor.isExportPupPack() && game.getMusicFolder() != null && game.getMusicFolder().exists()) {
+        zipFile(game.getMusicFolder().getParentFile(), getGameFolderName() + "/Music/", zipOut);
       }
 
       zipPupPack(zipOut);
       zipPopperMedia(zipOut);
 
-      LOG.info("Finished packing of " + target.getAbsolutePath() + ", took " + ((System.currentTimeMillis() - start) / 1000) + " seconds.");
+      LOG.info("Finished packing of " + target.getAbsolutePath() + ", took " + ((System.currentTimeMillis() - start) / 1000) + " seconds, " + FileUtils.readableFileSize(target.length()));
     } catch (Exception e) {
       LOG.error("Create VPA for " + game.getGameDisplayName() + " failed: " + e.getMessage(), e);
     } finally {
@@ -213,6 +216,11 @@ public class VpaExporterJob implements Job {
       manifest.setGameDisplayName(game.getGameDisplayName());
     }
 
+    manifest.setTableName(game.getTableName());
+    if(!StringUtils.isEmpty(game.getRom())) {
+      manifest.setRomName(game.getRom());
+    }
+
     String manifestString = objectMapper.writeValueAsString(manifest);
     File manifestFile = File.createTempFile("vpa-manifest", "json");
     manifestFile.deleteOnExit();
@@ -251,6 +259,7 @@ public class VpaExporterJob implements Job {
     while ((length = fis.read(bytes)) >= 0) {
       zipOut.write(bytes, 0, length);
     }
+    zipOut.closeEntry();
     fis.close();
   }
 

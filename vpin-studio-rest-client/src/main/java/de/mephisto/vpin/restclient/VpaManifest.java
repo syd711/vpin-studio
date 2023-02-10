@@ -27,8 +27,18 @@ public class VpaManifest {
   private String altRunMode;
   private String url;
   private String designedBy;
+
+  private String tableName;
   private String icon;
   private Map<String,Object> additionalData = new HashMap<>();
+
+  public String getTableName() {
+    return tableName;
+  }
+
+  public void setTableName(String tableName) {
+    this.tableName = tableName;
+  }
 
   public Map<String, Object> getAdditionalData() {
     return additionalData;

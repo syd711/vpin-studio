@@ -7,9 +7,10 @@ import de.mephisto.vpin.restclient.ImportDescriptor;
 import de.mephisto.vpin.restclient.VpaManifest;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.highscores.HighscoreService;
-import de.mephisto.vpin.server.highscores.Score;
 import de.mephisto.vpin.server.popper.PinUPConnector;
 import de.mephisto.vpin.server.system.SystemService;
+import de.mephisto.vpin.server.util.vpreg.VPReg;
+import de.mephisto.vpin.server.util.vpreg.VPRegScoreSummary;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -19,8 +20,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.Date;
-import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
@@ -34,8 +33,11 @@ public class VpaImporter {
   private final HighscoreService highscoreService;
   private final ObjectMapper objectMapper;
 
-  public VpaImporter(@NonNull ImportDescriptor descriptor, @NonNull File file, @NonNull PinUPConnector connector,
-                     @NonNull SystemService systemService, @NonNull HighscoreService highscoreService) {
+  public VpaImporter(@NonNull ImportDescriptor descriptor,
+                     @NonNull File file,
+                     @NonNull PinUPConnector connector,
+                     @NonNull SystemService systemService,
+                     @NonNull HighscoreService highscoreService) {
     this.descriptor = descriptor;
     this.vpaFile = file;
     this.connector = connector;
@@ -46,61 +48,64 @@ public class VpaImporter {
     objectMapper.enable(SerializationFeature.INDENT_OUTPUT);
   }
 
-  public int startImport() {
+  public Game startImport() {
     try {
       LOG.info("Starting import of " + descriptor.getVpaFileName());
 
       boolean importRom = descriptor.isImportRom();
       boolean importPopperMedia = descriptor.isImportPopperMedia();
       boolean importPupPack = descriptor.isImportPupPack();
+      boolean importHighscores = descriptor.isImportHighscores();
 
       unzipVpa(importRom, importPopperMedia, importPupPack);
       LOG.info("Finished unzipping of " + descriptor.getVpaFileName() + ", starting Popper import.");
 
       VpaManifest manifest = VpaUtil.readManifest(vpaFile);
-      if(StringUtils.isEmpty(manifest.getGameFileName())) {
+      if (StringUtils.isEmpty(manifest.getGameFileName())) {
         LOG.error("The VPA manifest of " + vpaFile.getAbsolutePath() + " does not contain a game filename.");
-        return -1;
+        return null;
       }
 
       File gameFile = getGameFile(manifest);
-      Game gameByFilename = connector.getGameByFilename(manifest.getGameFileName());
-      if (gameByFilename == null) {
+      Game game = connector.getGameByFilename(manifest.getGameFileName());
+      if (game == null) {
         LOG.info("No existing game found for " + manifest.getGameDisplayName() + ", executing popper game import for " + manifest.getGameFileName());
         int newGameId = connector.importGame(manifest.getEmulatorType(), manifest.getGameName(), gameFile.getName(), manifest.getGameDisplayName());
-        gameByFilename = connector.getGame(newGameId);
+        game = connector.getGame(newGameId);
       }
 
-      connector.importManifest(gameByFilename, manifest);
+      connector.importManifest(game, manifest);
+      game.setRom(manifest.getRomName());
+      game.setTableName(manifest.getTableName());
 
       if (descriptor.getPlaylistId() != -1) {
-        connector.addToPlaylist(gameByFilename.getId(), descriptor.getPlaylistId());
+        connector.addToPlaylist(game.getId(), descriptor.getPlaylistId());
       }
 
-      boolean importHighscores = descriptor.isImportHighscores();
       if (importHighscores) {
-
-        if(manifest.getAdditionalData().containsKey(VpaService.DATA_HIGHSCORE_HISTORY)) {
+        if (manifest.getAdditionalData().containsKey(VpaService.DATA_HIGHSCORE_HISTORY)) {
           String json = (String) manifest.getAdditionalData().get(VpaService.DATA_HIGHSCORE_HISTORY);
           VpaExporterJob.ScoreVersionEntry[] scores = objectMapper.readValue(json, VpaExporterJob.ScoreVersionEntry[].class);
           LOG.info("Importing " + scores.length + " scores.");
           for (VpaExporterJob.ScoreVersionEntry score : scores) {
-            highscoreService.importScoreEntry(gameByFilename, score);
+            highscoreService.importScoreEntry(game, score);
           }
         }
 
-        if(manifest.getAdditionalData().containsKey(VpaService.DATA_HIGHSCORE)) {
-          String raw = (String) manifest.getAdditionalData().get(VpaService.DATA_HIGHSCORE);
-          List<Score> scores = highscoreService.parseScores(new Date(gameFile.lastModified()), raw, -1, -1);
-//          parse all!
+        if (manifest.getAdditionalData().containsKey(VpaService.DATA_VPREG_HIGHSCORE)) {
+          String json = (String) manifest.getAdditionalData().get(VpaService.DATA_VPREG_HIGHSCORE);
+          VPRegScoreSummary summary = objectMapper.readValue(json, VPRegScoreSummary.class);
+          VPReg vpReg = new VPReg(systemService.getVPRegFile(), game);
+          vpReg.restoreHighscore(summary);
         }
       }
 
-      return gameByFilename.getId();
+      LOG.info("Final highscore scan");
+      return game;
     } catch (Exception e) {
       LOG.error("Import failed: " + e.getMessage(), e);
     }
-    return -1;
+    return null;
   }
 
   private void unzipVpa(boolean importRom, boolean importPopperMedia, boolean importPupPack) {
@@ -121,6 +126,11 @@ public class VpaImporter {
         }
 
         if (newFile.getAbsolutePath().contains("PUPVideos") && !importPupPack) {
+          zipEntry = zis.getNextEntry();
+          continue;
+        }
+
+        if (newFile.getAbsolutePath().replaceAll("\\\\", "/").contains("VisualPinball/Music") && !importPupPack) {
           zipEntry = zis.getNextEntry();
           continue;
         }

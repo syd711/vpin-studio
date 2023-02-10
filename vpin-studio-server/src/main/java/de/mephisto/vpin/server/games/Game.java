@@ -212,7 +212,7 @@ public class Game {
   }
 
   public boolean isRomRequired() {
-    return getHighscoreType() != null && (getHighscoreType().equals(HighscoreType.NVRam));
+    return getHighscoreType() != null && HighscoreType.NVRam.equals(getHighscoreType());
   }
 
   public Date getModified() {

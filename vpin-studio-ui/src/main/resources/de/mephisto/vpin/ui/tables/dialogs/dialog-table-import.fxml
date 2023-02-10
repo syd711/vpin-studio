@@ -76,6 +76,7 @@
                         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                       <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                       <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
@@ -86,43 +87,53 @@
                               <Font size="14.0" />
                            </font>
                         </Label>
-                        <Label text="Import PUP Pack:" GridPane.rowIndex="3">
+                        <Label text="Import PUP Pack:" GridPane.rowIndex="4">
                            <font>
                               <Font size="14.0" />
                            </font>
                         </Label>
-                        <CheckBox fx:id="importPupPackCheckbox" mnemonicParsing="false" selected="true" GridPane.columnIndex="1" GridPane.rowIndex="3">
+                        <CheckBox fx:id="importPupPackCheckbox" mnemonicParsing="false" selected="true" GridPane.columnIndex="1" GridPane.rowIndex="4">
                            <font>
                               <Font size="14.0" />
                            </font>
                         </CheckBox>
-                        <Label layoutX="10.0" layoutY="45.0" text="Import Popper Media:" GridPane.rowIndex="4">
+                        <Label layoutX="10.0" layoutY="45.0" text="Import Popper Media:" GridPane.rowIndex="5">
                            <font>
                               <Font size="14.0" />
                            </font>
                         </Label>
-                        <CheckBox fx:id="importPopperMedia" layoutX="170.0" layoutY="45.0" mnemonicParsing="false" selected="true" GridPane.columnIndex="1" GridPane.rowIndex="4">
+                        <CheckBox fx:id="importPopperMedia" layoutX="170.0" layoutY="45.0" mnemonicParsing="false" selected="true" GridPane.columnIndex="1" GridPane.rowIndex="5">
                            <font>
                               <Font size="14.0" />
                            </font>
                         </CheckBox>
-                        <Label layoutX="10.0" layoutY="76.0" text="Import Highscores:" GridPane.rowIndex="5">
+                        <Label layoutX="10.0" layoutY="76.0" text="Import Highscores:" GridPane.rowIndex="6">
                            <font>
                               <Font size="14.0" />
                            </font>
                         </Label>
-                        <CheckBox fx:id="highscoresCheckbox" layoutX="194.0" layoutY="76.0" mnemonicParsing="false" GridPane.columnIndex="1" GridPane.rowIndex="5">
+                        <CheckBox fx:id="highscoresCheckbox" layoutX="194.0" layoutY="76.0" mnemonicParsing="false" GridPane.columnIndex="1" GridPane.rowIndex="6">
                            <font>
                               <Font size="14.0" />
                            </font>
                         </CheckBox>
                         <ComboBox fx:id="playlistCombo" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-                        <Label layoutX="10.0" layoutY="137.0" text="Import ROMs:" GridPane.rowIndex="2">
+                        <Label layoutX="10.0" layoutY="137.0" text="Import ROMs:" GridPane.rowIndex="3">
                            <font>
                               <Font size="14.0" />
                            </font>
                         </Label>
-                        <CheckBox fx:id="importRomCheckbox" layoutX="215.0" layoutY="137.0" mnemonicParsing="false" selected="true" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                        <CheckBox fx:id="importRomCheckbox" layoutX="215.0" layoutY="137.0" mnemonicParsing="false" selected="true" GridPane.columnIndex="1" GridPane.rowIndex="3">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </CheckBox>
+                        <Label layoutX="10.0" layoutY="106.0" text="Import Game Files:" GridPane.rowIndex="2">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Label>
+                        <CheckBox fx:id="importRomCheckbox1" disable="true" layoutX="215.0" layoutY="106.0" mnemonicParsing="false" selected="true" GridPane.columnIndex="1" GridPane.rowIndex="2">
                            <font>
                               <Font size="14.0" />
                            </font>

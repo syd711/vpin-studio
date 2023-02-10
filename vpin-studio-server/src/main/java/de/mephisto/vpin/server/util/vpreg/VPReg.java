@@ -47,8 +47,6 @@ public class VPReg {
     return false;
   }
 
-
-
   public boolean restoreHighscore(VPRegScoreSummary summary) {
     POIFSFileSystem fs = null;
     try {
@@ -60,6 +58,7 @@ public class VPReg {
           return false;
         }
 
+        LOG.info("Writing VPReg entry \"" + gameFolder.getName() + "\"");
         List<VPRegScoreEntry> scores = summary.getScores();
         for (VPRegScoreEntry score : scores) {
           DocumentNode scoreEntry = (DocumentNode) gameFolder.getEntry(HIGH_SCORE + score.getPos());
@@ -69,6 +68,8 @@ public class VPReg {
           DocumentNode nameEntry = (DocumentNode) gameFolder.getEntry(HIGH_SCORE + score.getPos() + NAME_SUFFIX);
           POIFSDocument nameDocument = new POIFSDocument(nameEntry);
           nameDocument.replaceContents(new ByteArrayInputStream(new Base64Encoder().decode(score.getBase64Name())));
+
+          LOG.info("Written VPReg score entry: " + score);
         }
 
         fs.writeFilesystem();

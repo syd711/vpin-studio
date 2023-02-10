@@ -47,4 +47,9 @@ public class VPRegScoreEntry {
   public void setScore(long score) {
     this.score = score;
   }
+
+  @Override
+  public String toString() {
+    return "#" + getPos() + " " + getInitials() + "   " + getScore();
+  }
 }

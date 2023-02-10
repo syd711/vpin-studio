@@ -48,10 +48,13 @@ public class VpaService {
     try {
       File vpaFile = new File(systemService.getVpaArchiveFolder(), descriptor.getVpaFileName());
       VpaImporter importer = new VpaImporter(descriptor, vpaFile, pinUPConnector, systemService, highscoreService);
-      int gameId = importer.startImport();
-      if (gameId != -1) {
-        gameService.scanGame(gameId);
-        Game game = gameService.getGame(gameId);
+      Game importedGame = importer.startImport();
+      if (importedGame != null) {
+        gameService.save(importedGame);
+
+        gameService.scanGame(importedGame.getId());
+        highscoreService.scanScore(importedGame);
+        Game game = gameService.getGame(importedGame.getId());
         cardService.generateCard(game, false);
         return true;
       }
@@ -131,9 +134,5 @@ public class VpaService {
 
   public VpaManifest getManifest(int id) {
     return pinUPConnector.getGameManifest(id);
-  }
-
-  public VpaManifest getManifest(File out) {
-    return VpaUtil.readManifest(out);
   }
 }
