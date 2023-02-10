@@ -7,6 +7,8 @@ import javafx.concurrent.Task;
 import javafx.scene.control.CustomMenuItem;
 import javafx.scene.control.MenuButton;
 import javafx.scene.control.MenuItem;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -15,6 +17,7 @@ import java.util.List;
 import static de.mephisto.vpin.ui.Studio.client;
 
 public class JobPoller {
+  private final static Logger LOG = LoggerFactory.getLogger(JobPoller.class);
 
   private static JobPoller instance;
   private MenuButton jobMenu;
@@ -33,21 +36,26 @@ public class JobPoller {
         return new Task() {
           @Override
           protected Object call() throws Exception {
+            LOG.info("Started JobPoller service.");
             boolean poll = true;
             while (poll) {
               List<JobDescriptor> jobs = new ArrayList<>(client.getJobs());
               refreshUI(jobs);
               Thread.sleep(2000);
               poll = !jobs.isEmpty();
+              LOG.info("JobPoller is waiting for " + jobs.size() + " running jobs.");
             }
             refreshUI(Collections.emptyList());
-            return null;
+            return true;
           }
         };
       }
     };
 
-    service.onSucceededProperty().addListener((observable, oldValue, newValue) -> service.reset());
+    service.onSucceededProperty().addListener((observable, oldValue, newValue) -> {
+      service.reset();
+      LOG.info("JobPoller has been resetted after success.");
+    });
   }
 
   public static JobPoller getInstance() {
@@ -55,7 +63,7 @@ public class JobPoller {
   }
 
   public void setPolling() {
-    jobMenu.setVisible(true);
+    jobMenu.setDisable(false);
     if (!service.isRunning()) {
       service.restart();
     }
@@ -63,6 +71,14 @@ public class JobPoller {
 
   private void refreshUI(List<JobDescriptor> updatedJobList) {
     Platform.runLater(() -> {
+      jobMenu.setDisable(updatedJobList.isEmpty());
+      if(jobMenu.isDisabled()) {
+        jobMenu.setText("No active jobs");
+      }
+      else{
+        jobMenu.setText(updatedJobList.size() + " active job(s)");
+      }
+
       List<MenuItem> items = new ArrayList<>(jobMenu.getItems());
       for (MenuItem item : items) {
         JobDescriptor descriptor = (JobDescriptor) item.getUserData();
@@ -85,7 +101,6 @@ public class JobPoller {
         item.setUserData(descriptor);
         jobMenu.getItems().add(item);
       }
-      jobMenu.setVisible(!updatedJobList.isEmpty());
     });
   }
 }

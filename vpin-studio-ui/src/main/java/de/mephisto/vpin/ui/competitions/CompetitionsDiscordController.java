@@ -467,10 +467,6 @@ public class CompetitionsDiscordController implements Initializable, StudioFXCon
     duplicateBtn.setDisable(disable);
 
     if (competition.isPresent()) {
-      if (!tableStack.getChildren().contains(loadingOverlay)) {
-        tableStack.getChildren().add(loadingOverlay);
-      }
-
       if (competitionWidget.getTop() != null) {
         competitionWidget.getTop().setVisible(true);
       }
@@ -483,7 +479,6 @@ public class CompetitionsDiscordController implements Initializable, StudioFXCon
       competitionWidgetController.setCompetition(CompetitionType.DISCORD, null);
     }
     competitionsController.setCompetition(competition.orElse(null));
-
   }
 
   @Override

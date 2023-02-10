@@ -1,7 +1,10 @@
 package de.mephisto.vpin.restclient;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class ExportDescriptor {
-  private int gameId;
+  private List<Integer> gameIds = new ArrayList<>();
   private VpaManifest manifest;
   private boolean exportRom = true;
   private boolean exportPupPack = true;
@@ -16,12 +19,12 @@ public class ExportDescriptor {
     this.exportHighscores = exportHighscores;
   }
 
-  public int getGameId() {
-    return gameId;
+  public List<Integer> getGameIds() {
+    return gameIds;
   }
 
-  public void setGameId(int gameId) {
-    this.gameId = gameId;
+  public void setGameIds(List<Integer> gameIds) {
+    this.gameIds = gameIds;
   }
 
   public VpaManifest getManifest() {

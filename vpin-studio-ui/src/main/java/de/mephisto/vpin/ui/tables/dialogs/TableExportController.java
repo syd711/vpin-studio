@@ -107,7 +107,6 @@ public class TableExportController implements Initializable, DialogController {
   @FXML
   private TextField notes;
 
-  private boolean result = false;
   private GameRepresentation game;
   private VpaManifest manifest;
 
@@ -115,7 +114,7 @@ public class TableExportController implements Initializable, DialogController {
   private void onExportClick(ActionEvent e) throws Exception {
     ExportDescriptor descriptor = new ExportDescriptor();
     descriptor.setManifest(manifest);
-    descriptor.setGameId(game.getId());
+    descriptor.getGameIds().add(game.getId());
     descriptor.setExportPupPack(this.exportPupPackCheckbox.isSelected());
     descriptor.setExportRom(this.exportRomCheckbox.isSelected());
     descriptor.setExportPopperMedia(this.exportPopperMedia.isSelected());
@@ -125,12 +124,21 @@ public class TableExportController implements Initializable, DialogController {
     Stage stage = (Stage) ((Button) e.getSource()).getScene().getWindow();
     stage.close();
 
-    Platform.runLater(() -> {
-      WidgetFactory.showInformation(Studio.stage, "Export Started", "The export of '" + game.getGameDisplayName() + "' has been started.", "The archived state will update once the export is finished.");
-    });
+
+    new Thread(() -> {
+      try {
+        Thread.sleep(1000);
+      } catch (InterruptedException ex) {
+        //ignore
+      }
+      Platform.runLater(() -> {
+        JobPoller.getInstance().setPolling();
+      });
+    }).start();
+
 
     Platform.runLater(() -> {
-      JobPoller.getInstance().setPolling();
+      WidgetFactory.showInformation(Studio.stage, "Export Started", "The export of '" + game.getGameDisplayName() + "' has been started.", "The archived state will update once the export is finished.");
     });
   }
 
@@ -142,12 +150,12 @@ public class TableExportController implements Initializable, DialogController {
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
-    this.result = false;
+
   }
 
   @Override
   public void onDialogCancel() {
-    result = false;
+
   }
 
   public void setGame(GameRepresentation game) {

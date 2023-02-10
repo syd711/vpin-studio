@@ -62,52 +62,59 @@ public class VpaService {
   }
 
   public boolean exportVpa(@NonNull ExportDescriptor exportDescriptor) {
-    Game game = gameService.getGame(exportDescriptor.getGameId());
-    if (game != null) {
-      File target = new File(systemService.getVpaArchiveFolder(), game.getGameDisplayName().replaceAll(" ", "-") + ".vpa");
-      return exportVpa(game, exportDescriptor, target);
+    List<Integer> gameIds = exportDescriptor.getGameIds();
+    boolean result = true;
+    for (Integer gameId : gameIds) {
+      Game game = gameService.getGame(gameId);
+      if (game != null) {
+        File target = new File(systemService.getVpaArchiveFolder(), game.getGameDisplayName().replaceAll(" ", "-") + ".vpa");
+        if (!exportVpa(game, exportDescriptor, target)) {
+          result = false;
+        }
+      }
     }
-    return false;
+    return result;
   }
 
   public boolean exportVpa(@NonNull Game game, @NonNull ExportDescriptor exportDescriptor, @NonNull File target) {
     VpaManifest manifest = exportDescriptor.getManifest();
-    if (manifest != null) {
-      List<HighscoreVersion> versions = highscoreService.getAllHighscoreVersions(game.getId());
-      Highscore highscore = highscoreService.getOrCreateHighscore(game);
-
-      JobDescriptor descriptor = new JobDescriptor() {
-        @Override
-        public String getTitle() {
-          return "Export of '" + game.getGameDisplayName() + "'";
-        }
-
-        @Override
-        public String getDescription() {
-          return "Exporting table archive " + target.getName();
-        }
-
-        @Override
-        public Job getJob() {
-          return new VpaExporterJob(game, exportDescriptor, highscore, versions, target);
-        }
-
-        @Override
-        public String getImageUrl() {
-          GameMediaItem mediaItem = game.getGameMedia().get(PopperScreen.Wheel);
-          if(mediaItem != null) {
-            return mediaItem.getUri();
-          }
-          return super.getImageUrl();
-        }
-      };
-
-      descriptor.setUuid(UUID.randomUUID().toString());
-      JobQueue.getInstance().offer(descriptor);
-      LOG.info("Offered export job for '" + game.getGameDisplayName() + "'");
-      return true;
+    if (manifest != null && getManifest(game.getId()) == null) {
+      LOG.error("Unable to export " + game.getGameDisplayName() + ": no manifest could be created.");
+      return false;
     }
-    return false;
+    List<HighscoreVersion> versions = highscoreService.getAllHighscoreVersions(game.getId());
+    Highscore highscore = highscoreService.getOrCreateHighscore(game);
+
+    JobDescriptor descriptor = new JobDescriptor() {
+      @Override
+      public String getTitle() {
+        return "Export of '" + game.getGameDisplayName() + "'";
+      }
+
+      @Override
+      public String getDescription() {
+        return "Exporting table archive " + target.getName();
+      }
+
+      @Override
+      public Job getJob() {
+        return new VpaExporterJob(game, exportDescriptor, highscore, versions, target);
+      }
+
+      @Override
+      public String getImageUrl() {
+        GameMediaItem mediaItem = game.getGameMedia().get(PopperScreen.Wheel);
+        if (mediaItem != null) {
+          return mediaItem.getUri();
+        }
+        return super.getImageUrl();
+      }
+    };
+
+    descriptor.setUuid(UUID.randomUUID().toString());
+    JobQueue.getInstance().offer(descriptor);
+    LOG.info("Offered export job for '" + game.getGameDisplayName() + "'");
+    return true;
   }
 
   public VpaManifest getManifest(int id) {

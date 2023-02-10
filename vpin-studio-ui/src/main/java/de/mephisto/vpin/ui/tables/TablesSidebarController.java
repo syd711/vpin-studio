@@ -14,6 +14,7 @@ import de.mephisto.vpin.ui.util.Dialogs;
 import de.mephisto.vpin.ui.util.MediaUtil;
 import de.mephisto.vpin.ui.util.ProgressResultModel;
 import eu.hansolo.tilesfx.Tile;
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -276,7 +277,6 @@ public class TablesSidebarController implements Initializable {
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
     client = Studio.client;
-    this.accordion.setExpandedPane(titledPaneMedia);
     povCreatePane.managedProperty().bind(povCreatePane.visibleProperty());
 
     volumeSlider.valueProperty().addListener((observableValue, number, t1) -> {
@@ -405,6 +405,10 @@ public class TablesSidebarController implements Initializable {
       debouncer.debounce(POV.FULLSCREEN_ROTATION, () -> {
         client.setPOVPreference(game.get().getId(), getPOV(), POV.FULLSCREEN_ROTATION, newValue);
       }, 500);
+    });
+
+    Platform.runLater(() -> {
+      this.accordion.setExpandedPane(titledPaneMedia);
     });
   }
 
@@ -854,16 +858,18 @@ public class TablesSidebarController implements Initializable {
   }
 
   private void refreshMedia(GameMediaRepresentation gameMedia) {
-    PreferenceEntryRepresentation entry = client.getPreference(PreferenceNames.IGNORED_MEDIA);
-    List<String> ignoreScreenNames = entry.getCSVValue();
+    Platform.runLater(() -> {
+      PreferenceEntryRepresentation entry = client.getPreference(PreferenceNames.IGNORED_MEDIA);
+      List<String> ignoreScreenNames = entry.getCSVValue();
 
-    PopperScreen[] values = PopperScreen.values();
-    for (PopperScreen value : values) {
-      BorderPane screen = this.getScreenBorderPaneFor(value);
-      boolean ignored = ignoreScreenNames.contains(value.name());
-      GameMediaItemRepresentation item = gameMedia.getItem(value);
-      WidgetFactory.createMediaContainer(Studio.client, screen, item, ignored, mediaPreviewCheckbox.isSelected());
-    }
+      PopperScreen[] values = PopperScreen.values();
+      for (PopperScreen value : values) {
+        BorderPane screen = this.getScreenBorderPaneFor(value);
+        boolean ignored = ignoreScreenNames.contains(value.name());
+        GameMediaItemRepresentation item = gameMedia.getItem(value);
+        WidgetFactory.createMediaContainer(Studio.client, screen, item, ignored, mediaPreviewCheckbox.isSelected());
+      }
+    });
   }
 
   private BorderPane getScreenBorderPaneFor(PopperScreen value) {

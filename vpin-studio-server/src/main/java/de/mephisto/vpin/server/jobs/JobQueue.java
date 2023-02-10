@@ -32,6 +32,7 @@ public class JobQueue {
   public void offer(JobDescriptor descriptor) {
     queue.offer(descriptor);
     statusQueue.add(descriptor);
+    LOG.info("Queue size: " + queue.size());
     pollQueue();
   }
 
@@ -40,8 +41,9 @@ public class JobQueue {
       JobDescriptor descriptor = queue.poll();
       Callable<Boolean> exec = () -> {
         boolean execute = descriptor.getJob().execute();
-        pollQueue();
         statusQueue.remove(descriptor);
+        LOG.info("Finished " + descriptor + ", queue size is " + queue.size());
+        pollQueue();
         return execute;
       };
       executor.submit(exec);

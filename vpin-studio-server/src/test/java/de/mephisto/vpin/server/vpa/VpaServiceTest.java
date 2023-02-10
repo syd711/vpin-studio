@@ -52,7 +52,7 @@ public class VpaServiceTest extends AbstractVPinServerTest {
     VpaManifest manifest = new VpaManifest();
     descriptor.setManifest(manifest);
 
-    descriptor.setGameId(game.getId());
+    descriptor.getGameIds().add(game.getId());
     File target = new File("E:\\downloads\\" + game.getGameDisplayName().replaceAll(" ", "-") + ".vpa");
     List<HighscoreVersion> versions = highscoreService.getAllHighscoreVersions(game.getId());
     Optional<Highscore> highscore = highscoreService.getHighscore(game.getId());
