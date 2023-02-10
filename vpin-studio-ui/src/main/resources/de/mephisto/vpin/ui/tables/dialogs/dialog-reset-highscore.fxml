@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<BorderPane fx:id="root" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="500.0" styleClass="base-component" stylesheets="@../../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.tables.dialogs.ResetHighscoreDialogController">
+   <top>
+      <fx:include fx:id="header" source="/de/mephisto/vpin/commons/fx/scene-dialog-header.fxml" />
+   </top>
+   <center>
+      <VBox spacing="3.0" BorderPane.alignment="TOP_LEFT">
+         <children>
+            <Label fx:id="textLabel" text="Label" textFill="WHITE">
+               <font>
+                  <Font size="18.0" />
+               </font>
+               <VBox.margin>
+                  <Insets />
+               </VBox.margin>
+            </Label>
+            <Label fx:id="descriptionLabel" styleClass="preference-description" text="Label" textFill="WHITE" wrapText="true">
+               <VBox.margin>
+                  <Insets top="12.0" />
+               </VBox.margin></Label>
+            <TextField fx:id="textField">
+               <font>
+                  <Font size="14.0" />
+               </font>
+               <VBox.margin>
+                  <Insets bottom="3.0" />
+               </VBox.margin>
+            </TextField>
+            <CheckBox fx:id="historyCheckbox" mnemonicParsing="false" text="Delete highscore history">
+               <font>
+                  <Font size="14.0" />
+               </font>
+            </CheckBox>
+            <Label fx:id="helpLabel" styleClass="preference-description" text="The highscore will be reset to the table defaults." textFill="WHITE" wrapText="true">
+               <VBox.margin>
+                  <Insets top="12.0" />
+               </VBox.margin>
+            </Label>
+            <Label styleClass="preference-description" text="These will be visible after a table restart." textFill="WHITE" wrapText="true" />
+         </children>
+         <BorderPane.margin>
+            <Insets bottom="12.0" left="24.0" right="24.0" top="12.0" />
+         </BorderPane.margin>
+      </VBox>
+   </center>
+   <bottom>
+      <HBox alignment="CENTER_RIGHT" BorderPane.alignment="CENTER">
+         <children>
+            <Button fx:id="cancelButton" cancelButton="true" mnemonicParsing="false" onAction="#onCancelClick" styleClass="default-button" text="Cancel">
+               <HBox.margin>
+                  <Insets right="12.0" />
+               </HBox.margin></Button>
+          <Button fx:id="okButton" defaultButton="true" mnemonicParsing="false" onAction="#onDialogSubmit" styleClass="submit-button" text="   OK   " />
+         </children>
+         <BorderPane.margin>
+            <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
+         </BorderPane.margin>
+      </HBox>
+   </bottom>
+</BorderPane>

@@ -3,17 +3,17 @@ package de.mephisto.vpin.server.highscores;
 import de.mephisto.vpin.commons.utils.SystemCommandExecutor;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.system.SystemService;
+import de.mephisto.vpin.server.util.vpreg.VPReg;
+import de.mephisto.vpin.server.util.vpreg.VPRegScoreSummary;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.poi.util.LittleEndian;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.*;
-import java.text.DecimalFormat;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
@@ -125,26 +125,18 @@ class HighscoreResolver {
       metadata.setType(HighscoreMetadata.TYPE_VREG);
       metadata.setFilename(systemService.getVPRegFile().getCanonicalPath());
       metadata.setModified(new Date(systemService.getVPRegFile().lastModified()));
-      metadata.setRaw(reg.readHighscores());
-      if(StringUtils.isEmpty(metadata.getRaw())) {
+
+      VPRegScoreSummary summary = reg.readHighscores();
+      if (summary != null) {
+        metadata.setRaw(summary.toRaw());
+      }
+      if (StringUtils.isEmpty(metadata.getRaw())) {
         metadata.setStatus("Found VReg entry, but no highscore entries in it.");
       }
       return metadata.getRaw();
     }
     LOG.debug("No VPReg highscore file found for '" + game.getRom() + "'");
     return null;
-  }
-
-  public static String formatScore(String score) {
-    try {
-      DecimalFormat decimalFormat = new DecimalFormat("#.##");
-      decimalFormat.setGroupingUsed(true);
-      decimalFormat.setGroupingSize(3);
-      return decimalFormat.format(Long.parseLong(score));
-    } catch (NumberFormatException e) {
-      LOG.error("Failed to read number from '" +score + "': " + e.getMessage());
-      return "0";
-    }
   }
 
   /**

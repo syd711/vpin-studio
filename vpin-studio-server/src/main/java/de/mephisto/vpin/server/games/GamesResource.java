@@ -1,6 +1,7 @@
 package de.mephisto.vpin.server.games;
 
 import de.mephisto.vpin.restclient.DeleteDescriptor;
+import de.mephisto.vpin.restclient.ResetHighscoreDescriptor;
 import de.mephisto.vpin.server.competitions.ScoreSummary;
 import de.mephisto.vpin.server.highscores.HighscoreMetadata;
 import de.mephisto.vpin.server.highscores.ScoreList;
@@ -92,6 +93,11 @@ public class GamesResource {
   @PostMapping("/delete")
   public boolean delete(@RequestBody DeleteDescriptor descriptor) {
     return gameService.deleteGame(descriptor);
+  }
+
+  @PostMapping("/reset")
+  public boolean reset(@RequestBody ResetHighscoreDescriptor descriptor) {
+    return gameService.resetGame(descriptor);
   }
 
   @PostMapping("/save")

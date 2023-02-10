@@ -45,6 +45,7 @@ public class InputDialogController implements DialogController {
   public void initDialog(Stage stage, String innerTitle, String description, String helpText, String defaultValue) {
     this.stage = stage;
     this.textLabel.setText(innerTitle);
+    textField.requestFocus();
 
     if(description != null) {
       this.descriptionLabel.setText(description);

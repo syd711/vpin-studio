@@ -11,10 +11,7 @@ import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.SnapshotParameters;
-import javafx.scene.control.Button;
-import javafx.scene.control.ButtonType;
-import javafx.scene.control.Label;
-import javafx.scene.control.ListCell;
+import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.image.WritableImage;
@@ -222,6 +219,13 @@ public class WidgetFactory {
     }
 
     return addMediaItemToBorderPane(client, mediaItem, parent);
+  }
+
+  public static TextField createCopyableLabel(String text) {
+    TextField copyable = new TextField(text);
+    copyable.setEditable(false);
+    copyable.getStyleClass().add("copyable-label");
+    return copyable;
   }
 
   public static Node addMediaItemToBorderPane(VPinStudioClient client, GameMediaItemRepresentation mediaItem, BorderPane parent) {

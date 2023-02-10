@@ -3,6 +3,7 @@ package de.mephisto.vpin.server.games;
 import de.mephisto.vpin.commons.utils.FileUtils;
 import de.mephisto.vpin.restclient.DeleteDescriptor;
 import de.mephisto.vpin.restclient.PreferenceNames;
+import de.mephisto.vpin.restclient.ResetHighscoreDescriptor;
 import de.mephisto.vpin.server.competitions.CompetitionService;
 import de.mephisto.vpin.server.competitions.ScoreSummary;
 import de.mephisto.vpin.server.highscores.*;
@@ -74,6 +75,15 @@ public class GameService {
     }
     return result;
   }
+
+  public boolean resetGame(@NonNull ResetHighscoreDescriptor descriptor) {
+    Game game = this.getGame(descriptor.getGameId());
+    if (game == null) {
+      return false;
+    }
+    return highscoreService.resetHighscore(game, descriptor);
+  }
+
 
   public boolean deleteGame(@NonNull DeleteDescriptor descriptor) {
     Game game = this.getGame(descriptor.getGameId());

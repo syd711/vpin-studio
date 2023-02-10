@@ -1,9 +1,9 @@
-package de.mephisto.vpin.server.highscores;
+package de.mephisto.vpin.server.util.vpreg;
 
+import com.thoughtworks.xstream.core.util.Base64Encoder;
 import de.mephisto.vpin.server.games.Game;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import org.apache.poi.poifs.filesystem.*;
-import org.apache.poi.util.LittleEndian;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -12,8 +12,10 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.util.List;
 
 public class VPReg {
+  public static final String NAME_SUFFIX = "Name";
   private final static Logger LOG = LoggerFactory.getLogger(VPReg.class);
   public static final String HIGH_SCORE = "HighScore";
 
@@ -45,6 +47,47 @@ public class VPReg {
     return false;
   }
 
+
+
+  public boolean restoreHighscore(VPRegScoreSummary summary) {
+    POIFSFileSystem fs = null;
+    try {
+      fs = new POIFSFileSystem(vpregFile, false);
+      DirectoryEntry root = fs.getRoot();
+      DirectoryEntry gameFolder = getGameDirectory(root);
+      if (gameFolder != null) {
+        if (!gameFolder.hasEntry(HIGH_SCORE + "1")) {
+          return false;
+        }
+
+        List<VPRegScoreEntry> scores = summary.getScores();
+        for (VPRegScoreEntry score : scores) {
+          DocumentNode scoreEntry = (DocumentNode) gameFolder.getEntry(HIGH_SCORE + score.getPos());
+          POIFSDocument scoreDocument = new POIFSDocument(scoreEntry);
+          scoreDocument.replaceContents(new ByteArrayInputStream(new Base64Encoder().decode(score.getBase64Score())));
+
+          DocumentNode nameEntry = (DocumentNode) gameFolder.getEntry(HIGH_SCORE + score.getPos() + NAME_SUFFIX);
+          POIFSDocument nameDocument = new POIFSDocument(nameEntry);
+          nameDocument.replaceContents(new ByteArrayInputStream(new Base64Encoder().decode(score.getBase64Name())));
+        }
+
+        fs.writeFilesystem();
+        return true;
+      }
+    } catch (IOException e) {
+      throw new RuntimeException(e);
+    } finally {
+      if (fs != null) {
+        try {
+          fs.close();
+        } catch (IOException e) {
+          //ignore
+        }
+      }
+    }
+    return false;
+  }
+
   public boolean resetHighscores() {
     POIFSFileSystem fs = null;
     try {
@@ -56,13 +99,12 @@ public class VPReg {
           return false;
         }
         int index = 1;
-        String nameSuffix = "Name";
-        while (gameFolder.hasEntry(HIGH_SCORE + index) && gameFolder.hasEntry(HIGH_SCORE + index + nameSuffix)) {
+        while (gameFolder.hasEntry(HIGH_SCORE + index) && gameFolder.hasEntry(HIGH_SCORE + index + NAME_SUFFIX)) {
           DocumentNode scoreEntry = (DocumentNode) gameFolder.getEntry(HIGH_SCORE + index);
           POIFSDocument scoreDocument = new POIFSDocument(scoreEntry);
           scoreDocument.replaceContents(new ByteArrayInputStream("0".getBytes()));
 
-          DocumentNode nameEntry = (DocumentNode) gameFolder.getEntry(HIGH_SCORE + index + nameSuffix);
+          DocumentNode nameEntry = (DocumentNode) gameFolder.getEntry(HIGH_SCORE + index + NAME_SUFFIX);
           POIFSDocument nameDocument = new POIFSDocument(nameEntry);
           nameDocument.replaceContents(new ByteArrayInputStream("???".getBytes()));
 
@@ -87,7 +129,7 @@ public class VPReg {
   }
 
   @Nullable
-  public String readHighscores() {
+  public VPRegScoreSummary readHighscores() {
     POIFSFileSystem fs = null;
     try {
       fs = new POIFSFileSystem(vpregFile, true);
@@ -98,7 +140,7 @@ public class VPReg {
           return null;
         }
 
-        StringBuilder builder = new StringBuilder("HIGHEST SCORES\n");
+        VPRegScoreSummary summary = new VPRegScoreSummary();
         int index = 1;
         String prefix = HIGH_SCORE;
         String nameSuffix = "Name";
@@ -121,19 +163,18 @@ public class VPReg {
 
           String scoreString = new String(scoreContent, StandardCharsets.UTF_8);
           scoreString = scoreString.replace("\0", "");
-          scoreString = HighscoreResolver.formatScore(scoreString);
 
-          builder.append("#");
-          builder.append(index);
-          builder.append(" ");
-          builder.append(nameString);
-          builder.append("   ");
-          builder.append(scoreString);
-          builder.append("\n");
+          VPRegScoreEntry score = new VPRegScoreEntry();
+          score.setBase64Score(new Base64Encoder().encode(scoreContent));
+          score.setBase64Name(new Base64Encoder().encode(nameContent));
+          score.setInitials(nameString);
+          score.setScore(Long.parseLong(scoreString));
+          score.setPos(index);
+          summary.getScores().add(score);
           index++;
         }
 
-        return builder.toString();
+        return summary;
       }
     } catch (IOException e) {
       LOG.error("Failed to read VPReg.stg: " + e.getMessage(), e);

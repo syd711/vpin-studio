@@ -1,6 +1,7 @@
 package de.mephisto.vpin.ui.util;
 
 import de.mephisto.vpin.commons.utils.WidgetFactory;
+import de.mephisto.vpin.restclient.ResetHighscoreDescriptor;
 import de.mephisto.vpin.restclient.VPinStudioClient;
 import de.mephisto.vpin.restclient.representations.CompetitionRepresentation;
 import de.mephisto.vpin.restclient.representations.GameMediaItemRepresentation;
@@ -136,6 +137,16 @@ public class Dialogs {
     controller.setTablesController(tablesController);
     stage.showAndWait();
   }
+
+  public static ResetHighscoreDescriptor openHighscoreResetDialog(GameRepresentation game) {
+    Stage stage = createStudioDialogStage(ResetHighscoreDialogController.class, "dialog-reset-highscore.fxml", "Highscore Reset");
+    ResetHighscoreDialogController controller = (ResetHighscoreDialogController) stage.getUserData();
+    controller.setGame(game);
+    stage.showAndWait();
+
+    return controller.getDescriptor();
+  }
+
 
   public static boolean openRomUploadDialog() {
     Stage stage = createStudioDialogStage(ROMUploadController.class, "dialog-rom-upload.fxml", "Rom Upload");

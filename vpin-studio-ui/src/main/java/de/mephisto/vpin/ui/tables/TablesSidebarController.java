@@ -6,6 +6,7 @@ import de.mephisto.vpin.commons.utils.ScoreGraphUtil;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.PopperScreen;
 import de.mephisto.vpin.restclient.PreferenceNames;
+import de.mephisto.vpin.restclient.ResetHighscoreDescriptor;
 import de.mephisto.vpin.restclient.VPinStudioClient;
 import de.mephisto.vpin.restclient.representations.*;
 import de.mephisto.vpin.ui.Studio;
@@ -483,7 +484,19 @@ public class TablesSidebarController implements Initializable {
 
   @FXML
   private void onScoreReset() {
-
+    if (this.game.isPresent()) {
+      GameRepresentation g = this.game.get();
+      ResetHighscoreDescriptor reset = Dialogs.openHighscoreResetDialog(g);
+      if (reset != null) {
+        try {
+          client.resetHighscore(reset);
+        } catch (Exception e) {
+          LOG.error("Failed to reset highscore: " + e.getMessage(), e);
+        } finally {
+          this.refreshHighscore(this.game, true);
+        }
+      }
+    }
   }
 
   @FXML

@@ -555,6 +555,10 @@ public class VPinStudioClient implements ObservedPropertyChangeListener, Overlay
     return restClient.get(API + "games/recent/" + count, ScoreSummaryRepresentation.class);
   }
 
+  public boolean resetHighscore(ResetHighscoreDescriptor descriptor) throws Exception {
+    return restClient.post(API + "games/reset", descriptor, Boolean.class);
+  }
+
   /*********************************************************************************************************************
    * Player
    ********************************************************************************************************************/
@@ -684,7 +688,7 @@ public class VPinStudioClient implements ObservedPropertyChangeListener, Overlay
 
 
   /*********************************************************************************************************************
-   * Direct2B
+   * DirectB2S
    ********************************************************************************************************************/
 
   public ByteArrayInputStream getDirectB2SImage(GameRepresentation game) {

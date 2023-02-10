@@ -1,8 +1,10 @@
 package de.mephisto.vpin.server.highscores;
 
 import com.google.common.annotations.VisibleForTesting;
+import de.mephisto.vpin.commons.HighscoreTypes;
 import de.mephisto.vpin.restclient.CompetitionType;
 import de.mephisto.vpin.restclient.PreferenceNames;
+import de.mephisto.vpin.restclient.ResetHighscoreDescriptor;
 import de.mephisto.vpin.server.competitions.Competition;
 import de.mephisto.vpin.server.competitions.CompetitionsRepository;
 import de.mephisto.vpin.server.competitions.RankedPlayer;
@@ -11,6 +13,7 @@ import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.players.Player;
 import de.mephisto.vpin.server.preferences.PreferencesService;
 import de.mephisto.vpin.server.system.SystemService;
+import de.mephisto.vpin.server.util.vpreg.VPReg;
 import de.mephisto.vpin.server.vpa.VpaExporterJob;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
@@ -95,11 +98,40 @@ public class HighscoreService implements InitializingBean {
     return metadata;
   }
 
-  public void deleteScores(int id) {
-    Optional<Highscore> byGameId = highscoreRepository.findByGameId(id);
+  public void deleteScores(int gameId) {
+    Optional<Highscore> byGameId = highscoreRepository.findByGameId(gameId);
     byGameId.ifPresent(highscore -> highscoreRepository.delete(highscore));
-    List<HighscoreVersion> versions = highscoreVersionRepository.findByGameId(id);
+    List<HighscoreVersion> versions = highscoreVersionRepository.findByGameId(gameId);
     highscoreVersionRepository.deleteAll(versions);
+    LOG.info("Deleted all highscores and versions for " + gameId);
+  }
+
+  public boolean resetHighscore(Game game, ResetHighscoreDescriptor descriptor) {
+    String highscoreType = game.getHighscoreType();
+    boolean result = false;
+    switch (highscoreType) {
+      case HighscoreTypes.TYPE_EM: {
+        result = game.getEMHighscoreFile() != null && game.getEMHighscoreFile().exists() && game.getEMHighscoreFile().delete();
+        break;
+      }
+      case HighscoreTypes.TYPE_NVRAM: {
+        result = game.getNvRamFile().exists() && game.getNvRamFile().delete();//TODO unify game file access
+        break;
+      }
+      case HighscoreTypes.TYPE_VREG: {
+        VPReg reg = new VPReg(systemService.getVPRegFile(), game);
+        result = reg.resetHighscores();
+        break;
+      }
+      default: {
+        LOG.error("No matching highscore type found for '" + highscoreType + "'");
+      }
+    }
+
+    if (descriptor.isDeleteHistory()) {
+      deleteScores(game.getId());
+    }
+    return result;
   }
 
   @NonNull
