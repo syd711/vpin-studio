@@ -54,6 +54,15 @@ public class AssetService {
     return false;
   }
 
+  public boolean deleteByExternalId(String externalId) {
+    Optional<Asset> byId = assetRepository.findByExternalId(externalId);
+    if (byId.isPresent()) {
+      assetRepository.delete(byId.get());
+      return true;
+    }
+    return false;
+  }
+
   public Asset saveOrUpdate(byte[] data, long id, String assetName, String assetType, String externalId) {
     String mimeType = "image/jpg";
     if (assetName.toLowerCase().endsWith(".png")) {

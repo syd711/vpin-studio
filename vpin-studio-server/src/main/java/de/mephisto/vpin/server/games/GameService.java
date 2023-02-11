@@ -5,6 +5,8 @@ import de.mephisto.vpin.commons.utils.FileUtils;
 import de.mephisto.vpin.restclient.DeleteDescriptor;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.ResetHighscoreDescriptor;
+import de.mephisto.vpin.server.assets.Asset;
+import de.mephisto.vpin.server.assets.AssetService;
 import de.mephisto.vpin.server.competitions.Competition;
 import de.mephisto.vpin.server.competitions.CompetitionService;
 import de.mephisto.vpin.server.competitions.ScoreSummary;
@@ -55,6 +57,9 @@ public class GameService {
 
   @Autowired
   private CardService cardService;
+
+  @Autowired
+  private AssetService assetService;
 
   @SuppressWarnings("unused")
   public List<Game> getGames() {
@@ -165,6 +170,7 @@ public class GameService {
       }
     }
 
+    assetService.deleteByExternalId(String.valueOf(descriptor.getGameId()));
     LOG.info("Deleted " + game.getGameDisplayName());
     return success;
   }

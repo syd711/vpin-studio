@@ -12,5 +12,4 @@ public interface GameDetailsRepository extends JpaRepository<GameDetails, Long> 
 
   List<GameDetails> findByRomNameOrTableName(String rom, String tableName);
 
-  void deleteByPupId(int pupId);
 }

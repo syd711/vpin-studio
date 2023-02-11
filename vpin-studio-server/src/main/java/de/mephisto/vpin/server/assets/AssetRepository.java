@@ -10,5 +10,7 @@ public interface AssetRepository extends JpaRepository<Asset, Long> {
 
   Optional<Asset> findByUuid(String uuid);
 
+  Optional<Asset> findByExternalId(String externalId);
+
   Optional<Asset> findByExternalIdAndAssetType(String externalId, String assetType);
 }
