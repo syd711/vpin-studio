@@ -11,7 +11,7 @@ import java.io.File;
 import java.util.Iterator;
 import java.util.List;
 
-public class TableImportProgressModel extends ProgressModel {
+public class TableImportProgressModel extends ProgressModel<File> {
   private final static Logger LOG = LoggerFactory.getLogger(TableImportProgressModel.class);
 
   private final ImportDescriptor descriptor;
@@ -37,9 +37,18 @@ public class TableImportProgressModel extends ProgressModel {
   }
 
   @Override
-  public String processNext(ProgressResultModel progressResultModel) {
+  public File getNext() {
+    return iterator.next();
+  }
+
+  @Override
+  public String nextToString(File file) {
+    return file.getName();
+  }
+
+  @Override
+  public void processNext(ProgressResultModel progressResultModel, File next) {
     try {
-      File next = iterator.next();
       String vpaFileName = Studio.client.uploadVpa(next, percent -> {
         double total = percentage + percent;
         progressResultModel.setProgress(total / this.vpaFiles.size());
@@ -50,11 +59,9 @@ public class TableImportProgressModel extends ProgressModel {
 
       progressResultModel.addProcessed();
       percentage++;
-      return next.getName();
     } catch (Exception e) {
       LOG.error("Table export failed: " + e.getMessage(), e);
     }
-    return null;
   }
 
   @Override

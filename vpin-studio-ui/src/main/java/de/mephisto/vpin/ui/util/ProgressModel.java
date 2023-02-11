@@ -1,6 +1,6 @@
 package de.mephisto.vpin.ui.util;
 
-abstract public class ProgressModel {
+abstract public class ProgressModel<T> {
 
   private String title;
 
@@ -22,7 +22,11 @@ abstract public class ProgressModel {
 
   abstract public int getMax();
 
-  abstract public String processNext(ProgressResultModel progressResultModel);
+  abstract public T getNext();
+
+  abstract public String nextToString(T t);
+
+  abstract public void processNext(ProgressResultModel progressResultModel, T next);
 
   abstract public boolean hasNext();
 }

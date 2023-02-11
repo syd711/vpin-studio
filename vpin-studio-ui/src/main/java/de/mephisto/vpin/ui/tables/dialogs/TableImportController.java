@@ -73,7 +73,8 @@ public class TableImportController implements Initializable, DialogController {
     this.selection = fileChooser.showOpenMultipleDialog(stage);
     if (this.selection != null && !this.selection.isEmpty()) {
       TableImportController.lastFolderSelection = this.selection.get(0).getParentFile();
-      this.fileNameField.setText(this.selection.stream().map(f -> f.getName()).collect(Collectors.joining()));
+      List<String> names = this.selection.stream().map(f -> f.getName()).collect(Collectors.toList());
+      this.fileNameField.setText(String.join(", ", names));
     }
     else {
       this.fileNameField.setText("");
@@ -97,7 +98,7 @@ public class TableImportController implements Initializable, DialogController {
 
     Platform.runLater(() -> {
       String title = "Importing " + this.selection.size() + " tables";
-      if(this.selection.size() == 1) {
+      if (this.selection.size() == 1) {
         title = "Importing \"" + this.selection.get(0).getName() + "\"";
       }
       TableImportProgressModel model = new TableImportProgressModel(title, descriptor, this.selection);

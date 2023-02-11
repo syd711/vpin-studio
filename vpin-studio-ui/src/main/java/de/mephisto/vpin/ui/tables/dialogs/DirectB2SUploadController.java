@@ -23,7 +23,6 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
 
-import static de.mephisto.vpin.ui.Studio.client;
 import static de.mephisto.vpin.ui.Studio.stage;
 
 public class DirectB2SUploadController implements Initializable, DialogController {
@@ -66,12 +65,12 @@ public class DirectB2SUploadController implements Initializable, DialogControlle
       try {
         if (uploadTypeGenerator.isSelected()) {
           uploadTypeGeneratorSelectedLast = true;
-          DirectB2SUploadProgressModel model = new DirectB2SUploadProgressModel(client, this.game.getId(), "DirectB2S Upload", selection, "generator");
+          DirectB2SUploadProgressModel model = new DirectB2SUploadProgressModel(this.game.getId(), "DirectB2S Upload", selection, "generator");
           Dialogs.createProgressDialog(model);
         }
         else {
           uploadTypeGeneratorSelectedLast = false;
-          DirectB2SUploadProgressModel model = new DirectB2SUploadProgressModel(client, this.game.getId(), "DirectB2S Upload", selection, "table");
+          DirectB2SUploadProgressModel model = new DirectB2SUploadProgressModel(this.game.getId(), "DirectB2S Upload", selection, "table");
           Dialogs.createProgressDialog(model);
         }
       } catch (Exception e) {

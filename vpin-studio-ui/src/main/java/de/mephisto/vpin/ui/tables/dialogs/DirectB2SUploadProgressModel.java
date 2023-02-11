@@ -1,6 +1,6 @@
 package de.mephisto.vpin.ui.tables.dialogs;
 
-import de.mephisto.vpin.restclient.VPinStudioClient;
+import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.util.ProgressModel;
 import de.mephisto.vpin.ui.util.ProgressResultModel;
 import org.slf4j.Logger;
@@ -10,18 +10,16 @@ import java.io.File;
 import java.util.Collections;
 import java.util.Iterator;
 
-public class DirectB2SUploadProgressModel extends ProgressModel {
+public class DirectB2SUploadProgressModel extends ProgressModel<File> {
   private final static Logger LOG = LoggerFactory.getLogger(DirectB2SUploadProgressModel.class);
 
   private final Iterator<File> iterator;
-  private final VPinStudioClient client;
-  private int gameId;
+  private final int gameId;
   private final File file;
-  private String directB2SType;
+  private final String directB2SType;
 
-  public DirectB2SUploadProgressModel(VPinStudioClient client, int gameId, String title, File file, String directB2SType) {
+  public DirectB2SUploadProgressModel(int gameId, String title, File file, String directB2SType) {
     super(title);
-    this.client = client;
     this.gameId = gameId;
     this.file = file;
     this.directB2SType = directB2SType;
@@ -39,16 +37,23 @@ public class DirectB2SUploadProgressModel extends ProgressModel {
   }
 
   @Override
-  public String processNext(ProgressResultModel progressResultModel) {
+  public File getNext() {
+    return iterator.next();
+  }
+
+  @Override
+  public String nextToString(File file) {
+    return file.getName();
+  }
+
+  @Override
+  public void processNext(ProgressResultModel progressResultModel, File next) {
     try {
-      File next = iterator.next();
-      client.uploadDirectB2SFile(next, directB2SType, gameId, percent -> progressResultModel.setProgress(percent));
+      Studio.client.uploadDirectB2SFile(next, directB2SType, gameId, percent -> progressResultModel.setProgress(percent));
       progressResultModel.addProcessed();
-      return next.getName();
     } catch (Exception e) {
       LOG.error("Table upload failed: " + e.getMessage(), e);
     }
-    return null;
   }
 
   @Override

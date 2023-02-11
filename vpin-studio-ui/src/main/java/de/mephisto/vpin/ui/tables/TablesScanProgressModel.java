@@ -1,7 +1,7 @@
 package de.mephisto.vpin.ui.tables;
 
-import de.mephisto.vpin.restclient.VPinStudioClient;
 import de.mephisto.vpin.restclient.representations.GameRepresentation;
+import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.util.ProgressModel;
 import de.mephisto.vpin.ui.util.ProgressResultModel;
 import org.slf4j.Logger;
@@ -10,17 +10,14 @@ import org.slf4j.LoggerFactory;
 import java.util.Iterator;
 import java.util.List;
 
-public class TablesScanProgressModel extends ProgressModel {
+public class TablesScanProgressModel extends ProgressModel<Integer> {
   private final static Logger LOG = LoggerFactory.getLogger(TablesScanProgressModel.class);
   private final Iterator<Integer> iterator;
   private final List<Integer> gameIds;
 
-  private final VPinStudioClient client;
-
-  public TablesScanProgressModel(VPinStudioClient client, String title) {
+  public TablesScanProgressModel(String title) {
     super(title);
-    this.client = client;
-    this.gameIds = client.getGameIds();
+    this.gameIds = Studio.client.getGameIds();
     iterator = gameIds.iterator();
   }
 
@@ -34,18 +31,24 @@ public class TablesScanProgressModel extends ProgressModel {
     return this.iterator.hasNext();
   }
 
-  public String processNext(ProgressResultModel progressResultModel) {
-    try {
-      Integer id = iterator.next();
-      GameRepresentation game = client.scanGame(id);
-      if(game != null) {
-        progressResultModel.addProcessed();
-        return game.getGameDisplayName();
-      }
-      return "Unknown Game";
-    } catch (Exception e) {
-      LOG.error("Generate card error: " + e.getMessage(), e);
-    }
+  @Override
+  public Integer getNext() {
+    return iterator.next();
+  }
+
+  @Override
+  public String nextToString(Integer id) {
     return null;
+  }
+
+  public void processNext(ProgressResultModel progressResultModel, Integer id) {
+    try {
+      GameRepresentation game = Studio.client.scanGame(id);
+      if (game != null) {
+        progressResultModel.addProcessed();
+      }
+    } catch (Exception e) {
+      LOG.error("Table scan error: " + e.getMessage(), e);
+    }
   }
 }

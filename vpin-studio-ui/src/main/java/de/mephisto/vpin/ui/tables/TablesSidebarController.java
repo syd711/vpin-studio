@@ -582,7 +582,7 @@ public class TablesSidebarController implements Initializable {
   private void onPOVExport() {
     if (game.isPresent()) {
       GameRepresentation g = game.get();
-      ProgressResultModel resultModel = Dialogs.createProgressDialog(new POVExportProgressModel(client, "Export POV Settings", g));
+      ProgressResultModel resultModel = Dialogs.createProgressDialog(new POVExportProgressModel("Export POV Settings", g));
       if (!resultModel.getResults().isEmpty()) {
         tablesController.onReload();
       }

@@ -49,7 +49,7 @@ public class ROMUploadController implements Initializable, DialogController {
     if (selection != null && !selection.isEmpty()) {
       result = true;
       try {
-        RomUploadProgressModel model = new RomUploadProgressModel(client, "ROM Upload", selection);
+        RomUploadProgressModel model = new RomUploadProgressModel("ROM Upload", selection);
         Dialogs.createProgressDialog(model);
       } catch (Exception e) {
         LOG.error("Upload failed: " + e.getMessage(), e);

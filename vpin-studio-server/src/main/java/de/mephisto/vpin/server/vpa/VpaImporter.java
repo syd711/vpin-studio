@@ -1,5 +1,6 @@
 package de.mephisto.vpin.server.vpa;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import de.mephisto.vpin.commons.EmulatorType;
@@ -83,29 +84,41 @@ public class VpaImporter {
       }
 
       if (importHighscores) {
-        if (manifest.getAdditionalData().containsKey(VpaService.DATA_HIGHSCORE_HISTORY)) {
-          String json = (String) manifest.getAdditionalData().get(VpaService.DATA_HIGHSCORE_HISTORY);
-          VpaExporterJob.ScoreVersionEntry[] scores = objectMapper.readValue(json, VpaExporterJob.ScoreVersionEntry[].class);
-          LOG.info("Importing " + scores.length + " scores.");
-          for (VpaExporterJob.ScoreVersionEntry score : scores) {
-            highscoreService.importScoreEntry(game, score);
-          }
-        }
-
-        if (manifest.getAdditionalData().containsKey(VpaService.DATA_VPREG_HIGHSCORE)) {
-          String json = (String) manifest.getAdditionalData().get(VpaService.DATA_VPREG_HIGHSCORE);
-          VPRegScoreSummary summary = objectMapper.readValue(json, VPRegScoreSummary.class);
-          VPReg vpReg = new VPReg(systemService.getVPRegFile(), game);
-          vpReg.restoreHighscore(summary);
-        }
+        importHighscores(game, manifest);
       }
 
       LOG.info("Final highscore scan");
       return game;
     } catch (Exception e) {
-      LOG.error("Import failed: " + e.getMessage(), e);
+      LOG.error("Import of \"" + vpaFile.getName() + "\" failed: " + e.getMessage(), e);
     }
     return null;
+  }
+
+  private void importHighscores(Game game, VpaManifest manifest) {
+    try {
+      if (manifest.getAdditionalData().containsKey(VpaService.DATA_HIGHSCORE_HISTORY)) {
+        String json = (String) manifest.getAdditionalData().get(VpaService.DATA_HIGHSCORE_HISTORY);
+        VpaExporterJob.ScoreVersionEntry[] scores = objectMapper.readValue(json, VpaExporterJob.ScoreVersionEntry[].class);
+        LOG.info("Importing " + scores.length + " scores.");
+        for (VpaExporterJob.ScoreVersionEntry score : scores) {
+          highscoreService.importScoreEntry(game, score);
+        }
+      }
+    } catch (Exception e) {
+      LOG.error("Error importing highscore history of " + game.getGameDisplayName() + ": " + e.getMessage(), e);
+    }
+
+    try {
+      if (manifest.getAdditionalData().containsKey(VpaService.DATA_VPREG_HIGHSCORE)) {
+        String json = (String) manifest.getAdditionalData().get(VpaService.DATA_VPREG_HIGHSCORE);
+        VPRegScoreSummary summary = objectMapper.readValue(json, VPRegScoreSummary.class);
+        VPReg vpReg = new VPReg(systemService.getVPRegFile(), game);
+        vpReg.restoreHighscore(summary);
+      }
+    } catch (Exception e) {
+      LOG.error("Error importing VPReg scores of " + game.getGameDisplayName() + ": " + e.getMessage(), e);
+    }
   }
 
   private void unzipVpa(boolean importRom, boolean importPopperMedia, boolean importPupPack) {
@@ -195,7 +208,7 @@ public class VpaImporter {
     File destFile = new File(destinationDir, zipEntry.getName());
 
     //copy directb2s file to another folder
-    if(zipEntry.getName().endsWith(".directb2s") && zipEntry.getName().contains("AdditionalFiles")) {
+    if (zipEntry.getName().endsWith(".directb2s") && zipEntry.getName().contains("AdditionalFiles")) {
       String name = zipEntry.getName().substring(zipEntry.getName().lastIndexOf('/') + 1);
       destFile = new File(systemService.getDirectB2SMediaFolder(), name);
       LOG.info("Importing media directb2s file \"" + destFile.getCanonicalPath() + "\"");

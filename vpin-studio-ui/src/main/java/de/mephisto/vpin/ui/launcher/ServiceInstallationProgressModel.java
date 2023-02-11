@@ -1,7 +1,6 @@
 package de.mephisto.vpin.ui.launcher;
 
 import de.mephisto.vpin.restclient.VPinStudioClient;
-import de.mephisto.vpin.restclient.representations.GameRepresentation;
 import de.mephisto.vpin.ui.util.ProgressModel;
 import de.mephisto.vpin.ui.util.ProgressResultModel;
 import org.slf4j.Logger;
@@ -9,54 +8,49 @@ import org.slf4j.LoggerFactory;
 
 import java.util.Iterator;
 import java.util.List;
+import java.util.stream.IntStream;
 
-public class ServiceInstallationProgressModel extends ProgressModel {
+public class ServiceInstallationProgressModel extends ProgressModel<Integer> {
   private final static Logger LOG = LoggerFactory.getLogger(ServiceInstallationProgressModel.class);
+  private final List<Integer> gameIds;
 
   private VPinStudioClient client;
-  private Iterator<Integer> gamesIterator;
-
-  private int max;
-  private boolean hasNext = true;
-  private List<Integer> gameIds;
+  private Iterator<Integer> gameIdIterator;
 
   public ServiceInstallationProgressModel(VPinStudioClient client) {
     super("Initial Table Scan");
     this.client = client;
-    int gameCount = this.client.getGameCount();
-    this.max = gameCount;
+    gameIds = client.getGameIds();
+    gameIdIterator = gameIds.iterator();
   }
 
   @Override
   public int getMax() {
-    return max;
+    return gameIds.size();
   }
 
   @Override
   public boolean hasNext() {
-    return hasNext;
+    return this.gameIdIterator.hasNext();
   }
 
   @Override
-  public String processNext(ProgressResultModel progressResultModel) {
-    try {
-      if (gameIds == null) {
-        gameIds = client.getGameIds();
-        this.max = gameIds.size();
-        gamesIterator = gameIds.iterator();
-        return "Preparing initial table scan...";
-      }
+  public Integer getNext() {
+    return gameIdIterator.next();
+  }
 
-      this.hasNext = gamesIterator.hasNext();
-      if (hasNext) {
-        Integer next = gamesIterator.next();
-        GameRepresentation gameRepresentation = client.scanGame(next);
-        progressResultModel.addProcessed();
-        return gameRepresentation.getGameDisplayName();
-      }
-    } catch (Exception e) {
-      LOG.error("Generate card error: " + e.getMessage(), e);
-    }
+  @Override
+  public String nextToString(Integer id) {
     return null;
+  }
+
+  @Override
+  public void processNext(ProgressResultModel progressResultModel, Integer next) {
+    try {
+      client.scanGame(next);
+      progressResultModel.addProcessed();
+    } catch (Exception e) {
+      LOG.error("Error during service installation: " + e.getMessage(), e);
+    }
   }
 }

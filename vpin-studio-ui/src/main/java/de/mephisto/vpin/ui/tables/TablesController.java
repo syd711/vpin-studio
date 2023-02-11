@@ -273,7 +273,7 @@ public class TablesController implements Initializable, StudioFXController {
     Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, title,
         "Re-scanning will overwrite some of the existing metadata properties.");
     if (result.isPresent() && result.get().equals(ButtonType.OK)) {
-      Dialogs.createProgressDialog(new TableScanProgressModel(client, "Scanning Tables", selectedItems));
+      Dialogs.createProgressDialog(new TableScanProgressModel("Scanning Tables", selectedItems));
       this.onReload();
     }
   }
@@ -302,7 +302,7 @@ public class TablesController implements Initializable, StudioFXController {
       Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Inspect Table Script?", "This will extract the table script into a temporary file.", "It will be opened afterwards in a text editor.");
       if (result.isPresent() && result.get().equals(ButtonType.OK)) {
 
-        ProgressResultModel resultModel = Dialogs.createProgressDialog(new ScriptDownloadProgressModel(client, "Extracting Table Script", game));
+        ProgressResultModel resultModel = Dialogs.createProgressDialog(new ScriptDownloadProgressModel("Extracting Table Script", game));
         if (!resultModel.getResults().isEmpty()) {
           File file = (File) resultModel.getResults().get(0);
           try {

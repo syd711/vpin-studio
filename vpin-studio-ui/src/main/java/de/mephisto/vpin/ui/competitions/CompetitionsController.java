@@ -211,12 +211,12 @@ public class CompetitionsController implements Initializable, StudioFXController
         NavigationController.setBreadCrumb(Arrays.asList("Competitions", "Offline Competitions", competitionRepresentation.get().getName()));
       }
       else {
-        NavigationController.setBreadCrumb(Arrays.asList("Competitions", "Discord Competitions"));
+        NavigationController.setBreadCrumb(Arrays.asList("Competitions", "Offline Competitions"));
       }
     }
     else {
       if (competitionRepresentation.isPresent()) {
-        NavigationController.setBreadCrumb(Arrays.asList("Competitions", "Offline Competitions", competitionRepresentation.get().getName()));
+        NavigationController.setBreadCrumb(Arrays.asList("Competitions", "Discord Competitions", competitionRepresentation.get().getName()));
       }
       else {
         NavigationController.setBreadCrumb(Arrays.asList("Competitions", "Discord Competitions"));

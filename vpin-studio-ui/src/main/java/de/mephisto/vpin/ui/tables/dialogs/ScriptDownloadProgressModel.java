@@ -1,7 +1,7 @@
 package de.mephisto.vpin.ui.tables.dialogs;
 
-import de.mephisto.vpin.restclient.VPinStudioClient;
 import de.mephisto.vpin.restclient.representations.GameRepresentation;
+import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.util.ProgressModel;
 import de.mephisto.vpin.ui.util.ProgressResultModel;
 import org.slf4j.Logger;
@@ -11,15 +11,13 @@ import java.io.File;
 import java.util.Collections;
 import java.util.Iterator;
 
-public class ScriptDownloadProgressModel extends ProgressModel {
+public class ScriptDownloadProgressModel extends ProgressModel<GameRepresentation> {
   private final static Logger LOG = LoggerFactory.getLogger(ScriptDownloadProgressModel.class);
 
   private final Iterator<GameRepresentation> iterator;
-  private final VPinStudioClient client;
 
-  public ScriptDownloadProgressModel(VPinStudioClient client, String title, GameRepresentation game) {
+  public ScriptDownloadProgressModel(String title, GameRepresentation game) {
     super(title);
-    this.client = client;
     iterator = Collections.singletonList(game).iterator();
   }
 
@@ -34,27 +32,33 @@ public class ScriptDownloadProgressModel extends ProgressModel {
   }
 
   @Override
+  public GameRepresentation getNext() {
+    return iterator.next();
+  }
+
+  @Override
+  public String nextToString(GameRepresentation game) {
+    return game.getGameDisplayName();
+  }
+
+  @Override
   public int getMax() {
     return 1;
   }
 
   @Override
-  public String processNext(ProgressResultModel progressResultModel) {
+  public void processNext(ProgressResultModel progressResultModel, GameRepresentation next) {
     try {
-      GameRepresentation next = iterator.next();
-      File tableScript = client.getTableScript(next);
-      if(tableScript != null) {
+      File tableScript = Studio.client.getTableScript(next);
+      if (tableScript != null) {
         progressResultModel.addProcessed(tableScript);
       }
       else {
         progressResultModel.addProcessed();
       }
-
-      return next.getGameDisplayName();
     } catch (Exception e) {
       LOG.error("Table upload failed: " + e.getMessage(), e);
     }
-    return null;
   }
 
   @Override

@@ -11,19 +11,17 @@ import java.io.File;
 import java.util.Iterator;
 import java.util.List;
 
-public class TableUploadProgressModel extends ProgressModel {
+public class TableUploadProgressModel extends ProgressModel<File> {
   private final static Logger LOG = LoggerFactory.getLogger(TableUploadProgressModel.class);
 
   private final Iterator<File> iterator;
-  private final VPinStudioClient client;
   private final List<File> files;
   private final boolean importToPopper;
   private final int playlistId;
   private double percentage = 0;
 
-  public TableUploadProgressModel(VPinStudioClient client, String title, List<File> files, boolean importToPopper, int playlistId) {
+  public TableUploadProgressModel(String title, List<File> files, boolean importToPopper, int playlistId) {
     super(title);
-    this.client = client;
     this.files = files;
     this.importToPopper = importToPopper;
     this.playlistId = playlistId;
@@ -41,20 +39,27 @@ public class TableUploadProgressModel extends ProgressModel {
   }
 
   @Override
-  public String processNext(ProgressResultModel progressResultModel) {
+  public File getNext() {
+    return iterator.next();
+  }
+
+  @Override
+  public String nextToString(File file) {
+    return file.getName();
+  }
+
+  @Override
+  public void processNext(ProgressResultModel progressResultModel, File next) {
     try {
-      File next = iterator.next();
       Studio.client.uploadTable(next, importToPopper, playlistId, percent -> {
         double total = percentage + percent;
         progressResultModel.setProgress(total / this.files.size());
       });
       progressResultModel.addProcessed();
       percentage++;
-      return next.getName();
     } catch (Exception e) {
       LOG.error("Table upload failed: " + e.getMessage(), e);
     }
-    return null;
   }
 
   @Override

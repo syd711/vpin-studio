@@ -66,7 +66,7 @@ public class TableUploadController implements Initializable, DialogController {
         final PlaylistRepresentation value = this.playlistCombo.getValue();
 
         int playListId = -1;
-        if(value != null) {
+        if (value != null) {
           playListId = value.getId();
         }
 
@@ -74,7 +74,7 @@ public class TableUploadController implements Initializable, DialogController {
           stage.close();
         });
 
-        TableUploadProgressModel model = new TableUploadProgressModel(client, "VPX Upload", selection, importToPopper, playListId);
+        TableUploadProgressModel model = new TableUploadProgressModel("VPX Upload", selection, importToPopper, playListId);
         Dialogs.createProgressDialog(model);
       } catch (Exception e) {
         LOG.error("Upload failed: " + e.getMessage(), e);

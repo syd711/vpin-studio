@@ -7,10 +7,11 @@ import de.mephisto.vpin.ui.util.ProgressResultModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.File;
 import java.util.Iterator;
 import java.util.List;
 
-public class HighscoreGeneratorProgressModel extends ProgressModel {
+public class HighscoreGeneratorProgressModel extends ProgressModel<GameRepresentation> {
   private final static Logger LOG = LoggerFactory.getLogger(HighscoreGeneratorProgressModel.class);
   private final Iterator<GameRepresentation> iterator;
   private final List<GameRepresentation> gameInfos;
@@ -30,13 +31,22 @@ public class HighscoreGeneratorProgressModel extends ProgressModel {
   }
 
   @Override
+  public GameRepresentation getNext() {
+    return iterator.next();
+  }
+
+  @Override
+  public String nextToString(GameRepresentation game) {
+    return game.getGameDisplayName();
+  }
+
+  @Override
   public boolean hasNext() {
     return this.iterator.hasNext();
   }
 
-  public String processNext(ProgressResultModel progressResultModel) {
+  public void processNext(ProgressResultModel progressResultModel, GameRepresentation game) {
     try {
-      GameRepresentation game = iterator.next();
       boolean result = client.generateHighscoreCard(game);
       if (result) {
         progressResultModel.addProcessed();
@@ -44,10 +54,8 @@ public class HighscoreGeneratorProgressModel extends ProgressModel {
       else {
         progressResultModel.addSkipped();
       }
-      return game.getGameDisplayName();
     } catch (Exception e) {
       LOG.error("Generate card error: " + e.getMessage(), e);
     }
-    return null;
   }
 }

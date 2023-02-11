@@ -48,25 +48,33 @@ public class ProgressDialogController implements Initializable, DialogController
 
 
     progressResultModel = new ProgressResultModel(progressBar);
+    progressBarLabel.setText("");
     service = new Service() {
       @Override
       protected Task createTask() {
         return new Task() {
           @Override
           protected Object call() throws Exception {
-            int index = 0;
+            int index = 1;
             while (model.hasNext() && !this.isCancelled()) {
-              String result = model.processNext(progressResultModel);
+              Object next = model.getNext();
+              final int uiIndex = index;
+
+              Platform.runLater(() -> {
+                String label = model.nextToString(next);
+                if(label != null) {
+                  progressBarLabel.setText("Processing: " + model.nextToString(next));
+                }
+                titleLabel.setText(model.getTitle() + " (" + uiIndex + "/" + model.getMax() + ")");
+              });
+
+              model.processNext(progressResultModel, next);
               if (!model.isIndeterminate()) {
                 long percent = index * 100 / model.getMax();
                 updateProgress(percent, 100);
               }
 
-              final int uiIndex = index;
               Platform.runLater(() -> {
-                titleLabel.setText(model.getTitle() + " (" + uiIndex + "/" + model.getMax() + ")");
-                progressBarLabel.setText("Processing: " + result);
-
                 if (!model.isIndeterminate()) {
                   double p = Double.valueOf(uiIndex) / model.getMax();
                   progressBar.setProgress(p);
@@ -74,9 +82,10 @@ public class ProgressDialogController implements Initializable, DialogController
               });
               index++;
             }
+
+
             Platform.runLater(() -> {
               stage.close();
-
               if (model.isShowSummary()) {
                 Platform.runLater(() -> {
                   String msg = model.getTitle() + " finished.";

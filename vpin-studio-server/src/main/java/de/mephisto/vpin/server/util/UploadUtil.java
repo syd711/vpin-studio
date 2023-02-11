@@ -1,5 +1,6 @@
 package de.mephisto.vpin.server.util;
 
+import de.mephisto.vpin.commons.utils.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
@@ -25,7 +26,7 @@ public class UploadUtil {
       FileOutputStream fileOutputStream = new FileOutputStream(target);
       IOUtils.write(bytes, fileOutputStream);
       fileOutputStream.close();
-      LOG.info("Written uploaded file: " + target.getAbsolutePath() + ", byte size was " + bytes.length);
+      LOG.info("Written uploaded file: " + target.getAbsolutePath() + ", byte size was " + FileUtils.readableFileSize(bytes.length));
     } catch (Exception e) {
       LOG.error("Failed to store asset: " + e.getMessage() + ", byte size was " + bytes.length, e);
       throw e;

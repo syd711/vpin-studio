@@ -106,7 +106,7 @@
                                     <Font size="14.0" />
                                  </font>
                                  <graphic>
-                                    <FontIcon iconColor="WHITE" iconLiteral="mdi2a-archive-arrow-up-outline" />
+                                    <FontIcon iconColor="WHITE" iconLiteral="mdi2i-import" iconSize="12" />
                                  </graphic>
                                  <tooltip>
                                     <Tooltip text="Resets the dismissed validations and revalidates the table configuration." />
@@ -117,7 +117,7 @@
                                     <Font size="14.0" />
                                  </font>
                                  <graphic>
-                                    <FontIcon iconColor="WHITE" iconLiteral="mdi2a-archive-arrow-down-outline" />
+                                    <FontIcon iconColor="WHITE" iconLiteral="mdi2e-export" />
                                  </graphic>
                                  <tooltip>
                                     <Tooltip text="Resets the dismissed validations and revalidates the table configuration." />
