@@ -208,7 +208,7 @@ public class NotificationService implements InitializingBean, HighscoreChangeLis
     Game game = gameService.getGame(competition.getGameId());
     if (game != null) {
       LOG.info("Finishing " + competition);
-      popperService.deAugmentWheel(game);
+      runCheckedDeAugmentation();
 
       if (competition.getDiscordChannelId() > 0) {
         long discordServerId = competition.getDiscordServerId();
@@ -234,7 +234,7 @@ public class NotificationService implements InitializingBean, HighscoreChangeLis
   public void competitionDeleted(@NonNull Competition competition) {
     Game game = gameService.getGame(competition.getGameId());
     if (game != null) {
-      popperService.deAugmentWheel(game);
+      runCheckedDeAugmentation();
 
       long discordServerId = competition.getDiscordServerId();
       long discordChannelId = competition.getDiscordChannelId();
@@ -246,7 +246,7 @@ public class NotificationService implements InitializingBean, HighscoreChangeLis
 
       if (competition.getType().equals(CompetitionType.DISCORD.name())) {
         //check if the owner deleted the competition
-        if(competition.getOwner().equals(String.valueOf(discordService.getBotId())) && competition.isActive()) {
+        if (competition.getOwner().equals(String.valueOf(discordService.getBotId())) && competition.isActive()) {
           discordService.resetCompetition(discordServerId, discordChannelId);
           Player player = discordService.getPlayer(discordServerId, Long.parseLong(competition.getOwner()));
           String message = DiscordChannelMessageFactory.createCompetitionCancelledMessage(player, competition);
@@ -263,12 +263,7 @@ public class NotificationService implements InitializingBean, HighscoreChangeLis
       if (competition.getBadge() != null) {
         popperService.augmentWheel(game, competition.getBadge());
       }
-      else {
-        popperService.deAugmentWheel(game);
-      }
     }
-
-    runAugmentationCheck();
 
     //only the dates of the competition could have been changed
     if (competition.getType().equals(CompetitionType.DISCORD.name())) {
@@ -279,9 +274,11 @@ public class NotificationService implements InitializingBean, HighscoreChangeLis
       long messageId = discordService.getStartMessageId(discordServerId, discordChannelId);
       discordService.saveCompetitionData(competition, game, summary, messageId);
     }
+
+    runCheckedDeAugmentation();
   }
 
-  private void runAugmentationCheck() {
+  private void runCheckedDeAugmentation() {
     List<Integer> competedGameIds = competitionService.getActiveCompetitions().stream().map(Competition::getGameId).collect(Collectors.toList());
 
     List<Game> games = gameService.getGames();
