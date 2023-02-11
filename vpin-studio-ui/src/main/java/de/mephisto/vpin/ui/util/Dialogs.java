@@ -1,6 +1,7 @@
 package de.mephisto.vpin.ui.util;
 
 import de.mephisto.vpin.commons.utils.WidgetFactory;
+import de.mephisto.vpin.restclient.PopperScreen;
 import de.mephisto.vpin.restclient.ResetHighscoreDescriptor;
 import de.mephisto.vpin.restclient.VPinStudioClient;
 import de.mephisto.vpin.restclient.representations.CompetitionRepresentation;
@@ -10,9 +11,9 @@ import de.mephisto.vpin.restclient.representations.PlayerRepresentation;
 import de.mephisto.vpin.ui.ProgressDialogController;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.UpdateDialogController;
+import de.mephisto.vpin.ui.competitions.CompetitionDiscordDialogController;
 import de.mephisto.vpin.ui.competitions.CompetitionDiscordJoinDialogController;
 import de.mephisto.vpin.ui.competitions.CompetitionOfflineDialogController;
-import de.mephisto.vpin.ui.competitions.CompetitionDiscordDialogController;
 import de.mephisto.vpin.ui.players.PlayerDialogController;
 import de.mephisto.vpin.ui.tables.TablesController;
 import de.mephisto.vpin.ui.tables.dialogs.*;
@@ -101,7 +102,7 @@ public class Dialogs {
   }
 
   public static boolean openTableUploadDialog() {
-    Stage stage = createStudioDialogStage(TableUploadController.class,"dialog-table-upload.fxml", "VPX Table Upload");
+    Stage stage = createStudioDialogStage(TableUploadController.class, "dialog-table-upload.fxml", "VPX Table Upload");
     TableUploadController controller = (TableUploadController) stage.getUserData();
     stage.showAndWait();
 
@@ -196,6 +197,11 @@ public class Dialogs {
 
     Stage owner = Studio.stage;
     BorderPane mediaView = (BorderPane) root.lookup("#mediaView");
+
+    if (item.getScreen().equals(PopperScreen.PlayField.name()) || item.getScreen().equals(PopperScreen.Loading.name())) {
+      mediaView.rotateProperty().set(90);
+    }
+
     WidgetFactory.addMediaItemToBorderPane(client, item, mediaView);
     final Stage stage = WidgetFactory.createStage();
     stage.initModality(Modality.WINDOW_MODAL);
@@ -223,7 +229,7 @@ public class Dialogs {
   }
 
   public static Optional<ButtonType> openPopperRunningWarning(Stage stage) {
-    return WidgetFactory.showAlertOption(stage, "PinUP Popper is running.", "Close PinUP Popper","Cancel",
+    return WidgetFactory.showAlertOption(stage, "PinUP Popper is running.", "Close PinUP Popper", "Cancel",
         "PinUP Popper is running. To perform this operation, you have to close it.",
         "This will also KILL the the current emulator process!");
   }
