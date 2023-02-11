@@ -1,6 +1,5 @@
 package de.mephisto.vpin.ui.tables.dialogs;
 
-import de.mephisto.vpin.restclient.VPinStudioClient;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.util.ProgressModel;
 import de.mephisto.vpin.ui.util.ProgressResultModel;
@@ -18,13 +17,15 @@ public class TableUploadProgressModel extends ProgressModel<File> {
   private final List<File> files;
   private final boolean importToPopper;
   private final int playlistId;
+  private final int replaceId;
   private double percentage = 0;
 
-  public TableUploadProgressModel(String title, List<File> files, boolean importToPopper, int playlistId) {
+  public TableUploadProgressModel(String title, List<File> files, boolean importToPopper, int playlistId, int replaceId) {
     super(title);
     this.files = files;
     this.importToPopper = importToPopper;
     this.playlistId = playlistId;
+    this.replaceId = replaceId;
     iterator = this.files.iterator();
   }
 
@@ -51,7 +52,7 @@ public class TableUploadProgressModel extends ProgressModel<File> {
   @Override
   public void processNext(ProgressResultModel progressResultModel, File next) {
     try {
-      Studio.client.uploadTable(next, importToPopper, playlistId, percent -> {
+      Studio.client.uploadTable(next, importToPopper, playlistId, replaceId, percent -> {
         double total = percentage + percent;
         progressResultModel.setProgress(total / this.files.size());
       });
@@ -59,6 +60,7 @@ public class TableUploadProgressModel extends ProgressModel<File> {
       percentage++;
     } catch (Exception e) {
       LOG.error("Table upload failed: " + e.getMessage(), e);
+      throw e;
     }
   }
 

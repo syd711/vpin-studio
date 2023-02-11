@@ -56,44 +56,52 @@ public class ProgressDialogController implements Initializable, DialogController
           @Override
           protected Object call() throws Exception {
             int index = 1;
-            while (model.hasNext() && !this.isCancelled()) {
-              Object next = model.getNext();
-              final int uiIndex = index;
 
-              Platform.runLater(() -> {
-                String label = model.nextToString(next);
-                if(label != null) {
-                  progressBarLabel.setText("Processing: " + model.nextToString(next));
-                }
-                titleLabel.setText(model.getTitle() + " (" + uiIndex + "/" + model.getMax() + ")");
-              });
+            try {
+              while (model.hasNext() && !this.isCancelled()) {
+                Object next = model.getNext();
+                final int uiIndex = index;
 
-              model.processNext(progressResultModel, next);
-              if (!model.isIndeterminate()) {
-                long percent = index * 100 / model.getMax();
-                updateProgress(percent, 100);
-              }
-
-              Platform.runLater(() -> {
-                if (!model.isIndeterminate()) {
-                  double p = Double.valueOf(uiIndex) / model.getMax();
-                  progressBar.setProgress(p);
-                }
-              });
-              index++;
-            }
-
-
-            Platform.runLater(() -> {
-              stage.close();
-              if (model.isShowSummary()) {
                 Platform.runLater(() -> {
-                  String msg = model.getTitle() + " finished.";
-                  WidgetFactory.showInformation(Studio.stage, msg, "Processed " + progressResultModel.getProcessed() + " of " + model.getMax() + " elements.");
+                  String label = model.nextToString(next);
+                  if (label != null) {
+                    progressBarLabel.setText("Processing: " + model.nextToString(next));
+                  }
+                  titleLabel.setText(model.getTitle() + " (" + uiIndex + "/" + model.getMax() + ")");
                 });
-              }
-            });
 
+                model.processNext(progressResultModel, next);
+                if (!model.isIndeterminate()) {
+                  long percent = index * 100 / model.getMax();
+                  updateProgress(percent, 100);
+                }
+
+                Platform.runLater(() -> {
+                  if (!model.isIndeterminate()) {
+                    double p = Double.valueOf(uiIndex) / model.getMax();
+                    progressBar.setProgress(p);
+                  }
+                });
+                index++;
+              }
+
+              Platform.runLater(() -> {
+                stage.close();
+                if (model.isShowSummary()) {
+                  Platform.runLater(() -> {
+                    String msg = model.getTitle() + " finished.";
+                    WidgetFactory.showInformation(Studio.stage, msg, "Processed " + progressResultModel.getProcessed() + " of " + model.getMax() + " elements.");
+                  });
+                }
+              });
+            } catch (Exception e) {
+              Platform.runLater(() -> {
+                stage.close();
+              });
+              Platform.runLater(() -> {
+                WidgetFactory.showAlert(Studio.stage, "Error", e.getMessage());
+              });
+            }
             return null;
           }
         };

@@ -26,7 +26,7 @@ abstract public class ProgressModel<T> {
 
   abstract public String nextToString(T t);
 
-  abstract public void processNext(ProgressResultModel progressResultModel, T next);
+  abstract public void processNext(ProgressResultModel progressResultModel, T next) throws Exception;
 
   abstract public boolean hasNext();
 }

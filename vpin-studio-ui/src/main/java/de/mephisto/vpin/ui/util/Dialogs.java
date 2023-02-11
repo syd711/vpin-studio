@@ -101,9 +101,10 @@ public class Dialogs {
     return controller.uploadFinished();
   }
 
-  public static boolean openTableUploadDialog() {
+  public static boolean openTableUploadDialog(GameRepresentation game) {
     Stage stage = createStudioDialogStage(TableUploadController.class, "dialog-table-upload.fxml", "VPX Table Upload");
     TableUploadController controller = (TableUploadController) stage.getUserData();
+    controller.setGame(game);
     stage.showAndWait();
 
     return controller.uploadFinished();

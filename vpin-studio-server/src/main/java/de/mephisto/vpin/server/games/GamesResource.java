@@ -127,17 +127,30 @@ public class GamesResource {
   @PostMapping("/upload/table")
   public Boolean uploadTable(@RequestParam(value = "file") MultipartFile file,
                              @RequestParam(value = "importToPopper") boolean importToPopper,
-                             @RequestParam(value = "playlistId") int playlistId) {
+                             @RequestParam(value = "playlistId") int playlistId,
+                             @RequestParam(value = "replaceId") int replaceId) {
     try {
       if (file == null) {
         LOG.error("Table upload request did not contain a file object.");
         return false;
       }
+
       File out = new File(systemService.getVPXTablesFolder(), file.getOriginalFilename());
+      Game replacingGame = null;
+      if (replaceId > 0) {
+        replacingGame = this.getGame(replaceId);
+        out = new File(systemService.getVPXTablesFolder(), replacingGame.getGameFileName());
+        if (!out.delete()) {
+          throw new ResponseStatusException(INTERNAL_SERVER_ERROR, "Table upload failed: existing table could not be deleted.");
+        }
+      }
+
       if (UploadUtil.upload(file, out)) {
-        int gameId = popperService.importVPXGame(out, importToPopper, playlistId);
-        if (gameId >= 0) {
-          gameService.scanGame(gameId);
+        if (replaceId <= 0) {
+          int gameId = popperService.importVPXGame(out, importToPopper, playlistId);
+          if (gameId >= 0) {
+            gameService.scanGame(gameId);
+          }
         }
         return true;
       }

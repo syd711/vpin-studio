@@ -216,7 +216,8 @@ public class TablesController implements Initializable, StudioFXController {
   }
 
   private void openUploadDialog() {
-    boolean updated = Dialogs.openTableUploadDialog();
+    GameRepresentation game = tableView.getSelectionModel().getSelectedItem();
+    boolean updated = Dialogs.openTableUploadDialog(game);
     if (updated) {
       onReload();
     }

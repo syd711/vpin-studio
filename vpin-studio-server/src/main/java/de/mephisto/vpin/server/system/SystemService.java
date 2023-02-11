@@ -317,10 +317,6 @@ public class SystemService implements InitializingBean {
     return futurePinballInstallationFolder;
   }
 
-  public String get7ZipCommand() {
-    return new File(SystemService.RESOURCES, "7z.exe").getAbsolutePath();
-  }
-
   public File getVPXTablesFolder() {
     return new File(getVisualPinballInstallationFolder(), "Tables/");
   }

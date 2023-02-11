@@ -101,25 +101,29 @@ public class HighscoreService implements InitializingBean {
   public boolean resetHighscore(Game game, ResetHighscoreDescriptor descriptor) {
     HighscoreType highscoreType = game.getHighscoreType();
     boolean result = false;
-    switch (highscoreType) {
-      case EM: {
-        result = game.getEMHighscoreFile() != null && game.getEMHighscoreFile().exists() && game.getEMHighscoreFile().delete();
-        break;
-      }
-      case NVRam: {
-        result = game.getNvRamFile().exists() && game.getNvRamFile().delete();//TODO unify game file access
-        break;
-      }
-      case VPReg: {
-        VPReg reg = new VPReg(systemService.getVPRegFile(), game);
-        result = reg.resetHighscores();
-        break;
-      }
-      default: {
-        LOG.error("No matching highscore type found for '" + highscoreType + "'");
+    if(highscoreType != null) {
+      switch (highscoreType) {
+        case EM: {
+          result = game.getEMHighscoreFile() != null && game.getEMHighscoreFile().exists() && game.getEMHighscoreFile().delete();
+          break;
+        }
+        case NVRam: {
+          result = game.getNvRamFile().exists() && game.getNvRamFile().delete();//TODO unify game file access
+          break;
+        }
+        case VPReg: {
+          VPReg reg = new VPReg(systemService.getVPRegFile(), game);
+          result = reg.resetHighscores();
+          break;
+        }
+        default: {
+          LOG.error("No matching highscore type found for '" + highscoreType + "'");
+        }
       }
     }
-
+    else {
+      result = true;
+    }
     deleteScores(game.getId(), descriptor.isDeleteHistory());
     return result;
   }

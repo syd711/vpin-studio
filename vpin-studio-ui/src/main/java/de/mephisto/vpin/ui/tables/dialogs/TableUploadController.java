@@ -2,6 +2,7 @@ package de.mephisto.vpin.ui.tables.dialogs;
 
 import de.mephisto.vpin.commons.fx.DialogController;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
+import de.mephisto.vpin.restclient.representations.GameRepresentation;
 import de.mephisto.vpin.restclient.representations.PlaylistRepresentation;
 import de.mephisto.vpin.ui.util.Dialogs;
 import javafx.application.Platform;
@@ -41,6 +42,9 @@ public class TableUploadController implements Initializable, DialogController {
   private CheckBox importCheckbox;
 
   @FXML
+  private CheckBox replaceCheckbox;
+
+  @FXML
   private ComboBox<PlaylistRepresentation> playlistCombo;
 
   @FXML
@@ -48,6 +52,7 @@ public class TableUploadController implements Initializable, DialogController {
 
   private List<File> selection;
   private boolean result = false;
+  private GameRepresentation game;
 
   @FXML
   private void onCancelClick(ActionEvent e) {
@@ -64,6 +69,10 @@ public class TableUploadController implements Initializable, DialogController {
       try {
         boolean importToPopper = this.importCheckbox.isSelected();
         final PlaylistRepresentation value = this.playlistCombo.getValue();
+        int replaceId = -1;
+        if(game != null && replaceCheckbox.isSelected()) {
+          replaceId = this.game.getId();
+        }
 
         int playListId = -1;
         if (value != null) {
@@ -74,7 +83,7 @@ public class TableUploadController implements Initializable, DialogController {
           stage.close();
         });
 
-        TableUploadProgressModel model = new TableUploadProgressModel("VPX Upload", selection, importToPopper, playListId);
+        TableUploadProgressModel model = new TableUploadProgressModel("VPX Upload", selection, importToPopper, playListId, replaceId);
         Dialogs.createProgressDialog(model);
       } catch (Exception e) {
         LOG.error("Upload failed: " + e.getMessage(), e);
@@ -96,11 +105,16 @@ public class TableUploadController implements Initializable, DialogController {
     }
 
     this.selection = fileChooser.showOpenMultipleDialog(stage);
+    replaceCheckbox.setSelected(false);
     if (this.selection != null && !this.selection.isEmpty()) {
+      replaceCheckbox.setVisible(this.selection.size() <= 1);
+
       TableUploadController.lastFolderSelection = this.selection.get(0).getParentFile();
-      this.fileNameField.setText(this.selection.stream().map(f -> f.getName()).collect(Collectors.joining()));
+      List<String> collect = this.selection.stream().map(f -> f.getName()).collect(Collectors.toList());
+      this.fileNameField.setText(String.join(", ", collect));
     }
     else {
+      replaceCheckbox.setVisible(true);
       this.fileNameField.setText("");
     }
   }
@@ -118,6 +132,18 @@ public class TableUploadController implements Initializable, DialogController {
     this.playlistCombo.setDisable(false);
 
     importCheckbox.selectedProperty().addListener((observable, oldValue, newValue) -> playlistCombo.setDisable(!newValue));
+    replaceCheckbox.selectedProperty().addListener((observable, oldValue, newValue) -> {
+      importCheckbox.setDisable(newValue);
+      playlistCombo.setDisable(newValue);
+    });
+  }
+
+  public void setGame(GameRepresentation game) {
+    this.game = game;
+    replaceCheckbox.setVisible(game != null);
+    if (game != null) {
+      replaceCheckbox.setText("Replace table \"" + game.getGameDisplayName() + "\" with the VPX upload.");
+    }
   }
 
   @Override
