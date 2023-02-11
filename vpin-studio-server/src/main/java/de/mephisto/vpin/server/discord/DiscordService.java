@@ -347,13 +347,7 @@ public class DiscordService implements InitializingBean, PreferenceChangedListen
   public void preferenceChanged(String propertyName, Object oldValue, Object newValue) {
     if (propertyName.equals(PreferenceNames.DISCORD_GUILD_ID) || propertyName.equals(PreferenceNames.DISCORD_BOT_TOKEN) || propertyName.equals(PreferenceNames.DISCORD_BOT_ALLOW_LIST)) {
       LOG.info("Detected Discord config change, updating BOT.");
-      String botToken = (String) preferencesService.getPreferenceValue(PreferenceNames.DISCORD_BOT_TOKEN);
-      String guildId = (String) preferencesService.getPreferenceValue(PreferenceNames.DISCORD_GUILD_ID);
-
-      if (!StringUtils.isEmpty(botToken) && !StringUtils.isEmpty(guildId)) {
-        LOG.info("Re-creating discord client because of preference changes.");
-        this.discordClient = recreateDiscordClient();
-      }
+      this.discordClient = recreateDiscordClient();
     }
   }
 

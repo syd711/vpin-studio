@@ -110,29 +110,6 @@ public class DiscordBotPreferencesController implements Initializable {
     ObservableList<DiscordServer> discordServers = FXCollections.observableArrayList(servers);
     serverCombo.setItems(FXCollections.observableList(discordServers));
 
-    serverCombo.valueProperty().addListener(new ChangeListener<DiscordServer>() {
-      @Override
-      public void changed(ObservableValue<? extends DiscordServer> observable, DiscordServer oldValue, DiscordServer newValue) {
-        if(newValue != null) {
-          client.setPreference(PreferenceNames.DISCORD_GUILD_ID, newValue.getId());
-        }
-        else {
-          client.setPreference(PreferenceNames.DISCORD_GUILD_ID, "");
-        }
-      }
-    });
-
-    channelCombo.valueProperty().addListener(new ChangeListener<DiscordChannel>() {
-      @Override
-      public void changed(ObservableValue<? extends DiscordChannel> observable, DiscordChannel oldValue, DiscordChannel newValue) {
-        if(newValue != null) {
-          client.setPreference(PreferenceNames.DISCORD_CHANNEL_ID, newValue.getId());
-        }
-        else {
-          client.setPreference(PreferenceNames.DISCORD_CHANNEL_ID, "");
-        }
-      }
-    });
 
     PreferenceEntryRepresentation preference = client.getPreference(PreferenceNames.DISCORD_GUILD_ID);
     long longValue = preference.getLongValue();
@@ -154,5 +131,23 @@ public class DiscordBotPreferencesController implements Initializable {
         }
       }
     }
+
+    serverCombo.valueProperty().addListener((observable, oldValue, newValue) -> {
+      if(newValue != null) {
+        client.setPreference(PreferenceNames.DISCORD_GUILD_ID, newValue.getId());
+      }
+      else {
+        client.setPreference(PreferenceNames.DISCORD_GUILD_ID, "");
+      }
+    });
+
+    channelCombo.valueProperty().addListener((observable, oldValue, newValue) -> {
+      if(newValue != null) {
+        client.setPreference(PreferenceNames.DISCORD_CHANNEL_ID, newValue.getId());
+      }
+      else {
+        client.setPreference(PreferenceNames.DISCORD_CHANNEL_ID, "");
+      }
+    });
   }
 }
