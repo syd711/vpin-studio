@@ -197,7 +197,7 @@ public class NotificationService implements InitializingBean, HighscoreChangeLis
         discordService.sendMessage(discordServerId, discordChannelId, DiscordOfflineChannelMessageFactory.createOfflineCompetitionCreatedMessage(competition, game));
       }
 
-      if (competition.getBadge() != null) {
+      if (competition.getBadge() != null && competition.isActive()) {
         popperService.augmentWheel(game, competition.getBadge());
       }
     }

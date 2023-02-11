@@ -228,10 +228,16 @@ public class CompetitionOfflineDialogController implements Initializable, Dialog
     }
 
     GameRepresentation game = this.tableCombo.getValue();
-    if (!StringUtils.isEmpty(game.getCompetitionUuid()) && !game.getCompetitionUuid().equals(this.competition.getUuid())) {
-      validationTitle.setText("Invalid competition selected");
-      validationDescription.setText("This table is already used for another competition.");
-      return;
+    if (game != null && !StringUtils.isEmpty(game.getCompetitionUuid()) && !game.getCompetitionUuid().equals(this.competition.getUuid())) {
+      CompetitionRepresentation competitionByUuid = client.getCompetitionByUuid(game.getCompetitionUuid());
+      Date startSelection = Date.from(startDatePicker.getValue().atStartOfDay(ZoneId.systemDefault()).toInstant());
+      Date endSelection = Date.from(endDatePicker.getValue().atStartOfDay(ZoneId.systemDefault()).toInstant());
+
+      if(competitionByUuid.isOverlappingWith(startSelection, endSelection)) {
+        validationTitle.setText("Invalid table selected");
+        validationDescription.setText("This table is already used for another competition in the selected time span.");
+        return;
+      }
     }
 
     if (competition.getStartDate() == null || competition.getEndDate() == null || competition.getStartDate().getTime() > competition.getEndDate().getTime()) {
@@ -262,7 +268,7 @@ public class CompetitionOfflineDialogController implements Initializable, Dialog
       this.startDatePicker.setValue(this.competition.getStartDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate());
       this.endDatePicker.setValue(this.competition.getEndDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate());
       this.tableCombo.setValue(game);
-      this.tableCombo.setDisable(true);
+      this.tableCombo.setDisable(this.competition.getId() != null);
 
 
       Optional<DiscordChannel> channelOpt = getDiscordChannels().stream().filter(channel -> channel.getId() == c.getDiscordChannelId()).findFirst();

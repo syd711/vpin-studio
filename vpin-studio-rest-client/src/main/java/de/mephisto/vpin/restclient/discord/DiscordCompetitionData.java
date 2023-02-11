@@ -95,4 +95,9 @@ public class DiscordCompetitionData {
   public void setFs(long fs) {
     this.fs = fs;
   }
+
+  public boolean isOverlappingWith(Date startSelection, Date endSelection) {
+    return (getSdt().before(endSelection) || getSdt().equals(endSelection)) &&
+        (startSelection.before(this.getEdt()) || startSelection.equals(this.getEdt()));
+  }
 }

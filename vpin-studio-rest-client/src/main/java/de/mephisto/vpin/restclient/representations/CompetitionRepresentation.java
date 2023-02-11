@@ -165,12 +165,17 @@ public class CompetitionRepresentation {
     LocalDate end = getEndDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
     int diff = (int) Math.abs(ChronoUnit.DAYS.between(end, start));
 
-    Calendar c = Calendar.getInstance();
-    c.setTime(getEndDate());
-    c.add(Calendar.DATE, diff);
-    Date newEndDate = c.getTime();
+    Calendar endDateCal = Calendar.getInstance();
+    endDateCal.setTime(getEndDate());
+    endDateCal.add(Calendar.DATE, diff);
+    Date newEndDate = endDateCal.getTime();
 
-    clone.setStartDate(Date.from(end.atStartOfDay(ZoneId.systemDefault()).toInstant()));
+    Calendar startDateCal = Calendar.getInstance();
+    startDateCal.setTime(getEndDate());
+    startDateCal.add(Calendar.DATE, 1);
+    Date newStartDate = startDateCal.getTime();
+
+    clone.setStartDate(newStartDate);
     clone.setEndDate(newEndDate);
 
     clone.setName(this.getName() + "(1)");
@@ -184,14 +189,24 @@ public class CompetitionRepresentation {
   }
 
   public boolean isActive() {
-    LocalDate end = getEndDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
-    return LocalDate.now().isBefore(end);
+    Date now = new Date();
+    return (getStartDate().before(now) || getStartDate().equals(now)) && getEndDate().after(now);
+  }
+
+  public boolean isPlanned() {
+    Date now = new Date();
+    return getStartDate().after(now);
   }
 
   public int remainingDays() {
     LocalDate start = LocalDate.now();
     LocalDate end = getEndDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
     return (int) Math.abs(ChronoUnit.DAYS.between(end, start));
+  }
+
+  public boolean isOverlappingWith(Date startSelection, Date endSelection) {
+    return (getStartDate().before(endSelection) || getStartDate().equals(endSelection)) &&
+        (startSelection.before(this.getEndDate()) || startSelection.equals(this.getEndDate()));
   }
 
   @Override

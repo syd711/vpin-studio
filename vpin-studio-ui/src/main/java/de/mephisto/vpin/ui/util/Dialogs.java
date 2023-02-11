@@ -59,11 +59,13 @@ public class Dialogs {
   }
 
   public static CompetitionRepresentation openDiscordCompetitionDialog(CompetitionRepresentation selection) {
-    String title = "Add New Competition";
-    if (selection != null) {
-      title = "Edit Competition";
+    String title = "Edit Competition";
+    if (selection == null) {
+      title = "Add Competition";
     }
-
+    else if(selection.getId() == null) {
+      title = "Duplicate Competition";
+    }
 
     FXMLLoader fxmlLoader = new FXMLLoader(CompetitionOfflineDialogController.class.getResource("dialog-discord-competition-edit.fxml"));
     Stage stage = WidgetFactory.createDialogStage(fxmlLoader, Studio.stage, title);
@@ -76,9 +78,12 @@ public class Dialogs {
 
 
   public static CompetitionRepresentation openOfflineCompetitionDialog(CompetitionRepresentation selection) {
-    String title = "Add New Competition";
-    if (selection != null) {
-      title = "Edit Competition";
+    String title = "Edit Competition";
+    if (selection == null) {
+      title = "Add Competition";
+    }
+    else if(selection.getId() == null) {
+      title = "Duplicate Competition";
     }
 
 

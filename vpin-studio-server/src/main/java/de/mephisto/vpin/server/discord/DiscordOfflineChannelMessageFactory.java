@@ -42,6 +42,9 @@ public class DiscordOfflineChannelMessageFactory {
       "%s\n" +
       "```";
 
+  private static final String COMPETITION_FINISHED_INCOMPLETE = "The competition '%s' has been finished, but no winner could be determined:\n" +
+      "No scores have been found.";
+
   private static final String COMPETITION_CANCELLED_TEMPLATE = "The competition \"%s\" has been cancelled.";
 
   public static String createCompetitionCancelledMessage(Competition competition) {
@@ -81,7 +84,7 @@ public class DiscordOfflineChannelMessageFactory {
     String suffix = String.format(otherPlayerTemplate, oldName, oldScore.getScore());
 
     String result = msg;
-    if(StringUtils.isEmpty(oldName)) {
+    if (StringUtils.isEmpty(oldName)) {
       result = result + "\nThe previous highscore of " + oldScore.getScore() + " has been beaten.";
     }
     else if (!oldName.equals(newName)) {
@@ -123,7 +126,7 @@ public class DiscordOfflineChannelMessageFactory {
     String suffix = String.format(otherPlayerTemplate, oldName, oldScore.getScore());
 
     String result = msg;
-    if(StringUtils.isEmpty(oldName)) {
+    if (StringUtils.isEmpty(oldName)) {
       result = result + "\nThe previous highscore of " + oldScore.getScore() + " has been beaten.";
     }
     else if (!oldName.equals(newName)) {
@@ -135,7 +138,7 @@ public class DiscordOfflineChannelMessageFactory {
     return result;
   }
 
-  
+
   public static String createOfflineCompetitionCreatedMessage(Competition competition, Game game) {
     LocalDate start = competition.getStartDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
     LocalDate end = competition.getEndDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
@@ -150,6 +153,10 @@ public class DiscordOfflineChannelMessageFactory {
   }
 
   public static String createCompetitionFinishedMessage(@NonNull Competition competition, @Nullable Player winner, Game game, ScoreSummary summary) {
+    if (summary.getScores().isEmpty()) {
+      return String.format(COMPETITION_FINISHED_INCOMPLETE, competition.getName());
+    }
+
     String winnerName = competition.getWinnerInitials();
     String winnerRaw = competition.getWinnerInitials();
     if (winner != null) {

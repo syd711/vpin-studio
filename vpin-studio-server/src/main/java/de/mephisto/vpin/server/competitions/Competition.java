@@ -174,7 +174,8 @@ public class Competition {
   }
 
   public boolean isActive() {
-    return this.getEndDate().after(new Date()) && this.startDate.before(new Date());
+    Date now = new Date();
+    return (getStartDate().before(now) || getStartDate().equals(now)) && getEndDate().after(now);
   }
 
   @Override

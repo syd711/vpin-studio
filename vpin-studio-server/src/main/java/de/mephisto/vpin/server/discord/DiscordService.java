@@ -201,13 +201,11 @@ public class DiscordService implements InitializingBean, PreferenceChangedListen
       DiscordCompetitionData data = this.getCompetitionData(serverId, channelId);
       if (data != null) {
         List<DiscordMessage> competitionUpdates = discordClient.getCompetitionUpdates(serverId, channelId, data.getMsgId(), uuid);
-        LOG.info("Discord message search for " + data.getUuid() + " returned " + competitionUpdates.size() + " messages.");
         List<ScoreSummary> scores = competitionUpdates.stream().map(message -> toScoreSummary(highscoreParser, message)).collect(Collectors.toList());
         if (scores.isEmpty()) {
           ScoreSummary initialScore = CompetitionDataHelper.getDiscordCompetitionScore(this, serverId, data);
           result.setLatestScore(initialScore);
           result.getScores().add(initialScore);
-          LOG.info("Because no score updated was found, only the initial competition highscore of channel '" + channel.getName() + "' was read.");
         }
         else {
           result.setScores(scores);

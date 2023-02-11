@@ -226,6 +226,8 @@ public class DiscordClient {
               }
             }
           }
+
+          LOG.info("Discord message search for " + uuid + " returned " + result.size() + " messages.");
           messageCache.put(channelId, result);
         }
       }

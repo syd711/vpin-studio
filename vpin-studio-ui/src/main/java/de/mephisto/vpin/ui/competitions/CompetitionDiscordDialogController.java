@@ -250,18 +250,29 @@ public class CompetitionDiscordDialogController implements Initializable, Dialog
       else {
         DiscordCompetitionData discordCompetitionData = client.getDiscordCompetitionData(competition.getDiscordServerId(), competition.getDiscordChannelId());
         if (discordCompetitionData != null) {
-          validationTitle.setText("Active competition found.");
-          validationDescription.setText("The selected channel is already running the competition '" + discordCompetitionData.getName() + "'");
-          return;
+          Date startSelection = Date.from(startDatePicker.getValue().atStartOfDay(ZoneId.systemDefault()).toInstant());
+          Date endSelection = Date.from(endDatePicker.getValue().atStartOfDay(ZoneId.systemDefault()).toInstant());
+
+          if(discordCompetitionData.isOverlappingWith(startSelection, endSelection)) {
+            validationTitle.setText("Active competition found.");
+            validationDescription.setText("The selected channel is already running the competition '" + discordCompetitionData.getName() + "' for this time span.");
+            return;
+          }
         }
       }
 
 
       GameRepresentation game = this.tableCombo.getValue();
-      if (!StringUtils.isEmpty(game.getCompetitionUuid()) && !game.getCompetitionUuid().equals(this.competition.getUuid())) {
-        validationTitle.setText("Invalid competition selected");
-        validationDescription.setText("This table is already used for another competition.");
-        return;
+      if (game != null && !StringUtils.isEmpty(game.getCompetitionUuid()) && !game.getCompetitionUuid().equals(this.competition.getUuid())) {
+        CompetitionRepresentation competitionByUuid = client.getCompetitionByUuid(game.getCompetitionUuid());
+        Date startSelection = Date.from(startDatePicker.getValue().atStartOfDay(ZoneId.systemDefault()).toInstant());
+        Date endSelection = Date.from(endDatePicker.getValue().atStartOfDay(ZoneId.systemDefault()).toInstant());
+
+        if(competitionByUuid.isOverlappingWith(startSelection, endSelection)) {
+          validationTitle.setText("Invalid table selected");
+          validationDescription.setText("This table is already used for another competition in the selected time span.");
+          return;
+        }
       }
     }
 
@@ -307,8 +318,8 @@ public class CompetitionDiscordDialogController implements Initializable, Dialog
       String botId = String.valueOf(botStatus.getBotId());
       boolean isOwner = c.getOwner().equals(botId);
 
-      channelsCombo.setDisable(true);
-      serversCombo.setDisable(true);
+      channelsCombo.setDisable(c.getId() != null);
+      serversCombo.setDisable(c.getId() != null);
 
       this.nameField.setText(this.competition.getName());
       this.nameField.setDisable(!isOwner);
@@ -319,16 +330,19 @@ public class CompetitionDiscordDialogController implements Initializable, Dialog
       this.endDatePicker.setDisable(!isOwner);
 
       this.tableCombo.setValue(game);
-      this.tableCombo.setDisable(true);
+      this.tableCombo.setDisable(c.getId() != null);
 
       this.channelsCombo.setItems(FXCollections.observableList(client.getDiscordChannels(discordServer.getId())));
       this.serversCombo.setValue(discordServer);
 
       List<DiscordChannel> discordChannels = client.getDiscordChannels(discordServer.getId());
-      Optional<DiscordChannel> first = discordChannels.stream().filter(channel -> channel.getId() != competition.getId()).findFirst();
       this.channelsCombo.setItems(FXCollections.observableArrayList(discordChannels));
-      first.ifPresent(discordChannel -> this.channelsCombo.setValue(discordChannel));
 
+      //the id is null when we want to duplicate an existing competition
+      if(competition.getId() != null) {
+        Optional<DiscordChannel> first = discordChannels.stream().filter(channel -> channel.getId() != competition.getId()).findFirst();
+        first.ifPresent(discordChannel -> this.channelsCombo.setValue(discordChannel));
+      }
 
       ObservableList<DiscordChannel> items = this.channelsCombo.getItems();
       for (DiscordChannel item : items) {

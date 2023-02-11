@@ -266,6 +266,9 @@ public class CompetitionsOfflineController implements Initializable, StudioFXCon
       if (value.isActive()) {
         status = "ACTIVE";
       }
+      else if(value.isPlanned()) {
+        status = "PLANNED";
+      }
       Label label = new Label(status);
       return new SimpleObjectProperty(label);
     });
