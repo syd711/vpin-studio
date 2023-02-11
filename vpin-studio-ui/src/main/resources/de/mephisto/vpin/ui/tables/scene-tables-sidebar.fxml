@@ -234,7 +234,7 @@
                <graphic>
                   <BorderPane prefWidth="560.0">
                      <left>
-                        <Label text="Media" BorderPane.alignment="CENTER" />
+                        <Label text="PinUP Popper Media" BorderPane.alignment="CENTER" />
                      </left>
                      <right>
                         <CheckBox fx:id="mediaPreviewCheckbox" mnemonicParsing="false" selected="true" text="Preview" textFill="WHITE" BorderPane.alignment="CENTER">
