@@ -482,7 +482,11 @@ public class HighscoreService implements InitializingBean {
     version.setChangedPosition(score.getChangedPosition());
     version.setCreatedAt(score.getCreatedAt());
     version.setDisplayName(game.getGameDisplayName());
-    HighscoreVersion saved = highscoreVersionRepository.saveAndFlush(version);
-    LOG.info("Imported " + saved);
+
+    Optional<HighscoreVersion> byCreatedAt = highscoreVersionRepository.findByCreatedAt(score.getCreatedAt());
+    if(byCreatedAt.isEmpty()) {
+      HighscoreVersion saved = highscoreVersionRepository.saveAndFlush(version);
+      LOG.info("Imported " + saved);
+    }
   }
 }
