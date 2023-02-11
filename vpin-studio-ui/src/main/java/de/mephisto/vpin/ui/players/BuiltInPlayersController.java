@@ -115,9 +115,10 @@ public class BuiltInPlayersController implements Initializable {
 
   @FXML
   private void onAdd() {
-    PlayerRepresentation p = Dialogs.openPlayerDialog(null);
-    if (p != null) {
-      doSave(p);
+    PlayerRepresentation player = Dialogs.openPlayerDialog(null);
+    onReload();
+    if (player != null) {
+      tableView.getSelectionModel().select(player);
     }
   }
 
@@ -126,11 +127,9 @@ public class BuiltInPlayersController implements Initializable {
     PlayerRepresentation selection = tableView.getSelectionModel().getSelectedItem();
     if (selection != null) {
       PlayerRepresentation player = Dialogs.openPlayerDialog(selection);
+      onReload();
       if (player != null) {
-        doSave(player);
-      }
-      else {
-        onReload();
+        tableView.getSelectionModel().select(player);
       }
     }
   }
@@ -145,16 +144,6 @@ public class BuiltInPlayersController implements Initializable {
         tableView.getSelectionModel().clearSelection();
         onReload();
       }
-    }
-  }
-
-  private void doSave(PlayerRepresentation p) {
-    try {
-      PlayerRepresentation newPlayer = client.savePlayer(p);
-      onReload();
-      tableView.getSelectionModel().select(newPlayer);
-    } catch (Exception e) {
-      WidgetFactory.showAlert(Studio.stage, e.getMessage());
     }
   }
 

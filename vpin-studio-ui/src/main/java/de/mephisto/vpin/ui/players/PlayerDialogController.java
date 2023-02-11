@@ -3,7 +3,6 @@ package de.mephisto.vpin.ui.players;
 import de.mephisto.vpin.commons.fx.DialogController;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.AssetType;
-import de.mephisto.vpin.restclient.PlayerDomain;
 import de.mephisto.vpin.restclient.representations.AssetRepresentation;
 import de.mephisto.vpin.restclient.representations.PlayerRepresentation;
 import de.mephisto.vpin.ui.DashboardController;
@@ -40,6 +39,7 @@ import static de.mephisto.vpin.ui.Studio.stage;
 
 public class PlayerDialogController implements Initializable, DialogController {
   private final static Logger LOG = LoggerFactory.getLogger(PlayerDialogController.class);
+  private static File lastFolderSelection;
 
   @FXML
   private Button saveBtn;
@@ -75,13 +75,16 @@ public class PlayerDialogController implements Initializable, DialogController {
   @FXML
   private void onSaveClick(ActionEvent e) {
     try {
-      if(this.player.getAvatar() == null && this.avatarFile == null) {
+      this.player = client.savePlayer(this.player);
+
+      if (this.player.getAvatar() == null && this.avatarFile == null) {
         avatarFile = WidgetFactory.snapshot(this.avatarStack);
       }
 
-      if(this.avatarFile != null) {
+      if (this.avatarFile != null) {
         this.uploadAvatar(this.avatarFile);
       }
+      client.savePlayer(this.player);
     } catch (Exception ex) {
       WidgetFactory.showAlert(Studio.stage, ex.getMessage());
     }
@@ -101,11 +104,17 @@ public class PlayerDialogController implements Initializable, DialogController {
   @FXML
   private void onFileSelect() {
     FileChooser fileChooser = new FileChooser();
+    if (PlayerDialogController.lastFolderSelection != null) {
+      fileChooser.setInitialDirectory(PlayerDialogController.lastFolderSelection);
+    }
     fileChooser.setTitle("Select Image");
     fileChooser.getExtensionFilters().addAll(
         new FileChooser.ExtensionFilter("Image", "*.png", "*.jpg", "*.jpeg"));
 
     this.avatarFile = fileChooser.showOpenDialog(stage);
+    if (this.avatarFile != null) {
+      PlayerDialogController.lastFolderSelection = this.avatarFile.getParentFile();
+    }
     refreshAvatar();
   }
 
@@ -121,7 +130,7 @@ public class PlayerDialogController implements Initializable, DialogController {
     initialsField.setText(player.getInitials());
     initialsField.textProperty().addListener((observableValue, s, t1) -> {
       String initials = t1.toUpperCase();
-      if(initials.length() > 3) {
+      if (initials.length() > 3) {
         initials = initials.substring(0, 3);
         initialsField.setText(initials);
       }
@@ -150,6 +159,7 @@ public class PlayerDialogController implements Initializable, DialogController {
   private void refreshAvatar() {
     if (this.avatarFile != null) {
       try {
+        client.clearCache();
         this.initialsOverlayLabel.setText("");
         FileInputStream fileInputStream = new FileInputStream(this.avatarFile);
         Image image = new Image(fileInputStream);
