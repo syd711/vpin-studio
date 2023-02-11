@@ -75,16 +75,17 @@ public class PlayerDialogController implements Initializable, DialogController {
   @FXML
   private void onSaveClick(ActionEvent e) {
     try {
-      this.player = client.savePlayer(this.player);
-
       if (this.player.getAvatar() == null && this.avatarFile == null) {
         avatarFile = WidgetFactory.snapshot(this.avatarStack);
       }
+
+      this.player = client.savePlayer(this.player);
 
       if (this.avatarFile != null) {
         this.uploadAvatar(this.avatarFile);
       }
       client.savePlayer(this.player);
+      client.clearCache();
     } catch (Exception ex) {
       WidgetFactory.showAlert(Studio.stage, ex.getMessage());
     }

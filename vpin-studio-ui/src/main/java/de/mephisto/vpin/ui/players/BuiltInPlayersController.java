@@ -234,7 +234,10 @@ public class BuiltInPlayersController implements Initializable {
     });
 
     searchTextField.textProperty().addListener((observableValue, s, filterValue) -> {
-      onReload();
+      tableView.getSelectionModel().clearSelection();
+
+      List<PlayerRepresentation> filtered = filterPlayers(this.players);
+      tableView.setItems(FXCollections.observableList(filtered));
     });
 
     this.onReload();

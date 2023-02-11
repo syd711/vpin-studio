@@ -280,6 +280,7 @@ public class VPinStudioClient implements ObservedPropertyChangeListener, Overlay
   public AssetRepresentation uploadAsset(File file, long id, int maxSize, AssetType assetType, FileUploadProgressListener listener) throws Exception {
     try {
       String url = restClient.getBaseUrl() + API + "assets/" + id + "/upload/" + maxSize;
+      LOG.info("HTTP POST " + url);
       ResponseEntity<AssetRepresentation> exchange = new RestTemplate().exchange(url, HttpMethod.POST, createUpload(file, -1, null, assetType, listener), AssetRepresentation.class);
       return exchange.getBody();
     } catch (Exception e) {

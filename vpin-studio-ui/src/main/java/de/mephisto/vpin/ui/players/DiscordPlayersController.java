@@ -101,12 +101,14 @@ public class DiscordPlayersController implements Initializable {
     });
 
     tableView.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
-      boolean disable = newSelection == null;
       updateSelection(Optional.ofNullable(newSelection));
     });
 
     searchTextField.textProperty().addListener((observableValue, s, filterValue) -> {
-      refreshView();
+      tableView.getSelectionModel().clearSelection();
+
+      List<PlayerRepresentation> filtered = filterPlayers(this.players);
+      tableView.setItems(FXCollections.observableList(filtered));
     });
 
     this.players = client.getPlayers(PlayerDomain.DISCORD);
@@ -125,7 +127,8 @@ public class DiscordPlayersController implements Initializable {
     List<PlayerRepresentation> filtered = new ArrayList<>();
     String filterValue = searchTextField.textProperty().getValue();
     for (PlayerRepresentation player : players) {
-      if (player.getName().toLowerCase().contains(filterValue.toLowerCase()) || player.getInitials().toLowerCase().contains(filterValue)) {
+      if (player.getName().toLowerCase().contains(filterValue.toLowerCase()) ||
+          (player.getInitials() != null && player.getInitials().toLowerCase().contains(filterValue))) {
         filtered.add(player);
       }
     }
