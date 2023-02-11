@@ -39,7 +39,7 @@ public class Game {
   private String ignoredValidations;
   private int volume;
   private HighscoreType highscoreType;
-  private boolean competed;
+  private String competitionUuid;
 
   private List<GameAsset> assets = new ArrayList<>();
 
@@ -53,12 +53,12 @@ public class Game {
     this.systemService = systemService;
   }
 
-  public boolean isCompeted() {
-    return competed;
+  public String getCompetitionUuid() {
+    return competitionUuid;
   }
 
-  public void setCompeted(boolean competed) {
-    this.competed = competed;
+  public void setCompetitionUuid(String competitionUuid) {
+    this.competitionUuid = competitionUuid;
   }
 
   public long getGameFileSize() {

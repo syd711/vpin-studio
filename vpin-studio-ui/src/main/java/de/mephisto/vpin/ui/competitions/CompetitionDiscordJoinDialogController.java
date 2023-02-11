@@ -23,6 +23,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -245,7 +246,7 @@ public class CompetitionDiscordJoinDialogController implements Initializable, Di
     }
 
     GameRepresentation value = this.tableCombo.getValue();
-    if (value.isCompeted()) {
+    if (!StringUtils.isEmpty(value.getCompetitionUuid()) && !value.getCompetitionUuid().equals(this.competition.getUuid())) {
       validationTitle.setText("Invalid competition selected");
       validationDescription.setText("This table is already used for another competition.");
       return;

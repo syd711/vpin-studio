@@ -228,7 +228,7 @@ public class CompetitionOfflineDialogController implements Initializable, Dialog
     }
 
     GameRepresentation game = this.tableCombo.getValue();
-    if (game.isCompeted()) {
+    if (!StringUtils.isEmpty(game.getCompetitionUuid()) && !game.getCompetitionUuid().equals(this.competition.getUuid())) {
       validationTitle.setText("Invalid competition selected");
       validationDescription.setText("This table is already used for another competition.");
       return;
@@ -262,6 +262,8 @@ public class CompetitionOfflineDialogController implements Initializable, Dialog
       this.startDatePicker.setValue(this.competition.getStartDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate());
       this.endDatePicker.setValue(this.competition.getEndDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate());
       this.tableCombo.setValue(game);
+      this.tableCombo.setDisable(true);
+
 
       Optional<DiscordChannel> channelOpt = getDiscordChannels().stream().filter(channel -> channel.getId() == c.getDiscordChannelId()).findFirst();
       channelOpt.ifPresent(discordChannel -> this.channelsCombo.setValue(discordChannel));

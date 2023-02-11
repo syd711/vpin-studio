@@ -5,6 +5,7 @@ import de.mephisto.vpin.commons.utils.FileUtils;
 import de.mephisto.vpin.restclient.DeleteDescriptor;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.ResetHighscoreDescriptor;
+import de.mephisto.vpin.server.competitions.Competition;
 import de.mephisto.vpin.server.competitions.CompetitionService;
 import de.mephisto.vpin.server.competitions.ScoreSummary;
 import de.mephisto.vpin.server.highscores.*;
@@ -320,8 +321,9 @@ public class GameService {
     Optional<Highscore> highscore = this.highscoreService.getHighscore(game.getId());
     highscore.ifPresent(value -> game.setHighscoreType(value.getType() != null ? HighscoreType.valueOf(value.getType()) : null));
 
+    Competition activeCompetitionForGame = competitionService.getActiveCompetitionForGame(game.getId());
     game.setOriginalRom(romService.getOriginalRom(game.getRom()));
-    game.setCompeted(competitionService.isCompeted(game.getId()));
+    game.setCompetitionUuid(activeCompetitionForGame != null ? activeCompetitionForGame.getUuid() : null);
     game.setHsFileName(gameDetails.getHsFileName());
     game.setTableName(gameDetails.getTableName());
     game.setIgnoredValidations(gameDetails.getIgnoredValidations());

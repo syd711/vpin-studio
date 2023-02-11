@@ -256,8 +256,9 @@ public class CompetitionDiscordDialogController implements Initializable, Dialog
         }
       }
 
+
       GameRepresentation game = this.tableCombo.getValue();
-      if (game != null && game.isCompeted()) {
+      if (!StringUtils.isEmpty(game.getCompetitionUuid()) && !game.getCompetitionUuid().equals(this.competition.getUuid())) {
         validationTitle.setText("Invalid competition selected");
         validationDescription.setText("This table is already used for another competition.");
         return;

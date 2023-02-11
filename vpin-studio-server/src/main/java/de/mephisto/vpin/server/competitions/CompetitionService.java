@@ -201,6 +201,11 @@ public class CompetitionService implements InitializingBean {
     return competitionsRepository.findByStartDateLessThanEqualAndEndDateGreaterThanEqual(new Date(), new Date());
   }
 
+  public Competition getActiveCompetitionForGame(int gameId) {
+    Optional<Competition> competition = competitionsRepository.findByStartDateLessThanEqualAndEndDateGreaterThanEqualAndGameId(new Date(), new Date(), gameId);
+    return competition.orElse(null);
+  }
+
   public Competition getActiveCompetition(CompetitionType competitionType) {
     List<Competition> result = competitionsRepository.findByStartDateLessThanEqualAndEndDateGreaterThanEqualAndType(new Date(), new Date(), competitionType.name());
     if (!result.isEmpty()) {
@@ -229,11 +234,6 @@ public class CompetitionService implements InitializingBean {
   public Competition getCompetitionForUuid(String uuid) {
     Optional<Competition> competition = competitionsRepository.findByUuid(uuid);
     return competition.orElse(null);
-  }
-
-  public boolean isCompeted(int id) {
-    List<Competition> competedByGameId = competitionsRepository.findByStartDateLessThanEqualAndEndDateGreaterThanEqualAndGameId(new Date(), new Date(), id);
-    return !competedByGameId.isEmpty();
   }
 
   @Override
