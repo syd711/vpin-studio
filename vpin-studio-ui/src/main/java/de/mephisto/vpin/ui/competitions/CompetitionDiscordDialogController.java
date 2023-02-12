@@ -231,45 +231,44 @@ public class CompetitionDiscordDialogController implements Initializable, Dialog
       return;
     }
 
-    //validation for new tables
-    if (competition.getId() == null) {
-      if (competition.getDiscordServerId() == 0) {
-        validationTitle.setText("No discord server selected.");
-        validationDescription.setText("Select a discord server where the competition takes place.");
-        return;
-      }
+    if (competition.getDiscordServerId() == 0) {
+      validationTitle.setText("No discord server selected.");
+      validationDescription.setText("Select a discord server where the competition takes place.");
+      return;
+    }
 
-      if (competition.getDiscordChannelId() == 0) {
-        validationTitle.setText("No discord channel selected.");
-        validationDescription.setText("Select a discord channel for competition updates.");
-        return;
-      }
-      else {
-        DiscordCompetitionData discordCompetitionData = client.getDiscordCompetitionData(competition.getDiscordServerId(), competition.getDiscordChannelId());
-        if (discordCompetitionData != null) {
+    if (competition.getDiscordChannelId() == 0) {
+      validationTitle.setText("No discord channel selected.");
+      validationDescription.setText("Select a discord channel for competition updates.");
+      return;
+    }
+    else {
+      DiscordCompetitionData discordCompetitionData = client.getDiscordCompetitionData(competition.getDiscordServerId(), competition.getDiscordChannelId());
+      if (discordCompetitionData != null) {
+        if (!this.competition.getUuid().equals(discordCompetitionData.getUuid())) {
           Date startSelection = Date.from(startDatePicker.getValue().atStartOfDay(ZoneId.systemDefault()).toInstant());
           Date endSelection = Date.from(endDatePicker.getValue().atStartOfDay(ZoneId.systemDefault()).toInstant());
 
-          if(discordCompetitionData.isOverlappingWith(startSelection, endSelection)) {
+          if (discordCompetitionData.isOverlappingWith(startSelection, endSelection)) {
             validationTitle.setText("Active competition found.");
             validationDescription.setText("The selected channel is already running the competition '" + discordCompetitionData.getName() + "' for this time span.");
             return;
           }
         }
       }
+    }
 
 
-      GameRepresentation game = this.tableCombo.getValue();
-      if (game != null && !StringUtils.isEmpty(game.getCompetitionUuid()) && !game.getCompetitionUuid().equals(this.competition.getUuid())) {
-        CompetitionRepresentation competitionByUuid = client.getCompetitionByUuid(game.getCompetitionUuid());
-        Date startSelection = Date.from(startDatePicker.getValue().atStartOfDay(ZoneId.systemDefault()).toInstant());
-        Date endSelection = Date.from(endDatePicker.getValue().atStartOfDay(ZoneId.systemDefault()).toInstant());
+    GameRepresentation game = this.tableCombo.getValue();
+    if (game != null && !StringUtils.isEmpty(game.getCompetitionUuid()) && !game.getCompetitionUuid().equals(this.competition.getUuid())) {
+      CompetitionRepresentation competitionByUuid = client.getCompetitionByUuid(game.getCompetitionUuid());
+      Date startSelection = Date.from(startDatePicker.getValue().atStartOfDay(ZoneId.systemDefault()).toInstant());
+      Date endSelection = Date.from(endDatePicker.getValue().atStartOfDay(ZoneId.systemDefault()).toInstant());
 
-        if(competitionByUuid.isOverlappingWith(startSelection, endSelection)) {
-          validationTitle.setText("Invalid table selected");
-          validationDescription.setText("This table is already used for another competition in the selected time span.");
-          return;
-        }
+      if (competitionByUuid.isOverlappingWith(startSelection, endSelection)) {
+        validationTitle.setText("Invalid table selected");
+        validationDescription.setText("This table is already used for another competition in the selected time span.");
+        return;
       }
     }
 
@@ -336,7 +335,7 @@ public class CompetitionDiscordDialogController implements Initializable, Dialog
       this.channelsCombo.setItems(FXCollections.observableArrayList(discordChannels));
 
       //the id is null when we want to duplicate an existing competition
-      if(competition.getId() != null) {
+      if (competition.getId() != null) {
         Optional<DiscordChannel> first = discordChannels.stream().filter(channel -> channel.getId() != competition.getId()).findFirst();
         first.ifPresent(discordChannel -> this.channelsCombo.setValue(discordChannel));
       }

@@ -126,9 +126,11 @@ public class CompetitionsDiscordController implements Initializable, StudioFXCon
       CompetitionRepresentation newCmp = null;
       try {
         newCmp = client.saveCompetition(c);
-        WidgetFactory.showInformation(Studio.stage, "Competition created",
-            "The competition has been created and the Discord channel update requested.",
-            "Due to the rate limit (2x updates in 10 minutes) the topic update may take a while.");
+        if(newCmp.isActive()) {
+          WidgetFactory.showInformation(Studio.stage, "Competition created",
+              "The competition has been created and the Discord channel update requested.",
+              "Due to the rate limit (2x updates in 10 minutes) the topic update may take a while.");
+        }
       } catch (Exception e) {
         WidgetFactory.showAlert(Studio.stage, e.getMessage());
       }
