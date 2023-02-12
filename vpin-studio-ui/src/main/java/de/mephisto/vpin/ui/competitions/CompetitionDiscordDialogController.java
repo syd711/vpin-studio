@@ -81,6 +81,7 @@ public class CompetitionDiscordDialogController implements Initializable, Dialog
   private CompetitionRepresentation competition;
 
   private DiscordBotStatus botStatus = null;
+  private List<CompetitionRepresentation> allCompetitions;
 
   @FXML
   private void onCancelClick(ActionEvent e) {
@@ -242,54 +243,66 @@ public class CompetitionDiscordDialogController implements Initializable, Dialog
       validationDescription.setText("Select a discord channel for competition updates.");
       return;
     }
-    else {
-      DiscordCompetitionData discordCompetitionData = client.getDiscordCompetitionData(competition.getDiscordServerId(), competition.getDiscordChannelId());
-      if (discordCompetitionData != null) {
-        if (!this.competition.getUuid().equals(discordCompetitionData.getUuid())) {
-          Date startSelection = Date.from(startDatePicker.getValue().atStartOfDay(ZoneId.systemDefault()).toInstant());
-          Date endSelection = Date.from(endDatePicker.getValue().atStartOfDay(ZoneId.systemDefault()).toInstant());
-
-          if (discordCompetitionData.isOverlappingWith(startSelection, endSelection)) {
-            validationTitle.setText("Active competition found.");
-            validationDescription.setText("The selected channel is already running the competition '" + discordCompetitionData.getName() + "' for this time span.");
-            return;
-          }
-        }
-      }
-    }
-
-
-    GameRepresentation game = this.tableCombo.getValue();
-    if (game != null && !StringUtils.isEmpty(game.getCompetitionUuid()) && !game.getCompetitionUuid().equals(this.competition.getUuid())) {
-      CompetitionRepresentation competitionByUuid = client.getCompetitionByUuid(game.getCompetitionUuid());
-      Date startSelection = Date.from(startDatePicker.getValue().atStartOfDay(ZoneId.systemDefault()).toInstant());
-      Date endSelection = Date.from(endDatePicker.getValue().atStartOfDay(ZoneId.systemDefault()).toInstant());
-
-      if (competitionByUuid.isOverlappingWith(startSelection, endSelection)) {
-        validationTitle.setText("Invalid table selected");
-        validationDescription.setText("This table is already used for another competition in the selected time span.");
-        return;
-      }
-    }
-
-    if (competition.getGameId() <= 0) {
-      validationTitle.setText("No table selected.");
-      validationDescription.setText("Select a table for the competition.");
-      return;
-    }
-    else {
-      ScoreSummaryRepresentation summary = client.getGameScores(competition.getGameId());
-      HighscoreMetadataRepresentation metadata = summary.getMetadata();
-      if (!StringUtils.isEmpty(metadata.getStatus())) {
-        validationTitle.setText("Highscore issues");
-        validationDescription.setText(metadata.getStatus() + " Select a table with a valid highscore record.");
-        return;
-      }
-    }
 
     if (competition.getStartDate() == null || competition.getEndDate() == null || competition.getStartDate().getTime() > competition.getEndDate().getTime()) {
       validationTitle.setText("Invalid start/end date set.");
       validationDescription.setText("Define a valid start and end date.");
+      return;
+    }
+
+    //check table selection
+    if (this.tableCombo.getValue() == null) {
+      validationTitle.setText("No table selected.");
+      validationDescription.setText("Select a table for the competition.");
+      return;
+    }
+
+    GameRepresentation game = this.tableCombo.getValue();
+
+    Date startSelection = Date.from(startDatePicker.getValue().atStartOfDay(ZoneId.systemDefault()).toInstant());
+    Date endSelection = Date.from(endDatePicker.getValue().atStartOfDay(ZoneId.systemDefault()).toInstant());
+
+    //check the active competition stored for the selected channel against the date selection
+    DiscordCompetitionData discordCompetitionData = client.getDiscordCompetitionData(competition.getDiscordServerId(), competition.getDiscordChannelId());
+    if (discordCompetitionData != null) {
+      if (!this.competition.getUuid().equals(discordCompetitionData.getUuid())) {
+        if (discordCompetitionData.isOverlappingWith(startSelection, endSelection)) {
+          validationTitle.setText("Active competition found.");
+          validationDescription.setText("The selected channel is already running the competition '" + discordCompetitionData.getName() + "' for this time span.");
+          return;
+        }
+      }
+    }
+
+    //check if another active competition on this channel is active during the selected time span
+    for (CompetitionRepresentation existingCompetition : allCompetitions) {
+      if (existingCompetition.isFinished()) {
+        continue;
+      }
+
+      if (!this.competition.getUuid().equals(existingCompetition.getUuid())
+          && existingCompetition.isOverlappingWith(startSelection, endSelection)
+          && existingCompetition.getDiscordServerId() == this.competition.getDiscordServerId()
+          && existingCompetition.getDiscordChannelId() == this.competition.getDiscordChannelId()) {
+        validationTitle.setText("Overlapping competition found.");
+        validationDescription.setText("The competition " + existingCompetition.getName() + "overlaps for the the given Discord channel for this time span.");
+        return;
+      }
+
+//      GameRepresentation cGame = client.getGame(competition.getGameId());
+//      if (existingCompetition.isOverlappingWith(startSelection, endSelection) && String.valueOf(cGame.getRom()).equals(game.getRom()) ) {
+//        validationTitle.setText("Invalid table selected");
+//        validationDescription.setText("This table is already used for another competition in the selected time span.");
+//        return;
+//      }
+    }
+
+    //check highscore settings
+    ScoreSummaryRepresentation summary = client.getGameScores(competition.getGameId());
+    HighscoreMetadataRepresentation metadata = summary.getMetadata();
+    if (!StringUtils.isEmpty(metadata.getStatus())) {
+      validationTitle.setText("Highscore issues");
+      validationDescription.setText(metadata.getStatus() + " Select a table with a valid highscore record.");
       return;
     }
 
@@ -306,7 +319,9 @@ public class CompetitionDiscordDialogController implements Initializable, Dialog
     return competition;
   }
 
-  public void setCompetition(CompetitionRepresentation c) {
+  public void setCompetition(List<CompetitionRepresentation> all, CompetitionRepresentation c) {
+    this.allCompetitions = all;
+
     if (c != null) {
       this.competition = c;
       GameRepresentation game = client.getGame(c.getGameId());

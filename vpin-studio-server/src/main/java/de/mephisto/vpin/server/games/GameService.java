@@ -5,10 +5,7 @@ import de.mephisto.vpin.commons.utils.FileUtils;
 import de.mephisto.vpin.restclient.DeleteDescriptor;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.ResetHighscoreDescriptor;
-import de.mephisto.vpin.server.assets.Asset;
 import de.mephisto.vpin.server.assets.AssetService;
-import de.mephisto.vpin.server.competitions.Competition;
-import de.mephisto.vpin.server.competitions.CompetitionService;
 import de.mephisto.vpin.server.competitions.ScoreSummary;
 import de.mephisto.vpin.server.highscores.*;
 import de.mephisto.vpin.server.highscores.cards.CardService;
@@ -48,9 +45,6 @@ public class GameService {
 
   @Autowired
   private HighscoreService highscoreService;
-
-  @Autowired
-  private CompetitionService competitionService;
 
   @Autowired
   private PreferencesService preferencesService;
@@ -327,9 +321,7 @@ public class GameService {
     Optional<Highscore> highscore = this.highscoreService.getHighscore(game.getId());
     highscore.ifPresent(value -> game.setHighscoreType(value.getType() != null ? HighscoreType.valueOf(value.getType()) : null));
 
-    Competition activeCompetitionForGame = competitionService.getActiveCompetitionForGame(game.getId());
     game.setOriginalRom(romService.getOriginalRom(game.getRom()));
-    game.setCompetitionUuid(activeCompetitionForGame != null ? activeCompetitionForGame.getUuid() : null);
     game.setHsFileName(gameDetails.getHsFileName());
     game.setTableName(gameDetails.getTableName());
     game.setIgnoredValidations(gameDetails.getIgnoredValidations());
@@ -355,7 +347,7 @@ public class GameService {
     }
 
     //check if there is mismatch in the ROM name, overwrite popper value
-    if(original != null && !StringUtils.isEmpty(original.getRom()) && !StringUtils.isEmpty(game.getRom()) && !original.getRom().equals(game.getRom())) {
+    if (original != null && !StringUtils.isEmpty(original.getRom()) && !StringUtils.isEmpty(game.getRom()) && !original.getRom().equals(game.getRom())) {
       pinUPConnector.updateRom(game, game.getRom());
     }
 

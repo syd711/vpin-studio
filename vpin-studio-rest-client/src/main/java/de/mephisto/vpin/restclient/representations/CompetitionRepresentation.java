@@ -1,5 +1,7 @@
 package de.mephisto.vpin.restclient.representations;
 
+import org.apache.commons.lang3.StringUtils;
+
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
@@ -207,6 +209,10 @@ public class CompetitionRepresentation {
   public boolean isOverlappingWith(Date startSelection, Date endSelection) {
     return (getStartDate().before(endSelection) || getStartDate().equals(endSelection)) &&
         (startSelection.before(this.getEndDate()) || startSelection.equals(this.getEndDate()));
+  }
+
+  public boolean isFinished() {
+    return !StringUtils.isEmpty(this.getWinnerInitials());
   }
 
   @Override

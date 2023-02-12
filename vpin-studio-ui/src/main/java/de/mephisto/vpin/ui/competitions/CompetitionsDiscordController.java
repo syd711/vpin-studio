@@ -121,7 +121,7 @@ public class CompetitionsDiscordController implements Initializable, StudioFXCon
 
   @FXML
   private void onCompetitionCreate() {
-    CompetitionRepresentation c = Dialogs.openDiscordCompetitionDialog(null);
+    CompetitionRepresentation c = Dialogs.openDiscordCompetitionDialog(this.competitions, null);
     if (c != null) {
       CompetitionRepresentation newCmp = null;
       try {
@@ -144,7 +144,7 @@ public class CompetitionsDiscordController implements Initializable, StudioFXCon
     CompetitionRepresentation selection = tableView.getSelectionModel().getSelectedItem();
     if (selection != null) {
       CompetitionRepresentation clone = selection.cloneCompetition();
-      CompetitionRepresentation c = Dialogs.openDiscordCompetitionDialog(clone);
+      CompetitionRepresentation c = Dialogs.openDiscordCompetitionDialog(this.competitions, clone);
       if (c != null) {
         try {
           CompetitionRepresentation newCmp = client.saveCompetition(c);
@@ -178,7 +178,7 @@ public class CompetitionsDiscordController implements Initializable, StudioFXCon
   private void onEdit() {
     CompetitionRepresentation selection = tableView.getSelectionModel().getSelectedItem();
     if (selection != null) {
-      CompetitionRepresentation c = Dialogs.openDiscordCompetitionDialog(selection);
+      CompetitionRepresentation c = Dialogs.openDiscordCompetitionDialog(this.competitions, selection);
       if (c != null) {
         try {
           CompetitionRepresentation newCmp = client.saveCompetition(c);

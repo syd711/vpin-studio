@@ -39,7 +39,6 @@ public class Game {
   private String ignoredValidations;
   private int volume;
   private HighscoreType highscoreType;
-  private String competitionUuid;
 
   private List<GameAsset> assets = new ArrayList<>();
 
@@ -51,14 +50,6 @@ public class Game {
 
   public Game(@NonNull SystemService systemService) {
     this.systemService = systemService;
-  }
-
-  public String getCompetitionUuid() {
-    return competitionUuid;
-  }
-
-  public void setCompetitionUuid(String competitionUuid) {
-    this.competitionUuid = competitionUuid;
   }
 
   public long getGameFileSize() {

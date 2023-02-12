@@ -40,7 +40,6 @@ public class GameRepresentation {
   private List<GameAssetRepresentation> assets;
   private boolean pov;
   private boolean selected;
-  private String competitionUuid;
   private boolean romRequired;
 
   public boolean isRomRequired() {
@@ -49,14 +48,6 @@ public class GameRepresentation {
 
   public void setRomRequired(boolean romRequired) {
     this.romRequired = romRequired;
-  }
-
-  public String getCompetitionUuid() {
-    return competitionUuid;
-  }
-
-  public void setCompetitionUuid(String competitionUuid) {
-    this.competitionUuid = competitionUuid;
   }
 
   public long getGameFileSize() {

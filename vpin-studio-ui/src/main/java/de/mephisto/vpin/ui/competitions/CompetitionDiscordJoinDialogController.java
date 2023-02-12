@@ -245,14 +245,8 @@ public class CompetitionDiscordJoinDialogController implements Initializable, Di
       return;
     }
 
-    GameRepresentation value = this.tableCombo.getValue();
-    if (!StringUtils.isEmpty(value.getCompetitionUuid()) && !value.getCompetitionUuid().equals(this.competition.getUuid())) {
-      validationTitle.setText("Invalid competition selected");
-      validationDescription.setText("This table is already used for another competition.");
-      return;
-    }
-
-    long tableSize = value.getGameFileSize();
+    GameRepresentation game = this.tableCombo.getValue();
+    long tableSize = game.getGameFileSize();
     long competitionTableSize = this.discordCompetitionData.getFs();
     long min = competitionTableSize - 1024;
     long max = competitionTableSize + 1024;

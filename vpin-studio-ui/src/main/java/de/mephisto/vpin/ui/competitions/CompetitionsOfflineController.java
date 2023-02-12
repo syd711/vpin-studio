@@ -100,7 +100,7 @@ public class CompetitionsOfflineController implements Initializable, StudioFXCon
 
   @FXML
   private void onCompetitionCreate() {
-    CompetitionRepresentation c = Dialogs.openOfflineCompetitionDialog(null);
+    CompetitionRepresentation c = Dialogs.openOfflineCompetitionDialog(this.competitions, null);
     if (c != null) {
       CompetitionRepresentation newCmp = null;
       try {
@@ -118,7 +118,7 @@ public class CompetitionsOfflineController implements Initializable, StudioFXCon
     CompetitionRepresentation selection = tableView.getSelectionModel().getSelectedItem();
     if (selection != null) {
       CompetitionRepresentation clone = selection.cloneCompetition();
-      CompetitionRepresentation c = Dialogs.openOfflineCompetitionDialog(clone);
+      CompetitionRepresentation c = Dialogs.openOfflineCompetitionDialog(this.competitions, clone);
       if (c != null) {
         try {
           CompetitionRepresentation newCmp = client.saveCompetition(c);
@@ -135,7 +135,7 @@ public class CompetitionsOfflineController implements Initializable, StudioFXCon
   private void onEdit() {
     CompetitionRepresentation selection = tableView.getSelectionModel().getSelectedItem();
     if (selection != null) {
-      CompetitionRepresentation c = Dialogs.openOfflineCompetitionDialog(selection);
+      CompetitionRepresentation c = Dialogs.openOfflineCompetitionDialog(this.competitions, selection);
       if (c != null) {
         try {
           CompetitionRepresentation newCmp = client.saveCompetition(c);

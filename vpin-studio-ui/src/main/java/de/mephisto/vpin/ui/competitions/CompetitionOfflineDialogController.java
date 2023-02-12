@@ -3,10 +3,13 @@ package de.mephisto.vpin.ui.competitions;
 import de.mephisto.vpin.commons.EmulatorType;
 import de.mephisto.vpin.commons.fx.DialogController;
 import de.mephisto.vpin.restclient.CompetitionType;
-import de.mephisto.vpin.restclient.discord.DiscordChannel;
 import de.mephisto.vpin.restclient.PopperScreen;
 import de.mephisto.vpin.restclient.VPinStudioClient;
-import de.mephisto.vpin.restclient.representations.*;
+import de.mephisto.vpin.restclient.discord.DiscordChannel;
+import de.mephisto.vpin.restclient.representations.CompetitionRepresentation;
+import de.mephisto.vpin.restclient.representations.GameMediaItemRepresentation;
+import de.mephisto.vpin.restclient.representations.GameMediaRepresentation;
+import de.mephisto.vpin.restclient.representations.GameRepresentation;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -75,6 +78,7 @@ public class CompetitionOfflineDialogController implements Initializable, Dialog
   private CompetitionRepresentation competition;
 
   private List<DiscordChannel> discordChannels;
+  private List<CompetitionRepresentation> allCompetitions;
 
   @FXML
   private void onCancelClick(ActionEvent e) {
@@ -208,6 +212,8 @@ public class CompetitionOfflineDialogController implements Initializable, Dialog
 
     LocalDate start = startDatePicker.getValue();
     LocalDate value = endDatePicker.getValue();
+    Date startSelection = Date.from(startDatePicker.getValue().atStartOfDay(ZoneId.systemDefault()).toInstant());
+    Date endSelection = Date.from(endDatePicker.getValue().atStartOfDay(ZoneId.systemDefault()).toInstant());
 
     long diff = ChronoUnit.DAYS.between(start, value);
     this.durationLabel.setText(diff + " days");
@@ -224,25 +230,26 @@ public class CompetitionOfflineDialogController implements Initializable, Dialog
       return;
     }
 
-    GameRepresentation game = this.tableCombo.getValue();
-    if (game != null && !StringUtils.isEmpty(game.getCompetitionUuid()) && !game.getCompetitionUuid().equals(this.competition.getUuid())) {
-      CompetitionRepresentation competitionByUuid = client.getCompetitionByUuid(game.getCompetitionUuid());
-      Date startSelection = Date.from(startDatePicker.getValue().atStartOfDay(ZoneId.systemDefault()).toInstant());
-      Date endSelection = Date.from(endDatePicker.getValue().atStartOfDay(ZoneId.systemDefault()).toInstant());
-
-      if(competitionByUuid.isOverlappingWith(startSelection, endSelection)) {
-        validationTitle.setText("Invalid table selected");
-        validationDescription.setText("This table is already used for another competition in the selected time span.");
-        return;
-      }
-    }
-
     if (competition.getStartDate() == null || competition.getEndDate() == null || competition.getStartDate().getTime() > competition.getEndDate().getTime()) {
       validationTitle.setText("Invalid start/end date set.");
       validationDescription.setText("Define a valid start and end date.");
       return;
     }
 
+    GameRepresentation game = this.tableCombo.getValue();
+
+//    for (CompetitionRepresentation existingCompetition : this.allCompetitions) {
+//      if (competition.isFinished()) {
+//        continue;
+//      }
+//
+//      GameRepresentation cGame = client.getGame(competition.getGameId());
+//      if (existingCompetition.isOverlappingWith(startSelection, endSelection) && String.valueOf(cGame.getRom()).equals(game.getRom()) ) {
+//        validationTitle.setText("Invalid table selected");
+//        validationDescription.setText("This table is already used for another competition in the selected time span.");
+//        return;
+//      }
+//    }
     validationContainer.setVisible(false);
     this.saveBtn.setDisable(false);
   }
@@ -256,7 +263,8 @@ public class CompetitionOfflineDialogController implements Initializable, Dialog
     return competition;
   }
 
-  public void setCompetition(CompetitionRepresentation c) {
+  public void setCompetition(List<CompetitionRepresentation> all, CompetitionRepresentation c) {
+    this.allCompetitions = all;
     if (c != null) {
       this.competition = c;
       GameRepresentation game = client.getGame(c.getGameId());

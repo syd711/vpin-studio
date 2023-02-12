@@ -17,6 +17,7 @@ import de.mephisto.vpin.ui.competitions.CompetitionOfflineDialogController;
 import de.mephisto.vpin.ui.players.PlayerDialogController;
 import de.mephisto.vpin.ui.tables.TablesController;
 import de.mephisto.vpin.ui.tables.dialogs.*;
+import edu.umd.cs.findbugs.annotations.Nullable;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -58,7 +59,7 @@ public class Dialogs {
     return controller.getCompetition();
   }
 
-  public static CompetitionRepresentation openDiscordCompetitionDialog(CompetitionRepresentation selection) {
+  public static CompetitionRepresentation openDiscordCompetitionDialog(List<CompetitionRepresentation> all, @Nullable CompetitionRepresentation selection) {
     String title = "Edit Competition";
     if (selection == null) {
       title = "Add Competition";
@@ -67,17 +68,17 @@ public class Dialogs {
       title = "Duplicate Competition";
     }
 
-    FXMLLoader fxmlLoader = new FXMLLoader(CompetitionOfflineDialogController.class.getResource("dialog-discord-competition-edit.fxml"));
+    FXMLLoader fxmlLoader = new FXMLLoader(CompetitionDiscordDialogController.class.getResource("dialog-discord-competition-edit.fxml"));
     Stage stage = WidgetFactory.createDialogStage(fxmlLoader, Studio.stage, title);
     CompetitionDiscordDialogController controller = (CompetitionDiscordDialogController) stage.getUserData();
-    controller.setCompetition(selection);
+    controller.setCompetition(all, selection);
     stage.showAndWait();
 
     return controller.getCompetition();
   }
 
 
-  public static CompetitionRepresentation openOfflineCompetitionDialog(CompetitionRepresentation selection) {
+  public static CompetitionRepresentation openOfflineCompetitionDialog(List<CompetitionRepresentation> all, CompetitionRepresentation selection) {
     String title = "Edit Competition";
     if (selection == null) {
       title = "Add Competition";
@@ -90,7 +91,7 @@ public class Dialogs {
     FXMLLoader fxmlLoader = new FXMLLoader(CompetitionOfflineDialogController.class.getResource("dialog-offline-competition-edit.fxml"));
     Stage stage = WidgetFactory.createDialogStage(fxmlLoader, Studio.stage, title);
     CompetitionOfflineDialogController controller = (CompetitionOfflineDialogController) stage.getUserData();
-    controller.setCompetition(selection);
+    controller.setCompetition(all, selection);
     stage.showAndWait();
 
     return controller.getCompetition();
