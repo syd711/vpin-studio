@@ -170,7 +170,7 @@ public class NotificationService implements InitializingBean, HighscoreChangeLis
   }
 
   @Override
-  public void competitionCreated(@NonNull Competition competition) {
+  public void competitionStarted(@NonNull Competition competition) {
     Game game = gameService.getGame(competition.getGameId());
     if (game != null) {
 
@@ -204,10 +204,14 @@ public class NotificationService implements InitializingBean, HighscoreChangeLis
   }
 
   @Override
+  public void competitionCreated(@NonNull Competition competition) {
+    //nothing yet
+  }
+
+  @Override
   public void competitionFinished(@NonNull Competition competition, @Nullable Player winner) {
     Game game = gameService.getGame(competition.getGameId());
     if (game != null) {
-      LOG.info("Finishing " + competition);
       runCheckedDeAugmentation();
 
       if (competition.getDiscordChannelId() > 0) {

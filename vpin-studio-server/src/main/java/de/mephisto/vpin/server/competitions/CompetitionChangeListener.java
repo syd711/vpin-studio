@@ -6,6 +6,8 @@ import edu.umd.cs.findbugs.annotations.Nullable;
 
 public interface CompetitionChangeListener {
 
+  void competitionStarted(@NonNull Competition competition);
+
   void competitionCreated(@NonNull Competition competition);
 
   void competitionChanged(@NonNull Competition competition);

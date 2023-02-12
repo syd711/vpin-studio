@@ -196,6 +196,9 @@ public class CompetitionDiscordDialogController implements Initializable, Dialog
   }
 
   private void refreshPreview(GameRepresentation game, String badge) {
+    iconPreview.setImage(null);
+    badgePreview.setImage(null);
+
     if (game != null) {
       GameMediaRepresentation gameMedia = game.getGameMedia();
       GameMediaItemRepresentation mediaItem = gameMedia.getMedia().get(PopperScreen.Wheel.name());
@@ -208,13 +211,7 @@ public class CompetitionDiscordDialogController implements Initializable, Dialog
           Image badgeIcon = new Image(client.getCompetitionBadge(badge));
           badgePreview.setImage(badgeIcon);
         }
-        else {
-          badgePreview.setImage(null);
-        }
       }
-    }
-    else {
-      iconPreview.setImage(null);
     }
   }
 

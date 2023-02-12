@@ -48,7 +48,6 @@ public class DiscordListenerAdapter extends ListenerAdapter {
 
   /******************** Listener Methods ******************************************************************************/
 
-
   @Override
   public void onMessageReceived(MessageReceivedEvent event) {
     if (event.getAuthor().isBot()) {
@@ -71,7 +70,7 @@ public class DiscordListenerAdapter extends ListenerAdapter {
             "").queue();
       }
       else if (commandResolver != null) {
-        BotCommand command = new BotCommand(message.getGuild().getIdLong(), content, commandResolver);
+        BotCommand command = new BotCommand(discordClient.getDefaultGuildId(), content, commandResolver);
         BotCommandResponse response = command.execute();
         if (response != null) {
           String result = response.toDiscordMarkup();

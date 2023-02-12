@@ -110,6 +110,8 @@ public class CompetitionsDiscordController implements Initializable, StudioFXCon
   private CompetitionsController competitionsController;
   private WaitOverlayController loaderController;
 
+  private long discordBotId;
+
   // Add a public no-args constructor
   public CompetitionsDiscordController() {
   }
@@ -231,8 +233,6 @@ public class CompetitionsDiscordController implements Initializable, StudioFXCon
 
   @FXML
   public void onReload() {
-    CompetitionRepresentation selection = tableView.getSelectionModel().getSelectedItem();
-
     tableView.setVisible(false);
     tableStack.getChildren().add(loadingOverlay);
 
@@ -254,6 +254,7 @@ public class CompetitionsDiscordController implements Initializable, StudioFXCon
     }
 
     new Thread(() -> {
+      CompetitionRepresentation selection = tableView.getSelectionModel().getSelectedItem();
       competitions = client.getDiscordCompetitions();
       filterCompetitions(competitions);
       data = FXCollections.observableList(competitions);
@@ -280,8 +281,8 @@ public class CompetitionsDiscordController implements Initializable, StudioFXCon
           refreshView(Optional.empty());
         }
 
-        tableView.setVisible(true);
         tableStack.getChildren().remove(loadingOverlay);
+        tableView.setVisible(true);
       });
     }).start();
 
@@ -289,6 +290,8 @@ public class CompetitionsDiscordController implements Initializable, StudioFXCon
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
+    this.discordBotId = client.getDiscordStatus().getBotId();
+
     NavigationController.setBreadCrumb(Arrays.asList("Competitions"));
     tableView.setPlaceholder(new Label("            No competitions found.\nClick the '+' button to create a new one."));
 
@@ -462,7 +465,7 @@ public class CompetitionsDiscordController implements Initializable, StudioFXCon
     }
 
     boolean disable = newSelection == null;
-    boolean isOwner = newSelection != null && newSelection.getOwner().equals(String.valueOf(client.getDiscordStatus().getBotId()));
+    boolean isOwner = newSelection != null && newSelection.getOwner().equals(String.valueOf(this.discordBotId));
     editBtn.setDisable(disable || !isOwner);
     finishBtn.setDisable(disable || !isOwner);
     joinBtn.setDisable(disable || !newSelection.isActive());
@@ -486,7 +489,7 @@ public class CompetitionsDiscordController implements Initializable, StudioFXCon
 
   @Override
   public void onViewActivated() {
-
+    this.discordBotId = client.getDiscordStatus().getBotId();
   }
 
   public void setCompetitionsController(CompetitionsController competitionsController) {

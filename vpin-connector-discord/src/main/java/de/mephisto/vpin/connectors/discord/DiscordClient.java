@@ -33,8 +33,17 @@ public class DiscordClient {
     this.jda = jda;
     this.botId = jda.getSelfUser().getIdLong();
     this.listenerAdapter = new DiscordListenerAdapter(this, commandResolver);
-
+    this.loadMembers();
     jda.addEventListener(this.listenerAdapter);
+  }
+
+  public void loadMembers() {
+    List<Guild> guilds = this.jda.getGuilds();
+    for (Guild guild : guilds) {
+      guild.loadMembers().onSuccess(members -> {
+        LOG.info("Loaded " + members.size() + " members for " + guild.getName());
+      });
+    }
   }
 
   public static DiscordClient create(String botToken, DiscordCommandResolver commandResolver) throws Exception {
@@ -44,6 +53,10 @@ public class DiscordClient {
         .build();
     jda.awaitReady();
     return new DiscordClient(jda, commandResolver);
+  }
+
+  public long getDefaultGuildId() {
+    return defaultGuildId;
   }
 
   public void setDefaultGuildId(long defaultGuildId) {
@@ -68,7 +81,7 @@ public class DiscordClient {
   public synchronized List<DiscordMember> getMembers(long serverId) {
     Guild guild = getGuild(serverId);
     if (guild != null) {
-      List<Member> members = guild.loadMembers().get();
+      List<Member> members = guild.getMembers();
       return members.stream().map(this::toMember).collect(Collectors.toList());
     }
     return Collections.emptyList();

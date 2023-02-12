@@ -147,7 +147,7 @@ public class DiscordBotCommandResponseFactory {
     for (Score score : highscores.getScores()) {
       String table = gameService.getGame(score.getGameId()).getGameDisplayName();
       if (table.length() > 30) {
-        table = table.substring(0, 25) + "...";
+        table = table.substring(0, 25) + "...  ";
       }
       else {
         while (table.length() < 30) {

@@ -51,6 +51,12 @@ public class CompetitionService implements InitializingBean {
     }
   }
 
+  public void notifyCompetitionStarted(Competition c) {
+    for (CompetitionChangeListener listener : this.listeners) {
+      listener.competitionStarted(c);
+    }
+  }
+
   public void notifyCompetitionChanged(Competition c) {
     for (CompetitionChangeListener listener : this.listeners) {
       listener.competitionChanged(c);
@@ -162,14 +168,27 @@ public class CompetitionService implements InitializingBean {
     else {
       notifyCompetitionChanged(updated);
     }
-    runFinishedCompetitionsCheck();
+    runCompetitionsFinishedAndStartedCheck();
     return getCompetition(c.getId());
   }
 
-  public void runFinishedCompetitionsCheck() {
+  public void runCompetitionsFinishedAndStartedCheck() {
     List<Competition> openCompetitions = getCompetitionToBeFinished();
     for (Competition openCompetition : openCompetitions) {
+      LOG.info("Finishing " + openCompetition);
       finishCompetition(openCompetition);
+    }
+
+    List<Competition> plannedCompetitions = getActiveCompetitions();
+    for (Competition plannedCompetition : plannedCompetitions) {
+      if (plannedCompetition.isActive() && !plannedCompetition.isStarted()) {
+        LOG.info("Starting " + plannedCompetition);
+        notifyCompetitionStarted(plannedCompetition);
+
+        //update state
+        plannedCompetition.setStarted(true);
+        competitionsRepository.save(plannedCompetition);
+      }
     }
   }
 

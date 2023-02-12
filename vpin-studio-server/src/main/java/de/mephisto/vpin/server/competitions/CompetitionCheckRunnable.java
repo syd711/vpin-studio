@@ -15,6 +15,6 @@ public class CompetitionCheckRunnable implements Runnable {
   @Override
   public void run() {
     LOG.info("Running automated competition status check.");
-    this.competitionService.runFinishedCompetitionsCheck();
+    this.competitionService.runCompetitionsFinishedAndStartedCheck();
   }
 }

@@ -49,9 +49,19 @@ public class Competition {
 
   private Date endDate;
 
+  private boolean started;
+
   private String name;
 
   private String score;
+
+  public boolean isStarted() {
+    return started;
+  }
+
+  public void setStarted(boolean started) {
+    this.started = started;
+  }
 
   public String getScore() {
     return score;

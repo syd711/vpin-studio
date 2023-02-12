@@ -225,31 +225,31 @@ public class CompetitionsController implements Initializable, StudioFXController
   }
 
   private void refreshScoreGraph(Optional<CompetitionRepresentation> cp) {
-    try {
-      if(scoreGraphBox != null && scoreGraphBox.getChildren() != null) {
-        scoreGraphBox.getChildren().removeAll(scoreGraphBox.getChildren());
-      }
-    } catch (Exception e) {
-      LOG.error("Error refreshing score graph: " + e.getMessage()); //TODO dunno
-    }
-
-    if (cp.isPresent()) {
-      CompetitionRepresentation competition = cp.get();
-
-      if (!competition.isActive()) {
-        scoreGraphBox.getChildren().add(getNotActiveGrpahLabel());
-        return;
-      }
-
-      ScoreListRepresentation competitionScores = client.getCompetitionScoreList(competition.getId());
-      if (!competitionScores.getScores().isEmpty()) {
-        if (highscoresGraphTile != null) {
-          scoreGraphBox.getChildren().remove(highscoresGraphTile);
-        }
-        highscoresGraphTile = ScoreGraphUtil.createGraph(competitionScores);
-        scoreGraphBox.getChildren().add(highscoresGraphTile);
-      }
-    }
+//    try {
+//      if(scoreGraphBox != null && scoreGraphBox.getChildren() != null) {
+//        scoreGraphBox.getChildren().removeAll(scoreGraphBox.getChildren());
+//      }
+//    } catch (Exception e) {
+//      LOG.error("Error refreshing score graph: " + e.getMessage()); //TODO dunno
+//    }
+//
+//    if (cp.isPresent()) {
+//      CompetitionRepresentation competition = cp.get();
+//
+//      if (!competition.isActive()) {
+//        scoreGraphBox.getChildren().add(getNotActiveGrpahLabel());
+//        return;
+//      }
+//
+//      ScoreListRepresentation competitionScores = client.getCompetitionScoreList(competition.getId());
+//      if (!competitionScores.getScores().isEmpty()) {
+//        if (highscoresGraphTile != null) {
+//          scoreGraphBox.getChildren().remove(highscoresGraphTile);
+//        }
+//        highscoresGraphTile = ScoreGraphUtil.createGraph(competitionScores);
+//        scoreGraphBox.getChildren().add(highscoresGraphTile);
+//      }
+//    }
   }
 
   private void refreshUsers(Optional<CompetitionRepresentation> cp) {
