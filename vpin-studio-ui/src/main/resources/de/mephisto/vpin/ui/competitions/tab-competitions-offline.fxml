@@ -21,9 +21,9 @@
                     <children>
                         <TableView fx:id="tableView" style="-fx-background-color: #2a2a2a;" styleClass="base-component">
                             <columns>
+                                <TableColumn fx:id="columnTable" prefWidth="280.8000183105469" style="-fx-alignment: BASELINE_LEFT;" text="Table" />
                                 <TableColumn fx:id="columnName" prefWidth="292.0001335144043" style="-fx-alignment: BASELINE_LEFT;" text="Name" />
                                 <TableColumn fx:id="columnStatus" minWidth="0.0" prefWidth="160.0" style="-fx-alignment: CENTER;" text="Status" />
-                                <TableColumn fx:id="columnTable" prefWidth="280.8000183105469" style="-fx-alignment: BASELINE_LEFT;" text="Table" />
                                 <TableColumn fx:id="columnStartDate" prefWidth="125.0" style="-fx-alignment: CENTER;" text="Start Date" />
                                 <TableColumn fx:id="columnEndDate" prefWidth="125.0" style="-fx-alignment: CENTER;" text="End Date" />
                                 <TableColumn fx:id="columnWinner" prefWidth="185.59991455078125" style="-fx-alignment: CENTER;" text="Winner" />

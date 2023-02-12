@@ -1,5 +1,6 @@
 package de.mephisto.vpin.server.discord;
 
+import de.mephisto.vpin.restclient.CompetitionType;
 import de.mephisto.vpin.server.competitions.Competition;
 import de.mephisto.vpin.server.competitions.RankedPlayer;
 import de.mephisto.vpin.server.competitions.ScoreSummary;
@@ -20,15 +21,12 @@ public class DiscordBotCommandResponseFactory {
       "```\n" +
       "%s\n" +
       "------------------------------------------------------\n" +
+      "Type:        %s\n" +
       "Table:       %s\n" +
       "Start Date:  %s\n" +
       "End Date:    %s\n" +
       "Duration:    %s days\n" +
-      "\n" +
-      "%s\n" +
-      "%s\n" +
-      "%s\n" +
-      "------------------------------------------------------```";
+      "\n";
 
 
   public static String createHighscoreMessage(Game game, ScoreSummary scoreSummary) {
@@ -54,37 +52,44 @@ public class DiscordBotCommandResponseFactory {
     LocalDate end = competition.getEndDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
     long diff = Math.abs(ChronoUnit.DAYS.between(end, start));
 
-    String first = formatScoreEntry(summary, 0);
-    String second = formatScoreEntry(summary, 1);
-    String third = formatScoreEntry(summary, 2);
-
-    return String.format(COMPETITION_ACTIVE_TEMPLATE, competition.getName(),
+    String cType = "offline";
+    if (competition.getType().equals(CompetitionType.DISCORD.name())) {
+      cType = "Discord";
+    }
+    String format = String.format(COMPETITION_ACTIVE_TEMPLATE, competition.getName(),
+        cType,
         game.getGameDisplayName(),
         DateFormat.getDateInstance().format(competition.getStartDate()),
         DateFormat.getDateInstance().format(competition.getEndDate()),
-        diff, first, second, third);
+        diff);
+
+
+    StringBuilder msgBuilder = new StringBuilder(format);
+    List<Score> scores = summary.getScores();
+    for (Score score : scores) {
+      msgBuilder.append(formatScoreEntry(score));
+      msgBuilder.append("\n");
+    }
+    msgBuilder.append("------------------------------------------------------```");
+    return msgBuilder.toString();
   }
 
 
-  private static String formatScoreEntry(ScoreSummary summary, int index) {
+  private static String formatScoreEntry(Score score) {
     StringBuilder builder = new StringBuilder("#");
-    builder.append(index + 1);
+    builder.append(score.getPosition());
     builder.append(" ");
 
-    if (summary.getScores().size() > index) {
-      Score score = summary.getScores().get(index);
-      String playerName = score.getPlayerInitials();
-      if (score.getPlayer() != null) {
-        playerName = score.getPlayer().getName();
-      }
-      builder.append(playerName);
-      while (builder.toString().length() < 30) {
-        builder.append(" ");
-      }
-      builder.append("   ");
-      builder.append(score.getScore());
+    String playerName = score.getPlayerInitials();
+    if (score.getPlayer() != null) {
+      playerName = score.getPlayer().getName();
     }
-
+    builder.append(playerName);
+    while (builder.toString().length() < 30) {
+      builder.append(" ");
+    }
+    builder.append("   ");
+    builder.append(score.getScore());
     return builder.toString();
   }
 
@@ -121,7 +126,7 @@ public class DiscordBotCommandResponseFactory {
   public static String createRanksMessageFor(GameService gameService, Player player, ScoreSummary highscores) {
     StringBuilder builder = new StringBuilder();
 
-    if(highscores.getScores().isEmpty()) {
+    if (highscores.getScores().isEmpty()) {
       builder.append("No highscores for player '");
       if (player.getName() != null) {
         builder.append(player.getName());

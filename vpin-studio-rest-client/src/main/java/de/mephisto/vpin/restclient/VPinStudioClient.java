@@ -52,6 +52,10 @@ public class VPinStudioClient implements ObservedPropertyChangeListener, Overlay
     LOG.info("Cleared " + size + " resources from cache.");
   }
 
+  public void clearCache(String urlPrefix) {
+    restClient.clearCache(urlPrefix);
+  }
+
   /*********************************************************************************************************************
    * Discord
    ********************************************************************************************************************/
@@ -478,7 +482,7 @@ public class VPinStudioClient implements ObservedPropertyChangeListener, Overlay
 
   public GameRepresentation getGame(int id) {
     try {
-      return restClient.get(API + "games/" + id, GameRepresentation.class);
+      return restClient.getCached(API + "games/" + id, GameRepresentation.class);
     } catch (Exception e) {
       LOG.error("Failed to read game " + id + ": " + e.getMessage());
     }

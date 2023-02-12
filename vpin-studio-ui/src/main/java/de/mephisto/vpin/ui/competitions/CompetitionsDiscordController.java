@@ -1,9 +1,11 @@
 package de.mephisto.vpin.ui.competitions;
 
+import de.mephisto.vpin.commons.fx.OverlayWindowFX;
 import de.mephisto.vpin.commons.fx.widgets.WidgetCompetitionSummaryController;
 import de.mephisto.vpin.commons.utils.ImageUtil;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.CompetitionType;
+import de.mephisto.vpin.restclient.PopperScreen;
 import de.mephisto.vpin.restclient.discord.DiscordBotStatus;
 import de.mephisto.vpin.restclient.discord.DiscordServer;
 import de.mephisto.vpin.restclient.representations.CompetitionRepresentation;
@@ -33,6 +35,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.net.URL;
 import java.text.DateFormat;
@@ -322,7 +325,20 @@ public class CompetitionsDiscordController implements Initializable, StudioFXCon
       if (game != null) {
         label = new Label(game.getGameDisplayName());
       }
-      return new SimpleObjectProperty(label);
+
+      HBox hBox = new HBox(6);
+      hBox.setAlignment(Pos.CENTER_LEFT);
+
+      ByteArrayInputStream gameMediaItem = OverlayWindowFX.client.getGameMediaItem(value.getGameId(), PopperScreen.Wheel);
+      Image image = new Image(gameMediaItem);
+      ImageView view = new ImageView(image);
+      view.setPreserveRatio(true);
+      view.setSmooth(true);
+      view.setFitWidth(60);
+      view.setFitHeight(60);
+      hBox.getChildren().addAll(view, label);
+
+      return new SimpleObjectProperty(hBox);
     });
 
     columnServer.setCellValueFactory(cellData -> {
@@ -374,7 +390,7 @@ public class CompetitionsDiscordController implements Initializable, StudioFXCon
       if (value.isActive()) {
         status = "ACTIVE";
       }
-      else if(value.isPlanned()) {
+      else if (value.isPlanned()) {
         status = "PLANNED";
       }
       Label label = new Label(status);

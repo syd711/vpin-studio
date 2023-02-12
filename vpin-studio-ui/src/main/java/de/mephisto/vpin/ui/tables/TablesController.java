@@ -348,6 +348,8 @@ public class TablesController implements Initializable, StudioFXController {
 
   @FXML
   public void onReload() {
+    Studio.client.clearCache("/games/");
+
     this.textfieldSearch.setDisable(true);
     this.reloadBtn.setDisable(true);
     this.scanBtn.setDisable(true);
