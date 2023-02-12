@@ -213,17 +213,12 @@ public class NotificationService implements InitializingBean, HighscoreChangeLis
     Game game = gameService.getGame(competition.getGameId());
     if (game != null) {
       runCheckedDeAugmentation();
+      ScoreSummary summary = competitionService.getCompetitionScore(competition.getId());
 
       if (competition.getDiscordChannelId() > 0) {
         long discordServerId = competition.getDiscordServerId();
         long discordChannelId = competition.getDiscordChannelId();
-        ScoreSummary summary = competitionService.getCompetitionScore(competition.getId());
-        if (summary != null) {
-          discordService.sendMessage(discordServerId, discordChannelId, DiscordOfflineChannelMessageFactory.createCompetitionFinishedMessage(competition, winner, game, summary));
-        }
-        else {
-          LOG.warn("Failed to finished " + competition + " properly, unable to resolve scoring from topic.");
-        }
+        discordService.sendMessage(discordServerId, discordChannelId, DiscordOfflineChannelMessageFactory.createCompetitionFinishedMessage(competition, winner, game, summary));
       }
 
       if (competition.getType().equals(CompetitionType.DISCORD.name())) {
@@ -231,6 +226,10 @@ public class NotificationService implements InitializingBean, HighscoreChangeLis
         long discordChannelId = competition.getDiscordChannelId();
         discordService.resetCompetition(discordServerId, discordChannelId);
       }
+
+      //save the last raw score to the competition itself
+      competition.setScore(summary.getRaw());
+      competitionService.save(competition);
     }
   }
 

@@ -8,6 +8,7 @@ import de.mephisto.vpin.server.highscores.Score;
 import de.mephisto.vpin.server.highscores.ScoreList;
 import de.mephisto.vpin.server.players.Player;
 import de.mephisto.vpin.server.players.PlayerService;
+import edu.umd.cs.findbugs.annotations.NonNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
@@ -136,22 +137,18 @@ public class CompetitionService implements InitializingBean {
     return null;
   }
 
-
+  @NonNull
   public ScoreSummary getCompetitionScore(long competitionId) {
     Competition competition = getCompetition(competitionId);
     long serverId = competition.getDiscordServerId();
     long channelId = competition.getDiscordChannelId();
 
-    if (competition.getType().equals(CompetitionType.OFFLINE.name())) {
-      return highscoreService.getScoreSummary(serverId, competition.getGameId(), null);
-    }
-    else if (competition.getType().equals(CompetitionType.DISCORD.name())) {
+     if (competition.getType().equals(CompetitionType.DISCORD.name())) {
       ScoreList scoreList = discordService.getScoreList(highscoreParser, competition.getUuid(), serverId, channelId);
       return scoreList.getLatestScore();
     }
 
-    LOG.error("No competition found for highscore retrieval with competitionId " + competitionId);
-    return null;
+    return highscoreService.getScoreSummary(serverId, competition.getGameId(), null);
   }
 
 

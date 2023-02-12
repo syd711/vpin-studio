@@ -268,6 +268,7 @@ public class HighscoreService implements InitializingBean {
    * @param displayName the optional display name/name of the table the summary is for
    * @return all highscores of the given player
    */
+  @NonNull
   public ScoreSummary getScoreSummary(long serverId, int gameId, @Nullable String displayName) {
     ScoreSummary summary = new ScoreSummary(new ArrayList<>(), new Date());
     Optional<Highscore> highscore = highscoreRepository.findByGameId(gameId);

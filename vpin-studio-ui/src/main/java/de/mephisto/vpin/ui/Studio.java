@@ -90,7 +90,7 @@ public class Studio extends Application {
       int width = 1920;
       int height = 1080;
       if (screenBounds.getHeight() >= 1280) {
-        height = 1200;
+        height = 1300;
       }
       if (screenBounds.getHeight() >= 1480) {
         height = 1400;
