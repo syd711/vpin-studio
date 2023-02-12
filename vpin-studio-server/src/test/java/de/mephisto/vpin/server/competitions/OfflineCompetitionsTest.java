@@ -7,6 +7,7 @@ import de.mephisto.vpin.server.games.GameService;
 import de.mephisto.vpin.server.players.Player;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
+import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -29,6 +30,11 @@ public class OfflineCompetitionsTest extends AbstractVPinServerTest {
     Game game = gameService.getGameByFilename(AbstractVPinServerTest.TEST_GAME_FILENAME);
 
     competitionService.addCompetitionChangeListener(new CompetitionChangeListener() {
+      @Override
+      public void competitionStarted(@NotNull Competition competition) {
+
+      }
+
       @Override
       public void competitionCreated(@NonNull Competition competition) {
         assertNotNull(competition);
