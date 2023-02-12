@@ -182,7 +182,7 @@ public class CompetitionsController implements Initializable, StudioFXController
           hBox.setAlignment(Pos.CENTER_LEFT);
           hBox = new HBox(6);
           hBox.setAlignment(Pos.CENTER_LEFT);
-          Image image = new Image(discordPlayer.getAvatarUrl());
+          Image image = new Image(client.getCachedUrlImage(discordPlayer.getAvatarUrl()));
           ImageView view = new ImageView(image);
           view.setPreserveRatio(true);
           view.setFitWidth(50);

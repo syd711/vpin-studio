@@ -8,7 +8,6 @@ import de.mephisto.vpin.restclient.PopperScreen;
 import de.mephisto.vpin.restclient.representations.CompetitionRepresentation;
 import de.mephisto.vpin.restclient.representations.GameRepresentation;
 import de.mephisto.vpin.restclient.representations.PlayerRepresentation;
-import de.mephisto.vpin.restclient.representations.ScoreListRepresentation;
 import de.mephisto.vpin.ui.NavigationController;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.StudioFXController;
@@ -161,8 +160,8 @@ public class CompetitionsOfflineController implements Initializable, StudioFXCon
       if (!StringUtils.isEmpty(selection.getWinnerInitials())) {
         help = "The player '" + selection.getWinnerInitials() + "' will have one less won competition.";
       }
-      else if(selection.isActive()) {
-        help  = "The competition is still active for another " + selection.remainingDays() + " days.";
+      else if (selection.isActive()) {
+        help = "The competition is still active for another " + selection.remainingDays() + " days.";
         help2 = "This will cancel the competition, no winner will be announced.";
       }
 
@@ -286,7 +285,7 @@ public class CompetitionsOfflineController implements Initializable, StudioFXCon
       if (value.isActive()) {
         status = "ACTIVE";
       }
-      else if(value.isPlanned()) {
+      else if (value.isPlanned()) {
         status = "PLANNED";
       }
       Label label = new Label(status);
@@ -322,11 +321,7 @@ public class CompetitionsOfflineController implements Initializable, StudioFXCon
     tableView.setPlaceholder(new Label("            Mmmh, not up for a challange yet?\n" +
         "Create a new competition by pressing the '+' button."));
     tableView.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
-      boolean disable = newSelection == null;
-      editBtn.setDisable(disable || !newSelection.isActive());
-      finishBtn.setDisable(disable || !newSelection.isActive());
-      deleteBtn.setDisable(disable);
-      duplicateBtn.setDisable(disable);
+
       refreshView(Optional.ofNullable(newSelection));
     });
 
@@ -377,6 +372,16 @@ public class CompetitionsOfflineController implements Initializable, StudioFXCon
   }
 
   private void refreshView(Optional<CompetitionRepresentation> competition) {
+    CompetitionRepresentation newSelection = null;
+    if (competition.isPresent()) {
+      newSelection = competition.get();
+    }
+    boolean disable = newSelection == null;
+    editBtn.setDisable(disable || !newSelection.isActive());
+    finishBtn.setDisable(disable || !newSelection.isActive());
+    deleteBtn.setDisable(disable);
+    duplicateBtn.setDisable(disable);
+
     if (competition.isPresent()) {
       if (competitionWidget.getTop() != null) {
         competitionWidget.getTop().setVisible(true);

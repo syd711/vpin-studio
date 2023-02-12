@@ -45,7 +45,7 @@
                                 </Label>
                                 <BorderPane>
                                     <left>
-                                        <Label text="#1" textFill="WHITE" BorderPane.alignment="CENTER">
+                                        <Label fx:id="firstLabel" text="#1" textFill="WHITE" BorderPane.alignment="CENTER">
                                             <font>
                                                 <Font size="24.0" />
                                             </font>
@@ -71,7 +71,7 @@
                                 </BorderPane>
                                 <BorderPane layoutX="10.0" layoutY="116.0">
                                     <left>
-                                        <Label text="#2" textFill="WHITE" BorderPane.alignment="CENTER">
+                                        <Label fx:id="secondLabel" text="#2" textFill="WHITE" BorderPane.alignment="CENTER">
                                             <font>
                                                 <Font size="24.0" />
                                             </font>
@@ -97,7 +97,7 @@
                                 </BorderPane>
                                 <BorderPane layoutX="10.0" layoutY="144.0">
                                     <left>
-                                        <Label text="#3" textFill="WHITE" BorderPane.alignment="CENTER">
+                                        <Label fx:id="thirdLabel" text="#3" textFill="WHITE" BorderPane.alignment="CENTER">
                                             <font>
                                                 <Font size="24.0" />
                                             </font>

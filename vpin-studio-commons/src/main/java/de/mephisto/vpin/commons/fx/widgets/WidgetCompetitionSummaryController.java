@@ -55,6 +55,15 @@ public class WidgetCompetitionSummaryController extends WidgetController impleme
   private Label name3;
 
   @FXML
+  private Label firstLabel;
+
+  @FXML
+  private Label secondLabel;
+
+  @FXML
+  private Label thirdLabel;
+
+  @FXML
   private Label scoreLabel1;
 
   @FXML
@@ -111,7 +120,6 @@ public class WidgetCompetitionSummaryController extends WidgetController impleme
 
       LocalDate start = competition.getStartDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
       LocalDate end = competition.getEndDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
-      LocalDate now = new Date().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
       long durationDays = ChronoUnit.DAYS.between(start, end);
 
       String duration = "Duration: " + DateFormat.getDateInstance().format(competition.getStartDate())
@@ -121,26 +129,43 @@ public class WidgetCompetitionSummaryController extends WidgetController impleme
       competitionLabel.setText(competition.getName());
       tableNameLabel.setText(game.getGameDisplayName());
 
-      ScoreSummaryRepresentation latestCompetitionScore = OverlayWindowFX.client.getCompetitionScore(competition.getId());
-      if(latestCompetitionScore != null) {
-        List<ScoreRepresentation> scores = latestCompetitionScore.getScores();
-        if (scores.size() >= 3) {
-          ScoreRepresentation score1 = scores.get(0);
-          name1.setText(formatScoreText(score1));
-          scoreLabel1.setFont(getCompetitionScoreFont());
-          scoreLabel1.setText(score1.getScore());
+      boolean isActive = competition.isActive();
+      firstLabel.setVisible(isActive);
+      secondLabel.setVisible(isActive);
+      thirdLabel.setVisible(isActive);
+      scoreLabel1.setVisible(isActive);
+      scoreLabel2.setVisible(isActive);
+      scoreLabel3.setVisible(isActive);
+      name2.setVisible(isActive);
+      name3.setVisible(isActive);
 
-          ScoreRepresentation score2 = scores.get(1);
-          name2.setText(formatScoreText(score2));
-          scoreLabel2.setFont(getCompetitionScoreFont());
-          scoreLabel2.setText(score2.getScore());
+      if(!competition.isActive()) {
+        name1.setText("");
+      }
+      else {
+        ScoreSummaryRepresentation latestCompetitionScore = OverlayWindowFX.client.getCompetitionScore(competition.getId());
+        if(latestCompetitionScore != null) {
+          List<ScoreRepresentation> scores = latestCompetitionScore.getScores();
+          if (scores.size() >= 3) {
+            ScoreRepresentation score1 = scores.get(0);
+            name1.setText(formatScoreText(score1));
+            scoreLabel1.setFont(getCompetitionScoreFont());
+            scoreLabel1.setText(score1.getScore());
 
-          ScoreRepresentation score3 = scores.get(2);
-          name3.setText(formatScoreText(score3));
-          scoreLabel3.setFont(getCompetitionScoreFont());
-          scoreLabel3.setText(score3.getScore());
+            ScoreRepresentation score2 = scores.get(1);
+            name2.setText(formatScoreText(score2));
+            scoreLabel2.setFont(getCompetitionScoreFont());
+            scoreLabel2.setText(score2.getScore());
+
+            ScoreRepresentation score3 = scores.get(2);
+            name3.setText(formatScoreText(score3));
+            scoreLabel3.setFont(getCompetitionScoreFont());
+            scoreLabel3.setText(score3.getScore());
+          }
         }
       }
+
+
 
       GameMediaItemRepresentation item = gameMedia.getItem(PopperScreen.Wheel);
       if (item != null) {

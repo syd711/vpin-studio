@@ -163,39 +163,41 @@ public class WidgetCompetitionController extends WidgetController implements Ini
       countdownTile.setDescription(String.valueOf(remainingDays));
       countdownTile.setText("Competition End: " + DateFormat.getDateInstance().format(competition.getEndDate()));
 
-      ScoreListRepresentation competitionScores = OverlayWindowFX.client.getCompetitionScoreList(competition.getId());
-      if (!competitionScores.getScores().isEmpty()) {
-        if (highscoresGraphTile != null) {
-          statsWidget.getChildren().remove(highscoresGraphTile);
+      if(competition.isActive()) {
+        ScoreListRepresentation competitionScores = OverlayWindowFX.client.getCompetitionScoreList(competition.getId());
+        if (!competitionScores.getScores().isEmpty()) {
+          if (highscoresGraphTile != null) {
+            statsWidget.getChildren().remove(highscoresGraphTile);
+          }
+
+          highscoresGraphTile = ScoreGraphUtil.createGraph(competitionScores);
+          statsWidget.getChildren().add(highscoresGraphTile);
         }
 
-        highscoresGraphTile = ScoreGraphUtil.createGraph(competitionScores);
-        statsWidget.getChildren().add(highscoresGraphTile);
-      }
+        if (competitionScores.getLatestScore() != null) {
+          ScoreSummaryRepresentation latestScore = competitionScores.getLatestScore();
+          ScoreRepresentation currentScore = latestScore.getScores().get(0);
 
-      if (competitionScores.getLatestScore() != null) {
-        ScoreSummaryRepresentation latestScore = competitionScores.getLatestScore();
-        ScoreRepresentation currentScore = latestScore.getScores().get(0);
+          Platform.runLater(() -> {
+            turnoverTile.setTitle("#1 Place");
+            turnoverTile.setValue(currentScore.getNumericScore());
 
-        Platform.runLater(() -> {
-          turnoverTile.setTitle("#1 Place");
-          turnoverTile.setValue(currentScore.getNumericScore());
-
-          if (currentScore.getPlayer() != null) {
-            turnoverTile.setText(currentScore.getPlayer().getName());
-            String avatarUrl = currentScore.getPlayer().getAvatarUrl();
-            if (!StringUtils.isEmpty(avatarUrl)) {
-              turnoverTile.setImage(new Image(avatarUrl));
+            if (currentScore.getPlayer() != null) {
+              turnoverTile.setText(currentScore.getPlayer().getName());
+              String avatarUrl = currentScore.getPlayer().getAvatarUrl();
+              if (!StringUtils.isEmpty(avatarUrl)) {
+                turnoverTile.setImage(new Image(avatarUrl));
+              }
+              else if (currentScore.getPlayer().getAvatar() != null) {
+                AssetRepresentation avatar = currentScore.getPlayer().getAvatar();
+                turnoverTile.setImage(new Image(OverlayWindowFX.client.getAsset(AssetType.AVATAR, avatar.getUuid())));
+              }
             }
-            else if (currentScore.getPlayer().getAvatar() != null) {
-              AssetRepresentation avatar = currentScore.getPlayer().getAvatar();
-              turnoverTile.setImage(new Image(OverlayWindowFX.client.getAsset(AssetType.AVATAR, avatar.getUuid())));
+            else {
+              turnoverTile.setText(currentScore.getPlayerInitials());
             }
-          }
-          else {
-            turnoverTile.setText(currentScore.getPlayerInitials());
-          }
-        });
+          });
+        }
       }
     }
 
