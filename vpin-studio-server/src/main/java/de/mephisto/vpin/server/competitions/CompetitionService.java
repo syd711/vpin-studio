@@ -1,6 +1,7 @@
 package de.mephisto.vpin.server.competitions;
 
 import de.mephisto.vpin.restclient.CompetitionType;
+import de.mephisto.vpin.restclient.discord.DiscordServer;
 import de.mephisto.vpin.server.discord.DiscordService;
 import de.mephisto.vpin.server.highscores.HighscoreParser;
 import de.mephisto.vpin.server.highscores.HighscoreService;
@@ -170,12 +171,7 @@ public class CompetitionService implements InitializingBean {
   }
 
   public void runCompetitionsFinishedAndStartedCheck() {
-    List<Competition> openCompetitions = getCompetitionToBeFinished();
-    for (Competition openCompetition : openCompetitions) {
-      LOG.info("Finishing " + openCompetition);
-      finishCompetition(openCompetition);
-    }
-
+    //check if competition have become active, initialize them
     List<Competition> plannedCompetitions = getActiveCompetitions();
     for (Competition plannedCompetition : plannedCompetitions) {
       if (plannedCompetition.isActive() && !plannedCompetition.isStarted()) {
@@ -184,8 +180,15 @@ public class CompetitionService implements InitializingBean {
 
         //update state
         plannedCompetition.setStarted(true);
-        competitionsRepository.save(plannedCompetition);
+        competitionsRepository.saveAndFlush(plannedCompetition);
       }
+    }
+
+    //check all competitions for their finish state, this includes Discord ones, since the date can't be changed
+    List<Competition> openCompetitions = getCompetitionToBeFinished();
+    for (Competition openCompetition : openCompetitions) {
+      LOG.info("Finishing " + openCompetition);
+      finishCompetition(openCompetition);
     }
   }
 

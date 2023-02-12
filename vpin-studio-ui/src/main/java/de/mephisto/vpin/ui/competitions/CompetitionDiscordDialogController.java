@@ -328,20 +328,21 @@ public class CompetitionDiscordDialogController implements Initializable, Dialog
       DiscordServer discordServer = client.getDiscordServer(competition.getDiscordServerId());
       String botId = String.valueOf(botStatus.getBotId());
       boolean isOwner = c.getOwner().equals(botId);
+      boolean editable = isOwner && !c.isStarted();
 
-      channelsCombo.setDisable(c.getId() != null);
-      serversCombo.setDisable(c.getId() != null);
+      channelsCombo.setDisable(!editable);
+      serversCombo.setDisable(!editable);
 
       this.nameField.setText(this.competition.getName());
-      this.nameField.setDisable(!isOwner);
+      this.nameField.setDisable(!editable);
 
       this.startDatePicker.setValue(this.competition.getStartDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate());
-      this.startDatePicker.setDisable(!isOwner);
+      this.startDatePicker.setDisable(!editable);
       this.endDatePicker.setValue(this.competition.getEndDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate());
-      this.endDatePicker.setDisable(!isOwner);
+      this.endDatePicker.setDisable(!editable);
 
       this.tableCombo.setValue(game);
-      this.tableCombo.setDisable(c.getId() != null);
+      this.tableCombo.setDisable(!editable);
 
       this.channelsCombo.setItems(FXCollections.observableList(client.getDiscordChannels(discordServer.getId())));
       this.serversCombo.setValue(discordServer);

@@ -262,20 +262,14 @@ public class NotificationService implements InitializingBean, HighscoreChangeLis
   @Override
   public void competitionChanged(@NonNull Competition competition) {
     Game game = gameService.getGame(competition.getGameId());
-    if (game != null) {
+    boolean active = competition.isActive();
+    boolean started = competition.isStarted();
+
+    //the data has already been saved, check other changes, like the badge
+    if (game != null && active) {
       if (competition.getBadge() != null) {
         popperService.augmentWheel(game, competition.getBadge());
       }
-    }
-
-    //only the dates of the competition could have been changed
-    if (competition.getType().equals(CompetitionType.DISCORD.name())) {
-      ScoreSummary summary = competitionService.getCompetitionScore(competition.getId());
-      long discordServerId = competition.getDiscordServerId();
-      long discordChannelId = competition.getDiscordChannelId();
-
-      long messageId = discordService.getStartMessageId(discordServerId, discordChannelId);
-      discordService.saveCompetitionData(competition, game, summary, messageId);
     }
 
     runCheckedDeAugmentation();

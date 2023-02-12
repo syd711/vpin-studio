@@ -18,7 +18,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.nio.charset.StandardCharsets;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 public class CompetitionDataHelper {
   private final static Logger LOG = LoggerFactory.getLogger(CompetitionDataHelper.class);
@@ -30,8 +32,8 @@ public class CompetitionDataHelper {
     objectMapper.enable(SerializationFeature.INDENT_OUTPUT);
   }
 
-  @NonNull
-  public static String toDataString(@NonNull Competition competition, @NonNull Game game, @NonNull ScoreSummary summary, @NonNull long messageId) {
+  @Nullable
+  public static String toDataString(@NonNull Competition competition, @NonNull Game game, @NonNull ScoreSummary summary, long messageId) {
     try {
       StringBuilder b = new StringBuilder();
       b.append("Competition Table: ");
@@ -39,7 +41,7 @@ public class CompetitionDataHelper {
       b.append("\n\n");
 
       String tableName = game.getGameDisplayName();
-      if(tableName.length() > 40) {
+      if (tableName.length() > 40) {
         tableName = tableName.substring(0, 40);
       }
 
@@ -56,7 +58,7 @@ public class CompetitionDataHelper {
 
       List<Score> scores = summary.getScores();
       for (Score score : scores) {
-        if(data.getScrs().size() >= 5) {
+        if (data.getScrs().size() >= 5) {
           //mpf, we have to limit the highscore for the discord topic
           break;
         }
@@ -73,21 +75,10 @@ public class CompetitionDataHelper {
     return null;
   }
 
-
-
   public static String getName(String topic) {
     DiscordCompetitionData data = getCompetitionData(topic);
     if (data != null) {
       return data.getName();
-    }
-    return null;
-  }
-
-  @Nullable
-  public static UUID getUuid(@Nullable String topic) {
-    DiscordCompetitionData data = getCompetitionData(topic);
-    if (data != null) {
-      return UUID.fromString(data.getUuid());
     }
     return null;
   }
@@ -98,12 +89,6 @@ public class CompetitionDataHelper {
       return data.getMsgId();
     }
     return -1;
-  }
-
-  @Nullable
-  public static ScoreSummary getDiscordCompetitionScore(@NonNull DiscordService discordService, long serverId, @Nullable String topic) {
-    DiscordCompetitionData data = getCompetitionData(topic);
-    return getDiscordCompetitionScore(discordService, serverId, data);
   }
 
   @Nullable
