@@ -76,7 +76,7 @@ public class DiscordPlayersController implements Initializable {
         return new SimpleObjectProperty("");
       }
 
-      Image image = new Image(value.getAvatarUrl());
+      Image image = new Image(client.getCachedUrlImage(value.getAvatarUrl()));
       ImageView view = new ImageView(image);
       view.setPreserveRatio(true);
       view.setFitWidth(50);

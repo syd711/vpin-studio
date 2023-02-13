@@ -5,6 +5,7 @@ import de.mephisto.vpin.commons.fx.OverlayWindowFX;
 import de.mephisto.vpin.commons.utils.ScoreGraphUtil;
 import de.mephisto.vpin.restclient.AssetType;
 import de.mephisto.vpin.restclient.CompetitionType;
+import de.mephisto.vpin.restclient.VPinStudioClient;
 import de.mephisto.vpin.restclient.discord.DiscordServer;
 import de.mephisto.vpin.restclient.representations.*;
 import eu.hansolo.tilesfx.Tile;
@@ -186,6 +187,7 @@ public class WidgetCompetitionController extends WidgetController implements Ini
               turnoverTile.setText(currentScore.getPlayer().getName());
               String avatarUrl = currentScore.getPlayer().getAvatarUrl();
               if (!StringUtils.isEmpty(avatarUrl)) {
+                Image image = new Image(OverlayWindowFX.client.getCachedUrlImage(avatarUrl));
                 turnoverTile.setImage(new Image(avatarUrl));
               }
               else if (currentScore.getPlayer().getAvatar() != null) {

@@ -4,6 +4,7 @@ import de.mephisto.vpin.restclient.discord.DiscordServer;
 import de.mephisto.vpin.restclient.representations.*;
 
 import java.io.ByteArrayInputStream;
+import java.io.InputStream;
 import java.util.List;
 
 public interface OverlayClient {
@@ -14,6 +15,8 @@ public interface OverlayClient {
   CompetitionRepresentation getActiveCompetition(CompetitionType type);
 
   GameRepresentation getGame(int id);
+
+  InputStream getCachedUrlImage(String url);
 
   ScoreSummaryRepresentation getCompetitionScore(long id);
 

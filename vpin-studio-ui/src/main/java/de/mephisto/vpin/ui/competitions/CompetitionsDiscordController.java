@@ -372,7 +372,7 @@ public class CompetitionsDiscordController implements Initializable, StudioFXCon
       hBox.setAlignment(Pos.CENTER_LEFT);
       PlayerRepresentation discordPlayer = client.getDiscordPlayer(value.getDiscordServerId(), Long.valueOf(value.getOwner()));
       if (discordPlayer != null) {
-        Image image = new Image(discordPlayer.getAvatarUrl());
+        Image image = new Image(client.getCachedUrlImage(discordPlayer.getAvatarUrl()));
         ImageView view = new ImageView(image);
         view.setPreserveRatio(true);
         view.setFitWidth(50);

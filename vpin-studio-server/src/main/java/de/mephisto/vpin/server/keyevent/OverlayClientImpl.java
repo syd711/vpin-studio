@@ -26,12 +26,12 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
+import java.io.*;
+import java.net.URL;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class OverlayClientImpl implements OverlayClient, InitializingBean {
@@ -57,6 +57,8 @@ public class OverlayClientImpl implements OverlayClient, InitializingBean {
 
   private ObjectMapper mapper;
 
+  private final Map<String, byte[]> imageCache = new HashMap<>();
+
   @Override
   public DiscordServer getDiscordServer(long serverId) {
     try {
@@ -67,6 +69,34 @@ public class OverlayClientImpl implements OverlayClient, InitializingBean {
       LOG.error("Error during conversion: " + e.getMessage(), e);
     }
     return null;
+  }
+
+  public InputStream getCachedUrlImage(String imageUrl) {
+    try {
+      if (!imageCache.containsKey(imageUrl)) {
+        URL url = new URL(imageUrl);
+        ByteArrayOutputStream bis = new ByteArrayOutputStream();
+        InputStream is = null;
+        is = url.openStream();
+        byte[] bytebuff = new byte[4096];
+        int n;
+
+        while ((n = is.read(bytebuff)) > 0) {
+          bis.write(bytebuff, 0, n);
+        }
+        is.close();
+        bis.close();
+
+        byte[] bytes = bis.toByteArray();
+        imageCache.put(imageUrl, bytes);
+        LOG.info("Cached image URL " + imageUrl);
+      }
+    } catch (IOException e) {
+      LOG.error("Failed to read image from URL: " + e.getMessage(), e);
+    }
+
+    byte[] bytes = imageCache.get(imageUrl);
+    return new ByteArrayInputStream(bytes);
   }
 
   @Override
