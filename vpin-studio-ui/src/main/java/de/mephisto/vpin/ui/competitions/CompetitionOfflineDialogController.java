@@ -271,15 +271,21 @@ public class CompetitionOfflineDialogController implements Initializable, Dialog
 
       nameField.setText(this.competition.getName());
       this.startDatePicker.setValue(this.competition.getStartDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate());
+      this.startDatePicker.setDisable(this.competition.isFinished());
+
       this.endDatePicker.setValue(this.competition.getEndDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate());
+      this.endDatePicker.setDisable(this.competition.isFinished());
+
       this.tableCombo.setValue(game);
-      this.tableCombo.setDisable(this.competition.getId() != null && !this.competition.isPlanned());
+      this.tableCombo.setDisable((this.competition.getId() != null && !this.competition.isPlanned()) || this.competition.isFinished());
 
 
       Optional<DiscordChannel> channelOpt = getDiscordChannels().stream().filter(channel -> channel.getId() == c.getDiscordChannelId()).findFirst();
       channelOpt.ifPresent(discordChannel -> this.channelsCombo.setValue(discordChannel));
+      this.channelsCombo.setDisable(this.competition.isFinished());
 
       this.competitionIconCombo.setValue(c.getBadge());
+      this.competitionIconCombo.setDisable(this.competition.isFinished());
       String badge = c.getBadge();
       refreshPreview(game, badge);
     }
