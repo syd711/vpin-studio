@@ -171,6 +171,8 @@ public class CompetitionService implements InitializingBean {
   }
 
   public void runCompetitionsFinishedAndStartedCheck() {
+    //TODO check discord competition completion
+
     //check if competition have become active, initialize them
     List<Competition> plannedCompetitions = getActiveCompetitions();
     for (Competition plannedCompetition : plannedCompetitions) {

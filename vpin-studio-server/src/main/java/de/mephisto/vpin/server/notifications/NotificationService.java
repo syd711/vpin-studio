@@ -263,7 +263,6 @@ public class NotificationService implements InitializingBean, HighscoreChangeLis
   public void competitionChanged(@NonNull Competition competition) {
     Game game = gameService.getGame(competition.getGameId());
     boolean active = competition.isActive();
-    boolean started = competition.isStarted();
 
     //the data has already been saved, check other changes, like the badge
     if (game != null && active) {
@@ -271,7 +270,6 @@ public class NotificationService implements InitializingBean, HighscoreChangeLis
         popperService.augmentWheel(game, competition.getBadge());
       }
     }
-
     runCheckedDeAugmentation();
   }
 
