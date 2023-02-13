@@ -346,6 +346,7 @@ public class GameService {
       pinUPConnector.updateVolume(game, game.getVolume());
     }
 
+    //TODO check rom name import vs. scan
     //check if there is mismatch in the ROM name, overwrite popper value
     if (original != null && !StringUtils.isEmpty(original.getRom()) && !StringUtils.isEmpty(game.getRom()) && !original.getRom().equals(game.getRom())) {
       pinUPConnector.updateRom(game, game.getRom());
