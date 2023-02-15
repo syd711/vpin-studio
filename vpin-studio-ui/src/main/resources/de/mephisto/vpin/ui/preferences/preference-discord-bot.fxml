@@ -42,9 +42,9 @@
             </Label>
             <GridPane alignment="BASELINE_RIGHT" layoutX="34.0" layoutY="136.0" vgap="3.0">
                <columnConstraints>
-                  <ColumnConstraints hgrow="SOMETIMES" maxWidth="349.2000732421875" minWidth="10.0" prefWidth="178.80002441406248" />
-                  <ColumnConstraints hgrow="SOMETIMES" maxWidth="1090.3999877929687" minWidth="10.0" prefWidth="500.0" />
-                  <ColumnConstraints hgrow="SOMETIMES" maxWidth="759.2" minWidth="10.0" prefWidth="200.0" />
+                  <ColumnConstraints hgrow="SOMETIMES" maxWidth="349.2000732421875" minWidth="10.0" prefWidth="197.6000244140625" />
+                  <ColumnConstraints hgrow="SOMETIMES" maxWidth="1090.3999877929687" minWidth="10.0" prefWidth="559.0000244140625" />
+                  <ColumnConstraints hgrow="SOMETIMES" maxWidth="759.2" minWidth="10.0" prefWidth="143.5999755859375" />
                </columnConstraints>
                <rowConstraints>
                   <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
@@ -56,22 +56,17 @@
                         <Font size="14.0" />
                      </font>
                   </Label>
-                  <TextField fx:id="botTokenText" editable="false" GridPane.columnIndex="1">
-                     <font>
-                        <Font size="14.0" />
-                     </font>
-                  </TextField>
-                  <HBox alignment="CENTER_LEFT" spacing="3.0" GridPane.columnIndex="2">
+                  <HBox alignment="CENTER_LEFT" spacing="3.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
                      <GridPane.margin>
-                        <Insets left="6.0" />
+                        <Insets />
                      </GridPane.margin>
                      <children>
-                        <Button fx:id="pasteButton" mnemonicParsing="false" onAction="#onTokenPaste" text="Paste Token">
+                        <Button fx:id="editBtn" mnemonicParsing="false" onAction="#onTokenEdit" text="Edit">
                            <font>
                               <Font size="14.0" />
                            </font>
                            <graphic>
-                              <FontIcon iconColor="WHITE" iconLiteral="mdi2c-content-paste" />
+                              <FontIcon iconColor="WHITE" iconLiteral="mdi2d-database-edit-outline" />
                            </graphic>
                         </Button>
                         <Button fx:id="resetBtn" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" onAction="#onReset" text="Reset" textFill="#ff3333">
@@ -84,6 +79,11 @@
                         </Button>
                      </children>
                   </HBox>
+                  <Label fx:id="botTokenLabel" text="-" GridPane.columnIndex="1">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                  </Label>
                </children>
                <opaqueInsets>
                   <Insets />
