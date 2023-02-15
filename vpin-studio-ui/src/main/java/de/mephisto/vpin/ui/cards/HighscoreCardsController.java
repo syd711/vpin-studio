@@ -131,6 +131,12 @@ public class HighscoreCardsController implements Initializable, ObservedProperty
   @FXML
   private StackPane previewStack;
 
+  @FXML
+  private TitledPane backgroundSettingsPane;
+
+  @FXML
+  private Accordion accordion;
+
 
   private VPinStudioClient client;
 
@@ -347,6 +353,8 @@ public class HighscoreCardsController implements Initializable, ObservedProperty
     GameRepresentation value = tableCombo.getValue();
     refreshRawPreview(Optional.ofNullable(value));
     refreshPreview(Optional.ofNullable(value), false);
+
+    accordion.setExpandedPane(backgroundSettingsPane);
   }
 
   private void refreshRawPreview(Optional<GameRepresentation> game) {
