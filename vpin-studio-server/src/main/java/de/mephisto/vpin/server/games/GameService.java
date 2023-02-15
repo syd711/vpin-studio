@@ -310,7 +310,7 @@ public class GameService {
     }
 
     game.setNvOffset(gameDetails.getNvOffset());
-    if (StringUtils.isEmpty(game.getRom()) && !StringUtils.isEmpty(gameDetails.getRomName())) {
+    if (!StringUtils.isEmpty(gameDetails.getRomName())) {
       game.setRom(gameDetails.getRomName());
 
       //re-fetch highscore since the ROM may be set

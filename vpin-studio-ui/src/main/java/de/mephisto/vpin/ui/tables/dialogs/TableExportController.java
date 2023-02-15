@@ -19,6 +19,7 @@ import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.stage.Stage;
+import org.apache.commons.lang3.StringUtils;
 
 import java.io.ByteArrayInputStream;
 import java.net.URL;
@@ -204,7 +205,7 @@ public class TableExportController implements Initializable, DialogController {
       }
     });
 
-    romName.setText(manifest.getRomName());
+    romName.setText(game.getRom());
     romName.textProperty().addListener((observable, oldValue, newValue) -> manifest.setRomName(newValue));
 
     romUrl.setText(manifest.getRomUrl());

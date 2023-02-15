@@ -314,9 +314,11 @@ public class DiscordService implements InitializingBean, PreferenceChangedListen
   }
 
   public Player getPlayerByInitials(long serverId, String initials) {
-    for (DiscordMember member : this.getMembers(serverId)) {
-      if (!StringUtils.isEmpty(member.getInitials()) && member.getInitials().equalsIgnoreCase(initials.toUpperCase())) {
-        return toPlayer(member);
+    if(serverId > 0) {
+      for (DiscordMember member : this.getMembers(serverId)) {
+        if (!StringUtils.isEmpty(member.getInitials()) && member.getInitials().equalsIgnoreCase(initials.toUpperCase())) {
+          return toPlayer(member);
+        }
       }
     }
     return null;
