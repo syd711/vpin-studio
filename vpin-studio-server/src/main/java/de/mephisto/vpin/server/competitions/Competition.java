@@ -1,6 +1,7 @@
 package de.mephisto.vpin.server.competitions;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import de.mephisto.vpin.restclient.util.DateUtil;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -184,8 +185,8 @@ public class Competition {
   }
 
   public boolean isActive() {
-    Date now = new Date();
-    return (getStartDate().before(now) || getStartDate().equals(now)) && getEndDate().after(now);
+    Date now = DateUtil.today();
+    return (getStartDate().before(now) || getStartDate().equals(now)) && (getEndDate().after(now) || getEndDate().equals(now));
   }
 
   @Override

@@ -8,6 +8,7 @@ import de.mephisto.vpin.restclient.CompetitionType;
 import de.mephisto.vpin.restclient.VPinStudioClient;
 import de.mephisto.vpin.restclient.discord.DiscordServer;
 import de.mephisto.vpin.restclient.representations.*;
+import de.mephisto.vpin.restclient.util.DateUtil;
 import eu.hansolo.tilesfx.Tile;
 import eu.hansolo.tilesfx.TileBuilder;
 import eu.hansolo.tilesfx.events.TileEvent;
@@ -155,7 +156,7 @@ public class WidgetCompetitionController extends WidgetController implements Ini
 
     if (competition != null) {
       LocalDate end = competition.getEndDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
-      LocalDate now = new Date().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+      LocalDate now = DateUtil.today().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
 
       long remainingDays = ChronoUnit.DAYS.between(now, end);
       if (remainingDays < 0) {

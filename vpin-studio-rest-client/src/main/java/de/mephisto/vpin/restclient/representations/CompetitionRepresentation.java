@@ -1,6 +1,8 @@
 package de.mephisto.vpin.restclient.representations;
 
+import de.mephisto.vpin.restclient.util.DateUtil;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.time.DateUtils;
 
 import java.time.LocalDate;
 import java.time.ZoneId;
@@ -201,12 +203,12 @@ public class CompetitionRepresentation {
   }
 
   public boolean isActive() {
-    Date now = new Date();
-    return (getStartDate().before(now) || getStartDate().equals(now)) && getEndDate().after(now);
+    Date now = DateUtil.today();
+    return (getStartDate().before(now) || getStartDate().equals(now)) && (getEndDate().after(now) || getEndDate().equals(now));
   }
 
   public boolean isPlanned() {
-    Date now = new Date();
+    Date now = DateUtil.today();
     return getStartDate().after(now);
   }
 

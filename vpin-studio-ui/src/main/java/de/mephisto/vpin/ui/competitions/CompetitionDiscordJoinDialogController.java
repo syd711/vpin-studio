@@ -9,6 +9,7 @@ import de.mephisto.vpin.restclient.discord.DiscordChannel;
 import de.mephisto.vpin.restclient.discord.DiscordCompetitionData;
 import de.mephisto.vpin.restclient.discord.DiscordServer;
 import de.mephisto.vpin.restclient.representations.*;
+import de.mephisto.vpin.restclient.util.DateUtil;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -219,7 +220,7 @@ public class CompetitionDiscordJoinDialogController implements Initializable, Di
     long channelId = this.channelsCombo.getValue().getId();
 
     LocalDate end = discordCompetitionData.getEdt().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
-    LocalDate now = new Date().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+    LocalDate now = DateUtil.today().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
 
     long remainingDays = ChronoUnit.DAYS.between(now, end);
     if (remainingDays < 0) {

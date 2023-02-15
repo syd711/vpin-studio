@@ -2,6 +2,7 @@ package de.mephisto.vpin.server.competitions;
 
 import de.mephisto.vpin.restclient.CompetitionType;
 import de.mephisto.vpin.restclient.discord.DiscordServer;
+import de.mephisto.vpin.restclient.util.DateUtil;
 import de.mephisto.vpin.server.discord.DiscordService;
 import de.mephisto.vpin.server.highscores.HighscoreParser;
 import de.mephisto.vpin.server.highscores.HighscoreService;
@@ -107,7 +108,7 @@ public class CompetitionService implements InitializingBean {
   }
 
   public List<Competition> getFinishedCompetitions(int limit) {
-    List<Competition> competitions = competitionsRepository.findByWinnerInitialsIsNotNullAndEndDateLessThanEqualOrderByEndDate(new Date());
+    List<Competition> competitions = competitionsRepository.findByWinnerInitialsIsNotNullAndEndDateLessThanEqualOrderByEndDate(DateUtil.today());
     if (competitions.size() > limit) {
       return competitions.subList(0, limit);
     }
@@ -115,7 +116,7 @@ public class CompetitionService implements InitializingBean {
   }
 
   public List<Competition> getCompetitionToBeFinished() {
-    return competitionsRepository.findByWinnerInitialsIsNullAndEndDateLessThanEqualOrderByEndDate(new Date());
+    return competitionsRepository.findByWinnerInitialsIsNullAndEndDateLessThanEqualOrderByEndDate(DateUtil.today());
   }
 
   public ScoreList getCompetitionScores(long id) {
@@ -219,16 +220,16 @@ public class CompetitionService implements InitializingBean {
   }
 
   public List<Competition> getActiveCompetitions() {
-    return competitionsRepository.findByStartDateLessThanEqualAndEndDateGreaterThanEqual(new Date(), new Date());
+    return competitionsRepository.findByStartDateLessThanEqualAndEndDateGreaterThanEqual(DateUtil.today(), DateUtil.today());
   }
 
   public Competition getActiveCompetitionForGame(int gameId) {
-    Optional<Competition> competition = competitionsRepository.findByStartDateLessThanEqualAndEndDateGreaterThanEqualAndGameId(new Date(), new Date(), gameId);
+    Optional<Competition> competition = competitionsRepository.findByStartDateLessThanEqualAndEndDateGreaterThanEqualAndGameId(DateUtil.today(), DateUtil.today(), gameId);
     return competition.orElse(null);
   }
 
   public Competition getActiveCompetition(CompetitionType competitionType) {
-    List<Competition> result = competitionsRepository.findByStartDateLessThanEqualAndEndDateGreaterThanEqualAndType(new Date(), new Date(), competitionType.name());
+    List<Competition> result = competitionsRepository.findByStartDateLessThanEqualAndEndDateGreaterThanEqualAndType(DateUtil.today(), DateUtil.today(), competitionType.name());
     if (!result.isEmpty()) {
       return result.get(0);
     }
