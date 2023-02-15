@@ -215,7 +215,12 @@ public class WidgetCompetitionController extends WidgetController implements Ini
         if (competition != null) {
           if (competition.getType().equals(CompetitionType.DISCORD.name())) {
             DiscordServer discordServer = OverlayWindowFX.client.getDiscordServer(competition.getDiscordServerId());
-            titleLabel.setText("Discord: " + discordServer.getName());
+            if(discordServer != null) {
+              titleLabel.setText("Discord: " + discordServer.getName());
+            }
+            else {
+              titleLabel.setText("Discord: - invalid server id -");
+            }
           }
           else {
             titleLabel.setText("Offline: " + competition.getName());

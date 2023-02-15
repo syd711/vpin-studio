@@ -3,6 +3,7 @@ package de.mephisto.vpin.server.preferences;
 import de.mephisto.vpin.restclient.AssetType;
 import de.mephisto.vpin.server.assets.Asset;
 import de.mephisto.vpin.server.assets.AssetRepository;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanWrapper;
@@ -53,6 +54,15 @@ public class PreferencesService implements InitializingBean {
       return defaultValue;
     }
     return value;
+  }
+
+  public Long getPreferenceValueLong(String key, long defaultValue) {
+    BeanWrapper bean = new BeanWrapperImpl(preferences);
+    Object value = bean.getPropertyValue(key);
+    if (value != null && String.valueOf(value).length() > 0) {
+      return Long.parseLong(String.valueOf(value));
+    }
+    return defaultValue;
   }
 
   public boolean savePreference(Map<String, Object> values) {

@@ -3,7 +3,6 @@ package de.mephisto.vpin.server.games;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import de.mephisto.vpin.commons.HighscoreType;
 import de.mephisto.vpin.restclient.PopperScreen;
-import de.mephisto.vpin.server.highscores.HighscoreMetadata;
 import de.mephisto.vpin.server.popper.Emulator;
 import de.mephisto.vpin.server.popper.GameMedia;
 import de.mephisto.vpin.server.popper.GameMediaItem;
@@ -53,7 +52,7 @@ public class Game {
   }
 
   public long getGameFileSize() {
-    if(this.getGameFile().exists()) {
+    if (this.getGameFile().exists()) {
       return this.getGameFile().length();
     }
     return -1;
@@ -161,6 +160,12 @@ public class Game {
   public File getPinUPMedia(@NonNull PopperScreen screen) {
     String baseName = FilenameUtils.getBaseName(getGameFileName());
     File[] mediaFiles = getPinUPMediaFolder(screen).listFiles((dir, name) -> FilenameUtils.getBaseName(name).equals(baseName));
+    if (mediaFiles != null && mediaFiles.length > 0) {
+      return mediaFiles[0];
+    }
+
+    String screenNameSuffix = "(SCREEN";
+    mediaFiles = getPinUPMediaFolder(screen).listFiles((dir, name) -> FilenameUtils.getBaseName(name).startsWith(baseName) && FilenameUtils.getBaseName(name).contains(screenNameSuffix));
     if (mediaFiles != null && mediaFiles.length > 0) {
       return mediaFiles[0];
     }

@@ -53,7 +53,7 @@ public class CardService {
 
   public boolean generateCard(Game game, boolean generateSampleCard) throws Exception {
     try {
-      long serverId = Long.parseLong(String.valueOf(preferencesService.getPreferenceValue(PreferenceNames.DISCORD_GUILD_ID, -1)));
+      long serverId = preferencesService.getPreferenceValueLong(PreferenceNames.DISCORD_GUILD_ID, -1);
       ScoreSummary summary = highscoreService.getScoreSummary(serverId, game.getId(), game.getGameDisplayName());
       if (!summary.getScores().isEmpty() && !StringUtils.isEmpty(summary.getRaw())) {
         Config.getCardGeneratorConfig().reload();

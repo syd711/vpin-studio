@@ -111,9 +111,13 @@ public class WidgetFactory {
   }
 
   public static Optional<ButtonType> showConfirmation(Stage owner, String text, String help1, String help2) {
+    return showConfirmation(owner, text, help1, help2, null);
+  }
+
+  public static Optional<ButtonType> showConfirmation(Stage owner, String text, String help1, String help2, String btnText) {
     Stage stage = createDialogStage(ConfirmationDialogController.class, owner, "Confirmation", "dialog-confirmation.fxml");
     ConfirmationDialogController controller = (ConfirmationDialogController) stage.getUserData();
-    controller.initDialog(stage, text, help1, help2);
+    controller.initDialog(stage, null, btnText,  text, help1, help2);
     stage.showAndWait();
     return controller.getResult();
   }

@@ -243,11 +243,11 @@ public class DiscordService implements InitializingBean, PreferenceChangedListen
 
   private DiscordClient recreateDiscordClient() {
     String botToken = (String) preferencesService.getPreferenceValue(PreferenceNames.DISCORD_BOT_TOKEN);
-    String guildId = (String) preferencesService.getPreferenceValue(PreferenceNames.DISCORD_GUILD_ID);
-    String whiteList = (String) preferencesService.getPreferenceValue(PreferenceNames.DISCORD_BOT_ALLOW_LIST);
+
     try {
-      if (this.discordClient != null) {
+      if (this.discordClient != null && (StringUtils.isEmpty(botToken) || !botToken.equals(this.discordClient.getBotToken()))) {
         this.discordClient.shutdown();
+        LOG.info("Discord client has been shutdown, because the token was changed.");
       }
       this.discordClient = null;
     } catch (Exception e) {
@@ -255,23 +255,14 @@ public class DiscordService implements InitializingBean, PreferenceChangedListen
     }
 
     try {
-      if (!StringUtils.isEmpty(botToken) && !StringUtils.isEmpty(guildId)) {
-        this.discordClient = DiscordClient.create(botToken, this);
-        if (!StringUtils.isEmpty(whiteList)) {
-          String[] split = whiteList.split(",");
-          this.discordClient.setCommandsAllowList(Arrays.asList(split));
-        }
-
-        if (!StringUtils.isEmpty(guildId)) {
-          try {
-            this.discordClient.setDefaultGuildId(Long.parseLong(guildId));
-          } catch (Exception e) {
-            LOG.error("Failed to set guildId: " + e.getMessage(), e);
-          }
-        }
+      if(StringUtils.isEmpty(botToken)) {
+        LOG.info("Skipped discord client creation, no botId set.");
+        return null;
       }
-      else {
-        LOG.info("Skipped discord client creation, no botId or guildId set.");
+
+      if (this.discordClient == null) {
+        this.discordClient = DiscordClient.create(botToken, this);
+        LOG.info("Recreated Discord client.");
       }
     } catch (Exception e) {
       LOG.error("Failed to create discord client: " + e.getMessage() + ". Try to update your settings to create a valid client.");
@@ -343,9 +334,24 @@ public class DiscordService implements InitializingBean, PreferenceChangedListen
 
   @Override
   public void preferenceChanged(String propertyName, Object oldValue, Object newValue) {
-    if (propertyName.equals(PreferenceNames.DISCORD_GUILD_ID) || propertyName.equals(PreferenceNames.DISCORD_BOT_TOKEN) || propertyName.equals(PreferenceNames.DISCORD_BOT_ALLOW_LIST)) {
+    if (propertyName.equals(PreferenceNames.DISCORD_BOT_TOKEN)) {
       LOG.info("Detected Discord config change, updating BOT.");
       this.discordClient = recreateDiscordClient();
+    }
+    else if (propertyName.equals(PreferenceNames.DISCORD_GUILD_ID) || propertyName.equals(PreferenceNames.DISCORD_BOT_ALLOW_LIST)) {
+      String guildId = (String) preferencesService.getPreferenceValue(PreferenceNames.DISCORD_GUILD_ID);
+      String whiteList = (String) preferencesService.getPreferenceValue(PreferenceNames.DISCORD_BOT_ALLOW_LIST);
+
+      if (this.discordClient != null) {
+        if (!StringUtils.isEmpty(whiteList)) {
+          String[] split = whiteList.split(",");
+          this.discordClient.setCommandsAllowList(Arrays.asList(split));
+        }
+
+        if (!StringUtils.isEmpty(guildId)) {
+          this.discordClient.setDefaultGuildId(Long.parseLong(guildId));
+        }
+      }
     }
   }
 

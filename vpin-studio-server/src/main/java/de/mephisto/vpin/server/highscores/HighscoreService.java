@@ -101,7 +101,7 @@ public class HighscoreService implements InitializingBean {
   public boolean resetHighscore(Game game, ResetHighscoreDescriptor descriptor) {
     HighscoreType highscoreType = game.getHighscoreType();
     boolean result = false;
-    if(highscoreType != null) {
+    if (highscoreType != null) {
       switch (highscoreType) {
         case EM: {
           result = game.getEMHighscoreFile() != null && game.getEMHighscoreFile().exists() && game.getEMHighscoreFile().delete();
@@ -186,7 +186,7 @@ public class HighscoreService implements InitializingBean {
   public List<ScoreSummary> getHighscoresWithScore() {
     List<ScoreSummary> result = new ArrayList<>();
     List<Highscore> byRawIsNotNull = highscoreRepository.findByRawIsNotNull();
-    long serverId = Long.parseLong(String.valueOf(preferencesService.getPreferenceValue(PreferenceNames.DISCORD_GUILD_ID, -1)));
+    long serverId = preferencesService.getPreferenceValueLong(PreferenceNames.DISCORD_GUILD_ID, -1);
     for (Highscore highscore : byRawIsNotNull) {
       List<Score> scores = highscoreParser.parseScores(highscore.getLastModified(), highscore.getRaw(), highscore.getGameId(), serverId);
       result.add(new ScoreSummary(scores, highscore.getCreatedAt()));
@@ -199,7 +199,7 @@ public class HighscoreService implements InitializingBean {
   }
 
   public ScoreList getScoreHistory(int gameId) {
-    long serverId = Long.parseLong(String.valueOf(preferencesService.getPreferenceValue(PreferenceNames.DISCORD_GUILD_ID, -1)));
+    long serverId = preferencesService.getPreferenceValueLong(PreferenceNames.DISCORD_GUILD_ID, -1);
     return getScoresBetween(gameId, new Date(0), new Date(), serverId);
   }
 
@@ -233,7 +233,7 @@ public class HighscoreService implements InitializingBean {
   }
 
   public ScoreSummary getAllHighscoresForPlayer(String initials) {
-    long serverId = Long.parseLong(String.valueOf(preferencesService.getPreferenceValue(PreferenceNames.DISCORD_GUILD_ID, -1)));
+    long serverId = preferencesService.getPreferenceValueLong(PreferenceNames.DISCORD_GUILD_ID, -1);
     return getAllHighscoresForPlayer(serverId, initials);
   }
 
@@ -298,7 +298,7 @@ public class HighscoreService implements InitializingBean {
   public List<Score> getAllHighscoreVersions() {
     List<Score> scores = new ArrayList<>();
     List<HighscoreVersion> all = highscoreVersionRepository.findAllByOrderByCreatedAtDesc();
-    long serverId = Long.parseLong(String.valueOf(preferencesService.getPreferenceValue(PreferenceNames.DISCORD_GUILD_ID, -1)));
+    long serverId = preferencesService.getPreferenceValueLong(PreferenceNames.DISCORD_GUILD_ID, -1);
 
     for (HighscoreVersion version : all) {
       List<Score> versionScores = highscoreParser.parseScores(version.getCreatedAt(), version.getNewRaw(), version.getGameId(), serverId);
@@ -387,7 +387,7 @@ public class HighscoreService implements InitializingBean {
     }
 
     //diff calculation
-    long serverId = Long.parseLong(String.valueOf(preferencesService.getPreferenceValue(PreferenceNames.DISCORD_GUILD_ID, -1)));
+    long serverId = preferencesService.getPreferenceValueLong(PreferenceNames.DISCORD_GUILD_ID, -1);
     List<Score> oldScores = highscoreParser.parseScores(existingScore.getLastModified(), existingScore.getRaw(), game.getId(), serverId);
     List<Score> newScores = highscoreParser.parseScores(newHighscore.getLastModified(), newHighscore.getRaw(), game.getId(), serverId);
 
@@ -485,7 +485,7 @@ public class HighscoreService implements InitializingBean {
     version.setDisplayName(game.getGameDisplayName());
 
     Optional<HighscoreVersion> byCreatedAt = highscoreVersionRepository.findByCreatedAt(score.getCreatedAt());
-    if(byCreatedAt.isEmpty()) {
+    if (byCreatedAt.isEmpty()) {
       HighscoreVersion saved = highscoreVersionRepository.saveAndFlush(version);
       LOG.info("Imported " + saved);
     }

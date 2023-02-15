@@ -23,16 +23,18 @@ public class DiscordClient {
 
   private final JDA jda;
   private final DiscordListenerAdapter listenerAdapter;
+  private final String botToken;
   private final Map<Long, Guild> guilds = new HashMap<>();
   private final long botId;
   private long defaultGuildId;
 
   private final DiscordCache<List<DiscordMessage>> messageCache = new DiscordCache<>();
 
-  private DiscordClient(JDA jda, DiscordCommandResolver commandResolver) {
+  private DiscordClient(JDA jda, DiscordCommandResolver commandResolver, String botToken) {
     this.jda = jda;
     this.botId = jda.getSelfUser().getIdLong();
     this.listenerAdapter = new DiscordListenerAdapter(this, commandResolver);
+    this.botToken = botToken;
     this.loadMembers();
     jda.addEventListener(this.listenerAdapter);
   }
@@ -52,7 +54,7 @@ public class DiscordClient {
         .setMemberCachePolicy(MemberCachePolicy.ALL)
         .build();
     jda.awaitReady();
-    return new DiscordClient(jda, commandResolver);
+    return new DiscordClient(jda, commandResolver, botToken);
   }
 
   public long getDefaultGuildId() {
@@ -93,6 +95,10 @@ public class DiscordClient {
 
   public long getBotId() {
     return botId;
+  }
+
+  public String getBotToken() {
+    return botToken;
   }
 
   public void setTopic(long serverId, long channelId, String topic) {
@@ -308,7 +314,8 @@ public class DiscordClient {
         guilds.put(id, guildById);
       }
       else {
-        throw new UnsupportedOperationException("No guild found for id \"" + serverId + "\"");
+        LOG.error("No guild found for id \"" + serverId + "\"");
+        return null;
       }
 
     }
