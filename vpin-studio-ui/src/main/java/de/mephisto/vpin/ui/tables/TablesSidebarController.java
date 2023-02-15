@@ -88,7 +88,7 @@ public class TablesSidebarController implements Initializable {
   private Button playfieldViewBtn;
 
   @FXML
-  private Accordion accordion;
+  private Accordion tableAccordion;
 
   @FXML
   private TitledPane titledPaneMedia;
@@ -264,11 +264,14 @@ public class TablesSidebarController implements Initializable {
   @FXML
   private Spinner<Integer> povRotationFullscreenSpinner;
 
+  @FXML
+  private VBox tableAccordionVBox;
+
   private VPinStudioClient client;
 
   private Optional<GameRepresentation> game = Optional.empty();
 
-  private TablesController tablesController;
+  private TableOverviewController tablesController;
   private POVRepresentation pov;
 
   // Add a public no-args constructor
@@ -278,6 +281,7 @@ public class TablesSidebarController implements Initializable {
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
     client = Studio.client;
+    tableAccordionVBox.managedProperty().bindBidirectional(tableAccordion.visibleProperty());
     povCreatePane.managedProperty().bind(povCreatePane.visibleProperty());
 
     volumeSlider.valueProperty().addListener((observableValue, number, t1) -> {
@@ -409,11 +413,11 @@ public class TablesSidebarController implements Initializable {
     });
 
     Platform.runLater(() -> {
-      this.accordion.setExpandedPane(titledPaneMedia);
+      this.tableAccordion.setExpandedPane(titledPaneMedia);
     });
   }
 
-  public void setTablesController(TablesController tablesController) {
+  public void setTablesController(TableOverviewController tablesController) {
     this.tablesController = tablesController;
   }
 
@@ -900,5 +904,9 @@ public class TablesSidebarController implements Initializable {
     if (parent != null && parent.getCenter() != null) {
       WidgetFactory.disposeMediaBorderPane(parent);
     }
+  }
+
+  public void setVisible(boolean b) {
+    tableAccordion.setVisible(b);
   }
 }

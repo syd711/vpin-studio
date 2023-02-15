@@ -15,7 +15,7 @@ import de.mephisto.vpin.ui.competitions.CompetitionDiscordDialogController;
 import de.mephisto.vpin.ui.competitions.CompetitionDiscordJoinDialogController;
 import de.mephisto.vpin.ui.competitions.CompetitionOfflineDialogController;
 import de.mephisto.vpin.ui.players.PlayerDialogController;
-import de.mephisto.vpin.ui.tables.TablesController;
+import de.mephisto.vpin.ui.tables.TableOverviewController;
 import de.mephisto.vpin.ui.tables.dialogs.*;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import javafx.fxml.FXMLLoader;
@@ -139,7 +139,7 @@ public class Dialogs {
     stage.showAndWait();
   }
 
-  public static void openTableImportDialog(TablesController tablesController) {
+  public static void openTableImportDialog(TableOverviewController tablesController) {
     Stage stage = createStudioDialogStage(TableImportController.class, "dialog-table-import.fxml", "Table Import");
     TableImportController controller = (TableImportController) stage.getUserData();
     controller.setTablesController(tablesController);

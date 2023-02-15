@@ -3,7 +3,7 @@ package de.mephisto.vpin.ui.tables.dialogs;
 import de.mephisto.vpin.commons.fx.DialogController;
 import de.mephisto.vpin.restclient.ImportDescriptor;
 import de.mephisto.vpin.restclient.representations.PlaylistRepresentation;
-import de.mephisto.vpin.ui.tables.TablesController;
+import de.mephisto.vpin.ui.tables.TableOverviewController;
 import de.mephisto.vpin.ui.util.Dialogs;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
@@ -57,7 +57,7 @@ public class TableImportController implements Initializable, DialogController {
   private ComboBox<PlaylistRepresentation> playlistCombo;
 
   private List<File> selection;
-  private TablesController tablesController;
+  private TableOverviewController tablesController;
 
   @FXML
   private void onFileSelect() {
@@ -129,7 +129,7 @@ public class TableImportController implements Initializable, DialogController {
 
   }
 
-  public void setTablesController(TablesController tablesController) {
+  public void setTablesController(TableOverviewController tablesController) {
     this.tablesController = tablesController;
   }
 }
