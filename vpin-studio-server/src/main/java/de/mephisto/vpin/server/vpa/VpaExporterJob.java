@@ -27,6 +27,7 @@ import java.nio.file.Files;
 import java.util.Base64;
 import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
@@ -42,6 +43,7 @@ public class VpaExporterJob implements Job {
   private final Highscore highscore;
   private final List<HighscoreVersion> scoreHistory;
   private final File target;
+  private final File tempFile;
   private final ObjectMapper objectMapper;
 
   public VpaExporterJob(@NonNull File vprRegFile,
@@ -60,6 +62,7 @@ public class VpaExporterJob implements Job {
     this.highscore = highscore;
     this.scoreHistory = scoreHistory;
     this.target = target;
+    this.tempFile = new File(target.getParentFile(), target.getName() + ".bak");
 
     objectMapper = new ObjectMapper();
     objectMapper.enable(SerializationFeature.INDENT_OUTPUT);
@@ -70,6 +73,9 @@ public class VpaExporterJob implements Job {
     if (target.exists() && !target.delete()) {
       throw new UnsupportedOperationException("Couldn't delete existing VPA file " + target.getAbsolutePath());
     }
+    if (tempFile.exists() && !tempFile.delete()) {
+      throw new UnsupportedOperationException("Couldn't delete existing temporary VPA file " + target.getAbsolutePath());
+    }
 
     VpaPackageInfo packageInfo = new VpaPackageInfo();
     manifest.setPackageInfo(packageInfo);
@@ -79,7 +85,8 @@ public class VpaExporterJob implements Job {
     FileOutputStream fos = null;
     ZipOutputStream zipOut = null;
     try {
-      fos = new FileOutputStream(target);
+      LOG.info("Creating temporary archive file " + tempFile.getAbsolutePath());
+      fos = new FileOutputStream(tempFile);
       zipOut = new ZipOutputStream(fos);
 
       //store highscore history
@@ -176,8 +183,6 @@ public class VpaExporterJob implements Job {
       zipPupPack(packageInfo, zipOut);
       zipPopperMedia(packageInfo, zipOut);
       zipManifest(zipOut);
-
-      LOG.info("Finished packing of " + target.getAbsolutePath() + ", took " + ((System.currentTimeMillis() - start) / 1000) + " seconds, " + FileUtils.readableFileSize(target.length()));
     } catch (Exception e) {
       LOG.error("Create VPA for " + game.getGameDisplayName() + " failed: " + e.getMessage(), e);
     } finally {
@@ -195,6 +200,14 @@ public class VpaExporterJob implements Job {
         }
       } catch (IOException e) {
         //ignore
+      }
+
+      boolean renamed = tempFile.renameTo(target);
+      if(renamed) {
+        LOG.info("Finished packing of " + target.getAbsolutePath() + ", took " + ((System.currentTimeMillis() - start) / 1000) + " seconds, " + FileUtils.readableFileSize(target.length()));
+      }
+      else {
+        LOG.error("Final renaming export file to " + target.getAbsolutePath() + " failed.");
       }
     }
     return true;
@@ -243,7 +256,7 @@ public class VpaExporterJob implements Job {
       manifest.setIcon(Base64.getEncoder().encodeToString(original));
     }
 
-    manifest.setUuid(game.getUuid());
+    manifest.setUuid(UUID.randomUUID().toString());
     manifest.setEmulatorType(VpaUtil.getEmulatorType(game.getGameFile()));
 
     if (StringUtils.isEmpty(manifest.getGameFileName())) {

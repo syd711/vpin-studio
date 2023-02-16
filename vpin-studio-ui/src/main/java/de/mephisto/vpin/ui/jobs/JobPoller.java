@@ -38,8 +38,15 @@ public class JobPoller {
           protected Object call() throws Exception {
             LOG.info("Started JobPoller service.");
             boolean poll = true;
+
+            //give the init some time
+            List<JobDescriptor> jobs = new ArrayList<>(client.getJobs());
+            if(jobs.isEmpty()) {
+              Thread.sleep(2000);
+            }
+
             while (poll) {
-              List<JobDescriptor> jobs = new ArrayList<>(client.getJobs());
+              jobs = new ArrayList<>(client.getJobs());
               refreshUI(jobs);
               Thread.sleep(2000);
               poll = !jobs.isEmpty();

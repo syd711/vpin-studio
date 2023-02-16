@@ -262,6 +262,7 @@ public class DiscordService implements InitializingBean, PreferenceChangedListen
 
       if (this.discordClient == null) {
         this.discordClient = DiscordClient.create(botToken, this);
+        this.applyDefaultDiscordSettings();
         LOG.info("Recreated Discord client.");
       }
     } catch (Exception e) {
@@ -341,18 +342,22 @@ public class DiscordService implements InitializingBean, PreferenceChangedListen
       this.discordClient = recreateDiscordClient();
     }
     else if (propertyName.equals(PreferenceNames.DISCORD_GUILD_ID) || propertyName.equals(PreferenceNames.DISCORD_BOT_ALLOW_LIST)) {
-      String guildId = (String) preferencesService.getPreferenceValue(PreferenceNames.DISCORD_GUILD_ID);
-      String whiteList = (String) preferencesService.getPreferenceValue(PreferenceNames.DISCORD_BOT_ALLOW_LIST);
+      this.applyDefaultDiscordSettings();
+    }
+  }
 
-      if (this.discordClient != null) {
-        if (!StringUtils.isEmpty(whiteList)) {
-          String[] split = whiteList.split(",");
-          this.discordClient.setCommandsAllowList(Arrays.asList(split));
-        }
+  private void applyDefaultDiscordSettings() {
+    String guildId = (String) preferencesService.getPreferenceValue(PreferenceNames.DISCORD_GUILD_ID);
+    String whiteList = (String) preferencesService.getPreferenceValue(PreferenceNames.DISCORD_BOT_ALLOW_LIST);
 
-        if (!StringUtils.isEmpty(guildId)) {
-          this.discordClient.setDefaultGuildId(Long.parseLong(guildId));
-        }
+    if (this.discordClient != null) {
+      if (!StringUtils.isEmpty(whiteList)) {
+        String[] split = whiteList.split(",");
+        this.discordClient.setCommandsAllowList(Arrays.asList(split));
+      }
+
+      if (!StringUtils.isEmpty(guildId)) {
+        this.discordClient.setDefaultGuildId(Long.parseLong(guildId));
       }
     }
   }

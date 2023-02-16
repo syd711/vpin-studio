@@ -14,6 +14,7 @@ public class BotCommand {
   private long serverId;
 
   public BotCommand(long serverId, String content, DiscordCommandResolver commandResolver) {
+    this.serverId = serverId;
     this.content = content;
     this.commandResolver = commandResolver;
     command = content.trim().substring(1);

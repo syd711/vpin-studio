@@ -135,11 +135,6 @@ public class TableExportController implements Initializable, DialogController {
         JobPoller.getInstance().setPolling();
       });
     }).start();
-
-
-    Platform.runLater(() -> {
-      WidgetFactory.showInformation(Studio.stage, "Export Started", "The export of '" + game.getGameDisplayName() + "' has been started.", "The archived state will update once the export is finished.");
-    });
   }
 
   @FXML
