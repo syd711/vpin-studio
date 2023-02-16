@@ -40,6 +40,9 @@ public class RepositoryController implements Initializable {
   private Button deleteBtn;
 
   @FXML
+  private Button importBtn;
+
+  @FXML
   private TextField searchTextField;
 
   @FXML
@@ -84,6 +87,11 @@ public class RepositoryController implements Initializable {
   }
 
   @FXML
+  private void onImport() {
+
+  }
+
+  @FXML
   private void onReload() {
     this.searchTextField.setDisable(true);
 
@@ -91,6 +99,7 @@ public class RepositoryController implements Initializable {
     tableView.getSelectionModel().clearSelection();
     boolean disable = selection == null;
     deleteBtn.setDisable(disable);
+    importBtn.setDisable(disable);
 
     tableView.setVisible(false);
     tableStack.getChildren().add(loadingOverlay);
@@ -105,6 +114,7 @@ public class RepositoryController implements Initializable {
         if (data.contains(selection)) {
           tableView.getSelectionModel().select(selection);
           deleteBtn.setDisable(false);
+          importBtn.setDisable(false);
         }
         else if (!data.isEmpty()) {
           tableView.getSelectionModel().select(0);
@@ -215,11 +225,10 @@ public class RepositoryController implements Initializable {
       return new SimpleStringProperty(DateFormat.getInstance().format(value.getCreatedAt()));
     });
 
-    deleteBtn.setDisable(true);
-
     tableView.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
       boolean disable = newSelection == null;
       deleteBtn.setDisable(disable);
+      importBtn.setDisable(disable);
 
       if (oldSelection == null || !oldSelection.equals(newSelection)) {
         updateSelection(Optional.ofNullable(newSelection));
@@ -243,6 +252,8 @@ public class RepositoryController implements Initializable {
       tableView.setItems(FXCollections.observableList(filtered));
     });
 
+    deleteBtn.setDisable(true);
+    importBtn.setDisable(true);
     this.onReload();
   }
 

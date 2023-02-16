@@ -126,6 +126,21 @@ public class VPinStudioClient implements ObservedPropertyChangeListener, Overlay
   }
 
   /*********************************************************************************************************************
+   * IO
+   ********************************************************************************************************************/
+  public boolean exportVpa(ExportDescriptor exportDescriptor) throws Exception {
+    return restClient.post(API + "io/export", exportDescriptor, Boolean.class);
+  }
+
+  public boolean importVpa(ImportDescriptor exportDescriptor) throws Exception {
+    return restClient.post(API + "io/import", exportDescriptor, Boolean.class);
+  }
+
+  public VpaManifest getVpaManifest(int gameId) {
+    return restClient.get(API + "io/manifest/" + gameId, VpaManifest.class);
+  }
+
+  /*********************************************************************************************************************
    * VPA
    ********************************************************************************************************************/
   public List<VpaDescriptorRepresentation> getVpaDescriptors() {
@@ -140,14 +155,6 @@ public class VPinStudioClient implements ObservedPropertyChangeListener, Overlay
     }
   }
 
-  public VpaManifest getVpaManifest(int gameId) {
-    return restClient.get(API + "vpa/manifest/" + gameId, VpaManifest.class);
-  }
-
-  public boolean exportVpa(ExportDescriptor exportDescriptor) throws Exception {
-    return restClient.post(API + "vpa/export", exportDescriptor, Boolean.class);
-  }
-
   public String uploadVpa(File file, FileUploadProgressListener listener) throws Exception {
     try {
       String url = restClient.getBaseUrl() + API + "vpa/upload";
@@ -157,10 +164,6 @@ public class VPinStudioClient implements ObservedPropertyChangeListener, Overlay
       LOG.error("VPA upload failed: " + e.getMessage(), e);
       throw e;
     }
-  }
-
-  public boolean importVpa(ImportDescriptor exportDescriptor) throws Exception {
-    return restClient.post(API + "vpa/import", exportDescriptor, Boolean.class);
   }
 
   /*********************************************************************************************************************

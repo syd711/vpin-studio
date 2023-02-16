@@ -46,6 +46,15 @@
                      </graphic>
                   </Button>
                   <Separator orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
+                  <Button fx:id="importBtn" layoutX="198.0" layoutY="10.0" mnemonicParsing="false" onAction="#onImport" text="Import" textFill="WHITE">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                     <graphic>
+                        <FontIcon iconColor="WHITE" iconLiteral="mdi2i-import" />
+                     </graphic>
+                  </Button>
+                  <Separator layoutX="282.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
                   <Button fx:id="deleteBtn" layoutX="379.0" layoutY="11.0" mnemonicParsing="false" onAction="#onDelete" text="Delete" textFill="#ff3333">
                      <font>
                         <Font size="14.0" />

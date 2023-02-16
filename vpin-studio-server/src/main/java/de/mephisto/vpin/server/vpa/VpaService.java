@@ -1,28 +1,19 @@
 package de.mephisto.vpin.server.vpa;
 
-import de.mephisto.vpin.restclient.*;
+import de.mephisto.vpin.restclient.VpaManifest;
 import de.mephisto.vpin.server.games.Game;
-import de.mephisto.vpin.server.games.GameService;
-import de.mephisto.vpin.server.highscores.Highscore;
-import de.mephisto.vpin.server.highscores.HighscoreService;
-import de.mephisto.vpin.server.highscores.HighscoreVersion;
-import de.mephisto.vpin.server.highscores.cards.CardService;
-import de.mephisto.vpin.server.jobs.JobQueue;
-import de.mephisto.vpin.server.popper.GameMediaItem;
 import de.mephisto.vpin.server.popper.PinUPConnector;
 import de.mephisto.vpin.server.system.SystemService;
-import edu.umd.cs.findbugs.annotations.NonNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 public class VpaService implements InitializingBean {
@@ -35,23 +26,17 @@ public class VpaService implements InitializingBean {
   @Autowired
   private SystemService systemService;
 
-  @Autowired
-  private GameService gameService;
-
-  @Autowired
-  private HighscoreService highscoreService;
-
-  @Autowired
-  private PinUPConnector pinUPConnector;
-
-  @Autowired
-  private CardService cardService;
 
   private VpaSource defaultVpaSource;
   private List<VpaSource> vpaSources = new ArrayList<>();
 
-  public List<VpaSource> getVpaSources() {
-    return vpaSources;
+  public List<VpaDescriptor> getVpasFor(Game game) {
+    return getVpaDescriptors().stream().filter(vpaDescriptor -> {
+      VpaManifest manifest = vpaDescriptor.getManifest();
+      return (manifest.getGameName() != null && manifest.getGameName().equals(game.getGameDisplayName())) ||
+          (manifest.getGameFileName() != null && manifest.getGameFileName().equals(game.getGameFileName())) ||
+          (manifest.getGameDisplayName() != null && manifest.getGameDisplayName().equals(game.getGameDisplayName()));
+    }).collect(Collectors.toList());
   }
 
   public List<VpaDescriptor> getVpaDescriptors() {
@@ -65,99 +50,11 @@ public class VpaService implements InitializingBean {
 
   public boolean deleteVpa(String uuid) {
     Optional<VpaDescriptor> first = getVpaDescriptors().stream().filter(vpaDescriptor -> vpaDescriptor.getManifest().getUuid().equals(uuid)).findFirst();
-    if(first.isPresent()) {
+    if (first.isPresent()) {
       VpaDescriptor descriptor = first.get();
       return descriptor.getSource().delete(descriptor);
     }
     return false;
-  }
-
-  public boolean importVpa(@NonNull ImportDescriptor descriptor) {
-    try {
-      File vpaFile = new File(systemService.getVpaArchiveFolder(), descriptor.getVpaFileName());
-      VpaImporter importer = new VpaImporter(descriptor, vpaFile, pinUPConnector, systemService, highscoreService);
-      Game importedGame = importer.startImport();
-      if (importedGame != null) {
-        Game game = gameService.getGame(importedGame.getId());
-        cardService.generateCard(game, false);
-        return true;
-      }
-    } catch (Exception e) {
-      LOG.error("Import failed: " + e.getMessage(), e);
-    }
-    return false;
-  }
-
-  public boolean exportVpa(@NonNull ExportDescriptor exportDescriptor) {
-    List<Integer> gameIds = exportDescriptor.getGameIds();
-
-    //single export
-    if (gameIds.size() == 1) {
-      VpaManifest manifest = exportDescriptor.getManifest();
-      Game game = gameService.getGame(gameIds.get(0));
-      if (game != null) {
-        File target = new File(systemService.getVpaArchiveFolder(), game.getGameDisplayName().replaceAll(" ", "-") + ".vpa");
-        return exportVpa(game, manifest, exportDescriptor, target);
-      }
-    }
-    else {
-      //multi export
-      boolean result = true;
-      for (Integer gameId : gameIds) {
-        VpaManifest manifest = this.getManifest(gameId);
-        Game game = gameService.getGame(gameId);
-        if (game != null) {
-          File target = new File(systemService.getVpaArchiveFolder(), game.getGameDisplayName().replaceAll(" ", "-") + ".vpa");
-          if(!exportVpa(game, manifest, exportDescriptor, target)) {
-            result = false;
-          }
-        }
-      }
-      return result;
-    }
-
-    return false;
-  }
-
-  private boolean exportVpa(@NonNull Game game, @NonNull VpaManifest manifest, @NonNull ExportDescriptor exportDescriptor, @NonNull File target) {
-    List<HighscoreVersion> versions = highscoreService.getAllHighscoreVersions(game.getId());
-    Highscore highscore = highscoreService.getOrCreateHighscore(game);
-    File vpRegFile = systemService.getVPRegFile();
-
-    JobDescriptor descriptor = new JobDescriptor() {
-      @Override
-      public String getTitle() {
-        return "Export of '" + game.getGameDisplayName() + "'";
-      }
-
-      @Override
-      public String getDescription() {
-        return "Exporting table archive " + target.getName();
-      }
-
-      @Override
-      public Job getJob() {
-        return new VpaExporterJob(vpRegFile,  systemService.getVPXMusicFolder(), game, exportDescriptor, manifest, highscore, versions, target);
-      }
-
-      @Override
-      public String getImageUrl() {
-        GameMediaItem mediaItem = game.getGameMedia().get(PopperScreen.Wheel);
-        if (mediaItem != null) {
-          return mediaItem.getUri();
-        }
-        return super.getImageUrl();
-      }
-    };
-
-    descriptor.setUuid(UUID.randomUUID().toString());
-    JobQueue.getInstance().offer(descriptor);
-    LOG.info("Offered export job for '" + game.getGameDisplayName() + "'");
-    return true;
-  }
-
-  public VpaManifest getManifest(int id) {
-    return pinUPConnector.getGameManifest(id);
   }
 
   @Override

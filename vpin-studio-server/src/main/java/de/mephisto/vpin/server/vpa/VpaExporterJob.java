@@ -42,9 +42,9 @@ public class VpaExporterJob implements Job {
   private final VpaManifest manifest;
   private final Highscore highscore;
   private final List<HighscoreVersion> scoreHistory;
-  private final File target;
-  private final File tempFile;
   private final ObjectMapper objectMapper;
+
+  private File target;
 
   public VpaExporterJob(@NonNull File vprRegFile,
                         @NonNull File musicFolder,
@@ -62,7 +62,6 @@ public class VpaExporterJob implements Job {
     this.highscore = highscore;
     this.scoreHistory = scoreHistory;
     this.target = target;
-    this.tempFile = new File(target.getParentFile(), target.getName() + ".bak");
 
     objectMapper = new ObjectMapper();
     objectMapper.enable(SerializationFeature.INDENT_OUTPUT);
@@ -70,6 +69,9 @@ public class VpaExporterJob implements Job {
   }
 
   public boolean execute() {
+    target = FileUtils.uniqueFile(target);
+    File tempFile = new File(target.getParentFile(), target.getName() + ".bak");
+
     if (target.exists() && !target.delete()) {
       throw new UnsupportedOperationException("Couldn't delete existing VPA file " + target.getAbsolutePath());
     }
@@ -114,6 +116,7 @@ public class VpaExporterJob implements Job {
 
         //write highscore history
         List<ScoreVersionEntry> scores = scoreHistory.stream().map(ScoreVersionEntry::new).collect(Collectors.toList());
+        packageInfo.setHighscoreHistory(!scores.isEmpty());
         String scoresJson = objectMapper.writeValueAsString(scores);
         manifest.getAdditionalData().put(VpaService.DATA_HIGHSCORE_HISTORY, scoresJson);
 

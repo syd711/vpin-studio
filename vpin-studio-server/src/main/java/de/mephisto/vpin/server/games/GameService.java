@@ -14,6 +14,7 @@ import de.mephisto.vpin.server.popper.PinUPConnector;
 import de.mephisto.vpin.server.preferences.PreferencesService;
 import de.mephisto.vpin.server.roms.RomService;
 import de.mephisto.vpin.server.roms.ScanResult;
+import de.mephisto.vpin.server.vpa.VpaService;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import org.apache.commons.lang3.StringUtils;
@@ -54,6 +55,9 @@ public class GameService {
 
   @Autowired
   private AssetService assetService;
+
+  @Autowired
+  private VpaService vpaService;
 
   @SuppressWarnings("unused")
   public List<Game> getGames() {
@@ -317,10 +321,10 @@ public class GameService {
       this.highscoreService.getOrCreateHighscore(game);
     }
 
-
     Optional<Highscore> highscore = this.highscoreService.getHighscore(game.getId());
     highscore.ifPresent(value -> game.setHighscoreType(value.getType() != null ? HighscoreType.valueOf(value.getType()) : null));
 
+    game.setVpaUuids(vpaService.getVpasFor(game).stream().map(vpaDescriptor -> vpaDescriptor.getManifest().getUuid()).collect(Collectors.toList()));
     game.setOriginalRom(romService.getOriginalRom(game.getRom()));
     game.setHsFileName(gameDetails.getHsFileName());
     game.setTableName(gameDetails.getTableName());

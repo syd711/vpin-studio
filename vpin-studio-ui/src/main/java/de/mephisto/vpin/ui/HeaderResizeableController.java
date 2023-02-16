@@ -1,18 +1,23 @@
 package de.mephisto.vpin.ui;
 
 import de.mephisto.vpin.commons.fx.UIDefaults;
+import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.representations.PreferenceEntryRepresentation;
+import de.mephisto.vpin.ui.jobs.JobPoller;
+import de.mephisto.vpin.ui.util.Dialogs;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Screen;
 import org.apache.commons.lang3.StringUtils;
 
 import java.net.URL;
+import java.util.Optional;
 import java.util.ResourceBundle;
 
 import static de.mephisto.vpin.ui.Studio.client;
@@ -39,7 +44,15 @@ public class HeaderResizeableController implements Initializable {
 
   @FXML
   private void onCloseClick() {
-    System.exit(0);
+    if(JobPoller.getInstance().isPolling()) {
+      Optional<ButtonType> result = WidgetFactory.showConfirmation(stage, "Jobs Running", "There are still jobs running.", "Do you want to continue?", "Yes, continue.");
+      if (result.isPresent() && result.get().equals(ButtonType.OK)) {
+        System.exit(0);
+      }
+    }
+    else {
+      System.exit(0);
+    }
   }
 
   @FXML

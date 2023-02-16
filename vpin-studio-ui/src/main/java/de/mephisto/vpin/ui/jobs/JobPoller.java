@@ -70,6 +70,10 @@ public class JobPoller {
     return instance;
   }
 
+  public boolean isPolling() {
+    return !jobMenu.isDisabled();
+  }
+
   public void setPolling() {
     jobMenu.setDisable(false);
     if (!service.isRunning()) {

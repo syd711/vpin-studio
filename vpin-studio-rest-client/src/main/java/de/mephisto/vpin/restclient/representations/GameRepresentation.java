@@ -1,5 +1,6 @@
 package de.mephisto.vpin.restclient.representations;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -41,6 +42,15 @@ public class GameRepresentation {
   private boolean pov;
   private boolean selected;
   private boolean romRequired;
+  private List<String> vpaUuids = new ArrayList<>();
+
+  public List<String> getVpaUuids() {
+    return vpaUuids;
+  }
+
+  public void setVpaUuids(List<String> vpaUuids) {
+    this.vpaUuids = vpaUuids;
+  }
 
   public boolean isRomRequired() {
     return romRequired;

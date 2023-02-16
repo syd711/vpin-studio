@@ -93,5 +93,6 @@ public class ToolbarController implements Initializable {
       });
     }).start();
 
+    JobPoller.getInstance().setPolling();
   }
 }

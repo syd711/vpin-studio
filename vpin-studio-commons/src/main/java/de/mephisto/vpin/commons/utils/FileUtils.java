@@ -1,5 +1,6 @@
 package de.mephisto.vpin.commons.utils;
 
+import org.apache.commons.io.FilenameUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -50,5 +51,16 @@ public class FileUtils {
       return false;
     }
     return true;
+  }
+
+  public static File uniqueFile(File target) {
+    int index = 1;
+    String originalBaseName = FilenameUtils.getBaseName(target.getName());
+    while(target.exists()) {
+      String suffix = FilenameUtils.getExtension(target.getName());
+      target = new File(target.getParentFile(), originalBaseName + " (" + index + ")." + suffix);
+      index++;
+    }
+    return target;
   }
 }

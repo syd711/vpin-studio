@@ -43,6 +43,14 @@
          <center>
             <VBox BorderPane.alignment="CENTER">
                <children>
+                  <Label text="Additional files and data to export:" textFill="WHITE">
+                     <font>
+                        <Font name="System Bold" size="14.0" />
+                     </font>
+                     <VBox.margin>
+                        <Insets top="6.0" />
+                     </VBox.margin>
+                  </Label>
                   <GridPane>
                     <columnConstraints>
                       <ColumnConstraints hgrow="SOMETIMES" maxWidth="234.400048828125" minWidth="10.0" prefWidth="234.400048828125" />
