@@ -281,7 +281,7 @@ public class TablesSidebarController implements Initializable {
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
     client = Studio.client;
-    tableAccordionVBox.managedProperty().bindBidirectional(tableAccordion.visibleProperty());
+    tableAccordion.managedProperty().bindBidirectional(tableAccordion.visibleProperty());
     povCreatePane.managedProperty().bind(povCreatePane.visibleProperty());
 
     volumeSlider.valueProperty().addListener((observableValue, number, t1) -> {

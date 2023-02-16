@@ -106,8 +106,6 @@ public class DiscordBotPreferencesController implements Initializable {
     channelCombo.setDisable(true);
     resetBtn.setDisable(true);
 
-    //TODO check PUT
-
     PreferenceEntryRepresentation preference = client.getPreference(PreferenceNames.DISCORD_BOT_TOKEN);
     String token = !StringUtils.isEmpty(preference.getValue()) ? preference.getValue() : "-";
     botTokenLabel.setText(token);
@@ -118,6 +116,8 @@ public class DiscordBotPreferencesController implements Initializable {
     }
 
     BindingUtil.bindTextField(botChannelAllowList, PreferenceNames.DISCORD_BOT_ALLOW_LIST, "");
+
+    validateDefaultChannel();
 
     serverCombo.valueProperty().addListener((observable, oldValue, newValue) -> {
       if (newValue != null) {
@@ -137,7 +137,6 @@ public class DiscordBotPreferencesController implements Initializable {
         client.setPreference(PreferenceNames.DISCORD_CHANNEL_ID, "");
       }
     });
-    validateDefaultChannel();
   }
 
   private void validateDefaultChannel() {

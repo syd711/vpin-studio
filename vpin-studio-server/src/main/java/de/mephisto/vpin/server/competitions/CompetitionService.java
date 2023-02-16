@@ -137,6 +137,7 @@ public class CompetitionService implements InitializingBean {
         LOG.warn("Discord competition \"" + competition +  "\" did not contain any highscore, maybe the topic was resetted?");
         return new ScoreSummary(Collections.emptyList(), competition.getUpdatedAt());
       }
+      return latestScore;
     }
 
     return highscoreService.getScoreSummary(serverId, competition.getGameId(), null);

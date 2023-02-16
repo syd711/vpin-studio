@@ -2,6 +2,7 @@ package de.mephisto.vpin.ui.tables;
 
 import de.mephisto.vpin.ui.NavigationController;
 import de.mephisto.vpin.ui.StudioFXController;
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -69,16 +70,18 @@ public class TablesController implements Initializable, StudioFXController {
 
 
     tabPane.getSelectionModel().selectedIndexProperty().addListener((observableValue, number, t1) -> {
-      if (t1.intValue() == 0) {
-        NavigationController.setBreadCrumb(Arrays.asList("Tables"));
-        tablesSideBarController.setVisible(true);
-        repositorySideBarController.setVisible(false);
-      }
-      else {
-        NavigationController.setBreadCrumb(Arrays.asList("Table Repository"));
-        tablesSideBarController.setVisible(false);
-        repositorySideBarController.setVisible(true);
-      }
+      Platform.runLater(() -> {
+        if (t1.intValue() == 0) {
+          NavigationController.setBreadCrumb(Arrays.asList("Tables"));
+          tablesSideBarController.setVisible(true);
+          repositorySideBarController.setVisible(false);
+        }
+        else {
+          NavigationController.setBreadCrumb(Arrays.asList("Table Repository"));
+          tablesSideBarController.setVisible(false);
+          repositorySideBarController.setVisible(true);
+        }
+      });
     });
 
     tablesSideBarController.setVisible(true);
