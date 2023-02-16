@@ -18,9 +18,7 @@
 <?import org.kordamp.ikonli.javafx.FontIcon?>
 
 <BorderPane styleClass="base-component" stylesheets="@../stylesheet.css" xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.competitions.CompetitionsController">
-    <top>
-        <fx:include fx:id="mainToolbar" source="../scene-toolbar.fxml" />
-    </top>
+
     <center>
         <BorderPane styleClass="subpanel" BorderPane.alignment="CENTER">
             <center>
