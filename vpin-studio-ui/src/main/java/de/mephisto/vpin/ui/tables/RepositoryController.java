@@ -20,8 +20,6 @@ import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.StackPane;
-import javafx.scene.paint.Paint;
-import org.kordamp.ikonli.javafx.FontIcon;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -161,16 +159,21 @@ public class RepositoryController implements Initializable {
       VpaDescriptorRepresentation value = cellData.getValue();
       String thumbnail = value.getManifest().getThumbnail();
       if (thumbnail == null) {
-        return new SimpleStringProperty("");
+        Image wheel = new Image(Studio.class.getResourceAsStream("avatar-blank.png"));
+        ImageView view = new ImageView(wheel);
+        view.setPreserveRatio(true);
+        view.setFitWidth(70);
+        view.setFitHeight(70);
+        return new SimpleObjectProperty(view);
       }
 
       byte[] decode = Base64.getDecoder().decode(thumbnail);
-      Image image = new Image(new ByteArrayInputStream(decode));
-      ImageView view = new ImageView(image);
+      Image wheel = new Image(new ByteArrayInputStream(decode));
+      ImageView view = new ImageView(wheel);
       view.setPreserveRatio(true);
       view.setFitWidth(80);
       view.setFitHeight(80);
-      ImageUtil.setClippedImage(view, (int) (image.getWidth() / 2));
+      ImageUtil.setClippedImage(view, (int) (wheel.getWidth() / 2));
       return new SimpleObjectProperty(view);
     });
 
@@ -182,7 +185,7 @@ public class RepositoryController implements Initializable {
     directB2SColumn.setCellValueFactory(cellData -> {
       VpaDescriptorRepresentation value = cellData.getValue();
       boolean directb2s = value.getManifest().getPackageInfo().isDirectb2s();
-      if(directb2s) {
+      if (directb2s) {
         return new SimpleObjectProperty(WidgetFactory.createCheckIcon());
       }
       return new SimpleStringProperty("");
@@ -191,7 +194,7 @@ public class RepositoryController implements Initializable {
     pupPackColumn.setCellValueFactory(cellData -> {
       VpaDescriptorRepresentation value = cellData.getValue();
       boolean packaged = value.getManifest().getPackageInfo().isPupPack();
-      if(packaged) {
+      if (packaged) {
         return new SimpleObjectProperty(WidgetFactory.createCheckIcon());
       }
       return new SimpleStringProperty("");
@@ -200,7 +203,7 @@ public class RepositoryController implements Initializable {
     popperColumn.setCellValueFactory(cellData -> {
       VpaDescriptorRepresentation value = cellData.getValue();
       boolean packaged = value.getManifest().getPackageInfo().isPopperMedia();
-      if(packaged) {
+      if (packaged) {
         return new SimpleObjectProperty(WidgetFactory.createCheckIcon());
       }
       return new SimpleStringProperty("");
@@ -209,7 +212,7 @@ public class RepositoryController implements Initializable {
     romColumn.setCellValueFactory(cellData -> {
       VpaDescriptorRepresentation value = cellData.getValue();
       boolean packaged = value.getManifest().getPackageInfo().isPopperMedia();
-      if(packaged) {
+      if (packaged) {
         return new SimpleObjectProperty(WidgetFactory.createCheckIcon());
       }
       return new SimpleStringProperty("");
@@ -259,7 +262,7 @@ public class RepositoryController implements Initializable {
 
   private void updateSelection(Optional<VpaDescriptorRepresentation> newSelection) {
     NavigationController.setBreadCrumb(Arrays.asList("Table Repository"));
-    if(newSelection.isPresent()) {
+    if (newSelection.isPresent()) {
       VpaDescriptorRepresentation descriptorRepresentation = newSelection.get();
       NavigationController.setBreadCrumb(Arrays.asList("Table Repository", descriptorRepresentation.getName()));
     }

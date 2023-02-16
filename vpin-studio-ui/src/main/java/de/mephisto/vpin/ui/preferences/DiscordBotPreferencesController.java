@@ -106,6 +106,8 @@ public class DiscordBotPreferencesController implements Initializable {
     channelCombo.setDisable(true);
     resetBtn.setDisable(true);
 
+    //TODO check PUT
+
     PreferenceEntryRepresentation preference = client.getPreference(PreferenceNames.DISCORD_BOT_TOKEN);
     String token = !StringUtils.isEmpty(preference.getValue()) ? preference.getValue() : "-";
     botTokenLabel.setText(token);
