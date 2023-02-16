@@ -14,6 +14,7 @@ import de.mephisto.vpin.server.system.SystemService;
 import de.mephisto.vpin.server.vpa.VpaExporterJob;
 import de.mephisto.vpin.server.vpa.VpaImporter;
 import de.mephisto.vpin.server.vpa.VpaService;
+import de.mephisto.vpin.server.vpa.VpaSource;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -42,6 +43,9 @@ public class IOService {
 
   @Autowired
   private CardService cardService;
+
+  @Autowired
+  private VpaService vpaService;
 
   public boolean importVpa(@NonNull ImportDescriptor descriptor) {
     try {
@@ -79,7 +83,7 @@ public class IOService {
         Game game = gameService.getGame(gameId);
         if (game != null) {
           File target = new File(systemService.getVpaArchiveFolder(), game.getGameDisplayName().replaceAll(" ", "-") + ".vpa");
-          if(!exportVpa(game, manifest, exportDescriptor, target)) {
+          if (!exportVpa(game, manifest, exportDescriptor, target)) {
             result = false;
           }
         }
@@ -94,6 +98,7 @@ public class IOService {
     List<HighscoreVersion> versions = highscoreService.getAllHighscoreVersions(game.getId());
     Highscore highscore = highscoreService.getOrCreateHighscore(game);
     File vpRegFile = systemService.getVPRegFile();
+    VpaSource vpaSource = vpaService.getDefaultVpaSource();
 
     JobDescriptor descriptor = new JobDescriptor() {
       @Override
@@ -108,7 +113,7 @@ public class IOService {
 
       @Override
       public Job getJob() {
-        return new VpaExporterJob(vpRegFile,  systemService.getVPXMusicFolder(), game, exportDescriptor, manifest, highscore, versions, target);
+        return new VpaExporterJob(vpRegFile, systemService.getVPXMusicFolder(), game, exportDescriptor, manifest, highscore, versions, vpaSource, target);
       }
 
       @Override

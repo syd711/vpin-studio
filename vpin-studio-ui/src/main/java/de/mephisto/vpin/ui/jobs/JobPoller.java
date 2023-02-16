@@ -25,10 +25,15 @@ public class JobPoller {
   private List<JobDescriptor> activeJobs = new ArrayList<>();
   private Service service;
 
-  public JobPoller(MenuButton jobMenu) {
+  public static void create(MenuButton jobMenu) {
+    if (instance == null) {
+      instance = new JobPoller(jobMenu);
+    }
+  }
+
+  private JobPoller(MenuButton jobMenu) {
     this.jobMenu = jobMenu;
     this.jobMenu.setStyle("-fx-background-color: #111111;");
-    instance = this;
 
     service = new Service() {
       @Override
@@ -41,8 +46,8 @@ public class JobPoller {
 
             //give the init some time
             List<JobDescriptor> jobs = new ArrayList<>(client.getJobs());
-            if(jobs.isEmpty()) {
-              Thread.sleep(2000);
+            if (jobs.isEmpty()) {
+              Thread.sleep(1000);
             }
 
             while (poll) {
@@ -84,10 +89,10 @@ public class JobPoller {
   private void refreshUI(List<JobDescriptor> updatedJobList) {
     Platform.runLater(() -> {
       jobMenu.setDisable(updatedJobList.isEmpty());
-      if(jobMenu.isDisabled()) {
+      if (jobMenu.isDisabled()) {
         jobMenu.setText("No active jobs");
       }
-      else{
+      else {
         jobMenu.setText(updatedJobList.size() + " active job(s)");
       }
 
@@ -103,7 +108,7 @@ public class JobPoller {
       activeJobs.addAll(updatedJobList);
 
       for (JobDescriptor descriptor : updatedJobList) {
-        if(items.stream().anyMatch(c -> c.getUserData().equals(descriptor))) {
+        if (items.stream().anyMatch(c -> c.getUserData().equals(descriptor))) {
           continue;
         }
 

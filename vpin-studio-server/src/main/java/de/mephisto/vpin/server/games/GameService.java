@@ -324,8 +324,7 @@ public class GameService {
     Optional<Highscore> highscore = this.highscoreService.getHighscore(game.getId());
     highscore.ifPresent(value -> game.setHighscoreType(value.getType() != null ? HighscoreType.valueOf(value.getType()) : null));
 
-    //TODO caching
-//    game.setVpaUuids(vpaService.getVpasFor(game).stream().map(vpaDescriptor -> vpaDescriptor.getManifest().getUuid()).collect(Collectors.toList()));
+    game.setVpaUuids(vpaService.getVpasFor(game).stream().map(vpaDescriptor -> vpaDescriptor.getManifest().getUuid()).collect(Collectors.toList()));
     game.setOriginalRom(romService.getOriginalRom(game.getRom()));
     game.setHsFileName(gameDetails.getHsFileName());
     game.setTableName(gameDetails.getTableName());

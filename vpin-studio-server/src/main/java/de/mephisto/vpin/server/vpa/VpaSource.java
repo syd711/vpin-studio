@@ -13,4 +13,6 @@ public interface VpaSource {
   boolean delete(VpaDescriptor descriptor);
 
   String getLocation();
+
+  void invalidate();
 }

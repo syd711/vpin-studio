@@ -3,15 +3,17 @@ package de.mephisto.vpin.server.vpa;
 import de.mephisto.vpin.commons.VpaSourceType;
 import de.mephisto.vpin.restclient.VpaManifest;
 import org.apache.commons.io.FilenameUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 public class VpaSourceFileSystem implements VpaSource {
+  private final static Logger LOG = LoggerFactory.getLogger(VpaSourceFileSystem.class);
 
   private final File vpaArchiveFolder;
+  private final Map<String, VpaDescriptor> cache = new HashMap<>();
 
   public VpaSourceFileSystem(File vpaArchiveFolder) {
     this.vpaArchiveFolder = vpaArchiveFolder;
@@ -23,17 +25,18 @@ public class VpaSourceFileSystem implements VpaSource {
   }
 
   public List<VpaDescriptor> getDescriptors() {
-    List<VpaDescriptor> descriptors = new ArrayList<>();
-    File[] vpaFiles = vpaArchiveFolder.listFiles((dir, name) -> name.endsWith(".vpa"));
-    if (vpaFiles != null) {
-      for (File vpaFile : vpaFiles) {
-        VpaManifest manifest = VpaUtil.readManifest(vpaFile);
-        VpaDescriptor descriptor = new VpaDescriptor(this, manifest, new Date(vpaFile.lastModified()),
-            FilenameUtils.getBaseName(vpaFile.getName()), vpaFile.length());
-        descriptors.add(descriptor);
+    if (cache.isEmpty()) {
+      File[] vpaFiles = vpaArchiveFolder.listFiles((dir, name) -> name.endsWith(".vpa"));
+      if (vpaFiles != null) {
+        for (File vpaFile : vpaFiles) {
+          VpaManifest manifest = VpaUtil.readManifest(vpaFile);
+          VpaDescriptor descriptor = new VpaDescriptor(this, manifest, new Date(vpaFile.lastModified()),
+              FilenameUtils.getBaseName(vpaFile.getName()), vpaFile.length());
+          cache.put(vpaFile.getName(), descriptor);
+        }
       }
     }
-    return descriptors;
+    return new ArrayList<>(cache.values());
   }
 
   @Override
@@ -45,5 +48,11 @@ public class VpaSourceFileSystem implements VpaSource {
   @Override
   public String getLocation() {
     return vpaArchiveFolder.getAbsolutePath();
+  }
+
+  @Override
+  public void invalidate() {
+    cache.clear();
+    LOG.info("Invalidated VPA source \"" + this.getLocation() + "\"");
   }
 }

@@ -94,7 +94,7 @@
                                     <Font size="14.0" />
                                  </font>
                               </CheckBox>
-                              <Label layoutX="10.0" layoutY="15.0" text="Delete Table File (includes POV): ">
+                              <Label layoutX="10.0" layoutY="15.0" text="Delete Game File (includes POV): ">
                                  <font>
                                     <Font size="14.0" />
                                  </font>

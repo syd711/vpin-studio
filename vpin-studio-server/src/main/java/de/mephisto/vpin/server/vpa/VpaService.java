@@ -2,7 +2,6 @@ package de.mephisto.vpin.server.vpa;
 
 import de.mephisto.vpin.restclient.VpaManifest;
 import de.mephisto.vpin.server.games.Game;
-import de.mephisto.vpin.server.popper.PinUPConnector;
 import de.mephisto.vpin.server.system.SystemService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,7 +24,6 @@ public class VpaService implements InitializingBean {
 
   @Autowired
   private SystemService systemService;
-
 
   private VpaSource defaultVpaSource;
   private List<VpaSource> vpaSources = new ArrayList<>();
@@ -52,9 +50,14 @@ public class VpaService implements InitializingBean {
     Optional<VpaDescriptor> first = getVpaDescriptors().stream().filter(vpaDescriptor -> vpaDescriptor.getManifest().getUuid().equals(uuid)).findFirst();
     if (first.isPresent()) {
       VpaDescriptor descriptor = first.get();
+      descriptor.getSource().invalidate();
       return descriptor.getSource().delete(descriptor);
     }
     return false;
+  }
+
+  public VpaSource getDefaultVpaSource() {
+    return this.defaultVpaSource;
   }
 
   @Override
