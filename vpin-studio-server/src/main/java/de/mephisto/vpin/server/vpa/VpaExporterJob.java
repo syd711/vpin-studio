@@ -2,7 +2,6 @@ package de.mephisto.vpin.server.vpa;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
-import com.thoughtworks.xstream.core.util.Base64Encoder;
 import de.mephisto.vpin.commons.HighscoreType;
 import de.mephisto.vpin.commons.utils.FileUtils;
 import de.mephisto.vpin.restclient.*;
@@ -10,6 +9,7 @@ import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.highscores.Highscore;
 import de.mephisto.vpin.server.highscores.HighscoreVersion;
 import de.mephisto.vpin.server.popper.GameMediaItem;
+import de.mephisto.vpin.server.util.ImageUtil;
 import de.mephisto.vpin.server.util.vpreg.VPReg;
 import de.mephisto.vpin.server.util.vpreg.VPRegScoreSummary;
 import edu.umd.cs.findbugs.annotations.NonNull;
@@ -18,8 +18,13 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.*;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.nio.file.Files;
+import java.util.Base64;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -30,7 +35,7 @@ public class VpaExporterJob implements Job {
   private final static Logger LOG = LoggerFactory.getLogger(VpaService.class);
 
   private final File vprRegFile;
-  private File musicFolder;
+  private final File musicFolder;
   private final Game game;
   private final ExportDescriptor exportDescriptor;
   private final VpaManifest manifest;
@@ -41,10 +46,10 @@ public class VpaExporterJob implements Job {
 
   public VpaExporterJob(@NonNull File vprRegFile,
                         @NonNull File musicFolder,
-                        @NonNull Game game, 
-                        @NonNull ExportDescriptor exportDescriptor, 
-                        @NonNull VpaManifest manifest, 
-                        @Nullable Highscore highscore, 
+                        @NonNull Game game,
+                        @NonNull ExportDescriptor exportDescriptor,
+                        @NonNull VpaManifest manifest,
+                        @Nullable Highscore highscore,
                         @NonNull List<HighscoreVersion> scoreHistory,
                         @NonNull File target) {
     this.vprRegFile = vprRegFile;
@@ -55,14 +60,19 @@ public class VpaExporterJob implements Job {
     this.highscore = highscore;
     this.scoreHistory = scoreHistory;
     this.target = target;
+
     objectMapper = new ObjectMapper();
     objectMapper.enable(SerializationFeature.INDENT_OUTPUT);
+    objectMapper.enable(SerializationFeature.ORDER_MAP_ENTRIES_BY_KEYS);
   }
 
   public boolean execute() {
     if (target.exists() && !target.delete()) {
       throw new UnsupportedOperationException("Couldn't delete existing VPA file " + target.getAbsolutePath());
     }
+
+    VpaPackageInfo packageInfo = new VpaPackageInfo();
+    manifest.setPackageInfo(packageInfo);
 
     LOG.info("Packaging " + game.getGameDisplayName());
     long start = System.currentTimeMillis();
@@ -76,12 +86,23 @@ public class VpaExporterJob implements Job {
       if (exportDescriptor.isExportHighscores()) {
         //zip EM file
         if (game.getEMHighscoreFile() != null && game.getEMHighscoreFile().exists()) {
+          packageInfo.setHighscore(true);
           zipFile(game.getEMHighscoreFile(), getGameFolderName() + "/User/" + game.getEMHighscoreFile().getName(), zipOut);
         }
 
         //zip nvram file
         if (game.getNvRamFile().exists()) {
+          packageInfo.setHighscore(true);
           zipFile(game.getNvRamFile(), getGameFolderName() + "/VPinMAME/nvram/" + game.getNvRamFile().getName(), zipOut);
+        }
+
+        //write VPReg.stg data
+        if (HighscoreType.VPReg.equals(game.getHighscoreType())) {
+          packageInfo.setHighscore(true);
+          VPReg reg = new VPReg(vprRegFile, game);
+          VPRegScoreSummary summary = reg.readHighscores();
+          String vpRegJson = objectMapper.writeValueAsString(summary);
+          manifest.getAdditionalData().put(VpaService.DATA_VPREG_HIGHSCORE, vpRegJson);
         }
 
         //write highscore history
@@ -90,71 +111,71 @@ public class VpaExporterJob implements Job {
         manifest.getAdditionalData().put(VpaService.DATA_HIGHSCORE_HISTORY, scoresJson);
 
         //write raw highscore
-        if(highscore != null && highscore.getRaw() != null) {
+        if (highscore != null && highscore.getRaw() != null) {
           manifest.getAdditionalData().put(VpaService.DATA_HIGHSCORE, highscore.getRaw());
-        }
-
-        //write VPReg.stg data
-        if(HighscoreType.VPReg.equals(game.getHighscoreType())) {
-          VPReg reg = new VPReg(vprRegFile, game);
-          VPRegScoreSummary summary = reg.readHighscores();
-          String vpRegJson = objectMapper.writeValueAsString(summary);
-          manifest.getAdditionalData().put(VpaService.DATA_VPREG_HIGHSCORE, vpRegJson);
         }
       }
 
-      zipManifest(zipOut);
 
       if (exportDescriptor.isExportRom() && game.getRomFile() != null && game.getRomFile().exists()) {
+        packageInfo.setRom(true);
         zipFile(game.getRomFile(), getGameFolderName() + "/VPinMAME/roms/" + game.getRomFile().getName(), zipOut);
       }
 
       if (game.getPOVFile() != null && game.getPOVFile().exists()) {
+        packageInfo.setPov(true);
         zipFile(game.getPOVFile(), getGameFolderName() + "/Tables/" + game.getPOVFile().getName(), zipOut);
       }
 
       if (game.getGameFile().exists()) {
+        packageInfo.setVpx(true);
         zipFile(game.getGameFile(), getGameFolderName() + "/Tables/" + game.getGameFile().getName(), zipOut);
       }
 
       if (game.getDirectB2SFile().exists()) {
+        packageInfo.setDirectb2s(true);
         zipFile(game.getDirectB2SFile(), getGameFolderName() + "/Tables/" + game.getDirectB2SFile().getName(), zipOut);
       }
 
-      if(game.getDirectB2SMediaFile().exists()) {
+      if (game.getDirectB2SMediaFile().exists()) {
         zipFile(game.getDirectB2SMediaFile(), "AdditionalFiles/" + game.getDirectB2SMediaFile().getName(), zipOut);
       }
 
       // DMDs
       if (game.getUltraDMDFolder().exists()) {
+        packageInfo.setUltraDMD(true);
         zipFile(game.getUltraDMDFolder(), getGameFolderName() + "/Tables/" + game.getUltraDMDFolder().getName(), zipOut);
       }
 
       if (game.getFlexDMDFolder().exists()) {
+        packageInfo.setFlexDMD(true);
         zipFile(game.getFlexDMDFolder(), getGameFolderName() + "/Tables/" + game.getFlexDMDFolder().getName(), zipOut);
       }
 
       // Music and sounds
       if (game.getAltSoundFolder() != null && game.getAltSoundFolder().exists()) {
+        packageInfo.setAltSound(true);
         zipFile(game.getAltSoundFolder(), getGameFolderName() + "/VPinMAME/altsound/" + game.getAltSoundFolder().getName(), zipOut);
       }
 
       //aways pack whole music folder, it may contain gamefiles
       if (exportDescriptor.isExportPupPack()) {
+        packageInfo.setMusic(true);
         File[] files = musicFolder.listFiles((dir, name) -> name.endsWith(".mp3"));
-        if(files != null) {
+        if (files != null) {
           for (File file : files) {
             zipFile(file, getGameFolderName() + "/Music/" + file.getName(), zipOut);
           }
         }
 
-        if(game.getMusicFolder() != null && game.getMusicFolder().exists()) {
+        if (game.getMusicFolder() != null && game.getMusicFolder().exists()) {
           zipFile(game.getMusicFolder(), getGameFolderName() + "/Music/" + game.getMusicFolder().getName(), zipOut);
         }
       }
 
-      zipPupPack(zipOut);
-      zipPopperMedia(zipOut);
+      zipPupPack(packageInfo, zipOut);
+      zipPopperMedia(packageInfo, zipOut);
+      zipManifest(zipOut);
 
       LOG.info("Finished packing of " + target.getAbsolutePath() + ", took " + ((System.currentTimeMillis() - start) / 1000) + " seconds, " + FileUtils.readableFileSize(target.length()));
     } catch (Exception e) {
@@ -179,9 +200,10 @@ public class VpaExporterJob implements Job {
     return true;
   }
 
-  private void zipPopperMedia(ZipOutputStream zipOut) throws IOException {
+  private void zipPopperMedia(VpaPackageInfo packageInfo, ZipOutputStream zipOut) throws IOException {
     //export popper menu data
     if (exportDescriptor.isExportPopperMedia()) {
+      packageInfo.setPopperMedia(true);
       PopperScreen[] values = PopperScreen.values();
       for (PopperScreen value : values) {
         GameMediaItem gameMediaItem = game.getGameMedia().get(value);
@@ -195,13 +217,11 @@ public class VpaExporterJob implements Job {
 
   /**
    * Archives the PUP pack
-   *
-   * @param zipOut
-   * @throws IOException
    */
-  private void zipPupPack(ZipOutputStream zipOut) throws IOException {
+  private void zipPupPack(VpaPackageInfo packageInfo, ZipOutputStream zipOut) throws IOException {
     if (exportDescriptor.isExportPupPack()) {
       if (game.getPupPackFolder() != null && game.getPupPackFolder().exists()) {
+        packageInfo.setPupPack(true);
         LOG.info("Packing " + game.getPupPackFolder().getAbsolutePath());
         zipFile(game.getPupPackFolder(), "PinUPSystem/PUPVideos/" + game.getPupPackFolder().getName(), zipOut);
       }
@@ -212,25 +232,31 @@ public class VpaExporterJob implements Job {
     //store wheel icon as archive preview
     GameMediaItem mediaItem = game.getGameMedia().get(PopperScreen.Wheel);
     if (mediaItem != null) {
-      byte[] bytes = Files.readAllBytes(mediaItem.getFile().toPath());
-      Base64Encoder encoder = new Base64Encoder();
-      String encode = encoder.encode(bytes);
-      manifest.setIcon(encode);
+      BufferedImage image = ImageUtil.loadImage(mediaItem.getFile());
+      BufferedImage resizedImage = ImageUtil.resizeImage(image, 100);
+
+      byte[] bytes = ImageUtil.toBytes(resizedImage);
+      String encode = Base64.getEncoder().encodeToString(bytes);
+      manifest.setThumbnail(encode);
+
+      byte[] original = Files.readAllBytes(mediaItem.getFile().toPath());
+      manifest.setIcon(Base64.getEncoder().encodeToString(original));
     }
 
+    manifest.setUuid(game.getUuid());
     manifest.setEmulatorType(VpaUtil.getEmulatorType(game.getGameFile()));
 
-    if(StringUtils.isEmpty(manifest.getGameFileName())) {
+    if (StringUtils.isEmpty(manifest.getGameFileName())) {
       manifest.setGameFileName(game.getGameFileName());
     }
 
-    if(StringUtils.isEmpty(manifest.getGameName())) {
+    if (StringUtils.isEmpty(manifest.getGameName())) {
       manifest.setGameName(game.getGameDisplayName());
       manifest.setGameDisplayName(game.getGameDisplayName());
     }
 
     manifest.setTableName(game.getTableName());
-    if(!StringUtils.isEmpty(game.getRom())) {
+    if (!StringUtils.isEmpty(game.getRom())) {
       manifest.setRomName(game.getRom());
     }
 

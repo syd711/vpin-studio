@@ -37,6 +37,7 @@ public class Game {
   private int validationState;
   private String ignoredValidations;
   private int volume;
+  private String uuid;
   private HighscoreType highscoreType;
 
   private List<GameAsset> assets = new ArrayList<>();
@@ -56,6 +57,14 @@ public class Game {
       return this.getGameFile().length();
     }
     return -1;
+  }
+
+  public String getUuid() {
+    return uuid;
+  }
+
+  public void setUuid(String uuid) {
+    this.uuid = uuid;
   }
 
   public HighscoreType getHighscoreType() {

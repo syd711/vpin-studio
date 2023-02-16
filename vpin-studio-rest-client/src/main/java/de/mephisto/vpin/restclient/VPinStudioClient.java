@@ -128,6 +128,18 @@ public class VPinStudioClient implements ObservedPropertyChangeListener, Overlay
   /*********************************************************************************************************************
    * VPA
    ********************************************************************************************************************/
+  public List<VpaDescriptorRepresentation> getVpaDescriptors() {
+    return Arrays.asList(restClient.get(API + "vpa", VpaDescriptorRepresentation[].class));
+  }
+
+  public void deleteVpa(VpaDescriptorRepresentation descriptorRepresentation) {
+    try {
+      restClient.delete(API + "vpa/" + descriptorRepresentation.getManifest().getUuid());
+    } catch (Exception e) {
+      LOG.error("Failed to delete VPA: " + e.getMessage(), e);
+    }
+  }
+
   public VpaManifest getVpaManifest(int gameId) {
     return restClient.get(API + "vpa/manifest/" + gameId, VpaManifest.class);
   }

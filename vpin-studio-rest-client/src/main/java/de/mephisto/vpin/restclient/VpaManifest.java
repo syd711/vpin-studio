@@ -28,8 +28,29 @@ public class VpaManifest {
   private String url;
   private String designedBy;
 
+  private String uuid;
   private String tableName;
   private String icon;
+  private String thumbnail;
+
+  private VpaPackageInfo packageInfo;
+
+  public VpaPackageInfo getPackageInfo() {
+    return packageInfo;
+  }
+
+  public void setPackageInfo(VpaPackageInfo packageInfo) {
+    this.packageInfo = packageInfo;
+  }
+
+  public String getUuid() {
+    return uuid;
+  }
+
+  public void setUuid(String uuid) {
+    this.uuid = uuid;
+  }
+
   private Map<String,Object> additionalData = new HashMap<>();
 
   public String getTableName() {
@@ -46,6 +67,14 @@ public class VpaManifest {
 
   public void setAdditionalData(Map<String, Object> additionalData) {
     this.additionalData = additionalData;
+  }
+
+  public String getThumbnail() {
+    return thumbnail;
+  }
+
+  public void setThumbnail(String thumbnail) {
+    this.thumbnail = thumbnail;
   }
 
   public String getIcon() {

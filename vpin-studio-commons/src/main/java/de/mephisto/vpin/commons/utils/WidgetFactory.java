@@ -4,13 +4,11 @@ import de.mephisto.vpin.commons.fx.*;
 import de.mephisto.vpin.restclient.PopperScreen;
 import de.mephisto.vpin.restclient.VPinStudioClient;
 import de.mephisto.vpin.restclient.representations.GameMediaItemRepresentation;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Rectangle2D;
-import javafx.scene.Node;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
-import javafx.scene.SnapshotParameters;
+import javafx.scene.*;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -22,6 +20,7 @@ import javafx.scene.layout.Pane;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.scene.media.MediaView;
+import javafx.scene.paint.Paint;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
@@ -51,6 +50,23 @@ public class WidgetFactory {
     BufferedImage image = SwingFXUtils.fromFXImage(snapshot, bufferedImage);
     ImageIO.write(image, "png", file);
     return file;
+  }
+
+  public static FontIcon createCheckIcon() {
+    FontIcon fontIcon = new FontIcon();
+    fontIcon.setIconSize(18);
+    fontIcon.setIconColor(Paint.valueOf("#66FF66"));
+    fontIcon.setIconLiteral("bi-check-circle");
+    return fontIcon;
+  }
+
+  public static FontIcon createExclamationIcon() {
+    FontIcon fontIcon = new FontIcon();
+    fontIcon.setIconSize(18);
+    fontIcon.setCursor(Cursor.HAND);
+    fontIcon.setIconColor(Paint.valueOf("#FF3333"));
+    fontIcon.setIconLiteral("bi-exclamation-circle");
+    return fontIcon;
   }
 
   public static Stage createStage() {

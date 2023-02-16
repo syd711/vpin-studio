@@ -756,7 +756,7 @@ public class PinUPConnector implements InitializingBean {
   }
 
   private void importManifestValue(int gameId, String field, Object value) {
-    if(value == null) {
+    if (value == null) {
       return;
     }
 

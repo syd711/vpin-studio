@@ -45,6 +45,7 @@ public class JobPoller {
               poll = !jobs.isEmpty();
               LOG.info("JobPoller is waiting for " + jobs.size() + " running jobs.");
             }
+            LOG.info("JobPoller finished all jobs");
             refreshUI(Collections.emptyList());
             return true;
           }

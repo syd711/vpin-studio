@@ -195,12 +195,7 @@ public class BuiltInPlayersController implements Initializable {
       }
 
       if (StringUtils.isEmpty(value.getInitials())) {
-        FontIcon fontIcon = new FontIcon();
-        fontIcon.setIconSize(18);
-        fontIcon.setCursor(Cursor.HAND);
-        fontIcon.setIconColor(Paint.valueOf("#FF3333"));
-        fontIcon.setIconLiteral("bi-exclamation-circle");
-        return new SimpleObjectProperty(fontIcon);
+        return new SimpleObjectProperty(WidgetFactory.createExclamationIcon());
       }
       return new SimpleObjectProperty(value.getInitials().toUpperCase());
     });

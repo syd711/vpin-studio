@@ -481,11 +481,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
     columnB2S.setCellValueFactory(cellData -> {
       GameRepresentation value = cellData.getValue();
       if (value.isDirectB2SAvailable()) {
-        FontIcon fontIcon = new FontIcon();
-        fontIcon.setIconSize(18);
-        fontIcon.setIconColor(Paint.valueOf("#66FF66"));
-        fontIcon.setIconLiteral("bi-check-circle");
-        return new SimpleObjectProperty(fontIcon);
+        return new SimpleObjectProperty(WidgetFactory.createCheckIcon());
       }
       return new SimpleStringProperty("");
     });
@@ -493,11 +489,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
     columnMediaB2S.setCellValueFactory(cellData -> {
       GameRepresentation value = cellData.getValue();
       if (value.isDirectB2SAsMediaAvailable()) {
-        FontIcon fontIcon = new FontIcon();
-        fontIcon.setIconSize(18);
-        fontIcon.setIconColor(Paint.valueOf("#66FF66"));
-        fontIcon.setIconLiteral("bi-check-circle");
-        return new SimpleObjectProperty(fontIcon);
+        return new SimpleObjectProperty(WidgetFactory.createCheckIcon());
       }
       return new SimpleStringProperty("");
     });
@@ -518,19 +510,10 @@ public class TableOverviewController implements Initializable, StudioFXControlle
       GameRepresentation value = cellData.getValue();
       int validationState = value.getValidationState();
       if (validationState > 0) {
-        FontIcon fontIcon = new FontIcon();
-        fontIcon.setIconSize(18);
-        fontIcon.setCursor(Cursor.HAND);
-        fontIcon.setIconColor(Paint.valueOf("#FF3333"));
-        fontIcon.setIconLiteral("bi-exclamation-circle");
-        return new SimpleObjectProperty(fontIcon);
+        return new SimpleObjectProperty(WidgetFactory.createExclamationIcon());
       }
 
-      FontIcon fontIcon = new FontIcon();
-      fontIcon.setIconSize(18);
-      fontIcon.setIconColor(Paint.valueOf("#66FF66"));
-      fontIcon.setIconLiteral("bi-check-circle");
-      return new SimpleObjectProperty(fontIcon);
+      return new SimpleObjectProperty(WidgetFactory.createCheckIcon());
     });
 
 

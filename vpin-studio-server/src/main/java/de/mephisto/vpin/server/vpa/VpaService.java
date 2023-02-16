@@ -14,15 +14,18 @@ import de.mephisto.vpin.server.system.SystemService;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
-public class VpaService {
+public class VpaService implements InitializingBean {
   private final static Logger LOG = LoggerFactory.getLogger(VpaService.class);
 
   public final static String DATA_HIGHSCORE_HISTORY = "highscores";
@@ -43,6 +46,31 @@ public class VpaService {
 
   @Autowired
   private CardService cardService;
+
+  private VpaSource defaultVpaSource;
+  private List<VpaSource> vpaSources = new ArrayList<>();
+
+  public List<VpaSource> getVpaSources() {
+    return vpaSources;
+  }
+
+  public List<VpaDescriptor> getVpaDescriptors() {
+    List<VpaDescriptor> result = new ArrayList<>();
+    for (VpaSource vpaSource : vpaSources) {
+      List<VpaDescriptor> descriptors = vpaSource.getDescriptors();
+      result.addAll(descriptors);
+    }
+    return result;
+  }
+
+  public boolean deleteVpa(String uuid) {
+    Optional<VpaDescriptor> first = getVpaDescriptors().stream().filter(vpaDescriptor -> vpaDescriptor.getManifest().getUuid().equals(uuid)).findFirst();
+    if(first.isPresent()) {
+      VpaDescriptor descriptor = first.get();
+      return descriptor.getSource().delete(descriptor);
+    }
+    return false;
+  }
 
   public boolean importVpa(@NonNull ImportDescriptor descriptor) {
     try {
@@ -130,5 +158,11 @@ public class VpaService {
 
   public VpaManifest getManifest(int id) {
     return pinUPConnector.getGameManifest(id);
+  }
+
+  @Override
+  public void afterPropertiesSet() {
+    this.defaultVpaSource = new VpaSourceFileSystem(systemService.getVpaArchiveFolder());
+    this.vpaSources.add(defaultVpaSource);
   }
 }

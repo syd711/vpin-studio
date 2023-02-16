@@ -20,6 +20,7 @@ public class TablesController implements Initializable, StudioFXController {
   private final static Logger LOG = LoggerFactory.getLogger(TablesController.class);
 
   private TableOverviewController tableOverviewController;
+  private RepositoryController repositoryController;
 
   @FXML
   private TabPane tabPane;
@@ -47,14 +48,25 @@ public class TablesController implements Initializable, StudioFXController {
 
     try {
       FXMLLoader loader = new FXMLLoader(TableOverviewController.class.getResource("scene-tables-overview.fxml"));
-      Parent builtInRoot = loader.load();
+      Parent tablesRoot = loader.load();
       tableOverviewController = loader.getController();
       tableOverviewController.setRootController(this);
       tablesSideBarController.setTablesController(tableOverviewController);
-      tablesTab.setContent(builtInRoot);
+      tablesTab.setContent(tablesRoot);
     } catch (IOException e) {
       LOG.error("failed to load table overview: " + e.getMessage(), e);
     }
+
+    try {
+      FXMLLoader loader = new FXMLLoader(RepositoryController.class.getResource("scene-repository.fxml"));
+      Parent repositoryRoot = loader.load();
+      repositoryController = loader.getController();
+      repositoryController.setRootController(this);
+      tableRepositoryTab.setContent(repositoryRoot);
+    } catch (IOException e) {
+      LOG.error("failed to load table overview: " + e.getMessage(), e);
+    }
+
 
     tabPane.getSelectionModel().selectedIndexProperty().addListener((observableValue, number, t1) -> {
       if (t1.intValue() == 0) {
@@ -75,6 +87,10 @@ public class TablesController implements Initializable, StudioFXController {
 
   public TablesSidebarController getTablesSideBarController() {
     return tablesSideBarController;
+  }
+
+  public RepositorySidebarController getRepositorySideBarController() {
+    return repositorySideBarController;
   }
 
   public TableOverviewController getTableOverviewController() {
