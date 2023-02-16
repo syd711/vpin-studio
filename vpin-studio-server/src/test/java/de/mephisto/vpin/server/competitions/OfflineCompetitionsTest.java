@@ -46,7 +46,7 @@ public class OfflineCompetitionsTest extends AbstractVPinServerTest {
       }
 
       @Override
-      public void competitionFinished(@NonNull Competition competition, @Nullable Player player) {
+      public void competitionFinished(@NonNull Competition competition, @Nullable Player player, ScoreSummary scoreSummary) {
         assertNotNull(competition);
       }
 

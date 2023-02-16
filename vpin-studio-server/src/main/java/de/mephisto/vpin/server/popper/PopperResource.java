@@ -31,8 +31,8 @@ public class PopperResource {
 
   @PostMapping("/gameLaunch")
   public boolean gameLaunch(@RequestParam("table") String table) {
-    LOG.info("Received popper game launch event for " + table);
-    File tableFile = new File(table);
+    LOG.info("Received popper game launch event for " + table.trim());
+    File tableFile = new File(table.trim());
     Game game = gameService.getGameByFilename(tableFile.getName());
 
     new Thread(() -> {
@@ -49,7 +49,7 @@ public class PopperResource {
 
   @PostMapping("/gameExit")
   public boolean gameExit(@RequestParam("table") String table) {
-    LOG.info("Received popper game exit event for " + table);
+    LOG.info("Received popper game exit event for " + table.trim());
     File tableFile = new File(table.trim());
     Game game = gameService.getGameByFilename(tableFile.getName());
 

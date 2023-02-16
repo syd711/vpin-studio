@@ -78,7 +78,7 @@ public class DiscordOfflineChannelMessageFactory {
     String template = "**%s created a new highscore for \"%s\"**.\n" +
         "```%s\n" +
         "```\n";
-    String otherPlayerTemplate = "\n%s, your highscore of %s points has been beaten.";
+    String otherPlayerTemplate = "%s, your highscore of %s points has been beaten.";
 
     String msg = String.format(template, newName, game.getGameDisplayName(), newScore);
     String suffix = String.format(otherPlayerTemplate, oldName, oldScore.getScore());

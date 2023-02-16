@@ -1,7 +1,6 @@
 package de.mephisto.vpin.server.competitions;
 
 import de.mephisto.vpin.restclient.CompetitionType;
-import de.mephisto.vpin.restclient.discord.DiscordServer;
 import de.mephisto.vpin.restclient.util.DateUtil;
 import de.mephisto.vpin.server.discord.DiscordService;
 import de.mephisto.vpin.server.highscores.HighscoreParser;
@@ -63,20 +62,6 @@ public class CompetitionService implements InitializingBean {
   public void notifyCompetitionChanged(Competition c) {
     for (CompetitionChangeListener listener : this.listeners) {
       listener.competitionChanged(c);
-    }
-  }
-
-  public void notifyCompetitionFinished(Competition c) {
-    Player player = null;
-    if (c.getType().equals(CompetitionType.OFFLINE.name())) {
-      player = playerService.getPlayerForInitials(c.getDiscordServerId(), c.getWinnerInitials());
-    }
-    else if (c.getType().equals(CompetitionType.DISCORD.name())) {
-      player = discordService.getPlayerByInitials(c.getDiscordServerId(), c.getWinnerInitials());
-    }
-
-    for (CompetitionChangeListener listener : this.listeners) {
-      listener.competitionFinished(c, player);
     }
   }
 
@@ -147,7 +132,11 @@ public class CompetitionService implements InitializingBean {
 
     if (competition.getType().equals(CompetitionType.DISCORD.name())) {
       ScoreList scoreList = discordService.getScoreList(highscoreParser, competition.getUuid(), serverId, channelId);
-      return scoreList.getLatestScore();
+      ScoreSummary latestScore = scoreList.getLatestScore();
+      if (latestScore == null) {
+        LOG.warn("Discord competition \"" + competition +  "\" did not contain any highscore, maybe the topic was resetted?");
+        return new ScoreSummary(Collections.emptyList(), competition.getUpdatedAt());
+      }
     }
 
     return highscoreService.getScoreSummary(serverId, competition.getGameId(), null);
@@ -199,24 +188,34 @@ public class CompetitionService implements InitializingBean {
     return finishCompetition(getCompetition(id));
   }
 
-  public Competition finishCompetition(Competition competition) {
+  @NonNull
+  public Competition finishCompetition(@NonNull Competition competition) {
     long serverId = competition.getDiscordServerId();
-    long channelId = competition.getDiscordChannelId();
-
-    ScoreSummary highscores = highscoreService.getScoreSummary(serverId, competition.getGameId(), null);
-    if (highscores.getScores().isEmpty()) {
+    ScoreSummary scoreSummary = highscoreService.getScoreSummary(serverId, competition.getGameId(), null);
+    if (scoreSummary.getScores().isEmpty()) {
       LOG.error("Failed to finished " + competition + " correctly, no score could be determined, using John Doe.");
       competition.setWinnerInitials("???");
     }
     else {
-      Score score = highscores.getScores().get(0);
+      Score score = scoreSummary.getScores().get(0);
       competition.setWinnerInitials(score.getPlayerInitials());
     }
     competition.setEndDate(new Date()); //always the current date
-    Competition save = save(competition);
+    competition.setScore(scoreSummary.getRaw()); //save the last raw score to the competition itself
+    Competition finishedCompetition = save(competition);
 
-    notifyCompetitionFinished(save);
-    return save;
+    Player player = null;
+    if (finishedCompetition.getType().equals(CompetitionType.OFFLINE.name())) {
+      player = playerService.getPlayerForInitials(finishedCompetition.getDiscordServerId(), finishedCompetition.getWinnerInitials());
+    }
+    else if (competition.getType().equals(CompetitionType.DISCORD.name())) {
+      player = discordService.getPlayerByInitials(finishedCompetition.getDiscordServerId(), finishedCompetition.getWinnerInitials());
+    }
+
+    for (CompetitionChangeListener listener : this.listeners) {
+      listener.competitionFinished(finishedCompetition, player, scoreSummary);
+    }
+    return finishedCompetition;
   }
 
   public List<Competition> getActiveCompetitions() {

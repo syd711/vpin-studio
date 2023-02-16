@@ -203,8 +203,14 @@ public class CompetitionRepresentation {
   }
 
   public boolean isActive() {
-    Date now = DateUtil.today();
-    return (getStartDate().before(now) || getStartDate().equals(now)) && (getEndDate().after(now) || getEndDate().equals(now));
+    if(!StringUtils.isEmpty(getWinnerInitials())) {
+      return false;
+    }
+
+    long now = DateUtil.today().getTime();
+    long start = getStartDate().getTime();
+    long end = getEndDate().getTime();
+    return start <= now && end >= now;
   }
 
   public boolean isPlanned() {

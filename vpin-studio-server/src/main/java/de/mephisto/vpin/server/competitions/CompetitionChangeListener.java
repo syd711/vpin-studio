@@ -12,7 +12,7 @@ public interface CompetitionChangeListener {
 
   void competitionChanged(@NonNull Competition competition);
 
-  void competitionFinished(@NonNull Competition competition, @Nullable Player winner);
+  void competitionFinished(@NonNull Competition competition, @Nullable Player winner, @NonNull ScoreSummary scoreSummary);
 
   void competitionDeleted(@NonNull Competition competition);
 }

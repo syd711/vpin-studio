@@ -2,6 +2,7 @@ package de.mephisto.vpin.server.competitions;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import de.mephisto.vpin.restclient.util.DateUtil;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -185,8 +186,14 @@ public class Competition {
   }
 
   public boolean isActive() {
-    Date now = DateUtil.today();
-    return (getStartDate().before(now) || getStartDate().equals(now)) && (getEndDate().after(now) || getEndDate().equals(now));
+    if(!StringUtils.isEmpty(getWinnerInitials())) {
+      return false;
+    }
+
+    long now = DateUtil.today().getTime();
+    long start = getStartDate().getTime();
+    long end = getEndDate().getTime();
+    return start <= now && end >= now;
   }
 
   @Override

@@ -3,6 +3,7 @@ package de.mephisto.vpin.server.util.vpreg;
 import com.thoughtworks.xstream.core.util.Base64Encoder;
 import de.mephisto.vpin.server.games.Game;
 import edu.umd.cs.findbugs.annotations.Nullable;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.poifs.filesystem.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -169,7 +170,7 @@ public class VPReg {
           score.setBase64Score(new Base64Encoder().encode(scoreContent));
           score.setBase64Name(new Base64Encoder().encode(nameContent));
           score.setInitials(nameString);
-          score.setScore(Long.parseLong(scoreString));
+          score.setScore(StringUtils.isEmpty(scoreString) ?  0 : Long.parseLong(scoreString));
           score.setPos(index);
           summary.getScores().add(score);
           index++;

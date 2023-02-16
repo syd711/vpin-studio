@@ -18,9 +18,9 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class DiscordTest {
 
-  private final static String testTopic = "Competition Table: Attack from Mars 2.0.1\n" +
+  private final static String testTopic = "Competition Table: Tom and Jerry\n" +
       "\n" +
-      "data:ew0KICAidXVpZCIgOiAiOWJhMjNhMjgtNzVkMi00MTI4LTliZGItMDYyOWRhMDdlZTg1IiwNCiAgIm93bmVyIiA6ICIxMDU1MTAzMzIyODc0NDY2MzY1IiwNCiAgInJvbSIgOiAiYWZtXzExM2IiLA0KICAiZmlsZVNpemUiIDogMTQxNjMxNDg4LA0KICAic3RhcnREYXRlIiA6IDE2NzU0MjgyODk5ODAsDQogICJlbmREYXRlIiA6IDE2NzU3NzM4ODk5ODAsDQogICJuYW1lIiA6ICJDb21wZXRpdGlvbiBmb3IgQXR0YWNrIGZyb20gTWFycyAyLjAuMSIsDQogICJ0YWJsZU5hbWUiIDogIkF0dGFjayBmcm9tIE1hcnMgMi4wLjEiLA0KICAic3RhcnRNZXNzYWdlSWQiIDogIjEwNzEwNDg2OTIyNDY3ODIwNzciLA0KICAic2NvcmVzIiA6IFsgew0KICAgICJwb3NpdGlvbiIgOiAxLA0KICAgICJpbml0aWFscyIgOiAiU0xMIiwNCiAgICAic2NvcmUiIDogIjcuNTAwLjAwMC4wMDAiDQogIH0sIHsNCiAgICAicG9zaXRpb24iIDogMiwNCiAgICAiaW5pdGlhbHMiIDogIk1GQSIsDQogICAgInNjb3JlIiA6ICI3LjEwMC4wMDAuMDAwIg0KICB9LCB7DQogICAgInBvc2l0aW9uIiA6IDMsDQogICAgImluaXRpYWxzIiA6ICJMRlMiLA0KICAgICJzY29yZSIgOiAiNi41MDAuMDAwLjAwMCINCiAgfSBdDQp9";
+      "data:ew0KICAidXVpZCIgOiAiOTY1NjgwOTYtNjQyZi00NDVmLWJhOTAtNjQxZjYzN2ZjYThhIiwNCiAgIm93bmVyIiA6ICIxMDY2MzYzMzA3NzgwNDkzMzEyIiwNCiAgInJvbSIgOiAidG9tamVycnkiLA0KICAiZnMiIDogNzk4OTY1NzYsDQogICJzZHQiIDogMTY3NjUwMjAwMDAwMCwNCiAgImVkdCIgOiAxNjc3MTA2ODAwMDAwLA0KICAibmFtZSIgOiAiTXkgbmV4dCBjb21wZXRpdGlvbiIsDQogICJ0bmFtZSIgOiAiVG9tIGFuZCBKZXJyeSIsDQogICJtc2dJZCIgOiAxMDc1NzYyMjU0NDQxNjExMzA1LA0KICAic2NycyIgOiBbIHsNCiAgICAicCIgOiAxLA0KICAgICJpIiA6ICI/Pz8iLA0KICAgICJzIiA6ICIyODAuMjcwIg0KICB9LCB7DQogICAgInAiIDogMiwNCiAgICAiaSIgOiAiVUFBIiwNCiAgICAicyIgOiAiMjY5LjAzMCINCiAgfSwgew0KICAgICJwIiA6IDMsDQogICAgImkiIDogIlpBQSIsDQogICAgInMiIDogIjIyOS4yNDAiDQogIH0sIHsNCiAgICAicCIgOiA0LA0KICAgICJpIiA6ICI/Pz8iLA0KICAgICJzIiA6ICIwIg0KICB9LCB7DQogICAgInAiIDogNSwNCiAgICAiaSIgOiAiPz8/IiwNCiAgICAicyIgOiAiMCINCiAgfSBdDQp9";
 
   private final static String testTopic2 = "Competition Table: Godzilla (Sega-Stern mash-up) v3.0\n" +
       "\n" +
@@ -28,7 +28,7 @@ public class DiscordTest {
 
   @Test
   public void testTopicHelper() {
-    DiscordCompetitionData competitionData = CompetitionDataHelper.getCompetitionData(testTopic2);
+    DiscordCompetitionData competitionData = CompetitionDataHelper.getCompetitionData(testTopic);
     assertNotNull(competitionData);
     System.out.println(competitionData.getTname());
     System.out.println(competitionData.getName());

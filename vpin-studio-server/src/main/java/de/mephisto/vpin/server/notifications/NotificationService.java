@@ -119,6 +119,7 @@ public class NotificationService implements InitializingBean, HighscoreChangeLis
     }
 
     if (!messageSent) {
+      LOG.info("No competition found for " + game + ", sending default notification.");
       discordService.sendDefaultHighscoreMessage(DiscordOfflineChannelMessageFactory.createHighscoreCreatedMessage(event));
     }
   }
@@ -132,6 +133,7 @@ public class NotificationService implements InitializingBean, HighscoreChangeLis
     long discordChannelId = competition.getDiscordChannelId();
 
     LOG.info("****** Processing Discord Highscore Change Event for " + game.getGameDisplayName() + " *********");
+    LOG.info("The new score: " + newScore);
 
     ScoreList scoreList = discordService.getScoreList(highscoreParser, competition.getUuid(), discordServerId, discordChannelId);
     ScoreSummary latestScore = scoreList.getLatestScore();
@@ -152,7 +154,7 @@ public class NotificationService implements InitializingBean, HighscoreChangeLis
         if ((i + 1) == position) {
           updatedScores.add(newScore);
         }
-        if (updatedScores.size() < 3) {
+        if (updatedScores.size() <= oldScores.size()) {
           updatedScores.add(oldScores.get(i));
         }
       }
@@ -164,6 +166,7 @@ public class NotificationService implements InitializingBean, HighscoreChangeLis
         LOG.info("[" + s + "]");
       }
 
+      LOG.info("Emitting Discord highscore changed message for discord competition '" + competition + "'");
       discordService.sendMessage(discordServerId, discordChannelId, DiscordChannelMessageFactory.createCompetitionHighscoreCreatedMessage(game, competition, oldScore, newScore, updatedScores));
     }
     LOG.info("***************** / Finished Discord Highscore Processing *********************");
@@ -209,16 +212,15 @@ public class NotificationService implements InitializingBean, HighscoreChangeLis
   }
 
   @Override
-  public void competitionFinished(@NonNull Competition competition, @Nullable Player winner) {
+  public void competitionFinished(@NonNull Competition competition, @Nullable Player winner, @NonNull ScoreSummary scoreSummary) {
     Game game = gameService.getGame(competition.getGameId());
     if (game != null) {
       runCheckedDeAugmentation();
-      ScoreSummary summary = competitionService.getCompetitionScore(competition.getId());
 
       if (competition.getDiscordChannelId() > 0) {
         long discordServerId = competition.getDiscordServerId();
         long discordChannelId = competition.getDiscordChannelId();
-        discordService.sendMessage(discordServerId, discordChannelId, DiscordOfflineChannelMessageFactory.createCompetitionFinishedMessage(competition, winner, game, summary));
+        discordService.sendMessage(discordServerId, discordChannelId, DiscordOfflineChannelMessageFactory.createCompetitionFinishedMessage(competition, winner, game, scoreSummary));
       }
 
       if (competition.getType().equals(CompetitionType.DISCORD.name())) {
@@ -226,10 +228,6 @@ public class NotificationService implements InitializingBean, HighscoreChangeLis
         long discordChannelId = competition.getDiscordChannelId();
         discordService.resetCompetition(discordServerId, discordChannelId);
       }
-
-      //save the last raw score to the competition itself
-      competition.setScore(summary.getRaw());
-      competitionService.save(competition);
     }
   }
 

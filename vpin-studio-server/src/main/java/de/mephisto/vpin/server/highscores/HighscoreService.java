@@ -368,7 +368,7 @@ public class HighscoreService implements InitializingBean {
 
     //check if the existing highscore has actual RAW data to analyze
     Highscore existingScore = existingHighscore.get();
-    if (StringUtils.isEmpty(existingHighscore.get().getRaw())) {
+    if (StringUtils.isEmpty(existingScore.getRaw())) {
       if (!StringUtils.isEmpty(metadata.getRaw())) {
         existingScore.setRaw(metadata.getRaw());
         existingScore.setType(metadata.getType() != null ? metadata.getType().name() : null);
@@ -386,7 +386,11 @@ public class HighscoreService implements InitializingBean {
       return;
     }
 
-    //diff calculation
+    /*
+     * Diff calculation:
+     * Note that this only determines if the highscore has changed locally and a change event should be fired.
+     * For discord competition, this event with the new score is used to calculate the actual change inside the competition
+     */
     long serverId = preferencesService.getPreferenceValueLong(PreferenceNames.DISCORD_GUILD_ID, -1);
     List<Score> oldScores = highscoreParser.parseScores(existingScore.getLastModified(), existingScore.getRaw(), game.getId(), serverId);
     List<Score> newScores = highscoreParser.parseScores(newHighscore.getLastModified(), newHighscore.getRaw(), game.getId(), serverId);
@@ -401,6 +405,7 @@ public class HighscoreService implements InitializingBean {
     Score oldScore = oldScores.get(position - 1);
     Score newScore = newScores.get(position - 1);
 
+    //TODO this does not work, we need the updated existing data earlier
     //handle online competition change events differently
     List<Competition> activeDiscordCompetitionsForGame = competitionsRepository.findByStartDateLessThanEqualAndEndDateGreaterThanEqualAndGameIdAndType(new Date(), new Date(), game.getId(), CompetitionType.DISCORD.name());
     if (activeDiscordCompetitionsForGame.isEmpty()) {
