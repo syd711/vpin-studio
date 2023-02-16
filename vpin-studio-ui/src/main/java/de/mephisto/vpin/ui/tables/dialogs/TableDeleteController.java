@@ -10,6 +10,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
+import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -52,6 +53,15 @@ public class TableDeleteController implements Initializable, DialogController {
 
   @FXML
   private CheckBox dmdCheckbox;
+
+  @FXML
+  private Pane validationContainer;
+
+  @FXML
+  private Label validationTitle;
+
+  @FXML
+  private Label validationDescription;
 
   private boolean result = false;
   private GameRepresentation game;
