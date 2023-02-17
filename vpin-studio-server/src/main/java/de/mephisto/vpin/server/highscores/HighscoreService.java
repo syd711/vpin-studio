@@ -98,7 +98,7 @@ public class HighscoreService implements InitializingBean {
     return metadata;
   }
 
-  public boolean resetHighscore(Game game, ResetHighscoreDescriptor descriptor) {
+  public boolean resetHighscore(@NonNull Game game, boolean deleteHistory) {
     HighscoreType highscoreType = game.getHighscoreType();
     boolean result = false;
     if (highscoreType != null) {
@@ -124,7 +124,7 @@ public class HighscoreService implements InitializingBean {
     else {
       result = true;
     }
-    deleteScores(game.getId(), descriptor.isDeleteHistory());
+    deleteScores(game.getId(), deleteHistory);
     return result;
   }
 

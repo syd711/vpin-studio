@@ -176,15 +176,18 @@ public class NotificationService implements InitializingBean, HighscoreChangeLis
   public void competitionStarted(@NonNull Competition competition) {
     Game game = gameService.getGame(competition.getGameId());
     if (game != null) {
-
       if (competition.getType().equals(CompetitionType.DISCORD.name())) {
+        highscoreService.resetHighscore(game, true);
+
+        boolean isOwner = competition.getOwner().equals(String.valueOf(discordService.getBotId()));
         long discordServerId = competition.getDiscordServerId();
         long discordChannelId = competition.getDiscordChannelId();
         long botId = discordService.getBotId();
 
+
         //check if the competition is already set as topic, in this case the user simply re-created the DB entry
         DiscordCompetitionData competitionData = discordService.getCompetitionData(discordServerId, discordChannelId);
-        if (competitionData == null) {
+        if (competitionData == null && isOwner) {
           long messageId = discordService.sendMessage(discordServerId, discordChannelId, DiscordChannelMessageFactory.createDiscordCompetitionCreatedMessage(competition, game, botId));
           ScoreSummary highscores = highscoreService.getScoreSummary(discordServerId, game.getId(), game.getGameDisplayName());
           discordService.saveCompetitionData(competition, game, highscores, messageId);

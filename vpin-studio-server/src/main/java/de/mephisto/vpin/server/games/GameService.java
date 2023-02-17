@@ -81,14 +81,13 @@ public class GameService {
     return result;
   }
 
-  public boolean resetGame(@NonNull ResetHighscoreDescriptor descriptor) {
-    Game game = this.getGame(descriptor.getGameId());
+  public boolean resetGame(int gameId, boolean deleteHistory) {
+    Game game = this.getGame(gameId);
     if (game == null) {
       return false;
     }
-    return highscoreService.resetHighscore(game, descriptor);
+    return highscoreService.resetHighscore(game, deleteHistory);
   }
-
 
   public boolean deleteGame(@NonNull DeleteDescriptor descriptor) {
     Game game = this.getGame(descriptor.getGameId());
@@ -97,10 +96,7 @@ public class GameService {
     }
 
     if (descriptor.isDeleteHighscores()) {
-      ResetHighscoreDescriptor d = new ResetHighscoreDescriptor();
-      d.setGameId(game.getId());
-      d.setDeleteHistory(true);
-      resetGame(d);
+      resetGame(game.getId(), true);
     }
 
     boolean success = true;

@@ -97,7 +97,7 @@ public class GamesResource {
 
   @PostMapping("/reset")
   public boolean reset(@RequestBody ResetHighscoreDescriptor descriptor) {
-    return gameService.resetGame(descriptor);
+    return gameService.resetGame(descriptor.getGameId(), descriptor.isDeleteHistory());
   }
 
   @PostMapping("/save")
