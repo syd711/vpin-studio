@@ -9,14 +9,14 @@ public class VpaDescriptor {
   private VpaManifest manifest;
   private VpaSource source;
   private Date createdAt;
-  private String name;
+  private String filename;
   private long size;
 
-  public VpaDescriptor(VpaSource source, VpaManifest manifest, Date createdAt, String name, long size) {
+  public VpaDescriptor(VpaSource source, VpaManifest manifest, Date createdAt, String filename, long size) {
     this.source = source;
     this.manifest = manifest;
     this.createdAt = createdAt;
-    this.name = name;
+    this.filename = filename;
     this.size = size;
   }
 
@@ -28,12 +28,12 @@ public class VpaDescriptor {
     this.size = size;
   }
 
-  public String getName() {
-    return name;
+  public String getFilename() {
+    return filename;
   }
 
-  public void setName(String name) {
-    this.name = name;
+  public void setFilename(String filename) {
+    this.filename = filename;
   }
 
   public Date getCreatedAt() {

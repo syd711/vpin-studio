@@ -31,7 +31,7 @@ public class VpaSourceFileSystem implements VpaSource {
         for (File vpaFile : vpaFiles) {
           VpaManifest manifest = VpaUtil.readManifest(vpaFile);
           VpaDescriptor descriptor = new VpaDescriptor(this, manifest, new Date(vpaFile.lastModified()),
-              FilenameUtils.getBaseName(vpaFile.getName()), vpaFile.length());
+              vpaFile.getName(), vpaFile.length());
           cache.put(vpaFile.getName(), descriptor);
         }
       }
@@ -41,7 +41,7 @@ public class VpaSourceFileSystem implements VpaSource {
 
   @Override
   public boolean delete(VpaDescriptor descriptor) {
-    File file = new File(vpaArchiveFolder, descriptor.getName() + ".vpa");
+    File file = new File(vpaArchiveFolder, descriptor.getFilename());
     return file.delete();
   }
 

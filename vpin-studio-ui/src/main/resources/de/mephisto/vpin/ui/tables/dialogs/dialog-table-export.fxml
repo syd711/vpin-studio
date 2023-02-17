@@ -335,6 +335,9 @@
                                  <font>
                                     <Font size="14.0" />
                                  </font>
+                                 <GridPane.margin>
+                                    <Insets />
+                                 </GridPane.margin>
                               </Label>
                               <Label text="Export PUP Pack:" GridPane.rowIndex="2">
                                  <font>
@@ -382,6 +385,9 @@
                                  </font>
                               </CheckBox>
                            </children>
+                           <padding>
+                              <Insets left="24.0" />
+                           </padding>
                         </GridPane>
                      </children>
                   </VBox>

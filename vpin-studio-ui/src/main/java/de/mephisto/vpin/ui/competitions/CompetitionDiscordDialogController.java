@@ -78,6 +78,9 @@ public class CompetitionDiscordDialogController implements Initializable, Dialog
   @FXML
   private Label validationDescription;
 
+  @FXML
+  private CheckBox resetCheckbox;
+
   private CompetitionRepresentation competition;
 
   private DiscordBotStatus botStatus = null;
@@ -193,6 +196,9 @@ public class CompetitionDiscordDialogController implements Initializable, Dialog
       validate();
     });
 
+
+    resetCheckbox.selectedProperty().addListener((observable, oldValue, newValue) -> validate());
+
     validate();
   }
 
@@ -306,6 +312,12 @@ public class CompetitionDiscordDialogController implements Initializable, Dialog
       return;
     }
 
+    if(!resetCheckbox.isDisable() && !resetCheckbox.isSelected()) {
+      validationTitle.setText("Highscore reset required");
+      validationDescription.setText("The reset is required in case your highscore is already higher than the others.");
+      return;
+    }
+
     validationContainer.setVisible(false);
     this.saveBtn.setDisable(false);
   }
@@ -324,6 +336,8 @@ public class CompetitionDiscordDialogController implements Initializable, Dialog
 
     if (c != null) {
       this.competition = c;
+      this.resetCheckbox.setDisable(true);
+
       GameRepresentation game = client.getGame(c.getGameId());
       DiscordServer discordServer = client.getDiscordServer(competition.getDiscordServerId());
       String botId = String.valueOf(botStatus.getBotId());

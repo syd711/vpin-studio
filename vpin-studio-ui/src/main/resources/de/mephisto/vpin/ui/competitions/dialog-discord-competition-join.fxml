@@ -2,6 +2,7 @@
 
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.Tooltip?>
@@ -16,7 +17,7 @@
 <?import javafx.scene.text.Font?>
 <?import org.kordamp.ikonli.javafx.FontIcon?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefWidth="750.0" styleClass="base-component" stylesheets="@../stylesheet.css" xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.competitions.CompetitionDiscordJoinDialogController">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefWidth="750.0" styleClass="base-component" stylesheets="@../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.competitions.CompetitionDiscordJoinDialogController">
    <top>
       <fx:include fx:id="header" source="/de/mephisto/vpin/commons/fx/scene-dialog-header.fxml" />
    </top>
@@ -190,20 +191,21 @@
                     <rowConstraints>
                         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                         <RowConstraints />
                     </rowConstraints>
                      <children>
-                        <Label layoutX="10.0" layoutY="189.0" text="Wheel Icon Preview:" textFill="WHITE" GridPane.rowIndex="2">
+                        <Label layoutX="10.0" layoutY="189.0" text="Wheel Icon Preview:" textFill="WHITE" GridPane.rowIndex="3">
                            <font>
                               <Font size="14.0" />
                            </font>
                         </Label>
-                        <Label layoutX="10.0" layoutY="117.0" text="Competition Badge:" textFill="WHITE" GridPane.rowIndex="1">
+                        <Label layoutX="10.0" layoutY="117.0" text="Competition Badge:" textFill="WHITE" GridPane.rowIndex="2">
                            <font>
                               <Font size="14.0" />
                            </font>
                         </Label>
-                        <HBox alignment="CENTER_LEFT" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                        <HBox alignment="CENTER_LEFT" GridPane.columnIndex="1" GridPane.rowIndex="2">
                            <children>
                               <ComboBox fx:id="competitionIconCombo" prefHeight="30.0" prefWidth="210.0" />
                               <Label textFill="WHITE">
@@ -228,6 +230,31 @@
                            </font>
                         </Label>
                         <ComboBox fx:id="tableCombo" prefHeight="30.0" prefWidth="300.0" GridPane.columnIndex="1" />
+                        <HBox alignment="CENTER_LEFT" spacing="6.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                           <children>
+                              <CheckBox fx:id="resetCheckbox" mnemonicParsing="false" textFill="WHITE">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </CheckBox>
+                              <Label textFill="WHITE">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                                 <graphic>
+                                    <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
+                                 </graphic>
+                                 <tooltip>
+                                    <Tooltip text="The reset is required in case your highscore is already higher than the others. You can backup your table to restore them after the competition is finished." />
+                                 </tooltip>
+                              </Label>
+                           </children>
+                        </HBox>
+                        <Label layoutX="10.0" layoutY="15.0" text="Reset Highscores:" textFill="WHITE" GridPane.rowIndex="1">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Label>
                      </children>
                   </GridPane>
                   <StackPane alignment="TOP_LEFT" prefHeight="200.0" prefWidth="578.0">
@@ -262,7 +289,7 @@
                   </Label>
                </bottom>
                <BorderPane.margin>
-                  <Insets />
+                  <Insets top="12.0" />
                </BorderPane.margin>
                <padding>
                   <Insets bottom="6.0" left="6.0" right="6.0" top="6.0" />

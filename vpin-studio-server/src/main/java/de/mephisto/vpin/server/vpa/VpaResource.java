@@ -1,6 +1,5 @@
 package de.mephisto.vpin.server.vpa;
 
-import de.mephisto.vpin.restclient.VpaManifest;
 import de.mephisto.vpin.restclient.representations.VpaDescriptorRepresentation;
 import de.mephisto.vpin.restclient.representations.VpaSourceRepresentation;
 import de.mephisto.vpin.server.system.SystemService;
@@ -40,7 +39,7 @@ public class VpaResource {
       source.setLocation(vpaDescriptor.getSource().getLocation());
 
       VpaDescriptorRepresentation representation = new VpaDescriptorRepresentation();
-      representation.setName(vpaDescriptor.getName());
+      representation.setFilename(vpaDescriptor.getFilename());
       representation.setManifest(vpaDescriptor.getManifest());
       representation.setCreatedAt(vpaDescriptor.getCreatedAt());
       representation.setSize(vpaDescriptor.getSize());

@@ -166,6 +166,10 @@ public class TableExportController implements Initializable, DialogController {
       Image image = new Image(gameMediaItem);
       imageView.setImage(image);
     }
+    else {
+      Image wheel = new Image(Studio.class.getResourceAsStream("avatar-blank.png"));
+      imageView.setImage(wheel);
+    }
 
     exportRomCheckbox.setSelected(true);
     exportPupPackCheckbox.setSelected(true);

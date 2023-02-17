@@ -7,6 +7,7 @@ import de.mephisto.vpin.restclient.representations.VpaDescriptorRepresentation;
 import de.mephisto.vpin.ui.NavigationController;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.WaitOverlayController;
+import de.mephisto.vpin.ui.util.Dialogs;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
@@ -39,6 +40,9 @@ public class RepositoryController implements Initializable {
 
   @FXML
   private Button importBtn;
+
+  @FXML
+  private Button uploadBtn;
 
   @FXML
   private TextField searchTextField;
@@ -86,6 +90,24 @@ public class RepositoryController implements Initializable {
 
   @FXML
   private void onImport() {
+    VpaDescriptorRepresentation selection = tableView.getSelectionModel().getSelectedItem();
+    if(selection != null) {
+      if (client.isPinUPPopperRunning()) {
+        Optional<ButtonType> buttonType = Dialogs.openPopperRunningWarning(Studio.stage);
+        if (buttonType.isPresent() && buttonType.get().equals(ButtonType.APPLY)) {
+          Studio.client.terminatePopper();
+          Dialogs.openVpaImportDialog(this, selection);
+        }
+      }
+      else {
+        Dialogs.openVpaImportDialog(this, selection);
+      }
+    }
+
+  }
+
+  @FXML
+  private void onUpload() {
 
   }
 
@@ -131,7 +153,7 @@ public class RepositoryController implements Initializable {
   private void onDelete() {
     VpaDescriptorRepresentation selection = tableView.getSelectionModel().getSelectedItem();
     if (selection != null) {
-      Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Delete Archive '" + selection.getName() + "'?");
+      Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Delete Archive '" + selection.getFilename() + "'?");
       if (result.isPresent() && result.get().equals(ButtonType.OK)) {
         client.deleteVpa(selection);
         tableView.getSelectionModel().clearSelection();
@@ -179,7 +201,7 @@ public class RepositoryController implements Initializable {
 
     nameColumn.setCellValueFactory(cellData -> {
       VpaDescriptorRepresentation value = cellData.getValue();
-      return new SimpleStringProperty(value.getName());
+      return new SimpleStringProperty(value.getManifest().getGameDisplayName());
     });
 
     directB2SColumn.setCellValueFactory(cellData -> {
@@ -264,7 +286,7 @@ public class RepositoryController implements Initializable {
     NavigationController.setBreadCrumb(Arrays.asList("Table Repository"));
     if (newSelection.isPresent()) {
       VpaDescriptorRepresentation descriptorRepresentation = newSelection.get();
-      NavigationController.setBreadCrumb(Arrays.asList("Table Repository", descriptorRepresentation.getName()));
+      NavigationController.setBreadCrumb(Arrays.asList("Table Repository", descriptorRepresentation.getFilename()));
     }
     tablesController.getRepositorySideBarController().setVpaDescriptor(newSelection);
   }
@@ -277,7 +299,7 @@ public class RepositoryController implements Initializable {
     }
 
     for (VpaDescriptorRepresentation archive : archives) {
-      if (archive.getName().toLowerCase().contains(filterValue.toLowerCase())) {
+      if (archive.getFilename().toLowerCase().contains(filterValue.toLowerCase())) {
         filtered.add(archive);
       }
     }

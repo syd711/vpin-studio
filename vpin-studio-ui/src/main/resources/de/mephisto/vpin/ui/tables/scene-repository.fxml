@@ -46,12 +46,20 @@
                      </graphic>
                   </Button>
                   <Separator orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
-                  <Button fx:id="importBtn" layoutX="198.0" layoutY="10.0" mnemonicParsing="false" onAction="#onImport" text="Import" textFill="WHITE">
+                  <Button fx:id="importBtn" layoutX="198.0" layoutY="10.0" mnemonicParsing="false" onAction="#onImport" text="Install" textFill="WHITE">
                      <font>
                         <Font size="14.0" />
                      </font>
                      <graphic>
-                        <FontIcon iconColor="WHITE" iconLiteral="mdi2i-import" />
+                        <FontIcon iconColor="WHITE" iconLiteral="mdi2a-application-import" />
+                     </graphic>
+                  </Button>
+                  <Button fx:id="uploadBtn" layoutX="298.0" layoutY="10.0" mnemonicParsing="false" onAction="#onUpload" text="Upload" textFill="WHITE">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                     <graphic>
+                        <FontIcon iconColor="WHITE" iconLiteral="mdi2u-upload" />
                      </graphic>
                   </Button>
                   <Separator layoutX="282.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />

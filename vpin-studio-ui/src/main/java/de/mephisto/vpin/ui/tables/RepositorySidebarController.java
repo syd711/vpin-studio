@@ -178,7 +178,7 @@ public class RepositorySidebarController implements Initializable, StudioFXContr
       VpaDescriptorRepresentation descriptorRepresentation = selection.get();
       VpaManifest manifest = descriptorRepresentation.getManifest();
 
-      filenameLabel.setText(descriptorRepresentation.getName() + ".vpa");
+      filenameLabel.setText(descriptorRepresentation.getFilename());
       fileSizeLabel.setText(FileUtils.readableFileSize(descriptorRepresentation.getSize()));
       sourceLabel.setText(descriptorRepresentation.getSource().getLocation());
 

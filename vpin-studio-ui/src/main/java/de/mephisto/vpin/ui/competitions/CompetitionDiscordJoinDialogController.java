@@ -11,20 +11,18 @@ import de.mephisto.vpin.restclient.discord.DiscordServer;
 import de.mephisto.vpin.restclient.representations.*;
 import de.mephisto.vpin.restclient.util.DateUtil;
 import edu.umd.cs.findbugs.annotations.Nullable;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.Button;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.Label;
-import javafx.scene.control.ListCell;
+import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -35,7 +33,6 @@ import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.ResourceBundle;
 
@@ -91,6 +88,9 @@ public class CompetitionDiscordJoinDialogController implements Initializable, Di
 
   @FXML
   private Label validationDescription;
+
+  @FXML
+  private CheckBox resetCheckbox;
 
   private CompetitionRepresentation competition;
 
@@ -167,6 +167,8 @@ public class CompetitionDiscordJoinDialogController implements Initializable, Di
       refreshPreview(tableCombo.getValue(), t1);
       validate();
     });
+
+    resetCheckbox.selectedProperty().addListener((observable, oldValue, newValue) -> validate());
 
     validate();
   }
@@ -245,6 +247,7 @@ public class CompetitionDiscordJoinDialogController implements Initializable, Di
       validationDescription.setText("You are the owner of this competition.");
       return;
     }
+    //TODO check against existing
 
     GameRepresentation game = this.tableCombo.getValue();
     long tableSize = game.getGameFileSize();
@@ -256,6 +259,13 @@ public class CompetitionDiscordJoinDialogController implements Initializable, Di
       validationDescription.setText("The file size of the matching table does not match the competed one.");
       return;
     }
+
+    if(!resetCheckbox.isSelected()) {
+      validationTitle.setText("Highscore reset required");
+      validationDescription.setText("The reset is required in case your highscore is already higher than the others.");
+      return;
+    }
+
 
     this.competitionIconCombo.setDisable(false);
     this.tableCombo.setDisable(false);

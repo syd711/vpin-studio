@@ -4,10 +4,7 @@ import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.PopperScreen;
 import de.mephisto.vpin.restclient.ResetHighscoreDescriptor;
 import de.mephisto.vpin.restclient.VPinStudioClient;
-import de.mephisto.vpin.restclient.representations.CompetitionRepresentation;
-import de.mephisto.vpin.restclient.representations.GameMediaItemRepresentation;
-import de.mephisto.vpin.restclient.representations.GameRepresentation;
-import de.mephisto.vpin.restclient.representations.PlayerRepresentation;
+import de.mephisto.vpin.restclient.representations.*;
 import de.mephisto.vpin.ui.ProgressDialogController;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.UpdateDialogController;
@@ -15,6 +12,7 @@ import de.mephisto.vpin.ui.competitions.CompetitionDiscordDialogController;
 import de.mephisto.vpin.ui.competitions.CompetitionDiscordJoinDialogController;
 import de.mephisto.vpin.ui.competitions.CompetitionOfflineDialogController;
 import de.mephisto.vpin.ui.players.PlayerDialogController;
+import de.mephisto.vpin.ui.tables.RepositoryController;
 import de.mephisto.vpin.ui.tables.TableOverviewController;
 import de.mephisto.vpin.ui.tables.dialogs.*;
 import edu.umd.cs.findbugs.annotations.Nullable;
@@ -143,6 +141,13 @@ public class Dialogs {
     Stage stage = createStudioDialogStage(TableImportController.class, "dialog-table-import.fxml", "Table Import");
     TableImportController controller = (TableImportController) stage.getUserData();
     controller.setTablesController(tablesController);
+    stage.showAndWait();
+  }
+
+  public static void openVpaImportDialog(RepositoryController repositoryController, VpaDescriptorRepresentation vpaDescriptor) {
+    Stage stage = createStudioDialogStage(VpaImportController.class, "dialog-vpa-import.fxml", "Install Archive");
+    VpaImportController controller = (VpaImportController) stage.getUserData();
+    controller.setData(repositoryController, vpaDescriptor);
     stage.showAndWait();
   }
 

@@ -8,7 +8,7 @@ public class VpaDescriptorRepresentation {
   private VpaManifest manifest;
   private VpaSourceRepresentation source;
   private Date createdAt;
-  private String name;
+  private String filename;
   private long size;
 
   public long getSize() {
@@ -19,12 +19,12 @@ public class VpaDescriptorRepresentation {
     this.size = size;
   }
 
-  public String getName() {
-    return name;
+  public String getFilename() {
+    return filename;
   }
 
-  public void setName(String name) {
-    this.name = name;
+  public void setFilename(String filename) {
+    this.filename = filename;
   }
 
   public Date getCreatedAt() {
