@@ -11,6 +11,7 @@ import javafx.scene.paint.Color;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 public class ScoreGraphUtil {
@@ -29,11 +30,12 @@ public class ScoreGraphUtil {
 
       //every summary is one history version
       List<ScoreSummaryRepresentation> scores = list.getScores();
+      scores.sort(Comparator.comparing(ScoreSummaryRepresentation::getCreatedAt));
       for (ScoreSummaryRepresentation score : scores) {
         List<ScoreRepresentation> entryList = score.getScores();
         for (int i = 0; i < entryList.size(); i++) {
           ScoreRepresentation s = entryList.get(i);
-          series.get((i)).getData().add(new XYChart.Data(SimpleDateFormat.getDateTimeInstance().format(score.getCreatedAt()), s.getNumericScore()));
+          series.get((i)).getData().add(new XYChart.Data(SimpleDateFormat.getDateTimeInstance().format(s.getCreatedAt()), s.getNumericScore()));
         }
       }
 

@@ -124,16 +124,19 @@ public class WheelAugmenter {
   }
 
   public synchronized void deAugment() {
-    deAugment(backupWheelIcon, wheelIcon);
-    deAugment(backupWheelIconThumbnail, wheelIconThumbnail);
-    deAugment(backupWheelIconThumbnailSm, wheelIconThumbnailSm);
-    resetThumbs();
+    boolean b1 = deAugment(backupWheelIcon, wheelIcon);
+    boolean b2 = deAugment(backupWheelIconThumbnail, wheelIconThumbnail);
+    boolean b3 = deAugment(backupWheelIconThumbnailSm, wheelIconThumbnailSm);
+    if(b1 || b2 || b3) {
+      resetThumbs();
+    }
   }
 
-  private void deAugment(File backup, File target) {
+  private boolean deAugment(File backup, File target) {
     if (backup.exists()) {
       if (!target.delete()) {
         LOG.warn("Failed to delete augmented file '" + target.getAbsolutePath() + "'");
+        return false;
       }
       else {
         LOG.info("Deleted augmented file '" + target.getAbsolutePath() + "'");
@@ -145,9 +148,11 @@ public class WheelAugmenter {
         if (!backup.delete()) {
           LOG.error("Failed to delete backup file " + backup.getAbsolutePath());
         }
+        return true;
       } catch (IOException e) {
         LOG.error("Failed to restore original wheel icon '" + target.getAbsolutePath() + "': " + e.getMessage(), e);
       }
     }
+    return false;
   }
 }

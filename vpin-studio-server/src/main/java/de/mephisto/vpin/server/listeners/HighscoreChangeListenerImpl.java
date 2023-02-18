@@ -85,7 +85,7 @@ public class HighscoreChangeListenerImpl implements InitializingBean, HighscoreC
     ScoreList scoreList = discordService.getScoreList(highscoreParser, competition.getUuid(), discordServerId, discordChannelId);
     if (scoreList.getScores().isEmpty()) {
       LOG.info("Emitting initial highscore message for " + competition);
-      discordService.sendMessage(discordServerId, discordChannelId, DiscordChannelMessageFactory.createFirstCompetitionHighscoreCreatedMessage(game, competition, newScore, event.getNewScores()));
+      discordService.sendMessage(discordServerId, discordChannelId, DiscordChannelMessageFactory.createFirstCompetitionHighscoreCreatedMessage(game, competition, newScore, event.getScoreCount()));
     }
     else {
       ScoreSummary latestScore = scoreList.getLatestScore();

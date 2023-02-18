@@ -51,6 +51,15 @@ public class VPinStudioClient implements ObservedPropertyChangeListener, Overlay
     LOG.info("Cleared " + size + " resources from cache.");
   }
 
+  public void clearWheelCache() {
+    List<String> keys = new ArrayList<>(imageCache.keySet());
+    for (String key : keys) {
+      if(key.contains("/Wheel")) {
+        imageCache.remove(key);
+      }
+    }
+  }
+
   public void clearTableCache() {
     restClient.clearCache("games/");
   }
@@ -314,20 +323,21 @@ public class VPinStudioClient implements ObservedPropertyChangeListener, Overlay
    ********************************************************************************************************************/
 
   public ByteArrayInputStream getGameMediaItem(int id, PopperScreen screen) {
-    if (!imageCache.containsKey(String.valueOf(id)) && screen.equals(PopperScreen.Wheel)) {
-      byte[] bytes = restClient.readBinary(API + "poppermedia/" + id + "/" + screen.name());
+    String url = API + "poppermedia/" + id + "/" + screen.name();
+    if (!imageCache.containsKey(url) && screen.equals(PopperScreen.Wheel)) {
+      byte[] bytes = restClient.readBinary(url);
       if (bytes == null) {
         bytes = new byte[]{};
       }
-      imageCache.put(String.valueOf(id), bytes);
+      imageCache.put(url, bytes);
     }
 
     if (screen.equals(PopperScreen.Wheel)) {
-      byte[] imageBytes = imageCache.get(String.valueOf(id));
+      byte[] imageBytes = imageCache.get(url);
       return new ByteArrayInputStream(imageBytes);
     }
 
-    byte[] bytes = restClient.readBinary(API + "poppermedia/" + id + "/" + screen.name());
+    byte[] bytes = restClient.readBinary(url);
     return new ByteArrayInputStream(bytes);
   }
 

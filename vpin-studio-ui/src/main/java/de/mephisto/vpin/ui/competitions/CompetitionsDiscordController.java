@@ -238,6 +238,8 @@ public class CompetitionsDiscordController implements Initializable, StudioFXCon
 
   @FXML
   public void onReload() {
+    client.clearWheelCache();
+
     tableView.setVisible(false);
     tableStack.getChildren().add(loadingOverlay);
 

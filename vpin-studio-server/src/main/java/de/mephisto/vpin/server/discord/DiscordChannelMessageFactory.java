@@ -42,7 +42,7 @@ public class DiscordChannelMessageFactory {
   public static String createFirstCompetitionHighscoreCreatedMessage(@NonNull Game game,
                                                                      @NonNull Competition competition,
                                                                      @NonNull Score newScore,
-                                                                     @NonNull List<Score> newScores) {
+                                                                     int scoreCount) {
     String playerName = newScore.getPlayerInitials();
     if (newScore.getPlayer() != null) {
       Player player = newScore.getPlayer();
@@ -52,12 +52,12 @@ public class DiscordChannelMessageFactory {
       }
     }
 
-    String template = "**%s created the first highscore for \"%s\"**.\n(ID: %s)\n" +
+    String template = "**%s created the first highscore for competition \"%s\" of table \"%s\"**.\n(ID: %s)\n" +
         "```%s\n" +
         "```";
 
-    String msg = String.format(template, playerName, game.getGameDisplayName(), competition.getUuid(), newScore);
-    return msg + "Here is the updated highscore list:" + createInitialHighscoreList(newScore, newScores.size() - 1);
+    String msg = String.format(template, playerName, competition.getName(), game.getGameDisplayName(), competition.getUuid(), newScore);
+    return msg + "Here is the updated highscore list:" + createInitialHighscoreList(newScore, scoreCount - 1);
 
   }
 

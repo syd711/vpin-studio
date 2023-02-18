@@ -192,6 +192,7 @@ public class CompetitionsOfflineController implements Initializable, StudioFXCon
 
   @FXML
   public void onReload() {
+    client.clearWheelCache();
     CompetitionRepresentation selection = tableView.getSelectionModel().getSelectedItem();
 
     tableView.setVisible(false);

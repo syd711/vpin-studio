@@ -21,6 +21,8 @@ import java.util.stream.Collectors;
 public class DiscordClient {
   private final static Logger LOG = LoggerFactory.getLogger(DiscordClient.class);
 
+  private final static List<String> ALLOW_LIST = Arrays.asList("bot-test-channel", "online-competitions", "offline-competitions");
+
   private final JDA jda;
   private final DiscordListenerAdapter listenerAdapter;
   private final String botToken;
@@ -135,6 +137,7 @@ public class DiscordClient {
 
   public void invalidateMessageCache(long channelId) {
     messageCache.invalidate(channelId);
+    LOG.info("Invalidated Discord competition message cache for " + channelId);
   }
 
   public DiscordMember getMember(long serverId, long memberId) {
@@ -160,7 +163,7 @@ public class DiscordClient {
       List<GuildChannel> channels = guild.getChannels();
       for (GuildChannel channel : channels) {
         if (channel instanceof TextChannel) {
-          if (!channel.getName().equals("bot-test-channel")) {
+          if (!ALLOW_LIST.contains(channel.getName())) {
             PermissionOverride po = channel.getPermissionContainer().getPermissionOverride((IPermissionHolder) guild.getRolesByName("@everyone", true).toArray()[0]);
             if (po != null && po.getDenied().contains(Permission.VIEW_CHANNEL)) {
               continue;

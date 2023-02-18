@@ -4,6 +4,7 @@ import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.channel.concrete.PrivateChannel;
 import net.dv8tion.jda.api.entities.channel.middleman.MessageChannel;
 import net.dv8tion.jda.api.entities.channel.unions.MessageChannelUnion;
+import net.dv8tion.jda.api.events.message.MessageDeleteEvent;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.slf4j.Logger;
@@ -46,7 +47,16 @@ public class DiscordListenerAdapter extends ListenerAdapter {
     return false;
   }
 
+  @Override
+  public void onMessageDelete(MessageDeleteEvent event) {
+    super.onMessageDelete(event);
+    long channelId = event.getChannel().getIdLong();
+    discordClient.invalidateMessageCache(channelId);
+  }
+
   /******************** Listener Methods ******************************************************************************/
+
+
 
   @Override
   public void onMessageReceived(MessageReceivedEvent event) {
