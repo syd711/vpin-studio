@@ -148,7 +148,7 @@ public class Highscore {
   public HighscoreVersion toVersion(int changedPosition) {
     HighscoreVersion version = new HighscoreVersion();
     version.setChangedPosition(changedPosition);
-    version.setCreatedAt(this.getCreatedAt());
+    version.setCreatedAt(new Date());
     version.setOldRaw(this.getRaw());
     version.setDisplayName(this.getDisplayName());
     version.setGameId(this.getGameId());

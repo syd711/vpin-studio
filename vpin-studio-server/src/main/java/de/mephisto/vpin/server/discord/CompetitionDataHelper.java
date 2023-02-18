@@ -56,15 +56,6 @@ public class CompetitionDataHelper {
       data.setRom(game.getRom());
       data.setOwner(competition.getOwner());
 
-      List<Score> scores = summary.getScores();
-      for (Score score : scores) {
-        if (data.getScrs().size() >= 5) {
-          //mpf, we have to limit the highscore for the discord topic
-          break;
-        }
-        data.getScrs().add(toScoreEntry(score));
-      }
-
       String json = objectMapper.writeValueAsString(data);
       b.append(DATA_INDICATOR);
       b.append(new Base64Encoder().encode(json.getBytes(StandardCharsets.UTF_8)));
@@ -89,22 +80,6 @@ public class CompetitionDataHelper {
       return data.getMsgId();
     }
     return -1;
-  }
-
-  @Nullable
-  public static ScoreSummary getDiscordCompetitionScore(@NonNull DiscordService discordService, long serverId, @Nullable DiscordCompetitionData data) {
-    if (data != null) {
-      List<Score> scores = new ArrayList<>();
-      ScoreSummary summary = new ScoreSummary(scores, new Date());
-      List<DiscordCompetitionScoreEntry> scoresEntries = data.getScrs();
-      for (DiscordCompetitionScoreEntry scoresEntry : scoresEntries) {
-        Player player = discordService.getPlayerByInitials(serverId, scoresEntry.getI());
-        Score score = new Score(new Date(), -1, scoresEntry.getI(), player, scoresEntry.getS(), HighscoreParser.toNumericScore(scoresEntry.getS()), scoresEntry.getP());
-        scores.add(score);
-      }
-      return summary;
-    }
-    return null;
   }
 
   @Nullable

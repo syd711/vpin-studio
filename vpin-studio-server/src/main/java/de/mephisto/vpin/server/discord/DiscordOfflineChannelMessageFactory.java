@@ -91,7 +91,7 @@ public class DiscordOfflineChannelMessageFactory {
       result = result + suffix;
     }
     else {
-      result = result + "\nThe player has beaten their own highscore.";
+      result = result + "The player has beaten their own highscore.";
     }
     return result;
   }
@@ -133,7 +133,7 @@ public class DiscordOfflineChannelMessageFactory {
       result = result + suffix;
     }
     else {
-      result = result + "\nThe player has beaten their own highscore.";
+      result = result + "The player has beaten their own highscore.";
     }
     return result;
   }

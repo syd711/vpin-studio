@@ -134,7 +134,7 @@ public class CompetitionService implements InitializingBean {
       ScoreList scoreList = discordService.getScoreList(highscoreParser, competition.getUuid(), serverId, channelId);
       ScoreSummary latestScore = scoreList.getLatestScore();
       if (latestScore == null) {
-        LOG.warn("Discord competition \"" + competition +  "\" did not contain any highscore, maybe the topic was resetted?");
+        LOG.info("Discord competition \"" + competition +  "\" did not contain any highscore, seems no one played yet?");
         return new ScoreSummary(Collections.emptyList(), competition.getUpdatedAt());
       }
       return latestScore;

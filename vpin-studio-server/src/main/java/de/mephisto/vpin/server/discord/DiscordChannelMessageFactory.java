@@ -38,6 +38,29 @@ public class DiscordChannelMessageFactory {
     return String.format(COMPETITION_CANCELLED_ANONYMOUS_TEMPLATE, competition.getName());
   }
 
+
+  public static String createFirstCompetitionHighscoreCreatedMessage(@NonNull Game game,
+                                                                     @NonNull Competition competition,
+                                                                     @NonNull Score newScore,
+                                                                     @NonNull List<Score> newScores) {
+    String playerName = newScore.getPlayerInitials();
+    if (newScore.getPlayer() != null) {
+      Player player = newScore.getPlayer();
+      playerName = newScore.getPlayer().getName();
+      if (PlayerDomain.DISCORD.name().equals(player.getDomain())) {
+        playerName = "<@" + player.getId() + ">";
+      }
+    }
+
+    String template = "**%s created the first highscore for \"%s\"**.\n(ID: %s)\n" +
+        "```%s\n" +
+        "```";
+
+    String msg = String.format(template, playerName, game.getGameDisplayName(), competition.getUuid(), newScore);
+    return msg + "Here is the updated highscore list:" + createInitialHighscoreList(newScore, newScores.size() - 1);
+
+  }
+
   public static String createCompetitionHighscoreCreatedMessage(@NonNull Game game,
                                                                 @NonNull Competition competition,
                                                                 @NonNull Score oldScore,
@@ -73,7 +96,7 @@ public class DiscordChannelMessageFactory {
     if (StringUtils.isEmpty(oldName)) {
       result = result + "The previous highscore of " + oldScore.getScore() + " has been beaten.\n";
     }
-    else if (!oldName.equals(playerName)) {
+    else if (!oldName.equals(playerName) && !oldName.equals("???")) {
       result = result + suffix;
     }
     else {
@@ -114,6 +137,32 @@ public class DiscordChannelMessageFactory {
       builder.append(String.format("%4.4s", score.getPlayerInitials()));
       builder.append("       ");
       builder.append(String.format("%14.12s", score.getScore()));
+      builder.append("\n");
+    }
+    builder.append("```");
+
+    return builder.toString();
+  }
+
+  private static String createInitialHighscoreList(Score score, int length) {
+    StringBuilder builder = new StringBuilder();
+    builder.append("```");
+    builder.append("Pos   Initials           Score\n");
+    builder.append("------------------------------\n");
+    builder.append("#1");
+    builder.append("   ");
+    builder.append(String.format("%4.4s", score.getPlayerInitials()));
+    builder.append("       ");
+    builder.append(String.format("%14.12s", score.getScore()));
+    builder.append("\n");
+
+    for (int i = 0; i < length; i++) {
+      builder.append("#");
+      builder.append((i + 2));
+      builder.append("   ");
+      builder.append(String.format("%4.4s", "???"));
+      builder.append("       ");
+      builder.append(String.format("%14.12s", "0"));
       builder.append("\n");
     }
     builder.append("```");

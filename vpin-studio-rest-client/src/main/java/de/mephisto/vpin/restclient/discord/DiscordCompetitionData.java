@@ -14,7 +14,6 @@ public class DiscordCompetitionData {
   private String name;
   private String tname;
   private long msgId;
-  private List<DiscordCompetitionScoreEntry> scrs = new ArrayList<>();
 
   public String getTname() {
     return tname;
@@ -54,14 +53,6 @@ public class DiscordCompetitionData {
 
   public void setName(String name) {
     this.name = name;
-  }
-
-  public List<DiscordCompetitionScoreEntry> getScrs() {
-    return scrs;
-  }
-
-  public void setScrs(List<DiscordCompetitionScoreEntry> scrs) {
-    this.scrs = scrs;
   }
 
   public String getUuid() {

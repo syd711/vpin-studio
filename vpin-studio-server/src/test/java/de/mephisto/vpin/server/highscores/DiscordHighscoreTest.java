@@ -97,7 +97,6 @@ public class DiscordHighscoreTest extends AbstractVPinServerTest {
     }
 
     assertNotNull(competitionData);
-    assertEquals(competitionData.getScrs().size(), 3);
     assertEquals(competitionData.getRom(), game.getRom());
 
     HighscoreMetadata metadata = highscoreService.scanScore(game);

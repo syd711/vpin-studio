@@ -18,9 +18,9 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class DiscordTest {
 
-  private final static String testTopic = "Competition Table: Tom and Jerry\n" +
+  private final static String testTopic = "Competition Table: Guardians of the Galaxy\n" +
       "\n" +
-      "data:ew0KICAidXVpZCIgOiAiOTY1NjgwOTYtNjQyZi00NDVmLWJhOTAtNjQxZjYzN2ZjYThhIiwNCiAgIm93bmVyIiA6ICIxMDY2MzYzMzA3NzgwNDkzMzEyIiwNCiAgInJvbSIgOiAidG9tamVycnkiLA0KICAiZnMiIDogNzk4OTY1NzYsDQogICJzZHQiIDogMTY3NjUwMjAwMDAwMCwNCiAgImVkdCIgOiAxNjc3MTA2ODAwMDAwLA0KICAibmFtZSIgOiAiTXkgbmV4dCBjb21wZXRpdGlvbiIsDQogICJ0bmFtZSIgOiAiVG9tIGFuZCBKZXJyeSIsDQogICJtc2dJZCIgOiAxMDc1NzYyMjU0NDQxNjExMzA1LA0KICAic2NycyIgOiBbIHsNCiAgICAicCIgOiAxLA0KICAgICJpIiA6ICI/Pz8iLA0KICAgICJzIiA6ICIyODAuMjcwIg0KICB9LCB7DQogICAgInAiIDogMiwNCiAgICAiaSIgOiAiVUFBIiwNCiAgICAicyIgOiAiMjY5LjAzMCINCiAgfSwgew0KICAgICJwIiA6IDMsDQogICAgImkiIDogIlpBQSIsDQogICAgInMiIDogIjIyOS4yNDAiDQogIH0sIHsNCiAgICAicCIgOiA0LA0KICAgICJpIiA6ICI/Pz8iLA0KICAgICJzIiA6ICIwIg0KICB9LCB7DQogICAgInAiIDogNSwNCiAgICAiaSIgOiAiPz8/IiwNCiAgICAicyIgOiAiMCINCiAgfSBdDQp9";
+      "data:ew0KICAidXVpZCIgOiAiNDVhMTBlOWYtYjJlZi00OWM5LTljYjYtNjIzYTdkN2ZjZjJmIiwNCiAgIm93bmVyIiA6ICIxMDY2MzYzMzA3NzgwNDkzMzEyIiwNCiAgInJvbSIgOiAiZ290ZyIsDQogICJmcyIgOiA0NDYxODk1NjgsDQogICJzZHQiIDogMTY3NjY3NDgwMDAwMCwNCiAgImVkdCIgOiAxNjc3Mjc5NjAwMDAwLA0KICAibmFtZSIgOiAiTXkgbmV4dCBjb21wZXRpdGlvbiIsDQogICJ0bmFtZSIgOiAiR3VhcmRpYW5zIG9mIHRoZSBHYWxheHkiLA0KICAibXNnSWQiIDogMTA3NjUzMzk1MDQ3NTkyNzU1MiwNCiAgInNjcnMiIDogWyBdDQp9";
 
   private final static String testTopic2 = "Competition Table: Godzilla (Sega-Stern mash-up) v3.0\n" +
       "\n" +
@@ -32,12 +32,6 @@ public class DiscordTest {
     assertNotNull(competitionData);
     System.out.println(competitionData.getTname());
     System.out.println(competitionData.getName());
-
-    List<DiscordCompetitionScoreEntry> scores = competitionData.getScrs();
-    System.out.println("Scores: ");
-    for (DiscordCompetitionScoreEntry score : scores) {
-      System.out.println("\t" + score);
-    }
 
     assertFalse(testTopic.length() > 1024);
   }
@@ -56,11 +50,8 @@ public class DiscordTest {
     data.setTname("123456789 123456789 123456789 123456789 ");
 
     Score score = new Score(new Date(), 1234, "123", null, "100.100.000.000", 100000000000d, 1);
-    data.getScrs().add(CompetitionDataHelper.toScoreEntry(score));
     score.setPosition(2);
-    data.getScrs().add(CompetitionDataHelper.toScoreEntry(score));
     score.setPosition(3);
-    data.getScrs().add(CompetitionDataHelper.toScoreEntry(score));
 
     ObjectMapper objectMapper = new ObjectMapper();
     objectMapper.enable(SerializationFeature.INDENT_OUTPUT);

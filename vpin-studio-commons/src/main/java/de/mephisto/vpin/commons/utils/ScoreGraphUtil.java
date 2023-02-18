@@ -33,7 +33,7 @@ public class ScoreGraphUtil {
         List<ScoreRepresentation> entryList = score.getScores();
         for (int i = 0; i < entryList.size(); i++) {
           ScoreRepresentation s = entryList.get(i);
-          series.get((i)).getData().add(new XYChart.Data(SimpleDateFormat.getDateInstance().format(score.getCreatedAt()), s.getNumericScore()));
+          series.get((i)).getData().add(new XYChart.Data(SimpleDateFormat.getDateTimeInstance().format(score.getCreatedAt()), s.getNumericScore()));
         }
       }
 

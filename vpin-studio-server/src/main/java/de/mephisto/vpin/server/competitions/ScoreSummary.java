@@ -7,7 +7,6 @@ import java.util.Date;
 import java.util.List;
 
 public class ScoreSummary {
-
   private String raw;
   private Date createdAt;
   private List<Score> scores;

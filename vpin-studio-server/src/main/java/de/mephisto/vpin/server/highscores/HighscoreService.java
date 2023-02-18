@@ -2,10 +2,7 @@ package de.mephisto.vpin.server.highscores;
 
 import com.google.common.annotations.VisibleForTesting;
 import de.mephisto.vpin.commons.HighscoreType;
-import de.mephisto.vpin.restclient.CompetitionType;
 import de.mephisto.vpin.restclient.PreferenceNames;
-import de.mephisto.vpin.restclient.ResetHighscoreDescriptor;
-import de.mephisto.vpin.server.competitions.Competition;
 import de.mephisto.vpin.server.competitions.CompetitionsRepository;
 import de.mephisto.vpin.server.competitions.RankedPlayer;
 import de.mephisto.vpin.server.competitions.ScoreSummary;
@@ -354,42 +351,46 @@ public class HighscoreService implements InitializingBean {
 
   @VisibleForTesting
   protected void updateHighscore(@NonNull Game game, @NonNull HighscoreMetadata metadata) {
-    String rawHighscore = metadata.getRaw();
     Highscore newHighscore = Highscore.forGame(game, metadata);
     Optional<Highscore> existingHighscore = highscoreRepository.findByGameId(game.getId());
 
-    //check if the table highscore file was ever written
-    if (existingHighscore.isEmpty()) {
-      Highscore update = highscoreRepository.saveAndFlush(newHighscore);
-      LOG.info("Saved initial highscore for " + game);
-      triggerHighscoreInitialized(new HighscoreInitializedEvent(game, update));
+    if (StringUtils.isEmpty(metadata.getRaw())) {
+      LOG.info("Skipped highscore change event for {} because the raw highscore data does not exist.", game);
       return;
     }
 
-    //check if the existing highscore has actual RAW data to analyze
-    Highscore existingScore = existingHighscore.get();
-    if (StringUtils.isEmpty(existingScore.getRaw())) {
-      if (!StringUtils.isEmpty(metadata.getRaw())) {
-        existingScore.setRaw(metadata.getRaw());
-        existingScore.setType(metadata.getType() != null ? metadata.getType().name() : null);
-        existingScore.setLastScanned(metadata.getScanned());
-        existingScore.setLastModified(metadata.getModified());
-        existingScore.setFilename(metadata.getFilename());
-        existingScore.setDisplayName(game.getGameDisplayName());
 
-        Highscore update = highscoreRepository.saveAndFlush(existingScore);
+    //check if the table highscore file was ever written
+    if (existingHighscore.isEmpty()) {
+      existingHighscore = Optional.of(highscoreRepository.saveAndFlush(newHighscore));
+      LOG.info("Saved initial highscore for " + game);
+    }
+    else {
+      //check if the existing highscore has actual RAW data to analyze
+      Highscore existingScore = existingHighscore.get();
+      if (StringUtils.isEmpty(existingScore.getRaw()) && !StringUtils.isEmpty(newHighscore.getRaw())) {
+        existingScore.setRaw(newHighscore.getRaw());
+        existingScore.setType(newHighscore.getType());
+        existingScore.setLastScanned(newHighscore.getLastScanned());
+        existingScore.setLastModified(newHighscore.getLastModified());
+        existingScore.setFilename(newHighscore.getFilename());
+        existingScore.setDisplayName(newHighscore.getDisplayName());
+
+        newHighscore = highscoreRepository.saveAndFlush(existingScore);
         LOG.info("Updated the initial highscore for " + game);
-        triggerHighscoreInitialized(new HighscoreInitializedEvent(game, update));
       }
+    }
 
-      LOG.info("Skipped highscore change event for {} because the raw highscore data does not exist.", game);
+    //check if there is a difference
+    Highscore existingScore = existingHighscore.get();
+    if (existingScore.getRaw().equals(newHighscore.getRaw())) {
+      LOG.info("Skipped highscore change event for {} because the no score change detected.", game);
       return;
     }
 
     /*
      * Diff calculation:
      * Note that this only determines if the highscore has changed locally and a change event should be fired.
-     * For discord competition, this event with the new score is used to calculate the actual change inside the competition
      */
     long serverId = preferencesService.getPreferenceValueLong(PreferenceNames.DISCORD_GUILD_ID, -1);
     List<Score> oldScores = highscoreParser.parseScores(existingScore.getLastModified(), existingScore.getRaw(), game.getId(), serverId);
@@ -405,25 +406,19 @@ public class HighscoreService implements InitializingBean {
     Score oldScore = oldScores.get(position - 1);
     Score newScore = newScores.get(position - 1);
 
-    //TODO this does not work, we need the updated existing data earlier
-    //handle online competition change events differently
-    List<Competition> activeDiscordCompetitionsForGame = competitionsRepository.findByStartDateLessThanEqualAndEndDateGreaterThanEqualAndGameIdAndType(new Date(), new Date(), game.getId(), CompetitionType.DISCORD.name());
-    if (activeDiscordCompetitionsForGame.isEmpty()) {
-      LOG.info("The Game '" + game.getGameDisplayName() + "' is not part of a discord competition, archiving highscore...");
-      //archive old existingScore
-      HighscoreVersion version = existingScore.toVersion(position);
-      version.setNewRaw(rawHighscore);
-      highscoreVersionRepository.saveAndFlush(version);
+    //archive old existingScore
+    HighscoreVersion version = existingScore.toVersion(position);
+    version.setNewRaw(metadata.getRaw());
+    highscoreVersionRepository.saveAndFlush(version);
 
-      //update existing one
-      existingScore.setRaw(rawHighscore);
-      existingScore.setCreatedAt(new Date());
-      highscoreRepository.saveAndFlush(existingScore);
-      LOG.info("Archived old existingScore and saved updated existingScore for " + game);
-    }
+    //update existing one
+    existingScore.setRaw(newHighscore.getRaw());
+    existingScore.setLastModified(new Date());
+    highscoreRepository.saveAndFlush(existingScore);
+    LOG.info("Archived old existingScore and saved updated existingScore for " + game);
 
     //finally, fire the update event to notify all listeners
-    HighscoreChangeEvent event = new HighscoreChangeEvent(game, oldScore, newScore);
+    HighscoreChangeEvent event = new HighscoreChangeEvent(game, oldScores, newScores, oldScore, newScore);
     triggerHighscoreChange(event);
   }
 
@@ -463,14 +458,6 @@ public class HighscoreService implements InitializingBean {
     new Thread(() -> {
       for (HighscoreChangeListener listener : listeners) {
         listener.highscoreChanged(event);
-      }
-    }).start();
-  }
-
-  private void triggerHighscoreInitialized(@NonNull HighscoreInitializedEvent event) {
-    new Thread(() -> {
-      for (HighscoreChangeListener listener : listeners) {
-        listener.highscoreInitialized(event);
       }
     }).start();
   }

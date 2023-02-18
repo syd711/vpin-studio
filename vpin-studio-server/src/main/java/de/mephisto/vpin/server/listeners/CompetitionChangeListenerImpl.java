@@ -49,7 +49,7 @@ public class CompetitionChangeListenerImpl implements InitializingBean, Competit
     Game game = gameService.getGame(competition.getGameId());
     if (game != null) {
       if (competition.getType().equals(CompetitionType.DISCORD.name())) {
-        highscoreService.resetHighscore(game, true);
+        highscoreService.resetHighscore(game, false);
         LOG.info("Resetted highscores of " + game.getGameDisplayName() + " for " + competition);
 
         boolean isOwner = competition.getOwner().equals(String.valueOf(discordService.getBotId()));

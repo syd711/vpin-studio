@@ -5,6 +5,8 @@ import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.server.competitions.ScoreSummary;
 import de.mephisto.vpin.server.directb2s.DirectB2SService;
 import de.mephisto.vpin.server.games.Game;
+import de.mephisto.vpin.server.highscores.HighscoreChangeEvent;
+import de.mephisto.vpin.server.highscores.HighscoreChangeListener;
 import de.mephisto.vpin.server.highscores.HighscoreService;
 import de.mephisto.vpin.server.preferences.PreferencesService;
 import de.mephisto.vpin.server.system.SystemService;
@@ -13,8 +15,10 @@ import de.mephisto.vpin.server.util.ImageUtil;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -25,7 +29,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
-public class CardService {
+public class CardService implements InitializingBean, HighscoreChangeListener {
   private final static Logger LOG = LoggerFactory.getLogger(CardService.class);
 
   @Autowired
@@ -98,5 +102,20 @@ public class CardService {
     PopperScreen screen = PopperScreen.valueOf(screenName);
     File mediaFolder = game.getPinUPMediaFolder(screen);
     return new File(mediaFolder, FilenameUtils.getBaseName(game.getGameFileName()) + ".png");
+  }
+
+
+  @Override
+  public void highscoreChanged(@NotNull HighscoreChangeEvent event) {
+    try {
+      generateCard(event.getGame(), false);
+    } catch (Exception e) {
+      LOG.error("Error updating card after highscore change event: " + e.getMessage(), e);
+    }
+  }
+
+  @Override
+  public void afterPropertiesSet() throws Exception {
+    this.highscoreService.addHighscoreChangeListener(this);
   }
 }

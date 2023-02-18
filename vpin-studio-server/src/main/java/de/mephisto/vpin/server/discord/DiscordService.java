@@ -197,20 +197,17 @@ public class DiscordService implements InitializingBean, PreferenceChangedListen
   public ScoreList getScoreList(@NonNull HighscoreParser highscoreParser, @NonNull String uuid, long serverId, long channelId) {
     ScoreList result = new ScoreList();
     if (this.discordClient != null) {
-      DiscordChannel channel = this.getChannel(serverId, channelId);
       DiscordCompetitionData data = this.getCompetitionData(serverId, channelId);
       if (data != null) {
         List<DiscordMessage> competitionUpdates = discordClient.getCompetitionUpdates(serverId, channelId, data.getMsgId(), uuid);
         List<ScoreSummary> scores = competitionUpdates.stream().map(message -> toScoreSummary(highscoreParser, message)).collect(Collectors.toList());
-        if (scores.isEmpty()) {
-          ScoreSummary initialScore = CompetitionDataHelper.getDiscordCompetitionScore(this, serverId, data);
-          result.setLatestScore(initialScore);
-          result.getScores().add(initialScore);
-        }
-        else {
+        if (!scores.isEmpty()) {
           result.setScores(scores);
           result.setLatestScore(scores.get(0));
           LOG.info("Using latest message from channel for the update of '" + data.getName() + "', found " + result.getScores().size() + " highscore messages.");
+        }
+        else {
+          LOG.info("No record highscore for " + uuid + " found, so this seems to be the first one.");
         }
       }
     }
