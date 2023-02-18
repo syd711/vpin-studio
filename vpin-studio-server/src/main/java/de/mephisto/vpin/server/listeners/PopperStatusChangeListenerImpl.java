@@ -50,16 +50,18 @@ public class PopperStatusChangeListenerImpl implements InitializingBean, PopperS
 
   @Override
   public void popperLaunched() {
-
+    LOG.info("Popper launch event");
   }
 
   @Override
   public void popperExited() {
+    LOG.info("Popper exit event");
     discordService.setStatus(null);
   }
 
   @Override
   public void popperRestarted() {
+    LOG.info("Popper restarted event");
     discordService.setStatus(null);
   }
 

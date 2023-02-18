@@ -6,6 +6,7 @@ import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.system.SystemService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -15,7 +16,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
-public class PopperService {
+public class PopperService implements InitializingBean {
   private final static Logger LOG = LoggerFactory.getLogger(PopperService.class);
 
   private final List<PopperStatusChangeListener> listeners = new ArrayList<>();
@@ -87,6 +88,12 @@ public class PopperService {
     }
   }
 
+  public void notifyPopperExit() {
+    for (PopperStatusChangeListener listener : listeners) {
+      listener.popperExited();
+    }
+  }
+
   public void augmentWheel(Game game, String badge) {
     GameMediaItem gameMediaItem = game.getGameMedia().get(PopperScreen.Wheel);
     if (gameMediaItem != null) {
@@ -107,5 +114,11 @@ public class PopperService {
       WheelAugmenter augmenter = new WheelAugmenter(wheelIcon);
       augmenter.deAugment();
     }
+  }
+
+  @Override
+  public void afterPropertiesSet() throws Exception {
+    Thread shutdownHook = new Thread(this::notifyPopperExit);
+    Runtime.getRuntime().addShutdownHook(shutdownHook);
   }
 }

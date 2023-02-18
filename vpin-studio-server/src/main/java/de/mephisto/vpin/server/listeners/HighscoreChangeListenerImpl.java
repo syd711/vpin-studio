@@ -58,6 +58,7 @@ public class HighscoreChangeListenerImpl implements InitializingBean, HighscoreC
       LOG.error("Error updating card after highscore change event: " + e.getMessage(), e);
     }
 
+    //find competition to notify about highscore updates
     List<Competition> competitionForGame = competitionService.getCompetitionForGame(game.getId());
     boolean messageSent = false;
     for (Competition competition : competitionForGame) {
@@ -75,6 +76,7 @@ public class HighscoreChangeListenerImpl implements InitializingBean, HighscoreC
       }
     }
 
+    //send the default message if no competition updates was sent
     if (!messageSent) {
       LOG.info("No competition found for " + game + ", sending default notification.");
       discordService.sendDefaultHighscoreMessage(DiscordOfflineChannelMessageFactory.createHighscoreCreatedMessage(event));

@@ -93,16 +93,19 @@ public class CompetitionChangeListenerImpl implements InitializingBean, Competit
     if (game != null) {
       runCheckedDeAugmentation();
 
-      if (competition.getDiscordChannelId() > 0) {
-        long discordServerId = competition.getDiscordServerId();
-        long discordChannelId = competition.getDiscordChannelId();
+      long discordServerId = competition.getDiscordServerId();
+      long discordChannelId = competition.getDiscordChannelId();
+
+      if (competition.getType().equals(CompetitionType.OFFLINE.name())) {
         discordService.sendMessage(discordServerId, discordChannelId, DiscordOfflineChannelMessageFactory.createCompetitionFinishedMessage(competition, winner, game, scoreSummary));
       }
 
       if (competition.getType().equals(CompetitionType.DISCORD.name())) {
-        long discordServerId = competition.getDiscordServerId();
-        long discordChannelId = competition.getDiscordChannelId();
-        discordService.resetCompetition(discordServerId, discordChannelId);
+        //only the owner can perform additional actions
+        if (competition.getOwner().equals(String.valueOf(discordService.getBotId())) &&  competition.getType().equals(CompetitionType.DISCORD.name())) {
+          discordService.resetCompetition(discordServerId, discordChannelId);
+          discordService.sendMessage(discordServerId, discordChannelId, DiscordOfflineChannelMessageFactory.createCompetitionFinishedMessage(competition, winner, game, scoreSummary));
+        }
       }
     }
   }
@@ -147,9 +150,12 @@ public class CompetitionChangeListenerImpl implements InitializingBean, Competit
     runCheckedDeAugmentation();
   }
 
+  /**
+   * Checks if there are any augmented wheel icons that do not belong
+   * to any competition anymore.
+   */
   private void runCheckedDeAugmentation() {
     List<Integer> competedGameIds = competitionService.getActiveCompetitions().stream().map(Competition::getGameId).collect(Collectors.toList());
-
     List<Game> games = gameService.getGames();
     for (Game game : games) {
       if (!competedGameIds.contains(game.getId())) {
@@ -160,7 +166,6 @@ public class CompetitionChangeListenerImpl implements InitializingBean, Competit
 
   @Override
   public void afterPropertiesSet() throws Exception {
-
     competitionService.addCompetitionChangeListener(this);
   }
 }
