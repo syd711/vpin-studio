@@ -1,4 +1,4 @@
-package de.mephisto.vpin.server.notifications;
+package de.mephisto.vpin.server.listeners;
 
 import de.mephisto.vpin.restclient.CompetitionType;
 import de.mephisto.vpin.server.AbstractVPinServerTest;

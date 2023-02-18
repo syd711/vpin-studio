@@ -18,8 +18,7 @@ import java.util.Optional;
 public class PopperService {
   private final static Logger LOG = LoggerFactory.getLogger(PopperService.class);
 
-  private final List<TableStatusChangeListener> listeners = new ArrayList<>();
-  private final List<PopperLaunchListener> launchListeners = new ArrayList<>();
+  private final List<PopperStatusChangeListener> listeners = new ArrayList<>();
 
   @Autowired
   private SystemService systemService;
@@ -35,10 +34,15 @@ public class PopperService {
     return pinUPConnector.getPlayLists();
   }
 
+  @SuppressWarnings("unused")
+  public void addPopperStatusChangeListener(PopperStatusChangeListener listener) {
+    this.listeners.add(listener);
+  }
+
   public int importVPXGame(File file, boolean importToPopper, int playListId) {
-    if(importToPopper) {
+    if (importToPopper) {
       int gameId = pinUPConnector.importGame(file);
-      if(gameId >= 0 && playListId >= 0) {
+      if (gameId >= 0 && playListId >= 0) {
         pinUPConnector.addToPlaylist(gameId, playListId);
       }
       return gameId;
@@ -48,7 +52,7 @@ public class PopperService {
 
   public void notifyTableStatusChange(final Game game, final boolean started) {
     TableStatusChangedEvent event = () -> game;
-    for (TableStatusChangeListener listener : this.listeners) {
+    for (PopperStatusChangeListener listener : this.listeners) {
       if (started) {
         listener.tableLaunched(event);
       }
@@ -64,38 +68,33 @@ public class PopperService {
   }
 
   public boolean terminate() {
-    return systemService.killPopper();
-  }
-
-  @SuppressWarnings("unused")
-  public void addPopperLaunchListener(PopperLaunchListener listener) {
-    this.launchListeners.add(listener);
-  }
-
-  @SuppressWarnings("unused")
-  public void addTableStatusChangeListener(TableStatusChangeListener listener) {
-    this.listeners.add(listener);
-  }
-
-  @SuppressWarnings("unused")
-  public void removeTableStatusChangeListener(TableStatusChangeListener listener) {
-    this.listeners.remove(listener);
+    boolean b = systemService.killPopper();
+    for (PopperStatusChangeListener listener : listeners) {
+      listener.popperExited();
+    }
+    return b;
   }
 
   public void notifyPopperLaunch() {
-    for (PopperLaunchListener launchListener : launchListeners) {
-      launchListener.popperLaunched();
+    for (PopperStatusChangeListener listener : listeners) {
+      listener.popperLaunched();
+    }
+  }
+
+  public void notifyPopperRestart() {
+    for (PopperStatusChangeListener listener : listeners) {
+      listener.popperRestarted();
     }
   }
 
   public void augmentWheel(Game game, String badge) {
     GameMediaItem gameMediaItem = game.getGameMedia().get(PopperScreen.Wheel);
-    if(gameMediaItem != null) {
+    if (gameMediaItem != null) {
       File wheelIcon = gameMediaItem.getFile();
       WheelAugmenter augmenter = new WheelAugmenter(wheelIcon);
 
       File badgeFile = systemService.getBagdeFile(badge);
-      if(badgeFile.exists()) {
+      if (badgeFile.exists()) {
         augmenter.augment(badgeFile);
       }
     }
@@ -103,7 +102,7 @@ public class PopperService {
 
   public void deAugmentWheel(Game game) {
     GameMediaItem gameMediaItem = game.getGameMedia().get(PopperScreen.Wheel);
-    if(gameMediaItem != null) {
+    if (gameMediaItem != null) {
       File wheelIcon = gameMediaItem.getFile();
       WheelAugmenter augmenter = new WheelAugmenter(wheelIcon);
       augmenter.deAugment();

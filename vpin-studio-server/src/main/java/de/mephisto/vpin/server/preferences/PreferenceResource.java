@@ -1,6 +1,5 @@
 package de.mephisto.vpin.server.preferences;
 
-import de.mephisto.vpin.server.notifications.NotificationService;
 import de.mephisto.vpin.server.util.UploadUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,9 +19,6 @@ public class PreferenceResource {
 
   @Autowired
   private PreferencesService preferencesService;
-
-  @Autowired
-  private NotificationService notificationService;
 
   @GetMapping("/{key}")
   public PreferenceEntry get(@PathVariable("key") String key) {

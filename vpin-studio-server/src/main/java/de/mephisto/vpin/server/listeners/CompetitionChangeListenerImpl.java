@@ -1,4 +1,4 @@
-package de.mephisto.vpin.server.notifications;
+package de.mephisto.vpin.server.listeners;
 
 import de.mephisto.vpin.restclient.CompetitionType;
 import de.mephisto.vpin.restclient.discord.DiscordCompetitionData;
@@ -11,166 +11,38 @@ import de.mephisto.vpin.server.discord.DiscordOfflineChannelMessageFactory;
 import de.mephisto.vpin.server.discord.DiscordService;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameService;
-import de.mephisto.vpin.server.highscores.*;
-import de.mephisto.vpin.server.highscores.cards.CardService;
+import de.mephisto.vpin.server.highscores.HighscoreService;
 import de.mephisto.vpin.server.players.Player;
 import de.mephisto.vpin.server.popper.PopperService;
-import de.mephisto.vpin.server.popper.TableStatusChangeListener;
-import de.mephisto.vpin.server.popper.TableStatusChangedEvent;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
-import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
-public class NotificationService implements InitializingBean, HighscoreChangeListener, CompetitionChangeListener, TableStatusChangeListener {
-  private final static Logger LOG = LoggerFactory.getLogger(NotificationService.class);
-
-  @Autowired
-  private HighscoreService highscoreService;
-
-  @Autowired
-  private CardService cardService;
-
-  @Autowired
-  private GameService gameService;
+public class CompetitionChangeListenerImpl implements InitializingBean, CompetitionChangeListener {
+  private final static Logger LOG = LoggerFactory.getLogger(CompetitionChangeListenerImpl.class);
 
   @Autowired
   private CompetitionService competitionService;
 
   @Autowired
-  private PopperService popperService;
-
-  @Autowired
-  private HighscoreParser highscoreParser;
+  private HighscoreService highscoreService;
 
   @Autowired
   private DiscordService discordService;
 
-  public void notifyPopperRestart() {
-    discordService.setStatus(null);
-  }
+  @Autowired
+  private GameService gameService;
 
-
-  @Override
-  public void tableLaunched(TableStatusChangedEvent event) {
-    Game game = event.getGame();
-    discordService.setStatus(game.getGameDisplayName());
-    highscoreService.updateHighscore(game);
-  }
-
-  @Override
-  public void tableExited(TableStatusChangedEvent event) {
-    Game game = event.getGame();
-    LOG.info("Executing table exit commands for '" + game + "'");
-    discordService.setStatus(null);
-    new Thread(() -> {
-      try {
-        Thread.sleep(5000);
-      } catch (InterruptedException e) {
-        //ignore
-      }
-      LOG.info("Finished 5 second update delay, updating highscores.");
-      highscoreService.updateHighscore(game);
-    }).start();
-  }
-
-  @Override
-  public void highscoreInitialized(@NotNull HighscoreInitializedEvent event) {
-    try {
-      cardService.generateCard(event.getGame(), false);
-    } catch (Exception e) {
-      LOG.error("Error updating card after highscore initialized event: " + e.getMessage(), e);
-    }
-  }
-
-  @Override
-  public void highscoreChanged(@NotNull HighscoreChangeEvent event) {
-    Game game = event.getGame();
-    try {
-      cardService.generateCard(game, false);
-    } catch (Exception e) {
-      LOG.error("Error updating card after highscore change event: " + e.getMessage(), e);
-    }
-
-    List<Competition> competitionForGame = competitionService.getCompetitionForGame(game.getId());
-    boolean messageSent = false;
-    for (Competition competition : competitionForGame) {
-      if (competition.getDiscordChannelId() > 0 && competition.isActive()) {
-        long discordServerId = competition.getDiscordServerId();
-        long discordChannelId = competition.getDiscordChannelId();
-
-        if (competition.getType().equals(CompetitionType.OFFLINE.name())) {
-          discordService.sendMessage(discordServerId, discordChannelId, DiscordOfflineChannelMessageFactory.createCompetitionHighscoreCreatedMessage(competition, event));
-        }
-        else if (competition.getType().equals(CompetitionType.DISCORD.name())) {
-          discordCompetitionHighscoreChanged(event, competition);
-        }
-        messageSent = true;
-      }
-    }
-
-    if (!messageSent) {
-      LOG.info("No competition found for " + game + ", sending default notification.");
-      discordService.sendDefaultHighscoreMessage(DiscordOfflineChannelMessageFactory.createHighscoreCreatedMessage(event));
-    }
-  }
-
-  private void discordCompetitionHighscoreChanged(@NotNull HighscoreChangeEvent event, @NonNull Competition competition) {
-    //up til now we only THAT the score has changed, but not how
-    Game game = event.getGame();
-    Score newScore = event.getNewScore();
-
-    long discordServerId = competition.getDiscordServerId();
-    long discordChannelId = competition.getDiscordChannelId();
-
-    LOG.info("****** Processing Discord Highscore Change Event for " + game.getGameDisplayName() + " *********");
-    LOG.info("The new score: " + newScore);
-
-    ScoreList scoreList = discordService.getScoreList(highscoreParser, competition.getUuid(), discordServerId, discordChannelId);
-    ScoreSummary latestScore = scoreList.getLatestScore();
-    List<Score> oldScores = latestScore.getScores();
-    LOG.info("Current discord scores:");
-    for (Score oldScore : oldScores) {
-      LOG.info("[" + oldScore + "]");
-    }
-
-    int position = highscoreService.calculateChangedPositionByScore(oldScores, event.getNewScore());
-    if (position == -1) {
-      LOG.info("No highscore change detected for " + game + " of discord competition '" + competition.getName() + "', skipping highscore message.");
-    }
-    else {
-      Score oldScore = oldScores.get(position - 1);
-      List<Score> updatedScores = new ArrayList<>();
-      for (int i = 0; i < oldScores.size(); i++) {
-        if ((i + 1) == position) {
-          updatedScores.add(newScore);
-        }
-        if (updatedScores.size() <= oldScores.size()) {
-          updatedScores.add(oldScores.get(i));
-        }
-      }
-
-      LOG.info("Updated score post:");
-      for (int i = 0; i < updatedScores.size(); i++) {
-        Score s = updatedScores.get(i);
-        s.setPosition(i + 1);
-        LOG.info("[" + s + "]");
-      }
-
-      LOG.info("Emitting Discord highscore changed message for discord competition '" + competition + "'");
-      discordService.sendMessage(discordServerId, discordChannelId, DiscordChannelMessageFactory.createCompetitionHighscoreCreatedMessage(game, competition, oldScore, newScore, updatedScores));
-    }
-    LOG.info("***************** / Finished Discord Highscore Processing *********************");
-  }
+  @Autowired
+  private PopperService popperService;
 
   @Override
   public void competitionStarted(@NonNull Competition competition) {
@@ -178,6 +50,7 @@ public class NotificationService implements InitializingBean, HighscoreChangeLis
     if (game != null) {
       if (competition.getType().equals(CompetitionType.DISCORD.name())) {
         highscoreService.resetHighscore(game, true);
+        LOG.info("Resetted highscores of " + game.getGameDisplayName() + " for " + competition);
 
         boolean isOwner = competition.getOwner().equals(String.valueOf(discordService.getBotId()));
         long discordServerId = competition.getDiscordServerId();
@@ -287,9 +160,7 @@ public class NotificationService implements InitializingBean, HighscoreChangeLis
 
   @Override
   public void afterPropertiesSet() throws Exception {
-    highscoreService.addHighscoreChangeListener(this);
+
     competitionService.addCompetitionChangeListener(this);
-    popperService.addTableStatusChangeListener(this);
-    discordService.setStatus(null);
   }
 }

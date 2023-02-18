@@ -78,7 +78,7 @@ public class DiscordBotPreferencesController implements Initializable {
         discordClient.shutdown();
 
         Platform.runLater(() -> {
-          client.clearCache("discord/");
+          client.clearDiscordCache();
           Studio.stage.getScene().setCursor(Cursor.DEFAULT);
           client.setPreference(PreferenceNames.DISCORD_BOT_TOKEN, token.trim());
           botTokenLabel.setText(token.trim());
@@ -140,7 +140,7 @@ public class DiscordBotPreferencesController implements Initializable {
   }
 
   private void validateDefaultChannel() {
-    client.clearCache("discord/");
+    client.clearDiscordCache();
 
     List<DiscordServer> servers = client.getDiscordServers();
     ObservableList<DiscordServer> discordServers = FXCollections.observableArrayList(servers);

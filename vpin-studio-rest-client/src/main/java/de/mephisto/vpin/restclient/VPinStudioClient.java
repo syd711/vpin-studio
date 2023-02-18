@@ -51,8 +51,12 @@ public class VPinStudioClient implements ObservedPropertyChangeListener, Overlay
     LOG.info("Cleared " + size + " resources from cache.");
   }
 
-  public void clearCache(String urlPrefix) {
-    restClient.clearCache(urlPrefix);
+  public void clearTableCache() {
+    restClient.clearCache("games/");
+  }
+
+  public void clearDiscordCache() {
+    restClient.clearCache("discord/");
   }
 
   /*********************************************************************************************************************

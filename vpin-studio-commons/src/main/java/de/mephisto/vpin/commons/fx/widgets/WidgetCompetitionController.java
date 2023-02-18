@@ -178,28 +178,30 @@ public class WidgetCompetitionController extends WidgetController implements Ini
 
         if (competitionScores.getLatestScore() != null) {
           ScoreSummaryRepresentation latestScore = competitionScores.getLatestScore();
-          ScoreRepresentation currentScore = latestScore.getScores().get(0);
+          List<ScoreRepresentation> scores = latestScore.getScores();
+          if(!scores.isEmpty()) {
+            ScoreRepresentation currentScore = scores.get(0);
+            Platform.runLater(() -> {
+              turnoverTile.setTitle("#1 Place");
+              turnoverTile.setValue(currentScore.getNumericScore());
 
-          Platform.runLater(() -> {
-            turnoverTile.setTitle("#1 Place");
-            turnoverTile.setValue(currentScore.getNumericScore());
-
-            if (currentScore.getPlayer() != null) {
-              turnoverTile.setText(currentScore.getPlayer().getName());
-              String avatarUrl = currentScore.getPlayer().getAvatarUrl();
-              if (!StringUtils.isEmpty(avatarUrl)) {
-                Image image = new Image(OverlayWindowFX.client.getCachedUrlImage(avatarUrl));
-                turnoverTile.setImage(new Image(avatarUrl));
+              if (currentScore.getPlayer() != null) {
+                turnoverTile.setText(currentScore.getPlayer().getName());
+                String avatarUrl = currentScore.getPlayer().getAvatarUrl();
+                if (!StringUtils.isEmpty(avatarUrl)) {
+                  Image image = new Image(OverlayWindowFX.client.getCachedUrlImage(avatarUrl));
+                  turnoverTile.setImage(new Image(avatarUrl));
+                }
+                else if (currentScore.getPlayer().getAvatar() != null) {
+                  AssetRepresentation avatar = currentScore.getPlayer().getAvatar();
+                  turnoverTile.setImage(new Image(OverlayWindowFX.client.getAsset(AssetType.AVATAR, avatar.getUuid())));
+                }
               }
-              else if (currentScore.getPlayer().getAvatar() != null) {
-                AssetRepresentation avatar = currentScore.getPlayer().getAvatar();
-                turnoverTile.setImage(new Image(OverlayWindowFX.client.getAsset(AssetType.AVATAR, avatar.getUuid())));
+              else {
+                turnoverTile.setText(currentScore.getPlayerInitials());
               }
-            }
-            else {
-              turnoverTile.setText(currentScore.getPlayerInitials());
-            }
-          });
+            });
+          }
         }
       }
     }

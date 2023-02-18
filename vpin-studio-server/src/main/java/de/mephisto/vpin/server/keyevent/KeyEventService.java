@@ -3,9 +3,9 @@ package de.mephisto.vpin.server.keyevent;
 import de.mephisto.vpin.commons.fx.OverlayWindowFX;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.server.VPinStudioServerTray;
-import de.mephisto.vpin.server.notifications.NotificationService;
-import de.mephisto.vpin.server.popper.PopperLaunchListener;
 import de.mephisto.vpin.server.popper.PopperService;
+import de.mephisto.vpin.server.popper.PopperStatusChangeListener;
+import de.mephisto.vpin.server.popper.TableStatusChangedEvent;
 import de.mephisto.vpin.server.preferences.PreferencesService;
 import de.mephisto.vpin.server.system.SystemService;
 import de.mephisto.vpin.server.util.KeyChecker;
@@ -26,7 +26,7 @@ import java.net.UnknownHostException;
 import java.util.logging.Level;
 
 @Service
-public class KeyEventService implements InitializingBean, NativeKeyListener, PopperLaunchListener {
+public class KeyEventService implements InitializingBean, NativeKeyListener, PopperStatusChangeListener {
   private final static Logger LOG = LoggerFactory.getLogger(KeyEventService.class);
 
   @Autowired
@@ -40,9 +40,6 @@ public class KeyEventService implements InitializingBean, NativeKeyListener, Pop
 
   @Autowired
   private SystemService systemService;
-
-  @Autowired
-  private NotificationService notificationService;
 
   private boolean visible;
 
@@ -107,7 +104,7 @@ public class KeyEventService implements InitializingBean, NativeKeyListener, Pop
       if (keyChecker.matches(nativeKeyEvent)) {
         new Thread(() -> {
           systemService.restartPopper();
-          notificationService.notifyPopperRestart();
+          popperService.notifyPopperRestart();
         }).start();
 
       }
@@ -119,7 +116,6 @@ public class KeyEventService implements InitializingBean, NativeKeyListener, Pop
 
   }
 
-
   @Override
   public void popperLaunched() {
     Platform.runLater(() -> {
@@ -129,6 +125,26 @@ public class KeyEventService implements InitializingBean, NativeKeyListener, Pop
         overlayWindowFX.setVisible(visible);
       }
     });
+  }
+
+  @Override
+  public void tableLaunched(TableStatusChangedEvent event) {
+
+  }
+
+  @Override
+  public void tableExited(TableStatusChangedEvent event) {
+
+  }
+
+  @Override
+  public void popperExited() {
+
+  }
+
+  @Override
+  public void popperRestarted() {
+
   }
 
   public void resetShutdownTimer() {
@@ -145,7 +161,7 @@ public class KeyEventService implements InitializingBean, NativeKeyListener, Pop
     }
     else {
       LOG.info("Added VPin service popper status listener.");
-      popperService.addPopperLaunchListener(this);
+      popperService.addPopperStatusChangeListener(this);
     }
 
     LOG.info("Server startup finished, running version is " + systemService.getVersion());
