@@ -66,45 +66,23 @@ public class DiscordChannelMessageFactory {
                                                                 @NonNull Score oldScore,
                                                                 @NonNull Score newScore,
                                                                 List<Score> updatedScores) {
-    String playerName = newScore.getPlayerInitials();
+    String newName = newScore.getPlayerInitials();
     if (newScore.getPlayer() != null) {
       Player player = newScore.getPlayer();
-      playerName = newScore.getPlayer().getName();
+      newName = newScore.getPlayer().getName();
       if (PlayerDomain.DISCORD.name().equals(player.getDomain())) {
-        playerName = "<@" + player.getId() + ">";
+        newName = "<@" + player.getId() + ">";
       }
     }
 
-    String oldName = oldScore.getPlayerInitials();
-    if (oldScore.getPlayer() != null) {
-      Player player = oldScore.getPlayer();
-      oldName = oldScore.getPlayer().getName();
-      if (PlayerDomain.DISCORD.name().equals(player.getDomain())) {
-        oldName = "<@" + player.getId() + ">";
-      }
-    }
 
     String template = "**%s created a new highscore for \"%s\"**.\n(ID: %s)\n" +
         "```%s\n" +
         "```";
-    String otherPlayerTemplate = "\n%s, your highscore of %s points has been beaten.\n";
+    String msg = String.format(template, newName, game.getGameDisplayName(), competition.getUuid(), newScore);
+    msg = msg + DiscordOfflineChannelMessageFactory.getBeatenMessage(oldScore, newScore);
 
-    String msg = String.format(template, playerName, game.getGameDisplayName(), competition.getUuid(), newScore);
-    String suffix = String.format(otherPlayerTemplate, oldName, oldScore.getScore());
-
-    String result = msg;
-    if (StringUtils.isEmpty(oldName)) {
-      result = result + "The previous highscore of " + oldScore.getScore() + " has been beaten.\n";
-    }
-    else if (!oldName.equals(playerName) && !oldName.equals("???")) {
-      result = result + suffix;
-    }
-    else {
-      result = result + "\nThe player has beaten their own highscore.\n";
-    }
-
-
-    return result + "Here is the updated highscore list:" + createHighscoreList(updatedScores);
+    return msg + "\nHere is the updated highscore list:" + createHighscoreList(updatedScores);
   }
 
   public static String createDiscordCompetitionCreatedMessage(Competition competition, Game game, long initiatorId) {

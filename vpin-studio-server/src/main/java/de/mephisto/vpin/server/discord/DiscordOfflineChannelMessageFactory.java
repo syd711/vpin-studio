@@ -78,22 +78,9 @@ public class DiscordOfflineChannelMessageFactory {
     String template = "**%s created a new highscore for \"%s\"**.\n" +
         "```%s\n" +
         "```\n";
-    String otherPlayerTemplate = "%s, your highscore of %s points has been beaten.";
-
     String msg = String.format(template, newName, game.getGameDisplayName(), newScore);
-    String suffix = String.format(otherPlayerTemplate, oldName, oldScore.getScore());
-
-    String result = msg;
-    if (StringUtils.isEmpty(oldName)) {
-      result = result + "\nThe previous highscore of " + oldScore.getScore() + " has been beaten.";
-    }
-    else if (!oldName.equals(newName)) {
-      result = result + suffix;
-    }
-    else {
-      result = result + "The player has beaten their own highscore.";
-    }
-    return result;
+    msg = msg + getBeatenMessage(oldScore, newScore);
+    return msg;
   }
 
   public static String createCompetitionHighscoreCreatedMessage(Competition competition, HighscoreChangeEvent event) {
@@ -110,32 +97,10 @@ public class DiscordOfflineChannelMessageFactory {
       }
     }
 
-    String oldName = oldScore.getPlayerInitials();
-    if (oldScore.getPlayer() != null) {
-      Player player = oldScore.getPlayer();
-      oldName = oldScore.getPlayer().getName();
-      if (PlayerDomain.DISCORD.name().equals(player.getDomain())) {
-        oldName = "<@" + player.getId() + ">";
-      }
-    }
-
     String template = "**%s created a new highscore for \"%s\"**.\nCompetition: \"%s\"\n```%s```\n";
-    String otherPlayerTemplate = "%s, your highscore of %s points has been beaten.";
-
     String msg = String.format(template, newName, game.getGameDisplayName(), competition.getName(), newScore);
-    String suffix = String.format(otherPlayerTemplate, oldName, oldScore.getScore());
-
-    String result = msg;
-    if (StringUtils.isEmpty(oldName)) {
-      result = result + "\nThe previous highscore of " + oldScore.getScore() + " has been beaten.";
-    }
-    else if (!oldName.equals(newName)) {
-      result = result + suffix;
-    }
-    else {
-      result = result + "The player has beaten their own highscore.";
-    }
-    return result;
+    msg = msg + getBeatenMessage(oldScore, newScore);
+    return msg;
   }
 
 
@@ -178,5 +143,31 @@ public class DiscordOfflineChannelMessageFactory {
         summary.getScores().get(0).getScore(),
         second,
         third);
+  }
+
+  public static String getBeatenMessage(Score oldScore, Score newScore) {
+    String oldName = oldScore.getPlayerInitials();
+    if (oldScore.getPlayer() != null) {
+      Player player = oldScore.getPlayer();
+      oldName = oldScore.getPlayer().getName();
+      if (PlayerDomain.DISCORD.name().equals(player.getDomain())) {
+        oldName = "<@" + player.getId() + ">";
+      }
+    }
+
+    if (oldScore.getPlayerInitials().equals("???") || oldScore.getNumericScore() == 0) {
+      return "";
+    }
+
+    if (StringUtils.isEmpty(oldName)) {
+      return "The previous highscore of " + oldScore.getScore() + " has been beaten.";
+    }
+
+    if (newScore.getPlayerInitials().equals(oldScore.getPlayerInitials())) {
+      return "The player has beaten their own highscore.";
+    }
+
+    String beatenMessageTemplate = "%s, your highscore of %s points has been beaten.";
+    return String.format(beatenMessageTemplate, oldName, oldScore.getScore());
   }
 }
