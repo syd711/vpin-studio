@@ -6,6 +6,7 @@ import de.mephisto.vpin.commons.EmulatorType;
 import de.mephisto.vpin.restclient.ImportDescriptor;
 import de.mephisto.vpin.restclient.VpaManifest;
 import de.mephisto.vpin.server.games.Game;
+import de.mephisto.vpin.server.games.GameService;
 import de.mephisto.vpin.server.highscores.HighscoreService;
 import de.mephisto.vpin.server.popper.PinUPConnector;
 import de.mephisto.vpin.server.system.SystemService;
@@ -31,18 +32,21 @@ public class VpaImporter {
   private final PinUPConnector connector;
   private final SystemService systemService;
   private final HighscoreService highscoreService;
+  private final GameService gameService;
   private final ObjectMapper objectMapper;
 
   public VpaImporter(@NonNull ImportDescriptor descriptor,
-                     @NonNull File file,
+                     @NonNull File vpaFile,
                      @NonNull PinUPConnector connector,
                      @NonNull SystemService systemService,
-                     @NonNull HighscoreService highscoreService) {
+                     @NonNull HighscoreService highscoreService,
+                     @NonNull GameService gameService) {
     this.descriptor = descriptor;
-    this.vpaFile = file;
+    this.vpaFile = vpaFile;
     this.connector = connector;
     this.systemService = systemService;
     this.highscoreService = highscoreService;
+    this.gameService = gameService;
 
     objectMapper = new ObjectMapper();
     objectMapper.enable(SerializationFeature.INDENT_OUTPUT);
@@ -57,7 +61,7 @@ public class VpaImporter {
       boolean importPupPack = descriptor.isImportPupPack();
       boolean importHighscores = descriptor.isImportHighscores();
 
-      unzipVpa(importRom, importPopperMedia, importPupPack);
+      unzipVpa(importRom, importPopperMedia, importPupPack, importHighscores);
       LOG.info("Finished unzipping of " + descriptor.getVpaFileName() + ", starting Popper import.");
 
       VpaManifest manifest = VpaUtil.readManifest(vpaFile);
@@ -67,11 +71,11 @@ public class VpaImporter {
       }
 
       File gameFile = getGameFile(manifest);
-      Game game = connector.getGameByFilename(manifest.getGameFileName());
+      Game game = gameService.getGameByFilename(manifest.getGameFileName());
       if (game == null) {
         LOG.info("No existing game found for " + manifest.getGameDisplayName() + ", executing popper game import for " + manifest.getGameFileName());
         int newGameId = connector.importGame(manifest.getEmulatorType(), manifest.getGameName(), gameFile.getName(), manifest.getGameDisplayName());
-        game = connector.getGame(newGameId);
+        game = gameService.getGame(newGameId);
       }
 
       connector.importManifest(game, manifest);
@@ -86,6 +90,7 @@ public class VpaImporter {
         importHighscores(game, manifest);
       }
 
+      highscoreService.scanScore(game);
       LOG.info("Final highscore scan");
       return game;
     } catch (Exception e) {
@@ -99,10 +104,10 @@ public class VpaImporter {
       if (manifest.getAdditionalData().containsKey(VpaService.DATA_HIGHSCORE_HISTORY)) {
         String json = (String) manifest.getAdditionalData().get(VpaService.DATA_HIGHSCORE_HISTORY);
         VpaExporterJob.ScoreVersionEntry[] scores = objectMapper.readValue(json, VpaExporterJob.ScoreVersionEntry[].class);
-        LOG.info("Importing " + scores.length + " scores.");
         for (VpaExporterJob.ScoreVersionEntry score : scores) {
           highscoreService.importScoreEntry(game, score);
         }
+        LOG.info("Finished importing " + scores.length + " highscore version entries.");
       }
     } catch (Exception e) {
       LOG.error("Error importing highscore history of " + game.getGameDisplayName() + ": " + e.getMessage(), e);
@@ -120,14 +125,21 @@ public class VpaImporter {
     }
   }
 
-  private void unzipVpa(boolean importRom, boolean importPopperMedia, boolean importPupPack) {
+  private void unzipVpa(boolean importRom, boolean importPopperMedia, boolean importPupPack, boolean importHighscores) {
     try {
       byte[] buffer = new byte[1024];
       ZipInputStream zis = new ZipInputStream(new FileInputStream(vpaFile));
       ZipEntry zipEntry = zis.getNextEntry();
       while (zipEntry != null) {
         File newFile = newFile(getDestDirForEntry(zipEntry), zipEntry);
-        if (newFile.getParentFile().getName().equals("roms") && !importRom) {
+        String folderName = newFile.getParentFile().getName();
+
+        if (folderName.equals("roms") && !importRom) {
+          zipEntry = zis.getNextEntry();
+          continue;
+        }
+
+        if ((folderName.equals("User") || folderName.equals("nvram")) && !importHighscores) {
           zipEntry = zis.getNextEntry();
           continue;
         }

@@ -50,7 +50,7 @@ public class IOService {
   public boolean importVpa(@NonNull ImportDescriptor descriptor) {
     try {
       File vpaFile = new File(systemService.getVpaArchiveFolder(), descriptor.getVpaFileName());
-      VpaImporter importer = new VpaImporter(descriptor, vpaFile, pinUPConnector, systemService, highscoreService);
+      VpaImporter importer = new VpaImporter(descriptor, vpaFile, pinUPConnector, systemService, highscoreService, gameService);
       Game importedGame = importer.startImport();
       if (importedGame != null) {
         Game game = gameService.getGame(importedGame.getId());

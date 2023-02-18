@@ -15,6 +15,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.*;
+import java.nio.charset.Charset;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
@@ -90,27 +91,37 @@ class HighscoreResolver {
       metadata.setFilename(hsFile.getCanonicalPath());
       metadata.setModified(new Date(hsFile.lastModified()));
 
-      List<String> lines = IOUtils.readLines(new FileInputStream(hsFile), "utf-8");
-      if (lines.size() >= 15) {
-        StringBuilder builder = new StringBuilder("HIGHEST SCORES\n");
+      FileInputStream fileInputStream = null;
+      try {
+        fileInputStream = new FileInputStream(hsFile);
+        List<String> lines = IOUtils.readLines(fileInputStream, Charset.defaultCharset());
+        if (lines.size() >= 15) {
+          StringBuilder builder = new StringBuilder("HIGHEST SCORES\n");
 
-        int index = 5;
-        for (int i = 1; i < 6; i++) {
-          String score = lines.get(index);
-          String initials = lines.get(index + 5);
+          int index = 5;
+          for (int i = 1; i < 6; i++) {
+            String score = lines.get(index);
+            String initials = lines.get(index + 5);
 
-          builder.append("#");
-          builder.append(i);
-          builder.append(" ");
-          builder.append(initials);
-          builder.append("   ");
-          builder.append(score);
-          builder.append("\n");
+            builder.append("#");
+            builder.append(i);
+            builder.append(" ");
+            builder.append(initials);
+            builder.append("   ");
+            builder.append(score);
+            builder.append("\n");
 
-          index++;
+            index++;
+          }
+
+          return builder.toString();
         }
-
-        return builder.toString();
+      } catch (IOException e) {
+        LOG.error("Error reading EM highscore file: " + e.getMessage(), e);
+      } finally {
+        if (fileInputStream != null) {
+          fileInputStream.close();
+        }
       }
     }
     return null;
