@@ -59,22 +59,23 @@ public class VpaRepositoriesPreferencesController implements Initializable {
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
     tableView.setPlaceholder(new Label("              No table repository found.\nAdd a table repository to download tables from."));
+    deleteBtn.setDisable(true);
 
-//    nameColumn.setCellValueFactory(cellData -> {
-//      VpaSourceRepresentation value = cellData.getValue();
-//      return new SimpleObjectProperty(value.getName());
-//    });
-//
-//    urlColumn.setCellValueFactory(cellData -> {
-//      VpaSourceRepresentation value = cellData.getValue();
-//      return new SimpleObjectProperty(value.getLocation());
-//    });
+    nameColumn.setCellValueFactory(cellData -> {
+      VpaSourceRepresentation value = cellData.getValue();
+      return new SimpleObjectProperty(value.getName());
+    });
 
-//    List<VpaSourceRepresentation> vpaSources = client.getVpaSources();
-//    tableView.setItems(FXCollections.observableList(vpaSources));
-//    tableView.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
-//      boolean disable = newSelection == null || newSelection.getId() == -1;
-//      deleteBtn.setDisable(disable);
-//    });
+    urlColumn.setCellValueFactory(cellData -> {
+      VpaSourceRepresentation value = cellData.getValue();
+      return new SimpleObjectProperty(value.getLocation());
+    });
+
+    List<VpaSourceRepresentation> vpaSources = client.getVpaSources();
+    tableView.setItems(FXCollections.observableList(vpaSources));
+    tableView.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
+      boolean disable = newSelection == null || newSelection.getId() == -1;
+      deleteBtn.setDisable(disable);
+    });
   }
 }

@@ -129,6 +129,7 @@ public class VpaResource {
     representation.setType(source.getType());
     representation.setLocation(source.getLocation());
     representation.setName(source.getName());
+    representation.setId(source.getId());
     return representation;
   }
 
