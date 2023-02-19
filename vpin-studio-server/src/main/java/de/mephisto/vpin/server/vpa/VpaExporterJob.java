@@ -282,7 +282,6 @@ public class VpaExporterJob implements Job {
       manifest.setIcon(Base64.getEncoder().encodeToString(original));
     }
 
-    manifest.setUuid(UUID.randomUUID().toString());
     manifest.setEmulatorType(VpaUtil.getEmulatorType(game.getGameFile()));
 
     if (StringUtils.isEmpty(manifest.getGameFileName())) {

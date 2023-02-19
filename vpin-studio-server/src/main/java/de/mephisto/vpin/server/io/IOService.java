@@ -98,33 +98,21 @@ public class IOService {
     File vpRegFile = systemService.getVPRegFile();
     VpaSource vpaSource = vpaService.getDefaultVpaSource();
 
-    JobDescriptor descriptor = new JobDescriptor() {
-      @Override
-      public String getTitle() {
-        return "Export of '" + game.getGameDisplayName() + "'";
-      }
+    String uuid = UUID.randomUUID().toString();
+    manifest.setUuid(uuid);
 
-      @Override
-      public String getDescription() {
-        return "Exporting table archive " + target.getName();
-      }
+    JobDescriptor descriptor = new JobDescriptor();
+    descriptor.setJobType(JobType.VPA_EXPORT);
+    descriptor.setUuid(uuid);
+    descriptor.setTitle("Export of '" + game.getGameDisplayName() + "'");
+    descriptor.setDescription("Exporting table archive " + target.getName());
+    descriptor.setJob(new VpaExporterJob(vpRegFile, systemService.getVPXMusicFolder(), game, exportDescriptor, manifest, highscore, versions, vpaSource, target));
 
-      @Override
-      public Job getJob() {
-        return new VpaExporterJob(vpRegFile, systemService.getVPXMusicFolder(), game, exportDescriptor, manifest, highscore, versions, vpaSource, target);
-      }
+    GameMediaItem mediaItem = game.getGameMedia().get(PopperScreen.Wheel);
+    if (mediaItem != null) {
+      descriptor.setImageUrl(mediaItem.getUri());
+    }
 
-      @Override
-      public String getImageUrl() {
-        GameMediaItem mediaItem = game.getGameMedia().get(PopperScreen.Wheel);
-        if (mediaItem != null) {
-          return mediaItem.getUri();
-        }
-        return super.getImageUrl();
-      }
-    };
-
-    descriptor.setUuid(UUID.randomUUID().toString());
     JobQueue.getInstance().offer(descriptor);
     LOG.info("Offered export job for '" + game.getGameDisplayName() + "'");
     return true;

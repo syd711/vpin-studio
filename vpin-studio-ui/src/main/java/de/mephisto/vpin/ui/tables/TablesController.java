@@ -2,6 +2,10 @@ package de.mephisto.vpin.ui.tables;
 
 import de.mephisto.vpin.ui.NavigationController;
 import de.mephisto.vpin.ui.StudioFXController;
+import de.mephisto.vpin.ui.events.EventManager;
+import de.mephisto.vpin.ui.events.StudioEventListener;
+import de.mephisto.vpin.ui.events.VpaExportedEvent;
+import edu.umd.cs.findbugs.annotations.NonNull;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -17,7 +21,7 @@ import java.net.URL;
 import java.util.Arrays;
 import java.util.ResourceBundle;
 
-public class TablesController implements Initializable, StudioFXController {
+public class TablesController implements Initializable, StudioFXController, StudioEventListener {
   private final static Logger LOG = LoggerFactory.getLogger(TablesController.class);
 
   private TableOverviewController tableOverviewController;
@@ -46,6 +50,7 @@ public class TablesController implements Initializable, StudioFXController {
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
     NavigationController.setBreadCrumb(Arrays.asList("Players", "Build-In Players"));
+    EventManager.getInstance().addListener(this);
 
     try {
       FXMLLoader loader = new FXMLLoader(TableOverviewController.class.getResource("scene-tables-overview.fxml"));
@@ -98,5 +103,12 @@ public class TablesController implements Initializable, StudioFXController {
 
   public TableOverviewController getTableOverviewController() {
     return tableOverviewController;
+  }
+
+  @Override
+  public void onVpaExport(@NonNull VpaExportedEvent event) {
+    Platform.runLater(() -> {
+      repositoryController.onReload();
+    });
   }
 }

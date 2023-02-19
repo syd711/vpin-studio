@@ -112,7 +112,7 @@ public class RepositoryController implements Initializable {
   }
 
   @FXML
-  private void onReload() {
+  public void onReload() {
     this.searchTextField.setDisable(true);
 
     VpaDescriptorRepresentation selection = tableView.getSelectionModel().getSelectedItem();

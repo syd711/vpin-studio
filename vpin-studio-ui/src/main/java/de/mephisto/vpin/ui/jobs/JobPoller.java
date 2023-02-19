@@ -1,6 +1,7 @@
 package de.mephisto.vpin.ui.jobs;
 
 import de.mephisto.vpin.restclient.JobDescriptor;
+import de.mephisto.vpin.ui.events.EventManager;
 import javafx.application.Platform;
 import javafx.concurrent.Service;
 import javafx.concurrent.Task;
@@ -101,6 +102,7 @@ public class JobPoller {
         JobDescriptor descriptor = (JobDescriptor) item.getUserData();
         if (!updatedJobList.contains(descriptor)) {
           jobMenu.getItems().remove(item);
+          EventManager.getInstance().notifyVpaExport(descriptor.getUuid());
         }
       }
 

@@ -7,6 +7,15 @@ public class JobDescriptor {
   private String imageUrl;
   private String title;
   private String description;
+  private JobType jobType;
+
+  public JobType getJobType() {
+    return jobType;
+  }
+
+  public void setJobType(JobType jobType) {
+    this.jobType = jobType;
+  }
 
   @JsonIgnore
   private Job job;
