@@ -70,6 +70,11 @@ public class PreferencesController implements Initializable {
   }
 
   @FXML
+  private void onVpaRepositories(ActionEvent event) throws IOException {
+    load("preference-vpa-repositories.fxml", event);
+  }
+
+  @FXML
   private void onScreens(ActionEvent event) throws IOException {
     load("preference-screens.fxml", event);
   }

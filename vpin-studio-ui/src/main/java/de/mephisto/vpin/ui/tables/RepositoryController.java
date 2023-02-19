@@ -5,7 +5,9 @@ import de.mephisto.vpin.commons.utils.ImageUtil;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.JobDescriptor;
 import de.mephisto.vpin.restclient.UploadJobDescriptor;
+import de.mephisto.vpin.restclient.representations.GameRepresentation;
 import de.mephisto.vpin.restclient.representations.VpaDescriptorRepresentation;
+import de.mephisto.vpin.restclient.representations.VpaSourceRepresentation;
 import de.mephisto.vpin.ui.NavigationController;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.WaitOverlayController;
@@ -56,6 +58,9 @@ public class RepositoryController implements Initializable {
 
   @FXML
   private TextField searchTextField;
+
+  @FXML
+  private ComboBox<VpaSourceRepresentation> sourceCombo;
 
   @FXML
   private TableView<VpaDescriptorRepresentation> tableView;
@@ -321,6 +326,16 @@ public class RepositoryController implements Initializable {
 
       List<VpaDescriptorRepresentation> filtered = filterArchives(this.archives);
       tableView.setItems(FXCollections.observableList(filtered));
+    });
+
+    sourceCombo.setItems(FXCollections.observableList(client.getVpaSources()));
+    sourceCombo.getSelectionModel().select(0);
+    sourceCombo.valueProperty().addListener((observableValue, gameRepresentation, t1) -> {
+      if (t1 == null) {
+
+      }
+      else {
+      }
     });
 
     deleteBtn.setDisable(true);

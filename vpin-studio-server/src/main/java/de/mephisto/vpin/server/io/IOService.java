@@ -96,7 +96,7 @@ public class IOService {
     List<HighscoreVersion> versions = highscoreService.getAllHighscoreVersions(game.getId());
     Highscore highscore = highscoreService.getOrCreateHighscore(game);
     File vpRegFile = systemService.getVPRegFile();
-    VpaSource vpaSource = vpaService.getDefaultVpaSource();
+    VpaSourceAdapter defaultVpaSourceAdapter = vpaService.getDefaultVpaSourceAdapter();
 
     String uuid = UUID.randomUUID().toString();
     manifest.setUuid(uuid);
@@ -106,7 +106,7 @@ public class IOService {
     descriptor.setUuid(uuid);
     descriptor.setTitle("Export of '" + game.getGameDisplayName() + "'");
     descriptor.setDescription("Exporting table archive " + target.getName());
-    descriptor.setJob(new VpaExporterJob(vpRegFile, systemService.getVPXMusicFolder(), game, exportDescriptor, manifest, highscore, versions, vpaSource, target));
+    descriptor.setJob(new VpaExporterJob(vpRegFile, systemService.getVPXMusicFolder(), game, exportDescriptor, manifest, highscore, versions, defaultVpaSourceAdapter, target));
 
     GameMediaItem mediaItem = game.getGameMedia().get(PopperScreen.Wheel);
     if (mediaItem != null) {

@@ -2,6 +2,7 @@ package de.mephisto.vpin.server.vpa;
 
 import de.mephisto.vpin.restclient.representations.VpaDescriptorRepresentation;
 import de.mephisto.vpin.restclient.representations.VpaSourceRepresentation;
+import de.mephisto.vpin.server.players.Player;
 import de.mephisto.vpin.server.system.SystemService;
 import de.mephisto.vpin.server.util.UploadUtil;
 import org.apache.commons.io.IOUtils;
@@ -18,6 +19,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static de.mephisto.vpin.server.VPinStudioServer.API_SEGMENT;
 import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
@@ -44,6 +46,16 @@ public class VpaResource {
     return result;
   }
 
+  @GetMapping("/sources")
+  public List<VpaSourceRepresentation> getSources() {
+    return vpaService.getVpaSources().stream().map(source -> toRepresentation(source)).collect(Collectors.toList());
+  }
+
+  @DeleteMapping("/source/{id}")
+  public Boolean getSources(@PathVariable("id") long id) {
+    return vpaService.deleteVpaSource(id);
+  }
+
   @GetMapping("/game/{id}")
   public List<VpaDescriptorRepresentation> getArchives(@PathVariable("id") int gameId) {
     List<VpaDescriptor> vpaDescriptors = vpaService.getVpaDescriptors(gameId);
@@ -66,7 +78,7 @@ public class VpaResource {
     FileInputStream in = null;
     try {
       VpaDescriptor vpaDescriptor = vpaService.getVpaDescriptor(uuid);
-      File vpaFile = vpaDescriptor.getSource().getFile(vpaDescriptor);
+      File vpaFile = vpaService.getDefaultVpaSourceAdapter().getFile(vpaDescriptor);
       in = new FileInputStream(vpaFile);
       IOUtils.copy(in, response.getOutputStream());
       response.flushBuffer();
@@ -106,11 +118,22 @@ public class VpaResource {
     }
   }
 
-  private VpaDescriptorRepresentation toRepresentation(VpaDescriptor vpaDescriptor) {
-    VpaSourceRepresentation source = new VpaSourceRepresentation();
-    source.setType(vpaDescriptor.getSource().getType().name());
-    source.setLocation(vpaDescriptor.getSource().getLocation());
+  @PostMapping("/save")
+  public VpaSourceRepresentation save(@RequestBody VpaSourceRepresentation vpaSourceRepresentation) {
+    return vpaService.save(vpaSourceRepresentation);
+  }
 
+
+  private VpaSourceRepresentation toRepresentation(VpaSource source) {
+    VpaSourceRepresentation representation = new VpaSourceRepresentation();
+    representation.setType(source.getType());
+    representation.setLocation(source.getLocation());
+    representation.setName(source.getName());
+    return representation;
+  }
+
+  private VpaDescriptorRepresentation toRepresentation(VpaDescriptor vpaDescriptor) {
+    VpaSourceRepresentation source = toRepresentation(vpaDescriptor.getSource());
     VpaDescriptorRepresentation representation = new VpaDescriptorRepresentation();
     representation.setFilename(vpaDescriptor.getFilename());
     representation.setManifest(vpaDescriptor.getManifest());

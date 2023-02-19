@@ -161,6 +161,14 @@ public class VPinStudioClient implements ObservedPropertyChangeListener, Overlay
     return Arrays.asList(restClient.get(API + "vpa", VpaDescriptorRepresentation[].class));
   }
 
+  public List<VpaSourceRepresentation> getVpaSources() {
+    return Arrays.asList(restClient.get(API + "vpa/sources", VpaSourceRepresentation[].class));
+  }
+
+  public void deleteVpaSource(long id) throws Exception {
+    restClient.delete(API + "vpa/" + id);
+  }
+
   public List<VpaDescriptorRepresentation> getVpaDescriptorsForGame(int gameId) {
     return Arrays.asList(restClient.get(API + "vpa/game/" + gameId, VpaDescriptorRepresentation[].class));
   }

@@ -1,27 +1,22 @@
 package de.mephisto.vpin.server.vpa;
 
-import de.mephisto.vpin.commons.VpaSourceType;
 import de.mephisto.vpin.restclient.VpaManifest;
-import org.apache.commons.io.FilenameUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.util.*;
 
-public class VpaSourceFileSystem implements VpaSource {
-  private final static Logger LOG = LoggerFactory.getLogger(VpaSourceFileSystem.class);
+public class VpaSourceAdapterFileSystem implements VpaSourceAdapter {
+  private final static Logger LOG = LoggerFactory.getLogger(VpaSourceAdapterFileSystem.class);
 
+  private final VpaSource source;
   private final File vpaArchiveFolder;
   private final Map<String, VpaDescriptor> cache = new HashMap<>();
 
-  public VpaSourceFileSystem(File vpaArchiveFolder) {
-    this.vpaArchiveFolder = vpaArchiveFolder;
-  }
-
-  @Override
-  public VpaSourceType getType() {
-    return VpaSourceType.File;
+  public VpaSourceAdapterFileSystem(VpaSource source) {
+    this.source = source;
+    this.vpaArchiveFolder = new File(source.getLocation());
   }
 
   public List<VpaDescriptor> getDescriptors() {
@@ -30,7 +25,7 @@ public class VpaSourceFileSystem implements VpaSource {
       if (vpaFiles != null) {
         for (File vpaFile : vpaFiles) {
           VpaManifest manifest = VpaUtil.readManifest(vpaFile);
-          VpaDescriptor descriptor = new VpaDescriptor(this, manifest, new Date(vpaFile.lastModified()),
+          VpaDescriptor descriptor = new VpaDescriptor(source, manifest, new Date(vpaFile.lastModified()),
               vpaFile.getName(), vpaFile.length());
           cache.put(vpaFile.getName(), descriptor);
         }
@@ -39,10 +34,16 @@ public class VpaSourceFileSystem implements VpaSource {
     return new ArrayList<>(cache.values());
   }
 
+  public VpaSource getVpaSource() {
+    return source;
+  }
+
   @Override
   public boolean delete(VpaDescriptor descriptor) {
     File file = new File(vpaArchiveFolder, descriptor.getFilename());
-    return file.delete();
+    boolean result =  file.delete();
+    this.invalidate();
+    return result;
   }
 
   @Override
@@ -51,13 +52,8 @@ public class VpaSourceFileSystem implements VpaSource {
   }
 
   @Override
-  public String getLocation() {
-    return vpaArchiveFolder.getAbsolutePath();
-  }
-
-  @Override
   public void invalidate() {
     cache.clear();
-    LOG.info("Invalidated VPA source \"" + this.getLocation() + "\"");
+    LOG.info("Invalidated VPA source \"" + this.getVpaSource() + "\"");
   }
 }

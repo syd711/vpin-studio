@@ -43,7 +43,7 @@ public class VpaExporterJob implements Job {
   private final Highscore highscore;
   private final List<HighscoreVersion> scoreHistory;
   private final ObjectMapper objectMapper;
-  private final VpaSource vpaSource;
+  private final VpaSourceAdapter vpaSourceAdapter;
 
   private File target;
 
@@ -54,7 +54,7 @@ public class VpaExporterJob implements Job {
                         @NonNull VpaManifest manifest,
                         @Nullable Highscore highscore,
                         @NonNull List<HighscoreVersion> scoreHistory,
-                        @NonNull VpaSource vpaSource,
+                        @NonNull VpaSourceAdapter vpaSource,
                         @NonNull File target) {
     this.vprRegFile = vprRegFile;
     this.musicFolder = musicFolder;
@@ -63,7 +63,7 @@ public class VpaExporterJob implements Job {
     this.manifest = manifest;
     this.highscore = highscore;
     this.scoreHistory = scoreHistory;
-    this.vpaSource = vpaSource;
+    this.vpaSourceAdapter = vpaSource;
     this.target = target;
 
     objectMapper = new ObjectMapper();
@@ -217,7 +217,7 @@ public class VpaExporterJob implements Job {
       }
 
       //reset vpa cache
-      vpaSource.invalidate();
+      vpaSourceAdapter.invalidate();
     }
     return true;
   }

@@ -1,21 +1,112 @@
 package de.mephisto.vpin.server.vpa;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import de.mephisto.vpin.commons.VpaSourceType;
 
+import javax.persistence.*;
 import java.io.File;
+import java.util.Date;
 import java.util.List;
 
-public interface VpaSource {
+@Entity
+@Table(name = "VpaSources")
+@JsonInclude(JsonInclude.Include.NON_NULL)
+public class VpaSource {
 
-  VpaSourceType getType();
+  @Column(nullable = false)
+  @Temporal(TemporalType.TIMESTAMP)
+  private Date createdAt;
 
-  List<VpaDescriptor> getDescriptors();
+  @Id
+  @GeneratedValue(strategy = GenerationType.AUTO)
+  private Long id;
 
-  boolean delete(VpaDescriptor descriptor);
+  private String type;
 
-  String getLocation();
+  private String name;
 
-  void invalidate();
+  private String location;
 
-  File getFile(VpaDescriptor vpaDescriptor);
+  private String login;
+
+  private String password;
+
+  public String getType() {
+    return type;
+  }
+
+  public void setType(String type) {
+    this.type = type;
+  }
+
+  public Date getCreatedAt() {
+    return createdAt;
+  }
+
+  public void setCreatedAt(Date createdAt) {
+    this.createdAt = createdAt;
+  }
+
+  public Long getId() {
+    return id;
+  }
+
+  public void setId(Long id) {
+    this.id = id;
+  }
+
+  public String getName() {
+    return name;
+  }
+
+  public void setName(String name) {
+    this.name = name;
+  }
+
+  public String getLocation() {
+    return location;
+  }
+
+  public void setLocation(String location) {
+    this.location = location;
+  }
+
+  public String getLogin() {
+    return login;
+  }
+
+  public void setLogin(String login) {
+    this.login = login;
+  }
+
+  public String getPassword() {
+    return password;
+  }
+
+  public void setPassword(String password) {
+    this.password = password;
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) return true;
+    if (!(o instanceof VpaSource)) return false;
+
+    VpaSource vpaSource = (VpaSource) o;
+
+    if (!id.equals(vpaSource.id)) return false;
+    return location.equals(vpaSource.location);
+  }
+
+  @Override
+  public int hashCode() {
+    int result = id.hashCode();
+    result = 31 * result + location.hashCode();
+    return result;
+  }
+
+  @Override
+  public String toString() {
+    return this.getName();
+  }
 }

@@ -1,6 +1,7 @@
 package de.mephisto.vpin.server.vpa;
 
 import de.mephisto.vpin.restclient.VpaManifest;
+import de.mephisto.vpin.restclient.representations.VpaSourceRepresentation;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameService;
 import de.mephisto.vpin.server.system.SystemService;
@@ -13,10 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -33,8 +31,11 @@ public class VpaService implements InitializingBean {
   @Autowired
   private GameService gameService;
 
-  private VpaSource defaultVpaSource;
-  private List<VpaSource> vpaSources = new ArrayList<>();
+  @Autowired
+  private VpaSourceRepository vpaSourceRepository;
+
+  private VpaSourceAdapterFileSystem defaultVpaSourceAdapter;
+  private final Map<Long, VpaSourceAdapter> adapterCache = new HashMap<>();
 
   public List<VpaDescriptor> getVpaDescriptors(int gameId) {
     Game game = gameService.getGame(gameId);
@@ -49,8 +50,8 @@ public class VpaService implements InitializingBean {
   @Nullable
   public List<VpaDescriptor> getVpaDescriptors() {
     List<VpaDescriptor> result = new ArrayList<>();
-    for (VpaSource vpaSource : vpaSources) {
-      List<VpaDescriptor> descriptors = vpaSource.getDescriptors();
+    for (VpaSourceAdapter adapter : adapterCache.values()) {
+      List<VpaDescriptor> descriptors = adapter.getDescriptors();
       result.addAll(descriptors);
     }
     result.sort(Comparator.comparing(VpaDescriptor::getFilename));
@@ -73,23 +74,51 @@ public class VpaService implements InitializingBean {
     Optional<VpaDescriptor> first = getVpaDescriptors().stream().filter(vpaDescriptor -> vpaDescriptor.getManifest().getUuid().equals(uuid)).findFirst();
     if (first.isPresent()) {
       VpaDescriptor descriptor = first.get();
-      descriptor.getSource().invalidate();
-      return descriptor.getSource().delete(descriptor);
+      return getDefaultVpaSourceAdapter().delete(descriptor);
     }
     return false;
   }
 
-  public VpaSource getDefaultVpaSource() {
-    return this.defaultVpaSource;
+  public boolean deleteVpaSource(long id) {
+    if (adapterCache.containsKey(id)) {
+      this.adapterCache.remove(id);
+      this.vpaSourceRepository.deleteById(id);
+      return true;
+    }
+    return false;
+  }
+
+  public List<VpaSource> getVpaSources() {
+    return adapterCache.values().stream().map(VpaSourceAdapter::getVpaSource).collect(Collectors.toList());
+  }
+
+  public VpaSourceAdapter getDefaultVpaSourceAdapter() {
+    return this.defaultVpaSourceAdapter;
   }
 
   public void invalidateDefaultCache() {
-    this.defaultVpaSource.invalidate();
+    this.getDefaultVpaSourceAdapter().invalidate();
+  }
+
+  public VpaSourceRepresentation save(VpaSourceRepresentation vpaSourceRepresentation) {
+    Optional<VpaSource> byId = vpaSourceRepository.findById(vpaSourceRepresentation.getId());
+    if(byId.isPresent()) {
+      VpaSource vpaSource = byId.get();
+
+    }
+    return null;
   }
 
   @Override
   public void afterPropertiesSet() {
-    this.defaultVpaSource = new VpaSourceFileSystem(systemService.getVpaArchiveFolder());
-    this.vpaSources.add(defaultVpaSource);
+    DefaultVpaSource defaultVpaSource = new DefaultVpaSource(systemService.getVpaArchiveFolder());
+    defaultVpaSourceAdapter = new VpaSourceAdapterFileSystem(defaultVpaSource);
+    this.adapterCache.put(defaultVpaSource.getId(), defaultVpaSourceAdapter);
+
+    List<VpaSource> all = vpaSourceRepository.findAll();
+    for (VpaSource vpaSource : all) {
+      VpaSourceAdapter vpaSourceAdapter = VpaSourceAdapterFactory.create(vpaSource);
+      this.adapterCache.put(vpaSource.getId(), vpaSourceAdapter);
+    }
   }
 }

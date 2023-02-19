@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
 <?import javafx.scene.control.Separator?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
@@ -31,12 +33,19 @@
          <top>
             <ToolBar BorderPane.alignment="CENTER">
               <items>
-                  <TextField fx:id="searchTextField" promptText="Search Archive...">
+                  <Label text="Repository: " textFill="WHITE">
+                     <font>
+                        <Font name="System Bold" size="14.0" />
+                     </font>
+                  </Label>
+                  <ComboBox fx:id="sourceCombo" prefWidth="200.0" />
+                  <Separator layoutX="475.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
+                  <TextField fx:id="searchTextField" prefHeight="30.0" prefWidth="200.0" promptText="Search Repository..">
                      <font>
                         <Font size="14.0" />
                      </font>
                   </TextField>
-                  <Separator orientation="VERTICAL" prefHeight="0.0" prefWidth="0.0" />
+                  <Separator orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
                 <Button fx:id="reloadBtn" mnemonicParsing="false" onAction="#onReload" text="Reload" textFill="WHITE">
                      <font>
                         <Font size="14.0" />
@@ -46,7 +55,7 @@
                      </graphic>
                   </Button>
                   <Separator orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
-                  <Button fx:id="importBtn" layoutX="198.0" layoutY="10.0" mnemonicParsing="false" onAction="#onImport" text="Install" textFill="WHITE">
+                  <Button fx:id="importBtn" layoutX="198.0" layoutY="10.0" mnemonicParsing="false" onAction="#onImport" text="Install Table" textFill="WHITE">
                      <font>
                         <Font size="14.0" />
                      </font>
