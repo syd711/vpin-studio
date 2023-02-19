@@ -294,6 +294,7 @@ public class RepositoryController implements Initializable {
       return new SimpleStringProperty(DateFormat.getInstance().format(value.getCreatedAt()));
     });
 
+    tableView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
     tableView.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
       boolean disable = newSelection == null;
       deleteBtn.setDisable(disable);

@@ -110,8 +110,8 @@ public class TableOverviewController implements Initializable, StudioFXControlle
   @FXML
   private Button scanBtn;
 
-  @FXML
-  private Button importBtn;
+//  @FXML
+//  private Button importBtn;
 
   @FXML
   private Button exportBtn;
@@ -169,19 +169,19 @@ public class TableOverviewController implements Initializable, StudioFXControlle
     }
   }
 
-  @FXML
-  private void onImport() {
-    if (client.isPinUPPopperRunning()) {
-      Optional<ButtonType> buttonType = Dialogs.openPopperRunningWarning(Studio.stage);
-      if (buttonType.isPresent() && buttonType.get().equals(ButtonType.APPLY)) {
-        Studio.client.terminatePopper();
-        Dialogs.openTableImportDialog(this);
-      }
-    }
-    else {
-      Dialogs.openTableImportDialog(this);
-    }
-  }
+//  @FXML
+//  private void onImport() {
+//    if (client.isPinUPPopperRunning()) {
+//      Optional<ButtonType> buttonType = Dialogs.openPopperRunningWarning(Studio.stage);
+//      if (buttonType.isPresent() && buttonType.get().equals(ButtonType.APPLY)) {
+//        Studio.client.terminatePopper();
+//        Dialogs.openTableImportDialog(this);
+//      }
+//    }
+//    else {
+//      Dialogs.openTableImportDialog(this);
+//    }
+//  }
 
   @FXML
   private void onEmulatorSelect() {
@@ -355,7 +355,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
     this.uploadDirectB2SItem.setDisable(true);
     this.inspectBtn.setDisable(true);
     this.exportBtn.setDisable(true);
-    this.importBtn.setDisable(true);
+//    this.importBtn.setDisable(true);
     this.uploadMenuBtn.setDisable(true);
 
     tableView.setVisible(false);
@@ -391,7 +391,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
         }
 
 
-        this.importBtn.setDisable(false);
+//        this.importBtn.setDisable(false);
         this.textfieldSearch.setDisable(false);
         this.reloadBtn.setDisable(false);
         this.scanBtn.setDisable(false);
