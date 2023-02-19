@@ -1,29 +1,29 @@
 package de.mephisto.vpin.ui.tables.dialogs;
 
 import de.mephisto.vpin.restclient.ImportDescriptor;
+import de.mephisto.vpin.restclient.representations.VpaDescriptorRepresentation;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.util.ProgressModel;
 import de.mephisto.vpin.ui.util.ProgressResultModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.File;
 import java.util.Iterator;
 import java.util.List;
 
-public class TableImportProgressModel extends ProgressModel<File> {
-  private final static Logger LOG = LoggerFactory.getLogger(TableImportProgressModel.class);
+public class VpaImportProgressModel extends ProgressModel<VpaDescriptorRepresentation> {
+  private final static Logger LOG = LoggerFactory.getLogger(VpaImportProgressModel.class);
 
   private final ImportDescriptor descriptor;
-  private final Iterator<File> iterator;
-  private final List<File> vpaFiles;
+  private final Iterator<VpaDescriptorRepresentation> iterator;
+  private final List<VpaDescriptorRepresentation> vpaDescriptors;
   private double percentage = 0;
 
-  public TableImportProgressModel(String title, ImportDescriptor descriptor, List<File> vpaFiles) {
+  public VpaImportProgressModel(String title, ImportDescriptor descriptor, List<VpaDescriptorRepresentation> vpaDescriptors) {
     super(title);
     this.descriptor = descriptor;
-    this.iterator = vpaFiles.iterator();
-    this.vpaFiles = vpaFiles;
+    this.iterator = vpaDescriptors.iterator();
+    this.vpaDescriptors = vpaDescriptors;
   }
 
   @Override
@@ -33,28 +33,23 @@ public class TableImportProgressModel extends ProgressModel<File> {
 
   @Override
   public int getMax() {
-    return vpaFiles.size();
+    return vpaDescriptors.size();
   }
 
   @Override
-  public File getNext() {
+  public VpaDescriptorRepresentation getNext() {
     return iterator.next();
   }
 
   @Override
-  public String nextToString(File file) {
-    return file.getName();
+  public String nextToString(VpaDescriptorRepresentation d) {
+    return d.getManifest().getGameDisplayName();
   }
 
   @Override
-  public void processNext(ProgressResultModel progressResultModel, File next) {
+  public void processNext(ProgressResultModel progressResultModel, VpaDescriptorRepresentation next) {
     try {
-      String uuid = Studio.client.uploadVpa(next, percent -> {
-        double total = percentage + percent;
-        progressResultModel.setProgress(total / this.vpaFiles.size());
-      });
-
-      descriptor.setUuid(uuid);
+      descriptor.setUuid(next.getManifest().getUuid());
       Studio.client.importVpa(descriptor);
 
       progressResultModel.addProcessed();

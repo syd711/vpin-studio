@@ -112,7 +112,7 @@ public class TableDeleteController implements Initializable, DialogController {
     this.game = game;
     this.titleLabel.setText(game.getGameDisplayName());
 
-    boolean hasVpa = !game.getVpaUuids().isEmpty();
+    boolean hasVpa = Studio.client.getVpaDescriptorsForGame(game.getId()).isEmpty();
     this.validationContainer.setVisible(!hasVpa);
   }
 }

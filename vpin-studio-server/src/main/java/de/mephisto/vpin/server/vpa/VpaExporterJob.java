@@ -9,6 +9,7 @@ import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.highscores.Highscore;
 import de.mephisto.vpin.server.highscores.HighscoreVersion;
 import de.mephisto.vpin.server.popper.GameMediaItem;
+import de.mephisto.vpin.server.popper.WheelAugmenter;
 import de.mephisto.vpin.server.util.ImageUtil;
 import de.mephisto.vpin.server.util.vpreg.VPReg;
 import de.mephisto.vpin.server.util.vpreg.VPRegScoreSummary;
@@ -119,7 +120,7 @@ public class VpaExporterJob implements Job {
 
         //write highscore history
         List<ScoreVersionEntry> scores = scoreHistory.stream().map(ScoreVersionEntry::new).collect(Collectors.toList());
-        packageInfo.setHighscoreHistory(!scores.isEmpty());
+        packageInfo.setHighscoreHistoryRecords(scores.size());
         String scoresJson = objectMapper.writeValueAsString(scores);
         manifest.getAdditionalData().put(VpaService.DATA_HIGHSCORE_HISTORY, scoresJson);
 
@@ -209,7 +210,7 @@ public class VpaExporterJob implements Job {
       }
 
       boolean renamed = tempFile.renameTo(target);
-      if(renamed) {
+      if (renamed) {
         LOG.info("Finished packing of " + target.getAbsolutePath() + ", took " + ((System.currentTimeMillis() - start) / 1000) + " seconds, " + FileUtils.readableFileSize(target.length()));
       }
       else {
@@ -231,7 +232,16 @@ public class VpaExporterJob implements Job {
         GameMediaItem gameMediaItem = game.getGameMedia().get(value);
         if (gameMediaItem != null && gameMediaItem.getFile().exists()) {
           LOG.info("Packing " + gameMediaItem.getFile().getAbsolutePath());
-          zipFile(gameMediaItem.getFile(), "PinUPSystem/POPMedia/" + getPupUpMediaFolderName() + "/" + value.name() + "/" + gameMediaItem.getFile().getName(), zipOut);
+          File mediaFile = gameMediaItem.getFile();
+
+          //do not archive augmented icons
+          if (value.equals(PopperScreen.Wheel)) {
+            WheelAugmenter augmenter = new WheelAugmenter(gameMediaItem.getFile());
+            if (augmenter.getBackupWheelIcon().exists()) {
+              mediaFile = augmenter.getBackupWheelIcon();
+            }
+          }
+          zipFile(mediaFile, "PinUPSystem/POPMedia/" + getPupUpMediaFolderName() + "/" + value.name() + "/" + mediaFile.getName(), zipOut);
         }
       }
     }
@@ -254,7 +264,14 @@ public class VpaExporterJob implements Job {
     //store wheel icon as archive preview
     GameMediaItem mediaItem = game.getGameMedia().get(PopperScreen.Wheel);
     if (mediaItem != null) {
-      BufferedImage image = ImageUtil.loadImage(mediaItem.getFile());
+      File mediaFile = mediaItem.getFile();
+      //do not archive augmented icons
+      WheelAugmenter augmenter = new WheelAugmenter(mediaItem.getFile());
+      if (augmenter.getBackupWheelIcon().exists()) {
+        mediaFile = augmenter.getBackupWheelIcon();
+      }
+
+      BufferedImage image = ImageUtil.loadImage(mediaFile);
       BufferedImage resizedImage = ImageUtil.resizeImage(image, 100);
 
       byte[] bytes = ImageUtil.toBytes(resizedImage);

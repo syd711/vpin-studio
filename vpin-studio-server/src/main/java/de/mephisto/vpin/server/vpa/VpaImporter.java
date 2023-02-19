@@ -54,7 +54,7 @@ public class VpaImporter {
 
   public Game startImport() {
     try {
-      LOG.info("Starting import of " + descriptor.getVpaFileName());
+      LOG.info("Starting import of " + descriptor.getUuid());
 
       boolean importRom = descriptor.isImportRom();
       boolean importPopperMedia = descriptor.isImportPopperMedia();
@@ -62,7 +62,7 @@ public class VpaImporter {
       boolean importHighscores = descriptor.isImportHighscores();
 
       unzipVpa(importRom, importPopperMedia, importPupPack, importHighscores);
-      LOG.info("Finished unzipping of " + descriptor.getVpaFileName() + ", starting Popper import.");
+      LOG.info("Finished unzipping of " + descriptor.getUuid() + ", starting Popper import.");
 
       VpaManifest manifest = VpaUtil.readManifest(vpaFile);
       if (StringUtils.isEmpty(manifest.getGameFileName())) {

@@ -90,17 +90,17 @@ public class RepositoryController implements Initializable {
 
   @FXML
   private void onImport() {
-    VpaDescriptorRepresentation selection = tableView.getSelectionModel().getSelectedItem();
-    if(selection != null) {
+    ObservableList<VpaDescriptorRepresentation> selectedItems = tableView.getSelectionModel().getSelectedItems();
+    if(!selectedItems.isEmpty()) {
       if (client.isPinUPPopperRunning()) {
         Optional<ButtonType> buttonType = Dialogs.openPopperRunningWarning(Studio.stage);
         if (buttonType.isPresent() && buttonType.get().equals(ButtonType.APPLY)) {
           Studio.client.terminatePopper();
-          Dialogs.openVpaImportDialog(this, selection);
+          Dialogs.openVpaImportDialog(tablesController, selectedItems);
         }
       }
       else {
-        Dialogs.openVpaImportDialog(this, selection);
+        Dialogs.openVpaImportDialog(tablesController, selectedItems);
       }
     }
 

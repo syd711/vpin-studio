@@ -11,10 +11,7 @@ import de.mephisto.vpin.server.jobs.JobQueue;
 import de.mephisto.vpin.server.popper.GameMediaItem;
 import de.mephisto.vpin.server.popper.PinUPConnector;
 import de.mephisto.vpin.server.system.SystemService;
-import de.mephisto.vpin.server.vpa.VpaExporterJob;
-import de.mephisto.vpin.server.vpa.VpaImporter;
-import de.mephisto.vpin.server.vpa.VpaService;
-import de.mephisto.vpin.server.vpa.VpaSource;
+import de.mephisto.vpin.server.vpa.*;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -49,7 +46,8 @@ public class IOService {
 
   public boolean importVpa(@NonNull ImportDescriptor descriptor) {
     try {
-      File vpaFile = new File(systemService.getVpaArchiveFolder(), descriptor.getVpaFileName());
+      VpaDescriptor vpaDescriptor = vpaService.getVpaDescriptor(descriptor.getUuid());
+      File vpaFile = new File(systemService.getVpaArchiveFolder(), vpaDescriptor.getFilename());
       VpaImporter importer = new VpaImporter(descriptor, vpaFile, pinUPConnector, systemService, highscoreService, gameService);
       Game importedGame = importer.startImport();
       if (importedGame != null) {

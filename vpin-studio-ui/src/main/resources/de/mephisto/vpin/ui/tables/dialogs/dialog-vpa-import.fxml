@@ -44,7 +44,7 @@
          <center>
             <VBox BorderPane.alignment="CENTER">
                <children>
-                  <Label fx:id="fileNameLabel" text="-" textFill="WHITE">
+                  <Label fx:id="titleLabel" text="-" textFill="WHITE">
                      <font>
                         <Font size="18.0" />
                      </font>

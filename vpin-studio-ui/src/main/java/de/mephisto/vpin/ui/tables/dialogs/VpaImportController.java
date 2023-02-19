@@ -5,6 +5,8 @@ import de.mephisto.vpin.restclient.ImportDescriptor;
 import de.mephisto.vpin.restclient.representations.PlaylistRepresentation;
 import de.mephisto.vpin.restclient.representations.VpaDescriptorRepresentation;
 import de.mephisto.vpin.ui.tables.RepositoryController;
+import de.mephisto.vpin.ui.tables.TablesController;
+import de.mephisto.vpin.ui.util.Dialogs;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -26,9 +28,6 @@ public class VpaImportController implements Initializable, DialogController {
   private final static Logger LOG = LoggerFactory.getLogger(VpaImportController.class);
 
   @FXML
-  private Button importBtn;
-
-  @FXML
   private CheckBox importRomCheckbox;
 
   @FXML
@@ -41,12 +40,13 @@ public class VpaImportController implements Initializable, DialogController {
   private CheckBox highscoresCheckbox;
 
   @FXML
-  private Label fileNameLabel;
+  private Label titleLabel;
 
   @FXML
   private ComboBox<PlaylistRepresentation> playlistCombo;
 
-  private RepositoryController repositoryController;
+  private TablesController tablesController;
+  private List<VpaDescriptorRepresentation> vpaDescriptors;
 
 
   @FXML
@@ -65,13 +65,9 @@ public class VpaImportController implements Initializable, DialogController {
     stage.close();
 
     Platform.runLater(() -> {
-//      String title = "Importing " + this.selection.size() + " tables";
-//      if (this.selection.size() == 1) {
-//        title = "Importing \"" + this.selection.get(0).getName() + "\"";
-//      }
-//      TableImportProgressModel model = new TableImportProgressModel(title, descriptor, this.selection);
-//      Dialogs.createProgressDialog(model);
-//      tablesController.onReload();
+      VpaImportProgressModel model = new VpaImportProgressModel(titleLabel.getText(), descriptor, this.vpaDescriptors);
+      Dialogs.createProgressDialog(model);
+      tablesController.getTableOverviewController().onReload();
     });
   }
 
@@ -83,7 +79,6 @@ public class VpaImportController implements Initializable, DialogController {
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
-    this.importBtn.setDisable(true);
     List<PlaylistRepresentation> playlists = client.getPlaylists();
     ObservableList<PlaylistRepresentation> data = FXCollections.observableList(playlists);
     this.playlistCombo.setItems(data);
@@ -95,8 +90,14 @@ public class VpaImportController implements Initializable, DialogController {
 
   }
 
-  public void setData(RepositoryController repositoryController, VpaDescriptorRepresentation vpaDescriptor) {
-    this.repositoryController = repositoryController;
-    this.fileNameLabel.setText(vpaDescriptor.getFilename());
+  public void setData(TablesController tablesController, List<VpaDescriptorRepresentation> vpaDescriptors) {
+    this.tablesController = tablesController;
+    this.vpaDescriptors = vpaDescriptors;
+
+    String title = "Importing " + this.vpaDescriptors.size() + " archives";
+    if (this.vpaDescriptors.size() == 1) {
+      title = "Importing \"" + this.vpaDescriptors.get(0).getManifest().getGameDisplayName() + "\"";
+    }
+    titleLabel.setText(title);
   }
 }

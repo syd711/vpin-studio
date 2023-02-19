@@ -145,10 +145,6 @@ public class VPinStudioClient implements ObservedPropertyChangeListener, Overlay
     return restClient.post(API + "io/export", exportDescriptor, Boolean.class);
   }
 
-  public boolean importVpa(ImportDescriptor exportDescriptor) throws Exception {
-    return restClient.post(API + "io/import", exportDescriptor, Boolean.class);
-  }
-
   public VpaManifest getVpaManifest(int gameId) {
     return restClient.get(API + "io/manifest/" + gameId, VpaManifest.class);
   }
@@ -158,6 +154,14 @@ public class VPinStudioClient implements ObservedPropertyChangeListener, Overlay
    ********************************************************************************************************************/
   public List<VpaDescriptorRepresentation> getVpaDescriptors() {
     return Arrays.asList(restClient.get(API + "vpa", VpaDescriptorRepresentation[].class));
+  }
+
+  public List<VpaDescriptorRepresentation> getVpaDescriptorsForGame(int gameId) {
+    return Arrays.asList(restClient.get(API + "vpa/game/" + gameId, VpaDescriptorRepresentation[].class));
+  }
+
+  public boolean importVpa(ImportDescriptor descriptor) throws Exception {
+    return restClient.post(API + "io/import", descriptor, Boolean.class);
   }
 
   public void deleteVpa(VpaDescriptorRepresentation descriptorRepresentation) {
@@ -175,6 +179,15 @@ public class VPinStudioClient implements ObservedPropertyChangeListener, Overlay
       return new RestTemplate().exchange(url, HttpMethod.POST, upload, String.class).getBody();
     } catch (Exception e) {
       LOG.error("VPA upload failed: " + e.getMessage(), e);
+      throw e;
+    }
+  }
+
+  public boolean installVpa(VpaDescriptorRepresentation vpa) throws Exception {
+    try {
+      return restClient.post(API + "vpa/install", vpa, Boolean.class);
+    } catch (Exception e) {
+      LOG.error("Failed install archive: " + e.getMessage(), e);
       throw e;
     }
   }

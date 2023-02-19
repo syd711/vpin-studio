@@ -72,8 +72,7 @@ public class RepositorySidebarController implements Initializable, StudioFXContr
   private FontIcon highscoreIcon;
 
   @FXML
-  private FontIcon highscoreHistoryIcon;
-
+  private Label highscoreHistoryLabel;
 
   @FXML
   private TitledPane manifestPane;
@@ -168,8 +167,8 @@ public class RepositorySidebarController implements Initializable, StudioFXContr
     altSoundIcon.setVisible(false);
     povIcon.setVisible(false);
     highscoreIcon.setVisible(false);
-    highscoreHistoryIcon.setVisible(false);
 
+    highscoreHistoryLabel.setText("");
     filenameLabel.setText("-");
     fileSizeLabel.setText("-");
     sourceLabel.setText("-");
@@ -193,7 +192,7 @@ public class RepositorySidebarController implements Initializable, StudioFXContr
       altSoundIcon.setVisible(packageInfo.isAltSound());
       povIcon.setVisible(packageInfo.isPov());
       highscoreIcon.setVisible(packageInfo.isHighscore());
-      highscoreHistoryIcon.setVisible(packageInfo.isHighscoreHistory());
+      highscoreHistoryLabel.setText(String.valueOf(packageInfo.getHighscoreHistoryRecords()));
 
 
       gameName.setText(StringUtils.isEmpty(manifest.getGameName()) ? "-" : manifest.getGameName());

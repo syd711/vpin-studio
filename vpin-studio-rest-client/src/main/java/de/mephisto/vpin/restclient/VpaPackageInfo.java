@@ -9,7 +9,7 @@ public class VpaPackageInfo {
   private boolean music;
   private boolean altSound;
   private boolean highscore;
-  private boolean highscoreHistory;
+  private int highscoreHistoryRecords;
   private boolean flexDMD;
   private boolean ultraDMD;
   private boolean vpx;
@@ -86,12 +86,12 @@ public class VpaPackageInfo {
     this.highscore = highscore;
   }
 
-  public boolean isHighscoreHistory() {
-    return highscoreHistory;
+  public int getHighscoreHistoryRecords() {
+    return highscoreHistoryRecords;
   }
 
-  public void setHighscoreHistory(boolean highscoreHistory) {
-    this.highscoreHistory = highscoreHistory;
+  public void setHighscoreHistoryRecords(int highscoreHistoryRecords) {
+    this.highscoreHistoryRecords = highscoreHistoryRecords;
   }
 
   public boolean isFlexDMD() {

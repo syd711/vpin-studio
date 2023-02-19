@@ -62,6 +62,14 @@
                         <FontIcon iconColor="WHITE" iconLiteral="mdi2u-upload" />
                      </graphic>
                   </Button>
+                  <Button fx:id="uploadBtn1" layoutX="376.0" layoutY="10.0" mnemonicParsing="false" onAction="#onUpload" text="Download" textFill="WHITE">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                     <graphic>
+                        <FontIcon iconColor="WHITE" iconLiteral="mdi2d-download" />
+                     </graphic>
+                  </Button>
                   <Separator layoutX="282.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
                   <Button fx:id="deleteBtn" layoutX="379.0" layoutY="11.0" mnemonicParsing="false" onAction="#onDelete" text="Delete" textFill="#ff3333">
                      <font>

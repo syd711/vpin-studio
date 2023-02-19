@@ -38,7 +38,6 @@ public class Game {
   private String ignoredValidations;
   private int volume;
   private HighscoreType highscoreType;
-  private List<String> vpaUuids = new ArrayList<>();
 
   private List<GameAsset> assets = new ArrayList<>();
 
@@ -57,14 +56,6 @@ public class Game {
       return this.getGameFile().length();
     }
     return -1;
-  }
-
-  public List<String> getVpaUuids() {
-    return vpaUuids;
-  }
-
-  public void setVpaUuids(List<String> vpaUuids) {
-    this.vpaUuids = vpaUuids;
   }
 
   public HighscoreType getHighscoreType() {

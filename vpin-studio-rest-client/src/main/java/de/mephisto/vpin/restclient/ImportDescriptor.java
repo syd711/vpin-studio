@@ -6,14 +6,14 @@ public class ImportDescriptor {
   private boolean importPopperMedia;
   private boolean importHighscores;
   private int playlistId = -1;
-  private String vpaFileName;
+  private String uuid;
 
-  public String getVpaFileName() {
-    return vpaFileName;
+  public String getUuid() {
+    return uuid;
   }
 
-  public void setVpaFileName(String vpaFileName) {
-    this.vpaFileName = vpaFileName;
+  public void setUuid(String uuid) {
+    this.uuid = uuid;
   }
 
   public int getPlaylistId() {

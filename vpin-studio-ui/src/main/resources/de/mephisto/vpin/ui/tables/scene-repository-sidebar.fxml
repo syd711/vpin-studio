@@ -117,7 +117,7 @@
                                     <Font size="14.0" />
                                  </font>
                               </Label>
-                              <Label layoutX="10.0" layoutY="137.0" text="Highscore History Data:" GridPane.rowIndex="10">
+                              <Label layoutX="10.0" layoutY="137.0" text="Highscore History Entries:" GridPane.rowIndex="10">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
@@ -151,13 +151,17 @@
                               <FontIcon fx:id="altSoundIcon" iconColor="#66ff66" iconLiteral="bi-check-circle" iconSize="18" layoutX="174.0" layoutY="186.0" GridPane.columnIndex="1" GridPane.rowIndex="7" />
                               <FontIcon fx:id="povIcon" iconColor="#66ff66" iconLiteral="bi-check-circle" iconSize="18" layoutX="174.0" layoutY="217.0" GridPane.columnIndex="1" GridPane.rowIndex="8" />
                               <FontIcon fx:id="highscoreIcon" iconColor="#66ff66" iconLiteral="bi-check-circle" iconSize="18" layoutX="174.0" layoutY="247.0" GridPane.columnIndex="1" GridPane.rowIndex="9" />
-                              <FontIcon fx:id="highscoreHistoryIcon" iconColor="#66ff66" iconLiteral="bi-check-circle" iconSize="18" layoutX="174.0" layoutY="278.0" GridPane.columnIndex="1" GridPane.rowIndex="10" />
                               <Label layoutX="10.0" layoutY="228.0" text="Music:" GridPane.rowIndex="6">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
                               </Label>
                               <FontIcon fx:id="musicIcon" iconColor="#66ff66" iconLiteral="bi-check-circle" iconSize="18" layoutX="192.0" layoutY="186.0" GridPane.columnIndex="1" GridPane.rowIndex="6" />
+                              <Label fx:id="highscoreHistoryLabel" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="10">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </Label>
                            </children>
                         </GridPane>
                      </children>

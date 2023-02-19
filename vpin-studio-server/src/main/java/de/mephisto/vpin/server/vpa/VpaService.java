@@ -2,13 +2,17 @@ package de.mephisto.vpin.server.vpa;
 
 import de.mephisto.vpin.restclient.VpaManifest;
 import de.mephisto.vpin.server.games.Game;
+import de.mephisto.vpin.server.games.GameService;
 import de.mephisto.vpin.server.system.SystemService;
+import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -26,10 +30,14 @@ public class VpaService implements InitializingBean {
   @Autowired
   private SystemService systemService;
 
+  @Autowired
+  private GameService gameService;
+
   private VpaSource defaultVpaSource;
   private List<VpaSource> vpaSources = new ArrayList<>();
 
-  public List<VpaDescriptor> getVpasFor(Game game) {
+  public List<VpaDescriptor> getVpaDescriptors(int gameId) {
+    Game game = gameService.getGame(gameId);
     return getVpaDescriptors().stream().filter(vpaDescriptor -> {
       VpaManifest manifest = vpaDescriptor.getManifest();
       return (manifest.getGameName() != null && manifest.getGameName().equals(game.getGameDisplayName())) ||
@@ -38,6 +46,7 @@ public class VpaService implements InitializingBean {
     }).collect(Collectors.toList());
   }
 
+  @Nullable
   public List<VpaDescriptor> getVpaDescriptors() {
     List<VpaDescriptor> result = new ArrayList<>();
     for (VpaSource vpaSource : vpaSources) {
@@ -46,6 +55,18 @@ public class VpaService implements InitializingBean {
     }
     result.sort(Comparator.comparing(VpaDescriptor::getFilename));
     return result;
+  }
+
+  @Nullable
+  public VpaDescriptor getVpaDescriptor(@NonNull File out) {
+    Optional<VpaDescriptor> first = getVpaDescriptors().stream().filter(f -> f.getFilename().equals(out.getName())).findFirst();
+    return first.orElse(null);
+  }
+
+  @Nullable
+  public VpaDescriptor getVpaDescriptor(@NonNull String uuid) {
+    Optional<VpaDescriptor> first = getVpaDescriptors().stream().filter(f -> f.getManifest().getUuid().equals(uuid)).findFirst();
+    return first.orElse(null);
   }
 
   public boolean deleteVpa(String uuid) {

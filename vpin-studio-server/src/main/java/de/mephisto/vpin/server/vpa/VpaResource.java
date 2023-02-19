@@ -34,18 +34,19 @@ public class VpaResource {
     List<VpaDescriptor> vpaDescriptors = vpaService.getVpaDescriptors();
     List<VpaDescriptorRepresentation> result = new ArrayList<>();
     for (VpaDescriptor vpaDescriptor : vpaDescriptors) {
-      VpaSourceRepresentation source = new VpaSourceRepresentation();
-      source.setType(vpaDescriptor.getSource().getType().name());
-      source.setLocation(vpaDescriptor.getSource().getLocation());
+      VpaDescriptorRepresentation descriptorRepresentation = toRepresentation(vpaDescriptor);
+      result.add(descriptorRepresentation);
+    }
+    return result;
+  }
 
-      VpaDescriptorRepresentation representation = new VpaDescriptorRepresentation();
-      representation.setFilename(vpaDescriptor.getFilename());
-      representation.setManifest(vpaDescriptor.getManifest());
-      representation.setCreatedAt(vpaDescriptor.getCreatedAt());
-      representation.setSize(vpaDescriptor.getSize());
-      representation.setSource(source);
-
-      result.add(representation);
+  @GetMapping("/game/{id}")
+  public List<VpaDescriptorRepresentation> getArchives(@PathVariable("id") int gameId) {
+    List<VpaDescriptor> vpaDescriptors = vpaService.getVpaDescriptors(gameId);
+    List<VpaDescriptorRepresentation> result = new ArrayList<>();
+    for (VpaDescriptor vpaDescriptor : vpaDescriptors) {
+      VpaDescriptorRepresentation descriptorRepresentation = toRepresentation(vpaDescriptor);
+      result.add(descriptorRepresentation);
     }
     return result;
   }
@@ -64,7 +65,8 @@ public class VpaResource {
       }
       File out = new File(systemService.getVpaArchiveFolder(), file.getOriginalFilename());
       if (UploadUtil.upload(file, out)) {
-        return out.getName();
+        VpaDescriptor vpaDescriptor = vpaService.getVpaDescriptor(out);
+        return vpaDescriptor.getManifest().getUuid();
       }
       return null;
     } catch (Exception e) {
@@ -72,5 +74,17 @@ public class VpaResource {
     }
   }
 
+  private VpaDescriptorRepresentation toRepresentation(VpaDescriptor vpaDescriptor) {
+    VpaSourceRepresentation source = new VpaSourceRepresentation();
+    source.setType(vpaDescriptor.getSource().getType().name());
+    source.setLocation(vpaDescriptor.getSource().getLocation());
 
+    VpaDescriptorRepresentation representation = new VpaDescriptorRepresentation();
+    representation.setFilename(vpaDescriptor.getFilename());
+    representation.setManifest(vpaDescriptor.getManifest());
+    representation.setCreatedAt(vpaDescriptor.getCreatedAt());
+    representation.setSize(vpaDescriptor.getSize());
+    representation.setSource(source);
+    return representation;
+  }
 }

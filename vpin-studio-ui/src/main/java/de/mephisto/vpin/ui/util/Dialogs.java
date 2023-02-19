@@ -14,6 +14,7 @@ import de.mephisto.vpin.ui.competitions.CompetitionOfflineDialogController;
 import de.mephisto.vpin.ui.players.PlayerDialogController;
 import de.mephisto.vpin.ui.tables.RepositoryController;
 import de.mephisto.vpin.ui.tables.TableOverviewController;
+import de.mephisto.vpin.ui.tables.TablesController;
 import de.mephisto.vpin.ui.tables.dialogs.*;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import javafx.fxml.FXMLLoader;
@@ -144,10 +145,10 @@ public class Dialogs {
     stage.showAndWait();
   }
 
-  public static void openVpaImportDialog(RepositoryController repositoryController, VpaDescriptorRepresentation vpaDescriptor) {
-    Stage stage = createStudioDialogStage(VpaImportController.class, "dialog-vpa-import.fxml", "Install Archive");
+  public static void openVpaImportDialog(TablesController tablesController, List<VpaDescriptorRepresentation> vpaDescriptors) {
+    Stage stage = createStudioDialogStage(VpaImportController.class, "dialog-vpa-import.fxml", "Install Archives");
     VpaImportController controller = (VpaImportController) stage.getUserData();
-    controller.setData(repositoryController, vpaDescriptor);
+    controller.setData(tablesController, vpaDescriptors);
     stage.showAndWait();
   }
 
