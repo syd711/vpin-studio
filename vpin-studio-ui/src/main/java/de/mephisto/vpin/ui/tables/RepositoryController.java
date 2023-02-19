@@ -3,10 +3,13 @@ package de.mephisto.vpin.ui.tables;
 import de.mephisto.vpin.commons.utils.FileUtils;
 import de.mephisto.vpin.commons.utils.ImageUtil;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
+import de.mephisto.vpin.restclient.JobDescriptor;
+import de.mephisto.vpin.restclient.UploadJobDescriptor;
 import de.mephisto.vpin.restclient.representations.VpaDescriptorRepresentation;
 import de.mephisto.vpin.ui.NavigationController;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.WaitOverlayController;
+import de.mephisto.vpin.ui.jobs.JobPoller;
 import de.mephisto.vpin.ui.util.Dialogs;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleObjectProperty;
@@ -21,16 +24,20 @@ import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.StackPane;
+import javafx.stage.DirectoryChooser;
+import org.apache.commons.io.FilenameUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.ByteArrayInputStream;
+import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.text.DateFormat;
 import java.util.*;
 
 import static de.mephisto.vpin.ui.Studio.client;
+import static de.mephisto.vpin.ui.Studio.stage;
 
 public class RepositoryController implements Initializable {
   private final static Logger LOG = LoggerFactory.getLogger(RepositoryController.class);
@@ -43,6 +50,9 @@ public class RepositoryController implements Initializable {
 
   @FXML
   private Button uploadBtn;
+
+  @FXML
+  private Button downloadBtn;
 
   @FXML
   private TextField searchTextField;
@@ -91,7 +101,7 @@ public class RepositoryController implements Initializable {
   @FXML
   private void onImport() {
     ObservableList<VpaDescriptorRepresentation> selectedItems = tableView.getSelectionModel().getSelectedItems();
-    if(!selectedItems.isEmpty()) {
+    if (!selectedItems.isEmpty()) {
       if (client.isPinUPPopperRunning()) {
         Optional<ButtonType> buttonType = Dialogs.openPopperRunningWarning(Studio.stage);
         if (buttonType.isPresent() && buttonType.get().equals(ButtonType.APPLY)) {
@@ -103,16 +113,50 @@ public class RepositoryController implements Initializable {
         Dialogs.openVpaImportDialog(tablesController, selectedItems);
       }
     }
-
   }
 
   @FXML
   private void onUpload() {
+    boolean uploaded = Dialogs.openVpaUploadDialog();
+    if (uploaded) {
+      doReload();
+    }
+  }
 
+  @FXML
+  private void onDownload() {
+    ObservableList<VpaDescriptorRepresentation> selectedItems = tableView.getSelectionModel().getSelectedItems();
+    if(!selectedItems.isEmpty()) {
+      DirectoryChooser chooser = new DirectoryChooser();
+      chooser.setTitle("Select Target Folder");
+      File targetFolder = chooser.showDialog(stage);
+      if (targetFolder != null) {
+        for (VpaDescriptorRepresentation selectedItem : selectedItems) {
+          File target = new File(targetFolder, selectedItem.getFilename());
+          int index = 1;
+          String originalBaseName = FilenameUtils.getBaseName(target.getName());
+          while(target.exists()) {
+            String suffix = FilenameUtils.getExtension(target.getName());
+            target = new File(target.getParentFile(), originalBaseName + " (" + index + ")." + suffix);
+            index++;
+          }
+
+          UploadJobDescriptor job = new UploadJobDescriptor("/vpa/download/" + selectedItem.getManifest().getUuid(), target);
+          job.setTitle("Download of \"" + selectedItem.getManifest().getGameDisplayName()+ "\"");
+          job.setDescription("Downloading file \"" + selectedItem.getFilename() + "\"");
+          JobPoller.getInstance().queueJob(job);
+        }
+      }
+    }
   }
 
   @FXML
   public void onReload() {
+    client.invalidateVpaCache();
+    doReload();
+  }
+
+  public void doReload() {
     this.searchTextField.setDisable(true);
 
     VpaDescriptorRepresentation selection = tableView.getSelectionModel().getSelectedItem();
@@ -157,7 +201,7 @@ public class RepositoryController implements Initializable {
       if (result.isPresent() && result.get().equals(ButtonType.OK)) {
         client.deleteVpa(selection);
         tableView.getSelectionModel().clearSelection();
-        onReload();
+        doReload();
       }
     }
   }
@@ -254,6 +298,7 @@ public class RepositoryController implements Initializable {
       boolean disable = newSelection == null;
       deleteBtn.setDisable(disable);
       importBtn.setDisable(disable);
+      downloadBtn.setDisable(disable);
 
       if (oldSelection == null || !oldSelection.equals(newSelection)) {
         updateSelection(Optional.ofNullable(newSelection));
@@ -279,7 +324,8 @@ public class RepositoryController implements Initializable {
 
     deleteBtn.setDisable(true);
     importBtn.setDisable(true);
-    this.onReload();
+    downloadBtn.setDisable(true);
+    this.doReload();
   }
 
   private void updateSelection(Optional<VpaDescriptorRepresentation> newSelection) {

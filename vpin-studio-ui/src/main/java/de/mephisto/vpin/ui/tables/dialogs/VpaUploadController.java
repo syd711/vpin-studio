@@ -21,11 +21,10 @@ import java.util.List;
 import java.util.ResourceBundle;
 import java.util.stream.Collectors;
 
-import static de.mephisto.vpin.ui.Studio.client;
 import static de.mephisto.vpin.ui.Studio.stage;
 
-public class ROMUploadController implements Initializable, DialogController {
-  private final static Logger LOG = LoggerFactory.getLogger(ROMUploadController.class);
+public class VpaUploadController implements Initializable, DialogController {
+  private final static Logger LOG = LoggerFactory.getLogger(VpaUploadController.class);
 
   private static File lastFolderSelection;
 
@@ -54,11 +53,11 @@ public class ROMUploadController implements Initializable, DialogController {
           Stage stage = (Stage) ((Button) event.getSource()).getScene().getWindow();
           stage.close();
         });
-        RomUploadProgressModel model = new RomUploadProgressModel("ROM Upload", selection);
+        VpaUploadProgressModel model = new VpaUploadProgressModel("Archive Upload", selection);
         Dialogs.createProgressDialog(model);
       } catch (Exception e) {
         LOG.error("Upload failed: " + e.getMessage(), e);
-        WidgetFactory.showAlert(stage, "Uploading ROM failed", "Please check the log file for details", "Error: " + e.getMessage());
+        WidgetFactory.showAlert(stage, "Uploading archive failed", "Please check the log file for details", "Error: " + e.getMessage());
       }
     }
   }
@@ -66,19 +65,18 @@ public class ROMUploadController implements Initializable, DialogController {
   @FXML
   private void onFileSelect() {
     FileChooser fileChooser = new FileChooser();
-    fileChooser.setTitle("Select ROM File");
+    fileChooser.setTitle("Select Archive File");
     fileChooser.getExtensionFilters().addAll(
-        new FileChooser.ExtensionFilter("ROM", "*.zip"));
+        new FileChooser.ExtensionFilter("Visual Pinball Archive", "*.vpa"));
 
-    if (ROMUploadController.lastFolderSelection != null) {
-      fileChooser.setInitialDirectory(ROMUploadController.lastFolderSelection);
+    if (VpaUploadController.lastFolderSelection != null) {
+      fileChooser.setInitialDirectory(VpaUploadController.lastFolderSelection);
     }
 
     this.selection = fileChooser.showOpenMultipleDialog(stage);
     if (this.selection != null && !this.selection.isEmpty()) {
-      ROMUploadController.lastFolderSelection = this.selection.get(0).getParentFile();
-      List<String> collect = this.selection.stream().map(f -> f.getName()).collect(Collectors.toList());
-      this.fileNameField.setText(String.join(", ", collect));
+      VpaUploadController.lastFolderSelection = this.selection.get(0).getParentFile();
+      this.fileNameField.setText(this.selection.stream().map(f -> f.getName()).collect(Collectors.joining()));
     }
     else {
       this.fileNameField.setText("");

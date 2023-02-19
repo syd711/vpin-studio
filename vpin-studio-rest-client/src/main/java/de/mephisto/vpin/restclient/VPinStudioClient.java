@@ -11,6 +11,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.*;
 import org.springframework.lang.NonNull;
 import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.StreamUtils;
 import org.springframework.web.client.RestTemplate;
 
 import java.io.*;
@@ -54,7 +55,7 @@ public class VPinStudioClient implements ObservedPropertyChangeListener, Overlay
   public void clearWheelCache() {
     List<String> keys = new ArrayList<>(imageCache.keySet());
     for (String key : keys) {
-      if(key.contains("/Wheel")) {
+      if (key.contains("/Wheel")) {
         imageCache.remove(key);
       }
     }
@@ -145,6 +146,10 @@ public class VPinStudioClient implements ObservedPropertyChangeListener, Overlay
     return restClient.post(API + "io/export", exportDescriptor, Boolean.class);
   }
 
+  public boolean importVpa(ImportDescriptor descriptor) throws Exception {
+    return restClient.post(API + "io/import", descriptor, Boolean.class);
+  }
+
   public VpaManifest getVpaManifest(int gameId) {
     return restClient.get(API + "io/manifest/" + gameId, VpaManifest.class);
   }
@@ -160,8 +165,8 @@ public class VPinStudioClient implements ObservedPropertyChangeListener, Overlay
     return Arrays.asList(restClient.get(API + "vpa/game/" + gameId, VpaDescriptorRepresentation[].class));
   }
 
-  public boolean importVpa(ImportDescriptor descriptor) throws Exception {
-    return restClient.post(API + "io/import", descriptor, Boolean.class);
+  public boolean invalidateVpaCache() {
+    return restClient.get(API + "vpa/invalidate", Boolean.class);
   }
 
   public void deleteVpa(VpaDescriptorRepresentation descriptorRepresentation) {
@@ -790,6 +795,22 @@ public class VPinStudioClient implements ObservedPropertyChangeListener, Overlay
   /*********************************************************************************************************************
    * Utils
    */
+  public void download(@NonNull String url, @NonNull File target) throws Exception {
+    RestTemplate template = new RestTemplate();
+    File file = template.execute(restClient.getBaseUrl() + API + url, HttpMethod.GET, null, clientHttpResponse -> {
+      FileOutputStream out = null;
+      try {
+        out = new FileOutputStream(target);
+        StreamUtils.copy(clientHttpResponse.getBody(), out);
+        return target;
+      } catch (Exception e) {
+        throw e;
+      } finally {
+        out.close();
+      }
+    });
+  }
+
   private static HttpEntity createUpload(File file, int gameId, String uploadType, AssetType assetType, FileUploadProgressListener listener) throws Exception {
     LinkedMultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
     return createUpload(map, file, gameId, uploadType, assetType, listener);

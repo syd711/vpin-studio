@@ -2,6 +2,7 @@ package de.mephisto.vpin.server.vpa;
 
 import de.mephisto.vpin.commons.VpaSourceType;
 
+import java.io.File;
 import java.util.List;
 
 public interface VpaSource {
@@ -15,4 +16,6 @@ public interface VpaSource {
   String getLocation();
 
   void invalidate();
+
+  File getFile(VpaDescriptor vpaDescriptor);
 }

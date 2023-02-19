@@ -108,7 +108,7 @@ public class TablesController implements Initializable, StudioFXController, Stud
   @Override
   public void onVpaExport(@NonNull VpaExportedEvent event) {
     Platform.runLater(() -> {
-      repositoryController.onReload();
+      repositoryController.doReload();
     });
   }
 }

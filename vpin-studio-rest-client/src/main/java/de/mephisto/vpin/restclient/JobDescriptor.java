@@ -65,6 +65,10 @@ public class JobDescriptor {
     return "Job '" + this.getTitle() + "'";
   }
 
+  public void execute(VPinStudioClient client) {
+
+  }
+
   @Override
   public boolean equals(Object o) {
     if (this == o) return true;

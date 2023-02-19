@@ -1,11 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.scene.control.Accordion?>
+<?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.TitledPane?>
 <?import javafx.scene.control.Tooltip?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
@@ -27,12 +29,14 @@
                         <GridPane>
                           <columnConstraints>
                             <ColumnConstraints hgrow="SOMETIMES" maxWidth="296.4000244140625" minWidth="10.0" prefWidth="125.79995880126953" />
-                            <ColumnConstraints hgrow="SOMETIMES" maxWidth="503.59996795654297" minWidth="10.0" prefWidth="491.4000411987305" />
+                            <ColumnConstraints hgrow="SOMETIMES" maxWidth="503.59996795654297" minWidth="10.0" prefWidth="420.0" />
+                              <ColumnConstraints hgrow="SOMETIMES" maxWidth="503.59996795654297" minWidth="10.0" prefWidth="40.0" />
                           </columnConstraints>
                           <rowConstraints>
                             <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                             <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                             <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                               <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                           </rowConstraints>
                            <children>
@@ -66,6 +70,25 @@
                                     <Font size="14.0" />
                                  </font>
                               </Label>
+                              <Label layoutX="10.0" layoutY="76.0" text="ID:" GridPane.rowIndex="3">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </Label>
+                              <Label fx:id="idLabel" layoutX="139.0" layoutY="76.0" text="-" GridPane.columnIndex="1" GridPane.rowIndex="3">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </Label>
+                              <HBox alignment="CENTER_RIGHT" GridPane.columnIndex="2" GridPane.rowIndex="3">
+                                 <children>
+                                    <Button fx:id="idCopyBtn" mnemonicParsing="false" onAction="#onIdCopy">
+                                       <graphic>
+                                          <FontIcon iconColor="WHITE" iconLiteral="mdi2c-content-copy" />
+                                       </graphic>
+                                    </Button>
+                                 </children>
+                              </HBox>
                            </children>
                         </GridPane>
                         <Label layoutX="20.0" layoutY="20.0" text="Included Files &amp; Data">

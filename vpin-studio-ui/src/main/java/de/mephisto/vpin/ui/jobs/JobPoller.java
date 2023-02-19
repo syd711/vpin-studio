@@ -1,6 +1,7 @@
 package de.mephisto.vpin.ui.jobs;
 
 import de.mephisto.vpin.restclient.JobDescriptor;
+import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.events.EventManager;
 import javafx.application.Platform;
 import javafx.concurrent.Service;
@@ -21,10 +22,11 @@ public class JobPoller {
   private final static Logger LOG = LoggerFactory.getLogger(JobPoller.class);
 
   private static JobPoller instance;
-  private MenuButton jobMenu;
+  private final MenuButton jobMenu;
 
-  private List<JobDescriptor> activeJobs = new ArrayList<>();
-  private Service service;
+  private final List<JobDescriptor> activeJobs = Collections.synchronizedList(new ArrayList<>());
+  private final List<JobDescriptor> clientJobs = Collections.synchronizedList(new ArrayList<>());
+  private final Service service;
 
   public static void create(MenuButton jobMenu) {
     if (instance == null) {
@@ -46,13 +48,13 @@ public class JobPoller {
             boolean poll = true;
 
             //give the init some time
-            List<JobDescriptor> jobs = new ArrayList<>(client.getJobs());
+            List<JobDescriptor> jobs = new ArrayList<>(getActiveJobs());
             if (jobs.isEmpty()) {
               Thread.sleep(1000);
             }
 
             while (poll) {
-              jobs = new ArrayList<>(client.getJobs());
+              jobs = new ArrayList<>(getActiveJobs());
               refreshUI(jobs);
               Thread.sleep(2000);
               poll = !jobs.isEmpty();
@@ -121,5 +123,23 @@ public class JobPoller {
         jobMenu.getItems().add(item);
       }
     });
+  }
+
+  private List<JobDescriptor> getActiveJobs() {
+    List<JobDescriptor> jobs = new ArrayList<>();
+    jobs.addAll(client.getJobs());
+    jobs.addAll(clientJobs);
+    return jobs;
+  }
+
+  public void queueJob(JobDescriptor jobDescriptor) {
+    clientJobs.add(jobDescriptor);
+
+    new Thread(() -> {
+      jobDescriptor.execute(client);
+      clientJobs.remove(jobDescriptor);
+    }).start();
+
+    JobPoller.getInstance().setPolling();
   }
 }

@@ -8,8 +8,11 @@ import de.mephisto.vpin.ui.StudioFXController;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Accordion;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TitledPane;
+import javafx.scene.input.Clipboard;
+import javafx.scene.input.ClipboardContent;
 import javafx.scene.layout.VBox;
 import org.apache.commons.lang3.StringUtils;
 import org.kordamp.ikonli.javafx.FontIcon;
@@ -40,6 +43,12 @@ public class RepositorySidebarController implements Initializable, StudioFXContr
 
   @FXML
   private Label fileSizeLabel;
+
+  @FXML
+  private Label idLabel;
+
+  @FXML
+  private Button idCopyBtn;
 
   @FXML
   private FontIcon directb2sIcon;
@@ -145,6 +154,17 @@ public class RepositorySidebarController implements Initializable, StudioFXContr
 
   }
 
+  @FXML
+  private void onIdCopy() {
+    String id = this.idLabel.getText();
+    if(!StringUtils.isEmpty(id) && id.length() > 1) {
+      Clipboard systemClipboard = Clipboard.getSystemClipboard();
+      final ClipboardContent content = new ClipboardContent();
+      content.putString(id);
+      systemClipboard.setContent(content);
+    }
+  }
+
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
     repositoryAccordion.managedProperty().bindBidirectional(repositoryAccordion.visibleProperty());
@@ -167,11 +187,13 @@ public class RepositorySidebarController implements Initializable, StudioFXContr
     altSoundIcon.setVisible(false);
     povIcon.setVisible(false);
     highscoreIcon.setVisible(false);
+    idCopyBtn.setVisible(false);
 
     highscoreHistoryLabel.setText("");
     filenameLabel.setText("-");
     fileSizeLabel.setText("-");
     sourceLabel.setText("-");
+    idLabel.setText("-");
 
     if (selection.isPresent()) {
       VpaDescriptorRepresentation descriptorRepresentation = selection.get();
@@ -180,6 +202,8 @@ public class RepositorySidebarController implements Initializable, StudioFXContr
       filenameLabel.setText(descriptorRepresentation.getFilename());
       fileSizeLabel.setText(FileUtils.readableFileSize(descriptorRepresentation.getSize()));
       sourceLabel.setText(descriptorRepresentation.getSource().getLocation());
+      idLabel.setText(descriptorRepresentation.getManifest().getUuid());
+      idCopyBtn.setVisible(true);
 
       VpaPackageInfo packageInfo = manifest.getPackageInfo();
       directb2sIcon.setVisible(packageInfo.isDirectb2s());

@@ -83,6 +83,10 @@ public class VpaService implements InitializingBean {
     return this.defaultVpaSource;
   }
 
+  public void invalidateDefaultCache() {
+    this.defaultVpaSource.invalidate();
+  }
+
   @Override
   public void afterPropertiesSet() {
     this.defaultVpaSource = new VpaSourceFileSystem(systemService.getVpaArchiveFolder());

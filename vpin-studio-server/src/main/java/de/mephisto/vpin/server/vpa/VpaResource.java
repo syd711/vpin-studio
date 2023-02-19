@@ -4,6 +4,7 @@ import de.mephisto.vpin.restclient.representations.VpaDescriptorRepresentation;
 import de.mephisto.vpin.restclient.representations.VpaSourceRepresentation;
 import de.mephisto.vpin.server.system.SystemService;
 import de.mephisto.vpin.server.util.UploadUtil;
+import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,7 +12,10 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
+import javax.servlet.http.HttpServletResponse;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -51,6 +55,33 @@ public class VpaResource {
     return result;
   }
 
+  @GetMapping("/invalidate")
+  public boolean invalidateCache() {
+    vpaService.invalidateDefaultCache();
+    return true;
+  }
+
+  @GetMapping(value = "/download/{uuid}")
+  public void getFile(@PathVariable("uuid") String uuid, HttpServletResponse response) {
+    FileInputStream in = null;
+    try {
+      VpaDescriptor vpaDescriptor = vpaService.getVpaDescriptor(uuid);
+      File vpaFile = vpaDescriptor.getSource().getFile(vpaDescriptor);
+      in = new FileInputStream(vpaFile);
+      IOUtils.copy(in, response.getOutputStream());
+      response.flushBuffer();
+    } catch (IOException ex) {
+      LOG.info("Error writing VPA to output stream. UUID was '{}'", uuid, ex);
+      throw new RuntimeException("IOError writing file to output stream");
+    } finally {
+      try {
+        in.close();
+      } catch (IOException e) {
+        //ignore
+      }
+    }
+  }
+
   @DeleteMapping("/{id}")
   public boolean delete(@PathVariable("id") String uuid) {
     return vpaService.deleteVpa(uuid);
@@ -65,6 +96,7 @@ public class VpaResource {
       }
       File out = new File(systemService.getVpaArchiveFolder(), file.getOriginalFilename());
       if (UploadUtil.upload(file, out)) {
+        vpaService.invalidateDefaultCache();
         VpaDescriptor vpaDescriptor = vpaService.getVpaDescriptor(out);
         return vpaDescriptor.getManifest().getUuid();
       }

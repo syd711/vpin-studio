@@ -62,7 +62,7 @@
                         <FontIcon iconColor="WHITE" iconLiteral="mdi2u-upload" />
                      </graphic>
                   </Button>
-                  <Button fx:id="uploadBtn1" layoutX="376.0" layoutY="10.0" mnemonicParsing="false" onAction="#onUpload" text="Download" textFill="WHITE">
+                  <Button fx:id="downloadBtn" layoutX="376.0" layoutY="10.0" mnemonicParsing="false" onAction="#onDownload" text="Download" textFill="WHITE">
                      <font>
                         <Font size="14.0" />
                      </font>

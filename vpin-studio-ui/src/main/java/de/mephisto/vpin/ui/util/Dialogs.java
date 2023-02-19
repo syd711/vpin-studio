@@ -161,6 +161,13 @@ public class Dialogs {
     return controller.getDescriptor();
   }
 
+  public static boolean openVpaUploadDialog() {
+    Stage stage = createStudioDialogStage(VpaUploadController.class, "dialog-vpa-upload.fxml", "Visual Pinball Archive Upload");
+    VpaUploadController controller = (VpaUploadController) stage.getUserData();
+    stage.showAndWait();
+
+    return controller.uploadFinished();
+  }
 
   public static boolean openRomUploadDialog() {
     Stage stage = createStudioDialogStage(ROMUploadController.class, "dialog-rom-upload.fxml", "Rom Upload");
@@ -197,7 +204,9 @@ public class Dialogs {
     ProgressDialogController controller = (ProgressDialogController) stage.getUserData();
     controller.setProgressModel(stage, model);
     stage.showAndWait();
-    return controller.getProgressResult();
+    ProgressResultModel progressResult = controller.getProgressResult();
+    stage.close();
+    return progressResult;
   }
 
   public static void openMediaDialog(VPinStudioClient client, GameRepresentation game, GameMediaItemRepresentation item) {

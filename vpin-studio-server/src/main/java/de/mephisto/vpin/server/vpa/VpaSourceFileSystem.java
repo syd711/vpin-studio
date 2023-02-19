@@ -46,6 +46,11 @@ public class VpaSourceFileSystem implements VpaSource {
   }
 
   @Override
+  public File getFile(VpaDescriptor descriptor) {
+    return new File(vpaArchiveFolder, descriptor.getFilename());
+  }
+
+  @Override
   public String getLocation() {
     return vpaArchiveFolder.getAbsolutePath();
   }

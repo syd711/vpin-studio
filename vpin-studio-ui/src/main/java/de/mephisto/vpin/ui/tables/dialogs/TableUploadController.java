@@ -62,7 +62,6 @@ public class TableUploadController implements Initializable, DialogController {
 
   @FXML
   private void onUploadClick(ActionEvent event) {
-    Stage stage = (Stage) ((Button) event.getSource()).getScene().getWindow();
     if (selection != null && !selection.isEmpty()) {
       uploadBtn.setDisable(true);
       result = true;
@@ -79,7 +78,8 @@ public class TableUploadController implements Initializable, DialogController {
           playListId = value.getId();
         }
 
-        Platform.runLater(() -> {
+        Platform.runLater(()-> {
+          Stage stage = (Stage) ((Button) event.getSource()).getScene().getWindow();
           stage.close();
         });
 
