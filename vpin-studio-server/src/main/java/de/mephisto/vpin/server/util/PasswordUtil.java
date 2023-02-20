@@ -13,6 +13,7 @@ import java.util.Base64;
 public class PasswordUtil {
 
   private static Cipher cipher;
+  private static SecretKey secretKey;
 
   static {
     try {
@@ -27,21 +28,28 @@ public class PasswordUtil {
     }
   }
 
-  public static String encrypt(String plainText, SecretKey secretKey)
-      throws Exception {
-    byte[] plainTextByte = plainText.getBytes();
-    cipher.init(Cipher.ENCRYPT_MODE, secretKey);
-    byte[] encryptedByte = cipher.doFinal(plainTextByte);
-    Base64.Encoder encoder = Base64.getEncoder();
-    return encoder.encodeToString(encryptedByte);
+  public static String encrypt(String plainText) {
+    try {
+      byte[] plainTextByte = plainText.getBytes();
+      cipher.init(Cipher.ENCRYPT_MODE, secretKey);
+      byte[] encryptedByte = cipher.doFinal(plainTextByte);
+      Base64.Encoder encoder = Base64.getEncoder();
+      return encoder.encodeToString(encryptedByte);
+    } catch (Exception e) {
+    }
+    return null;
   }
 
-  public static String decrypt(String encryptedText, SecretKey secretKey)
-      throws Exception {
-    Base64.Decoder decoder = Base64.getDecoder();
-    byte[] encryptedTextByte = decoder.decode(encryptedText);
-    cipher.init(Cipher.DECRYPT_MODE, secretKey);
-    byte[] decryptedByte = cipher.doFinal(encryptedTextByte);
-    return new String(decryptedByte);
+  public static String decrypt(String encryptedText) {
+    try {
+      Base64.Decoder decoder = Base64.getDecoder();
+      byte[] encryptedTextByte = decoder.decode(encryptedText);
+      cipher.init(Cipher.DECRYPT_MODE, secretKey);
+      byte[] decryptedByte = cipher.doFinal(encryptedTextByte);
+      return new String(decryptedByte);
+    } catch (Exception e) {
+
+    }
+    return null;
   }
 }

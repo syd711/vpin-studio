@@ -19,6 +19,10 @@ public class VpaSourceAdapterFileSystem implements VpaSourceAdapter {
     this.vpaArchiveFolder = new File(source.getLocation());
   }
 
+  public File getFolder() {
+    return vpaArchiveFolder;
+  }
+
   public List<VpaDescriptor> getDescriptors() {
     if (cache.isEmpty()) {
       File[] vpaFiles = vpaArchiveFolder.listFiles((dir, name) -> name.endsWith(".vpa"));

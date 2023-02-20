@@ -91,6 +91,7 @@ public class RestClient implements ClientHttpRequestInterceptor {
 
   public Boolean delete(String path) {
     String url = baseUrl + path;
+    LOG.info("HTTP DELETE " + url);
     restTemplate.delete(url);
     return true;
   }

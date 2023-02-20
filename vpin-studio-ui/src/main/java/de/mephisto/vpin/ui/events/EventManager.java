@@ -27,4 +27,12 @@ public class EventManager {
       }
     }).start();
   }
+
+  public void notifyVpaSourceUpdate() {
+    new Thread(() -> {
+      for (StudioEventListener listener : listeners) {
+        listener.onVpaSourceUpdate();
+      }
+    }).start();
+  }
 }

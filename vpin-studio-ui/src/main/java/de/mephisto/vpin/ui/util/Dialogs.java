@@ -12,6 +12,7 @@ import de.mephisto.vpin.ui.competitions.CompetitionDiscordDialogController;
 import de.mephisto.vpin.ui.competitions.CompetitionDiscordJoinDialogController;
 import de.mephisto.vpin.ui.competitions.CompetitionOfflineDialogController;
 import de.mephisto.vpin.ui.players.PlayerDialogController;
+import de.mephisto.vpin.ui.preferences.VpaRepositoriesPreferencesController;
 import de.mephisto.vpin.ui.tables.RepositoryController;
 import de.mephisto.vpin.ui.tables.TableOverviewController;
 import de.mephisto.vpin.ui.tables.TablesController;
@@ -146,10 +147,19 @@ public class Dialogs {
   }
 
   public static void openVpaImportDialog(TablesController tablesController, List<VpaDescriptorRepresentation> vpaDescriptors) {
-    Stage stage = createStudioDialogStage(VpaImportController.class, "dialog-vpa-import.fxml", "Install Archives");
+    Stage stage = createStudioDialogStage(VpaImportController.class, "dialog-vpa-import.fxml", "Install Tables");
     VpaImportController controller = (VpaImportController) stage.getUserData();
     controller.setData(tablesController, vpaDescriptors);
     stage.showAndWait();
+  }
+
+  public static VpaSourceRepresentation openVpaSourceDialog(VpaSourceRepresentation source) {
+    Stage stage = createStudioDialogStage(VpaSourceFileDialogController.class, "dialog-vpa-source-file.fxml", "VPA Folder Repository");
+    VpaSourceFileDialogController controller = (VpaSourceFileDialogController) stage.getUserData();
+    controller.setSource(source);
+    stage.showAndWait();
+
+    return controller.getVpaSource();
   }
 
   public static ResetHighscoreDescriptor openHighscoreResetDialog(GameRepresentation game) {

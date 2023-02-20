@@ -1,8 +1,11 @@
 package de.mephisto.vpin.ui.preferences;
 
+import de.mephisto.vpin.commons.VpaSourceType;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.representations.VpaSourceRepresentation;
 import de.mephisto.vpin.ui.Studio;
+import de.mephisto.vpin.ui.events.EventManager;
+import de.mephisto.vpin.ui.util.Dialogs;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
@@ -31,7 +34,50 @@ public class VpaRepositoriesPreferencesController implements Initializable {
   private Button deleteBtn;
 
   @FXML
-  private void onAdd() {
+  private Button editBtn;
+
+  @FXML
+  private void onEdit() {
+    VpaSourceRepresentation selectedItem = tableView.getSelectionModel().getSelectedItem();
+    if (selectedItem != null) {
+      VpaSourceRepresentation sourceRepresentation = null;
+      VpaSourceType vpaSourceType = VpaSourceType.valueOf(selectedItem.getType());
+      switch (vpaSourceType) {
+        case File: {
+          sourceRepresentation = Dialogs.openVpaSourceDialog(selectedItem);
+          break;
+        }
+        default: {
+
+        }
+      }
+
+      if (sourceRepresentation != null) {
+        try {
+          client.saveVpaSource(sourceRepresentation);
+        } catch (Exception e) {
+          WidgetFactory.showAlert(Studio.stage, "Error", "Error saving repository: " + e.getMessage());
+        }
+        onReload();
+      }
+    }
+  }
+
+  @FXML
+  private void onFolderAdd() {
+    VpaSourceRepresentation sourceRepresentation = Dialogs.openVpaSourceDialog(null);
+    if (sourceRepresentation != null) {
+      try {
+        client.saveVpaSource(sourceRepresentation);
+      } catch (Exception e) {
+        WidgetFactory.showAlert(Studio.stage, "Error", "Error saving repository: " + e.getMessage());
+      }
+      onReload();
+    }
+  }
+
+  @FXML
+  private void onHttpAdd() {
 
   }
 
@@ -54,12 +100,14 @@ public class VpaRepositoriesPreferencesController implements Initializable {
 
   private void onReload() {
     tableView.setItems(FXCollections.observableList(client.getVpaSources()));
+    EventManager.getInstance().notifyVpaSourceUpdate();
   }
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
     tableView.setPlaceholder(new Label("              No table repository found.\nAdd a table repository to download tables from."));
     deleteBtn.setDisable(true);
+    editBtn.setDisable(true);
 
     nameColumn.setCellValueFactory(cellData -> {
       VpaSourceRepresentation value = cellData.getValue();
@@ -76,6 +124,7 @@ public class VpaRepositoriesPreferencesController implements Initializable {
     tableView.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
       boolean disable = newSelection == null || newSelection.getId() == -1;
       deleteBtn.setDisable(disable);
+      editBtn.setDisable(disable);
     });
   }
 }

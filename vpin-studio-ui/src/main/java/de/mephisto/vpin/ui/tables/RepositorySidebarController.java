@@ -48,6 +48,12 @@ public class RepositorySidebarController implements Initializable, StudioFXContr
   private Label idLabel;
 
   @FXML
+  private Label repositoryTypeLabel;
+
+  @FXML
+  private Label repositoryNameLabel;
+
+  @FXML
   private Button idCopyBtn;
 
   @FXML
@@ -194,6 +200,8 @@ public class RepositorySidebarController implements Initializable, StudioFXContr
     fileSizeLabel.setText("-");
     sourceLabel.setText("-");
     idLabel.setText("-");
+    repositoryNameLabel.setText("-");
+    repositoryTypeLabel.setText("-");
 
     if (selection.isPresent()) {
       VpaDescriptorRepresentation descriptorRepresentation = selection.get();
@@ -204,6 +212,9 @@ public class RepositorySidebarController implements Initializable, StudioFXContr
       sourceLabel.setText(descriptorRepresentation.getSource().getLocation());
       idLabel.setText(descriptorRepresentation.getManifest().getUuid());
       idCopyBtn.setVisible(true);
+
+      repositoryTypeLabel.setText(descriptorRepresentation.getSource().getType());
+      repositoryNameLabel.setText(descriptorRepresentation.getSource().getName());
 
       VpaPackageInfo packageInfo = manifest.getPackageInfo();
       directb2sIcon.setVisible(packageInfo.isDirectb2s());

@@ -2,7 +2,6 @@ package de.mephisto.vpin.server.vpa;
 
 import de.mephisto.vpin.restclient.representations.VpaDescriptorRepresentation;
 import de.mephisto.vpin.restclient.representations.VpaSourceRepresentation;
-import de.mephisto.vpin.server.players.Player;
 import de.mephisto.vpin.server.system.SystemService;
 import de.mephisto.vpin.server.util.UploadUtil;
 import org.apache.commons.io.IOUtils;
@@ -51,8 +50,13 @@ public class VpaResource {
     return vpaService.getVpaSources().stream().map(source -> toRepresentation(source)).collect(Collectors.toList());
   }
 
+  @DeleteMapping("/descriptor/{uuid}")
+  public boolean deleteVpaDescriptor(@PathVariable("uuid") String uuid) {
+    return vpaService.deleteVpaDescriptor(uuid);
+  }
+
   @DeleteMapping("/source/{id}")
-  public Boolean getSources(@PathVariable("id") long id) {
+  public boolean deleteVpaSource(@PathVariable("id") long id) {
     return vpaService.deleteVpaSource(id);
   }
 
@@ -67,9 +71,9 @@ public class VpaResource {
     return result;
   }
 
-  @GetMapping("/invalidate")
+  @GetMapping("/invalidate/")
   public boolean invalidateCache() {
-    vpaService.invalidateDefaultCache();
+    vpaService.invalidateCaches();
     return true;
   }
 
@@ -94,21 +98,19 @@ public class VpaResource {
     }
   }
 
-  @DeleteMapping("/{id}")
-  public boolean delete(@PathVariable("id") String uuid) {
-    return vpaService.deleteVpa(uuid);
-  }
-
   @PostMapping("/upload")
-  public String uploadVpa(@RequestParam(value = "file", required = false) MultipartFile file) {
+  public String uploadVpa(@RequestParam(value = "file", required = false) MultipartFile file,
+                          @RequestParam("objectId") Integer repositoryId) {
     try {
       if (file == null) {
         LOG.error("VPA upload request did not contain a file object.");
         return null;
       }
-      File out = new File(systemService.getVpaArchiveFolder(), file.getOriginalFilename());
+
+      VpaSourceAdapterFileSystem vpaSourceAdapter = (VpaSourceAdapterFileSystem) vpaService.getVpaSourceAdapter(repositoryId);
+      File out = new File(vpaSourceAdapter.getFolder(), file.getOriginalFilename());
       if (UploadUtil.upload(file, out)) {
-        vpaService.invalidateDefaultCache();
+        vpaService.invalidateCache(repositoryId);
         VpaDescriptor vpaDescriptor = vpaService.getVpaDescriptor(out);
         return vpaDescriptor.getManifest().getUuid();
       }
@@ -120,7 +122,8 @@ public class VpaResource {
 
   @PostMapping("/save")
   public VpaSourceRepresentation save(@RequestBody VpaSourceRepresentation vpaSourceRepresentation) {
-    return vpaService.save(vpaSourceRepresentation);
+    VpaSource update = vpaService.save(vpaSourceRepresentation);
+    return toRepresentation(update);
   }
 
 

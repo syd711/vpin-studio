@@ -7,4 +7,8 @@ public interface StudioEventListener {
   default void onVpaExport(@NonNull VpaExportedEvent event) {
 
   }
+
+  default void onVpaSourceUpdate() {
+
+  }
 }

@@ -94,9 +94,9 @@ public class VpaImportController implements Initializable, DialogController {
     this.tablesController = tablesController;
     this.vpaDescriptors = vpaDescriptors;
 
-    String title = "Installing " + this.vpaDescriptors.size() + " archives";
+    String title = "Installing " + this.vpaDescriptors.size() + " Tables";
     if (this.vpaDescriptors.size() == 1) {
-      title = "Importing \"" + this.vpaDescriptors.get(0).getManifest().getGameDisplayName() + "\"";
+      title = "Installing Table \"" + this.vpaDescriptors.get(0).getManifest().getGameDisplayName() + "\"";
     }
     titleLabel.setText(title);
   }

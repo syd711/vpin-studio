@@ -1,16 +1,17 @@
 package de.mephisto.vpin.ui.tables;
 
+import de.mephisto.vpin.commons.VpaSourceType;
 import de.mephisto.vpin.commons.utils.FileUtils;
 import de.mephisto.vpin.commons.utils.ImageUtil;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
-import de.mephisto.vpin.restclient.JobDescriptor;
 import de.mephisto.vpin.restclient.UploadJobDescriptor;
-import de.mephisto.vpin.restclient.representations.GameRepresentation;
 import de.mephisto.vpin.restclient.representations.VpaDescriptorRepresentation;
 import de.mephisto.vpin.restclient.representations.VpaSourceRepresentation;
 import de.mephisto.vpin.ui.NavigationController;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.WaitOverlayController;
+import de.mephisto.vpin.ui.events.EventManager;
+import de.mephisto.vpin.ui.events.StudioEventListener;
 import de.mephisto.vpin.ui.jobs.JobPoller;
 import de.mephisto.vpin.ui.util.Dialogs;
 import javafx.application.Platform;
@@ -41,7 +42,7 @@ import java.util.*;
 import static de.mephisto.vpin.ui.Studio.client;
 import static de.mephisto.vpin.ui.Studio.stage;
 
-public class RepositoryController implements Initializable {
+public class RepositoryController implements Initializable, StudioEventListener {
   private final static Logger LOG = LoggerFactory.getLogger(RepositoryController.class);
 
   @FXML
@@ -131,7 +132,7 @@ public class RepositoryController implements Initializable {
   @FXML
   private void onDownload() {
     ObservableList<VpaDescriptorRepresentation> selectedItems = tableView.getSelectionModel().getSelectedItems();
-    if(!selectedItems.isEmpty()) {
+    if (!selectedItems.isEmpty()) {
       DirectoryChooser chooser = new DirectoryChooser();
       chooser.setTitle("Select Target Folder");
       File targetFolder = chooser.showDialog(stage);
@@ -140,14 +141,14 @@ public class RepositoryController implements Initializable {
           File target = new File(targetFolder, selectedItem.getFilename());
           int index = 1;
           String originalBaseName = FilenameUtils.getBaseName(target.getName());
-          while(target.exists()) {
+          while (target.exists()) {
             String suffix = FilenameUtils.getExtension(target.getName());
             target = new File(target.getParentFile(), originalBaseName + " (" + index + ")." + suffix);
             index++;
           }
 
           UploadJobDescriptor job = new UploadJobDescriptor("/vpa/download/" + selectedItem.getManifest().getUuid(), target);
-          job.setTitle("Download of \"" + selectedItem.getManifest().getGameDisplayName()+ "\"");
+          job.setTitle("Download of \"" + selectedItem.getManifest().getGameDisplayName() + "\"");
           job.setDescription("Downloading file \"" + selectedItem.getFilename() + "\"");
           JobPoller.getInstance().queueJob(job);
         }
@@ -204,7 +205,11 @@ public class RepositoryController implements Initializable {
     if (selection != null) {
       Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Delete Archive '" + selection.getFilename() + "'?");
       if (result.isPresent() && result.get().equals(ButtonType.OK)) {
-        client.deleteVpa(selection);
+        try {
+          client.deleteVpaDescriptor(selection.getManifest().getUuid());
+        } catch (Exception e) {
+          WidgetFactory.showAlert(stage, "Error", "Error deleting \"" + selection.getFilename() + "\": " + e.getMessage());
+        }
         tableView.getSelectionModel().clearSelection();
         doReload();
       }
@@ -301,10 +306,10 @@ public class RepositoryController implements Initializable {
 
     tableView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
     tableView.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
-      boolean disable = newSelection == null;
-      deleteBtn.setDisable(disable);
-      importBtn.setDisable(disable);
-      downloadBtn.setDisable(disable);
+      boolean fileRepo = newSelection != null && newSelection.getSource().getType().equals(VpaSourceType.File.name());
+      deleteBtn.setDisable(!fileRepo);
+      importBtn.setDisable(!fileRepo);
+      downloadBtn.setDisable(newSelection == null);
 
       if (oldSelection == null || !oldSelection.equals(newSelection)) {
         updateSelection(Optional.ofNullable(newSelection));
@@ -328,19 +333,19 @@ public class RepositoryController implements Initializable {
       tableView.setItems(FXCollections.observableList(filtered));
     });
 
-    sourceCombo.setItems(FXCollections.observableList(client.getVpaSources()));
+    List<VpaSourceRepresentation> repositories = new ArrayList<>(client.getVpaSources());
+    repositories.add(0, null);
+    sourceCombo.setItems(FXCollections.observableList(repositories));
     sourceCombo.getSelectionModel().select(0);
     sourceCombo.valueProperty().addListener((observableValue, gameRepresentation, t1) -> {
-      if (t1 == null) {
-
-      }
-      else {
-      }
+      doReload();
     });
 
     deleteBtn.setDisable(true);
     importBtn.setDisable(true);
     downloadBtn.setDisable(true);
+
+    EventManager.getInstance().addListener(this);
     this.doReload();
   }
 
@@ -360,7 +365,12 @@ public class RepositoryController implements Initializable {
       filterValue = "";
     }
 
+    VpaSourceRepresentation selectedItem = sourceCombo.getSelectionModel().getSelectedItem();
     for (VpaDescriptorRepresentation archive : archives) {
+      if(selectedItem != null && archive.getSource().getId() != selectedItem.getId()) {
+        continue;
+      }
+
       if (archive.getFilename().toLowerCase().contains(filterValue.toLowerCase())) {
         filtered.add(archive);
       }
@@ -374,6 +384,11 @@ public class RepositoryController implements Initializable {
       return Optional.of(selection);
     }
     return Optional.empty();
+  }
+
+  @Override
+  public void onVpaSourceUpdate() {
+    this.doReload();
   }
 
   public int getCount() {

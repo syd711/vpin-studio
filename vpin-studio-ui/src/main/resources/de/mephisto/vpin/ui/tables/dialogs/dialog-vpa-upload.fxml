@@ -2,10 +2,14 @@
 
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.text.Font?>
 
 <BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" styleClass="base-component" stylesheets="@../../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.tables.dialogs.VpaUploadController">
@@ -34,33 +38,47 @@
    <center>
       <BorderPane BorderPane.alignment="CENTER">
          <center>
-            <HBox>
+            <GridPane vgap="3.0">
+               <columnConstraints>
+                  <ColumnConstraints hgrow="SOMETIMES" maxWidth="213.5999755859375" minWidth="10.0" prefWidth="132.79998321533202" />
+                  <ColumnConstraints hgrow="SOMETIMES" maxWidth="455.1999755859375" minWidth="10.0" prefWidth="421.60001678466796" />
+               </columnConstraints>
+               <rowConstraints>
+                  <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+                  <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+               </rowConstraints>
                <children>
-                  <TextField fx:id="fileNameField" prefHeight="26.0" prefWidth="375.0">
-                     <HBox.margin>
-                        <Insets right="12.0" />
-                     </HBox.margin>
+                  <HBox GridPane.columnIndex="1" GridPane.rowIndex="1">
+                     <children>
+                        <TextField fx:id="fileNameField" prefHeight="30.0" prefWidth="307.0">
+                           <HBox.margin>
+                              <Insets right="12.0" />
+                           </HBox.margin>
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </TextField>
+                        <Button mnemonicParsing="false" onAction="#onFileSelect" prefHeight="26.0" prefWidth="99.0" text="Select File...">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Button>
+                     </children>
+                  </HBox>
+                  <ComboBox fx:id="repositoryCombo" GridPane.columnIndex="1" />
+                  <Label text="Target Repository:" textFill="WHITE">
                      <font>
                         <Font size="14.0" />
                      </font>
-                  </TextField>
-                  <Button mnemonicParsing="false" onAction="#onFileSelect" prefHeight="26.0" prefWidth="99.0" text="Select File...">
+                  </Label>
+                  <Label layoutX="10.0" layoutY="15.0" text="VPA Files:" textFill="WHITE" GridPane.rowIndex="1">
                      <font>
                         <Font size="14.0" />
-                     </font></Button>
+                     </font>
+                  </Label>
                </children>
-            </HBox>
+            </GridPane>
          </center>
-         <top>
-            <Label fx:id="titleLabel" text="Visual Pinball Archive Files:" textFill="WHITE" BorderPane.alignment="TOP_LEFT">
-               <font>
-                  <Font size="14.0" />
-               </font>
-               <BorderPane.margin>
-                  <Insets bottom="6.0" />
-               </BorderPane.margin>
-            </Label>
-         </top>
          <BorderPane.margin>
             <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
          </BorderPane.margin>

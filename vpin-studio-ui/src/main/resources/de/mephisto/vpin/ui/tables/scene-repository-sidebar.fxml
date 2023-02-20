@@ -91,6 +91,44 @@
                               </HBox>
                            </children>
                         </GridPane>
+                        <Label layoutX="20.0" layoutY="192.0" text="Repository">
+                           <font>
+                              <Font name="System Bold" size="14.0" />
+                           </font>
+                        </Label>
+                        <GridPane>
+                          <columnConstraints>
+                            <ColumnConstraints hgrow="SOMETIMES" maxWidth="307.2000732421875" minWidth="10.0" prefWidth="136.80003356933594" />
+                            <ColumnConstraints hgrow="SOMETIMES" maxWidth="492.00001525878906" minWidth="10.0" prefWidth="487.19996643066406" />
+                          </columnConstraints>
+                          <rowConstraints>
+                            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                          </rowConstraints>
+                           <children>
+                              <Label text="Name:">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </Label>
+                              <Label layoutX="10.0" layoutY="15.0" text="Type:" GridPane.rowIndex="1">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </Label>
+                              <Label fx:id="repositoryNameLabel" text="-" GridPane.columnIndex="1">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </Label>
+                              <Label fx:id="repositoryTypeLabel" layoutX="148.0" layoutY="15.0" text="-" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </Label>
+                           </children>
+                        </GridPane>
                         <Label layoutX="20.0" layoutY="20.0" text="Included Files &amp; Data">
                            <font>
                               <Font name="System Bold" size="14.0" />

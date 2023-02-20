@@ -49,15 +49,15 @@ public class TableImportProgressModel extends ProgressModel<File> {
   @Override
   public void processNext(ProgressResultModel progressResultModel, File next) {
     try {
-      String uuid = Studio.client.uploadVpa(next, percent -> {
-        double total = percentage + percent;
-        progressResultModel.setProgress(total / this.vpaFiles.size());
-      });
-
-      descriptor.setUuid(uuid);
-      Studio.client.importVpa(descriptor);
-
-      progressResultModel.addProcessed();
+//      String uuid = Studio.client.uploadVpa(next, percent -> {
+//        double total = percentage + percent;
+//        progressResultModel.setProgress(total / this.vpaFiles.size());
+//      });
+//
+//      descriptor.setUuid(uuid);
+//      Studio.client.importVpa(descriptor);
+//
+//      progressResultModel.addProcessed();
       percentage++;
     } catch (Exception e) {
       LOG.error("Table export failed: " + e.getMessage(), e);

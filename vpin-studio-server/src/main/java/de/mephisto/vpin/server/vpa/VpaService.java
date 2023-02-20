@@ -5,8 +5,10 @@ import de.mephisto.vpin.restclient.representations.VpaSourceRepresentation;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameService;
 import de.mephisto.vpin.server.system.SystemService;
+import de.mephisto.vpin.server.util.PasswordUtil;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
@@ -70,7 +72,7 @@ public class VpaService implements InitializingBean {
     return first.orElse(null);
   }
 
-  public boolean deleteVpa(String uuid) {
+  public boolean deleteVpaDescriptor(String uuid) {
     Optional<VpaDescriptor> first = getVpaDescriptors().stream().filter(vpaDescriptor -> vpaDescriptor.getManifest().getUuid().equals(uuid)).findFirst();
     if (first.isPresent()) {
       VpaDescriptor descriptor = first.get();
@@ -96,17 +98,46 @@ public class VpaService implements InitializingBean {
     return this.defaultVpaSourceAdapter;
   }
 
-  public void invalidateDefaultCache() {
-    this.getDefaultVpaSourceAdapter().invalidate();
+  public VpaSourceAdapter getVpaSourceAdapter(long id) {
+    return adapterCache.get(id);
   }
 
-  public VpaSourceRepresentation save(VpaSourceRepresentation vpaSourceRepresentation) {
-    Optional<VpaSource> byId = vpaSourceRepository.findById(vpaSourceRepresentation.getId());
-    if(byId.isPresent()) {
-      VpaSource vpaSource = byId.get();
+  public void invalidateCaches() {
+    this.adapterCache.values().stream().peek(VpaSourceAdapter::invalidate);
+  }
 
+  public void invalidateCache(long id) {
+    VpaSourceAdapter vpaSourceAdapter = this.adapterCache.get(id);
+    vpaSourceAdapter.invalidate();
+  }
+
+  public VpaSource save(VpaSourceRepresentation vpaSourceRepresentation) {
+    Optional<VpaSource> byId = vpaSourceRepository.findById(vpaSourceRepresentation.getId());
+    VpaSource vpaSource = null;
+    if (byId.isPresent()) {
+      vpaSource = byId.get();
     }
-    return null;
+    else {
+      vpaSource = new VpaSource();
+      vpaSource.setCreatedAt(new Date());
+      vpaSource.setType(vpaSourceRepresentation.getType());
+    }
+
+    vpaSource.setLocation(vpaSourceRepresentation.getLocation());
+    vpaSource.setName(vpaSourceRepresentation.getName());
+    vpaSource.setLogin(vpaSourceRepresentation.getLogin());
+    if (!StringUtils.isEmpty(vpaSourceRepresentation.getPassword())) {
+      vpaSource.setPassword(PasswordUtil.encrypt(vpaSourceRepresentation.getPassword()));
+    }
+
+    VpaSource updatedSource = vpaSourceRepository.saveAndFlush(vpaSource);
+    if (adapterCache.containsKey(updatedSource.getId())) {
+      adapterCache.remove(updatedSource.getId());
+    }
+
+    adapterCache.put(updatedSource.getId(), VpaSourceAdapterFactory.create(updatedSource));
+    LOG.info("(Re)created VPA source adapter \"" + updatedSource + "\"");
+    return updatedSource;
   }
 
   @Override

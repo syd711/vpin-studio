@@ -165,8 +165,21 @@ public class VPinStudioClient implements ObservedPropertyChangeListener, Overlay
     return Arrays.asList(restClient.get(API + "vpa/sources", VpaSourceRepresentation[].class));
   }
 
+  public void deleteVpaDescriptor(String uuid) throws Exception {
+    restClient.delete(API + "vpa/descriptor/" + uuid);
+  }
+
   public void deleteVpaSource(long id) throws Exception {
-    restClient.delete(API + "vpa/" + id);
+    restClient.delete(API + "vpa/source/" + id);
+  }
+
+  public VpaSourceRepresentation saveVpaSource(VpaSourceRepresentation source) throws Exception {
+    try {
+      return restClient.post(API + "vpa/save", source, VpaSourceRepresentation.class);
+    } catch (Exception e) {
+      LOG.error("Failed to save VPA source: " + e.getMessage(), e);
+      throw e;
+    }
   }
 
   public List<VpaDescriptorRepresentation> getVpaDescriptorsForGame(int gameId) {
@@ -177,18 +190,10 @@ public class VPinStudioClient implements ObservedPropertyChangeListener, Overlay
     return restClient.get(API + "vpa/invalidate", Boolean.class);
   }
 
-  public void deleteVpa(VpaDescriptorRepresentation descriptorRepresentation) {
+  public String uploadVpa(File file, int repositoryId, FileUploadProgressListener listener) throws Exception {
     try {
-      restClient.delete(API + "vpa/" + descriptorRepresentation.getManifest().getUuid());
-    } catch (Exception e) {
-      LOG.error("Failed to delete VPA: " + e.getMessage(), e);
-    }
-  }
-
-  public String uploadVpa(File file, FileUploadProgressListener listener) throws Exception {
-    try {
-      String url = restClient.getBaseUrl() + API + "vpa/upload";
-      HttpEntity upload = createUpload(file, -1, null, AssetType.VPA, listener);
+      String url = restClient.getBaseUrl() + API + "vpa/upload/";
+      HttpEntity upload = createUpload(file, repositoryId, null, AssetType.VPA, listener);
       return new RestTemplate().exchange(url, HttpMethod.POST, upload, String.class).getBody();
     } catch (Exception e) {
       LOG.error("VPA upload failed: " + e.getMessage(), e);
@@ -832,7 +837,7 @@ public class VPinStudioClient implements ObservedPropertyChangeListener, Overlay
     ProgressableFileSystemResource rsr = new ProgressableFileSystemResource(file, listener);
 
     map.add("file", rsr);
-    map.add("gameId", gameId);
+    map.add("objectId", gameId);
     map.add("uploadType", uploadType);
     map.add("assetType", assetType.name());
     return new HttpEntity<>(map, headers);

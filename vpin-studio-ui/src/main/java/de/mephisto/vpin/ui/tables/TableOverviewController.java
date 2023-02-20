@@ -9,6 +9,7 @@ import de.mephisto.vpin.ui.NavigationController;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.StudioFXController;
 import de.mephisto.vpin.ui.WaitOverlayController;
+import de.mephisto.vpin.ui.events.StudioEventListener;
 import de.mephisto.vpin.ui.tables.dialogs.ScriptDownloadProgressModel;
 import de.mephisto.vpin.ui.tables.validation.ValidationResult;
 import de.mephisto.vpin.ui.tables.validation.ValidationTexts;

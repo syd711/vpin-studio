@@ -93,7 +93,7 @@ public class DirectB2SResource {
   @PostMapping("/upload")
   public Boolean directb2supload(@RequestParam(value = "file", required = false) MultipartFile file,
                                  @RequestParam(value = "uploadType", required = false) String uploadType,
-                                 @RequestParam("gameId") Integer gameId) {
+                                 @RequestParam("objectId") Integer gameId) {
     try {
       if (file == null) {
         LOG.error("Upload request did not contain a file object.");
