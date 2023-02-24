@@ -35,6 +35,7 @@
                           <rowConstraints>
                             <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                             <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                             <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                               <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                               <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
@@ -50,7 +51,7 @@
                                     <Font size="14.0" />
                                  </font>
                               </Label>
-                              <Label layoutX="10.0" layoutY="45.0" text="Source:" GridPane.rowIndex="2">
+                              <Label layoutX="10.0" layoutY="45.0" text="Source:" GridPane.rowIndex="3">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
@@ -65,22 +66,22 @@
                                     <Font size="14.0" />
                                  </font>
                               </Label>
-                              <Label fx:id="sourceLabel" layoutX="136.0" layoutY="45.0" text="-" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                              <Label fx:id="sourceLabel" layoutX="136.0" layoutY="45.0" text="-" GridPane.columnIndex="1" GridPane.rowIndex="3">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
                               </Label>
-                              <Label layoutX="10.0" layoutY="76.0" text="ID:" GridPane.rowIndex="3">
+                              <Label layoutX="10.0" layoutY="76.0" text="ID:" GridPane.rowIndex="4">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
                               </Label>
-                              <Label fx:id="idLabel" layoutX="139.0" layoutY="76.0" text="-" GridPane.columnIndex="1" GridPane.rowIndex="3">
+                              <Label fx:id="idLabel" layoutX="139.0" layoutY="76.0" text="-" GridPane.columnIndex="1" GridPane.rowIndex="4">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
                               </Label>
-                              <HBox alignment="CENTER_RIGHT" GridPane.columnIndex="2" GridPane.rowIndex="3">
+                              <HBox alignment="CENTER_RIGHT" GridPane.columnIndex="2" GridPane.rowIndex="4">
                                  <children>
                                     <Button fx:id="idCopyBtn" mnemonicParsing="false" onAction="#onIdCopy">
                                        <graphic>
@@ -89,6 +90,16 @@
                                     </Button>
                                  </children>
                               </HBox>
+                              <Label layoutX="10.0" layoutY="45.0" text="Last Modified:" GridPane.rowIndex="2">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </Label>
+                              <Label fx:id="lastModifiedLabel" layoutX="149.0" layoutY="45.0" text="-" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </Label>
                            </children>
                         </GridPane>
                         <Label layoutX="20.0" layoutY="192.0" text="Repository">

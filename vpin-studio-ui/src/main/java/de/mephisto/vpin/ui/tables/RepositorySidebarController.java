@@ -15,11 +15,13 @@ import javafx.scene.input.Clipboard;
 import javafx.scene.input.ClipboardContent;
 import javafx.scene.layout.VBox;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.time.DateUtils;
 import org.kordamp.ikonli.javafx.FontIcon;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.net.URL;
+import java.text.SimpleDateFormat;
 import java.util.Optional;
 import java.util.ResourceBundle;
 
@@ -43,6 +45,9 @@ public class RepositorySidebarController implements Initializable, StudioFXContr
 
   @FXML
   private Label fileSizeLabel;
+
+  @FXML
+  private Label lastModifiedLabel;
 
   @FXML
   private Label idLabel;
@@ -209,6 +214,7 @@ public class RepositorySidebarController implements Initializable, StudioFXContr
     highscoreHistoryLabel.setText("");
     filenameLabel.setText("-");
     fileSizeLabel.setText("-");
+    lastModifiedLabel.setText("-");
     sourceLabel.setText("-");
     idLabel.setText("-");
     repositoryNameLabel.setText("-");
@@ -220,6 +226,7 @@ public class RepositorySidebarController implements Initializable, StudioFXContr
 
       filenameLabel.setText(descriptorRepresentation.getFilename());
       fileSizeLabel.setText(descriptorRepresentation.getSize() > 0 ? FileUtils.readableFileSize(descriptorRepresentation.getSize()) : "-");
+      lastModifiedLabel.setText(SimpleDateFormat.getDateTimeInstance().format(descriptorRepresentation.getCreatedAt()));
       sourceLabel.setText(descriptorRepresentation.getSource().getLocation());
       idLabel.setText(descriptorRepresentation.getManifest().getUuid());
       idCopyBtn.setVisible(true);
