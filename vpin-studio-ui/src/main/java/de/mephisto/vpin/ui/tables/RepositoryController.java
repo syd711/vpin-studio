@@ -4,7 +4,7 @@ import de.mephisto.vpin.commons.VpaSourceType;
 import de.mephisto.vpin.commons.utils.FileUtils;
 import de.mephisto.vpin.commons.utils.ImageUtil;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
-import de.mephisto.vpin.restclient.UploadJobDescriptor;
+import de.mephisto.vpin.restclient.DownloadJobDescriptor;
 import de.mephisto.vpin.restclient.representations.VpaDescriptorRepresentation;
 import de.mephisto.vpin.restclient.representations.VpaSourceRepresentation;
 import de.mephisto.vpin.ui.NavigationController;
@@ -49,7 +49,7 @@ public class RepositoryController implements Initializable, StudioEventListener 
   private Button deleteBtn;
 
   @FXML
-  private Button importBtn;
+  private Button installBtn;
 
   @FXML
   private Button uploadBtn;
@@ -105,7 +105,7 @@ public class RepositoryController implements Initializable, StudioEventListener 
   }
 
   @FXML
-  private void onImport() {
+  private void onInstall() {
     ObservableList<VpaDescriptorRepresentation> selectedItems = tableView.getSelectionModel().getSelectedItems();
     if (!selectedItems.isEmpty()) {
       if (client.isPinUPPopperRunning()) {
@@ -147,7 +147,9 @@ public class RepositoryController implements Initializable, StudioEventListener 
             index++;
           }
 
-          UploadJobDescriptor job = new UploadJobDescriptor("/vpa/download/" + selectedItem.getManifest().getUuid(), target);
+          long repositoryId = selectedItem.getSource().getId();
+          String uuid = selectedItem.getManifest().getUuid();
+          DownloadJobDescriptor job = new DownloadJobDescriptor("/vpa/download/" + repositoryId + "/" + uuid, target);
           job.setTitle("Download of \"" + selectedItem.getManifest().getGameDisplayName() + "\"");
           job.setDescription("Downloading file \"" + selectedItem.getFilename() + "\"");
           JobPoller.getInstance().queueJob(job);
@@ -158,7 +160,10 @@ public class RepositoryController implements Initializable, StudioEventListener 
 
   @FXML
   public void onReload() {
-    client.invalidateVpaCache();
+    VpaSourceRepresentation selectedItem = sourceCombo.getSelectionModel().getSelectedItem();
+    if(selectedItem != null) {
+      client.invalidateVpaCache(selectedItem.getId());
+    }
     doReload();
   }
 
@@ -169,7 +174,7 @@ public class RepositoryController implements Initializable, StudioEventListener 
     tableView.getSelectionModel().clearSelection();
     boolean disable = selection == null;
     deleteBtn.setDisable(disable);
-    importBtn.setDisable(disable);
+    installBtn.setDisable(disable);
 
     tableView.setVisible(false);
     tableStack.getChildren().add(loadingOverlay);
@@ -184,7 +189,7 @@ public class RepositoryController implements Initializable, StudioEventListener 
         if (data.contains(selection)) {
           tableView.getSelectionModel().select(selection);
           deleteBtn.setDisable(false);
-          importBtn.setDisable(false);
+          installBtn.setDisable(false);
         }
         else if (!data.isEmpty()) {
           tableView.getSelectionModel().select(0);
@@ -206,7 +211,7 @@ public class RepositoryController implements Initializable, StudioEventListener 
       Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Delete Archive '" + selection.getFilename() + "'?");
       if (result.isPresent() && result.get().equals(ButtonType.OK)) {
         try {
-          client.deleteVpaDescriptor(selection.getManifest().getUuid());
+          client.deleteVpaDescriptor(selection.getSource().getId(), selection.getManifest().getUuid());
         } catch (Exception e) {
           WidgetFactory.showAlert(stage, "Error", "Error deleting \"" + selection.getFilename() + "\": " + e.getMessage());
         }
@@ -296,6 +301,9 @@ public class RepositoryController implements Initializable, StudioEventListener 
 
     sizeColumn.setCellValueFactory(cellData -> {
       VpaDescriptorRepresentation value = cellData.getValue();
+      if(value.getSize() == 0 ) {
+        return new SimpleStringProperty("-");
+      }
       return new SimpleStringProperty(FileUtils.readableFileSize(value.getSize()));
     });
 
@@ -308,7 +316,7 @@ public class RepositoryController implements Initializable, StudioEventListener 
     tableView.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
       boolean fileRepo = newSelection != null && newSelection.getSource().getType().equals(VpaSourceType.File.name());
       deleteBtn.setDisable(!fileRepo);
-      importBtn.setDisable(!fileRepo);
+      installBtn.setDisable(newSelection == null);
       downloadBtn.setDisable(newSelection == null);
 
       if (oldSelection == null || !oldSelection.equals(newSelection)) {
@@ -333,16 +341,13 @@ public class RepositoryController implements Initializable, StudioEventListener 
       tableView.setItems(FXCollections.observableList(filtered));
     });
 
-    List<VpaSourceRepresentation> repositories = new ArrayList<>(client.getVpaSources());
-    repositories.add(0, null);
-    sourceCombo.setItems(FXCollections.observableList(repositories));
-    sourceCombo.getSelectionModel().select(0);
+    refreshRepositoryCombo();
     sourceCombo.valueProperty().addListener((observableValue, gameRepresentation, t1) -> {
       doReload();
     });
 
     deleteBtn.setDisable(true);
-    importBtn.setDisable(true);
+    installBtn.setDisable(true);
     downloadBtn.setDisable(true);
 
     EventManager.getInstance().addListener(this);
@@ -367,7 +372,7 @@ public class RepositoryController implements Initializable, StudioEventListener 
 
     VpaSourceRepresentation selectedItem = sourceCombo.getSelectionModel().getSelectedItem();
     for (VpaDescriptorRepresentation archive : archives) {
-      if(selectedItem != null && archive.getSource().getId() != selectedItem.getId()) {
+      if (selectedItem != null && archive.getSource().getId() != selectedItem.getId()) {
         continue;
       }
 
@@ -388,7 +393,16 @@ public class RepositoryController implements Initializable, StudioEventListener 
 
   @Override
   public void onVpaSourceUpdate() {
-    this.doReload();
+    Platform.runLater(() -> {
+      refreshRepositoryCombo();
+      doReload();
+    });
+  }
+
+  private void refreshRepositoryCombo() {
+    List<VpaSourceRepresentation> repositories = new ArrayList<>(client.getVpaSources());
+    sourceCombo.setItems(FXCollections.observableList(repositories));
+    sourceCombo.getSelectionModel().select(0);
   }
 
   public int getCount() {

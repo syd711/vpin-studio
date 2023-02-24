@@ -2,7 +2,7 @@ package de.mephisto.vpin.server.vpa;
 
 import de.mephisto.vpin.restclient.representations.VpaDescriptorRepresentation;
 import de.mephisto.vpin.restclient.representations.VpaSourceRepresentation;
-import de.mephisto.vpin.server.system.SystemService;
+import de.mephisto.vpin.restclient.util.PasswordUtil;
 import de.mephisto.vpin.server.util.UploadUtil;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
@@ -14,8 +14,8 @@ import org.springframework.web.server.ResponseStatusException;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -30,9 +30,6 @@ public class VpaResource {
 
   @Autowired
   private VpaService vpaService;
-
-  @Autowired
-  private SystemService systemService;
 
   @GetMapping
   public List<VpaDescriptorRepresentation> getArchives() {
@@ -50,9 +47,10 @@ public class VpaResource {
     return vpaService.getVpaSources().stream().map(source -> toRepresentation(source)).collect(Collectors.toList());
   }
 
-  @DeleteMapping("/descriptor/{uuid}")
-  public boolean deleteVpaDescriptor(@PathVariable("uuid") String uuid) {
-    return vpaService.deleteVpaDescriptor(uuid);
+  @DeleteMapping("/descriptor/{sourceId}/{uuid}")
+  public boolean deleteVpaDescriptor(@PathVariable("sourceId") long sourceId,
+                                     @PathVariable("uuid") String uuid) {
+    return vpaService.deleteVpaDescriptor(sourceId, uuid);
   }
 
   @DeleteMapping("/source/{id}")
@@ -71,27 +69,33 @@ public class VpaResource {
     return result;
   }
 
-  @GetMapping("/invalidate/")
-  public boolean invalidateCache() {
-    vpaService.invalidateCaches();
+  @GetMapping("/invalidate/{sourceId}")
+  public boolean invalidateCache(@PathVariable("sourceId") long sourceId) {
+    vpaService.invalidateCache(sourceId);
     return true;
   }
 
-  @GetMapping(value = "/download/{uuid}")
-  public void getFile(@PathVariable("uuid") String uuid, HttpServletResponse response) {
-    FileInputStream in = null;
+  @GetMapping("/download/{sourceId}/{uuid}")
+  public void getFile(@PathVariable("sourceId") long sourceId,
+                      @PathVariable("uuid") String uuid,
+                      HttpServletResponse response) {
+    InputStream in = null;
     try {
-      VpaDescriptor vpaDescriptor = vpaService.getVpaDescriptor(uuid);
-      File vpaFile = vpaService.getDefaultVpaSourceAdapter().getFile(vpaDescriptor);
-      in = new FileInputStream(vpaFile);
+      VpaDescriptor vpaDescriptor = vpaService.getVpaDescriptor(sourceId, uuid);
+      VpaSourceAdapter vpaSourceAdapter = vpaService.getVpaSourceAdapter(sourceId);
+      in = vpaSourceAdapter.getDescriptorInputStream(vpaDescriptor);
       IOUtils.copy(in, response.getOutputStream());
       response.flushBuffer();
+
+      LOG.info("Finished download of \"" + vpaDescriptor.getManifest().getGameDisplayName() + "\"");
     } catch (IOException ex) {
       LOG.info("Error writing VPA to output stream. UUID was '{}'", uuid, ex);
       throw new RuntimeException("IOError writing file to output stream");
     } finally {
       try {
-        in.close();
+        if(in != null) {
+          in.close();
+        }
       } catch (IOException e) {
         //ignore
       }
@@ -133,6 +137,9 @@ public class VpaResource {
     representation.setLocation(source.getLocation());
     representation.setName(source.getName());
     representation.setId(source.getId());
+    representation.setLogin(source.getLogin());
+    representation.setPassword(source.getPassword());
+    representation.setAuthenticationType(source.getAuthenticationType());
     return representation;
   }
 

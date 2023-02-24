@@ -160,7 +160,7 @@
                                         <FontIcon iconColor="WHITE" iconLiteral="mdi2e-export" />
                                     </graphic>
                                     <tooltip>
-                                        <Tooltip text="Resets the dismissed validations and revalidates the table configuration." />
+                                        <Tooltip text="Exports the selected table into the local repository." />
                                     </tooltip>
                                 </Button>
                                 <Separator layoutX="768.0" layoutY="10.0" orientation="VERTICAL" prefHeight="30.0" prefWidth="12.0" />

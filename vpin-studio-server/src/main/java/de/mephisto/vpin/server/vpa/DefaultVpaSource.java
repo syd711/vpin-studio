@@ -7,6 +7,7 @@ import java.io.File;
 import java.util.Date;
 
 public class DefaultVpaSource extends VpaSource {
+  public final static long DEFAULT_VPA_SOURCE_ID = -1;
 
   private final File folder;
 
@@ -26,7 +27,7 @@ public class DefaultVpaSource extends VpaSource {
 
   @Override
   public Long getId() {
-    return -1l;
+    return DEFAULT_VPA_SOURCE_ID;
   }
 
   @Override

@@ -15,6 +15,7 @@ import de.mephisto.vpin.server.util.vpreg.VPReg;
 import de.mephisto.vpin.server.util.vpreg.VPRegScoreSummary;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -45,7 +46,8 @@ public class VpaExporterJob implements Job {
   private final ObjectMapper objectMapper;
   private final VpaSourceAdapter vpaSourceAdapter;
 
-  private File target;
+  private final File targetFolder;
+  private final String vpaVersion;
 
   public VpaExporterJob(@NonNull File vprRegFile,
                         @NonNull File musicFolder,
@@ -55,7 +57,8 @@ public class VpaExporterJob implements Job {
                         @Nullable Highscore highscore,
                         @NonNull List<HighscoreVersion> scoreHistory,
                         @NonNull VpaSourceAdapter vpaSource,
-                        @NonNull File target) {
+                        @NonNull File targetFolder,
+                        @NonNull String vpaVersion) {
     this.vprRegFile = vprRegFile;
     this.musicFolder = musicFolder;
     this.game = game;
@@ -64,14 +67,16 @@ public class VpaExporterJob implements Job {
     this.highscore = highscore;
     this.scoreHistory = scoreHistory;
     this.vpaSourceAdapter = vpaSource;
-    this.target = target;
-
+    this.targetFolder = targetFolder;
+    this.vpaVersion = vpaVersion;
     objectMapper = new ObjectMapper();
     objectMapper.enable(SerializationFeature.INDENT_OUTPUT);
     objectMapper.enable(SerializationFeature.ORDER_MAP_ENTRIES_BY_KEYS);
   }
 
   public boolean execute() {
+    String baseName = FilenameUtils.getBaseName(manifest.getGameFileName());
+    File target = new File(targetFolder, baseName + ".vpa");
     target = FileUtils.uniqueFile(target);
     File tempFile = new File(target.getParentFile(), target.getName() + ".bak");
 
@@ -129,15 +134,19 @@ public class VpaExporterJob implements Job {
         }
       }
 
-
       if (exportDescriptor.isExportRom() && game.getRomFile() != null && game.getRomFile().exists()) {
         packageInfo.setRom(true);
         zipFile(game.getRomFile(), getGameFolderName() + "/VPinMAME/roms/" + game.getRomFile().getName(), zipOut);
       }
 
-      if (game.getPOVFile() != null && game.getPOVFile().exists()) {
+      if (game.getPOVFile().exists()) {
         packageInfo.setPov(true);
         zipFile(game.getPOVFile(), getGameFolderName() + "/Tables/" + game.getPOVFile().getName(), zipOut);
+      }
+
+      if (game.getResFile().exists()) {
+        packageInfo.setRes(true);
+        zipFile(game.getResFile(), getGameFolderName() + "/Tables/" + game.getResFile().getName(), zipOut);
       }
 
       if (game.getGameFile().exists()) {
@@ -171,8 +180,20 @@ public class VpaExporterJob implements Job {
         zipFile(game.getAltSoundFolder(), getGameFolderName() + "/VPinMAME/altsound/" + game.getAltSoundFolder().getName(), zipOut);
       }
 
-      //aways pack whole music folder, it may contain gamefiles
-      if (exportDescriptor.isExportPupPack()) {
+      // Cfg
+      if (game.getCfgFile() != null && game.getCfgFile().exists()) {
+        packageInfo.setCfg(true);
+        zipFile(game.getCfgFile(), getGameFolderName() + "/VPinMAME/cfg/" + game.getCfgFile().getName(), zipOut);
+      }
+
+      //colored DMD
+      if (game.getAltColorFolder() != null && game.getAltColorFolder().exists()) {
+        packageInfo.setAltColor(true);
+        zipFile(game.getAltColorFolder(), getGameFolderName() + "/VPinMAME/altcolor/" + game.getAltColorFolder().getName(), zipOut);
+      }
+
+      if (exportDescriptor.isExportMusic()) {
+        //aways pack whole music folder, it may contain gamefiles
         packageInfo.setMusic(true);
         File[] files = musicFolder.listFiles((dir, name) -> name.endsWith(".mp3"));
         if (files != null) {
@@ -188,7 +209,7 @@ public class VpaExporterJob implements Job {
 
       zipPupPack(packageInfo, zipOut);
       zipPopperMedia(packageInfo, zipOut);
-      zipManifest(zipOut);
+      zipManifest(zipOut, target);
     } catch (Exception e) {
       LOG.error("Create VPA for " + game.getGameDisplayName() + " failed: " + e.getMessage(), e);
     } finally {
@@ -259,7 +280,7 @@ public class VpaExporterJob implements Job {
     }
   }
 
-  private void zipManifest(ZipOutputStream zipOut) throws IOException {
+  private void zipManifest(ZipOutputStream zipOut, File target) throws IOException {
     //store wheel icon as archive preview
     GameMediaItem mediaItem = game.getGameMedia().get(PopperScreen.Wheel);
     if (mediaItem != null) {
@@ -277,11 +298,14 @@ public class VpaExporterJob implements Job {
       String encode = Base64.getEncoder().encodeToString(bytes);
       manifest.setThumbnail(encode);
 
+      manifest.setVpaFilename(target.getName());
+
       byte[] original = Files.readAllBytes(mediaItem.getFile().toPath());
       manifest.setIcon(Base64.getEncoder().encodeToString(original));
     }
 
     manifest.setEmulatorType(VpaUtil.getEmulatorType(game.getGameFile()));
+    manifest.setVpaVersion(vpaVersion);
 
     if (StringUtils.isEmpty(manifest.getGameFileName())) {
       manifest.setGameFileName(game.getGameFileName());

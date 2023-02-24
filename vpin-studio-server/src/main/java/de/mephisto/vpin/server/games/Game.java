@@ -30,7 +30,6 @@ public class Game {
   private Emulator emulator;
 
   private File gameFile;
-  private File povFile;
 
   private Date lastPlayed;
   private int numberPlays;
@@ -197,14 +196,20 @@ public class Game {
 
   @NonNull
   @JsonIgnore
-  public File getGameFile() {
-    return gameFile;
+  public File getPOVFile() {
+    return new File(systemService.getVPXTablesFolder(), FilenameUtils.getBaseName(gameFileName) + ".pov");
   }
 
-  @Nullable
+  @NonNull
   @JsonIgnore
-  public File getPOVFile() {
-    return povFile;
+  public File getResFile() {
+    return new File(systemService.getVPXTablesFolder(), FilenameUtils.getBaseName(gameFileName) + ".res");
+  }
+
+  @NonNull
+  @JsonIgnore
+  public File getGameFile() {
+    return gameFile;
   }
 
   public boolean isRomRequired() {
@@ -219,11 +224,7 @@ public class Game {
   }
 
   public boolean isPOV() {
-    return this.povFile != null && this.povFile.exists();
-  }
-
-  public void setPOVFile(File povFile) {
-    this.povFile = povFile;
+    return this.getPOVFile().exists();
   }
 
   public void setGameFile(@NonNull File gameFile) {
@@ -333,6 +334,25 @@ public class Game {
     }
     return null;
   }
+
+  @Nullable
+  @JsonIgnore
+  public File getCfgFile() {
+    if (!StringUtils.isEmpty(this.getRom())) {
+      return new File(new File(systemService.getMameFolder(), "cfg"), this.getRom() + ".cfg");
+    }
+    return null;
+  }
+
+  @Nullable
+  @JsonIgnore
+  public File getAltColorFolder() {
+    if (!StringUtils.isEmpty(this.getRom())) {
+      return new File(new File(systemService.getMameFolder(), "altcolor"), this.getRom());
+    }
+    return null;
+  }
+
 
   @Nullable
   @JsonIgnore

@@ -38,7 +38,7 @@
                         <Font name="System Bold" size="14.0" />
                      </font>
                   </Label>
-                  <ComboBox fx:id="sourceCombo" prefWidth="200.0" />
+                  <ComboBox fx:id="sourceCombo" prefHeight="30.0" prefWidth="249.0" />
                   <Separator layoutX="475.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
                   <TextField fx:id="searchTextField" prefHeight="30.0" prefWidth="200.0" promptText="Search Repository..">
                      <font>
@@ -55,12 +55,12 @@
                      </graphic>
                   </Button>
                   <Separator orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
-                  <Button fx:id="importBtn" layoutX="198.0" layoutY="10.0" mnemonicParsing="false" onAction="#onImport" text="Install Table" textFill="WHITE">
+                  <Button fx:id="installBtn" layoutX="198.0" layoutY="10.0" mnemonicParsing="false" onAction="#onInstall" text="Install Table" textFill="WHITE">
                      <font>
                         <Font size="14.0" />
                      </font>
                      <graphic>
-                        <FontIcon iconColor="WHITE" iconLiteral="mdi2a-application-import" />
+                        <FontIcon iconColor="WHITE" iconLiteral="mdi2p-play-circle-outline" />
                      </graphic>
                   </Button>
                   <Button fx:id="uploadBtn" layoutX="298.0" layoutY="10.0" mnemonicParsing="false" onAction="#onUpload" text="Upload" textFill="WHITE">

@@ -31,6 +31,16 @@ public class VpaSource {
 
   private String password;
 
+  private String authenticationType;
+
+  public String getAuthenticationType() {
+    return authenticationType;
+  }
+
+  public void setAuthenticationType(String authenticationType) {
+    this.authenticationType = authenticationType;
+  }
+
   public String getType() {
     return type;
   }

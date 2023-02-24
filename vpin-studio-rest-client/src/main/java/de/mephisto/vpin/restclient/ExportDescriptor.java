@@ -6,10 +6,28 @@ import java.util.List;
 public class ExportDescriptor {
   private List<Integer> gameIds = new ArrayList<>();
   private VpaManifest manifest;
+  private long repositoryId = -1;
   private boolean exportRom = true;
   private boolean exportPupPack = true;
   private boolean exportPopperMedia = true;
   private boolean exportHighscores = true;
+  private boolean exportMusic = false;
+
+  public boolean isExportMusic() {
+    return exportMusic;
+  }
+
+  public void setExportMusic(boolean exportMusic) {
+    this.exportMusic = exportMusic;
+  }
+
+  public long getRepositoryId() {
+    return repositoryId;
+  }
+
+  public void setRepositoryId(long repositoryId) {
+    this.repositoryId = repositoryId;
+  }
 
   public boolean isExportHighscores() {
     return exportHighscores;

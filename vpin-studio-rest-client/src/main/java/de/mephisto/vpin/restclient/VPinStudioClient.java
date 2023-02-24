@@ -165,8 +165,8 @@ public class VPinStudioClient implements ObservedPropertyChangeListener, Overlay
     return Arrays.asList(restClient.get(API + "vpa/sources", VpaSourceRepresentation[].class));
   }
 
-  public void deleteVpaDescriptor(String uuid) throws Exception {
-    restClient.delete(API + "vpa/descriptor/" + uuid);
+  public void deleteVpaDescriptor(long sourceId, String uuid) throws Exception {
+    restClient.delete(API + "vpa/descriptor/" + sourceId + "/" + uuid);
   }
 
   public void deleteVpaSource(long id) throws Exception {
@@ -186,8 +186,8 @@ public class VPinStudioClient implements ObservedPropertyChangeListener, Overlay
     return Arrays.asList(restClient.get(API + "vpa/game/" + gameId, VpaDescriptorRepresentation[].class));
   }
 
-  public boolean invalidateVpaCache() {
-    return restClient.get(API + "vpa/invalidate", Boolean.class);
+  public boolean invalidateVpaCache(long id) {
+    return restClient.get(API + "vpa/invalidate/" + id, Boolean.class);
   }
 
   public String uploadVpa(File file, int repositoryId, FileUploadProgressListener listener) throws Exception {
@@ -810,6 +810,7 @@ public class VPinStudioClient implements ObservedPropertyChangeListener, Overlay
    */
   public void download(@NonNull String url, @NonNull File target) throws Exception {
     RestTemplate template = new RestTemplate();
+    LOG.info("HTTP Download " + restClient.getBaseUrl() + API + url);
     File file = template.execute(restClient.getBaseUrl() + API + url, HttpMethod.GET, null, clientHttpResponse -> {
       FileOutputStream out = null;
       try {

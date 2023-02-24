@@ -5,6 +5,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.util.*;
 
 public class VpaSourceAdapterFileSystem implements VpaSourceAdapter {
@@ -23,7 +25,7 @@ public class VpaSourceAdapterFileSystem implements VpaSourceAdapter {
     return vpaArchiveFolder;
   }
 
-  public List<VpaDescriptor> getDescriptors() {
+  public List<VpaDescriptor> getVpaDescriptors() {
     if (cache.isEmpty()) {
       File[] vpaFiles = vpaArchiveFolder.listFiles((dir, name) -> name.endsWith(".vpa"));
       if (vpaFiles != null) {
@@ -31,6 +33,7 @@ public class VpaSourceAdapterFileSystem implements VpaSourceAdapter {
           VpaManifest manifest = VpaUtil.readManifest(vpaFile);
           VpaDescriptor descriptor = new VpaDescriptor(source, manifest, new Date(vpaFile.lastModified()),
               vpaFile.getName(), vpaFile.length());
+          manifest.setVpaFileSize(vpaFile.length());
           cache.put(vpaFile.getName(), descriptor);
         }
       }
@@ -45,19 +48,27 @@ public class VpaSourceAdapterFileSystem implements VpaSourceAdapter {
   @Override
   public boolean delete(VpaDescriptor descriptor) {
     File file = new File(vpaArchiveFolder, descriptor.getFilename());
-    boolean result =  file.delete();
+    if (!file.delete()) {
+      LOG.error("Failed to delete " + file.getAbsolutePath());
+      return false;
+    }
     this.invalidate();
-    return result;
+    return true;
   }
 
   @Override
-  public File getFile(VpaDescriptor descriptor) {
-    return new File(vpaArchiveFolder, descriptor.getFilename());
+  public FileInputStream getDescriptorInputStream(VpaDescriptor descriptor) throws IOException {
+    File file = new File(vpaArchiveFolder, descriptor.getFilename());
+    return new FileInputStream(file);
   }
 
   @Override
   public void invalidate() {
     cache.clear();
     LOG.info("Invalidated VPA source \"" + this.getVpaSource() + "\"");
+
+    if (this.getVpaSource().getId() == -1) {
+      VpaUtil.exportDescriptorJson(this);
+    }
   }
 }

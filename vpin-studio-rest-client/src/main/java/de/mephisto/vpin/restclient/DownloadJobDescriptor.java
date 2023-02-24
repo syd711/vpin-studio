@@ -6,15 +6,15 @@ import org.springframework.lang.NonNull;
 
 import java.io.File;
 
-public class UploadJobDescriptor extends JobDescriptor {
-  private final static Logger LOG = LoggerFactory.getLogger(UploadJobDescriptor.class);
+public class DownloadJobDescriptor extends JobDescriptor {
+  private final static Logger LOG = LoggerFactory.getLogger(DownloadJobDescriptor.class);
 
   @NonNull
   private final String url;
   @NonNull
   private final File target;
 
-  public UploadJobDescriptor(@NonNull String url, @NonNull File target) {
+  public DownloadJobDescriptor(@NonNull String url, @NonNull File target) {
     this.url = url;
     this.target = target;
   }

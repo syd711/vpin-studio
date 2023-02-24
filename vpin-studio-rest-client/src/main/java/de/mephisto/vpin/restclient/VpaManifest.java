@@ -32,6 +32,33 @@ public class VpaManifest {
   private String tableName;
   private String icon;
   private String thumbnail;
+  private String vpaFilename;
+  private long vpaFileSize;
+  private String vpaVersion;
+
+  public long getVpaFileSize() {
+    return vpaFileSize;
+  }
+
+  public void setVpaFileSize(long vpaFileSize) {
+    this.vpaFileSize = vpaFileSize;
+  }
+
+  public String getVpaVersion() {
+    return vpaVersion;
+  }
+
+  public void setVpaVersion(String vpaVersion) {
+    this.vpaVersion = vpaVersion;
+  }
+
+  public String getVpaFilename() {
+    return vpaFilename;
+  }
+
+  public void setVpaFilename(String vpaFilename) {
+    this.vpaFilename = vpaFilename;
+  }
 
   private VpaPackageInfo packageInfo;
 

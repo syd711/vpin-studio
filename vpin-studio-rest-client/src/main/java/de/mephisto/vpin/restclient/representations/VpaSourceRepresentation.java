@@ -8,6 +8,16 @@ public class VpaSourceRepresentation {
   private String login;
   private String password;
 
+  private String authenticationType;
+
+  public String getAuthenticationType() {
+    return authenticationType;
+  }
+
+  public void setAuthenticationType(String authenticationType) {
+    this.authenticationType = authenticationType;
+  }
+
   public long getId() {
     return id;
   }

@@ -12,12 +12,44 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.util.Arrays;
 import java.util.Enumeration;
+import java.util.List;
+import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
 public class VpaUtil {
   private final static Logger LOG = LoggerFactory.getLogger(VpaService.class);
+
+  public static void exportDescriptorJson(VpaSourceAdapterFileSystem source) {
+    try {
+      ObjectMapper objectMapper = new ObjectMapper();
+      objectMapper.enable(SerializationFeature.INDENT_OUTPUT);
+
+      List<VpaDescriptor> descriptors = source.getVpaDescriptors();
+      List<VpaManifest> manifests = descriptors.stream().map(d -> d.getManifest()).collect(Collectors.toList());
+      String manifestString = objectMapper.writeValueAsString(manifests);
+      File descriptorFile = new File(source.getFolder(), "descriptor.json");
+      Files.write(descriptorFile.toPath(), manifestString.getBytes());
+
+      LOG.info("Written " + descriptorFile.getAbsolutePath());
+    } catch (IOException e) {
+      LOG.error("Error writing export descriptor.json: " + e.getMessage(), e);
+    }
+  }
+
+  public static List<VpaManifest> readManifests(String json) {
+    try {
+      ObjectMapper objectMapper = new ObjectMapper();
+      objectMapper.enable(SerializationFeature.INDENT_OUTPUT);
+      return Arrays.asList(objectMapper.readValue(json, VpaManifest[].class));
+    } catch (IOException e) {
+      LOG.error("Failed to read manifest data from json\n" + json + ": " + e.getMessage(), e);
+    }
+    return null;
+  }
 
   public static VpaManifest readManifest(File file) {
     try {

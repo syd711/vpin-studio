@@ -2,6 +2,7 @@ package de.mephisto.vpin.ui.preferences;
 
 import de.mephisto.vpin.commons.VpaSourceType;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
+import de.mephisto.vpin.restclient.representations.PlayerRepresentation;
 import de.mephisto.vpin.restclient.representations.VpaSourceRepresentation;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.events.EventManager;
@@ -44,11 +45,12 @@ public class VpaRepositoriesPreferencesController implements Initializable {
       VpaSourceType vpaSourceType = VpaSourceType.valueOf(selectedItem.getType());
       switch (vpaSourceType) {
         case File: {
-          sourceRepresentation = Dialogs.openVpaSourceDialog(selectedItem);
+          sourceRepresentation = Dialogs.openVpaSourceFileDialog(selectedItem);
           break;
         }
         default: {
-
+          sourceRepresentation = Dialogs.openVpaSourceHttpDialog(selectedItem);
+          break;
         }
       }
 
@@ -63,9 +65,22 @@ public class VpaRepositoriesPreferencesController implements Initializable {
     }
   }
 
+//  @FXML
+//  private void onFolderAdd() {
+//    VpaSourceRepresentation sourceRepresentation = Dialogs.openVpaSourceFileDialog(null);
+//    if (sourceRepresentation != null) {
+//      try {
+//        client.saveVpaSource(sourceRepresentation);
+//      } catch (Exception e) {
+//        WidgetFactory.showAlert(Studio.stage, "Error", "Error saving repository: " + e.getMessage());
+//      }
+//      onReload();
+//    }
+//  }
+
   @FXML
-  private void onFolderAdd() {
-    VpaSourceRepresentation sourceRepresentation = Dialogs.openVpaSourceDialog(null);
+  private void onHttpAdd() {
+    VpaSourceRepresentation sourceRepresentation = Dialogs.openVpaSourceHttpDialog(null);
     if (sourceRepresentation != null) {
       try {
         client.saveVpaSource(sourceRepresentation);
@@ -74,11 +89,6 @@ public class VpaRepositoriesPreferencesController implements Initializable {
       }
       onReload();
     }
-  }
-
-  @FXML
-  private void onHttpAdd() {
-
   }
 
   @FXML
@@ -125,6 +135,16 @@ public class VpaRepositoriesPreferencesController implements Initializable {
       boolean disable = newSelection == null || newSelection.getId() == -1;
       deleteBtn.setDisable(disable);
       editBtn.setDisable(disable);
+    });
+
+    tableView.setRowFactory(tv -> {
+      TableRow<VpaSourceRepresentation> row = new TableRow<>();
+      row.setOnMouseClicked(event -> {
+        if (event.getClickCount() == 2 && (!row.isEmpty())) {
+          onEdit();
+        }
+      });
+      return row;
     });
   }
 }

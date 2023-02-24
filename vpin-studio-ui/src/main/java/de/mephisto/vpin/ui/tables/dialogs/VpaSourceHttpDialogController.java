@@ -3,12 +3,12 @@ package de.mephisto.vpin.ui.tables.dialogs;
 import de.mephisto.vpin.commons.VpaSourceType;
 import de.mephisto.vpin.commons.fx.DialogController;
 import de.mephisto.vpin.restclient.representations.VpaSourceRepresentation;
+import de.mephisto.vpin.restclient.util.PasswordUtil;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
-import javafx.stage.DirectoryChooser;
 import javafx.stage.Stage;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -18,10 +18,8 @@ import java.io.File;
 import java.net.URL;
 import java.util.ResourceBundle;
 
-import static de.mephisto.vpin.ui.Studio.stage;
-
-public class VpaSourceFileDialogController implements Initializable, DialogController {
-  private final static Logger LOG = LoggerFactory.getLogger(VpaSourceFileDialogController.class);
+public class VpaSourceHttpDialogController implements Initializable, DialogController {
+  private final static Logger LOG = LoggerFactory.getLogger(VpaSourceHttpDialogController.class);
   private static File lastFolderSelection;
 
   @FXML
@@ -31,7 +29,13 @@ public class VpaSourceFileDialogController implements Initializable, DialogContr
   private TextField nameField;
 
   @FXML
-  private TextField folderField;
+  private TextField urlField;
+
+  @FXML
+  private TextField loginField;
+
+  @FXML
+  private TextField passwordField;
 
   private VpaSourceRepresentation source;
 
@@ -44,31 +48,15 @@ public class VpaSourceFileDialogController implements Initializable, DialogContr
 
   @FXML
   private void onSaveClick(ActionEvent e) {
-    this.source.setType(VpaSourceType.File.name());
+    this.source.setType(VpaSourceType.Http.name());
     this.source.setName(nameField.getText());
-    this.source.setLocation(folderField.getText());
+    this.source.setLocation(urlField.getText());
+    this.source.setLogin(loginField.getText());
+    this.source.setAuthenticationType("basic");
+    this.source.setPassword(PasswordUtil.encrypt(passwordField.getText()));
 
     Stage stage = (Stage) ((Button) e.getSource()).getScene().getWindow();
     stage.close();
-  }
-
-  @FXML
-  private void onFileSelect() {
-    DirectoryChooser chooser = new DirectoryChooser();
-    if (VpaSourceFileDialogController.lastFolderSelection != null) {
-      chooser.setInitialDirectory(VpaSourceFileDialogController.lastFolderSelection);
-    }
-    chooser.setTitle("Select Source Folder");
-    File targetFolder = chooser.showDialog(stage);
-    if (targetFolder != null) {
-      folderField.setText(targetFolder.getAbsolutePath());
-      VpaSourceFileDialogController.lastFolderSelection = targetFolder;
-
-      if(StringUtils.isEmpty(nameField.getText())) {
-        nameField.setText(StringUtils.capitalize(targetFolder.getName()));
-      }
-    }
-    validateInput();
   }
 
   @Override
@@ -79,16 +67,18 @@ public class VpaSourceFileDialogController implements Initializable, DialogContr
       source.setName(t1);
       validateInput();
     });
+    urlField.textProperty().addListener((observableValue, s, t1) -> {
+      source.setName(t1);
+      validateInput();
+    });
     this.validateInput();
-
     this.nameField.requestFocus();
   }
 
   private void validateInput() {
     String name = nameField.getText();
-    String initials = folderField.getText();
-
-    saveBtn.setDisable(StringUtils.isEmpty(name) || StringUtils.isEmpty(initials));
+    String url = urlField.getText();
+    saveBtn.setDisable(StringUtils.isEmpty(name) || StringUtils.isEmpty(url));
   }
 
   @Override
@@ -104,7 +94,9 @@ public class VpaSourceFileDialogController implements Initializable, DialogContr
     if (source != null) {
       this.source = source;
       nameField.setText(source.getName());
-      folderField.setText(source.getLocation());
+      urlField.setText(source.getLocation());
+      loginField.setText(source.getLogin());
+      passwordField.setText(PasswordUtil.decrypt(source.getPassword()));
     }
     validateInput();
   }

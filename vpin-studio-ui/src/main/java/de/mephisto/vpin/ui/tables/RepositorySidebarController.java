@@ -66,6 +66,9 @@ public class RepositorySidebarController implements Initializable, StudioFXContr
   private FontIcon romIcon;
 
   @FXML
+  private FontIcon cfgIcon;
+
+  @FXML
   private FontIcon popperIcon;
 
   @FXML
@@ -79,9 +82,14 @@ public class RepositorySidebarController implements Initializable, StudioFXContr
 
   @FXML
   private FontIcon altSoundIcon;
+  @FXML
+  private FontIcon altColorIcon;
 
   @FXML
   private FontIcon povIcon;
+
+  @FXML
+  private FontIcon resIcon;
 
   @FXML
   private FontIcon highscoreIcon;
@@ -191,6 +199,9 @@ public class RepositorySidebarController implements Initializable, StudioFXContr
     ultraIcon.setVisible(false);
     musicIcon.setVisible(false);
     altSoundIcon.setVisible(false);
+    altColorIcon.setVisible(false);
+    resIcon.setVisible(false);
+    cfgIcon.setVisible(false);
     povIcon.setVisible(false);
     highscoreIcon.setVisible(false);
     idCopyBtn.setVisible(false);
@@ -208,7 +219,7 @@ public class RepositorySidebarController implements Initializable, StudioFXContr
       VpaManifest manifest = descriptorRepresentation.getManifest();
 
       filenameLabel.setText(descriptorRepresentation.getFilename());
-      fileSizeLabel.setText(FileUtils.readableFileSize(descriptorRepresentation.getSize()));
+      fileSizeLabel.setText(descriptorRepresentation.getSize() > 0 ? FileUtils.readableFileSize(descriptorRepresentation.getSize()) : "-");
       sourceLabel.setText(descriptorRepresentation.getSource().getLocation());
       idLabel.setText(descriptorRepresentation.getManifest().getUuid());
       idCopyBtn.setVisible(true);
@@ -220,11 +231,14 @@ public class RepositorySidebarController implements Initializable, StudioFXContr
       directb2sIcon.setVisible(packageInfo.isDirectb2s());
       pupPackIcon.setVisible(packageInfo.isPupPack());
       romIcon.setVisible(packageInfo.isRom());
+      resIcon.setVisible(packageInfo.isRes());
+      cfgIcon.setVisible(packageInfo.isCfg());
       popperIcon.setVisible(packageInfo.isPopperMedia());
       flexIcon.setVisible(packageInfo.isFlexDMD());
       ultraIcon.setVisible(packageInfo.isUltraDMD());
       musicIcon.setVisible(packageInfo.isMusic());
       altSoundIcon.setVisible(packageInfo.isAltSound());
+      altColorIcon.setVisible(packageInfo.isAltColor());
       povIcon.setVisible(packageInfo.isPov());
       highscoreIcon.setVisible(packageInfo.isHighscore());
       highscoreHistoryLabel.setText(String.valueOf(packageInfo.getHighscoreHistoryRecords()));

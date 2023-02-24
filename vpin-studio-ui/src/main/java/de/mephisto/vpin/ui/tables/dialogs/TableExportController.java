@@ -102,6 +102,9 @@ public class TableExportController implements Initializable, DialogController {
   private CheckBox exportPopperMedia;
 
   @FXML
+  private CheckBox exportMusic;
+
+  @FXML
   private CheckBox highscoresCheckbox;
 
   @FXML
@@ -119,6 +122,7 @@ public class TableExportController implements Initializable, DialogController {
     descriptor.setExportRom(this.exportRomCheckbox.isSelected());
     descriptor.setExportPopperMedia(this.exportPopperMedia.isSelected());
     descriptor.setExportHighscores(this.highscoresCheckbox.isSelected());
+    descriptor.setExportMusic(this.exportMusic.isSelected());
     Studio.client.exportVpa(descriptor);
 
     Stage stage = (Stage) ((Button) e.getSource()).getScene().getWindow();

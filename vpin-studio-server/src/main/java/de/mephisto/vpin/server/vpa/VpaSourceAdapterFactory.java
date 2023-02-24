@@ -10,6 +10,9 @@ public class VpaSourceAdapterFactory {
       case File: {
         return new VpaSourceAdapterFileSystem(source);
       }
+      case Http: {
+        return new VpaSourceAdapterHttpServer(source);
+      }
       default: {
         throw new UnsupportedOperationException("Invalid source type: " + vpaSourceType);
       }

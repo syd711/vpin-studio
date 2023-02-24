@@ -4,15 +4,42 @@ public class VpaPackageInfo {
   private boolean directb2s;
   private boolean pupPack;
   private boolean rom;
+  private boolean res;
+  private boolean cfg;
   private boolean popperMedia;
   private boolean pov;
   private boolean music;
   private boolean altSound;
+  private boolean altColor;
   private boolean highscore;
   private int highscoreHistoryRecords;
   private boolean flexDMD;
   private boolean ultraDMD;
   private boolean vpx;
+
+  public boolean isRes() {
+    return res;
+  }
+
+  public void setRes(boolean res) {
+    this.res = res;
+  }
+
+  public boolean isCfg() {
+    return cfg;
+  }
+
+  public void setCfg(boolean cfg) {
+    this.cfg = cfg;
+  }
+
+  public boolean isAltColor() {
+    return altColor;
+  }
+
+  public void setAltColor(boolean altColor) {
+    this.altColor = altColor;
+  }
 
   public boolean isVpx() {
     return vpx;

@@ -1,17 +1,18 @@
 package de.mephisto.vpin.server.vpa;
 
-import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.List;
 
 public interface VpaSourceAdapter {
 
-  List<VpaDescriptor> getDescriptors();
+  List<VpaDescriptor> getVpaDescriptors();
 
   boolean delete(VpaDescriptor descriptor);
 
   void invalidate();
 
-  File getFile(VpaDescriptor vpaDescriptor);
+  InputStream getDescriptorInputStream(VpaDescriptor vpaDescriptor) throws IOException;
 
   VpaSource getVpaSource();
 }

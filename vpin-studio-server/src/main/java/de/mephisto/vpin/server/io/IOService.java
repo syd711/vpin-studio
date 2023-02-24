@@ -46,7 +46,7 @@ public class IOService {
 
   public boolean importVpa(@NonNull ImportDescriptor descriptor) {
     try {
-      VpaDescriptor vpaDescriptor = vpaService.getVpaDescriptor(descriptor.getUuid());
+      VpaDescriptor vpaDescriptor = vpaService.getVpaDescriptor(DefaultVpaSource.DEFAULT_VPA_SOURCE_ID, descriptor.getUuid());
       File vpaFile = new File(systemService.getVpaArchiveFolder(), vpaDescriptor.getFilename());
       VpaImporter importer = new VpaImporter(descriptor, vpaFile, pinUPConnector, systemService, highscoreService, gameService);
       Game importedGame = importer.startImport();
@@ -63,14 +63,14 @@ public class IOService {
 
   public boolean exportVpa(@NonNull ExportDescriptor exportDescriptor) {
     List<Integer> gameIds = exportDescriptor.getGameIds();
+    File targetFolder = systemService.getVpaArchiveFolder();
 
     //single export
     if (gameIds.size() == 1) {
       VpaManifest manifest = exportDescriptor.getManifest();
       Game game = gameService.getGame(gameIds.get(0));
       if (game != null) {
-        File target = new File(systemService.getVpaArchiveFolder(), game.getGameDisplayName().replaceAll(" ", "-") + ".vpa");
-        return exportVpa(game, manifest, exportDescriptor, target);
+        return exportVpa(game, manifest, exportDescriptor, targetFolder);
       }
     }
     else {
@@ -80,19 +80,17 @@ public class IOService {
         VpaManifest manifest = getManifest(gameId);
         Game game = gameService.getGame(gameId);
         if (game != null) {
-          File target = new File(systemService.getVpaArchiveFolder(), game.getGameDisplayName().replaceAll(" ", "-") + ".vpa");
-          if (!exportVpa(game, manifest, exportDescriptor, target)) {
+          if (!exportVpa(game, manifest, exportDescriptor, targetFolder)) {
             result = false;
           }
         }
       }
       return result;
     }
-
     return false;
   }
 
-  private boolean exportVpa(@NonNull Game game, @NonNull VpaManifest manifest, @NonNull ExportDescriptor exportDescriptor, @NonNull File target) {
+  private boolean exportVpa(@NonNull Game game, @NonNull VpaManifest manifest, @NonNull ExportDescriptor exportDescriptor, @NonNull File targetFolder) {
     List<HighscoreVersion> versions = highscoreService.getAllHighscoreVersions(game.getId());
     Highscore highscore = highscoreService.getOrCreateHighscore(game);
     File vpRegFile = systemService.getVPRegFile();
@@ -105,8 +103,8 @@ public class IOService {
     descriptor.setJobType(JobType.VPA_EXPORT);
     descriptor.setUuid(uuid);
     descriptor.setTitle("Export of '" + game.getGameDisplayName() + "'");
-    descriptor.setDescription("Exporting table archive " + target.getName());
-    descriptor.setJob(new VpaExporterJob(vpRegFile, systemService.getVPXMusicFolder(), game, exportDescriptor, manifest, highscore, versions, defaultVpaSourceAdapter, target));
+    descriptor.setDescription("Exporting table archive for \"" + manifest.getGameDisplayName() + "\"");
+    descriptor.setJob(new VpaExporterJob(vpRegFile, systemService.getVPXMusicFolder(), game, exportDescriptor, manifest, highscore, versions, defaultVpaSourceAdapter, targetFolder, systemService.getVersion()));
 
     GameMediaItem mediaItem = game.getGameMedia().get(PopperScreen.Wheel);
     if (mediaItem != null) {

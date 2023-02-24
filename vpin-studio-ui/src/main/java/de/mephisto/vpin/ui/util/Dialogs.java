@@ -12,8 +12,6 @@ import de.mephisto.vpin.ui.competitions.CompetitionDiscordDialogController;
 import de.mephisto.vpin.ui.competitions.CompetitionDiscordJoinDialogController;
 import de.mephisto.vpin.ui.competitions.CompetitionOfflineDialogController;
 import de.mephisto.vpin.ui.players.PlayerDialogController;
-import de.mephisto.vpin.ui.preferences.VpaRepositoriesPreferencesController;
-import de.mephisto.vpin.ui.tables.RepositoryController;
 import de.mephisto.vpin.ui.tables.TableOverviewController;
 import de.mephisto.vpin.ui.tables.TablesController;
 import de.mephisto.vpin.ui.tables.dialogs.*;
@@ -153,9 +151,18 @@ public class Dialogs {
     stage.showAndWait();
   }
 
-  public static VpaSourceRepresentation openVpaSourceDialog(VpaSourceRepresentation source) {
+  public static VpaSourceRepresentation openVpaSourceFileDialog(VpaSourceRepresentation source) {
     Stage stage = createStudioDialogStage(VpaSourceFileDialogController.class, "dialog-vpa-source-file.fxml", "VPA Folder Repository");
     VpaSourceFileDialogController controller = (VpaSourceFileDialogController) stage.getUserData();
+    controller.setSource(source);
+    stage.showAndWait();
+
+    return controller.getVpaSource();
+  }
+
+  public static VpaSourceRepresentation openVpaSourceHttpDialog(VpaSourceRepresentation source) {
+    Stage stage = createStudioDialogStage(VpaSourceHttpDialogController.class, "dialog-vpa-source-http.fxml", "VPA HTTP Repository");
+    VpaSourceHttpDialogController controller = (VpaSourceHttpDialogController) stage.getUserData();
     controller.setSource(source);
     stage.showAndWait();
 
