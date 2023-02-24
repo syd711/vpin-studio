@@ -43,6 +43,7 @@ public class JobPoller {
         return new Task() {
           @Override
           protected Object call() throws Exception {
+            Thread.currentThread().setName("Job Polling Thread");
             LOG.info("Started JobPoller service.");
             boolean poll = true;
 

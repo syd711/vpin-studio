@@ -21,6 +21,7 @@ import java.util.ResourceBundle;
 import static de.mephisto.vpin.ui.Studio.client;
 
 public class VpaRepositoriesPreferencesController implements Initializable {
+  public final static long DEFAULT_VPA_SOURCE_ID = -1;
 
   @FXML
   private TableView<VpaSourceRepresentation> tableView;
@@ -41,6 +42,10 @@ public class VpaRepositoriesPreferencesController implements Initializable {
   private void onEdit() {
     VpaSourceRepresentation selectedItem = tableView.getSelectionModel().getSelectedItem();
     if (selectedItem != null) {
+      if(selectedItem.getId() == DEFAULT_VPA_SOURCE_ID) {
+        return;
+      }
+
       VpaSourceRepresentation sourceRepresentation = null;
       VpaSourceType vpaSourceType = VpaSourceType.valueOf(selectedItem.getType());
       switch (vpaSourceType) {

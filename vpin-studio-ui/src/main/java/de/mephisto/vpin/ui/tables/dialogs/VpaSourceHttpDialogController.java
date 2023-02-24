@@ -1,13 +1,17 @@
 package de.mephisto.vpin.ui.tables.dialogs;
 
+import de.mephisto.vpin.commons.VpaAuthenticationType;
 import de.mephisto.vpin.commons.VpaSourceType;
 import de.mephisto.vpin.commons.fx.DialogController;
 import de.mephisto.vpin.restclient.representations.VpaSourceRepresentation;
 import de.mephisto.vpin.restclient.util.PasswordUtil;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 import org.apache.commons.lang3.StringUtils;
@@ -32,6 +36,9 @@ public class VpaSourceHttpDialogController implements Initializable, DialogContr
   private TextField urlField;
 
   @FXML
+  private CheckBox basicAuthCheckbox;
+
+  @FXML
   private TextField loginField;
 
   @FXML
@@ -52,7 +59,11 @@ public class VpaSourceHttpDialogController implements Initializable, DialogContr
     this.source.setName(nameField.getText());
     this.source.setLocation(urlField.getText());
     this.source.setLogin(loginField.getText());
-    this.source.setAuthenticationType("basic");
+
+    if(basicAuthCheckbox.isSelected()) {
+      this.source.setAuthenticationType(VpaAuthenticationType.Basic.name());
+    }
+
     this.source.setPassword(PasswordUtil.encrypt(passwordField.getText()));
 
     Stage stage = (Stage) ((Button) e.getSource()).getScene().getWindow();
@@ -62,6 +73,8 @@ public class VpaSourceHttpDialogController implements Initializable, DialogContr
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
     source = new VpaSourceRepresentation();
+    loginField.setDisable(true);
+    passwordField.setDisable(true);
 
     nameField.textProperty().addListener((observableValue, s, t1) -> {
       source.setName(t1);
@@ -71,6 +84,13 @@ public class VpaSourceHttpDialogController implements Initializable, DialogContr
       source.setName(t1);
       validateInput();
     });
+
+    basicAuthCheckbox.selectedProperty().addListener((observable, oldValue, newValue) -> {
+      this.loginField.setDisable(!newValue);
+      this.passwordField.setDisable(!newValue);
+      validateInput();
+    });
+
     this.validateInput();
     this.nameField.requestFocus();
   }
@@ -78,6 +98,7 @@ public class VpaSourceHttpDialogController implements Initializable, DialogContr
   private void validateInput() {
     String name = nameField.getText();
     String url = urlField.getText();
+
     saveBtn.setDisable(StringUtils.isEmpty(name) || StringUtils.isEmpty(url));
   }
 
@@ -96,6 +117,7 @@ public class VpaSourceHttpDialogController implements Initializable, DialogContr
       nameField.setText(source.getName());
       urlField.setText(source.getLocation());
       loginField.setText(source.getLogin());
+      basicAuthCheckbox.setSelected(source.getAuthenticationType() != null & source.getAuthenticationType().equals(VpaAuthenticationType.Basic.name()));
       passwordField.setText(PasswordUtil.decrypt(source.getPassword()));
     }
     validateInput();

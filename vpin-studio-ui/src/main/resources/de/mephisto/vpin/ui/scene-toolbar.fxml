@@ -44,7 +44,7 @@
                               <Insets top="1.0" />
                            </HBox.margin>
                         </MenuButton>
-                        <Button fx:id="updateBtn" mnemonicParsing="false" onAction="#onUpdate" textFill="WHITE">
+                        <Button fx:id="updateBtn" mnemonicParsing="false" onAction="#onUpdate" textFill="WHITE" visible="false">
                            <graphic>
                               <FontIcon iconColor="#03a905" iconLiteral="mdi2a-arrow-down-bold" iconSize="16" />
                            </graphic>

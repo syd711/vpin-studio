@@ -368,7 +368,7 @@ public class RepositoryController implements Initializable, StudioEventListener 
   @Override
   public void onVpaSourceUpdate() {
     Platform.runLater(() -> {
-      refreshRepositoryCombo();
+//      refreshRepositoryCombo(); //TODO
       doReload();
     });
   }
