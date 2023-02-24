@@ -9,6 +9,8 @@ public class DeleteDescriptor {
   private boolean deleteHighscores;
   private boolean deleteMusic;
   private boolean deleteAltSound;
+  private boolean deleteAltColor;
+  private boolean deleteCfg;
 
   private int gameId;
 
@@ -18,6 +20,22 @@ public class DeleteDescriptor {
 
   public void setGameId(int gameId) {
     this.gameId = gameId;
+  }
+
+  public boolean isDeleteAltColor() {
+    return deleteAltColor;
+  }
+
+  public void setDeleteAltColor(boolean deleteAltColor) {
+    this.deleteAltColor = deleteAltColor;
+  }
+
+  public boolean isDeleteCfg() {
+    return deleteCfg;
+  }
+
+  public void setDeleteCfg(boolean deleteCfg) {
+    this.deleteCfg = deleteCfg;
   }
 
   public boolean isDeleteTable() {
