@@ -83,13 +83,20 @@ public class VpaResource {
       VpaSourceAdapter vpaSourceAdapter = vpaService.getVpaSourceAdapter(sourceId);
       in = vpaSourceAdapter.getDescriptorInputStream(vpaDescriptor);
 
-      File target = new File(vpaService.getDefaultVpaSourceAdapter().getFolder(), vpaDescriptor.getFilename());
+      VpaSourceAdapterFileSystem defaultVpaSourceAdapter = vpaService.getDefaultVpaSourceAdapter();
+      File target = new File(defaultVpaSourceAdapter.getFolder(), vpaDescriptor.getFilename());
       target = FileUtils.uniqueFile(target);
-      out = new BufferedOutputStream(new FileOutputStream(target));
+      File temp = new File(defaultVpaSourceAdapter.getFolder(), target.getName() + ".bak");
+      out = new BufferedOutputStream(new FileOutputStream(temp));
       IOUtils.copy(in, out);
+      out.close();
+      in.close();
 
+      if (!temp.renameTo(target)) {
+        throw new IOException("File rename to " + target.getAbsolutePath() + " failed.");
+      }
       LOG.info("Finished copying of \"" + vpaDescriptor.getManifest().getGameDisplayName() + "\" to " + target.getAbsolutePath());
-      invalidateCache(vpaSourceAdapter.getVpaSource().getId());
+      invalidateCache(defaultVpaSourceAdapter.getVpaSource().getId());
     } catch (IOException ex) {
       LOG.info("Error writing VPA to output stream. UUID was '{}'", uuid, ex);
       throw new RuntimeException("IOError writing file to output stream");
@@ -99,7 +106,7 @@ public class VpaResource {
           in.close();
         }
 
-        if(out != null) {
+        if (out != null) {
           out.close();
         }
       } catch (IOException e) {

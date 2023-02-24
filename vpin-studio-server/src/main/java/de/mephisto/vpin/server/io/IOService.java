@@ -99,7 +99,7 @@ public class IOService {
     String uuid = UUID.randomUUID().toString();
     manifest.setUuid(uuid);
 
-    JobDescriptor descriptor = new JobDescriptor(uuid);
+    JobDescriptor descriptor = new JobDescriptor(JobType.VPA_EXPORT, uuid);
     descriptor.setJobType(JobType.VPA_EXPORT);
     descriptor.setTitle("Export of '" + game.getGameDisplayName() + "'");
     descriptor.setDescription("Exporting table archive for \"" + manifest.getGameDisplayName() + "\"");

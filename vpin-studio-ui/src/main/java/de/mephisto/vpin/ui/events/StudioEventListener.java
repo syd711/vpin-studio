@@ -8,6 +8,10 @@ public interface StudioEventListener {
 
   }
 
+  default void onVpaDownload() {
+
+  }
+
   default void onVpaSourceUpdate() {
 
   }

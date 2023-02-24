@@ -9,7 +9,8 @@ public class JobDescriptor {
   private String description;
   private JobType jobType;
 
-  public JobDescriptor(String uuid) {
+  public JobDescriptor(JobType jobType, String uuid) {
+    this.jobType = jobType;
     this.uuid = uuid;
   }
 

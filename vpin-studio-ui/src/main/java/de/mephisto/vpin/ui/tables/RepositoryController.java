@@ -373,6 +373,13 @@ public class RepositoryController implements Initializable, StudioEventListener 
     });
   }
 
+  @Override
+  public void onVpaDownload() {
+    Platform.runLater(() -> {
+      onReload();
+    });
+  }
+
   private void refreshRepositoryCombo() {
     List<VpaSourceRepresentation> repositories = new ArrayList<>(client.getVpaSources());
     sourceCombo.setItems(FXCollections.observableList(repositories));

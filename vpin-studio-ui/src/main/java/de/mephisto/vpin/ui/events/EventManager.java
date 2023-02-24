@@ -1,5 +1,7 @@
 package de.mephisto.vpin.ui.events;
 
+import de.mephisto.vpin.restclient.JobDescriptor;
+import de.mephisto.vpin.restclient.JobType;
 import edu.umd.cs.findbugs.annotations.NonNull;
 
 import java.util.ArrayList;
@@ -34,5 +36,31 @@ public class EventManager {
         listener.onVpaSourceUpdate();
       }
     }).start();
+  }
+
+  public void notifyVpaDownloadFinished() {
+    new Thread(() -> {
+      for (StudioEventListener listener : listeners) {
+        listener.onVpaDownload();
+      }
+    }).start();
+  }
+
+  public void notifyJobFinished(JobDescriptor descriptor) {
+    JobType type = descriptor.getJobType();
+    switch (type) {
+      case VPA_EXPORT: {
+        String uuid = descriptor.getUuid();
+        notifyVpaExport(uuid);
+        return;
+      }
+      case VPA_DOWNLOAD: {
+        notifyVpaDownloadFinished();
+        return;
+      }
+      default: {
+        throw new UnsupportedOperationException("invalid job type " + type);
+      }
+    }
   }
 }
