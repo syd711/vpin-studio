@@ -60,7 +60,7 @@ public class VpaServiceTest extends AbstractVPinServerTest {
     File target = new File("E:\\downloads\\" + game.getGameDisplayName().replaceAll(" ", "-") + ".vpa");
     List<HighscoreVersion> versions = highscoreService.getAllHighscoreVersions(game.getId());
     Optional<Highscore> highscore = highscoreService.getHighscore(game.getId());
-    VpaExporterJob exporter = new VpaExporterJob(systemService.getVPRegFile(), systemService.getVPXMusicFolder(), game, descriptor, manifest, highscore.get(), versions, null, target);
+    VpaExporterJob exporter = new VpaExporterJob(systemService.getVPRegFile(), systemService.getVPXMusicFolder(), game, descriptor, manifest, highscore.get(), versions, null, target, manifest.getUuid());
     exporter.execute();
     assertTrue(target.exists());
   }

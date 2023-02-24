@@ -99,9 +99,8 @@ public class IOService {
     String uuid = UUID.randomUUID().toString();
     manifest.setUuid(uuid);
 
-    JobDescriptor descriptor = new JobDescriptor();
+    JobDescriptor descriptor = new JobDescriptor(uuid);
     descriptor.setJobType(JobType.VPA_EXPORT);
-    descriptor.setUuid(uuid);
     descriptor.setTitle("Export of '" + game.getGameDisplayName() + "'");
     descriptor.setDescription("Exporting table archive for \"" + manifest.getGameDisplayName() + "\"");
     descriptor.setJob(new VpaExporterJob(vpRegFile, systemService.getVPXMusicFolder(), game, exportDescriptor, manifest, highscore, versions, defaultVpaSourceAdapter, targetFolder, systemService.getVersion()));

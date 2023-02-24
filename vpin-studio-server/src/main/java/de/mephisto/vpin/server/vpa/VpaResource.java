@@ -1,8 +1,8 @@
 package de.mephisto.vpin.server.vpa;
 
+import de.mephisto.vpin.commons.utils.FileUtils;
 import de.mephisto.vpin.restclient.representations.VpaDescriptorRepresentation;
 import de.mephisto.vpin.restclient.representations.VpaSourceRepresentation;
-import de.mephisto.vpin.restclient.util.PasswordUtil;
 import de.mephisto.vpin.server.util.UploadUtil;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
@@ -13,9 +13,7 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
 import javax.servlet.http.HttpServletResponse;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -75,10 +73,45 @@ public class VpaResource {
     return true;
   }
 
-  @GetMapping("/download/{sourceId}/{uuid}")
-  public void getFile(@PathVariable("sourceId") long sourceId,
-                      @PathVariable("uuid") String uuid,
-                      HttpServletResponse response) {
+  @GetMapping("/download/archive/{sourceId}/{uuid}")
+  public void downloadArchive(@PathVariable("sourceId") long sourceId,
+                              @PathVariable("uuid") String uuid) {
+    InputStream in = null;
+    BufferedOutputStream out = null;
+    try {
+      VpaDescriptor vpaDescriptor = vpaService.getVpaDescriptor(sourceId, uuid);
+      VpaSourceAdapter vpaSourceAdapter = vpaService.getVpaSourceAdapter(sourceId);
+      in = vpaSourceAdapter.getDescriptorInputStream(vpaDescriptor);
+
+      File target = new File(vpaService.getDefaultVpaSourceAdapter().getFolder(), vpaDescriptor.getFilename());
+      target = FileUtils.uniqueFile(target);
+      out = new BufferedOutputStream(new FileOutputStream(target));
+      IOUtils.copy(in, out);
+
+      LOG.info("Finished copying of \"" + vpaDescriptor.getManifest().getGameDisplayName() + "\" to " + target.getAbsolutePath());
+      invalidateCache(vpaSourceAdapter.getVpaSource().getId());
+    } catch (IOException ex) {
+      LOG.info("Error writing VPA to output stream. UUID was '{}'", uuid, ex);
+      throw new RuntimeException("IOError writing file to output stream");
+    } finally {
+      try {
+        if (in != null) {
+          in.close();
+        }
+
+        if(out != null) {
+          out.close();
+        }
+      } catch (IOException e) {
+        //ignore
+      }
+    }
+  }
+
+  @GetMapping("/download/file/{sourceId}/{uuid}")
+  public void downloadArchiveFile(@PathVariable("sourceId") long sourceId,
+                                  @PathVariable("uuid") String uuid,
+                                  HttpServletResponse response) {
     InputStream in = null;
     try {
       VpaDescriptor vpaDescriptor = vpaService.getVpaDescriptor(sourceId, uuid);
@@ -88,12 +121,13 @@ public class VpaResource {
       response.flushBuffer();
 
       LOG.info("Finished download of \"" + vpaDescriptor.getManifest().getGameDisplayName() + "\"");
+      invalidateCache(vpaSourceAdapter.getVpaSource().getId());
     } catch (IOException ex) {
       LOG.info("Error writing VPA to output stream. UUID was '{}'", uuid, ex);
       throw new RuntimeException("IOError writing file to output stream");
     } finally {
       try {
-        if(in != null) {
+        if (in != null) {
           in.close();
         }
       } catch (IOException e) {

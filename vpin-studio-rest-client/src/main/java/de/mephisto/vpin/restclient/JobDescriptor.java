@@ -9,6 +9,10 @@ public class JobDescriptor {
   private String description;
   private JobType jobType;
 
+  public JobDescriptor(String uuid) {
+    this.uuid = uuid;
+  }
+
   public JobType getJobType() {
     return jobType;
   }

@@ -21,6 +21,9 @@ public class VpaDescriptor {
   }
 
   public long getSize() {
+    if (size == 0) {
+      return manifest.getVpaFileSize();
+    }
     return size;
   }
 

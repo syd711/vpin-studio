@@ -22,7 +22,7 @@
                <center>
                   <HBox>
                      <children>
-                        <TextField fx:id="fileNameField" prefHeight="26.0" prefWidth="375.0">
+                        <TextField fx:id="fileNameField" editable="false" prefHeight="26.0" prefWidth="375.0">
                            <HBox.margin>
                               <Insets right="12.0" />
                            </HBox.margin>

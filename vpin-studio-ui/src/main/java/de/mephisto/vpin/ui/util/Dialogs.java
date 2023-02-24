@@ -16,6 +16,7 @@ import de.mephisto.vpin.ui.tables.TableOverviewController;
 import de.mephisto.vpin.ui.tables.TablesController;
 import de.mephisto.vpin.ui.tables.dialogs.*;
 import edu.umd.cs.findbugs.annotations.Nullable;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -184,6 +185,15 @@ public class Dialogs {
     stage.showAndWait();
 
     return controller.uploadFinished();
+  }
+
+
+
+  public static void openVpaDownloadDialog(ObservableList<VpaDescriptorRepresentation> selectedItems) {
+    Stage stage = createStudioDialogStage(VpaDownloadDialogController.class, "dialog-vpa-download.fxml", "Visual Pinball Archive Download");
+    VpaDownloadDialogController controller = (VpaDownloadDialogController) stage.getUserData();
+    controller.setData(selectedItems);
+    stage.showAndWait();
   }
 
   public static boolean openRomUploadDialog() {

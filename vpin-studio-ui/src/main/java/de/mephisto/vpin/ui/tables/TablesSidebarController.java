@@ -2,6 +2,7 @@ package de.mephisto.vpin.ui.tables;
 
 import de.mephisto.vpin.commons.POV;
 import de.mephisto.vpin.commons.fx.widgets.WidgetController;
+import de.mephisto.vpin.commons.utils.FileUtils;
 import de.mephisto.vpin.commons.utils.ScoreGraphUtil;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.PopperScreen;
@@ -116,6 +117,9 @@ public class TablesSidebarController implements Initializable {
 
   @FXML
   private Label labelFilename;
+
+  @FXML
+  private Label labelFilesize;
 
   @FXML
   private Label labelLastPlayed;
@@ -762,6 +766,7 @@ public class TablesSidebarController implements Initializable {
       labelRomAlias.setText(game.getOriginalRom() != null ? game.getRom() : "-");
       labelNVOffset.setText(game.getNvOffset() > 0 ? String.valueOf(game.getNvOffset()) : "-");
       labelFilename.setText(game.getGameFileName() != null ? game.getGameFileName() : "-");
+      labelFilesize.setText(FileUtils.readableFileSize(game.getGameFileSize()));
       labelTableName.setText(game.getTableName() != null ? game.getTableName() : "-");
       labelLastModified.setText(game.getModified() != null ? DateFormat.getDateTimeInstance().format(game.getModified()) : "-");
       labelLastPlayed.setText(game.getLastPlayed() != null ? DateFormat.getDateTimeInstance().format(game.getLastPlayed()) : "-");

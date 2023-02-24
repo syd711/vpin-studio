@@ -127,6 +127,6 @@ public class DirectB2SUploadController implements Initializable, DialogControlle
 
   public void setGame(GameRepresentation game) {
     this.game = game;
-    this.titleLabel.setText("Select directb2s file for '" + game.getGameDisplayName() + "':");
+    this.titleLabel.setText("Select directb2s file for \"" + game.getGameDisplayName() + "\":");
   }
 }

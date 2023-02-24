@@ -4,7 +4,6 @@ import de.mephisto.vpin.commons.VpaSourceType;
 import de.mephisto.vpin.commons.utils.FileUtils;
 import de.mephisto.vpin.commons.utils.ImageUtil;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
-import de.mephisto.vpin.restclient.DownloadJobDescriptor;
 import de.mephisto.vpin.restclient.representations.VpaDescriptorRepresentation;
 import de.mephisto.vpin.restclient.representations.VpaSourceRepresentation;
 import de.mephisto.vpin.ui.NavigationController;
@@ -12,7 +11,6 @@ import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.WaitOverlayController;
 import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.events.StudioEventListener;
-import de.mephisto.vpin.ui.jobs.JobPoller;
 import de.mephisto.vpin.ui.util.Dialogs;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleObjectProperty;
@@ -27,13 +25,10 @@ import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.StackPane;
-import javafx.stage.DirectoryChooser;
-import org.apache.commons.io.FilenameUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.ByteArrayInputStream;
-import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.text.DateFormat;
@@ -133,28 +128,7 @@ public class RepositoryController implements Initializable, StudioEventListener 
   private void onDownload() {
     ObservableList<VpaDescriptorRepresentation> selectedItems = tableView.getSelectionModel().getSelectedItems();
     if (!selectedItems.isEmpty()) {
-      DirectoryChooser chooser = new DirectoryChooser();
-      chooser.setTitle("Select Target Folder");
-      File targetFolder = chooser.showDialog(stage);
-      if (targetFolder != null) {
-        for (VpaDescriptorRepresentation selectedItem : selectedItems) {
-          File target = new File(targetFolder, selectedItem.getFilename());
-          int index = 1;
-          String originalBaseName = FilenameUtils.getBaseName(target.getName());
-          while (target.exists()) {
-            String suffix = FilenameUtils.getExtension(target.getName());
-            target = new File(target.getParentFile(), originalBaseName + " (" + index + ")." + suffix);
-            index++;
-          }
-
-          long repositoryId = selectedItem.getSource().getId();
-          String uuid = selectedItem.getManifest().getUuid();
-          DownloadJobDescriptor job = new DownloadJobDescriptor("/vpa/download/" + repositoryId + "/" + uuid, target);
-          job.setTitle("Download of \"" + selectedItem.getManifest().getGameDisplayName() + "\"");
-          job.setDescription("Downloading file \"" + selectedItem.getFilename() + "\"");
-          JobPoller.getInstance().queueJob(job);
-        }
-      }
+      Dialogs.openVpaDownloadDialog(selectedItems);
     }
   }
 

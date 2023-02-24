@@ -14,7 +14,8 @@ public class DownloadJobDescriptor extends JobDescriptor {
   @NonNull
   private final File target;
 
-  public DownloadJobDescriptor(@NonNull String url, @NonNull File target) {
+  public DownloadJobDescriptor(@NonNull String url, @NonNull File target, @NonNull String uuid) {
+    super(uuid);
     this.url = url;
     this.target = target;
   }

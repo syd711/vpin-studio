@@ -100,7 +100,11 @@ public class GameService {
         success = false;
       }
 
-      if (game.getPOVFile() != null && !FileUtils.delete(game.getPOVFile())) {
+      if (!FileUtils.delete(game.getPOVFile())) {
+        success = false;
+      }
+
+      if (!FileUtils.delete(game.getResFile())) {
         success = false;
       }
     }
@@ -141,6 +145,20 @@ public class GameService {
         success = false;
       }
     }
+
+
+    if (descriptor.isDeleteAltColor()) {
+      if (game.getAltColorFolder() != null && !FileUtils.deleteFolder(game.getAltColorFolder())) {
+        success = false;
+      }
+    }
+
+    if (descriptor.isDeleteCfg()) {
+      if (game.getCfgFile() != null && !FileUtils.delete(game.getCfgFile())) {
+        success = false;
+      }
+    }
+
 
     if (descriptor.isDeleteMusic()) {
       if (game.getMusicFolder() != null && !FileUtils.deleteFolder(game.getMusicFolder())) {

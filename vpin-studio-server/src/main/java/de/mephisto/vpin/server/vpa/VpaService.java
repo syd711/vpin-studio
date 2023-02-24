@@ -97,7 +97,7 @@ public class VpaService implements InitializingBean {
     return adapterCache.values().stream().map(VpaSourceAdapter::getVpaSource).collect(Collectors.toList());
   }
 
-  public VpaSourceAdapter getDefaultVpaSourceAdapter() {
+  public VpaSourceAdapterFileSystem getDefaultVpaSourceAdapter() {
     return this.defaultVpaSourceAdapter;
   }
 
