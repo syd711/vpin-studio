@@ -15,6 +15,7 @@ import de.mephisto.vpin.ui.util.Dialogs;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.value.ChangeListener;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -94,6 +95,7 @@ public class RepositoryController implements Initializable, StudioEventListener 
   private ObservableList<VpaDescriptorRepresentation> data;
   private List<VpaDescriptorRepresentation> archives;
   private TablesController tablesController;
+  private ChangeListener<VpaSourceRepresentation> sourceComboChangeListener;
 
   // Add a public no-args constructor
   public RepositoryController() {
@@ -315,10 +317,8 @@ public class RepositoryController implements Initializable, StudioEventListener 
       tableView.setItems(FXCollections.observableList(filtered));
     });
 
+    sourceComboChangeListener = (observable, oldValue, newValue) -> doReload();
     refreshRepositoryCombo();
-    sourceCombo.valueProperty().addListener((observableValue, gameRepresentation, t1) -> {
-      doReload();
-    });
 
     deleteBtn.setDisable(true);
     installBtn.setDisable(true);
@@ -368,7 +368,7 @@ public class RepositoryController implements Initializable, StudioEventListener 
   @Override
   public void onVpaSourceUpdate() {
     Platform.runLater(() -> {
-//      refreshRepositoryCombo(); //TODO
+      refreshRepositoryCombo();
       doReload();
     });
   }
@@ -381,9 +381,11 @@ public class RepositoryController implements Initializable, StudioEventListener 
   }
 
   private void refreshRepositoryCombo() {
+    sourceCombo.valueProperty().removeListener(sourceComboChangeListener);
     List<VpaSourceRepresentation> repositories = new ArrayList<>(client.getVpaSources());
     sourceCombo.setItems(FXCollections.observableList(repositories));
     sourceCombo.getSelectionModel().select(0);
+    sourceCombo.valueProperty().addListener(sourceComboChangeListener);
   }
 
   public int getCount() {
