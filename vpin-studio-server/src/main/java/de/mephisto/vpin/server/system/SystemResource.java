@@ -39,9 +39,14 @@ public class SystemResource {
 
   @GetMapping("/logs")
   @ResponseBody
-  public String logs() throws IOException {
-    Path filePath = Path.of("./vpin-studio-server.log");
-    return Files.readString(filePath);
+  public String logs() {
+    try {
+      Path filePath = Path.of("./vpin-studio-server.log");
+      return Files.readString(filePath);
+    } catch (IOException e) {
+      LOG.error("Error reading log: " + e.getMessage(), e);
+    }
+    return "";
   }
 
   @GetMapping("/shutdown")

@@ -169,6 +169,24 @@
               </resources>
             </configuration>
           </execution>
+          <execution>
+            <id>copy-config</id>
+            <phase>package</phase>
+            <goals>
+              <goal>copy-resources</goal>
+            </goals>
+            <configuration>
+              <outputDirectory>${basedir}/../Output/VPin-Studio/config/</outputDirectory>
+              <resources>
+                <resource>
+                  <directory>../config/</directory>
+                  <includes>
+                    <include>*.txt</include>
+                  </includes>
+                </resource>
+              </resources>
+            </configuration>
+          </execution>
         </executions>
       </plugin>
       <plugin>
