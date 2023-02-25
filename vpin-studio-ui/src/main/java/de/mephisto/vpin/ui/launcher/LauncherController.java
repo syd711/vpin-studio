@@ -283,7 +283,9 @@ public class LauncherController implements Initializable {
       return row;
     });
 
-    store = PropertiesStore.create(new File("config/connection.properties"));
+    File propertiesFile = new File("config/connection.properties");
+    propertiesFile.getParentFile().mkdirs();
+    store = PropertiesStore.create(propertiesFile);
   }
 
   private VPinConnection checkConnection(String host) {
