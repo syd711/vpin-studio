@@ -5,6 +5,7 @@ import de.mephisto.vpin.commons.utils.SystemCommandExecutor;
 import de.mephisto.vpin.restclient.RestClient;
 import de.mephisto.vpin.server.VPinStudioException;
 import de.mephisto.vpin.server.VPinStudioServer;
+import de.mephisto.vpin.server.util.SystemUtil;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
@@ -414,16 +415,7 @@ public class SystemService implements InitializingBean {
   }
 
   public String getVersion() {
-    try {
-      final Properties properties = new Properties();
-      InputStream resourceAsStream = VPinStudioServer.class.getClassLoader().getResourceAsStream("version.properties");
-      properties.load(resourceAsStream);
-      resourceAsStream.close();
-      return properties.getProperty("vpin.studio.version");
-    } catch (IOException e) {
-      LOG.error("Failed to read version number: " + e.getMessage(), e);
-    }
-    return null;
+    return SystemUtil.getVersion();
   }
 
   public List<String> getCompetitionBadges() {

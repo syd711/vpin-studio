@@ -2,6 +2,7 @@ package de.mephisto.vpin.server;
 
 import de.mephisto.vpin.server.resources.ResourceLoader;
 import de.mephisto.vpin.server.util.Config;
+import de.mephisto.vpin.server.util.SystemUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -48,6 +49,7 @@ public class VPinStudioServerTray {
     exitItem.addActionListener(e -> System.exit(0));
 //    popup.add(restartItem);
     popup.add(logsItem);
+    popup.add(new MenuItem("Version " + SystemUtil.getVersion()));
     popup.addSeparator();
     popup.add(exitItem);
 
