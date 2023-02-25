@@ -67,8 +67,8 @@ public class HeaderResizeableController implements Initializable {
       stage.setMinWidth(primaryScreenBounds.getWidth());
     }
     else {
-      stage.setX(400);
-      stage.setY(200);
+      stage.setX(0);
+      stage.setY(0);
       stage.setMaxHeight(1280);
       stage.setMinHeight(1280);
       stage.setMaxWidth(1920);
