@@ -350,7 +350,7 @@ public class RepositoryController implements Initializable, StudioEventListener 
         continue;
       }
 
-      if (archive.getFilename().toLowerCase().contains(filterValue.toLowerCase())) {
+      if (archive.getFilename() != null && archive.getFilename().toLowerCase().contains(filterValue.toLowerCase())) {
         filtered.add(archive);
       }
     }

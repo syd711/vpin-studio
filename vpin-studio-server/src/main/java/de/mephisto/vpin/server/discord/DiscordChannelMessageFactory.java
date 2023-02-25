@@ -52,11 +52,11 @@ public class DiscordChannelMessageFactory {
       }
     }
 
-    String template = "**%s created the first highscore for competition \"%s\" of table \"%s\"**.\n(ID: %s)\n" +
+    String template = "**%s created the first highscore for the \"%s\" competition.**.\n(ID: %s)\n" +
         "```%s\n" +
         "```";
 
-    String msg = String.format(template, playerName, competition.getName(), game.getGameDisplayName(), competition.getUuid(), newScore);
+    String msg = String.format(template, playerName, competition.getName(), competition.getUuid(), newScore);
     return msg + "Here is the updated highscore list:" + createInitialHighscoreList(newScore, scoreCount - 1);
 
   }
@@ -76,7 +76,7 @@ public class DiscordChannelMessageFactory {
     }
 
 
-    String template = "**%s created a new highscore for \"%s\"**.\n(ID: %s)\n" +
+    String template = "**%s created a new highscore for the \"%s\" competition.**\n(ID: %s)\n" +
         "```%s\n" +
         "```";
     String msg = String.format(template, newName, game.getGameDisplayName(), competition.getUuid(), newScore);

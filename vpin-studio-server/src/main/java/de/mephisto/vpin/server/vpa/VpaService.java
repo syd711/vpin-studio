@@ -57,7 +57,12 @@ public class VpaService implements InitializingBean {
       List<VpaDescriptor> descriptors = adapter.getVpaDescriptors();
       result.addAll(descriptors);
     }
-    result.sort(Comparator.comparing(VpaDescriptor::getFilename));
+    result.sort((o1, o2) -> {
+      if (o1.getFilename() != null && o2.getFilename() != null) {
+        return o1.getFilename().compareTo(o2.getFilename());
+      }
+      return o1.getManifest().getGameDisplayName().compareTo(o2.getManifest().getGameDisplayName());
+    });
     return result;
   }
 

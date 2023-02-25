@@ -1,6 +1,7 @@
 package de.mephisto.vpin.server.vpa;
 
 import de.mephisto.vpin.restclient.VpaManifest;
+import de.mephisto.vpin.restclient.util.DateUtil;
 import de.mephisto.vpin.restclient.util.PasswordUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -34,6 +35,8 @@ public class VpaSourceAdapterHttpServer implements VpaSourceAdapter {
       HttpURLConnection conn = null;
       try {
         conn = getConnection(location);
+        LOG.info("Reading " + location);
+        long start = System.currentTimeMillis();
         BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
         StringBuilder jsonBuffer = new StringBuilder();
         String str;
@@ -47,6 +50,7 @@ public class VpaSourceAdapterHttpServer implements VpaSourceAdapter {
           VpaDescriptor descriptor = new VpaDescriptor(source, manifest, new Date(), manifest.getVpaFilename(), 0);
           cache.put(manifest.getUuid(), descriptor);
         }
+        LOG.info("Reading of " + location + " finshed, took " + (System.currentTimeMillis()-start) + "ms.");
       } catch (FileNotFoundException e) {
         LOG.error("No descriptor found for " + location + " (" + e.getMessage() + ")");
       } catch (Exception e) {
