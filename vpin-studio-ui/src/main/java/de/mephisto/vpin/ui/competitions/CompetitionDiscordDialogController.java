@@ -1,7 +1,9 @@
 package de.mephisto.vpin.ui.competitions;
 
 import de.mephisto.vpin.commons.EmulatorType;
+import de.mephisto.vpin.commons.fx.Debouncer;
 import de.mephisto.vpin.commons.fx.DialogController;
+import de.mephisto.vpin.commons.fx.UIDefaults;
 import de.mephisto.vpin.restclient.CompetitionType;
 import de.mephisto.vpin.restclient.PopperScreen;
 import de.mephisto.vpin.restclient.VPinStudioClient;
@@ -10,6 +12,7 @@ import de.mephisto.vpin.restclient.discord.DiscordChannel;
 import de.mephisto.vpin.restclient.discord.DiscordCompetitionData;
 import de.mephisto.vpin.restclient.discord.DiscordServer;
 import de.mephisto.vpin.restclient.representations.*;
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -35,6 +38,9 @@ import static de.mephisto.vpin.ui.Studio.client;
 
 public class CompetitionDiscordDialogController implements Initializable, DialogController {
   private final static Logger LOG = LoggerFactory.getLogger(CompetitionDiscordDialogController.class);
+
+
+  private Debouncer debouncer = new Debouncer();
 
   @FXML
   private ImageView iconPreview;
@@ -105,7 +111,7 @@ public class CompetitionDiscordDialogController implements Initializable, Dialog
 
     competition = new CompetitionRepresentation();
     competition.setType(CompetitionType.DISCORD.name());
-    competition.setName("My next competition");
+    competition.setName(UIDefaults.DEFAULT_COMPETITION_NAME);
     competition.setUuid(UUID.randomUUID().toString());
     competition.setOwner(String.valueOf(botStatus.getBotId()));
 
@@ -116,14 +122,16 @@ public class CompetitionDiscordDialogController implements Initializable, Dialog
     saveBtn.setDisable(true);
 
     nameField.setText(competition.getName());
-    nameField.textProperty().addListener((observableValue, s, t1) -> {
-      if (nameField.getText().length() > 40) {
-        String sub = nameField.getText().substring(0, 40);
-        nameField.setText(sub);
-      }
-      competition.setName(nameField.getText());
-      validate();
-    });
+    nameField.textProperty().addListener((observableValue, s, t1) -> debouncer.debounce("nameField", () -> {
+      Platform.runLater(() -> {
+        if (nameField.getText().length() > 40) {
+          String sub = nameField.getText().substring(0, 40);
+          nameField.setText(sub);
+        }
+        competition.setName(nameField.getText());
+        validate();
+      });
+    }, 500));
 
 
     List<DiscordServer> servers = client.getDiscordServers();
@@ -182,6 +190,9 @@ public class CompetitionDiscordDialogController implements Initializable, Dialog
     tableCombo.getItems().addAll(gameRepresentations);
     tableCombo.valueProperty().addListener((observableValue, gameRepresentation, t1) -> {
       competition.setGameId(t1.getId());
+      if(nameField.getText().equals(UIDefaults.DEFAULT_COMPETITION_NAME)) {
+        nameField.setText(t1.getGameDisplayName());
+      }
       refreshPreview(t1, competitionIconCombo.getValue());
       validate();
     });
@@ -197,7 +208,7 @@ public class CompetitionDiscordDialogController implements Initializable, Dialog
     });
 
 
-    resetCheckbox.selectedProperty().addListener((observable, oldValue, newValue) -> validate());
+    resetCheckbox.setDisable(true);
 
     validate();
   }

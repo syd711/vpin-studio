@@ -17,7 +17,7 @@
 <?import javafx.scene.text.Font?>
 <?import org.kordamp.ikonli.javafx.FontIcon?>
 
-<BorderPane styleClass="base-component" stylesheets="@../stylesheet.css" xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.competitions.CompetitionsController">
+<BorderPane styleClass="base-component" stylesheets="@../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.competitions.CompetitionsController">
 
     <center>
         <BorderPane styleClass="subpanel" BorderPane.alignment="CENTER">
@@ -60,11 +60,18 @@
                      <content>
                         <ScrollPane vbarPolicy="NEVER">
                            <content>
-                              <VBox fx:id="scoreGraphBox" minHeight="200.0" prefWidth="590.0">
+                              <BorderPane fx:id="scoreGraphBox" nodeOrientation="LEFT_TO_RIGHT" prefWidth="588.0">
+                                 <top>
+                                    <Label fx:id="statusLabel" textFill="WHITE" BorderPane.alignment="TOP_LEFT">
+                                       <font>
+                                          <Font size="14.0" />
+                                       </font>
+                                    </Label>
+                                 </top>
                                  <padding>
                                     <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
                                  </padding>
-                              </VBox>
+                              </BorderPane>
                            </content>
                         </ScrollPane>
                      </content></TitledPane>

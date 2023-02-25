@@ -2,6 +2,7 @@ package de.mephisto.vpin.ui.competitions;
 
 import de.mephisto.vpin.commons.EmulatorType;
 import de.mephisto.vpin.commons.fx.DialogController;
+import de.mephisto.vpin.commons.fx.UIDefaults;
 import de.mephisto.vpin.restclient.CompetitionType;
 import de.mephisto.vpin.restclient.PopperScreen;
 import de.mephisto.vpin.restclient.VPinStudioClient;
@@ -154,6 +155,9 @@ public class CompetitionOfflineDialogController implements Initializable, Dialog
     tableCombo.getItems().addAll(gameRepresentations);
     tableCombo.valueProperty().addListener((observableValue, gameRepresentation, t1) -> {
       competition.setGameId(t1.getId());
+      if(nameField.getText().equals(UIDefaults.DEFAULT_COMPETITION_NAME)) {
+        nameField.setText(t1.getGameDisplayName());
+      }
       refreshPreview(t1, competitionIconCombo.getValue());
       validate();
     });

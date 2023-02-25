@@ -179,20 +179,20 @@ public class CompetitionRepresentation {
     LocalDate end = getEndDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
     int diff = (int) Math.abs(ChronoUnit.DAYS.between(end, start));
 
-    Calendar endDateCal = Calendar.getInstance();
-    endDateCal.setTime(getEndDate());
-    endDateCal.add(Calendar.DATE, diff);
-    Date newEndDate = endDateCal.getTime();
-
     Calendar startDateCal = Calendar.getInstance();
     startDateCal.setTime(getEndDate());
     startDateCal.add(Calendar.DATE, 1);
     Date newStartDate = startDateCal.getTime();
 
+    Calendar endDateCal = Calendar.getInstance();
+    endDateCal.setTime(newStartDate);
+    endDateCal.add(Calendar.DATE, diff);
+    Date newEndDate = endDateCal.getTime();
+
     clone.setStartDate(newStartDate);
     clone.setEndDate(newEndDate);
 
-    clone.setName(this.getName() + "(1)");
+    clone.setName(this.getName() + " (1)");
     clone.setBadge(this.getBadge());
     clone.setType(this.getType());
     clone.setOwner(this.getOwner());
@@ -210,7 +210,7 @@ public class CompetitionRepresentation {
     long now = DateUtil.today().getTime();
     long start = getStartDate().getTime();
     long end = getEndDate().getTime();
-    return start <= now && end >= now;
+    return start <= now && end > now;
   }
 
   public boolean isPlanned() {

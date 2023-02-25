@@ -38,6 +38,12 @@ import java.util.Optional;
 public class WidgetFactory {
   private final static Logger LOG = LoggerFactory.getLogger(WidgetFactory.class);
 
+  public static Label createDefaultLabel(String msg) {
+    Label label = new Label(msg);
+    label.setStyle("-fx-font-size: 14px;");
+    return label;
+  }
+
   public static File snapshot(Pane root) throws IOException {
     int offset = 7;
     SnapshotParameters snapshotParameters = new SnapshotParameters();

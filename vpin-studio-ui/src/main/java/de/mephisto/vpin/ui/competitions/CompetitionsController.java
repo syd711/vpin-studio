@@ -3,6 +3,7 @@ package de.mephisto.vpin.ui.competitions;
 import de.mephisto.vpin.commons.fx.discord.DiscordUserEntryController;
 import de.mephisto.vpin.commons.utils.ImageUtil;
 import de.mephisto.vpin.commons.utils.ScoreGraphUtil;
+import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.CompetitionType;
 import de.mephisto.vpin.restclient.discord.DiscordChannel;
 import de.mephisto.vpin.restclient.discord.DiscordServer;
@@ -20,6 +21,7 @@ import javafx.scene.Parent;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import org.slf4j.Logger;
@@ -82,10 +84,13 @@ public class CompetitionsController implements Initializable, StudioFXController
   private VBox membersBox;
 
   @FXML
-  private VBox scoreGraphBox;
+  private BorderPane scoreGraphBox;
 
   @FXML
   private Accordion accordion;
+
+  @FXML
+  private Label statusLabel;
 
 
   private CompetitionsOfflineController offlineController;
@@ -95,9 +100,6 @@ public class CompetitionsController implements Initializable, StudioFXController
 
   private Optional<CompetitionRepresentation> competition = Optional.empty();
 
-  private Label noPlayersLabel;
-  private Label notActiveLabel;
-  private Label notActiveGraphLabel;
 
   // Add a public no-args constructor
   public CompetitionsController() {
@@ -158,7 +160,7 @@ public class CompetitionsController implements Initializable, StudioFXController
         createdAtLabel.setText(SimpleDateFormat.getDateTimeInstance().format(competition.getCreatedAt()));
 
         DiscordServer discordServer = client.getDiscordServer(competition.getDiscordServerId());
-        if(discordServer != null) {
+        if (discordServer != null) {
           Image image = new Image(discordServer.getAvatarUrl());
           ImageView view = new ImageView(image);
           view.setPreserveRatio(true);
@@ -177,7 +179,7 @@ public class CompetitionsController implements Initializable, StudioFXController
         first.ifPresent(discordChannel -> channelLabel.setText(discordChannel.getName()));
 
         PlayerRepresentation discordPlayer = client.getDiscordPlayer(competition.getDiscordServerId(), Long.valueOf(competition.getOwner()));
-        if(discordPlayer != null) {
+        if (discordPlayer != null) {
           HBox hBox = new HBox(6);
           hBox.setAlignment(Pos.CENTER_LEFT);
           hBox = new HBox(6);
@@ -227,30 +229,28 @@ public class CompetitionsController implements Initializable, StudioFXController
   }
 
   private void refreshScoreGraph(Optional<CompetitionRepresentation> cp) {
-    try {
-      if(scoreGraphBox != null && scoreGraphBox.getChildren() != null) {
-        scoreGraphBox.getChildren().removeAll(scoreGraphBox.getChildren());
-      }
-    } catch (Exception e) {
-      LOG.error("Error refreshing score graph: " + e.getMessage()); //TODO dunno
-    }
+    statusLabel.setText("");
+    scoreGraphBox.setCenter(new Label());
 
     if (cp.isPresent()) {
       CompetitionRepresentation competition = cp.get();
 
       if (!competition.isActive()) {
-        scoreGraphBox.getChildren().add(getNotActiveGrpahLabel());
+        statusLabel.setText("The graph is only calculated for active competitions.");
         return;
       }
 
       ScoreListRepresentation competitionScores = client.getCompetitionScoreList(competition.getId());
       if (!competitionScores.getScores().isEmpty()) {
-        if (highscoresGraphTile != null) {
-          scoreGraphBox.getChildren().remove(highscoresGraphTile);
-        }
         highscoresGraphTile = ScoreGraphUtil.createGraph(competitionScores);
-        scoreGraphBox.getChildren().add(highscoresGraphTile);
+        scoreGraphBox.setCenter(highscoresGraphTile);
       }
+      else {
+        statusLabel.setText("No scores have been submitted yet.");
+      }
+    }
+    else {
+      statusLabel.setText("The graph is only calculated for active competitions.");
     }
   }
 
@@ -260,12 +260,12 @@ public class CompetitionsController implements Initializable, StudioFXController
       CompetitionRepresentation competition = cp.get();
       if (competitionMembersPane.isVisible()) {
         if (!competition.isActive()) {
-          membersBox.getChildren().add(getNotActiveLabel());
+          membersBox.getChildren().add(WidgetFactory.createDefaultLabel("The competition is not active."));
         }
         else {
           List<PlayerRepresentation> memberList = client.getDiscordCompetitionPlayers(competition.getId());
           if (memberList.isEmpty()) {
-            membersBox.getChildren().add(getNoPlayersLabel());
+            membersBox.getChildren().add(WidgetFactory.createDefaultLabel("No discord members have joined this competition yet."));
           }
           else {
             for (PlayerRepresentation player : memberList) {
@@ -307,27 +307,4 @@ public class CompetitionsController implements Initializable, StudioFXController
     }
   }
 
-  private Label getNoPlayersLabel() {
-    if (this.noPlayersLabel == null) {
-      noPlayersLabel = new Label("No discord members have joined this competition yet.");
-      noPlayersLabel.setStyle("-fx-font-weight: bold;-fx-font-size: 14px;");
-    }
-    return this.noPlayersLabel;
-  }
-
-  private Label getNotActiveLabel() {
-    if (this.notActiveLabel == null) {
-      notActiveLabel = new Label("The competition is not active.");
-      notActiveLabel.setStyle("-fx-font-weight: bold;-fx-font-size: 14px;");
-    }
-    return this.notActiveLabel;
-  }
-
-  private Label getNotActiveGrpahLabel() {
-    if (this.notActiveGraphLabel == null) {
-      notActiveGraphLabel = new Label("The graph is only calculated for active competitions.");
-      notActiveGraphLabel.setStyle("-fx-font-weight: bold;-fx-font-size: 14px;");
-    }
-    return this.notActiveGraphLabel;
-  }
 }

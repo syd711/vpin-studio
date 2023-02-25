@@ -220,16 +220,16 @@ public class CompetitionService implements InitializingBean {
   }
 
   public List<Competition> getActiveCompetitions() {
-    return competitionsRepository.findByStartDateLessThanEqualAndEndDateGreaterThanEqual(DateUtil.today(), DateUtil.today());
+    return competitionsRepository.findByStartDateLessThanEqualAndEndDateGreaterThan(DateUtil.today(), DateUtil.today());
   }
 
   public Competition getActiveCompetitionForGame(int gameId) {
-    Optional<Competition> competition = competitionsRepository.findByStartDateLessThanEqualAndEndDateGreaterThanEqualAndGameId(DateUtil.today(), DateUtil.today(), gameId);
+    Optional<Competition> competition = competitionsRepository.findByStartDateLessThanEqualAndEndDateGreaterThanAndGameId(DateUtil.today(), DateUtil.today(), gameId);
     return competition.orElse(null);
   }
 
   public Competition getActiveCompetition(CompetitionType competitionType) {
-    List<Competition> result = competitionsRepository.findByStartDateLessThanEqualAndEndDateGreaterThanEqualAndType(DateUtil.today(), DateUtil.today(), competitionType.name());
+    List<Competition> result = competitionsRepository.findByStartDateLessThanEqualAndEndDateGreaterThanAndType(DateUtil.today(), DateUtil.today(), competitionType.name());
     if (!result.isEmpty()) {
       return result.get(0);
     }
