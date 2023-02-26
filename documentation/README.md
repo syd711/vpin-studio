@@ -7,7 +7,7 @@ Be aware that the given screenshots might not match with the latest release.
 * [Tables](#tables)
 * [Player](#players)
 * [Competitions](#competitions)
-* [Highscore Cards](#highscore-cards)]
+* [Highscore Cards](#highscore-cards)
 * [Trouble Shooting / FAQ](#trouble-shooting)
 
 
@@ -29,25 +29,57 @@ _The VPin Overlay_
 
 ## Tables
 
-<img src="./tables1.png" width="800">
+The table management is the heart of the software and contains different
+functionalities and validators that help you to get the best experience out of your VPin.
 
-<img src="./tables-validation.png" width="800">
+<img src="./tables1.png" width="800"><br/>
+_Table Overview_
 
+The table validation ensures that all tables are setup properly and that 
+all highscores can be read. If specific validators do not apply to your VPin,
+you can disable them in the preferences. Additionally, you can disable validations
+for every table.
 
-<img src="./tables-pov.png" width="800">
+<img src="./tables-validation.png" width="800"><br/>
+_Validation Issue Example_
+
 
 ## Players
 
+The player management helps you to map three-letter-highscore-acronyms to real names.
+The VPin Studio supports two different users:
+
+### BuildIn Users
+These users only exist on your VPin. If your VPin has no internet connection and 
+you play with friends and family, you can create players for them here.
+The full name will then be shown in the player ranking and for newly created scores.
+
+### Discord Users
+
+The more preferable solution is using a Discord server for your competitions and player mappings.
+The VPin Studio has a detailed documentation how to setup a Discord bot and players.
+Go to the preferences and read the section "Bot FAQ".
 
 <img src="./players-discord.png" width="800">
 
 ## Competitions
 
+_WIP_
+
+### Offline Competitions
+
+### Discord Competitions
+
 
 ## Highscore Cards
-<img src="./tables-highscores.png" width="800">
 
-<img src="./highscore-cards.png" width="800">
+The VPin Studio comes with a highscore card editor and generator.
+The highscore images are updated on every table exit if the user has 
+generated a new highscore.
+
+<img src="./highscore-cards.png" width="800"><br/>
+_The VPin Highscore Card Editor_
+
 
 ## Trouble Shooting
 
