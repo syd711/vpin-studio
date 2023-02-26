@@ -125,6 +125,9 @@ public class VpaSourceAdapterHttpServer implements VpaSourceAdapter {
    */
   private void disableSslVerification() {
     try {
+      System.setProperty("javax.net.ssl.trustStore","clientTrustStore.key");
+      System.setProperty("javax.net.ssl.trustStorePassword","qwerty");
+
       // Create a trust manager that does not validate certificate chains
       TrustManager[] trustAllCerts = new TrustManager[]{
           new X509TrustManager() {

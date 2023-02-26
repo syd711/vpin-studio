@@ -181,7 +181,7 @@
                                     <Insets left="6.0" />
                                  </HBox.margin>
                                  <tooltip>
-                                    <Tooltip text="The reset is required in case your highscore is already higher than the others. You can backup your table to restore them after the competition is finished." />
+                                    <Tooltip text="The competition badge will be added to the wheel icon. After the competition is finished, the original icon will be restored." />
                                  </tooltip>
                               </Label>
                            </children>

@@ -112,7 +112,12 @@ public class VpaService implements InitializingBean {
 
   public void invalidateCache(long id) {
     VpaSourceAdapter vpaSourceAdapter = this.adapterCache.get(id);
-    vpaSourceAdapter.invalidate();
+    if(vpaSourceAdapter != null) {
+      vpaSourceAdapter.invalidate();
+    }
+    else {
+      LOG.error("Invalid VPA source adapter id " + id);
+    }
   }
 
   public VpaSource save(VpaSourceRepresentation representation) {
