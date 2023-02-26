@@ -33,27 +33,15 @@ public class PlayerRankingsPreferencesController implements Initializable {
   public void initialize(URL url, ResourceBundle resourceBundle) {
     SpinnerValueFactory.IntegerSpinnerValueFactory factory1 = new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 10, 0);
     spinner1.setValueFactory(factory1);
-    factory1.valueProperty().addListener((observableValue, integer, t1) -> debouncer.debounce(PreferenceNames.IDLE_TIMEOUT, () -> {
-      savePoints();
-    }, 500));
 
     SpinnerValueFactory.IntegerSpinnerValueFactory factory2 = new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 10, 0);
     spinner2.setValueFactory(factory2);
-    factory2.valueProperty().addListener((observableValue, integer, t1) -> debouncer.debounce(PreferenceNames.IDLE_TIMEOUT, () -> {
-      savePoints();
-    }, 500));
 
     SpinnerValueFactory.IntegerSpinnerValueFactory factory3 = new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 10, 0);
     spinner3.setValueFactory(factory3);
-    factory3.valueProperty().addListener((observableValue, integer, t1) -> debouncer.debounce(PreferenceNames.IDLE_TIMEOUT, () -> {
-      savePoints();
-    }, 500));
 
     SpinnerValueFactory.IntegerSpinnerValueFactory factoryC = new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 10, 0);
     spinnerCompetitions.setValueFactory(factoryC);
-    spinnerCompetitions.valueProperty().addListener((observableValue, integer, t1) -> debouncer.debounce(PreferenceNames.IDLE_TIMEOUT, () -> {
-      savePoints();
-    }, 500));
 
     PreferenceEntryRepresentation idle = OverlayWindowFX.client.getPreference(PreferenceNames.RANKING_POINTS);
     String pointsString = idle.getValue();
@@ -71,6 +59,22 @@ public class PlayerRankingsPreferencesController implements Initializable {
     else {
       client.setPreference(PreferenceNames.RANKING_POINTS, UIDefaults.DEFAULT_POINTS);
     }
+
+    factory1.valueProperty().addListener((observableValue, integer, t1) -> debouncer.debounce(PreferenceNames.IDLE_TIMEOUT, () -> {
+      savePoints();
+    }, 500));
+
+    factory2.valueProperty().addListener((observableValue, integer, t1) -> debouncer.debounce(PreferenceNames.IDLE_TIMEOUT, () -> {
+      savePoints();
+    }, 500));
+
+    factory3.valueProperty().addListener((observableValue, integer, t1) -> debouncer.debounce(PreferenceNames.IDLE_TIMEOUT, () -> {
+      savePoints();
+    }, 500));
+
+    spinnerCompetitions.valueProperty().addListener((observableValue, integer, t1) -> debouncer.debounce(PreferenceNames.IDLE_TIMEOUT, () -> {
+      savePoints();
+    }, 500));
   }
 
   private void savePoints() {
