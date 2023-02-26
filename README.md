@@ -36,14 +36,13 @@ The given overview shows the key features and roadmap of the VPin Studio
 
 #### Table Management
   - table validators (PinUP Popper media validation, general config validation, ...)
-  - POV export
-  - POV editing
+  - POV export & editing
   - table script preview
   - table volume control
   - table upload
   - rom upload
   - directb2s upload
-  - table export/import
+  - table backup and restore (including highscores)
 
 #### User Management
   - build in user management
@@ -65,7 +64,7 @@ The given overview shows the key features and roadmap of the VPin Studio
 
 #### Dashboard Support
  - VPin dashboard support for UHD, WQHD and HD resolutions
- - "Recent Scores Widget": shows the latest n highscores that have been created with player name info
+ - "Recent Scores Widget": shows the latest _n_ highscores that have been created with player name info
  - "Active Online Competition Widget": shows the status of the active online competition 
  - "Active Offline Competition Widget": shows the status of the active offline competition 
  - "Player Ranking Widget": shows a leader board of all players
