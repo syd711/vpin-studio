@@ -1,29 +1,41 @@
 # VPin Studio
 
-The VPin Studio is a util to manage VPin users and competitions.
+The VPin Studio is a util to manage VPin users, tables, competitions and highscores.
 It depends on PinUP Popper and gives the user an overview about installed tables
 and their media configuration.
 
+## Installation
+
+Download the latest installer from the [releases section](https://github.com/syd711/vpin-studio/releases). 
+
+In general, the VPin Studio has a client/server architecture,
+supporting the configuration of multiple VPins with one client.
+That's why every release comes with two different installers:
+- Full Installer: this installer must always be installed on the actual VPin and contains the server and the client UI.
+- Client Installer: this installer only contains the UI client which let's you connect from any other Windows PC to your VPin.
+
+## Documentation
+
+For more details see [Documentation](./documentation/).
+If your questions aren't answered there, you always can you our Discord server.
+
+## Discord
+
+You have feedback or want to report a bug? Join the VPin Studio Discord server:
+https://discord.com/invite/69YqHYd3wD
+
+## Features
 
 The given overview shows the key features and roadmap of the VPin Studio
-In general, the VPin Studio has a client/server architecture, 
-supporting the configuration of multiple VPin with one client
-
-
-### Key Features
-
-
-- _TBA: to-be-announced (development not started yet)_ 
-- _WIP: work-in-progress (development has been started)_
 
 
 #### Highscores
   - extraction and versioning of different highscores
   - highscore card generator (including style editing)
+  - highscore backup, reset and restore
 
 #### Table Management
-  - table media validation
-  - table ROM validation
+  - table validators (PinUP Popper media validation, general config validation, ...)
   - POV export
   - POV editing
   - table script preview
@@ -31,31 +43,31 @@ supporting the configuration of multiple VPin with one client
   - table upload
   - rom upload
   - directb2s upload
-  - VPA export/import (_VPA = visual pinball archive_ - contains all related file for a table (music, vpx file, rom, nvram, directb2s, popper metadata, ...)) (_WIP_)
-  - "alt-sound" editor (_TBA_) (not sure about this yet, but it would be nice to have an actual UI instead of cumbersome CSV editing)
+  - table export/import
 
 #### User Management
   - build in user management
   - Discord user management
 
 #### Discord Integration
-  - Discord channel to VPin mapping (1:1 connection) (when a group of people using 1x VPin for competitions)
-  - Discord channel to VPin**s** mapping (n:1 connection) (when VPin owners want to compete against each other) (_TBA_)
+  - Discord channel to VPin mapping (1:1 connection) (when a group of people using 1x VPin for "offline" competitions)
+  - Discord channel to VPin**s** mapping (1:n connection) (when different VPin owners want to compete against each other on one Discord server)
   - Discord user name to highscore mapping
-  - Webhook support for publishing new highscores and competitions events
   - BOT support:
     - request table highscore
-    - request player rank
+    - request player archievements
     - request player rankings
     - request active competition
-    - 
+    
 #### Competition Management
  - Offline Competitions (these are used for when multiple people using one VPin)
- - Online Competitions (_TBA_, these will work together with the n:1 Discord support)
+ - Online Competitions (see Discord integration)
 
 #### Dashboard Support
+ - VPin dashboard support for UHD, WQHD and HD resolutions
  - "Recent Scores Widget": shows the latest n highscores that have been created with player name info
- - "Active Competition Widget": shows the status of the active competition including a highscore graph
+ - "Active Online Competition Widget": shows the status of the active online competition 
+ - "Active Offline Competition Widget": shows the status of the active offline competition 
  - "Player Ranking Widget": shows a leader board of all players
 
 #### Highscore Card Generation
@@ -67,66 +79,18 @@ supporting the configuration of multiple VPin with one client
 - Automatic shutdown support for VPins
 - PinUP Popper reset support
 
-### Screenshots
-
-__Table Media Overview__
-
-<img src="./documentation/tables1.png" width="800">
 
 
-__Table Validation__
+## Third Party Licenses and Resources
 
-<img src="./documentation/tables-validation.png" width="800">
+For license texts have a look at [Third-Party Libraries](./documentation/third-party-licenses/)
 
-__Table Highscore Overview__
+### Icons
+<a href="https://www.flaticon.com/free-icons/trophy" title="trophy icons">Trophy icons created by Freepik - Flaticon</a><br/>
+<a href="https://www.flaticon.com/free-icons/medal" title="medal icons">Medal icons created by Freepik - Flaticon</a><br/>
 
-<img src="./documentation/tables-highscores.png" width="800">
-
-__Table POV Extraction & Editing__
-
-<img src="./documentation/tables-pov.png" width="800">
-
-__Table Volume Control__
-
-<img src="./documentation/tables-volume.png" width="800">
-
-__Dashboard__
-
-<img src="./documentation/dashboard1.png" width="800">
-
-__Discord Players__
-
-<img src="./documentation/players-discord.png" width="800">
-
-__Highscore Card Editor__
-
-<img src="./documentation/highscore-cards.png" width="800">
-
-__BOT Support (Example Chat)__
-
-<img src="./documentation/bot-support.png" width="800">
-
-__VPin Overlay__
-
-(this is what you will see on your VPin when the overlay key is mapped)
-
-<img src="./documentation/vpin-dashboard.png" width="800">
-
-### Documentation
-
-wip
-
-
-### Resources
-
-##### Third Party Licenses:
-
-see documentation folder
-
-##### Icons
-<a href="https://www.flaticon.com/free-icons/trophy" title="trophy icons">Trophy icons created by Freepik - Flaticon</a>
-<a href="https://www.flaticon.com/free-icons/medal" title="medal icons">Medal icons created by Freepik - Flaticon</a>
+### Fonts
 Fonts: https://www.1001fonts.com/digital-7-font.html#license
 
-##### 7zip
+### 7zip
 https://7-zip.org/
