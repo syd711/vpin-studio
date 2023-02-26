@@ -47,25 +47,25 @@ public class CompetitionService implements InitializingBean {
     this.listeners.add(c);
   }
 
-  public void notifyCompetitionCreation(Competition c) {
+  public void notifyCompetitionCreation(@NonNull Competition c) {
     for (CompetitionChangeListener listener : this.listeners) {
       listener.competitionCreated(c);
     }
   }
 
-  public void notifyCompetitionStarted(Competition c) {
+  public void notifyCompetitionStarted(@NonNull Competition c) {
     for (CompetitionChangeListener listener : this.listeners) {
       listener.competitionStarted(c);
     }
   }
 
-  public void notifyCompetitionChanged(Competition c) {
+  public void notifyCompetitionChanged(@NonNull Competition c) {
     for (CompetitionChangeListener listener : this.listeners) {
       listener.competitionChanged(c);
     }
   }
 
-  public void notifyCompetitionDeleted(Competition c) {
+  public void notifyCompetitionDeleted(@NonNull Competition c) {
     for (CompetitionChangeListener listener : this.listeners) {
       listener.competitionDeleted(c);
     }
@@ -157,7 +157,6 @@ public class CompetitionService implements InitializingBean {
     else {
       notifyCompetitionChanged(updated);
     }
-    runCompetitionsFinishedAndStartedCheck();
     return getCompetition(c.getId());
   }
 
@@ -191,6 +190,7 @@ public class CompetitionService implements InitializingBean {
 
   @NonNull
   public Competition finishCompetition(@NonNull Competition competition) {
+    LOG.info("Running finishing process for " + competition);
     long serverId = competition.getDiscordServerId();
     ScoreSummary scoreSummary = highscoreService.getScoreSummary(serverId, competition.getGameId(), null);
     if (scoreSummary.getScores().isEmpty()) {
@@ -201,7 +201,7 @@ public class CompetitionService implements InitializingBean {
       Score score = scoreSummary.getScores().get(0);
       competition.setWinnerInitials(score.getPlayerInitials());
     }
-    competition.setEndDate(new Date()); //always the current date
+    competition.setEndDate(DateUtil.today()); //always the current date
     competition.setScore(scoreSummary.getRaw()); //save the last raw score to the competition itself
     Competition finishedCompetition = save(competition);
 
@@ -221,11 +221,6 @@ public class CompetitionService implements InitializingBean {
 
   public List<Competition> getActiveCompetitions() {
     return competitionsRepository.findByStartDateLessThanEqualAndEndDateGreaterThan(DateUtil.today(), DateUtil.today());
-  }
-
-  public Competition getActiveCompetitionForGame(int gameId) {
-    Optional<Competition> competition = competitionsRepository.findByStartDateLessThanEqualAndEndDateGreaterThanAndGameId(DateUtil.today(), DateUtil.today(), gameId);
-    return competition.orElse(null);
   }
 
   public Competition getActiveCompetition(CompetitionType competitionType) {

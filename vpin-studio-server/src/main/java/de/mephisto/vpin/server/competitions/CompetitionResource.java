@@ -75,13 +75,15 @@ public class CompetitionResource {
   }
 
   @PutMapping("/finish/{id}")
-  public boolean save(@PathVariable("id") int id) {
+  public boolean finishCompetition(@PathVariable("id") int id) {
     return competitionService.finishCompetition(id) != null;
   }
 
   @PostMapping("/save")
   public Competition save(@RequestBody Competition c) {
-    return competitionService.save(c);
+    Competition save = competitionService.save(c);
+    competitionService.runCompetitionsFinishedAndStartedCheck();
+    return save;
   }
 
   @DeleteMapping("/{id}")

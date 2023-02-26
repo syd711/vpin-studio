@@ -102,7 +102,7 @@ public class CompetitionChangeListenerImpl implements InitializingBean, Competit
 
       if (competition.getType().equals(CompetitionType.DISCORD.name())) {
         //only the owner can perform additional actions
-        if (competition.getOwner().equals(String.valueOf(discordService.getBotId())) &&  competition.getType().equals(CompetitionType.DISCORD.name())) {
+        if (competition.getOwner().equals(String.valueOf(discordService.getBotId()))) {
           discordService.resetCompetition(discordServerId, discordChannelId);
           discordService.sendMessage(discordServerId, discordChannelId, DiscordOfflineChannelMessageFactory.createCompetitionFinishedMessage(competition, winner, game, scoreSummary));
         }

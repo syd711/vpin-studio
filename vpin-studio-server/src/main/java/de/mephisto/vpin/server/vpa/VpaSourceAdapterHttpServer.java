@@ -1,17 +1,18 @@
 package de.mephisto.vpin.server.vpa;
 
 import de.mephisto.vpin.restclient.VpaManifest;
-import de.mephisto.vpin.restclient.util.DateUtil;
 import de.mephisto.vpin.restclient.util.PasswordUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.net.ssl.*;
 import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
+import java.security.cert.X509Certificate;
 import java.util.*;
 
 public class VpaSourceAdapterHttpServer implements VpaSourceAdapter {
@@ -22,6 +23,7 @@ public class VpaSourceAdapterHttpServer implements VpaSourceAdapter {
 
   public VpaSourceAdapterHttpServer(VpaSource source) {
     this.source = source;
+    disableSslVerification();
   }
 
   public List<VpaDescriptor> getVpaDescriptors() {
@@ -50,7 +52,7 @@ public class VpaSourceAdapterHttpServer implements VpaSourceAdapter {
           VpaDescriptor descriptor = new VpaDescriptor(source, manifest, new Date(), manifest.getVpaFilename(), 0);
           cache.put(manifest.getUuid(), descriptor);
         }
-        LOG.info("Reading of " + location + " finshed, took " + (System.currentTimeMillis()-start) + "ms.");
+        LOG.info("Reading of " + location + " finshed, took " + (System.currentTimeMillis() - start) + "ms.");
       } catch (FileNotFoundException e) {
         LOG.error("No descriptor found for " + location + " (" + e.getMessage() + ")");
       } catch (Exception e) {
@@ -116,6 +118,46 @@ public class VpaSourceAdapterHttpServer implements VpaSourceAdapter {
       }
     }
     return null;
+  }
+
+  /**
+   * disable SSL
+   */
+  private void disableSslVerification() {
+    try {
+      // Create a trust manager that does not validate certificate chains
+      TrustManager[] trustAllCerts = new TrustManager[]{
+          new X509TrustManager() {
+            public java.security.cert.X509Certificate[] getAcceptedIssuers() {
+              return null;
+            }
+
+            public void checkClientTrusted(X509Certificate[] certs,
+                                           String authType) {
+            }
+
+            public void checkServerTrusted(X509Certificate[] certs,
+                                           String authType) {
+            }
+          }};
+
+      // Install the all-trusting trust manager
+      SSLContext sc = SSLContext.getInstance("SSL");
+      sc.init(null, trustAllCerts, new java.security.SecureRandom());
+      HttpsURLConnection.setDefaultSSLSocketFactory(sc.getSocketFactory());
+
+      // Create all-trusting host name verifier
+      HostnameVerifier allHostsValid = new HostnameVerifier() {
+        public boolean verify(String hostname, SSLSession session) {
+          return true;
+        }
+      };
+
+      // Install the all-trusting host verifier
+      HttpsURLConnection.setDefaultHostnameVerifier(allHostsValid);
+    } catch (Exception e) {
+      LOG.error("Failed to disable SSL verification: " + e.getMessage(), e);
+    }
   }
 
   @Override
