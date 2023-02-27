@@ -74,7 +74,7 @@ public class WidgetLatestScoresController extends WidgetController implements In
 
         try {
           List<ScoreRepresentation> scores = scoreSummary.getScores();
-          if (!scores.isEmpty()) {
+          if (scores.isEmpty()) {
             Label label = new Label("                            No highscore record yet.\nThe history of newly achieved highscores will be shown here.");
             label.setPadding(new Insets(80, 0, 0, 100));
             label.getStyleClass().add("preference-description");

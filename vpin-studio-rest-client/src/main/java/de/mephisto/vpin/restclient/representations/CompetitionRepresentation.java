@@ -181,7 +181,6 @@ public class CompetitionRepresentation {
 
     Calendar startDateCal = Calendar.getInstance();
     startDateCal.setTime(getEndDate());
-    startDateCal.add(Calendar.DATE, 1);
     Date newStartDate = startDateCal.getTime();
 
     Calendar endDateCal = Calendar.getInstance();
@@ -225,8 +224,9 @@ public class CompetitionRepresentation {
   }
 
   public boolean isOverlappingWith(Date startSelection, Date endSelection) {
-    return (getStartDate().before(endSelection) || getStartDate().equals(endSelection)) &&
-        (startSelection.before(this.getEndDate()) || startSelection.equals(this.getEndDate()));
+    return false; //TODO
+//    return (getStartDate().before(endSelection) || getStartDate().equals(endSelection)) &&
+//        (startSelection.before(this.getEndDate()) || startSelection.equals(this.getEndDate()));
   }
 
   public boolean isFinished() {

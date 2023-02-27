@@ -314,14 +314,14 @@ public class CompetitionDiscordDialogController implements Initializable, Dialog
 //      }
     }
 
-    //check highscore settings
-    ScoreSummaryRepresentation summary = client.getGameScores(competition.getGameId());
-    HighscoreMetadataRepresentation metadata = summary.getMetadata();
-    if (!StringUtils.isEmpty(metadata.getStatus())) {
-      validationTitle.setText("Highscore issues");
-      validationDescription.setText(metadata.getStatus() + " Select a table with a valid highscore record.");
-      return;
-    }
+    //check highscore settings //TODO
+//    ScoreSummaryRepresentation summary = client.getGameScores(competition.getGameId());
+//    HighscoreMetadataRepresentation metadata = summary.getMetadata();
+//    if (!StringUtils.isEmpty(metadata.getStatus())) {
+//      validationTitle.setText("Highscore issues");
+//      validationDescription.setText(metadata.getStatus() + " Select a table with a valid highscore record.");
+//      return;
+//    }
 
     if(!resetCheckbox.isDisable() && !resetCheckbox.isSelected()) {
       validationTitle.setText("Highscore reset required");
@@ -351,6 +351,8 @@ public class CompetitionDiscordDialogController implements Initializable, Dialog
 
       GameRepresentation game = client.getGame(c.getGameId());
       DiscordServer discordServer = client.getDiscordServer(competition.getDiscordServerId());
+      List<DiscordChannel> serverChannels = client.getDiscordChannels(discordServer.getId());
+
       String botId = String.valueOf(botStatus.getBotId());
       boolean isOwner = c.getOwner().equals(botId);
       boolean editable = isOwner && !c.isStarted();
@@ -369,15 +371,13 @@ public class CompetitionDiscordDialogController implements Initializable, Dialog
       this.tableCombo.setValue(game);
       this.tableCombo.setDisable(!editable);
 
-      this.channelsCombo.setItems(FXCollections.observableList(client.getDiscordChannels(discordServer.getId())));
-      this.serversCombo.setValue(discordServer);
 
-      List<DiscordChannel> discordChannels = client.getDiscordChannels(discordServer.getId());
-      this.channelsCombo.setItems(FXCollections.observableArrayList(discordChannels));
+      this.channelsCombo.setItems(FXCollections.observableList(serverChannels));
+      this.serversCombo.setValue(discordServer);
 
       //the id is null when we want to duplicate an existing competition
       if (competition.getId() != null) {
-        Optional<DiscordChannel> first = discordChannels.stream().filter(channel -> channel.getId() != competition.getId()).findFirst();
+        Optional<DiscordChannel> first = serverChannels.stream().filter(channel -> channel.getId() == competition.getId()).findFirst();
         first.ifPresent(discordChannel -> this.channelsCombo.setValue(discordChannel));
       }
 

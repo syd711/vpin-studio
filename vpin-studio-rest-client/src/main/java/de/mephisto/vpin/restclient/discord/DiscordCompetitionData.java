@@ -88,7 +88,9 @@ public class DiscordCompetitionData {
   }
 
   public boolean isOverlappingWith(Date startSelection, Date endSelection) {
-    return (getSdt().before(endSelection) || getSdt().equals(endSelection)) &&
-        (startSelection.before(this.getEdt()) || startSelection.equals(this.getEdt()));
+    return false; //TODO
+//    boolean myStartDateIsBeforeEndDate = (getSdt().before(endSelection));
+//    boolean theStartDateIsBeforeMyEndDate = (startSelection.before(this.getEdt()));
+//    return  myStartDateIsBeforeEndDate && theStartDateIsBeforeMyEndDate;
   }
 }
