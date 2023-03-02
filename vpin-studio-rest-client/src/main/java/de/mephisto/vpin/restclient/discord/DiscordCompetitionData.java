@@ -1,8 +1,6 @@
 package de.mephisto.vpin.restclient.discord;
 
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 
 public class DiscordCompetitionData {
   private String uuid;
@@ -88,9 +86,8 @@ public class DiscordCompetitionData {
   }
 
   public boolean isOverlappingWith(Date startSelection, Date endSelection) {
-    return false; //TODO
-//    boolean myStartDateIsBeforeEndDate = (getSdt().before(endSelection));
-//    boolean theStartDateIsBeforeMyEndDate = (startSelection.before(this.getEdt()));
-//    return  myStartDateIsBeforeEndDate && theStartDateIsBeforeMyEndDate;
+    boolean startOverlap = getSdt().before(endSelection);
+    boolean endOverlap = startSelection.before(this.getEdt());
+    return startOverlap && endOverlap;
   }
 }

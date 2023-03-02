@@ -15,6 +15,7 @@ import de.mephisto.vpin.server.vpa.VpaExporterJob;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import org.apache.commons.lang3.StringUtils;
+import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
@@ -389,7 +390,9 @@ public class HighscoreService implements InitializingBean {
    */
   private void notifyExistingHighscoreChange(Highscore oldHighscore, Highscore newHighscore, Game game) {
     //check if there is a difference
-    if (oldHighscore.getRaw().equals(newHighscore.getRaw())) {
+    String oldRaw = oldHighscore.getRaw();
+    String newRaw = newHighscore.getRaw();
+    if (oldRaw != null && oldRaw.equals(newRaw)) {
       LOG.info("Skipped highscore change event for {} because the no score change detected.", game);
       return;
     }
@@ -399,8 +402,8 @@ public class HighscoreService implements InitializingBean {
      * Note that this only determines if the highscore has changed locally and a change event should be fired.
      */
     long serverId = preferencesService.getPreferenceValueLong(PreferenceNames.DISCORD_GUILD_ID, -1);
-    List<Score> oldScores = highscoreParser.parseScores(oldHighscore.getLastModified(), oldHighscore.getRaw(), game.getId(), serverId);
     List<Score> newScores = highscoreParser.parseScores(newHighscore.getLastModified(), newHighscore.getRaw(), game.getId(), serverId);
+    List<Score> oldScores = getOrCloneOldHighscores(oldHighscore, game, oldRaw, serverId, newScores);
 
     int position = calculateChangedPosition(oldScores, newScores);
     if (position == -1) {
@@ -430,6 +433,24 @@ public class HighscoreService implements InitializingBean {
     //finally, fire the update event to notify all listeners
     HighscoreChangeEvent event = new HighscoreChangeEvent(game, oldScore, newScore, oldScores.size());
     triggerHighscoreChange(event);
+  }
+
+  /**
+   * The old highscore may be empty if a competitions did reset them.
+   */
+  @NotNull
+  private List<Score> getOrCloneOldHighscores(Highscore oldHighscore, Game game, String oldRaw, long serverId, List<Score> newScores) {
+    List<Score> oldScores = new ArrayList<>();
+    if (oldRaw != null) {
+      oldScores = highscoreParser.parseScores(oldHighscore.getLastModified(), oldHighscore.getRaw(), game.getId(), serverId);
+    }
+    else {
+      for (Score newScore : newScores) {
+        Score score = new Score(newScore.getCreatedAt(), newScore.getGameId(), "???", null, "0", 0, newScore.getPosition());
+        oldScores.add(score);
+      }
+    }
+    return oldScores;
   }
 
   private void deleteScores(int gameId, boolean deleteHistory) {

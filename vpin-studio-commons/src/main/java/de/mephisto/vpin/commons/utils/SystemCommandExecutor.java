@@ -138,14 +138,11 @@ public class SystemCommandExecutor {
       errorStreamHandler = new ThreadedStreamHandler(Joiner.on(" ").join(commandInformation), errorStream);
       errorStreamHandler.enableLog(enableLogging);
 
-      // TODO the inputStreamHandler has a nasty side-effect of hanging if the given password is wrong; fix it
       inputStreamHandler.start();
       errorStreamHandler.start();
 
-      // TODO a better way to do this?
       exitValue = process.waitFor();
 
-      // TODO a better way to do this?
       inputStreamHandler.interrupt();
       errorStreamHandler.interrupt();
       inputStreamHandler.join();

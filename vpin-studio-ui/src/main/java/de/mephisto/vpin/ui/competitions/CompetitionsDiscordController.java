@@ -159,6 +159,15 @@ public class CompetitionsDiscordController implements Initializable, StudioFXCon
 
   @FXML
   private void onJoin() {
+    DiscordBotStatus discordStatus = client.getDiscordStatus();
+    String botInitials = discordStatus.getBotInitials();
+    if(StringUtils.isEmpty(botInitials)) {
+      WidgetFactory.showAlert(Studio.stage, "Your bot does not have player initials.",
+          "In order for the multiplayer competition to work, your bot needs unique initials.",
+          "Please check the \"Bot FAQ\" in the setting how to apply initials.");
+      return;
+    }
+
     CompetitionRepresentation c = Dialogs.openDiscordJoinCompetitionDialog();
     if (c != null) {
       try {

@@ -1,6 +1,7 @@
 package de.mephisto.vpin.ui;
 
 import de.mephisto.vpin.commons.fx.OverlayWindowFX;
+import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.VPinStudioClient;
 import de.mephisto.vpin.ui.launcher.LauncherController;
 import de.mephisto.vpin.ui.util.ResizeHelper;
@@ -18,9 +19,12 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.swing.*;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.List;
 import java.util.Properties;
+import java.util.stream.Collectors;
 
 public class Studio extends Application {
   private final static Logger LOG = LoggerFactory.getLogger(Studio.class);

@@ -1,5 +1,6 @@
 package de.mephisto.vpin.server.listeners;
 
+import de.mephisto.vpin.connectors.discord.DiscordMember;
 import de.mephisto.vpin.restclient.CompetitionType;
 import de.mephisto.vpin.restclient.discord.DiscordCompetitionData;
 import de.mephisto.vpin.server.competitions.Competition;
@@ -84,7 +85,15 @@ public class CompetitionChangeListenerImpl implements InitializingBean, Competit
 
   @Override
   public void competitionCreated(@NonNull Competition competition) {
-    //nothing yet
+    if(competition.getType().equals(CompetitionType.DISCORD.name())) {
+      Game game = gameService.getGame(competition.getGameId());
+      boolean isOwner = competition.getOwner().equals(String.valueOf(discordService.getBotId()));
+      DiscordMember bot = discordService.getBot();
+      if (game != null && !isOwner && bot != null) {
+        LOG.info("Discord bot \"" + bot + "\" has joined \"" + competition + "\"");
+        DiscordChannelMessageFactory.createCompetitionJoinedMessage(competition, bot);
+      }
+    }
   }
 
   @Override

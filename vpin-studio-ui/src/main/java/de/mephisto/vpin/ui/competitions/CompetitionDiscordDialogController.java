@@ -13,6 +13,8 @@ import de.mephisto.vpin.restclient.discord.DiscordCompetitionData;
 import de.mephisto.vpin.restclient.discord.DiscordServer;
 import de.mephisto.vpin.restclient.representations.*;
 import javafx.application.Platform;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -207,8 +209,7 @@ public class CompetitionDiscordDialogController implements Initializable, Dialog
       validate();
     });
 
-
-    resetCheckbox.setDisable(true);
+    this.resetCheckbox.selectedProperty().addListener((observable, oldValue, newValue) -> validate());
 
     validate();
   }
@@ -347,7 +348,8 @@ public class CompetitionDiscordDialogController implements Initializable, Dialog
 
     if (c != null) {
       this.competition = c;
-      this.resetCheckbox.setDisable(true);
+      this.resetCheckbox.setDisable(c.getId() != null);
+      this.resetCheckbox.setSelected(c.getId() != null);
 
       GameRepresentation game = client.getGame(c.getGameId());
       DiscordServer discordServer = client.getDiscordServer(competition.getDiscordServerId());

@@ -168,7 +168,7 @@ public class CompetitionDiscordJoinDialogController implements Initializable, Di
       validate();
     });
 
-    resetCheckbox.setDisable(true);
+    this.resetCheckbox.selectedProperty().addListener((observable, oldValue, newValue) -> validate());
 
     validate();
   }

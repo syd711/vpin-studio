@@ -93,7 +93,7 @@ public class CompetitionService implements InitializingBean {
   }
 
   public List<Competition> getFinishedCompetitions(int limit) {
-    List<Competition> competitions = competitionsRepository.findByWinnerInitialsIsNotNullAndEndDateLessThanEqualOrderByEndDate(DateUtil.today());
+    List<Competition> competitions = competitionsRepository.findByWinnerInitialsIsNotNull();
     if (competitions.size() > limit) {
       return competitions.subList(0, limit);
     }
@@ -251,6 +251,10 @@ public class CompetitionService implements InitializingBean {
   public Competition getCompetitionForUuid(String uuid) {
     Optional<Competition> competition = competitionsRepository.findByUuid(uuid);
     return competition.orElse(null);
+  }
+
+  public List<Competition> getWonCompetitions(CompetitionType cType, String initials) {
+    return competitionsRepository.findByWinnerInitialsAndType(initials, cType.name());
   }
 
   @Override

@@ -2,6 +2,7 @@ package de.mephisto.vpin.server.discord;
 
 import de.mephisto.vpin.connectors.discord.BotCommand;
 import de.mephisto.vpin.connectors.discord.BotCommandResponse;
+import de.mephisto.vpin.restclient.CompetitionType;
 import de.mephisto.vpin.server.competitions.Competition;
 import de.mephisto.vpin.server.competitions.CompetitionService;
 import de.mephisto.vpin.server.competitions.RankedPlayer;
@@ -85,8 +86,10 @@ public class DiscordBotResponseService implements DiscordBotCommandListener, Ini
       case BotCommand.CMD_PLAYER: {
         Player player = playerService.getPlayerForInitials(cmd.getServerId(), cmd.getParameter());
         if (player != null) {
+          List<Competition> offlineCompetitions = competitionService.getWonCompetitions(CompetitionType.OFFLINE, player.getInitials());
+          List<Competition> onlineCompetitions = competitionService.getWonCompetitions(CompetitionType.DISCORD, player.getInitials());
           ScoreSummary highscores = highscoreService.getAllHighscoresForPlayer(cmd.getServerId(), cmd.getParameter());
-          return () -> DiscordBotCommandResponseFactory.createRanksMessageFor(gameService, player, highscores);
+          return () -> DiscordBotCommandResponseFactory.createRanksMessageFor(gameService, player, highscores, offlineCompetitions, onlineCompetitions);
         }
         return () -> "No player found with initials '" + cmd.getParameter().toUpperCase() + "'";
       }

@@ -1,5 +1,6 @@
 package de.mephisto.vpin.server.discord;
 
+import de.mephisto.vpin.connectors.discord.DiscordMember;
 import de.mephisto.vpin.restclient.PlayerDomain;
 import de.mephisto.vpin.server.competitions.Competition;
 import de.mephisto.vpin.server.games.Game;
@@ -29,6 +30,7 @@ public class DiscordChannelMessageFactory {
 
   private static final String COMPETITION_CANCELLED_TEMPLATE = "%s has cancelled the competition \"%s\".";
   private static final String COMPETITION_CANCELLED_ANONYMOUS_TEMPLATE = "The competition \"%s\" has been cancelled.";
+  private static final String COMPETITION_JOINED_TEMPLATE = "%s has joined the competition \"%s\".";
 
   public static String createCompetitionCancelledMessage(Player player, Competition competition) {
     if (player != null) {
@@ -36,6 +38,11 @@ public class DiscordChannelMessageFactory {
       return String.format(COMPETITION_CANCELLED_TEMPLATE, playerName, competition.getName());
     }
     return String.format(COMPETITION_CANCELLED_ANONYMOUS_TEMPLATE, competition.getName());
+  }
+
+  public static String createCompetitionJoinedMessage(@NonNull Competition competition, @NonNull DiscordMember bot) {
+    String playerName = "<@" + bot.getId() + ">";
+    return String.format(COMPETITION_JOINED_TEMPLATE, playerName, competition.getName());
   }
 
 

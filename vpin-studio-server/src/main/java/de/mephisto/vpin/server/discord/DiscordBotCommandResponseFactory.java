@@ -70,6 +70,10 @@ public class DiscordBotCommandResponseFactory {
       msgBuilder.append(formatScoreEntry(score));
       msgBuilder.append("\n");
     }
+
+    if(scores.isEmpty()) {
+      msgBuilder.append("No score has been record yet.\n");
+    }
     msgBuilder.append("------------------------------------------------------```");
     return msgBuilder.toString();
   }
@@ -123,7 +127,7 @@ public class DiscordBotCommandResponseFactory {
     return builder.toString();
   }
 
-  public static String createRanksMessageFor(GameService gameService, Player player, ScoreSummary highscores) {
+  public static String createRanksMessageFor(GameService gameService, Player player, ScoreSummary highscores, List<Competition> offlineCompetitions, List<Competition> onlineCompetitions) {
     StringBuilder builder = new StringBuilder();
 
     if (highscores.getScores().isEmpty()) {
@@ -168,6 +172,19 @@ public class DiscordBotCommandResponseFactory {
       builder.append(score.getScore());
       builder.append("\n");
     }
+
+    String offline = offlineCompetitions.size() == 1 ? "competition" : "competitions";
+    String online = onlineCompetitions.size() == 1 ? "competition" : "competitions";
+    builder.append("\nThe player has won ");
+    builder.append(offlineCompetitions.size());
+    builder.append(" offline ");
+    builder.append(offline);
+    builder.append(" and ");
+    builder.append(onlineCompetitions.size());
+    builder.append(" online ");
+    builder.append(online);
+    builder.append(".\n");
+
     builder.append("```");
 
     return builder.toString();

@@ -12,8 +12,8 @@
             <Font name="System Bold" size="124.0" />
          </font>
       </Label>
-      <fx:include fx:id="players" prefHeight="1060.0" prefWidth="754.0" scaleX="1.5" scaleY="1.5"  source="widgets/widget-player-rank.fxml" translateX="462.0" translateY="-760.0" />
-      <fx:include fx:id="latestScores" prefHeight="1060.0" scaleX="1.5" scaleY="1.5" source="widgets/widget-latest-scores.fxml" translateX="-578.0" translateY="-760.0" />
+      <fx:include fx:id="players" scaleX="1.5" prefWidth="554.0"   prefHeight="1060.0" scaleY="1.5"  source="widgets/widget-player-rank.fxml" translateX="462.0" translateY="-760.0" />
+      <fx:include fx:id="latestScores" scaleX="1.5" prefHeight="1060.0" scaleY="1.5" source="widgets/widget-latest-scores.fxml" translateX="-578.0" translateY="-760.0" />
 
       <fx:include fx:id="offlineCompetition" scaleX="1.5" prefWidth="1370.0" scaleY="1.5" source="widgets/widget-competition.fxml" translateX="0.0" translateY="510.0" />
       <fx:include fx:id="discordCompetition" scaleX="1.5" prefWidth="1370.0" scaleY="1.5" source="widgets/widget-competition.fxml" translateX="0.0" translateY="1440.0" />

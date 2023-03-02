@@ -41,6 +41,15 @@ public class DiscordClient {
     jda.addEventListener(this.listenerAdapter);
   }
 
+  public DiscordMember getBot() {
+    DiscordMember member = new DiscordMember();
+    member.setName(jda.getSelfUser().getName());
+    member.setInitials(resolveInitials(jda.getSelfUser().getName()));
+    member.setId(this.botId);
+    member.setAvatarUrl(jda.getSelfUser().getAvatarUrl());
+    return member;
+  }
+
   public void loadMembers() {
     List<Guild> guilds = this.jda.getGuilds();
     for (Guild guild : guilds) {
@@ -325,4 +334,5 @@ public class DiscordClient {
 
     return guilds.get(id);
   }
+
 }

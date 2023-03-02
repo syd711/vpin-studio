@@ -2,8 +2,17 @@ package de.mephisto.vpin.restclient.discord;
 
 public class DiscordBotStatus {
   private long botId;
+  private String botInitials;
   private boolean valid;
   private boolean validDefaultChannel;
+
+  public String getBotInitials() {
+    return botInitials;
+  }
+
+  public void setBotInitials(String botInitials) {
+    this.botInitials = botInitials;
+  }
 
   public long getBotId() {
     return botId;

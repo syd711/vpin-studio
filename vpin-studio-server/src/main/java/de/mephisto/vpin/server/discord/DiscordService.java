@@ -48,6 +48,7 @@ public class DiscordService implements InitializingBean, PreferenceChangedListen
 
     DiscordBotStatus status = new DiscordBotStatus();
     status.setBotId(botId);
+    status.setBotInitials(this.discordClient.getBot().getInitials());
     status.setValid(this.discordClient != null && this.discordClient.getChannels().size() > 0);
     try {
       long channelId = Long.parseLong(defaultChannelId);
@@ -171,6 +172,14 @@ public class DiscordService implements InitializingBean, PreferenceChangedListen
       return discordClient.getBotId();
     }
     return -1;
+  }
+
+  @Nullable
+  public DiscordMember getBot() {
+    if (discordClient != null) {
+      return discordClient.getBot();
+    }
+    return null;
   }
 
   public void saveCompetitionData(@NonNull Competition competition, @NonNull Game game, @NonNull ScoreSummary scoreSummary, long messageId) {
