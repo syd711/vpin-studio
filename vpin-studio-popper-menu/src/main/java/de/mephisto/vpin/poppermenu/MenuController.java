@@ -86,6 +86,7 @@ public class MenuController implements Initializable {
       BorderPane child = (BorderPane) gameRow.getChildren().get(selectionIndex);
       TransitionUtil.createTranslateByXTransition(child, 60, -SCROLL_OFFSET).play();
       TransitionUtil.createScaleTransition(child, UIDefaults.SELECTION_SCALE, 100).play();
+      TransitionUtil.createTranslateByYTransition(node, 60, -UIDefaults.SELECTION_HEIGHT_OFFSET).play();
     }
   }
 
@@ -113,12 +114,14 @@ public class MenuController implements Initializable {
     Node node = gameRow.getChildren().get(selectionIndex);
     TransitionUtil.createTranslateByXTransition(node, 60, -SCROLL_OFFSET).play();
     TransitionUtil.createScaleTransition(node, UIDefaults.SELECTION_SCALE_DEFAULT, 100).play();
+    TransitionUtil.createTranslateByYTransition(node, 60, UIDefaults.SELECTION_HEIGHT_OFFSET).play();
 
     selectionIndex++;
     t.play();
     node = gameRow.getChildren().get(selectionIndex);
     TransitionUtil.createTranslateByXTransition(node, 60, -SCROLL_OFFSET).play();
     TransitionUtil.createScaleTransition(node, UIDefaults.SELECTION_SCALE, 100).play();
+    TransitionUtil.createTranslateByYTransition(node, 60, -UIDefaults.SELECTION_HEIGHT_OFFSET).play();
   }
 
   public void scrollGameBarLeft() {
@@ -141,6 +144,7 @@ public class MenuController implements Initializable {
     Node node = gameRow.getChildren().get(selectionIndex);
     TransitionUtil.createTranslateByXTransition(node, 60, SCROLL_OFFSET).play();
     TransitionUtil.createScaleTransition(node, UIDefaults.SELECTION_SCALE_DEFAULT, 100).play();
+    TransitionUtil.createTranslateByYTransition(node, 60, UIDefaults.SELECTION_HEIGHT_OFFSET).play();
 
     selectionIndex--;
     t.play();
@@ -148,6 +152,7 @@ public class MenuController implements Initializable {
     node = gameRow.getChildren().get(selectionIndex);
     TransitionUtil.createTranslateByXTransition(node, 60, SCROLL_OFFSET).play();
     TransitionUtil.createScaleTransition(node, UIDefaults.SELECTION_SCALE, 100).play();
+    TransitionUtil.createTranslateByYTransition(node, 60, -UIDefaults.SELECTION_HEIGHT_OFFSET).play();
   }
 
 
