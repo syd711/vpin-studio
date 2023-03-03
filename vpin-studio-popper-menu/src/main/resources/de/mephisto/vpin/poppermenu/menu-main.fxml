@@ -67,7 +67,7 @@
                <center>
                   <StackPane BorderPane.alignment="CENTER">
                      <children>
-                        <Label text="Loading...">
+                        <Label fx:id="loadLabel" text="Loading...">
                            <font>
                               <Font name="Impact" size="120.0" />
                            </font>

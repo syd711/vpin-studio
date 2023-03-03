@@ -17,7 +17,11 @@ public class TransitionUtil {
    * Creates a fade in effect without playing it
    */
   public static FadeTransition createInFader(Node node) {
-    return createInFader(node, FADER_DEFAULT);
+    long duration = FADER_DEFAULT;
+    if(node.getOpacity() == 1) {
+      duration = 0;
+    }
+    return createInFader(node, duration);
   }
 
   public static FadeTransition createInFader(Node node, long duration) {
@@ -45,7 +49,12 @@ public class TransitionUtil {
   }
 
   public static FadeTransition createOutFader(Node node) {
-    FadeTransition fadeTransition = new FadeTransition(Duration.millis(FADER_DEFAULT), node);
+    long duration = FADER_DEFAULT;
+    if(node.getOpacity() == 0) {
+      duration = 0;
+    }
+
+    FadeTransition fadeTransition = new FadeTransition(Duration.millis(duration), node);
     fadeTransition.setFromValue(1);
     fadeTransition.setToValue(0);
     applyDefaults(node, fadeTransition);

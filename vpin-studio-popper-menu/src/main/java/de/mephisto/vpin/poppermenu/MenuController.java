@@ -1,5 +1,6 @@
 package de.mephisto.vpin.poppermenu;
 
+import de.mephisto.vpin.commons.utils.FXUtil;
 import de.mephisto.vpin.restclient.PopperScreen;
 import de.mephisto.vpin.restclient.representations.GameMediaItemRepresentation;
 import de.mephisto.vpin.restclient.representations.GameMediaRepresentation;
@@ -9,6 +10,7 @@ import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
+import javafx.scene.Parent;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -101,6 +103,7 @@ public class MenuController implements Initializable {
     new Thread(() -> {
       List<GameRepresentation> games = Menu.client.getGames();
       Platform.runLater(() -> {
+        setLoadLabel("Loading...");
         loadGameItems(games);
         initGameBarSelection();
 
@@ -129,21 +132,32 @@ public class MenuController implements Initializable {
 
   public void enterTableInstallConfirmation() {
     positivLabel.setText("Install Table?");
-//    TransitionUtil.createOutFader(gameRow).play();
     TransitionUtil.createOutFader(redPanel).play();
     TransitionUtil.createInFader(greenPanel, 0.9, 100).play();
   }
 
   public void enterArchiveInstallConfirmation() {
     positivLabel.setText("Archive Table?");
-//    TransitionUtil.createOutFader(gameRow).play();
     TransitionUtil.createOutFader(redPanel).play();
     TransitionUtil.createInFader(greenPanel, 0.9, 100).play();
   }
 
   public void leaveConfirmation() {
+    setLoadLabel("");
     TransitionUtil.createOutFader(redPanel).play();
     TransitionUtil.createOutFader(greenPanel).play();
+    TransitionUtil.createOutFader(loadMask).play();
+  }
+
+  public void enterArchiving() {
+    positivLabel.setText("");
+    TransitionUtil.createInFader(loadMask).play();
+    setLoadLabel("Archiving...");
+  }
+
+  public void setLoadLabel(String text) {
+    Label label = FXUtil.findChildByID((Parent) loadMask, "loadLabel");
+    label.setText(text);
   }
 
   public void scrollGameBarRight() {
