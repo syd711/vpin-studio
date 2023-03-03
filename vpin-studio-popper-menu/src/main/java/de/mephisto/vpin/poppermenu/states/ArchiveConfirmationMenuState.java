@@ -3,9 +3,11 @@ package de.mephisto.vpin.poppermenu.states;
 import de.mephisto.vpin.poppermenu.MenuController;
 
 public class ArchiveConfirmationMenuState extends MenuState {
+  private final MenuState parentState;
   private final MenuController menuController;
 
-  public ArchiveConfirmationMenuState(MenuController menuController) {
+  public ArchiveConfirmationMenuState(MenuState parentState, MenuController menuController) {
+    this.parentState = parentState;
     this.menuController = menuController;
     this.menuController.enterArchiveInstallConfirmation();
   }
@@ -27,6 +29,7 @@ public class ArchiveConfirmationMenuState extends MenuState {
 
   @Override
   MenuState back() {
-    return new ArchiveSelectionMenuState(menuController);
+    this.menuController.leaveConfirmation();
+    return parentState;
   }
 }

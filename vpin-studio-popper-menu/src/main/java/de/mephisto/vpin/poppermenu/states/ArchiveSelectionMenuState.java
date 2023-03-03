@@ -24,7 +24,7 @@ public class ArchiveSelectionMenuState extends MenuState{
 
   @Override
   MenuState enter() {
-    return new ArchiveConfirmationMenuState(menuController);
+    return new ArchiveConfirmationMenuState(this, menuController);
   }
 
   @Override

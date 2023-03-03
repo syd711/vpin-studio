@@ -7,8 +7,10 @@ import javafx.fxml.FXMLLoader;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.paint.Color;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -37,11 +39,11 @@ public class Menu extends Application {
 
 
       Scene scene = new Scene(root, UIDefaults.SCREEN_WIDTH, 1000);
-//      scene.setFill(Color.TRANSPARENT);
+      scene.setFill(Color.TRANSPARENT);
 
       stage.setTitle("VPin Studio Menu");
       stage.setScene(scene);
-//      stage.initStyle(StageStyle.TRANSPARENT);
+      stage.initStyle(StageStyle.TRANSPARENT);
       stage.setX((screenBounds.getWidth() / 2) - (UIDefaults.SCREEN_WIDTH / 2));
       stage.setY((screenBounds.getHeight() / 2) - (1000 / 2));
 

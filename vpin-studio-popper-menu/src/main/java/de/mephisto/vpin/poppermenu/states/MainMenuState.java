@@ -26,8 +26,10 @@ public class MainMenuState extends MenuState {
   MenuState enter() {
     boolean install = menuController.isInstallSelected();
     if (install) {
+      menuController.resetGameRow();
       return new InstallSelectionMenuState(menuController);
     }
+    menuController.resetGameRow();
     return new ArchiveSelectionMenuState(menuController);
   }
 

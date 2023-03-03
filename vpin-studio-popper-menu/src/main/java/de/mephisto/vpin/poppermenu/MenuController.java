@@ -78,6 +78,8 @@ public class MenuController implements Initializable {
   }
 
   public void enterInstall() {
+    resetGameRow();
+    positivLabel.setText("Install Table");
     TransitionUtil.createOutFader(redPanel).play();
     TransitionUtil.createOutFader(greenPanel).play();
     TransitionUtil.createInFader(gameRow).play();
@@ -88,21 +90,9 @@ public class MenuController implements Initializable {
     initGameBarSelection();
   }
 
-  public void enterMainWithInstall() {
-    positivLabel.setText("Install Table");
-    TransitionUtil.createOutFader(gameRow).play();
-    TransitionUtil.createOutFader(redPanel).play();
-    TransitionUtil.createInFader(greenPanel).play();
-  }
-
-  public void enterMainWithArchive() {
-    negativLabel.setText("Archive Table");
-    TransitionUtil.createOutFader(gameRow).play();
-    TransitionUtil.createOutFader(greenPanel).play();
-    TransitionUtil.createInFader(redPanel).play();
-  }
-
   public void enterArchive() {
+    resetGameRow();
+    negativLabel.setText("Archive Table");
     TransitionUtil.createOutFader(redPanel).play();
     TransitionUtil.createOutFader(greenPanel).play();
     TransitionUtil.createInFader(gameRow).play();
@@ -119,18 +109,41 @@ public class MenuController implements Initializable {
     }).start();
   }
 
+  public void enterMainWithInstall() {
+    positivLabel.setText("Install Table");
+    negativLabel.setText("Archive Table");
+    resetGameRow();
+    TransitionUtil.createOutFader(gameRow).play();
+    TransitionUtil.createOutFader(redPanel).play();
+    TransitionUtil.createInFader(greenPanel).play();
+  }
+
+  public void enterMainWithArchive() {
+    positivLabel.setText("Install Table");
+    negativLabel.setText("Archive Table");
+    resetGameRow();
+    TransitionUtil.createOutFader(gameRow).play();
+    TransitionUtil.createOutFader(greenPanel).play();
+    TransitionUtil.createInFader(redPanel).play();
+  }
+
   public void enterTableInstallConfirmation() {
     positivLabel.setText("Install Table?");
 //    TransitionUtil.createOutFader(gameRow).play();
     TransitionUtil.createOutFader(redPanel).play();
-    TransitionUtil.createInFader(greenPanel, 0.9).play();
+    TransitionUtil.createInFader(greenPanel, 0.9, 100).play();
   }
 
   public void enterArchiveInstallConfirmation() {
     positivLabel.setText("Archive Table?");
 //    TransitionUtil.createOutFader(gameRow).play();
     TransitionUtil.createOutFader(redPanel).play();
-    TransitionUtil.createInFader(greenPanel, 0.9).play();
+    TransitionUtil.createInFader(greenPanel, 0.9, 100).play();
+  }
+
+  public void leaveConfirmation() {
+    TransitionUtil.createOutFader(redPanel).play();
+    TransitionUtil.createOutFader(greenPanel).play();
   }
 
   public void scrollGameBarRight() {
@@ -174,18 +187,22 @@ public class MenuController implements Initializable {
   private void initGameBarSelection() {
     Pane node = (Pane) gameRow.getChildren().get(0);
     int size = gameRow.getChildren().size() * THUMBNAIL_SIZE;
-    gameRow.setTranslateX(0);
     if(size < UIDefaults.SCREEN_WIDTH) {
-      TransitionUtil.createTranslateByXTransition(gameRow, 100, UIDefaults.SCREEN_WIDTH / 2).play();
+      gameRow.setTranslateX(UIDefaults.SCREEN_WIDTH / 2);
     }
     else {
-      TransitionUtil.createTranslateByXTransition(gameRow, 100, size/2).play();
+      gameRow.setTranslateX(size/2);
     }
 
     BorderPane child = (BorderPane) gameRow.getChildren().get(selectionIndex);
     TransitionUtil.createTranslateByXTransition(child, 60, -SCROLL_OFFSET).play();
     TransitionUtil.createScaleTransition(child, UIDefaults.SELECTION_SCALE, 100).play();
     TransitionUtil.createTranslateByYTransition(node, 60, -UIDefaults.SELECTION_HEIGHT_OFFSET).play();
+  }
+
+  public void resetGameRow() {
+    gameRow.getChildren().removeAll(gameRow.getChildren());
+    gameRow.setTranslateX(0);
   }
 
   private void loadArchivedItems(List<VpaDescriptorRepresentation> vpaDescriptors) {
