@@ -7,18 +7,15 @@ import javafx.fxml.FXMLLoader;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.paint.Color;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
-import javafx.stage.StageStyle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.awt.*;
 import java.io.IOException;
 
-public class MenuMain extends Application {
-  private final static Logger LOG = LoggerFactory.getLogger(MenuMain.class);
+public class Menu extends Application {
+  private final static Logger LOG = LoggerFactory.getLogger(Menu.class);
 
   public static VPinStudioClient client;
 
@@ -28,7 +25,7 @@ public class MenuMain extends Application {
 
   @Override
   public void start(Stage stage) {
-    MenuMain.client = new VPinStudioClient("localhost");
+    Menu.client = new VPinStudioClient("localhost");
     loadUpdater(stage);
   }
 

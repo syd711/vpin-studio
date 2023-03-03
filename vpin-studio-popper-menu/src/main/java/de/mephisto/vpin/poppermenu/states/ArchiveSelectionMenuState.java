@@ -24,12 +24,12 @@ public class ArchiveSelectionMenuState extends MenuState{
 
   @Override
   MenuState enter() {
-    return this;
+    return new ArchiveConfirmationMenuState(menuController);
   }
 
   @Override
   MenuState back() {
-    menuController.enterMainWithInstall();
+    menuController.enterMainWithArchive();
     return new MainMenuState(menuController);
   }
 }

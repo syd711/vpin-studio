@@ -34,7 +34,7 @@
     -fx-background-radius: 400px;
 }
 
-.install-selector {
+.green-selector {
     -fx-background-color: -fx-green;
     -fx-background-radius: 400px;
 }
@@ -44,7 +44,7 @@
     -fx-background-radius: 400px;
 }
 
-.uninstall-selector {
+.red-selector {
     -fx-background-color: -fx-red;
     -fx-background-radius: 400px;
 }

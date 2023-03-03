@@ -3,6 +3,7 @@ package de.mephisto.vpin.restclient.representations;
 import de.mephisto.vpin.restclient.VpaManifest;
 
 import java.util.Date;
+import java.util.Objects;
 
 public class VpaDescriptorRepresentation {
   private VpaManifest manifest;
@@ -49,5 +50,25 @@ public class VpaDescriptorRepresentation {
 
   public void setSource(VpaSourceRepresentation source) {
     this.source = source;
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) return true;
+    if (!(o instanceof VpaDescriptorRepresentation)) return false;
+
+    VpaDescriptorRepresentation that = (VpaDescriptorRepresentation) o;
+
+    return Objects.equals(filename, that.filename);
+  }
+
+  @Override
+  public int hashCode() {
+    return filename != null ? filename.hashCode() : 0;
+  }
+
+  @Override
+  public String toString() {
+    return filename;
   }
 }

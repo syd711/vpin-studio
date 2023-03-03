@@ -26,7 +26,7 @@
                   </ImageView>
                </center></BorderPane>
             <HBox fx:id="gameRow" alignment="CENTER_LEFT" prefHeight="800.0" />
-            <BorderPane fx:id="uninstallPanel" layoutX="110.0" layoutY="110.0" maxHeight="800.0" maxWidth="800.0" styleClass="uninstall-selector">
+            <BorderPane fx:id="redPanel" layoutX="110.0" layoutY="110.0" maxHeight="800.0" maxWidth="800.0" styleClass="red-selector">
                <center>
                   <StackPane styleClass="root" BorderPane.alignment="CENTER">
                      <children>
@@ -44,7 +44,7 @@
                   </StackPane>
                </center>
             </BorderPane>
-            <BorderPane fx:id="installPanel" maxHeight="800.0" maxWidth="800.0" styleClass="install-selector">
+            <BorderPane fx:id="greenPanel" maxHeight="800.0" maxWidth="800.0" styleClass="green-selector">
                <center>
                   <StackPane styleClass="root" BorderPane.alignment="CENTER">
                      <children>
@@ -62,6 +62,7 @@
                   </StackPane>
                </center>
             </BorderPane>
+            <BorderPane prefHeight="200.0" prefWidth="200.0" />
             <ImageView fitHeight="1000.0" fitWidth="1000.0" pickOnBounds="true" preserveRatio="true" styleClass="main">
                <image>
                   <Image url="@wheel.png" />

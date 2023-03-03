@@ -1,14 +1,13 @@
 package de.mephisto.vpin.poppermenu;
 
+import de.mephisto.vpin.commons.fx.OverlayWindowFX;
+import de.mephisto.vpin.restclient.PopperScreen;
+import de.mephisto.vpin.restclient.representations.GameMediaItemRepresentation;
+import de.mephisto.vpin.restclient.representations.GameMediaRepresentation;
+import de.mephisto.vpin.restclient.representations.GameRepresentation;
 import de.mephisto.vpin.restclient.representations.VpaDescriptorRepresentation;
-import javafx.animation.Animation;
-import javafx.animation.TranslateTransition;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
-import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.geometry.Bounds;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
@@ -16,6 +15,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.StackPane;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -31,10 +31,10 @@ public class MenuController implements Initializable {
   public static final int SCROLL_OFFSET = 220;
 
   @FXML
-  private Node installPanel;
+  private Node greenPanel;
 
   @FXML
-  private Node uninstallPanel;
+  private Node redPanel;
 
   @FXML
   private Node baseSelector;
@@ -49,7 +49,6 @@ public class MenuController implements Initializable {
   private Label positivLabel;
 
   private boolean installToggle = true;
-  private boolean loadedArchives = false;
   private int selectionIndex = 0;
 
   @Override
@@ -60,13 +59,13 @@ public class MenuController implements Initializable {
   public void toggleInstall() {
     if (installToggle) {
       baseSelector.setStyle("-fx-background-color: #33CC00;");
-      TransitionUtil.createOutFader(installPanel).play();
-      TransitionUtil.createInFader(uninstallPanel).play();
+      TransitionUtil.createOutFader(greenPanel).play();
+      TransitionUtil.createInFader(redPanel).play();
     }
     else {
       baseSelector.setStyle("-fx-background-color: #FF3333;");
-      TransitionUtil.createOutFader(uninstallPanel).play();
-      TransitionUtil.createInFader(installPanel).play();
+      TransitionUtil.createOutFader(redPanel).play();
+      TransitionUtil.createInFader(greenPanel).play();
     }
     installToggle = !installToggle;
   }
@@ -76,46 +75,52 @@ public class MenuController implements Initializable {
   }
 
   public void enterInstall() {
-    TransitionUtil.createOutFader(uninstallPanel).play();
-    TransitionUtil.createOutFader(installPanel).play();
+    TransitionUtil.createOutFader(redPanel).play();
+    TransitionUtil.createOutFader(greenPanel).play();
     TransitionUtil.createInFader(gameRow).play();
 
-    if (!loadedArchives) {
-      List<VpaDescriptorRepresentation> vpaDescriptors = MenuMain.client.getVpaDescriptors();
-      loadedArchives = true;
-      loadArchivedItems(vpaDescriptors);
 
-      Pane node = (Pane) gameRow.getChildren().get(0);
-      Bounds boundsInScene = node.localToScene(node.getBoundsInLocal());
-      System.out.println(boundsInScene.getMinX());
-      TransitionUtil.createTranslateByXTransition(gameRow, 100, UIDefaults.SCREEN_WIDTH / 2).play();
-
-      BorderPane child = (BorderPane) gameRow.getChildren().get(selectionIndex);
-      TransitionUtil.createTranslateByXTransition(child, 60, -SCROLL_OFFSET).play();
-      TransitionUtil.createScaleTransition(child, UIDefaults.SELECTION_SCALE, 100).play();
-      TransitionUtil.createTranslateByYTransition(node, 60, -UIDefaults.SELECTION_HEIGHT_OFFSET).play();
-    }
+    List<VpaDescriptorRepresentation> vpaDescriptors = Menu.client.getVpaDescriptors();
+    loadArchivedItems(vpaDescriptors);
+    initGameBarSelection();
   }
 
   public void enterMainWithInstall() {
     positivLabel.setText("Install Table");
     TransitionUtil.createOutFader(gameRow).play();
-    TransitionUtil.createOutFader(uninstallPanel).play();
-    TransitionUtil.createInFader(installPanel).play();
+    TransitionUtil.createOutFader(redPanel).play();
+    TransitionUtil.createInFader(greenPanel).play();
   }
 
   public void enterMainWithArchive() {
     positivLabel.setText("Archive Table");
     TransitionUtil.createOutFader(gameRow).play();
-    TransitionUtil.createOutFader(installPanel).play();
-    TransitionUtil.createInFader(uninstallPanel).play();
+    TransitionUtil.createOutFader(greenPanel).play();
+    TransitionUtil.createInFader(redPanel).play();
   }
 
-  public void showTableInstallConfirmation() {
+  public void enterArchive() {
+    TransitionUtil.createOutFader(redPanel).play();
+    TransitionUtil.createOutFader(greenPanel).play();
+    TransitionUtil.createInFader(gameRow).play();
+
+    List<GameRepresentation> games = Menu.client.getGames();
+    loadGameItems(games);
+    initGameBarSelection();
+  }
+
+  public void enterTableInstallConfirmation() {
     positivLabel.setText("Install Table?");
-    TransitionUtil.createOutFader(gameRow).play();
-    TransitionUtil.createOutFader(uninstallPanel).play();
-    TransitionUtil.createInFader(installPanel).play();
+//    TransitionUtil.createOutFader(gameRow).play();
+    TransitionUtil.createOutFader(redPanel).play();
+    TransitionUtil.createInFader(greenPanel, 0.9).play();
+  }
+
+  public void enterArchiveInstallConfirmation() {
+    positivLabel.setText("Archive Table?");
+//    TransitionUtil.createOutFader(gameRow).play();
+    TransitionUtil.createOutFader(redPanel).play();
+    TransitionUtil.createInFader(greenPanel, 0.9).play();
   }
 
   public void scrollGameBarRight() {
@@ -128,15 +133,15 @@ public class MenuController implements Initializable {
 
   private void scroll(boolean left) {
     int oldIndex = selectionIndex;
-    if(left) {
-      if(selectionIndex <= 0) {
+    if (left) {
+      if (selectionIndex <= 0) {
         selectionIndex = 0;
         return;
       }
       selectionIndex--;
     }
     else {
-      if(selectionIndex == (gameRow.getChildren().size() - 1)) {
+      if (selectionIndex == (gameRow.getChildren().size() - 1)) {
         return;
       }
       selectionIndex++;
@@ -153,33 +158,83 @@ public class MenuController implements Initializable {
     TransitionUtil.createTranslateByXTransition(node, 60, left ? SCROLL_OFFSET : -SCROLL_OFFSET).play();
     TransitionUtil.createScaleTransition(node, UIDefaults.SELECTION_SCALE, 100).play();
     TransitionUtil.createTranslateByYTransition(node, 60, -UIDefaults.SELECTION_HEIGHT_OFFSET).play();
+    System.out.println("Selected "  + node.getUserData());
   }
 
+  private void initGameBarSelection() {
+    Pane node = (Pane) gameRow.getChildren().get(0);
+    int size = gameRow.getChildren().size() * THUMBNAIL_SIZE;
+    if(size < UIDefaults.SCREEN_WIDTH) {
+      TransitionUtil.createTranslateByXTransition(gameRow, 100, UIDefaults.SCREEN_WIDTH / 2).play();
+    }
+    else {
+      TransitionUtil.createTranslateByXTransition(gameRow, 100, size/2).play();
+    }
+
+    BorderPane child = (BorderPane) gameRow.getChildren().get(selectionIndex);
+    TransitionUtil.createTranslateByXTransition(child, 60, -SCROLL_OFFSET).play();
+    TransitionUtil.createScaleTransition(child, UIDefaults.SELECTION_SCALE, 100).play();
+    TransitionUtil.createTranslateByYTransition(node, 60, -UIDefaults.SELECTION_HEIGHT_OFFSET).play();
+  }
 
   private void loadArchivedItems(List<VpaDescriptorRepresentation> vpaDescriptors) {
+    gameRow.getChildren().clear();
+    selectionIndex = 0;
     for (VpaDescriptorRepresentation vpaDescriptor : vpaDescriptors) {
-      BorderPane borderPane = new BorderPane();
-      ImageView imageView = new ImageView();
-      imageView.setPreserveRatio(true);
-      imageView.setFitWidth(THUMBNAIL_SIZE);
-      imageView.setFitHeight(THUMBNAIL_SIZE);
-      String thumbnail = vpaDescriptor.getManifest().getIcon();
-      if (thumbnail == null) {
-        Image wheel = new Image(MenuMain.class.getResourceAsStream("avatar-blank.png"));
-        imageView.setImage(wheel);
-        borderPane.setCenter(imageView);
+      String icon = vpaDescriptor.getManifest().getIcon();
+      Image wheel = null;
+      if (icon == null) {
+        wheel = new Image(Menu.class.getResourceAsStream("avatar-blank.png"));
       }
       else {
-        byte[] decode = Base64.getDecoder().decode(thumbnail);
-        Image wheel = new Image(new ByteArrayInputStream(decode));
-        imageView.setImage(wheel);
-        borderPane.setCenter(imageView);
+        byte[] decode = Base64.getDecoder().decode(icon);
+        wheel = new Image(new ByteArrayInputStream(decode));
       }
-      gameRow.getChildren().add(borderPane);
+      gameRow.getChildren().add(createItem(wheel, vpaDescriptor, null));
     }
   }
 
-  public void enterArchive() {
+  private void loadGameItems(List<GameRepresentation> games) {
+    gameRow.getChildren().clear();
+    selectionIndex = 0;
 
+    for (GameRepresentation game : games) {
+      GameMediaRepresentation gameMedia = game.getGameMedia();
+      GameMediaItemRepresentation item = gameMedia.getItem(PopperScreen.Wheel);
+      Image wheel = null;
+      String text= null;
+      if (item != null) {
+
+        ByteArrayInputStream gameMediaItem = Menu.client.getGameMediaItem(game.getId(), PopperScreen.Wheel);
+        wheel = new Image(gameMediaItem);
+      }
+      else {
+        text = game.getGameDisplayName();
+        wheel = new Image(Menu.class.getResourceAsStream("avatar-blank.png"));
+      }
+      gameRow.getChildren().add(createItem(wheel, game, text));
+    }
+  }
+
+  private BorderPane createItem(Image image, Object data, String text) {
+    BorderPane borderPane = new BorderPane();
+    borderPane.setUserData(data);
+    ImageView imageView = new ImageView();
+    imageView.setPreserveRatio(true);
+    imageView.setFitWidth(THUMBNAIL_SIZE);
+    imageView.setFitHeight(THUMBNAIL_SIZE);
+
+    imageView.setImage(image);
+    StackPane stackPane = new StackPane();
+    stackPane.getChildren().add(imageView);
+
+    if(text != null && text.length() > 16) {
+      text = text.substring(0, 16) +  "...";
+    }
+    Label label = new Label(text);
+    label.setStyle("-fx-font-size: 36px;-fx-text-fill: #444444;");
+    stackPane.getChildren().add(label);
+    borderPane.setCenter(stackPane);
+    return borderPane;
   }
 }

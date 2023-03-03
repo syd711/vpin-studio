@@ -28,6 +28,14 @@ public class TransitionUtil {
     return fadeTransition;
   }
 
+  public static FadeTransition createInFader(Node node, double opacity) {
+    FadeTransition fadeTransition = new FadeTransition(Duration.millis(FADER_DEFAULT), node);
+    fadeTransition.setFromValue(0);
+    fadeTransition.setToValue(opacity);
+    applyDefaults(node, fadeTransition);
+    return fadeTransition;
+  }
+
   public static FadeTransition createOutFader(Node node, long duration) {
     FadeTransition fadeTransition = new FadeTransition(Duration.millis(duration), node);
     fadeTransition.setFromValue(1);
