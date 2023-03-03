@@ -2,12 +2,12 @@ package de.mephisto.vpin.poppermenu.states;
 
 import de.mephisto.vpin.poppermenu.MenuController;
 
-public class InstallSelectionMenuState extends MenuState{
+public class ArchiveSelectionMenuState extends MenuState{
   private final MenuController menuController;
 
-  public InstallSelectionMenuState(MenuController menuController) {
+  public ArchiveSelectionMenuState(MenuController menuController) {
     this.menuController = menuController;
-    menuController.enterInstall();
+    menuController.enterArchive();
   }
 
   @Override
@@ -24,7 +24,7 @@ public class InstallSelectionMenuState extends MenuState{
 
   @Override
   MenuState enter() {
-    return new InstallConfirmationMenuState(menuController);
+    return this;
   }
 
   @Override

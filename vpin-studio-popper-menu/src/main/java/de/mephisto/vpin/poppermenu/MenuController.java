@@ -10,6 +10,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Bounds;
 import javafx.scene.Node;
+import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
@@ -40,6 +41,12 @@ public class MenuController implements Initializable {
 
   @FXML
   private HBox gameRow;
+
+  @FXML
+  private Label negativLabel;
+
+  @FXML
+  private Label positivLabel;
 
   private boolean installToggle = true;
   private boolean loadedArchives = false;
@@ -91,81 +98,66 @@ public class MenuController implements Initializable {
   }
 
   public void enterMainWithInstall() {
+    positivLabel.setText("Install Table");
+    TransitionUtil.createOutFader(gameRow).play();
+    TransitionUtil.createOutFader(uninstallPanel).play();
+    TransitionUtil.createInFader(installPanel).play();
+  }
+
+  public void enterMainWithArchive() {
+    positivLabel.setText("Archive Table");
+    TransitionUtil.createOutFader(gameRow).play();
+    TransitionUtil.createOutFader(installPanel).play();
+    TransitionUtil.createInFader(uninstallPanel).play();
+  }
+
+  public void showTableInstallConfirmation() {
+    positivLabel.setText("Install Table?");
     TransitionUtil.createOutFader(gameRow).play();
     TransitionUtil.createOutFader(uninstallPanel).play();
     TransitionUtil.createInFader(installPanel).play();
   }
 
   public void scrollGameBarRight() {
-    if(selectionIndex == (gameRow.getChildren().size() - 1)) {
-      return;
-    }
-
-    TranslateTransition t = TransitionUtil.createTranslateByXTransition(gameRow, 60, -THUMBNAIL_SIZE);
-    t.statusProperty().addListener(new ChangeListener<Animation.Status>() {
-      @Override
-      public void changed(ObservableValue<? extends Animation.Status> observable, Animation.Status oldValue, Animation.Status newValue) {
-//        Node node = gameRow.getChildren().get(gameRow.getChildren().size() - 1);
-//        gameRow.getChildren().remove(node);
-//        gameRow.getChildren().add(0, node);
-      }
-    });
-
-    Node node = gameRow.getChildren().get(selectionIndex);
-    TransitionUtil.createTranslateByXTransition(node, 60, -SCROLL_OFFSET).play();
-    TransitionUtil.createScaleTransition(node, UIDefaults.SELECTION_SCALE_DEFAULT, 100).play();
-    TransitionUtil.createTranslateByYTransition(node, 60, UIDefaults.SELECTION_HEIGHT_OFFSET).play();
-
-    selectionIndex++;
-    t.play();
-    node = gameRow.getChildren().get(selectionIndex);
-    TransitionUtil.createTranslateByXTransition(node, 60, -SCROLL_OFFSET).play();
-    TransitionUtil.createScaleTransition(node, UIDefaults.SELECTION_SCALE, 100).play();
-    TransitionUtil.createTranslateByYTransition(node, 60, -UIDefaults.SELECTION_HEIGHT_OFFSET).play();
+    scroll(false);
   }
 
   public void scrollGameBarLeft() {
-    if(selectionIndex <= 0) {
-      selectionIndex = 0;
-      return;
+    scroll(true);
+  }
+
+  private void scroll(boolean left) {
+    int oldIndex = selectionIndex;
+    if(left) {
+      if(selectionIndex <= 0) {
+        selectionIndex = 0;
+        return;
+      }
+      selectionIndex--;
+    }
+    else {
+      if(selectionIndex == (gameRow.getChildren().size() - 1)) {
+        return;
+      }
+      selectionIndex++;
     }
 
-    TranslateTransition t = TransitionUtil.createTranslateByXTransition(gameRow, 60, THUMBNAIL_SIZE);
-    t.statusProperty().addListener(new ChangeListener<Animation.Status>() {
-      @Override
-      public void changed(ObservableValue<? extends Animation.Status> observable, Animation.Status oldValue, Animation.Status newValue) {
-//        Node node = gameRow.getChildren().get(0);
-//        gameRow.getChildren().remove(node);
-//        gameRow.getChildren().add(node);
-      }
-    });
-
-
-    Node node = gameRow.getChildren().get(selectionIndex);
-    TransitionUtil.createTranslateByXTransition(node, 60, SCROLL_OFFSET).play();
+    Node node = gameRow.getChildren().get(oldIndex);
+    TransitionUtil.createTranslateByXTransition(node, 60, left ? SCROLL_OFFSET : -SCROLL_OFFSET).play();
     TransitionUtil.createScaleTransition(node, UIDefaults.SELECTION_SCALE_DEFAULT, 100).play();
     TransitionUtil.createTranslateByYTransition(node, 60, UIDefaults.SELECTION_HEIGHT_OFFSET).play();
 
-    selectionIndex--;
-    t.play();
+    TransitionUtil.createTranslateByXTransition(gameRow, 60, left ? THUMBNAIL_SIZE : -THUMBNAIL_SIZE).play();
 
     node = gameRow.getChildren().get(selectionIndex);
-    TransitionUtil.createTranslateByXTransition(node, 60, SCROLL_OFFSET).play();
+    TransitionUtil.createTranslateByXTransition(node, 60, left ? SCROLL_OFFSET : -SCROLL_OFFSET).play();
     TransitionUtil.createScaleTransition(node, UIDefaults.SELECTION_SCALE, 100).play();
     TransitionUtil.createTranslateByYTransition(node, 60, -UIDefaults.SELECTION_HEIGHT_OFFSET).play();
   }
-
 
 
   private void loadArchivedItems(List<VpaDescriptorRepresentation> vpaDescriptors) {
     for (VpaDescriptorRepresentation vpaDescriptor : vpaDescriptors) {
-//        FXMLLoader loader = new FXMLLoader(ArchiveItemController.class.getResource("menu-archive-item.fxml"));
-//        BorderPane root = loader.load();
-//        gameRow.getChildren().add(root);
-//
-//        ArchiveItemController controller = loader.getController();
-//        controller.setData(vpaDescriptor);
-
       BorderPane borderPane = new BorderPane();
       ImageView imageView = new ImageView();
       imageView.setPreserveRatio(true);
@@ -185,5 +177,9 @@ public class MenuController implements Initializable {
       }
       gameRow.getChildren().add(borderPane);
     }
+  }
+
+  public void enterArchive() {
+
   }
 }

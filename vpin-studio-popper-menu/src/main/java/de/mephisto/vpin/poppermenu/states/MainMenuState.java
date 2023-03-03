@@ -26,10 +26,9 @@ public class MainMenuState extends MenuState {
   MenuState enter() {
     boolean install = menuController.isInstallSelected();
     if (install) {
-      menuController.enterInstall();
       return new InstallSelectionMenuState(menuController);
     }
-    return null;
+    return new ArchiveSelectionMenuState(menuController);
   }
 
   @Override

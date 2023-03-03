@@ -35,7 +35,7 @@
                               <Image url="@red.png" />
                            </image>
                         </ImageView>
-                        <Label text="Archive Table" textAlignment="CENTER" wrapText="true">
+                        <Label fx:id="negativLabel" text="Archive Table" textAlignment="CENTER" wrapText="true">
                            <font>
                               <Font name="Impact" size="158.0" />
                            </font>
@@ -53,7 +53,7 @@
                               <Image url="@green.png" />
                            </image>
                         </ImageView>
-                        <Label text="Install Table" textAlignment="CENTER" wrapText="true">
+                        <Label fx:id="positivLabel" text="Install Table" textAlignment="CENTER" wrapText="true">
                            <font>
                               <Font name="Impact" size="158.0" />
                            </font>
