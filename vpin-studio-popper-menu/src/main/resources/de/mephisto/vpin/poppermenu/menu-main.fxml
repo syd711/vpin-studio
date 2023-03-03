@@ -8,7 +8,7 @@
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="1000.0" prefWidth="4400.0" styleClass="root" stylesheets="@stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.poppermenu.MenuController">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="1000.0" prefWidth="4400.0" scaleX="0.6" scaleY="0.6" styleClass="root" stylesheets="@stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.poppermenu.MenuController">
    <center>
       <StackPane styleClass="root" BorderPane.alignment="CENTER">
          <children>
@@ -25,7 +25,7 @@
                      </image>
                   </ImageView>
                </center></BorderPane>
-            <HBox fx:id="gameRow" alignment="CENTER" prefHeight="800.0" />
+            <HBox fx:id="gameRow" alignment="CENTER_LEFT" prefHeight="800.0" />
             <BorderPane fx:id="uninstallPanel" layoutX="110.0" layoutY="110.0" maxHeight="800.0" maxWidth="800.0" styleClass="uninstall-selector">
                <center>
                   <StackPane styleClass="root" BorderPane.alignment="CENTER">

@@ -1,9 +1,6 @@
 package de.mephisto.vpin.poppermenu;
 
-import javafx.animation.FadeTransition;
-import javafx.animation.Interpolator;
-import javafx.animation.Transition;
-import javafx.animation.TranslateTransition;
+import javafx.animation.*;
 import javafx.scene.CacheHint;
 import javafx.scene.Node;
 import javafx.scene.layout.Pane;
@@ -65,6 +62,15 @@ public class TransitionUtil {
     fadeTransition.setToValue(1);
     applyDefaults(node, fadeTransition);
     return fadeTransition;
+  }
+
+  public static Transition createScaleTransition(Node node, double increase, long duration) {
+    ScaleTransition transition = new ScaleTransition(Duration.millis(duration), node);
+    transition.setByX(increase);
+    transition.setByY(increase);
+    transition.setCycleCount(0);
+    applyDefaults(node, transition);
+    return transition;
   }
 
   /**
