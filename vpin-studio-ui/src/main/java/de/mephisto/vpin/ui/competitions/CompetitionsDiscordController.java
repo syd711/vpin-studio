@@ -159,14 +159,15 @@ public class CompetitionsDiscordController implements Initializable, StudioFXCon
 
   @FXML
   private void onJoin() {
-    DiscordBotStatus discordStatus = client.getDiscordStatus();
-    String botInitials = discordStatus.getBotInitials();
-    if(StringUtils.isEmpty(botInitials)) {
-      WidgetFactory.showAlert(Studio.stage, "Your bot does not have player initials.",
-          "In order for the multiplayer competition to work, your bot needs unique initials.",
-          "Please check the \"Bot FAQ\" in the setting how to apply initials.");
-      return;
-    }
+//    client.clearDiscordCache();
+//    DiscordBotStatus discordStatus = client.getDiscordStatus();
+//    String botInitials = discordStatus.getBotInitials();
+//    if(StringUtils.isEmpty(botInitials)) {
+//      WidgetFactory.showAlert(Studio.stage, "Your bot does not have player initials.",
+//          "In order for the multiplayer competition to work, your bot needs unique initials.",
+//          "Please check the \"Bot FAQ\" in the setting how to apply initials.");
+//      return;
+//    }
 
     CompetitionRepresentation c = Dialogs.openDiscordJoinCompetitionDialog();
     if (c != null) {
@@ -211,13 +212,16 @@ public class CompetitionsDiscordController implements Initializable, StudioFXCon
 
       String help = null;
       String help2 = null;
+      String remainingDayMsg = selection.remainingDays() == 1 ? "The competition will remain active for one more day." :
+          "The competition will remain active for another " + selection.remainingDays() + " days.";
+
       if (isOwner && selection.isActive()) {
-        help = "The competition is still active for another " + selection.remainingDays() + " days.";
+        help = remainingDayMsg;
         help2 = "This will cancel the competition, no winner will be announced.";
       }
       else if (!isOwner && selection.isActive()) {
         help = "You are a member of this competition. The competition information will be removed from your VPin.";
-        help2 = "The competition will remain active for another \" + selection.remainingDays() + \" days.";
+        help2 = remainingDayMsg;
       }
 
       Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Delete Competition '" + selection.getName() + "'?",

@@ -90,8 +90,11 @@ public class CompetitionChangeListenerImpl implements InitializingBean, Competit
       boolean isOwner = competition.getOwner().equals(String.valueOf(discordService.getBotId()));
       DiscordMember bot = discordService.getBot();
       if (game != null && !isOwner && bot != null) {
+        long discordServerId = competition.getDiscordServerId();
+        long discordChannelId = competition.getDiscordChannelId();
+        discordService.sendMessage(discordServerId, discordChannelId, DiscordChannelMessageFactory.createCompetitionJoinedMessage(competition, bot));
+
         LOG.info("Discord bot \"" + bot + "\" has joined \"" + competition + "\"");
-        DiscordChannelMessageFactory.createCompetitionJoinedMessage(competition, bot);
       }
     }
   }

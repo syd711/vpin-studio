@@ -117,8 +117,14 @@ public class DiscordClient {
     if (guild != null) {
       TextChannel channel = guild.getChannelById(TextChannel.class, channelId);
       if (channel != null) {
-        LOG.info("Updating topic of '" + channel.getName() + "' (length of " + topic.length() + " characters)");
-        channel.getManager().setTopic(topic).queue();
+        String existingTopic = this.getTopic(serverId, channelId);
+        if (!String.valueOf(existingTopic).equals(topic)) {
+          LOG.info("Updating topic of '" + channel.getName() + "' (length of " + topic.length() + " characters)");
+          channel.getManager().setTopic(topic).queue();
+        }
+        else {
+          LOG.warn("Skipped topic update, the existing topic is equals to the update: '" + topic + "'");
+        }
       }
       else {
         LOG.error("No discord channel found for id '" + channelId + "'");

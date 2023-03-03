@@ -134,7 +134,7 @@ public class CompetitionService implements InitializingBean {
       ScoreList scoreList = discordService.getScoreList(highscoreParser, competition.getUuid(), serverId, channelId);
       ScoreSummary latestScore = scoreList.getLatestScore();
       if (latestScore == null) {
-        LOG.info("Discord competition \"" + competition +  "\" did not contain any highscore, seems no one played yet?");
+        LOG.info("Discord competition \"" + competition + "\" did not contain any highscore, seems no one played yet?");
         return new ScoreSummary(Collections.emptyList(), competition.getUpdatedAt());
       }
       return latestScore;
@@ -160,8 +160,19 @@ public class CompetitionService implements InitializingBean {
     return getCompetition(c.getId());
   }
 
+  /**
+   * As the name says: it checks for finished and to be started competitions:
+   * Important: finish competitions first as we have to "release" the channel topic for the next one.
+   */
   public void runCompetitionsFinishedAndStartedCheck() {
     LOG.info("Running automated competition status check.");
+
+    //check all competitions for their finish state, this includes Discord ones, since the date can't be changed
+    List<Competition> openCompetitions = getCompetitionToBeFinished();
+    for (Competition openCompetition : openCompetitions) {
+      LOG.info("Finishing " + openCompetition);
+      finishCompetition(openCompetition);
+    }
 
     //check if competition have become active, initialize them
     List<Competition> plannedCompetitions = getActiveCompetitions();
@@ -174,13 +185,6 @@ public class CompetitionService implements InitializingBean {
         plannedCompetition.setStarted(true);
         competitionsRepository.saveAndFlush(plannedCompetition);
       }
-    }
-
-    //check all competitions for their finish state, this includes Discord ones, since the date can't be changed
-    List<Competition> openCompetitions = getCompetitionToBeFinished();
-    for (Competition openCompetition : openCompetitions) {
-      LOG.info("Finishing " + openCompetition);
-      finishCompetition(openCompetition);
     }
   }
 
