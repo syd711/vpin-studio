@@ -1,7 +1,7 @@
 package de.mephisto.vpin.poppermenu;
 
+import de.mephisto.vpin.poppermenu.states.StateMananger;
 import de.mephisto.vpin.restclient.VPinStudioClient;
-import de.mephisto.vpin.restclient.representations.GameRepresentation;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Rectangle2D;
@@ -15,14 +15,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-import java.util.List;
 
 public class MenuMain extends Application {
   private final static Logger LOG = LoggerFactory.getLogger(MenuMain.class);
 
   public static VPinStudioClient client;
-
-  private static String updateHost = null;
 
   public static void main(String[] args) {
     launch(args);
@@ -30,14 +27,14 @@ public class MenuMain extends Application {
 
   @Override
   public void start(Stage stage) {
-    MenuMain.client = new VPinStudioClient(updateHost);
+    MenuMain.client = new VPinStudioClient("localhost");
     loadUpdater(stage);
   }
 
   public static void loadUpdater(Stage stage) {
     try {
       Rectangle2D screenBounds = Screen.getPrimary().getBounds();
-      FXMLLoader loader = new FXMLLoader(MenuController.class.getResource("main.fxml"));
+      FXMLLoader loader = new FXMLLoader(MenuController.class.getResource("menu-main.fxml"));
       Parent root = loader.load();
 
 
@@ -51,9 +48,9 @@ public class MenuMain extends Application {
       stage.setY((screenBounds.getHeight() / 2) - (1000 / 2));
 
       MenuController controller = loader.getController();
-      MenuKeyListener listener = new MenuKeyListener(controller);
+      StateMananger.getInstance().init(controller);
       scene.setOnKeyPressed(event -> {
-        listener.handle(event);
+        StateMananger.getInstance().handle(event);
       });
       stage.show();
     } catch (IOException e) {

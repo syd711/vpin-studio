@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.text.Font?>
+
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="1000.0" prefWidth="1000.0" styleClass="root" stylesheets="@stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.poppermenu.MenuController">
+   <center>
+      <StackPane styleClass="root" BorderPane.alignment="CENTER">
+         <children>
+            <BorderPane fx:id="baseSelector" layoutX="110.0" layoutY="110.0" maxHeight="800.0" maxWidth="800.0" styleClass="base-selector" />
+            <HBox fx:id="gameRow" alignment="CENTER" prefHeight="800.0" />
+            <BorderPane fx:id="uninstallPanel" layoutX="110.0" layoutY="110.0" maxHeight="800.0" maxWidth="800.0" styleClass="uninstall-selector">
+               <center>
+                  <StackPane styleClass="root" BorderPane.alignment="CENTER">
+                     <children>
+                        <ImageView fitHeight="800.0" fitWidth="800.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@red.png" />
+                           </image>
+                        </ImageView>
+                        <Label text="Archive Table" textAlignment="CENTER" wrapText="true">
+                           <font>
+                              <Font name="Impact" size="158.0" />
+                           </font>
+                        </Label>
+                     </children>
+                  </StackPane>
+               </center>
+            </BorderPane>
+            <BorderPane fx:id="installPanel" maxHeight="800.0" maxWidth="800.0" styleClass="install-selector">
+               <center>
+                  <StackPane styleClass="root" BorderPane.alignment="CENTER">
+                     <children>
+                        <ImageView fitHeight="800.0" fitWidth="800.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@green.png" />
+                           </image>
+                        </ImageView>
+                        <Label text="Install Table" textAlignment="CENTER" wrapText="true">
+                           <font>
+                              <Font name="Impact" size="158.0" />
+                           </font>
+                        </Label>
+                     </children>
+                  </StackPane>
+               </center>
+            </BorderPane>
+            <ImageView fitHeight="1000.0" fitWidth="1000.0" pickOnBounds="true" preserveRatio="true" styleClass="main">
+               <image>
+                  <Image url="@wheel.png" />
+               </image>
+            </ImageView>
+         </children>
+      </StackPane>
+   </center>
+</BorderPane>

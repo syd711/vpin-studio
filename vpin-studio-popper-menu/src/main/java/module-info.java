@@ -25,4 +25,6 @@ module de.mephisto.vpin.poppermenu {
 
   exports de.mephisto.vpin.poppermenu;
   opens de.mephisto.vpin.poppermenu to javafx.fxml;
+  exports de.mephisto.vpin.poppermenu.states;
+  opens de.mephisto.vpin.poppermenu.states to javafx.fxml;
 }

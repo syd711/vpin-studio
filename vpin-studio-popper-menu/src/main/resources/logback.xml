@@ -3,7 +3,7 @@
     <appender name="rollingFile" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <file>./vpin-studio-popper-menu.log</file>
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-            <FileNamePattern>./vpin-studio-updater.%d{yyyy-MM-dd}.log</FileNamePattern>
+            <FileNamePattern>./vpin-studio-menu.%d{yyyy-MM-dd}.log</FileNamePattern>
             <MaxHistory>10</MaxHistory>
         </rollingPolicy>
         <encoder>
