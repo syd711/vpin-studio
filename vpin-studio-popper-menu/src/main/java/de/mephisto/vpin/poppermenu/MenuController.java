@@ -65,6 +65,7 @@ public class MenuController implements Initializable {
   public void enterInstall() {
     TransitionUtil.createOutFader(uninstallPanel).play();
     TransitionUtil.createOutFader(installPanel).play();
+    TransitionUtil.createInFader(gameRow).play();
     List<VpaDescriptorRepresentation> vpaDescriptors = MenuMain.client.getVpaDescriptors();
 
     try {
@@ -78,9 +79,9 @@ public class MenuController implements Initializable {
 
         ImageView imageView = new ImageView();
         imageView.setPreserveRatio(true);
-        imageView.setFitWidth(400);
-        imageView.setFitHeight(400);
-        String thumbnail = vpaDescriptor.getManifest().getThumbnail();
+        imageView.setFitWidth(440);
+        imageView.setFitHeight(440);
+        String thumbnail = vpaDescriptor.getManifest().getIcon();
         if (thumbnail == null) {
           Image wheel = new Image(MenuMain.class.getResourceAsStream("avatar-blank.png"));
           imageView.setImage(wheel);
@@ -97,5 +98,19 @@ public class MenuController implements Initializable {
       LOG.error("Failed to load item: " + e.getMessage());
     }
 
+  }
+
+  public void enterMainWithInstall() {
+    TransitionUtil.createOutFader(gameRow).play();
+    TransitionUtil.createOutFader(uninstallPanel).play();
+    TransitionUtil.createInFader(installPanel).play();
+  }
+
+  public void scrollGameBarRight() {
+    TransitionUtil.createTranslateByXTransition(gameRow, 60, -440).play();
+  }
+
+  public void scrollGameBarLeft() {
+    TransitionUtil.createTranslateByXTransition(gameRow, 60, 440).play();
   }
 }

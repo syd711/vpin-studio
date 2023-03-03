@@ -35,6 +35,7 @@ import java.util.zip.ZipOutputStream;
 
 public class VpaExporterJob implements Job {
   private final static Logger LOG = LoggerFactory.getLogger(VpaService.class);
+  public static final int TARGET_WHEEL_SIZE_WIDTH = 100;
 
   private final File vprRegFile;
   private final File musicFolder;
@@ -292,7 +293,7 @@ public class VpaExporterJob implements Job {
       }
 
       BufferedImage image = ImageUtil.loadImage(mediaFile);
-      BufferedImage resizedImage = ImageUtil.resizeImage(image, 100);
+      BufferedImage resizedImage = ImageUtil.resizeImage(image, TARGET_WHEEL_SIZE_WIDTH);
 
       byte[] bytes = ImageUtil.toBytes(resizedImage);
       String encode = Base64.getEncoder().encodeToString(bytes);

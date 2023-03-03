@@ -14,6 +14,7 @@ import javafx.stage.StageStyle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.awt.*;
 import java.io.IOException;
 
 public class MenuMain extends Application {
@@ -38,13 +39,13 @@ public class MenuMain extends Application {
       Parent root = loader.load();
 
 
-      Scene scene = new Scene(root, 1000, 1000);
-      scene.setFill(Color.TRANSPARENT);
+      Scene scene = new Scene(root, 4400, 1000);
+//      scene.setFill(Color.TRANSPARENT);
 
       stage.setTitle("VPin Studio Menu");
       stage.setScene(scene);
-      stage.initStyle(StageStyle.TRANSPARENT);
-      stage.setX((screenBounds.getWidth() / 2) - (1000 / 2));
+//      stage.initStyle(StageStyle.TRANSPARENT);
+      stage.setX((screenBounds.getWidth() / 2) - (4400 / 2));
       stage.setY((screenBounds.getHeight() / 2) - (1000 / 2));
 
       MenuController controller = loader.getController();

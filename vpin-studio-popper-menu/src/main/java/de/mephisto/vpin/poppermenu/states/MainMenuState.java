@@ -25,7 +25,7 @@ public class MainMenuState extends MenuState {
   @Override
   MenuState enter() {
     boolean install = menuController.isInstallSelected();
-    if(install) {
+    if (install) {
       menuController.enterInstall();
       return new InstallSelectionMenuState(menuController);
     }
@@ -35,6 +35,6 @@ public class MainMenuState extends MenuState {
   @Override
   MenuState back() {
     System.exit(0);
-    return this;
+    return null;
   }
 }

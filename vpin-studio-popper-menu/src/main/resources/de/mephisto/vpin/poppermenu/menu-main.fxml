@@ -8,11 +8,23 @@
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="1000.0" prefWidth="1000.0" styleClass="root" stylesheets="@stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.poppermenu.MenuController">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="1000.0" prefWidth="4400.0" styleClass="root" stylesheets="@stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.poppermenu.MenuController">
    <center>
       <StackPane styleClass="root" BorderPane.alignment="CENTER">
          <children>
-            <BorderPane fx:id="baseSelector" layoutX="110.0" layoutY="110.0" maxHeight="800.0" maxWidth="800.0" styleClass="base-selector" />
+            <ImageView fitHeight="600.0" fitWidth="4400.0" nodeOrientation="RIGHT_TO_LEFT" pickOnBounds="true" preserveRatio="true" StackPane.alignment="CENTER">
+               <image>
+                  <Image url="@row.png" />
+               </image>
+            </ImageView>
+            <BorderPane fx:id="baseSelector" layoutX="110.0" layoutY="110.0" maxHeight="800.0" maxWidth="800.0" styleClass="base-selector">
+               <center>
+                  <ImageView fitHeight="800.0" fitWidth="800.0" pickOnBounds="true" preserveRatio="true" BorderPane.alignment="CENTER">
+                     <image>
+                        <Image url="@blue.png" />
+                     </image>
+                  </ImageView>
+               </center></BorderPane>
             <HBox fx:id="gameRow" alignment="CENTER" prefHeight="800.0" />
             <BorderPane fx:id="uninstallPanel" layoutX="110.0" layoutY="110.0" maxHeight="800.0" maxWidth="800.0" styleClass="uninstall-selector">
                <center>

@@ -11,12 +11,14 @@ public class InstallSelectionMenuState extends MenuState{
 
   @Override
   MenuState left() {
-    return null;
+    menuController.scrollGameBarLeft();
+    return this;
   }
 
   @Override
   MenuState right() {
-    return null;
+    menuController.scrollGameBarRight();
+    return this;
   }
 
   @Override
@@ -26,6 +28,7 @@ public class InstallSelectionMenuState extends MenuState{
 
   @Override
   MenuState back() {
-    return null;
+    menuController.enterMainWithInstall();
+    return new MainMenuState(menuController);
   }
 }
