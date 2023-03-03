@@ -1,11 +1,11 @@
 package de.mephisto.vpin.poppermenu;
 
-import de.mephisto.vpin.commons.fx.OverlayWindowFX;
 import de.mephisto.vpin.restclient.PopperScreen;
 import de.mephisto.vpin.restclient.representations.GameMediaItemRepresentation;
 import de.mephisto.vpin.restclient.representations.GameMediaRepresentation;
 import de.mephisto.vpin.restclient.representations.GameRepresentation;
 import de.mephisto.vpin.restclient.representations.VpaDescriptorRepresentation;
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
@@ -44,6 +44,9 @@ public class MenuController implements Initializable {
 
   @FXML
   private Label negativLabel;
+
+  @FXML
+  private Node loadMask;
 
   @FXML
   private Label positivLabel;
@@ -93,7 +96,7 @@ public class MenuController implements Initializable {
   }
 
   public void enterMainWithArchive() {
-    positivLabel.setText("Archive Table");
+    negativLabel.setText("Archive Table");
     TransitionUtil.createOutFader(gameRow).play();
     TransitionUtil.createOutFader(greenPanel).play();
     TransitionUtil.createInFader(redPanel).play();
@@ -103,10 +106,17 @@ public class MenuController implements Initializable {
     TransitionUtil.createOutFader(redPanel).play();
     TransitionUtil.createOutFader(greenPanel).play();
     TransitionUtil.createInFader(gameRow).play();
+    TransitionUtil.createInFader(loadMask).play();
 
-    List<GameRepresentation> games = Menu.client.getGames();
-    loadGameItems(games);
-    initGameBarSelection();
+    new Thread(() -> {
+      List<GameRepresentation> games = Menu.client.getGames();
+      Platform.runLater(() -> {
+        loadGameItems(games);
+        initGameBarSelection();
+
+        TransitionUtil.createOutFader(loadMask).play();
+      });
+    }).start();
   }
 
   public void enterTableInstallConfirmation() {
@@ -164,6 +174,7 @@ public class MenuController implements Initializable {
   private void initGameBarSelection() {
     Pane node = (Pane) gameRow.getChildren().get(0);
     int size = gameRow.getChildren().size() * THUMBNAIL_SIZE;
+    gameRow.setTranslateX(0);
     if(size < UIDefaults.SCREEN_WIDTH) {
       TransitionUtil.createTranslateByXTransition(gameRow, 100, UIDefaults.SCREEN_WIDTH / 2).play();
     }

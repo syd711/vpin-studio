@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ProgressIndicator?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.BorderPane?>
@@ -32,7 +33,7 @@
                      <children>
                         <ImageView fitHeight="800.0" fitWidth="800.0" pickOnBounds="true" preserveRatio="true">
                            <image>
-                              <Image url="@red.png" />
+                              <Image url="@blue.png" />
                            </image>
                         </ImageView>
                         <Label fx:id="negativLabel" text="Archive Table" textAlignment="CENTER" wrapText="true">
@@ -62,7 +63,20 @@
                   </StackPane>
                </center>
             </BorderPane>
-            <BorderPane prefHeight="200.0" prefWidth="200.0" />
+            <BorderPane fx:id="loadMask" maxHeight="800.0" maxWidth="800.0" opacity="0.0" styleClass="loading-selector">
+               <center>
+                  <StackPane BorderPane.alignment="CENTER">
+                     <children>
+                        <Label text="Loading...">
+                           <font>
+                              <Font name="Impact" size="120.0" />
+                           </font>
+                        </Label>
+                        <ProgressIndicator minHeight="700.0" minWidth="700.0" prefHeight="600.0" prefWidth="600.0" />
+                     </children>
+                  </StackPane>
+               </center>
+            </BorderPane>
             <ImageView fitHeight="1000.0" fitWidth="1000.0" pickOnBounds="true" preserveRatio="true" styleClass="main">
                <image>
                   <Image url="@wheel.png" />

@@ -18,7 +18,8 @@
    -fx-primary-color: #333366;
    -fx-secondary-color: #111111;
    -fx-green: #33CC00;
-   -fx-red: #FF3333
+   -fx-red: #FF3333;
+   -fx-blue: #333366;
 }
 
 
@@ -46,5 +47,9 @@
 
 .red-selector {
     -fx-background-color: -fx-red;
+    -fx-background-radius: 400px;
+}
+
+.loading-selector {
     -fx-background-radius: 400px;
 }
