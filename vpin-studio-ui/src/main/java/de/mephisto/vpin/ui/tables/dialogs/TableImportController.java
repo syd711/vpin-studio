@@ -3,6 +3,7 @@ package de.mephisto.vpin.ui.tables.dialogs;
 import de.mephisto.vpin.commons.fx.DialogController;
 import de.mephisto.vpin.restclient.ImportDescriptor;
 import de.mephisto.vpin.restclient.representations.PlaylistRepresentation;
+import de.mephisto.vpin.ui.jobs.JobPoller;
 import de.mephisto.vpin.ui.tables.TableOverviewController;
 import de.mephisto.vpin.ui.util.Dialogs;
 import javafx.application.Platform;
@@ -30,6 +31,7 @@ import java.util.stream.Collectors;
 import static de.mephisto.vpin.ui.Studio.client;
 import static de.mephisto.vpin.ui.Studio.stage;
 
+@Deprecated //see VpaImport
 public class TableImportController implements Initializable, DialogController {
   private final static Logger LOG = LoggerFactory.getLogger(TableImportController.class);
 
@@ -96,15 +98,27 @@ public class TableImportController implements Initializable, DialogController {
     Stage stage = (Stage) ((Button) e.getSource()).getScene().getWindow();
     stage.close();
 
-    Platform.runLater(() -> {
-      String title = "Importing " + this.selection.size() + " tables";
-      if (this.selection.size() == 1) {
-        title = "Importing \"" + this.selection.get(0).getName() + "\"";
+    new Thread(() -> {
+      try {
+        Thread.sleep(1000);
+      } catch (InterruptedException ex) {
+        //ignore
       }
-      TableImportProgressModel model = new TableImportProgressModel(title, descriptor, this.selection);
-      Dialogs.createProgressDialog(model);
-      tablesController.onReload();
-    });
+      Platform.runLater(() -> {
+        //TODO missing import call
+        JobPoller.getInstance().setPolling();
+      });
+    }).start();
+
+//    Platform.runLater(() -> {
+//      String title = "Importing " + this.selection.size() + " tables";
+//      if (this.selection.size() == 1) {
+//        title = "Importing \"" + this.selection.get(0).getName() + "\"";
+//      }
+//      TableImportProgressModel model = new TableImportProgressModel(title, descriptor, this.selection);
+//      Dialogs.createProgressDialog(model);
+//      tablesController.onReload();
+//    });
   }
 
   @FXML

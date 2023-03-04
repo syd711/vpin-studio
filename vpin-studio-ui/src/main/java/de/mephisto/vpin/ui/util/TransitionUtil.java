@@ -145,11 +145,5 @@ public class TransitionUtil {
   private static void applyDefaults(Node node, Transition transition) {
     transition.setAutoReverse(false);
     transition.setInterpolator(Interpolator.EASE_BOTH);
-
-    //apply speed as default cache strategy.
-    if(!node.getCacheHint().equals(CacheHint.SPEED)) {
-      node.setCache(true);
-      node.setCacheHint(CacheHint.SPEED);
-    }
   }
 }

@@ -7,6 +7,7 @@ import de.mephisto.vpin.tablemanager.states.StateMananger;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.CacheHint;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.control.Label;
@@ -320,6 +321,8 @@ public class MenuController implements Initializable {
     label.setStyle("-fx-font-size: 36px;-fx-text-fill: #444444;");
     stackPane.getChildren().add(label);
     borderPane.setCenter(stackPane);
+    borderPane.setCache(true);
+    blueLabel.setCacheHint(CacheHint.SCALE_AND_ROTATE);
     return borderPane;
   }
 

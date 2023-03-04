@@ -1,19 +1,23 @@
 package de.mephisto.vpin.ui.tables.dialogs;
 
 import de.mephisto.vpin.commons.fx.DialogController;
+import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.ImportDescriptor;
 import de.mephisto.vpin.restclient.representations.PlaylistRepresentation;
 import de.mephisto.vpin.restclient.representations.VpaDescriptorRepresentation;
-import de.mephisto.vpin.ui.tables.RepositoryController;
+import de.mephisto.vpin.ui.Studio;
+import de.mephisto.vpin.ui.jobs.JobPoller;
 import de.mephisto.vpin.ui.tables.TablesController;
-import de.mephisto.vpin.ui.util.Dialogs;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
+import javafx.scene.control.ComboBox;
+import javafx.scene.control.Label;
 import javafx.stage.Stage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -64,11 +68,27 @@ public class VpaImportController implements Initializable, DialogController {
     Stage stage = (Stage) ((Button) e.getSource()).getScene().getWindow();
     stage.close();
 
-    Platform.runLater(() -> {
-      VpaImportProgressModel model = new VpaImportProgressModel(titleLabel.getText(), descriptor, this.vpaDescriptors);
-      Dialogs.createProgressDialog(model);
-      tablesController.getTableOverviewController().onReload();
-    });
+//    Platform.runLater(() -> {
+//      VpaImportProgressModel model = new VpaImportProgressModel(titleLabel.getText(), descriptor, this.vpaDescriptors);
+//      Dialogs.createProgressDialog(model);
+//      tablesController.getTableOverviewController().onReload();
+//    });
+
+    new Thread(() -> {
+      Platform.runLater(() -> {
+        try {
+          for (VpaDescriptorRepresentation vpaDescriptor : this.vpaDescriptors) {
+            descriptor.setUuid(vpaDescriptor.getManifest().getUuid());
+            client.importVpa(descriptor);
+          }
+          JobPoller.getInstance().setPolling();
+        } catch (Exception ex) {
+          LOG.error("Failed to import: " + ex.getMessage(), ex);
+          WidgetFactory.showAlert(Studio.stage, "Import Failed", "Failed to trigger import: " + ex.getMessage());
+        }
+
+      });
+    }).start();
   }
 
   @FXML

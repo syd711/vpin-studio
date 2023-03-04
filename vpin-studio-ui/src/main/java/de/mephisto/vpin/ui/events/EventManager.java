@@ -30,6 +30,15 @@ public class EventManager {
     }).start();
   }
 
+  public void notifyVpaImport(String uuid) {
+    new Thread(() -> {
+      VpaImportedEvent event = new VpaImportedEvent(uuid);
+      for (StudioEventListener listener : listeners) {
+        listener.onVpaImport(event);
+      }
+    }).start();
+  }
+
   public void notifyVpaSourceUpdate() {
     new Thread(() -> {
       for (StudioEventListener listener : listeners) {
@@ -52,6 +61,11 @@ public class EventManager {
       case VPA_EXPORT: {
         String uuid = descriptor.getUuid();
         notifyVpaExport(uuid);
+        return;
+      }
+      case VPA_IMPORT: {
+        String uuid = descriptor.getUuid();
+        notifyVpaImport(uuid);
         return;
       }
       case VPA_DOWNLOAD: {

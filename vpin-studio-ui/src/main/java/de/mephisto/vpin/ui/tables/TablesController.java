@@ -5,6 +5,7 @@ import de.mephisto.vpin.ui.StudioFXController;
 import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.events.StudioEventListener;
 import de.mephisto.vpin.ui.events.VpaExportedEvent;
+import de.mephisto.vpin.ui.events.VpaImportedEvent;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
@@ -109,6 +110,13 @@ public class TablesController implements Initializable, StudioFXController, Stud
   public void onVpaExport(@NonNull VpaExportedEvent event) {
     Platform.runLater(() -> {
       repositoryController.doReload();
+    });
+  }
+
+  @Override
+  public void onVpaImport(@NonNull VpaImportedEvent event) {
+    Platform.runLater(() -> {
+      tableOverviewController.onReload();
     });
   }
 }

@@ -9,6 +9,9 @@ public class JobDescriptor {
   private String description;
   private JobType jobType;
 
+  @JsonIgnore
+  private Job job;
+
   public JobDescriptor() {
 
   }
@@ -18,12 +21,13 @@ public class JobDescriptor {
     this.uuid = uuid;
   }
 
+  public void setJobType(JobType jobType) {
+    this.jobType = jobType;
+  }
+
   public JobType getJobType() {
     return jobType;
   }
-
-  @JsonIgnore
-  private Job job;
 
   public Job getJob() {
     return job;

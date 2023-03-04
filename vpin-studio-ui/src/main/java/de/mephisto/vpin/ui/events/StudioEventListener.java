@@ -8,6 +8,10 @@ public interface StudioEventListener {
 
   }
 
+  default void onVpaImport(@NonNull VpaImportedEvent event) {
+
+  }
+
   default void onVpaDownload() {
 
   }
