@@ -1,5 +1,6 @@
 package de.mephisto.vpin.tablemanager.states;
 
+import de.mephisto.vpin.tablemanager.Menu;
 import de.mephisto.vpin.tablemanager.MenuController;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.media.Media;
@@ -13,6 +14,7 @@ public class StateMananger {
 
   private final MediaPlayer navPlayer;
   private final MediaPlayer enterPlayer;
+  private final MediaPlayer backPlayer;
 
   private MenuState activeState;
 
@@ -23,18 +25,27 @@ public class StateMananger {
   }
 
   private StateMananger() {
-    Media media = new Media(getClass().getClassLoader().getResource("select.mp3").toExternalForm());
+    String s = Menu.class.getResource("select.mp3").toExternalForm();
+    System.out.println(s);
+    Media media = new Media(Menu.class.getResource("select.mp3").toExternalForm());
     navPlayer = new MediaPlayer(media);
     navPlayer.setOnEndOfMedia(() -> {
       navPlayer.stop();
       navPlayer.seek(Duration.ZERO);
     });
 
-    media = new Media(getClass().getClassLoader().getResource("enter.mp3").toExternalForm());
+    media = new Media(Menu.class.getResource("enter.mp3").toExternalForm());
     enterPlayer = new MediaPlayer(media);
     enterPlayer.setOnEndOfMedia(() -> {
       enterPlayer.stop();
       enterPlayer.seek(Duration.ZERO);
+    });
+
+    media = new Media(Menu.class.getResource("back.mp3").toExternalForm());
+    backPlayer = new MediaPlayer(media);
+    backPlayer.setOnEndOfMedia(() -> {
+      backPlayer.stop();
+      backPlayer.seek(Duration.ZERO);
     });
   }
 
@@ -61,7 +72,7 @@ public class StateMananger {
         break;
       }
       case ESCAPE: {
-        enterPlayer.play();
+        backPlayer.play();
         this.activeState = activeState.back();
         LOG.info("Went back to " + this.activeState);
         break;
