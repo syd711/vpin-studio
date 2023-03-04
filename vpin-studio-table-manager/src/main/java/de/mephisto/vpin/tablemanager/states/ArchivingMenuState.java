@@ -46,23 +46,26 @@ public class ArchivingMenuState extends MenuState {
   }
 
   private void executeArchiving() {
-    GameRepresentation game = this.menuController.getGameSelection();
-    VpaManifest manifest = Menu.client.getVpaManifest(game.getId());
+    new Thread(() -> {
+      GameRepresentation game = this.menuController.getGameSelection();
+      VpaManifest manifest = Menu.client.getVpaManifest(game.getId());
 
-    ExportDescriptor descriptor = new ExportDescriptor();
-    descriptor.setManifest(manifest);
-    descriptor.getGameIds().add(game.getId());
-    descriptor.setExportPupPack(true);
-    descriptor.setExportRom(true);
-    descriptor.setExportPopperMedia(true);
-    descriptor.setExportHighscores(true);
-    descriptor.setExportMusic(true);
-    try {
-      Menu.client.exportVpa(descriptor);
-    } catch (Exception e) {
-      LOG.error("Failed to executing archiving: " + e.getMessage(), e);
-    }
+      ExportDescriptor descriptor = new ExportDescriptor();
+      descriptor.setManifest(manifest);
+      descriptor.getGameIds().add(game.getId());
+      descriptor.setExportPupPack(true);
+      descriptor.setExportRom(true);
+      descriptor.setExportPopperMedia(true);
+      descriptor.setExportHighscores(true);
+      descriptor.setExportMusic(true);
+      try {
+        Menu.client.exportVpa(descriptor);
+      } catch (Exception e) {
+        LOG.error("Failed to executing archiving: " + e.getMessage(), e);
+      }
 
-    StateMananger.getInstance().waitForJobAndGoBack();
+      StateMananger.getInstance().waitForJobAndGoBack();
+    }).start();
+
   }
 }

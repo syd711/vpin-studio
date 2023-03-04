@@ -110,7 +110,9 @@ public class StateMananger implements JobListener {
 
   public void waitForJobAndGoBack() {
     this.setInputBlocked(true);
-    TableManagerJobPoller.getInstance().setPolling();
+    Platform.runLater(() -> {
+      TableManagerJobPoller.getInstance().setPolling();
+    });
   }
 
   @Override
