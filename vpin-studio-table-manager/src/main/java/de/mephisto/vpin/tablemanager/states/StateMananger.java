@@ -19,6 +19,7 @@ public class StateMananger {
   private MenuState activeState;
 
   private final static StateMananger INSTANCE = new StateMananger();
+  private boolean blocked;
 
   public static StateMananger getInstance() {
     return INSTANCE;
@@ -49,11 +50,31 @@ public class StateMananger {
     });
   }
 
+  public void setInputBlocked(boolean blocked) {
+    if(blocked) {
+      this.blocked = true;
+    }
+    else {
+      new Thread(() -> {
+        try {
+          Thread.sleep(100);
+        } catch (InterruptedException e) {
+          //ignore
+        }
+        this.blocked = false;
+      }).start();
+    }
+  }
+
   public void init(MenuController controller) {
     this.activeState = new MainMenuState(controller);
   }
 
   public void handle(KeyEvent event) {
+    if (blocked) {
+      return;
+    }
+
     switch (event.getCode()) {
       case LEFT: {
         navPlayer.play();

@@ -52,7 +52,7 @@ public class Menu extends Application {
 
       MenuController controller = loader.getController();
       StateMananger.getInstance().init(controller);
-      scene.setOnKeyPressed(event -> {
+      scene.setOnKeyReleased(event -> {
         StateMananger.getInstance().handle(event);
       });
       stage.show();

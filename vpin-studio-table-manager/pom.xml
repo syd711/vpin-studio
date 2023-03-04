@@ -117,6 +117,7 @@
     </dependencies>
 
     <build>
+<!--        this will corrupt mp3s here -->
 <!--        <resources>-->
 <!--            <resource>-->
 <!--                <directory>src/main/resources</directory>-->

@@ -2,34 +2,35 @@ package de.mephisto.vpin.tablemanager.states;
 
 import de.mephisto.vpin.tablemanager.MenuController;
 
-public class ArchiveSelectionMenuState extends MenuState{
+public class ExitMenuState extends MenuState {
+  private final MenuState parentState;
   private final MenuController menuController;
 
-  public ArchiveSelectionMenuState(MenuController menuController) {
+  public ExitMenuState(MenuState parentState, MenuController menuController) {
+    this.parentState = parentState;
     this.menuController = menuController;
-    menuController.enterArchive();
+    this.menuController.enterExitConfirmation();
   }
 
   @Override
   MenuState left() {
-    menuController.scrollGameBarLeft();
     return this;
   }
 
   @Override
   MenuState right() {
-    menuController.scrollGameBarRight();
     return this;
   }
 
   @Override
   MenuState enter() {
-    return new ArchiveConfirmationMenuState(this, menuController);
+    System.exit(0);
+    return null;
   }
 
   @Override
   MenuState back() {
     menuController.enterMainMenu();
-    return new MainMenuState(menuController);
+    return parentState;
   }
 }

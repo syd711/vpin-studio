@@ -11,7 +11,7 @@ import javafx.util.Duration;
  */
 public class TransitionUtil {
 
-  public static final int FADER_DEFAULT = 300;
+  public static final int FADER_DEFAULT = 200;
 
   /**
    * Creates a fade in effect without playing it

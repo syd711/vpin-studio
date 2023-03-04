@@ -29,7 +29,7 @@ public class InstallSelectionMenuState extends MenuState{
 
   @Override
   MenuState back() {
-    menuController.enterMainWithInstall();
+    menuController.enterMainMenu();
     return new MainMenuState(menuController);
   }
 }

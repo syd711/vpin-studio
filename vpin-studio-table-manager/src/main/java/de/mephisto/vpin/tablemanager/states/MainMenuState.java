@@ -8,6 +8,7 @@ public class MainMenuState extends MenuState {
 
   public MainMenuState(MenuController menuController) {
     this.menuController = menuController;
+    this.menuController.enterMainMenu();
   }
 
   @Override
@@ -35,7 +36,6 @@ public class MainMenuState extends MenuState {
 
   @Override
   MenuState back() {
-    System.exit(0);
-    return null;
+    return new ExitMenuState(this, menuController);
   }
 }

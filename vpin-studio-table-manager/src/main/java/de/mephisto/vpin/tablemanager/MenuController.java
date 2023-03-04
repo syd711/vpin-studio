@@ -6,6 +6,7 @@ import de.mephisto.vpin.restclient.representations.GameMediaItemRepresentation;
 import de.mephisto.vpin.restclient.representations.GameMediaRepresentation;
 import de.mephisto.vpin.restclient.representations.GameRepresentation;
 import de.mephisto.vpin.restclient.representations.VpaDescriptorRepresentation;
+import de.mephisto.vpin.tablemanager.states.StateMananger;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -36,6 +37,9 @@ public class MenuController implements Initializable {
   private Node greenPanel;
 
   @FXML
+  private Node bluePanel;
+
+  @FXML
   private Node redPanel;
 
   @FXML
@@ -45,13 +49,16 @@ public class MenuController implements Initializable {
   private HBox gameRow;
 
   @FXML
-  private Label negativLabel;
+  private Label blueLabel;
 
   @FXML
   private Node loadMask;
 
   @FXML
-  private Label positivLabel;
+  private Label greenLabel;
+
+  @FXML
+  private Label redLabel;
 
   private boolean installToggle = true;
   private int selectionIndex = 0;
@@ -65,11 +72,11 @@ public class MenuController implements Initializable {
     if (installToggle) {
       baseSelector.setStyle("-fx-background-color: #33CC00;");
       TransitionUtil.createOutFader(greenPanel).play();
-      TransitionUtil.createInFader(redPanel).play();
+      TransitionUtil.createInFader(bluePanel).play();
     }
     else {
       baseSelector.setStyle("-fx-background-color: #FF3333;");
-      TransitionUtil.createOutFader(redPanel).play();
+      TransitionUtil.createOutFader(bluePanel).play();
       TransitionUtil.createInFader(greenPanel).play();
     }
     installToggle = !installToggle;
@@ -81,8 +88,8 @@ public class MenuController implements Initializable {
 
   public void enterInstall() {
     resetGameRow();
-    positivLabel.setText("Install Table");
-    TransitionUtil.createOutFader(redPanel).play();
+    greenLabel.setText("Install Table");
+    TransitionUtil.createOutFader(bluePanel).play();
     TransitionUtil.createOutFader(greenPanel).play();
     TransitionUtil.createInFader(gameRow).play();
 
@@ -93,66 +100,97 @@ public class MenuController implements Initializable {
   }
 
   public void enterArchive() {
+    StateMananger.getInstance().setInputBlocked(true);
     resetGameRow();
-    negativLabel.setText("Archive Table");
-    TransitionUtil.createOutFader(redPanel).play();
+    blueLabel.setText("Archive Table");
+    TransitionUtil.createOutFader(bluePanel).play();
     TransitionUtil.createOutFader(greenPanel).play();
     TransitionUtil.createInFader(gameRow).play();
     TransitionUtil.createInFader(loadMask).play();
 
+    setLoadLabel("Loading...");
+
     new Thread(() -> {
       List<GameRepresentation> games = Menu.client.getGames();
       Platform.runLater(() -> {
-        setLoadLabel("Loading...");
         loadGameItems(games);
         initGameBarSelection();
 
         TransitionUtil.createOutFader(loadMask).play();
+        System.out.println("finished");
+        StateMananger.getInstance().setInputBlocked(false);
       });
     }).start();
   }
 
-  public void enterMainWithInstall() {
-    positivLabel.setText("Install Table");
-    negativLabel.setText("Archive Table");
+  private void enterMainWithInstall() {
+    redLabel.setText("");
+    greenLabel.setText("Install Table");
+    blueLabel.setText("Archive Table");
     resetGameRow();
     TransitionUtil.createOutFader(gameRow).play();
+    TransitionUtil.createOutFader(bluePanel).play();
     TransitionUtil.createOutFader(redPanel).play();
     TransitionUtil.createInFader(greenPanel).play();
   }
 
-  public void enterMainWithArchive() {
-    positivLabel.setText("Install Table");
-    negativLabel.setText("Archive Table");
+  private void enterMainWithArchive() {
+    redLabel.setText("");
+    greenLabel.setText("Install Table");
+    blueLabel.setText("Archive Table");
     resetGameRow();
     TransitionUtil.createOutFader(gameRow).play();
+    TransitionUtil.createOutFader(redPanel).play();
     TransitionUtil.createOutFader(greenPanel).play();
-    TransitionUtil.createInFader(redPanel).play();
+    TransitionUtil.createInFader(bluePanel).play();
+  }
+
+  public void enterMainMenu() {
+    if(this.installToggle) {
+      enterMainWithInstall();
+    }
+    else {
+      enterMainWithArchive();
+    }
   }
 
   public void enterTableInstallConfirmation() {
-    positivLabel.setText("Install Table?");
-    TransitionUtil.createOutFader(redPanel).play();
+    greenLabel.setText("Install Table?");
+    TransitionUtil.createOutFader(bluePanel).play();
     TransitionUtil.createInFader(greenPanel, 0.9, 100).play();
   }
 
   public void enterArchiveInstallConfirmation() {
-    positivLabel.setText("Archive Table?");
-    TransitionUtil.createOutFader(redPanel).play();
+    greenLabel.setText("Archive Table?");
+    TransitionUtil.createOutFader(bluePanel).play();
     TransitionUtil.createInFader(greenPanel, 0.9, 100).play();
   }
 
   public void leaveConfirmation() {
     setLoadLabel("");
-    TransitionUtil.createOutFader(redPanel).play();
+    TransitionUtil.createOutFader(bluePanel).play();
     TransitionUtil.createOutFader(greenPanel).play();
     TransitionUtil.createOutFader(loadMask).play();
   }
 
   public void enterArchiving() {
-    positivLabel.setText("");
+    greenLabel.setText("");
+    blueLabel.setText("");
+    TransitionUtil.createOutFader(greenPanel).play();
+    TransitionUtil.createInFader(bluePanel, 0.9, 100).play();
     TransitionUtil.createInFader(loadMask).play();
-    setLoadLabel("Archiving...");
+    setLoadLabel("Archiving, please wait...");
+  }
+
+
+  public void enterExitConfirmation() {
+    blueLabel.setText("");
+    greenLabel.setText("");
+    redLabel.setText("Back To Popper?");
+    TransitionUtil.createInFader(redPanel).play();
+    TransitionUtil.createOutFader(greenPanel).play();
+    TransitionUtil.createOutFader(bluePanel).play();
+    TransitionUtil.createOutFader(loadMask).play();
   }
 
   public void setLoadLabel(String text) {

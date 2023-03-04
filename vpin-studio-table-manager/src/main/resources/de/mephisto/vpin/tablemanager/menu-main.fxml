@@ -27,7 +27,7 @@
                   </ImageView>
                </center></BorderPane>
             <HBox fx:id="gameRow" alignment="CENTER_LEFT" prefHeight="800.0" />
-            <BorderPane fx:id="redPanel" layoutX="110.0" layoutY="110.0" maxHeight="800.0" maxWidth="800.0" styleClass="red-selector">
+            <BorderPane fx:id="bluePanel" layoutX="110.0" layoutY="110.0" maxHeight="800.0" maxWidth="800.0" styleClass="red-selector">
                <center>
                   <StackPane styleClass="root" BorderPane.alignment="CENTER">
                      <children>
@@ -36,7 +36,25 @@
                               <Image url="@blue.png" />
                            </image>
                         </ImageView>
-                        <Label fx:id="negativLabel" text="Archive Table" textAlignment="CENTER" wrapText="true">
+                        <Label fx:id="blueLabel" text="Archive Table" textAlignment="CENTER" wrapText="true">
+                           <font>
+                              <Font name="Impact" size="158.0" />
+                           </font>
+                        </Label>
+                     </children>
+                  </StackPane>
+               </center>
+            </BorderPane>
+            <BorderPane fx:id="redPanel" layoutX="1810.0" layoutY="110.0" maxHeight="800.0" maxWidth="800.0" opacity="0.0" styleClass="red-selector">
+               <center>
+                  <StackPane styleClass="root" BorderPane.alignment="CENTER">
+                     <children>
+                        <ImageView fitHeight="800.0" fitWidth="800.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@red.png" />
+                           </image>
+                        </ImageView>
+                        <Label fx:id="redLabel" textAlignment="CENTER" wrapText="true">
                            <font>
                               <Font name="Impact" size="158.0" />
                            </font>
@@ -54,7 +72,7 @@
                               <Image url="@green.png" />
                            </image>
                         </ImageView>
-                        <Label fx:id="positivLabel" text="Install Table" textAlignment="CENTER" wrapText="true">
+                        <Label fx:id="greenLabel" text="Install Table" textAlignment="CENTER" wrapText="true">
                            <font>
                               <Font name="Impact" size="158.0" />
                            </font>
@@ -67,7 +85,7 @@
                <center>
                   <StackPane BorderPane.alignment="CENTER">
                      <children>
-                        <Label fx:id="loadLabel" text="Loading...">
+                        <Label fx:id="loadLabel" text="Loading..." textAlignment="CENTER" wrapText="true">
                            <font>
                               <Font name="Impact" size="120.0" />
                            </font>
