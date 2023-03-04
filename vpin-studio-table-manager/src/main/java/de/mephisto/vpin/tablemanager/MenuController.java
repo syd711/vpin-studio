@@ -2,10 +2,7 @@ package de.mephisto.vpin.tablemanager;
 
 import de.mephisto.vpin.commons.utils.FXUtil;
 import de.mephisto.vpin.restclient.PopperScreen;
-import de.mephisto.vpin.restclient.representations.GameMediaItemRepresentation;
-import de.mephisto.vpin.restclient.representations.GameMediaRepresentation;
-import de.mephisto.vpin.restclient.representations.GameRepresentation;
-import de.mephisto.vpin.restclient.representations.VpaDescriptorRepresentation;
+import de.mephisto.vpin.restclient.representations.*;
 import de.mephisto.vpin.tablemanager.states.StateMananger;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
@@ -182,6 +179,16 @@ public class MenuController implements Initializable {
   }
 
 
+  public void enterInstalling() {
+    greenLabel.setText("");
+    blueLabel.setText("");
+    setLoadLabel("Installing, please wait...");
+    TransitionUtil.createOutFader(greenPanel).play();
+    TransitionUtil.createInFader(bluePanel, 0.9, 100).play();
+    TransitionUtil.createInFader(loadMask).play();
+  }
+
+
   public void enterExitConfirmation() {
     blueLabel.setText("");
     greenLabel.setText("");
@@ -319,5 +326,10 @@ public class MenuController implements Initializable {
   public GameRepresentation getGameSelection() {
     Node node = gameRow.getChildren().get(selectionIndex);
     return (GameRepresentation) node.getUserData();
+  }
+
+  public VpaDescriptorRepresentation getVpaSelection() {
+    Node node = gameRow.getChildren().get(selectionIndex);
+    return (VpaDescriptorRepresentation) node.getUserData();
   }
 }

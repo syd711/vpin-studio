@@ -24,7 +24,7 @@ public class InstallConfirmationMenuState extends MenuState {
 
   @Override
   MenuState enter() {
-    return this;
+    return new InstallingMenuState(this, menuController);
   }
 
   @Override

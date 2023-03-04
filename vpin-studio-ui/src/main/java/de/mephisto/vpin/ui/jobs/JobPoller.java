@@ -33,6 +33,7 @@ public class JobPoller {
     }
   }
 
+  //TODO throw UI out!
   private JobPoller(MenuButton jobMenu) {
     this.jobMenu = jobMenu;
     this.jobMenu.setStyle("-fx-background-color: #111111;");
@@ -78,6 +79,7 @@ public class JobPoller {
     return instance;
   }
 
+  //TODO throw UI out!
   public boolean isPolling() {
     return !jobMenu.isDisabled();
   }
