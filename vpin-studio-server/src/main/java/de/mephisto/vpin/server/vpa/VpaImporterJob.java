@@ -4,10 +4,12 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import de.mephisto.vpin.commons.EmulatorType;
 import de.mephisto.vpin.restclient.ImportDescriptor;
+import de.mephisto.vpin.restclient.Job;
 import de.mephisto.vpin.restclient.VpaManifest;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameService;
 import de.mephisto.vpin.server.highscores.HighscoreService;
+import de.mephisto.vpin.server.highscores.cards.CardService;
 import de.mephisto.vpin.server.popper.PinUPConnector;
 import de.mephisto.vpin.server.system.SystemService;
 import de.mephisto.vpin.server.util.vpreg.VPReg;
@@ -24,7 +26,7 @@ import java.io.IOException;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
-public class VpaImporter {
+public class VpaImporterJob implements Job {
   private final static Logger LOG = LoggerFactory.getLogger(VpaService.class);
 
   private final ImportDescriptor descriptor;
@@ -33,26 +35,30 @@ public class VpaImporter {
   private final SystemService systemService;
   private final HighscoreService highscoreService;
   private final GameService gameService;
+  private final CardService cardService;
   private final ObjectMapper objectMapper;
 
-  public VpaImporter(@NonNull ImportDescriptor descriptor,
-                     @NonNull File vpaFile,
-                     @NonNull PinUPConnector connector,
-                     @NonNull SystemService systemService,
-                     @NonNull HighscoreService highscoreService,
-                     @NonNull GameService gameService) {
+  public VpaImporterJob(@NonNull ImportDescriptor descriptor,
+                        @NonNull File vpaFile,
+                        @NonNull PinUPConnector connector,
+                        @NonNull SystemService systemService,
+                        @NonNull HighscoreService highscoreService,
+                        @NonNull GameService gameService,
+                        @NonNull CardService cardService) {
     this.descriptor = descriptor;
     this.vpaFile = vpaFile;
     this.connector = connector;
     this.systemService = systemService;
     this.highscoreService = highscoreService;
     this.gameService = gameService;
+    this.cardService = cardService;
 
     objectMapper = new ObjectMapper();
     objectMapper.enable(SerializationFeature.INDENT_OUTPUT);
   }
 
-  public Game startImport() {
+  @Override
+  public boolean execute() {
     try {
       LOG.info("Starting import of " + descriptor.getUuid());
 
@@ -67,7 +73,7 @@ public class VpaImporter {
       VpaManifest manifest = VpaUtil.readManifest(vpaFile);
       if (StringUtils.isEmpty(manifest.getGameFileName())) {
         LOG.error("The VPA manifest of " + vpaFile.getAbsolutePath() + " does not contain a game filename.");
-        return null;
+        return false;
       }
 
       File gameFile = getGameFile(manifest);
@@ -92,11 +98,13 @@ public class VpaImporter {
 
       highscoreService.scanScore(game);
       LOG.info("Final highscore scan");
-      return game;
+
+      cardService.generateCard(game, false);
     } catch (Exception e) {
       LOG.error("Import of \"" + vpaFile.getName() + "\" failed: " + e.getMessage(), e);
+      return false;
     }
-    return null;
+    return true;
   }
 
   private void importHighscores(Game game, VpaManifest manifest) {

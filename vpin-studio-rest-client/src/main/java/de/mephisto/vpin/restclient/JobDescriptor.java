@@ -22,10 +22,6 @@ public class JobDescriptor {
     return jobType;
   }
 
-  public void setJobType(JobType jobType) {
-    this.jobType = jobType;
-  }
-
   @JsonIgnore
   private Job job;
 

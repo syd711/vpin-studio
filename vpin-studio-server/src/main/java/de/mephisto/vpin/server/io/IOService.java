@@ -48,17 +48,19 @@ public class IOService {
     try {
       VpaDescriptor vpaDescriptor = vpaService.getVpaDescriptor(DefaultVpaSource.DEFAULT_VPA_SOURCE_ID, descriptor.getUuid());
       File vpaFile = new File(systemService.getVpaArchiveFolder(), vpaDescriptor.getFilename());
-      VpaImporter importer = new VpaImporter(descriptor, vpaFile, pinUPConnector, systemService, highscoreService, gameService);
-      Game importedGame = importer.startImport();
-      if (importedGame != null) {
-        Game game = gameService.getGame(importedGame.getId());
-        cardService.generateCard(game, false);
-        return true;
-      }
+
+      JobDescriptor jobDescriptor = new JobDescriptor(JobType.VPA_IMPORT, descriptor.getUuid());
+      jobDescriptor.setTitle("Import of \"" + vpaDescriptor.getManifest().getGameDisplayName() + "\"");
+      jobDescriptor.setDescription("Importing table for \"" + vpaDescriptor.getManifest().getGameDisplayName() + "\"");
+      jobDescriptor.setJob(new VpaImporterJob(descriptor, vpaFile, pinUPConnector, systemService, highscoreService, gameService, cardService));
+
+      JobQueue.getInstance().offer(jobDescriptor);
+      LOG.info("Offered import job for \"" + vpaDescriptor.getManifest().getGameDisplayName() + "\"");
     } catch (Exception e) {
       LOG.error("Import failed: " + e.getMessage(), e);
+      return false;
     }
-    return false;
+    return true;
   }
 
   public boolean exportVpa(@NonNull ExportDescriptor exportDescriptor) {
@@ -100,8 +102,7 @@ public class IOService {
     manifest.setUuid(uuid);
 
     JobDescriptor descriptor = new JobDescriptor(JobType.VPA_EXPORT, uuid);
-    descriptor.setJobType(JobType.VPA_EXPORT);
-    descriptor.setTitle("Export of '" + game.getGameDisplayName() + "'");
+    descriptor.setTitle("Export of \"" + game.getGameDisplayName() + "\"");
     descriptor.setDescription("Exporting table archive for \"" + manifest.getGameDisplayName() + "\"");
     descriptor.setJob(new VpaExporterJob(vpRegFile, systemService.getVPXMusicFolder(), game, exportDescriptor, manifest, highscore, versions, defaultVpaSourceAdapter, targetFolder, systemService.getVersion()));
 
