@@ -1,6 +1,6 @@
-package de.mephisto.vpin.poppermenu.states;
+package de.mephisto.vpin.tablemanager.states;
 
-import de.mephisto.vpin.poppermenu.MenuController;
+import de.mephisto.vpin.tablemanager.MenuController;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;

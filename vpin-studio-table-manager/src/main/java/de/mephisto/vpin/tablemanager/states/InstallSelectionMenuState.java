@@ -1,6 +1,6 @@
-package de.mephisto.vpin.poppermenu.states;
+package de.mephisto.vpin.tablemanager.states;
 
-import de.mephisto.vpin.poppermenu.MenuController;
+import de.mephisto.vpin.tablemanager.MenuController;
 
 public class InstallSelectionMenuState extends MenuState{
   private final MenuController menuController;

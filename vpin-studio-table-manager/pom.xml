@@ -147,7 +147,7 @@
                             <transformers>
                                 <transformer
                                         implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
-                                    <mainClass>de.mephisto.vpin.poppermenu.MenuLauncher</mainClass>
+                                    <mainClass>de.mephisto.vpin.tablemanager.MenuLauncher</mainClass>
                                 </transformer>
                                 <transformer
                                         implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer"/>
@@ -187,7 +187,7 @@
                         <!-- Default configuration for running with: mvn clean javafx:run -->
                         <id>default-cli</id>
                         <configuration>
-                            <mainClass>de.mephisto.vpin.poppermenu/de.mephisto.vpin.poppermenu.MenuLauncher</mainClass>
+                            <mainClass>de.mephisto.vpin.poppermenu/de.mephisto.vpin.tablemanager.MenuLauncher</mainClass>
                             <launcher>app</launcher>
                             <jlinkZipName>app</jlinkZipName>
                             <jlinkImageName>app</jlinkImageName>
@@ -213,12 +213,12 @@
                         </goals>
                         <configuration>
                             <headerType>gui</headerType>
-                            <icon>src/main/resources/de/mephisto/vpin/poppermenu/logo.ico</icon>
+                            <icon>src/main/resources/de/mephisto/vpin/tablemanager/logo.ico</icon>
                             <outfile>target/VPin-Studio-Table-Manager.exe</outfile>
                             <jar>target/vpin-studio-table-manager.jar</jar>
                             <errTitle>VPin-Studio-Table-Manager</errTitle>
                             <classPath>
-                                <mainClass>de.mephisto.vpin.poppermenu.MenuLauncher</mainClass>
+                                <mainClass>de.mephisto.vpin.tablemanager.MenuLauncher</mainClass>
                                 <addDependencies>true</addDependencies>
                                 <preCp>anything</preCp>
                             </classPath>

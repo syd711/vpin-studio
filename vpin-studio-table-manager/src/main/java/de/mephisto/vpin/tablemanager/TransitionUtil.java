@@ -1,4 +1,4 @@
-package de.mephisto.vpin.poppermenu;
+package de.mephisto.vpin.tablemanager;
 
 import javafx.animation.*;
 import javafx.scene.CacheHint;

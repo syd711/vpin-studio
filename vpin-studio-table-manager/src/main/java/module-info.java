@@ -23,8 +23,8 @@ module de.mephisto.vpin.poppermenu {
   requires de.mephisto.vpin.restclient;
   requires de.mephisto.vpin.commons;
 
-  exports de.mephisto.vpin.poppermenu;
-  opens de.mephisto.vpin.poppermenu to javafx.fxml;
-  exports de.mephisto.vpin.poppermenu.states;
-  opens de.mephisto.vpin.poppermenu.states to javafx.fxml;
+  exports de.mephisto.vpin.tablemanager;
+  opens de.mephisto.vpin.tablemanager to javafx.fxml;
+  exports de.mephisto.vpin.tablemanager.states;
+  opens de.mephisto.vpin.tablemanager.states to javafx.fxml;
 }

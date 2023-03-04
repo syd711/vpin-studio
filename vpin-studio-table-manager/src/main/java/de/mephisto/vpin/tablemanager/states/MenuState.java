@@ -1,4 +1,4 @@
-package de.mephisto.vpin.poppermenu.states;
+package de.mephisto.vpin.tablemanager.states;
 
 abstract public class MenuState {
 

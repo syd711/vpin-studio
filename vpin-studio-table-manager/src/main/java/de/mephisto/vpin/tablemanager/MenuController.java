@@ -1,4 +1,4 @@
-package de.mephisto.vpin.poppermenu;
+package de.mephisto.vpin.tablemanager;
 
 import de.mephisto.vpin.commons.utils.FXUtil;
 import de.mephisto.vpin.restclient.PopperScreen;

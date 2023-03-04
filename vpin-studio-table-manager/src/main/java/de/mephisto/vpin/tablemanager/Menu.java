@@ -1,6 +1,6 @@
-package de.mephisto.vpin.poppermenu;
+package de.mephisto.vpin.tablemanager;
 
-import de.mephisto.vpin.poppermenu.states.StateMananger;
+import de.mephisto.vpin.tablemanager.states.StateMananger;
 import de.mephisto.vpin.restclient.VPinStudioClient;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;

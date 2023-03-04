@@ -11,17 +11,17 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane styleClass="base-component" stylesheets="@../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.preferences.ArchiveManagerPreferencesController">
+<BorderPane styleClass="base-component" stylesheets="@../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.preferences.TableManagerPreferencesController">
    <top>
       <VBox fx:id="preferenceList" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" styleClass="subpanel" BorderPane.alignment="TOP_LEFT">
          <children>
             <Label styleClass="preference-title" text="TABLE MANAGEMENT" textFill="WHITE" />
-            <Label styleClass="preference-subtitle" text="Archive Manager">
+            <Label styleClass="preference-subtitle" text="Table Manager">
                <VBox.margin>
                   <Insets />
                </VBox.margin>
             </Label>
-            <Label styleClass="preference-description" text="The archive manager is an optional UI that can be launched as a regular game via PinUP Popper." textFill="WHITE">
+            <Label styleClass="preference-description" text="The table manager is an optional UI that can be launched as a regular game via PinUP Popper." textFill="WHITE">
                <VBox.margin>
                   <Insets top="24.0" />
                </VBox.margin>
@@ -41,7 +41,7 @@
                   <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                </rowConstraints>
                <children>
-                  <Label styleClass="preference-label" text="Add Archive Manager to Playlist:" textFill="WHITE">
+                  <Label styleClass="preference-label" text="Add Table Manager to Playlist:" textFill="WHITE">
                      <font>
                         <Font size="14.0" />
                      </font>

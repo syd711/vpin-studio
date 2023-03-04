@@ -1,4 +1,4 @@
-package de.mephisto.vpin.poppermenu;
+package de.mephisto.vpin.tablemanager;
 
 public interface UIDefaults {
   int SCREEN_WIDTH = 4400;

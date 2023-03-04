@@ -20,7 +20,7 @@ import java.util.ResourceBundle;
 
 import static de.mephisto.vpin.ui.Studio.client;
 
-public class ArchiveManagerPreferencesController implements Initializable {
+public class TableManagerPreferencesController implements Initializable {
 
   @FXML
   private ComboBox<PlaylistRepresentation> playlistCombo;
