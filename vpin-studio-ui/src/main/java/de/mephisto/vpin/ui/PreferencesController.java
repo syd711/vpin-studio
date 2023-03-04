@@ -75,6 +75,11 @@ public class PreferencesController implements Initializable {
   }
 
   @FXML
+  private void onArchiveManager(ActionEvent event) throws IOException {
+    load("preference-archive-manager.fxml", event);
+  }
+
+  @FXML
   private void onScreens(ActionEvent event) throws IOException {
     load("preference-screens.fxml", event);
   }

@@ -36,7 +36,7 @@ public class PinUPConnector implements InitializingBean {
   @Autowired
   private SystemService systemService;
 
-  private Map<Integer, Emulator> emulators = new HashMap<>();
+  private final Map<Integer, Emulator> emulators = new HashMap<>();
 
   @Override
   public void afterPropertiesSet() {
@@ -48,9 +48,10 @@ public class PinUPConnector implements InitializingBean {
   private void runConfigCheck() {
     List<Emulator> ems = this.getEmulators();
     for (Emulator emulator : ems) {
+      emulators.put(emulator.getId(), emulator);
+
       String name = emulator.getName();
       if (name.equals(Emulator.VISUAL_PINBALL_X) || name.equals(Emulator.FUTURE_PINBALL) || name.equals(Emulator.PINBALL_FX3)) {
-        emulators.put(emulator.getId(), emulator);
         initVisualPinballXScripts(emulator);
       }
     }
@@ -283,7 +284,7 @@ public class PinUPConnector implements InitializingBean {
     String name = FilenameUtils.getBaseName(file.getName());
     String gameFileName = file.getName();
     String gameDisplayName = name.replaceAll("-", " ").replaceAll("_", " ");
-    return importGame(emulator, name, gameFileName, gameDisplayName);
+    return importGame(emulator, name, gameFileName, gameDisplayName, null);
   }
 
   /**
@@ -292,16 +293,17 @@ public class PinUPConnector implements InitializingBean {
    *
    * @return the generated game id.
    */
-  public int importGame(@NonNull String emulator, @NonNull String gameName, @NonNull String gameFileName, @NonNull String gameDisplayName) {
+  public int importGame(@NonNull String emulator, @NonNull String gameName, @NonNull String gameFileName, @NonNull String gameDisplayName, @Nullable String launchCustomVar) {
     Connection connect = this.connect();
     int emulatorId = getEmulatorId(emulator);
     try {
-      PreparedStatement preparedStatement = connect.prepareStatement("INSERT INTO Games (EMUID, GameName, GameFileName, GameDisplay, Visible) VALUES (?,?,?,?,?)", Statement.RETURN_GENERATED_KEYS);
+      PreparedStatement preparedStatement = connect.prepareStatement("INSERT INTO Games (EMUID, GameName, GameFileName, GameDisplay, Visible, LaunchCustomVar) VALUES (?,?,?,?,?,?)", Statement.RETURN_GENERATED_KEYS);
       preparedStatement.setInt(1, emulatorId);
       preparedStatement.setString(2, gameName);
       preparedStatement.setString(3, gameFileName);
       preparedStatement.setString(4, gameDisplayName);
       preparedStatement.setInt(5, 1);
+      preparedStatement.setString(6, launchCustomVar);
 //      preparedStatement.setTimestamp(6, new java.sql.Timestamp(System.currentTimeMillis()));
       int affectedRows = preparedStatement.executeUpdate();
       preparedStatement.close();
@@ -425,6 +427,29 @@ public class PinUPConnector implements InitializingBean {
     } finally {
       this.disconnect(connect);
     }
+  }
+
+  public Playlist getPlayListForGame(int gameId) {
+    Playlist result = null;
+    Connection connect = connect();
+    try {
+      Statement statement = connect.createStatement();
+      ResultSet rs = statement.executeQuery("SELECT * FROM PlayListDetails WHERE GameID = " + gameId);
+      while (rs.next()) {
+        Playlist playlist = new Playlist();
+        playlist.setId(rs.getInt("PlayListID"));
+        result = playlist;
+        break;
+      }
+
+      rs.close();
+      statement.close();
+    } catch (SQLException e) {
+      LOG.error("Failed to read playlist for gameId: " + e.getMessage(), e);
+    } finally {
+      disconnect(connect);
+    }
+    return result;
   }
 
   @NonNull

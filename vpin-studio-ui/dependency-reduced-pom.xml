@@ -153,10 +153,10 @@
               <outputDirectory>${basedir}/../Output/VPin-Studio/</outputDirectory>
               <resources>
                 <resource>
-                  <directory>${basedir}/../vpin-studio-popper-menu/target/</directory>
+                  <directory>${basedir}/../vpin-studio-table-manager/target/</directory>
                   <includes>
-                    <include>vpin-studio-popper-menu.jar</include>
-                    <include>VPin-Studio-Popper-Menu.exe</include>
+                    <include>vpin-studio-table-manager.jar</include>
+                    <include>VPin-Studio-Table-Manager.exe</include>
                   </includes>
                 </resource>
                 <resource>
@@ -240,6 +240,7 @@
                 <argument>-t7z</argument>
                 <argument>VPin-Studio.zip</argument>
                 <argument>VPin-Studio.exe</argument>
+                <argument>VPin-Studio-Table-Manager.exe</argument>
               </arguments>
             </configuration>
           </execution>

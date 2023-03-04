@@ -100,6 +100,16 @@ public class VPinStudioClient implements ObservedPropertyChangeListener, Overlay
     return new ByteArrayInputStream(bytes);
   }
 
+  /*********************************************************************************************************************
+   * Archive Manager
+   ********************************************************************************************************************/
+  public ArchiveManagerDescriptor getArchiveManagerSettings() {
+    return restClient.get(API + "popper/manager", ArchiveManagerDescriptor.class);
+  }
+
+  public boolean saveArchiveManagerManagerSettings(ArchiveManagerDescriptor descriptor) throws Exception {
+    return restClient.post(API + "popper/manager", descriptor, Boolean.class);
+  }
 
   /*********************************************************************************************************************
    * Discord

@@ -1,10 +1,12 @@
 package de.mephisto.vpin.server.popper;
 
 import de.mephisto.vpin.commons.EmulatorType;
+import de.mephisto.vpin.restclient.ArchiveManagerDescriptor;
 import de.mephisto.vpin.restclient.PinUPControl;
 import de.mephisto.vpin.restclient.PopperScreen;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.system.SystemService;
+import edu.umd.cs.findbugs.annotations.NonNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
@@ -117,18 +119,30 @@ public class PopperService implements InitializingBean {
     }
   }
 
-  public boolean installPopperMenu(int playlistId) {
-    pinUPConnector.enablePCGameEmulator();
-    File file = systemService.getVPinStudioMenuExe();
-    int newGameId = pinUPConnector.importGame(EmulatorType.PC_GAMES, SystemService.VPIN_STUDIO_MENU_NAME, file.getAbsolutePath(), SystemService.VPIN_STUDIO_MENU_NAME);
-    pinUPConnector.addToPlaylist(newGameId, playlistId);
+  public boolean saveArchiveManager(ArchiveManagerDescriptor archiveManagerDescriptor) {
+    if (archiveManagerDescriptor.getPlaylistId() != -1) {
+      pinUPConnector.enablePCGameEmulator();
+      File file = systemService.getVPinStudioMenuExe();
+      int newGameId = pinUPConnector.importGame(EmulatorType.PC_GAMES, SystemService.VPIN_STUDIO_MENU_NAME, file.getAbsolutePath(),
+          SystemService.VPIN_STUDIO_MENU_NAME, SystemService.VPIN_STUDIO_MENU_NAME);
+      pinUPConnector.addToPlaylist(newGameId, archiveManagerDescriptor.getPlaylistId());
+    }
+    else {
+      File file = systemService.getVPinStudioMenuExe();
+      pinUPConnector.deleteGame(file.getAbsolutePath());
+    }
     return true;
   }
 
-  public boolean uninstallPopperMenu() {
+  @NonNull
+  public ArchiveManagerDescriptor getArchiveManagerDescriptor() {
+    ArchiveManagerDescriptor descriptor = new ArchiveManagerDescriptor();
     File file = systemService.getVPinStudioMenuExe();
-    pinUPConnector.deleteGame(file.getAbsolutePath());
-    return true;
+    Game game = pinUPConnector.getGameByFilename(file.getAbsolutePath());
+    if (game != null) {
+      descriptor.setPlaylistId(pinUPConnector.getPlayListForGame(game.getId()).getId());
+    }
+    return descriptor;
   }
 
   @Override

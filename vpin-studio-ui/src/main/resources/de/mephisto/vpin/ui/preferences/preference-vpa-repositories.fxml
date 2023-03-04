@@ -19,11 +19,16 @@
    <top>
       <VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" styleClass="subpanel" BorderPane.alignment="TOP_LEFT">
          <children>
-            <Label styleClass="preference-title" text="TABLE PREFERENCES" textFill="WHITE" />
-            <Label layoutX="34.0" layoutY="66.0" styleClass="preference-subtitle" text="VPA Repositories" />
-            <Label layoutX="34.0" layoutY="104.0" styleClass="preference-description" text="Add domains for downloading VPA files here." textFill="WHITE">
+            <Label styleClass="preference-title" text="TABLE MANAGEMENT" textFill="WHITE" />
+            <Label layoutX="34.0" layoutY="66.0" styleClass="preference-subtitle" text="Repositories" />
+            <Label layoutX="34.0" layoutY="128.0" styleClass="preference-description" text="Table repositories are servers that serve VPA (Visual Pinball Archive) files." textFill="WHITE">
                <VBox.margin>
                   <Insets top="24.0" />
+               </VBox.margin>
+            </Label>
+            <Label layoutX="34.0" layoutY="104.0" styleClass="preference-description" text="You can add your own server here to safely create and restore table backups." textFill="WHITE">
+               <VBox.margin>
+                  <Insets bottom="6.0" />
                </VBox.margin></Label>
             <ToolBar>
               <items>

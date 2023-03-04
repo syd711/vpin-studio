@@ -20,7 +20,7 @@ public class Menu extends Application {
   private final static Logger LOG = LoggerFactory.getLogger(Menu.class);
 
   //do not change this title as it is used in popper as launch parameter
-  public static final String TITLE = "VPin Studio Menu";
+  public static final String TITLE = "VPin Studio Table Manager";
 
   public static VPinStudioClient client;
 

@@ -74,7 +74,7 @@ public class VpaImporter {
       Game game = gameService.getGameByFilename(manifest.getGameFileName());
       if (game == null) {
         LOG.info("No existing game found for " + manifest.getGameDisplayName() + ", executing popper game import for " + manifest.getGameFileName());
-        int newGameId = connector.importGame(manifest.getEmulatorType(), manifest.getGameName(), gameFile.getName(), manifest.getGameDisplayName());
+        int newGameId = connector.importGame(manifest.getEmulatorType(), manifest.getGameName(), gameFile.getName(), manifest.getGameDisplayName(), null);
         game = gameService.getGame(newGameId);
       }
 

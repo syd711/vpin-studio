@@ -1,5 +1,6 @@
 package de.mephisto.vpin.server.popper;
 
+import de.mephisto.vpin.restclient.ArchiveManagerDescriptor;
 import de.mephisto.vpin.restclient.PinUPControl;
 import de.mephisto.vpin.restclient.PopperScreen;
 import de.mephisto.vpin.server.games.Game;
@@ -38,14 +39,14 @@ public class PopperServiceResource {
     return popperService.isPinUPRunning();
   }
 
-  @PostMapping
-  public boolean installPopperMenu(@RequestParam("playlistId") int playlistId) {
-    return popperService.installPopperMenu(playlistId);
+  @PostMapping("/manager")
+  public boolean saveArchiveManager(@RequestBody ArchiveManagerDescriptor descriptor) {
+    return popperService.saveArchiveManager(descriptor);
   }
 
-  @DeleteMapping
-  public boolean uninstallPopperMenu() {
-    return popperService.uninstallPopperMenu();
+  @GetMapping("/manager")
+  public ArchiveManagerDescriptor getArchiveManagerDescriptor() {
+    return popperService.getArchiveManagerDescriptor();
   }
 
 

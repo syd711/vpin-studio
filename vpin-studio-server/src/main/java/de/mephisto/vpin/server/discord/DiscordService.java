@@ -213,7 +213,6 @@ public class DiscordService implements InitializingBean, PreferenceChangedListen
         if (!scores.isEmpty()) {
           result.setScores(scores);
           result.setLatestScore(scores.get(0));
-          LOG.info("Using latest message from channel for the update of '" + data.getName() + "', found " + result.getScores().size() + " highscore messages.");
         }
         else {
           LOG.info("No record highscore for " + uuid + " found, so this seems to be the first one.");

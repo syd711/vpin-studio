@@ -6,8 +6,8 @@
     <version>1.2.16</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
-  <artifactId>vpin-studio-popper-menu</artifactId>
-  <name>vpin-studio-popper-menu</name>
+  <artifactId>vpin-studio-table-manager</artifactId>
+  <name>vpin-studio-table-manager</name>
   <build>
     <resources>
       <resource>
@@ -56,8 +56,8 @@
               <goal>copy</goal>
             </goals>
             <configuration>
-              <sourceFile>${basedir}/target/vpin-studio-popper-menu-${project.version}.jar</sourceFile>
-              <destinationFile>${basedir}/target/vpin-studio-popper-menu.jar</destinationFile>
+              <sourceFile>${basedir}/target/vpin-studio-table-manager-${project.version}.jar</sourceFile>
+              <destinationFile>${basedir}/target/vpin-studio-table-manager.jar</destinationFile>
             </configuration>
           </execution>
         </executions>
@@ -95,9 +95,9 @@
             <configuration>
               <headerType>gui</headerType>
               <icon>src/main/resources/de/mephisto/vpin/poppermenu/logo.ico</icon>
-              <outfile>target/VPin-Studio-Popper-Menu.exe</outfile>
-              <jar>target/vpin-studio-popper-menu.jar</jar>
-              <errTitle>VPin-Studio-Popper-Menu</errTitle>
+              <outfile>target/VPin-Studio-Table-Manager.exe</outfile>
+              <jar>target/vpin-studio-table-manager.jar</jar>
+              <errTitle>VPin-Studio-Table-Manager</errTitle>
               <classPath>
                 <mainClass>de.mephisto.vpin.poppermenu.MenuLauncher</mainClass>
                 <addDependencies>true</addDependencies>
@@ -137,8 +137,8 @@
                 <resource>
                   <directory>${basedir}/target/</directory>
                   <includes>
-                    <include>vpin-studio-popper-menu.jar</include>
-                    <include>VPin-Studio-Popper-Menu.exe</include>
+                    <include>vpin-studio-table-manager.jar</include>
+                    <include>VPin-Studio-Table-Manager.exe</include>
                   </includes>
                 </resource>
               </resources>

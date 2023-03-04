@@ -491,7 +491,7 @@ public class SystemService implements InitializingBean {
   }
 
   public File getVPinStudioMenuExe() {
-    return new File("./VPin-Studio-Popper-Menu.exe");
+    return new File("./VPin-Studio-Table-Manager.exe");
   }
 
   static class StreamReader extends Thread {

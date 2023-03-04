@@ -415,10 +415,13 @@ public class HighscoreService implements InitializingBean {
     Score oldScore = oldScores.get(position - 1);
     Score newScore = newScores.get(position - 1);
 
-    //archive old existingScore
-    HighscoreVersion version = oldHighscore.toVersion(position);
-    version.setNewRaw(oldHighscore.getRaw());
-    highscoreVersionRepository.saveAndFlush(version);
+    //archive old existingScore only if it had actual data
+    if(!StringUtils.isEmpty(oldRaw)) {
+      HighscoreVersion version = oldHighscore.toVersion(position);
+      version.setNewRaw(oldHighscore.getRaw());
+      highscoreVersionRepository.saveAndFlush(version);
+      LOG.info("Created highscore version for " + game);
+    }
 
     //update existing one
     oldHighscore.setRaw(newHighscore.getRaw());
@@ -426,9 +429,10 @@ public class HighscoreService implements InitializingBean {
     oldHighscore.setLastScanned(newHighscore.getLastScanned());
     oldHighscore.setLastModified(newHighscore.getLastModified());
     oldHighscore.setFilename(newHighscore.getFilename());
+    oldHighscore.setStatus(null);
     oldHighscore.setDisplayName(newHighscore.getDisplayName());
     highscoreRepository.saveAndFlush(oldHighscore);
-    LOG.info("Archived old existingScore and saved updated old score for " + game);
+    LOG.info("Saved updated highscore for " + game);
 
     //finally, fire the update event to notify all listeners
     HighscoreChangeEvent event = new HighscoreChangeEvent(game, oldScore, newScore, oldScores.size());

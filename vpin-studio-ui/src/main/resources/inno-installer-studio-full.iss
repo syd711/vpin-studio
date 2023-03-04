@@ -40,7 +40,7 @@ Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{
 Source: "E:\Development\workspace\vpin-studio\Output\VPin-Studio\{#MyAppExeName}"; DestDir: "{app}"; Flags: ignoreversion
 Source: "E:\Development\workspace\vpin-studio\Output\VPin-Studio\config\info.txt"; DestDir: "{app}\config"; Flags: ignoreversion recursesubdirs createallsubdirs
 Source: "E:\Development\workspace\vpin-studio\Output\VPin-Studio\VPin-Studio-Server.exe"; DestDir: "{app}"; Flags: ignoreversion
-Source: "E:\Development\workspace\vpin-studio\Output\VPin-Studio\VPin-Studio-Popper-Menu.exe"; DestDir: "{app}"; Flags: ignoreversion
+Source: "E:\Development\workspace\vpin-studio\Output\VPin-Studio\VPin-Studio-Table-Manager.exe"; DestDir: "{app}"; Flags: ignoreversion
 Source: "E:\Development\workspace\vpin-studio\Output\Vpin-Studio\win32\*"; DestDir: "{app}\win32"; Flags: ignoreversion recursesubdirs createallsubdirs
 Source: "E:\Development\workspace\vpin-studio\Output\Vpin-Studio\resources\*"; DestDir: "{app}\resources"; Flags: ignoreversion recursesubdirs createallsubdirs
 Source: "E:\Development\workspace\vpin-studio\Output\Vpin-Studio\server.vbs"; DestDir: "{app}"; Flags: ignoreversion
