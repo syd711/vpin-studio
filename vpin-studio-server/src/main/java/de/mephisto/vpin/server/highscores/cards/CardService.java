@@ -62,6 +62,7 @@ public class CardService implements InitializingBean, HighscoreChangeListener {
       if (!summary.getScores().isEmpty() && !StringUtils.isEmpty(summary.getRaw())) {
         Config.getCardGeneratorConfig().reload();
 
+        //sample card are always generated
         if (generateSampleCard) {
           BufferedImage bufferedImage = new CardGraphics(directB2SService, game, summary).draw();
           if (bufferedImage != null) {
@@ -71,6 +72,7 @@ public class CardService implements InitializingBean, HighscoreChangeListener {
           return false;
         }
 
+        //otherwise check if the card rendering is enabled
         String screenName = Config.getCardGeneratorConfig().getString("popper.screen", null);
         if (!StringUtils.isEmpty(screenName)) {
           BufferedImage bufferedImage = new CardGraphics(directB2SService, game, summary).draw();
