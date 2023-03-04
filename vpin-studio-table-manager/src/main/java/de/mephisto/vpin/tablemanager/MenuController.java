@@ -117,7 +117,6 @@ public class MenuController implements Initializable {
         initGameBarSelection();
 
         TransitionUtil.createOutFader(loadMask).play();
-        System.out.println("finished");
         StateMananger.getInstance().setInputBlocked(false);
       });
     }).start();
@@ -176,10 +175,10 @@ public class MenuController implements Initializable {
   public void enterArchiving() {
     greenLabel.setText("");
     blueLabel.setText("");
+    setLoadLabel("Archiving, please wait...");
     TransitionUtil.createOutFader(greenPanel).play();
     TransitionUtil.createInFader(bluePanel, 0.9, 100).play();
     TransitionUtil.createInFader(loadMask).play();
-    setLoadLabel("Archiving, please wait...");
   }
 
 
@@ -233,7 +232,6 @@ public class MenuController implements Initializable {
     TransitionUtil.createTranslateByXTransition(node, 60, left ? SCROLL_OFFSET : -SCROLL_OFFSET).play();
     TransitionUtil.createScaleTransition(node, UIDefaults.SELECTION_SCALE, 100).play();
     TransitionUtil.createTranslateByYTransition(node, 60, -UIDefaults.SELECTION_HEIGHT_OFFSET).play();
-    System.out.println("Selected "  + node.getUserData());
   }
 
   private void initGameBarSelection() {
@@ -316,5 +314,10 @@ public class MenuController implements Initializable {
     stackPane.getChildren().add(label);
     borderPane.setCenter(stackPane);
     return borderPane;
+  }
+
+  public GameRepresentation getGameSelection() {
+    Node node = gameRow.getChildren().get(selectionIndex);
+    return (GameRepresentation) node.getUserData();
   }
 }

@@ -1,6 +1,6 @@
 package de.mephisto.vpin.restclient;
 
-public class ArchiveManagerDescriptor {
+public class TableManagerSettings {
   private int playlistId = -1;
 
   public int getPlaylistId() {

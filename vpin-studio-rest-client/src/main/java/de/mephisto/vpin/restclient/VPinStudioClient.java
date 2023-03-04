@@ -101,13 +101,13 @@ public class VPinStudioClient implements ObservedPropertyChangeListener, Overlay
   }
 
   /*********************************************************************************************************************
-   * Archive Manager
+   * Table Manager
    ********************************************************************************************************************/
-  public ArchiveManagerDescriptor getArchiveManagerSettings() {
-    return restClient.get(API + "popper/manager", ArchiveManagerDescriptor.class);
+  public TableManagerSettings getTableManagerSettings() {
+    return restClient.get(API + "popper/manager", TableManagerSettings.class);
   }
 
-  public boolean saveArchiveManagerManagerSettings(ArchiveManagerDescriptor descriptor) throws Exception {
+  public boolean saveTableManagerSettings(TableManagerSettings descriptor) throws Exception {
     return restClient.post(API + "popper/manager", descriptor, Boolean.class);
   }
 
@@ -196,8 +196,8 @@ public class VPinStudioClient implements ObservedPropertyChangeListener, Overlay
     return Arrays.asList(restClient.get(API + "vpa/game/" + gameId, VpaDescriptorRepresentation[].class));
   }
 
-  public boolean invalidateVpaCache(long id) {
-    return restClient.get(API + "vpa/invalidate/" + id, Boolean.class);
+  public boolean invalidateVpaCache(long sourceAdapterId) {
+    return restClient.get(API + "vpa/invalidate/" + sourceAdapterId, Boolean.class);
   }
 
   public String uploadVpa(File file, int repositoryId, FileUploadProgressListener listener) throws Exception {

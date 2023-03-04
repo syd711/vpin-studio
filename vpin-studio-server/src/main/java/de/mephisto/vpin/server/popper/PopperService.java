@@ -1,7 +1,7 @@
 package de.mephisto.vpin.server.popper;
 
 import de.mephisto.vpin.commons.EmulatorType;
-import de.mephisto.vpin.restclient.ArchiveManagerDescriptor;
+import de.mephisto.vpin.restclient.TableManagerSettings;
 import de.mephisto.vpin.restclient.PinUPControl;
 import de.mephisto.vpin.restclient.PopperScreen;
 import de.mephisto.vpin.server.games.Game;
@@ -119,7 +119,7 @@ public class PopperService implements InitializingBean {
     }
   }
 
-  public boolean saveArchiveManager(ArchiveManagerDescriptor archiveManagerDescriptor) {
+  public boolean saveArchiveManager(TableManagerSettings archiveManagerDescriptor) {
     if (archiveManagerDescriptor.getPlaylistId() != -1) {
       pinUPConnector.enablePCGameEmulator();
       File file = systemService.getVPinStudioMenuExe();
@@ -135,8 +135,8 @@ public class PopperService implements InitializingBean {
   }
 
   @NonNull
-  public ArchiveManagerDescriptor getArchiveManagerDescriptor() {
-    ArchiveManagerDescriptor descriptor = new ArchiveManagerDescriptor();
+  public TableManagerSettings getArchiveManagerDescriptor() {
+    TableManagerSettings descriptor = new TableManagerSettings();
     File file = systemService.getVPinStudioMenuExe();
     Game game = pinUPConnector.getGameByFilename(file.getAbsolutePath());
     if (game != null) {

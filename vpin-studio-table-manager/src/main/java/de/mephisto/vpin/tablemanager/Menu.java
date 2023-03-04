@@ -1,7 +1,7 @@
 package de.mephisto.vpin.tablemanager;
 
-import de.mephisto.vpin.tablemanager.states.StateMananger;
 import de.mephisto.vpin.restclient.VPinStudioClient;
+import de.mephisto.vpin.tablemanager.states.StateMananger;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Rectangle2D;
@@ -24,6 +24,8 @@ public class Menu extends Application {
 
   public static VPinStudioClient client;
 
+  private final static boolean PRODUCTION_USE = false;
+
   public static void main(String[] args) {
     launch(args);
   }
@@ -40,15 +42,26 @@ public class Menu extends Application {
       FXMLLoader loader = new FXMLLoader(MenuController.class.getResource("menu-main.fxml"));
       Parent root = loader.load();
 
+      Scene scene = null;
 
-      Scene scene = new Scene(root, UIDefaults.SCREEN_WIDTH, 1000);
+      if(PRODUCTION_USE) {
+        root.setRotate(-90);
+        scene = new Scene(root, 1000, UIDefaults.SCREEN_WIDTH);
+        stage.setY((screenBounds.getWidth() / 2) - (UIDefaults.SCREEN_WIDTH / 2));
+        stage.setX((screenBounds.getHeight() / 2) - (1000 / 2));
+      }
+      else {
+        scene = new Scene(root, UIDefaults.SCREEN_WIDTH, 1000);
+        stage.setX((screenBounds.getWidth() / 2) - (UIDefaults.SCREEN_WIDTH / 2));
+        stage.setY((screenBounds.getHeight() / 2) - (1000 / 2));
+      }
+
       scene.setFill(Color.TRANSPARENT);
 
       stage.setTitle(TITLE);
       stage.setScene(scene);
       stage.initStyle(StageStyle.TRANSPARENT);
-      stage.setX((screenBounds.getWidth() / 2) - (UIDefaults.SCREEN_WIDTH / 2));
-      stage.setY((screenBounds.getHeight() / 2) - (1000 / 2));
+
 
       MenuController controller = loader.getController();
       StateMananger.getInstance().init(controller);

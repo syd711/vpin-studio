@@ -1,7 +1,7 @@
 package de.mephisto.vpin.ui.preferences;
 
 import de.mephisto.vpin.commons.utils.WidgetFactory;
-import de.mephisto.vpin.restclient.ArchiveManagerDescriptor;
+import de.mephisto.vpin.restclient.TableManagerSettings;
 import de.mephisto.vpin.restclient.representations.PlaylistRepresentation;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.util.Dialogs;
@@ -25,7 +25,7 @@ public class TableManagerPreferencesController implements Initializable {
   @FXML
   private ComboBox<PlaylistRepresentation> playlistCombo;
 
-  private ArchiveManagerDescriptor archiveManagerSettings;
+  private TableManagerSettings archiveManagerSettings;
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -35,7 +35,7 @@ public class TableManagerPreferencesController implements Initializable {
     this.playlistCombo.setItems(data);
 
 
-    archiveManagerSettings = client.getArchiveManagerSettings();
+    archiveManagerSettings = client.getTableManagerSettings();
     if (archiveManagerSettings.getPlaylistId() != -1) {
       for (PlaylistRepresentation playlist : playlists) {
         if (playlist != null && playlist.getId() == archiveManagerSettings.getPlaylistId()) {
@@ -62,7 +62,7 @@ public class TableManagerPreferencesController implements Initializable {
     archiveManagerSettings.setPlaylistId(playlist == null ? -1 : playlist.getId());
 
     try {
-      client.saveArchiveManagerManagerSettings(archiveManagerSettings);
+      client.saveTableManagerSettings(archiveManagerSettings);
     } catch (Exception e) {
       WidgetFactory.showAlert(Studio.stage, "Failed to update archive manager: " + e.getMessage());
     }

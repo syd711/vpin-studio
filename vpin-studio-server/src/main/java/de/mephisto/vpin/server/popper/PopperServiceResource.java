@@ -1,9 +1,8 @@
 package de.mephisto.vpin.server.popper;
 
-import de.mephisto.vpin.restclient.ArchiveManagerDescriptor;
+import de.mephisto.vpin.restclient.TableManagerSettings;
 import de.mephisto.vpin.restclient.PinUPControl;
 import de.mephisto.vpin.restclient.PopperScreen;
-import de.mephisto.vpin.server.games.Game;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,12 +39,12 @@ public class PopperServiceResource {
   }
 
   @PostMapping("/manager")
-  public boolean saveArchiveManager(@RequestBody ArchiveManagerDescriptor descriptor) {
+  public boolean saveArchiveManager(@RequestBody TableManagerSettings descriptor) {
     return popperService.saveArchiveManager(descriptor);
   }
 
   @GetMapping("/manager")
-  public ArchiveManagerDescriptor getArchiveManagerDescriptor() {
+  public TableManagerSettings getArchiveManagerDescriptor() {
     return popperService.getArchiveManagerDescriptor();
   }
 

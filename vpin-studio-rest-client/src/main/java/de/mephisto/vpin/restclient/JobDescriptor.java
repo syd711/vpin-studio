@@ -75,7 +75,7 @@ public class JobDescriptor {
   }
 
   public void execute(VPinStudioClient client) {
-
+    //only for client jobs
   }
 
   @Override

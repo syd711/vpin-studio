@@ -1,7 +1,11 @@
 package de.mephisto.vpin.tablemanager.states;
 
+import de.mephisto.vpin.restclient.JobDescriptor;
+import de.mephisto.vpin.tablemanager.JobListener;
 import de.mephisto.vpin.tablemanager.Menu;
 import de.mephisto.vpin.tablemanager.MenuController;
+import de.mephisto.vpin.tablemanager.TableManagerJobPoller;
+import javafx.application.Platform;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
@@ -9,7 +13,7 @@ import javafx.util.Duration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class StateMananger {
+public class StateMananger implements JobListener {
   private final static Logger LOG = LoggerFactory.getLogger(StateMananger.class);
 
   private final MediaPlayer navPlayer;
@@ -26,6 +30,9 @@ public class StateMananger {
   }
 
   private StateMananger() {
+    TableManagerJobPoller.getInstance().addJobListener(this);
+    Menu.client.invalidateVpaCache(-1); //invalidate local file system
+
     String s = Menu.class.getResource("select.mp3").toExternalForm();
     System.out.println(s);
     Media media = new Media(Menu.class.getResource("select.mp3").toExternalForm());
@@ -99,5 +106,24 @@ public class StateMananger {
         break;
       }
     }
+  }
+
+  public void waitForJobAndGoBack() {
+    this.setInputBlocked(true);
+    TableManagerJobPoller.getInstance().setPolling();
+  }
+
+  @Override
+  public void updated(JobDescriptor descriptor) {
+  }
+
+  @Override
+  public void finished(JobDescriptor descriptor) {
+    LOG.info("StateManager received finish job event of " + descriptor);
+    this.setInputBlocked(false);
+
+    Platform.runLater(() -> {
+      this.activeState = activeState.back();
+    });
   }
 }
