@@ -19,6 +19,9 @@ import java.io.IOException;
 public class Menu extends Application {
   private final static Logger LOG = LoggerFactory.getLogger(Menu.class);
 
+  //do not change this title as it is used in popper as launch parameter
+  public static final String TITLE = "VPin Studio Menu";
+
   public static VPinStudioClient client;
 
   public static void main(String[] args) {
@@ -41,7 +44,7 @@ public class Menu extends Application {
       Scene scene = new Scene(root, UIDefaults.SCREEN_WIDTH, 1000);
       scene.setFill(Color.TRANSPARENT);
 
-      stage.setTitle("VPin Studio Menu");
+      stage.setTitle(TITLE);
       stage.setScene(scene);
       stage.initStyle(StageStyle.TRANSPARENT);
       stage.setX((screenBounds.getWidth() / 2) - (UIDefaults.SCREEN_WIDTH / 2));

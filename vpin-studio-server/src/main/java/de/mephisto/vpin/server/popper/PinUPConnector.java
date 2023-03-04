@@ -1,5 +1,6 @@
 package de.mephisto.vpin.server.popper;
 
+import de.mephisto.vpin.commons.EmulatorType;
 import de.mephisto.vpin.restclient.PinUPControl;
 import de.mephisto.vpin.restclient.PopperScreen;
 import de.mephisto.vpin.restclient.VpaManifest;
@@ -319,6 +320,15 @@ public class PinUPConnector implements InitializingBean {
     return -1;
   }
 
+  public boolean deleteGame(String name) {
+    Game gameByFilename = getGameByFilename(name);
+    if(gameByFilename != null) {
+      return deleteGame(gameByFilename.getId());
+    }
+    LOG.error("Failed to delete " + name + ": no game entry has been found for this name.");
+    return false;
+  }
+
   public boolean deleteGame(int id) {
     deleteFromPlaylists(id);
     deleteFromGames(id);
@@ -429,6 +439,7 @@ public class PinUPConnector implements InitializingBean {
         e.setId(rs.getInt("EMUID"));
         e.setName(rs.getString("EmuName"));
         e.setMediaDir(rs.getString("DirMedia"));
+        e.setVisible(rs.getInt("Visible") == 1);
         result.add(e);
       }
       rs.close();
@@ -439,6 +450,29 @@ public class PinUPConnector implements InitializingBean {
       this.disconnect(connect);
     }
     return result;
+  }
+
+
+  public void enablePCGameEmulator() {
+    List<Emulator> ems = this.getEmulators();
+    for (Emulator em : ems) {
+      if (em.getName().equals(EmulatorType.PC_GAMES) && em.isVisible()) {
+        return;
+      }
+    }
+
+    Connection connect = this.connect();
+    String sql = "UPDATE Emulators SET 'VISIBLE'=1 WHERE EmuName = '" + Emulator.PC_GAMES + "';";
+    try {
+      Statement stmt = connect.createStatement();
+      stmt.executeUpdate(sql);
+      stmt.close();
+      LOG.info("Enabled PC Games emulator for popper.");
+    } catch (Exception e) {
+      LOG.error("Failed to update script script [" + sql + "]: " + e.getMessage(), e);
+    } finally {
+      this.disconnect(connect);
+    }
   }
 
   @Nullable
@@ -726,6 +760,7 @@ public class PinUPConnector implements InitializingBean {
     }
     throw new UnsupportedOperationException("Failed to determine emulator id for '" + name + "'");
   }
+
 
   public void importManifest(Game game, VpaManifest manifest) {
     int id = game.getId();

@@ -6,10 +6,20 @@ public class Emulator {
   public final static String VISUAL_PINBALL_X = EmulatorType.VISUAL_PINBALL_X;
   public final static String PINBALL_FX3 = EmulatorType.PINBALL_FX3;
   public final static String FUTURE_PINBALL = EmulatorType.FUTURE_PINBALL;
+  public final static String PC_GAMES = EmulatorType.PC_GAMES;
 
   private String name;
   private int id;
   private String mediaDir;
+  private boolean visible;
+
+  public boolean isVisible() {
+    return visible;
+  }
+
+  public void setVisible(boolean visible) {
+    this.visible = visible;
+  }
 
   public String getName() {
     return name;

@@ -1,5 +1,6 @@
 package de.mephisto.vpin.server.popper;
 
+import de.mephisto.vpin.commons.EmulatorType;
 import de.mephisto.vpin.restclient.PinUPControl;
 import de.mephisto.vpin.restclient.PopperScreen;
 import de.mephisto.vpin.server.games.Game;
@@ -114,6 +115,20 @@ public class PopperService implements InitializingBean {
       WheelAugmenter augmenter = new WheelAugmenter(wheelIcon);
       augmenter.deAugment();
     }
+  }
+
+  public boolean installPopperMenu(int playlistId) {
+    pinUPConnector.enablePCGameEmulator();
+    File file = systemService.getVPinStudioMenuExe();
+    int newGameId = pinUPConnector.importGame(EmulatorType.PC_GAMES, SystemService.VPIN_STUDIO_MENU_NAME, file.getAbsolutePath(), SystemService.VPIN_STUDIO_MENU_NAME);
+    pinUPConnector.addToPlaylist(newGameId, playlistId);
+    return true;
+  }
+
+  public boolean uninstallPopperMenu() {
+    File file = systemService.getVPinStudioMenuExe();
+    pinUPConnector.deleteGame(file.getAbsolutePath());
+    return true;
   }
 
   @Override

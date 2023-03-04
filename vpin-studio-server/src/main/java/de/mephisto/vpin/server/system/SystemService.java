@@ -30,6 +30,7 @@ public class SystemService implements InitializingBean {
   private final static Logger LOG = LoggerFactory.getLogger(SystemService.class);
 
   public final static int SERVER_PORT = RestClient.PORT;
+  public final static String VPIN_STUDIO_MENU_NAME = "VPin Studio Menu";
 
   public static final String COMPETITION_BADGES = "competition-badges";
 
@@ -487,6 +488,10 @@ public class SystemService implements InitializingBean {
     } catch (Exception e) {
       LOG.error("Failed to start PinUP Popper again: " + e.getMessage(), e);
     }
+  }
+
+  public File getVPinStudioMenuExe() {
+    return new File("./VPin-Studio-Popper-Menu.exe");
   }
 
   static class StreamReader extends Thread {

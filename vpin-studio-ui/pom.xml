@@ -411,6 +411,7 @@
                                 <argument>-t7z</argument>
                                 <argument>VPin-Studio.zip</argument>
                                 <argument>VPin-Studio.exe</argument>
+                                <argument>VPin-Studio-Popper-Menu.exe</argument>
                             </arguments>
                         </configuration>
                     </execution>
