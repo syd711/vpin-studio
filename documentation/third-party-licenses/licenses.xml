@@ -152,7 +152,7 @@
     <dependency>
       <groupId>de.mephisto.vpin</groupId>
       <artifactId>vpin-connector-discord</artifactId>
-      <version>1.2.12</version>
+      <version>1.2.16</version>
       <licenses>
         <!-- No license information available. -->
       </licenses>
@@ -160,7 +160,7 @@
     <dependency>
       <groupId>de.mephisto.vpin</groupId>
       <artifactId>vpin-studio-commons</artifactId>
-      <version>1.2.12</version>
+      <version>1.2.16</version>
       <licenses>
         <!-- No license information available. -->
       </licenses>
@@ -168,7 +168,7 @@
     <dependency>
       <groupId>de.mephisto.vpin</groupId>
       <artifactId>vpin-studio-rest-client</artifactId>
-      <version>1.2.12</version>
+      <version>1.2.16</version>
       <licenses>
         <!-- No license information available. -->
       </licenses>
