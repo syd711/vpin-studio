@@ -20,11 +20,10 @@ public class Menu extends Application {
   private final static Logger LOG = LoggerFactory.getLogger(Menu.class);
 
   //do not change this title as it is used in popper as launch parameter
-  public static final String TITLE = "VPin Studio Table Manager";
 
   public static VPinStudioClient client;
 
-  private final static boolean PRODUCTION_USE = false;
+  private final static boolean PRODUCTION_USE = true;
 
   public static void main(String[] args) {
     launch(args);
@@ -46,19 +45,20 @@ public class Menu extends Application {
 
       if(PRODUCTION_USE) {
         root.setRotate(-90);
-        scene = new Scene(root, 1000, UIDefaults.SCREEN_WIDTH);
-        stage.setY((screenBounds.getWidth() / 2) - (UIDefaults.SCREEN_WIDTH / 2));
-        stage.setX((screenBounds.getHeight() / 2) - (1000 / 2));
+        root.setTranslateY(0);
+        root.setTranslateX(0);
+        scene = new Scene(root, screenBounds.getWidth(), screenBounds.getHeight());
+        stage.setY(0);
+        stage.setX(screenBounds.getWidth() / 2 / 2);
       }
       else {
-        scene = new Scene(root, UIDefaults.SCREEN_WIDTH, 1000);
-        stage.setX((screenBounds.getWidth() / 2) - (UIDefaults.SCREEN_WIDTH / 2));
+        scene = new Scene(root, screenBounds.getWidth(), 1000);
+        stage.setX((screenBounds.getWidth() / 2) - (screenBounds.getWidth() / 2));
         stage.setY((screenBounds.getHeight() / 2) - (1000 / 2));
       }
 
       scene.setFill(Color.TRANSPARENT);
-
-      stage.setTitle(TITLE);
+      stage.setTitle(de.mephisto.vpin.commons.fx.UIDefaults.MANAGER_TITLE);
       stage.setScene(scene);
       stage.initStyle(StageStyle.TRANSPARENT);
 

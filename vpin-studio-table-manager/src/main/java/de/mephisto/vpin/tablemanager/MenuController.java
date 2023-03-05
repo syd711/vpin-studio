@@ -2,8 +2,12 @@ package de.mephisto.vpin.tablemanager;
 
 import de.mephisto.vpin.commons.utils.FXUtil;
 import de.mephisto.vpin.restclient.PopperScreen;
-import de.mephisto.vpin.restclient.representations.*;
+import de.mephisto.vpin.restclient.representations.GameMediaItemRepresentation;
+import de.mephisto.vpin.restclient.representations.GameMediaRepresentation;
+import de.mephisto.vpin.restclient.representations.GameRepresentation;
+import de.mephisto.vpin.restclient.representations.VpaDescriptorRepresentation;
 import de.mephisto.vpin.tablemanager.states.StateMananger;
+import javafx.animation.Transition;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -26,10 +30,11 @@ import java.util.Base64;
 import java.util.List;
 import java.util.ResourceBundle;
 
+import static de.mephisto.vpin.tablemanager.UIDefaults.MAX_ROW_ITEMS;
+
 public class MenuController implements Initializable {
   private final static Logger LOG = LoggerFactory.getLogger(MenuController.class);
-  public static final int THUMBNAIL_SIZE = 440;
-  public static final int SCROLL_OFFSET = 220;
+
 
   @FXML
   private Node greenPanel;
@@ -60,6 +65,9 @@ public class MenuController implements Initializable {
 
   private boolean installToggle = true;
   private int selectionIndex = 0;
+  private List<VpaDescriptorRepresentation> vpaDescriptors;
+  private List<GameRepresentation> games;
+  private List<?> activeModels;
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -85,16 +93,25 @@ public class MenuController implements Initializable {
   }
 
   public void enterInstall() {
+    StateMananger.getInstance().setInputBlocked(true);
     resetGameRow();
     greenLabel.setText("Install Table");
     TransitionUtil.createOutFader(bluePanel).play();
     TransitionUtil.createOutFader(greenPanel).play();
     TransitionUtil.createInFader(gameRow).play();
+    TransitionUtil.createInFader(loadMask).play();
 
+    new Thread(() -> {
+      vpaDescriptors = Menu.client.getVpaDescriptors();
+      activeModels = vpaDescriptors; //TODO mpf
+      Platform.runLater(() -> {
+        loadArchivedItems();
+        initGameBarSelection();
 
-    List<VpaDescriptorRepresentation> vpaDescriptors = Menu.client.getVpaDescriptors();
-    loadArchivedItems(vpaDescriptors);
-    initGameBarSelection();
+        TransitionUtil.createOutFader(loadMask).play();
+        StateMananger.getInstance().setInputBlocked(false);
+      });
+    }).start();
   }
 
   public void enterArchive() {
@@ -109,9 +126,10 @@ public class MenuController implements Initializable {
     setLoadLabel("Loading...");
 
     new Thread(() -> {
-      List<GameRepresentation> games = Menu.client.getGames();
+      games = Menu.client.getGames();
+      activeModels = games; //TODO mpf
       Platform.runLater(() -> {
-        loadGameItems(games);
+        loadGameItems();
         initGameBarSelection();
 
         TransitionUtil.createOutFader(loadMask).play();
@@ -143,7 +161,7 @@ public class MenuController implements Initializable {
   }
 
   public void enterMainMenu() {
-    if(this.installToggle) {
+    if (this.installToggle) {
       enterMainWithInstall();
     }
     else {
@@ -223,37 +241,58 @@ public class MenuController implements Initializable {
       selectionIndex--;
     }
     else {
-      if (selectionIndex == (gameRow.getChildren().size() - 1)) {
+      if (selectionIndex == (activeModels.size() - 1)) {
         return;
       }
       selectionIndex++;
     }
 
     Node node = gameRow.getChildren().get(oldIndex);
-    TransitionUtil.createTranslateByXTransition(node, 60, left ? SCROLL_OFFSET : -SCROLL_OFFSET).play();
-    TransitionUtil.createScaleTransition(node, UIDefaults.SELECTION_SCALE_DEFAULT, 100).play();
+    TransitionUtil.createTranslateByXTransition(node, 60, left ? UIDefaults.SCROLL_OFFSET : -UIDefaults.SCROLL_OFFSET).play();
+    TransitionUtil.createScaleTransition(node, UIDefaults.SELECTION_SCALE_DEFAULT, 60).play();
     TransitionUtil.createTranslateByYTransition(node, 60, UIDefaults.SELECTION_HEIGHT_OFFSET).play();
 
-    TransitionUtil.createTranslateByXTransition(gameRow, 60, left ? THUMBNAIL_SIZE : -THUMBNAIL_SIZE).play();
+    //scroll whole game row
+    TransitionUtil.createTranslateByXTransition(gameRow, 60, left ? UIDefaults.THUMBNAIL_SIZE : -UIDefaults.THUMBNAIL_SIZE).play();
 
     node = gameRow.getChildren().get(selectionIndex);
-    TransitionUtil.createTranslateByXTransition(node, 60, left ? SCROLL_OFFSET : -SCROLL_OFFSET).play();
-    TransitionUtil.createScaleTransition(node, UIDefaults.SELECTION_SCALE, 100).play();
+    TransitionUtil.createTranslateByXTransition(node, 60, left ? UIDefaults.SCROLL_OFFSET : -UIDefaults.SCROLL_OFFSET).play();
+    Transition t = TransitionUtil.createScaleTransition(node, UIDefaults.SELECTION_SCALE, 60);
     TransitionUtil.createTranslateByYTransition(node, 60, -UIDefaults.SELECTION_HEIGHT_OFFSET).play();
+
+    t.setOnFinished(event -> {
+//      //check if replacing is required
+//      if (this.activeModels.size() > MAX_ROW_ITEMS) {
+//        if (left) {
+//          Object o = activeModels.get(selectionIndex + MAX_ROW_ITEMS - 1);
+//          BorderPane item = createItemFor(o);
+//          gameRow.getChildren().add(item);
+//        }
+//        else {
+//          Object o = activeModels.get(selectionIndex + MAX_ROW_ITEMS - 1);
+//          BorderPane item = createItemFor(o);
+//          gameRow.getChildren().add(item);
+//        }
+//      }
+    });
+    t.play();
   }
 
+  /**
+   * Centers the row start back to the center.
+   */
   private void initGameBarSelection() {
     Pane node = (Pane) gameRow.getChildren().get(0);
-    int size = gameRow.getChildren().size() * THUMBNAIL_SIZE;
-    if(size < UIDefaults.SCREEN_WIDTH) {
+    int size = gameRow.getChildren().size() * UIDefaults.THUMBNAIL_SIZE;
+    if (size < UIDefaults.SCREEN_WIDTH) {
       gameRow.setTranslateX(UIDefaults.SCREEN_WIDTH / 2);
     }
     else {
-      gameRow.setTranslateX(size/2);
+      gameRow.setTranslateX(size / 2);
     }
 
     BorderPane child = (BorderPane) gameRow.getChildren().get(selectionIndex);
-    TransitionUtil.createTranslateByXTransition(child, 60, -SCROLL_OFFSET).play();
+    TransitionUtil.createTranslateByXTransition(child, 60, -UIDefaults.SCROLL_OFFSET).play();
     TransitionUtil.createScaleTransition(child, UIDefaults.SELECTION_SCALE, 100).play();
     TransitionUtil.createTranslateByYTransition(node, 60, -UIDefaults.SELECTION_HEIGHT_OFFSET).play();
   }
@@ -263,62 +302,81 @@ public class MenuController implements Initializable {
     gameRow.setTranslateX(0);
   }
 
-  private void loadArchivedItems(List<VpaDescriptorRepresentation> vpaDescriptors) {
+  private void loadArchivedItems() {
     gameRow.getChildren().clear();
     selectionIndex = 0;
     for (VpaDescriptorRepresentation vpaDescriptor : vpaDescriptors) {
+      gameRow.getChildren().add(createItemFor(vpaDescriptor));
+//      if (gameRow.getChildren().size() == MAX_ROW_ITEMS) {
+//        break;
+//      }
+    }
+  }
+
+  private void loadGameItems() {
+    gameRow.getChildren().clear();
+    selectionIndex = 0;
+
+    for (GameRepresentation game : games) {
+      gameRow.getChildren().add(createItemFor(game));
+//      if (gameRow.getChildren().size() == MAX_ROW_ITEMS) {
+//        break;
+//      }
+    }
+  }
+
+  private BorderPane createItemFor(Object o) {
+    Image wheel = null;
+    String text = null;
+    if (o instanceof GameRepresentation) {
+      GameRepresentation game = (GameRepresentation) o;
+      GameMediaRepresentation gameMedia = game.getGameMedia();
+      GameMediaItemRepresentation item = gameMedia.getItem(PopperScreen.Wheel);
+      if (item == null) {
+        text = game.getGameDisplayName();
+        wheel = new Image(Menu.class.getResourceAsStream("avatar-blank.png"));
+      }
+      else {
+        ByteArrayInputStream gameMediaItem = Menu.client.getGameMediaItem(game.getId(), PopperScreen.Wheel);
+        wheel = new Image(gameMediaItem);
+      }
+    }
+    else if (o instanceof VpaDescriptorRepresentation) {
+      VpaDescriptorRepresentation vpaDescriptor = (VpaDescriptorRepresentation) o;
       String icon = vpaDescriptor.getManifest().getIcon();
-      Image wheel = null;
       if (icon == null) {
+        text = vpaDescriptor.getManifest().getGameDisplayName();
         wheel = new Image(Menu.class.getResourceAsStream("avatar-blank.png"));
       }
       else {
         byte[] decode = Base64.getDecoder().decode(icon);
         wheel = new Image(new ByteArrayInputStream(decode));
       }
-      gameRow.getChildren().add(createItem(wheel, vpaDescriptor, null));
     }
+    else {
+      throw new UnsupportedOperationException("Invalid item");
+    }
+
+    return createItem(wheel, text, o);
   }
 
-  private void loadGameItems(List<GameRepresentation> games) {
-    gameRow.getChildren().clear();
-    selectionIndex = 0;
-
-    for (GameRepresentation game : games) {
-      GameMediaRepresentation gameMedia = game.getGameMedia();
-      GameMediaItemRepresentation item = gameMedia.getItem(PopperScreen.Wheel);
-      Image wheel = null;
-      String text= null;
-      if (item != null) {
-
-        ByteArrayInputStream gameMediaItem = Menu.client.getGameMediaItem(game.getId(), PopperScreen.Wheel);
-        wheel = new Image(gameMediaItem);
-      }
-      else {
-        text = game.getGameDisplayName();
-        wheel = new Image(Menu.class.getResourceAsStream("avatar-blank.png"));
-      }
-      gameRow.getChildren().add(createItem(wheel, game, text));
-    }
-  }
-
-  private BorderPane createItem(Image image, Object data, String text) {
+  private BorderPane createItem(Image image, String text, Object data) {
     BorderPane borderPane = new BorderPane();
     borderPane.setUserData(data);
     ImageView imageView = new ImageView();
     imageView.setPreserveRatio(true);
-    imageView.setFitWidth(THUMBNAIL_SIZE);
-    imageView.setFitHeight(THUMBNAIL_SIZE);
+    imageView.setFitWidth(UIDefaults.THUMBNAIL_SIZE);
+    imageView.setFitHeight(UIDefaults.THUMBNAIL_SIZE);
 
     imageView.setImage(image);
     StackPane stackPane = new StackPane();
     stackPane.getChildren().add(imageView);
 
-    if(text != null && text.length() > 16) {
-      text = text.substring(0, 16) +  "...";
+    if (text != null && text.length() > 16) {
+      text = text.substring(0, 16) + "...";
     }
     Label label = new Label(text);
-    label.setStyle("-fx-font-size: 36px;-fx-text-fill: #444444;");
+    label.setStyle("-fx-font-size: 22px;-fx-text-fill: #444444;");
     stackPane.getChildren().add(label);
     borderPane.setCenter(stackPane);
     borderPane.setCache(true);
