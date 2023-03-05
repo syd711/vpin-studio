@@ -7,7 +7,6 @@ import de.mephisto.vpin.restclient.representations.GameMediaRepresentation;
 import de.mephisto.vpin.restclient.representations.GameRepresentation;
 import de.mephisto.vpin.restclient.representations.VpaDescriptorRepresentation;
 import de.mephisto.vpin.tablemanager.states.StateMananger;
-import javafx.animation.Transition;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -30,7 +29,7 @@ import java.util.Base64;
 import java.util.List;
 import java.util.ResourceBundle;
 
-import static de.mephisto.vpin.tablemanager.UIDefaults.MAX_ROW_ITEMS;
+import static de.mephisto.vpin.tablemanager.UIDefaults.*;
 
 public class MenuController implements Initializable {
   private final static Logger LOG = LoggerFactory.getLogger(MenuController.class);
@@ -144,8 +143,8 @@ public class MenuController implements Initializable {
     blueLabel.setText("Archive Table");
     resetGameRow();
     TransitionUtil.createOutFader(gameRow).play();
-    TransitionUtil.createOutFader(bluePanel).play();
     TransitionUtil.createOutFader(redPanel).play();
+    TransitionUtil.createOutFader(bluePanel).play();
     TransitionUtil.createInFader(greenPanel).play();
   }
 
@@ -191,7 +190,7 @@ public class MenuController implements Initializable {
   public void enterArchiving() {
     greenLabel.setText("");
     blueLabel.setText("");
-    setLoadLabel("Archiving, please wait...");
+    setLoadLabel("Archiving Table...");
     TransitionUtil.createOutFader(greenPanel).play();
     TransitionUtil.createInFader(bluePanel, 0.9, 100).play();
     TransitionUtil.createInFader(loadMask).play();
@@ -232,6 +231,10 @@ public class MenuController implements Initializable {
   }
 
   private void scroll(boolean left) {
+    if(gameRow.getChildren().isEmpty()) {
+      return;
+    }
+
     int oldIndex = selectionIndex;
     if (left) {
       if (selectionIndex <= 0) {
@@ -247,59 +250,45 @@ public class MenuController implements Initializable {
       selectionIndex++;
     }
 
-    Node node = gameRow.getChildren().get(oldIndex);
-    TransitionUtil.createTranslateByXTransition(node, 60, left ? UIDefaults.SCROLL_OFFSET : -UIDefaults.SCROLL_OFFSET).play();
-    TransitionUtil.createScaleTransition(node, UIDefaults.SELECTION_SCALE_DEFAULT, 60).play();
-    TransitionUtil.createTranslateByYTransition(node, 60, UIDefaults.SELECTION_HEIGHT_OFFSET).play();
+    final Node node = gameRow.getChildren().get(oldIndex);
+    TransitionUtil.createTranslateByXTransition(node, SELECTION_SCALE_DURATION, left ? UIDefaults.SCROLL_OFFSET : -UIDefaults.SCROLL_OFFSET).play();
+    TransitionUtil.createScaleTransition(node, UIDefaults.SELECTION_SCALE_DEFAULT, SELECTION_SCALE_DURATION).play();
+    TransitionUtil.createTranslateByYTransition(node, SELECTION_SCALE_DURATION, UIDefaults.SELECTION_HEIGHT_OFFSET).play();
 
     //scroll whole game row
-    TransitionUtil.createTranslateByXTransition(gameRow, 60, left ? UIDefaults.THUMBNAIL_SIZE : -UIDefaults.THUMBNAIL_SIZE).play();
+    TransitionUtil.createTranslateByXTransition(gameRow, SELECTION_SCALE_DURATION, left ? UIDefaults.THUMBNAIL_SIZE : -UIDefaults.THUMBNAIL_SIZE).play();
 
-    node = gameRow.getChildren().get(selectionIndex);
-    TransitionUtil.createTranslateByXTransition(node, 60, left ? UIDefaults.SCROLL_OFFSET : -UIDefaults.SCROLL_OFFSET).play();
-    Transition t = TransitionUtil.createScaleTransition(node, UIDefaults.SELECTION_SCALE, 60);
-    TransitionUtil.createTranslateByYTransition(node, 60, -UIDefaults.SELECTION_HEIGHT_OFFSET).play();
-
-    t.setOnFinished(event -> {
-//      //check if replacing is required
-//      if (this.activeModels.size() > MAX_ROW_ITEMS) {
-//        if (left) {
-//          Object o = activeModels.get(selectionIndex + MAX_ROW_ITEMS - 1);
-//          BorderPane item = createItemFor(o);
-//          gameRow.getChildren().add(item);
-//        }
-//        else {
-//          Object o = activeModels.get(selectionIndex + MAX_ROW_ITEMS - 1);
-//          BorderPane item = createItemFor(o);
-//          gameRow.getChildren().add(item);
-//        }
-//      }
-    });
-    t.play();
+    final Node updatedNode = gameRow.getChildren().get(selectionIndex);
+    TransitionUtil.createTranslateByXTransition(updatedNode, SELECTION_SCALE_DURATION, left ? UIDefaults.SCROLL_OFFSET : -UIDefaults.SCROLL_OFFSET).play();
+    TransitionUtil.createScaleTransition(updatedNode, UIDefaults.SELECTION_SCALE, SELECTION_SCALE_DURATION).play();
+    TransitionUtil.createTranslateByYTransition(updatedNode, SELECTION_SCALE_DURATION, -UIDefaults.SELECTION_HEIGHT_OFFSET).play();
   }
 
   /**
    * Centers the row start back to the center.
    */
   private void initGameBarSelection() {
+    if(gameRow.getChildren().isEmpty()) {
+      return;
+    }
+
     Pane node = (Pane) gameRow.getChildren().get(0);
     int size = gameRow.getChildren().size() * UIDefaults.THUMBNAIL_SIZE;
     if (size < UIDefaults.SCREEN_WIDTH) {
-      gameRow.setTranslateX(UIDefaults.SCREEN_WIDTH / 2);
+      gameRow.setTranslateX(UIDefaults.SCREEN_WIDTH / 2 + UIDefaults.THUMBNAIL_SIZE + SCROLL_OFFSET);
     }
     else {
       gameRow.setTranslateX(size / 2);
     }
 
     BorderPane child = (BorderPane) gameRow.getChildren().get(selectionIndex);
-    TransitionUtil.createTranslateByXTransition(child, 60, -UIDefaults.SCROLL_OFFSET).play();
-    TransitionUtil.createScaleTransition(child, UIDefaults.SELECTION_SCALE, 100).play();
-    TransitionUtil.createTranslateByYTransition(node, 60, -UIDefaults.SELECTION_HEIGHT_OFFSET).play();
+    TransitionUtil.createTranslateByXTransition(child, SELECTION_SCALE_DURATION, -UIDefaults.SCROLL_OFFSET).play();
+    TransitionUtil.createScaleTransition(child, UIDefaults.SELECTION_SCALE, SELECTION_SCALE_DURATION).play();
+    TransitionUtil.createTranslateByYTransition(node, SELECTION_SCALE_DURATION, -UIDefaults.SELECTION_HEIGHT_OFFSET).play();
   }
 
   public void resetGameRow() {
     gameRow.getChildren().removeAll(gameRow.getChildren());
-    gameRow.setTranslateX(0);
   }
 
   private void loadArchivedItems() {
@@ -307,21 +296,31 @@ public class MenuController implements Initializable {
     selectionIndex = 0;
     for (VpaDescriptorRepresentation vpaDescriptor : vpaDescriptors) {
       gameRow.getChildren().add(createItemFor(vpaDescriptor));
-//      if (gameRow.getChildren().size() == MAX_ROW_ITEMS) {
-//        break;
-//      }
     }
+
+    if(!vpaDescriptors.isEmpty()) {
+      while (gameRow.getChildren().size() * UIDefaults.THUMBNAIL_SIZE < UIDefaults.SCREEN_WIDTH * 2) {
+        Label label = new Label();
+        label.setMinWidth(THUMBNAIL_SIZE);
+        gameRow.getChildren().add(label);
+      }
+    }
+
   }
 
   private void loadGameItems() {
     gameRow.getChildren().clear();
     selectionIndex = 0;
-
     for (GameRepresentation game : games) {
       gameRow.getChildren().add(createItemFor(game));
-//      if (gameRow.getChildren().size() == MAX_ROW_ITEMS) {
-//        break;
-//      }
+    }
+
+    if(!games.isEmpty()) {
+      while (gameRow.getChildren().size() * UIDefaults.THUMBNAIL_SIZE < UIDefaults.SCREEN_WIDTH * 2) {
+        Label label = new Label();
+        label.setMinWidth(THUMBNAIL_SIZE);
+        gameRow.getChildren().add(label);
+      }
     }
   }
 
@@ -380,7 +379,7 @@ public class MenuController implements Initializable {
     stackPane.getChildren().add(label);
     borderPane.setCenter(stackPane);
     borderPane.setCache(true);
-    blueLabel.setCacheHint(CacheHint.SCALE_AND_ROTATE);
+    borderPane.setCacheHint(CacheHint.SCALE_AND_ROTATE);
     return borderPane;
   }
 

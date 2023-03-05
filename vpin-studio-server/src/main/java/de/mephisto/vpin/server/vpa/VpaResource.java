@@ -180,6 +180,8 @@ public class VpaResource {
     representation.setId(source.getId());
     representation.setLogin(source.getLogin());
     representation.setPassword(source.getPassword());
+    representation.setEnabled(source.isEnabled());
+    representation.setSettings(source.getSettings());
     representation.setAuthenticationType(source.getAuthenticationType());
     return representation;
   }

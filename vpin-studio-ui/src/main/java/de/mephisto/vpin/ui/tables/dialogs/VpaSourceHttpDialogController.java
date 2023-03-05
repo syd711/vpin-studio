@@ -73,6 +73,8 @@ public class VpaSourceHttpDialogController implements Initializable, DialogContr
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
     source = new VpaSourceRepresentation();
+    source.setSettings(null);
+    source.setEnabled(true);
     loginField.setDisable(true);
     passwordField.setDisable(true);
 

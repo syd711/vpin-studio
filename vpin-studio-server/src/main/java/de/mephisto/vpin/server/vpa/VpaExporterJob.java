@@ -75,6 +75,16 @@ public class VpaExporterJob implements Job {
     objectMapper.enable(SerializationFeature.ORDER_MAP_ENTRIES_BY_KEYS);
   }
 
+  @Override
+  public double getProgress() {
+    return 0;
+  }
+
+  @Override
+  public String getStatus() {
+    return null;
+  }
+
   public boolean execute() {
     String baseName = FilenameUtils.getBaseName(manifest.getGameFileName());
     File target = new File(targetFolder, baseName + ".vpa");

@@ -7,8 +7,25 @@ public class VpaSourceRepresentation {
   private String location;
   private String login;
   private String password;
-
+  private String settings;
+  private boolean enabled;
   private String authenticationType;
+
+  public String getSettings() {
+    return settings;
+  }
+
+  public void setSettings(String settings) {
+    this.settings = settings;
+  }
+
+  public boolean isEnabled() {
+    return enabled;
+  }
+
+  public void setEnabled(boolean enabled) {
+    this.enabled = enabled;
+  }
 
   public String getAuthenticationType() {
     return authenticationType;

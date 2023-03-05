@@ -18,6 +18,12 @@ public class JobsResource {
 
   @GetMapping
   public List<JobDescriptor> status() {
-    return JobQueue.getInstance().getElements();
+    List<JobDescriptor> elements = JobQueue.getInstance().getElements();
+    //TODO mpf
+    for (JobDescriptor descriptor : elements) {
+      descriptor.setStatus(descriptor.getJob().getStatus());
+      descriptor.setProgress(descriptor.getJob().getProgress());
+    }
+    return elements;
   }
 }

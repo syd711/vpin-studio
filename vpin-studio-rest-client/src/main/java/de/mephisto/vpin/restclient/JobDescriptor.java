@@ -8,6 +8,8 @@ public class JobDescriptor {
   private String title;
   private String description;
   private JobType jobType;
+  private double progress;
+  private String status;
 
   @JsonIgnore
   private Job job;
@@ -19,6 +21,22 @@ public class JobDescriptor {
   public JobDescriptor(JobType jobType, String uuid) {
     this.jobType = jobType;
     this.uuid = uuid;
+  }
+
+  public double getProgress() {
+    return progress;
+  }
+
+  public void setProgress(double progress) {
+    this.progress = progress;
+  }
+
+  public String getStatus() {
+    return status;
+  }
+
+  public void setStatus(String status) {
+    this.status = status;
   }
 
   public void setJobType(JobType jobType) {

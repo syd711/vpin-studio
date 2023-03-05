@@ -7,6 +7,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
@@ -23,7 +24,7 @@ public class Menu extends Application {
 
   public static VPinStudioClient client;
 
-  private final static boolean PRODUCTION_USE = true;
+  private final static boolean PRODUCTION_USE = false;
 
   public static void main(String[] args) {
     launch(args);
@@ -37,6 +38,8 @@ public class Menu extends Application {
 
   public static void loadUpdater(Stage stage) {
     try {
+      stage.getIcons().add(new Image(Menu.class.getResourceAsStream("logo-64.png")));
+
       Rectangle2D screenBounds = Screen.getPrimary().getBounds();
       FXMLLoader loader = new FXMLLoader(MenuController.class.getResource("menu-main.fxml"));
       Parent root = loader.load();

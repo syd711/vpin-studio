@@ -137,6 +137,8 @@ public class VpaService implements InitializingBean {
     vpaSource.setAuthenticationType(representation.getAuthenticationType());
     vpaSource.setLogin(representation.getLogin());
     vpaSource.setPassword(representation.getPassword());
+    vpaSource.setEnabled(representation.isEnabled());
+    vpaSource.setSettings(representation.getSettings());
 
     VpaSource updatedSource = vpaSourceRepository.saveAndFlush(vpaSource);
     adapterCache.remove(updatedSource.getId());

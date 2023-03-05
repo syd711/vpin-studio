@@ -38,7 +38,7 @@
                         </ImageView>
                         <Label fx:id="blueLabel" text="Archive Table" textAlignment="CENTER" wrapText="true">
                            <font>
-                              <Font name="Impact" size="96.0" />
+                              <Font name="Impact" size="88.0" />
                            </font>
                         </Label>
                      </children>
@@ -56,7 +56,7 @@
                         </ImageView>
                         <Label fx:id="redLabel" textAlignment="CENTER" wrapText="true">
                            <font>
-                              <Font name="Impact" size="96.0" />
+                              <Font name="Impact" size="88.0" />
                            </font>
                         </Label>
                      </children>
@@ -74,20 +74,20 @@
                         </ImageView>
                         <Label fx:id="greenLabel" text="Install Table" textAlignment="CENTER" wrapText="true">
                            <font>
-                              <Font name="Impact" size="96.0" />
+                              <Font name="Impact" size="88.0" />
                            </font>
                         </Label>
                      </children>
                   </StackPane>
                </center>
             </BorderPane>
-            <BorderPane fx:id="loadMask" maxHeight="800.0" maxWidth="800.0" opacity="0.0" styleClass="loading-selector">
+            <BorderPane fx:id="loadMask" maxHeight="400.0" maxWidth="400.0" opacity="0.0" styleClass="loading-selector">
                <center>
                   <StackPane BorderPane.alignment="CENTER">
                      <children>
                         <Label fx:id="loadLabel" text="Loading..." textAlignment="CENTER" wrapText="true">
                            <font>
-                              <Font name="Impact" size="96.0" />
+                              <Font name="Impact" size="88.0" />
                            </font>
                         </Label>
                         <ProgressIndicator minHeight="400.0" minWidth="400.0" />

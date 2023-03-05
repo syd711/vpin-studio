@@ -33,6 +33,26 @@ public class VpaSource {
 
   private String authenticationType;
 
+  private boolean enabled;
+
+  private String settings;
+
+  public boolean isEnabled() {
+    return enabled;
+  }
+
+  public void setEnabled(boolean enabled) {
+    this.enabled = enabled;
+  }
+
+  public String getSettings() {
+    return settings;
+  }
+
+  public void setSettings(String settings) {
+    this.settings = settings;
+  }
+
   public String getAuthenticationType() {
     return authenticationType;
   }

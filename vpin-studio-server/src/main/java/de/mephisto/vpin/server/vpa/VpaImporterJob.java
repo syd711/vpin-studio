@@ -58,6 +58,16 @@ public class VpaImporterJob implements Job {
   }
 
   @Override
+  public double getProgress() {
+    return 0;
+  }
+
+  @Override
+  public String getStatus() {
+    return null;
+  }
+
+  @Override
   public boolean execute() {
     try {
       LOG.info("Starting import of " + descriptor.getUuid());
