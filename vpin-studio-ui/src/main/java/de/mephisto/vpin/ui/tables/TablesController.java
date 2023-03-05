@@ -81,11 +81,13 @@ public class TablesController implements Initializable, StudioFXController, Stud
           NavigationController.setBreadCrumb(Arrays.asList("Tables"));
           tablesSideBarController.setVisible(true);
           repositorySideBarController.setVisible(false);
+          tableOverviewController.initSelection();
         }
         else {
           NavigationController.setBreadCrumb(Arrays.asList("Table Repository"));
           tablesSideBarController.setVisible(false);
           repositorySideBarController.setVisible(true);
+          repositoryController.initSelection();
         }
       });
     });

@@ -4,6 +4,7 @@ import de.mephisto.vpin.commons.VpaSourceType;
 import de.mephisto.vpin.commons.utils.FileUtils;
 import de.mephisto.vpin.commons.utils.ImageUtil;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
+import de.mephisto.vpin.restclient.representations.GameRepresentation;
 import de.mephisto.vpin.restclient.representations.VpaDescriptorRepresentation;
 import de.mephisto.vpin.restclient.representations.VpaSourceRepresentation;
 import de.mephisto.vpin.ui.NavigationController;
@@ -394,5 +395,12 @@ public class RepositoryController implements Initializable, StudioEventListener 
 
   public void setRootController(TablesController tablesController) {
     this.tablesController = tablesController;
+  }
+
+  public void initSelection() {
+    VpaDescriptorRepresentation vpa = tableView.getSelectionModel().getSelectedItem();
+    if(vpa != null) {
+      NavigationController.setBreadCrumb(Arrays.asList("Tables", vpa.getManifest().getGameDisplayName()));
+    }
   }
 }
