@@ -398,7 +398,7 @@
                 <version>1.4.0</version>
                 <executions>
                     <execution>
-                        <id>zip-exe</id>
+                        <id>zip-ui-exe</id>
                         <phase>package</phase>
                         <goals>
                             <goal>exec</goal>
@@ -412,6 +412,25 @@
                                 <argument>-t7z</argument>
                                 <argument>VPin-Studio.zip</argument>
                                 <argument>VPin-Studio.exe</argument>
+                            </arguments>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>zip-server-exe</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>exec</goal>
+                        </goals>
+                        <configuration>
+                            <!-- define the command to execute -->
+                            <executable>7z</executable>
+                            <workingDirectory>${basedir}/../Output/VPin-Studio/</workingDirectory>
+                            <arguments>
+                                <argument>a</argument>
+                                <argument>-t7z</argument>
+                                <argument>VPin-Studio-Server.zip</argument>
+                                <argument>VPin-Studio-Server.exe</argument>
+                                <argument>VPin-Studio-Table-Manager.exe</argument>
                             </arguments>
                         </configuration>
                     </execution>

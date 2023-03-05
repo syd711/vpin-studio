@@ -8,7 +8,6 @@
         <version>1.2.16</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
-    <packaging>jar</packaging>
 
     <artifactId>vpin-studio-table-manager</artifactId>
     <name>vpin-studio-table-manager</name>
@@ -235,12 +234,12 @@
                             <versionInfo>
                                 <fileVersion>1.0.0.0</fileVersion>
                                 <txtFileVersion>1.0.0.0</txtFileVersion>
-                                <fileDescription>VPin Studio</fileDescription>
+                                <fileDescription>VPin Studio Table Manager</fileDescription>
                                 <copyright>2023 https://github.com/syd711</copyright>
                                 <productVersion>1.0.0.0</productVersion>
                                 <txtProductVersion>1.0.0.0</txtProductVersion>
-                                <productName>VPin Studio</productName>
-                                <internalName>VPin-Studio</internalName>
+                                <productName>VPin Studio Table Manager</productName>
+                                <internalName>VPin-Studio Table Manager</internalName>
                                 <originalFilename>original.exe</originalFilename>
                             </versionInfo>
                         </configuration>
@@ -277,7 +276,6 @@
 
                 </executions>
             </plugin>
-
         </plugins>
 
 

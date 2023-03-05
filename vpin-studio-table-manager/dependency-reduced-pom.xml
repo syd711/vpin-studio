@@ -9,12 +9,6 @@
   <artifactId>vpin-studio-table-manager</artifactId>
   <name>vpin-studio-table-manager</name>
   <build>
-    <resources>
-      <resource>
-        <filtering>true</filtering>
-        <directory>src/main/resources</directory>
-      </resource>
-    </resources>
     <plugins>
       <plugin>
         <artifactId>maven-compiler-plugin</artifactId>
@@ -109,12 +103,12 @@
               <versionInfo>
                 <fileVersion>1.0.0.0</fileVersion>
                 <txtFileVersion>1.0.0.0</txtFileVersion>
-                <fileDescription>VPin Studio</fileDescription>
+                <fileDescription>VPin Studio Table Manager</fileDescription>
                 <copyright>2023 https://github.com/syd711</copyright>
                 <productVersion>1.0.0.0</productVersion>
                 <txtProductVersion>1.0.0.0</txtProductVersion>
-                <productName>VPin Studio</productName>
-                <internalName>VPin-Studio</internalName>
+                <productName>VPin Studio Table Manager</productName>
+                <internalName>VPin-Studio Table Manager</internalName>
                 <originalFilename>original.exe</originalFilename>
               </versionInfo>
             </configuration>
