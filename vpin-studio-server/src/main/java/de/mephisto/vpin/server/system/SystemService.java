@@ -1,12 +1,15 @@
 package de.mephisto.vpin.server.system;
 
+import de.mephisto.vpin.commons.fx.UIDefaults;
 import de.mephisto.vpin.commons.utils.PropertiesStore;
 import de.mephisto.vpin.commons.utils.SystemCommandExecutor;
 import de.mephisto.vpin.restclient.RestClient;
 import de.mephisto.vpin.server.VPinStudioException;
 import de.mephisto.vpin.server.VPinStudioServer;
+import de.mephisto.vpin.server.resources.ResourceLoader;
 import de.mephisto.vpin.server.util.SystemUtil;
 import edu.umd.cs.findbugs.annotations.NonNull;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -30,7 +33,6 @@ public class SystemService implements InitializingBean {
   private final static Logger LOG = LoggerFactory.getLogger(SystemService.class);
 
   public final static int SERVER_PORT = RestClient.PORT;
-  public final static String VPIN_STUDIO_MENU_NAME = "VPin Studio Menu";
 
   public static final String COMPETITION_BADGES = "competition-badges";
 
@@ -59,6 +61,7 @@ public class SystemService implements InitializingBean {
   public void afterPropertiesSet() throws Exception {
     initBaseFolders();
     initPinemHiFolders();
+    initVPinTableManagerIcon();
 
     if (!getPinUPSystemFolder().exists()) {
       throw new FileNotFoundException("Wrong PinUP Popper installation folder: " + getPinUPSystemFolder().getAbsolutePath() + ".\nPlease fix the PinUP Popper installation path in file ./resources/system.properties");
@@ -67,6 +70,26 @@ public class SystemService implements InitializingBean {
       throw new FileNotFoundException("Wrong Visual Pinball installation folder: " + getVisualPinballInstallationFolder().getAbsolutePath() + ".\nPlease fix the Visual Pinball installation path in file ./resources/system.properties");
     }
     logSystemInfo();
+  }
+
+  private void initVPinTableManagerIcon() {
+    File pcWheelFolder = new File(this.getPinUPSystemFolder(), "POPMedia/PC Games/Wheel/");
+    if (pcWheelFolder.exists()) {
+      File wheelIcon = new File(pcWheelFolder, UIDefaults.MANAGER_TITLE + ".png");
+      if (!wheelIcon.exists()) {
+        try {
+          InputStream resourceAsStream = ResourceLoader.class.getResourceAsStream("logo-500.png");
+          FileUtils.copyInputStreamToFile(resourceAsStream, wheelIcon);
+          resourceAsStream.close();
+          LOG.info("Copied VPin Table Manager icon.");
+
+          File thumbsFolder = new File(pcWheelFolder, "pthumbs");
+          de.mephisto.vpin.commons.utils.FileUtils.deleteFolder(thumbsFolder);
+        } catch (Exception e) {
+          LOG.info("Failed to copy VPin Manager wheel icon: " + e.getMessage(), e);
+        }
+      }
+    }
   }
 
   private void initBaseFolders() throws VPinStudioException {

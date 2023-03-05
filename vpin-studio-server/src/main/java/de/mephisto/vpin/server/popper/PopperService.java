@@ -1,6 +1,7 @@
 package de.mephisto.vpin.server.popper;
 
 import de.mephisto.vpin.commons.EmulatorType;
+import de.mephisto.vpin.commons.fx.UIDefaults;
 import de.mephisto.vpin.restclient.TableManagerSettings;
 import de.mephisto.vpin.restclient.PinUPControl;
 import de.mephisto.vpin.restclient.PopperScreen;
@@ -123,8 +124,8 @@ public class PopperService implements InitializingBean {
     if (archiveManagerDescriptor.getPlaylistId() != -1) {
       pinUPConnector.enablePCGameEmulator();
       File file = systemService.getVPinStudioMenuExe();
-      int newGameId = pinUPConnector.importGame(EmulatorType.PC_GAMES, SystemService.VPIN_STUDIO_MENU_NAME, file.getAbsolutePath(),
-          SystemService.VPIN_STUDIO_MENU_NAME, SystemService.VPIN_STUDIO_MENU_NAME);
+      int newGameId = pinUPConnector.importGame(EmulatorType.PC_GAMES, UIDefaults.MANAGER_TITLE, file.getAbsolutePath(),
+          UIDefaults.MANAGER_TITLE, UIDefaults.MANAGER_TITLE);
       pinUPConnector.addToPlaylist(newGameId, archiveManagerDescriptor.getPlaylistId());
     }
     else {
