@@ -2,7 +2,6 @@ package de.mephisto.vpin.ui.preferences;
 
 import de.mephisto.vpin.commons.VpaSourceType;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
-import de.mephisto.vpin.restclient.representations.PlayerRepresentation;
 import de.mephisto.vpin.restclient.representations.VpaSourceRepresentation;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.events.EventManager;
@@ -31,6 +30,9 @@ public class VpaRepositoriesPreferencesController implements Initializable {
 
   @FXML
   private TableColumn<VpaSourceRepresentation, String> urlColumn;
+
+  @FXML
+  private TableColumn<VpaSourceRepresentation, String> enabledColumn;
 
   @FXML
   private Button deleteBtn;
@@ -114,7 +116,9 @@ public class VpaRepositoriesPreferencesController implements Initializable {
   }
 
   private void onReload() {
-    tableView.setItems(FXCollections.observableList(client.getVpaSources()));
+    List<VpaSourceRepresentation> vpaSources = client.getVpaSources();
+    tableView.setItems(FXCollections.observableList(vpaSources));
+    tableView.refresh();
     EventManager.getInstance().notifyVpaSourceUpdate();
   }
 
@@ -134,8 +138,14 @@ public class VpaRepositoriesPreferencesController implements Initializable {
       return new SimpleObjectProperty(value.getLocation());
     });
 
-    List<VpaSourceRepresentation> vpaSources = client.getVpaSources();
-    tableView.setItems(FXCollections.observableList(vpaSources));
+    enabledColumn.setCellValueFactory(cellData -> {
+      VpaSourceRepresentation value = cellData.getValue();
+      if (value.isEnabled()) {
+        return new SimpleObjectProperty(WidgetFactory.createCheckIcon());
+      }
+      return new SimpleObjectProperty(WidgetFactory.createExclamationIcon());
+    });
+
     tableView.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
       boolean disable = newSelection == null || newSelection.getId() == -1;
       deleteBtn.setDisable(disable);
@@ -151,5 +161,7 @@ public class VpaRepositoriesPreferencesController implements Initializable {
       });
       return row;
     });
+
+    onReload();
   }
 }

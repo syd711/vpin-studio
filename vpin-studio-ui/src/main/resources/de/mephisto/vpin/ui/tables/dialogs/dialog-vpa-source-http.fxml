@@ -53,6 +53,7 @@
                   <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                   <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                   <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
               </rowConstraints>
                <children>
                   <Label text="Name:" textFill="WHITE">
@@ -74,32 +75,42 @@
                         <Font size="14.0" />
                      </font>
                   </TextField>
-                  <TextField fx:id="loginField" layoutX="132.0" layoutY="24.0" GridPane.columnIndex="1" GridPane.rowIndex="4">
+                  <TextField fx:id="loginField" layoutX="132.0" layoutY="24.0" GridPane.columnIndex="1" GridPane.rowIndex="5">
                      <font>
                         <Font size="14.0" />
                      </font>
                   </TextField>
-                  <Label layoutX="10.0" layoutY="48.0" text="Login:" textFill="WHITE" GridPane.rowIndex="4">
+                  <Label layoutX="10.0" layoutY="48.0" text="Login:" textFill="WHITE" GridPane.rowIndex="5">
                      <font>
                         <Font size="14.0" />
                      </font>
                   </Label>
-                  <Label layoutX="10.0" layoutY="82.0" text="Password:" textFill="WHITE" GridPane.rowIndex="5">
+                  <Label layoutX="10.0" layoutY="82.0" text="Password:" textFill="WHITE" GridPane.rowIndex="6">
                      <font>
                         <Font size="14.0" />
                      </font>
                   </Label>
-                  <PasswordField fx:id="passwordField" GridPane.columnIndex="1" GridPane.rowIndex="5">
+                  <PasswordField fx:id="passwordField" GridPane.columnIndex="1" GridPane.rowIndex="6">
                      <font>
                         <Font size="14.0" />
                      </font>
                   </PasswordField>
-                  <Label layoutX="10.0" layoutY="148.0" text="Basic Authentication:" textFill="WHITE" GridPane.rowIndex="3">
+                  <Label layoutX="10.0" layoutY="148.0" text="Basic Authentication:" textFill="WHITE" GridPane.rowIndex="4">
                      <font>
                         <Font size="14.0" />
                      </font>
                   </Label>
-                  <CheckBox fx:id="basicAuthCheckbox" mnemonicParsing="false" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="3">
+                  <CheckBox fx:id="basicAuthCheckbox" mnemonicParsing="false" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="4">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                  </CheckBox>
+                  <Label layoutX="10.0" layoutY="148.0" text="Enabled:" textFill="WHITE" GridPane.rowIndex="2">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                  </Label>
+                  <CheckBox fx:id="enabledCheckbox" layoutX="178.0" layoutY="148.0" mnemonicParsing="false" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="2">
                      <font>
                         <Font size="14.0" />
                      </font>

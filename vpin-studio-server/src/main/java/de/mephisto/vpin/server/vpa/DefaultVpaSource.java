@@ -16,6 +16,11 @@ public class DefaultVpaSource extends VpaSource {
   }
 
   @Override
+  public boolean isEnabled() {
+    return true;
+  }
+
+  @Override
   public String getType() {
     return VpaSourceType.File.name();
   }

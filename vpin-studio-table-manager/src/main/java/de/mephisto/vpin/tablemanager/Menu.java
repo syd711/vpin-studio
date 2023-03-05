@@ -1,5 +1,6 @@
 package de.mephisto.vpin.tablemanager;
 
+import de.mephisto.vpin.restclient.PinUPControls;
 import de.mephisto.vpin.restclient.VPinStudioClient;
 import de.mephisto.vpin.tablemanager.states.StateMananger;
 import javafx.application.Application;
@@ -8,14 +9,19 @@ import javafx.geometry.Rectangle2D;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
+import javafx.scene.input.KeyCode;
 import javafx.scene.paint.Color;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
+import org.jnativehook.GlobalScreen;
+import org.jnativehook.NativeHookException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.File;
 import java.io.IOException;
+import java.util.logging.Level;
 
 public class Menu extends Application {
   private final static Logger LOG = LoggerFactory.getLogger(Menu.class);
@@ -24,7 +30,7 @@ public class Menu extends Application {
 
   public static VPinStudioClient client;
 
-  private final static boolean PRODUCTION_USE = false;
+  private final static boolean PRODUCTION_USE = !new File("./").getAbsolutePath().contains("workspace");
 
   public static void main(String[] args) {
     launch(args);
@@ -68,11 +74,18 @@ public class Menu extends Application {
 
       MenuController controller = loader.getController();
       StateMananger.getInstance().init(controller);
-      scene.setOnKeyReleased(event -> {
-        StateMananger.getInstance().handle(event);
-      });
+
+      PinUPControls pinUPControls = client.getPinUPControls();
+      StateMananger.getInstance().setControls(pinUPControls);
+
+      GlobalScreen.registerNativeHook();
+      java.util.logging.Logger logger = java.util.logging.Logger.getLogger(GlobalScreen.class.getPackage().getName());
+      logger.setLevel(Level.OFF);
+      logger.setUseParentHandlers(false);
+      GlobalScreen.addNativeKeyListener(StateMananger.getInstance());
+
       stage.show();
-    } catch (IOException e) {
+    } catch (Exception e) {
       LOG.error("Failed to load launcher: " + e.getMessage(), e);
     }
   }

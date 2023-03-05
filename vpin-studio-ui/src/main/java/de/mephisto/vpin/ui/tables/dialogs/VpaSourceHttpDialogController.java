@@ -39,6 +39,9 @@ public class VpaSourceHttpDialogController implements Initializable, DialogContr
   private CheckBox basicAuthCheckbox;
 
   @FXML
+  private CheckBox enabledCheckbox;
+
+  @FXML
   private TextField loginField;
 
   @FXML
@@ -59,6 +62,7 @@ public class VpaSourceHttpDialogController implements Initializable, DialogContr
     this.source.setName(nameField.getText());
     this.source.setLocation(urlField.getText());
     this.source.setLogin(loginField.getText());
+    this.source.setEnabled(enabledCheckbox.isSelected());
 
     if(basicAuthCheckbox.isSelected()) {
       this.source.setAuthenticationType(VpaAuthenticationType.Basic.name());
@@ -75,6 +79,7 @@ public class VpaSourceHttpDialogController implements Initializable, DialogContr
     source = new VpaSourceRepresentation();
     source.setSettings(null);
     source.setEnabled(true);
+    enabledCheckbox.setSelected(true);
     loginField.setDisable(true);
     passwordField.setDisable(true);
 
@@ -118,6 +123,7 @@ public class VpaSourceHttpDialogController implements Initializable, DialogContr
       this.source = source;
       nameField.setText(source.getName());
       urlField.setText(source.getLocation());
+      enabledCheckbox.setSelected(source.isEnabled());
       loginField.setText(source.getLogin());
       basicAuthCheckbox.setSelected(source.getAuthenticationType() != null & source.getAuthenticationType().equals(VpaAuthenticationType.Basic.name()));
       passwordField.setText(PasswordUtil.decrypt(source.getPassword()));

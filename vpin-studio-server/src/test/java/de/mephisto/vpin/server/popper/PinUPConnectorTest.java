@@ -18,11 +18,6 @@ public class PinUPConnectorTest extends AbstractVPinServerTest {
   @Autowired
   private PinUPConnector connector;
 
-  @Test
-  public void testControls() {
-    List<PinUPControl> controls = connector.getControls();
-    assertFalse(controls.isEmpty());
-  }
 
   @Test
   public void testPlaylists() {

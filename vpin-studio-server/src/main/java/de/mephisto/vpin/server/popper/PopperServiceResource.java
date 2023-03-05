@@ -1,5 +1,6 @@
 package de.mephisto.vpin.server.popper;
 
+import de.mephisto.vpin.restclient.PinUPControls;
 import de.mephisto.vpin.restclient.TableManagerSettings;
 import de.mephisto.vpin.restclient.PinUPControl;
 import de.mephisto.vpin.restclient.PopperScreen;
@@ -26,6 +27,11 @@ public class PopperServiceResource {
   @GetMapping("/pincontrol/{screen}")
   public PinUPControl getPinUPControlFor(@PathVariable("screen") String screenName) {
     return popperService.getPinUPControlFor(PopperScreen.valueOf(screenName));
+  }
+
+  @GetMapping("/pincontrols")
+  public PinUPControls getPinUPControls() {
+    return popperService.getPinUPControls();
   }
 
   @GetMapping("/playlists")

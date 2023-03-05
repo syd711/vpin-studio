@@ -1,5 +1,7 @@
 package de.mephisto.vpin.restclient.representations;
 
+import java.util.Objects;
+
 public class VpaSourceRepresentation {
   private long id;
   private String name;
@@ -85,21 +87,35 @@ public class VpaSourceRepresentation {
 
   @Override
   public boolean equals(Object o) {
-    if (this == o) return true;
+    if (this == o) {
+      return true;
+    }
     if (!(o instanceof VpaSourceRepresentation)) return false;
 
     VpaSourceRepresentation that = (VpaSourceRepresentation) o;
 
+    if (id != that.id) return false;
+    if (enabled != that.enabled) return false;
     if (!name.equals(that.name)) return false;
     if (!type.equals(that.type)) return false;
-    return location.equals(that.location);
+    if (!location.equals(that.location)) return false;
+    if (!Objects.equals(login, that.login)) return false;
+    if (!Objects.equals(password, that.password)) return false;
+    if (!Objects.equals(settings, that.settings)) return false;
+    return Objects.equals(authenticationType, that.authenticationType);
   }
 
   @Override
   public int hashCode() {
-    int result = name.hashCode();
+    int result = (int) (id ^ (id >>> 32));
+    result = 31 * result + name.hashCode();
     result = 31 * result + type.hashCode();
     result = 31 * result + location.hashCode();
+    result = 31 * result + (login != null ? login.hashCode() : 0);
+    result = 31 * result + (password != null ? password.hashCode() : 0);
+    result = 31 * result + (settings != null ? settings.hashCode() : 0);
+    result = 31 * result + (enabled ? 1 : 0);
+    result = 31 * result + (authenticationType != null ? authenticationType.hashCode() : 0);
     return result;
   }
 

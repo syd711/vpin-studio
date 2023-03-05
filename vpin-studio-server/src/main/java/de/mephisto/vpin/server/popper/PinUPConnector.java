@@ -2,6 +2,7 @@ package de.mephisto.vpin.server.popper;
 
 import de.mephisto.vpin.commons.EmulatorType;
 import de.mephisto.vpin.restclient.PinUPControl;
+import de.mephisto.vpin.restclient.PinUPControls;
 import de.mephisto.vpin.restclient.PopperScreen;
 import de.mephisto.vpin.restclient.VpaManifest;
 import de.mephisto.vpin.server.games.Game;
@@ -324,7 +325,7 @@ public class PinUPConnector implements InitializingBean {
 
   public boolean deleteGame(String name) {
     Game gameByFilename = getGameByFilename(name);
-    if(gameByFilename != null) {
+    if (gameByFilename != null) {
       return deleteGame(gameByFilename.getId());
     }
     LOG.error("Failed to delete " + name + ": no game entry has been found for this name.");
@@ -548,9 +549,9 @@ public class PinUPConnector implements InitializingBean {
   }
 
   @NonNull
-  public List<PinUPControl> getControls() {
+  public PinUPControls getControls() {
+    PinUPControls controls = new PinUPControls();
     Connection connect = this.connect();
-    List<PinUPControl> results = new ArrayList<>();
     try {
       Statement statement = connect.createStatement();
       ResultSet rs = statement.executeQuery("SELECT * FROM PinUPFunctions;");
@@ -560,7 +561,7 @@ public class PinUPConnector implements InitializingBean {
         f.setDescription(rs.getString("Descript"));
         f.setCtrlKey(rs.getInt("CntrlCodes"));
         f.setId(rs.getInt("uniqueID"));
-        results.add(f);
+        controls.addControl(f);
       }
 
       rs.close();
@@ -570,7 +571,7 @@ public class PinUPConnector implements InitializingBean {
     } finally {
       this.disconnect(connect);
     }
-    return results;
+    return controls;
   }
 
   public int getGameCount() {

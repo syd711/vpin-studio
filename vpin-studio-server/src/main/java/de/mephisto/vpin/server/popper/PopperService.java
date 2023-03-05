@@ -2,6 +2,7 @@ package de.mephisto.vpin.server.popper;
 
 import de.mephisto.vpin.commons.EmulatorType;
 import de.mephisto.vpin.commons.fx.UIDefaults;
+import de.mephisto.vpin.restclient.PinUPControls;
 import de.mephisto.vpin.restclient.TableManagerSettings;
 import de.mephisto.vpin.restclient.PinUPControl;
 import de.mephisto.vpin.restclient.PopperScreen;
@@ -33,6 +34,10 @@ public class PopperService implements InitializingBean {
 
   public PinUPControl getPinUPControlFor(PopperScreen screen) {
     return pinUPConnector.getPinUPControlFor(screen);
+  }
+
+  public PinUPControls getPinUPControls() {
+    return pinUPConnector.getControls();
   }
 
   public List<Playlist> getPlaylists() {

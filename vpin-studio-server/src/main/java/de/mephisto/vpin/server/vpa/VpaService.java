@@ -54,8 +54,10 @@ public class VpaService implements InitializingBean {
   public List<VpaDescriptor> getVpaDescriptors() {
     List<VpaDescriptor> result = new ArrayList<>();
     for (VpaSourceAdapter adapter : adapterCache.values()) {
-      List<VpaDescriptor> descriptors = adapter.getVpaDescriptors();
-      result.addAll(descriptors);
+      if(adapter.getVpaSource().isEnabled()) {
+        List<VpaDescriptor> descriptors = adapter.getVpaDescriptors();
+        result.addAll(descriptors);
+      }
     }
     result.sort((o1, o2) -> {
       if (o1.getFilename() != null && o2.getFilename() != null) {

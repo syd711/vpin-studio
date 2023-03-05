@@ -227,6 +227,10 @@ public class VPinStudioClient implements ObservedPropertyChangeListener, Overlay
     return restClient.get(API + "popper/pincontrol/" + screen.name(), PinUPControl.class);
   }
 
+  public PinUPControls getPinUPControls() {
+    return restClient.get(API + "popper/pincontrols", PinUPControls.class);
+  }
+
   public List<PlaylistRepresentation> getPlaylists() {
     return Arrays.asList(restClient.get(API + "popper/playlists", PlaylistRepresentation[].class));
   }
