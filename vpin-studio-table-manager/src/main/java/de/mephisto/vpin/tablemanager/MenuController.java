@@ -64,6 +64,15 @@ public class MenuController implements Initializable {
   @FXML
   private Label redLabel;
 
+  @FXML
+  private Label nameLabel;
+
+  @FXML
+  private Node progressStack;
+
+  @FXML
+  private Node footer;
+
   private boolean installToggle = true;
   private int selectionIndex = 0;
   private List<VpaDescriptorRepresentation> vpaDescriptors;
@@ -101,6 +110,7 @@ public class MenuController implements Initializable {
     TransitionUtil.createOutFader(greenPanel).play();
     TransitionUtil.createInFader(gameRow).play();
     TransitionUtil.createInFader(loadMask).play();
+    TransitionUtil.createTranslateByYTransition(footer, FOOTER_ANIMATION_DURATION, FOOTER_HEIGHT).play();
 
     new Thread(() -> {
       vpaDescriptors = Menu.client.getVpaDescriptors();
@@ -123,6 +133,7 @@ public class MenuController implements Initializable {
     TransitionUtil.createOutFader(greenPanel).play();
     TransitionUtil.createInFader(gameRow).play();
     TransitionUtil.createInFader(loadMask).play();
+    TransitionUtil.createTranslateByYTransition(footer, FOOTER_ANIMATION_DURATION, FOOTER_HEIGHT).play();
 
     setLoadLabel("Loading...");
 
@@ -161,7 +172,14 @@ public class MenuController implements Initializable {
     TransitionUtil.createInFader(bluePanel).play();
   }
 
+  public void resetFooter() {
+    if (footer.getTranslateY() != 0) {
+      TransitionUtil.createTranslateByYTransition(footer, FOOTER_ANIMATION_DURATION, -FOOTER_HEIGHT).play();
+    }
+  }
+
   public void enterMainMenu() {
+    resetFooter();
     if (this.installToggle) {
       enterMainWithInstall();
     }
@@ -233,7 +251,7 @@ public class MenuController implements Initializable {
   }
 
   private void scroll(boolean left) {
-    if(gameRow.getChildren().isEmpty()) {
+    if (gameRow.getChildren().isEmpty()) {
       return;
     }
 
@@ -267,13 +285,25 @@ public class MenuController implements Initializable {
 
     ParallelTransition parallelTransition = new ParallelTransition(t1, t2, t3, t4, t5, t6, t7);
     parallelTransition.play();
+
+    updateLabel(updatedNode);
+  }
+
+  private void updateLabel(Node node) {
+    Object userData = node.getUserData();
+    if (userData instanceof GameRepresentation) {
+      nameLabel.setText(((GameRepresentation) userData).getGameDisplayName());
+    }
+    else {
+      nameLabel.setText(((VpaDescriptorRepresentation) userData).getManifest().getGameDisplayName());
+    }
   }
 
   /**
    * Centers the row start back to the center.
    */
   private void initGameBarSelection() {
-    if(gameRow.getChildren().isEmpty()) {
+    if (gameRow.getChildren().isEmpty()) {
       return;
     }
 
@@ -290,6 +320,8 @@ public class MenuController implements Initializable {
     TransitionUtil.createTranslateByXTransition(child, SELECTION_SCALE_DURATION, -UIDefaults.SCROLL_OFFSET).play();
     TransitionUtil.createScaleTransition(child, UIDefaults.SELECTION_SCALE, SELECTION_SCALE_DURATION).play();
     TransitionUtil.createTranslateByYTransition(node, SELECTION_SCALE_DURATION, -UIDefaults.SELECTION_HEIGHT_OFFSET).play();
+
+    updateLabel(child);
   }
 
   public void resetGameRow() {
@@ -303,7 +335,7 @@ public class MenuController implements Initializable {
       gameRow.getChildren().add(createItemFor(vpaDescriptor));
     }
 
-    if(!vpaDescriptors.isEmpty()) {
+    if (!vpaDescriptors.isEmpty()) {
       while (gameRow.getChildren().size() * UIDefaults.THUMBNAIL_SIZE < UIDefaults.SCREEN_WIDTH * 2) {
         Label label = new Label();
         label.setMinWidth(THUMBNAIL_SIZE);
@@ -320,7 +352,7 @@ public class MenuController implements Initializable {
       gameRow.getChildren().add(createItemFor(game));
     }
 
-    if(!games.isEmpty()) {
+    if (!games.isEmpty()) {
       while (gameRow.getChildren().size() * UIDefaults.THUMBNAIL_SIZE < UIDefaults.SCREEN_WIDTH * 2) {
         Label label = new Label();
         label.setMinWidth(THUMBNAIL_SIZE);
@@ -396,5 +428,9 @@ public class MenuController implements Initializable {
   public VpaDescriptorRepresentation getVpaSelection() {
     Node node = gameRow.getChildren().get(selectionIndex);
     return (VpaDescriptorRepresentation) node.getUserData();
+  }
+
+  public void showProgress() {
+    TransitionUtil.createTranslateByYTransition(progressStack, FOOTER_ANIMATION_DURATION, 70).play();
   }
 }

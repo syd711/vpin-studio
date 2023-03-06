@@ -17,31 +17,57 @@
          <children>
             <BorderPane fx:id="footer">
                <center>
-                  <StackPane prefHeight="150.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+                  <StackPane BorderPane.alignment="CENTER">
                      <children>
-                        <ProgressBar prefHeight="70.0" prefWidth="880.0" progress="0.64">
+                        <StackPane fx:id="progressStack">
                            <StackPane.margin>
-                              <Insets top="50.0" />
+                              <Insets top="-100.0" />
                            </StackPane.margin>
-                        </ProgressBar>
-                        <ImageView fitHeight="150.0" fitWidth="1200.0" pickOnBounds="true" preserveRatio="true">
-                           <image>
-                              <Image url="@footer.png" />
-                           </image>
-                        </ImageView>
+                           <children>
+                              <ProgressBar prefHeight="70.0" prefWidth="980.0" progress="0.64" />
+                              <ImageView fitHeight="150.0" fitWidth="1200.0" pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@footer-progress.png" />
+                                 </image>
+                                 <StackPane.margin>
+                                    <Insets />
+                                 </StackPane.margin>
+                              </ImageView>
+                           </children>
+                        </StackPane>
+                        <StackPane fx:id="footerStack">
+                           <children>
+                              <ImageView fitHeight="150.0" fitWidth="1200.0" pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@footer.png" />
+                                 </image>
+                              </ImageView>
+                              <Label fx:id="nameLabel" text="Label" textFill="WHITE">
+                                 <font>
+                                    <Font size="36.0" />
+                                 </font>
+                                 <StackPane.margin>
+                                    <Insets top="-90.0" />
+                                 </StackPane.margin>
+                              </Label>
+                           </children>
+                           <StackPane.margin>
+                              <Insets />
+                           </StackPane.margin>
+                        </StackPane>
                      </children>
                   </StackPane>
                </center>
                <StackPane.margin>
-                  <Insets top="442.0" />
+                  <Insets />
                </StackPane.margin>
             </BorderPane>
-            <ImageView fitHeight="600.0" fitWidth="2200.0" nodeOrientation="RIGHT_TO_LEFT" pickOnBounds="true" preserveRatio="true" StackPane.alignment="CENTER">
+            <ImageView fitHeight="440.0" fitWidth="2200.0" nodeOrientation="RIGHT_TO_LEFT" pickOnBounds="true" StackPane.alignment="CENTER">
                <image>
                   <Image url="@row.png" />
                </image>
                <StackPane.margin>
-                  <Insets />
+                  <Insets top="30.0" />
                </StackPane.margin>
             </ImageView>
             <BorderPane fx:id="baseSelector" layoutX="110.0" layoutY="110.0" maxHeight="400.0" maxWidth="400.0" styleClass="base-selector">
@@ -52,7 +78,10 @@
                      </image>
                   </ImageView>
                </center></BorderPane>
-            <HBox fx:id="gameRow" alignment="CENTER_LEFT" prefWidth="500.0" />
+            <HBox fx:id="gameRow" alignment="CENTER_LEFT" prefWidth="500.0">
+               <padding>
+                  <Insets top="20.0" />
+               </padding></HBox>
             <BorderPane fx:id="bluePanel" layoutX="110.0" layoutY="110.0" maxHeight="400.0" maxWidth="400.0" styleClass="red-selector">
                <center>
                   <StackPane styleClass="root" BorderPane.alignment="CENTER">

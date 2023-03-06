@@ -21,7 +21,7 @@ public class ArchivingMenuState extends MenuState {
     this.menuController.enterArchiving();
 
     StateMananger.getInstance().setInputBlocked(true);
-    executeArchiving();
+//    executeArchiving();
   }
 
   @Override

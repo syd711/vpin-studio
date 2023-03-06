@@ -24,6 +24,7 @@ public class ArchiveConfirmationMenuState extends MenuState {
 
   @Override
   MenuState enter() {
+    menuController.showProgress();
     return new ArchivingMenuState(this, menuController);
   }
 

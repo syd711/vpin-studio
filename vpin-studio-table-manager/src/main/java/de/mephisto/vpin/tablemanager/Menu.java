@@ -9,18 +9,15 @@ import javafx.geometry.Rectangle2D;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
-import javafx.scene.input.KeyCode;
 import javafx.scene.paint.Color;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import org.jnativehook.GlobalScreen;
-import org.jnativehook.NativeHookException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.logging.Level;
 
 public class Menu extends Application {
@@ -52,7 +49,7 @@ public class Menu extends Application {
 
       Scene scene = null;
 
-      if(PRODUCTION_USE) {
+      if (PRODUCTION_USE) {
         root.setRotate(-90);
         root.setTranslateY(0);
         root.setTranslateX(0);
@@ -84,11 +81,12 @@ public class Menu extends Application {
       logger.setUseParentHandlers(false);
       GlobalScreen.addNativeKeyListener(StateMananger.getInstance());
 
-      Thread shutdownHook = new Thread(() -> {
-        Menu.client.restartPopper();
-      });
-      Runtime.getRuntime().addShutdownHook(shutdownHook);
-
+      if (PRODUCTION_USE) {
+        Thread shutdownHook = new Thread(() -> {
+          Menu.client.restartPopper();
+        });
+        Runtime.getRuntime().addShutdownHook(shutdownHook);
+      }
       stage.show();
     } catch (Exception e) {
       LOG.error("Failed to load launcher: " + e.getMessage(), e);
