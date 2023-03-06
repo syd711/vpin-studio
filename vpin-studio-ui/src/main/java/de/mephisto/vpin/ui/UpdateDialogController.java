@@ -9,7 +9,6 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
-import org.apache.commons.lang3.StringUtils;
 
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -41,7 +40,7 @@ public class UpdateDialogController implements Initializable, DialogController {
 
 
     String existingVersion = client.version();
-    if(existingVersion.equals(newVersion)) {
+    if (existingVersion.equals(newVersion)) {
       serverProgress.setDisable(true);
       serverProgress.setProgress(1f);
       serverLabel.setText("The server is already running on version " + newVersion);
