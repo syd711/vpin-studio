@@ -113,7 +113,7 @@ public class UpdateDialogController implements Initializable, DialogController {
           protected Object call() throws Exception {
             Updater.downloadUpdate(newVersion, Updater.UI_ZIP);
             while (true) {
-              int progress = Updater.getDownloadProgress(Updater.UI_ZIP, Updater.UI_EXE);
+              int progress = Updater.getDownloadProgress(Updater.UI_ZIP, Updater.UI_ZIP_SIZE);
               updateProgress(progress, 100);
               Thread.sleep(1000);
               Platform.runLater(() -> {

@@ -21,9 +21,11 @@ public class Updater {
 
   public final static String SERVER_ZIP = "VPin-Studio-Server.zip";
   public final static String SERVER_EXE = "VPin-Studio-Server.exe";
+  public final static long SERVER_ZIP_SIZE = 185000000;
 
   public final static String UI_ZIP = "VPin-Studio.zip";
   public final static String UI_EXE = "VPin-Studio.exe";
+  public final static long UI_ZIP_SIZE = 78000000;
 
   private final static String DOWNLOAD_SUFFIX = ".bak";
 
@@ -37,15 +39,14 @@ public class Updater {
     return true;
   }
 
-  public static int getDownloadProgress(String targetZip, String targetExe) {
+  public static int getDownloadProgress(String targetZip, long estimatedSize) {
     File tmp = new File(getBasePath(), targetZip + DOWNLOAD_SUFFIX);
     File zip = new File(getBasePath(), targetZip);
     if (zip.exists()) {
       return 100;
     }
 
-    File exe = new File(getBasePath(), targetExe);
-    int percentage = (int) (tmp.length() * 100 / exe.length());
+    int percentage = (int) (tmp.length() * 100 / estimatedSize);
     LOG.info(tmp.getAbsolutePath() + " download at " + percentage + "%");
     return percentage;
   }

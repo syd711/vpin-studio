@@ -62,7 +62,7 @@ public class SystemResource {
 
   @GetMapping("/update/download/status")
   public int updateDownloadStatus() {
-    return Updater.getDownloadProgress(Updater.SERVER_ZIP, Updater.SERVER_EXE);
+    return Updater.getDownloadProgress(Updater.SERVER_ZIP, Updater.SERVER_ZIP_SIZE);
   }
 
   @GetMapping("/update/install")
