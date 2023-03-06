@@ -84,6 +84,11 @@ public class Menu extends Application {
       logger.setUseParentHandlers(false);
       GlobalScreen.addNativeKeyListener(StateMananger.getInstance());
 
+      Thread shutdownHook = new Thread(() -> {
+        Menu.client.restartPopper();
+      });
+      Runtime.getRuntime().addShutdownHook(shutdownHook);
+
       stage.show();
     } catch (Exception e) {
       LOG.error("Failed to load launcher: " + e.getMessage(), e);

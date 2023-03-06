@@ -103,6 +103,11 @@ public class PopperService implements InitializingBean {
     }
   }
 
+  public boolean restart() {
+    systemService.restartPopper();
+    return true;
+  }
+
   public void augmentWheel(Game game, String badge) {
     GameMediaItem gameMediaItem = game.getGameMedia().get(PopperScreen.Wheel);
     if (gameMediaItem != null) {

@@ -243,6 +243,10 @@ public class VPinStudioClient implements ObservedPropertyChangeListener, Overlay
     return restClient.get(API + "popper/terminate", Boolean.class);
   }
 
+  public boolean restartPopper() {
+    return restClient.get(API + "popper/restart", Boolean.class);
+  }
+
 
   /*********************************************************************************************************************
    * VPX

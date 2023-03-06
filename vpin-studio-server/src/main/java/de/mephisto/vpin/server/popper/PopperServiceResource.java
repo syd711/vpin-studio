@@ -54,9 +54,13 @@ public class PopperServiceResource {
     return popperService.getArchiveManagerDescriptor();
   }
 
-
   @GetMapping("/terminate")
   public boolean terminate() {
     return popperService.terminate();
+  }
+
+  @GetMapping("/restart")
+  public boolean restart() {
+    return popperService.restart();
   }
 }
