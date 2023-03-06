@@ -53,3 +53,7 @@
 .loading-selector {
     -fx-background-radius: 400px;
 }
+
+.progress-bar .bar {
+    -fx-background-color:-fx-box-border, linear-gradient(to bottom, derive(-fx-accent,95%), derive(-fx-accent,10%)), #333366; /* this line is the background color of the bar */
+}

@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ProgressBar?>
 <?import javafx.scene.control.ProgressIndicator?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
@@ -13,10 +15,34 @@
    <center>
       <StackPane styleClass="root" BorderPane.alignment="CENTER">
          <children>
+            <BorderPane fx:id="footer">
+               <center>
+                  <StackPane prefHeight="150.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+                     <children>
+                        <ProgressBar prefHeight="70.0" prefWidth="880.0" progress="0.64">
+                           <StackPane.margin>
+                              <Insets top="50.0" />
+                           </StackPane.margin>
+                        </ProgressBar>
+                        <ImageView fitHeight="150.0" fitWidth="1200.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@footer.png" />
+                           </image>
+                        </ImageView>
+                     </children>
+                  </StackPane>
+               </center>
+               <StackPane.margin>
+                  <Insets top="442.0" />
+               </StackPane.margin>
+            </BorderPane>
             <ImageView fitHeight="600.0" fitWidth="2200.0" nodeOrientation="RIGHT_TO_LEFT" pickOnBounds="true" preserveRatio="true" StackPane.alignment="CENTER">
                <image>
                   <Image url="@row.png" />
                </image>
+               <StackPane.margin>
+                  <Insets />
+               </StackPane.margin>
             </ImageView>
             <BorderPane fx:id="baseSelector" layoutX="110.0" layoutY="110.0" maxHeight="400.0" maxWidth="400.0" styleClass="base-selector">
                <center>
@@ -26,7 +52,7 @@
                      </image>
                   </ImageView>
                </center></BorderPane>
-            <HBox fx:id="gameRow" alignment="CENTER_LEFT" prefHeight="550.0" />
+            <HBox fx:id="gameRow" alignment="CENTER_LEFT" prefWidth="500.0" />
             <BorderPane fx:id="bluePanel" layoutX="110.0" layoutY="110.0" maxHeight="400.0" maxWidth="400.0" styleClass="red-selector">
                <center>
                   <StackPane styleClass="root" BorderPane.alignment="CENTER">
