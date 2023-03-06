@@ -132,9 +132,14 @@ public class DiscordClient {
     }
   }
 
-  public List<DiscordMember> getCompetitionMembers(long serverId, long channelId, long afterMessageId, String competitionUuid) {
+  public List<DiscordMember> getCompetitionMembers(long serverId, long channelId, long afterMessageId, String competitionUuid, long ownerId) {
     List<DiscordMessage> messageHistory = getMessageHistory(serverId, channelId, afterMessageId, competitionUuid);
     List<DiscordMember> result = new ArrayList<>();
+
+    //always add owner
+    DiscordMember owner = getMember(serverId, ownerId);
+    result.add(owner);
+
     for (DiscordMessage discordMessage : messageHistory) {
       DiscordMember member = discordMessage.getMember();
       if (member != null) {

@@ -136,7 +136,7 @@ public class DiscordService implements InitializingBean, PreferenceChangedListen
     if (this.discordClient != null) {
       DiscordCompetitionData competitionData = getCompetitionData(serverId, channelId);
       if (competitionData != null) {
-        List<DiscordMember> competitionMembers = this.discordClient.getCompetitionMembers(serverId, channelId, competitionData.getMsgId(), competitionData.getUuid());
+        List<DiscordMember> competitionMembers = this.discordClient.getCompetitionMembers(serverId, channelId, competitionData.getMsgId(), competitionData.getUuid(), Long.parseLong(competitionData.getOwner()));
         DiscordMember owner = this.discordClient.getMember(serverId, this.getBotId());
         if (!competitionMembers.contains(owner)) {
           competitionMembers.add(0, owner);

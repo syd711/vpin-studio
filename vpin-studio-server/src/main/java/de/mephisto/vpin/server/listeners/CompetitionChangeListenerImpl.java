@@ -85,7 +85,7 @@ public class CompetitionChangeListenerImpl implements InitializingBean, Competit
 
   @Override
   public void competitionCreated(@NonNull Competition competition) {
-    if(competition.getType().equals(CompetitionType.DISCORD.name())) {
+    if (competition.getType().equals(CompetitionType.DISCORD.name())) {
       Game game = gameService.getGame(competition.getGameId());
       boolean isOwner = competition.getOwner().equals(String.valueOf(discordService.getBotId()));
       DiscordMember bot = discordService.getBot();
@@ -109,14 +109,16 @@ public class CompetitionChangeListenerImpl implements InitializingBean, Competit
       long discordChannelId = competition.getDiscordChannelId();
 
       if (competition.getType().equals(CompetitionType.OFFLINE.name())) {
-        discordService.sendMessage(discordServerId, discordChannelId, DiscordOfflineChannelMessageFactory.createCompetitionFinishedMessage(competition, winner, game, scoreSummary));
+        String message = DiscordOfflineChannelMessageFactory.createCompetitionFinishedMessage(competition, winner, game, scoreSummary);
+        discordService.sendMessage(discordServerId, discordChannelId, message);
       }
 
       if (competition.getType().equals(CompetitionType.DISCORD.name())) {
         //only the owner can perform additional actions
         if (competition.getOwner().equals(String.valueOf(discordService.getBotId()))) {
           discordService.resetCompetition(discordServerId, discordChannelId);
-          discordService.sendMessage(discordServerId, discordChannelId, DiscordOfflineChannelMessageFactory.createCompetitionFinishedMessage(competition, winner, game, scoreSummary));
+          String message = DiscordOfflineChannelMessageFactory.createCompetitionFinishedMessage(competition, winner, game, scoreSummary);
+          discordService.sendMessage(discordServerId, discordChannelId, message);
         }
       }
     }

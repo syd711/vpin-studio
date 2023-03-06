@@ -10,6 +10,7 @@ import de.mephisto.vpin.server.highscores.ScoreList;
 import de.mephisto.vpin.server.players.Player;
 import de.mephisto.vpin.server.players.PlayerService;
 import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
@@ -195,18 +196,18 @@ public class CompetitionService implements InitializingBean {
   @NonNull
   public Competition finishCompetition(@NonNull Competition competition) {
     LOG.info("Running finishing process for " + competition);
-    long serverId = competition.getDiscordServerId();
-    ScoreSummary scoreSummary = highscoreService.getScoreSummary(serverId, competition.getGameId(), null);
-    if (scoreSummary.getScores().isEmpty()) {
+    ScoreSummary competitionScore = getCompetitionsFinalScore(competition);
+
+    if (competitionScore.getScores().isEmpty()) {
       LOG.error("Failed to finished " + competition + " correctly, no score could be determined, using John Doe.");
       competition.setWinnerInitials("???");
     }
     else {
-      Score score = scoreSummary.getScores().get(0);
+      Score score = competitionScore.getScores().get(0);
       competition.setWinnerInitials(score.getPlayerInitials());
     }
     competition.setEndDate(DateUtil.today()); //always the current date
-    competition.setScore(scoreSummary.getRaw()); //save the last raw score to the competition itself
+    competition.setScore(competitionScore.getRaw()); //save the last raw score to the competition itself
     Competition finishedCompetition = save(competition);
 
     Player player = null;
@@ -218,7 +219,7 @@ public class CompetitionService implements InitializingBean {
     }
 
     for (CompetitionChangeListener listener : this.listeners) {
-      listener.competitionFinished(finishedCompetition, player, scoreSummary);
+      listener.competitionFinished(finishedCompetition, player, competitionScore);
     }
     return finishedCompetition;
   }
@@ -264,5 +265,19 @@ public class CompetitionService implements InitializingBean {
   @Override
   public void afterPropertiesSet() throws Exception {
     scheduler.scheduleAtFixedRate(new CompetitionCheckRunnable(this), 1000 * 60 * 60);
+  }
+
+  @NonNull
+  private ScoreSummary getCompetitionsFinalScore(@NonNull Competition competition) {
+    long serverId = competition.getDiscordServerId();
+    if (competition.getType().equals(CompetitionType.DISCORD.name())) {
+      ScoreList scoreList = discordService.getScoreList(this.highscoreParser, competition.getUuid(), serverId, competition.getDiscordChannelId());
+      ScoreSummary latestScore = scoreList.getLatestScore();
+      if(latestScore == null) {
+        latestScore = new ScoreSummary(Collections.emptyList(), new Date());
+      }
+      return latestScore;
+    }
+    return highscoreService.getScoreSummary(serverId, competition.getGameId(), null);
   }
 }
