@@ -47,6 +47,10 @@ public class Updater {
     }
 
     int percentage = (int) (tmp.length() * 100 / estimatedSize);
+    if(percentage > 99) {
+      percentage = 99;
+    }
+
     LOG.info(tmp.getAbsolutePath() + " download at " + percentage + "%");
     return percentage;
   }

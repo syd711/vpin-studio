@@ -68,7 +68,7 @@ public class UpdateDialogController implements Initializable, DialogController {
                 serverProgress.setProgress(p);
               });
 
-              if (progress == 100) {
+              if (progress >= 100) {
                 break;
               }
             }
@@ -120,7 +120,7 @@ public class UpdateDialogController implements Initializable, DialogController {
                 clientProgress.setProgress(p);
               });
 
-              if (progress == 100) {
+              if (progress >= 100) {
                 break;
               }
             }
