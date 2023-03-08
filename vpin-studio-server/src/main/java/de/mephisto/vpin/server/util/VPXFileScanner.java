@@ -67,7 +67,7 @@ public class VPXFileScanner {
         }
         count++;
 
-        if (result.isScanComplete() || line.toLowerCase().contains("Option Explicit".toLowerCase())) {
+        if (result.isScanComplete() || line.trim().equals("Option Explicit")) {
           break;
         }
 
