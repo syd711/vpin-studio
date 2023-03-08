@@ -24,7 +24,12 @@
                               <Insets top="-100.0" />
                            </StackPane.margin>
                            <children>
-                              <ProgressBar prefHeight="70.0" prefWidth="980.0" progress="0.64" />
+                              <ProgressBar fx:id="progressBar" prefHeight="70.0" prefWidth="980.0" progress="0.0" />
+                              <Label fx:id="progressLabel" text="Label" textFill="WHITE">
+                                 <font>
+                                    <Font size="18.0" />
+                                 </font>
+                              </Label>
                               <ImageView fitHeight="150.0" fitWidth="1200.0" pickOnBounds="true" preserveRatio="true">
                                  <image>
                                     <Image url="@footer-progress.png" />

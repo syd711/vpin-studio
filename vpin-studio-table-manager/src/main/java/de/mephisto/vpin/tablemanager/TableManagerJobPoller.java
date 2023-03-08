@@ -81,6 +81,11 @@ public class TableManagerJobPoller {
   private void refreshJobList() {
     List<JobDescriptor> jobs = Menu.client.getJobs();
     for (JobDescriptor activeJob : activeJobs) {
+      notifyJobUpdate(activeJob);
+    }
+
+
+    for (JobDescriptor activeJob : activeJobs) {
       if (!jobs.contains(activeJob)) {
         LOG.info(activeJob + " finished.");
         notifyJobFinished(activeJob);
@@ -94,6 +99,14 @@ public class TableManagerJobPoller {
     new Thread(() -> {
       for (JobListener listener : this.listeners) {
         listener.finished(descriptor);
+      }
+    }).start();
+  }
+
+  private void notifyJobUpdate(JobDescriptor descriptor) {
+    new Thread(() -> {
+      for (JobListener listener : this.listeners) {
+        listener.updated(descriptor);
       }
     }).start();
   }

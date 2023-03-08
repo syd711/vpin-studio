@@ -24,6 +24,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
 import java.util.zip.ZipInputStream;
 
 public class VpaImporterJob implements Job {
@@ -37,6 +38,9 @@ public class VpaImporterJob implements Job {
   private final GameService gameService;
   private final CardService cardService;
   private final ObjectMapper objectMapper;
+
+  private double progress;
+  private String status;
 
   public VpaImporterJob(@NonNull ImportDescriptor descriptor,
                         @NonNull File vpaFile,
@@ -59,12 +63,12 @@ public class VpaImporterJob implements Job {
 
   @Override
   public double getProgress() {
-    return 0;
+    return progress;
   }
 
   @Override
   public String getStatus() {
-    return null;
+    return status;
   }
 
   @Override
@@ -77,6 +81,7 @@ public class VpaImporterJob implements Job {
       boolean importPupPack = descriptor.isImportPupPack();
       boolean importHighscores = descriptor.isImportHighscores();
 
+      status = "Extracting " + vpaFile.getAbsolutePath();
       unzipVpa(importRom, importPopperMedia, importPupPack, importHighscores);
       LOG.info("Finished unzipping of " + descriptor.getUuid() + ", starting Popper import.");
 
@@ -94,6 +99,7 @@ public class VpaImporterJob implements Job {
         game = gameService.getGame(newGameId);
       }
 
+      status = "Importing Game to Popper";
       connector.importManifest(game, manifest);
       game.setRom(manifest.getRomName());
       game.setTableName(manifest.getTableName());
@@ -103,6 +109,7 @@ public class VpaImporterJob implements Job {
       }
 
       if (importHighscores) {
+        status = "Importing Highscores";
         importHighscores(game, manifest);
       }
 
@@ -145,10 +152,16 @@ public class VpaImporterJob implements Job {
 
   private void unzipVpa(boolean importRom, boolean importPopperMedia, boolean importPupPack, boolean importHighscores) {
     try {
+      ZipFile zf = new ZipFile(vpaFile);
+      int totalCount = zf.size();
+
+
       byte[] buffer = new byte[1024];
       ZipInputStream zis = new ZipInputStream(new FileInputStream(vpaFile));
       ZipEntry zipEntry = zis.getNextEntry();
+      int currentCount = 0;
       while (zipEntry != null) {
+        currentCount++;
         File newFile = newFile(getDestDirForEntry(zipEntry), zipEntry);
         String folderName = newFile.getParentFile().getName();
 
@@ -191,6 +204,7 @@ public class VpaImporterJob implements Job {
           }
 
           // write file content
+          status = "Extracting " + newFile;
           FileOutputStream fos = new FileOutputStream(newFile);
           int len;
           while ((len = zis.read(buffer)) > 0) {
@@ -198,6 +212,9 @@ public class VpaImporterJob implements Job {
           }
           fos.close();
         }
+
+        progress = currentCount * 100 / totalCount;
+
         zipEntry = zis.getNextEntry();
       }
 

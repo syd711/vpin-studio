@@ -296,7 +296,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
   private void onInspect() {
     GameRepresentation game = tableView.getSelectionModel().getSelectedItem();
     if (game != null) {
-      Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Inspect Table Script?", "This will extract the table script into a temporary file.", "It will be opened afterwards in a text editor.");
+      Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Inspect script of table\"" + game.getGameDisplayName() + "\"?", "This will extract the table script into a temporary file.", "It will be opened afterwards in a text editor.");
       if (result.isPresent() && result.get().equals(ButtonType.OK)) {
 
         ProgressResultModel resultModel = Dialogs.createProgressDialog(new ScriptDownloadProgressModel("Extracting Table Script", game));

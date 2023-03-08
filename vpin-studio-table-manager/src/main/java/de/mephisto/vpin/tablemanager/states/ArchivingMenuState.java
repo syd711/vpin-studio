@@ -6,6 +6,7 @@ import de.mephisto.vpin.restclient.VpaManifest;
 import de.mephisto.vpin.restclient.representations.GameRepresentation;
 import de.mephisto.vpin.tablemanager.Menu;
 import de.mephisto.vpin.tablemanager.MenuController;
+import javafx.application.Platform;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -21,7 +22,7 @@ public class ArchivingMenuState extends MenuState {
     this.menuController.enterArchiving();
 
     StateMananger.getInstance().setInputBlocked(true);
-//    executeArchiving();
+    executeArchiving();
   }
 
   @Override
@@ -46,6 +47,9 @@ public class ArchivingMenuState extends MenuState {
   }
 
   private void executeArchiving() {
+    Platform.runLater(() -> {
+      this.menuController.showProgressbar();
+    });
     new Thread(() -> {
       GameRepresentation game = this.menuController.getGameSelection();
       VpaManifest manifest = Menu.client.getVpaManifest(game.getId());

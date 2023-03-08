@@ -16,6 +16,7 @@ import javafx.scene.CacheHint;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.control.Label;
+import javafx.scene.control.ProgressBar;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
@@ -71,6 +72,12 @@ public class MenuController implements Initializable {
   private Node progressStack;
 
   @FXML
+  private ProgressBar progressBar;
+
+  @FXML
+  private Label progressLabel;
+
+  @FXML
   private Node footer;
 
   private boolean installToggle = true;
@@ -81,7 +88,6 @@ public class MenuController implements Initializable {
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
-
   }
 
   public void toggleInstall() {
@@ -430,7 +436,17 @@ public class MenuController implements Initializable {
     return (VpaDescriptorRepresentation) node.getUserData();
   }
 
-  public void showProgress() {
+  public void showProgressbar() {
     TransitionUtil.createTranslateByYTransition(progressStack, FOOTER_ANIMATION_DURATION, 70).play();
+  }
+
+  public void hideProgressbar() {
+    TransitionUtil.createTranslateByYTransition(progressStack, FOOTER_ANIMATION_DURATION, -70).play();
+  }
+
+  public void setStatus(String status, double progress) {
+    this.progressBar.setProgress(progress / 100);
+    this.progressLabel.setText(status);
+    LOG.info("Setting status: \"" + status + "\" / " + progress);
   }
 }

@@ -32,6 +32,7 @@ public class StateMananger implements JobListener, NativeKeyListener {
   private int RIGHT;
   private int ENTER;
   private int BACK;
+  private MenuController menuController;
 
   public static StateMananger getInstance() {
     return INSTANCE;
@@ -82,6 +83,7 @@ public class StateMananger implements JobListener, NativeKeyListener {
   }
 
   public void init(MenuController controller) {
+    menuController = controller;
     this.activeState = new MainMenuState(controller);
   }
 
@@ -119,6 +121,9 @@ public class StateMananger implements JobListener, NativeKeyListener {
 
   @Override
   public void updated(JobDescriptor descriptor) {
+    Platform.runLater(() -> {
+      menuController.setStatus(descriptor.getStatus(), descriptor.getProgress());
+    });
   }
 
   @Override
@@ -128,6 +133,7 @@ public class StateMananger implements JobListener, NativeKeyListener {
 
     Platform.runLater(() -> {
       this.activeState = activeState.back();
+      this.menuController.hideProgressbar();
     });
   }
 

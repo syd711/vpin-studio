@@ -55,7 +55,7 @@ public class Menu extends Application {
         root.setTranslateX(0);
         scene = new Scene(root, screenBounds.getWidth(), screenBounds.getHeight());
         stage.setY(0);
-        stage.setX(screenBounds.getWidth() / 2 / 2);
+        stage.setX(screenBounds.getWidth() / 2 + 300);
       }
       else {
         scene = new Scene(root, screenBounds.getWidth(), 1000);

@@ -50,6 +50,12 @@ public class VpaExporterJob implements Job {
   private final File targetFolder;
   private final String vpaVersion;
 
+  private double progress;
+  private String status;
+
+  private long totalSizeExpected;
+  private File tempFile;
+
   public VpaExporterJob(@NonNull File vprRegFile,
                         @NonNull File musicFolder,
                         @NonNull Game game,
@@ -75,21 +81,26 @@ public class VpaExporterJob implements Job {
     objectMapper.enable(SerializationFeature.ORDER_MAP_ENTRIES_BY_KEYS);
   }
 
+
   @Override
   public double getProgress() {
-    return 0;
+    return progress;
   }
 
   @Override
   public String getStatus() {
-    return null;
+    return status;
   }
 
   public boolean execute() {
+    status = "Calculating export size of " + manifest.getGameFileName();
+    this.calculateTotalSize();
+    LOG.info("Calculated total approx. size of " + FileUtils.readableFileSize(totalSizeExpected) + " for the archive of " + game.getGameDisplayName());
+
     String baseName = FilenameUtils.getBaseName(manifest.getGameFileName());
     File target = new File(targetFolder, baseName + ".vpa");
     target = FileUtils.uniqueFile(target);
-    File tempFile = new File(target.getParentFile(), target.getName() + ".bak");
+    tempFile = new File(target.getParentFile(), target.getName() + ".bak");
 
     if (target.exists() && !target.delete()) {
       throw new UnsupportedOperationException("Couldn't delete existing VPA file " + target.getAbsolutePath());
@@ -254,6 +265,37 @@ public class VpaExporterJob implements Job {
     return true;
   }
 
+  private void calculateTotalSize() {
+    if (exportDescriptor.isExportMusic()) {
+      totalSizeExpected += org.apache.commons.io.FileUtils.sizeOfDirectory(musicFolder);
+    }
+    if (exportDescriptor.isExportPopperMedia()) {
+      PopperScreen[] values = PopperScreen.values();
+      for (PopperScreen value : values) {
+        GameMediaItem gameMediaItem = game.getGameMedia().get(value);
+        if (gameMediaItem != null && gameMediaItem.getFile().exists()) {
+          totalSizeExpected += gameMediaItem.getFile().length();
+        }
+      }
+    }
+    if (exportDescriptor.isExportPupPack()) {
+      if (game.getPupPackFolder() != null && game.getPupPackFolder().exists()) {
+        totalSizeExpected += org.apache.commons.io.FileUtils.sizeOfDirectory(game.getPupPackFolder());
+      }
+    }
+    if (game.getGameFile().exists()) {
+      totalSizeExpected += game.getGameFile().length();
+    }
+
+    if (game.getDirectB2SFile().exists()) {
+      totalSizeExpected += game.getDirectB2SFile().length();
+    }
+
+    if (game.getDirectB2SMediaFile().exists()) {
+      totalSizeExpected += game.getDirectB2SMediaFile().length();
+    }
+  }
+
   private void zipPopperMedia(VpaPackageInfo packageInfo, ZipOutputStream zipOut) throws IOException {
     //export popper menu data
     if (exportDescriptor.isExportPopperMedia()) {
@@ -343,8 +385,15 @@ public class VpaExporterJob implements Job {
     if (fileToZip.isHidden()) {
       return;
     }
+
+    status = "Packing " + fileToZip.getAbsolutePath();
+    if (progress < 100 && tempFile.exists()) {
+      this.progress = tempFile.length() * 100 / totalSizeExpected;
+    }
+
     if (fileToZip.isDirectory()) {
       LOG.info("Zipping " + fileToZip.getCanonicalPath());
+
       if (fileName.endsWith("/")) {
         zipOut.putNextEntry(new ZipEntry(fileName));
         zipOut.closeEntry();
