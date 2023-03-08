@@ -226,7 +226,7 @@ public class MenuController implements Initializable {
   public void enterInstalling() {
     greenLabel.setText("");
     blueLabel.setText("");
-    setLoadLabel("Installing, please wait...");
+    setLoadLabel("Installing Table...");
     TransitionUtil.createOutFader(greenPanel).play();
     TransitionUtil.createInFader(bluePanel, 0.9, 100).play();
     TransitionUtil.createInFader(loadMask).play();
@@ -441,6 +441,7 @@ public class MenuController implements Initializable {
   }
 
   public void hideProgressbar() {
+    this.progressBar.setProgress(1);
     TransitionUtil.createTranslateByYTransition(progressStack, FOOTER_ANIMATION_DURATION, -70).play();
   }
 

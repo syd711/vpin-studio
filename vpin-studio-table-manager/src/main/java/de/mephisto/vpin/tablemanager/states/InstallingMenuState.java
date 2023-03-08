@@ -9,6 +9,7 @@ import de.mephisto.vpin.restclient.representations.PlaylistRepresentation;
 import de.mephisto.vpin.restclient.representations.VpaDescriptorRepresentation;
 import de.mephisto.vpin.tablemanager.Menu;
 import de.mephisto.vpin.tablemanager.MenuController;
+import javafx.application.Platform;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -51,6 +52,10 @@ public class InstallingMenuState extends MenuState {
   }
 
   private void executeInstallation() {
+    Platform.runLater(() -> {
+      this.menuController.showProgressbar();
+    });
+
     new Thread(() -> {
       VpaDescriptorRepresentation game = this.menuController.getVpaSelection();
       VpaManifest manifest = game.getManifest();
