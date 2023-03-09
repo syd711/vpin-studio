@@ -19,6 +19,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class HighscoreChangeListenerImpl implements InitializingBean, HighscoreChangeListener {
@@ -40,6 +41,12 @@ public class HighscoreChangeListenerImpl implements InitializingBean, HighscoreC
   public void highscoreChanged(@NotNull HighscoreChangeEvent event) {
     Game game = event.getGame();
 
+    String raw = null;
+    Optional<Highscore> highscore = highscoreService.getHighscore(game.getId());
+    if(highscore.isPresent()) {
+      raw = highscore.get().getRaw();
+    }
+
     //find competition to notify about highscore updates
     List<Competition> competitionForGame = competitionService.getCompetitionForGame(game.getId());
     boolean messageSent = false;
@@ -50,7 +57,7 @@ public class HighscoreChangeListenerImpl implements InitializingBean, HighscoreC
         long discordChannelId = competition.getDiscordChannelId();
 
         if (competition.getType().equals(CompetitionType.OFFLINE.name())) {
-          discordService.sendMessage(discordServerId, discordChannelId, DiscordOfflineChannelMessageFactory.createCompetitionHighscoreCreatedMessage(competition, event));
+          discordService.sendMessage(discordServerId, discordChannelId, DiscordOfflineChannelMessageFactory.createCompetitionHighscoreCreatedMessage(competition, event, raw));
         }
         else if (competition.getType().equals(CompetitionType.DISCORD.name())) {
           discordCompetitionHighscoreChanged(event, competition);
@@ -62,7 +69,7 @@ public class HighscoreChangeListenerImpl implements InitializingBean, HighscoreC
     //send the default message if no competition updates was sent
     if (!messageSent) {
       LOG.info("No competition found for " + game + ", sending default notification.");
-      discordService.sendDefaultHighscoreMessage(DiscordOfflineChannelMessageFactory.createHighscoreCreatedMessage(event));
+      discordService.sendDefaultHighscoreMessage(DiscordOfflineChannelMessageFactory.createHighscoreCreatedMessage(event, raw));
     }
   }
 

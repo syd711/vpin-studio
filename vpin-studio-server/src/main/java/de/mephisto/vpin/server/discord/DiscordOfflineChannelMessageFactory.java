@@ -52,7 +52,7 @@ public class DiscordOfflineChannelMessageFactory {
   }
 
 
-  public static String createHighscoreCreatedMessage(HighscoreChangeEvent event) {
+  public static String createHighscoreCreatedMessage(@NonNull HighscoreChangeEvent event, @Nullable String raw) {
     Game game = event.getGame();
     Score newScore = event.getNewScore();
     Score oldScore = event.getOldScore();
@@ -80,10 +80,15 @@ public class DiscordOfflineChannelMessageFactory {
         "```\n";
     String msg = String.format(template, newName, game.getGameDisplayName(), newScore);
     msg = msg + getBeatenMessage(oldScore, newScore);
+
+    if (!StringUtils.isEmpty(raw)) {
+      msg= msg + "\nHere is the updated highscore:\n```" + raw + "```";
+    }
+
     return msg;
   }
 
-  public static String createCompetitionHighscoreCreatedMessage(Competition competition, HighscoreChangeEvent event) {
+  public static String createCompetitionHighscoreCreatedMessage(@NonNull Competition competition, @NonNull HighscoreChangeEvent event, @Nullable String raw) {
     Game game = event.getGame();
     Score newScore = event.getNewScore();
     Score oldScore = event.getOldScore();
@@ -100,6 +105,11 @@ public class DiscordOfflineChannelMessageFactory {
     String template = "**%s created a new highscore for \"%s\"**.\nCompetition: \"%s\"\n```%s```\n";
     String msg = String.format(template, newName, game.getGameDisplayName(), competition.getName(), newScore);
     msg = msg + getBeatenMessage(oldScore, newScore);
+
+    if (!StringUtils.isEmpty(raw)) {
+      msg= msg + "\nHere is the updated highscore:\n```" + raw + "```";
+    }
+
     return msg;
   }
 

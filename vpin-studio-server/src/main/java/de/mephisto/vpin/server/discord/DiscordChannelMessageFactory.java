@@ -59,7 +59,7 @@ public class DiscordChannelMessageFactory {
       }
     }
 
-    String template = "**%s created the first highscore for the \"%s\" competition.**.\n(ID: %s)\n" +
+    String template = "**%s created the first highscore for the \"%s\" competition.**\n(ID: %s)\n" +
         "```%s\n" +
         "```";
 
