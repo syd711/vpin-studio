@@ -1,7 +1,7 @@
 package de.mephisto.vpin.tablemanager.states;
 
-import de.mephisto.vpin.restclient.VpaImportDescriptor;
 import de.mephisto.vpin.restclient.VPinStudioClient;
+import de.mephisto.vpin.restclient.VpaImportDescriptor;
 import de.mephisto.vpin.restclient.VpaManifest;
 import de.mephisto.vpin.restclient.representations.PlaylistRepresentation;
 import de.mephisto.vpin.restclient.representations.VpaDescriptorRepresentation;
@@ -18,10 +18,12 @@ public class InstallingMenuState extends MenuState {
   private final static Logger LOG = LoggerFactory.getLogger(VPinStudioClient.class);
   private final MenuState parentState;
   private final MenuController menuController;
+  private final PlaylistRepresentation playlist;
 
-  public InstallingMenuState(MenuState parentState, MenuController menuController) {
+  public InstallingMenuState(MenuState parentState, MenuController menuController, PlaylistRepresentation playlist) {
     this.parentState = parentState;
     this.menuController = menuController;
+    this.playlist = playlist;
     this.menuController.enterInstalling();
 
     StateMananger.getInstance().setInputBlocked(true);
@@ -66,11 +68,14 @@ public class InstallingMenuState extends MenuState {
       descriptor.setVpaSourceId(vpaDescriptor.getSource().getId());
       descriptor.setUuid(manifest.getUuid());
 
-      //TODO provide playlist selector
       List<PlaylistRepresentation> playlists = Menu.client.getPlaylists();
-      if(!playlists.isEmpty()) {
+      if (playlist != null) {
+        descriptor.setPlaylistId(playlist.getId());
+      }
+      else if (!playlists.isEmpty()) {
         descriptor.setPlaylistId(playlists.get(0).getId());
       }
+
       try {
         Menu.client.importVpa(descriptor);
       } catch (Exception e) {

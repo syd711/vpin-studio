@@ -1,6 +1,7 @@
 package de.mephisto.vpin.tablemanager.states;
 
 import de.mephisto.vpin.restclient.JobDescriptor;
+import de.mephisto.vpin.restclient.JobType;
 import de.mephisto.vpin.restclient.PinUPControl;
 import de.mephisto.vpin.restclient.PinUPControls;
 import de.mephisto.vpin.tablemanager.JobListener;
@@ -135,6 +136,9 @@ public class StateMananger implements JobListener, NativeKeyListener {
 
     Platform.runLater(() -> {
       this.activeState = activeState.back();
+      if(descriptor.getJobType().equals(JobType.VPA_IMPORT)) {
+        this.activeState = this.activeState.back();
+      }
       this.menuController.hideProgressbar();
     });
   }

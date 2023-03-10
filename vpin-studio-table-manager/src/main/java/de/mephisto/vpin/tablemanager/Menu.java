@@ -28,6 +28,7 @@ public class Menu extends Application {
   public static VPinStudioClient client;
 
   private final static boolean PRODUCTION_USE = !new File("./").getAbsolutePath().contains("workspace");
+  private final static boolean TEST_PRODUCTION = false;
 
   public static void main(String[] args) {
     launch(args);
@@ -49,13 +50,13 @@ public class Menu extends Application {
 
       Scene scene = null;
 
-      if (PRODUCTION_USE) {
+      if (PRODUCTION_USE || TEST_PRODUCTION) {
         root.setRotate(-90);
         root.setTranslateY(0);
         root.setTranslateX(0);
         scene = new Scene(root, screenBounds.getWidth(), screenBounds.getHeight());
         stage.setY(0);
-        stage.setX(screenBounds.getWidth() / 2 + 300);
+        stage.setX(screenBounds.getWidth() / 2 / 2);
       }
       else {
         scene = new Scene(root, screenBounds.getWidth(), 1000);

@@ -1,6 +1,10 @@
 package de.mephisto.vpin.tablemanager.states;
 
+import de.mephisto.vpin.restclient.representations.PlaylistRepresentation;
+import de.mephisto.vpin.tablemanager.Menu;
 import de.mephisto.vpin.tablemanager.MenuController;
+
+import java.util.List;
 
 public class InstallConfirmationMenuState extends MenuState {
   private final MenuState parentState;
@@ -24,7 +28,11 @@ public class InstallConfirmationMenuState extends MenuState {
 
   @Override
   MenuState enter() {
-    return new InstallingMenuState(this, menuController);
+    List<PlaylistRepresentation> playlists = Menu.client.getPlaylists();
+    if(!playlists.isEmpty()) {
+      return new PlaylistSelectionMenuState(this, menuController);
+    }
+    return new InstallingMenuState(this, menuController, null);
   }
 
   @Override

@@ -80,6 +80,12 @@ public class MenuController implements Initializable {
   @FXML
   private Node footer;
 
+  @FXML
+  private Node arrowRight;
+
+  @FXML
+  private Node arrowLeft;
+
   private boolean installToggle = true;
   private int selectionIndex = 0;
   private List<VpaDescriptorRepresentation> vpaDescriptors;
@@ -446,9 +452,25 @@ public class MenuController implements Initializable {
     TransitionUtil.createTranslateByYTransition(progressStack, FOOTER_ANIMATION_DURATION, -70).play();
   }
 
+  public void setNameLabelText(String text) {
+    nameLabel.setText(text);
+  }
+
   public void setStatus(String status, double progress) {
     this.progressBar.setProgress(progress / 100);
     this.progressLabel.setText(status);
     LOG.info("Setting status: \"" + status + "\" / " + progress);
+  }
+
+  public void enterPlaylistSelection() {
+    arrowRight.setVisible(true);
+    arrowLeft.setVisible(true);
+    greenLabel.setText("Select Playlist");
+  }
+
+  public void leavePlaylistSelection() {
+    arrowRight.setVisible(false);
+    arrowLeft.setVisible(false);
+    greenLabel.setText("Install Table?");
   }
 }

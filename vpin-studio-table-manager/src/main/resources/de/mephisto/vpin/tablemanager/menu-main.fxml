@@ -10,6 +10,7 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.text.Font?>
+<?import org.kordamp.ikonli.javafx.FontIcon?>
 
 <BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="550.0" prefWidth="2200.0" styleClass="root" stylesheets="@stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.tablemanager.MenuController">
    <center>
@@ -47,14 +48,24 @@
                                     <Image url="@footer.png" />
                                  </image>
                               </ImageView>
-                              <Label fx:id="nameLabel" text="Label" textFill="WHITE">
-                                 <font>
-                                    <Font size="36.0" />
-                                 </font>
+                              <BorderPane maxWidth="1080.0">
                                  <StackPane.margin>
                                     <Insets top="-90.0" />
                                  </StackPane.margin>
-                              </Label>
+                                 <center>
+                                    <Label fx:id="nameLabel" text="Loading Tables..." textFill="WHITE">
+                                       <font>
+                                          <Font size="36.0" />
+                                       </font>
+                                    </Label>
+                                 </center>
+                                 <left>
+                                    <FontIcon fx:id="arrowLeft" iconColor="WHITE" iconLiteral="mdi2a-arrow-left-bold" iconSize="46" visible="false" BorderPane.alignment="CENTER" />
+                                 </left>
+                                 <right>
+                                    <FontIcon fx:id="arrowRight" iconColor="WHITE" iconLiteral="mdi2a-arrow-right-bold" iconSize="46" visible="false" BorderPane.alignment="CENTER" />
+                                 </right>
+                              </BorderPane>
                            </children>
                            <StackPane.margin>
                               <Insets />
