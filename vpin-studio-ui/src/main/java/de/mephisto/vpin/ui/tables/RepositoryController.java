@@ -4,7 +4,6 @@ import de.mephisto.vpin.commons.VpaSourceType;
 import de.mephisto.vpin.commons.utils.FileUtils;
 import de.mephisto.vpin.commons.utils.ImageUtil;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
-import de.mephisto.vpin.restclient.representations.GameRepresentation;
 import de.mephisto.vpin.restclient.representations.VpaDescriptorRepresentation;
 import de.mephisto.vpin.restclient.representations.VpaSourceRepresentation;
 import de.mephisto.vpin.ui.NavigationController;
@@ -12,7 +11,9 @@ import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.WaitOverlayController;
 import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.events.StudioEventListener;
+import de.mephisto.vpin.ui.events.VpaImportedEvent;
 import de.mephisto.vpin.ui.util.Dialogs;
+import edu.umd.cs.findbugs.annotations.NonNull;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
@@ -110,11 +111,11 @@ public class RepositoryController implements Initializable, StudioEventListener 
         Optional<ButtonType> buttonType = Dialogs.openPopperRunningWarning(Studio.stage);
         if (buttonType.isPresent() && buttonType.get().equals(ButtonType.APPLY)) {
           Studio.client.terminatePopper();
-          Dialogs.openVpaImportDialog(tablesController, selectedItems);
+          Dialogs.openVpaInstallationDialog(tablesController, selectedItems);
         }
       }
       else {
-        Dialogs.openVpaImportDialog(tablesController, selectedItems);
+        Dialogs.openVpaInstallationDialog(tablesController, selectedItems);
       }
     }
   }
@@ -377,6 +378,14 @@ public class RepositoryController implements Initializable, StudioEventListener 
   @Override
   public void onVpaDownload() {
     Platform.runLater(() -> {
+      onReload();
+    });
+  }
+
+  @Override
+  public void onVpaImport(@NonNull VpaImportedEvent event) {
+    Platform.runLater(() -> {
+      client.invalidateVpaCache(-1);
       onReload();
     });
   }

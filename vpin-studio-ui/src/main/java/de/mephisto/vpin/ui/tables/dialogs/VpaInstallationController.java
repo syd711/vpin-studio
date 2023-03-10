@@ -2,7 +2,7 @@ package de.mephisto.vpin.ui.tables.dialogs;
 
 import de.mephisto.vpin.commons.fx.DialogController;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
-import de.mephisto.vpin.restclient.ImportDescriptor;
+import de.mephisto.vpin.restclient.VpaImportDescriptor;
 import de.mephisto.vpin.restclient.representations.PlaylistRepresentation;
 import de.mephisto.vpin.restclient.representations.VpaDescriptorRepresentation;
 import de.mephisto.vpin.ui.Studio;
@@ -28,8 +28,8 @@ import java.util.ResourceBundle;
 
 import static de.mephisto.vpin.ui.Studio.client;
 
-public class VpaImportController implements Initializable, DialogController {
-  private final static Logger LOG = LoggerFactory.getLogger(VpaImportController.class);
+public class VpaInstallationController implements Initializable, DialogController {
+  private final static Logger LOG = LoggerFactory.getLogger(VpaInstallationController.class);
 
   @FXML
   private CheckBox importRomCheckbox;
@@ -55,11 +55,12 @@ public class VpaImportController implements Initializable, DialogController {
 
   @FXML
   private void onImport(ActionEvent e) {
-    ImportDescriptor descriptor = new ImportDescriptor();
+    VpaImportDescriptor descriptor = new VpaImportDescriptor();
     descriptor.setImportRom(this.importRomCheckbox.isSelected());
     descriptor.setImportPupPack(this.importPupPackCheckbox.isSelected());
     descriptor.setImportPopperMedia(this.importPopperMedia.isSelected());
     descriptor.setImportHighscores(this.highscoresCheckbox.isSelected());
+    descriptor.setInstall(true);
 
     if (!this.playlistCombo.getSelectionModel().isEmpty()) {
       descriptor.setPlaylistId(this.playlistCombo.getSelectionModel().getSelectedItem().getId());
@@ -79,6 +80,7 @@ public class VpaImportController implements Initializable, DialogController {
         try {
           for (VpaDescriptorRepresentation vpaDescriptor : this.vpaDescriptors) {
             descriptor.setUuid(vpaDescriptor.getManifest().getUuid());
+            descriptor.setVpaSourceId(vpaDescriptor.getSource().getId());
             client.importVpa(descriptor);
           }
           JobPoller.getInstance().setPolling();

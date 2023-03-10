@@ -1,10 +1,8 @@
 package de.mephisto.vpin.tablemanager.states;
 
-import de.mephisto.vpin.restclient.ExportDescriptor;
-import de.mephisto.vpin.restclient.ImportDescriptor;
+import de.mephisto.vpin.restclient.VpaImportDescriptor;
 import de.mephisto.vpin.restclient.VPinStudioClient;
 import de.mephisto.vpin.restclient.VpaManifest;
-import de.mephisto.vpin.restclient.representations.GameRepresentation;
 import de.mephisto.vpin.restclient.representations.PlaylistRepresentation;
 import de.mephisto.vpin.restclient.representations.VpaDescriptorRepresentation;
 import de.mephisto.vpin.tablemanager.Menu;
@@ -57,14 +55,15 @@ public class InstallingMenuState extends MenuState {
     });
 
     new Thread(() -> {
-      VpaDescriptorRepresentation game = this.menuController.getVpaSelection();
-      VpaManifest manifest = game.getManifest();
+      VpaDescriptorRepresentation vpaDescriptor = this.menuController.getVpaSelection();
+      VpaManifest manifest = vpaDescriptor.getManifest();
 
-      ImportDescriptor descriptor = new ImportDescriptor();
+      VpaImportDescriptor descriptor = new VpaImportDescriptor();
       descriptor.setImportRom(true);
       descriptor.setImportPupPack(true);
       descriptor.setImportPopperMedia(true);
       descriptor.setImportHighscores(true);
+      descriptor.setVpaSourceId(vpaDescriptor.getSource().getId());
       descriptor.setUuid(manifest.getUuid());
 
       //TODO provide playlist selector

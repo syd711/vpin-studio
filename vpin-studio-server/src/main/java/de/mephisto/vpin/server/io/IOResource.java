@@ -1,7 +1,7 @@
 package de.mephisto.vpin.server.io;
 
 import de.mephisto.vpin.restclient.ExportDescriptor;
-import de.mephisto.vpin.restclient.ImportDescriptor;
+import de.mephisto.vpin.restclient.VpaImportDescriptor;
 import de.mephisto.vpin.restclient.VpaManifest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,7 +24,7 @@ public class IOResource {
   }
 
   @PostMapping("/import")
-  public Boolean importVpa(@RequestBody ImportDescriptor descriptor) {
+  public Boolean importVpa(@RequestBody VpaImportDescriptor descriptor) {
     return ioService.importVpa(descriptor);
   }
 

@@ -469,6 +469,9 @@ public class HighscoreService implements InitializingBean {
     }
   }
 
+  /**
+   * Returns the highscore difference position, starting from 1.
+   */
   public int calculateChangedPosition(@NonNull List<Score> oldScores, @NonNull List<Score> newScores) {
     for (int i = 0; i < oldScores.size(); i++) {
       if (!oldScores.get(i).equals(newScores.get(i))) {

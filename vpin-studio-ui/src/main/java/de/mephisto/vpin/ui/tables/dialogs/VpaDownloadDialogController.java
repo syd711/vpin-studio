@@ -4,6 +4,7 @@ import de.mephisto.vpin.commons.VpaSourceType;
 import de.mephisto.vpin.commons.fx.DialogController;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.DownloadJobDescriptor;
+import de.mephisto.vpin.restclient.VpaImportDescriptor;
 import de.mephisto.vpin.restclient.representations.VpaDescriptorRepresentation;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.jobs.JobPoller;
@@ -26,6 +27,7 @@ import java.net.URL;
 import java.util.List;
 import java.util.ResourceBundle;
 
+import static de.mephisto.vpin.ui.Studio.client;
 import static de.mephisto.vpin.ui.Studio.stage;
 
 public class VpaDownloadDialogController implements Initializable, DialogController {
@@ -69,28 +71,32 @@ public class VpaDownloadDialogController implements Initializable, DialogControl
     result = true;
     try {
       for (VpaDescriptorRepresentation selectedItem : vpas) {
-        File target = new File(targetFolder, selectedItem.getFilename());
-        int index = 1;
-        String originalBaseName = FilenameUtils.getBaseName(target.getName());
-        while (target.exists()) {
-          String suffix = FilenameUtils.getExtension(target.getName());
-          target = new File(target.getParentFile(), originalBaseName + " (" + index + ")." + suffix);
-          index++;
-        }
-
-        long repositoryId = selectedItem.getSource().getId();
-        String uuid = selectedItem.getManifest().getUuid();
-        DownloadJobDescriptor job = new DownloadJobDescriptor("/vpa/download/file/" + repositoryId + "/" + uuid, target, uuid);
-        job.setTitle("Download of \"" + selectedItem.getManifest().getGameDisplayName() + "\"");
-        job.setDescription("Downloading file \"" + selectedItem.getFilename() + "\"");
-
         if (downloadToRepository.isSelected()) {
-          job = new DownloadJobDescriptor("/vpa/download/archive/" + repositoryId + "/" + uuid, target, uuid);
-          job.setTitle("Copying of \"" + selectedItem.getManifest().getGameDisplayName() + "\"");
-          job.setDescription("Copying file \"" + selectedItem.getFilename() + "\"");
+          VpaImportDescriptor descriptor = new VpaImportDescriptor();
+          descriptor.setUuid(selectedItem.getManifest().getUuid());
+          descriptor.setVpaSourceId(selectedItem.getSource().getId());
+          descriptor.setInstall(false);
+          client.importVpa(descriptor);
+          JobPoller.getInstance().setPolling();
         }
+        else {
+          File target = new File(targetFolder, selectedItem.getFilename());
+          int index = 1;
+          String originalBaseName = FilenameUtils.getBaseName(target.getName());
+          while (target.exists()) {
+            String suffix = FilenameUtils.getExtension(target.getName());
+            target = new File(target.getParentFile(), originalBaseName + " (" + index + ")." + suffix);
+            index++;
+          }
 
-        JobPoller.getInstance().queueJob(job);
+          long repositoryId = selectedItem.getSource().getId();
+          String uuid = selectedItem.getManifest().getUuid();
+
+          DownloadJobDescriptor job = new DownloadJobDescriptor("/vpa/download/file/" + repositoryId + "/" + uuid, target, uuid);
+          job.setTitle("Download of \"" + selectedItem.getManifest().getGameDisplayName() + "\"");
+          job.setDescription("Downloading file \"" + selectedItem.getFilename() + "\"");
+          JobPoller.getInstance().queueJob(job);
+        }
       }
     } catch (Exception e) {
       LOG.error("Download failed: " + e.getMessage(), e);

@@ -1,11 +1,10 @@
 package de.mephisto.vpin.ui.tables.dialogs;
 
 import de.mephisto.vpin.commons.fx.DialogController;
-import de.mephisto.vpin.restclient.ImportDescriptor;
+import de.mephisto.vpin.restclient.VpaImportDescriptor;
 import de.mephisto.vpin.restclient.representations.PlaylistRepresentation;
 import de.mephisto.vpin.ui.jobs.JobPoller;
 import de.mephisto.vpin.ui.tables.TableOverviewController;
-import de.mephisto.vpin.ui.util.Dialogs;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -84,8 +83,10 @@ public class TableImportController implements Initializable, DialogController {
   }
 
   @FXML
+  @Deprecated
   private void onImport(ActionEvent e) {
-    ImportDescriptor descriptor = new ImportDescriptor();
+    VpaImportDescriptor descriptor = new VpaImportDescriptor();
+//    descriptor.setVpaSourceId(this.);
     descriptor.setImportRom(this.importRomCheckbox.isSelected());
     descriptor.setImportPupPack(this.importPupPackCheckbox.isSelected());
     descriptor.setImportPopperMedia(this.importPopperMedia.isSelected());

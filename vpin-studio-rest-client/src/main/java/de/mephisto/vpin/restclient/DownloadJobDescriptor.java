@@ -6,7 +6,7 @@ import org.springframework.lang.NonNull;
 
 import java.io.File;
 
-import static de.mephisto.vpin.restclient.JobType.VPA_DOWNLOAD;
+import static de.mephisto.vpin.restclient.JobType.VPA_DOWNLOAD_TO_FILESYSTEM;
 
 public class DownloadJobDescriptor extends JobDescriptor {
   private final static Logger LOG = LoggerFactory.getLogger(DownloadJobDescriptor.class);
@@ -17,7 +17,7 @@ public class DownloadJobDescriptor extends JobDescriptor {
   private final File target;
 
   public DownloadJobDescriptor(@NonNull String url, @NonNull File target, @NonNull String uuid) {
-    super(VPA_DOWNLOAD, uuid);
+    super(VPA_DOWNLOAD_TO_FILESYSTEM, uuid);
     this.url = url;
     this.target = target;
   }

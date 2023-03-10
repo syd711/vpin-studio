@@ -145,9 +145,9 @@ public class Dialogs {
     stage.showAndWait();
   }
 
-  public static void openVpaImportDialog(TablesController tablesController, List<VpaDescriptorRepresentation> vpaDescriptors) {
-    Stage stage = createStudioDialogStage(VpaImportController.class, "dialog-vpa-import.fxml", "Install Tables");
-    VpaImportController controller = (VpaImportController) stage.getUserData();
+  public static void openVpaInstallationDialog(TablesController tablesController, List<VpaDescriptorRepresentation> vpaDescriptors) {
+    Stage stage = createStudioDialogStage(VpaInstallationController.class, "dialog-vpa-install.fxml", "Install Tables");
+    VpaInstallationController controller = (VpaInstallationController) stage.getUserData();
     controller.setData(tablesController, vpaDescriptors);
     stage.showAndWait();
   }

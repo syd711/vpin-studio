@@ -77,8 +77,14 @@ public class VpaService implements InitializingBean {
   @Nullable
   public VpaDescriptor getVpaDescriptor(long sourceId, @NonNull String uuid) {
     VpaSourceAdapter vpaSourceAdapter = adapterCache.get(sourceId);
-    Optional<VpaDescriptor> first = vpaSourceAdapter.getVpaDescriptors().stream().filter(f -> f.getManifest().getUuid().equals(uuid)).findFirst();
-    return first.orElse(null);
+    List<VpaDescriptor> vpaDescriptors = vpaSourceAdapter.getVpaDescriptors();
+    for (VpaDescriptor vpaDescriptor : vpaDescriptors) {
+      String descriptorUUID = vpaDescriptor.getManifest().getUuid();
+      if(descriptorUUID.equals(uuid)) {
+        return vpaDescriptor;
+      }
+    }
+    return null;
   }
 
   public boolean deleteVpaDescriptor(long sourceId, @NonNull String uuid) {
@@ -108,8 +114,8 @@ public class VpaService implements InitializingBean {
     return this.defaultVpaSourceAdapter;
   }
 
-  public VpaSourceAdapter getVpaSourceAdapter(long id) {
-    return adapterCache.get(id);
+  public VpaSourceAdapter getVpaSourceAdapter(long sourceId) {
+    return adapterCache.get(sourceId);
   }
 
   public void invalidateCache(long id) {

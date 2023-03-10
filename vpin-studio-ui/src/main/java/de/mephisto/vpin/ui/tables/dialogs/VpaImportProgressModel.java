@@ -1,6 +1,6 @@
 package de.mephisto.vpin.ui.tables.dialogs;
 
-import de.mephisto.vpin.restclient.ImportDescriptor;
+import de.mephisto.vpin.restclient.VpaImportDescriptor;
 import de.mephisto.vpin.restclient.representations.VpaDescriptorRepresentation;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.util.ProgressModel;
@@ -14,12 +14,12 @@ import java.util.List;
 public class VpaImportProgressModel extends ProgressModel<VpaDescriptorRepresentation> {
   private final static Logger LOG = LoggerFactory.getLogger(VpaImportProgressModel.class);
 
-  private final ImportDescriptor descriptor;
+  private final VpaImportDescriptor descriptor;
   private final Iterator<VpaDescriptorRepresentation> iterator;
   private final List<VpaDescriptorRepresentation> vpaDescriptors;
   private double percentage = 0;
 
-  public VpaImportProgressModel(String title, ImportDescriptor descriptor, List<VpaDescriptorRepresentation> vpaDescriptors) {
+  public VpaImportProgressModel(String title, VpaImportDescriptor descriptor, List<VpaDescriptorRepresentation> vpaDescriptors) {
     super(title);
     this.descriptor = descriptor;
     this.iterator = vpaDescriptors.iterator();

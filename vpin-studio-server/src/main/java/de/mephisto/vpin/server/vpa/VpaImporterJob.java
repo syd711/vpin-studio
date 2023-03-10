@@ -3,7 +3,7 @@ package de.mephisto.vpin.server.vpa;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import de.mephisto.vpin.commons.EmulatorType;
-import de.mephisto.vpin.restclient.ImportDescriptor;
+import de.mephisto.vpin.restclient.VpaImportDescriptor;
 import de.mephisto.vpin.restclient.Job;
 import de.mephisto.vpin.restclient.VpaManifest;
 import de.mephisto.vpin.server.games.Game;
@@ -30,10 +30,11 @@ import java.util.zip.ZipInputStream;
 public class VpaImporterJob implements Job {
   private final static Logger LOG = LoggerFactory.getLogger(VpaService.class);
 
-  private final ImportDescriptor descriptor;
-  private final File vpaFile;
+  protected final VpaImportDescriptor descriptor;
+  protected File vpaFile;
+  protected final SystemService systemService;
+
   private final PinUPConnector connector;
-  private final SystemService systemService;
   private final HighscoreService highscoreService;
   private final GameService gameService;
   private final CardService cardService;
@@ -42,7 +43,7 @@ public class VpaImporterJob implements Job {
   private double progress;
   private String status;
 
-  public VpaImporterJob(@NonNull ImportDescriptor descriptor,
+  public VpaImporterJob(@NonNull VpaImportDescriptor descriptor,
                         @NonNull File vpaFile,
                         @NonNull PinUPConnector connector,
                         @NonNull SystemService systemService,

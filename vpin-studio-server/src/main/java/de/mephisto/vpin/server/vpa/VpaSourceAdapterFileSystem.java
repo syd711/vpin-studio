@@ -30,11 +30,15 @@ public class VpaSourceAdapterFileSystem implements VpaSourceAdapter {
       File[] vpaFiles = vpaArchiveFolder.listFiles((dir, name) -> name.endsWith(".vpa"));
       if (vpaFiles != null) {
         for (File vpaFile : vpaFiles) {
-          VpaManifest manifest = VpaUtil.readManifest(vpaFile);
-          VpaDescriptor descriptor = new VpaDescriptor(source, manifest, new Date(vpaFile.lastModified()),
-              vpaFile.getName(), vpaFile.length());
-          manifest.setVpaFileSize(vpaFile.length());
-          cache.put(vpaFile.getName(), descriptor);
+          try {
+            VpaManifest manifest = VpaUtil.readManifest(vpaFile);
+            VpaDescriptor descriptor = new VpaDescriptor(source, manifest, new Date(vpaFile.lastModified()),
+                vpaFile.getName(), vpaFile.length());
+            manifest.setVpaFileSize(vpaFile.length());
+            cache.put(vpaFile.getName(), descriptor);
+          } catch (Exception e) {
+            LOG.error("Failed to read " + vpaFile.getAbsolutePath() + ": " + e.getMessage(), e);
+          }
         }
       }
     }

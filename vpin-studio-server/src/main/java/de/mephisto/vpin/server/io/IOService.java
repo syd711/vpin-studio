@@ -1,5 +1,6 @@
 package de.mephisto.vpin.server.io;
 
+import de.mephisto.vpin.commons.VpaSourceType;
 import de.mephisto.vpin.restclient.*;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameService;
@@ -44,15 +45,29 @@ public class IOService {
   @Autowired
   private VpaService vpaService;
 
-  public boolean importVpa(@NonNull ImportDescriptor descriptor) {
+  public boolean importVpa(@NonNull VpaImportDescriptor descriptor) {
     try {
-      VpaDescriptor vpaDescriptor = vpaService.getVpaDescriptor(DefaultVpaSource.DEFAULT_VPA_SOURCE_ID, descriptor.getUuid());
+      VpaDescriptor vpaDescriptor = vpaService.getVpaDescriptor(descriptor.getVpaSourceId(), descriptor.getUuid());
       File vpaFile = new File(systemService.getVpaArchiveFolder(), vpaDescriptor.getFilename());
 
       JobDescriptor jobDescriptor = new JobDescriptor(JobType.VPA_IMPORT, descriptor.getUuid());
       jobDescriptor.setTitle("Import of \"" + vpaDescriptor.getManifest().getGameDisplayName() + "\"");
       jobDescriptor.setDescription("Importing table for \"" + vpaDescriptor.getManifest().getGameDisplayName() + "\"");
-      jobDescriptor.setJob(new VpaImporterJob(descriptor, vpaFile, pinUPConnector, systemService, highscoreService, gameService, cardService));
+
+      VpaImporterJob job = null;
+      if (vpaDescriptor.getSource().getType().equals(VpaSourceType.Http.name())) {
+        if (descriptor.isInstall()) {
+          jobDescriptor.setDescription("Downloading and installing \"" + vpaDescriptor.getManifest().getGameDisplayName() + "\"");
+        }
+        else {
+          jobDescriptor.setDescription("Downloading \"" + vpaDescriptor.getManifest().getGameDisplayName() + "\"");
+        }
+        job = new VpaDownloadAndImporterJob(vpaDescriptor, descriptor, vpaFile, pinUPConnector, systemService, highscoreService, vpaService, gameService, cardService);
+      }
+      else {
+        job = new VpaImporterJob(descriptor, vpaFile, pinUPConnector, systemService, highscoreService, gameService, cardService);
+      }
+      jobDescriptor.setJob(job);
 
       JobQueue.getInstance().offer(jobDescriptor);
       LOG.info("Offered import job for \"" + vpaDescriptor.getManifest().getGameDisplayName() + "\"");

@@ -2,6 +2,7 @@ package de.mephisto.vpin.server.vpa;
 
 import de.mephisto.vpin.restclient.VpaManifest;
 import de.mephisto.vpin.restclient.util.PasswordUtil;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,6 +27,36 @@ public class VpaSourceAdapterHttpServer implements VpaSourceAdapter {
     disableSslVerification();
   }
 
+  public void download(VpaDescriptor descriptor, File target) {
+    BufferedInputStream in = null;
+    BufferedOutputStream out = null;
+    try {
+      String location = this.source.getLocation();
+      if (!location.endsWith("/")) {
+        location += "/";
+      }
+
+      String url = location + URLEncoder.encode(descriptor.getFilename(), StandardCharsets.UTF_8).replace("+", "%20");
+      LOG.info("Downloading " + url);
+      FileOutputStream fout = new FileOutputStream(target);
+      HttpURLConnection conn = getConnection(url);
+      in = new BufferedInputStream(conn.getInputStream());
+      out = new BufferedOutputStream(fout);
+
+      IOUtils.copy(in, out);
+
+      in.close();
+
+      out.flush();
+      out.close();
+
+      fout.close();
+      conn.disconnect();
+    } catch (IOException e) {
+      LOG.error("Failed to download " + descriptor.getFilename() + ": " + e.getMessage(), e);
+    }
+  }
+
   public List<VpaDescriptor> getVpaDescriptors() {
     if (cache.isEmpty()) {
       String location = this.source.getLocation();
@@ -45,6 +76,7 @@ public class VpaSourceAdapterHttpServer implements VpaSourceAdapter {
         while ((str = in.readLine()) != null) {
           jsonBuffer.append(str);
         }
+        in.close();
 
         String json = jsonBuffer.toString();
         List<VpaManifest> vpaManifests = VpaUtil.readManifests(json);
@@ -57,6 +89,10 @@ public class VpaSourceAdapterHttpServer implements VpaSourceAdapter {
         LOG.error("No descriptor found for " + location + " (" + e.getMessage() + ")");
       } catch (Exception e) {
         LOG.error("Failed to read HTTP URL \"" + location + "\":" + e.getMessage());
+      } finally {
+        if (conn != null) {
+          conn.disconnect();
+        }
       }
     }
     return new ArrayList<>(cache.values());
@@ -125,8 +161,8 @@ public class VpaSourceAdapterHttpServer implements VpaSourceAdapter {
    */
   private void disableSslVerification() {
     try {
-      System.setProperty("javax.net.ssl.trustStore","clientTrustStore.key");
-      System.setProperty("javax.net.ssl.trustStorePassword","qwerty");
+      System.setProperty("javax.net.ssl.trustStore", "clientTrustStore.key");
+      System.setProperty("javax.net.ssl.trustStorePassword", "qwerty");
 
       // Create a trust manager that does not validate certificate chains
       TrustManager[] trustAllCerts = new TrustManager[]{

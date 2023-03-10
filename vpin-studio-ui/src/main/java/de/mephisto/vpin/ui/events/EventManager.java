@@ -68,7 +68,7 @@ public class EventManager {
         notifyVpaImport(uuid);
         return;
       }
-      case VPA_DOWNLOAD: {
+      case VPA_DOWNLOAD_TO_REPOSITORY: {
         notifyVpaDownloadFinished();
         return;
       }
