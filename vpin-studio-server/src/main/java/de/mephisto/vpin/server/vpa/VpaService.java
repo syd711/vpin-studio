@@ -38,7 +38,7 @@ public class VpaService implements InitializingBean {
   private VpaSourceRepository vpaSourceRepository;
 
   private VpaSourceAdapterFileSystem defaultVpaSourceAdapter;
-  private final Map<Long, VpaSourceAdapter> adapterCache = new HashMap<>();
+  private final Map<Long, VpaSourceAdapter> adapterCache = new LinkedHashMap<>();
 
   public List<VpaDescriptor> getVpaDescriptors(int gameId) {
     Game game = gameService.getGame(gameId);

@@ -16,6 +16,8 @@ import org.jnativehook.keyboard.NativeKeyListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static de.mephisto.vpin.tablemanager.UIDefaults.FOOTER_ANIMATION_DURATION;
+
 public class StateMananger implements JobListener, NativeKeyListener {
   private final static Logger LOG = LoggerFactory.getLogger(StateMananger.class);
 
@@ -66,20 +68,20 @@ public class StateMananger implements JobListener, NativeKeyListener {
     });
   }
 
-  public void setInputBlocked(boolean blocked) {
-    if (blocked) {
-      this.blocked = true;
-    }
-    else {
-      new Thread(() -> {
-        try {
-          Thread.sleep(100);
-        } catch (InterruptedException e) {
-          //ignore
-        }
-        this.blocked = false;
-      }).start();
-    }
+  public void setInputBlocked(boolean b, long duration) {
+    this.blocked = b;
+    new Thread(() -> {
+      try {
+        Thread.sleep(duration);
+      } catch (InterruptedException e) {
+        //ignore1
+      }
+      this.blocked = !b;
+    }).start();
+  }
+
+  public void setInputBlocked(boolean unblock) {
+    this.blocked = unblock;
   }
 
   public void init(MenuController controller) {
@@ -129,7 +131,7 @@ public class StateMananger implements JobListener, NativeKeyListener {
   @Override
   public void finished(JobDescriptor descriptor) {
     LOG.info("StateManager received finish job event of " + descriptor);
-    this.setInputBlocked(false);
+    this.setInputBlocked(true, FOOTER_ANIMATION_DURATION + 100);
 
     Platform.runLater(() -> {
       this.activeState = activeState.back();

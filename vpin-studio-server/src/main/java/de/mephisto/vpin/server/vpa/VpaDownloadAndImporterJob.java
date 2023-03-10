@@ -39,7 +39,7 @@ public class VpaDownloadAndImporterJob extends VpaImporterJob {
 
   @Override
   public double getProgress() {
-    return this.downloadToRepositoryJob.getProgress() * (3 / 4d) + (super.getProgress() * (1 / 4d));
+    return this.downloadToRepositoryJob.getProgress() * (4 / 5d) + (super.getProgress() * (1 / 5d));
   }
 
   @Override

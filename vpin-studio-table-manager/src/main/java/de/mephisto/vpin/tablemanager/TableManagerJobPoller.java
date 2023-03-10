@@ -18,7 +18,7 @@ public class TableManagerJobPoller {
   private boolean polling = false;
 
   private final List<JobDescriptor> activeJobs = Collections.synchronizedList(new ArrayList<>());
-  private List<JobListener> listeners = new ArrayList<>();
+  private final List<JobListener> listeners = new ArrayList<>();
 
   public void addJobListener(JobListener listener) {
     this.listeners.add(listener);
@@ -45,12 +45,12 @@ public class TableManagerJobPoller {
             //give the init some time
             refreshJobList();
             if (activeJobs.isEmpty()) {
-              Thread.sleep(1000);
+              Thread.sleep(600);
             }
 
             while (polling) {
               refreshJobList();
-              Thread.sleep(2000);
+              Thread.sleep(1500);
               polling = !activeJobs.isEmpty();
               LOG.info("JobPoller is waiting for " + activeJobs.size() + " running jobs.");
             }

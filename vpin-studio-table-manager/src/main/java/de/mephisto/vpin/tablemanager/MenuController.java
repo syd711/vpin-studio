@@ -119,14 +119,14 @@ public class MenuController implements Initializable {
     TransitionUtil.createTranslateByYTransition(footer, FOOTER_ANIMATION_DURATION, FOOTER_HEIGHT).play();
 
     new Thread(() -> {
-      vpaDescriptors = Menu.client.getVpaDescriptors();
+      vpaDescriptors = Menu.client.getVpaDescriptorsFiltered();
       activeModels = vpaDescriptors; //TODO mpf
       Platform.runLater(() -> {
         loadArchivedItems();
         initGameBarSelection();
 
         TransitionUtil.createOutFader(loadMask).play();
-        StateMananger.getInstance().setInputBlocked(false);
+        StateMananger.getInstance().setInputBlocked(true, TransitionUtil.FADER_DEFAULT + 100);
       });
     }).start();
   }
@@ -151,7 +151,7 @@ public class MenuController implements Initializable {
         initGameBarSelection();
 
         TransitionUtil.createOutFader(loadMask).play();
-        StateMananger.getInstance().setInputBlocked(false);
+        StateMananger.getInstance().setInputBlocked(true, TransitionUtil.FADER_DEFAULT + 100);
       });
     }).start();
   }
@@ -179,6 +179,7 @@ public class MenuController implements Initializable {
   }
 
   public void resetFooter() {
+    StateMananger.getInstance().setInputBlocked(true, FOOTER_ANIMATION_DURATION + 100);
     if (footer.getTranslateY() != 0) {
       TransitionUtil.createTranslateByYTransition(footer, FOOTER_ANIMATION_DURATION, -FOOTER_HEIGHT).play();
     }

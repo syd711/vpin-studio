@@ -25,7 +25,7 @@
                            </StackPane.margin>
                            <children>
                               <ProgressBar fx:id="progressBar" prefHeight="70.0" prefWidth="980.0" progress="0.0" />
-                              <Label fx:id="progressLabel" text="Label" textFill="WHITE">
+                              <Label fx:id="progressLabel" text="Loading Tables..." textFill="WHITE">
                                  <font>
                                     <Font size="18.0" />
                                  </font>

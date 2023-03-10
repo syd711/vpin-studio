@@ -1,10 +1,7 @@
 package de.mephisto.vpin.server.vpa;
 
-import de.mephisto.vpin.restclient.JobDescriptor;
-import de.mephisto.vpin.restclient.JobType;
 import de.mephisto.vpin.restclient.representations.VpaDescriptorRepresentation;
 import de.mephisto.vpin.restclient.representations.VpaSourceRepresentation;
-import de.mephisto.vpin.server.jobs.JobQueue;
 import de.mephisto.vpin.server.system.SystemService;
 import de.mephisto.vpin.server.util.UploadUtil;
 import org.apache.commons.io.IOUtils;
@@ -16,9 +13,14 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
 import javax.servlet.http.HttpServletResponse;
-import java.io.*;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import static de.mephisto.vpin.server.VPinStudioServer.API_SEGMENT;
@@ -44,6 +46,18 @@ public class VpaResource {
       result.add(descriptorRepresentation);
     }
     return result;
+  }
+
+
+  @GetMapping("/filtered")
+  public List<VpaDescriptorRepresentation> getFilteredArchives() {
+    List<VpaDescriptor> vpaDescriptors = vpaService.getVpaDescriptors();
+    Map<String, VpaDescriptorRepresentation> result = new HashMap<>();
+    for (VpaDescriptor vpaDescriptor : vpaDescriptors) {
+      VpaDescriptorRepresentation descriptorRepresentation = toRepresentation(vpaDescriptor);
+      result.put(vpaDescriptor.getManifest().getUuid(), descriptorRepresentation);
+    }
+    return new ArrayList<>(result.values());
   }
 
   @GetMapping("/sources")
