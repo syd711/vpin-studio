@@ -43,7 +43,7 @@ public class HighscoreChangeListenerImpl implements InitializingBean, HighscoreC
 
     String raw = null;
     Optional<Highscore> highscore = highscoreService.getHighscore(game.getId());
-    if(highscore.isPresent()) {
+    if (highscore.isPresent()) {
       raw = highscore.get().getRaw();
     }
 
@@ -117,7 +117,7 @@ public class HighscoreChangeListenerImpl implements InitializingBean, HighscoreC
           }
 
           //do not append endless new records
-          if(updatedScores.size() == oldScores.size()) {
+          if (updatedScores.size() == oldScores.size()) {
             break;
           }
         }
