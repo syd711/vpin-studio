@@ -79,6 +79,18 @@ The given overview shows the key features and roadmap of the VPin Studio
 - PinUP Popper reset support
 
 
+## Sample Screenshots
+
+A sample log generated from on the VPin bot:
+<img src="./documentation/discord-sample.png" width="800"><br/>
+_Discord Integration_
+
+<img src="./documentation/tables1.png" width="800"><br/>
+_Table Overview_
+
+<img src="./documentation/tables-validation.png" width="800"><br/>
+_Validation Issue Example_
+
 
 ## Third Party Licenses and Resources
 
