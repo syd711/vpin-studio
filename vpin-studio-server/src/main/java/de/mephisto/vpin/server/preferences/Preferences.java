@@ -49,6 +49,17 @@ public class Preferences {
 
   private int idleTimeout;
 
+  @Column(name = "activeGame", nullable = false, columnDefinition = "int default -1")
+  private int activeGame = -1;
+
+  public int getActiveGame() {
+    return activeGame;
+  }
+
+  public void setActiveGame(int activeGame) {
+    this.activeGame = activeGame;
+  }
+
   public String getDiscordChannelId() {
     return discordChannelId;
   }

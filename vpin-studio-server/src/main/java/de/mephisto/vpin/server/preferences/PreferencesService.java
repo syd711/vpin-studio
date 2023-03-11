@@ -3,7 +3,6 @@ package de.mephisto.vpin.server.preferences;
 import de.mephisto.vpin.restclient.AssetType;
 import de.mephisto.vpin.server.assets.Asset;
 import de.mephisto.vpin.server.assets.AssetRepository;
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanWrapper;
@@ -79,14 +78,14 @@ public class PreferencesService implements InitializingBean {
     preferencesRepository.saveAndFlush(preferences);
     LOG.info("Saved preferences " + values);
 
-    //notify change listeners
-    for (Map.Entry<String, Object> entry : oldValues.entrySet()) {
-      String key = entry.getKey();
-      Object oldValue = entry.getValue();
-      Object newValue = values.get(key);
-      notifyListeners(key, oldValue, newValue);
-    }
+    notifyChangeListeners(values, oldValues);
     return true;
+  }
+
+  public boolean savePreference(String key, Object value) {
+    Map<String, Object> values = new HashMap<>();
+    values.put(key, value);
+    return savePreference(values);
   }
 
   public Asset saveAvatar(byte[] bytes, String mimeType) {
@@ -110,6 +109,16 @@ public class PreferencesService implements InitializingBean {
     Preferences updatedPreferences = preferencesRepository.saveAndFlush(preferences);
     LOG.info("Updates avatar in preferences.");
     return updatedPreferences.getAvatar();
+  }
+
+  private void notifyChangeListeners(Map<String, Object> values, Map<String, Object> oldValues) {
+    //notify change listeners
+    for (Map.Entry<String, Object> entry : oldValues.entrySet()) {
+      String key = entry.getKey();
+      Object oldValue = entry.getValue();
+      Object newValue = values.get(key);
+      notifyListeners(key, oldValue, newValue);
+    }
   }
 
   @Override

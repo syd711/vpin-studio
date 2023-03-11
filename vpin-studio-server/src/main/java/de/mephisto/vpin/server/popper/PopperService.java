@@ -7,6 +7,7 @@ import de.mephisto.vpin.restclient.TableManagerSettings;
 import de.mephisto.vpin.restclient.PinUPControl;
 import de.mephisto.vpin.restclient.PopperScreen;
 import de.mephisto.vpin.server.games.Game;
+import de.mephisto.vpin.server.preferences.PreferencesService;
 import de.mephisto.vpin.server.system.SystemService;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import org.slf4j.Logger;
