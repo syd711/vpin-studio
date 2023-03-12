@@ -811,7 +811,7 @@ public class VPinStudioClient implements ObservedPropertyChangeListener, Overlay
    * DirectB2S
    ********************************************************************************************************************/
 
-  public ByteArrayInputStream getDirectB2SImage(GameRepresentation game) {
+  public ByteArrayInputStream getDefaultPicture(GameRepresentation game) {
     byte[] bytes = restClient.readBinary(API + "directb2s/" + game.getId());
     return new ByteArrayInputStream(bytes);
   }
@@ -823,6 +823,17 @@ public class VPinStudioClient implements ObservedPropertyChangeListener, Overlay
       return true;
     } catch (Exception e) {
       LOG.error("Directb2s upload failed: " + e.getMessage(), e);
+      throw e;
+    }
+  }
+
+  public boolean uploadDefaultBackgroundFile(File file, int gameId, FileUploadProgressListener listener) throws Exception {
+    try {
+      String url = restClient.getBaseUrl() + API + "directb2s/background";
+      new RestTemplate().exchange(url, HttpMethod.POST, createUpload(file, gameId, null, AssetType.DEFAULT_BACKGROUND, listener), Boolean.class);
+      return true;
+    } catch (Exception e) {
+      LOG.error("Default background upload failed: " + e.getMessage(), e);
       throw e;
     }
   }

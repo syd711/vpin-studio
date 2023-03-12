@@ -29,7 +29,7 @@ public class DefaultPictureService {
 
   }
 
-  public void extractDefaultPicture(@NonNull Game game) throws VPinStudioException {
+  public void extractDefaultPicture(@NonNull Game game) {
     DirectB2SImageExtractor extractor = new DirectB2SImageExtractor();
 
     if (StringUtils.isEmpty(game.getRom())) {
@@ -43,8 +43,12 @@ public class DefaultPictureService {
 
     File target = game.getRawDefaultPicture();
     if (game.getDirectB2SFile().exists()) {
-      extractor.extractImage(game.getDirectB2SFile(), target);
-      return;
+      try {
+        extractor.extractImage(game.getDirectB2SFile(), target);
+        return;
+      } catch (VPinStudioException e) {
+        //ignore
+      }
     }
 
     File backGlass = game.getPinUPMedia(PopperScreen.BackGlass);
@@ -53,6 +57,7 @@ public class DefaultPictureService {
       if (name.endsWith(".png") || name.endsWith(".jpg") || name.endsWith(".jpeg")) {
         try {
           FileUtils.copyFile(backGlass, target);
+          return;
         } catch (IOException e) {
           LOG.error("Failed to copy popper resource file as background: " + e.getMessage(), e);
         }
@@ -118,12 +123,12 @@ public class DefaultPictureService {
   @Nullable
   public BufferedImage generateB2SCompetitionImage(@NonNull Game game, int cropWidth, int cropHeight) throws VPinStudioException {
     try {
-      if (game.getRawDefaultPicture() != null && game.getRawDefaultPicture().exists()) {
+      if (game.getRawDefaultPicture() == null || !game.getRawDefaultPicture().exists()) {
         extractDefaultPicture(game);
       }
 
       File backgroundImageFile = game.getRawDefaultPicture();
-      if (!backgroundImageFile.exists()) {
+      if (backgroundImageFile == null || !backgroundImageFile.exists()) {
         return null;
       }
 

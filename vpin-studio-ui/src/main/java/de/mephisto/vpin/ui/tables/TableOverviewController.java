@@ -151,7 +151,13 @@ public class TableOverviewController implements Initializable, StudioFXControlle
 
   @FXML
   private void onDirectb2sUpload() {
-    this.tablesController.getTablesSideBarController().onDirectb2sUpload();
+    GameRepresentation game = tableView.getSelectionModel().getSelectedItem();
+    if (game != null) {
+      boolean uploaded = Dialogs.openDirectB2SUploadDialog(game);
+      if (uploaded) {
+        onReload();
+      }
+    }
   }
 
   @FXML
@@ -587,7 +593,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
 
   public void initSelection() {
     GameRepresentation game = tableView.getSelectionModel().getSelectedItem();
-    if(game != null) {
+    if (game != null) {
       NavigationController.setBreadCrumb(Arrays.asList("Tables", game.getGameDisplayName()));
     }
   }

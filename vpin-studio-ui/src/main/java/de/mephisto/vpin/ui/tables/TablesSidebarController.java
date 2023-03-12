@@ -155,7 +155,7 @@ public class TablesSidebarController implements Initializable {
   private ImageView rawDirectB2SImage;
 
   @FXML
-  private Button openDirectB2SImageButton;
+  private Button openDefaultPictureBtn;
 
   @FXML
   private Button editHsFileNameBtn;
@@ -167,7 +167,7 @@ public class TablesSidebarController implements Initializable {
   private Button editTableNameBtn;
 
   @FXML
-  private Button directb2sUploadBtn;
+  private Button defaultPictureUploadBtn;
 
   @FXML
   private Button scanBtn;
@@ -456,9 +456,9 @@ public class TablesSidebarController implements Initializable {
 
 
   @FXML
-  public void onDirectb2sUpload() {
+  public void onDefaultBackgroundUpload() {
     if (this.game.isPresent()) {
-      boolean uploaded = Dialogs.openDirectB2SUploadDialog(this.game.get());
+      boolean uploaded = Dialogs.openDefaultBackgroundUploadDialog(this.game.get());
       if (uploaded) {
         tablesController.onReload();
       }
@@ -530,7 +530,7 @@ public class TablesSidebarController implements Initializable {
   @FXML
   private void onOpenDirectB2SBackground() {
     if (game.isPresent()) {
-      ByteArrayInputStream image = client.getDirectB2SImage(game.get());
+      ByteArrayInputStream image = client.getDefaultPicture(game.get());
       MediaUtil.openMedia(image);
     }
   }
@@ -739,7 +739,7 @@ public class TablesSidebarController implements Initializable {
     editTableNameBtn.setDisable(g.isEmpty());
     romUploadBtn.setDisable(g.isEmpty());
     scanBtn.setDisable(g.isEmpty());
-    directb2sUploadBtn.setDisable(g.isEmpty());
+    defaultPictureUploadBtn.setDisable(true);
 
     if (g.isPresent()) {
       GameRepresentation game = g.get();
@@ -753,6 +753,7 @@ public class TablesSidebarController implements Initializable {
       editTableNameBtn.setDisable(!game.getEmulator().isVisualPinball());
       romUploadBtn.setDisable(!game.getEmulator().isVisualPinball());
       scanBtn.setDisable(!game.getEmulator().isVisualPinball());
+      defaultPictureUploadBtn.setDisable(StringUtils.isEmpty(game.getRom()));
 
 
       volumeSlider.setDisable(false);
@@ -855,19 +856,19 @@ public class TablesSidebarController implements Initializable {
 
   private void refreshDirectB2SPreview(Optional<GameRepresentation> game) {
     try {
-      openDirectB2SImageButton.setVisible(false);
-      openDirectB2SImageButton.setTooltip(new Tooltip("Open directb2s image"));
+      openDefaultPictureBtn.setDisable(true);
+      openDefaultPictureBtn.setTooltip(new Tooltip("Open directb2s image"));
       rawDirectB2SImage.setVisible(false);
 
       if (game.isPresent()) {
-        InputStream input = client.getDirectB2SImage(game.get());
+        InputStream input = client.getDefaultPicture(game.get());
         Image image = new Image(input);
         rawDirectB2SImage.setVisible(true);
         rawDirectB2SImage.setImage(image);
         input.close();
 
         if (image.getWidth() > 300) {
-          openDirectB2SImageButton.setVisible(true);
+          openDefaultPictureBtn.setDisable(false);
           resolutionLabel.setText("Resolution: " + (int) image.getWidth() + " x " + (int) image.getHeight());
         }
         else {

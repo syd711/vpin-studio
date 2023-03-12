@@ -11,8 +11,7 @@ import org.xml.sax.helpers.DefaultHandler;
 import javax.xml.bind.DatatypeConverter;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
-import java.io.File;
-import java.io.FileOutputStream;
+import java.io.*;
 
 public class DirectB2SImageExtractor extends DefaultHandler {
   private final static Logger LOG = LoggerFactory.getLogger(DirectB2SImageExtractor.class);
@@ -23,21 +22,41 @@ public class DirectB2SImageExtractor extends DefaultHandler {
   }
 
   public void extractImage(@NonNull File directB2S, @NonNull File target) throws VPinStudioException {
+    FileOutputStream out = null;
+    InputStream in = null;
     try {
       if (directB2S.exists()) {
+        in = new FileInputStream(directB2S);
         SAXParserFactory factory = SAXParserFactory.newInstance();
         SAXParser saxParser = factory.newSAXParser();
-        saxParser.parse(directB2S.getAbsolutePath(), this);
+        saxParser.parse(in, this);
 
         byte[] bytes = DatatypeConverter.parseBase64Binary(imageData);
-        FileOutputStream out = new FileOutputStream(target);
+        out = new FileOutputStream(target);
         IOUtils.write(bytes, out);
         out.close();
       }
     } catch (Exception e) {
       String msg = "Failed to parse directb2s directB2S '" + directB2S.getAbsolutePath() + "': " + e.getMessage();
-      LOG.error(msg, e);
+      LOG.error(msg);
       throw new VPinStudioException(msg, e);
+    }
+    finally {
+      if(in != null) {
+        try {
+          in.close();
+        } catch (IOException e) {
+          //ignore
+        }
+      }
+
+      if(out != null) {
+        try {
+          out.close();
+        } catch (IOException e) {
+          //ignore
+        }
+      }
     }
   }
 

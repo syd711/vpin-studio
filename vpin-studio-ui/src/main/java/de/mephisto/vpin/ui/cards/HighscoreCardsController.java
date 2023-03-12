@@ -48,7 +48,7 @@ public class HighscoreCardsController implements Initializable, ObservedProperty
   private Label resolutionLabel;
 
   @FXML
-  private Button openDirectB2SImageButton;
+  private Button openDefaultPictureBtn;
 
   @FXML
   private ImageView cardPreview;
@@ -215,9 +215,9 @@ public class HighscoreCardsController implements Initializable, ObservedProperty
   }
 
   @FXML
-  private void onDirectB2SUpload() {
+  private void onDefaultPictureUpload() {
     GameRepresentation game = tableCombo.getValue();
-    boolean uploaded = Dialogs.openDirectB2SUploadDialog(game);
+    boolean uploaded = Dialogs.openDefaultBackgroundUploadDialog(game);
     if (uploaded) {
       refreshRawPreview(Optional.of(game));
       onGenerateClick();
@@ -267,10 +267,10 @@ public class HighscoreCardsController implements Initializable, ObservedProperty
   }
 
   @FXML
-  private void onOpenDirectB2SBackground() {
+  private void onOpenDefaultPicture() {
     GameRepresentation game = tableCombo.getValue();
     if (game != null) {
-      ByteArrayInputStream s = Studio.client.getDirectB2SImage(game);
+      ByteArrayInputStream s = Studio.client.getDefaultPicture(game);
       MediaUtil.openMedia(s);
     }
   }
@@ -360,18 +360,18 @@ public class HighscoreCardsController implements Initializable, ObservedProperty
   private void refreshRawPreview(Optional<GameRepresentation> game) {
     try {
       resolutionLabel.setText("");
-      openDirectB2SImageButton.setVisible(false);
+      openDefaultPictureBtn.setVisible(false);
       rawDirectB2SImage.setImage(null);
 
       if (game.isPresent()) {
-        openDirectB2SImageButton.setTooltip(new Tooltip("Open directb2s image"));
-        InputStream input = client.getDirectB2SImage(game.get());
+        openDefaultPictureBtn.setTooltip(new Tooltip("Open directb2s image"));
+        InputStream input = client.getDefaultPicture(game.get());
         Image image = new Image(input);
         rawDirectB2SImage.setImage(image);
         input.close();
 
         if (image.getWidth() > 300) {
-          openDirectB2SImageButton.setVisible(true);
+          openDefaultPictureBtn.setVisible(true);
           resolutionLabel.setText("Resolution: " + (int) image.getWidth() + " x " + (int) image.getHeight());
         }
       }

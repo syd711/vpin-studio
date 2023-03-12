@@ -96,10 +96,18 @@ public class Dialogs {
     return controller.getCompetition();
   }
 
-
   public static boolean openDirectB2SUploadDialog(GameRepresentation game) {
     Stage stage = createStudioDialogStage(DirectB2SUploadController.class, "dialog-directb2s-upload.fxml", "DirectB2S File Upload");
     DirectB2SUploadController controller = (DirectB2SUploadController) stage.getUserData();
+    controller.setGame(game);
+    stage.showAndWait();
+
+    return controller.uploadFinished();
+  }
+
+  public static boolean openDefaultBackgroundUploadDialog(GameRepresentation game) {
+    Stage stage = createStudioDialogStage(DefaultBackgroundUploadController.class, "dialog-background-picture-upload.fxml", "Default Background Upload");
+    DefaultBackgroundUploadController controller = (DefaultBackgroundUploadController) stage.getUserData();
     controller.setGame(game);
     stage.showAndWait();
 

@@ -285,7 +285,7 @@
                      <top>
                         <ToolBar prefHeight="40.0" prefWidth="200.0" BorderPane.alignment="CENTER">
                            <items>
-                              <Button fx:id="directb2sUploadBtn" mnemonicParsing="false" onAction="#onDirectb2sUpload" text="Upload">
+                              <Button fx:id="defaultPictureUploadBtn" mnemonicParsing="false" onAction="#onDefaultBackgroundUpload" text="Upload">
                                  <graphic>
                                     <FontIcon iconColor="WHITE" iconLiteral="mdi2u-upload" />
                                  </graphic>
@@ -293,7 +293,7 @@
                                     <Font size="14.0" />
                                  </font>
                               </Button>
-                                        <Button fx:id="openDirectB2SImageButton" mnemonicParsing="false" onAction="#onOpenDirectB2SBackground" text="View">
+                                        <Button fx:id="openDefaultPictureBtn" mnemonicParsing="false" onAction="#onOpenDirectB2SBackground" text="View">
                                  <graphic>
                                                 <FontIcon iconColor="WHITE" iconLiteral="mdi2e-eye" />
                                  </graphic>

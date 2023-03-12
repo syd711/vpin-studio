@@ -113,20 +113,43 @@ public class DirectB2SResource {
         LOG.error("No game found for upload.");
         return false;
       }
-
-      if (game.getCroppedDefaultPicture() != null && game.getCroppedDefaultPicture().exists()) {
-        game.getCroppedDefaultPicture().delete();
-      }
-
-      if (game.getRawDefaultPicture() != null && game.getRawDefaultPicture().exists()) {
-        game.getRawDefaultPicture().delete();
-      }
-
       File out = game.getDirectB2SFile();
       LOG.info("Uploading " + out.getAbsolutePath());
       return UploadUtil.upload(file, out);
     } catch (Exception e) {
       throw new ResponseStatusException(INTERNAL_SERVER_ERROR, "DirectB2S upload failed: " + e.getMessage());
+    }
+  }
+
+  @PostMapping("/background")
+  public Boolean backgroundUpload(@RequestParam(value = "file", required = false) MultipartFile file,
+                                 @RequestParam(value = "uploadType", required = false) String uploadType,
+                                 @RequestParam("objectId") Integer gameId) {
+    try {
+      if (file == null) {
+        LOG.error("Upload request did not contain a file object.");
+        return false;
+      }
+
+      Game game = gameService.getGame(gameId);
+      if (game == null || game.getRawDefaultPicture() == null || game.getCroppedDefaultPicture() == null) {
+        LOG.error("Invalid game data.");
+        return false;
+      }
+
+      if (game.getCroppedDefaultPicture().exists()) {
+        game.getCroppedDefaultPicture().delete();
+      }
+
+      if (game.getRawDefaultPicture().exists()) {
+        game.getRawDefaultPicture().delete();
+      }
+
+      File out = game.getRawDefaultPicture();
+      LOG.info("Uploading " + out.getAbsolutePath());
+      return UploadUtil.upload(file, out);
+    } catch (Exception e) {
+      throw new ResponseStatusException(INTERNAL_SERVER_ERROR, "Background image upload failed: " + e.getMessage());
     }
   }
 }
