@@ -23,6 +23,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.net.URL;
+import java.util.Arrays;
 import java.util.List;
 import java.util.ResourceBundle;
 import java.util.stream.Collectors;
@@ -50,7 +51,7 @@ public class TableUploadController implements Initializable, DialogController {
   @FXML
   private Button uploadBtn;
 
-  private List<File> selection;
+  private File selection;
   private boolean result = false;
   private GameRepresentation game;
 
@@ -62,7 +63,7 @@ public class TableUploadController implements Initializable, DialogController {
 
   @FXML
   private void onUploadClick(ActionEvent event) {
-    if (selection != null && !selection.isEmpty()) {
+    if (selection != null) {
       uploadBtn.setDisable(true);
       result = true;
       try {
@@ -83,7 +84,7 @@ public class TableUploadController implements Initializable, DialogController {
           stage.close();
         });
 
-        TableUploadProgressModel model = new TableUploadProgressModel("VPX Upload", selection, importToPopper, playListId, replaceId);
+        TableUploadProgressModel model = new TableUploadProgressModel("VPX Upload", Arrays.asList(selection), importToPopper, playListId, replaceId);
         Dialogs.createProgressDialog(model);
       } catch (Exception e) {
         LOG.error("Upload failed: " + e.getMessage(), e);
@@ -104,14 +105,11 @@ public class TableUploadController implements Initializable, DialogController {
       fileChooser.setInitialDirectory(TableUploadController.lastFolderSelection);
     }
 
-    this.selection = fileChooser.showOpenMultipleDialog(stage);
+    this.selection = fileChooser.showOpenDialog(stage);
     replaceCheckbox.setSelected(false);
-    if (this.selection != null && !this.selection.isEmpty()) {
-      replaceCheckbox.setVisible(this.selection.size() <= 1);
-
-      TableUploadController.lastFolderSelection = this.selection.get(0).getParentFile();
-      List<String> collect = this.selection.stream().map(f -> f.getName()).collect(Collectors.toList());
-      this.fileNameField.setText(String.join(", ", collect));
+    if (this.selection != null) {
+      TableUploadController.lastFolderSelection = this.selection.getParentFile();
+      this.fileNameField.setText(this.selection.getAbsolutePath());
     }
     else {
       replaceCheckbox.setVisible(true);

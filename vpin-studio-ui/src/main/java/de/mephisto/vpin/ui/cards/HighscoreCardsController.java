@@ -70,12 +70,12 @@ public class HighscoreCardsController implements Initializable, ObservedProperty
 
   @FXML
   private CheckBox grayScaleCheckbox;
-
-  @FXML
-  private ComboBox<String> imageRatioCombo;
-
-  @FXML
-  private ComboBox<String> imageScalingCombo;
+//
+//  @FXML
+//  private ComboBox<String> imageRatioCombo;
+//
+//  @FXML
+//  private ComboBox<String> imageScalingCombo;
 
   @FXML
   private ColorPicker fontColorSelector;
@@ -298,19 +298,19 @@ public class HighscoreCardsController implements Initializable, ObservedProperty
 
     BindingUtil.bindCheckbox(useDirectB2SCheckbox, properties, "card.useDirectB2S");
     BindingUtil.bindCheckbox(grayScaleCheckbox, properties, "card.grayScale");
-    useDirectB2SCheckbox.selectedProperty().addListener((observableValue, aBoolean, t1) -> imageRatioCombo.setDisable(!t1));
-    useDirectB2SCheckbox.selectedProperty().addListener((observableValue, aBoolean, t1) -> imageScalingCombo.setDisable(!t1));
+//    useDirectB2SCheckbox.selectedProperty().addListener((observableValue, aBoolean, t1) -> imageRatioCombo.setDisable(!t1));
+//    useDirectB2SCheckbox.selectedProperty().addListener((observableValue, aBoolean, t1) -> imageScalingCombo.setDisable(!t1));
 
-    imageRatioCombo.setItems(FXCollections.observableList(Arrays.asList("RATIO_16x9", "RATIO_4x3")));
-    imageRatioCombo.setDisable(!useDirectB2SCheckbox.selectedProperty().get());
-
-    imageRatioCombo.setCellFactory(c -> new WidgetFactory.RationListCell());
-    imageRatioCombo.setButtonCell(new WidgetFactory.RationListCell());
-    BindingUtil.bindComboBox(imageRatioCombo, properties, "card.ratio");
-
-    imageScalingCombo.setItems(FXCollections.observableList(Arrays.asList("1024", "1280", "1920", "2560")));
-    imageScalingCombo.setDisable(!useDirectB2SCheckbox.selectedProperty().get());
-    BindingUtil.bindComboBox(imageScalingCombo, properties, "card.scaling", "1280");
+//    imageRatioCombo.setItems(FXCollections.observableList(Arrays.asList("RATIO_16x9", "RATIO_4x3")));
+//    imageRatioCombo.setDisable(!useDirectB2SCheckbox.selectedProperty().get());
+//
+//    imageRatioCombo.setCellFactory(c -> new WidgetFactory.RationListCell());
+//    imageRatioCombo.setButtonCell(new WidgetFactory.RationListCell());
+//    BindingUtil.bindComboBox(imageRatioCombo, properties, "card.ratio");
+//
+//    imageScalingCombo.setItems(FXCollections.observableList(Arrays.asList("1024", "1280", "1920", "2560")));
+//    imageScalingCombo.setDisable(!useDirectB2SCheckbox.selectedProperty().get());
+//    BindingUtil.bindComboBox(imageScalingCombo, properties, "card.scaling", "1280");
 
     imageList = FXCollections.observableList(new ArrayList<>(client.getHighscoreBackgroundImages()));
     backgroundImageCombo.setItems(imageList);
@@ -406,15 +406,15 @@ public class HighscoreCardsController implements Initializable, ObservedProperty
           cardPreview.setImage(image);
           cardPreview.setVisible(true);
 
-          int resolution = Integer.parseInt(imageScalingCombo.getValue());
-          if (image.getWidth() >= resolution && image.getWidth() < imageCenter.getWidth()) {
-//              cardPreview.setFitHeight(image.getHeight());
-//              cardPreview.setFitWidth(image.getWidth());
-          }
-          else {
-            cardPreview.setFitHeight(imageCenter.getHeight() - offset);
-            cardPreview.setFitWidth(imageCenter.getWidth() - offset);
-          }
+//          int resolution = Integer.parseInt(imageScalingCombo.getValue());
+//          if (image.getWidth() >= resolution && image.getWidth() < imageCenter.getWidth()) {
+////              cardPreview.setFitHeight(image.getHeight());
+////              cardPreview.setFitWidth(image.getWidth());
+//          }
+//          else {
+//            cardPreview.setFitHeight(imageCenter.getHeight() - offset);
+//            cardPreview.setFitWidth(imageCenter.getWidth() - offset);
+//          }
 
           Platform.runLater(() -> {
             imageMetaDataLabel.setText("Resolution: " + (int) image.getWidth() + " x " + (int) image.getHeight());

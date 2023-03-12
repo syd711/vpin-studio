@@ -53,7 +53,7 @@ public class CardGraphics {
   private final int BLUR_PIXELS = Config.getCardGeneratorConfig().getInt("card.blur");
 
   String cardRatio = Config.getCardGeneratorConfig().getString("card.ratio", DirectB2SImageRatio.RATIO_16X9.name());
-  private final DirectB2SImageRatio DIRECTB2S_RATIO = DirectB2SImageRatio.valueOf(cardRatio.toUpperCase());
+  private final DirectB2SImageRatio DIRECTB2S_RATIO = DirectB2SImageRatio.RATIO_16X9; //DirectB2SImageRatio.valueOf(cardRatio.toUpperCase());
 
 
   private final DefaultPictureService directB2SService;
@@ -83,9 +83,8 @@ public class CardGraphics {
           "make sure that folder " + backgroundsFolder.getAbsolutePath() + " contains valid images.");
     }
 
-    int scaling = Config.getCardGeneratorConfig().getInt("card.scaling", 1280);
+    int scaling = 1280; //Config.getCardGeneratorConfig().getInt("card.scaling", 1280);
     if (USE_DIRECTB2S) {
-
       File croppedDirectB2SBackgroundImage = game.getCroppedDefaultPicture();
 
       //check if the existing directb2s exists and has the correct scaling

@@ -126,7 +126,7 @@
                                 <Separator orientation="VERTICAL" prefHeight="30.0" prefWidth="12.0" />
                                 <MenuButton fx:id="uploadMenuBtn" mnemonicParsing="false" text="Upload">
                                     <items>
-                                        <MenuItem fx:id="uploadTableItem" mnemonicParsing="false" onAction="#onTableUpload" text="Upload VPX Tables">
+                                        <MenuItem fx:id="uploadTableItem" mnemonicParsing="false" onAction="#onTableUpload" text="Upload VPX Table">
                                             <graphic>
                                                 <FontIcon iconColor="WHITE" iconLiteral="mdi2u-upload" />
                                             </graphic>

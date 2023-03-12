@@ -26,7 +26,7 @@
 <BorderPane styleClass="base-component" stylesheets="@../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.cards.HighscoreCardsController">
 
    <right>
-      <BorderPane prefWidth="300.0" styleClass="subpanel" BorderPane.alignment="CENTER">
+      <BorderPane prefWidth="600.0" styleClass="subpanel" BorderPane.alignment="CENTER">
 
          <center>
             <Accordion fx:id="accordion" prefWidth="300.0" BorderPane.alignment="CENTER">
@@ -35,7 +35,7 @@
                     <content>
                        <VBox prefHeight="200.0" prefWidth="100.0" styleClass="accordion-container">
                           <children>
-                             <CheckBox fx:id="useDirectB2SCheckbox" mnemonicParsing="false" text="Use DirectB2S Backgrounds" textFill="WHITE">
+                             <CheckBox fx:id="useDirectB2SCheckbox" mnemonicParsing="false" text="Prefer Default Background over Fallback" textFill="WHITE">
                                 <VBox.margin>
                                    <Insets />
                                 </VBox.margin>
@@ -51,33 +51,18 @@
                                     <Insets top="12.0" />
                                  </VBox.margin>
                               </CheckBox>
-                             <Label text="Image Ratio:" textFill="WHITE">
-                                <font>
-                                   <Font size="14.0" />
-                                </font>
-                                <padding>
-                                   <Insets top="12.0" />
-                                </padding>
-                             </Label>
-                             <ComboBox fx:id="imageRatioCombo" prefWidth="150.0" />
-                              <Label layoutX="20.0" layoutY="40.0" text="Scaling Width (Pixel):" textFill="WHITE">
-                                 <font>
-                                    <Font size="14.0" />
-                                 </font>
-                                 <padding>
-                                    <Insets top="12.0" />
-                                 </padding>
-                              </Label>
-                              <ComboBox fx:id="imageScalingCombo" layoutX="20.0" layoutY="72.0" prefWidth="150.0" />
                               <BorderPane>
                                  <VBox.margin>
                                     <Insets top="12.0" />
                                  </VBox.margin>
                                  <left>
-                                   <Label text="Default Background Image:" textFill="WHITE" BorderPane.alignment="CENTER">
+                                   <Label text="Fallback Background Image:" textFill="WHITE" BorderPane.alignment="CENTER">
                                       <font>
                                          <Font size="14.0" />
                                       </font>
+                                       <BorderPane.margin>
+                                          <Insets top="12.0" />
+                                       </BorderPane.margin>
                                    </Label>
                                  </left>
                                  <right>
@@ -100,9 +85,9 @@
                                  <font>
                                     <Font size="14.0" />
                                  </font>
-                                 <padding>
+                                 <VBox.margin>
                                     <Insets top="12.0" />
-                                 </padding>
+                                 </VBox.margin>
                               </Label>
                               <Slider fx:id="brightenSlider">
                                  <padding>
@@ -326,21 +311,45 @@
             </Accordion>
          </center>
          <top>
-            <TitledPane collapsible="false" prefHeight="233.0" prefWidth="300.0" styleClass="accordion-container" text="B2S Background" BorderPane.alignment="CENTER">
+            <TitledPane collapsible="false" prefHeight="233.0" prefWidth="300.0" styleClass="accordion-container" text="Default Background" BorderPane.alignment="CENTER">
                <BorderPane.margin>
                   <Insets />
                </BorderPane.margin>
                <content>
                   <VBox prefHeight="151.0" prefWidth="298.0" styleClass="accordion-container">
                      <children>
-                        <TilePane alignment="CENTER" prefHeight="232.0" prefWidth="298.0" styleClass="media-parent">
-                           <children>
-                              <ImageView fx:id="rawDirectB2SImage" fitHeight="145.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true">
+                        <BorderPane styleClass="media-parent">
+                           <center>
+                              <ImageView fx:id="rawDirectB2SImage" fitHeight="350.0" fitWidth="450.0" pickOnBounds="true" preserveRatio="true">
                                  <viewport>
                                     <Rectangle2D />
                                  </viewport>
                               </ImageView>
-                           </children>
+                           </center>
+                           <top>
+                              <ToolBar BorderPane.alignment="CENTER">
+                                 <items>
+                                    <Button fx:id="onDirectB2SUpload" mnemonicParsing="false" onAction="#onDirectB2SUpload" text="Upload" textFill="WHITE">
+                                       <graphic>
+                                          <FontIcon iconColor="WHITE" iconLiteral="mdi2u-upload" />
+                                       </graphic>
+                                       <font>
+                                          <Font size="14.0" />
+                                       </font>
+                                    </Button>
+                                    <Button fx:id="openDirectB2SImageButton" mnemonicParsing="false" onAction="#onOpenDirectB2SBackground" text="View">
+                                       <graphic>
+                                          <FontIcon iconColor="WHITE" iconLiteral="mdi2e-eye" />
+                                       </graphic>
+                                       <font>
+                                          <Font size="14.0" />
+                                       </font>
+                                    </Button>
+                                 </items>
+                              </ToolBar>
+                           </top>
+                        </BorderPane>
+                        <TilePane alignment="CENTER" prefHeight="232.0" prefWidth="298.0" styleClass="media-parent">
                            <padding>
                               <Insets bottom="6.0" left="6.0" right="6.0" top="6.0" />
                            </padding>
@@ -353,28 +362,7 @@
                               <Label fx:id="resolutionLabel" BorderPane.alignment="CENTER" />
                            </left>
                            <right>
-                              <HBox alignment="BASELINE_RIGHT" BorderPane.alignment="CENTER">
-                                 <children>
-                                    <Button fx:id="openDirectB2SImageButton" mnemonicParsing="false" onAction="#onOpenDirectB2SBackground">
-                                       <graphic>
-                                          <FontIcon iconColor="WHITE" iconLiteral="mdi2e-eye" />
-                                       </graphic>
-                                       <font>
-                                          <Font size="10.0" />
-                                       </font>
-                                       <HBox.margin>
-                                          <Insets right="3.0" />
-                                       </HBox.margin>
-                                    </Button>
-                                    <Button fx:id="onDirectB2SUpload" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" onAction="#onDirectB2SUpload">
-                                       <graphic>
-                                          <FontIcon iconColor="WHITE" iconLiteral="mdi2u-upload" />
-                                       </graphic>
-                                       <font>
-                                          <Font size="10.0" />
-                                       </font>
-                                    </Button>
-                                 </children>
+                              <HBox alignment="BASELINE_RIGHT" BorderPane.alignment="CENTER_LEFT">
                                  <BorderPane.margin>
                                     <Insets />
                                  </BorderPane.margin>
@@ -438,11 +426,7 @@
                         <FontIcon iconColor="WHITE" iconLiteral="sil-reload" wrappingWidth="12.800048828125" />
                      </graphic>
                   </Button>
-                  <Separator orientation="VERTICAL" prefHeight="0.0" prefWidth="0.0">
-                     <padding>
-                        <Insets left="3.0" right="3.0" />
-                     </padding>
-                  </Separator>
+                  <Separator orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
                   <Button mnemonicParsing="false" onAction="#onGenerateAll" text=" Generate All" textFill="WHITE">
                      <font>
                         <Font size="14.0" />
@@ -451,11 +435,7 @@
                         <FontIcon iconColor="WHITE" iconLiteral="bi-images" />
                      </graphic>
                   </Button>
-                  <Separator orientation="VERTICAL" prefHeight="0.0" prefWidth="0.0">
-                     <padding>
-                        <Insets left="3.0" right="3.0" />
-                     </padding>
-                  </Separator>
+                  <Separator orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
                 <Button fx:id="generateBtn" mnemonicParsing="false" onAction="#onGenerateClick" text="Refresh" textFill="WHITE">
                      <font>
                         <Font size="14.0" />
