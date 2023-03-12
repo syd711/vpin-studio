@@ -181,10 +181,6 @@ public class VpaExporterJob implements Job {
         zipFile(game.getDirectB2SFile(), getGameFolderName() + "/Tables/" + game.getDirectB2SFile().getName(), zipOut);
       }
 
-      if (game.getDirectB2SMediaFile().exists()) {
-        zipFile(game.getDirectB2SMediaFile(), "AdditionalFiles/" + game.getDirectB2SMediaFile().getName(), zipOut);
-      }
-
       // DMDs
       if (game.getUltraDMDFolder().exists()) {
         packageInfo.setUltraDMD(true);
@@ -279,8 +275,8 @@ public class VpaExporterJob implements Job {
       }
     }
     if (exportDescriptor.isExportPupPack()) {
-      if (game.getPupPackFolder() != null && game.getPupPackFolder().exists()) {
-        totalSizeExpected += org.apache.commons.io.FileUtils.sizeOfDirectory(game.getPupPackFolder());
+      if (game.getPupPack().getPupPackFolder() != null && game.getPupPack().getPupPackFolder().exists()) {
+        totalSizeExpected += org.apache.commons.io.FileUtils.sizeOfDirectory(game.getPupPack().getPupPackFolder());
       }
     }
     if (game.getGameFile().exists()) {
@@ -289,10 +285,6 @@ public class VpaExporterJob implements Job {
 
     if (game.getDirectB2SFile().exists()) {
       totalSizeExpected += game.getDirectB2SFile().length();
-    }
-
-    if (game.getDirectB2SMediaFile().exists()) {
-      totalSizeExpected += game.getDirectB2SMediaFile().length();
     }
   }
 
@@ -325,10 +317,10 @@ public class VpaExporterJob implements Job {
    */
   private void zipPupPack(VpaPackageInfo packageInfo, ZipOutputStream zipOut) throws IOException {
     if (exportDescriptor.isExportPupPack()) {
-      if (game.getPupPackFolder() != null && game.getPupPackFolder().exists()) {
+      if (game.getPupPack().getPupPackFolder() != null && game.getPupPack().getPupPackFolder().exists()) {
         packageInfo.setPupPack(true);
-        LOG.info("Packing " + game.getPupPackFolder().getAbsolutePath());
-        zipFile(game.getPupPackFolder(), "PinUPSystem/PUPVideos/" + game.getPupPackFolder().getName(), zipOut);
+        LOG.info("Packing " + game.getPupPack().getPupPackFolder().getAbsolutePath());
+        zipFile(game.getPupPack().getPupPackFolder(), "PinUPSystem/PUPVideos/" + game.getPupPack().getPupPackFolder().getName(), zipOut);
       }
     }
   }

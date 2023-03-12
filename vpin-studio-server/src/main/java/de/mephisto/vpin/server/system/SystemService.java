@@ -49,6 +49,7 @@ public class SystemService implements InitializingBean {
   private final static String PINEMHI_INI = "pinemhi.ini";
   private final static String VPM_ALIAS = "VPMAlias.txt";
   private static final String SYSTEM_PROPERTIES = "system";
+  public static final String DEFAULT_BACKGROUND = "background.png";
 
 
   private File pinUPSystemInstallationFolder;
@@ -356,10 +357,6 @@ public class SystemService implements InitializingBean {
 
   public File getFuturePinballTablesFolder() {
     return new File(getFuturePinballInstallationFolder(), "Tables/");
-  }
-
-  public File getDirectB2SMediaFolder() {
-    return new File(RESOURCES, "directB2S/");
   }
 
   public File getPinUPSystemFolder() {

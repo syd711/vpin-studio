@@ -110,22 +110,19 @@ public class GameService {
     }
 
     if (descriptor.isDeleteDirectB2s()) {
-      if (!FileUtils.delete(game.getCroppedDirectB2SBackgroundImage())) {
+      if (!FileUtils.delete(game.getCroppedDefaultPicture())) {
         success = false;
       }
-      if (!FileUtils.delete(game.getRawDirectB2SBackgroundImage())) {
+      if (!FileUtils.delete(game.getRawDefaultPicture())) {
         success = false;
       }
       if (!FileUtils.delete(game.getDirectB2SFile())) {
         success = false;
       }
-      if (!FileUtils.delete(game.getDirectB2SMediaFile())) {
-        success = false;
-      }
     }
 
     if (descriptor.isDeletePupPack()) {
-      if (game.getPupPackFolder() != null && !FileUtils.deleteFolder(game.getPupPackFolder())) {
+      if (game.getPupPack().getPupPackFolder() != null && !FileUtils.deleteFolder(game.getPupPack().getPupPackFolder())) {
         success = false;
       }
     }

@@ -3,12 +3,9 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
-<?import javafx.scene.control.RadioButton?>
 <?import javafx.scene.control.TextField?>
-<?import javafx.scene.control.ToggleGroup?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
 <BorderPane styleClass="base-component" stylesheets="@../../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.tables.dialogs.DirectB2SUploadController">
@@ -74,31 +71,6 @@
                </BorderPane.margin>
             </HBox>
          </bottom>
-         <left>
-            <VBox BorderPane.alignment="CENTER">
-               <BorderPane.margin>
-                  <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
-               </BorderPane.margin>
-               <children>
-                  <RadioButton fx:id="uploadTypeTable" mnemonicParsing="false" selected="true" text="Upload to &quot;Tables&quot; folder" textFill="WHITE">
-                     <font>
-                        <Font size="14.0" />
-                     </font>
-                     <toggleGroup>
-                        <ToggleGroup fx:id="group" />
-                     </toggleGroup>
-                  </RadioButton>
-                  <RadioButton fx:id="uploadTypeGenerator" mnemonicParsing="false" text="Upload as background image for the card generator and competitions only" textFill="WHITE" toggleGroup="$group">
-                     <font>
-                        <Font size="14.0" />
-                     </font>
-                     <VBox.margin>
-                        <Insets top="6.0" />
-                     </VBox.margin>
-                  </RadioButton>
-               </children>
-            </VBox>
-         </left>
       </BorderPane>
    </center>
 </BorderPane>

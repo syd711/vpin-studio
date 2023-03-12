@@ -30,7 +30,6 @@ public class GameRepresentation {
   private GameMediaRepresentation gameMedia;
   private EmulatorRepresentation emulator;
   private boolean directB2SAvailable;
-  private boolean directB2SAsMediaAvailable;
   private boolean pupPackAvailable;
   private int validationState;
   private int volume;
@@ -165,14 +164,6 @@ public class GameRepresentation {
 
   public boolean isDirectB2SAvailable() {
     return directB2SAvailable;
-  }
-
-  public void setDirectB2SAsMediaAvailable(boolean directB2SAsMediaAvailable) {
-    this.directB2SAsMediaAvailable = directB2SAsMediaAvailable;
-  }
-
-  public boolean isDirectB2SAsMediaAvailable() {
-    return directB2SAsMediaAvailable;
   }
 
   public void setDirectB2SAvailable(boolean directB2SAvailable) {

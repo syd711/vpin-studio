@@ -71,7 +71,6 @@
             <artifactId>commons-csv</artifactId>
             <version>1.10.0</version>
         </dependency>
-
         <dependency>
             <groupId>org.jcodec</groupId>
             <artifactId>jcodec</artifactId>

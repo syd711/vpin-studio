@@ -3,7 +3,7 @@ package de.mephisto.vpin.server.highscores.cards;
 import de.mephisto.vpin.restclient.PopperScreen;
 import de.mephisto.vpin.server.competitions.ScoreSummary;
 import de.mephisto.vpin.server.directb2s.DirectB2SImageRatio;
-import de.mephisto.vpin.server.directb2s.DirectB2SService;
+import de.mephisto.vpin.server.system.DefaultPictureService;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.highscores.Score;
 import de.mephisto.vpin.server.popper.WheelAugmenter;
@@ -56,11 +56,11 @@ public class CardGraphics {
   private final DirectB2SImageRatio DIRECTB2S_RATIO = DirectB2SImageRatio.valueOf(cardRatio.toUpperCase());
 
 
-  private final DirectB2SService directB2SService;
+  private final DefaultPictureService directB2SService;
   private final ScoreSummary summary;
   private final Game game;
 
-  public CardGraphics(DirectB2SService directB2SService, Game game, ScoreSummary summary) {
+  public CardGraphics(DefaultPictureService directB2SService, Game game, ScoreSummary summary) {
     this.directB2SService = directB2SService;
     this.game = game;
     this.summary = summary;
@@ -86,10 +86,10 @@ public class CardGraphics {
     int scaling = Config.getCardGeneratorConfig().getInt("card.scaling", 1280);
     if (USE_DIRECTB2S) {
 
-      File croppedDirectB2SBackgroundImage = game.getCroppedDirectB2SBackgroundImage();
+      File croppedDirectB2SBackgroundImage = game.getCroppedDefaultPicture();
 
       //check if the existing directb2s exists and has the correct scaling
-      if (croppedDirectB2SBackgroundImage.exists()) {
+      if (croppedDirectB2SBackgroundImage != null && croppedDirectB2SBackgroundImage.exists()) {
         BufferedImage croppedDirectb2s = ImageUtil.loadImage(croppedDirectB2SBackgroundImage);
         int width = croppedDirectb2s.getWidth();
         if(width != scaling) {
@@ -97,11 +97,11 @@ public class CardGraphics {
           if(!croppedDirectB2SBackgroundImage.delete()) {
             LOG.error("Failed to delete " + croppedDirectB2SBackgroundImage.getAbsolutePath());
           }
-          croppedDirectB2SBackgroundImage = directB2SService.generateCroppedB2SImage(game, DIRECTB2S_RATIO, scaling);
+          croppedDirectB2SBackgroundImage = directB2SService.generateCroppedDefaultPicture(game, DIRECTB2S_RATIO, scaling);
         }
       }
       else {
-        croppedDirectB2SBackgroundImage = directB2SService.generateCroppedB2SImage(game, DIRECTB2S_RATIO, scaling);
+        croppedDirectB2SBackgroundImage = directB2SService.generateCroppedDefaultPicture(game, DIRECTB2S_RATIO, scaling);
       }
 
       if (croppedDirectB2SBackgroundImage != null && croppedDirectB2SBackgroundImage.exists()) {

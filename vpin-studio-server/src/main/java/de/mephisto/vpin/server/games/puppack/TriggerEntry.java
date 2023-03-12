@@ -1,4 +1,4 @@
-package de.mephisto.vpin.server.puppack;
+package de.mephisto.vpin.server.games.puppack;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 import org.apache.commons.csv.CSVRecord;
@@ -6,7 +6,7 @@ import org.apache.commons.lang3.StringUtils;
 
 public class TriggerEntry {
 
-  private CSVRecord record;
+  private final CSVRecord record;
 
   public TriggerEntry(@NonNull CSVRecord record) {
     this.record = record;

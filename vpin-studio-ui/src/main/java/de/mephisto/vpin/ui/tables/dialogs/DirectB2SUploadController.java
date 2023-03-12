@@ -10,7 +10,6 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextField;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
@@ -40,12 +39,6 @@ public class DirectB2SUploadController implements Initializable, DialogControlle
   @FXML
   private Label titleLabel;
 
-  @FXML
-  private RadioButton uploadTypeGenerator;
-
-  @FXML
-  private RadioButton uploadTypeTable;
-
   private File selection;
 
   private boolean result = false;
@@ -58,26 +51,18 @@ public class DirectB2SUploadController implements Initializable, DialogControlle
   }
 
   @FXML
-  private void onUploadClick(ActionEvent event){
+  private void onUploadClick(ActionEvent event) {
     if (selection != null && selection.exists()) {
       Stage stage = (Stage) ((Button) event.getSource()).getScene().getWindow();
       result = true;
       try {
-        if (uploadTypeGenerator.isSelected()) {
-          uploadTypeGeneratorSelectedLast = true;
-          DirectB2SUploadProgressModel model = new DirectB2SUploadProgressModel(this.game.getId(), "DirectB2S Upload", selection, "generator");
-          Dialogs.createProgressDialog(model);
-        }
-        else {
-          uploadTypeGeneratorSelectedLast = false;
-          DirectB2SUploadProgressModel model = new DirectB2SUploadProgressModel(this.game.getId(), "DirectB2S Upload", selection, "table");
-          Dialogs.createProgressDialog(model);
-        }
+        uploadTypeGeneratorSelectedLast = false;
+        DirectB2SUploadProgressModel model = new DirectB2SUploadProgressModel(this.game.getId(), "DirectB2S Upload", selection, "table");
+        Dialogs.createProgressDialog(model);
       } catch (Exception e) {
         LOG.error("Upload failed: " + e.getMessage(), e);
         WidgetFactory.showAlert(Studio.stage, "Uploading directb2s failed.", "Please check the log file for details.", "Error: " + e.getMessage());
-      }
-      finally {
+      } finally {
         stage.close();
       }
     }
@@ -111,9 +96,6 @@ public class DirectB2SUploadController implements Initializable, DialogControlle
 
     this.uploadBtn.setDisable(true);
     this.fileNameField.textProperty().addListener((observableValue, s, t1) -> uploadBtn.setDisable(StringUtils.isEmpty(t1)));
-
-    this.uploadTypeGenerator.setSelected(DirectB2SUploadController.uploadTypeGeneratorSelectedLast);
-    this.uploadTypeTable.setSelected(!DirectB2SUploadController.uploadTypeGeneratorSelectedLast);
   }
 
   @Override

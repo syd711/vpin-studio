@@ -9,7 +9,6 @@ import de.mephisto.vpin.ui.NavigationController;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.StudioFXController;
 import de.mephisto.vpin.ui.WaitOverlayController;
-import de.mephisto.vpin.ui.events.StudioEventListener;
 import de.mephisto.vpin.ui.tables.dialogs.ScriptDownloadProgressModel;
 import de.mephisto.vpin.ui.tables.validation.ValidationResult;
 import de.mephisto.vpin.ui.tables.validation.ValidationTexts;
@@ -24,7 +23,6 @@ import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
-import javafx.scene.Cursor;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.control.Button;
@@ -68,9 +66,6 @@ public class TableOverviewController implements Initializable, StudioFXControlle
 
   @FXML
   private TableColumn<GameRepresentation, String> columnB2S;
-
-  @FXML
-  private TableColumn<GameRepresentation, String> columnMediaB2S;
 
   @FXML
   private TableColumn<GameRepresentation, String> columnStatus;
@@ -482,14 +477,6 @@ public class TableOverviewController implements Initializable, StudioFXControlle
     columnB2S.setCellValueFactory(cellData -> {
       GameRepresentation value = cellData.getValue();
       if (value.isDirectB2SAvailable()) {
-        return new SimpleObjectProperty(WidgetFactory.createCheckIcon());
-      }
-      return new SimpleStringProperty("");
-    });
-
-    columnMediaB2S.setCellValueFactory(cellData -> {
-      GameRepresentation value = cellData.getValue();
-      if (value.isDirectB2SAsMediaAvailable()) {
         return new SimpleObjectProperty(WidgetFactory.createCheckIcon());
       }
       return new SimpleStringProperty("");

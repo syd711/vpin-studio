@@ -1,4 +1,4 @@
-package de.mephisto.vpin.server.puppack;
+package de.mephisto.vpin.server.games.puppack;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 import org.apache.commons.csv.CSVRecord;

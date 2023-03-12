@@ -3,6 +3,7 @@ package de.mephisto.vpin.server.games;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import de.mephisto.vpin.commons.HighscoreType;
 import de.mephisto.vpin.restclient.PopperScreen;
+import de.mephisto.vpin.server.games.puppack.PupPack;
 import de.mephisto.vpin.server.popper.Emulator;
 import de.mephisto.vpin.server.popper.GameMedia;
 import de.mephisto.vpin.server.popper.GameMediaItem;
@@ -41,6 +42,7 @@ public class Game {
   private List<GameAsset> assets = new ArrayList<>();
 
   private SystemService systemService;
+  private PupPack pupPack;
 
   public Game() {
 
@@ -241,20 +243,17 @@ public class Game {
     return new File(systemService.getVPXTablesFolder(), directB2SName).exists();
   }
 
-  public boolean isDirectB2SAsMediaAvailable() {
-    String name = FilenameUtils.getBaseName(this.getGameFileName());
-    String directB2SName = name + ".directb2s";
-    return new File(systemService.getDirectB2SMediaFolder(), directB2SName).exists();
+  @JsonIgnore
+  @NonNull
+  public PupPack getPupPack() {
+    if (pupPack == null) {
+      pupPack = new PupPack(systemService, this);
+    }
+    return pupPack;
   }
 
   public boolean isPupPackAvailable() {
-    if (StringUtils.isEmpty(this.getRom())) {
-      return false;
-    }
-
-    File pupVideos = new File(systemService.getPinUPSystemFolder(), "PUPVideos");
-    File pupPackFolder = new File(pupVideos, getRom());
-    return pupPackFolder.exists() && pupPackFolder.listFiles().length > 1;
+    return this.getPupPack().isAvailable();
   }
 
   public String getHsFileName() {
@@ -363,15 +362,6 @@ public class Game {
     return null;
   }
 
-  @Nullable
-  @JsonIgnore
-  public File getPupPackFolder() {
-    if (!StringUtils.isEmpty(this.getRom())) {
-      return new File(new File(systemService.getPinUPSystemFolder(), "PUPVideos"), this.getRom());
-    }
-    return null;
-  }
-
   public boolean isRomExists() {
     return getRomFile() != null && getRomFile().exists();
   }
@@ -383,18 +373,14 @@ public class Game {
     return new File(systemService.getVPXTablesFolder(), baseName + ".directb2s");
   }
 
-  @NonNull
+  @Nullable
   @JsonIgnore
-  public File getDirectB2SMediaFile() {
-    String baseName = FilenameUtils.getBaseName(this.getGameFileName());
-    return new File(systemService.getDirectB2SMediaFolder(), baseName + ".directb2s");
-  }
-
-  @NonNull
-  @JsonIgnore
-  public File getCroppedDirectB2SBackgroundImage() {
-    String targetName = FilenameUtils.getBaseName(getGameFileName()) + ".png";
-    return new File(systemService.getB2SCroppedImageFolder(), targetName);
+  public File getCroppedDefaultPicture() {
+    if (this.getRom() != null) {
+      File subFolder = new File(systemService.getB2SCroppedImageFolder(), this.getRom());
+      return new File(subFolder, SystemService.DEFAULT_BACKGROUND);
+    }
+    return null;
   }
 
   @NonNull
@@ -424,11 +410,14 @@ public class Game {
   }
 
 
-  @NonNull
+  @Nullable
   @JsonIgnore
-  public File getRawDirectB2SBackgroundImage() {
-    String targetName = FilenameUtils.getBaseName(getGameFileName()) + ".png";
-    return new File(systemService.getB2SImageExtractionFolder(), targetName);
+  public File getRawDefaultPicture() {
+    if (this.getRom() != null) {
+      File subFolder = new File(systemService.getB2SImageExtractionFolder(), this.getRom());
+      return new File(subFolder, SystemService.DEFAULT_BACKGROUND);
+    }
+    return null;
   }
 
   @Override

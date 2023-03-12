@@ -1,5 +1,6 @@
 package de.mephisto.vpin.server.util;
 
+import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
@@ -36,6 +37,19 @@ public class RequestUtil {
       return (200 <= responseCode && responseCode <= 399);
     } catch (IOException exception) {
       return false;
+    }
+  }
+
+  public static ResponseEntity<byte[]> serializeImage(@NonNull byte[] bytes, String filename) throws Exception {
+    try {
+      return ResponseEntity.ok()
+          .contentType(MediaType.parseMediaType("image/" + FilenameUtils.getExtension(filename)))
+          .contentLength(bytes.length)
+          .cacheControl(CacheControl.maxAge(3600 * 24 * 7, TimeUnit.SECONDS).cachePublic())
+          .body(bytes);
+    } catch (Exception e) {
+      LOG.error("Failed to serialize image " + filename + ": " + e.getMessage(), e);
+      throw e;
     }
   }
 

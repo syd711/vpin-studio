@@ -3,7 +3,7 @@ package de.mephisto.vpin.server.highscores.cards;
 import de.mephisto.vpin.restclient.PopperScreen;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.server.competitions.ScoreSummary;
-import de.mephisto.vpin.server.directb2s.DirectB2SService;
+import de.mephisto.vpin.server.system.DefaultPictureService;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.highscores.HighscoreChangeEvent;
 import de.mephisto.vpin.server.highscores.HighscoreChangeListener;
@@ -36,7 +36,7 @@ public class CardService implements InitializingBean, HighscoreChangeListener {
   private HighscoreService highscoreService;
 
   @Autowired
-  private DirectB2SService directB2SService;
+  private DefaultPictureService directB2SService;
 
   @Autowired
   private PreferencesService preferencesService;

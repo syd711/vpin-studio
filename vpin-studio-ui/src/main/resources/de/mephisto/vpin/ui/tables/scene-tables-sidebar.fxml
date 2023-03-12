@@ -246,7 +246,7 @@
                   </BorderPane>
                </graphic>
                 </TitledPane>
-                <TitledPane expanded="false" layoutX="10.0" layoutY="104.0" prefWidth="600.0" text="DirectB2S">
+                <TitledPane expanded="false" layoutX="10.0" layoutY="104.0" prefWidth="600.0">
                     <content>
                   <BorderPane>
                      <center>
@@ -309,6 +309,23 @@
                      </padding>
                   </BorderPane>
                     </content>
+               <graphic>
+                  <BorderPane prefWidth="560.0">
+                     <left>
+                        <Label text="Default Background" BorderPane.alignment="CENTER" />
+                     </left>
+                     <right>
+                        <Label BorderPane.alignment="CENTER">
+                           <graphic>
+                              <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="16" />
+                           </graphic>
+                           <tooltip>
+                              <Tooltip text="Used for highscore cards and competition backgrounds." />
+                           </tooltip>
+                        </Label>
+                     </right>
+                  </BorderPane>
+               </graphic>
                 </TitledPane>
             <TitledPane expanded="false" text="Highscores">
               <content>

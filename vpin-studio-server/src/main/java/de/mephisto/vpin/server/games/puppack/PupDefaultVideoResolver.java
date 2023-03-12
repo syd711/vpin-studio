@@ -1,29 +1,26 @@
-package de.mephisto.vpin.server.puppack;
+package de.mephisto.vpin.server.games.puppack;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVRecord;
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.*;
-import java.nio.charset.StandardCharsets;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.Reader;
 import java.util.Iterator;
-import java.util.List;
 
 public class PupDefaultVideoResolver {
   private final static Logger LOG = LoggerFactory.getLogger(PupDefaultVideoResolver.class);
 
-  public static final String SCREENS_PUP = "screens.pup";
-  public static final String TRIGGERS_PUP = "triggers.pup";
+  private final PupPack pupPack;
 
-  private final File pupFolder;
-
-  public PupDefaultVideoResolver(@NonNull File pupFolder) {
-    this.pupFolder = pupFolder;
+  public PupDefaultVideoResolver(@NonNull PupPack pupPack) {
+    this.pupPack = pupPack;
   }
 
   @Nullable
@@ -40,7 +37,7 @@ public class PupDefaultVideoResolver {
   private File findVideoFromTriggers() {
     Reader in = null;
     try {
-      File csvFile = new File(pupFolder, TRIGGERS_PUP);
+      File csvFile = pupPack.getTriggersPup();
       if (!csvFile.exists()) {
         return null;
       }
@@ -50,7 +47,7 @@ public class PupDefaultVideoResolver {
       Iterator<CSVRecord> iterator = records.iterator();
       iterator.next();
 
-      while(iterator.hasNext()) {
+      while (iterator.hasNext()) {
         CSVRecord record = iterator.next();
         TriggerEntry entry = new TriggerEntry(record);
         if (entry.getScreenNum() == 2) {
@@ -63,7 +60,7 @@ public class PupDefaultVideoResolver {
         }
       }
     } catch (Exception e) {
-      LOG.error("Failed to resolve default trigger video for " + pupFolder.getAbsolutePath() + ": " + e.getMessage(), e);
+      LOG.error("Failed to resolve default trigger video for " + pupPack + ": " + e.getMessage(), e);
     } finally {
       if (in != null) {
         try {
@@ -80,7 +77,7 @@ public class PupDefaultVideoResolver {
   private File findVideoFromScreens() {
     Reader in = null;
     try {
-      File csvFile = new File(pupFolder, SCREENS_PUP);
+      File csvFile = pupPack.getScreensPup();
       if (!csvFile.exists()) {
         return null;
       }
@@ -90,7 +87,7 @@ public class PupDefaultVideoResolver {
       Iterator<CSVRecord> iterator = records.iterator();
       iterator.next();
 
-      while(iterator.hasNext()) {
+      while (iterator.hasNext()) {
         CSVRecord record = iterator.next();
         ScreenEntry entry = new ScreenEntry(record);
         String playList = entry.getPlayList();
@@ -101,7 +98,7 @@ public class PupDefaultVideoResolver {
         }
       }
     } catch (Exception e) {
-      LOG.error("Failed to resolve default screen video for " + pupFolder.getAbsolutePath() + ": " + e.getMessage(), e);
+      LOG.error("Failed to resolve default screen video for " + pupPack + ": " + e.getMessage(), e);
     } finally {
       if (in != null) {
         try {
@@ -118,7 +115,7 @@ public class PupDefaultVideoResolver {
   private File resolveFile(@Nullable String playList, @Nullable String playFile) {
     //try to find default file for any screen
     if (!StringUtils.isEmpty(playList) && !StringUtils.isEmpty(playFile)) {
-      File video = new File(new File(pupFolder, playList), playFile);
+      File video = new File(new File(pupPack.getPupPackFolder(), playList), playFile);
       if (video.exists()) {
         return video;
       }
@@ -126,8 +123,8 @@ public class PupDefaultVideoResolver {
 
     //search playlist if specified without default file
     if (!StringUtils.isEmpty(playList) && StringUtils.isEmpty(playFile)) {
-      File playlistFolder = new File(pupFolder, playList);
-      File[] videos = playlistFolder.listFiles((dir, name) -> name.endsWith(".mp4") || name.endsWith(".m4v"));
+      File playlistFolder = new File(pupPack.getPupPackFolder(), playList);
+      File[] videos = playlistFolder.listFiles((dir, name) -> name.endsWith(".mp4") || name.endsWith(".m4v") || name.endsWith(".mov"));
       if (videos != null && videos.length > 0) {
         return videos[0];
       }

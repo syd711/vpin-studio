@@ -6,10 +6,13 @@ import de.mephisto.vpin.server.assets.Asset;
 import de.mephisto.vpin.server.assets.AssetService;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameService;
+import de.mephisto.vpin.server.resources.ResourceLoader;
+import de.mephisto.vpin.server.system.DefaultPictureService;
 import de.mephisto.vpin.server.system.SystemService;
 import de.mephisto.vpin.server.util.ImageUtil;
 import de.mephisto.vpin.server.util.RequestUtil;
 import de.mephisto.vpin.server.util.UploadUtil;
+import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +23,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.InputStream;
 
 import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 
@@ -32,7 +36,7 @@ public class DirectB2SResource {
   private final static Logger LOG = LoggerFactory.getLogger(DirectB2SResource.class);
 
   @Autowired
-  private DirectB2SService directB2SManager;
+  private DefaultPictureService defaultPictureService;
 
   @Autowired
   private GameService gameService;
@@ -45,12 +49,13 @@ public class DirectB2SResource {
     try {
       Game game = gameService.getGame(id);
       if (game != null) {
-        File target = game.getRawDirectB2SBackgroundImage();
-        if (!target.exists()) {
-          directB2SManager.extractDirectB2SBackgroundImage(game);
+        File target = game.getRawDefaultPicture();
+        if (target != null && !target.exists()) {
+          defaultPictureService.extractDefaultPicture(game);
         }
 
-        if (target.exists()) {
+        target = game.getRawDefaultPicture();
+        if (target != null && target.exists()) {
           return RequestUtil.serializeImage(target);
         }
       }
@@ -60,7 +65,10 @@ public class DirectB2SResource {
     } catch (Exception e) {
       LOG.error("Failed to load directb2s image: " + e.getMessage(), e);
     }
-    return RequestUtil.serializeImage(new File(SystemService.RESOURCES, "empty-b2s-preview.png"));
+
+    InputStream in = ResourceLoader.class.getResourceAsStream("empty-b2s-preview.png");
+    byte[] bytes = IOUtils.toByteArray(in);
+    return RequestUtil.serializeImage(bytes, "empty-b2s-preview.png");
   }
 
   @GetMapping("/competition/{gameId}")
@@ -70,7 +78,7 @@ public class DirectB2SResource {
       if (game != null) {
         Asset asset = assetService.getCompetitionBackground(gameId);
         if (asset == null) {
-          BufferedImage background = directB2SManager.generateB2SCompetitionImage(game, 800, 340);
+          BufferedImage background = defaultPictureService.generateB2SCompetitionImage(game, 800, 340);
           if (background != null) {
             byte[] bytes = ImageUtil.toBytes(background);
             asset = assetService.saveOrUpdate(bytes, -1, "image.png", AssetType.COMPETITION.name(), String.valueOf(game.getId()));
@@ -106,19 +114,15 @@ public class DirectB2SResource {
         return false;
       }
 
-      if (game.getCroppedDirectB2SBackgroundImage().exists()) {
-        game.getCroppedDirectB2SBackgroundImage().delete();
+      if (game.getCroppedDefaultPicture() != null && game.getCroppedDefaultPicture().exists()) {
+        game.getCroppedDefaultPicture().delete();
       }
-      if (game.getRawDirectB2SBackgroundImage().exists()) {
-        game.getRawDirectB2SBackgroundImage().delete();
+
+      if (game.getRawDefaultPicture() != null && game.getRawDefaultPicture().exists()) {
+        game.getRawDefaultPicture().delete();
       }
 
       File out = game.getDirectB2SFile();
-      if (uploadType != null && uploadType.equals("generator")) {
-        out = game.getDirectB2SMediaFile();
-      }
-
-      out.mkdirs();
       LOG.info("Uploading " + out.getAbsolutePath());
       return UploadUtil.upload(file, out);
     } catch (Exception e) {
