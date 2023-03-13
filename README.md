@@ -16,8 +16,8 @@ That's why every release comes with two different installers:
 
 ## Documentation
 
-For more details see [Documentation](./documentation/).
-If your questions aren't answered there, you always can you our Discord server.
+For more details see [Wiki](https://github.com/syd711/vpin-studio/wiki).
+If your questions aren't answered there, you always can you our Discord server (https://discord.com/invite/69YqHYd3wD).
 
 ## Discord
 
