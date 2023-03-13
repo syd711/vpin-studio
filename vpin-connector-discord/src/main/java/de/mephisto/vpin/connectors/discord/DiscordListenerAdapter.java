@@ -57,7 +57,6 @@ public class DiscordListenerAdapter extends ListenerAdapter {
   /******************** Listener Methods ******************************************************************************/
 
 
-
   @Override
   public void onMessageReceived(MessageReceivedEvent event) {
     if (event.getAuthor().isBot()) {
@@ -70,28 +69,23 @@ public class DiscordListenerAdapter extends ListenerAdapter {
     Message message = event.getMessage();
     String content = message.getContentRaw();
     if (content.startsWith("/") && isValidChannel(event)) {
-      if (content.startsWith("/commands")) {
+      if (commandResolver == null) {
         MessageChannel channel = event.getChannel();
-        channel.sendMessage("List of available commands:\n" +
-            "**/competitions **: Returns the list and status of active competitions.\n" +
-            "**/hs <TABLE NAME>**: Returns the highscore for the table matching the give name.\n" +
-            "**/ranks **: Returns the overall player ranking.\n" +
-            "**/player <PLAYER_INITIALS> **: Returns all data of this player.\n" +
-            "").queue();
+        channel.sendMessage("No command resolver found.").queue();
+        return;
       }
-      else if (commandResolver != null) {
-        BotCommand command = new BotCommand(discordClient.getDefaultGuildId(), content, commandResolver);
-        BotCommandResponse response = command.execute();
-        if (response != null) {
-          String result = response.toDiscordMarkup();
-          if (result != null) {
-            MessageChannel channel = event.getChannel();
-            channel.sendMessage(result).queue();
-          }
+
+      BotCommand command = new BotCommand(discordClient.getDefaultGuildId(), content, commandResolver);
+      BotCommandResponse response = command.execute();
+      if (response != null) {
+        String result = response.toDiscordMarkup();
+        if (result != null) {
+          MessageChannel channel = event.getChannel();
+          channel.sendMessage(result).queue();
         }
-        else {
-          LOG.info("Unknown bot command '" + content + "'");
-        }
+      }
+      else {
+        LOG.error("Unknown bot command '" + content + "'");
       }
     }
   }

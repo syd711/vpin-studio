@@ -10,12 +10,23 @@ import de.mephisto.vpin.server.highscores.Score;
 import de.mephisto.vpin.server.players.Player;
 
 import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
 
 public class DiscordBotCommandResponseFactory {
+
+  public static final String COMMAND_SUMMARY = "List of available commands:\n" +
+      "**/competitions **: Returns the list and status of active competitions.\n" +
+      "**/find <TERM>**: Returns the list of tables matching the given search term, including their id.\n" +
+      "**/hs <TABLE NAME | ID>**: Returns the highscore for the table matching the give name or id.\n" +
+      "**/ranks **: Returns the overall player ranking.\n" +
+      "**/recent **: Returns the latest highscores.\n" +
+      "**/player <PLAYER_INITIALS> **: Returns all data of this player.\n" +
+      "";
 
   private static final String COMPETITION_ACTIVE_TEMPLATE = "" +
       "```\n" +
@@ -71,7 +82,7 @@ public class DiscordBotCommandResponseFactory {
       msgBuilder.append("\n");
     }
 
-    if(scores.isEmpty()) {
+    if (scores.isEmpty()) {
       msgBuilder.append("No score has been record yet.\n");
     }
     msgBuilder.append("------------------------------------------------------```");
@@ -187,6 +198,30 @@ public class DiscordBotCommandResponseFactory {
 
     builder.append("```");
 
+    return builder.toString();
+  }
+
+  public static String createRecentHighscoresMesssage(GameService gameService, ScoreSummary recentHighscores) {
+    List<Score> scores = recentHighscores.getScores();
+
+    if (scores.isEmpty()) {
+      return "No scores recorded yet.";
+    }
+
+    StringBuilder builder = new StringBuilder();
+    for (Score score : scores) {
+      Game game = gameService.getGame(score.getGameId());
+      if(game == null) {
+        continue;
+      }
+
+      builder.append(SimpleDateFormat.getDateTimeInstance().format(score.getCreatedAt()));
+      builder.append("\t");
+      builder.append(game.getGameDisplayName());
+      builder.append("   ");
+      builder.append(score);
+      builder.append("\n");
+    }
     return builder.toString();
   }
 }

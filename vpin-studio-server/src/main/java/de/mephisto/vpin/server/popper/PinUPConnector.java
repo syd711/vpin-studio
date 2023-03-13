@@ -11,6 +11,7 @@ import de.mephisto.vpin.server.vpa.VpaUtil;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
@@ -379,6 +380,11 @@ public class PinUPConnector implements InitializingBean {
       Statement statement = connect.createStatement();
       ResultSet rs = statement.executeQuery("SELECT * FROM Playlists WHERE Visible = 1;");
       while (rs.next()) {
+        String sql = rs.getString("PlayListSQL");
+        if (!StringUtils.isEmpty(sql)) {
+          continue;
+        }
+
         Playlist playlist = new Playlist();
         playlist.setId(rs.getInt("PlayListID"));
         playlist.setName(rs.getString("PlayName"));

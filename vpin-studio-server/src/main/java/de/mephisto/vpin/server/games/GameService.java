@@ -231,7 +231,7 @@ public class GameService {
         scores.add(version);
       }
 
-      if (scores.size() == count) {
+      if (count > 0 && scores.size() == count) {
         return summary;
       }
     }

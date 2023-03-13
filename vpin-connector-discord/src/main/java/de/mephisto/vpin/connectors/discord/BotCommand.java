@@ -1,8 +1,11 @@
 package de.mephisto.vpin.connectors.discord;
 
 public class BotCommand {
+  public final static String CMD_COMMANDS = "commands";
+  public final static String CMD_RECENT = "recent";
   public final static String CMD_COMPETITIONS = "competitions";
   public final static String CMD_HS = "hs";
+  public final static String CMD_FIND = "find";
   public final static String CMD_RANKS = "ranks";
   public final static String CMD_PLAYER = "player";
 

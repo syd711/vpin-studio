@@ -20,6 +20,7 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -45,6 +46,9 @@ public class DiscordBotResponseService implements DiscordBotCommandListener, Ini
   public BotCommandResponse onBotCommand(BotCommand cmd) {
     String name = cmd.getCommand();
     switch (name) {
+      case BotCommand.CMD_COMMANDS: {
+        return () -> DiscordBotCommandResponseFactory.COMMAND_SUMMARY;
+      }
       case BotCommand.CMD_COMPETITIONS: {
         List<Competition> activeCompetitions = competitionService.getActiveCompetitions();
         if (activeCompetitions.isEmpty()) {
@@ -62,11 +66,16 @@ public class DiscordBotResponseService implements DiscordBotCommandListener, Ini
         }
         return builder::toString;
       }
+      case BotCommand.CMD_RECENT: {
+        ScoreSummary recentHighscores = gameService.getRecentHighscores(10);
+        String msg = DiscordBotCommandResponseFactory.createRecentHighscoresMesssage(gameService, recentHighscores);
+        return () -> msg;
+      }
       case BotCommand.CMD_HS: {
-        if (cmd.getParameter() != null) {
+        if (!StringUtils.isEmpty(cmd.getParameter())) {
           List<Game> games = gameService.getGames();
           for (Game game : games) {
-            if (game.getGameDisplayName().toLowerCase().contains(cmd.getParameter())) {
+            if (game.getGameDisplayName().toLowerCase().contains(cmd.getParameter()) || String.valueOf(game.getId()).equals(cmd.getParameter().trim())) {
               HighscoreMetadata metadata = highscoreService.updateHighscore(game);
               if (StringUtils.isEmpty(metadata.getRaw()) && !StringUtils.isEmpty(metadata.getStatus())) {
                 return () -> "Highscore for '" + game.getGameDisplayName() + "' retrieval failed: " + metadata.getStatus();
@@ -75,9 +84,33 @@ public class DiscordBotResponseService implements DiscordBotCommandListener, Ini
               return () -> DiscordBotCommandResponseFactory.createHighscoreMessage(game, highscores);
             }
           }
-          LOG.info("No matching game found for '" + cmd);
+          return () -> "No matching table found for \"" + cmd.getParameter() + "\"";
         }
-        return null;
+        return () -> "Missing search parameter for \"hs\" command.";
+      }
+      case BotCommand.CMD_FIND: {
+        if (cmd.getParameter() != null) {
+          List<Game> games = gameService.getGames();
+          List<Game> matches = new ArrayList<>();
+          for (Game game : games) {
+            if (game.getGameDisplayName().toLowerCase().contains(cmd.getParameter()) || String.valueOf(game.getId()).equals(cmd.getParameter().trim())) {
+              matches.add(game);
+            }
+
+            if(matches.size() == 10) {
+              break;
+            }
+          }
+
+          if (matches.isEmpty()) {
+            return () -> "No matching table found for \"" + cmd.getParameter() + "\"";
+          }
+
+          StringBuilder builder = new StringBuilder();
+          matches.forEach(g -> builder.append(g.getGameDisplayName() + " [ID " + g.getId() + "]\n"));
+          return builder::toString;
+        }
+        return () -> "Missing search parameter for \"find\" command.";
       }
       case BotCommand.CMD_RANKS: {
         List<RankedPlayer> playersByRanks = highscoreService.getPlayersByRanks();
@@ -94,8 +127,7 @@ public class DiscordBotResponseService implements DiscordBotCommandListener, Ini
         return () -> "No player found with initials '" + cmd.getParameter().toUpperCase() + "'";
       }
     }
-//    return () -> "Unknown bot command '" + cmd.getContent() + "'";
-    return () -> null;
+    return () -> "Unknown bot command \"" + cmd.getContent() + "\"\n\n" + DiscordBotCommandResponseFactory.COMMAND_SUMMARY;
   }
 
   @Override
