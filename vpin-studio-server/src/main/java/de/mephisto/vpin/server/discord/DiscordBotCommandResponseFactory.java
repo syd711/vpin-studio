@@ -1,6 +1,7 @@
 package de.mephisto.vpin.server.discord;
 
 import de.mephisto.vpin.restclient.CompetitionType;
+import de.mephisto.vpin.restclient.util.DateUtil;
 import de.mephisto.vpin.server.competitions.Competition;
 import de.mephisto.vpin.server.competitions.RankedPlayer;
 import de.mephisto.vpin.server.competitions.ScoreSummary;
@@ -36,8 +37,10 @@ public class DiscordBotCommandResponseFactory {
       "Table:       %s\n" +
       "Start Date:  %s\n" +
       "End Date:    %s\n" +
-      "Duration:    %s days\n" +
+      "Duration:    %s day(s)\n" +
+      "Remaining:   %s day(s)\n" +
       "\n";
+
 
 
   public static String createHighscoreMessage(Game game, ScoreSummary scoreSummary) {
@@ -61,7 +64,9 @@ public class DiscordBotCommandResponseFactory {
   public static String createActiveCompetitionMessage(Competition competition, Game game, ScoreSummary summary) {
     LocalDate start = competition.getStartDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
     LocalDate end = competition.getEndDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
-    long diff = Math.abs(ChronoUnit.DAYS.between(end, start));
+    LocalDate now = DateUtil.today().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+    long diff = Math.abs(ChronoUnit.DAYS.between(end, start)) + 1;
+    long remaining = Math.abs(ChronoUnit.DAYS.between(end, now)) + 1;
 
     String cType = "offline";
     if (competition.getType().equals(CompetitionType.DISCORD.name())) {
@@ -72,7 +77,8 @@ public class DiscordBotCommandResponseFactory {
         game.getGameDisplayName(),
         DateFormat.getDateInstance().format(competition.getStartDate()),
         DateFormat.getDateInstance().format(competition.getEndDate()),
-        diff);
+        diff,
+        remaining);
 
 
     StringBuilder msgBuilder = new StringBuilder(format);

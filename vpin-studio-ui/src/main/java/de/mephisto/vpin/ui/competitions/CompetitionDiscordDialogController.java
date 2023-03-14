@@ -241,7 +241,7 @@ public class CompetitionDiscordDialogController implements Initializable, Dialog
     LocalDate start = startDatePicker.getValue();
     LocalDate value = endDatePicker.getValue();
 
-    long diff = ChronoUnit.DAYS.between(start, value);
+    long diff = ChronoUnit.DAYS.between(start, value) + 1;
     this.durationLabel.setText(diff + " days");
 
     if (StringUtils.isEmpty(competition.getName())) {
@@ -361,6 +361,7 @@ public class CompetitionDiscordDialogController implements Initializable, Dialog
 
       channelsCombo.setDisable(!editable);
       serversCombo.setDisable(!editable);
+      competitionIconCombo.setDisable(!editable);
 
       this.nameField.setText(this.competition.getName());
       this.nameField.setDisable(!editable);

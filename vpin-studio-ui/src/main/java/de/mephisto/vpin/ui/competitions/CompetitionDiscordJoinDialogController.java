@@ -31,6 +31,7 @@ import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.ResourceBundle;
 
@@ -246,6 +247,13 @@ public class CompetitionDiscordJoinDialogController implements Initializable, Di
       return;
     }
     //TODO check against existing
+
+
+    if(this.discordCompetitionData.getEdt().before(DateUtil.today())) {
+      validationTitle.setText("Invalid competition data");
+      validationDescription.setText("Ups, look like the selected competition wasn't resetted. It's already finished.");
+      return;
+    }
 
     GameRepresentation game = this.tableCombo.getValue();
     long tableSize = game.getGameFileSize();

@@ -20,7 +20,6 @@ import java.text.DateFormat;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
-import java.util.Date;
 import java.util.List;
 import java.util.ResourceBundle;
 
@@ -75,7 +74,7 @@ public class WidgetCompetitionSummaryController extends WidgetController impleme
   private Label emptylabel;
 
   private final static String OFFLINE_EMPTY_TEXT = "                        No active offline competition found.\nStart an offline competition to compete with friends and family.";
-  private final static String ONLINE_EMPTY_TEXT  = "                            No active Discord competition found.\nStart an online competition on your Discord server or join an existing one.";
+  private final static String ONLINE_EMPTY_TEXT = "                            No active Discord competition found.\nStart an online competition on your Discord server or join an existing one.";
 
   // Add a public no-args constructor
   public WidgetCompetitionSummaryController() {
@@ -102,7 +101,7 @@ public class WidgetCompetitionSummaryController extends WidgetController impleme
 
   public void setCompetition(CompetitionType competitionType, CompetitionRepresentation competition) {
     if (competition == null) {
-      if(competitionType.equals(CompetitionType.DISCORD)) {
+      if (competitionType.equals(CompetitionType.DISCORD)) {
         emptylabel.setText(ONLINE_EMPTY_TEXT);
       }
       else {
@@ -120,7 +119,7 @@ public class WidgetCompetitionSummaryController extends WidgetController impleme
 
       LocalDate start = competition.getStartDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
       LocalDate end = competition.getEndDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
-      long durationDays = ChronoUnit.DAYS.between(start, end);
+      long durationDays = ChronoUnit.DAYS.between(start, end) + 1;
 
       String duration = "Duration: " + DateFormat.getDateInstance().format(competition.getStartDate())
           + " - " + DateFormat.getDateInstance().format(competition.getEndDate())
@@ -139,12 +138,12 @@ public class WidgetCompetitionSummaryController extends WidgetController impleme
       name2.setVisible(isActive);
       name3.setVisible(isActive);
 
-      if(!competition.isActive()) {
+      if (!competition.isActive()) {
         name1.setText("");
       }
       else {
         ScoreSummaryRepresentation latestCompetitionScore = OverlayWindowFX.client.getCompetitionScore(competition.getId());
-        if(latestCompetitionScore != null) {
+        if (latestCompetitionScore != null) {
           List<ScoreRepresentation> scores = latestCompetitionScore.getScores();
           if (scores.size() >= 3) {
             ScoreRepresentation score1 = scores.get(0);
@@ -164,7 +163,6 @@ public class WidgetCompetitionSummaryController extends WidgetController impleme
           }
         }
       }
-
 
 
       GameMediaItemRepresentation item = gameMedia.getItem(PopperScreen.Wheel);

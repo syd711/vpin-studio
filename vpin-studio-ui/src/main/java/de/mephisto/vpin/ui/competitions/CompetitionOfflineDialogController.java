@@ -155,7 +155,7 @@ public class CompetitionOfflineDialogController implements Initializable, Dialog
     tableCombo.getItems().addAll(gameRepresentations);
     tableCombo.valueProperty().addListener((observableValue, gameRepresentation, t1) -> {
       competition.setGameId(t1.getId());
-      if(nameField.getText().equals(UIDefaults.DEFAULT_COMPETITION_NAME)) {
+      if (nameField.getText().equals(UIDefaults.DEFAULT_COMPETITION_NAME)) {
         nameField.setText(t1.getGameDisplayName());
       }
       refreshPreview(t1, competitionIconCombo.getValue());
@@ -216,10 +216,8 @@ public class CompetitionOfflineDialogController implements Initializable, Dialog
 
     LocalDate start = startDatePicker.getValue();
     LocalDate value = endDatePicker.getValue();
-    Date startSelection = Date.from(startDatePicker.getValue().atStartOfDay(ZoneId.systemDefault()).toInstant());
-    Date endSelection = Date.from(endDatePicker.getValue().atStartOfDay(ZoneId.systemDefault()).toInstant());
 
-    long diff = ChronoUnit.DAYS.between(start, value);
+    long diff = ChronoUnit.DAYS.between(start, value) + 1;
     this.durationLabel.setText(diff + " days");
 
     if (StringUtils.isEmpty(competition.getName())) {
@@ -240,8 +238,9 @@ public class CompetitionOfflineDialogController implements Initializable, Dialog
       return;
     }
 
-    GameRepresentation game = this.tableCombo.getValue();
-
+//    GameRepresentation game = this.tableCombo.getValue();
+//    Date startSelection = Date.from(startDatePicker.getValue().atStartOfDay(ZoneId.systemDefault()).toInstant());
+//    Date endSelection = Date.from(endDatePicker.getValue().atStartOfDay(ZoneId.systemDefault()).toInstant());
 //    for (CompetitionRepresentation existingCompetition : this.allCompetitions) {
 //      if (competition.isFinished()) {
 //        continue;

@@ -73,7 +73,7 @@ public class DiscordBotPreferencesController implements Initializable {
     new Thread(() -> {
       DiscordClient discordClient = null;
       try {
-        discordClient = DiscordClient.create(token.trim(), null);
+        discordClient = new DiscordClient(token.trim(), null);
         List<GuildInfo> guilds = discordClient.getGuilds();
         discordClient.shutdown();
 

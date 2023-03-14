@@ -10,7 +10,6 @@ import de.mephisto.vpin.server.highscores.ScoreList;
 import de.mephisto.vpin.server.players.Player;
 import de.mephisto.vpin.server.players.PlayerService;
 import edu.umd.cs.findbugs.annotations.NonNull;
-import edu.umd.cs.findbugs.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
@@ -102,7 +101,7 @@ public class CompetitionService implements InitializingBean {
   }
 
   public List<Competition> getCompetitionToBeFinished() {
-    return competitionsRepository.findByWinnerInitialsIsNullAndEndDateLessThanEqualOrderByEndDate(DateUtil.today());
+    return competitionsRepository.findByWinnerInitialsIsNullAndEndDateLessThanAndWinnerInitialsNullOrderByEndDate(DateUtil.today());
   }
 
   public ScoreList getCompetitionScores(long id) {
@@ -225,11 +224,11 @@ public class CompetitionService implements InitializingBean {
   }
 
   public List<Competition> getActiveCompetitions() {
-    return competitionsRepository.findByStartDateLessThanEqualAndEndDateGreaterThan(DateUtil.today(), DateUtil.today());
+    return competitionsRepository.findByStartDateLessThanEqualAndEndDateGreaterThanEqual(DateUtil.today(), DateUtil.today());
   }
 
   public Competition getActiveCompetition(CompetitionType competitionType) {
-    List<Competition> result = competitionsRepository.findByStartDateLessThanEqualAndEndDateGreaterThanAndType(DateUtil.today(), DateUtil.today(), competitionType.name());
+    List<Competition> result = competitionsRepository.findByStartDateLessThanEqualAndEndDateGreaterThanEqualAndWinnerInitialsNullAndType(DateUtil.today(), DateUtil.today(), competitionType.name());
     if (!result.isEmpty()) {
       return result.get(0);
     }

@@ -89,7 +89,7 @@ public class DiscordChannelMessageFactory {
     String msg = String.format(template, newName, game.getGameDisplayName(), competition.getUuid(), newScore);
     msg = msg + DiscordOfflineChannelMessageFactory.getBeatenMessage(oldScore, newScore);
 
-    return msg + "\nHere is the updated highscore list:" + createHighscoreList(updatedScores);
+    return msg + "Here is the updated highscore list:" + createHighscoreList(updatedScores);
   }
 
   public static String createDiscordCompetitionCreatedMessage(Competition competition, Game game, long initiatorId) {

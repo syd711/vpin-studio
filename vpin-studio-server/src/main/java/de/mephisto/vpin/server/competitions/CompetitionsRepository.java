@@ -10,15 +10,15 @@ import java.util.Optional;
 @Repository
 public interface CompetitionsRepository extends JpaRepository<Competition, Long> {
 
-  List<Competition> findByStartDateLessThanEqualAndEndDateGreaterThan(Date now1, Date now2);
+  List<Competition> findByStartDateLessThanEqualAndEndDateGreaterThanEqual(Date now1, Date now2);
 
-  Optional<Competition> findByStartDateLessThanEqualAndEndDateGreaterThanAndGameId(Date now1, Date now2, int gameId);
+//  Optional<Competition> findByStartDateLessThanEqualAndEndDateGreaterThanAndGameId(Date now1, Date now2, int gameId);
 
-  List<Competition> findByStartDateLessThanEqualAndEndDateGreaterThanAndType(Date now1, Date now2, String type);
+  List<Competition> findByStartDateLessThanEqualAndEndDateGreaterThanEqualAndWinnerInitialsNullAndType(Date now1, Date now2, String type);
 
   List<Competition> findByWinnerInitialsIsNotNull();
 
-  List<Competition> findByWinnerInitialsIsNullAndEndDateLessThanEqualOrderByEndDate(Date now);
+  List<Competition> findByWinnerInitialsIsNullAndEndDateLessThanAndWinnerInitialsNullOrderByEndDate(Date now);
 
   List<Competition> findByWinnerInitials(String initials);
 

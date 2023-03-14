@@ -193,7 +193,7 @@ public class Competition {
     long now = DateUtil.today().getTime();
     long start = getStartDate().getTime();
     long end = getEndDate().getTime();
-    return start <= now && end > now;
+    return start <= now && end >= now;
   }
 
   @Override

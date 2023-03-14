@@ -13,7 +13,7 @@ public class DiscordClientTest {
     String token = System.getenv("TOKEN");
 
     if(token != null) {
-      DiscordClient client = DiscordClient.create(token, null);
+      DiscordClient client = new DiscordClient(token, null);
 //      client.refreshMembers();
       client.setStatus("testing");
 

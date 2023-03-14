@@ -208,7 +208,7 @@ public class CompetitionRepresentation {
     long now = DateUtil.today().getTime();
     long start = getStartDate().getTime();
     long end = getEndDate().getTime();
-    return start <= now && end > now;
+    return start <= now && end >= now;
   }
 
   public boolean isPlanned() {
@@ -219,7 +219,7 @@ public class CompetitionRepresentation {
   public int remainingDays() {
     LocalDate start = LocalDate.now();
     LocalDate end = getEndDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
-    return (int) Math.abs(ChronoUnit.DAYS.between(end, start));
+    return (int) Math.abs(ChronoUnit.DAYS.between(end, start)) + 1;
   }
 
   public boolean isOverlappingWith(Date startSelection, Date endSelection) {
