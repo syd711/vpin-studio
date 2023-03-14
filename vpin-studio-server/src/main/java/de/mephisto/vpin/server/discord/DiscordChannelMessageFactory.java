@@ -95,7 +95,7 @@ public class DiscordChannelMessageFactory {
   public static String createDiscordCompetitionCreatedMessage(Competition competition, Game game, long initiatorId) {
     LocalDate start = competition.getStartDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
     LocalDate end = competition.getEndDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
-    long diff = Math.abs(ChronoUnit.DAYS.between(end, start));
+    long diff = Math.abs(ChronoUnit.DAYS.between(end, start)) + 1;
     String userId = "<@" + initiatorId + ">";
 
     return String.format(DISCORD_COMPETITION_CREATED_TEMPLATE,
