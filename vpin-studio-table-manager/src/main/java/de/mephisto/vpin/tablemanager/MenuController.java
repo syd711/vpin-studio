@@ -117,7 +117,7 @@ public class MenuController implements Initializable {
   public void enterInstall() {
     StateMananger.getInstance().setInputBlocked(true);
     resetGameRow();
-    greenLabel.setText("Install Table");
+    greenLabel.setText("Install");
     TransitionUtil.createOutFader(bluePanel).play();
     TransitionUtil.createOutFader(greenPanel).play();
     TransitionUtil.createInFader(gameRow).play();
@@ -164,8 +164,9 @@ public class MenuController implements Initializable {
 
   private void enterMainWithInstall() {
     redLabel.setText("");
-    greenLabel.setText("Install Table");
-    blueLabel.setText("Archive Table");
+    greenLabel.setText("Install");
+    blueLabel.setText("Archive");
+    setLoadLabel("");
     resetGameRow();
     TransitionUtil.createOutFader(gameRow).play();
     TransitionUtil.createOutFader(redPanel).play();
@@ -175,8 +176,9 @@ public class MenuController implements Initializable {
 
   private void enterMainWithArchive() {
     redLabel.setText("");
-    greenLabel.setText("Install Table");
-    blueLabel.setText("Archive Table");
+    greenLabel.setText("Install");
+    blueLabel.setText("Archive");
+    setLoadLabel("");
     resetGameRow();
     TransitionUtil.createOutFader(gameRow).play();
     TransitionUtil.createOutFader(redPanel).play();

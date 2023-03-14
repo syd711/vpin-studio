@@ -7,6 +7,7 @@ import de.mephisto.vpin.tablemanager.MenuController;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -21,7 +22,8 @@ public class PlaylistSelectionMenuState extends MenuState {
     this.parentState = parentState;
     this.menuController = menuController;
     this.menuController.enterPlaylistSelection();
-    playlists = Menu.client.getPlaylists();
+    playlists = new ArrayList<>(Menu.client.getPlaylists());
+    playlists.add(null);
 
     this.menuController.setNameLabelText(playlists.get(index).getName());
   }
@@ -48,7 +50,15 @@ public class PlaylistSelectionMenuState extends MenuState {
       index++;
     }
 
-    this.menuController.setNameLabelText(playlists.get(index).getName());
+    PlaylistRepresentation playlistRepresentation = playlists.get(index);
+    if(playlistRepresentation == null) {
+      this.menuController.leavePlaylistSelection();
+      this.menuController.setNameLabelText("Skip Playlist Selection");
+    }
+    else {
+      this.menuController.enterPlaylistSelection();
+      this.menuController.setNameLabelText(playlistRepresentation.getName());
+    }
     return this;
   }
 
