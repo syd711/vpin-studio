@@ -3,6 +3,7 @@ package de.mephisto.vpin.connectors.discord;
 
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
+import net.dv8tion.jda.api.OnlineStatus;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.*;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
@@ -32,18 +33,28 @@ public class DiscordClient {
 
   private final DiscordCache<List<DiscordMessage>> messageCache = new DiscordCache<>();
 
-  private DiscordClient(JDA jda, DiscordCommandResolver commandResolver, String botToken) {
-    this.jda = jda;
-    this.botId = jda.getSelfUser().getIdLong();
+  public DiscordClient(String botToken, DiscordCommandResolver commandResolver) throws InterruptedException {
     this.listenerAdapter = new DiscordListenerAdapter(this, commandResolver);
     this.botToken = botToken;
+
+    jda = JDABuilder.createDefault(botToken.trim(), Arrays.asList(GatewayIntent.DIRECT_MESSAGES,
+            GatewayIntent.GUILD_MESSAGES, GatewayIntent.GUILD_MEMBERS, GatewayIntent.MESSAGE_CONTENT))
+        .setEventPassthrough(true)
+        .setStatus(OnlineStatus.ONLINE)
+        .setMemberCachePolicy(MemberCachePolicy.ALL)
+        .addEventListeners(this.listenerAdapter)
+        .build();
+    jda.awaitReady();
+    this.botId = jda.getSelfUser().getIdLong();
+
     this.loadMembers();
-    jda.addEventListener(this.listenerAdapter);
   }
 
   public DiscordMember getBot() {
     DiscordMember member = new DiscordMember();
     member.setName(jda.getSelfUser().getName());
+
+
     member.setInitials(resolveInitials(jda.getSelfUser().getName()));
     member.setId(this.botId);
     member.setAvatarUrl(jda.getSelfUser().getAvatarUrl());
@@ -57,15 +68,6 @@ public class DiscordClient {
         LOG.info("Loaded " + members.size() + " members for " + guild.getName());
       });
     }
-  }
-
-  public static DiscordClient create(String botToken, DiscordCommandResolver commandResolver) throws Exception {
-    JDA jda = JDABuilder.createDefault(botToken.trim(), Arrays.asList(GatewayIntent.DIRECT_MESSAGES, GatewayIntent.GUILD_MESSAGES, GatewayIntent.GUILD_MEMBERS, GatewayIntent.MESSAGE_CONTENT))
-        .setEventPassthrough(true)
-        .setMemberCachePolicy(MemberCachePolicy.ALL)
-        .build();
-    jda.awaitReady();
-    return new DiscordClient(jda, commandResolver, botToken);
   }
 
   public long getDefaultGuildId() {

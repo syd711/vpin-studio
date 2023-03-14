@@ -4,8 +4,10 @@ import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.channel.concrete.PrivateChannel;
 import net.dv8tion.jda.api.entities.channel.middleman.MessageChannel;
 import net.dv8tion.jda.api.entities.channel.unions.MessageChannelUnion;
+import net.dv8tion.jda.api.events.guild.GuildReadyEvent;
 import net.dv8tion.jda.api.events.message.MessageDeleteEvent;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
+import net.dv8tion.jda.api.events.session.ReadyEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -52,6 +54,28 @@ public class DiscordListenerAdapter extends ListenerAdapter {
     super.onMessageDelete(event);
     long channelId = event.getChannel().getIdLong();
     discordClient.invalidateMessageCache(channelId);
+  }
+
+
+  @Override
+  public void onReady(ReadyEvent event) {
+
+  }
+
+  @Override
+  public void onGuildReady(GuildReadyEvent event) {
+//    Guild guild = event.getGuild();
+//    List<CommandData> commandData = new ArrayList<>();
+//    OptionData option1 = new OptionData(OptionType.STRING, "name", "The name of the table or a matching string.", true);
+//    commandData.add(Commands.slash("hs", "List the current highscore for a table.").addOptions(option1));
+//    guild.updateCommands().addCommands(commandData).queue();
+//    RestAction<List<Command>> listRestAction = guild.retrieveCommands();
+//    listRestAction.queue((commands -> {
+//      for (Command command : commands) {
+//        guild.deleteCommandById(command.getId()).complete();
+//      }
+//    }));
+//    LOG.info("Added commands for \"" + guild.getName() + "\"");
   }
 
   /******************** Listener Methods ******************************************************************************/

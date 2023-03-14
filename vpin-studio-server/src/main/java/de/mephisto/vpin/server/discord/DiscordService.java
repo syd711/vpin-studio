@@ -266,7 +266,7 @@ public class DiscordService implements InitializingBean, PreferenceChangedListen
       }
 
       if (this.discordClient == null) {
-        this.discordClient = DiscordClient.create(botToken, this);
+        this.discordClient = new DiscordClient(botToken, this);
         this.applyDefaultDiscordSettings();
         LOG.info("Recreated Discord client.");
       }
