@@ -101,7 +101,7 @@ public class CompetitionService implements InitializingBean {
   }
 
   public List<Competition> getCompetitionToBeFinished() {
-    return competitionsRepository.findByWinnerInitialsIsNullAndEndDateLessThanAndWinnerInitialsNullOrderByEndDate(DateUtil.today());
+    return competitionsRepository.findByWinnerInitialsIsNullAndEndDateLessThanAndWinnerInitialsNullOrderByEndDate(DateUtil.endOfToday());
   }
 
   public ScoreList getCompetitionScores(long id) {
@@ -224,11 +224,11 @@ public class CompetitionService implements InitializingBean {
   }
 
   public List<Competition> getActiveCompetitions() {
-    return competitionsRepository.findByStartDateLessThanEqualAndEndDateGreaterThanEqual(DateUtil.today(), DateUtil.today());
+    return competitionsRepository.findByStartDateLessThanEqualAndEndDateGreaterThanEqual(DateUtil.today(), DateUtil.endOfToday());
   }
 
   public Competition getActiveCompetition(CompetitionType competitionType) {
-    List<Competition> result = competitionsRepository.findByStartDateLessThanEqualAndEndDateGreaterThanEqualAndWinnerInitialsNullAndType(DateUtil.today(), DateUtil.today(), competitionType.name());
+    List<Competition> result = competitionsRepository.findByStartDateLessThanEqualAndEndDateGreaterThanEqualAndWinnerInitialsNullAndType(DateUtil.today(), DateUtil.endOfToday(), competitionType.name());
     if (!result.isEmpty()) {
       return result.get(0);
     }

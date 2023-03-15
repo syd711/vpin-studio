@@ -1,5 +1,6 @@
 package de.mephisto.vpin.server.discord;
 
+import de.mephisto.vpin.restclient.CompetitionType;
 import de.mephisto.vpin.restclient.PlayerDomain;
 import de.mephisto.vpin.server.competitions.Competition;
 import de.mephisto.vpin.server.competitions.ScoreSummary;
@@ -145,9 +146,14 @@ public class DiscordOfflineChannelMessageFactory {
     String second = ScoreHelper.formatScoreEntry(summary, 1);
     String third = ScoreHelper.formatScoreEntry(summary, 2);
 
+    String competitionName = competition.getName();
+    if(competition.getType().equals(CompetitionType.DISCORD.name())) {
+      competitionName = competitionName + " (" + competition.getUuid() + ")";
+    }
+
     return String.format(COMPETITION_FINISHED_TEMPLATE,
         winnerName,
-        competition.getName(),
+        competitionName,
         winnerRaw,
         game.getGameDisplayName(),
         summary.getScores().get(0).getScore(),
