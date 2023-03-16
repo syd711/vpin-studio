@@ -10,6 +10,7 @@ import de.mephisto.vpin.server.highscores.ScoreList;
 import de.mephisto.vpin.server.players.Player;
 import de.mephisto.vpin.server.players.PlayerService;
 import edu.umd.cs.findbugs.annotations.NonNull;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
@@ -101,7 +102,7 @@ public class CompetitionService implements InitializingBean {
   }
 
   public List<Competition> getCompetitionToBeFinished() {
-    return competitionsRepository.findByWinnerInitialsIsNullAndEndDateLessThanAndWinnerInitialsNullOrderByEndDate(DateUtil.endOfToday());
+    return competitionsRepository.findByWinnerInitialsIsNullAndEndDateLessThanEqualOrderByEndDate(new Date());
   }
 
   public ScoreList getCompetitionScores(long id) {
@@ -203,7 +204,8 @@ public class CompetitionService implements InitializingBean {
     }
     else {
       Score score = competitionScore.getScores().get(0);
-      competition.setWinnerInitials(score.getPlayerInitials());
+      String initials = !StringUtils.isEmpty(score.getPlayerInitials()) ? score.getPlayerInitials() : "???";
+      competition.setWinnerInitials(initials);
     }
     competition.setEndDate(DateUtil.today()); //always the current date
     competition.setScore(competitionScore.getRaw()); //save the last raw score to the competition itself
@@ -228,7 +230,7 @@ public class CompetitionService implements InitializingBean {
   }
 
   public Competition getActiveCompetition(CompetitionType competitionType) {
-    List<Competition> result = competitionsRepository.findByStartDateLessThanEqualAndEndDateGreaterThanEqualAndWinnerInitialsNullAndType(DateUtil.today(), DateUtil.endOfToday(), competitionType.name());
+    List<Competition> result = competitionsRepository.findByAndWinnerInitialsIsNullAndStartDateLessThanEqualAndEndDateGreaterThanEqualAndType(DateUtil.today(), DateUtil.endOfToday(), competitionType.name());
     if (!result.isEmpty()) {
       return result.get(0);
     }
@@ -272,7 +274,7 @@ public class CompetitionService implements InitializingBean {
     if (competition.getType().equals(CompetitionType.DISCORD.name())) {
       ScoreList scoreList = discordService.getScoreList(this.highscoreParser, competition.getUuid(), serverId, competition.getDiscordChannelId());
       ScoreSummary latestScore = scoreList.getLatestScore();
-      if(latestScore == null) {
+      if (latestScore == null) {
         latestScore = new ScoreSummary(Collections.emptyList(), new Date());
       }
       return latestScore;

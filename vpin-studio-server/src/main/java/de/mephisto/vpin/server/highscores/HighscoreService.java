@@ -367,7 +367,7 @@ public class HighscoreService implements InitializingBean {
       notifyInitialHighscoreChange(newHighscore, game);
     }
     else {
-      notifyExistingHighscoreChange(existingHighscore.get(), newHighscore, game);
+      runHighscoreChangedCheck(existingHighscore.get(), newHighscore, game);
     }
   }
 
@@ -388,7 +388,7 @@ public class HighscoreService implements InitializingBean {
    * @param newHighscore
    * @param game
    */
-  private void notifyExistingHighscoreChange(Highscore oldHighscore, Highscore newHighscore, Game game) {
+  private void runHighscoreChangedCheck(Highscore oldHighscore, Highscore newHighscore, Game game) {
     //check if there is a difference
     String oldRaw = oldHighscore.getRaw();
     String newRaw = newHighscore.getRaw();

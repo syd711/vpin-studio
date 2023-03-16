@@ -181,9 +181,7 @@ public class CompetitionRepresentation {
     LocalDate end = getEndDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
     int diff = (int) Math.abs(ChronoUnit.DAYS.between(end, start));
 
-    Calendar startDateCal = Calendar.getInstance();
-    startDateCal.setTime(getEndDate());
-    Date newStartDate = startDateCal.getTime();
+    Date newStartDate = DateUtil.today();
 
     Calendar endDateCal = Calendar.getInstance();
     endDateCal.setTime(newStartDate);

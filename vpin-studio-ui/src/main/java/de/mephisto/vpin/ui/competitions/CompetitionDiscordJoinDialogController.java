@@ -251,7 +251,7 @@ public class CompetitionDiscordJoinDialogController implements Initializable, Di
 
     if(this.discordCompetitionData.getEdt().before(DateUtil.today())) {
       validationTitle.setText("Invalid competition data");
-      validationDescription.setText("Ups, look like the selected competition wasn't resetted. It's already finished.");
+      validationDescription.setText("Ups, looks like the selected competition wasn't resetted. It's already finished.");
       return;
     }
 
