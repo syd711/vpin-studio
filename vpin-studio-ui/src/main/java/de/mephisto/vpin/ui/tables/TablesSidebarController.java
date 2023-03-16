@@ -218,6 +218,9 @@ public class TablesSidebarController implements Initializable {
   private VBox assetList;
 
   @FXML
+  private Button povExportBtn;
+
+  @FXML
   private ComboBox<POVComboModel> povSSAACombo;
 
   @FXML
@@ -590,6 +593,10 @@ public class TablesSidebarController implements Initializable {
   private void onPOVExport() {
     if (game.isPresent()) {
       GameRepresentation g = game.get();
+      if(!g.isGameFileAvailable()) {
+        return;
+      }
+
       ProgressResultModel resultModel = Dialogs.createProgressDialog(new POVExportProgressModel("Export POV Settings", g));
       if (!resultModel.getResults().isEmpty()) {
         tablesController.onReload();
@@ -813,9 +820,12 @@ public class TablesSidebarController implements Initializable {
   private void refreshPOV(Optional<GameRepresentation> g) {
     povSoundVolumeSlider.setDisable(true);
     povMusicVolumeSlider.setDisable(true);
+    povExportBtn.setDisable(true);
 
     if (g.isPresent()) {
       GameRepresentation game = g.get();
+      povExportBtn.setDisable(!game.isGameFileAvailable());
+
       if (game.isPov()) {
         pov = client.getPOV(game.getId());
 

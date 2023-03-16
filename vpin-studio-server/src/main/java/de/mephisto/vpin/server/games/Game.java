@@ -243,6 +243,10 @@ public class Game {
     return new File(systemService.getVPXTablesFolder(), directB2SName).exists();
   }
 
+  public boolean isGameFileAvailable() {
+    return this.getGameFile().exists();
+  }
+
   @JsonIgnore
   @NonNull
   public PupPack getPupPack() {

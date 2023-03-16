@@ -30,6 +30,7 @@ public class GameRepresentation {
   private GameMediaRepresentation gameMedia;
   private EmulatorRepresentation emulator;
   private boolean directB2SAvailable;
+  private boolean gameFileAvailable;
   private boolean pupPackAvailable;
   private int validationState;
   private int volume;
@@ -41,6 +42,14 @@ public class GameRepresentation {
   private boolean pov;
   private boolean selected;
   private boolean romRequired;
+
+  public boolean isGameFileAvailable() {
+    return gameFileAvailable;
+  }
+
+  public void setGameFileAvailable(boolean gameFileAvailable) {
+    this.gameFileAvailable = gameFileAvailable;
+  }
 
   public boolean isRomRequired() {
     return romRequired;

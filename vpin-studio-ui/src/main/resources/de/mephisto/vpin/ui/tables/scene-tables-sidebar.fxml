@@ -787,7 +787,7 @@
                                     <Font size="14.0" />
                                  </font>
                               </Label>
-                              <Button mnemonicParsing="false" onAction="#onPOVExport" text="Export POV File">
+                              <Button fx:id="povExportBtn" mnemonicParsing="false" onAction="#onPOVExport" text="Export POV File">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
