@@ -25,6 +25,9 @@ import java.io.IOException;
 public class DefaultPictureService {
   private final static Logger LOG = LoggerFactory.getLogger(DefaultPictureService.class);
 
+  public final static int DEFAULT_MEDIA_SIZE = 1280;
+  private final static DirectB2SImageRatio DEFAULT_MEDIA_RATIO = DirectB2SImageRatio.RATIO_16X9;
+
   public DefaultPictureService() {
 
   }
@@ -76,18 +79,23 @@ public class DefaultPictureService {
   }
 
   @Nullable
-  public File generateCroppedDefaultPicture(@NonNull Game game, @NonNull DirectB2SImageRatio ratio, int cropWidth) throws VPinStudioException {
+  public File generateCroppedDefaultPicture(@NonNull Game game) {
+    return generateCroppedDefaultPicture(game, false);
+  }
+
+  @Nullable
+  public File generateCroppedDefaultPicture(@NonNull Game game, boolean forceRegeneration) {
     try {
-      if (game.getRawDefaultPicture() == null || !game.getRawDefaultPicture().exists()) {
+      if (forceRegeneration || game.getRawDefaultPicture() == null || !game.getRawDefaultPicture().exists()) {
         extractDefaultPicture(game);
       }
 
-      if (game.getRawDefaultPicture().exists()) {
+      if (game.getRawDefaultPicture() != null && game.getRawDefaultPicture().exists()) {
         File backgroundImageFile = game.getRawDefaultPicture();
 
         BufferedImage image = ImageIO.read(backgroundImageFile);
-        BufferedImage crop = ImageUtil.crop(image, ratio.getXRatio(), ratio.getYRatio());
-        BufferedImage resized = ImageUtil.resizeImage(crop, cropWidth);
+        BufferedImage crop = ImageUtil.crop(image, DEFAULT_MEDIA_RATIO.getXRatio(), DEFAULT_MEDIA_RATIO.getYRatio());
+        BufferedImage resized = ImageUtil.resizeImage(crop, DEFAULT_MEDIA_SIZE);
 
         File target = game.getCroppedDefaultPicture();
         if (target == null) {
@@ -111,11 +119,8 @@ public class DefaultPictureService {
         LOG.info("Written cropped default background for " + game.getRom());
         return target;
       }
-    } catch (IOException e) {
-      LOG.error("Error extracting default picture: " + e.getMessage(), e);
-      throw new VPinStudioException(e);
     } catch (Exception e) {
-      throw new VPinStudioException(e);
+      LOG.error("Error extracting default picture: " + e.getMessage(), e);
     }
     return null;
   }

@@ -3,10 +3,10 @@ package de.mephisto.vpin.server.highscores.cards;
 import de.mephisto.vpin.restclient.PopperScreen;
 import de.mephisto.vpin.server.competitions.ScoreSummary;
 import de.mephisto.vpin.server.directb2s.DirectB2SImageRatio;
-import de.mephisto.vpin.server.system.DefaultPictureService;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.highscores.Score;
 import de.mephisto.vpin.server.popper.WheelAugmenter;
+import de.mephisto.vpin.server.system.DefaultPictureService;
 import de.mephisto.vpin.server.system.SystemService;
 import de.mephisto.vpin.server.util.Config;
 import de.mephisto.vpin.server.util.ImageUtil;
@@ -83,24 +83,12 @@ public class CardGraphics {
           "make sure that folder " + backgroundsFolder.getAbsolutePath() + " contains valid images.");
     }
 
-    int scaling = 1280; //Config.getCardGeneratorConfig().getInt("card.scaling", 1280);
     if (USE_DIRECTB2S) {
       File croppedDirectB2SBackgroundImage = game.getCroppedDefaultPicture();
 
-      //check if the existing directb2s exists and has the correct scaling
-      if (croppedDirectB2SBackgroundImage != null && croppedDirectB2SBackgroundImage.exists()) {
-        BufferedImage croppedDirectb2s = ImageUtil.loadImage(croppedDirectB2SBackgroundImage);
-        int width = croppedDirectb2s.getWidth();
-        if(width != scaling) {
-          LOG.info("Deleting existing cropped directb2s background '" + croppedDirectB2SBackgroundImage.getAbsolutePath() + "', because is has the wrong ratio.");
-          if(!croppedDirectB2SBackgroundImage.delete()) {
-            LOG.error("Failed to delete " + croppedDirectB2SBackgroundImage.getAbsolutePath());
-          }
-          croppedDirectB2SBackgroundImage = directB2SService.generateCroppedDefaultPicture(game, DIRECTB2S_RATIO, scaling);
-        }
-      }
-      else {
-        croppedDirectB2SBackgroundImage = directB2SService.generateCroppedDefaultPicture(game, DIRECTB2S_RATIO, scaling);
+      //check if the existing directb2s exists
+      if (croppedDirectB2SBackgroundImage == null || !croppedDirectB2SBackgroundImage.exists()) {
+        croppedDirectB2SBackgroundImage = directB2SService.generateCroppedDefaultPicture(game);
       }
 
       if (croppedDirectB2SBackgroundImage != null && croppedDirectB2SBackgroundImage.exists()) {
@@ -111,7 +99,7 @@ public class CardGraphics {
     BufferedImage backgroundImage = ImageUtil.loadImage(sourceImage);
     if (USE_DIRECTB2S) {
       backgroundImage = ImageUtil.crop(backgroundImage, DIRECTB2S_RATIO.getXRatio(), DIRECTB2S_RATIO.getYRatio());
-      backgroundImage = ImageUtil.resizeImage(backgroundImage, scaling);
+      backgroundImage = ImageUtil.resizeImage(backgroundImage, DefaultPictureService.DEFAULT_MEDIA_SIZE);
     }
 
     if (BLUR_PIXELS > 0) {
@@ -191,7 +179,7 @@ public class CardGraphics {
     int wheelSize = 3 * SCORE_FONT_SIZE + 3 * ROW_SEPARATOR;
     if (wheelIconFile != null && wheelIconFile.exists()) {
       WheelAugmenter augmenter = new WheelAugmenter(wheelIconFile);
-      if(augmenter.getBackupWheelIcon().exists()) {
+      if (augmenter.getBackupWheelIcon().exists()) {
         wheelIconFile = augmenter.getBackupWheelIcon();
       }
       BufferedImage wheelImage = ImageIO.read(wheelIconFile);
@@ -251,7 +239,7 @@ public class CardGraphics {
     //file exists && there is place to render it
     if (wheelIconFile != null && wheelIconFile.exists() && renderWheel) {
       WheelAugmenter augmenter = new WheelAugmenter(wheelIconFile);
-      if(augmenter.getBackupWheelIcon().exists()) {
+      if (augmenter.getBackupWheelIcon().exists()) {
         wheelIconFile = augmenter.getBackupWheelIcon();
       }
       BufferedImage wheelImage = ImageIO.read(wheelIconFile);

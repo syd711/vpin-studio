@@ -83,7 +83,7 @@ public class DiscordOfflineChannelMessageFactory {
     msg = msg + getBeatenMessage(oldScore, newScore);
 
     if (!StringUtils.isEmpty(raw)) {
-      msg = msg + "\nHere is the updated highscore:\n```" + raw + "```";
+      msg = msg + "\nHere is the current highscore:\n```" + raw + "```";
     }
 
     return msg;
@@ -108,7 +108,7 @@ public class DiscordOfflineChannelMessageFactory {
     msg = msg + getBeatenMessage(oldScore, newScore);
 
     if (!StringUtils.isEmpty(raw)) {
-      msg = msg + "\nHere is the updated highscore:\n```" + raw + "```";
+      msg = msg + "\nHere is the current highscore:\n```" + raw + "```";
     }
 
     return msg;

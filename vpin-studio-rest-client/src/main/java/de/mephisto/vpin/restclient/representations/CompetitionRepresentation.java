@@ -159,6 +159,9 @@ public class CompetitionRepresentation {
 
   public void setEndDate(Date endDate) {
     this.endDate = endDate;
+    if(endDate != null) {
+      this.endDate = DateUtil.endOfDay(endDate);
+    }
   }
 
   @Override

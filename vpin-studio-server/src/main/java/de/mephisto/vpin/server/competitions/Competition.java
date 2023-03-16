@@ -151,6 +151,9 @@ public class Competition {
 
   public void setEndDate(Date endDate) {
     this.endDate = endDate;
+    if(endDate != null) {
+      this.endDate = DateUtil.endOfDay(endDate);
+    }
   }
 
   public Long getId() {

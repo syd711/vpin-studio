@@ -13,6 +13,7 @@ import de.mephisto.vpin.server.popper.PinUPConnector;
 import de.mephisto.vpin.server.preferences.PreferencesService;
 import de.mephisto.vpin.server.roms.RomService;
 import de.mephisto.vpin.server.roms.ScanResult;
+import de.mephisto.vpin.server.system.DefaultPictureService;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import org.apache.commons.lang3.StringUtils;
@@ -53,6 +54,9 @@ public class GameService {
 
   @Autowired
   private AssetService assetService;
+
+  @Autowired
+  private DefaultPictureService defaultPictureService;
 
   @SuppressWarnings("unused")
   public List<Game> getGames() {
@@ -254,6 +258,7 @@ public class GameService {
       }
       applyGameDetails(game, true);
       highscoreService.scanScore(game);
+      defaultPictureService.generateCroppedDefaultPicture(game, true);
 
       return getGame(gameId);
     }
