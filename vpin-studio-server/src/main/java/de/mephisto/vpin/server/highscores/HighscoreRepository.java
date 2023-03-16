@@ -13,8 +13,6 @@ public interface HighscoreRepository extends JpaRepository<Highscore, Long> {
 
   Optional<Highscore> findByGameId(int gameId);
 
-  Optional<Highscore> findByGameIdAndCreatedAtBetweenAndRawIsNotNull(int gameId, Date start, Date end);
-
   @Query(value = "SELECT * FROM Highscores h WHERE h.raw NOT NULL ORDER BY lastModified DESC", nativeQuery = true)
   List<Highscore> findRecent();
 

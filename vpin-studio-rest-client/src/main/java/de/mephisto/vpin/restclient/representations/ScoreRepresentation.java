@@ -66,4 +66,13 @@ public class ScoreRepresentation {
   public void setScore(String score) {
     this.score = score;
   }
+
+  @Override
+  public String toString() {
+    String name = this.getPlayerInitials();
+    if(this.player != null) {
+      name = this.player.getName();
+    }
+    return "#" + this.getPosition() + " " + name + "   " + this.getScore();
+  }
 }

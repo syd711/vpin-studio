@@ -206,24 +206,30 @@ public class HighscoreService implements InitializingBean {
    */
   public ScoreList getScoresBetween(int gameId, Date start, Date end, long serverId) {
     ScoreList scoreList = new ScoreList();
-    Optional<Highscore> highscore = highscoreRepository.findByGameIdAndCreatedAtBetweenAndRawIsNotNull(gameId, start, end);
-    if (end.after(new Date())) {
-      highscore = highscoreRepository.findByGameId(gameId);
+
+    Date latestVersion = null;
+    List<HighscoreVersion> byGameIdAndCreatedAtBetween = highscoreVersionRepository.findByGameIdAndCreatedAtBetween(gameId, start, end);
+    for (HighscoreVersion version : byGameIdAndCreatedAtBetween) {
+      latestVersion = version.getCreatedAt();
+      ScoreSummary scoreSummary = getScoreSummary(version.getCreatedAt(), version.getOldRaw(), gameId, serverId);
+      scoreList.getScores().add(scoreSummary);
     }
 
+    Optional<Highscore> highscore = highscoreRepository.findByGameId(gameId);
     if (highscore.isPresent()) {
       Highscore h = highscore.get();
       if (h.getRaw() != null) {
-        ScoreSummary scoreSummary = getScoreSummary(h.getCreatedAt(), h.getRaw(), gameId, serverId);
-        scoreList.setLatestScore(scoreSummary);
-        scoreList.getScores().add(scoreSummary);
-      }
-    }
+        //set the latest score date here for the existing score list, because the current highscore is the latest!
+        Date latestScoreTime = h.getLastModified();
+        if (latestVersion != null) {
+          latestScoreTime.setTime(latestVersion.getTime() + 1);
+        }//TODO only use version
 
-    List<HighscoreVersion> byGameIdAndCreatedAtBetween = highscoreVersionRepository.findByGameIdAndCreatedAtBetween(gameId, start, end);
-    for (HighscoreVersion version : byGameIdAndCreatedAtBetween) {
-      ScoreSummary scoreSummary = getScoreSummary(version.getCreatedAt(), version.getOldRaw(), gameId, serverId);
-      scoreList.getScores().add(scoreSummary);
+        ScoreSummary scoreSummary = getScoreSummary(h.getLastModified(), h.getRaw(), gameId, serverId);
+//        scoreSummary.setCreatedAt(latestScoreTime);
+        scoreList.setLatestScore(scoreSummary);
+        scoreList.getScores().add(0, scoreSummary);
+      }
     }
 
     scoreList.getScores().sort(Comparator.comparing(ScoreSummary::getCreatedAt));
@@ -419,7 +425,7 @@ public class HighscoreService implements InitializingBean {
       //archive old existingScore only if it had actual data
       if (!StringUtils.isEmpty(oldRaw)) {
         HighscoreVersion version = oldHighscore.toVersion(changedPosition);
-        version.setNewRaw(oldHighscore.getRaw());
+        version.setNewRaw(newHighscore.getRaw());
         highscoreVersionRepository.saveAndFlush(version);
         LOG.info("Created highscore version for " + game);
       }

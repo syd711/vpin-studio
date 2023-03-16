@@ -11,6 +11,7 @@ import javafx.scene.paint.Color;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
@@ -22,20 +23,20 @@ public class ScoreGraphUtil {
       List<XYChart.Series> series = new ArrayList<>();
       ScoreSummaryRepresentation firstEntry = list.getScores().get(0);
       List<ScoreRepresentation> scoreList = firstEntry.getScores();
-      for (int i = 1; i <= scoreList.size(); i++) {
+      for (int i = 0; i < scoreList.size(); i++) {
         XYChart.Series<String, Number> scoreGraph = new XYChart.Series();
-        scoreGraph.setName("#" + i);
+        scoreGraph.setName("#" + (i+1));
         series.add(scoreGraph);
       }
 
       //every summary is one history version
       List<ScoreSummaryRepresentation> scores = list.getScores();
-      scores.sort(Comparator.comparing(ScoreSummaryRepresentation::getCreatedAt));
       for (ScoreSummaryRepresentation score : scores) {
         List<ScoreRepresentation> entryList = score.getScores();
         for (int i = 0; i < entryList.size(); i++) {
           ScoreRepresentation s = entryList.get(i);
           series.get((i)).getData().add(new XYChart.Data(SimpleDateFormat.getDateTimeInstance().format(s.getCreatedAt()), s.getNumericScore()));
+          System.out.println(s.toString());
         }
       }
 
