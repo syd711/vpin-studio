@@ -178,5 +178,6 @@ public class VpaDownloadDialogController implements Initializable, DialogControl
     VpaSourceType vpaSourceType = VpaSourceType.valueOf(descriptorRepresentation.getSource().getType());
     downloadToRepository.setVisible(!vpaSourceType.equals(VpaSourceType.File));
     downloadToFile.setSelected(true);
+    downloadToFile.setDisable(true);
   }
 }
