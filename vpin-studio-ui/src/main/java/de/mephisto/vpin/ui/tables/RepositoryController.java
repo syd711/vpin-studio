@@ -83,6 +83,9 @@ public class RepositoryController implements Initializable, StudioEventListener 
   private TableColumn<VpaDescriptorRepresentation, String> popperColumn;
 
   @FXML
+  private TableColumn<VpaDescriptorRepresentation, String> povColumn;
+
+  @FXML
   private TableColumn<VpaDescriptorRepresentation, String> sizeColumn;
 
   @FXML
@@ -245,7 +248,7 @@ public class RepositoryController implements Initializable, StudioEventListener 
       VpaDescriptorRepresentation value = cellData.getValue();
       boolean directb2s = value.getManifest().getPackageInfo().isDirectb2s();
       if (directb2s) {
-        return new SimpleObjectProperty(WidgetFactory.createCheckIcon());
+        return new SimpleObjectProperty(WidgetFactory.createCheckboxIcon());
       }
       return new SimpleStringProperty("");
     });
@@ -254,7 +257,7 @@ public class RepositoryController implements Initializable, StudioEventListener 
       VpaDescriptorRepresentation value = cellData.getValue();
       boolean packaged = value.getManifest().getPackageInfo().isPupPack();
       if (packaged) {
-        return new SimpleObjectProperty(WidgetFactory.createCheckIcon());
+        return new SimpleObjectProperty(WidgetFactory.createCheckboxIcon());
       }
       return new SimpleStringProperty("");
     });
@@ -263,7 +266,16 @@ public class RepositoryController implements Initializable, StudioEventListener 
       VpaDescriptorRepresentation value = cellData.getValue();
       boolean packaged = value.getManifest().getPackageInfo().isPopperMedia();
       if (packaged) {
-        return new SimpleObjectProperty(WidgetFactory.createCheckIcon());
+        return new SimpleObjectProperty(WidgetFactory.createCheckboxIcon());
+      }
+      return new SimpleStringProperty("");
+    });
+
+    povColumn.setCellValueFactory(cellData -> {
+      VpaDescriptorRepresentation value = cellData.getValue();
+      boolean pov = value.getManifest().getPackageInfo().isPov();
+      if (pov) {
+        return new SimpleObjectProperty(WidgetFactory.createCheckboxIcon());
       }
       return new SimpleStringProperty("");
     });
@@ -272,7 +284,7 @@ public class RepositoryController implements Initializable, StudioEventListener 
       VpaDescriptorRepresentation value = cellData.getValue();
       boolean packaged = value.getManifest().getPackageInfo().isPopperMedia();
       if (packaged) {
-        return new SimpleObjectProperty(WidgetFactory.createCheckIcon());
+        return new SimpleObjectProperty(WidgetFactory.createCheckboxIcon());
       }
       return new SimpleStringProperty("");
     });

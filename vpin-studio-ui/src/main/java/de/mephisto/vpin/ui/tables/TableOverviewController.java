@@ -74,6 +74,9 @@ public class TableOverviewController implements Initializable, StudioFXControlle
   private TableColumn<GameRepresentation, String> columnPUPPack;
 
   @FXML
+  private TableColumn<GameRepresentation, String> columnPOV;
+
+  @FXML
   private TableColumn<GameRepresentation, String> columnHSType;
 
   @FXML
@@ -483,7 +486,15 @@ public class TableOverviewController implements Initializable, StudioFXControlle
     columnB2S.setCellValueFactory(cellData -> {
       GameRepresentation value = cellData.getValue();
       if (value.isDirectB2SAvailable()) {
-        return new SimpleObjectProperty(WidgetFactory.createCheckIcon());
+        return new SimpleObjectProperty(WidgetFactory.createCheckboxIcon());
+      }
+      return new SimpleStringProperty("");
+    });
+
+    columnPOV.setCellValueFactory(cellData -> {
+      GameRepresentation value = cellData.getValue();
+      if (value.isPov()) {
+        return new SimpleObjectProperty(WidgetFactory.createCheckboxIcon());
       }
       return new SimpleStringProperty("");
     });
@@ -491,11 +502,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
     columnPUPPack.setCellValueFactory(cellData -> {
       GameRepresentation value = cellData.getValue();
       if (value.isPupPackAvailable()) {
-        FontIcon fontIcon = new FontIcon();
-        fontIcon.setIconSize(18);
-        fontIcon.setIconColor(Paint.valueOf("#66FF66"));
-        fontIcon.setIconLiteral("bi-check-circle");
-        return new SimpleObjectProperty(fontIcon);
+        return new SimpleObjectProperty(WidgetFactory.createCheckboxIcon());
       }
       return new SimpleStringProperty("");
     });

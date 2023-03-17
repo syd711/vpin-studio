@@ -66,6 +66,14 @@ public class WidgetFactory {
     return fontIcon;
   }
 
+  public static FontIcon createCheckboxIcon() {
+    FontIcon fontIcon = new FontIcon();
+    fontIcon.setIconSize(18);
+    fontIcon.setIconColor(Paint.valueOf("#FFFFFF"));
+    fontIcon.setIconLiteral("bi-check-circle");
+    return fontIcon;
+  }
+
   public static FontIcon createExclamationIcon() {
     FontIcon fontIcon = new FontIcon();
     fontIcon.setIconSize(18);

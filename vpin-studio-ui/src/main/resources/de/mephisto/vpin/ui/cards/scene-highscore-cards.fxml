@@ -157,19 +157,21 @@
                      <content>
                         <VBox prefHeight="786.0" prefWidth="298.0" styleClass="accordion-container">
                            <children>
-                              <Label text="Title Font:" textFill="WHITE">
+                              <Label text="Title Font" textFill="WHITE">
                                  <font>
-                                    <Font size="14.0" />
+                                    <Font name="System Bold" size="14.0" />
                                  </font>
                               </Label>
-                              <HBox alignment="CENTER_LEFT" prefHeight="32.0" prefWidth="276.0">
-                                 <children>
-                                    <Label fx:id="titleFontLabel" prefHeight="20.0" prefWidth="260.0" textFill="WHITE">
+                              <BorderPane>
+                                 <left>
+                                    <Label fx:id="titleFontLabel" prefHeight="20.0" prefWidth="260.0" textFill="WHITE" BorderPane.alignment="CENTER">
                                        <font>
                                           <Font size="14.0" />
                                        </font>
                                     </Label>
-                                    <Button mnemonicParsing="false" onAction="#onFontTitleSelect" prefHeight="30.0" prefWidth="30.0">
+                                 </left>
+                                 <right>
+                                    <Button mnemonicParsing="false" onAction="#onFontTitleSelect" prefHeight="30.0" prefWidth="30.0" BorderPane.alignment="CENTER">
                                        <font>
                                           <Font size="14.0" />
                                        </font>
@@ -177,24 +179,26 @@
                                           <FontIcon iconColor="WHITE" iconLiteral="bi-fonts" />
                                        </graphic>
                                     </Button>
-                                 </children>
-                                 <VBox.margin>
-                                    <Insets bottom="12.0" />
-                                 </VBox.margin>
-                              </HBox>
-                              <Label text="Table Font:" textFill="WHITE">
+                                 </right>
+                              </BorderPane>
+                              <Label text="Table Font" textFill="WHITE">
                                  <font>
-                                    <Font size="14.0" />
+                                    <Font name="System Bold" size="14.0" />
                                  </font>
+                                 <VBox.margin>
+                                    <Insets top="12.0" />
+                                 </VBox.margin>
                               </Label>
-                              <HBox alignment="CENTER_LEFT" prefHeight="32.0" prefWidth="276.0">
-                                 <children>
-                                    <Label fx:id="tableFontLabel" prefHeight="20.0" prefWidth="271.0" textFill="WHITE">
+                              <BorderPane>
+                                 <left>
+                                    <Label fx:id="tableFontLabel" prefHeight="20.0" prefWidth="271.0" textFill="WHITE" BorderPane.alignment="CENTER">
                                        <font>
                                           <Font size="14.0" />
                                        </font>
                                     </Label>
-                                    <Button mnemonicParsing="false" onAction="#onFontTableSelect" prefHeight="30.0" prefWidth="30.0">
+                                 </left>
+                                 <right>
+                                    <Button mnemonicParsing="false" onAction="#onFontTableSelect" prefHeight="30.0" prefWidth="30.0" BorderPane.alignment="CENTER">
                                        <font>
                                           <Font size="14.0" />
                                        </font>
@@ -202,24 +206,26 @@
                                           <FontIcon iconColor="WHITE" iconLiteral="bi-fonts" onDragDetected="#onFontTableSelect" />
                                        </graphic>
                                     </Button>
-                                 </children>
-                                 <padding>
-                                    <Insets bottom="12.0" />
-                                 </padding>
-                              </HBox>
-                              <Label text="Score Font:" textFill="WHITE">
+                                 </right>
+                              </BorderPane>
+                              <Label text="Score Font" textFill="WHITE">
                                  <font>
-                                    <Font size="14.0" />
+                                    <Font name="System Bold" size="14.0" />
                                  </font>
+                                 <VBox.margin>
+                                    <Insets top="12.0" />
+                                 </VBox.margin>
                               </Label>
-                              <HBox alignment="CENTER_LEFT" prefHeight="32.0" prefWidth="276.0">
-                                 <children>
-                                    <Label fx:id="scoreFontLabel" prefHeight="20.0" prefWidth="266.0" textFill="WHITE">
+                              <BorderPane>
+                                 <left>
+                                    <Label fx:id="scoreFontLabel" prefHeight="20.0" prefWidth="266.0" textFill="WHITE" BorderPane.alignment="CENTER">
                                        <font>
                                           <Font size="14.0" />
                                        </font>
                                     </Label>
-                                    <Button mnemonicParsing="false" onAction="#onFontScoreSelect" prefHeight="30.0" prefWidth="30.0">
+                                 </left>
+                                 <right>
+                                    <Button mnemonicParsing="false" onAction="#onFontScoreSelect" prefHeight="30.0" prefWidth="30.0" BorderPane.alignment="CENTER">
                                        <font>
                                           <Font size="14.0" />
                                        </font>
@@ -227,17 +233,17 @@
                                           <FontIcon iconColor="WHITE" iconLiteral="bi-fonts" />
                                        </graphic>
                                     </Button>
-                                 </children>
-                                 <padding>
-                                    <Insets bottom="12.0" />
-                                 </padding>
-                              </HBox>
-                              <Label text="Font Color:" textFill="WHITE">
+                                 </right>
+                              </BorderPane>
+                              <Label text="Font Color" textFill="WHITE">
                                  <font>
-                                    <Font size="14.0" />
+                                    <Font name="System Bold" size="14.0" />
                                  </font>
+                                 <VBox.margin>
+                                    <Insets top="12.0" />
+                                 </VBox.margin>
                               </Label>
-                              <ColorPicker fx:id="fontColorSelector" prefWidth="134.0">
+                              <ColorPicker fx:id="fontColorSelector">
                                  <VBox.margin>
                                     <Insets top="6.0" />
                                  </VBox.margin>

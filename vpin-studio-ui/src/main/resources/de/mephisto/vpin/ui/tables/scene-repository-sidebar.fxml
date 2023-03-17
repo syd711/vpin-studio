@@ -212,26 +212,26 @@
                                     <Font size="14.0" />
                                  </font>
                               </Label>
-                              <FontIcon fx:id="directb2sIcon" iconColor="#66ff66" iconLiteral="bi-check-circle" iconSize="18" GridPane.columnIndex="1" />
+                              <FontIcon fx:id="directb2sIcon" iconColor="#FFFFFF" iconLiteral="bi-check-circle" iconSize="18" GridPane.columnIndex="1" />
                               <Label layoutX="10.0" layoutY="198.0" text="POV File:" GridPane.rowIndex="10">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
                               </Label>
-                              <FontIcon fx:id="pupPackIcon" iconColor="#66ff66" iconLiteral="bi-check-circle" iconSize="18" layoutX="174.0" layoutY="34.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-                              <FontIcon fx:id="romIcon" iconColor="#66ff66" iconLiteral="bi-check-circle" iconSize="18" layoutX="174.0" layoutY="65.0" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-                              <FontIcon fx:id="popperIcon" iconColor="#66ff66" iconLiteral="bi-check-circle" iconSize="18" layoutX="174.0" layoutY="95.0" GridPane.columnIndex="1" GridPane.rowIndex="4" />
-                              <FontIcon fx:id="flexIcon" iconColor="#66ff66" iconLiteral="bi-check-circle" iconSize="18" layoutX="174.0" layoutY="126.0" GridPane.columnIndex="1" GridPane.rowIndex="5" />
-                              <FontIcon fx:id="ultraIcon" iconColor="#66ff66" iconLiteral="bi-check-circle" iconSize="18" layoutX="174.0" layoutY="156.0" GridPane.columnIndex="1" GridPane.rowIndex="6" />
-                              <FontIcon fx:id="altSoundIcon" iconColor="#66ff66" iconLiteral="bi-check-circle" iconSize="18" layoutX="174.0" layoutY="186.0" GridPane.columnIndex="1" GridPane.rowIndex="8" />
-                              <FontIcon fx:id="povIcon" iconColor="#66ff66" iconLiteral="bi-check-circle" iconSize="18" layoutX="174.0" layoutY="217.0" GridPane.columnIndex="1" GridPane.rowIndex="10" />
-                              <FontIcon fx:id="highscoreIcon" iconColor="#66ff66" iconLiteral="bi-check-circle" iconSize="18" layoutX="174.0" layoutY="247.0" GridPane.columnIndex="1" GridPane.rowIndex="12" />
+                              <FontIcon fx:id="pupPackIcon" iconColor="#FFFFFF" iconLiteral="bi-check-circle" iconSize="18" layoutX="174.0" layoutY="34.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                              <FontIcon fx:id="romIcon" iconColor="#FFFFFF" iconLiteral="bi-check-circle" iconSize="18" layoutX="174.0" layoutY="65.0" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                              <FontIcon fx:id="popperIcon" iconColor="#FFFFFF" iconLiteral="bi-check-circle" iconSize="18" layoutX="174.0" layoutY="95.0" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+                              <FontIcon fx:id="flexIcon" iconColor="#FFFFFF" iconLiteral="bi-check-circle" iconSize="18" layoutX="174.0" layoutY="126.0" GridPane.columnIndex="1" GridPane.rowIndex="5" />
+                              <FontIcon fx:id="ultraIcon" iconColor="#FFFFFF" iconLiteral="bi-check-circle" iconSize="18" layoutX="174.0" layoutY="156.0" GridPane.columnIndex="1" GridPane.rowIndex="6" />
+                              <FontIcon fx:id="altSoundIcon" iconColor="#FFFFFF" iconLiteral="bi-check-circle" iconSize="18" layoutX="174.0" layoutY="186.0" GridPane.columnIndex="1" GridPane.rowIndex="8" />
+                              <FontIcon fx:id="povIcon" iconColor="#FFFFFF" iconLiteral="bi-check-circle" iconSize="18" layoutX="174.0" layoutY="217.0" GridPane.columnIndex="1" GridPane.rowIndex="10" />
+                              <FontIcon fx:id="highscoreIcon" iconColor="#FFFFFF" iconLiteral="bi-check-circle" iconSize="18" layoutX="174.0" layoutY="247.0" GridPane.columnIndex="1" GridPane.rowIndex="12" />
                               <Label layoutX="10.0" layoutY="228.0" text="Music:" GridPane.rowIndex="7">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
                               </Label>
-                              <FontIcon fx:id="musicIcon" iconColor="#66ff66" iconLiteral="bi-check-circle" iconSize="18" layoutX="192.0" layoutY="186.0" GridPane.columnIndex="1" GridPane.rowIndex="7" />
+                              <FontIcon fx:id="musicIcon" iconColor="#FFFFFF" iconLiteral="bi-check-circle" iconSize="18" layoutX="192.0" layoutY="186.0" GridPane.columnIndex="1" GridPane.rowIndex="7" />
                               <Label fx:id="highscoreHistoryLabel" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="13">
                                  <font>
                                     <Font size="14.0" />
@@ -242,19 +242,19 @@
                                     <Font size="14.0" />
                                  </font>
                               </Label>
-                              <FontIcon fx:id="altColorIcon" iconColor="#66ff66" iconLiteral="bi-check-circle" iconSize="18" layoutX="194.0" layoutY="247.0" GridPane.columnIndex="1" GridPane.rowIndex="9" />
+                              <FontIcon fx:id="altColorIcon" iconColor="#FFFFFF" iconLiteral="bi-check-circle" iconSize="18" layoutX="194.0" layoutY="247.0" GridPane.columnIndex="1" GridPane.rowIndex="9" />
                               <Label layoutX="10.0" layoutY="289.0" text="RES File:" GridPane.rowIndex="11">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
                               </Label>
-                              <FontIcon fx:id="resIcon" iconColor="#66ff66" iconLiteral="bi-check-circle" iconSize="18" layoutX="194.0" layoutY="308.0" GridPane.columnIndex="1" GridPane.rowIndex="11" />
+                              <FontIcon fx:id="resIcon" iconColor="#FFFFFF" iconLiteral="bi-check-circle" iconSize="18" layoutX="194.0" layoutY="308.0" GridPane.columnIndex="1" GridPane.rowIndex="11" />
                               <Label layoutX="10.0" layoutY="76.0" text="Mame Config File:" GridPane.rowIndex="3">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
                               </Label>
-                              <FontIcon fx:id="cfgIcon" iconColor="#66ff66" iconLiteral="bi-check-circle" iconSize="18" layoutX="194.0" layoutY="95.0" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                              <FontIcon fx:id="cfgIcon" iconColor="#FFFFFF" iconLiteral="bi-check-circle" iconSize="18" layoutX="194.0" layoutY="95.0" GridPane.columnIndex="1" GridPane.rowIndex="3" />
                            </children>
                         </GridPane>
                      </children>

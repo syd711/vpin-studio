@@ -34,11 +34,12 @@
                                         <TableColumn fx:id="columnId" minWidth="35.99993896484375" prefWidth="58.399959564208984" style="-fx-alignment: baseline-right;" text="ID" />
                                         <TableColumn fx:id="columnStatus" minWidth="32.79998779296875" prefWidth="53.5999755859375" style="-fx-alignment: CENTER;" text="Status" />
                                         <TableColumn fx:id="columnDisplayName" minWidth="100.0" prefWidth="306.40003204345703" style="-fx-alignment: BASELINE_LEFT;" text="Display Name" />
-                                        <TableColumn fx:id="columnEmulator" minWidth="10.4000244140625" prefWidth="126.4000244140625" style="-fx-alignment: BASELINE_LEFT;" text="Emulator" />
-                                        <TableColumn fx:id="columnB2S" minWidth="51.199951171875" prefWidth="100.0" style="-fx-alignment: CENTER;" text="DirectB2S" />
-                                        <TableColumn fx:id="columnPUPPack" minWidth="57.5999755859375" prefWidth="100.0" style="-fx-alignment: CENTER;" text="PUP Pack" />
-                                        <TableColumn fx:id="columnRom" minWidth="10.4000244140625" prefWidth="152.800048828125" style="-fx-alignment: BASELINE_LEFT;" text="ROM" />
-                                        <TableColumn fx:id="columnHSType" minWidth="10.4000244140625" prefWidth="190.4000244140625" style="-fx-alignment: BASELINE_LEFT;" text="Highscore Type" />
+                                        <TableColumn fx:id="columnEmulator" minWidth="10.4000244140625" prefWidth="126.4000244140625" style="-fx-alignment: BASELINE_LEFT;" text="Emulator" visible="false" />
+                                        <TableColumn fx:id="columnB2S" minWidth="51.199951171875" prefWidth="90.0" style="-fx-alignment: CENTER;" text="DirectB2S" />
+                                        <TableColumn fx:id="columnPUPPack" minWidth="57.5999755859375" prefWidth="90.0" style="-fx-alignment: CENTER;" text="PUP Pack" />
+                              <TableColumn fx:id="columnPOV" minWidth="57.5999755859375" prefWidth="90.0" style="-fx-alignment: CENTER;" text="POV" />
+                                        <TableColumn fx:id="columnRom" minWidth="10.4000244140625" prefWidth="140.0" style="-fx-alignment: BASELINE_LEFT;" text="ROM" />
+                                        <TableColumn fx:id="columnHSType" minWidth="10.4000244140625" prefWidth="130.0" style="-fx-alignment: BASELINE_LEFT;" text="Highscore Type" />
                                     </columns>
                                 </TableView>
                             </children>
