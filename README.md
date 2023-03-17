@@ -11,23 +11,14 @@ Download the latest installer from the [releases section](https://github.com/syd
 In general, the VPin Studio has a client/server architecture,
 supporting the configuration of multiple VPins with one client.
 That's why every release comes with two different installers:
-- Full Installer: this installer must always be installed on the actual VPin and contains the server and the client UI.
-- Client Installer: this installer only contains the UI client which let's you connect from any other Windows PC to your VPin.
+- **Full Installer**: this installer must always be installed on the actual VPin and contains the server and the client UI.
+- **Client Installer**: this installer only contains the UI client which let's you connect from any other Windows PC to your VPin.
 
 
 
-## Sample Screenshots
+## Documentation
 
-A sample log generated from on the VPin bot:
-<img src="./documentation/discord-sample.png" width="800"><br/>
-_Discord Integration_
-
-<img src="./documentation/tables1.png" width="800"><br/>
-_Table Overview_
-
-<img src="./documentation/tables-validation.png" width="800"><br/>
-_Validation Issue Example_
-
+https://github.com/syd711/vpin-studio/wiki
 
 ## Third Party Licenses and Resources
 
