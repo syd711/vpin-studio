@@ -80,13 +80,8 @@ public class DefaultPictureService {
 
   @Nullable
   public File generateCroppedDefaultPicture(@NonNull Game game) {
-    return generateCroppedDefaultPicture(game, false);
-  }
-
-  @Nullable
-  public File generateCroppedDefaultPicture(@NonNull Game game, boolean forceRegeneration) {
     try {
-      if (forceRegeneration || game.getRawDefaultPicture() == null || !game.getRawDefaultPicture().exists()) {
+      if (game.getRawDefaultPicture() == null || !game.getRawDefaultPicture().exists()) {
         extractDefaultPicture(game);
       }
 
