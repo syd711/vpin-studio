@@ -28,11 +28,4 @@ public class PasswordUtil {
     }
     return null;
   }
-
-  public static void main(String[] args) {
-    String pwd = "abc123";
-    System.out.println(encrypt(pwd));
-    encrypt(pwd);
-    System.out.println(decrypt(pwd));
-  }
 }

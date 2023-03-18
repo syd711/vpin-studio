@@ -206,33 +206,16 @@ public class HighscoreService implements InitializingBean {
    */
   public ScoreList getScoresBetween(int gameId, Date start, Date end, long serverId) {
     ScoreList scoreList = new ScoreList();
-
-    Date latestVersion = null;
     List<HighscoreVersion> byGameIdAndCreatedAtBetween = highscoreVersionRepository.findByGameIdAndCreatedAtBetween(gameId, start, end);
     for (HighscoreVersion version : byGameIdAndCreatedAtBetween) {
-      latestVersion = version.getCreatedAt();
       ScoreSummary scoreSummary = getScoreSummary(version.getCreatedAt(), version.getOldRaw(), gameId, serverId);
       scoreList.getScores().add(scoreSummary);
     }
-
-    Optional<Highscore> highscore = highscoreRepository.findByGameId(gameId);
-    if (highscore.isPresent()) {
-      Highscore h = highscore.get();
-      if (h.getRaw() != null) {
-        //set the latest score date here for the existing score list, because the current highscore is the latest!
-        Date latestScoreTime = h.getLastModified();
-        if (latestVersion != null) {
-          latestScoreTime.setTime(latestVersion.getTime() + 1);
-        }//TODO only use version
-
-        ScoreSummary scoreSummary = getScoreSummary(h.getLastModified(), h.getRaw(), gameId, serverId);
-//        scoreSummary.setCreatedAt(latestScoreTime);
-        scoreList.setLatestScore(scoreSummary);
-        scoreList.getScores().add(0, scoreSummary);
-      }
-    }
-
     scoreList.getScores().sort(Comparator.comparing(ScoreSummary::getCreatedAt));
+
+    if (!scoreList.getScores().isEmpty()) {
+      scoreList.setLatestScore(scoreList.getScores().get(0));
+    }
     return scoreList;
   }
 
