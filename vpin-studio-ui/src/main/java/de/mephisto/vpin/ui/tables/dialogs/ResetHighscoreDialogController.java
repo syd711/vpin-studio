@@ -26,9 +26,6 @@ public class ResetHighscoreDialogController implements DialogController {
   @FXML
   private TextField textField;
 
-  @FXML
-  private CheckBox historyCheckbox;
-
   private ResetHighscoreDescriptor result;
   private GameRepresentation game;
 
@@ -47,7 +44,6 @@ public class ResetHighscoreDialogController implements DialogController {
   @FXML
   private void onDialogSubmit(ActionEvent e) {
     result = new ResetHighscoreDescriptor();
-    result.setDeleteHistory(historyCheckbox.isSelected());
     result.setGameId(game.getId());
 
     Stage stage = (Stage) ((Button) e.getSource()).getScene().getWindow();

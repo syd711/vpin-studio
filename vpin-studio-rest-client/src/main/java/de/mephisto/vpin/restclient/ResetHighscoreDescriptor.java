@@ -11,12 +11,4 @@ public class ResetHighscoreDescriptor {
   public void setGameId(int gameId) {
     this.gameId = gameId;
   }
-
-  public boolean isDeleteHistory() {
-    return deleteHistory;
-  }
-
-  public void setDeleteHistory(boolean deleteHistory) {
-    this.deleteHistory = deleteHistory;
-  }
 }

@@ -96,7 +96,7 @@ public class HighscoreService implements InitializingBean {
     return metadata;
   }
 
-  public boolean resetHighscore(@NonNull Game game, boolean deleteHistory) {
+  public boolean resetHighscore(@NonNull Game game) {
     HighscoreType highscoreType = game.getHighscoreType();
     boolean result = false;
     if (highscoreType != null) {
@@ -122,7 +122,7 @@ public class HighscoreService implements InitializingBean {
     else {
       result = true;
     }
-    deleteScores(game.getId(), deleteHistory);
+    deleteScores(game.getId());
     return result;
   }
 
@@ -448,16 +448,14 @@ public class HighscoreService implements InitializingBean {
     return oldScores;
   }
 
-  private void deleteScores(int gameId, boolean deleteHistory) {
+  private void deleteScores(int gameId) {
     Optional<Highscore> byGameId = highscoreRepository.findByGameId(gameId);
     byGameId.ifPresent(highscore -> highscoreRepository.delete(highscore));
     LOG.info("Deleted latest highscore for " + gameId);
 
-    if (deleteHistory) {
-      List<HighscoreVersion> versions = highscoreVersionRepository.findByGameId(gameId);
-      highscoreVersionRepository.deleteAll(versions);
-      LOG.info("Deleted all highscore versions for " + gameId);
-    }
+    List<HighscoreVersion> versions = highscoreVersionRepository.findByGameId(gameId);
+    highscoreVersionRepository.deleteAll(versions);
+    LOG.info("Deleted all highscore versions for " + gameId);
   }
 
   /**

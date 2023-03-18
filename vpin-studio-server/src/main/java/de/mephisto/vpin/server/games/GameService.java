@@ -80,12 +80,12 @@ public class GameService {
     return result;
   }
 
-  public boolean resetGame(int gameId, boolean deleteHistory) {
+  public boolean resetGame(int gameId) {
     Game game = this.getGame(gameId);
     if (game == null) {
       return false;
     }
-    return highscoreService.resetHighscore(game, deleteHistory);
+    return highscoreService.resetHighscore(game);
   }
 
   public boolean deleteGame(@NonNull DeleteDescriptor descriptor) {
@@ -95,7 +95,7 @@ public class GameService {
     }
 
     if (descriptor.isDeleteHighscores()) {
-      resetGame(game.getId(), true);
+      resetGame(game.getId());
     }
 
     boolean success = true;
