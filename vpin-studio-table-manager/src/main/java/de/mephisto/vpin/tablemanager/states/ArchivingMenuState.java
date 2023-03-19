@@ -61,7 +61,6 @@ public class ArchivingMenuState extends MenuState {
       descriptor.setExportRom(true);
       descriptor.setExportPopperMedia(true);
       descriptor.setExportHighscores(true);
-      descriptor.setExportMusic(true);
       try {
         Menu.client.exportVpa(descriptor);
       } catch (Exception e) {

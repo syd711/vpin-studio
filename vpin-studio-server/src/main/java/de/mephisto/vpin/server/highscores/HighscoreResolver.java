@@ -52,7 +52,6 @@ class HighscoreResolver {
       if (StringUtils.isEmpty(romName)) {
         String msg = "No rom name found.";
         metadata.setStatus(msg);
-        LOG.info(msg);
         return metadata;
       }
 

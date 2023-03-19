@@ -38,10 +38,18 @@ public class GameRepresentation {
   private boolean romExists;
   private String ignoredValidations;
   private String highscoreType;
-  private List<GameAssetRepresentation> assets;
   private boolean pov;
   private boolean selected;
   private boolean romRequired;
+  private String assets;
+
+  public String getAssets() {
+    return assets;
+  }
+
+  public void setAssets(String assets) {
+    this.assets = assets;
+  }
 
   public boolean isGameFileAvailable() {
     return gameFileAvailable;
@@ -105,14 +113,6 @@ public class GameRepresentation {
 
   public void setTableName(String tableName) {
     this.tableName = tableName;
-  }
-
-  public List<GameAssetRepresentation> getAssets() {
-    return assets;
-  }
-
-  public void setAssets(List<GameAssetRepresentation> assets) {
-    this.assets = assets;
   }
 
   public GameMediaRepresentation getGameMedia() {

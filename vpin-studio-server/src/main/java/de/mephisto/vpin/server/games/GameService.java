@@ -326,7 +326,7 @@ public class GameService {
       gameDetails.setNvOffset(scanResult.getNvOffset());
       gameDetails.setHsFileName(scanResult.getHsFileName());
       gameDetails.setPupId(game.getId());
-      gameDetails.setAssets(StringUtils.join(scanResult.getAssets(), "|"));
+      gameDetails.setAssets(StringUtils.join(scanResult.getAssets(), ","));
       gameDetails.setCreatedAt(new java.util.Date());
       gameDetails.setUpdatedAt(new java.util.Date());
 
@@ -336,6 +336,7 @@ public class GameService {
 
     game.setRom(gameDetails.getRomName());
     game.setNvOffset(gameDetails.getNvOffset());
+    game.setAssets(gameDetails.getAssets());
     game.setOriginalRom(romService.getOriginalRom(game.getRom()));
     game.setHsFileName(gameDetails.getHsFileName());
     game.setTableName(gameDetails.getTableName());

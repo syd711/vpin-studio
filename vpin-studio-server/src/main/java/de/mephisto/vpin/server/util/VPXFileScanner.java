@@ -28,7 +28,7 @@ public class VPXFileScanner {
 
   private final static String PATTERN_TABLENAME = "TableName";
   private final static List<String> PATTERNS = Arrays.asList("cGameName", "cgamename", "RomSet1", "GameName", PATTERN_TABLENAME);
-  private final static List<String> ASSET_TYPES = Arrays.asList("mp3", "png", "jpeg", "jpeg", "ogg");
+  private final static List<String> ASSET_TYPES = Arrays.asList("mp3", "ogg");
 
 
   private final static List<Pattern> patternList = new ArrayList<>();
@@ -74,7 +74,7 @@ public class VPXFileScanner {
         lineSearchRom(result, line);
         lineSearchNvOffset(result, line);
         lineSearchHsFileName(result, line);
-//        lineSearchAsset(result, line);
+        lineSearchAsset(result, line);
       }
     } catch (Exception e) {
       LOG.error("Failed to read rom line '" + line + "' for  " + gameFile.getAbsolutePath() + ": " + e.getMessage(), e);

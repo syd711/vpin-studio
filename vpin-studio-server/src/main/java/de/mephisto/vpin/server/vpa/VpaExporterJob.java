@@ -210,18 +210,20 @@ public class VpaExporterJob implements Job {
         zipFile(game.getAltColorFolder(), getGameFolderName() + "/VPinMAME/altcolor/" + game.getAltColorFolder().getName(), zipOut);
       }
 
-      if (exportDescriptor.isExportMusic()) {
-        //aways pack whole music folder, it may contain gamefiles
-        packageInfo.setMusic(true);
-        File[] files = musicFolder.listFiles((dir, name) -> name.endsWith(".mp3"));
-        if (files != null) {
-          for (File file : files) {
-            zipFile(file, getGameFolderName() + "/Music/" + file.getName(), zipOut);
+      //always zip music files if they are in a ROM named folder
+      if (game.getMusicFolder() != null && game.getMusicFolder().exists()) {
+        zipFile(game.getMusicFolder(), getGameFolderName() + "/Music/" + game.getMusicFolder().getName(), zipOut);
+      }
+      else {
+        String assets = game.getAssets();
+        if (!StringUtils.isEmpty(assets)) {
+          String[] tableMusic = assets.split(",");
+          File[] files = musicFolder.listFiles((dir, name) -> name.endsWith(".mp3"));
+          if (findAudioMatch(files, tableMusic)) {
+            for (File file : files) {
+              zipFile(file, getGameFolderName() + "/Music/" + file.getName(), zipOut);
+            }
           }
-        }
-
-        if (game.getMusicFolder() != null && game.getMusicFolder().exists()) {
-          zipFile(game.getMusicFolder(), getGameFolderName() + "/Music/" + game.getMusicFolder().getName(), zipOut);
         }
       }
 
@@ -261,10 +263,36 @@ public class VpaExporterJob implements Job {
     return true;
   }
 
-  private void calculateTotalSize() {
-    if (exportDescriptor.isExportMusic()) {
-      totalSizeExpected += org.apache.commons.io.FileUtils.sizeOfDirectory(musicFolder);
+  private boolean findAudioMatch(File[] allMusicFiles, String[] audioAssets) {
+    if (allMusicFiles != null) {
+      for (File file : allMusicFiles) {
+        for (String tableMusicFile : audioAssets) {
+          if (file.getName().equals(tableMusicFile)) {
+            return true;
+          }
+        }
+      }
     }
+    return false;
+  }
+
+  private void calculateTotalSize() {
+    if (game.getMusicFolder() != null && game.getMusicFolder().exists()) {
+      totalSizeExpected += org.apache.commons.io.FileUtils.sizeOfDirectory(game.getMusicFolder());
+    }
+    else {
+      String assets = game.getAssets();
+      if (!StringUtils.isEmpty(assets)) {
+        String[] tableMusic = assets.split(",");
+        File[] files = musicFolder.listFiles((dir, name) -> name.endsWith(".mp3"));
+        if (findAudioMatch(files, tableMusic)) {
+          for (File file : files) {
+            totalSizeExpected += file.length();
+          }
+        }
+      }
+    }
+
     if (exportDescriptor.isExportPopperMedia()) {
       PopperScreen[] values = PopperScreen.values();
       for (PopperScreen value : values) {

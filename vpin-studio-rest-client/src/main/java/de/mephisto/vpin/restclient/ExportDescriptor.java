@@ -11,15 +11,6 @@ public class ExportDescriptor {
   private boolean exportPupPack = true;
   private boolean exportPopperMedia = true;
   private boolean exportHighscores = true;
-  private boolean exportMusic = false;
-
-  public boolean isExportMusic() {
-    return exportMusic;
-  }
-
-  public void setExportMusic(boolean exportMusic) {
-    this.exportMusic = exportMusic;
-  }
 
   public long getRepositoryId() {
     return repositoryId;

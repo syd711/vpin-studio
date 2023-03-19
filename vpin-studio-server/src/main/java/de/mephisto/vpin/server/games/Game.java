@@ -39,7 +39,7 @@ public class Game {
   private int volume;
   private HighscoreType highscoreType;
 
-  private List<GameAsset> assets = new ArrayList<>();
+  private String assets;
 
   private SystemService systemService;
   private PupPack pupPack;
@@ -67,20 +67,20 @@ public class Game {
     this.highscoreType = highscoreType;
   }
 
+  public String getAssets() {
+    return assets;
+  }
+
+  public void setAssets(String assets) {
+    this.assets = assets;
+  }
+
   public String getTableName() {
     return tableName;
   }
 
   public void setTableName(String tableName) {
     this.tableName = tableName;
-  }
-
-  public List<GameAsset> getAssets() {
-    return assets;
-  }
-
-  public void setAssets(List<GameAsset> assets) {
-    this.assets = assets;
   }
 
   @NonNull

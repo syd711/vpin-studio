@@ -314,7 +314,6 @@ public class HighscoreService implements InitializingBean {
   protected Optional<Highscore> updateHighscore(@NonNull Game game, @NonNull HighscoreMetadata metadata) {
     //we don't do anything if not value is extract, this may lead to superflous system calls, but we have time
     if (StringUtils.isEmpty(metadata.getRaw())) {
-      LOG.info("No score update for \"" + game.getGameDisplayName() + "\", no raw data extracted.");
       return Optional.empty();
     }
 

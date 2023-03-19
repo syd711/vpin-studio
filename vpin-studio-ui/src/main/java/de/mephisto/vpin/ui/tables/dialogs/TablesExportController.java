@@ -52,7 +52,6 @@ public class TablesExportController implements Initializable, DialogController {
     descriptor.setExportPupPack(this.exportPupPackCheckbox.isSelected());
     descriptor.setExportRom(this.exportRomCheckbox.isSelected());
     descriptor.setExportPopperMedia(this.exportPopperMedia.isSelected());
-    descriptor.setExportMusic(this.exportMusic.isSelected());
     descriptor.setExportHighscores(this.highscoresCheckbox.isSelected());
     descriptor.getGameIds().addAll(games.stream().map(GameRepresentation::getId).collect(Collectors.toList()));
     Studio.client.exportVpa(descriptor);
