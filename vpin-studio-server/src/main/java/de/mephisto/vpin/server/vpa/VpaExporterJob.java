@@ -14,7 +14,6 @@ import de.mephisto.vpin.server.util.ImageUtil;
 import de.mephisto.vpin.server.util.vpreg.VPReg;
 import de.mephisto.vpin.server.util.vpreg.VPRegScoreSummary;
 import edu.umd.cs.findbugs.annotations.NonNull;
-import edu.umd.cs.findbugs.annotations.Nullable;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -29,6 +28,7 @@ import java.nio.file.Files;
 import java.util.Base64;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
@@ -42,7 +42,7 @@ public class VpaExporterJob implements Job {
   private final Game game;
   private final ExportDescriptor exportDescriptor;
   private final VpaManifest manifest;
-  private final Highscore highscore;
+  private final Optional<Highscore> highscore;
   private final List<HighscoreVersion> scoreHistory;
   private final ObjectMapper objectMapper;
   private final VpaSourceAdapter vpaSourceAdapter;
@@ -61,7 +61,7 @@ public class VpaExporterJob implements Job {
                         @NonNull Game game,
                         @NonNull ExportDescriptor exportDescriptor,
                         @NonNull VpaManifest manifest,
-                        @Nullable Highscore highscore,
+                        @NonNull Optional<Highscore> highscore,
                         @NonNull List<HighscoreVersion> scoreHistory,
                         @NonNull VpaSourceAdapter vpaSource,
                         @NonNull File targetFolder,
@@ -151,8 +151,8 @@ public class VpaExporterJob implements Job {
         manifest.getAdditionalData().put(VpaService.DATA_HIGHSCORE_HISTORY, scoresJson);
 
         //write raw highscore
-        if (highscore != null && highscore.getRaw() != null) {
-          manifest.getAdditionalData().put(VpaService.DATA_HIGHSCORE, highscore.getRaw());
+        if (highscore.isPresent() && highscore.get().getRaw() != null) {
+          manifest.getAdditionalData().put(VpaService.DATA_HIGHSCORE, highscore.get().getRaw());
         }
       }
 

@@ -42,7 +42,7 @@ public class HighscoreChangeListenerImpl implements InitializingBean, HighscoreC
     Game game = event.getGame();
 
     String raw = null;
-    Optional<Highscore> highscore = highscoreService.getHighscore(game.getId());
+    Optional<Highscore> highscore = highscoreService.getOrCreateHighscore(game);
     if (highscore.isPresent()) {
       raw = highscore.get().getRaw();
     }

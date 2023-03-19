@@ -198,7 +198,7 @@ public class GameService {
   public List<Game> getGamesWithScore() {
     List<Game> games = getGames();
     return games.stream().filter(g -> {
-      Optional<Highscore> highscore = highscoreService.getHighscore(g.getId());
+      Optional<Highscore> highscore = highscoreService.getOrCreateHighscore(g);
       return highscore.isPresent() && !StringUtils.isEmpty(highscore.get().getRaw());
     }).collect(Collectors.toList());
   }
@@ -214,11 +214,21 @@ public class GameService {
     return null;
   }
 
+  /**
+   * Retursn the current highscore for the given game
+   * @param gameId
+   * @return
+   */
   public ScoreSummary getScores(int gameId) {
     long serverId = preferencesService.getPreferenceValueLong(PreferenceNames.DISCORD_GUILD_ID, -1);
     return highscoreService.getScoreSummary(serverId, gameId, null);
   }
 
+  /**
+   * Returns a complete list of highscore versions
+   * @param gameId
+   * @return
+   */
   public ScoreList getScoreHistory(int gameId) {
     return highscoreService.getScoreHistory(gameId);
   }
@@ -324,21 +334,15 @@ public class GameService {
       LOG.info("Created GameDetails for " + game.getGameDisplayName());
     }
 
+    game.setRom(gameDetails.getRomName());
     game.setNvOffset(gameDetails.getNvOffset());
-    if (!StringUtils.isEmpty(gameDetails.getRomName())) {
-      game.setRom(gameDetails.getRomName());
-
-      //re-fetch highscore since the ROM may be set
-      this.highscoreService.getOrCreateHighscore(game);
-    }
-
-    Optional<Highscore> highscore = this.highscoreService.getHighscore(game.getId());
-    highscore.ifPresent(value -> game.setHighscoreType(value.getType() != null ? HighscoreType.valueOf(value.getType()) : null));
-
     game.setOriginalRom(romService.getOriginalRom(game.getRom()));
     game.setHsFileName(gameDetails.getHsFileName());
     game.setTableName(gameDetails.getTableName());
     game.setIgnoredValidations(gameDetails.getIgnoredValidations());
+
+    Optional<Highscore> highscore = this.highscoreService.getOrCreateHighscore(game);
+    highscore.ifPresent(value -> game.setHighscoreType(value.getType() != null ? HighscoreType.valueOf(value.getType()) : null));
 
     //run validations at the end!!!
     game.setValidationState(gameValidator.validate(game));
@@ -369,7 +373,7 @@ public class GameService {
     LOG.info("Saved " + game);
     Game updated = getGame(game.getId());
     if (romChanged) {
-      highscoreService.updateHighscore(updated);
+      highscoreService.scanScore(updated);
       cardService.generateCard(updated, false);
     }
     return updated;

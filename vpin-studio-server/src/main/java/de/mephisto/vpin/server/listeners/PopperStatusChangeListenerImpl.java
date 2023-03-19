@@ -39,7 +39,7 @@ public class PopperStatusChangeListenerImpl implements InitializingBean, PopperS
     Game game = event.getGame();
     preferencesService.savePreference(PreferenceNames.ACTIVE_GAME, game.getId());
     discordService.setStatus(game.getGameDisplayName());
-    highscoreService.updateHighscore(game);
+    highscoreService.scanScore(game);
   }
 
   @Override
@@ -54,7 +54,7 @@ public class PopperStatusChangeListenerImpl implements InitializingBean, PopperS
         //ignore
       }
       LOG.info("Finished 4 second update delay, updating highscores.");
-      highscoreService.updateHighscore(game);
+      highscoreService.scanScore(game);
       preferencesService.savePreference(PreferenceNames.ACTIVE_GAME, -1);
     }).start();
   }
@@ -66,7 +66,7 @@ public class PopperStatusChangeListenerImpl implements InitializingBean, PopperS
     if (activeTableId >= 0) {
       Game game = gameService.getGame(activeTableId);
       if (game != null) {
-        highscoreService.updateHighscore(game);
+        highscoreService.scanScore(game);
         preferencesService.savePreference(PreferenceNames.ACTIVE_GAME, -1);
       }
     }

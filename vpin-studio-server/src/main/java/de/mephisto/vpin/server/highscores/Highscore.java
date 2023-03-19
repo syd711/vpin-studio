@@ -145,13 +145,14 @@ public class Highscore {
     return highscore;
   }
 
-  public HighscoreVersion toVersion(int changedPosition) {
+  public HighscoreVersion toVersion(int changedPosition, String newRaw) {
     HighscoreVersion version = new HighscoreVersion();
     version.setChangedPosition(changedPosition);
     version.setCreatedAt(new Date());
     version.setOldRaw(this.getRaw());
     version.setDisplayName(this.getDisplayName());
     version.setGameId(this.getGameId());
+    version.setNewRaw(newRaw);
     return version;
   }
 

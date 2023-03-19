@@ -212,25 +212,4 @@ class HighscoreResolver {
       throw e;
     }
   }
-
-  /**
-   * Reads the first line of the given file
-   */
-  private String readFileString(File file) throws IOException {
-    BufferedReader brTest = new BufferedReader(new FileReader(file));
-    try {
-      String text = brTest.readLine();
-      if (text != null) {
-        return text.replace("\0", "").trim();
-      }
-      else {
-        LOG.debug("Error reading highscore file " + file.getCanonicalPath() + ", reader returned null.");
-      }
-      return null;
-    } catch (IOException e) {
-      throw e;
-    } finally {
-      brTest.close();
-    }
-  }
 }

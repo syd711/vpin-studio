@@ -81,7 +81,12 @@ public class DefaultPictureService {
   @Nullable
   public File generateCroppedDefaultPicture(@NonNull Game game) {
     try {
-      if (game.getRawDefaultPicture() == null || !game.getRawDefaultPicture().exists()) {
+      //try to use existing file first
+      if (game.getCroppedDefaultPicture() != null && game.getCroppedDefaultPicture().exists()) {
+        return game.getCroppedDefaultPicture();
+      }
+
+      if (game.getRawDefaultPicture() != null && !game.getRawDefaultPicture().exists()) {
         extractDefaultPicture(game);
       }
 
@@ -98,11 +103,15 @@ public class DefaultPictureService {
         }
 
         if (target.exists()) {
-          target.delete();
+          if (!target.delete()) {
+            LOG.error("Failed to delete crop picture " + target.getAbsolutePath());
+          }
         }
 
         if (!target.getParentFile().exists()) {
-          target.getParentFile().mkdirs();
+          if (!target.getParentFile().mkdirs()) {
+            LOG.error("Failed to create crop image directory " + target.getParentFile().getAbsolutePath());
+          }
         }
 
         if (target.getParentFile().exists() && target.getParentFile().canWrite()) {

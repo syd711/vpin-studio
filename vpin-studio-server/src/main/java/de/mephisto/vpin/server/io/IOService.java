@@ -21,6 +21,7 @@ import org.springframework.stereotype.Service;
 
 import java.io.File;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -109,7 +110,7 @@ public class IOService {
 
   private boolean exportVpa(@NonNull Game game, @NonNull VpaManifest manifest, @NonNull ExportDescriptor exportDescriptor, @NonNull File targetFolder) {
     List<HighscoreVersion> versions = highscoreService.getAllHighscoreVersions(game.getId());
-    Highscore highscore = highscoreService.getOrCreateHighscore(game);
+    Optional<Highscore> highscore = highscoreService.getOrCreateHighscore(game);
     File vpRegFile = systemService.getVPRegFile();
     VpaSourceAdapter defaultVpaSourceAdapter = vpaService.getDefaultVpaSourceAdapter();
 
