@@ -293,24 +293,25 @@ public class TablesSidebarController implements Initializable {
 
     volumeSlider.valueProperty().addListener((observableValue, number, t1) -> {
       if (game.isPresent()) {
-        debouncer.debounce("tableVolume" + game.get().getId(), () -> {
+        final GameRepresentation g = game.get();
+        debouncer.debounce("tableVolume" + g.getId(), () -> {
           int value = t1.intValue();
           if (value == 0) {
             value = 1;
           }
 
-          if (game.get().getVolume() == value) {
+          if (g.getVolume() == value) {
             return;
           }
 
-          game.get().setVolume(value);
+          g.setVolume(value);
 
           try {
-            client.saveGame(game.get());
+            client.saveGame(g);
           } catch (Exception e) {
             WidgetFactory.showAlert(Studio.stage, e.getMessage());
           }
-        }, 1000);
+        }, 500);
       }
     });
 
@@ -351,9 +352,10 @@ public class TablesSidebarController implements Initializable {
     });
 
     povDetailsSlider.valueProperty().addListener((observable, oldValue, newValue) -> {
+      final GameRepresentation g = game.get();
       debouncer.debounce(POV.DETAILS_LEVEL, () -> {
         int value1 = ((Double) newValue).intValue();
-        client.setPOVPreference(game.get().getId(), getPOV(), POV.DETAILS_LEVEL, value1);
+        client.setPOVPreference(g.getId(), getPOV(), POV.DETAILS_LEVEL, value1);
       }, 500);
     });
 
@@ -366,9 +368,10 @@ public class TablesSidebarController implements Initializable {
     SpinnerValueFactory.IntegerSpinnerValueFactory factory = new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 100, 0);
     povBallTrailStrengthSpinner.setValueFactory(factory);
     povBallTrailStrengthSpinner.valueProperty().addListener((observable, oldValue, newValue) -> {
+      final GameRepresentation g = game.get();
       debouncer.debounce(POV.BALL_TRAIL_STRENGTH, () -> {
         double formattedValue = Double.valueOf(newValue) / 100;
-        client.setPOVPreference(game.get().getId(), getPOV(), POV.BALL_TRAIL_STRENGTH, formattedValue);
+        client.setPOVPreference(g.getId(), getPOV(), POV.BALL_TRAIL_STRENGTH, formattedValue);
       }, 500);
     });
 
@@ -385,37 +388,42 @@ public class TablesSidebarController implements Initializable {
     SpinnerValueFactory.IntegerSpinnerValueFactory factoryNightDay = new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 100, 0);
     povNighDaySpinner.setValueFactory(factoryNightDay);
     factoryNightDay.valueProperty().addListener((observable, oldValue, newValue) -> {
+      final GameRepresentation g = game.get();
       debouncer.debounce(POV.NIGHTDAY_LEVEL, () -> {
-        client.setPOVPreference(game.get().getId(), getPOV(), POV.NIGHTDAY_LEVEL, newValue);
+        client.setPOVPreference(g.getId(), getPOV(), POV.NIGHTDAY_LEVEL, newValue);
       }, 500);
     });
 
     SpinnerValueFactory.DoubleSpinnerValueFactory factoryDifficulty = new SpinnerValueFactory.DoubleSpinnerValueFactory(0, 100, 0);
     povGameDifficultySpinner.setValueFactory(factoryDifficulty);
     povGameDifficultySpinner.valueProperty().addListener((observable, oldValue, newValue) -> {
+      final GameRepresentation g = game.get();
       debouncer.debounce(POV.GAMEPLAY_DIFFICULTY, () -> {
-        client.setPOVPreference(game.get().getId(), getPOV(), POV.GAMEPLAY_DIFFICULTY, newValue);
+        client.setPOVPreference(g.getId(), getPOV(), POV.GAMEPLAY_DIFFICULTY, newValue);
       }, 500);
     });
 
     povSoundVolumeSlider.valueProperty().addListener((observable, oldValue, newValue) -> {
+      final GameRepresentation g = game.get();
       debouncer.debounce(POV.SOUND_VOLUME, () -> {
         int v = (int) newValue;
-        client.setPOVPreference(game.get().getId(), getPOV(), POV.SOUND_VOLUME, v);
+        client.setPOVPreference(g.getId(), getPOV(), POV.SOUND_VOLUME, v);
       }, 500);
     });
     povMusicVolumeSlider.valueProperty().addListener((observable, oldValue, newValue) -> {
+      final GameRepresentation g = game.get();
       debouncer.debounce(POV.MUSIC_VOLUME, () -> {
         int v = (int) newValue;
-        client.setPOVPreference(game.get().getId(), getPOV(), POV.MUSIC_VOLUME, v);
+        client.setPOVPreference(g.getId(), getPOV(), POV.MUSIC_VOLUME, v);
       }, 500);
     });
 
     SpinnerValueFactory.IntegerSpinnerValueFactory factoryRotation = new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 360, 0);
     povRotationFullscreenSpinner.setValueFactory(factoryRotation);
     povRotationFullscreenSpinner.valueProperty().addListener((observable, oldValue, newValue) -> {
+      final GameRepresentation g = game.get();
       debouncer.debounce(POV.FULLSCREEN_ROTATION, () -> {
-        client.setPOVPreference(game.get().getId(), getPOV(), POV.FULLSCREEN_ROTATION, newValue);
+        client.setPOVPreference(g.getId(), getPOV(), POV.FULLSCREEN_ROTATION, newValue);
       }, 500);
     });
 
