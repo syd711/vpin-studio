@@ -52,10 +52,6 @@ public class CardGraphics {
 
   private final int BLUR_PIXELS = Config.getCardGeneratorConfig().getInt("card.blur");
 
-  String cardRatio = Config.getCardGeneratorConfig().getString("card.ratio", DirectB2SImageRatio.RATIO_16X9.name());
-  private final DirectB2SImageRatio DIRECTB2S_RATIO = DirectB2SImageRatio.RATIO_16X9; //DirectB2SImageRatio.valueOf(cardRatio.toUpperCase());
-
-
   private final DefaultPictureService directB2SService;
   private final ScoreSummary summary;
   private final Game game;
@@ -83,24 +79,16 @@ public class CardGraphics {
           "make sure that folder " + backgroundsFolder.getAbsolutePath() + " contains valid images.");
     }
 
-    if (USE_DIRECTB2S) {
-      File croppedDirectB2SBackgroundImage = game.getCroppedDefaultPicture();
-
-      //check if the existing directb2s exists
-      if (croppedDirectB2SBackgroundImage == null || !croppedDirectB2SBackgroundImage.exists()) {
-        croppedDirectB2SBackgroundImage = directB2SService.generateCroppedDefaultPicture(game);
-      }
-
-      if (croppedDirectB2SBackgroundImage != null && croppedDirectB2SBackgroundImage.exists()) {
-        sourceImage = croppedDirectB2SBackgroundImage;
-      }
+    File croppedDefaultPicture = directB2SService.generateCroppedDefaultPicture(game);
+    BufferedImage backgroundImage = null;
+    if (croppedDefaultPicture == null || !USE_DIRECTB2S) {
+      BufferedImage sImage = ImageUtil.loadImage(sourceImage);
+      backgroundImage = ImageUtil.crop(sImage, DirectB2SImageRatio.RATIO_16X9.getXRatio(), DirectB2SImageRatio.RATIO_16X9.getYRatio());
+    }
+    else {
+      backgroundImage = ImageUtil.loadImage(croppedDefaultPicture);
     }
 
-    BufferedImage backgroundImage = ImageUtil.loadImage(sourceImage);
-    if (USE_DIRECTB2S) {
-      backgroundImage = ImageUtil.crop(backgroundImage, DIRECTB2S_RATIO.getXRatio(), DIRECTB2S_RATIO.getYRatio());
-      backgroundImage = ImageUtil.resizeImage(backgroundImage, DefaultPictureService.DEFAULT_MEDIA_SIZE);
-    }
 
     if (BLUR_PIXELS > 0) {
       backgroundImage = ImageUtil.blurImage(backgroundImage, BLUR_PIXELS);
