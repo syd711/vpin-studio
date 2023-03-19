@@ -24,8 +24,7 @@ public class ArchiveConfirmationMenuState extends MenuState {
 
   @Override
   MenuState enter() {
-    menuController.showProgressbar();
-    return new ArchivingMenuState(this, menuController);
+    return new ArchiveOptionsMenuState(this, menuController);
   }
 
   @Override

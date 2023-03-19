@@ -37,7 +37,15 @@ public class PlaylistSelectionMenuState extends MenuState {
       index = playlists.size() - 1;
     }
 
-    this.menuController.setNameLabelText(playlists.get(index).getName());
+    PlaylistRepresentation playlistRepresentation = playlists.get(index);
+    if(playlistRepresentation == null) {
+      this.menuController.setArrowsVisible(false);
+      this.menuController.setNameLabelText("Skip Playlist Selection");
+    }
+    else {
+      this.menuController.setArrowsVisible(true);
+      this.menuController.setNameLabelText(playlistRepresentation.getName());
+    }
     return this;
   }
 
@@ -52,11 +60,11 @@ public class PlaylistSelectionMenuState extends MenuState {
 
     PlaylistRepresentation playlistRepresentation = playlists.get(index);
     if(playlistRepresentation == null) {
-      this.menuController.leavePlaylistSelection();
+      this.menuController.setArrowsVisible(false);
       this.menuController.setNameLabelText("Skip Playlist Selection");
     }
     else {
-      this.menuController.enterPlaylistSelection();
+      this.menuController.setArrowsVisible(true);
       this.menuController.setNameLabelText(playlistRepresentation.getName());
     }
     return this;
@@ -69,7 +77,7 @@ public class PlaylistSelectionMenuState extends MenuState {
 
   @Override
   MenuState back() {
-    menuController.leavePlaylistSelection();
+    menuController.leaveInstallSubSelection();
     return parentState.back();
   }
 }

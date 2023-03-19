@@ -11,6 +11,15 @@ public class ExportDescriptor {
   private boolean exportPupPack = true;
   private boolean exportPopperMedia = true;
   private boolean exportHighscores = true;
+  private boolean removeFromPlaylists = false;
+
+  public boolean isRemoveFromPlaylists() {
+    return removeFromPlaylists;
+  }
+
+  public void setRemoveFromPlaylists(boolean removeFromPlaylists) {
+    this.removeFromPlaylists = removeFromPlaylists;
+  }
 
   public long getRepositoryId() {
     return repositoryId;

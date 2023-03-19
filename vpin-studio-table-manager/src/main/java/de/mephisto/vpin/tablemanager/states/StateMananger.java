@@ -136,7 +136,7 @@ public class StateMananger implements JobListener, NativeKeyListener {
 
     Platform.runLater(() -> {
       this.activeState = activeState.back();
-      if(descriptor.getJobType().equals(JobType.VPA_IMPORT)) {
+      if(descriptor.getJobType().equals(JobType.VPA_IMPORT) || descriptor.getJobType().equals(JobType.VPA_EXPORT)) {
         this.activeState = this.activeState.back();
       }
       this.menuController.hideProgressbar();

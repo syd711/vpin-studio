@@ -120,7 +120,7 @@ public class IOService {
     JobDescriptor descriptor = new JobDescriptor(JobType.VPA_EXPORT, uuid);
     descriptor.setTitle("Export of \"" + game.getGameDisplayName() + "\"");
     descriptor.setDescription("Exporting table archive for \"" + manifest.getGameDisplayName() + "\"");
-    descriptor.setJob(new VpaExporterJob(vpRegFile, systemService.getVPXMusicFolder(), game, exportDescriptor, manifest, highscore, versions, defaultVpaSourceAdapter, targetFolder, systemService.getVersion()));
+    descriptor.setJob(new VpaExporterJob(pinUPConnector, vpRegFile, systemService.getVPXMusicFolder(), game, exportDescriptor, manifest, highscore, versions, defaultVpaSourceAdapter, targetFolder, systemService.getVersion()));
 
     GameMediaItem mediaItem = game.getGameMedia().get(PopperScreen.Wheel);
     if (mediaItem != null) {

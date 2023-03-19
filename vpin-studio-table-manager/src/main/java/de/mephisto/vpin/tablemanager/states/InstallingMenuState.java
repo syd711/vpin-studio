@@ -25,6 +25,7 @@ public class InstallingMenuState extends MenuState {
     this.menuController = menuController;
     this.playlist = playlist;
     this.menuController.enterInstalling();
+    this.menuController.setNameLabelText("Installing, please wait...");
 
     StateMananger.getInstance().setInputBlocked(true);
     executeInstallation();

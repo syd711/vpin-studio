@@ -14,12 +14,15 @@ import org.slf4j.LoggerFactory;
 public class ArchivingMenuState extends MenuState {
   private final static Logger LOG = LoggerFactory.getLogger(VPinStudioClient.class);
   private final MenuState parentState;
+  private int mode;
   private final MenuController menuController;
 
-  public ArchivingMenuState(MenuState parentState, MenuController menuController) {
+  public ArchivingMenuState(MenuState parentState, int mode, MenuController menuController) {
     this.parentState = parentState;
+    this.mode = mode;
     this.menuController = menuController;
     this.menuController.enterArchiving();
+    this.menuController.setNameLabelText("Archiving, please wait...");
 
     StateMananger.getInstance().setInputBlocked(true);
     executeArchiving();
@@ -61,6 +64,7 @@ public class ArchivingMenuState extends MenuState {
       descriptor.setExportRom(true);
       descriptor.setExportPopperMedia(true);
       descriptor.setExportHighscores(true);
+      descriptor.setRemoveFromPlaylists(mode == 0);
       try {
         Menu.client.exportVpa(descriptor);
       } catch (Exception e) {

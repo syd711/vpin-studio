@@ -464,15 +464,30 @@ public class MenuController implements Initializable {
     LOG.info("Setting status: \"" + status + "\" / " + progress);
   }
 
+  public void enterArchiveOptionsSelection() {
+    arrowRight.setVisible(true);
+    arrowLeft.setVisible(true);
+    greenLabel.setText("Archive Options");
+  }
+
   public void enterPlaylistSelection() {
     arrowRight.setVisible(true);
     arrowLeft.setVisible(true);
     greenLabel.setText("Select Playlist");
   }
 
-  public void leavePlaylistSelection() {
-    arrowRight.setVisible(false);
-    arrowLeft.setVisible(false);
-    greenLabel.setText("Install Table?");
+  public void setArrowsVisible(boolean b) {
+    arrowRight.setVisible(b);
+    arrowLeft.setVisible(b);
+  }
+
+  public void leaveArchiveSubSelection() {
+    setArrowsVisible(false);
+    nameLabel.setText(this.getGameSelection().getGameDisplayName());
+  }
+
+  public void leaveInstallSubSelection() {
+    setArrowsVisible(false);
+    nameLabel.setText(this.getVpaSelection().getManifest().getGameDisplayName());
   }
 }

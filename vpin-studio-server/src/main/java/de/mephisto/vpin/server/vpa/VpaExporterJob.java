@@ -9,6 +9,7 @@ import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.highscores.Highscore;
 import de.mephisto.vpin.server.highscores.HighscoreVersion;
 import de.mephisto.vpin.server.popper.GameMediaItem;
+import de.mephisto.vpin.server.popper.PinUPConnector;
 import de.mephisto.vpin.server.popper.WheelAugmenter;
 import de.mephisto.vpin.server.util.ImageUtil;
 import de.mephisto.vpin.server.util.vpreg.VPReg;
@@ -37,6 +38,7 @@ public class VpaExporterJob implements Job {
   private final static Logger LOG = LoggerFactory.getLogger(VpaService.class);
   public static final int TARGET_WHEEL_SIZE_WIDTH = 100;
 
+  private final PinUPConnector pinUPConnector;
   private final File vprRegFile;
   private final File musicFolder;
   private final Game game;
@@ -56,7 +58,8 @@ public class VpaExporterJob implements Job {
   private long totalSizeExpected;
   private File tempFile;
 
-  public VpaExporterJob(@NonNull File vprRegFile,
+  public VpaExporterJob(@NonNull PinUPConnector pinUPConnector,
+                        @NonNull File vprRegFile,
                         @NonNull File musicFolder,
                         @NonNull Game game,
                         @NonNull ExportDescriptor exportDescriptor,
@@ -66,6 +69,7 @@ public class VpaExporterJob implements Job {
                         @NonNull VpaSourceAdapter vpaSource,
                         @NonNull File targetFolder,
                         @NonNull String vpaVersion) {
+    this.pinUPConnector = pinUPConnector;
     this.vprRegFile = vprRegFile;
     this.musicFolder = musicFolder;
     this.game = game;
@@ -230,6 +234,8 @@ public class VpaExporterJob implements Job {
       zipPupPack(packageInfo, zipOut);
       zipPopperMedia(packageInfo, zipOut);
       zipManifest(zipOut, target);
+
+      pinUPConnector.deleteFromPlaylists(game.getId());
     } catch (Exception e) {
       LOG.error("Create VPA for " + game.getGameDisplayName() + " failed: " + e.getMessage(), e);
     } finally {

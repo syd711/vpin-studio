@@ -428,7 +428,7 @@ public class PinUPConnector implements InitializingBean {
       preparedStatement.executeUpdate();
       preparedStatement.close();
 
-      LOG.info("Removed game " + gameId + " from playlist list");
+      LOG.info("Removed game " + gameId + " from all playlists");
     } catch (SQLException e) {
       LOG.error("Failed to update playlist details: " + e.getMessage(), e);
     } finally {
