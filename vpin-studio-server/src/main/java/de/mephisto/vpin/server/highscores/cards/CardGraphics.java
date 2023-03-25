@@ -32,15 +32,15 @@ public class CardGraphics {
 
   private final String SCORE_FONT_NAME = Config.getCardGeneratorConfig().getString("card.score.font.name");
   private final int SCORE_FONT_STYLE = ImageUtil.convertFontPosture(Config.getCardGeneratorConfig().getString("card.score.font.style"));
-  private final int SCORE_FONT_SIZE = Config.getCardGeneratorConfig().getInt("card.score.font.size", 24);
+  private final int SCORE_FONT_SIZE = Config.getCardGeneratorConfig().getInt("card.score.font.size", 90);
 
   private final String TITLE_FONT_NAME = Config.getCardGeneratorConfig().getString("card.title.font.name", "Arial");
   private final int TITLE_FONT_STYLE = ImageUtil.convertFontPosture(Config.getCardGeneratorConfig().getString("card.title.font.style"));
-  private final int TITLE_FONT_SIZE = Config.getCardGeneratorConfig().getInt("card.title.font.size", 28);
+  private final int TITLE_FONT_SIZE = Config.getCardGeneratorConfig().getInt("card.title.font.size", 120);
 
   private final String TABLE_FONT_NAME = Config.getCardGeneratorConfig().getString("card.table.font.name");
   private final int TABLE_FONT_STYLE = ImageUtil.convertFontPosture(Config.getCardGeneratorConfig().getString("card.table.font.style"));
-  private final int TABLE_FONT_SIZE = Config.getCardGeneratorConfig().getInt("card.table.font.size", 24);
+  private final int TABLE_FONT_SIZE = Config.getCardGeneratorConfig().getInt("card.table.font.size", 72);
 
   private final String FONT_COLOR = Config.getCardGeneratorConfig().getString("card.font.color", "#FFFFFF");
 
