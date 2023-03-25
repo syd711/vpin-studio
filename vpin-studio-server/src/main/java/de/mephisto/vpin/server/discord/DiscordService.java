@@ -39,7 +39,6 @@ public class DiscordService implements InitializingBean, PreferenceChangedListen
 
   private DiscordBotCommandListener botCommandListener;
 
-
   @NonNull
   public DiscordBotStatus getStatus() {
     String guildId = (String) preferencesService.getPreferenceValue(PreferenceNames.DISCORD_GUILD_ID);
@@ -48,15 +47,18 @@ public class DiscordService implements InitializingBean, PreferenceChangedListen
 
     DiscordBotStatus status = new DiscordBotStatus();
     status.setBotId(botId);
-    status.setBotInitials(this.discordClient.getBot().getInitials());
-    status.setValid(this.discordClient != null && this.discordClient.getChannels().size() > 0);
-    try {
-      long channelId = Long.parseLong(defaultChannelId);
-      long serverId = Long.parseLong(guildId);
-      status.setValidDefaultChannel(!StringUtils.isEmpty(defaultChannelId) && this.discordClient != null && this.getChannel(serverId, channelId) != null);
-    } catch (Exception e) {
-      status.setValidDefaultChannel(false);
+    status.setValid(botId != -1 && this.discordClient != null && this.discordClient.getChannels().size() > 0);
+    if (botId != -1) {
+      status.setBotInitials(this.discordClient.getBot().getInitials());
+      try {
+        long channelId = Long.parseLong(defaultChannelId);
+        long serverId = Long.parseLong(guildId);
+        status.setValidDefaultChannel(!StringUtils.isEmpty(defaultChannelId) && this.discordClient != null && this.getChannel(serverId, channelId) != null);
+      } catch (Exception e) {
+        status.setValidDefaultChannel(false);
+      }
     }
+
     return status;
   }
 
@@ -142,8 +144,7 @@ public class DiscordService implements InitializingBean, PreferenceChangedListen
           competitionMembers.add(0, owner);
         }
         return competitionMembers.stream().map(this::toPlayer).collect(Collectors.toList());
-      }
-      else {
+      } else {
         LOG.warn("No competition found for channel " + channelId);
       }
     }
@@ -188,8 +189,7 @@ public class DiscordService implements InitializingBean, PreferenceChangedListen
       long discordServerId = competition.getDiscordServerId();
       long discordChannelId = competition.getDiscordChannelId();
       this.discordClient.setTopic(discordServerId, discordChannelId, topic);
-    }
-    else {
+    } else {
       throw new UnsupportedOperationException("No Discord client found.");
     }
   }
@@ -213,8 +213,7 @@ public class DiscordService implements InitializingBean, PreferenceChangedListen
         if (!scores.isEmpty()) {
           result.setScores(scores);
           result.setLatestScore(scores.get(0));
-        }
-        else {
+        } else {
           LOG.info("No record highscore for " + uuid + " found, so this seems to be the first one.");
         }
       }
@@ -225,8 +224,7 @@ public class DiscordService implements InitializingBean, PreferenceChangedListen
   public void resetCompetition(long serverId, long channelId) {
     if (this.discordClient != null) {
       this.discordClient.setTopic(serverId, channelId, "No active competition.");
-    }
-    else {
+    } else {
       throw new UnsupportedOperationException("No Discord client found.");
     }
   }
@@ -260,7 +258,7 @@ public class DiscordService implements InitializingBean, PreferenceChangedListen
     }
 
     try {
-      if(StringUtils.isEmpty(botToken)) {
+      if (StringUtils.isEmpty(botToken)) {
         LOG.info("Skipped discord client creation, no botId set.");
         return null;
       }
@@ -320,7 +318,7 @@ public class DiscordService implements InitializingBean, PreferenceChangedListen
   }
 
   public Player getPlayerByInitials(long serverId, String initials) {
-    if(serverId > 0) {
+    if (serverId > 0) {
       for (DiscordMember member : this.getMembers(serverId)) {
         if (!StringUtils.isEmpty(member.getInitials()) && member.getInitials().equalsIgnoreCase(initials.toUpperCase())) {
           return toPlayer(member);
@@ -345,8 +343,7 @@ public class DiscordService implements InitializingBean, PreferenceChangedListen
     if (propertyName.equals(PreferenceNames.DISCORD_BOT_TOKEN)) {
       LOG.info("Detected Discord config change, updating BOT.");
       this.discordClient = recreateDiscordClient();
-    }
-    else if (propertyName.equals(PreferenceNames.DISCORD_GUILD_ID) || propertyName.equals(PreferenceNames.DISCORD_BOT_ALLOW_LIST)) {
+    } else if (propertyName.equals(PreferenceNames.DISCORD_GUILD_ID) || propertyName.equals(PreferenceNames.DISCORD_BOT_ALLOW_LIST)) {
       this.applyDefaultDiscordSettings();
     }
   }
