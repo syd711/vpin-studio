@@ -8,6 +8,7 @@ import de.mephisto.vpin.server.games.GameService;
 import de.mephisto.vpin.server.highscores.Highscore;
 import de.mephisto.vpin.server.highscores.HighscoreService;
 import de.mephisto.vpin.server.highscores.HighscoreVersion;
+import de.mephisto.vpin.server.popper.PinUPConnector;
 import de.mephisto.vpin.server.system.SystemService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,6 +35,9 @@ public class VpaServiceTest extends AbstractVPinServerTest {
 
   @Autowired
   private GameService gameService;
+
+  @Autowired
+  private PinUPConnector pinUPConnector;
 
   @Test
   public void testExport() throws IOException {
