@@ -297,9 +297,10 @@
                         <configuration>
                             <outputDirectory>${basedir}/../Output/VPin-Studio/win32/java</outputDirectory>
                             <resources>
+                                <!-- //TODO use java home -->
                                 <resource>
                                     <!--                                    <directory>${java.home}</directory>-->
-                                    <directory>E:/Development/tools/jdk-11.0.17+8-jre</directory>
+                                    <directory>D:\dev\java\jdk-11.0.17+8-jre</directory>
                                     <excludes>
                                         <exclude>**/*.zip</exclude>
                                     </excludes>
@@ -405,7 +406,7 @@
                         </goals>
                         <configuration>
                             <!-- define the command to execute -->
-                            <executable>7z</executable>
+                            <executable>${basedir}/../Output/VPin-Studio/resources/7z.exe</executable>
                             <workingDirectory>${basedir}/../Output/VPin-Studio/</workingDirectory>
                             <arguments>
                                 <argument>a</argument>
@@ -423,7 +424,7 @@
                         </goals>
                         <configuration>
                             <!-- define the command to execute -->
-                            <executable>7z</executable>
+                            <executable>${basedir}/../Output/VPin-Studio/resources/7z.exe</executable>
                             <workingDirectory>${basedir}/../Output/VPin-Studio/</workingDirectory>
                             <arguments>
                                 <argument>a</argument>
