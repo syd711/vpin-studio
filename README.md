@@ -4,6 +4,8 @@ The VPin Studio is a util to manage VPin users, tables, competitions and highsco
 It depends on PinUP Popper and gives the user an overview about installed tables
 and their media configuration.
 
+<img src="documentation/tables/tables.png" width="800" />
+
 ## Installation
 
 Download the latest installer from the [releases section](https://github.com/syd711/vpin-studio/releases). 
