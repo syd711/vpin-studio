@@ -428,8 +428,8 @@ public class HighscoreService implements InitializingBean {
     List<Integer> changes = new ArrayList<>();
     int position = 1;
     for (Score newScore : newScores) {
-      if (!oldScores.contains(newScore) && !newScore.getPlayerInitials().equals("???") && newScore.getNumericScore() > 0) {
-        LOG.info("Calculated changed score: [" + newScore + "] has beaten [" + oldScores.get(newScore.getPosition()-1) + "]");
+      if (!containsScore(oldScores, newScore) && !newScore.getPlayerInitials().equals("???") && newScore.getNumericScore() > 0) {
+        LOG.info("Calculated changed score: [" + newScore + "] has beaten [" + oldScores.get(newScore.getPosition() - 1) + "]");
         changes.add(position);
         position++;
       }
@@ -451,6 +451,15 @@ public class HighscoreService implements InitializingBean {
     for (HighscoreChangeListener listener : listeners) {
       listener.highscoreChanged(event);
     }
+  }
+
+  private boolean containsScore(List<Score> scores, Score score) {
+    for (Score s : scores) {
+      if (s.getPlayerInitials().equals(score.getPlayerInitials()) && s.getNumericScore() == score.getNumericScore()) {
+        return true;
+      }
+    }
+    return false;
   }
 
   @Override
