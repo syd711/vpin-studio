@@ -313,7 +313,7 @@ public class DiscordClient {
   /**
    * Updates the online status with the active game info.
    */
-  public void setStatus(String status) {
+  public void setActivity(String status) {
     if (status == null) {
       this.jda.getPresence().setActivity(null);
     }

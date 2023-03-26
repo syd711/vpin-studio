@@ -244,7 +244,7 @@ public class WidgetCompetitionController extends WidgetController implements Ini
   }
 
   public void setCompact() {
-//    viewStack.setVisible(false);
-//    root.setPrefHeight(346);
+    viewStack.setVisible(false);
+    root.setPrefHeight(346);
   }
 }

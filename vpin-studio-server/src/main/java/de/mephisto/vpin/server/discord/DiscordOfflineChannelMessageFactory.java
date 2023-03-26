@@ -67,15 +67,6 @@ public class DiscordOfflineChannelMessageFactory {
       }
     }
 
-    String oldName = oldScore.getPlayerInitials();
-    if (oldScore.getPlayer() != null) {
-      Player player = oldScore.getPlayer();
-      oldName = oldScore.getPlayer().getName();
-      if (PlayerDomain.DISCORD.name().equals(player.getDomain())) {
-        oldName = "<@" + player.getId() + ">";
-      }
-    }
-
     String template = "**%s created a new highscore for \"%s\"**.\n" +
         "```%s\n" +
         "```\n";
@@ -83,7 +74,7 @@ public class DiscordOfflineChannelMessageFactory {
     msg = msg + getBeatenMessage(oldScore, newScore);
 
     if (!StringUtils.isEmpty(raw)) {
-      msg = msg + "Here is the current highscore:\n```" + raw + "```";
+      msg = msg + "\nHere is the current highscore:\n```" + raw + "```";
     }
 
     return msg;
@@ -108,7 +99,7 @@ public class DiscordOfflineChannelMessageFactory {
     msg = msg + getBeatenMessage(oldScore, newScore);
 
     if (!StringUtils.isEmpty(raw)) {
-      msg = msg + "Here is the current highscore:\n```" + raw + "```";
+      msg = msg + "\nHere is the current highscore:\n```" + raw + "```";
     }
 
     return msg;

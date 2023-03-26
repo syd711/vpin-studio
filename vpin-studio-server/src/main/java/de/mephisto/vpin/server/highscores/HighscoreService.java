@@ -425,24 +425,14 @@ public class HighscoreService implements InitializingBean {
    * Returns the highscore difference position, starting from 1.
    */
   public List<Integer> calculateChangedPositions(@NonNull List<Score> oldScores, @NonNull List<Score> newScores) {
-    int count = oldScores.size();
     List<Integer> changes = new ArrayList<>();
-    int offset = 0;
-    for (int i = 0; i < count; i++) {
-      if (offset == count) {
-        break;
+    int position = 1;
+    for (Score newScore : newScores) {
+      if (!oldScores.contains(newScore) && !newScore.getPlayerInitials().equals("???") && newScore.getNumericScore() > 0) {
+        LOG.info("Calculated changed score: [" + newScore + "] has beaten [" + oldScores.get(newScore.getPosition()-1) + "]");
+        changes.add(position);
+        position++;
       }
-
-      if (!oldScores.get(i).equals(newScores.get(offset))) {
-        Score score = newScores.get(offset);
-        if (!score.getPlayerInitials().equals("???") && score.getNumericScore() > 0) {
-          LOG.info("Calculated changed score: [" + newScores.get(offset) + "] has beaten [" + oldScores.get(i) + "]");
-          changes.add(offset + 1);
-          i--;
-        }
-      }
-
-      offset++;
     }
     return changes;
   }

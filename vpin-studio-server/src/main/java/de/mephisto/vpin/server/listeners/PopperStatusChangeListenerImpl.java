@@ -38,7 +38,7 @@ public class PopperStatusChangeListenerImpl implements InitializingBean, PopperS
   public void tableLaunched(TableStatusChangedEvent event) {
     Game game = event.getGame();
     preferencesService.savePreference(PreferenceNames.ACTIVE_GAME, game.getId());
-    discordService.setStatus(game.getGameDisplayName());
+    discordService.setActivity(game.getGameDisplayName());
     highscoreService.scanScore(game);
   }
 
@@ -46,7 +46,7 @@ public class PopperStatusChangeListenerImpl implements InitializingBean, PopperS
   public void tableExited(TableStatusChangedEvent event) {
     Game game = event.getGame();
     LOG.info("Executing table exit commands for '" + game + "'");
-    discordService.setStatus(null);
+    discordService.setActivity(null);
     new Thread(() -> {
       try {
         Thread.sleep(4000);
@@ -75,13 +75,13 @@ public class PopperStatusChangeListenerImpl implements InitializingBean, PopperS
   @Override
   public void popperExited() {
     LOG.info("Popper exit event");
-    discordService.setStatus(null);
+    discordService.setActivity(null);
   }
 
   @Override
   public void popperRestarted() {
     LOG.info("Popper restarted event");
-    discordService.setStatus(null);
+    discordService.setActivity(null);
   }
 
   @Override

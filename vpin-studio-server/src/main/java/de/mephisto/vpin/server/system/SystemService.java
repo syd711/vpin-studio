@@ -265,6 +265,7 @@ public class SystemService implements InitializingBean {
         if (folder.exists()) {
           return folder;
         }
+        LOG.error("Found registry entry for " + POPPER_REG_KEY + ", but that folder does not exist. I'm using the default installation folder instead.");
       }
     } catch (Exception e) {
       LOG.error("Failed to read installation folder: " + e.getMessage(), e);

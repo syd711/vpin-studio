@@ -58,10 +58,9 @@ public class CompetitionChangeListenerImpl implements InitializingBean, Competit
         long discordChannelId = competition.getDiscordChannelId();
         long botId = discordService.getBotId();
 
-
         //check if the competition is already set as topic, in this case the user simply re-created the DB entry
         DiscordCompetitionData competitionData = discordService.getCompetitionData(discordServerId, discordChannelId);
-        if (competitionData == null && isOwner) {
+        if ((competitionData == null && isOwner) || (competitionData != null && competitionData.isFinished() && isOwner)) {
           long messageId = discordService.sendMessage(discordServerId, discordChannelId, DiscordChannelMessageFactory.createDiscordCompetitionCreatedMessage(competition, game, botId));
           ScoreSummary highscores = highscoreService.getScoreSummary(discordServerId, game.getId(), game.getGameDisplayName());
           discordService.saveCompetitionData(competition, game, highscores, messageId);

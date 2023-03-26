@@ -290,9 +290,9 @@ public class DiscordService implements InitializingBean, PreferenceChangedListen
     return notifyBotCommandListener(cmd);
   }
 
-  public void setStatus(@Nullable String status) {
+  public void setActivity(@Nullable String status) {
     if (this.discordClient != null) {
-      this.discordClient.setStatus(status);
+      this.discordClient.setActivity(status);
     }
   }
 

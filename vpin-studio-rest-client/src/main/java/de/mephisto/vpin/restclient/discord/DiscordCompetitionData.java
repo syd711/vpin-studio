@@ -1,5 +1,7 @@
 package de.mephisto.vpin.restclient.discord;
 
+import de.mephisto.vpin.restclient.util.DateUtil;
+
 import java.util.Date;
 
 public class DiscordCompetitionData {
@@ -89,5 +91,9 @@ public class DiscordCompetitionData {
     boolean startOverlap = getSdt().before(endSelection);
     boolean endOverlap = startSelection.before(this.getEdt());
     return startOverlap && endOverlap;
+  }
+
+  public boolean isFinished(){
+    return DateUtil.endOfToday().before(this.getEdt());
   }
 }
