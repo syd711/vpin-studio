@@ -230,7 +230,9 @@ public class CompetitionsController implements Initializable, StudioFXController
 
   private void refreshScoreGraph(Optional<CompetitionRepresentation> cp) {
     statusLabel.setText("");
-    scoreGraphBox.setCenter(new Label());
+    if (scoreGraphBox.getCenter() != null) {
+      scoreGraphBox.getCenter().setVisible(false);
+    }
 
     if (cp.isPresent()) {
       CompetitionRepresentation competition = cp.get();
@@ -244,6 +246,7 @@ public class CompetitionsController implements Initializable, StudioFXController
       if (!competitionScores.getScores().isEmpty()) {
         highscoresGraphTile = ScoreGraphUtil.createGraph(competitionScores);
         scoreGraphBox.setCenter(highscoresGraphTile);
+        scoreGraphBox.getCenter().setVisible(true);
       }
       else {
         statusLabel.setText("No scores have been submitted yet.");
