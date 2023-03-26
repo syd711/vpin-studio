@@ -300,7 +300,7 @@
                                 <!-- //TODO use java home -->
                                 <resource>
                                     <!--                                    <directory>${java.home}</directory>-->
-                                    <directory>D:\dev\java\jdk-11.0.17+8-jre</directory>
+                                    <directory>E:/Development/tools/jdk-11.0.17+8-jre</directory>
                                     <excludes>
                                         <exclude>**/*.zip</exclude>
                                     </excludes>
