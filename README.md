@@ -16,6 +16,12 @@ That's why every release comes with two different installers:
 - **Full Installer**: this installer must always be installed on the actual VPin and contains the server and the client UI.
 - **Client Installer**: this installer only contains the UI client which let's you connect from any other Windows PC to your VPin.
 
+## Getting Started
+
+Please see:
+
+https://github.com/syd711/vpin-studio/wiki#getting-started
+
 ## How To Update
 
 Please see: 
