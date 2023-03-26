@@ -360,7 +360,6 @@ public class TableOverviewController implements Initializable, StudioFXControlle
     this.uploadDirectB2SItem.setDisable(true);
     this.inspectBtn.setDisable(true);
     this.exportBtn.setDisable(true);
-//    this.importBtn.setDisable(true);
     this.uploadMenuBtn.setDisable(true);
 
     tableView.setVisible(false);
@@ -378,6 +377,8 @@ public class TableOverviewController implements Initializable, StudioFXControlle
         if (selection != null) {
           final GameRepresentation updatedGame = client.getGame(selection.getId());
           tableView.getSelectionModel().select(updatedGame);
+          this.inspectBtn.setDisable(!updatedGame.isGameFileAvailable());
+          this.exportBtn.setDisable(!updatedGame.isGameFileAvailable());
         }
         else if (!games.isEmpty()) {
           tableView.getSelectionModel().select(0);
@@ -388,15 +389,10 @@ public class TableOverviewController implements Initializable, StudioFXControlle
         if (!games.isEmpty()) {
           this.validateBtn.setDisable(false);
           this.deleteBtn.setDisable(false);
-          this.inspectBtn.setDisable(false);
-
           this.uploadDirectB2SItem.setDisable(false);
           this.uploadRomItem.setDisable(false);
-          this.exportBtn.setDisable(false);
         }
 
-
-//        this.importBtn.setDisable(false);
         this.textfieldSearch.setDisable(false);
         this.reloadBtn.setDisable(false);
         this.scanBtn.setDisable(false);
@@ -520,21 +516,22 @@ public class TableOverviewController implements Initializable, StudioFXControlle
 
     tableView.setItems(data);
     tableView.setEditable(true);
-    tableView.getSelectionModel().getSelectedItems().addListener(new ListChangeListener<GameRepresentation>() {
-      @Override
-      public void onChanged(Change<? extends GameRepresentation> c) {
-        boolean disable = c.getList().isEmpty() || c.getList().size() > 1;
-        validateBtn.setDisable(disable);
-        deleteBtn.setDisable(disable);
-        inspectBtn.setDisable(disable);
-        uploadDirectB2SItem.setDisable(disable);
+    tableView.getSelectionModel().getSelectedItems().addListener((ListChangeListener<GameRepresentation>) c -> {
+      boolean disable = c.getList().isEmpty() || c.getList().size() > 1;
+      validateBtn.setDisable(disable);
+      deleteBtn.setDisable(disable);
+      uploadDirectB2SItem.setDisable(disable);
+      inspectBtn.setDisable(true);
+      exportBtn.setDisable(true);
 
-        if (c.getList().isEmpty()) {
-          refreshView(Optional.empty());
-        }
-        else {
-          refreshView(Optional.ofNullable(c.getList().get(0)));
-        }
+      if (c.getList().isEmpty()) {
+        refreshView(Optional.empty());
+      }
+      else {
+        GameRepresentation gameRepresentation = c.getList().get(0);
+        inspectBtn.setDisable(!gameRepresentation.isGameFileAvailable());
+        exportBtn.setDisable(!gameRepresentation.isGameFileAvailable());
+        refreshView(Optional.ofNullable(gameRepresentation));
       }
     });
 
