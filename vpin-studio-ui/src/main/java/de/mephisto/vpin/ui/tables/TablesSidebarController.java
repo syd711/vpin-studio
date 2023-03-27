@@ -646,8 +646,11 @@ public class TablesSidebarController implements Initializable {
 
     if (gameRepresentation.isPresent()) {
       GameRepresentation game = gameRepresentation.get();
+
+      ScoreSummaryRepresentation summary = client.getGameScores(game.getId());
+      HighscoreMetadataRepresentation metadata = summary.getMetadata();
       if (forceRescan) {
-        client.scanGameScore(game.getId());
+        metadata = client.scanGameScore(game.getId());
       }
 
       ScoreListRepresentation scoreHistory = Studio.client.getScoreHistory(game.getId());
@@ -657,26 +660,25 @@ public class TablesSidebarController implements Initializable {
         scoreGraph.setCenter(highscoresGraphTile);
       }
 
-      ScoreSummaryRepresentation summary = client.getGameScores(game.getId());
-      if (summary != null && summary.getMetadata() != null) {
-        if (summary.getMetadata().getFilename() != null) {
-          this.hsFileLabel.setText(summary.getMetadata().getFilename());
+      if (metadata != null) {
+        if (metadata.getFilename() != null) {
+          this.hsFileLabel.setText(metadata.getFilename());
         }
 
-        if (summary.getMetadata().getStatus() != null) {
-          this.hsStatusLabel.setText(summary.getMetadata().getStatus());
+        if (metadata.getStatus() != null) {
+          this.hsStatusLabel.setText(metadata.getStatus());
         }
 
-        if (summary.getMetadata().getType() != null) {
-          this.hsTypeLabel.setText(summary.getMetadata().getType());
+        if (metadata.getType() != null) {
+          this.hsTypeLabel.setText(metadata.getType());
         }
 
-        if (summary.getMetadata().getModified() != null) {
-          this.hsLastModifiedLabel.setText(SimpleDateFormat.getDateTimeInstance().format(summary.getMetadata().getModified()));
+        if (metadata.getModified() != null) {
+          this.hsLastModifiedLabel.setText(SimpleDateFormat.getDateTimeInstance().format(metadata.getModified()));
         }
 
-        if (summary.getMetadata().getScanned() != null) {
-          this.hsLastScannedLabel.setText(SimpleDateFormat.getDateTimeInstance().format(summary.getMetadata().getScanned()));
+        if (metadata.getScanned() != null) {
+          this.hsLastScannedLabel.setText(SimpleDateFormat.getDateTimeInstance().format(metadata.getScanned()));
         }
 
         if (!summary.getScores().isEmpty()) {

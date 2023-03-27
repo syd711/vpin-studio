@@ -22,6 +22,7 @@ import java.util.List;
 
 class HighscoreResolver {
   private final static Logger LOG = LoggerFactory.getLogger(HighscoreResolver.class);
+  public static final String NO_SCORE_FOUND_MSG = "No nvram file, VPReg.stg entry or EM highscore file found.";
 
   private List<String> supportedRoms;
   private final SystemService systemService;
@@ -68,7 +69,7 @@ class HighscoreResolver {
       if (rawScore == null) {
         String msg = "Reading highscore for '" + game.getGameDisplayName() + "' failed, no nvram file, VPReg.stg entry or EM highscore file found for rom name '" + romName + "'";
         if (metadata.getStatus() == null) {
-          metadata.setStatus("No nvram file, VPReg.stg entry or EM highscore file found.");
+          metadata.setStatus(NO_SCORE_FOUND_MSG);
         }
         LOG.info(msg);
       }

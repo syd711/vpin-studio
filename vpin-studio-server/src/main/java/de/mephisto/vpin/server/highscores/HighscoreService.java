@@ -231,6 +231,12 @@ public class HighscoreService implements InitializingBean {
       metadata.setStatus(h.getStatus());
       summary.setMetadata(metadata);
     }
+    else {
+      HighscoreMetadata metadata = new HighscoreMetadata();
+      metadata.setDisplayName(displayName);
+      metadata.setStatus(HighscoreResolver.NO_SCORE_FOUND_MSG);
+      summary.setMetadata(metadata);
+    }
     return summary;
   }
 
