@@ -102,8 +102,8 @@ public class CompetitionOfflineDialogController implements Initializable, Dialog
     competition.setName("My next competition");
     competition.setUuid(UUID.randomUUID().toString());
 
-    Date end = Date.from(LocalDate.now().plus(7, ChronoUnit.DAYS).atStartOfDay(ZoneId.systemDefault()).toInstant());
-    competition.setStartDate(Date.from(LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant()));
+    Date end = Date.from(LocalDate.now().plus(6, ChronoUnit.DAYS).atStartOfDay(ZoneId.systemDefault()).toInstant());
+    competition.setStartDate(DateUtil.today());
     competition.setEndDate(end);
 
     saveBtn.setDisable(true);
@@ -131,7 +131,7 @@ public class CompetitionOfflineDialogController implements Initializable, Dialog
       validate();
     });
 
-    endDatePicker.setValue(LocalDate.now().plus(7, ChronoUnit.DAYS));
+    endDatePicker.setValue(LocalDate.now().plus(6, ChronoUnit.DAYS));
     endDatePicker.valueProperty().addListener((observableValue, localDate, t1) -> {
       if (t1 != null) {
         Date date = Date.from(t1.atStartOfDay(ZoneId.systemDefault()).toInstant());

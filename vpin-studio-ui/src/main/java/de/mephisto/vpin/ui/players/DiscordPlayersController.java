@@ -6,14 +6,13 @@ import de.mephisto.vpin.restclient.representations.PlayerRepresentation;
 import de.mephisto.vpin.ui.NavigationController;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.Label;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import org.apache.commons.lang3.StringUtils;
@@ -26,6 +25,9 @@ import static de.mephisto.vpin.ui.Studio.client;
 public class DiscordPlayersController implements Initializable {
   @FXML
   private TextField searchTextField;
+
+  @FXML
+  private CheckBox validPlayersCheckbox;
 
   @FXML
   private TableView<PlayerRepresentation> tableView;
@@ -42,6 +44,7 @@ public class DiscordPlayersController implements Initializable {
   private ObservableList<PlayerRepresentation> data;
   private List<PlayerRepresentation> players;
   private PlayersController playersController;
+  private boolean filterValidPlayers = true;
 
   // Add a public no-args constructor
   public DiscordPlayersController() {
@@ -111,6 +114,11 @@ public class DiscordPlayersController implements Initializable {
       tableView.setItems(FXCollections.observableList(filtered));
     });
 
+    validPlayersCheckbox.selectedProperty().addListener((observable, oldValue, newValue) -> {
+      filterValidPlayers = newValue;
+      refreshView();
+    });
+
     this.players = client.getPlayers(PlayerDomain.DISCORD);
     this.refreshView();
   }
@@ -127,6 +135,10 @@ public class DiscordPlayersController implements Initializable {
     List<PlayerRepresentation> filtered = new ArrayList<>();
     String filterValue = searchTextField.textProperty().getValue();
     for (PlayerRepresentation player : players) {
+      if(filterValidPlayers && StringUtils.isEmpty(player.getInitials())) {
+        continue;
+      }
+
       if (player.getName().toLowerCase().contains(filterValue.toLowerCase()) ||
           (player.getInitials() != null && player.getInitials().toLowerCase().contains(filterValue))) {
         filtered.add(player);

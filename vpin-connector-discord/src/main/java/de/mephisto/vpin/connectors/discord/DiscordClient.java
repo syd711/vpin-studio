@@ -282,7 +282,7 @@ public class DiscordClient {
   private DiscordMember toMember(Member member) {
     String name = member.getEffectiveName();
     String initials = resolveInitials(name);
-
+    
     DiscordMember discordMember = new DiscordMember();
     discordMember.setId(member.getIdLong());
     discordMember.setName(name);
