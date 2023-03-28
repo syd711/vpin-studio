@@ -1,15 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.*?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
-<BorderPane styleClass="base-component" stylesheets="@../stylesheet.css" xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.preferences.CardGenerationPreferencesController">
+
+<BorderPane styleClass="base-component" stylesheets="@../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.preferences.CardGenerationPreferencesController">
    <top>
       <VBox fx:id="preferenceList" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" styleClass="subpanel" BorderPane.alignment="TOP_LEFT">
          <children>
             <Label styleClass="preference-title" text="HIGHSCORE PREFERENCES" textFill="WHITE" />
-            <Label styleClass="preference-subtitle" text="Card Settings">
+            <Label styleClass="preference-subtitle" text="Highscore Card Settings">
                <VBox.margin>
                   <Insets />
                </VBox.margin>

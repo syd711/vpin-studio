@@ -67,7 +67,7 @@
                            </VBox.margin>
                         </Label>
                         <Button alignment="BASELINE_LEFT" contentDisplay="RIGHT" layoutX="160.0" layoutY="409.0" mnemonicParsing="false" onAction="#onScoreFormat" styleClass="preference-button" text="Score Format" />
-                        <Button alignment="BASELINE_LEFT" contentDisplay="RIGHT" layoutX="125.0" layoutY="10.0" mnemonicParsing="false" onAction="#onHighscoreCards" styleClass="preference-button" text="Card Preferences">
+                        <Button alignment="BASELINE_LEFT" contentDisplay="RIGHT" layoutX="125.0" layoutY="10.0" mnemonicParsing="false" onAction="#onHighscoreCards" styleClass="preference-button" text="Highscore Card Settings">
                            <VBox.margin>
                               <Insets top="4.0" />
                            </VBox.margin>
