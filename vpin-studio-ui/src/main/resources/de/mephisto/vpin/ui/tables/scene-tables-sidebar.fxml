@@ -246,78 +246,7 @@
                   </BorderPane>
                </graphic>
                 </TitledPane>
-                <TitledPane expanded="false" layoutX="10.0" layoutY="104.0" prefWidth="600.0">
-                    <content>
-                  <BorderPane>
-                     <center>
-                              <VBox prefHeight="200.0" prefWidth="100.0">
-                                  <children>
-                                      <TilePane alignment="CENTER" prefHeight="200.0" prefWidth="200.0" styleClass="media-container">
-                                          <children>
-                                              <ImageView fx:id="rawDefaultBackgroundImage" fitHeight="350.0" fitWidth="450.0" pickOnBounds="true" preserveRatio="true" />
-                                          </children>
-                                      </TilePane>
-                                      <BorderPane prefWidth="200.0">
-                                          <left>
-                                              <Label fx:id="resolutionLabel" text="Label" BorderPane.alignment="CENTER_LEFT">
-                                       <BorderPane.margin>
-                                          <Insets bottom="6.0" left="6.0" />
-                                       </BorderPane.margin>
-                                    </Label>
-                                          </left>
-                                          <right>
-                                    <HBox BorderPane.alignment="CENTER">
-                                       <BorderPane.margin>
-                                          <Insets />
-                                       </BorderPane.margin>
-                                    </HBox>
-                                          </right>
-                                          <opaqueInsets>
-                                              <Insets />
-                                          </opaqueInsets>
-                                          <VBox.margin>
-                                              <Insets top="6.0" />
-                                          </VBox.margin>
-                                      </BorderPane>
-                                  </children>
-                              </VBox>
-                     </center>
-                     <top>
-                        <ToolBar prefHeight="40.0" prefWidth="200.0" BorderPane.alignment="CENTER">
-                           <items>
-                              <Button fx:id="defaultPictureUploadBtn" mnemonicParsing="false" onAction="#onDefaultBackgroundUpload" text="Upload">
-                                 <graphic>
-                                    <FontIcon iconColor="WHITE" iconLiteral="mdi2u-upload" />
-                                 </graphic>
-                                 <font>
-                                    <Font size="14.0" />
-                                 </font>
-                              </Button>
-                                        <Button fx:id="openDefaultPictureBtn" mnemonicParsing="false" onAction="#onOpenDirectB2SBackground" text="View">
-                                 <graphic>
-                                                <FontIcon iconColor="WHITE" iconLiteral="mdi2e-eye" />
-                                 </graphic>
-                                 <font>
-                                    <Font size="14.0" />
-                                 </font>
-                                        </Button>
-                              <Separator orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
-                              <Button fx:id="resetBackgroundBtn" mnemonicParsing="false" onAction="#onBackgroundReset" text="Reset" textFill="#ff3333">
-                                 <graphic>
-                                    <FontIcon iconColor="#ff3333" iconLiteral="mdi2d-delete-outline" />
-                                 </graphic>
-                                 <font>
-                                    <Font size="14.0" />
-                                 </font>
-                              </Button>
-                           </items>
-                        </ToolBar>
-                     </top>
-                     <padding>
-                        <Insets left="1.0" right="1.0" />
-                     </padding>
-                  </BorderPane>
-                    </content>
+                <TitledPane fx:id="titledPaneDefaultBackground" expanded="false" layoutX="10.0" layoutY="104.0" prefWidth="600.0">
                <graphic>
                   <BorderPane prefWidth="560.0">
                      <left>

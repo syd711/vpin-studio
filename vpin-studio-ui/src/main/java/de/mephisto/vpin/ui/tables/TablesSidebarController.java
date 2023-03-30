@@ -20,8 +20,10 @@ import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
+import javafx.scene.Parent;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -95,6 +97,9 @@ public class TablesSidebarController implements Initializable {
   private TitledPane titledPaneMedia;
 
   @FXML
+  private TitledPane titledPaneDefaultBackground;
+
+  @FXML
   private Pane mediaRootPane;
 
   @FXML
@@ -152,12 +157,6 @@ public class TablesSidebarController implements Initializable {
   private Label rawTitleLabel;
 
   @FXML
-  private ImageView rawDefaultBackgroundImage;
-
-  @FXML
-  private Button openDefaultPictureBtn;
-
-  @FXML
   private Button editHsFileNameBtn;
 
   @FXML
@@ -167,16 +166,10 @@ public class TablesSidebarController implements Initializable {
   private Button editTableNameBtn;
 
   @FXML
-  private Button defaultPictureUploadBtn;
-
-  @FXML
   private Button scanBtn;
 
   @FXML
   private Button romUploadBtn;
-
-  @FXML
-  private Label resolutionLabel;
 
   @FXML
   private CheckBox mediaPreviewCheckbox;
@@ -210,9 +203,6 @@ public class TablesSidebarController implements Initializable {
 
   @FXML
   private Button resetBtn;
-
-  @FXML
-  private Button resetBackgroundBtn;
 
   @FXML
   private Button cardBtn;
@@ -279,6 +269,9 @@ public class TablesSidebarController implements Initializable {
 
   private VPinStudioClient client;
 
+  @FXML
+  private TablesSidebarDefaultBackgroundController tablesSidebarDefaultBackgroundController; //fxml magic! Not unused
+
   private Optional<GameRepresentation> game = Optional.empty();
 
   private TableOverviewController tablesController;
@@ -291,8 +284,19 @@ public class TablesSidebarController implements Initializable {
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
     client = Studio.client;
+
     tableAccordion.managedProperty().bindBidirectional(tableAccordion.visibleProperty());
     povCreatePane.managedProperty().bind(povCreatePane.visibleProperty());
+
+    try {
+      FXMLLoader loader = new FXMLLoader(TablesSidebarDefaultBackgroundController.class.getResource("scene-tables-sidebar-default-background.fxml"));
+      Parent tablesRoot = loader.load();
+      tablesSidebarDefaultBackgroundController = loader.getController();
+      tablesSidebarDefaultBackgroundController.setRootController(this);
+      titledPaneDefaultBackground.setContent(tablesRoot);
+    } catch (IOException e) {
+      LOG.error("failed to load default background: " + e.getMessage(), e);
+    }
 
     volumeSlider.valueProperty().addListener((observableValue, number, t1) -> {
       if (game.isPresent()) {
@@ -437,6 +441,7 @@ public class TablesSidebarController implements Initializable {
 
   public void setTablesController(TableOverviewController tablesController) {
     this.tablesController = tablesController;
+    this.tablesSidebarDefaultBackgroundController.setTablesController(tablesController);
   }
 
   public void setGame(Optional<GameRepresentation> game) {
@@ -500,19 +505,6 @@ public class TablesSidebarController implements Initializable {
         ScoreSummaryRepresentation summary = client.getGameScores(g.getId());
         String status = summary.getMetadata().getStatus();
         WidgetFactory.showAlert(Studio.stage, "Card Generation Failed.", "The card generation failed: " + status);
-      }
-    }
-  }
-
-  @FXML
-  private void onBackgroundReset() {
-    if (this.game.isPresent()) {
-      GameRepresentation g = this.game.get();
-      Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Delete default background for \"" + g.getGameDisplayName() + "\"?",
-          "This will delete the existing default background.", "A new background will be generated from the existing assets for this table.", "Yes, delete background");
-      if (result.isPresent() && result.get().equals(ButtonType.OK)) {
-        client.deleteDefaultBackgroundFile(g.getId());
-        this.refreshDefaultBackground(this.game);
       }
     }
   }
@@ -764,6 +756,8 @@ public class TablesSidebarController implements Initializable {
   }
 
   private void refreshView(Optional<GameRepresentation> g) {
+    this.tablesSidebarDefaultBackgroundController.setGame(g);
+
     povSettingsPane.setVisible(g.isEmpty());
     povCreatePane.setVisible(g.isEmpty());
 
@@ -772,7 +766,6 @@ public class TablesSidebarController implements Initializable {
     editTableNameBtn.setDisable(g.isEmpty());
     romUploadBtn.setDisable(g.isEmpty());
     scanBtn.setDisable(g.isEmpty());
-    defaultPictureUploadBtn.setDisable(true);
 
     if (g.isPresent()) {
       GameRepresentation game = g.get();
@@ -786,7 +779,6 @@ public class TablesSidebarController implements Initializable {
       editTableNameBtn.setDisable(!game.getEmulator().isVisualPinball());
       romUploadBtn.setDisable(!game.getEmulator().isVisualPinball());
       scanBtn.setDisable(!game.getEmulator().isVisualPinball());
-      defaultPictureUploadBtn.setDisable(StringUtils.isEmpty(game.getRom()));
 
 
       volumeSlider.setDisable(false);
@@ -812,7 +804,7 @@ public class TablesSidebarController implements Initializable {
         labelHSFilename.setText("-");
       }
 
-      refreshDefaultBackground(g);
+      tablesSidebarDefaultBackgroundController.refreshView(g);
       refreshPOV(g);
 
       if (titledPaneMedia.isExpanded()) {
@@ -838,7 +830,7 @@ public class TablesSidebarController implements Initializable {
       labelTimesPlayed.setText("-");
       labelHSFilename.setText("-");
 
-      refreshDefaultBackground(Optional.empty());
+      tablesSidebarDefaultBackgroundController.refreshView(Optional.empty());
     }
     refreshHighscore(g, false);
   }
@@ -887,40 +879,6 @@ public class TablesSidebarController implements Initializable {
         povSoundVolumeSlider.setValue(100);
         povMusicVolumeSlider.setValue(100);
       }
-    }
-  }
-
-  private void refreshDefaultBackground(Optional<GameRepresentation> game) {
-    try {
-      openDefaultPictureBtn.setDisable(true);
-      openDefaultPictureBtn.setTooltip(new Tooltip("Open default background"));
-      rawDefaultBackgroundImage.setVisible(false);
-      resetBackgroundBtn.setDisable(true);
-
-      if (game.isPresent()) {
-        GameRepresentation g = game.get();
-        resetBackgroundBtn.setDisable(!g.isDefaultBackgroundAvailable());
-        openDefaultPictureBtn.setDisable(!g.isDefaultBackgroundAvailable());
-
-        InputStream input = client.getDefaultPicture(game.get());
-        Image image = new Image(input);
-        rawDefaultBackgroundImage.setVisible(true);
-        rawDefaultBackgroundImage.setImage(image);
-        input.close();
-
-        if (image.getWidth() > 300 && g.isDefaultBackgroundAvailable()) {
-          openDefaultPictureBtn.setDisable(false);
-          resolutionLabel.setText("Resolution: " + (int) image.getWidth() + " x " + (int) image.getHeight());
-        }
-        else {
-          resolutionLabel.setText("");
-        }
-      }
-      else {
-        resolutionLabel.setText("");
-      }
-    } catch (IOException e) {
-      LOG.error("Failed to load default background: " + e.getMessage(), e);
     }
   }
 
