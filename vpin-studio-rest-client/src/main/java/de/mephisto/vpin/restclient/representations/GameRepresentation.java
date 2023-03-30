@@ -42,6 +42,15 @@ public class GameRepresentation {
   private boolean selected;
   private boolean romRequired;
   private String assets;
+  private boolean defaultBackgroundAvailable;
+
+  public boolean isDefaultBackgroundAvailable() {
+    return defaultBackgroundAvailable;
+  }
+
+  public void setDefaultBackgroundAvailable(boolean defaultBackgroundAvailable) {
+    this.defaultBackgroundAvailable = defaultBackgroundAvailable;
+  }
 
   public String getAssets() {
     return assets;

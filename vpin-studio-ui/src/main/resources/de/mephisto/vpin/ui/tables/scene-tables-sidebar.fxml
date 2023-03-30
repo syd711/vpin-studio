@@ -254,7 +254,7 @@
                                   <children>
                                       <TilePane alignment="CENTER" prefHeight="200.0" prefWidth="200.0" styleClass="media-container">
                                           <children>
-                                              <ImageView fx:id="rawDirectB2SImage" fitHeight="350.0" fitWidth="450.0" pickOnBounds="true" preserveRatio="true" />
+                                              <ImageView fx:id="rawDefaultBackgroundImage" fitHeight="350.0" fitWidth="450.0" pickOnBounds="true" preserveRatio="true" />
                                           </children>
                                       </TilePane>
                                       <BorderPane prefWidth="200.0">
@@ -301,6 +301,15 @@
                                     <Font size="14.0" />
                                  </font>
                                         </Button>
+                              <Separator orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
+                              <Button fx:id="resetBackgroundBtn" mnemonicParsing="false" onAction="#onBackgroundReset" text="Reset" textFill="#ff3333">
+                                 <graphic>
+                                    <FontIcon iconColor="#ff3333" iconLiteral="mdi2d-delete-outline" />
+                                 </graphic>
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </Button>
                            </items>
                         </ToolBar>
                      </top>

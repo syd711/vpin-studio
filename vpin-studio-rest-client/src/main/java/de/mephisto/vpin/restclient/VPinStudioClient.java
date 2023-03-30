@@ -375,6 +375,27 @@ public class VPinStudioClient implements ObservedPropertyChangeListener, Overlay
    * Assets / Popper
    ********************************************************************************************************************/
 
+  public boolean uploadDefaultBackgroundFile(File file, int gameId, FileUploadProgressListener listener) throws Exception {
+    try {
+      String url = restClient.getBaseUrl() + API + "assets/background";
+      new RestTemplate().exchange(url, HttpMethod.POST, createUpload(file, gameId, null, AssetType.DEFAULT_BACKGROUND, listener), Boolean.class);
+      return true;
+    } catch (Exception e) {
+      LOG.error("Default background upload failed: " + e.getMessage(), e);
+      throw e;
+    }
+  }
+
+  public boolean deleteDefaultBackgroundFile(int gameId) {
+    try {
+      restClient.delete(API + "assets/background/" + gameId);
+      return true;
+    } catch (Exception e) {
+      LOG.error("Default background deletion failed: " + e.getMessage(), e);
+      throw e;
+    }
+  }
+
   public ByteArrayInputStream getGameMediaItem(int id, PopperScreen screen) {
     String url = API + "poppermedia/" + id + "/" + screen.name();
     if (!imageCache.containsKey(url) && screen.equals(PopperScreen.Wheel)) {
@@ -823,17 +844,6 @@ public class VPinStudioClient implements ObservedPropertyChangeListener, Overlay
       return true;
     } catch (Exception e) {
       LOG.error("Directb2s upload failed: " + e.getMessage(), e);
-      throw e;
-    }
-  }
-
-  public boolean uploadDefaultBackgroundFile(File file, int gameId, FileUploadProgressListener listener) throws Exception {
-    try {
-      String url = restClient.getBaseUrl() + API + "directb2s/background";
-      new RestTemplate().exchange(url, HttpMethod.POST, createUpload(file, gameId, null, AssetType.DEFAULT_BACKGROUND, listener), Boolean.class);
-      return true;
-    } catch (Exception e) {
-      LOG.error("Default background upload failed: " + e.getMessage(), e);
       throw e;
     }
   }

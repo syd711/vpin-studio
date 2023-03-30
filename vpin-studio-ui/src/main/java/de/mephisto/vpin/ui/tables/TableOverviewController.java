@@ -15,6 +15,7 @@ import de.mephisto.vpin.ui.tables.validation.ValidationTexts;
 import de.mephisto.vpin.ui.util.Dialogs;
 import de.mephisto.vpin.ui.util.ProgressResultModel;
 import javafx.application.Platform;
+import javafx.beans.binding.Bindings;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
@@ -37,6 +38,7 @@ import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Paint;
+import javafx.util.Callback;
 import org.apache.commons.lang3.StringUtils;
 import org.kordamp.ikonli.javafx.FontIcon;
 import org.slf4j.Logger;
@@ -534,6 +536,22 @@ public class TableOverviewController implements Initializable, StudioFXControlle
         refreshView(Optional.ofNullable(gameRepresentation));
       }
     });
+
+//    tableView.setRowFactory(
+//        tableView -> {
+//          final TableRow<GameRepresentation> row = new TableRow<>();
+//          final ContextMenu rowMenu = new ContextMenu();
+//          MenuItem editItem = new MenuItem("Edit");
+//          MenuItem removeItem = new MenuItem("Delete");
+//          rowMenu.getItems().addAll(editItem, removeItem);
+//
+//          // only display context menu for non-empty rows:
+//          row.contextMenuProperty().bind(
+//              Bindings.when(row.emptyProperty())
+//                  .then((ContextMenu) null)
+//                  .otherwise(rowMenu));
+//          return row;
+//        });
 
 
 //    emulatorTypeCombo.setItems(FXCollections.observableList(Arrays.asList("", EmulatorTypes.VISUAL_PINBALL_X, EmulatorTypes.PINBALL_FX3, EmulatorTypes.FUTURE_PINBALL)));

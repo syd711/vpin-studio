@@ -602,6 +602,7 @@
 }
 
 .menu-item {
+    -fx-min-width: 160px;
     -fx-padding: 6 6 6 6;
     -fx-text-fill: #FFFFFF;
     -fx-background: #111111;
@@ -629,3 +630,12 @@
     -fx-font-size: 14;
 }
 
+.context-menu {
+    -fx-min-width: 160px;
+    -fx-background-color: #222222;
+    -fx-text-fill: -fx-font-1;
+}
+
+.menu-item:focused {
+    -fx-background-color: -fx-base-5;
+}

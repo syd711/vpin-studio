@@ -152,7 +152,7 @@ public class TablesSidebarController implements Initializable {
   private Label rawTitleLabel;
 
   @FXML
-  private ImageView rawDirectB2SImage;
+  private ImageView rawDefaultBackgroundImage;
 
   @FXML
   private Button openDefaultPictureBtn;
@@ -210,6 +210,9 @@ public class TablesSidebarController implements Initializable {
 
   @FXML
   private Button resetBtn;
+
+  @FXML
+  private Button resetBackgroundBtn;
 
   @FXML
   private Button cardBtn;
@@ -502,6 +505,19 @@ public class TablesSidebarController implements Initializable {
   }
 
   @FXML
+  private void onBackgroundReset() {
+    if (this.game.isPresent()) {
+      GameRepresentation g = this.game.get();
+      Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Delete default background for \"" + g.getGameDisplayName() + "\"?",
+          "This will delete the existing default background.", "A new background will be generated from the existing assets for this table.", "Yes, delete background");
+      if (result.isPresent() && result.get().equals(ButtonType.OK)) {
+        client.deleteDefaultBackgroundFile(g.getId());
+        this.refreshDefaultBackground(this.game);
+      }
+    }
+  }
+
+  @FXML
   private void onScoreReset() {
     if (this.game.isPresent()) {
       GameRepresentation g = this.game.get();
@@ -601,7 +617,7 @@ public class TablesSidebarController implements Initializable {
   private void onPOVExport() {
     if (game.isPresent()) {
       GameRepresentation g = game.get();
-      if(!g.isGameFileAvailable()) {
+      if (!g.isGameFileAvailable()) {
         return;
       }
 
@@ -796,7 +812,7 @@ public class TablesSidebarController implements Initializable {
         labelHSFilename.setText("-");
       }
 
-      refreshDirectB2SPreview(g);
+      refreshDefaultBackground(g);
       refreshPOV(g);
 
       if (titledPaneMedia.isExpanded()) {
@@ -822,7 +838,7 @@ public class TablesSidebarController implements Initializable {
       labelTimesPlayed.setText("-");
       labelHSFilename.setText("-");
 
-      refreshDirectB2SPreview(Optional.empty());
+      refreshDefaultBackground(Optional.empty());
     }
     refreshHighscore(g, false);
   }
@@ -874,20 +890,25 @@ public class TablesSidebarController implements Initializable {
     }
   }
 
-  private void refreshDirectB2SPreview(Optional<GameRepresentation> game) {
+  private void refreshDefaultBackground(Optional<GameRepresentation> game) {
     try {
       openDefaultPictureBtn.setDisable(true);
-      openDefaultPictureBtn.setTooltip(new Tooltip("Open directb2s image"));
-      rawDirectB2SImage.setVisible(false);
+      openDefaultPictureBtn.setTooltip(new Tooltip("Open default background"));
+      rawDefaultBackgroundImage.setVisible(false);
+      resetBackgroundBtn.setDisable(true);
 
       if (game.isPresent()) {
+        GameRepresentation g = game.get();
+        resetBackgroundBtn.setDisable(!g.isDefaultBackgroundAvailable());
+        openDefaultPictureBtn.setDisable(!g.isDefaultBackgroundAvailable());
+
         InputStream input = client.getDefaultPicture(game.get());
         Image image = new Image(input);
-        rawDirectB2SImage.setVisible(true);
-        rawDirectB2SImage.setImage(image);
+        rawDefaultBackgroundImage.setVisible(true);
+        rawDefaultBackgroundImage.setImage(image);
         input.close();
 
-        if (image.getWidth() > 300) {
+        if (image.getWidth() > 300 && g.isDefaultBackgroundAvailable()) {
           openDefaultPictureBtn.setDisable(false);
           resolutionLabel.setText("Resolution: " + (int) image.getWidth() + " x " + (int) image.getHeight());
         }
@@ -899,7 +920,7 @@ public class TablesSidebarController implements Initializable {
         resolutionLabel.setText("");
       }
     } catch (IOException e) {
-      LOG.error("Failed to load raw b2s: " + e.getMessage(), e);
+      LOG.error("Failed to load default background: " + e.getMessage(), e);
     }
   }
 
