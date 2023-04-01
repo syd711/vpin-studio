@@ -2,34 +2,21 @@
 
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Label?>
-<?import javafx.scene.control.Tooltip?>
-<?import javafx.scene.layout.*?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
-<?import org.kordamp.ikonli.javafx.FontIcon?>
-<BorderPane fx:id="defaultBackgroundBorderPane" prefWidth="600.0" styleClass="accordion-container"
-            stylesheets="@../stylesheet.css" BorderPane.alignment="CENTER" xmlns="http://javafx.com/javafx/18"
-            xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.tables.TablesSidebarPUPPackController">
+
+<BorderPane fx:id="defaultBackgroundBorderPane" prefWidth="600.0" styleClass="accordion-container" stylesheets="@../stylesheet.css" BorderPane.alignment="CENTER" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.tables.TablesSidebarPUPPackController">
     <center>
         <VBox prefHeight="200.0" prefWidth="100.0" BorderPane.alignment="CENTER">
             <children>
                 <HBox alignment="BOTTOM_LEFT" spacing="6.0">
                     <children>
-                        <Label text="PinUP Popper Table Volume">
+                        <Label text="Work in progress..." textFill="WHITE">
                             <font>
-                                <Font size="14.0"/>
+                                <Font size="14.0" />
                             </font>
-                        </Label>
-                        <Label>
-                            <font>
-                                <Font size="14.0"/>
-                            </font>
-                            <graphic>
-                                <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18"/>
-                            </graphic>
-                            <tooltip>
-                                <Tooltip
-                                        text="Launches the game at the given volume level (%based on current Popper PC Volume)"/>
-                            </tooltip>
                         </Label>
                     </children>
                 </HBox>
@@ -37,6 +24,6 @@
         </VBox>
     </center>
     <padding>
-        <Insets bottom="12.0" left="12.0" right="12.0" top="12.0"/>
+        <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
     </padding>
 </BorderPane>
