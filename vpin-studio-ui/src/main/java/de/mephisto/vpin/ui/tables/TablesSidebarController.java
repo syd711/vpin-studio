@@ -169,12 +169,28 @@ public class TablesSidebarController implements Initializable {
     }
 
     titledPaneMedia.expandedProperty().addListener((observableValue, aBoolean, expanded) -> {
-      if (expanded) {
-        refreshView(game);
-      }
-      else {
-        tablesSidebarMediaController.resetMedia();
-      }
+      refreshView(game);
+    });
+    titledPanePov.expandedProperty().addListener((observableValue, aBoolean, expanded) -> {
+      refreshView(game);
+    });
+    titledPaneHighscores.expandedProperty().addListener((observableValue, aBoolean, expanded) -> {
+      refreshView(game);
+    });
+    titledPaneAudio.expandedProperty().addListener((observableValue, aBoolean, expanded) -> {
+      refreshView(game);
+    });
+    titledPanePUPPack.expandedProperty().addListener((observableValue, aBoolean, expanded) -> {
+      refreshView(game);
+    });
+    titledPaneDirectB2s.expandedProperty().addListener((observableValue, aBoolean, expanded) -> {
+      refreshView(game);
+    });
+    titledPaneMetadata.expandedProperty().addListener((observableValue, aBoolean, expanded) -> {
+      refreshView(game);
+    });
+    titledPaneDefaultBackground.expandedProperty().addListener((observableValue, aBoolean, expanded) -> {
+      refreshView(game);
     });
 
     mediaPreviewCheckbox.selectedProperty().addListener((observable, oldValue, newValue) -> refreshView(game));
@@ -198,14 +214,34 @@ public class TablesSidebarController implements Initializable {
   }
 
   private void refreshView(Optional<GameRepresentation> g) {
-    this.tablesSidebarAudioController.setGame(g);
-    this.tablesSidebarDefaultBackgroundController.setGame(g);
-    this.tablesSidebarHighscoresController.setGame(g);
-    this.tablesSidebarMediaController.setGame(g, mediaPreviewCheckbox.isSelected());
-    this.tablesSidebarMetadataController.setGame(g);
-    this.tablesSidebarPovController.setGame(g);
-    this.tablesSidebarDirectB2SController.setGame(g);
-    this.tablesSidebarPUPPackController.setGame(g);
+    if (titledPaneMedia.isExpanded()) {
+      this.tablesSidebarMediaController.setGame(g, mediaPreviewCheckbox.isSelected());
+    }
+    else {
+      tablesSidebarMediaController.resetMedia();
+    }
+
+    if (titledPaneMetadata.isExpanded()) {
+      this.tablesSidebarMetadataController.setGame(g);
+    }
+    if (titledPanePUPPack.isExpanded()) {
+      this.tablesSidebarPUPPackController.setGame(g);
+    }
+    if (titledPaneDirectB2s.isExpanded()) {
+      this.tablesSidebarDirectB2SController.setGame(g);
+    }
+    if (titledPaneAudio.isExpanded()) {
+      this.tablesSidebarAudioController.setGame(g);
+    }
+    if (titledPaneHighscores.isExpanded()) {
+      this.tablesSidebarHighscoresController.setGame(g);
+    }
+    if (titledPaneDefaultBackground.isExpanded()) {
+      this.tablesSidebarDefaultBackgroundController.setGame(g);
+    }
+    if (titledPanePov.isExpanded()) {
+      this.tablesSidebarPovController.setGame(g);
+    }
   }
 
   public TablesSidebarAudioController getTablesSidebarAudioController() {
