@@ -101,9 +101,9 @@ public class AssetsResource {
       LOG.error("Failed to load directb2s image: " + e.getMessage(), e);
     }
 
-    InputStream in = ResourceLoader.class.getResourceAsStream("empty-b2s-preview.png");
+    InputStream in = ResourceLoader.class.getResourceAsStream("empty-preview.png");
     byte[] bytes = IOUtils.toByteArray(in);
-    return RequestUtil.serializeImage(bytes, "empty-b2s-preview.png");
+    return RequestUtil.serializeImage(bytes, "empty-preview.png");
   }
 
   @GetMapping("/{id}")

@@ -9,6 +9,7 @@
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.TilePane?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 <?import org.kordamp.ikonli.javafx.FontIcon?>
@@ -17,6 +18,27 @@
     <center>
         <VBox BorderPane.alignment="CENTER">
          <children>
+            <TilePane alignment="CENTER" prefHeight="200.0" prefWidth="200.0" styleClass="media-container">
+               <children>
+                  <ImageView fx:id="thumbnailImage" fitHeight="350.0" fitWidth="450.0" pickOnBounds="true" preserveRatio="true" />
+               </children>
+            </TilePane>
+            <BorderPane>
+               <left>
+                  <Label fx:id="resolutionLabel" textFill="WHITE" BorderPane.alignment="CENTER" />
+               </left>
+               <VBox.margin>
+                  <Insets left="12.0" top="6.0" />
+               </VBox.margin>
+            </BorderPane>
+            <Label text="DirectB2S Data" textFill="WHITE">
+               <font>
+                  <Font name="System Bold" size="14.0" />
+               </font>
+               <VBox.margin>
+                  <Insets left="12.0" right="12.0" top="12.0" />
+               </VBox.margin>
+            </Label>
             <GridPane vgap="3.0">
               <columnConstraints>
                 <ColumnConstraints hgrow="SOMETIMES" maxWidth="295.199951171875" minWidth="10.0" prefWidth="152.00001525878906" />
@@ -32,7 +54,6 @@
                   <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                   <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                   <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                  <RowConstraints minHeight="10.0" prefHeight="420.0" valignment="TOP" vgrow="SOMETIMES" />
               </rowConstraints>
                <children>
                   <Label text="Table Type:" textFill="WHITE" GridPane.rowIndex="1">
@@ -75,17 +96,6 @@
                         <Font size="14.0" />
                      </font>
                   </Label>
-                  <Label layoutX="10.0" layoutY="251.0" text="Background Image:" textFill="WHITE" GridPane.rowIndex="9">
-                     <font>
-                        <Font size="14.0" />
-                     </font>
-                  </Label>
-                  <VBox GridPane.columnIndex="1" GridPane.rowIndex="9">
-                     <children>
-                        <ImageView fx:id="thumbnailImage" fitHeight="400.0" fitWidth="400.0" pickOnBounds="true" preserveRatio="true" />
-                        <Label fx:id="resolutionLabel" textFill="WHITE" />
-                     </children>
-                  </VBox>
                   <Label fx:id="nameLabel" text="-" textFill="WHITE" GridPane.columnIndex="1">
                      <font>
                         <Font size="14.0" />
@@ -143,7 +153,7 @@
                   </Label>
                </children>
                <VBox.margin>
-                  <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
+                  <Insets bottom="12.0" left="12.0" right="12.0" top="6.0" />
                </VBox.margin>
             </GridPane>
          </children>

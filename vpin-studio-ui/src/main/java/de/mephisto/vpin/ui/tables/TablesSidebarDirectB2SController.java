@@ -136,7 +136,7 @@ public class TablesSidebarDirectB2SController implements Initializable {
       playersLabel.setText("-");
       filesizeLabel.setText("-");
       modificationDateLabel.setText("-");
-      thumbnailImage.setImage(null);
+      thumbnailImage.setImage(new Image(Studio.class.getResourceAsStream("empty-preview.png")));
       resolutionLabel.setText("");
     }
   }
