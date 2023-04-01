@@ -127,9 +127,6 @@ public class TableOverviewController implements Initializable, StudioFXControlle
   private MenuItem uploadRomItem;
 
   @FXML
-  private MenuItem uploadDirectB2SItem;
-
-  @FXML
   private Button reloadBtn;
 
   @FXML
@@ -151,18 +148,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
 
   @FXML
   private void onRomUpload() {
-    this.tablesController.getTablesSideBarController().onRomUpload();
-  }
-
-  @FXML
-  private void onDirectb2sUpload() {
-    GameRepresentation game = tableView.getSelectionModel().getSelectedItem();
-    if (game != null) {
-      boolean uploaded = Dialogs.openDirectB2SUploadDialog(game);
-      if (uploaded) {
-        onReload();
-      }
-    }
+    this.tablesController.getTablesSideBarController().getTablesSidebarMetadataController().onRomUpload();
   }
 
   @FXML
@@ -359,7 +345,6 @@ public class TableOverviewController implements Initializable, StudioFXControlle
     this.deleteBtn.setDisable(true);
     this.uploadTableItem.setDisable(true);
     this.uploadRomItem.setDisable(true);
-    this.uploadDirectB2SItem.setDisable(true);
     this.inspectBtn.setDisable(true);
     this.exportBtn.setDisable(true);
     this.uploadMenuBtn.setDisable(true);
@@ -391,7 +376,6 @@ public class TableOverviewController implements Initializable, StudioFXControlle
         if (!games.isEmpty()) {
           this.validateBtn.setDisable(false);
           this.deleteBtn.setDisable(false);
-          this.uploadDirectB2SItem.setDisable(false);
           this.uploadRomItem.setDisable(false);
         }
 
@@ -522,7 +506,6 @@ public class TableOverviewController implements Initializable, StudioFXControlle
       boolean disable = c.getList().isEmpty() || c.getList().size() > 1;
       validateBtn.setDisable(disable);
       deleteBtn.setDisable(disable);
-      uploadDirectB2SItem.setDisable(disable);
       inspectBtn.setDisable(true);
       exportBtn.setDisable(true);
 

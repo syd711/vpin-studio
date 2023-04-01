@@ -37,7 +37,7 @@ public class DirectB2SImageExtractor extends DefaultHandler {
         out.close();
       }
     } catch (Exception e) {
-      String msg = "Failed to parse directb2s directB2S '" + directB2S.getAbsolutePath() + "': " + e.getMessage();
+      String msg = "Failed to parse directB2S '" + directB2S.getAbsolutePath() + "': " + e.getMessage();
       LOG.error(msg);
       throw new VPinStudioException(msg, e);
     }

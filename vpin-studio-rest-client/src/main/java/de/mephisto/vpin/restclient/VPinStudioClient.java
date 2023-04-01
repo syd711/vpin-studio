@@ -270,6 +270,7 @@ public class VPinStudioClient implements ObservedPropertyChangeListener, Overlay
         Map<String, Object> values = new HashMap<>();
         values.put("property", property);
         values.put("value", value);
+        LOG.info("Update POV property " + property + " to " + value);
         return restClient.put(API + "vpx/pov/" + gameId, values);
       }
       return true;
@@ -569,7 +570,7 @@ public class VPinStudioClient implements ObservedPropertyChangeListener, Overlay
     String name = "competition-bg-game-" + gameId;
 
     if (!imageCache.containsKey(name)) {
-      byte[] bytes = restClient.readBinary(API + "directb2s/competition/" + gameId);
+      byte[] bytes = restClient.readBinary(API + "assets/competition/" + gameId);
       imageCache.put(name, bytes);
     }
 
@@ -833,8 +834,12 @@ public class VPinStudioClient implements ObservedPropertyChangeListener, Overlay
    ********************************************************************************************************************/
 
   public ByteArrayInputStream getDefaultPicture(GameRepresentation game) {
-    byte[] bytes = restClient.readBinary(API + "directb2s/" + game.getId());
+    byte[] bytes = restClient.readBinary(API + "assets/defaultbackground/" + game.getId());
     return new ByteArrayInputStream(bytes);
+  }
+
+  public DirectB2SData getDirectB2SData(int gameId) {
+    return restClient.get(API + "directb2s/" + gameId, DirectB2SData.class);
   }
 
   public boolean uploadDirectB2SFile(File file, String uploadType, int gameId, FileUploadProgressListener listener) throws Exception {

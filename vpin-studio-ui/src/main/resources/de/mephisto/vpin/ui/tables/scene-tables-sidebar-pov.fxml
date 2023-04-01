@@ -1,0 +1,316 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.Slider?>
+<?import javafx.scene.control.Spinner?>
+<?import javafx.scene.control.ToolBar?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+<?import org.kordamp.ikonli.javafx.FontIcon?>
+
+<BorderPane fx:id="defaultBackgroundBorderPane" prefWidth="600.0" styleClass="accordion-container" stylesheets="@../stylesheet.css" BorderPane.alignment="CENTER" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.tables.TablesSidebarPovController">
+    <center>
+        <BorderPane fx:id="povSettingsPane" BorderPane.alignment="CENTER">
+            <BorderPane.margin>
+                <Insets />
+            </BorderPane.margin>
+            <center>
+                <VBox>
+                    <children>
+                        <GridPane vgap="3.0">
+                            <columnConstraints>
+                                <ColumnConstraints hgrow="SOMETIMES" maxWidth="282.20001220703125" minWidth="10.0" prefWidth="205.5999755859375" />
+                                <ColumnConstraints hgrow="SOMETIMES" maxWidth="436.0000152587891" minWidth="10.0" prefWidth="368.8000244140625" />
+                            </columnConstraints>
+                            <rowConstraints>
+                                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                <RowConstraints minHeight="10.0" prefHeight="10.0" vgrow="SOMETIMES" />
+                                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                <RowConstraints minHeight="10.0" prefHeight="44.0" vgrow="SOMETIMES" />
+                                <RowConstraints maxHeight="25.600012207031227" minHeight="10.0" prefHeight="10.0" vgrow="SOMETIMES" />
+                                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                <RowConstraints minHeight="10.0" prefHeight="10.0" vgrow="SOMETIMES" />
+                                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="10.0" prefHeight="10.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="10.0" prefHeight="44.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="10.0" prefHeight="44.0" vgrow="SOMETIMES" />
+                            </rowConstraints>
+                            <children>
+                                <Label text="4x AA (SSAA):" textFill="WHITE" GridPane.rowIndex="1">
+                                    <font>
+                                        <Font size="14.0" />
+                                    </font>
+                                </Label>
+                                <Label layoutX="10.0" layoutY="15.0" text="Post Proc AA:" textFill="WHITE" GridPane.rowIndex="2">
+                                    <font>
+                                        <Font size="14.0" />
+                                    </font>
+                                </Label>
+                                <Label layoutX="10.0" layoutY="45.0" text="In-game AO:" textFill="WHITE" GridPane.rowIndex="3">
+                                    <font>
+                                        <Font size="14.0" />
+                                    </font>
+                                </Label>
+                                <Label layoutX="10.0" layoutY="76.0" text="ScSp. Reflect.:" textFill="WHITE" GridPane.rowIndex="4">
+                                    <font>
+                                        <Font size="14.0" />
+                                    </font>
+                                </Label>
+                                <Label layoutX="10.0" layoutY="106.0" text="FPS Limiter:" textFill="WHITE" GridPane.rowIndex="5">
+                                    <font>
+                                        <Font size="14.0" />
+                                    </font>
+                                </Label>
+                                <Label layoutX="10.0" layoutY="289.0" text="Overwrite Night -&gt; Day Cycle:" textFill="WHITE" GridPane.rowIndex="17">
+                                    <font>
+                                        <Font size="14.0" />
+                                    </font>
+                                </Label>
+                                <Label layoutX="10.0" layoutY="320.0" text="Night -&gt; Day Level:" textFill="WHITE" GridPane.rowIndex="18">
+                                    <font>
+                                        <Font size="14.0" />
+                                    </font>
+                                </Label>
+                                <Label layoutX="10.0" layoutY="349.0" text="Game Difficulty:" textFill="WHITE" GridPane.rowIndex="20">
+                                    <font>
+                                        <Font name="System Bold" size="14.0" />
+                                    </font>
+                                </Label>
+                                <ComboBox fx:id="povSSAACombo" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                                <ComboBox fx:id="povPostprocAACombo" layoutX="244.0" layoutY="10.0" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                                <ComboBox fx:id="povIngameAOCombo" layoutX="244.0" layoutY="41.0" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                                <ComboBox fx:id="povScSpReflectCombo" layoutX="244.0" layoutY="72.0" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+                                <ComboBox fx:id="povFpsLimiterCombo" layoutX="244.0" layoutY="102.0" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="5" />
+                                <Label layoutX="10.0" layoutY="45.0" text="Graphic Settings" textFill="WHITE">
+                                    <font>
+                                        <Font name="System Bold" size="14.0" />
+                                    </font>
+                                </Label>
+                                <Label layoutX="10.0" layoutY="259.0" text="Night / Day Cycle" textFill="WHITE" GridPane.rowIndex="16">
+                                    <font>
+                                        <Font name="System Bold" size="14.0" />
+                                    </font>
+                                </Label>
+                                <Label text="Overwrite Detail Level:" textFill="WHITE" GridPane.rowIndex="8">
+                                    <font>
+                                        <Font size="14.0" />
+                                    </font>
+                                </Label>
+                                <Label text="Details Level:" textFill="WHITE" GridPane.rowIndex="9">
+                                    <font>
+                                        <Font size="14.0" />
+                                    </font>
+                                </Label>
+                                <Label layoutX="10.0" layoutY="15.0" text="Element Details" textFill="WHITE" GridPane.rowIndex="7">
+                                    <font>
+                                        <Font name="System Bold" size="14.0" />
+                                    </font>
+                                </Label>
+                                <Label text="Ball" textFill="WHITE" GridPane.rowIndex="11">
+                                    <font>
+                                        <Font name="System Bold" size="14.0" />
+                                    </font>
+                                </Label>
+                                <Label text="Ball Reflection:" textFill="WHITE" GridPane.rowIndex="12">
+                                    <font>
+                                        <Font size="14.0" />
+                                    </font>
+                                </Label>
+                                <Label text="Ball Trail:" textFill="WHITE" GridPane.rowIndex="13">
+                                    <font>
+                                        <Font size="14.0" />
+                                    </font>
+                                </Label>
+                                <Label text="Ball Trail Strength:" textFill="WHITE" GridPane.rowIndex="14">
+                                    <font>
+                                        <Font size="14.0" />
+                                    </font>
+                                </Label>
+                                <CheckBox fx:id="povOverwriteDetailCheckbox" mnemonicParsing="false" GridPane.columnIndex="1" GridPane.rowIndex="8">
+                                    <font>
+                                        <Font size="14.0" />
+                                    </font>
+                                </CheckBox>
+                                <ComboBox fx:id="povBallReflectionCombobox" layoutX="246.0" layoutY="163.0" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="12" />
+                                <ComboBox fx:id="povBallTrailCombobox" layoutX="246.0" layoutY="375.0" GridPane.columnIndex="1" GridPane.rowIndex="13" />
+                                <CheckBox fx:id="povOverwriteNightDayCheckbox" layoutX="246.0" layoutY="259.0" mnemonicParsing="false" GridPane.columnIndex="1" GridPane.rowIndex="17">
+                                    <font>
+                                        <Font size="14.0" />
+                                    </font>
+                                </CheckBox>
+                                <Slider fx:id="povDetailsSlider" blockIncrement="1.0" majorTickUnit="1.0" max="10.0" minorTickCount="0" showTickLabels="true" showTickMarks="true" snapToTicks="true" GridPane.columnIndex="1" GridPane.rowIndex="9">
+                                    <GridPane.margin>
+                                        <Insets top="6.0" />
+                                    </GridPane.margin>
+                                </Slider>
+                                <HBox alignment="CENTER_LEFT" spacing="6.0" GridPane.columnIndex="1" GridPane.rowIndex="14">
+                                    <children>
+                                        <Spinner fx:id="povBallTrailStrengthSpinner" />
+                                        <Label text="(0..100)">
+                                            <font>
+                                                <Font size="14.0" />
+                                            </font>
+                                        </Label>
+                                    </children>
+                                </HBox>
+                                <HBox alignment="CENTER_LEFT" spacing="6.0" GridPane.columnIndex="1" GridPane.rowIndex="20">
+                                    <children>
+                                        <Spinner fx:id="povGameDifficultySpinner" />
+                                        <Label text="(0..100)">
+                                            <font>
+                                                <Font size="14.0" />
+                                            </font>
+                                        </Label>
+                                    </children>
+                                </HBox>
+                                <HBox alignment="CENTER_LEFT" spacing="6.0" GridPane.columnIndex="1" GridPane.rowIndex="18">
+                                    <children>
+                                        <Spinner fx:id="povNighDaySpinner" />
+                                        <Label text="(0..100)">
+                                            <font>
+                                                <Font size="14.0" />
+                                            </font>
+                                        </Label>
+                                    </children>
+                                </HBox>
+                                <Label layoutX="10.0" layoutY="625.0" text="Rotation (Fullscreen):" textFill="WHITE" GridPane.rowIndex="21">
+                                    <font>
+                                        <Font name="System Bold" size="14.0" />
+                                    </font>
+                                </Label>
+                                <HBox alignment="CENTER_LEFT" spacing="6.0" GridPane.columnIndex="1" GridPane.rowIndex="21">
+                                    <children>
+                                        <Spinner fx:id="povRotationFullscreenSpinner" />
+                                        <Label text="(0..360)">
+                                            <font>
+                                                <Font size="14.0" />
+                                            </font>
+                                        </Label>
+                                    </children>
+                                </HBox>
+                        <Label layoutX="10.0" layoutY="352.0" text="Volume" textFill="WHITE" GridPane.rowIndex="23">
+                           <font>
+                              <Font name="System Bold" size="14.0" />
+                           </font>
+                        </Label>
+                        <Slider fx:id="povSoundVolumeSlider" blockIncrement="1.0" disable="true" majorTickUnit="10.0" minorTickCount="10" showTickLabels="true" showTickMarks="true" snapToTicks="true" value="100.0" GridPane.columnIndex="1" GridPane.rowIndex="24" />
+                        <Slider fx:id="povMusicVolumeSlider" blockIncrement="1.0" disable="true" majorTickUnit="10.0" minorTickCount="10" showTickLabels="true" showTickMarks="true" snapToTicks="true" value="100.0" GridPane.columnIndex="1" GridPane.rowIndex="25" />
+                        <Label layoutX="10.0" layoutY="450.0" text="Sound:" textFill="WHITE" GridPane.rowIndex="24">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Label>
+                        <Label layoutX="10.0" layoutY="784.0" text="Music:" textFill="WHITE" GridPane.rowIndex="25">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Label>
+                            </children>
+                            <VBox.margin>
+                                <Insets bottom="12.0" />
+                            </VBox.margin>
+                        </GridPane>
+                    </children>
+                    <BorderPane.margin>
+                        <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
+                    </BorderPane.margin>
+                </VBox>
+            </center>
+            <top>
+                <ToolBar prefHeight="40.0" prefWidth="200.0" BorderPane.alignment="CENTER_LEFT">
+                    <items>
+                        <Button mnemonicParsing="false" onAction="#onPOVReload" text="Reload">
+                            <font>
+                                <Font size="14.0" />
+                            </font>
+                            <graphic>
+                                <FontIcon iconColor="WHITE" iconLiteral="sil-reload" />
+                            </graphic>
+                        </Button>
+                        <Separator orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
+                        <Button layoutX="10.0" layoutY="11.0" mnemonicParsing="false" onAction="#onPOVReExport" text="Re-Export">
+                            <font>
+                                <Font size="14.0" />
+                            </font>
+                            <graphic>
+                                <FontIcon iconColor="WHITE" iconLiteral="mdi2d-download" />
+                            </graphic>
+                        </Button>
+                        <Button layoutX="212.0" layoutY="11.0" mnemonicParsing="false" onAction="#onPOVDelete" text="Delete" textFill="#ff3333">
+                            <font>
+                                <Font size="14.0" />
+                            </font>
+                            <graphic>
+                                <FontIcon iconColor="#ff3333" iconLiteral="mdi2d-delete-outline" />
+                            </graphic>
+                        </Button>
+                    </items>
+                    <BorderPane.margin>
+                        <Insets />
+                    </BorderPane.margin>
+                </ToolBar>
+            </top>
+        </BorderPane>
+    </center>
+    <top>
+        <VBox fx:id="povCreatePane" BorderPane.alignment="TOP_LEFT">
+            <children>
+                <Label layoutX="22.0" layoutY="22.0" text="This table does not have a POV file.">
+                    <font>
+                        <Font size="14.0" />
+                    </font>
+                </Label>
+                <Label text="You can export a POV file to customize settings of the table without modifying the VPX file.">
+                    <font>
+                        <Font size="14.0" />
+                    </font>
+                </Label>
+                <Button fx:id="povExportBtn" mnemonicParsing="false" onAction="#onPOVExport" text="Export POV File">
+                    <font>
+                        <Font size="14.0" />
+                    </font>
+                    <VBox.margin>
+                        <Insets top="12.0" />
+                    </VBox.margin>
+                    <graphic>
+                        <FontIcon iconColor="WHITE" iconLiteral="mdi2d-download" />
+                    </graphic>
+                </Button>
+            </children>
+            <BorderPane.margin>
+                <Insets />
+            </BorderPane.margin>
+            <padding>
+                <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
+            </padding>
+        </VBox>
+    </top>
+    <padding>
+        <Insets left="1.0" right="1.0" />
+    </padding>
+</BorderPane>

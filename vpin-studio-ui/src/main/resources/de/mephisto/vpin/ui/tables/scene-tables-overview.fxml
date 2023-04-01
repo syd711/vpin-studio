@@ -137,11 +137,6 @@
                                                 <FontIcon iconColor="WHITE" iconLiteral="mdi2u-upload" />
                                             </graphic>
                                         </MenuItem>
-                                        <MenuItem fx:id="uploadDirectB2SItem" mnemonicParsing="false" onAction="#onDirectb2sUpload" text="Upload DirectB2S">
-                                            <graphic>
-                                                <FontIcon iconColor="WHITE" iconLiteral="mdi2u-upload" />
-                                            </graphic>
-                                        </MenuItem>
                                     </items>
                                     <font>
                                         <Font size="14.0" />

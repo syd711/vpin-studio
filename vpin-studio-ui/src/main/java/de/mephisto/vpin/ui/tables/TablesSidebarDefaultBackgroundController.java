@@ -3,7 +3,6 @@ package de.mephisto.vpin.ui.tables;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.VPinStudioClient;
 import de.mephisto.vpin.restclient.representations.GameRepresentation;
-import de.mephisto.vpin.restclient.representations.POVRepresentation;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.util.Dialogs;
 import de.mephisto.vpin.ui.util.MediaUtil;
@@ -48,8 +47,6 @@ public class TablesSidebarDefaultBackgroundController implements Initializable {
 
   private Optional<GameRepresentation> game = Optional.empty();
 
-  private TableOverviewController tablesController;
-  private POVRepresentation pov;
   private TablesSidebarController tablesSidebarController;
 
   // Add a public no-args constructor
@@ -62,7 +59,6 @@ public class TablesSidebarDefaultBackgroundController implements Initializable {
   }
 
   public void setGame(Optional<GameRepresentation> game) {
-    this.pov = null;
     this.game = game;
     this.refreshView(game);
   }
@@ -72,7 +68,7 @@ public class TablesSidebarDefaultBackgroundController implements Initializable {
     if (this.game.isPresent()) {
       boolean uploaded = Dialogs.openDefaultBackgroundUploadDialog(this.game.get());
       if (uploaded) {
-        tablesController.onReload();
+        tablesSidebarController.getTablesController().onReload();
       }
     }
   }
@@ -91,7 +87,7 @@ public class TablesSidebarDefaultBackgroundController implements Initializable {
   }
 
   @FXML
-  private void onOpenDirectB2SBackground() {
+  private void onDefaultBackgroundView() {
     if (game.isPresent()) {
       ByteArrayInputStream image = client.getDefaultPicture(game.get());
       MediaUtil.openMedia(image);
@@ -135,11 +131,7 @@ public class TablesSidebarDefaultBackgroundController implements Initializable {
     }
   }
 
-  public void setRootController(TablesSidebarController tablesSidebarController) {
+  public void setSidebarController(TablesSidebarController tablesSidebarController) {
     this.tablesSidebarController = tablesSidebarController;
-  }
-
-  public void setTablesController(TableOverviewController tablesController) {
-    this.tablesController = tablesController;
   }
 }

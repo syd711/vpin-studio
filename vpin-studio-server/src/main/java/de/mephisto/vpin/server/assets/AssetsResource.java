@@ -1,8 +1,15 @@
 package de.mephisto.vpin.server.assets;
 
+import de.mephisto.vpin.restclient.AssetType;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameService;
+import de.mephisto.vpin.server.resources.ResourceLoader;
+import de.mephisto.vpin.server.system.DefaultPictureService;
+import de.mephisto.vpin.server.system.SystemService;
+import de.mephisto.vpin.server.util.ImageUtil;
+import de.mephisto.vpin.server.util.RequestUtil;
 import de.mephisto.vpin.server.util.UploadUtil;
+import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,8 +18,10 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.List;
 
 import static de.mephisto.vpin.server.VPinStudioServer.API_SEGMENT;
@@ -33,9 +42,68 @@ public class AssetsResource {
   @Autowired
   private GameService gameService;
 
+  @Autowired
+  private DefaultPictureService defaultPictureService;
+
+
   @GetMapping
   public List<Asset> getAssets() {
     return assetService.getAssets();
+  }
+
+
+  @GetMapping("/competition/{gameId}")
+  public ResponseEntity<byte[]> getCompetitionBackground(@PathVariable("gameId") int gameId) throws Exception {
+    try {
+      Game game = gameService.getGame(gameId);
+      if (game != null) {
+        Asset asset = assetService.getCompetitionBackground(gameId);
+        if (asset == null) {
+          BufferedImage background = defaultPictureService.generateCompetitionBackgroundImage(game, 800, 340);
+          if (background != null) {
+            byte[] bytes = ImageUtil.toBytes(background);
+            asset = assetService.saveOrUpdate(bytes, -1, "image.png", AssetType.COMPETITION.name(), String.valueOf(game.getId()));
+            LOG.info("Generated new competition background asset " + asset.getId());
+
+            return assetService.serializeAsset(asset);
+          }
+        }
+        else {
+          return assetService.serializeAsset(asset);
+        }
+      }
+    } catch (Exception e) {
+      LOG.error("Failed generate competition image: " + e.getMessage(), e);
+    }
+
+    return RequestUtil.serializeImage(new File(SystemService.RESOURCES, "competition-bg-default.png"));
+  }
+
+  @GetMapping("/defaultbackground/{id}")
+  public ResponseEntity<byte[]> getRaw(@PathVariable("id") int id) throws Exception {
+    try {
+      Game game = gameService.getGame(id);
+      if (game != null) {
+        File target = game.getRawDefaultPicture();
+        if (target != null && !target.exists()) {
+          defaultPictureService.extractDefaultPicture(game);
+        }
+
+        target = game.getRawDefaultPicture();
+        if (target != null && target.exists()) {
+          return RequestUtil.serializeImage(target);
+        }
+      }
+      else {
+        LOG.warn("No GameInfo found for id " + id);
+      }
+    } catch (Exception e) {
+      LOG.error("Failed to load directb2s image: " + e.getMessage(), e);
+    }
+
+    InputStream in = ResourceLoader.class.getResourceAsStream("empty-b2s-preview.png");
+    byte[] bytes = IOUtils.toByteArray(in);
+    return RequestUtil.serializeImage(bytes, "empty-b2s-preview.png");
   }
 
   @GetMapping("/{id}")

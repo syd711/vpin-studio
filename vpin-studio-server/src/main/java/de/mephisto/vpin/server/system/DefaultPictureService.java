@@ -130,7 +130,7 @@ public class DefaultPictureService {
   }
 
   @Nullable
-  public BufferedImage generateB2SCompetitionImage(@NonNull Game game, int cropWidth, int cropHeight) throws VPinStudioException {
+  public BufferedImage generateCompetitionBackgroundImage(@NonNull Game game, int cropWidth, int cropHeight) throws VPinStudioException {
     try {
       if (game.getRawDefaultPicture() == null || !game.getRawDefaultPicture().exists()) {
         extractDefaultPicture(game);

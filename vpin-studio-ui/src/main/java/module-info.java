@@ -12,6 +12,7 @@ module de.mephisto.vpin.ui {
   requires imgscalr.lib;
   requires org.apache.commons.lang3;
   requires org.apache.commons.io;
+  requires org.apache.commons.codec;
   requires com.fasterxml.jackson.databind;
 
   // add icon pack modules
