@@ -86,6 +86,9 @@ public class RepositoryController implements Initializable, StudioEventListener 
   private TableColumn<VpaDescriptorRepresentation, String> povColumn;
 
   @FXML
+  private TableColumn<VpaDescriptorRepresentation, String> altSoundColumn;
+
+  @FXML
   private TableColumn<VpaDescriptorRepresentation, String> sizeColumn;
 
   @FXML
@@ -284,6 +287,15 @@ public class RepositoryController implements Initializable, StudioEventListener 
       VpaDescriptorRepresentation value = cellData.getValue();
       boolean packaged = value.getManifest().getPackageInfo().isPopperMedia();
       if (packaged) {
+        return new SimpleObjectProperty(WidgetFactory.createCheckboxIcon());
+      }
+      return new SimpleStringProperty("");
+    });
+
+    altSoundColumn.setCellValueFactory(cellData -> {
+      VpaDescriptorRepresentation value = cellData.getValue();
+      boolean enabled = value.getManifest().getPackageInfo().isAltSound();
+      if (enabled) {
         return new SimpleObjectProperty(WidgetFactory.createCheckboxIcon());
       }
       return new SimpleStringProperty("");

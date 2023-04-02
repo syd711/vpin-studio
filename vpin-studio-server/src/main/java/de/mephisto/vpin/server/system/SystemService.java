@@ -332,6 +332,11 @@ public class SystemService implements InitializingBean {
     return new File(getVisualPinballInstallationFolder(), "VPinMAME/");
   }
 
+  @NonNull
+  public File getAltSoundFolder() {
+    return new File(getMameFolder(), "altsound/");
+  }
+
   public File[] getVPXTables() {
     return getVPXTablesFolder().listFiles((dir, name) -> name.endsWith(".vpx"));
   }

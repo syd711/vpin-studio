@@ -14,6 +14,7 @@ import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.File;
+import java.io.FilenameFilter;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -335,14 +336,32 @@ public class Game {
 
   public boolean isAltSoundAvailable() {
     File altSoundFolder = getAltSoundFolder();
-    return altSoundFolder != null && altSoundFolder.exists() && altSoundFolder.listFiles().length > 2;
+    if(altSoundFolder != null && altSoundFolder.exists()){
+      File[] files = altSoundFolder.listFiles((dir, name) -> name.endsWith(".csv"));
+      return files != null && files.length > 0;
+    }
+    return false;
   }
 
   @Nullable
   @JsonIgnore
   public File getAltSoundFolder() {
     if (!StringUtils.isEmpty(this.getRom())) {
-      return new File(new File(systemService.getMameFolder(), "altsound"), this.getRom());
+      return new File(systemService.getAltSoundFolder(), this.getRom());
+    }
+    return null;
+  }
+
+
+  @Nullable
+  @JsonIgnore
+  public File getAltSoundCsv() {
+    if (!StringUtils.isEmpty(this.getRom())) {
+      File altSoundFolder = this.getAltSoundFolder();
+      File[] files = altSoundFolder.listFiles((dir, name) -> name.endsWith(".csv"));
+      if(files != null) {
+        return files[0];
+      }
     }
     return null;
   }

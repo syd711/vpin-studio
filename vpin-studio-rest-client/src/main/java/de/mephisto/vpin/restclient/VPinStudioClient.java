@@ -101,6 +101,22 @@ public class VPinStudioClient implements ObservedPropertyChangeListener, Overlay
   }
 
   /*********************************************************************************************************************
+   * Alt Sound
+   ********************************************************************************************************************/
+  public AltSound saveAltSound(int gameId, AltSound altSound) throws Exception {
+    return restClient.post(API + "altsound/save/" + gameId, altSound, AltSound.class);
+  }
+
+  public AltSound getAltSound(int gameId) {
+    return restClient.get(API + "altsound/" + gameId, AltSound.class);
+  }
+
+  public AltSound restoreAltSound(int gameId) {
+    return restClient.get(API + "altsound/restore/" + gameId, AltSound.class);
+  }
+
+
+  /*********************************************************************************************************************
    * Table Manager
    ********************************************************************************************************************/
   public TableManagerSettings getTableManagerSettings() {

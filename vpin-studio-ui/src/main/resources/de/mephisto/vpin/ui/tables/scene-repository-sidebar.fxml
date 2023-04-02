@@ -13,7 +13,7 @@
 <?import javafx.scene.text.Font?>
 <?import org.kordamp.ikonli.javafx.FontIcon?>
 
-<VBox fx:id="repositoryAccordionVBox" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" styleClass="base-component" stylesheets="@../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.tables.RepositorySidebarController">
+<VBox fx:id="repositoryAccordionVBox" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefWidth="600.0" styleClass="base-component" stylesheets="@../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.tables.RepositorySidebarController">
    <children>
       <Accordion fx:id="repositoryAccordion">
         <panes>
@@ -28,8 +28,8 @@
                         </Label>
                         <GridPane>
                           <columnConstraints>
-                            <ColumnConstraints hgrow="SOMETIMES" maxWidth="296.4000244140625" minWidth="10.0" prefWidth="125.79995880126953" />
-                            <ColumnConstraints hgrow="SOMETIMES" maxWidth="503.59996795654297" minWidth="10.0" prefWidth="420.0" />
+                            <ColumnConstraints hgrow="SOMETIMES" maxWidth="296.4000244140625" minWidth="10.0" prefWidth="183.400048828125" />
+                            <ColumnConstraints hgrow="SOMETIMES" maxWidth="503.59996795654297" minWidth="10.0" prefWidth="365.799951171875" />
                               <ColumnConstraints hgrow="SOMETIMES" maxWidth="503.59996795654297" minWidth="10.0" prefWidth="40.0" />
                           </columnConstraints>
                           <rowConstraints>
@@ -109,8 +109,8 @@
                         </Label>
                         <GridPane>
                           <columnConstraints>
-                            <ColumnConstraints hgrow="SOMETIMES" maxWidth="307.2000732421875" minWidth="10.0" prefWidth="136.80003356933594" />
-                            <ColumnConstraints hgrow="SOMETIMES" maxWidth="492.00001525878906" minWidth="10.0" prefWidth="487.19996643066406" />
+                            <ColumnConstraints hgrow="SOMETIMES" maxWidth="307.2000732421875" minWidth="10.0" prefWidth="180.1999755859375" />
+                            <ColumnConstraints hgrow="SOMETIMES" maxWidth="492.00001525878906" minWidth="10.0" prefWidth="398.60002441406243" />
                           </columnConstraints>
                           <rowConstraints>
                             <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
@@ -147,8 +147,8 @@
                         </Label>
                         <GridPane>
                           <columnConstraints>
-                            <ColumnConstraints hgrow="SOMETIMES" maxWidth="298.2000732421875" minWidth="10.0" prefWidth="181.000048828125" />
-                            <ColumnConstraints hgrow="SOMETIMES" maxWidth="486.19995880126953" minWidth="10.0" prefWidth="440.19995117187506" />
+                            <ColumnConstraints hgrow="SOMETIMES" maxWidth="298.2000732421875" minWidth="10.0" prefWidth="185.0" />
+                            <ColumnConstraints hgrow="SOMETIMES" maxWidth="486.19995880126953" minWidth="10.0" prefWidth="403.20002441406245" />
                           </columnConstraints>
                           <rowConstraints>
                             <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />

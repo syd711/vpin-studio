@@ -1,6 +1,7 @@
 package de.mephisto.vpin.ui.util;
 
 import de.mephisto.vpin.commons.utils.WidgetFactory;
+import de.mephisto.vpin.restclient.AltSound;
 import de.mephisto.vpin.restclient.PopperScreen;
 import de.mephisto.vpin.restclient.ResetHighscoreDescriptor;
 import de.mephisto.vpin.restclient.VPinStudioClient;
@@ -210,6 +211,15 @@ public class Dialogs {
     stage.showAndWait();
 
     return controller.uploadFinished();
+  }
+
+  public static boolean openAltSoundEditor(AltSound altSound) {
+    Stage stage = createStudioDialogStage(ROMUploadController.class, "dialog-alt-sound-editor.fxml", "ALT Sound Editor");
+    AltSoundEditorController controller = (AltSoundEditorController) stage.getUserData();
+    controller.setAltSound(altSound);
+    stage.showAndWait();
+
+    return true;
   }
 
   public static void openBotServerIdTutorial() {

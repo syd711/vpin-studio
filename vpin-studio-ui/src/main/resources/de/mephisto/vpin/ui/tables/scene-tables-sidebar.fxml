@@ -1,12 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.Accordion?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TitledPane?>
+<?import javafx.scene.control.Tooltip?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 <?import org.kordamp.ikonli.javafx.FontIcon?>
-<VBox fx:id="tableAccordionVBox" prefWidth="600.0" stylesheets="@../stylesheet.css" BorderPane.alignment="CENTER"
-      xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1"
-      fx:controller="de.mephisto.vpin.ui.tables.TablesSidebarController">
+
+<VBox fx:id="tableAccordionVBox" prefWidth="600.0" stylesheets="@../stylesheet.css" BorderPane.alignment="CENTER" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.tables.TablesSidebarController">
     <children>
         <Accordion fx:id="tableAccordion">
             <panes>
@@ -14,13 +18,12 @@
                     <graphic>
                         <BorderPane prefWidth="560.0">
                             <left>
-                                <Label text="PinUP Popper Media" BorderPane.alignment="CENTER"/>
+                                <Label text="PinUP Popper Media" BorderPane.alignment="CENTER" />
                             </left>
                             <right>
-                                <CheckBox fx:id="mediaPreviewCheckbox" mnemonicParsing="false" selected="true"
-                                          text="Preview" textFill="WHITE" BorderPane.alignment="CENTER">
+                                <CheckBox fx:id="mediaPreviewCheckbox" mnemonicParsing="false" selected="true" text="Preview" textFill="WHITE" BorderPane.alignment="CENTER">
                                     <font>
-                                        <Font size="10.0"/>
+                                        <Font size="10.0" />
                                     </font>
                                 </CheckBox>
                             </right>
@@ -32,22 +35,20 @@
                 <TitledPane fx:id="titledPanePUPPack" expanded="false" text="PUP Pack" />
                 <TitledPane fx:id="titledPaneHighscores" expanded="false" text="Highscores" />
                 <TitledPane fx:id="titledPanePov" expanded="false" text="Point Of View (POV)" />
-                <TitledPane fx:id="titledPaneAudio" expanded="false" text="Audio Settings" />
-                <TitledPane fx:id="titledPaneDefaultBackground" expanded="false" layoutX="10.0" layoutY="104.0"
-                            prefWidth="600.0">
+                <TitledPane fx:id="titledPaneAudio" expanded="false" text="Volume / ALT Sound Settings" />
+                <TitledPane fx:id="titledPaneDefaultBackground" expanded="false" layoutX="10.0" layoutY="104.0" prefWidth="600.0">
                     <graphic>
                         <BorderPane prefWidth="560.0">
                             <left>
-                                <Label text="Default Background" BorderPane.alignment="CENTER"/>
+                                <Label text="Default Background" BorderPane.alignment="CENTER" />
                             </left>
                             <right>
                                 <Label BorderPane.alignment="CENTER">
                                     <graphic>
-                                        <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline"
-                                                  iconSize="16"/>
+                                        <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="16" />
                                     </graphic>
                                     <tooltip>
-                                        <Tooltip text="Used for highscore cards and competition backgrounds."/>
+                                        <Tooltip text="Used for highscore cards and competition backgrounds." />
                                     </tooltip>
                                 </Label>
                             </right>
