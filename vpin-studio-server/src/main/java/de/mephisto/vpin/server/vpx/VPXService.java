@@ -5,6 +5,7 @@ import de.mephisto.vpin.commons.utils.FileUtils;
 import de.mephisto.vpin.server.VPinStudioException;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameService;
+import de.mephisto.vpin.server.system.SystemService;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,6 +29,9 @@ public class VPXService {
 
   @Autowired
   private GameService gameService;
+
+  @Autowired
+  private SystemService systemService;
 
   @Autowired
   private VPXCommandLineService vpxCommandLineService;
@@ -99,7 +103,7 @@ public class VPXService {
     Game game = gameService.getGame(gameId);
     if (game != null) {
       try {
-        File target = vpxCommandLineService.execute(game, "-Pov", "pov");
+        File target = vpxCommandLineService.export(game, "-Pov", "pov");
         if (target.exists()) {
           return getPOV(gameId);
         }
@@ -114,7 +118,7 @@ public class VPXService {
   public String getScript(int gameId) {
     Game game = gameService.getGame(gameId);
     if (game != null) {
-      File target = vpxCommandLineService.execute(game, "-ExtractVBS", "vbs");
+      File target = vpxCommandLineService.export(game, "-ExtractVBS", "vbs");
       if (target.exists()) {
         try {
           LOG.info("Reading vbs file " + target.getAbsolutePath() + " (" + FileUtils.readableFileSize(target.length()) + ")");
@@ -147,6 +151,15 @@ public class VPXService {
       }
     }
     LOG.error("No game found for pov creation with id " + id);
+    return false;
+  }
+
+  public boolean play(int id) {
+    Game game = gameService.getGame(id);
+    if (game != null) {
+      systemService.killPopper();
+      return vpxCommandLineService.execute(game, "-Play");
+    }
     return false;
   }
 }

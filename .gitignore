@@ -53,7 +53,7 @@ hs_err_pid*
 /resources/overlay.png
 /resources/overlay.jpg
 /resources/VPReg/*
-/resources/vpa/*
+/resources/vpa2/*
 /.idea/
 /VPReg/
 /target/
@@ -82,3 +82,4 @@ yarn-error.log*
 /Output/
 /crash.txt
 /documentation/~$discord-competitions.odp
+/resources/vpa/descriptor.json

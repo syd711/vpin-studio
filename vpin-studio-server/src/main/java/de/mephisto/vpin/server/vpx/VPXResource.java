@@ -30,6 +30,11 @@ public class VPXResource {
     return vpxService.savePOVPreference(id, values);
   }
 
+  @PutMapping("/play/{id}")
+  public boolean play(@PathVariable("id") int id, @RequestBody Map<String, Object> values) {
+    return vpxService.play(id);
+  }
+
   @PostMapping("/pov/{id}")
   public POV create(@PathVariable("id") int id, @RequestBody Map<String, Object> values) {
     return vpxService.create(id);

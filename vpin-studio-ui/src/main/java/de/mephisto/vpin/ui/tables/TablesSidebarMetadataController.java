@@ -8,15 +8,21 @@ import de.mephisto.vpin.restclient.representations.GameMediaItemRepresentation;
 import de.mephisto.vpin.restclient.representations.GameMediaRepresentation;
 import de.mephisto.vpin.restclient.representations.GameRepresentation;
 import de.mephisto.vpin.ui.Studio;
+import de.mephisto.vpin.ui.tables.dialogs.ScriptDownloadProgressModel;
 import de.mephisto.vpin.ui.util.Dialogs;
+import de.mephisto.vpin.ui.util.ProgressResultModel;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.awt.*;
+import java.io.File;
+import java.io.IOException;
 import java.net.URL;
 import java.text.DateFormat;
 import java.util.Optional;
@@ -66,6 +72,9 @@ public class TablesSidebarMetadataController implements Initializable {
 
   @FXML
   private Button romUploadBtn;
+
+  @FXML
+  private Button inspectBtn;
 
   @FXML
   private Button editTableNameBtn;
@@ -151,11 +160,36 @@ public class TablesSidebarMetadataController implements Initializable {
     }
   }
 
+  @FXML
+  private void onInspect() {
+    if (game.isPresent()) {
+      Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Inspect script of table\"" + game.get().getGameDisplayName() + "\"?",
+          "This will extract the table script into a temporary file.",
+          "It will be opened afterwards in a text editor.");
+      if (result.isPresent() && result.get().equals(ButtonType.OK)) {
+
+        ProgressResultModel resultModel = Dialogs.createProgressDialog(new ScriptDownloadProgressModel("Extracting Table Script", game.get()));
+        if (!resultModel.getResults().isEmpty()) {
+          File file = (File) resultModel.getResults().get(0);
+          try {
+            Desktop.getDesktop().open(file);
+          } catch (IOException e) {
+            WidgetFactory.showAlert(Studio.stage, "Failed to open script file " + file.getAbsolutePath() + ": " + e.getMessage());
+          }
+        }
+        else {
+          WidgetFactory.showAlert(Studio.stage, "Script extraction failed, check log for details.");
+        }
+      }
+    }
+  }
+
   public void refreshView(Optional<GameRepresentation> g) {
     editHsFileNameBtn.setDisable(g.isEmpty());
     editRomNameBtn.setDisable(g.isEmpty());
     editTableNameBtn.setDisable(g.isEmpty());
     romUploadBtn.setDisable(g.isEmpty());
+    inspectBtn.setDisable(g.isEmpty() || !g.get().isGameFileAvailable());
 
     if (g.isPresent()) {
       GameRepresentation game = g.get();

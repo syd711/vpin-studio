@@ -21,7 +21,28 @@ public class VPXCommandLineService {
   @Autowired
   private SystemService systemService;
 
-  public File execute(@NonNull Game game, @NonNull String commandParam, @NonNull String fileSuffix) {
+  public boolean execute(@NonNull Game game, @NonNull String commandParam) {
+    File gameFile = game.getGameFile();
+    File vpxExe = systemService.getVPXExe();
+
+    try {
+      LOG.info("Executing VPX " + commandParam + "command for " + gameFile.getAbsolutePath());
+      SystemCommandExecutor executor = new SystemCommandExecutor(Arrays.asList(vpxExe.getAbsolutePath(), commandParam, gameFile.getAbsolutePath()));
+      executor.executeCommandAsync();
+
+      StringBuilder standardErrorFromCommand = executor.getStandardErrorFromCommand();
+      if (standardErrorFromCommand != null && !StringUtils.isEmpty(standardErrorFromCommand.toString())) {
+        LOG.error("VPX command failed:\n" + standardErrorFromCommand);
+        return false;
+      }
+      return true;
+    } catch (Exception e) {
+      LOG.error("Error executing VPX command: " + e.getMessage(), e);
+    }
+    return false;
+  }
+
+  public File export(@NonNull Game game, @NonNull String commandParam, @NonNull String fileSuffix) {
     File gameFile = game.getGameFile();
     File vpxExe = systemService.getVPXExe();
     File target = new File(gameFile.getParentFile(), FilenameUtils.getBaseName(gameFile.getName()) + "." + fileSuffix);

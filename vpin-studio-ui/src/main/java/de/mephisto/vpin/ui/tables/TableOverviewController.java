@@ -15,7 +15,6 @@ import de.mephisto.vpin.ui.tables.validation.ValidationTexts;
 import de.mephisto.vpin.ui.util.Dialogs;
 import de.mephisto.vpin.ui.util.ProgressResultModel;
 import javafx.application.Platform;
-import javafx.beans.binding.Bindings;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
@@ -37,10 +36,7 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.StackPane;
-import javafx.scene.paint.Paint;
-import javafx.util.Callback;
 import org.apache.commons.lang3.StringUtils;
-import org.kordamp.ikonli.javafx.FontIcon;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -76,6 +72,9 @@ public class TableOverviewController implements Initializable, StudioFXControlle
   private TableColumn<GameRepresentation, String> columnPUPPack;
 
   @FXML
+  private TableColumn<GameRepresentation, String> columnAltSound;
+
+  @FXML
   private TableColumn<GameRepresentation, String> columnPOV;
 
   @FXML
@@ -106,10 +105,13 @@ public class TableOverviewController implements Initializable, StudioFXControlle
   private Button deleteBtn;
 
   @FXML
-  private Button inspectBtn;
+  private Button scanBtn;
 
   @FXML
-  private Button scanBtn;
+  private Button playBtn;
+
+  @FXML
+  private Button stopBtn;
 
 //  @FXML
 //  private Button importBtn;
@@ -159,6 +161,29 @@ public class TableOverviewController implements Initializable, StudioFXControlle
     }
     else if (selectedItems.size() > 1) {
       Dialogs.openTablesExportDialog(selectedItems);
+    }
+  }
+
+  @FXML
+  private void onPlay() {
+    GameRepresentation game = tableView.getSelectionModel().getSelectedItem();
+    if (game != null) {
+      Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Start playing table \"" + game.getGameDisplayName() + "\"?",
+          "All existing VPX and Popper processes will be terminated.");
+      if (result.isPresent() && result.get().equals(ButtonType.OK)) {
+        client.playGame(game.getId());
+      }
+    }
+  }
+
+  @FXML
+  private void onStop() {
+    GameRepresentation game = tableView.getSelectionModel().getSelectedItem();
+    if (game != null) {
+      Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Stop all VPX and PinUP Popper processes?");
+      if (result.isPresent() && result.get().equals(ButtonType.OK)) {
+        client.terminatePopper();
+      }
     }
   }
 
@@ -256,7 +281,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
     List<GameRepresentation> selectedItems = new ArrayList<>(tableView.getSelectionModel().getSelectedItems());
     String title = "Re-scan selected tables?";
     if (selectedItems.size() == 1) {
-      title = "Re-scan table '" + selectedItems.get(0).getGameDisplayName() + "'?";
+      title = "Re-scan table \"" + selectedItems.get(0).getGameDisplayName() + "\"?";
     }
 
     Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, title,
@@ -270,7 +295,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
   @FXML
   private void onValidate() {
     GameRepresentation game = tableView.getSelectionModel().getSelectedItem();
-    Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Re-validate table '" + game.getGameDisplayName() + "'?",
+    Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Re-validate table \"" + game.getGameDisplayName() + "\"?",
         "This will reset the dismissed validations for this table too.", null);
     if (result.isPresent() && result.get().equals(ButtonType.OK)) {
       game.setIgnoredValidations(null);
@@ -281,29 +306,6 @@ public class TableOverviewController implements Initializable, StudioFXControlle
         WidgetFactory.showAlert(Studio.stage, e.getMessage());
       }
       onReload();
-    }
-  }
-
-  @FXML
-  private void onInspect() {
-    GameRepresentation game = tableView.getSelectionModel().getSelectedItem();
-    if (game != null) {
-      Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Inspect script of table\"" + game.getGameDisplayName() + "\"?", "This will extract the table script into a temporary file.", "It will be opened afterwards in a text editor.");
-      if (result.isPresent() && result.get().equals(ButtonType.OK)) {
-
-        ProgressResultModel resultModel = Dialogs.createProgressDialog(new ScriptDownloadProgressModel("Extracting Table Script", game));
-        if (!resultModel.getResults().isEmpty()) {
-          File file = (File) resultModel.getResults().get(0);
-          try {
-            Desktop.getDesktop().open(file);
-          } catch (IOException e) {
-            WidgetFactory.showAlert(Studio.stage, "Failed to open script file " + file.getAbsolutePath() + ": " + e.getMessage());
-          }
-        }
-        else {
-          WidgetFactory.showAlert(Studio.stage, "Script extraction failed, check log for details.");
-        }
-      }
     }
   }
 
@@ -341,11 +343,11 @@ public class TableOverviewController implements Initializable, StudioFXControlle
     this.textfieldSearch.setDisable(true);
     this.reloadBtn.setDisable(true);
     this.scanBtn.setDisable(true);
+    this.playBtn.setDisable(true);
     this.validateBtn.setDisable(true);
     this.deleteBtn.setDisable(true);
     this.uploadTableItem.setDisable(true);
     this.uploadRomItem.setDisable(true);
-    this.inspectBtn.setDisable(true);
     this.exportBtn.setDisable(true);
     this.uploadMenuBtn.setDisable(true);
 
@@ -364,7 +366,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
         if (selection != null) {
           final GameRepresentation updatedGame = client.getGame(selection.getId());
           tableView.getSelectionModel().select(updatedGame);
-          this.inspectBtn.setDisable(!updatedGame.isGameFileAvailable());
+          this.playBtn.setDisable(!updatedGame.isGameFileAvailable());
           this.exportBtn.setDisable(!updatedGame.isGameFileAvailable());
         }
         else if (!games.isEmpty()) {
@@ -481,6 +483,15 @@ public class TableOverviewController implements Initializable, StudioFXControlle
       return new SimpleStringProperty("");
     });
 
+    columnAltSound.setCellValueFactory(cellData -> {
+      GameRepresentation value = cellData.getValue();
+      if (value.isAltSoundAvailable()) {
+        return new SimpleObjectProperty(WidgetFactory.createCheckboxIcon());
+      }
+      return new SimpleStringProperty("");
+    });
+
+
     columnPUPPack.setCellValueFactory(cellData -> {
       GameRepresentation value = cellData.getValue();
       if (value.isPupPackAvailable()) {
@@ -506,16 +517,16 @@ public class TableOverviewController implements Initializable, StudioFXControlle
       boolean disable = c.getList().isEmpty() || c.getList().size() > 1;
       validateBtn.setDisable(disable);
       deleteBtn.setDisable(disable);
-      inspectBtn.setDisable(true);
       exportBtn.setDisable(true);
+      playBtn.setDisable(disable);
 
       if (c.getList().isEmpty()) {
         refreshView(Optional.empty());
       }
       else {
         GameRepresentation gameRepresentation = c.getList().get(0);
-        inspectBtn.setDisable(!gameRepresentation.isGameFileAvailable());
         exportBtn.setDisable(!gameRepresentation.isGameFileAvailable());
+        playBtn.setDisable(!gameRepresentation.isGameFileAvailable());
         refreshView(Optional.ofNullable(gameRepresentation));
       }
     });

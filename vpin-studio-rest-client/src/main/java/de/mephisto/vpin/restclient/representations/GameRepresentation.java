@@ -43,6 +43,15 @@ public class GameRepresentation {
   private boolean romRequired;
   private String assets;
   private boolean defaultBackgroundAvailable;
+  private boolean altSoundAvailable;
+
+  public boolean isAltSoundAvailable() {
+    return altSoundAvailable;
+  }
+
+  public void setAltSoundAvailable(boolean altSoundAvailable) {
+    this.altSoundAvailable = altSoundAvailable;
+  }
 
   public boolean isDefaultBackgroundAvailable() {
     return defaultBackgroundAvailable;

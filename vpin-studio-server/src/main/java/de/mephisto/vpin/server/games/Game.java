@@ -333,6 +333,11 @@ public class Game {
     return null;
   }
 
+  public boolean isAltSoundAvailable() {
+    File altSoundFolder = getAltSoundFolder();
+    return altSoundFolder != null && altSoundFolder.exists() && altSoundFolder.listFiles().length > 2;
+  }
+
   @Nullable
   @JsonIgnore
   public File getAltSoundFolder() {
