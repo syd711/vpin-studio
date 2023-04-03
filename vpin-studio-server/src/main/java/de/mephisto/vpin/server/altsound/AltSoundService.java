@@ -89,6 +89,11 @@ public class AltSoundService {
           audioFiles.put(entry.getFilename(), entry.getFilename());
           size += soundFile.length();
         }
+
+        if(!altSound.getChannels().contains(entry.getChannel())) {
+          altSound.getChannels().add(entry.getChannel());
+        }
+
         altSound.getEntries().add(entry);
       }
 

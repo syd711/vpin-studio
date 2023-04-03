@@ -7,6 +7,7 @@ public class AltSound {
   private List<AltSoundEntry> entries = new ArrayList<>();
   private int files;
   private long filesize;
+  private List<Integer> channels = new ArrayList<>();
 
   public int getFiles() {
     return files;
@@ -30,5 +31,13 @@ public class AltSound {
 
   public void setEntries(List<AltSoundEntry> entries) {
     this.entries = entries;
+  }
+
+  public List<Integer> getChannels() {
+    return channels;
+  }
+
+  public void setChannels(List<Integer> channels) {
+    this.channels = channels;
   }
 }
