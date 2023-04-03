@@ -168,35 +168,53 @@ public class TablesSidebarController implements Initializable {
       LOG.error("Failed loading sidebar controller: " + e.getMessage(), e);
     }
 
-    titledPaneMedia.expandedProperty().addListener((observableValue, aBoolean, expanded) -> {
-      refreshView(game);
+    Platform.runLater(() -> {
+      this.tableAccordion.setExpandedPane(titledPaneMedia);
+      titledPaneMedia.expandedProperty().addListener((observableValue, aBoolean, expanded) -> {
+        if (expanded) {
+          refreshView(game);
+        }
+
+      });
     });
+
     titledPanePov.expandedProperty().addListener((observableValue, aBoolean, expanded) -> {
-      refreshView(game);
+      if (expanded) {
+        refreshView(game);
+      }
     });
     titledPaneHighscores.expandedProperty().addListener((observableValue, aBoolean, expanded) -> {
-      refreshView(game);
+      if (expanded) {
+        refreshView(game);
+      }
     });
     titledPaneAudio.expandedProperty().addListener((observableValue, aBoolean, expanded) -> {
-      refreshView(game);
+      if (expanded) {
+        refreshView(game);
+      }
     });
     titledPanePUPPack.expandedProperty().addListener((observableValue, aBoolean, expanded) -> {
-      refreshView(game);
+      if (expanded) {
+        refreshView(game);
+      }
     });
     titledPaneDirectB2s.expandedProperty().addListener((observableValue, aBoolean, expanded) -> {
-      refreshView(game);
+      if (expanded) {
+        refreshView(game);
+      }
     });
     titledPaneMetadata.expandedProperty().addListener((observableValue, aBoolean, expanded) -> {
-      refreshView(game);
+      if (expanded) {
+        refreshView(game);
+      }
     });
     titledPaneDefaultBackground.expandedProperty().addListener((observableValue, aBoolean, expanded) -> {
-      refreshView(game);
+      if (expanded) {
+        refreshView(game);
+      }
     });
 
     mediaPreviewCheckbox.selectedProperty().addListener((observable, oldValue, newValue) -> refreshView(game));
-    Platform.runLater(() -> {
-      this.tableAccordion.setExpandedPane(titledPaneMedia);
-    });
   }
 
   public void setTablesController(TableOverviewController tablesController) {

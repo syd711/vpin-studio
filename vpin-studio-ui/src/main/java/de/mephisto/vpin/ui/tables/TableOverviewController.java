@@ -603,7 +603,6 @@ public class TableOverviewController implements Initializable, StudioFXControlle
 
   public void setRootController(TablesController tablesController) {
     this.tablesController = tablesController;
-    refreshView(Optional.empty());
     this.onReload();
   }
 
