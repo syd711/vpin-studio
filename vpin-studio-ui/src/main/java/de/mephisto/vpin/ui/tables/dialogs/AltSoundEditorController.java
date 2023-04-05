@@ -1,6 +1,7 @@
 package de.mephisto.vpin.ui.tables.dialogs;
 
 import de.mephisto.vpin.commons.fx.DialogController;
+import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.AltSound;
 import de.mephisto.vpin.restclient.AltSoundEntry;
 import javafx.beans.property.*;
@@ -11,8 +12,8 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
-import javafx.scene.control.cell.CheckBoxTableCell;
 import javafx.stage.Stage;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -48,16 +49,13 @@ public class AltSoundEditorController implements Initializable, DialogController
   private TableColumn<AltSoundEntryModel, Number> columnGain;
 
   @FXML
-  private TableColumn<AltSoundEntryModel, Boolean> columnLoop;
+  private TableColumn<AltSoundEntryModel, String> columnLoop;
 
   @FXML
   private TableColumn<AltSoundEntryModel, String> columnFilename;
 
   @FXML
-  private TableColumn<AltSoundEntryModel, Boolean> checkColumn;
-
-  @FXML
-  private CheckBox allCheckbox;
+  private TextField searchText;
 
   @FXML
   private ComboBox<Integer> channelFilterCombo;
@@ -117,11 +115,13 @@ public class AltSoundEditorController implements Initializable, DialogController
     columnGain.setCellValueFactory(cellData -> cellData.getValue().gain);
     columnFilename.setCellValueFactory(cellData -> cellData.getValue().filename);
 
-    columnLoop.setCellValueFactory(cd -> cd.getValue().looped);
-    columnLoop.setCellFactory(CheckBoxTableCell.forTableColumn(columnLoop));
-    checkColumn.setCellValueFactory(cd -> cd.getValue().active);
-    checkColumn.setCellFactory(CheckBoxTableCell.forTableColumn(checkColumn));
-
+    columnLoop.setCellValueFactory(cellData -> {
+      AltSoundEntryModel value = cellData.getValue();
+      if (value.looped.get()) {
+        return new SimpleObjectProperty(WidgetFactory.createCheckboxIcon());
+      }
+      return new SimpleStringProperty("");
+    });
     tableView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
 
     loopedFilterCombo.setItems(FXCollections.observableList(Arrays.asList(null, "Yes", "No")));
@@ -129,17 +129,7 @@ public class AltSoundEditorController implements Initializable, DialogController
     channelFilterCombo.valueProperty().addListener((observable, oldValue, newValue) -> refresh());
     nameFilterCombo.valueProperty().addListener((observable, oldValue, newValue) -> refresh());
     filenameFilterCombo.valueProperty().addListener((observable, oldValue, newValue) -> refresh());
-
-
-    allCheckbox.selectedProperty().addListener((observable, oldValue, newValue) -> {
-      if (newValue) {
-        tableView.getSelectionModel().selectAll();
-      }
-      else {
-        tableView.getSelectionModel().clearSelection();
-      }
-      refreshEditorForSelection();
-    });
+    searchText.textProperty().addListener((observable, oldValue, newValue) -> refresh());
 
     tableView.getSelectionModel().getSelectedItems().addListener((ListChangeListener<AltSoundEntryModel>) c -> refreshEditorForSelection());
 
@@ -176,6 +166,9 @@ public class AltSoundEditorController implements Initializable, DialogController
       gainLabel.setText(String.valueOf(value1));
       tableView.refresh();
     });
+
+    tableView.setPlaceholder(new Label("               No matching entries found!\n" +
+        "Adapt the filter criteria to find matching entries."));
   }
 
   public void setAltSound(AltSound altSound) {
@@ -203,6 +196,7 @@ public class AltSoundEditorController implements Initializable, DialogController
     filenameFilterCombo.setItems(FXCollections.observableList(filenames));
 
     refresh();
+    tableView.getSelectionModel().clearSelection();
   }
 
   private void refresh() {
@@ -213,8 +207,13 @@ public class AltSoundEditorController implements Initializable, DialogController
     Integer channelFilter = this.channelFilterCombo.getValue();
     String filenameFiler = this.filenameFilterCombo.getValue();
     String loopedFilter = this.loopedFilterCombo.getValue();
+    String term = this.searchText.getText();
 
     for (AltSoundEntry entry : allEntries) {
+      if (!StringUtils.isEmpty(term) && !entry.getFilename().toLowerCase().contains(term) && !entry.getName().toLowerCase().contains(term)) {
+        continue;
+      }
+
       if (nameFilter != null && !entry.getName().equals(nameFilter)) {
         continue;
       }
@@ -224,7 +223,7 @@ public class AltSoundEditorController implements Initializable, DialogController
       }
 
       if (loopedFilter != null) {
-        if (loopedFilter.equals("No") && entry.getLoop() != 0) {
+        if (loopedFilter.equals("Yes") && entry.getLoop() != 100) {
           continue;
         }
       }
@@ -233,7 +232,7 @@ public class AltSoundEditorController implements Initializable, DialogController
         continue;
       }
 
-      filtered.add(new AltSoundEntryModel(entry.getId(), entry.getName(), entry.getFilename(), entry.getChannel(), entry.getDuck(), entry.getGain(), entry.getLoop() != 0));
+      filtered.add(new AltSoundEntryModel(entry.getId(), entry.getName(), entry.getFilename(), entry.getChannel(), entry.getDuck(), entry.getGain(), entry.getLoop() == 100));
     }
 
     ObservableList<AltSoundEntryModel> entries = FXCollections.observableList(filtered);
@@ -247,6 +246,25 @@ public class AltSoundEditorController implements Initializable, DialogController
   private void refreshEditorForSelection() {
     ObservableList<AltSoundEntryModel> selectedItems = tableView.getSelectionModel().getSelectedItems();
     entriesLabel.setText(String.valueOf(selectedItems.size()));
+
+    gainVolume.setDisable(selectedItems.isEmpty());
+    duckLabel.setDisable(selectedItems.isEmpty());
+    loopedCheckbox.setDisable(selectedItems.isEmpty());
+    channelSpinner.setDisable(selectedItems.isEmpty());
+
+    if (!selectedItems.isEmpty()) {
+      AltSoundEntryModel altSoundEntryModel = selectedItems.get(0);
+      gainVolume.valueProperty().set(altSoundEntryModel.gain.get());
+      gainLabel.setText("" + altSoundEntryModel.gain.getValue());
+      duckVolume.valueProperty().set(altSoundEntryModel.duck.get());
+      duckLabel.setText("" + altSoundEntryModel.duck.getValue());
+    }
+    else {
+      gainVolume.valueProperty().set(0);
+      gainLabel.setText("-");
+      duckVolume.valueProperty().set(0);
+      duckLabel.setText("-");
+    }
   }
 
   @Override

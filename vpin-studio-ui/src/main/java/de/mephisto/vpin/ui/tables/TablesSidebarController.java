@@ -49,6 +49,9 @@ public class TablesSidebarController implements Initializable {
   private TitledPane titledPanePUPPack;
 
   @FXML
+  private TitledPane titledPanePopper;
+
+  @FXML
   private CheckBox mediaPreviewCheckbox;
 
   @FXML
@@ -74,6 +77,9 @@ public class TablesSidebarController implements Initializable {
 
   @FXML
   private TablesSidebarPUPPackController tablesSidebarPUPPackController; //fxml magic! Not unused
+
+  @FXML
+  private TablesSidebarPopperController tablesSidebarPopperController; //fxml magic! Not unused
 
   private Optional<GameRepresentation> game = Optional.empty();
 
@@ -168,6 +174,16 @@ public class TablesSidebarController implements Initializable {
       LOG.error("Failed loading sidebar controller: " + e.getMessage(), e);
     }
 
+    try {
+      FXMLLoader loader = new FXMLLoader(TablesSidebarPopperController.class.getResource("scene-tables-sidebar-popper.fxml"));
+      Parent tablesRoot = loader.load();
+      tablesSidebarPopperController = loader.getController();
+      tablesSidebarPopperController.setSidebarController(this);
+      titledPanePopper.setContent(tablesRoot);
+    } catch (IOException e) {
+      LOG.error("Failed loading sidebar controller: " + e.getMessage(), e);
+    }
+
     Platform.runLater(() -> {
       this.tableAccordion.setExpandedPane(titledPaneMedia);
       titledPaneMedia.expandedProperty().addListener((observableValue, aBoolean, expanded) -> {
@@ -209,6 +225,11 @@ public class TablesSidebarController implements Initializable {
       }
     });
     titledPaneDefaultBackground.expandedProperty().addListener((observableValue, aBoolean, expanded) -> {
+      if (expanded) {
+        refreshView(game);
+      }
+    });
+    titledPanePopper.expandedProperty().addListener((observableValue, aBoolean, expanded) -> {
       if (expanded) {
         refreshView(game);
       }
@@ -259,6 +280,9 @@ public class TablesSidebarController implements Initializable {
     }
     if (titledPanePov.isExpanded()) {
       this.tablesSidebarPovController.setGame(g);
+    }
+    if (titledPanePopper.isExpanded()) {
+      this.tablesSidebarPopperController.setGame(g);
     }
   }
 

@@ -35,7 +35,8 @@
                 <TitledPane fx:id="titledPanePUPPack" expanded="false" text="PUP Pack" />
                 <TitledPane fx:id="titledPaneHighscores" expanded="false" text="Highscores" />
                 <TitledPane fx:id="titledPanePov" expanded="false" text="Point Of View (POV)" />
-                <TitledPane fx:id="titledPaneAudio" expanded="false" text="Volume / ALT Sound Settings" />
+                <TitledPane fx:id="titledPanePopper" expanded="false" text="PinUP Popper Settings" />
+                <TitledPane fx:id="titledPaneAudio" expanded="false" text="ALT Sound" />
                 <TitledPane fx:id="titledPaneDefaultBackground" expanded="false" layoutX="10.0" layoutY="104.0" prefWidth="600.0">
                     <graphic>
                         <BorderPane prefWidth="560.0">

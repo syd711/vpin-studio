@@ -18,7 +18,7 @@ AppPublisher={#MyAppPublisher}
 AppPublisherURL={#MyAppURL}
 AppSupportURL={#MyAppURL}
 AppUpdatesURL={#MyAppURL}
-DefaultDirName=C:\vPinball\VPin-Studio\
+DefaultDirName=C:\vPinball\VPin-Studio-Client\
 DisableProgramGroupPage=yes
 LicenseFile=..\..\..\..\vpin-studio\LICENSE
 ; Uncomment the following line to run in non administrative install mode (install for current user only.)

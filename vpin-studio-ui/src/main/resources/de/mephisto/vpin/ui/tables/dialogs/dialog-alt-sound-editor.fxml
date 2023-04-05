@@ -57,18 +57,13 @@
                      <children>
                         <TableView fx:id="tableView" prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #2a2a2a;" styleClass="base-component">
                           <columns>
-                              <TableColumn fx:id="checkColumn" prefWidth="75.0">
-                                 <graphic>
-                                    <CheckBox fx:id="allCheckbox" mnemonicParsing="false" />
-                                 </graphic>
-                              </TableColumn>
                             <TableColumn fx:id="columnId" prefWidth="75.0" style="-fx-alignment: BASELINE_LEFT;" text="ID" />
-                              <TableColumn fx:id="columnName" prefWidth="220.0" style="-fx-alignment: BASELINE_LEFT;" text="Name" />
+                              <TableColumn fx:id="columnName" prefWidth="300.0" style="-fx-alignment: BASELINE_LEFT;" text="Name" />
                             <TableColumn fx:id="columnChannel" prefWidth="75.0" style="-fx-alignment: CENTER;" text="Channel" />
                               <TableColumn fx:id="columnDuck" prefWidth="75.0" style="-fx-alignment: CENTER;" text="Duck" />
                               <TableColumn fx:id="columnGain" prefWidth="75.0" style="-fx-alignment: CENTER;" text="Gain" />
                               <TableColumn fx:id="columnLoop" prefWidth="75.0" style="-fx-alignment: CENTER;" text="Loop" />
-                              <TableColumn fx:id="columnFilename" prefWidth="220.0" style="-fx-alignment: BASELINE_LEFT;" text="Filename" />
+                              <TableColumn fx:id="columnFilename" prefWidth="300.0" style="-fx-alignment: BASELINE_LEFT;" text="Filename" />
                           </columns>
                         </TableView>
                      </children>
@@ -77,7 +72,7 @@
                <top>
                   <ToolBar prefHeight="40.0" prefWidth="200.0" BorderPane.alignment="CENTER">
                      <items>
-                        <TextField promptText="Entry Search...">
+                        <TextField fx:id="searchText" promptText="Entry Search...">
                            <font>
                               <Font size="14.0" />
                            </font>
@@ -111,7 +106,7 @@
                               <Insets right="6.0" />
                            </padding>
                         </Label>
-                        <ComboBox fx:id="filenameFilterCombo" layoutX="296.0" layoutY="11.0" prefWidth="250.0" />
+                        <ComboBox fx:id="filenameFilterCombo" layoutX="296.0" layoutY="11.0" prefWidth="240.0" />
                         <Separator layoutX="450.0" layoutY="10.0" orientation="VERTICAL" prefWidth="12.0" />
                         <Label layoutX="466.0" layoutY="16.0" text="Looped:" textFill="WHITE">
                            <font>
@@ -121,7 +116,7 @@
                               <Insets right="6.0" />
                            </padding>
                         </Label>
-                        <ComboBox fx:id="loopedFilterCombo" layoutX="535.0" layoutY="11.0" prefHeight="30.0" prefWidth="60.0" />
+                        <ComboBox fx:id="loopedFilterCombo" layoutX="535.0" layoutY="11.0" prefHeight="30.0" prefWidth="80.0" />
                      </items>
                   </ToolBar>
                </top>
@@ -130,7 +125,7 @@
       </BorderPane>
    </center>
    <right>
-      <BorderPane prefWidth="300.0" BorderPane.alignment="CENTER">
+      <BorderPane prefWidth="280.0" BorderPane.alignment="CENTER">
          <BorderPane.margin>
             <Insets bottom="12.0" right="12.0" top="12.0" />
          </BorderPane.margin>
