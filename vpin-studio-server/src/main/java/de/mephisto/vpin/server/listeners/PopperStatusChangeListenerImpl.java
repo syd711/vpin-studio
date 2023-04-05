@@ -49,11 +49,11 @@ public class PopperStatusChangeListenerImpl implements InitializingBean, PopperS
     discordService.setActivity(null);
     new Thread(() -> {
       try {
-        Thread.sleep(4000);
+        Thread.sleep(6000);
       } catch (InterruptedException e) {
         //ignore
       }
-      LOG.info("Finished 4 second update delay, updating highscores.");
+      LOG.info("Finished 6 second update delay, updating highscores.");
       highscoreService.scanScore(game);
       preferencesService.savePreference(PreferenceNames.ACTIVE_GAME, -1);
     }).start();

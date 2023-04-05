@@ -20,6 +20,7 @@
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
+<?import org.kordamp.ikonli.javafx.FontIcon?>
 
 <BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="960.0" styleClass="base-component" stylesheets="@../../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.tables.dialogs.AltSoundEditorController">
    <top>
@@ -183,7 +184,16 @@
                               <Insets right="6.0" />
                            </padding>
                         </Label>
-                        <Label text="Label" GridPane.columnIndex="2" GridPane.rowIndex="1" />
+                        <Label GridPane.columnIndex="2" GridPane.rowIndex="1">
+                           <graphic>
+                              <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
+                           </graphic>
+                        </Label>
+                        <Label layoutX="248.0" layoutY="50.0" GridPane.columnIndex="2" GridPane.rowIndex="2">
+                           <graphic>
+                              <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
+                           </graphic>
+                        </Label>
                      </children>
                   </GridPane>
                   <GridPane>
@@ -199,28 +209,46 @@
                      <children>
                         <Slider fx:id="duckVolume" orientation="VERTICAL" showTickLabels="true" showTickMarks="true" GridPane.rowIndex="1" />
                         <Slider fx:id="gainVolume" layoutX="10.0" layoutY="35.0" orientation="VERTICAL" showTickLabels="true" showTickMarks="true" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-                        <Label text="Duck" textFill="WHITE" GridPane.rowIndex="2">
-                           <font>
-                              <Font size="14.0" />
-                           </font>
-                           <padding>
-                              <Insets right="6.0" />
-                           </padding>
+                        <HBox alignment="CENTER" GridPane.rowIndex="2">
                            <GridPane.margin>
                               <Insets right="16.0" top="12.0" />
                            </GridPane.margin>
-                        </Label>
-                        <Label layoutX="74.0" layoutY="345.0" text="Gain" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="2">
-                           <font>
-                              <Font size="14.0" />
-                           </font>
-                           <padding>
-                              <Insets right="6.0" />
-                           </padding>
+                           <children>
+                              <Label text="Duck" textFill="WHITE">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                                 <padding>
+                                    <Insets right="6.0" />
+                                 </padding>
+                              </Label>
+                              <Label>
+                                 <graphic>
+                                    <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
+                                 </graphic>
+                              </Label>
+                           </children>
+                        </HBox>
+                        <HBox alignment="CENTER" GridPane.columnIndex="1" GridPane.rowIndex="2">
                            <GridPane.margin>
                               <Insets right="16.0" top="12.0" />
                            </GridPane.margin>
-                        </Label>
+                           <children>
+                              <Label text="Gain" textFill="WHITE">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                                 <padding>
+                                    <Insets right="6.0" />
+                                 </padding>
+                              </Label>
+                              <Label>
+                                 <graphic>
+                                    <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
+                                 </graphic>
+                              </Label>
+                           </children>
+                        </HBox>
                         <Label fx:id="gainLabel" layoutX="85.0" layoutY="15.0" text="-" textFill="WHITE" GridPane.columnIndex="1">
                            <font>
                               <Font name="System Bold" size="36.0" />

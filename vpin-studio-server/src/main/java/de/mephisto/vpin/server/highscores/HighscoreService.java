@@ -351,7 +351,7 @@ public class HighscoreService implements InitializingBean {
     }
 
     if (oldRaw.equals(newRaw)) {
-      LOG.info("Skipped highscore change event for {} because the no score change detected.", game);
+      LOG.info("Skipped highscore change event for {} because the no score change for rom '{}' detected.", game, game.getRom());
       return Optional.of(oldHighscore);
     }
 
@@ -365,7 +365,7 @@ public class HighscoreService implements InitializingBean {
 
     List<Integer> changedPositions = calculateChangedPositions(oldScores, newScores);
     if (changedPositions.isEmpty()) {
-      LOG.info("No highscore change detected for " + game + ", skipping notification event.");
+      LOG.info("No highscore change of rom '" + game.getRom() + "' detected for " + game + ", skipping notification event.");
       return Optional.of(oldHighscore);
     }
 
