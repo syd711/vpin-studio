@@ -19,6 +19,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -50,6 +51,7 @@ public class AltSoundService {
     if (csvFile == null) {
       return altSound;
     }
+    altSound.setModificationDate(new Date(csvFile.lastModified()));
 
     //make sure a backup is there
     this.getOrCreateBackup(csvFile);

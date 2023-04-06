@@ -122,4 +122,11 @@ public class AltSoundEntry {
   public void setStopCmd(String stopCmd) {
     this.stopCmd = stopCmd;
   }
+
+  public String toCSV() {
+    StringBuilder builder = new StringBuilder();
+    builder.append(this.id);
+    builder.append(",");
+    return builder.toString();
+  }
 }

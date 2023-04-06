@@ -1,13 +1,23 @@
 package de.mephisto.vpin.restclient;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public class AltSound {
   private List<AltSoundEntry> entries = new ArrayList<>();
   private int files;
   private long filesize;
+  private Date modificationDate;
   private List<Integer> channels = new ArrayList<>();
+
+  public Date getModificationDate() {
+    return modificationDate;
+  }
+
+  public void setModificationDate(Date modificationDate) {
+    this.modificationDate = modificationDate;
+  }
 
   public int getFiles() {
     return files;

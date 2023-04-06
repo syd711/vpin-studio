@@ -213,10 +213,10 @@ public class Dialogs {
     return controller.uploadFinished();
   }
 
-  public static boolean openAltSoundEditor(AltSound altSound) {
+  public static boolean openAltSoundEditor(GameRepresentation game, AltSound altSound) {
     Stage stage = createStudioDialogStage(ROMUploadController.class, "dialog-alt-sound-editor.fxml", "ALT Sound Editor");
     AltSoundEditorController controller = (AltSoundEditorController) stage.getUserData();
-    controller.setAltSound(altSound);
+    controller.setAltSound(game, altSound);
     stage.showAndWait();
 
     return true;

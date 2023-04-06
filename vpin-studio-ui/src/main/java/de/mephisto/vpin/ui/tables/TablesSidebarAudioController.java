@@ -14,6 +14,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.net.URL;
+import java.text.SimpleDateFormat;
 import java.util.Optional;
 import java.util.ResourceBundle;
 
@@ -28,6 +29,9 @@ public class TablesSidebarAudioController implements Initializable {
 
   @FXML
   private Label filesLabel;
+
+  @FXML
+  private Label lastModifiedLabel;
 
   @FXML
   private Label bundleSizeLabel;
@@ -46,7 +50,7 @@ public class TablesSidebarAudioController implements Initializable {
   @FXML
   private void onAltSoundEdit() {
     if (game.isPresent() && game.get().isAltSoundAvailable()) {
-      Dialogs.openAltSoundEditor(altSound);
+      Dialogs.openAltSoundEditor(game.get(), altSound);
     }
   }
 
@@ -67,6 +71,7 @@ public class TablesSidebarAudioController implements Initializable {
     entriesLabel.setText("-");
     bundleSizeLabel.setText("-");
     filesLabel.setText("-");
+    lastModifiedLabel.setText("-");
 
     if (g.isPresent()) {
       GameRepresentation game = g.get();
@@ -77,6 +82,7 @@ public class TablesSidebarAudioController implements Initializable {
         entriesLabel.setText(String.valueOf(altSound.getEntries().size()));
         filesLabel.setText(String.valueOf(altSound.getFiles()));
         bundleSizeLabel.setText(FileUtils.readableFileSize(altSound.getFilesize()));
+        lastModifiedLabel.setText(SimpleDateFormat.getDateTimeInstance().format(altSound.getModificationDate()));
       }
     }
   }

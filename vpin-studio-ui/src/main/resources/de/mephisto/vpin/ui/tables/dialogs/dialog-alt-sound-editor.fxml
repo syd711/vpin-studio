@@ -34,7 +34,7 @@
                   <Insets right="12.0" />
                </HBox.margin>
             </Button>
-            <Button fx:id="uploadBtn" layoutX="418.0" layoutY="10.0" mnemonicParsing="false" onAction="#onRestoreClick" styleClass="warn-button" text="Restore Defaults">
+            <Button fx:id="uploadBtn" layoutX="418.0" layoutY="10.0" mnemonicParsing="false" onAction="#onRestoreClick" styleClass="default-button" text="Revert Changes">
                <HBox.margin>
                   <Insets />
                </HBox.margin>
@@ -147,7 +147,7 @@
                     </rowConstraints>
                      <children>
                         <Spinner fx:id="channelSpinner" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-                        <Label text="Looped:" textFill="WHITE" GridPane.rowIndex="2">
+                        <Label text="Loop:" textFill="WHITE" GridPane.rowIndex="2">
                            <font>
                               <Font size="14.0" />
                            </font>

@@ -4,6 +4,8 @@ import de.mephisto.vpin.commons.fx.DialogController;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.AltSound;
 import de.mephisto.vpin.restclient.AltSoundEntry;
+import de.mephisto.vpin.restclient.representations.GameRepresentation;
+import de.mephisto.vpin.ui.Studio;
 import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
@@ -18,14 +20,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.ResourceBundle;
+import java.util.*;
 
 public class AltSoundEditorController implements Initializable, DialogController {
   private final static Logger LOG = LoggerFactory.getLogger(AltSoundEditorController.class);
 
+  private GameRepresentation game;
   private AltSound altSound;
   private boolean result = false;
 
@@ -90,6 +90,11 @@ public class AltSoundEditorController implements Initializable, DialogController
   @FXML
   private CheckBox loopedCheckbox;
 
+  @Override
+  public void onDialogCancel() {
+    result = false;
+  }
+
   @FXML
   private void onCancelClick(ActionEvent e) {
     Stage stage = (Stage) ((Button) e.getSource()).getScene().getWindow();
@@ -98,12 +103,29 @@ public class AltSoundEditorController implements Initializable, DialogController
 
   @FXML
   private void onRestoreClick() {
-
+    Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Revert Changes?", "Revert all changes and reload original ALT sound data?", null, "Yes, revert changes");
+    if (result.isPresent() && result.get().equals(ButtonType.OK)) {
+      AltSound orig = Studio.client.getAltSound(this.game.getId());
+      this.altSound.setEntries(orig.getEntries());
+      this.refresh();
+    }
   }
 
   @FXML
-  private void onSaveClick() {
+  private void onSaveClick(ActionEvent e) {
+    try {
+//      Studio.client.saveAltSound(game.getId(), this.altSound);
+      List<AltSoundEntry> entries = this.altSound.getEntries();
+      for (AltSoundEntry entry : entries) {
+        System.out.println(entry.toCSV());
+      }
 
+    } catch (Exception ex) {
+      LOG.error("Failed to save ALT sound: " + ex.getMessage(), ex);
+      WidgetFactory.showAlert(Studio.stage, "Error", "Failed to save ALT sound: " + ex.getMessage());
+    }
+    Stage stage = (Stage) ((Button) e.getSource()).getScene().getWindow();
+    stage.close();
   }
 
   @Override
@@ -171,7 +193,8 @@ public class AltSoundEditorController implements Initializable, DialogController
         "Adapt the filter criteria to find matching entries."));
   }
 
-  public void setAltSound(AltSound altSound) {
+  public void setAltSound(GameRepresentation game, AltSound altSound) {
+    this.game = game;
     this.altSound = altSound;
 
     List<Integer> channels = new ArrayList<>(altSound.getChannels());
@@ -232,14 +255,13 @@ public class AltSoundEditorController implements Initializable, DialogController
         continue;
       }
 
-      filtered.add(new AltSoundEntryModel(entry.getId(), entry.getName(), entry.getFilename(), entry.getChannel(), entry.getDuck(), entry.getGain(), entry.getLoop() == 100));
+      filtered.add(new AltSoundEntryModel(entry));
     }
 
     ObservableList<AltSoundEntryModel> entries = FXCollections.observableList(filtered);
     tableView.setItems(entries);
     tableView.refresh();
 
-    tableView.getSelectionModel().selectAll();
     refreshEditorForSelection();
   }
 
@@ -267,11 +289,6 @@ public class AltSoundEditorController implements Initializable, DialogController
     }
   }
 
-  @Override
-  public void onDialogCancel() {
-    result = false;
-  }
-
   private static class AltSoundEntryModel {
     private final StringProperty id;
     private final StringProperty name;
@@ -280,17 +297,32 @@ public class AltSoundEditorController implements Initializable, DialogController
     private final IntegerProperty gain;
     private final IntegerProperty channel;
     private final BooleanProperty looped;
-    private final BooleanProperty active;
 
-    private AltSoundEntryModel(String id, String name, String filename, int channel, int duck, int gain, boolean looped) {
-      this.id = new SimpleStringProperty(id);
-      this.name = new SimpleStringProperty(name);
-      this.filename = new SimpleStringProperty(filename);
-      this.looped = new SimpleBooleanProperty(looped);
-      this.channel = new SimpleIntegerProperty(channel);
-      this.duck = new SimpleIntegerProperty(duck);
-      this.gain = new SimpleIntegerProperty(gain);
-      this.active = new SimpleBooleanProperty(true);
+    private AltSoundEntryModel(AltSoundEntry entry) {
+      this.id = new SimpleStringProperty(entry.getId());
+      this.name = new SimpleStringProperty(entry.getName());
+      this.filename = new SimpleStringProperty(entry.getFilename());
+      this.looped = new SimpleBooleanProperty(entry.getLoop() == 100);
+      this.looped.addListener((observable, oldValue, newValue) -> {
+        if (newValue) {
+          entry.setLoop(100);
+        }
+        else {
+          entry.setLoop(0);
+        }
+      });
+
+      this.channel = new SimpleIntegerProperty(entry.getChannel());
+      this.channel.addListener((observable, oldValue, newValue) -> {
+        entry.setChannel((Integer) newValue);
+      });
+
+
+      this.duck = new SimpleIntegerProperty(entry.getDuck());
+      this.duck.addListener((observable, oldValue, newValue) -> entry.setDuck((Integer) newValue));
+
+      this.gain = new SimpleIntegerProperty(entry.getGain());
+      this.gain.addListener((observable, oldValue, newValue) -> entry.setGain((Integer) newValue));
     }
   }
 }

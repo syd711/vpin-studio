@@ -33,8 +33,14 @@
                 <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                 <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                 <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
               </rowConstraints>
                <children>
+                  <Label fx:id="lastModifiedLabel" layoutX="175.0" layoutY="76.0" text="-" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="3">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                  </Label>
                   <Label text="CSV Entries:" textFill="WHITE">
                      <font>
                         <Font size="14.0" />
@@ -61,6 +67,11 @@
                      </font>
                   </Label>
                   <Label fx:id="bundleSizeLabel" layoutX="175.0" layoutY="45.0" text="-" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                  </Label>
+                  <Label layoutX="10.0" layoutY="45.0" text="Last Modified:" textFill="WHITE" GridPane.rowIndex="3">
                      <font>
                         <Font size="14.0" />
                      </font>
