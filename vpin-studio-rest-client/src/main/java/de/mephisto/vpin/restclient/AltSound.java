@@ -6,10 +6,19 @@ import java.util.List;
 
 public class AltSound {
   private List<AltSoundEntry> entries = new ArrayList<>();
+  private List<String> headers = new ArrayList<>();
   private int files;
   private long filesize;
   private Date modificationDate;
   private List<Integer> channels = new ArrayList<>();
+
+  public List<String> getHeaders() {
+    return headers;
+  }
+
+  public void setHeaders(List<String> headers) {
+    this.headers = headers;
+  }
 
   public Date getModificationDate() {
     return modificationDate;
@@ -49,5 +58,20 @@ public class AltSound {
 
   public void setChannels(List<Integer> channels) {
     this.channels = channels;
+  }
+
+  public String toCSV() {
+    StringBuilder builder = new StringBuilder();
+    builder.append("\"");
+    builder.append(String.join("\",\"", this.headers));
+    builder.append("\"");
+    builder.append("\n");
+
+    for (AltSoundEntry entry : this.entries) {
+      builder.append(entry.toCSV(this));
+      builder.append("\n");
+    }
+
+    return builder.toString();
   }
 }

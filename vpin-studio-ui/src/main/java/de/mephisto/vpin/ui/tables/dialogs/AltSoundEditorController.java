@@ -32,7 +32,6 @@ public class AltSoundEditorController implements Initializable, DialogController
   @FXML
   private TableView<AltSoundEntryModel> tableView;
 
-
   @FXML
   private TableColumn<AltSoundEntryModel, String> columnId;
 
@@ -50,6 +49,9 @@ public class AltSoundEditorController implements Initializable, DialogController
 
   @FXML
   private TableColumn<AltSoundEntryModel, String> columnLoop;
+
+  @FXML
+  private TableColumn<AltSoundEntryModel, String> columnStop;
 
   @FXML
   private TableColumn<AltSoundEntryModel, String> columnFilename;
@@ -90,6 +92,12 @@ public class AltSoundEditorController implements Initializable, DialogController
   @FXML
   private CheckBox loopedCheckbox;
 
+  @FXML
+  private CheckBox stopCheckbox;
+
+  @FXML
+  private Button saveBtn;
+
   @Override
   public void onDialogCancel() {
     result = false;
@@ -114,12 +122,7 @@ public class AltSoundEditorController implements Initializable, DialogController
   @FXML
   private void onSaveClick(ActionEvent e) {
     try {
-//      Studio.client.saveAltSound(game.getId(), this.altSound);
-      List<AltSoundEntry> entries = this.altSound.getEntries();
-      for (AltSoundEntry entry : entries) {
-        System.out.println(entry.toCSV());
-      }
-
+      Studio.client.saveAltSound(game.getId(), this.altSound);
     } catch (Exception ex) {
       LOG.error("Failed to save ALT sound: " + ex.getMessage(), ex);
       WidgetFactory.showAlert(Studio.stage, "Error", "Failed to save ALT sound: " + ex.getMessage());
@@ -140,6 +143,14 @@ public class AltSoundEditorController implements Initializable, DialogController
     columnLoop.setCellValueFactory(cellData -> {
       AltSoundEntryModel value = cellData.getValue();
       if (value.looped.get()) {
+        return new SimpleObjectProperty(WidgetFactory.createCheckboxIcon());
+      }
+      return new SimpleStringProperty("");
+    });
+
+    columnStop.setCellValueFactory(cellData -> {
+      AltSoundEntryModel value = cellData.getValue();
+      if (value.stop.get()) {
         return new SimpleObjectProperty(WidgetFactory.createCheckboxIcon());
       }
       return new SimpleStringProperty("");
@@ -166,6 +177,12 @@ public class AltSoundEditorController implements Initializable, DialogController
     loopedCheckbox.selectedProperty().addListener((observable, oldValue, newValue) -> {
       ObservableList<AltSoundEntryModel> selectedItems = tableView.getSelectionModel().getSelectedItems();
       selectedItems.forEach(i -> i.looped.set(newValue));
+      tableView.refresh();
+    });
+
+    stopCheckbox.selectedProperty().addListener((observable, oldValue, newValue) -> {
+      ObservableList<AltSoundEntryModel> selectedItems = tableView.getSelectionModel().getSelectedItems();
+      selectedItems.forEach(i -> i.stop.set(newValue));
       tableView.refresh();
     });
 
@@ -272,6 +289,7 @@ public class AltSoundEditorController implements Initializable, DialogController
     gainVolume.setDisable(selectedItems.isEmpty());
     duckLabel.setDisable(selectedItems.isEmpty());
     loopedCheckbox.setDisable(selectedItems.isEmpty());
+    stopCheckbox.setDisable(selectedItems.isEmpty());
     channelSpinner.setDisable(selectedItems.isEmpty());
 
     if (!selectedItems.isEmpty()) {
@@ -297,18 +315,29 @@ public class AltSoundEditorController implements Initializable, DialogController
     private final IntegerProperty gain;
     private final IntegerProperty channel;
     private final BooleanProperty looped;
+    private final BooleanProperty stop;
 
     private AltSoundEntryModel(AltSoundEntry entry) {
       this.id = new SimpleStringProperty(entry.getId());
       this.name = new SimpleStringProperty(entry.getName());
       this.filename = new SimpleStringProperty(entry.getFilename());
       this.looped = new SimpleBooleanProperty(entry.getLoop() == 100);
+      this.stop = new SimpleBooleanProperty(entry.getStop() == 1);
       this.looped.addListener((observable, oldValue, newValue) -> {
         if (newValue) {
           entry.setLoop(100);
         }
         else {
           entry.setLoop(0);
+        }
+      });
+
+      this.stop.addListener((observable, oldValue, newValue) -> {
+        if (newValue) {
+          entry.setStop(1);
+        }
+        else {
+          entry.setStop(0);
         }
       });
 

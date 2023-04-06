@@ -123,10 +123,50 @@ public class AltSoundEntry {
     this.stopCmd = stopCmd;
   }
 
-  public String toCSV() {
+  public String toCSV(AltSound altSound) {
     StringBuilder builder = new StringBuilder();
+    builder.append("\"");
     builder.append(this.id);
+    builder.append("\",");
+    builder.append(this.channel);
     builder.append(",");
+    builder.append(this.duck);
+    builder.append(",");
+    builder.append(this.gain);
+    builder.append(",");
+    builder.append(this.loop);
+    builder.append(",");
+    builder.append(this.stop);
+    builder.append(",\"");
+    builder.append(this.name);
+    builder.append("\",\"");
+    builder.append(this.filename);
+    builder.append("\"");
+
+    if (altSound.getHeaders().contains("GROUP")) {
+      builder.append(",");
+      builder.append(this.group);
+    }
+
+    if (altSound.getHeaders().contains("SHAKER")) {
+      builder.append(",");
+      builder.append(this.shaker != null ? this.shaker : "");
+    }
+
+    if (altSound.getHeaders().contains("SERIAL")) {
+      builder.append(",");
+      builder.append(this.serial != null ? this.serial : "");
+    }
+
+    if (altSound.getHeaders().contains("PRELOAD")) {
+      builder.append(",");
+      builder.append(this.preload);
+    }
+
+    if (altSound.getHeaders().contains("STOPCMD")) {
+      builder.append(",");
+      builder.append(this.stopCmd != null ? this.stopCmd : "");
+    }
     return builder.toString();
   }
 }

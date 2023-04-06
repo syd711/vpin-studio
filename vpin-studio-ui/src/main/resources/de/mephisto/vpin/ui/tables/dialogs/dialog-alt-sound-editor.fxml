@@ -34,12 +34,12 @@
                   <Insets right="12.0" />
                </HBox.margin>
             </Button>
-            <Button fx:id="uploadBtn" layoutX="418.0" layoutY="10.0" mnemonicParsing="false" onAction="#onRestoreClick" styleClass="default-button" text="Revert Changes">
+            <Button fx:id="revertBtn" layoutX="418.0" layoutY="10.0" mnemonicParsing="false" onAction="#onRestoreClick" styleClass="default-button" text="Revert Changes">
                <HBox.margin>
                   <Insets />
                </HBox.margin>
             </Button>
-            <Button fx:id="uploadBtn1" layoutX="84.0" layoutY="10.0" mnemonicParsing="false" onAction="#onSaveClick" styleClass="submit-button" text="Save" />
+            <Button fx:id="saveBtn" layoutX="84.0" layoutY="10.0" mnemonicParsing="false" onAction="#onSaveClick" styleClass="submit-button" text="Save" />
          </children>
          <BorderPane.margin>
             <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
@@ -64,6 +64,7 @@
                               <TableColumn fx:id="columnDuck" prefWidth="75.0" style="-fx-alignment: CENTER;" text="Duck" />
                               <TableColumn fx:id="columnGain" prefWidth="75.0" style="-fx-alignment: CENTER;" text="Gain" />
                               <TableColumn fx:id="columnLoop" prefWidth="75.0" style="-fx-alignment: CENTER;" text="Loop" />
+                              <TableColumn fx:id="columnStop" prefWidth="75.0" style="-fx-alignment: CENTER;" text="Stop" />
                               <TableColumn fx:id="columnFilename" prefWidth="300.0" style="-fx-alignment: BASELINE_LEFT;" text="Filename" />
                           </columns>
                         </TableView>
@@ -144,6 +145,7 @@
                       <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                       <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                     </rowConstraints>
                      <children>
                         <Spinner fx:id="channelSpinner" GridPane.columnIndex="1" GridPane.rowIndex="1" />
@@ -190,6 +192,24 @@
                            </graphic>
                         </Label>
                         <Label layoutX="248.0" layoutY="50.0" GridPane.columnIndex="2" GridPane.rowIndex="2">
+                           <graphic>
+                              <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
+                           </graphic>
+                        </Label>
+                        <Label layoutX="10.0" layoutY="83.0" text="Stop:" textFill="WHITE" GridPane.rowIndex="3">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                           <padding>
+                              <Insets right="6.0" />
+                           </padding>
+                        </Label>
+                        <CheckBox fx:id="stopCheckbox" layoutX="118.0" layoutY="83.0" mnemonicParsing="false" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="3">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </CheckBox>
+                        <Label layoutX="248.0" layoutY="84.0" GridPane.columnIndex="2" GridPane.rowIndex="3">
                            <graphic>
                               <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
                            </graphic>
@@ -257,7 +277,7 @@
                               <Insets right="6.0" />
                            </padding>
                            <GridPane.margin>
-                              <Insets bottom="12.0" right="22.0" />
+                              <Insets bottom="24.0" right="22.0" />
                            </GridPane.margin>
                         </Label>
                         <Label fx:id="duckLabel" layoutX="248.0" layoutY="15.0" text="-" textFill="WHITE">
@@ -268,10 +288,13 @@
                               <Insets right="6.0" />
                            </padding>
                            <GridPane.margin>
-                              <Insets bottom="12.0" right="22.0" />
+                              <Insets bottom="24.0" right="22.0" />
                            </GridPane.margin>
                         </Label>
                      </children>
+                     <VBox.margin>
+                        <Insets top="24.0" />
+                     </VBox.margin>
                   </GridPane>
                </children>
                <BorderPane.margin>

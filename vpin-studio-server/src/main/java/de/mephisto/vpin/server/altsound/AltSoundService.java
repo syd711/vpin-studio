@@ -61,13 +61,14 @@ public class AltSoundService {
     Map<String, String> audioFiles = new HashMap<>();
     try {
       in = new FileReader(csvFile);
-      Iterable<CSVRecord> records = CSVFormat.RFC4180.withFirstRecordAsHeader()
+      Iterable<CSVRecord> records = CSVFormat.RFC4180
           .withIgnoreEmptyLines(true)
           .withQuoteMode(QuoteMode.NON_NUMERIC)
           .withQuote('"')
           .withTrim().parse(in);
       Iterator<CSVRecord> iterator = records.iterator();
-      iterator.next();
+      CSVRecord header = iterator.next();
+      altSound.setHeaders(header.toList());
 
       while (iterator.hasNext()) {
         CSVRecord record = iterator.next();
@@ -120,9 +121,10 @@ public class AltSoundService {
     if (game != null && game.isAltSoundAvailable()) {
       File altSoundCsv = game.getAltSoundCsv();
       try {
-        FileUtils.writeStringToFile(altSoundCsv, altSound.toString(), StandardCharsets.UTF_8);
+//        FileUtils.writeStringToFile(altSoundCsv, altSound.toCSV(), StandardCharsets.UTF_8);
+        System.out.println(altSound.toCSV());
         return null;
-      } catch (IOException e) {
+      } catch (Exception e) {
         LOG.error("Error writing CSV " + altSoundCsv.getAbsolutePath() + ": " + e.getMessage(), e);
       }
     }
