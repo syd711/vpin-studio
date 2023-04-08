@@ -1,5 +1,6 @@
 package de.mephisto.vpin.server.system;
 
+import de.mephisto.vpin.commons.SystemInfo;
 import de.mephisto.vpin.commons.fx.UIDefaults;
 import de.mephisto.vpin.commons.utils.PropertiesStore;
 import de.mephisto.vpin.commons.utils.SystemCommandExecutor;
@@ -29,21 +30,16 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
-public class SystemService implements InitializingBean {
+public class SystemService extends SystemInfo implements InitializingBean {
   private final static Logger LOG = LoggerFactory.getLogger(SystemService.class);
 
   public final static int SERVER_PORT = RestClient.PORT;
 
   public static final String COMPETITION_BADGES = "competition-badges";
 
-  private final static String VPX_REG_KEY = "HKEY_CURRENT_USER\\SOFTWARE\\Visual Pinball\\VP10\\RecentDir";
-  private final static String POPPER_REG_KEY = "HKEY_LOCAL_MACHINE\\SYSTEM\\ControlSet001\\Control\\Session Manager\\Environment";
   private final static String VPREG_STG = "VPReg.stg";
-  public static String RESOURCES = "./resources/";
 
-  private final static String PINUP_SYSTEM_INSTALLATION_DIR_INST_DIR = "pinupSystem.installationDir";
-  private final static String VISUAL_PINBALL_INST_DIR = "visualPinball.installationDir";
-  private final static String FUTURE_PINBALL_INST_DIR = "futurePinball.installationDir";
+
   public static String PINEMHI_FOLDER = RESOURCES + "pinemhi";
   private final static String PINEMHI_COMMAND = "PINemHi.exe";
   private final static String PINEMHI_INI = "pinemhi.ini";
@@ -51,10 +47,12 @@ public class SystemService implements InitializingBean {
   private static final String SYSTEM_PROPERTIES = "system";
   public static final String DEFAULT_BACKGROUND = "background.png";
 
-
   private File pinUPSystemInstallationFolder;
   private File visualPinballInstallationFolder;
   private File futurePinballInstallationFolder;
+  private File vpxTablesFolder;
+  private File mameFolder;
+  private File userFolder;
 
   private File pinemhiNvRamFolder;
 
@@ -73,6 +71,96 @@ public class SystemService implements InitializingBean {
     logSystemInfo();
   }
 
+
+  private void initBaseFolders() throws VPinStudioException {
+    try {
+      PropertiesStore store = PropertiesStore.create(SystemService.RESOURCES, SYSTEM_PROPERTIES);
+
+      //PinUP Popper Folder
+      this.pinUPSystemInstallationFolder = this.resolvePinUPSystemInstallationFolder();
+      if (!store.containsKey(PINUP_SYSTEM_INSTALLATION_DIR_INST_DIR)) {
+        store.set(PINUP_SYSTEM_INSTALLATION_DIR_INST_DIR, pinUPSystemInstallationFolder.getAbsolutePath().replaceAll("\\\\", "/"));
+      }
+      else {
+        this.pinUPSystemInstallationFolder = new File(store.get(PINUP_SYSTEM_INSTALLATION_DIR_INST_DIR));
+      }
+
+      //Visual Pinball Folder
+      this.visualPinballInstallationFolder = this.resolveVisualPinballInstallationFolder(pinUPSystemInstallationFolder);
+      if (!store.containsKey(VISUAL_PINBALL_INST_DIR)) {
+        store.set(VISUAL_PINBALL_INST_DIR, visualPinballInstallationFolder.getAbsolutePath().replaceAll("\\\\", "/"));
+      }
+      else {
+        this.visualPinballInstallationFolder = new File(store.get(VISUAL_PINBALL_INST_DIR));
+      }
+
+      //Future Pinball Folder
+      this.futurePinballInstallationFolder = this.resolveFuturePinballInstallationFolder(pinUPSystemInstallationFolder);
+      if (!store.containsKey(FUTURE_PINBALL_INST_DIR)) {
+        store.set(FUTURE_PINBALL_INST_DIR, futurePinballInstallationFolder.getAbsolutePath().replaceAll("\\\\", "/"));
+      }
+      else {
+        this.futurePinballInstallationFolder = new File(store.get(FUTURE_PINBALL_INST_DIR));
+      }
+
+      //VPX Tables Folder
+      this.vpxTablesFolder = this.resolveVpxTablesInstallationFolder(pinUPSystemInstallationFolder);
+      if (!store.containsKey(VPX_TABLES_DIR)) {
+        store.set(VPX_TABLES_DIR, vpxTablesFolder.getAbsolutePath().replaceAll("\\\\", "/"));
+      }
+      else {
+        this.vpxTablesFolder = new File(store.get(VPX_TABLES_DIR));
+      }
+
+      //Mame Root Folder
+      this.mameFolder = this.resolveMameInstallationFolder(pinUPSystemInstallationFolder);
+      if (!store.containsKey(MAME_DIR)) {
+        store.set(MAME_DIR, mameFolder.getAbsolutePath().replaceAll("\\\\", "/"));
+      }
+      else {
+        this.mameFolder = new File(store.get(MAME_DIR));
+      }
+
+      //User Folder
+      this.userFolder = this.resolveUserFolder(pinUPSystemInstallationFolder);
+      if (!store.containsKey(USER_DIR)) {
+        store.set(USER_DIR, userFolder.getAbsolutePath().replaceAll("\\\\", "/"));
+      }
+      else {
+        this.userFolder = new File(store.get(USER_DIR));
+      }
+
+
+      if (!getB2SImageExtractionFolder().exists()) {
+        boolean mkdirs = getB2SImageExtractionFolder().mkdirs();
+        if (!mkdirs) {
+          LOG.error("Failed to create b2s image directory " + getB2SImageExtractionFolder().getAbsolutePath());
+        }
+      }
+
+      if (!getB2SCroppedImageFolder().exists()) {
+        boolean mkdirs = getB2SCroppedImageFolder().mkdirs();
+        if (!mkdirs) {
+          LOG.error("Failed to create b2s crops directory " + getB2SCroppedImageFolder().getAbsolutePath());
+        }
+      }
+
+      if (!getVpaArchiveFolder().exists()) {
+        boolean mkdirs = getVPXTablesFolder().mkdirs();
+        if (!mkdirs) {
+          LOG.error("Failed to create VPA archive directory " + getVpaArchiveFolder().getAbsolutePath());
+        }
+      }
+    } catch (Exception e) {
+      String msg = "Failed to initialize base folders: " + e.getMessage();
+      LOG.error(msg, e);
+      throw new VPinStudioException(msg, e);
+    }
+  }
+
+  /**
+   * Ensures that the VPin Studio Logo is available for PinUP Popper in the T-Arc.
+   */
   private void initVPinTableManagerIcon() {
     File pcWheelFolder = new File(this.getPinUPSystemFolder(), "POPMedia/PC Games/Wheel/");
     if (pcWheelFolder.exists()) {
@@ -90,57 +178,6 @@ public class SystemService implements InitializingBean {
           LOG.info("Failed to copy VPin Manager wheel icon: " + e.getMessage(), e);
         }
       }
-    }
-  }
-
-  private void initBaseFolders() throws VPinStudioException {
-    try {
-      PropertiesStore store = PropertiesStore.create(SystemService.RESOURCES, SYSTEM_PROPERTIES);
-
-      //PinUP Popper Folder
-      this.pinUPSystemInstallationFolder = this.resolvePinUPSystemInstallationFolder();
-      if (!store.containsKey(PINUP_SYSTEM_INSTALLATION_DIR_INST_DIR)) {
-        store.set(PINUP_SYSTEM_INSTALLATION_DIR_INST_DIR, pinUPSystemInstallationFolder.getAbsolutePath().replaceAll("\\\\", "/"));
-      }
-      else {
-        this.pinUPSystemInstallationFolder = new File(store.get(PINUP_SYSTEM_INSTALLATION_DIR_INST_DIR));
-      }
-
-      //Visual Pinball Folder
-      this.visualPinballInstallationFolder = this.resolveVisualPinballInstallationFolder();
-      if (!store.containsKey(VISUAL_PINBALL_INST_DIR)) {
-        store.set(VISUAL_PINBALL_INST_DIR, visualPinballInstallationFolder.getAbsolutePath().replaceAll("\\\\", "/"));
-      }
-      else {
-        this.visualPinballInstallationFolder = new File(store.get(VISUAL_PINBALL_INST_DIR));
-      }
-
-      //Future Pinball Folder
-      this.futurePinballInstallationFolder = this.resolveFuturePinballInstallationFolder();
-      if (!store.containsKey(FUTURE_PINBALL_INST_DIR)) {
-        store.set(FUTURE_PINBALL_INST_DIR, futurePinballInstallationFolder.getAbsolutePath().replaceAll("\\\\", "/"));
-      }
-      else {
-        this.futurePinballInstallationFolder = new File(store.get(FUTURE_PINBALL_INST_DIR));
-      }
-
-      if (!getB2SImageExtractionFolder().exists()) {
-        boolean mkdirs = getB2SImageExtractionFolder().mkdirs();
-        if (!mkdirs) {
-          LOG.error("Failed to create b2s image directory " + getB2SImageExtractionFolder().getAbsolutePath());
-        }
-      }
-
-      if (!getB2SCroppedImageFolder().exists()) {
-        boolean mkdirs = getB2SCroppedImageFolder().mkdirs();
-        if (!mkdirs) {
-          LOG.error("Failed to create b2s crops directory " + getB2SCroppedImageFolder().getAbsolutePath());
-        }
-      }
-    } catch (Exception e) {
-      String msg = "Failed to initialize base folders: " + e.getMessage();
-      LOG.error(msg, e);
-      throw new VPinStudioException(msg, e);
     }
   }
 
@@ -251,53 +288,6 @@ public class SystemService implements InitializingBean {
     return b.toString();
   }
 
-  private File resolvePinUPSystemInstallationFolder() {
-    try {
-      String popperInstDir = System.getenv("PopperInstDir");
-      if (!StringUtils.isEmpty(popperInstDir)) {
-        return new File(popperInstDir, "PinUPSystem");
-      }
-
-      String output = readRegistry(POPPER_REG_KEY, "PopperInstDir");
-      if (output != null && output.trim().length() > 0) {
-        String path = extractRegistryValue(output);
-        File folder = new File(path, "PinUPSystem");
-        if (folder.exists()) {
-          return folder;
-        }
-        LOG.error("Found registry entry for " + POPPER_REG_KEY + ", but that folder does not exist. I'm using the default installation folder instead.");
-      }
-    } catch (Exception e) {
-      LOG.error("Failed to read installation folder: " + e.getMessage(), e);
-    }
-    return new File("C:/vPinball/Visual Pinball");
-  }
-
-  private File resolveVisualPinballInstallationFolder() {
-    File file = new File(pinUPSystemInstallationFolder.getParent(), "VisualPinball");
-    if (!file.exists()) {
-      LOG.info("The system info could not derive the Visual Pinball installation folder from the PinUP Popper installation, checking windows registry next.");
-      String tablesDir = readRegistry(VPX_REG_KEY, "LoadDir");
-      if (tablesDir != null) {
-        tablesDir = extractRegistryValue(tablesDir);
-        LOG.info("Resolve Visual Pinball tables folder " + tablesDir);
-        file = new File(tablesDir);
-        if (file.exists()) {
-          return file.getParentFile();
-        }
-      }
-    }
-    return file;
-  }
-
-  private File resolveFuturePinballInstallationFolder() {
-    File file = new File(pinUPSystemInstallationFolder.getParent(), "FuturePinball");
-    if (!file.exists()) {
-      LOG.info("The system info could not derive the Future Pinball installation folder from the PinUP Popper installation, checking windows registry next.");
-    }
-    return file;
-  }
-
   @NonNull
   public File getPinemhiCommandFile() {
     return new File(PINEMHI_FOLDER, PINEMHI_COMMAND);
@@ -315,11 +305,11 @@ public class SystemService implements InitializingBean {
 
   @NonNull
   public File getVisualPinballUserFolder() {
-    return new File(this.getVisualPinballInstallationFolder(), "User");
+    return this.userFolder;
   }
 
   public File getMameRomFolder() {
-    return new File(getVisualPinballInstallationFolder(), "VPinMAME/roms/");
+    return new File(this.getMameFolder(), "roms/");
   }
 
   @SuppressWarnings("unused")
@@ -329,7 +319,7 @@ public class SystemService implements InitializingBean {
 
   @NonNull
   public File getMameFolder() {
-    return new File(getVisualPinballInstallationFolder(), "VPinMAME/");
+    return this.mameFolder;
   }
 
   @NonNull
@@ -350,7 +340,7 @@ public class SystemService implements InitializingBean {
   }
 
   public File getVPXTablesFolder() {
-    return new File(getVisualPinballInstallationFolder(), "Tables/");
+    return this.vpxTablesFolder;
   }
 
   public File getVPXMusicFolder() {
@@ -400,33 +390,6 @@ public class SystemService implements InitializingBean {
     }
 
     return false;
-  }
-
-  static String extractRegistryValue(String output) {
-    String result = output;
-    result = result.replace("\n", "").replace("\r", "").trim();
-
-    String[] s = result.split("    ");
-    return s[3];
-  }
-
-  static final String readRegistry(String location, String key) {
-    try {
-      // Run reg query, then read output with StreamReader (internal class)
-      String cmd = "reg query " + '"' + location;
-      if (key != null) {
-        cmd = "reg query " + '"' + location + "\" /v " + key;
-      }
-      Process process = Runtime.getRuntime().exec(cmd);
-      StreamReader reader = new StreamReader(process.getInputStream());
-      reader.start();
-      process.waitFor();
-      reader.join();
-      return reader.getResult();
-    } catch (Exception e) {
-      LOG.error("Failed to read registry key " + location);
-      return null;
-    }
   }
 
   public File getPinUPDatabaseFile() {
@@ -518,28 +481,5 @@ public class SystemService implements InitializingBean {
 
   public File getVPinStudioMenuExe() {
     return new File("./VPin-Studio-Table-Manager.exe");
-  }
-
-  static class StreamReader extends Thread {
-    private InputStream is = null;
-    private final StringWriter sw = new StringWriter();
-
-    public StreamReader(InputStream is) {
-      this.is = is;
-    }
-
-    public void run() {
-      try {
-        int c;
-        while ((c = is.read()) != -1)
-          sw.write(c);
-      } catch (IOException e) {
-        LOG.error("Failed to execute stream reader: " + e.getMessage(), e);
-      }
-    }
-
-    public String getResult() {
-      return sw.toString();
-    }
   }
 }

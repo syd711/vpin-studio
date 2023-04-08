@@ -12,6 +12,7 @@ import de.mephisto.vpin.ui.UpdateDialogController;
 import de.mephisto.vpin.ui.competitions.CompetitionDiscordDialogController;
 import de.mephisto.vpin.ui.competitions.CompetitionDiscordJoinDialogController;
 import de.mephisto.vpin.ui.competitions.CompetitionOfflineDialogController;
+import de.mephisto.vpin.ui.launcher.InstallationController;
 import de.mephisto.vpin.ui.players.PlayerDialogController;
 import de.mephisto.vpin.ui.tables.TableOverviewController;
 import de.mephisto.vpin.ui.tables.TablesController;
@@ -196,8 +197,6 @@ public class Dialogs {
     return controller.uploadFinished();
   }
 
-
-
   public static void openVpaDownloadDialog(ObservableList<VpaDescriptorRepresentation> selectedItems) {
     Stage stage = createStudioDialogStage(VpaDownloadDialogController.class, "dialog-vpa-download.fxml", "Visual Pinball Archive Download");
     VpaDownloadDialogController controller = (VpaDownloadDialogController) stage.getUserData();
@@ -211,6 +210,11 @@ public class Dialogs {
     stage.showAndWait();
 
     return controller.uploadFinished();
+  }
+
+  public static void openInstallerDialog() {
+    Stage stage = createStudioDialogStage(InstallationController.class, "dialog-installer.fxml", "Visual Studio Server Installation");
+    stage.showAndWait();
   }
 
   public static boolean openAltSoundEditor(GameRepresentation game, AltSound altSound) {

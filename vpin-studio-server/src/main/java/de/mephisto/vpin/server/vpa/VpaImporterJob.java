@@ -186,7 +186,7 @@ public class VpaImporterJob implements Job {
           continue;
         }
 
-        if (newFile.getAbsolutePath().replaceAll("\\\\", "/").contains("VisualPinball/Music") && !importPupPack) {
+        if (newFile.getAbsolutePath().replaceAll("\\\\", "/").contains("Pinball/Music") && !importPupPack) {
           zipEntry = zis.getNextEntry();
           continue;
         }
@@ -228,7 +228,7 @@ public class VpaImporterJob implements Job {
 
   private File getDestDirForEntry(ZipEntry entry) {
     String name = entry.getName();
-    if (name.startsWith("VisualPinball")) {
+    if (name.startsWith("VisualPinball") || name.startsWith("Visual Pinball")) {
       return systemService.getVisualPinballInstallationFolder().getParentFile();
     }
     else if (name.startsWith("PinUPSystem")) {

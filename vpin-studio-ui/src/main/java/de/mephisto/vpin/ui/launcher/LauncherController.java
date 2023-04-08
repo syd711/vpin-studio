@@ -1,11 +1,9 @@
 package de.mephisto.vpin.ui.launcher;
 
 import de.mephisto.vpin.commons.ServerInstallationUtil;
-import de.mephisto.vpin.commons.fx.LoadingOverlayController;
 import de.mephisto.vpin.commons.fx.UIDefaults;
 import de.mephisto.vpin.commons.utils.ImageUtil;
 import de.mephisto.vpin.commons.utils.PropertiesStore;
-import de.mephisto.vpin.commons.utils.Updater;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.AssetType;
 import de.mephisto.vpin.restclient.PreferenceNames;
@@ -18,7 +16,6 @@ import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Cursor;
 import javafx.scene.control.*;
@@ -89,7 +86,7 @@ public class LauncherController implements Initializable {
 
   @FXML
   private void onInstall() {
-    this.installServer();
+    Dialogs.openInstallerDialog();
   }
 
   @FXML
@@ -172,52 +169,12 @@ public class LauncherController implements Initializable {
     this.onConnectionRefresh();
   }
 
-  private void installServer() {
-    try {
-      ServerInstallationUtil.install();
-      if (!ServerInstallationUtil.getAutostartFile().exists()) {
-        throw new UnsupportedOperationException("Installation failed: " + ServerInstallationUtil.getAutostartFile().getAbsolutePath() + " does not exist.");
-      }
-
-      Updater.restartServer();
-      main.getTop().setVisible(false);
-
-      FXMLLoader loader = new FXMLLoader(LoadingOverlayController.class.getResource("loading-overlay.fxml"));
-      BorderPane loadingOverlay = loader.load();
-      LoadingOverlayController ctrl = loader.getController();
-      ctrl.setLoadingMessage("Installing Server, waiting for initial connect...");
-
-      main.setCenter(loadingOverlay);
-
-      new Thread(() -> {
-        while (client.version() == null) {
-          try {
-            LOG.info("Waiting for server...");
-            Thread.sleep(2000);
-          } catch (InterruptedException e) {
-            LOG.error("server wait error");
-          }
-        }
-
-        LOG.info("Running initial tasks.");
-        Platform.runLater(() -> {
-          stage.close();
-          Dialogs.createProgressDialog(new ServiceInstallationProgressModel(Studio.client));
-          Studio.loadStudio(WidgetFactory.createStage(), client);
-        });
-      }).start();
-    } catch (Exception e) {
-      LOG.error("Server installation failed: " + e.getMessage(), e);
-      WidgetFactory.showAlert(stage, "Server installation failed.", "Error: " + e.getMessage());
-    }
-  }
-
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
     tableView.setPlaceholder(new Label("                 No connections found.\n" +
         "Install the service or connect to another system."));
 
-    this.installBtn.setVisible(ServerInstallationUtil.SERVER_EXE.exists());
+//    this.installBtn.setVisible(ServerInstallationUtil.SERVER_EXE.exists());
     this.installBtn.setDisable(client.version() != null);
 
     connectBtn.setDisable(true);
