@@ -81,11 +81,13 @@ public class AltSoundService {
         entry.setStop(record.isSet(5) ? getInt(record.get(5)) : 0);
         entry.setName(record.isSet(6) ? record.get(6).replaceAll("\"", "") : "");
         entry.setFilename(record.isSet(7) ? record.get(7).replaceAll("\"", "") : "");
+        entry.setExists(record.isSet(7) && new File(game.getAltSoundFolder(), record.get(7).replaceAll("\"", "")).exists());
         entry.setGroup(record.isSet(8) ? getInt(record.get(8)) : 0);
         entry.setShaker(record.isSet(9) ? record.get(9) : "");
         entry.setSerial(record.isSet(10) ? record.get(10) : "");
         entry.setPreload(record.isSet(11) ? getInt(record.get(11)) : 0);
         entry.setStopCmd(record.isSet(12) ? record.get(12) : "");
+
 
         File soundFile = new File(game.getAltSoundFolder(), entry.getFilename());
         if (soundFile.exists()) {

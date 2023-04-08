@@ -212,9 +212,11 @@ public class Dialogs {
     return controller.uploadFinished();
   }
 
-  public static void openInstallerDialog() {
+  public static boolean openInstallerDialog() {
     Stage stage = createStudioDialogStage(InstallationController.class, "dialog-installer.fxml", "Visual Studio Server Installation");
+    InstallationController controller = (InstallationController) stage.getUserData();
     stage.showAndWait();
+    return controller.install();
   }
 
   public static boolean openAltSoundEditor(GameRepresentation game, AltSound altSound) {

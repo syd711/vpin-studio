@@ -18,6 +18,15 @@ public class AltSoundEntry {
   private String serial;
   private int preload;
   private String stopCmd;
+  private boolean exists;
+
+  public boolean isExists() {
+    return exists;
+  }
+
+  public void setExists(boolean exists) {
+    this.exists = exists;
+  }
 
   public String getId() {
     return id;

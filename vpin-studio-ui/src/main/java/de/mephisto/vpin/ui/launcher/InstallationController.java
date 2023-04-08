@@ -81,6 +81,8 @@ public class InstallationController implements Initializable, DialogController {
   @FXML
   private VBox validationError;
 
+  private boolean result = false;
+
   private Stage stage;
   private PropertiesStore store;
   private File pinUPSystemInstallationFolder;
@@ -98,7 +100,7 @@ public class InstallationController implements Initializable, DialogController {
   }
 
   @FXML
-  private void onInstall() {
+  private void onInstall(ActionEvent e) {
     LOG.info("********************************* Installation Overview ***********************************************");
     LOG.info("PinUP System Folder: " + pinUPSystemInstallationFolder.getAbsolutePath());
     LOG.info("Visual Pinball Folder: " + visualPinballInstallationFolder.getAbsolutePath());
@@ -112,7 +114,10 @@ public class InstallationController implements Initializable, DialogController {
     store.set(SystemInfo.MAME_DIR, mameFolder.getAbsolutePath());
     store.set(SystemInfo.USER_DIR, systemInfo.resolveUserFolder(visualPinballInstallationFolder).getAbsolutePath());
 
-//    this.installServer();
+    result = true;
+
+    Stage stage = (Stage) ((Button) e.getSource()).getScene().getWindow();
+    stage.close();
   }
 
   @FXML
@@ -168,48 +173,6 @@ public class InstallationController implements Initializable, DialogController {
       this.mameFolder = selectedDirectory;
       this.mameFolderField.setText(this.mameFolder.getAbsolutePath());
       validateFolders();
-    }
-  }
-
-  @FXML
-  private void installServer() {
-    try {
-      ServerInstallationUtil.install();
-      if (!ServerInstallationUtil.getAutostartFile().exists()) {
-        throw new UnsupportedOperationException("Installation failed: " + ServerInstallationUtil.getAutostartFile().getAbsolutePath() + " does not exist.");
-      }
-
-      Updater.restartServer();
-      main.getTop().setVisible(false);
-      toolbar.setVisible(false);
-
-      FXMLLoader loader = new FXMLLoader(LoadingOverlayController.class.getResource("loading-overlay.fxml"));
-      BorderPane loadingOverlay = loader.load();
-      LoadingOverlayController ctrl = loader.getController();
-      ctrl.setLoadingMessage("Installing Server, waiting for initial connect...");
-
-      main.setCenter(loadingOverlay);
-
-      new Thread(() -> {
-        while (client.version() == null) {
-          try {
-            LOG.info("Waiting for server...");
-            Thread.sleep(2000);
-          } catch (InterruptedException e) {
-            LOG.error("server wait error");
-          }
-        }
-
-        LOG.info("Running initial tasks.");
-        Platform.runLater(() -> {
-          stage.close();
-          Dialogs.createProgressDialog(new ServiceInstallationProgressModel(Studio.client));
-          Studio.loadStudio(WidgetFactory.createStage(), client);
-        });
-      }).start();
-    } catch (Exception e) {
-      LOG.error("Server installation failed: " + e.getMessage(), e);
-      WidgetFactory.showAlert(stage, "Server installation failed.", "Error: " + e.getMessage());
     }
   }
 
@@ -328,5 +291,9 @@ public class InstallationController implements Initializable, DialogController {
   @Override
   public void onDialogCancel() {
 
+  }
+
+  public boolean install() {
+    return this.result;
   }
 }

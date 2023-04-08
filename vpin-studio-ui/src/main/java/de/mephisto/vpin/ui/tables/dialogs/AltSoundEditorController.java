@@ -4,6 +4,7 @@ import de.mephisto.vpin.commons.fx.DialogController;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.AltSound;
 import de.mephisto.vpin.restclient.AltSoundEntry;
+import de.mephisto.vpin.restclient.representations.CompetitionRepresentation;
 import de.mephisto.vpin.restclient.representations.GameRepresentation;
 import de.mephisto.vpin.ui.Studio;
 import javafx.beans.property.*;
@@ -111,7 +112,7 @@ public class AltSoundEditorController implements Initializable, DialogController
 
   @FXML
   private void onRestoreClick() {
-    Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Revert Changes?", "Revert all changes and reload original ALT sound data?", null, "Yes, revert changes");
+    Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Revert Changes?", "Revert all changes and restore initial ALT sound data?", null, "Yes, revert changes");
     if (result.isPresent() && result.get().equals(ButtonType.OK)) {
       AltSound orig = Studio.client.getAltSound(this.game.getId());
       this.altSound.setEntries(orig.getEntries());
@@ -138,7 +139,15 @@ public class AltSoundEditorController implements Initializable, DialogController
     columnChannel.setCellValueFactory(cellData -> cellData.getValue().channel);
     columnDuck.setCellValueFactory(cellData -> cellData.getValue().duck);
     columnGain.setCellValueFactory(cellData -> cellData.getValue().gain);
-    columnFilename.setCellValueFactory(cellData -> cellData.getValue().filename);
+    columnFilename.setCellValueFactory(cellData -> {
+      AltSoundEntryModel entry = cellData.getValue();
+      Label label = new Label(entry.filename.getValue());
+
+      if (!entry.exists.getValue()) {
+        label.setStyle("-fx-font-color: #FF3333;-fx-text-fill:#FF3333; -fx-font-weight: bold;");
+      }
+      return new SimpleObjectProperty(label);
+    });
 
     columnLoop.setCellValueFactory(cellData -> {
       AltSoundEntryModel value = cellData.getValue();
@@ -316,6 +325,7 @@ public class AltSoundEditorController implements Initializable, DialogController
     private final IntegerProperty channel;
     private final BooleanProperty looped;
     private final BooleanProperty stop;
+    private final BooleanProperty exists;
 
     private AltSoundEntryModel(AltSoundEntry entry) {
       this.id = new SimpleStringProperty(entry.getId());
@@ -323,6 +333,7 @@ public class AltSoundEditorController implements Initializable, DialogController
       this.filename = new SimpleStringProperty(entry.getFilename());
       this.looped = new SimpleBooleanProperty(entry.getLoop() == 100);
       this.stop = new SimpleBooleanProperty(entry.getStop() == 1);
+      this.exists = new SimpleBooleanProperty(entry.isExists());
       this.looped.addListener((observable, oldValue, newValue) -> {
         if (newValue) {
           entry.setLoop(100);

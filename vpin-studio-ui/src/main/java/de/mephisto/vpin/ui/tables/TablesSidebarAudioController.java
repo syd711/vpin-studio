@@ -1,6 +1,7 @@
 package de.mephisto.vpin.ui.tables;
 
 import de.mephisto.vpin.commons.utils.FileUtils;
+import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.AltSound;
 import de.mephisto.vpin.restclient.VPinStudioClient;
 import de.mephisto.vpin.restclient.representations.GameRepresentation;
@@ -9,6 +10,7 @@ import de.mephisto.vpin.ui.util.Dialogs;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,6 +25,8 @@ public class TablesSidebarAudioController implements Initializable {
 
   @FXML
   private Button altSoundBtn;
+  @FXML
+  private Button restoreBtn;
 
   @FXML
   private Label entriesLabel;
@@ -54,11 +58,20 @@ public class TablesSidebarAudioController implements Initializable {
     }
   }
 
+  @FXML
+  private void onRestore() {
+    if (game.isPresent() && game.get().isAltSoundAvailable()) {
+      Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Restore Backup?", "Revert all changes and restore original ALT sound backup?", null, "Yes, restore backup");
+      if (result.isPresent() && result.get().equals(ButtonType.OK)) {
+        client.restoreAltSound(game.get().getId());
+      }
+    }
+  }
+
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
     client = Studio.client;
   }
-
 
   public void setGame(Optional<GameRepresentation> game) {
     this.game = game;
