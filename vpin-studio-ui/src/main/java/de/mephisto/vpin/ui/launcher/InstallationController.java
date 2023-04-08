@@ -123,7 +123,9 @@ public class InstallationController implements Initializable, DialogController {
   @FXML
   private void onPopperFolderBtn() {
     DirectoryChooser directoryChooser = new DirectoryChooser();
-    directoryChooser.setInitialDirectory(this.pinUPSystemInstallationFolder);
+    if(pinUPSystemInstallationFolder != null && pinUPSystemInstallationFolder.exists()) {
+      directoryChooser.setInitialDirectory(this.pinUPSystemInstallationFolder);
+    }
     directoryChooser.setTitle("Select PinUP System Folder");
     File selectedDirectory = directoryChooser.showDialog(stage);
 
@@ -137,7 +139,9 @@ public class InstallationController implements Initializable, DialogController {
   @FXML
   private void onVisualPinballFolderBtn() {
     DirectoryChooser directoryChooser = new DirectoryChooser();
-    directoryChooser.setInitialDirectory(this.visualPinballInstallationFolder);
+    if(visualPinballInstallationFolder != null && visualPinballInstallationFolder.exists()) {
+      directoryChooser.setInitialDirectory(this.visualPinballInstallationFolder);
+    }
     directoryChooser.setTitle("Select Visual Pinball Installation Folder");
     File selectedDirectory = directoryChooser.showDialog(stage);
 
@@ -151,7 +155,9 @@ public class InstallationController implements Initializable, DialogController {
   @FXML
   private void onVpxTablesFolderBtn() {
     DirectoryChooser directoryChooser = new DirectoryChooser();
-    directoryChooser.setInitialDirectory(this.vpxTablesFolder);
+    if(vpxTablesFolder != null && vpxTablesFolder.exists()) {
+      directoryChooser.setInitialDirectory(this.vpxTablesFolder);
+    }
     directoryChooser.setTitle("Select VPX Tables Folder");
     File selectedDirectory = directoryChooser.showDialog(stage);
 
@@ -165,7 +171,10 @@ public class InstallationController implements Initializable, DialogController {
   @FXML
   private void onMameFolderBtn() {
     DirectoryChooser directoryChooser = new DirectoryChooser();
-    directoryChooser.setInitialDirectory(this.mameFolder);
+    if(mameFolder != null && mameFolder.exists()) {
+      directoryChooser.setInitialDirectory(this.mameFolder);
+    }
+
     directoryChooser.setTitle("Select VPin MAME Folder");
     File selectedDirectory = directoryChooser.showDialog(stage);
 
