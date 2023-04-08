@@ -215,6 +215,7 @@ public class Dialogs {
   public static boolean openInstallerDialog() {
     Stage stage = createStudioDialogStage(InstallationController.class, "dialog-installer.fxml", "Visual Studio Server Installation");
     InstallationController controller = (InstallationController) stage.getUserData();
+    controller.setStage(stage);
     stage.showAndWait();
     return controller.install();
   }

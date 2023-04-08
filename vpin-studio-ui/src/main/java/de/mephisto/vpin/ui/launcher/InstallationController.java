@@ -187,8 +187,6 @@ public class InstallationController implements Initializable, DialogController {
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
-    this.stage = Studio.stage;
-
     this.installBtn.setDisable(true);
     Font font = Font.font("Impact", FontPosture.findByName("regular"), 28);
     studioLabel.setFont(font);
@@ -304,5 +302,9 @@ public class InstallationController implements Initializable, DialogController {
 
   public boolean install() {
     return this.result;
+  }
+
+  public void setStage(Stage stage) {
+    this.stage = stage;
   }
 }
