@@ -74,7 +74,7 @@ public class AltSoundService {
         CSVRecord record = iterator.next();
         AltSoundEntry entry = new AltSoundEntry();
         entry.setId(record.get(0));
-        entry.setChannel(record.isSet(1) ? getInt(record.get(1)) : 0);
+        entry.setChannel(record.isSet(1) ? record.get(1) : "");
         entry.setDuck(record.isSet(2) ? getInt(record.get(2)) : 0);
         entry.setGain(record.isSet(3) ? getInt(record.get(3)) : 0);
         entry.setLoop(record.isSet(4) ? getInt(record.get(4)) : 0);
@@ -95,12 +95,10 @@ public class AltSoundService {
           size += soundFile.length();
         }
 
-        if(!altSound.getChannels().contains(entry.getChannel())) {
-          altSound.getChannels().add(entry.getChannel());
-        }
-
         altSound.getEntries().add(entry);
       }
+
+      in.close();
 
       altSound.setFilesize(size);
       altSound.setFiles(audioFiles.size());
@@ -111,7 +109,7 @@ public class AltSoundService {
   }
 
   private int getInt(String value) {
-    if(StringUtils.isEmpty(value)) {
+    if (StringUtils.isEmpty(value)) {
       return 0;
     }
 
@@ -123,8 +121,8 @@ public class AltSoundService {
     if (game != null && game.isAltSoundAvailable()) {
       File altSoundCsv = game.getAltSoundCsv();
       try {
-//        FileUtils.writeStringToFile(altSoundCsv, altSound.toCSV(), StandardCharsets.UTF_8);
-        System.out.println(altSound.toCSV());
+        FileUtils.writeStringToFile(altSoundCsv, altSound.toCSV(), StandardCharsets.UTF_8);
+        LOG.info("Written ALTSound for " + game.getGameDisplayName());
         return null;
       } catch (Exception e) {
         LOG.error("Error writing CSV " + altSoundCsv.getAbsolutePath() + ": " + e.getMessage(), e);
@@ -148,10 +146,15 @@ public class AltSoundService {
   public AltSound restore(int id) {
     Game game = gameService.getGame(id);
     if (game != null && game.isAltSoundAvailable()) {
-      File altSoundCsv = game.getAltSoundCsv();
-      File backup = getOrCreateBackup(altSoundCsv);
       try {
-        FileUtils.copyFile(backup, altSoundCsv);
+        File altSoundCsv = game.getAltSoundCsv();
+        File backup = getOrCreateBackup(altSoundCsv);
+        if (backup.exists()) {
+          FileUtils.copyFile(backup, altSoundCsv);
+        }
+        else {
+          LOG.error("Failed to restore ALT sound backup, the backup file " + backup.getAbsolutePath() + " does not exists.");
+        }
       } catch (IOException e) {
         LOG.error("Error restoring CSV backup: " + e.getMessage(), e);
       }

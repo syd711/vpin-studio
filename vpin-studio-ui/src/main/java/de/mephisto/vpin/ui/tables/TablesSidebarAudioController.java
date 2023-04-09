@@ -25,6 +25,7 @@ public class TablesSidebarAudioController implements Initializable {
 
   @FXML
   private Button altSoundBtn;
+
   @FXML
   private Button restoreBtn;
 
@@ -61,7 +62,7 @@ public class TablesSidebarAudioController implements Initializable {
   @FXML
   private void onRestore() {
     if (game.isPresent() && game.get().isAltSoundAvailable()) {
-      Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Restore Backup?", "Revert all changes and restore original ALT sound backup?", null, "Yes, restore backup");
+      Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Restore Backup?", "Revert all changes and restore the original ALT sound backup?", null, "Yes, restore backup");
       if (result.isPresent() && result.get().equals(ButtonType.OK)) {
         client.restoreAltSound(game.get().getId());
       }
@@ -80,6 +81,7 @@ public class TablesSidebarAudioController implements Initializable {
 
   public void refreshView(Optional<GameRepresentation> g) {
     altSoundBtn.setDisable(!game.isPresent() || !game.get().isAltSoundAvailable());
+    restoreBtn.setDisable(!game.isPresent() || !game.get().isAltSoundAvailable());
 
     entriesLabel.setText("-");
     bundleSizeLabel.setText("-");

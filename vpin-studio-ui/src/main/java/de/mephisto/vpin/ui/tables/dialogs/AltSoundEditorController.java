@@ -4,10 +4,10 @@ import de.mephisto.vpin.commons.fx.DialogController;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.AltSound;
 import de.mephisto.vpin.restclient.AltSoundEntry;
-import de.mephisto.vpin.restclient.representations.CompetitionRepresentation;
 import de.mephisto.vpin.restclient.representations.GameRepresentation;
 import de.mephisto.vpin.ui.Studio;
 import javafx.beans.property.*;
+import javafx.beans.value.ChangeListener;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
@@ -40,7 +40,7 @@ public class AltSoundEditorController implements Initializable, DialogController
   private TableColumn<AltSoundEntryModel, String> columnName;
 
   @FXML
-  private TableColumn<AltSoundEntryModel, Number> columnChannel;
+  private TableColumn<AltSoundEntryModel, String> columnChannel;
 
   @FXML
   private TableColumn<AltSoundEntryModel, Number> columnDuck;
@@ -61,9 +61,6 @@ public class AltSoundEditorController implements Initializable, DialogController
   private TextField searchText;
 
   @FXML
-  private ComboBox<Integer> channelFilterCombo;
-
-  @FXML
   private ComboBox<String> nameFilterCombo;
 
   @FXML
@@ -73,7 +70,7 @@ public class AltSoundEditorController implements Initializable, DialogController
   private ComboBox<String> loopedFilterCombo;
 
   @FXML
-  private Spinner<Integer> channelSpinner;
+  private TextField channelField;
 
   @FXML
   private Label entriesLabel;
@@ -98,6 +95,10 @@ public class AltSoundEditorController implements Initializable, DialogController
 
   @FXML
   private Button saveBtn;
+
+  private ChangeListener<String> channelFieldChangeListener;
+  private ChangeListener<Boolean> loopCheckboxChangeListener;
+  private ChangeListener<Boolean> stopCheckboxChangeListener;
 
   @Override
   public void onDialogCancel() {
@@ -136,7 +137,13 @@ public class AltSoundEditorController implements Initializable, DialogController
   public void initialize(URL url, ResourceBundle resourceBundle) {
     columnId.setCellValueFactory(cellData -> cellData.getValue().id);
     columnName.setCellValueFactory(cellData -> cellData.getValue().name);
-    columnChannel.setCellValueFactory(cellData -> cellData.getValue().channel);
+    columnChannel.setCellValueFactory(cellData -> {
+      AltSoundEntryModel entry = cellData.getValue();
+      if (entry.channel.get() == null) {
+        return new SimpleObjectProperty("");
+      }
+      return new SimpleObjectProperty(entry.channel.get());
+    });
     columnDuck.setCellValueFactory(cellData -> cellData.getValue().duck);
     columnGain.setCellValueFactory(cellData -> cellData.getValue().gain);
     columnFilename.setCellValueFactory(cellData -> {
@@ -168,32 +175,49 @@ public class AltSoundEditorController implements Initializable, DialogController
 
     loopedFilterCombo.setItems(FXCollections.observableList(Arrays.asList(null, "Yes", "No")));
     loopedFilterCombo.valueProperty().addListener((observable, oldValue, newValue) -> refresh());
-    channelFilterCombo.valueProperty().addListener((observable, oldValue, newValue) -> refresh());
     nameFilterCombo.valueProperty().addListener((observable, oldValue, newValue) -> refresh());
     filenameFilterCombo.valueProperty().addListener((observable, oldValue, newValue) -> refresh());
     searchText.textProperty().addListener((observable, oldValue, newValue) -> refresh());
 
     tableView.getSelectionModel().getSelectedItems().addListener((ListChangeListener<AltSoundEntryModel>) c -> refreshEditorForSelection());
 
-    SpinnerValueFactory.IntegerSpinnerValueFactory factory = new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 10);
-    channelSpinner.setValueFactory(factory);
-    channelSpinner.valueProperty().addListener((observable, oldValue, newValue) -> {
-      ObservableList<AltSoundEntryModel> selectedItems = tableView.getSelectionModel().getSelectedItems();
-      selectedItems.forEach(i -> i.channel.set(newValue));
-      tableView.refresh();
-    });
+    channelFieldChangeListener = (observable, oldValue, newValue) -> {
+      try {
+        int v = Integer.parseInt(newValue);
+        if (v > 256) {
+          channelField.setText(String.valueOf(oldValue));
+          return;
+        }
+        ObservableList<AltSoundEntryModel> selectedItems = tableView.getSelectionModel().getSelectedItems();
+        selectedItems.forEach(i -> i.channel.set(String.valueOf(v)));
+        tableView.refresh();
+      } catch (Exception e) {
+        String value = String.valueOf(oldValue);
+        if (String.valueOf(newValue).equals("")) {
+          value = "";
+        }
 
-    loopedCheckbox.selectedProperty().addListener((observable, oldValue, newValue) -> {
+        channelField.setText(value);
+        ObservableList<AltSoundEntryModel> selectedItems = tableView.getSelectionModel().getSelectedItems();
+        selectedItems.forEach(i -> i.channel.set(newValue));
+        tableView.refresh();
+      }
+    };
+    channelField.textProperty().addListener(channelFieldChangeListener);
+
+    loopCheckboxChangeListener = (observable, oldValue, newValue) -> {
       ObservableList<AltSoundEntryModel> selectedItems = tableView.getSelectionModel().getSelectedItems();
       selectedItems.forEach(i -> i.looped.set(newValue));
       tableView.refresh();
-    });
+    };
+    loopedCheckbox.selectedProperty().addListener(loopCheckboxChangeListener);
 
-    stopCheckbox.selectedProperty().addListener((observable, oldValue, newValue) -> {
+    stopCheckboxChangeListener = (observable, oldValue, newValue) -> {
       ObservableList<AltSoundEntryModel> selectedItems = tableView.getSelectionModel().getSelectedItems();
       selectedItems.forEach(i -> i.stop.set(newValue));
       tableView.refresh();
-    });
+    };
+    stopCheckbox.selectedProperty().addListener(stopCheckboxChangeListener);
 
     duckVolume.valueProperty().addListener((observable, oldValue, newValue) -> {
       ObservableList<AltSoundEntryModel> selectedItems = tableView.getSelectionModel().getSelectedItems();
@@ -223,10 +247,6 @@ public class AltSoundEditorController implements Initializable, DialogController
     this.game = game;
     this.altSound = altSound;
 
-    List<Integer> channels = new ArrayList<>(altSound.getChannels());
-    channels.add(0, null);
-    channelFilterCombo.setItems(FXCollections.observableList(channels));
-
     List<String> names = new ArrayList<>();
     names.add(null);
     List<String> filenames = new ArrayList<>();
@@ -253,7 +273,6 @@ public class AltSoundEditorController implements Initializable, DialogController
     List<AltSoundEntry> allEntries = altSound.getEntries();
 
     String nameFilter = this.nameFilterCombo.getValue();
-    Integer channelFilter = this.channelFilterCombo.getValue();
     String filenameFiler = this.filenameFilterCombo.getValue();
     String loopedFilter = this.loopedFilterCombo.getValue();
     String term = this.searchText.getText();
@@ -276,11 +295,6 @@ public class AltSoundEditorController implements Initializable, DialogController
           continue;
         }
       }
-
-      if (channelFilter != null && entry.getChannel() != channelFilter) {
-        continue;
-      }
-
       filtered.add(new AltSoundEntryModel(entry));
     }
 
@@ -295,11 +309,18 @@ public class AltSoundEditorController implements Initializable, DialogController
     ObservableList<AltSoundEntryModel> selectedItems = tableView.getSelectionModel().getSelectedItems();
     entriesLabel.setText(String.valueOf(selectedItems.size()));
 
+    channelField.textProperty().removeListener(channelFieldChangeListener);
+    loopedCheckbox.selectedProperty().removeListener(loopCheckboxChangeListener);
+    stopCheckbox.selectedProperty().removeListener(stopCheckboxChangeListener);
+
     gainVolume.setDisable(selectedItems.isEmpty());
+    gainLabel.setDisable(selectedItems.isEmpty());
+    duckVolume.setDisable(selectedItems.isEmpty());
     duckLabel.setDisable(selectedItems.isEmpty());
+
     loopedCheckbox.setDisable(selectedItems.isEmpty());
     stopCheckbox.setDisable(selectedItems.isEmpty());
-    channelSpinner.setDisable(selectedItems.isEmpty());
+    channelField.setDisable(selectedItems.isEmpty());
 
     if (!selectedItems.isEmpty()) {
       AltSoundEntryModel altSoundEntryModel = selectedItems.get(0);
@@ -307,13 +328,25 @@ public class AltSoundEditorController implements Initializable, DialogController
       gainLabel.setText("" + altSoundEntryModel.gain.getValue());
       duckVolume.valueProperty().set(altSoundEntryModel.duck.get());
       duckLabel.setText("" + altSoundEntryModel.duck.getValue());
+
+      channelField.setText(altSoundEntryModel.channel.get() == null ? "" : altSoundEntryModel.channel.getValue());
+      loopedCheckbox.selectedProperty().set(altSoundEntryModel.looped.getValue());
+      stopCheckbox.selectedProperty().set(altSoundEntryModel.stop.getValue());
     }
     else {
       gainVolume.valueProperty().set(0);
       gainLabel.setText("-");
       duckVolume.valueProperty().set(0);
       duckLabel.setText("-");
+
+      channelField.setText("");
+      loopedCheckbox.setSelected(false);
+      stopCheckbox.setSelected(false);
     }
+
+    channelField.textProperty().addListener(channelFieldChangeListener);
+    loopedCheckbox.selectedProperty().addListener(loopCheckboxChangeListener);
+    stopCheckbox.selectedProperty().addListener(stopCheckboxChangeListener);
   }
 
   private static class AltSoundEntryModel {
@@ -322,7 +355,7 @@ public class AltSoundEditorController implements Initializable, DialogController
     private final StringProperty filename;
     private final IntegerProperty duck;
     private final IntegerProperty gain;
-    private final IntegerProperty channel;
+    private final SimpleStringProperty channel;
     private final BooleanProperty looped;
     private final BooleanProperty stop;
     private final BooleanProperty exists;
@@ -352,11 +385,10 @@ public class AltSoundEditorController implements Initializable, DialogController
         }
       });
 
-      this.channel = new SimpleIntegerProperty(entry.getChannel());
+      this.channel = new SimpleStringProperty(entry.getChannel());
       this.channel.addListener((observable, oldValue, newValue) -> {
-        entry.setChannel((Integer) newValue);
+        entry.setChannel(newValue);
       });
-
 
       this.duck = new SimpleIntegerProperty(entry.getDuck());
       this.duck.addListener((observable, oldValue, newValue) -> entry.setDuck((Integer) newValue));

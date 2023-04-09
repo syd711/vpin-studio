@@ -52,14 +52,6 @@ public class AltSound {
     this.entries = entries;
   }
 
-  public List<Integer> getChannels() {
-    return channels;
-  }
-
-  public void setChannels(List<Integer> channels) {
-    this.channels = channels;
-  }
-
   public String toCSV() {
     StringBuilder builder = new StringBuilder();
     builder.append("\"");

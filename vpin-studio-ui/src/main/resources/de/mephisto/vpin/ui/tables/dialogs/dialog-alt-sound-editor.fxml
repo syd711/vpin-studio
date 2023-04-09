@@ -7,11 +7,11 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.Separator?>
 <?import javafx.scene.control.Slider?>
-<?import javafx.scene.control.Spinner?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.control.ToolBar?>
+<?import javafx.scene.control.Tooltip?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
@@ -80,16 +80,6 @@
                            </font>
                         </TextField>
                         <Separator layoutX="316.0" layoutY="10.0" orientation="VERTICAL" prefWidth="12.0" />
-                        <Label text="Channel:" textFill="WHITE">
-                           <font>
-                              <Font size="14.0" />
-                           </font>
-                           <padding>
-                              <Insets right="6.0" />
-                           </padding>
-                        </Label>
-                        <ComboBox fx:id="channelFilterCombo" prefHeight="30.0" prefWidth="60.0" />
-                        <Separator orientation="VERTICAL" prefWidth="12.0" />
                         <Label layoutX="10.0" layoutY="16.0" text="Name:" textFill="WHITE">
                            <font>
                               <Font size="14.0" />
@@ -148,7 +138,6 @@
                         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                     </rowConstraints>
                      <children>
-                        <Spinner fx:id="channelSpinner" GridPane.columnIndex="1" GridPane.rowIndex="1" />
                         <Label text="Loop:" textFill="WHITE" GridPane.rowIndex="2">
                            <font>
                               <Font size="14.0" />
@@ -190,11 +179,17 @@
                            <graphic>
                               <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
                            </graphic>
+                           <tooltip>
+                              <Tooltip prefWidth="300.0" text="The channel that is used for playback. Usually the music is played on channel &quot;1&quot; while effects don't need a channel and will look for a free one to be played." wrapText="true" />
+                           </tooltip>
                         </Label>
                         <Label layoutX="248.0" layoutY="50.0" GridPane.columnIndex="2" GridPane.rowIndex="2">
                            <graphic>
                               <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
                            </graphic>
+                           <tooltip>
+                              <Tooltip prefWidth="300.0" text="Loops the selected audio file. Usually this is only enabled for music files, not effects." wrapText="true" />
+                           </tooltip>
                         </Label>
                         <Label layoutX="10.0" layoutY="83.0" text="Stop:" textFill="WHITE" GridPane.rowIndex="3">
                            <font>
@@ -213,7 +208,15 @@
                            <graphic>
                               <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
                            </graphic>
+                           <tooltip>
+                              <Tooltip text="Stops the playback of other sound effects/music when played. (Not verified!) " wrapText="true" />
+                           </tooltip>
                         </Label>
+                        <TextField fx:id="channelField" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </TextField>
                      </children>
                   </GridPane>
                   <GridPane>
@@ -246,6 +249,9 @@
                                  <graphic>
                                     <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
                                  </graphic>
+                                 <tooltip>
+                                    <Tooltip prefWidth="300.0" text="The &quot;duck&quot; value determines to what volume the music should go down to, when the selected effect is played. This gives room for the effects. " wrapText="true" />
+                                 </tooltip>
                               </Label>
                            </children>
                         </HBox>
@@ -266,6 +272,9 @@
                                  <graphic>
                                     <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
                                  </graphic>
+                                 <tooltip>
+                                    <Tooltip prefWidth="300.0" text="The &quot;gain&quot; value determines the absolute volume of the selected audio file." wrapText="true" />
+                                 </tooltip>
                               </Label>
                            </children>
                         </HBox>

@@ -1,12 +1,14 @@
 package de.mephisto.vpin.restclient;
 
+import org.apache.commons.lang3.StringUtils;
+
 /**
  * ID,CHANNEL,DUCK,GAIN,LOOP,STOP,NAME,FNAME,GROUP,SHAKER,SERIAL,PRELOAD,STOPCMD
  * 0x0002,0,100,85,100,0,"normal_prelaunch","0x0002-normal_prelaunch.ogg",1,,,0,
  */
 public class AltSoundEntry {
   private String id;
-  private int channel;
+  private String channel;
   private int duck;
   private int gain;
   private int loop;
@@ -36,11 +38,11 @@ public class AltSoundEntry {
     this.id = id;
   }
 
-  public int getChannel() {
+  public String getChannel() {
     return channel;
   }
 
-  public void setChannel(int channel) {
+  public void setChannel(String channel) {
     this.channel = channel;
   }
 
@@ -137,7 +139,7 @@ public class AltSoundEntry {
     builder.append("\"");
     builder.append(this.id);
     builder.append("\",");
-    builder.append(this.channel);
+    builder.append(StringUtils.isEmpty(this.channel) ? "" : this.channel);
     builder.append(",");
     builder.append(this.duck);
     builder.append(",");
