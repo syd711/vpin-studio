@@ -52,6 +52,17 @@ public class Preferences {
   @Column(name = "activeGame", nullable = false, columnDefinition = "int default -1")
   private int activeGame = -1;
 
+  @Column(name = "previewEnabled", nullable = false, columnDefinition = "boolean default true")
+  private boolean previewEnabled;
+
+  public boolean getPreviewEnabled() {
+    return previewEnabled;
+  }
+
+  public void setPreviewEnabled(boolean previewEnabled) {
+    this.previewEnabled = previewEnabled;
+  }
+
   public int getActiveGame() {
     return activeGame;
   }

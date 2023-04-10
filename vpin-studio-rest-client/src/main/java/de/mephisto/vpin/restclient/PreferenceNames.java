@@ -17,4 +17,5 @@ public interface PreferenceNames {
   String DISCORD_BOT_ALLOW_LIST = "discordBotAllowList";
   String RANKING_POINTS = "rankingPoints";
   String ACTIVE_GAME = "activeGame";
+  String PREVIEW_ENABLED = "previewEnabled";
 }

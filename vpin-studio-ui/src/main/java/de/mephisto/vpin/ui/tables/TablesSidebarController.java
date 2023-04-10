@@ -1,7 +1,9 @@
 package de.mephisto.vpin.ui.tables;
 
+import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.representations.GameRepresentation;
 import de.mephisto.vpin.restclient.representations.POVRepresentation;
+import de.mephisto.vpin.restclient.representations.PreferenceEntryRepresentation;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -17,6 +19,8 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.Optional;
 import java.util.ResourceBundle;
+
+import static de.mephisto.vpin.ui.Studio.client;
 
 public class TablesSidebarController implements Initializable {
   private final static Logger LOG = LoggerFactory.getLogger(TablesSidebarController.class);
@@ -184,6 +188,9 @@ public class TablesSidebarController implements Initializable {
       LOG.error("Failed loading sidebar controller: " + e.getMessage(), e);
     }
 
+    PreferenceEntryRepresentation preference = client.getPreference(PreferenceNames.PREVIEW_ENABLED);
+    mediaPreviewCheckbox.setSelected(preference.getBooleanValue());
+
     Platform.runLater(() -> {
       this.tableAccordion.setExpandedPane(titledPaneMedia);
       titledPaneMedia.expandedProperty().addListener((observableValue, aBoolean, expanded) -> {
@@ -235,7 +242,10 @@ public class TablesSidebarController implements Initializable {
       }
     });
 
-    mediaPreviewCheckbox.selectedProperty().addListener((observable, oldValue, newValue) -> refreshView(game));
+    mediaPreviewCheckbox.selectedProperty().addListener((observable, oldValue, newValue) -> {
+      client.setPreference(PreferenceNames.PREVIEW_ENABLED, newValue);
+      refreshView(game);
+    });
   }
 
   public void setTablesController(TableOverviewController tablesController) {
