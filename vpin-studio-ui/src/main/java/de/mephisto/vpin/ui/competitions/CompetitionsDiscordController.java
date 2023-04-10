@@ -229,6 +229,7 @@ public class CompetitionsDiscordController implements Initializable, StudioFXCon
       if (result.isPresent() && result.get().equals(ButtonType.OK)) {
         tableView.getSelectionModel().clearSelection();
         client.deleteCompetition(selection);
+        NavigationController.setBreadCrumb(Arrays.asList("Competitions", "Discord Competitions"));
         onReload();
       }
     }

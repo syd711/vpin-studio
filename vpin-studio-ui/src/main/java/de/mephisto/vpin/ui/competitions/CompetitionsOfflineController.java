@@ -170,6 +170,7 @@ public class CompetitionsOfflineController implements Initializable, StudioFXCon
       if (result.isPresent() && result.get().equals(ButtonType.OK)) {
         tableView.getSelectionModel().clearSelection();
         client.deleteCompetition(selection);
+        NavigationController.setBreadCrumb(Arrays.asList("Competitions", "Offline Competitions"));
         onReload();
       }
     }
