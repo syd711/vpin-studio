@@ -11,6 +11,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,6 +42,9 @@ public class TablesSidebarAudioController implements Initializable {
   @FXML
   private Label bundleSizeLabel;
 
+  @FXML
+  private CheckBox enabledCheckbox;
+
   private VPinStudioClient client;
 
   private Optional<GameRepresentation> game = Optional.empty();
@@ -56,6 +60,19 @@ public class TablesSidebarAudioController implements Initializable {
   private void onAltSoundEdit() {
     if (game.isPresent() && game.get().isAltSoundAvailable()) {
       Dialogs.openAltSoundEditor(game.get(), altSound);
+    }
+  }
+
+  @FXML
+  private void onAltSoundEnable() {
+    if (game.isPresent() && game.get().isAltSoundAvailable()) {
+      GameRepresentation g = game.get();
+      g.setAltSoundEnabled(enabledCheckbox.isSelected());
+      try {
+        client.saveGame(g);
+      } catch (Exception e) {
+        WidgetFactory.showAlert(Studio.stage, e.getMessage());
+      }
     }
   }
 
@@ -82,6 +99,8 @@ public class TablesSidebarAudioController implements Initializable {
   public void refreshView(Optional<GameRepresentation> g) {
     altSoundBtn.setDisable(!game.isPresent() || !game.get().isAltSoundAvailable());
     restoreBtn.setDisable(!game.isPresent() || !game.get().isAltSoundAvailable());
+    enabledCheckbox.setDisable(!game.isPresent() || !game.get().isAltSoundAvailable());
+    enabledCheckbox.setSelected(false);
 
     entriesLabel.setText("-");
     bundleSizeLabel.setText("-");
@@ -93,6 +112,7 @@ public class TablesSidebarAudioController implements Initializable {
 
       if (game.isAltSoundAvailable()) {
         altSound = client.getAltSound(game.getId());
+        enabledCheckbox.setSelected(game.isAltSoundEnabled());
 
         entriesLabel.setText(String.valueOf(altSound.getEntries().size()));
         filesLabel.setText(String.valueOf(altSound.getFiles()));

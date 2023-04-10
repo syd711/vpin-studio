@@ -1,6 +1,7 @@
 package de.mephisto.vpin.commons;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,6 +24,7 @@ public class SystemInfo {
 
   private final static String VPX_REG_KEY = "HKEY_CURRENT_USER\\SOFTWARE\\Visual Pinball\\VP10\\RecentDir";
   private final static String POPPER_REG_KEY = "HKEY_LOCAL_MACHINE\\SYSTEM\\ControlSet001\\Control\\Session Manager\\Environment";
+  public final static String MAME_REG_KEY = "HKEY_CURRENT_USER\\SOFTWARE\\Freeware\\Visual PinMame\\";
 
   @NonNull
   public File resolvePinUPSystemInstallationFolder() {
@@ -90,11 +92,10 @@ public class SystemInfo {
     return new File(visualPinballInstallationFolder, "Tables/");
   }
 
-
-  static String readRegistry(String location, String key) {
+  public String readRegistry(String location, String key) {
     try {
       // Run reg query, then read output with StreamReader (internal class)
-      String cmd = "reg query " + '"' + location;
+      String cmd = "reg query " + "\"" + location + "\"";
       if (key != null) {
         cmd = "reg query " + '"' + location + "\" /v " + key;
       }
@@ -110,12 +111,36 @@ public class SystemInfo {
     }
   }
 
-  static String extractRegistryValue(String output) {
+  /**
+   * REG ADD "HKEY_CURRENT_USER\SOFTWARE\Freeware\Visual PinMame\tz_94ch" /v sound_mode /t REG_DWORD /d 1 /f
+   * @param location
+   * @param key
+   * @param value
+   */
+  public void writeRegistry(String location, String key, int value) {
+    try {
+      String cmd = "REG ADD \"" + location + "\" /v " + key + " /t REG_DWORD /d " + value + " /f";
+      Process process = Runtime.getRuntime().exec(cmd);
+      StreamReader reader = new StreamReader(process.getInputStream());
+      reader.start();
+      process.waitFor();
+      reader.join();
+      System.out.println("Written command: " + cmd);
+    } catch (Exception e) {
+      LOG.error("Failed to write registry key " + location + ": " + e.getMessage(), e);
+    }
+  }
+
+  @Nullable
+  public String extractRegistryValue(String output) {
     String result = output;
     result = result.replace("\n", "").replace("\r", "").trim();
 
     String[] s = result.split("    ");
-    return s[3];
+    if(s.length >= 4) {
+      return s[3];
+    }
+    return null;
   }
 
   static class StreamReader extends Thread {

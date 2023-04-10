@@ -216,6 +216,7 @@ public class GameService {
 
   /**
    * Retursn the current highscore for the given game
+   *
    * @param gameId
    * @return
    */
@@ -226,6 +227,7 @@ public class GameService {
 
   /**
    * Returns a complete list of highscore versions
+   *
    * @param gameId
    * @return
    */
@@ -344,6 +346,7 @@ public class GameService {
     game.setHsFileName(gameDetails.getHsFileName());
     game.setTableName(gameDetails.getTableName());
     game.setIgnoredValidations(gameDetails.getIgnoredValidations());
+    game.setAltSoundEnabled(game.getSystemService().isAltSoundEnabled(game.getRom()));
 
     Optional<Highscore> highscore = this.highscoreService.getOrCreateHighscore(game);
     highscore.ifPresent(value -> game.setHighscoreType(value.getType() != null ? HighscoreType.valueOf(value.getType()) : null));
@@ -364,9 +367,17 @@ public class GameService {
     gameDetailsRepository.saveAndFlush(gameDetails);
 
     Game original = getGame(game.getId());
-    if (original != null && original.getVolume() != game.getVolume()) {
-      pinUPConnector.updateVolume(game, game.getVolume());
+    if (original != null) {
+      if (original.getVolume() != game.getVolume()) {
+        pinUPConnector.updateVolume(game, game.getVolume());
+      }
+
+      if (original.isAltSoundEnabled() != game.isAltSoundEnabled()) {
+        original.getSystemService().setAltSoundEnabled(game.getRom(), game.isAltSoundEnabled());
+        LOG.info("Updated ALT sound setting for " + game.getRom() + ": " + original.getSystemService().isAltSoundEnabled(game.getRom()));
+      }
     }
+
 
     //TODO check rom name import vs. scan
     //check if there is mismatch in the ROM name, overwrite popper value

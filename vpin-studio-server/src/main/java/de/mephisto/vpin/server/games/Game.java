@@ -14,10 +14,7 @@ import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.File;
-import java.io.FilenameFilter;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 
 public class Game {
 
@@ -39,6 +36,7 @@ public class Game {
   private String ignoredValidations;
   private int volume;
   private HighscoreType highscoreType;
+  private boolean altSoundEnabled;
 
   private String assets;
 
@@ -58,6 +56,14 @@ public class Game {
       return this.getGameFile().length();
     }
     return -1;
+  }
+
+  public boolean isAltSoundEnabled() {
+    return altSoundEnabled;
+  }
+
+  public void setAltSoundEnabled(boolean altSoundEnabled) {
+    this.altSoundEnabled = altSoundEnabled;
   }
 
   public HighscoreType getHighscoreType() {
@@ -336,7 +342,7 @@ public class Game {
 
   public boolean isAltSoundAvailable() {
     File altSoundFolder = getAltSoundFolder();
-    if(altSoundFolder != null && altSoundFolder.exists()){
+    if (altSoundFolder != null && altSoundFolder.exists()) {
       File[] files = altSoundFolder.listFiles((dir, name) -> name.endsWith(".csv"));
       return files != null && files.length > 0;
     }
@@ -352,14 +358,13 @@ public class Game {
     return null;
   }
 
-
   @Nullable
   @JsonIgnore
   public File getAltSoundCsv() {
     if (!StringUtils.isEmpty(this.getRom())) {
       File altSoundFolder = this.getAltSoundFolder();
       File[] files = altSoundFolder.listFiles((dir, name) -> name.endsWith(".csv"));
-      if(files != null) {
+      if (files != null) {
         return files[0];
       }
     }
