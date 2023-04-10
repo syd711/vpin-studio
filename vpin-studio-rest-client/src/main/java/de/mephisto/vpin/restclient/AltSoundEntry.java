@@ -21,6 +21,15 @@ public class AltSoundEntry {
   private int preload;
   private String stopCmd;
   private boolean exists;
+  private long size;
+
+  public long getSize() {
+    return size;
+  }
+
+  public void setSize(long size) {
+    this.size = size;
+  }
 
   public boolean isExists() {
     return exists;

@@ -59,13 +59,14 @@
                         <TableView fx:id="tableView" prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #2a2a2a;" styleClass="base-component">
                           <columns>
                             <TableColumn fx:id="columnId" prefWidth="75.0" style="-fx-alignment: BASELINE_LEFT;" text="ID" />
-                              <TableColumn fx:id="columnName" prefWidth="300.0" style="-fx-alignment: BASELINE_LEFT;" text="Name" />
+                              <TableColumn fx:id="columnName" prefWidth="260.0" style="-fx-alignment: BASELINE_LEFT;" text="Name" />
                             <TableColumn fx:id="columnChannel" prefWidth="75.0" style="-fx-alignment: CENTER;" text="Channel" />
                               <TableColumn fx:id="columnDuck" prefWidth="75.0" style="-fx-alignment: CENTER;" text="Duck" />
                               <TableColumn fx:id="columnGain" prefWidth="75.0" style="-fx-alignment: CENTER;" text="Gain" />
                               <TableColumn fx:id="columnLoop" prefWidth="75.0" style="-fx-alignment: CENTER;" text="Loop" />
                               <TableColumn fx:id="columnStop" prefWidth="75.0" style="-fx-alignment: CENTER;" text="Stop" />
-                              <TableColumn fx:id="columnFilename" prefWidth="300.0" style="-fx-alignment: BASELINE_LEFT;" text="Filename" />
+                              <TableColumn fx:id="columnFilename" prefWidth="280.0" style="-fx-alignment: BASELINE_LEFT;" text="Filename" />
+                              <TableColumn fx:id="columnFilesize" prefWidth="100.0" style="-fx-alignment: CENTER;" text="Filesize" />
                           </columns>
                         </TableView>
                      </children>
@@ -250,7 +251,7 @@
                                     <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
                                  </graphic>
                                  <tooltip>
-                                    <Tooltip prefWidth="300.0" text="The &quot;duck&quot; value determines to what volume the music should go down to, when the selected effect is played. This gives room for the effects. " wrapText="true" />
+                                    <Tooltip prefWidth="300.0" text="The &quot;duck&quot; value determines to what volume the music should go down to when the selected effect is played. This gives room for the effects. " wrapText="true" />
                                  </tooltip>
                               </Label>
                            </children>

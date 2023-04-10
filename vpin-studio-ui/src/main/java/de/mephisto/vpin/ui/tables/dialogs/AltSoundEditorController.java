@@ -1,6 +1,7 @@
 package de.mephisto.vpin.ui.tables.dialogs;
 
 import de.mephisto.vpin.commons.fx.DialogController;
+import de.mephisto.vpin.commons.utils.FileUtils;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.AltSound;
 import de.mephisto.vpin.restclient.AltSoundEntry;
@@ -56,6 +57,9 @@ public class AltSoundEditorController implements Initializable, DialogController
 
   @FXML
   private TableColumn<AltSoundEntryModel, String> columnFilename;
+
+  @FXML
+  private TableColumn<AltSoundEntryModel, String> columnFilesize;
 
   @FXML
   private TextField searchText;
@@ -146,6 +150,7 @@ public class AltSoundEditorController implements Initializable, DialogController
     });
     columnDuck.setCellValueFactory(cellData -> cellData.getValue().duck);
     columnGain.setCellValueFactory(cellData -> cellData.getValue().gain);
+    columnFilesize.setCellValueFactory(cellData -> cellData.getValue().size);
     columnFilename.setCellValueFactory(cellData -> {
       AltSoundEntryModel entry = cellData.getValue();
       Label label = new Label(entry.filename.getValue());
@@ -359,6 +364,7 @@ public class AltSoundEditorController implements Initializable, DialogController
     private final BooleanProperty looped;
     private final BooleanProperty stop;
     private final BooleanProperty exists;
+    private final StringProperty size;
 
     private AltSoundEntryModel(AltSoundEntry entry) {
       this.id = new SimpleStringProperty(entry.getId());
@@ -366,6 +372,7 @@ public class AltSoundEditorController implements Initializable, DialogController
       this.filename = new SimpleStringProperty(entry.getFilename());
       this.looped = new SimpleBooleanProperty(entry.getLoop() == 100);
       this.stop = new SimpleBooleanProperty(entry.getStop() == 1);
+      this.size= new SimpleStringProperty(FileUtils.readableFileSize(entry.getSize()));
       this.exists = new SimpleBooleanProperty(entry.isExists());
       this.looped.addListener((observable, oldValue, newValue) -> {
         if (newValue) {
