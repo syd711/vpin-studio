@@ -237,6 +237,11 @@ public class WidgetFactory {
     Label label = new Label("Preview disabled");
     label.setUserData(mediaItem);
     label.setStyle("-fx-font-size: 14px;-fx-text-fill: #444444;");
+
+    if(mediaItem != null) {
+      label.setStyle("-fx-font-color: #33CC00;-fx-text-fill:#33CC00; -fx-font-weight: bold;");
+    }
+
     parent.setCenter(label);
 
     if (!previewEnabled) {

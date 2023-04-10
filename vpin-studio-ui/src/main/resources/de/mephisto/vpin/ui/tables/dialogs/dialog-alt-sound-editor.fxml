@@ -65,7 +65,7 @@
                               <TableColumn fx:id="columnGain" prefWidth="75.0" style="-fx-alignment: CENTER;" text="Gain" />
                               <TableColumn fx:id="columnLoop" prefWidth="75.0" style="-fx-alignment: CENTER;" text="Loop" />
                               <TableColumn fx:id="columnStop" prefWidth="75.0" style="-fx-alignment: CENTER;" text="Stop" />
-                              <TableColumn fx:id="columnFilename" prefWidth="280.0" style="-fx-alignment: BASELINE_LEFT;" text="Filename" />
+                              <TableColumn fx:id="columnFilename" prefWidth="260.0" style="-fx-alignment: BASELINE_LEFT;" text="Filename" />
                               <TableColumn fx:id="columnFilesize" prefWidth="100.0" style="-fx-alignment: CENTER;" text="Filesize" />
                           </columns>
                         </TableView>
@@ -210,7 +210,7 @@
                               <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
                            </graphic>
                            <tooltip>
-                              <Tooltip text="Stops the playback of other sound effects/music when played. (Not verified!) " wrapText="true" />
+                              <Tooltip prefWidth="300.0" text="Stops the playback of other sound effects/music when played. (Not verified!) " wrapText="true" />
                            </tooltip>
                         </Label>
                         <TextField fx:id="channelField" GridPane.columnIndex="1" GridPane.rowIndex="1">

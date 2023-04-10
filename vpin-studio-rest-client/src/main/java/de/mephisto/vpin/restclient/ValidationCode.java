@@ -20,4 +20,5 @@ public interface ValidationCode {
   int CODE_NO_OTHER2 = 40;
   int CODE_NO_WHEEL_IMAGE = 41;
 
+  int CODE_ALT_SOUND_NOT_ENABLED = 50;
 }

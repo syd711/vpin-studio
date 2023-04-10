@@ -98,6 +98,11 @@ public class ValidationTexts {
         text = NO_MEDIA_TEXT;
         break;
       }
+      case CODE_ALT_SOUND_NOT_ENABLED: {
+        label = "ALT sound not enabled.";
+        text = "The table has an ALT sound package, but it's not enabled in VPin MAME.";
+        break;
+      }
       default: {
         return null;
       }

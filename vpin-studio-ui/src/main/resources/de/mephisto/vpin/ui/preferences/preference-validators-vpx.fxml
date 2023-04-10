@@ -60,6 +60,12 @@
                      </font>
                   </Label>
                   <CheckBox fx:id="pref_3" layoutX="364.0" layoutY="13.0" mnemonicParsing="false" onAction="#onPreferenceChange" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                  <CheckBox fx:id="pref_50" layoutX="391.0" layoutY="117.0" mnemonicParsing="false" onAction="#onPreferenceChange" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+                  <Label layoutX="11.0" layoutY="113.0" prefHeight="20.0" styleClass="preference-label" text="ALT sound found but not enabled" textFill="WHITE" GridPane.rowIndex="4">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                  </Label>
                </children>
                <VBox.margin>
                   <Insets top="6.0" />

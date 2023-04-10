@@ -161,6 +161,12 @@ public class GameValidator implements InitializingBean {
       }
     }
 
+    if (isValidationEnabled(game, CODE_ALT_SOUND_NOT_ENABLED)) {
+      if (game.isAltSoundAvailable() && !game.isAltSoundEnabled()) {
+        return ValidationCode.CODE_ALT_SOUND_NOT_ENABLED;
+      }
+    }
+
     return -1;
   }
 
