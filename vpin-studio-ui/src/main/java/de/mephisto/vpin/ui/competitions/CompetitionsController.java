@@ -109,6 +109,7 @@ public class CompetitionsController implements Initializable, StudioFXController
   public void onViewActivated() {
     refreshUsers(competition);
     scorePane.setExpanded(true);
+    discordController.onReload();
   }
 
   @Override
