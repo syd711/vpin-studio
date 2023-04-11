@@ -11,6 +11,7 @@ import de.mephisto.vpin.restclient.representations.CompetitionRepresentation;
 import de.mephisto.vpin.restclient.representations.PlayerRepresentation;
 import de.mephisto.vpin.restclient.representations.ScoreListRepresentation;
 import de.mephisto.vpin.ui.NavigationController;
+import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.StudioFXController;
 import eu.hansolo.tilesfx.Tile;
 import javafx.fxml.FXML;
@@ -162,7 +163,15 @@ public class CompetitionsController implements Initializable, StudioFXController
 
         DiscordServer discordServer = client.getDiscordServer(competition.getDiscordServerId());
         if (discordServer != null) {
-          Image image = new Image(discordServer.getAvatarUrl());
+          String avatarUrl = discordServer.getAvatarUrl();
+          Image image = null;
+          if(avatarUrl == null) {
+            image = new Image(Studio.class.getResourceAsStream("avatar-blank.png"));
+          }
+          else {
+            image = new Image(avatarUrl);
+          }
+
           ImageView view = new ImageView(image);
           view.setPreserveRatio(true);
           view.setFitWidth(50);
