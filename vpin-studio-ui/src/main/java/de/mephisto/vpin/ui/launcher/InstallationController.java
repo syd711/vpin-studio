@@ -1,18 +1,11 @@
 package de.mephisto.vpin.ui.launcher;
 
-import de.mephisto.vpin.commons.ServerInstallationUtil;
 import de.mephisto.vpin.commons.SystemInfo;
 import de.mephisto.vpin.commons.fx.DialogController;
-import de.mephisto.vpin.commons.fx.LoadingOverlayController;
 import de.mephisto.vpin.commons.utils.PropertiesStore;
-import de.mephisto.vpin.commons.utils.Updater;
-import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.ui.Studio;
-import de.mephisto.vpin.ui.util.Dialogs;
-import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -30,8 +23,6 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.net.URL;
 import java.util.ResourceBundle;
-
-import static de.mephisto.vpin.ui.Studio.client;
 
 public class InstallationController implements Initializable, DialogController {
   private final static Logger LOG = LoggerFactory.getLogger(InstallationController.class);
@@ -61,7 +52,7 @@ public class InstallationController implements Initializable, DialogController {
   private Button vpxTablesFolderBtn;
 
   @FXML
-  private TextField popperFolderField;
+  private TextField pinUPSystemFolderField;
 
   @FXML
   private TextField visualPinballFolderField;
@@ -131,7 +122,7 @@ public class InstallationController implements Initializable, DialogController {
 
     if (selectedDirectory != null) {
       this.pinUPSystemInstallationFolder = selectedDirectory;
-      this.visualPinballFolderField.setText(this.pinUPSystemInstallationFolder.getAbsolutePath());
+      this.pinUPSystemFolderField.setText(this.pinUPSystemInstallationFolder.getAbsolutePath());
       validateFolders();
     }
   }
@@ -197,7 +188,7 @@ public class InstallationController implements Initializable, DialogController {
     store = PropertiesStore.create(propertiesFile);
 
     pinUPSystemInstallationFolder = systemInfo.resolvePinUPSystemInstallationFolder();
-    popperFolderField.setText(pinUPSystemInstallationFolder.getAbsolutePath());
+    pinUPSystemFolderField.setText(pinUPSystemInstallationFolder.getAbsolutePath());
 
     visualPinballInstallationFolder = systemInfo.resolveVisualPinballInstallationFolder(pinUPSystemInstallationFolder);
     visualPinballFolderField.setText(visualPinballInstallationFolder.getAbsolutePath());

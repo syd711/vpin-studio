@@ -220,8 +220,8 @@ public class LauncherController implements Initializable {
     tableView.setPlaceholder(new Label("                 No connections found.\n" +
         "Install the service or connect to another system."));
 
-//    this.installBtn.setVisible(ServerInstallationUtil.SERVER_EXE.exists());
-//    this.installBtn.setDisable(client.version() != null);
+    this.installBtn.setVisible(ServerInstallationUtil.SERVER_EXE.exists());
+    this.installBtn.setDisable(client.version() != null);
 
     connectBtn.setDisable(true);
     tableView.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> connectBtn.setDisable(newValue == null));
