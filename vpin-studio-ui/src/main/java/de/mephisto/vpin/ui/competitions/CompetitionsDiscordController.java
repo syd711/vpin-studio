@@ -212,8 +212,8 @@ public class CompetitionsDiscordController implements Initializable, StudioFXCon
 
       String help = null;
       String help2 = null;
-      String remainingDayMsg = selection.remainingDays() == 1 ? "The competition will remain active for one more day." :
-          "The competition will remain active for another " + selection.remainingDays() + " days.";
+      String remainingDayMsg = selection.remainingDays() == 1 ? "The competition is active for another day." :
+          "The competition is still active for another " + selection.remainingDays() + " days.";
 
       if (isOwner && selection.isActive()) {
         help = remainingDayMsg;
