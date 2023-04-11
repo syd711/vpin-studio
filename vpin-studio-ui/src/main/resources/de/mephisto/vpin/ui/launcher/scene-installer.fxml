@@ -105,7 +105,7 @@
                               <Font size="14.0" />
                            </font>
                         </Button>
-                        <TextField fx:id="popperFolderField" editable="false" layoutX="223.0" layoutY="10.0" prefHeight="30.0" prefWidth="339.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                        <TextField fx:id="pinUPSystemFolderField" editable="false" layoutX="223.0" layoutY="10.0" prefHeight="30.0" prefWidth="339.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
                            <font>
                               <Font size="14.0" />
                            </font>
