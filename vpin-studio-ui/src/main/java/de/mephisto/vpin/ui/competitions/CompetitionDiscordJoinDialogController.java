@@ -224,14 +224,14 @@ public class CompetitionDiscordJoinDialogController implements Initializable, Di
     LocalDate now = DateUtil.today().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
 
     long remainingDays = ChronoUnit.DAYS.between(now, end);
-    if (remainingDays < 0) {
-      remainingDays = 0;
+    if (remainingDays <= 0) {
+      remainingDays = 1;
     }
 
     this.tableLabel.setText(this.discordCompetitionData.getTname());
     this.startDateLabel.setText(DateFormat.getDateInstance().format(this.discordCompetitionData.getSdt()));
     this.endDateLabel.setText(DateFormat.getDateInstance().format(this.discordCompetitionData.getEdt()));
-    this.remainingDaysLabel.setText(remainingDays + " days");
+    this.remainingDaysLabel.setText(remainingDays + " day(s)");
     this.nameLabel.setText(this.discordCompetitionData.getName());
 
     PlayerRepresentation discordPlayer = client.getDiscordPlayer(serverId, Long.parseLong(this.discordCompetitionData.getOwner()));
