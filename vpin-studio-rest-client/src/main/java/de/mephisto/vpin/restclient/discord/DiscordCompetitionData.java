@@ -1,5 +1,6 @@
 package de.mephisto.vpin.restclient.discord;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import de.mephisto.vpin.restclient.util.DateUtil;
 
 import java.util.Date;
@@ -93,6 +94,7 @@ public class DiscordCompetitionData {
     return startOverlap && endOverlap;
   }
 
+  @JsonIgnore
   public boolean isFinished(){
     return DateUtil.endOfToday().before(this.getEdt());
   }
