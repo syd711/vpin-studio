@@ -4,6 +4,7 @@ import de.mephisto.vpin.commons.fx.OverlayWindowFX;
 import de.mephisto.vpin.restclient.CompetitionType;
 import de.mephisto.vpin.restclient.PopperScreen;
 import de.mephisto.vpin.restclient.representations.*;
+import de.mephisto.vpin.restclient.util.DateUtil;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
@@ -16,10 +17,6 @@ import org.slf4j.LoggerFactory;
 
 import java.io.ByteArrayInputStream;
 import java.net.URL;
-import java.text.DateFormat;
-import java.time.LocalDate;
-import java.time.ZoneId;
-import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.ResourceBundle;
 
@@ -117,14 +114,7 @@ public class WidgetCompetitionSummaryController extends WidgetController impleme
       GameRepresentation game = OverlayWindowFX.client.getGame(competition.getGameId());
       GameMediaRepresentation gameMedia = game.getGameMedia();
 
-      LocalDate start = competition.getStartDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
-      LocalDate end = competition.getEndDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
-      long durationDays = ChronoUnit.DAYS.between(start, end) + 1;
-
-      String duration = "Duration: " + DateFormat.getDateInstance().format(competition.getStartDate())
-          + " - " + DateFormat.getDateInstance().format(competition.getEndDate())
-          + " (" + durationDays + " days)";
-      durationLabel.setText(duration);
+      durationLabel.setText("Duration: " + DateUtil.formatDuration(competition.getStartDate(), competition.getEndDate()));
       competitionLabel.setText(competition.getName());
       tableNameLabel.setText(game.getGameDisplayName());
 

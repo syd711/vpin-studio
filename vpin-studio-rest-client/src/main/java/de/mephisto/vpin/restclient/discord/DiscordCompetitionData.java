@@ -96,6 +96,6 @@ public class DiscordCompetitionData {
 
   @JsonIgnore
   public boolean isFinished(){
-    return DateUtil.endOfToday().before(this.getEdt());
+    return new Date().before(this.getEdt());
   }
 }

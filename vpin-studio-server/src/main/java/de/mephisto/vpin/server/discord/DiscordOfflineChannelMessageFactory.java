@@ -2,6 +2,7 @@ package de.mephisto.vpin.server.discord;
 
 import de.mephisto.vpin.restclient.CompetitionType;
 import de.mephisto.vpin.restclient.PlayerDomain;
+import de.mephisto.vpin.restclient.util.DateUtil;
 import de.mephisto.vpin.server.competitions.Competition;
 import de.mephisto.vpin.server.competitions.ScoreSummary;
 import de.mephisto.vpin.server.games.Game;
@@ -26,7 +27,7 @@ public class DiscordOfflineChannelMessageFactory {
       "Table:       %s\n" +
       "Start Date:  %s\n" +
       "End Date:    %s\n" +
-      "Duration:    %s days\n" +
+      "Duration:    %s\n" +
       "------------------------------------------------------------```";
 
   private static final String COMPETITION_FINISHED_TEMPLATE = "Congratulation %s!\n" +
@@ -107,16 +108,12 @@ public class DiscordOfflineChannelMessageFactory {
 
 
   public static String createOfflineCompetitionCreatedMessage(Competition competition, Game game) {
-    LocalDate start = competition.getStartDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
-    LocalDate end = competition.getEndDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
-    long diff = Math.abs(ChronoUnit.DAYS.between(end, start)) + 1;
-
     return String.format(COMPETITION_CREATED_TEMPLATE,
         competition.getName(),
         game.getGameDisplayName(),
         DateFormat.getDateInstance().format(competition.getStartDate()),
         DateFormat.getDateInstance().format(competition.getEndDate()),
-        diff);
+        DateUtil.formatDuration(competition.getStartDate(), competition.getEndDate()));
   }
 
   public static String createCompetitionFinishedMessage(@NonNull Competition competition, @Nullable Player winner, Game game, ScoreSummary summary) {

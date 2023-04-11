@@ -127,8 +127,18 @@
                               <Font size="14.0" />
                            </font>
                         </Label>
-                        <DatePicker fx:id="startDatePicker" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-                        <DatePicker fx:id="endDatePicker" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                        <HBox alignment="CENTER_LEFT" spacing="6.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                           <children>
+                              <DatePicker fx:id="startDatePicker" />
+                              <ComboBox fx:id="startTime" prefWidth="100.0" />
+                           </children>
+                        </HBox>
+                        <HBox alignment="CENTER_LEFT" spacing="6.0" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                           <children>
+                              <DatePicker fx:id="endDatePicker" />
+                              <ComboBox fx:id="endTime" prefWidth="100.0" />
+                           </children>
+                        </HBox>
                         <Label text="Duration:" textFill="WHITE" GridPane.rowIndex="3">
                            <font>
                               <Font size="14.0" />
@@ -181,7 +191,7 @@
                                     <Insets left="6.0" />
                                  </HBox.margin>
                                  <tooltip>
-                                    <Tooltip text="The competition badge will be added to the wheel icon. After the competition is finished, the original icon will be restored." />
+                                    <Tooltip prefWidth="300.0" text="The competition badge will be added to the wheel icon. After the competition is finished, the original icon will be restored." />
                                  </tooltip>
                               </Label>
                            </children>
@@ -206,7 +216,7 @@
                                     <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
                                  </graphic>
                                  <tooltip>
-                                    <Tooltip text="The reset is required in case your highscore is already higher than the others. You can backup your table to restore them after the competition is finished." />
+                                    <Tooltip prefWidth="300.0" text="The reset is required in case your highscore is already higher than the others. You can backup your table to restore them after the competition is finished." />
                                  </tooltip>
                               </Label>
                            </children>

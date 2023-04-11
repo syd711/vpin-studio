@@ -12,7 +12,7 @@
 <?import javafx.scene.text.Font?>
 <?import org.kordamp.ikonli.javafx.FontIcon?>
 
-<BorderPane styleClass="base-component" stylesheets="@../stylesheet.css" xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.competitions.CompetitionsDiscordController">
+<BorderPane styleClass="base-component" stylesheets="@../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.competitions.CompetitionsDiscordController">
     <center>
 
         <BorderPane BorderPane.alignment="CENTER">
@@ -21,13 +21,13 @@
                     <children>
                         <TableView fx:id="tableView" style="-fx-background-color: #2a2a2a;" styleClass="base-component">
                             <columns>
-                                <TableColumn fx:id="columnTable" prefWidth="313.60009765625" style="-fx-alignment: BASELINE_LEFT;" text="Table" />
+                                <TableColumn fx:id="columnTable" prefWidth="300.0" style="-fx-alignment: BASELINE_LEFT;" text="Table" />
                                 <TableColumn fx:id="columnName" prefWidth="232.80005192756653" style="-fx-alignment: BASELINE_LEFT;" text="Name" />
                                 <TableColumn fx:id="columnStatus" minWidth="0.0" prefWidth="123.19984436035156" style="-fx-alignment: CENTER;" text="Status" />
                         <TableColumn fx:id="columnServer" prefWidth="192.0" style="-fx-alignment: CENTER;" text="Server" />
-                                <TableColumn fx:id="columnStartDate" prefWidth="137.5999755859375" style="-fx-alignment: CENTER;" text="Start Date" />
-                                <TableColumn fx:id="columnEndDate" prefWidth="120.0" style="-fx-alignment: CENTER;" text="End Date" />
-                        <TableColumn fx:id="columnWinner" prefWidth="180.0" style="-fx-alignment: CENTER;" text="Winner" />
+                                <TableColumn fx:id="columnStartDate" prefWidth="160.0" style="-fx-alignment: CENTER;" text="Start Date" />
+                                <TableColumn fx:id="columnEndDate" prefWidth="160.0" style="-fx-alignment: CENTER;" text="End Date" />
+                        <TableColumn fx:id="columnWinner" prefWidth="150.0" style="-fx-alignment: CENTER;" text="Winner" />
                         <TableColumn fx:id="columnCompetitionOwner" prefWidth="156.0" style="-fx-alignment: CENTER;" text="Competition Owner" />
                             </columns>
                         </TableView>

@@ -69,6 +69,12 @@ public class CompetitionOfflineDialogController implements Initializable, Dialog
   private DatePicker endDatePicker;
 
   @FXML
+  private ComboBox<String> startTime;
+
+  @FXML
+  private ComboBox<String> endTime;
+
+  @FXML
   private Pane validationContainer;
 
   @FXML
@@ -102,7 +108,7 @@ public class CompetitionOfflineDialogController implements Initializable, Dialog
     competition.setName("My next competition");
     competition.setUuid(UUID.randomUUID().toString());
 
-    Date end = Date.from(LocalDate.now().plus(6, ChronoUnit.DAYS).atStartOfDay(ZoneId.systemDefault()).toInstant());
+    Date end = Date.from(LocalDate.now().plus(7, ChronoUnit.DAYS).atStartOfDay(ZoneId.systemDefault()).toInstant());
     competition.setStartDate(DateUtil.today());
     competition.setEndDate(end);
 
@@ -121,26 +127,29 @@ public class CompetitionOfflineDialogController implements Initializable, Dialog
 
     startDatePicker.setValue(LocalDate.now());
     startDatePicker.valueProperty().addListener((observableValue, localDate, t1) -> {
-      if (t1 != null) {
-        Date date = Date.from(t1.atStartOfDay(ZoneId.systemDefault()).toInstant());
-        competition.setStartDate(date);
-      }
-      else {
-        competition.setStartDate(null);
-      }
+      Date date = DateUtil.formatDate(startDatePicker.getValue(), startTime.getValue());
+      competition.setStartDate(date);
+      validate();
+    });
+    startTime.setItems(FXCollections.observableList(DateUtil.TIMES));
+    startTime.setValue("00:00");
+    startTime.valueProperty().addListener((observable, oldValue, newValue) -> {
+      Date date = DateUtil.formatDate(startDatePicker.getValue(), startTime.getValue());
+      competition.setStartDate(date);
       validate();
     });
 
-    endDatePicker.setValue(LocalDate.now().plus(6, ChronoUnit.DAYS));
+    endDatePicker.setValue(LocalDate.now().plus(7, ChronoUnit.DAYS));
     endDatePicker.valueProperty().addListener((observableValue, localDate, t1) -> {
-      if (t1 != null) {
-        Date date = Date.from(t1.atStartOfDay(ZoneId.systemDefault()).toInstant());
-        competition.setEndDate(date);
-      }
-      else {
-        competition.setEndDate(null);
-      }
-
+      Date date = DateUtil.formatDate(endDatePicker.getValue(), endTime.getValue());
+      competition.setEndDate(date);
+      validate();
+    });
+    endTime.setItems(FXCollections.observableList(DateUtil.TIMES));
+    endTime.setValue("00:00");
+    endTime.valueProperty().addListener((observable, oldValue, newValue) -> {
+      Date date = DateUtil.formatDate(endDatePicker.getValue(), endTime.getValue());
+      competition.setEndDate(date);
       validate();
     });
 
@@ -215,11 +224,9 @@ public class CompetitionOfflineDialogController implements Initializable, Dialog
     validationContainer.setVisible(true);
     this.saveBtn.setDisable(true);
 
-    LocalDate start = startDatePicker.getValue();
-    LocalDate value = endDatePicker.getValue();
-
-    long diff = ChronoUnit.DAYS.between(start, value) + 1;
-    this.durationLabel.setText(diff + " days");
+    Date startDate = competition.getStartDate();
+    Date endDate = competition.getEndDate();
+    this.durationLabel.setText(DateUtil.formatDuration(startDate, endDate));
 
     if (StringUtils.isEmpty(competition.getName())) {
       validationTitle.setText("No competition name set.");
@@ -233,7 +240,7 @@ public class CompetitionOfflineDialogController implements Initializable, Dialog
       return;
     }
 
-    if (competition.getStartDate() == null || competition.getEndDate() == null || competition.getStartDate().getTime() > competition.getEndDate().getTime()) {
+    if (startDate == null || endDate == null || startDate.getTime() >= endDate.getTime()) {
       validationTitle.setText("Invalid start/end date set.");
       validationDescription.setText("Define a valid start and end date.");
       return;
@@ -276,9 +283,11 @@ public class CompetitionOfflineDialogController implements Initializable, Dialog
       nameField.setText(this.competition.getName());
       this.startDatePicker.setValue(this.competition.getStartDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate());
       this.startDatePicker.setDisable(this.competition.isFinished());
+      this.startTime.setValue(DateUtil.formatTimeString(this.competition.getStartDate()));
 
       this.endDatePicker.setValue(this.competition.getEndDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate());
       this.endDatePicker.setDisable(this.competition.isFinished());
+      this.endTime.setValue(DateUtil.formatTimeString(this.competition.getEndDate()));
 
       this.tableCombo.setValue(game);
       this.tableCombo.setDisable((this.competition.getId() != null && !this.competition.isPlanned()) || this.competition.isFinished());

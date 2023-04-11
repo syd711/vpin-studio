@@ -16,6 +16,7 @@ import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
+import java.util.Date;
 import java.util.List;
 
 public class DiscordBotCommandResponseFactory {
@@ -37,8 +38,8 @@ public class DiscordBotCommandResponseFactory {
       "Table:       %s\n" +
       "Start Date:  %s\n" +
       "End Date:    %s\n" +
-      "Duration:    %s day(s)\n" +
-      "Remaining:   %s day(s)\n" +
+      "Duration:    %s\n" +
+      "Remaining:   %s\n" +
       "\n";
 
 
@@ -62,12 +63,6 @@ public class DiscordBotCommandResponseFactory {
   }
 
   public static String createActiveCompetitionMessage(Competition competition, Game game, ScoreSummary summary) {
-    LocalDate start = competition.getStartDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
-    LocalDate end = competition.getEndDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
-    LocalDate now = DateUtil.today().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
-    long diff = Math.abs(ChronoUnit.DAYS.between(end, start)) + 1;
-    long remaining = Math.abs(ChronoUnit.DAYS.between(end, now)) + 1;
-
     String cType = "offline";
     if (competition.getType().equals(CompetitionType.DISCORD.name())) {
       cType = "Discord";
@@ -77,8 +72,8 @@ public class DiscordBotCommandResponseFactory {
         game.getGameDisplayName(),
         DateFormat.getDateInstance().format(competition.getStartDate()),
         DateFormat.getDateInstance().format(competition.getEndDate()),
-        diff,
-        remaining);
+        DateUtil.formatDuration(competition.getStartDate(), competition.getEndDate()),
+        DateUtil.formatDuration(new Date(), competition.getEndDate()));
 
 
     StringBuilder msgBuilder = new StringBuilder(format);

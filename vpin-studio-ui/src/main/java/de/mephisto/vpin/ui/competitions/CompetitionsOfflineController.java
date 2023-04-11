@@ -296,13 +296,13 @@ public class CompetitionsOfflineController implements Initializable, StudioFXCon
 
     columnStartDate.setCellValueFactory(cellData -> {
       CompetitionRepresentation value = cellData.getValue();
-      Label label = new Label(DateFormat.getDateInstance().format(value.getStartDate()));
+      Label label = new Label(DateFormat.getDateTimeInstance().format(value.getStartDate()));
       return new SimpleObjectProperty(label);
     });
 
     columnEndDate.setCellValueFactory(cellData -> {
       CompetitionRepresentation value = cellData.getValue();
-      Label label = new Label(DateFormat.getDateInstance().format(value.getEndDate()));
+      Label label = new Label(DateFormat.getDateTimeInstance().format(value.getEndDate()));
       return new SimpleObjectProperty(label);
     });
 

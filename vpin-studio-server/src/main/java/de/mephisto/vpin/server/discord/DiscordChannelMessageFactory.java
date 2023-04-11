@@ -2,6 +2,7 @@ package de.mephisto.vpin.server.discord;
 
 import de.mephisto.vpin.connectors.discord.DiscordMember;
 import de.mephisto.vpin.restclient.PlayerDomain;
+import de.mephisto.vpin.restclient.util.DateUtil;
 import de.mephisto.vpin.server.competitions.Competition;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.highscores.Score;
@@ -24,7 +25,7 @@ public class DiscordChannelMessageFactory {
       "Table:       %s\n" +
       "Start Date:  %s\n" +
       "End Date:    %s\n" +
-      "Duration:    %s days\n" +
+      "Duration:    %s\n" +
       "------------------------------------------------------------```";
 
 
@@ -93,9 +94,6 @@ public class DiscordChannelMessageFactory {
   }
 
   public static String createDiscordCompetitionCreatedMessage(Competition competition, Game game, long initiatorId) {
-    LocalDate start = competition.getStartDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
-    LocalDate end = competition.getEndDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
-    long diff = Math.abs(ChronoUnit.DAYS.between(end, start)) + 1;
     String userId = "<@" + initiatorId + ">";
 
     return String.format(DISCORD_COMPETITION_CREATED_TEMPLATE,
@@ -105,7 +103,7 @@ public class DiscordChannelMessageFactory {
         game.getGameDisplayName(),
         DateFormat.getDateInstance().format(competition.getStartDate()),
         DateFormat.getDateInstance().format(competition.getEndDate()),
-        diff);
+        DateUtil.formatDuration(competition.getStartDate(), competition.getEndDate()));
   }
 
   private static String createHighscoreList(List<Score> scores) {
