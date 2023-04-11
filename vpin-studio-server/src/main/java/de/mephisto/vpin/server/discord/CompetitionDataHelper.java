@@ -95,7 +95,7 @@ public class CompetitionDataHelper {
       }
       return null;
     } catch (JsonProcessingException e) {
-      LOG.info("Failed to read competition data from '" + topic + "'");
+      LOG.info("Failed to read competition data from '" + topic + "':" + e.getMessage());
     }
     return null;
   }
