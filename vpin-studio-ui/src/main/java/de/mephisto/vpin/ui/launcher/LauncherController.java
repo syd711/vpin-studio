@@ -202,7 +202,7 @@ public class LauncherController implements Initializable {
           }
         }
 
-        LOG.info("Running initial tasks.");
+        LOG.info("Found server startup, running on version " + client.version() + ", starting table scan.");
         Platform.runLater(() -> {
           stage.close();
           Dialogs.createProgressDialog(new ServiceInstallationProgressModel(Studio.client));
