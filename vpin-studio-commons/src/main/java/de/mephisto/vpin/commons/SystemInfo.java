@@ -61,6 +61,9 @@ public class SystemInfo {
       String tablesDir = readRegistry(VPX_REG_KEY, "LoadDir");
       if (tablesDir != null) {
         tablesDir = extractRegistryValue(tablesDir);
+        if(tablesDir == null) {
+          return file;
+        }
         LOG.info("Resolve Visual Pinball tables folder " + tablesDir);
         file = new File(tablesDir);
         if (file.exists()) {
