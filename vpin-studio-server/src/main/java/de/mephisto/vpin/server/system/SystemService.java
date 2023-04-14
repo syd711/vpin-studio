@@ -106,7 +106,7 @@ public class SystemService extends SystemInfo implements InitializingBean {
       }
 
       //VPX Tables Folder
-      this.vpxTablesFolder = this.resolveVpxTablesInstallationFolder(pinUPSystemInstallationFolder);
+      this.vpxTablesFolder = this.resolveVpxTablesInstallationFolder(visualPinballInstallationFolder);
       if (!store.containsKey(VPX_TABLES_DIR)) {
         store.set(VPX_TABLES_DIR, vpxTablesFolder.getAbsolutePath().replaceAll("\\\\", "/"));
       }
@@ -115,7 +115,7 @@ public class SystemService extends SystemInfo implements InitializingBean {
       }
 
       //Mame Root Folder
-      this.mameFolder = this.resolveMameInstallationFolder(pinUPSystemInstallationFolder);
+      this.mameFolder = this.resolveMameInstallationFolder(visualPinballInstallationFolder);
       if (!store.containsKey(MAME_DIR)) {
         store.set(MAME_DIR, mameFolder.getAbsolutePath().replaceAll("\\\\", "/"));
       }
@@ -124,7 +124,7 @@ public class SystemService extends SystemInfo implements InitializingBean {
       }
 
       //User Folder
-      this.userFolder = this.resolveUserFolder(pinUPSystemInstallationFolder);
+      this.userFolder = this.resolveUserFolder(visualPinballInstallationFolder);
       if (!store.containsKey(USER_DIR)) {
         store.set(USER_DIR, userFolder.getAbsolutePath().replaceAll("\\\\", "/"));
       }
