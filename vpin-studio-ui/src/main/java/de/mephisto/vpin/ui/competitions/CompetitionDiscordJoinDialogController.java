@@ -31,7 +31,6 @@ import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.ResourceBundle;
 
@@ -246,6 +245,7 @@ public class CompetitionDiscordJoinDialogController implements Initializable, Di
       validationDescription.setText("You are the owner of this competition.");
       return;
     }
+
     //TODO check against existing
 
 
@@ -255,23 +255,22 @@ public class CompetitionDiscordJoinDialogController implements Initializable, Di
       return;
     }
 
-    GameRepresentation game = this.tableCombo.getValue();
-    long tableSize = game.getGameFileSize();
-    long competitionTableSize = this.discordCompetitionData.getFs();
-    long min = competitionTableSize - 1024;
-    long max = competitionTableSize + 1024;
-    if (tableSize < min || tableSize > max) {
-      validationTitle.setText("Invalid table version");
-      validationDescription.setText("The file size of the matching table does not match the competed one.");
-      return;
-    }
+//    GameRepresentation game = this.tableCombo.getValue();
+//    long tableSize = game.getGameFileSize();
+//    long competitionTableSize = this.discordCompetitionData.getFs();
+//    long min = competitionTableSize - 1024;
+//    long max = competitionTableSize + 1024;
+//    if (tableSize < min || tableSize > max) {
+//      validationTitle.setText("Invalid table version");
+//      validationDescription.setText("The file size of the matching table does not match the competed one.");
+//      return;
+//    }
 
     if(!resetCheckbox.isSelected()) {
       validationTitle.setText("Highscore reset required");
       validationDescription.setText("The reset is required in case your highscore is already higher than the others.");
       return;
     }
-
 
     this.competitionIconCombo.setDisable(false);
     this.tableCombo.setDisable(false);
