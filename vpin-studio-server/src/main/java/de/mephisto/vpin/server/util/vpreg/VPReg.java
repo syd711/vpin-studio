@@ -34,8 +34,8 @@ public class VPReg {
       fs = new POIFSFileSystem(vpregFile, false);
       DirectoryEntry root = fs.getRoot();
       return getGameDirectory(root) != null;
-    } catch (IOException e) {
-      LOG.error("Failed to read VPReg: " + e.getMessage(), e);
+    } catch (Exception e) {
+      LOG.error("Failed to read VPReg: " + e.getMessage());
     } finally {
       if (fs != null) {
         try {
