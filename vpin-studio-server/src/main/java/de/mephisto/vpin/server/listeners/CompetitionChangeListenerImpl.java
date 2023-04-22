@@ -115,7 +115,6 @@ public class CompetitionChangeListenerImpl implements InitializingBean, Competit
       if (competition.getType().equals(CompetitionType.DISCORD.name())) {
         //only the owner can perform additional actions
         if (competition.getOwner().equals(String.valueOf(discordService.getBotId()))) {
-          discordService.resetCompetition(discordServerId, discordChannelId);
           String message = DiscordOfflineChannelMessageFactory.createCompetitionFinishedMessage(competition, winner, game, scoreSummary);
           discordService.sendMessage(discordServerId, discordChannelId, message);
         }
@@ -140,7 +139,6 @@ public class CompetitionChangeListenerImpl implements InitializingBean, Competit
       if (competition.getType().equals(CompetitionType.DISCORD.name())) {
         //check if the owner deleted the competition
         if (competition.getOwner().equals(String.valueOf(discordService.getBotId())) && competition.isActive()) {
-          discordService.resetCompetition(discordServerId, discordChannelId);
           Player player = discordService.getPlayer(discordServerId, Long.parseLong(competition.getOwner()));
           String message = DiscordChannelMessageFactory.createCompetitionCancelledMessage(player, competition);
           discordService.sendMessage(discordServerId, discordChannelId, message);
