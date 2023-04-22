@@ -207,7 +207,6 @@ public class CompetitionService implements InitializingBean {
       String initials = !StringUtils.isEmpty(score.getPlayerInitials()) ? score.getPlayerInitials() : "???";
       competition.setWinnerInitials(initials);
     }
-    competition.setEndDate(DateUtil.today()); //always the current date
     competition.setScore(competitionScore.getRaw()); //save the last raw score to the competition itself
     Competition finishedCompetition = save(competition);
 
@@ -226,11 +225,11 @@ public class CompetitionService implements InitializingBean {
   }
 
   public List<Competition> getActiveCompetitions() {
-    return competitionsRepository.findByStartDateLessThanEqualAndEndDateGreaterThanEqual(DateUtil.today(), DateUtil.endOfToday());
+    return competitionsRepository.findByStartDateLessThanEqualAndEndDateGreaterThanEqual(new Date(), new Date());
   }
 
   public Competition getActiveCompetition(CompetitionType competitionType) {
-    List<Competition> result = competitionsRepository.findByAndWinnerInitialsIsNullAndStartDateLessThanEqualAndEndDateGreaterThanEqualAndType(DateUtil.today(), DateUtil.endOfToday(), competitionType.name());
+    List<Competition> result = competitionsRepository.findByAndWinnerInitialsIsNullAndStartDateLessThanEqualAndEndDateGreaterThanEqualAndType(new Date(), new Date(), competitionType.name());
     if (!result.isEmpty()) {
       return result.get(0);
     }
@@ -265,7 +264,7 @@ public class CompetitionService implements InitializingBean {
 
   @Override
   public void afterPropertiesSet() throws Exception {
-    scheduler.scheduleAtFixedRate(new CompetitionCheckRunnable(this), 1000 * 60 * 60);
+    scheduler.scheduleAtFixedRate(new CompetitionCheckRunnable(this), 1000 * 60 * 5);
   }
 
   @NonNull

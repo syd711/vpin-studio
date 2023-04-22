@@ -46,14 +46,12 @@ public class DiscordClient {
         .build();
     jda.awaitReady();
     this.botId = jda.getSelfUser().getIdLong();
-
     this.loadMembers();
   }
 
   public DiscordMember getBot() {
     DiscordMember member = new DiscordMember();
     member.setName(jda.getSelfUser().getName());
-
 
     member.setInitials(resolveInitials(jda.getSelfUser().getName()));
     member.setId(this.botId);

@@ -11,7 +11,11 @@ import de.mephisto.vpin.restclient.discord.DiscordBotStatus;
 import de.mephisto.vpin.restclient.discord.DiscordChannel;
 import de.mephisto.vpin.restclient.discord.DiscordCompetitionData;
 import de.mephisto.vpin.restclient.discord.DiscordServer;
-import de.mephisto.vpin.restclient.representations.*;
+import de.mephisto.vpin.restclient.representations.CompetitionRepresentation;
+import de.mephisto.vpin.restclient.representations.GameMediaItemRepresentation;
+import de.mephisto.vpin.restclient.representations.GameMediaRepresentation;
+import de.mephisto.vpin.restclient.representations.GameRepresentation;
+import de.mephisto.vpin.restclient.util.DateUtil;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -61,6 +65,12 @@ public class CompetitionDiscordDialogController implements Initializable, Dialog
 
   @FXML
   private ComboBox<DiscordServer> serversCombo;
+
+  @FXML
+  private ComboBox<String> startTime;
+
+  @FXML
+  private ComboBox<String> endTime;
 
   @FXML
   private Button saveBtn;
@@ -157,26 +167,29 @@ public class CompetitionDiscordDialogController implements Initializable, Dialog
 
     startDatePicker.setValue(LocalDate.now());
     startDatePicker.valueProperty().addListener((observableValue, localDate, t1) -> {
-      if (t1 != null) {
-        Date date = Date.from(t1.atStartOfDay(ZoneId.systemDefault()).toInstant());
-        competition.setStartDate(date);
-      }
-      else {
-        competition.setStartDate(null);
-      }
+      Date date = DateUtil.formatDate(startDatePicker.getValue(), startTime.getValue());
+      competition.setStartDate(date);
+      validate();
+    });
+    startTime.setItems(FXCollections.observableList(DateUtil.TIMES));
+    startTime.setValue("00:00");
+    startTime.valueProperty().addListener((observable, oldValue, newValue) -> {
+      Date date = DateUtil.formatDate(startDatePicker.getValue(), startTime.getValue());
+      competition.setStartDate(date);
       validate();
     });
 
     endDatePicker.setValue(LocalDate.now().plus(7, ChronoUnit.DAYS));
     endDatePicker.valueProperty().addListener((observableValue, localDate, t1) -> {
-      if (t1 != null) {
-        Date date = Date.from(t1.atStartOfDay(ZoneId.systemDefault()).toInstant());
-        competition.setEndDate(date);
-      }
-      else {
-        competition.setEndDate(null);
-      }
-
+      Date date = DateUtil.formatDate(endDatePicker.getValue(), endTime.getValue());
+      competition.setEndDate(date);
+      validate();
+    });
+    endTime.setItems(FXCollections.observableList(DateUtil.TIMES));
+    endTime.setValue("00:00");
+    endTime.valueProperty().addListener((observable, oldValue, newValue) -> {
+      Date date = DateUtil.formatDate(endDatePicker.getValue(), endTime.getValue());
+      competition.setEndDate(date);
       validate();
     });
 
@@ -192,7 +205,7 @@ public class CompetitionDiscordDialogController implements Initializable, Dialog
     tableCombo.getItems().addAll(gameRepresentations);
     tableCombo.valueProperty().addListener((observableValue, gameRepresentation, t1) -> {
       competition.setGameId(t1.getId());
-      if(nameField.getText().equals(UIDefaults.DEFAULT_COMPETITION_NAME)) {
+      if (nameField.getText().equals(UIDefaults.DEFAULT_COMPETITION_NAME)) {
         nameField.setText(t1.getGameDisplayName());
       }
       refreshPreview(t1, competitionIconCombo.getValue());
@@ -238,11 +251,9 @@ public class CompetitionDiscordDialogController implements Initializable, Dialog
     validationContainer.setVisible(true);
     this.saveBtn.setDisable(true);
 
-    LocalDate start = startDatePicker.getValue();
-    LocalDate value = endDatePicker.getValue();
-
-    long diff = ChronoUnit.DAYS.between(start, value) + 1;
-    this.durationLabel.setText(diff + " days");
+    Date startDate = competition.getStartDate();
+    Date endDate = competition.getEndDate();
+    this.durationLabel.setText(DateUtil.formatDuration(startDate, endDate));
 
     if (StringUtils.isEmpty(competition.getName())) {
       validationTitle.setText("No competition name set.");
@@ -262,7 +273,7 @@ public class CompetitionDiscordDialogController implements Initializable, Dialog
       return;
     }
 
-    if (competition.getStartDate() == null || competition.getEndDate() == null || competition.getStartDate().getTime() > competition.getEndDate().getTime()) {
+    if (startDate == null || endDate == null || startDate.getTime() >= endDate.getTime()) {
       validationTitle.setText("Invalid start/end date set.");
       validationDescription.setText("Define a valid start and end date.");
       return;
@@ -274,8 +285,6 @@ public class CompetitionDiscordDialogController implements Initializable, Dialog
       validationDescription.setText("Select a table for the competition.");
       return;
     }
-
-    GameRepresentation game = this.tableCombo.getValue();
 
     Date startSelection = Date.from(startDatePicker.getValue().atStartOfDay(ZoneId.systemDefault()).toInstant());
     Date endSelection = Date.from(endDatePicker.getValue().atStartOfDay(ZoneId.systemDefault()).toInstant());
@@ -324,7 +333,7 @@ public class CompetitionDiscordDialogController implements Initializable, Dialog
 //      return;
 //    }
 
-    if(!resetCheckbox.isDisable() && !resetCheckbox.isSelected()) {
+    if (!resetCheckbox.isDisable() && !resetCheckbox.isSelected()) {
       validationTitle.setText("Highscore reset required");
       validationDescription.setText("The reset is required in case your highscore is already higher than the others.");
       return;
@@ -368,8 +377,11 @@ public class CompetitionDiscordDialogController implements Initializable, Dialog
 
       this.startDatePicker.setValue(this.competition.getStartDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate());
       this.startDatePicker.setDisable(!editable);
+      this.startTime.setValue(DateUtil.formatTimeString(this.competition.getStartDate()));
+
       this.endDatePicker.setValue(this.competition.getEndDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate());
       this.endDatePicker.setDisable(!editable);
+      this.endTime.setValue(DateUtil.formatTimeString(this.competition.getEndDate()));
 
       this.tableCombo.setValue(game);
       this.tableCombo.setDisable(!editable);

@@ -222,9 +222,9 @@ public class CompetitionDiscordJoinDialogController implements Initializable, Di
     LocalDate end = discordCompetitionData.getEdt().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
     LocalDate now = DateUtil.today().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
 
-    long remainingDays = ChronoUnit.DAYS.between(now, end);
-    if (remainingDays <= 0) {
-      remainingDays = 1;
+    long remainingDays = ChronoUnit.DAYS.between(now, end) + 1;
+    if (remainingDays < 0) {
+      remainingDays = 0;
     }
 
     this.tableLabel.setText(this.discordCompetitionData.getTname());
@@ -249,7 +249,7 @@ public class CompetitionDiscordJoinDialogController implements Initializable, Di
     //TODO check against existing
 
 
-    if(this.discordCompetitionData.getEdt().before(DateUtil.today())) {
+    if (this.discordCompetitionData.getEdt().before(DateUtil.today())) {
       validationTitle.setText("Invalid competition data");
       validationDescription.setText("Ups, looks like the selected competition wasn't resetted. It's already finished.");
       return;
@@ -266,7 +266,7 @@ public class CompetitionDiscordJoinDialogController implements Initializable, Di
 //      return;
 //    }
 
-    if(!resetCheckbox.isSelected()) {
+    if (!resetCheckbox.isSelected()) {
       validationTitle.setText("Highscore reset required");
       validationDescription.setText("The reset is required in case your highscore is already higher than the others.");
       return;

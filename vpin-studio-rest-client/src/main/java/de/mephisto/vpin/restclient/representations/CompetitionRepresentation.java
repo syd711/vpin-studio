@@ -159,9 +159,6 @@ public class CompetitionRepresentation {
 
   public void setEndDate(Date endDate) {
     this.endDate = endDate;
-    if(endDate != null) {
-      this.endDate = DateUtil.endOfDay(endDate);
-    }
   }
 
   @Override
@@ -206,15 +203,14 @@ public class CompetitionRepresentation {
       return false;
     }
 
-    long now = DateUtil.today().getTime();
+    long now = new Date().getTime();
     long start = getStartDate().getTime();
     long end = getEndDate().getTime();
     return start <= now && end >= now;
   }
 
   public boolean isPlanned() {
-    Date now = DateUtil.today();
-    return getStartDate().after(now);
+    return getStartDate().after(new Date());
   }
 
   public int remainingDays() {

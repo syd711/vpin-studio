@@ -188,7 +188,9 @@ public class DiscordService implements InitializingBean, PreferenceChangedListen
     if (this.discordClient != null) {
       long discordServerId = competition.getDiscordServerId();
       long discordChannelId = competition.getDiscordChannelId();
-      this.discordClient.setTopic(discordServerId, discordChannelId, topic);
+
+      String message = DiscordOfflineChannelMessageFactory.createCompetitionCancelledMessage(competition, topic);
+      sendMessage(discordServerId, discordChannelId, message);
     } else {
       throw new UnsupportedOperationException("No Discord client found.");
     }
@@ -219,14 +221,6 @@ public class DiscordService implements InitializingBean, PreferenceChangedListen
       }
     }
     return result;
-  }
-
-  public void resetCompetition(long serverId, long channelId) {
-    if (this.discordClient != null) {
-      this.discordClient.setTopic(serverId, channelId, "No active competition.");
-    } else {
-      throw new UnsupportedOperationException("No Discord client found.");
-    }
   }
 
   public boolean isEnabled() {
