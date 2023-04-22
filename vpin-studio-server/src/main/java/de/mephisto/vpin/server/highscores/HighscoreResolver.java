@@ -171,7 +171,7 @@ class HighscoreResolver {
 
       if (!this.supportedRoms.contains(nvRamName)) {
         String msg = "The resolved NV ram file '" + nvRamName + "' of game '" + game.getGameDisplayName() + "' is not supported by PINemHi.";
-        LOG.warn(msg);
+        LOG.info(msg);
         metadata.setStatus(msg);
         return null;
       }

@@ -86,7 +86,6 @@ public class CompetitionOfflineDialogController implements Initializable, Dialog
   private CompetitionRepresentation competition;
 
   private List<DiscordChannel> discordChannels;
-  private List<CompetitionRepresentation> allCompetitions;
 
   @FXML
   private void onCancelClick(ActionEvent e) {
@@ -153,7 +152,7 @@ public class CompetitionOfflineDialogController implements Initializable, Dialog
       validate();
     });
 
-    List<GameRepresentation> games = client.getGames();
+    List<GameRepresentation> games = client.getGamesWithScores();
     List<GameRepresentation> filtered = new ArrayList<>();
     for (GameRepresentation game : games) {
       if (game.getEmulator().getName().equals(EmulatorType.VISUAL_PINBALL_X)) {
@@ -275,7 +274,6 @@ public class CompetitionOfflineDialogController implements Initializable, Dialog
   }
 
   public void setCompetition(List<CompetitionRepresentation> all, CompetitionRepresentation c) {
-    this.allCompetitions = all;
     if (c != null) {
       this.competition = c;
       GameRepresentation game = client.getGame(c.getGameId());

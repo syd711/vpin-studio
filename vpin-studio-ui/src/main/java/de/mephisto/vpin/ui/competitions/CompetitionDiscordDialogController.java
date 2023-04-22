@@ -193,7 +193,7 @@ public class CompetitionDiscordDialogController implements Initializable, Dialog
       validate();
     });
 
-    List<GameRepresentation> games = client.getGames();
+    List<GameRepresentation> games = client.getGamesWithScores();
     List<GameRepresentation> filtered = new ArrayList<>();
     for (GameRepresentation game : games) {
       if (game.getEmulator().getName().equals(EmulatorType.VISUAL_PINBALL_X)) {
