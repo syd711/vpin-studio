@@ -273,6 +273,13 @@ public class CompetitionDiscordDialogController implements Initializable, Dialog
       return;
     }
 
+    //check Discord permissions
+    if(!client.hasManagePermissions(competition.getDiscordServerId(), competition.getDiscordChannelId())) {
+      validationTitle.setText("Insufficient Permissions");
+      validationDescription.setText("Your Discord bot has insufficient permissions to join a competition. Please check the documentation for details.");
+      return;
+    }
+
     if (startDate == null || endDate == null || startDate.getTime() >= endDate.getTime()) {
       validationTitle.setText("Invalid start/end date set.");
       validationDescription.setText("Define a valid start and end date.");

@@ -140,19 +140,6 @@ public class CompetitionDiscordJoinDialogController implements Initializable, Di
     channelsCombo.setDisable(true);
     channelsCombo.getItems().addAll(discordChannels);
     channelsCombo.valueProperty().addListener((observableValue, gameRepresentation, t1) -> {
-      this.discordCompetitionData = client.getDiscordCompetitionData(serversCombo.getValue().getId(), t1.getId());
-      if (discordCompetitionData != null) {
-        List<GameRepresentation> gamesByRom = client.getGamesByRom(this.discordCompetitionData.getRom());
-        tableCombo.getItems().addAll(FXCollections.observableList(gamesByRom));
-        if (!gamesByRom.isEmpty()) {
-          tableCombo.setValue(gamesByRom.get(0));
-          refreshPreview(tableCombo.getValue(), null);
-        }
-      }
-      else {
-        this.tableCombo.setItems(FXCollections.observableList(new ArrayList<>()));
-        this.refreshPreview(null, null);
-      }
       validate();
     });
 
@@ -195,7 +182,7 @@ public class CompetitionDiscordJoinDialogController implements Initializable, Di
   }
 
   private void validate() {
-    this.competition = null;
+    refreshPreview(null, null);
 
     validationContainer.setVisible(true);
     this.saveBtn.setDisable(true);
@@ -210,14 +197,49 @@ public class CompetitionDiscordJoinDialogController implements Initializable, Di
     this.nameLabel.setText("-");
     this.ownerLabel.setText("-");
 
+
+    DiscordServer server = this.serversCombo.getValue();
+    DiscordChannel channel = this.channelsCombo.getValue();
+
+
+    if (server == null) {
+      validationTitle.setText("No discord server selected.");
+      validationDescription.setText("Select a discord server where the competition takes place.");
+      return;
+    }
+
+    if (channel == null) {
+      validationTitle.setText("No discord channel selected.");
+      validationDescription.setText("Select a discord channel where the competition takes place.");
+      return;
+    }
+
+    //check Discord permissions
+    if (!client.hasManagePermissions(server.getId(), channel.getId())) {
+      validationTitle.setText("Insufficient Permissions");
+      validationDescription.setText("Your Discord bot has insufficient permissions to start a competition. Please check the documentation for details.");
+      return;
+    }
+
+    this.discordCompetitionData = client.getDiscordCompetitionData(server.getId(), channel.getId());
+    if (discordCompetitionData != null) {
+      List<GameRepresentation> gamesByRom = client.getGamesByRom(this.discordCompetitionData.getRom());
+      tableCombo.getItems().addAll(FXCollections.observableList(gamesByRom));
+      if (!gamesByRom.isEmpty()) {
+        tableCombo.setValue(gamesByRom.get(0));
+        refreshPreview(tableCombo.getValue(), null);
+      }
+    }
+    else {
+      this.tableCombo.setItems(FXCollections.observableList(new ArrayList<>()));
+    }
+
     if (this.discordCompetitionData == null) {
-      validationTitle.setText("No competition selected");
+      validationTitle.setText("No competition found");
       validationDescription.setText("Select a discord server and channel where the competition takes place.");
       return;
     }
 
-    long serverId = this.serversCombo.getValue().getId();
-    long channelId = this.channelsCombo.getValue().getId();
 
     LocalDate end = discordCompetitionData.getEdt().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
     LocalDate now = DateUtil.today().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
@@ -233,7 +255,7 @@ public class CompetitionDiscordJoinDialogController implements Initializable, Di
     this.remainingDaysLabel.setText(remainingDays + " day(s)");
     this.nameLabel.setText(this.discordCompetitionData.getName());
 
-    PlayerRepresentation discordPlayer = client.getDiscordPlayer(serverId, Long.parseLong(this.discordCompetitionData.getOwner()));
+    PlayerRepresentation discordPlayer = client.getDiscordPlayer(server.getId(), Long.parseLong(this.discordCompetitionData.getOwner()));
     if (discordPlayer != null) {
       this.ownerLabel.setText(discordPlayer.getName());
     }
@@ -251,20 +273,20 @@ public class CompetitionDiscordJoinDialogController implements Initializable, Di
 
     if (this.discordCompetitionData.getEdt().before(DateUtil.today())) {
       validationTitle.setText("Invalid competition data");
-      validationDescription.setText("Ups, looks like the selected competition wasn't resetted. It's already finished.");
+      validationDescription.setText("Ups, looks like the selected competition wasn't reset. It's already finished.");
       return;
     }
 
-//    GameRepresentation game = this.tableCombo.getValue();
-//    long tableSize = game.getGameFileSize();
-//    long competitionTableSize = this.discordCompetitionData.getFs();
-//    long min = competitionTableSize - 1024;
-//    long max = competitionTableSize + 1024;
-//    if (tableSize < min || tableSize > max) {
-//      validationTitle.setText("Invalid table version");
-//      validationDescription.setText("The file size of the matching table does not match the competed one.");
-//      return;
-//    }
+    GameRepresentation game = this.tableCombo.getValue();
+    long tableSize = game.getGameFileSize();
+    long competitionTableSize = this.discordCompetitionData.getFs();
+    long min = competitionTableSize - 1024;
+    long max = competitionTableSize + 1024;
+    if (tableSize < min || tableSize > max) {
+      validationTitle.setText("Invalid table version");
+      validationDescription.setText("The file size of the matching table does not match the competed one.");
+      return;
+    }
 
     if (!resetCheckbox.isSelected()) {
       validationTitle.setText("Highscore reset required");

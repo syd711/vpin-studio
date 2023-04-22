@@ -28,6 +28,8 @@ import org.springframework.stereotype.Service;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static de.mephisto.vpin.connectors.discord.Permissions.*;
+
 @Service
 public class DiscordService implements InitializingBean, PreferenceChangedListener, DiscordCommandResolver {
   private final static Logger LOG = LoggerFactory.getLogger(DiscordService.class);
@@ -47,7 +49,7 @@ public class DiscordService implements InitializingBean, PreferenceChangedListen
 
     DiscordBotStatus status = new DiscordBotStatus();
     status.setBotId(botId);
-    status.setValid(botId != -1 && this.discordClient != null && this.discordClient.getChannels().size() > 0);
+    status.setValid(botId != -1 && this.discordClient != null && this.discordClient.getGuilds().size() > 0);
     if (botId != -1) {
       status.setBotInitials(this.discordClient.getBot().getInitials());
       try {
@@ -134,6 +136,34 @@ public class DiscordService implements InitializingBean, PreferenceChangedListen
     return Collections.emptyList();
   }
 
+  public boolean hasJoinPermissions(long serverId, long channelId, long memberId) {
+    if(this.discordClient != null) {
+      return this.discordClient.hasPermissions(serverId, channelId, memberId,
+          VIEW_CHANNEL,
+          MESSAGE_SEND,
+          MESSAGE_MANAGE,
+          MESSAGE_EMBED_LINKS,
+          MESSAGE_ATTACH_FILES,
+          MESSAGE_HISTORY);
+    }
+    return false;
+  }
+
+
+  public boolean hasManagePermissions(long serverId, long channelId, long memberId) {
+    if(this.discordClient != null) {
+      return this.discordClient.hasPermissions(serverId, channelId, memberId,
+          MANAGE_CHANNEL,
+          VIEW_CHANNEL,
+          MESSAGE_SEND,
+          MESSAGE_MANAGE,
+          MESSAGE_EMBED_LINKS,
+          MESSAGE_ATTACH_FILES,
+          MESSAGE_HISTORY);
+    }
+    return false;
+  }
+
   public List<Player> getCompetitionPlayers(long serverId, long channelId) {
     if (this.discordClient != null) {
       DiscordCompetitionData competitionData = getCompetitionData(serverId, channelId);
@@ -189,7 +219,7 @@ public class DiscordService implements InitializingBean, PreferenceChangedListen
       long discordServerId = competition.getDiscordServerId();
       long discordChannelId = competition.getDiscordChannelId();
 
-      String message = DiscordOfflineChannelMessageFactory.createCompetitionCancelledMessage(competition, topic);
+      String message = DiscordOfflineChannelMessageFactory.createCompetitionCancelledMessage(competition);
       sendMessage(discordServerId, discordChannelId, message);
     } else {
       throw new UnsupportedOperationException("No Discord client found.");

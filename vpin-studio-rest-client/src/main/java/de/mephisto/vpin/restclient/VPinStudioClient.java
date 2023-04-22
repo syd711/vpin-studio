@@ -513,6 +513,14 @@ public class VPinStudioClient implements ObservedPropertyChangeListener, Overlay
    * Competitions
    ********************************************************************************************************************/
 
+  public boolean hasManagePermissions(long serverId, long channelId) {
+    return restClient.get(API + "discord/permissions/competitions/manage/" + serverId + "/" + channelId, Boolean.class);
+  }
+
+  public boolean hasJoinPermissions(long serverId, long channelId) {
+    return restClient.get(API + "discord/permissions/competitions/join/" + serverId + "/" + channelId, Boolean.class);
+  }
+
   public CompetitionRepresentation getCompetitionByUuid(String uuid) {
     return restClient.get(API + "competitions/competition/" + uuid, CompetitionRepresentation.class);
   }

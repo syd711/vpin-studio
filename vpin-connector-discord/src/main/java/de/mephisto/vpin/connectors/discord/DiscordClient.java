@@ -10,6 +10,7 @@ import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.entities.channel.middleman.GuildChannel;
 import net.dv8tion.jda.api.requests.GatewayIntent;
 import net.dv8tion.jda.api.utils.MemberCachePolicy;
+import net.dv8tion.jda.internal.utils.PermissionUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -47,6 +48,21 @@ public class DiscordClient {
     jda.awaitReady();
     this.botId = jda.getSelfUser().getIdLong();
     this.loadMembers();
+  }
+
+  public boolean hasPermissions(long serverId, long channelId, long memberId, Permissions... permissions) {
+    Guild guild = getGuild(serverId);
+    if (guild != null) {
+      TextChannel channel = guild.getChannelById(TextChannel.class, channelId);
+      if (channel != null) {
+        Member member = guild.getMemberById(memberId);
+        if (member != null) {
+          List<Permission> permissionList = Arrays.stream(permissions).map(p -> Permissions.toPermission(p)).collect(Collectors.toList());
+          return PermissionUtil.checkPermission(channel.getPermissionContainer(), member, permissionList.toArray(new Permission[0]));
+        }
+      }
+    }
+    return false;
   }
 
   public DiscordMember getBot() {
@@ -280,7 +296,7 @@ public class DiscordClient {
   private DiscordMember toMember(Member member) {
     String name = member.getEffectiveName();
     String initials = resolveInitials(name);
-    
+
     DiscordMember discordMember = new DiscordMember();
     discordMember.setId(member.getIdLong());
     discordMember.setName(name);

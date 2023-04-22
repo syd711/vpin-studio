@@ -1,9 +1,6 @@
 package de.mephisto.vpin.server.discord;
 
-import de.mephisto.vpin.restclient.discord.DiscordBotStatus;
-import de.mephisto.vpin.restclient.discord.DiscordChannel;
-import de.mephisto.vpin.restclient.discord.DiscordCompetitionData;
-import de.mephisto.vpin.restclient.discord.DiscordServer;
+import de.mephisto.vpin.restclient.discord.*;
 import de.mephisto.vpin.server.players.Player;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -25,6 +22,16 @@ public class DiscordResource {
   @GetMapping("/status")
   public DiscordBotStatus getStatus() {
     return discordService.getStatus();
+  }
+
+  @GetMapping("/permissions/competitions/join/{serverId}/{channelId}")
+  public boolean hasJoinPermissions(@PathVariable("serverId") long serverId, @PathVariable("channelId") long channelId) {
+    return discordService.hasJoinPermissions(serverId, channelId, discordService.getBotId());
+  }
+
+  @GetMapping("/permissions/competitions/manage/{serverId}/{channelId}")
+  public boolean hasManagePermissions(@PathVariable("serverId") long serverId, @PathVariable("channelId") long channelId) {
+    return discordService.hasManagePermissions(serverId, channelId, discordService.getBotId());
   }
 
   @GetMapping("/competition/{serverId}/{channelId}")
