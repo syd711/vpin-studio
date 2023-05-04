@@ -14,7 +14,16 @@ public class DiscordCompetitionData {
   private Date edt;
   private String name;
   private String tname;
+  private String mode;
   private long msgId;
+
+  public String getMode() {
+    return mode;
+  }
+
+  public void setMode(String mode) {
+    this.mode = mode;
+  }
 
   public String getTname() {
     return tname;

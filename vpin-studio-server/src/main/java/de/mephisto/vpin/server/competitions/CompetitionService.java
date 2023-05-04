@@ -1,7 +1,6 @@
 package de.mephisto.vpin.server.competitions;
 
 import de.mephisto.vpin.restclient.CompetitionType;
-import de.mephisto.vpin.restclient.util.DateUtil;
 import de.mephisto.vpin.server.discord.DiscordService;
 import de.mephisto.vpin.server.highscores.HighscoreParser;
 import de.mephisto.vpin.server.highscores.HighscoreService;
@@ -83,7 +82,7 @@ public class CompetitionService implements InitializingBean {
   public List<Player> getDiscordCompetitionPlayers(long competitionId) {
     Competition competition = this.getCompetition(competitionId);
     if (competition != null) {
-      return discordService.getCompetitionPlayers(competition.getDiscordServerId(), competition.getDiscordChannelId());
+      return discordService.getCompetitionPlayers(competition.getDiscordServerId(), competition.getDiscordChannelId(), competition.getUuid());
     }
     return Collections.emptyList();
   }

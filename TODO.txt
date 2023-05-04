@@ -1,7 +1,4 @@
-- do not offer unsupported nvrams for competitions
 - provide optional strict mode for competitions
 - switch online competitions to message mode
   - send message with image and base64 data
-- check Discord bot permission
-- support Discord bot permission sheet
 - check with malibu about archive data format

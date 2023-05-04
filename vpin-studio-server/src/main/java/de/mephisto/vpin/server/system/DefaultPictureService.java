@@ -6,7 +6,6 @@ import de.mephisto.vpin.server.directb2s.DirectB2SImageExtractor;
 import de.mephisto.vpin.server.directb2s.DirectB2SImageRatio;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.util.ImageUtil;
-import de.mephisto.vpin.server.vpa.JCodec;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import org.apache.commons.io.FileUtils;

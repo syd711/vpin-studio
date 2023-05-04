@@ -32,7 +32,7 @@ public class DiscordOfflineChannelMessageFactory {
 
   private static final String COMPETITION_FINISHED_TEMPLATE = "Congratulation %s!\n" +
       "```" +
-      "The competition '%s' has been finished!\n" +
+      "The competition \"%s\" has been finished!\n" +
       "And the winner is...\n" +
       "\n" +
       "        %s\n" +
@@ -44,7 +44,8 @@ public class DiscordOfflineChannelMessageFactory {
       "%s\n" +
       "```";
 
-  private static final String COMPETITION_FINISHED_INCOMPLETE = "The competition '%s' has been finished, but no winner could be determined:\n" +
+  private static final String COMPETITION_FINISHED_INCOMPLETE = "The competition \"%s\" has been " + DiscordChannelMessageFactory.FINISHED_INDICATOR + ", " +
+      "but no winner could be determined:\n" +
       "No scores have been found.";
 
   private static final String COMPETITION_CANCELLED_TEMPLATE = "The competition \"%s\" has been cancelled.";

@@ -1,4 +1,4 @@
-package de.mephisto.vpin.server.vpa;
+package de.mephisto.vpin.server.system;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 import org.jcodec.api.FrameGrab;

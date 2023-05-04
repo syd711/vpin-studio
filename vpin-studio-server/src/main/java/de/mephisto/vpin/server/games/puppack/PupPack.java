@@ -2,7 +2,7 @@ package de.mephisto.vpin.server.games.puppack;
 
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.system.SystemService;
-import de.mephisto.vpin.server.vpa.JCodec;
+import de.mephisto.vpin.server.system.JCodec;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import org.apache.commons.lang3.StringUtils;

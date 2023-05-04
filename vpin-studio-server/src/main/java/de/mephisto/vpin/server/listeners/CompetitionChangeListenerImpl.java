@@ -2,11 +2,11 @@ package de.mephisto.vpin.server.listeners;
 
 import de.mephisto.vpin.connectors.discord.DiscordMember;
 import de.mephisto.vpin.restclient.CompetitionType;
-import de.mephisto.vpin.restclient.discord.DiscordCompetitionData;
 import de.mephisto.vpin.server.competitions.Competition;
 import de.mephisto.vpin.server.competitions.CompetitionChangeListener;
 import de.mephisto.vpin.server.competitions.CompetitionService;
 import de.mephisto.vpin.server.competitions.ScoreSummary;
+import de.mephisto.vpin.server.discord.CompetitionDataHelper;
 import de.mephisto.vpin.server.discord.DiscordChannelMessageFactory;
 import de.mephisto.vpin.server.discord.DiscordOfflineChannelMessageFactory;
 import de.mephisto.vpin.server.discord.DiscordService;
@@ -50,24 +50,29 @@ public class CompetitionChangeListenerImpl implements InitializingBean, Competit
     Game game = gameService.getGame(competition.getGameId());
     if (game != null) {
       if (competition.getType().equals(CompetitionType.DISCORD.name())) {
-        highscoreService.resetHighscore(game);
-        LOG.info("Resetted highscores of " + game.getGameDisplayName() + " for " + competition);
-
         boolean isOwner = competition.getOwner().equals(String.valueOf(discordService.getBotId()));
         long discordServerId = competition.getDiscordServerId();
         long discordChannelId = competition.getDiscordChannelId();
         long botId = discordService.getBotId();
 
-        //check if the competition is already set as topic, in this case the user simply re-created the DB entry
-        DiscordCompetitionData competitionData = discordService.getCompetitionData(discordServerId, discordChannelId);
-        if ((competitionData == null && isOwner) || (competitionData != null && competitionData.isFinished() && isOwner)) {
-          long messageId = discordService.sendMessage(discordServerId, discordChannelId, DiscordChannelMessageFactory.createDiscordCompetitionCreatedMessage(competition, game, botId));
-          ScoreSummary highscores = highscoreService.getScoreSummary(discordServerId, game.getId(), game.getGameDisplayName());
-          discordService.saveCompetitionData(competition, game, highscores, messageId);
+        if (isOwner) {
+          String base64Data = CompetitionDataHelper.toBase64(competition, game);
+          long messageId = discordService.sendMessage(discordServerId, discordChannelId,
+              DiscordChannelMessageFactory.createDiscordCompetitionCreatedMessage(competition, game, botId, base64Data));
+          //since we started a new competition, all messages before today are irrelevant (we check only today so we don't run into topic update limits)
+          discordService.updateTopicTimestamp(discordServerId, discordChannelId, messageId);
+          LOG.info("Finished Discord update of \"" + competition.getName() + "\"");
         }
         else {
-          LOG.warn("Tried to overwrite an existing competition, skipped notifications and Discord server update.");
+          if (!discordService.isCompetitionActive(discordServerId, discordServerId, competition.getUuid())) {
+            LOG.warn("The start of competition \"" + competition.getName() + "\" has been cancelled, because its no longer valid. " +
+                "The competition will be close during the next check.");
+            return;
+          }
         }
+
+        highscoreService.resetHighscore(game);
+        LOG.info("Resetted highscores of " + game.getGameDisplayName() + " for " + competition);
       }
 
       if (competition.getType().equals(CompetitionType.OFFLINE.name()) && competition.getDiscordChannelId() > 0 && competition.isActive()) {
@@ -115,7 +120,7 @@ public class CompetitionChangeListenerImpl implements InitializingBean, Competit
       if (competition.getType().equals(CompetitionType.DISCORD.name())) {
         //only the owner can perform additional actions
         if (competition.getOwner().equals(String.valueOf(discordService.getBotId()))) {
-          String message = DiscordOfflineChannelMessageFactory.createCompetitionFinishedMessage(competition, winner, game, scoreSummary);
+          String message = DiscordChannelMessageFactory.createCompetitionFinishedMessage(competition, winner, game, scoreSummary);
           discordService.sendMessage(discordServerId, discordChannelId, message);
         }
       }

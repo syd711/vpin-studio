@@ -29,6 +29,7 @@ public class DiscordClient {
   private final DiscordListenerAdapter listenerAdapter;
   private final String botToken;
   private final Map<Long, Guild> guilds = new HashMap<>();
+  private final Map<Long, Message> messageCacheById = new HashMap<>();
   private final long botId;
   private long defaultGuildId;
 
@@ -149,7 +150,7 @@ public class DiscordClient {
   }
 
   public List<DiscordMember> getCompetitionMembers(long serverId, long channelId, long afterMessageId, String competitionUuid, long ownerId) {
-    List<DiscordMessage> messageHistory = getMessageHistory(serverId, channelId, afterMessageId, competitionUuid);
+    List<DiscordMessage> messageHistory = getMessageHistoryAfter(serverId, channelId, afterMessageId, competitionUuid);
     List<DiscordMember> result = new ArrayList<>();
 
     //always add owner
@@ -168,7 +169,7 @@ public class DiscordClient {
   }
 
   public List<DiscordMessage> getCompetitionUpdates(long serverId, long channelId, long afterMessageId, String competitionUuid) {
-    return getMessageHistory(serverId, channelId, afterMessageId, competitionUuid);
+    return getMessageHistoryAfter(serverId, channelId, afterMessageId, competitionUuid);
   }
 
   public void invalidateMessageCache(long channelId) {
@@ -255,7 +256,7 @@ public class DiscordClient {
     return null;
   }
 
-  private List<DiscordMessage> getMessageHistory(long serverId, long channelId, long afterMessageId, String uuid) {
+  public List<DiscordMessage> getMessageHistoryAfter(long serverId, long channelId, long afterMessageId, String uuid) {
     if (!messageCache.contains(channelId)) {
       Guild guild = getGuild(serverId);
       if (guild != null) {
@@ -268,7 +269,7 @@ public class DiscordClient {
 
           List<DiscordMessage> result = new ArrayList<>();
           for (Message botMessage : botMessages) {
-            if (botMessage.getContentRaw().contains(uuid)) {
+            if (uuid == null || botMessage.getContentRaw().contains(uuid)) {
               Member member = botMessage.getMember();
               if (member != null) {
                 DiscordMessage message = new DiscordMessage();
@@ -285,7 +286,7 @@ public class DiscordClient {
             }
           }
 
-          LOG.info("Discord message search for " + uuid + " returned " + result.size() + " messages.");
+          LOG.info("Discord message search for UUID '" + uuid + "' returned " + result.size() + " messages.");
           messageCache.put(channelId, result);
         }
       }
@@ -362,4 +363,22 @@ public class DiscordClient {
     return guilds.get(id);
   }
 
+  public String getMessage(long serverId, long channelId, long messageId) {
+    if(messageCacheById.containsKey(messageId)) {
+      return messageCacheById.get(messageId).getContentRaw();
+    }
+
+    Guild guild = getGuild(serverId);
+    if (guild != null) {
+      TextChannel channel = guild.getChannelById(TextChannel.class, channelId);
+      if (channel != null) {
+        Message message = channel.retrieveMessageById(messageId).complete();
+        if(message != null) {
+          messageCacheById.put(messageId, message);
+          return message.getContentRaw();
+        }
+      }
+    }
+    return null;
+  }
 }

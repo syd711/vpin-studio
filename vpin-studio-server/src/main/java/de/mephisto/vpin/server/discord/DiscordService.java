@@ -3,13 +3,8 @@ package de.mephisto.vpin.server.discord;
 import de.mephisto.vpin.connectors.discord.*;
 import de.mephisto.vpin.restclient.PlayerDomain;
 import de.mephisto.vpin.restclient.PreferenceNames;
-import de.mephisto.vpin.restclient.discord.DiscordBotStatus;
-import de.mephisto.vpin.restclient.discord.DiscordChannel;
-import de.mephisto.vpin.restclient.discord.DiscordCompetitionData;
-import de.mephisto.vpin.restclient.discord.DiscordServer;
-import de.mephisto.vpin.server.competitions.Competition;
+import de.mephisto.vpin.restclient.discord.*;
 import de.mephisto.vpin.server.competitions.ScoreSummary;
-import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.highscores.HighscoreParser;
 import de.mephisto.vpin.server.highscores.Score;
 import de.mephisto.vpin.server.highscores.ScoreList;
@@ -88,14 +83,6 @@ public class DiscordService implements InitializingBean, PreferenceChangedListen
     return null;
   }
 
-  public long getStartMessageId(long serverId, long channelId) {
-    if (this.discordClient != null) {
-      String topic = this.discordClient.getTopic(serverId, channelId);
-      return CompetitionDataHelper.getStartMessageId(topic);
-    }
-    return -1;
-  }
-
   @Nullable
   public DiscordChannel getChannel(long serverId, long channelId) {
     if (this.discordClient != null) {
@@ -137,7 +124,7 @@ public class DiscordService implements InitializingBean, PreferenceChangedListen
   }
 
   public boolean hasJoinPermissions(long serverId, long channelId, long memberId) {
-    if(this.discordClient != null) {
+    if (this.discordClient != null) {
       return this.discordClient.hasPermissions(serverId, channelId, memberId,
           VIEW_CHANNEL,
           MESSAGE_SEND,
@@ -151,7 +138,7 @@ public class DiscordService implements InitializingBean, PreferenceChangedListen
 
 
   public boolean hasManagePermissions(long serverId, long channelId, long memberId) {
-    if(this.discordClient != null) {
+    if (this.discordClient != null) {
       return this.discordClient.hasPermissions(serverId, channelId, memberId,
           MANAGE_CHANNEL,
           VIEW_CHANNEL,
@@ -164,9 +151,9 @@ public class DiscordService implements InitializingBean, PreferenceChangedListen
     return false;
   }
 
-  public List<Player> getCompetitionPlayers(long serverId, long channelId) {
+  public List<Player> getCompetitionPlayers(long serverId, long channelId, String uuid) {
     if (this.discordClient != null) {
-      DiscordCompetitionData competitionData = getCompetitionData(serverId, channelId);
+      DiscordCompetitionData competitionData = getCompetitionData(serverId, channelId, uuid);
       if (competitionData != null) {
         List<DiscordMember> competitionMembers = this.discordClient.getCompetitionMembers(serverId, channelId, competitionData.getMsgId(), competitionData.getUuid(), Long.parseLong(competitionData.getOwner()));
         DiscordMember owner = this.discordClient.getMember(serverId, this.getBotId());
@@ -174,8 +161,9 @@ public class DiscordService implements InitializingBean, PreferenceChangedListen
           competitionMembers.add(0, owner);
         }
         return competitionMembers.stream().map(this::toPlayer).collect(Collectors.toList());
-      } else {
-        LOG.warn("No competition found for channel " + channelId);
+      }
+      else {
+        LOG.warn("No competition found for channel " + channelId + " during player search.");
       }
     }
     return Collections.emptyList();
@@ -213,19 +201,6 @@ public class DiscordService implements InitializingBean, PreferenceChangedListen
     return null;
   }
 
-  public void saveCompetitionData(@NonNull Competition competition, @NonNull Game game, @NonNull ScoreSummary scoreSummary, long messageId) {
-    String topic = CompetitionDataHelper.toDataString(competition, game, scoreSummary, messageId);
-    if (this.discordClient != null) {
-      long discordServerId = competition.getDiscordServerId();
-      long discordChannelId = competition.getDiscordChannelId();
-
-      String message = DiscordOfflineChannelMessageFactory.createCompetitionCancelledMessage(competition);
-      sendMessage(discordServerId, discordChannelId, message);
-    } else {
-      throw new UnsupportedOperationException("No Discord client found.");
-    }
-  }
-
   /**
    * Returns the list of scores posted on the given channel.
    * If no message was found, the initial score is taken as single value.
@@ -238,14 +213,15 @@ public class DiscordService implements InitializingBean, PreferenceChangedListen
   public ScoreList getScoreList(@NonNull HighscoreParser highscoreParser, @NonNull String uuid, long serverId, long channelId) {
     ScoreList result = new ScoreList();
     if (this.discordClient != null) {
-      DiscordCompetitionData data = this.getCompetitionData(serverId, channelId);
+      DiscordCompetitionData data = this.getCompetitionData(serverId, channelId, uuid);
       if (data != null) {
         List<DiscordMessage> competitionUpdates = discordClient.getCompetitionUpdates(serverId, channelId, data.getMsgId(), uuid);
         List<ScoreSummary> scores = competitionUpdates.stream().map(message -> toScoreSummary(highscoreParser, message)).collect(Collectors.toList());
         if (!scores.isEmpty()) {
           result.setScores(scores);
           result.setLatestScore(scores.get(0));
-        } else {
+        }
+        else {
           LOG.info("No record highscore for " + uuid + " found, so this seems to be the first one.");
         }
       }
@@ -259,11 +235,61 @@ public class DiscordService implements InitializingBean, PreferenceChangedListen
 
   public DiscordCompetitionData getCompetitionData(long serverId, long channelId) {
     if (this.discordClient != null) {
-      String topic = this.discordClient.getTopic(serverId, channelId);
-      DiscordCompetitionData competitionData = CompetitionDataHelper.getCompetitionData(topic);
-      if (competitionData != null) {
+      ChannelTopic channelTopic = this.getTopicData(serverId, channelId);
+      if (channelTopic != null) {
+        List<DiscordMessage> messageHistory = this.discordClient.getMessageHistoryAfter(serverId, channelId, channelTopic.getMessageId(), null);
+        LOG.info("Competition search returned " + messageHistory.size() + " messages, using last messageId '" + channelTopic.getMessageId() + "'");
+        if (messageHistory.size() == 0) {
+          String message = discordClient.getMessage(serverId, channelId, channelTopic.getMessageId());
+          return CompetitionDataHelper.getCompetitionData(message);
+        }
+
+        DiscordMessage lastCompetitionStartMessage = null;
+        for (DiscordMessage discordMessage : messageHistory) {
+          if (discordMessage.getRaw().contains(DiscordChannelMessageFactory.START_INDICATOR)) {
+            lastCompetitionStartMessage = discordMessage;
+          }
+        }
+
+        if (lastCompetitionStartMessage != null) {
+          DiscordCompetitionData competitionData = CompetitionDataHelper.getCompetitionData(lastCompetitionStartMessage.getRaw());
+          if (competitionData != null) {
+            Optional<DiscordMessage> abortMessage = messageHistory
+                .stream()
+                .filter(m -> m.getRaw().toLowerCase().contains(DiscordChannelMessageFactory.FINISHED_INDICATOR) ||
+                    m.getRaw().toLowerCase().contains(DiscordChannelMessageFactory.CANCEL_INDICATOR)).findFirst();
+            if (abortMessage.isPresent()) {
+              LOG.info("No competition data found searching for " + competitionData.getUuid() + ", this competition has already been canceled.");
+              return null;
+            }
+            return competitionData;
+          }
+        }
+      }
+    }
+    return null;
+  }
+
+  public DiscordCompetitionData getCompetitionData(long serverId, long channelId, String uuid) {
+    if (this.discordClient != null) {
+      DiscordCompetitionData competitionData = getCompetitionData(serverId, channelId);
+      if (competitionData == null) {
+        LOG.info("No competition data found for " + uuid);
+      }
+      else {
+        if (!competitionData.getUuid().equals(uuid)) {
+          LOG.warn("The last competition data found was " + competitionData.getName() + ", no matching UUID " + uuid);
+        }
         return competitionData;
       }
+    }
+    return null;
+  }
+
+  private ChannelTopic getTopicData(long serverId, long channelId) {
+    if (this.discordClient != null) {
+      String topic = this.discordClient.getTopic(serverId, channelId);
+      return ChannelTopic.toChannelTopic(topic);
     }
     return null;
   }
@@ -367,7 +393,8 @@ public class DiscordService implements InitializingBean, PreferenceChangedListen
     if (propertyName.equals(PreferenceNames.DISCORD_BOT_TOKEN)) {
       LOG.info("Detected Discord config change, updating BOT.");
       this.discordClient = recreateDiscordClient();
-    } else if (propertyName.equals(PreferenceNames.DISCORD_GUILD_ID) || propertyName.equals(PreferenceNames.DISCORD_BOT_ALLOW_LIST)) {
+    }
+    else if (propertyName.equals(PreferenceNames.DISCORD_GUILD_ID) || propertyName.equals(PreferenceNames.DISCORD_BOT_ALLOW_LIST)) {
       this.applyDefaultDiscordSettings();
     }
   }
@@ -413,6 +440,21 @@ public class DiscordService implements InitializingBean, PreferenceChangedListen
     String raw = message.getRaw();
     scores.addAll(highscoreParser.parseScores(message.getCreatedAt(), raw, -1, message.getServerId()));
     return summary;
+  }
+
+  public void updateTopicTimestamp(long serverId, long channelId, long messageId) {
+    String topic = discordClient.getTopic(serverId, channelId);
+    ChannelTopic channelTopic = ChannelTopic.toChannelTopic(topic);
+    if (channelTopic == null || channelTopic.isOlderThanToday()) {
+      channelTopic = new ChannelTopic();
+      channelTopic.setTimestamp(new Date().getTime());
+      channelTopic.setMessageId(messageId);
+      discordClient.setTopic(serverId, channelId, channelTopic.toTopic());
+    }
+  }
+
+  public boolean isCompetitionActive(long serverId, long channelId, String uuid) {
+    return this.getCompetitionData(serverId, channelId, uuid) != null;
   }
 
   @Override

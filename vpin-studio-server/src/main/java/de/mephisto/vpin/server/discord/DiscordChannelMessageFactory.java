@@ -1,23 +1,27 @@
 package de.mephisto.vpin.server.discord;
 
 import de.mephisto.vpin.connectors.discord.DiscordMember;
+import de.mephisto.vpin.restclient.CompetitionType;
 import de.mephisto.vpin.restclient.PlayerDomain;
 import de.mephisto.vpin.restclient.util.DateUtil;
 import de.mephisto.vpin.server.competitions.Competition;
+import de.mephisto.vpin.server.competitions.ScoreSummary;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.highscores.Score;
 import de.mephisto.vpin.server.players.Player;
+import de.mephisto.vpin.server.util.ScoreHelper;
 import edu.umd.cs.findbugs.annotations.NonNull;
-import org.apache.commons.lang3.StringUtils;
+import edu.umd.cs.findbugs.annotations.Nullable;
 
 import java.text.DateFormat;
-import java.time.LocalDate;
-import java.time.ZoneId;
-import java.time.temporal.ChronoUnit;
 import java.util.List;
 
 public class DiscordChannelMessageFactory {
-  private static final String DISCORD_COMPETITION_CREATED_TEMPLATE = "%s started a new competition!\n" +
+  public static final String START_INDICATOR = "started a new competition";
+  public static final String CANCEL_INDICATOR = "cancelled";
+  public static final String FINISHED_INDICATOR = "finished";
+
+  private static final String DISCORD_COMPETITION_CREATED_TEMPLATE = "%s " + START_INDICATOR + "!\n" +
       "```\n" +
       "%s\n" +
       "(ID: %s)\n" +
@@ -26,12 +30,65 @@ public class DiscordChannelMessageFactory {
       "Start Date:  %s\n" +
       "End Date:    %s\n" +
       "Duration:    %s\n" +
+      "------------------------------------------------------------\n" +
+      "Data: %s\n" +
       "------------------------------------------------------------```";
 
 
-  private static final String COMPETITION_CANCELLED_TEMPLATE = "%s has cancelled the competition \"%s\".";
-  private static final String COMPETITION_CANCELLED_ANONYMOUS_TEMPLATE = "The competition \"%s\" has been cancelled.";
+  private static final String COMPETITION_CANCELLED_TEMPLATE = "%s has " + CANCEL_INDICATOR + " the competition \"%s\".";
+  private static final String COMPETITION_CANCELLED_ANONYMOUS_TEMPLATE = "The competition \"%s\" has been " + CANCEL_INDICATOR + ".";
   private static final String COMPETITION_JOINED_TEMPLATE = "%s has joined the competition \"%s\".";
+  private static final String COMPETITION_FINISHED_INCOMPLETE = "The competition \"%s\" (ID: %s) has been " + DiscordChannelMessageFactory.FINISHED_INDICATOR + ", " +
+      "but no winner could be determined:\n" +
+      "No scores have been found.";
+  private static final String COMPETITION_FINISHED_TEMPLATE = "Congratulation %s!\n" +
+      "```" +
+      "The competition \"%s\" (ID: %s) has been finished!\n" +
+      "And the winner is...\n" +
+      "\n" +
+      "        %s\n" +
+      "\n" +
+      "Table: %s\n" +
+      "Score: %s\n" +
+      "\n" +
+      "%s\n" +
+      "%s\n" +
+      "```";
+
+
+  public static String createCompetitionFinishedMessage(@NonNull Competition competition, @Nullable Player winner, Game game, ScoreSummary summary) {
+    if (summary.getScores().isEmpty()) {
+      return String.format(COMPETITION_FINISHED_INCOMPLETE, competition.getName(), competition.getUuid());
+    }
+
+    String winnerName = competition.getWinnerInitials();
+    String winnerRaw = competition.getWinnerInitials();
+    if (winner != null) {
+      winnerName = winner.getName();
+      winnerRaw = winner.getName();
+      if (PlayerDomain.DISCORD.name().equals(winner.getDomain())) {
+        winnerName = "<@" + winner.getId() + ">";
+      }
+    }
+
+    String second = ScoreHelper.formatScoreEntry(summary, 1);
+    String third = ScoreHelper.formatScoreEntry(summary, 2);
+
+    String competitionName = competition.getName();
+    if(competition.getType().equals(CompetitionType.DISCORD.name())) {
+      competitionName = competitionName + " (" + competition.getUuid() + ")";
+    }
+
+    return String.format(COMPETITION_FINISHED_TEMPLATE,
+        winnerName,
+        competitionName,
+        competition.getUuid(),
+        winnerRaw,
+        game.getGameDisplayName(),
+        summary.getScores().get(0).getScore(),
+        second,
+        third);
+  }
 
   public static String createCompetitionCancelledMessage(Player player, Competition competition) {
     if (player != null) {
@@ -93,7 +150,7 @@ public class DiscordChannelMessageFactory {
     return msg + "Here is the updated highscore list:" + createHighscoreList(updatedScores);
   }
 
-  public static String createDiscordCompetitionCreatedMessage(Competition competition, Game game, long initiatorId) {
+  public static String createDiscordCompetitionCreatedMessage(Competition competition, Game game, long initiatorId, String base64Data) {
     String userId = "<@" + initiatorId + ">";
 
     return String.format(DISCORD_COMPETITION_CREATED_TEMPLATE,
@@ -103,7 +160,8 @@ public class DiscordChannelMessageFactory {
         game.getGameDisplayName(),
         DateFormat.getDateInstance().format(competition.getStartDate()),
         DateFormat.getDateInstance().format(competition.getEndDate()),
-        DateUtil.formatDuration(competition.getStartDate(), competition.getEndDate()));
+        DateUtil.formatDuration(competition.getStartDate(), competition.getEndDate()),
+        base64Data);
   }
 
   private static String createHighscoreList(List<Score> scores) {

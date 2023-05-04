@@ -41,6 +41,16 @@ public class CompetitionRepresentation {
 
   private boolean started;
 
+  private String joinMode;
+
+  public String getJoinMode() {
+    return joinMode;
+  }
+
+  public void setJoinMode(String joinMode) {
+    this.joinMode = joinMode;
+  }
+
   public boolean isStarted() {
     return started;
   }

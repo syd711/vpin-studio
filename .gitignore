@@ -83,3 +83,4 @@ yarn-error.log*
 /crash.txt
 /documentation/~$discord-competitions.odp
 /resources/vpa/descriptor.json
+/**/Thumbs.db
