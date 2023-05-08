@@ -3,10 +3,20 @@ package de.mephisto.vpin.connectors.discord;
 import java.util.Date;
 
 public class DiscordMessage {
+  private long id;
   private DiscordMember member;
   private String raw;
+  private String embedDescription;
   private Date createdAt;
   private long serverId;
+
+  public String getEmbedDescription() {
+    return embedDescription;
+  }
+
+  public void setEmbedDescription(String embedDescription) {
+    this.embedDescription = embedDescription;
+  }
 
   public long getServerId() {
     return serverId;
@@ -38,5 +48,10 @@ public class DiscordMessage {
 
   public void setRaw(String raw) {
     this.raw = raw;
+  }
+
+  @Override
+  public String toString() {
+    return "Discord Message '" + raw + "' (" + id + ")";
   }
 }

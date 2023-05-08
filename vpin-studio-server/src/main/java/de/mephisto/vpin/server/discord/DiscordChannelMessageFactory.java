@@ -3,7 +3,6 @@ package de.mephisto.vpin.server.discord;
 import de.mephisto.vpin.connectors.discord.DiscordMember;
 import de.mephisto.vpin.restclient.CompetitionType;
 import de.mephisto.vpin.restclient.PlayerDomain;
-import de.mephisto.vpin.restclient.util.DateUtil;
 import de.mephisto.vpin.server.competitions.Competition;
 import de.mephisto.vpin.server.competitions.ScoreSummary;
 import de.mephisto.vpin.server.games.Game;
@@ -13,7 +12,6 @@ import de.mephisto.vpin.server.util.ScoreHelper;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 
-import java.text.DateFormat;
 import java.util.List;
 
 public class DiscordChannelMessageFactory {
@@ -21,18 +19,7 @@ public class DiscordChannelMessageFactory {
   public static final String CANCEL_INDICATOR = "cancelled";
   public static final String FINISHED_INDICATOR = "finished";
 
-  private static final String DISCORD_COMPETITION_CREATED_TEMPLATE = "%s " + START_INDICATOR + "!\n" +
-      "```\n" +
-      "%s\n" +
-      "(ID: %s)\n" +
-      "------------------------------------------------------------\n" +
-      "Table:       %s\n" +
-      "Start Date:  %s\n" +
-      "End Date:    %s\n" +
-      "Duration:    %s\n" +
-      "------------------------------------------------------------\n" +
-      "Data: %s\n" +
-      "------------------------------------------------------------```";
+  private static final String DISCORD_COMPETITION_CREATED_TEMPLATE = "%s " + START_INDICATOR + "!\n(ID: %s)";
 
 
   private static final String COMPETITION_CANCELLED_TEMPLATE = "%s has " + CANCEL_INDICATOR + " the competition \"%s\".";
@@ -56,18 +43,10 @@ public class DiscordChannelMessageFactory {
       "```";
 
 
-  public static String createDiscordCompetitionCreatedMessage(Competition competition, Game game, long initiatorId, String base64Data) {
+  public static String createDiscordCompetitionCreatedMessage(long initiatorId, String uuid) {
     String userId = "<@" + initiatorId + ">";
 
-    return String.format(DISCORD_COMPETITION_CREATED_TEMPLATE,
-        userId,
-        competition.getName(),
-        competition.getUuid(),
-        game.getGameDisplayName(),
-        DateFormat.getDateInstance().format(competition.getStartDate()),
-        DateFormat.getDateInstance().format(competition.getEndDate()),
-        DateUtil.formatDuration(competition.getStartDate(), competition.getEndDate()),
-        base64Data);
+    return String.format(DISCORD_COMPETITION_CREATED_TEMPLATE, userId, uuid);
   }
 
   public static String createFirstCompetitionHighscoreCreatedMessage(@NonNull Game game,
@@ -111,7 +90,7 @@ public class DiscordChannelMessageFactory {
     String third = ScoreHelper.formatScoreEntry(summary, 2);
 
     String competitionName = competition.getName();
-    if(competition.getType().equals(CompetitionType.DISCORD.name())) {
+    if (competition.getType().equals(CompetitionType.DISCORD.name())) {
       competitionName = competitionName + " (" + competition.getUuid() + ")";
     }
 

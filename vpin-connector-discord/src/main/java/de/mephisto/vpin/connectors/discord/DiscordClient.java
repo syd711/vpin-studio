@@ -246,7 +246,7 @@ public class DiscordClient {
       if (textChannel != null) {
         EmbedBuilder embed = new EmbedBuilder();
         embed.setImage("attachment://" + URLEncoder.encode(name, StandardCharsets.UTF_8))
-            .setDescription(msg);
+            .setDescription(imageText);
         Message complete = textChannel.sendMessage(msg).addFiles(FileUpload.fromData(image, name)).setEmbeds(embed.build()).complete();
         return complete.getIdLong();
       }
@@ -302,6 +302,12 @@ public class DiscordClient {
                 message.setCreatedAt(createdAt);
                 message.setRaw(botMessage.getContentRaw());
                 message.setServerId(serverId);
+
+                List<MessageEmbed> embeds = botMessage.getEmbeds();
+                for (MessageEmbed embed : embeds) {
+                  message.setEmbedDescription(embed.getDescription());
+                }
+
                 result.add(message);
               }
             }
@@ -393,9 +399,9 @@ public class DiscordClient {
     return guilds.get(id);
   }
 
-  public String getMessage(long serverId, long channelId, long messageId) {
+  public Message getMessage(long serverId, long channelId, long messageId) {
     if (messageCacheById.containsKey(messageId)) {
-      return messageCacheById.get(messageId).getContentRaw();
+      return messageCacheById.get(messageId);
     }
 
     Guild guild = getGuild(serverId);
@@ -405,7 +411,7 @@ public class DiscordClient {
         Message message = channel.retrieveMessageById(messageId).complete();
         if (message != null) {
           messageCacheById.put(messageId, message);
-          return message.getContentRaw();
+          return message;
         }
       }
     }

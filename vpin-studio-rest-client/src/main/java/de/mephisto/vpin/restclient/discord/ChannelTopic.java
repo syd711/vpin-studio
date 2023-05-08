@@ -42,7 +42,7 @@ public class ChannelTopic {
 
   public static ChannelTopic toChannelTopic(String topic) {
     try {
-      if (!StringUtils.isEmpty(topic)) {
+      if (!StringUtils.isEmpty(topic) && topic.contains("(") && topic.contains(")")) {
         String data = topic.substring(topic.indexOf('(') + 1, topic.lastIndexOf(')'));
 
         ChannelTopic channelTopic = new ChannelTopic();

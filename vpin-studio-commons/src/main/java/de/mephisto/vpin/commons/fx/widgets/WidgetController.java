@@ -6,9 +6,9 @@ import javafx.scene.text.FontPosture;
 
 public class WidgetController {
 
-  private static Font scoreFont;
-  private static Font competitionScoreFont;
-  private static Font scoreFontText;
+  public static Font scoreFont;
+  public static Font competitionScoreFont;
+  public static Font scoreFontText;
 
   static {
     Font.loadFont(OverlayWindowFX.class.getResourceAsStream("MonospaceBold.ttf"), 22);

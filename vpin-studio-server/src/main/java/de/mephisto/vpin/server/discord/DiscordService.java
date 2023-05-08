@@ -13,6 +13,7 @@ import de.mephisto.vpin.server.preferences.PreferenceChangedListener;
 import de.mephisto.vpin.server.preferences.PreferencesService;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
+import net.dv8tion.jda.api.entities.Message;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -246,8 +247,10 @@ public class DiscordService implements InitializingBean, PreferenceChangedListen
       if (channelTopic != null) {
         List<DiscordMessage> messageHistory = this.discordClient.getMessageHistoryAfter(serverId, channelId, channelTopic.getMessageId(), null);
         LOG.info("Competition search returned " + messageHistory.size() + " messages, using last messageId '" + channelTopic.getMessageId() + "'");
+
+        //equals 0 when no additional message was posted
         if (messageHistory.size() == 0) {
-          String message = discordClient.getMessage(serverId, channelId, channelTopic.getMessageId());
+          Message message = discordClient.getMessage(serverId, channelId, channelTopic.getMessageId());
           return CompetitionDataHelper.getCompetitionData(message);
         }
 
@@ -260,7 +263,7 @@ public class DiscordService implements InitializingBean, PreferenceChangedListen
 
         //check if there was a cancellation or finished method posted for the last started competition
         if (lastCompetitionStartMessage != null) {
-          DiscordCompetitionData competitionData = CompetitionDataHelper.getCompetitionData(lastCompetitionStartMessage.getRaw());
+          DiscordCompetitionData competitionData = CompetitionDataHelper.getCompetitionData(lastCompetitionStartMessage);
           if (competitionData != null) {
             Optional<DiscordMessage> abortMessage = messageHistory
                 .stream()

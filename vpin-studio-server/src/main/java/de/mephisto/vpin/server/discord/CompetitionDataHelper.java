@@ -4,15 +4,19 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.thoughtworks.xstream.core.util.Base64Encoder;
+import de.mephisto.vpin.connectors.discord.DiscordMessage;
 import de.mephisto.vpin.restclient.discord.DiscordCompetitionData;
 import de.mephisto.vpin.server.competitions.Competition;
 import de.mephisto.vpin.server.games.Game;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
+import net.dv8tion.jda.api.entities.Message;
+import net.dv8tion.jda.api.entities.MessageEmbed;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.nio.charset.StandardCharsets;
+import java.util.List;
 
 public class CompetitionDataHelper {
   private final static Logger LOG = LoggerFactory.getLogger(CompetitionDataHelper.class);
@@ -42,6 +46,21 @@ public class CompetitionDataHelper {
       return new Base64Encoder().encode(json.getBytes(StandardCharsets.UTF_8));
     } catch (JsonProcessingException e) {
       LOG.error("Failed to persist competition data: " + e.getMessage(), e);
+    }
+    return null;
+  }
+
+
+  @Nullable
+  public static DiscordCompetitionData getCompetitionData(@Nullable DiscordMessage msg) {
+    return getCompetitionData(msg.getEmbedDescription());
+  }
+
+  @Nullable
+  public static DiscordCompetitionData getCompetitionData(@Nullable Message msg) {
+    List<MessageEmbed> embeds = msg.getEmbeds();
+    for (MessageEmbed embed : embeds) {
+      return getCompetitionData(embed.getDescription());
     }
     return null;
   }

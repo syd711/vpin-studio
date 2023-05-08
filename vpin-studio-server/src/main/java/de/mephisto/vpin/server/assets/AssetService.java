@@ -1,6 +1,8 @@
 package de.mephisto.vpin.server.assets;
 
 import de.mephisto.vpin.restclient.AssetType;
+import de.mephisto.vpin.restclient.util.DateUtil;
+import de.mephisto.vpin.server.competitions.Competition;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameService;
 import de.mephisto.vpin.server.resources.ResourceLoader;
@@ -8,6 +10,7 @@ import de.mephisto.vpin.server.system.DefaultPictureService;
 import de.mephisto.vpin.server.system.SystemService;
 import de.mephisto.vpin.server.util.ImageUtil;
 import de.mephisto.vpin.server.util.UploadUtil;
+import edu.umd.cs.findbugs.annotations.NonNull;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,7 +18,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.imageio.ImageIO;
+import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.InputStream;
 import java.util.List;
@@ -130,6 +136,54 @@ public class AssetService {
       }
 
       return asset.get();
+    } catch (Exception e) {
+      LOG.error("Failed to get competition background " + e.getMessage(), e);
+    }
+    return null;
+  }
+
+
+  public byte[] getCompetitionBackgroundFor(@NonNull Competition competition) {
+    try {
+      Game game = gameService.getGame(competition.getGameId());
+      Asset asset = getCompetitionBackground(competition.getGameId());
+      byte[] data = asset.getData();
+      BufferedImage background = ImageIO.read(new ByteArrayInputStream(data));
+      Graphics2D graphics = (Graphics2D) background.getGraphics();
+      graphics.setRenderingHint(
+          RenderingHints.KEY_TEXT_ANTIALIASING,
+          RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+      graphics.setColor(Color.WHITE);
+
+      String name = competition.getName();
+      if (name.length() > 34) {
+        name = name.substring(0, 33) + "...";
+      }
+
+      String table = game.getGameDisplayName();
+      if(table.length() > 36) {
+        table = table.substring(0, 35) + "...";
+      }
+
+      int yOffset = 0;
+      int xOffset = 16;
+      Font font = new Font("System", Font.BOLD, 42);
+      graphics.setFont(font);
+      graphics.drawString(name, xOffset, yOffset += 64);
+
+      font = new Font("System", Font.BOLD, 32);
+      graphics.setFont(font);
+      graphics.drawString("Table: " + table, xOffset, yOffset += 72);
+
+      font = new Font("System", Font.PLAIN, 32);
+      graphics.setFont(font);
+      graphics.drawString("Start Date:", xOffset, yOffset += 52);
+      graphics.drawString(DateUtil.formatDateTime(competition.getStartDate()), 232, yOffset);
+      graphics.drawString("End Date:", xOffset, yOffset += 42);
+      graphics.drawString(DateUtil.formatDateTime(competition.getEndDate()), 232, yOffset);
+      graphics.drawString("Duration: " + DateUtil.formatDuration(competition.getStartDate(), competition.getEndDate()), xOffset, yOffset += 72);
+
+      return ImageUtil.toBytes(background);
     } catch (Exception e) {
       LOG.error("Failed to get competition background " + e.getMessage(), e);
     }

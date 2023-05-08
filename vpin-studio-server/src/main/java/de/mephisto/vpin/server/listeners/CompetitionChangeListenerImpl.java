@@ -2,7 +2,6 @@ package de.mephisto.vpin.server.listeners;
 
 import de.mephisto.vpin.connectors.discord.DiscordMember;
 import de.mephisto.vpin.restclient.CompetitionType;
-import de.mephisto.vpin.server.assets.Asset;
 import de.mephisto.vpin.server.assets.AssetService;
 import de.mephisto.vpin.server.competitions.Competition;
 import de.mephisto.vpin.server.competitions.CompetitionChangeListener;
@@ -61,12 +60,11 @@ public class CompetitionChangeListenerImpl implements InitializingBean, Competit
         long botId = discordService.getBotId();
 
         if (isOwner) {
-          String base64Data = CompetitionDataHelper.toBase64(competition, game);
-          Asset competitionBackground = assetService.getCompetitionBackground(game.getId());
-          byte[] image = competitionBackground.getData();
-          String message = DiscordChannelMessageFactory.createDiscordCompetitionCreatedMessage(competition, game, botId, base64Data);
+          String base64Data = "Data: " + CompetitionDataHelper.toBase64(competition, game);
+          byte[] image = assetService.getCompetitionBackgroundFor(competition);
+          String message = DiscordChannelMessageFactory.createDiscordCompetitionCreatedMessage(botId, competition.getUuid());
 
-          long messageId = discordService.sendMessage(discordServerId, discordChannelId, message, image, competition.getName() + ".png");
+          long messageId = discordService.sendMessage(discordServerId, discordChannelId, message, image, competition.getName() + ".png", base64Data);
           //since we started a new competition, all messages before today are irrelevant (we check only today so we don't run into topic update limits)
           discordService.updateTopicTimestamp(discordServerId, discordChannelId, messageId);
           LOG.info("Finished Discord update of \"" + competition.getName() + "\"");
