@@ -2,6 +2,8 @@ package de.mephisto.vpin.server.listeners;
 
 import de.mephisto.vpin.connectors.discord.DiscordMember;
 import de.mephisto.vpin.restclient.CompetitionType;
+import de.mephisto.vpin.server.assets.Asset;
+import de.mephisto.vpin.server.assets.AssetService;
 import de.mephisto.vpin.server.competitions.Competition;
 import de.mephisto.vpin.server.competitions.CompetitionChangeListener;
 import de.mephisto.vpin.server.competitions.CompetitionService;
@@ -45,6 +47,9 @@ public class CompetitionChangeListenerImpl implements InitializingBean, Competit
   @Autowired
   private PopperService popperService;
 
+  @Autowired
+  private AssetService assetService;
+
   @Override
   public void competitionStarted(@NonNull Competition competition) {
     Game game = gameService.getGame(competition.getGameId());
@@ -57,8 +62,11 @@ public class CompetitionChangeListenerImpl implements InitializingBean, Competit
 
         if (isOwner) {
           String base64Data = CompetitionDataHelper.toBase64(competition, game);
-          long messageId = discordService.sendMessage(discordServerId, discordChannelId,
-              DiscordChannelMessageFactory.createDiscordCompetitionCreatedMessage(competition, game, botId, base64Data));
+          Asset competitionBackground = assetService.getCompetitionBackground(game.getId());
+          byte[] image = competitionBackground.getData();
+          String message = DiscordChannelMessageFactory.createDiscordCompetitionCreatedMessage(competition, game, botId, base64Data);
+
+          long messageId = discordService.sendMessage(discordServerId, discordChannelId, message, image, competition.getName() + ".png");
           //since we started a new competition, all messages before today are irrelevant (we check only today so we don't run into topic update limits)
           discordService.updateTopicTimestamp(discordServerId, discordChannelId, messageId);
           LOG.info("Finished Discord update of \"" + competition.getName() + "\"");

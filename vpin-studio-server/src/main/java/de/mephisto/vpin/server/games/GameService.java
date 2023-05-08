@@ -4,6 +4,8 @@ import de.mephisto.vpin.commons.HighscoreType;
 import de.mephisto.vpin.commons.utils.FileUtils;
 import de.mephisto.vpin.restclient.DeleteDescriptor;
 import de.mephisto.vpin.restclient.PreferenceNames;
+import de.mephisto.vpin.server.assets.Asset;
+import de.mephisto.vpin.server.assets.AssetRepository;
 import de.mephisto.vpin.server.assets.AssetService;
 import de.mephisto.vpin.server.competitions.ScoreSummary;
 import de.mephisto.vpin.server.highscores.*;
@@ -53,7 +55,7 @@ public class GameService {
   private CardService cardService;
 
   @Autowired
-  private AssetService assetService;
+  private AssetRepository assetRepository;
 
   @Autowired
   private DefaultPictureService defaultPictureService;
@@ -178,7 +180,9 @@ public class GameService {
       }
     }
 
-    assetService.deleteByExternalId(String.valueOf(descriptor.getGameId()));
+    Optional<Asset> byId = assetRepository.findByExternalId(String.valueOf(descriptor.getGameId()));
+    byId.ifPresent(asset -> assetRepository.delete(asset));
+
     LOG.info("Deleted " + game.getGameDisplayName());
     return success;
   }
@@ -269,6 +273,11 @@ public class GameService {
         if (!emulator.getName().equalsIgnoreCase(Emulator.VISUAL_PINBALL_X)) {
           return game;
         }
+
+        Optional<Asset> byId = assetRepository.findByExternalId(String.valueOf(game.getId()));
+        byId.ifPresent(asset -> assetRepository.delete(asset));
+        defaultPictureService.deleteDefaultPictures(game);
+
         applyGameDetails(game, true);
         highscoreService.scanScore(game);
         defaultPictureService.generateCroppedDefaultPicture(game);

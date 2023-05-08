@@ -5,6 +5,7 @@ import de.mephisto.vpin.commons.fx.Debouncer;
 import de.mephisto.vpin.commons.fx.DialogController;
 import de.mephisto.vpin.commons.fx.UIDefaults;
 import de.mephisto.vpin.restclient.CompetitionType;
+import de.mephisto.vpin.restclient.JoinMode;
 import de.mephisto.vpin.restclient.PopperScreen;
 import de.mephisto.vpin.restclient.VPinStudioClient;
 import de.mephisto.vpin.restclient.discord.DiscordBotStatus;
@@ -96,6 +97,9 @@ public class CompetitionDiscordDialogController implements Initializable, Dialog
 
   @FXML
   private CheckBox resetCheckbox;
+
+  @FXML
+  private CheckBox strictCheckCheckbox;
 
   private CompetitionRepresentation competition;
 
@@ -221,6 +225,11 @@ public class CompetitionDiscordDialogController implements Initializable, Dialog
     });
 
     this.resetCheckbox.selectedProperty().addListener((observable, oldValue, newValue) -> validate());
+    this.strictCheckCheckbox.setSelected(this.competition.getJoinMode() != null && this.competition.getJoinMode().equals(JoinMode.STRICT.name()));
+    this.strictCheckCheckbox.selectedProperty().addListener((observable, oldValue, newValue) -> {
+      this.competition.setJoinMode(newValue ? JoinMode.STRICT.name() : JoinMode.ROM_ONLY.name());
+      validate();
+    });
 
     validate();
   }
@@ -272,7 +281,7 @@ public class CompetitionDiscordDialogController implements Initializable, Dialog
     }
 
     //check Discord permissions
-    if(!client.hasManagePermissions(competition.getDiscordServerId(), competition.getDiscordChannelId())) {
+    if (!client.hasManagePermissions(competition.getDiscordServerId(), competition.getDiscordChannelId())) {
       validationTitle.setText("Insufficient Permissions");
       validationDescription.setText("Your Discord bot has insufficient permissions to join a competition. Please check the documentation for details.");
       return;

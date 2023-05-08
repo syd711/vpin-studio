@@ -2,7 +2,10 @@ package de.mephisto.vpin.server.keyevent;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import de.mephisto.vpin.restclient.*;
+import de.mephisto.vpin.restclient.AssetType;
+import de.mephisto.vpin.restclient.CompetitionType;
+import de.mephisto.vpin.restclient.OverlayClient;
+import de.mephisto.vpin.restclient.PopperScreen;
 import de.mephisto.vpin.restclient.discord.DiscordServer;
 import de.mephisto.vpin.restclient.representations.*;
 import de.mephisto.vpin.server.assets.Asset;
@@ -18,7 +21,6 @@ import de.mephisto.vpin.server.highscores.HighscoreService;
 import de.mephisto.vpin.server.highscores.ScoreList;
 import de.mephisto.vpin.server.popper.GameMediaItem;
 import de.mephisto.vpin.server.preferences.PreferencesService;
-import de.mephisto.vpin.server.system.SystemService;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -161,20 +163,8 @@ public class OverlayClientImpl implements OverlayClient, InitializingBean {
 
   @Override
   public ByteArrayInputStream getCompetitionBackground(long gameId) {
-    try {
-      Asset asset = assetService.getCompetitionBackground(gameId);
-      if (asset == null) {
-        File background = new File(SystemService.RESOURCES, "competition-bg-default.png");
-        FileInputStream fileInputStream = new FileInputStream(background);
-        byte[] bytes = IOUtils.toByteArray(fileInputStream);
-        fileInputStream.close();
-        return new ByteArrayInputStream(bytes);
-      }
-      return new ByteArrayInputStream(asset.getData());
-    } catch (IOException e) {
-      LOG.error("Failed to read competition background: " + e.getMessage(), e);
-    }
-    return null;
+    Asset asset = assetService.getCompetitionBackground(gameId);
+    return new ByteArrayInputStream(asset.getData());
   }
 
   @Override

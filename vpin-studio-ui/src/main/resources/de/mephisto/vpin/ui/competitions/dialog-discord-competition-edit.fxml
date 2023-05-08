@@ -19,7 +19,7 @@
 <?import javafx.scene.text.Font?>
 <?import org.kordamp.ikonli.javafx.FontIcon?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefWidth="750.0" styleClass="base-component" stylesheets="@../stylesheet.css" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.competitions.CompetitionDiscordDialogController">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefWidth="750.0" styleClass="base-component" stylesheets="@../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.competitions.CompetitionDiscordDialogController">
    <top>
       <fx:include fx:id="header" source="/de/mephisto/vpin/commons/fx/scene-dialog-header.fxml" />
    </top>
@@ -157,7 +157,7 @@
                         </Label>
                         <HBox alignment="CENTER_LEFT" spacing="6.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
                            <children>
-                              <CheckBox mnemonicParsing="false" textFill="WHITE">
+                              <CheckBox fx:id="strictCheckCheckbox" mnemonicParsing="false" textFill="WHITE">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
@@ -170,7 +170,7 @@
                                     <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
                                  </graphic>
                                  <tooltip>
-                                    <Tooltip prefWidth="300.0" text="If checked, the table filesize must match with selected table +/- 1kb. Otherwise it is only checked if players playing the competition with a table, that has the same ROM name." />
+                                    <Tooltip prefWidth="300.0" text="If checked, the table filesize must match with selected table +/- 1kb. Otherwise it is only checked if players playing the competition with a table, that has the same ROM name." wrapText="true" />
                                  </tooltip>
                               </Label>
                            </children>
@@ -250,7 +250,7 @@
                                     <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
                                  </graphic>
                                  <tooltip>
-                                    <Tooltip prefWidth="300.0" text="The reset is required in case your highscore is already higher than the others. You can backup your table to restore them after the competition is finished." />
+                                    <Tooltip prefWidth="300.0" text="The reset is required in case your highscore is already higher than the others. You can backup your table to restore them after the competition is finished." wrapText="true" />
                                  </tooltip>
                               </Label>
                            </children>

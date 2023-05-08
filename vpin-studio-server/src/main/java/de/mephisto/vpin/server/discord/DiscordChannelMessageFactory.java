@@ -56,6 +56,42 @@ public class DiscordChannelMessageFactory {
       "```";
 
 
+  public static String createDiscordCompetitionCreatedMessage(Competition competition, Game game, long initiatorId, String base64Data) {
+    String userId = "<@" + initiatorId + ">";
+
+    return String.format(DISCORD_COMPETITION_CREATED_TEMPLATE,
+        userId,
+        competition.getName(),
+        competition.getUuid(),
+        game.getGameDisplayName(),
+        DateFormat.getDateInstance().format(competition.getStartDate()),
+        DateFormat.getDateInstance().format(competition.getEndDate()),
+        DateUtil.formatDuration(competition.getStartDate(), competition.getEndDate()),
+        base64Data);
+  }
+
+  public static String createFirstCompetitionHighscoreCreatedMessage(@NonNull Game game,
+                                                                     @NonNull Competition competition,
+                                                                     @NonNull Score newScore,
+                                                                     int scoreCount) {
+    String playerName = newScore.getPlayerInitials();
+    if (newScore.getPlayer() != null) {
+      Player player = newScore.getPlayer();
+      playerName = newScore.getPlayer().getName();
+      if (PlayerDomain.DISCORD.name().equals(player.getDomain())) {
+        playerName = "<@" + player.getId() + ">";
+      }
+    }
+
+    String template = "**%s created the first highscore for the \"%s\" competition.**\n(ID: %s)\n" +
+        "```%s\n" +
+        "```";
+
+    String msg = String.format(template, playerName, competition.getName(), competition.getUuid(), newScore);
+    return msg + "Here is the updated highscore list:" + createInitialHighscoreList(newScore, scoreCount - 1);
+
+  }
+
   public static String createCompetitionFinishedMessage(@NonNull Competition competition, @Nullable Player winner, Game game, ScoreSummary summary) {
     if (summary.getScores().isEmpty()) {
       return String.format(COMPETITION_FINISHED_INCOMPLETE, competition.getName(), competition.getUuid());
@@ -104,28 +140,6 @@ public class DiscordChannelMessageFactory {
   }
 
 
-  public static String createFirstCompetitionHighscoreCreatedMessage(@NonNull Game game,
-                                                                     @NonNull Competition competition,
-                                                                     @NonNull Score newScore,
-                                                                     int scoreCount) {
-    String playerName = newScore.getPlayerInitials();
-    if (newScore.getPlayer() != null) {
-      Player player = newScore.getPlayer();
-      playerName = newScore.getPlayer().getName();
-      if (PlayerDomain.DISCORD.name().equals(player.getDomain())) {
-        playerName = "<@" + player.getId() + ">";
-      }
-    }
-
-    String template = "**%s created the first highscore for the \"%s\" competition.**\n(ID: %s)\n" +
-        "```%s\n" +
-        "```";
-
-    String msg = String.format(template, playerName, competition.getName(), competition.getUuid(), newScore);
-    return msg + "Here is the updated highscore list:" + createInitialHighscoreList(newScore, scoreCount - 1);
-
-  }
-
   public static String createCompetitionHighscoreCreatedMessage(@NonNull Game game,
                                                                 @NonNull Competition competition,
                                                                 @NonNull Score oldScore,
@@ -148,20 +162,6 @@ public class DiscordChannelMessageFactory {
     msg = msg + DiscordOfflineChannelMessageFactory.getBeatenMessage(oldScore, newScore);
 
     return msg + "Here is the updated highscore list:" + createHighscoreList(updatedScores);
-  }
-
-  public static String createDiscordCompetitionCreatedMessage(Competition competition, Game game, long initiatorId, String base64Data) {
-    String userId = "<@" + initiatorId + ">";
-
-    return String.format(DISCORD_COMPETITION_CREATED_TEMPLATE,
-        userId,
-        competition.getName(),
-        competition.getUuid(),
-        game.getGameDisplayName(),
-        DateFormat.getDateInstance().format(competition.getStartDate()),
-        DateFormat.getDateInstance().format(competition.getEndDate()),
-        DateUtil.formatDuration(competition.getStartDate(), competition.getEndDate()),
-        base64Data);
   }
 
   private static String createHighscoreList(List<Score> scores) {

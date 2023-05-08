@@ -1,5 +1,6 @@
 package de.mephisto.vpin.restclient.representations;
 
+import de.mephisto.vpin.restclient.JoinMode;
 import de.mephisto.vpin.restclient.util.DateUtil;
 import org.apache.commons.lang3.StringUtils;
 
@@ -41,7 +42,7 @@ public class CompetitionRepresentation {
 
   private boolean started;
 
-  private String joinMode;
+  private String joinMode = JoinMode.STRICT.name();
 
   public String getJoinMode() {
     return joinMode;

@@ -31,6 +31,7 @@ public class CompetitionDataHelper {
       data.setName(competition.getName());
       data.setTname(game.getGameDisplayName());
       data.setSdt(competition.getStartDate());
+      data.setMode(competition.getJoinMode());
       data.setEdt(competition.getEndDate());
       data.setFs(game.getGameFileSize());
       data.setUuid(competition.getUuid());

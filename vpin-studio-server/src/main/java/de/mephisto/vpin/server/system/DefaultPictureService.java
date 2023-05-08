@@ -77,6 +77,16 @@ public class DefaultPictureService {
     }
   }
 
+  public void deleteDefaultPictures(@NonNull Game game) {
+    if (game.getCroppedDefaultPicture() != null && game.getCroppedDefaultPicture().exists()) {
+      game.getCroppedDefaultPicture().delete();
+    }
+
+    if (game.getRawDefaultPicture() != null && !game.getRawDefaultPicture().exists()) {
+      game.getRawDefaultPicture().delete();
+    }
+  }
+
   @Nullable
   public File generateCroppedDefaultPicture(@NonNull Game game) {
     try {

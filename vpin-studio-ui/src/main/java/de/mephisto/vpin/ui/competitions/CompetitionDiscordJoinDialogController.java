@@ -1,7 +1,9 @@
 package de.mephisto.vpin.ui.competitions;
 
 import de.mephisto.vpin.commons.fx.DialogController;
+import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.CompetitionType;
+import de.mephisto.vpin.restclient.JoinMode;
 import de.mephisto.vpin.restclient.PopperScreen;
 import de.mephisto.vpin.restclient.VPinStudioClient;
 import de.mephisto.vpin.restclient.discord.DiscordBotStatus;
@@ -21,6 +23,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
+import org.kordamp.ikonli.javafx.FontIcon;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -79,6 +82,9 @@ public class CompetitionDiscordJoinDialogController implements Initializable, Di
   private Label endDateLabel;
 
   @FXML
+  private FontIcon joinMode;
+
+  @FXML
   private Pane validationContainer;
 
   @FXML
@@ -111,6 +117,7 @@ public class CompetitionDiscordJoinDialogController implements Initializable, Di
     competition.setOwner(this.discordCompetitionData.getOwner());
     competition.setStartDate(this.discordCompetitionData.getSdt());
     competition.setEndDate(this.discordCompetitionData.getEdt());
+    competition.setJoinMode(this.discordCompetitionData.getMode());
 
     competition.setBadge(this.competitionIconCombo.getValue());
     competition.setGameId(this.tableCombo.getValue().getId());
@@ -254,6 +261,14 @@ public class CompetitionDiscordJoinDialogController implements Initializable, Di
     this.endDateLabel.setText(DateFormat.getDateInstance().format(this.discordCompetitionData.getEdt()));
     this.remainingDaysLabel.setText(remainingDays + " day(s)");
     this.nameLabel.setText(this.discordCompetitionData.getName());
+
+    String mode = this.discordCompetitionData.getMode();
+    if(mode != null && JoinMode.valueOf(mode).equals(JoinMode.STRICT)) {
+      this.joinMode.setIconLiteral("bi-check-circle");
+    }
+    else {
+      this.joinMode.setIconLiteral("");
+    }
 
     PlayerRepresentation discordPlayer = client.getDiscordPlayer(server.getId(), Long.parseLong(this.discordCompetitionData.getOwner()));
     if (discordPlayer != null) {

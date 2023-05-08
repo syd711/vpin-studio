@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 import static de.mephisto.vpin.server.VPinStudioServer.API_SEGMENT;
 
 /**
- *
+ * Legacy controller for b2s curl calls
  */
 @RestController
 @RequestMapping(API_SEGMENT + "b2s")

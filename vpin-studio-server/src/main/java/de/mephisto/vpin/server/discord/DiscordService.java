@@ -176,6 +176,13 @@ public class DiscordService implements InitializingBean, PreferenceChangedListen
     return -1;
   }
 
+  public long sendMessage(long serverId, long channelId, String message, byte[] data, String name, String imageText) {
+    if (this.discordClient != null) {
+      return this.discordClient.sendMessage(serverId, channelId, message, data, name, imageText);
+    }
+    return -1;
+  }
+
   public void sendDefaultHighscoreMessage(String message) {
     if (this.discordClient != null) {
       long serverId = Long.parseLong(String.valueOf(preferencesService.getPreferenceValue(PreferenceNames.DISCORD_GUILD_ID, -1)));
@@ -251,13 +258,15 @@ public class DiscordService implements InitializingBean, PreferenceChangedListen
           }
         }
 
+        //check if there was a cancellation or finished method posted for the last started competition
         if (lastCompetitionStartMessage != null) {
           DiscordCompetitionData competitionData = CompetitionDataHelper.getCompetitionData(lastCompetitionStartMessage.getRaw());
           if (competitionData != null) {
             Optional<DiscordMessage> abortMessage = messageHistory
                 .stream()
                 .filter(m -> m.getRaw().toLowerCase().contains(DiscordChannelMessageFactory.FINISHED_INDICATOR) ||
-                    m.getRaw().toLowerCase().contains(DiscordChannelMessageFactory.CANCEL_INDICATOR)).findFirst();
+                    m.getRaw().toLowerCase().contains(DiscordChannelMessageFactory.CANCEL_INDICATOR))
+                .filter(m -> m.getRaw().contains(competitionData.getUuid())).findFirst();
             if (abortMessage.isPresent()) {
               LOG.info("No competition data found searching for " + competitionData.getUuid() + ", this competition has already been canceled.");
               return null;

@@ -1,19 +1,19 @@
 package de.mephisto.vpin.connectors.discord;
 
 
-import net.dv8tion.jda.api.JDA;
-import net.dv8tion.jda.api.JDABuilder;
-import net.dv8tion.jda.api.OnlineStatus;
-import net.dv8tion.jda.api.Permission;
+import net.dv8tion.jda.api.*;
 import net.dv8tion.jda.api.entities.*;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.entities.channel.middleman.GuildChannel;
 import net.dv8tion.jda.api.requests.GatewayIntent;
+import net.dv8tion.jda.api.utils.FileUpload;
 import net.dv8tion.jda.api.utils.MemberCachePolicy;
 import net.dv8tion.jda.internal.utils.PermissionUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -239,6 +239,27 @@ public class DiscordClient {
     return -1;
   }
 
+  public long sendMessage(long serverId, long channelId, String msg, byte[] image, String name, String imageText) {
+    Guild guild = getGuild(serverId);
+    if (guild != null) {
+      TextChannel textChannel = jda.getChannelById(TextChannel.class, channelId);
+      if (textChannel != null) {
+        EmbedBuilder embed = new EmbedBuilder();
+        embed.setImage("attachment://" + URLEncoder.encode(name, StandardCharsets.UTF_8))
+            .setDescription(msg);
+        Message complete = textChannel.sendMessage(msg).addFiles(FileUpload.fromData(image, name)).setEmbeds(embed.build()).complete();
+        return complete.getIdLong();
+      }
+      else {
+        LOG.error("No discord channel found for id '" + channelId + "'");
+      }
+    }
+    else {
+      throw new UnsupportedOperationException("No guild found for default guildId '" + this.defaultGuildId + "'");
+    }
+    return -1;
+  }
+
   public String getTopic(long serverId, long channelId) {
     Guild guild = getGuild(serverId);
     if (guild != null) {
@@ -269,7 +290,7 @@ public class DiscordClient {
 
           List<DiscordMessage> result = new ArrayList<>();
           for (Message botMessage : botMessages) {
-            if (uuid == null || botMessage.getContentRaw().contains(uuid)) {
+            if (uuid == null || botMessage.getContentRaw().contains(uuid) || embedContains(botMessage.getEmbeds(), uuid)) {
               Member member = botMessage.getMember();
               if (member != null) {
                 DiscordMessage message = new DiscordMessage();
@@ -292,6 +313,15 @@ public class DiscordClient {
       }
     }
     return messageCache.get(channelId);
+  }
+
+  private boolean embedContains(List<MessageEmbed> embeds, String uuid) {
+    for (MessageEmbed embed : embeds) {
+      if(embed.getDescription().contains(uuid)) {
+        return true;
+      }
+    }
+    return false;
   }
 
   private DiscordMember toMember(Member member) {
@@ -364,7 +394,7 @@ public class DiscordClient {
   }
 
   public String getMessage(long serverId, long channelId, long messageId) {
-    if(messageCacheById.containsKey(messageId)) {
+    if (messageCacheById.containsKey(messageId)) {
       return messageCacheById.get(messageId).getContentRaw();
     }
 
@@ -373,7 +403,7 @@ public class DiscordClient {
       TextChannel channel = guild.getChannelById(TextChannel.class, channelId);
       if (channel != null) {
         Message message = channel.retrieveMessageById(messageId).complete();
-        if(message != null) {
+        if (message != null) {
           messageCacheById.put(messageId, message);
           return message.getContentRaw();
         }

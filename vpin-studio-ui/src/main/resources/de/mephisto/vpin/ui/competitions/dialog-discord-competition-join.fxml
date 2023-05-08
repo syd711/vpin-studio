@@ -114,6 +114,7 @@
                       <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                     </rowConstraints>
                      <children>
                         <Label text="Table:" textFill="WHITE" GridPane.rowIndex="2">
@@ -176,6 +177,12 @@
                               <Font size="14.0" />
                            </font>
                         </Label>
+                        <Label layoutX="10.0" layoutY="184.0" text="Strict Table Checking:" textFill="WHITE" GridPane.rowIndex="6">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Label>
+                        <FontIcon fx:id="joinMode" iconColor="WHITE" iconLiteral="bi-check-circle" iconSize="16" GridPane.columnIndex="1" GridPane.rowIndex="6" />
                      </children>
                   </GridPane>
                   <Label layoutX="10.0" layoutY="182.0" text="Your VPin Settings">
