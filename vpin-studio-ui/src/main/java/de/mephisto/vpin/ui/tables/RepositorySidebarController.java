@@ -49,16 +49,10 @@ public class RepositorySidebarController implements Initializable, StudioFXContr
   private Label lastModifiedLabel;
 
   @FXML
-  private Label idLabel;
-
-  @FXML
   private Label repositoryTypeLabel;
 
   @FXML
   private Label repositoryNameLabel;
-
-  @FXML
-  private Button idCopyBtn;
 
   @FXML
   private FontIcon directb2sIcon;
@@ -98,26 +92,9 @@ public class RepositorySidebarController implements Initializable, StudioFXContr
   @FXML
   private FontIcon highscoreIcon;
 
-  @FXML
-  private Label highscoreHistoryLabel;
-
-  @FXML
-  private TitledPane manifestPane;
-
   @Override
   public void onViewActivated() {
 
-  }
-
-  @FXML
-  private void onIdCopy() {
-    String id = this.idLabel.getText();
-    if(!StringUtils.isEmpty(id) && id.length() > 1) {
-      Clipboard systemClipboard = Clipboard.getSystemClipboard();
-      final ClipboardContent content = new ClipboardContent();
-      content.putString(id);
-      systemClipboard.setContent(content);
-    }
   }
 
   @Override
@@ -145,14 +122,11 @@ public class RepositorySidebarController implements Initializable, StudioFXContr
     cfgIcon.setVisible(false);
     povIcon.setVisible(false);
     highscoreIcon.setVisible(false);
-    idCopyBtn.setVisible(false);
 
-    highscoreHistoryLabel.setText("");
     filenameLabel.setText("-");
     fileSizeLabel.setText("-");
     lastModifiedLabel.setText("-");
     sourceLabel.setText("-");
-    idLabel.setText("-");
     repositoryNameLabel.setText("-");
     repositoryTypeLabel.setText("-");
 

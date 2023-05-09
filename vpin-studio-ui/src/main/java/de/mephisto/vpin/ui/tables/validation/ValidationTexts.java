@@ -20,7 +20,7 @@ public class ValidationTexts {
     switch (code) {
       case CODE_VPX_NOT_EXISTS: {
         label = "VPX file '" + game.getGameFileName() + "' does not exist.";
-        text = "Fix the configuration for this table in PinUP Popper.";
+        text = "Fix the configuration for this table in PinUP Popper or delete it.";
         break;
       }
       case CODE_NO_ROM: {

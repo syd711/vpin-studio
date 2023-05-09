@@ -1,15 +1,17 @@
 package de.mephisto.vpin.server.games.puppack;
 
 import de.mephisto.vpin.server.games.Game;
-import de.mephisto.vpin.server.system.SystemService;
 import de.mephisto.vpin.server.system.JCodec;
+import de.mephisto.vpin.server.system.SystemService;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
+import java.util.Collection;
 
 public class PupPack {
   private final static Logger LOG = LoggerFactory.getLogger(PupPack.class);
@@ -29,7 +31,15 @@ public class PupPack {
     if (StringUtils.isEmpty(game.getRom())) {
       return false;
     }
-    return getScreensPup().exists() && getTriggersPup().exists();
+    return (getScreensPup().exists() && getTriggersPup().exists()) || containsVideos();
+  }
+
+  private boolean containsVideos() {
+    if (getPupPackFolder().exists()) {
+      Collection<File> files = FileUtils.listFiles(getPupPackFolder(), new String[]{"mp4"}, true);
+      return !files.isEmpty();
+    }
+    return false;
   }
 
   public File getPupPackFolder() {

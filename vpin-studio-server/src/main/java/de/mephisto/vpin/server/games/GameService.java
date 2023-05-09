@@ -280,7 +280,7 @@ public class GameService {
 
         applyGameDetails(game, true);
         highscoreService.scanScore(game);
-        defaultPictureService.generateCroppedDefaultPicture(game);
+        defaultPictureService.extractDefaultPicture(game);
 
         return getGame(gameId);
       }
