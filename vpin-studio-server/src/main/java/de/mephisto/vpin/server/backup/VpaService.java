@@ -1,14 +1,12 @@
-package de.mephisto.vpin.server.vpa;
+package de.mephisto.vpin.server.backup;
 
-import de.mephisto.vpin.restclient.VpaManifest;
+import de.mephisto.vpin.restclient.TableManifest;
 import de.mephisto.vpin.restclient.representations.VpaSourceRepresentation;
-import de.mephisto.vpin.restclient.util.PasswordUtil;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameService;
 import de.mephisto.vpin.server.system.SystemService;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
@@ -43,7 +41,7 @@ public class VpaService implements InitializingBean {
   public List<VpaDescriptor> getVpaDescriptors(int gameId) {
     Game game = gameService.getGame(gameId);
     return getVpaDescriptors().stream().filter(vpaDescriptor -> {
-      VpaManifest manifest = vpaDescriptor.getManifest();
+      TableManifest manifest = vpaDescriptor.getManifest();
       return (manifest.getGameName() != null && manifest.getGameName().equals(game.getGameDisplayName())) ||
           (manifest.getGameFileName() != null && manifest.getGameFileName().equals(game.getGameFileName())) ||
           (manifest.getGameDisplayName() != null && manifest.getGameDisplayName().equals(game.getGameDisplayName()));
@@ -77,23 +75,25 @@ public class VpaService implements InitializingBean {
   @Nullable
   public VpaDescriptor getVpaDescriptor(long sourceId, @NonNull String uuid) {
     VpaSourceAdapter vpaSourceAdapter = adapterCache.get(sourceId);
-    List<VpaDescriptor> vpaDescriptors = vpaSourceAdapter.getVpaDescriptors();
-    for (VpaDescriptor vpaDescriptor : vpaDescriptors) {
-      String descriptorUUID = vpaDescriptor.getManifest().getUuid();
-      if(descriptorUUID.equals(uuid)) {
-        return vpaDescriptor;
-      }
-    }
+    //TODO
+//    List<VpaDescriptor> vpaDescriptors = vpaSourceAdapter.getVpaDescriptors();
+//    for (VpaDescriptor vpaDescriptor : vpaDescriptors) {
+//      String descriptorUUID = vpaDescriptor.getManifest().getUuid();
+//      if(descriptorUUID.equals(uuid)) {
+//        return vpaDescriptor;
+//      }
+//    }
     return null;
   }
 
   public boolean deleteVpaDescriptor(long sourceId, @NonNull String uuid) {
-    List<VpaDescriptor> descriptors = adapterCache.get(sourceId).getVpaDescriptors();
-    Optional<VpaDescriptor> first = descriptors.stream().filter(vpaDescriptor -> vpaDescriptor.getManifest().getUuid().equals(uuid)).findFirst();
-    if (first.isPresent()) {
-      VpaDescriptor descriptor = first.get();
-      return getDefaultVpaSourceAdapter().delete(descriptor);
-    }
+    //TODO
+//    List<VpaDescriptor> descriptors = adapterCache.get(sourceId).getVpaDescriptors();
+//    Optional<VpaDescriptor> first = descriptors.stream().filter(vpaDescriptor -> vpaDescriptor.getManifest().getUuid().equals(uuid)).findFirst();
+//    if (first.isPresent()) {
+//      VpaDescriptor descriptor = first.get();
+//      return getDefaultVpaSourceAdapter().delete(descriptor);
+//    }
     return false;
   }
 

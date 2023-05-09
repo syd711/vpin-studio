@@ -14,7 +14,6 @@ import de.mephisto.vpin.ui.competitions.CompetitionDiscordJoinDialogController;
 import de.mephisto.vpin.ui.competitions.CompetitionOfflineDialogController;
 import de.mephisto.vpin.ui.launcher.InstallationController;
 import de.mephisto.vpin.ui.players.PlayerDialogController;
-import de.mephisto.vpin.ui.tables.TableOverviewController;
 import de.mephisto.vpin.ui.tables.TablesController;
 import de.mephisto.vpin.ui.tables.dialogs.*;
 import edu.umd.cs.findbugs.annotations.Nullable;
@@ -134,24 +133,24 @@ public class Dialogs {
     return controller.tableDeleted();
   }
 
-  public static void openTableExportDialog(GameRepresentation game) {
-    Stage stage = createStudioDialogStage(TableExportController.class, "dialog-table-export.fxml", "Table Export");
-    TableExportController controller = (TableExportController) stage.getUserData();
+  public static void openTableBackupDialog(GameRepresentation game) {
+    Stage stage = createStudioDialogStage(TableBackupController.class, "dialog-table-backup.fxml", "Table Export");
+    TableBackupController controller = (TableBackupController) stage.getUserData();
+    controller.setGame(game);
+    stage.showAndWait();
+  }
+
+  public static void openTableDataDialog(GameRepresentation game) {
+    Stage stage = createStudioDialogStage(TableDataController.class, "dialog-table-data.fxml", "Table Data");
+    TableDataController controller = (TableDataController) stage.getUserData();
     controller.setGame(game);
     stage.showAndWait();
   }
 
   public static void openTablesExportDialog(List<GameRepresentation> games) {
-    Stage stage = createStudioDialogStage(TableExportController.class, "dialog-tables-export.fxml", "Table Export");
+    Stage stage = createStudioDialogStage(TableBackupController.class, "dialog-tables-export.fxml", "Table Export");
     TablesExportController controller = (TablesExportController) stage.getUserData();
     controller.setGames(games);
-    stage.showAndWait();
-  }
-
-  public static void openTableImportDialog(TableOverviewController tablesController) {
-    Stage stage = createStudioDialogStage(TableImportController.class, "dialog-table-import.fxml", "Table Import");
-    TableImportController controller = (TableImportController) stage.getUserData();
-    controller.setTablesController(tablesController);
     stage.showAndWait();
   }
 

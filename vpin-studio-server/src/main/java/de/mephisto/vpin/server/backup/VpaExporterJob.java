@@ -1,4 +1,4 @@
-package de.mephisto.vpin.server.vpa;
+package de.mephisto.vpin.server.backup;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
@@ -30,7 +30,6 @@ import java.util.Base64;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
@@ -43,7 +42,7 @@ public class VpaExporterJob implements Job {
   private final File musicFolder;
   private final Game game;
   private final ExportDescriptor exportDescriptor;
-  private final VpaManifest manifest;
+  private final TableManifest manifest;
   private final Optional<Highscore> highscore;
   private final List<HighscoreVersion> scoreHistory;
   private final ObjectMapper objectMapper;
@@ -63,7 +62,7 @@ public class VpaExporterJob implements Job {
                         @NonNull File musicFolder,
                         @NonNull Game game,
                         @NonNull ExportDescriptor exportDescriptor,
-                        @NonNull VpaManifest manifest,
+                        @NonNull TableManifest manifest,
                         @NonNull Optional<Highscore> highscore,
                         @NonNull List<HighscoreVersion> scoreHistory,
                         @NonNull VpaSourceAdapter vpaSource,
@@ -114,7 +113,8 @@ public class VpaExporterJob implements Job {
     }
 
     VpaPackageInfo packageInfo = new VpaPackageInfo();
-    manifest.setPackageInfo(packageInfo);
+    //TODO
+//    manifest.setPackageInfo(packageInfo);
 
     LOG.info("Packaging " + game.getGameDisplayName());
     long start = System.currentTimeMillis();
@@ -145,19 +145,21 @@ public class VpaExporterJob implements Job {
           VPReg reg = new VPReg(vprRegFile, game);
           VPRegScoreSummary summary = reg.readHighscores();
           String vpRegJson = objectMapper.writeValueAsString(summary);
-          manifest.getAdditionalData().put(VpaService.DATA_VPREG_HIGHSCORE, vpRegJson);
+          //TODO
+//          manifest.getAdditionalData().put(VpaService.DATA_VPREG_HIGHSCORE, vpRegJson);
         }
 
         //write highscore history
-        List<ScoreVersionEntry> scores = scoreHistory.stream().map(ScoreVersionEntry::new).collect(Collectors.toList());
-        packageInfo.setHighscoreHistoryRecords(scores.size());
-        String scoresJson = objectMapper.writeValueAsString(scores);
-        manifest.getAdditionalData().put(VpaService.DATA_HIGHSCORE_HISTORY, scoresJson);
-
-        //write raw highscore
-        if (highscore.isPresent() && highscore.get().getRaw() != null) {
-          manifest.getAdditionalData().put(VpaService.DATA_HIGHSCORE, highscore.get().getRaw());
-        }
+        //TODO
+//        List<ScoreVersionEntry> scores = scoreHistory.stream().map(ScoreVersionEntry::new).collect(Collectors.toList());
+//        packageInfo.setHighscoreHistoryRecords(scores.size());
+//        String scoresJson = objectMapper.writeValueAsString(scores);
+//        manifest.getAdditionalData().put(VpaService.DATA_HIGHSCORE_HISTORY, scoresJson);
+//
+//        //write raw highscore
+//        if (highscore.isPresent() && highscore.get().getRaw() != null) {
+//          manifest.getAdditionalData().put(VpaService.DATA_HIGHSCORE, highscore.get().getRaw());
+//        }
       }
 
       if (exportDescriptor.isExportRom() && game.getRomFile() != null && game.getRomFile().exists()) {
@@ -375,16 +377,18 @@ public class VpaExporterJob implements Job {
 
       byte[] bytes = ImageUtil.toBytes(resizedImage);
       String encode = Base64.getEncoder().encodeToString(bytes);
-      manifest.setThumbnail(encode);
-
-      manifest.setVpaFilename(target.getName());
-
-      byte[] original = Files.readAllBytes(mediaItem.getFile().toPath());
-      manifest.setIcon(Base64.getEncoder().encodeToString(original));
+      //TODO
+//      manifest.setThumbnail(encode);
+//
+//      manifest.setVpaFilename(target.getName());
+//
+//      byte[] original = Files.readAllBytes(mediaItem.getFile().toPath());
+//      manifest.setIcon(Base64.getEncoder().encodeToString(original));
     }
 
     manifest.setEmulatorType(VpaUtil.getEmulatorType(game.getGameFile()));
-    manifest.setVpaVersion(vpaVersion);
+    //TODO
+//    manifest.setVpaVersion(vpaVersion);
 
     if (StringUtils.isEmpty(manifest.getGameFileName())) {
       manifest.setGameFileName(game.getGameFileName());
@@ -394,11 +398,12 @@ public class VpaExporterJob implements Job {
       manifest.setGameName(game.getGameDisplayName());
       manifest.setGameDisplayName(game.getGameDisplayName());
     }
-
-    manifest.setTableName(game.getTableName());
-    if (!StringUtils.isEmpty(game.getRom())) {
-      manifest.setRomName(game.getRom());
-    }
+//
+    //TODO
+//    manifest.setTableName(game.getTableName());
+//    if (!StringUtils.isEmpty(game.getRom())) {
+//      manifest.setRomName(game.getRom());
+//    }
 
     String manifestString = objectMapper.writeValueAsString(manifest);
     File manifestFile = File.createTempFile("vpa-manifest", "json");

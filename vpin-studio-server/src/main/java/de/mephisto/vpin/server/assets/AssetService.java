@@ -156,8 +156,8 @@ public class AssetService {
       graphics.setColor(Color.WHITE);
 
       String name = competition.getName();
-      if (name.length() > 34) {
-        name = name.substring(0, 33) + "...";
+      if (name.length() > 35) {
+        name = name.substring(0, 34) + "...";
       }
 
       String table = game.getGameDisplayName();
@@ -166,12 +166,12 @@ public class AssetService {
       }
 
       int yOffset = 0;
-      int xOffset = 16;
-      Font font = new Font("System", Font.BOLD, 42);
+      int xOffset = 32;
+      Font font = new Font("System", Font.BOLD, 38);
       graphics.setFont(font);
       graphics.drawString(name, xOffset, yOffset += 64);
 
-      font = new Font("System", Font.BOLD, 32);
+      font = new Font("System", Font.BOLD, 30);
       graphics.setFont(font);
       graphics.drawString("Table: " + table, xOffset, yOffset += 72);
 

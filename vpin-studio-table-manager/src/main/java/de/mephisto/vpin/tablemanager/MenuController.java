@@ -394,15 +394,16 @@ public class MenuController implements Initializable {
     }
     else if (o instanceof VpaDescriptorRepresentation) {
       VpaDescriptorRepresentation vpaDescriptor = (VpaDescriptorRepresentation) o;
-      String icon = vpaDescriptor.getManifest().getIcon();
-      if (icon == null) {
-        text = vpaDescriptor.getManifest().getGameDisplayName();
-        wheel = new Image(Menu.class.getResourceAsStream("avatar-blank.png"));
-      }
-      else {
-        byte[] decode = Base64.getDecoder().decode(icon);
-        wheel = new Image(new ByteArrayInputStream(decode));
-      }
+      //TODO
+//      String icon = vpaDescriptor.getManifest().getIcon();
+//      if (icon == null) {
+//        text = vpaDescriptor.getManifest().getGameDisplayName();
+//        wheel = new Image(Menu.class.getResourceAsStream("avatar-blank.png"));
+//      }
+//      else {
+//        byte[] decode = Base64.getDecoder().decode(icon);
+//        wheel = new Image(new ByteArrayInputStream(decode));
+//      }
     }
     else {
       throw new UnsupportedOperationException("Invalid item");

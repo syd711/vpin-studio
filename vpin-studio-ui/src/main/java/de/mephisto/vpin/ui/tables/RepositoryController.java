@@ -192,16 +192,17 @@ public class RepositoryController implements Initializable, StudioEventListener 
   private void onDelete() {
     VpaDescriptorRepresentation selection = tableView.getSelectionModel().getSelectedItem();
     if (selection != null) {
-      Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Delete Archive '" + selection.getFilename() + "'?");
-      if (result.isPresent() && result.get().equals(ButtonType.OK)) {
-        try {
-          client.deleteVpaDescriptor(selection.getSource().getId(), selection.getManifest().getUuid());
-        } catch (Exception e) {
-          WidgetFactory.showAlert(stage, "Error", "Error deleting \"" + selection.getFilename() + "\": " + e.getMessage());
-        }
-        tableView.getSelectionModel().clearSelection();
-        doReload();
-      }
+      //TODO
+//      Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Delete Archive '" + selection.getFilename() + "'?");
+//      if (result.isPresent() && result.get().equals(ButtonType.OK)) {
+//        try {
+//          client.deleteVpaDescriptor(selection.getSource().getId(), selection.getManifest().getUuid());
+//        } catch (Exception e) {
+//          WidgetFactory.showAlert(stage, "Error", "Error deleting \"" + selection.getFilename() + "\": " + e.getMessage());
+//        }
+//        tableView.getSelectionModel().clearSelection();
+//        doReload();
+//      }
     }
   }
 
@@ -219,129 +220,129 @@ public class RepositoryController implements Initializable, StudioEventListener 
     } catch (IOException e) {
       LOG.error("Failed to load loading overlay: " + e.getMessage());
     }
-
-    iconColumn.setCellValueFactory(cellData -> {
-      VpaDescriptorRepresentation value = cellData.getValue();
-      String thumbnail = value.getManifest().getThumbnail();
-      if (thumbnail == null) {
-        Image wheel = new Image(Studio.class.getResourceAsStream("avatar-blank.png"));
-        ImageView view = new ImageView(wheel);
-        view.setPreserveRatio(true);
-        view.setFitWidth(70);
-        view.setFitHeight(70);
-        return new SimpleObjectProperty(view);
-      }
-
-      byte[] decode = Base64.getDecoder().decode(thumbnail);
-      Image wheel = new Image(new ByteArrayInputStream(decode));
-      ImageView view = new ImageView(wheel);
-      view.setPreserveRatio(true);
-      view.setFitWidth(80);
-      view.setFitHeight(80);
-      ImageUtil.setClippedImage(view, (int) (wheel.getWidth() / 2));
-      return new SimpleObjectProperty(view);
-    });
-
-    nameColumn.setCellValueFactory(cellData -> {
-      VpaDescriptorRepresentation value = cellData.getValue();
-      return new SimpleStringProperty(value.getManifest().getGameDisplayName());
-    });
-
-    directB2SColumn.setCellValueFactory(cellData -> {
-      VpaDescriptorRepresentation value = cellData.getValue();
-      boolean directb2s = value.getManifest().getPackageInfo().isDirectb2s();
-      if (directb2s) {
-        return new SimpleObjectProperty(WidgetFactory.createCheckboxIcon());
-      }
-      return new SimpleStringProperty("");
-    });
-
-    pupPackColumn.setCellValueFactory(cellData -> {
-      VpaDescriptorRepresentation value = cellData.getValue();
-      boolean packaged = value.getManifest().getPackageInfo().isPupPack();
-      if (packaged) {
-        return new SimpleObjectProperty(WidgetFactory.createCheckboxIcon());
-      }
-      return new SimpleStringProperty("");
-    });
-
-    popperColumn.setCellValueFactory(cellData -> {
-      VpaDescriptorRepresentation value = cellData.getValue();
-      boolean packaged = value.getManifest().getPackageInfo().isPopperMedia();
-      if (packaged) {
-        return new SimpleObjectProperty(WidgetFactory.createCheckboxIcon());
-      }
-      return new SimpleStringProperty("");
-    });
-
-    povColumn.setCellValueFactory(cellData -> {
-      VpaDescriptorRepresentation value = cellData.getValue();
-      boolean pov = value.getManifest().getPackageInfo().isPov();
-      if (pov) {
-        return new SimpleObjectProperty(WidgetFactory.createCheckboxIcon());
-      }
-      return new SimpleStringProperty("");
-    });
-
-    romColumn.setCellValueFactory(cellData -> {
-      VpaDescriptorRepresentation value = cellData.getValue();
-      boolean packaged = value.getManifest().getPackageInfo().isPopperMedia();
-      if (packaged) {
-        return new SimpleObjectProperty(WidgetFactory.createCheckboxIcon());
-      }
-      return new SimpleStringProperty("");
-    });
-
-    altSoundColumn.setCellValueFactory(cellData -> {
-      VpaDescriptorRepresentation value = cellData.getValue();
-      boolean enabled = value.getManifest().getPackageInfo().isAltSound();
-      if (enabled) {
-        return new SimpleObjectProperty(WidgetFactory.createCheckboxIcon());
-      }
-      return new SimpleStringProperty("");
-    });
-
-    sizeColumn.setCellValueFactory(cellData -> {
-      VpaDescriptorRepresentation value = cellData.getValue();
-      if(value.getSize() == 0 ) {
-        return new SimpleStringProperty("-");
-      }
-      return new SimpleStringProperty(FileUtils.readableFileSize(value.getSize()));
-    });
-
-    createdAtColumn.setCellValueFactory(cellData -> {
-      VpaDescriptorRepresentation value = cellData.getValue();
-      return new SimpleStringProperty(DateFormat.getInstance().format(value.getCreatedAt()));
-    });
-
-    tableView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
-    tableView.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
-      boolean fileRepo = newSelection != null && newSelection.getSource().getType().equals(VpaSourceType.File.name());
-      deleteBtn.setDisable(!fileRepo);
-      installBtn.setDisable(newSelection == null);
-      downloadBtn.setDisable(newSelection == null);
-
-      if (oldSelection == null || !oldSelection.equals(newSelection)) {
-        updateSelection(Optional.ofNullable(newSelection));
-      }
-    });
-
-    tableView.setRowFactory(tv -> {
-      TableRow<VpaDescriptorRepresentation> row = new TableRow<>();
-      row.setOnMouseClicked(event -> {
-        if (event.getClickCount() == 2 && (!row.isEmpty())) {
-
-        }
-      });
-      return row;
-    });
-
-    searchTextField.textProperty().addListener((observableValue, s, filterValue) -> {
-      tableView.getSelectionModel().clearSelection();
-
-      List<VpaDescriptorRepresentation> filtered = filterArchives(this.archives);
-      tableView.setItems(FXCollections.observableList(filtered));
-    });
+//TODO
+//    iconColumn.setCellValueFactory(cellData -> {
+//      VpaDescriptorRepresentation value = cellData.getValue();
+//      String thumbnail = value.getManifest().getThumbnail();
+//      if (thumbnail == null) {
+//        Image wheel = new Image(Studio.class.getResourceAsStream("avatar-blank.png"));
+//        ImageView view = new ImageView(wheel);
+//        view.setPreserveRatio(true);
+//        view.setFitWidth(70);
+//        view.setFitHeight(70);
+//        return new SimpleObjectProperty(view);
+//      }
+//
+//      byte[] decode = Base64.getDecoder().decode(thumbnail);
+//      Image wheel = new Image(new ByteArrayInputStream(decode));
+//      ImageView view = new ImageView(wheel);
+//      view.setPreserveRatio(true);
+//      view.setFitWidth(80);
+//      view.setFitHeight(80);
+//      ImageUtil.setClippedImage(view, (int) (wheel.getWidth() / 2));
+//      return new SimpleObjectProperty(view);
+//    });
+//
+//    nameColumn.setCellValueFactory(cellData -> {
+//      VpaDescriptorRepresentation value = cellData.getValue();
+//      return new SimpleStringProperty(value.getManifest().getGameDisplayName());
+//    });
+//
+//    directB2SColumn.setCellValueFactory(cellData -> {
+//      VpaDescriptorRepresentation value = cellData.getValue();
+//      boolean directb2s = value.getManifest().getPackageInfo().isDirectb2s();
+//      if (directb2s) {
+//        return new SimpleObjectProperty(WidgetFactory.createCheckboxIcon());
+//      }
+//      return new SimpleStringProperty("");
+//    });
+//
+//    pupPackColumn.setCellValueFactory(cellData -> {
+//      VpaDescriptorRepresentation value = cellData.getValue();
+//      boolean packaged = value.getManifest().getPackageInfo().isPupPack();
+//      if (packaged) {
+//        return new SimpleObjectProperty(WidgetFactory.createCheckboxIcon());
+//      }
+//      return new SimpleStringProperty("");
+//    });
+//
+//    popperColumn.setCellValueFactory(cellData -> {
+//      VpaDescriptorRepresentation value = cellData.getValue();
+//      boolean packaged = value.getManifest().getPackageInfo().isPopperMedia();
+//      if (packaged) {
+//        return new SimpleObjectProperty(WidgetFactory.createCheckboxIcon());
+//      }
+//      return new SimpleStringProperty("");
+//    });
+//
+//    povColumn.setCellValueFactory(cellData -> {
+//      VpaDescriptorRepresentation value = cellData.getValue();
+//      boolean pov = value.getManifest().getPackageInfo().isPov();
+//      if (pov) {
+//        return new SimpleObjectProperty(WidgetFactory.createCheckboxIcon());
+//      }
+//      return new SimpleStringProperty("");
+//    });
+//
+//    romColumn.setCellValueFactory(cellData -> {
+//      VpaDescriptorRepresentation value = cellData.getValue();
+//      boolean packaged = value.getManifest().getPackageInfo().isPopperMedia();
+//      if (packaged) {
+//        return new SimpleObjectProperty(WidgetFactory.createCheckboxIcon());
+//      }
+//      return new SimpleStringProperty("");
+//    });
+//
+//    altSoundColumn.setCellValueFactory(cellData -> {
+//      VpaDescriptorRepresentation value = cellData.getValue();
+//      boolean enabled = value.getManifest().getPackageInfo().isAltSound();
+//      if (enabled) {
+//        return new SimpleObjectProperty(WidgetFactory.createCheckboxIcon());
+//      }
+//      return new SimpleStringProperty("");
+//    });
+//
+//    sizeColumn.setCellValueFactory(cellData -> {
+//      VpaDescriptorRepresentation value = cellData.getValue();
+//      if(value.getSize() == 0 ) {
+//        return new SimpleStringProperty("-");
+//      }
+//      return new SimpleStringProperty(FileUtils.readableFileSize(value.getSize()));
+//    });
+//
+//    createdAtColumn.setCellValueFactory(cellData -> {
+//      VpaDescriptorRepresentation value = cellData.getValue();
+//      return new SimpleStringProperty(DateFormat.getInstance().format(value.getCreatedAt()));
+//    });
+//
+//    tableView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
+//    tableView.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
+//      boolean fileRepo = newSelection != null && newSelection.getSource().getType().equals(VpaSourceType.File.name());
+//      deleteBtn.setDisable(!fileRepo);
+//      installBtn.setDisable(newSelection == null);
+//      downloadBtn.setDisable(newSelection == null);
+//
+//      if (oldSelection == null || !oldSelection.equals(newSelection)) {
+//        updateSelection(Optional.ofNullable(newSelection));
+//      }
+//    });
+//
+//    tableView.setRowFactory(tv -> {
+//      TableRow<VpaDescriptorRepresentation> row = new TableRow<>();
+//      row.setOnMouseClicked(event -> {
+//        if (event.getClickCount() == 2 && (!row.isEmpty())) {
+//
+//        }
+//      });
+//      return row;
+//    });
+//
+//    searchTextField.textProperty().addListener((observableValue, s, filterValue) -> {
+//      tableView.getSelectionModel().clearSelection();
+//
+//      List<VpaDescriptorRepresentation> filtered = filterArchives(this.archives);
+//      tableView.setItems(FXCollections.observableList(filtered));
+//    });
 
     sourceComboChangeListener = (observable, oldValue, newValue) -> doReload();
     refreshRepositoryCombo();

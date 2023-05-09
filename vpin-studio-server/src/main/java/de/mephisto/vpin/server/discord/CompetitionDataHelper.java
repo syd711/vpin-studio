@@ -22,7 +22,7 @@ public class CompetitionDataHelper {
   private final static Logger LOG = LoggerFactory.getLogger(CompetitionDataHelper.class);
 
   private static final ObjectMapper objectMapper = new ObjectMapper();
-  private static final String DATA_INDICATOR = "Data: ";
+  public static final String DATA_INDICATOR = "Data: ";
 
   static {
     objectMapper.enable(SerializationFeature.INDENT_OUTPUT);
@@ -52,28 +52,37 @@ public class CompetitionDataHelper {
 
 
   @Nullable
-  public static DiscordCompetitionData getCompetitionData(@Nullable DiscordMessage msg) {
-    return getCompetitionData(msg.getEmbedDescription());
+  public static DiscordCompetitionData getCompetitionData(@NonNull DiscordMessage msg) {
+    DiscordCompetitionData competitionData = getCompetitionData(msg.getEmbedDescription());
+    if(competitionData != null) {
+      competitionData.setMsgId(msg.getId());
+    }
+
+    return competitionData;
   }
 
   @Nullable
-  public static DiscordCompetitionData getCompetitionData(@Nullable Message msg) {
+  public static DiscordCompetitionData getCompetitionData(@NonNull Message msg) {
     List<MessageEmbed> embeds = msg.getEmbeds();
     for (MessageEmbed embed : embeds) {
-      return getCompetitionData(embed.getDescription());
+      DiscordCompetitionData competitionData = getCompetitionData(embed.getDescription());
+      if(competitionData != null) {
+        competitionData.setMsgId(msg.getIdLong());
+      }
+
+      return competitionData;
     }
     return null;
   }
 
   @Nullable
-  public static DiscordCompetitionData getCompetitionData(@Nullable String messageText) {
+  private static DiscordCompetitionData getCompetitionData(@Nullable String messageText) {
     try {
       if (messageText == null) {
         return null;
       }
       if (messageText.contains(DATA_INDICATOR)) {
-        String dataBase64 = messageText.substring(messageText.indexOf(DATA_INDICATOR) + DATA_INDICATOR.length());
-        dataBase64 = dataBase64.substring(0, dataBase64.indexOf("---")).trim();
+        String dataBase64 = messageText.substring(messageText.indexOf(DATA_INDICATOR) + DATA_INDICATOR.length()).trim();
         String data = new String(new Base64Encoder().decode(dataBase64));
         return objectMapper.readValue(data, DiscordCompetitionData.class);
       }

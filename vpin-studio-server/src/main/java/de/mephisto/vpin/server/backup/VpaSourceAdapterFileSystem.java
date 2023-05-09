@@ -1,6 +1,6 @@
-package de.mephisto.vpin.server.vpa;
+package de.mephisto.vpin.server.backup;
 
-import de.mephisto.vpin.restclient.VpaManifest;
+import de.mephisto.vpin.restclient.TableManifest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -31,10 +31,11 @@ public class VpaSourceAdapterFileSystem implements VpaSourceAdapter {
       if (vpaFiles != null) {
         for (File vpaFile : vpaFiles) {
           try {
-            VpaManifest manifest = VpaUtil.readManifest(vpaFile);
+            TableManifest manifest = VpaUtil.readManifest(vpaFile);
             VpaDescriptor descriptor = new VpaDescriptor(source, manifest, new Date(vpaFile.lastModified()),
                 vpaFile.getName(), vpaFile.length());
-            manifest.setVpaFileSize(vpaFile.length());
+            //TODO
+//            manifest.setVpaFileSize(vpaFile.length());
             cache.put(vpaFile.getName(), descriptor);
           } catch (Exception e) {
             LOG.error("Failed to read " + vpaFile.getAbsolutePath() + ": " + e.getMessage(), e);

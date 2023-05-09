@@ -56,18 +56,6 @@ public class PinUPConnectorTest extends AbstractVPinServerTest {
     assertNotNull(connector.getEmulatorExitScript(Emulator.FUTURE_PINBALL));
     assertNotNull(connector.getEmulatorStartupScript(Emulator.VISUAL_PINBALL_X));
     assertNotNull(connector.getEmulatorStartupScript(Emulator.FUTURE_PINBALL));
-
-    Game volgame = connector.getGame(games.get(0).getId());
-    int volume = volgame.getVolume();
-
-    connector.updateVolume(game, volume);
-    volgame = connector.getGame(games.get(0).getId());
-    assertEquals(volume, volgame.getVolume());
-
-    volume = volume + 1;
-    connector.updateVolume(game, volume);
-    volgame = connector.getGame(games.get(0).getId());
-    assertEquals(volume, volgame.getVolume());
   }
 
 }

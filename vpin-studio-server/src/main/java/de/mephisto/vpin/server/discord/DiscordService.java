@@ -246,6 +246,7 @@ public class DiscordService implements InitializingBean, PreferenceChangedListen
       ChannelTopic channelTopic = this.getTopicData(serverId, channelId);
       if (channelTopic != null) {
         List<DiscordMessage> messageHistory = this.discordClient.getMessageHistoryAfter(serverId, channelId, channelTopic.getMessageId(), null);
+        Collections.reverse(messageHistory);
         LOG.info("Competition search returned " + messageHistory.size() + " messages, using last messageId '" + channelTopic.getMessageId() + "'");
 
         //equals 0 when no additional message was posted

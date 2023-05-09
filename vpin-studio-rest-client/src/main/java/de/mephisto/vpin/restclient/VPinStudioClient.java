@@ -176,8 +176,8 @@ public class VPinStudioClient implements ObservedPropertyChangeListener, Overlay
     return restClient.post(API + "io/import", descriptor, Boolean.class);
   }
 
-  public VpaManifest getVpaManifest(int gameId) {
-    return restClient.get(API + "io/manifest/" + gameId, VpaManifest.class);
+  public TableManifest getVpaManifest(int gameId) {
+    return restClient.get(API + "io/manifest/" + gameId, TableManifest.class);
   }
 
   /*********************************************************************************************************************
@@ -267,6 +267,18 @@ public class VPinStudioClient implements ObservedPropertyChangeListener, Overlay
     return restClient.get(API + "popper/restart", Boolean.class);
   }
 
+  public TableManifest getTableManifest(int gameId) {
+    return restClient.get(API + "popper/tablemanifest/" + gameId, TableManifest.class);
+  }
+
+  public TableManifest saveTableManifest(TableManifest manifest) throws Exception {
+    try {
+      return restClient.post(API + "popper/tablemanifest", manifest, TableManifest.class);
+    } catch (Exception e) {
+      LOG.error("Failed install archive: " + e.getMessage(), e);
+      throw e;
+    }
+  }
 
   /*********************************************************************************************************************
    * VPX

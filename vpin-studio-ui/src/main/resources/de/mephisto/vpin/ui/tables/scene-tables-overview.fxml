@@ -1,12 +1,24 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.*?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
-<?import javafx.scene.text.*?>
-<?import org.kordamp.ikonli.javafx.*?>
-<BorderPane styleClass="base-component" stylesheets="@../stylesheet.css" xmlns="http://javafx.com/javafx/18"
-            xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.tables.TableOverviewController">
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Hyperlink?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.MenuButton?>
+<?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.ToolBar?>
+<?import javafx.scene.control.Tooltip?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+<?import org.kordamp.ikonli.javafx.FontIcon?>
+
+<BorderPane styleClass="base-component" stylesheets="@../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.tables.TableOverviewController">
     <center>
         <BorderPane BorderPane.alignment="CENTER">
             <center>
@@ -14,65 +26,50 @@
                     <center>
                         <StackPane fx:id="tableStack" styleClass="media-parent">
                             <BorderPane.margin>
-                                <Insets bottom="6.0"/>
+                                <Insets bottom="6.0" />
                             </BorderPane.margin>
                             <children>
-                                <TableView fx:id="tableView" onMouseClicked="#onTableMouseClicked"
-                                           style="-fx-background-color: #2a2a2a;" styleClass="base-component">
+                                <TableView fx:id="tableView" onMouseClicked="#onTableMouseClicked" style="-fx-background-color: #2a2a2a;" styleClass="base-component">
                                     <columns>
-                                        <TableColumn fx:id="columnId" minWidth="35.99993896484375"
-                                                     prefWidth="58.399959564208984"
-                                                     style="-fx-alignment: baseline-right;" text="ID"/>
-                                        <TableColumn fx:id="columnStatus" minWidth="32.79998779296875"
-                                                     prefWidth="53.5999755859375" style="-fx-alignment: CENTER;"
-                                                     text="Status"/>
-                                        <TableColumn fx:id="columnDisplayName" minWidth="100.0"
-                                                     prefWidth="306.40003204345703"
-                                                     style="-fx-alignment: BASELINE_LEFT;" text="Display Name"/>
-                                        <TableColumn fx:id="columnEmulator" minWidth="10.4000244140625"
-                                                     prefWidth="126.4000244140625" style="-fx-alignment: BASELINE_LEFT;"
-                                                     text="Emulator" visible="false"/>
-                                        <TableColumn fx:id="columnB2S" minWidth="51.199951171875" prefWidth="90.0"
-                                                     style="-fx-alignment: CENTER;" text="DirectB2S"/>
-                                        <TableColumn fx:id="columnPUPPack" minWidth="57.5999755859375" prefWidth="90.0"
-                                                     style="-fx-alignment: CENTER;" text="PUP Pack"/>
-                                        <TableColumn fx:id="columnPOV" minWidth="57.5999755859375" prefWidth="90.0"
-                                                     style="-fx-alignment: CENTER;" text="POV"/>
-                                        <TableColumn fx:id="columnAltSound" minWidth="10.4000244140625" prefWidth="90.0"
-                                                     style="-fx-alignment: CENTER;" text="ALT Sound"/>
-                                        <TableColumn fx:id="columnRom" minWidth="10.4000244140625" prefWidth="140.0"
-                                                     style="-fx-alignment: BASELINE_LEFT;" text="ROM"/>
-                                        <TableColumn fx:id="columnHSType" minWidth="10.4000244140625" prefWidth="130.0"
-                                                     style="-fx-alignment: BASELINE_LEFT;" text="Highscore Type"/>
+                                        <TableColumn fx:id="columnId" minWidth="35.99993896484375" prefWidth="58.399959564208984" style="-fx-alignment: baseline-right;" text="ID" />
+                                        <TableColumn fx:id="columnStatus" minWidth="32.79998779296875" prefWidth="53.5999755859375" style="-fx-alignment: CENTER;" text="Status" />
+                                        <TableColumn fx:id="columnDisplayName" minWidth="100.0" prefWidth="306.40003204345703" style="-fx-alignment: BASELINE_LEFT;" text="Display Name" />
+                                        <TableColumn fx:id="columnEmulator" minWidth="10.4000244140625" prefWidth="126.4000244140625" style="-fx-alignment: BASELINE_LEFT;" text="Emulator" visible="false" />
+                                        <TableColumn fx:id="columnB2S" minWidth="51.199951171875" prefWidth="90.0" style="-fx-alignment: CENTER;" text="DirectB2S" />
+                                        <TableColumn fx:id="columnPUPPack" minWidth="57.5999755859375" prefWidth="90.0" style="-fx-alignment: CENTER;" text="PUP Pack" />
+                                        <TableColumn fx:id="columnPOV" minWidth="57.5999755859375" prefWidth="90.0" style="-fx-alignment: CENTER;" text="POV" />
+                                        <TableColumn fx:id="columnAltSound" minWidth="10.4000244140625" prefWidth="90.0" style="-fx-alignment: CENTER;" text="ALT Sound" />
+                                        <TableColumn fx:id="columnRom" minWidth="10.4000244140625" prefWidth="140.0" style="-fx-alignment: BASELINE_LEFT;" text="ROM" />
+                                        <TableColumn fx:id="columnHSType" minWidth="10.4000244140625" prefWidth="130.0" style="-fx-alignment: BASELINE_LEFT;" text="Highscore Type" />
                                     </columns>
                                 </TableView>
                             </children>
                         </StackPane>
                     </center>
                     <BorderPane.margin>
-                        <Insets/>
+                        <Insets />
                     </BorderPane.margin>
                     <bottom>
                         <BorderPane BorderPane.alignment="CENTER">
                             <BorderPane.margin>
-                                <Insets bottom="12.0"/>
+                                <Insets bottom="12.0" />
                             </BorderPane.margin>
                             <center>
                                 <BorderPane fx:id="validationError">
                                     <left>
                                         <VBox BorderPane.alignment="CENTER">
                                             <BorderPane.margin>
-                                                <Insets bottom="3.0" left="12.0" top="3.0"/>
+                                                <Insets bottom="3.0" left="12.0" top="3.0" />
                                             </BorderPane.margin>
                                             <children>
                                                 <Label fx:id="validationErrorLabel" text="Label" textFill="WHITE">
                                                     <font>
-                                                        <Font name="System Bold" size="14.0"/>
+                                                        <Font name="System Bold" size="14.0" />
                                                     </font>
                                                 </Label>
                                                 <Label fx:id="validationErrorText" text="Label" textFill="WHITE">
                                                     <font>
-                                                        <Font name="System" size="14.0"/>
+                                                        <Font name="System" size="14.0" />
                                                     </font>
                                                 </Label>
                                             </children>
@@ -81,12 +78,12 @@
                                     <right>
                                         <VBox BorderPane.alignment="TOP_RIGHT">
                                             <BorderPane.margin>
-                                                <Insets right="6.0"/>
+                                                <Insets right="6.0" />
                                             </BorderPane.margin>
                                             <children>
                                                 <Hyperlink onAction="#onDismiss" text="Dismiss" textFill="WHITE">
                                                     <font>
-                                                        <Font size="10.0"/>
+                                                        <Font size="10.0" />
                                                     </font>
                                                 </Hyperlink>
                                             </children>
@@ -97,7 +94,7 @@
                             <top>
                                 <Label fx:id="labelTableCount" textFill="WHITE" BorderPane.alignment="TOP_RIGHT">
                                     <BorderPane.margin>
-                                        <Insets bottom="3.0"/>
+                                        <Insets bottom="3.0" />
                                     </BorderPane.margin>
                                 </Label>
                             </top>
@@ -106,127 +103,112 @@
                     <top>
                         <ToolBar prefHeight="40.0" BorderPane.alignment="CENTER">
                             <items>
-                                <TextField fx:id="textfieldSearch" onKeyPressed="#onSearchKeyPressed" prefHeight="30.0"
-                                           prefWidth="215.0" promptText="Table Search...">
+                                <TextField fx:id="textfieldSearch" onKeyPressed="#onSearchKeyPressed" prefHeight="30.0" prefWidth="215.0" promptText="Table Search...">
                                     <font>
-                                        <Font size="14.0"/>
+                                        <Font size="14.0" />
                                     </font>
                                 </TextField>
-                                <Separator orientation="VERTICAL" prefHeight="0.0" prefWidth="0.0"/>
-                                <Button fx:id="reloadBtn" mnemonicParsing="false" onAction="#onReload" text="Reload"
-                                        textFill="WHITE">
+                                <Separator orientation="VERTICAL" prefHeight="0.0" prefWidth="0.0" />
+                                <Button fx:id="reloadBtn" mnemonicParsing="false" onAction="#onReload" text="Reload" textFill="WHITE">
                                     <font>
-                                        <Font size="14.0"/>
+                                        <Font size="14.0" />
                                     </font>
                                     <graphic>
-                                        <FontIcon iconColor="WHITE" iconLiteral="sil-reload"/>
+                                        <FontIcon iconColor="WHITE" iconLiteral="sil-reload" />
                                     </graphic>
                                 </Button>
-                                <Button fx:id="scanBtn" mnemonicParsing="false" onAction="#onTablesScan" text="Scan"
-                                        textFill="WHITE">
+                                <Button fx:id="scanBtn" mnemonicParsing="false" onAction="#onTablesScan" text="Scan" textFill="WHITE">
                                     <font>
-                                        <Font size="14.0"/>
+                                        <Font size="14.0" />
                                     </font>
                                     <graphic>
-                                        <FontIcon iconColor="WHITE" iconLiteral="mdi2m-map-search-outline"/>
+                                        <FontIcon iconColor="WHITE" iconLiteral="mdi2m-map-search-outline" />
                                     </graphic>
                                 </Button>
-                                <Separator orientation="VERTICAL" prefHeight="30.0" prefWidth="12.0"/>
+                                <Separator orientation="VERTICAL" prefHeight="30.0" prefWidth="12.0" />
                                 <MenuButton fx:id="uploadMenuBtn" mnemonicParsing="false" text="Upload">
                                     <items>
-                                        <MenuItem fx:id="uploadTableItem" mnemonicParsing="false"
-                                                  onAction="#onTableUpload" text="Upload VPX Table">
+                                        <MenuItem fx:id="uploadTableItem" mnemonicParsing="false" onAction="#onTableUpload" text="Upload VPX Table">
                                             <graphic>
-                                                <FontIcon iconColor="WHITE" iconLiteral="mdi2u-upload"/>
+                                                <FontIcon iconColor="WHITE" iconLiteral="mdi2u-upload" />
                                             </graphic>
                                         </MenuItem>
-                                        <MenuItem fx:id="uploadRomItem" mnemonicParsing="false" onAction="#onRomUpload"
-                                                  text="Upload ROMs">
+                                        <MenuItem fx:id="uploadRomItem" mnemonicParsing="false" onAction="#onRomUpload" text="Upload ROMs">
                                             <graphic>
-                                                <FontIcon iconColor="WHITE" iconLiteral="mdi2u-upload"/>
+                                                <FontIcon iconColor="WHITE" iconLiteral="mdi2u-upload" />
                                             </graphic>
                                         </MenuItem>
                                     </items>
                                     <font>
-                                        <Font size="14.0"/>
+                                        <Font size="14.0" />
                                     </font>
                                 </MenuButton>
-                                <Separator layoutX="682.0" layoutY="10.0" orientation="VERTICAL" prefHeight="30.0"
-                                           prefWidth="12.0"/>
-                                <Button fx:id="exportBtn" layoutX="596.0" layoutY="11.0" mnemonicParsing="false"
-                                        onAction="#onExport" text="Export" textFill="WHITE">
+                                <Separator layoutX="682.0" layoutY="10.0" orientation="VERTICAL" prefHeight="30.0" prefWidth="12.0" />
+                                <Button fx:id="backupBtn" layoutX="596.0" layoutY="11.0" mnemonicParsing="false" onAction="#onBackup" text="Backup" textFill="WHITE">
                                     <font>
-                                        <Font size="14.0"/>
+                                        <Font size="14.0" />
                                     </font>
                                     <graphic>
-                                        <FontIcon iconColor="WHITE" iconLiteral="mdi2e-export"/>
+                                        <FontIcon iconColor="WHITE" iconLiteral="mdi2e-export" />
                                     </graphic>
                                     <tooltip>
-                                        <Tooltip text="Exports the selected table into the local repository."/>
+                                        <Tooltip text="Exports the selected table into the local repository." />
                                     </tooltip>
                                 </Button>
-                                <Separator layoutX="768.0" layoutY="10.0" orientation="VERTICAL" prefHeight="30.0"
-                                           prefWidth="12.0"/>
-                                <Button fx:id="validateBtn" mnemonicParsing="false" onAction="#onValidate"
-                                        text="Validate" textFill="WHITE">
+                                <Separator layoutX="768.0" layoutY="10.0" orientation="VERTICAL" prefHeight="30.0" prefWidth="12.0" />
+                                <Button fx:id="validateBtn" mnemonicParsing="false" onAction="#onValidate" text="Validate" textFill="WHITE">
                                     <font>
-                                        <Font size="14.0"/>
+                                        <Font size="14.0" />
                                     </font>
                                     <graphic>
-                                        <FontIcon iconColor="WHITE" iconLiteral="sil-magnifier"/>
+                                        <FontIcon iconColor="WHITE" iconLiteral="sil-magnifier" />
                                     </graphic>
                                     <tooltip>
-                                        <Tooltip
-                                                text="Resets the dismissed validations and revalidates the table configuration."/>
+                                        <Tooltip text="Resets the dismissed validations and revalidates the table configuration." />
                                     </tooltip>
                                 </Button>
-                                <Separator layoutX="938.0" layoutY="10.0" orientation="VERTICAL" prefHeight="30.0"
-                                           prefWidth="12.0"/>
-                                <Button fx:id="playBtn" layoutX="703.0" layoutY="11.0" mnemonicParsing="false"
-                                        onAction="#onPlay" text="Play" textFill="WHITE">
+                                <Separator layoutX="938.0" layoutY="10.0" orientation="VERTICAL" prefHeight="30.0" prefWidth="12.0" />
+                                <Button fx:id="playBtn" layoutX="703.0" layoutY="11.0" mnemonicParsing="false" onAction="#onPlay" text="Play" textFill="WHITE">
                                     <font>
-                                        <Font size="14.0"/>
+                                        <Font size="14.0" />
                                     </font>
                                     <graphic>
-                                        <FontIcon iconColor="WHITE" iconLiteral="mdi2p-play"/>
+                                        <FontIcon iconColor="WHITE" iconLiteral="mdi2p-play" />
                                     </graphic>
                                     <tooltip>
-                                        <Tooltip text="Open the table script for the selected table."/>
+                                        <Tooltip text="Open the table script for the selected table." />
                                     </tooltip>
                                 </Button>
-                                <Button fx:id="stopBtn" layoutX="700.0" layoutY="11.0" mnemonicParsing="false"
-                                        onAction="#onStop" text="Stop" textFill="WHITE">
+                                <Button fx:id="stopBtn" layoutX="700.0" layoutY="11.0" mnemonicParsing="false" onAction="#onStop" text="Stop" textFill="WHITE">
                                     <font>
-                                        <Font size="14.0"/>
+                                        <Font size="14.0" />
                                     </font>
                                     <graphic>
-                                        <FontIcon iconColor="WHITE" iconLiteral="mdi2s-stop"/>
+                                        <FontIcon iconColor="WHITE" iconLiteral="mdi2s-stop" />
                                     </graphic>
                                     <tooltip>
-                                        <Tooltip text="Open the table script for the selected table."/>
+                                        <Tooltip text="Open the table script for the selected table." />
                                     </tooltip>
                                 </Button>
-                                <Separator layoutX="788.0" layoutY="10.0" orientation="VERTICAL" prefHeight="30.0"
-                                           prefWidth="12.0"/>
-                                <Button fx:id="deleteBtn" mnemonicParsing="false" onAction="#onDelete" text="Delete"
-                                        textFill="#ff3333">
+                                <Separator layoutX="788.0" layoutY="10.0" orientation="VERTICAL" prefHeight="30.0" prefWidth="12.0" />
+                                <Button fx:id="deleteBtn" mnemonicParsing="false" onAction="#onDelete" text="Delete" textFill="#ff3333">
                                     <font>
-                                        <Font size="14.0"/>
+                                        <Font size="14.0" />
                                     </font>
                                     <graphic>
-                                        <FontIcon iconColor="#ff3333" iconLiteral="mdi2d-delete-outline" text="󰧧"/>
+                                        <FontIcon iconColor="#ff3333" iconLiteral="mdi2d-delete-outline" text="󰧧" />
                                     </graphic>
                                 </Button>
                             </items>
                             <BorderPane.margin>
-                                <Insets/>
+                                <Insets />
                             </BorderPane.margin>
                         </ToolBar>
                     </top>
                 </BorderPane>
             </center>
             <BorderPane.margin>
-                <Insets right="12.0"/>
+                <Insets right="12.0" />
             </BorderPane.margin>
         </BorderPane>
     </center>

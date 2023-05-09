@@ -2,7 +2,7 @@ package de.mephisto.vpin.server.io;
 
 import de.mephisto.vpin.restclient.ExportDescriptor;
 import de.mephisto.vpin.restclient.VpaImportDescriptor;
-import de.mephisto.vpin.restclient.VpaManifest;
+import de.mephisto.vpin.restclient.TableManifest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,7 +29,7 @@ public class IOResource {
   }
 
   @GetMapping("/manifest/{id}")
-  public VpaManifest getManifest(@PathVariable("id") int id) {
+  public TableManifest getManifest(@PathVariable("id") int id) {
     return ioService.getManifest(id);
   }
 

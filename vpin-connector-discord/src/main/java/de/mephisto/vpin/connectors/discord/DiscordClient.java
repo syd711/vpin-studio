@@ -298,6 +298,7 @@ public class DiscordClient {
                 long epochMilli = botMessage.getTimeCreated().toInstant().toEpochMilli();
                 Date createdAt = new Date(epochMilli);
 
+                message.setId(botMessage.getIdLong());
                 message.setMember(discordMember);
                 message.setCreatedAt(createdAt);
                 message.setRaw(botMessage.getContentRaw());

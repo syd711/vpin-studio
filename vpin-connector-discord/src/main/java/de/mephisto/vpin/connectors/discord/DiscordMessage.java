@@ -10,6 +10,14 @@ public class DiscordMessage {
   private Date createdAt;
   private long serverId;
 
+  public long getId() {
+    return id;
+  }
+
+  public void setId(long id) {
+    this.id = id;
+  }
+
   public String getEmbedDescription() {
     return embedDescription;
   }

@@ -1,9 +1,8 @@
-package de.mephisto.vpin.server.vpa;
+package de.mephisto.vpin.server.backup;
 
 import de.mephisto.vpin.restclient.representations.VpaDescriptorRepresentation;
 import de.mephisto.vpin.restclient.representations.VpaSourceRepresentation;
 import de.mephisto.vpin.server.system.SystemService;
-import de.mephisto.vpin.server.util.UploadUtil;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,7 +12,6 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
 import javax.servlet.http.HttpServletResponse;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -53,10 +51,11 @@ public class VpaResource {
   public List<VpaDescriptorRepresentation> getFilteredArchives() {
     List<VpaDescriptor> vpaDescriptors = vpaService.getVpaDescriptors();
     Map<String, VpaDescriptorRepresentation> result = new HashMap<>();
-    for (VpaDescriptor vpaDescriptor : vpaDescriptors) {
-      VpaDescriptorRepresentation descriptorRepresentation = toRepresentation(vpaDescriptor);
-      result.put(vpaDescriptor.getManifest().getUuid(), descriptorRepresentation);
-    }
+    //TODO
+//    for (VpaDescriptor vpaDescriptor : vpaDescriptors) {
+//      VpaDescriptorRepresentation descriptorRepresentation = toRepresentation(vpaDescriptor);
+//      result.put(vpaDescriptor.getManifest().getUuid(), descriptorRepresentation);
+//    }
     return new ArrayList<>(result.values());
   }
 
@@ -126,14 +125,14 @@ public class VpaResource {
         LOG.error("VPA upload request did not contain a file object.");
         return null;
       }
-
-      VpaSourceAdapterFileSystem vpaSourceAdapter = (VpaSourceAdapterFileSystem) vpaService.getVpaSourceAdapter(repositoryId);
-      File out = new File(vpaSourceAdapter.getFolder(), file.getOriginalFilename());
-      if (UploadUtil.upload(file, out)) {
-        vpaService.invalidateCache(repositoryId);
-        VpaDescriptor vpaDescriptor = vpaService.getVpaDescriptor(out);
-        return vpaDescriptor.getManifest().getUuid();
-      }
+//TODO
+//      VpaSourceAdapterFileSystem vpaSourceAdapter = (VpaSourceAdapterFileSystem) vpaService.getVpaSourceAdapter(repositoryId);
+//      File out = new File(vpaSourceAdapter.getFolder(), file.getOriginalFilename());
+//      if (UploadUtil.upload(file, out)) {
+//        vpaService.invalidateCache(repositoryId);
+//        VpaDescriptor vpaDescriptor = vpaService.getVpaDescriptor(out);
+//        return vpaDescriptor.getManifest().getUuid();
+//      }
       return null;
     } catch (Exception e) {
       throw new ResponseStatusException(INTERNAL_SERVER_ERROR, "VPA upload failed: " + e.getMessage());

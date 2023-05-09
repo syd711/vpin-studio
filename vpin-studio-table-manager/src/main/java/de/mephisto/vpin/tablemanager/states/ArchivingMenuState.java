@@ -2,7 +2,7 @@ package de.mephisto.vpin.tablemanager.states;
 
 import de.mephisto.vpin.restclient.ExportDescriptor;
 import de.mephisto.vpin.restclient.VPinStudioClient;
-import de.mephisto.vpin.restclient.VpaManifest;
+import de.mephisto.vpin.restclient.TableManifest;
 import de.mephisto.vpin.restclient.representations.GameRepresentation;
 import de.mephisto.vpin.tablemanager.Menu;
 import de.mephisto.vpin.tablemanager.MenuController;
@@ -55,7 +55,7 @@ public class ArchivingMenuState extends MenuState {
     });
     new Thread(() -> {
       GameRepresentation game = this.menuController.getGameSelection();
-      VpaManifest manifest = Menu.client.getVpaManifest(game.getId());
+      TableManifest manifest = Menu.client.getVpaManifest(game.getId());
 
       ExportDescriptor descriptor = new ExportDescriptor();
       descriptor.setManifest(manifest);

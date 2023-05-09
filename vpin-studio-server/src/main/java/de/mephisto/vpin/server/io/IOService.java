@@ -9,10 +9,9 @@ import de.mephisto.vpin.server.highscores.HighscoreService;
 import de.mephisto.vpin.server.highscores.HighscoreVersion;
 import de.mephisto.vpin.server.highscores.cards.CardService;
 import de.mephisto.vpin.server.jobs.JobQueue;
-import de.mephisto.vpin.server.popper.GameMediaItem;
 import de.mephisto.vpin.server.popper.PinUPConnector;
 import de.mephisto.vpin.server.system.SystemService;
-import de.mephisto.vpin.server.vpa.*;
+import de.mephisto.vpin.server.backup.*;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,7 +21,6 @@ import org.springframework.stereotype.Service;
 import java.io.File;
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 
 @Service
 public class IOService {
@@ -85,7 +83,7 @@ public class IOService {
 
     //single export
     if (gameIds.size() == 1) {
-      VpaManifest manifest = exportDescriptor.getManifest();
+      TableManifest manifest = exportDescriptor.getManifest();
       Game game = gameService.getGame(gameIds.get(0));
       if (game != null) {
         return exportVpa(game, manifest, exportDescriptor, targetFolder);
@@ -95,7 +93,7 @@ public class IOService {
       //multi export
       boolean result = true;
       for (Integer gameId : gameIds) {
-        VpaManifest manifest = getManifest(gameId);
+        TableManifest manifest = getManifest(gameId);
         Game game = gameService.getGame(gameId);
         if (game != null) {
           if (!exportVpa(game, manifest, exportDescriptor, targetFolder)) {
@@ -108,31 +106,31 @@ public class IOService {
     return false;
   }
 
-  private boolean exportVpa(@NonNull Game game, @NonNull VpaManifest manifest, @NonNull ExportDescriptor exportDescriptor, @NonNull File targetFolder) {
+  private boolean exportVpa(@NonNull Game game, @NonNull TableManifest manifest, @NonNull ExportDescriptor exportDescriptor, @NonNull File targetFolder) {
     List<HighscoreVersion> versions = highscoreService.getAllHighscoreVersions(game.getId());
     Optional<Highscore> highscore = highscoreService.getOrCreateHighscore(game);
     File vpRegFile = systemService.getVPRegFile();
     VpaSourceAdapter defaultVpaSourceAdapter = vpaService.getDefaultVpaSourceAdapter();
-
-    String uuid = UUID.randomUUID().toString();
-    manifest.setUuid(uuid);
-
-    JobDescriptor descriptor = new JobDescriptor(JobType.VPA_EXPORT, uuid);
-    descriptor.setTitle("Export of \"" + game.getGameDisplayName() + "\"");
-    descriptor.setDescription("Exporting table archive for \"" + manifest.getGameDisplayName() + "\"");
-    descriptor.setJob(new VpaExporterJob(pinUPConnector, vpRegFile, systemService.getVPXMusicFolder(), game, exportDescriptor, manifest, highscore, versions, defaultVpaSourceAdapter, targetFolder, systemService.getVersion()));
-
-    GameMediaItem mediaItem = game.getGameMedia().get(PopperScreen.Wheel);
-    if (mediaItem != null) {
-      descriptor.setImageUrl(mediaItem.getUri());
-    }
-
-    JobQueue.getInstance().offer(descriptor);
+    //TODO
+//    String uuid = UUID.randomUUID().toString();
+//    manifest.setUuid(uuid);
+//
+//    JobDescriptor descriptor = new JobDescriptor(JobType.VPA_EXPORT, uuid);
+//    descriptor.setTitle("Export of \"" + game.getGameDisplayName() + "\"");
+//    descriptor.setDescription("Exporting table archive for \"" + manifest.getGameDisplayName() + "\"");
+//    descriptor.setJob(new VpaExporterJob(pinUPConnector, vpRegFile, systemService.getVPXMusicFolder(), game, exportDescriptor, manifest, highscore, versions, defaultVpaSourceAdapter, targetFolder, systemService.getVersion()));
+//
+//    GameMediaItem mediaItem = game.getGameMedia().get(PopperScreen.Wheel);
+//    if (mediaItem != null) {
+//      descriptor.setImageUrl(mediaItem.getUri());
+//    }
+//
+//    JobQueue.getInstance().offer(descriptor);
     LOG.info("Offered export job for '" + game.getGameDisplayName() + "'");
     return true;
   }
 
-  public VpaManifest getManifest(int id) {
+  public TableManifest getManifest(int id) {
     return pinUPConnector.getGameManifest(id);
   }
 

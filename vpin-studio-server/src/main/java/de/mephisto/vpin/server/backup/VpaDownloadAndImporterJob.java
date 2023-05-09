@@ -1,4 +1,4 @@
-package de.mephisto.vpin.server.vpa;
+package de.mephisto.vpin.server.backup;
 
 import de.mephisto.vpin.restclient.VpaImportDescriptor;
 import de.mephisto.vpin.server.games.GameService;

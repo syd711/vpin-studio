@@ -4,7 +4,7 @@ import de.mephisto.vpin.commons.fx.DialogController;
 import de.mephisto.vpin.commons.fx.OverlayWindowFX;
 import de.mephisto.vpin.restclient.ExportDescriptor;
 import de.mephisto.vpin.restclient.PopperScreen;
-import de.mephisto.vpin.restclient.VpaManifest;
+import de.mephisto.vpin.restclient.TableManifest;
 import de.mephisto.vpin.restclient.representations.GameMediaItemRepresentation;
 import de.mephisto.vpin.restclient.representations.GameMediaRepresentation;
 import de.mephisto.vpin.restclient.representations.GameRepresentation;
@@ -23,7 +23,7 @@ import java.io.ByteArrayInputStream;
 import java.net.URL;
 import java.util.ResourceBundle;
 
-public class TableExportController implements Initializable, DialogController {
+public class TableBackupController implements Initializable, DialogController {
 
   @FXML
   private Label titleLabel;
@@ -107,7 +107,7 @@ public class TableExportController implements Initializable, DialogController {
   private TextField notes;
 
   private GameRepresentation game;
-  private VpaManifest manifest;
+  private TableManifest manifest;
 
   @FXML
   private void onExportClick(ActionEvent e) throws Exception {

@@ -2,10 +2,7 @@ package de.mephisto.vpin.ui.tables;
 
 import de.mephisto.vpin.commons.utils.FileUtils;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
-import de.mephisto.vpin.restclient.PopperScreen;
 import de.mephisto.vpin.restclient.VPinStudioClient;
-import de.mephisto.vpin.restclient.representations.GameMediaItemRepresentation;
-import de.mephisto.vpin.restclient.representations.GameMediaRepresentation;
 import de.mephisto.vpin.restclient.representations.GameRepresentation;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.tables.dialogs.ScriptDownloadProgressModel;
@@ -28,11 +25,8 @@ import java.text.DateFormat;
 import java.util.Optional;
 import java.util.ResourceBundle;
 
-public class TablesSidebarMetadataController implements Initializable {
-  private final static Logger LOG = LoggerFactory.getLogger(TablesSidebarMetadataController.class);
-
-  @FXML
-  private Label labelId;
+public class TablesSidebarScriptDataController implements Initializable {
+  private final static Logger LOG = LoggerFactory.getLogger(TablesSidebarScriptDataController.class);
 
   @FXML
   private Label labelRom;
@@ -49,11 +43,6 @@ public class TablesSidebarMetadataController implements Initializable {
   @FXML
   private Label labelFilesize;
 
-  @FXML
-  private Label labelLastPlayed;
-
-  @FXML
-  private Label labelTimesPlayed;
 
   @FXML
   private Label labelHSFilename;
@@ -86,7 +75,7 @@ public class TablesSidebarMetadataController implements Initializable {
   private TablesSidebarController tablesSidebarController;
 
   // Add a public no-args constructor
-  public TablesSidebarMetadataController() {
+  public TablesSidebarScriptDataController() {
   }
 
   @Override
@@ -199,7 +188,6 @@ public class TablesSidebarMetadataController implements Initializable {
       editTableNameBtn.setDisable(!game.getEmulator().isVisualPinball());
       romUploadBtn.setDisable(!game.getEmulator().isVisualPinball());
 
-      labelId.setText(String.valueOf(game.getId()));
       labelRom.setText(game.getOriginalRom() != null ? game.getOriginalRom() : game.getRom());
       labelRomAlias.setText(game.getOriginalRom() != null ? game.getRom() : "-");
       labelNVOffset.setText(game.getNvOffset() > 0 ? String.valueOf(game.getNvOffset()) : "-");
@@ -207,8 +195,6 @@ public class TablesSidebarMetadataController implements Initializable {
       labelFilesize.setText(FileUtils.readableFileSize(game.getGameFileSize()));
       labelTableName.setText(game.getTableName() != null ? game.getTableName() : "-");
       labelLastModified.setText(game.getModified() != null ? DateFormat.getDateTimeInstance().format(game.getModified()) : "-");
-      labelLastPlayed.setText(game.getLastPlayed() != null ? DateFormat.getDateTimeInstance().format(game.getLastPlayed()) : "-");
-      labelTimesPlayed.setText(String.valueOf(game.getNumberPlays()));
       if (!StringUtils.isEmpty(game.getHsFileName())) {
         labelHSFilename.setText(game.getHsFileName());
       }
@@ -217,15 +203,12 @@ public class TablesSidebarMetadataController implements Initializable {
       }
     }
     else {
-      labelId.setText("-");
       labelRom.setText("-");
       labelRomAlias.setText("-");
       labelNVOffset.setText("-");
       labelFilename.setText("-");
       labelLastModified.setText("-");
-      labelLastPlayed.setText("-");
       labelTableName.setText("-");
-      labelTimesPlayed.setText("-");
       labelHSFilename.setText("-");
     }
   }

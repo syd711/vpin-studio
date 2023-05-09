@@ -1,6 +1,6 @@
-package de.mephisto.vpin.server.vpa;
+package de.mephisto.vpin.server.backup;
 
-import de.mephisto.vpin.restclient.VpaManifest;
+import de.mephisto.vpin.restclient.TableManifest;
 import de.mephisto.vpin.restclient.util.PasswordUtil;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -79,11 +79,12 @@ public class VpaSourceAdapterHttpServer implements VpaSourceAdapter {
         in.close();
 
         String json = jsonBuffer.toString();
-        List<VpaManifest> vpaManifests = VpaUtil.readManifests(json);
-        for (VpaManifest manifest : vpaManifests) {
-          VpaDescriptor descriptor = new VpaDescriptor(source, manifest, new Date(), manifest.getVpaFilename(), 0);
-          cache.put(manifest.getUuid(), descriptor);
-        }
+        List<TableManifest> vpaManifests = VpaUtil.readManifests(json);
+        //TODO
+//        for (TableManifest manifest : vpaManifests) {
+//          VpaDescriptor descriptor = new VpaDescriptor(source, manifest, new Date(), manifest.getVpaFilename(), 0);
+//          cache.put(manifest.getUuid(), descriptor);
+//        }
         LOG.info("Reading of " + location + " finshed, took " + (System.currentTimeMillis() - start) + "ms.");
       } catch (FileNotFoundException e) {
         LOG.error("No descriptor found for " + location + " (" + e.getMessage() + ")");
@@ -114,8 +115,9 @@ public class VpaSourceAdapterHttpServer implements VpaSourceAdapter {
       location += "/";
     }
 
-    String name = descriptor.getManifest().getVpaFilename();
-    location += URLEncoder.encode(name, StandardCharsets.UTF_8).replace("+", "%20");
+    //TODO
+//    String name = descriptor.getManifest().getVpaFilename();
+//    location += URLEncoder.encode(name, StandardCharsets.UTF_8).replace("+", "%20");
 
     HttpURLConnection conn = getConnection(location);
     return new BufferedInputStream(conn.getInputStream());

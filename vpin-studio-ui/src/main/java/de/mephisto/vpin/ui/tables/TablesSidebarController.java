@@ -71,7 +71,7 @@ public class TablesSidebarController implements Initializable {
   private TablesSidebarMediaController tablesSidebarMediaController; //fxml magic! Not unused
 
   @FXML
-  private TablesSidebarMetadataController tablesSidebarMetadataController; //fxml magic! Not unused
+  private TablesSidebarScriptDataController tablesSidebarMetadataController; //fxml magic! Not unused
 
   @FXML
   private TablesSidebarPovController tablesSidebarPovController; //fxml magic! Not unused
@@ -139,7 +139,7 @@ public class TablesSidebarController implements Initializable {
     }
 
     try {
-      FXMLLoader loader = new FXMLLoader(TablesSidebarMetadataController.class.getResource("scene-tables-sidebar-metadata.fxml"));
+      FXMLLoader loader = new FXMLLoader(TablesSidebarScriptDataController.class.getResource("scene-tables-sidebar-scriptdata.fxml"));
       Parent tablesRoot = loader.load();
       tablesSidebarMetadataController = loader.getController();
       tablesSidebarMetadataController.setSidebarController(this);
@@ -312,7 +312,7 @@ public class TablesSidebarController implements Initializable {
     return tablesSidebarMediaController;
   }
 
-  public TablesSidebarMetadataController getTablesSidebarMetadataController() {
+  public TablesSidebarScriptDataController getTablesSidebarMetadataController() {
     return tablesSidebarMetadataController;
   }
 

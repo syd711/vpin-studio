@@ -5,7 +5,7 @@ import java.util.List;
 
 public class ExportDescriptor {
   private List<Integer> gameIds = new ArrayList<>();
-  private VpaManifest manifest;
+  private TableManifest manifest;
   private long repositoryId = -1;
   private boolean exportRom = true;
   private boolean exportPupPack = true;
@@ -45,11 +45,11 @@ public class ExportDescriptor {
     this.gameIds = gameIds;
   }
 
-  public VpaManifest getManifest() {
+  public TableManifest getManifest() {
     return manifest;
   }
 
-  public void setManifest(VpaManifest manifest) {
+  public void setManifest(TableManifest manifest) {
     this.manifest = manifest;
   }
 

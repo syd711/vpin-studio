@@ -49,8 +49,9 @@ public class VpaImportProgressModel extends ProgressModel<VpaDescriptorRepresent
   @Override
   public void processNext(ProgressResultModel progressResultModel, VpaDescriptorRepresentation next) {
     try {
-      descriptor.setUuid(next.getManifest().getUuid());
-      Studio.client.importVpa(descriptor);
+      //TODO
+//      descriptor.setUuid(next.getManifest().getUuid());
+//      Studio.client.importVpa(descriptor);
 
       progressResultModel.addProcessed();
       percentage++;

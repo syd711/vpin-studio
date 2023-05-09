@@ -1,12 +1,12 @@
 package de.mephisto.vpin.restclient.representations;
 
-import de.mephisto.vpin.restclient.VpaManifest;
+import de.mephisto.vpin.restclient.TableManifest;
 
 import java.util.Date;
 import java.util.Objects;
 
 public class VpaDescriptorRepresentation {
-  private VpaManifest manifest;
+  private TableManifest manifest;
   private VpaSourceRepresentation source;
   private Date createdAt;
   private String filename;
@@ -36,11 +36,11 @@ public class VpaDescriptorRepresentation {
     this.createdAt = createdAt;
   }
 
-  public VpaManifest getManifest() {
+  public TableManifest getManifest() {
     return manifest;
   }
 
-  public void setManifest(VpaManifest manifest) {
+  public void setManifest(TableManifest manifest) {
     this.manifest = manifest;
   }
 

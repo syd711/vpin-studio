@@ -60,7 +60,7 @@ public class CompetitionChangeListenerImpl implements InitializingBean, Competit
         long botId = discordService.getBotId();
 
         if (isOwner) {
-          String base64Data = "Data: " + CompetitionDataHelper.toBase64(competition, game);
+          String base64Data = CompetitionDataHelper.DATA_INDICATOR + CompetitionDataHelper.toBase64(competition, game);
           byte[] image = assetService.getCompetitionBackgroundFor(competition);
           String message = DiscordChannelMessageFactory.createDiscordCompetitionCreatedMessage(botId, competition.getUuid());
 

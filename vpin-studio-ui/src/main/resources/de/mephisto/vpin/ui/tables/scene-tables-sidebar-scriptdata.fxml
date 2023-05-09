@@ -14,7 +14,7 @@
 <?import javafx.scene.text.Font?>
 <?import org.kordamp.ikonli.javafx.FontIcon?>
 
-<BorderPane fx:id="defaultBackgroundBorderPane" styleClass="accordion-container" stylesheets="@../stylesheet.css" BorderPane.alignment="CENTER" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.tables.TablesSidebarMetadataController">
+<BorderPane fx:id="defaultBackgroundBorderPane" styleClass="accordion-container" stylesheets="@../stylesheet.css" BorderPane.alignment="CENTER" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.tables.TablesSidebarScriptDataController">
     <padding>
         <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
     </padding>
@@ -35,83 +35,50 @@
                         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="ALWAYS" />
                     </rowConstraints>
                     <children>
-                        <Label text="Table Filename:" textFill="WHITE" GridPane.rowIndex="1">
+                        <Label text="Table Filename:" textFill="WHITE">
                             <font>
                                 <Font name="System Bold" size="14.0" />
                             </font>
                         </Label>
-                        <Label layoutX="10.0" layoutY="31.0" text="Rom Name:" textFill="WHITE" GridPane.rowIndex="4">
+                        <Label layoutX="10.0" layoutY="31.0" text="Rom Name:" textFill="WHITE" GridPane.rowIndex="3">
                             <font>
                                 <Font name="System Bold" size="14.0" />
                             </font>
                         </Label>
-                        <Label layoutX="10.0" layoutY="45.0" text="NVOffset:" textFill="WHITE" GridPane.rowIndex="7">
+                        <Label layoutX="10.0" layoutY="45.0" text="NVOffset:" textFill="WHITE" GridPane.rowIndex="6">
                             <font>
                                 <Font name="System Bold" size="14.0" />
                             </font>
                         </Label>
-                        <Label layoutX="10.0" layoutY="76.0" text="Times Played:" textFill="WHITE" GridPane.rowIndex="9">
+                        <Label fx:id="labelFilename" layoutX="130.0" layoutY="12.0" text="-" textFill="WHITE" GridPane.columnIndex="1">
+                            <font>
+                                <Font size="14.0" />
+                            </font>
+                        </Label>
+                        <Label fx:id="labelRom" layoutX="130.0" layoutY="38.0" text="-" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="3">
+                            <font>
+                                <Font size="14.0" />
+                            </font>
+                        </Label>
+                        <Label layoutX="10.0" layoutY="56.0" text="Rom Alias:" textFill="WHITE" GridPane.rowIndex="4">
                             <font>
                                 <Font name="System Bold" size="14.0" />
                             </font>
                         </Label>
-                        <Label layoutX="10.0" layoutY="103.0" text="Last Played" textFill="WHITE" GridPane.rowIndex="8">
-                            <font>
-                                <Font name="System Bold" size="14.0" />
-                            </font>
-                        </Label>
-                        <Label layoutX="10.0" layoutY="38.0" text="ID:" textFill="WHITE">
-                            <font>
-                                <Font name="System Bold" size="14.0" />
-                            </font>
-                        </Label>
-                        <Label fx:id="labelId" textFill="WHITE" GridPane.columnIndex="1">
+                        <Label fx:id="labelRomAlias" layoutX="130.0" layoutY="56.0" text="-" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="4">
                             <font>
                                 <Font size="14.0" />
                             </font>
                         </Label>
-                        <Label fx:id="labelFilename" layoutX="130.0" layoutY="12.0" text="-" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                        <Label fx:id="labelNVOffset" layoutX="130.0" layoutY="78.0" text="-" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="6">
                             <font>
                                 <Font size="14.0" />
                             </font>
                         </Label>
-                        <Label fx:id="labelRom" layoutX="130.0" layoutY="38.0" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="4">
-                            <font>
-                                <Font size="14.0" />
-                            </font>
-                        </Label>
-                        <Label layoutX="10.0" layoutY="56.0" text="Rom Alias:" textFill="WHITE" GridPane.rowIndex="5">
-                            <font>
-                                <Font name="System Bold" size="14.0" />
-                            </font>
-                        </Label>
-                        <Label fx:id="labelRomAlias" layoutX="130.0" layoutY="56.0" text="-" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="5">
-                            <font>
-                                <Font size="14.0" />
-                            </font>
-                        </Label>
-                        <Label fx:id="labelNVOffset" layoutX="130.0" layoutY="78.0" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="7">
-                            <font>
-                                <Font size="14.0" />
-                            </font>
-                        </Label>
-                        <Label fx:id="labelLastPlayed" layoutX="130.0" layoutY="101.0" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="8">
-                            <font>
-                                <Font size="14.0" />
-                            </font>
-                        </Label>
-                        <Label fx:id="labelTimesPlayed" layoutX="130.0" layoutY="124.0" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="9">
-                            <font>
-                                <Font size="14.0" />
-                            </font>
-                        </Label>
-                        <HBox alignment="CENTER_RIGHT" spacing="6.0" GridPane.columnIndex="2" GridPane.rowIndex="4">
+                        <HBox alignment="CENTER_RIGHT" spacing="6.0" GridPane.columnIndex="2" GridPane.rowIndex="3">
                             <children>
                                 <Button fx:id="editRomNameBtn" mnemonicParsing="false" onAction="#onRomEdit">
                                     <graphic>
@@ -142,12 +109,12 @@
                                 </Label>
                             </children>
                         </HBox>
-                        <Label layoutX="10.0" layoutY="198.0" text="EM Highscore Filename:" textFill="WHITE" GridPane.rowIndex="10">
+                        <Label layoutX="10.0" layoutY="198.0" text="EM Highscore Filename:" textFill="WHITE" GridPane.rowIndex="7">
                             <font>
                                 <Font name="System Bold" size="14.0" />
                             </font>
                         </Label>
-                        <HBox alignment="CENTER_RIGHT" spacing="6.0" GridPane.columnIndex="2" GridPane.rowIndex="10">
+                        <HBox alignment="CENTER_RIGHT" spacing="6.0" GridPane.columnIndex="2" GridPane.rowIndex="7">
                             <children>
                                 <Button fx:id="editHsFileNameBtn" mnemonicParsing="false" onAction="#onHsFileNameEdit">
                                     <graphic>
@@ -170,22 +137,22 @@
                                 </Label>
                             </children>
                         </HBox>
-                        <Label fx:id="labelHSFilename" text="-" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="10">
+                        <Label fx:id="labelHSFilename" text="-" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="7">
                             <font>
                                 <Font size="14.0" />
                             </font>
                         </Label>
-                        <Label layoutX="10.0" layoutY="110.0" text="Tablename:" textFill="WHITE" GridPane.rowIndex="6">
+                        <Label layoutX="10.0" layoutY="110.0" text="Tablename:" textFill="WHITE" GridPane.rowIndex="5">
                             <font>
                                 <Font name="System Bold" size="14.0" />
                             </font>
                         </Label>
-                        <Label fx:id="labelTableName" layoutX="188.0" layoutY="110.0" text="-" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="6">
+                        <Label fx:id="labelTableName" layoutX="188.0" layoutY="110.0" text="-" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="5">
                             <font>
                                 <Font size="14.0" />
                             </font>
                         </Label>
-                        <HBox alignment="CENTER_RIGHT" spacing="6.0" GridPane.columnIndex="2" GridPane.rowIndex="6">
+                        <HBox alignment="CENTER_RIGHT" spacing="6.0" GridPane.columnIndex="2" GridPane.rowIndex="5">
                             <children>
                                 <Button fx:id="editTableNameBtn" mnemonicParsing="false" onAction="#onTableNameEdit">
                                     <graphic>
@@ -208,22 +175,22 @@
                                 </Label>
                             </children>
                         </HBox>
-                        <Label layoutX="10.0" layoutY="45.0" text="Last Modified:" textFill="WHITE" GridPane.rowIndex="3">
+                        <Label layoutX="10.0" layoutY="45.0" text="Last Modified:" textFill="WHITE" GridPane.rowIndex="2">
                             <font>
                                 <Font name="System Bold" size="14.0" />
                             </font>
                         </Label>
-                        <Label fx:id="labelLastModified" layoutX="188.0" layoutY="45.0" text="-" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="3">
+                        <Label fx:id="labelLastModified" layoutX="188.0" layoutY="45.0" text="-" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="2">
                             <font>
                                 <Font size="14.0" />
                             </font>
                         </Label>
-                        <Label layoutX="10.0" layoutY="45.0" text="File Size:" textFill="WHITE" GridPane.rowIndex="2">
+                        <Label layoutX="10.0" layoutY="45.0" text="File Size:" textFill="WHITE" GridPane.rowIndex="1">
                             <font>
                                 <Font name="System Bold" size="14.0" />
                             </font>
                         </Label>
-                        <Label fx:id="labelFilesize" layoutX="187.0" layoutY="45.0" text="-" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                        <Label fx:id="labelFilesize" layoutX="187.0" layoutY="45.0" text="-" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="1">
                             <font>
                                 <Font size="14.0" />
                             </font>

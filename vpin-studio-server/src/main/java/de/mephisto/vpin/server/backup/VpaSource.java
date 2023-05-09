@@ -1,12 +1,9 @@
-package de.mephisto.vpin.server.vpa;
+package de.mephisto.vpin.server.backup;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import de.mephisto.vpin.commons.VpaSourceType;
 
 import javax.persistence.*;
-import java.io.File;
 import java.util.Date;
-import java.util.List;
 
 @Entity
 @Table(name = "VpaSources")

@@ -73,7 +73,8 @@ public class VpaDownloadDialogController implements Initializable, DialogControl
       for (VpaDescriptorRepresentation selectedItem : vpas) {
         if (downloadToRepository.isSelected()) {
           VpaImportDescriptor descriptor = new VpaImportDescriptor();
-          descriptor.setUuid(selectedItem.getManifest().getUuid());
+          //TODO
+//          descriptor.setUuid(selectedItem.getManifest().getUuid());
           descriptor.setVpaSourceId(selectedItem.getSource().getId());
           descriptor.setInstall(false);
           client.importVpa(descriptor);
@@ -90,12 +91,12 @@ public class VpaDownloadDialogController implements Initializable, DialogControl
           }
 
           long repositoryId = selectedItem.getSource().getId();
-          String uuid = selectedItem.getManifest().getUuid();
-
-          DownloadJobDescriptor job = new DownloadJobDescriptor("/vpa/download/file/" + repositoryId + "/" + uuid, target, uuid);
-          job.setTitle("Download of \"" + selectedItem.getManifest().getGameDisplayName() + "\"");
-          job.setDescription("Downloading file \"" + selectedItem.getFilename() + "\"");
-          JobPoller.getInstance().queueJob(job);
+//          String uuid = selectedItem.getManifest().getUuid();
+//
+//          DownloadJobDescriptor job = new DownloadJobDescriptor("/vpa/download/file/" + repositoryId + "/" + uuid, target, uuid);
+//          job.setTitle("Download of \"" + selectedItem.getManifest().getGameDisplayName() + "\"");
+//          job.setDescription("Downloading file \"" + selectedItem.getFilename() + "\"");
+//          JobPoller.getInstance().queueJob(job);
         }
       }
     } catch (Exception e) {

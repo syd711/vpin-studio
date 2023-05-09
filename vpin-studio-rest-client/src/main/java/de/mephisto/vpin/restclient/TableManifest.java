@@ -1,9 +1,9 @@
 package de.mephisto.vpin.restclient;
 
-import java.util.HashMap;
-import java.util.Map;
+public class TableManifest {
+  //only metadata
+  private int gameId;
 
-public class VpaManifest {
   private String emulatorType;
   private String gameName;
   private String gameFileName;
@@ -28,88 +28,12 @@ public class VpaManifest {
   private String url;
   private String designedBy;
 
-  private String uuid;
-  private String tableName;
-  private String icon;
-  private String thumbnail;
-  private String vpaFilename;
-  private long vpaFileSize;
-  private String vpaVersion;
-
-  public long getVpaFileSize() {
-    return vpaFileSize;
+  public int getGameId() {
+    return gameId;
   }
 
-  public void setVpaFileSize(long vpaFileSize) {
-    this.vpaFileSize = vpaFileSize;
-  }
-
-  public String getVpaVersion() {
-    return vpaVersion;
-  }
-
-  public void setVpaVersion(String vpaVersion) {
-    this.vpaVersion = vpaVersion;
-  }
-
-  public String getVpaFilename() {
-    return vpaFilename;
-  }
-
-  public void setVpaFilename(String vpaFilename) {
-    this.vpaFilename = vpaFilename;
-  }
-
-  private VpaPackageInfo packageInfo;
-
-  public VpaPackageInfo getPackageInfo() {
-    return packageInfo;
-  }
-
-  public void setPackageInfo(VpaPackageInfo packageInfo) {
-    this.packageInfo = packageInfo;
-  }
-
-  public String getUuid() {
-    return uuid;
-  }
-
-  public void setUuid(String uuid) {
-    this.uuid = uuid;
-  }
-
-  private Map<String,Object> additionalData = new HashMap<>();
-
-  public String getTableName() {
-    return tableName;
-  }
-
-  public void setTableName(String tableName) {
-    this.tableName = tableName;
-  }
-
-  public Map<String, Object> getAdditionalData() {
-    return additionalData;
-  }
-
-  public void setAdditionalData(Map<String, Object> additionalData) {
-    this.additionalData = additionalData;
-  }
-
-  public String getThumbnail() {
-    return thumbnail;
-  }
-
-  public void setThumbnail(String thumbnail) {
-    this.thumbnail = thumbnail;
-  }
-
-  public String getIcon() {
-    return icon;
-  }
-
-  public void setIcon(String icon) {
-    this.icon = icon;
+  public void setGameId(int gameId) {
+    this.gameId = gameId;
   }
 
   public String getCategory() {

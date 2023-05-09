@@ -1,19 +1,17 @@
-package de.mephisto.vpin.server.vpa;
+package de.mephisto.vpin.server.backup;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import de.mephisto.vpin.commons.EmulatorType;
 import de.mephisto.vpin.restclient.VpaImportDescriptor;
 import de.mephisto.vpin.restclient.Job;
-import de.mephisto.vpin.restclient.VpaManifest;
+import de.mephisto.vpin.restclient.TableManifest;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameService;
 import de.mephisto.vpin.server.highscores.HighscoreService;
 import de.mephisto.vpin.server.highscores.cards.CardService;
 import de.mephisto.vpin.server.popper.PinUPConnector;
 import de.mephisto.vpin.server.system.SystemService;
-import de.mephisto.vpin.server.util.vpreg.VPReg;
-import de.mephisto.vpin.server.util.vpreg.VPRegScoreSummary;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -86,7 +84,7 @@ public class VpaImporterJob implements Job {
       unzipVpa(importRom, importPopperMedia, importPupPack, importHighscores);
       LOG.info("Finished unzipping of " + descriptor.getUuid() + ", starting Popper import.");
 
-      VpaManifest manifest = VpaUtil.readManifest(vpaFile);
+      TableManifest manifest = VpaUtil.readManifest(vpaFile);
       if (StringUtils.isEmpty(manifest.getGameFileName())) {
         LOG.error("The VPA manifest of " + vpaFile.getAbsolutePath() + " does not contain a game filename.");
         return false;
@@ -103,7 +101,8 @@ public class VpaImporterJob implements Job {
       status = "Importing Game to Popper";
       connector.importManifest(game, manifest);
       game.setRom(manifest.getRomName());
-      game.setTableName(manifest.getTableName());
+      //TODO
+//      game.setTableName(manifest.getTableName());
 
       if (descriptor.getPlaylistId() != -1) {
         connector.addToPlaylist(game.getId(), descriptor.getPlaylistId());
@@ -125,27 +124,29 @@ public class VpaImporterJob implements Job {
     return true;
   }
 
-  private void importHighscores(Game game, VpaManifest manifest) {
+  private void importHighscores(Game game, TableManifest manifest) {
     try {
-      if (manifest.getAdditionalData().containsKey(VpaService.DATA_HIGHSCORE_HISTORY)) {
-        String json = (String) manifest.getAdditionalData().get(VpaService.DATA_HIGHSCORE_HISTORY);
-        VpaExporterJob.ScoreVersionEntry[] scores = objectMapper.readValue(json, VpaExporterJob.ScoreVersionEntry[].class);
-        for (VpaExporterJob.ScoreVersionEntry score : scores) {
-          highscoreService.importScoreEntry(game, score);
-        }
-        LOG.info("Finished importing " + scores.length + " highscore version entries.");
-      }
+      //TODO
+//      if (manifest.getAdditionalData().containsKey(VpaService.DATA_HIGHSCORE_HISTORY)) {
+//        String json = (String) manifest.getAdditionalData().get(VpaService.DATA_HIGHSCORE_HISTORY);
+//        VpaExporterJob.ScoreVersionEntry[] scores = objectMapper.readValue(json, VpaExporterJob.ScoreVersionEntry[].class);
+//        for (VpaExporterJob.ScoreVersionEntry score : scores) {
+//          highscoreService.importScoreEntry(game, score);
+//        }
+//        LOG.info("Finished importing " + scores.length + " highscore version entries.");
+//      }
     } catch (Exception e) {
       LOG.error("Error importing highscore history of " + game.getGameDisplayName() + ": " + e.getMessage(), e);
     }
 
     try {
-      if (manifest.getAdditionalData().containsKey(VpaService.DATA_VPREG_HIGHSCORE)) {
-        String json = (String) manifest.getAdditionalData().get(VpaService.DATA_VPREG_HIGHSCORE);
-        VPRegScoreSummary summary = objectMapper.readValue(json, VPRegScoreSummary.class);
-        VPReg vpReg = new VPReg(systemService.getVPRegFile(), game);
-        vpReg.restoreHighscore(summary);
-      }
+      //TODO
+//      if (manifest.getAdditionalData().containsKey(VpaService.DATA_VPREG_HIGHSCORE)) {
+//        String json = (String) manifest.getAdditionalData().get(VpaService.DATA_VPREG_HIGHSCORE);
+//        VPRegScoreSummary summary = objectMapper.readValue(json, VPRegScoreSummary.class);
+//        VPReg vpReg = new VPReg(systemService.getVPRegFile(), game);
+//        vpReg.restoreHighscore(summary);
+//      }
     } catch (Exception e) {
       LOG.error("Error importing VPReg scores of " + game.getGameDisplayName() + ": " + e.getMessage(), e);
     }
@@ -238,7 +239,7 @@ public class VpaImporterJob implements Job {
     return systemService.getPinUPSystemFolder().getParentFile();
   }
 
-  private File getGameFile(VpaManifest manifest) {
+  private File getGameFile(TableManifest manifest) {
     String emulator = manifest.getEmulatorType();
     if (EmulatorType.VISUAL_PINBALL_X.equals(emulator)) {
       return new File(systemService.getVPXTablesFolder(), manifest.getGameFileName());

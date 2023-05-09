@@ -1,9 +1,7 @@
 package de.mephisto.vpin.server.popper;
 
-import de.mephisto.vpin.restclient.PinUPControls;
-import de.mephisto.vpin.restclient.TableManagerSettings;
-import de.mephisto.vpin.restclient.PinUPControl;
-import de.mephisto.vpin.restclient.PopperScreen;
+import de.mephisto.vpin.restclient.*;
+import de.mephisto.vpin.server.games.Game;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +21,9 @@ public class PopperServiceResource {
 
   @Autowired
   private PopperService popperService;
+
+  @Autowired
+  private PinUPConnector pinUPConnector;
 
   @GetMapping("/pincontrol/{screen}")
   public PinUPControl getPinUPControlFor(@PathVariable("screen") String screenName) {
@@ -63,4 +64,17 @@ public class PopperServiceResource {
   public boolean restart() {
     return popperService.restart();
   }
+
+  @GetMapping("/tablemanifest/{gameId}")
+  public TableManifest get(@PathVariable("gameId") int gameId) {
+    return pinUPConnector.getGameManifest(gameId);
+  }
+
+  @PostMapping("/tablemanifest")
+  public TableManifest save(@RequestBody TableManifest m) {
+    Game game = pinUPConnector.getGame(m.getGameId());
+    pinUPConnector.importManifest(game, m);
+    return m;
+  }
+
 }

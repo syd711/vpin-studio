@@ -79,7 +79,8 @@ public class VpaInstallationController implements Initializable, DialogControlle
       Platform.runLater(() -> {
         try {
           for (VpaDescriptorRepresentation vpaDescriptor : this.vpaDescriptors) {
-            descriptor.setUuid(vpaDescriptor.getManifest().getUuid());
+            //TODO
+//            descriptor.setUuid(vpaDescriptor.getManifest().getUuid());
             descriptor.setVpaSourceId(vpaDescriptor.getSource().getId());
             client.importVpa(descriptor);
           }

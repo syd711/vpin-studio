@@ -1,9 +1,9 @@
-package de.mephisto.vpin.server.vpa;
+package de.mephisto.vpin.server.backup;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import de.mephisto.vpin.commons.EmulatorType;
-import de.mephisto.vpin.restclient.VpaManifest;
+import de.mephisto.vpin.restclient.TableManifest;
 import org.apache.commons.io.FilenameUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,7 +29,7 @@ public class VpaUtil {
       objectMapper.enable(SerializationFeature.INDENT_OUTPUT);
 
       List<VpaDescriptor> descriptors = source.getVpaDescriptors();
-      List<VpaManifest> manifests = descriptors.stream().map(d -> d.getManifest()).collect(Collectors.toList());
+      List<TableManifest> manifests = descriptors.stream().map(d -> d.getManifest()).collect(Collectors.toList());
       String manifestString = objectMapper.writeValueAsString(manifests);
       File descriptorFile = new File(source.getFolder(), "descriptor.json");
       Files.write(descriptorFile.toPath(), manifestString.getBytes());
@@ -40,18 +40,18 @@ public class VpaUtil {
     }
   }
 
-  public static List<VpaManifest> readManifests(String json) {
+  public static List<TableManifest> readManifests(String json) {
     try {
       ObjectMapper objectMapper = new ObjectMapper();
       objectMapper.enable(SerializationFeature.INDENT_OUTPUT);
-      return Arrays.asList(objectMapper.readValue(json, VpaManifest[].class));
+      return Arrays.asList(objectMapper.readValue(json, TableManifest[].class));
     } catch (IOException e) {
       LOG.error("Failed to read manifest data from json\n" + json + ": " + e.getMessage(), e);
     }
     return null;
   }
 
-  public static VpaManifest readManifest(File file) {
+  public static TableManifest readManifest(File file) {
     try {
       ObjectMapper objectMapper = new ObjectMapper();
       objectMapper.enable(SerializationFeature.INDENT_OUTPUT);
@@ -66,7 +66,7 @@ public class VpaUtil {
           stream.close();
           zipFile.close();
 
-          return objectMapper.readValue(text, VpaManifest.class);
+          return objectMapper.readValue(text, TableManifest.class);
         }
       }
     } catch (IOException e) {

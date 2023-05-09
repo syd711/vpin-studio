@@ -384,10 +384,6 @@ public class GameService {
 
     Game original = getGame(game.getId());
     if (original != null) {
-      if (original.getVolume() != game.getVolume()) {
-        pinUPConnector.updateVolume(game, game.getVolume());
-      }
-
       if (original.isAltSoundEnabled() != game.isAltSoundEnabled()) {
         original.getSystemService().setAltSoundEnabled(game.getRom(), game.isAltSoundEnabled());
         LOG.info("Updated ALT sound setting for " + game.getRom() + ": " + original.getSystemService().isAltSoundEnabled(game.getRom()));

@@ -1,18 +1,18 @@
-package de.mephisto.vpin.server.vpa;
+package de.mephisto.vpin.server.backup;
 
 
-import de.mephisto.vpin.restclient.VpaManifest;
+import de.mephisto.vpin.restclient.TableManifest;
 
 import java.util.Date;
 
 public class VpaDescriptor {
-  private VpaManifest manifest;
+  private TableManifest manifest;
   private VpaSource source;
   private Date createdAt;
   private String filename;
   private long size;
 
-  public VpaDescriptor(VpaSource source, VpaManifest manifest, Date createdAt, String filename, long size) {
+  public VpaDescriptor(VpaSource source, TableManifest manifest, Date createdAt, String filename, long size) {
     this.source = source;
     this.manifest = manifest;
     this.createdAt = createdAt;
@@ -22,7 +22,8 @@ public class VpaDescriptor {
 
   public long getSize() {
     if (size == 0) {
-      return manifest.getVpaFileSize();
+      //TODO
+//      return manifest.getVpaFileSize();
     }
     return size;
   }
@@ -47,11 +48,11 @@ public class VpaDescriptor {
     this.createdAt = createdAt;
   }
 
-  public VpaManifest getManifest() {
+  public TableManifest getManifest() {
     return manifest;
   }
 
-  public void setManifest(VpaManifest manifest) {
+  public void setManifest(TableManifest manifest) {
     this.manifest = manifest;
   }
 

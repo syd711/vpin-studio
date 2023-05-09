@@ -34,7 +34,6 @@ public class Game {
   private int numberPlays;
   private int validationState;
   private String ignoredValidations;
-  private int volume;
   private HighscoreType highscoreType;
   private boolean altSoundEnabled;
 
@@ -116,14 +115,6 @@ public class Game {
 
   public void setLastPlayed(Date lastPlayed) {
     this.lastPlayed = lastPlayed;
-  }
-
-  public int getVolume() {
-    return volume;
-  }
-
-  public void setVolume(int volume) {
-    this.volume = volume;
   }
 
   public String getIgnoredValidations() {

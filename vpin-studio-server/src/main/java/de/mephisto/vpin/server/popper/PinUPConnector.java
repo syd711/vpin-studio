@@ -4,10 +4,10 @@ import de.mephisto.vpin.commons.EmulatorType;
 import de.mephisto.vpin.restclient.PinUPControl;
 import de.mephisto.vpin.restclient.PinUPControls;
 import de.mephisto.vpin.restclient.PopperScreen;
-import de.mephisto.vpin.restclient.VpaManifest;
+import de.mephisto.vpin.restclient.TableManifest;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.system.SystemService;
-import de.mephisto.vpin.server.vpa.VpaUtil;
+import de.mephisto.vpin.server.backup.VpaUtil;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import org.apache.commons.io.FilenameUtils;
@@ -125,15 +125,16 @@ public class PinUPConnector implements InitializingBean {
   }
 
   @Nullable
-  public VpaManifest getGameManifest(int id) {
+  public TableManifest getGameManifest(int id) {
     Connection connect = connect();
-    VpaManifest manifest = null;
+    TableManifest manifest = null;
     try {
       PreparedStatement statement = connect.prepareStatement("SELECT * FROM Games where GameID = ?");
       statement.setInt(1, id);
       ResultSet rs = statement.executeQuery();
       if (rs.next()) {
-        manifest = new VpaManifest();
+        manifest = new TableManifest();
+        manifest.setGameId(id);
         manifest.setEmulatorType(rs.getString("GameType"));
         manifest.setGameName(rs.getString("GameName"));
         manifest.setGameFileName(rs.getString("GameFileName"));
@@ -733,15 +734,6 @@ public class PinUPConnector implements InitializingBean {
     String rom = rs.getString("ROM");
     game.setRom(rom);
 
-    int volume = rs.getInt("sysVolume");
-    if (volume <= 1) {
-      game.setVolume(100);
-    }
-    else {
-      game.setVolume(volume);
-    }
-
-
     String gameDisplayName = rs.getString("GameDisplay");
     game.setGameDisplayName(gameDisplayName);
 
@@ -794,7 +786,7 @@ public class PinUPConnector implements InitializingBean {
   }
 
 
-  public void importManifest(Game game, VpaManifest manifest) {
+  public void importManifest(Game game, TableManifest manifest) {
     int id = game.getId();
     importManifestValue(id, "GameName", manifest.getGameName());
     importManifestValue(id, "GameDisplay", manifest.getGameDisplayName());

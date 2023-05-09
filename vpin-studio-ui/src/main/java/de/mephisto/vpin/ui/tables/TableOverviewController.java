@@ -9,11 +9,9 @@ import de.mephisto.vpin.ui.NavigationController;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.StudioFXController;
 import de.mephisto.vpin.ui.WaitOverlayController;
-import de.mephisto.vpin.ui.tables.dialogs.ScriptDownloadProgressModel;
 import de.mephisto.vpin.ui.tables.validation.ValidationResult;
 import de.mephisto.vpin.ui.tables.validation.ValidationTexts;
 import de.mephisto.vpin.ui.util.Dialogs;
-import de.mephisto.vpin.ui.util.ProgressResultModel;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
@@ -40,8 +38,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.awt.*;
-import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.util.List;
@@ -117,7 +113,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
 //  private Button importBtn;
 
   @FXML
-  private Button exportBtn;
+  private Button backupBtn;
 
   @FXML
   private MenuButton uploadMenuBtn;
@@ -154,10 +150,10 @@ public class TableOverviewController implements Initializable, StudioFXControlle
   }
 
   @FXML
-  private void onExport() {
+  private void onBackup() {
     ObservableList<GameRepresentation> selectedItems = tableView.getSelectionModel().getSelectedItems();
     if (selectedItems.size() == 1) {
-      Dialogs.openTableExportDialog(selectedItems.get(0));
+      Dialogs.openTableBackupDialog(selectedItems.get(0));
     }
     else if (selectedItems.size() > 1) {
       Dialogs.openTablesExportDialog(selectedItems);
@@ -348,7 +344,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
     this.deleteBtn.setDisable(true);
     this.uploadTableItem.setDisable(true);
     this.uploadRomItem.setDisable(true);
-    this.exportBtn.setDisable(true);
+    this.backupBtn.setDisable(true);
     this.uploadMenuBtn.setDisable(true);
 
     tableView.setVisible(false);
@@ -367,7 +363,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
           final GameRepresentation updatedGame = client.getGame(selection.getId());
           tableView.getSelectionModel().select(updatedGame);
           this.playBtn.setDisable(!updatedGame.isGameFileAvailable());
-          this.exportBtn.setDisable(!updatedGame.isGameFileAvailable());
+          this.backupBtn.setDisable(!updatedGame.isGameFileAvailable());
         }
         else if (!games.isEmpty()) {
           tableView.getSelectionModel().select(0);
@@ -517,7 +513,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
       boolean disable = c.getList().isEmpty() || c.getList().size() > 1;
       validateBtn.setDisable(disable);
       deleteBtn.setDisable(disable);
-      exportBtn.setDisable(true);
+      backupBtn.setDisable(true);
       playBtn.setDisable(disable);
 
       if (c.getList().isEmpty()) {
@@ -525,7 +521,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
       }
       else {
         GameRepresentation gameRepresentation = c.getList().get(0);
-        exportBtn.setDisable(!gameRepresentation.isGameFileAvailable());
+        backupBtn.setDisable(!gameRepresentation.isGameFileAvailable());
         playBtn.setDisable(!gameRepresentation.isGameFileAvailable());
         refreshView(Optional.ofNullable(gameRepresentation));
       }
