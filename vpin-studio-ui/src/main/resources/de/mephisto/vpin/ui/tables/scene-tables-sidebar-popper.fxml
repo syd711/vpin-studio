@@ -318,6 +318,14 @@
                         <FontIcon iconColor="WHITE" iconLiteral="mdi2f-format-list-bulleted" />
                     </graphic>
                 </Button>
+            <Button layoutX="10.0" layoutY="11.0" mnemonicParsing="false" onAction="#onScreenEdit" text="Keep Displays On" textFill="WHITE">
+               <font>
+                  <Font size="14.0" />
+               </font>
+               <graphic>
+                  <FontIcon iconColor="WHITE" iconLiteral="mdi2m-monitor-multiple" />
+               </graphic>
+            </Button>
             </items>
         </ToolBar>
     </top>

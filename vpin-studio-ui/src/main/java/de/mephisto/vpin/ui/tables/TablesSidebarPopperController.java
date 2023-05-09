@@ -117,6 +117,12 @@ public class TablesSidebarPopperController implements Initializable, ChangeListe
     this.refreshView(this.game);
   }
 
+  @FXML
+  private void onScreenEdit() {
+    Dialogs.openPopperScreensDialog(this.game.get());
+    this.refreshView(this.game);
+  }
+
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
     client = Studio.client;
