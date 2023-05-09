@@ -41,7 +41,7 @@ public class VpaExporterJob implements Job {
   private final File vprRegFile;
   private final File musicFolder;
   private final Game game;
-  private final ExportDescriptor exportDescriptor;
+  private final BackupDescriptor exportDescriptor;
   private final TableManifest manifest;
   private final Optional<Highscore> highscore;
   private final List<HighscoreVersion> scoreHistory;
@@ -61,7 +61,7 @@ public class VpaExporterJob implements Job {
                         @NonNull File vprRegFile,
                         @NonNull File musicFolder,
                         @NonNull Game game,
-                        @NonNull ExportDescriptor exportDescriptor,
+                        @NonNull BackupDescriptor exportDescriptor,
                         @NonNull TableManifest manifest,
                         @NonNull Optional<Highscore> highscore,
                         @NonNull List<HighscoreVersion> scoreHistory,

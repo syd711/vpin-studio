@@ -26,7 +26,7 @@
                   <Insets top="24.0" />
                </VBox.margin>
             </Label>
-            <Label layoutX="34.0" layoutY="128.0" styleClass="preference-description" text="It can be used to install or archive (and remove) tables from your playlist and create backups." textFill="WHITE">
+            <Label layoutX="34.0" layoutY="128.0" styleClass="preference-description" text="It can be used to install archived table or create backups." textFill="WHITE">
                <VBox.margin>
                   <Insets bottom="6.0" />
                </VBox.margin>

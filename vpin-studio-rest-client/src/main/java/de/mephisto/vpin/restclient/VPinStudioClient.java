@@ -168,7 +168,7 @@ public class VPinStudioClient implements ObservedPropertyChangeListener, Overlay
   /*********************************************************************************************************************
    * IO
    ********************************************************************************************************************/
-  public boolean exportVpa(ExportDescriptor exportDescriptor) throws Exception {
+  public boolean exportVpa(BackupDescriptor exportDescriptor) throws Exception {
     return restClient.post(API + "io/export", exportDescriptor, Boolean.class);
   }
 

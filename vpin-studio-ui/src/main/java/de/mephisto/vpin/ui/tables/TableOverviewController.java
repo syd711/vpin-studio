@@ -23,10 +23,6 @@ import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.Parent;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.MenuItem;
-import javafx.scene.control.TextField;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.KeyCode;
@@ -40,7 +36,6 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.net.URL;
-import java.util.List;
 import java.util.*;
 
 public class TableOverviewController implements Initializable, StudioFXController {
@@ -152,12 +147,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
   @FXML
   private void onBackup() {
     ObservableList<GameRepresentation> selectedItems = tableView.getSelectionModel().getSelectedItems();
-    if (selectedItems.size() == 1) {
-      Dialogs.openTableBackupDialog(selectedItems.get(0));
-    }
-    else if (selectedItems.size() > 1) {
-      Dialogs.openTablesExportDialog(selectedItems);
-    }
+    Dialogs.openTablesBackupDialog(selectedItems);
   }
 
   @FXML

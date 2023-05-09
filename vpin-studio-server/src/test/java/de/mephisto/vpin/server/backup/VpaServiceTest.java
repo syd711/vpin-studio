@@ -1,6 +1,6 @@
 package de.mephisto.vpin.server.backup;
 
-import de.mephisto.vpin.restclient.ExportDescriptor;
+import de.mephisto.vpin.restclient.BackupDescriptor;
 import de.mephisto.vpin.restclient.TableManifest;
 import de.mephisto.vpin.server.AbstractVPinServerTest;
 import de.mephisto.vpin.server.games.Game;
@@ -52,7 +52,7 @@ public class VpaServiceTest extends AbstractVPinServerTest {
   private void exportTest(String name) {
     Game game = gameService.getGameByFilename(name);
 
-    ExportDescriptor descriptor = new ExportDescriptor();
+    BackupDescriptor descriptor = new BackupDescriptor();
     descriptor.setExportHighscores(true);
     descriptor.setExportPupPack(false);
     descriptor.setExportPopperMedia(false);

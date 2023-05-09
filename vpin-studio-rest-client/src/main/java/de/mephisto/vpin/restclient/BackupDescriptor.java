@@ -3,7 +3,7 @@ package de.mephisto.vpin.restclient;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ExportDescriptor {
+public class BackupDescriptor {
   private List<Integer> gameIds = new ArrayList<>();
   private TableManifest manifest;
   private long repositoryId = -1;

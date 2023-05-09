@@ -133,13 +133,6 @@ public class Dialogs {
     return controller.tableDeleted();
   }
 
-  public static void openTableBackupDialog(GameRepresentation game) {
-    Stage stage = createStudioDialogStage(TableBackupController.class, "dialog-table-backup.fxml", "Table Export");
-    TableBackupController controller = (TableBackupController) stage.getUserData();
-    controller.setGame(game);
-    stage.showAndWait();
-  }
-
   public static void openTableDataDialog(GameRepresentation game) {
     Stage stage = createStudioDialogStage(TableDataController.class, "dialog-table-data.fxml", "Table Data");
     TableDataController controller = (TableDataController) stage.getUserData();
@@ -147,9 +140,9 @@ public class Dialogs {
     stage.showAndWait();
   }
 
-  public static void openTablesExportDialog(List<GameRepresentation> games) {
-    Stage stage = createStudioDialogStage(TableBackupController.class, "dialog-tables-export.fxml", "Table Export");
-    TablesExportController controller = (TablesExportController) stage.getUserData();
+  public static void openTablesBackupDialog(List<GameRepresentation> games) {
+    Stage stage = createStudioDialogStage(TablesBackupController.class, "dialog-tables-backup.fxml", "Table Backup");
+    TablesBackupController controller = (TablesBackupController) stage.getUserData();
     controller.setGames(games);
     stage.showAndWait();
   }

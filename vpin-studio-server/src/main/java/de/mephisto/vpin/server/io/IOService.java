@@ -77,7 +77,7 @@ public class IOService {
     return true;
   }
 
-  public boolean exportVpa(@NonNull ExportDescriptor exportDescriptor) {
+  public boolean exportVpa(@NonNull BackupDescriptor exportDescriptor) {
     List<Integer> gameIds = exportDescriptor.getGameIds();
     File targetFolder = systemService.getVpaArchiveFolder();
 
@@ -106,7 +106,7 @@ public class IOService {
     return false;
   }
 
-  private boolean exportVpa(@NonNull Game game, @NonNull TableManifest manifest, @NonNull ExportDescriptor exportDescriptor, @NonNull File targetFolder) {
+  private boolean exportVpa(@NonNull Game game, @NonNull TableManifest manifest, @NonNull BackupDescriptor exportDescriptor, @NonNull File targetFolder) {
     List<HighscoreVersion> versions = highscoreService.getAllHighscoreVersions(game.getId());
     Optional<Highscore> highscore = highscoreService.getOrCreateHighscore(game);
     File vpRegFile = systemService.getVPRegFile();

@@ -2,11 +2,10 @@ package de.mephisto.vpin.ui.tables.dialogs;
 
 import de.mephisto.vpin.commons.fx.DialogController;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
-import de.mephisto.vpin.restclient.ExportDescriptor;
+import de.mephisto.vpin.restclient.BackupDescriptor;
 import de.mephisto.vpin.restclient.representations.GameRepresentation;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.jobs.JobPoller;
-import de.mephisto.vpin.ui.util.Dialogs;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -14,7 +13,6 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
-import javafx.scene.image.ImageView;
 import javafx.stage.Stage;
 
 import java.net.URL;
@@ -22,12 +20,10 @@ import java.util.List;
 import java.util.ResourceBundle;
 import java.util.stream.Collectors;
 
-public class TablesExportController implements Initializable, DialogController {
+public class TablesBackupController implements Initializable, DialogController {
 
   @FXML
   private Label titleLabel;
-  @FXML
-  private ImageView imageView;
 
   @FXML
   private CheckBox exportRomCheckbox;
@@ -48,7 +44,7 @@ public class TablesExportController implements Initializable, DialogController {
 
   @FXML
   private void onExportClick(ActionEvent e) throws Exception {
-    ExportDescriptor descriptor = new ExportDescriptor();
+    BackupDescriptor descriptor = new BackupDescriptor();
     descriptor.setExportPupPack(this.exportPupPackCheckbox.isSelected());
     descriptor.setExportRom(this.exportRomCheckbox.isSelected());
     descriptor.setExportPopperMedia(this.exportPopperMedia.isSelected());
@@ -71,7 +67,7 @@ public class TablesExportController implements Initializable, DialogController {
     }).start();
 
     Platform.runLater(() -> {
-      WidgetFactory.showInformation(Studio.stage, "Export Started", "The export of " + games.size() + " tables has been started.", "The archived state will update once the export is finished.");
+      WidgetFactory.showInformation(Studio.stage, "Backup Started", "The backup of " + games.size() + " tables has been started.", "The archived state will update once the backup is finished.");
     });
   }
 
@@ -93,7 +89,12 @@ public class TablesExportController implements Initializable, DialogController {
 
   public void setGames(List<GameRepresentation> games) {
     this.games = games;
-    this.titleLabel.setText("Export of " + games.size() + " tables");
+    if(games.size() == 1) {
+      this.titleLabel.setText("Export of " + games.size() + " table");
+    }
+    else {
+      this.titleLabel.setText("Export of " + games.size() + " tables");
+    }
 
     exportRomCheckbox.setSelected(true);
     exportPupPackCheckbox.setSelected(true);

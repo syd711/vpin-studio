@@ -1,6 +1,6 @@
 package de.mephisto.vpin.server.io;
 
-import de.mephisto.vpin.restclient.ExportDescriptor;
+import de.mephisto.vpin.restclient.BackupDescriptor;
 import de.mephisto.vpin.restclient.VpaImportDescriptor;
 import de.mephisto.vpin.restclient.TableManifest;
 import org.slf4j.Logger;
@@ -19,7 +19,7 @@ public class IOResource {
   private IOService ioService;
 
   @PostMapping("/export")
-  public Boolean exportVpa(@RequestBody ExportDescriptor descriptor) {
+  public Boolean exportVpa(@RequestBody BackupDescriptor descriptor) {
     return ioService.exportVpa(descriptor);
   }
 

@@ -1,6 +1,6 @@
 package de.mephisto.vpin.tablemanager.states;
 
-import de.mephisto.vpin.restclient.ExportDescriptor;
+import de.mephisto.vpin.restclient.BackupDescriptor;
 import de.mephisto.vpin.restclient.VPinStudioClient;
 import de.mephisto.vpin.restclient.TableManifest;
 import de.mephisto.vpin.restclient.representations.GameRepresentation;
@@ -57,13 +57,12 @@ public class ArchivingMenuState extends MenuState {
       GameRepresentation game = this.menuController.getGameSelection();
       TableManifest manifest = Menu.client.getVpaManifest(game.getId());
 
-      ExportDescriptor descriptor = new ExportDescriptor();
+      BackupDescriptor descriptor = new BackupDescriptor();
       descriptor.setManifest(manifest);
       descriptor.getGameIds().add(game.getId());
       descriptor.setExportPupPack(true);
       descriptor.setExportRom(true);
       descriptor.setExportPopperMedia(true);
-      descriptor.setExportHighscores(true);
       descriptor.setRemoveFromPlaylists(mode == 0);
       try {
         Menu.client.exportVpa(descriptor);
