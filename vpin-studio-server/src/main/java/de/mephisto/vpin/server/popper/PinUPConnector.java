@@ -5,9 +5,9 @@ import de.mephisto.vpin.restclient.PinUPControl;
 import de.mephisto.vpin.restclient.PinUPControls;
 import de.mephisto.vpin.restclient.PopperScreen;
 import de.mephisto.vpin.restclient.TableManifest;
+import de.mephisto.vpin.server.backup.VpaUtil;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.system.SystemService;
-import de.mephisto.vpin.server.backup.VpaUtil;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import org.apache.commons.io.FilenameUtils;
@@ -145,18 +145,19 @@ public class PinUPConnector implements InitializingBean {
         manifest.setManufacturer(rs.getString("Manufact"));
         manifest.setNumberOfPlayers(rs.getInt("NumPlayers"));
         manifest.setTags(rs.getString("TAGS"));
+        manifest.setVolume(rs.getString("sysVolume"));
         manifest.setCategory(rs.getString("Category"));
         manifest.setAuthor(rs.getString("Author"));
         manifest.setLaunchCustomVar(rs.getString("LaunchCustomVar"));
         manifest.setKeepDisplays(rs.getString("GKeepDisplays"));
         manifest.setGameTheme(rs.getString("GameTheme"));
         manifest.setGameRating(rs.getInt("GameRating"));
-        manifest.setVolume(rs.getInt("sysVolume"));
         manifest.setDof(rs.getString("DOFStuff"));
         manifest.setIPDBNum(rs.getString("IPDBNum"));
         manifest.setAltRunMode(rs.getString("AltRunMode"));
         manifest.setUrl(rs.getString("WebLinkURL"));
         manifest.setDesignedBy(rs.getString("DesignedBy"));
+
       }
       rs.close();
       statement.close();

@@ -229,10 +229,10 @@ public class TableBackupController implements Initializable, DialogController {
 
     SpinnerValueFactory.IntegerSpinnerValueFactory volumeFactory = new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 100, 0);
     volume.setValueFactory(volumeFactory);
-    if (manifest.getVolume() > 0) {
-      volume.getValueFactory().setValue(manifest.getVolume());
+    if (manifest.getVolume() != null) {
+      volume.getValueFactory().setValue(Integer.parseInt(manifest.getVolume()));
     }
-    volume.getValueFactory().valueProperty().addListener((observable, oldValue, newValue) -> manifest.setVolume(Integer.parseInt(String.valueOf(newValue))));
+    volume.getValueFactory().valueProperty().addListener((observable, oldValue, newValue) -> manifest.setVolume(String.valueOf(newValue)));
 
     launchCustomVar.setText(manifest.getLaunchCustomVar());
     launchCustomVar.textProperty().addListener((observable, oldValue, newValue) -> manifest.setLaunchCustomVar(newValue));

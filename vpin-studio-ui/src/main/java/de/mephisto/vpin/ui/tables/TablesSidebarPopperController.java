@@ -6,6 +6,8 @@ import de.mephisto.vpin.restclient.VPinStudioClient;
 import de.mephisto.vpin.restclient.representations.GameRepresentation;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.util.Dialogs;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
@@ -22,7 +24,7 @@ import java.util.ResourceBundle;
 
 import static de.mephisto.vpin.ui.util.BindingUtil.debouncer;
 
-public class TablesSidebarPopperController implements Initializable {
+public class TablesSidebarPopperController implements Initializable, ChangeListener<Number> {
   private final static Logger LOG = LoggerFactory.getLogger(TablesSidebarPopperController.class);
 
   @FXML
@@ -118,30 +120,6 @@ public class TablesSidebarPopperController implements Initializable {
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
     client = Studio.client;
-
-    volumeSlider.valueProperty().addListener((observableValue, number, t1) -> {
-      if (game.isPresent()) {
-        final GameRepresentation g = game.get();
-        debouncer.debounce("tableVolume" + g.getId(), () -> {
-          int value = t1.intValue();
-          if (value == 0) {
-            value = 1;
-          }
-
-          if (manifest.getVolume() == value) {
-            return;
-          }
-
-          manifest.setVolume(value);
-          LOG.info("Updates volume of " + g.getGameDisplayName() + " to " + value);
-          try {
-            client.saveTableManifest(manifest);
-          } catch (Exception e) {
-            WidgetFactory.showAlert(Studio.stage, e.getMessage());
-          }
-        }, 500);
-      }
-    });
   }
 
 
@@ -161,7 +139,14 @@ public class TablesSidebarPopperController implements Initializable {
 
       manifest = client.getTableManifest(game.getId());
 
-      volumeSlider.setValue(manifest.getVolume());
+      volumeSlider.valueProperty().removeListener(this);
+      if (manifest.getVolume() != null) {
+        volumeSlider.setValue(Integer.parseInt(manifest.getVolume()));
+      }
+      else {
+        volumeSlider.setValue(100);
+      }
+      volumeSlider.valueProperty().addListener(this);
 
       gameName.setText(StringUtils.isEmpty(manifest.getGameName()) ? "-" : manifest.getGameName());
       gameFileName.setText(StringUtils.isEmpty(manifest.getGameFileName()) ? "-" : manifest.getGameFileName());
@@ -215,5 +200,30 @@ public class TablesSidebarPopperController implements Initializable {
 
   public void setSidebarController(TablesSidebarController tablesSidebarController) {
     this.tablesSidebarController = tablesSidebarController;
+  }
+
+  @Override
+  public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
+    if (game.isPresent()) {
+      final GameRepresentation g = game.get();
+      debouncer.debounce("tableVolume" + g.getId(), () -> {
+        int value = newValue.intValue();
+        if (value == 0) {
+          value = 1;
+        }
+
+        if (manifest.getVolume() != null && Integer.parseInt(manifest.getVolume()) == value) {
+          return;
+        }
+
+        manifest.setVolume(String.valueOf(value));
+        LOG.info("Updates volume of " + g.getGameDisplayName() + " to " + value);
+        try {
+          client.saveTableManifest(manifest);
+        } catch (Exception e) {
+          WidgetFactory.showAlert(Studio.stage, e.getMessage());
+        }
+      }, 500);
+    }
   }
 }

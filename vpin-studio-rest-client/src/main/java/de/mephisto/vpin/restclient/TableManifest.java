@@ -18,7 +18,7 @@ public class TableManifest {
   private String tags;
   private String category;
   private String author;
-  private int volume;
+  private String volume;
   private String launchCustomVar;
   private String keepDisplays;
   private int gameRating;
@@ -148,11 +148,11 @@ public class TableManifest {
     this.author = author;
   }
 
-  public int getVolume() {
+  public String getVolume() {
     return volume;
   }
 
-  public void setVolume(int volume) {
+  public void setVolume(String volume) {
     this.volume = volume;
   }
 
