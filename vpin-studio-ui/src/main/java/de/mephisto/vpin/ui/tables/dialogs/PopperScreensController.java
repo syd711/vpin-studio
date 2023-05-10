@@ -5,6 +5,8 @@ import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.TableManifest;
 import de.mephisto.vpin.restclient.representations.GameRepresentation;
 import de.mephisto.vpin.ui.Studio;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -87,15 +89,16 @@ public class PopperScreensController implements Initializable, DialogController 
       if (helpCheckbox.isSelected()) result.add("" + 10);
 
       value = String.join(",", result);
-      manifest.setKeepDisplays(value);
-      try {
-        Studio.client.saveTableManifest(manifest);
-      } catch (Exception ex) {
-        WidgetFactory.showAlert(Studio.stage, "Error", "Failed to save table manifest: " + ex.getMessage());
-      }
-
-      this.onCancelClick(e);
     }
+
+    manifest.setKeepDisplays(value);
+    try {
+      Studio.client.saveTableManifest(manifest);
+    } catch (Exception ex) {
+      WidgetFactory.showAlert(Studio.stage, "Error", "Failed to save table manifest: " + ex.getMessage());
+    }
+
+    this.onCancelClick(e);
   }
 
   @FXML
@@ -119,6 +122,73 @@ public class PopperScreensController implements Initializable, DialogController 
     hideAllCheckbox.selectedProperty().addListener((observable, oldValue, newValue) -> {
       if (newValue) {
         screenCheckboxes.stream().forEach(check -> check.setSelected(false));
+        useEmuDefaultsCheckbox.setSelected(false);
+      }
+    });
+
+    topperCheckbox.selectedProperty().addListener((observable, oldValue, newValue) -> {
+      if(newValue)  {
+        hideAllCheckbox.setSelected(false);
+        useEmuDefaultsCheckbox.setSelected(false);
+      }
+    });
+    dmdCheckbox.selectedProperty().addListener((observable, oldValue, newValue) -> {
+      if(newValue)  {
+        hideAllCheckbox.setSelected(false);
+        useEmuDefaultsCheckbox.setSelected(false);
+      }
+    });
+    backglassCheckbox.selectedProperty().addListener((observable, oldValue, newValue) -> {
+      if(newValue)  {
+        hideAllCheckbox.setSelected(false);
+        useEmuDefaultsCheckbox.setSelected(false);
+      }
+    });
+    playfieldCheckbox.selectedProperty().addListener((observable, oldValue, newValue) -> {
+      if(newValue)  {
+        hideAllCheckbox.setSelected(false);
+        useEmuDefaultsCheckbox.setSelected(false);
+      }
+    });
+    musicCheckbox.selectedProperty().addListener((observable, oldValue, newValue) -> {
+      if(newValue)  {
+        hideAllCheckbox.setSelected(false);
+        useEmuDefaultsCheckbox.setSelected(false);
+      }
+    });
+    apronCheckbox.selectedProperty().addListener((observable, oldValue, newValue) -> {
+      if(newValue)  {
+        hideAllCheckbox.setSelected(false);
+        useEmuDefaultsCheckbox.setSelected(false);
+      }
+    });
+    wheelbarCheckbox.selectedProperty().addListener((observable, oldValue, newValue) -> {
+      if(newValue)  {
+        hideAllCheckbox.setSelected(false);
+        useEmuDefaultsCheckbox.setSelected(false);
+      }
+    });
+    loadingCheckbox.selectedProperty().addListener((observable, oldValue, newValue) -> {
+      if(newValue)  {
+        hideAllCheckbox.setSelected(false);
+        useEmuDefaultsCheckbox.setSelected(false);
+      }
+    });
+    otherCheckbox.selectedProperty().addListener((observable, oldValue, newValue) -> {
+      if(newValue)  {
+        hideAllCheckbox.setSelected(false);
+        useEmuDefaultsCheckbox.setSelected(false);
+      }
+    });
+    flyerCheckbox.selectedProperty().addListener((observable, oldValue, newValue) -> {
+      if(newValue)  {
+        hideAllCheckbox.setSelected(false);
+        useEmuDefaultsCheckbox.setSelected(false);
+      }
+    });
+    helpCheckbox.selectedProperty().addListener((observable, oldValue, newValue) -> {
+      if(newValue)  {
+        hideAllCheckbox.setSelected(false);
         useEmuDefaultsCheckbox.setSelected(false);
       }
     });

@@ -11,6 +11,7 @@ import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
 import javafx.scene.control.Slider;
 import org.apache.commons.lang3.StringUtils;
@@ -113,12 +114,32 @@ public class TablesSidebarPopperController implements Initializable, ChangeListe
 
   @FXML
   private void onTableEdit() {
+    if (client.isPinUPPopperRunning()) {
+      Optional<ButtonType> buttonType = Dialogs.openPopperRunningWarning(Studio.stage);
+      if (buttonType.isPresent() && buttonType.get().equals(ButtonType.APPLY)) {
+        Studio.client.terminatePopper();
+        Dialogs.openTableDataDialog(this.game.get());
+        this.refreshView(this.game);
+      }
+      return;
+    }
+
     Dialogs.openTableDataDialog(this.game.get());
     this.refreshView(this.game);
   }
 
   @FXML
   private void onScreenEdit() {
+    if (client.isPinUPPopperRunning()) {
+      Optional<ButtonType> buttonType = Dialogs.openPopperRunningWarning(Studio.stage);
+      if (buttonType.isPresent() && buttonType.get().equals(ButtonType.APPLY)) {
+        Studio.client.terminatePopper();
+        Dialogs.openPopperScreensDialog(this.game.get());
+        this.refreshView(this.game);
+      }
+      return;
+    }
+
     Dialogs.openPopperScreensDialog(this.game.get());
     this.refreshView(this.game);
   }
