@@ -114,7 +114,7 @@ public class IOService {
     JobDescriptor descriptor = new JobDescriptor(JobType.VPA_EXPORT, UUID.randomUUID().toString());
     descriptor.setTitle("Export of \"" + game.getGameDisplayName() + "\"");
     descriptor.setDescription("Exporting table archive for \"" + game.getGameDisplayName() + "\"");
-    descriptor.setJob(new VpaExporterJob(pinUPConnector, vpRegFile, systemService.getVPXMusicFolder(), game, exportDescriptor, highscore, defaultVpaSourceAdapter, targetFolder, systemService.getVersion()));
+    descriptor.setJob(new VpaExporterJob(pinUPConnector, vpRegFile, systemService.getVPXMusicFolder(), game, exportDescriptor, highscore, defaultVpaSourceAdapter, targetFolder));
 
     GameMediaItem mediaItem = game.getGameMedia().get(PopperScreen.Wheel);
     if (mediaItem != null) {

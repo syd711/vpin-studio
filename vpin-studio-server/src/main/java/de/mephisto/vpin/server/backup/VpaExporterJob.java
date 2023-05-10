@@ -59,8 +59,7 @@ public class VpaExporterJob implements Job {
                         @NonNull BackupDescriptor exportDescriptor,
                         @NonNull Optional<Highscore> highscore,
                         @NonNull ArchiveSourceAdapter vpaSource,
-                        @NonNull File targetFolder,
-                        @NonNull String vpaVersion) {
+                        @NonNull File targetFolder) {
     this.pinUPConnector = pinUPConnector;
     this.vprRegFile = vprRegFile;
     this.musicFolder = musicFolder;
@@ -361,7 +360,7 @@ public class VpaExporterJob implements Job {
       packageInfo.setIcon(Base64.getEncoder().encodeToString(original));
     }
 
-    String packageInfoJson = objectMapper.writeValueAsString(manifest);
+    String packageInfoJson = objectMapper.writeValueAsString(packageInfo);
     File manifestFile = File.createTempFile("package-info", "json");
     manifestFile.deleteOnExit();
     Files.write(manifestFile.toPath(), packageInfoJson.getBytes());
