@@ -1,11 +1,11 @@
 package de.mephisto.vpin.ui.tables;
 
-import de.mephisto.vpin.commons.VpaSourceType;
+import de.mephisto.vpin.commons.ArchiveSourceType;
 import de.mephisto.vpin.commons.utils.FileUtils;
 import de.mephisto.vpin.commons.utils.ImageUtil;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
-import de.mephisto.vpin.restclient.representations.VpaDescriptorRepresentation;
-import de.mephisto.vpin.restclient.representations.VpaSourceRepresentation;
+import de.mephisto.vpin.restclient.representations.ArchiveDescriptorRepresentation;
+import de.mephisto.vpin.restclient.representations.ArchiveSourceRepresentation;
 import de.mephisto.vpin.ui.NavigationController;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.WaitOverlayController;
@@ -59,40 +59,40 @@ public class RepositoryController implements Initializable, StudioEventListener 
   private TextField searchTextField;
 
   @FXML
-  private ComboBox<VpaSourceRepresentation> sourceCombo;
+  private ComboBox<ArchiveSourceRepresentation> sourceCombo;
 
   @FXML
-  private TableView<VpaDescriptorRepresentation> tableView;
+  private TableView<ArchiveDescriptorRepresentation> tableView;
 
   @FXML
-  private TableColumn<VpaDescriptorRepresentation, String> iconColumn;
+  private TableColumn<ArchiveDescriptorRepresentation, String> iconColumn;
 
   @FXML
-  private TableColumn<VpaDescriptorRepresentation, String> nameColumn;
+  private TableColumn<ArchiveDescriptorRepresentation, String> nameColumn;
 
   @FXML
-  private TableColumn<VpaDescriptorRepresentation, String> directB2SColumn;
+  private TableColumn<ArchiveDescriptorRepresentation, String> directB2SColumn;
 
   @FXML
-  private TableColumn<VpaDescriptorRepresentation, String> pupPackColumn;
+  private TableColumn<ArchiveDescriptorRepresentation, String> pupPackColumn;
 
   @FXML
-  private TableColumn<VpaDescriptorRepresentation, String> romColumn;
+  private TableColumn<ArchiveDescriptorRepresentation, String> romColumn;
 
   @FXML
-  private TableColumn<VpaDescriptorRepresentation, String> popperColumn;
+  private TableColumn<ArchiveDescriptorRepresentation, String> popperColumn;
 
   @FXML
-  private TableColumn<VpaDescriptorRepresentation, String> povColumn;
+  private TableColumn<ArchiveDescriptorRepresentation, String> povColumn;
 
   @FXML
-  private TableColumn<VpaDescriptorRepresentation, String> altSoundColumn;
+  private TableColumn<ArchiveDescriptorRepresentation, String> altSoundColumn;
 
   @FXML
-  private TableColumn<VpaDescriptorRepresentation, String> sizeColumn;
+  private TableColumn<ArchiveDescriptorRepresentation, String> sizeColumn;
 
   @FXML
-  private TableColumn<VpaDescriptorRepresentation, String> createdAtColumn;
+  private TableColumn<ArchiveDescriptorRepresentation, String> createdAtColumn;
 
   @FXML
   private StackPane tableStack;
@@ -100,10 +100,10 @@ public class RepositoryController implements Initializable, StudioEventListener 
   private Parent loadingOverlay;
 
 
-  private ObservableList<VpaDescriptorRepresentation> data;
-  private List<VpaDescriptorRepresentation> archives;
+  private ObservableList<ArchiveDescriptorRepresentation> data;
+  private List<ArchiveDescriptorRepresentation> archives;
   private TablesController tablesController;
-  private ChangeListener<VpaSourceRepresentation> sourceComboChangeListener;
+  private ChangeListener<ArchiveSourceRepresentation> sourceComboChangeListener;
 
   // Add a public no-args constructor
   public RepositoryController() {
@@ -111,7 +111,7 @@ public class RepositoryController implements Initializable, StudioEventListener 
 
   @FXML
   private void onInstall() {
-    ObservableList<VpaDescriptorRepresentation> selectedItems = tableView.getSelectionModel().getSelectedItems();
+    ObservableList<ArchiveDescriptorRepresentation> selectedItems = tableView.getSelectionModel().getSelectedItems();
     if (!selectedItems.isEmpty()) {
       if (client.isPinUPPopperRunning()) {
         Optional<ButtonType> buttonType = Dialogs.openPopperRunningWarning(Studio.stage);
@@ -136,7 +136,7 @@ public class RepositoryController implements Initializable, StudioEventListener 
 
   @FXML
   private void onDownload() {
-    ObservableList<VpaDescriptorRepresentation> selectedItems = tableView.getSelectionModel().getSelectedItems();
+    ObservableList<ArchiveDescriptorRepresentation> selectedItems = tableView.getSelectionModel().getSelectedItems();
     if (!selectedItems.isEmpty()) {
       Dialogs.openVpaDownloadDialog(selectedItems);
     }
@@ -144,9 +144,9 @@ public class RepositoryController implements Initializable, StudioEventListener 
 
   @FXML
   public void onReload() {
-    VpaSourceRepresentation selectedItem = sourceCombo.getSelectionModel().getSelectedItem();
-    if(selectedItem != null) {
-      client.invalidateVpaCache(selectedItem.getId());
+    ArchiveSourceRepresentation selectedItem = sourceCombo.getSelectionModel().getSelectedItem();
+    if (selectedItem != null) {
+      client.invalidateArchiveCache(selectedItem.getId());
     }
     doReload();
   }
@@ -154,7 +154,7 @@ public class RepositoryController implements Initializable, StudioEventListener 
   public void doReload() {
     this.searchTextField.setDisable(true);
 
-    VpaDescriptorRepresentation selection = tableView.getSelectionModel().getSelectedItem();
+    ArchiveDescriptorRepresentation selection = tableView.getSelectionModel().getSelectedItem();
     tableView.getSelectionModel().clearSelection();
     boolean disable = selection == null;
     deleteBtn.setDisable(disable);
@@ -164,7 +164,7 @@ public class RepositoryController implements Initializable, StudioEventListener 
     tableStack.getChildren().add(loadingOverlay);
 
     new Thread(() -> {
-      archives = client.getVpaDescriptors();
+      archives = client.getArchiveDescriptors();
 
       Platform.runLater(() -> {
         data = FXCollections.observableList(filterArchives(archives));
@@ -190,19 +190,18 @@ public class RepositoryController implements Initializable, StudioEventListener 
 
   @FXML
   private void onDelete() {
-    VpaDescriptorRepresentation selection = tableView.getSelectionModel().getSelectedItem();
+    ArchiveDescriptorRepresentation selection = tableView.getSelectionModel().getSelectedItem();
     if (selection != null) {
-      //TODO
-//      Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Delete Archive '" + selection.getFilename() + "'?");
-//      if (result.isPresent() && result.get().equals(ButtonType.OK)) {
-//        try {
-//          client.deleteVpaDescriptor(selection.getSource().getId(), selection.getManifest().getUuid());
-//        } catch (Exception e) {
-//          WidgetFactory.showAlert(stage, "Error", "Error deleting \"" + selection.getFilename() + "\": " + e.getMessage());
-//        }
-//        tableView.getSelectionModel().clearSelection();
-//        doReload();
-//      }
+      Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Delete Archive '" + selection.getFilename() + "'?");
+      if (result.isPresent() && result.get().equals(ButtonType.OK)) {
+        try {
+          client.deleteArchive(selection.getSource().getId(), selection.getFilename());
+        } catch (Exception e) {
+          WidgetFactory.showAlert(stage, "Error", "Error deleting \"" + selection.getFilename() + "\": " + e.getMessage());
+        }
+        tableView.getSelectionModel().clearSelection();
+        doReload();
+      }
     }
   }
 
@@ -220,129 +219,146 @@ public class RepositoryController implements Initializable, StudioEventListener 
     } catch (IOException e) {
       LOG.error("Failed to load loading overlay: " + e.getMessage());
     }
-//TODO
-//    iconColumn.setCellValueFactory(cellData -> {
-//      VpaDescriptorRepresentation value = cellData.getValue();
-//      String thumbnail = value.getManifest().getThumbnail();
-//      if (thumbnail == null) {
-//        Image wheel = new Image(Studio.class.getResourceAsStream("avatar-blank.png"));
-//        ImageView view = new ImageView(wheel);
-//        view.setPreserveRatio(true);
-//        view.setFitWidth(70);
-//        view.setFitHeight(70);
-//        return new SimpleObjectProperty(view);
-//      }
-//
-//      byte[] decode = Base64.getDecoder().decode(thumbnail);
-//      Image wheel = new Image(new ByteArrayInputStream(decode));
-//      ImageView view = new ImageView(wheel);
-//      view.setPreserveRatio(true);
-//      view.setFitWidth(80);
-//      view.setFitHeight(80);
-//      ImageUtil.setClippedImage(view, (int) (wheel.getWidth() / 2));
-//      return new SimpleObjectProperty(view);
-//    });
-//
-//    nameColumn.setCellValueFactory(cellData -> {
-//      VpaDescriptorRepresentation value = cellData.getValue();
-//      return new SimpleStringProperty(value.getManifest().getGameDisplayName());
-//    });
-//
-//    directB2SColumn.setCellValueFactory(cellData -> {
-//      VpaDescriptorRepresentation value = cellData.getValue();
-//      boolean directb2s = value.getManifest().getPackageInfo().isDirectb2s();
-//      if (directb2s) {
-//        return new SimpleObjectProperty(WidgetFactory.createCheckboxIcon());
-//      }
-//      return new SimpleStringProperty("");
-//    });
-//
-//    pupPackColumn.setCellValueFactory(cellData -> {
-//      VpaDescriptorRepresentation value = cellData.getValue();
-//      boolean packaged = value.getManifest().getPackageInfo().isPupPack();
-//      if (packaged) {
-//        return new SimpleObjectProperty(WidgetFactory.createCheckboxIcon());
-//      }
-//      return new SimpleStringProperty("");
-//    });
-//
-//    popperColumn.setCellValueFactory(cellData -> {
-//      VpaDescriptorRepresentation value = cellData.getValue();
-//      boolean packaged = value.getManifest().getPackageInfo().isPopperMedia();
-//      if (packaged) {
-//        return new SimpleObjectProperty(WidgetFactory.createCheckboxIcon());
-//      }
-//      return new SimpleStringProperty("");
-//    });
-//
-//    povColumn.setCellValueFactory(cellData -> {
-//      VpaDescriptorRepresentation value = cellData.getValue();
-//      boolean pov = value.getManifest().getPackageInfo().isPov();
-//      if (pov) {
-//        return new SimpleObjectProperty(WidgetFactory.createCheckboxIcon());
-//      }
-//      return new SimpleStringProperty("");
-//    });
-//
-//    romColumn.setCellValueFactory(cellData -> {
-//      VpaDescriptorRepresentation value = cellData.getValue();
-//      boolean packaged = value.getManifest().getPackageInfo().isPopperMedia();
-//      if (packaged) {
-//        return new SimpleObjectProperty(WidgetFactory.createCheckboxIcon());
-//      }
-//      return new SimpleStringProperty("");
-//    });
-//
-//    altSoundColumn.setCellValueFactory(cellData -> {
-//      VpaDescriptorRepresentation value = cellData.getValue();
-//      boolean enabled = value.getManifest().getPackageInfo().isAltSound();
-//      if (enabled) {
-//        return new SimpleObjectProperty(WidgetFactory.createCheckboxIcon());
-//      }
-//      return new SimpleStringProperty("");
-//    });
-//
-//    sizeColumn.setCellValueFactory(cellData -> {
-//      VpaDescriptorRepresentation value = cellData.getValue();
-//      if(value.getSize() == 0 ) {
-//        return new SimpleStringProperty("-");
-//      }
-//      return new SimpleStringProperty(FileUtils.readableFileSize(value.getSize()));
-//    });
-//
-//    createdAtColumn.setCellValueFactory(cellData -> {
-//      VpaDescriptorRepresentation value = cellData.getValue();
-//      return new SimpleStringProperty(DateFormat.getInstance().format(value.getCreatedAt()));
-//    });
-//
-//    tableView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
-//    tableView.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
-//      boolean fileRepo = newSelection != null && newSelection.getSource().getType().equals(VpaSourceType.File.name());
-//      deleteBtn.setDisable(!fileRepo);
-//      installBtn.setDisable(newSelection == null);
-//      downloadBtn.setDisable(newSelection == null);
-//
-//      if (oldSelection == null || !oldSelection.equals(newSelection)) {
-//        updateSelection(Optional.ofNullable(newSelection));
-//      }
-//    });
-//
-//    tableView.setRowFactory(tv -> {
-//      TableRow<VpaDescriptorRepresentation> row = new TableRow<>();
-//      row.setOnMouseClicked(event -> {
-//        if (event.getClickCount() == 2 && (!row.isEmpty())) {
-//
-//        }
-//      });
-//      return row;
-//    });
-//
-//    searchTextField.textProperty().addListener((observableValue, s, filterValue) -> {
-//      tableView.getSelectionModel().clearSelection();
-//
-//      List<VpaDescriptorRepresentation> filtered = filterArchives(this.archives);
-//      tableView.setItems(FXCollections.observableList(filtered));
-//    });
+
+    iconColumn.setCellValueFactory(cellData -> {
+      ArchiveDescriptorRepresentation value = cellData.getValue();
+      if (value.getPackageInfo() != null) {
+        String thumbnail = value.getPackageInfo().getThumbnail();
+        if (thumbnail != null) {
+          byte[] decode = Base64.getDecoder().decode(thumbnail);
+          Image wheel = new Image(new ByteArrayInputStream(decode));
+          ImageView view = new ImageView(wheel);
+          view.setPreserveRatio(true);
+          view.setFitWidth(80);
+          view.setFitHeight(80);
+          ImageUtil.setClippedImage(view, (int) (wheel.getWidth() / 2));
+          return new SimpleObjectProperty(view);
+        }
+      }
+
+      Image wheel = new Image(Studio.class.getResourceAsStream("avatar-blank.png"));
+      ImageView view = new ImageView(wheel);
+      view.setPreserveRatio(true);
+      view.setFitWidth(70);
+      view.setFitHeight(70);
+      return new SimpleObjectProperty(view);
+    });
+
+    nameColumn.setCellValueFactory(cellData -> {
+      ArchiveDescriptorRepresentation value = cellData.getValue();
+      return new SimpleStringProperty(value.getTableDetails().getGameDisplayName());
+    });
+
+    directB2SColumn.setCellValueFactory(cellData -> {
+      ArchiveDescriptorRepresentation value = cellData.getValue();
+      if (value.getPackageInfo() != null) {
+        boolean directb2s = value.getPackageInfo().isDirectb2s();
+        if (directb2s) {
+          return new SimpleObjectProperty(WidgetFactory.createCheckboxIcon());
+        }
+      }
+      return new SimpleStringProperty("");
+    });
+
+    pupPackColumn.setCellValueFactory(cellData -> {
+      ArchiveDescriptorRepresentation value = cellData.getValue();
+      if (value.getPackageInfo() != null) {
+        boolean packaged = value.getPackageInfo().isPupPack();
+        if (packaged) {
+          return new SimpleObjectProperty(WidgetFactory.createCheckboxIcon());
+        }
+      }
+
+      return new SimpleStringProperty("");
+    });
+
+    popperColumn.setCellValueFactory(cellData -> {
+      ArchiveDescriptorRepresentation value = cellData.getValue();
+      if (value.getPackageInfo() != null) {
+        boolean packaged = value.getPackageInfo().isPopperMedia();
+        if (packaged) {
+          return new SimpleObjectProperty(WidgetFactory.createCheckboxIcon());
+        }
+      }
+
+      return new SimpleStringProperty("");
+    });
+
+    povColumn.setCellValueFactory(cellData -> {
+      ArchiveDescriptorRepresentation value = cellData.getValue();
+      if (value.getPackageInfo() != null) {
+        boolean pov = value.getPackageInfo().isPov();
+        if (pov) {
+          return new SimpleObjectProperty(WidgetFactory.createCheckboxIcon());
+        }
+      }
+      return new SimpleStringProperty("");
+    });
+
+    romColumn.setCellValueFactory(cellData -> {
+      ArchiveDescriptorRepresentation value = cellData.getValue();
+      if (value.getPackageInfo() != null) {
+        boolean packaged = value.getPackageInfo().isPopperMedia();
+        if (packaged) {
+          return new SimpleObjectProperty(WidgetFactory.createCheckboxIcon());
+        }
+      }
+      return new SimpleStringProperty("");
+    });
+
+    altSoundColumn.setCellValueFactory(cellData -> {
+      ArchiveDescriptorRepresentation value = cellData.getValue();
+      if(value.getPackageInfo() != null) {
+        boolean enabled = value.getPackageInfo().isAltSound();
+        if (enabled) {
+          return new SimpleObjectProperty(WidgetFactory.createCheckboxIcon());
+        }
+      }
+
+      return new SimpleStringProperty("");
+    });
+
+    sizeColumn.setCellValueFactory(cellData -> {
+      ArchiveDescriptorRepresentation value = cellData.getValue();
+      if (value.getSize() == 0) {
+        return new SimpleStringProperty("-");
+      }
+      return new SimpleStringProperty(FileUtils.readableFileSize(value.getSize()));
+    });
+
+    createdAtColumn.setCellValueFactory(cellData -> {
+      ArchiveDescriptorRepresentation value = cellData.getValue();
+      return new SimpleStringProperty(DateFormat.getInstance().format(value.getCreatedAt()));
+    });
+
+    tableView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
+    tableView.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
+      boolean fileRepo = newSelection != null && newSelection.getSource().getType().equals(ArchiveSourceType.File.name());
+      deleteBtn.setDisable(!fileRepo);
+      installBtn.setDisable(newSelection == null);
+      downloadBtn.setDisable(newSelection == null);
+
+      if (oldSelection == null || !oldSelection.equals(newSelection)) {
+        updateSelection(Optional.ofNullable(newSelection));
+      }
+    });
+
+    tableView.setRowFactory(tv -> {
+      TableRow<ArchiveDescriptorRepresentation> row = new TableRow<>();
+      row.setOnMouseClicked(event -> {
+        if (event.getClickCount() == 2 && (!row.isEmpty())) {
+
+        }
+      });
+      return row;
+    });
+
+    searchTextField.textProperty().addListener((observableValue, s, filterValue) -> {
+      tableView.getSelectionModel().clearSelection();
+
+      List<ArchiveDescriptorRepresentation> filtered = filterArchives(this.archives);
+      tableView.setItems(FXCollections.observableList(filtered));
+    });
 
     sourceComboChangeListener = (observable, oldValue, newValue) -> doReload();
     refreshRepositoryCombo();
@@ -355,24 +371,24 @@ public class RepositoryController implements Initializable, StudioEventListener 
     this.doReload();
   }
 
-  private void updateSelection(Optional<VpaDescriptorRepresentation> newSelection) {
+  private void updateSelection(Optional<ArchiveDescriptorRepresentation> newSelection) {
     NavigationController.setBreadCrumb(Arrays.asList("Table Repository"));
     if (newSelection.isPresent()) {
-      VpaDescriptorRepresentation descriptorRepresentation = newSelection.get();
+      ArchiveDescriptorRepresentation descriptorRepresentation = newSelection.get();
       NavigationController.setBreadCrumb(Arrays.asList("Table Repository", descriptorRepresentation.getFilename()));
     }
     tablesController.getRepositorySideBarController().setVpaDescriptor(newSelection);
   }
 
-  private List<VpaDescriptorRepresentation> filterArchives(List<VpaDescriptorRepresentation> archives) {
-    List<VpaDescriptorRepresentation> filtered = new ArrayList<>();
+  private List<ArchiveDescriptorRepresentation> filterArchives(List<ArchiveDescriptorRepresentation> archives) {
+    List<ArchiveDescriptorRepresentation> filtered = new ArrayList<>();
     String filterValue = searchTextField.textProperty().getValue();
     if (filterValue == null) {
       filterValue = "";
     }
 
-    VpaSourceRepresentation selectedItem = sourceCombo.getSelectionModel().getSelectedItem();
-    for (VpaDescriptorRepresentation archive : archives) {
+    ArchiveSourceRepresentation selectedItem = sourceCombo.getSelectionModel().getSelectedItem();
+    for (ArchiveDescriptorRepresentation archive : archives) {
       if (selectedItem != null && archive.getSource().getId() != selectedItem.getId()) {
         continue;
       }
@@ -384,8 +400,8 @@ public class RepositoryController implements Initializable, StudioEventListener 
     return filtered;
   }
 
-  public Optional<VpaDescriptorRepresentation> getSelection() {
-    VpaDescriptorRepresentation selection = tableView.getSelectionModel().getSelectedItem();
+  public Optional<ArchiveDescriptorRepresentation> getSelection() {
+    ArchiveDescriptorRepresentation selection = tableView.getSelectionModel().getSelectedItem();
     if (selection != null) {
       return Optional.of(selection);
     }
@@ -410,14 +426,14 @@ public class RepositoryController implements Initializable, StudioEventListener 
   @Override
   public void onVpaImport(@NonNull VpaImportedEvent event) {
     Platform.runLater(() -> {
-      client.invalidateVpaCache(-1);
+      client.invalidateArchiveCache(-1);
       onReload();
     });
   }
 
   private void refreshRepositoryCombo() {
     sourceCombo.valueProperty().removeListener(sourceComboChangeListener);
-    List<VpaSourceRepresentation> repositories = new ArrayList<>(client.getVpaSources());
+    List<ArchiveSourceRepresentation> repositories = new ArrayList<>(client.getArchiveSources());
     sourceCombo.setItems(FXCollections.observableList(repositories));
     sourceCombo.getSelectionModel().select(0);
     sourceCombo.valueProperty().addListener(sourceComboChangeListener);
@@ -432,9 +448,9 @@ public class RepositoryController implements Initializable, StudioEventListener 
   }
 
   public void initSelection() {
-    VpaDescriptorRepresentation vpa = tableView.getSelectionModel().getSelectedItem();
-    if(vpa != null) {
-      NavigationController.setBreadCrumb(Arrays.asList("Tables", vpa.getManifest().getGameDisplayName()));
+    ArchiveDescriptorRepresentation vpa = tableView.getSelectionModel().getSelectedItem();
+    if (vpa != null) {
+      NavigationController.setBreadCrumb(Arrays.asList("Tables", vpa.getTableDetails().getGameDisplayName()));
     }
   }
 }

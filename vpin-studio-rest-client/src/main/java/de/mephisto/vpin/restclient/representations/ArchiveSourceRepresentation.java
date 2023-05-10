@@ -2,7 +2,7 @@ package de.mephisto.vpin.restclient.representations;
 
 import java.util.Objects;
 
-public class VpaSourceRepresentation {
+public class ArchiveSourceRepresentation {
   private long id;
   private String name;
   private String type;
@@ -90,9 +90,9 @@ public class VpaSourceRepresentation {
     if (this == o) {
       return true;
     }
-    if (!(o instanceof VpaSourceRepresentation)) return false;
+    if (!(o instanceof ArchiveSourceRepresentation)) return false;
 
-    VpaSourceRepresentation that = (VpaSourceRepresentation) o;
+    ArchiveSourceRepresentation that = (ArchiveSourceRepresentation) o;
 
     if (id != that.id) return false;
     if (enabled != that.enabled) return false;

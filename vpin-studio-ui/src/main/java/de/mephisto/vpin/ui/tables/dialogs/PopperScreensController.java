@@ -2,11 +2,9 @@ package de.mephisto.vpin.ui.tables.dialogs;
 
 import de.mephisto.vpin.commons.fx.DialogController;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
-import de.mephisto.vpin.restclient.TableManifest;
+import de.mephisto.vpin.restclient.TableDetails;
 import de.mephisto.vpin.restclient.representations.GameRepresentation;
 import de.mephisto.vpin.ui.Studio;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -63,7 +61,7 @@ public class PopperScreensController implements Initializable, DialogController 
   private CheckBox helpCheckbox;
 
   private List<CheckBox> screenCheckboxes = new ArrayList<>();
-  private TableManifest manifest;
+  private TableDetails manifest;
 
   @FXML
   private void onSaveClick(ActionEvent e) {
@@ -93,7 +91,7 @@ public class PopperScreensController implements Initializable, DialogController 
 
     manifest.setKeepDisplays(value);
     try {
-      Studio.client.saveTableManifest(manifest);
+      Studio.client.saveTableDetails(manifest);
     } catch (Exception ex) {
       WidgetFactory.showAlert(Studio.stage, "Error", "Failed to save table manifest: " + ex.getMessage());
     }
@@ -200,7 +198,7 @@ public class PopperScreensController implements Initializable, DialogController 
   }
 
   public void setGame(GameRepresentation game) {
-    manifest = Studio.client.getTableManifest(game.getId());
+    manifest = Studio.client.getTableDetails(game.getId());
 
     String keepDisplays = manifest.getKeepDisplays();
     if (StringUtils.isEmpty(keepDisplays)) {

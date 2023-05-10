@@ -4,7 +4,7 @@ import de.mephisto.vpin.commons.fx.DialogController;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.VpaImportDescriptor;
 import de.mephisto.vpin.restclient.representations.PlaylistRepresentation;
-import de.mephisto.vpin.restclient.representations.VpaDescriptorRepresentation;
+import de.mephisto.vpin.restclient.representations.ArchiveDescriptorRepresentation;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.jobs.JobPoller;
 import de.mephisto.vpin.ui.tables.TablesController;
@@ -28,8 +28,8 @@ import java.util.ResourceBundle;
 
 import static de.mephisto.vpin.ui.Studio.client;
 
-public class VpaInstallationController implements Initializable, DialogController {
-  private final static Logger LOG = LoggerFactory.getLogger(VpaInstallationController.class);
+public class ArchiveInstallationController implements Initializable, DialogController {
+  private final static Logger LOG = LoggerFactory.getLogger(ArchiveInstallationController.class);
 
   @FXML
   private CheckBox importRomCheckbox;
@@ -50,7 +50,7 @@ public class VpaInstallationController implements Initializable, DialogControlle
   private ComboBox<PlaylistRepresentation> playlistCombo;
 
   private TablesController tablesController;
-  private List<VpaDescriptorRepresentation> vpaDescriptors;
+  private List<ArchiveDescriptorRepresentation> vpaDescriptors;
 
 
   @FXML
@@ -78,11 +78,11 @@ public class VpaInstallationController implements Initializable, DialogControlle
     new Thread(() -> {
       Platform.runLater(() -> {
         try {
-          for (VpaDescriptorRepresentation vpaDescriptor : this.vpaDescriptors) {
+          for (ArchiveDescriptorRepresentation vpaDescriptor : this.vpaDescriptors) {
             //TODO
 //            descriptor.setUuid(vpaDescriptor.getManifest().getUuid());
             descriptor.setVpaSourceId(vpaDescriptor.getSource().getId());
-            client.importVpa(descriptor);
+            client.importArchive(descriptor);
           }
           JobPoller.getInstance().setPolling();
         } catch (Exception ex) {
@@ -113,13 +113,13 @@ public class VpaInstallationController implements Initializable, DialogControlle
 
   }
 
-  public void setData(TablesController tablesController, List<VpaDescriptorRepresentation> vpaDescriptors) {
+  public void setData(TablesController tablesController, List<ArchiveDescriptorRepresentation> vpaDescriptors) {
     this.tablesController = tablesController;
     this.vpaDescriptors = vpaDescriptors;
 
     String title = "Installing " + this.vpaDescriptors.size() + " Tables";
     if (this.vpaDescriptors.size() == 1) {
-      title = "Installing Table \"" + this.vpaDescriptors.get(0).getManifest().getGameDisplayName() + "\"";
+      title = "Installing Table \"" + this.vpaDescriptors.get(0).getTableDetails().getGameDisplayName() + "\"";
     }
     titleLabel.setText(title);
   }

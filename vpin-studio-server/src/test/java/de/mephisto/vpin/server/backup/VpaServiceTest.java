@@ -1,7 +1,7 @@
 package de.mephisto.vpin.server.backup;
 
 import de.mephisto.vpin.restclient.BackupDescriptor;
-import de.mephisto.vpin.restclient.TableManifest;
+import de.mephisto.vpin.restclient.TableDetails;
 import de.mephisto.vpin.server.AbstractVPinServerTest;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameService;
@@ -25,7 +25,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class VpaServiceTest extends AbstractVPinServerTest {
 
   @Autowired
-  private VpaService vpaService;
+  private ArchiveService vpaService;
 
   @Autowired
   private HighscoreService highscoreService;
@@ -57,8 +57,8 @@ public class VpaServiceTest extends AbstractVPinServerTest {
     descriptor.setExportPupPack(false);
     descriptor.setExportPopperMedia(false);
 
-    TableManifest manifest = new TableManifest();
-    descriptor.setManifest(manifest);
+    TableDetails manifest = new TableDetails();
+//    descriptor.setManifest(manifest);
 
     descriptor.getGameIds().add(game.getId());
     File target = new File("E:\\downloads\\" + game.getGameDisplayName().replaceAll(" ", "-") + ".vpa");

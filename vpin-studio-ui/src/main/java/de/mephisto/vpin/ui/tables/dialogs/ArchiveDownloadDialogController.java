@@ -1,11 +1,10 @@
 package de.mephisto.vpin.ui.tables.dialogs;
 
-import de.mephisto.vpin.commons.VpaSourceType;
+import de.mephisto.vpin.commons.ArchiveSourceType;
 import de.mephisto.vpin.commons.fx.DialogController;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
-import de.mephisto.vpin.restclient.DownloadJobDescriptor;
 import de.mephisto.vpin.restclient.VpaImportDescriptor;
-import de.mephisto.vpin.restclient.representations.VpaDescriptorRepresentation;
+import de.mephisto.vpin.restclient.representations.ArchiveDescriptorRepresentation;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.jobs.JobPoller;
 import javafx.event.ActionEvent;
@@ -30,8 +29,8 @@ import java.util.ResourceBundle;
 import static de.mephisto.vpin.ui.Studio.client;
 import static de.mephisto.vpin.ui.Studio.stage;
 
-public class VpaDownloadDialogController implements Initializable, DialogController {
-  private final static Logger LOG = LoggerFactory.getLogger(VpaDownloadDialogController.class);
+public class ArchiveDownloadDialogController implements Initializable, DialogController {
+  private final static Logger LOG = LoggerFactory.getLogger(ArchiveDownloadDialogController.class);
 
   private static File lastFolderSelection;
   private static boolean fileSelectedLast;
@@ -57,7 +56,7 @@ public class VpaDownloadDialogController implements Initializable, DialogControl
   private File targetFolder;
 
   private boolean result = false;
-  private List<VpaDescriptorRepresentation> vpas;
+  private List<ArchiveDescriptorRepresentation> vpas;
 
   @FXML
   private void onCancelClick(ActionEvent e) {
@@ -70,14 +69,14 @@ public class VpaDownloadDialogController implements Initializable, DialogControl
     Stage stage = (Stage) ((Button) event.getSource()).getScene().getWindow();
     result = true;
     try {
-      for (VpaDescriptorRepresentation selectedItem : vpas) {
+      for (ArchiveDescriptorRepresentation selectedItem : vpas) {
         if (downloadToRepository.isSelected()) {
           VpaImportDescriptor descriptor = new VpaImportDescriptor();
           //TODO
 //          descriptor.setUuid(selectedItem.getManifest().getUuid());
           descriptor.setVpaSourceId(selectedItem.getSource().getId());
           descriptor.setInstall(false);
-          client.importVpa(descriptor);
+          client.importArchive(descriptor);
           JobPoller.getInstance().setPolling();
         }
         else {
@@ -111,13 +110,13 @@ public class VpaDownloadDialogController implements Initializable, DialogControl
   private void onFileSelect() {
     DirectoryChooser chooser = new DirectoryChooser();
     chooser.setTitle("Select Target Folder");
-    if (VpaDownloadDialogController.lastFolderSelection != null) {
-      chooser.setInitialDirectory(VpaDownloadDialogController.lastFolderSelection);
+    if (ArchiveDownloadDialogController.lastFolderSelection != null) {
+      chooser.setInitialDirectory(ArchiveDownloadDialogController.lastFolderSelection);
     }
 
     this.targetFolder = chooser.showDialog(stage);
     if (this.targetFolder != null) {
-      VpaDownloadDialogController.lastFolderSelection = this.targetFolder;
+      ArchiveDownloadDialogController.lastFolderSelection = this.targetFolder;
       this.fileNameField.setText(this.targetFolder.getAbsolutePath());
     }
     else {
@@ -147,8 +146,8 @@ public class VpaDownloadDialogController implements Initializable, DialogControl
       validateInput();
     });
 
-    this.downloadToFile.setSelected(VpaDownloadDialogController.fileSelectedLast);
-    this.downloadToRepository.setSelected(!VpaDownloadDialogController.fileSelectedLast);
+    this.downloadToFile.setSelected(ArchiveDownloadDialogController.fileSelectedLast);
+    this.downloadToRepository.setSelected(!ArchiveDownloadDialogController.fileSelectedLast);
   }
 
   private void validateInput() {
@@ -165,7 +164,7 @@ public class VpaDownloadDialogController implements Initializable, DialogControl
     result = false;
   }
 
-  public void setData(List<VpaDescriptorRepresentation> vpas) {
+  public void setData(List<ArchiveDescriptorRepresentation> vpas) {
     this.vpas = vpas;
     if (vpas.size() == 1) {
       this.titleLabel.setText("Download \"" + vpas.get(0).getFilename() + "\"");
@@ -175,9 +174,9 @@ public class VpaDownloadDialogController implements Initializable, DialogControl
     }
 
     //do not download from file repo to file repo
-    VpaDescriptorRepresentation descriptorRepresentation = vpas.get(0);
-    VpaSourceType vpaSourceType = VpaSourceType.valueOf(descriptorRepresentation.getSource().getType());
-    downloadToRepository.setVisible(!vpaSourceType.equals(VpaSourceType.File));
+    ArchiveDescriptorRepresentation descriptorRepresentation = vpas.get(0);
+    ArchiveSourceType vpaSourceType = ArchiveSourceType.valueOf(descriptorRepresentation.getSource().getType());
+    downloadToRepository.setVisible(!vpaSourceType.equals(ArchiveSourceType.File));
     downloadToFile.setSelected(true);
     downloadToFile.setDisable(true);
   }

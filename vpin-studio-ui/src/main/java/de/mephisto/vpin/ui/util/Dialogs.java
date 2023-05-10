@@ -154,25 +154,25 @@ public class Dialogs {
     stage.showAndWait();
   }
 
-  public static void openVpaInstallationDialog(TablesController tablesController, List<VpaDescriptorRepresentation> vpaDescriptors) {
-    Stage stage = createStudioDialogStage(VpaInstallationController.class, "dialog-vpa-install.fxml", "Install Tables");
-    VpaInstallationController controller = (VpaInstallationController) stage.getUserData();
+  public static void openVpaInstallationDialog(TablesController tablesController, List<ArchiveDescriptorRepresentation> vpaDescriptors) {
+    Stage stage = createStudioDialogStage(ArchiveInstallationController.class, "dialog-vpa-install.fxml", "Install Tables");
+    ArchiveInstallationController controller = (ArchiveInstallationController) stage.getUserData();
     controller.setData(tablesController, vpaDescriptors);
     stage.showAndWait();
   }
 
-  public static VpaSourceRepresentation openVpaSourceFileDialog(VpaSourceRepresentation source) {
-    Stage stage = createStudioDialogStage(VpaSourceFileDialogController.class, "dialog-vpa-source-file.fxml", "VPA Folder Repository");
-    VpaSourceFileDialogController controller = (VpaSourceFileDialogController) stage.getUserData();
+  public static ArchiveSourceRepresentation openVpaSourceFileDialog(ArchiveSourceRepresentation source) {
+    Stage stage = createStudioDialogStage(ArchiveSourceFileDialogController.class, "dialog-vpa-source-file.fxml", "VPA Folder Repository");
+    ArchiveSourceFileDialogController controller = (ArchiveSourceFileDialogController) stage.getUserData();
     controller.setSource(source);
     stage.showAndWait();
 
     return controller.getVpaSource();
   }
 
-  public static VpaSourceRepresentation openVpaSourceHttpDialog(VpaSourceRepresentation source) {
-    Stage stage = createStudioDialogStage(VpaSourceHttpDialogController.class, "dialog-vpa-source-http.fxml", "VPA HTTP Repository");
-    VpaSourceHttpDialogController controller = (VpaSourceHttpDialogController) stage.getUserData();
+  public static ArchiveSourceRepresentation openVpaSourceHttpDialog(ArchiveSourceRepresentation source) {
+    Stage stage = createStudioDialogStage(ArchiveSourceHttpDialogController.class, "dialog-vpa-source-http.fxml", "VPA HTTP Repository");
+    ArchiveSourceHttpDialogController controller = (ArchiveSourceHttpDialogController) stage.getUserData();
     controller.setSource(source);
     stage.showAndWait();
 
@@ -189,16 +189,16 @@ public class Dialogs {
   }
 
   public static boolean openVpaUploadDialog() {
-    Stage stage = createStudioDialogStage(VpaUploadController.class, "dialog-vpa-upload.fxml", "Visual Pinball Archive Upload");
-    VpaUploadController controller = (VpaUploadController) stage.getUserData();
+    Stage stage = createStudioDialogStage(ArchiveUploadController.class, "dialog-vpa-upload.fxml", "Visual Pinball Archive Upload");
+    ArchiveUploadController controller = (ArchiveUploadController) stage.getUserData();
     stage.showAndWait();
 
     return controller.uploadFinished();
   }
 
-  public static void openVpaDownloadDialog(ObservableList<VpaDescriptorRepresentation> selectedItems) {
-    Stage stage = createStudioDialogStage(VpaDownloadDialogController.class, "dialog-vpa-download.fxml", "Visual Pinball Archive Download");
-    VpaDownloadDialogController controller = (VpaDownloadDialogController) stage.getUserData();
+  public static void openVpaDownloadDialog(ObservableList<ArchiveDescriptorRepresentation> selectedItems) {
+    Stage stage = createStudioDialogStage(ArchiveDownloadDialogController.class, "dialog-vpa-download.fxml", "Visual Pinball Archive Download");
+    ArchiveDownloadDialogController controller = (ArchiveDownloadDialogController) stage.getUserData();
     controller.setData(selectedItems);
     stage.showAndWait();
   }

@@ -7,7 +7,6 @@ import de.mephisto.vpin.commons.utils.FileUtils;
 import de.mephisto.vpin.restclient.*;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.highscores.Highscore;
-import de.mephisto.vpin.server.highscores.HighscoreVersion;
 import de.mephisto.vpin.server.popper.GameMediaItem;
 import de.mephisto.vpin.server.popper.PinUPConnector;
 import de.mephisto.vpin.server.popper.WheelAugmenter;
@@ -27,14 +26,12 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.util.Base64;
-import java.util.Date;
-import java.util.List;
 import java.util.Optional;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
 public class VpaExporterJob implements Job {
-  private final static Logger LOG = LoggerFactory.getLogger(VpaService.class);
+  private final static Logger LOG = LoggerFactory.getLogger(ArchiveService.class);
   public static final int TARGET_WHEEL_SIZE_WIDTH = 100;
 
   private final PinUPConnector pinUPConnector;
@@ -42,14 +39,12 @@ public class VpaExporterJob implements Job {
   private final File musicFolder;
   private final Game game;
   private final BackupDescriptor exportDescriptor;
-  private final TableManifest manifest;
   private final Optional<Highscore> highscore;
-  private final List<HighscoreVersion> scoreHistory;
   private final ObjectMapper objectMapper;
-  private final VpaSourceAdapter vpaSourceAdapter;
+  private final ArchiveSourceAdapter vpaSourceAdapter;
 
   private final File targetFolder;
-  private final String vpaVersion;
+  private TableDetails manifest;
 
   private double progress;
   private String status;
@@ -62,10 +57,8 @@ public class VpaExporterJob implements Job {
                         @NonNull File musicFolder,
                         @NonNull Game game,
                         @NonNull BackupDescriptor exportDescriptor,
-                        @NonNull TableManifest manifest,
                         @NonNull Optional<Highscore> highscore,
-                        @NonNull List<HighscoreVersion> scoreHistory,
-                        @NonNull VpaSourceAdapter vpaSource,
+                        @NonNull ArchiveSourceAdapter vpaSource,
                         @NonNull File targetFolder,
                         @NonNull String vpaVersion) {
     this.pinUPConnector = pinUPConnector;
@@ -73,12 +66,9 @@ public class VpaExporterJob implements Job {
     this.musicFolder = musicFolder;
     this.game = game;
     this.exportDescriptor = exportDescriptor;
-    this.manifest = manifest;
     this.highscore = highscore;
-    this.scoreHistory = scoreHistory;
     this.vpaSourceAdapter = vpaSource;
     this.targetFolder = targetFolder;
-    this.vpaVersion = vpaVersion;
     objectMapper = new ObjectMapper();
     objectMapper.enable(SerializationFeature.INDENT_OUTPUT);
     objectMapper.enable(SerializationFeature.ORDER_MAP_ENTRIES_BY_KEYS);
@@ -96,6 +86,8 @@ public class VpaExporterJob implements Job {
   }
 
   public boolean execute() {
+    this.manifest = pinUPConnector.getGameManifest(this.game.getId());
+
     status = "Calculating export size of " + manifest.getGameFileName();
     this.calculateTotalSize();
     LOG.info("Calculated total approx. size of " + FileUtils.readableFileSize(totalSizeExpected) + " for the archive of " + game.getGameDisplayName());
@@ -112,9 +104,7 @@ public class VpaExporterJob implements Job {
       throw new UnsupportedOperationException("Couldn't delete existing temporary VPA file " + target.getAbsolutePath());
     }
 
-    VpaPackageInfo packageInfo = new VpaPackageInfo();
-    //TODO
-//    manifest.setPackageInfo(packageInfo);
+    ArchivePackageInfo packageInfo = new ArchivePackageInfo();
 
     LOG.info("Packaging " + game.getGameDisplayName());
     long start = System.currentTimeMillis();
@@ -148,18 +138,6 @@ public class VpaExporterJob implements Job {
           //TODO
 //          manifest.getAdditionalData().put(VpaService.DATA_VPREG_HIGHSCORE, vpRegJson);
         }
-
-        //write highscore history
-        //TODO
-//        List<ScoreVersionEntry> scores = scoreHistory.stream().map(ScoreVersionEntry::new).collect(Collectors.toList());
-//        packageInfo.setHighscoreHistoryRecords(scores.size());
-//        String scoresJson = objectMapper.writeValueAsString(scores);
-//        manifest.getAdditionalData().put(VpaService.DATA_HIGHSCORE_HISTORY, scoresJson);
-//
-//        //write raw highscore
-//        if (highscore.isPresent() && highscore.get().getRaw() != null) {
-//          manifest.getAdditionalData().put(VpaService.DATA_HIGHSCORE, highscore.get().getRaw());
-//        }
       }
 
       if (exportDescriptor.isExportRom() && game.getRomFile() != null && game.getRomFile().exists()) {
@@ -235,7 +213,8 @@ public class VpaExporterJob implements Job {
 
       zipPupPack(packageInfo, zipOut);
       zipPopperMedia(packageInfo, zipOut);
-      zipManifest(zipOut, target);
+      zipTableDetails(zipOut);
+      zipPackageInfo(zipOut, packageInfo);
 
       pinUPConnector.deleteFromPlaylists(game.getId());
     } catch (Exception e) {
@@ -324,7 +303,7 @@ public class VpaExporterJob implements Job {
     }
   }
 
-  private void zipPopperMedia(VpaPackageInfo packageInfo, ZipOutputStream zipOut) throws IOException {
+  private void zipPopperMedia(ArchivePackageInfo packageInfo, ZipOutputStream zipOut) throws IOException {
     //export popper menu data
     if (exportDescriptor.isExportPopperMedia()) {
       packageInfo.setPopperMedia(true);
@@ -351,7 +330,7 @@ public class VpaExporterJob implements Job {
   /**
    * Archives the PUP pack
    */
-  private void zipPupPack(VpaPackageInfo packageInfo, ZipOutputStream zipOut) throws IOException {
+  private void zipPupPack(ArchivePackageInfo packageInfo, ZipOutputStream zipOut) throws IOException {
     if (exportDescriptor.isExportPupPack()) {
       if (game.getPupPack().getPupPackFolder() != null && game.getPupPack().getPupPackFolder().exists()) {
         packageInfo.setPupPack(true);
@@ -361,7 +340,7 @@ public class VpaExporterJob implements Job {
     }
   }
 
-  private void zipManifest(ZipOutputStream zipOut, File target) throws IOException {
+  private void zipPackageInfo(ZipOutputStream zipOut, ArchivePackageInfo packageInfo) throws IOException {
     //store wheel icon as archive preview
     GameMediaItem mediaItem = game.getGameMedia().get(PopperScreen.Wheel);
     if (mediaItem != null) {
@@ -376,20 +355,21 @@ public class VpaExporterJob implements Job {
       BufferedImage resizedImage = ImageUtil.resizeImage(image, TARGET_WHEEL_SIZE_WIDTH);
 
       byte[] bytes = ImageUtil.toBytes(resizedImage);
-      String encode = Base64.getEncoder().encodeToString(bytes);
-      //TODO
-//      manifest.setThumbnail(encode);
-//
-//      manifest.setVpaFilename(target.getName());
-//
-//      byte[] original = Files.readAllBytes(mediaItem.getFile().toPath());
-//      manifest.setIcon(Base64.getEncoder().encodeToString(original));
+      packageInfo.setThumbnail(Base64.getEncoder().encodeToString(bytes));
+
+      byte[] original = Files.readAllBytes(mediaItem.getFile().toPath());
+      packageInfo.setIcon(Base64.getEncoder().encodeToString(original));
     }
 
-    manifest.setEmulatorType(VpaUtil.getEmulatorType(game.getGameFile()));
-    //TODO
-//    manifest.setVpaVersion(vpaVersion);
+    String packageInfoJson = objectMapper.writeValueAsString(manifest);
+    File manifestFile = File.createTempFile("package-info", "json");
+    manifestFile.deleteOnExit();
+    Files.write(manifestFile.toPath(), packageInfoJson.getBytes());
+    zipFile(manifestFile, ArchivePackageInfo.FILENAME, zipOut);
+  }
 
+  private void zipTableDetails(ZipOutputStream zipOut) throws IOException {
+    manifest.setEmulatorType(ArchiveUtil.getEmulatorType(game.getGameFile()));
     if (StringUtils.isEmpty(manifest.getGameFileName())) {
       manifest.setGameFileName(game.getGameFileName());
     }
@@ -398,18 +378,12 @@ public class VpaExporterJob implements Job {
       manifest.setGameName(game.getGameDisplayName());
       manifest.setGameDisplayName(game.getGameDisplayName());
     }
-//
-    //TODO
-//    manifest.setTableName(game.getTableName());
-//    if (!StringUtils.isEmpty(game.getRom())) {
-//      manifest.setRomName(game.getRom());
-//    }
 
-    String manifestString = objectMapper.writeValueAsString(manifest);
-    File manifestFile = File.createTempFile("vpa-manifest", "json");
-    manifestFile.deleteOnExit();
-    Files.write(manifestFile.toPath(), manifestString.getBytes());
-    zipFile(manifestFile, "manifest.json", zipOut);
+    String tableDetailsJson = objectMapper.writeValueAsString(manifest);
+    File tableDetailsTmpFile = File.createTempFile("table-details", "json");
+    tableDetailsTmpFile.deleteOnExit();
+    Files.write(tableDetailsTmpFile.toPath(), tableDetailsJson.getBytes());
+    zipFile(tableDetailsTmpFile, TableDetails.FILENAME, zipOut);
   }
 
   private void zipFile(File fileToZip, String fileName, ZipOutputStream zipOut) throws IOException {
@@ -479,39 +453,5 @@ public class VpaExporterJob implements Job {
     }
 
     return "Visual Pinball X";
-  }
-
-  public static class ScoreVersionEntry {
-    private String oldRaw;
-    private String newRaw;
-    private int changedPosition;
-    private Date createdAt;
-
-    public ScoreVersionEntry() {
-
-    }
-
-    private ScoreVersionEntry(HighscoreVersion version) {
-      this.oldRaw = version.getOldRaw();
-      this.newRaw = version.getNewRaw();
-      this.changedPosition = version.getChangedPosition();
-      this.createdAt = version.getCreatedAt();
-    }
-
-    public String getOldRaw() {
-      return oldRaw;
-    }
-
-    public String getNewRaw() {
-      return newRaw;
-    }
-
-    public int getChangedPosition() {
-      return changedPosition;
-    }
-
-    public Date getCreatedAt() {
-      return createdAt;
-    }
   }
 }

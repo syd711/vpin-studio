@@ -2,7 +2,7 @@ package de.mephisto.vpin.server.io;
 
 import de.mephisto.vpin.restclient.BackupDescriptor;
 import de.mephisto.vpin.restclient.VpaImportDescriptor;
-import de.mephisto.vpin.restclient.TableManifest;
+import de.mephisto.vpin.restclient.TableDetails;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,18 +19,12 @@ public class IOResource {
   private IOService ioService;
 
   @PostMapping("/export")
-  public Boolean exportVpa(@RequestBody BackupDescriptor descriptor) {
-    return ioService.exportVpa(descriptor);
+  public Boolean exportArchive(@RequestBody BackupDescriptor descriptor) {
+    return ioService.exportArchive(descriptor);
   }
 
   @PostMapping("/import")
-  public Boolean importVpa(@RequestBody VpaImportDescriptor descriptor) {
+  public Boolean importArchive(@RequestBody VpaImportDescriptor descriptor) {
     return ioService.importVpa(descriptor);
   }
-
-  @GetMapping("/manifest/{id}")
-  public TableManifest getManifest(@PathVariable("id") int id) {
-    return ioService.getManifest(id);
-  }
-
 }

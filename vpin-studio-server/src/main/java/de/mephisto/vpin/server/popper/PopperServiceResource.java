@@ -65,16 +65,15 @@ public class PopperServiceResource {
     return popperService.restart();
   }
 
-  @GetMapping("/tablemanifest/{gameId}")
-  public TableManifest get(@PathVariable("gameId") int gameId) {
+  @GetMapping("/tabledetails/{gameId}")
+  public TableDetails get(@PathVariable("gameId") int gameId) {
     return pinUPConnector.getGameManifest(gameId);
   }
 
   @PostMapping("/tablemanifest")
-  public TableManifest save(@RequestBody TableManifest m) {
+  public TableDetails save(@RequestBody TableDetails m) {
     Game game = pinUPConnector.getGame(m.getGameId());
     pinUPConnector.importManifest(game, m);
     return m;
   }
-
 }

@@ -1,6 +1,6 @@
 package de.mephisto.vpin.server.backup;
 
-import de.mephisto.vpin.restclient.TableManifest;
+import de.mephisto.vpin.restclient.TableDetails;
 import de.mephisto.vpin.restclient.util.PasswordUtil;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -16,18 +16,18 @@ import java.nio.charset.StandardCharsets;
 import java.security.cert.X509Certificate;
 import java.util.*;
 
-public class VpaSourceAdapterHttpServer implements VpaSourceAdapter {
-  private final static Logger LOG = LoggerFactory.getLogger(VpaSourceAdapterHttpServer.class);
+public class ArchiveSourceAdapterHttpServer implements ArchiveSourceAdapter {
+  private final static Logger LOG = LoggerFactory.getLogger(ArchiveSourceAdapterHttpServer.class);
 
-  private final VpaSource source;
-  private final Map<String, VpaDescriptor> cache = new HashMap<>();
+  private final ArchiveSource source;
+  private final Map<String, ArchiveDescriptor> cache = new HashMap<>();
 
-  public VpaSourceAdapterHttpServer(VpaSource source) {
+  public ArchiveSourceAdapterHttpServer(ArchiveSource source) {
     this.source = source;
     disableSslVerification();
   }
 
-  public void download(VpaDescriptor descriptor, File target) {
+  public void download(ArchiveDescriptor descriptor, File target) {
     BufferedInputStream in = null;
     BufferedOutputStream out = null;
     try {
@@ -57,7 +57,7 @@ public class VpaSourceAdapterHttpServer implements VpaSourceAdapter {
     }
   }
 
-  public List<VpaDescriptor> getVpaDescriptors() {
+  public List<ArchiveDescriptor> getArchiveDescriptors() {
     if (cache.isEmpty()) {
       String location = this.source.getLocation();
       if (!location.endsWith("/")) {
@@ -79,7 +79,7 @@ public class VpaSourceAdapterHttpServer implements VpaSourceAdapter {
         in.close();
 
         String json = jsonBuffer.toString();
-        List<TableManifest> vpaManifests = VpaUtil.readManifests(json);
+        List<TableDetails> vpaManifests = VpaArchiveUtil.readTableDetails(json);
         //TODO
 //        for (TableManifest manifest : vpaManifests) {
 //          VpaDescriptor descriptor = new VpaDescriptor(source, manifest, new Date(), manifest.getVpaFilename(), 0);
@@ -99,17 +99,17 @@ public class VpaSourceAdapterHttpServer implements VpaSourceAdapter {
     return new ArrayList<>(cache.values());
   }
 
-  public VpaSource getVpaSource() {
+  public ArchiveSource getArchiveSource() {
     return source;
   }
 
   @Override
-  public boolean delete(VpaDescriptor descriptor) {
+  public boolean delete(ArchiveDescriptor descriptor) {
     throw new UnsupportedOperationException("Delete not supported for HTTP sources.");
   }
 
   @Override
-  public InputStream getDescriptorInputStream(VpaDescriptor descriptor) throws IOException {
+  public InputStream getDescriptorInputStream(ArchiveDescriptor descriptor) throws IOException {
     String location = this.source.getLocation();
     if (!location.endsWith("/")) {
       location += "/";
@@ -126,8 +126,8 @@ public class VpaSourceAdapterHttpServer implements VpaSourceAdapter {
   private HttpURLConnection getConnection(String location) {
     HttpURLConnection conn = null;
     try {
-      String login = getVpaSource().getLogin();
-      String password = PasswordUtil.decrypt(getVpaSource().getPassword());
+      String login = getArchiveSource().getLogin();
+      String password = PasswordUtil.decrypt(getArchiveSource().getPassword());
 
       URL url = new URL(location);
       conn = (HttpURLConnection) url.openConnection();
@@ -204,6 +204,6 @@ public class VpaSourceAdapterHttpServer implements VpaSourceAdapter {
   @Override
   public void invalidate() {
     cache.clear();
-    LOG.info("Invalidated VPA source \"" + this.getVpaSource() + "\"");
+    LOG.info("Invalidated VPA source \"" + this.getArchiveSource() + "\"");
   }
 }

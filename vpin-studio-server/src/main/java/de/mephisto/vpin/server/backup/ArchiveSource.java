@@ -6,9 +6,9 @@ import javax.persistence.*;
 import java.util.Date;
 
 @Entity
-@Table(name = "VpaSources")
+@Table(name = "ArchiveSources")
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class VpaSource {
+public class ArchiveSource {
 
   @Column(nullable = false)
   @Temporal(TemporalType.TIMESTAMP)
@@ -117,9 +117,9 @@ public class VpaSource {
   @Override
   public boolean equals(Object o) {
     if (this == o) return true;
-    if (!(o instanceof VpaSource)) return false;
+    if (!(o instanceof ArchiveSource)) return false;
 
-    VpaSource vpaSource = (VpaSource) o;
+    ArchiveSource vpaSource = (ArchiveSource) o;
 
     if (!id.equals(vpaSource.id)) return false;
     return location.equals(vpaSource.location);

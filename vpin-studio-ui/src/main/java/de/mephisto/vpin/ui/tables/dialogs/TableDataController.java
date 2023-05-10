@@ -2,7 +2,7 @@ package de.mephisto.vpin.ui.tables.dialogs;
 
 import de.mephisto.vpin.commons.fx.DialogController;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
-import de.mephisto.vpin.restclient.TableManifest;
+import de.mephisto.vpin.restclient.TableDetails;
 import de.mephisto.vpin.restclient.representations.GameRepresentation;
 import de.mephisto.vpin.ui.Studio;
 import javafx.event.ActionEvent;
@@ -83,7 +83,7 @@ public class TableDataController implements Initializable, DialogController {
   private TextField notes;
 
   private GameRepresentation game;
-  private TableManifest manifest;
+  private TableDetails manifest;
 
   @FXML
   private void onSaveClick(ActionEvent e) {
@@ -91,7 +91,7 @@ public class TableDataController implements Initializable, DialogController {
     stage.close();
 
     try {
-      manifest = Studio.client.saveTableManifest(this.manifest);
+      manifest = Studio.client.saveTableDetails(this.manifest);
     } catch (Exception ex) {
       LOG.error("Error saving table manifest: " + ex.getMessage(), ex);
       WidgetFactory.showAlert(Studio.stage, "Error", "Error saving table manifest: " + ex.getMessage());
@@ -118,7 +118,7 @@ public class TableDataController implements Initializable, DialogController {
     this.game = game;
     this.titleLabel.setText("Table Data of '" + game.getGameDisplayName() + "'");
 
-    manifest = Studio.client.getVpaManifest(game.getId());
+    manifest = Studio.client.getTableDetails(game.getId());
 
     gameName.setText(manifest.getGameName());
     gameName.textProperty().addListener((observable, oldValue, newValue) -> manifest.setGameName(newValue));

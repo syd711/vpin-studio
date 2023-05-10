@@ -472,20 +472,4 @@ public class HighscoreService implements InitializingBean {
   public void afterPropertiesSet() {
     this.highscoreResolver = new HighscoreResolver(systemService);
   }
-
-  public void importScoreEntry(Game game, VpaExporterJob.ScoreVersionEntry score) {
-    HighscoreVersion version = new HighscoreVersion();
-    version.setNewRaw(score.getNewRaw());
-    version.setOldRaw(score.getOldRaw());
-    version.setGameId(game.getId());
-    version.setChangedPosition(score.getChangedPosition());
-    version.setCreatedAt(score.getCreatedAt());
-    version.setDisplayName(game.getGameDisplayName());
-
-    Optional<HighscoreVersion> byCreatedAt = highscoreVersionRepository.findByCreatedAt(score.getCreatedAt());
-    if (byCreatedAt.isEmpty()) {
-      HighscoreVersion saved = highscoreVersionRepository.saveAndFlush(version);
-      LOG.info("Imported " + saved);
-    }
-  }
 }

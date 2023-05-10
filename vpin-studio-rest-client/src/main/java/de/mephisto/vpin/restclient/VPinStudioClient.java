@@ -168,72 +168,68 @@ public class VPinStudioClient implements ObservedPropertyChangeListener, Overlay
   /*********************************************************************************************************************
    * IO
    ********************************************************************************************************************/
-  public boolean exportVpa(BackupDescriptor exportDescriptor) throws Exception {
+  public boolean exportArchive(BackupDescriptor exportDescriptor) throws Exception {
     return restClient.post(API + "io/export", exportDescriptor, Boolean.class);
   }
 
-  public boolean importVpa(VpaImportDescriptor descriptor) throws Exception {
+  public boolean importArchive(VpaImportDescriptor descriptor) throws Exception {
     return restClient.post(API + "io/import", descriptor, Boolean.class);
   }
 
-  public TableManifest getVpaManifest(int gameId) {
-    return restClient.get(API + "io/manifest/" + gameId, TableManifest.class);
-  }
-
   /*********************************************************************************************************************
-   * VPA
+   * Archiving
    ********************************************************************************************************************/
-  public List<VpaDescriptorRepresentation> getVpaDescriptors() {
-    return Arrays.asList(restClient.get(API + "vpa", VpaDescriptorRepresentation[].class));
+  public List<ArchiveDescriptorRepresentation> getArchiveDescriptors() {
+    return Arrays.asList(restClient.get(API + "archives", ArchiveDescriptorRepresentation[].class));
   }
 
-  public List<VpaDescriptorRepresentation> getVpaDescriptorsFiltered() {
-    return Arrays.asList(restClient.get(API + "vpa/filtered", VpaDescriptorRepresentation[].class));
+  public List<ArchiveDescriptorRepresentation> getArchiveDescriptorsFiltered() {
+    return Arrays.asList(restClient.get(API + "archives/filtered", ArchiveDescriptorRepresentation[].class));
   }
 
-  public List<VpaSourceRepresentation> getVpaSources() {
-    return Arrays.asList(restClient.get(API + "vpa/sources", VpaSourceRepresentation[].class));
+  public List<ArchiveSourceRepresentation> getArchiveSources() {
+    return Arrays.asList(restClient.get(API + "archives/sources", ArchiveSourceRepresentation[].class));
   }
 
-  public void deleteVpaDescriptor(long sourceId, String uuid) throws Exception {
-    restClient.delete(API + "vpa/descriptor/" + sourceId + "/" + uuid);
+  public void deleteArchive(long sourceId, String filename) {
+    restClient.delete(API + "archives/descriptor/" + sourceId + "/" + filename);
   }
 
-  public void deleteVpaSource(long id) throws Exception {
-    restClient.delete(API + "vpa/source/" + id);
+  public void deleteArchiveSource(long id) {
+    restClient.delete(API + "archives/source/" + id);
   }
 
-  public VpaSourceRepresentation saveVpaSource(VpaSourceRepresentation source) throws Exception {
+  public ArchiveSourceRepresentation saveArchiveSource(ArchiveSourceRepresentation source) throws Exception {
     try {
-      return restClient.post(API + "vpa/save", source, VpaSourceRepresentation.class);
+      return restClient.post(API + "archives/save", source, ArchiveSourceRepresentation.class);
     } catch (Exception e) {
-      LOG.error("Failed to save VPA source: " + e.getMessage(), e);
+      LOG.error("Failed to save archive source: " + e.getMessage(), e);
       throw e;
     }
   }
 
-  public List<VpaDescriptorRepresentation> getVpaDescriptorsForGame(int gameId) {
-    return Arrays.asList(restClient.get(API + "vpa/game/" + gameId, VpaDescriptorRepresentation[].class));
+  public List<ArchiveDescriptorRepresentation> getArchiveDescriptorsForGame(int gameId) {
+    return Arrays.asList(restClient.get(API + "archives/game/" + gameId, ArchiveDescriptorRepresentation[].class));
   }
 
-  public boolean invalidateVpaCache(long sourceAdapterId) {
-    return restClient.get(API + "vpa/invalidate/" + sourceAdapterId, Boolean.class);
+  public boolean invalidateArchiveCache(long sourceAdapterId) {
+    return restClient.get(API + "archives/invalidate/" + sourceAdapterId, Boolean.class);
   }
 
-  public String uploadVpa(File file, int repositoryId, FileUploadProgressListener listener) throws Exception {
+  public String uploadArchive(File file, int repositoryId, FileUploadProgressListener listener) throws Exception {
     try {
-      String url = restClient.getBaseUrl() + API + "vpa/upload/";
-      HttpEntity upload = createUpload(file, repositoryId, null, AssetType.VPA, listener);
+      String url = restClient.getBaseUrl() + API + "archives/upload/";
+      HttpEntity upload = createUpload(file, repositoryId, null, AssetType.ARCHIVE, listener);
       return new RestTemplate().exchange(url, HttpMethod.POST, upload, String.class).getBody();
     } catch (Exception e) {
-      LOG.error("VPA upload failed: " + e.getMessage(), e);
+      LOG.error("Archive upload failed: " + e.getMessage(), e);
       throw e;
     }
   }
 
-  public boolean installVpa(VpaDescriptorRepresentation vpa) throws Exception {
+  public boolean installArchive(ArchiveDescriptorRepresentation descriptor) throws Exception {
     try {
-      return restClient.post(API + "vpa/install", vpa, Boolean.class);
+      return restClient.post(API + "archives/install", descriptor, Boolean.class);
     } catch (Exception e) {
       LOG.error("Failed install archive: " + e.getMessage(), e);
       throw e;
@@ -267,15 +263,15 @@ public class VPinStudioClient implements ObservedPropertyChangeListener, Overlay
     return restClient.get(API + "popper/restart", Boolean.class);
   }
 
-  public TableManifest getTableManifest(int gameId) {
-    return restClient.get(API + "popper/tablemanifest/" + gameId, TableManifest.class);
+  public TableDetails getTableDetails(int gameId) {
+    return restClient.get(API + "popper/tabledetails/" + gameId, TableDetails.class);
   }
 
-  public TableManifest saveTableManifest(TableManifest manifest) throws Exception {
+  public TableDetails saveTableDetails(TableDetails tableDetails) throws Exception {
     try {
-      return restClient.post(API + "popper/tablemanifest", manifest, TableManifest.class);
+      return restClient.post(API + "popper/tabledetails", tableDetails, TableDetails.class);
     } catch (Exception e) {
-      LOG.error("Failed install archive: " + e.getMessage(), e);
+      LOG.error("Failed save table details: " + e.getMessage(), e);
       throw e;
     }
   }

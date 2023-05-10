@@ -1,17 +1,17 @@
 package de.mephisto.vpin.server.backup;
 
-import de.mephisto.vpin.commons.VpaSourceType;
+import de.mephisto.vpin.commons.ArchiveSourceType;
 import edu.umd.cs.findbugs.annotations.NonNull;
 
 import java.io.File;
 import java.util.Date;
 
-public class DefaultVpaSource extends VpaSource {
-  public final static long DEFAULT_VPA_SOURCE_ID = -1;
+public class DefaultArchiveSource extends ArchiveSource {
+  public final static long DEFAULT_ARCHIVE_SOURCE_ID = -1;
 
   private final File folder;
 
-  public DefaultVpaSource(@NonNull File folder) {
+  public DefaultArchiveSource(@NonNull File folder) {
     this.folder = folder;
   }
 
@@ -22,7 +22,7 @@ public class DefaultVpaSource extends VpaSource {
 
   @Override
   public String getType() {
-    return VpaSourceType.File.name();
+    return ArchiveSourceType.File.name();
   }
 
   @Override
@@ -32,7 +32,7 @@ public class DefaultVpaSource extends VpaSource {
 
   @Override
   public Long getId() {
-    return DEFAULT_VPA_SOURCE_ID;
+    return DEFAULT_ARCHIVE_SOURCE_ID;
   }
 
   @Override

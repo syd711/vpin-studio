@@ -1,20 +1,15 @@
 package de.mephisto.vpin.ui.tables;
 
 import de.mephisto.vpin.commons.utils.FileUtils;
-import de.mephisto.vpin.restclient.TableManifest;
-import de.mephisto.vpin.restclient.VpaPackageInfo;
-import de.mephisto.vpin.restclient.representations.VpaDescriptorRepresentation;
+import de.mephisto.vpin.restclient.TableDetails;
+import de.mephisto.vpin.restclient.representations.ArchiveDescriptorRepresentation;
 import de.mephisto.vpin.ui.StudioFXController;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Accordion;
-import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TitledPane;
-import javafx.scene.input.Clipboard;
-import javafx.scene.input.ClipboardContent;
 import javafx.scene.layout.VBox;
-import org.apache.commons.lang3.StringUtils;
 import org.kordamp.ikonli.javafx.FontIcon;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -108,7 +103,7 @@ public class RepositorySidebarController implements Initializable, StudioFXContr
     this.repositoryAccordion.setVisible(b);
   }
 
-  public void setVpaDescriptor(Optional<VpaDescriptorRepresentation> selection) {
+  public void setVpaDescriptor(Optional<ArchiveDescriptorRepresentation> selection) {
     directb2sIcon.setVisible(false);
     pupPackIcon.setVisible(false);
     romIcon.setVisible(false);
@@ -131,8 +126,8 @@ public class RepositorySidebarController implements Initializable, StudioFXContr
     repositoryTypeLabel.setText("-");
 
     if (selection.isPresent()) {
-      VpaDescriptorRepresentation descriptorRepresentation = selection.get();
-      TableManifest manifest = descriptorRepresentation.getManifest();
+      ArchiveDescriptorRepresentation descriptorRepresentation = selection.get();
+      TableDetails manifest = descriptorRepresentation.getTableDetails();
 
       filenameLabel.setText(descriptorRepresentation.getFilename());
       fileSizeLabel.setText(descriptorRepresentation.getSize() > 0 ? FileUtils.readableFileSize(descriptorRepresentation.getSize()) : "-");

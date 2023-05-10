@@ -7,7 +7,7 @@ public enum AssetType {
   TABLE,
   DIRECT_B2S,
   ROM,
-  VPA,
+  ARCHIVE,
   DEFAULT_BACKGROUND,
   CARD_BACKGROUND,
 }

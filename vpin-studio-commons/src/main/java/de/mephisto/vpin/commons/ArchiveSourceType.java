@@ -1,6 +1,6 @@
 package de.mephisto.vpin.commons;
 
-public enum VpaSourceType {
+public enum ArchiveSourceType {
   File,
   Http
 }

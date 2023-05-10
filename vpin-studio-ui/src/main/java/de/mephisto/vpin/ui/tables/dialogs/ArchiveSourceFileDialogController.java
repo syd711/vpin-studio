@@ -1,8 +1,8 @@
 package de.mephisto.vpin.ui.tables.dialogs;
 
-import de.mephisto.vpin.commons.VpaSourceType;
+import de.mephisto.vpin.commons.ArchiveSourceType;
 import de.mephisto.vpin.commons.fx.DialogController;
-import de.mephisto.vpin.restclient.representations.VpaSourceRepresentation;
+import de.mephisto.vpin.restclient.representations.ArchiveSourceRepresentation;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -20,8 +20,8 @@ import java.util.ResourceBundle;
 
 import static de.mephisto.vpin.ui.Studio.stage;
 
-public class VpaSourceFileDialogController implements Initializable, DialogController {
-  private final static Logger LOG = LoggerFactory.getLogger(VpaSourceFileDialogController.class);
+public class ArchiveSourceFileDialogController implements Initializable, DialogController {
+  private final static Logger LOG = LoggerFactory.getLogger(ArchiveSourceFileDialogController.class);
   private static File lastFolderSelection;
 
   @FXML
@@ -33,7 +33,7 @@ public class VpaSourceFileDialogController implements Initializable, DialogContr
   @FXML
   private TextField folderField;
 
-  private VpaSourceRepresentation source;
+  private ArchiveSourceRepresentation source;
 
   @FXML
   private void onCancelClick(ActionEvent e) {
@@ -44,7 +44,7 @@ public class VpaSourceFileDialogController implements Initializable, DialogContr
 
   @FXML
   private void onSaveClick(ActionEvent e) {
-    this.source.setType(VpaSourceType.File.name());
+    this.source.setType(ArchiveSourceType.File.name());
     this.source.setName(nameField.getText());
     this.source.setLocation(folderField.getText());
 
@@ -55,14 +55,14 @@ public class VpaSourceFileDialogController implements Initializable, DialogContr
   @FXML
   private void onFileSelect() {
     DirectoryChooser chooser = new DirectoryChooser();
-    if (VpaSourceFileDialogController.lastFolderSelection != null) {
-      chooser.setInitialDirectory(VpaSourceFileDialogController.lastFolderSelection);
+    if (ArchiveSourceFileDialogController.lastFolderSelection != null) {
+      chooser.setInitialDirectory(ArchiveSourceFileDialogController.lastFolderSelection);
     }
     chooser.setTitle("Select Source Folder");
     File targetFolder = chooser.showDialog(stage);
     if (targetFolder != null) {
       folderField.setText(targetFolder.getAbsolutePath());
-      VpaSourceFileDialogController.lastFolderSelection = targetFolder;
+      ArchiveSourceFileDialogController.lastFolderSelection = targetFolder;
 
       if(StringUtils.isEmpty(nameField.getText())) {
         nameField.setText(StringUtils.capitalize(targetFolder.getName()));
@@ -73,7 +73,7 @@ public class VpaSourceFileDialogController implements Initializable, DialogContr
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
-    source = new VpaSourceRepresentation();
+    source = new ArchiveSourceRepresentation();
 
     nameField.textProperty().addListener((observableValue, s, t1) -> {
       source.setName(t1);
@@ -96,11 +96,11 @@ public class VpaSourceFileDialogController implements Initializable, DialogContr
     this.source = null;
   }
 
-  public VpaSourceRepresentation getVpaSource() {
+  public ArchiveSourceRepresentation getVpaSource() {
     return source;
   }
 
-  public void setSource(VpaSourceRepresentation source) {
+  public void setSource(ArchiveSourceRepresentation source) {
     if (source != null) {
       this.source = source;
       nameField.setText(source.getName());

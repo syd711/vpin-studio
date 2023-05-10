@@ -2,9 +2,9 @@ package de.mephisto.vpin.tablemanager.states;
 
 import de.mephisto.vpin.restclient.VPinStudioClient;
 import de.mephisto.vpin.restclient.VpaImportDescriptor;
-import de.mephisto.vpin.restclient.TableManifest;
+import de.mephisto.vpin.restclient.TableDetails;
 import de.mephisto.vpin.restclient.representations.PlaylistRepresentation;
-import de.mephisto.vpin.restclient.representations.VpaDescriptorRepresentation;
+import de.mephisto.vpin.restclient.representations.ArchiveDescriptorRepresentation;
 import de.mephisto.vpin.tablemanager.Menu;
 import de.mephisto.vpin.tablemanager.MenuController;
 import javafx.application.Platform;
@@ -58,8 +58,8 @@ public class InstallingMenuState extends MenuState {
     });
 
     new Thread(() -> {
-      VpaDescriptorRepresentation vpaDescriptor = this.menuController.getVpaSelection();
-      TableManifest manifest = vpaDescriptor.getManifest();
+      ArchiveDescriptorRepresentation vpaDescriptor = this.menuController.getVpaSelection();
+      TableDetails manifest = vpaDescriptor.getTableDetails();
 
       VpaImportDescriptor descriptor = new VpaImportDescriptor();
       descriptor.setImportRom(true);
@@ -79,7 +79,7 @@ public class InstallingMenuState extends MenuState {
       }
 
       try {
-        Menu.client.importVpa(descriptor);
+        Menu.client.importArchive(descriptor);
       } catch (Exception e) {
         LOG.error("Failed to executing installation: " + e.getMessage(), e);
       }

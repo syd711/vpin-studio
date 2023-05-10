@@ -50,7 +50,7 @@ public class TablesBackupController implements Initializable, DialogController {
     descriptor.setExportPopperMedia(this.exportPopperMedia.isSelected());
     descriptor.setExportHighscores(this.highscoresCheckbox.isSelected());
     descriptor.getGameIds().addAll(games.stream().map(GameRepresentation::getId).collect(Collectors.toList()));
-    Studio.client.exportVpa(descriptor);
+    Studio.client.exportArchive(descriptor);
 
     Stage stage = (Stage) ((Button) e.getSource()).getScene().getWindow();
     stage.close();
@@ -90,7 +90,7 @@ public class TablesBackupController implements Initializable, DialogController {
   public void setGames(List<GameRepresentation> games) {
     this.games = games;
     if(games.size() == 1) {
-      this.titleLabel.setText("Export of " + games.size() + " table");
+      this.titleLabel.setText("Export of \"" + games.get(0).getGameDisplayName() + "\"");
     }
     else {
       this.titleLabel.setText("Export of " + games.size() + " tables");

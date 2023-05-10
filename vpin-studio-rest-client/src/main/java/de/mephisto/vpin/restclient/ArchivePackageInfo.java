@@ -1,6 +1,8 @@
 package de.mephisto.vpin.restclient;
 
-public class VpaPackageInfo {
+public class ArchivePackageInfo {
+  public final static String FILENAME = "package-info.json";
+
   private boolean directb2s;
   private boolean pupPack;
   private boolean rom;
@@ -12,10 +14,28 @@ public class VpaPackageInfo {
   private boolean altSound;
   private boolean altColor;
   private boolean highscore;
-  private int highscoreHistoryRecords;
   private boolean flexDMD;
   private boolean ultraDMD;
   private boolean vpx;
+
+  private String icon;
+  private String thumbnail;
+
+  public String getIcon() {
+    return icon;
+  }
+
+  public void setIcon(String icon) {
+    this.icon = icon;
+  }
+
+  public String getThumbnail() {
+    return thumbnail;
+  }
+
+  public void setThumbnail(String thumbnail) {
+    this.thumbnail = thumbnail;
+  }
 
   public boolean isRes() {
     return res;
@@ -111,14 +131,6 @@ public class VpaPackageInfo {
 
   public void setHighscore(boolean highscore) {
     this.highscore = highscore;
-  }
-
-  public int getHighscoreHistoryRecords() {
-    return highscoreHistoryRecords;
-  }
-
-  public void setHighscoreHistoryRecords(int highscoreHistoryRecords) {
-    this.highscoreHistoryRecords = highscoreHistoryRecords;
   }
 
   public boolean isFlexDMD() {

@@ -1,6 +1,10 @@
 package de.mephisto.vpin.restclient;
 
-public class TableManifest {
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
+public class TableDetails {
+  public final static String FILENAME = "table-details.json";
+
   //only metadata
   private int gameId;
 
@@ -28,6 +32,7 @@ public class TableManifest {
   private String url;
   private String designedBy;
 
+  @JsonIgnore
   public int getGameId() {
     return gameId;
   }

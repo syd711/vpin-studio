@@ -2,7 +2,7 @@ package de.mephisto.vpin.tablemanager.states;
 
 import de.mephisto.vpin.restclient.BackupDescriptor;
 import de.mephisto.vpin.restclient.VPinStudioClient;
-import de.mephisto.vpin.restclient.TableManifest;
+import de.mephisto.vpin.restclient.TableDetails;
 import de.mephisto.vpin.restclient.representations.GameRepresentation;
 import de.mephisto.vpin.tablemanager.Menu;
 import de.mephisto.vpin.tablemanager.MenuController;
@@ -55,17 +55,15 @@ public class ArchivingMenuState extends MenuState {
     });
     new Thread(() -> {
       GameRepresentation game = this.menuController.getGameSelection();
-      TableManifest manifest = Menu.client.getVpaManifest(game.getId());
 
       BackupDescriptor descriptor = new BackupDescriptor();
-      descriptor.setManifest(manifest);
       descriptor.getGameIds().add(game.getId());
       descriptor.setExportPupPack(true);
       descriptor.setExportRom(true);
       descriptor.setExportPopperMedia(true);
       descriptor.setRemoveFromPlaylists(mode == 0);
       try {
-        Menu.client.exportVpa(descriptor);
+        Menu.client.exportArchive(descriptor);
       } catch (Exception e) {
         LOG.error("Failed to executing archiving: " + e.getMessage(), e);
       }

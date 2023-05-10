@@ -5,7 +5,7 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import de.mephisto.vpin.commons.EmulatorType;
 import de.mephisto.vpin.restclient.VpaImportDescriptor;
 import de.mephisto.vpin.restclient.Job;
-import de.mephisto.vpin.restclient.TableManifest;
+import de.mephisto.vpin.restclient.TableDetails;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameService;
 import de.mephisto.vpin.server.highscores.HighscoreService;
@@ -26,7 +26,7 @@ import java.util.zip.ZipFile;
 import java.util.zip.ZipInputStream;
 
 public class VpaImporterJob implements Job {
-  private final static Logger LOG = LoggerFactory.getLogger(VpaService.class);
+  private final static Logger LOG = LoggerFactory.getLogger(ArchiveService.class);
 
   protected final VpaImportDescriptor descriptor;
   protected File vpaFile;
@@ -84,7 +84,7 @@ public class VpaImporterJob implements Job {
       unzipVpa(importRom, importPopperMedia, importPupPack, importHighscores);
       LOG.info("Finished unzipping of " + descriptor.getUuid() + ", starting Popper import.");
 
-      TableManifest manifest = VpaUtil.readManifest(vpaFile);
+      TableDetails manifest = VpaArchiveUtil.readTableDetails(vpaFile);
       if (StringUtils.isEmpty(manifest.getGameFileName())) {
         LOG.error("The VPA manifest of " + vpaFile.getAbsolutePath() + " does not contain a game filename.");
         return false;
@@ -101,8 +101,6 @@ public class VpaImporterJob implements Job {
       status = "Importing Game to Popper";
       connector.importManifest(game, manifest);
       game.setRom(manifest.getRomName());
-      //TODO
-//      game.setTableName(manifest.getTableName());
 
       if (descriptor.getPlaylistId() != -1) {
         connector.addToPlaylist(game.getId(), descriptor.getPlaylistId());
@@ -110,7 +108,7 @@ public class VpaImporterJob implements Job {
 
       if (importHighscores) {
         status = "Importing Highscores";
-        importHighscores(game, manifest);
+        importHighscore(game, manifest);
       }
 
       highscoreService.scanScore(game);
@@ -124,21 +122,7 @@ public class VpaImporterJob implements Job {
     return true;
   }
 
-  private void importHighscores(Game game, TableManifest manifest) {
-    try {
-      //TODO
-//      if (manifest.getAdditionalData().containsKey(VpaService.DATA_HIGHSCORE_HISTORY)) {
-//        String json = (String) manifest.getAdditionalData().get(VpaService.DATA_HIGHSCORE_HISTORY);
-//        VpaExporterJob.ScoreVersionEntry[] scores = objectMapper.readValue(json, VpaExporterJob.ScoreVersionEntry[].class);
-//        for (VpaExporterJob.ScoreVersionEntry score : scores) {
-//          highscoreService.importScoreEntry(game, score);
-//        }
-//        LOG.info("Finished importing " + scores.length + " highscore version entries.");
-//      }
-    } catch (Exception e) {
-      LOG.error("Error importing highscore history of " + game.getGameDisplayName() + ": " + e.getMessage(), e);
-    }
-
+  private void importHighscore(Game game, TableDetails manifest) {
     try {
       //TODO
 //      if (manifest.getAdditionalData().containsKey(VpaService.DATA_VPREG_HIGHSCORE)) {
@@ -239,7 +223,7 @@ public class VpaImporterJob implements Job {
     return systemService.getPinUPSystemFolder().getParentFile();
   }
 
-  private File getGameFile(TableManifest manifest) {
+  private File getGameFile(TableDetails manifest) {
     String emulator = manifest.getEmulatorType();
     if (EmulatorType.VISUAL_PINBALL_X.equals(emulator)) {
       return new File(systemService.getVPXTablesFolder(), manifest.getGameFileName());

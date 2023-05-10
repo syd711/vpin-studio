@@ -65,7 +65,6 @@ class ThreadedStreamHandler extends Thread {
    * Use this constructor when you want to invoke the 'sudo' command.
    * The outputStream must not be null. If it is, you'll regret it. :)
    * <p/>
-   * TODO this currently hangs if the admin password given for the sudo command is wrong.
    *
    * @param name
    * @param inputStream

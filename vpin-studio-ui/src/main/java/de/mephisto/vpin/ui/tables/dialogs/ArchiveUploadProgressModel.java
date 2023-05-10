@@ -10,15 +10,15 @@ import java.io.File;
 import java.util.Iterator;
 import java.util.List;
 
-public class VpaUploadProgressModel extends ProgressModel<File> {
-  private final static Logger LOG = LoggerFactory.getLogger(VpaUploadProgressModel.class);
+public class ArchiveUploadProgressModel extends ProgressModel<File> {
+  private final static Logger LOG = LoggerFactory.getLogger(ArchiveUploadProgressModel.class);
 
   private final Iterator<File> iterator;
   private final long repositoryId;
   private final List<File> files;
   private double percentage = 0;
 
-  public VpaUploadProgressModel(String title, long repositoryId, List<File> files) {
+  public ArchiveUploadProgressModel(String title, long repositoryId, List<File> files) {
     super(title);
     this.repositoryId = repositoryId;
     this.files = files;
@@ -48,7 +48,7 @@ public class VpaUploadProgressModel extends ProgressModel<File> {
   @Override
   public void processNext(ProgressResultModel progressResultModel, File next) {
     try {
-      Studio.client.uploadVpa(next, (int) repositoryId, percent -> {
+      Studio.client.uploadArchive(next, (int) repositoryId, percent -> {
         double total = percentage + percent;
         progressResultModel.setProgress(total / this.files.size());
       });

@@ -4,8 +4,8 @@ import de.mephisto.vpin.commons.EmulatorType;
 import de.mephisto.vpin.restclient.PinUPControl;
 import de.mephisto.vpin.restclient.PinUPControls;
 import de.mephisto.vpin.restclient.PopperScreen;
-import de.mephisto.vpin.restclient.TableManifest;
-import de.mephisto.vpin.server.backup.VpaUtil;
+import de.mephisto.vpin.restclient.TableDetails;
+import de.mephisto.vpin.server.backup.ArchiveUtil;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.system.SystemService;
 import edu.umd.cs.findbugs.annotations.NonNull;
@@ -125,15 +125,15 @@ public class PinUPConnector implements InitializingBean {
   }
 
   @Nullable
-  public TableManifest getGameManifest(int id) {
+  public TableDetails getGameManifest(int id) {
     Connection connect = connect();
-    TableManifest manifest = null;
+    TableDetails manifest = null;
     try {
       PreparedStatement statement = connect.prepareStatement("SELECT * FROM Games where GameID = ?");
       statement.setInt(1, id);
       ResultSet rs = statement.executeQuery();
       if (rs.next()) {
-        manifest = new TableManifest();
+        manifest = new TableDetails();
         manifest.setGameId(id);
         manifest.setEmulatorType(rs.getString("GameType"));
         manifest.setGameName(rs.getString("GameName"));
@@ -284,7 +284,7 @@ public class PinUPConnector implements InitializingBean {
   }
 
   public int importGame(@NonNull File file) {
-    String emulator = VpaUtil.getEmulatorType(file);
+    String emulator = ArchiveUtil.getEmulatorType(file);
     String name = FilenameUtils.getBaseName(file.getName());
     String gameFileName = file.getName();
     String gameDisplayName = name.replaceAll("-", " ").replaceAll("_", " ");
@@ -787,7 +787,7 @@ public class PinUPConnector implements InitializingBean {
   }
 
 
-  public void importManifest(Game game, TableManifest manifest) {
+  public void importManifest(Game game, TableDetails manifest) {
     int id = game.getId();
     importManifestValue(id, "GameName", manifest.getGameName());
     importManifestValue(id, "GameDisplay", manifest.getGameDisplayName());

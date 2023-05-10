@@ -1,12 +1,10 @@
 package de.mephisto.vpin.ui.tables.dialogs;
 
 import de.mephisto.vpin.commons.VpaAuthenticationType;
-import de.mephisto.vpin.commons.VpaSourceType;
+import de.mephisto.vpin.commons.ArchiveSourceType;
 import de.mephisto.vpin.commons.fx.DialogController;
-import de.mephisto.vpin.restclient.representations.VpaSourceRepresentation;
+import de.mephisto.vpin.restclient.representations.ArchiveSourceRepresentation;
 import de.mephisto.vpin.restclient.util.PasswordUtil;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -22,8 +20,8 @@ import java.io.File;
 import java.net.URL;
 import java.util.ResourceBundle;
 
-public class VpaSourceHttpDialogController implements Initializable, DialogController {
-  private final static Logger LOG = LoggerFactory.getLogger(VpaSourceHttpDialogController.class);
+public class ArchiveSourceHttpDialogController implements Initializable, DialogController {
+  private final static Logger LOG = LoggerFactory.getLogger(ArchiveSourceHttpDialogController.class);
   private static File lastFolderSelection;
 
   @FXML
@@ -47,7 +45,7 @@ public class VpaSourceHttpDialogController implements Initializable, DialogContr
   @FXML
   private TextField passwordField;
 
-  private VpaSourceRepresentation source;
+  private ArchiveSourceRepresentation source;
 
   @FXML
   private void onCancelClick(ActionEvent e) {
@@ -58,7 +56,7 @@ public class VpaSourceHttpDialogController implements Initializable, DialogContr
 
   @FXML
   private void onSaveClick(ActionEvent e) {
-    this.source.setType(VpaSourceType.Http.name());
+    this.source.setType(ArchiveSourceType.Http.name());
     this.source.setName(nameField.getText());
     this.source.setLocation(urlField.getText());
     this.source.setLogin(loginField.getText());
@@ -76,7 +74,7 @@ public class VpaSourceHttpDialogController implements Initializable, DialogContr
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
-    source = new VpaSourceRepresentation();
+    source = new ArchiveSourceRepresentation();
     source.setSettings(null);
     source.setEnabled(true);
     enabledCheckbox.setSelected(true);
@@ -114,11 +112,11 @@ public class VpaSourceHttpDialogController implements Initializable, DialogContr
     this.source = null;
   }
 
-  public VpaSourceRepresentation getVpaSource() {
+  public ArchiveSourceRepresentation getVpaSource() {
     return source;
   }
 
-  public void setSource(VpaSourceRepresentation source) {
+  public void setSource(ArchiveSourceRepresentation source) {
     if (source != null) {
       this.source = source;
       nameField.setText(source.getName());

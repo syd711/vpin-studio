@@ -1,7 +1,7 @@
 package de.mephisto.vpin.ui.tables;
 
 import de.mephisto.vpin.commons.utils.WidgetFactory;
-import de.mephisto.vpin.restclient.TableManifest;
+import de.mephisto.vpin.restclient.TableDetails;
 import de.mephisto.vpin.restclient.VPinStudioClient;
 import de.mephisto.vpin.restclient.representations.GameRepresentation;
 import de.mephisto.vpin.ui.Studio;
@@ -106,7 +106,7 @@ public class TablesSidebarPopperController implements Initializable, ChangeListe
   private Optional<GameRepresentation> game = Optional.empty();
 
   private TablesSidebarController tablesSidebarController;
-  private TableManifest manifest;
+  private TableDetails manifest;
 
   // Add a public no-args constructor
   public TablesSidebarPopperController() {
@@ -164,7 +164,7 @@ public class TablesSidebarPopperController implements Initializable, ChangeListe
       labelLastPlayed.setText(game.getLastPlayed() != null ? DateFormat.getDateInstance().format(game.getLastPlayed()) : "-");
       labelTimesPlayed.setText(String.valueOf(game.getNumberPlays()));
 
-      manifest = client.getTableManifest(game.getId());
+      manifest = client.getTableDetails(game.getId());
 
       volumeSlider.valueProperty().removeListener(this);
       if (manifest.getVolume() != null) {
@@ -246,7 +246,7 @@ public class TablesSidebarPopperController implements Initializable, ChangeListe
         manifest.setVolume(String.valueOf(value));
         LOG.info("Updates volume of " + g.getGameDisplayName() + " to " + value);
         try {
-          client.saveTableManifest(manifest);
+          client.saveTableDetails(manifest);
         } catch (Exception e) {
           WidgetFactory.showAlert(Studio.stage, e.getMessage());
         }

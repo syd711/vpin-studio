@@ -13,21 +13,21 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 
 public class VpaDownloadAndImporterJob extends VpaImporterJob {
-  private final static Logger LOG = LoggerFactory.getLogger(VpaService.class);
+  private final static Logger LOG = LoggerFactory.getLogger(ArchiveService.class);
 
-  private final VpaDescriptor vpaDescriptor;
-  private final VpaService vpaService;
+  private final ArchiveDescriptor vpaDescriptor;
+  private final ArchiveService vpaService;
   private boolean downloadFinished;
 
   private final VpaDownloadToRepositoryJob downloadToRepositoryJob;
 
-  public VpaDownloadAndImporterJob(@NonNull VpaDescriptor vpaDescriptor,
+  public VpaDownloadAndImporterJob(@NonNull ArchiveDescriptor vpaDescriptor,
                                    @NonNull VpaImportDescriptor descriptor,
                                    @NonNull File vpaFile,
                                    @NonNull PinUPConnector connector,
                                    @NonNull SystemService systemService,
                                    @NonNull HighscoreService highscoreService,
-                                   @NonNull VpaService vpaService,
+                                   @NonNull ArchiveService vpaService,
                                    @NonNull GameService gameService,
                                    @NonNull CardService cardService) {
     super(descriptor, vpaFile, connector, systemService, highscoreService, gameService, cardService);
@@ -56,7 +56,7 @@ public class VpaDownloadAndImporterJob extends VpaImporterJob {
     this.vpaFile = downloadToRepositoryJob.getDownloadedFile();
     downloadFinished = true;
 
-    VpaSourceAdapter vpaSourceAdapter = vpaService.getVpaSourceAdapter(vpaDescriptor.getSource().getId());
+    ArchiveSourceAdapter vpaSourceAdapter = vpaService.getVpaSourceAdapter(vpaDescriptor.getSource().getId());
     vpaSourceAdapter.invalidate();
 
     if (descriptor.isInstall()) {

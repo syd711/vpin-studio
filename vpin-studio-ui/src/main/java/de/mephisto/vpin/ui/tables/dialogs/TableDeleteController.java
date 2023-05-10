@@ -158,7 +158,7 @@ public class TableDeleteController implements Initializable, DialogController {
       imageView.setImage(wheel);
     }
 
-    boolean hasNoVpa = Studio.client.getVpaDescriptorsForGame(game.getId()).isEmpty();
+    boolean hasNoVpa = Studio.client.getArchiveDescriptorsForGame(game.getId()).isEmpty();
     this.validationContainer.setVisible(hasNoVpa);
   }
 }

@@ -5,7 +5,7 @@ import de.mephisto.vpin.restclient.PopperScreen;
 import de.mephisto.vpin.restclient.representations.GameMediaItemRepresentation;
 import de.mephisto.vpin.restclient.representations.GameMediaRepresentation;
 import de.mephisto.vpin.restclient.representations.GameRepresentation;
-import de.mephisto.vpin.restclient.representations.VpaDescriptorRepresentation;
+import de.mephisto.vpin.restclient.representations.ArchiveDescriptorRepresentation;
 import de.mephisto.vpin.tablemanager.states.StateMananger;
 import javafx.animation.ParallelTransition;
 import javafx.animation.Transition;
@@ -28,7 +28,6 @@ import org.slf4j.LoggerFactory;
 
 import java.io.ByteArrayInputStream;
 import java.net.URL;
-import java.util.Base64;
 import java.util.List;
 import java.util.ResourceBundle;
 
@@ -88,7 +87,7 @@ public class MenuController implements Initializable {
 
   private boolean installToggle = true;
   private int selectionIndex = 0;
-  private List<VpaDescriptorRepresentation> vpaDescriptors;
+  private List<ArchiveDescriptorRepresentation> vpaDescriptors;
   private List<GameRepresentation> games;
   private List<?> activeModels;
 
@@ -125,7 +124,7 @@ public class MenuController implements Initializable {
     TransitionUtil.createTranslateByYTransition(footer, FOOTER_ANIMATION_DURATION, FOOTER_HEIGHT).play();
 
     new Thread(() -> {
-      vpaDescriptors = Menu.client.getVpaDescriptorsFiltered();
+      vpaDescriptors = Menu.client.getArchiveDescriptorsFiltered();
       activeModels = vpaDescriptors; //TODO mpf
       Platform.runLater(() -> {
         loadArchivedItems();
@@ -310,7 +309,7 @@ public class MenuController implements Initializable {
       nameLabel.setText(((GameRepresentation) userData).getGameDisplayName());
     }
     else {
-      nameLabel.setText(((VpaDescriptorRepresentation) userData).getManifest().getGameDisplayName());
+      nameLabel.setText(((ArchiveDescriptorRepresentation) userData).getTableDetails().getGameDisplayName());
     }
   }
 
@@ -346,7 +345,7 @@ public class MenuController implements Initializable {
   private void loadArchivedItems() {
     gameRow.getChildren().clear();
     selectionIndex = 0;
-    for (VpaDescriptorRepresentation vpaDescriptor : vpaDescriptors) {
+    for (ArchiveDescriptorRepresentation vpaDescriptor : vpaDescriptors) {
       gameRow.getChildren().add(createItemFor(vpaDescriptor));
     }
 
@@ -392,8 +391,8 @@ public class MenuController implements Initializable {
         wheel = new Image(gameMediaItem);
       }
     }
-    else if (o instanceof VpaDescriptorRepresentation) {
-      VpaDescriptorRepresentation vpaDescriptor = (VpaDescriptorRepresentation) o;
+    else if (o instanceof ArchiveDescriptorRepresentation) {
+      ArchiveDescriptorRepresentation vpaDescriptor = (ArchiveDescriptorRepresentation) o;
       //TODO
 //      String icon = vpaDescriptor.getManifest().getIcon();
 //      if (icon == null) {
@@ -441,9 +440,9 @@ public class MenuController implements Initializable {
     return (GameRepresentation) node.getUserData();
   }
 
-  public VpaDescriptorRepresentation getVpaSelection() {
+  public ArchiveDescriptorRepresentation getVpaSelection() {
     Node node = gameRow.getChildren().get(selectionIndex);
-    return (VpaDescriptorRepresentation) node.getUserData();
+    return (ArchiveDescriptorRepresentation) node.getUserData();
   }
 
   public void showProgressbar() {
@@ -489,6 +488,6 @@ public class MenuController implements Initializable {
 
   public void leaveInstallSubSelection() {
     setArrowsVisible(false);
-    nameLabel.setText(this.getVpaSelection().getManifest().getGameDisplayName());
+    nameLabel.setText(this.getVpaSelection().getTableDetails().getGameDisplayName());
   }
 }

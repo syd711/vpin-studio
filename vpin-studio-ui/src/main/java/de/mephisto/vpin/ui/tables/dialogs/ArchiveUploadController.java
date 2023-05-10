@@ -1,9 +1,9 @@
 package de.mephisto.vpin.ui.tables.dialogs;
 
-import de.mephisto.vpin.commons.VpaSourceType;
+import de.mephisto.vpin.commons.ArchiveSourceType;
 import de.mephisto.vpin.commons.fx.DialogController;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
-import de.mephisto.vpin.restclient.representations.VpaSourceRepresentation;
+import de.mephisto.vpin.restclient.representations.ArchiveSourceRepresentation;
 import de.mephisto.vpin.ui.util.Dialogs;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
@@ -29,8 +29,8 @@ import java.util.stream.Collectors;
 import static de.mephisto.vpin.ui.Studio.client;
 import static de.mephisto.vpin.ui.Studio.stage;
 
-public class VpaUploadController implements Initializable, DialogController {
-  private final static Logger LOG = LoggerFactory.getLogger(VpaUploadController.class);
+public class ArchiveUploadController implements Initializable, DialogController {
+  private final static Logger LOG = LoggerFactory.getLogger(ArchiveUploadController.class);
 
   private static File lastFolderSelection;
 
@@ -41,7 +41,7 @@ public class VpaUploadController implements Initializable, DialogController {
   private Button uploadBtn;
 
   @FXML
-  private ComboBox<VpaSourceRepresentation> repositoryCombo;
+  private ComboBox<ArchiveSourceRepresentation> repositoryCombo;
 
   private List<File> selection;
 
@@ -63,8 +63,8 @@ public class VpaUploadController implements Initializable, DialogController {
           stage.close();
         });
 
-        VpaSourceRepresentation selectedItem = this.repositoryCombo.getSelectionModel().getSelectedItem();
-        VpaUploadProgressModel model = new VpaUploadProgressModel("Archive Upload", selectedItem.getId(), selection);
+        ArchiveSourceRepresentation selectedItem = this.repositoryCombo.getSelectionModel().getSelectedItem();
+        ArchiveUploadProgressModel model = new ArchiveUploadProgressModel("Archive Upload", selectedItem.getId(), selection);
         Dialogs.createProgressDialog(model);
       } catch (Exception e) {
         LOG.error("Upload failed: " + e.getMessage(), e);
@@ -80,13 +80,13 @@ public class VpaUploadController implements Initializable, DialogController {
     fileChooser.getExtensionFilters().addAll(
         new FileChooser.ExtensionFilter("Visual Pinball Archive", "*.vpa"));
 
-    if (VpaUploadController.lastFolderSelection != null) {
-      fileChooser.setInitialDirectory(VpaUploadController.lastFolderSelection);
+    if (ArchiveUploadController.lastFolderSelection != null) {
+      fileChooser.setInitialDirectory(ArchiveUploadController.lastFolderSelection);
     }
 
     this.selection = fileChooser.showOpenMultipleDialog(stage);
     if (this.selection != null && !this.selection.isEmpty()) {
-      VpaUploadController.lastFolderSelection = this.selection.get(0).getParentFile();
+      ArchiveUploadController.lastFolderSelection = this.selection.get(0).getParentFile();
       this.fileNameField.setText(this.selection.stream().map(f -> f.getName()).collect(Collectors.joining()));
     }
     else {
@@ -102,8 +102,8 @@ public class VpaUploadController implements Initializable, DialogController {
     this.uploadBtn.setDisable(true);
     this.fileNameField.textProperty().addListener((observableValue, s, t1) -> uploadBtn.setDisable(StringUtils.isEmpty(t1)));
 
-    List<VpaSourceRepresentation> repositories = new ArrayList<>(client.getVpaSources());
-    repositories = repositories.stream().filter(r -> r.getType().equals(VpaSourceType.File.name())).collect(Collectors.toList());
+    List<ArchiveSourceRepresentation> repositories = new ArrayList<>(client.getArchiveSources());
+    repositories = repositories.stream().filter(r -> r.getType().equals(ArchiveSourceType.File.name())).collect(Collectors.toList());
     repositoryCombo.setItems(FXCollections.observableList(repositories));
     repositoryCombo.getSelectionModel().select(0);
   }
