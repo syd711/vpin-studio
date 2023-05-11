@@ -80,7 +80,7 @@ public class ArchiveSourceAdapterHttpServer implements ArchiveSourceAdapter {
 
         String json = jsonBuffer.toString();
         List<TableDetails> tableDetails = VpaArchiveUtil.readTableDetails(json);
-        //TODO
+        //TODO vpa
 //        for (TableManifest manifest : tableDetails) {
 //          VpaDescriptor descriptor = new VpaDescriptor(source, manifest, new Date(), manifest.getVpaFilename(), 0);
 //          cache.put(manifest.getUuid(), descriptor);
@@ -115,7 +115,7 @@ public class ArchiveSourceAdapterHttpServer implements ArchiveSourceAdapter {
       location += "/";
     }
 
-    //TODO
+    //TODO vpa
 //    String name = descriptor.getManifest().getVpaFilename();
 //    location += URLEncoder.encode(name, StandardCharsets.UTF_8).replace("+", "%20");
 

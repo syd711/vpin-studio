@@ -60,7 +60,7 @@ public class HighscoreService implements InitializingBean {
           break;
         }
         case NVRam: {
-          result = game.getNvRamFile().exists() && game.getNvRamFile().delete();//TODO unify game file access
+          result = game.getNvRamFile().exists() && game.getNvRamFile().delete();
           break;
         }
         case VPReg: {

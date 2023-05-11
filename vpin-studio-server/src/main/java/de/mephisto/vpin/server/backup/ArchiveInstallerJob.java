@@ -117,7 +117,7 @@ public class ArchiveInstallerJob implements Job {
 
   private void importHighscore(Game game, TableDetails manifest) {
     try {
-      //TODO
+      //TODO vpa
 //      if (manifest.getAdditionalData().containsKey(VpaService.DATA_VPREG_HIGHSCORE)) {
 //        String json = (String) manifest.getAdditionalData().get(VpaService.DATA_VPREG_HIGHSCORE);
 //        VPRegScoreSummary summary = objectMapper.readValue(json, VPRegScoreSummary.class);

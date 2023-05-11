@@ -134,7 +134,7 @@ public class TableBackupJob implements Job {
         VPReg reg = new VPReg(vprRegFile, game);
         VPRegScoreSummary summary = reg.readHighscores();
         String vpRegJson = objectMapper.writeValueAsString(summary);
-        //TODO
+        //TODO vpa
 //          manifest.getAdditionalData().put(VpaService.DATA_VPREG_HIGHSCORE, vpRegJson);
       }
 

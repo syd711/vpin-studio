@@ -2,6 +2,7 @@ package de.mephisto.vpin.ui.tables.dialogs;
 
 import de.mephisto.vpin.restclient.descriptors.ArchiveInstallDescriptor;
 import de.mephisto.vpin.restclient.representations.ArchiveDescriptorRepresentation;
+import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.util.ProgressModel;
 import de.mephisto.vpin.ui.util.ProgressResultModel;
 import org.slf4j.Logger;
@@ -48,14 +49,13 @@ public class TableInstallationProgressModel extends ProgressModel<ArchiveDescrip
   @Override
   public void processNext(ProgressResultModel progressResultModel, ArchiveDescriptorRepresentation next) {
     try {
-      //TODO
-//      descriptor.setUuid(next.getManifest().getUuid());
-//      Studio.client.importVpa(descriptor);
+      descriptor.setFilename(next.getFilename());
+      Studio.client.installTable(descriptor);
 
       progressResultModel.addProcessed();
       percentage++;
     } catch (Exception e) {
-      LOG.error("Table export failed: " + e.getMessage(), e);
+      LOG.error("Table installation failed: " + e.getMessage(), e);
     }
   }
 
