@@ -81,7 +81,7 @@
                         <FontIcon iconColor="WHITE" iconLiteral="mdi2d-download" />
                      </graphic>
                   </Button>
-                  <Button fx:id="copyToRepositoryBtn" layoutX="915.0" layoutY="11.0" mnemonicParsing="false" onAction="#onToRepositoryCopy" text="Copy To Repository" textFill="WHITE">
+                  <Button fx:id="copyToRepositoryBtn" layoutX="915.0" layoutY="11.0" mnemonicParsing="false" onAction="#onToRepositoryCopy" text="Copy" textFill="WHITE">
                      <font>
                         <Font size="14.0" />
                      </font>
@@ -89,7 +89,7 @@
                         <FontIcon iconColor="WHITE" iconLiteral="mdi2c-content-copy" />
                      </graphic>
                   </Button>
-                  <Separator layoutX="282.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
+                  <Separator layoutX="282.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="6.0" />
                   <Button fx:id="deleteBtn" layoutX="379.0" layoutY="11.0" mnemonicParsing="false" onAction="#onDelete" text="Delete" textFill="#ff3333">
                      <font>
                         <Font size="14.0" />

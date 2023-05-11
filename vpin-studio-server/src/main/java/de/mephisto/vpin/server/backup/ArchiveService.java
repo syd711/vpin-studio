@@ -92,7 +92,7 @@ public class ArchiveService implements InitializingBean {
     return false;
   }
 
-  public boolean deleteVpaSource(long id) {
+  public boolean deleteArchiveSource(long id) {
     if (adapterCache.containsKey(id)) {
       this.adapterCache.remove(id);
       this.archiveSourceRepository.deleteById(id);

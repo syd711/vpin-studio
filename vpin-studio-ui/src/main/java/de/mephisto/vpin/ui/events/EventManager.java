@@ -21,36 +21,44 @@ public class EventManager {
     this.listeners.add(listener);
   }
 
-  public void notifyVpaExport(String uuid) {
+  public void notifyTableBackedUp() {
     new Thread(() -> {
-      VpaExportedEvent event = new VpaExportedEvent(uuid);
+      TableBackedUpEvent event = new TableBackedUpEvent();
       for (StudioEventListener listener : listeners) {
-        listener.onVpaExport(event);
+        listener.onTableBackedUp(event);
       }
     }).start();
   }
 
-  public void notifyVpaImport(String uuid) {
+  public void notifyArchiveInstallation() {
     new Thread(() -> {
-      VpaImportedEvent event = new VpaImportedEvent(uuid);
+      ArchiveInstalledEvent event = new ArchiveInstalledEvent();
       for (StudioEventListener listener : listeners) {
-        listener.onVpaImport(event);
+        listener.onArchiveInstalled(event);
       }
     }).start();
   }
 
-  public void notifyVpaSourceUpdate() {
+  public void notifyArchiveSourceUpdate() {
     new Thread(() -> {
       for (StudioEventListener listener : listeners) {
-        listener.onVpaSourceUpdate();
+        listener.onArchiveSourceUpdate();
       }
     }).start();
   }
 
-  public void notifyVpaDownloadFinished() {
+  public void notifyArchiveCopyFinished() {
     new Thread(() -> {
       for (StudioEventListener listener : listeners) {
-        listener.onVpaDownload();
+        listener.onArchiveCopiedToRepository();
+      }
+    }).start();
+  }
+
+  public void notifyArchiveDownloadFinished() {
+    new Thread(() -> {
+      for (StudioEventListener listener : listeners) {
+        listener.onArchiveDownload();
       }
     }).start();
   }
@@ -59,17 +67,19 @@ public class EventManager {
     JobType type = descriptor.getJobType();
     switch (type) {
       case TABLE_BACKUP: {
-        String uuid = descriptor.getUuid();
-        notifyVpaExport(uuid);
+        notifyTableBackedUp();
         return;
       }
       case ARCHIVE_INSTALL: {
-        String uuid = descriptor.getUuid();
-        notifyVpaImport(uuid);
+        notifyArchiveInstallation();
         return;
       }
       case ARCHIVE_DOWNLOAD_TO_REPOSITORY: {
-        notifyVpaDownloadFinished();
+        notifyArchiveCopyFinished();
+        return;
+      }
+      case ARCHIVE_DOWNLOAD_TO_FILESYSTEM: {
+        notifyArchiveDownloadFinished();
         return;
       }
       default: {

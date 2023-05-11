@@ -11,7 +11,7 @@ import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.WaitOverlayController;
 import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.events.StudioEventListener;
-import de.mephisto.vpin.ui.events.VpaImportedEvent;
+import de.mephisto.vpin.ui.events.ArchiveInstalledEvent;
 import de.mephisto.vpin.ui.util.Dialogs;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import javafx.application.Platform;
@@ -420,7 +420,7 @@ public class RepositoryController implements Initializable, StudioEventListener 
   }
 
   @Override
-  public void onVpaSourceUpdate() {
+  public void onArchiveSourceUpdate() {
     Platform.runLater(() -> {
       refreshRepositoryCombo();
       doReload();
@@ -428,14 +428,14 @@ public class RepositoryController implements Initializable, StudioEventListener 
   }
 
   @Override
-  public void onVpaDownload() {
+  public void onArchiveCopiedToRepository() {
     Platform.runLater(() -> {
       onReload();
     });
   }
 
   @Override
-  public void onVpaImport(@NonNull VpaImportedEvent event) {
+  public void onArchiveInstalled(@NonNull ArchiveInstalledEvent event) {
     Platform.runLater(() -> {
       client.invalidateArchiveCache(-1);
       onReload();

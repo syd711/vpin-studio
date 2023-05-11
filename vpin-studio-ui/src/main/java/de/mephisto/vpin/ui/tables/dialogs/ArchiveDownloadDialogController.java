@@ -21,6 +21,8 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.net.URL;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.ResourceBundle;
 
@@ -67,7 +69,7 @@ public class ArchiveDownloadDialogController implements Initializable, DialogCon
         }
 
         long repositoryId = selectedItem.getSource().getId();
-        DownloadJobDescriptor job = new DownloadJobDescriptor("/archives/download/file/" + repositoryId + "/" + target.getName(), target);
+        DownloadJobDescriptor job = new DownloadJobDescriptor("archives/download/file/" + repositoryId + "/" + URLEncoder.encode(target.getName(), StandardCharsets.UTF_8), target);
         job.setTitle("Download of \"" + selectedItem.getFilename() + "\"");
         job.setDescription("Downloading file \"" + selectedItem.getFilename() + "\"");
         JobPoller.getInstance().queueJob(job);
@@ -105,6 +107,9 @@ public class ArchiveDownloadDialogController implements Initializable, DialogCon
 
     this.downloadBtn.setDisable(true);
     this.fileNameField.textProperty().addListener((observableValue, s, t1) -> downloadBtn.setDisable(StringUtils.isEmpty(t1)));
+    if (ArchiveDownloadDialogController.lastFolderSelection != null) {
+      fileNameField.setText(ArchiveDownloadDialogController.lastFolderSelection.getAbsolutePath());
+    }
   }
 
   private void validateInput() {

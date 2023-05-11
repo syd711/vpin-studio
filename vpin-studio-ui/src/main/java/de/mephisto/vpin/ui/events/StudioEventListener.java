@@ -4,19 +4,23 @@ package de.mephisto.vpin.ui.events;
 import edu.umd.cs.findbugs.annotations.NonNull;
 
 public interface StudioEventListener {
-  default void onVpaExport(@NonNull VpaExportedEvent event) {
+  default void onTableBackedUp(@NonNull TableBackedUpEvent event) {
 
   }
 
-  default void onVpaImport(@NonNull VpaImportedEvent event) {
+  default void onArchiveInstalled(@NonNull ArchiveInstalledEvent event) {
 
   }
 
-  default void onVpaDownload() {
+  default void onArchiveCopiedToRepository() {
 
   }
 
-  default void onVpaSourceUpdate() {
+  default void onArchiveDownload() {
+
+  }
+
+  default void onArchiveSourceUpdate() {
 
   }
 }

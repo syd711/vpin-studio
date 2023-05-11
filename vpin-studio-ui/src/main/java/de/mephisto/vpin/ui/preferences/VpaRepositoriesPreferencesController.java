@@ -119,7 +119,7 @@ public class VpaRepositoriesPreferencesController implements Initializable {
     List<ArchiveSourceRepresentation> vpaSources = client.getArchiveSources();
     tableView.setItems(FXCollections.observableList(vpaSources));
     tableView.refresh();
-    EventManager.getInstance().notifyVpaSourceUpdate();
+    EventManager.getInstance().notifyArchiveSourceUpdate();
   }
 
   @Override
