@@ -79,9 +79,9 @@ public class ArchiveSourceAdapterHttpServer implements ArchiveSourceAdapter {
         in.close();
 
         String json = jsonBuffer.toString();
-        List<TableDetails> vpaManifests = VpaArchiveUtil.readTableDetails(json);
+        List<TableDetails> tableDetails = VpaArchiveUtil.readTableDetails(json);
         //TODO
-//        for (TableManifest manifest : vpaManifests) {
+//        for (TableManifest manifest : tableDetails) {
 //          VpaDescriptor descriptor = new VpaDescriptor(source, manifest, new Date(), manifest.getVpaFilename(), 0);
 //          cache.put(manifest.getUuid(), descriptor);
 //        }
@@ -109,7 +109,7 @@ public class ArchiveSourceAdapterHttpServer implements ArchiveSourceAdapter {
   }
 
   @Override
-  public InputStream getDescriptorInputStream(ArchiveDescriptor descriptor) throws IOException {
+  public InputStream getDescriptorInputStream(ArchiveDescriptor archiveDescriptor) throws IOException {
     String location = this.source.getLocation();
     if (!location.endsWith("/")) {
       location += "/";
@@ -204,6 +204,6 @@ public class ArchiveSourceAdapterHttpServer implements ArchiveSourceAdapter {
   @Override
   public void invalidate() {
     cache.clear();
-    LOG.info("Invalidated VPA source \"" + this.getArchiveSource() + "\"");
+    LOG.info("Invalidated archive source \"" + this.getArchiveSource() + "\"");
   }
 }

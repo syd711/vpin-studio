@@ -120,11 +120,11 @@ public class RepositoryController implements Initializable, StudioEventListener 
         Optional<ButtonType> buttonType = Dialogs.openPopperRunningWarning(Studio.stage);
         if (buttonType.isPresent() && buttonType.get().equals(ButtonType.APPLY)) {
           Studio.client.terminatePopper();
-          Dialogs.openVpaInstallationDialog(tablesController, selectedItems);
+          Dialogs.openTableInstallationDialog(tablesController, selectedItems);
         }
       }
       else {
-        Dialogs.openVpaInstallationDialog(tablesController, selectedItems);
+        Dialogs.openTableInstallationDialog(tablesController, selectedItems);
       }
     }
   }
@@ -388,7 +388,7 @@ public class RepositoryController implements Initializable, StudioEventListener 
       ArchiveDescriptorRepresentation descriptorRepresentation = newSelection.get();
       NavigationController.setBreadCrumb(Arrays.asList("Table Repository", descriptorRepresentation.getFilename()));
     }
-    tablesController.getRepositorySideBarController().setVpaDescriptor(newSelection);
+    tablesController.getRepositorySideBarController().setArchiveDescriptor(newSelection);
   }
 
   private List<ArchiveDescriptorRepresentation> filterArchives(List<ArchiveDescriptorRepresentation> archives) {
@@ -459,9 +459,9 @@ public class RepositoryController implements Initializable, StudioEventListener 
   }
 
   public void initSelection() {
-    ArchiveDescriptorRepresentation vpa = tableView.getSelectionModel().getSelectedItem();
-    if (vpa != null) {
-      NavigationController.setBreadCrumb(Arrays.asList("Tables", vpa.getTableDetails().getGameDisplayName()));
+    ArchiveDescriptorRepresentation archiveDescriptor = tableView.getSelectionModel().getSelectedItem();
+    if (archiveDescriptor != null) {
+      NavigationController.setBreadCrumb(Arrays.asList("Tables", archiveDescriptor.getFilename()));
     }
   }
 }

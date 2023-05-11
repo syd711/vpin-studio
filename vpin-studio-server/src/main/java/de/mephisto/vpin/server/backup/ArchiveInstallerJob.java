@@ -76,12 +76,12 @@ public class ArchiveInstallerJob implements Job {
       LOG.info("Starting import of " + descriptor.getFilename());
 
       status = "Extracting " + archiveFile.getAbsolutePath();
-      unzipVpa();
+      unzipArchive();
       LOG.info("Finished unzipping of " + descriptor.getFilename() + ", starting Popper import.");
 
       TableDetails manifest = VpaArchiveUtil.readTableDetails(archiveFile);
       if (StringUtils.isEmpty(manifest.getGameFileName())) {
-        LOG.error("The VPA manifest of " + archiveFile.getAbsolutePath() + " does not contain a game filename.");
+        LOG.error("The archive manifest of " + archiveFile.getAbsolutePath() + " does not contain a game filename.");
         return false;
       }
 
@@ -129,7 +129,7 @@ public class ArchiveInstallerJob implements Job {
     }
   }
 
-  private void unzipVpa() {
+  private void unzipArchive() {
     try {
       ZipFile zf = new ZipFile(archiveFile);
       int totalCount = zf.size();
@@ -175,7 +175,7 @@ public class ArchiveInstallerJob implements Job {
       zis.closeEntry();
       zis.close();
     } catch (Exception e) {
-      LOG.error("VPA import of " + archiveFile.getAbsolutePath() + " failed: " + e.getMessage(), e);
+      LOG.error("Table installation of " + archiveFile.getAbsolutePath() + " failed: " + e.getMessage(), e);
     }
   }
 

@@ -2,7 +2,7 @@ package de.mephisto.vpin.restclient.descriptors;
 
 public class ArchiveInstallDescriptor {
   private int playlistId = -1;
-  private long vpaSourceId;
+  private long archiveSourceId;
   private String filename;
 
   public String getFilename() {
@@ -13,12 +13,12 @@ public class ArchiveInstallDescriptor {
     this.filename = filename;
   }
 
-  public long getVpaSourceId() {
-    return vpaSourceId;
+  public long getArchiveSourceId() {
+    return archiveSourceId;
   }
 
-  public void setArchiveSourceId(long vpaSourceId) {
-    this.vpaSourceId = vpaSourceId;
+  public void setArchiveSourceId(long sourceId) {
+    this.archiveSourceId = sourceId;
   }
 
   public int getPlaylistId() {

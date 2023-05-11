@@ -5,8 +5,8 @@ import de.mephisto.vpin.commons.ArchiveSourceType;
 public class ArchiveSourceAdapterFactory {
 
   public static ArchiveSourceAdapter create(ArchiveSource source) {
-    ArchiveSourceType vpaSourceType = ArchiveSourceType.valueOf(source.getType());
-    switch (vpaSourceType) {
+    ArchiveSourceType archiveSourceType = ArchiveSourceType.valueOf(source.getType());
+    switch (archiveSourceType) {
       case File: {
         return new ArchiveSourceAdapterFileSystem(source);
       }
@@ -14,7 +14,7 @@ public class ArchiveSourceAdapterFactory {
         return new ArchiveSourceAdapterHttpServer(source);
       }
       default: {
-        throw new UnsupportedOperationException("Invalid source type: " + vpaSourceType);
+        throw new UnsupportedOperationException("Invalid source type: " + archiveSourceType);
       }
     }
   }

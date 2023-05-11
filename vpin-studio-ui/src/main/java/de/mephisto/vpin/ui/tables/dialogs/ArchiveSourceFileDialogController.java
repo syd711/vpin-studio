@@ -96,7 +96,7 @@ public class ArchiveSourceFileDialogController implements Initializable, DialogC
     this.source = null;
   }
 
-  public ArchiveSourceRepresentation getVpaSource() {
+  public ArchiveSourceRepresentation getArchiveSource() {
     return source;
   }
 

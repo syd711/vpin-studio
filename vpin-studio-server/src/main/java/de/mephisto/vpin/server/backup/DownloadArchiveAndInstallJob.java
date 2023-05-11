@@ -21,14 +21,14 @@ public class DownloadArchiveAndInstallJob extends ArchiveInstallerJob {
 
   public DownloadArchiveAndInstallJob(@NonNull ArchiveDescriptor archiveDescriptor,
                                       @NonNull ArchiveDownloadAndInstallDescriptor descriptor,
-                                      @NonNull File vpaFile,
+                                      @NonNull File archiveFile,
                                       @NonNull PinUPConnector connector,
                                       @NonNull SystemService systemService,
                                       @NonNull HighscoreService highscoreService,
                                       @NonNull ArchiveService archiveService,
                                       @NonNull GameService gameService,
                                       @NonNull CardService cardService) {
-    super(descriptor, vpaFile, connector, systemService, highscoreService, gameService, cardService);
+    super(descriptor, archiveFile, connector, systemService, highscoreService, gameService, cardService);
     this.archiveDescriptor = archiveDescriptor;
     this.archiveService = archiveService;
     this.descriptor = descriptor;
@@ -55,8 +55,8 @@ public class DownloadArchiveAndInstallJob extends ArchiveInstallerJob {
     this.archiveFile = downloadToRepositoryJob.getDownloadedFile();
     downloadFinished = true;
 
-    ArchiveSourceAdapter vpaSourceAdapter = archiveService.getArchiveSourceAdapter(archiveDescriptor.getSource().getId());
-    vpaSourceAdapter.invalidate();
+    ArchiveSourceAdapter sourceAdapter = archiveService.getArchiveSourceAdapter(archiveDescriptor.getSource().getId());
+    sourceAdapter.invalidate();
 
     if (descriptor.isInstall()) {
       return super.execute();

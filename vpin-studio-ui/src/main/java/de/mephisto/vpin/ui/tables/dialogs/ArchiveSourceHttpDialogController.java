@@ -1,6 +1,6 @@
 package de.mephisto.vpin.ui.tables.dialogs;
 
-import de.mephisto.vpin.commons.VpaAuthenticationType;
+import de.mephisto.vpin.commons.ArchiveSourceAuthenticationType;
 import de.mephisto.vpin.commons.ArchiveSourceType;
 import de.mephisto.vpin.commons.fx.DialogController;
 import de.mephisto.vpin.restclient.representations.ArchiveSourceRepresentation;
@@ -63,7 +63,7 @@ public class ArchiveSourceHttpDialogController implements Initializable, DialogC
     this.source.setEnabled(enabledCheckbox.isSelected());
 
     if(basicAuthCheckbox.isSelected()) {
-      this.source.setAuthenticationType(VpaAuthenticationType.Basic.name());
+      this.source.setAuthenticationType(ArchiveSourceAuthenticationType.Basic.name());
     }
 
     this.source.setPassword(PasswordUtil.encrypt(passwordField.getText()));
@@ -112,7 +112,7 @@ public class ArchiveSourceHttpDialogController implements Initializable, DialogC
     this.source = null;
   }
 
-  public ArchiveSourceRepresentation getVpaSource() {
+  public ArchiveSourceRepresentation getArchiveSource() {
     return source;
   }
 
@@ -123,7 +123,7 @@ public class ArchiveSourceHttpDialogController implements Initializable, DialogC
       urlField.setText(source.getLocation());
       enabledCheckbox.setSelected(source.isEnabled());
       loginField.setText(source.getLogin());
-      basicAuthCheckbox.setSelected(source.getAuthenticationType() != null & source.getAuthenticationType().equals(VpaAuthenticationType.Basic.name()));
+      basicAuthCheckbox.setSelected(source.getAuthenticationType() != null & source.getAuthenticationType().equals(ArchiveSourceAuthenticationType.Basic.name()));
       passwordField.setText(PasswordUtil.decrypt(source.getPassword()));
     }
     validateInput();

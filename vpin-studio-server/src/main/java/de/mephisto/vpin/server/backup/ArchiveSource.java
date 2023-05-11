@@ -119,10 +119,10 @@ public class ArchiveSource {
     if (this == o) return true;
     if (!(o instanceof ArchiveSource)) return false;
 
-    ArchiveSource vpaSource = (ArchiveSource) o;
+    ArchiveSource archiveSource = (ArchiveSource) o;
 
-    if (!id.equals(vpaSource.id)) return false;
-    return location.equals(vpaSource.location);
+    if (!id.equals(archiveSource.id)) return false;
+    return location.equals(archiveSource.location);
   }
 
   @Override

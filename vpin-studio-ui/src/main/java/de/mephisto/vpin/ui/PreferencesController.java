@@ -71,7 +71,7 @@ public class PreferencesController implements Initializable {
 
   @FXML
   private void onVpaRepositories(ActionEvent event) throws IOException {
-    load("preference-vpa-repositories.fxml", event);
+    load("preference-repositories.fxml", event);
   }
 
   @FXML

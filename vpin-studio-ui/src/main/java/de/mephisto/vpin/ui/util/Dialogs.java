@@ -154,29 +154,29 @@ public class Dialogs {
     stage.showAndWait();
   }
 
-  public static void openVpaInstallationDialog(TablesController tablesController, List<ArchiveDescriptorRepresentation> vpaDescriptors) {
+  public static void openTableInstallationDialog(TablesController tablesController, List<ArchiveDescriptorRepresentation> descriptorRepresentations) {
     Stage stage = createStudioDialogStage(TableInstallFromBackController.class, "dialog-table-install.fxml", "Install Tables");
     TableInstallFromBackController controller = (TableInstallFromBackController) stage.getUserData();
-    controller.setData(tablesController, vpaDescriptors);
+    controller.setData(tablesController, descriptorRepresentations);
     stage.showAndWait();
   }
 
-  public static ArchiveSourceRepresentation openVpaSourceFileDialog(ArchiveSourceRepresentation source) {
-    Stage stage = createStudioDialogStage(ArchiveSourceFileDialogController.class, "dialog-vpa-source-file.fxml", "VPA Folder Repository");
+  public static ArchiveSourceRepresentation openArchiveSourceFileDialog(ArchiveSourceRepresentation source) {
+    Stage stage = createStudioDialogStage(ArchiveSourceFileDialogController.class, "dialog-archive-source-file.fxml", "Folder Repository");
     ArchiveSourceFileDialogController controller = (ArchiveSourceFileDialogController) stage.getUserData();
     controller.setSource(source);
     stage.showAndWait();
 
-    return controller.getVpaSource();
+    return controller.getArchiveSource();
   }
 
-  public static ArchiveSourceRepresentation openVpaSourceHttpDialog(ArchiveSourceRepresentation source) {
-    Stage stage = createStudioDialogStage(ArchiveSourceHttpDialogController.class, "dialog-vpa-source-http.fxml", "VPA HTTP Repository");
+  public static ArchiveSourceRepresentation openArchiveSourceHttpDialog(ArchiveSourceRepresentation source) {
+    Stage stage = createStudioDialogStage(ArchiveSourceHttpDialogController.class, "dialog-archive-source-http.fxml", "HTTP Repository");
     ArchiveSourceHttpDialogController controller = (ArchiveSourceHttpDialogController) stage.getUserData();
     controller.setSource(source);
     stage.showAndWait();
 
-    return controller.getVpaSource();
+    return controller.getArchiveSource();
   }
 
   public static ResetHighscoreDescriptor openHighscoreResetDialog(GameRepresentation game) {

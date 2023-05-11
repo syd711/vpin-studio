@@ -52,19 +52,19 @@ public class IOService {
 
   public boolean installArchive(@NonNull ArchiveInstallDescriptor descriptor) {
     try {
-      ArchiveDescriptor vpaDescriptor = archiveService.getArchiveDescriptor(descriptor.getVpaSourceId(), descriptor.getFilename());
-      File archiveFile = new File(systemService.getVpaArchiveFolder(), vpaDescriptor.getFilename());
+      ArchiveDescriptor archiveDescriptor = archiveService.getArchiveDescriptor(descriptor.getArchiveSourceId(), descriptor.getFilename());
+      File archiveFile = new File(systemService.getVpaArchiveFolder(), archiveDescriptor.getFilename());
 
       JobDescriptor jobDescriptor = new JobDescriptor(JobType.ARCHIVE_INSTALL, descriptor.getFilename());
-      jobDescriptor.setTitle("Import of \"" + vpaDescriptor.getTableDetails().getGameDisplayName() + "\"");
-      jobDescriptor.setDescription("Importing table for \"" + vpaDescriptor.getTableDetails().getGameDisplayName() + "\"");
+      jobDescriptor.setTitle("Import of \"" + archiveDescriptor.getTableDetails().getGameDisplayName() + "\"");
+      jobDescriptor.setDescription("Importing table for \"" + archiveDescriptor.getTableDetails().getGameDisplayName() + "\"");
 
       ArchiveInstallerJob job = new ArchiveInstallerJob(descriptor, archiveFile, pinUPConnector, systemService, highscoreService, gameService, cardService);
-      jobDescriptor.setDescription("Installing \"" + vpaDescriptor.getTableDetails().getGameDisplayName() + "\"");
+      jobDescriptor.setDescription("Installing \"" + archiveDescriptor.getTableDetails().getGameDisplayName() + "\"");
       jobDescriptor.setJob(job);
 
       JobQueue.getInstance().offer(jobDescriptor);
-      LOG.info("Offered import job for \"" + vpaDescriptor.getTableDetails().getGameDisplayName() + "\"");
+      LOG.info("Offered import job for \"" + archiveDescriptor.getTableDetails().getGameDisplayName() + "\"");
     } catch (Exception e) {
       LOG.error("Import failed: " + e.getMessage(), e);
       return false;
@@ -74,7 +74,7 @@ public class IOService {
 
   public boolean downloadArchive(ArchiveDownloadAndInstallDescriptor downloadAndInstallDescriptor) {
     try {
-      ArchiveDescriptor archiveDescriptor = archiveService.getArchiveDescriptor(downloadAndInstallDescriptor.getVpaSourceId(), downloadAndInstallDescriptor.getFilename());
+      ArchiveDescriptor archiveDescriptor = archiveService.getArchiveDescriptor(downloadAndInstallDescriptor.getArchiveSourceId(), downloadAndInstallDescriptor.getFilename());
       File archiveFile = new File(systemService.getVpaArchiveFolder(), archiveDescriptor.getFilename());
 
       JobDescriptor jobDescriptor = new JobDescriptor(JobType.ARCHIVE_DOWNLOAD_TO_REPOSITORY, downloadAndInstallDescriptor.getFilename());

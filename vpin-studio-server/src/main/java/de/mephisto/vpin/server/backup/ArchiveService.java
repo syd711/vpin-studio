@@ -125,25 +125,25 @@ public class ArchiveService implements InitializingBean {
 
   public ArchiveSource save(ArchiveSourceRepresentation representation) {
     Optional<ArchiveSource> byId = archiveSourceRepository.findById(representation.getId());
-    ArchiveSource vpaSource = null;
+    ArchiveSource archiveSource = null;
     if (byId.isPresent()) {
-      vpaSource = byId.get();
+      archiveSource = byId.get();
     }
     else {
-      vpaSource = new ArchiveSource();
-      vpaSource.setCreatedAt(new Date());
-      vpaSource.setType(representation.getType());
+      archiveSource = new ArchiveSource();
+      archiveSource.setCreatedAt(new Date());
+      archiveSource.setType(representation.getType());
     }
 
-    vpaSource.setLocation(representation.getLocation());
-    vpaSource.setName(representation.getName());
-    vpaSource.setAuthenticationType(representation.getAuthenticationType());
-    vpaSource.setLogin(representation.getLogin());
-    vpaSource.setPassword(representation.getPassword());
-    vpaSource.setEnabled(representation.isEnabled());
-    vpaSource.setSettings(representation.getSettings());
+    archiveSource.setLocation(representation.getLocation());
+    archiveSource.setName(representation.getName());
+    archiveSource.setAuthenticationType(representation.getAuthenticationType());
+    archiveSource.setLogin(representation.getLogin());
+    archiveSource.setPassword(representation.getPassword());
+    archiveSource.setEnabled(representation.isEnabled());
+    archiveSource.setSettings(representation.getSettings());
 
-    ArchiveSource updatedSource = archiveSourceRepository.saveAndFlush(vpaSource);
+    ArchiveSource updatedSource = archiveSourceRepository.saveAndFlush(archiveSource);
     adapterCache.remove(updatedSource.getId());
 
     adapterCache.put(updatedSource.getId(), ArchiveSourceAdapterFactory.create(updatedSource));
@@ -153,14 +153,14 @@ public class ArchiveService implements InitializingBean {
 
   @Override
   public void afterPropertiesSet() {
-    DefaultArchiveSource defaultVpaSource = new DefaultArchiveSource(systemService.getVpaArchiveFolder());
-    defaultArchiveSourceAdapter = new ArchiveSourceAdapterFileSystem(defaultVpaSource);
-    this.adapterCache.put(defaultVpaSource.getId(), defaultArchiveSourceAdapter);
+    DefaultArchiveSource defaultArchiveSource = new DefaultArchiveSource(systemService.getVpaArchiveFolder());
+    defaultArchiveSourceAdapter = new ArchiveSourceAdapterFileSystem(defaultArchiveSource);
+    this.adapterCache.put(defaultArchiveSource.getId(), defaultArchiveSourceAdapter);
 
     List<ArchiveSource> all = archiveSourceRepository.findAll();
-    for (ArchiveSource vpaSource : all) {
-      ArchiveSourceAdapter vpaSourceAdapter = ArchiveSourceAdapterFactory.create(vpaSource);
-      this.adapterCache.put(vpaSource.getId(), vpaSourceAdapter);
+    for (ArchiveSource archiveSource : all) {
+      ArchiveSourceAdapter vpaSourceAdapter = ArchiveSourceAdapterFactory.create(archiveSource);
+      this.adapterCache.put(archiveSource.getId(), vpaSourceAdapter);
     }
   }
 }

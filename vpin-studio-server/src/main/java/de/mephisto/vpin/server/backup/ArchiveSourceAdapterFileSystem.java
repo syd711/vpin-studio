@@ -61,15 +61,15 @@ public class ArchiveSourceAdapterFileSystem implements ArchiveSourceAdapter {
   }
 
   @Override
-  public FileInputStream getDescriptorInputStream(ArchiveDescriptor descriptor) throws IOException {
-    File file = new File(archiveFolder, descriptor.getFilename());
+  public FileInputStream getDescriptorInputStream(ArchiveDescriptor archiveDescriptor) throws IOException {
+    File file = new File(archiveFolder, archiveDescriptor.getFilename());
     return new FileInputStream(file);
   }
 
   @Override
   public void invalidate() {
     cache.clear();
-    LOG.info("Invalidated VPA source \"" + this.getArchiveSource() + "\"");
+    LOG.info("Invalidated archive source \"" + this.getArchiveSource() + "\"");
 
     if (this.getArchiveSource().getId() == -1) {
       ArchiveUtil.exportDescriptorJson(this);

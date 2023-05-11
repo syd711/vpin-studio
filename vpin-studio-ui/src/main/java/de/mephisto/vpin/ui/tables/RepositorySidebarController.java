@@ -158,14 +158,14 @@ public class RepositorySidebarController implements Initializable, StudioFXContr
   public void initialize(URL url, ResourceBundle resourceBundle) {
     repositoryAccordion.managedProperty().bindBidirectional(repositoryAccordion.visibleProperty());
     repositoryAccordion.setExpandedPane(detailsPane);
-    setVpaDescriptor(Optional.empty());
+    setArchiveDescriptor(Optional.empty());
   }
 
   public void setVisible(boolean b) {
     this.repositoryAccordion.setVisible(b);
   }
 
-  public void setVpaDescriptor(Optional<ArchiveDescriptorRepresentation> selection) {
+  public void setArchiveDescriptor(Optional<ArchiveDescriptorRepresentation> selection) {
     directb2sIcon.setVisible(false);
     pupPackIcon.setVisible(false);
     romIcon.setVisible(false);

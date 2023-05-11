@@ -55,7 +55,7 @@ public class ArchiveUploadProgressModel extends ProgressModel<File> {
       progressResultModel.addProcessed();
       percentage++;
     } catch (Exception e) {
-      LOG.error("VPA upload failed: " + e.getMessage(), e);
+      LOG.error("Archive upload failed: " + e.getMessage(), e);
     }
   }
 

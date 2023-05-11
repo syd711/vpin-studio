@@ -45,7 +45,7 @@ public class ArchiveDownloadDialogController implements Initializable, DialogCon
   private File targetFolder;
 
   private boolean result = false;
-  private List<ArchiveDescriptorRepresentation> vpas;
+  private List<ArchiveDescriptorRepresentation> archiveDescriptors;
 
   @FXML
   private void onCancelClick(ActionEvent e) {
@@ -58,7 +58,7 @@ public class ArchiveDownloadDialogController implements Initializable, DialogCon
     Stage stage = (Stage) ((Button) event.getSource()).getScene().getWindow();
     result = true;
     try {
-      for (ArchiveDescriptorRepresentation selectedItem : vpas) {
+      for (ArchiveDescriptorRepresentation selectedItem : archiveDescriptors) {
         File target = new File(targetFolder, selectedItem.getFilename());
         int index = 1;
         String originalBaseName = FilenameUtils.getBaseName(target.getName());
@@ -76,7 +76,7 @@ public class ArchiveDownloadDialogController implements Initializable, DialogCon
       }
     } catch (Exception e) {
       LOG.error("Download failed: " + e.getMessage(), e);
-      WidgetFactory.showAlert(Studio.stage, "Downloading VPA files failed.", "Please check the log file for details.", "Error: " + e.getMessage());
+      WidgetFactory.showAlert(Studio.stage, "Downloading archive files failed.", "Please check the log file for details.", "Error: " + e.getMessage());
     } finally {
       stage.close();
     }
@@ -121,13 +121,13 @@ public class ArchiveDownloadDialogController implements Initializable, DialogCon
     result = false;
   }
 
-  public void setData(List<ArchiveDescriptorRepresentation> vpas) {
-    this.vpas = vpas;
-    if (vpas.size() == 1) {
-      this.titleLabel.setText("Download \"" + vpas.get(0).getFilename() + "\"");
+  public void setData(List<ArchiveDescriptorRepresentation> archiveDescriptors) {
+    this.archiveDescriptors = archiveDescriptors;
+    if (archiveDescriptors.size() == 1) {
+      this.titleLabel.setText("Download \"" + archiveDescriptors.get(0).getFilename() + "\"");
     }
     else {
-      this.titleLabel.setText("Download " + vpas.size() + " Archives");
+      this.titleLabel.setText("Download " + archiveDescriptors.size() + " Archives");
     }
   }
 }

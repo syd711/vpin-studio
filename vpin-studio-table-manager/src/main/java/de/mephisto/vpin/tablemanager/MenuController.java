@@ -87,7 +87,7 @@ public class MenuController implements Initializable {
 
   private boolean installToggle = true;
   private int selectionIndex = 0;
-  private List<ArchiveDescriptorRepresentation> vpaDescriptors;
+  private List<ArchiveDescriptorRepresentation> archiveDescriptors;
   private List<GameRepresentation> games;
   private List<?> activeModels;
 
@@ -124,8 +124,8 @@ public class MenuController implements Initializable {
     TransitionUtil.createTranslateByYTransition(footer, FOOTER_ANIMATION_DURATION, FOOTER_HEIGHT).play();
 
     new Thread(() -> {
-      vpaDescriptors = Menu.client.getArchiveDescriptorsFiltered();
-      activeModels = vpaDescriptors; //TODO mpf
+      archiveDescriptors = Menu.client.getArchiveDescriptorsFiltered();
+      activeModels = archiveDescriptors; //TODO mpf
       Platform.runLater(() -> {
         loadArchivedItems();
         initGameBarSelection();
@@ -345,11 +345,11 @@ public class MenuController implements Initializable {
   private void loadArchivedItems() {
     gameRow.getChildren().clear();
     selectionIndex = 0;
-    for (ArchiveDescriptorRepresentation vpaDescriptor : vpaDescriptors) {
-      gameRow.getChildren().add(createItemFor(vpaDescriptor));
+    for (ArchiveDescriptorRepresentation archiveDescriptor : archiveDescriptors) {
+      gameRow.getChildren().add(createItemFor(archiveDescriptor));
     }
 
-    if (!vpaDescriptors.isEmpty()) {
+    if (!archiveDescriptors.isEmpty()) {
       while (gameRow.getChildren().size() * UIDefaults.THUMBNAIL_SIZE < UIDefaults.SCREEN_WIDTH * 2) {
         Label label = new Label();
         label.setMinWidth(THUMBNAIL_SIZE);
@@ -392,11 +392,11 @@ public class MenuController implements Initializable {
       }
     }
     else if (o instanceof ArchiveDescriptorRepresentation) {
-      ArchiveDescriptorRepresentation vpaDescriptor = (ArchiveDescriptorRepresentation) o;
+      ArchiveDescriptorRepresentation archiveDescriptor = (ArchiveDescriptorRepresentation) o;
       //TODO
-//      String icon = vpaDescriptor.getManifest().getIcon();
+//      String icon = archiveDescriptor.getManifest().getIcon();
 //      if (icon == null) {
-//        text = vpaDescriptor.getManifest().getGameDisplayName();
+//        text = archiveDescriptor.getManifest().getGameDisplayName();
 //        wheel = new Image(Menu.class.getResourceAsStream("avatar-blank.png"));
 //      }
 //      else {

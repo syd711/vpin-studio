@@ -28,7 +28,7 @@ public class CopyArchiveToRepositoryDialogController implements Initializable, D
   private Label titleLabel;
 
   private boolean result = false;
-  private List<ArchiveDescriptorRepresentation> vpas;
+  private List<ArchiveDescriptorRepresentation> archiveDescriptors;
 
   @FXML
   private void onCancelClick(ActionEvent e) {
@@ -41,7 +41,7 @@ public class CopyArchiveToRepositoryDialogController implements Initializable, D
     Stage stage = (Stage) ((Button) event.getSource()).getScene().getWindow();
     result = true;
     try {
-      for (ArchiveDescriptorRepresentation selectedItem : vpas) {
+      for (ArchiveDescriptorRepresentation selectedItem : archiveDescriptors) {
         ArchiveDownloadAndInstallDescriptor descriptor = new ArchiveDownloadAndInstallDescriptor();
         descriptor.setInstall(false);
         descriptor.setFilename(selectedItem.getFilename());
@@ -67,13 +67,13 @@ public class CopyArchiveToRepositoryDialogController implements Initializable, D
     result = false;
   }
 
-  public void setData(List<ArchiveDescriptorRepresentation> vpas) {
-    this.vpas = vpas;
-    if (vpas.size() == 1) {
-      this.titleLabel.setText("Copy \"" + vpas.get(0).getFilename() + "\"");
+  public void setData(List<ArchiveDescriptorRepresentation> archiveDescriptors) {
+    this.archiveDescriptors = archiveDescriptors;
+    if (archiveDescriptors.size() == 1) {
+      this.titleLabel.setText("Copy \"" + archiveDescriptors.get(0).getFilename() + "\"");
     }
     else {
-      this.titleLabel.setText("Copy " + vpas.size() + " Archives");
+      this.titleLabel.setText("Copy " + archiveDescriptors.size() + " Archives");
     }
   }
 }

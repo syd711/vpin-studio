@@ -49,14 +49,14 @@ public class VpaRepositoriesPreferencesController implements Initializable {
       }
 
       ArchiveSourceRepresentation sourceRepresentation = null;
-      ArchiveSourceType vpaSourceType = ArchiveSourceType.valueOf(selectedItem.getType());
-      switch (vpaSourceType) {
+      ArchiveSourceType archiveSourceType = ArchiveSourceType.valueOf(selectedItem.getType());
+      switch (archiveSourceType) {
         case File: {
-          sourceRepresentation = Dialogs.openVpaSourceFileDialog(selectedItem);
+          sourceRepresentation = Dialogs.openArchiveSourceFileDialog(selectedItem);
           break;
         }
         default: {
-          sourceRepresentation = Dialogs.openVpaSourceHttpDialog(selectedItem);
+          sourceRepresentation = Dialogs.openArchiveSourceHttpDialog(selectedItem);
           break;
         }
       }
@@ -87,7 +87,7 @@ public class VpaRepositoriesPreferencesController implements Initializable {
 
   @FXML
   private void onHttpAdd() {
-    ArchiveSourceRepresentation sourceRepresentation = Dialogs.openVpaSourceHttpDialog(null);
+    ArchiveSourceRepresentation sourceRepresentation = Dialogs.openArchiveSourceHttpDialog(null);
     if (sourceRepresentation != null) {
       try {
         client.saveArchiveSource(sourceRepresentation);
@@ -116,8 +116,8 @@ public class VpaRepositoriesPreferencesController implements Initializable {
   }
 
   private void onReload() {
-    List<ArchiveSourceRepresentation> vpaSources = client.getArchiveSources();
-    tableView.setItems(FXCollections.observableList(vpaSources));
+    List<ArchiveSourceRepresentation> sources = client.getArchiveSources();
+    tableView.setItems(FXCollections.observableList(sources));
     tableView.refresh();
     EventManager.getInstance().notifyArchiveSourceUpdate();
   }

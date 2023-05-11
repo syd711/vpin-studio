@@ -42,7 +42,7 @@ public class TableBackupJob implements Job {
   private final BackupDescriptor exportDescriptor;
   private final Optional<Highscore> highscore;
   private final ObjectMapper objectMapper;
-  private final ArchiveSourceAdapter vpaSourceAdapter;
+  private final ArchiveSourceAdapter archiveSource;
 
   private final File targetFolder;
   private TableDetails manifest;
@@ -59,7 +59,7 @@ public class TableBackupJob implements Job {
                         @NonNull Game game,
                         @NonNull BackupDescriptor exportDescriptor,
                         @NonNull Optional<Highscore> highscore,
-                        @NonNull ArchiveSourceAdapter vpaSource,
+                        @NonNull ArchiveSourceAdapter archiveSource,
                         @NonNull File targetFolder) {
     this.pinUPConnector = pinUPConnector;
     this.vprRegFile = vprRegFile;
@@ -67,7 +67,7 @@ public class TableBackupJob implements Job {
     this.game = game;
     this.exportDescriptor = exportDescriptor;
     this.highscore = highscore;
-    this.vpaSourceAdapter = vpaSource;
+    this.archiveSource = archiveSource;
     this.targetFolder = targetFolder;
     objectMapper = new ObjectMapper();
     objectMapper.enable(SerializationFeature.INDENT_OUTPUT);
@@ -98,10 +98,10 @@ public class TableBackupJob implements Job {
     tempFile = new File(target.getParentFile(), target.getName() + ".bak");
 
     if (target.exists() && !target.delete()) {
-      throw new UnsupportedOperationException("Couldn't delete existing VPA file " + target.getAbsolutePath());
+      throw new UnsupportedOperationException("Couldn't delete existing archive file " + target.getAbsolutePath());
     }
     if (tempFile.exists() && !tempFile.delete()) {
-      throw new UnsupportedOperationException("Couldn't delete existing temporary VPA file " + target.getAbsolutePath());
+      throw new UnsupportedOperationException("Couldn't delete existing temporary archive file " + target.getAbsolutePath());
     }
 
     ArchivePackageInfo packageInfo = new ArchivePackageInfo();
@@ -243,7 +243,7 @@ public class TableBackupJob implements Job {
       }
 
       //reset vpa cache
-      vpaSourceAdapter.invalidate();
+      archiveSource.invalidate();
     }
     return true;
   }

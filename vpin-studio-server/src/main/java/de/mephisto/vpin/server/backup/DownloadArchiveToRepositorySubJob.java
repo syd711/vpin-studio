@@ -12,41 +12,41 @@ import java.io.File;
 public class DownloadArchiveToRepositorySubJob implements Job {
   private final static Logger LOG = LoggerFactory.getLogger(DownloadArchiveToRepositorySubJob.class);
 
-  private final ArchiveService vpaService;
+  private final ArchiveService archiveService;
   private final SystemService systemService;
-  private final ArchiveDescriptor vpaDescriptor;
+  private final ArchiveDescriptor archiveDescriptor;
 
   private String status;
 
   private File temp;
 
-  public DownloadArchiveToRepositorySubJob(@NonNull ArchiveService vpaService,
+  public DownloadArchiveToRepositorySubJob(@NonNull ArchiveService archiveService,
                                            @NonNull SystemService systemService,
-                                           @NonNull ArchiveDescriptor vpaDescriptor) {
-    this.vpaService = vpaService;
+                                           @NonNull ArchiveDescriptor archiveDescriptor) {
+    this.archiveService = archiveService;
     this.systemService = systemService;
-    this.vpaDescriptor = vpaDescriptor;
+    this.archiveDescriptor = archiveDescriptor;
   }
 
   @Override
   public boolean execute() {
     try {
-      status = "Downloading " + vpaDescriptor.getFilename();
+      status = "Downloading " + archiveDescriptor.getFilename();
       File targetFolder = systemService.getVpaArchiveFolder();
-      File target = new File(targetFolder, vpaDescriptor.getFilename());
+      File target = new File(targetFolder, archiveDescriptor.getFilename());
       target = FileUtils.uniqueFile(target);
       temp = new File(target.getParentFile(), target.getName() + ".bak");
       LOG.info("Writing into temporary download file " + temp.getAbsolutePath());
-      ArchiveSourceAdapterHttpServer source = (ArchiveSourceAdapterHttpServer) vpaService.getArchiveSourceAdapter(vpaDescriptor.getSource().getId());
-      source.download(vpaDescriptor, temp);
-      LOG.info("Finished downloading " + vpaDescriptor.getFilename());
+      ArchiveSourceAdapterHttpServer source = (ArchiveSourceAdapterHttpServer) archiveService.getArchiveSourceAdapter(archiveDescriptor.getSource().getId());
+      source.download(archiveDescriptor, temp);
+      LOG.info("Finished downloading " + archiveDescriptor.getFilename());
       boolean renamed = temp.renameTo(target);
       if (!renamed) {
         LOG.error("Failed to rename downloaded file " + temp.getAbsolutePath());
         return false;
       }
     } catch (Exception e) {
-      LOG.error("Download of \"" + vpaDescriptor.getFilename() + "\" failed: " + e.getMessage(), e);
+      LOG.error("Download of \"" + archiveDescriptor.getFilename() + "\" failed: " + e.getMessage(), e);
       return false;
     }
     return true;
@@ -59,7 +59,7 @@ public class DownloadArchiveToRepositorySubJob implements Job {
   @Override
   public double getProgress() {
     long currentSize = temp.length();
-    return currentSize * 100d / vpaDescriptor.getSize();
+    return currentSize * 100d / archiveDescriptor.getSize();
   }
 
   @Override

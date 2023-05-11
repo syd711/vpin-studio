@@ -10,19 +10,19 @@ import org.slf4j.LoggerFactory;
 import java.util.Iterator;
 import java.util.List;
 
-public class ArchiveImportProgressModel extends ProgressModel<ArchiveDescriptorRepresentation> {
-  private final static Logger LOG = LoggerFactory.getLogger(ArchiveImportProgressModel.class);
+public class TableInstallationProgressModel extends ProgressModel<ArchiveDescriptorRepresentation> {
+  private final static Logger LOG = LoggerFactory.getLogger(TableInstallationProgressModel.class);
 
   private final ArchiveInstallDescriptor descriptor;
   private final Iterator<ArchiveDescriptorRepresentation> iterator;
-  private final List<ArchiveDescriptorRepresentation> vpaDescriptors;
+  private final List<ArchiveDescriptorRepresentation> archiveDescritors;
   private double percentage = 0;
 
-  public ArchiveImportProgressModel(String title, ArchiveInstallDescriptor descriptor, List<ArchiveDescriptorRepresentation> vpaDescriptors) {
+  public TableInstallationProgressModel(String title, ArchiveInstallDescriptor descriptor, List<ArchiveDescriptorRepresentation> archiveDescriptors) {
     super(title);
     this.descriptor = descriptor;
-    this.iterator = vpaDescriptors.iterator();
-    this.vpaDescriptors = vpaDescriptors;
+    this.iterator = archiveDescriptors.iterator();
+    this.archiveDescritors = archiveDescriptors;
   }
 
   @Override
@@ -32,7 +32,7 @@ public class ArchiveImportProgressModel extends ProgressModel<ArchiveDescriptorR
 
   @Override
   public int getMax() {
-    return vpaDescriptors.size();
+    return archiveDescritors.size();
   }
 
   @Override
