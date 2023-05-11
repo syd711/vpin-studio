@@ -1,6 +1,9 @@
-package de.mephisto.vpin.restclient;
+package de.mephisto.vpin.restclient.descriptors;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import de.mephisto.vpin.restclient.Job;
+import de.mephisto.vpin.restclient.JobType;
+import de.mephisto.vpin.restclient.VPinStudioClient;
 
 public class JobDescriptor {
   private String uuid;

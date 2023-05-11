@@ -9,8 +9,8 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 
-public class VpaDownloadToRepositoryJob implements Job {
-  private final static Logger LOG = LoggerFactory.getLogger(VpaDownloadToRepositoryJob.class);
+public class DownloadArchiveToRepositorySubJob implements Job {
+  private final static Logger LOG = LoggerFactory.getLogger(DownloadArchiveToRepositorySubJob.class);
 
   private final ArchiveService vpaService;
   private final SystemService systemService;
@@ -20,9 +20,9 @@ public class VpaDownloadToRepositoryJob implements Job {
 
   private File temp;
 
-  public VpaDownloadToRepositoryJob(@NonNull ArchiveService vpaService,
-                                    @NonNull SystemService systemService,
-                                    @NonNull ArchiveDescriptor vpaDescriptor) {
+  public DownloadArchiveToRepositorySubJob(@NonNull ArchiveService vpaService,
+                                           @NonNull SystemService systemService,
+                                           @NonNull ArchiveDescriptor vpaDescriptor) {
     this.vpaService = vpaService;
     this.systemService = systemService;
     this.vpaDescriptor = vpaDescriptor;
@@ -37,7 +37,7 @@ public class VpaDownloadToRepositoryJob implements Job {
       target = FileUtils.uniqueFile(target);
       temp = new File(target.getParentFile(), target.getName() + ".bak");
       LOG.info("Writing into temporary download file " + temp.getAbsolutePath());
-      ArchiveSourceAdapterHttpServer source = (ArchiveSourceAdapterHttpServer) vpaService.getVpaSourceAdapter(vpaDescriptor.getSource().getId());
+      ArchiveSourceAdapterHttpServer source = (ArchiveSourceAdapterHttpServer) vpaService.getArchiveSourceAdapter(vpaDescriptor.getSource().getId());
       source.download(vpaDescriptor, temp);
       LOG.info("Finished downloading " + vpaDescriptor.getFilename());
       boolean renamed = temp.renameTo(target);

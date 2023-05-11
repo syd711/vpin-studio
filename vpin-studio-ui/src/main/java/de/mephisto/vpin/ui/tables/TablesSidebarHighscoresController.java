@@ -3,7 +3,7 @@ package de.mephisto.vpin.ui.tables;
 import de.mephisto.vpin.commons.fx.widgets.WidgetController;
 import de.mephisto.vpin.commons.utils.ScoreGraphUtil;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
-import de.mephisto.vpin.restclient.ResetHighscoreDescriptor;
+import de.mephisto.vpin.restclient.descriptors.ResetHighscoreDescriptor;
 import de.mephisto.vpin.restclient.VPinStudioClient;
 import de.mephisto.vpin.restclient.representations.*;
 import de.mephisto.vpin.ui.Studio;

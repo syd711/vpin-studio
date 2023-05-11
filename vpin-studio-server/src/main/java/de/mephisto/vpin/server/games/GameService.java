@@ -2,11 +2,10 @@ package de.mephisto.vpin.server.games;
 
 import de.mephisto.vpin.commons.HighscoreType;
 import de.mephisto.vpin.commons.utils.FileUtils;
-import de.mephisto.vpin.restclient.DeleteDescriptor;
+import de.mephisto.vpin.restclient.descriptors.DeleteDescriptor;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.server.assets.Asset;
 import de.mephisto.vpin.server.assets.AssetRepository;
-import de.mephisto.vpin.server.assets.AssetService;
 import de.mephisto.vpin.server.competitions.ScoreSummary;
 import de.mephisto.vpin.server.highscores.*;
 import de.mephisto.vpin.server.highscores.cards.CardService;

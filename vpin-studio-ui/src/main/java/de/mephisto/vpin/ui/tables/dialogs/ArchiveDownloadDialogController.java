@@ -3,7 +3,9 @@ package de.mephisto.vpin.ui.tables.dialogs;
 import de.mephisto.vpin.commons.ArchiveSourceType;
 import de.mephisto.vpin.commons.fx.DialogController;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
-import de.mephisto.vpin.restclient.VpaImportDescriptor;
+import de.mephisto.vpin.restclient.descriptors.ArchiveDownloadAndInstallDescriptor;
+import de.mephisto.vpin.restclient.descriptors.ArchiveInstallDescriptor;
+import de.mephisto.vpin.restclient.descriptors.DownloadJobDescriptor;
 import de.mephisto.vpin.restclient.representations.ArchiveDescriptorRepresentation;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.jobs.JobPoller;
@@ -71,12 +73,11 @@ public class ArchiveDownloadDialogController implements Initializable, DialogCon
     try {
       for (ArchiveDescriptorRepresentation selectedItem : vpas) {
         if (downloadToRepository.isSelected()) {
-          VpaImportDescriptor descriptor = new VpaImportDescriptor();
-          //TODO
-//          descriptor.setUuid(selectedItem.getManifest().getUuid());
-          descriptor.setVpaSourceId(selectedItem.getSource().getId());
+          ArchiveDownloadAndInstallDescriptor descriptor = new ArchiveDownloadAndInstallDescriptor();
           descriptor.setInstall(false);
-          client.importArchive(descriptor);
+          descriptor.setFilename(selectedItem.getFilename());
+          descriptor.setArchiveSourceId(selectedItem.getSource().getId());
+          client.downloadArchive(descriptor);
           JobPoller.getInstance().setPolling();
         }
         else {
@@ -90,12 +91,10 @@ public class ArchiveDownloadDialogController implements Initializable, DialogCon
           }
 
           long repositoryId = selectedItem.getSource().getId();
-//          String uuid = selectedItem.getManifest().getUuid();
-//
-//          DownloadJobDescriptor job = new DownloadJobDescriptor("/vpa/download/file/" + repositoryId + "/" + uuid, target, uuid);
-//          job.setTitle("Download of \"" + selectedItem.getManifest().getGameDisplayName() + "\"");
-//          job.setDescription("Downloading file \"" + selectedItem.getFilename() + "\"");
-//          JobPoller.getInstance().queueJob(job);
+          DownloadJobDescriptor job = new DownloadJobDescriptor("/archives/download/file/" + repositoryId + "/" + target.getName(), target);
+          job.setTitle("Download of \"" + selectedItem.getFilename() + "\"");
+          job.setDescription("Downloading file \"" + selectedItem.getFilename() + "\"");
+          JobPoller.getInstance().queueJob(job);
         }
       }
     } catch (Exception e) {

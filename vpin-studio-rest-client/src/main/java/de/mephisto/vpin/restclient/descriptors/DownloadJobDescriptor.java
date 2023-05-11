@@ -1,12 +1,14 @@
-package de.mephisto.vpin.restclient;
+package de.mephisto.vpin.restclient.descriptors;
 
+import de.mephisto.vpin.restclient.VPinStudioClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.lang.NonNull;
 
 import java.io.File;
+import java.util.UUID;
 
-import static de.mephisto.vpin.restclient.JobType.VPA_DOWNLOAD_TO_FILESYSTEM;
+import static de.mephisto.vpin.restclient.JobType.ARCHIVE_DOWNLOAD_TO_FILESYSTEM;
 
 public class DownloadJobDescriptor extends JobDescriptor {
   private final static Logger LOG = LoggerFactory.getLogger(DownloadJobDescriptor.class);
@@ -16,8 +18,8 @@ public class DownloadJobDescriptor extends JobDescriptor {
   @NonNull
   private final File target;
 
-  public DownloadJobDescriptor(@NonNull String url, @NonNull File target, @NonNull String uuid) {
-    super(VPA_DOWNLOAD_TO_FILESYSTEM, uuid);
+  public DownloadJobDescriptor(@NonNull String url, @NonNull File target) {
+    super(ARCHIVE_DOWNLOAD_TO_FILESYSTEM, UUID.randomUUID().toString());
     this.url = url;
     this.target = target;
   }

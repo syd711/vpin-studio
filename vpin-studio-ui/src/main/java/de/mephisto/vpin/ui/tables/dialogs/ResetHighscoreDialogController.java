@@ -1,13 +1,11 @@
 package de.mephisto.vpin.ui.tables.dialogs;
 
 import de.mephisto.vpin.commons.fx.DialogController;
-import de.mephisto.vpin.restclient.ResetHighscoreDescriptor;
+import de.mephisto.vpin.restclient.descriptors.ResetHighscoreDescriptor;
 import de.mephisto.vpin.restclient.representations.GameRepresentation;
-import de.mephisto.vpin.restclient.representations.HighscoreMetadataRepresentation;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
-import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;

@@ -3,7 +3,7 @@ package de.mephisto.vpin.ui.util;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.AltSound;
 import de.mephisto.vpin.restclient.PopperScreen;
-import de.mephisto.vpin.restclient.ResetHighscoreDescriptor;
+import de.mephisto.vpin.restclient.descriptors.ResetHighscoreDescriptor;
 import de.mephisto.vpin.restclient.VPinStudioClient;
 import de.mephisto.vpin.restclient.representations.*;
 import de.mephisto.vpin.ui.ProgressDialogController;
@@ -155,7 +155,7 @@ public class Dialogs {
   }
 
   public static void openVpaInstallationDialog(TablesController tablesController, List<ArchiveDescriptorRepresentation> vpaDescriptors) {
-    Stage stage = createStudioDialogStage(ArchiveInstallationController.class, "dialog-vpa-install.fxml", "Install Tables");
+    Stage stage = createStudioDialogStage(ArchiveInstallationController.class, "dialog-archive-install.fxml", "Install Tables");
     ArchiveInstallationController controller = (ArchiveInstallationController) stage.getUserData();
     controller.setData(tablesController, vpaDescriptors);
     stage.showAndWait();

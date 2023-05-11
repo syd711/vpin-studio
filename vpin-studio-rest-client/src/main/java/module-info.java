@@ -9,4 +9,5 @@ open module de.mephisto.vpin.restclient {
   exports de.mephisto.vpin.restclient.representations;
   exports de.mephisto.vpin.restclient.discord;
   exports de.mephisto.vpin.restclient.util;
+  exports de.mephisto.vpin.restclient.descriptors;
 }

@@ -1,8 +1,7 @@
 package de.mephisto.vpin.tablemanager.states;
 
-import de.mephisto.vpin.restclient.BackupDescriptor;
+import de.mephisto.vpin.restclient.descriptors.BackupDescriptor;
 import de.mephisto.vpin.restclient.VPinStudioClient;
-import de.mephisto.vpin.restclient.TableDetails;
 import de.mephisto.vpin.restclient.representations.GameRepresentation;
 import de.mephisto.vpin.tablemanager.Menu;
 import de.mephisto.vpin.tablemanager.MenuController;
@@ -22,7 +21,7 @@ public class ArchivingMenuState extends MenuState {
     this.mode = mode;
     this.menuController = menuController;
     this.menuController.enterArchiving();
-    this.menuController.setNameLabelText("Archiving, please wait...");
+    this.menuController.setNameLabelText("Creating Backup, please wait...");
 
     StateMananger.getInstance().setInputBlocked(true);
     executeArchiving();
@@ -58,12 +57,9 @@ public class ArchivingMenuState extends MenuState {
 
       BackupDescriptor descriptor = new BackupDescriptor();
       descriptor.getGameIds().add(game.getId());
-      descriptor.setExportPupPack(true);
-      descriptor.setExportRom(true);
-      descriptor.setExportPopperMedia(true);
       descriptor.setRemoveFromPlaylists(mode == 0);
       try {
-        Menu.client.exportArchive(descriptor);
+        Menu.client.backupTable(descriptor);
       } catch (Exception e) {
         LOG.error("Failed to executing archiving: " + e.getMessage(), e);
       }

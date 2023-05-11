@@ -1,5 +1,6 @@
 package de.mephisto.vpin.restclient;
 
+import de.mephisto.vpin.restclient.descriptors.*;
 import de.mephisto.vpin.restclient.discord.DiscordBotStatus;
 import de.mephisto.vpin.restclient.discord.DiscordChannel;
 import de.mephisto.vpin.restclient.discord.DiscordCompetitionData;
@@ -168,12 +169,16 @@ public class VPinStudioClient implements ObservedPropertyChangeListener, Overlay
   /*********************************************************************************************************************
    * IO
    ********************************************************************************************************************/
-  public boolean exportArchive(BackupDescriptor exportDescriptor) throws Exception {
-    return restClient.post(API + "io/export", exportDescriptor, Boolean.class);
+  public boolean backupTable(BackupDescriptor exportDescriptor) throws Exception {
+    return restClient.post(API + "io/backup", exportDescriptor, Boolean.class);
   }
 
-  public boolean importArchive(VpaImportDescriptor descriptor) throws Exception {
-    return restClient.post(API + "io/import", descriptor, Boolean.class);
+  public boolean installTable(ArchiveInstallDescriptor descriptor) throws Exception {
+    return restClient.post(API + "io/install", descriptor, Boolean.class);
+  }
+
+  public boolean downloadArchive(ArchiveDownloadAndInstallDescriptor descriptor) throws Exception {
+    return restClient.post(API + "io/download", descriptor, Boolean.class);
   }
 
   /*********************************************************************************************************************
@@ -227,7 +232,7 @@ public class VPinStudioClient implements ObservedPropertyChangeListener, Overlay
     }
   }
 
-  public boolean installArchive(ArchiveDescriptorRepresentation descriptor) throws Exception {
+  public boolean downloadArchive(ArchiveDescriptorRepresentation descriptor) throws Exception {
     try {
       return restClient.post(API + "archives/install", descriptor, Boolean.class);
     } catch (Exception e) {

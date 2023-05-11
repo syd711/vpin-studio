@@ -1,6 +1,6 @@
 package de.mephisto.vpin.tablemanager;
 
-import de.mephisto.vpin.restclient.JobDescriptor;
+import de.mephisto.vpin.restclient.descriptors.JobDescriptor;
 
 public interface JobListener {
 

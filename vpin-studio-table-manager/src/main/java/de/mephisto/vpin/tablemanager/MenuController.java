@@ -440,7 +440,7 @@ public class MenuController implements Initializable {
     return (GameRepresentation) node.getUserData();
   }
 
-  public ArchiveDescriptorRepresentation getVpaSelection() {
+  public ArchiveDescriptorRepresentation getArchiveSelection() {
     Node node = gameRow.getChildren().get(selectionIndex);
     return (ArchiveDescriptorRepresentation) node.getUserData();
   }
@@ -488,6 +488,6 @@ public class MenuController implements Initializable {
 
   public void leaveInstallSubSelection() {
     setArrowsVisible(false);
-    nameLabel.setText(this.getVpaSelection().getTableDetails().getGameDisplayName());
+    nameLabel.setText(this.getArchiveSelection().getTableDetails().getGameDisplayName());
   }
 }

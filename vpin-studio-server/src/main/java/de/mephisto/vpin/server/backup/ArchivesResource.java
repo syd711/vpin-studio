@@ -90,7 +90,7 @@ public class ArchivesResource {
     return true;
   }
 
-  @GetMapping("/download/file/{sourceId}/{uuid}")
+  @GetMapping("/download/file/{sourceId}/{filename}")
   public void downloadArchiveFile(@PathVariable("sourceId") long sourceId,
                                   @PathVariable("uuid") String uuid,
                                   HttpServletResponse response) {
@@ -98,7 +98,7 @@ public class ArchivesResource {
     OutputStream out = null;
     try {
       ArchiveDescriptor vpaDescriptor = archiveService.getArchiveDescriptor(sourceId, uuid);
-      ArchiveSourceAdapter vpaSourceAdapter = archiveService.getVpaSourceAdapter(sourceId);
+      ArchiveSourceAdapter vpaSourceAdapter = archiveService.getArchiveSourceAdapter(sourceId);
 
       in = vpaSourceAdapter.getDescriptorInputStream(vpaDescriptor);
       out = response.getOutputStream();
@@ -123,7 +123,7 @@ public class ArchivesResource {
         LOG.error("VPA upload request did not contain a file object.");
         return null;
       }
-      ArchiveSourceAdapterFileSystem vpaSourceAdapter = (ArchiveSourceAdapterFileSystem) archiveService.getVpaSourceAdapter(repositoryId);
+      ArchiveSourceAdapterFileSystem vpaSourceAdapter = (ArchiveSourceAdapterFileSystem) archiveService.getArchiveSourceAdapter(repositoryId);
       File out = new File(vpaSourceAdapter.getFolder(), file.getOriginalFilename());
       if (UploadUtil.upload(file, out)) {
         archiveService.invalidateCache(repositoryId);

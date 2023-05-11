@@ -1,4 +1,4 @@
-package de.mephisto.vpin.restclient;
+package de.mephisto.vpin.restclient.descriptors;
 
 public class ResetHighscoreDescriptor {
   private int gameId;

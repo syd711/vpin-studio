@@ -1,8 +1,8 @@
 package de.mephisto.vpin.server.io;
 
-import de.mephisto.vpin.restclient.BackupDescriptor;
-import de.mephisto.vpin.restclient.VpaImportDescriptor;
-import de.mephisto.vpin.restclient.TableDetails;
+import de.mephisto.vpin.restclient.descriptors.ArchiveDownloadAndInstallDescriptor;
+import de.mephisto.vpin.restclient.descriptors.BackupDescriptor;
+import de.mephisto.vpin.restclient.descriptors.ArchiveInstallDescriptor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,13 +18,18 @@ public class IOResource {
   @Autowired
   private IOService ioService;
 
-  @PostMapping("/export")
-  public Boolean exportArchive(@RequestBody BackupDescriptor descriptor) {
-    return ioService.exportArchive(descriptor);
+  @PostMapping("/backup")
+  public Boolean backupTable(@RequestBody BackupDescriptor descriptor) {
+    return ioService.backupTable(descriptor);
   }
 
-  @PostMapping("/import")
-  public Boolean importArchive(@RequestBody VpaImportDescriptor descriptor) {
-    return ioService.importVpa(descriptor);
+  @PostMapping("/install")
+  public Boolean installArchive(@RequestBody ArchiveInstallDescriptor descriptor) {
+    return ioService.installArchive(descriptor);
+  }
+
+  @PostMapping("/download")
+  public Boolean downloadArchive(@RequestBody ArchiveDownloadAndInstallDescriptor descriptor) {
+    return ioService.downloadArchive(descriptor);
   }
 }

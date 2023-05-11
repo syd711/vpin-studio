@@ -1,7 +1,7 @@
 package de.mephisto.vpin.server.games;
 
-import de.mephisto.vpin.restclient.DeleteDescriptor;
-import de.mephisto.vpin.restclient.ResetHighscoreDescriptor;
+import de.mephisto.vpin.restclient.descriptors.DeleteDescriptor;
+import de.mephisto.vpin.restclient.descriptors.ResetHighscoreDescriptor;
 import de.mephisto.vpin.server.competitions.ScoreSummary;
 import de.mephisto.vpin.server.highscores.HighscoreMetadata;
 import de.mephisto.vpin.server.highscores.ScoreList;

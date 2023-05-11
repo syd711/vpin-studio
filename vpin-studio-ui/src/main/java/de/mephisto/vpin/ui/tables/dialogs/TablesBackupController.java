@@ -2,7 +2,7 @@ package de.mephisto.vpin.ui.tables.dialogs;
 
 import de.mephisto.vpin.commons.fx.DialogController;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
-import de.mephisto.vpin.restclient.BackupDescriptor;
+import de.mephisto.vpin.restclient.descriptors.BackupDescriptor;
 import de.mephisto.vpin.restclient.representations.GameRepresentation;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.jobs.JobPoller;
@@ -26,31 +26,16 @@ public class TablesBackupController implements Initializable, DialogController {
   private Label titleLabel;
 
   @FXML
-  private CheckBox exportRomCheckbox;
-
-  @FXML
-  private CheckBox exportPupPackCheckbox;
-
-  @FXML
-  private CheckBox exportPopperMedia;
-
-  @FXML
-  private CheckBox exportMusic;
-
-  @FXML
-  private CheckBox highscoresCheckbox;
+  private CheckBox removeFromPlaylistCheckbox;
 
   private List<GameRepresentation> games;
 
   @FXML
   private void onExportClick(ActionEvent e) throws Exception {
     BackupDescriptor descriptor = new BackupDescriptor();
-    descriptor.setExportPupPack(this.exportPupPackCheckbox.isSelected());
-    descriptor.setExportRom(this.exportRomCheckbox.isSelected());
-    descriptor.setExportPopperMedia(this.exportPopperMedia.isSelected());
-    descriptor.setExportHighscores(this.highscoresCheckbox.isSelected());
+    descriptor.setRemoveFromPlaylists(removeFromPlaylistCheckbox.isSelected());
     descriptor.getGameIds().addAll(games.stream().map(GameRepresentation::getId).collect(Collectors.toList()));
-    Studio.client.exportArchive(descriptor);
+    Studio.client.backupTable(descriptor);
 
     Stage stage = (Stage) ((Button) e.getSource()).getScene().getWindow();
     stage.close();
@@ -67,7 +52,11 @@ public class TablesBackupController implements Initializable, DialogController {
     }).start();
 
     Platform.runLater(() -> {
-      WidgetFactory.showInformation(Studio.stage, "Backup Started", "The backup of " + games.size() + " tables has been started.", "The archived state will update once the backup is finished.");
+      String msg = "The backup of " + games.size() + " tables has been started.";
+      if(games.size() == 1) {
+        msg = "The backup of \"" + games.get(0).getGameDisplayName() + "\" tables has been started.";
+      }
+      WidgetFactory.showInformation(Studio.stage, "Backup Started", msg, "The archived state will update once the backup is finished.");
     });
   }
 
@@ -90,13 +79,10 @@ public class TablesBackupController implements Initializable, DialogController {
   public void setGames(List<GameRepresentation> games) {
     this.games = games;
     if(games.size() == 1) {
-      this.titleLabel.setText("Export of \"" + games.get(0).getGameDisplayName() + "\"");
+      this.titleLabel.setText(games.get(0).getGameDisplayName());
     }
     else {
-      this.titleLabel.setText("Export of " + games.size() + " tables");
+      this.titleLabel.setText("Backup of " + games.size() + " tables");
     }
-
-    exportRomCheckbox.setSelected(true);
-    exportPupPackCheckbox.setSelected(true);
   }
 }

@@ -109,7 +109,7 @@ public class ArchiveService implements InitializingBean {
     return this.defaultArchiveSourceAdapter;
   }
 
-  public ArchiveSourceAdapter getVpaSourceAdapter(long sourceId) {
+  public ArchiveSourceAdapter getArchiveSourceAdapter(long sourceId) {
     return adapterCache.get(sourceId);
   }
 

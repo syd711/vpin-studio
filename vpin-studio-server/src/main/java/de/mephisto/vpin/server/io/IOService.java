@@ -1,7 +1,11 @@
 package de.mephisto.vpin.server.io;
 
-import de.mephisto.vpin.commons.ArchiveSourceType;
-import de.mephisto.vpin.restclient.*;
+import de.mephisto.vpin.restclient.JobType;
+import de.mephisto.vpin.restclient.PopperScreen;
+import de.mephisto.vpin.restclient.descriptors.ArchiveDownloadAndInstallDescriptor;
+import de.mephisto.vpin.restclient.descriptors.ArchiveInstallDescriptor;
+import de.mephisto.vpin.restclient.descriptors.BackupDescriptor;
+import de.mephisto.vpin.restclient.descriptors.JobDescriptor;
 import de.mephisto.vpin.server.backup.*;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameService;
@@ -44,30 +48,19 @@ public class IOService {
   private CardService cardService;
 
   @Autowired
-  private ArchiveService vpaService;
+  private ArchiveService archiveService;
 
-  public boolean importVpa(@NonNull VpaImportDescriptor descriptor) {
+  public boolean installArchive(@NonNull ArchiveInstallDescriptor descriptor) {
     try {
-      ArchiveDescriptor vpaDescriptor = vpaService.getArchiveDescriptor(descriptor.getVpaSourceId(), descriptor.getUuid());
-      File vpaFile = new File(systemService.getVpaArchiveFolder(), vpaDescriptor.getFilename());
+      ArchiveDescriptor vpaDescriptor = archiveService.getArchiveDescriptor(descriptor.getVpaSourceId(), descriptor.getFilename());
+      File archiveFile = new File(systemService.getVpaArchiveFolder(), vpaDescriptor.getFilename());
 
-      JobDescriptor jobDescriptor = new JobDescriptor(JobType.VPA_IMPORT, descriptor.getUuid());
+      JobDescriptor jobDescriptor = new JobDescriptor(JobType.ARCHIVE_INSTALL, descriptor.getFilename());
       jobDescriptor.setTitle("Import of \"" + vpaDescriptor.getTableDetails().getGameDisplayName() + "\"");
       jobDescriptor.setDescription("Importing table for \"" + vpaDescriptor.getTableDetails().getGameDisplayName() + "\"");
 
-      VpaImporterJob job = null;
-      if (vpaDescriptor.getSource().getType().equals(ArchiveSourceType.Http.name())) {
-        if (descriptor.isInstall()) {
-          jobDescriptor.setDescription("Downloading and installing \"" + vpaDescriptor.getTableDetails().getGameDisplayName() + "\"");
-        }
-        else {
-          jobDescriptor.setDescription("Downloading \"" + vpaDescriptor.getTableDetails().getGameDisplayName() + "\"");
-        }
-        job = new VpaDownloadAndImporterJob(vpaDescriptor, descriptor, vpaFile, pinUPConnector, systemService, highscoreService, vpaService, gameService, cardService);
-      }
-      else {
-        job = new VpaImporterJob(descriptor, vpaFile, pinUPConnector, systemService, highscoreService, gameService, cardService);
-      }
+      ArchiveInstallerJob job = new ArchiveInstallerJob(descriptor, archiveFile, pinUPConnector, systemService, highscoreService, gameService, cardService);
+      jobDescriptor.setDescription("Installing \"" + vpaDescriptor.getTableDetails().getGameDisplayName() + "\"");
       jobDescriptor.setJob(job);
 
       JobQueue.getInstance().offer(jobDescriptor);
@@ -79,42 +72,54 @@ public class IOService {
     return true;
   }
 
-  public boolean exportArchive(@NonNull BackupDescriptor exportDescriptor) {
-    List<Integer> gameIds = exportDescriptor.getGameIds();
-    File targetFolder = systemService.getVpaArchiveFolder();
+  public boolean downloadArchive(ArchiveDownloadAndInstallDescriptor downloadAndInstallDescriptor) {
+    try {
+      ArchiveDescriptor archiveDescriptor = archiveService.getArchiveDescriptor(downloadAndInstallDescriptor.getVpaSourceId(), downloadAndInstallDescriptor.getFilename());
+      File archiveFile = new File(systemService.getVpaArchiveFolder(), archiveDescriptor.getFilename());
 
-    //single export
-    if (gameIds.size() == 1) {
-      Game game = gameService.getGame(gameIds.get(0));
-      if (game != null) {
-        return exportArchive(game, exportDescriptor, targetFolder);
+      JobDescriptor jobDescriptor = new JobDescriptor(JobType.ARCHIVE_DOWNLOAD_TO_REPOSITORY, downloadAndInstallDescriptor.getFilename());
+      jobDescriptor.setTitle("Download of \"" + archiveDescriptor.getTableDetails().getGameDisplayName() + "\"");
+
+      DownloadArchiveAndInstallJob job = new DownloadArchiveAndInstallJob(archiveDescriptor, downloadAndInstallDescriptor, archiveFile, pinUPConnector, systemService, highscoreService, archiveService, gameService, cardService);
+      jobDescriptor.setDescription("Downloading \"" + archiveDescriptor.getTableDetails().getGameDisplayName() + "\"");
+      if (downloadAndInstallDescriptor.isInstall()) {
+        jobDescriptor.setDescription("Downloading and installing \"" + archiveDescriptor.getTableDetails().getGameDisplayName() + "\"");
       }
+      jobDescriptor.setJob(job);
+
+      JobQueue.getInstance().offer(jobDescriptor);
+      LOG.info("Offered archive download job for \"" + archiveDescriptor.getTableDetails().getGameDisplayName() + "\"");
+    } catch (Exception e) {
+      LOG.error("Import failed: " + e.getMessage(), e);
+      return false;
     }
-    else {
-      //multi export
-      boolean result = true;
-      for (Integer gameId : gameIds) {
-        Game game = gameService.getGame(gameId);
-        if (game != null) {
-          if (!exportArchive(game, exportDescriptor, targetFolder)) {
-            result = false;
-          }
-        }
-      }
-      return result;
-    }
-    return false;
+    return true;
   }
 
-  private boolean exportArchive(@NonNull Game game, @NonNull BackupDescriptor exportDescriptor, @NonNull File targetFolder) {
+  public boolean backupTable(@NonNull BackupDescriptor exportDescriptor) {
+    List<Integer> gameIds = exportDescriptor.getGameIds();
+    File targetFolder = systemService.getVpaArchiveFolder();
+    boolean result = true;
+    for (Integer gameId : gameIds) {
+      Game game = gameService.getGame(gameId);
+      if (game != null) {
+        if (!backupTable(game, exportDescriptor, targetFolder)) {
+          result = false;
+        }
+      }
+    }
+    return result;
+  }
+
+  private boolean backupTable(@NonNull Game game, @NonNull BackupDescriptor exportDescriptor, @NonNull File targetFolder) {
     List<HighscoreVersion> versions = highscoreService.getAllHighscoreVersions(game.getId());
     Optional<Highscore> highscore = highscoreService.getOrCreateHighscore(game);
     File vpRegFile = systemService.getVPRegFile();
-    ArchiveSourceAdapter defaultVpaSourceAdapter = vpaService.getDefaultArchiveSourceAdapter();
-    JobDescriptor descriptor = new JobDescriptor(JobType.VPA_EXPORT, UUID.randomUUID().toString());
+    ArchiveSourceAdapter defaultVpaSourceAdapter = archiveService.getDefaultArchiveSourceAdapter();
+    JobDescriptor descriptor = new JobDescriptor(JobType.TABLE_BACKUP, UUID.randomUUID().toString());
     descriptor.setTitle("Export of \"" + game.getGameDisplayName() + "\"");
     descriptor.setDescription("Exporting table archive for \"" + game.getGameDisplayName() + "\"");
-    descriptor.setJob(new VpaExporterJob(pinUPConnector, vpRegFile, systemService.getVPXMusicFolder(), game, exportDescriptor, highscore, defaultVpaSourceAdapter, targetFolder));
+    descriptor.setJob(new TableBackupJob(pinUPConnector, vpRegFile, systemService.getVPXMusicFolder(), game, exportDescriptor, highscore, defaultVpaSourceAdapter, targetFolder));
 
     GameMediaItem mediaItem = game.getGameMedia().get(PopperScreen.Wheel);
     if (mediaItem != null) {

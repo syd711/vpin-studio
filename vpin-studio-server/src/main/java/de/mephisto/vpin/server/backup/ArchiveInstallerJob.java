@@ -3,7 +3,7 @@ package de.mephisto.vpin.server.backup;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import de.mephisto.vpin.commons.EmulatorType;
-import de.mephisto.vpin.restclient.VpaImportDescriptor;
+import de.mephisto.vpin.restclient.descriptors.ArchiveInstallDescriptor;
 import de.mephisto.vpin.restclient.Job;
 import de.mephisto.vpin.restclient.TableDetails;
 import de.mephisto.vpin.server.games.Game;
@@ -25,11 +25,11 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import java.util.zip.ZipInputStream;
 
-public class VpaImporterJob implements Job {
+public class ArchiveInstallerJob implements Job {
   private final static Logger LOG = LoggerFactory.getLogger(ArchiveService.class);
 
-  protected final VpaImportDescriptor descriptor;
-  protected File vpaFile;
+  protected final ArchiveInstallDescriptor descriptor;
+  protected File archiveFile;
   protected final SystemService systemService;
 
   private final PinUPConnector connector;
@@ -41,15 +41,15 @@ public class VpaImporterJob implements Job {
   private double progress;
   private String status;
 
-  public VpaImporterJob(@NonNull VpaImportDescriptor descriptor,
-                        @NonNull File vpaFile,
-                        @NonNull PinUPConnector connector,
-                        @NonNull SystemService systemService,
-                        @NonNull HighscoreService highscoreService,
-                        @NonNull GameService gameService,
-                        @NonNull CardService cardService) {
+  public ArchiveInstallerJob(@NonNull ArchiveInstallDescriptor descriptor,
+                             @NonNull File archiveFile,
+                             @NonNull PinUPConnector connector,
+                             @NonNull SystemService systemService,
+                             @NonNull HighscoreService highscoreService,
+                             @NonNull GameService gameService,
+                             @NonNull CardService cardService) {
     this.descriptor = descriptor;
-    this.vpaFile = vpaFile;
+    this.archiveFile = archiveFile;
     this.connector = connector;
     this.systemService = systemService;
     this.highscoreService = highscoreService;
@@ -73,20 +73,15 @@ public class VpaImporterJob implements Job {
   @Override
   public boolean execute() {
     try {
-      LOG.info("Starting import of " + descriptor.getUuid());
+      LOG.info("Starting import of " + descriptor.getFilename());
 
-      boolean importRom = descriptor.isImportRom();
-      boolean importPopperMedia = descriptor.isImportPopperMedia();
-      boolean importPupPack = descriptor.isImportPupPack();
-      boolean importHighscores = descriptor.isImportHighscores();
+      status = "Extracting " + archiveFile.getAbsolutePath();
+      unzipVpa();
+      LOG.info("Finished unzipping of " + descriptor.getFilename() + ", starting Popper import.");
 
-      status = "Extracting " + vpaFile.getAbsolutePath();
-      unzipVpa(importRom, importPopperMedia, importPupPack, importHighscores);
-      LOG.info("Finished unzipping of " + descriptor.getUuid() + ", starting Popper import.");
-
-      TableDetails manifest = VpaArchiveUtil.readTableDetails(vpaFile);
+      TableDetails manifest = VpaArchiveUtil.readTableDetails(archiveFile);
       if (StringUtils.isEmpty(manifest.getGameFileName())) {
-        LOG.error("The VPA manifest of " + vpaFile.getAbsolutePath() + " does not contain a game filename.");
+        LOG.error("The VPA manifest of " + archiveFile.getAbsolutePath() + " does not contain a game filename.");
         return false;
       }
 
@@ -106,17 +101,15 @@ public class VpaImporterJob implements Job {
         connector.addToPlaylist(game.getId(), descriptor.getPlaylistId());
       }
 
-      if (importHighscores) {
-        status = "Importing Highscores";
-        importHighscore(game, manifest);
-      }
+      status = "Importing Highscores";
+      importHighscore(game, manifest);
 
       highscoreService.scanScore(game);
       LOG.info("Final highscore scan");
 
       cardService.generateCard(game, false);
     } catch (Exception e) {
-      LOG.error("Import of \"" + vpaFile.getName() + "\" failed: " + e.getMessage(), e);
+      LOG.error("Import of \"" + archiveFile.getName() + "\" failed: " + e.getMessage(), e);
       return false;
     }
     return true;
@@ -136,45 +129,20 @@ public class VpaImporterJob implements Job {
     }
   }
 
-  private void unzipVpa(boolean importRom, boolean importPopperMedia, boolean importPupPack, boolean importHighscores) {
+  private void unzipVpa() {
     try {
-      ZipFile zf = new ZipFile(vpaFile);
+      ZipFile zf = new ZipFile(archiveFile);
       int totalCount = zf.size();
 
 
       byte[] buffer = new byte[1024];
-      ZipInputStream zis = new ZipInputStream(new FileInputStream(vpaFile));
+      ZipInputStream zis = new ZipInputStream(new FileInputStream(archiveFile));
       ZipEntry zipEntry = zis.getNextEntry();
       int currentCount = 0;
       while (zipEntry != null) {
         currentCount++;
         File newFile = newFile(getDestDirForEntry(zipEntry), zipEntry);
         String folderName = newFile.getParentFile().getName();
-
-        if (folderName.equals("roms") && !importRom) {
-          zipEntry = zis.getNextEntry();
-          continue;
-        }
-
-        if ((folderName.equals("User") || folderName.equals("nvram")) && !importHighscores) {
-          zipEntry = zis.getNextEntry();
-          continue;
-        }
-
-        if (newFile.getAbsolutePath().contains("POPMedia") && !importPopperMedia) {
-          zipEntry = zis.getNextEntry();
-          continue;
-        }
-
-        if (newFile.getAbsolutePath().contains("PUPVideos") && !importPupPack) {
-          zipEntry = zis.getNextEntry();
-          continue;
-        }
-
-        if (newFile.getAbsolutePath().replaceAll("\\\\", "/").contains("Pinball/Music") && !importPupPack) {
-          zipEntry = zis.getNextEntry();
-          continue;
-        }
 
         LOG.info("Writing " + newFile.getAbsolutePath());
         if (zipEntry.isDirectory()) {
@@ -207,7 +175,7 @@ public class VpaImporterJob implements Job {
       zis.closeEntry();
       zis.close();
     } catch (Exception e) {
-      LOG.error("VPA import of " + vpaFile.getAbsolutePath() + " failed: " + e.getMessage(), e);
+      LOG.error("VPA import of " + archiveFile.getAbsolutePath() + " failed: " + e.getMessage(), e);
     }
   }
 

@@ -1,6 +1,6 @@
 package de.mephisto.vpin.ui.events;
 
-import de.mephisto.vpin.restclient.JobDescriptor;
+import de.mephisto.vpin.restclient.descriptors.JobDescriptor;
 import de.mephisto.vpin.restclient.JobType;
 import edu.umd.cs.findbugs.annotations.NonNull;
 
@@ -58,17 +58,17 @@ public class EventManager {
   public void notifyJobFinished(JobDescriptor descriptor) {
     JobType type = descriptor.getJobType();
     switch (type) {
-      case VPA_EXPORT: {
+      case TABLE_BACKUP: {
         String uuid = descriptor.getUuid();
         notifyVpaExport(uuid);
         return;
       }
-      case VPA_IMPORT: {
+      case ARCHIVE_INSTALL: {
         String uuid = descriptor.getUuid();
         notifyVpaImport(uuid);
         return;
       }
-      case VPA_DOWNLOAD_TO_REPOSITORY: {
+      case ARCHIVE_DOWNLOAD_TO_REPOSITORY: {
         notifyVpaDownloadFinished();
         return;
       }

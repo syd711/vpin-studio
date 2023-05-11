@@ -1,6 +1,6 @@
 package de.mephisto.vpin.ui.jobs;
 
-import de.mephisto.vpin.restclient.JobDescriptor;
+import de.mephisto.vpin.restclient.descriptors.JobDescriptor;
 import de.mephisto.vpin.ui.events.EventManager;
 import javafx.application.Platform;
 import javafx.concurrent.Service;

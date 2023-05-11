@@ -1,8 +1,7 @@
 package de.mephisto.vpin.tablemanager.states;
 
 import de.mephisto.vpin.restclient.VPinStudioClient;
-import de.mephisto.vpin.restclient.VpaImportDescriptor;
-import de.mephisto.vpin.restclient.TableDetails;
+import de.mephisto.vpin.restclient.descriptors.ArchiveInstallDescriptor;
 import de.mephisto.vpin.restclient.representations.PlaylistRepresentation;
 import de.mephisto.vpin.restclient.representations.ArchiveDescriptorRepresentation;
 import de.mephisto.vpin.tablemanager.Menu;
@@ -58,17 +57,11 @@ public class InstallingMenuState extends MenuState {
     });
 
     new Thread(() -> {
-      ArchiveDescriptorRepresentation vpaDescriptor = this.menuController.getVpaSelection();
-      TableDetails manifest = vpaDescriptor.getTableDetails();
+      ArchiveDescriptorRepresentation archiveDescriptor = this.menuController.getArchiveSelection();
 
-      VpaImportDescriptor descriptor = new VpaImportDescriptor();
-      descriptor.setImportRom(true);
-      descriptor.setImportPupPack(true);
-      descriptor.setImportPopperMedia(true);
-      descriptor.setImportHighscores(true);
-      descriptor.setVpaSourceId(vpaDescriptor.getSource().getId());
-      //TODO
-//      descriptor.setUuid(manifest.getUuid());
+      ArchiveInstallDescriptor descriptor = new ArchiveInstallDescriptor();
+      descriptor.setArchiveSourceId(archiveDescriptor.getSource().getId());
+      descriptor.setFilename(archiveDescriptor.getFilename());
 
       List<PlaylistRepresentation> playlists = Menu.client.getPlaylists();
       if (playlist != null) {
@@ -79,7 +72,7 @@ public class InstallingMenuState extends MenuState {
       }
 
       try {
-        Menu.client.importArchive(descriptor);
+        Menu.client.installTable(descriptor);
       } catch (Exception e) {
         LOG.error("Failed to executing installation: " + e.getMessage(), e);
       }

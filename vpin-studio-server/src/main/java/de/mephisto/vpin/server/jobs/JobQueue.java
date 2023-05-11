@@ -1,6 +1,6 @@
 package de.mephisto.vpin.server.jobs;
 
-import de.mephisto.vpin.restclient.JobDescriptor;
+import de.mephisto.vpin.restclient.descriptors.JobDescriptor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

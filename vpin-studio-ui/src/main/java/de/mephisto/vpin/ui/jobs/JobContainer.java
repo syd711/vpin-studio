@@ -1,6 +1,6 @@
 package de.mephisto.vpin.ui.jobs;
 
-import de.mephisto.vpin.restclient.JobDescriptor;
+import de.mephisto.vpin.restclient.descriptors.JobDescriptor;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressIndicator;
 import javafx.scene.layout.BorderPane;

@@ -1,6 +1,6 @@
 package de.mephisto.vpin.ui.tables.dialogs;
 
-import de.mephisto.vpin.restclient.VpaImportDescriptor;
+import de.mephisto.vpin.restclient.descriptors.ArchiveInstallDescriptor;
 import de.mephisto.vpin.restclient.representations.ArchiveDescriptorRepresentation;
 import de.mephisto.vpin.ui.util.ProgressModel;
 import de.mephisto.vpin.ui.util.ProgressResultModel;
@@ -13,12 +13,12 @@ import java.util.List;
 public class ArchiveImportProgressModel extends ProgressModel<ArchiveDescriptorRepresentation> {
   private final static Logger LOG = LoggerFactory.getLogger(ArchiveImportProgressModel.class);
 
-  private final VpaImportDescriptor descriptor;
+  private final ArchiveInstallDescriptor descriptor;
   private final Iterator<ArchiveDescriptorRepresentation> iterator;
   private final List<ArchiveDescriptorRepresentation> vpaDescriptors;
   private double percentage = 0;
 
-  public ArchiveImportProgressModel(String title, VpaImportDescriptor descriptor, List<ArchiveDescriptorRepresentation> vpaDescriptors) {
+  public ArchiveImportProgressModel(String title, ArchiveInstallDescriptor descriptor, List<ArchiveDescriptorRepresentation> vpaDescriptors) {
     super(title);
     this.descriptor = descriptor;
     this.iterator = vpaDescriptors.iterator();

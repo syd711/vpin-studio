@@ -2,12 +2,13 @@ package de.mephisto.vpin.ui.tables.dialogs;
 
 import de.mephisto.vpin.commons.fx.DialogController;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
-import de.mephisto.vpin.restclient.VpaImportDescriptor;
+import de.mephisto.vpin.restclient.descriptors.ArchiveInstallDescriptor;
 import de.mephisto.vpin.restclient.representations.PlaylistRepresentation;
 import de.mephisto.vpin.restclient.representations.ArchiveDescriptorRepresentation;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.jobs.JobPoller;
 import de.mephisto.vpin.ui.tables.TablesController;
+import de.mephisto.vpin.ui.util.Dialogs;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -32,15 +33,6 @@ public class ArchiveInstallationController implements Initializable, DialogContr
   private final static Logger LOG = LoggerFactory.getLogger(ArchiveInstallationController.class);
 
   @FXML
-  private CheckBox importRomCheckbox;
-
-  @FXML
-  private CheckBox importPupPackCheckbox;
-
-  @FXML
-  private CheckBox importPopperMedia;
-
-  @FXML
   private CheckBox highscoresCheckbox;
 
   @FXML
@@ -50,39 +42,33 @@ public class ArchiveInstallationController implements Initializable, DialogContr
   private ComboBox<PlaylistRepresentation> playlistCombo;
 
   private TablesController tablesController;
-  private List<ArchiveDescriptorRepresentation> vpaDescriptors;
+  private List<ArchiveDescriptorRepresentation> archiveDescriptors;
 
 
   @FXML
   private void onImport(ActionEvent e) {
-    VpaImportDescriptor descriptor = new VpaImportDescriptor();
-    descriptor.setImportRom(this.importRomCheckbox.isSelected());
-    descriptor.setImportPupPack(this.importPupPackCheckbox.isSelected());
-    descriptor.setImportPopperMedia(this.importPopperMedia.isSelected());
-    descriptor.setImportHighscores(this.highscoresCheckbox.isSelected());
-    descriptor.setInstall(true);
+    ArchiveInstallDescriptor installDescriptor = new ArchiveInstallDescriptor();
 
     if (!this.playlistCombo.getSelectionModel().isEmpty()) {
-      descriptor.setPlaylistId(this.playlistCombo.getSelectionModel().getSelectedItem().getId());
+      installDescriptor.setPlaylistId(this.playlistCombo.getSelectionModel().getSelectedItem().getId());
     }
 
     Stage stage = (Stage) ((Button) e.getSource()).getScene().getWindow();
     stage.close();
 
-//    Platform.runLater(() -> {
-//      VpaImportProgressModel model = new VpaImportProgressModel(titleLabel.getText(), descriptor, this.vpaDescriptors);
-//      Dialogs.createProgressDialog(model);
-//      tablesController.getTableOverviewController().onReload();
-//    });
+    Platform.runLater(() -> {
+      ArchiveImportProgressModel model = new ArchiveImportProgressModel(titleLabel.getText(), installDescriptor, this.archiveDescriptors);
+      Dialogs.createProgressDialog(model);
+      tablesController.getTableOverviewController().onReload();
+    });
 
     new Thread(() -> {
       Platform.runLater(() -> {
         try {
-          for (ArchiveDescriptorRepresentation vpaDescriptor : this.vpaDescriptors) {
-            //TODO
-//            descriptor.setUuid(vpaDescriptor.getManifest().getUuid());
-            descriptor.setVpaSourceId(vpaDescriptor.getSource().getId());
-            client.importArchive(descriptor);
+          for (ArchiveDescriptorRepresentation archiveDescriptor : this.archiveDescriptors) {
+            installDescriptor.setFilename(archiveDescriptor.getFilename());
+            installDescriptor.setArchiveSourceId(archiveDescriptor.getSource().getId());
+            client.installTable(installDescriptor);
           }
           JobPoller.getInstance().setPolling();
         } catch (Exception ex) {
@@ -113,13 +99,13 @@ public class ArchiveInstallationController implements Initializable, DialogContr
 
   }
 
-  public void setData(TablesController tablesController, List<ArchiveDescriptorRepresentation> vpaDescriptors) {
+  public void setData(TablesController tablesController, List<ArchiveDescriptorRepresentation> archiveDescriptors) {
     this.tablesController = tablesController;
-    this.vpaDescriptors = vpaDescriptors;
+    this.archiveDescriptors = archiveDescriptors;
 
-    String title = "Installing " + this.vpaDescriptors.size() + " Tables";
-    if (this.vpaDescriptors.size() == 1) {
-      title = "Installing Table \"" + this.vpaDescriptors.get(0).getTableDetails().getGameDisplayName() + "\"";
+    String title = "Installing " + this.archiveDescriptors.size() + " Tables";
+    if (this.archiveDescriptors.size() == 1) {
+      title = "Installing \"" + this.archiveDescriptors.get(0).getTableDetails().getGameDisplayName() + "\"";
     }
     titleLabel.setText(title);
   }

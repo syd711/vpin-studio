@@ -1,7 +1,6 @@
 package de.mephisto.vpin.server.backup;
 
-import de.mephisto.vpin.restclient.BackupDescriptor;
-import de.mephisto.vpin.restclient.TableDetails;
+import de.mephisto.vpin.restclient.descriptors.BackupDescriptor;
 import de.mephisto.vpin.server.AbstractVPinServerTest;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameService;
@@ -53,19 +52,12 @@ public class VpaServiceTest extends AbstractVPinServerTest {
     Game game = gameService.getGameByFilename(name);
 
     BackupDescriptor descriptor = new BackupDescriptor();
-    descriptor.setExportHighscores(true);
-    descriptor.setExportPupPack(false);
-    descriptor.setExportPopperMedia(false);
-
-    TableDetails manifest = new TableDetails();
-//    descriptor.setManifest(manifest);
-
     descriptor.getGameIds().add(game.getId());
     File target = new File("E:\\downloads\\" + game.getGameDisplayName().replaceAll(" ", "-") + ".vpa");
     List<HighscoreVersion> versions = highscoreService.getAllHighscoreVersions(game.getId());
     Optional<Highscore> highscore = highscoreService.getOrCreateHighscore(game);
-//    VpaExporterJob exporter = new VpaExporterJob(pinUPConnector, systemService.getVPRegFile(), systemService.getVPXMusicFolder(), game, descriptor, manifest, highscore, versions, null, target, manifest.getUuid());
-//    exporter.execute();
+    TableBackupJob exporter = new TableBackupJob(pinUPConnector, systemService.getVPRegFile(), systemService.getVPXMusicFolder(), game, descriptor, highscore, null, target);
+    exporter.execute();
     assertTrue(target.exists());
   }
 }
