@@ -3,9 +3,7 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
-<?import javafx.scene.control.RadioButton?>
 <?import javafx.scene.control.TextField?>
-<?import javafx.scene.control.ToggleGroup?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
@@ -31,16 +29,11 @@
                         <Insets bottom="12.0" />
                      </VBox.margin>
                   </Label>
-                  <RadioButton fx:id="downloadToFile" mnemonicParsing="false" selected="true" text="Download VPA File(s)" textFill="WHITE" toggleGroup="$group">
-                     <font>
-                        <Font size="14.0" />
-                     </font>
-                  </RadioButton>
                   <BorderPane>
                      <center>
                         <HBox alignment="CENTER_LEFT" spacing="6.0" BorderPane.alignment="CENTER_LEFT">
                            <children>
-                              <TextField fx:id="fileNameField" editable="false" prefHeight="26.0" prefWidth="370.0">
+                              <TextField fx:id="fileNameField" editable="false" prefWidth="350.0">
                                  <HBox.margin>
                                     <Insets />
                                  </HBox.margin>
@@ -58,7 +51,7 @@
                               </Button>
                            </children>
                            <BorderPane.margin>
-                              <Insets left="26.0" top="6.0" />
+                              <Insets top="6.0" />
                            </BorderPane.margin>
                         </HBox>
                      </center>
@@ -90,19 +83,6 @@
                <BorderPane.margin>
                   <Insets bottom="12.0" left="12.0" right="12.0" />
                </BorderPane.margin>
-               <children>
-                  <RadioButton fx:id="downloadToRepository" mnemonicParsing="false" text="Copy VPA File(s) Into Table Repository" textFill="WHITE">
-                     <font>
-                        <Font size="14.0" />
-                     </font>
-                     <VBox.margin>
-                        <Insets top="6.0" />
-                     </VBox.margin>
-                     <toggleGroup>
-                        <ToggleGroup fx:id="group" />
-                     </toggleGroup>
-                  </RadioButton>
-               </children>
             </VBox>
          </left>
       </BorderPane>

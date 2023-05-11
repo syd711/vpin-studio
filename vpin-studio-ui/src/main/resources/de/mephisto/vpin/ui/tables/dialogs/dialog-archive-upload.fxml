@@ -24,7 +24,7 @@
                   <Insets right="12.0" />
                </HBox.margin>
             </Button>
-            <Button fx:id="uploadBtn" layoutX="418.0" layoutY="10.0" mnemonicParsing="false" onAction="#onUploadClick" styleClass="submit-button" text="Upload">
+            <Button fx:id="uploadBtn" layoutX="418.0" layoutY="10.0" mnemonicParsing="false" onAction="#onUploadClick" styleClass="submit-button" text="Upload To Repository">
                <HBox.margin>
                   <Insets />
                </HBox.margin>
@@ -71,7 +71,7 @@
                         <Font size="14.0" />
                      </font>
                   </Label>
-                  <Label layoutX="10.0" layoutY="15.0" text="VPA Files:" textFill="WHITE" GridPane.rowIndex="1">
+                  <Label layoutX="10.0" layoutY="15.0" text="Archive Files:" textFill="WHITE" GridPane.rowIndex="1">
                      <font>
                         <Font size="14.0" />
                      </font>

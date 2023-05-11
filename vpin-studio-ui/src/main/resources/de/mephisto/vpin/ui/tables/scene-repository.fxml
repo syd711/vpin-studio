@@ -65,7 +65,7 @@
                         <FontIcon iconColor="WHITE" iconLiteral="mdi2p-play-circle-outline" />
                      </graphic>
                   </Button>
-                  <Button fx:id="uploadBtn" layoutX="298.0" layoutY="10.0" mnemonicParsing="false" onAction="#onUpload" text="Upload" textFill="WHITE">
+                  <Button fx:id="addArchiveBtn" layoutX="298.0" layoutY="10.0" mnemonicParsing="false" onAction="#onArchiveAdd" text="Add Archive" textFill="WHITE">
                      <font>
                         <Font size="14.0" />
                      </font>
@@ -79,6 +79,14 @@
                      </font>
                      <graphic>
                         <FontIcon iconColor="WHITE" iconLiteral="mdi2d-download" />
+                     </graphic>
+                  </Button>
+                  <Button fx:id="copyToRepositoryBtn" layoutX="915.0" layoutY="11.0" mnemonicParsing="false" onAction="#onToRepositoryCopy" text="Copy To Repository" textFill="WHITE">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                     <graphic>
+                        <FontIcon iconColor="WHITE" iconLiteral="mdi2c-content-copy" />
                      </graphic>
                   </Button>
                   <Separator layoutX="282.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />

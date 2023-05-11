@@ -29,11 +29,8 @@ import java.util.ResourceBundle;
 
 import static de.mephisto.vpin.ui.Studio.client;
 
-public class ArchiveInstallationController implements Initializable, DialogController {
-  private final static Logger LOG = LoggerFactory.getLogger(ArchiveInstallationController.class);
-
-  @FXML
-  private CheckBox highscoresCheckbox;
+public class TableInstallFromBackController implements Initializable, DialogController {
+  private final static Logger LOG = LoggerFactory.getLogger(TableInstallFromBackController.class);
 
   @FXML
   private Label titleLabel;

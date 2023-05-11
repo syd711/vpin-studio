@@ -155,8 +155,8 @@ public class Dialogs {
   }
 
   public static void openVpaInstallationDialog(TablesController tablesController, List<ArchiveDescriptorRepresentation> vpaDescriptors) {
-    Stage stage = createStudioDialogStage(ArchiveInstallationController.class, "dialog-archive-install.fxml", "Install Tables");
-    ArchiveInstallationController controller = (ArchiveInstallationController) stage.getUserData();
+    Stage stage = createStudioDialogStage(TableInstallFromBackController.class, "dialog-table-install.fxml", "Install Tables");
+    TableInstallFromBackController controller = (TableInstallFromBackController) stage.getUserData();
     controller.setData(tablesController, vpaDescriptors);
     stage.showAndWait();
   }
@@ -188,16 +188,23 @@ public class Dialogs {
     return controller.getDescriptor();
   }
 
-  public static boolean openVpaUploadDialog() {
-    Stage stage = createStudioDialogStage(ArchiveUploadController.class, "dialog-vpa-upload.fxml", "Visual Pinball Archive Upload");
+  public static boolean openArchiveUploadDialog() {
+    Stage stage = createStudioDialogStage(ArchiveUploadController.class, "dialog-archive-upload.fxml", "Archive Upload");
     ArchiveUploadController controller = (ArchiveUploadController) stage.getUserData();
     stage.showAndWait();
 
     return controller.uploadFinished();
   }
 
-  public static void openVpaDownloadDialog(ObservableList<ArchiveDescriptorRepresentation> selectedItems) {
-    Stage stage = createStudioDialogStage(ArchiveDownloadDialogController.class, "dialog-vpa-download.fxml", "Visual Pinball Archive Download");
+  public static void openArchiveDownloadDialog(ObservableList<ArchiveDescriptorRepresentation> selectedItems) {
+    Stage stage = createStudioDialogStage(ArchiveDownloadDialogController.class, "dialog-archive-download.fxml", "Archive Download");
+    ArchiveDownloadDialogController controller = (ArchiveDownloadDialogController) stage.getUserData();
+    controller.setData(selectedItems);
+    stage.showAndWait();
+  }
+
+  public static void openCopyArchiveToRepositoryDialog(ObservableList<ArchiveDescriptorRepresentation> selectedItems) {
+    Stage stage = createStudioDialogStage(ArchiveDownloadDialogController.class, "dialog-copy-archive-to-repository.fxml", "Copy To Repository");
     ArchiveDownloadDialogController controller = (ArchiveDownloadDialogController) stage.getUserData();
     controller.setData(selectedItems);
     stage.showAndWait();

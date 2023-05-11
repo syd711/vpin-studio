@@ -50,7 +50,10 @@ public class RepositoryController implements Initializable, StudioEventListener 
   private Button installBtn;
 
   @FXML
-  private Button uploadBtn;
+  private Button addArchiveBtn;
+
+  @FXML
+  private Button copyToRepositoryBtn;
 
   @FXML
   private Button downloadBtn;
@@ -127,8 +130,8 @@ public class RepositoryController implements Initializable, StudioEventListener 
   }
 
   @FXML
-  private void onUpload() {
-    boolean uploaded = Dialogs.openVpaUploadDialog();
+  private void onArchiveAdd() {
+    boolean uploaded = Dialogs.openArchiveUploadDialog();
     if (uploaded) {
       doReload();
     }
@@ -138,7 +141,15 @@ public class RepositoryController implements Initializable, StudioEventListener 
   private void onDownload() {
     ObservableList<ArchiveDescriptorRepresentation> selectedItems = tableView.getSelectionModel().getSelectedItems();
     if (!selectedItems.isEmpty()) {
-      Dialogs.openVpaDownloadDialog(selectedItems);
+      Dialogs.openArchiveDownloadDialog(selectedItems);
+    }
+  }
+
+  @FXML
+  private void onToRepositoryCopy() {
+    ObservableList<ArchiveDescriptorRepresentation> selectedItems = tableView.getSelectionModel().getSelectedItems();
+    if (!selectedItems.isEmpty()) {
+      Dialogs.openCopyArchiveToRepositoryDialog(selectedItems);
     }
   }
 
