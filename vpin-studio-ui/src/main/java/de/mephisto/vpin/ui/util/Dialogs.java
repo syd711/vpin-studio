@@ -204,8 +204,8 @@ public class Dialogs {
   }
 
   public static void openCopyArchiveToRepositoryDialog(ObservableList<ArchiveDescriptorRepresentation> selectedItems) {
-    Stage stage = createStudioDialogStage(ArchiveDownloadDialogController.class, "dialog-copy-archive-to-repository.fxml", "Copy To Repository");
-    ArchiveDownloadDialogController controller = (ArchiveDownloadDialogController) stage.getUserData();
+    Stage stage = createStudioDialogStage(CopyArchiveToRepositoryDialogController.class, "dialog-copy-archive-to-repository.fxml", "Copy To Repository");
+    CopyArchiveToRepositoryDialogController controller = (CopyArchiveToRepositoryDialogController) stage.getUserData();
     controller.setData(selectedItems);
     stage.showAndWait();
   }

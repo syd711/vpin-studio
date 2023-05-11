@@ -28,7 +28,7 @@
                         <Insets bottom="12.0" />
                      </VBox.margin>
                   </Label>
-                  <Label styleClass="preference-description" text="The selected tables will be copied into the local repository." />
+                  <Label styleClass="preference-description" text="The selected archives will be copied into the local repository." />
                   <BorderPane>
                      <center>
                         <HBox alignment="CENTER_LEFT" spacing="6.0" BorderPane.alignment="CENTER_LEFT">

@@ -25,9 +25,6 @@ public class CopyArchiveToRepositoryDialogController implements Initializable, D
   private final static Logger LOG = LoggerFactory.getLogger(CopyArchiveToRepositoryDialogController.class);
 
   @FXML
-  private Button copyBtn;
-
-  @FXML
   private Label titleLabel;
 
   private boolean result = false;
