@@ -1,6 +1,7 @@
 package de.mephisto.vpin.ui.tables;
 
 import de.mephisto.vpin.commons.utils.FileUtils;
+import de.mephisto.vpin.restclient.ArchivePackageInfo;
 import de.mephisto.vpin.restclient.TableDetails;
 import de.mephisto.vpin.restclient.representations.ArchiveDescriptorRepresentation;
 import de.mephisto.vpin.ui.StudioFXController;
@@ -10,6 +11,7 @@ import javafx.scene.control.Accordion;
 import javafx.scene.control.Label;
 import javafx.scene.control.TitledPane;
 import javafx.scene.layout.VBox;
+import org.apache.commons.lang3.StringUtils;
 import org.kordamp.ikonli.javafx.FontIcon;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -42,12 +44,6 @@ public class RepositorySidebarController implements Initializable, StudioFXContr
 
   @FXML
   private Label lastModifiedLabel;
-
-  @FXML
-  private Label repositoryTypeLabel;
-
-  @FXML
-  private Label repositoryNameLabel;
 
   @FXML
   private FontIcon directb2sIcon;
@@ -87,6 +83,72 @@ public class RepositorySidebarController implements Initializable, StudioFXContr
   @FXML
   private FontIcon highscoreIcon;
 
+  @FXML
+  private TitledPane manifestPane;
+
+  @FXML
+  private Label gameName;
+
+  @FXML
+  private Label gameFileName;
+
+  @FXML
+  private Label gameDisplayName;
+
+  @FXML
+  private Label gameYear;
+
+  @FXML
+  private Label romName;
+
+  @FXML
+  private Label romUrl;
+
+  @FXML
+  private Label manufacturer;
+
+  @FXML
+  private Label numberOfPlayers;
+
+  @FXML
+  private Label tags;
+
+  @FXML
+  private Label category;
+
+  @FXML
+  private Label author;
+
+  @FXML
+  private Label volume;
+
+  @FXML
+  private Label launchCustomVar;
+
+  @FXML
+  private Label keepDisplays;
+
+  @FXML
+  private Label gameRating;
+
+  @FXML
+  private Label dof;
+
+  @FXML
+  private Label IPDBNum;
+
+  @FXML
+  private Label altRunMode;
+
+  @FXML
+  private Label url;
+
+  @FXML
+  private Label designedBy;
+
+  @FXML
+  private Label notes;
+
   @Override
   public void onViewActivated() {
 
@@ -122,41 +184,57 @@ public class RepositorySidebarController implements Initializable, StudioFXContr
     fileSizeLabel.setText("-");
     lastModifiedLabel.setText("-");
     sourceLabel.setText("-");
-    repositoryNameLabel.setText("-");
-    repositoryTypeLabel.setText("-");
 
     if (selection.isPresent()) {
       ArchiveDescriptorRepresentation descriptorRepresentation = selection.get();
-      TableDetails manifest = descriptorRepresentation.getTableDetails();
-
       filenameLabel.setText(descriptorRepresentation.getFilename());
       fileSizeLabel.setText(descriptorRepresentation.getSize() > 0 ? FileUtils.readableFileSize(descriptorRepresentation.getSize()) : "-");
       lastModifiedLabel.setText(SimpleDateFormat.getDateTimeInstance().format(descriptorRepresentation.getCreatedAt()));
       sourceLabel.setText(descriptorRepresentation.getSource().getLocation());
-      //TODO
-//      idLabel.setText(descriptorRepresentation.getManifest().getUuid());
-//      idCopyBtn.setVisible(true);
-//
-//      repositoryTypeLabel.setText(descriptorRepresentation.getSource().getType());
-//      repositoryNameLabel.setText(descriptorRepresentation.getSource().getName());
-//
-//      VpaPackageInfo packageInfo = manifest.getPackageInfo();
-//      directb2sIcon.setVisible(packageInfo.isDirectb2s());
-//      pupPackIcon.setVisible(packageInfo.isPupPack());
-//      romIcon.setVisible(packageInfo.isRom());
-//      resIcon.setVisible(packageInfo.isRes());
-//      cfgIcon.setVisible(packageInfo.isCfg());
-//      popperIcon.setVisible(packageInfo.isPopperMedia());
-//      flexIcon.setVisible(packageInfo.isFlexDMD());
-//      ultraIcon.setVisible(packageInfo.isUltraDMD());
-//      musicIcon.setVisible(packageInfo.isMusic());
-//      altSoundIcon.setVisible(packageInfo.isAltSound());
-//      altColorIcon.setVisible(packageInfo.isAltColor());
-//      povIcon.setVisible(packageInfo.isPov());
-//      highscoreIcon.setVisible(packageInfo.isHighscore());
-//      highscoreHistoryLabel.setText(String.valueOf(packageInfo.getHighscoreHistoryRecords()));
 
+      ArchivePackageInfo packageInfo = descriptorRepresentation.getPackageInfo();
 
+      if (packageInfo != null) {
+        directb2sIcon.setVisible(packageInfo.isDirectb2s());
+        pupPackIcon.setVisible(packageInfo.isPupPack());
+        romIcon.setVisible(packageInfo.isRom());
+        resIcon.setVisible(packageInfo.isRes());
+        cfgIcon.setVisible(packageInfo.isCfg());
+        popperIcon.setVisible(packageInfo.isPopperMedia());
+        flexIcon.setVisible(packageInfo.isFlexDMD());
+        ultraIcon.setVisible(packageInfo.isUltraDMD());
+        musicIcon.setVisible(packageInfo.isMusic());
+        altSoundIcon.setVisible(packageInfo.isAltSound());
+        altColorIcon.setVisible(packageInfo.isAltColor());
+        povIcon.setVisible(packageInfo.isPov());
+        highscoreIcon.setVisible(packageInfo.isHighscore());
+      }
+
+      TableDetails tableDetails = descriptorRepresentation.getTableDetails();
+      manifestPane.setVisible(tableDetails != null);
+      if (tableDetails == null) {
+        tableDetails = new TableDetails();
+      }
+      gameName.setText(StringUtils.isEmpty(tableDetails.getGameName()) ? "-" : tableDetails.getGameName());
+      gameFileName.setText(StringUtils.isEmpty(tableDetails.getGameFileName()) ? "-" : tableDetails.getGameFileName());
+      gameDisplayName.setText(StringUtils.isEmpty(tableDetails.getGameDisplayName()) ? "-" : tableDetails.getGameDisplayName());
+      gameYear.setText(tableDetails.getGameYear() == 0 ? "-" : String.valueOf(tableDetails.getGameYear()));
+      romName.setText(StringUtils.isEmpty(tableDetails.getRomName()) ? "-" : tableDetails.getRomName());
+      romUrl.setText(StringUtils.isEmpty(tableDetails.getRomUrl()) ? "-" : tableDetails.getRomUrl());
+      manufacturer.setText(StringUtils.isEmpty(tableDetails.getManufacturer()) ? "-" : tableDetails.getManufacturer());
+      numberOfPlayers.setText(tableDetails.getNumberOfPlayers() == 0 ? "-" : String.valueOf(tableDetails.getNumberOfPlayers()));
+      tags.setText(StringUtils.isEmpty(tableDetails.getTags()) ? "-" : tableDetails.getTags());
+      category.setText(StringUtils.isEmpty(tableDetails.getCategory()) ? "-" : tableDetails.getCategory());
+      author.setText(StringUtils.isEmpty(tableDetails.getAuthor()) ? "-" : tableDetails.getAuthor());
+      launchCustomVar.setText(StringUtils.isEmpty(tableDetails.getLaunchCustomVar()) ? "-" : tableDetails.getLaunchCustomVar());
+      keepDisplays.setText(StringUtils.isEmpty(tableDetails.getKeepDisplays()) ? "-" : tableDetails.getKeepDisplays());
+      gameRating.setText(tableDetails.getGameRating() > 0 ? String.valueOf(tableDetails.getGameRating()) : "-");
+      dof.setText(StringUtils.isEmpty(tableDetails.getDof()) ? "-" : tableDetails.getDof());
+      IPDBNum.setText(StringUtils.isEmpty(tableDetails.getIPDBNum()) ? "-" : tableDetails.getIPDBNum());
+      altRunMode.setText(StringUtils.isEmpty(tableDetails.getAltRunMode()) ? "-" : tableDetails.getAltRunMode());
+      url.setText(StringUtils.isEmpty(tableDetails.getUrl()) ? "-" : tableDetails.getUrl());
+      designedBy.setText(StringUtils.isEmpty(tableDetails.getDesignedBy()) ? "-" : tableDetails.getDesignedBy());
+      notes.setText(StringUtils.isEmpty(tableDetails.getNotes()) ? "-" : tableDetails.getNotes());
     }
     else {
 
