@@ -2,18 +2,18 @@ package de.mephisto.vpin.server.io;
 
 import de.mephisto.vpin.restclient.JobType;
 import de.mephisto.vpin.restclient.PopperScreen;
-import de.mephisto.vpin.restclient.descriptors.ArchiveDownloadAndInstallDescriptor;
+import de.mephisto.vpin.restclient.descriptors.ArchiveDownloadDescriptor;
 import de.mephisto.vpin.restclient.descriptors.ArchiveInstallDescriptor;
 import de.mephisto.vpin.restclient.descriptors.BackupDescriptor;
 import de.mephisto.vpin.restclient.descriptors.JobDescriptor;
 import de.mephisto.vpin.server.backup.*;
 import de.mephisto.vpin.server.backup.types.TableBackupAdapter;
 import de.mephisto.vpin.server.backup.types.TableBackupAdapterFactory;
+import de.mephisto.vpin.server.backup.types.TableInstallerAdapter;
+import de.mephisto.vpin.server.backup.types.TableInstallerAdapterFactory;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameService;
-import de.mephisto.vpin.server.highscores.Highscore;
 import de.mephisto.vpin.server.highscores.HighscoreService;
-import de.mephisto.vpin.server.highscores.HighscoreVersion;
 import de.mephisto.vpin.server.highscores.cards.CardService;
 import de.mephisto.vpin.server.jobs.JobQueue;
 import de.mephisto.vpin.server.popper.GameMediaItem;
@@ -25,9 +25,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.io.File;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -41,9 +39,6 @@ public class IOService {
   private GameService gameService;
 
   @Autowired
-  private HighscoreService highscoreService;
-
-  @Autowired
   private PinUPConnector pinUPConnector;
 
   @Autowired
@@ -55,16 +50,20 @@ public class IOService {
   @Autowired
   private TableBackupAdapterFactory tableBackupAdapterFactory;
 
-  public boolean installArchive(@NonNull ArchiveInstallDescriptor descriptor) {
+  @Autowired
+  private TableInstallerAdapterFactory tableInstallerAdapterFactory;
+
+  public boolean installArchive(@NonNull ArchiveInstallDescriptor installDescriptor) {
     try {
-      ArchiveDescriptor archiveDescriptor = archiveService.getArchiveDescriptor(descriptor.getArchiveSourceId(), descriptor.getFilename());
-      File archiveFile = new File(systemService.getVpaArchiveFolder(), archiveDescriptor.getFilename());
+      ArchiveDescriptor archiveDescriptor = archiveService.getArchiveDescriptor(installDescriptor.getArchiveSourceId(), installDescriptor.getFilename());
 
-      JobDescriptor jobDescriptor = new JobDescriptor(JobType.ARCHIVE_INSTALL, descriptor.getFilename());
-      jobDescriptor.setTitle("Import of \"" + archiveDescriptor.getTableDetails().getGameDisplayName() + "\"");
-      jobDescriptor.setDescription("Importing table for \"" + archiveDescriptor.getTableDetails().getGameDisplayName() + "\"");
+      JobDescriptor jobDescriptor = new JobDescriptor(JobType.ARCHIVE_INSTALL, installDescriptor.getFilename());
+      jobDescriptor.setTitle("Import of \"" + archiveDescriptor.getFilename() + "\"");
+      jobDescriptor.setDescription("Importing table for \"" + archiveDescriptor.getFilename() + "\"");
 
-      ArchiveInstallerJob job = new ArchiveInstallerJob(descriptor, archiveFile, pinUPConnector, systemService, highscoreService, gameService, cardService);
+      TableInstallerAdapter adapter = tableInstallerAdapterFactory.createAdapter(archiveDescriptor);
+
+      ArchiveInstallerJob job = new ArchiveInstallerJob(adapter, archiveDescriptor, pinUPConnector, cardService, installDescriptor);
       jobDescriptor.setDescription("Installing \"" + archiveDescriptor.getTableDetails().getGameDisplayName() + "\"");
       jobDescriptor.setJob(job);
 
@@ -77,19 +76,15 @@ public class IOService {
     return true;
   }
 
-  public boolean downloadArchive(ArchiveDownloadAndInstallDescriptor downloadAndInstallDescriptor) {
+  public boolean downloadArchive(ArchiveDownloadDescriptor archiveDownloadDescriptor) {
     try {
-      ArchiveDescriptor archiveDescriptor = archiveService.getArchiveDescriptor(downloadAndInstallDescriptor.getArchiveSourceId(), downloadAndInstallDescriptor.getFilename());
-      File archiveFile = new File(systemService.getVpaArchiveFolder(), archiveDescriptor.getFilename());
+      ArchiveDescriptor archiveDescriptor = archiveService.getArchiveDescriptor(archiveDownloadDescriptor.getArchiveSourceId(), archiveDownloadDescriptor.getFilename());
 
-      JobDescriptor jobDescriptor = new JobDescriptor(JobType.ARCHIVE_DOWNLOAD_TO_REPOSITORY, downloadAndInstallDescriptor.getFilename());
+      JobDescriptor jobDescriptor = new JobDescriptor(JobType.ARCHIVE_DOWNLOAD_TO_REPOSITORY, archiveDownloadDescriptor.getFilename());
       jobDescriptor.setTitle("Download of \"" + archiveDescriptor.getTableDetails().getGameDisplayName() + "\"");
 
-      DownloadArchiveAndInstallJob job = new DownloadArchiveAndInstallJob(archiveDescriptor, downloadAndInstallDescriptor, archiveFile, pinUPConnector, systemService, highscoreService, archiveService, gameService, cardService);
+      DownloadArchiveToRepositoryJob job = new DownloadArchiveToRepositoryJob(archiveService, systemService, archiveDescriptor);
       jobDescriptor.setDescription("Downloading \"" + archiveDescriptor.getTableDetails().getGameDisplayName() + "\"");
-      if (downloadAndInstallDescriptor.isInstall()) {
-        jobDescriptor.setDescription("Downloading and installing \"" + archiveDescriptor.getTableDetails().getGameDisplayName() + "\"");
-      }
       jobDescriptor.setJob(job);
 
       JobQueue.getInstance().offer(jobDescriptor);

@@ -177,7 +177,7 @@ public class VPinStudioClient implements ObservedPropertyChangeListener, Overlay
     return restClient.post(API + "io/install", descriptor, Boolean.class);
   }
 
-  public boolean downloadArchive(ArchiveDownloadAndInstallDescriptor descriptor) throws Exception {
+  public boolean downloadArchive(ArchiveDownloadDescriptor descriptor) throws Exception {
     return restClient.post(API + "io/download", descriptor, Boolean.class);
   }
 

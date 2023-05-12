@@ -1,6 +1,6 @@
 package de.mephisto.vpin.server.io;
 
-import de.mephisto.vpin.restclient.descriptors.ArchiveDownloadAndInstallDescriptor;
+import de.mephisto.vpin.restclient.descriptors.ArchiveDownloadDescriptor;
 import de.mephisto.vpin.restclient.descriptors.BackupDescriptor;
 import de.mephisto.vpin.restclient.descriptors.ArchiveInstallDescriptor;
 import org.slf4j.Logger;
@@ -29,7 +29,7 @@ public class IOResource {
   }
 
   @PostMapping("/download")
-  public Boolean downloadArchive(@RequestBody ArchiveDownloadAndInstallDescriptor descriptor) {
+  public Boolean downloadArchive(@RequestBody ArchiveDownloadDescriptor descriptor) {
     return ioService.downloadArchive(descriptor);
   }
 }

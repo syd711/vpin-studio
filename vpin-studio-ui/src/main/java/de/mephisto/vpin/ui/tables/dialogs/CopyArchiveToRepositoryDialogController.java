@@ -2,7 +2,7 @@ package de.mephisto.vpin.ui.tables.dialogs;
 
 import de.mephisto.vpin.commons.fx.DialogController;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
-import de.mephisto.vpin.restclient.descriptors.ArchiveDownloadAndInstallDescriptor;
+import de.mephisto.vpin.restclient.descriptors.ArchiveDownloadDescriptor;
 import de.mephisto.vpin.restclient.representations.ArchiveDescriptorRepresentation;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.jobs.JobPoller;
@@ -42,8 +42,7 @@ public class CopyArchiveToRepositoryDialogController implements Initializable, D
     result = true;
     try {
       for (ArchiveDescriptorRepresentation selectedItem : archiveDescriptors) {
-        ArchiveDownloadAndInstallDescriptor descriptor = new ArchiveDownloadAndInstallDescriptor();
-        descriptor.setInstall(false);
+        ArchiveDownloadDescriptor descriptor = new ArchiveDownloadDescriptor();
         descriptor.setFilename(selectedItem.getFilename());
         descriptor.setArchiveSourceId(selectedItem.getSource().getId());
         client.downloadArchive(descriptor);

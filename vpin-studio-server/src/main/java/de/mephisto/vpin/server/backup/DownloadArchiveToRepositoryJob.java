@@ -9,8 +9,8 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 
-public class DownloadArchiveToRepositorySubJob implements Job {
-  private final static Logger LOG = LoggerFactory.getLogger(DownloadArchiveToRepositorySubJob.class);
+public class DownloadArchiveToRepositoryJob implements Job {
+  private final static Logger LOG = LoggerFactory.getLogger(DownloadArchiveToRepositoryJob.class);
 
   private final ArchiveService archiveService;
   private final SystemService systemService;
@@ -20,9 +20,9 @@ public class DownloadArchiveToRepositorySubJob implements Job {
 
   private File temp;
 
-  public DownloadArchiveToRepositorySubJob(@NonNull ArchiveService archiveService,
-                                           @NonNull SystemService systemService,
-                                           @NonNull ArchiveDescriptor archiveDescriptor) {
+  public DownloadArchiveToRepositoryJob(@NonNull ArchiveService archiveService,
+                                        @NonNull SystemService systemService,
+                                        @NonNull ArchiveDescriptor archiveDescriptor) {
     this.archiveService = archiveService;
     this.systemService = systemService;
     this.archiveDescriptor = archiveDescriptor;
@@ -50,10 +50,6 @@ public class DownloadArchiveToRepositorySubJob implements Job {
       return false;
     }
     return true;
-  }
-
-  public File getDownloadedFile() {
-    return this.temp;
   }
 
   @Override
