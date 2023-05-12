@@ -36,9 +36,9 @@ public class ArchivesResource {
   @Autowired
   private ArchiveService archiveService;
 
-  @GetMapping
-  public List<ArchiveDescriptorRepresentation> getArchives() {
-    List<ArchiveDescriptor> descriptors = archiveService.getArchiveDescriptors();
+  @GetMapping("/{sourceId}")
+  public List<ArchiveDescriptorRepresentation> getArchives(@PathVariable("sourceId") long sourceId) {
+    List<ArchiveDescriptor> descriptors = archiveService.getArchiveDescriptors(sourceId);
     List<ArchiveDescriptorRepresentation> result = new ArrayList<>();
     for (ArchiveDescriptor archiveDescriptor : descriptors) {
       ArchiveDescriptorRepresentation descriptorRepresentation = toRepresentation(archiveDescriptor);
@@ -104,7 +104,7 @@ public class ArchivesResource {
       ArchiveDescriptor archiveDescriptor = archiveService.getArchiveDescriptor(sourceId, filename);
       ArchiveSourceAdapter sourceAdapter = archiveService.getArchiveSourceAdapter(sourceId);
 
-      in = sourceAdapter.getDescriptorInputStream(archiveDescriptor);
+      in = sourceAdapter.getArchiveInputStream(archiveDescriptor);
       out = response.getOutputStream();
       IOUtils.copy(in, out);
       response.flushBuffer();

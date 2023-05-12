@@ -18,6 +18,7 @@ import javafx.application.Platform;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -175,7 +176,8 @@ public class RepositoryController implements Initializable, StudioEventListener 
     tableStack.getChildren().add(loadingOverlay);
 
     new Thread(() -> {
-      archives = client.getArchiveDescriptors();
+      ArchiveSourceRepresentation value = sourceCombo.getValue();
+      archives = client.getArchiveDescriptors(value.getId());
 
       Platform.runLater(() -> {
         data = FXCollections.observableList(filterArchives(archives));
@@ -372,13 +374,24 @@ public class RepositoryController implements Initializable, StudioEventListener 
       tableView.setItems(FXCollections.observableList(filtered));
     });
 
-    sourceComboChangeListener = (observable, oldValue, newValue) -> doReload();
+    sourceComboChangeListener = (observable, oldValue, newValue) -> {
+      if (newValue.getId() == -1) {
+        addArchiveBtn.setDisable(false);
+        copyToRepositoryBtn.setVisible(false);
+      }
+      else {
+        addArchiveBtn.setDisable(true);
+        copyToRepositoryBtn.setVisible(true);
+      }
+      tableView.getSelectionModel().clearSelection();
+      doReload();
+    };
     refreshRepositoryCombo();
 
     deleteBtn.setDisable(true);
     installBtn.setDisable(true);
     downloadBtn.setDisable(true);
-    copyToRepositoryBtn.setDisable(true);
+    copyToRepositoryBtn.setVisible(false);
 
     EventManager.getInstance().addListener(this);
     this.doReload();
@@ -402,10 +415,6 @@ public class RepositoryController implements Initializable, StudioEventListener 
 
     ArchiveSourceRepresentation selectedItem = sourceCombo.getSelectionModel().getSelectedItem();
     for (ArchiveDescriptorRepresentation archive : archives) {
-      if (selectedItem != null && archive.getSource().getId() != selectedItem.getId()) {
-        continue;
-      }
-
       if (archive.getFilename() != null && archive.getFilename().toLowerCase().contains(filterValue.toLowerCase())) {
         filtered.add(archive);
       }

@@ -104,6 +104,7 @@
                               <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                               <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                               <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                           </rowConstraints>
                            <children>
                               <Label text="DirectB2S:">
@@ -184,6 +185,12 @@
                                  </font>
                               </Label>
                               <FontIcon fx:id="cfgIcon" iconColor="#FFFFFF" iconLiteral="bi-check-circle" iconSize="18" layoutX="194.0" layoutY="95.0" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                              <Label layoutX="10.0" layoutY="380.0" text="Windows Registry Entries:" GridPane.rowIndex="13">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </Label>
+                              <FontIcon fx:id="registryIcon" iconColor="#FFFFFF" iconLiteral="bi-check-circle" iconSize="18" layoutX="191.0" layoutY="399.0" GridPane.columnIndex="1" GridPane.rowIndex="13" />
                            </children>
                         </GridPane>
                      </children>

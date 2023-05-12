@@ -1,6 +1,5 @@
 package de.mephisto.vpin.server.backup;
 
-import de.mephisto.vpin.restclient.TableDetails;
 import de.mephisto.vpin.restclient.util.PasswordUtil;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -79,12 +78,10 @@ public class ArchiveSourceAdapterHttpServer implements ArchiveSourceAdapter {
         in.close();
 
         String json = jsonBuffer.toString();
-        List<TableDetails> tableDetails = VpaArchiveUtil.readTableDetails(json);
-        //TODO vpa
-//        for (TableManifest manifest : tableDetails) {
-//          VpaDescriptor descriptor = new VpaDescriptor(source, manifest, new Date(), manifest.getVpaFilename(), 0);
-//          cache.put(manifest.getUuid(), descriptor);
-//        }
+        List<ArchiveDescriptor> archiveDescriptors = ArchiveUtil.readArchiveDecriptors(json, this.getArchiveSource());
+        for (ArchiveDescriptor archiveDescriptor : archiveDescriptors) {
+          cache.put(archiveDescriptor.getFilename(), archiveDescriptor);
+        }
         LOG.info("Reading of " + location + " finshed, took " + (System.currentTimeMillis() - start) + "ms.");
       } catch (FileNotFoundException e) {
         LOG.error("No descriptor found for " + location + " (" + e.getMessage() + ")");
@@ -109,15 +106,14 @@ public class ArchiveSourceAdapterHttpServer implements ArchiveSourceAdapter {
   }
 
   @Override
-  public InputStream getDescriptorInputStream(ArchiveDescriptor archiveDescriptor) throws IOException {
+  public InputStream getArchiveInputStream(ArchiveDescriptor archiveDescriptor) throws IOException {
     String location = this.source.getLocation();
     if (!location.endsWith("/")) {
       location += "/";
     }
 
-    //TODO vpa
-//    String name = descriptor.getManifest().getVpaFilename();
-//    location += URLEncoder.encode(name, StandardCharsets.UTF_8).replace("+", "%20");
+    String name = archiveDescriptor.getFilename();
+    location += URLEncoder.encode(name, StandardCharsets.UTF_8).replace("+", "%20");
 
     HttpURLConnection conn = getConnection(location);
     return new BufferedInputStream(conn.getInputStream());
@@ -167,20 +163,17 @@ public class ArchiveSourceAdapterHttpServer implements ArchiveSourceAdapter {
       System.setProperty("javax.net.ssl.trustStorePassword", "qwerty");
 
       // Create a trust manager that does not validate certificate chains
-      TrustManager[] trustAllCerts = new TrustManager[]{
-          new X509TrustManager() {
-            public java.security.cert.X509Certificate[] getAcceptedIssuers() {
-              return null;
-            }
+      TrustManager[] trustAllCerts = new TrustManager[]{new X509TrustManager() {
+        public java.security.cert.X509Certificate[] getAcceptedIssuers() {
+          return null;
+        }
 
-            public void checkClientTrusted(X509Certificate[] certs,
-                                           String authType) {
-            }
+        public void checkClientTrusted(X509Certificate[] certs, String authType) {
+        }
 
-            public void checkServerTrusted(X509Certificate[] certs,
-                                           String authType) {
-            }
-          }};
+        public void checkServerTrusted(X509Certificate[] certs, String authType) {
+        }
+      }};
 
       // Install the all-trusting trust manager
       SSLContext sc = SSLContext.getInstance("SSL");

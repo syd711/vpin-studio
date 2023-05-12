@@ -21,7 +21,7 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @SpringBootTest
-public class VpaServiceTest extends AbstractVPinServerTest {
+public class ArchiveServiceTest extends AbstractVPinServerTest {
 
   @Autowired
   private ArchiveService vpaService;

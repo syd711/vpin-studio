@@ -17,9 +17,18 @@ public class ArchivePackageInfo {
   private boolean flexDMD;
   private boolean ultraDMD;
   private boolean vpx;
+  private boolean registryData;
 
   private String icon;
   private String thumbnail;
+
+  public boolean isRegistryData() {
+    return registryData;
+  }
+
+  public void setRegistryData(boolean registryData) {
+    this.registryData = registryData;
+  }
 
   public String getIcon() {
     return icon;

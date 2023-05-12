@@ -184,8 +184,8 @@ public class VPinStudioClient implements ObservedPropertyChangeListener, Overlay
   /*********************************************************************************************************************
    * Archiving
    ********************************************************************************************************************/
-  public List<ArchiveDescriptorRepresentation> getArchiveDescriptors() {
-    return Arrays.asList(restClient.get(API + "archives", ArchiveDescriptorRepresentation[].class));
+  public List<ArchiveDescriptorRepresentation> getArchiveDescriptors(long id) {
+    return Arrays.asList(restClient.get(API + "archives/" + id, ArchiveDescriptorRepresentation[].class));
   }
 
   public List<ArchiveDescriptorRepresentation> getArchiveDescriptorsFiltered() {

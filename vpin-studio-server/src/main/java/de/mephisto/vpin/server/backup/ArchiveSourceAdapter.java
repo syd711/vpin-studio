@@ -12,7 +12,7 @@ public interface ArchiveSourceAdapter {
 
   void invalidate();
 
-  InputStream getDescriptorInputStream(ArchiveDescriptor archiveDescriptor) throws IOException;
+  InputStream getArchiveInputStream(ArchiveDescriptor archiveDescriptor) throws IOException;
 
   ArchiveSource getArchiveSource();
 }

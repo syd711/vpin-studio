@@ -14,6 +14,10 @@ public class ArchiveDescriptor {
   private String filename;
   private long size;
 
+  public ArchiveDescriptor() {
+    //used for JSON serialization
+  }
+
   public ArchiveDescriptor(ArchiveSource source, TableDetails tableDetails, ArchivePackageInfo packageInfo, Date createdAt, String filename, long size) {
     this.source = source;
     this.tableDetails = tableDetails;

@@ -71,6 +71,7 @@ public class RepositorySidebarController implements Initializable, StudioFXContr
 
   @FXML
   private FontIcon altSoundIcon;
+
   @FXML
   private FontIcon altColorIcon;
 
@@ -82,6 +83,9 @@ public class RepositorySidebarController implements Initializable, StudioFXContr
 
   @FXML
   private FontIcon highscoreIcon;
+
+  @FXML
+  private FontIcon registryIcon;
 
   @FXML
   private TitledPane manifestPane;
@@ -179,6 +183,7 @@ public class RepositorySidebarController implements Initializable, StudioFXContr
     cfgIcon.setVisible(false);
     povIcon.setVisible(false);
     highscoreIcon.setVisible(false);
+    registryIcon.setVisible(false);
 
     filenameLabel.setText("-");
     fileSizeLabel.setText("-");
@@ -208,6 +213,7 @@ public class RepositorySidebarController implements Initializable, StudioFXContr
         altColorIcon.setVisible(packageInfo.isAltColor());
         povIcon.setVisible(packageInfo.isPov());
         highscoreIcon.setVisible(packageInfo.isHighscore());
+        registryIcon.setVisible(packageInfo.isRegistryData());
       }
 
       TableDetails tableDetails = descriptorRepresentation.getTableDetails();

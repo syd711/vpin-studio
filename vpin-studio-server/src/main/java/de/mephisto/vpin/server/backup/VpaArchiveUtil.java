@@ -19,17 +19,6 @@ import java.util.zip.ZipFile;
 public class VpaArchiveUtil {
   private final static Logger LOG = LoggerFactory.getLogger(VpaArchiveUtil.class);
 
-  public static List<TableDetails> readTableDetails(String json) {
-    try {
-      ObjectMapper objectMapper = new ObjectMapper();
-      objectMapper.enable(SerializationFeature.INDENT_OUTPUT);
-      return Arrays.asList(objectMapper.readValue(json, TableDetails[].class));
-    } catch (IOException e) {
-      LOG.error("Failed to read manifest data from json\n" + json + ": " + e.getMessage(), e);
-    }
-    return null;
-  }
-
   public static TableDetails readTableDetails(File file) {
     try {
       ObjectMapper objectMapper = new ObjectMapper();

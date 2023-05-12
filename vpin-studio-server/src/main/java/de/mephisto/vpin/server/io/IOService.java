@@ -117,8 +117,8 @@ public class IOService {
     File vpRegFile = systemService.getVPRegFile();
     ArchiveSourceAdapter defaultVpaSourceAdapter = archiveService.getDefaultArchiveSourceAdapter();
     JobDescriptor descriptor = new JobDescriptor(JobType.TABLE_BACKUP, UUID.randomUUID().toString());
-    descriptor.setTitle("Export of \"" + game.getGameDisplayName() + "\"");
-    descriptor.setDescription("Exporting table archive for \"" + game.getGameDisplayName() + "\"");
+    descriptor.setTitle("Backup of \"" + game.getGameDisplayName() + "\"");
+    descriptor.setDescription("Creating archive for \"" + game.getGameDisplayName() + "\"");
     descriptor.setJob(new TableBackupJob(pinUPConnector, vpRegFile, systemService.getVPXMusicFolder(), game, exportDescriptor, highscore, defaultVpaSourceAdapter, targetFolder));
 
     GameMediaItem mediaItem = game.getGameMedia().get(PopperScreen.Wheel);

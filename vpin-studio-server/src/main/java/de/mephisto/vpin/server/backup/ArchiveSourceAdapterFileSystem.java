@@ -28,7 +28,7 @@ public class ArchiveSourceAdapterFileSystem implements ArchiveSourceAdapter {
 
   public List<ArchiveDescriptor> getArchiveDescriptors() {
     if (cache.isEmpty()) {
-      File[] vpaFiles = archiveFolder.listFiles((dir, name) -> name.endsWith(".vpa"));
+      File[] vpaFiles = archiveFolder.listFiles((dir, name) -> name.endsWith(".vpa") || name.endsWith(".vpinzip"));
       if (vpaFiles != null) {
         for (File archiveFile : vpaFiles) {
           try {
@@ -61,7 +61,7 @@ public class ArchiveSourceAdapterFileSystem implements ArchiveSourceAdapter {
   }
 
   @Override
-  public FileInputStream getDescriptorInputStream(ArchiveDescriptor archiveDescriptor) throws IOException {
+  public FileInputStream getArchiveInputStream(ArchiveDescriptor archiveDescriptor) throws IOException {
     File file = new File(archiveFolder, archiveDescriptor.getFilename());
     return new FileInputStream(file);
   }

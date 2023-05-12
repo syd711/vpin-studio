@@ -34,7 +34,7 @@ public class ArchiveService implements InitializingBean {
   
   private final Map<Long, ArchiveSourceAdapter> adapterCache = new LinkedHashMap<>();
 
-  public List<ArchiveDescriptor> getArchiveDescriptors(int gameId) {
+  public List<ArchiveDescriptor> getArchiveDescriptorForGame(int gameId) {
     Game game = gameService.getGame(gameId);
     
     return getArchiveDescriptors().stream().filter(ArchiveDescriptor -> {
@@ -45,7 +45,7 @@ public class ArchiveService implements InitializingBean {
     }).collect(Collectors.toList());
   }
 
-  @Nullable
+  @NonNull
   public List<ArchiveDescriptor> getArchiveDescriptors() {
     List<ArchiveDescriptor> result = new ArrayList<>();
     for (ArchiveSourceAdapter adapter : adapterCache.values()) {
@@ -61,6 +61,19 @@ public class ArchiveService implements InitializingBean {
       return o1.getTableDetails().getGameDisplayName().compareTo(o2.getTableDetails().getGameDisplayName());
     });
     return result;
+  }
+
+  @NonNull
+  public List<ArchiveDescriptor> getArchiveDescriptors(long sourceId) {
+    ArchiveSourceAdapter adapter = getArchiveSourceAdapter(sourceId);
+    List<ArchiveDescriptor> archiveDescriptors = adapter.getArchiveDescriptors();
+    archiveDescriptors.sort((o1, o2) -> {
+      if (o1.getFilename() != null && o2.getFilename() != null) {
+        return o1.getFilename().compareTo(o2.getFilename());
+      }
+      return o1.getTableDetails().getGameDisplayName().compareTo(o2.getTableDetails().getGameDisplayName());
+    });
+    return archiveDescriptors;
   }
 
   @Nullable
