@@ -197,11 +197,13 @@ public class TableBackupJob implements Job {
 
       //always zip music files if they are in a ROM named folder
       if (game.getMusicFolder() != null && game.getMusicFolder().exists()) {
+        packageInfo.setMusic(true);
         zipFile(game.getMusicFolder(), getGameFolderName() + "/Music/" + game.getMusicFolder().getName(), zipOut);
       }
       else {
         String assets = game.getAssets();
         if (!StringUtils.isEmpty(assets)) {
+          packageInfo.setMusic(true);
           String[] tableMusic = assets.split(",");
           File[] files = musicFolder.listFiles((dir, name) -> name.endsWith(".mp3"));
           if (findAudioMatch(files, tableMusic)) {
