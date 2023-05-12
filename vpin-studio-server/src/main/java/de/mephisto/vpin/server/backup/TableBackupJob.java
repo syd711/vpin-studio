@@ -1,454 +1,48 @@
 package de.mephisto.vpin.server.backup;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
-import de.mephisto.vpin.commons.HighscoreType;
-import de.mephisto.vpin.commons.utils.FileUtils;
-import de.mephisto.vpin.restclient.*;
+import de.mephisto.vpin.restclient.Job;
 import de.mephisto.vpin.restclient.descriptors.BackupDescriptor;
-import de.mephisto.vpin.server.games.Game;
-import de.mephisto.vpin.server.highscores.Highscore;
-import de.mephisto.vpin.server.popper.GameMediaItem;
+import de.mephisto.vpin.server.backup.types.TableBackupAdapter;
 import de.mephisto.vpin.server.popper.PinUPConnector;
-import de.mephisto.vpin.server.popper.WheelAugmenter;
-import de.mephisto.vpin.server.util.ImageUtil;
-import de.mephisto.vpin.server.util.vpreg.VPReg;
 import edu.umd.cs.findbugs.annotations.NonNull;
-import org.apache.commons.io.FilenameUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.util.Base64;
-import java.util.Optional;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipOutputStream;
 
 public class TableBackupJob implements Job {
-  private final static Logger LOG = LoggerFactory.getLogger(ArchiveService.class);
-  public static final int TARGET_WHEEL_SIZE_WIDTH = 100;
-
   private final PinUPConnector pinUPConnector;
-  private final File vprRegFile;
-  private final File musicFolder;
-  private final Game game;
-  private final BackupDescriptor exportDescriptor;
-  private final Optional<Highscore> highscore;
-  private final ObjectMapper objectMapper;
-  private final ArchiveSourceAdapter archiveSource;
-
-  private final File targetFolder;
-  private TableDetails manifest;
-
-  private double progress;
-  private String status;
-
-  private long totalSizeExpected;
-  private File tempFile;
+  private final ArchiveSourceAdapter sourceAdapter;
+  private final TableBackupAdapter tableBackupAdapter;
+  private final BackupDescriptor backupDescriptor;
+  private int gameId;
 
   public TableBackupJob(@NonNull PinUPConnector pinUPConnector,
-                        @NonNull File vprRegFile,
-                        @NonNull File musicFolder,
-                        @NonNull Game game,
-                        @NonNull BackupDescriptor exportDescriptor,
-                        @NonNull Optional<Highscore> highscore,
-                        @NonNull ArchiveSourceAdapter archiveSource,
-                        @NonNull File targetFolder) {
+                        @NonNull ArchiveSourceAdapter sourceAdapter,
+                        @NonNull TableBackupAdapter tableBackupAdapter,
+                        @NonNull BackupDescriptor backupDescriptor,
+                        int gameId) {
     this.pinUPConnector = pinUPConnector;
-    this.vprRegFile = vprRegFile;
-    this.musicFolder = musicFolder;
-    this.game = game;
-    this.exportDescriptor = exportDescriptor;
-    this.highscore = highscore;
-    this.archiveSource = archiveSource;
-    this.targetFolder = targetFolder;
-    objectMapper = new ObjectMapper();
-    objectMapper.enable(SerializationFeature.INDENT_OUTPUT);
-    objectMapper.enable(SerializationFeature.ORDER_MAP_ENTRIES_BY_KEYS);
+    this.sourceAdapter = sourceAdapter;
+    this.tableBackupAdapter = tableBackupAdapter;
+    this.backupDescriptor = backupDescriptor;
+    this.gameId = gameId;
   }
-
 
   @Override
   public double getProgress() {
-    return progress;
+    return tableBackupAdapter.getProgress();
   }
 
   @Override
   public String getStatus() {
-    return status;
+    return tableBackupAdapter.getStatus();
   }
 
   public boolean execute() {
-    this.manifest = pinUPConnector.getGameManifest(this.game.getId());
-
-    status = "Calculating export size of " + manifest.getGameFileName();
-    this.calculateTotalSize();
-    LOG.info("Calculated total approx. size of " + FileUtils.readableFileSize(totalSizeExpected) + " for the archive of " + game.getGameDisplayName());
-
-    String baseName = FilenameUtils.getBaseName(manifest.getGameFileName());
-    File target = new File(targetFolder, baseName + ".vpa");
-    target = FileUtils.uniqueFile(target);
-    tempFile = new File(target.getParentFile(), target.getName() + ".bak");
-
-    if (target.exists() && !target.delete()) {
-      throw new UnsupportedOperationException("Couldn't delete existing archive file " + target.getAbsolutePath());
+    boolean result = tableBackupAdapter.execute();
+    if (result) {
+      if(backupDescriptor.isRemoveFromPlaylists()) {
+        pinUPConnector.deleteFromPlaylists(gameId);
+      }
+      sourceAdapter.invalidate();
     }
-    if (tempFile.exists() && !tempFile.delete()) {
-      throw new UnsupportedOperationException("Couldn't delete existing temporary archive file " + target.getAbsolutePath());
-    }
-
-    ArchivePackageInfo packageInfo = new ArchivePackageInfo();
-
-    LOG.info("Packaging " + game.getGameDisplayName());
-    long start = System.currentTimeMillis();
-    FileOutputStream fos = null;
-    ZipOutputStream zipOut = null;
-    try {
-      LOG.info("Creating temporary archive file " + tempFile.getAbsolutePath());
-      fos = new FileOutputStream(tempFile);
-      zipOut = new ZipOutputStream(fos);
-
-      //store highscore
-      //zip EM file
-      if (game.getEMHighscoreFile() != null && game.getEMHighscoreFile().exists()) {
-        packageInfo.setHighscore(true);
-        zipFile(game.getEMHighscoreFile(), getGameFolderName() + "/User/" + game.getEMHighscoreFile().getName(), zipOut);
-      }
-
-      //zip nvram file
-      if (game.getNvRamFile().exists()) {
-        packageInfo.setHighscore(true);
-        zipFile(game.getNvRamFile(), getGameFolderName() + "/VPinMAME/nvram/" + game.getNvRamFile().getName(), zipOut);
-      }
-
-      //write VPReg.stg data
-      if (HighscoreType.VPReg.equals(game.getHighscoreType())) {
-        packageInfo.setHighscore(true);
-        VPReg reg = new VPReg(vprRegFile, game);
-        String gameData = reg.toJson();
-        if(gameData != null) {
-          File regBackupTemp = File.createTempFile("vpreg-stg", "json");
-          regBackupTemp.deleteOnExit();
-          Files.write(regBackupTemp.toPath(), gameData.getBytes());
-          zipFile(regBackupTemp, VPReg.ARCHIVE_FILENAME, zipOut);
-          regBackupTemp.delete();
-        }
-      }
-
-      if (game.getRomFile() != null && game.getRomFile().exists()) {
-        packageInfo.setRom(true);
-        zipFile(game.getRomFile(), getGameFolderName() + "/VPinMAME/roms/" + game.getRomFile().getName(), zipOut);
-      }
-
-      if (game.getPOVFile().exists()) {
-        packageInfo.setPov(true);
-        zipFile(game.getPOVFile(), getGameFolderName() + "/Tables/" + game.getPOVFile().getName(), zipOut);
-      }
-
-      if (game.getResFile().exists()) {
-        packageInfo.setRes(true);
-        zipFile(game.getResFile(), getGameFolderName() + "/Tables/" + game.getResFile().getName(), zipOut);
-      }
-
-      if (game.getGameFile().exists()) {
-        packageInfo.setVpx(true);
-        zipFile(game.getGameFile(), getGameFolderName() + "/Tables/" + game.getGameFile().getName(), zipOut);
-      }
-
-      if (game.getDirectB2SFile().exists()) {
-        packageInfo.setDirectb2s(true);
-        zipFile(game.getDirectB2SFile(), getGameFolderName() + "/Tables/" + game.getDirectB2SFile().getName(), zipOut);
-      }
-
-      // DMDs
-      if (game.getUltraDMDFolder().exists()) {
-        packageInfo.setUltraDMD(true);
-        zipFile(game.getUltraDMDFolder(), getGameFolderName() + "/Tables/" + game.getUltraDMDFolder().getName(), zipOut);
-      }
-
-      if (game.getFlexDMDFolder().exists()) {
-        packageInfo.setFlexDMD(true);
-        zipFile(game.getFlexDMDFolder(), getGameFolderName() + "/Tables/" + game.getFlexDMDFolder().getName(), zipOut);
-      }
-
-      // Music and sounds
-      if (game.getAltSoundFolder() != null && game.getAltSoundFolder().exists()) {
-        packageInfo.setAltSound(true);
-        zipFile(game.getAltSoundFolder(), getGameFolderName() + "/VPinMAME/altsound/" + game.getAltSoundFolder().getName(), zipOut);
-      }
-
-      // Cfg
-      if (game.getCfgFile() != null && game.getCfgFile().exists()) {
-        packageInfo.setCfg(true);
-        zipFile(game.getCfgFile(), getGameFolderName() + "/VPinMAME/cfg/" + game.getCfgFile().getName(), zipOut);
-      }
-
-      //colored DMD
-      if (game.getAltColorFolder() != null && game.getAltColorFolder().exists()) {
-        packageInfo.setAltColor(true);
-        zipFile(game.getAltColorFolder(), getGameFolderName() + "/VPinMAME/altcolor/" + game.getAltColorFolder().getName(), zipOut);
-      }
-
-      //always zip music files if they are in a ROM named folder
-      if (game.getMusicFolder() != null && game.getMusicFolder().exists()) {
-        packageInfo.setMusic(true);
-        zipFile(game.getMusicFolder(), getGameFolderName() + "/Music/" + game.getMusicFolder().getName(), zipOut);
-      }
-      else {
-        String assets = game.getAssets();
-        if (!StringUtils.isEmpty(assets)) {
-          packageInfo.setMusic(true);
-          String[] tableMusic = assets.split(",");
-          File[] files = musicFolder.listFiles((dir, name) -> name.endsWith(".mp3"));
-          if (findAudioMatch(files, tableMusic)) {
-            for (File file : files) {
-              zipFile(file, getGameFolderName() + "/Music/" + file.getName(), zipOut);
-            }
-          }
-        }
-      }
-
-      zipPupPack(packageInfo, zipOut);
-      zipPopperMedia(packageInfo, zipOut);
-      zipTableDetails(zipOut);
-      zipPackageInfo(zipOut, packageInfo);
-
-      pinUPConnector.deleteFromPlaylists(game.getId());
-    } catch (Exception e) {
-      LOG.error("Create VPA for " + game.getGameDisplayName() + " failed: " + e.getMessage(), e);
-    } finally {
-      try {
-        if (zipOut != null) {
-          zipOut.close();
-        }
-      } catch (IOException e) {
-        //ignore
-      }
-
-      try {
-        if (fos != null) {
-          fos.close();
-        }
-      } catch (IOException e) {
-        //ignore
-      }
-
-      boolean renamed = tempFile.renameTo(target);
-      if (renamed) {
-        LOG.info("Finished packing of " + target.getAbsolutePath() + ", took " + ((System.currentTimeMillis() - start) / 1000) + " seconds, " + FileUtils.readableFileSize(target.length()));
-      }
-      else {
-        LOG.error("Final renaming export file to " + target.getAbsolutePath() + " failed.");
-      }
-
-      //reset vpa cache
-      archiveSource.invalidate();
-    }
-    return true;
-  }
-
-  private boolean findAudioMatch(File[] allMusicFiles, String[] audioAssets) {
-    if (allMusicFiles != null) {
-      for (File file : allMusicFiles) {
-        for (String tableMusicFile : audioAssets) {
-          if (file.getName().equals(tableMusicFile)) {
-            return true;
-          }
-        }
-      }
-    }
-    return false;
-  }
-
-  private void calculateTotalSize() {
-    if (game.getMusicFolder() != null && game.getMusicFolder().exists()) {
-      totalSizeExpected += org.apache.commons.io.FileUtils.sizeOfDirectory(game.getMusicFolder());
-    }
-    else {
-      String assets = game.getAssets();
-      if (!StringUtils.isEmpty(assets)) {
-        String[] tableMusic = assets.split(",");
-        File[] files = musicFolder.listFiles((dir, name) -> name.endsWith(".mp3"));
-        if (findAudioMatch(files, tableMusic)) {
-          for (File file : files) {
-            totalSizeExpected += file.length();
-          }
-        }
-      }
-    }
-
-    PopperScreen[] values = PopperScreen.values();
-    for (PopperScreen value : values) {
-      GameMediaItem gameMediaItem = game.getGameMedia().get(value);
-      if (gameMediaItem != null && gameMediaItem.getFile().exists()) {
-        totalSizeExpected += gameMediaItem.getFile().length();
-      }
-    }
-    if (game.getPupPack().getPupPackFolder() != null && game.getPupPack().getPupPackFolder().exists()) {
-      totalSizeExpected += org.apache.commons.io.FileUtils.sizeOfDirectory(game.getPupPack().getPupPackFolder());
-    }
-    if (game.getGameFile().exists()) {
-      totalSizeExpected += game.getGameFile().length();
-    }
-
-    if (game.getDirectB2SFile().exists()) {
-      totalSizeExpected += game.getDirectB2SFile().length();
-    }
-  }
-
-  private void zipPopperMedia(ArchivePackageInfo packageInfo, ZipOutputStream zipOut) throws IOException {
-    //export popper menu data
-    packageInfo.setPopperMedia(true);
-    PopperScreen[] values = PopperScreen.values();
-    for (PopperScreen value : values) {
-      GameMediaItem gameMediaItem = game.getGameMedia().get(value);
-      if (gameMediaItem != null && gameMediaItem.getFile().exists()) {
-        LOG.info("Packing " + gameMediaItem.getFile().getAbsolutePath());
-        File mediaFile = gameMediaItem.getFile();
-
-        //do not archive augmented icons
-        if (value.equals(PopperScreen.Wheel)) {
-          WheelAugmenter augmenter = new WheelAugmenter(gameMediaItem.getFile());
-          if (augmenter.getBackupWheelIcon().exists()) {
-            mediaFile = augmenter.getBackupWheelIcon();
-          }
-        }
-        zipFile(mediaFile, "PinUPSystem/POPMedia/" + getPupUpMediaFolderName() + "/" + value.name() + "/" + mediaFile.getName(), zipOut);
-      }
-    }
-  }
-
-  /**
-   * Archives the PUP pack
-   */
-  private void zipPupPack(ArchivePackageInfo packageInfo, ZipOutputStream zipOut) throws IOException {
-    if (game.getPupPack().getPupPackFolder() != null && game.getPupPack().getPupPackFolder().exists()) {
-      packageInfo.setPupPack(true);
-      LOG.info("Packing " + game.getPupPack().getPupPackFolder().getAbsolutePath());
-      zipFile(game.getPupPack().getPupPackFolder(), "PinUPSystem/PUPVideos/" + game.getPupPack().getPupPackFolder().getName(), zipOut);
-    }
-  }
-
-  private void zipPackageInfo(ZipOutputStream zipOut, ArchivePackageInfo packageInfo) throws IOException {
-    //store wheel icon as archive preview
-    GameMediaItem mediaItem = game.getGameMedia().get(PopperScreen.Wheel);
-    if (mediaItem != null) {
-      File mediaFile = mediaItem.getFile();
-      //do not archive augmented icons
-      WheelAugmenter augmenter = new WheelAugmenter(mediaItem.getFile());
-      if (augmenter.getBackupWheelIcon().exists()) {
-        mediaFile = augmenter.getBackupWheelIcon();
-      }
-
-      BufferedImage image = ImageUtil.loadImage(mediaFile);
-      BufferedImage resizedImage = ImageUtil.resizeImage(image, TARGET_WHEEL_SIZE_WIDTH);
-
-      byte[] bytes = ImageUtil.toBytes(resizedImage);
-      packageInfo.setThumbnail(Base64.getEncoder().encodeToString(bytes));
-
-      byte[] original = Files.readAllBytes(mediaItem.getFile().toPath());
-      packageInfo.setIcon(Base64.getEncoder().encodeToString(original));
-    }
-
-    String packageInfoJson = objectMapper.writeValueAsString(packageInfo);
-    File manifestFile = File.createTempFile("package-info", "json");
-    manifestFile.deleteOnExit();
-    Files.write(manifestFile.toPath(), packageInfoJson.getBytes());
-    zipFile(manifestFile, ArchivePackageInfo.ARCHIVE_FILENAME, zipOut);
-    manifestFile.delete();
-  }
-
-  private void zipTableDetails(ZipOutputStream zipOut) throws IOException {
-    manifest.setEmulatorType(ArchiveUtil.getEmulatorType(game.getGameFile()));
-    if (StringUtils.isEmpty(manifest.getGameFileName())) {
-      manifest.setGameFileName(game.getGameFileName());
-    }
-
-    if (StringUtils.isEmpty(manifest.getGameName())) {
-      manifest.setGameName(game.getGameDisplayName());
-      manifest.setGameDisplayName(game.getGameDisplayName());
-    }
-
-    String tableDetailsJson = objectMapper.writeValueAsString(manifest);
-    File tableDetailsTmpFile = File.createTempFile("table-details", "json");
-    tableDetailsTmpFile.deleteOnExit();
-    Files.write(tableDetailsTmpFile.toPath(), tableDetailsJson.getBytes());
-    zipFile(tableDetailsTmpFile, TableDetails.ARCHIVE_FILENAME, zipOut);
-    tableDetailsTmpFile.delete();
-  }
-
-  private void zipFile(File fileToZip, String fileName, ZipOutputStream zipOut) throws IOException {
-    if (fileToZip.isHidden()) {
-      return;
-    }
-
-    status = "Packing " + fileToZip.getAbsolutePath();
-    if (progress < 100 && tempFile.exists()) {
-      this.progress = tempFile.length() * 100 / totalSizeExpected;
-    }
-
-    if (fileToZip.isDirectory()) {
-      LOG.info("Zipping " + fileToZip.getCanonicalPath());
-
-      if (fileName.endsWith("/")) {
-        zipOut.putNextEntry(new ZipEntry(fileName));
-        zipOut.closeEntry();
-      }
-      else {
-        zipOut.putNextEntry(new ZipEntry(fileName + "/"));
-        zipOut.closeEntry();
-      }
-
-      File[] children = fileToZip.listFiles();
-      if (children != null) {
-        for (File childFile : children) {
-          zipFile(childFile, fileName + "/" + childFile.getName(), zipOut);
-        }
-      }
-      return;
-    }
-
-    FileInputStream fis = new FileInputStream(fileToZip);
-    ZipEntry zipEntry = new ZipEntry(fileName);
-    zipOut.putNextEntry(zipEntry);
-    byte[] bytes = new byte[1024];
-    int length;
-    while ((length = fis.read(bytes)) >= 0) {
-      zipOut.write(bytes, 0, length);
-    }
-    zipOut.closeEntry();
-    fis.close();
-  }
-
-  private String getGameFolderName() {
-    String filename = game.getGameFile().getName();
-    if (filename.endsWith(".fp")) {
-      return "FuturePinball";
-    }
-
-    if (filename.endsWith(".fx")) {
-      return "Pinball FX3";
-    }
-
-    return "VisualPinball";
-  }
-
-  private String getPupUpMediaFolderName() {
-    String filename = game.getGameFile().getName();
-    if (filename.endsWith(".fp")) {
-      return "Future Pinball";
-    }
-
-    if (filename.endsWith(".fx")) {
-      return "Pinball FX3";
-    }
-
-    return "Visual Pinball X";
+    return result;
   }
 }

@@ -7,6 +7,8 @@ import de.mephisto.vpin.restclient.descriptors.ArchiveInstallDescriptor;
 import de.mephisto.vpin.restclient.descriptors.BackupDescriptor;
 import de.mephisto.vpin.restclient.descriptors.JobDescriptor;
 import de.mephisto.vpin.server.backup.*;
+import de.mephisto.vpin.server.backup.types.TableBackupAdapter;
+import de.mephisto.vpin.server.backup.types.TableBackupAdapterFactory;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameService;
 import de.mephisto.vpin.server.highscores.Highscore;
@@ -49,6 +51,9 @@ public class IOService {
 
   @Autowired
   private ArchiveService archiveService;
+
+  @Autowired
+  private TableBackupAdapterFactory tableBackupAdapterFactory;
 
   public boolean installArchive(@NonNull ArchiveInstallDescriptor descriptor) {
     try {
@@ -98,12 +103,11 @@ public class IOService {
 
   public boolean backupTable(@NonNull BackupDescriptor exportDescriptor) {
     List<Integer> gameIds = exportDescriptor.getGameIds();
-    File targetFolder = systemService.getVpaArchiveFolder();
     boolean result = true;
     for (Integer gameId : gameIds) {
       Game game = gameService.getGame(gameId);
       if (game != null) {
-        if (!backupTable(game, exportDescriptor, targetFolder)) {
+        if (!backupTable(game, exportDescriptor)) {
           result = false;
         }
       }
@@ -111,15 +115,15 @@ public class IOService {
     return result;
   }
 
-  private boolean backupTable(@NonNull Game game, @NonNull BackupDescriptor exportDescriptor, @NonNull File targetFolder) {
-    List<HighscoreVersion> versions = highscoreService.getAllHighscoreVersions(game.getId());
-    Optional<Highscore> highscore = highscoreService.getOrCreateHighscore(game);
-    File vpRegFile = systemService.getVPRegFile();
-    ArchiveSourceAdapter defaultVpaSourceAdapter = archiveService.getDefaultArchiveSourceAdapter();
+  private boolean backupTable(@NonNull Game game, @NonNull BackupDescriptor exportDescriptor) {
     JobDescriptor descriptor = new JobDescriptor(JobType.TABLE_BACKUP, UUID.randomUUID().toString());
     descriptor.setTitle("Backup of \"" + game.getGameDisplayName() + "\"");
     descriptor.setDescription("Creating archive for \"" + game.getGameDisplayName() + "\"");
-    descriptor.setJob(new TableBackupJob(pinUPConnector, vpRegFile, systemService.getVPXMusicFolder(), game, exportDescriptor, highscore, defaultVpaSourceAdapter, targetFolder));
+
+    TableBackupAdapter adapter = tableBackupAdapterFactory.createAdapter(game);
+    ArchiveSourceAdapter sourceAdapter = archiveService.getDefaultArchiveSourceAdapter();
+
+    descriptor.setJob(new TableBackupJob(pinUPConnector, sourceAdapter, adapter, exportDescriptor, game.getId()));
 
     GameMediaItem mediaItem = game.getGameMedia().get(PopperScreen.Wheel);
     if (mediaItem != null) {
