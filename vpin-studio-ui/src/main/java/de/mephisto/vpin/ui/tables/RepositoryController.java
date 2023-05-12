@@ -348,6 +348,7 @@ public class RepositoryController implements Initializable, StudioEventListener 
       deleteBtn.setDisable(!fileRepo);
       installBtn.setDisable(newSelection == null);
       downloadBtn.setDisable(newSelection == null);
+      copyToRepositoryBtn.setDisable(newSelection == null);
 
       if (oldSelection == null || !oldSelection.equals(newSelection)) {
         updateSelection(Optional.ofNullable(newSelection));
@@ -377,6 +378,7 @@ public class RepositoryController implements Initializable, StudioEventListener 
     deleteBtn.setDisable(true);
     installBtn.setDisable(true);
     downloadBtn.setDisable(true);
+    copyToRepositoryBtn.setDisable(true);
 
     EventManager.getInstance().addListener(this);
     this.doReload();

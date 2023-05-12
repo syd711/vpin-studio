@@ -1,17 +1,17 @@
 package de.mephisto.vpin.server.backup;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
 import de.mephisto.vpin.commons.EmulatorType;
-import de.mephisto.vpin.restclient.descriptors.ArchiveInstallDescriptor;
+import de.mephisto.vpin.restclient.ArchivePackageInfo;
 import de.mephisto.vpin.restclient.Job;
 import de.mephisto.vpin.restclient.TableDetails;
+import de.mephisto.vpin.restclient.descriptors.ArchiveInstallDescriptor;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameService;
 import de.mephisto.vpin.server.highscores.HighscoreService;
 import de.mephisto.vpin.server.highscores.cards.CardService;
 import de.mephisto.vpin.server.popper.PinUPConnector;
 import de.mephisto.vpin.server.system.SystemService;
+import de.mephisto.vpin.server.util.vpreg.VPReg;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -36,7 +36,6 @@ public class ArchiveInstallerJob implements Job {
   private final HighscoreService highscoreService;
   private final GameService gameService;
   private final CardService cardService;
-  private final ObjectMapper objectMapper;
 
   private double progress;
   private String status;
@@ -55,9 +54,6 @@ public class ArchiveInstallerJob implements Job {
     this.highscoreService = highscoreService;
     this.gameService = gameService;
     this.cardService = cardService;
-
-    objectMapper = new ObjectMapper();
-    objectMapper.enable(SerializationFeature.INDENT_OUTPUT);
   }
 
   @Override
@@ -95,17 +91,15 @@ public class ArchiveInstallerJob implements Job {
 
       status = "Importing Game to Popper";
       connector.importManifest(game, manifest);
-      game.setRom(manifest.getRomName());
-
       if (descriptor.getPlaylistId() != -1) {
         connector.addToPlaylist(game.getId(), descriptor.getPlaylistId());
       }
 
       status = "Importing Highscores";
-      importHighscore(game, manifest);
+      importHighscore(game, archiveFile);
 
-      highscoreService.scanScore(game);
-      LOG.info("Final highscore scan");
+      LOG.info("Executing final table scan for " + game.getGameDisplayName());
+      gameService.scanGame(game.getId());
 
       cardService.generateCard(game, false);
     } catch (Exception e) {
@@ -115,34 +109,36 @@ public class ArchiveInstallerJob implements Job {
     return true;
   }
 
-  private void importHighscore(Game game, TableDetails manifest) {
-    try {
-      //TODO vpa
-//      if (manifest.getAdditionalData().containsKey(VpaService.DATA_VPREG_HIGHSCORE)) {
-//        String json = (String) manifest.getAdditionalData().get(VpaService.DATA_VPREG_HIGHSCORE);
-//        VPRegScoreSummary summary = objectMapper.readValue(json, VPRegScoreSummary.class);
-//        VPReg vpReg = new VPReg(systemService.getVPRegFile(), game);
-//        vpReg.restoreHighscore(summary);
-//      }
-    } catch (Exception e) {
-      LOG.error("Error importing VPReg scores of " + game.getGameDisplayName() + ": " + e.getMessage(), e);
+  private void importHighscore(Game game, File zipFile) {
+    String jsonData = VpaArchiveUtil.readVPRegJson(zipFile);
+    if (jsonData != null) {
+      VPReg vpReg = new VPReg(systemService.getVPRegFile(), game);
+      vpReg.restore(jsonData);
+      LOG.info("Imported VPReg.stg data.");
     }
   }
 
   private void unzipArchive() {
+
     try {
       ZipFile zf = new ZipFile(archiveFile);
       int totalCount = zf.size();
-
+      zf.close();
 
       byte[] buffer = new byte[1024];
-      ZipInputStream zis = new ZipInputStream(new FileInputStream(archiveFile));
+      FileInputStream fileInputStream = new FileInputStream(archiveFile);
+      ZipInputStream zis = new ZipInputStream(fileInputStream);
       ZipEntry zipEntry = zis.getNextEntry();
       int currentCount = 0;
       while (zipEntry != null) {
         currentCount++;
+
         File newFile = newFile(getDestDirForEntry(zipEntry), zipEntry);
-        String folderName = newFile.getParentFile().getName();
+        if (isExcluded(newFile)) {
+          zis.closeEntry();
+          zipEntry = zis.getNextEntry();
+          continue;
+        }
 
         LOG.info("Writing " + newFile.getAbsolutePath());
         if (zipEntry.isDirectory()) {
@@ -169,14 +165,20 @@ public class ArchiveInstallerJob implements Job {
 
         progress = currentCount * 100 / totalCount;
 
+        zis.closeEntry();
         zipEntry = zis.getNextEntry();
       }
-
+      fileInputStream.close();
       zis.closeEntry();
       zis.close();
     } catch (Exception e) {
       LOG.error("Table installation of " + archiveFile.getAbsolutePath() + " failed: " + e.getMessage(), e);
     }
+  }
+
+  private boolean isExcluded(File newFile) {
+    String name = newFile.getName();
+    return VPReg.ARCHIVE_FILENAME.equals(name) || TableDetails.ARCHIVE_FILENAME.equals(name) || ArchivePackageInfo.ARCHIVE_FILENAME.equals(name);
   }
 
   private File getDestDirForEntry(ZipEntry entry) {

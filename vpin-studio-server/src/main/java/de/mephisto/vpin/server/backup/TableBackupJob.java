@@ -13,7 +13,6 @@ import de.mephisto.vpin.server.popper.PinUPConnector;
 import de.mephisto.vpin.server.popper.WheelAugmenter;
 import de.mephisto.vpin.server.util.ImageUtil;
 import de.mephisto.vpin.server.util.vpreg.VPReg;
-import de.mephisto.vpin.server.util.vpreg.VPRegScoreSummary;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -132,10 +131,14 @@ public class TableBackupJob implements Job {
       if (HighscoreType.VPReg.equals(game.getHighscoreType())) {
         packageInfo.setHighscore(true);
         VPReg reg = new VPReg(vprRegFile, game);
-        VPRegScoreSummary summary = reg.readHighscores();
-        String vpRegJson = objectMapper.writeValueAsString(summary);
-        //TODO vpa
-//          manifest.getAdditionalData().put(VpaService.DATA_VPREG_HIGHSCORE, vpRegJson);
+        String gameData = reg.toJson();
+        if(gameData != null) {
+          File regBackupTemp = File.createTempFile("vpreg-stg", "json");
+          regBackupTemp.deleteOnExit();
+          Files.write(regBackupTemp.toPath(), gameData.getBytes());
+          zipFile(regBackupTemp, VPReg.ARCHIVE_FILENAME, zipOut);
+          regBackupTemp.delete();
+        }
       }
 
       if (game.getRomFile() != null && game.getRomFile().exists()) {
@@ -355,7 +358,8 @@ public class TableBackupJob implements Job {
     File manifestFile = File.createTempFile("package-info", "json");
     manifestFile.deleteOnExit();
     Files.write(manifestFile.toPath(), packageInfoJson.getBytes());
-    zipFile(manifestFile, ArchivePackageInfo.FILENAME, zipOut);
+    zipFile(manifestFile, ArchivePackageInfo.ARCHIVE_FILENAME, zipOut);
+    manifestFile.delete();
   }
 
   private void zipTableDetails(ZipOutputStream zipOut) throws IOException {
@@ -373,7 +377,8 @@ public class TableBackupJob implements Job {
     File tableDetailsTmpFile = File.createTempFile("table-details", "json");
     tableDetailsTmpFile.deleteOnExit();
     Files.write(tableDetailsTmpFile.toPath(), tableDetailsJson.getBytes());
-    zipFile(tableDetailsTmpFile, TableDetails.FILENAME, zipOut);
+    zipFile(tableDetailsTmpFile, TableDetails.ARCHIVE_FILENAME, zipOut);
+    tableDetailsTmpFile.delete();
   }
 
   private void zipFile(File fileToZip, String fileName, ZipOutputStream zipOut) throws IOException {

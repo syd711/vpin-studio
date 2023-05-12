@@ -3,7 +3,7 @@ package de.mephisto.vpin.restclient;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 public class TableDetails {
-  public final static String FILENAME = "table-details.json";
+  public final static String ARCHIVE_FILENAME = "table-details.json";
 
   //only metadata
   private int gameId;

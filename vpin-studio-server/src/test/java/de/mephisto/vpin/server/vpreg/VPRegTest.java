@@ -16,14 +16,16 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest
 public class VPRegTest extends AbstractVPinServerTest {
 
+  public static final String VPX = "Batman 66.vpx";
+  public static final String VPREG_FILE = "C:\\vPinball\\VisualPinball\\User\\VPReg.stg";
+
   @Autowired
   private GameService gameService;
 
   @Test
   public void readFile() {
-    File file = new File("C:\\vPinball\\VisualPinball\\User\\VPReg.stg");
-//    Game game = gameService.getGameByFilename("Harry Potter.vpx");
-    Game game = gameService.getGameByFilename("Batman 66.vpx");
+    File file = new File(VPREG_FILE);
+    Game game = gameService.getGameByFilename(VPX);
 
     VPReg reg = new VPReg(file, game);
     VPRegScoreSummary summary = reg.readHighscores();
@@ -36,12 +38,14 @@ public class VPRegTest extends AbstractVPinServerTest {
   }
 
   @Test
-  public void fullRestore() {
-    File file = new File("C:\\vPinball\\VisualPinball\\User\\VPReg.stg");
-//    Game game = gameService.getGameByFilename("Harry Potter.vpx");
-    Game game = gameService.getGameByFilename("Batman 66.vpx");
+  public void fullReadAndRestore() {
+    File file = new File(VPREG_FILE);
+    Game game = gameService.getGameByFilename(VPX);
 
     VPReg reg = new VPReg(file, game);
     String data = reg.toJson();
+    reg.restore(data);
+    String restoredData = reg.toJson();
+    assertEquals(data, restoredData);
   }
 }

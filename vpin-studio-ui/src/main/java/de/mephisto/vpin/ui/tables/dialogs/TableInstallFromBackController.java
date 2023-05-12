@@ -3,12 +3,11 @@ package de.mephisto.vpin.ui.tables.dialogs;
 import de.mephisto.vpin.commons.fx.DialogController;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.descriptors.ArchiveInstallDescriptor;
-import de.mephisto.vpin.restclient.representations.PlaylistRepresentation;
 import de.mephisto.vpin.restclient.representations.ArchiveDescriptorRepresentation;
+import de.mephisto.vpin.restclient.representations.PlaylistRepresentation;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.jobs.JobPoller;
 import de.mephisto.vpin.ui.tables.TablesController;
-import de.mephisto.vpin.ui.util.Dialogs;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -37,7 +36,6 @@ public class TableInstallFromBackController implements Initializable, DialogCont
   @FXML
   private ComboBox<PlaylistRepresentation> playlistCombo;
 
-  private TablesController tablesController;
   private List<ArchiveDescriptorRepresentation> archiveDescriptors;
 
 
@@ -51,12 +49,6 @@ public class TableInstallFromBackController implements Initializable, DialogCont
 
     Stage stage = (Stage) ((Button) e.getSource()).getScene().getWindow();
     stage.close();
-
-    Platform.runLater(() -> {
-      TableInstallationProgressModel model = new TableInstallationProgressModel(titleLabel.getText(), installDescriptor, this.archiveDescriptors);
-      Dialogs.createProgressDialog(model);
-      tablesController.getTableOverviewController().onReload();
-    });
 
     new Thread(() -> {
       Platform.runLater(() -> {
@@ -96,7 +88,6 @@ public class TableInstallFromBackController implements Initializable, DialogCont
   }
 
   public void setData(TablesController tablesController, List<ArchiveDescriptorRepresentation> archiveDescriptors) {
-    this.tablesController = tablesController;
     this.archiveDescriptors = archiveDescriptors;
 
     String title = "Installing " + this.archiveDescriptors.size() + " Tables";

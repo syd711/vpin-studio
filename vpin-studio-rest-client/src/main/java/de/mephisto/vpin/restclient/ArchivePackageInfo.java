@@ -1,7 +1,7 @@
 package de.mephisto.vpin.restclient;
 
 public class ArchivePackageInfo {
-  public final static String FILENAME = "package-info.json";
+  public final static String ARCHIVE_FILENAME = "package-info.json";
 
   private boolean directb2s;
   private boolean pupPack;

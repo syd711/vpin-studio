@@ -1,5 +1,8 @@
 package de.mephisto.vpin.server.util.vpreg;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import com.thoughtworks.xstream.core.util.Base64Encoder;
 import de.mephisto.vpin.server.games.Game;
 import edu.umd.cs.findbugs.annotations.Nullable;
@@ -16,8 +19,11 @@ import java.nio.charset.StandardCharsets;
 import java.util.*;
 
 public class VPReg {
-  public static final String NAME_SUFFIX = "Name";
   private final static Logger LOG = LoggerFactory.getLogger(VPReg.class);
+
+  public static final String ARCHIVE_FILENAME = "vpreg-stg.json";
+
+  public static final String NAME_SUFFIX = "Name";
   public static final String HIGH_SCORE = "HighScore";
 
   private final File vpregFile;
@@ -152,7 +158,9 @@ public class VPReg {
         }
       }
 
-
+      ObjectMapper objectMapper = new ObjectMapper();
+      objectMapper.enable(SerializationFeature.INDENT_OUTPUT);
+      return objectMapper.writeValueAsString(target);
     } catch (IOException e) {
       LOG.error("Failed to read VPReg.stg: " + e.getMessage(), e);
     } finally {
@@ -165,6 +173,46 @@ public class VPReg {
       }
     }
     return null;
+  }
+
+  public void restore(String data) {
+    POIFSFileSystem fs = null;
+    try {
+      ObjectMapper objectMapper = new ObjectMapper();
+      objectMapper.enable(SerializationFeature.INDENT_OUTPUT);
+      TypeReference<HashMap<String, String>> typeRef = new TypeReference<>() {
+      };
+      HashMap<String, String> values = objectMapper.readValue(data, typeRef);
+
+      fs = new POIFSFileSystem(vpregFile, true);
+      DirectoryEntry root = fs.getRoot();
+      DirectoryEntry gameFolder = getOrCreateGameDirectory(root);
+      Set<String> entryNames = gameFolder.getEntryNames();
+
+      Set<Map.Entry<String, String>> entries = values.entrySet();
+      for (Map.Entry<String, String> entry : entries) {
+        String name = entry.getKey();
+        byte[] value = new Base64Encoder().decode(entry.getValue());
+        if (entryNames.contains(name)) {
+          DocumentNode documentEntry = (DocumentNode) gameFolder.getEntry(name);
+          POIFSDocument scoreDocument = new POIFSDocument(documentEntry);
+          scoreDocument.replaceContents(new ByteArrayInputStream(value));
+        }
+        else {
+          gameFolder.createDocument(entry.getKey(), new ByteArrayInputStream(value));
+        }
+      }
+    } catch (IOException e) {
+      LOG.error("Failed to read VPReg.stg: " + e.getMessage(), e);
+    } finally {
+      if (fs != null) {
+        try {
+          fs.close();
+        } catch (IOException e) {
+          //ignore
+        }
+      }
+    }
   }
 
   @Nullable
@@ -245,5 +293,23 @@ public class VPReg {
     }
 
     return null;
+  }
+
+  /**
+   * Checks if the VPReg.stg has a subfolder that matches the game's ROM name.
+   *
+   * @param root the root folder of the archive
+   * @throws FileNotFoundException
+   */
+  private DirectoryEntry getOrCreateGameDirectory(DirectoryEntry root) throws IOException {
+    if (root.hasEntry(game.getRom())) {
+      return (DirectoryEntry) root.getEntry(game.getRom());
+    }
+
+    if (game.getTableName() != null && root.hasEntry(game.getTableName())) {
+      return (DirectoryEntry) root.getEntry(game.getTableName());
+    }
+
+    return root.createDirectory(game.getRom());
   }
 }

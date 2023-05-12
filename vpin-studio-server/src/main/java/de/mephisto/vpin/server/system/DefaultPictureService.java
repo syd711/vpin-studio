@@ -125,11 +125,11 @@ public class DefaultPictureService {
 
         if (target.getParentFile().exists() && target.getParentFile().canWrite()) {
           ImageUtil.write(resized, target);
+          LOG.info("Written cropped default background for " + game.getRom());
         }
         else {
           LOG.error("No permission to write cropped default picture, folder " + game.getRom() + " does not exist.");
         }
-        LOG.info("Written cropped default background for " + game.getRom());
         return target;
       }
     } catch (Exception e) {
