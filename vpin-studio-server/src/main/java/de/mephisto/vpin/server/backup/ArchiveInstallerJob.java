@@ -2,7 +2,7 @@ package de.mephisto.vpin.server.backup;
 
 import de.mephisto.vpin.restclient.Job;
 import de.mephisto.vpin.restclient.descriptors.ArchiveInstallDescriptor;
-import de.mephisto.vpin.server.backup.types.TableInstallerAdapter;
+import de.mephisto.vpin.server.backup.adapters.TableInstallerAdapter;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.highscores.cards.CardService;
 import de.mephisto.vpin.server.popper.PinUPConnector;

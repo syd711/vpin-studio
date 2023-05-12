@@ -7,6 +7,7 @@ import de.mephisto.vpin.commons.utils.SystemCommandExecutor;
 import de.mephisto.vpin.restclient.RestClient;
 import de.mephisto.vpin.server.VPinStudioException;
 import de.mephisto.vpin.server.VPinStudioServer;
+import de.mephisto.vpin.server.backup.adapters.ArchiveType;
 import de.mephisto.vpin.server.resources.ResourceLoader;
 import de.mephisto.vpin.server.util.SystemUtil;
 import edu.umd.cs.findbugs.annotations.NonNull;
@@ -520,5 +521,9 @@ public class SystemService extends SystemInfo implements InitializingBean {
 
   public File getVPinStudioMenuExe() {
     return new File("./VPin-Studio-Table-Manager.exe");
+  }
+
+  public ArchiveType getArchiveType() {
+    return ArchiveType.VPINZIP;
   }
 }

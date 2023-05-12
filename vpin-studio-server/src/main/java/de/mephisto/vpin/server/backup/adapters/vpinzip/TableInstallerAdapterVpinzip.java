@@ -1,4 +1,4 @@
-package de.mephisto.vpin.server.backup.types;
+package de.mephisto.vpin.server.backup.adapters.vpinzip;
 
 import de.mephisto.vpin.commons.EmulatorType;
 import de.mephisto.vpin.restclient.ArchivePackageInfo;
@@ -6,7 +6,8 @@ import de.mephisto.vpin.restclient.Job;
 import de.mephisto.vpin.restclient.TableDetails;
 import de.mephisto.vpin.server.backup.ArchiveDescriptor;
 import de.mephisto.vpin.server.backup.ArchiveService;
-import de.mephisto.vpin.server.backup.VpaArchiveUtil;
+import de.mephisto.vpin.server.backup.adapters.vpa.VpaArchiveUtil;
+import de.mephisto.vpin.server.backup.adapters.TableInstallerAdapter;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameService;
 import de.mephisto.vpin.server.popper.PinUPConnector;
@@ -14,7 +15,6 @@ import de.mephisto.vpin.server.system.SystemService;
 import de.mephisto.vpin.server.util.vpreg.VPReg;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import org.apache.commons.lang3.StringUtils;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,7 +27,7 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import java.util.zip.ZipInputStream;
 
-public class TableInstallerAdapterVpa implements TableInstallerAdapter, Job {
+public class TableInstallerAdapterVpinzip implements TableInstallerAdapter, Job {
   private final static Logger LOG = LoggerFactory.getLogger(ArchiveService.class);
 
   private final SystemService systemService;
@@ -39,10 +39,10 @@ public class TableInstallerAdapterVpa implements TableInstallerAdapter, Job {
   private double progress;
   private String status;
 
-  public TableInstallerAdapterVpa(@NonNull SystemService systemService,
-                                  @NonNull GameService gameService,
-                                  @NonNull PinUPConnector pinUPConnector,
-                                  @NonNull ArchiveDescriptor archiveDescriptor) {
+  public TableInstallerAdapterVpinzip(@NonNull SystemService systemService,
+                                      @NonNull GameService gameService,
+                                      @NonNull PinUPConnector pinUPConnector,
+                                      @NonNull ArchiveDescriptor archiveDescriptor) {
     this.systemService = systemService;
     this.gameService = gameService;
     this.pinUPConnector = pinUPConnector;

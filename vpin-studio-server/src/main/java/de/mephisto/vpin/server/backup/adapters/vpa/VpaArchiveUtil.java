@@ -1,4 +1,4 @@
-package de.mephisto.vpin.server.backup;
+package de.mephisto.vpin.server.backup.adapters.vpa;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;

@@ -1,10 +1,10 @@
 package de.mephisto.vpin.server.backup;
 
 import de.mephisto.vpin.server.AbstractVPinServerTest;
-import de.mephisto.vpin.server.backup.types.TableBackupAdapter;
-import de.mephisto.vpin.server.backup.types.TableBackupAdapterFactory;
-import de.mephisto.vpin.server.backup.types.TableInstallerAdapter;
-import de.mephisto.vpin.server.backup.types.TableInstallerAdapterFactory;
+import de.mephisto.vpin.server.backup.adapters.TableBackupAdapter;
+import de.mephisto.vpin.server.backup.adapters.TableBackupAdapterFactory;
+import de.mephisto.vpin.server.backup.adapters.TableInstallerAdapter;
+import de.mephisto.vpin.server.backup.adapters.TableInstallerAdapterFactory;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameService;
 import de.mephisto.vpin.server.system.SystemService;

@@ -1,4 +1,4 @@
-package de.mephisto.vpin.server.backup.types;
+package de.mephisto.vpin.server.backup.adapters;
 
 import de.mephisto.vpin.restclient.Job;
 import de.mephisto.vpin.server.games.Game;

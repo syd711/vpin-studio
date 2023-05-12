@@ -2,6 +2,7 @@ package de.mephisto.vpin.server.backup;
 
 import de.mephisto.vpin.restclient.ArchivePackageInfo;
 import de.mephisto.vpin.restclient.TableDetails;
+import de.mephisto.vpin.server.backup.adapters.vpa.VpaArchiveUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
