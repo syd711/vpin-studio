@@ -131,7 +131,8 @@ class HighscoreResolver {
   private String readVPRegHighscore(Game game, HighscoreMetadata metadata) throws IOException {
     VPReg reg = new VPReg(systemService.getVPRegFile(), game);
 
-    if (reg.containsGame()) {//TODO cleanup metadata usage
+    //TODO cleanup metadata usage
+    if (reg.containsGame()) {
       metadata.setType(HighscoreType.VPReg);
       metadata.setFilename(systemService.getVPRegFile().getCanonicalPath());
       metadata.setModified(new Date(systemService.getVPRegFile().lastModified()));

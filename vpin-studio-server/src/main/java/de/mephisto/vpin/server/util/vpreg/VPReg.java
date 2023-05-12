@@ -13,7 +13,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.util.List;
+import java.util.*;
 
 public class VPReg {
   public static final String NAME_SUFFIX = "Name";
@@ -130,6 +130,43 @@ public class VPReg {
     return false;
   }
 
+  public String toJson() {
+    POIFSFileSystem fs = null;
+    try {
+      fs = new POIFSFileSystem(vpregFile, true);
+      DirectoryEntry root = fs.getRoot();
+
+      DirectoryEntry gameFolder = getGameDirectory(root);
+      Map<String, String> target = new LinkedHashMap<>();
+      if (gameFolder != null) {
+        Set<String> entryNames = gameFolder.getEntryNames();
+        for (String entryName : entryNames) {
+          DocumentEntry documentEntry = (DocumentEntry) gameFolder.getEntry(entryName);
+
+          DocumentInputStream documentInputStream = new DocumentInputStream(documentEntry);
+          byte[] fieldContent = new byte[documentInputStream.available()];
+          documentInputStream.read(fieldContent);
+          documentInputStream.close();
+
+          target.put(entryName, new Base64Encoder().encode(fieldContent));
+        }
+      }
+
+
+    } catch (IOException e) {
+      LOG.error("Failed to read VPReg.stg: " + e.getMessage(), e);
+    } finally {
+      if (fs != null) {
+        try {
+          fs.close();
+        } catch (IOException e) {
+          //ignore
+        }
+      }
+    }
+    return null;
+  }
+
   @Nullable
   public VPRegScoreSummary readHighscores() {
     POIFSFileSystem fs = null;
@@ -170,7 +207,7 @@ public class VPReg {
           score.setBase64Score(new Base64Encoder().encode(scoreContent));
           score.setBase64Name(new Base64Encoder().encode(nameContent));
           score.setInitials(nameString);
-          score.setScore(StringUtils.isEmpty(scoreString) ?  0 : Long.parseLong(scoreString));
+          score.setScore(StringUtils.isEmpty(scoreString) ? 0 : Long.parseLong(scoreString));
           score.setPos(index);
           summary.getScores().add(score);
           index++;
