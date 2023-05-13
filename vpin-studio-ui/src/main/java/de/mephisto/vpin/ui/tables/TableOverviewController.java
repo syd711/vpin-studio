@@ -37,6 +37,7 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.net.URL;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class TableOverviewController implements Initializable, StudioFXController {
   private final static Logger LOG = LoggerFactory.getLogger(TableOverviewController.class);
@@ -245,8 +246,16 @@ public class TableOverviewController implements Initializable, StudioFXControlle
         return;
       }
 
+      boolean hasVariants = false;
+
+      if (!StringUtils.isEmpty(game.getRom())) {
+        String rom = game.getRom();
+        List<GameRepresentation> collect = games.stream().filter(g -> rom.equals(g.getRom())).collect(Collectors.toList());
+        hasVariants = collect.size() > 1;
+      }
+
       tableView.getSelectionModel().clearSelection();
-      boolean b = Dialogs.openTableDeleteDialog(game);
+      boolean b = Dialogs.openTableDeleteDialog(game, hasVariants);
       if (b) {
         this.onReload();
       }

@@ -57,12 +57,12 @@
                      </graphic>
                   </Button>
                   <Separator orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
-                  <Button fx:id="installBtn" layoutX="198.0" layoutY="10.0" mnemonicParsing="false" onAction="#onInstall" text="Install" textFill="WHITE">
+                  <Button fx:id="installBtn" layoutX="198.0" layoutY="10.0" mnemonicParsing="false" onAction="#onInstall" text="Restore" textFill="WHITE">
                      <font>
                         <Font size="14.0" />
                      </font>
                      <graphic>
-                        <FontIcon iconColor="WHITE" iconLiteral="mdi2p-play-circle-outline" />
+                        <FontIcon iconColor="WHITE" iconLiteral="mdi2f-file-restore-outline" />
                      </graphic>
                   </Button>
                   <Button fx:id="addArchiveBtn" layoutX="298.0" layoutY="10.0" mnemonicParsing="false" onAction="#onArchiveAdd" text="Add Archive" textFill="WHITE">

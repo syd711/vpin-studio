@@ -2,6 +2,11 @@ package de.mephisto.vpin.server.backup;
 
 import de.mephisto.vpin.restclient.TableDetails;
 import de.mephisto.vpin.restclient.representations.ArchiveSourceRepresentation;
+import de.mephisto.vpin.server.backup.adapters.ArchiveType;
+import de.mephisto.vpin.server.backup.adapters.vpa.VpaArchiveSource;
+import de.mephisto.vpin.server.backup.adapters.vpa.VpaArchiveSourceAdapter;
+import de.mephisto.vpin.server.backup.adapters.vpinzip.VpinzipArchiveSource;
+import de.mephisto.vpin.server.backup.adapters.vpinzip.VpinzipArchiveSourceAdapter;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameService;
 import de.mephisto.vpin.server.system.SystemService;
@@ -30,13 +35,13 @@ public class ArchiveService implements InitializingBean {
   @Autowired
   private ArchiveSourceRepository archiveSourceRepository;
 
-  private ArchiveSourceAdapterFileSystem defaultArchiveSourceAdapter;
-  
+  private ArchiveSourceAdapter defaultArchiveSourceAdapter;
+
   private final Map<Long, ArchiveSourceAdapter> adapterCache = new LinkedHashMap<>();
 
   public List<ArchiveDescriptor> getArchiveDescriptorForGame(int gameId) {
     Game game = gameService.getGame(gameId);
-    
+
     return getArchiveDescriptors().stream().filter(ArchiveDescriptor -> {
       TableDetails manifest = ArchiveDescriptor.getTableDetails();
       return (manifest.getGameName() != null && manifest.getGameName().equals(game.getGameDisplayName())) ||
@@ -49,7 +54,7 @@ public class ArchiveService implements InitializingBean {
   public List<ArchiveDescriptor> getArchiveDescriptors() {
     List<ArchiveDescriptor> result = new ArrayList<>();
     for (ArchiveSourceAdapter adapter : adapterCache.values()) {
-      if(adapter.getArchiveSource().isEnabled()) {
+      if (adapter.getArchiveSource().isEnabled()) {
         List<ArchiveDescriptor> descriptors = adapter.getArchiveDescriptors();
         result.addAll(descriptors);
       }
@@ -73,6 +78,7 @@ public class ArchiveService implements InitializingBean {
       }
       return o1.getTableDetails().getGameDisplayName().compareTo(o2.getTableDetails().getGameDisplayName());
     });
+
     return archiveDescriptors;
   }
 
@@ -88,7 +94,7 @@ public class ArchiveService implements InitializingBean {
     List<ArchiveDescriptor> descriptors = sourceAdapter.getArchiveDescriptors();
     for (ArchiveDescriptor descriptor : descriptors) {
       String descriptorFilename = descriptor.getFilename();
-      if(filename.equals(descriptorFilename)) {
+      if (filename.equals(descriptorFilename)) {
         return descriptor;
       }
     }
@@ -100,7 +106,7 @@ public class ArchiveService implements InitializingBean {
     Optional<ArchiveDescriptor> first = descriptors.stream().filter(ArchiveDescriptor -> ArchiveDescriptor.getFilename().equals(filename)).findFirst();
     if (first.isPresent()) {
       ArchiveDescriptor descriptor = first.get();
-      return getDefaultArchiveSourceAdapter().delete(descriptor);
+      return getArchiveSourceAdapter(sourceId).delete(descriptor);
     }
     return false;
   }
@@ -118,7 +124,13 @@ public class ArchiveService implements InitializingBean {
     return adapterCache.values().stream().map(ArchiveSourceAdapter::getArchiveSource).collect(Collectors.toList());
   }
 
-  public ArchiveSourceAdapterFileSystem getDefaultArchiveSourceAdapter() {
+  public boolean isValidArchiveDescriptor(@NonNull ArchiveDescriptor archiveDescriptor) {
+    ArchiveType archiveType = systemService.getArchiveType();
+    String suffix = "." + archiveType.name().toLowerCase();
+    return archiveDescriptor.getFilename() != null && archiveDescriptor.getFilename().endsWith(suffix);
+  }
+
+  public ArchiveSourceAdapter getDefaultArchiveSourceAdapter() {
     return this.defaultArchiveSourceAdapter;
   }
 
@@ -128,7 +140,7 @@ public class ArchiveService implements InitializingBean {
 
   public void invalidateCache(long id) {
     ArchiveSourceAdapter sourceAdapter = this.adapterCache.get(id);
-    if(sourceAdapter != null) {
+    if (sourceAdapter != null) {
       sourceAdapter.invalidate();
     }
     else {
@@ -159,21 +171,35 @@ public class ArchiveService implements InitializingBean {
     ArchiveSource updatedSource = archiveSourceRepository.saveAndFlush(archiveSource);
     adapterCache.remove(updatedSource.getId());
 
-    adapterCache.put(updatedSource.getId(), ArchiveSourceAdapterFactory.create(updatedSource));
-    LOG.info("(Re)created VPA source adapter \"" + updatedSource + "\"");
+    adapterCache.put(updatedSource.getId(), ArchiveSourceAdapterFactory.create(this, updatedSource));
+    LOG.info("(Re)created archive source adapter \"" + updatedSource + "\"");
     return updatedSource;
   }
 
   @Override
   public void afterPropertiesSet() {
-    DefaultArchiveSource defaultArchiveSource = new DefaultArchiveSource(systemService.getVpaArchiveFolder());
-    defaultArchiveSourceAdapter = new ArchiveSourceAdapterFileSystem(defaultArchiveSource);
-    this.adapterCache.put(defaultArchiveSource.getId(), defaultArchiveSourceAdapter);
+    //VPA
+    if(systemService.getArchiveType().equals(ArchiveType.VPA)) {
+      ArchiveSource archiveSource = new VpaArchiveSource(systemService.getVpaArchiveFolder());
+      this.defaultArchiveSourceAdapter = new VpaArchiveSourceAdapter(archiveSource);
+      this.adapterCache.put(archiveSource.getId(), this.defaultArchiveSourceAdapter);
+    }
 
+    //VPINZIP
+    if(systemService.getArchiveType().equals(ArchiveType.VPINZIP)) {
+      //TODO
+//      File vpinzipArchiveFolder = new File(systemService.getBackupManagerInstallationFolder().getParentFile(), "backups/Visual Pinball X/");
+      File vpinzipArchiveFolder = new File("C:\\vPinball\\backups\\Visual Pinball X\\");
+      ArchiveSource archiveSource = new VpinzipArchiveSource(vpinzipArchiveFolder);
+      this.defaultArchiveSourceAdapter = new VpinzipArchiveSourceAdapter(archiveSource);
+      this.adapterCache.put(archiveSource.getId(), this.defaultArchiveSourceAdapter);
+    }
+
+    //EXTERNAL
     List<ArchiveSource> all = archiveSourceRepository.findAll();
-    for (ArchiveSource archiveSource : all) {
-      ArchiveSourceAdapter vpaSourceAdapter = ArchiveSourceAdapterFactory.create(archiveSource);
-      this.adapterCache.put(archiveSource.getId(), vpaSourceAdapter);
+    for (ArchiveSource as : all) {
+      ArchiveSourceAdapter vpaSourceAdapter = ArchiveSourceAdapterFactory.create(this, as);
+      this.adapterCache.put(as.getId(), vpaSourceAdapter);
     }
   }
 }

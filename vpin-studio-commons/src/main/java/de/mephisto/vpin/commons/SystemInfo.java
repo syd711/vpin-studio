@@ -21,7 +21,6 @@ public class SystemInfo {
   public final static String VPX_TABLES_DIR = "visualPinball.vpxtables.installationDir";
   public final static String MAME_DIR = "visualPinball.mame.installationDir";
   public final static String USER_DIR = "visualPinball.user.installationDir";
-  public final static String BACKUP_MANAGER_INSTALLATION_DIR = "backupmanager.installationDir";
 
   private final static String VPX_REG_KEY = "HKEY_CURRENT_USER\\SOFTWARE\\Visual Pinball\\VP10\\RecentDir";
   private final static String POPPER_REG_KEY = "HKEY_LOCAL_MACHINE\\SYSTEM\\ControlSet001\\Control\\Session Manager\\Environment";

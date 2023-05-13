@@ -2,6 +2,7 @@ package de.mephisto.vpin.server.backup;
 
 import de.mephisto.vpin.restclient.representations.ArchiveDescriptorRepresentation;
 import de.mephisto.vpin.restclient.representations.ArchiveSourceRepresentation;
+import de.mephisto.vpin.server.backup.adapters.vpa.VpaArchiveSourceAdapter;
 import de.mephisto.vpin.server.util.UploadUtil;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
@@ -77,7 +78,7 @@ public class ArchivesResource {
 
   @GetMapping("/game/{id}")
   public List<ArchiveDescriptorRepresentation> getArchives(@PathVariable("id") int gameId) {
-    List<ArchiveDescriptor> archiveDescriptors = archiveService.getArchiveDescriptors(gameId);
+    List<ArchiveDescriptor> archiveDescriptors = archiveService.getArchiveDescriptorForGame(gameId);
     List<ArchiveDescriptorRepresentation> result = new ArrayList<>();
     for (ArchiveDescriptor archiveDescriptor : archiveDescriptors) {
       ArchiveDescriptorRepresentation descriptorRepresentation = toRepresentation(archiveDescriptor);
@@ -127,7 +128,7 @@ public class ArchivesResource {
         LOG.error("Archive upload request did not contain a file object.");
         return null;
       }
-      ArchiveSourceAdapterFileSystem sourceAdapter = (ArchiveSourceAdapterFileSystem) archiveService.getArchiveSourceAdapter(repositoryId);
+      VpaArchiveSourceAdapter sourceAdapter = (VpaArchiveSourceAdapter) archiveService.getArchiveSourceAdapter(repositoryId);
       File out = new File(sourceAdapter.getFolder(), file.getOriginalFilename());
       if (UploadUtil.upload(file, out)) {
         archiveService.invalidateCache(repositoryId);

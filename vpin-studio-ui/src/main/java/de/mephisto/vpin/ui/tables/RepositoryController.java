@@ -375,7 +375,7 @@ public class RepositoryController implements Initializable, StudioEventListener 
     });
 
     sourceComboChangeListener = (observable, oldValue, newValue) -> {
-      if (newValue.getId() == -1) {
+      if (newValue.getId() < 0) {
         addArchiveBtn.setDisable(false);
         copyToRepositoryBtn.setVisible(false);
       }

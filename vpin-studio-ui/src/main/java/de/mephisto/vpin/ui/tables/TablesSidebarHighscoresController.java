@@ -148,6 +148,7 @@ public class TablesSidebarHighscoresController implements Initializable {
     this.hsTypeLabel.setText("-");
     this.hsLastModifiedLabel.setText("-");
     this.hsLastScannedLabel.setText("-");
+    this.hsRecordLabel.setText("-");
 
     rawTitleLabel.setVisible(false);
     formattedTitleLabel.setVisible(false);

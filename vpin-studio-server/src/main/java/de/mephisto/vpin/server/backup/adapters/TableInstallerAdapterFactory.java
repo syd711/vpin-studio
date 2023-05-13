@@ -30,7 +30,7 @@ public class TableInstallerAdapterFactory {
         return new TableInstallerAdapterVpa(systemService, gameService, pinUPConnector, archiveDescriptor);
       }
       case VPINZIP: {
-        return new TableInstallerAdapterVpinzip(systemService, null, null, null);
+        return new TableInstallerAdapterVpinzip(gameService, archiveDescriptor);
       }
       default: {
         throw new UnsupportedOperationException("Unkown archive type " + archiveType);

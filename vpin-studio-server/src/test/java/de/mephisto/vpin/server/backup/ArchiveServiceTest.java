@@ -20,6 +20,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @SpringBootTest
 public class ArchiveServiceTest extends AbstractVPinServerTest {
 
+  private final static String TEST_FILE = "Hayburners (WIlliams 1951).vpx";
+
   @Autowired
   private TableBackupAdapterFactory tableBackupAdapterFactory;
 
@@ -41,22 +43,18 @@ public class ArchiveServiceTest extends AbstractVPinServerTest {
 //    test("Hayburners (WIlliams 1951).vpx");
 //    exportTest("Attack from Mars 2.0.1.vpx");
 //    test("The Addams Family.vpx");
-    exportTest("Jaws in English.vpx");
-//    test("Stranger Things.vpx");
+    String name = "Hayburners (WIlliams 1951).vpx";
+    Game game = gameService.getGameByFilename(name);
+    TableBackupAdapter adapter = tableBackupAdapterFactory.createAdapter(archiveService.getDefaultArchiveSourceAdapter(), game);
+    ArchiveDescriptor backup = adapter.createBackup();
+    assertTrue(new File(backup.getSource().getLocation(), backup.getFilename()).exists());
   }
 
   @Test
   public void testImport() {
-    ArchiveDescriptor archiveDescriptor = archiveService.getArchiveDescriptor(-1, "Jaws in English.vpa");
+    ArchiveDescriptor archiveDescriptor = archiveService.getArchiveDescriptor(-2, "Hayburners (WIlliams 1951).vpinzip");
     TableInstallerAdapter adapter = tableInstallerAdapterFactory.createAdapter(archiveDescriptor);
     Game game = adapter.installTable();
     assertNotNull(game);
-  }
-
-  private void exportTest(String name) {
-    Game game = gameService.getGameByFilename(name);
-    TableBackupAdapter adapter = tableBackupAdapterFactory.createAdapter(game);
-    ArchiveDescriptor backup = adapter.createBackup();
-    assertTrue(new File(systemService.getVpaArchiveFolder(), backup.getFilename()).exists());
   }
 }

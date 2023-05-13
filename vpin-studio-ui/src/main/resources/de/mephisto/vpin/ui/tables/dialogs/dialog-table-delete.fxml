@@ -239,7 +239,7 @@
             </VBox>
             <BorderPane fx:id="validationContainer">
                <top>
-                  <Label fx:id="validationTitle" text="No archived version found" textFill="WHITE" BorderPane.alignment="TOP_LEFT" />
+                  <Label fx:id="validationTitle" text="Different versions of this table have been found, only the game files can be deleted." textFill="WHITE" BorderPane.alignment="TOP_LEFT" />
                </top>
                <VBox.margin>
                   <Insets top="12.0" />

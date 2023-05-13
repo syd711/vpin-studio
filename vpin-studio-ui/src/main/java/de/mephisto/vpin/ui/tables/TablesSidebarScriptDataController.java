@@ -43,7 +43,6 @@ public class TablesSidebarScriptDataController implements Initializable {
   @FXML
   private Label labelFilesize;
 
-
   @FXML
   private Label labelHSFilename;
 
@@ -192,7 +191,7 @@ public class TablesSidebarScriptDataController implements Initializable {
       labelRomAlias.setText(game.getOriginalRom() != null ? game.getRom() : "-");
       labelNVOffset.setText(game.getNvOffset() > 0 ? String.valueOf(game.getNvOffset()) : "-");
       labelFilename.setText(game.getGameFileName() != null ? game.getGameFileName() : "-");
-      labelFilesize.setText(FileUtils.readableFileSize(game.getGameFileSize()));
+      labelFilesize.setText(game.getGameFileSize() > 0 ? FileUtils.readableFileSize(game.getGameFileSize()) : "-");
       labelTableName.setText(game.getTableName() != null ? game.getTableName() : "-");
       labelLastModified.setText(game.getModified() != null ? DateFormat.getDateTimeInstance().format(game.getModified()) : "-");
       if (!StringUtils.isEmpty(game.getHsFileName())) {
@@ -207,6 +206,7 @@ public class TablesSidebarScriptDataController implements Initializable {
       labelRomAlias.setText("-");
       labelNVOffset.setText("-");
       labelFilename.setText("-");
+      labelFilesize.setText("-");
       labelLastModified.setText("-");
       labelTableName.setText("-");
       labelHSFilename.setText("-");

@@ -57,8 +57,8 @@ public class IOService {
       ArchiveDescriptor archiveDescriptor = archiveService.getArchiveDescriptor(installDescriptor.getArchiveSourceId(), installDescriptor.getFilename());
 
       JobDescriptor jobDescriptor = new JobDescriptor(JobType.ARCHIVE_INSTALL, installDescriptor.getFilename());
-      jobDescriptor.setTitle("Import of \"" + archiveDescriptor.getFilename() + "\"");
-      jobDescriptor.setDescription("Importing table for \"" + archiveDescriptor.getFilename() + "\"");
+      jobDescriptor.setTitle("Restoring \"" + archiveDescriptor.getFilename() + "\"");
+      jobDescriptor.setDescription("Restoring table from \"" + archiveDescriptor.getFilename() + "\"");
 
       TableInstallerAdapter adapter = tableInstallerAdapterFactory.createAdapter(archiveDescriptor);
 
@@ -114,8 +114,8 @@ public class IOService {
     descriptor.setTitle("Backup of \"" + game.getGameDisplayName() + "\"");
     descriptor.setDescription("Creating archive for \"" + game.getGameDisplayName() + "\"");
 
-    TableBackupAdapter adapter = tableBackupAdapterFactory.createAdapter(game);
     ArchiveSourceAdapter sourceAdapter = archiveService.getDefaultArchiveSourceAdapter();
+    TableBackupAdapter adapter = tableBackupAdapterFactory.createAdapter(sourceAdapter, game);
 
     descriptor.setJob(new TableBackupJob(pinUPConnector, sourceAdapter, adapter, exportDescriptor, game.getId()));
 

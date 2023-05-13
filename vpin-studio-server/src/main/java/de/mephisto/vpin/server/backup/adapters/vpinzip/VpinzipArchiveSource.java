@@ -1,17 +1,18 @@
-package de.mephisto.vpin.server.backup;
+package de.mephisto.vpin.server.backup.adapters.vpinzip;
 
 import de.mephisto.vpin.commons.ArchiveSourceType;
+import de.mephisto.vpin.server.backup.ArchiveSource;
 import edu.umd.cs.findbugs.annotations.NonNull;
 
 import java.io.File;
 import java.util.Date;
 
-public class DefaultArchiveSource extends ArchiveSource {
-  public final static long DEFAULT_ARCHIVE_SOURCE_ID = -1;
+public class VpinzipArchiveSource extends ArchiveSource {
+  private final static long DEFAULT_ARCHIVE_SOURCE_ID = -2;
 
   private final File folder;
 
-  public DefaultArchiveSource(@NonNull File folder) {
+  public VpinzipArchiveSource(@NonNull File folder) {
     this.folder = folder;
   }
 
@@ -37,7 +38,7 @@ public class DefaultArchiveSource extends ArchiveSource {
 
   @Override
   public String getName() {
-    return "Local Repository";
+    return "VpinZip Repository";
   }
 
   @Override

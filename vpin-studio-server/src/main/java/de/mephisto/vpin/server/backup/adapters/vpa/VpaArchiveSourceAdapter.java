@@ -1,8 +1,11 @@
-package de.mephisto.vpin.server.backup;
+package de.mephisto.vpin.server.backup.adapters.vpa;
 
 import de.mephisto.vpin.restclient.ArchivePackageInfo;
 import de.mephisto.vpin.restclient.TableDetails;
-import de.mephisto.vpin.server.backup.adapters.vpa.VpaArchiveUtil;
+import de.mephisto.vpin.server.backup.ArchiveDescriptor;
+import de.mephisto.vpin.server.backup.ArchiveSource;
+import de.mephisto.vpin.server.backup.ArchiveSourceAdapter;
+import de.mephisto.vpin.server.backup.ArchiveUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -11,14 +14,14 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.*;
 
-public class ArchiveSourceAdapterFileSystem implements ArchiveSourceAdapter {
-  private final static Logger LOG = LoggerFactory.getLogger(ArchiveSourceAdapterFileSystem.class);
+public class VpaArchiveSourceAdapter implements ArchiveSourceAdapter {
+  private final static Logger LOG = LoggerFactory.getLogger(VpaArchiveSourceAdapter.class);
 
   private final ArchiveSource source;
   private final File archiveFolder;
   private final Map<String, ArchiveDescriptor> cache = new HashMap<>();
 
-  public ArchiveSourceAdapterFileSystem(ArchiveSource source) {
+  public VpaArchiveSourceAdapter(ArchiveSource source) {
     this.source = source;
     this.archiveFolder = new File(source.getLocation());
   }
@@ -29,7 +32,7 @@ public class ArchiveSourceAdapterFileSystem implements ArchiveSourceAdapter {
 
   public List<ArchiveDescriptor> getArchiveDescriptors() {
     if (cache.isEmpty()) {
-      File[] vpaFiles = archiveFolder.listFiles((dir, name) -> name.endsWith(".vpa") || name.endsWith(".vpinzip"));
+      File[] vpaFiles = archiveFolder.listFiles((dir, name) -> name.endsWith(".vpa"));
       if (vpaFiles != null) {
         for (File archiveFile : vpaFiles) {
           try {
@@ -71,9 +74,5 @@ public class ArchiveSourceAdapterFileSystem implements ArchiveSourceAdapter {
   public void invalidate() {
     cache.clear();
     LOG.info("Invalidated archive source \"" + this.getArchiveSource() + "\"");
-
-    if (this.getArchiveSource().getId() == -1) {
-      ArchiveUtil.exportDescriptorJson(this);
-    }
   }
 }

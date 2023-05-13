@@ -18,10 +18,12 @@ import java.util.*;
 public class ArchiveSourceAdapterHttpServer implements ArchiveSourceAdapter {
   private final static Logger LOG = LoggerFactory.getLogger(ArchiveSourceAdapterHttpServer.class);
 
+  private final ArchiveService archiveService;
   private final ArchiveSource source;
   private final Map<String, ArchiveDescriptor> cache = new HashMap<>();
 
-  public ArchiveSourceAdapterHttpServer(ArchiveSource source) {
+  public ArchiveSourceAdapterHttpServer(ArchiveService archiveService, ArchiveSource source) {
+    this.archiveService = archiveService;
     this.source = source;
     disableSslVerification();
   }
@@ -62,7 +64,7 @@ public class ArchiveSourceAdapterHttpServer implements ArchiveSourceAdapter {
       if (!location.endsWith("/")) {
         location += "/";
       }
-      location += "descriptor.json";
+      location += ArchiveUtil.DESCRIPTOR_JSON;
 
       HttpURLConnection conn = null;
       try {
@@ -78,9 +80,11 @@ public class ArchiveSourceAdapterHttpServer implements ArchiveSourceAdapter {
         in.close();
 
         String json = jsonBuffer.toString();
-        List<ArchiveDescriptor> archiveDescriptors = ArchiveUtil.readArchiveDecriptors(json, this.getArchiveSource());
+        List<ArchiveDescriptor> archiveDescriptors = ArchiveUtil.readArchiveDescriptors(json, this.getArchiveSource());
         for (ArchiveDescriptor archiveDescriptor : archiveDescriptors) {
-          cache.put(archiveDescriptor.getFilename(), archiveDescriptor);
+          if(archiveService.isValidArchiveDescriptor(archiveDescriptor)) {
+            cache.put(archiveDescriptor.getFilename(), archiveDescriptor);
+          }
         }
         LOG.info("Reading of " + location + " finshed, took " + (System.currentTimeMillis() - start) + "ms.");
       } catch (FileNotFoundException e) {

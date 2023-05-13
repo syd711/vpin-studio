@@ -9,6 +9,7 @@ import de.mephisto.vpin.restclient.Job;
 import de.mephisto.vpin.restclient.PopperScreen;
 import de.mephisto.vpin.restclient.TableDetails;
 import de.mephisto.vpin.server.backup.ArchiveDescriptor;
+import de.mephisto.vpin.server.backup.ArchiveSourceAdapter;
 import de.mephisto.vpin.server.backup.ArchiveUtil;
 import de.mephisto.vpin.server.backup.adapters.TableBackupAdapter;
 import de.mephisto.vpin.server.games.Game;
@@ -37,9 +38,9 @@ import java.util.zip.ZipOutputStream;
 public class TableBackupAdapterVpa implements TableBackupAdapter, Job {
   private final static Logger LOG = LoggerFactory.getLogger(TableBackupAdapterVpa.class);
 
-  public static final int TARGET_WHEEL_SIZE_WIDTH = 100;
 
   private final SystemService systemService;
+  private final ArchiveSourceAdapter archiveSourceAdapter;
   private final Game game;
   private final ObjectMapper objectMapper;
   private final TableDetails tableDetails;
@@ -52,9 +53,11 @@ public class TableBackupAdapterVpa implements TableBackupAdapter, Job {
 
 
   public TableBackupAdapterVpa(@NonNull SystemService systemService,
+                               @NonNull ArchiveSourceAdapter archiveSourceAdapter,
                                @NonNull Game game,
                                @NonNull TableDetails tableDetails) {
     this.systemService = systemService;
+    this.archiveSourceAdapter = archiveSourceAdapter;
     this.game = game;
     this.tableDetails = tableDetails;
 
@@ -249,6 +252,7 @@ public class TableBackupAdapterVpa implements TableBackupAdapter, Job {
       else {
         LOG.error("Final renaming export file to " + target.getAbsolutePath() + " failed.");
       }
+      archiveSourceAdapter.invalidate();
     }
 
     archiveDescriptor.setSize(target.length());
@@ -349,7 +353,7 @@ public class TableBackupAdapterVpa implements TableBackupAdapter, Job {
       }
 
       BufferedImage image = ImageUtil.loadImage(mediaFile);
-      BufferedImage resizedImage = ImageUtil.resizeImage(image, TARGET_WHEEL_SIZE_WIDTH);
+      BufferedImage resizedImage = ImageUtil.resizeImage(image, ArchivePackageInfo.TARGET_WHEEL_SIZE_WIDTH);
 
       byte[] bytes = ImageUtil.toBytes(resizedImage);
       packageInfo.setThumbnail(Base64.getEncoder().encodeToString(bytes));

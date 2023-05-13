@@ -51,13 +51,13 @@ public class TablesBackupController implements Initializable, DialogController {
       });
     }).start();
 
-    Platform.runLater(() -> {
-      String msg = "The backup of " + games.size() + " tables has been started.";
-      if(games.size() == 1) {
-        msg = "The backup of \"" + games.get(0).getGameDisplayName() + "\" tables has been started.";
-      }
-      WidgetFactory.showInformation(Studio.stage, "Backup Started", msg, "The archived state will update once the backup is finished.");
-    });
+//    Platform.runLater(() -> {
+//      String msg = "The backup of " + games.size() + " tables has been started.";
+//      if(games.size() == 1) {
+//        msg = "The backup of \"" + games.get(0).getGameDisplayName() + "\" tables has been started.";
+//      }
+//      WidgetFactory.showInformation(Studio.stage, "Backup Started", msg, "The archived state will update once the backup is finished.");
+//    });
   }
 
   @FXML

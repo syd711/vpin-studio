@@ -1,6 +1,7 @@
 package de.mephisto.vpin.restclient;
 
 public class ArchivePackageInfo {
+  public static final int TARGET_WHEEL_SIZE_WIDTH = 100;
   public final static String ARCHIVE_FILENAME = "package-info.json";
 
   private boolean directb2s;

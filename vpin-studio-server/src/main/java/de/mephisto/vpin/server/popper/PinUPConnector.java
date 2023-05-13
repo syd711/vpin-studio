@@ -192,13 +192,13 @@ public class PinUPConnector implements InitializingBean {
   }
 
   @Nullable
-  public Game getGameByName(String table) {
+  public Game getGameByName(String gameName) {
     Connection connect = this.connect();
     Game info = null;
     try {
-      String gameName = table.replaceAll("'", "''");
+      gameName = gameName.replaceAll("'", "''");
       Statement statement = connect.createStatement();
-      ResultSet rs = statement.executeQuery("SELECT * FROM Games where GameDisplay = '" + gameName + "';");
+      ResultSet rs = statement.executeQuery("SELECT * FROM Games where GameName = '" + gameName + "';");
       while (rs.next()) {
         info = createGame(connect, rs);
       }
@@ -206,7 +206,7 @@ public class PinUPConnector implements InitializingBean {
       rs.close();
       statement.close();
     } catch (SQLException e) {
-      LOG.error("Failed to get game by name '" + table + "': " + e.getMessage(), e);
+      LOG.error("Failed to read game by gameName '" + gameName + "': " + e.getMessage(), e);
     } finally {
       this.disconnect(connect);
     }

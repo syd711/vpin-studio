@@ -329,6 +329,15 @@ public class GameService {
     return game;
   }
 
+  public Game getGameByName(String name) {
+    Game game = this.pinUPConnector.getGameByName(name);
+    if (game != null) {
+      //this will ensure that a scanned table is fetched
+      game = this.getGame(game.getId());
+    }
+    return game;
+  }
+
   private void applyGameDetails(@NonNull Game game, boolean forceScan) {
     GameDetails gameDetails = gameDetailsRepository.findByPupId(game.getId());
     if (gameDetails == null || forceScan) {

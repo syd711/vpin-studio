@@ -27,7 +27,7 @@ import java.util.zip.ZipFile;
 import java.util.zip.ZipInputStream;
 
 public class TableInstallerAdapterVpa implements TableInstallerAdapter, Job {
-  private final static Logger LOG = LoggerFactory.getLogger(ArchiveService.class);
+  private final static Logger LOG = LoggerFactory.getLogger(TableInstallerAdapterVpa.class);
 
   private final SystemService systemService;
   private final GameService gameService;

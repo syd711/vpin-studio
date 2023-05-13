@@ -142,9 +142,20 @@ public class TableDeleteController implements Initializable, DialogController {
     return result;
   }
 
-  public void setGame(GameRepresentation game) {
+  public void setGame(GameRepresentation game, boolean hasVariants) {
     this.game = game;
     this.titleLabel.setText("Delete \"" + game.getGameDisplayName() + "\"");
+
+    this.deleteAllCheckbox.setDisable(hasVariants);
+    popperCheckbox.setDisable(hasVariants);
+    popperCheckbox.setSelected(!hasVariants);
+    pupPackCheckbox.setDisable(hasVariants);
+    dmdCheckbox.setDisable(hasVariants);
+    musicCheckbox.setDisable(hasVariants);
+    mameConfigCheckbox.setDisable(hasVariants);
+    highscoreCheckbox.setDisable(hasVariants);
+    altSoundCheckbox.setDisable(hasVariants);
+    altColorCheckbox.setDisable(hasVariants);
 
     GameMediaRepresentation gameMedia = game.getGameMedia();
     GameMediaItemRepresentation wheelMedia = gameMedia.getMedia().get(PopperScreen.Wheel.name());
@@ -159,6 +170,9 @@ public class TableDeleteController implements Initializable, DialogController {
     }
 
     boolean hasNoArchives = Studio.client.getArchiveDescriptorsForGame(game.getId()).isEmpty();
-    this.validationContainer.setVisible(hasNoArchives);
+    this.validationContainer.setVisible(hasNoArchives || hasVariants);
+
+    this.validationTitle.setVisible(hasVariants);
+    this.validationDescription.setVisible(hasNoArchives);
   }
 }
