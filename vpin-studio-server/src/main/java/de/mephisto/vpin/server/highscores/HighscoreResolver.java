@@ -58,6 +58,7 @@ class HighscoreResolver {
 
       metadata.setRom(romName);
 
+      //always check NV ram first, the table might store additional data into the VPReg.stg too
       String rawScore = readNvHighscore(game, metadata);
       if (rawScore == null) {
         rawScore = readVPRegHighscore(game, metadata);
