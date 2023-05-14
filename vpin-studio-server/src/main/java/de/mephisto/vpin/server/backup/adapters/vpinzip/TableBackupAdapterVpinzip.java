@@ -65,7 +65,7 @@ public class TableBackupAdapterVpinzip implements TableBackupAdapter, Job {
     status = "Creating backup of \"" + game.getGameDisplayName() + "\"";
 
     try {
-      File dir = new File(systemService.RESOURCES, "Virtual Pinball Backup Manager");
+      File dir = new File(systemService.RESOURCES, VpinzipArchiveSource.FOLDER_NAME);
       List<String> commands = Arrays.asList("vPinBackupManager.exe", "-b", String.valueOf(game.getId()));
       SystemCommandExecutor executor = new SystemCommandExecutor(commands);
       executor.enableLogging(true);

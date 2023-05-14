@@ -44,7 +44,7 @@ public class VpaRepositoriesPreferencesController implements Initializable {
   private void onEdit() {
     ArchiveSourceRepresentation selectedItem = tableView.getSelectionModel().getSelectedItem();
     if (selectedItem != null) {
-      if(selectedItem.getId() == DEFAULT_VPA_SOURCE_ID) {
+      if (selectedItem.getId() == DEFAULT_VPA_SOURCE_ID) {
         return;
       }
 
@@ -71,19 +71,6 @@ public class VpaRepositoriesPreferencesController implements Initializable {
       }
     }
   }
-
-//  @FXML
-//  private void onFolderAdd() {
-//    VpaSourceRepresentation sourceRepresentation = Dialogs.openVpaSourceFileDialog(null);
-//    if (sourceRepresentation != null) {
-//      try {
-//        client.saveVpaSource(sourceRepresentation);
-//      } catch (Exception e) {
-//        WidgetFactory.showAlert(Studio.stage, "Error", "Error saving repository: " + e.getMessage());
-//      }
-//      onReload();
-//    }
-//  }
 
   @FXML
   private void onHttpAdd() {

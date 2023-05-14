@@ -78,7 +78,7 @@ public class ArchiveUploadController implements Initializable, DialogController 
     FileChooser fileChooser = new FileChooser();
     fileChooser.setTitle("Select Archive File");
     fileChooser.getExtensionFilters().addAll(
-        new FileChooser.ExtensionFilter("Visual Pinball Archive", "*.vpa", "*.vpinzip"));
+        new FileChooser.ExtensionFilter("Visual Pinball Archive", "*.*"));
 
     if (ArchiveUploadController.lastFolderSelection != null) {
       fileChooser.setInitialDirectory(ArchiveUploadController.lastFolderSelection);

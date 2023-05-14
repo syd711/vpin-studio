@@ -32,7 +32,7 @@ public class DownloadArchiveToRepositoryJob implements Job {
   public boolean execute() {
     try {
       status = "Downloading " + archiveDescriptor.getFilename();
-      File targetFolder = systemService.getVpaArchiveFolder();
+      File targetFolder = new File(archiveDescriptor.getSource().getLocation());
       File target = new File(targetFolder, archiveDescriptor.getFilename());
       target = FileUtils.uniqueFile(target);
       temp = new File(target.getParentFile(), target.getName() + ".bak");

@@ -440,7 +440,7 @@ public class SystemService extends SystemInfo implements InitializingBean {
   }
 
   public File getVpaArchiveFolder() {
-    File file = new File(RESOURCES, "vpa/");
+    File file = new File(RESOURCES, "archives/");
     if (!file.exists()) {
       file.mkdirs();
     }

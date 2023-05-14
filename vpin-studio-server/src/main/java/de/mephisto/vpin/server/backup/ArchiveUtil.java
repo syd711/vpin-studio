@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import de.mephisto.vpin.commons.EmulatorType;
-import de.mephisto.vpin.server.backup.adapters.vpa.VpaArchiveSourceAdapter;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
@@ -75,15 +74,15 @@ public class ArchiveUtil {
     }
   }
 
-  public static void exportDescriptorJson(VpaArchiveSourceAdapter source) {
+  public static void exportDescriptorJson(ArchiveSourceAdapter archiveAdapter) {
     try {
       ObjectMapper objectMapper = new ObjectMapper();
       objectMapper.enable(SerializationFeature.INDENT_OUTPUT);
       objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 
-      List<ArchiveDescriptor> descriptors = source.getArchiveDescriptors();
+      List<ArchiveDescriptor> descriptors = archiveAdapter.getArchiveDescriptors();
       String manifestString = objectMapper.writeValueAsString(descriptors);
-      File descriptorFile = new File(source.getFolder(), ArchiveUtil.DESCRIPTOR_JSON);
+      File descriptorFile = new File(archiveAdapter.getArchiveSource().getLocation(), ArchiveUtil.DESCRIPTOR_JSON);
       Files.write(descriptorFile.toPath(), manifestString.getBytes());
 
       LOG.info("Written " + descriptorFile.getAbsolutePath());

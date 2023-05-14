@@ -75,7 +75,7 @@ public class TableInstallerAdapterVpinzip implements TableInstallerAdapter, Job 
       }
 
       LOG.info("Executing restore command: " + String.join(" ", commands));
-      File dir = new File(SystemService.RESOURCES, "Virtual Pinball Backup Manager");
+      File dir = new File(SystemService.RESOURCES, VpinzipArchiveSource.FOLDER_NAME);
       SystemCommandExecutor executor = new SystemCommandExecutor(commands);
       executor.setDir(dir);
       StringBuilder standardOutputFromCommand = executor.getStandardOutputFromCommand();

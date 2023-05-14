@@ -2,7 +2,6 @@ package de.mephisto.vpin.server.backup;
 
 import de.mephisto.vpin.restclient.representations.ArchiveDescriptorRepresentation;
 import de.mephisto.vpin.restclient.representations.ArchiveSourceRepresentation;
-import de.mephisto.vpin.server.backup.adapters.vpa.VpaArchiveSourceAdapter;
 import de.mephisto.vpin.server.util.UploadUtil;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
@@ -128,8 +127,8 @@ public class ArchivesResource {
         LOG.error("Archive upload request did not contain a file object.");
         return null;
       }
-      VpaArchiveSourceAdapter sourceAdapter = (VpaArchiveSourceAdapter) archiveService.getArchiveSourceAdapter(repositoryId);
-      File out = new File(sourceAdapter.getFolder(), file.getOriginalFilename());
+      ArchiveSourceAdapter sourceAdapter = archiveService.getArchiveSourceAdapter(repositoryId);
+      File out = new File(sourceAdapter.getArchiveSource().getLocation(), file.getOriginalFilename());
       if (UploadUtil.upload(file, out)) {
         archiveService.invalidateCache(repositoryId);
         ArchiveDescriptor descriptor = archiveService.getArchiveDescriptor(out);

@@ -9,6 +9,7 @@ import java.util.Date;
 
 public class VpinzipArchiveSource extends ArchiveSource {
   private final static long DEFAULT_ARCHIVE_SOURCE_ID = -2;
+  public final static String FOLDER_NAME = "vpinzip";
 
   private final File folder;
 
@@ -38,7 +39,7 @@ public class VpinzipArchiveSource extends ArchiveSource {
 
   @Override
   public String getName() {
-    return "VpinZip Repository";
+    return "Vpinzip Repository";
   }
 
   @Override
