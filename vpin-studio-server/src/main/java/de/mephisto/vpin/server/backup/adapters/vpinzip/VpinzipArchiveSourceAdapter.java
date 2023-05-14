@@ -39,9 +39,9 @@ public class VpinzipArchiveSourceAdapter implements ArchiveSourceAdapter {
         for (File archiveFile : archiveFiles) {
           try {
             ArchiveDescriptor archiveDescriptor = ArchiveUtil.readArchiveDescriptor(archiveFile);
-            if(archiveDescriptor == null) {
+            if (archiveDescriptor == null) {
               TableDetails manifest = VpinzipArchiveUtil.readTableDetails(archiveFile);
-              ArchivePackageInfo  packageInfo = VpinzipArchiveUtil.generatePackageInfo(archiveFile, null);
+              ArchivePackageInfo packageInfo = VpinzipArchiveUtil.generatePackageInfo(archiveFile, null);
               archiveDescriptor = new ArchiveDescriptor(source, manifest, packageInfo, new Date(archiveFile.lastModified()), archiveFile.getName(), archiveFile.length());
             }
 
@@ -87,7 +87,7 @@ public class VpinzipArchiveSourceAdapter implements ArchiveSourceAdapter {
   public void invalidate() {
     cache.clear();
 
-    //TODO generate manifests
     LOG.info("Invalidated archive source \"" + this.getArchiveSource() + "\"");
+    ArchiveUtil.exportDescriptorJson(this);
   }
 }

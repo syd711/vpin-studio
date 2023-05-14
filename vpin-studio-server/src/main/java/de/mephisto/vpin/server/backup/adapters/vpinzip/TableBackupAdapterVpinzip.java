@@ -19,6 +19,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
@@ -65,8 +66,12 @@ public class TableBackupAdapterVpinzip implements TableBackupAdapter, Job {
     status = "Creating backup of \"" + game.getGameDisplayName() + "\"";
 
     try {
+      refreshManifestData();
+
       File dir = new File(systemService.RESOURCES, VpinzipArchiveSource.FOLDER_NAME);
       List<String> commands = Arrays.asList("vPinBackupManager.exe", "-b", String.valueOf(game.getId()));
+
+      LOG.info("Executing backup command: " + String.join(" ", commands));
       SystemCommandExecutor executor = new SystemCommandExecutor(commands);
       executor.enableLogging(true);
       executor.setDir(dir);
@@ -76,7 +81,7 @@ public class TableBackupAdapterVpinzip implements TableBackupAdapter, Job {
         LOG.error("Vpinzip Command Error:\n" + standardErrorFromCommand);
       }
       if (!StringUtils.isEmpty(standardOutputFromCommand.toString())) {
-        LOG.error("Vpinzip Command StdOut:\n" + standardOutputFromCommand);
+        LOG.info("Vpinzip Command StdOut:\n" + standardOutputFromCommand);
       }
       executor.executeCommand();
     } catch (Exception e) {
@@ -112,5 +117,23 @@ public class TableBackupAdapterVpinzip implements TableBackupAdapter, Job {
 
     archiveSourceAdapter.invalidate();
     return archiveDescriptor;
+  }
+
+  private static void refreshManifestData() throws IOException, InterruptedException {
+    LOG.info("Refreshing manifest data.");
+    File dir = new File(SystemService.RESOURCES, VpinzipArchiveSource.FOLDER_NAME);
+    List<String> commands = Arrays.asList("vPinBackupManager.exe", "-g");
+    SystemCommandExecutor executor = new SystemCommandExecutor(commands);
+    executor.setDir(dir);
+    StringBuilder standardOutputFromCommand = executor.getStandardOutputFromCommand();
+    StringBuilder standardErrorFromCommand = executor.getStandardErrorFromCommand();
+    if (!StringUtils.isEmpty(standardErrorFromCommand.toString())) {
+      LOG.error("Vpinzip Command Error:\n" + standardErrorFromCommand);
+    }
+    if (!StringUtils.isEmpty(standardOutputFromCommand.toString())) {
+      LOG.info("Vpinzip Command StdOut:\n" + standardOutputFromCommand);
+    }
+    executor.executeCommand();
+    LOG.info("Refreshing manifest data finished.");
   }
 }

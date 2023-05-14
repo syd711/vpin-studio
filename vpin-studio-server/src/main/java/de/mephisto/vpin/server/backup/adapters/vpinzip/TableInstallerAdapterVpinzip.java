@@ -84,7 +84,7 @@ public class TableInstallerAdapterVpinzip implements TableInstallerAdapter, Job 
         LOG.error("Vpinzip Command Error:\n" + standardErrorFromCommand);
       }
       if (!StringUtils.isEmpty(standardOutputFromCommand.toString())) {
-        LOG.error("Vpinzip Command StdOut:\n" + standardOutputFromCommand);
+        LOG.info("Vpinzip Command StdOut:\n" + standardOutputFromCommand);
       }
       executor.executeCommand();
 
