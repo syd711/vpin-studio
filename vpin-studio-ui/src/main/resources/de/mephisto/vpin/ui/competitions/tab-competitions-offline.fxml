@@ -58,21 +58,12 @@
                                 <FontIcon iconColor="WHITE" iconLiteral="mdi2p-plus-circle-outline" />
                             </graphic>
                         </Button>
-                        <Separator layoutX="364.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
                         <Button fx:id="editBtn" layoutX="280.0" layoutY="11.0" mnemonicParsing="false" onAction="#onEdit" text="Edit" textFill="WHITE">
                             <font>
                                 <Font size="14.0" />
                             </font>
                             <graphic>
                                 <FontIcon iconColor="WHITE" iconLiteral="mdi2d-database-edit-outline" />
-                            </graphic>
-                        </Button>
-                        <Button fx:id="deleteBtn" layoutX="464.0" layoutY="11.0" mnemonicParsing="false" onAction="#onDelete" text="Delete" textFill="WHITE">
-                            <font>
-                                <Font size="14.0" />
-                            </font>
-                            <graphic>
-                                <FontIcon iconColor="WHITE" iconLiteral="mdi2d-delete-outline" />
                             </graphic>
                         </Button>
                         <Button fx:id="duplicateBtn" layoutX="547.0" layoutY="11.0" mnemonicParsing="false" onAction="#onDuplicate" text="Duplicate" textFill="WHITE">
@@ -83,13 +74,22 @@
                                 <FontIcon iconColor="WHITE" iconLiteral="mdi2f-forwardburger" />
                             </graphic>
                         </Button>
-                        <Separator layoutX="448.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
+                  <Separator layoutX="364.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
                         <Button fx:id="finishBtn" layoutX="610.0" layoutY="11.0" mnemonicParsing="false" onAction="#onFinish" text="Finish" textFill="WHITE">
                             <font>
                                 <Font size="14.0" />
                             </font>
                             <graphic>
                                 <FontIcon iconColor="WHITE" iconLiteral="bi-stop" />
+                            </graphic>
+                        </Button>
+                        <Separator layoutX="364.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
+                        <Button fx:id="deleteBtn" layoutX="464.0" layoutY="11.0" mnemonicParsing="false" onAction="#onDelete" text="Delete" textFill="#ff3333">
+                            <font>
+                                <Font size="14.0" />
+                            </font>
+                            <graphic>
+                                <FontIcon iconColor="#ff3333" iconLiteral="mdi2d-delete-outline" />
                             </graphic>
                         </Button>
                     </items>

@@ -11,7 +11,7 @@
 <?import javafx.scene.text.Font?>
 <?import org.kordamp.ikonli.javafx.FontIcon?>
 
-<StackPane fx:id="tableStack" prefWidth="700.0" styleClass="base-component" stylesheets="@../stylesheet.css" xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.players.BuiltInPlayersController">
+<StackPane fx:id="tableStack" prefWidth="700.0" styleClass="base-component" stylesheets="@../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.players.BuiltInPlayersController">
     <children>
         <BorderPane>
             <center>
@@ -51,7 +51,6 @@
                         <FontIcon iconColor="WHITE" iconLiteral="mdi2p-plus-circle-outline" />
                      </graphic>
                   </Button>
-                  <Separator orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
                   <Button fx:id="editBtn" layoutX="298.0" layoutY="11.0" mnemonicParsing="false" onAction="#onEdit" text="Edit" textFill="WHITE">
                      <font>
                         <Font size="14.0" />
@@ -60,12 +59,13 @@
                         <FontIcon iconColor="WHITE" iconLiteral="mdi2d-database-edit-outline" />
                      </graphic>
                   </Button>
-                  <Button fx:id="deleteBtn" layoutX="379.0" layoutY="11.0" mnemonicParsing="false" onAction="#onDelete" text="Delete" textFill="WHITE">
+                  <Separator orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
+                  <Button fx:id="deleteBtn" layoutX="379.0" layoutY="11.0" mnemonicParsing="false" onAction="#onDelete" text="Delete" textFill="#ff3333">
                      <font>
                         <Font size="14.0" />
                      </font>
                      <graphic>
-                        <FontIcon iconColor="WHITE" iconLiteral="mdi2d-delete-outline" />
+                        <FontIcon iconColor="#ff3333" iconLiteral="mdi2d-delete-outline" />
                      </graphic>
                   </Button>
               </items>

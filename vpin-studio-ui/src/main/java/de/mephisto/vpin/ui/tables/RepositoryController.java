@@ -351,7 +351,7 @@ public class RepositoryController implements Initializable, StudioEventListener 
       deleteBtn.setDisable(!fileRepo);
       installBtn.setDisable(newSelection == null);
       downloadBtn.setDisable(newSelection == null);
-      copyToRepositoryBtn.setDisable(newSelection == null);
+      copyToRepositoryBtn.setDisable(newSelection == null || sourceCombo.getValue() == null || sourceCombo.getValue().getId() < 0);
 
       if (oldSelection == null || !oldSelection.equals(newSelection)) {
         updateSelection(Optional.ofNullable(newSelection));
@@ -378,11 +378,11 @@ public class RepositoryController implements Initializable, StudioEventListener 
     sourceComboChangeListener = (observable, oldValue, newValue) -> {
       if (newValue.getId() < 0) {
         addArchiveBtn.setDisable(false);
-        copyToRepositoryBtn.setVisible(false);
+        copyToRepositoryBtn.setDisable(false);
       }
       else {
         addArchiveBtn.setDisable(true);
-        copyToRepositoryBtn.setVisible(true);
+        copyToRepositoryBtn.setDisable(true);
       }
       tableView.getSelectionModel().clearSelection();
       doReload();
@@ -392,7 +392,7 @@ public class RepositoryController implements Initializable, StudioEventListener 
     deleteBtn.setDisable(true);
     installBtn.setDisable(true);
     downloadBtn.setDisable(true);
-    copyToRepositoryBtn.setVisible(false);
+    copyToRepositoryBtn.setDisable(true);
 
     EventManager.getInstance().addListener(this);
     this.doReload();

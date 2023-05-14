@@ -117,14 +117,6 @@
                                         <FontIcon iconColor="WHITE" iconLiteral="sil-reload" />
                                     </graphic>
                                 </Button>
-                                <Button fx:id="scanBtn" mnemonicParsing="false" onAction="#onTablesScan" text="Scan" textFill="WHITE">
-                                    <font>
-                                        <Font size="14.0" />
-                                    </font>
-                                    <graphic>
-                                        <FontIcon iconColor="WHITE" iconLiteral="mdi2m-map-search-outline" />
-                                    </graphic>
-                                </Button>
                                 <Separator orientation="VERTICAL" prefHeight="30.0" prefWidth="12.0" />
                                 <MenuButton fx:id="uploadMenuBtn" mnemonicParsing="false" text="Upload">
                                     <items>
@@ -142,20 +134,19 @@
                                     <font>
                                         <Font size="14.0" />
                                     </font>
+                           <graphic>
+                              <FontIcon iconColor="WHITE" iconLiteral="mdi2u-upload" />
+                           </graphic>
                                 </MenuButton>
                                 <Separator layoutX="682.0" layoutY="10.0" orientation="VERTICAL" prefHeight="30.0" prefWidth="12.0" />
-                                <Button fx:id="backupBtn" layoutX="596.0" layoutY="11.0" mnemonicParsing="false" onAction="#onBackup" text="Backup" textFill="WHITE">
+                                <Button fx:id="scanBtn" mnemonicParsing="false" onAction="#onTablesScan" text="Scan" textFill="WHITE">
                                     <font>
                                         <Font size="14.0" />
                                     </font>
                                     <graphic>
-                                        <FontIcon iconColor="WHITE" iconLiteral="mdi2e-export" />
+                                        <FontIcon iconColor="WHITE" iconLiteral="mdi2m-map-search-outline" />
                                     </graphic>
-                                    <tooltip>
-                                        <Tooltip text="Exports the selected table into the local repository." />
-                                    </tooltip>
                                 </Button>
-                                <Separator layoutX="768.0" layoutY="10.0" orientation="VERTICAL" prefHeight="30.0" prefWidth="12.0" />
                                 <Button fx:id="validateBtn" mnemonicParsing="false" onAction="#onValidate" text="Validate" textFill="WHITE">
                                     <font>
                                         <Font size="14.0" />
@@ -167,7 +158,7 @@
                                         <Tooltip text="Resets the dismissed validations and revalidates the table configuration." />
                                     </tooltip>
                                 </Button>
-                                <Separator layoutX="938.0" layoutY="10.0" orientation="VERTICAL" prefHeight="30.0" prefWidth="12.0" />
+                                <Separator layoutX="768.0" layoutY="10.0" orientation="VERTICAL" prefHeight="30.0" prefWidth="12.0" />
                                 <Button fx:id="playBtn" layoutX="703.0" layoutY="11.0" mnemonicParsing="false" onAction="#onPlay" text="Play" textFill="WHITE">
                                     <font>
                                         <Font size="14.0" />
@@ -191,6 +182,18 @@
                                     </tooltip>
                                 </Button>
                                 <Separator layoutX="788.0" layoutY="10.0" orientation="VERTICAL" prefHeight="30.0" prefWidth="12.0" />
+                                <Button fx:id="backupBtn" layoutX="596.0" layoutY="11.0" mnemonicParsing="false" onAction="#onBackup" text="Backup" textFill="WHITE">
+                                    <font>
+                                        <Font size="14.0" />
+                                    </font>
+                                    <graphic>
+                                        <FontIcon iconColor="WHITE" iconLiteral="mdi2e-export" />
+                                    </graphic>
+                                    <tooltip>
+                                        <Tooltip text="Exports the selected table into the local repository." />
+                                    </tooltip>
+                                </Button>
+                                <Separator layoutX="938.0" layoutY="10.0" orientation="VERTICAL" prefHeight="30.0" prefWidth="12.0" />
                                 <Button fx:id="deleteBtn" mnemonicParsing="false" onAction="#onDelete" text="Delete" textFill="#ff3333">
                                     <font>
                                         <Font size="14.0" />
