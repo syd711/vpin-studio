@@ -70,9 +70,9 @@ public class PopperServiceResource {
     return pinUPConnector.getGameManifest(gameId);
   }
 
-  @PostMapping("/tablemanifest")
-  public TableDetails save(@RequestBody TableDetails m) {
-    Game game = pinUPConnector.getGame(m.getGameId());
+  @PostMapping("/tabledetails/{gameId}")
+  public TableDetails save(@PathVariable("gameId") int gameId, @RequestBody TableDetails m) {
+    Game game = pinUPConnector.getGame(gameId);
     pinUPConnector.importManifest(game, m);
     return m;
   }

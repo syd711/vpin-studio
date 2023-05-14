@@ -134,7 +134,6 @@ public class PinUPConnector implements InitializingBean {
       ResultSet rs = statement.executeQuery();
       if (rs.next()) {
         manifest = new TableDetails();
-        manifest.setGameId(id);
         manifest.setEmulatorType(rs.getString("GameType"));
         manifest.setGameName(rs.getString("GameName"));
         manifest.setGameFileName(rs.getString("GameFileName"));

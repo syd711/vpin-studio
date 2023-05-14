@@ -1,12 +1,7 @@
 package de.mephisto.vpin.restclient;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
 public class TableDetails {
   public final static String ARCHIVE_FILENAME = "table-details.json";
-
-  //only metadata
-  private int gameId;
 
   private String emulatorType;
   private String gameName;
@@ -31,15 +26,6 @@ public class TableDetails {
   private String altRunMode;
   private String url;
   private String designedBy;
-
-  @JsonIgnore
-  public int getGameId() {
-    return gameId;
-  }
-
-  public void setGameId(int gameId) {
-    this.gameId = gameId;
-  }
 
   public String getCategory() {
     return category;

@@ -62,6 +62,7 @@ public class PopperScreensController implements Initializable, DialogController 
 
   private List<CheckBox> screenCheckboxes = new ArrayList<>();
   private TableDetails manifest;
+  private GameRepresentation game;
 
   @FXML
   private void onSaveClick(ActionEvent e) {
@@ -91,7 +92,7 @@ public class PopperScreensController implements Initializable, DialogController 
 
     manifest.setKeepDisplays(value);
     try {
-      Studio.client.saveTableDetails(manifest);
+      Studio.client.saveTableDetails(manifest, game.getId());
     } catch (Exception ex) {
       WidgetFactory.showAlert(Studio.stage, "Error", "Failed to save table manifest: " + ex.getMessage());
     }
@@ -198,7 +199,8 @@ public class PopperScreensController implements Initializable, DialogController 
   }
 
   public void setGame(GameRepresentation game) {
-    manifest = Studio.client.getTableDetails(game.getId());
+    this.game = game;
+    this.manifest = Studio.client.getTableDetails(game.getId());
 
     String keepDisplays = manifest.getKeepDisplays();
     if (StringUtils.isEmpty(keepDisplays)) {

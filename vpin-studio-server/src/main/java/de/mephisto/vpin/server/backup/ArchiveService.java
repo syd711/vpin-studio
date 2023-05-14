@@ -44,6 +44,9 @@ public class ArchiveService implements InitializingBean {
 
     return getArchiveDescriptors().stream().filter(ArchiveDescriptor -> {
       TableDetails manifest = ArchiveDescriptor.getTableDetails();
+      if(manifest == null) {
+        return false;
+      }
       return (manifest.getGameName() != null && manifest.getGameName().equals(game.getGameDisplayName())) ||
           (manifest.getGameFileName() != null && manifest.getGameFileName().equals(game.getGameFileName())) ||
           (manifest.getGameDisplayName() != null && manifest.getGameDisplayName().equals(game.getGameDisplayName()));

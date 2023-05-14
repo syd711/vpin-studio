@@ -100,10 +100,14 @@ public class IOService {
     boolean result = true;
     for (Integer gameId : gameIds) {
       Game game = gameService.getGame(gameId);
-      if (game != null) {
+      if (game != null && game.getGameFile().exists()) {
         if (!backupTable(game, exportDescriptor)) {
           result = false;
         }
+      }
+      else {
+        LOG.error("Cancelled backup for id " + game + ", invalid game data.");
+        result = false;
       }
     }
     return result;

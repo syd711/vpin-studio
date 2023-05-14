@@ -246,7 +246,7 @@ public class TablesSidebarPopperController implements Initializable, ChangeListe
         manifest.setVolume(String.valueOf(value));
         LOG.info("Updates volume of " + g.getGameDisplayName() + " to " + value);
         try {
-          client.saveTableDetails(manifest);
+          client.saveTableDetails(manifest, g.getId());
         } catch (Exception e) {
           WidgetFactory.showAlert(Studio.stage, e.getMessage());
         }

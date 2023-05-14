@@ -20,7 +20,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @SpringBootTest
 public class ArchiveServiceTest extends AbstractVPinServerTest {
 
-  private final static String TEST_FILE = "Hayburners (WIlliams 1951).vpx";
+  private final static String TEST_FILE = "Batman 66.vpx";
+//  private final static String TEST_FILE = "Hayburners (WIlliams 1951).vpx";
 
   @Autowired
   private TableBackupAdapterFactory tableBackupAdapterFactory;
@@ -32,19 +33,11 @@ public class ArchiveServiceTest extends AbstractVPinServerTest {
   private GameService gameService;
 
   @Autowired
-  private SystemService systemService;
-
-  @Autowired
   private ArchiveService archiveService;
 
   @Test
   public void testExport() {
-//    test(VPinServerTest.TEST_GAME_FILENAME);
-//    test("Hayburners (WIlliams 1951).vpx");
-//    exportTest("Attack from Mars 2.0.1.vpx");
-//    test("The Addams Family.vpx");
-    String name = "Hayburners (WIlliams 1951).vpx";
-    Game game = gameService.getGameByFilename(name);
+    Game game = gameService.getGameByFilename(TEST_FILE);
     TableBackupAdapter adapter = tableBackupAdapterFactory.createAdapter(archiveService.getDefaultArchiveSourceAdapter(), game);
     ArchiveDescriptor backup = adapter.createBackup();
     assertTrue(new File(backup.getSource().getLocation(), backup.getFilename()).exists());

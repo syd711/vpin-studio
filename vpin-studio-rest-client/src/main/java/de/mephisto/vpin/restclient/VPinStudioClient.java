@@ -272,9 +272,9 @@ public class VPinStudioClient implements ObservedPropertyChangeListener, Overlay
     return restClient.get(API + "popper/tabledetails/" + gameId, TableDetails.class);
   }
 
-  public TableDetails saveTableDetails(TableDetails tableDetails) throws Exception {
+  public TableDetails saveTableDetails(TableDetails tableDetails, int gameId) throws Exception {
     try {
-      return restClient.post(API + "popper/tabledetails", tableDetails, TableDetails.class);
+      return restClient.post(API + "popper/tabledetails/" + gameId, tableDetails, TableDetails.class);
     } catch (Exception e) {
       LOG.error("Failed save table details: " + e.getMessage(), e);
       throw e;

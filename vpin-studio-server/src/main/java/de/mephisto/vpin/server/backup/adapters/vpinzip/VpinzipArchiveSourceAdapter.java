@@ -87,6 +87,8 @@ public class VpinzipArchiveSourceAdapter implements ArchiveSourceAdapter {
   @Override
   public void invalidate() {
     cache.clear();
+
+    //TODO generate manifests
     LOG.info("Invalidated archive source \"" + this.getArchiveSource() + "\"");
   }
 }

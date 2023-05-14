@@ -259,7 +259,8 @@ public class RepositoryController implements Initializable, StudioEventListener 
 
     nameColumn.setCellValueFactory(cellData -> {
       ArchiveDescriptorRepresentation value = cellData.getValue();
-      return new SimpleStringProperty(value.getTableDetails().getGameDisplayName());
+      String gameDisplayName = value.getTableDetails().getGameDisplayName();
+      return new SimpleStringProperty(gameDisplayName);
     });
 
     directB2SColumn.setCellValueFactory(cellData -> {

@@ -396,7 +396,9 @@ public class TableBackupAdapterVpa implements TableBackupAdapter, Job {
 
     status = "Packing " + fileToZip.getAbsolutePath();
     if (progress < 100 && tempFile.exists()) {
-      this.progress = tempFile.length() * 100 / totalSizeExpected;
+      if(totalSizeExpected > 0) {
+        this.progress = tempFile.length() * 100 / totalSizeExpected;
+      }
     }
 
     if (fileToZip.isDirectory()) {
