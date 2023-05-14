@@ -125,7 +125,7 @@ public class PinUPConnector implements InitializingBean {
   }
 
   @Nullable
-  public TableDetails getGameManifest(int id) {
+  public TableDetails getTableDetails(int id) {
     Connection connect = connect();
     TableDetails manifest = null;
     try {
@@ -786,7 +786,7 @@ public class PinUPConnector implements InitializingBean {
   }
 
 
-  public void importManifest(Game game, TableDetails manifest) {
+  public void saveTableDetails(Game game, TableDetails manifest) {
     int id = game.getId();
     importManifestValue(id, "GameName", manifest.getGameName());
     importManifestValue(id, "GameDisplay", manifest.getGameDisplayName());

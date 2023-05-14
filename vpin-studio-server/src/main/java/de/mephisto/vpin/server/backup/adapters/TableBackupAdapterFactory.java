@@ -1,7 +1,6 @@
 package de.mephisto.vpin.server.backup.adapters;
 
 import de.mephisto.vpin.restclient.TableDetails;
-import de.mephisto.vpin.server.backup.ArchiveSource;
 import de.mephisto.vpin.server.backup.ArchiveSourceAdapter;
 import de.mephisto.vpin.server.backup.adapters.vpa.TableBackupAdapterVpa;
 import de.mephisto.vpin.server.backup.adapters.vpinzip.TableBackupAdapterVpinzip;
@@ -23,7 +22,7 @@ public class TableBackupAdapterFactory {
 
   public TableBackupAdapter createAdapter(@NonNull ArchiveSourceAdapter archiveSourceAdapter, @NonNull Game game) {
     ArchiveType archiveType = systemService.getArchiveType();
-    TableDetails tableDetails = pinUPConnector.getGameManifest(game.getId());
+    TableDetails tableDetails = pinUPConnector.getTableDetails(game.getId());
 
     switch (archiveType) {
       case VPA: {

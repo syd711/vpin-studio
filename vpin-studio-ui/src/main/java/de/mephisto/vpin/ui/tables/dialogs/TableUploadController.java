@@ -2,6 +2,7 @@ package de.mephisto.vpin.ui.tables.dialogs;
 
 import de.mephisto.vpin.commons.fx.DialogController;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
+import de.mephisto.vpin.restclient.descriptors.TableUploadDescriptor;
 import de.mephisto.vpin.restclient.representations.GameRepresentation;
 import de.mephisto.vpin.restclient.representations.PlaylistRepresentation;
 import de.mephisto.vpin.ui.util.Dialogs;
@@ -11,10 +12,7 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.Button;
-import javafx.scene.control.CheckBox;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import org.apache.commons.lang3.StringUtils;
@@ -26,7 +24,6 @@ import java.net.URL;
 import java.util.Arrays;
 import java.util.List;
 import java.util.ResourceBundle;
-import java.util.stream.Collectors;
 
 import static de.mephisto.vpin.ui.Studio.client;
 import static de.mephisto.vpin.ui.Studio.stage;
@@ -40,20 +37,31 @@ public class TableUploadController implements Initializable, DialogController {
   private TextField fileNameField;
 
   @FXML
-  private CheckBox importCheckbox;
+  private RadioButton uploadRadio;
 
   @FXML
-  private CheckBox replaceCheckbox;
+  private RadioButton uploadAndImportRadio;
 
   @FXML
-  private ComboBox<PlaylistRepresentation> playlistCombo;
+  private RadioButton uploadAndReplaceRadio;
+
+  @FXML
+  private RadioButton uploadAndCloneRadio;
+
+  @FXML
+  private Label replaceTitle;
+
+  @FXML
+  private Label cloneTitle;
 
   @FXML
   private Button uploadBtn;
 
   private File selection;
   private boolean result = false;
+
   private GameRepresentation game;
+  private int gameId;
 
   @FXML
   private void onCancelClick(ActionEvent e) {
@@ -67,16 +75,15 @@ public class TableUploadController implements Initializable, DialogController {
       uploadBtn.setDisable(true);
       result = true;
       try {
-        boolean importToPopper = this.importCheckbox.isSelected();
-        final PlaylistRepresentation value = this.playlistCombo.getValue();
-        int replaceId = -1;
-        if(game != null && replaceCheckbox.isSelected()) {
-          replaceId = this.game.getId();
+        TableUploadDescriptor descriptor = TableUploadDescriptor.upload;
+        if(uploadAndImportRadio.isSelected()) {
+          descriptor = TableUploadDescriptor.uploadAndImport;
         }
-
-        int playListId = -1;
-        if (value != null) {
-          playListId = value.getId();
+        else if (uploadAndReplaceRadio.isSelected()) {
+          descriptor = TableUploadDescriptor.uploadAndReplace;
+        }
+        else if(uploadAndCloneRadio.isSelected()) {
+          descriptor = TableUploadDescriptor.uploadAndClone;
         }
 
         Platform.runLater(()-> {
@@ -84,7 +91,7 @@ public class TableUploadController implements Initializable, DialogController {
           stage.close();
         });
 
-        TableUploadProgressModel model = new TableUploadProgressModel("VPX Upload", Arrays.asList(selection), importToPopper, playListId, replaceId);
+        TableUploadProgressModel model = new TableUploadProgressModel("VPX Upload", selection, gameId, descriptor);
         Dialogs.createProgressDialog(model);
       } catch (Exception e) {
         LOG.error("Upload failed: " + e.getMessage(), e);
@@ -97,7 +104,7 @@ public class TableUploadController implements Initializable, DialogController {
   @FXML
   private void onFileSelect() {
     FileChooser fileChooser = new FileChooser();
-    fileChooser.setTitle("Select VPX Files");
+    fileChooser.setTitle("Select VPX File");
     fileChooser.getExtensionFilters().addAll(
         new FileChooser.ExtensionFilter("VPX File", "*.vpx"));
 
@@ -106,13 +113,13 @@ public class TableUploadController implements Initializable, DialogController {
     }
 
     this.selection = fileChooser.showOpenDialog(stage);
-    replaceCheckbox.setSelected(false);
+    uploadBtn.setDisable(this.selection == null);
+
     if (this.selection != null) {
       TableUploadController.lastFolderSelection = this.selection.getParentFile();
       this.fileNameField.setText(this.selection.getAbsolutePath());
     }
     else {
-      replaceCheckbox.setVisible(true);
       this.fileNameField.setText("");
     }
   }
@@ -124,23 +131,25 @@ public class TableUploadController implements Initializable, DialogController {
     this.uploadBtn.setDisable(true);
     this.fileNameField.textProperty().addListener((observableValue, s, t1) -> uploadBtn.setDisable(StringUtils.isEmpty(t1)));
 
-    List<PlaylistRepresentation> playlists = client.getPlaylists();
-    ObservableList<PlaylistRepresentation> data = FXCollections.observableList(playlists);
-    this.playlistCombo.setItems(data);
-    this.playlistCombo.setDisable(false);
-
-    importCheckbox.selectedProperty().addListener((observable, oldValue, newValue) -> playlistCombo.setDisable(!newValue));
-    replaceCheckbox.selectedProperty().addListener((observable, oldValue, newValue) -> {
-      importCheckbox.setDisable(newValue);
-      playlistCombo.setDisable(newValue);
-    });
+    ToggleGroup toggleGroup = new ToggleGroup();
+    uploadRadio.setToggleGroup(toggleGroup);
+    uploadAndCloneRadio.setToggleGroup(toggleGroup);
+    uploadAndImportRadio.setToggleGroup(toggleGroup);
+    uploadAndReplaceRadio.setToggleGroup(toggleGroup);
   }
 
   public void setGame(GameRepresentation game) {
     this.game = game;
-    replaceCheckbox.setVisible(game != null);
-    if (game != null) {
-      replaceCheckbox.setText("Replace table \"" + game.getGameDisplayName() + "\" with the VPX upload.");
+
+    if(game != null) {
+      this.gameId = game.getId();
+      this.replaceTitle.setText("Upload and Replace \"" + game.getGameDisplayName() + "\"");
+      this.cloneTitle.setText("Upload and Clone \"" + game.getGameDisplayName() + "\"");
+    }
+    else {
+      this.gameId = -1;
+      this.uploadAndReplaceRadio.setDisable(true);
+      this.uploadAndCloneRadio.setDisable(true);
     }
   }
 

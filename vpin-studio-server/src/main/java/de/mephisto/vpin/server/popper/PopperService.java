@@ -2,14 +2,12 @@ package de.mephisto.vpin.server.popper;
 
 import de.mephisto.vpin.commons.EmulatorType;
 import de.mephisto.vpin.commons.fx.UIDefaults;
-import de.mephisto.vpin.restclient.PinUPControls;
-import de.mephisto.vpin.restclient.TableManagerSettings;
-import de.mephisto.vpin.restclient.PinUPControl;
-import de.mephisto.vpin.restclient.PopperScreen;
+import de.mephisto.vpin.restclient.*;
 import de.mephisto.vpin.server.games.Game;
-import de.mephisto.vpin.server.preferences.PreferencesService;
 import de.mephisto.vpin.server.system.SystemService;
 import edu.umd.cs.findbugs.annotations.NonNull;
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.FilenameUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
@@ -17,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -104,6 +103,16 @@ public class PopperService implements InitializingBean {
     }
   }
 
+  public TableDetails getTableDetails(int gameId) {
+    return pinUPConnector.getTableDetails(gameId);
+  }
+
+  public TableDetails saveTableDetails(TableDetails tableDetails, int gameId) {
+    Game game = pinUPConnector.getGame(gameId);
+    pinUPConnector.saveTableDetails(game, tableDetails);
+    return tableDetails;
+  }
+
   public boolean restart() {
     systemService.restartPopper();
     return true;
@@ -155,6 +164,30 @@ public class PopperService implements InitializingBean {
       descriptor.setPlaylistId(pinUPConnector.getPlayListForGame(game.getId()).getId());
     }
     return descriptor;
+  }
+
+  public void cloneGameMedia(Game original, Game clone) {
+    PopperScreen[] values = PopperScreen.values();
+    for (PopperScreen originalScreenValue : values) {
+      try {
+        GameMediaItem gameMediaItem = original.getGameMedia().get(originalScreenValue);
+        if (gameMediaItem != null && gameMediaItem.getFile().exists()) {
+          File mediaFile = gameMediaItem.getFile();
+          String suffix = FilenameUtils.getExtension(mediaFile.getName());
+          String name = FilenameUtils.getBaseName(clone.getGameFileName());
+
+          File cloneTarget = new File(clone.getPinUPMediaFolder(originalScreenValue), name + "." + suffix);
+          if (cloneTarget.exists()) {
+            cloneTarget.delete();
+          }
+
+          FileUtils.copyFile(mediaFile, cloneTarget);
+          LOG.info("Cloned PinUP Popper media: " + cloneTarget.getAbsolutePath());
+        }
+      } catch (IOException e) {
+        LOG.info("Failed to clone popper media: " + e.getMessage(), e);
+      }
+    }
   }
 
   @Override

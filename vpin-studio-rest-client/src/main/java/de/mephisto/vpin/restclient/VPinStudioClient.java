@@ -849,13 +849,12 @@ public class VPinStudioClient implements ObservedPropertyChangeListener, Overlay
     }
   }
 
-  public boolean uploadTable(File file, boolean importToPopper, int playlistId, int replaceId, FileUploadProgressListener listener) {
+  public boolean uploadTable(File file, TableUploadDescriptor tableUploadDescriptor, int gameId, FileUploadProgressListener listener) {
     try {
       String url = restClient.getBaseUrl() + API + "games/upload/table";
       LinkedMultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
-      map.add("importToPopper", importToPopper);
-      map.add("playlistId", playlistId);
-      map.add("replaceId", replaceId);
+      map.add("mode", tableUploadDescriptor.name());
+      map.add("gameId", gameId);
       new RestTemplate().exchange(url, HttpMethod.POST, createUpload(map, file, -1, null, AssetType.TABLE, listener), Boolean.class);
       return true;
     } catch (Exception e) {

@@ -147,8 +147,6 @@ public class TableDeleteController implements Initializable, DialogController {
     this.titleLabel.setText("Delete \"" + game.getGameDisplayName() + "\"");
 
     this.deleteAllCheckbox.setDisable(hasVariants);
-    popperCheckbox.setDisable(hasVariants);
-    popperCheckbox.setSelected(!hasVariants);
     pupPackCheckbox.setDisable(hasVariants);
     dmdCheckbox.setDisable(hasVariants);
     musicCheckbox.setDisable(hasVariants);

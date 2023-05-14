@@ -1,9 +1,6 @@
 package de.mephisto.vpin.server.popper;
 
 import de.mephisto.vpin.restclient.*;
-import de.mephisto.vpin.server.games.Game;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -17,13 +14,9 @@ import static de.mephisto.vpin.server.VPinStudioServer.API_SEGMENT;
 @RestController
 @RequestMapping(API_SEGMENT + "popper")
 public class PopperServiceResource {
-  private final static Logger LOG = LoggerFactory.getLogger(PopperServiceResource.class);
 
   @Autowired
   private PopperService popperService;
-
-  @Autowired
-  private PinUPConnector pinUPConnector;
 
   @GetMapping("/pincontrol/{screen}")
   public PinUPControl getPinUPControlFor(@PathVariable("screen") String screenName) {
@@ -67,13 +60,11 @@ public class PopperServiceResource {
 
   @GetMapping("/tabledetails/{gameId}")
   public TableDetails get(@PathVariable("gameId") int gameId) {
-    return pinUPConnector.getGameManifest(gameId);
+    return popperService.getTableDetails(gameId);
   }
 
   @PostMapping("/tabledetails/{gameId}")
-  public TableDetails save(@PathVariable("gameId") int gameId, @RequestBody TableDetails m) {
-    Game game = pinUPConnector.getGame(gameId);
-    pinUPConnector.importManifest(game, m);
-    return m;
+  public TableDetails save(@PathVariable("gameId") int gameId, @RequestBody TableDetails tableDetails) {
+    return popperService.saveTableDetails(tableDetails, gameId);
   }
 }

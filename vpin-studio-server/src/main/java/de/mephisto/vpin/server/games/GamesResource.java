@@ -1,13 +1,17 @@
 package de.mephisto.vpin.server.games;
 
+import de.mephisto.vpin.commons.utils.FileUtils;
+import de.mephisto.vpin.restclient.TableDetails;
 import de.mephisto.vpin.restclient.descriptors.DeleteDescriptor;
 import de.mephisto.vpin.restclient.descriptors.ResetHighscoreDescriptor;
+import de.mephisto.vpin.restclient.descriptors.TableUploadDescriptor;
 import de.mephisto.vpin.server.competitions.ScoreSummary;
 import de.mephisto.vpin.server.highscores.HighscoreMetadata;
 import de.mephisto.vpin.server.highscores.ScoreList;
 import de.mephisto.vpin.server.popper.PopperService;
 import de.mephisto.vpin.server.system.SystemService;
 import de.mephisto.vpin.server.util.UploadUtil;
+import org.apache.commons.io.FilenameUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -126,33 +130,71 @@ public class GamesResource {
 
   @PostMapping("/upload/table")
   public Boolean uploadTable(@RequestParam(value = "file") MultipartFile file,
-                             @RequestParam(value = "importToPopper") boolean importToPopper,
-                             @RequestParam(value = "playlistId") int playlistId,
-                             @RequestParam(value = "replaceId") int replaceId) {
+                             @RequestParam(value = "gameId") int gameId,
+                             @RequestParam(value = "mode") String modeString) {
     try {
       if (file == null) {
         LOG.error("Table upload request did not contain a file object.");
         return false;
       }
+      File uploadFile = new File(systemService.getVPXTablesFolder(), file.getOriginalFilename());
+      uploadFile = FileUtils.uniqueFile(uploadFile);
 
-      File out = new File(systemService.getVPXTablesFolder(), file.getOriginalFilename());
-      Game replacingGame = null;
-      if (replaceId > 0) {
-        replacingGame = this.getGame(replaceId);
-        out = new File(systemService.getVPXTablesFolder(), replacingGame.getGameFileName());
-        if (!out.delete()) {
-          throw new ResponseStatusException(INTERNAL_SERVER_ERROR, "Table upload failed: existing table could not be deleted.");
+      TableUploadDescriptor mode = TableUploadDescriptor.valueOf(modeString);
+      if (gameId > 0) {
+        if (mode.equals(TableUploadDescriptor.uploadAndReplace)) {
+          if (!uploadFile.delete()) {
+            throw new ResponseStatusException(INTERNAL_SERVER_ERROR, "Table upload failed: existing table could not be deleted.");
+          }
+        }
+        else if (mode.equals(TableUploadDescriptor.uploadAndClone)) {
         }
       }
 
-      if (UploadUtil.upload(file, out)) {
-        if (replaceId <= 0) {
-          int gameId = popperService.importVPXGame(out, importToPopper, playlistId);
-          if (gameId >= 0) {
+      if (UploadUtil.upload(file, uploadFile)) {
+        switch (mode) {
+          case upload: {
+            //nothing, we are done here
+            return true;
+          }
+          case uploadAndImport: {
+            int importedGameId = popperService.importVPXGame(uploadFile, true, -1);
+            if (importedGameId >= 0) {
+              gameService.scanGame(importedGameId);
+            }
+            return true;
+          }
+          case uploadAndReplace: {
+            //we only have to rename the filename for the selected entry with the new filename
+            TableDetails tableDetails = popperService.getTableDetails(gameId);
+            tableDetails.setGameFileName(uploadFile.getName());
+            popperService.saveTableDetails(tableDetails, gameId);
+
             gameService.scanGame(gameId);
+            break;
+          }
+          case uploadAndClone: {
+            int importedGameId = popperService.importVPXGame(uploadFile, true, -1);
+            if (importedGameId >= 0) {
+              Game importedGame = gameService.scanGame(importedGameId);
+
+              //update table details after new entry creation
+              TableDetails tableDetails = popperService.getTableDetails(gameId);
+              tableDetails.setGameFileName(uploadFile.getName());
+              tableDetails.setGameDisplayName(FilenameUtils.getBaseName(uploadFile.getName()));
+              tableDetails.setGameName(FilenameUtils.getBaseName(uploadFile.getName()));
+              popperService.saveTableDetails(tableDetails, importedGameId);
+
+              //clone popper media
+              Game original = getGame(gameId);
+              popperService.cloneGameMedia(original, importedGame);
+            }
+            return true;
+          }
+          default: {
+            //ignore
           }
         }
-        return true;
       }
     } catch (Exception e) {
       throw new ResponseStatusException(INTERNAL_SERVER_ERROR, "Table upload failed: " + e.getMessage());

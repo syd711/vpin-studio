@@ -5,7 +5,6 @@ import de.mephisto.vpin.restclient.ArchivePackageInfo;
 import de.mephisto.vpin.restclient.Job;
 import de.mephisto.vpin.restclient.TableDetails;
 import de.mephisto.vpin.server.backup.ArchiveDescriptor;
-import de.mephisto.vpin.server.backup.ArchiveService;
 import de.mephisto.vpin.server.backup.adapters.TableInstallerAdapter;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameService;
@@ -93,7 +92,7 @@ public class TableInstallerAdapterVpa implements TableInstallerAdapter, Job {
       }
 
       status = "Importing Game to Popper";
-      pinUPConnector.importManifest(game, manifest);
+      pinUPConnector.saveTableDetails(game, manifest);
 
       status = "Importing Highscores";
       importHighscore(game, archiveFile);

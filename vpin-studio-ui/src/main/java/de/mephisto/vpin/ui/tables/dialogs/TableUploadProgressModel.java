@@ -1,5 +1,6 @@
 package de.mephisto.vpin.ui.tables.dialogs;
 
+import de.mephisto.vpin.restclient.descriptors.TableUploadDescriptor;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.util.ProgressModel;
 import de.mephisto.vpin.ui.util.ProgressResultModel;
@@ -7,6 +8,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
@@ -15,17 +18,15 @@ public class TableUploadProgressModel extends ProgressModel<File> {
 
   private final Iterator<File> iterator;
   private final List<File> files;
-  private final boolean importToPopper;
-  private final int playlistId;
-  private final int replaceId;
+  private final int gameId;
+  private final TableUploadDescriptor tableUploadDescriptor;
   private double percentage = 0;
 
-  public TableUploadProgressModel(String title, List<File> files, boolean importToPopper, int playlistId, int replaceId) {
+  public TableUploadProgressModel(String title, File file, int gameId, TableUploadDescriptor tableUploadDescriptor) {
     super(title);
-    this.files = files;
-    this.importToPopper = importToPopper;
-    this.playlistId = playlistId;
-    this.replaceId = replaceId;
+    this.files = Collections.singletonList(file);
+    this.gameId = gameId;
+    this.tableUploadDescriptor = tableUploadDescriptor;
     iterator = this.files.iterator();
   }
 
@@ -52,7 +53,7 @@ public class TableUploadProgressModel extends ProgressModel<File> {
   @Override
   public void processNext(ProgressResultModel progressResultModel, File next) {
     try {
-      Studio.client.uploadTable(next, importToPopper, playlistId, replaceId, percent -> {
+      Studio.client.uploadTable(next,tableUploadDescriptor, gameId, percent -> {
         double total = percentage + percent;
         progressResultModel.setProgress(total / this.files.size());
       });

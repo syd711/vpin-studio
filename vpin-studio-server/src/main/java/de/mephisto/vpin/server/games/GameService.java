@@ -2,14 +2,16 @@ package de.mephisto.vpin.server.games;
 
 import de.mephisto.vpin.commons.HighscoreType;
 import de.mephisto.vpin.commons.utils.FileUtils;
-import de.mephisto.vpin.restclient.descriptors.DeleteDescriptor;
+import de.mephisto.vpin.restclient.PopperScreen;
 import de.mephisto.vpin.restclient.PreferenceNames;
+import de.mephisto.vpin.restclient.descriptors.DeleteDescriptor;
 import de.mephisto.vpin.server.assets.Asset;
 import de.mephisto.vpin.server.assets.AssetRepository;
 import de.mephisto.vpin.server.competitions.ScoreSummary;
 import de.mephisto.vpin.server.highscores.*;
 import de.mephisto.vpin.server.highscores.cards.CardService;
 import de.mephisto.vpin.server.popper.Emulator;
+import de.mephisto.vpin.server.popper.GameMediaItem;
 import de.mephisto.vpin.server.popper.PinUPConnector;
 import de.mephisto.vpin.server.preferences.PreferencesService;
 import de.mephisto.vpin.server.roms.RomService;
@@ -23,6 +25,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -176,6 +179,17 @@ public class GameService {
     if (descriptor.isDeleteFromPopper()) {
       if (!pinUPConnector.deleteGame(descriptor.getGameId())) {
         success = false;
+      }
+
+      PopperScreen[] values = PopperScreen.values();
+      for (PopperScreen originalScreenValue : values) {
+        GameMediaItem gameMediaItem = game.getGameMedia().get(originalScreenValue);
+        if (gameMediaItem != null && gameMediaItem.getFile().exists()) {
+          File mediaFile = gameMediaItem.getFile();
+          if (!mediaFile.delete() && success) {
+            success = false;
+          }
+        }
       }
     }
 
