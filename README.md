@@ -34,6 +34,28 @@ A full documentation is available in the wiki of this repository:
 
 https://github.com/syd711/vpin-studio/wiki
 
+## Third Party Integrations
+
+### Visual Pinball Backup Manager
+
+<img src="documentation/vpbm-128.png" width="64"/> 
+
+
+Download: https://github.com/mmattner/vPinBackupManagerApp/releases
+
+Documentation: https://github.com/mmattner/vPinBackupManagerApp/wiki 
+
+
+### PINemHi and PINemHi Leaderboard
+
+<img src="documentation/pinemhi.png" width="64"/> 
+
+Download: http://www.pinemhi.com/
+
+Documentation: http://www.pinemhi.com/
+
+
+
 ## Third Party Licenses and Resources
 
 For license texts have a look at [Third-Party Libraries](./documentation/third-party-licenses/)
