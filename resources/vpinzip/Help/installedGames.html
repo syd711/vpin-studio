@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>VPBM - Installed Games Panel</title>
+    <link rel="icon" href="img/vpbm.png">
+    <link rel="stylesheet" href="vpbm.css">
+</head>
+
+
+<header>
+    <hr>
+	<a href="main.html"><img style="float: left; padding: 6px 0px 0px 0px;" src="./img/logo.png" alt="VPBM Logo" width="60" height="60"></a>
+    <h2><span>&nbsp;&nbsp;Installed Games Panel</span></h2>
+	<p><span class="vpbm">Virtual Pinball Backup Manager</span> - managing your backups, one game at a time</p>
+    <hr>
+</header>
+
+
+<body>
+    <h3><span>&nbsp;&nbsp;Overview</span></h3>
+    <img src="img/InstalledGames.jpg" alt="Installed Games" style="float: right;">
+    <p>Entries within this list are colour coded to indicate the status of backups for the corresponding game. Users may select one or more rows in this table to operate on using the buttons seen across the top of the table. The most recently selected row is treated as the primary row selection and information about this row is displayed in other panels within the application.</p>
+    <p>Selected rows will be highlighted in a highlight colour, this will be described in more details along with colour coding rules below.&nbsp;</p>
+    <p>Jump straight to <a href="#gameListControlButtons">Games List Control Buttons</a> if you want to jump straight into using the tool.</p>
+
+    <hr>
+
+    <h3><span>&nbsp;&nbsp;Colour Coding Rules</span></h3>
+    <p>Non backed up games use the default colouring of black text on white rows when unselected and white text on blue rows when selected.</p>
+    <ol>
+        <li>The game AC-DC (Stern 2012) Britman 1.01 MOD in the screenshot is an example of an unselected row that has not been backed up.</li>
+        <li>The game AC-DC (Stern 2012) Ninuzzu 1.5 SSF MOD in the screenshot is an example of a selected row that has not been backed up.</li>
+    </ol>
+    <p>Colouring of backed up games reflects the status of the individual backups by comparing the contents of each games backup , to the corresponding files found in the system. A green shading theme is used when the backup content matches the content found on the system, while a red theme is used when there are differences found between the backup file and the content found on the system. The row colours are shaded darker when rows are selected.</p>
+    <ol>
+        <li>The game Addams Family, The (Bally 1992) G5k 2.3.1 SSF in the screenshot is an example of an unselected row that has a backup with matching content.</li>
+        <li>The game Addams Family, The (Bally 1992) SG1bsoN 1.0.0 MOD in the screenshot is an example of a selected row that has a backup with matching content.</li>
+        <li>The game Attack from Mars (Bally 1995) G5k 1.1 SSF in the screenshot is an example of an unselected row that has a backup with differing content.</li>
+        <li>The game Attack from Mars (Bally 1995) SG1bson 1.1 MOD in the screenshot is an example of a selected row that has a backup with differing content.</li>
+    </ol>
+    <hr>
+
+    <h3><span>&nbsp;&nbsp;Viewing Backup Differences</span></h3>
+    <p>Hovering over a game marked as not matching the backup (red rows) will provide a tooltip identifying all the differences between the backup file and the files on the system. This allows the user to better understand the inconsistency and determine how to resolve it. In the example the game <strong>Attack from Mars (Bally 1995) G5k 1.1 SSF</strong> is being hovered over (screen capture does not show the pointer icon).</p>
+    <br />
+    <img src="img/GameDifferencesTooltip.jpg" alt="Game Difference Tooltip">
+    <br />
+    <br />
+    <p>Changes shown in the tooltip are broken into the following categories:</p>
+    <dl>
+        <dt><strong>Files missing from backup</strong></dt>
+        <dd>These are files found on the system (using configured file matching rules) that were not found in the backup file.</dd>
+        <dt><strong>Files only in backup</strong></dt>
+        <dd>These are files that exist in the backup file that were not found on the system (using configured file matching rules).</dd>
+        <dt><strong>Files with differences</strong></dt>
+        <dd>These are files found to have different content between the system and the backup file.</dd>
+        <dt><strong>Game Details (Database) differs</strong></dt>
+        <dd>The backup file contains a copy of all game details found in the PinUp database when it was backed up, this entry is an indication that one or more database entries differ between the system and backup content.</dd>
+        <dt><strong>Game Registry entries differ</strong></dt>
+        <dd>Some emulators store information about games in the registry (in particular Visual Pinball/vPinMame) uses the registry to save game settings). These settings are stored in the backup file. This entry is an indication that one or more registry values differ between the system and backup content.</dd>
+        <dt><strong>Game custom file filters differ</strong></dt>
+        <dd>This application allows users to define custom file filters to find additional <strong>game specific</strong> files associated with a game, this is described further in <a href="./customFileFilters.html">Custom File Filters</a>, however this indication indicates that the custom file filters stored for the current system and game differ from those used when the backup was created.</dd>
+    </dl>
+    The <a href="./selectedGameContent.html">Selected Game Content</a> and&nbsp;<a href="./selectedGameDetails.html">Selected Game Details</a> panels can be used further to drill to the files in question and provide further insight.
+    <br />
+    <br />
+    <hr>
+
+    <h3><span>&nbsp;&nbsp;Filtering Games</span></h3>
+    <p>The Filter by Emulator combo box allows users to filter the games displayed in the game details table.</p>
+    <br />
+    <img alt="Filtering Games" src="img/FilteringGames.jpg">
+    <br />
+    <br />
+    <p>There are two filtering options available:</p>
+    <ol>
+        <li><strong>Filter on Emulator</strong> allows users to limit displayed games to a single emulator, or all emulators</li>
+        <li><strong>Only View Games Requiring Action</strong> allows users to hide all games that have matching backups and only show games still requiring action</li>
+    </ol>
+    <hr>
+
+    <h3><span>&nbsp;&nbsp;Restoring Deleted Games</span></h3>
+    <p>Refer to <a href="./restoreDeletedGames.html">Restore Deleted Games</a> for details on how to restore previously deleted games from stored backups.</p>
+    <br />
+    <hr>
+
+    <h3><span>&nbsp;&nbsp;Importing New Games</span></h3>
+    <p>Refer to <a href="./importNewGames.html">Import Games</a> for details on how to import new games fromout side of the stored backups.</p>
+    <br />
+    <hr>
+
+    <h3><span>&nbsp;&nbsp;Sorting Games</span></h3>
+    <p>The headings in the game list allow rows to be sorted. Clicking on the headers will adjust row sorting. In this example, rows are being sorted by game name in a descending order.&nbsp;</p>
+    <br />
+    <img src="img/SortingGames.jpg" alt="Sorting Games">
+    <br />
+    <p>Sorting can be performed on both the Emulator and Name columns in either an ascending or descending order. As can be seen in the Name column heading, an arrow identifies the sort order being used.</p>
+    <br />
+    <hr>
+
+    <h3><span>&nbsp;&nbsp;<a name="gameListControlButtons">Games List Control Buttons</a></span></h3>
+    <p>Five buttons residing across the top of the <strong>Installed Games</strong> panel provide the key operations that are perfomed within <span class="vpbm">VPBM</span>, these operations are described below.</p>
+    <br />
+    <img alt="Installed Games Buttons" src="img/InstalledGamesButtons.jpg">
+    <dl>
+        <dt><strong>Backup Game</strong></dt>
+        <dd>Pressing this button triggers processing to loop through all selected games and generate new backup files for them, these backup files will be stored within the configured backup directory within a subdirectory based on the games emulator. Backup files contain a full set of fiels and metadata used to restore the game when required, this content includes:
+            <ol>
+                <li>All emulator specific game files, such as (for VPX) rom files, backglass and POV files, and (for Future Pinball) BAM config files. These files will vary by emulator.</li>
+                <li>Pinup Pup Packs - for games with pup packs</li>
+                <li>Pinup Player Media - for display within Pinup Popper</li>
+                <li>A game manifest file (<strong>manifest.json</strong>) which identifies and charecterises every file within the backup file</li>
+                <li>A game details file (<strong>gameDetails.json</strong>) which stores every piece of game information found in the Pinup database Games table for the game.</li>
+                <li>A registry settings file (<strong>registrySettings.json</strong>) which stores and game specific emulator registry settings.</li>
+                <li>A custom file paths file (<strong>customFilePaths.json</strong>) which stores filter information to locate and additional 'game specific' emualtor files to be stored.</li>
+            </ol>
+        </dd>
+        <dt><strong>Restore Game</strong></dt>
+        <dd>Pressing this button triggers processing to loop through all selected games and restoring them to a state consistant with the backup file. This action effectively performs the reverse of the <strong>Backup Selected</strong> button. All game and pinup files are restored, additionally the pinup database is updated to match the stored content and and registry settings defined for the game are also updated.</dd>
+        <dt><strong>Delete Game</strong></dt>
+        <dd>Pressing this button deletes the game content, removing the game entirely from the current system for all selected games. Any backup files are NOT deleted meaning that they can be re-imported if required. This is achieved using the <strong>Import/Export</strong> -> <strong>Import New</strong> menu option. A warning dialog is provided to ensure that users confirm the delete action is required.</dd>
+        <dt><strong>Delete Backup</strong></dt>
+        <dd>Pressing this button deletes all selected game backups, however gamre content is left as is.</dd>
+        <dt><strong>Export Backup</strong></dt>
+        <dd>This button is only enabled if two pre-conditions are met:
+			<ol>
+				<li>An <strong>Export Path</strong> value has been configured in settings to specify where exporeted backups should be placed.</li>
+				<li>An <strong>Export Host Identifier</strong> value has been configured in settings to specify which host to generate exported backups for.</li>
+			</ol>
+			If clicked, existing backups for all selected games will be processed, with new copies made encoded for export to the intended <strong>Export Host Identifier</strong>. Once generated, these exports can be copied onto media and transferred to the export host.
+		</dd>
+    </dl>
+    <hr>
+
+    <h3><span>&nbsp;&nbsp;Progress Reporting</span></h3>
+    <p>Processing triggered by these buttons can take some time, as such a progress bar is displayed across the bottom of the application while operations are occuring as shown below. Note the <strong>Import New</strong> operation does not show progress in this way.</p>
+    <br />
+    <img src="img/ProgressBar.jpg" alt="Progress Bar" />
+
+</body>
+
+<footer>
+	<br/>
+    <hr>
+    <tbody>
+        <tr style="padding: 10px; border: 1px solid black;">
+            <td>
+                <span class="vpbm">Virtual Pinball Backup Manager</span> is provided free for personal use. Use of <span class="vpbm">VPBM</span> for commercial purposes is strictly prohibited.
+				<br>
+				Users wishing to donate to the ongoing support, development and upkeep may use the donate button. Thanks for your support and I hope this tool helps.
+            </td>
+            <td>
+                <form action="https://www.paypal.com/donate" method="post" target="_top" style="float: right;">
+                    <input type="hidden" name="business" value="QPUQYK8DKFAZG" />
+                    <input type="hidden" name="no_recurring" value="1" />
+                    <input type="hidden" name="currency_code" value="AUD" />
+                    <input type="image" src="https://www.paypalobjects.com/en_AU/i/btn/btn_donate_SM.gif" border="0" name="submit" title="PayPal - The safer, easier way to pay online!" alt="Donate with PayPal button" />
+                    <img alt="" border="0" src="https://www.paypal.com/en_AU/i/scr/pixel.gif" width="1" height="1" />
+                </form>
+            </td>
+        </tr>
+    </tbody>
+</footer>
+
+</html>

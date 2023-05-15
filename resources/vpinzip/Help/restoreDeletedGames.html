@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>VPBM - Restore Deleted Games</title>
+    <link rel="icon" href="img/vpbm.png">
+    <link rel="stylesheet" href="vpbm.css">
+</head>
+
+
+<header>
+    <hr>
+	<a href="main.html"><img style="float: left; padding: 6px 0px 0px 0px;" src="./img/logo.png" alt="VPBM Logo" width="60" height="60"></a>
+    <h2><span>&nbsp;&nbsp;Restore Deleted Game Backups</span></h2>
+	<p><span class="vpbm">Virtual Pinball Backup Manager</span> - managing your backups, one game at a time</p>
+    <hr>
+</header>
+
+
+<body>
+    <h3><span>&nbsp;&nbsp;Overview</span></h3>
+    <img src="img/RestoreDeletedGameBackups.jpg" alt="Restore Deleted Game Backups" style="float: right;">
+    <p>The <strong>Restore Deleted Game Backups</strong> allows backup games that are do not have a corresponding entry in the <strong>Pinup System</strong> database to be restored to the system.</p>
+    <p>This function is very similar to the <strong>Restore Selected</strong> functionality found on the <a href="./installedGames.html">Installed Games</a> panel, which the key difference being that <strong>Restore Selected</strong> operates on games that are already present in the <strong>Pinup System</strong> while this import functionality handles games that do not already exist in the <strong>Pinup System</strong> database but for which backups exist in the appropriate backup directory - generally these will be games previously installed, backed up, and then deleted.</p>
+    <p>After performing a restore of one or more games into the system, these games will be present in the <strong>Pinup System</strong> database and shown on the Installed Games panel.</p>
+    <p>If <strong>Pinup System</strong> is configured to use active SQL playlists, then the imported games will be included in these playlists on next run. Refer to <a href=https://www.nailbuster.com/wikipinup/doku.php?id =playlists_sql_examples>Pinup System Playlists</a> documentation for further information on playlists. If Active SQL playlists are not being used, then users will need to manually add the installed games to <strong>Pinup System</strong> playlists using the <strong>Pinup System</strong> setup tool - refer to <strong>Playlist Config</strong> <a href=https://www.nailbuster.com/wikipinup/doku.php?id =managing_games>here</a>.</p>
+    <p>Games that are deleted from the <a href="./installedGames.html">Installed Games</a> panel are removed from the live system and from the <strong>Pinup System</strong> database, however the backup files are not deleted (if they exist) and can be restored using this dialog.</p>
+    <br />
+    <hr>
+    
+    <h3><span>&nbsp;&nbsp;How to Restore Deleted Game Backups</span></h3>
+    <p>The following steps are used to import new games using menu options.</p>
+    <ol>
+        <li>Select the <strong>Restore From Backup</strong> option from the <a href="./importMenu.html">Import Menu</a>.</li>
+        <li>Select one or more games to restore from the displayed <strong>Restore Game Backups</strong> dialog.</li>
+        <li>Press the <strong>Restore Selected</strong> button. The restoration of games will be triggered, with the dialog closing after all requested games are imported. Note that depending on the size of the games and their associated files, this process may be slow. Once started, an restore cannot be cancelled.</li>
+    </ol>
+    <p>To close the dialog without performing a restore, press the <strong>Close</strong> button.</p>
+    <p style="color:red">Backup files containing games with GameName or GameFileName values matching already installed games will not be available for restoration.</p>
+</body>
+
+<footer>
+	<br/>
+    <hr>
+    <tbody>
+        <tr style="padding: 10px; border: 1px solid black;">
+            <td>
+                <span class="vpbm">Virtual Pinball Backup Manager</span> is provided free for personal use. Use of <span class="vpbm">VPBM</span> for commercial purposes is strictly prohibited.
+				<br>
+				Users wishing to donate to the ongoing support, development and upkeep may use the donate button. Thanks for your support and I hope this tool helps.
+            </td>
+            <td>
+                <form action="https://www.paypal.com/donate" method="post" target="_top" style="float: right;">
+                    <input type="hidden" name="business" value="QPUQYK8DKFAZG" />
+                    <input type="hidden" name="no_recurring" value="1" />
+                    <input type="hidden" name="currency_code" value="AUD" />
+                    <input type="image" src="https://www.paypalobjects.com/en_AU/i/btn/btn_donate_SM.gif" border="0" name="submit" title="PayPal - The safer, easier way to pay online!" alt="Donate with PayPal button" />
+                    <img alt="" border="0" src="https://www.paypal.com/en_AU/i/scr/pixel.gif" width="1" height="1" />
+                </form>
+            </td>
+        </tr>
+    </tbody>
+</footer>
+

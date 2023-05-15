@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>VPBM</title>
+    <link rel="icon" href="img/vpbm.png">
+    <link rel="stylesheet" href="vpbm.css">
+</head>
+
+
+<header>
+    <hr>
+	<img style="float: left; padding: 6px 0px 0px 0px;" src="./img/logo.png" alt="VPBM Logo" width="60" height="60">
+    <h2><span>&nbsp;&nbsp;Virtual Pinball Backup Manager</span></h2>
+	<p><span class="vpbm">Virtual Pinball Backup Manager</span> - managing your backups, one game at a time</p>
+    <hr>
+</header>
+
+
+<body>
+    <h3><span>&nbsp;&nbsp;What is Virtual Pinball Backup Manager</span></h3>
+    <img src="img/vpbmFullScreen.jpg" alt="VPBM" style="float: right;">
+    <p>Virtual Pinball Backup Manager  (<span class="vpbm">VPBM</span>) processes a variety of game content including:</p>
+    <ol>
+        <li>Game scripts/files</li>
+        <li>Backglass files, POV files, ROM and NVRAM files as well as alt colour/sound files (VPX)</li>
+        <li>Game libraries required by game scripts (Future Pinball)</li>
+        <li>Game specific Pinup Player Pup Packs</li>
+        <li>Game specific Pinup Popper front end media files</li>
+        <li>Copies of all stored game database settings</li>
+        <li>Copies of any game specific registry settings (VPX)</li>
+    </ol>
+    <p>The contents of a games backup can easily be viewed within the application using the tree view, while an integrated <strong>Quick View</strong> bar provides users a quick visual indication of the presence of critical files - as shown in the screenshot provided. Additionally, a <strong>Pinup View</strong> displays Pinup media, in a manner consistent with how media is displayed within Pinup Menu Setup.</p>
+    <p><span class="vpbm">VPBM</span> is not designed to replace Pinup System, in fact it depends on it to function - rather it tries to add features that make managing game files and settings easier. I found myself storing all files used by a game in a backup folder and then having to manually copy these files when I felt the need to update my system, <span class="vpbm">VPBM</span> automates this process.</p>
+    <p><span class="vpbm">VPBM</span> has been designed to quickly highlight to users when a games backup has fallen out of synch with the currently installed version of the game, allowing users to use the functions provides to address the inconsistencies.</p>
+    <p><span class="vpbm">VPBM</span> backup files are encrypted and locked to the machine that they were created on, however a mechanism is provided to export games to a known external system. For infromation on this feature, refer to the <strong>Export Path</strong> and <strong>Export Host Identifier</strong> settings described at <a href="./applicationSettings.html">Application Settings</a>. This process does not a llow games to be exported and shared universally.</p>
+    <p>Integrated help is provided, with the various menus and application panels making up the application each having their own help buttons. Quick links to this help is provided below.</p>
+    <dl>
+        <dt><strong>Help Quick Links</strong></dt>
+        <dd>
+            <ol>
+                <li><a href="./applicationSettings.html">Application Settings</a> help</li>
+                <li><a href="./fileMenu.html">File</a> menu help</li>
+                <li><a href="./importMenu.html">Import</a> menu help</li>
+                <li><a href="./helpMenu.html">Help</a> menu help</li>
+                <li><a href="./installedGames.html">Installed Games</a> panel help</li>
+                <li><a href="./selectedGameDisplayControl.html">Selected Game Display Control</a> panel help</li>
+                <li><a href="./selectedGameContent.html">Selected Game Content</a> panel help</li>
+                <li><a href="./selectedGameDetails.html">Selected Game Details</a> panel help</li>
+                <li><a href="./selectedGamePinupMedia.html">Selected Game Pinup Media</a> panel help</li>
+                <li><a href="./customFileFilters.html">Custom File Filters</a> panel help</li>
+                <li><a href="./restoreDeletedGames.html">Restoring Deleted Games</a> help</li>
+                <li><a href="./importNewGames.html">Importing New Games</a> help</li>
+            </ol>
+        </dd>
+    </dl>
+
+</body>
+
+<footer>
+	<br/>
+    <hr>
+    <tbody>
+        <tr style="padding: 10px; border: 1px solid black;">
+            <td>
+                <span class="vpbm">Virtual Pinball Backup Manager</span> is provided free for personal use. Use of <span class="vpbm">VPBM</span> for commercial purposes is strictly prohibited.
+				<br>
+				Users wishing to donate to the ongoing support, development and upkeep may use the donate button. Thanks for your support and I hope this tool helps.
+            </td>
+            <td>
+                <form action="https://www.paypal.com/donate" method="post" target="_top" style="float: right;">
+                    <input type="hidden" name="business" value="QPUQYK8DKFAZG" />
+                    <input type="hidden" name="no_recurring" value="1" />
+                    <input type="hidden" name="currency_code" value="AUD" />
+                    <input type="image" src="https://www.paypalobjects.com/en_AU/i/btn/btn_donate_SM.gif" border="0" name="submit" title="PayPal - The safer, easier way to pay online!" alt="Donate with PayPal button" />
+                    <img alt="" border="0" src="https://www.paypal.com/en_AU/i/scr/pixel.gif" width="1" height="1" />
+                </form>
+            </td>
+        </tr>
+    </tbody>
+</footer>
+
+</html>
