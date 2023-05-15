@@ -287,13 +287,8 @@ public class GameService {
           return game;
         }
 
-        Optional<Asset> byId = assetRepository.findByExternalId(String.valueOf(game.getId()));
-        byId.ifPresent(asset -> assetRepository.delete(asset));
-        defaultPictureService.deleteDefaultPictures(game);
-
         applyGameDetails(game, true);
         highscoreService.scanScore(game);
-        defaultPictureService.extractDefaultPicture(game);
 
         return getGame(gameId);
       }

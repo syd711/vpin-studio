@@ -99,6 +99,12 @@ public class Score {
     this.score = score;
   }
 
+  public boolean matches(Score newScore) {
+    return this.playerInitials != null && this.playerInitials.equals(newScore.getPlayerInitials())
+        && this.score != null && this.score.equals(newScore.getScore());
+
+  }
+
   @Override
   public String toString() {
     String name = this.getPlayerInitials();

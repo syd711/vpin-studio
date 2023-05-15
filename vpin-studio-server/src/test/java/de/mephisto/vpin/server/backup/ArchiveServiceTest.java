@@ -8,6 +8,7 @@ import de.mephisto.vpin.server.backup.adapters.TableInstallerAdapterFactory;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameService;
 import de.mephisto.vpin.server.system.SystemService;
+import org.apache.commons.io.FilenameUtils;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -20,8 +21,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @SpringBootTest
 public class ArchiveServiceTest extends AbstractVPinServerTest {
 
-  private final static String TEST_FILE = "Batman 66.vpx";
-//  private final static String TEST_FILE = "Hayburners (WIlliams 1951).vpx";
+//  private final static String TEST_FILE = "Batman 66.vpx";
+  private final static String TEST_FILE = "Hayburners (WIlliams 1951).vpx";
 
   @Autowired
   private TableBackupAdapterFactory tableBackupAdapterFactory;
@@ -45,7 +46,8 @@ public class ArchiveServiceTest extends AbstractVPinServerTest {
 
   @Test
   public void testImport() {
-    ArchiveDescriptor archiveDescriptor = archiveService.getArchiveDescriptor(-2, "Hayburners (WIlliams 1951).vpinzip");
+    String name = FilenameUtils.getBaseName(TEST_FILE);
+    ArchiveDescriptor archiveDescriptor = archiveService.getArchiveDescriptor(-2, name + ".vpinzip");
     TableInstallerAdapter adapter = tableInstallerAdapterFactory.createAdapter(archiveDescriptor);
     Game game = adapter.installTable();
     assertNotNull(game);

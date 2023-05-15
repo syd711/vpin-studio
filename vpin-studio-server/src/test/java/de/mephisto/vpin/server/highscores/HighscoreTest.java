@@ -1,108 +1,107 @@
 package de.mephisto.vpin.server.highscores;
 
-import de.mephisto.vpin.server.AbstractVPinServerTest;
-import de.mephisto.vpin.server.competitions.ScoreSummary;
-import de.mephisto.vpin.server.games.Game;
-import de.mephisto.vpin.server.games.GameService;
-import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 
-import java.util.Calendar;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-@SpringBootTest
-public class HighscoreTest extends AbstractVPinServerTest {
-
-  @Autowired
-  private HighscoreService highscoreService;
-
-  @Autowired
-  private GameService gameService;
+public class HighscoreTest {
 
   @Test
-  public void testHighscore() {
-//    Game game = gameService.getGameByFilename("Game of Thrones LE (Stern 2015) VPW v1.0.1.vpx");
-    Game game = gameService.getGameByFilename(AbstractVPinServerTest.TEST_GAME_FILENAME);
-    ScoreSummary highscores = highscoreService.getScoreSummary(-1l, game.getId(), game.getGameDisplayName());
+  public void testSingleChange() {
+    HighscoreService highscoreService = new HighscoreService();
 
-    assertNotNull(highscores);
-    assertNotNull(highscores.getRaw());
-    assertFalse(highscores.getScores().isEmpty());
+    List<Score> oldScores = new ArrayList<>();
+    oldScores.add(new Score(new Date(), -1, "AAA", null, "9000", 9000, 1));
+    oldScores.add(new Score(new Date(), -1, "BBB", null, "8000", 8000, 2));
+    oldScores.add(new Score(new Date(), -1, "CCC", null, "7000", 7000, 3));
+    oldScores.add(new Score(new Date(), -1, "DDD", null, "6000", 6000, 4));
+    oldScores.add(new Score(new Date(), -1, "EEE", null, "5000", 5000, 5));
+
+    List<Score> newScores = new ArrayList<>();
+    newScores.add(new Score(new Date(), -1, "AAA", null, "9000", 9000, 1));
+    newScores.add(new Score(new Date(), -1, "BBB", null, "8000", 8000, 2));
+    newScores.add(new Score(new Date(), -1, "CCC", null, "7000", 7000, 3));
+    newScores.add(new Score(new Date(), -1, "DDD", null, "6000", 6000, 4));
+    newScores.add(new Score(new Date(), -1, "FFF", null, "5001", 5001, 5));
+
+    List<Integer> changedPositions = highscoreService.calculateChangedPositions(oldScores, newScores);
+    assertTrue(changedPositions.size() == 1);
+    assertTrue(changedPositions.get(0).equals(5));
   }
 
-  /**
-   * GRAND CHAMPION
-   * SLL     7.500.000.000
-   *
-   * HIGHEST SCORES
-   * 1) BRE     7.000.000.000
-   * 2) LFS     6.500.000.000
-   * 3) RCF     6.000.000.000
-   * 4) DTW     5.500.000.000
-   *
-   * MARTIAN CHAMPION
-   * LFS - 20
-   * MARTIANS DESTROYED
-   *
-   * RULER OF THE UNIVERSE
-   * TEX
-   * INAUGURATED
-   * 14 DEC, 2022 5:59 PM
-   *
-   * BUY-IN HIGHEST SCORES
-   * 1) DWF     5.000.000.000
-   * 2) ASR     4.500.000.000
-   * 3) BCM     4.000.000.000
-   * 4) MOO     3.500.000.000
-   */
   @Test
-  public void testHighscores() throws InterruptedException {
-    Game game = gameService.getGameByFilename(AbstractVPinServerTest.TEST_GAME_FILENAME);
-    ScoreSummary highscores = highscoreService.getScoreSummary(-1l, game.getId(), game.getGameDisplayName());
+  public void testChange1() {
+    HighscoreService highscoreService = new HighscoreService();
 
-    assertNotNull(highscores);
-    assertNotNull(highscores.getRaw());
-    assertFalse(highscores.getScores().isEmpty());
+    List<Score> oldScores = new ArrayList<>();
+    oldScores.add(new Score(new Date(), -1, "AAA", null, "9000", 9000, 1));
+    oldScores.add(new Score(new Date(), -1, "BBB", null, "8000", 8000, 2));
+    oldScores.add(new Score(new Date(), -1, "CCC", null, "7000", 7000, 3));
+    oldScores.add(new Score(new Date(), -1, "DDD", null, "6000", 6000, 4));
+    oldScores.add(new Score(new Date(), -1, "EEE", null, "5000", 5000, 5));
 
-    List<ScoreSummary> highscoresWithScore = highscoreService.getHighscoresWithScore();
-    assertFalse(highscoresWithScore.isEmpty());
+    List<Score> newScores = new ArrayList<>();
+    newScores.add(new Score(new Date(), -1, "AAA", null, "9001", 9001, 1));
+    newScores.add(new Score(new Date(), -1, "AAA", null, "9000", 9000, 2));
+    newScores.add(new Score(new Date(), -1, "BBB", null, "8000", 8000, 3));
+    newScores.add(new Score(new Date(), -1, "CCC", null, "7000", 7000, 4));
+    newScores.add(new Score(new Date(), -1, "DDD", null, "6000", 6000, 5));
 
+    List<Integer>  changedPositions = highscoreService.calculateChangedPositions(oldScores, newScores);
+    assertTrue(changedPositions.size() == 1);
+    assertTrue(changedPositions.get(0).equals(1));
+  }
 
-    Calendar cal = Calendar.getInstance();
-    cal.setTime(new Date());
-    cal.add(Calendar.YEAR, -10);
-    Date from = cal.getTime();
-    ScoreList scoresBetween = highscoreService.getScoresBetween(game.getId(), from, new Date(), -1l);
-    assertFalse(scoresBetween.getScores().isEmpty());
+  @Test
+  public void testChange2() {
+    HighscoreService highscoreService = new HighscoreService();
 
-    HighscoreMetadata metadata = highscoreService.scanScore(game);
-    String raw = metadata.getRaw();
-    raw = raw.replace("BRE     7.000.000.000", "MFA     7.100.000.000");
-    metadata.setRaw(raw);
+    List<Score> oldScores = new ArrayList<>();
+    oldScores.add(new Score(new Date(), -1, "AAA", null, "9000", 9000, 1));
+    oldScores.add(new Score(new Date(), -1, "BBB", null, "8000", 8000, 2));
+    oldScores.add(new Score(new Date(), -1, "CCC", null, "7000", 7000, 3));
+    oldScores.add(new Score(new Date(), -1, "DDD", null, "6000", 6000, 4));
+    oldScores.add(new Score(new Date(), -1, "EEE", null, "5000", 5000, 5));
 
-    highscoreService.addHighscoreChangeListener(new HighscoreChangeListener() {
-      @Override
-      public void highscoreChanged(@NotNull HighscoreChangeEvent event) {
-        assertNotNull(event.getNewScore());
-        assertEquals("7.100.000.000", event.getNewScore().getScore());
-        assertEquals("7.100.000.000", event.getNewScore().getScore());
-        assertEquals(2, event.getNewScore().getPosition());
-      }
-    });
-    highscoreService.updateHighscore(game, metadata);
+    List<Score> newScores = new ArrayList<>();
+    newScores.add(new Score(new Date(), -1, "AAA", null, "9001", 9001, 1));
+    newScores.add(new Score(new Date(), -1, "AAA", null, "9000", 9000, 2));
+    newScores.add(new Score(new Date(), -1, "BBB", null, "8000", 8000, 3));
+    newScores.add(new Score(new Date(), -1, "CCC", null, "7000", 7000, 4));
+    newScores.add(new Score(new Date(), -1, "DDD", null, "6001", 6001, 5));
 
+    List<Integer>  changedPositions = highscoreService.calculateChangedPositions(oldScores, newScores);
+    assertTrue(changedPositions.size() == 2);
+    assertTrue(changedPositions.get(0).equals(1));
+    assertTrue(changedPositions.get(1).equals(5));
+  }
 
-    Thread.sleep(1000);
+  @Test
+  public void testChange3() {
+    HighscoreService highscoreService = new HighscoreService();
 
-    ScoreSummary recentHighscores = gameService.getRecentHighscores(10);
-    assertFalse(recentHighscores.getScores().isEmpty());
-    Score score = recentHighscores.getScores().get(0);
-    assertEquals(score.getGameId(), game.getId());
-    assertEquals("7.100.000.000", score.getScore());
+    List<Score> oldScores = new ArrayList<>();
+    oldScores.add(new Score(new Date(), -1, "AAA", null, "9000", 9000, 1));
+    oldScores.add(new Score(new Date(), -1, "BBB", null, "8000", 8000, 2));
+    oldScores.add(new Score(new Date(), -1, "CCC", null, "7000", 7000, 3));
+    oldScores.add(new Score(new Date(), -1, "DDD", null, "6000", 6000, 4));
+    oldScores.add(new Score(new Date(), -1, "EEE", null, "5000", 5000, 5));
+
+    List<Score> newScores = new ArrayList<>();
+    newScores.add(new Score(new Date(), -1, "AAA", null, "9003", 9003, 1));
+    newScores.add(new Score(new Date(), -1, "AAA", null, "9002", 9002, 2));
+    newScores.add(new Score(new Date(), -1, "AAA", null, "9001", 9001, 3));
+    newScores.add(new Score(new Date(), -1, "BBB", null, "8000", 8000, 4));
+    newScores.add(new Score(new Date(), -1, "CCC", null, "7000", 7000, 5));
+
+    List<Integer>  changedPositions = highscoreService.calculateChangedPositions(oldScores, newScores);
+    assertTrue(changedPositions.size() == 3);
+    assertTrue(changedPositions.get(0).equals(1));
+    assertTrue(changedPositions.get(1).equals(2));
+    assertTrue(changedPositions.get(2).equals(3));
   }
 }

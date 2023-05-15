@@ -431,13 +431,21 @@ public class HighscoreService implements InitializingBean {
    */
   public List<Integer> calculateChangedPositions(@NonNull List<Score> oldScores, @NonNull List<Score> newScores) {
     List<Integer> changes = new ArrayList<>();
-    int position = 1;
-    for (Score newScore : newScores) {
-      if (!containsScore(oldScores, newScore) && !newScore.getPlayerInitials().equals("???") && newScore.getNumericScore() > 0) {
-        LOG.info("Calculated changed score: [" + newScore + "] has beaten [" + oldScores.get(newScore.getPosition() - 1) + "]");
-        changes.add(position);
-        position++;
+    try {
+      for (int i = 0; i < newScores.size(); i++) {
+        Score newScore = newScores.get(i);
+        if (newScore.getPlayerInitials().equals("???") || newScore.getNumericScore() == 0) {
+          continue;
+        }
+
+        boolean notFound = oldScores.stream().noneMatch(score -> score.matches(newScore));
+        if (notFound) {
+          changes.add(newScore.getPosition());
+          LOG.info("Calculated changed score: [" + newScore + "] has beaten [" + oldScores.get(newScore.getPosition()-1) + "]");
+        }
       }
+    } catch (Exception e) {
+      LOG.info("Failed to calculate score change: " + e.getMessage(), e);
     }
     return changes;
   }
@@ -456,15 +464,6 @@ public class HighscoreService implements InitializingBean {
     for (HighscoreChangeListener listener : listeners) {
       listener.highscoreChanged(event);
     }
-  }
-
-  private boolean containsScore(List<Score> scores, Score score) {
-    for (Score s : scores) {
-      if (s.getPlayerInitials().equals(score.getPlayerInitials()) && s.getNumericScore() == score.getNumericScore()) {
-        return true;
-      }
-    }
-    return false;
   }
 
   @Override

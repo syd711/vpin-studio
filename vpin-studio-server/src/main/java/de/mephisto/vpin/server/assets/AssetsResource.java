@@ -65,7 +65,7 @@ public class AssetsResource {
 
   @DeleteMapping("/{id}")
   public boolean delete(@PathVariable("id") int id) {
-    return assetService.delete(id);
+    return assetService.resetGameAssets(id);
   }
 
   @DeleteMapping("/background/{gameId}")

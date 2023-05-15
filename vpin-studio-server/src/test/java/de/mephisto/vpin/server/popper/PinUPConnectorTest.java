@@ -1,6 +1,5 @@
 package de.mephisto.vpin.server.popper;
 
-import de.mephisto.vpin.restclient.PinUPControl;
 import de.mephisto.vpin.server.AbstractVPinServerTest;
 import de.mephisto.vpin.server.games.Game;
 import org.junit.jupiter.api.Test;

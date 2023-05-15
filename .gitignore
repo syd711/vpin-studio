@@ -84,3 +84,4 @@ yarn-error.log*
 /documentation/~$discord-competitions.odp
 /resources/archives/descriptor.json
 /**/Thumbs.db
+/vpin-studio-server/resources/system.properties

@@ -77,10 +77,10 @@ public class TablesSidebarDefaultBackgroundController implements Initializable {
   private void onBackgroundReset() {
     if (this.game.isPresent()) {
       GameRepresentation g = this.game.get();
-      Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Delete default background for \"" + g.getGameDisplayName() + "\"?",
-          "This will delete the existing default background.", "A new background will be generated from the existing assets for this table.", "Yes, delete background");
+      Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Re-generate default background for \"" + g.getGameDisplayName() + "\"?",
+          "This will re-generate the existing default background.", null, "Yes, generate background");
       if (result.isPresent() && result.get().equals(ButtonType.OK)) {
-        client.deleteDefaultBackgroundFile(g.getId());
+        client.regenerateGameAssets(g.getId());
         this.refreshView(this.game);
       }
     }

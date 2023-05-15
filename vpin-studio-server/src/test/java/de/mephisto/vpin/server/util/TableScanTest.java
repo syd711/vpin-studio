@@ -20,9 +20,9 @@ public class TableScanTest {
 
   @Test
   public void testTableScan2() throws Exception {
-    File table = new File("C:\\vPinball\\VisualPinball\\Tables\\Guns N Roses.vpx");
+    File table = new File("C:\\vPinball\\VisualPinball\\Tables\\Batman 66.vpx");
     ScanResult scan = VPXFileScanner.scan(table);
-    assertEquals("gnr_300", scan.getRom());
+    assertEquals("b66_orig", scan.getRom());
   }
 
   @Test

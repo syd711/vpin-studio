@@ -49,6 +49,7 @@ public class HighscoreParserTest extends AbstractVPinServerTest {
       "\n" +
       "LOOP BACK CHAMP\n" +
       "CHP   7\n";
+
   private String RAW3 = "GRAND CHAMPION\n" +
       "SLL      52.000.000\n" +
       "\n" +
@@ -138,19 +139,7 @@ public class HighscoreParserTest extends AbstractVPinServerTest {
       "3) WAL     1.000.000.000\n" +
       "4) JAP       500.000.000\n";
 
-  private final List<String> testlings = Arrays.asList(RAW1, RAW2, RAW3, RAW4, RAW5);
 
-  @Test
-  public void testParsing() {
-    for (String testling : testlings) {
-      List<Score> test = highscoreParser.parseScores(new Date(), RAW5, -1, -1l);
-      assertFalse(test.isEmpty());
-      assertTrue(test.size() == 3);
-      for (Score score : test) {
-        System.out.println(score);
-      }
-    }
-  }
 
   private String singleton = "HIGHEST SCORES\n" +
       "1)       5.555.555\n" +
@@ -158,13 +147,77 @@ public class HighscoreParserTest extends AbstractVPinServerTest {
       "3)       3.000.000\n" +
       "4)       2.000.000";
 
+  private String orderCheck = "AUTOBOT\n" +
+      "GRAND CHAMPION\n" +
+      "OPT        75.000.000\n" +
+      "\n" +
+      "AUTOBOT\n" +
+      "HIGH SCORES\n" +
+      "#1 JAZ        55.000.000\n" +
+      "#2 PWL        40.000.000\n" +
+      "#3 IRN        30.000.000\n" +
+      "#4 BEE        25.000.000\n" +
+      "\n" +
+      "DECEPTICON\n" +
+      "GRAND CHAMPION\n" +
+      "MEG        75.000.000\n" +
+      "\n" +
+      "DECEPTICON\n" +
+      "HIGH SCORES\n" +
+      "#1 STR        55.000.000\n" +
+      "#2 SND        40.000.000\n" +
+      "#3 SHK        30.000.000\n" +
+      "#4 BLK        25.000.000\n" +
+      "\n" +
+      "COMBO CHAMPION\n" +
+      "LON   20 COMBOS\n" +
+      "\n" +
+      "BEST COMBO CHAMPION\n" +
+      "LON   5-WAY\n";
+
+  private final List<String> testlings = Arrays.asList(RAW1, RAW2, RAW3, RAW4, RAW5);
+
+  @Test
+  public void testParsing() {
+    for (String testling : testlings) {
+      List<Score> test = highscoreParser.parseScores(new Date(), testling, -1, -1l);
+      assertFalse(test.isEmpty());
+      assertTrue(test.size() > 3);
+    }
+  }
+
   @Test
   public void testSingleton() {
     List<Score> test = highscoreParser.parseScores(new Date(), singleton, -1, -1l);
     assertFalse(test.isEmpty());
-    assertTrue(test.size() == 3);
-    for (Score score : test) {
-      System.out.println(score);
-    }
+    assertTrue(test.size() > 3);
+  }
+
+  @Test
+  public void testOrder() {
+    List<Score> test = highscoreParser.parseScores(new Date(), orderCheck, -1, -1l);
+    assertFalse(test.isEmpty());
+    assertTrue(test.size() > 3);
+
+    Score score = test.get(0);
+    assertTrue(score.getScore().equals("75.000.000"));
+    assertTrue(score.getPlayerInitials().equals("OPT"));
+
+    score = test.get(1);
+    assertTrue(score.getScore().equals("55.000.000"));
+    assertTrue(score.getPlayerInitials().equals("JAZ"));
+
+    score = test.get(2);
+    assertTrue(score.getScore().equals("40.000.000"));
+    assertTrue(score.getPlayerInitials().equals("PWL"));
+
+    score = test.get(3);
+    assertTrue(score.getScore().equals("30.000.000"));
+    assertTrue(score.getPlayerInitials().equals("IRN"));
+
+    score = test.get(4);
+    assertTrue(score.getScore().equals("25.000.000"));
+    assertTrue(score.getPlayerInitials().equals("BEE"));
+
   }
 }

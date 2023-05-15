@@ -79,11 +79,15 @@ public class DefaultPictureService {
 
   public void deleteDefaultPictures(@NonNull Game game) {
     if (game.getCroppedDefaultPicture() != null && game.getCroppedDefaultPicture().exists()) {
-      game.getCroppedDefaultPicture().delete();
+      if(game.getCroppedDefaultPicture().delete()) {
+        LOG.info("Deleted " + game.getCroppedDefaultPicture().getAbsolutePath());
+      }
     }
 
     if (game.getRawDefaultPicture() != null && !game.getRawDefaultPicture().exists()) {
-      game.getRawDefaultPicture().delete();
+      if(game.getRawDefaultPicture().delete()) {
+        LOG.info("Deleted " + game.getCroppedDefaultPicture().getAbsolutePath());
+      }
     }
   }
 

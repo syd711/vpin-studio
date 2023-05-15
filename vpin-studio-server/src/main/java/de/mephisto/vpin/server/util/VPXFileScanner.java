@@ -44,6 +44,7 @@ public class VPXFileScanner {
   }
 
   public static ScanResult scan(@NonNull File gameFile) {
+    long start = System.currentTimeMillis();
     ScanResult result = new ScanResult();
 
     BufferedReader bufferedReader = null;
@@ -93,10 +94,10 @@ public class VPXFileScanner {
     }
 
     if (!StringUtils.isEmpty(result.getRom())) {
-      LOG.info("Finished scan of table " + gameFile.getAbsolutePath() + ", found ROM '" + result.getRom() + "'.");
+      LOG.info("Finished scan of table " + gameFile.getAbsolutePath() + ", found ROM '" + result.getRom() + "', took " + (System.currentTimeMillis() - start) + " ms.");
     }
     else {
-      LOG.info("Finished scan of table " + gameFile.getAbsolutePath() + ", no ROM found.");
+      LOG.info("Finished scan of table " + gameFile.getAbsolutePath() + ", no ROM found" + "', took " + (System.currentTimeMillis() - start) + " ms.");
     }
     return result;
   }

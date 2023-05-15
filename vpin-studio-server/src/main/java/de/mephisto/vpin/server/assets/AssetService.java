@@ -200,12 +200,19 @@ public class AssetService {
     return assetRepository.findAll();
   }
 
-  public boolean delete(long id) {
-    Optional<Asset> byId = assetRepository.findById(id);
+  public boolean resetGameAssets(long gameId) {
+    Game game = gameService.getGame((int) gameId);
+
+    Optional<Asset> byId = assetRepository.findById(gameId);
     if (byId.isPresent()) {
       assetRepository.delete(byId.get());
+      LOG.info("Deleted assets for " + game.getGameDisplayName());
       return true;
     }
+
+    defaultPictureService.deleteDefaultPictures(game);
+    defaultPictureService.extractDefaultPicture(game);
+
     return false;
   }
 

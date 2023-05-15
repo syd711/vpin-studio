@@ -425,7 +425,7 @@ public class VPinStudioClient implements ObservedPropertyChangeListener, Overlay
     }
   }
 
-  public boolean deleteDefaultBackgroundFile(int gameId) {
+  public boolean regenerateGameAssets(int gameId) {
     try {
       restClient.delete(API + "assets/background/" + gameId);
       return true;
@@ -880,6 +880,10 @@ public class VPinStudioClient implements ObservedPropertyChangeListener, Overlay
 
   public ByteArrayInputStream getDefaultPicture(GameRepresentation game) {
     byte[] bytes = restClient.readBinary(API + "assets/defaultbackground/" + game.getId());
+    if(bytes == null) {
+      LOG.error("Failed to read image, using empty bytes.");
+      bytes = new byte[]{};
+    }
     return new ByteArrayInputStream(bytes);
   }
 
