@@ -365,6 +365,11 @@ public class VPinStudioClient implements ObservedPropertyChangeListener, Overlay
     return restTemplate.getForObject(restClient.getBaseUrl() + API + "system/logs", String.class);
   }
 
+  public boolean isLocal() {
+    String url = restClient.getBaseUrl();
+    return url.contains("localhost") || url.contains("127.0.0.1");
+  }
+
   public void shutdown() {
     final RestTemplate restTemplate = new RestTemplate();
     restTemplate.getForObject(restClient.getBaseUrl() + API + "system/shutdown", Boolean.class);

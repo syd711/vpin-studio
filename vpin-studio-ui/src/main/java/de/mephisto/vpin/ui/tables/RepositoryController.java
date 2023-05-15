@@ -3,6 +3,7 @@ package de.mephisto.vpin.ui.tables;
 import de.mephisto.vpin.commons.ArchiveSourceType;
 import de.mephisto.vpin.commons.utils.FileUtils;
 import de.mephisto.vpin.commons.utils.ImageUtil;
+import de.mephisto.vpin.commons.utils.SystemCommandExecutor;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.representations.ArchiveDescriptorRepresentation;
 import de.mephisto.vpin.restclient.representations.ArchiveSourceRepresentation;
@@ -33,6 +34,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.ByteArrayInputStream;
+import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.text.DateFormat;
@@ -58,6 +60,9 @@ public class RepositoryController implements Initializable, StudioEventListener 
 
   @FXML
   private Button downloadBtn;
+
+  @FXML
+  private Button vpbmBtbn;
 
   @FXML
   private TextField searchTextField;
@@ -114,6 +119,32 @@ public class RepositoryController implements Initializable, StudioEventListener 
   }
 
   @FXML
+  private void onVPBM() {
+    Platform.runLater(() -> {
+      vpbmBtbn.setDisable(true);
+    });
+
+    new Thread(()-> {
+      List<String> commands = Arrays.asList("vPinBackupManager.exe");
+      LOG.info("Executing vpbm: " + String.join(" ", commands));
+      File dir = new File("./resources/", "vpinzip");
+      SystemCommandExecutor executor = new SystemCommandExecutor(commands);
+      executor.setDir(dir);
+      executor.executeCommandAsync();
+    }).start();
+
+
+    Platform.runLater(() -> {
+      try {
+        Thread.sleep(2000);
+      } catch (InterruptedException e) {
+        //ignore
+      }
+      vpbmBtbn.setDisable(false);
+    });
+  }
+
+  @FXML
   private void onInstall() {
     ObservableList<ArchiveDescriptorRepresentation> selectedItems = tableView.getSelectionModel().getSelectedItems();
     if (!selectedItems.isEmpty()) {
@@ -156,17 +187,18 @@ public class RepositoryController implements Initializable, StudioEventListener 
 
   @FXML
   public void onReload() {
-    ArchiveSourceRepresentation selectedItem = sourceCombo.getSelectionModel().getSelectedItem();
-    if (selectedItem != null) {
-      client.invalidateArchiveCache(selectedItem.getId());
-    }
-    doReload();
+    doReload(true);
   }
 
   public void doReload() {
+    doReload(false);
+  }
+
+  public void doReload(boolean invalidate) {
     this.searchTextField.setDisable(true);
 
-    ArchiveDescriptorRepresentation selection = tableView.getSelectionModel().getSelectedItem();
+    ArchiveSourceRepresentation selectedItem = sourceCombo.getSelectionModel().getSelectedItem();
+    final ArchiveDescriptorRepresentation selection = tableView.getSelectionModel().getSelectedItem();
     tableView.getSelectionModel().clearSelection();
     boolean disable = selection == null;
     deleteBtn.setDisable(disable);
@@ -176,6 +208,10 @@ public class RepositoryController implements Initializable, StudioEventListener 
     tableStack.getChildren().add(loadingOverlay);
 
     new Thread(() -> {
+      if (selectedItem != null && invalidate) {
+        client.invalidateArchiveCache(selectedItem.getId());
+      }
+
       ArchiveSourceRepresentation value = sourceCombo.getValue();
       archives = client.getArchiveDescriptors(value.getId());
 
@@ -393,6 +429,8 @@ public class RepositoryController implements Initializable, StudioEventListener 
     installBtn.setDisable(true);
     downloadBtn.setDisable(true);
     copyToRepositoryBtn.setDisable(true);
+
+    vpbmBtbn.setDisable(sourceCombo.getValue().getId() == -1 || !client.isLocal());
 
     EventManager.getInstance().addListener(this);
     this.doReload();

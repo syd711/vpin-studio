@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import java.lang.String?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
@@ -8,12 +9,14 @@
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.control.ToolBar?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.text.Font?>
 <?import org.kordamp.ikonli.javafx.FontIcon?>
 
-<StackPane fx:id="tableStack" styleClass="base-component" stylesheets="@../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.tables.RepositoryController">
+<StackPane fx:id="tableStack" stylesheets="@../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.tables.RepositoryController">
     <children>
         <BorderPane>
             <center>
@@ -40,9 +43,9 @@
                         <Font name="System Bold" size="14.0" />
                      </font>
                   </Label>
-                  <ComboBox fx:id="sourceCombo" prefHeight="30.0" prefWidth="250.0" />
+                  <ComboBox fx:id="sourceCombo" prefHeight="30.0" prefWidth="220.0" />
                   <Separator layoutX="475.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
-                  <TextField fx:id="searchTextField" prefHeight="30.0" prefWidth="200.0" promptText="Search Repository...">
+                  <TextField fx:id="searchTextField" prefHeight="30.0" prefWidth="190.0" promptText="Search Repository...">
                      <font>
                         <Font size="14.0" />
                      </font>
@@ -54,6 +57,18 @@
                      </font>
                      <graphic>
                         <FontIcon iconColor="WHITE" iconLiteral="sil-reload" />
+                     </graphic>
+                  </Button>
+                  <Button fx:id="vpbmBtbn" layoutX="553.0" layoutY="11.0" mnemonicParsing="false" onAction="#onVPBM" text="VPBM" textFill="WHITE">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                     <graphic>
+                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../vpbm-128.png" />
+                           </image>
+                        </ImageView>
                      </graphic>
                   </Button>
                   <Separator orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
@@ -105,4 +120,8 @@
          </top>
         </BorderPane>
     </children>
+   <styleClass>
+      <String fx:value="media-parent" />
+      <String fx:value="base-component" />
+   </styleClass>
 </StackPane>
