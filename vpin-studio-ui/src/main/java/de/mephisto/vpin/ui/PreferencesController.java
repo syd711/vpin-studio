@@ -90,6 +90,11 @@ public class PreferencesController implements Initializable {
   }
 
   @FXML
+  private void onVPBM(ActionEvent event) throws IOException {
+    load("preference-vpbm.fxml", event);
+  }
+
+  @FXML
   private void onOverlay(ActionEvent event) throws IOException {
     load("preference-overlay.fxml", event);
   }

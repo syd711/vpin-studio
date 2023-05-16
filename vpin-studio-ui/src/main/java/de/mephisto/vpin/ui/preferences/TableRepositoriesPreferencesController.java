@@ -19,7 +19,7 @@ import java.util.ResourceBundle;
 
 import static de.mephisto.vpin.ui.Studio.client;
 
-public class VpaRepositoriesPreferencesController implements Initializable {
+public class TableRepositoriesPreferencesController implements Initializable {
   public final static long DEFAULT_VPA_SOURCE_ID = -1;
 
   @FXML
@@ -44,7 +44,7 @@ public class VpaRepositoriesPreferencesController implements Initializable {
   private void onEdit() {
     ArchiveSourceRepresentation selectedItem = tableView.getSelectionModel().getSelectedItem();
     if (selectedItem != null) {
-      if (selectedItem.getId() == DEFAULT_VPA_SOURCE_ID) {
+      if (selectedItem.getId() < 0) {
         return;
       }
 
@@ -134,7 +134,7 @@ public class VpaRepositoriesPreferencesController implements Initializable {
     });
 
     tableView.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
-      boolean disable = newSelection == null || newSelection.getId() == -1;
+      boolean disable = newSelection == null || newSelection.getId() < 0;
       deleteBtn.setDisable(disable);
       editBtn.setDisable(disable);
     });

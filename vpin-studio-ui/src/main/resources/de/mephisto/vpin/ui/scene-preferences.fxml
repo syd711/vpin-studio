@@ -94,26 +94,6 @@
                               <Insets top="4.0" />
                            </VBox.margin>
                         </Button>
-                        <Label alignment="BASELINE_LEFT" layoutX="160.0" layoutY="256.0" styleClass="preference-section" text="TABLE MANAGEMENT">
-                           <font>
-                              <Font size="13.0" />
-                           </font>
-                           <VBox.margin>
-                              <Insets top="24.0" />
-                           </VBox.margin>
-                        </Label>
-                        <Button alignment="BASELINE_LEFT" contentDisplay="RIGHT" layoutX="160.0" layoutY="709.0" mnemonicParsing="false" onAction="#onVpaRepositories" styleClass="preference-button" text="Repositories" />
-                        <Button alignment="BASELINE_LEFT" contentDisplay="RIGHT" layoutX="160.0" layoutY="319.0" mnemonicParsing="false" onAction="#onArchiveManager" styleClass="preference-button" text="Table Manager" />
-                        <Label alignment="BASELINE_LEFT" layoutX="160.0" layoutY="470.0" styleClass="preference-section" text="SERVICE PREFERENCES">
-                           <font>
-                              <Font size="13.0" />
-                           </font>
-                           <VBox.margin>
-                              <Insets top="24.0" />
-                           </VBox.margin>
-                        </Label>
-                        <Button alignment="BASELINE_LEFT" contentDisplay="RIGHT" layoutX="160.0" layoutY="623.0" mnemonicParsing="false" onAction="#onServiceOptions" styleClass="preference-button" text="Service Options" />
-                        <Button alignment="BASELINE_LEFT" contentDisplay="RIGHT" layoutX="160.0" layoutY="500.0" mnemonicParsing="false" onAction="#onServiceInfo" styleClass="preference-button" text="Service Info" />
                         <Label alignment="BASELINE_LEFT" layoutX="160.0" layoutY="560.0" styleClass="preference-section" text="DISCORD INTEGRATION">
                            <font>
                               <Font size="13.0" />
@@ -124,6 +104,27 @@
                         </Label>
                         <Button alignment="BASELINE_LEFT" contentDisplay="RIGHT" layoutX="160.0" layoutY="672.0" mnemonicParsing="false" onAction="#onDiscordBot" styleClass="preference-button" text="Bot Settings" />
                         <Button alignment="BASELINE_LEFT" contentDisplay="RIGHT" layoutX="160.0" layoutY="832.0" mnemonicParsing="false" onAction="#onDiscordBotFaq" styleClass="preference-button" text="Bot FAQ" />
+                        <Label alignment="BASELINE_LEFT" layoutX="160.0" layoutY="256.0" styleClass="preference-section" text="TABLE MANAGEMENT">
+                           <font>
+                              <Font size="13.0" />
+                           </font>
+                           <VBox.margin>
+                              <Insets top="24.0" />
+                           </VBox.margin>
+                        </Label>
+                        <Button alignment="BASELINE_LEFT" contentDisplay="RIGHT" layoutX="160.0" layoutY="709.0" mnemonicParsing="false" onAction="#onVpaRepositories" styleClass="preference-button" text="Repositories" />
+                        <Button alignment="BASELINE_LEFT" contentDisplay="RIGHT" layoutX="160.0" layoutY="319.0" mnemonicParsing="false" onAction="#onArchiveManager" styleClass="preference-button" text="Table Manager" />
+                        <Button alignment="BASELINE_LEFT" contentDisplay="RIGHT" layoutX="160.0" layoutY="864.0" mnemonicParsing="false" onAction="#onVPBM" styleClass="preference-button" text="Visual Pinball Backup Manager" />
+                        <Label alignment="BASELINE_LEFT" layoutX="160.0" layoutY="470.0" styleClass="preference-section" text="SERVICE PREFERENCES">
+                           <font>
+                              <Font size="13.0" />
+                           </font>
+                           <VBox.margin>
+                              <Insets top="24.0" />
+                           </VBox.margin>
+                        </Label>
+                        <Button alignment="BASELINE_LEFT" contentDisplay="RIGHT" layoutX="160.0" layoutY="623.0" mnemonicParsing="false" onAction="#onServiceOptions" styleClass="preference-button" text="Service Options" />
+                        <Button alignment="BASELINE_LEFT" contentDisplay="RIGHT" layoutX="160.0" layoutY="500.0" mnemonicParsing="false" onAction="#onServiceInfo" styleClass="preference-button" text="Service Info" />
                      </children>
                      <opaqueInsets>
                         <Insets />

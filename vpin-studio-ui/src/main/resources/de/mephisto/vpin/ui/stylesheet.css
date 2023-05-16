@@ -91,7 +91,7 @@
     -fx-font-color: -fx-base-2;
     -fx-text-fill: -fx-base-2;
     -fx-font-size : 13px;
-    -fx-padding: 0 12 6 10;
+    -fx-padding: 0 8 3 6;
     -fx-pref-width: 250;
  }
 
@@ -131,6 +131,7 @@
     -fx-background-radius: 4 4 4 4;
     -fx-text-fill: -fx-font-1;
     -fx-pref-width: 250;
+    -fx-padding: 6px;
 }
 
 .preference-button:hover {
