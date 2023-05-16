@@ -280,7 +280,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
     }
 
     Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, title,
-        "Re-scanning will overwrite some of the existing metadata properties.");
+        "Re-scanning will overwrite some of the existing metadata properties.", null, "Start Scan");
     if (result.isPresent() && result.get().equals(ButtonType.OK)) {
       Dialogs.createProgressDialog(new TableScanProgressModel("Scanning Tables", selectedItems));
       this.onReload();

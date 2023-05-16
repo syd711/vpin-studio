@@ -241,7 +241,7 @@ public class RepositoryController implements Initializable, StudioEventListener 
   private void onDelete() {
     ArchiveDescriptorRepresentation selection = tableView.getSelectionModel().getSelectedItem();
     if (selection != null) {
-      Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Delete Archive '" + selection.getFilename() + "'?");
+      Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Delete Archive '" + selection.getFilename() + "'?", null , null, "Delete");
       if (result.isPresent() && result.get().equals(ButtonType.OK)) {
         try {
           client.deleteArchive(selection.getSource().getId(), selection.getFilename());
