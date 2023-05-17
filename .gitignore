@@ -85,3 +85,4 @@ yarn-error.log*
 /resources/archives/descriptor.json
 /**/Thumbs.db
 /vpin-studio-server/resources/system.properties
+/resources/archives/**
