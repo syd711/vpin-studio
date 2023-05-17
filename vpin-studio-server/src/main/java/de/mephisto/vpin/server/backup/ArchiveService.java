@@ -190,9 +190,7 @@ public class ArchiveService implements InitializingBean {
 
     //VPINZIP
     if(systemService.getArchiveType().equals(ArchiveType.VPINZIP)) {
-      //TODO
-//      File vpinzipArchiveFolder = new File(systemService.getBackupManagerInstallationFolder().getParentFile(), "backups/Visual Pinball X/");
-      File vpinzipArchiveFolder = new File("C:\\vPinball\\backups\\Visual Pinball X\\");
+      File vpinzipArchiveFolder = new File(systemService.getVpaArchiveFolder(), "backups/Visual Pinball X/");
       ArchiveSource archiveSource = new VpinzipArchiveSource(vpinzipArchiveFolder);
       this.defaultArchiveSourceAdapter = new VpinzipArchiveSourceAdapter(archiveSource);
       this.adapterCache.put(archiveSource.getId(), this.defaultArchiveSourceAdapter);

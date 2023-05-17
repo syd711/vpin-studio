@@ -252,7 +252,6 @@ public class TableBackupAdapterVpa implements TableBackupAdapter, Job {
       else {
         LOG.error("Final renaming export file to " + target.getAbsolutePath() + " failed.");
       }
-      archiveSourceAdapter.invalidate();
     }
 
     archiveDescriptor.setSize(target.length());

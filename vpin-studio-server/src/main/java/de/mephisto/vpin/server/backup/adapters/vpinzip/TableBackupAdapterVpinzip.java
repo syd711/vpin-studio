@@ -115,7 +115,6 @@ public class TableBackupAdapterVpinzip implements TableBackupAdapter, Job {
 
     progress = 100;
 
-    archiveSourceAdapter.invalidate();
     return archiveDescriptor;
   }
 

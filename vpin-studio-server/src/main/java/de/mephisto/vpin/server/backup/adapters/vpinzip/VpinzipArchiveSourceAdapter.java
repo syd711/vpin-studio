@@ -65,19 +65,20 @@ public class VpinzipArchiveSourceAdapter implements ArchiveSourceAdapter {
   @Override
   public boolean delete(ArchiveDescriptor descriptor) {
     File file = new File(archiveFolder, descriptor.getFilename());
+    boolean result = true;
     if (!file.delete()) {
       LOG.error("Failed to delete " + file.getAbsolutePath());
-      return false;
+      result = false;
     }
 
     File descriptorFile = new File(archiveFolder, FilenameUtils.getBaseName(descriptor.getFilename()) + ".json");
     if (!descriptorFile.delete()) {
       LOG.error("Failed to delete " + descriptorFile.getAbsolutePath());
-      return false;
+      result = false;
     }
 
     this.invalidate();
-    return true;
+    return result;
   }
 
   @Override

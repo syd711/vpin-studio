@@ -1,7 +1,7 @@
 {
   "VpinballBasePath": "C:\\vPinball",
-  "BackupPath": "C:\\vPinball\\backups",
-  "ExportPath": "C:\\vPinball\\exports",
+  "BackupPath": "E:\\Development\\workspace\\vpin-studio\\.\\resources\\archives\\backups",
+  "ExportPath": "E:\\Development\\workspace\\vpin-studio\\.\\resources\\archives\\exports",
 
   "Emulators": [
     {
