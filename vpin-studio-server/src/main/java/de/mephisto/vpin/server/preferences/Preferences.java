@@ -42,7 +42,27 @@ public class Preferences {
 
   private String discordBotAllowList;
 
+  private String vpbmInternalHostId;
+
+  private String vpbmExternalHostId;
+
   private String rankingPoints;
+
+  public String getVpbmInternalHostId() {
+    return vpbmInternalHostId;
+  }
+
+  public void setVpbmInternalHostId(String vpbmInternalHostId) {
+    this.vpbmInternalHostId = vpbmInternalHostId;
+  }
+
+  public String getVpbmExternalHostId() {
+    return vpbmExternalHostId;
+  }
+
+  public void setVpbmExternalHostId(String vpbmExternalHostId) {
+    this.vpbmExternalHostId = vpbmExternalHostId;
+  }
 
   @Column(length = 1024)
   private String highscoreTitles;

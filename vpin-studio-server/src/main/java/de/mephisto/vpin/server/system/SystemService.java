@@ -53,7 +53,6 @@ public class SystemService extends SystemInfo implements InitializingBean {
   private File pinUPSystemInstallationFolder;
   private File visualPinballInstallationFolder;
   private File futurePinballInstallationFolder;
-  private File backupManagerInstallationFolder;
   private File vpxTablesFolder;
   private File mameFolder;
   private File userFolder;
@@ -137,9 +136,6 @@ public class SystemService extends SystemInfo implements InitializingBean {
         this.userFolder = new File(store.get(USER_DIR));
       }
 
-      //Backup Manager Folder
-      this.backupManagerInstallationFolder = new File(RESOURCES, "Virtual Pinball Backup Manager");
-
 
       if (!getB2SImageExtractionFolder().exists()) {
         boolean mkdirs = getB2SImageExtractionFolder().mkdirs();
@@ -208,7 +204,6 @@ public class SystemService extends SystemInfo implements InitializingBean {
     LOG.info(formatPathLog("B2S Extraction Folder", this.getB2SImageExtractionFolder()));
     LOG.info(formatPathLog("B2S Cropped Folder", this.getB2SCroppedImageFolder()));
     LOG.info(formatPathLog("VPX Files", String.valueOf(this.getVPXTables().length)));
-    LOG.info(formatPathLog("Backup Manager", this.getBackupManagerInstallationFolder()));
     LOG.info(formatPathLog("Service Version", VPinStudioServer.class.getPackage().getImplementationVersion()));
     LOG.info("*******************************************************************************************************");
   }
@@ -260,10 +255,6 @@ public class SystemService extends SystemInfo implements InitializingBean {
 
   private String formatPathLog(String label, File file) {
     return formatPathLog(label, file.getAbsolutePath(), file.exists(), file.canRead());
-  }
-
-  public File getBackupManagerInstallationFolder() {
-    return backupManagerInstallationFolder;
   }
 
   public boolean isAltSoundEnabled(@Nullable String rom) {

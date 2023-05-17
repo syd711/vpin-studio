@@ -18,4 +18,6 @@ public interface PreferenceNames {
   String RANKING_POINTS = "rankingPoints";
   String ACTIVE_GAME = "activeGame";
   String PREVIEW_ENABLED = "previewEnabled";
+  String VPBM_INTERNAL_HOST_IDENTIFIER = "vpbmInternalHostId";
+  String VPBM_EXTERNAL_HOST_IDENTIFIER = "vpbmExternalHostId";
 }

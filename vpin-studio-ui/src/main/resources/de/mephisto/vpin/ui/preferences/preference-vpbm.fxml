@@ -24,7 +24,7 @@
                   <Insets />
                </VBox.margin>
             </Label>
-            <Label styleClass="preference-description" text="The VPin Studio uses the &quot;Visual Pinball Backup Manager&quot; to create and restore backups." textFill="WHITE">
+            <Label styleClass="preference-description" text="The VPin Studio uses an embedded version of the &quot;Visual Pinball Backup Manager&quot; to create and restore backups." textFill="WHITE">
                <VBox.margin>
                   <Insets top="24.0" />
                </VBox.margin>
@@ -45,7 +45,7 @@
                   <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                </rowConstraints>
                <children>
-                  <Label prefHeight="20.0" styleClass="preference-label" text="Export Host Identifier:" textFill="WHITE">
+                  <Label prefHeight="20.0" styleClass="preference-label" text="External Host Identifier:" textFill="WHITE">
                      <font>
                         <Font size="14.0" />
                      </font>
@@ -55,7 +55,7 @@
                         <Font size="14.0" />
                      </font>
                   </Label>
-                  <TextField fx:id="vpinNameText" prefWidth="800.0" GridPane.columnIndex="1">
+                  <TextField fx:id="externalHostText" prefWidth="800.0" GridPane.columnIndex="1">
                      <font>
                         <Font size="14.0" />
                      </font>
@@ -65,7 +65,7 @@
                         <Font size="14.0" />
                      </font>
                   </Label>
-                  <TextField fx:id="vpinNameText1" layoutX="192.0" layoutY="10.0" prefWidth="800.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                  <TextField fx:id="thisHostText" layoutX="192.0" layoutY="10.0" prefWidth="800.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
                      <font>
                         <Font size="14.0" />
                      </font>
@@ -114,14 +114,14 @@
                               <Insets left="3.0" />
                            </VBox.margin>
                         </Label>
-                        <Hyperlink text="https://github.com/mmattner/vPinBackupManagerApp/" textFill="WHITE">
+                        <Hyperlink onAction="#onVPBMLink" text="https://github.com/mmattner/vPinBackupManagerApp/" textFill="WHITE">
                            <font>
                               <Font size="14.0" />
                            </font>
                         </Hyperlink>
                      </children>
                   </VBox>
-                  <Button mnemonicParsing="false" text="VPBM" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                  <Button fx:id="vpbmBtbn" mnemonicParsing="false" onAction="#onVPBM" text="VPBM" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="1">
                      <font>
                         <Font size="14.0" />
                      </font>
