@@ -1,7 +1,7 @@
 package de.mephisto.vpin.tablemanager.states;
 
 import de.mephisto.vpin.restclient.VPinStudioClient;
-import de.mephisto.vpin.restclient.descriptors.ArchiveInstallDescriptor;
+import de.mephisto.vpin.restclient.descriptors.ArchiveRestoreDescriptor;
 import de.mephisto.vpin.restclient.representations.PlaylistRepresentation;
 import de.mephisto.vpin.restclient.representations.ArchiveDescriptorRepresentation;
 import de.mephisto.vpin.tablemanager.Menu;
@@ -24,7 +24,7 @@ public class InstallingMenuState extends MenuState {
     this.menuController = menuController;
     this.playlist = playlist;
     this.menuController.enterInstalling();
-    this.menuController.setNameLabelText("Installing, please wait...");
+    this.menuController.setNameLabelText("Restoring, please wait...");
 
     StateMananger.getInstance().setInputBlocked(true);
     executeInstallation();
@@ -59,7 +59,7 @@ public class InstallingMenuState extends MenuState {
     new Thread(() -> {
       ArchiveDescriptorRepresentation archiveDescriptor = this.menuController.getArchiveSelection();
 
-      ArchiveInstallDescriptor descriptor = new ArchiveInstallDescriptor();
+      ArchiveRestoreDescriptor descriptor = new ArchiveRestoreDescriptor();
       descriptor.setArchiveSourceId(archiveDescriptor.getSource().getId());
       descriptor.setFilename(archiveDescriptor.getFilename());
 

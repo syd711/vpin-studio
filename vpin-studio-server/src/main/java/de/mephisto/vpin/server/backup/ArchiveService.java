@@ -7,6 +7,7 @@ import de.mephisto.vpin.server.backup.adapters.vpa.VpaArchiveSource;
 import de.mephisto.vpin.server.backup.adapters.vpa.VpaArchiveSourceAdapter;
 import de.mephisto.vpin.server.backup.adapters.vpinzip.VpinzipArchiveSource;
 import de.mephisto.vpin.server.backup.adapters.vpinzip.VpinzipArchiveSourceAdapter;
+import de.mephisto.vpin.server.backup.adapters.vpinzip.Vpinzip;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameService;
 import de.mephisto.vpin.server.system.SystemService;
@@ -44,7 +45,7 @@ public class ArchiveService implements InitializingBean {
 
     return getArchiveDescriptors().stream().filter(ArchiveDescriptor -> {
       TableDetails manifest = ArchiveDescriptor.getTableDetails();
-      if(manifest == null) {
+      if (manifest == null) {
         return false;
       }
       return (manifest.getGameName() != null && manifest.getGameName().equals(game.getGameDisplayName())) ||
@@ -182,15 +183,15 @@ public class ArchiveService implements InitializingBean {
   @Override
   public void afterPropertiesSet() {
     //VPA
-    if(systemService.getArchiveType().equals(ArchiveType.VPA)) {
+    if (systemService.getArchiveType().equals(ArchiveType.VPA)) {
       ArchiveSource archiveSource = new VpaArchiveSource(systemService.getVpaArchiveFolder());
       this.defaultArchiveSourceAdapter = new VpaArchiveSourceAdapter(archiveSource);
       this.adapterCache.put(archiveSource.getId(), this.defaultArchiveSourceAdapter);
     }
 
     //VPINZIP
-    if(systemService.getArchiveType().equals(ArchiveType.VPINZIP)) {
-      File vpinzipArchiveFolder = new File(systemService.getVpaArchiveFolder(), "backups/Visual Pinball X/");
+    if (systemService.getArchiveType().equals(ArchiveType.VPINZIP)) {
+      File vpinzipArchiveFolder = Vpinzip.getArchiveFolder(systemService);
       ArchiveSource archiveSource = new VpinzipArchiveSource(vpinzipArchiveFolder);
       this.defaultArchiveSourceAdapter = new VpinzipArchiveSourceAdapter(archiveSource);
       this.adapterCache.put(archiveSource.getId(), this.defaultArchiveSourceAdapter);

@@ -155,8 +155,8 @@ public class Dialogs {
   }
 
   public static void openTableInstallationDialog(TablesController tablesController, List<ArchiveDescriptorRepresentation> descriptorRepresentations) {
-    Stage stage = createStudioDialogStage(TableInstallFromBackController.class, "dialog-table-install.fxml", "Install Tables");
-    TableInstallFromBackController controller = (TableInstallFromBackController) stage.getUserData();
+    Stage stage = createStudioDialogStage(TableRestoreFromBackController.class, "dialog-table-restore.fxml", "Restore Tables");
+    TableRestoreFromBackController controller = (TableRestoreFromBackController) stage.getUserData();
     controller.setData(tablesController, descriptorRepresentations);
     stage.showAndWait();
   }

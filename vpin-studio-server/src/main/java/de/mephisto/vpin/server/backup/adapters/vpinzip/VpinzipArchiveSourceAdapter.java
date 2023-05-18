@@ -28,7 +28,6 @@ public class VpinzipArchiveSourceAdapter implements ArchiveSourceAdapter {
   public VpinzipArchiveSourceAdapter(ArchiveSource source) {
     this.source = source;
     this.archiveFolder = new File(source.getLocation());
-    LOG.info("Created Vpinzip archive adapter for folder " + this.archiveFolder.getAbsolutePath());
   }
 
   public File getFolder() {

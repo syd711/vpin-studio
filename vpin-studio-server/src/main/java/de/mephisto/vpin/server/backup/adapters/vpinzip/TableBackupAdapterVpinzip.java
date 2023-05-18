@@ -1,12 +1,10 @@
 package de.mephisto.vpin.server.backup.adapters.vpinzip;
 
-import de.mephisto.vpin.commons.utils.SystemCommandExecutor;
 import de.mephisto.vpin.restclient.ArchivePackageInfo;
 import de.mephisto.vpin.restclient.Job;
 import de.mephisto.vpin.restclient.PopperScreen;
 import de.mephisto.vpin.restclient.TableDetails;
 import de.mephisto.vpin.server.backup.ArchiveDescriptor;
-import de.mephisto.vpin.server.backup.ArchiveSource;
 import de.mephisto.vpin.server.backup.ArchiveSourceAdapter;
 import de.mephisto.vpin.server.backup.ArchiveUtil;
 import de.mephisto.vpin.server.backup.adapters.TableBackupAdapter;
@@ -14,15 +12,11 @@ import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.popper.GameMediaItem;
 import de.mephisto.vpin.server.system.SystemService;
 import edu.umd.cs.findbugs.annotations.NonNull;
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
-import java.io.IOException;
-import java.util.Arrays;
 import java.util.Date;
-import java.util.List;
 
 public class TableBackupAdapterVpinzip implements TableBackupAdapter, Job {
   private final static Logger LOG = LoggerFactory.getLogger(TableBackupAdapterVpinzip.class);
@@ -65,29 +59,8 @@ public class TableBackupAdapterVpinzip implements TableBackupAdapter, Job {
 
     status = "Creating backup of \"" + game.getGameDisplayName() + "\"";
 
-    try {
-      refreshManifestData();
-
-      File dir = new File(systemService.RESOURCES, VpinzipArchiveSource.FOLDER_NAME);
-      List<String> commands = Arrays.asList("vPinBackupManager.exe", "-b", String.valueOf(game.getId()));
-
-      LOG.info("Executing backup command: " + String.join(" ", commands));
-      SystemCommandExecutor executor = new SystemCommandExecutor(commands);
-      executor.enableLogging(true);
-      executor.setDir(dir);
-      StringBuilder standardOutputFromCommand = executor.getStandardOutputFromCommand();
-      StringBuilder standardErrorFromCommand = executor.getStandardErrorFromCommand();
-      if (!StringUtils.isEmpty(standardErrorFromCommand.toString())) {
-        LOG.error("Vpinzip Command Error:\n" + standardErrorFromCommand);
-      }
-      if (!StringUtils.isEmpty(standardOutputFromCommand.toString())) {
-        LOG.info("Vpinzip Command StdOut:\n" + standardOutputFromCommand);
-      }
-      executor.executeCommand();
-    } catch (Exception e) {
-      LOG.error("Failed to execute vpinzip back job: " + e.getMessage(), e);
-      return null;
-    }
+    Vpinzip.refresh().execute();
+    Vpinzip.backup(game.getId()).execute();
 
     File archiveFile = new File(this.archiveSourceAdapter.getArchiveSource().getLocation(), tableDetails.getGameName() + ".vpinzip");
 
@@ -99,7 +72,7 @@ public class TableBackupAdapterVpinzip implements TableBackupAdapter, Job {
 
     File wheelIcon = null;
     GameMediaItem gameMediaItem = game.getGameMedia().get(PopperScreen.Wheel);
-    if(gameMediaItem != null) {
+    if (gameMediaItem != null) {
       wheelIcon = gameMediaItem.getFile();
     }
 
@@ -116,23 +89,5 @@ public class TableBackupAdapterVpinzip implements TableBackupAdapter, Job {
     progress = 100;
 
     return archiveDescriptor;
-  }
-
-  private static void refreshManifestData() throws IOException, InterruptedException {
-    LOG.info("Refreshing manifest data.");
-    File dir = new File(SystemService.RESOURCES, VpinzipArchiveSource.FOLDER_NAME);
-    List<String> commands = Arrays.asList("vPinBackupManager.exe", "-g");
-    SystemCommandExecutor executor = new SystemCommandExecutor(commands);
-    executor.setDir(dir);
-    StringBuilder standardOutputFromCommand = executor.getStandardOutputFromCommand();
-    StringBuilder standardErrorFromCommand = executor.getStandardErrorFromCommand();
-    if (!StringUtils.isEmpty(standardErrorFromCommand.toString())) {
-      LOG.error("Vpinzip Command Error:\n" + standardErrorFromCommand);
-    }
-    if (!StringUtils.isEmpty(standardOutputFromCommand.toString())) {
-      LOG.info("Vpinzip Command StdOut:\n" + standardOutputFromCommand);
-    }
-    executor.executeCommand();
-    LOG.info("Refreshing manifest data finished.");
   }
 }

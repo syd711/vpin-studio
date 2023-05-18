@@ -1,6 +1,6 @@
 package de.mephisto.vpin.restclient.descriptors;
 
-public class ArchiveInstallDescriptor {
+public class ArchiveRestoreDescriptor {
   private int playlistId = -1;
   private long archiveSourceId;
   private String filename;

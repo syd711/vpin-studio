@@ -2,7 +2,7 @@ package de.mephisto.vpin.ui.tables.dialogs;
 
 import de.mephisto.vpin.commons.fx.DialogController;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
-import de.mephisto.vpin.restclient.descriptors.ArchiveInstallDescriptor;
+import de.mephisto.vpin.restclient.descriptors.ArchiveRestoreDescriptor;
 import de.mephisto.vpin.restclient.representations.ArchiveDescriptorRepresentation;
 import de.mephisto.vpin.restclient.representations.PlaylistRepresentation;
 import de.mephisto.vpin.ui.Studio;
@@ -27,8 +27,8 @@ import java.util.ResourceBundle;
 
 import static de.mephisto.vpin.ui.Studio.client;
 
-public class TableInstallFromBackController implements Initializable, DialogController {
-  private final static Logger LOG = LoggerFactory.getLogger(TableInstallFromBackController.class);
+public class TableRestoreFromBackController implements Initializable, DialogController {
+  private final static Logger LOG = LoggerFactory.getLogger(TableRestoreFromBackController.class);
 
   @FXML
   private Label titleLabel;
@@ -41,10 +41,10 @@ public class TableInstallFromBackController implements Initializable, DialogCont
 
   @FXML
   private void onImport(ActionEvent e) {
-    ArchiveInstallDescriptor installDescriptor = new ArchiveInstallDescriptor();
+    ArchiveRestoreDescriptor restoreDescriptor = new ArchiveRestoreDescriptor();
 
     if (!this.playlistCombo.getSelectionModel().isEmpty()) {
-      installDescriptor.setPlaylistId(this.playlistCombo.getSelectionModel().getSelectedItem().getId());
+      restoreDescriptor.setPlaylistId(this.playlistCombo.getSelectionModel().getSelectedItem().getId());
     }
 
     Stage stage = (Stage) ((Button) e.getSource()).getScene().getWindow();
@@ -54,14 +54,14 @@ public class TableInstallFromBackController implements Initializable, DialogCont
       Platform.runLater(() -> {
         try {
           for (ArchiveDescriptorRepresentation archiveDescriptor : this.archiveDescriptors) {
-            installDescriptor.setFilename(archiveDescriptor.getFilename());
-            installDescriptor.setArchiveSourceId(archiveDescriptor.getSource().getId());
-            client.installTable(installDescriptor);
+            restoreDescriptor.setFilename(archiveDescriptor.getFilename());
+            restoreDescriptor.setArchiveSourceId(archiveDescriptor.getSource().getId());
+            client.installTable(restoreDescriptor);
           }
           JobPoller.getInstance().setPolling();
         } catch (Exception ex) {
-          LOG.error("Failed to import: " + ex.getMessage(), ex);
-          WidgetFactory.showAlert(Studio.stage, "Import Failed", "Failed to trigger import: " + ex.getMessage());
+          LOG.error("Failed to restore: " + ex.getMessage(), ex);
+          WidgetFactory.showAlert(Studio.stage, "Restore Failed", "Failed to trigger import: " + ex.getMessage());
         }
 
       });
@@ -90,9 +90,9 @@ public class TableInstallFromBackController implements Initializable, DialogCont
   public void setData(TablesController tablesController, List<ArchiveDescriptorRepresentation> archiveDescriptors) {
     this.archiveDescriptors = archiveDescriptors;
 
-    String title = "Installing " + this.archiveDescriptors.size() + " Tables";
+    String title = "Restore " + this.archiveDescriptors.size() + " Tables";
     if (this.archiveDescriptors.size() == 1) {
-      title = "Installing \"" + this.archiveDescriptors.get(0).getTableDetails().getGameDisplayName() + "\"";
+      title = "Restore \"" + this.archiveDescriptors.get(0).getTableDetails().getGameDisplayName() + "\"";
     }
     titleLabel.setText(title);
   }

@@ -3,7 +3,7 @@ package de.mephisto.vpin.server.io;
 import de.mephisto.vpin.restclient.JobType;
 import de.mephisto.vpin.restclient.PopperScreen;
 import de.mephisto.vpin.restclient.descriptors.ArchiveDownloadDescriptor;
-import de.mephisto.vpin.restclient.descriptors.ArchiveInstallDescriptor;
+import de.mephisto.vpin.restclient.descriptors.ArchiveRestoreDescriptor;
 import de.mephisto.vpin.restclient.descriptors.BackupDescriptor;
 import de.mephisto.vpin.restclient.descriptors.JobDescriptor;
 import de.mephisto.vpin.server.backup.*;
@@ -52,7 +52,7 @@ public class IOService {
   @Autowired
   private TableInstallerAdapterFactory tableInstallerAdapterFactory;
 
-  public boolean installArchive(@NonNull ArchiveInstallDescriptor installDescriptor) {
+  public boolean installArchive(@NonNull ArchiveRestoreDescriptor installDescriptor) {
     try {
       ArchiveDescriptor archiveDescriptor = archiveService.getArchiveDescriptor(installDescriptor.getArchiveSourceId(), installDescriptor.getFilename());
 
@@ -63,7 +63,7 @@ public class IOService {
       TableInstallerAdapter adapter = tableInstallerAdapterFactory.createAdapter(archiveDescriptor);
 
       ArchiveInstallerJob job = new ArchiveInstallerJob(adapter, archiveDescriptor, pinUPConnector, cardService, installDescriptor);
-      jobDescriptor.setDescription("Installing \"" + archiveDescriptor.getTableDetails().getGameDisplayName() + "\"");
+      jobDescriptor.setDescription("Restoring \"" + archiveDescriptor.getTableDetails().getGameDisplayName() + "\"");
       jobDescriptor.setJob(job);
 
       JobQueue.getInstance().offer(jobDescriptor);

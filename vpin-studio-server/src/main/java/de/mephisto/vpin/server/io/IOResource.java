@@ -2,7 +2,7 @@ package de.mephisto.vpin.server.io;
 
 import de.mephisto.vpin.restclient.descriptors.ArchiveDownloadDescriptor;
 import de.mephisto.vpin.restclient.descriptors.BackupDescriptor;
-import de.mephisto.vpin.restclient.descriptors.ArchiveInstallDescriptor;
+import de.mephisto.vpin.restclient.descriptors.ArchiveRestoreDescriptor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,7 +24,7 @@ public class IOResource {
   }
 
   @PostMapping("/install")
-  public Boolean installArchive(@RequestBody ArchiveInstallDescriptor descriptor) {
+  public Boolean installArchive(@RequestBody ArchiveRestoreDescriptor descriptor) {
     return ioService.installArchive(descriptor);
   }
 

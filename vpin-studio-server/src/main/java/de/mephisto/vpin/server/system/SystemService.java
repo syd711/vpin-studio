@@ -8,6 +8,7 @@ import de.mephisto.vpin.restclient.RestClient;
 import de.mephisto.vpin.server.VPinStudioException;
 import de.mephisto.vpin.server.VPinStudioServer;
 import de.mephisto.vpin.server.backup.adapters.ArchiveType;
+import de.mephisto.vpin.server.backup.adapters.vpinzip.Vpinzip;
 import de.mephisto.vpin.server.resources.ResourceLoader;
 import de.mephisto.vpin.server.util.SystemUtil;
 import edu.umd.cs.findbugs.annotations.NonNull;
@@ -42,9 +43,7 @@ public class SystemService extends SystemInfo implements InitializingBean {
   private final static String VPREG_STG = "VPReg.stg";
   public static final String SOUND_MODE = "sound_mode";
 
-
   public static String PINEMHI_FOLDER = RESOURCES + "pinemhi";
-  public static String VPINZIP_FOLDER = RESOURCES + "vpinzip";
   public static String ARCHIVES_FOLDER = RESOURCES + "archives";
   private final static String PINEMHI_COMMAND = "PINemHi.exe";
   private final static String PINEMHI_INI = "pinemhi.ini";
@@ -75,7 +74,7 @@ public class SystemService extends SystemInfo implements InitializingBean {
     if (!getVisualPinballInstallationFolder().exists()) {
       throw new FileNotFoundException("Wrong Visual Pinball installation folder: " + getVisualPinballInstallationFolder().getAbsolutePath() + ".\nPlease fix the Visual Pinball installation path in file ./resources/system.properties");
     }
-    initVPBMFolders();
+    Vpinzip.initVPBMFolders(this);
     logSystemInfo();
   }
 
@@ -209,59 +208,6 @@ public class SystemService extends SystemInfo implements InitializingBean {
     LOG.info(formatPathLog("VPX Files", String.valueOf(this.getVPXTables().length)));
     LOG.info(formatPathLog("Service Version", VPinStudioServer.class.getPackage().getImplementationVersion()));
     LOG.info("*******************************************************************************************************");
-  }
-
-  private void initVPBMFolders() throws Exception {
-    try {
-      File vpinzipFolder = new File(VPINZIP_FOLDER);
-      File configJson = new File(vpinzipFolder, "vPinBackupManager.json");
-      File archives = new File(ARCHIVES_FOLDER);
-      archives.mkdirs();
-
-      File backupFolder = new File(ARCHIVES_FOLDER, "backups");
-      backupFolder.mkdirs();
-      File exportFolder = new File(ARCHIVES_FOLDER, "exports");
-      exportFolder.mkdirs();
-
-      if (!configJson.exists()) {
-        throw new FileNotFoundException(VPINZIP_FOLDER + " file (" + configJson.getAbsolutePath() + ") not found.");
-      }
-
-      FileInputStream fileInputStream = new FileInputStream(configJson);
-      java.util.List<String> lines = IOUtils.readLines(fileInputStream, StandardCharsets.UTF_8);
-      fileInputStream.close();
-
-      boolean writeUpdates = false;
-      List<String> updatedLines = new ArrayList<>();
-      for (String line : lines) {
-        if (line.contains("VpinballBasePath") && line.contains("%s")) {
-          line = String.format(line, getVisualPinballInstallationFolder().getParentFile().getAbsolutePath()).replace("\\", "\\\\");
-          writeUpdates = true;
-        }
-        else if (line.contains("BackupPath") && line.contains("%s")) {
-          line = String.format(line, backupFolder.getAbsolutePath()).replace("\\", "\\\\");
-          writeUpdates = true;
-        }
-        else if (line.contains("ExportPath") && line.contains("%s")) {
-          line = String.format(line, exportFolder.getAbsolutePath()).replace("\\", "\\\\");
-          writeUpdates = true;
-        }
-        updatedLines.add(line);
-      }
-
-      if (writeUpdates) {
-        FileOutputStream out = new FileOutputStream(configJson);
-        IOUtils.writeLines(updatedLines, "\n", out, StandardCharsets.UTF_8);
-        out.close();
-        LOG.info("Written updates to " + configJson.getAbsolutePath());
-      }
-
-      LOG.info("Finished vpbm installation check.");
-    } catch (Exception e) {
-      String msg = "Failed to run installation for vpbm: " + e.getMessage();
-      LOG.error(msg, e);
-      throw new VPinStudioException(msg, e);
-    }
   }
 
   private void initPinemHiFolders() throws VPinStudioException {

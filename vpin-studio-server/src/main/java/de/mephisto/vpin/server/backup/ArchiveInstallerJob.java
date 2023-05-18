@@ -1,7 +1,7 @@
 package de.mephisto.vpin.server.backup;
 
 import de.mephisto.vpin.restclient.Job;
-import de.mephisto.vpin.restclient.descriptors.ArchiveInstallDescriptor;
+import de.mephisto.vpin.restclient.descriptors.ArchiveRestoreDescriptor;
 import de.mephisto.vpin.server.backup.adapters.TableInstallerAdapter;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.highscores.cards.CardService;
@@ -13,13 +13,13 @@ public class ArchiveInstallerJob implements Job {
   private final ArchiveDescriptor archiveDescriptor;
   private final PinUPConnector pinUPConnector;
   private final CardService cardService;
-  private final ArchiveInstallDescriptor installDescriptor;
+  private final ArchiveRestoreDescriptor installDescriptor;
 
   public ArchiveInstallerJob(@NonNull TableInstallerAdapter tableInstallerAdapter,
                              @NonNull ArchiveDescriptor archiveDescriptor,
                              @NonNull PinUPConnector pinUPConnector,
                              @NonNull CardService cardService,
-                             @NonNull ArchiveInstallDescriptor installDescriptor) {
+                             @NonNull ArchiveRestoreDescriptor installDescriptor) {
     this.tableInstallerAdapter = tableInstallerAdapter;
     this.archiveDescriptor = archiveDescriptor;
     this.pinUPConnector = pinUPConnector;
