@@ -10,7 +10,6 @@ import de.mephisto.vpin.server.backup.ArchiveUtil;
 import de.mephisto.vpin.server.backup.adapters.TableBackupAdapter;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.popper.GameMediaItem;
-import de.mephisto.vpin.server.system.SystemService;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,7 +20,7 @@ import java.util.Date;
 public class TableBackupAdapterVpinzip implements TableBackupAdapter, Job {
   private final static Logger LOG = LoggerFactory.getLogger(TableBackupAdapterVpinzip.class);
 
-  private final SystemService systemService;
+  private final VpinzipService vpinzipService;
   private final Game game;
   private final ArchiveSourceAdapter archiveSourceAdapter;
   private final TableDetails tableDetails;
@@ -29,11 +28,11 @@ public class TableBackupAdapterVpinzip implements TableBackupAdapter, Job {
   private double progress;
   private String status;
 
-  public TableBackupAdapterVpinzip(@NonNull SystemService systemService,
+  public TableBackupAdapterVpinzip(@NonNull VpinzipService vpinzipService,
                                    @NonNull ArchiveSourceAdapter archiveSourceAdapter,
                                    @NonNull Game game,
                                    @NonNull TableDetails tableDetails) {
-    this.systemService = systemService;
+    this.vpinzipService = vpinzipService;
     this.game = game;
     this.archiveSourceAdapter = archiveSourceAdapter;
     this.tableDetails = tableDetails;
@@ -59,8 +58,7 @@ public class TableBackupAdapterVpinzip implements TableBackupAdapter, Job {
 
     status = "Creating backup of \"" + game.getGameDisplayName() + "\"";
 
-    Vpinzip.refresh().execute();
-    Vpinzip.backup(game.getId()).execute();
+    vpinzipService.backup(game.getId());
 
     File archiveFile = new File(this.archiveSourceAdapter.getArchiveSource().getLocation(), tableDetails.getGameName() + ".vpinzip");
 

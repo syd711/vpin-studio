@@ -82,7 +82,7 @@ public class IOService {
       JobDescriptor jobDescriptor = new JobDescriptor(JobType.ARCHIVE_DOWNLOAD_TO_REPOSITORY, archiveDownloadDescriptor.getFilename());
       jobDescriptor.setTitle("Download of \"" + archiveDescriptor.getTableDetails().getGameDisplayName() + "\"");
 
-      DownloadArchiveToRepositoryJob job = new DownloadArchiveToRepositoryJob(archiveService, systemService, archiveDescriptor);
+      DownloadArchiveToRepositoryJob job = new DownloadArchiveToRepositoryJob(archiveService, archiveDescriptor);
       jobDescriptor.setDescription("Downloading \"" + archiveDescriptor.getTableDetails().getGameDisplayName() + "\"");
       jobDescriptor.setJob(job);
 

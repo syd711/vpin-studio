@@ -8,7 +8,6 @@ import de.mephisto.vpin.restclient.RestClient;
 import de.mephisto.vpin.server.VPinStudioException;
 import de.mephisto.vpin.server.VPinStudioServer;
 import de.mephisto.vpin.server.backup.adapters.ArchiveType;
-import de.mephisto.vpin.server.backup.adapters.vpinzip.Vpinzip;
 import de.mephisto.vpin.server.resources.ResourceLoader;
 import de.mephisto.vpin.server.util.SystemUtil;
 import edu.umd.cs.findbugs.annotations.NonNull;
@@ -74,7 +73,6 @@ public class SystemService extends SystemInfo implements InitializingBean {
     if (!getVisualPinballInstallationFolder().exists()) {
       throw new FileNotFoundException("Wrong Visual Pinball installation folder: " + getVisualPinballInstallationFolder().getAbsolutePath() + ".\nPlease fix the Visual Pinball installation path in file ./resources/system.properties");
     }
-    Vpinzip.initVPBMFolders(this);
     logSystemInfo();
   }
 
@@ -153,10 +151,10 @@ public class SystemService extends SystemInfo implements InitializingBean {
         }
       }
 
-      if (!getVpaArchiveFolder().exists()) {
+      if (!getArchivesFolder().exists()) {
         boolean mkdirs = getVPXTablesFolder().mkdirs();
         if (!mkdirs) {
-          LOG.error("Failed to create VPA archive directory " + getVpaArchiveFolder().getAbsolutePath());
+          LOG.error("Failed to create VPA archive directory " + getArchivesFolder().getAbsolutePath());
         }
       }
     } catch (Exception e) {
@@ -432,7 +430,7 @@ public class SystemService extends SystemInfo implements InitializingBean {
     return new File(getPinUPSystemFolder(), "PUPDatabase.db");
   }
 
-  public File getVpaArchiveFolder() {
+  public File getArchivesFolder() {
     File file = new File(RESOURCES, "archives/");
     if (!file.exists()) {
       file.mkdirs();

@@ -7,12 +7,13 @@ import de.mephisto.vpin.server.backup.adapters.vpa.VpaArchiveSource;
 import de.mephisto.vpin.server.backup.adapters.vpa.VpaArchiveSourceAdapter;
 import de.mephisto.vpin.server.backup.adapters.vpinzip.VpinzipArchiveSource;
 import de.mephisto.vpin.server.backup.adapters.vpinzip.VpinzipArchiveSourceAdapter;
-import de.mephisto.vpin.server.backup.adapters.vpinzip.Vpinzip;
+import de.mephisto.vpin.server.backup.adapters.vpinzip.VpinzipService;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameService;
 import de.mephisto.vpin.server.system.SystemService;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
+import org.apache.commons.io.FilenameUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
@@ -35,6 +36,9 @@ public class ArchiveService implements InitializingBean {
 
   @Autowired
   private ArchiveSourceRepository archiveSourceRepository;
+
+  @Autowired
+  private VpinzipService vpinzipService;
 
   private ArchiveSourceAdapter defaultArchiveSourceAdapter;
 
@@ -184,16 +188,16 @@ public class ArchiveService implements InitializingBean {
   public void afterPropertiesSet() {
     //VPA
     if (systemService.getArchiveType().equals(ArchiveType.VPA)) {
-      ArchiveSource archiveSource = new VpaArchiveSource(systemService.getVpaArchiveFolder());
+      ArchiveSource archiveSource = new VpaArchiveSource(systemService.getArchivesFolder());
       this.defaultArchiveSourceAdapter = new VpaArchiveSourceAdapter(archiveSource);
       this.adapterCache.put(archiveSource.getId(), this.defaultArchiveSourceAdapter);
     }
 
     //VPINZIP
     if (systemService.getArchiveType().equals(ArchiveType.VPINZIP)) {
-      File vpinzipArchiveFolder = Vpinzip.getArchiveFolder(systemService);
+      File vpinzipArchiveFolder = vpinzipService.getArchiveFolder();
       ArchiveSource archiveSource = new VpinzipArchiveSource(vpinzipArchiveFolder);
-      this.defaultArchiveSourceAdapter = new VpinzipArchiveSourceAdapter(archiveSource);
+      this.defaultArchiveSourceAdapter = new VpinzipArchiveSourceAdapter(archiveSource, vpinzipService);
       this.adapterCache.put(archiveSource.getId(), this.defaultArchiveSourceAdapter);
     }
 
@@ -203,5 +207,19 @@ public class ArchiveService implements InitializingBean {
       ArchiveSourceAdapter vpaSourceAdapter = ArchiveSourceAdapterFactory.create(this, as);
       this.adapterCache.put(as.getId(), vpaSourceAdapter);
     }
+  }
+
+  public File getTargetFile(ArchiveDescriptor archiveDescriptor) {
+    String descriptorFilename = archiveDescriptor.getFilename();
+    ArchiveType archiveType = ArchiveType.valueOf(FilenameUtils.getExtension(descriptorFilename).toUpperCase());
+    switch (archiveType) {
+      case VPINZIP: {
+        return new File(vpinzipService.getArchiveFolder(), archiveDescriptor.getFilename());
+      }
+      case VPA: {
+        return new File(systemService.getArchivesFolder(), archiveDescriptor.getFilename());
+      }
+    }
+    return null;
   }
 }

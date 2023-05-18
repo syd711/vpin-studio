@@ -1,6 +1,7 @@
 package de.mephisto.vpin.server.backup;
 
 import de.mephisto.vpin.restclient.util.PasswordUtil;
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -28,7 +29,7 @@ public class ArchiveSourceAdapterHttpServer implements ArchiveSourceAdapter {
     disableSslVerification();
   }
 
-  public void download(ArchiveDescriptor descriptor, File target) {
+  public void downloadArchive(ArchiveDescriptor descriptor, File target) {
     BufferedInputStream in = null;
     BufferedOutputStream out = null;
     try {
@@ -55,6 +56,36 @@ public class ArchiveSourceAdapterHttpServer implements ArchiveSourceAdapter {
       conn.disconnect();
     } catch (IOException e) {
       LOG.error("Failed to download " + descriptor.getFilename() + ": " + e.getMessage(), e);
+    }
+  }
+
+  public void downloadDescriptor(ArchiveDescriptor descriptor, File target) {
+    BufferedInputStream in = null;
+    BufferedOutputStream out = null;
+    try {
+      String location = this.source.getLocation();
+      if (!location.endsWith("/")) {
+        location += "/";
+      }
+
+      String url = location + URLEncoder.encode(FilenameUtils.getBaseName(descriptor.getFilename()) + ".json", StandardCharsets.UTF_8).replace("+", "%20");
+      LOG.info("Downloading " + url);
+      FileOutputStream fout = new FileOutputStream(target);
+      HttpURLConnection conn = getConnection(url);
+      in = new BufferedInputStream(conn.getInputStream());
+      out = new BufferedOutputStream(fout);
+
+      IOUtils.copy(in, out);
+
+      in.close();
+
+      out.flush();
+      out.close();
+
+      fout.close();
+      conn.disconnect();
+    } catch (IOException e) {
+      LOG.error("Failed to download " + descriptor.getFilename() + ": " + e.getMessage());
     }
   }
 

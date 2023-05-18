@@ -4,6 +4,7 @@ import de.mephisto.vpin.restclient.TableDetails;
 import de.mephisto.vpin.server.backup.ArchiveSourceAdapter;
 import de.mephisto.vpin.server.backup.adapters.vpa.TableBackupAdapterVpa;
 import de.mephisto.vpin.server.backup.adapters.vpinzip.TableBackupAdapterVpinzip;
+import de.mephisto.vpin.server.backup.adapters.vpinzip.VpinzipService;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.popper.PinUPConnector;
 import de.mephisto.vpin.server.system.SystemService;
@@ -20,6 +21,9 @@ public class TableBackupAdapterFactory {
   @Autowired
   private PinUPConnector pinUPConnector;
 
+  @Autowired
+  private VpinzipService vpinzipService;
+
   public TableBackupAdapter createAdapter(@NonNull ArchiveSourceAdapter archiveSourceAdapter, @NonNull Game game) {
     ArchiveType archiveType = systemService.getArchiveType();
     TableDetails tableDetails = pinUPConnector.getTableDetails(game.getId());
@@ -29,7 +33,7 @@ public class TableBackupAdapterFactory {
         return new TableBackupAdapterVpa(systemService, archiveSourceAdapter, game, tableDetails);
       }
       case VPINZIP: {
-        return new TableBackupAdapterVpinzip(systemService, archiveSourceAdapter, game, tableDetails);
+        return new TableBackupAdapterVpinzip(vpinzipService, archiveSourceAdapter, game, tableDetails);
       }
       default: {
         throw new UnsupportedOperationException("Unkown archive type " +archiveType);

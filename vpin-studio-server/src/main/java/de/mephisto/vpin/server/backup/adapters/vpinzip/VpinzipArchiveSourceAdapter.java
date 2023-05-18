@@ -1,15 +1,12 @@
 package de.mephisto.vpin.server.backup.adapters.vpinzip;
 
-import de.mephisto.vpin.commons.utils.SystemCommandExecutor;
 import de.mephisto.vpin.restclient.ArchivePackageInfo;
 import de.mephisto.vpin.restclient.TableDetails;
 import de.mephisto.vpin.server.backup.ArchiveDescriptor;
 import de.mephisto.vpin.server.backup.ArchiveSource;
 import de.mephisto.vpin.server.backup.ArchiveSourceAdapter;
 import de.mephisto.vpin.server.backup.ArchiveUtil;
-import de.mephisto.vpin.server.system.SystemService;
 import org.apache.commons.io.FilenameUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -23,11 +20,13 @@ public class VpinzipArchiveSourceAdapter implements ArchiveSourceAdapter {
 
   private final ArchiveSource source;
   private final File archiveFolder;
+  private final VpinzipService vpinzipService;
   private final Map<String, ArchiveDescriptor> cache = new HashMap<>();
 
-  public VpinzipArchiveSourceAdapter(ArchiveSource source) {
+  public VpinzipArchiveSourceAdapter(ArchiveSource source, VpinzipService vpinzipService) {
     this.source = source;
     this.archiveFolder = new File(source.getLocation());
+    this.vpinzipService = vpinzipService;
   }
 
   public File getFolder() {
@@ -89,25 +88,7 @@ public class VpinzipArchiveSourceAdapter implements ArchiveSourceAdapter {
   @Override
   public void invalidate() {
     cache.clear();
-
-    try {
-      List<String> commands = Arrays.asList("vPinBackupManager.exe", "-g");
-      LOG.info("Executing refresh command: " + String.join(" ", commands));
-      File dir = new File(SystemService.RESOURCES, VpinzipArchiveSource.FOLDER_NAME);
-      SystemCommandExecutor executor = new SystemCommandExecutor(commands);
-      executor.setDir(dir);
-      StringBuilder standardOutputFromCommand = executor.getStandardOutputFromCommand();
-      StringBuilder standardErrorFromCommand = executor.getStandardErrorFromCommand();
-      if (!StringUtils.isEmpty(standardErrorFromCommand.toString())) {
-        LOG.error("Vpinzip Command Error:\n" + standardErrorFromCommand);
-      }
-      if (!StringUtils.isEmpty(standardOutputFromCommand.toString())) {
-        LOG.info("Vpinzip Command StdOut:\n" + standardOutputFromCommand);
-      }
-      executor.executeCommand();
-    } catch (Exception e) {
-      LOG.error("Failed to re-generate VPBM manifests: " + e.getMessage(), e);
-    }
+    vpinzipService.refresh();
 
     LOG.info("Invalidated archive source \"" + this.getArchiveSource() + "\"");
     ArchiveUtil.exportDescriptorJson(this);

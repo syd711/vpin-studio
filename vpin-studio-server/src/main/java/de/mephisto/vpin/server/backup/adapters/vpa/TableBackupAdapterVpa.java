@@ -94,7 +94,7 @@ public class TableBackupAdapterVpa implements TableBackupAdapter, Job {
     LOG.info("Calculated total approx. size of " + FileUtils.readableFileSize(totalSizeExpected) + " for the archive of " + game.getGameDisplayName());
 
     String baseName = FilenameUtils.getBaseName(game.getGameFileName());
-    File target = new File(systemService.getVpaArchiveFolder(), baseName + ".vpa");
+    File target = new File(systemService.getArchivesFolder(), baseName + ".vpa");
     target = FileUtils.uniqueFile(target);
     archiveDescriptor.setFilename(target.getName());
 

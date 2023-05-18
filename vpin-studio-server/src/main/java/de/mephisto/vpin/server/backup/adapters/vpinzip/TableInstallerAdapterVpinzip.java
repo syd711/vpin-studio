@@ -17,6 +17,7 @@ public class TableInstallerAdapterVpinzip implements TableInstallerAdapter, Job 
   private final static Logger LOG = LoggerFactory.getLogger(TableInstallerAdapterVpinzip.class);
 
   private final GameService gameService;
+  private final VpinzipService vpinzipService;
   private final ArchiveDescriptor archiveDescriptor;
 
   private File archiveFile;
@@ -24,8 +25,10 @@ public class TableInstallerAdapterVpinzip implements TableInstallerAdapter, Job 
   private String status;
 
   public TableInstallerAdapterVpinzip(@NonNull GameService gameService,
+                                      @NonNull VpinzipService vpinzipService,
                                       @NonNull ArchiveDescriptor archiveDescriptor) {
     this.gameService = gameService;
+    this.vpinzipService = vpinzipService;
     this.archiveDescriptor = archiveDescriptor;
   }
 
@@ -57,7 +60,7 @@ public class TableInstallerAdapterVpinzip implements TableInstallerAdapter, Job 
       }
 
       status = "Extracting " + archiveFile.getAbsolutePath();
-      Vpinzip.restore(archiveFile.getAbsolutePath()).execute();
+      vpinzipService.restore(archiveFile.getAbsolutePath());
 
       String baseName = FilenameUtils.getBaseName(archiveDescriptor.getFilename());
       Game game = gameService.getGameByName(baseName);
