@@ -47,6 +47,10 @@ public class TableInstallerAdapterVpa implements TableInstallerAdapter, Job {
     this.archiveDescriptor = archiveDescriptor;
   }
 
+  public ArchiveDescriptor getArchiveDescriptor() {
+    return archiveDescriptor;
+  }
+
   @Override
   public double getProgress() {
     return progress;
@@ -61,6 +65,7 @@ public class TableInstallerAdapterVpa implements TableInstallerAdapter, Job {
   public boolean execute() {
     return installTable() != null;
   }
+
 
   @Nullable
   @Override

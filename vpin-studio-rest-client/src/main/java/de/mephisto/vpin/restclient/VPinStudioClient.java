@@ -217,8 +217,8 @@ public class VPinStudioClient implements ObservedPropertyChangeListener, Overlay
     return Arrays.asList(restClient.get(API + "archives/game/" + gameId, ArchiveDescriptorRepresentation[].class));
   }
 
-  public boolean invalidateArchiveCache(long sourceAdapterId) {
-    return restClient.get(API + "archives/invalidate/" + sourceAdapterId, Boolean.class);
+  public boolean invalidateArchiveCache() {
+    return restClient.get(API + "archives/invalidate", Boolean.class);
   }
 
   public String uploadArchive(File file, int repositoryId, FileUploadProgressListener listener) throws Exception {

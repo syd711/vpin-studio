@@ -28,6 +28,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.ByteArrayInputStream;
 import java.net.URL;
+import java.util.Base64;
 import java.util.List;
 import java.util.ResourceBundle;
 
@@ -393,16 +394,15 @@ public class MenuController implements Initializable {
     }
     else if (o instanceof ArchiveDescriptorRepresentation) {
       ArchiveDescriptorRepresentation archiveDescriptor = (ArchiveDescriptorRepresentation) o;
-      //TODO
-//      String icon = archiveDescriptor.getManifest().getIcon();
-//      if (icon == null) {
-//        text = archiveDescriptor.getManifest().getGameDisplayName();
-//        wheel = new Image(Menu.class.getResourceAsStream("avatar-blank.png"));
-//      }
-//      else {
-//        byte[] decode = Base64.getDecoder().decode(icon);
-//        wheel = new Image(new ByteArrayInputStream(decode));
-//      }
+      String icon = archiveDescriptor.getPackageInfo().getIcon();
+      if (icon == null) {
+        text = archiveDescriptor.getFilename();
+        wheel = new Image(Menu.class.getResourceAsStream("avatar-blank.png"));
+      }
+      else {
+        byte[] decode = Base64.getDecoder().decode(icon);
+        wheel = new Image(new ByteArrayInputStream(decode));
+      }
     }
     else {
       throw new UnsupportedOperationException("Invalid item");

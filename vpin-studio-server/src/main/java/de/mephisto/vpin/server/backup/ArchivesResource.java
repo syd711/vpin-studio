@@ -86,9 +86,9 @@ public class ArchivesResource {
     return result;
   }
 
-  @GetMapping("/invalidate/{sourceId}")
-  public boolean invalidateCache(@PathVariable("sourceId") long sourceId) {
-    archiveService.invalidateCache(sourceId);
+  @GetMapping("/invalidate")
+  public boolean invalidateCache() {
+    archiveService.invalidateCache();
     return true;
   }
 
@@ -112,7 +112,7 @@ public class ArchivesResource {
       out.close();
 
       LOG.info("Finished download of \"" + archiveDescriptor.getTableDetails().getGameDisplayName() + "\"");
-      invalidateCache(sourceAdapter.getArchiveSource().getId());
+      invalidateCache();
     } catch (IOException ex) {
       LOG.info("Error writing archive to output stream. Filename was '{}'", filename, ex);
       throw new RuntimeException("IOError writing file to output stream");
@@ -130,7 +130,7 @@ public class ArchivesResource {
       ArchiveSourceAdapter sourceAdapter = archiveService.getArchiveSourceAdapter(repositoryId);
       File out = new File(sourceAdapter.getArchiveSource().getLocation(), file.getOriginalFilename());
       if (UploadUtil.upload(file, out)) {
-        archiveService.invalidateCache(repositoryId);
+        archiveService.invalidateCache();
         ArchiveDescriptor descriptor = archiveService.getArchiveDescriptor(out);
         return toRepresentation(descriptor);
       }

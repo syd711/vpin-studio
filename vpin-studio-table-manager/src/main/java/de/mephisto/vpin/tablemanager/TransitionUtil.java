@@ -18,7 +18,7 @@ public class TransitionUtil {
    */
   public static FadeTransition createInFader(Node node) {
     long duration = FADER_DEFAULT;
-    if(node.getOpacity() == 1) {
+    if (node.getOpacity() == 1) {
       duration = 0;
     }
     return createInFader(node, duration);
@@ -50,7 +50,7 @@ public class TransitionUtil {
 
   public static FadeTransition createOutFader(Node node) {
     long duration = FADER_DEFAULT;
-    if(node.getOpacity() == 0) {
+    if (node.getOpacity() == 0) {
       duration = 0;
     }
 
@@ -60,14 +60,6 @@ public class TransitionUtil {
     applyDefaults(node, fadeTransition);
     return fadeTransition;
   }
-
-//  public static ScaleTransition createScaler(Node node, double factor) {
-//    ScaleTransition scaleTransition = new ScaleTransition(Duration.millis(ServiceChooser.SCROLL_DURATION), node);
-//    scaleTransition.setToX(factor);
-//    scaleTransition.setToY(factor);
-//    applyDefaults(node, scaleTransition);
-//    return scaleTransition;
-//  }
 
   /**
    * Creates a blink out effect without playing it
@@ -107,7 +99,7 @@ public class TransitionUtil {
         double percent = v * 100;
         double newWidthOffset = offset * percent / 100;
 
-        if(increase) {
+        if (increase) {
           node.setMinWidth(originalWidth + newWidthOffset);
         }
         else {
@@ -152,7 +144,7 @@ public class TransitionUtil {
     transition.setInterpolator(Interpolator.EASE_BOTH);
 
     //apply speed as default cache strategy.
-    if(!node.getCacheHint().equals(CacheHint.SPEED)) {
+    if (!node.getCacheHint().equals(CacheHint.SPEED)) {
       node.setCache(true);
       node.setCacheHint(CacheHint.SPEED);
     }

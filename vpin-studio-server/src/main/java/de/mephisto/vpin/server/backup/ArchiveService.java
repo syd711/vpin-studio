@@ -146,13 +146,10 @@ public class ArchiveService implements InitializingBean {
     return adapterCache.get(sourceId);
   }
 
-  public void invalidateCache(long id) {
-    ArchiveSourceAdapter sourceAdapter = this.adapterCache.get(id);
-    if (sourceAdapter != null) {
-      sourceAdapter.invalidate();
-    }
-    else {
-      LOG.error("Invalid archive source adapter id " + id);
+  public void invalidateCache() {
+    Set<Map.Entry<Long, ArchiveSourceAdapter>> entries = adapterCache.entrySet();
+    for (Map.Entry<Long, ArchiveSourceAdapter> entry : entries) {
+      entry.getValue().invalidate();
     }
   }
 

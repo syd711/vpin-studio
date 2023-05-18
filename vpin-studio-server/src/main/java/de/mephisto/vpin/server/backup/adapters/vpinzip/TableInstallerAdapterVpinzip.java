@@ -7,6 +7,7 @@ import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameService;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import org.apache.commons.io.FilenameUtils;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -45,6 +46,12 @@ public class TableInstallerAdapterVpinzip implements TableInstallerAdapter, Job 
   @Override
   public boolean execute() {
     return installTable() != null;
+  }
+
+  @NotNull
+  @Override
+  public ArchiveDescriptor getArchiveDescriptor() {
+    return archiveDescriptor;
   }
 
   @Nullable

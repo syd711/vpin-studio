@@ -209,7 +209,7 @@ public class RepositoryController implements Initializable, StudioEventListener 
 
     new Thread(() -> {
       if (selectedItem != null && invalidate) {
-        client.invalidateArchiveCache(selectedItem.getId());
+        client.invalidateArchiveCache();
       }
 
       ArchiveSourceRepresentation value = sourceCombo.getValue();
@@ -487,7 +487,7 @@ public class RepositoryController implements Initializable, StudioEventListener 
   @Override
   public void onArchiveInstalled(@NonNull ArchiveInstalledEvent event) {
     Platform.runLater(() -> {
-      client.invalidateArchiveCache(-1);
+      client.invalidateArchiveCache();
       onReload();
     });
   }
