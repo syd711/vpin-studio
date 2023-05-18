@@ -314,13 +314,15 @@
                                     <directory>../resources/</directory>
                                     <includes>
                                         <include>backgrounds/*</include>
-                                        <include>pinemhi/*</include>
+                                        <include>pinemhi/**</include>
+                                        <include>vpinzip/**</include>
                                         <include>competition-badges/*</include>
                                         <include>*.exe</include>
                                         <include>highscore-card-background-*.jpg</include>
                                         <include>competition-bg-default.png</include>
                                         <include>card-generator.properties</include>
                                         <include>empty-b2s-preview.png</include>
+                                        <include>vpbm-128.png</include>
                                     </includes>
                                 </resource>
                             </resources>

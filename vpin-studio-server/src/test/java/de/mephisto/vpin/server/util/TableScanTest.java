@@ -3,14 +3,15 @@ package de.mephisto.vpin.server.util;
 import de.mephisto.vpin.server.roms.ScanResult;
 import org.junit.jupiter.api.Test;
 
-import java.io.File;
+import java.io.*;
+import java.nio.charset.StandardCharsets;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class TableScanTest {
 
   @Test
-  public void testTableScan1()  {
+  public void testTableScan1() {
     File table = new File("C:\\vPinball\\VisualPinball\\Tables\\Hayburners (WIlliams 1951).vpx");
     ScanResult scan = VPXFileScanner.scan(table);
     assertEquals("Hayburners_51VPX.txt", scan.getHsFileName());
@@ -23,6 +24,7 @@ public class TableScanTest {
     File table = new File("C:\\vPinball\\VisualPinball\\Tables\\Batman 66.vpx");
     ScanResult scan = VPXFileScanner.scan(table);
     assertEquals("b66_orig", scan.getRom());
+
   }
 
   @Test

@@ -304,7 +304,8 @@
                             <resources>
                                 <!-- //TODO use java home -->
                                 <resource>
-                                    <directory>C:/workspace/bin/jdk-11.0.17+8-jre</directory>
+                                    <!--                                    <directory>${java.home}</directory>-->
+                                    <directory>E:/Development/tools/jdk-11.0.17+8-jre</directory>
                                     <excludes>
                                         <exclude>**/*.zip</exclude>
                                     </excludes>

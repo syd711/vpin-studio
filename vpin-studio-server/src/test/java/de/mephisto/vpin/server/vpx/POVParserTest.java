@@ -8,7 +8,7 @@ import java.io.File;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class VPXParserTest {
+public class POVParserTest {
 
   @Test
   public void testParser() throws VPinStudioException {
