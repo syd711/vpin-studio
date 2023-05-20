@@ -1,10 +1,10 @@
-package de.mephisto.vpin.server.util;
+package de.mephisto.vpin.server.vpx;
 
 import de.mephisto.vpin.server.roms.ScanResult;
+import de.mephisto.vpin.server.util.VPXFileScanner;
 import org.junit.jupiter.api.Test;
 
-import java.io.*;
-import java.nio.charset.StandardCharsets;
+import java.io.File;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -20,11 +20,11 @@ public class TableScanTest {
   }
 
   @Test
-  public void testTableScan2() throws Exception {
-    File table = new File("C:\\vPinball\\VisualPinball\\Tables\\Batman 66.vpx");
+  public void testTableScan2() {
+    long start = System.currentTimeMillis();
+    File table = new File("D:\\vPinball\\VisualPinball\\Tables\\Batman 66.vpx");
     ScanResult scan = VPXFileScanner.scan(table);
     assertEquals("b66_orig", scan.getRom());
-
   }
 
   @Test

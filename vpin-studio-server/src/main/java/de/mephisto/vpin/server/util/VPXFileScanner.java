@@ -4,14 +4,14 @@ import de.mephisto.vpin.server.roms.ScanResult;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.poi.poifs.filesystem.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.regex.Pattern;
 
@@ -47,25 +47,23 @@ public class VPXFileScanner {
     long start = System.currentTimeMillis();
     ScanResult result = new ScanResult();
 
-    BufferedReader bufferedReader = null;
-    ReverseLineInputStream reverseLineInputStream = null;
-    String line = null;
     int count = 0;
+    String l = null;
+    POIFSFileSystem fs = null;
     try {
-      reverseLineInputStream = new ReverseLineInputStream(gameFile);
-      bufferedReader = new BufferedReader(new InputStreamReader(reverseLineInputStream));
+      fs = new POIFSFileSystem(gameFile, true);
+      DirectoryEntry root = fs.getRoot();
+      DirectoryEntry gameStg = (DirectoryEntry) root.getEntry("GameStg");
+      DocumentNode gameData = (DocumentNode) gameStg.getEntry("GameData");
 
-      bufferedReader.readLine();//skip last line if empty
-      boolean continueRead = true;
-      while (continueRead) {
-        line = bufferedReader.readLine();
-        if (line == null) {
-          line = bufferedReader.readLine();
-          line = bufferedReader.readLine();
-          if (line == null) {
-            break;
-          }
-        }
+      POIFSDocument document = new POIFSDocument(gameData);
+      DocumentInputStream documentInputStream = new DocumentInputStream(document);
+      String script = new String(documentInputStream.readAllBytes());
+
+      List<String> split = Arrays.asList(script.split(System.getProperty("line.separator")));
+      Collections.reverse(split);
+      for (String line : split) {
+        l = line;
         count++;
 
         if (result.isScanComplete() || line.trim().equals("Option Explicit")) {
@@ -77,16 +75,13 @@ public class VPXFileScanner {
         lineSearchHsFileName(result, line);
         lineSearchAsset(result, line);
       }
-    } catch (Exception e) {
-      LOG.error("Failed to read rom line '" + line + "' for  " + gameFile.getAbsolutePath() + ": " + e.getMessage(), e);
+    }
+    catch (Exception e) {
+      LOG.error("Failed to read rom line '" + l + "' for  " + gameFile.getAbsolutePath() + ": " + e.getMessage(), e);
     } finally {
       try {
-        if (reverseLineInputStream != null) {
-          reverseLineInputStream.close();
-        }
-
-        if (bufferedReader != null) {
-          bufferedReader.close();
+        if (fs != null) {
+          fs.close();
         }
       } catch (Exception e) {
         LOG.error("Failed to close vpx file stream: " + e.getMessage(), e);
