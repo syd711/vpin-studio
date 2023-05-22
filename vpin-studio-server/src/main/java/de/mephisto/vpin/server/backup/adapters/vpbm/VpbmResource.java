@@ -32,7 +32,7 @@ public class VpbmResource {
     return vpbmService.getHostIds();
   }
 
-  @PostMapping
+  @PostMapping("/hostIds")
   public VpbmHosts saveHostIds(@RequestBody VpbmHosts vpbmHosts) {
     return vpbmService.saveHostIds(vpbmHosts);
   }
