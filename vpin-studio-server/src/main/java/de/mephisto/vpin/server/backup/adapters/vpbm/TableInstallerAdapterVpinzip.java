@@ -1,4 +1,4 @@
-package de.mephisto.vpin.server.backup.adapters.vpinzip;
+package de.mephisto.vpin.server.backup.adapters.vpbm;
 
 import de.mephisto.vpin.restclient.Job;
 import de.mephisto.vpin.server.backup.ArchiveDescriptor;
@@ -18,7 +18,7 @@ public class TableInstallerAdapterVpinzip implements TableInstallerAdapter, Job 
   private final static Logger LOG = LoggerFactory.getLogger(TableInstallerAdapterVpinzip.class);
 
   private final GameService gameService;
-  private final VpinzipService vpinzipService;
+  private final VpbmService vpbmService;
   private final ArchiveDescriptor archiveDescriptor;
 
   private File archiveFile;
@@ -26,10 +26,10 @@ public class TableInstallerAdapterVpinzip implements TableInstallerAdapter, Job 
   private String status;
 
   public TableInstallerAdapterVpinzip(@NonNull GameService gameService,
-                                      @NonNull VpinzipService vpinzipService,
+                                      @NonNull VpbmService vpbmService,
                                       @NonNull ArchiveDescriptor archiveDescriptor) {
     this.gameService = gameService;
-    this.vpinzipService = vpinzipService;
+    this.vpbmService = vpbmService;
     this.archiveDescriptor = archiveDescriptor;
   }
 
@@ -67,7 +67,7 @@ public class TableInstallerAdapterVpinzip implements TableInstallerAdapter, Job 
       }
 
       status = "Extracting " + archiveFile.getAbsolutePath();
-      vpinzipService.restore(archiveFile.getAbsolutePath());
+      vpbmService.restore(archiveFile.getAbsolutePath());
 
       String baseName = FilenameUtils.getBaseName(archiveDescriptor.getFilename());
       Game game = gameService.getGameByName(baseName);

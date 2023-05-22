@@ -2,8 +2,8 @@ package de.mephisto.vpin.server.backup.adapters;
 
 import de.mephisto.vpin.server.backup.ArchiveDescriptor;
 import de.mephisto.vpin.server.backup.adapters.vpa.TableInstallerAdapterVpa;
-import de.mephisto.vpin.server.backup.adapters.vpinzip.TableInstallerAdapterVpinzip;
-import de.mephisto.vpin.server.backup.adapters.vpinzip.VpinzipService;
+import de.mephisto.vpin.server.backup.adapters.vpbm.TableInstallerAdapterVpinzip;
+import de.mephisto.vpin.server.backup.adapters.vpbm.VpbmService;
 import de.mephisto.vpin.server.games.GameService;
 import de.mephisto.vpin.server.popper.PinUPConnector;
 import de.mephisto.vpin.server.system.SystemService;
@@ -21,7 +21,7 @@ public class TableInstallerAdapterFactory {
   private PinUPConnector pinUPConnector;
 
   @Autowired
-  private VpinzipService vpinzipService;
+  private VpbmService vpbmService;
 
   @Autowired
   private GameService gameService;
@@ -34,7 +34,7 @@ public class TableInstallerAdapterFactory {
         return new TableInstallerAdapterVpa(systemService, gameService, pinUPConnector, archiveDescriptor);
       }
       case VPINZIP: {
-        return new TableInstallerAdapterVpinzip(gameService, vpinzipService, archiveDescriptor);
+        return new TableInstallerAdapterVpinzip(gameService, vpbmService, archiveDescriptor);
       }
       default: {
         throw new UnsupportedOperationException("Unkown archive type " + archiveType);

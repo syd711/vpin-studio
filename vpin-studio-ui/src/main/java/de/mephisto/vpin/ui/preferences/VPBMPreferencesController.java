@@ -30,7 +30,13 @@ public class VPBMPreferencesController implements Initializable {
   private TextField thisHostText;
 
   @FXML
+  private Label versionLabel;
+
+  @FXML
   private Button vpbmBtbn;
+
+  @FXML
+  private Button updateBtn;
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -46,6 +52,18 @@ public class VPBMPreferencesController implements Initializable {
     if (desktop != null && desktop.isSupported(Desktop.Action.BROWSE)) {
       try {
         desktop.browse(new URI("https://github.com/mmattner/vPinBackupManagerApp/"));
+      } catch (Exception e) {
+        LOG.error("Failed to open link: " + e.getMessage(), e);
+      }
+    }
+  }
+
+  @FXML
+  private void onDotNetLink() {
+    Desktop desktop = Desktop.isDesktopSupported() ? Desktop.getDesktop() : null;
+    if (desktop != null && desktop.isSupported(Desktop.Action.BROWSE)) {
+      try {
+        desktop.browse(new URI("https://dotnet.microsoft.com/en-us/download/dotnet/thank-you/runtime-desktop-6.0.16-windows-x64-installer?cid=getdotnetcore"));
       } catch (Exception e) {
         LOG.error("Failed to open link: " + e.getMessage(), e);
       }

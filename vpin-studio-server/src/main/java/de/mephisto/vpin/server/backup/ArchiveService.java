@@ -5,9 +5,9 @@ import de.mephisto.vpin.restclient.representations.ArchiveSourceRepresentation;
 import de.mephisto.vpin.server.backup.adapters.ArchiveType;
 import de.mephisto.vpin.server.backup.adapters.vpa.VpaArchiveSource;
 import de.mephisto.vpin.server.backup.adapters.vpa.VpaArchiveSourceAdapter;
-import de.mephisto.vpin.server.backup.adapters.vpinzip.VpinzipArchiveSource;
-import de.mephisto.vpin.server.backup.adapters.vpinzip.VpinzipArchiveSourceAdapter;
-import de.mephisto.vpin.server.backup.adapters.vpinzip.VpinzipService;
+import de.mephisto.vpin.server.backup.adapters.vpbm.VpbmArchiveSource;
+import de.mephisto.vpin.server.backup.adapters.vpbm.VpbmArchiveSourceAdapter;
+import de.mephisto.vpin.server.backup.adapters.vpbm.VpbmService;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameService;
 import de.mephisto.vpin.server.system.SystemService;
@@ -38,7 +38,7 @@ public class ArchiveService implements InitializingBean {
   private ArchiveSourceRepository archiveSourceRepository;
 
   @Autowired
-  private VpinzipService vpinzipService;
+  private VpbmService vpbmService;
 
   private ArchiveSourceAdapter defaultArchiveSourceAdapter;
 
@@ -192,9 +192,9 @@ public class ArchiveService implements InitializingBean {
 
     //VPINZIP
     if (systemService.getArchiveType().equals(ArchiveType.VPINZIP)) {
-      File vpinzipArchiveFolder = vpinzipService.getArchiveFolder();
-      ArchiveSource archiveSource = new VpinzipArchiveSource(vpinzipArchiveFolder);
-      this.defaultArchiveSourceAdapter = new VpinzipArchiveSourceAdapter(archiveSource, vpinzipService);
+      File vpinzipArchiveFolder = vpbmService.getArchiveFolder();
+      ArchiveSource archiveSource = new VpbmArchiveSource(vpinzipArchiveFolder);
+      this.defaultArchiveSourceAdapter = new VpbmArchiveSourceAdapter(archiveSource, vpbmService);
       this.adapterCache.put(archiveSource.getId(), this.defaultArchiveSourceAdapter);
     }
 
@@ -211,7 +211,7 @@ public class ArchiveService implements InitializingBean {
     ArchiveType archiveType = ArchiveType.valueOf(FilenameUtils.getExtension(descriptorFilename).toUpperCase());
     switch (archiveType) {
       case VPINZIP: {
-        return new File(vpinzipService.getArchiveFolder(), archiveDescriptor.getFilename());
+        return new File(vpbmService.getArchiveFolder(), archiveDescriptor.getFilename());
       }
       case VPA: {
         return new File(systemService.getArchivesFolder(), archiveDescriptor.getFilename());

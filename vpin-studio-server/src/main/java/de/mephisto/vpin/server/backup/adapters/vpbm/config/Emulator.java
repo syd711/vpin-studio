@@ -1,4 +1,4 @@
-package de.mephisto.vpin.server.backup.adapters.vpinzip.config;
+package de.mephisto.vpin.server.backup.adapters.vpbm.config;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 

@@ -1,4 +1,4 @@
-package de.mephisto.vpin.server.backup.adapters.vpinzip;
+package de.mephisto.vpin.server.backup.adapters.vpbm;
 
 import de.mephisto.vpin.restclient.ArchivePackageInfo;
 import de.mephisto.vpin.restclient.Job;
@@ -17,10 +17,10 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.util.Date;
 
-public class TableBackupAdapterVpinzip implements TableBackupAdapter, Job {
-  private final static Logger LOG = LoggerFactory.getLogger(TableBackupAdapterVpinzip.class);
+public class TableBackupAdapterVpbm implements TableBackupAdapter, Job {
+  private final static Logger LOG = LoggerFactory.getLogger(TableBackupAdapterVpbm.class);
 
-  private final VpinzipService vpinzipService;
+  private final VpbmService vpbmService;
   private final Game game;
   private final ArchiveSourceAdapter archiveSourceAdapter;
   private final TableDetails tableDetails;
@@ -28,11 +28,11 @@ public class TableBackupAdapterVpinzip implements TableBackupAdapter, Job {
   private double progress;
   private String status;
 
-  public TableBackupAdapterVpinzip(@NonNull VpinzipService vpinzipService,
-                                   @NonNull ArchiveSourceAdapter archiveSourceAdapter,
-                                   @NonNull Game game,
-                                   @NonNull TableDetails tableDetails) {
-    this.vpinzipService = vpinzipService;
+  public TableBackupAdapterVpbm(@NonNull VpbmService vpbmService,
+                                @NonNull ArchiveSourceAdapter archiveSourceAdapter,
+                                @NonNull Game game,
+                                @NonNull TableDetails tableDetails) {
+    this.vpbmService = vpbmService;
     this.game = game;
     this.archiveSourceAdapter = archiveSourceAdapter;
     this.tableDetails = tableDetails;
@@ -58,7 +58,7 @@ public class TableBackupAdapterVpinzip implements TableBackupAdapter, Job {
 
     status = "Creating backup of \"" + game.getGameDisplayName() + "\"";
 
-    vpinzipService.backup(game.getId());
+    vpbmService.backup(game.getId());
 
     File archiveFile = new File(this.archiveSourceAdapter.getArchiveSource().getLocation(), tableDetails.getGameName() + ".vpinzip");
 
@@ -74,7 +74,7 @@ public class TableBackupAdapterVpinzip implements TableBackupAdapter, Job {
       wheelIcon = gameMediaItem.getFile();
     }
 
-    ArchivePackageInfo packageInfo = VpinzipArchiveUtil.generatePackageInfo(archiveFile, wheelIcon);
+    ArchivePackageInfo packageInfo = VpbmArchiveUtil.generatePackageInfo(archiveFile, wheelIcon);
 
     archiveDescriptor.setCreatedAt(new Date());
     archiveDescriptor.setTableDetails(tableDetails);

@@ -1,11 +1,11 @@
-package de.mephisto.vpin.server.backup.adapters.vpinzip;
+package de.mephisto.vpin.server.backup.adapters.vpbm;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import de.mephisto.vpin.commons.utils.SystemCommandExecutor;
 import de.mephisto.vpin.server.VPinStudioException;
-import de.mephisto.vpin.server.backup.adapters.vpinzip.config.VPinBackupManagerConfig;
+import de.mephisto.vpin.server.backup.adapters.vpbm.config.VPinBackupManagerConfig;
 import de.mephisto.vpin.server.system.SystemService;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -21,14 +21,14 @@ import java.util.Arrays;
 import java.util.List;
 
 @Service
-public class VpinzipService implements InitializingBean {
-  private final static Logger LOG = LoggerFactory.getLogger(VpinzipService.class);
-  public static String VPINZIP_FOLDER = SystemService.RESOURCES + "vpinzip";
+public class VpbmService implements InitializingBean {
+  private final static Logger LOG = LoggerFactory.getLogger(VpbmService.class);
+  public static String VPINZIP_FOLDER = SystemService.RESOURCES + "vpbm";
 
   @Autowired
   private SystemService systemService;
 
-  private VpinzipService() {
+  private VpbmService() {
     //force build
   }
 
@@ -51,7 +51,7 @@ public class VpinzipService implements InitializingBean {
 
   public void executeVPBM(String option, String param) {
     try {
-      File dir = new File(SystemService.RESOURCES, VpinzipArchiveSource.FOLDER_NAME);
+      File dir = new File(SystemService.RESOURCES, VpbmArchiveSource.FOLDER_NAME);
       List<String> commands = new ArrayList<>(Arrays.asList("vPinBackupManager.exe", option));
       if (param != null) {
         commands.add(param);

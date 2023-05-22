@@ -1,4 +1,4 @@
-package de.mephisto.vpin.server.backup.adapters.vpinzip;
+package de.mephisto.vpin.server.backup.adapters.vpbm;
 
 import de.mephisto.vpin.commons.ArchiveSourceType;
 import de.mephisto.vpin.server.backup.ArchiveSource;
@@ -7,13 +7,13 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 import java.io.File;
 import java.util.Date;
 
-public class VpinzipArchiveSource extends ArchiveSource {
+public class VpbmArchiveSource extends ArchiveSource {
   private final static long DEFAULT_ARCHIVE_SOURCE_ID = -2;
   public final static String FOLDER_NAME = "vpinzip";
 
   private final File folder;
 
-  public VpinzipArchiveSource(@NonNull File folder) {
+  public VpbmArchiveSource(@NonNull File folder) {
     this.folder = folder;
   }
 

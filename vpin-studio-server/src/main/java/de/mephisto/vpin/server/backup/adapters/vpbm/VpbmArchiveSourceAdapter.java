@@ -1,4 +1,4 @@
-package de.mephisto.vpin.server.backup.adapters.vpinzip;
+package de.mephisto.vpin.server.backup.adapters.vpbm;
 
 import de.mephisto.vpin.restclient.ArchivePackageInfo;
 import de.mephisto.vpin.restclient.TableDetails;
@@ -15,18 +15,18 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.*;
 
-public class VpinzipArchiveSourceAdapter implements ArchiveSourceAdapter {
-  private final static Logger LOG = LoggerFactory.getLogger(VpinzipArchiveSourceAdapter.class);
+public class VpbmArchiveSourceAdapter implements ArchiveSourceAdapter {
+  private final static Logger LOG = LoggerFactory.getLogger(VpbmArchiveSourceAdapter.class);
 
   private final ArchiveSource source;
   private final File archiveFolder;
-  private final VpinzipService vpinzipService;
+  private final VpbmService vpbmService;
   private final Map<String, ArchiveDescriptor> cache = new HashMap<>();
 
-  public VpinzipArchiveSourceAdapter(ArchiveSource source, VpinzipService vpinzipService) {
+  public VpbmArchiveSourceAdapter(ArchiveSource source, VpbmService vpbmService) {
     this.source = source;
     this.archiveFolder = new File(source.getLocation());
-    this.vpinzipService = vpinzipService;
+    this.vpbmService = vpbmService;
   }
 
   public File getFolder() {
@@ -41,8 +41,8 @@ public class VpinzipArchiveSourceAdapter implements ArchiveSourceAdapter {
           try {
             ArchiveDescriptor archiveDescriptor = ArchiveUtil.readArchiveDescriptor(archiveFile);
             if (archiveDescriptor == null) {
-              TableDetails manifest = VpinzipArchiveUtil.readTableDetails(archiveFile);
-              ArchivePackageInfo packageInfo = VpinzipArchiveUtil.generatePackageInfo(archiveFile, null);
+              TableDetails manifest = VpbmArchiveUtil.readTableDetails(archiveFile);
+              ArchivePackageInfo packageInfo = VpbmArchiveUtil.generatePackageInfo(archiveFile, null);
               archiveDescriptor = new ArchiveDescriptor(source, manifest, packageInfo, new Date(archiveFile.lastModified()), archiveFile.getName(), archiveFile.length());
             }
 
@@ -88,7 +88,7 @@ public class VpinzipArchiveSourceAdapter implements ArchiveSourceAdapter {
   @Override
   public void invalidate() {
     cache.clear();
-    vpinzipService.refresh();
+    vpbmService.refresh();
 
     LOG.info("Invalidated archive source \"" + this.getArchiveSource() + "\"");
     ArchiveUtil.exportDescriptorJson(this);

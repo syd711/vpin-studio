@@ -367,9 +367,6 @@ public class GameService {
 
       gameDetailsRepository.saveAndFlush(gameDetails);
       LOG.info("Created GameDetails for " + game.getGameDisplayName());
-
-      //check assets too
-      defaultPictureService.generateCroppedDefaultPicture(game);
     }
 
     game.setRom(gameDetails.getRomName());

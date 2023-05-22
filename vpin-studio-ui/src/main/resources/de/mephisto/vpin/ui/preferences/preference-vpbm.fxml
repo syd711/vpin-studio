@@ -10,11 +10,12 @@
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane styleClass="base-component" stylesheets="@../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.preferences.VPBMPreferencesController">
+<BorderPane styleClass="base-component" stylesheets="@../stylesheet.css" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.preferences.VPBMPreferencesController">
    <top>
       <VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefWidth="800.0" styleClass="subpanel" BorderPane.alignment="TOP_LEFT">
          <children>
@@ -83,6 +84,7 @@
               <rowConstraints>
                 <RowConstraints />
                 <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                 <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                   <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
               </rowConstraints>
@@ -109,9 +111,17 @@
                               <Insets left="3.0" />
                            </VBox.margin>
                         </Label>
+                        <Label fx:id="versionLabel" layoutX="13.0" layoutY="10.0" text="Version" textFill="WHITE">
+                           <font>
+                              <Font name="System Bold" size="13.0" />
+                           </font>
+                           <VBox.margin>
+                              <Insets left="4.0" />
+                           </VBox.margin>
+                        </Label>
                         <Label styleClass="preference-description" text="Download and documentation:" textFill="WHITE">
                            <VBox.margin>
-                              <Insets left="3.0" />
+                              <Insets left="4.0" />
                            </VBox.margin>
                         </Label>
                         <Hyperlink onAction="#onVPBMLink" text="https://github.com/mmattner/vPinBackupManagerApp/" textFill="WHITE">
@@ -121,18 +131,33 @@
                         </Hyperlink>
                      </children>
                   </VBox>
-                  <Button fx:id="vpbmBtbn" mnemonicParsing="false" onAction="#onVPBM" text="VPBM" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                  <HBox alignment="BASELINE_LEFT" spacing="3.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                     <children>
+                        <Button fx:id="vpbmBtbn" mnemonicParsing="false" onAction="#onVPBM" text="VPBM" textFill="WHITE">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                           <graphic>
+                              <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@../vpbm-128.png" />
+                                 </image>
+                              </ImageView>
+                           </graphic>
+                        </Button>
+                        <Button fx:id="updateBtn" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" onAction="#onVPBM" text="Install Update" textFill="WHITE">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Button>
+                     </children>
+                  </HBox>
+                  <Hyperlink onAction="#onDotNetLink" text="https://dotnet.microsoft.com/en-us/download/dotnet/" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="4">
                      <font>
                         <Font size="14.0" />
                      </font>
-                     <graphic>
-                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                           <image>
-                              <Image url="@../vpbm-128.png" />
-                           </image>
-                        </ImageView>
-                     </graphic>
-                  </Button>
+                  </Hyperlink>
+                  <Label styleClass="preference-description" text="The Visual Pinball Backup Manager requires the .NET Desktop Runtime Environment:" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="3" />
                </children>
             </GridPane>
          </children>

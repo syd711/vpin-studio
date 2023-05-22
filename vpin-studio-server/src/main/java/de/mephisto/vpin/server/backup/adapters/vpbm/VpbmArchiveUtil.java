@@ -1,4 +1,4 @@
-package de.mephisto.vpin.server.backup.adapters.vpinzip;
+package de.mephisto.vpin.server.backup.adapters.vpbm;
 
 import de.mephisto.vpin.restclient.ArchivePackageInfo;
 import de.mephisto.vpin.restclient.TableDetails;
@@ -16,8 +16,8 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.Base64;
 
-public class VpinzipArchiveUtil {
-  private final static Logger LOG = LoggerFactory.getLogger(VpinzipArchiveUtil.class);
+public class VpbmArchiveUtil {
+  private final static Logger LOG = LoggerFactory.getLogger(VpbmArchiveUtil.class);
 
   public static TableDetails readTableDetails(@NonNull File file) {
     try {
