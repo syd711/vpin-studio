@@ -53,7 +53,7 @@ Source: "..\..\..\..\vpin-studio\Output\Vpin-Studio\server.bat"; DestDir: "{app}
 [Icons]
 Name: "{autoprograms}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"
 Name: "{autodesktop}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"; Tasks: desktopicon
-Name: "{autodesktop}\{#MyAppNameVPBM}"; Filename: "{app}\resources\vpinzip\{#MyAppExeNameVPBM}"; Tasks: desktopiconVPBM
+Name: "{autodesktop}\{#MyAppNameVPBM}"; Filename: "{app}\resources\vpbm\{#MyAppExeNameVPBM}"; Tasks: desktopiconVPBM
 
 [Run]
 Filename: "{app}\{#MyAppExeName}"; Description: "{cm:LaunchProgram,{#StringChange(MyAppName, '&', '&&')}}"; Flags: nowait postinstall skipifsilent

@@ -79,7 +79,7 @@ public class VPBMPreferencesController implements Initializable {
     new Thread(()-> {
       List<String> commands = Arrays.asList("vPinBackupManager.exe");
       LOG.info("Executing vpbm: " + String.join(" ", commands));
-      File dir = new File("./resources/", "vpinzip");
+      File dir = new File("./resources/", "vpbm");
       SystemCommandExecutor executor = new SystemCommandExecutor(commands);
       executor.setDir(dir);
       executor.executeCommandAsync();

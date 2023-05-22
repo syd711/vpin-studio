@@ -192,8 +192,8 @@ public class ArchiveService implements InitializingBean {
 
     //VPINZIP
     if (systemService.getArchiveType().equals(ArchiveType.VPINZIP)) {
-      File vpinzipArchiveFolder = vpbmService.getArchiveFolder();
-      ArchiveSource archiveSource = new VpbmArchiveSource(vpinzipArchiveFolder);
+      File vpbmArchiveFolder = vpbmService.getArchiveFolder();
+      ArchiveSource archiveSource = new VpbmArchiveSource(vpbmArchiveFolder);
       this.defaultArchiveSourceAdapter = new VpbmArchiveSourceAdapter(archiveSource, vpbmService);
       this.adapterCache.put(archiveSource.getId(), this.defaultArchiveSourceAdapter);
     }
