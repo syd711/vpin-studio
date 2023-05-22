@@ -32,9 +32,6 @@ public class IOService {
   private final static Logger LOG = LoggerFactory.getLogger(ArchiveService.class);
 
   @Autowired
-  private SystemService systemService;
-
-  @Autowired
   private GameService gameService;
 
   @Autowired
