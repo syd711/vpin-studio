@@ -1,6 +1,5 @@
 package de.mephisto.vpin.commons.utils;
 
-import de.mephisto.vpin.restclient.VPinStudioClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

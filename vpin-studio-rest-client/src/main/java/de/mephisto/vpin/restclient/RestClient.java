@@ -1,6 +1,7 @@
 package de.mephisto.vpin.restclient;
 
 import com.fasterxml.jackson.databind.SerializationFeature;
+import de.mephisto.vpin.restclient.client.VPinStudioClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.*;

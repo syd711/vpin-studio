@@ -1,7 +1,7 @@
 package de.mephisto.vpin.tablemanager;
 
 import de.mephisto.vpin.restclient.PinUPControls;
-import de.mephisto.vpin.restclient.VPinStudioClient;
+import de.mephisto.vpin.restclient.client.VPinStudioClient;
 import de.mephisto.vpin.tablemanager.states.StateMananger;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;

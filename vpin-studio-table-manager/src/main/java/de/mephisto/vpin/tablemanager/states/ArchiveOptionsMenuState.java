@@ -1,6 +1,6 @@
 package de.mephisto.vpin.tablemanager.states;
 
-import de.mephisto.vpin.restclient.VPinStudioClient;
+import de.mephisto.vpin.restclient.client.VPinStudioClient;
 import de.mephisto.vpin.tablemanager.MenuController;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

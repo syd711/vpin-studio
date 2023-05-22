@@ -4,7 +4,7 @@ import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.AltSound;
 import de.mephisto.vpin.restclient.PopperScreen;
 import de.mephisto.vpin.restclient.descriptors.ResetHighscoreDescriptor;
-import de.mephisto.vpin.restclient.VPinStudioClient;
+import de.mephisto.vpin.restclient.client.VPinStudioClient;
 import de.mephisto.vpin.restclient.representations.*;
 import de.mephisto.vpin.ui.ProgressDialogController;
 import de.mephisto.vpin.ui.Studio;

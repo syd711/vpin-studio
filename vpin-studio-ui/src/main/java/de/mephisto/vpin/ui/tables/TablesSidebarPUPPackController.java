@@ -1,6 +1,6 @@
 package de.mephisto.vpin.ui.tables;
 
-import de.mephisto.vpin.restclient.VPinStudioClient;
+import de.mephisto.vpin.restclient.client.VPinStudioClient;
 import de.mephisto.vpin.restclient.representations.GameRepresentation;
 import de.mephisto.vpin.ui.Studio;
 import javafx.fxml.Initializable;

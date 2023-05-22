@@ -1,5 +1,6 @@
-package de.mephisto.vpin.restclient;
+package de.mephisto.vpin.restclient.client;
 
+import de.mephisto.vpin.restclient.*;
 import de.mephisto.vpin.restclient.descriptors.*;
 import de.mephisto.vpin.restclient.discord.DiscordBotStatus;
 import de.mephisto.vpin.restclient.discord.DiscordChannel;

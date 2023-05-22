@@ -7,7 +7,7 @@ import de.mephisto.vpin.commons.fx.UIDefaults;
 import de.mephisto.vpin.restclient.CompetitionType;
 import de.mephisto.vpin.restclient.JoinMode;
 import de.mephisto.vpin.restclient.PopperScreen;
-import de.mephisto.vpin.restclient.VPinStudioClient;
+import de.mephisto.vpin.restclient.client.VPinStudioClient;
 import de.mephisto.vpin.restclient.discord.DiscordBotStatus;
 import de.mephisto.vpin.restclient.discord.DiscordChannel;
 import de.mephisto.vpin.restclient.discord.DiscordCompetitionData;

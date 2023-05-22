@@ -1,6 +1,6 @@
 package de.mephisto.vpin.ui.launcher;
 
-import de.mephisto.vpin.restclient.VPinStudioClient;
+import de.mephisto.vpin.restclient.client.VPinStudioClient;
 import de.mephisto.vpin.ui.util.ProgressModel;
 import de.mephisto.vpin.ui.util.ProgressResultModel;
 import org.slf4j.Logger;
@@ -8,7 +8,6 @@ import org.slf4j.LoggerFactory;
 
 import java.util.Iterator;
 import java.util.List;
-import java.util.stream.IntStream;
 
 public class ServiceInstallationProgressModel extends ProgressModel<Integer> {
   private final static Logger LOG = LoggerFactory.getLogger(ServiceInstallationProgressModel.class);

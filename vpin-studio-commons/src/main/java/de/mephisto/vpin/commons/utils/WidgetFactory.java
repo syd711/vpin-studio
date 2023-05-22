@@ -2,9 +2,8 @@ package de.mephisto.vpin.commons.utils;
 
 import de.mephisto.vpin.commons.fx.*;
 import de.mephisto.vpin.restclient.PopperScreen;
-import de.mephisto.vpin.restclient.VPinStudioClient;
+import de.mephisto.vpin.restclient.client.VPinStudioClient;
 import de.mephisto.vpin.restclient.representations.GameMediaItemRepresentation;
-import javafx.beans.property.SimpleObjectProperty;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Rectangle2D;
