@@ -7,6 +7,7 @@ import de.mephisto.vpin.commons.utils.SystemCommandExecutor;
 import de.mephisto.vpin.server.VPinStudioException;
 import de.mephisto.vpin.server.backup.adapters.vpbm.config.VPinBackupManagerConfig;
 import de.mephisto.vpin.server.system.SystemService;
+import de.mephisto.vpin.server.util.GithubUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -49,7 +50,26 @@ public class VpbmService implements InitializingBean {
     executeVPBM("-g", null);
   }
 
-  public void executeVPBM(String option, String param) {
+
+  public Boolean update() {
+    return executeVPBM("-u", null) != null;
+  }
+
+  public boolean isUpdateAvailable() {
+    String version = getVersion();
+    String versionNumber = version.substring(version.indexOf(" ") + 1).trim();
+    return GithubUtil.checkForUpdate(versionNumber, "https://github.com/mmattner/vPinBackupManagerApp/releases/latest") != null;
+  }
+
+  public String getVersion() {
+    String version = executeVPBM("-v", null);
+    if (!StringUtils.isEmpty(version)) {
+      return version.trim();
+    }
+    return "Unable to determine version, check log for details.";
+  }
+
+  public String executeVPBM(String option, String param) {
     try {
       File dir = new File(SystemService.RESOURCES, VpbmArchiveSource.FOLDER_NAME);
       List<String> commands = new ArrayList<>(Arrays.asList("vPinBackupManager.exe", option));
@@ -59,18 +79,22 @@ public class VpbmService implements InitializingBean {
       LOG.info("Executing VPBM command: " + String.join(" ", commands));
       SystemCommandExecutor executor = new SystemCommandExecutor(commands);
       executor.setDir(dir);
+      executor.executeCommand();
+
       StringBuilder standardOutputFromCommand = executor.getStandardOutputFromCommand();
       StringBuilder standardErrorFromCommand = executor.getStandardErrorFromCommand();
       if (!StringUtils.isEmpty(standardErrorFromCommand.toString())) {
         LOG.error("Vpinzip Command Error:\n" + standardErrorFromCommand);
+        return standardOutputFromCommand.toString();
       }
       if (!StringUtils.isEmpty(standardOutputFromCommand.toString())) {
         LOG.info("Vpinzip Command StdOut:\n" + standardOutputFromCommand);
+        return standardOutputFromCommand.toString();
       }
-      executor.executeCommand();
     } catch (Exception e) {
       LOG.error("Failed to execute VPBM: " + e.getMessage(), e);
     }
+    return null;
   }
 
   @Override
