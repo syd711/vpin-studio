@@ -1,11 +1,7 @@
-package de.mephisto.vpin.server.backup;
+package de.mephisto.vpin.server.backup.adapters.vpbm;
 
-import de.mephisto.vpin.server.backup.adapters.vpbm.VpbmService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import static de.mephisto.vpin.server.VPinStudioServer.API_SEGMENT;
 
@@ -29,5 +25,15 @@ public class VpbmResource {
   @GetMapping("/updateavailable")
   public Boolean updateavailable() {
     return vpbmService.isUpdateAvailable();
+  }
+
+  @GetMapping("/hostids")
+  public VpbmHosts getHostIds() {
+    return vpbmService.getHostIds();
+  }
+
+  @PostMapping
+  public VpbmHosts saveHostIds(@RequestBody VpbmHosts vpbmHosts) {
+    return vpbmService.saveHostIds(vpbmHosts);
   }
 }

@@ -4,8 +4,10 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import de.mephisto.vpin.commons.utils.SystemCommandExecutor;
+import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.server.VPinStudioException;
 import de.mephisto.vpin.server.backup.adapters.vpbm.config.VPinBackupManagerConfig;
+import de.mephisto.vpin.server.preferences.PreferencesService;
 import de.mephisto.vpin.server.system.SystemService;
 import de.mephisto.vpin.server.util.GithubUtil;
 import org.apache.commons.lang3.StringUtils;
@@ -28,6 +30,9 @@ public class VpbmService implements InitializingBean {
 
   @Autowired
   private SystemService systemService;
+
+  @Autowired
+  private PreferencesService preferencesService;
 
   private VpbmService() {
     //force build
@@ -69,7 +74,28 @@ public class VpbmService implements InitializingBean {
     return "Unable to determine version, check log for details.";
   }
 
-  public String executeVPBM(String option, String param) {
+  public VpbmHosts saveHostIds(VpbmHosts vpbmHosts) {
+    preferencesService.savePreference(PreferenceNames.VPBM_EXTERNAL_HOST_IDENTIFIER, vpbmHosts.getExternalHostId());
+    preferencesService.savePreference(PreferenceNames.VPBM_INTERNAL_HOST_IDENTIFIER, vpbmHosts.getInternalHostId());
+    return vpbmHosts;
+  }
+
+  public VpbmHosts getHostIds() {
+    VpbmHosts ids = new VpbmHosts();
+    ids.setInternalHostId((String) preferencesService.getPreferenceValue(PreferenceNames.VPBM_EXTERNAL_HOST_IDENTIFIER, ""));
+
+    String internalHostId = (String) preferencesService.getPreferenceValue(PreferenceNames.VPBM_INTERNAL_HOST_IDENTIFIER);
+    if (StringUtils.isEmpty(internalHostId)) {
+      String hostId = executeVPBM("-h", null);
+      if(hostId != null) {
+        preferencesService.savePreference(PreferenceNames.VPBM_INTERNAL_HOST_IDENTIFIER, hostId.trim());
+        ids.setInternalHostId(hostId);
+      }
+    }
+    return ids;
+  }
+
+  private String executeVPBM(String option, String param) {
     try {
       File dir = new File(SystemService.RESOURCES, VpbmArchiveSource.FOLDER_NAME);
       List<String> commands = new ArrayList<>(Arrays.asList("vPinBackupManager.exe", option));
