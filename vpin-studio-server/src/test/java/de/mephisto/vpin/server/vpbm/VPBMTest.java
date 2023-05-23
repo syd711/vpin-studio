@@ -1,5 +1,6 @@
 package de.mephisto.vpin.server.vpbm;
 
+import de.mephisto.vpin.restclient.VpbmHosts;
 import de.mephisto.vpin.server.AbstractVPinServerTest;
 import de.mephisto.vpin.server.backup.adapters.vpbm.VpbmService;
 import org.apache.commons.lang3.StringUtils;
