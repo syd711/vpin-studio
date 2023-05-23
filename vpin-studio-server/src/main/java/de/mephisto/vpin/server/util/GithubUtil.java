@@ -19,10 +19,12 @@ public class GithubUtil {
       conn.addRequestProperty("Accept-Language", "en-US,en;q=0.8");
       conn.addRequestProperty("User-Agent", "Mozilla");
       conn.addRequestProperty("Referer", "google.com");
+      int responseCode = conn.getResponseCode();//DO NOT DELETE!!!!
 
       String s = conn.getURL().toString();
       String versionSegment = s.substring(s.lastIndexOf("/") + 1);
       if (!referenceVersion.equalsIgnoreCase(versionSegment)) {
+        LOG.info("Found version diff: " + referenceVersion + " => " + versionSegment);
         return versionSegment;
       }
     } catch (Exception e) {

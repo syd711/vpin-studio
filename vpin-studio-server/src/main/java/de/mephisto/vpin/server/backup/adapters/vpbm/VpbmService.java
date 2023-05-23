@@ -34,10 +34,6 @@ public class VpbmService implements InitializingBean {
   @Autowired
   private PreferencesService preferencesService;
 
-  private VpbmService() {
-    //force build
-  }
-
   public File getArchiveFolder() {
     return new File(systemService.getArchivesFolder(), "backups/Visual Pinball X/");
   }
@@ -87,7 +83,7 @@ public class VpbmService implements InitializingBean {
     String internalHostId = (String) preferencesService.getPreferenceValue(PreferenceNames.VPBM_INTERNAL_HOST_IDENTIFIER);
     if (StringUtils.isEmpty(internalHostId)) {
       String hostId = executeVPBM("-h", null);
-      if(hostId != null) {
+      if (hostId != null) {
         preferencesService.savePreference(PreferenceNames.VPBM_INTERNAL_HOST_IDENTIFIER, hostId.trim());
         ids.setInternalHostId(hostId);
       }
@@ -98,25 +94,27 @@ public class VpbmService implements InitializingBean {
   private String executeVPBM(String option, String param) {
     try {
       File dir = new File(SystemService.RESOURCES, VpbmArchiveSource.FOLDER_NAME);
-      List<String> commands = new ArrayList<>(Arrays.asList("vPinBackupManager.exe", option));
+      File exe = new File(dir, "vPinBackupManager.exe");
+      List<String> commands = new ArrayList<>(Arrays.asList(exe.getAbsolutePath(), option));
       if (param != null) {
         commands.add(param);
       }
-      LOG.info("Executing VPBM command: " + String.join(" ", commands));
-      SystemCommandExecutor executor = new SystemCommandExecutor(commands);
+      LOG.info("Executing VPBM command (" + dir.getAbsolutePath() + "): " + String.join(" ", commands));
+      SystemCommandExecutor executor = new SystemCommandExecutor(commands, false);
       executor.setDir(dir);
       executor.executeCommand();
 
       StringBuilder standardOutputFromCommand = executor.getStandardOutputFromCommand();
       StringBuilder standardErrorFromCommand = executor.getStandardErrorFromCommand();
-      if (!StringUtils.isEmpty(standardErrorFromCommand.toString())) {
-        LOG.error("Vpinzip Command Error:\n" + standardErrorFromCommand);
-        return standardOutputFromCommand.toString();
-      }
       if (!StringUtils.isEmpty(standardOutputFromCommand.toString())) {
         LOG.info("Vpinzip Command StdOut:\n" + standardOutputFromCommand);
         return standardOutputFromCommand.toString();
       }
+      if (!StringUtils.isEmpty(standardErrorFromCommand.toString())) {
+        LOG.error("Vpinzip Command Error:\n" + standardErrorFromCommand);
+        return standardOutputFromCommand.toString();
+      }
+
     } catch (Exception e) {
       LOG.error("Failed to execute VPBM: " + e.getMessage(), e);
     }
