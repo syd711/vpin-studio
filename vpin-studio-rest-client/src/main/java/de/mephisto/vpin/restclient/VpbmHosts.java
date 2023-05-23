@@ -1,4 +1,4 @@
-package de.mephisto.vpin.server.backup.adapters.vpbm;
+package de.mephisto.vpin.restclient;
 
 public class VpbmHosts {
   private String internalHostId;

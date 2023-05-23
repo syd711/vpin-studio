@@ -1,5 +1,6 @@
 package de.mephisto.vpin.server.backup.adapters.vpbm;
 
+import de.mephisto.vpin.restclient.VpbmHosts;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -17,7 +18,7 @@ public class VpbmResource {
     return vpbmService.getVersion();
   }
 
-  @PostMapping("/update")
+  @GetMapping("/update")
   public Boolean update() {
     return vpbmService.update();
   }
@@ -32,7 +33,7 @@ public class VpbmResource {
     return vpbmService.getHostIds();
   }
 
-  @PostMapping("/hostIds")
+  @PostMapping("/hostids")
   public VpbmHosts saveHostIds(@RequestBody VpbmHosts vpbmHosts) {
     return vpbmService.saveHostIds(vpbmHosts);
   }

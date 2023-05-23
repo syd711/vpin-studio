@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import de.mephisto.vpin.commons.utils.SystemCommandExecutor;
 import de.mephisto.vpin.restclient.PreferenceNames;
+import de.mephisto.vpin.restclient.VpbmHosts;
 import de.mephisto.vpin.server.VPinStudioException;
 import de.mephisto.vpin.server.backup.adapters.vpbm.config.VPinBackupManagerConfig;
 import de.mephisto.vpin.server.preferences.PreferencesService;

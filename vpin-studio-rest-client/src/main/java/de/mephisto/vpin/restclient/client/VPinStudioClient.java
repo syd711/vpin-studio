@@ -42,6 +42,7 @@ public class VPinStudioClient implements ObservedPropertyChangeListener, Overlay
   private final SystemServiceClient systemServiceClient;
   private final TableManagerServiceClient tableManagerServiceClient;
   private final VpxServiceClient vpxServiceClient;
+  private final VpbmServiceClient vpbmServiceClient;
 
   public VPinStudioClient(String host) {
     this.host = host;
@@ -63,6 +64,7 @@ public class VPinStudioClient implements ObservedPropertyChangeListener, Overlay
     this.systemServiceClient = new SystemServiceClient(this);
     this.tableManagerServiceClient = new TableManagerServiceClient(this);
     this.vpxServiceClient = new VpxServiceClient(this);
+    this.vpbmServiceClient = new VpbmServiceClient(this);
   }
 
   public AltSoundServiceClient getAltSoundService() {
@@ -129,6 +131,9 @@ public class VPinStudioClient implements ObservedPropertyChangeListener, Overlay
     return vpxServiceClient;
   }
 
+  public VpbmServiceClient getVpbmService() {
+    return vpbmServiceClient;
+  }
 
   @Override
   public DiscordServer getDiscordServer(long serverId) {

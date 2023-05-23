@@ -2,6 +2,7 @@ package de.mephisto.vpin.ui.preferences;
 
 import de.mephisto.vpin.commons.utils.SystemCommandExecutor;
 import de.mephisto.vpin.restclient.PreferenceNames;
+import de.mephisto.vpin.restclient.VpbmHosts;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.util.BindingUtil;
 import javafx.application.Platform;
@@ -41,10 +42,24 @@ public class VPBMPreferencesController implements Initializable {
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
+    vpbmBtbn.setDisable(!Studio.client.getSystemService().isLocal());
+    versionLabel.setText(Studio.client.getVpbmService().getVersion());
+    updateBtn.setDisable(true);
+
+    VpbmHosts hostIds = Studio.client.getVpbmService().getHostIds();
+    if (hostIds != null) {
+      this.externalHostText.setText(hostIds.getExternalHostId());
+      this.thisHostText.setText(hostIds.getInternalHostId());
+    }
+
     BindingUtil.bindTextField(externalHostText, PreferenceNames.VPBM_EXTERNAL_HOST_IDENTIFIER, "");
     BindingUtil.bindTextField(thisHostText, PreferenceNames.VPBM_INTERNAL_HOST_IDENTIFIER, "");
 
-    vpbmBtbn.setDisable(!Studio.client.getSystemService().isLocal());
+    new Thread(() -> {
+      Platform.runLater(() -> {
+        updateBtn.setDisable(!Studio.client.getVpbmService().isUpdateAvailable());
+      });
+    }).start();
   }
 
   @FXML
@@ -77,7 +92,7 @@ public class VPBMPreferencesController implements Initializable {
       vpbmBtbn.setDisable(true);
     });
 
-    new Thread(()-> {
+    new Thread(() -> {
       List<String> commands = Arrays.asList("vPinBackupManager.exe");
       LOG.info("Executing vpbm: " + String.join(" ", commands));
       File dir = new File("./resources/", "vpbm");

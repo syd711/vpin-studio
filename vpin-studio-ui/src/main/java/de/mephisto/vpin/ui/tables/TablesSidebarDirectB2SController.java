@@ -7,6 +7,7 @@ import de.mephisto.vpin.restclient.representations.GameRepresentation;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.util.Dialogs;
 import de.mephisto.vpin.ui.util.MediaUtil;
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
@@ -109,21 +110,31 @@ public class TablesSidebarDirectB2SController implements Initializable {
     uploadBtn.setDisable(!g.isPresent());
 
     if (g.isPresent() && g.get().isDirectB2SAvailable()) {
-      data = client.getDirectB2SService().getDirectB2SData(g.get().getId());
-      nameLabel.setText(data.getName());
-      typeLabel.setText(this.getTableType(data.getTableType()));
-      authorLabel.setText(data.getAuthor());
-      artworkLabel.setText(data.getArtwork());
-      grillLabel.setText(String.valueOf(data.getGrillHeight()));
-      b2sElementsLabel.setText(String.valueOf(data.getB2sElements()));
-      playersLabel.setText(String.valueOf(data.getNumberOfPlayers()));
-      filesizeLabel.setText(FileUtils.readableFileSize(data.getFilesize()));
-      modificationDateLabel.setText(SimpleDateFormat.getDateTimeInstance().format(data.getModificationDate()));
+      new Thread(() -> {
+        Platform.runLater(() -> {
+          data = client.getDirectB2SService().getDirectB2SData(g.get().getId());
+          nameLabel.setText(data.getName());
+          typeLabel.setText(this.getTableType(data.getTableType()));
+          authorLabel.setText(data.getAuthor());
+          artworkLabel.setText(data.getArtwork());
+          grillLabel.setText(String.valueOf(data.getGrillHeight()));
+          b2sElementsLabel.setText(String.valueOf(data.getB2sElements()));
+          playersLabel.setText(String.valueOf(data.getNumberOfPlayers()));
+          filesizeLabel.setText(FileUtils.readableFileSize(data.getFilesize()));
+          modificationDateLabel.setText(SimpleDateFormat.getDateTimeInstance().format(data.getModificationDate()));
 
-      byte[] bytesEncoded = org.apache.commons.codec.binary.Base64.decodeBase64(data.getThumbnailBase64());
-      Image image = new Image(new ByteArrayInputStream(bytesEncoded));
-      thumbnailImage.setImage(image);
-      resolutionLabel.setText("Resolution: " + (int)image.getWidth() + " x " + (int)image.getHeight());
+          byte[] bytesEncoded = org.apache.commons.codec.binary.Base64.decodeBase64(data.getThumbnailBase64());
+          if(bytesEncoded != null) {
+            Image image = new Image(new ByteArrayInputStream(bytesEncoded));
+            thumbnailImage.setImage(image);
+            resolutionLabel.setText("Resolution: " + (int)image.getWidth() + " x " + (int)image.getHeight());
+          }
+          else {
+            thumbnailImage.setImage(null);
+            resolutionLabel.setText("Failed to read image data.");
+          }
+        });
+      }).start();
     }
     else {
       nameLabel.setText("-");

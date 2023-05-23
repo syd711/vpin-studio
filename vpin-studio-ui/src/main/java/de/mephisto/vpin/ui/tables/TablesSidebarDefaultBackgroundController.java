@@ -6,6 +6,7 @@ import de.mephisto.vpin.restclient.representations.GameRepresentation;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.util.Dialogs;
 import de.mephisto.vpin.ui.util.MediaUtil;
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
@@ -78,7 +79,7 @@ public class TablesSidebarDefaultBackgroundController implements Initializable {
     if (this.game.isPresent()) {
       GameRepresentation g = this.game.get();
       Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Re-generate default background for \"" + g.getGameDisplayName() + "\"?",
-          "This will re-generate the existing default background.", null, "Yes, generate background");
+        "This will re-generate the existing default background.", null, "Yes, generate background");
       if (result.isPresent() && result.get().equals(ButtonType.OK)) {
         client.getAssetService().regenerateGameAssets(g.getId());
         this.refreshView(this.game);
@@ -95,39 +96,42 @@ public class TablesSidebarDefaultBackgroundController implements Initializable {
   }
 
   public void refreshView(Optional<GameRepresentation> game) {
-    try {
-      openDefaultPictureBtn.setDisable(true);
-      openDefaultPictureBtn.setTooltip(new Tooltip("Open default background"));
-      rawDefaultBackgroundImage.setVisible(false);
-      resetBackgroundBtn.setDisable(true);
-      defaultPictureUploadBtn.setDisable(true);
+    openDefaultPictureBtn.setDisable(true);
+    openDefaultPictureBtn.setTooltip(new Tooltip("Open default background"));
+    rawDefaultBackgroundImage.setVisible(false);
+    resetBackgroundBtn.setDisable(true);
+    defaultPictureUploadBtn.setDisable(true);
 
-      if (game.isPresent()) {
-        GameRepresentation g = game.get();
+    if (game.isPresent()) {
+      GameRepresentation g = game.get();
 
-        defaultPictureUploadBtn.setDisable(StringUtils.isEmpty(g.getRom()));
-        resetBackgroundBtn.setDisable(!g.isDefaultBackgroundAvailable());
-        openDefaultPictureBtn.setDisable(!g.isDefaultBackgroundAvailable());
+      defaultPictureUploadBtn.setDisable(StringUtils.isEmpty(g.getRom()));
+      resetBackgroundBtn.setDisable(!g.isDefaultBackgroundAvailable());
+      openDefaultPictureBtn.setDisable(!g.isDefaultBackgroundAvailable());
 
-        InputStream input = client.getDirectB2SService().getDefaultPicture(game.get());
-        Image image = new Image(input);
-        rawDefaultBackgroundImage.setVisible(true);
-        rawDefaultBackgroundImage.setImage(image);
-        input.close();
+      new Thread(() -> {
+        Platform.runLater(() -> {
+          try {
+            InputStream input = client.getDirectB2SService().getDefaultPicture(game.get());
+            Image image = new Image(input);
+            rawDefaultBackgroundImage.setVisible(true);
+            rawDefaultBackgroundImage.setImage(image);
+            input.close();
 
-        if (image.getWidth() > 300 && g.isDefaultBackgroundAvailable()) {
-          openDefaultPictureBtn.setDisable(false);
-          resolutionLabel.setText("Resolution: " + (int) image.getWidth() + " x " + (int) image.getHeight());
-        }
-        else {
-          resolutionLabel.setText("");
-        }
-      }
-      else {
-        resolutionLabel.setText("");
-      }
-    } catch (IOException e) {
-      LOG.error("Failed to load default background: " + e.getMessage(), e);
+            if (image.getWidth() > 300 && g.isDefaultBackgroundAvailable()) {
+              openDefaultPictureBtn.setDisable(false);
+              resolutionLabel.setText("Resolution: " + (int) image.getWidth() + " x " + (int) image.getHeight());
+            } else {
+              resolutionLabel.setText("");
+            }
+          } catch (IOException e) {
+            LOG.error("Failed to load default background: " + e.getMessage(), e);
+          }
+        });
+      }).start();
+
+    } else {
+      resolutionLabel.setText("");
     }
   }
 

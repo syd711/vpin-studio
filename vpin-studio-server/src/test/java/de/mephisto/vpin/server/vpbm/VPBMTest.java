@@ -1,19 +1,11 @@
 package de.mephisto.vpin.server.vpbm;
 
 import de.mephisto.vpin.server.AbstractVPinServerTest;
-import de.mephisto.vpin.server.backup.adapters.vpbm.VpbmHosts;
 import de.mephisto.vpin.server.backup.adapters.vpbm.VpbmService;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.util.ArrayList;
-import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
