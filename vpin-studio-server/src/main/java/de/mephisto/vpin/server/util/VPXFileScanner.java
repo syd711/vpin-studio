@@ -1,6 +1,7 @@
 package de.mephisto.vpin.server.util;
 
 import de.mephisto.vpin.server.roms.ScanResult;
+import de.mephisto.vpin.server.vpx.VPXUtil;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import org.apache.commons.lang3.StringUtils;
@@ -47,51 +48,26 @@ public class VPXFileScanner {
     long start = System.currentTimeMillis();
     ScanResult result = new ScanResult();
 
-    int count = 0;
     String l = null;
-    POIFSFileSystem fs = null;
-    try {
-      fs = new POIFSFileSystem(gameFile, true);
-      DirectoryEntry root = fs.getRoot();
-      DirectoryEntry gameStg = (DirectoryEntry) root.getEntry("GameStg");
-      DocumentNode gameData = (DocumentNode) gameStg.getEntry("GameData");
+    String script = VPXUtil.readScript(gameFile);
+    List<String> split = Arrays.asList(script.split(System.getProperty("line.separator")));
+    Collections.reverse(split);
+    for (String line : split) {
+      l = line;
 
-      POIFSDocument document = new POIFSDocument(gameData);
-      DocumentInputStream documentInputStream = new DocumentInputStream(document);
-      String script = new String(documentInputStream.readAllBytes());
-
-      List<String> split = Arrays.asList(script.split(System.getProperty("line.separator")));
-      Collections.reverse(split);
-      for (String line : split) {
-        l = line;
-        count++;
-
-        if (result.isScanComplete() || line.trim().equals("Option Explicit")) {
-          break;
-        }
-
-        lineSearchRom(result, line);
-        lineSearchNvOffset(result, line);
-        lineSearchHsFileName(result, line);
-        lineSearchAsset(result, line);
+      if (result.isScanComplete() || line.trim().equals("Option Explicit")) {
+        break;
       }
-    }
-    catch (Exception e) {
-      LOG.error("Failed to read rom line '" + l + "' for  " + gameFile.getAbsolutePath() + ": " + e.getMessage(), e);
-    } finally {
-      try {
-        if (fs != null) {
-          fs.close();
-        }
-      } catch (Exception e) {
-        LOG.error("Failed to close vpx file stream: " + e.getMessage(), e);
-      }
+
+      lineSearchRom(result, line);
+      lineSearchNvOffset(result, line);
+      lineSearchHsFileName(result, line);
+      lineSearchAsset(result, line);
     }
 
     if (!StringUtils.isEmpty(result.getRom())) {
       LOG.info("Finished scan of table " + gameFile.getAbsolutePath() + ", found ROM '" + result.getRom() + "', took " + (System.currentTimeMillis() - start) + " ms.");
-    }
-    else {
+    } else {
       LOG.info("Finished scan of table " + gameFile.getAbsolutePath() + ", no ROM found" + "', took " + (System.currentTimeMillis() - start) + " ms.");
     }
     return result;

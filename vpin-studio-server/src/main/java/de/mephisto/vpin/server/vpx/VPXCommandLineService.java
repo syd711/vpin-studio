@@ -1,5 +1,6 @@
 package de.mephisto.vpin.server.vpx;
 
+import de.mephisto.vpin.commons.utils.Joiner;
 import de.mephisto.vpin.commons.utils.SystemCommandExecutor;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.system.SystemService;
@@ -13,6 +14,7 @@ import org.springframework.stereotype.Service;
 
 import java.io.File;
 import java.util.Arrays;
+import java.util.List;
 
 @Service
 public class VPXCommandLineService {
@@ -26,8 +28,9 @@ public class VPXCommandLineService {
     File vpxExe = systemService.getVPXExe();
 
     try {
-      LOG.info("Executing VPX " + commandParam + "command for " + gameFile.getAbsolutePath());
-      SystemCommandExecutor executor = new SystemCommandExecutor(Arrays.asList(vpxExe.getAbsolutePath(), commandParam, gameFile.getAbsolutePath()));
+      List<String> strings = Arrays.asList(vpxExe.getAbsolutePath(), commandParam, "\"" + gameFile.getAbsolutePath() + "\"");
+      LOG.info("Executing VPX " + commandParam + "command: " + String.join(" ", strings));
+      SystemCommandExecutor executor = new SystemCommandExecutor(strings);
       executor.executeCommandAsync();
 
       StringBuilder standardErrorFromCommand = executor.getStandardErrorFromCommand();
@@ -48,8 +51,9 @@ public class VPXCommandLineService {
     File target = new File(gameFile.getParentFile(), FilenameUtils.getBaseName(gameFile.getName()) + "." + fileSuffix);
 
     try {
-      LOG.info("Executing VPX " + commandParam + "command for " + gameFile.getAbsolutePath());
-      SystemCommandExecutor executor = new SystemCommandExecutor(Arrays.asList(vpxExe.getAbsolutePath(), commandParam, gameFile.getAbsolutePath()));
+      List<String> strings = Arrays.asList(vpxExe.getAbsolutePath(), commandParam, "\"" + gameFile.getAbsolutePath() + "\"");
+      LOG.info("Executing VPX " + commandParam + "command: " + String.join(" ", strings));
+      SystemCommandExecutor executor = new SystemCommandExecutor(strings);
       executor.executeCommandAsync();
 
       StringBuilder standardErrorFromCommand = executor.getStandardErrorFromCommand();
