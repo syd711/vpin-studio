@@ -3,7 +3,6 @@ package de.mephisto.vpin.restclient.util;
 import org.apache.commons.lang3.time.DurationFormatUtils;
 
 import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
@@ -40,7 +39,7 @@ public class DateUtil {
   }
 
   public static Date formatDate(LocalDate value, String time) {
-    if(value == null) {
+    if (value == null) {
       return null;
     }
 

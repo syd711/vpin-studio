@@ -24,7 +24,7 @@ public class DirectB2SServiceClient extends VPinStudioClientService {
 
   public ByteArrayInputStream getDefaultPicture(GameRepresentation game) {
     byte[] bytes = getRestClient().readBinary(API + "assets/defaultbackground/" + game.getId());
-    if(bytes == null) {
+    if (bytes == null) {
       LOG.error("Failed to read image, using empty bytes.");
       bytes = new byte[]{};
     }

@@ -1,6 +1,5 @@
 package de.mephisto.vpin.server.vpx;
 
-import de.mephisto.vpin.commons.utils.Joiner;
 import de.mephisto.vpin.commons.utils.SystemCommandExecutor;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.system.SystemService;

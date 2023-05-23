@@ -1,7 +1,6 @@
 package de.mephisto.vpin.restclient.discord;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import de.mephisto.vpin.restclient.util.DateUtil;
 
 import java.util.Date;
 
@@ -104,7 +103,7 @@ public class DiscordCompetitionData {
   }
 
   @JsonIgnore
-  public boolean isFinished(){
+  public boolean isFinished() {
     return new Date().before(this.getEdt());
   }
 }

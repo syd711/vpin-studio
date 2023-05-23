@@ -71,6 +71,7 @@ public class RestClient implements ClientHttpRequestInterceptor {
   public <T> T get(String path, Class<T> entityType) {
     return get(path, entityType, new HashMap<>());
   }
+
   public <T> T getCached(String path, Class<T> entityType) {
     if (cache.contains(path)) {
       return (T) cache.get(path);

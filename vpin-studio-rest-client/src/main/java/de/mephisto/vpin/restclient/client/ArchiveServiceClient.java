@@ -85,7 +85,6 @@ public class ArchiveServiceClient extends VPinStudioClientService {
   }
 
 
-
   public boolean backupTable(BackupDescriptor exportDescriptor) throws Exception {
     return getRestClient().post(API + "io/backup", exportDescriptor, Boolean.class);
   }

@@ -1,8 +1,6 @@
 package de.mephisto.vpin.restclient.representations;
 
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 
 /**
  * {

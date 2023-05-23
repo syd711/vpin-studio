@@ -7,15 +7,15 @@ import java.util.ArrayList;
 public class ProcessInputStream extends InputStream {
 
   private InputStream in;
-  private int length,sumRead;
+  private int length, sumRead;
   private java.util.List<FileUploadProgressListener> listeners;
   private double percent;
 
-  public ProcessInputStream(InputStream inputStream,int length) throws IOException{
-    this.in=inputStream;
-    listeners=new ArrayList<>();
-    sumRead=0;
-    this.length=length;
+  public ProcessInputStream(InputStream inputStream, int length) throws IOException {
+    this.in = inputStream;
+    listeners = new ArrayList<>();
+    sumRead = 0;
+    this.length = length;
   }
 
 
@@ -25,7 +25,6 @@ public class ProcessInputStream extends InputStream {
     evaluatePercent(readCount);
     return readCount;
   }
-
 
 
   @Override
@@ -45,26 +44,26 @@ public class ProcessInputStream extends InputStream {
   @Override
   public int read() throws IOException {
     int read = in.read();
-    if(read!=-1){
+    if (read != -1) {
       evaluatePercent(1);
     }
     return read;
   }
 
-  public ProcessInputStream addListener(FileUploadProgressListener listener){
+  public ProcessInputStream addListener(FileUploadProgressListener listener) {
     this.listeners.add(listener);
     return this;
   }
 
-  private void evaluatePercent(long readCount){
-    if(readCount!=-1){
-      sumRead+=readCount;
-      percent=sumRead*1.0/length;
+  private void evaluatePercent(long readCount) {
+    if (readCount != -1) {
+      sumRead += readCount;
+      percent = sumRead * 1.0 / length;
     }
     notifyListener();
   }
 
-  private void notifyListener(){
+  private void notifyListener() {
     for (FileUploadProgressListener listener : listeners) {
       listener.process(percent);
     }

@@ -24,11 +24,10 @@ public class PreferenceEntryRepresentation {
 
   public int getIntValue() {
     try {
-      if(value != null) {
+      if (value != null) {
         return Integer.parseInt(value);
       }
-    }
-    catch (Exception e) {
+    } catch (Exception e) {
       //ignore
     }
     return 0;
@@ -36,11 +35,10 @@ public class PreferenceEntryRepresentation {
 
   public long getLongValue() {
     try {
-      if(value != null) {
+      if (value != null) {
         return Long.parseLong(value);
       }
-    }
-    catch (Exception e) {
+    } catch (Exception e) {
       //ignore
     }
     return 0;
@@ -80,13 +78,13 @@ public class PreferenceEntryRepresentation {
   }
 
   public String getOptionValue(String optionName) {
-    if(!StringUtils.isEmpty(value)) {
+    if (!StringUtils.isEmpty(value)) {
       String[] split = value.split(";");
       for (String optionEntry : split) {
         String[] entry = optionEntry.split("=");
-        if(entry.length == 2) {
+        if (entry.length == 2) {
           String key = entry[0];
-          if(key.equals(optionName)) {
+          if (key.equals(optionName)) {
             return entry[1];
           }
         }

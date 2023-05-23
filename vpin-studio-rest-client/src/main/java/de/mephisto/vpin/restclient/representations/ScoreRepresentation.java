@@ -70,7 +70,7 @@ public class ScoreRepresentation {
   @Override
   public String toString() {
     String name = this.getPlayerInitials();
-    if(this.player != null) {
+    if (this.player != null) {
       name = this.player.getName();
     }
     return "#" + this.getPosition() + " " + name + "   " + this.getScore();
