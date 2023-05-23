@@ -125,7 +125,7 @@ public class CompetitionsDiscordController implements Initializable, StudioFXCon
     if (c != null) {
       CompetitionRepresentation newCmp = null;
       try {
-        newCmp = client.saveCompetition(c);
+        newCmp = client.getCompetitions().saveCompetition(c);
         if(newCmp.isActive()) {
           WidgetFactory.showInformation(Studio.stage, "Competition created",
               "The competition has been created and the Discord channel update requested.",
@@ -147,7 +147,7 @@ public class CompetitionsDiscordController implements Initializable, StudioFXCon
       CompetitionRepresentation c = Dialogs.openDiscordCompetitionDialog(this.competitions, clone);
       if (c != null) {
         try {
-          CompetitionRepresentation newCmp = client.saveCompetition(c);
+          CompetitionRepresentation newCmp = client.getCompetitions().saveCompetition(c);
           onReload();
           tableView.getSelectionModel().select(newCmp);
         } catch (Exception e) {
@@ -172,7 +172,7 @@ public class CompetitionsDiscordController implements Initializable, StudioFXCon
     CompetitionRepresentation c = Dialogs.openDiscordJoinCompetitionDialog();
     if (c != null) {
       try {
-        CompetitionRepresentation newCmp = client.saveCompetition(c);
+        CompetitionRepresentation newCmp = client.getCompetitions().saveCompetition(c);
         onReload();
         tableView.getSelectionModel().select(newCmp);
       } catch (Exception e) {
@@ -191,7 +191,7 @@ public class CompetitionsDiscordController implements Initializable, StudioFXCon
       CompetitionRepresentation c = Dialogs.openDiscordCompetitionDialog(this.competitions, selection);
       if (c != null) {
         try {
-          CompetitionRepresentation newCmp = client.saveCompetition(c);
+          CompetitionRepresentation newCmp = client.getCompetitions().saveCompetition(c);
           onReload();
           tableView.getSelectionModel().select(newCmp);
         } catch (Exception e) {
@@ -208,7 +208,7 @@ public class CompetitionsDiscordController implements Initializable, StudioFXCon
   private void onDelete() {
     CompetitionRepresentation selection = tableView.getSelectionModel().getSelectedItem();
     if (selection != null) {
-      boolean isOwner = selection.getOwner().equals(String.valueOf(client.getDiscordStatus().getBotId()));
+      boolean isOwner = selection.getOwner().equals(String.valueOf(client.getDiscord().getDiscordStatus().getBotId()));
 
       String help = null;
       String help2 = null;
@@ -228,7 +228,7 @@ public class CompetitionsDiscordController implements Initializable, StudioFXCon
           help, help2);
       if (result.isPresent() && result.get().equals(ButtonType.OK)) {
         tableView.getSelectionModel().clearSelection();
-        client.deleteCompetition(selection);
+        client.getCompetitions().deleteCompetition(selection);
         NavigationController.setBreadCrumb(Arrays.asList("Competitions", "Discord Competitions"));
         onReload();
       }
@@ -244,7 +244,7 @@ public class CompetitionsDiscordController implements Initializable, StudioFXCon
 
       Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Finish Competition '" + selection.getName() + "'?", helpText1, helpText2);
       if (result.isPresent() && result.get().equals(ButtonType.OK)) {
-        client.finishCompetition(selection);
+        client.getCompetitions().finishCompetition(selection);
         onReload();
       }
     }
@@ -257,7 +257,7 @@ public class CompetitionsDiscordController implements Initializable, StudioFXCon
     tableView.setVisible(false);
     tableStack.getChildren().add(loadingOverlay);
 
-    DiscordBotStatus discordStatus = client.getDiscordStatus();
+    DiscordBotStatus discordStatus = client.getDiscord().getDiscordStatus();
     if (!discordStatus.isValid()) {
       textfieldSearch.setDisable(true);
       addBtn.setDisable(true);
@@ -276,7 +276,7 @@ public class CompetitionsDiscordController implements Initializable, StudioFXCon
 
     new Thread(() -> {
       CompetitionRepresentation selection = tableView.getSelectionModel().getSelectedItem();
-      competitions = client.getDiscordCompetitions();
+      competitions = client.getCompetitions().getDiscordCompetitions();
       filterCompetitions(competitions);
       data = FXCollections.observableList(competitions);
 
@@ -311,7 +311,7 @@ public class CompetitionsDiscordController implements Initializable, StudioFXCon
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
-    this.discordBotId = client.getDiscordStatus().getBotId();
+    this.discordBotId = client.getDiscord().getDiscordStatus().getBotId();
 
     NavigationController.setBreadCrumb(Arrays.asList("Competitions"));
     tableView.setPlaceholder(new Label("            No competitions found.\nClick the '+' button to create a new one."));
@@ -393,7 +393,7 @@ public class CompetitionsDiscordController implements Initializable, StudioFXCon
 
       HBox hBox = new HBox(6);
       hBox.setAlignment(Pos.CENTER_LEFT);
-      PlayerRepresentation discordPlayer = client.getDiscordPlayer(value.getDiscordServerId(), Long.valueOf(value.getOwner()));
+      PlayerRepresentation discordPlayer = client.getDiscord().getDiscordPlayer(value.getDiscordServerId(), Long.valueOf(value.getOwner()));
       if (discordPlayer != null) {
         Image image = new Image(client.getCachedUrlImage(discordPlayer.getAvatarUrl()));
         ImageView view = new ImageView(image);
@@ -440,7 +440,7 @@ public class CompetitionsDiscordController implements Initializable, StudioFXCon
 
       if (!StringUtils.isEmpty(value.getWinnerInitials())) {
         winner = value.getWinnerInitials();
-        PlayerRepresentation player = client.getPlayer(value.getDiscordServerId(), value.getWinnerInitials());
+        PlayerRepresentation player = client.getPlayers().getPlayer(value.getDiscordServerId(), value.getWinnerInitials());
         if (player != null) {
           winner = player.getName();
         }
@@ -529,7 +529,7 @@ public class CompetitionsDiscordController implements Initializable, StudioFXCon
 
   @Override
   public void onViewActivated() {
-    this.discordBotId = client.getDiscordStatus().getBotId();
+    this.discordBotId = client.getDiscord().getDiscordStatus().getBotId();
   }
 
   public void setCompetitionsController(CompetitionsController competitionsController) {

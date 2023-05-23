@@ -49,7 +49,7 @@ public class DirectB2SUploadProgressModel extends ProgressModel<File> {
   @Override
   public void processNext(ProgressResultModel progressResultModel, File next) {
     try {
-      Studio.client.uploadDirectB2SFile(next, directB2SType, gameId, percent -> progressResultModel.setProgress(percent));
+      Studio.client.getDirectB2S().uploadDirectB2SFile(next, directB2SType, gameId, percent -> progressResultModel.setProgress(percent));
       progressResultModel.addProcessed();
     } catch (Exception e) {
       LOG.error("Table upload failed: " + e.getMessage(), e);

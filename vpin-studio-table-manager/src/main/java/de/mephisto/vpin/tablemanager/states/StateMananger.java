@@ -43,7 +43,7 @@ public class StateMananger implements JobListener, NativeKeyListener {
 
   private StateMananger() {
     TableManagerJobPoller.getInstance().addJobListener(this);
-    Menu.client.invalidateArchiveCache();
+    Menu.client.getArchiving().invalidateArchiveCache();
 
     String s = Menu.class.getResource("select.mp3").toExternalForm();
     System.out.println(s);

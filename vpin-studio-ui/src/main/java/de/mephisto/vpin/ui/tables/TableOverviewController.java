@@ -158,7 +158,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
       Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Start playing table \"" + game.getGameDisplayName() + "\"?",
           "All existing VPX and Popper processes will be terminated.");
       if (result.isPresent() && result.get().equals(ButtonType.OK)) {
-        client.playGame(game.getId());
+        client.getVpx().playGame(game.getId());
       }
     }
   }
@@ -169,7 +169,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
     if (game != null) {
       Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Stop all VPX and PinUP Popper processes?");
       if (result.isPresent() && result.get().equals(ButtonType.OK)) {
-        client.terminatePopper();
+        client.getPopper().terminatePopper();
       }
     }
   }
@@ -203,10 +203,10 @@ public class TableOverviewController implements Initializable, StudioFXControlle
 
   @FXML
   private void onTableUpload() {
-    if (client.isPinUPPopperRunning()) {
+    if (client.getPopper().isPinUPPopperRunning()) {
       Optional<ButtonType> buttonType = Dialogs.openPopperRunningWarning(Studio.stage);
       if (buttonType.isPresent() && buttonType.get().equals(ButtonType.APPLY)) {
-        Studio.client.terminatePopper();
+        Studio.client.getPopper().terminatePopper();
         openUploadDialog();
       }
       return;
@@ -225,10 +225,10 @@ public class TableOverviewController implements Initializable, StudioFXControlle
 
   @FXML
   private void onDelete() {
-    if (client.isPinUPPopperRunning()) {
+    if (client.getPopper().isPinUPPopperRunning()) {
       Optional<ButtonType> buttonType = Dialogs.openPopperRunningWarning(Studio.stage);
       if (buttonType.isPresent() && buttonType.get().equals(ButtonType.APPLY)) {
-        Studio.client.terminatePopper();
+        Studio.client.getPopper().terminatePopper();
         deleteSelection();
       }
       return;
@@ -240,7 +240,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
   private void deleteSelection() {
     GameRepresentation game = tableView.getSelectionModel().getSelectedItem();
     if (game != null) {
-      if (Studio.client.isGameReferencedByCompetitions(game.getId())) {
+      if (Studio.client.getCompetitions().isGameReferencedByCompetitions(game.getId())) {
         WidgetFactory.showAlert(Studio.stage, "The table \"" + game.getGameDisplayName()
             + "\" is used by at least one competition.", "Delete all competitions for this table first.");
         return;
@@ -296,7 +296,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
       game.setIgnoredValidations(null);
 
       try {
-        client.saveGame(game);
+        client.getGames().saveGame(game);
       } catch (Exception e) {
         WidgetFactory.showAlert(Studio.stage, e.getMessage());
       }
@@ -323,7 +323,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
       game.setIgnoredValidations(StringUtils.join(gameIgnoreList, ","));
 
       try {
-        client.saveGame(game);
+        client.getGames().saveGame(game);
       } catch (Exception e) {
         WidgetFactory.showAlert(Studio.stage, e.getMessage());
       }
@@ -351,7 +351,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
 
     new Thread(() -> {
       GameRepresentation selection = tableView.getSelectionModel().getSelectedItem();
-      games = client.getGames();
+      games = client.getGames().getGames();
       filterGames(games);
 
       Platform.runLater(() -> {

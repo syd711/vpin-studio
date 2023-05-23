@@ -102,7 +102,7 @@ public class ArchiveUploadController implements Initializable, DialogController 
     this.uploadBtn.setDisable(true);
     this.fileNameField.textProperty().addListener((observableValue, s, t1) -> uploadBtn.setDisable(StringUtils.isEmpty(t1)));
 
-    List<ArchiveSourceRepresentation> repositories = new ArrayList<>(client.getArchiveSources());
+    List<ArchiveSourceRepresentation> repositories = new ArrayList<>(client.getArchiving().getArchiveSources());
     repositories = repositories.stream().filter(r -> r.getType().equals(ArchiveSourceType.File.name())).collect(Collectors.toList());
     repositoryCombo.setItems(FXCollections.observableList(repositories));
     repositoryCombo.getSelectionModel().select(0);

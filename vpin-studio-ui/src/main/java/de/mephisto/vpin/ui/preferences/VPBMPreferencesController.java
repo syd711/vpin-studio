@@ -44,7 +44,7 @@ public class VPBMPreferencesController implements Initializable {
     BindingUtil.bindTextField(externalHostText, PreferenceNames.VPBM_EXTERNAL_HOST_IDENTIFIER, "");
     BindingUtil.bindTextField(thisHostText, PreferenceNames.VPBM_INTERNAL_HOST_IDENTIFIER, "");
 
-    vpbmBtbn.setDisable(!Studio.client.isLocal());
+    vpbmBtbn.setDisable(!Studio.client.getSystem().isLocal());
   }
 
   @FXML

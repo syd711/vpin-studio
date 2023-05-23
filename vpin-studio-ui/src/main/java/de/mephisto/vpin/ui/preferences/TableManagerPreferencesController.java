@@ -29,13 +29,13 @@ public class TableManagerPreferencesController implements Initializable {
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
-    List<PlaylistRepresentation> playlists = new ArrayList<>(client.getPlaylists());
+    List<PlaylistRepresentation> playlists = new ArrayList<>(client.getPopper().getPlaylists());
     playlists.add(0, null);
     ObservableList<PlaylistRepresentation> data = FXCollections.observableList(playlists);
     this.playlistCombo.setItems(data);
 
 
-    archiveManagerSettings = client.getTableManagerSettings();
+    archiveManagerSettings = client.getTableManager().getTableManagerSettings();
     if (archiveManagerSettings.getPlaylistId() != -1) {
       for (PlaylistRepresentation playlist : playlists) {
         if (playlist != null && playlist.getId() == archiveManagerSettings.getPlaylistId()) {
@@ -45,10 +45,10 @@ public class TableManagerPreferencesController implements Initializable {
     }
 
     this.playlistCombo.valueProperty().addListener((observable, oldValue, newValue) -> {
-      if (client.isPinUPPopperRunning()) {
+      if (client.getPopper().isPinUPPopperRunning()) {
         Optional<ButtonType> buttonType = Dialogs.openPopperRunningWarning(Studio.stage);
         if (buttonType.isPresent() && buttonType.get().equals(ButtonType.APPLY)) {
-          Studio.client.terminatePopper();
+          Studio.client.getPopper().terminatePopper();
           updateInstallation(newValue);
         }
       }
@@ -62,7 +62,7 @@ public class TableManagerPreferencesController implements Initializable {
     archiveManagerSettings.setPlaylistId(playlist == null ? -1 : playlist.getId());
 
     try {
-      client.saveTableManagerSettings(archiveManagerSettings);
+      client.getTableManager().saveTableManagerSettings(archiveManagerSettings);
     } catch (Exception e) {
       WidgetFactory.showAlert(Studio.stage, "Failed to update archive manager: " + e.getMessage());
     }

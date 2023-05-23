@@ -43,7 +43,7 @@ public class ScreensPreferencesController implements Initializable {
     String value = StringUtils.join(ignoreList, ",");
     Map<String, Object> prefs = new HashMap<>();
     prefs.put(PreferenceNames.IGNORED_MEDIA, value);
-    client.setPreferences(prefs);
+    client.getPreferences().setPreferences(prefs);
   }
 
   @Override

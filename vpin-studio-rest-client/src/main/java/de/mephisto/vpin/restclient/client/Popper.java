@@ -1,0 +1,61 @@
+package de.mephisto.vpin.restclient.client;
+
+import de.mephisto.vpin.restclient.PinUPControl;
+import de.mephisto.vpin.restclient.PinUPControls;
+import de.mephisto.vpin.restclient.PopperScreen;
+import de.mephisto.vpin.restclient.TableDetails;
+import de.mephisto.vpin.restclient.representations.PlaylistRepresentation;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.util.Arrays;
+import java.util.List;
+
+/*********************************************************************************************************************
+ * Popper
+ ********************************************************************************************************************/
+public class Popper extends AbstractStudioClientModule{
+  private final static Logger LOG = LoggerFactory.getLogger(VPinStudioClient.class);
+
+  Popper(VPinStudioClient client) {
+    super(client);
+  }
+
+  public PinUPControl getPinUPControlFor(PopperScreen screen) {
+    return getRestClient().get(API + "popper/pincontrol/" + screen.name(), PinUPControl.class);
+  }
+
+  public PinUPControls getPinUPControls() {
+    return getRestClient().get(API + "popper/pincontrols", PinUPControls.class);
+  }
+
+  public List<PlaylistRepresentation> getPlaylists() {
+    return Arrays.asList(getRestClient().get(API + "popper/playlists", PlaylistRepresentation[].class));
+  }
+
+  public boolean isPinUPPopperRunning() {
+    return getRestClient().get(API + "popper/running", Boolean.class);
+  }
+
+  public boolean terminatePopper() {
+    return getRestClient().get(API + "popper/terminate", Boolean.class);
+  }
+
+  public boolean restartPopper() {
+    return getRestClient().get(API + "popper/restart", Boolean.class);
+  }
+
+  public TableDetails getTableDetails(int gameId) {
+    return getRestClient().get(API + "popper/tabledetails/" + gameId, TableDetails.class);
+  }
+
+  public TableDetails saveTableDetails(TableDetails tableDetails, int gameId) throws Exception {
+    try {
+      return getRestClient().post(API + "popper/tabledetails/" + gameId, tableDetails, TableDetails.class);
+    } catch (Exception e) {
+      LOG.error("Failed save table details: " + e.getMessage(), e);
+      throw e;
+    }
+  }
+
+}

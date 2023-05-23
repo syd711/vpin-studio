@@ -45,7 +45,7 @@ public class CopyArchiveToRepositoryDialogController implements Initializable, D
         ArchiveDownloadDescriptor descriptor = new ArchiveDownloadDescriptor();
         descriptor.setFilename(selectedItem.getFilename());
         descriptor.setArchiveSourceId(selectedItem.getSource().getId());
-        client.downloadArchive(descriptor);
+        client.getIo().downloadArchive(descriptor);
         JobPoller.getInstance().setPolling();
       }
     } catch (Exception e) {

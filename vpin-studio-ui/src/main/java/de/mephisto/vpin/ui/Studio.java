@@ -41,7 +41,7 @@ public class Studio extends Application {
     Studio.client = new VPinStudioClient("localhost");
     OverlayWindowFX.client = Studio.client;
 
-    String version = client.version();
+    String version = client.getSystem().version();
     if (!StringUtils.isEmpty(version)) {
       loadStudio(stage, Studio.client);
     }

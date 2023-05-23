@@ -119,7 +119,7 @@ public class AltSoundEditorController implements Initializable, DialogController
   private void onRestoreClick() {
     Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Revert Changes?", "Revert all changes and restore initial ALT sound data?", null, "Yes, revert changes");
     if (result.isPresent() && result.get().equals(ButtonType.OK)) {
-      AltSound orig = Studio.client.getAltSound(this.game.getId());
+      AltSound orig = Studio.client.getAltSoundService().getAltSound(this.game.getId());
       this.altSound.setEntries(orig.getEntries());
       this.refresh();
     }
@@ -128,7 +128,7 @@ public class AltSoundEditorController implements Initializable, DialogController
   @FXML
   private void onSaveClick(ActionEvent e) {
     try {
-      Studio.client.saveAltSound(game.getId(), this.altSound);
+      Studio.client.getAltSoundService().saveAltSound(game.getId(), this.altSound);
     } catch (Exception ex) {
       LOG.error("Failed to save ALT sound: " + ex.getMessage(), ex);
       WidgetFactory.showAlert(Studio.stage, "Error", "Failed to save ALT sound: " + ex.getMessage());

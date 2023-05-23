@@ -164,7 +164,7 @@ public class LauncherController implements Initializable {
   private void onConnect() {
     VPinConnection selectedItem = tableView.getSelectionModel().getSelectedItem();
     VPinStudioClient client = new VPinStudioClient(selectedItem.getHost());
-    if (client.version() != null) {
+    if (client.getSystem().version() != null) {
       stage.close();
       Studio.loadStudio(WidgetFactory.createStage(), client);
     }
@@ -193,7 +193,7 @@ public class LauncherController implements Initializable {
       main.setCenter(loadingOverlay);
 
       new Thread(() -> {
-        while (client.version() == null) {
+        while (client.getSystem().version() == null) {
           try {
             LOG.info("Waiting for server...");
             Thread.sleep(2000);
@@ -202,7 +202,7 @@ public class LauncherController implements Initializable {
           }
         }
 
-        LOG.info("Found server startup, running on version " + client.version() + ", starting table scan.");
+        LOG.info("Found server startup, running on version " + client.getSystem().version() + ", starting table scan.");
         Platform.runLater(() -> {
           stage.close();
           Dialogs.createProgressDialog(new ServiceInstallationProgressModel(Studio.client));
@@ -221,7 +221,7 @@ public class LauncherController implements Initializable {
         "Install the service or connect to another system."));
 
     this.installBtn.setVisible(ServerInstallationUtil.SERVER_EXE.exists());
-    this.installBtn.setDisable(client.version() != null);
+    this.installBtn.setDisable(client.getSystem().version() != null);
 
     connectBtn.setDisable(true);
     tableView.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> connectBtn.setDisable(newValue == null));
@@ -293,7 +293,7 @@ public class LauncherController implements Initializable {
 
   private VPinConnection checkConnection(String host) {
     VPinStudioClient client = new VPinStudioClient(host);
-    String version = client.version();
+    String version = client.getSystem().version();
     if (version != null) {
       VPinConnection connection = new VPinConnection();
       PreferenceEntryRepresentation avatarEntry = client.getPreference(PreferenceNames.AVATAR);

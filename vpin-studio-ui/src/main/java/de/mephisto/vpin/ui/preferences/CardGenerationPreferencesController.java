@@ -38,7 +38,7 @@ public class CardGenerationPreferencesController implements Initializable {
   private void onScreenChange() {
     String selectedItem = popperScreenCombo.getSelectionModel().getSelectedItem();
     if (!StringUtils.isEmpty(selectedItem)) {
-      PinUPControl fn = Studio.client.getPinUPControlFor(PopperScreen.valueOf(selectedItem));
+      PinUPControl fn = Studio.client.getPopper().getPinUPControlFor(PopperScreen.valueOf(selectedItem));
 
       String msg = null;
       if (fn != null) {

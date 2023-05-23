@@ -63,7 +63,7 @@ public class InstallingMenuState extends MenuState {
       descriptor.setArchiveSourceId(archiveDescriptor.getSource().getId());
       descriptor.setFilename(archiveDescriptor.getFilename());
 
-      List<PlaylistRepresentation> playlists = Menu.client.getPlaylists();
+      List<PlaylistRepresentation> playlists = Menu.client.getPopper().getPlaylists();
       if (playlist != null) {
         descriptor.setPlaylistId(playlist.getId());
       }
@@ -72,7 +72,7 @@ public class InstallingMenuState extends MenuState {
       }
 
       try {
-        Menu.client.installTable(descriptor);
+        Menu.client.getIo().installTable(descriptor);
       } catch (Exception e) {
         LOG.error("Failed to executing installation: " + e.getMessage(), e);
       }

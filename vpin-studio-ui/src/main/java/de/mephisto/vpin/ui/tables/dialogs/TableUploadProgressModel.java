@@ -53,7 +53,7 @@ public class TableUploadProgressModel extends ProgressModel<File> {
   @Override
   public void processNext(ProgressResultModel progressResultModel, File next) {
     try {
-      Studio.client.uploadTable(next,tableUploadDescriptor, gameId, percent -> {
+      Studio.client.getHighscoreCards().uploadTable(next,tableUploadDescriptor, gameId, percent -> {
         double total = percentage + percent;
         progressResultModel.setProgress(total / this.files.size());
       });

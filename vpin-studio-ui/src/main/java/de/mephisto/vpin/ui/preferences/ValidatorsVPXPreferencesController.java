@@ -42,7 +42,7 @@ public class ValidatorsVPXPreferencesController implements Initializable {
     String value = StringUtils.join(ignoreList, ",");
     Map<String, Object> prefs = new HashMap<>();
     prefs.put(PreferenceNames.IGNORED_VALIDATIONS, value);
-    client.setPreferences(prefs);
+    client.getPreferences().setPreferences(prefs);
   }
 
 

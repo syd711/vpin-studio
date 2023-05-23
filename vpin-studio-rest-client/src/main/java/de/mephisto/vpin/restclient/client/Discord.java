@@ -1,0 +1,49 @@
+package de.mephisto.vpin.restclient.client;
+
+
+import de.mephisto.vpin.restclient.discord.DiscordBotStatus;
+import de.mephisto.vpin.restclient.discord.DiscordChannel;
+import de.mephisto.vpin.restclient.discord.DiscordCompetitionData;
+import de.mephisto.vpin.restclient.discord.DiscordServer;
+import de.mephisto.vpin.restclient.representations.PlayerRepresentation;
+
+import java.util.Arrays;
+import java.util.List;
+
+/*********************************************************************************************************************
+ * Discord
+ ********************************************************************************************************************/
+public class Discord extends AbstractStudioClientModule{
+
+  Discord(VPinStudioClient client) {
+    super(client);
+  }
+
+  public DiscordCompetitionData getDiscordCompetitionData(long serverId, long channelId) {
+    return getRestClient().get(API + "discord/competition/" + serverId + "/" + channelId, DiscordCompetitionData.class);
+  }
+
+  public DiscordBotStatus getDiscordStatus() {
+    return getRestClient().get(API + "discord/status", DiscordBotStatus.class);
+  }
+
+  public List<DiscordChannel> getDiscordChannels() {
+    return Arrays.asList(getRestClient().getCached(API + "discord/channels", DiscordChannel[].class));
+  }
+
+  public PlayerRepresentation getDiscordPlayer(long serverId, long memberId) {
+    return getRestClient().getCached(API + "discord/player/" + serverId + "/" + memberId, PlayerRepresentation.class);
+  }
+
+  public List<DiscordChannel> getDiscordChannels(long serverId) {
+    return Arrays.asList(getRestClient().getCached(API + "discord/channels/" + serverId, DiscordChannel[].class));
+  }
+
+  public DiscordServer getDiscordServer(long serverId) {
+    return getRestClient().getCached(API + "discord/server/" + serverId, DiscordServer.class);
+  }
+
+  public List<DiscordServer> getDiscordServers() {
+    return Arrays.asList(getRestClient().getCached(API + "discord/servers", DiscordServer[].class));
+  }
+}

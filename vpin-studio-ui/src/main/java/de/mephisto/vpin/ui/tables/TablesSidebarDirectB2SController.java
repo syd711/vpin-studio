@@ -109,7 +109,7 @@ public class TablesSidebarDirectB2SController implements Initializable {
     uploadBtn.setDisable(!g.isPresent());
 
     if (g.isPresent() && g.get().isDirectB2SAvailable()) {
-      data = client.getDirectB2SData(g.get().getId());
+      data = client.getDirectB2S().getDirectB2SData(g.get().getId());
       nameLabel.setText(data.getName());
       typeLabel.setText(this.getTableType(data.getTableType()));
       authorLabel.setText(data.getAuthor());

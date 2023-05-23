@@ -243,7 +243,7 @@ public class TablesSidebarController implements Initializable {
     });
 
     mediaPreviewCheckbox.selectedProperty().addListener((observable, oldValue, newValue) -> {
-      client.setPreference(PreferenceNames.PREVIEW_ENABLED, newValue);
+      client.getPreferences().setPreference(PreferenceNames.PREVIEW_ENABLED, newValue);
       refreshView(game);
     });
   }

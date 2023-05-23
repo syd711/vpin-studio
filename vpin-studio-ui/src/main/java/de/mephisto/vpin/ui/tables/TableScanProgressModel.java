@@ -48,7 +48,7 @@ public class TableScanProgressModel extends ProgressModel<GameRepresentation> {
 
   public void processNext(ProgressResultModel progressResultModel, GameRepresentation game) {
     try {
-      Studio.client.scanGame(game.getId());
+      Studio.client.getGames().scanGame(game.getId());
       progressResultModel.addProcessed();
     } catch (Exception e) {
       LOG.error("Generate card error: " + e.getMessage(), e);

@@ -96,7 +96,7 @@ public class TablesSidebarScriptDataController implements Initializable {
       gameRepresentation.setHsFileName(fs);
 
       try {
-        client.saveGame(gameRepresentation);
+        client.getGames().saveGame(gameRepresentation);
         this.tablesSidebarController.getTablesSidebarHighscoresController().refreshView(game, true);
       } catch (Exception e) {
         WidgetFactory.showAlert(Studio.stage, e.getMessage());
@@ -123,7 +123,7 @@ public class TablesSidebarScriptDataController implements Initializable {
     if (tableName != null) {
       gameRepresentation.setTableName(tableName);
       try {
-        client.saveGame(gameRepresentation);
+        client.getGames().saveGame(gameRepresentation);
         tablesSidebarController.getTablesSidebarHighscoresController().refreshView(game, true);
       } catch (Exception e) {
         WidgetFactory.showAlert(Studio.stage, e.getMessage());
@@ -139,7 +139,7 @@ public class TablesSidebarScriptDataController implements Initializable {
     if (romName != null) {
       gameRepresentation.setRom(romName);
       try {
-        client.saveGame(gameRepresentation);
+        client.getGames().saveGame(gameRepresentation);
         this.tablesSidebarController.getTablesSidebarHighscoresController().refreshView(game, true);
       } catch (Exception e) {
         WidgetFactory.showAlert(Studio.stage, e.getMessage());

@@ -50,7 +50,7 @@ public class TableRestoreProgressModel extends ProgressModel<ArchiveDescriptorRe
   public void processNext(ProgressResultModel progressResultModel, ArchiveDescriptorRepresentation next) {
     try {
       descriptor.setFilename(next.getFilename());
-      Studio.client.installTable(descriptor);
+      Studio.client.getIo().installTable(descriptor);
 
       progressResultModel.addProcessed();
       percentage++;

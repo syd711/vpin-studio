@@ -25,15 +25,15 @@ public class ServiceInfoPreferencesController implements Initializable {
 
   @FXML
   private void onReload() {
-    String logs = client.logs();
+    String logs = client.getSystem().logs();
     logTextArea.setText(logs);
   }
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
-    Date startupTime = client.getStartupTime();
+    Date startupTime = client.getSystem().getStartupTime();
     startupTimeLabel.setText(DateFormat.getDateTimeInstance().format(startupTime));
-    versionLabel.setText(client.version());
+    versionLabel.setText(client.getSystem().version());
 
     onReload();
   }

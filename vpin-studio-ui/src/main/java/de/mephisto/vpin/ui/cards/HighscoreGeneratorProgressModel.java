@@ -20,7 +20,7 @@ public class HighscoreGeneratorProgressModel extends ProgressModel<GameRepresent
   public HighscoreGeneratorProgressModel(VPinStudioClient client, String title) {
     super(title);
     this.client = client;
-    this.gameInfos = client.getGames();
+    this.gameInfos = client.getGames().getGames();
     iterator = gameInfos.iterator();
   }
 
@@ -46,7 +46,7 @@ public class HighscoreGeneratorProgressModel extends ProgressModel<GameRepresent
 
   public void processNext(ProgressResultModel progressResultModel, GameRepresentation game) {
     try {
-      boolean result = client.generateHighscoreCard(game);
+      boolean result = client.getHighscoreCards().generateHighscoreCard(game);
       if (result) {
         progressResultModel.addProcessed();
       }

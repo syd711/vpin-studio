@@ -47,7 +47,7 @@ public class DefaultBackgroundUploadProgressModel extends ProgressModel<File> {
   @Override
   public void processNext(ProgressResultModel progressResultModel, File next) {
     try {
-      Studio.client.uploadDefaultBackgroundFile(next, gameId, percent -> progressResultModel.setProgress(percent));
+      Studio.client.getAssets().uploadDefaultBackgroundFile(next, gameId, percent -> progressResultModel.setProgress(percent));
       progressResultModel.addProcessed();
     } catch (Exception e) {
       LOG.error("Table upload failed: " + e.getMessage(), e);

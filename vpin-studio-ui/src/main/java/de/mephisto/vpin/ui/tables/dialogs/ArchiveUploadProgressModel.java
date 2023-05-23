@@ -48,7 +48,7 @@ public class ArchiveUploadProgressModel extends ProgressModel<File> {
   @Override
   public void processNext(ProgressResultModel progressResultModel, File next) {
     try {
-      Studio.client.uploadArchive(next, (int) repositoryId, percent -> {
+      Studio.client.getArchiving().uploadArchive(next, (int) repositoryId, percent -> {
         double total = percentage + percent;
         progressResultModel.setProgress(total / this.files.size());
       });

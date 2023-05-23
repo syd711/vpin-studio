@@ -69,7 +69,7 @@ public class TablesSidebarAudioController implements Initializable {
       GameRepresentation g = game.get();
       g.setAltSoundEnabled(enabledCheckbox.isSelected());
       try {
-        client.saveGame(g);
+        client.getGames().saveGame(g);
       } catch (Exception e) {
         WidgetFactory.showAlert(Studio.stage, e.getMessage());
       }
@@ -81,7 +81,7 @@ public class TablesSidebarAudioController implements Initializable {
     if (game.isPresent() && game.get().isAltSoundAvailable()) {
       Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Restore Backup?", "Revert all changes and restore the original ALT sound backup?", null, "Yes, restore backup");
       if (result.isPresent() && result.get().equals(ButtonType.OK)) {
-        client.restoreAltSound(game.get().getId());
+        client.getAltSoundService().restoreAltSound(game.get().getId());
       }
     }
   }
@@ -111,7 +111,7 @@ public class TablesSidebarAudioController implements Initializable {
       GameRepresentation game = g.get();
 
       if (game.isAltSoundAvailable()) {
-        altSound = client.getAltSound(game.getId());
+        altSound = client.getAltSoundService().getAltSound(game.getId());
         enabledCheckbox.setSelected(game.isAltSoundEnabled());
 
         entriesLabel.setText(String.valueOf(altSound.getEntries().size()));

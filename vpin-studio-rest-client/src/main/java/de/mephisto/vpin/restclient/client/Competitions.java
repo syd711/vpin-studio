@@ -1,0 +1,142 @@
+package de.mephisto.vpin.restclient.client;
+
+import de.mephisto.vpin.restclient.CompetitionType;
+import de.mephisto.vpin.restclient.representations.CompetitionRepresentation;
+import de.mephisto.vpin.restclient.representations.PlayerRepresentation;
+import de.mephisto.vpin.restclient.representations.ScoreListRepresentation;
+import de.mephisto.vpin.restclient.representations.ScoreSummaryRepresentation;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.io.ByteArrayInputStream;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+
+
+/*********************************************************************************************************************
+ * Competitions
+ ********************************************************************************************************************/
+public class Competitions extends AbstractStudioClientModule {
+  private final static Logger LOG = LoggerFactory.getLogger(VPinStudioClient.class);
+
+  Competitions(VPinStudioClient client) {
+    super(client);
+  }
+
+  public boolean hasManagePermissions(long serverId, long channelId) {
+    return getRestClient().get(API + "discord/permissions/competitions/manage/" + serverId + "/" + channelId, Boolean.class);
+  }
+
+  public boolean hasJoinPermissions(long serverId, long channelId) {
+    return getRestClient().get(API + "discord/permissions/competitions/join/" + serverId + "/" + channelId, Boolean.class);
+  }
+
+  public CompetitionRepresentation getCompetitionByUuid(String uuid) {
+    return getRestClient().get(API + "competitions/competition/" + uuid, CompetitionRepresentation.class);
+  }
+
+  public List<CompetitionRepresentation> getOfflineCompetitions() {
+    return Arrays.asList(getRestClient().get(API + "competitions/offline", CompetitionRepresentation[].class));
+  }
+
+  public List<PlayerRepresentation> getDiscordCompetitionPlayers(long competitionId) {
+    return Arrays.asList(getRestClient().get(API + "competitions/players/" + competitionId, PlayerRepresentation[].class));
+  }
+
+  public List<CompetitionRepresentation> getDiscordCompetitions() {
+    return Arrays.asList(getRestClient().get(API + "competitions/discord", CompetitionRepresentation[].class));
+  }
+
+  public List<CompetitionRepresentation> getFinishedCompetitions(int limit) {
+    return Arrays.asList(getRestClient().get(API + "competitions/finished/" + limit, CompetitionRepresentation[].class));
+  }
+
+
+  public CompetitionRepresentation getActiveCompetition(CompetitionType type) {
+    try {
+      return getRestClient().get(API + "competitions/" + type.name() + "/active", CompetitionRepresentation.class);
+    } catch (Exception e) {
+      LOG.error("Failed to read active competition: " + e.getMessage(), e);
+    }
+    return null;
+  }
+
+  public CompetitionRepresentation saveCompetition(CompetitionRepresentation c) throws Exception {
+    try {
+      return getRestClient().post(API + "competitions/save", c, CompetitionRepresentation.class);
+    } catch (Exception e) {
+      LOG.error("Failed to save competition: " + e.getMessage(), e);
+      throw e;
+    }
+  }
+
+  public boolean isGameReferencedByCompetitions(int gameId) {
+    CompetitionRepresentation[] competitionRepresentations = getRestClient().get(API + "competitions/game/" + gameId, CompetitionRepresentation[].class);
+    return competitionRepresentations.length > 0;
+  }
+
+  public void deleteCompetition(CompetitionRepresentation c) {
+    try {
+      getRestClient().delete(API + "competitions/" + c.getId());
+    } catch (Exception e) {
+      LOG.error("Failed to delete competition: " + e.getMessage(), e);
+    }
+  }
+
+  public void finishCompetition(CompetitionRepresentation c) {
+    try {
+      getRestClient().put(API + "competitions/finish/" + c.getId(), Collections.emptyMap());
+    } catch (Exception e) {
+      LOG.error("Failed to finish competition: " + e.getMessage(), e);
+    }
+  }
+
+  public ScoreListRepresentation getCompetitionScoreList(long competitionId) {
+    try {
+      return getRestClient().get(API + "competitions/scores/" + competitionId, ScoreListRepresentation.class);
+    } catch (Exception e) {
+      LOG.error("Failed to read competition scores list " + competitionId + ": " + e.getMessage(), e);
+    }
+    return null;
+  }
+
+  public ScoreSummaryRepresentation getCompetitionScore(long id) {
+    try {
+      return getRestClient().get(API + "competitions/score/" + id, ScoreSummaryRepresentation.class);
+    } catch (Exception e) {
+      LOG.error("Failed to read competition scores " + id + ": " + e.getMessage(), e);
+    }
+    return null;
+  }
+
+  public ByteArrayInputStream getCompetitionBackground(long gameId) {
+    String name = "competition-bg-game-" + gameId;
+
+    if (!client.getImageCache().containsKey(name)) {
+      byte[] bytes = getRestClient().readBinary(API + "assets/competition/" + gameId);
+      client.getImageCache().put(name, bytes);
+    }
+
+    byte[] imageBytes = client.getImageCache().get(name);
+    return new ByteArrayInputStream(imageBytes);
+  }
+
+
+  public List<String> getCompetitionBadges() {
+    return Arrays.asList(getRestClient().get(API + "system/badges", String[].class));
+  }
+
+  public ByteArrayInputStream getCompetitionBadge(String name) {
+    if (!client.getImageCache().containsKey(name)) {
+      String encodedName = URLEncoder.encode(name, StandardCharsets.UTF_8);
+      byte[] bytes = getRestClient().readBinary(API + "system/badge/" + encodedName);
+      client.getImageCache().put(name, bytes);
+    }
+
+    byte[] imageBytes = client.getImageCache().get(name);
+    return new ByteArrayInputStream(imageBytes);
+  }
+}

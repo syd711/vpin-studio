@@ -63,7 +63,7 @@ public class TableRepositoriesPreferencesController implements Initializable {
 
       if (sourceRepresentation != null) {
         try {
-          client.saveArchiveSource(sourceRepresentation);
+          client.getArchiving().saveArchiveSource(sourceRepresentation);
         } catch (Exception e) {
           WidgetFactory.showAlert(Studio.stage, "Error", "Error saving repository: " + e.getMessage());
         }
@@ -77,7 +77,7 @@ public class TableRepositoriesPreferencesController implements Initializable {
     ArchiveSourceRepresentation sourceRepresentation = Dialogs.openArchiveSourceHttpDialog(null);
     if (sourceRepresentation != null) {
       try {
-        client.saveArchiveSource(sourceRepresentation);
+        client.getArchiving().saveArchiveSource(sourceRepresentation);
       } catch (Exception e) {
         WidgetFactory.showAlert(Studio.stage, "Error", "Error saving repository: " + e.getMessage());
       }
@@ -92,7 +92,7 @@ public class TableRepositoriesPreferencesController implements Initializable {
       Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Delete Repository \"" + selectedItem.getName() + "\"?");
       if (result.isPresent() && result.get().equals(ButtonType.OK)) {
         try {
-          client.deleteArchiveSource(selectedItem.getId());
+          client.getArchiving().deleteArchiveSource(selectedItem.getId());
         } catch (Exception e) {
           WidgetFactory.showAlert(Studio.stage, "Error", "Error deleting \"" + selectedItem.getName() + "\": " + e.getMessage());
         } finally {
@@ -103,7 +103,7 @@ public class TableRepositoriesPreferencesController implements Initializable {
   }
 
   private void onReload() {
-    List<ArchiveSourceRepresentation> sources = client.getArchiveSources();
+    List<ArchiveSourceRepresentation> sources = client.getArchiving().getArchiveSources();
     tableView.setItems(FXCollections.observableList(sources));
     tableView.refresh();
     EventManager.getInstance().notifyArchiveSourceUpdate();

@@ -39,7 +39,7 @@ public class UpdateDialogController implements Initializable, DialogController {
     serverLabel.setText("Downloading " + String.format(Updater.BASE_URL, newVersion) + Updater.SERVER_ZIP);
 
 
-    String existingVersion = client.version();
+    String existingVersion = client.getSystem().version();
     if (existingVersion.equals(newVersion)) {
       serverProgress.setDisable(true);
       serverProgress.setProgress(1f);
@@ -58,9 +58,9 @@ public class UpdateDialogController implements Initializable, DialogController {
         return new Task() {
           @Override
           protected Object call() throws Exception {
-            client.startServerUpdate(newVersion);
+            client.getSystem().startServerUpdate(newVersion);
             while (true) {
-              int progress = client.getServerUpdateProgress();
+              int progress = client.getSystem().getServerUpdateProgress();
               updateProgress(progress, 100);
               Thread.sleep(1000);
               Platform.runLater(() -> {
@@ -77,18 +77,18 @@ public class UpdateDialogController implements Initializable, DialogController {
               serverProgress.setProgress(ProgressBar.INDETERMINATE_PROGRESS);
             });
 
-            client.installServerUpdate();
+            client.getSystem().installServerUpdate();
             Thread.sleep(5000);
 
             while (true) {
               Thread.sleep(1000);
-              if (client.version() != null) {
+              if (client.getSystem().version() != null) {
                 break;
               }
             }
 
             Platform.runLater(() -> {
-              serverLabel.setText("Update successful, server is running on version " + client.version());
+              serverLabel.setText("Update successful, server is running on version " + client.getSystem().version());
               serverProgress.setProgress(1f);
             });
 

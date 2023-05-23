@@ -43,7 +43,7 @@ public class AvatarPreferencesController implements Initializable {
     File selection = fileChooser.showOpenDialog(stage);
     if (selection != null) {
       try {
-        client.uploadVPinAvatar(selection);
+        client.getPreferences().uploadVPinAvatar(selection);
         refreshAvatar();
       } catch (Exception ex) {
         WidgetFactory.showAlert(Studio.stage, "Uploading avatar image failed.", "Please check the log file for details.", "Error: " + ex.getMessage());

@@ -25,13 +25,13 @@ public class ServiceOptionsPreferencesController implements Initializable {
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
-    serviceStartupCheckbox.setSelected(client.autostartInstalled());
+    serviceStartupCheckbox.setSelected(client.getSystem().autostartInstalled());
     serviceStartupCheckbox.selectedProperty().addListener((observable, oldValue, newValue) -> {
       if(newValue) {
-        client.autostartInstall();
+        client.getSystem().autostartInstall();
       }
       else {
-        client.autostartUninstall();
+        client.getSystem().autostartUninstall();
       }
     });
 
@@ -41,7 +41,7 @@ public class ServiceOptionsPreferencesController implements Initializable {
     idleSpinner.setValueFactory(factory);
     factory.valueProperty().addListener((observableValue, integer, t1) -> debouncer.debounce(PreferenceNames.IDLE_TIMEOUT, () -> {
       int value1 = Integer.parseInt(String.valueOf(t1));
-      client.setPreference(PreferenceNames.IDLE_TIMEOUT, String.valueOf(value1));
+      client.getPreferences().setPreference(PreferenceNames.IDLE_TIMEOUT, String.valueOf(value1));
     }, 1000));
   }
 }

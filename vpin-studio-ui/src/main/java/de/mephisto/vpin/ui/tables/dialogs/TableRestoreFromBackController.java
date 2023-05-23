@@ -56,7 +56,7 @@ public class TableRestoreFromBackController implements Initializable, DialogCont
           for (ArchiveDescriptorRepresentation archiveDescriptor : this.archiveDescriptors) {
             restoreDescriptor.setFilename(archiveDescriptor.getFilename());
             restoreDescriptor.setArchiveSourceId(archiveDescriptor.getSource().getId());
-            client.installTable(restoreDescriptor);
+            client.getIo().installTable(restoreDescriptor);
           }
           JobPoller.getInstance().setPolling();
         } catch (Exception ex) {
@@ -76,7 +76,7 @@ public class TableRestoreFromBackController implements Initializable, DialogCont
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
-    List<PlaylistRepresentation> playlists = client.getPlaylists();
+    List<PlaylistRepresentation> playlists = client.getPopper().getPlaylists();
     ObservableList<PlaylistRepresentation> data = FXCollections.observableList(playlists);
     this.playlistCombo.setItems(data);
     this.playlistCombo.setDisable(false);

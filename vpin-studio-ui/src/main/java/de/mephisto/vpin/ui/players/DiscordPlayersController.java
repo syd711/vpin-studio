@@ -52,7 +52,7 @@ public class DiscordPlayersController implements Initializable {
 
   @FXML
   private void onReload() {
-    this.players = client.getPlayers(PlayerDomain.DISCORD);
+    this.players = client.getPlayers().getPlayers(PlayerDomain.DISCORD);
     this.refreshView();
   }
 
@@ -119,7 +119,7 @@ public class DiscordPlayersController implements Initializable {
       refreshView();
     });
 
-    this.players = client.getPlayers(PlayerDomain.DISCORD);
+    this.players = client.getPlayers().getPlayers(PlayerDomain.DISCORD);
     this.refreshView();
   }
 

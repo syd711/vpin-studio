@@ -131,13 +131,13 @@ public class CompetitionDiscordJoinDialogController implements Initializable, Di
   public void initialize(URL url, ResourceBundle resourceBundle) {
     saveBtn.setDisable(true);
 
-    List<DiscordServer> servers = client.getDiscordServers();
+    List<DiscordServer> servers = client.getDiscord().getDiscordServers();
     ObservableList<DiscordServer> discordServers = FXCollections.observableArrayList(servers);
     serversCombo.getItems().addAll(discordServers);
     serversCombo.valueProperty().addListener((observableValue, gameRepresentation, t1) -> {
       this.discordCompetitionData = null;
       channelsCombo.setDisable(false);
-      channelsCombo.setItems(FXCollections.observableArrayList(client.getDiscordChannels(t1.getId())));
+      channelsCombo.setItems(FXCollections.observableArrayList(client.getDiscord().getDiscordChannels(t1.getId())));
       validate();
     });
 
@@ -149,7 +149,7 @@ public class CompetitionDiscordJoinDialogController implements Initializable, Di
       validate();
     });
 
-    ArrayList<String> badges = new ArrayList<>(client.getCompetitionBadges());
+    ArrayList<String> badges = new ArrayList<>(client.getCompetitions().getCompetitionBadges());
     badges.add(0, null);
     ObservableList<String> imageList = FXCollections.observableList(badges);
     competitionIconCombo.setItems(imageList);
@@ -174,7 +174,7 @@ public class CompetitionDiscordJoinDialogController implements Initializable, Di
         iconPreview.setImage(image);
 
         if (badge != null) {
-          Image badgeIcon = new Image(client.getCompetitionBadge(badge));
+          Image badgeIcon = new Image(client.getCompetitions().getCompetitionBadge(badge));
           badgePreview.setImage(badgeIcon);
         }
         else {
@@ -221,15 +221,15 @@ public class CompetitionDiscordJoinDialogController implements Initializable, Di
     }
 
     //check Discord permissions
-    if (!client.hasManagePermissions(server.getId(), channel.getId())) {
+    if (!client.getCompetitions().hasManagePermissions(server.getId(), channel.getId())) {
       validationTitle.setText("Insufficient Permissions");
       validationDescription.setText("Your Discord bot has insufficient permissions to start a competition. Please check the documentation for details.");
       return;
     }
 
-    this.discordCompetitionData = client.getDiscordCompetitionData(server.getId(), channel.getId());
+    this.discordCompetitionData = client.getDiscord().getDiscordCompetitionData(server.getId(), channel.getId());
     if (discordCompetitionData != null) {
-      List<GameRepresentation> gamesByRom = client.getGamesByRom(this.discordCompetitionData.getRom());
+      List<GameRepresentation> gamesByRom = client.getGames().getGamesByRom(this.discordCompetitionData.getRom());
       tableCombo.getItems().addAll(FXCollections.observableList(gamesByRom));
       if (!gamesByRom.isEmpty()) {
         tableCombo.setValue(gamesByRom.get(0));
@@ -269,13 +269,13 @@ public class CompetitionDiscordJoinDialogController implements Initializable, Di
       this.joinMode.setIconLiteral("");
     }
 
-    PlayerRepresentation discordPlayer = client.getDiscordPlayer(server.getId(), Long.parseLong(this.discordCompetitionData.getOwner()));
+    PlayerRepresentation discordPlayer = client.getDiscord().getDiscordPlayer(server.getId(), Long.parseLong(this.discordCompetitionData.getOwner()));
     if (discordPlayer != null) {
       this.ownerLabel.setText(discordPlayer.getName());
     }
 
-    CompetitionRepresentation existingEntry = client.getCompetitionByUuid(this.discordCompetitionData.getUuid());
-    DiscordBotStatus discordStatus = client.getDiscordStatus();
+    CompetitionRepresentation existingEntry = client.getCompetitions().getCompetitionByUuid(this.discordCompetitionData.getUuid());
+    DiscordBotStatus discordStatus = client.getDiscord().getDiscordStatus();
     if (existingEntry != null && this.discordCompetitionData.getOwner().equals(String.valueOf(discordStatus.getBotId()))) {
       validationTitle.setText("Invalid competition selected");
       validationDescription.setText("You are the owner of this competition.");
@@ -336,7 +336,7 @@ public class CompetitionDiscordJoinDialogController implements Initializable, Di
       setGraphic(null);
       setText(null);
       if (item != null) {
-        Image image = new Image(client.getCompetitionBadge(item));
+        Image image = new Image(client.getCompetitions().getCompetitionBadge(item));
         ImageView imageView = new ImageView(image);
         imageView.setFitWidth(80);
 

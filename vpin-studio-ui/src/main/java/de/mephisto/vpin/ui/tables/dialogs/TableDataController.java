@@ -91,7 +91,7 @@ public class TableDataController implements Initializable, DialogController {
     stage.close();
 
     try {
-      manifest = Studio.client.saveTableDetails(this.manifest, game.getId());
+      manifest = Studio.client.getPopper().saveTableDetails(this.manifest, game.getId());
     } catch (Exception ex) {
       LOG.error("Error saving table manifest: " + ex.getMessage(), ex);
       WidgetFactory.showAlert(Studio.stage, "Error", "Error saving table manifest: " + ex.getMessage());
@@ -118,7 +118,7 @@ public class TableDataController implements Initializable, DialogController {
     this.game = game;
     this.titleLabel.setText("Table Data of '" + game.getGameDisplayName() + "'");
 
-    manifest = Studio.client.getTableDetails(game.getId());
+    manifest = Studio.client.getPopper().getTableDetails(game.getId());
 
     gameName.setText(manifest.getGameName());
     gameName.textProperty().addListener((observable, oldValue, newValue) -> manifest.setGameName(newValue));

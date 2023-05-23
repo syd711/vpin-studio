@@ -35,7 +35,7 @@ public class TablesBackupController implements Initializable, DialogController {
     BackupDescriptor descriptor = new BackupDescriptor();
     descriptor.setRemoveFromPlaylists(removeFromPlaylistCheckbox.isSelected());
     descriptor.getGameIds().addAll(games.stream().map(GameRepresentation::getId).collect(Collectors.toList()));
-    Studio.client.backupTable(descriptor);
+    Studio.client.getIo().backupTable(descriptor);
 
     Stage stage = (Stage) ((Button) e.getSource()).getScene().getWindow();
     stage.close();

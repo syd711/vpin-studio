@@ -1,0 +1,80 @@
+package de.mephisto.vpin.restclient.client;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+public class ImageCache extends AbstractStudioClientModule {
+  private final static Logger LOG = LoggerFactory.getLogger(VPinStudioClient.class);
+  private final Map<String, byte[]> imageCache = new HashMap<>();
+
+  ImageCache(VPinStudioClient client) {
+    super(client);
+  }
+
+  public InputStream getCachedUrlImage(String imageUrl) {
+    try {
+      if (!imageCache.containsKey(imageUrl)) {
+        URL url = new URL(imageUrl);
+        ByteArrayOutputStream bis = new ByteArrayOutputStream();
+        InputStream is = null;
+        is = url.openStream();
+        byte[] bytebuff = new byte[4096];
+        int n;
+
+        while ((n = is.read(bytebuff)) > 0) {
+          bis.write(bytebuff, 0, n);
+        }
+        is.close();
+        bis.close();
+
+        byte[] bytes = bis.toByteArray();
+        imageCache.put(imageUrl, bytes);
+        LOG.info("Cached image URL " + imageUrl);
+      }
+    } catch (IOException e) {
+      LOG.error("Failed to read image from URL: " + e.getMessage(), e);
+    }
+
+    byte[] bytes = imageCache.get(imageUrl);
+    return new ByteArrayInputStream(bytes);
+  }
+
+
+  public void clearCache() {
+    int size = this.imageCache.size();
+    this.imageCache.clear();
+    getRestClient().clearCache();
+    LOG.info("Cleared " + size + " resources from cache.");
+  }
+
+  public void clearWheelCache() {
+    List<String> keys = new ArrayList<>(imageCache.keySet());
+    for (String key : keys) {
+      if (key.contains("/Wheel")) {
+        imageCache.remove(key);
+      }
+    }
+  }
+
+  public boolean containsKey(String name) {
+    return imageCache.containsKey(name);
+  }
+
+  public void put(String name, byte[] bytes) {
+    this.imageCache.put(name, bytes);
+  }
+
+  public byte[] get(String name) {
+    return imageCache.get(name);
+  }
+}

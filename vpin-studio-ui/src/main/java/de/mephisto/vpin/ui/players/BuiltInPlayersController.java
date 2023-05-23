@@ -92,7 +92,7 @@ public class BuiltInPlayersController implements Initializable {
     tableStack.getChildren().add(playersLoadingOverlay);
 
     new Thread(() -> {
-      players = client.getPlayers();
+      players = client.getPlayers().getPlayers();
 
       Platform.runLater(() -> {
         data = FXCollections.observableList(filterPlayers(players));
@@ -140,7 +140,7 @@ public class BuiltInPlayersController implements Initializable {
     if (selection != null) {
       Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Delete Player '" + selection.getName() + "'?");
       if (result.isPresent() && result.get().equals(ButtonType.OK)) {
-        client.deletePlayer(selection);
+        client.getPlayers().deletePlayer(selection);
         tableView.getSelectionModel().clearSelection();
         onReload();
       }

@@ -125,7 +125,7 @@ public class MenuController implements Initializable {
     TransitionUtil.createTranslateByYTransition(footer, FOOTER_ANIMATION_DURATION, FOOTER_HEIGHT).play();
 
     new Thread(() -> {
-      archiveDescriptors = Menu.client.getArchiveDescriptorsFiltered();
+      archiveDescriptors = Menu.client.getArchiving().getArchiveDescriptorsFiltered();
       activeModels = archiveDescriptors; //TODO mpf
       Platform.runLater(() -> {
         loadArchivedItems();
@@ -150,7 +150,7 @@ public class MenuController implements Initializable {
     setLoadLabel("Loading...");
 
     new Thread(() -> {
-      games = Menu.client.getGames();
+      games = Menu.client.getGames().getGames();
       activeModels = games; //TODO mpf
       Platform.runLater(() -> {
         loadGameItems();
