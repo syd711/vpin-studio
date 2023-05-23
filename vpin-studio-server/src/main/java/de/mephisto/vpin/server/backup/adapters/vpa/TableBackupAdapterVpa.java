@@ -17,6 +17,7 @@ import de.mephisto.vpin.server.popper.GameMediaItem;
 import de.mephisto.vpin.server.popper.WheelAugmenter;
 import de.mephisto.vpin.server.system.SystemService;
 import de.mephisto.vpin.server.util.ImageUtil;
+import de.mephisto.vpin.server.util.ZipUtil;
 import de.mephisto.vpin.server.util.vpreg.VPReg;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import org.apache.commons.io.FilenameUtils;
@@ -26,13 +27,11 @@ import org.slf4j.LoggerFactory;
 
 import java.awt.image.BufferedImage;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.util.Base64;
 import java.util.Date;
-import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
 public class TableBackupAdapterVpa implements TableBackupAdapter, Job {
@@ -389,10 +388,6 @@ public class TableBackupAdapterVpa implements TableBackupAdapter, Job {
   }
 
   private void zipFile(File fileToZip, String fileName, ZipOutputStream zipOut) throws IOException {
-    if (fileToZip.isHidden()) {
-      return;
-    }
-
     status = "Packing " + fileToZip.getAbsolutePath();
     if (progress < 100 && tempFile.exists()) {
       if(totalSizeExpected > 0) {
@@ -400,37 +395,7 @@ public class TableBackupAdapterVpa implements TableBackupAdapter, Job {
       }
     }
 
-    if (fileToZip.isDirectory()) {
-      LOG.info("Zipping " + fileToZip.getCanonicalPath());
-
-      if (fileName.endsWith("/")) {
-        zipOut.putNextEntry(new ZipEntry(fileName));
-        zipOut.closeEntry();
-      }
-      else {
-        zipOut.putNextEntry(new ZipEntry(fileName + "/"));
-        zipOut.closeEntry();
-      }
-
-      File[] children = fileToZip.listFiles();
-      if (children != null) {
-        for (File childFile : children) {
-          zipFile(childFile, fileName + "/" + childFile.getName(), zipOut);
-        }
-      }
-      return;
-    }
-
-    FileInputStream fis = new FileInputStream(fileToZip);
-    ZipEntry zipEntry = new ZipEntry(fileName);
-    zipOut.putNextEntry(zipEntry);
-    byte[] bytes = new byte[1024];
-    int length;
-    while ((length = fis.read(bytes)) >= 0) {
-      zipOut.write(bytes, 0, length);
-    }
-    zipOut.closeEntry();
-    fis.close();
+    ZipUtil.zipFile(fileToZip, fileName, zipOut);
   }
 
   private String getGameFolderName() {

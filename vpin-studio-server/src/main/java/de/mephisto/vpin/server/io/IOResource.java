@@ -1,5 +1,6 @@
 package de.mephisto.vpin.server.io;
 
+import de.mephisto.vpin.restclient.descriptors.ArchiveBundleDescriptor;
 import de.mephisto.vpin.restclient.descriptors.ArchiveDownloadDescriptor;
 import de.mephisto.vpin.restclient.descriptors.BackupDescriptor;
 import de.mephisto.vpin.restclient.descriptors.ArchiveRestoreDescriptor;
@@ -21,6 +22,11 @@ public class IOResource {
   @PostMapping("/backup")
   public Boolean backupTable(@RequestBody BackupDescriptor descriptor) {
     return ioService.backupTable(descriptor);
+  }
+
+  @PostMapping("/bundle")
+  public Boolean bundle(@RequestBody ArchiveBundleDescriptor descriptor) {
+    return ioService.bundleArchives(descriptor);
   }
 
   @PostMapping("/install")

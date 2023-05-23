@@ -29,6 +29,11 @@ public class ArchiveSourceAdapterHttpServer implements ArchiveSourceAdapter {
     disableSslVerification();
   }
 
+  @Override
+  public File export(ArchiveDescriptor archiveDescriptor, boolean overwrite) {
+    throw new UnsupportedOperationException("not supported for http");
+  }
+
   public void downloadArchive(ArchiveDescriptor descriptor, File target) {
     BufferedInputStream in = null;
     BufferedOutputStream out = null;

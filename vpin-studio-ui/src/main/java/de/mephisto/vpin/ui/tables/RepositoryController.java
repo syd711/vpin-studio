@@ -168,11 +168,19 @@ public class RepositoryController implements Initializable, StudioEventListener 
     }
   }
 
+//  @FXML
+//  private void onDownload() {
+//    ObservableList<ArchiveDescriptorRepresentation> selectedItems = tableView.getSelectionModel().getSelectedItems();
+//    if (!selectedItems.isEmpty()) {
+//      Dialogs.openArchiveDownloadDialog(selectedItems);
+//    }
+//  }
+
   @FXML
-  private void onDownload() {
+  private void onBundle() {
     ObservableList<ArchiveDescriptorRepresentation> selectedItems = tableView.getSelectionModel().getSelectedItems();
     if (!selectedItems.isEmpty()) {
-      Dialogs.openArchiveDownloadDialog(selectedItems);
+      Dialogs.openArchiveBundleDialog(selectedItems);
     }
   }
 

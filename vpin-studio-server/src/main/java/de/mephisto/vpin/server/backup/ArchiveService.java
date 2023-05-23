@@ -146,6 +146,10 @@ public class ArchiveService implements InitializingBean {
     return adapterCache.get(sourceId);
   }
 
+  public File export(ArchiveDescriptor archiveDescriptor, boolean overwrite) {
+    return getDefaultArchiveSourceAdapter().export(archiveDescriptor, overwrite);
+  }
+
   public void invalidateCache() {
     Set<Map.Entry<Long, ArchiveSourceAdapter>> entries = adapterCache.entrySet();
     for (Map.Entry<Long, ArchiveSourceAdapter> entry : entries) {

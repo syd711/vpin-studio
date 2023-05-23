@@ -203,6 +203,13 @@ public class Dialogs {
     stage.showAndWait();
   }
 
+  public static void openArchiveBundleDialog(ObservableList<ArchiveDescriptorRepresentation> selectedItems) {
+    Stage stage = createStudioDialogStage(ArchiveBundleDialogController.class, "dialog-bundle-download.fxml", "Archive Bundle");
+    ArchiveBundleDialogController controller = (ArchiveBundleDialogController) stage.getUserData();
+    controller.setData(selectedItems);
+    stage.showAndWait();
+  }
+
   public static void openCopyArchiveToRepositoryDialog(ObservableList<ArchiveDescriptorRepresentation> selectedItems) {
     Stage stage = createStudioDialogStage(CopyArchiveToRepositoryDialogController.class, "dialog-copy-archive-to-repository.fxml", "Copy To Repository");
     CopyArchiveToRepositoryDialogController controller = (CopyArchiveToRepositoryDialogController) stage.getUserData();

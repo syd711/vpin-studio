@@ -8,9 +8,12 @@ import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.VpbmHosts;
 import de.mephisto.vpin.server.VPinStudioException;
 import de.mephisto.vpin.server.backup.adapters.vpbm.config.VPinBackupManagerConfig;
+import de.mephisto.vpin.server.games.Game;
+import de.mephisto.vpin.server.popper.PinUPConnector;
 import de.mephisto.vpin.server.preferences.PreferencesService;
 import de.mephisto.vpin.server.system.SystemService;
 import de.mephisto.vpin.server.util.GithubUtil;
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,26 +38,56 @@ public class VpbmService implements InitializingBean {
   @Autowired
   private PreferencesService preferencesService;
 
+  @Autowired
+  private PinUPConnector pinUPConnector;
+
   public File getArchiveFolder() {
     return new File(systemService.getArchivesFolder(), "backups/Visual Pinball X/");
   }
 
+  public File getExportFolder() {
+    return new File(systemService.getArchivesFolder(), "exports/Visual Pinball X/");
+  }
+
   public void backup(int tableId) {
-    executeVPBM("-b", String.valueOf(tableId));
+    executeVPBM(Arrays.asList("-b", String.valueOf(tableId)));
+  }
+
+  public File export(String tablename, boolean overwrite) {
+    String vpxName = FilenameUtils.getBaseName(tablename) + ".vpx";
+    Game game = pinUPConnector.getGameByFilename(vpxName);
+    if (game != null) {
+      File backupFile = new File(getArchiveFolder(), tablename);
+      File exportFile = new File(getExportFolder(), tablename);
+
+      if (!backupFile.exists() || overwrite) {
+        backup(game.getId());
+      }
+
+      if (!exportFile.exists() || overwrite) {
+        String exportHostId = (String) preferencesService.getPreferenceValue(PreferenceNames.VPBM_EXTERNAL_HOST_IDENTIFIER);
+        executeVPBM(Arrays.asList("-e", String.valueOf(game.getId()), "-x", exportHostId));
+      }
+
+      return exportFile;
+    } else {
+      LOG.warn("Game not found for VPX filename " + vpxName);
+    }
+    return null;
   }
 
   public void restore(String tableId) {
     String tableFilename = "\"" + tableId + "\"";
-    executeVPBM("-i", tableFilename);
+    executeVPBM(Arrays.asList("-i", tableFilename));
   }
 
   public void refresh() {
-    executeVPBM("-g", null);
+    executeVPBM(Arrays.asList("-g"));
   }
 
 
   public Boolean update() {
-    return executeVPBM("-u", null) != null;
+    return executeVPBM(Arrays.asList("-u")) != null;
   }
 
   public boolean isUpdateAvailable() {
@@ -64,7 +97,7 @@ public class VpbmService implements InitializingBean {
   }
 
   public String getVersion() {
-    String version = executeVPBM("-v", null);
+    String version = executeVPBM(Arrays.asList("-v"));
     if (!StringUtils.isEmpty(version)) {
       return version.trim();
     }
@@ -83,7 +116,7 @@ public class VpbmService implements InitializingBean {
 
     String internalHostId = (String) preferencesService.getPreferenceValue(PreferenceNames.VPBM_INTERNAL_HOST_IDENTIFIER);
     if (StringUtils.isEmpty(internalHostId)) {
-      String hostId = executeVPBM("-h", null);
+      String hostId = executeVPBM(Arrays.asList("-h"));
       if (hostId != null) {
         preferencesService.savePreference(PreferenceNames.VPBM_INTERNAL_HOST_IDENTIFIER, hostId.trim());
         ids.setInternalHostId(hostId);
@@ -92,14 +125,12 @@ public class VpbmService implements InitializingBean {
     return ids;
   }
 
-  private String executeVPBM(String option, String param) {
+  private String executeVPBM(List<String> options) {
     try {
       File dir = new File(SystemService.RESOURCES, VpbmArchiveSource.FOLDER_NAME);
       File exe = new File(dir, "vPinBackupManager.exe");
-      List<String> commands = new ArrayList<>(Arrays.asList(exe.getAbsolutePath(), option));
-      if (param != null) {
-        commands.add(param);
-      }
+      List<String> commands = new ArrayList<>(Arrays.asList(exe.getAbsolutePath()));
+      commands.addAll(options);
       LOG.info("Executing VPBM command (" + dir.getAbsolutePath() + "): " + String.join(" ", commands));
       SystemCommandExecutor executor = new SystemCommandExecutor(commands, false);
       executor.setDir(dir);

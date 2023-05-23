@@ -15,7 +15,7 @@
 <?import javafx.scene.text.Font?>
 <?import org.kordamp.ikonli.javafx.FontIcon?>
 
-<StackPane fx:id="tableStack" stylesheets="@../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.tables.RepositoryController">
+<StackPane fx:id="tableStack" stylesheets="@../stylesheet.css" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.tables.RepositoryController">
     <children>
         <BorderPane>
             <center>
@@ -83,12 +83,12 @@
                         <FontIcon iconColor="WHITE" iconLiteral="mdi2u-upload" />
                      </graphic>
                   </Button>
-                  <Button fx:id="downloadBtn" layoutX="376.0" layoutY="10.0" mnemonicParsing="false" onAction="#onDownload" text="Download" textFill="WHITE">
+                  <Button fx:id="downloadBtn" layoutX="376.0" layoutY="10.0" mnemonicParsing="false" onAction="#onBundle" text="Bundle" textFill="WHITE">
                      <font>
                         <Font size="14.0" />
                      </font>
                      <graphic>
-                        <FontIcon iconColor="WHITE" iconLiteral="mdi2d-download" />
+                        <FontIcon iconColor="WHITE" iconLiteral="mdi2p-package-variant" iconSize="16" />
                      </graphic>
                   </Button>
                   <Separator layoutX="1022.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="6.0" />

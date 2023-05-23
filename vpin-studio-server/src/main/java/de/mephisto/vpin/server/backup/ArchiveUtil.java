@@ -75,20 +75,26 @@ public class ArchiveUtil {
   }
 
   public static void exportDescriptorJson(ArchiveSourceAdapter archiveAdapter) {
+    List<ArchiveDescriptor> descriptors = archiveAdapter.getArchiveDescriptors();
+    File target = new File(archiveAdapter.getArchiveSource().getLocation(), DESCRIPTOR_JSON);
+    exportDescriptorJson(descriptors, target);
+  }
+
+  public static File exportDescriptorJson(List<ArchiveDescriptor> descriptors, File target) {
     try {
       ObjectMapper objectMapper = new ObjectMapper();
       objectMapper.enable(SerializationFeature.INDENT_OUTPUT);
       objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 
-      List<ArchiveDescriptor> descriptors = archiveAdapter.getArchiveDescriptors();
       String manifestString = objectMapper.writeValueAsString(descriptors);
-      File descriptorFile = new File(archiveAdapter.getArchiveSource().getLocation(), ArchiveUtil.DESCRIPTOR_JSON);
-      Files.write(descriptorFile.toPath(), manifestString.getBytes());
+      Files.write(target.toPath(), manifestString.getBytes());
 
-      LOG.info("Written " + descriptorFile.getAbsolutePath());
+      LOG.info("Written " + target.getAbsolutePath());
+      return target;
     } catch (IOException e) {
       LOG.error("Error writing export descriptor.json: " + e.getMessage(), e);
     }
+    return null;
   }
 
   public static String getEmulatorType(File gameFile) {

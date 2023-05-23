@@ -2,6 +2,7 @@ package de.mephisto.vpin.restclient.client;
 
 import de.mephisto.vpin.restclient.AssetType;
 import de.mephisto.vpin.restclient.FileUploadProgressListener;
+import de.mephisto.vpin.restclient.descriptors.ArchiveBundleDescriptor;
 import de.mephisto.vpin.restclient.descriptors.ArchiveDownloadDescriptor;
 import de.mephisto.vpin.restclient.descriptors.ArchiveRestoreDescriptor;
 import de.mephisto.vpin.restclient.descriptors.BackupDescriptor;
@@ -96,4 +97,9 @@ public class ArchiveServiceClient extends VPinStudioClientService {
   public boolean downloadArchive(ArchiveDownloadDescriptor descriptor) throws Exception {
     return getRestClient().post(API + "io/download", descriptor, Boolean.class);
   }
+
+  public boolean bundle(ArchiveBundleDescriptor descriptor) throws Exception {
+    return getRestClient().post(API + "io/bundle", descriptor, Boolean.class);
+  }
+
 }

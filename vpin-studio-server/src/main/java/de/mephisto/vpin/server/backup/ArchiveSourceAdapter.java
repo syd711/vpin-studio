@@ -1,5 +1,6 @@
 package de.mephisto.vpin.server.backup;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
@@ -15,4 +16,6 @@ public interface ArchiveSourceAdapter {
   InputStream getArchiveInputStream(ArchiveDescriptor archiveDescriptor) throws IOException;
 
   ArchiveSource getArchiveSource();
+
+  File export(ArchiveDescriptor archiveDescriptor, boolean overwrite);
 }

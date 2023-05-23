@@ -33,6 +33,11 @@ public class VpbmArchiveSourceAdapter implements ArchiveSourceAdapter {
     return archiveFolder;
   }
 
+  @Override
+  public File export(ArchiveDescriptor archiveDescriptor, boolean overwrite) {
+    return vpbmService.export(archiveDescriptor.getFilename(), overwrite);
+  }
+
   public List<ArchiveDescriptor> getArchiveDescriptors() {
     if (cache.isEmpty()) {
       File[] archiveFiles = archiveFolder.listFiles((dir, name) -> name.endsWith(".vpinzip"));

@@ -2,10 +2,7 @@ package de.mephisto.vpin.server.io;
 
 import de.mephisto.vpin.restclient.JobType;
 import de.mephisto.vpin.restclient.PopperScreen;
-import de.mephisto.vpin.restclient.descriptors.ArchiveDownloadDescriptor;
-import de.mephisto.vpin.restclient.descriptors.ArchiveRestoreDescriptor;
-import de.mephisto.vpin.restclient.descriptors.BackupDescriptor;
-import de.mephisto.vpin.restclient.descriptors.JobDescriptor;
+import de.mephisto.vpin.restclient.descriptors.*;
 import de.mephisto.vpin.server.backup.*;
 import de.mephisto.vpin.server.backup.adapters.TableBackupAdapter;
 import de.mephisto.vpin.server.backup.adapters.TableBackupAdapterFactory;
@@ -24,6 +21,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -42,6 +40,9 @@ public class IOService {
 
   @Autowired
   private ArchiveService archiveService;
+
+  @Autowired
+  private SystemService systemService;
 
   @Autowired
   private TableBackupAdapterFactory tableBackupAdapterFactory;
@@ -67,6 +68,30 @@ public class IOService {
       LOG.info("Offered import job for \"" + archiveDescriptor.getTableDetails().getGameDisplayName() + "\"");
     } catch (Exception e) {
       LOG.error("Import failed: " + e.getMessage(), e);
+      return false;
+    }
+    return true;
+  }
+
+  public boolean bundleArchives(ArchiveBundleDescriptor archiveBundleDescriptor) {
+    try {
+      List<ArchiveDescriptor> bundleArchiveDescriptors = new ArrayList<>();
+      List<String> archiveNames = archiveBundleDescriptor.getArchiveNames();
+      for (String archiveName : archiveNames) {
+        ArchiveDescriptor archiveDescriptor = archiveService.getArchiveDescriptor(archiveBundleDescriptor.getArchiveSourceId(), archiveName);
+        bundleArchiveDescriptors.add(archiveDescriptor);
+      }
+
+      JobDescriptor jobDescriptor = new JobDescriptor(JobType.ARCHIVE_BUNDLING, UUID.randomUUID().toString());
+      jobDescriptor.setTitle("Archive Bundle");
+
+      BundleArchivesJob job = new BundleArchivesJob(archiveService, systemService, bundleArchiveDescriptors);
+      jobDescriptor.setDescription("Creating bundle of " + bundleArchiveDescriptors.size() + " archived table(s).");
+      jobDescriptor.setJob(job);
+
+      JobQueue.getInstance().offer(jobDescriptor);
+    } catch (Exception e) {
+      LOG.error("Bundling failed: " + e.getMessage(), e);
       return false;
     }
     return true;
