@@ -49,7 +49,7 @@ public class ScriptDownloadProgressModel extends ProgressModel<GameRepresentatio
   @Override
   public void processNext(ProgressResultModel progressResultModel, GameRepresentation next) {
     try {
-      File tableScript = Studio.client.getVpx().getTableScript(next);
+      File tableScript = Studio.client.getVpxService().getTableScript(next);
       if (tableScript != null) {
         progressResultModel.addProcessed(tableScript);
       }

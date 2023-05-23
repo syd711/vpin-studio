@@ -102,7 +102,7 @@ public class TableDeleteController implements Initializable, DialogController {
     descriptor.setDeleteCfg(mameConfigCheckbox.isSelected());
     descriptor.setGameId(game.getId());
 
-    Studio.client.getGames().deleteGame(descriptor);
+    Studio.client.getGameService().deleteGame(descriptor);
     result = true;
     stage.close();
   }
@@ -167,7 +167,7 @@ public class TableDeleteController implements Initializable, DialogController {
       imageView.setImage(wheel);
     }
 
-    boolean hasNoArchives = Studio.client.getArchiving().getArchiveDescriptorsForGame(game.getId()).isEmpty();
+    boolean hasNoArchives = Studio.client.getArchiveService().getArchiveDescriptorsForGame(game.getId()).isEmpty();
     this.validationContainer.setVisible(hasNoArchives || hasVariants);
 
     this.validationTitle.setVisible(hasVariants);

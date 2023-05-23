@@ -8,8 +8,8 @@ import java.util.List;
 /*********************************************************************************************************************
  * Jobs
  ********************************************************************************************************************/
-public class Jobs extends AbstractStudioClientModule{
-  Jobs(VPinStudioClient client) {
+public class JobsServiceClient extends VPinStudioClientService {
+  JobsServiceClient(VPinStudioClient client) {
     super(client);
   }
   public List<JobDescriptor> getJobs() {

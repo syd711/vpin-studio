@@ -5,9 +5,9 @@ import de.mephisto.vpin.restclient.AltSound;
 /*********************************************************************************************************************
  * Alt Sound
  ********************************************************************************************************************/
-public class AltSoundService extends AbstractStudioClientModule{
+public class AltSoundServiceClient extends VPinStudioClientService {
 
-  AltSoundService(VPinStudioClient client) {
+  AltSoundServiceClient(VPinStudioClient client) {
     super(client);
   }
 

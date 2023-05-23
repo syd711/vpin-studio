@@ -104,7 +104,7 @@ public class CompetitionsOfflineController implements Initializable, StudioFXCon
     if (c != null) {
       CompetitionRepresentation newCmp = null;
       try {
-        newCmp = client.getCompetitions().saveCompetition(c);
+        newCmp = client.getCompetitionService().saveCompetition(c);
       } catch (Exception e) {
         WidgetFactory.showAlert(Studio.stage, e.getMessage());
       }
@@ -121,7 +121,7 @@ public class CompetitionsOfflineController implements Initializable, StudioFXCon
       CompetitionRepresentation c = Dialogs.openOfflineCompetitionDialog(this.competitions, clone);
       if (c != null) {
         try {
-          CompetitionRepresentation newCmp = client.getCompetitions().saveCompetition(c);
+          CompetitionRepresentation newCmp = client.getCompetitionService().saveCompetition(c);
           onReload();
           tableView.getSelectionModel().select(newCmp);
         } catch (Exception e) {
@@ -138,7 +138,7 @@ public class CompetitionsOfflineController implements Initializable, StudioFXCon
       CompetitionRepresentation c = Dialogs.openOfflineCompetitionDialog(this.competitions, selection);
       if (c != null) {
         try {
-          CompetitionRepresentation newCmp = client.getCompetitions().saveCompetition(c);
+          CompetitionRepresentation newCmp = client.getCompetitionService().saveCompetition(c);
           onReload();
           tableView.getSelectionModel().select(newCmp);
         } catch (Exception e) {
@@ -169,7 +169,7 @@ public class CompetitionsOfflineController implements Initializable, StudioFXCon
           help, help2);
       if (result.isPresent() && result.get().equals(ButtonType.OK)) {
         tableView.getSelectionModel().clearSelection();
-        client.getCompetitions().deleteCompetition(selection);
+        client.getCompetitionService().deleteCompetition(selection);
         NavigationController.setBreadCrumb(Arrays.asList("Competitions", "Offline Competitions"));
         onReload();
       }
@@ -185,7 +185,7 @@ public class CompetitionsOfflineController implements Initializable, StudioFXCon
 
       Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Finish Competition '" + selection.getName() + "'?", helpText1, helpText2);
       if (result.isPresent() && result.get().equals(ButtonType.OK)) {
-        client.getCompetitions().finishCompetition(selection);
+        client.getCompetitionService().finishCompetition(selection);
         onReload();
       }
     }
@@ -200,7 +200,7 @@ public class CompetitionsOfflineController implements Initializable, StudioFXCon
     tableStack.getChildren().add(loadingOverlay);
 
     new Thread(() -> {
-      competitions = client.getCompetitions().getOfflineCompetitions();
+      competitions = client.getCompetitionService().getOfflineCompetitions();
       filterCompetitions(competitions);
       data = FXCollections.observableList(competitions);
 
@@ -312,7 +312,7 @@ public class CompetitionsOfflineController implements Initializable, StudioFXCon
 
       if (!StringUtils.isEmpty(value.getWinnerInitials())) {
         winner = value.getWinnerInitials();
-        PlayerRepresentation player = client.getPlayers().getPlayer(value.getDiscordServerId(), value.getWinnerInitials());
+        PlayerRepresentation player = client.getPlayerService().getPlayer(value.getDiscordServerId(), value.getWinnerInitials());
         if (player != null) {
           winner = player.getName();
         }

@@ -79,7 +79,7 @@ public class TableManagerJobPoller {
   }
 
   private void refreshJobList() {
-    List<JobDescriptor> jobs = Menu.client.getJobs().getJobs();
+    List<JobDescriptor> jobs = Menu.client.getJobsService().getJobs();
     for (JobDescriptor activeJob : activeJobs) {
       notifyJobUpdate(activeJob);
     }

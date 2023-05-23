@@ -192,7 +192,7 @@ public class HighscoreCardsController implements Initializable, ObservedProperty
     File file = fileChooser.showOpenDialog(stage);
     if (file != null && file.exists()) {
       try {
-        boolean result = client.getHighscoreCards().uploadHighscoreBackgroundImage(file, null);
+        boolean result = client.getHighscoreCardsService().uploadHighscoreBackgroundImage(file, null);
         if (result) {
           String baseName = FilenameUtils.getBaseName(file.getName());
           if (!imageList.contains(baseName)) {
@@ -209,7 +209,7 @@ public class HighscoreCardsController implements Initializable, ObservedProperty
   private void onOpenImage() {
     GameRepresentation game = tableCombo.getValue();
     if (game != null) {
-      ByteArrayInputStream s = Studio.client.getHighscoreCards().getHighscoreCard(game);
+      ByteArrayInputStream s = Studio.client.getHighscoreCardsService().getHighscoreCard(game);
       MediaUtil.openMedia(s);
     }
   }
@@ -238,7 +238,7 @@ public class HighscoreCardsController implements Initializable, ObservedProperty
 
   @FXML
   private void onTableRefresh() {
-    List<GameRepresentation> games = client.getGames().getGamesWithScores();
+    List<GameRepresentation> games = client.getGameService().getGamesWithScores();
     ObservableList<GameRepresentation> gameRepresentations = FXCollections.observableArrayList(games);
 
     GameRepresentation game = tableCombo.getSelectionModel().getSelectedItem();
@@ -270,7 +270,7 @@ public class HighscoreCardsController implements Initializable, ObservedProperty
   private void onOpenDefaultPicture() {
     GameRepresentation game = tableCombo.getValue();
     if (game != null) {
-      ByteArrayInputStream s = Studio.client.getDirectB2S().getDefaultPicture(game);
+      ByteArrayInputStream s = Studio.client.getDirectB2SService().getDefaultPicture(game);
       MediaUtil.openMedia(s);
     }
   }
@@ -312,7 +312,7 @@ public class HighscoreCardsController implements Initializable, ObservedProperty
 //    imageScalingCombo.setDisable(!useDirectB2SCheckbox.selectedProperty().get());
 //    BindingUtil.bindComboBox(imageScalingCombo, properties, "card.scaling", "1280");
 
-    imageList = FXCollections.observableList(new ArrayList<>(client.getHighscoreCards().getHighscoreBackgroundImages()));
+    imageList = FXCollections.observableList(new ArrayList<>(client.getHighscoreCardsService().getHighscoreBackgroundImages()));
     backgroundImageCombo.setItems(imageList);
     backgroundImageCombo.setCellFactory(c -> new WidgetFactory.HighscoreBackgroundImageListCell(client));
     backgroundImageCombo.setButtonCell(new WidgetFactory.HighscoreBackgroundImageListCell(client));
@@ -365,7 +365,7 @@ public class HighscoreCardsController implements Initializable, ObservedProperty
 
       if (game.isPresent()) {
         openDefaultPictureBtn.setTooltip(new Tooltip("Open directb2s image"));
-        InputStream input = client.getDirectB2S().getDefaultPicture(game.get());
+        InputStream input = client.getDirectB2SService().getDefaultPicture(game.get());
         Image image = new Image(input);
         rawDirectB2SImage.setImage(image);
         input.close();
@@ -398,10 +398,10 @@ public class HighscoreCardsController implements Initializable, ObservedProperty
       try {
         new Thread(() -> {
           if (regenerate) {
-            client.getHighscoreCards().generateHighscoreCardSample(game.get());
+            client.getHighscoreCardsService().generateHighscoreCardSample(game.get());
           }
 
-          InputStream input = client.getHighscoreCards().getHighscoreCard(game.get());
+          InputStream input = client.getHighscoreCardsService().getHighscoreCard(game.get());
           Image image = new Image(input);
           cardPreview.setImage(image);
           cardPreview.setVisible(true);

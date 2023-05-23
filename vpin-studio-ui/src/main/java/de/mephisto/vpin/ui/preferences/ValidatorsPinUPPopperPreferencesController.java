@@ -44,7 +44,7 @@ public class ValidatorsPinUPPopperPreferencesController implements Initializable
     String value = StringUtils.join(ignoreList, ",");
     Map<String, Object> prefs = new HashMap<>();
     prefs.put(PreferenceNames.IGNORED_VALIDATIONS, value);
-    client.getPreferences().setPreferences(prefs);
+    client.getPreferenceService().setPreferences(prefs);
   }
 
 

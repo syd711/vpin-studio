@@ -14,10 +14,10 @@ import java.util.List;
 /*********************************************************************************************************************
  * Player
  ********************************************************************************************************************/
-public class Players extends AbstractStudioClientModule {
+public class PlayersServiceClient extends VPinStudioClientService {
   private final static Logger LOG = LoggerFactory.getLogger(VPinStudioClient.class);
 
-  Players(VPinStudioClient client) {
+  PlayersServiceClient(VPinStudioClient client) {
     super(client);
   }
 

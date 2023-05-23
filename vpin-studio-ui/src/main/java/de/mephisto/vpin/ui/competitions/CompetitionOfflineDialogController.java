@@ -152,7 +152,7 @@ public class CompetitionOfflineDialogController implements Initializable, Dialog
       validate();
     });
 
-    List<GameRepresentation> games = client.getGames().getGamesWithScores();
+    List<GameRepresentation> games = client.getGameService().getGamesWithScores();
     List<GameRepresentation> filtered = new ArrayList<>();
     for (GameRepresentation game : games) {
       if (game.getEmulator().getName().equals(EmulatorType.VISUAL_PINBALL_X)) {
@@ -185,7 +185,7 @@ public class CompetitionOfflineDialogController implements Initializable, Dialog
       validate();
     });
 
-    ArrayList<String> badges = new ArrayList<>(client.getCompetitions().getCompetitionBadges());
+    ArrayList<String> badges = new ArrayList<>(client.getCompetitionService().getCompetitionBadges());
     badges.add(0, null);
     ObservableList<String> imageList = FXCollections.observableList(badges);
     competitionIconCombo.setItems(imageList);
@@ -212,7 +212,7 @@ public class CompetitionOfflineDialogController implements Initializable, Dialog
         iconPreview.setImage(image);
 
         if (badge != null) {
-          Image badgeIcon = new Image(client.getCompetitions().getCompetitionBadge(badge));
+          Image badgeIcon = new Image(client.getCompetitionService().getCompetitionBadge(badge));
           badgePreview.setImage(badgeIcon);
         }
       }
@@ -314,7 +314,7 @@ public class CompetitionOfflineDialogController implements Initializable, Dialog
       setGraphic(null);
       setText(null);
       if (item != null) {
-        Image image = new Image(client.getCompetitions().getCompetitionBadge(item));
+        Image image = new Image(client.getCompetitionService().getCompetitionBadge(item));
         ImageView imageView = new ImageView(image);
         imageView.setFitWidth(80);
 
@@ -329,7 +329,7 @@ public class CompetitionOfflineDialogController implements Initializable, Dialog
 
   private List<DiscordChannel> getDiscordChannels() {
     if (this.discordChannels == null) {
-      this.discordChannels = client.getDiscord().getDiscordChannels();
+      this.discordChannels = client.getDiscordService().getDiscordChannels();
     }
     return this.discordChannels;
   }

@@ -277,7 +277,7 @@ public class WidgetFactory {
       imageView.setFitHeight(parent.getPrefWidth() - 20);
       imageView.setPreserveRatio(true);
 
-      ByteArrayInputStream gameMediaItem = client.getAssets().getGameMediaItem(mediaItem.getGameId(), PopperScreen.valueOf(mediaItem.getScreen()));
+      ByteArrayInputStream gameMediaItem = client.getAssetService().getGameMediaItem(mediaItem.getGameId(), PopperScreen.valueOf(mediaItem.getScreen()));
       Image image = new Image(gameMediaItem);
       imageView.setImage(image);
       imageView.setUserData(mediaItem);
@@ -379,7 +379,7 @@ public class WidgetFactory {
       setGraphic(null);
       setText(null);
       if (item != null) {
-        Image image = new Image(client.getHighscoreCards().getOverlayBackgroundImage(item));
+        Image image = new Image(client.getHighscoreCardsService().getOverlayBackgroundImage(item));
         ImageView imageView = new ImageView(image);
         imageView.setFitWidth(80);
 
@@ -404,7 +404,7 @@ public class WidgetFactory {
       setGraphic(null);
       setText(null);
       if (item != null) {
-        Image image = new Image(client.getHighscoreCards().getHighscoreBackgroundImage(item));
+        Image image = new Image(client.getHighscoreCardsService().getHighscoreBackgroundImage(item));
         ImageView imageView = new ImageView(image);
         imageView.setFitWidth(80);
 

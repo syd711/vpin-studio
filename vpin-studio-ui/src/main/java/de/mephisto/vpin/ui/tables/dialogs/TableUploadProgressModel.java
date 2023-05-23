@@ -8,7 +8,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
@@ -53,7 +52,7 @@ public class TableUploadProgressModel extends ProgressModel<File> {
   @Override
   public void processNext(ProgressResultModel progressResultModel, File next) {
     try {
-      Studio.client.getHighscoreCards().uploadTable(next,tableUploadDescriptor, gameId, percent -> {
+      Studio.client.getHighscoreCardsService().uploadTable(next,tableUploadDescriptor, gameId, percent -> {
         double total = percentage + percent;
         progressResultModel.setProgress(total / this.files.size());
       });

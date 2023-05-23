@@ -114,10 +114,10 @@ public class TablesSidebarPopperController implements Initializable, ChangeListe
 
   @FXML
   private void onTableEdit() {
-    if (client.getPopper().isPinUPPopperRunning()) {
+    if (client.getPinUPPopperService().isPinUPPopperRunning()) {
       Optional<ButtonType> buttonType = Dialogs.openPopperRunningWarning(Studio.stage);
       if (buttonType.isPresent() && buttonType.get().equals(ButtonType.APPLY)) {
-        Studio.client.getPopper().terminatePopper();
+        Studio.client.getPinUPPopperService().terminatePopper();
         Dialogs.openTableDataDialog(this.game.get());
         this.refreshView(this.game);
       }
@@ -130,10 +130,10 @@ public class TablesSidebarPopperController implements Initializable, ChangeListe
 
   @FXML
   private void onScreenEdit() {
-    if (client.getPopper().isPinUPPopperRunning()) {
+    if (client.getPinUPPopperService().isPinUPPopperRunning()) {
       Optional<ButtonType> buttonType = Dialogs.openPopperRunningWarning(Studio.stage);
       if (buttonType.isPresent() && buttonType.get().equals(ButtonType.APPLY)) {
-        Studio.client.getPopper().terminatePopper();
+        Studio.client.getPinUPPopperService().terminatePopper();
         Dialogs.openPopperScreensDialog(this.game.get());
         this.refreshView(this.game);
       }
@@ -164,7 +164,7 @@ public class TablesSidebarPopperController implements Initializable, ChangeListe
       labelLastPlayed.setText(game.getLastPlayed() != null ? DateFormat.getDateInstance().format(game.getLastPlayed()) : "-");
       labelTimesPlayed.setText(String.valueOf(game.getNumberPlays()));
 
-      manifest = client.getPopper().getTableDetails(game.getId());
+      manifest = client.getPinUPPopperService().getTableDetails(game.getId());
 
       volumeSlider.valueProperty().removeListener(this);
       if (manifest.getVolume() != null) {
@@ -246,7 +246,7 @@ public class TablesSidebarPopperController implements Initializable, ChangeListe
         manifest.setVolume(String.valueOf(value));
         LOG.info("Updates volume of " + g.getGameDisplayName() + " to " + value);
         try {
-          client.getPopper().saveTableDetails(manifest, g.getId());
+          client.getPinUPPopperService().saveTableDetails(manifest, g.getId());
         } catch (Exception e) {
           WidgetFactory.showAlert(Studio.stage, e.getMessage());
         }

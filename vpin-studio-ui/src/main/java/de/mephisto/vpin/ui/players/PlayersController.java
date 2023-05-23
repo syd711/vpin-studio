@@ -85,7 +85,7 @@ public class PlayersController implements Initializable, StudioFXController {
       }
 
       new Thread(() -> {
-        ScoreSummaryRepresentation playerScores = client.getPlayers().getPlayerScores(p.getInitials());
+        ScoreSummaryRepresentation playerScores = client.getPlayerService().getPlayerScores(p.getInitials());
         Platform.runLater(() -> {
           highscoreList.getChildren().removeAll(highscoreList.getChildren());
           if (playerScores.getScores().isEmpty()) {

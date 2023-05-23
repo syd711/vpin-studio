@@ -13,9 +13,9 @@ import java.util.List;
 /*********************************************************************************************************************
  * Discord
  ********************************************************************************************************************/
-public class Discord extends AbstractStudioClientModule{
+public class DiscordServiceClient extends VPinStudioClientService {
 
-  Discord(VPinStudioClient client) {
+  DiscordServiceClient(VPinStudioClient client) {
     super(client);
   }
 

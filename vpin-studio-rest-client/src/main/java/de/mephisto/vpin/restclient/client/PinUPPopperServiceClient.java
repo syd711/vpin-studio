@@ -14,10 +14,10 @@ import java.util.List;
 /*********************************************************************************************************************
  * Popper
  ********************************************************************************************************************/
-public class Popper extends AbstractStudioClientModule{
+public class PinUPPopperServiceClient extends VPinStudioClientService {
   private final static Logger LOG = LoggerFactory.getLogger(VPinStudioClient.class);
 
-  Popper(VPinStudioClient client) {
+  PinUPPopperServiceClient(VPinStudioClient client) {
     super(client);
   }
 

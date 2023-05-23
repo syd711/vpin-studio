@@ -69,7 +69,7 @@ public class TablesSidebarAudioController implements Initializable {
       GameRepresentation g = game.get();
       g.setAltSoundEnabled(enabledCheckbox.isSelected());
       try {
-        client.getGames().saveGame(g);
+        client.getGameService().saveGame(g);
       } catch (Exception e) {
         WidgetFactory.showAlert(Studio.stage, e.getMessage());
       }

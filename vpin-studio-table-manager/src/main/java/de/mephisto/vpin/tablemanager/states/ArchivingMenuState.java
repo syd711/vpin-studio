@@ -59,7 +59,7 @@ public class ArchivingMenuState extends MenuState {
       descriptor.getGameIds().add(game.getId());
       descriptor.setRemoveFromPlaylists(mode == 0);
       try {
-        Menu.client.getIo().backupTable(descriptor);
+        Menu.client.getArchiveService().backupTable(descriptor);
       } catch (Exception e) {
         LOG.error("Failed to executing archiving: " + e.getMessage(), e);
       }

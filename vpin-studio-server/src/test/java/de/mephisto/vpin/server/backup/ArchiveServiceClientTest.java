@@ -19,7 +19,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @SpringBootTest
-public class ArchiveServiceTest extends AbstractVPinServerTest {
+public class ArchiveServiceClientTest extends AbstractVPinServerTest {
 
 //  private final static String TEST_FILE = "Batman 66.vpx";
   private final static String TEST_FILE = "Hayburners (WIlliams 1951).vpx";

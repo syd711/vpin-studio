@@ -9,10 +9,10 @@ import java.util.Date;
 /*********************************************************************************************************************
  * System
  ********************************************************************************************************************/
-public class Systm extends AbstractStudioClientModule{
+public class SystemServiceClient extends VPinStudioClientService {
   private final static Logger LOG = LoggerFactory.getLogger(VPinStudioClient.class);
 
-  Systm(VPinStudioClient client) {
+  SystemServiceClient(VPinStudioClient client) {
     super(client);
   }
 

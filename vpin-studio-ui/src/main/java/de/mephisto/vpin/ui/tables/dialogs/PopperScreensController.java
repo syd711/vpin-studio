@@ -92,7 +92,7 @@ public class PopperScreensController implements Initializable, DialogController 
 
     manifest.setKeepDisplays(value);
     try {
-      Studio.client.getPopper().saveTableDetails(manifest, game.getId());
+      Studio.client.getPinUPPopperService().saveTableDetails(manifest, game.getId());
     } catch (Exception ex) {
       WidgetFactory.showAlert(Studio.stage, "Error", "Failed to save table manifest: " + ex.getMessage());
     }
@@ -200,7 +200,7 @@ public class PopperScreensController implements Initializable, DialogController 
 
   public void setGame(GameRepresentation game) {
     this.game = game;
-    this.manifest = Studio.client.getPopper().getTableDetails(game.getId());
+    this.manifest = Studio.client.getPinUPPopperService().getTableDetails(game.getId());
 
     String keepDisplays = manifest.getKeepDisplays();
     if (StringUtils.isEmpty(keepDisplays)) {

@@ -19,10 +19,10 @@ import java.util.List;
 /*********************************************************************************************************************
  * Competitions
  ********************************************************************************************************************/
-public class Competitions extends AbstractStudioClientModule {
+public class CompetitionsServiceClient extends VPinStudioClientService {
   private final static Logger LOG = LoggerFactory.getLogger(VPinStudioClient.class);
 
-  Competitions(VPinStudioClient client) {
+  CompetitionsServiceClient(VPinStudioClient client) {
     super(client);
   }
 

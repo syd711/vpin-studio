@@ -22,7 +22,7 @@ public class PlaylistSelectionMenuState extends MenuState {
     this.parentState = parentState;
     this.menuController = menuController;
     this.menuController.enterPlaylistSelection();
-    playlists = new ArrayList<>(Menu.client.getPopper().getPlaylists());
+    playlists = new ArrayList<>(Menu.client.getPinUPPopperService().getPlaylists());
     playlists.add(null);
 
     this.menuController.setNameLabelText(playlists.get(index).getName());

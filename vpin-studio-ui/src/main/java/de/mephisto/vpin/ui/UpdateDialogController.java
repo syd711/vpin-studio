@@ -39,7 +39,7 @@ public class UpdateDialogController implements Initializable, DialogController {
     serverLabel.setText("Downloading " + String.format(Updater.BASE_URL, newVersion) + Updater.SERVER_ZIP);
 
 
-    String existingVersion = client.getSystem().version();
+    String existingVersion = client.getSystemService().version();
     if (existingVersion.equals(newVersion)) {
       serverProgress.setDisable(true);
       serverProgress.setProgress(1f);
@@ -58,9 +58,9 @@ public class UpdateDialogController implements Initializable, DialogController {
         return new Task() {
           @Override
           protected Object call() throws Exception {
-            client.getSystem().startServerUpdate(newVersion);
+            client.getSystemService().startServerUpdate(newVersion);
             while (true) {
-              int progress = client.getSystem().getServerUpdateProgress();
+              int progress = client.getSystemService().getServerUpdateProgress();
               updateProgress(progress, 100);
               Thread.sleep(1000);
               Platform.runLater(() -> {
@@ -77,18 +77,18 @@ public class UpdateDialogController implements Initializable, DialogController {
               serverProgress.setProgress(ProgressBar.INDETERMINATE_PROGRESS);
             });
 
-            client.getSystem().installServerUpdate();
+            client.getSystemService().installServerUpdate();
             Thread.sleep(5000);
 
             while (true) {
               Thread.sleep(1000);
-              if (client.getSystem().version() != null) {
+              if (client.getSystemService().version() != null) {
                 break;
               }
             }
 
             Platform.runLater(() -> {
-              serverLabel.setText("Update successful, server is running on version " + client.getSystem().version());
+              serverLabel.setText("Update successful, server is running on version " + client.getSystemService().version());
               serverProgress.setProgress(1f);
             });
 

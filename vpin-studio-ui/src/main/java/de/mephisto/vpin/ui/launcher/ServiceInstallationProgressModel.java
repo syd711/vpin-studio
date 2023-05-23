@@ -19,7 +19,7 @@ public class ServiceInstallationProgressModel extends ProgressModel<Integer> {
   public ServiceInstallationProgressModel(VPinStudioClient client) {
     super("Initial Table Scan");
     this.client = client;
-    gameIds = client.getGames().getGameIds();
+    gameIds = client.getGameService().getGameIds();
     gameIdIterator = gameIds.iterator();
   }
 
@@ -46,7 +46,7 @@ public class ServiceInstallationProgressModel extends ProgressModel<Integer> {
   @Override
   public void processNext(ProgressResultModel progressResultModel, Integer next) {
     try {
-      client.getGames().scanGame(next);
+      client.getGameService().scanGame(next);
       progressResultModel.addProcessed();
     } catch (Exception e) {
       LOG.error("Error during service installation: " + e.getMessage(), e);

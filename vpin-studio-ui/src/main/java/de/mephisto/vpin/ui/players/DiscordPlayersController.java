@@ -6,8 +6,6 @@ import de.mephisto.vpin.restclient.representations.PlayerRepresentation;
 import de.mephisto.vpin.ui.NavigationController;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleObjectProperty;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -52,7 +50,7 @@ public class DiscordPlayersController implements Initializable {
 
   @FXML
   private void onReload() {
-    this.players = client.getPlayers().getPlayers(PlayerDomain.DISCORD);
+    this.players = client.getPlayerService().getPlayers(PlayerDomain.DISCORD);
     this.refreshView();
   }
 
@@ -119,7 +117,7 @@ public class DiscordPlayersController implements Initializable {
       refreshView();
     });
 
-    this.players = client.getPlayers().getPlayers(PlayerDomain.DISCORD);
+    this.players = client.getPlayerService().getPlayers(PlayerDomain.DISCORD);
     this.refreshView();
   }
 

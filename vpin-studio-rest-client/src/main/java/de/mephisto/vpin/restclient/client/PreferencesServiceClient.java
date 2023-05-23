@@ -14,10 +14,10 @@ import java.util.Map;
 /*********************************************************************************************************************
  * Preferences
  ********************************************************************************************************************/
-public class Preferences extends AbstractStudioClientModule {
+public class PreferencesServiceClient extends VPinStudioClientService {
   private final static Logger LOG = LoggerFactory.getLogger(VPinStudioClient.class);
 
-  Preferences(VPinStudioClient client) {
+  PreferencesServiceClient(VPinStudioClient client) {
     super(client);
   }
 

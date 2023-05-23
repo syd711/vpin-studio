@@ -121,7 +121,7 @@ public class CompetitionDiscordDialogController implements Initializable, Dialog
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
-    this.botStatus = client.getDiscord().getDiscordStatus();
+    this.botStatus = client.getDiscordService().getDiscordStatus();
 
     competition = new CompetitionRepresentation();
     competition.setType(CompetitionType.DISCORD.name());
@@ -148,13 +148,13 @@ public class CompetitionDiscordDialogController implements Initializable, Dialog
     }, 500));
 
 
-    List<DiscordServer> servers = client.getDiscord().getDiscordServers();
+    List<DiscordServer> servers = client.getDiscordService().getDiscordServers();
     ObservableList<DiscordServer> discordServers = FXCollections.observableArrayList(servers);
     serversCombo.getItems().addAll(discordServers);
     serversCombo.valueProperty().addListener((observableValue, gameRepresentation, t1) -> {
       competition.setDiscordServerId(t1.getId());
 
-      channelsCombo.setItems(FXCollections.observableArrayList(client.getDiscord().getDiscordChannels(t1.getId())));
+      channelsCombo.setItems(FXCollections.observableArrayList(client.getDiscordService().getDiscordChannels(t1.getId())));
       validate();
     });
 
@@ -195,7 +195,7 @@ public class CompetitionDiscordDialogController implements Initializable, Dialog
       validate();
     });
 
-    List<GameRepresentation> games = client.getGames().getGamesWithScores();
+    List<GameRepresentation> games = client.getGameService().getGamesWithScores();
     List<GameRepresentation> filtered = new ArrayList<>();
     for (GameRepresentation game : games) {
       if (game.getEmulator().getName().equals(EmulatorType.VISUAL_PINBALL_X)) {
@@ -213,7 +213,7 @@ public class CompetitionDiscordDialogController implements Initializable, Dialog
       refreshPreview(t1, competitionIconCombo.getValue());
       validate();
     });
-    ArrayList<String> badges = new ArrayList<>(client.getCompetitions().getCompetitionBadges());
+    ArrayList<String> badges = new ArrayList<>(client.getCompetitionService().getCompetitionBadges());
     badges.add(0, null);
     ObservableList<String> imageList = FXCollections.observableList(badges);
     competitionIconCombo.setItems(imageList);
@@ -247,7 +247,7 @@ public class CompetitionDiscordDialogController implements Initializable, Dialog
         iconPreview.setImage(image);
 
         if (badge != null) {
-          Image badgeIcon = new Image(client.getCompetitions().getCompetitionBadge(badge));
+          Image badgeIcon = new Image(client.getCompetitionService().getCompetitionBadge(badge));
           badgePreview.setImage(badgeIcon);
         }
       }
@@ -281,7 +281,7 @@ public class CompetitionDiscordDialogController implements Initializable, Dialog
     }
 
     //check Discord permissions
-    if (!client.getCompetitions().hasManagePermissions(competition.getDiscordServerId(), competition.getDiscordChannelId())) {
+    if (!client.getCompetitionService().hasManagePermissions(competition.getDiscordServerId(), competition.getDiscordChannelId())) {
       validationTitle.setText("Insufficient Permissions");
       validationDescription.setText("Your Discord bot has insufficient permissions to join a competition. Please check the documentation for details.");
       return;
@@ -304,7 +304,7 @@ public class CompetitionDiscordDialogController implements Initializable, Dialog
     Date endSelection = Date.from(endDatePicker.getValue().atStartOfDay(ZoneId.systemDefault()).toInstant());
 
     //check the active competition stored for the selected channel against the date selection
-    DiscordCompetitionData discordCompetitionData = client.getDiscord().getDiscordCompetitionData(competition.getDiscordServerId(), competition.getDiscordChannelId());
+    DiscordCompetitionData discordCompetitionData = client.getDiscordService().getDiscordCompetitionData(competition.getDiscordServerId(), competition.getDiscordChannelId());
     if (discordCompetitionData != null) {
       if (!this.competition.getUuid().equals(discordCompetitionData.getUuid())) {
         if (discordCompetitionData.isOverlappingWith(startSelection, endSelection)) {
@@ -376,7 +376,7 @@ public class CompetitionDiscordDialogController implements Initializable, Dialog
 
       GameRepresentation game = client.getGame(c.getGameId());
       DiscordServer discordServer = client.getDiscordServer(competition.getDiscordServerId());
-      List<DiscordChannel> serverChannels = client.getDiscord().getDiscordChannels(discordServer.getId());
+      List<DiscordChannel> serverChannels = client.getDiscordService().getDiscordChannels(discordServer.getId());
 
       String botId = String.valueOf(botStatus.getBotId());
       boolean isOwner = c.getOwner().equals(botId);
@@ -437,7 +437,7 @@ public class CompetitionDiscordDialogController implements Initializable, Dialog
       setGraphic(null);
       setText(null);
       if (item != null) {
-        Image image = new Image(client.getCompetitions().getCompetitionBadge(item));
+        Image image = new Image(client.getCompetitionService().getCompetitionBadge(item));
         ImageView imageView = new ImageView(image);
         imageView.setFitWidth(80);
 

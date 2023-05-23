@@ -79,12 +79,12 @@ public class PlayerDialogController implements Initializable, DialogController {
         avatarFile = WidgetFactory.snapshot(this.avatarStack);
       }
 
-      this.player = client.getPlayers().savePlayer(this.player);
+      this.player = client.getPlayerService().savePlayer(this.player);
 
       if (this.avatarFile != null) {
         this.uploadAvatar(this.avatarFile);
       }
-      client.getPlayers().savePlayer(this.player);
+      client.getPlayerService().savePlayer(this.player);
       client.clearCache();
     } catch (Exception ex) {
       WidgetFactory.showAlert(Studio.stage, ex.getMessage());
@@ -153,7 +153,7 @@ public class PlayerDialogController implements Initializable, DialogController {
     if (player.getAvatar() != null) {
       assetId = player.getAvatar().getId();
     }
-    AssetRepresentation assetRepresentation = client.getAssets().uploadAsset(file, assetId, 300, AssetType.AVATAR, null);
+    AssetRepresentation assetRepresentation = client.getAssetService().uploadAsset(file, assetId, 300, AssetType.AVATAR, null);
     this.player.setAvatar(assetRepresentation);
   }
 

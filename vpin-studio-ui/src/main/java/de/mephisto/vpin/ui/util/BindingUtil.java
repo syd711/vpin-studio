@@ -61,7 +61,7 @@ public class BindingUtil {
     textField.setText(stringProperty.getValue());
     Bindings.bindBidirectional(stringProperty, textField.textProperty());
     textField.textProperty().addListener((observableValue, s, t1) -> debouncer.debounce(preference, () -> {
-      client.getPreferences().setPreference(preference, t1);
+      client.getPreferenceService().setPreference(preference, t1);
     }, 500));
   }
 
@@ -83,7 +83,7 @@ public class BindingUtil {
     StringProperty stringProperty = new SimpleStringProperty();
     Bindings.bindBidirectional(stringProperty, comboBox.valueProperty());
     comboBox.setValue(value);
-    comboBox.valueProperty().addListener((observableValue, s, t1) -> client.getPreferences().setPreference(preference, t1));
+    comboBox.valueProperty().addListener((observableValue, s, t1) -> client.getPreferenceService().setPreference(preference, t1));
   }
 
   public static void bindCheckbox(CheckBox checkbox, ObservedProperties properties, String property) {
@@ -100,7 +100,7 @@ public class BindingUtil {
     BooleanProperty booleanProperty = new SimpleBooleanProperty();
     Bindings.bindBidirectional(booleanProperty, checkbox.selectedProperty());
     booleanProperty.set(checked);
-    checkbox.selectedProperty().addListener((observableValue, s, t1) -> client.getPreferences().setPreference(preference, t1));
+    checkbox.selectedProperty().addListener((observableValue, s, t1) -> client.getPreferenceService().setPreference(preference, t1));
   }
 
   public static void bindSpinner(Spinner spinner, ObservedProperties properties, String property) {

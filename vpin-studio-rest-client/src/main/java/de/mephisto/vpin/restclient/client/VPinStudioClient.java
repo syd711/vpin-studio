@@ -26,134 +26,128 @@ public class VPinStudioClient implements ObservedPropertyChangeListener, Overlay
 
   private final String host;
 
-  private final AltSoundService altSoundService;
-  private final Archiving archiving;
-  private final Assets assets;
-  private final Competitions competitions;
-  private final DirectB2S directB2S;
-  private final Discord discord;
-  private final Games games;
-  private final HighscoreCards highscoreCards;
+  private final AltSoundServiceClient altSoundServiceClient;
+  private final ArchiveServiceClient archiveServiceClient;
+  private final AssetServiceClient assetServiceClient;
+  private final CompetitionsServiceClient competitions;
+  private final DirectB2SServiceClient directB2SServiceClient;
+  private final DiscordServiceClient discordServiceClient;
+  private final GamesServiceClient gamesServiceClient;
+  private final HighscoreCardsServiceClient highscoreCardsServiceClient;
   private final ImageCache imageCache;
-  private final IO io;
-  private final Jobs jobs;
-  private final Players players;
-  private final Popper popper;
-  private final Preferences preferences;
-  private final Systm system;
-  private final TableManager tableManager;
-  private final Vpx vpx;
+  private final JobsServiceClient jobsServiceClient;
+  private final PlayersServiceClient playersServiceClient;
+  private final PinUPPopperServiceClient pinUPPopperServiceClient;
+  private final PreferencesServiceClient preferencesServiceClient;
+  private final SystemServiceClient systemServiceClient;
+  private final TableManagerServiceClient tableManagerServiceClient;
+  private final VpxServiceClient vpxServiceClient;
 
   public VPinStudioClient(String host) {
     this.host = host;
     restClient = RestClient.createInstance(host);
 
-    this.altSoundService = new AltSoundService(this);
-    this.archiving = new Archiving(this);
-    this.assets = new Assets(this);
-    this.competitions = new Competitions(this);
-    this.directB2S = new DirectB2S(this);
-    this.discord = new Discord(this);
-    this.games = new Games(this);
-    this.highscoreCards = new HighscoreCards(this);
+    this.altSoundServiceClient = new AltSoundServiceClient(this);
+    this.archiveServiceClient = new ArchiveServiceClient(this);
+    this.assetServiceClient = new AssetServiceClient(this);
+    this.competitions = new CompetitionsServiceClient(this);
+    this.directB2SServiceClient = new DirectB2SServiceClient(this);
+    this.discordServiceClient = new DiscordServiceClient(this);
+    this.gamesServiceClient = new GamesServiceClient(this);
+    this.highscoreCardsServiceClient = new HighscoreCardsServiceClient(this);
     this.imageCache = new ImageCache(this);
-    this.io = new IO(this);
-    this.jobs = new Jobs(this);
-    this.players = new Players(this);
-    this.popper = new Popper(this);
-    this.preferences = new Preferences(this);
-    this.system = new Systm(this);
-    this.tableManager = new TableManager(this);
-    this.vpx = new Vpx(this);
+    this.jobsServiceClient = new JobsServiceClient(this);
+    this.playersServiceClient = new PlayersServiceClient(this);
+    this.pinUPPopperServiceClient = new PinUPPopperServiceClient(this);
+    this.preferencesServiceClient = new PreferencesServiceClient(this);
+    this.systemServiceClient = new SystemServiceClient(this);
+    this.tableManagerServiceClient = new TableManagerServiceClient(this);
+    this.vpxServiceClient = new VpxServiceClient(this);
   }
 
-  public AltSoundService getAltSoundService() {
-    return altSoundService;
+  public AltSoundServiceClient getAltSoundService() {
+    return altSoundServiceClient;
   }
 
-  public Archiving getArchiving() {
-    return archiving;
+  public ArchiveServiceClient getArchiveService() {
+    return archiveServiceClient;
   }
 
-  public Assets getAssets() {
-    return assets;
+  public AssetServiceClient getAssetService() {
+    return assetServiceClient;
   }
 
-  public Competitions getCompetitions() {
+  public CompetitionsServiceClient getCompetitionService() {
     return competitions;
   }
 
-  public DirectB2S getDirectB2S() {
-    return directB2S;
+  public DirectB2SServiceClient getDirectB2SService() {
+    return directB2SServiceClient;
   }
 
-  public Discord getDiscord() {
-    return discord;
+  public DiscordServiceClient getDiscordService() {
+    return discordServiceClient;
   }
 
-  public Games getGames() {
-    return games;
+  public GamesServiceClient getGameService() {
+    return gamesServiceClient;
   }
 
-  public HighscoreCards getHighscoreCards() {
-    return highscoreCards;
+  public HighscoreCardsServiceClient getHighscoreCardsService() {
+    return highscoreCardsServiceClient;
   }
 
   public ImageCache getImageCache() {
     return imageCache;
   }
 
-  public IO getIo() {
-    return io;
+  public JobsServiceClient getJobsService() {
+    return jobsServiceClient;
   }
 
-  public Jobs getJobs() {
-    return jobs;
+  public PlayersServiceClient getPlayerService() {
+    return playersServiceClient;
   }
 
-  public Players getPlayers() {
-    return players;
+  public PinUPPopperServiceClient getPinUPPopperService() {
+    return pinUPPopperServiceClient;
   }
 
-  public Popper getPopper() {
-    return popper;
+  public PreferencesServiceClient getPreferenceService() {
+    return preferencesServiceClient;
   }
 
-  public Preferences getPreferences() {
-    return preferences;
+  public SystemServiceClient getSystemService() {
+    return systemServiceClient;
   }
 
-  public Systm getSystem() {
-    return system;
+  public TableManagerServiceClient getTableManagerService() {
+    return tableManagerServiceClient;
   }
 
-  public TableManager getTableManager() {
-    return tableManager;
-  }
-
-  public Vpx getVpx() {
-    return vpx;
+  public VpxServiceClient getVpxService() {
+    return vpxServiceClient;
   }
 
 
   @Override
   public DiscordServer getDiscordServer(long serverId) {
-    return discord.getDiscordServer(serverId);
+    return discordServiceClient.getDiscordServer(serverId);
   }
 
   @Override
   public List<CompetitionRepresentation> getFinishedCompetitions(int limit) {
-    return getCompetitions().getFinishedCompetitions(limit);
+    return getCompetitionService().getFinishedCompetitions(limit);
   }
 
   @Override
   public CompetitionRepresentation getActiveCompetition(CompetitionType type) {
-    return getCompetitions().getActiveCompetition(type);
+    return getCompetitionService().getActiveCompetition(type);
   }
 
   @Override
   public GameRepresentation getGame(int id) {
-    return getGames().getGame(id);
+    return getGameService().getGame(id);
   }
 
   @Override
@@ -163,42 +157,42 @@ public class VPinStudioClient implements ObservedPropertyChangeListener, Overlay
 
   @Override
   public ScoreSummaryRepresentation getCompetitionScore(long id) {
-    return getCompetitions().getCompetitionScore(id);
+    return getCompetitionService().getCompetitionScore(id);
   }
 
   @Override
   public ByteArrayInputStream getCompetitionBackground(long gameId) {
-    return getCompetitions().getCompetitionBackground(gameId);
+    return getCompetitionService().getCompetitionBackground(gameId);
   }
 
   @Override
   public ScoreListRepresentation getCompetitionScoreList(long id) {
-    return getCompetitions().getCompetitionScoreList(id);
+    return getCompetitionService().getCompetitionScoreList(id);
   }
 
   @Override
   public ByteArrayInputStream getAsset(AssetType assetType, String uuid) {
-    return getAssets().getAsset(assetType, uuid);
+    return getAssetService().getAsset(assetType, uuid);
   }
 
   @Override
   public ScoreSummaryRepresentation getRecentlyPlayedGames(int count) {
-    return getGames().getRecentlyPlayedGames(count);
+    return getGameService().getRecentlyPlayedGames(count);
   }
 
   @Override
   public ByteArrayInputStream getGameMediaItem(int id, PopperScreen screen) {
-    return getAssets().getGameMediaItem(id, screen);
+    return getAssetService().getGameMediaItem(id, screen);
   }
 
   @Override
   public PreferenceEntryRepresentation getPreference(String key) {
-    return this.preferences.getPreference(key);
+    return this.preferencesServiceClient.getPreference(key);
   }
 
   @Override
   public List<RankedPlayerRepresentation> getRankedPlayers() {
-    return getPlayers().getRankedPlayers();
+    return getPlayerService().getRankedPlayers();
   }
 
   public RestClient getRestClient() {
@@ -219,8 +213,8 @@ public class VPinStudioClient implements ObservedPropertyChangeListener, Overlay
    */
   public void download(@NonNull String url, @NonNull File target) throws Exception {
     RestTemplate template = new RestTemplate();
-    LOG.info("HTTP Download " + restClient.getBaseUrl() + AbstractStudioClientModule.API + url);
-    File file = template.execute(restClient.getBaseUrl() + AbstractStudioClientModule.API + url, HttpMethod.GET, null, clientHttpResponse -> {
+    LOG.info("HTTP Download " + restClient.getBaseUrl() + VPinStudioClientService.API + url);
+    File file = template.execute(restClient.getBaseUrl() + VPinStudioClientService.API + url, HttpMethod.GET, null, clientHttpResponse -> {
       FileOutputStream out = null;
       try {
         out = new FileOutputStream(target);
@@ -236,7 +230,7 @@ public class VPinStudioClient implements ObservedPropertyChangeListener, Overlay
 
   public ObservedProperties getProperties(String propertiesName) {
     if (!observedProperties.containsKey(propertiesName)) {
-      Map<String, Object> result = restClient.get(AbstractStudioClientModule.API + "properties/" + propertiesName, Map.class);
+      Map<String, Object> result = restClient.get(VPinStudioClientService.API + "properties/" + propertiesName, Map.class);
       Properties properties = new Properties();
       properties.putAll(result);
       ObservedProperties observedProperties = new ObservedProperties(propertiesName, properties);
@@ -248,8 +242,8 @@ public class VPinStudioClient implements ObservedPropertyChangeListener, Overlay
   }
 
   public String getURL(String segment) {
-    if (!segment.startsWith("http") && !segment.contains(AbstractStudioClientModule.API)) {
-      return restClient.getBaseUrl() + AbstractStudioClientModule.API + segment;
+    if (!segment.startsWith("http") && !segment.contains(VPinStudioClientService.API)) {
+      return restClient.getBaseUrl() + VPinStudioClientService.API + segment;
     }
     return segment;
   }
@@ -259,7 +253,7 @@ public class VPinStudioClient implements ObservedPropertyChangeListener, Overlay
     try {
       Map<String, Object> model = new HashMap<>();
       model.put(key, updatedValue.get());
-      Boolean result = restClient.put(AbstractStudioClientModule.API + "properties/" + propertiesName, model);
+      Boolean result = restClient.put(VPinStudioClientService.API + "properties/" + propertiesName, model);
       ObservedProperties obsprops = this.observedProperties.get(propertiesName);
       obsprops.notifyChange(key, updatedValue.get());
     } catch (Exception e) {

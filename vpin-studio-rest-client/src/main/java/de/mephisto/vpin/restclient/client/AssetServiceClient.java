@@ -16,10 +16,10 @@ import java.io.File;
 /*********************************************************************************************************************
  * Assets / Popper
  ********************************************************************************************************************/
-public class Assets extends AbstractStudioClientModule{
+public class AssetServiceClient extends VPinStudioClientService {
   private final static Logger LOG = LoggerFactory.getLogger(VPinStudioClient.class);
 
-  Assets(VPinStudioClient client) {
+  AssetServiceClient(VPinStudioClient client) {
     super(client);
   }
 

@@ -21,10 +21,10 @@ import java.util.List;
 /*********************************************************************************************************************
  * Highscore Cards
  ********************************************************************************************************************/
-public class HighscoreCards extends AbstractStudioClientModule {
+public class HighscoreCardsServiceClient extends VPinStudioClientService {
   private final static Logger LOG = LoggerFactory.getLogger(VPinStudioClient.class);
 
-  HighscoreCards(VPinStudioClient client) {
+  HighscoreCardsServiceClient(VPinStudioClient client) {
     super(client);
   }
 

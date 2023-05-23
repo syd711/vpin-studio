@@ -46,7 +46,7 @@ public class RomUploadProgressModel extends ProgressModel<File> {
   @Override
   public void processNext(ProgressResultModel progressResultModel, File next) {
     try {
-      Studio.client.getGames().uploadRom(next, percent -> {
+      Studio.client.getGameService().uploadRom(next, percent -> {
         double total = percentage + percent;
         progressResultModel.setProgress(total / this.files.size());
       });

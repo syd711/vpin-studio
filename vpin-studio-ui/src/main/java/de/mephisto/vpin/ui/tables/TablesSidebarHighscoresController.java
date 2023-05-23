@@ -99,13 +99,13 @@ public class TablesSidebarHighscoresController implements Initializable {
   private void onCard() {
     if (this.game.isPresent()) {
       GameRepresentation g = this.game.get();
-      boolean b = client.getHighscoreCards().generateHighscoreCardSample(g);
+      boolean b = client.getHighscoreCardsService().generateHighscoreCardSample(g);
       if (b) {
-        ByteArrayInputStream s = Studio.client.getHighscoreCards().getHighscoreCard(g);
+        ByteArrayInputStream s = Studio.client.getHighscoreCardsService().getHighscoreCard(g);
         MediaUtil.openMedia(s);
       }
       else {
-        ScoreSummaryRepresentation summary = client.getGames().getGameScores(g.getId());
+        ScoreSummaryRepresentation summary = client.getGameService().getGameScores(g.getId());
         String status = summary.getMetadata().getStatus();
         WidgetFactory.showAlert(Studio.stage, "Card Generation Failed.", "The card generation failed: " + status);
       }
@@ -124,7 +124,7 @@ public class TablesSidebarHighscoresController implements Initializable {
       ResetHighscoreDescriptor reset = Dialogs.openHighscoreResetDialog(g);
       if (reset != null) {
         try {
-          client.getGames().resetHighscore(reset);
+          client.getGameService().resetHighscore(reset);
         } catch (Exception e) {
           LOG.error("Failed to reset highscore: " + e.getMessage(), e);
         } finally {
@@ -165,13 +165,13 @@ public class TablesSidebarHighscoresController implements Initializable {
       GameRepresentation game = g.get();
       scanHighscoreBtn.setDisable(false);
 
-      ScoreSummaryRepresentation summary = client.getGames().getGameScores(game.getId());
+      ScoreSummaryRepresentation summary = client.getGameService().getGameScores(game.getId());
       HighscoreMetadataRepresentation metadata = summary.getMetadata();
       if (forceRescan) {
-        metadata = client.getGames().scanGameScore(game.getId());
+        metadata = client.getGameService().scanGameScore(game.getId());
       }
 
-      ScoreListRepresentation scoreHistory = Studio.client.getGames().getScoreHistory(game.getId());
+      ScoreListRepresentation scoreHistory = Studio.client.getGameService().getScoreHistory(game.getId());
       hsRecordLabel.setText(String.valueOf(scoreHistory.getScores().size()));
       if (!scoreHistory.getScores().isEmpty()) {
         Tile highscoresGraphTile = ScoreGraphUtil.createGraph(scoreHistory);

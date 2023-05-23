@@ -18,10 +18,10 @@ import java.util.Map;
 /*********************************************************************************************************************
  * VPX
  ********************************************************************************************************************/
-public class Vpx extends AbstractStudioClientModule{
+public class VpxServiceClient extends VPinStudioClientService {
   private final static Logger LOG = LoggerFactory.getLogger(VPinStudioClient.class);
 
-  Vpx(VPinStudioClient client) {
+  VpxServiceClient(VPinStudioClient client) {
     super(client);
   }
 

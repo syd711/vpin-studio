@@ -13,7 +13,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class ImageCache extends AbstractStudioClientModule {
+public class ImageCache extends VPinStudioClientService {
   private final static Logger LOG = LoggerFactory.getLogger(VPinStudioClient.class);
   private final Map<String, byte[]> imageCache = new HashMap<>();
 

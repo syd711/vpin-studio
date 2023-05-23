@@ -17,7 +17,7 @@ public class TablesScanProgressModel extends ProgressModel<Integer> {
 
   public TablesScanProgressModel(String title) {
     super(title);
-    this.gameIds = Studio.client.getGames().getGameIds();
+    this.gameIds = Studio.client.getGameService().getGameIds();
     iterator = gameIds.iterator();
   }
 
@@ -43,7 +43,7 @@ public class TablesScanProgressModel extends ProgressModel<Integer> {
 
   public void processNext(ProgressResultModel progressResultModel, Integer id) {
     try {
-      GameRepresentation game = Studio.client.getGames().scanGame(id);
+      GameRepresentation game = Studio.client.getGameService().scanGame(id);
       if (game != null) {
         progressResultModel.addProcessed();
       }

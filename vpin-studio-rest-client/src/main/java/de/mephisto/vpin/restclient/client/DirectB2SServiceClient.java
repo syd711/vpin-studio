@@ -15,10 +15,10 @@ import java.io.File;
 /*********************************************************************************************************************
  * DirectB2S
  ********************************************************************************************************************/
-public class DirectB2S extends AbstractStudioClientModule{
+public class DirectB2SServiceClient extends VPinStudioClientService {
   private final static Logger LOG = LoggerFactory.getLogger(VPinStudioClient.class);
 
-  DirectB2S(VPinStudioClient client) {
+  DirectB2SServiceClient(VPinStudioClient client) {
     super(client);
   }
 

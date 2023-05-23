@@ -6,8 +6,8 @@ import de.mephisto.vpin.restclient.TableManagerSettings;
 /*********************************************************************************************************************
  * Table Manager
  ********************************************************************************************************************/
-public class TableManager extends AbstractStudioClientModule {
-  TableManager(VPinStudioClient client) {
+public class TableManagerServiceClient extends VPinStudioClientService {
+  TableManagerServiceClient(VPinStudioClient client) {
     super(client);
   }
 

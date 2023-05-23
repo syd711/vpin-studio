@@ -49,7 +49,7 @@ public class POVExportProgressModel extends ProgressModel<GameRepresentation> {
   @Override
   public void processNext(ProgressResultModel progressResultModel, GameRepresentation next) {
     try {
-      POVRepresentation pov = Studio.client.getVpx().createPOV(next.getId());
+      POVRepresentation pov = Studio.client.getVpxService().createPOV(next.getId());
       if(pov != null) {
         progressResultModel.addProcessed(pov);
       }

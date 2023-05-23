@@ -57,7 +57,7 @@ public class PlayerRankingsPreferencesController implements Initializable {
         spinnerCompetitions.getValueFactory().setValue(Integer.parseInt(split[3]));
     }
     else {
-      client.getPreferences().setPreference(PreferenceNames.RANKING_POINTS, UIDefaults.DEFAULT_POINTS);
+      client.getPreferenceService().setPreference(PreferenceNames.RANKING_POINTS, UIDefaults.DEFAULT_POINTS);
     }
 
     factory1.valueProperty().addListener((observableValue, integer, t1) -> debouncer.debounce(PreferenceNames.IDLE_TIMEOUT, () -> {
@@ -79,6 +79,6 @@ public class PlayerRankingsPreferencesController implements Initializable {
 
   private void savePoints() {
     String points = spinner1.getValue() + "," + spinner2.getValue() + "," + spinner3.getValue() + "," + spinnerCompetitions.getValue();
-    client.getPreferences().setPreference(PreferenceNames.RANKING_POINTS, points);
+    client.getPreferenceService().setPreference(PreferenceNames.RANKING_POINTS, points);
   }
 }

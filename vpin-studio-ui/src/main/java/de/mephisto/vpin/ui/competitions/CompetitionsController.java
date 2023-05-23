@@ -184,11 +184,11 @@ public class CompetitionsController implements Initializable, StudioFXController
           serverBox.getChildren().addAll(view, label);
         }
 
-        List<DiscordChannel> discordChannels = client.getDiscord().getDiscordChannels(competition.getDiscordServerId());
+        List<DiscordChannel> discordChannels = client.getDiscordService().getDiscordChannels(competition.getDiscordServerId());
         Optional<DiscordChannel> first = discordChannels.stream().filter(channel -> channel.getId() == competition.getDiscordChannelId()).findFirst();
         first.ifPresent(discordChannel -> channelLabel.setText(discordChannel.getName()));
 
-        PlayerRepresentation discordPlayer = client.getDiscord().getDiscordPlayer(competition.getDiscordServerId(), Long.valueOf(competition.getOwner()));
+        PlayerRepresentation discordPlayer = client.getDiscordService().getDiscordPlayer(competition.getDiscordServerId(), Long.valueOf(competition.getOwner()));
         if (discordPlayer != null) {
           HBox hBox = new HBox(6);
           hBox.setAlignment(Pos.CENTER_LEFT);
@@ -276,7 +276,7 @@ public class CompetitionsController implements Initializable, StudioFXController
           membersBox.getChildren().add(WidgetFactory.createDefaultLabel("The competition is not active."));
         }
         else {
-          List<PlayerRepresentation> memberList = client.getCompetitions().getDiscordCompetitionPlayers(competition.getId());
+          List<PlayerRepresentation> memberList = client.getCompetitionService().getDiscordCompetitionPlayers(competition.getId());
           if (memberList.isEmpty()) {
             membersBox.getChildren().add(WidgetFactory.createDefaultLabel("No discord members have joined this competition yet."));
           }

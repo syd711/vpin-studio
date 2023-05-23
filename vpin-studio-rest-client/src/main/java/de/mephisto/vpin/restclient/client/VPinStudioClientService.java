@@ -11,12 +11,12 @@ import org.springframework.util.LinkedMultiValueMap;
 
 import java.io.File;
 
-public class AbstractStudioClientModule {
+public class VPinStudioClientService {
   public final static String API = VPinStudioClient.API;
 
   public VPinStudioClient client;
 
-  AbstractStudioClientModule(VPinStudioClient client) {
+  VPinStudioClientService(VPinStudioClient client) {
     this.client = client;
   }
 

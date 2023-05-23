@@ -15,15 +15,12 @@ import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
-import javafx.scene.Cursor;
 import javafx.scene.Parent;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.StackPane;
-import javafx.scene.paint.Paint;
 import org.apache.commons.lang3.StringUtils;
-import org.kordamp.ikonli.javafx.FontIcon;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -92,7 +89,7 @@ public class BuiltInPlayersController implements Initializable {
     tableStack.getChildren().add(playersLoadingOverlay);
 
     new Thread(() -> {
-      players = client.getPlayers().getPlayers();
+      players = client.getPlayerService().getPlayers();
 
       Platform.runLater(() -> {
         data = FXCollections.observableList(filterPlayers(players));
@@ -140,7 +137,7 @@ public class BuiltInPlayersController implements Initializable {
     if (selection != null) {
       Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Delete Player '" + selection.getName() + "'?");
       if (result.isPresent() && result.get().equals(ButtonType.OK)) {
-        client.getPlayers().deletePlayer(selection);
+        client.getPlayerService().deletePlayer(selection);
         tableView.getSelectionModel().clearSelection();
         onReload();
       }

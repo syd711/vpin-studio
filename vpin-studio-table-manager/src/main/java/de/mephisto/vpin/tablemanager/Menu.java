@@ -73,7 +73,7 @@ public class Menu extends Application {
       MenuController controller = loader.getController();
       StateMananger.getInstance().init(controller);
 
-      PinUPControls pinUPControls = client.getPopper().getPinUPControls();
+      PinUPControls pinUPControls = client.getPinUPPopperService().getPinUPControls();
       StateMananger.getInstance().setControls(pinUPControls);
 
       GlobalScreen.registerNativeHook();
@@ -83,9 +83,9 @@ public class Menu extends Application {
       GlobalScreen.addNativeKeyListener(StateMananger.getInstance());
 
       if (PRODUCTION_USE) {
-        Menu.client.getPopper().terminatePopper();
+        Menu.client.getPinUPPopperService().terminatePopper();
         Thread shutdownHook = new Thread(() -> {
-          Menu.client.getPopper().restartPopper();
+          Menu.client.getPinUPPopperService().restartPopper();
         });
         Runtime.getRuntime().addShutdownHook(shutdownHook);
       }

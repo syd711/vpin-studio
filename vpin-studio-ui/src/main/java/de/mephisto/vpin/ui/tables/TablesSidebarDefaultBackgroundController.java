@@ -80,7 +80,7 @@ public class TablesSidebarDefaultBackgroundController implements Initializable {
       Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Re-generate default background for \"" + g.getGameDisplayName() + "\"?",
           "This will re-generate the existing default background.", null, "Yes, generate background");
       if (result.isPresent() && result.get().equals(ButtonType.OK)) {
-        client.getAssets().regenerateGameAssets(g.getId());
+        client.getAssetService().regenerateGameAssets(g.getId());
         this.refreshView(this.game);
       }
     }
@@ -89,7 +89,7 @@ public class TablesSidebarDefaultBackgroundController implements Initializable {
   @FXML
   private void onDefaultBackgroundView() {
     if (game.isPresent()) {
-      ByteArrayInputStream image = client.getDirectB2S().getDefaultPicture(game.get());
+      ByteArrayInputStream image = client.getDirectB2SService().getDefaultPicture(game.get());
       MediaUtil.openMedia(image);
     }
   }
@@ -109,7 +109,7 @@ public class TablesSidebarDefaultBackgroundController implements Initializable {
         resetBackgroundBtn.setDisable(!g.isDefaultBackgroundAvailable());
         openDefaultPictureBtn.setDisable(!g.isDefaultBackgroundAvailable());
 
-        InputStream input = client.getDirectB2S().getDefaultPicture(game.get());
+        InputStream input = client.getDirectB2SService().getDefaultPicture(game.get());
         Image image = new Image(input);
         rawDefaultBackgroundImage.setVisible(true);
         rawDefaultBackgroundImage.setImage(image);

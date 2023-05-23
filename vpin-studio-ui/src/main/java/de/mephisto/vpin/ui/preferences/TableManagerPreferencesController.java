@@ -29,13 +29,13 @@ public class TableManagerPreferencesController implements Initializable {
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
-    List<PlaylistRepresentation> playlists = new ArrayList<>(client.getPopper().getPlaylists());
+    List<PlaylistRepresentation> playlists = new ArrayList<>(client.getPinUPPopperService().getPlaylists());
     playlists.add(0, null);
     ObservableList<PlaylistRepresentation> data = FXCollections.observableList(playlists);
     this.playlistCombo.setItems(data);
 
 
-    archiveManagerSettings = client.getTableManager().getTableManagerSettings();
+    archiveManagerSettings = client.getTableManagerService().getTableManagerSettings();
     if (archiveManagerSettings.getPlaylistId() != -1) {
       for (PlaylistRepresentation playlist : playlists) {
         if (playlist != null && playlist.getId() == archiveManagerSettings.getPlaylistId()) {
@@ -45,10 +45,10 @@ public class TableManagerPreferencesController implements Initializable {
     }
 
     this.playlistCombo.valueProperty().addListener((observable, oldValue, newValue) -> {
-      if (client.getPopper().isPinUPPopperRunning()) {
+      if (client.getPinUPPopperService().isPinUPPopperRunning()) {
         Optional<ButtonType> buttonType = Dialogs.openPopperRunningWarning(Studio.stage);
         if (buttonType.isPresent() && buttonType.get().equals(ButtonType.APPLY)) {
-          Studio.client.getPopper().terminatePopper();
+          Studio.client.getPinUPPopperService().terminatePopper();
           updateInstallation(newValue);
         }
       }
@@ -62,7 +62,7 @@ public class TableManagerPreferencesController implements Initializable {
     archiveManagerSettings.setPlaylistId(playlist == null ? -1 : playlist.getId());
 
     try {
-      client.getTableManager().saveTableManagerSettings(archiveManagerSettings);
+      client.getTableManagerService().saveTableManagerSettings(archiveManagerSettings);
     } catch (Exception e) {
       WidgetFactory.showAlert(Studio.stage, "Failed to update archive manager: " + e.getMessage());
     }

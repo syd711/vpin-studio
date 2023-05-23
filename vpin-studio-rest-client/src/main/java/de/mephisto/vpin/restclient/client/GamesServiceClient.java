@@ -23,10 +23,10 @@ import java.util.List;
 /*********************************************************************************************************************
  * Games
  ********************************************************************************************************************/
-public class Games extends AbstractStudioClientModule{
+public class GamesServiceClient extends VPinStudioClientService {
   private final static Logger LOG = LoggerFactory.getLogger(VPinStudioClient.class);
 
-  Games(VPinStudioClient client) {
+  GamesServiceClient(VPinStudioClient client) {
     super(client);
   }
 

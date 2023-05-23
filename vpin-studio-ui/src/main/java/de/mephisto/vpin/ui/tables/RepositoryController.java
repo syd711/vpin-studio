@@ -19,7 +19,6 @@ import javafx.application.Platform;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -148,10 +147,10 @@ public class RepositoryController implements Initializable, StudioEventListener 
   private void onInstall() {
     ObservableList<ArchiveDescriptorRepresentation> selectedItems = tableView.getSelectionModel().getSelectedItems();
     if (!selectedItems.isEmpty()) {
-      if (client.getPopper().isPinUPPopperRunning()) {
+      if (client.getPinUPPopperService().isPinUPPopperRunning()) {
         Optional<ButtonType> buttonType = Dialogs.openPopperRunningWarning(Studio.stage);
         if (buttonType.isPresent() && buttonType.get().equals(ButtonType.APPLY)) {
-          Studio.client.getPopper().terminatePopper();
+          Studio.client.getPinUPPopperService().terminatePopper();
           Dialogs.openTableInstallationDialog(tablesController, selectedItems);
         }
       }
@@ -209,11 +208,11 @@ public class RepositoryController implements Initializable, StudioEventListener 
 
     new Thread(() -> {
       if (selectedItem != null && invalidate) {
-        client.getArchiving().invalidateArchiveCache();
+        client.getArchiveService().invalidateArchiveCache();
       }
 
       ArchiveSourceRepresentation value = sourceCombo.getValue();
-      archives = client.getArchiving().getArchiveDescriptors(value.getId());
+      archives = client.getArchiveService().getArchiveDescriptors(value.getId());
 
       Platform.runLater(() -> {
         data = FXCollections.observableList(filterArchives(archives));
@@ -244,7 +243,7 @@ public class RepositoryController implements Initializable, StudioEventListener 
       Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Delete Archive '" + selection.getFilename() + "'?", null , null, "Delete");
       if (result.isPresent() && result.get().equals(ButtonType.OK)) {
         try {
-          client.getArchiving().deleteArchive(selection.getSource().getId(), selection.getFilename());
+          client.getArchiveService().deleteArchive(selection.getSource().getId(), selection.getFilename());
         } catch (Exception e) {
           WidgetFactory.showAlert(stage, "Error", "Error deleting \"" + selection.getFilename() + "\": " + e.getMessage());
         }
@@ -430,7 +429,7 @@ public class RepositoryController implements Initializable, StudioEventListener 
     downloadBtn.setDisable(true);
     copyToRepositoryBtn.setDisable(true);
 
-    vpbmBtbn.setDisable(sourceCombo.getValue().getId() == -1 || !client.getSystem().isLocal());
+    vpbmBtbn.setDisable(sourceCombo.getValue().getId() == -1 || !client.getSystemService().isLocal());
 
     EventManager.getInstance().addListener(this);
     this.doReload();
@@ -487,14 +486,14 @@ public class RepositoryController implements Initializable, StudioEventListener 
   @Override
   public void onArchiveInstalled(@NonNull ArchiveInstalledEvent event) {
     Platform.runLater(() -> {
-      client.getArchiving().invalidateArchiveCache();
+      client.getArchiveService().invalidateArchiveCache();
       onReload();
     });
   }
 
   private void refreshRepositoryCombo() {
     sourceCombo.valueProperty().removeListener(sourceComboChangeListener);
-    List<ArchiveSourceRepresentation> repositories = new ArrayList<>(client.getArchiving().getArchiveSources());
+    List<ArchiveSourceRepresentation> repositories = new ArrayList<>(client.getArchiveService().getArchiveSources());
     sourceCombo.setItems(FXCollections.observableList(repositories));
     sourceCombo.getSelectionModel().select(0);
     sourceCombo.valueProperty().addListener(sourceComboChangeListener);

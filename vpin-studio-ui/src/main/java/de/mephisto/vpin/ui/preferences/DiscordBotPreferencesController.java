@@ -47,7 +47,7 @@ public class DiscordBotPreferencesController implements Initializable {
         "If you haven't stored it elsewhere, you have to re-generate a new one using the Discord developer portal.",
         "Yes, delete token");
     if (result.get().equals(ButtonType.OK)) {
-      client.getPreferences().setPreference(PreferenceNames.DISCORD_BOT_TOKEN, "");
+      client.getPreferenceService().setPreference(PreferenceNames.DISCORD_BOT_TOKEN, "");
       botTokenLabel.setText("-");
       this.serverCombo.setDisable(true);
       this.serverCombo.setValue(null);
@@ -80,7 +80,7 @@ public class DiscordBotPreferencesController implements Initializable {
         Platform.runLater(() -> {
           client.clearDiscordCache();
           Studio.stage.getScene().setCursor(Cursor.DEFAULT);
-          client.getPreferences().setPreference(PreferenceNames.DISCORD_BOT_TOKEN, token.trim());
+          client.getPreferenceService().setPreference(PreferenceNames.DISCORD_BOT_TOKEN, token.trim());
           botTokenLabel.setText(token.trim());
           serverCombo.setDisable(false);
           channelCombo.setDisable(false);
@@ -121,20 +121,20 @@ public class DiscordBotPreferencesController implements Initializable {
 
     serverCombo.valueProperty().addListener((observable, oldValue, newValue) -> {
       if (newValue != null) {
-        client.getPreferences().setPreference(PreferenceNames.DISCORD_GUILD_ID, newValue.getId());
+        client.getPreferenceService().setPreference(PreferenceNames.DISCORD_GUILD_ID, newValue.getId());
         validateDefaultChannel();
       }
       else {
-        client.getPreferences().setPreference(PreferenceNames.DISCORD_GUILD_ID, "");
+        client.getPreferenceService().setPreference(PreferenceNames.DISCORD_GUILD_ID, "");
       }
     });
 
     channelCombo.valueProperty().addListener((observable, oldValue, newValue) -> {
       if (newValue != null) {
-        client.getPreferences().setPreference(PreferenceNames.DISCORD_CHANNEL_ID, newValue.getId());
+        client.getPreferenceService().setPreference(PreferenceNames.DISCORD_CHANNEL_ID, newValue.getId());
       }
       else {
-        client.getPreferences().setPreference(PreferenceNames.DISCORD_CHANNEL_ID, "");
+        client.getPreferenceService().setPreference(PreferenceNames.DISCORD_CHANNEL_ID, "");
       }
     });
   }
@@ -142,7 +142,7 @@ public class DiscordBotPreferencesController implements Initializable {
   private void validateDefaultChannel() {
     client.clearDiscordCache();
 
-    List<DiscordServer> servers = client.getDiscord().getDiscordServers();
+    List<DiscordServer> servers = client.getDiscordService().getDiscordServers();
     ObservableList<DiscordServer> discordServers = FXCollections.observableArrayList(servers);
     serverCombo.setItems(FXCollections.observableList(discordServers));
 
@@ -154,7 +154,7 @@ public class DiscordBotPreferencesController implements Initializable {
       DiscordServer discordServer = client.getDiscordServer(serverId);
       if (discordServer != null) {
         serverCombo.setValue(discordServer);
-        List<DiscordChannel> discordChannels = client.getDiscord().getDiscordChannels(discordServer.getId());
+        List<DiscordChannel> discordChannels = client.getDiscordService().getDiscordChannels(discordServer.getId());
         channelCombo.setItems(FXCollections.observableArrayList(discordChannels));
 
         long channelId = channelPreference.getLongValue();

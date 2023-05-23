@@ -2,6 +2,9 @@ package de.mephisto.vpin.restclient.client;
 
 import de.mephisto.vpin.restclient.AssetType;
 import de.mephisto.vpin.restclient.FileUploadProgressListener;
+import de.mephisto.vpin.restclient.descriptors.ArchiveDownloadDescriptor;
+import de.mephisto.vpin.restclient.descriptors.ArchiveRestoreDescriptor;
+import de.mephisto.vpin.restclient.descriptors.BackupDescriptor;
 import de.mephisto.vpin.restclient.representations.ArchiveDescriptorRepresentation;
 import de.mephisto.vpin.restclient.representations.ArchiveSourceRepresentation;
 import org.slf4j.Logger;
@@ -17,10 +20,10 @@ import java.util.List;
 /*********************************************************************************************************************
  * Archiving
  ********************************************************************************************************************/
-public class Archiving extends AbstractStudioClientModule{
+public class ArchiveServiceClient extends VPinStudioClientService {
   private final static Logger LOG = LoggerFactory.getLogger(VPinStudioClient.class);
 
-  Archiving(VPinStudioClient client) {
+  ArchiveServiceClient(VPinStudioClient client) {
     super(client);
   }
 
@@ -72,12 +75,26 @@ public class Archiving extends AbstractStudioClientModule{
     }
   }
 
-  public boolean downloadArchive(ArchiveDescriptorRepresentation descriptor) throws Exception {
+  public boolean installArchive(ArchiveDescriptorRepresentation descriptor) throws Exception {
     try {
       return getRestClient().post(API + "archives/install", descriptor, Boolean.class);
     } catch (Exception e) {
       LOG.error("Failed install archive: " + e.getMessage(), e);
       throw e;
     }
+  }
+
+
+
+  public boolean backupTable(BackupDescriptor exportDescriptor) throws Exception {
+    return getRestClient().post(API + "io/backup", exportDescriptor, Boolean.class);
+  }
+
+  public boolean installTable(ArchiveRestoreDescriptor descriptor) throws Exception {
+    return getRestClient().post(API + "io/install", descriptor, Boolean.class);
+  }
+
+  public boolean downloadArchive(ArchiveDownloadDescriptor descriptor) throws Exception {
+    return getRestClient().post(API + "io/download", descriptor, Boolean.class);
   }
 }

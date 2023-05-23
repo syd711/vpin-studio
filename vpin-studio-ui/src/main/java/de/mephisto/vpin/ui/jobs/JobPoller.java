@@ -129,7 +129,7 @@ public class JobPoller {
 
   private List<JobDescriptor> getActiveJobs() {
     List<JobDescriptor> jobs = new ArrayList<>();
-    jobs.addAll(client.getJobs().getJobs());
+    jobs.addAll(client.getJobsService().getJobs());
     jobs.addAll(clientJobs);
     return jobs;
   }
