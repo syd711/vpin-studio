@@ -59,7 +59,7 @@ public class SystemService extends SystemInfo implements InitializingBean {
 
   private File pinemhiNvRamFolder;
 
-  private ArchiveType archiveType = ArchiveType.VPINZIP;
+  private ArchiveType archiveType = ArchiveType.VPBM;
 
   @Override
   public void afterPropertiesSet() throws Exception {
@@ -80,7 +80,7 @@ public class SystemService extends SystemInfo implements InitializingBean {
   private void initBaseFolders() throws VPinStudioException {
     try {
       PropertiesStore store = PropertiesStore.create(SystemService.RESOURCES, SYSTEM_PROPERTIES);
-      this.archiveType = !store.containsKey(ARCHIVE_TYPE) || store.get(ARCHIVE_TYPE).equals(ArchiveType.VPINZIP.name().toLowerCase()) ? ArchiveType.VPINZIP : ArchiveType.VPA;
+      this.archiveType = !store.containsKey(ARCHIVE_TYPE) || store.get(ARCHIVE_TYPE).equals(ArchiveType.VPBM.name().toLowerCase()) ? ArchiveType.VPBM : ArchiveType.VPA;
 
       //PinUP Popper Folder
       this.pinUPSystemInstallationFolder = this.resolvePinUPSystemInstallationFolder();

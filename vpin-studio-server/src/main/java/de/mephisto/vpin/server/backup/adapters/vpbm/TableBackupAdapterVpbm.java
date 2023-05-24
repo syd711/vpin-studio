@@ -54,7 +54,7 @@ public class TableBackupAdapterVpbm implements TableBackupAdapter, Job {
 
   @Override
   public ArchiveDescriptor createBackup() {
-    LOG.info("Starting vpinzip backup of " + game.getGameFileName());
+    LOG.info("Starting VPBM backup of " + game.getGameFileName());
 
     status = "Creating backup of \"" + game.getGameDisplayName() + "\"";
 

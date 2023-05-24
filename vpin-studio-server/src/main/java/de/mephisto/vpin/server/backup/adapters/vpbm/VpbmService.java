@@ -30,7 +30,7 @@ import java.util.List;
 @Service
 public class VpbmService implements InitializingBean {
   private final static Logger LOG = LoggerFactory.getLogger(VpbmService.class);
-  public static String VPINZIP_FOLDER = SystemService.RESOURCES + "vpbm";
+  public static String VPBM_FOLDER = SystemService.RESOURCES + "vpbm";
 
   @Autowired
   private SystemService systemService;
@@ -132,11 +132,11 @@ public class VpbmService implements InitializingBean {
       StringBuilder standardOutputFromCommand = executor.getStandardOutputFromCommand();
       StringBuilder standardErrorFromCommand = executor.getStandardErrorFromCommand();
       if (!StringUtils.isEmpty(standardOutputFromCommand.toString())) {
-        LOG.info("Vpinzip Command StdOut:\n" + standardOutputFromCommand.toString().trim());
+        LOG.info("VPBM Command StdOut:\n" + standardOutputFromCommand.toString().trim());
         return standardOutputFromCommand.toString();
       }
       if (!StringUtils.isEmpty(standardErrorFromCommand.toString())) {
-        LOG.error("Vpinzip Command Error:\n" + standardErrorFromCommand);
+        LOG.error("VPBM Command Error:\n" + standardErrorFromCommand);
         return standardOutputFromCommand.toString();
       }
 
@@ -149,13 +149,13 @@ public class VpbmService implements InitializingBean {
   @Override
   public void afterPropertiesSet() throws Exception {
     try {
-      File configFileFolder = new File(VPINZIP_FOLDER);
+      File configFileFolder = new File(VPBM_FOLDER);
       File configJson = new File(configFileFolder, "vPinBackupManager.json");
       File archives = new File(SystemService.ARCHIVES_FOLDER);
       archives.mkdirs();
 
       if (!configJson.exists()) {
-        throw new FileNotFoundException(VPINZIP_FOLDER + " file (" + configJson.getAbsolutePath() + ") not found.");
+        throw new FileNotFoundException(VPBM_FOLDER + " file (" + configJson.getAbsolutePath() + ") not found.");
       }
 
       ObjectMapper objectMapper = new ObjectMapper();

@@ -32,7 +32,7 @@ public class TableBackupAdapterFactory {
       case VPA: {
         return new TableBackupAdapterVpa(systemService, archiveSourceAdapter, game, tableDetails);
       }
-      case VPINZIP: {
+      case VPBM: {
         return new TableBackupAdapterVpbm(vpbmService, archiveSourceAdapter, game, tableDetails);
       }
       default: {

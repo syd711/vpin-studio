@@ -14,8 +14,8 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 
-public class TableInstallerAdapterVpinzip implements TableInstallerAdapter, Job {
-  private final static Logger LOG = LoggerFactory.getLogger(TableInstallerAdapterVpinzip.class);
+public class TableInstallerAdapterVpbm implements TableInstallerAdapter, Job {
+  private final static Logger LOG = LoggerFactory.getLogger(TableInstallerAdapterVpbm.class);
 
   private final GameService gameService;
   private final VpbmService vpbmService;
@@ -25,9 +25,9 @@ public class TableInstallerAdapterVpinzip implements TableInstallerAdapter, Job 
   private double progress;
   private String status;
 
-  public TableInstallerAdapterVpinzip(@NonNull GameService gameService,
-                                      @NonNull VpbmService vpbmService,
-                                      @NonNull ArchiveDescriptor archiveDescriptor) {
+  public TableInstallerAdapterVpbm(@NonNull GameService gameService,
+                                   @NonNull VpbmService vpbmService,
+                                   @NonNull ArchiveDescriptor archiveDescriptor) {
     this.gameService = gameService;
     this.vpbmService = vpbmService;
     this.archiveDescriptor = archiveDescriptor;

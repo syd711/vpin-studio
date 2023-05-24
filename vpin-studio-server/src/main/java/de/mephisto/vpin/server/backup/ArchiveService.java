@@ -194,8 +194,8 @@ public class ArchiveService implements InitializingBean {
       this.adapterCache.put(archiveSource.getId(), this.defaultArchiveSourceAdapter);
     }
 
-    //VPINZIP
-    if (systemService.getArchiveType().equals(ArchiveType.VPINZIP)) {
+    //VPBM
+    if (systemService.getArchiveType().equals(ArchiveType.VPBM)) {
       File vpbmArchiveFolder = vpbmService.getArchiveFolder();
       ArchiveSource archiveSource = new VpbmArchiveSource(vpbmArchiveFolder);
       this.defaultArchiveSourceAdapter = new VpbmArchiveSourceAdapter(archiveSource, vpbmService);
@@ -214,7 +214,7 @@ public class ArchiveService implements InitializingBean {
     String descriptorFilename = archiveDescriptor.getFilename();
     ArchiveType archiveType = ArchiveType.valueOf(FilenameUtils.getExtension(descriptorFilename).toUpperCase());
     switch (archiveType) {
-      case VPINZIP: {
+      case VPBM: {
         return new File(vpbmService.getArchiveFolder(), archiveDescriptor.getFilename());
       }
       case VPA: {
