@@ -4,6 +4,7 @@ import de.mephisto.vpin.commons.EmulatorType;
 
 public class Emulator {
   public final static String VISUAL_PINBALL_X = EmulatorType.VISUAL_PINBALL_X;
+  public final static String VISUAL_PINBALL = EmulatorType.VISUAL_PINBALL;
   public final static String PINBALL_FX3 = EmulatorType.PINBALL_FX3;
   public final static String FUTURE_PINBALL = EmulatorType.FUTURE_PINBALL;
   public final static String PC_GAMES = EmulatorType.PC_GAMES;
@@ -46,6 +47,6 @@ public class Emulator {
   }
 
   public boolean isVisualPinball() {
-    return VISUAL_PINBALL_X.equals(this.name);
+    return VISUAL_PINBALL_X.equals(this.name) || VISUAL_PINBALL.equals(this.name);
   }
 }

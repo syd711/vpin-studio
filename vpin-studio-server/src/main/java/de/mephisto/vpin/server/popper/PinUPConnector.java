@@ -53,7 +53,7 @@ public class PinUPConnector implements InitializingBean {
       emulators.put(emulator.getId(), emulator);
 
       String name = emulator.getName();
-      if (name.equals(Emulator.VISUAL_PINBALL_X) || name.equals(Emulator.FUTURE_PINBALL) || name.equals(Emulator.PINBALL_FX3)) {
+      if (name.equals(Emulator.VISUAL_PINBALL) || name.equals(Emulator.VISUAL_PINBALL_X) || name.equals(Emulator.FUTURE_PINBALL) || name.equals(Emulator.PINBALL_FX3)) {
         initVisualPinballXScripts(emulator);
       }
     }
@@ -741,7 +741,7 @@ public class PinUPConnector implements InitializingBean {
     Emulator emulator = emulators.get(emuId);
     game.setEmulator(emulator);
 
-    if (emulator.getName().equalsIgnoreCase(Emulator.VISUAL_PINBALL_X)) {
+    if (emulator.getName().equalsIgnoreCase(Emulator.VISUAL_PINBALL_X) || emulator.getName().equalsIgnoreCase(Emulator.VISUAL_PINBALL)) {
       File vpxFile = new File(systemService.getVPXTablesFolder(), gameFileName);
       game.setGameFile(vpxFile);
     }

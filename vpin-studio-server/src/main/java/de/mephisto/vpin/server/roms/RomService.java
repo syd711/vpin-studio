@@ -35,7 +35,7 @@ public class RomService implements InitializingBean {
 
   @NonNull
   public ScanResult scanGameFile(@NonNull Game game) {
-    if(game.getEmulator().getName().equalsIgnoreCase(Emulator.VISUAL_PINBALL_X)) {
+    if(game.getEmulator().getName().equalsIgnoreCase(Emulator.VISUAL_PINBALL_X) || game.getEmulator().getName().equalsIgnoreCase(Emulator.VISUAL_PINBALL)) {
       if(game.getGameFile().exists()) {
         return VPXFileScanner.scan(game.getGameFile());
       }

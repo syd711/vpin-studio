@@ -49,7 +49,7 @@ public class GameValidator implements InitializingBean {
   private Preferences preferences;
 
   public int validate(@NonNull Game game) {
-    boolean isVPX = game.getEmulator().getName().equals(Emulator.VISUAL_PINBALL_X);
+    boolean isVPX = game.getEmulator().getName().equals(Emulator.VISUAL_PINBALL_X) || game.getEmulator().getName().equals(Emulator.VISUAL_PINBALL);
     boolean isFP = game.getEmulator().getName().equals(Emulator.FUTURE_PINBALL);
 
     if (isVPX && isValidationEnabled(game, CODE_VPX_NOT_EXISTS)) {
