@@ -98,8 +98,8 @@ public class ArchiveServiceClient extends VPinStudioClientService {
     return getRestClient().post(API + "io/download", descriptor, Boolean.class);
   }
 
-  public boolean bundle(ArchiveBundleDescriptor descriptor) throws Exception {
-    return getRestClient().post(API + "io/bundle", descriptor, Boolean.class);
+  public String bundle(ArchiveBundleDescriptor descriptor) throws Exception {
+    final RestTemplate restTemplate = new RestTemplate();
+    return restTemplate.postForObject(getRestClient().getBaseUrl() + API + "io/bundle", descriptor, String.class);
   }
-
 }

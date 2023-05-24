@@ -25,8 +25,8 @@ public class IOResource {
   }
 
   @PostMapping("/bundle")
-  public Boolean bundle(@RequestBody ArchiveBundleDescriptor descriptor) {
-    return ioService.bundleArchives(descriptor);
+  public String bundle(@RequestBody ArchiveBundleDescriptor descriptor) {
+    return ioService.bundle(descriptor);
   }
 
   @PostMapping("/install")

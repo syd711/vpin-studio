@@ -57,7 +57,7 @@ public class KeyEventService implements InitializingBean, NativeKeyListener, Pop
 
     String hotkey = (String) preferencesService.getPreferenceValue("overlayKey");
     if (StringUtils.isEmpty(hotkey)) {
-      LOG.error("No overlay hotkey defined! Define a key binding on the overlay configuration tab.");
+      LOG.warn("No overlay hotkey defined! Define a key binding on the overlay configuration tab.");
     }
 
     new Thread(() -> {

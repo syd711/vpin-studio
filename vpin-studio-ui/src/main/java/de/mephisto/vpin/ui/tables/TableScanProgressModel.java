@@ -51,7 +51,7 @@ public class TableScanProgressModel extends ProgressModel<GameRepresentation> {
       Studio.client.getGameService().scanGame(game.getId());
       progressResultModel.addProcessed();
     } catch (Exception e) {
-      LOG.error("Generate card error: " + e.getMessage(), e);
+      LOG.error("Table scan error: " + e.getMessage(), e);
     }
   }
 }

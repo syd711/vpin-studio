@@ -2,6 +2,7 @@ package de.mephisto.vpin.server.backup;
 
 import de.mephisto.vpin.restclient.representations.ArchiveDescriptorRepresentation;
 import de.mephisto.vpin.restclient.representations.ArchiveSourceRepresentation;
+import de.mephisto.vpin.server.system.SystemService;
 import de.mephisto.vpin.server.util.UploadUtil;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
@@ -13,10 +14,7 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
 import javax.servlet.http.HttpServletResponse;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.*;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
@@ -35,6 +33,9 @@ public class ArchivesResource {
 
   @Autowired
   private ArchiveService archiveService;
+
+  @Autowired
+  private SystemService systemService;
 
   @GetMapping("/{sourceId}")
   public List<ArchiveDescriptorRepresentation> getArchives(@PathVariable("sourceId") long sourceId) {
@@ -116,6 +117,32 @@ public class ArchivesResource {
     } catch (IOException ex) {
       LOG.info("Error writing archive to output stream. Filename was '{}'", filename, ex);
       throw new RuntimeException("IOError writing file to output stream");
+    }
+  }
+
+  @GetMapping("/download/bundle/{sourceId}/{filename}")
+  public void downloadBundle(@PathVariable("sourceId") long sourceId,
+                             @PathVariable("filename") String fn,
+                             HttpServletResponse response) {
+    InputStream in = null;
+    OutputStream out = null;
+    String filename = URLDecoder.decode(fn, StandardCharsets.UTF_8);
+
+    try {
+      File bundleFile = new File(systemService.getBundlesFolder(), filename);
+      in = new BufferedInputStream(new FileInputStream(bundleFile));
+      out = response.getOutputStream();
+      IOUtils.copy(in, out);
+      response.flushBuffer();
+      in.close();
+      out.close();
+
+      LOG.info("Finished download of \"" + filename + "\"");
+      bundleFile.delete();
+      invalidateCache();
+    } catch (IOException ex) {
+      LOG.info("Error writing bundle to output stream. Filename was '{}'", filename, ex);
+      throw new RuntimeException("IOError writing bundle to output stream");
     }
   }
 

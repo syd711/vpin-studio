@@ -150,13 +150,6 @@ public class SystemService extends SystemInfo implements InitializingBean {
           LOG.error("Failed to create b2s crops directory " + getB2SCroppedImageFolder().getAbsolutePath());
         }
       }
-
-      if (!getArchivesFolder().exists()) {
-        boolean mkdirs = getVPXTablesFolder().mkdirs();
-        if (!mkdirs) {
-          LOG.error("Failed to create VPA archive directory " + getArchivesFolder().getAbsolutePath());
-        }
-      }
     } catch (Exception e) {
       String msg = "Failed to initialize base folders: " + e.getMessage();
       LOG.error(msg, e);
@@ -432,6 +425,14 @@ public class SystemService extends SystemInfo implements InitializingBean {
 
   public File getArchivesFolder() {
     File file = new File(RESOURCES, "archives/");
+    if (!file.exists()) {
+      file.mkdirs();
+    }
+    return file;
+  }
+
+  public File getBundlesFolder() {
+    File file = new File(getArchivesFolder(), "bundles/");
     if (!file.exists()) {
       file.mkdirs();
     }

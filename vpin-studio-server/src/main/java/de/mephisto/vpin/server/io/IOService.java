@@ -73,7 +73,7 @@ public class IOService {
     return true;
   }
 
-  public boolean bundleArchives(ArchiveBundleDescriptor archiveBundleDescriptor) {
+  public String bundle(ArchiveBundleDescriptor archiveBundleDescriptor) {
     try {
       List<ArchiveDescriptor> bundleArchiveDescriptors = new ArrayList<>();
       List<String> archiveNames = archiveBundleDescriptor.getArchiveNames();
@@ -82,19 +82,21 @@ public class IOService {
         bundleArchiveDescriptors.add(archiveDescriptor);
       }
 
-      JobDescriptor jobDescriptor = new JobDescriptor(JobType.ARCHIVE_BUNDLING, UUID.randomUUID().toString());
-      jobDescriptor.setTitle("Archive Bundle");
+//      JobDescriptor jobDescriptor = new JobDescriptor(JobType.ARCHIVE_BUNDLING, UUID.randomUUID().toString());
+//      jobDescriptor.setTitle("Archive Bundle");
+//
+      BundleArchivesJob job = new BundleArchivesJob(archiveService, systemService, archiveBundleDescriptor, bundleArchiveDescriptors);
+      job.execute();
 
-      BundleArchivesJob job = new BundleArchivesJob(archiveService, systemService, bundleArchiveDescriptors);
-      jobDescriptor.setDescription("Creating bundle of " + bundleArchiveDescriptors.size() + " archived table(s).");
-      jobDescriptor.setJob(job);
+      return job.getTarget().getName();
 
-      JobQueue.getInstance().offer(jobDescriptor);
+//      jobDescriptor.setDescription("Creating bundle of " + bundleArchiveDescriptors.size() + " archived table(s).");
+//      jobDescriptor.setJob(job);
+//      JobQueue.getInstance().offer(jobDescriptor);
     } catch (Exception e) {
       LOG.error("Bundling failed: " + e.getMessage(), e);
-      return false;
     }
-    return true;
+    return null;
   }
 
   public boolean downloadArchive(ArchiveDownloadDescriptor archiveDownloadDescriptor) {

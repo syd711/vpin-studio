@@ -2,9 +2,13 @@ package de.mephisto.vpin.ui.archiving.dialogs;
 
 import de.mephisto.vpin.commons.fx.DialogController;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
+import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.descriptors.ArchiveBundleDescriptor;
 import de.mephisto.vpin.restclient.representations.ArchiveDescriptorRepresentation;
+import de.mephisto.vpin.restclient.representations.PreferenceEntryRepresentation;
 import de.mephisto.vpin.ui.Studio;
+import de.mephisto.vpin.ui.util.Dialogs;
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -34,6 +38,9 @@ public class ArchiveBundleDialogController implements Initializable, DialogContr
   private TextField fileNameField;
 
   @FXML
+  private TextField exportHostId;
+
+  @FXML
   private Button downloadBtn;
 
   @FXML
@@ -52,24 +59,23 @@ public class ArchiveBundleDialogController implements Initializable, DialogContr
 
   @FXML
   private void onDownload(ActionEvent event) {
-    Stage stage = (Stage) ((Button) event.getSource()).getScene().getWindow();
     result = true;
     try {
       ArchiveBundleDescriptor archiveBundleDescriptor = new ArchiveBundleDescriptor();
       archiveBundleDescriptor.setArchiveSourceId(archiveDescriptors.get(0).getSource().getId());
+      archiveBundleDescriptor.setExportHostId(this.exportHostId.getText());
 
       for (ArchiveDescriptorRepresentation selectedItem : archiveDescriptors) {
         archiveBundleDescriptor.getArchiveNames().add(selectedItem.getFilename());
       }
 
+      Platform.runLater(()-> {
+        Stage stage = (Stage) ((Button) event.getSource()).getScene().getWindow();
+        stage.close();
+      });
 
-//        long repositoryId = selectedItem.getSource().getId();
-//        DownloadJobDescriptor job = new DownloadJobDescriptor("archives/download/file/" + repositoryId + "/" + URLEncoder.encode(target.getName(), StandardCharsets.UTF_8), target);
-//        job.setTitle("Download of \"" + selectedItem.getFilename() + "\"");
-//        job.setDescription("Downloading file \"" + selectedItem.getFilename() + "\"");
-//        JobPoller.getInstance().queueJob(job);
+      Dialogs.createProgressDialog(new BundleProgressModel("Bundle Creation", this.targetFolder, archiveBundleDescriptor));
 
-      client.getArchiveService().bundle(archiveBundleDescriptor);
     } catch (Exception e) {
       LOG.error("Download failed: " + e.getMessage(), e);
       WidgetFactory.showAlert(Studio.stage, "Downloading archive files failed.", "Please check the log file for details.", "Error: " + e.getMessage());
@@ -106,10 +112,26 @@ public class ArchiveBundleDialogController implements Initializable, DialogContr
     if (ArchiveBundleDialogController.lastFolderSelection != null) {
       fileNameField.setText(ArchiveBundleDialogController.lastFolderSelection.getAbsolutePath());
     }
+
+    PreferenceEntryRepresentation preference = client.getPreference(PreferenceNames.VPBM_EXTERNAL_HOST_IDENTIFIER);
+    String value = preference.getValue();
+    if (!StringUtils.isEmpty(value)) {
+      exportHostId.setText(value);
+    }
   }
 
   private void validateInput() {
-    this.downloadBtn.setDisable(this.targetFolder == null);
+    this.downloadBtn.setDisable(true);
+
+    if (this.targetFolder == null) {
+      return;
+    }
+
+    if (StringUtils.isEmpty(this.exportHostId.getText())) {
+      return;
+    }
+
+    this.downloadBtn.setDisable(false);
   }
 
   @Override

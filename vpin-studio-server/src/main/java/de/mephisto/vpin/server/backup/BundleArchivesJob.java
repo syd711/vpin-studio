@@ -2,7 +2,7 @@ package de.mephisto.vpin.server.backup;
 
 import de.mephisto.vpin.commons.utils.FileUtils;
 import de.mephisto.vpin.restclient.Job;
-import de.mephisto.vpin.restclient.util.DateUtil;
+import de.mephisto.vpin.restclient.descriptors.ArchiveBundleDescriptor;
 import de.mephisto.vpin.server.system.SystemService;
 import de.mephisto.vpin.server.util.ZipUtil;
 import edu.umd.cs.findbugs.annotations.NonNull;
@@ -22,6 +22,7 @@ public class BundleArchivesJob implements Job {
 
   private final ArchiveService archiveService;
   private final SystemService systemService;
+  private final ArchiveBundleDescriptor archiveBundleDescriptor;
   private final List<ArchiveDescriptor> archiveDescriptors;
 
   private String status;
@@ -29,12 +30,15 @@ public class BundleArchivesJob implements Job {
 
   private File temp;
   private File tempFile;
+  private File target;
 
   public BundleArchivesJob(@NonNull ArchiveService archiveService,
                            @NonNull SystemService systemService,
+                           @NonNull ArchiveBundleDescriptor archiveBundleDescriptor,
                            @NonNull List<ArchiveDescriptor> archiveDescriptors) {
     this.archiveService = archiveService;
     this.systemService = systemService;
+    this.archiveBundleDescriptor = archiveBundleDescriptor;
     this.archiveDescriptors = archiveDescriptors;
   }
 
@@ -45,8 +49,8 @@ public class BundleArchivesJob implements Job {
     long start = System.currentTimeMillis();
 
     String targetName = "archive-bundle-" + System.currentTimeMillis() + ".zip";
-    File target = new File(systemService.getArchivesFolder(), targetName);
-    File tempFile = new File(systemService.getArchivesFolder(), targetName + ".bak");
+    target = new File(systemService.getBundlesFolder(), targetName);
+    File tempFile = new File(systemService.getBundlesFolder(), targetName + ".bak");
 
     List<ArchiveDescriptor> exportedDescriptors = new ArrayList<>();
 
@@ -111,6 +115,10 @@ public class BundleArchivesJob implements Job {
       LOG.error("Final renaming export file to " + target.getAbsolutePath() + " failed.");
     }
     return true;
+  }
+
+  public File getTarget() {
+    return target;
   }
 
   @Override

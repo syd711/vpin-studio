@@ -86,6 +86,7 @@ public class GamesResource {
 
   @GetMapping("/scan/{id}")
   public Game scanGame(@PathVariable("id") int pupId) {
+
     return gameService.scanGame(pupId);
   }
 
