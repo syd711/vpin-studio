@@ -22,7 +22,7 @@ public class TableScanTest {
   @Test
   public void testTableScan2() {
     long start = System.currentTimeMillis();
-    File table = new File("D:\\vPinball\\VisualPinball\\Tables\\Batman 66.vpx");
+    File table = new File("C:\\vPinball\\VisualPinball\\Tables\\Batman 66.vpx");
     ScanResult scan = VPXFileScanner.scan(table);
     assertEquals("b66_orig", scan.getRom());
   }

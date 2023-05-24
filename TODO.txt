@@ -1,1 +1,2 @@
-- send message with image and base64 data
+- send message with image and base64 data for offline competitions
+- fill pup pack section

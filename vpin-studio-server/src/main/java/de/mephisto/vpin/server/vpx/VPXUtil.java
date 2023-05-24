@@ -21,7 +21,10 @@ public class VPXUtil {
 
       POIFSDocument document = new POIFSDocument(gameData);
       DocumentInputStream documentInputStream = new DocumentInputStream(document);
-      return new String(documentInputStream.readAllBytes());
+      byte[] content = new byte[ documentInputStream.available() ];
+      documentInputStream.read(content);
+
+      return new String(content);
     } catch (Exception e) {
       LOG.error("Reading script failed for " + file.getAbsolutePath() + " failed: " + e.getMessage(), e);
       return null;
