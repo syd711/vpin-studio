@@ -34,8 +34,8 @@ public class VpbmArchiveSourceAdapter implements ArchiveSourceAdapter {
   }
 
   @Override
-  public File export(ArchiveDescriptor archiveDescriptor, boolean overwrite) {
-    return vpbmService.export(archiveDescriptor.getFilename(), overwrite);
+  public File export(ArchiveDescriptor archiveDescriptor) {
+    return vpbmService.export(archiveDescriptor.getFilename());
   }
 
   public List<ArchiveDescriptor> getArchiveDescriptors() {

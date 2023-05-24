@@ -17,5 +17,5 @@ public interface ArchiveSourceAdapter {
 
   ArchiveSource getArchiveSource();
 
-  File export(ArchiveDescriptor archiveDescriptor, boolean overwrite);
+  File export(ArchiveDescriptor archiveDescriptor);
 }

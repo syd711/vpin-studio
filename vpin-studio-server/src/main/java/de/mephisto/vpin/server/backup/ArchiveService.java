@@ -146,8 +146,8 @@ public class ArchiveService implements InitializingBean {
     return adapterCache.get(sourceId);
   }
 
-  public File export(ArchiveDescriptor archiveDescriptor, boolean overwrite) {
-    return getDefaultArchiveSourceAdapter().export(archiveDescriptor, overwrite);
+  public File export(ArchiveDescriptor archiveDescriptor) {
+    return getDefaultArchiveSourceAdapter().export(archiveDescriptor);
   }
 
   public void invalidateCache() {

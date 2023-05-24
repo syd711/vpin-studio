@@ -27,7 +27,7 @@ public class VpaArchiveSourceAdapter implements ArchiveSourceAdapter {
   }
 
   @Override
-  public File export(ArchiveDescriptor archiveDescriptor, boolean overwrite) {
+  public File export(ArchiveDescriptor archiveDescriptor) {
     Optional<ArchiveDescriptor> first = getArchiveDescriptors().stream().filter(d -> d.getFilename().equals(archiveDescriptor.getFilename())).findFirst();
     if (first.isPresent()) {
       return new File(archiveFolder, archiveDescriptor.getFilename());

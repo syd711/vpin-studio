@@ -30,7 +30,7 @@ public class ArchiveSourceAdapterHttpServer implements ArchiveSourceAdapter {
   }
 
   @Override
-  public File export(ArchiveDescriptor archiveDescriptor, boolean overwrite) {
+  public File export(ArchiveDescriptor archiveDescriptor) {
     throw new UnsupportedOperationException("not supported for http");
   }
 

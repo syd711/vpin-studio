@@ -53,24 +53,23 @@ public class VpbmService implements InitializingBean {
     executeVPBM(Arrays.asList("-b", String.valueOf(tableId)));
   }
 
-  public File export(String tablename, boolean overwrite) {
+  public File export(String tablename) {
     String vpxName = FilenameUtils.getBaseName(tablename) + ".vpx";
     Game game = pinUPConnector.getGameByFilename(vpxName);
     if (game != null) {
       File backupFile = new File(getArchiveFolder(), tablename);
       File exportFile = new File(getExportFolder(), tablename);
 
-      if (!backupFile.exists() || overwrite) {
+      if (!backupFile.exists()) {
         backup(game.getId());
       }
 
-      if (!exportFile.exists() || overwrite) {
-        String exportHostId = (String) preferencesService.getPreferenceValue(PreferenceNames.VPBM_EXTERNAL_HOST_IDENTIFIER);
-        executeVPBM(Arrays.asList("-e", String.valueOf(game.getId()), "-x", exportHostId));
-      }
+      String exportHostId = (String) preferencesService.getPreferenceValue(PreferenceNames.VPBM_EXTERNAL_HOST_IDENTIFIER);
+      executeVPBM(Arrays.asList("-e", String.valueOf(game.getId()), "-x", exportHostId));
 
       return exportFile;
-    } else {
+    }
+    else {
       LOG.warn("Game not found for VPX filename " + vpxName);
     }
     return null;
@@ -168,7 +167,7 @@ public class VpbmService implements InitializingBean {
 
       boolean dirty = false;
       File exportPath = new File(config.getExportPath());
-      if (!exportPath.exists()) {
+      if (!exportPath.equals(getExportFolder())) {
         File exportFolder = new File(SystemService.ARCHIVES_FOLDER, "exports");
         exportFolder.mkdirs();
         config.setExportPath(exportFolder.getAbsolutePath());
@@ -177,7 +176,7 @@ public class VpbmService implements InitializingBean {
       }
 
       File backUpPath = new File(config.getBackupPath());
-      if (!backUpPath.exists()) {
+      if (!backUpPath.equals(getArchiveFolder())) {
         File backupsFolder = new File(SystemService.ARCHIVES_FOLDER, "backups");
         backupsFolder.mkdirs();
         config.setBackupPath(backupsFolder.getAbsolutePath());

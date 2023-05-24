@@ -61,7 +61,7 @@ public class BundleArchivesJob implements Job {
       for (ArchiveDescriptor archiveDescriptor : archiveDescriptors) {
         status = "Adding " + archiveDescriptor.getFilename() + " to bundle.";
 
-        File exportedArchive = archiveService.export(archiveDescriptor, false);
+        File exportedArchive = archiveService.export(archiveDescriptor);
         if(exportedArchive != null && exportedArchive.exists()) {
           ZipUtil.zipFile(exportedArchive, exportedArchive.getName(), zipOut);
           LOG.info("Zipping " + exportedArchive.getAbsolutePath());
