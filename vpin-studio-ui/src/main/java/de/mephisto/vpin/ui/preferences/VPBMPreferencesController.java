@@ -57,7 +57,8 @@ public class VPBMPreferencesController implements Initializable {
 
     new Thread(() -> {
       Platform.runLater(() -> {
-        updateBtn.setDisable(!Studio.client.getVpbmService().isUpdateAvailable());
+        boolean canUpdate = Studio.client.getSystemService().isLocal() && Studio.client.getVpbmService().isUpdateAvailable();
+        updateBtn.setDisable(!canUpdate);
       });
     }).start();
   }
@@ -84,6 +85,32 @@ public class VPBMPreferencesController implements Initializable {
         LOG.error("Failed to open link: " + e.getMessage(), e);
       }
     }
+  }
+
+  @FXML
+  private void onUpdate() {
+    updateBtn.setDisable(true);
+    vpbmBtbn.setDisable(true);
+
+    updateBtn.setText("Installing Update...");
+    new Thread(() -> {
+      Studio.client.getVpbmService().update();
+      Platform.runLater(() -> {
+        try {
+          vpbmBtbn.setDisable(true);
+          updateBtn.setText("Install Update");
+          updateBtn.setDisable(true);
+          Thread.sleep(5000);
+
+          versionLabel.setText(Studio.client.getVpbmService().getVersion());
+        } catch (InterruptedException e) {
+          LOG.error("Failed to execute VPBM update: " + e.getMessage(), e);
+        }
+        finally {
+          vpbmBtbn.setDisable(false);
+        }
+      });
+    }).start();
   }
 
   @FXML

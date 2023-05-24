@@ -15,7 +15,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane styleClass="base-component" stylesheets="@../stylesheet.css" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.preferences.VPBMPreferencesController">
+<BorderPane styleClass="base-component" stylesheets="@../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.preferences.VPBMPreferencesController">
    <top>
       <VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefWidth="800.0" styleClass="subpanel" BorderPane.alignment="TOP_LEFT">
          <children>
@@ -145,7 +145,7 @@
                               </ImageView>
                            </graphic>
                         </Button>
-                        <Button fx:id="updateBtn" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" onAction="#onVPBM" text="Install Update" textFill="WHITE">
+                        <Button fx:id="updateBtn" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" onAction="#onUpdate" text="Install Update" textFill="WHITE">
                            <font>
                               <Font size="14.0" />
                            </font>

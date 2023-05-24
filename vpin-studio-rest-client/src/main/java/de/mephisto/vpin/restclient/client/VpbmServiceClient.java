@@ -17,7 +17,7 @@ public class VpbmServiceClient extends VPinStudioClientService {
   }
 
   public boolean update() {
-    return getRestClient().get(API + "vpbm/updateavailable", Boolean.class);
+    return getRestClient().get(API + "vpbm/update", Boolean.class);
   }
 
   public String getVersion() {
@@ -28,14 +28,4 @@ public class VpbmServiceClient extends VPinStudioClientService {
   public VpbmHosts getHostIds() {
     return getRestClient().get(API + "vpbm/hostids", VpbmHosts.class);
   }
-
-  public VpbmHosts saveVpbmHosts(VpbmHosts p) throws Exception {
-    try {
-      return getRestClient().post(API + "vpbm/hostids", p, VpbmHosts.class);
-    } catch (Exception e) {
-      LOG.error("Failed to save vpbm hosts: " + e.getMessage(), e);
-      throw e;
-    }
-  }
-
 }

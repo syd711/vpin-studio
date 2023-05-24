@@ -104,18 +104,12 @@ public class VpbmService implements InitializingBean {
     return "Unable to determine version, check log for details.";
   }
 
-  public VpbmHosts saveHostIds(VpbmHosts vpbmHosts) {
-    preferencesService.savePreference(PreferenceNames.VPBM_EXTERNAL_HOST_IDENTIFIER, vpbmHosts.getExternalHostId());
-    preferencesService.savePreference(PreferenceNames.VPBM_INTERNAL_HOST_IDENTIFIER, vpbmHosts.getInternalHostId());
-    return vpbmHosts;
-  }
-
   public VpbmHosts getHostIds() {
     VpbmHosts ids = new VpbmHosts();
     ids.setInternalHostId((String) preferencesService.getPreferenceValue(PreferenceNames.VPBM_EXTERNAL_HOST_IDENTIFIER, ""));
 
     String internalHostId = (String) preferencesService.getPreferenceValue(PreferenceNames.VPBM_INTERNAL_HOST_IDENTIFIER);
-    if (StringUtils.isEmpty(internalHostId)) {
+    if (StringUtils.isEmpty(internalHostId) || internalHostId.contains("ERROR")) {
       String hostId = executeVPBM(Arrays.asList("-h"));
       if (hostId != null) {
         preferencesService.savePreference(PreferenceNames.VPBM_INTERNAL_HOST_IDENTIFIER, hostId.trim());
@@ -139,7 +133,7 @@ public class VpbmService implements InitializingBean {
       StringBuilder standardOutputFromCommand = executor.getStandardOutputFromCommand();
       StringBuilder standardErrorFromCommand = executor.getStandardErrorFromCommand();
       if (!StringUtils.isEmpty(standardOutputFromCommand.toString())) {
-        LOG.info("Vpinzip Command StdOut:\n" + standardOutputFromCommand);
+        LOG.info("Vpinzip Command StdOut:\n" + standardOutputFromCommand.toString().trim());
         return standardOutputFromCommand.toString();
       }
       if (!StringUtils.isEmpty(standardErrorFromCommand.toString())) {
