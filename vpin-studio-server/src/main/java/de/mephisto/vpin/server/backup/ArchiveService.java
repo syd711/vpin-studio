@@ -133,9 +133,7 @@ public class ArchiveService implements InitializingBean {
   }
 
   public boolean isValidArchiveDescriptor(@NonNull ArchiveDescriptor archiveDescriptor) {
-    ArchiveType archiveType = systemService.getArchiveType();
-    String suffix = "." + archiveType.name().toLowerCase();
-    return archiveDescriptor.getFilename() != null && archiveDescriptor.getFilename().endsWith(suffix);
+    return archiveDescriptor.getFilename() != null;
   }
 
   public ArchiveSourceAdapter getDefaultArchiveSourceAdapter() {

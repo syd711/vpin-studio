@@ -79,8 +79,6 @@ public class ArchiveBundleDialogController implements Initializable, DialogContr
     } catch (Exception e) {
       LOG.error("Download failed: " + e.getMessage(), e);
       WidgetFactory.showAlert(Studio.stage, "Downloading archive files failed.", "Please check the log file for details.", "Error: " + e.getMessage());
-    } finally {
-      stage.close();
     }
   }
 

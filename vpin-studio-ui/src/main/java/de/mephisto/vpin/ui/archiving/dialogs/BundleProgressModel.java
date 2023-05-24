@@ -6,6 +6,7 @@ import de.mephisto.vpin.restclient.representations.GameRepresentation;
 import de.mephisto.vpin.ui.jobs.JobPoller;
 import de.mephisto.vpin.ui.util.ProgressModel;
 import de.mephisto.vpin.ui.util.ProgressResultModel;
+import javafx.application.Platform;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -39,7 +40,7 @@ public class BundleProgressModel extends ProgressModel<String> {
 
   @Override
   public String getNext() {
-    return "Creating Bundle Archive";
+    return "Creating bundle archive, download will start afterwards.";
   }
 
   @Override
@@ -62,11 +63,13 @@ public class BundleProgressModel extends ProgressModel<String> {
       String bundleName = client.getArchiveService().bundle(archiveBundleDescriptor);
       hasNext = false;
 
-      File target = new File(targetFolder, bundleName);
-      DownloadJobDescriptor job = new DownloadJobDescriptor("archives/download/bundle/" + archiveBundleDescriptor.getArchiveSourceId() + "/" + URLEncoder.encode(bundleName, StandardCharsets.UTF_8), target);
-      job.setTitle("Download of \"" + bundleName + "\"");
-      job.setDescription("Downloading file \"" + bundleName + "\"");
-      JobPoller.getInstance().queueJob(job);
+      Platform.runLater(() -> {
+        File target = new File(targetFolder, bundleName);
+        DownloadJobDescriptor job = new DownloadJobDescriptor("archives/download/bundle/" + archiveBundleDescriptor.getArchiveSourceId() + "/" + URLEncoder.encode(bundleName, StandardCharsets.UTF_8), target);
+        job.setTitle("Download of \"" + bundleName + "\"");
+        job.setDescription("Downloading file \"" + bundleName + "\"");
+        JobPoller.getInstance().queueJob(job);
+      });
     } catch (Exception e) {
       LOG.error("Generate bundle download error: " + e.getMessage(), e);
     }

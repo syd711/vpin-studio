@@ -48,7 +48,7 @@ public class BundleArchivesJob implements Job {
     ZipOutputStream zipOut = null;
     long start = System.currentTimeMillis();
 
-    String targetName = "archive-bundle-" + System.currentTimeMillis() + ".zip";
+    String targetName = "table-bundle-" + System.currentTimeMillis() + ".zip";
     target = new File(systemService.getBundlesFolder(), targetName);
     File tempFile = new File(systemService.getBundlesFolder(), targetName + ".bak");
 

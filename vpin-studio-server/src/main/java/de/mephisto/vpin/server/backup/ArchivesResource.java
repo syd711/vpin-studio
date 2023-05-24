@@ -127,22 +127,39 @@ public class ArchivesResource {
     InputStream in = null;
     OutputStream out = null;
     String filename = URLDecoder.decode(fn, StandardCharsets.UTF_8);
+    File bundleFile = new File(systemService.getBundlesFolder(), filename);
 
     try {
-      File bundleFile = new File(systemService.getBundlesFolder(), filename);
       in = new BufferedInputStream(new FileInputStream(bundleFile));
       out = response.getOutputStream();
       IOUtils.copy(in, out);
       response.flushBuffer();
-      in.close();
-      out.close();
 
       LOG.info("Finished download of \"" + filename + "\"");
-      bundleFile.delete();
       invalidateCache();
     } catch (IOException ex) {
       LOG.info("Error writing bundle to output stream. Filename was '{}'", filename, ex);
       throw new RuntimeException("IOError writing bundle to output stream");
+    } finally {
+      if (in != null) {
+        try {
+          in.close();
+        } catch (IOException e) {
+          //
+        }
+      }
+
+      if (out != null) {
+        try {
+          out.close();
+        } catch (IOException e) {
+          //
+        }
+      }
+
+      if (bundleFile.exists() && bundleFile.delete()) {
+        LOG.info("Deleted temporary bundle file " + bundleFile.getAbsolutePath());
+      }
     }
   }
 
