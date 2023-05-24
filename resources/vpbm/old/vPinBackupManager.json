@@ -1,0 +1,15 @@
+{
+  "VpinballBasePath" : "D:\\vPinball",
+  "BackupPath" : "D:\\workspace\\vpin-studio\\.\\resources\\archives\\backups",
+  "ExportPath" : "D:\\workspace\\vpin-studio\\.\\resources\\archives\\exports",
+  "Emulators" : [ {
+    "Name" : "Visual Pinball X"
+  }, {
+    "Name" : "Future Pinball"
+  } ],
+  "LogLevel" : "Information",
+  "LogRotationSizeMb" : 20,
+  "Pinup" : {
+    "PinupDir" : "PinUPSystem"
+  }
+}
