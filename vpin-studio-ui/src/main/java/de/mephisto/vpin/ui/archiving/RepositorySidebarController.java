@@ -1,4 +1,4 @@
-package de.mephisto.vpin.ui.tables;
+package de.mephisto.vpin.ui.archiving;
 
 import de.mephisto.vpin.commons.utils.FileUtils;
 import de.mephisto.vpin.restclient.ArchivePackageInfo;

@@ -45,7 +45,7 @@
       <VBox styleClass="subpanel" BorderPane.alignment="CENTER">
          <children>
               <fx:include fx:id="tablesSideBar" source="scene-tables-sidebar.fxml" />
-              <fx:include fx:id="repositorySideBar" source="scene-repository-sidebar.fxml" />
+              <fx:include fx:id="repositorySideBar" source="../archiving/scene-repository-sidebar.fxml" />
          </children>
       </VBox>
    </right>

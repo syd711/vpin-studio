@@ -46,4 +46,8 @@ module de.mephisto.vpin.ui {
   opens de.mephisto.vpin.ui.launcher to javafx.fxml;
   exports de.mephisto.vpin.ui.util;
   opens de.mephisto.vpin.ui.util to javafx.fxml;
+  exports de.mephisto.vpin.ui.archiving;
+  opens de.mephisto.vpin.ui.archiving to javafx.fxml;
+  exports de.mephisto.vpin.ui.archiving.dialogs;
+  opens de.mephisto.vpin.ui.archiving.dialogs to javafx.fxml;
 }

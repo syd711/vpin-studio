@@ -1,4 +1,4 @@
-package de.mephisto.vpin.ui.tables.dialogs;
+package de.mephisto.vpin.ui.archiving.dialogs;
 
 import de.mephisto.vpin.commons.ArchiveSourceAuthenticationType;
 import de.mephisto.vpin.commons.ArchiveSourceType;
