@@ -2,18 +2,22 @@ package de.mephisto.vpin.server.backup;
 
 import de.mephisto.vpin.commons.ArchiveSourceType;
 import de.mephisto.vpin.restclient.Job;
+import de.mephisto.vpin.restclient.JobExecutionResult;
 import de.mephisto.vpin.restclient.descriptors.ArchiveRestoreDescriptor;
 import de.mephisto.vpin.server.backup.adapters.TableInstallerAdapter;
 import de.mephisto.vpin.server.games.Game;
+import de.mephisto.vpin.server.games.GameService;
 import de.mephisto.vpin.server.highscores.cards.CardService;
 import de.mephisto.vpin.server.popper.PinUPConnector;
 import edu.umd.cs.findbugs.annotations.NonNull;
+import org.apache.commons.lang3.StringUtils;
 
 public class ArchiveInstallerJob implements Job {
   private final TableInstallerAdapter tableInstallerAdapter;
   private final ArchiveDescriptor archiveDescriptor;
   private final PinUPConnector pinUPConnector;
   private final CardService cardService;
+  private final GameService gameService;
   private final ArchiveService archiveService;
   private final ArchiveRestoreDescriptor installDescriptor;
   private DownloadArchiveToRepositoryJob downloadJob;
@@ -22,12 +26,14 @@ public class ArchiveInstallerJob implements Job {
                              @NonNull ArchiveDescriptor archiveDescriptor,
                              @NonNull PinUPConnector pinUPConnector,
                              @NonNull CardService cardService,
+                             @NonNull GameService gameService,
                              @NonNull ArchiveService archiveService,
                              @NonNull ArchiveRestoreDescriptor installDescriptor) {
     this.tableInstallerAdapter = tableInstallerAdapter;
     this.archiveDescriptor = archiveDescriptor;
     this.pinUPConnector = pinUPConnector;
     this.cardService = cardService;
+    this.gameService = gameService;
     this.archiveService = archiveService;
     this.installDescriptor = installDescriptor;
   }
@@ -49,7 +55,7 @@ public class ArchiveInstallerJob implements Job {
   }
 
   @Override
-  public boolean execute() {
+  public JobExecutionResult execute() {
     ArchiveSource source = archiveDescriptor.getSource();
     if(source.getType().equals(ArchiveSourceType.Http.name())) {
       downloadJob = new DownloadArchiveToRepositoryJob(archiveService, archiveDescriptor);
@@ -59,8 +65,9 @@ public class ArchiveInstallerJob implements Job {
       tableInstallerAdapter.getArchiveDescriptor().setSource(archiveService.getDefaultArchiveSourceAdapter().getArchiveSource());
     }
 
-    Game game = tableInstallerAdapter.installTable();
-    if (game != null) {
+    JobExecutionResult result = tableInstallerAdapter.installTable();
+    if (StringUtils.isEmpty(result.getError())) {
+      Game game = gameService.getGame(result.getGameId());
       try {
         cardService.generateCard(game, false);
       } catch (Exception e) {
@@ -71,6 +78,6 @@ public class ArchiveInstallerJob implements Job {
         pinUPConnector.addToPlaylist(game.getId(), installDescriptor.getPlaylistId());
       }
     }
-    return game != null;
+    return result;
   }
 }

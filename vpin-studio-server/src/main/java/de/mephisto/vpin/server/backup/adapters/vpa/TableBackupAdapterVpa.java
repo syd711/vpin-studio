@@ -4,10 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import de.mephisto.vpin.commons.HighscoreType;
 import de.mephisto.vpin.commons.utils.FileUtils;
-import de.mephisto.vpin.restclient.ArchivePackageInfo;
-import de.mephisto.vpin.restclient.Job;
-import de.mephisto.vpin.restclient.PopperScreen;
-import de.mephisto.vpin.restclient.TableDetails;
+import de.mephisto.vpin.restclient.*;
 import de.mephisto.vpin.server.backup.ArchiveDescriptor;
 import de.mephisto.vpin.server.backup.ArchiveSourceAdapter;
 import de.mephisto.vpin.server.backup.ArchiveUtil;
@@ -75,8 +72,8 @@ public class TableBackupAdapterVpa implements TableBackupAdapter, Job {
     return status;
   }
 
-  public boolean execute() {
-    return createBackup() != null;
+  public JobExecutionResult execute() {
+    return JobExecutionResultFactory.create(createBackup() != null, "VPA backup failed.");
   }
 
   @Override

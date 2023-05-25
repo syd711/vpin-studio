@@ -1,6 +1,7 @@
 package de.mephisto.vpin.server.backup;
 
 import de.mephisto.vpin.restclient.Job;
+import de.mephisto.vpin.restclient.JobExecutionResult;
 import de.mephisto.vpin.restclient.descriptors.BackupDescriptor;
 import de.mephisto.vpin.server.backup.adapters.TableBackupAdapter;
 import de.mephisto.vpin.server.popper.PinUPConnector;
@@ -35,9 +36,9 @@ public class TableBackupJob implements Job {
     return tableBackupAdapter.getStatus();
   }
 
-  public boolean execute() {
-    boolean result = tableBackupAdapter.execute();
-    if (result) {
+  public JobExecutionResult execute() {
+    JobExecutionResult result = tableBackupAdapter.execute();
+    if (!result.isErrorneous()) {
       if(backupDescriptor.isRemoveFromPlaylists()) {
         pinUPConnector.deleteFromPlaylists(gameId);
       }

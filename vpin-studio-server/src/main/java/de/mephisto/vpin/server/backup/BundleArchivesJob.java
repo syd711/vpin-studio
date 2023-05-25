@@ -2,6 +2,7 @@ package de.mephisto.vpin.server.backup;
 
 import de.mephisto.vpin.commons.utils.FileUtils;
 import de.mephisto.vpin.restclient.Job;
+import de.mephisto.vpin.restclient.JobExecutionResult;
 import de.mephisto.vpin.restclient.descriptors.ArchiveBundleDescriptor;
 import de.mephisto.vpin.server.system.SystemService;
 import de.mephisto.vpin.server.util.ZipUtil;
@@ -43,7 +44,9 @@ public class BundleArchivesJob implements Job {
   }
 
   @Override
-  public boolean execute() {
+  public JobExecutionResult execute() {
+    JobExecutionResult result = new JobExecutionResult();
+
     FileOutputStream fos = null;
     ZipOutputStream zipOut = null;
     long start = System.currentTimeMillis();
@@ -66,12 +69,12 @@ public class BundleArchivesJob implements Job {
         status = "Adding " + archiveDescriptor.getFilename() + " to bundle.";
 
         File exportedArchive = archiveService.export(archiveDescriptor);
-        if(exportedArchive != null && exportedArchive.exists()) {
+        if (exportedArchive != null && exportedArchive.exists()) {
           ZipUtil.zipFile(exportedArchive, exportedArchive.getName(), zipOut);
           LOG.info("Zipping " + exportedArchive.getAbsolutePath());
 
           File descriptor = new File(descriptorFolder, FilenameUtils.getBaseName(archiveDescriptor.getFilename()) + ".json");
-          if(descriptor.exists()) {
+          if (descriptor.exists()) {
             LOG.info("Zipping " + descriptor.getAbsolutePath());
             ZipUtil.zipFile(descriptor, descriptor.getName(), zipOut);
           }
@@ -91,7 +94,8 @@ public class BundleArchivesJob implements Job {
       descriptorTemp.delete();
     } catch (Exception e) {
       LOG.error("Bundle creation failed: " + e.getMessage(), e);
-      return false;
+      result.setError("Bundle creation failed: " + e.getMessage());
+      return result;
     }
     try {
       if (zipOut != null) {
@@ -111,10 +115,12 @@ public class BundleArchivesJob implements Job {
     boolean renamed = tempFile.renameTo(target);
     if (renamed) {
       LOG.info("Finished creating bundle " + target.getAbsolutePath() + ", took " + ((System.currentTimeMillis() - start) / 1000) + " seconds, " + FileUtils.readableFileSize(target.length()));
-    } else {
-      LOG.error("Final renaming export file to " + target.getAbsolutePath() + " failed.");
     }
-    return true;
+    else {
+      LOG.error("Final renaming export file to " + target.getAbsolutePath() + " failed.");
+      result.setError("Final renaming export file to " + target.getAbsolutePath() + " failed.");
+    }
+    return result;
   }
 
   public File getTarget() {

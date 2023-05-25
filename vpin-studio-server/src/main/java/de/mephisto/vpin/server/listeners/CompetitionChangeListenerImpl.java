@@ -61,7 +61,7 @@ public class CompetitionChangeListenerImpl implements InitializingBean, Competit
 
         if (isOwner) {
           String base64Data = CompetitionDataHelper.DATA_INDICATOR + CompetitionDataHelper.toBase64(competition, game);
-          byte[] image = assetService.getCompetitionBackgroundFor(competition);
+          byte[] image = assetService.getCompetitionBackgroundFor(competition, game);
           String message = DiscordChannelMessageFactory.createDiscordCompetitionCreatedMessage(botId, competition.getUuid());
 
           long messageId = discordService.sendMessage(discordServerId, discordChannelId, message, image, competition.getName() + ".png", base64Data);
@@ -84,7 +84,10 @@ public class CompetitionChangeListenerImpl implements InitializingBean, Competit
       if (competition.getType().equals(CompetitionType.OFFLINE.name()) && competition.getDiscordChannelId() > 0 && competition.isActive()) {
         long discordServerId = competition.getDiscordServerId();
         long discordChannelId = competition.getDiscordChannelId();
-        discordService.sendMessage(discordServerId, discordChannelId, DiscordOfflineChannelMessageFactory.createOfflineCompetitionCreatedMessage(competition, game));
+
+        byte[] image = assetService.getCompetitionBackgroundFor(competition, game);
+        String message = DiscordOfflineChannelMessageFactory.createOfflineCompetitionCreatedMessage(competition, game);
+        discordService.sendMessage(discordServerId, discordChannelId, message, image, competition.getName() + ".png", "This is an offline competition. Other player bots can't join.");
       }
 
       if (competition.getBadge() != null && competition.isActive()) {

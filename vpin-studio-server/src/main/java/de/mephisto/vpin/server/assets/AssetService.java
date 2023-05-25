@@ -1,6 +1,8 @@
 package de.mephisto.vpin.server.assets;
 
+import de.mephisto.vpin.restclient.ArchivePackageInfo;
 import de.mephisto.vpin.restclient.AssetType;
+import de.mephisto.vpin.restclient.PopperScreen;
 import de.mephisto.vpin.restclient.util.DateUtil;
 import de.mephisto.vpin.server.competitions.Competition;
 import de.mephisto.vpin.server.games.Game;
@@ -143,9 +145,11 @@ public class AssetService {
   }
 
 
-  public byte[] getCompetitionBackgroundFor(@NonNull Competition competition) {
+  public byte[] getCompetitionBackgroundFor(@NonNull Competition competition, @NonNull Game game) {
+    final int HEADLINE_SIZE = 20;
+    final int SEPARATOR = 28;
+
     try {
-      Game game = gameService.getGame(competition.getGameId());
       Asset asset = getCompetitionBackground(competition.getGameId());
       byte[] data = asset.getData();
       BufferedImage background = ImageIO.read(new ByteArrayInputStream(data));
@@ -165,23 +169,56 @@ public class AssetService {
         table = table.substring(0, 35) + "...";
       }
 
-      int yOffset = 0;
-      int xOffset = 32;
+      int yOffset = 6;
+      int xOffset = 24;
+      int imageY = 0;
       Font font = new Font("System", Font.BOLD, 38);
       graphics.setFont(font);
-      graphics.drawString(name, xOffset, yOffset += 64);
+      graphics.drawString(name, xOffset, yOffset += 48);
+
+      //TABLE
+      font = new Font("System", Font.PLAIN, HEADLINE_SIZE);
+      graphics.setFont(font);
+      graphics.drawString("Table", xOffset, yOffset += 48);
 
       font = new Font("System", Font.BOLD, 30);
       graphics.setFont(font);
-      graphics.drawString("Table: " + table, xOffset, yOffset += 72);
+      graphics.drawString(table, xOffset, yOffset += HEADLINE_SIZE + 12);
+      imageY = yOffset;
 
-      font = new Font("System", Font.PLAIN, 32);
+      //START DATE
+      font = new Font("System", Font.PLAIN, HEADLINE_SIZE);
       graphics.setFont(font);
-      graphics.drawString("Start Date:", xOffset, yOffset += 52);
-      graphics.drawString(DateUtil.formatDateTime(competition.getStartDate()), 232, yOffset);
-      graphics.drawString("End Date:", xOffset, yOffset += 42);
-      graphics.drawString(DateUtil.formatDateTime(competition.getEndDate()), 232, yOffset);
-      graphics.drawString("Duration: " + DateUtil.formatDuration(competition.getStartDate(), competition.getEndDate()), xOffset, yOffset += 72);
+      graphics.drawString("Start Date", xOffset, yOffset += SEPARATOR);
+
+      font = new Font("System", Font.BOLD, 30);
+      graphics.setFont(font);
+      graphics.drawString(DateUtil.formatDateTime(competition.getStartDate()), xOffset, yOffset += HEADLINE_SIZE + 12);
+
+      //END DATE
+      font = new Font("System", Font.PLAIN, HEADLINE_SIZE);
+      graphics.setFont(font);
+      graphics.drawString("End Date", xOffset, yOffset += SEPARATOR);
+
+      font = new Font("System", Font.BOLD, 30);
+      graphics.setFont(font);
+      graphics.drawString(DateUtil.formatDateTime(competition.getEndDate()), xOffset, yOffset += HEADLINE_SIZE + 12);
+
+      //DURATION
+      font = new Font("System", Font.PLAIN, HEADLINE_SIZE);
+      graphics.setFont(font);
+      graphics.drawString("Duration", xOffset, yOffset += SEPARATOR);
+
+      font = new Font("System", Font.BOLD, 30);
+      graphics.setFont(font);
+      graphics.drawString(DateUtil.formatDuration(competition.getStartDate(), competition.getEndDate()), xOffset, yOffset += HEADLINE_SIZE + 12);
+
+      File wheelIconFile = game.getPinUPMedia(PopperScreen.Wheel);
+      if(wheelIconFile != null && wheelIconFile.exists()) {
+        BufferedImage image = ImageUtil.loadImage(wheelIconFile);
+        BufferedImage resizedImage = ImageUtil.resizeImage(image, 200);
+        graphics.drawImage(resizedImage, null, background.getWidth() - 212, imageY);
+      }
 
       return ImageUtil.toBytes(background);
     } catch (Exception e) {

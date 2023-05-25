@@ -164,9 +164,6 @@ public class CompetitionOfflineDialogController implements Initializable, Dialog
     tableCombo.getItems().addAll(gameRepresentations);
     tableCombo.valueProperty().addListener((observableValue, gameRepresentation, t1) -> {
       competition.setGameId(t1.getId());
-      if (nameField.getText().equals(UIDefaults.DEFAULT_COMPETITION_NAME)) {
-        nameField.setText(t1.getGameDisplayName());
-      }
       refreshPreview(t1, competitionIconCombo.getValue());
       validate();
     });

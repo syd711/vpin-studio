@@ -2,7 +2,7 @@ package de.mephisto.vpin.restclient;
 
 public interface Job {
 
-  boolean execute();
+  JobExecutionResult execute();
 
   double getProgress();
 

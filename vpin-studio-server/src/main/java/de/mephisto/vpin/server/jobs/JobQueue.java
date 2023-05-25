@@ -1,5 +1,6 @@
 package de.mephisto.vpin.server.jobs;
 
+import de.mephisto.vpin.restclient.JobExecutionResult;
 import de.mephisto.vpin.restclient.descriptors.JobDescriptor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,12 +40,12 @@ public class JobQueue {
   private void pollQueue() {
     if (!getInstance().isEmpty()) {
       JobDescriptor descriptor = queue.poll();
-      Callable<Boolean> exec = () -> {
-        boolean execute = descriptor.getJob().execute();
+      Callable<JobExecutionResult> exec = () -> {
+        JobExecutionResult result = descriptor.getJob().execute();
         statusQueue.remove(descriptor);
         LOG.info("Finished " + descriptor + ", queue size is " + queue.size());
         pollQueue();
-        return execute;
+        return result;
       };
       executor.submit(exec);
     }

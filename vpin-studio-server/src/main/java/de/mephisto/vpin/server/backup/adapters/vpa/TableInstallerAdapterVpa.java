@@ -1,10 +1,7 @@
 package de.mephisto.vpin.server.backup.adapters.vpa;
 
 import de.mephisto.vpin.commons.EmulatorType;
-import de.mephisto.vpin.restclient.ArchivePackageInfo;
-import de.mephisto.vpin.restclient.Job;
-import de.mephisto.vpin.restclient.TableDetails;
-import de.mephisto.vpin.restclient.TableInstallationResult;
+import de.mephisto.vpin.restclient.*;
 import de.mephisto.vpin.server.backup.ArchiveDescriptor;
 import de.mephisto.vpin.server.backup.adapters.TableInstallerAdapter;
 import de.mephisto.vpin.server.games.Game;
@@ -63,15 +60,14 @@ public class TableInstallerAdapterVpa implements TableInstallerAdapter, Job {
   }
 
   @Override
-  public boolean execute() {
-    return installTable() != null;
+  public JobExecutionResult execute() {
+    return installTable();
   }
-
 
   @Nullable
   @Override
-  public TableInstallationResult installTable() {
-    TableInstallationResult result = new TableInstallationResult();
+  public JobExecutionResult installTable() {
+    JobExecutionResult result = new JobExecutionResult();
     try {
       archiveFile = new File(archiveDescriptor.getSource().getLocation(), archiveDescriptor.getFilename());
       if (!archiveFile.exists()) {

@@ -1,5 +1,6 @@
 package de.mephisto.vpin.server.backup;
 
+import de.mephisto.vpin.restclient.JobExecutionResult;
 import de.mephisto.vpin.server.AbstractVPinServerTest;
 import de.mephisto.vpin.server.backup.adapters.TableBackupAdapter;
 import de.mephisto.vpin.server.backup.adapters.TableBackupAdapterFactory;
@@ -7,7 +8,6 @@ import de.mephisto.vpin.server.backup.adapters.TableInstallerAdapter;
 import de.mephisto.vpin.server.backup.adapters.TableInstallerAdapterFactory;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameService;
-import de.mephisto.vpin.server.system.SystemService;
 import org.apache.commons.io.FilenameUtils;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,13 +15,13 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 import java.io.File;
 
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @SpringBootTest
 public class ArchiveServiceClientTest extends AbstractVPinServerTest {
 
-//  private final static String TEST_FILE = "Batman 66.vpx";
+  //  private final static String TEST_FILE = "Batman 66.vpx";
   private final static String TEST_FILE = "Hayburners (WIlliams 1951).vpx";
 
   @Autowired
@@ -49,7 +49,7 @@ public class ArchiveServiceClientTest extends AbstractVPinServerTest {
     String name = FilenameUtils.getBaseName(TEST_FILE);
     ArchiveDescriptor archiveDescriptor = archiveService.getArchiveDescriptor(-2, name + ".vpinzip");
     TableInstallerAdapter adapter = tableInstallerAdapterFactory.createAdapter(archiveDescriptor);
-    Game game = adapter.installTable();
-    assertNotNull(game);
+    JobExecutionResult result = adapter.installTable();
+    assertNull(result.getError());
   }
 }

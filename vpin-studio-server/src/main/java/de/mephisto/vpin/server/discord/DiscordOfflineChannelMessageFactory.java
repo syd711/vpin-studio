@@ -15,20 +15,9 @@ import edu.umd.cs.findbugs.annotations.Nullable;
 import org.apache.commons.lang3.StringUtils;
 
 import java.text.DateFormat;
-import java.time.LocalDate;
-import java.time.ZoneId;
-import java.time.temporal.ChronoUnit;
 
 public class DiscordOfflineChannelMessageFactory {
-  private static final String COMPETITION_CREATED_TEMPLATE = "A new competition has been started!\n" +
-      "```\n" +
-      "%s\n" +
-      "------------------------------------------------------------\n" +
-      "Table:       %s\n" +
-      "Start Date:  %s\n" +
-      "End Date:    %s\n" +
-      "Duration:    %s\n" +
-      "------------------------------------------------------------```";
+  public static final String START_INDICATOR = "A new competition has been started!\n";
 
   private static final String COMPETITION_FINISHED_TEMPLATE = "Congratulation %s!\n" +
       "```" +
@@ -109,12 +98,7 @@ public class DiscordOfflineChannelMessageFactory {
 
 
   public static String createOfflineCompetitionCreatedMessage(Competition competition, Game game) {
-    return String.format(COMPETITION_CREATED_TEMPLATE,
-        competition.getName(),
-        game.getGameDisplayName(),
-        DateFormat.getDateInstance().format(competition.getStartDate()),
-        DateFormat.getDateInstance().format(competition.getEndDate()),
-        DateUtil.formatDuration(competition.getStartDate(), competition.getEndDate()));
+    return START_INDICATOR;
   }
 
   public static String createCompetitionFinishedMessage(@NonNull Competition competition, @Nullable Player winner, Game game, ScoreSummary summary) {
@@ -128,7 +112,7 @@ public class DiscordOfflineChannelMessageFactory {
       winnerName = winner.getName();
       winnerRaw = winner.getName();
       if (PlayerDomain.DISCORD.name().equals(winner.getDomain())) {
-        winnerName = "<@" + winner.getId() + ">";
+        winnerRaw = "<@" + winner.getId() + ">";
       }
     }
 

@@ -1,6 +1,8 @@
 package de.mephisto.vpin.server.backup;
 
 import de.mephisto.vpin.restclient.Job;
+import de.mephisto.vpin.restclient.JobExecutionResult;
+import de.mephisto.vpin.restclient.JobExecutionResultFactory;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import org.apache.commons.io.FilenameUtils;
 import org.slf4j.Logger;
@@ -25,15 +27,15 @@ public class DownloadArchiveToRepositoryJob implements Job {
   }
 
   @Override
-  public boolean execute() {
+  public JobExecutionResult execute() {
     try {
       status = "Downloading " + archiveDescriptor.getFilename();
       File archiveTarget = archiveService.getTargetFile(archiveDescriptor);
       temp = new File(archiveTarget.getParentFile(), archiveDescriptor.getFilename() + ".bak");
-      if(temp.exists()) {
+      if (temp.exists()) {
         temp.delete();
       }
-      if(archiveTarget.exists()) {
+      if (archiveTarget.exists()) {
         archiveTarget.delete();
       }
 
@@ -44,15 +46,15 @@ public class DownloadArchiveToRepositoryJob implements Job {
       boolean renamed = temp.renameTo(archiveTarget);
       if (!renamed) {
         LOG.error("Failed to rename downloaded file " + temp.getAbsolutePath());
-        return false;
+        return JobExecutionResultFactory.create("Failed to rename downloaded file " + temp.getAbsolutePath());
       }
 
       File descriptorTarget = new File(archiveTarget.getParentFile(), FilenameUtils.getBaseName(archiveDescriptor.getFilename()) + ".json");
       temp = new File(descriptorTarget.getParentFile(), descriptorTarget.getName() + ".bak");
-      if(temp.exists()) {
+      if (temp.exists()) {
         temp.delete();
       }
-      if(descriptorTarget.exists()) {
+      if (descriptorTarget.exists()) {
         descriptorTarget.delete();
       }
 
@@ -61,14 +63,14 @@ public class DownloadArchiveToRepositoryJob implements Job {
       renamed = temp.renameTo(descriptorTarget);
       if (!renamed) {
         LOG.error("Failed to rename downloaded file " + temp.getAbsolutePath());
-        return false;
+        return JobExecutionResultFactory.create("Failed to rename downloaded file " + temp.getAbsolutePath());
       }
 
     } catch (Exception e) {
       LOG.error("Download of \"" + archiveDescriptor.getFilename() + "\" failed: " + e.getMessage(), e);
-      return false;
+      return JobExecutionResultFactory.create("Download of \"" + archiveDescriptor.getFilename() + "\" failed: " + e.getMessage());
     }
-    return true;
+    return new JobExecutionResult();
   }
 
   @Override

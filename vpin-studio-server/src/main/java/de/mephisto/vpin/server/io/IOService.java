@@ -60,7 +60,7 @@ public class IOService {
 
       TableInstallerAdapter adapter = tableInstallerAdapterFactory.createAdapter(archiveDescriptor);
 
-      ArchiveInstallerJob job = new ArchiveInstallerJob(adapter, archiveDescriptor, pinUPConnector, cardService, archiveService, installDescriptor);
+      ArchiveInstallerJob job = new ArchiveInstallerJob(adapter, archiveDescriptor, pinUPConnector, cardService, gameService, archiveService, installDescriptor);
       jobDescriptor.setDescription("Restoring \"" + archiveDescriptor.getTableDetails().getGameDisplayName() + "\"");
       jobDescriptor.setJob(job);
 

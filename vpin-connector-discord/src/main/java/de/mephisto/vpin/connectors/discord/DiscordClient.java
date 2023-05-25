@@ -245,8 +245,10 @@ public class DiscordClient {
       TextChannel textChannel = jda.getChannelById(TextChannel.class, channelId);
       if (textChannel != null) {
         EmbedBuilder embed = new EmbedBuilder();
-        embed.setImage("attachment://" + URLEncoder.encode(name, StandardCharsets.UTF_8))
-            .setDescription(imageText);
+        EmbedBuilder embedBuilder = embed.setImage("attachment://" + URLEncoder.encode(name, StandardCharsets.UTF_8));
+        if (imageText != null) {
+          embedBuilder.setDescription(imageText);
+        }
         Message complete = textChannel.sendMessage(msg).addFiles(FileUpload.fromData(image, name)).setEmbeds(embed.build()).complete();
         return complete.getIdLong();
       }
@@ -324,7 +326,7 @@ public class DiscordClient {
 
   private boolean embedContains(List<MessageEmbed> embeds, String uuid) {
     for (MessageEmbed embed : embeds) {
-      if(embed.getDescription().contains(uuid)) {
+      if (embed.getDescription().contains(uuid)) {
         return true;
       }
     }

@@ -1,7 +1,7 @@
 package de.mephisto.vpin.server.backup.adapters.vpbm;
 
 import de.mephisto.vpin.restclient.Job;
-import de.mephisto.vpin.restclient.TableInstallationResult;
+import de.mephisto.vpin.restclient.JobExecutionResult;
 import de.mephisto.vpin.server.backup.ArchiveDescriptor;
 import de.mephisto.vpin.server.backup.adapters.TableInstallerAdapter;
 import de.mephisto.vpin.server.games.Game;
@@ -45,8 +45,8 @@ public class TableInstallerAdapterVpbm implements TableInstallerAdapter, Job {
   }
 
   @Override
-  public boolean execute() {
-    return installTable() != null;
+  public JobExecutionResult execute() {
+    return installTable();
   }
 
   @NotNull
@@ -57,8 +57,8 @@ public class TableInstallerAdapterVpbm implements TableInstallerAdapter, Job {
 
   @Nullable
   @Override
-  public TableInstallationResult installTable() {
-    TableInstallationResult result = new TableInstallationResult();
+  public JobExecutionResult installTable() {
+    JobExecutionResult result = new JobExecutionResult();
     try {
       LOG.info("Starting import of " + archiveDescriptor.getFilename());
 
