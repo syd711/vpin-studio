@@ -64,7 +64,7 @@ public class ArchiveUploadController implements Initializable, DialogController 
         });
 
         ArchiveSourceRepresentation selectedItem = this.repositoryCombo.getSelectionModel().getSelectedItem();
-        ArchiveUploadProgressModel model = new ArchiveUploadProgressModel("Archive Upload", selectedItem.getId(), selection);
+        ArchiveUploadProgressModel model = new ArchiveUploadProgressModel("Upload", selectedItem.getId(), selection);
         Dialogs.createProgressDialog(model);
       } catch (Exception e) {
         LOG.error("Upload failed: " + e.getMessage(), e);

@@ -80,6 +80,7 @@ public class VpbmArchiveSourceAdapter implements ArchiveSourceAdapter {
       result = false;
     }
 
+    this.invalidate();
     return result;
   }
 

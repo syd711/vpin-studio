@@ -59,8 +59,6 @@ public class GameService {
   @Autowired
   private AssetRepository assetRepository;
 
-  @Autowired
-  private DefaultPictureService defaultPictureService;
 
   @SuppressWarnings("unused")
   public List<Game> getGames() {

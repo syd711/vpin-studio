@@ -183,23 +183,22 @@ class HighscoreResolver {
       String msg = "Failed to parse highscore: " + e.getMessage();
       metadata.setStatus(msg);
       LOG.error(msg, e);
-      e.printStackTrace();
     }
     return null;
   }
 
-  private String executePINemHi(String param, HighscoreMetadata metadata) throws Exception {
+  private String executePINemHi(String nvRamFileName, HighscoreMetadata metadata) throws Exception {
     metadata.setType(HighscoreType.NVRam);
     File commandFile = systemService.getPinemhiCommandFile();
     try {
-      List<String> commands = Arrays.asList(commandFile.getName(), param);
+      List<String> commands = Arrays.asList(commandFile.getName(), nvRamFileName);
       SystemCommandExecutor executor = new SystemCommandExecutor(commands);
       executor.setDir(commandFile.getParentFile());
       executor.executeCommand();
       StringBuilder standardOutputFromCommand = executor.getStandardOutputFromCommand();
       StringBuilder standardErrorFromCommand = executor.getStandardErrorFromCommand();
       if (!StringUtils.isEmpty(standardErrorFromCommand.toString())) {
-        String error = "Pinemhi command (" + commandFile.getCanonicalPath() + ") failed: " + standardErrorFromCommand;
+        String error = "Pinemhi command (" + commandFile.getCanonicalPath() + " "+ nvRamFileName + ") failed: " + standardErrorFromCommand;
         LOG.error(error);
         metadata.setStatus(error);
         throw new Exception(error);

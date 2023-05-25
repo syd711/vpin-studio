@@ -4,6 +4,7 @@ import de.mephisto.vpin.commons.EmulatorType;
 import de.mephisto.vpin.restclient.ArchivePackageInfo;
 import de.mephisto.vpin.restclient.Job;
 import de.mephisto.vpin.restclient.TableDetails;
+import de.mephisto.vpin.restclient.TableInstallationResult;
 import de.mephisto.vpin.server.backup.ArchiveDescriptor;
 import de.mephisto.vpin.server.backup.adapters.TableInstallerAdapter;
 import de.mephisto.vpin.server.games.Game;
@@ -69,7 +70,8 @@ public class TableInstallerAdapterVpa implements TableInstallerAdapter, Job {
 
   @Nullable
   @Override
-  public Game installTable() {
+  public TableInstallationResult installTable() {
+    TableInstallationResult result = new TableInstallationResult();
     try {
       archiveFile = new File(archiveDescriptor.getSource().getLocation(), archiveDescriptor.getFilename());
       if (!archiveFile.exists()) {
@@ -105,11 +107,12 @@ public class TableInstallerAdapterVpa implements TableInstallerAdapter, Job {
       LOG.info("Executing final table scan for " + game.getGameDisplayName());
       gameService.scanGame(game.getId());
 
-      return game;
+      result.setGameId(game.getId());
     } catch (Exception e) {
       LOG.error("Import of \"" + archiveFile.getName() + "\" failed: " + e.getMessage(), e);
-      return null;
+      result.setError("Import of \"" + archiveFile.getName() + "\" failed: " + e.getMessage());
     }
+    return result;
   }
 
   private void importHighscore(Game game, File zipFile) {
@@ -210,14 +213,6 @@ public class TableInstallerAdapterVpa implements TableInstallerAdapter, Job {
   }
 
   public File newFile(File destinationDir, ZipEntry zipEntry) throws IOException {
-    File destFile = new File(destinationDir, zipEntry.getName());
-
-    String destDirPath = destinationDir.getCanonicalPath();
-    String destFilePath = destFile.getCanonicalPath();
-
-    if (!destFilePath.startsWith(destDirPath + File.separator)) {
-//      throw new IOException("Entry is outside of the target dir: " + zipEntry.getName());
-    }
-    return destFile;
+    return new File(destinationDir, zipEntry.getName());
   }
 }

@@ -5,12 +5,60 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
+import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
 
 public class ZipUtil {
   private final static Logger LOG = LoggerFactory.getLogger(ZipUtil.class);
+
+  public static void unzip(File archiveFile, File destinationDir) {
+    try {
+      ZipFile zf = new ZipFile(archiveFile);
+      int totalCount = zf.size();
+      zf.close();
+
+      byte[] buffer = new byte[1024];
+      FileInputStream fileInputStream = new FileInputStream(archiveFile);
+      ZipInputStream zis = new ZipInputStream(fileInputStream);
+      ZipEntry zipEntry = zis.getNextEntry();
+      int currentCount = 0;
+      while (zipEntry != null) {
+        currentCount++;
+
+        File newFile = new File(destinationDir, zipEntry.getName());
+        LOG.info("Writing " + newFile.getAbsolutePath());
+        if (zipEntry.isDirectory()) {
+          if (!newFile.isDirectory() && !newFile.mkdirs()) {
+            throw new IOException("Failed to create directory " + newFile);
+          }
+        }
+        else {
+          // fix for Windows-created archives
+          File parent = newFile.getParentFile();
+          if (!parent.isDirectory() && !parent.mkdirs()) {
+            throw new IOException("Failed to create directory " + parent);
+          }
+          FileOutputStream fos = new FileOutputStream(newFile);
+          int len;
+          while ((len = zis.read(buffer)) > 0) {
+            fos.write(buffer, 0, len);
+          }
+          fos.close();
+        }
+        zis.closeEntry();
+        zipEntry = zis.getNextEntry();
+      }
+      fileInputStream.close();
+      zis.closeEntry();
+      zis.close();
+    } catch (Exception e) {
+      LOG.error("Unzipping of " + archiveFile.getAbsolutePath() + " failed: " + e.getMessage(), e);
+    }
+  }
 
   public static void zipFile(File fileToZip, String fileName, ZipOutputStream zipOut) throws IOException {
     if (fileToZip.isHidden()) {

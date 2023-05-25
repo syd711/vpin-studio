@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import de.mephisto.vpin.commons.utils.SystemCommandExecutor;
+import de.mephisto.vpin.commons.utils.SystemCommandOutput;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.VpbmHosts;
 import de.mephisto.vpin.server.VPinStudioException;
@@ -75,9 +76,10 @@ public class VpbmService implements InitializingBean {
     return null;
   }
 
-  public void restore(String tableId) {
+  public String restore(String tableId) {
     String tableFilename = "\"" + tableId + "\"";
-    executeVPBM(Arrays.asList("-i", tableFilename));
+    SystemCommandOutput systemCommandOutput = executeVPBM(Arrays.asList("-i", tableFilename));
+    return systemCommandOutput.getStdOut();
   }
 
   public void refresh() {
@@ -96,7 +98,7 @@ public class VpbmService implements InitializingBean {
   }
 
   public String getVersion() {
-    String version = executeVPBM(Arrays.asList("-v"));
+    String version = executeVPBM(Arrays.asList("-v")).getStdOut();
     if (!StringUtils.isEmpty(version)) {
       return version.trim();
     }
@@ -109,7 +111,7 @@ public class VpbmService implements InitializingBean {
 
     String internalHostId = (String) preferencesService.getPreferenceValue(PreferenceNames.VPBM_INTERNAL_HOST_IDENTIFIER);
     if (StringUtils.isEmpty(internalHostId) || internalHostId.contains("ERROR")) {
-      String hostId = executeVPBM(Arrays.asList("-h"));
+      String hostId = executeVPBM(Arrays.asList("-h")).getStdOut();
       if (hostId != null) {
         preferencesService.savePreference(PreferenceNames.VPBM_INTERNAL_HOST_IDENTIFIER, hostId.trim());
         ids.setInternalHostId(hostId);
@@ -118,7 +120,8 @@ public class VpbmService implements InitializingBean {
     return ids;
   }
 
-  private String executeVPBM(List<String> options) {
+  private SystemCommandOutput executeVPBM(List<String> options) {
+    SystemCommandOutput out = new SystemCommandOutput();
     try {
       File dir = new File(SystemService.RESOURCES, VpbmArchiveSource.FOLDER_NAME);
       File exe = new File(dir, "vPinBackupManager.exe");
@@ -133,17 +136,17 @@ public class VpbmService implements InitializingBean {
       StringBuilder standardErrorFromCommand = executor.getStandardErrorFromCommand();
       if (!StringUtils.isEmpty(standardOutputFromCommand.toString())) {
         LOG.info("VPBM Command StdOut:\n" + standardOutputFromCommand.toString().trim());
-        return standardOutputFromCommand.toString();
+        out.setStdOut(standardErrorFromCommand.toString());
       }
       if (!StringUtils.isEmpty(standardErrorFromCommand.toString())) {
         LOG.error("VPBM Command Error:\n" + standardErrorFromCommand);
-        return standardOutputFromCommand.toString();
+        out.setErrOut(standardOutputFromCommand.toString());
       }
-
     } catch (Exception e) {
+      out.setErrOut("Failed to execute VPBM: " + e.getMessage());
       LOG.error("Failed to execute VPBM: " + e.getMessage(), e);
     }
-    return null;
+    return out;
   }
 
   @Override
@@ -167,7 +170,7 @@ public class VpbmService implements InitializingBean {
 
       boolean dirty = false;
       File exportPath = new File(config.getExportPath());
-      if (!exportPath.equals(getExportFolder())) {
+      if (!exportPath.getAbsolutePath().equals(getExportFolder().getParentFile().getAbsolutePath())) {
         File exportFolder = new File(SystemService.ARCHIVES_FOLDER, "exports");
         exportFolder.mkdirs();
         config.setExportPath(exportFolder.getAbsolutePath());
@@ -176,7 +179,7 @@ public class VpbmService implements InitializingBean {
       }
 
       File backUpPath = new File(config.getBackupPath());
-      if (!backUpPath.equals(getArchiveFolder())) {
+      if (!backUpPath.getAbsolutePath().equals(getArchiveFolder().getParentFile().getAbsolutePath())) {
         File backupsFolder = new File(SystemService.ARCHIVES_FOLDER, "backups");
         backupsFolder.mkdirs();
         config.setBackupPath(backupsFolder.getAbsolutePath());

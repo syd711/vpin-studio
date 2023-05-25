@@ -190,7 +190,7 @@ public class Dialogs {
   }
 
   public static boolean openArchiveUploadDialog() {
-    Stage stage = createStudioDialogStage(ArchiveUploadController.class, "dialog-archive-upload.fxml", "Archive Upload");
+    Stage stage = createStudioDialogStage(ArchiveUploadController.class, "dialog-archive-upload.fxml", "Upload");
     ArchiveUploadController controller = (ArchiveUploadController) stage.getUserData();
     stage.showAndWait();
 

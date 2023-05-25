@@ -4,6 +4,7 @@ import de.mephisto.vpin.restclient.representations.ArchiveDescriptorRepresentati
 import de.mephisto.vpin.restclient.representations.ArchiveSourceRepresentation;
 import de.mephisto.vpin.server.system.SystemService;
 import de.mephisto.vpin.server.util.UploadUtil;
+import de.mephisto.vpin.server.util.ZipUtil;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
@@ -173,11 +174,21 @@ public class ArchivesResource {
       }
       ArchiveSourceAdapter sourceAdapter = archiveService.getArchiveSourceAdapter(repositoryId);
       File out = new File(sourceAdapter.getArchiveSource().getLocation(), file.getOriginalFilename());
+
+      if (file.getOriginalFilename().endsWith(".zip")) {
+        out = File.createTempFile(FilenameUtils.getBaseName(file.getOriginalFilename()), ".zip");
+      }
+
       if (UploadUtil.upload(file, out)) {
+        if (file.getOriginalFilename().endsWith(".zip")) {
+          ZipUtil.unzip(out, new File(sourceAdapter.getArchiveSource().getLocation()));
+        }
+
         archiveService.invalidateCache();
         ArchiveDescriptor descriptor = archiveService.getArchiveDescriptor(out);
         return toRepresentation(descriptor);
       }
+
       return null;
     } catch (Exception e) {
       throw new ResponseStatusException(INTERNAL_SERVER_ERROR, "Archive upload failed: " + e.getMessage());

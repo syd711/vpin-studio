@@ -1,6 +1,7 @@
 package de.mephisto.vpin.server.backup.adapters.vpbm;
 
 import de.mephisto.vpin.restclient.Job;
+import de.mephisto.vpin.restclient.TableInstallationResult;
 import de.mephisto.vpin.server.backup.ArchiveDescriptor;
 import de.mephisto.vpin.server.backup.adapters.TableInstallerAdapter;
 import de.mephisto.vpin.server.games.Game;
@@ -56,7 +57,8 @@ public class TableInstallerAdapterVpbm implements TableInstallerAdapter, Job {
 
   @Nullable
   @Override
-  public Game installTable() {
+  public TableInstallationResult installTable() {
+    TableInstallationResult result = new TableInstallationResult();
     try {
       LOG.info("Starting import of " + archiveDescriptor.getFilename());
 
@@ -67,7 +69,11 @@ public class TableInstallerAdapterVpbm implements TableInstallerAdapter, Job {
       }
 
       status = "Extracting " + archiveFile.getAbsolutePath();
-      vpbmService.restore(archiveFile.getAbsolutePath());
+      String msg = vpbmService.restore(archiveFile.getAbsolutePath());
+      if(msg.contains("ERROR")) {
+        result.setError(msg);
+        return result;
+      }
 
       String baseName = FilenameUtils.getBaseName(archiveDescriptor.getFilename());
       Game game = gameService.getGameByName(baseName);
@@ -75,10 +81,11 @@ public class TableInstallerAdapterVpbm implements TableInstallerAdapter, Job {
       gameService.scanGame(game.getId());
 
       this.progress = 100;
-      return game;
+      result.setGameId(game.getId());
     } catch (Exception e) {
       LOG.error("Import of \"" + archiveFile.getName() + "\" failed: " + e.getMessage(), e);
-      return null;
+      result.setError("Import of \"" + archiveFile.getName() + "\" failed: " + e.getMessage());
     }
+    return result;
   }
 }
