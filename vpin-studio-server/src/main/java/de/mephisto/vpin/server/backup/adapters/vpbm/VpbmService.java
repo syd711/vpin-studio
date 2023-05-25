@@ -108,15 +108,7 @@ public class VpbmService implements InitializingBean {
   public VpbmHosts getHostIds() {
     VpbmHosts ids = new VpbmHosts();
     ids.setInternalHostId((String) preferencesService.getPreferenceValue(PreferenceNames.VPBM_EXTERNAL_HOST_IDENTIFIER, ""));
-
-    String internalHostId = (String) preferencesService.getPreferenceValue(PreferenceNames.VPBM_INTERNAL_HOST_IDENTIFIER);
-    if (StringUtils.isEmpty(internalHostId) || internalHostId.contains("ERROR")) {
-      String hostId = executeVPBM(Arrays.asList("-h")).getStdOut();
-      if (hostId != null) {
-        preferencesService.savePreference(PreferenceNames.VPBM_INTERNAL_HOST_IDENTIFIER, hostId.trim());
-        ids.setInternalHostId(hostId);
-      }
-    }
+    ids.setInternalHostId((String) preferencesService.getPreferenceValue(PreferenceNames.VPBM_INTERNAL_HOST_IDENTIFIER));
     return ids;
   }
 
@@ -135,12 +127,12 @@ public class VpbmService implements InitializingBean {
       StringBuilder standardOutputFromCommand = executor.getStandardOutputFromCommand();
       StringBuilder standardErrorFromCommand = executor.getStandardErrorFromCommand();
       if (!StringUtils.isEmpty(standardOutputFromCommand.toString())) {
-        LOG.info("VPBM Command StdOut:\n" + standardOutputFromCommand.toString().trim());
-        out.setStdOut(standardErrorFromCommand.toString());
+        LOG.info("VPBM Command StdOut: " + standardOutputFromCommand.toString().trim());
+        out.setStdOut(standardOutputFromCommand.toString());
       }
       if (!StringUtils.isEmpty(standardErrorFromCommand.toString())) {
-        LOG.error("VPBM Command Error:\n" + standardErrorFromCommand);
-        out.setErrOut(standardOutputFromCommand.toString());
+        LOG.error("VPBM Command Error: " + standardErrorFromCommand);
+        out.setErrOut(standardErrorFromCommand.toString());
       }
     } catch (Exception e) {
       out.setErrOut("Failed to execute VPBM: " + e.getMessage());
@@ -195,11 +187,30 @@ public class VpbmService implements InitializingBean {
         dirty = true;
       }
 
+      File pinupSystemPath = new File(config.getPinup().getPinupDir());
+      if (!pinupSystemPath.exists()) {
+        pinupSystemPath = new File(config.getVpinballBasePath(), config.getPinup().getPinupDir());
+      }
+
+      if (!pinupSystemPath.exists()) {
+        config.getPinup().setPinupDir(systemService.getPinUPSystemFolder().getAbsolutePath());
+        LOG.info("Updated PinUPSystem path to " + systemService.getPinUPSystemFolder().getAbsolutePath());
+        dirty = true;
+      }
+
       if (dirty) {
         objectMapper.writeValue(configJson, config);
         LOG.info("Written updated VPBM config " + configJson.getAbsolutePath());
       }
 
+      String internalHostId = preferencesService.getPreferences().getVpbmInternalHostId();
+      if (StringUtils.isEmpty(internalHostId) || internalHostId.contains("ERROR")) {
+        String hostId = executeVPBM(Arrays.asList("-h")).getStdOut();
+        if (hostId != null) {
+          preferencesService.savePreference(PreferenceNames.VPBM_INTERNAL_HOST_IDENTIFIER, hostId.trim());
+          LOG.info("Updated internal host id to '" + hostId.trim() + "'");
+        }
+      }
       LOG.info("Finished vpbm installation check.");
     } catch (Exception e) {
       String msg = "Failed to run installation for vpbm: " + e.getMessage();

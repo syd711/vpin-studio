@@ -30,7 +30,6 @@ import java.io.ByteArrayInputStream;
 import java.net.URL;
 import java.text.DateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.ResourceBundle;
 
@@ -252,7 +251,7 @@ public class CompetitionDiscordJoinDialogController implements Initializable, Di
     this.nameLabel.setText(this.discordCompetitionData.getName());
 
     String mode = this.discordCompetitionData.getMode();
-    if(mode != null && JoinMode.valueOf(mode).equals(JoinMode.STRICT)) {
+    if (mode != null && JoinMode.valueOf(mode).equals(JoinMode.STRICT)) {
       this.joinMode.setIconLiteral("bi-check-circle");
     }
     else {
@@ -282,15 +281,18 @@ public class CompetitionDiscordJoinDialogController implements Initializable, Di
     }
 
     GameRepresentation game = this.tableCombo.getValue();
-    long tableSize = game.getGameFileSize();
-    long competitionTableSize = this.discordCompetitionData.getFs();
-    long min = competitionTableSize - 1024;
-    long max = competitionTableSize + 1024;
-    if (tableSize < min || tableSize > max) {
-      validationTitle.setText("Invalid table version");
-      validationDescription.setText("The file size of the matching table does not match the competed one.");
-      return;
+    if (game != null) {
+      long tableSize = game.getGameFileSize();
+      long competitionTableSize = this.discordCompetitionData.getFs();
+      long min = competitionTableSize - 1024;
+      long max = competitionTableSize + 1024;
+      if (tableSize < min || tableSize > max) {
+        validationTitle.setText("Invalid table version");
+        validationDescription.setText("The file size of the matching table does not match the competed one.");
+        return;
+      }
     }
+
 
     if (!resetCheckbox.isSelected()) {
       validationTitle.setText("Highscore reset required");
