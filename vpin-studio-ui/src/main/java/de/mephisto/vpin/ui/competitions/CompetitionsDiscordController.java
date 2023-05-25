@@ -126,11 +126,6 @@ public class CompetitionsDiscordController implements Initializable, StudioFXCon
       CompetitionRepresentation newCmp = null;
       try {
         newCmp = client.getCompetitionService().saveCompetition(c);
-        if(newCmp.isActive()) {
-          WidgetFactory.showInformation(Studio.stage, "Competition created",
-              "The competition has been created and the Discord channel update requested.",
-              "Due to the rate limit (2x updates in 10 minutes) the topic update may take a while.");
-        }
       } catch (Exception e) {
         WidgetFactory.showAlert(Studio.stage, e.getMessage());
       }
@@ -369,7 +364,7 @@ public class CompetitionsDiscordController implements Initializable, StudioFXCon
       if (discordServer != null) {
         String avatarUrl = discordServer.getAvatarUrl();
         Image image = null;
-        if(avatarUrl == null) {
+        if (avatarUrl == null) {
           image = new Image(Studio.class.getResourceAsStream("avatar-blank.png"));
         }
         else {

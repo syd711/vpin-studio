@@ -67,7 +67,7 @@ public class DiscordChannelMessageFactory {
         "```";
 
     String msg = String.format(template, playerName, competition.getName(), competition.getUuid(), newScore);
-    return msg + "Here is the updated highscore list:" + createInitialHighscoreList(newScore, scoreCount - 1);
+    return msg + "\nHere is the updated highscore list:" + createInitialHighscoreList(newScore, scoreCount - 1);
 
   }
 

@@ -48,6 +48,7 @@ public class PopperStatusChangeListenerImpl implements InitializingBean, PopperS
     LOG.info("Executing table exit commands for '" + game + "'");
     discordService.setActivity(null);
     new Thread(() -> {
+      LOG.info("Starting 6 second update delay before updating highscores.");
       try {
         Thread.sleep(6000);
       } catch (InterruptedException e) {

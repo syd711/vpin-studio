@@ -146,8 +146,8 @@ public class AssetService {
 
 
   public byte[] getCompetitionBackgroundFor(@NonNull Competition competition, @NonNull Game game) {
-    final int HEADLINE_SIZE = 20;
-    final int SEPARATOR = 28;
+    final int HEADLINE_SIZE = 18;
+    final int SEPARATOR = 30;
 
     try {
       Asset asset = getCompetitionBackground(competition.getGameId());
@@ -216,8 +216,8 @@ public class AssetService {
       File wheelIconFile = game.getPinUPMedia(PopperScreen.Wheel);
       if(wheelIconFile != null && wheelIconFile.exists()) {
         BufferedImage image = ImageUtil.loadImage(wheelIconFile);
-        BufferedImage resizedImage = ImageUtil.resizeImage(image, 200);
-        graphics.drawImage(resizedImage, null, background.getWidth() - 212, imageY);
+        BufferedImage resizedImage = ImageUtil.resizeImage(image, 190);
+        graphics.drawImage(resizedImage, null, background.getWidth() - 200, imageY);
       }
 
       return ImageUtil.toBytes(background);
