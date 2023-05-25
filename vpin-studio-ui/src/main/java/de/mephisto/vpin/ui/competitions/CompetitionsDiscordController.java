@@ -502,7 +502,7 @@ public class CompetitionsDiscordController implements Initializable, StudioFXCon
 
     boolean disable = newSelection == null;
     boolean isOwner = newSelection != null && newSelection.getOwner().equals(String.valueOf(this.discordBotId));
-    editBtn.setDisable(disable || !isOwner);
+    editBtn.setDisable(disable || !isOwner || newSelection.isActive() || newSelection.isFinished());
     finishBtn.setDisable(disable || !isOwner || !newSelection.isActive());
     deleteBtn.setDisable(disable);
     duplicateBtn.setDisable(disable);

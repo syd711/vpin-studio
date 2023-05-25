@@ -29,9 +29,9 @@ public class TableScanTest {
 
   @Test
   public void testTableScan3() throws Exception {
-    File table = new File("C:\\vPinball\\VisualPinball\\Tables\\Masters of the Universe.vpx");
+    File table = new File("C:\\vPinball\\VisualPinball\\Tables\\Algar (1980).vpx");
     ScanResult scan = VPXFileScanner.scan(table);
-    assertEquals("motu", scan.getRom());
+    assertEquals("algar_l1", scan.getRom());
   }
 
 }

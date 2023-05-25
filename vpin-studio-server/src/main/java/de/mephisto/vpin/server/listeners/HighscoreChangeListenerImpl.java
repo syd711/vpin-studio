@@ -97,10 +97,11 @@ public class HighscoreChangeListenerImpl implements InitializingBean, HighscoreC
     else {
       ScoreSummary latestScore = scoreList.getLatestScore();
       List<Score> oldScores = latestScore.getScores();
-      LOG.info("The current online score for " + competition + ":");
+      LOG.info("The current online score for " + competition + "(" + oldScores.size() + " entries):");
       for (Score oldScore : oldScores) {
         LOG.info("[" + oldScore + "]");
       }
+
       int position = highscoreService.calculateChangedPositionByScore(oldScores, event.getNewScore());
       if (position == -1) {
         LOG.info("No highscore change detected for " + game + " of discord competition '" + competition.getName() + "', skipping highscore message.");

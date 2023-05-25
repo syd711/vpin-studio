@@ -29,10 +29,8 @@ import org.slf4j.LoggerFactory;
 import java.io.ByteArrayInputStream;
 import java.net.URL;
 import java.text.DateFormat;
-import java.time.LocalDate;
-import java.time.ZoneId;
-import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.ResourceBundle;
 
@@ -72,7 +70,7 @@ public class CompetitionDiscordJoinDialogController implements Initializable, Di
   private Label nameLabel;
 
   @FXML
-  private Label remainingDaysLabel;
+  private Label remainingTimeLabel;
 
   @FXML
   private Label startDateLabel;
@@ -199,7 +197,7 @@ public class CompetitionDiscordJoinDialogController implements Initializable, Di
     this.tableLabel.setText("-");
     this.startDateLabel.setText("-");
     this.endDateLabel.setText("-");
-    this.remainingDaysLabel.setText("-");
+    this.remainingTimeLabel.setText("-");
     this.nameLabel.setText("-");
     this.ownerLabel.setText("-");
 
@@ -247,18 +245,10 @@ public class CompetitionDiscordJoinDialogController implements Initializable, Di
     }
 
 
-    LocalDate end = discordCompetitionData.getEdt().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
-    LocalDate now = DateUtil.today().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
-
-    long remainingDays = ChronoUnit.DAYS.between(now, end) + 1;
-    if (remainingDays < 0) {
-      remainingDays = 0;
-    }
-
     this.tableLabel.setText(this.discordCompetitionData.getTname());
     this.startDateLabel.setText(DateFormat.getDateInstance().format(this.discordCompetitionData.getSdt()));
     this.endDateLabel.setText(DateFormat.getDateInstance().format(this.discordCompetitionData.getEdt()));
-    this.remainingDaysLabel.setText(remainingDays + " day(s)");
+    this.remainingTimeLabel.setText(DateUtil.formatDuration(this.discordCompetitionData.getSdt(), this.discordCompetitionData.getEdt()));
     this.nameLabel.setText(this.discordCompetitionData.getName());
 
     String mode = this.discordCompetitionData.getMode();

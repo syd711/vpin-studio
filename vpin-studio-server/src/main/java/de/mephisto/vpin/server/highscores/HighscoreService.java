@@ -48,6 +48,8 @@ public class HighscoreService implements InitializingBean {
 
   private HighscoreResolver highscoreResolver;
 
+  private boolean changeListenerEnabled = true;
+
   private final List<HighscoreChangeListener> listeners = new ArrayList<>();
 
   public boolean resetHighscore(@NonNull Game game) {
@@ -461,9 +463,15 @@ public class HighscoreService implements InitializingBean {
   }
 
   private void triggerHighscoreChange(@NonNull HighscoreChangeEvent event) {
-    for (HighscoreChangeListener listener : listeners) {
-      listener.highscoreChanged(event);
+    if(changeListenerEnabled) {
+      for (HighscoreChangeListener listener : listeners) {
+        listener.highscoreChanged(event);
+      }
     }
+  }
+
+  public void setChangeListenerEnabled(boolean b) {
+    this.changeListenerEnabled = b;
   }
 
   @Override

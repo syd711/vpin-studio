@@ -389,10 +389,14 @@ public class CompetitionDiscordDialogController implements Initializable, Dialog
       this.startDatePicker.setValue(this.competition.getStartDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate());
       this.startDatePicker.setDisable(!editable);
       this.startTime.setValue(DateUtil.formatTimeString(this.competition.getStartDate()));
+      this.startTime.setDisable(!editable);
 
       this.endDatePicker.setValue(this.competition.getEndDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate());
       this.endDatePicker.setDisable(!editable);
       this.endTime.setValue(DateUtil.formatTimeString(this.competition.getEndDate()));
+      this.endTime.setDisable(!editable);
+
+      this.strictCheckCheckbox.setDisable(!editable);
 
       this.tableCombo.setValue(game);
       this.tableCombo.setDisable(!editable);

@@ -224,14 +224,22 @@ public class DiscordService implements InitializingBean, PreferenceChangedListen
       DiscordCompetitionData data = this.getCompetitionData(serverId, channelId, uuid);
       if (data != null) {
         List<DiscordMessage> competitionUpdates = discordClient.getCompetitionUpdates(serverId, channelId, data.getMsgId(), uuid);
-        List<ScoreSummary> scores = competitionUpdates.stream().map(message -> toScoreSummary(highscoreParser, message)).collect(Collectors.toList());
-        if (!scores.isEmpty()) {
-          result.setScores(scores);
-          result.setLatestScore(scores.get(0));
+        for (DiscordMessage competitionUpdate : competitionUpdates) {
+          ScoreSummary scoreSummary = toScoreSummary(highscoreParser, competitionUpdate);
+          if(!scoreSummary.getScores().isEmpty())  {
+            result.getScores().add(scoreSummary);
+          }
+        }
+
+        if (!result.getScores().isEmpty()) {
+          result.setLatestScore(result.getScores().get(0));
         }
         else {
           LOG.info("No record highscore for " + uuid + " found, so this seems to be the first one.");
         }
+      }
+      else {
+        LOG.error("No competition data found for '" + uuid + "', unable to calculated highscore updates for this competition.");
       }
     }
     return result;
@@ -241,20 +249,24 @@ public class DiscordService implements InitializingBean, PreferenceChangedListen
     return this.discordClient != null;
   }
 
-  public DiscordCompetitionData getCompetitionData(long serverId, long channelId) {
+  public DiscordCompetitionData getLatestCompetitionData(long serverId, long channelId, String uuid) {
     if (this.discordClient != null) {
       ChannelTopic channelTopic = this.getTopicData(serverId, channelId);
       if (channelTopic != null) {
-        List<DiscordMessage> messageHistory = this.discordClient.getMessageHistoryAfter(serverId, channelId, channelTopic.getMessageId(), null);
-        Collections.reverse(messageHistory);
-        LOG.info("Competition search returned " + messageHistory.size() + " messages, using last messageId '" + channelTopic.getMessageId() + "'");
-
-        //equals 0 when no additional message was posted
-        if (messageHistory.size() == 0) {
+        if (channelTopic.getMessageId() > 0) {
           Message message = discordClient.getMessage(serverId, channelId, channelTopic.getMessageId());
-          return CompetitionDataHelper.getCompetitionData(message);
+          if (message != null) {
+            DiscordCompetitionData competitionData = CompetitionDataHelper.getCompetitionData(message);
+            if(competitionData.getUuid().equals(uuid)) {
+              return competitionData;
+            }
+          }
         }
 
+        List<DiscordMessage> messageHistory = this.discordClient.getMessageHistoryAfter(serverId, channelId, channelTopic.getMessageId(), uuid);
+        Collections.sort(messageHistory, Comparator.comparing(DiscordMessage::getCreatedAt));
+
+        LOG.info("Competition search returned " + messageHistory.size() + " messages, using last messageId '" + channelTopic.getMessageId() + "'");
         DiscordMessage lastCompetitionStartMessage = null;
         for (DiscordMessage discordMessage : messageHistory) {
           if (discordMessage.getRaw().contains(DiscordChannelMessageFactory.START_INDICATOR)) {
@@ -285,13 +297,13 @@ public class DiscordService implements InitializingBean, PreferenceChangedListen
 
   public DiscordCompetitionData getCompetitionData(long serverId, long channelId, String uuid) {
     if (this.discordClient != null) {
-      DiscordCompetitionData competitionData = getCompetitionData(serverId, channelId);
+      DiscordCompetitionData competitionData = getLatestCompetitionData(serverId, channelId, uuid);
       if (competitionData == null) {
         LOG.info("No competition data found for " + uuid);
       }
       else {
         if (!competitionData.getUuid().equals(uuid)) {
-          LOG.warn("The last competition data found was " + competitionData.getName() + ", no matching UUID " + uuid);
+          LOG.warn("The last competition data found was for '" + competitionData.getName() + "', no matching UUID " + uuid);
         }
         return competitionData;
       }

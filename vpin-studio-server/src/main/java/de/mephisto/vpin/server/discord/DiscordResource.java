@@ -34,9 +34,13 @@ public class DiscordResource {
     return discordService.hasManagePermissions(serverId, channelId, discordService.getBotId());
   }
 
+  /**
+   * Used for the competition joining, find the latest competition for the given channel
+   * @return
+   */
   @GetMapping("/competition/{serverId}/{channelId}")
   public DiscordCompetitionData getCompetitionData(@PathVariable("serverId") long serverId, @PathVariable("channelId") long channelId) {
-    return discordService.getCompetitionData(serverId, channelId);
+    return discordService.getLatestCompetitionData(serverId, channelId, null);
   }
 
   @GetMapping("/channels")

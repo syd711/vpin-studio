@@ -263,7 +263,7 @@ public class CompetitionService implements InitializingBean {
 
   @Override
   public void afterPropertiesSet() throws Exception {
-    scheduler.scheduleAtFixedRate(new CompetitionCheckRunnable(this), 1000 * 60 * 5);
+    scheduler.scheduleAtFixedRate(new CompetitionCheckRunnable(this), 1000 * 60 * 1);
   }
 
   @NonNull

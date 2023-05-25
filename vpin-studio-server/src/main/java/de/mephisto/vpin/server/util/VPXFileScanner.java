@@ -6,10 +6,13 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.poifs.filesystem.*;
+import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -52,17 +55,11 @@ public class VPXFileScanner {
     String script = VPXUtil.readScript(gameFile);
     List<String> split = Arrays.asList(script.split(System.getProperty("line.separator")));
     Collections.reverse(split);
-    for (String line : split) {
-      l = line;
+    scanLines(gameFile, start, result, split);
 
-      if (result.isScanComplete() || line.trim().equals("Option Explicit")) {
-        break;
-      }
-
-      lineSearchRom(result, line);
-      lineSearchNvOffset(result, line);
-      lineSearchHsFileName(result, line);
-      lineSearchAsset(result, line);
+    if(StringUtils.isEmpty(result.getRom())) {
+      LOG.info("Regular scan failed, running deep scan for " + gameFile.getAbsolutePath());
+      runDeepScan(gameFile, result);
     }
 
     if (!StringUtils.isEmpty(result.getRom())) {
@@ -71,6 +68,70 @@ public class VPXFileScanner {
       LOG.info("Finished scan of table " + gameFile.getAbsolutePath() + ", no ROM found" + "', took " + (System.currentTimeMillis() - start) + " ms.");
     }
     return result;
+  }
+
+  private static void runDeepScan(File gameFile, ScanResult result) {
+    BufferedReader bufferedReader = null;
+    ReverseLineInputStream reverseLineInputStream = null;
+    String line = null;
+    int count = 0;
+    try {
+      reverseLineInputStream = new ReverseLineInputStream(gameFile);
+      bufferedReader = new BufferedReader(new InputStreamReader(reverseLineInputStream));
+
+      bufferedReader.readLine();//skip last line if empty
+      boolean continueRead = true;
+      while (continueRead) {
+        line = bufferedReader.readLine();
+        if (line == null) {
+          line = bufferedReader.readLine();
+          line = bufferedReader.readLine();
+          if (line == null) {
+            break;
+          }
+        }
+        count++;
+
+        if (result.isScanComplete() || line.trim().equals("Option Explicit")) {
+          break;
+        }
+
+        lineSearchRom(result, line);
+        lineSearchNvOffset(result, line);
+        lineSearchHsFileName(result, line);
+        lineSearchAsset(result, line);
+      }
+    } catch (Exception e) {
+      LOG.error("Failed to read rom line '" + line + "' for  " + gameFile.getAbsolutePath() + ": " + e.getMessage(), e);
+    } finally {
+      try {
+        if (reverseLineInputStream != null) {
+          reverseLineInputStream.close();
+        }
+
+        if (bufferedReader != null) {
+          bufferedReader.close();
+        }
+      } catch (Exception e) {
+        LOG.error("Failed to close vpx file stream: " + e.getMessage(), e);
+      }
+    }
+  }
+
+  private static void scanLines(@NotNull File gameFile, long start, ScanResult result, List<String> split) {
+    String l;
+    for (String line : split) {
+      l = line;
+
+      if (result.isScanComplete()) {
+        break;
+      }
+
+      lineSearchRom(result, line);
+      lineSearchNvOffset(result, line);
+      lineSearchHsFileName(result, line);
+      lineSearchAsset(result, line);
+    }
   }
 
   /**

@@ -132,12 +132,12 @@
                               <Font size="14.0" />
                            </font>
                         </Label>
-                        <Label text="Remaining Time:" textFill="WHITE" GridPane.rowIndex="5">
+                        <Label text="Duration:" textFill="WHITE" GridPane.rowIndex="5">
                            <font>
                               <Font size="14.0" />
                            </font>
                         </Label>
-                        <Label fx:id="remainingDaysLabel" text="-" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="5">
+                        <Label fx:id="remainingTimeLabel" text="-" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="5">
                            <font>
                               <Font size="14.0" />
                            </font>
