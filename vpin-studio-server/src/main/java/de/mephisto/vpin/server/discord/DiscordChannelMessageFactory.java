@@ -24,7 +24,7 @@ public class DiscordChannelMessageFactory {
 
   private static final String COMPETITION_CANCELLED_TEMPLATE = "%s has " + CANCEL_INDICATOR + " the competition \"%s\".";
   private static final String COMPETITION_CANCELLED_ANONYMOUS_TEMPLATE = "The competition \"%s\" has been " + CANCEL_INDICATOR + ".";
-  private static final String COMPETITION_JOINED_TEMPLATE = "%s has joined the competition \"%s\".";
+  private static final String COMPETITION_JOINED_TEMPLATE = "%s has joined the competition \"%s\".\n(ID: %s)";
   private static final String COMPETITION_FINISHED_INCOMPLETE = "The competition \"%s\" (ID: %s) has been " + DiscordChannelMessageFactory.FINISHED_INDICATOR + ", " +
       "but no winner could be determined:\n" +
       "No scores have been found.";
@@ -117,7 +117,7 @@ public class DiscordChannelMessageFactory {
 
   public static String createCompetitionJoinedMessage(@NonNull Competition competition, @NonNull DiscordMember bot) {
     String playerName = "<@" + bot.getId() + ">";
-    return String.format(COMPETITION_JOINED_TEMPLATE, playerName, competition.getName());
+    return String.format(COMPETITION_JOINED_TEMPLATE, playerName, competition.getName(), competition.getUuid());
   }
 
 
