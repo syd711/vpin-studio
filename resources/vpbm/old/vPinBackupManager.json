@@ -1,7 +1,7 @@
 {
-  "VpinballBasePath" : "D:\\vPinball",
-  "BackupPath" : "D:\\workspace\\vpin-studio\\.\\resources\\archives\\backups",
-  "ExportPath" : "D:\\workspace\\vpin-studio\\.\\resources\\archives\\exports",
+  "VpinballBasePath" : "C:\\vPinball",
+  "BackupPath" : "E:\\Development\\workspace\\vpin-studio\\.\\resources\\archives\\backups",
+  "ExportPath" : "E:\\Development\\workspace\\vpin-studio\\.\\resources\\archives\\exports",
   "Emulators" : [ {
     "Name" : "Visual Pinball X"
   }, {
