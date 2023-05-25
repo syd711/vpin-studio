@@ -226,13 +226,13 @@ public class DiscordService implements InitializingBean, PreferenceChangedListen
         List<DiscordMessage> competitionUpdates = discordClient.getCompetitionUpdates(serverId, channelId, data.getMsgId(), uuid);
         for (DiscordMessage competitionUpdate : competitionUpdates) {
           ScoreSummary scoreSummary = toScoreSummary(highscoreParser, competitionUpdate);
-          if(!scoreSummary.getScores().isEmpty())  {
+          if (!scoreSummary.getScores().isEmpty()) {
             result.getScores().add(scoreSummary);
           }
         }
 
         if (!result.getScores().isEmpty()) {
-          result.setLatestScore(result.getScores().get(0));
+          result.setLatestScore(result.getScores().get(result.getScores().size() - 1));
         }
         else {
           LOG.info("No record highscore for " + uuid + " found, so this seems to be the first one.");
@@ -257,7 +257,7 @@ public class DiscordService implements InitializingBean, PreferenceChangedListen
           Message message = discordClient.getMessage(serverId, channelId, channelTopic.getMessageId());
           if (message != null) {
             DiscordCompetitionData competitionData = CompetitionDataHelper.getCompetitionData(message);
-            if(competitionData.getUuid().equals(uuid)) {
+            if (competitionData.getUuid().equals(uuid)) {
               return competitionData;
             }
           }
@@ -266,7 +266,7 @@ public class DiscordService implements InitializingBean, PreferenceChangedListen
         List<DiscordMessage> messageHistory = this.discordClient.getMessageHistoryAfter(serverId, channelId, channelTopic.getMessageId(), uuid);
         Collections.sort(messageHistory, Comparator.comparing(DiscordMessage::getCreatedAt));
 
-        LOG.info("Competition search returned " + messageHistory.size() + " messages, using last messageId '" + channelTopic.getMessageId() + "'");
+        LOG.info("Competition search returned " + messageHistory.size() + " messages, using messageId of channel topic '" + channelTopic.getMessageId() + "'");
         DiscordMessage lastCompetitionStartMessage = null;
         for (DiscordMessage discordMessage : messageHistory) {
           if (discordMessage.getRaw().contains(DiscordChannelMessageFactory.START_INDICATOR)) {

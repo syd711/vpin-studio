@@ -97,31 +97,20 @@ public class HighscoreChangeListenerImpl implements InitializingBean, HighscoreC
     else {
       ScoreSummary latestScore = scoreList.getLatestScore();
       List<Score> oldScores = latestScore.getScores();
-      LOG.info("The current online score for " + competition + "(" + oldScores.size() + " entries):");
+      LOG.info("The current online score for " + competition + " (" + oldScores.size() + " entries):");
       for (Score oldScore : oldScores) {
         LOG.info("[" + oldScore + "]");
       }
 
-      int position = highscoreService.calculateChangedPositionByScore(oldScores, event.getNewScore());
+      int position = highscoreService.calculateChangedPositionByScore(oldScores, newScore);
       if (position == -1) {
         LOG.info("No highscore change detected for " + game + " of discord competition '" + competition.getName() + "', skipping highscore message.");
       }
       else {
+        List<Score> updatedScores = new ArrayList<>(oldScores);
         Score oldScore = oldScores.get(position - 1);
-        List<Score> updatedScores = new ArrayList<>();
-        for (int i = 0; i < oldScores.size(); i++) {
-          if ((i + 1) == position) {
-            updatedScores.add(newScore);
-          }
-          if (updatedScores.size() <= oldScores.size()) {
-            updatedScores.add(oldScores.get(i));
-          }
-
-          //do not append endless new records
-          if (updatedScores.size() == oldScores.size()) {
-            break;
-          }
-        }
+        updatedScores.add(position - 1, newScore);
+        updatedScores = updatedScores.subList(0, updatedScores.size() - 1);
 
         LOG.info("Updated score post:");
         for (int i = 0; i < updatedScores.size(); i++) {

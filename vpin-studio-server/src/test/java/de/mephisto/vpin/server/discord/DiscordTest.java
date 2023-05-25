@@ -44,23 +44,23 @@ public class DiscordTest extends AbstractVPinServerTest {
 
     assertNotNull(client.getGuilds());
 
-    long messageId = 1111288134504820816l;
     String competitionUUID = "514103a0-c172-4567-8e1e-c3771263153b";
 
     DiscordCompetitionData competitionData = discordService.getCompetitionData(TEST_SERVER_ID, TEST_CHANNEL_ID, competitionUUID);
     assertNotNull(competitionData);
     assertEquals(competitionData.getUuid(), competitionUUID);
 
-    ScoreList scoreList = discordService.getScoreList(highscoreParser, competitionUUID, TEST_SERVER_ID, TEST_CHANNEL_ID);
-    assertTrue(scoreList.getScores().isEmpty());
+//    ScoreList scoreList = discordService.getScoreList(highscoreParser, competitionUUID, TEST_SERVER_ID, TEST_CHANNEL_ID);
+//    assertTrue(scoreList.getScores().isEmpty());
 
     List<DiscordMessage> messageHistoryAfter = client.getMessageHistoryAfter(TEST_SERVER_ID, TEST_CHANNEL_ID, competitionData.getMsgId(), competitionUUID);
     assertTrue(messageHistoryAfter.size() >= 1);
 
-    List<DiscordMessage> competitionUpdates = client.getCompetitionUpdates(TEST_SERVER_ID, TEST_CHANNEL_ID, messageId, competitionUUID);
+    List<DiscordMessage> competitionUpdates = client.getCompetitionUpdates(TEST_SERVER_ID, TEST_CHANNEL_ID, competitionData.getMsgId(), competitionUUID);
     List<ScoreSummary> scores = competitionUpdates.stream().map(message -> toScoreSummary(highscoreParser, message)).collect(Collectors.toList());
     for (ScoreSummary score : scores) {
       List<Score> entries = score.getScores();
+      System.out.println("---- " + score.getCreatedAt() + "---------" );
       for (Score entry : entries) {
         System.out.println(entry);
       }

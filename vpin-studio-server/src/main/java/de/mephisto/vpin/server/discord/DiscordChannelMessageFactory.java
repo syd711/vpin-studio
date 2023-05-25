@@ -142,7 +142,7 @@ public class DiscordChannelMessageFactory {
     String msg = String.format(template, newName, game.getGameDisplayName(), competition.getUuid(), newScore);
     msg = msg + DiscordOfflineChannelMessageFactory.getBeatenMessage(oldScore, newScore);
 
-    return msg + "Here is the updated highscore list:" + createHighscoreList(updatedScores);
+    return msg + "\nHere is the updated highscore list:" + createHighscoreList(updatedScores);
   }
 
   private static String createHighscoreList(List<Score> scores) {
