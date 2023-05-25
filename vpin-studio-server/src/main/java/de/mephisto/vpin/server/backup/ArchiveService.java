@@ -210,7 +210,11 @@ public class ArchiveService implements InitializingBean {
 
   public File getTargetFile(ArchiveDescriptor archiveDescriptor) {
     String descriptorFilename = archiveDescriptor.getFilename();
-    ArchiveType archiveType = ArchiveType.valueOf(FilenameUtils.getExtension(descriptorFilename).toUpperCase());
+    ArchiveType archiveType = ArchiveType.VPA;
+    if(descriptorFilename.endsWith("vpinzip")) {
+      archiveType = ArchiveType.VPBM;
+    }
+
     switch (archiveType) {
       case VPBM: {
         return new File(vpbmService.getArchiveFolder(), archiveDescriptor.getFilename());

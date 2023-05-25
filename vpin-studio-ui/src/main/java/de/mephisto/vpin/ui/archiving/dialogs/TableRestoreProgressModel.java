@@ -1,4 +1,4 @@
-package de.mephisto.vpin.ui.tables.dialogs;
+package de.mephisto.vpin.ui.archiving.dialogs;
 
 import de.mephisto.vpin.restclient.descriptors.ArchiveRestoreDescriptor;
 import de.mephisto.vpin.restclient.representations.ArchiveDescriptorRepresentation;

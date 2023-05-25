@@ -2,8 +2,9 @@ package de.mephisto.vpin.restclient.client;
 
 import de.mephisto.vpin.restclient.AssetType;
 import de.mephisto.vpin.restclient.FileUploadProgressListener;
+import de.mephisto.vpin.restclient.JobExecutionResult;
 import de.mephisto.vpin.restclient.descriptors.ArchiveBundleDescriptor;
-import de.mephisto.vpin.restclient.descriptors.ArchiveDownloadDescriptor;
+import de.mephisto.vpin.restclient.descriptors.ArchiveCopyToRepositoryDescriptor;
 import de.mephisto.vpin.restclient.descriptors.ArchiveRestoreDescriptor;
 import de.mephisto.vpin.restclient.descriptors.BackupDescriptor;
 import de.mephisto.vpin.restclient.representations.ArchiveDescriptorRepresentation;
@@ -65,11 +66,11 @@ public class ArchiveServiceClient extends VPinStudioClientService {
     return getRestClient().get(API + "archives/invalidate", Boolean.class);
   }
 
-  public String uploadArchive(File file, int repositoryId, FileUploadProgressListener listener) throws Exception {
+  public JobExecutionResult uploadArchive(File file, int repositoryId, FileUploadProgressListener listener) throws Exception {
     try {
       String url = getRestClient().getBaseUrl() + API + "archives/upload/";
       HttpEntity upload = createUpload(file, repositoryId, null, AssetType.ARCHIVE, listener);
-      return new RestTemplate().exchange(url, HttpMethod.POST, upload, String.class).getBody();
+      return new RestTemplate().exchange(url, HttpMethod.POST, upload, JobExecutionResult.class).getBody();
     } catch (Exception e) {
       LOG.error("Archive upload failed: " + e.getMessage(), e);
       throw e;
@@ -94,8 +95,8 @@ public class ArchiveServiceClient extends VPinStudioClientService {
     return getRestClient().post(API + "io/install", descriptor, Boolean.class);
   }
 
-  public boolean downloadArchive(ArchiveDownloadDescriptor descriptor) throws Exception {
-    return getRestClient().post(API + "io/download", descriptor, Boolean.class);
+  public boolean copyToRepository(ArchiveCopyToRepositoryDescriptor descriptor) throws Exception {
+    return getRestClient().post(API + "io/copytorepository", descriptor, Boolean.class);
   }
 
   public String bundle(ArchiveBundleDescriptor descriptor) throws Exception {

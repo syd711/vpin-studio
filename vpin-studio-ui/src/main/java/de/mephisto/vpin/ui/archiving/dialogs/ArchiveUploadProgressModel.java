@@ -37,7 +37,7 @@ public class ArchiveUploadProgressModel extends ProgressModel<File> {
 
   @Override
   public String nextToString(File file) {
-    return file.getName();
+    return "Uploading " + file.getName();
   }
 
   @Override

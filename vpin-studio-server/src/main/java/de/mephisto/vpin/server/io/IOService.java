@@ -99,19 +99,19 @@ public class IOService {
     return null;
   }
 
-  public boolean downloadArchive(ArchiveDownloadDescriptor archiveDownloadDescriptor) {
+  public boolean copyToRepository(ArchiveCopyToRepositoryDescriptor archiveCopyToRepositoryDescriptor) {
     try {
-      ArchiveDescriptor archiveDescriptor = archiveService.getArchiveDescriptor(archiveDownloadDescriptor.getArchiveSourceId(), archiveDownloadDescriptor.getFilename());
+      ArchiveDescriptor archiveDescriptor = archiveService.getArchiveDescriptor(archiveCopyToRepositoryDescriptor.getArchiveSourceId(), archiveCopyToRepositoryDescriptor.getFilename());
 
-      JobDescriptor jobDescriptor = new JobDescriptor(JobType.ARCHIVE_DOWNLOAD_TO_REPOSITORY, archiveDownloadDescriptor.getFilename());
+      JobDescriptor jobDescriptor = new JobDescriptor(JobType.ARCHIVE_DOWNLOAD_TO_REPOSITORY, archiveCopyToRepositoryDescriptor.getFilename());
       jobDescriptor.setTitle("Download of \"" + archiveDescriptor.getTableDetails().getGameDisplayName() + "\"");
 
-      DownloadArchiveToRepositoryJob job = new DownloadArchiveToRepositoryJob(archiveService, archiveDescriptor);
+      CopyArchiveToRepositoryJob job = new CopyArchiveToRepositoryJob(archiveService, archiveDescriptor, archiveCopyToRepositoryDescriptor.isOverwrite());
       jobDescriptor.setDescription("Downloading \"" + archiveDescriptor.getTableDetails().getGameDisplayName() + "\"");
       jobDescriptor.setJob(job);
 
       JobQueue.getInstance().offer(jobDescriptor);
-      LOG.info("Offered archive download job for \"" + archiveDescriptor.getTableDetails().getGameDisplayName() + "\"");
+      LOG.info("Offered archive copying for \"" + archiveDescriptor.getTableDetails().getGameDisplayName() + "\"");
     } catch (Exception e) {
       LOG.error("Import failed: " + e.getMessage(), e);
       return false;

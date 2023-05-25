@@ -66,7 +66,7 @@
                      </graphic>
                   </Button>
                   <Separator orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
-                  <Button fx:id="installBtn" layoutX="198.0" layoutY="10.0" mnemonicParsing="false" onAction="#onInstall" text="Restore" textFill="WHITE">
+                  <Button fx:id="installBtn" layoutX="198.0" layoutY="10.0" mnemonicParsing="false" onAction="#onRestore" text="Restore" textFill="WHITE">
                      <font>
                         <Font size="14.0" />
                      </font>

@@ -7,12 +7,13 @@ import de.mephisto.vpin.commons.utils.SystemCommandExecutor;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.representations.ArchiveDescriptorRepresentation;
 import de.mephisto.vpin.restclient.representations.ArchiveSourceRepresentation;
+import de.mephisto.vpin.restclient.representations.GameRepresentation;
 import de.mephisto.vpin.ui.NavigationController;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.WaitOverlayController;
+import de.mephisto.vpin.ui.events.ArchiveInstalledEvent;
 import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.events.StudioEventListener;
-import de.mephisto.vpin.ui.events.ArchiveInstalledEvent;
 import de.mephisto.vpin.ui.tables.TablesController;
 import de.mephisto.vpin.ui.util.Dialogs;
 import edu.umd.cs.findbugs.annotations.NonNull;
@@ -30,6 +31,7 @@ import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.StackPane;
+import org.apache.commons.io.FilenameUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -124,7 +126,7 @@ public class RepositoryController implements Initializable, StudioEventListener 
       vpbmBtbn.setDisable(true);
     });
 
-    new Thread(()-> {
+    new Thread(() -> {
       List<String> commands = Arrays.asList("vPinBackupManager.exe");
       LOG.info("Executing vpbm: " + String.join(" ", commands));
       File dir = new File("./resources/", "vpbm");
@@ -145,9 +147,20 @@ public class RepositoryController implements Initializable, StudioEventListener 
   }
 
   @FXML
-  private void onInstall() {
+  private void onRestore() {
     ObservableList<ArchiveDescriptorRepresentation> selectedItems = tableView.getSelectionModel().getSelectedItems();
     if (!selectedItems.isEmpty()) {
+      List<GameRepresentation> games = tablesController.getTableOverviewController().getGames();
+      for (ArchiveDescriptorRepresentation selectedItem : selectedItems) {
+        String archiveBaseName = FilenameUtils.getBaseName(selectedItem.getFilename());
+        Optional<GameRepresentation> first = games.stream().filter(g -> FilenameUtils.getBaseName(g.getGameFileName()).equals(archiveBaseName)).findFirst();
+        if (first.isPresent()) {
+          WidgetFactory.showAlert(stage, "Table Exists", "Delete the existing table before restoring it.");
+          return;
+        }
+      }
+
+
       if (client.getPinUPPopperService().isPinUPPopperRunning()) {
         Optional<ButtonType> buttonType = Dialogs.openPopperRunningWarning(Studio.stage);
         if (buttonType.isPresent() && buttonType.get().equals(ButtonType.APPLY)) {
@@ -249,7 +262,7 @@ public class RepositoryController implements Initializable, StudioEventListener 
   private void onDelete() {
     ArchiveDescriptorRepresentation selection = tableView.getSelectionModel().getSelectedItem();
     if (selection != null) {
-      Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Delete Archive '" + selection.getFilename() + "'?", null , null, "Delete");
+      Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Delete Archive '" + selection.getFilename() + "'?", null, null, "Delete");
       if (result.isPresent() && result.get().equals(ButtonType.OK)) {
         try {
           client.getArchiveService().deleteArchive(selection.getSource().getId(), selection.getFilename());
@@ -366,7 +379,7 @@ public class RepositoryController implements Initializable, StudioEventListener 
 
     altSoundColumn.setCellValueFactory(cellData -> {
       ArchiveDescriptorRepresentation value = cellData.getValue();
-      if(value.getPackageInfo() != null) {
+      if (value.getPackageInfo() != null) {
         boolean enabled = value.getPackageInfo().isAltSound();
         if (enabled) {
           return new SimpleObjectProperty(WidgetFactory.createCheckboxIcon());

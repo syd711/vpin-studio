@@ -1,8 +1,17 @@
 package de.mephisto.vpin.restclient.descriptors;
 
-public class ArchiveDownloadDescriptor {
+public class ArchiveCopyToRepositoryDescriptor {
   private long archiveSourceId;
   private String filename;
+  private boolean overwrite;
+
+  public boolean isOverwrite() {
+    return overwrite;
+  }
+
+  public void setOverwrite(boolean overwrite) {
+    this.overwrite = overwrite;
+  }
 
   public String getFilename() {
     return filename;

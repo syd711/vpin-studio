@@ -1,4 +1,4 @@
-package de.mephisto.vpin.server.games;
+  package de.mephisto.vpin.server.games;
 
 import de.mephisto.vpin.commons.utils.FileUtils;
 import de.mephisto.vpin.restclient.TableDetails;

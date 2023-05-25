@@ -1,7 +1,7 @@
 package de.mephisto.vpin.server.io;
 
 import de.mephisto.vpin.restclient.descriptors.ArchiveBundleDescriptor;
-import de.mephisto.vpin.restclient.descriptors.ArchiveDownloadDescriptor;
+import de.mephisto.vpin.restclient.descriptors.ArchiveCopyToRepositoryDescriptor;
 import de.mephisto.vpin.restclient.descriptors.BackupDescriptor;
 import de.mephisto.vpin.restclient.descriptors.ArchiveRestoreDescriptor;
 import org.slf4j.Logger;
@@ -34,8 +34,8 @@ public class IOResource {
     return ioService.installArchive(descriptor);
   }
 
-  @PostMapping("/download")
-  public Boolean downloadArchive(@RequestBody ArchiveDownloadDescriptor descriptor) {
-    return ioService.downloadArchive(descriptor);
+  @PostMapping("/copytorepository")
+  public Boolean copyToRepository(@RequestBody ArchiveCopyToRepositoryDescriptor descriptor) {
+    return ioService.copyToRepository(descriptor);
   }
 }

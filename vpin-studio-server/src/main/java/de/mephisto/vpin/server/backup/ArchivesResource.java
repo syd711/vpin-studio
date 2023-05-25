@@ -1,5 +1,7 @@
 package de.mephisto.vpin.server.backup;
 
+import de.mephisto.vpin.restclient.JobExecutionResult;
+import de.mephisto.vpin.restclient.JobExecutionResultFactory;
 import de.mephisto.vpin.restclient.representations.ArchiveDescriptorRepresentation;
 import de.mephisto.vpin.restclient.representations.ArchiveSourceRepresentation;
 import de.mephisto.vpin.server.system.SystemService;
@@ -12,7 +14,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.server.ResponseStatusException;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
@@ -25,7 +26,6 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import static de.mephisto.vpin.server.VPinStudioServer.API_SEGMENT;
-import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 
 @RestController
 @RequestMapping(API_SEGMENT + "archives")
@@ -165,8 +165,8 @@ public class ArchivesResource {
   }
 
   @PostMapping("/upload")
-  public ArchiveDescriptorRepresentation uploadArchive(@RequestParam(value = "file", required = false) MultipartFile file,
-                                                       @RequestParam("objectId") Integer repositoryId) {
+  public JobExecutionResult uploadArchive(@RequestParam(value = "file", required = false) MultipartFile file,
+                                          @RequestParam("objectId") Integer repositoryId) {
     try {
       if (file == null) {
         LOG.error("Archive upload request did not contain a file object.");
@@ -185,14 +185,12 @@ public class ArchivesResource {
         }
 
         archiveService.invalidateCache();
-        ArchiveDescriptor descriptor = archiveService.getArchiveDescriptor(out);
-        return toRepresentation(descriptor);
       }
-
-      return null;
     } catch (Exception e) {
-      throw new ResponseStatusException(INTERNAL_SERVER_ERROR, "Archive upload failed: " + e.getMessage());
+      LOG.error("Archive upload failed: " + e.getMessage(), e);
+      return JobExecutionResultFactory.create("Archive upload failed: " + e.getMessage());
     }
+    return JobExecutionResultFactory.create(null);
   }
 
   @PostMapping("/save")

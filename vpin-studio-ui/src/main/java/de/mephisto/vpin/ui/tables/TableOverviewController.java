@@ -601,6 +601,10 @@ public class TableOverviewController implements Initializable, StudioFXControlle
     this.onReload();
   }
 
+  public List<GameRepresentation> getGames() {
+    return games;
+  }
+
   public void initSelection() {
     GameRepresentation game = tableView.getSelectionModel().getSelectedItem();
     if (game != null) {

@@ -10,20 +10,23 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 
-public class DownloadArchiveToRepositoryJob implements Job {
-  private final static Logger LOG = LoggerFactory.getLogger(DownloadArchiveToRepositoryJob.class);
+public class CopyArchiveToRepositoryJob implements Job {
+  private final static Logger LOG = LoggerFactory.getLogger(CopyArchiveToRepositoryJob.class);
 
   private final ArchiveService archiveService;
   private final ArchiveDescriptor archiveDescriptor;
+  private final boolean overwrite;
 
   private String status;
 
   private File temp;
 
-  public DownloadArchiveToRepositoryJob(@NonNull ArchiveService archiveService,
-                                        @NonNull ArchiveDescriptor archiveDescriptor) {
+  public CopyArchiveToRepositoryJob(@NonNull ArchiveService archiveService,
+                                    @NonNull ArchiveDescriptor archiveDescriptor,
+                                    boolean overwrite) {
     this.archiveService = archiveService;
     this.archiveDescriptor = archiveDescriptor;
+    this.overwrite = overwrite;
   }
 
   @Override
@@ -36,7 +39,13 @@ public class DownloadArchiveToRepositoryJob implements Job {
         temp.delete();
       }
       if (archiveTarget.exists()) {
-        archiveTarget.delete();
+        if (overwrite && !archiveTarget.delete()) {
+          return JobExecutionResultFactory.create("Failed to delete existing archive " + archiveTarget.getAbsolutePath());
+        }
+
+        if (!overwrite) {
+          return new JobExecutionResult();
+        }
       }
 
       LOG.info("Writing into temporary download file " + temp.getAbsolutePath());

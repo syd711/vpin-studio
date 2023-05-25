@@ -1,4 +1,4 @@
-package de.mephisto.vpin.ui.tables.dialogs;
+package de.mephisto.vpin.ui.archiving.dialogs;
 
 import de.mephisto.vpin.commons.fx.DialogController;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
@@ -27,8 +27,8 @@ import java.util.ResourceBundle;
 
 import static de.mephisto.vpin.ui.Studio.client;
 
-public class TableRestoreFromBackController implements Initializable, DialogController {
-  private final static Logger LOG = LoggerFactory.getLogger(TableRestoreFromBackController.class);
+public class TableRestoreController implements Initializable, DialogController {
+  private final static Logger LOG = LoggerFactory.getLogger(TableRestoreController.class);
 
   @FXML
   private Label titleLabel;

@@ -1,8 +1,8 @@
-package de.mephisto.vpin.ui.tables.dialogs;
+package de.mephisto.vpin.ui.archiving.dialogs;
 
 import de.mephisto.vpin.commons.fx.DialogController;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
-import de.mephisto.vpin.restclient.descriptors.ArchiveDownloadDescriptor;
+import de.mephisto.vpin.restclient.descriptors.ArchiveCopyToRepositoryDescriptor;
 import de.mephisto.vpin.restclient.representations.ArchiveDescriptorRepresentation;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.jobs.JobPoller;
@@ -10,6 +10,7 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.stage.Stage;
 import org.slf4j.Logger;
@@ -27,6 +28,9 @@ public class CopyArchiveToRepositoryDialogController implements Initializable, D
   @FXML
   private Label titleLabel;
 
+  @FXML
+  private CheckBox overwriteCheckbox;
+
   private boolean result = false;
   private List<ArchiveDescriptorRepresentation> archiveDescriptors;
 
@@ -42,10 +46,11 @@ public class CopyArchiveToRepositoryDialogController implements Initializable, D
     result = true;
     try {
       for (ArchiveDescriptorRepresentation selectedItem : archiveDescriptors) {
-        ArchiveDownloadDescriptor descriptor = new ArchiveDownloadDescriptor();
+        ArchiveCopyToRepositoryDescriptor descriptor = new ArchiveCopyToRepositoryDescriptor();
+        descriptor.setOverwrite(overwriteCheckbox.isSelected());
         descriptor.setFilename(selectedItem.getFilename());
         descriptor.setArchiveSourceId(selectedItem.getSource().getId());
-        client.getArchiveService().downloadArchive(descriptor);
+        client.getArchiveService().copyToRepository(descriptor);
         JobPoller.getInstance().setPolling();
       }
     } catch (Exception e) {

@@ -64,7 +64,7 @@ public class ArchiveUploadController implements Initializable, DialogController 
         });
 
         ArchiveSourceRepresentation selectedItem = this.repositoryCombo.getSelectionModel().getSelectedItem();
-        ArchiveUploadProgressModel model = new ArchiveUploadProgressModel("Upload", selectedItem.getId(), selection);
+        ArchiveUploadProgressModel model = new ArchiveUploadProgressModel("Repository Upload", selectedItem.getId(), selection);
         Dialogs.createProgressDialog(model);
       } catch (Exception e) {
         LOG.error("Upload failed: " + e.getMessage(), e);
@@ -76,9 +76,9 @@ public class ArchiveUploadController implements Initializable, DialogController 
   @FXML
   private void onFileSelect() {
     FileChooser fileChooser = new FileChooser();
-    fileChooser.setTitle("Select Archive File");
+    fileChooser.setTitle("Select Archive or Bundle Files");
     fileChooser.getExtensionFilters().addAll(
-        new FileChooser.ExtensionFilter("Visual Pinball Archive", "*.*"));
+        new FileChooser.ExtensionFilter("Visual Pinball Archive", "*.vpinzip", "*.zip"));
 
     if (ArchiveUploadController.lastFolderSelection != null) {
       fileChooser.setInitialDirectory(ArchiveUploadController.lastFolderSelection);

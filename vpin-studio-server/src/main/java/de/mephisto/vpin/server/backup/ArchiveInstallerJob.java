@@ -20,7 +20,7 @@ public class ArchiveInstallerJob implements Job {
   private final GameService gameService;
   private final ArchiveService archiveService;
   private final ArchiveRestoreDescriptor installDescriptor;
-  private DownloadArchiveToRepositoryJob downloadJob;
+  private CopyArchiveToRepositoryJob downloadJob;
 
   public ArchiveInstallerJob(@NonNull TableInstallerAdapter tableInstallerAdapter,
                              @NonNull ArchiveDescriptor archiveDescriptor,
@@ -54,11 +54,15 @@ public class ArchiveInstallerJob implements Job {
     return tableInstallerAdapter.getStatus();
   }
 
+  /**
+   * Used by the table manager
+   * @return
+   */
   @Override
   public JobExecutionResult execute() {
     ArchiveSource source = archiveDescriptor.getSource();
     if(source.getType().equals(ArchiveSourceType.Http.name())) {
-      downloadJob = new DownloadArchiveToRepositoryJob(archiveService, archiveDescriptor);
+      downloadJob = new CopyArchiveToRepositoryJob(archiveService, archiveDescriptor, false);
       downloadJob.execute();
       this.downloadJob = null;
       tableInstallerAdapter.getArchiveDescriptor().setFilename(archiveDescriptor.getFilename());
