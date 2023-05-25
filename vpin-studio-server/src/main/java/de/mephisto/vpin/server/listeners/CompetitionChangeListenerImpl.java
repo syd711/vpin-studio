@@ -103,6 +103,8 @@ public class CompetitionChangeListenerImpl implements InitializingBean, Competit
       boolean isOwner = competition.getOwner().equals(String.valueOf(discordService.getBotId()));
       DiscordMember bot = discordService.getBot();
       if (game != null && !isOwner && bot != null) {
+        highscoreService.resetHighscore(game);
+
         long discordServerId = competition.getDiscordServerId();
         long discordChannelId = competition.getDiscordChannelId();
         discordService.sendMessage(discordServerId, discordChannelId, DiscordChannelMessageFactory.createCompetitionJoinedMessage(competition, bot));
