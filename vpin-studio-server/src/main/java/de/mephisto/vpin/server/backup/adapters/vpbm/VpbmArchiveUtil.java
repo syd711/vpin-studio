@@ -51,7 +51,7 @@ public class VpbmArchiveUtil {
         File manifestFolder = new File(file.getParentFile(), "manifests");
         if (manifestFolder.exists()) {
           File manifestFile = new File(manifestFolder, FilenameUtils.getBaseName(file.getName()) + ".json");
-          if (manifestFolder.exists()) {
+          if (manifestFile.exists()) {
             String manifestString = FileUtils.readFileToString(manifestFile, StandardCharsets.UTF_8);
 
             info.setPopperMedia(manifestString.contains("POPMedia"));
