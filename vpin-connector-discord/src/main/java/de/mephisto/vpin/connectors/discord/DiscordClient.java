@@ -58,7 +58,7 @@ public class DiscordClient {
       if (channel != null) {
         Member member = guild.getMemberById(memberId);
         if (member != null) {
-          List<Permission> permissionList = Arrays.stream(permissions).map(p -> Permissions.toPermission(p)).collect(Collectors.toList());
+          List<Permission> permissionList = Arrays.stream(permissions).map(Permissions::toPermission).collect(Collectors.toList());
           return PermissionUtil.checkPermission(channel.getPermissionContainer(), member, permissionList.toArray(new Permission[0]));
         }
       }
@@ -135,7 +135,7 @@ public class DiscordClient {
       TextChannel channel = guild.getChannelById(TextChannel.class, channelId);
       if (channel != null) {
         List<Message> complete = channel.retrievePinnedMessages().complete();
-        return complete.stream().map(m -> toMessage(m)).collect(Collectors.toList());
+        return complete.stream().map(this::toMessage).collect(Collectors.toList());
       }
       else {
         LOG.error("No discord channel found for id '" + channelId + "'");
@@ -329,7 +329,7 @@ public class DiscordClient {
 
   private boolean embedContains(List<MessageEmbed> embeds, String uuid) {
     for (MessageEmbed embed : embeds) {
-      if (embed.getDescription().contains(uuid)) {
+      if (embed.getDescription() != null && embed.getDescription().contains(uuid)) {
         return true;
       }
     }

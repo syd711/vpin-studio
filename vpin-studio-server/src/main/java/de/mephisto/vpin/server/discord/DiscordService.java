@@ -259,14 +259,6 @@ public class DiscordService implements InitializingBean, PreferenceChangedListen
     return null;
   }
 
-  private ChannelTopic getTopicData(long serverId, long channelId) {
-    if (this.discordClient != null) {
-      String topic = this.discordClient.getTopic(serverId, channelId);
-      return ChannelTopic.toChannelTopic(topic);
-    }
-    return null;
-  }
-
   private DiscordClient recreateDiscordClient() {
     String botToken = (String) preferencesService.getPreferenceValue(PreferenceNames.DISCORD_BOT_TOKEN);
 
@@ -444,7 +436,13 @@ public class DiscordService implements InitializingBean, PreferenceChangedListen
   }
 
   public void addCompetitionPlayer(long serverId, long channelId, long msgId) {
-    discordClient.pinMessage(serverId, channelId, msgId);
+    List<DiscordMessage> pinnedMessages = discordClient.getPinnedMessages(serverId, channelId);
+    if(pinnedMessages.size() < 50) {
+      discordClient.pinMessage(serverId, channelId, msgId);
+    }
+    else {
+      LOG.warn("Player could not be added to the player list for channel " + channelId + ", pin limit has been reached.");
+    }
   }
 
   public void removeCompetitionPlayer(long serverId, long channelId) {
@@ -457,7 +455,7 @@ public class DiscordService implements InitializingBean, PreferenceChangedListen
 
       if (pinnedMessage.getRaw().contains(DiscordChannelMessageFactory.JOIN_INDICATOR)) {
         discordClient.unpinMessage(serverId, channelId, pinnedMessage.getId());
-        LOG.info("Removed bot from list of players.");
+        LOG.info("Removed bot from list of players in channel " + channelId);
       }
     }
   }
