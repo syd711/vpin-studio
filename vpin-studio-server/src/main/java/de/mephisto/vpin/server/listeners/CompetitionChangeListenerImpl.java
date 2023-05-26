@@ -70,7 +70,7 @@ public class CompetitionChangeListenerImpl implements InitializingBean, Competit
           LOG.info("Finished Discord update of \"" + competition.getName() + "\"");
         }
         else {
-          if (!discordService.isCompetitionActive(serverId, serverId, competition.getUuid())) {
+          if (!discordService.isCompetitionActive(serverId, channelId, competition.getUuid())) {
             LOG.warn("The start of competition \"" + competition.getName() + "\" has been cancelled, because its no longer valid. " +
                 "The competition will be close during the next check.");
             return;

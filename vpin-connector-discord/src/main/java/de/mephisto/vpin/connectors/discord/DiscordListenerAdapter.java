@@ -50,6 +50,14 @@ public class DiscordListenerAdapter extends ListenerAdapter {
   }
 
   @Override
+  public void onMessageDelete(MessageDeleteEvent event) {
+    super.onMessageDelete(event);
+    long channelId = event.getChannel().getIdLong();
+    discordClient.invalidateMessageCache(channelId, -1);
+  }
+
+
+  @Override
   public void onReady(ReadyEvent event) {
 
   }
