@@ -151,10 +151,10 @@ public class DiscordClient {
         return collect;
       }
       else {
-        LOG.error("No discord channel found for id '" + channelId + "'");
+        LOG.error("No discord channel found for id '" + channelId + "' to read pinned messages from.");
       }
     }
-    return null;
+    return Collections.emptyList();
   }
 
   public void setSlowMode(long serverId, long channelId, int seconds) {

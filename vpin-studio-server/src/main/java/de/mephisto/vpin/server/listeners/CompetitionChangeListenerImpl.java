@@ -55,8 +55,8 @@ public class CompetitionChangeListenerImpl implements InitializingBean, Competit
     if (game != null) {
       if (competition.getType().equals(CompetitionType.DISCORD.name())) {
         boolean isOwner = competition.getOwner().equals(String.valueOf(discordService.getBotId()));
-        long discordServerId = competition.getDiscordServerId();
-        long discordChannelId = competition.getDiscordChannelId();
+        long serverId = competition.getDiscordServerId();
+        long channelId = competition.getDiscordChannelId();
         long botId = discordService.getBotId();
 
         if (isOwner) {
@@ -64,13 +64,13 @@ public class CompetitionChangeListenerImpl implements InitializingBean, Competit
           byte[] image = assetService.getCompetitionBackgroundFor(competition, game);
           String message = DiscordChannelMessageFactory.createDiscordCompetitionCreatedMessage(botId, competition.getUuid());
 
-          long messageId = discordService.sendMessage(discordServerId, discordChannelId, message, image, competition.getName() + ".png", base64Data);
+          long messageId = discordService.sendMessage(serverId, channelId, message, image, competition.getName() + ".png", base64Data);
           //since we started a new competition, all messages before today are irrelevant (we check only today so we don't run into topic update limits)
-          discordService.initCompetition(discordServerId, discordChannelId, messageId);
+          discordService.initCompetition(serverId, channelId, messageId);
           LOG.info("Finished Discord update of \"" + competition.getName() + "\"");
         }
         else {
-          if (!discordService.isCompetitionActive(discordServerId, discordServerId, competition.getUuid())) {
+          if (!discordService.isCompetitionActive(serverId, serverId, competition.getUuid())) {
             LOG.warn("The start of competition \"" + competition.getName() + "\" has been cancelled, because its no longer valid. " +
                 "The competition will be close during the next check.");
             return;
