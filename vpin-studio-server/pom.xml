@@ -324,6 +324,9 @@
                                         <include>empty-b2s-preview.png</include>
                                         <include>vpbm-128.png</include>
                                     </includes>
+                                    <excludes>
+                                        <exclude>vpbm/identifiers.dat</exclude>
+                                    </excludes>
                                 </resource>
                             </resources>
                         </configuration>
