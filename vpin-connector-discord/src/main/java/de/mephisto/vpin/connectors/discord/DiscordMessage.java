@@ -59,6 +59,21 @@ public class DiscordMessage {
   }
 
   @Override
+  public boolean equals(Object o) {
+    if (this == o) return true;
+    if (!(o instanceof DiscordMessage)) return false;
+
+    DiscordMessage that = (DiscordMessage) o;
+
+    return id == that.id;
+  }
+
+  @Override
+  public int hashCode() {
+    return (int) (id ^ (id >>> 32));
+  }
+
+  @Override
   public String toString() {
     return "Discord Message '" + raw + "' (" + id + ")";
   }

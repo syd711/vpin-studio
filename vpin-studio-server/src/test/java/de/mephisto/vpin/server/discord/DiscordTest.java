@@ -50,9 +50,6 @@ public class DiscordTest extends AbstractVPinServerTest {
 //    ScoreList scoreList = discordService.getScoreList(highscoreParser, competitionUUID, TEST_SERVER_ID, TEST_CHANNEL_ID);
 //    assertTrue(scoreList.getScores().isEmpty());
 
-    List<DiscordMessage> messageHistoryAfter = client.getMessageHistoryAfter(TEST_SERVER_ID, TEST_CHANNEL_ID, competitionData.getMsgId(), competitionUUID);
-    assertTrue(messageHistoryAfter.size() >= 1);
-
     ScoreList scoreList = discordService.getScoreList(highscoreParser, competitionUUID, TEST_SERVER_ID, TEST_CHANNEL_ID);
     List<ScoreSummary> scores = scoreList.getScores();
     for (ScoreSummary score : scores) {

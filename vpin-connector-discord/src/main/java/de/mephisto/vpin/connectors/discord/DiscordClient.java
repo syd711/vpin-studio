@@ -33,6 +33,8 @@ public class DiscordClient {
   private final long botId;
   private long defaultGuildId;
 
+  private final Map<Long, PinnedMessages> pinnedMessagesCache = new HashMap<>();
+
   private final DiscordCache<List<DiscordMessage>> messageCache = new DiscordCache<>();
 
   public DiscordClient(String botToken, DiscordCommandResolver commandResolver) throws InterruptedException {
@@ -130,12 +132,21 @@ public class DiscordClient {
   }
 
   public List<DiscordMessage> getPinnedMessages(long serverId, long channelId) {
+    if (pinnedMessagesCache.containsKey(channelId)) {
+      return pinnedMessagesCache.get(channelId).getMessages();
+    }
+
     Guild guild = getGuild(serverId);
     if (guild != null) {
       TextChannel channel = guild.getChannelById(TextChannel.class, channelId);
       if (channel != null) {
+        long start = System.currentTimeMillis();
         List<Message> complete = channel.retrievePinnedMessages().complete();
-        return complete.stream().map(this::toMessage).collect(Collectors.toList());
+        LOG.info("Pinned messages fetch took " + (System.currentTimeMillis() - start) + "ms.");
+        List<DiscordMessage> collect = complete.stream().map(this::toMessage).collect(Collectors.toList());
+        pinnedMessagesCache.put(channelId, new PinnedMessages());
+        pinnedMessagesCache.get(channelId).getMessages().addAll(collect);
+        return collect;
       }
       else {
         LOG.error("No discord channel found for id '" + channelId + "'");
@@ -144,12 +155,28 @@ public class DiscordClient {
     return null;
   }
 
+  public void setSlowMode(long serverId, long channelId, int seconds) {
+    Guild guild = getGuild(serverId);
+    if (guild != null) {
+      TextChannel channel = guild.getChannelById(TextChannel.class, channelId);
+      if (channel != null) {
+        channel.getManager().setSlowmode(seconds);
+      }
+    }
+  }
+
   public void pinMessage(long serverId, long channelId, long messageId) {
     Guild guild = getGuild(serverId);
     if (guild != null) {
       TextChannel channel = guild.getChannelById(TextChannel.class, channelId);
       if (channel != null) {
         channel.pinMessageById(messageId).complete();
+        if (!this.pinnedMessagesCache.containsKey(channelId)) {
+          this.pinnedMessagesCache.put(channelId, new PinnedMessages());
+        }
+
+        DiscordMessage msg = toMessage(getMessage(serverId, channelId, messageId));
+        this.pinnedMessagesCache.get(channelId).getMessages().add(msg);
       }
       else {
         LOG.error("No discord channel found for id '" + channelId + "'");
@@ -162,7 +189,13 @@ public class DiscordClient {
     if (guild != null) {
       TextChannel channel = guild.getChannelById(TextChannel.class, channelId);
       if (channel != null) {
+        LOG.info("Unpinned message " + messageId);
         channel.unpinMessageById(messageId).complete();
+
+        if (!this.pinnedMessagesCache.containsKey(channelId)) {
+          DiscordMessage msg = toMessage(getMessage(serverId, channelId, messageId));
+          this.pinnedMessagesCache.get(channelId).getMessages().remove(msg);
+        }
       }
       else {
         LOG.error("No discord channel found for id '" + channelId + "'");
@@ -190,9 +223,22 @@ public class DiscordClient {
     }
   }
 
-  public void invalidateMessageCache(long channelId) {
+  public void invalidateMessageCache(long channelId, long originUserId) {
     messageCache.invalidate(channelId);
+
+    long botId = this.getBotId();
+    if(botId != originUserId) {
+      invalidatePinnedMessagesCache(channelId);
+    }
+
     LOG.info("Invalidated Discord competition message cache for " + channelId);
+  }
+
+  public void invalidatePinnedMessagesCache(long channelId) {
+    if (pinnedMessagesCache.containsKey(channelId)) {
+      pinnedMessagesCache.remove(channelId);
+      LOG.info("Invalidated Discord pinned messages cache for " + channelId);
+    }
   }
 
   public DiscordMember getMember(long serverId, long memberId) {
@@ -252,7 +298,7 @@ public class DiscordClient {
       }
     }
     else {
-      throw new UnsupportedOperationException("No guild found for default guildId '" + this.defaultGuildId + "'");
+      throw new UnsupportedOperationException("No guild found for default guildId '" + serverId + "'");
     }
     return -1;
   }
@@ -275,7 +321,7 @@ public class DiscordClient {
       }
     }
     else {
-      throw new UnsupportedOperationException("No guild found for default guildId '" + this.defaultGuildId + "'");
+      throw new UnsupportedOperationException("No guild found for default guildId '" + serverId + "'");
     }
     return -1;
   }
@@ -295,45 +341,6 @@ public class DiscordClient {
       LOG.warn("Unable to retrieve topic from channel '" + channelId + "', no connection.");
     }
     return null;
-  }
-
-  public List<DiscordMessage> getMessageHistoryAfter(long serverId, long channelId, long afterMessageId, String uuid) {
-    if (!messageCache.contains(channelId)) {
-      Guild guild = getGuild(serverId);
-      if (guild != null) {
-        TextChannel channel = guild.getChannelById(TextChannel.class, channelId);
-        if (channel != null) {
-          MessageHistory history = MessageHistory.getHistoryAfter(channel, String.valueOf(afterMessageId)).complete();
-          List<Message> messages = new ArrayList<>(history.getRetrievedHistory());
-          messages.sort((o1, o2) -> o2.getTimeCreated().compareTo(o1.getTimeCreated()));
-          List<Message> botMessages = messages.stream().filter(m -> m.getAuthor().isBot()).collect(Collectors.toList());
-
-          List<DiscordMessage> result = new ArrayList<>();
-          for (Message botMessage : botMessages) {
-            if (uuid == null || botMessage.getContentRaw().contains(uuid) || embedContains(botMessage.getEmbeds(), uuid)) {
-              Member member = botMessage.getMember();
-              if (member != null) {
-                DiscordMessage message = toMessage(botMessage);
-                result.add(message);
-              }
-            }
-          }
-
-          LOG.info("Discord message search for UUID '" + uuid + "' returned " + result.size() + " messages.");
-          messageCache.put(channelId, result);
-        }
-      }
-    }
-    return messageCache.get(channelId);
-  }
-
-  private boolean embedContains(List<MessageEmbed> embeds, String uuid) {
-    for (MessageEmbed embed : embeds) {
-      if (embed.getDescription() != null && embed.getDescription().contains(uuid)) {
-        return true;
-      }
-    }
-    return false;
   }
 
   private DiscordMessage toMessage(Message msg) {

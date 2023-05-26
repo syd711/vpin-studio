@@ -69,7 +69,7 @@ public class DiscordChannelMessageFactory {
         "```";
 
     //do not use the original Score#toString() method as the online position does not match with the persisted score
-    String score = "#1 " + playerName + "   " + newScore.getScore();
+    String score = "#1 " + newScore.getPlayerInitials() + "   " + newScore.getScore();
     String msg = String.format(template, playerName, competition.getName(), competition.getUuid(), score);
     return msg + "\nHere is the " + HIGHSCORE_INDICATOR + ":" + createInitialHighscoreList(newScore, scoreCount - 1);
 

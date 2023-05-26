@@ -66,7 +66,7 @@ public class CompetitionChangeListenerImpl implements InitializingBean, Competit
 
           long messageId = discordService.sendMessage(discordServerId, discordChannelId, message, image, competition.getName() + ".png", base64Data);
           //since we started a new competition, all messages before today are irrelevant (we check only today so we don't run into topic update limits)
-          discordService.saveCompetitionInfoMessage(discordServerId, discordChannelId, messageId);
+          discordService.initCompetition(discordServerId, discordChannelId, messageId);
           LOG.info("Finished Discord update of \"" + competition.getName() + "\"");
         }
         else {

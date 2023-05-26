@@ -3,7 +3,10 @@ package de.mephisto.vpin.server.discord;
 import de.mephisto.vpin.connectors.discord.*;
 import de.mephisto.vpin.restclient.PlayerDomain;
 import de.mephisto.vpin.restclient.PreferenceNames;
-import de.mephisto.vpin.restclient.discord.*;
+import de.mephisto.vpin.restclient.discord.DiscordBotStatus;
+import de.mephisto.vpin.restclient.discord.DiscordChannel;
+import de.mephisto.vpin.restclient.discord.DiscordCompetitionData;
+import de.mephisto.vpin.restclient.discord.DiscordServer;
 import de.mephisto.vpin.server.competitions.ScoreSummary;
 import de.mephisto.vpin.server.highscores.HighscoreParser;
 import de.mephisto.vpin.server.highscores.Score;
@@ -216,28 +219,22 @@ public class DiscordService implements InitializingBean, PreferenceChangedListen
   public ScoreList getScoreList(@NonNull HighscoreParser highscoreParser, @NonNull String uuid, long serverId, long channelId) {
     ScoreList result = new ScoreList();
     if (this.discordClient != null) {
-      DiscordCompetitionData data = this.getCompetitionData(serverId, channelId);
-      if (data != null) {
-        List<DiscordMessage> competitionUpdates = discordClient.getPinnedMessages(serverId, channelId);
-        for (DiscordMessage competitionUpdate : competitionUpdates) {
-          if (competitionUpdate.getRaw().contains(DiscordChannelMessageFactory.HIGHSCORE_INDICATOR)) {
-            ScoreSummary scoreSummary = toScoreSummary(highscoreParser, competitionUpdate);
-            if (!scoreSummary.getScores().isEmpty()) {
-              result.getScores().add(scoreSummary);
-            }
-            break;
+      List<DiscordMessage> competitionUpdates = discordClient.getPinnedMessages(serverId, channelId);
+      for (DiscordMessage pinnedMessage : competitionUpdates) {
+        if (pinnedMessage.getRaw().contains(DiscordChannelMessageFactory.HIGHSCORE_INDICATOR) && pinnedMessage.getRaw().contains(uuid)) {
+          ScoreSummary scoreSummary = toScoreSummary(highscoreParser, pinnedMessage);
+          if (!scoreSummary.getScores().isEmpty()) {
+            result.getScores().add(scoreSummary);
           }
-        }
-
-        if (!result.getScores().isEmpty()) {
-          result.setLatestScore(result.getScores().get(result.getScores().size() - 1));
-        }
-        else {
-          LOG.info("No record highscore for " + uuid + " found, so this seems to be the first one.");
+          break;
         }
       }
+
+      if (!result.getScores().isEmpty()) {
+        result.setLatestScore(result.getScores().get(result.getScores().size() - 1));
+      }
       else {
-        LOG.error("No competition data found for '" + uuid + "', unable to calculated highscore updates for this competition.");
+        LOG.info("No record highscore for " + uuid + " found, so this seems to be the first one.");
       }
     }
     return result;
@@ -407,9 +404,11 @@ public class DiscordService implements InitializingBean, PreferenceChangedListen
     return summary;
   }
 
-  public void saveCompetitionInfoMessage(long serverId, long channelId, long messageId) {
+  public void initCompetition(long serverId, long channelId, long messageId) {
     //delete existing pins for new competition starts
     clearPinnedMessages(serverId, channelId);
+    //use the slow mode to avoid concurrent pinning of new highscores
+    discordClient.setSlowMode(serverId, channelId, 5);
     discordClient.pinMessage(serverId, channelId, messageId);
   }
 
@@ -417,7 +416,7 @@ public class DiscordService implements InitializingBean, PreferenceChangedListen
     List<DiscordMessage> pinnedMessages = discordClient.getPinnedMessages(serverId, channelId);
     for (DiscordMessage pinnedMessage : pinnedMessages) {
       if (pinnedMessage.getRaw().contains(DiscordChannelMessageFactory.HIGHSCORE_INDICATOR)) {
-        discordClient.unpinMessage(channelId, channelId, pinnedMessage.getId());
+        discordClient.unpinMessage(serverId, channelId, pinnedMessage.getId());
       }
     }
     discordClient.pinMessage(serverId, channelId, msgId);
@@ -426,7 +425,7 @@ public class DiscordService implements InitializingBean, PreferenceChangedListen
   public void clearPinnedMessages(long serverId, long channelId) {
     List<DiscordMessage> pinnedMessages = discordClient.getPinnedMessages(serverId, channelId);
     for (DiscordMessage pinnedMessage : pinnedMessages) {
-      discordClient.unpinMessage(channelId, channelId, pinnedMessage.getId());
+      discordClient.unpinMessage(serverId, channelId, pinnedMessage.getId());
     }
   }
 
@@ -437,7 +436,7 @@ public class DiscordService implements InitializingBean, PreferenceChangedListen
 
   public void addCompetitionPlayer(long serverId, long channelId, long msgId) {
     List<DiscordMessage> pinnedMessages = discordClient.getPinnedMessages(serverId, channelId);
-    if(pinnedMessages.size() < 50) {
+    if (pinnedMessages.size() < 50) {
       discordClient.pinMessage(serverId, channelId, msgId);
     }
     else {

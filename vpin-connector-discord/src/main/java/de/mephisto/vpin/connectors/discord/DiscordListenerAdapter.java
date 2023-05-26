@@ -53,7 +53,7 @@ public class DiscordListenerAdapter extends ListenerAdapter {
   public void onMessageDelete(MessageDeleteEvent event) {
     super.onMessageDelete(event);
     long channelId = event.getChannel().getIdLong();
-    discordClient.invalidateMessageCache(channelId);
+    discordClient.invalidateMessageCache(channelId, -1);
   }
 
 
@@ -86,7 +86,8 @@ public class DiscordListenerAdapter extends ListenerAdapter {
     if (event.getAuthor().isBot()) {
       //a message from another(?) bot was posted, invalidate the message history to detect a new highscore
       long channelId = event.getMessage().getChannel().getIdLong();
-      discordClient.invalidateMessageCache(channelId);
+      long originUserId = event.getAuthor().getIdLong();
+      discordClient.invalidateMessageCache(channelId, originUserId);
       return;
     }
 

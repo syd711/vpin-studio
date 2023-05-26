@@ -126,7 +126,7 @@ public class HighscoreChangeListenerImpl implements InitializingBean, HighscoreC
           LOG.info("[" + s + "]");
         }
 
-        LOG.info("Emitting Discord highscore changed message for discord competition '" + competition + "'");
+        LOG.info("Emitting Discord highscore changed message for discord competition " + competition);
         long newHighscoreMessageId = discordService.sendMessage(discordServerId, discordChannelId, DiscordChannelMessageFactory.createCompetitionHighscoreCreatedMessage(game, competition, oldScore, newScore, updatedScores));
         discordService.updateHighscoreMessage(discordServerId, discordChannelId, newHighscoreMessageId);
       }
