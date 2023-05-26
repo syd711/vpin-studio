@@ -17,20 +17,22 @@ import java.util.List;
 public class DiscordChannelMessageFactory {
   public static final String START_INDICATOR = "started a new competition";
   public static final String CANCEL_INDICATOR = "cancelled";
+  public static final String JOIN_INDICATOR = "joined";
   public static final String FINISHED_INDICATOR = "finished";
+  public static final String HIGHSCORE_INDICATOR = "updated highscore list";
 
   private static final String DISCORD_COMPETITION_CREATED_TEMPLATE = "%s " + START_INDICATOR + "!\n(ID: %s)";
 
 
   private static final String COMPETITION_CANCELLED_TEMPLATE = "%s has " + CANCEL_INDICATOR + " the competition \"%s\".";
   private static final String COMPETITION_CANCELLED_ANONYMOUS_TEMPLATE = "The competition \"%s\" has been " + CANCEL_INDICATOR + ".";
-  private static final String COMPETITION_JOINED_TEMPLATE = "%s has joined the competition \"%s\".\n(ID: %s)";
+  private static final String COMPETITION_JOINED_TEMPLATE = "%s has " + JOIN_INDICATOR + " the competition \"%s\".\n(ID: %s)";
   private static final String COMPETITION_FINISHED_INCOMPLETE = "The competition \"%s\" (ID: %s) has been " + DiscordChannelMessageFactory.FINISHED_INDICATOR + ", " +
       "but no winner could be determined:\n" +
       "No scores have been found.";
   private static final String COMPETITION_FINISHED_TEMPLATE = "Congratulation %s!\n" +
       "```" +
-      "The competition \"%s\" (ID: %s) has been finished!\n" +
+      "The competition \"%s\" has been finished!\n(ID: %s) \n" +
       "And the winner is...\n" +
       "\n" +
       "        %s\n" +
@@ -69,8 +71,32 @@ public class DiscordChannelMessageFactory {
     //do not use the original Score#toString() method as the online position does not match with the persisted score
     String score = "#1 " + playerName + "   " + newScore.getScore();
     String msg = String.format(template, playerName, competition.getName(), competition.getUuid(), score);
-    return msg + "\nHere is the updated highscore list:" + createInitialHighscoreList(newScore, scoreCount - 1);
+    return msg + "\nHere is the " + HIGHSCORE_INDICATOR + ":" + createInitialHighscoreList(newScore, scoreCount - 1);
 
+  }
+
+  public static String createCompetitionHighscoreCreatedMessage(@NonNull Game game,
+                                                                @NonNull Competition competition,
+                                                                @NonNull Score oldScore,
+                                                                @NonNull Score newScore,
+                                                                List<Score> updatedScores) {
+    String newName = newScore.getPlayerInitials();
+    if (newScore.getPlayer() != null) {
+      Player player = newScore.getPlayer();
+      newName = newScore.getPlayer().getName();
+      if (PlayerDomain.DISCORD.name().equals(player.getDomain())) {
+        newName = "<@" + player.getId() + ">";
+      }
+    }
+
+
+    String template = "**%s created a new highscore for the \"%s\" competition.**\n(ID: %s)\n" +
+        "```%s\n" +
+        "```";
+    String msg = String.format(template, newName, game.getGameDisplayName(), competition.getUuid(), newScore);
+    msg = msg + DiscordOfflineChannelMessageFactory.getBeatenMessage(oldScore, newScore);
+
+    return msg + "\nHere is the " + HIGHSCORE_INDICATOR + ":" + createHighscoreList(updatedScores);
   }
 
   public static String createCompetitionFinishedMessage(@NonNull Competition competition, @Nullable Player winner, Game game, ScoreSummary summary) {
@@ -92,10 +118,6 @@ public class DiscordChannelMessageFactory {
     String third = ScoreHelper.formatScoreEntry(summary, 2);
 
     String competitionName = competition.getName();
-    if (competition.getType().equals(CompetitionType.DISCORD.name())) {
-      competitionName = competitionName + " (" + competition.getUuid() + ")";
-    }
-
     return String.format(COMPETITION_FINISHED_TEMPLATE,
         winnerName,
         competitionName,
@@ -120,30 +142,6 @@ public class DiscordChannelMessageFactory {
     return String.format(COMPETITION_JOINED_TEMPLATE, playerName, competition.getName(), competition.getUuid());
   }
 
-
-  public static String createCompetitionHighscoreCreatedMessage(@NonNull Game game,
-                                                                @NonNull Competition competition,
-                                                                @NonNull Score oldScore,
-                                                                @NonNull Score newScore,
-                                                                List<Score> updatedScores) {
-    String newName = newScore.getPlayerInitials();
-    if (newScore.getPlayer() != null) {
-      Player player = newScore.getPlayer();
-      newName = newScore.getPlayer().getName();
-      if (PlayerDomain.DISCORD.name().equals(player.getDomain())) {
-        newName = "<@" + player.getId() + ">";
-      }
-    }
-
-
-    String template = "**%s created a new highscore for the \"%s\" competition.**\n(ID: %s)\n" +
-        "```%s\n" +
-        "```";
-    String msg = String.format(template, newName, game.getGameDisplayName(), competition.getUuid(), newScore);
-    msg = msg + DiscordOfflineChannelMessageFactory.getBeatenMessage(oldScore, newScore);
-
-    return msg + "\nHere is the updated highscore list:" + createHighscoreList(updatedScores);
-  }
 
   private static String createHighscoreList(List<Score> scores) {
     StringBuilder builder = new StringBuilder();

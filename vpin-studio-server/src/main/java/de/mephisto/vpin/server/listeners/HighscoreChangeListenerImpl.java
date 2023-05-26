@@ -60,7 +60,13 @@ public class HighscoreChangeListenerImpl implements InitializingBean, HighscoreC
           discordService.sendMessage(discordServerId, discordChannelId, DiscordOfflineChannelMessageFactory.createCompetitionHighscoreCreatedMessage(competition, event, raw));
         }
         else if (competition.getType().equals(CompetitionType.DISCORD.name())) {
-          discordCompetitionHighscoreChanged(event, competition);
+          if(discordService.isCompetitionActive(discordServerId, discordChannelId, competition.getUuid())) {
+            discordCompetitionHighscoreChanged(event, competition);
+          }
+          else {
+            LOG.warn("Skipping Discord highscore update for " + competition.getName() + ", no or invalid competition data found.");
+            competitionService.finishCompetition(competition);
+          }
         }
         messageSent = true;
       }
@@ -92,7 +98,8 @@ public class HighscoreChangeListenerImpl implements InitializingBean, HighscoreC
     ScoreList scoreList = discordService.getScoreList(highscoreParser, competition.getUuid(), discordServerId, discordChannelId);
     if (scoreList.getScores().isEmpty()) {
       LOG.info("Emitting initial highscore message for " + competition);
-      discordService.sendMessage(discordServerId, discordChannelId, DiscordChannelMessageFactory.createFirstCompetitionHighscoreCreatedMessage(game, competition, newScore, event.getScoreCount()));
+      long newHighscoreMessageId = discordService.sendMessage(discordServerId, discordChannelId, DiscordChannelMessageFactory.createFirstCompetitionHighscoreCreatedMessage(game, competition, newScore, event.getScoreCount()));
+      discordService.updateHighscoreMessage(discordServerId, discordChannelId, newHighscoreMessageId);
     }
     else {
       ScoreSummary latestScore = scoreList.getLatestScore();
@@ -120,7 +127,8 @@ public class HighscoreChangeListenerImpl implements InitializingBean, HighscoreC
         }
 
         LOG.info("Emitting Discord highscore changed message for discord competition '" + competition + "'");
-        discordService.sendMessage(discordServerId, discordChannelId, DiscordChannelMessageFactory.createCompetitionHighscoreCreatedMessage(game, competition, oldScore, newScore, updatedScores));
+        long newHighscoreMessageId = discordService.sendMessage(discordServerId, discordChannelId, DiscordChannelMessageFactory.createCompetitionHighscoreCreatedMessage(game, competition, oldScore, newScore, updatedScores));
+        discordService.updateHighscoreMessage(discordServerId, discordChannelId, newHighscoreMessageId);
       }
     }
     LOG.info("***************** / Finished Discord Highscore Processing *********************");

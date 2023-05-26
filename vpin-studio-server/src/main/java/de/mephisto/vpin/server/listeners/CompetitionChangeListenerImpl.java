@@ -66,7 +66,7 @@ public class CompetitionChangeListenerImpl implements InitializingBean, Competit
 
           long messageId = discordService.sendMessage(discordServerId, discordChannelId, message, image, competition.getName() + ".png", base64Data);
           //since we started a new competition, all messages before today are irrelevant (we check only today so we don't run into topic update limits)
-          discordService.updateTopicTimestamp(discordServerId, discordChannelId, messageId);
+          discordService.saveCompetitionInfoMessage(discordServerId, discordChannelId, messageId);
           LOG.info("Finished Discord update of \"" + competition.getName() + "\"");
         }
         else {
@@ -107,7 +107,8 @@ public class CompetitionChangeListenerImpl implements InitializingBean, Competit
 
         long discordServerId = competition.getDiscordServerId();
         long discordChannelId = competition.getDiscordChannelId();
-        discordService.sendMessage(discordServerId, discordChannelId, DiscordChannelMessageFactory.createCompetitionJoinedMessage(competition, bot));
+        long msgId = discordService.sendMessage(discordServerId, discordChannelId, DiscordChannelMessageFactory.createCompetitionJoinedMessage(competition, bot));
+        discordService.addCompetitionPlayer(discordServerId, discordChannelId, msgId);
 
         LOG.info("Discord bot \"" + bot + "\" has joined \"" + competition + "\"");
       }
@@ -133,6 +134,8 @@ public class CompetitionChangeListenerImpl implements InitializingBean, Competit
         if (competition.getOwner().equals(String.valueOf(discordService.getBotId()))) {
           String message = DiscordChannelMessageFactory.createCompetitionFinishedMessage(competition, winner, game, scoreSummary);
           discordService.sendMessage(discordServerId, discordChannelId, message);
+          LOG.info("Clearing pinned messages for " + competition.getName());
+          discordService.clearPinnedMessages(discordServerId, discordChannelId);
         }
       }
     }
@@ -154,10 +157,16 @@ public class CompetitionChangeListenerImpl implements InitializingBean, Competit
 
       if (competition.getType().equals(CompetitionType.DISCORD.name())) {
         //check if the owner deleted the competition
-        if (competition.getOwner().equals(String.valueOf(discordService.getBotId())) && competition.isActive()) {
+        boolean isOwner = competition.getOwner().equals(String.valueOf(discordService.getBotId()));
+        if (isOwner && competition.isActive()) {
           Player player = discordService.getPlayer(discordServerId, Long.parseLong(competition.getOwner()));
           String message = DiscordChannelMessageFactory.createCompetitionCancelledMessage(player, competition);
           discordService.sendMessage(discordServerId, discordChannelId, message);
+        }
+
+        //remove from active player list
+        if(!isOwner && competition.isActive()) {
+          discordService.removeCompetitionPlayer(discordServerId, discordChannelId);
         }
       }
     }

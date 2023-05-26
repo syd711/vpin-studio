@@ -129,6 +129,47 @@ public class DiscordClient {
     return botToken;
   }
 
+  public List<DiscordMessage> getPinnedMessages(long serverId, long channelId) {
+    Guild guild = getGuild(serverId);
+    if (guild != null) {
+      TextChannel channel = guild.getChannelById(TextChannel.class, channelId);
+      if (channel != null) {
+        List<Message> complete = channel.retrievePinnedMessages().complete();
+        return complete.stream().map(m -> toMessage(m)).collect(Collectors.toList());
+      }
+      else {
+        LOG.error("No discord channel found for id '" + channelId + "'");
+      }
+    }
+    return null;
+  }
+
+  public void pinMessage(long serverId, long channelId, long messageId) {
+    Guild guild = getGuild(serverId);
+    if (guild != null) {
+      TextChannel channel = guild.getChannelById(TextChannel.class, channelId);
+      if (channel != null) {
+        channel.pinMessageById(messageId).complete();
+      }
+      else {
+        LOG.error("No discord channel found for id '" + channelId + "'");
+      }
+    }
+  }
+
+  public void unpinMessage(long serverId, long channelId, long messageId) {
+    Guild guild = getGuild(serverId);
+    if (guild != null) {
+      TextChannel channel = guild.getChannelById(TextChannel.class, channelId);
+      if (channel != null) {
+        channel.unpinMessageById(messageId).complete();
+      }
+      else {
+        LOG.error("No discord channel found for id '" + channelId + "'");
+      }
+    }
+  }
+
   public void setTopic(long serverId, long channelId, String topic) {
     Guild guild = getGuild(serverId);
     if (guild != null) {
@@ -147,29 +188,6 @@ public class DiscordClient {
         LOG.error("No discord channel found for id '" + channelId + "'");
       }
     }
-  }
-
-  public List<DiscordMember> getCompetitionMembers(long serverId, long channelId, long afterMessageId, String competitionUuid, long ownerId) {
-    List<DiscordMessage> messageHistory = getMessageHistoryAfter(serverId, channelId, afterMessageId, competitionUuid);
-    List<DiscordMember> result = new ArrayList<>();
-
-    //always add owner
-    DiscordMember owner = getMember(serverId, ownerId);
-    result.add(owner);
-
-    for (DiscordMessage discordMessage : messageHistory) {
-      DiscordMember member = discordMessage.getMember();
-      if (member != null) {
-        if (!result.contains(member)) {
-          result.add(member);
-        }
-      }
-    }
-    return result;
-  }
-
-  public List<DiscordMessage> getCompetitionUpdates(long serverId, long channelId, long afterMessageId, String competitionUuid) {
-    return getMessageHistoryAfter(serverId, channelId, afterMessageId, competitionUuid);
   }
 
   public void invalidateMessageCache(long channelId) {
@@ -295,22 +313,7 @@ public class DiscordClient {
             if (uuid == null || botMessage.getContentRaw().contains(uuid) || embedContains(botMessage.getEmbeds(), uuid)) {
               Member member = botMessage.getMember();
               if (member != null) {
-                DiscordMessage message = new DiscordMessage();
-                DiscordMember discordMember = toMember(member);
-                long epochMilli = botMessage.getTimeCreated().toInstant().toEpochMilli();
-                Date createdAt = new Date(epochMilli);
-
-                message.setId(botMessage.getIdLong());
-                message.setMember(discordMember);
-                message.setCreatedAt(createdAt);
-                message.setRaw(botMessage.getContentRaw());
-                message.setServerId(serverId);
-
-                List<MessageEmbed> embeds = botMessage.getEmbeds();
-                for (MessageEmbed embed : embeds) {
-                  message.setEmbedDescription(embed.getDescription());
-                }
-
+                DiscordMessage message = toMessage(botMessage);
                 result.add(message);
               }
             }
@@ -331,6 +334,28 @@ public class DiscordClient {
       }
     }
     return false;
+  }
+
+  private DiscordMessage toMessage(Message msg) {
+    DiscordMessage message = new DiscordMessage();
+    long epochMilli = msg.getTimeCreated().toInstant().toEpochMilli();
+    Date createdAt = new Date(epochMilli);
+
+    message.setId(msg.getIdLong());
+    message.setCreatedAt(createdAt);
+    message.setRaw(msg.getContentRaw());
+    message.setServerId(msg.getGuild().getIdLong());
+
+    if (msg.getMember() != null) {
+      DiscordMember discordMember = toMember(msg.getMember());
+      message.setMember(discordMember);
+    }
+
+    List<MessageEmbed> embeds = msg.getEmbeds();
+    for (MessageEmbed embed : embeds) {
+      message.setEmbedDescription(embed.getDescription());
+    }
+    return message;
   }
 
   private DiscordMember toMember(Member member) {

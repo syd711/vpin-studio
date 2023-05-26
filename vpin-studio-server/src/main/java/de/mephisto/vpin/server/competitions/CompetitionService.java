@@ -82,7 +82,7 @@ public class CompetitionService implements InitializingBean {
   public List<Player> getDiscordCompetitionPlayers(long competitionId) {
     Competition competition = this.getCompetition(competitionId);
     if (competition != null) {
-      return discordService.getCompetitionPlayers(competition.getDiscordServerId(), competition.getDiscordChannelId(), competition.getUuid());
+      return discordService.getCompetitionPlayers(competition.getDiscordServerId(), competition.getDiscordChannelId());
     }
     return Collections.emptyList();
   }
@@ -263,7 +263,7 @@ public class CompetitionService implements InitializingBean {
 
   @Override
   public void afterPropertiesSet() throws Exception {
-    scheduler.scheduleAtFixedRate(new CompetitionCheckRunnable(this), 1000 * 60 * 1);
+    scheduler.scheduleAtFixedRate(new CompetitionCheckRunnable(this), 1000 * 60 * 2);
   }
 
   @NonNull

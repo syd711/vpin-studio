@@ -13,7 +13,6 @@ import de.mephisto.vpin.server.preferences.PreferenceChangedListener;
 import de.mephisto.vpin.server.preferences.PreferencesService;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
-import net.dv8tion.jda.api.entities.Message;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -152,22 +151,18 @@ public class DiscordService implements InitializingBean, PreferenceChangedListen
     return false;
   }
 
-  public List<Player> getCompetitionPlayers(long serverId, long channelId, String uuid) {
+  public List<Player> getCompetitionPlayers(long serverId, long channelId) {
+    List<Player> result = new ArrayList<>();
     if (this.discordClient != null) {
-      DiscordCompetitionData competitionData = getCompetitionData(serverId, channelId, uuid);
-      if (competitionData != null) {
-        List<DiscordMember> competitionMembers = this.discordClient.getCompetitionMembers(serverId, channelId, competitionData.getMsgId(), competitionData.getUuid(), Long.parseLong(competitionData.getOwner()));
-        DiscordMember owner = this.discordClient.getMember(serverId, this.getBotId());
-        if (!competitionMembers.contains(owner)) {
-          competitionMembers.add(0, owner);
+      List<DiscordMessage> pinnedMessages = discordClient.getPinnedMessages(serverId, channelId);
+      for (DiscordMessage pinnedMessage : pinnedMessages) {
+        Player player = toPlayer(pinnedMessage.getMember());
+        if (!result.contains(player)) {
+          result.add(player);
         }
-        return competitionMembers.stream().map(this::toPlayer).collect(Collectors.toList());
-      }
-      else {
-        LOG.warn("No competition found for channel " + channelId + " during player search.");
       }
     }
-    return Collections.emptyList();
+    return result;
   }
 
   public long sendMessage(long serverId, long channelId, String message) {
@@ -221,13 +216,16 @@ public class DiscordService implements InitializingBean, PreferenceChangedListen
   public ScoreList getScoreList(@NonNull HighscoreParser highscoreParser, @NonNull String uuid, long serverId, long channelId) {
     ScoreList result = new ScoreList();
     if (this.discordClient != null) {
-      DiscordCompetitionData data = this.getCompetitionData(serverId, channelId, uuid);
+      DiscordCompetitionData data = this.getCompetitionData(serverId, channelId);
       if (data != null) {
-        List<DiscordMessage> competitionUpdates = discordClient.getCompetitionUpdates(serverId, channelId, data.getMsgId(), uuid);
+        List<DiscordMessage> competitionUpdates = discordClient.getPinnedMessages(serverId, channelId);
         for (DiscordMessage competitionUpdate : competitionUpdates) {
-          ScoreSummary scoreSummary = toScoreSummary(highscoreParser, competitionUpdate);
-          if (!scoreSummary.getScores().isEmpty()) {
-            result.getScores().add(scoreSummary);
+          if (competitionUpdate.getRaw().contains(DiscordChannelMessageFactory.HIGHSCORE_INDICATOR)) {
+            ScoreSummary scoreSummary = toScoreSummary(highscoreParser, competitionUpdate);
+            if (!scoreSummary.getScores().isEmpty()) {
+              result.getScores().add(scoreSummary);
+            }
+            break;
           }
         }
 
@@ -249,63 +247,13 @@ public class DiscordService implements InitializingBean, PreferenceChangedListen
     return this.discordClient != null;
   }
 
-  public DiscordCompetitionData getLatestCompetitionData(long serverId, long channelId, String uuid) {
+  public DiscordCompetitionData getCompetitionData(long serverId, long channelId) {
     if (this.discordClient != null) {
-      ChannelTopic channelTopic = this.getTopicData(serverId, channelId);
-      if (channelTopic != null) {
-        if (channelTopic.getMessageId() > 0) {
-          Message message = discordClient.getMessage(serverId, channelId, channelTopic.getMessageId());
-          if (message != null) {
-            DiscordCompetitionData competitionData = CompetitionDataHelper.getCompetitionData(message);
-            if (competitionData.getUuid().equals(uuid)) {
-              return competitionData;
-            }
-          }
+      List<DiscordMessage> pinnedMessages = discordClient.getPinnedMessages(serverId, channelId);
+      for (DiscordMessage pinnedMessage : pinnedMessages) {
+        if (pinnedMessage.getRaw().contains(DiscordChannelMessageFactory.START_INDICATOR)) {
+          return CompetitionDataHelper.getCompetitionData(pinnedMessage);
         }
-
-        List<DiscordMessage> messageHistory = this.discordClient.getMessageHistoryAfter(serverId, channelId, channelTopic.getMessageId(), uuid);
-        Collections.sort(messageHistory, Comparator.comparing(DiscordMessage::getCreatedAt));
-
-        LOG.info("Competition search returned " + messageHistory.size() + " messages, using messageId of channel topic '" + channelTopic.getMessageId() + "'");
-        DiscordMessage lastCompetitionStartMessage = null;
-        for (DiscordMessage discordMessage : messageHistory) {
-          if (discordMessage.getRaw().contains(DiscordChannelMessageFactory.START_INDICATOR)) {
-            lastCompetitionStartMessage = discordMessage;
-          }
-        }
-
-        //check if there was a cancellation or finished method posted for the last started competition
-        if (lastCompetitionStartMessage != null) {
-          DiscordCompetitionData competitionData = CompetitionDataHelper.getCompetitionData(lastCompetitionStartMessage);
-          if (competitionData != null) {
-            Optional<DiscordMessage> abortMessage = messageHistory
-                .stream()
-                .filter(m -> m.getRaw().toLowerCase().contains(DiscordChannelMessageFactory.FINISHED_INDICATOR) ||
-                    m.getRaw().toLowerCase().contains(DiscordChannelMessageFactory.CANCEL_INDICATOR))
-                .filter(m -> m.getRaw().contains(competitionData.getUuid())).findFirst();
-            if (abortMessage.isPresent()) {
-              LOG.info("No competition data found searching for " + competitionData.getUuid() + ", this competition has already been canceled.");
-              return null;
-            }
-            return competitionData;
-          }
-        }
-      }
-    }
-    return null;
-  }
-
-  public DiscordCompetitionData getCompetitionData(long serverId, long channelId, String uuid) {
-    if (this.discordClient != null) {
-      DiscordCompetitionData competitionData = getLatestCompetitionData(serverId, channelId, uuid);
-      if (competitionData == null) {
-        LOG.info("No competition data found for " + uuid);
-      }
-      else {
-        if (!competitionData.getUuid().equals(uuid)) {
-          LOG.warn("The last competition data found was for '" + competitionData.getName() + "', no matching UUID " + uuid);
-        }
-        return competitionData;
       }
     }
     return null;
@@ -467,19 +415,51 @@ public class DiscordService implements InitializingBean, PreferenceChangedListen
     return summary;
   }
 
-  public void updateTopicTimestamp(long serverId, long channelId, long messageId) {
-    String topic = discordClient.getTopic(serverId, channelId);
-    ChannelTopic channelTopic = ChannelTopic.toChannelTopic(topic);
-    if (channelTopic == null || channelTopic.isOlderThanToday()) {
-      channelTopic = new ChannelTopic();
-      channelTopic.setTimestamp(new Date().getTime());
-      channelTopic.setMessageId(messageId);
-      discordClient.setTopic(serverId, channelId, channelTopic.toTopic());
+  public void saveCompetitionInfoMessage(long serverId, long channelId, long messageId) {
+    //delete existing pins for new competition starts
+    clearPinnedMessages(serverId, channelId);
+    discordClient.pinMessage(serverId, channelId, messageId);
+  }
+
+  public void updateHighscoreMessage(long serverId, long channelId, long msgId) {
+    List<DiscordMessage> pinnedMessages = discordClient.getPinnedMessages(serverId, channelId);
+    for (DiscordMessage pinnedMessage : pinnedMessages) {
+      if (pinnedMessage.getRaw().contains(DiscordChannelMessageFactory.HIGHSCORE_INDICATOR)) {
+        discordClient.unpinMessage(channelId, channelId, pinnedMessage.getId());
+      }
+    }
+    discordClient.pinMessage(serverId, channelId, msgId);
+  }
+
+  public void clearPinnedMessages(long serverId, long channelId) {
+    List<DiscordMessage> pinnedMessages = discordClient.getPinnedMessages(serverId, channelId);
+    for (DiscordMessage pinnedMessage : pinnedMessages) {
+      discordClient.unpinMessage(channelId, channelId, pinnedMessage.getId());
     }
   }
 
   public boolean isCompetitionActive(long serverId, long channelId, String uuid) {
-    return this.getCompetitionData(serverId, channelId, uuid) != null;
+    DiscordCompetitionData competitionData = this.getCompetitionData(serverId, channelId);
+    return competitionData != null && competitionData.getUuid().equals(uuid);
+  }
+
+  public void addCompetitionPlayer(long serverId, long channelId, long msgId) {
+    discordClient.pinMessage(serverId, channelId, msgId);
+  }
+
+  public void removeCompetitionPlayer(long serverId, long channelId) {
+    long botId = getBotId();
+    List<DiscordMessage> pinnedMessages = discordClient.getPinnedMessages(serverId, channelId);
+    for (DiscordMessage pinnedMessage : pinnedMessages) {
+      if (pinnedMessage.getMember().getId() != botId) {
+        continue;
+      }
+
+      if (pinnedMessage.getRaw().contains(DiscordChannelMessageFactory.JOIN_INDICATOR)) {
+        discordClient.unpinMessage(serverId, channelId, pinnedMessage.getId());
+        LOG.info("Removed bot from list of players.");
+      }
+    }
   }
 
   @Override

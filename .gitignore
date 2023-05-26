@@ -86,3 +86,4 @@ yarn-error.log*
 /**/Thumbs.db
 /vpin-studio-server/resources/system.properties
 /resources/archives/**
+/resources/vpbm/identifiers.dat

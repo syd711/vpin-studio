@@ -40,7 +40,7 @@ public class DiscordResource {
    */
   @GetMapping("/competition/{serverId}/{channelId}")
   public DiscordCompetitionData getCompetitionData(@PathVariable("serverId") long serverId, @PathVariable("channelId") long channelId) {
-    return discordService.getLatestCompetitionData(serverId, channelId, null);
+    return discordService.getCompetitionData(serverId, channelId);
   }
 
   @GetMapping("/channels")
