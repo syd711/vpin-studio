@@ -50,6 +50,7 @@ public class VpxServiceClient extends VPinStudioClientService {
         values.put("property", property);
         values.put("value", value);
         LOG.info("Update POV property " + property + " to " + value);
+        pov.getValues().put(property, value);
         return getRestClient().put(API + "vpx/pov/" + gameId, values);
       }
       return true;

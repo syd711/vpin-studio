@@ -418,7 +418,7 @@ public class HighscoreService implements InitializingBean {
     return oldScores;
   }
 
-  private void deleteScores(int gameId) {
+  public void deleteScores(int gameId) {
     Optional<Highscore> byGameId = highscoreRepository.findByGameId(gameId);
     byGameId.ifPresent(highscore -> highscoreRepository.delete(highscore));
     LOG.info("Deleted latest highscore for " + gameId);

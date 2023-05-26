@@ -178,6 +178,8 @@ public class GameService {
         success = false;
       }
 
+      highscoreService.deleteScores(game.getId());
+
       PopperScreen[] values = PopperScreen.values();
       for (PopperScreen originalScreenValue : values) {
         GameMediaItem gameMediaItem = game.getGameMedia().get(originalScreenValue);

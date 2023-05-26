@@ -31,7 +31,7 @@ public class TableUploadProgressModel extends ProgressModel<File> {
 
   @Override
   public boolean isShowSummary() {
-    return true;
+    return false;
   }
 
   @Override

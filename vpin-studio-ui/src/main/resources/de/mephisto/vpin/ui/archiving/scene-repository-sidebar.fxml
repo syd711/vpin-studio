@@ -15,7 +15,7 @@
    <children>
       <Accordion fx:id="repositoryAccordion">
         <panes>
-            <TitledPane fx:id="detailsPane" text="Details">
+            <TitledPane fx:id="detailsPane" text="Archive Details">
                <content>
                   <VBox>
                      <children>
@@ -197,7 +197,7 @@
                   </VBox>
                </content>
             </TitledPane>
-          <TitledPane fx:id="manifestPane" layoutX="1.0" text="Manifest">
+          <TitledPane fx:id="manifestPane" layoutX="1.0" text="Table Details">
             <content>
                 <VBox>
                     <children>

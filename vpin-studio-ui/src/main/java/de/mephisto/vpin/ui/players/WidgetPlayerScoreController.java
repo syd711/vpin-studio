@@ -51,8 +51,7 @@ public class WidgetPlayerScoreController extends WidgetController implements Ini
   public void initialize(URL url, ResourceBundle resourceBundle) {
   }
 
-  public void setData(PlayerRepresentation player, ScoreRepresentation score) {
-    GameRepresentation game = client.getGame(score.getGameId());
+  public void setData(PlayerRepresentation player, GameRepresentation game, ScoreRepresentation score) {
     GameMediaRepresentation gameMedia = game.getGameMedia();
     GameMediaItemRepresentation item = gameMedia.getItem(PopperScreen.Wheel);
     if(item != null) {

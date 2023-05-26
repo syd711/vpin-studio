@@ -252,7 +252,7 @@ public class CompetitionsOfflineController implements Initializable, StudioFXCon
       Label label = new Label(value.getName());
 
       if (value.isActive()) {
-        label.setStyle("-fx-font-color: #33CC00;-fx-text-fill:#33CC00; -fx-font-weight: bold;");
+        label.setStyle("-fx-font-color: #33CC00;-fx-text-fill:#33CC00;");
       }
       return new SimpleObjectProperty(label);
     });
@@ -264,6 +264,9 @@ public class CompetitionsOfflineController implements Initializable, StudioFXCon
       Label label = new Label("- not available anymore -");
       if (game != null) {
         label = new Label(game.getGameDisplayName());
+      }
+      if (value.isActive()) {
+        label.setStyle("-fx-font-color: #33CC00;-fx-text-fill:#33CC00;");
       }
 
       HBox hBox = new HBox(6);
@@ -291,18 +294,27 @@ public class CompetitionsOfflineController implements Initializable, StudioFXCon
         status = "PLANNED";
       }
       Label label = new Label(status);
+      if (value.isActive()) {
+        label.setStyle("-fx-font-color: #33CC00;-fx-text-fill:#33CC00;");
+      }
       return new SimpleObjectProperty(label);
     });
 
     columnStartDate.setCellValueFactory(cellData -> {
       CompetitionRepresentation value = cellData.getValue();
       Label label = new Label(DateFormat.getDateTimeInstance().format(value.getStartDate()));
+      if (value.isActive()) {
+        label.setStyle("-fx-font-color: #33CC00;-fx-text-fill:#33CC00;");
+      }
       return new SimpleObjectProperty(label);
     });
 
     columnEndDate.setCellValueFactory(cellData -> {
       CompetitionRepresentation value = cellData.getValue();
       Label label = new Label(DateFormat.getDateTimeInstance().format(value.getEndDate()));
+      if (value.isActive()) {
+        label.setStyle("-fx-font-color: #33CC00;-fx-text-fill:#33CC00;");
+      }
       return new SimpleObjectProperty(label);
     });
 

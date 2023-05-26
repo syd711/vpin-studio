@@ -10,6 +10,10 @@ public class POVRepresentation {
 
   }
 
+  public Map<String, Object> getValues() {
+    return values;
+  }
+
   public int getGameId() {
     return gameId;
   }

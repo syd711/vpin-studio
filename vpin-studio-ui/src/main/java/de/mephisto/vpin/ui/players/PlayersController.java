@@ -1,5 +1,6 @@
 package de.mephisto.vpin.ui.players;
 
+import de.mephisto.vpin.restclient.representations.GameRepresentation;
 import de.mephisto.vpin.restclient.representations.PlayerRepresentation;
 import de.mephisto.vpin.restclient.representations.ScoreRepresentation;
 import de.mephisto.vpin.restclient.representations.ScoreSummaryRepresentation;
@@ -96,12 +97,17 @@ public class PlayersController implements Initializable, StudioFXController {
             noScoreLabel.setVisible(true);
             noScoreLabel.setText("Highscores for player \"" + p.getName() + "\"");
             for (ScoreRepresentation playerScore : playerScores.getScores()) {
+              GameRepresentation game = client.getGame(playerScore.getGameId());
+              if (game == null) {
+                continue;
+              }
+
               try {
                 FXMLLoader loader = new FXMLLoader(WidgetPlayerScoreController.class.getResource("widget-highscore.fxml"));
                 BorderPane row = loader.load();
                 row.setPrefWidth(600 - 48);
                 WidgetPlayerScoreController controller = loader.getController();
-                controller.setData(p, playerScore);
+                controller.setData(p, game, playerScore);
                 highscoreList.getChildren().add(row);
               } catch (IOException e) {
                 LOG.error("failed to load score component: " + e.getMessage(), e);
