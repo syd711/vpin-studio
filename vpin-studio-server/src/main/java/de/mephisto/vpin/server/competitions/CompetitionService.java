@@ -191,6 +191,7 @@ public class CompetitionService implements InitializingBean {
         long channelId = activeCompetition.getDiscordChannelId();
         boolean active = discordService.isCompetitionActive(serverId, channelId, activeCompetition.getUuid());
         if (!active) {
+          LOG.info("Found active competition " + activeCompetition + ", trying to resolve winner data.");
           ScoreSummary competitionScore = getCompetitionsFinalScore(activeCompetition);
           if (competitionScore.getScores().isEmpty()) {
             activeCompetition.setWinnerInitials("???");

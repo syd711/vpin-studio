@@ -16,9 +16,9 @@ import java.util.List;
 
 public class DiscordChannelMessageFactory {
   public static final String START_INDICATOR = "started a new competition";
-  public static final String CANCEL_INDICATOR = "cancelled";
-  public static final String JOIN_INDICATOR = "joined";
-  public static final String FINISHED_INDICATOR = "finished";
+  public static final String CANCEL_INDICATOR = " cancelled";
+  public static final String JOIN_INDICATOR = " joined";
+  public static final String FINISHED_INDICATOR = " finished";
   public static final String HIGHSCORE_INDICATOR = "updated highscore list";
 
   private static final String DISCORD_COMPETITION_CREATED_TEMPLATE = "%s " + START_INDICATOR + "!\n(ID: %s)";
@@ -101,7 +101,7 @@ public class DiscordChannelMessageFactory {
 
   public static String createCompetitionFinishedMessage(@NonNull Competition competition, @Nullable Player winner, Game game, ScoreSummary summary) {
     if (summary.getScores().isEmpty()) {
-      return String.format(COMPETITION_FINISHED_INCOMPLETE, competition.getName(), competition.getUuid());
+      return String.format(COMPETITION_FINISHED_INCOMPLETE, competition.getName());
     }
 
     String winnerName = competition.getWinnerInitials();
@@ -121,7 +121,6 @@ public class DiscordChannelMessageFactory {
     return String.format(COMPETITION_FINISHED_TEMPLATE,
         winnerName,
         competitionName,
-        competition.getUuid(),
         winnerRaw,
         game.getGameDisplayName(),
         summary.getScores().get(0).getScore(),

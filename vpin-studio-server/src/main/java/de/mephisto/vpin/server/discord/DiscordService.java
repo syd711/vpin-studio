@@ -446,8 +446,9 @@ public class DiscordService implements InitializingBean, PreferenceChangedListen
     }
 
     for (DiscordMessage pinnedMessage : pinnedMessages) {
-      if(pinnedMessage.getRaw().contains(uuid) && pinnedMessage.getRaw().contains(DiscordChannelMessageFactory.FINISHED_INDICATOR)) {
-        return true;
+      if (pinnedMessage.getRaw().contains(uuid) && pinnedMessage.getRaw().contains(DiscordChannelMessageFactory.FINISHED_INDICATOR)) {
+        LOG.info("Found finished message indicator for competition " + uuid);
+        return false;
       }
     }
 
