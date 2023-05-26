@@ -265,13 +265,18 @@ public class CompetitionDiscordJoinDialogController implements Initializable, Di
 
     CompetitionRepresentation existingEntry = client.getCompetitionService().getCompetitionByUuid(this.discordCompetitionData.getUuid());
     DiscordBotStatus discordStatus = client.getDiscordService().getDiscordStatus();
-    if (existingEntry != null && this.discordCompetitionData.getOwner().equals(String.valueOf(discordStatus.getBotId()))) {
+    boolean isOwner = this.discordCompetitionData.getOwner().equals(String.valueOf(discordStatus.getBotId()));
+    if (existingEntry != null && isOwner) {
       validationTitle.setText("Invalid competition selected");
       validationDescription.setText("You are the owner of this competition.");
       return;
     }
 
-    //TODO check against existing
+    if (existingEntry != null) {
+      validationTitle.setText("Competition exist");
+      validationDescription.setText("You already joined this competition.");
+      return;
+    }
 
 
     if (this.discordCompetitionData.getEdt().before(DateUtil.today())) {
