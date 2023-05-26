@@ -131,7 +131,7 @@ public class DiscordClient {
 
   public List<DiscordMessage> getPinnedMessages(long serverId, long channelId) {
     if (pinnedMessagesCache.containsKey(channelId)) {
-      return pinnedMessagesCache.get(channelId).getMessages();
+      return new ArrayList<>(pinnedMessagesCache.get(channelId).getMessages());
     }
 
     Guild guild = getGuild(serverId);
@@ -194,7 +194,7 @@ public class DiscordClient {
         LOG.info("Unpinned message " + messageId);
         channel.unpinMessageById(messageId).complete();
 
-        if (!this.pinnedMessagesCache.containsKey(channelId)) {
+        if (this.pinnedMessagesCache.containsKey(channelId)) {
           DiscordMessage msg = toMessage(getMessage(serverId, channelId, messageId));
           this.pinnedMessagesCache.get(channelId).getMessages().remove(msg);
         }
