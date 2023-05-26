@@ -27,12 +27,12 @@ public class DiscordChannelMessageFactory {
   private static final String COMPETITION_CANCELLED_TEMPLATE = "%s has " + CANCEL_INDICATOR + " the competition \"%s\".";
   private static final String COMPETITION_CANCELLED_ANONYMOUS_TEMPLATE = "The competition \"%s\" has been " + CANCEL_INDICATOR + ".";
   private static final String COMPETITION_JOINED_TEMPLATE = "%s has " + JOIN_INDICATOR + " the competition \"%s\".\n(ID: %s)";
-  private static final String COMPETITION_FINISHED_INCOMPLETE = "The competition \"%s\" (ID: %s) has been " + DiscordChannelMessageFactory.FINISHED_INDICATOR + ", " +
+  private static final String COMPETITION_FINISHED_INCOMPLETE = "The competition \"%s\" has been " + DiscordChannelMessageFactory.FINISHED_INDICATOR + ", " +
       "but no winner could be determined:\n" +
       "No scores have been found.";
   private static final String COMPETITION_FINISHED_TEMPLATE = "Congratulation %s!\n" +
       "```" +
-      "The competition \"%s\" has been finished!\n(ID: %s) \n" +
+      "The competition \"%s\" has been finished!\n" +
       "And the winner is...\n" +
       "\n" +
       "        %s\n" +

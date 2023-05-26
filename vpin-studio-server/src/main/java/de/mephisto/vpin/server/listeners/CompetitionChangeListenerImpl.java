@@ -121,21 +121,20 @@ public class CompetitionChangeListenerImpl implements InitializingBean, Competit
     if (game != null) {
       runCheckedDeAugmentation();
 
-      long discordServerId = competition.getDiscordServerId();
-      long discordChannelId = competition.getDiscordChannelId();
+      long serverId = competition.getDiscordServerId();
+      long channelId = competition.getDiscordChannelId();
 
       if (competition.getType().equals(CompetitionType.OFFLINE.name())) {
         String message = DiscordOfflineChannelMessageFactory.createCompetitionFinishedMessage(competition, winner, game, scoreSummary);
-        discordService.sendMessage(discordServerId, discordChannelId, message);
+        discordService.sendMessage(serverId, channelId, message);
       }
 
       if (competition.getType().equals(CompetitionType.DISCORD.name())) {
         //only the owner can perform additional actions
         if (competition.getOwner().equals(String.valueOf(discordService.getBotId()))) {
           String message = DiscordChannelMessageFactory.createCompetitionFinishedMessage(competition, winner, game, scoreSummary);
-          discordService.sendMessage(discordServerId, discordChannelId, message);
-          LOG.info("Clearing pinned messages for " + competition.getName());
-          discordService.clearPinnedMessages(discordServerId, discordChannelId);
+          long msgId = discordService.sendMessage(serverId, channelId, message);
+          discordService.finishCompetition(serverId, channelId, msgId);
         }
       }
     }
@@ -147,26 +146,27 @@ public class CompetitionChangeListenerImpl implements InitializingBean, Competit
     if (game != null) {
       runCheckedDeAugmentation();
 
-      long discordServerId = competition.getDiscordServerId();
-      long discordChannelId = competition.getDiscordChannelId();
+      long serverId = competition.getDiscordServerId();
+      long channelId = competition.getDiscordChannelId();
 
-      if (competition.getType().equals(CompetitionType.OFFLINE.name()) && discordChannelId > 0 && competition.isActive()) {
+      if (competition.getType().equals(CompetitionType.OFFLINE.name()) && channelId > 0 && competition.isActive()) {
         String message = DiscordOfflineChannelMessageFactory.createCompetitionCancelledMessage(competition);
-        discordService.sendMessage(discordServerId, discordChannelId, message);
+        discordService.sendMessage(serverId, channelId, message);
       }
 
       if (competition.getType().equals(CompetitionType.DISCORD.name())) {
         //check if the owner deleted the competition
         boolean isOwner = competition.getOwner().equals(String.valueOf(discordService.getBotId()));
         if (isOwner && competition.isActive()) {
-          Player player = discordService.getPlayer(discordServerId, Long.parseLong(competition.getOwner()));
+          Player player = discordService.getPlayer(serverId, Long.parseLong(competition.getOwner()));
           String message = DiscordChannelMessageFactory.createCompetitionCancelledMessage(player, competition);
-          discordService.sendMessage(discordServerId, discordChannelId, message);
+          long msgId = discordService.sendMessage(serverId, channelId, message);
+          discordService.finishCompetition(serverId, channelId, msgId);
         }
 
         //remove from active player list
         if(!isOwner && competition.isActive()) {
-          discordService.removeCompetitionPlayer(discordServerId, discordChannelId);
+          discordService.removeCompetitionPlayer(serverId, channelId);
         }
       }
     }

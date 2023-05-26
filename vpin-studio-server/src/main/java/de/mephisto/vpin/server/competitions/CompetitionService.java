@@ -175,15 +175,33 @@ public class CompetitionService implements InitializingBean {
     }
 
     //check if competition have become active, initialize them
-    List<Competition> plannedCompetitions = getActiveCompetitions();
-    for (Competition plannedCompetition : plannedCompetitions) {
-      if (plannedCompetition.isActive() && !plannedCompetition.isStarted()) {
-        LOG.info("Starting " + plannedCompetition);
-        notifyCompetitionStarted(plannedCompetition);
+    List<Competition> activeCompetitions = getActiveCompetitions();
+    for (Competition activeCompetition : activeCompetitions) {
+      if (activeCompetition.isActive() && !activeCompetition.isStarted()) {
+        LOG.info("Starting " + activeCompetition);
+        notifyCompetitionStarted(activeCompetition);
 
         //update state
-        plannedCompetition.setStarted(true);
-        competitionsRepository.saveAndFlush(plannedCompetition);
+        activeCompetition.setStarted(true);
+        competitionsRepository.saveAndFlush(activeCompetition);
+      }
+
+      if (activeCompetition.isActive() && activeCompetition.isStarted() && activeCompetition.getType().equals(CompetitionType.DISCORD.name())) {
+        long serverId = activeCompetition.getDiscordServerId();
+        long channelId = activeCompetition.getDiscordChannelId();
+        boolean active = discordService.isCompetitionActive(serverId, channelId, activeCompetition.getUuid());
+        if (!active) {
+          ScoreSummary competitionScore = getCompetitionsFinalScore(activeCompetition);
+          if (competitionScore.getScores().isEmpty()) {
+            activeCompetition.setWinnerInitials("???");
+          }
+          else {
+            Score score = competitionScore.getScores().get(0);
+            String initials = !StringUtils.isEmpty(score.getPlayerInitials()) ? score.getPlayerInitials() : "???";
+            activeCompetition.setWinnerInitials(initials);
+          }
+          competitionsRepository.saveAndFlush(activeCompetition);
+        }
       }
     }
   }

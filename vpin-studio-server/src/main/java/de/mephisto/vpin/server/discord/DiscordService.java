@@ -422,6 +422,16 @@ public class DiscordService implements InitializingBean, PreferenceChangedListen
     discordClient.pinMessage(serverId, channelId, msgId);
   }
 
+  public void finishCompetition(long serverId, long channelId, long msgId) {
+    this.discordClient.pinMessage(serverId, channelId, msgId);
+    List<DiscordMessage> pinnedMessages = discordClient.getPinnedMessages(serverId, channelId);
+    for (DiscordMessage pinnedMessage : pinnedMessages) {
+      if (pinnedMessage.getRaw().contains(DiscordChannelMessageFactory.JOIN_INDICATOR)) {
+        discordClient.unpinMessage(serverId, channelId, pinnedMessage.getId());
+      }
+    }
+  }
+
   public void clearPinnedMessages(long serverId, long channelId) {
     List<DiscordMessage> pinnedMessages = discordClient.getPinnedMessages(serverId, channelId);
     for (DiscordMessage pinnedMessage : pinnedMessages) {
@@ -430,6 +440,17 @@ public class DiscordService implements InitializingBean, PreferenceChangedListen
   }
 
   public boolean isCompetitionActive(long serverId, long channelId, String uuid) {
+    List<DiscordMessage> pinnedMessages = this.discordClient.getPinnedMessages(serverId, channelId);
+    if (pinnedMessages.isEmpty()) {
+      return true;
+    }
+
+    for (DiscordMessage pinnedMessage : pinnedMessages) {
+      if(pinnedMessage.getRaw().contains(uuid) && pinnedMessage.getRaw().contains(DiscordChannelMessageFactory.FINISHED_INDICATOR)) {
+        return true;
+      }
+    }
+
     DiscordCompetitionData competitionData = this.getCompetitionData(serverId, channelId);
     return competitionData != null && competitionData.getUuid().equals(uuid);
   }
