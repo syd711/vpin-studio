@@ -35,8 +35,6 @@ public class DiscordClient {
 
   private final Map<Long, PinnedMessages> pinnedMessagesCache = new HashMap<>();
 
-  private final DiscordCache<List<DiscordMessage>> messageCache = new DiscordCache<>();
-
   public DiscordClient(String botToken, DiscordCommandResolver commandResolver) throws InterruptedException {
     this.listenerAdapter = new DiscordListenerAdapter(this, commandResolver);
     this.botToken = botToken;
@@ -142,6 +140,10 @@ public class DiscordClient {
       if (channel != null) {
         long start = System.currentTimeMillis();
         List<Message> complete = channel.retrievePinnedMessages().complete();
+        for (Message message : complete) {
+          this.messageCacheById.put(message.getIdLong(), message);
+        }
+
         LOG.info("Pinned messages fetch took " + (System.currentTimeMillis() - start) + "ms.");
         List<DiscordMessage> collect = complete.stream().map(this::toMessage).collect(Collectors.toList());
         pinnedMessagesCache.put(channelId, new PinnedMessages());
@@ -159,8 +161,8 @@ public class DiscordClient {
     Guild guild = getGuild(serverId);
     if (guild != null) {
       TextChannel channel = guild.getChannelById(TextChannel.class, channelId);
-      if (channel != null) {
-        channel.getManager().setSlowmode(seconds);
+      if (channel != null) { //TODO required?
+//        channel.getManager().setSlowmode(seconds);
       }
     }
   }
@@ -224,20 +226,12 @@ public class DiscordClient {
   }
 
   public void invalidateMessageCache(long channelId, long originUserId) {
-    messageCache.invalidate(channelId);
-
     long botId = this.getBotId();
-    if(botId != originUserId) {
-      invalidatePinnedMessagesCache(channelId);
-    }
-
-    LOG.info("Invalidated Discord competition message cache for " + channelId);
-  }
-
-  public void invalidatePinnedMessagesCache(long channelId) {
-    if (pinnedMessagesCache.containsKey(channelId)) {
-      pinnedMessagesCache.remove(channelId);
-      LOG.info("Invalidated Discord pinned messages cache for " + channelId);
+    if (botId != originUserId) {
+      if (pinnedMessagesCache.containsKey(channelId)) {
+        pinnedMessagesCache.remove(channelId);
+        LOG.info("Invalidated Discord pinned messages cache for " + channelId);
+      }
     }
   }
 
@@ -291,6 +285,7 @@ public class DiscordClient {
       TextChannel textChannel = jda.getChannelById(TextChannel.class, channelId);
       if (textChannel != null) {
         Message complete = textChannel.sendMessage(msg).complete();
+        this.messageCacheById.put(complete.getIdLong(), complete);
         return complete.getIdLong();
       }
       else {
@@ -314,6 +309,7 @@ public class DiscordClient {
           embedBuilder.setDescription(imageText);
         }
         Message complete = textChannel.sendMessage(msg).addFiles(FileUpload.fromData(image, name)).setEmbeds(embed.build()).complete();
+        this.messageCacheById.put(complete.getIdLong(), complete);
         return complete.getIdLong();
       }
       else {
