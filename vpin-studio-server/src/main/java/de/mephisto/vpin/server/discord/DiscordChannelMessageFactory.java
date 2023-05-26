@@ -29,8 +29,8 @@ public class DiscordChannelMessageFactory {
   private static final String COMPETITION_JOINED_TEMPLATE = "%s has " + JOIN_INDICATOR + " the competition \"%s\".\n(ID: %s)";
   private static final String COMPETITION_FINISHED_INCOMPLETE = "The competition \"%s\" has been " + DiscordChannelMessageFactory.FINISHED_INDICATOR + ", " +
       "but no winner could be determined:\n" +
-      "No scores have been found.";
-  private static final String COMPETITION_FINISHED_TEMPLATE = "Congratulation %s!\n" +
+      "No scores have been found.\n(ID: %s)";
+  private static final String COMPETITION_FINISHED_TEMPLATE = "Congratulation %s!\n(ID: %s)\n" +
       "```" +
       "The competition \"%s\" has been finished!\n" +
       "And the winner is...\n" +
@@ -101,7 +101,7 @@ public class DiscordChannelMessageFactory {
 
   public static String createCompetitionFinishedMessage(@NonNull Competition competition, @Nullable Player winner, Game game, ScoreSummary summary) {
     if (summary.getScores().isEmpty()) {
-      return String.format(COMPETITION_FINISHED_INCOMPLETE, competition.getName());
+      return String.format(COMPETITION_FINISHED_INCOMPLETE, competition.getName(), competition.getUuid());
     }
 
     String winnerName = competition.getWinnerInitials();
@@ -119,6 +119,7 @@ public class DiscordChannelMessageFactory {
 
     String competitionName = competition.getName();
     return String.format(COMPETITION_FINISHED_TEMPLATE,
+        competition.getUuid(),
         winnerName,
         competitionName,
         winnerRaw,

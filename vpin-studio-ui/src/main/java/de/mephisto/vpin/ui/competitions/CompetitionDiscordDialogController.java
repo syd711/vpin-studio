@@ -303,7 +303,8 @@ public class CompetitionDiscordDialogController implements Initializable, Dialog
     //check the active competition stored for the selected channel against the date selection
     DiscordCompetitionData discordCompetitionData = client.getDiscordService().getDiscordCompetitionData(competition.getDiscordServerId(), competition.getDiscordChannelId());
     if (discordCompetitionData != null) {
-      if (!this.competition.getUuid().equals(discordCompetitionData.getUuid())) {
+      boolean finished = client.getDiscordService().isCompetitionStatusFinished(competition.getDiscordServerId(), competition.getDiscordChannelId(), competition.getUuid());
+      if (!finished && !this.competition.getUuid().equals(discordCompetitionData.getUuid())) {
         if (discordCompetitionData.isOverlappingWith(startSelection, endSelection)) {
           validationTitle.setText("Active competition found.");
           validationDescription.setText("The selected channel is already running the competition '" + discordCompetitionData.getName() + "' for this time span.");

@@ -1,6 +1,9 @@
 package de.mephisto.vpin.server.discord;
 
-import de.mephisto.vpin.restclient.discord.*;
+import de.mephisto.vpin.restclient.discord.DiscordBotStatus;
+import de.mephisto.vpin.restclient.discord.DiscordChannel;
+import de.mephisto.vpin.restclient.discord.DiscordCompetitionData;
+import de.mephisto.vpin.restclient.discord.DiscordServer;
 import de.mephisto.vpin.server.players.Player;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -36,6 +39,7 @@ public class DiscordResource {
 
   /**
    * Used for the competition joining, find the latest competition for the given channel
+   *
    * @return
    */
   @GetMapping("/competition/{serverId}/{channelId}")
@@ -66,5 +70,12 @@ public class DiscordResource {
   @GetMapping("/servers")
   public List<DiscordServer> getServers() {
     return discordService.getServers();
+  }
+
+  @GetMapping("/competition/isfinished/{serverId}/{channelId}/{uuid}")
+  public boolean isFinished(@PathVariable("serverId") long serverId,
+                            @PathVariable("channelId") long channelId,
+                            @PathVariable("uuid") String uuid) {
+    return !discordService.isCompetitionActive(serverId, channelId, uuid);
   }
 }
