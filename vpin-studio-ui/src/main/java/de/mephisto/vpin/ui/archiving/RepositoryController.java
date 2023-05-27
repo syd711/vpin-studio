@@ -451,7 +451,8 @@ public class RepositoryController implements Initializable, StudioEventListener 
     downloadBtn.setDisable(true);
     copyToRepositoryBtn.setDisable(true);
 
-    vpbmBtbn.setDisable(sourceCombo.getValue().getId() == -1 || !client.getSystemService().isLocal());
+    vpbmBtbn.setDisable(sourceCombo.getValue().getId() == -1 || (
+        !Studio.client.getSystemService().isLocal() && new File("resources", "vpbm").exists()));
 
     EventManager.getInstance().addListener(this);
     this.doReload();

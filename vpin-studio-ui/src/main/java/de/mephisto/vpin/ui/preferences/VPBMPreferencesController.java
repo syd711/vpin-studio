@@ -42,7 +42,7 @@ public class VPBMPreferencesController implements Initializable {
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
-    vpbmBtbn.setDisable(!Studio.client.getSystemService().isLocal());
+    vpbmBtbn.setDisable(!Studio.client.getSystemService().isLocal() && new File("resources", "vpbm").exists());
     versionLabel.setText(Studio.client.getVpbmService().getVersion());
     updateBtn.setDisable(true);
 
