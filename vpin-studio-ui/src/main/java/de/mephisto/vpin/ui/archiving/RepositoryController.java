@@ -507,7 +507,6 @@ public class RepositoryController implements Initializable, StudioEventListener 
   @Override
   public void onArchiveInstalled(@NonNull ArchiveInstalledEvent event) {
     Platform.runLater(() -> {
-      client.getArchiveService().invalidateArchiveCache();
       onReload();
     });
   }

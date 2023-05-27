@@ -441,6 +441,7 @@ public class DiscordService implements InitializingBean, PreferenceChangedListen
 
   public boolean isCompetitionActive(long serverId, long channelId, String uuid) {
     List<DiscordMessage> pinnedMessages = this.discordClient.getPinnedMessages(serverId, channelId);
+    //let's assume Discord wasn't available
     if (pinnedMessages.isEmpty()) {
       return true;
     }

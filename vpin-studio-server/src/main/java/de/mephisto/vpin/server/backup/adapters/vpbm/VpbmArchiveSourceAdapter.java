@@ -93,8 +93,6 @@ public class VpbmArchiveSourceAdapter implements ArchiveSourceAdapter {
   @Override
   public void invalidate() {
     cache.clear();
-//    vpbmService.refresh();
-
     LOG.info("Invalidated archive source \"" + this.getArchiveSource() + "\"");
     ArchiveUtil.exportDescriptorJson(this);
   }

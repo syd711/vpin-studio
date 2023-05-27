@@ -525,7 +525,7 @@ public class CompetitionsDiscordController implements Initializable, StudioFXCon
     editBtn.setDisable(disable || !isOwner || newSelection.isActive() || newSelection.isFinished());
     finishBtn.setDisable(disable || !isOwner || !newSelection.isActive());
     deleteBtn.setDisable(disable);
-    duplicateBtn.setDisable(disable);
+    duplicateBtn.setDisable(disable || !isOwner);
 
     if (competition.isPresent()) {
       if (competitionWidget.getTop() != null) {

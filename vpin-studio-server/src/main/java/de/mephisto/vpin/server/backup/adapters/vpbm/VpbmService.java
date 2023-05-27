@@ -88,7 +88,12 @@ public class VpbmService implements InitializingBean {
 
 
   public Boolean update() {
-    return executeVPBM(Arrays.asList("-u")) != null;
+    long start = System.currentTimeMillis();
+    LOG.info("Executing VPBM update");
+    boolean result = executeVPBM(Arrays.asList("-u")) != null;
+    LOG.info("Finished VPBM update, refreshing config.");
+    refreshConfig();
+    return result;
   }
 
   public boolean isUpdateAvailable() {
@@ -143,6 +148,10 @@ public class VpbmService implements InitializingBean {
 
   @Override
   public void afterPropertiesSet() throws Exception {
+    refreshConfig();
+  }
+
+  private void refreshConfig() {
     try {
       File configFileFolder = new File(VPBM_FOLDER);
       File configJson = new File(configFileFolder, "vPinBackupManager.json");
@@ -211,11 +220,10 @@ public class VpbmService implements InitializingBean {
           LOG.info("Updated internal host id to '" + hostId.trim() + "'");
         }
       }
-      LOG.info("Finished vpbm installation check.");
+      LOG.info("Finished vpbm configuration check.");
     } catch (Exception e) {
-      String msg = "Failed to run installation for vpbm: " + e.getMessage();
+      String msg = "Failed to run configuration check for vpbm: " + e.getMessage();
       LOG.error(msg, e);
-      throw new VPinStudioException(msg, e);
     }
   }
 }

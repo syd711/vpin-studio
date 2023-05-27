@@ -300,18 +300,6 @@ public class CompetitionDiscordDialogController implements Initializable, Dialog
     Date startSelection = Date.from(startDatePicker.getValue().atStartOfDay(ZoneId.systemDefault()).toInstant());
     Date endSelection = Date.from(endDatePicker.getValue().atStartOfDay(ZoneId.systemDefault()).toInstant());
 
-    //check the active competition stored for the selected channel against the date selection
-    DiscordCompetitionData discordCompetitionData = client.getDiscordService().getDiscordCompetitionData(competition.getDiscordServerId(), competition.getDiscordChannelId());
-    if (discordCompetitionData != null) {
-      boolean finished = client.getDiscordService().isCompetitionStatusFinished(competition.getDiscordServerId(), competition.getDiscordChannelId(), competition.getUuid());
-      if (!finished && !this.competition.getUuid().equals(discordCompetitionData.getUuid())) {
-        if (discordCompetitionData.isOverlappingWith(startSelection, endSelection)) {
-          validationTitle.setText("Active competition found.");
-          validationDescription.setText("The selected channel is already running the competition '" + discordCompetitionData.getName() + "' for this time span.");
-          return;
-        }
-      }
-    }
 
     //check if another active competition on this channel is active during the selected time span
     for (CompetitionRepresentation existingCompetition : allCompetitions) {
@@ -334,6 +322,21 @@ public class CompetitionDiscordDialogController implements Initializable, Dialog
 //        validationDescription.setText("This table is already used for another competition in the selected time span.");
 //        return;
 //      }
+    }
+
+
+    //check the active competition stored for the selected channel against the date selection
+    DiscordCompetitionData discordCompetitionData = client.getDiscordService().getDiscordCompetitionData(competition.getDiscordServerId(), competition.getDiscordChannelId());
+    if (discordCompetitionData != null) {
+      //separate call since the data is still there, even if the competition is finished
+      boolean active = client.getDiscordService().isCompetitionActive(competition.getDiscordServerId(), competition.getDiscordChannelId(), discordCompetitionData.getUuid());
+      if (active) {
+        if (discordCompetitionData.isOverlappingWith(startSelection, endSelection)) {
+          validationTitle.setText("Active competition found.");
+          validationDescription.setText("The selected channel is already running the competition '" + discordCompetitionData.getName() + "' for this time span.");
+          return;
+        }
+      }
     }
 
     //check highscore settings //TODO

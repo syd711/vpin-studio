@@ -48,8 +48,8 @@ public class DiscordServiceClient extends VPinStudioClientService {
     return Arrays.asList(getRestClient().getCached(API + "discord/servers", DiscordServer[].class));
   }
 
-  public boolean isCompetitionStatusFinished(long discordServerId, long discordChannelId, String uuid) {
+  public boolean isCompetitionActive(long discordServerId, long discordChannelId, String uuid) {
     final RestTemplate restTemplate = new RestTemplate();
-    return restTemplate.getForObject(getRestClient().getBaseUrl() + API + "discord/competition/isfinished/" + discordServerId + "/" + discordChannelId + "/" + uuid, Boolean.class);
+    return restTemplate.getForObject(getRestClient().getBaseUrl() + API + "discord/competition/isactive/" + discordServerId + "/" + discordChannelId + "/" + uuid, Boolean.class);
   }
 }

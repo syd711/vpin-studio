@@ -72,10 +72,10 @@ public class DiscordResource {
     return discordService.getServers();
   }
 
-  @GetMapping("/competition/isfinished/{serverId}/{channelId}/{uuid}")
-  public boolean isFinished(@PathVariable("serverId") long serverId,
-                            @PathVariable("channelId") long channelId,
-                            @PathVariable("uuid") String uuid) {
-    return !discordService.isCompetitionActive(serverId, channelId, uuid);
+  @GetMapping("/competition/isactive/{serverId}/{channelId}/{uuid}")
+  public boolean isCompetitionActive(@PathVariable("serverId") long serverId,
+                                     @PathVariable("channelId") long channelId,
+                                     @PathVariable("uuid") String uuid) {
+    return discordService.isCompetitionActive(serverId, channelId, uuid);
   }
 }

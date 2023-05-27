@@ -165,7 +165,7 @@ public class CompetitionChangeListenerImpl implements InitializingBean, Competit
         }
 
         //remove from active player list
-        if(!isOwner && competition.isActive()) {
+        if (!isOwner && competition.isActive()) {
           discordService.removeCompetitionPlayer(serverId, channelId);
         }
       }
