@@ -292,7 +292,7 @@ public class LauncherController implements Initializable {
   }
 
   private VPinConnection checkConnection(String host) {
-    VPinStudioClient client = new VPinStudioClient(host);
+    VPinStudioClient client = new VPinStudioClient(host, 3000);
     String version = client.getSystemService().version();
     if (version != null) {
       VPinConnection connection = new VPinConnection();
