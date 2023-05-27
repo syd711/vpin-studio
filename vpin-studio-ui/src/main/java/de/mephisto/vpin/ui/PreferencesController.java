@@ -46,7 +46,7 @@ public class PreferencesController implements Initializable {
     BorderPane main = (BorderPane) lookup;
     StackPane stack = (StackPane) main.getCenter();
     stack.getChildren().remove(1);
-    NavigationController.refresh();
+    NavigationController.refreshControllerCache();
   }
 
   @FXML

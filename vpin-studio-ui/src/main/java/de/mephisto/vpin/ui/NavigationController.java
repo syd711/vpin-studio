@@ -7,7 +7,6 @@ import de.mephisto.vpin.restclient.representations.PreferenceEntryRepresentation
 import de.mephisto.vpin.ui.cards.HighscoreCardsController;
 import de.mephisto.vpin.ui.competitions.CompetitionsController;
 import de.mephisto.vpin.ui.players.PlayersController;
-import de.mephisto.vpin.ui.tables.TableOverviewController;
 import de.mephisto.vpin.ui.tables.TablesController;
 import eu.hansolo.tilesfx.Tile;
 import eu.hansolo.tilesfx.TileBuilder;
@@ -26,6 +25,8 @@ import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.text.TextAlignment;
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.net.URL;
@@ -37,6 +38,7 @@ import java.util.ResourceBundle;
 import static de.mephisto.vpin.ui.Studio.client;
 
 public class NavigationController implements Initializable {
+  private final static Logger LOG = LoggerFactory.getLogger(NavigationController.class);
 
   @FXML
   private BorderPane avatarPane;
@@ -56,10 +58,18 @@ public class NavigationController implements Initializable {
   public NavigationController() {
   }
 
-  public static void refresh() throws IOException {
-    StudioFXController studioFXController = controllerCache.get(activeScreenId);
-    loadScreen(null, studioFXController.getClass(), activeScreenId);
-    refreshAvatar();
+  public static void refreshControllerCache() {
+    try {
+      StudioFXController studioFXController = controllerCache.get(activeScreenId);
+      loadScreen(null, studioFXController.getClass(), activeScreenId);
+      refreshAvatar();
+    } catch (IOException e) {
+      LOG.error("Refresh of navigation components cache failed: " + e.getMessage(), e);
+    }
+  }
+
+  public static void refreshViewCache() {
+    viewCache.clear();
   }
 
   @FXML
@@ -166,7 +176,7 @@ public class NavigationController implements Initializable {
 
     Studio.stage.setTitle("VPin Studio - " + name);
 
-    if(Studio.stage != null && Studio.stage.getScene() != null) {
+    if (Studio.stage != null && Studio.stage.getScene() != null) {
       Node header = Studio.stage.getScene().lookup("#header");
       HeaderResizeableController dialogHeaderController = (HeaderResizeableController) header.getUserData();
       dialogHeaderController.setTitle(Studio.stage.getTitle());
@@ -176,7 +186,10 @@ public class NavigationController implements Initializable {
   public static void setBreadCrumb(List<String> crumbs) {
     Platform.runLater(() -> {
       Label breadCrumb = (Label) Studio.stage.getScene().lookup("#breadcrumb");
-      breadCrumb.setText("/ " + StringUtils.join(crumbs, " / "));
+      String join = StringUtils.join(crumbs, " / ");
+      if (breadCrumb != null) {
+        breadCrumb.setText("/ " + join);
+      }
     });
   }
 }

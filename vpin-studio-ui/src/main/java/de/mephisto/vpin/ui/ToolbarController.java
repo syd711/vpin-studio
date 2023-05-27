@@ -54,6 +54,8 @@ public class ToolbarController implements Initializable {
   @FXML
   private void onDisconnect() {
     Studio.stage.close();
+    NavigationController.refreshControllerCache();
+    NavigationController.refreshViewCache();
     Studio.loadLauncher(new Stage());
   }
 
