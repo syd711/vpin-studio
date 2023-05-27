@@ -27,6 +27,13 @@ public class JobPoller {
   private final List<JobDescriptor> clientJobs = Collections.synchronizedList(new ArrayList<>());
   private final Service service;
 
+  public static void destroy() {
+    if(instance != null) {
+      instance.service.cancel();
+      instance = null;
+    }
+  }
+
   public static void create(MenuButton jobMenu) {
     if (instance == null) {
       instance = new JobPoller(jobMenu);

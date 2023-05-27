@@ -212,6 +212,7 @@ public class RepositoryController implements Initializable, StudioEventListener 
   }
 
   public void doReload() {
+    this.tableView.getSelectionModel().clearSelection();
     doReload(false);
   }
 
@@ -244,9 +245,6 @@ public class RepositoryController implements Initializable, StudioEventListener 
           tableView.getSelectionModel().select(selection);
           deleteBtn.setDisable(false);
           installBtn.setDisable(false);
-        }
-        else if (!data.isEmpty()) {
-          tableView.getSelectionModel().select(0);
         }
 
         this.searchTextField.setDisable(false);

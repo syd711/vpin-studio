@@ -3,6 +3,7 @@ package de.mephisto.vpin.server.backup;
 import de.mephisto.vpin.commons.ArchiveSourceType;
 import de.mephisto.vpin.restclient.Job;
 import de.mephisto.vpin.restclient.JobExecutionResult;
+import de.mephisto.vpin.restclient.JobExecutionResultFactory;
 import de.mephisto.vpin.restclient.descriptors.ArchiveRestoreDescriptor;
 import de.mephisto.vpin.server.backup.adapters.TableInstallerAdapter;
 import de.mephisto.vpin.server.games.Game;
@@ -40,7 +41,7 @@ public class ArchiveInstallerJob implements Job {
 
   @Override
   public double getProgress() {
-    if(this.downloadJob != null) {
+    if (this.downloadJob != null) {
       return this.downloadJob.getProgress();
     }
     return tableInstallerAdapter.getProgress();
@@ -48,40 +49,50 @@ public class ArchiveInstallerJob implements Job {
 
   @Override
   public String getStatus() {
-    if(this.downloadJob != null) {
+    if (this.downloadJob != null) {
       return this.downloadJob.getStatus();
     }
     return tableInstallerAdapter.getStatus();
   }
 
   /**
-   * Used by the table manager
+   *
    * @return
    */
   @Override
   public JobExecutionResult execute() {
-    ArchiveSource source = archiveDescriptor.getSource();
-    if(source.getType().equals(ArchiveSourceType.Http.name())) {
-      downloadJob = new CopyArchiveToRepositoryJob(archiveService, archiveDescriptor, false);
-      downloadJob.execute();
-      this.downloadJob = null;
-      tableInstallerAdapter.getArchiveDescriptor().setFilename(archiveDescriptor.getFilename());
-      tableInstallerAdapter.getArchiveDescriptor().setSource(archiveService.getDefaultArchiveSourceAdapter().getArchiveSource());
-    }
+    Thread.currentThread().setName("Archive Installer for " + archiveDescriptor.getFilename());
 
-    JobExecutionResult result = tableInstallerAdapter.installTable();
-    if (StringUtils.isEmpty(result.getError())) {
-      Game game = gameService.getGame(result.getGameId());
-      try {
-        cardService.generateCard(game, false);
-      } catch (Exception e) {
-        //ignore
+    JobExecutionResult result = null;
+    try {
+      ArchiveSource source = archiveDescriptor.getSource();
+      if (source.getType().equals(ArchiveSourceType.Http.name())) {
+        downloadJob = new CopyArchiveToRepositoryJob(archiveService, archiveDescriptor, false);
+        downloadJob.execute();
+        this.downloadJob = null;
+        tableInstallerAdapter.getArchiveDescriptor().setFilename(archiveDescriptor.getFilename());
+        tableInstallerAdapter.getArchiveDescriptor().setSource(archiveService.getDefaultArchiveSourceAdapter().getArchiveSource());
       }
 
-      if (installDescriptor.getPlaylistId() != -1) {
-        pinUPConnector.addToPlaylist(game.getId(), installDescriptor.getPlaylistId());
+      result = tableInstallerAdapter.installTable();
+      if (StringUtils.isEmpty(result.getError())) {
+        Game game = gameService.getGame(result.getGameId());
+        try {
+          cardService.generateCard(game, false);
+        } catch (Exception e) {
+          //ignore
+        }
+
+        if (installDescriptor.getPlaylistId() != -1) {
+          pinUPConnector.addToPlaylist(game.getId(), installDescriptor.getPlaylistId());
+        }
       }
+      return result;
+    } catch (Exception e) {
+      if (result != null) {
+        return result;
+      }
+      return JobExecutionResultFactory.create("Failed to install archive: " + e.getMessage());
     }
-    return result;
   }
 }

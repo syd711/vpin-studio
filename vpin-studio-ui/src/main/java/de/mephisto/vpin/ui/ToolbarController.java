@@ -77,6 +77,7 @@ public class ToolbarController implements Initializable {
   public void initialize(URL url, ResourceBundle resourceBundle) {
     this.jobBtn.setDisable(true);
 
+    JobPoller.destroy();
     JobPoller.create(this.jobBtn);
 
     if (preferencesRoot == null) {
