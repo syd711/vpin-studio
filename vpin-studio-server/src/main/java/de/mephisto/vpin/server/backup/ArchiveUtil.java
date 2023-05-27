@@ -22,7 +22,7 @@ public class ArchiveUtil {
 
   public final static String DESCRIPTOR_JSON = "descriptor.json";
 
-  public static ArchiveDescriptor readArchiveDescriptor(@NonNull File archiveFile) {
+  public static ArchiveDescriptor readArchiveDescriptor(@NonNull ArchiveSource source, @NonNull File archiveFile) {
     try {
       if (archiveFile.exists()) {
         File packageInfo = new File(archiveFile.getParentFile(), FilenameUtils.getBaseName(archiveFile.getName()) + ".json");
@@ -32,7 +32,9 @@ public class ArchiveUtil {
           objectMapper.enable(SerializationFeature.INDENT_OUTPUT);
           objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 
-          return objectMapper.readValue(json, ArchiveDescriptor.class);
+          ArchiveDescriptor archiveDescriptor = objectMapper.readValue(json, ArchiveDescriptor.class);
+          archiveDescriptor.setSource(source);
+          return archiveDescriptor;
         }
       }
     } catch (IOException e) {

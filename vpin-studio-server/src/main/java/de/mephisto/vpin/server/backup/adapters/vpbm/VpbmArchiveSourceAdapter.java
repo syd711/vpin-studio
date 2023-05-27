@@ -44,7 +44,7 @@ public class VpbmArchiveSourceAdapter implements ArchiveSourceAdapter {
       if (archiveFiles != null) {
         for (File archiveFile : archiveFiles) {
           try {
-            ArchiveDescriptor archiveDescriptor = ArchiveUtil.readArchiveDescriptor(archiveFile);
+            ArchiveDescriptor archiveDescriptor = ArchiveUtil.readArchiveDescriptor(source, archiveFile);
             if (archiveDescriptor == null) {
               TableDetails manifest = VpbmArchiveUtil.readTableDetails(archiveFile);
               ArchivePackageInfo packageInfo = VpbmArchiveUtil.generatePackageInfo(archiveFile, null);

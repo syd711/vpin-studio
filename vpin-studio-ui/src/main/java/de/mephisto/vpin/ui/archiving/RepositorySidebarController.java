@@ -195,12 +195,7 @@ public class RepositorySidebarController implements Initializable, StudioFXContr
       filenameLabel.setText(descriptorRepresentation.getFilename());
       fileSizeLabel.setText(descriptorRepresentation.getSize() > 0 ? FileUtils.readableFileSize(descriptorRepresentation.getSize()) : "-");
       lastModifiedLabel.setText(SimpleDateFormat.getDateTimeInstance().format(descriptorRepresentation.getCreatedAt()));
-
-      String location = descriptorRepresentation.getSource().getLocation();
-      if(location.contains("resources")) {
-        location = location.substring(location.indexOf("resources"));
-      }
-      sourceLabel.setText(location);
+      sourceLabel.setText(descriptorRepresentation.getSource().getLocation());
 
       ArchivePackageInfo packageInfo = descriptorRepresentation.getPackageInfo();
 
