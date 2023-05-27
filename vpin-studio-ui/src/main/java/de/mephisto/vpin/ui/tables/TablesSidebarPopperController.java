@@ -100,9 +100,6 @@ public class TablesSidebarPopperController implements Initializable, ChangeListe
   @FXML
   private Label notes;
 
-
-  private VPinStudioClient client;
-
   private Optional<GameRepresentation> game = Optional.empty();
 
   private TablesSidebarController tablesSidebarController;
@@ -114,7 +111,7 @@ public class TablesSidebarPopperController implements Initializable, ChangeListe
 
   @FXML
   private void onTableEdit() {
-    if (client.getPinUPPopperService().isPinUPPopperRunning()) {
+    if (Studio.client.getPinUPPopperService().isPinUPPopperRunning()) {
       Optional<ButtonType> buttonType = Dialogs.openPopperRunningWarning(Studio.stage);
       if (buttonType.isPresent() && buttonType.get().equals(ButtonType.APPLY)) {
         Studio.client.getPinUPPopperService().terminatePopper();
@@ -130,7 +127,7 @@ public class TablesSidebarPopperController implements Initializable, ChangeListe
 
   @FXML
   private void onScreenEdit() {
-    if (client.getPinUPPopperService().isPinUPPopperRunning()) {
+    if (Studio.client.getPinUPPopperService().isPinUPPopperRunning()) {
       Optional<ButtonType> buttonType = Dialogs.openPopperRunningWarning(Studio.stage);
       if (buttonType.isPresent() && buttonType.get().equals(ButtonType.APPLY)) {
         Studio.client.getPinUPPopperService().terminatePopper();
@@ -146,7 +143,7 @@ public class TablesSidebarPopperController implements Initializable, ChangeListe
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
-    client = Studio.client;
+
   }
 
 
@@ -164,7 +161,7 @@ public class TablesSidebarPopperController implements Initializable, ChangeListe
       labelLastPlayed.setText(game.getLastPlayed() != null ? DateFormat.getDateInstance().format(game.getLastPlayed()) : "-");
       labelTimesPlayed.setText(String.valueOf(game.getNumberPlays()));
 
-      manifest = client.getPinUPPopperService().getTableDetails(game.getId());
+      manifest = Studio.client.getPinUPPopperService().getTableDetails(game.getId());
 
       volumeSlider.valueProperty().removeListener(this);
       if (manifest.getVolume() != null) {
@@ -246,7 +243,7 @@ public class TablesSidebarPopperController implements Initializable, ChangeListe
         manifest.setVolume(String.valueOf(value));
         LOG.info("Updates volume of " + g.getGameDisplayName() + " to " + value);
         try {
-          client.getPinUPPopperService().saveTableDetails(manifest, g.getId());
+          Studio.client.getPinUPPopperService().saveTableDetails(manifest, g.getId());
         } catch (Exception e) {
           WidgetFactory.showAlert(Studio.stage, e.getMessage());
         }

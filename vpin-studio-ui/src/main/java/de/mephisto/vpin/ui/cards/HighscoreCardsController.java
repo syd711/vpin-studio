@@ -137,9 +137,6 @@ public class HighscoreCardsController implements Initializable, ObservedProperty
   @FXML
   private Accordion accordion;
 
-
-  private VPinStudioClient client;
-
   private ObservedProperties properties;
 
   private List<String> ignoreList = new ArrayList<>();
@@ -149,8 +146,7 @@ public class HighscoreCardsController implements Initializable, ObservedProperty
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
     try {
-      client = Studio.client;
-      properties = client.getProperties("card-generator");
+      properties = Studio.client.getProperties("card-generator");
       ignoreList.addAll(Arrays.asList("popper.screen"));
       properties.addObservedPropertyChangeListener(this);
 
@@ -192,7 +188,7 @@ public class HighscoreCardsController implements Initializable, ObservedProperty
     File file = fileChooser.showOpenDialog(stage);
     if (file != null && file.exists()) {
       try {
-        boolean result = client.getHighscoreCardsService().uploadHighscoreBackgroundImage(file, null);
+        boolean result = Studio.client.getHighscoreCardsService().uploadHighscoreBackgroundImage(file, null);
         if (result) {
           String baseName = FilenameUtils.getBaseName(file.getName());
           if (!imageList.contains(baseName)) {
@@ -232,13 +228,13 @@ public class HighscoreCardsController implements Initializable, ObservedProperty
       WidgetFactory.showAlert(Studio.stage, "Not target screen selected.", "Select a target screen in the preferences.");
     }
     else {
-      Dialogs.createProgressDialog(new HighscoreGeneratorProgressModel(client, "Generating Highscore Cards"));
+      Dialogs.createProgressDialog(new HighscoreGeneratorProgressModel(Studio.client, "Generating Highscore Cards"));
     }
   }
 
   @FXML
   private void onTableRefresh() {
-    List<GameRepresentation> games = client.getGameService().getGamesWithScores();
+    List<GameRepresentation> games = Studio.client.getGameService().getGamesWithScores();
     ObservableList<GameRepresentation> gameRepresentations = FXCollections.observableArrayList(games);
 
     GameRepresentation game = tableCombo.getSelectionModel().getSelectedItem();
@@ -293,7 +289,7 @@ public class HighscoreCardsController implements Initializable, ObservedProperty
 
     BindingUtil.bindColorPicker(fontColorSelector, properties, "card.font.color");
 
-    BindingUtil.bindHighscoreTablesComboBox(client, tableCombo, properties, "card.sampleTable");
+    BindingUtil.bindHighscoreTablesComboBox(Studio.client, tableCombo, properties, "card.sampleTable");
 
 
     BindingUtil.bindCheckbox(useDirectB2SCheckbox, properties, "card.useDirectB2S");
@@ -312,10 +308,10 @@ public class HighscoreCardsController implements Initializable, ObservedProperty
 //    imageScalingCombo.setDisable(!useDirectB2SCheckbox.selectedProperty().get());
 //    BindingUtil.bindComboBox(imageScalingCombo, properties, "card.scaling", "1280");
 
-    imageList = FXCollections.observableList(new ArrayList<>(client.getHighscoreCardsService().getHighscoreBackgroundImages()));
+    imageList = FXCollections.observableList(new ArrayList<>(Studio.client.getHighscoreCardsService().getHighscoreBackgroundImages()));
     backgroundImageCombo.setItems(imageList);
-    backgroundImageCombo.setCellFactory(c -> new WidgetFactory.HighscoreBackgroundImageListCell(client));
-    backgroundImageCombo.setButtonCell(new WidgetFactory.HighscoreBackgroundImageListCell(client));
+    backgroundImageCombo.setCellFactory(c -> new WidgetFactory.HighscoreBackgroundImageListCell(Studio.client));
+    backgroundImageCombo.setButtonCell(new WidgetFactory.HighscoreBackgroundImageListCell(Studio.client));
     BindingUtil.bindComboBox(backgroundImageCombo, properties, "card.background");
 
     BindingUtil.bindTextField(titleText, properties, "card.title.text");
@@ -365,7 +361,7 @@ public class HighscoreCardsController implements Initializable, ObservedProperty
 
       if (game.isPresent()) {
         openDefaultPictureBtn.setTooltip(new Tooltip("Open directb2s image"));
-        InputStream input = client.getDirectB2SService().getDefaultPicture(game.get());
+        InputStream input = Studio.client.getDirectB2SService().getDefaultPicture(game.get());
         Image image = new Image(input);
         rawDirectB2SImage.setImage(image);
         input.close();
@@ -398,10 +394,10 @@ public class HighscoreCardsController implements Initializable, ObservedProperty
       try {
         new Thread(() -> {
           if (regenerate) {
-            client.getHighscoreCardsService().generateHighscoreCardSample(game.get());
+            Studio.client.getHighscoreCardsService().generateHighscoreCardSample(game.get());
           }
 
-          InputStream input = client.getHighscoreCardsService().getHighscoreCard(game.get());
+          InputStream input = Studio.client.getHighscoreCardsService().getHighscoreCard(game.get());
           Image image = new Image(input);
           cardPreview.setImage(image);
           cardPreview.setVisible(true);

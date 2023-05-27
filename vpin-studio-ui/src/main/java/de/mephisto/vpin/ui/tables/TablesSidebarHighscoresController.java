@@ -80,8 +80,6 @@ public class TablesSidebarHighscoresController implements Initializable {
   @FXML
   private BorderPane scoreGraph;
 
-  private VPinStudioClient client;
-
   private Optional<GameRepresentation> game = Optional.empty();
 
   private TablesSidebarController tablesSidebarController;
@@ -92,20 +90,20 @@ public class TablesSidebarHighscoresController implements Initializable {
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
-    client = Studio.client;
+
   }
 
   @FXML
   private void onCard() {
     if (this.game.isPresent()) {
       GameRepresentation g = this.game.get();
-      boolean b = client.getHighscoreCardsService().generateHighscoreCardSample(g);
+      boolean b = Studio.client.getHighscoreCardsService().generateHighscoreCardSample(g);
       if (b) {
         ByteArrayInputStream s = Studio.client.getHighscoreCardsService().getHighscoreCard(g);
         MediaUtil.openMedia(s);
       }
       else {
-        ScoreSummaryRepresentation summary = client.getGameService().getGameScores(g.getId());
+        ScoreSummaryRepresentation summary = Studio.client.getGameService().getGameScores(g.getId());
         String status = summary.getMetadata().getStatus();
         WidgetFactory.showAlert(Studio.stage, "Card Generation Failed.", "The card generation failed: " + status);
       }
@@ -124,7 +122,7 @@ public class TablesSidebarHighscoresController implements Initializable {
       ResetHighscoreDescriptor reset = Dialogs.openHighscoreResetDialog(g);
       if (reset != null) {
         try {
-          client.getGameService().resetHighscore(reset);
+          Studio.client.getGameService().resetHighscore(reset);
         } catch (Exception e) {
           LOG.error("Failed to reset highscore: " + e.getMessage(), e);
         } finally {
@@ -165,10 +163,10 @@ public class TablesSidebarHighscoresController implements Initializable {
       GameRepresentation game = g.get();
       scanHighscoreBtn.setDisable(false);
 
-      ScoreSummaryRepresentation summary = client.getGameService().getGameScores(game.getId());
+      ScoreSummaryRepresentation summary = Studio.client.getGameService().getGameScores(game.getId());
       HighscoreMetadataRepresentation metadata = summary.getMetadata();
       if (forceRescan) {
-        metadata = client.getGameService().scanGameScore(game.getId());
+        metadata = Studio.client.getGameService().scanGameScore(game.getId());
       }
 
       ScoreListRepresentation scoreHistory = Studio.client.getGameService().getScoreHistory(game.getId());

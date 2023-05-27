@@ -14,8 +14,6 @@ import java.util.ResourceBundle;
 public class TablesSidebarPUPPackController implements Initializable {
   private final static Logger LOG = LoggerFactory.getLogger(TablesSidebarPUPPackController.class);
 
-  private VPinStudioClient client;
-
   private Optional<GameRepresentation> game = Optional.empty();
 
   private TablesSidebarController tablesSidebarController;
@@ -26,7 +24,6 @@ public class TablesSidebarPUPPackController implements Initializable {
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
-    client = Studio.client;
   }
 
 

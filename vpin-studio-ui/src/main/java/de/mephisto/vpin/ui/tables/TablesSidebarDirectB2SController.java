@@ -65,9 +65,6 @@ public class TablesSidebarDirectB2SController implements Initializable {
   @FXML
   private Button uploadBtn;
 
-
-  private VPinStudioClient client;
-
   private Optional<GameRepresentation> game = Optional.empty();
 
   private TablesSidebarController tablesSidebarController;
@@ -97,7 +94,7 @@ public class TablesSidebarDirectB2SController implements Initializable {
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
-    client = Studio.client;
+
   }
 
   public void setGame(Optional<GameRepresentation> game) {
@@ -112,7 +109,7 @@ public class TablesSidebarDirectB2SController implements Initializable {
     if (g.isPresent() && g.get().isDirectB2SAvailable()) {
       new Thread(() -> {
         Platform.runLater(() -> {
-          data = client.getDirectB2SService().getDirectB2SData(g.get().getId());
+          data = Studio.client.getDirectB2SService().getDirectB2SData(g.get().getId());
           nameLabel.setText(data.getName());
           typeLabel.setText(this.getTableType(data.getTableType()));
           authorLabel.setText(data.getAuthor());

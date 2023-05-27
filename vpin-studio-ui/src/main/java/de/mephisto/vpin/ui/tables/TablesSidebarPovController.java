@@ -85,8 +85,6 @@ public class TablesSidebarPovController implements Initializable {
   @FXML
   private Spinner<Integer> povRotationFullscreenSpinner;
 
-  private VPinStudioClient client;
-
   private Optional<GameRepresentation> game = Optional.empty();
 
   private TablesSidebarController tablesSidebarController;
@@ -98,30 +96,29 @@ public class TablesSidebarPovController implements Initializable {
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
-    client = Studio.client;
     povCreatePane.managedProperty().bind(povCreatePane.visibleProperty());
 
     povSSAACombo.setItems(FXCollections.observableList(POVComboModel.MODELS));
-    povSSAACombo.valueProperty().addListener((observable, oldValue, newValue) -> client.getVpxService().setPOVPreference(game.get().getId(), getPOV(), POV.SSAA, newValue.getValue()));
+    povSSAACombo.valueProperty().addListener((observable, oldValue, newValue) -> Studio.client.getVpxService().setPOVPreference(game.get().getId(), getPOV(), POV.SSAA, newValue.getValue()));
 
     povPostprocAACombo.setItems(FXCollections.observableList(POVPostProcComboModel.MODELS));
-    povPostprocAACombo.valueProperty().addListener((observable, oldValue, newValue) -> client.getVpxService().setPOVPreference(game.get().getId(), getPOV(), POV.POST_PROC_AA, newValue.getValue()));
+    povPostprocAACombo.valueProperty().addListener((observable, oldValue, newValue) -> Studio.client.getVpxService().setPOVPreference(game.get().getId(), getPOV(), POV.POST_PROC_AA, newValue.getValue()));
 
     povIngameAOCombo.setItems(FXCollections.observableList(POVComboModel.MODELS));
-    povIngameAOCombo.valueProperty().addListener((observable, oldValue, newValue) -> client.getVpxService().setPOVPreference(game.get().getId(), getPOV(), POV.INGAME_AO, newValue.getValue()));
+    povIngameAOCombo.valueProperty().addListener((observable, oldValue, newValue) -> Studio.client.getVpxService().setPOVPreference(game.get().getId(), getPOV(), POV.INGAME_AO, newValue.getValue()));
 
     povScSpReflectCombo.setItems(FXCollections.observableList(POVComboModel.MODELS));
-    povScSpReflectCombo.valueProperty().addListener((observable, oldValue, newValue) -> client.getVpxService().setPOVPreference(game.get().getId(), getPOV(), POV.SCSP_REFLECT, newValue.getValue()));
+    povScSpReflectCombo.valueProperty().addListener((observable, oldValue, newValue) -> Studio.client.getVpxService().setPOVPreference(game.get().getId(), getPOV(), POV.SCSP_REFLECT, newValue.getValue()));
 
     povFpsLimiterCombo.setItems(FXCollections.observableList(POVComboModel.MODELS));
-    povFpsLimiterCombo.valueProperty().addListener((observable, oldValue, newValue) -> client.getVpxService().setPOVPreference(game.get().getId(), getPOV(), POV.FPS_LIMITER, newValue.getValue()));
+    povFpsLimiterCombo.valueProperty().addListener((observable, oldValue, newValue) -> Studio.client.getVpxService().setPOVPreference(game.get().getId(), getPOV(), POV.FPS_LIMITER, newValue.getValue()));
 
     povOverwriteDetailCheckbox.selectedProperty().addListener((observable, oldValue, newValue) -> {
       int result = 0;
       if (newValue) {
         result = 1;
       }
-      client.getVpxService().setPOVPreference(game.get().getId(), getPOV(), POV.OVERWRITE_DETAILS_LEVEL, result);
+      Studio.client.getVpxService().setPOVPreference(game.get().getId(), getPOV(), POV.OVERWRITE_DETAILS_LEVEL, result);
       povDetailsSlider.setDisable(!newValue);
     });
 
@@ -129,15 +126,15 @@ public class TablesSidebarPovController implements Initializable {
       final GameRepresentation g = game.get();
       debouncer.debounce(POV.DETAILS_LEVEL, () -> {
         int value1 = ((Double) newValue).intValue();
-        client.getVpxService().setPOVPreference(g.getId(), getPOV(), POV.DETAILS_LEVEL, value1);
+        Studio.client.getVpxService().setPOVPreference(g.getId(), getPOV(), POV.DETAILS_LEVEL, value1);
       }, 500);
     });
 
     povBallReflectionCombobox.setItems(FXCollections.observableList(POVComboModel.MODELS));
-    povBallReflectionCombobox.valueProperty().addListener((observable, oldValue, newValue) -> client.getVpxService().setPOVPreference(game.get().getId(), getPOV(), POV.BALL_REFLECTION, newValue.getValue()));
+    povBallReflectionCombobox.valueProperty().addListener((observable, oldValue, newValue) -> Studio.client.getVpxService().setPOVPreference(game.get().getId(), getPOV(), POV.BALL_REFLECTION, newValue.getValue()));
 
     povBallTrailCombobox.setItems(FXCollections.observableList(POVComboModel.MODELS));
-    povBallTrailCombobox.valueProperty().addListener((observable, oldValue, newValue) -> client.getVpxService().setPOVPreference(game.get().getId(), getPOV(), POV.BALL_TRAIL, newValue.getValue()));
+    povBallTrailCombobox.valueProperty().addListener((observable, oldValue, newValue) -> Studio.client.getVpxService().setPOVPreference(game.get().getId(), getPOV(), POV.BALL_TRAIL, newValue.getValue()));
 
     SpinnerValueFactory.IntegerSpinnerValueFactory factory = new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 100, 0);
     povBallTrailStrengthSpinner.setValueFactory(factory);
@@ -145,7 +142,7 @@ public class TablesSidebarPovController implements Initializable {
       final GameRepresentation g = game.get();
       debouncer.debounce(POV.BALL_TRAIL_STRENGTH, () -> {
         double formattedValue = Double.valueOf(newValue) / 100;
-        client.getVpxService().setPOVPreference(g.getId(), getPOV(), POV.BALL_TRAIL_STRENGTH, formattedValue);
+        Studio.client.getVpxService().setPOVPreference(g.getId(), getPOV(), POV.BALL_TRAIL_STRENGTH, formattedValue);
       }, 500);
     });
 
@@ -154,7 +151,7 @@ public class TablesSidebarPovController implements Initializable {
       if (newValue) {
         result = 1;
       }
-      client.getVpxService().setPOVPreference(game.get().getId(), getPOV(), POV.OVERWRITE_NIGHTDAY, result);
+      Studio.client.getVpxService().setPOVPreference(game.get().getId(), getPOV(), POV.OVERWRITE_NIGHTDAY, result);
       povNighDaySpinner.setDisable(!newValue);
     });
     ;
@@ -164,7 +161,7 @@ public class TablesSidebarPovController implements Initializable {
     factoryNightDay.valueProperty().addListener((observable, oldValue, newValue) -> {
       final GameRepresentation g = game.get();
       debouncer.debounce(POV.NIGHTDAY_LEVEL, () -> {
-        client.getVpxService().setPOVPreference(g.getId(), getPOV(), POV.NIGHTDAY_LEVEL, newValue);
+        Studio.client.getVpxService().setPOVPreference(g.getId(), getPOV(), POV.NIGHTDAY_LEVEL, newValue);
       }, 500);
     });
 
@@ -173,7 +170,7 @@ public class TablesSidebarPovController implements Initializable {
     povGameDifficultySpinner.valueProperty().addListener((observable, oldValue, newValue) -> {
       final GameRepresentation g = game.get();
       debouncer.debounce(POV.GAMEPLAY_DIFFICULTY, () -> {
-        client.getVpxService().setPOVPreference(g.getId(), getPOV(), POV.GAMEPLAY_DIFFICULTY, newValue);
+        Studio.client.getVpxService().setPOVPreference(g.getId(), getPOV(), POV.GAMEPLAY_DIFFICULTY, newValue);
       }, 500);
     });
 
@@ -182,7 +179,7 @@ public class TablesSidebarPovController implements Initializable {
     povRotationFullscreenSpinner.valueProperty().addListener((observable, oldValue, newValue) -> {
       final GameRepresentation g = game.get();
       debouncer.debounce(POV.FULLSCREEN_ROTATION, () -> {
-        client.getVpxService().setPOVPreference(g.getId(), getPOV(), POV.FULLSCREEN_ROTATION, newValue);
+        Studio.client.getVpxService().setPOVPreference(g.getId(), getPOV(), POV.FULLSCREEN_ROTATION, newValue);
       }, 500);
     });
 
@@ -191,7 +188,7 @@ public class TablesSidebarPovController implements Initializable {
       final GameRepresentation g = game.get();
       debouncer.debounce(POV.SOUND_VOLUME, () -> {
         int v = ((Double) newValue).intValue();
-        client.getVpxService().setPOVPreference(g.getId(), getPOV(), POV.SOUND_VOLUME, v);
+        Studio.client.getVpxService().setPOVPreference(g.getId(), getPOV(), POV.SOUND_VOLUME, v);
       }, 500);
     });
 
@@ -199,7 +196,7 @@ public class TablesSidebarPovController implements Initializable {
       final GameRepresentation g = game.get();
       debouncer.debounce(POV.MUSIC_VOLUME, () -> {
         int v = ((Double) newValue).intValue();
-        client.getVpxService().setPOVPreference(g.getId(), getPOV(), POV.MUSIC_VOLUME, v);
+        Studio.client.getVpxService().setPOVPreference(g.getId(), getPOV(), POV.MUSIC_VOLUME, v);
       }, 500);
     });
   }
@@ -214,7 +211,7 @@ public class TablesSidebarPovController implements Initializable {
   private void onPOVReExport() {
     Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Re-Export POV file for table '" + this.game.get().getGameDisplayName() + "'?", "This will overwrite the POV file with the table values.");
     if (result.isPresent() && result.get().equals(ButtonType.OK)) {
-      client.getVpxService().deletePOV(this.game.get().getId());
+      Studio.client.getVpxService().deletePOV(this.game.get().getId());
       this.onPOVExport();
     }
   }
@@ -223,7 +220,7 @@ public class TablesSidebarPovController implements Initializable {
   private void onPOVDelete() {
     Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Delete POV file for table '" + this.game.get().getGameDisplayName() + "'?");
     if (result.isPresent() && result.get().equals(ButtonType.OK)) {
-      client.getVpxService().deletePOV(this.game.get().getId());
+      Studio.client.getVpxService().deletePOV(this.game.get().getId());
       this.tablesSidebarController.getTablesController().onReload();
     }
   }
@@ -271,7 +268,7 @@ public class TablesSidebarPovController implements Initializable {
       povCreatePane.setVisible(!game.isPov());
 
       if (game.isPov()) {
-        pov = client.getVpxService().getPOV(game.getId());
+        pov = Studio.client.getVpxService().getPOV(game.getId());
 
         povSSAACombo.valueProperty().setValue(POVComboModel.forValue(pov.getValue(POV.SSAA)));
         povPostprocAACombo.valueProperty().setValue(POVPostProcComboModel.forValue(pov.getValue(POV.POST_PROC_AA)));

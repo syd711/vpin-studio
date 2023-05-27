@@ -136,7 +136,6 @@ public class TableOverviewController implements Initializable, StudioFXControlle
   public TableOverviewController() {
   }
 
-  private VPinStudioClient client;
   private ObservableList<GameRepresentation> data;
   private List<GameRepresentation> games;
 
@@ -158,7 +157,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
       Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Start playing table \"" + game.getGameDisplayName() + "\"?",
           "All existing VPX and Popper processes will be terminated.");
       if (result.isPresent() && result.get().equals(ButtonType.OK)) {
-        client.getVpxService().playGame(game.getId());
+        Studio.client.getVpxService().playGame(game.getId());
       }
     }
   }
@@ -169,7 +168,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
     if (game != null) {
       Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Stop all VPX and PinUP Popper processes?");
       if (result.isPresent() && result.get().equals(ButtonType.OK)) {
-        client.getPinUPPopperService().terminatePopper();
+        Studio.client.getPinUPPopperService().terminatePopper();
       }
     }
   }
@@ -203,7 +202,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
 
   @FXML
   private void onTableUpload() {
-    if (client.getPinUPPopperService().isPinUPPopperRunning()) {
+    if (Studio.client.getPinUPPopperService().isPinUPPopperRunning()) {
       Optional<ButtonType> buttonType = Dialogs.openPopperRunningWarning(Studio.stage);
       if (buttonType.isPresent() && buttonType.get().equals(ButtonType.APPLY)) {
         Studio.client.getPinUPPopperService().terminatePopper();
@@ -225,7 +224,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
 
   @FXML
   private void onDelete() {
-    if (client.getPinUPPopperService().isPinUPPopperRunning()) {
+    if (Studio.client.getPinUPPopperService().isPinUPPopperRunning()) {
       Optional<ButtonType> buttonType = Dialogs.openPopperRunningWarning(Studio.stage);
       if (buttonType.isPresent() && buttonType.get().equals(ButtonType.APPLY)) {
         Studio.client.getPinUPPopperService().terminatePopper();
@@ -296,7 +295,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
       game.setIgnoredValidations(null);
 
       try {
-        client.getGameService().saveGame(game);
+        Studio.client.getGameService().saveGame(game);
       } catch (Exception e) {
         WidgetFactory.showAlert(Studio.stage, e.getMessage());
       }
@@ -323,7 +322,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
       game.setIgnoredValidations(StringUtils.join(gameIgnoreList, ","));
 
       try {
-        client.getGameService().saveGame(game);
+        Studio.client.getGameService().saveGame(game);
       } catch (Exception e) {
         WidgetFactory.showAlert(Studio.stage, e.getMessage());
       }
@@ -351,7 +350,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
 
     new Thread(() -> {
       GameRepresentation selection = tableView.getSelectionModel().getSelectedItem();
-      games = client.getGameService().getGames();
+      games = Studio.client.getGameService().getGames();
       filterGames(games);
 
       Platform.runLater(() -> {
@@ -359,10 +358,12 @@ public class TableOverviewController implements Initializable, StudioFXControlle
         tableView.refresh();
 
         if (selection != null) {
-          final GameRepresentation updatedGame = client.getGame(selection.getId());
-          tableView.getSelectionModel().select(updatedGame);
-          this.playBtn.setDisable(!updatedGame.isGameFileAvailable());
-          this.backupBtn.setDisable(!updatedGame.isGameFileAvailable());
+          final GameRepresentation updatedGame = Studio.client.getGame(selection.getId());
+          if(updatedGame != null) {
+            tableView.getSelectionModel().select(updatedGame);
+            this.playBtn.setDisable(!updatedGame.isGameFileAvailable());
+            this.backupBtn.setDisable(!updatedGame.isGameFileAvailable());
+          }
         }
         else if (!games.isEmpty()) {
           tableView.getSelectionModel().select(0);
@@ -390,8 +391,6 @@ public class TableOverviewController implements Initializable, StudioFXControlle
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
-    client = Studio.client;
-
     try {
       FXMLLoader loader = new FXMLLoader(WaitOverlayController.class.getResource("overlay-wait.fxml"));
       tablesLoadingOverlay = loader.load();

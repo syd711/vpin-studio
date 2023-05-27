@@ -21,7 +21,6 @@ public class ScreensPreferencesController implements Initializable {
   @FXML
   private VBox preferenceList;
 
-  private VPinStudioClient client;
   private List<String> ignoreList;
 
   @FXML
@@ -43,18 +42,16 @@ public class ScreensPreferencesController implements Initializable {
     String value = StringUtils.join(ignoreList, ",");
     Map<String, Object> prefs = new HashMap<>();
     prefs.put(PreferenceNames.IGNORED_MEDIA, value);
-    client.getPreferenceService().setPreferences(prefs);
+    Studio.client.getPreferenceService().setPreferences(prefs);
   }
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
-    client = Studio.client;
-
     Parent parent = preferenceList;
     List<CheckBox> settingsCheckboxes = new ArrayList<>();
     findAllCheckboxes(parent, settingsCheckboxes);
 
-    PreferenceEntryRepresentation entry = client.getPreference(PreferenceNames.IGNORED_MEDIA);
+    PreferenceEntryRepresentation entry = Studio.client.getPreference(PreferenceNames.IGNORED_MEDIA);
     ignoreList = entry.getCSVValue();
     for (CheckBox checkbox : settingsCheckboxes) {
       String id = checkbox.getId();

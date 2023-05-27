@@ -45,8 +45,6 @@ public class TablesSidebarAudioController implements Initializable {
   @FXML
   private CheckBox enabledCheckbox;
 
-  private VPinStudioClient client;
-
   private Optional<GameRepresentation> game = Optional.empty();
 
   private TablesSidebarController tablesSidebarController;
@@ -69,7 +67,7 @@ public class TablesSidebarAudioController implements Initializable {
       GameRepresentation g = game.get();
       g.setAltSoundEnabled(enabledCheckbox.isSelected());
       try {
-        client.getGameService().saveGame(g);
+        Studio.client.getGameService().saveGame(g);
       } catch (Exception e) {
         WidgetFactory.showAlert(Studio.stage, e.getMessage());
       }
@@ -81,14 +79,14 @@ public class TablesSidebarAudioController implements Initializable {
     if (game.isPresent() && game.get().isAltSoundAvailable()) {
       Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Restore Backup?", "Revert all changes and restore the original ALT sound backup?", null, "Yes, restore backup");
       if (result.isPresent() && result.get().equals(ButtonType.OK)) {
-        client.getAltSoundService().restoreAltSound(game.get().getId());
+        Studio.client.getAltSoundService().restoreAltSound(game.get().getId());
       }
     }
   }
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
-    client = Studio.client;
+
   }
 
   public void setGame(Optional<GameRepresentation> game) {
@@ -111,7 +109,7 @@ public class TablesSidebarAudioController implements Initializable {
       GameRepresentation game = g.get();
 
       if (game.isAltSoundAvailable()) {
-        altSound = client.getAltSoundService().getAltSound(game.getId());
+        altSound = Studio.client.getAltSoundService().getAltSound(game.getId());
         enabledCheckbox.setSelected(game.isAltSoundEnabled());
 
         entriesLabel.setText(String.valueOf(altSound.getEntries().size()));

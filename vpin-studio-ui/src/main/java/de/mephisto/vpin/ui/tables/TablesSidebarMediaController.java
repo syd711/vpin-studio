@@ -73,9 +73,6 @@ public class TablesSidebarMediaController implements Initializable {
   @FXML
   private Button playfieldViewBtn;
 
-
-  private VPinStudioClient client;
-
   private Optional<GameRepresentation> game = Optional.empty();
 
   private TablesSidebarController tablesSidebarController;
@@ -86,7 +83,7 @@ public class TablesSidebarMediaController implements Initializable {
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
-    client = Studio.client;
+
   }
 
 
@@ -102,7 +99,7 @@ public class TablesSidebarMediaController implements Initializable {
     GameMediaItemRepresentation mediaItem = (GameMediaItemRepresentation) center.getUserData();
     if (mediaItem != null) {
       GameRepresentation gameRepresentation = game.get();
-      Dialogs.openMediaDialog(client, gameRepresentation, mediaItem);
+      Dialogs.openMediaDialog(Studio.client, gameRepresentation, mediaItem);
     }
   }
 
@@ -148,7 +145,7 @@ public class TablesSidebarMediaController implements Initializable {
 
   public void refreshMedia(GameMediaRepresentation gameMedia, boolean preview) {
     Platform.runLater(() -> {
-      PreferenceEntryRepresentation entry = client.getPreference(PreferenceNames.IGNORED_MEDIA);
+      PreferenceEntryRepresentation entry = Studio.client.getPreference(PreferenceNames.IGNORED_MEDIA);
       List<String> ignoreScreenNames = entry.getCSVValue();
 
       PopperScreen[] values = PopperScreen.values();

@@ -19,8 +19,6 @@ import java.util.stream.Collectors;
 
 public class ValidatorsPinUPPopperPreferencesController implements Initializable {
 
-  private VPinStudioClient client;
-
   @FXML
   private Parent preferenceList;
   private List<String> ignoreList;
@@ -44,15 +42,13 @@ public class ValidatorsPinUPPopperPreferencesController implements Initializable
     String value = StringUtils.join(ignoreList, ",");
     Map<String, Object> prefs = new HashMap<>();
     prefs.put(PreferenceNames.IGNORED_VALIDATIONS, value);
-    client.getPreferenceService().setPreferences(prefs);
+    Studio.client.getPreferenceService().setPreferences(prefs);
   }
 
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
-    client = Studio.client;
-
-    PreferenceEntryRepresentation ignoredMediaPrefs = client.getPreference(PreferenceNames.IGNORED_MEDIA);
+    PreferenceEntryRepresentation ignoredMediaPrefs = Studio.client.getPreference(PreferenceNames.IGNORED_MEDIA);
     List<String> ignoredMediaList = ignoredMediaPrefs.getCSVValue();
     List<String> screenNames = Arrays.stream(PopperScreen.values()).map(s -> s.name()).collect(Collectors.toList());
 
@@ -60,7 +56,7 @@ public class ValidatorsPinUPPopperPreferencesController implements Initializable
     List<CheckBox> settingsCheckboxes = new ArrayList<>();
     findAllCheckboxes(parent, settingsCheckboxes);
 
-    PreferenceEntryRepresentation entry = client.getPreference(PreferenceNames.IGNORED_VALIDATIONS);
+    PreferenceEntryRepresentation entry = Studio.client.getPreference(PreferenceNames.IGNORED_VALIDATIONS);
     ignoreList = entry.getCSVValue();
     for (CheckBox checkBox : settingsCheckboxes) {
       String id = checkBox.getId();

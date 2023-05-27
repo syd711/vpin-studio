@@ -44,8 +44,6 @@ public class TablesSidebarDefaultBackgroundController implements Initializable {
   @FXML
   private Label resolutionLabel;
 
-  private VPinStudioClient client;
-
   private Optional<GameRepresentation> game = Optional.empty();
 
   private TablesSidebarController tablesSidebarController;
@@ -56,7 +54,7 @@ public class TablesSidebarDefaultBackgroundController implements Initializable {
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
-    client = Studio.client;
+
   }
 
   public void setGame(Optional<GameRepresentation> game) {
@@ -81,7 +79,7 @@ public class TablesSidebarDefaultBackgroundController implements Initializable {
       Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Re-generate default background for \"" + g.getGameDisplayName() + "\"?",
         "This will re-generate the existing default background.", null, "Yes, generate background");
       if (result.isPresent() && result.get().equals(ButtonType.OK)) {
-        client.getAssetService().regenerateGameAssets(g.getId());
+        Studio.client.getAssetService().regenerateGameAssets(g.getId());
         this.refreshView(this.game);
       }
     }
@@ -90,7 +88,7 @@ public class TablesSidebarDefaultBackgroundController implements Initializable {
   @FXML
   private void onDefaultBackgroundView() {
     if (game.isPresent()) {
-      ByteArrayInputStream image = client.getDirectB2SService().getDefaultPicture(game.get());
+      ByteArrayInputStream image = Studio.client.getDirectB2SService().getDefaultPicture(game.get());
       MediaUtil.openMedia(image);
     }
   }
@@ -112,7 +110,7 @@ public class TablesSidebarDefaultBackgroundController implements Initializable {
       new Thread(() -> {
         Platform.runLater(() -> {
           try {
-            InputStream input = client.getDirectB2SService().getDefaultPicture(game.get());
+            InputStream input = Studio.client.getDirectB2SService().getDefaultPicture(game.get());
             Image image = new Image(input);
             rawDefaultBackgroundImage.setVisible(true);
             rawDefaultBackgroundImage.setImage(image);

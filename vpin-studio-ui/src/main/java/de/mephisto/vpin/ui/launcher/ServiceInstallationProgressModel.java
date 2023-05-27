@@ -1,6 +1,7 @@
 package de.mephisto.vpin.ui.launcher;
 
 import de.mephisto.vpin.restclient.client.VPinStudioClient;
+import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.util.ProgressModel;
 import de.mephisto.vpin.ui.util.ProgressResultModel;
 import org.slf4j.Logger;
@@ -13,12 +14,10 @@ public class ServiceInstallationProgressModel extends ProgressModel<Integer> {
   private final static Logger LOG = LoggerFactory.getLogger(ServiceInstallationProgressModel.class);
   private final List<Integer> gameIds;
 
-  private VPinStudioClient client;
   private Iterator<Integer> gameIdIterator;
 
   public ServiceInstallationProgressModel(VPinStudioClient client) {
     super("Initial Table Scan");
-    this.client = client;
     gameIds = client.getGameService().getGameIds();
     gameIdIterator = gameIds.iterator();
   }
@@ -46,7 +45,7 @@ public class ServiceInstallationProgressModel extends ProgressModel<Integer> {
   @Override
   public void processNext(ProgressResultModel progressResultModel, Integer next) {
     try {
-      client.getGameService().scanGame(next);
+      Studio.client.getGameService().scanGame(next);
       progressResultModel.addProcessed();
     } catch (Exception e) {
       LOG.error("Error during service installation: " + e.getMessage(), e);
