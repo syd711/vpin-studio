@@ -17,7 +17,6 @@ import javafx.application.Platform;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -41,7 +40,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
-import java.util.concurrent.*;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
 
 import static de.mephisto.vpin.ui.Studio.client;
 
@@ -92,7 +94,7 @@ public class LauncherController implements Initializable {
   @FXML
   private void onInstall() {
     boolean install = Dialogs.openInstallerDialog();
-    if(install) {
+    if (install) {
       installServer();
     }
   }
@@ -166,7 +168,14 @@ public class LauncherController implements Initializable {
   private void onConnect() {
     VPinConnection selectedItem = tableView.getSelectionModel().getSelectedItem();
     VPinStudioClient client = new VPinStudioClient(selectedItem.getHost());
-    if (client.getSystemService().version() != null) {
+    String clientVersion = Studio.getVersion();
+    String serverVersion = client.getSystemService().version();
+
+    if (serverVersion != null) {
+      if (!serverVersion.equals(clientVersion)) {
+        WidgetFactory.showAlert(stage, "Incompatible Version", "The VPin Server you are connecting to has version " + serverVersion + ".", "Please update to version " + clientVersion + ".");
+      }
+
       stage.close();
       Studio.loadStudio(WidgetFactory.createStage(), client);
     }

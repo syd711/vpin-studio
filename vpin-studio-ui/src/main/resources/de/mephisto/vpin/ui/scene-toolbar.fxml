@@ -29,6 +29,20 @@
                         <Insets bottom="6.0" right="6.0" />
                      </BorderPane.margin>
                      <children>
+                        <Button fx:id="updateBtn" mnemonicParsing="false" onAction="#onUpdate" textFill="WHITE" visible="false">
+                           <graphic>
+                              <FontIcon iconColor="#03a905" iconLiteral="mdi2a-arrow-down-bold" iconSize="16" />
+                           </graphic>
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                           <tooltip>
+                              <Tooltip text="Update available" />
+                           </tooltip>
+                           <HBox.margin>
+                              <Insets />
+                           </HBox.margin>
+                        </Button>
                         <MenuButton fx:id="jobBtn" mnemonicParsing="false" prefWidth="160.0" text="No active jobs">
                            <tooltip>
                               <Tooltip text="Job Overview" />
@@ -44,20 +58,14 @@
                               <Insets top="1.0" />
                            </HBox.margin>
                         </MenuButton>
-                        <Button fx:id="updateBtn" mnemonicParsing="false" onAction="#onUpdate" textFill="WHITE" visible="false">
+                        <MenuButton fx:id="bugBtn" mnemonicParsing="false">
                            <graphic>
-                              <FontIcon iconColor="#03a905" iconLiteral="mdi2a-arrow-down-bold" iconSize="16" />
+                              <FontIcon iconColor="WHITE" iconLiteral="mdi2m-message-alert-outline" iconSize="17" />
                            </graphic>
                            <font>
                               <Font size="14.0" />
                            </font>
-                           <tooltip>
-                              <Tooltip text="Update available" />
-                           </tooltip>
-                           <HBox.margin>
-                              <Insets />
-                           </HBox.margin>
-                        </Button>
+                        </MenuButton>
                         <Button layoutX="164.0" layoutY="10.0" mnemonicParsing="false" onAction="#onClearCache" textFill="WHITE">
                            <font>
                               <Font size="14.0" />

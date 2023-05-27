@@ -2,10 +2,25 @@ package de.mephisto.vpin.restclient;
 
 import org.apache.commons.lang3.StringUtils;
 
+import java.util.UUID;
+
 public class JobExecutionResult {
+  private String uuid;
   private int gameId;
   private String resourceId;
   private String error;
+
+  public JobExecutionResult() {
+    this.uuid = UUID.randomUUID().toString();
+  }
+
+  public String getUuid() {
+    return uuid;
+  }
+
+  public void setUuid(String uuid) {
+    this.uuid = uuid;
+  }
 
   public String getResourceId() {
     return resourceId;

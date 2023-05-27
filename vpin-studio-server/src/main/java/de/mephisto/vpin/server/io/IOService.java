@@ -50,6 +50,9 @@ public class IOService {
   @Autowired
   private TableInstallerAdapterFactory tableInstallerAdapterFactory;
 
+  @Autowired
+  private JobQueue jobQueue;
+
   public boolean installArchive(@NonNull ArchiveRestoreDescriptor installDescriptor) {
     try {
       ArchiveDescriptor archiveDescriptor = archiveService.getArchiveDescriptor(installDescriptor.getArchiveSourceId(), installDescriptor.getFilename());
@@ -64,7 +67,7 @@ public class IOService {
       jobDescriptor.setDescription("Restoring \"" + archiveDescriptor.getTableDetails().getGameDisplayName() + "\"");
       jobDescriptor.setJob(job);
 
-      JobQueue.getInstance().offer(jobDescriptor);
+      jobQueue.offer(jobDescriptor);
       LOG.info("Offered import job for \"" + archiveDescriptor.getTableDetails().getGameDisplayName() + "\"");
     } catch (Exception e) {
       LOG.error("Import failed: " + e.getMessage(), e);
@@ -110,7 +113,7 @@ public class IOService {
       jobDescriptor.setDescription("Downloading \"" + archiveDescriptor.getTableDetails().getGameDisplayName() + "\"");
       jobDescriptor.setJob(job);
 
-      JobQueue.getInstance().offer(jobDescriptor);
+      jobQueue.offer(jobDescriptor);
       LOG.info("Offered archive copying for \"" + archiveDescriptor.getTableDetails().getGameDisplayName() + "\"");
     } catch (Exception e) {
       LOG.error("Import failed: " + e.getMessage(), e);
@@ -152,7 +155,7 @@ public class IOService {
       descriptor.setImageUrl(mediaItem.getUri());
     }
 
-    JobQueue.getInstance().offer(descriptor);
+    jobQueue.offer(descriptor);
     LOG.info("Offered export job for '" + game.getGameDisplayName() + "'");
     return true;
   }

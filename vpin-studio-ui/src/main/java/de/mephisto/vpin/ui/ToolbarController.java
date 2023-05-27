@@ -36,6 +36,9 @@ public class ToolbarController implements Initializable {
   @FXML
   private MenuButton jobBtn;
 
+  @FXML
+  private MenuButton bugBtn;
+
   private Node preferencesRoot;
 
   // Add a public no-args constructor
@@ -76,6 +79,7 @@ public class ToolbarController implements Initializable {
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
     this.jobBtn.setDisable(true);
+    this.bugBtn.setDisable(true);
 
     JobPoller.destroy();
     JobPoller.create(this.jobBtn);
@@ -97,5 +101,7 @@ public class ToolbarController implements Initializable {
     }).start();
 
     JobPoller.getInstance().setPolling();
+
+    this.bugBtn.setDisable(client.getJobsService().getResults().isEmpty());
   }
 }
