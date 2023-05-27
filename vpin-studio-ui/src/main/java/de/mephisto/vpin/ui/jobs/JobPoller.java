@@ -1,7 +1,9 @@
 package de.mephisto.vpin.ui.jobs;
 
+import de.mephisto.vpin.restclient.JobExecutionResult;
 import de.mephisto.vpin.restclient.descriptors.JobDescriptor;
 import de.mephisto.vpin.ui.events.EventManager;
+import de.mephisto.vpin.ui.messaging.MessageContainer;
 import javafx.application.Platform;
 import javafx.concurrent.Service;
 import javafx.concurrent.Task;
@@ -21,7 +23,9 @@ public class JobPoller {
   private final static Logger LOG = LoggerFactory.getLogger(JobPoller.class);
 
   private static JobPoller instance;
+
   private final MenuButton jobMenu;
+  private final MenuButton messagesMenu;
 
   private final List<JobDescriptor> activeJobs = Collections.synchronizedList(new ArrayList<>());
   private final List<JobDescriptor> clientJobs = Collections.synchronizedList(new ArrayList<>());
@@ -34,16 +38,18 @@ public class JobPoller {
     }
   }
 
-  public static void create(MenuButton jobMenu) {
+  public static void create(MenuButton jobMenu, MenuButton messagesBtn) {
     if (instance == null) {
-      instance = new JobPoller(jobMenu);
+      instance = new JobPoller(jobMenu, messagesBtn);
     }
   }
 
   //TODO throw UI out!
-  private JobPoller(MenuButton jobMenu) {
+  private JobPoller(MenuButton jobMenu, MenuButton messagesMenu) {
     this.jobMenu = jobMenu;
+    this.messagesMenu = messagesMenu;
     this.jobMenu.setStyle("-fx-background-color: #111111;");
+    this.messagesMenu.setStyle("-fx-background-color: #111111;");
 
     service = new Service() {
       @Override
@@ -63,13 +69,14 @@ public class JobPoller {
 
             while (poll) {
               jobs = new ArrayList<>(getActiveJobs());
-              refreshUI(jobs);
+              refreshJobsUI(jobs);
+              refreshMessagesUI();
               Thread.sleep(2000);
               poll = !jobs.isEmpty();
               LOG.info("JobPoller is waiting for " + jobs.size() + " running jobs.");
             }
             LOG.info("JobPoller finished all jobs");
-            refreshUI(Collections.emptyList());
+            refreshJobsUI(Collections.emptyList());
             return true;
           }
         };
@@ -98,7 +105,7 @@ public class JobPoller {
     }
   }
 
-  private void refreshUI(List<JobDescriptor> updatedJobList) {
+  private void refreshJobsUI(List<JobDescriptor> updatedJobList) {
     Platform.runLater(() -> {
       jobMenu.setDisable(updatedJobList.isEmpty());
       if (jobMenu.isDisabled()) {
@@ -134,11 +141,33 @@ public class JobPoller {
     });
   }
 
+  public void refreshMessagesUI() {
+    Platform.runLater(() -> {
+      List<JobExecutionResult> messages = new ArrayList<>(getResults());
+      messagesMenu.setDisable(messages.isEmpty());
+      messagesMenu.getItems().removeAll(messagesMenu.getItems());
+
+      for (JobExecutionResult message : messages) {
+        MessageContainer c = new MessageContainer(message);
+        CustomMenuItem item = new CustomMenuItem();
+        item.setContent(c);
+        item.setUserData(message);
+        messagesMenu.getItems().add(item);
+      }
+    });
+  }
+
   private List<JobDescriptor> getActiveJobs() {
     List<JobDescriptor> jobs = new ArrayList<>();
     jobs.addAll(client.getJobsService().getJobs());
     jobs.addAll(clientJobs);
     return jobs;
+  }
+
+  private List<JobExecutionResult> getResults() {
+    List<JobExecutionResult> results = new ArrayList<>();
+    results.addAll(client.getJobsService().getResults());
+    return results;
   }
 
   public void queueJob(JobDescriptor jobDescriptor) {

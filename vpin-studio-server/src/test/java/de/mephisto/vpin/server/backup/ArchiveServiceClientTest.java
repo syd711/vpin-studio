@@ -40,8 +40,8 @@ public class ArchiveServiceClientTest extends AbstractVPinServerTest {
   public void testExport() {
     Game game = gameService.getGameByFilename(TEST_FILE);
     TableBackupAdapter adapter = tableBackupAdapterFactory.createAdapter(archiveService.getDefaultArchiveSourceAdapter(), game);
-    ArchiveDescriptor backup = adapter.createBackup();
-    assertTrue(new File(backup.getSource().getLocation(), backup.getFilename()).exists());
+    JobExecutionResult msg = adapter.createBackup();
+    assertTrue(msg.getError() == null);
   }
 
   @Test

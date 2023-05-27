@@ -1,6 +1,7 @@
 package de.mephisto.vpin.server.backup.adapters;
 
 import de.mephisto.vpin.restclient.Job;
+import de.mephisto.vpin.restclient.JobExecutionResult;
 import de.mephisto.vpin.server.backup.ArchiveDescriptor;
 
 /**
@@ -8,5 +9,5 @@ import de.mephisto.vpin.server.backup.ArchiveDescriptor;
  */
 public interface TableBackupAdapter extends Job {
 
-  ArchiveDescriptor createBackup();
+  JobExecutionResult createBackup();
 }

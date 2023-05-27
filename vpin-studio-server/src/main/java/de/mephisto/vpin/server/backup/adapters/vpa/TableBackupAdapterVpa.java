@@ -73,11 +73,11 @@ public class TableBackupAdapterVpa implements TableBackupAdapter, Job {
   }
 
   public JobExecutionResult execute() {
-    return JobExecutionResultFactory.create(createBackup() != null, "VPA backup failed.");
+    return createBackup();
   }
 
   @Override
-  public ArchiveDescriptor createBackup() {
+  public JobExecutionResult createBackup() {
     ArchiveDescriptor archiveDescriptor = new ArchiveDescriptor();
     ArchivePackageInfo packageInfo = new ArchivePackageInfo();
 
@@ -224,6 +224,7 @@ public class TableBackupAdapterVpa implements TableBackupAdapter, Job {
       zipPackageInfo(zipOut, packageInfo);
     } catch (Exception e) {
       LOG.error("Create VPA for " + game.getGameDisplayName() + " failed: " + e.getMessage(), e);
+      return JobExecutionResultFactory.create("Create VPA for " + game.getGameDisplayName() + " failed: " + e.getMessage());
     } finally {
       try {
         if (zipOut != null) {
@@ -247,11 +248,12 @@ public class TableBackupAdapterVpa implements TableBackupAdapter, Job {
       }
       else {
         LOG.error("Final renaming export file to " + target.getAbsolutePath() + " failed.");
+        return JobExecutionResultFactory.create("Final renaming export file to " + target.getAbsolutePath() + " failed.");
       }
     }
 
     archiveDescriptor.setSize(target.length());
-    return archiveDescriptor;
+    return JobExecutionResultFactory.create(null);
   }
 
   private boolean findAudioMatch(File[] allMusicFiles, String[] audioAssets) {

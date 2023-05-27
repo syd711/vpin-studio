@@ -58,7 +58,7 @@
                               <Insets top="1.0" />
                            </HBox.margin>
                         </MenuButton>
-                        <MenuButton fx:id="bugBtn" mnemonicParsing="false">
+                        <MenuButton fx:id="messagesBtn" mnemonicParsing="false">
                            <graphic>
                               <FontIcon iconColor="WHITE" iconLiteral="mdi2m-message-alert-outline" iconSize="17" />
                            </graphic>

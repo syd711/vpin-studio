@@ -46,16 +46,16 @@ public class TableBackupAdapterVpbm implements TableBackupAdapter, Job {
   }
 
   public JobExecutionResult execute() {
-    return JobExecutionResultFactory.create(createBackup() != null, "Creating backup failed");
+    return createBackup();
   }
 
   @Override
-  public ArchiveDescriptor createBackup() {
+  public JobExecutionResult createBackup() {
     LOG.info("Starting VPBM backup of " + game.getGameFileName());
 
     status = "Creating backup of \"" + game.getGameDisplayName() + "\"";
 
-    vpbmService.backup(game.getId());
+    JobExecutionResult result = JobExecutionResultFactory.create(vpbmService.backup(game.getId()));
 
     File archiveFile = new File(this.archiveSourceAdapter.getArchiveSource().getLocation(), tableDetails.getGameName() + ".vpinzip");
 
@@ -83,6 +83,6 @@ public class TableBackupAdapterVpbm implements TableBackupAdapter, Job {
 
     progress = 100;
 
-    return archiveDescriptor;
+    return result;
   }
 }

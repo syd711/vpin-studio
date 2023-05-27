@@ -37,7 +37,7 @@ public class ToolbarController implements Initializable {
   private MenuButton jobBtn;
 
   @FXML
-  private MenuButton bugBtn;
+  private MenuButton messagesBtn;
 
   private Node preferencesRoot;
 
@@ -79,10 +79,10 @@ public class ToolbarController implements Initializable {
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
     this.jobBtn.setDisable(true);
-    this.bugBtn.setDisable(true);
+    this.messagesBtn.setDisable(true);
 
     JobPoller.destroy();
-    JobPoller.create(this.jobBtn);
+    JobPoller.create(this.jobBtn, this.messagesBtn);
 
     if (preferencesRoot == null) {
       try {
@@ -102,6 +102,6 @@ public class ToolbarController implements Initializable {
 
     JobPoller.getInstance().setPolling();
 
-    this.bugBtn.setDisable(client.getJobsService().getResults().isEmpty());
+    this.messagesBtn.setDisable(client.getJobsService().getResults().isEmpty());
   }
 }

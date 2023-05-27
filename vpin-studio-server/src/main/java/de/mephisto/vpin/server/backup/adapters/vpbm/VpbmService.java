@@ -50,8 +50,12 @@ public class VpbmService implements InitializingBean {
     return new File(systemService.getArchivesFolder(), "exports/Visual Pinball X/");
   }
 
-  public void backup(int tableId) {
-    executeVPBM(Arrays.asList("-b", String.valueOf(tableId)));
+  public String backup(int tableId) {
+    SystemCommandOutput systemCommandOutput = executeVPBM(Arrays.asList("-b", String.valueOf(tableId)));
+    if (!StringUtils.isEmpty(systemCommandOutput.getErrOut())) {
+      return systemCommandOutput.getErrOut();
+    }
+    return null;
   }
 
   public File export(String tablename) {
