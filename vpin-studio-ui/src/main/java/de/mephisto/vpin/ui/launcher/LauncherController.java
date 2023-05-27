@@ -17,6 +17,7 @@ import javafx.application.Platform;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -40,6 +41,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
+import java.util.concurrent.*;
 
 import static de.mephisto.vpin.ui.Studio.client;
 
@@ -292,29 +294,42 @@ public class LauncherController implements Initializable {
   }
 
   private VPinConnection checkConnection(String host) {
-    VPinStudioClient client = new VPinStudioClient(host, 3000);
-    String version = client.getSystemService().version();
-    if (version != null) {
-      VPinConnection connection = new VPinConnection();
-      PreferenceEntryRepresentation avatarEntry = client.getPreference(PreferenceNames.AVATAR);
-      PreferenceEntryRepresentation systemName = client.getPreference(PreferenceNames.SYSTEM_NAME);
+    ExecutorService executor = Executors.newSingleThreadExecutor();
+    Future<VPinConnection> future = executor.submit(() -> {
+      VPinStudioClient client = new VPinStudioClient(host);
+      String version = client.getSystemService().version();
+      if (version != null) {
+        VPinConnection connection = new VPinConnection();
+        PreferenceEntryRepresentation avatarEntry = client.getPreference(PreferenceNames.AVATAR);
+        PreferenceEntryRepresentation systemName = client.getPreference(PreferenceNames.SYSTEM_NAME);
 
-      String name = systemName.getValue();
-      if (StringUtils.isEmpty(name)) {
-        name = UIDefaults.VPIN_NAME;
-      }
-      connection.setHost(host);
-      connection.setName(name);
+        String name = systemName.getValue();
+        if (StringUtils.isEmpty(name)) {
+          name = UIDefaults.VPIN_NAME;
+        }
+        connection.setHost(host);
+        connection.setName(name);
 
-      if (!StringUtils.isEmpty(avatarEntry.getValue())) {
-        connection.setAvatar(new Image(client.getAsset(AssetType.VPIN_AVATAR, avatarEntry.getValue())));
+        if (!StringUtils.isEmpty(avatarEntry.getValue())) {
+          connection.setAvatar(new Image(client.getAsset(AssetType.VPIN_AVATAR, avatarEntry.getValue())));
+        }
+        else {
+          Image image = new Image(Studio.class.getResourceAsStream("avatar-default.png"));
+          connection.setAvatar(image);
+        }
+        return connection;
       }
-      else {
-        Image image = new Image(Studio.class.getResourceAsStream("avatar-default.png"));
-        connection.setAvatar(image);
-      }
-      return connection;
+      return null;
+    });
+
+    executor.shutdownNow();
+
+    try {
+      return future.get(3000, TimeUnit.MILLISECONDS);
+    } catch (Exception e) {
+      //
     }
+
     return null;
   }
 }

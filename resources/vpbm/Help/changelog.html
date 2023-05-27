@@ -20,12 +20,18 @@
     <h3><span>&nbsp;&nbsp;VPBM Change Log</span></h3>
     <p>Note this change log takes effect from version 1.3 when <span class="vpbm">VPBM</span> became publicly available</p>
     <dl>
+        <dt>Version 1.11</dt>
+        <dd>
+            <li>Fixed bug restoring games with "'" in the gamename or gamefilename.</li>
+            <li>Reworked Import (both from file explorer and from drag and drop into game list) to provide progress in status bar as files are processed.</li>
+            <li>Reworked Restore Deleted game to provide progress in status bar.</li>
+        </dd>
         <dt><strong>Version 1.10</strong></dt>
         <dd>
 			<li>Modified TreeView to prevent attempts to open VPReg.stg and NVRAM files.</li>
-			<li>Modified TreeView to only show game specififc content from VPMAlias.txt files.</li>
-			<li>Modifed File Filter Panel to allow VPReg settings to be shown.</li>
-			<li>Fixed MVRAM deletes to also delete bookmark files when deleting a NVRAM with offset.</li>
+			<li>Modified TreeView to only show game specific content from VPMAlias.txt files.</li>
+			<li>Modified File Filter Panel to allow VPReg settings to be shown.</li>
+			<li>Fixed NVRAM deletes to also delete bookmark files when deleting a NVRAM with offset.</li>
 			<li>Modified location of temporary file extracts from backup to avoid overwriting manifest generated content.</li>
 			<li>Updated Filter Variables Panel to only show errors for missing variables if they are expected.</li>
 			<li>Refined import rules to ensure imports are prohibited if game with matching details is already installed.</li>
