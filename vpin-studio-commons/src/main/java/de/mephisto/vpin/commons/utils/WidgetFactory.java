@@ -367,31 +367,6 @@ public class WidgetFactory {
     }
   }
 
-  public static class OverlayBackgroundImageListCell extends ListCell<String> {
-    private final VPinStudioClient client;
-
-    public OverlayBackgroundImageListCell(VPinStudioClient client) {
-      this.client = client;
-    }
-
-    protected void updateItem(String item, boolean empty) {
-      super.updateItem(item, empty);
-      setGraphic(null);
-      setText(null);
-      if (item != null) {
-        Image image = new Image(client.getHighscoreCardsService().getOverlayBackgroundImage(item));
-        ImageView imageView = new ImageView(image);
-        imageView.setFitWidth(80);
-
-        int percentageWidth = (int) (80 * 100 / image.getWidth());
-        int height = (int) (image.getHeight() * percentageWidth / 100);
-        imageView.setFitHeight(height);
-        setGraphic(imageView);
-        setText(item);
-      }
-    }
-  }
-
   public static class HighscoreBackgroundImageListCell extends ListCell<String> {
     private final VPinStudioClient client;
 

@@ -63,9 +63,10 @@ public class VpbmArchiveUtil {
             info.setFlexDMD(manifestString.contains("FlexDMD"));
             info.setUltraDMD(manifestString.contains("UltraDMD"));
             info.setPupPack(manifestString.contains("PUPVideos"));
-            info.setRom(false);
             info.setVpx(manifestString.contains(".vpx"));
             info.setRes(manifestString.contains(".res"));
+            info.setPov(manifestString.contains(".pov"));
+            info.setRom(manifestString.contains("VPinMAME\\\\roms\\\\"));
             info.setDirectb2s(manifestString.contains(".directb2s"));
             return info;
           }

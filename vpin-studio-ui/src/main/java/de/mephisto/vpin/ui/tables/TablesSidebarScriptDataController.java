@@ -2,7 +2,6 @@ package de.mephisto.vpin.ui.tables;
 
 import de.mephisto.vpin.commons.utils.FileUtils;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
-import de.mephisto.vpin.restclient.client.VPinStudioClient;
 import de.mephisto.vpin.restclient.representations.GameRepresentation;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.tables.dialogs.ScriptDownloadProgressModel;
@@ -67,8 +66,6 @@ public class TablesSidebarScriptDataController implements Initializable {
   @FXML
   private Button editTableNameBtn;
 
-  private VPinStudioClient client;
-
   private Optional<GameRepresentation> game = Optional.empty();
 
   private TablesSidebarController tablesSidebarController;
@@ -79,7 +76,6 @@ public class TablesSidebarScriptDataController implements Initializable {
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
-    client = Studio.client;
   }
 
   public void setGame(Optional<GameRepresentation> game) {
@@ -96,7 +92,7 @@ public class TablesSidebarScriptDataController implements Initializable {
       gameRepresentation.setHsFileName(fs);
 
       try {
-        client.getGameService().saveGame(gameRepresentation);
+        Studio.client.getGameService().saveGame(gameRepresentation);
         this.tablesSidebarController.getTablesSidebarHighscoresController().refreshView(game, true);
       } catch (Exception e) {
         WidgetFactory.showAlert(Studio.stage, e.getMessage());
@@ -123,7 +119,7 @@ public class TablesSidebarScriptDataController implements Initializable {
     if (tableName != null) {
       gameRepresentation.setTableName(tableName);
       try {
-        client.getGameService().saveGame(gameRepresentation);
+        Studio.client.getGameService().saveGame(gameRepresentation);
         tablesSidebarController.getTablesSidebarHighscoresController().refreshView(game, true);
       } catch (Exception e) {
         WidgetFactory.showAlert(Studio.stage, e.getMessage());
@@ -139,7 +135,7 @@ public class TablesSidebarScriptDataController implements Initializable {
     if (romName != null) {
       gameRepresentation.setRom(romName);
       try {
-        client.getGameService().saveGame(gameRepresentation);
+        Studio.client.getGameService().saveGame(gameRepresentation);
         this.tablesSidebarController.getTablesSidebarHighscoresController().refreshView(game, true);
       } catch (Exception e) {
         WidgetFactory.showAlert(Studio.stage, e.getMessage());
