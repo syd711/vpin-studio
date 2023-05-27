@@ -17,9 +17,13 @@ import org.kordamp.ikonli.javafx.FontIcon;
 
 public class MessageContainer extends BorderPane {
 
+  public static final int VALUE = 600;
+
   public MessageContainer(JobExecutionResult result) {
-    setPrefWidth(400);
-    VBox vbox = new VBox(3);
+    setPrefWidth(VALUE);
+    this.getStyleClass().add("custom-menu-item");
+    VBox vbox = new VBox();
+    vbox.setStyle("-fx-padding: 6 6 6 6;");
 
     BorderPane top = new BorderPane();
     Label label = new Label("Job Execution Error");
@@ -44,6 +48,8 @@ public class MessageContainer extends BorderPane {
 
     vbox.getChildren().add(top);
     label = new Label(result.getError());
+    label.setWrapText(true);
+    label.setPrefWidth(VALUE);
     vbox.getChildren().add(label);
 
     setCenter(vbox);

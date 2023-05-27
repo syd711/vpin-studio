@@ -2,14 +2,19 @@ package de.mephisto.vpin.ui.jobs;
 
 import de.mephisto.vpin.restclient.JobExecutionResult;
 import de.mephisto.vpin.restclient.descriptors.JobDescriptor;
+import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.messaging.MessageContainer;
 import javafx.application.Platform;
 import javafx.concurrent.Service;
 import javafx.concurrent.Task;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
+import javafx.scene.control.Button;
 import javafx.scene.control.CustomMenuItem;
 import javafx.scene.control.MenuButton;
 import javafx.scene.control.MenuItem;
+import javafx.scene.layout.VBox;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -147,12 +152,31 @@ public class JobPoller {
       messagesMenu.setDisable(messages.isEmpty());
       messagesMenu.getItems().removeAll(messagesMenu.getItems());
 
-      for (JobExecutionResult message : messages) {
-        MessageContainer c = new MessageContainer(message);
-        CustomMenuItem item = new CustomMenuItem();
-        item.setContent(c);
-        item.setUserData(message);
-        messagesMenu.getItems().add(item);
+      if(!messages.isEmpty()) {
+        VBox vbox = new VBox();
+        vbox.setStyle("-fx-padding: 6 6 6 6;");
+        Button dismissBtn = new Button("Dismiss All");
+        dismissBtn.setOnAction(new EventHandler<>() {
+          @Override
+          public void handle(ActionEvent event) {
+            Studio.client.getJobsService().dismissAll();
+            JobPoller.getInstance().refreshMessagesUI();
+          }
+        });
+        vbox.getChildren().add(dismissBtn);
+
+        CustomMenuItem btnItem = new CustomMenuItem();
+        btnItem.setContent(vbox);
+        messagesMenu.getItems().add(btnItem);
+
+
+        for (JobExecutionResult message : messages) {
+          MessageContainer c = new MessageContainer(message);
+          CustomMenuItem item = new CustomMenuItem();
+          item.setContent(c);
+          item.setUserData(message);
+          messagesMenu.getItems().add(item);
+        }
       }
     });
   }

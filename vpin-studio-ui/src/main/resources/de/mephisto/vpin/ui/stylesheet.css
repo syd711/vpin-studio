@@ -622,6 +622,15 @@
     -fx-text-fill: #FFFFFF;
 }
 
+.custom-menu-item, .custom-menu-item:hover{
+   -fx-background-color: #111111;
+   -fx-padding: 0 0 0 0;
+}
+
+.custom-menu-item .label:hover {
+    -fx-background-color: #111111;
+}
+
 .copyable-label, .copyable-label:focused {
     -fx-background-color: transparent ;
     -fx-background-insets: 0px ;
