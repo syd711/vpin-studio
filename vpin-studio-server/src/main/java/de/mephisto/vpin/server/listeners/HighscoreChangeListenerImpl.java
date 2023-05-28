@@ -63,7 +63,7 @@ public class HighscoreChangeListenerImpl implements InitializingBean, HighscoreC
           discordService.sendMessage(discordServerId, discordChannelId, DiscordOfflineChannelMessageFactory.createCompetitionHighscoreCreatedMessage(competition, event, raw));
         }
         else if (competition.getType().equals(CompetitionType.DISCORD.name())) {
-          if(discordService.isCompetitionActive(discordServerId, discordChannelId, competition.getUuid())) {
+          if (discordService.isCompetitionActive(discordServerId, discordChannelId, competition.getUuid())) {
             discordCompetitionHighscoreChanged(event, competition);
           }
           else {
@@ -97,41 +97,45 @@ public class HighscoreChangeListenerImpl implements InitializingBean, HighscoreC
 
     LOG.info("****** Processing Discord Highscore Change Event for " + game.getGameDisplayName() + " *********");
     LOG.info("The new score: " + newScore);
-
-    ScoreList scoreList = discordService.getScoreList(highscoreParser, competition.getUuid(), discordServerId, discordChannelId);
-    if (scoreList.getScores().isEmpty()) {
-      LOG.info("Emitting initial highscore message for " + competition);
-      long newHighscoreMessageId = discordService.sendMessage(discordServerId, discordChannelId, discordChannelMessageFactory.createFirstCompetitionHighscoreCreatedMessage(game, competition, newScore, event.getScoreCount()));
-      discordService.updateHighscoreMessage(discordServerId, discordChannelId, newHighscoreMessageId);
+    if (newScore.getPlayerInitials().contains("?")) {
+      LOG.info("Highscore update has been skipped, initials with '?' are filtered.");
     }
     else {
-      ScoreSummary latestScore = scoreList.getLatestScore();
-      List<Score> oldScores = latestScore.getScores();
-      LOG.info("The current online score for " + competition + " (" + oldScores.size() + " entries):");
-      for (Score oldScore : oldScores) {
-        LOG.info("[" + oldScore + "]");
-      }
-
-      int position = highscoreService.calculateChangedPositionByScore(oldScores, newScore);
-      if (position == -1) {
-        LOG.info("No highscore change detected for " + game + " of discord competition '" + competition.getName() + "', skipping highscore message.");
+      ScoreList scoreList = discordService.getScoreList(highscoreParser, competition.getUuid(), discordServerId, discordChannelId);
+      if (scoreList.getScores().isEmpty()) {
+        LOG.info("Emitting initial highscore message for " + competition);
+        long newHighscoreMessageId = discordService.sendMessage(discordServerId, discordChannelId, discordChannelMessageFactory.createFirstCompetitionHighscoreCreatedMessage(game, competition, newScore, event.getScoreCount()));
+        discordService.updateHighscoreMessage(discordServerId, discordChannelId, newHighscoreMessageId);
       }
       else {
-        List<Score> updatedScores = new ArrayList<>(oldScores);
-        Score oldScore = oldScores.get(position - 1);
-        updatedScores.add(position - 1, newScore);
-        updatedScores = updatedScores.subList(0, updatedScores.size() - 1);
-
-        LOG.info("Updated score post:");
-        for (int i = 0; i < updatedScores.size(); i++) {
-          Score s = updatedScores.get(i);
-          s.setPosition(i + 1);
-          LOG.info("[" + s + "]");
+        ScoreSummary latestScore = scoreList.getLatestScore();
+        List<Score> oldScores = latestScore.getScores();
+        LOG.info("The current online score for " + competition + " (" + oldScores.size() + " entries):");
+        for (Score oldScore : oldScores) {
+          LOG.info("[" + oldScore + "]");
         }
 
-        LOG.info("Emitting Discord highscore changed message for discord competition " + competition);
-        long newHighscoreMessageId = discordService.sendMessage(discordServerId, discordChannelId, discordChannelMessageFactory.createCompetitionHighscoreCreatedMessage(game, competition, oldScore, newScore, updatedScores));
-        discordService.updateHighscoreMessage(discordServerId, discordChannelId, newHighscoreMessageId);
+        int position = highscoreService.calculateChangedPositionByScore(oldScores, newScore);
+        if (position == -1) {
+          LOG.info("No highscore change detected for " + game + " of discord competition '" + competition.getName() + "', skipping highscore message.");
+        }
+        else {
+          List<Score> updatedScores = new ArrayList<>(oldScores);
+          Score oldScore = oldScores.get(position - 1);
+          updatedScores.add(position - 1, newScore);
+          updatedScores = updatedScores.subList(0, updatedScores.size() - 1);
+
+          LOG.info("Updated score post:");
+          for (int i = 0; i < updatedScores.size(); i++) {
+            Score s = updatedScores.get(i);
+            s.setPosition(i + 1);
+            LOG.info("[" + s + "]");
+          }
+
+          LOG.info("Emitting Discord highscore changed message for discord competition " + competition);
+          long newHighscoreMessageId = discordService.sendMessage(discordServerId, discordChannelId, discordChannelMessageFactory.createCompetitionHighscoreCreatedMessage(game, competition, oldScore, newScore, updatedScores));
+          discordService.updateHighscoreMessage(discordServerId, discordChannelId, newHighscoreMessageId);
+        }
       }
     }
     LOG.info("***************** / Finished Discord Highscore Processing *********************");

@@ -10,7 +10,9 @@ import de.mephisto.vpin.server.competitions.ScoreSummary;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameService;
 import de.mephisto.vpin.server.highscores.HighscoreMetadata;
+import de.mephisto.vpin.server.highscores.HighscoreParser;
 import de.mephisto.vpin.server.highscores.HighscoreService;
+import de.mephisto.vpin.server.highscores.ScoreList;
 import de.mephisto.vpin.server.players.Player;
 import de.mephisto.vpin.server.players.PlayerService;
 import org.apache.commons.lang3.StringUtils;
@@ -42,6 +44,9 @@ public class DiscordBotResponseService implements DiscordBotCommandListener, Ini
   @Autowired
   private DiscordService discordService;
 
+  @Autowired
+  private HighscoreParser highscoreParser;
+
   @Override
   public BotCommandResponse onBotCommand(BotCommand cmd) {
     String name = cmd.getCommand();
@@ -57,11 +62,24 @@ public class DiscordBotResponseService implements DiscordBotCommandListener, Ini
 
         StringBuilder builder = new StringBuilder();
         for (Competition activeCompetition : activeCompetitions) {
+          if (!StringUtils.isEmpty(activeCompetition.getWinnerInitials())) {
+            continue;
+          }
+
           Game game = gameService.getGame(activeCompetition.getGameId());
           if (game != null) {
-            ScoreSummary highscores = highscoreService.getScoreSummary(cmd.getServerId(), game.getId(), game.getGameDisplayName());
-            String msg = DiscordBotCommandResponseFactory.createActiveCompetitionMessage(activeCompetition, game, highscores);
-            builder.append(msg);
+            if (activeCompetition.getType().equals(CompetitionType.DISCORD.name())) {
+              ScoreList scoreList = discordService.getScoreList(highscoreParser, activeCompetition.getUuid(), activeCompetition.getDiscordServerId(), activeCompetition.getDiscordChannelId());
+              if (scoreList.getLatestScore() != null) {
+                String msg = DiscordBotCommandResponseFactory.createActiveCompetitionMessage(activeCompetition, game, scoreList.getLatestScore());
+                builder.append(msg);
+              }
+            }
+            else {
+              ScoreSummary highscores = highscoreService.getScoreSummary(cmd.getServerId(), game.getId(), game.getGameDisplayName());
+              String msg = DiscordBotCommandResponseFactory.createActiveCompetitionMessage(activeCompetition, game, highscores);
+              builder.append(msg);
+            }
           }
         }
         return builder::toString;
@@ -97,7 +115,7 @@ public class DiscordBotResponseService implements DiscordBotCommandListener, Ini
               matches.add(game);
             }
 
-            if(matches.size() == 10) {
+            if (matches.size() == 10) {
               break;
             }
           }
