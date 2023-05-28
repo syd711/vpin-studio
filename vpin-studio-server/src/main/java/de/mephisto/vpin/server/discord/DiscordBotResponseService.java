@@ -54,6 +54,9 @@ public class DiscordBotResponseService implements DiscordBotCommandListener, Ini
       case BotCommand.CMD_COMMANDS: {
         return () -> DiscordBotCommandResponseFactory.COMMAND_SUMMARY;
       }
+      case BotCommand.CMD_HELP: {
+        return () -> DiscordBotCommandResponseFactory.COMMAND_SUMMARY;
+      }
       case BotCommand.CMD_COMPETITIONS: {
         List<Competition> activeCompetitions = competitionService.getActiveCompetitions();
         if (activeCompetitions.isEmpty()) {
@@ -62,7 +65,7 @@ public class DiscordBotResponseService implements DiscordBotCommandListener, Ini
 
         StringBuilder builder = new StringBuilder();
         for (Competition activeCompetition : activeCompetitions) {
-          if (!StringUtils.isEmpty(activeCompetition.getWinnerInitials())) {
+          if (!StringUtils.isEmpty(activeCompetition.getWinnerInitials()) || !activeCompetition.isStarted()) {
             continue;
           }
 
