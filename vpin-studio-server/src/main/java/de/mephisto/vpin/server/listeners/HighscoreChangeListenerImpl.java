@@ -133,7 +133,8 @@ public class HighscoreChangeListenerImpl implements InitializingBean, HighscoreC
           }
 
           LOG.info("Emitting Discord highscore changed message for discord competition " + competition);
-          long newHighscoreMessageId = discordService.sendMessage(discordServerId, discordChannelId, discordChannelMessageFactory.createCompetitionHighscoreCreatedMessage(game, competition, oldScore, newScore, updatedScores));
+          String msg = discordChannelMessageFactory.createCompetitionHighscoreCreatedMessage(game, competition, oldScore, newScore, updatedScores);
+          long newHighscoreMessageId = discordService.sendMessage(discordServerId, discordChannelId, msg);
           discordService.updateHighscoreMessage(discordServerId, discordChannelId, newHighscoreMessageId);
         }
       }

@@ -5,7 +5,6 @@ import de.mephisto.vpin.server.vpx.VPXUtil;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.poi.poifs.filesystem.*;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -99,7 +98,7 @@ public class VPXFileScanner {
         lineSearchRom(result, line);
         lineSearchNvOffset(result, line);
         lineSearchHsFileName(result, line);
-        lineSearchAsset(result, line);
+        lineSearchAsset(gameFile, result, line);
       }
     } catch (Exception e) {
       LOG.error("Failed to read rom line '" + line + "' for  " + gameFile.getAbsolutePath() + ": " + e.getMessage(), e);
@@ -130,22 +129,23 @@ public class VPXFileScanner {
       lineSearchRom(result, line);
       lineSearchNvOffset(result, line);
       lineSearchHsFileName(result, line);
-      lineSearchAsset(result, line);
+      lineSearchAsset(gameFile, result, line);
     }
   }
 
   /**
    * Searches the given line for assets.
    *
-   * @param result the current scan result to add the asset info to
-   * @param line   the line that is currently parsed
+   * @param gameFile the game file that is scanned
+   * @param result   the current scan result to add the asset info to
+   * @param line     the line that is currently parsed
    */
-  private static void lineSearchAsset(@NonNull ScanResult result, @NonNull String line) {
+  private static void lineSearchAsset(@NonNull File gameFile, @NonNull ScanResult result, @NonNull String line) {
     for (String assetType : ASSET_TYPES) {
       if (line.contains("." + assetType + "\"")) {
         String asset = extractAsset(line, assetType);
         if (asset != null && !result.getAssets().contains(asset)) {
-          LOG.info("Added asset '" + asset + "'");
+          LOG.info(gameFile.getAbsolutePath() + ": Added asset '" + asset + "'");
           result.getAssets().add(asset);
         }
       }

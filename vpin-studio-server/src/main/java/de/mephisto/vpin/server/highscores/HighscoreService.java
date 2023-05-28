@@ -385,6 +385,7 @@ public class HighscoreService implements InitializingBean {
       return Optional.of(oldHighscore);
     }
 
+    LOG.info("Calculated changed positions for '" + game.getRom() + "': " + changedPositions);
     for (Integer changedPosition : changedPositions) {
       //so we have a highscore update, let's decide the distribution
       Score oldScore = oldScores.get(changedPosition - 1);
@@ -394,7 +395,7 @@ public class HighscoreService implements InitializingBean {
       if (!StringUtils.isEmpty(oldRaw)) {
         HighscoreVersion version = oldHighscore.toVersion(changedPosition, newRaw);
         highscoreVersionRepository.saveAndFlush(version);
-        LOG.info("Created highscore version for " + game);
+        LOG.info("Created highscore version for " + game + ", changed position " + changedPosition);
       }
 
       //update existing one
@@ -458,7 +459,7 @@ public class HighscoreService implements InitializingBean {
         boolean notFound = oldScores.stream().noneMatch(score -> score.matches(newScore));
         if (notFound) {
           changes.add(newScore.getPosition());
-          LOG.info("Calculated changed score: [" + newScore + "] has beaten [" + oldScores.get(newScore.getPosition()-1) + "]");
+          LOG.info("Calculated changed score: [" + newScore + "] has beaten [" + oldScores.get(newScore.getPosition() - 1) + "]");
         }
       }
     } catch (Exception e) {
@@ -478,7 +479,7 @@ public class HighscoreService implements InitializingBean {
   }
 
   private void triggerHighscoreChange(@NonNull HighscoreChangeEvent event) {
-    if(changeListenerEnabled) {
+    if (changeListenerEnabled) {
       for (HighscoreChangeListener listener : listeners) {
         listener.highscoreChanged(event);
       }

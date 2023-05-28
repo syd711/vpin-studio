@@ -11,6 +11,7 @@ import de.mephisto.vpin.server.players.PlayerService;
 import de.mephisto.vpin.server.util.ScoreHelper;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -82,7 +83,7 @@ public class DiscordChannelMessageFactory {
         "```%s\n" +
         "```";
     String msg = String.format(template, playerName, game.getGameDisplayName(), competition.getUuid(), newScore);
-    msg = msg + DiscordOfflineChannelMessageFactory.getBeatenMessage(oldScore, newScore);
+    msg = msg + getBeatenMessage(competition.getDiscordServerId(), oldScore, newScore);
 
     return msg + "\nHere is the " + HIGHSCORE_INDICATOR + ":" + createHighscoreList(updatedScores);
   }
@@ -134,7 +135,7 @@ public class DiscordChannelMessageFactory {
     String playerName = newScore.getPlayerInitials();
     if (newScore.getPlayer() != null) {
       Player player = playerService.getPlayerForInitials(serverId, newScore.getPlayerInitials());
-      if(player != null) {
+      if (player != null) {
         playerName = newScore.getPlayer().getName();
         if (PlayerDomain.DISCORD.name().equals(player.getDomain())) {
           playerName = "<@" + player.getId() + ">";
@@ -142,6 +143,25 @@ public class DiscordChannelMessageFactory {
       }
     }
     return playerName;
+  }
+
+
+  private String getBeatenMessage(long serverId, Score oldScore, Score newScore) {
+    String oldName = resolvePlayerName(serverId, oldScore);
+    if (oldScore.getPlayerInitials().equals("???") || oldScore.getNumericScore() == 0) {
+      return "";
+    }
+
+    if (StringUtils.isEmpty(oldName)) {
+      return "The previous highscore of " + oldScore.getScore() + " has been beaten.";
+    }
+
+    if (newScore.getPlayerInitials().equals(oldScore.getPlayerInitials())) {
+      return "The player has beaten their own highscore.";
+    }
+
+    String beatenMessageTemplate = "%s, your highscore of %s points has been beaten.";
+    return String.format(beatenMessageTemplate, oldName, oldScore.getScore());
   }
 
   private static String createHighscoreList(List<Score> scores) {
