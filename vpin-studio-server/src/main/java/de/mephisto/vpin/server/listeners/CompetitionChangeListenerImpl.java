@@ -49,6 +49,9 @@ public class CompetitionChangeListenerImpl implements InitializingBean, Competit
   @Autowired
   private AssetService assetService;
 
+  @Autowired
+  private DiscordChannelMessageFactory discordChannelMessageFactory;
+
   @Override
   public void competitionStarted(@NonNull Competition competition) {
     Game game = gameService.getGame(competition.getGameId());
@@ -62,7 +65,7 @@ public class CompetitionChangeListenerImpl implements InitializingBean, Competit
         if (isOwner) {
           String base64Data = CompetitionDataHelper.DATA_INDICATOR + CompetitionDataHelper.toBase64(competition, game);
           byte[] image = assetService.getCompetitionBackgroundFor(competition, game);
-          String message = DiscordChannelMessageFactory.createDiscordCompetitionCreatedMessage(botId, competition.getUuid());
+          String message = discordChannelMessageFactory.createDiscordCompetitionCreatedMessage(competition.getDiscordServerId(), botId, competition.getUuid());
 
           long messageId = discordService.sendMessage(serverId, channelId, message, image, competition.getName() + ".png", base64Data);
           //since we started a new competition, all messages before today are irrelevant (we check only today so we don't run into topic update limits)
@@ -107,7 +110,7 @@ public class CompetitionChangeListenerImpl implements InitializingBean, Competit
 
         long discordServerId = competition.getDiscordServerId();
         long discordChannelId = competition.getDiscordChannelId();
-        long msgId = discordService.sendMessage(discordServerId, discordChannelId, DiscordChannelMessageFactory.createCompetitionJoinedMessage(competition, bot));
+        long msgId = discordService.sendMessage(discordServerId, discordChannelId, discordChannelMessageFactory.createCompetitionJoinedMessage(competition, bot));
         discordService.addCompetitionPlayer(discordServerId, discordChannelId, msgId);
 
         LOG.info("Discord bot \"" + bot + "\" has joined \"" + competition + "\"");
@@ -132,7 +135,7 @@ public class CompetitionChangeListenerImpl implements InitializingBean, Competit
       if (competition.getType().equals(CompetitionType.DISCORD.name())) {
         //only the owner can perform additional actions
         if (competition.getOwner().equals(String.valueOf(discordService.getBotId()))) {
-          String message = DiscordChannelMessageFactory.createCompetitionFinishedMessage(competition, winner, game, scoreSummary);
+          String message = discordChannelMessageFactory.createCompetitionFinishedMessage(competition, winner, game, scoreSummary);
           long msgId = discordService.sendMessage(serverId, channelId, message);
           discordService.finishCompetition(serverId, channelId, msgId);
         }
@@ -159,7 +162,7 @@ public class CompetitionChangeListenerImpl implements InitializingBean, Competit
         boolean isOwner = competition.getOwner().equals(String.valueOf(discordService.getBotId()));
         if (isOwner && competition.isActive()) {
           Player player = discordService.getPlayer(serverId, Long.parseLong(competition.getOwner()));
-          String message = DiscordChannelMessageFactory.createCompetitionCancelledMessage(player, competition);
+          String message = discordChannelMessageFactory.createCompetitionCancelledMessage(player, competition);
           long msgId = discordService.sendMessage(serverId, channelId, message);
           discordService.finishCompetition(serverId, channelId, msgId);
         }

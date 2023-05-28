@@ -37,6 +37,9 @@ public class HighscoreChangeListenerImpl implements InitializingBean, HighscoreC
   @Autowired
   private HighscoreParser highscoreParser;
 
+  @Autowired
+  private DiscordChannelMessageFactory discordChannelMessageFactory;
+
   @Override
   public void highscoreChanged(@NotNull HighscoreChangeEvent event) {
     Game game = event.getGame();
@@ -98,7 +101,7 @@ public class HighscoreChangeListenerImpl implements InitializingBean, HighscoreC
     ScoreList scoreList = discordService.getScoreList(highscoreParser, competition.getUuid(), discordServerId, discordChannelId);
     if (scoreList.getScores().isEmpty()) {
       LOG.info("Emitting initial highscore message for " + competition);
-      long newHighscoreMessageId = discordService.sendMessage(discordServerId, discordChannelId, DiscordChannelMessageFactory.createFirstCompetitionHighscoreCreatedMessage(game, competition, newScore, event.getScoreCount()));
+      long newHighscoreMessageId = discordService.sendMessage(discordServerId, discordChannelId, discordChannelMessageFactory.createFirstCompetitionHighscoreCreatedMessage(game, competition, newScore, event.getScoreCount()));
       discordService.updateHighscoreMessage(discordServerId, discordChannelId, newHighscoreMessageId);
     }
     else {
@@ -127,7 +130,7 @@ public class HighscoreChangeListenerImpl implements InitializingBean, HighscoreC
         }
 
         LOG.info("Emitting Discord highscore changed message for discord competition " + competition);
-        long newHighscoreMessageId = discordService.sendMessage(discordServerId, discordChannelId, DiscordChannelMessageFactory.createCompetitionHighscoreCreatedMessage(game, competition, oldScore, newScore, updatedScores));
+        long newHighscoreMessageId = discordService.sendMessage(discordServerId, discordChannelId, discordChannelMessageFactory.createCompetitionHighscoreCreatedMessage(game, competition, oldScore, newScore, updatedScores));
         discordService.updateHighscoreMessage(discordServerId, discordChannelId, newHighscoreMessageId);
       }
     }

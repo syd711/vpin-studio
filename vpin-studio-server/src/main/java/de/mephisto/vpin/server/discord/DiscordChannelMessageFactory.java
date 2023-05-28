@@ -1,19 +1,22 @@
 package de.mephisto.vpin.server.discord;
 
 import de.mephisto.vpin.connectors.discord.DiscordMember;
-import de.mephisto.vpin.restclient.CompetitionType;
 import de.mephisto.vpin.restclient.PlayerDomain;
 import de.mephisto.vpin.server.competitions.Competition;
 import de.mephisto.vpin.server.competitions.ScoreSummary;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.highscores.Score;
 import de.mephisto.vpin.server.players.Player;
+import de.mephisto.vpin.server.players.PlayerService;
 import de.mephisto.vpin.server.util.ScoreHelper;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+@Service
 public class DiscordChannelMessageFactory {
   public static final String START_INDICATOR = "started a new competition";
   public static final String CANCEL_INDICATOR = " cancelled";
@@ -44,26 +47,20 @@ public class DiscordChannelMessageFactory {
       "%s\n" +
       "```";
 
+  @Autowired
+  private PlayerService playerService;
 
-  public static String createDiscordCompetitionCreatedMessage(long initiatorId, String uuid) {
+  public String createDiscordCompetitionCreatedMessage(long serverId, long initiatorId, String uuid) {
     String userId = "<@" + initiatorId + ">";
 
     return String.format(DISCORD_COMPETITION_CREATED_TEMPLATE, userId, uuid);
   }
 
-  public static String createFirstCompetitionHighscoreCreatedMessage(@NonNull Game game,
-                                                                     @NonNull Competition competition,
-                                                                     @NonNull Score newScore,
-                                                                     int scoreCount) {
-    String playerName = newScore.getPlayerInitials();
-    if (newScore.getPlayer() != null) {
-      Player player = newScore.getPlayer();
-      playerName = newScore.getPlayer().getName();
-      if (PlayerDomain.DISCORD.name().equals(player.getDomain())) {
-        playerName = "<@" + player.getId() + ">";
-      }
-    }
-
+  public String createFirstCompetitionHighscoreCreatedMessage(@NonNull Game game,
+                                                              @NonNull Competition competition,
+                                                              @NonNull Score newScore,
+                                                              int scoreCount) {
+    String playerName = resolvePlayerName(competition.getDiscordServerId(), newScore);
     String template = "**%s created the first highscore for the \"%s\" competition.**\n(ID: %s)\n" +
         "```%s\n" +
         "```";
@@ -75,31 +72,22 @@ public class DiscordChannelMessageFactory {
 
   }
 
-  public static String createCompetitionHighscoreCreatedMessage(@NonNull Game game,
-                                                                @NonNull Competition competition,
-                                                                @NonNull Score oldScore,
-                                                                @NonNull Score newScore,
-                                                                List<Score> updatedScores) {
-    String newName = newScore.getPlayerInitials();
-    if (newScore.getPlayer() != null) {
-      Player player = newScore.getPlayer();
-      newName = newScore.getPlayer().getName();
-      if (PlayerDomain.DISCORD.name().equals(player.getDomain())) {
-        newName = "<@" + player.getId() + ">";
-      }
-    }
-
-
+  public String createCompetitionHighscoreCreatedMessage(@NonNull Game game,
+                                                         @NonNull Competition competition,
+                                                         @NonNull Score oldScore,
+                                                         @NonNull Score newScore,
+                                                         List<Score> updatedScores) {
+    String playerName = resolvePlayerName(competition.getDiscordServerId(), newScore);
     String template = "**%s created a new highscore for the \"%s\" competition.**\n(ID: %s)\n" +
         "```%s\n" +
         "```";
-    String msg = String.format(template, newName, game.getGameDisplayName(), competition.getUuid(), newScore);
+    String msg = String.format(template, playerName, game.getGameDisplayName(), competition.getUuid(), newScore);
     msg = msg + DiscordOfflineChannelMessageFactory.getBeatenMessage(oldScore, newScore);
 
     return msg + "\nHere is the " + HIGHSCORE_INDICATOR + ":" + createHighscoreList(updatedScores);
   }
 
-  public static String createCompetitionFinishedMessage(@NonNull Competition competition, @Nullable Player winner, Game game, ScoreSummary summary) {
+  public String createCompetitionFinishedMessage(@NonNull Competition competition, @Nullable Player winner, Game game, ScoreSummary summary) {
     if (summary.getScores().isEmpty()) {
       return String.format(COMPETITION_FINISHED_INCOMPLETE, competition.getName(), competition.getUuid());
     }
@@ -129,7 +117,7 @@ public class DiscordChannelMessageFactory {
         third);
   }
 
-  public static String createCompetitionCancelledMessage(Player player, Competition competition) {
+  public String createCompetitionCancelledMessage(Player player, Competition competition) {
     if (player != null) {
       String playerName = "<@" + player.getId() + ">";
       return String.format(COMPETITION_CANCELLED_TEMPLATE, playerName, competition.getName());
@@ -137,11 +125,24 @@ public class DiscordChannelMessageFactory {
     return String.format(COMPETITION_CANCELLED_ANONYMOUS_TEMPLATE, competition.getName());
   }
 
-  public static String createCompetitionJoinedMessage(@NonNull Competition competition, @NonNull DiscordMember bot) {
+  public String createCompetitionJoinedMessage(@NonNull Competition competition, @NonNull DiscordMember bot) {
     String playerName = "<@" + bot.getId() + ">";
     return String.format(COMPETITION_JOINED_TEMPLATE, playerName, competition.getName(), competition.getUuid());
   }
 
+  private String resolvePlayerName(long serverId, Score newScore) {
+    String playerName = newScore.getPlayerInitials();
+    if (newScore.getPlayer() != null) {
+      Player player = playerService.getPlayerForInitials(serverId, newScore.getPlayerInitials());
+      if(player != null) {
+        playerName = newScore.getPlayer().getName();
+        if (PlayerDomain.DISCORD.name().equals(player.getDomain())) {
+          playerName = "<@" + player.getId() + ">";
+        }
+      }
+    }
+    return playerName;
+  }
 
   private static String createHighscoreList(List<Score> scores) {
     StringBuilder builder = new StringBuilder();
