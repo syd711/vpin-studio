@@ -159,9 +159,14 @@ public class DiscordService implements InitializingBean, PreferenceChangedListen
     if (this.discordClient != null) {
       List<DiscordMessage> pinnedMessages = discordClient.getPinnedMessages(serverId, channelId);
       for (DiscordMessage pinnedMessage : pinnedMessages) {
-        Player player = toPlayer(pinnedMessage.getMember());
-        if (!result.contains(player)) {
-          result.add(player);
+        if(pinnedMessage.getMember() != null) {
+          Player player = toPlayer(pinnedMessage.getMember());
+          if (!result.contains(player)) {
+            result.add(player);
+          }
+        }
+        else {
+          LOG.warn("Unable to determine member of pinned message: '" + pinnedMessage.getRaw() + "'");
         }
       }
     }
