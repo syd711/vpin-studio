@@ -139,7 +139,7 @@ public class AssetService {
 
       return asset.get();
     } catch (Exception e) {
-      LOG.error("Failed to get competition background " + e.getMessage(), e);
+      LOG.warn("Failed to get competition background " + e.getMessage());
     }
     return null;
   }

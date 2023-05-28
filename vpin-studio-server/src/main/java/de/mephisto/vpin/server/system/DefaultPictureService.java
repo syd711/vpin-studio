@@ -143,7 +143,7 @@ public class DefaultPictureService {
   }
 
   @Nullable
-  public BufferedImage generateCompetitionBackgroundImage(@NonNull Game game, int cropWidth, int cropHeight) throws VPinStudioException {
+  public BufferedImage generateCompetitionBackgroundImage(@NonNull Game game, int cropWidth, int cropHeight) {
     try {
       if (game.getRawDefaultPicture() == null || !game.getRawDefaultPicture().exists()) {
         extractDefaultPicture(game);
@@ -165,12 +165,9 @@ public class DefaultPictureService {
       Color end = Color.decode("#111111");
       ImageUtil.gradient(blurred, cropHeight, cropWidth, start, end);
       return blurred;
-    } catch (IOException e) {
-      LOG.error("Error creating competition image: " + e.getMessage(), e);
-      throw new VPinStudioException(e);
     } catch (Exception e) {
-      LOG.error("Failed to generate competition image: " + e.getMessage(), e);
-      throw new VPinStudioException(e);
+      LOG.warn("Error creating competition image: " + e.getMessage());
     }
+    return null;
   }
 }
