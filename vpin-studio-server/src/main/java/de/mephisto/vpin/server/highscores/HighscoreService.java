@@ -328,15 +328,30 @@ public class HighscoreService implements InitializingBean {
     Optional<Highscore> existingHighscore = highscoreRepository.findByGameId(game.getId());
     if (existingHighscore.isEmpty()) {
       Highscore newHighscore = Highscore.forGame(game, metadata);
+
+      //create artificial empty init version
+      List<Score> newScores = highscoreParser.parseScores(newHighscore.getLastModified(), newHighscore.getRaw(), game.getId(), -1);
+      StringBuilder emptyRaw = new StringBuilder("HIGHEST SCORES\n");
+      for (Score newScore : newScores) {
+        emptyRaw.append("#");
+        emptyRaw.append(newScore.getPosition());
+        emptyRaw.append(" ");
+        emptyRaw.append("???");
+        emptyRaw.append("   ");
+        emptyRaw.append("0");
+        emptyRaw.append("\n");
+      }
+      newHighscore.setRaw(emptyRaw.toString());
       Highscore updatedNewHighScore = highscoreRepository.save(newHighscore);
 
-      HighscoreVersion highscoreVersion = newHighscore.toVersion(-1, metadata.getRaw());
+      HighscoreVersion highscoreVersion = newHighscore.toVersion(-1, emptyRaw.toString());
       //!!! this is the first highscore version, so the old RAW value must be corrected to NULL
       highscoreVersion.setOldRaw(null);
       highscoreVersionRepository.saveAndFlush(highscoreVersion);
 
-      //we are finished here since we cannot calculate any difference for the first score
-      return Optional.of(updatedNewHighScore);
+//      //we are finished here since we cannot calculate any difference for the first score
+//      return Optional.of(updatedNewHighScore);
+      existingHighscore = Optional.of(updatedNewHighScore);
     }
 
     Highscore newHighscore = Highscore.forGame(game, metadata);
