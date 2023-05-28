@@ -35,6 +35,9 @@ public class VPBMPreferencesController implements Initializable {
   private Label versionLabel;
 
   @FXML
+  private Label validationError;
+
+  @FXML
   private Button vpbmBtbn;
 
   @FXML
@@ -42,9 +45,9 @@ public class VPBMPreferencesController implements Initializable {
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
-    vpbmBtbn.setDisable(!Studio.client.getSystemService().isLocal() && new File("resources", "vpbm").exists());
-    versionLabel.setText(Studio.client.getVpbmService().getVersion());
+    validationError.setVisible(false);
     updateBtn.setDisable(true);
+    versionLabel.setText("Version: ???");
 
     VpbmHosts hostIds = Studio.client.getVpbmService().getHostIds();
     if (hostIds != null) {
@@ -57,8 +60,13 @@ public class VPBMPreferencesController implements Initializable {
 
     new Thread(() -> {
       Platform.runLater(() -> {
+        vpbmBtbn.setDisable(!Studio.client.getSystemService().isLocal() && new File("resources", "vpbm").exists());
+        versionLabel.setText(Studio.client.getVpbmService().getVersion());
+
         boolean canUpdate = Studio.client.getSystemService().isLocal() && Studio.client.getVpbmService().isUpdateAvailable();
         updateBtn.setDisable(!canUpdate);
+
+        validationError.setVisible(!Studio.client.getSystemService().isDotNetInstalled());
       });
     }).start();
   }

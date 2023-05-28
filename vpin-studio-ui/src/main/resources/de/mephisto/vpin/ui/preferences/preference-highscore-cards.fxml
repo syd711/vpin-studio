@@ -47,7 +47,7 @@
                      </font>
                   </Label>
                   <ComboBox fx:id="popperScreenCombo" prefWidth="150.0" GridPane.columnIndex="1" />
-                  <Label fx:id="validationError" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                  <Label fx:id="validationError" text=" " textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="1">
                      <font>
                         <Font name="System Bold" size="14.0" />
                      </font>
