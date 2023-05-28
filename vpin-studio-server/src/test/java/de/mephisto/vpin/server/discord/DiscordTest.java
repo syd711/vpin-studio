@@ -8,6 +8,7 @@ import de.mephisto.vpin.server.highscores.HighscoreParser;
 import de.mephisto.vpin.server.highscores.Score;
 import de.mephisto.vpin.server.highscores.ScoreList;
 import edu.umd.cs.findbugs.annotations.NonNull;
+import net.dv8tion.jda.api.entities.Message;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -63,6 +64,21 @@ public class DiscordTest extends AbstractVPinServerTest {
 
 
     assertFalse(scores.isEmpty());
+  }
+
+  @Test
+  public void testMessage() throws Exception {
+    String token = System.getenv("BOT_TOKEN");
+    DiscordClient client = new DiscordClient(token, new DiscordCommandResolver() {
+      @Override
+      public BotCommandResponse resolveCommand(BotCommand cmd) {
+        return null;
+      }
+    });
+
+    Message message = client.getMessage(TEST_SERVER_ID, TEST_CHANNEL_ID, 1111981108993732670l);
+    assertNotNull(message);
+    assertNotNull(message.getMember());
   }
 
   private ScoreSummary toScoreSummary(@NonNull HighscoreParser highscoreParser, @NonNull DiscordMessage message) {

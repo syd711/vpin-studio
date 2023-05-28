@@ -166,7 +166,7 @@ public class DiscordService implements InitializingBean, PreferenceChangedListen
           }
         }
         else {
-          LOG.warn("Unable to determine member of pinned message: '" + pinnedMessage.getRaw() + "'");
+          LOG.warn("Unable to determine member of pinned message: '" + pinnedMessage.getRaw() + "' (" + pinnedMessage.getId() + ")");
         }
       }
     }

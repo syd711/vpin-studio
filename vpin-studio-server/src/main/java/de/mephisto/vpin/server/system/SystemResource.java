@@ -95,6 +95,12 @@ public class SystemResource {
     return systemService.getCompetitionBadges();
   }
 
+  @GetMapping("/dotnet")
+  public boolean isDotNetInstalled() {
+    return systemService.isDotNetInstalled();
+  }
+
+
   @GetMapping("/badge/{name}")
   public ResponseEntity<byte[]> getBadge(@PathVariable("name") String imageName) throws Exception {
     File folder = new File(SystemService.RESOURCES, COMPETITION_BADGES);

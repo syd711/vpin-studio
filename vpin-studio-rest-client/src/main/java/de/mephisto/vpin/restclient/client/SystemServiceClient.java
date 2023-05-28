@@ -50,6 +50,11 @@ public class SystemServiceClient extends VPinStudioClientService {
     return Boolean.TRUE.equals(restTemplate.getForObject(getRestClient().getBaseUrl() + API + "system/autostart/uninstall", Boolean.class));
   }
 
+  public boolean isDotNetInstalled() {
+    final RestTemplate restTemplate = new RestTemplate();
+    return Boolean.TRUE.equals(restTemplate.getForObject(getRestClient().getBaseUrl() + API + "system/dotnet", Boolean.class));
+  }
+
   public void startServerUpdate(String version) {
     final RestTemplate restTemplate = new RestTemplate();
     restTemplate.getForObject(getRestClient().getBaseUrl() + API + "system/update/" + version + "/download/start", Boolean.class);

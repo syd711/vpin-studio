@@ -201,6 +201,7 @@ public class CompetitionService implements InitializingBean {
             activeCompetition.setWinnerInitials(initials);
           }
           competitionsRepository.saveAndFlush(activeCompetition);
+          LOG.info("Finished " + activeCompetition + ", winner is '" + activeCompetition.getWinnerInitials() + "'");
         }
       }
     }

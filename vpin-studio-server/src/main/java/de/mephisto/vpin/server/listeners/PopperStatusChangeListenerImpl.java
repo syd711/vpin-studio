@@ -18,6 +18,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class PopperStatusChangeListenerImpl implements InitializingBean, PopperStatusChangeListener {
   private final static Logger LOG = LoggerFactory.getLogger(PopperStatusChangeListenerImpl.class);
+  public static final int EXIT_DELAY = 6000;
 
   @Autowired
   private PopperService popperService;
@@ -48,13 +49,13 @@ public class PopperStatusChangeListenerImpl implements InitializingBean, PopperS
     LOG.info("Executing table exit commands for '" + game + "'");
     discordService.setActivity(null);
     new Thread(() -> {
-      LOG.info("Starting 6 second update delay before updating highscores.");
+      LOG.info("Starting " + EXIT_DELAY + "ms update delay before updating highscores.");
       try {
-        Thread.sleep(6000);
+        Thread.sleep(EXIT_DELAY);
       } catch (InterruptedException e) {
         //ignore
       }
-      LOG.info("Finished 6 second update delay, updating highscores.");
+      LOG.info("Finished " + EXIT_DELAY + "ms update delay, updating highscores.");
       highscoreService.scanScore(game);
       preferencesService.savePreference(PreferenceNames.ACTIVE_GAME, -1);
     }).start();
