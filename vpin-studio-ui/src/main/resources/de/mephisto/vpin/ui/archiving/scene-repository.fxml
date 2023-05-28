@@ -66,7 +66,7 @@
                      </graphic>
                   </Button>
                   <Separator orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
-                  <Button fx:id="installBtn" layoutX="198.0" layoutY="10.0" mnemonicParsing="false" onAction="#onRestore" text="Restore" textFill="WHITE">
+                  <Button fx:id="restoreBtn" layoutX="198.0" layoutY="10.0" mnemonicParsing="false" onAction="#onRestore" text="Restore" textFill="WHITE">
                      <font>
                         <Font size="14.0" />
                      </font>
@@ -83,7 +83,7 @@
                         <FontIcon iconColor="WHITE" iconLiteral="mdi2u-upload" />
                      </graphic>
                   </Button>
-                  <Button fx:id="downloadBtn" layoutX="376.0" layoutY="10.0" mnemonicParsing="false" onAction="#onBundle" text="Bundle" textFill="WHITE">
+                  <Button fx:id="bundleBtn" layoutX="376.0" layoutY="10.0" mnemonicParsing="false" onAction="#onBundle" text="Bundle" textFill="WHITE">
                      <font>
                         <Font size="14.0" />
                      </font>

@@ -52,7 +52,7 @@ public class RepositoryController implements Initializable, StudioEventListener 
   private Button deleteBtn;
 
   @FXML
-  private Button installBtn;
+  private Button restoreBtn;
 
   @FXML
   private Button addArchiveBtn;
@@ -61,7 +61,7 @@ public class RepositoryController implements Initializable, StudioEventListener 
   private Button copyToRepositoryBtn;
 
   @FXML
-  private Button downloadBtn;
+  private Button bundleBtn;
 
   @FXML
   private Button vpbmBtbn;
@@ -224,7 +224,7 @@ public class RepositoryController implements Initializable, StudioEventListener 
     tableView.getSelectionModel().clearSelection();
     boolean disable = selection == null;
     deleteBtn.setDisable(disable);
-    installBtn.setDisable(disable);
+    restoreBtn.setDisable(disable);
 
     tableView.setVisible(false);
     tableStack.getChildren().add(loadingOverlay);
@@ -244,7 +244,7 @@ public class RepositoryController implements Initializable, StudioEventListener 
         if (data.contains(selection)) {
           tableView.getSelectionModel().select(selection);
           deleteBtn.setDisable(false);
-          installBtn.setDisable(false);
+          restoreBtn.setDisable(false);
         }
 
         this.searchTextField.setDisable(false);
@@ -402,11 +402,14 @@ public class RepositoryController implements Initializable, StudioEventListener 
 
     tableView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
     tableView.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
-      boolean fileRepo = newSelection != null && newSelection.getSource().getType().equals(ArchiveSourceType.File.name());
-      deleteBtn.setDisable(!fileRepo);
-      installBtn.setDisable(newSelection == null);
-      downloadBtn.setDisable(newSelection == null);
-      copyToRepositoryBtn.setDisable(newSelection == null || sourceCombo.getValue() == null || sourceCombo.getValue().getId() < 0);
+      ArchiveSourceRepresentation archiveSource = sourceCombo.getValue();
+
+      deleteBtn.setDisable(!archiveSource.getType().equals(ArchiveSourceType.File.name()));
+      addArchiveBtn.setDisable(!archiveSource.getType().equals(ArchiveSourceType.File.name()));
+      restoreBtn.setDisable(!archiveSource.getType().equals(ArchiveSourceType.File.name()));
+      bundleBtn.setDisable(!archiveSource.getType().equals(ArchiveSourceType.File.name()));
+      copyToRepositoryBtn.setDisable(!archiveSource.getType().equals(ArchiveSourceType.Http.name()));
+
 
       if (oldSelection == null || !oldSelection.equals(newSelection)) {
         updateSelection(Optional.ofNullable(newSelection));
@@ -431,22 +434,19 @@ public class RepositoryController implements Initializable, StudioEventListener 
     });
 
     sourceComboChangeListener = (observable, oldValue, newValue) -> {
-      if (newValue.getId() < 0) {
-        addArchiveBtn.setDisable(false);
-        copyToRepositoryBtn.setDisable(false);
-      }
-      else {
-        addArchiveBtn.setDisable(true);
-        copyToRepositoryBtn.setDisable(true);
-      }
+      addArchiveBtn.setDisable(!newValue.getType().equals(ArchiveSourceType.File.name()));
+      restoreBtn.setDisable(!newValue.getType().equals(ArchiveSourceType.File.name()));
+      bundleBtn.setDisable(!newValue.getType().equals(ArchiveSourceType.File.name()));
+      copyToRepositoryBtn.setDisable(!newValue.getType().equals(ArchiveSourceType.Http.name()));
+
       tableView.getSelectionModel().clearSelection();
       doReload();
     };
     refreshRepositoryCombo();
 
     deleteBtn.setDisable(true);
-    installBtn.setDisable(true);
-    downloadBtn.setDisable(true);
+    restoreBtn.setDisable(true);
+    bundleBtn.setDisable(true);
     copyToRepositoryBtn.setDisable(true);
 
     vpbmBtbn.setDisable(sourceCombo.getValue().getId() == -1 || (
