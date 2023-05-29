@@ -223,6 +223,6 @@ public class Competition {
 
   @Override
   public String toString() {
-    return "Competition '" + this.getName() + "'";
+    return this.getType() + " Competition '" + this.getName() + "'";
   }
 }

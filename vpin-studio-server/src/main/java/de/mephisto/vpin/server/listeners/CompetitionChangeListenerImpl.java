@@ -76,6 +76,9 @@ public class CompetitionChangeListenerImpl implements InitializingBean, Competit
           discordService.initCompetition(serverId, channelId, messageId);
           LOG.info("Finished Discord update of \"" + competition.getName() + "\"");
         }
+
+        highscoreService.resetHighscore(game);
+        LOG.info("Resetted highscores of " + game.getGameDisplayName() + " for " + competition);
       }
 
       if (competition.getType().equals(CompetitionType.OFFLINE.name())) {
@@ -88,9 +91,6 @@ public class CompetitionChangeListenerImpl implements InitializingBean, Competit
           discordService.sendMessage(discordServerId, discordChannelId, message, image, competition.getName() + ".png", "This is an offline competition. Other player bots can't join.");
         }
       }
-
-      highscoreService.resetHighscore(game);
-      LOG.info("Resetted highscores of " + game.getGameDisplayName() + " for " + competition);
 
       if (competition.getBadge() != null && competition.isActive()) {
         popperService.augmentWheel(game, competition.getBadge());
