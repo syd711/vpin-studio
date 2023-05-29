@@ -2,7 +2,6 @@ package de.mephisto.vpin.server.discord;
 
 import de.mephisto.vpin.restclient.CompetitionType;
 import de.mephisto.vpin.restclient.PlayerDomain;
-import de.mephisto.vpin.restclient.util.DateUtil;
 import de.mephisto.vpin.server.competitions.Competition;
 import de.mephisto.vpin.server.competitions.ScoreSummary;
 import de.mephisto.vpin.server.games.Game;
@@ -14,11 +13,7 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import org.apache.commons.lang3.StringUtils;
 
-import java.text.DateFormat;
-
 public class DiscordOfflineChannelMessageFactory {
-  public static final String START_INDICATOR = "A new competition has been started!\n";
-
   private static final String COMPETITION_FINISHED_TEMPLATE = "Congratulation %s!\n" +
       "```" +
       "The competition \"%s\" has been finished!\n" +
@@ -98,7 +93,7 @@ public class DiscordOfflineChannelMessageFactory {
 
 
   public static String createOfflineCompetitionCreatedMessage(Competition competition, Game game) {
-    return START_INDICATOR;
+    return "A new competition has been started!\n";
   }
 
   public static String createCompetitionFinishedMessage(@NonNull Competition competition, @Nullable Player winner, Game game, ScoreSummary summary) {
@@ -120,7 +115,7 @@ public class DiscordOfflineChannelMessageFactory {
     String third = ScoreHelper.formatScoreEntry(summary, 2);
 
     String competitionName = competition.getName();
-    if(competition.getType().equals(CompetitionType.DISCORD.name())) {
+    if (competition.getType().equals(CompetitionType.DISCORD.name())) {
       competitionName = competitionName + " (" + competition.getUuid() + ")";
     }
 
