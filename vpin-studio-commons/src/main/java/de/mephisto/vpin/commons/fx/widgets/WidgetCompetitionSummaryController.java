@@ -125,11 +125,14 @@ public class WidgetCompetitionSummaryController extends WidgetController impleme
       scoreLabel1.setVisible(isActive);
       scoreLabel2.setVisible(isActive);
       scoreLabel3.setVisible(isActive);
+      name1.setVisible(isActive);
       name2.setVisible(isActive);
       name3.setVisible(isActive);
 
       if (!competition.isActive()) {
-        name1.setText("");
+        name1.setText("-");
+        name2.setText("-");
+        name3.setText("-");
       }
       else {
         ScoreSummaryRepresentation latestCompetitionScore = OverlayWindowFX.client.getCompetitionScore(competition.getId());

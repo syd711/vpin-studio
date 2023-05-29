@@ -1,3 +1,1 @@
 - fill pup pack section
-
-public boolean isCompetitionActive(long serverId, long channelId, String uuid) {

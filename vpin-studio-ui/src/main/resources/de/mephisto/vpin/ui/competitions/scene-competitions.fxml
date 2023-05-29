@@ -56,25 +56,6 @@
          <children>
             <Accordion fx:id="accordion" prefWidth="600.0">
               <panes>
-                <TitledPane fx:id="scorePane" text="Score Graph">
-                     <content>
-                        <ScrollPane vbarPolicy="NEVER">
-                           <content>
-                              <BorderPane fx:id="scoreGraphBox" nodeOrientation="LEFT_TO_RIGHT" prefWidth="588.0">
-                                 <top>
-                                    <Label fx:id="statusLabel" textFill="WHITE" BorderPane.alignment="TOP_LEFT">
-                                       <font>
-                                          <Font size="14.0" />
-                                       </font>
-                                    </Label>
-                                 </top>
-                                 <padding>
-                                    <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
-                                 </padding>
-                              </BorderPane>
-                           </content>
-                        </ScrollPane>
-                     </content></TitledPane>
                 <TitledPane fx:id="competitionMembersPane" expanded="false" text="Competition Members">
                      <content>
                         <ScrollPane vbarPolicy="NEVER">
@@ -186,6 +167,26 @@
                   </TitledPane>
               </panes>
             </Accordion>
+          <TitledPane fx:id="scorePane" text="Score Graph">
+               <content>
+                  <ScrollPane vbarPolicy="NEVER">
+                     <content>
+                        <BorderPane fx:id="scoreGraphBox" nodeOrientation="LEFT_TO_RIGHT" prefWidth="588.0">
+                           <top>
+                              <Label fx:id="statusLabel" textFill="WHITE" BorderPane.alignment="TOP_LEFT">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </Label>
+                           </top>
+                           <padding>
+                              <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
+                           </padding>
+                        </BorderPane>
+                     </content>
+                  </ScrollPane>
+               </content>
+            </TitledPane>
          </children>
       </VBox>
    </right>

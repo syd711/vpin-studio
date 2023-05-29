@@ -109,7 +109,8 @@ public class CompetitionsController implements Initializable, StudioFXController
   @Override
   public void onViewActivated() {
     refreshUsers(competition);
-    scorePane.setExpanded(true);
+    scorePane.setExpanded(competition.isPresent() && competition.get().getType().equals(CompetitionType.OFFLINE.name()));
+    competitionMembersPane.setExpanded(competition.isPresent() && competition.get().getType().equals(CompetitionType.DISCORD.name()));
     discordController.onReload();
   }
 
@@ -152,7 +153,7 @@ public class CompetitionsController implements Initializable, StudioFXController
   }
 
   private void refreshMetaData(Optional<CompetitionRepresentation> competitionRepresentation) {
-    if (competitionRepresentation.isPresent()) {
+    if (competitionRepresentation.isPresent() && competitionRepresentation.get().getType().equals(CompetitionType.DISCORD)) {
       CompetitionRepresentation competition = competitionRepresentation.get();
       if (metaDataPane.isVisible()) {
         uuidLabel.setText(competition.getUuid());
@@ -214,8 +215,19 @@ public class CompetitionsController implements Initializable, StudioFXController
   }
 
   private void checkTitledPanes(Optional<CompetitionRepresentation> cp) {
-    competitionMembersPane.setVisible(cp.isPresent() && cp.get().getType().equals(CompetitionType.DISCORD.name()));
-    metaDataPane.setVisible(cp.isPresent() && cp.get().getType().equals(CompetitionType.DISCORD.name()));
+    competitionMembersPane.setDisable(cp.isEmpty());
+    metaDataPane.setDisable(cp.isEmpty());
+    scorePane.setDisable(cp.isEmpty());
+
+    if (cp.isPresent()) {
+      competitionMembersPane.setDisable(!cp.get().getType().equals(CompetitionType.DISCORD.name()));
+      metaDataPane.setDisable(!cp.get().getType().equals(CompetitionType.DISCORD.name()));
+
+      scorePane.setDisable(!cp.get().getType().equals(CompetitionType.OFFLINE.name()));
+
+      scorePane.setExpanded(cp.get().getType().equals(CompetitionType.OFFLINE.name()));
+      competitionMembersPane.setExpanded(cp.get().getType().equals(CompetitionType.DISCORD.name()));
+    }
   }
 
   private void updateForTabSelection(Optional<CompetitionRepresentation> competitionRepresentation) {

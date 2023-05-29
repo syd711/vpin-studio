@@ -85,7 +85,7 @@ public class DiscordOfflineChannelMessageFactory {
     msg = msg + getBeatenMessage(oldScore, newScore);
 
     if (!StringUtils.isEmpty(raw)) {
-      msg = msg + "\nHere is the current highscore:\n```" + raw + "```";
+      msg = msg + "Here is the current highscore:\n```" + raw + "```";
     }
 
     return msg;

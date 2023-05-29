@@ -267,6 +267,7 @@ public class VPinStudioClient implements ObservedPropertyChangeListener, Overlay
   }
 
   public void clearCache() {
+    getDiscordService().clearCache();
     getImageCache().clearCache();
   }
 

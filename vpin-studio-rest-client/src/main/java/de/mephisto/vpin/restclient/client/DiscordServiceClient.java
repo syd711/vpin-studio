@@ -20,6 +20,11 @@ public class DiscordServiceClient extends VPinStudioClientService {
     super(client);
   }
 
+  public boolean clearCache() {
+    final RestTemplate restTemplate = new RestTemplate();
+    return restTemplate.getForObject(getRestClient().getBaseUrl() + API + "discord/clearcache", Boolean.class);
+  }
+
   public DiscordCompetitionData getDiscordCompetitionData(long serverId, long channelId) {
     return getRestClient().get(API + "discord/competition/" + serverId + "/" + channelId, DiscordCompetitionData.class);
   }

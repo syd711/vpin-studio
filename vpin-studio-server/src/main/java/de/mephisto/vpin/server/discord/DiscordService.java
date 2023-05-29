@@ -440,10 +440,20 @@ public class DiscordService implements InitializingBean, PreferenceChangedListen
   }
 
   public boolean isCompetitionActive(long serverId, long channelId, String uuid) {
-    List<DiscordMessage> pinnedMessages = this.discordClient.getPinnedMessages(serverId, channelId);
-    //let's assume Discord wasn't available
-    if (pinnedMessages.isEmpty()) {
+    if(this.discordClient == null) {
       return true;
+    }
+
+    //well, we abuse this as a connection check.
+    String topic = this.discordClient.getTopic(serverId, channelId);
+    //null means there are problem during reading from Discord, so let's assume everything is ok
+    if(topic == null) {
+      return true;
+    }
+
+    List<DiscordMessage> pinnedMessages = this.discordClient.getPinnedMessages(serverId, channelId);
+    if (pinnedMessages.isEmpty()) {
+      return false;
     }
 
     for (DiscordMessage pinnedMessage : pinnedMessages) {
@@ -459,28 +469,39 @@ public class DiscordService implements InitializingBean, PreferenceChangedListen
   }
 
   public void addCompetitionPlayer(long serverId, long channelId, long msgId) {
-    List<DiscordMessage> pinnedMessages = discordClient.getPinnedMessages(serverId, channelId);
-    if (pinnedMessages.size() < 50) {
-      discordClient.pinMessage(serverId, channelId, msgId);
-    }
-    else {
-      LOG.warn("Player could not be added to the player list for channel " + channelId + ", pin limit has been reached.");
+    if(this.discordClient != null) {
+      List<DiscordMessage> pinnedMessages = discordClient.getPinnedMessages(serverId, channelId);
+      if (pinnedMessages.size() < 50) {
+        discordClient.pinMessage(serverId, channelId, msgId);
+      }
+      else {
+        LOG.warn("Player could not be added to the player list for channel " + channelId + ", pin limit has been reached.");
+      }
     }
   }
 
   public void removeCompetitionPlayer(long serverId, long channelId) {
-    long botId = getBotId();
-    List<DiscordMessage> pinnedMessages = discordClient.getPinnedMessages(serverId, channelId);
-    for (DiscordMessage pinnedMessage : pinnedMessages) {
-      if (pinnedMessage.getMember().getId() != botId) {
-        continue;
-      }
+    if(this.discordClient != null) {
+      long botId = getBotId();
+      List<DiscordMessage> pinnedMessages = discordClient.getPinnedMessages(serverId, channelId);
+      for (DiscordMessage pinnedMessage : pinnedMessages) {
+        if (pinnedMessage.getMember().getId() != botId) {
+          continue;
+        }
 
-      if (pinnedMessage.getRaw().contains(DiscordChannelMessageFactory.JOIN_INDICATOR)) {
-        discordClient.unpinMessage(serverId, channelId, pinnedMessage.getId());
-        LOG.info("Removed bot from list of players in channel " + channelId);
+        if (pinnedMessage.getRaw().contains(DiscordChannelMessageFactory.JOIN_INDICATOR)) {
+          discordClient.unpinMessage(serverId, channelId, pinnedMessage.getId());
+          LOG.info("Removed bot from list of players in channel " + channelId);
+        }
       }
     }
+  }
+
+  public boolean clearCache() {
+    if(this.discordClient != null) {
+      this.discordClient.clearCache();
+    }
+    return true;
   }
 
   @Override

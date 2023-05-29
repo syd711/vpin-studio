@@ -327,7 +327,11 @@ public class DiscordClient {
     if (guild != null) {
       TextChannel textChannel = jda.getChannelById(TextChannel.class, channelId);
       if (textChannel != null) {
-        return textChannel.getTopic();
+        String topic = textChannel.getTopic();
+        if (topic == null) {
+          return "";
+        }
+        return topic;
       }
       else {
         LOG.error("No discord channel found for id '" + channelId + "'");
@@ -447,5 +451,12 @@ public class DiscordClient {
       }
     }
     return null;
+  }
+
+  public void clearCache() {
+    this.messageCacheById.clear();
+    this.pinnedMessagesCache.clear();
+    this.guilds.clear();
+    LOG.info("Cleared Discord client cache.");
   }
 }
