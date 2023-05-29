@@ -5,6 +5,15 @@ public class DiscordBotStatus {
   private String botInitials;
   private boolean valid;
   private boolean validDefaultChannel;
+  private long serverId;
+
+  public long getServerId() {
+    return serverId;
+  }
+
+  public void setServerId(long serverId) {
+    this.serverId = serverId;
+  }
 
   public String getBotInitials() {
     return botInitials;

@@ -24,8 +24,8 @@ public class DiscordServiceClient extends VPinStudioClientService {
     return getRestClient().get(API + "discord/competition/" + serverId + "/" + channelId, DiscordCompetitionData.class);
   }
 
-  public DiscordBotStatus getDiscordStatus() {
-    return getRestClient().get(API + "discord/status", DiscordBotStatus.class);
+  public DiscordBotStatus getDiscordStatus(long serverId) {
+    return getRestClient().get(API + "discord/status/" + serverId, DiscordBotStatus.class);
   }
 
   public List<DiscordChannel> getDiscordChannels() {

@@ -6,6 +6,7 @@ import de.mephisto.vpin.commons.utils.ImageUtil;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.CompetitionType;
 import de.mephisto.vpin.restclient.PopperScreen;
+import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.discord.DiscordBotStatus;
 import de.mephisto.vpin.restclient.discord.DiscordServer;
 import de.mephisto.vpin.restclient.representations.CompetitionRepresentation;
@@ -154,16 +155,7 @@ public class CompetitionsDiscordController implements Initializable, StudioFXCon
 
   @FXML
   private void onJoin() {
-//    client.clearDiscordCache();
-//    DiscordBotStatus discordStatus = client.getDiscordStatus();
-//    String botInitials = discordStatus.getBotInitials();
-//    if(StringUtils.isEmpty(botInitials)) {
-//      WidgetFactory.showAlert(Studio.stage, "Your bot does not have player initials.",
-//          "In order for the multiplayer competition to work, your bot needs unique initials.",
-//          "Please check the \"Bot FAQ\" in the setting how to apply initials.");
-//      return;
-//    }
-
+    client.clearDiscordCache();
     CompetitionRepresentation c = Dialogs.openDiscordJoinCompetitionDialog();
     if (c != null) {
       try {
@@ -203,7 +195,7 @@ public class CompetitionsDiscordController implements Initializable, StudioFXCon
   private void onDelete() {
     CompetitionRepresentation selection = tableView.getSelectionModel().getSelectedItem();
     if (selection != null) {
-      boolean isOwner = selection.getOwner().equals(String.valueOf(client.getDiscordService().getDiscordStatus().getBotId()));
+      boolean isOwner = selection.getOwner().equals(String.valueOf(client.getDiscordService().getDiscordStatus(selection.getDiscordServerId()).getBotId()));
 
       String help = null;
       String help2 = null;
@@ -252,7 +244,8 @@ public class CompetitionsDiscordController implements Initializable, StudioFXCon
     tableView.setVisible(false);
     tableStack.getChildren().add(loadingOverlay);
 
-    DiscordBotStatus discordStatus = client.getDiscordService().getDiscordStatus();
+    long guildId = client.getPreference(PreferenceNames.DISCORD_GUILD_ID).getLongValue();
+    DiscordBotStatus discordStatus = client.getDiscordService().getDiscordStatus(guildId);
     if (!discordStatus.isValid()) {
       textfieldSearch.setDisable(true);
       addBtn.setDisable(true);
@@ -306,8 +299,6 @@ public class CompetitionsDiscordController implements Initializable, StudioFXCon
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
-    this.discordBotId = client.getDiscordService().getDiscordStatus().getBotId();
-
     NavigationController.setBreadCrumb(Arrays.asList("Competitions"));
     tableView.setPlaceholder(new Label("            No competitions found.\nClick the '+' button to create a new one."));
 
@@ -544,7 +535,6 @@ public class CompetitionsDiscordController implements Initializable, StudioFXCon
 
   @Override
   public void onViewActivated() {
-    this.discordBotId = client.getDiscordService().getDiscordStatus().getBotId();
   }
 
   public void setCompetitionsController(CompetitionsController competitionsController) {

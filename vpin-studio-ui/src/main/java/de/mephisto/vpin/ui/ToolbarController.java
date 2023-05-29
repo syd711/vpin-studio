@@ -94,8 +94,8 @@ public class ToolbarController implements Initializable {
     }
 
     new Thread(() -> {
+      String s = Updater.checkForUpdate(Studio.getVersion());
       Platform.runLater(() -> {
-        String s = Updater.checkForUpdate(Studio.getVersion());
         updateBtn.setVisible(!StringUtils.isEmpty(s));
       });
     }).start();

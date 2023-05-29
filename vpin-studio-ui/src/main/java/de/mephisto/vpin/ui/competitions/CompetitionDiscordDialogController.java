@@ -7,6 +7,7 @@ import de.mephisto.vpin.commons.fx.UIDefaults;
 import de.mephisto.vpin.restclient.CompetitionType;
 import de.mephisto.vpin.restclient.JoinMode;
 import de.mephisto.vpin.restclient.PopperScreen;
+import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.client.VPinStudioClient;
 import de.mephisto.vpin.restclient.discord.DiscordBotStatus;
 import de.mephisto.vpin.restclient.discord.DiscordChannel;
@@ -104,6 +105,7 @@ public class CompetitionDiscordDialogController implements Initializable, Dialog
   private CompetitionRepresentation competition;
 
   private DiscordBotStatus botStatus = null;
+
   private List<CompetitionRepresentation> allCompetitions;
 
   @FXML
@@ -121,7 +123,8 @@ public class CompetitionDiscordDialogController implements Initializable, Dialog
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
-    this.botStatus = client.getDiscordService().getDiscordStatus();
+    long guildId = client.getPreference(PreferenceNames.DISCORD_GUILD_ID).getLongValue();
+    this.botStatus = client.getDiscordService().getDiscordStatus(guildId);
 
     competition = new CompetitionRepresentation();
     competition.setType(CompetitionType.DISCORD.name());
@@ -198,7 +201,7 @@ public class CompetitionDiscordDialogController implements Initializable, Dialog
     List<GameRepresentation> games = client.getGameService().getGames();
     List<GameRepresentation> filtered = new ArrayList<>();
     for (GameRepresentation game : games) {
-      if(StringUtils.isEmpty(game.getRom())) {
+      if (StringUtils.isEmpty(game.getRom())) {
         continue;
       }
       if (game.getEmulator().getName().equals(EmulatorType.VISUAL_PINBALL_X)) {
@@ -271,6 +274,16 @@ public class CompetitionDiscordDialogController implements Initializable, Dialog
     if (competition.getDiscordServerId() == 0) {
       validationTitle.setText("No discord server selected.");
       validationDescription.setText("Select a discord server where the competition takes place.");
+      return;
+    }
+
+    if (this.botStatus == null || this.botStatus.getServerId() != competition.getDiscordServerId()) {
+      this.botStatus = client.getDiscordService().getDiscordStatus(competition.getDiscordServerId());
+    }
+
+    if (botStatus == null || StringUtils.isEmpty(botStatus.getBotInitials())) {
+      validationTitle.setText("Invalid BOT nickname.");
+      validationDescription.setText("Please set a valid nickname for your BOT on the selected server.");
       return;
     }
 

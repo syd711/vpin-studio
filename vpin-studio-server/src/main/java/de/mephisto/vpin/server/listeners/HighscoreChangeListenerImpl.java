@@ -1,6 +1,7 @@
 package de.mephisto.vpin.server.listeners;
 
 import de.mephisto.vpin.restclient.CompetitionType;
+import de.mephisto.vpin.restclient.discord.DiscordBotStatus;
 import de.mephisto.vpin.server.competitions.Competition;
 import de.mephisto.vpin.server.competitions.CompetitionService;
 import de.mephisto.vpin.server.competitions.ScoreSummary;
@@ -76,7 +77,7 @@ public class HighscoreChangeListenerImpl implements InitializingBean, HighscoreC
     }
 
     //send the default message if no competition updates was sent
-    if (!messageSent) {
+    if (!messageSent && !event.isInitialScore()) {
       LOG.info("No competition found for " + game + ", sending default notification.");
       discordService.sendDefaultHighscoreMessage(DiscordOfflineChannelMessageFactory.createHighscoreCreatedMessage(event, raw));
     }
@@ -94,22 +95,26 @@ public class HighscoreChangeListenerImpl implements InitializingBean, HighscoreC
 
     long discordServerId = competition.getDiscordServerId();
     long discordChannelId = competition.getDiscordChannelId();
+    DiscordBotStatus status = discordService.getStatus(competition.getDiscordServerId());
 
     LOG.info("****** Processing Discord Highscore Change Event for " + game.getGameDisplayName() + " *********");
     LOG.info("The new score: " + newScore);
     if (newScore.getPlayerInitials().contains("?")) {
       LOG.info("Highscore update has been skipped, initials with '?' are filtered.");
     }
+    else if (!newScore.getPlayerInitials().equalsIgnoreCase(status.getBotInitials())) {
+      LOG.info("Highscore update has been skipped, the initials '" + newScore.getPlayerInitials() + "' do not belong to the our bot ('" + status.getBotInitials() + "').");
+    }
     else {
-      ScoreList scoreList = discordService.getScoreList(highscoreParser, competition.getUuid(), discordServerId, discordChannelId);
-      if (scoreList.getScores().isEmpty()) {
+      ScoreSummary scoreSummary = discordService.getScoreSummary(highscoreParser, competition.getUuid(), discordServerId, discordChannelId);
+      if (scoreSummary.getScores().isEmpty()) {
         LOG.info("Emitting initial highscore message for " + competition);
-        long newHighscoreMessageId = discordService.sendMessage(discordServerId, discordChannelId, discordChannelMessageFactory.createFirstCompetitionHighscoreCreatedMessage(game, competition, newScore, event.getScoreCount()));
+        String msg = discordChannelMessageFactory.createFirstCompetitionHighscoreCreatedMessage(game, competition, newScore, event.getScoreCount());
+        long newHighscoreMessageId = discordService.sendMessage(discordServerId, discordChannelId, msg);
         discordService.updateHighscoreMessage(discordServerId, discordChannelId, newHighscoreMessageId);
       }
       else {
-        ScoreSummary latestScore = scoreList.getLatestScore();
-        List<Score> oldScores = latestScore.getScores();
+        List<Score> oldScores = scoreSummary.getScores();
         LOG.info("The current online score for " + competition + " (" + oldScores.size() + " entries):");
         for (Score oldScore : oldScores) {
           LOG.info("[" + oldScore + "]");

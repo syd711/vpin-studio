@@ -165,7 +165,7 @@ public class CompetitionsController implements Initializable, StudioFXController
         if (discordServer != null) {
           String avatarUrl = discordServer.getAvatarUrl();
           Image image = null;
-          if(avatarUrl == null) {
+          if (avatarUrl == null) {
             image = new Image(Studio.class.getResourceAsStream("avatar-blank.png"));
           }
           else {
@@ -245,21 +245,25 @@ public class CompetitionsController implements Initializable, StudioFXController
     }
 
     if (cp.isPresent()) {
-      CompetitionRepresentation competition = cp.get();
+      try {
+        CompetitionRepresentation competition = cp.get();
 
-      if (!competition.isActive()) {
-        statusLabel.setText("The graph is only calculated for active competitions.");
-        return;
-      }
+        if (!competition.isActive()) {
+          statusLabel.setText("The graph is only calculated for active competitions.");
+          return;
+        }
 
-      ScoreListRepresentation competitionScores = client.getCompetitionScoreList(competition.getId());
-      if (!competitionScores.getScores().isEmpty()) {
-        highscoresGraphTile = ScoreGraphUtil.createGraph(competitionScores);
-        scoreGraphBox.setCenter(highscoresGraphTile);
-        scoreGraphBox.getCenter().setVisible(true);
-      }
-      else {
-        statusLabel.setText("No scores have been submitted yet.");
+        ScoreListRepresentation competitionScores = client.getCompetitionScoreList(competition.getId());
+        if (!competitionScores.getScores().isEmpty()) {
+          highscoresGraphTile = ScoreGraphUtil.createGraph(competitionScores);
+          scoreGraphBox.setCenter(highscoresGraphTile);
+          scoreGraphBox.getCenter().setVisible(true);
+        }
+        else {
+          statusLabel.setText("No scores have been submitted yet.");
+        }
+      } catch (Exception e) {
+        LOG.error("Failed to update score graph: " + e.getMessage(), e);
       }
     }
     else {

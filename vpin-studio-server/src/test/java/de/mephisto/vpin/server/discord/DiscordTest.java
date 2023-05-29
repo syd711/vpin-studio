@@ -51,19 +51,17 @@ public class DiscordTest extends AbstractVPinServerTest {
 //    ScoreList scoreList = discordService.getScoreList(highscoreParser, competitionUUID, TEST_SERVER_ID, TEST_CHANNEL_ID);
 //    assertTrue(scoreList.getScores().isEmpty());
 
-    ScoreList scoreList = discordService.getScoreList(highscoreParser, competitionUUID, TEST_SERVER_ID, TEST_CHANNEL_ID);
-    List<ScoreSummary> scores = scoreList.getScores();
-    for (ScoreSummary score : scores) {
-      List<Score> entries = score.getScores();
-      System.out.println("---- " + score.getCreatedAt() + "---------" );
-      for (Score entry : entries) {
-        System.out.println(entry);
-      }
-
-    }
-
-
-    assertFalse(scores.isEmpty());
+//    ScoreList scoreList = discordService.getScoreList(highscoreParser, competitionUUID, TEST_SERVER_ID, TEST_CHANNEL_ID);
+//    List<ScoreSummary> scores = scoreList.getScores();
+//    for (ScoreSummary score : scores) {
+//      List<Score> entries = score.getScores();
+//      System.out.println("---- " + score.getCreatedAt() + "---------" );
+//      for (Score entry : entries) {
+//        System.out.println(entry);
+//      }
+//
+//    }
+//    assertFalse(scores.isEmpty());
   }
 
   @Test

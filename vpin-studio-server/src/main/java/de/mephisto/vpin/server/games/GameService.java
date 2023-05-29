@@ -278,7 +278,6 @@ public class GameService {
    */
   @Nullable
   public Game scanGame(int gameId) {
-    highscoreService.setChangeListenerEnabled(false);
     try {
       Game game = getGame(gameId);
       if (game != null) {
@@ -297,9 +296,6 @@ public class GameService {
       }
     } catch (Exception e) {
       LOG.error("Game scan for game " + gameId + " failed: " + e.getMessage(), e);
-    }
-    finally {
-      highscoreService.setChangeListenerEnabled(true);
     }
     return null;
   }

@@ -22,6 +22,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
+import org.apache.commons.lang3.StringUtils;
 import org.kordamp.ikonli.javafx.FontIcon;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -95,6 +96,8 @@ public class CompetitionDiscordJoinDialogController implements Initializable, Di
   private CompetitionRepresentation competition;
 
   private DiscordCompetitionData discordCompetitionData;
+
+  private DiscordBotStatus botStatus;
 
   @FXML
   private void onCancelClick(ActionEvent e) {
@@ -211,6 +214,16 @@ public class CompetitionDiscordJoinDialogController implements Initializable, Di
       return;
     }
 
+    if (this.botStatus == null || this.botStatus.getServerId() != server.getId()) {
+      this.botStatus = client.getDiscordService().getDiscordStatus(server.getId());
+    }
+
+    if (botStatus == null || StringUtils.isEmpty(botStatus.getBotInitials())) {
+      validationTitle.setText("Invalid BOT nickname.");
+      validationDescription.setText("Please set a valid nickname for your BOT on the selected server.");
+      return;
+    }
+
     if (channel == null) {
       validationTitle.setText("No discord channel selected.");
       validationDescription.setText("Select a discord channel where the competition takes place.");
@@ -264,8 +277,7 @@ public class CompetitionDiscordJoinDialogController implements Initializable, Di
     }
 
     CompetitionRepresentation existingEntry = client.getCompetitionService().getCompetitionByUuid(this.discordCompetitionData.getUuid());
-    DiscordBotStatus discordStatus = client.getDiscordService().getDiscordStatus();
-    boolean isOwner = this.discordCompetitionData.getOwner().equals(String.valueOf(discordStatus.getBotId()));
+    boolean isOwner = this.discordCompetitionData.getOwner().equals(String.valueOf(botStatus.getBotId()));
     if (existingEntry != null && isOwner) {
       validationTitle.setText("Invalid competition selected");
       validationDescription.setText("You are the owner of this competition.");

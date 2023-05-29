@@ -12,7 +12,6 @@ import de.mephisto.vpin.server.games.GameService;
 import de.mephisto.vpin.server.highscores.HighscoreMetadata;
 import de.mephisto.vpin.server.highscores.HighscoreParser;
 import de.mephisto.vpin.server.highscores.HighscoreService;
-import de.mephisto.vpin.server.highscores.ScoreList;
 import de.mephisto.vpin.server.players.Player;
 import de.mephisto.vpin.server.players.PlayerService;
 import org.apache.commons.lang3.StringUtils;
@@ -72,9 +71,9 @@ public class DiscordBotResponseService implements DiscordBotCommandListener, Ini
           Game game = gameService.getGame(activeCompetition.getGameId());
           if (game != null) {
             if (activeCompetition.getType().equals(CompetitionType.DISCORD.name())) {
-              ScoreList scoreList = discordService.getScoreList(highscoreParser, activeCompetition.getUuid(), activeCompetition.getDiscordServerId(), activeCompetition.getDiscordChannelId());
-              if (scoreList.getLatestScore() != null) {
-                String msg = DiscordBotCommandResponseFactory.createActiveCompetitionMessage(activeCompetition, game, scoreList.getLatestScore());
+              ScoreSummary scoreSummary = discordService.getScoreSummary(highscoreParser, activeCompetition.getUuid(), activeCompetition.getDiscordServerId(), activeCompetition.getDiscordChannelId());
+              if (!scoreSummary.getScores().isEmpty()) {
+                String msg = DiscordBotCommandResponseFactory.createActiveCompetitionMessage(activeCompetition, game, scoreSummary);
                 builder.append(msg);
               }
             }

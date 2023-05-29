@@ -62,36 +62,35 @@ public class CompetitionChangeListenerImpl implements InitializingBean, Competit
         long channelId = competition.getDiscordChannelId();
         long botId = discordService.getBotId();
 
-        if (isOwner) {
+        //check if the database has been resetted and we only join a competition that we created earlier
+        boolean active = discordService.isCompetitionActive(serverId, channelId, competition.getUuid());
+        if (active) {
+          LOG.info("The " + competition + " is still available and active, skipping init process.");
+        }
+        else if (isOwner) {
           String base64Data = CompetitionDataHelper.DATA_INDICATOR + CompetitionDataHelper.toBase64(competition, game);
           byte[] image = assetService.getCompetitionBackgroundFor(competition, game);
           String message = discordChannelMessageFactory.createDiscordCompetitionCreatedMessage(competition.getDiscordServerId(), botId, competition.getUuid());
 
           long messageId = discordService.sendMessage(serverId, channelId, message, image, competition.getName() + ".png", base64Data);
-          //since we started a new competition, all messages before today are irrelevant (we check only today so we don't run into topic update limits)
           discordService.initCompetition(serverId, channelId, messageId);
           LOG.info("Finished Discord update of \"" + competition.getName() + "\"");
         }
-        else {
-          if (!discordService.isCompetitionActive(serverId, channelId, competition.getUuid())) {
-            LOG.warn("The start of competition \"" + competition.getName() + "\" has been cancelled, because its no longer valid. " +
-                "The competition will be close during the next check.");
-            return;
-          }
+      }
+
+      if (competition.getType().equals(CompetitionType.OFFLINE.name())) {
+        if (competition.getDiscordChannelId() > 0 && competition.isActive()) {
+          long discordServerId = competition.getDiscordServerId();
+          long discordChannelId = competition.getDiscordChannelId();
+
+          byte[] image = assetService.getCompetitionBackgroundFor(competition, game);
+          String message = DiscordOfflineChannelMessageFactory.createOfflineCompetitionCreatedMessage(competition, game);
+          discordService.sendMessage(discordServerId, discordChannelId, message, image, competition.getName() + ".png", "This is an offline competition. Other player bots can't join.");
         }
-
-        highscoreService.resetHighscore(game);
-        LOG.info("Resetted highscores of " + game.getGameDisplayName() + " for " + competition);
       }
 
-      if (competition.getType().equals(CompetitionType.OFFLINE.name()) && competition.getDiscordChannelId() > 0 && competition.isActive()) {
-        long discordServerId = competition.getDiscordServerId();
-        long discordChannelId = competition.getDiscordChannelId();
-
-        byte[] image = assetService.getCompetitionBackgroundFor(competition, game);
-        String message = DiscordOfflineChannelMessageFactory.createOfflineCompetitionCreatedMessage(competition, game);
-        discordService.sendMessage(discordServerId, discordChannelId, message, image, competition.getName() + ".png", "This is an offline competition. Other player bots can't join.");
-      }
+      highscoreService.resetHighscore(game);
+      LOG.info("Resetted highscores of " + game.getGameDisplayName() + " for " + competition);
 
       if (competition.getBadge() != null && competition.isActive()) {
         popperService.augmentWheel(game, competition.getBadge());

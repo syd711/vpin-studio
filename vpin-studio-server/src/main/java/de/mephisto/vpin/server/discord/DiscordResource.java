@@ -22,9 +22,9 @@ public class DiscordResource {
   @Autowired
   private DiscordService discordService;
 
-  @GetMapping("/status")
-  public DiscordBotStatus getStatus() {
-    return discordService.getStatus();
+  @GetMapping("/status/{serverId}")
+  public DiscordBotStatus getStatus(@PathVariable("serverId") long serverId) {
+    return discordService.getStatus(serverId);
   }
 
   @GetMapping("/permissions/competitions/join/{serverId}/{channelId}")

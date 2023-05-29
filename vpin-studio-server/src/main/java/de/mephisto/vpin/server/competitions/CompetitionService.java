@@ -118,7 +118,11 @@ public class CompetitionService implements InitializingBean {
     else if (competition.getType().equals(CompetitionType.DISCORD.name())) {
       long serverId = competition.getDiscordServerId();
       long channelId = competition.getDiscordChannelId();
-      return discordService.getScoreList(highscoreParser, competition.getUuid(), serverId, channelId);
+      ScoreSummary highscore = discordService.getScoreSummary(highscoreParser, competition.getUuid(), serverId, channelId);
+      ScoreList scoreList = new ScoreList();
+      scoreList.setLatestScore(highscore);
+      scoreList.setScores(Collections.singletonList(highscore));
+      return scoreList;
     }
 
     return null;
@@ -131,13 +135,7 @@ public class CompetitionService implements InitializingBean {
     long channelId = competition.getDiscordChannelId();
 
     if (competition.getType().equals(CompetitionType.DISCORD.name())) {
-      ScoreList scoreList = discordService.getScoreList(highscoreParser, competition.getUuid(), serverId, channelId);
-      ScoreSummary latestScore = scoreList.getLatestScore();
-      if (latestScore == null) {
-        LOG.info("Discord competition \"" + competition + "\" did not contain any highscore, seems no one played yet?");
-        return new ScoreSummary(Collections.emptyList(), competition.getUpdatedAt());
-      }
-      return latestScore;
+      return discordService.getScoreSummary(highscoreParser, competition.getUuid(), serverId, channelId);
     }
 
     return highscoreService.getScoreSummary(serverId, competition.getGameId(), null);
@@ -289,12 +287,7 @@ public class CompetitionService implements InitializingBean {
   private ScoreSummary getCompetitionsFinalScore(@NonNull Competition competition) {
     long serverId = competition.getDiscordServerId();
     if (competition.getType().equals(CompetitionType.DISCORD.name())) {
-      ScoreList scoreList = discordService.getScoreList(this.highscoreParser, competition.getUuid(), serverId, competition.getDiscordChannelId());
-      ScoreSummary latestScore = scoreList.getLatestScore();
-      if (latestScore == null) {
-        latestScore = new ScoreSummary(Collections.emptyList(), new Date());
-      }
-      return latestScore;
+      return discordService.getScoreSummary(this.highscoreParser, competition.getUuid(), serverId, competition.getDiscordChannelId());
     }
     return highscoreService.getScoreSummary(serverId, competition.getGameId(), null);
   }

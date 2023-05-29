@@ -16,11 +16,18 @@ public class HighscoreChangeEvent {
   @NonNull
   private final Score newScore;
 
-  public HighscoreChangeEvent(@NonNull Game game, @NonNull Score oldScore, @NonNull Score newScore, int scoreCount) {
+  private boolean initialScore;
+
+  public HighscoreChangeEvent(@NonNull Game game, @NonNull Score oldScore, @NonNull Score newScore, int scoreCount, boolean initialScore) {
     this.game = game;
     this.scoreCount = scoreCount;
     this.oldScore = oldScore;
     this.newScore = newScore;
+    this.initialScore = initialScore;
+  }
+
+  public boolean isInitialScore() {
+    return initialScore;
   }
 
   public int getScoreCount() {

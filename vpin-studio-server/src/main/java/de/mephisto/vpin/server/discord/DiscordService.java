@@ -10,7 +10,6 @@ import de.mephisto.vpin.restclient.discord.DiscordServer;
 import de.mephisto.vpin.server.competitions.ScoreSummary;
 import de.mephisto.vpin.server.highscores.HighscoreParser;
 import de.mephisto.vpin.server.highscores.Score;
-import de.mephisto.vpin.server.highscores.ScoreList;
 import de.mephisto.vpin.server.players.Player;
 import de.mephisto.vpin.server.preferences.PreferenceChangedListener;
 import de.mephisto.vpin.server.preferences.PreferencesService;
@@ -40,20 +39,28 @@ public class DiscordService implements InitializingBean, PreferenceChangedListen
   private DiscordBotCommandListener botCommandListener;
 
   @NonNull
-  public DiscordBotStatus getStatus() {
+  public DiscordBotStatus getStatus(long serverId) {
     String guildId = (String) preferencesService.getPreferenceValue(PreferenceNames.DISCORD_GUILD_ID);
     String defaultChannelId = (String) preferencesService.getPreferenceValue(PreferenceNames.DISCORD_CHANNEL_ID);
     long botId = this.getBotId();
 
     DiscordBotStatus status = new DiscordBotStatus();
+    status.setServerId(serverId);
     status.setBotId(botId);
     status.setValid(botId != -1 && this.discordClient != null && this.discordClient.getGuilds().size() > 0);
     if (botId != -1) {
-      status.setBotInitials(this.discordClient.getBot().getInitials());
+      try {
+        DiscordMember member = this.discordClient.getMember(serverId, botId);
+        if (member != null) {
+          status.setBotInitials(member.getInitials());
+        }
+      } catch (Exception e) {
+        LOG.warn("Failed to set BOT initials: " + e.getMessage());
+      }
+
       try {
         long channelId = Long.parseLong(defaultChannelId);
-        long serverId = Long.parseLong(guildId);
-        status.setValidDefaultChannel(!StringUtils.isEmpty(defaultChannelId) && this.discordClient != null && this.getChannel(serverId, channelId) != null);
+        status.setValidDefaultChannel(!StringUtils.isEmpty(defaultChannelId) && this.discordClient != null && this.getChannel(Long.parseLong(guildId), channelId) != null);
       } catch (Exception e) {
         status.setValidDefaultChannel(false);
       }
@@ -159,7 +166,7 @@ public class DiscordService implements InitializingBean, PreferenceChangedListen
     if (this.discordClient != null) {
       List<DiscordMessage> pinnedMessages = discordClient.getPinnedMessages(serverId, channelId);
       for (DiscordMessage pinnedMessage : pinnedMessages) {
-        if(pinnedMessage.getMember() != null) {
+        if (pinnedMessage.getMember() != null) {
           Player player = toPlayer(pinnedMessage.getMember());
           if (!result.contains(player)) {
             result.add(player);
@@ -221,28 +228,16 @@ public class DiscordService implements InitializingBean, PreferenceChangedListen
    * @param channelId the discord channel id
    */
   @NonNull
-  public ScoreList getScoreList(@NonNull HighscoreParser highscoreParser, @NonNull String uuid, long serverId, long channelId) {
-    ScoreList result = new ScoreList();
+  public ScoreSummary getScoreSummary(@NonNull HighscoreParser highscoreParser, @NonNull String uuid, long serverId, long channelId) {
     if (this.discordClient != null) {
       List<DiscordMessage> competitionUpdates = discordClient.getPinnedMessages(serverId, channelId);
       for (DiscordMessage pinnedMessage : competitionUpdates) {
         if (pinnedMessage.getRaw().contains(DiscordChannelMessageFactory.HIGHSCORE_INDICATOR) && pinnedMessage.getRaw().contains(uuid)) {
-          ScoreSummary scoreSummary = toScoreSummary(highscoreParser, pinnedMessage);
-          if (!scoreSummary.getScores().isEmpty()) {
-            result.getScores().add(scoreSummary);
-          }
-          break;
+          return toScoreSummary(highscoreParser, pinnedMessage);
         }
       }
-
-      if (!result.getScores().isEmpty()) {
-        result.setLatestScore(result.getScores().get(result.getScores().size() - 1));
-      }
-      else {
-        LOG.info("No record highscore for " + uuid + " found, so this seems to be the first one.");
-      }
     }
-    return result;
+    return new ScoreSummary(Collections.emptyList(), new Date());
   }
 
   public boolean isEnabled() {

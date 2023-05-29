@@ -48,8 +48,6 @@ public class HighscoreService implements InitializingBean {
 
   private HighscoreResolver highscoreResolver;
 
-  private boolean changeListenerEnabled = true;
-
   private final List<HighscoreChangeListener> listeners = new ArrayList<>();
 
   public boolean resetHighscore(@NonNull Game game) {
@@ -146,10 +144,6 @@ public class HighscoreService implements InitializingBean {
       result.add(new ScoreSummary(scores, highscore.getCreatedAt()));
     }
     return result;
-  }
-
-  public List<HighscoreVersion> getAllHighscoreVersions(int gameId) {
-    return highscoreVersionRepository.findByGameIdAndCreatedAtBetween(gameId, new Date(0), new Date());
   }
 
   public ScoreList getScoreHistory(int gameId) {
@@ -324,9 +318,12 @@ public class HighscoreService implements InitializingBean {
       return Optional.empty();
     }
 
+    boolean initialScore = false;
+
     //first highscore parsing situation: store the first record and the first version
     Optional<Highscore> existingHighscore = highscoreRepository.findByGameId(game.getId());
     if (existingHighscore.isEmpty()) {
+      initialScore = true;
       Highscore newHighscore = Highscore.forGame(game, metadata);
 
       //create artificial empty init version
@@ -410,7 +407,7 @@ public class HighscoreService implements InitializingBean {
       LOG.info("Saved updated highscore for " + game);
 
       //finally, fire the update event to notify all listeners
-      HighscoreChangeEvent event = new HighscoreChangeEvent(game, oldScore, newScore, oldScores.size());
+      HighscoreChangeEvent event = new HighscoreChangeEvent(game, oldScore, newScore, oldScores.size(), initialScore);
       triggerHighscoreChange(event);
     }
     return Optional.of(oldHighscore);
@@ -479,15 +476,9 @@ public class HighscoreService implements InitializingBean {
   }
 
   private void triggerHighscoreChange(@NonNull HighscoreChangeEvent event) {
-    if (changeListenerEnabled) {
-      for (HighscoreChangeListener listener : listeners) {
-        listener.highscoreChanged(event);
-      }
+    for (HighscoreChangeListener listener : listeners) {
+      listener.highscoreChanged(event);
     }
-  }
-
-  public void setChangeListenerEnabled(boolean b) {
-    this.changeListenerEnabled = b;
   }
 
   @Override
