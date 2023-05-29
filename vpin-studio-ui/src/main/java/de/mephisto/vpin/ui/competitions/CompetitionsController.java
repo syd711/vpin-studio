@@ -112,6 +112,9 @@ public class CompetitionsController implements Initializable, StudioFXController
     scorePane.setExpanded(competition.isPresent() && competition.get().getType().equals(CompetitionType.OFFLINE.name()));
     competitionMembersPane.setExpanded(competition.isPresent() && competition.get().getType().equals(CompetitionType.DISCORD.name()));
     discordController.onReload();
+
+    offlineController.onViewActivated();
+    discordController.onViewActivated();
   }
 
   @Override
@@ -153,7 +156,7 @@ public class CompetitionsController implements Initializable, StudioFXController
   }
 
   private void refreshMetaData(Optional<CompetitionRepresentation> competitionRepresentation) {
-    if (competitionRepresentation.isPresent() && competitionRepresentation.get().getType().equals(CompetitionType.DISCORD)) {
+    if (competitionRepresentation.isPresent() && competitionRepresentation.get().getType().equals(CompetitionType.DISCORD.name())) {
       CompetitionRepresentation competition = competitionRepresentation.get();
       if (metaDataPane.isVisible()) {
         uuidLabel.setText(competition.getUuid());

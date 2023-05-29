@@ -302,6 +302,8 @@ public class CompetitionsDiscordController implements Initializable, StudioFXCon
     NavigationController.setBreadCrumb(Arrays.asList("Competitions"));
     tableView.setPlaceholder(new Label("            No competitions found.\nClick the '+' button to create a new one."));
 
+    onViewActivated();
+
     try {
       FXMLLoader loader = new FXMLLoader(WaitOverlayController.class.getResource("overlay-wait.fxml"));
       loadingOverlay = loader.load();
@@ -535,6 +537,8 @@ public class CompetitionsDiscordController implements Initializable, StudioFXCon
 
   @Override
   public void onViewActivated() {
+    long guildId = client.getPreference(PreferenceNames.DISCORD_GUILD_ID).getLongValue();
+    this.discordBotId = client.getDiscordService().getDiscordStatus(guildId).getBotId();
   }
 
   public void setCompetitionsController(CompetitionsController competitionsController) {

@@ -148,8 +148,9 @@ public class RestClient implements ClientHttpRequestInterceptor {
     ByteArrayOutputStream baos = new ByteArrayOutputStream();
     InputStream is = null;
     try {
+      long start = System.currentTimeMillis();
       URL url = new URL(resource);
-      LOG.info("HTTP GET Binary: " + url);
+
       HttpURLConnection con = (HttpURLConnection) url.openConnection();
       int responseCode = con.getResponseCode();
       if (responseCode == 404) {
@@ -163,6 +164,8 @@ public class RestClient implements ClientHttpRequestInterceptor {
       while ((n = is.read(byteChunk)) > 0) {
         baos.write(byteChunk, 0, n);
       }
+
+      LOG.info("HTTP GET Binary: " + url + " (" + (System.currentTimeMillis() - start) + "ms)");
       return baos.toByteArray();
     } catch (Exception e) {
       LOG.error("Failed while reading bytes from %s: %s", resource, e.getMessage(), e);
