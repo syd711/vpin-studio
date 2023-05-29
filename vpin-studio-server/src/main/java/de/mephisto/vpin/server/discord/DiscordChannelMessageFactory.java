@@ -108,8 +108,8 @@ public class DiscordChannelMessageFactory {
 
     String competitionName = competition.getName();
     return String.format(COMPETITION_FINISHED_TEMPLATE,
-        competition.getUuid(),
         winnerName,
+        competition.getUuid(),
         competitionName,
         winnerRaw,
         game.getGameDisplayName(),

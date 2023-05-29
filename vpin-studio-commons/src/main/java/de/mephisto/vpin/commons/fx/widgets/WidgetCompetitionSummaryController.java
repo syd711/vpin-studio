@@ -125,16 +125,20 @@ public class WidgetCompetitionSummaryController extends WidgetController impleme
       scoreLabel1.setVisible(isActive);
       scoreLabel2.setVisible(isActive);
       scoreLabel3.setVisible(isActive);
+
+      name1.setText("-");
+      name2.setText("-");
+      name3.setText("-");
+
+      scoreLabel1.setText("0");
+      scoreLabel2.setText("0");
+      scoreLabel3.setText("0");
+
       name1.setVisible(isActive);
       name2.setVisible(isActive);
       name3.setVisible(isActive);
 
-      if (!competition.isActive()) {
-        name1.setText("-");
-        name2.setText("-");
-        name3.setText("-");
-      }
-      else {
+      if (competition.isActive()) {
         ScoreSummaryRepresentation latestCompetitionScore = OverlayWindowFX.client.getCompetitionScore(competition.getId());
         if (latestCompetitionScore != null) {
           List<ScoreRepresentation> scores = latestCompetitionScore.getScores();
@@ -156,7 +160,6 @@ public class WidgetCompetitionSummaryController extends WidgetController impleme
           }
         }
       }
-
 
       GameMediaItemRepresentation item = gameMedia.getItem(PopperScreen.Wheel);
       if (item != null) {
