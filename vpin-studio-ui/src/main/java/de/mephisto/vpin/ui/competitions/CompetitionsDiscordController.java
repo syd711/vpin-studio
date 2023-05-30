@@ -259,6 +259,13 @@ public class CompetitionsDiscordController implements Initializable, StudioFXCon
       tableView.setPlaceholder(new Label("                                         No Discord bot found.\nCreate a Discord bot and add it in the preference section \"Discord Preferences\"."));
       tableView.setVisible(true);
       tableStack.getChildren().remove(loadingOverlay);
+
+      if(competitionWidget != null) {
+        competitionWidget.setVisible(false);
+      }
+
+      tableView.setItems(FXCollections.emptyObservableList());
+      tableView.refresh();
       return;
     }
 
@@ -269,6 +276,7 @@ public class CompetitionsDiscordController implements Initializable, StudioFXCon
       data = FXCollections.observableList(competitions);
 
       Platform.runLater(() -> {
+        competitionWidget.setVisible(true);
         if (competitions.isEmpty()) {
           competitionWidget.setTop(null);
         }
@@ -301,8 +309,6 @@ public class CompetitionsDiscordController implements Initializable, StudioFXCon
   public void initialize(URL url, ResourceBundle resourceBundle) {
     NavigationController.setBreadCrumb(Arrays.asList("Competitions"));
     tableView.setPlaceholder(new Label("            No competitions found.\nClick the '+' button to create a new one."));
-
-    onViewActivated();
 
     try {
       FXMLLoader loader = new FXMLLoader(WaitOverlayController.class.getResource("overlay-wait.fxml"));
@@ -467,6 +473,8 @@ public class CompetitionsDiscordController implements Initializable, StudioFXCon
       competitionWidgetRoot = loader.load();
       competitionWidgetController = loader.getController();
       competitionWidgetRoot.setMaxWidth(Double.MAX_VALUE);
+
+      competitionWidgetRoot.managedProperty().bindBidirectional(competitionWidget.visibleProperty());
     } catch (IOException e) {
       LOG.error("Failed to load c-widget: " + e.getMessage(), e);
     }
@@ -482,6 +490,7 @@ public class CompetitionsDiscordController implements Initializable, StudioFXCon
     });
 
     bindSearchField();
+    onViewActivated();
   }
 
   private void bindSearchField() {
@@ -519,6 +528,9 @@ public class CompetitionsDiscordController implements Initializable, StudioFXCon
     finishBtn.setDisable(disable || !isOwner || !newSelection.isActive());
     deleteBtn.setDisable(disable);
     duplicateBtn.setDisable(disable || !isOwner);
+    reloadBtn.setDisable(this.discordBotId <= 0);
+    addBtn.setDisable(this.discordBotId <= 0);
+    joinBtn.setDisable(this.discordBotId <= 0);
 
     if (competition.isPresent()) {
       if (competitionWidget.getTop() != null) {
@@ -539,6 +551,9 @@ public class CompetitionsDiscordController implements Initializable, StudioFXCon
   public void onViewActivated() {
     long guildId = client.getPreference(PreferenceNames.DISCORD_GUILD_ID).getLongValue();
     this.discordBotId = client.getDiscordService().getDiscordStatus(guildId).getBotId();
+    if (this.competitionsController != null) {
+      refreshView(Optional.empty());
+    }
   }
 
   public void setCompetitionsController(CompetitionsController competitionsController) {

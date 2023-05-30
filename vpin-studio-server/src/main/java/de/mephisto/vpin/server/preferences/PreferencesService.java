@@ -35,7 +35,7 @@ public class PreferencesService implements InitializingBean {
     this.listeners.add(listener);
   }
 
-  public void notifyListeners(String key, Object oldValue, Object newValue) {
+  public void notifyListeners(String key, Object oldValue, Object newValue) throws Exception {
     for (PreferenceChangedListener listener : this.listeners) {
       listener.preferenceChanged(key, oldValue, newValue);
     }
@@ -64,7 +64,7 @@ public class PreferencesService implements InitializingBean {
     return defaultValue;
   }
 
-  public boolean savePreference(Map<String, Object> values) {
+  public boolean savePreference(Map<String, Object> values) throws Exception {
     BeanWrapper bean = new BeanWrapperImpl(preferences);
 
     Map<String, Object> oldValues = new HashMap<>();
@@ -82,7 +82,7 @@ public class PreferencesService implements InitializingBean {
     return true;
   }
 
-  public boolean savePreference(String key, Object value) {
+  public boolean savePreference(String key, Object value) throws Exception {
     Map<String, Object> values = new HashMap<>();
     values.put(key, value);
     return savePreference(values);
@@ -111,7 +111,7 @@ public class PreferencesService implements InitializingBean {
     return updatedPreferences.getAvatar();
   }
 
-  private void notifyChangeListeners(Map<String, Object> values, Map<String, Object> oldValues) {
+  private void notifyChangeListeners(Map<String, Object> values, Map<String, Object> oldValues) throws Exception {
     //notify change listeners
     for (Map.Entry<String, Object> entry : oldValues.entrySet()) {
       String key = entry.getKey();

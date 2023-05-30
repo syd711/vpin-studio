@@ -38,9 +38,22 @@ public class PopperStatusChangeListenerImpl implements InitializingBean, PopperS
   @Override
   public void tableLaunched(TableStatusChangedEvent event) {
     Game game = event.getGame();
-    preferencesService.savePreference(PreferenceNames.ACTIVE_GAME, game.getId());
     discordService.setActivity(game.getGameDisplayName());
     highscoreService.scanScore(game);
+
+    try {
+      //rescan highscore of last game in case Discord was offline
+      int activeTableId = (int) preferencesService.getPreferenceValue(PreferenceNames.ACTIVE_GAME);
+      if (activeTableId >= 0) {
+        Game lastGamePlayed = gameService.getGame(activeTableId);
+        if (lastGamePlayed != null && lastGamePlayed.getId() != game.getId()) {
+          highscoreService.scanScore(game);
+        }
+        preferencesService.savePreference(PreferenceNames.ACTIVE_GAME, game.getId());
+      }
+    } catch (Exception e) {
+      LOG.info("Failed to refresh game: " + e.getMessage(), e);
+    }
   }
 
   @Override
@@ -57,7 +70,6 @@ public class PopperStatusChangeListenerImpl implements InitializingBean, PopperS
       }
       LOG.info("Finished " + EXIT_DELAY + "ms update delay, updating highscores.");
       highscoreService.scanScore(game);
-      preferencesService.savePreference(PreferenceNames.ACTIVE_GAME, -1);
     }).start();
   }
 
@@ -69,7 +81,6 @@ public class PopperStatusChangeListenerImpl implements InitializingBean, PopperS
       Game game = gameService.getGame(activeTableId);
       if (game != null) {
         highscoreService.scanScore(game);
-        preferencesService.savePreference(PreferenceNames.ACTIVE_GAME, -1);
       }
     }
   }

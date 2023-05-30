@@ -256,7 +256,7 @@ public class DiscordService implements InitializingBean, PreferenceChangedListen
     return null;
   }
 
-  private DiscordClient recreateDiscordClient() {
+  private DiscordClient recreateDiscordClient() throws Exception {
     String botToken = (String) preferencesService.getPreferenceValue(PreferenceNames.DISCORD_BOT_TOKEN);
 
     try {
@@ -282,6 +282,7 @@ public class DiscordService implements InitializingBean, PreferenceChangedListen
       }
     } catch (Exception e) {
       LOG.error("Failed to create discord client: " + e.getMessage() + ". Try to update your settings to create a valid client.");
+      throw e;
     }
     return this.discordClient;
   }
@@ -351,7 +352,7 @@ public class DiscordService implements InitializingBean, PreferenceChangedListen
   }
 
   @Override
-  public void preferenceChanged(String propertyName, Object oldValue, Object newValue) {
+  public void preferenceChanged(String propertyName, Object oldValue, Object newValue) throws Exception {
     if (propertyName.equals(PreferenceNames.DISCORD_BOT_TOKEN)) {
       LOG.info("Detected Discord config change, updating BOT.");
       this.discordClient = recreateDiscordClient();

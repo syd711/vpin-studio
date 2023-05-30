@@ -232,7 +232,7 @@ public class CompetitionDiscordJoinDialogController implements Initializable, Di
 
     //check Discord permissions
     if (!client.getCompetitionService().hasManagePermissions(server.getId(), channel.getId())) {
-      validationTitle.setText("Insufficient Permissions");
+      validationTitle.setText("Insufficient permissions");
       validationDescription.setText("Your Discord bot has insufficient permissions to start a competition. Please check the documentation for details.");
       return;
     }
@@ -240,6 +240,7 @@ public class CompetitionDiscordJoinDialogController implements Initializable, Di
     this.discordCompetitionData = client.getDiscordService().getDiscordCompetitionData(server.getId(), channel.getId());
     if (discordCompetitionData != null) {
       List<GameRepresentation> gamesByRom = client.getGameService().getGamesByRom(this.discordCompetitionData.getRom());
+
       tableCombo.getItems().addAll(FXCollections.observableList(gamesByRom));
       if (!gamesByRom.isEmpty()) {
         tableCombo.setValue(gamesByRom.get(0));
@@ -289,13 +290,19 @@ public class CompetitionDiscordJoinDialogController implements Initializable, Di
       validationDescription.setText("You already joined this competition.");
       return;
     }
-
-
     if (this.discordCompetitionData.getEdt().before(DateUtil.today())) {
       validationTitle.setText("Invalid competition data");
       validationDescription.setText("Ups, looks like the selected competition wasn't reset. It's already finished.");
       return;
     }
+
+    if (tableCombo.getItems().isEmpty()) {
+      validationTitle.setText("No matching table found");
+      validationDescription.setText("None of your tables matches the ROM name \"" + this.discordCompetitionData.getRom() + "\" of \"" + this.discordCompetitionData.getTname() + "\"");
+      return;
+    }
+
+    this.tableCombo.setDisable(false);
 
     GameRepresentation game = this.tableCombo.getValue();
     if (game != null) {
@@ -318,7 +325,6 @@ public class CompetitionDiscordJoinDialogController implements Initializable, Di
     }
 
     this.competitionIconCombo.setDisable(false);
-    this.tableCombo.setDisable(false);
 
     validationContainer.setVisible(false);
     this.saveBtn.setDisable(false);

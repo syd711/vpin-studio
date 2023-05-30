@@ -67,7 +67,11 @@ public class ProgressDialogController implements Initializable, DialogController
                   if (label != null) {
                     progressBarLabel.setText("Status: " + model.nextToString(next));
                   }
-                  titleLabel.setText(model.getTitle() + " (" + uiIndex + "/" + model.getMax() + ")");
+                  String title = model.getTitle();
+                  if (model.getMax() > 1) {
+                    title = title + " (" + uiIndex + "/" + model.getMax() + ")";
+                  }
+                  titleLabel.setText(title);
                 });
 
                 model.processNext(progressResultModel, next);

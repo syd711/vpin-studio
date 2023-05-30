@@ -46,7 +46,7 @@ public class PreferenceResource {
   }
 
   @PutMapping
-  public boolean put(@RequestBody Map<String, Object> values) {
+  public boolean put(@RequestBody Map<String, Object> values) throws Exception {
     return preferencesService.savePreference(values);
   }
 
