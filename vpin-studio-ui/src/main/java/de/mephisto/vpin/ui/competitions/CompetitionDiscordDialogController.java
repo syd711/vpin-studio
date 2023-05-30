@@ -45,8 +45,7 @@ import static de.mephisto.vpin.ui.Studio.client;
 public class CompetitionDiscordDialogController implements Initializable, DialogController {
   private final static Logger LOG = LoggerFactory.getLogger(CompetitionDiscordDialogController.class);
 
-
-  private Debouncer debouncer = new Debouncer();
+  private final Debouncer debouncer = new Debouncer();
 
   @FXML
   private ImageView iconPreview;

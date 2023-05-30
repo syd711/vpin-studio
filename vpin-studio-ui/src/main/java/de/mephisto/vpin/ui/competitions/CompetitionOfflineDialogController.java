@@ -5,6 +5,7 @@ import de.mephisto.vpin.commons.fx.DialogController;
 import de.mephisto.vpin.commons.fx.UIDefaults;
 import de.mephisto.vpin.restclient.CompetitionType;
 import de.mephisto.vpin.restclient.PopperScreen;
+import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.client.VPinStudioClient;
 import de.mephisto.vpin.restclient.discord.DiscordChannel;
 import de.mephisto.vpin.restclient.representations.CompetitionRepresentation;
@@ -86,6 +87,8 @@ public class CompetitionOfflineDialogController implements Initializable, Dialog
   private CompetitionRepresentation competition;
 
   private List<DiscordChannel> discordChannels;
+
+  private long serverId;
 
   @FXML
   private void onCancelClick(ActionEvent e) {
@@ -174,9 +177,11 @@ public class CompetitionOfflineDialogController implements Initializable, Dialog
     channelsCombo.getItems().addAll(discordChannels);
     channelsCombo.valueProperty().addListener((observableValue, gameRepresentation, t1) -> {
       if (t1 != null) {
+        competition.setDiscordServerId(serverId);
         competition.setDiscordChannelId(t1.getId());
       }
       else {
+        competition.setDiscordServerId(0);
         competition.setDiscordChannelId(0);
       }
       validate();
@@ -327,6 +332,7 @@ public class CompetitionOfflineDialogController implements Initializable, Dialog
   private List<DiscordChannel> getDiscordChannels() {
     if (this.discordChannels == null) {
       this.discordChannels = client.getDiscordService().getDiscordChannels();
+      this.serverId = client.getPreference(PreferenceNames.DISCORD_GUILD_ID).getLongValue();
     }
     return this.discordChannels;
   }

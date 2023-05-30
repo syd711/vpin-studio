@@ -14,19 +14,8 @@ import edu.umd.cs.findbugs.annotations.Nullable;
 import org.apache.commons.lang3.StringUtils;
 
 public class DiscordOfflineChannelMessageFactory {
-  private static final String COMPETITION_FINISHED_TEMPLATE = "Congratulation %s!\n" +
-      "```" +
-      "The competition \"%s\" has been finished!\n" +
-      "And the winner is...\n" +
-      "\n" +
-      "        %s\n" +
-      "\n" +
-      "Table: %s\n" +
-      "Score: %s\n" +
-      "\n" +
-      "%s\n" +
-      "%s\n" +
-      "```";
+  private static final String COMPETITION_FINISHED_TEMPLATE =
+      "The competition \"%s\" has been finished!\n";
 
   private static final String COMPETITION_FINISHED_INCOMPLETE = "The competition \"%s\" has been " + DiscordChannelMessageFactory.FINISHED_INDICATOR + ", " +
       "but no winner could be determined:\n" +
@@ -101,32 +90,12 @@ public class DiscordOfflineChannelMessageFactory {
       return String.format(COMPETITION_FINISHED_INCOMPLETE, competition.getName());
     }
 
-    String winnerName = competition.getWinnerInitials();
-    String winnerRaw = competition.getWinnerInitials();
-    if (winner != null) {
-      winnerName = winner.getName();
-      winnerRaw = winner.getName();
-      if (PlayerDomain.DISCORD.name().equals(winner.getDomain())) {
-        winnerRaw = "<@" + winner.getId() + ">";
-      }
-    }
-
-    String second = ScoreHelper.formatScoreEntry(summary, 1);
-    String third = ScoreHelper.formatScoreEntry(summary, 2);
-
     String competitionName = competition.getName();
     if (competition.getType().equals(CompetitionType.DISCORD.name())) {
       competitionName = competitionName + " (" + competition.getUuid() + ")";
     }
 
-    return String.format(COMPETITION_FINISHED_TEMPLATE,
-        winnerName,
-        competitionName,
-        winnerRaw,
-        game.getGameDisplayName(),
-        summary.getScores().get(0).getScore(),
-        second,
-        third);
+    return String.format(COMPETITION_FINISHED_TEMPLATE, competitionName);
   }
 
   public static String getBeatenMessage(Score oldScore, Score newScore) {

@@ -69,7 +69,7 @@ public class CompetitionChangeListenerImpl implements InitializingBean, Competit
         }
         else if (isOwner) {
           String base64Data = CompetitionDataHelper.DATA_INDICATOR + CompetitionDataHelper.toBase64(competition, game);
-          byte[] image = assetService.getCompetitionBackgroundFor(competition, game);
+          byte[] image = assetService.getCompetitionStartedCard(competition, game);
           String message = discordChannelMessageFactory.createDiscordCompetitionCreatedMessage(competition.getDiscordServerId(), botId, competition.getUuid());
 
           long messageId = discordService.sendMessage(serverId, channelId, message, image, competition.getName() + ".png", base64Data);
@@ -83,12 +83,15 @@ public class CompetitionChangeListenerImpl implements InitializingBean, Competit
 
       if (competition.getType().equals(CompetitionType.OFFLINE.name())) {
         if (competition.getDiscordChannelId() > 0 && competition.isActive()) {
-          long discordServerId = competition.getDiscordServerId();
-          long discordChannelId = competition.getDiscordChannelId();
+          long serverId = competition.getDiscordServerId();
+          long channelId = competition.getDiscordChannelId();
 
-          byte[] image = assetService.getCompetitionBackgroundFor(competition, game);
-          String message = DiscordOfflineChannelMessageFactory.createOfflineCompetitionCreatedMessage(competition, game);
-          discordService.sendMessage(discordServerId, discordChannelId, message, image, competition.getName() + ".png", "This is an offline competition. Other player bots can't join.");
+          DiscordMember bot = discordService.getBot();
+          if (serverId > 0 && channelId > 0 && bot != null) {
+            byte[] image = assetService.getCompetitionStartedCard(competition, game);
+            String message = DiscordOfflineChannelMessageFactory.createOfflineCompetitionCreatedMessage(competition, game);
+            discordService.sendMessage(serverId, channelId, message, image, competition.getName() + ".png", "This is an offline competition. Other player bots can't join.");
+          }
         }
       }
 
@@ -127,8 +130,19 @@ public class CompetitionChangeListenerImpl implements InitializingBean, Competit
       long channelId = competition.getDiscordChannelId();
 
       if (competition.getType().equals(CompetitionType.OFFLINE.name())) {
-        String message = DiscordOfflineChannelMessageFactory.createCompetitionFinishedMessage(competition, winner, game, scoreSummary);
-        discordService.sendMessage(serverId, channelId, message);
+        DiscordMember bot = discordService.getBot();
+        if (bot != null && serverId > 0 && channelId > 0) {
+          boolean noWinner = scoreSummary.getScores().isEmpty();
+          String message = DiscordOfflineChannelMessageFactory.createCompetitionFinishedMessage(competition, winner, game, scoreSummary);
+          //check if a winner card should be generated
+          if (noWinner) {
+            discordService.sendMessage(serverId, channelId, message);
+          }
+          else {
+            byte[] image = assetService.getCompetitionFinishedCard(competition, game, winner, scoreSummary);
+            discordService.sendMessage(serverId, channelId, message, image, competition.getName() + ".png", null);
+          }
+        }
       }
 
       if (competition.getType().equals(CompetitionType.DISCORD.name())) {
@@ -152,8 +166,10 @@ public class CompetitionChangeListenerImpl implements InitializingBean, Competit
       long channelId = competition.getDiscordChannelId();
 
       if (competition.getType().equals(CompetitionType.OFFLINE.name()) && channelId > 0 && competition.isActive()) {
-        String message = DiscordOfflineChannelMessageFactory.createCompetitionCancelledMessage(competition);
-        discordService.sendMessage(serverId, channelId, message);
+        if (serverId > 0 && channelId > 0) {
+          String message = DiscordOfflineChannelMessageFactory.createCompetitionCancelledMessage(competition);
+          discordService.sendMessage(serverId, channelId, message);
+        }
       }
 
       if (competition.getType().equals(CompetitionType.DISCORD.name())) {
