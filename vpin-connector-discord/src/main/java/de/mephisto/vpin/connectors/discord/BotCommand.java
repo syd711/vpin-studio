@@ -9,6 +9,7 @@ public class BotCommand {
   public final static String CMD_FIND = "find";
   public final static String CMD_RANKS = "ranks";
   public final static String CMD_PLAYER = "player";
+  public final static String CMD_VPBM = "vpbm";
 
   private DiscordCommandResolver commandResolver;
 

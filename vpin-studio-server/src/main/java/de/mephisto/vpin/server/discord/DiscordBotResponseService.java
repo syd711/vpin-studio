@@ -3,6 +3,7 @@ package de.mephisto.vpin.server.discord;
 import de.mephisto.vpin.connectors.discord.BotCommand;
 import de.mephisto.vpin.connectors.discord.BotCommandResponse;
 import de.mephisto.vpin.restclient.CompetitionType;
+import de.mephisto.vpin.server.backup.adapters.vpbm.VpbmService;
 import de.mephisto.vpin.server.competitions.Competition;
 import de.mephisto.vpin.server.competitions.CompetitionService;
 import de.mephisto.vpin.server.competitions.RankedPlayer;
@@ -46,6 +47,9 @@ public class DiscordBotResponseService implements DiscordBotCommandListener, Ini
   @Autowired
   private HighscoreParser highscoreParser;
 
+  @Autowired
+  private VpbmService vpbmService;
+
   @Override
   public BotCommandResponse onBotCommand(BotCommand cmd) {
     String name = cmd.getCommand();
@@ -55,6 +59,9 @@ public class DiscordBotResponseService implements DiscordBotCommandListener, Ini
       }
       case BotCommand.CMD_HELP: {
         return () -> DiscordBotCommandResponseFactory.COMMAND_SUMMARY;
+      }
+      case BotCommand.CMD_VPBM: {
+        return () -> DiscordBotCommandResponseFactory.createVPBMStatusMessage(vpbmService);
       }
       case BotCommand.CMD_COMPETITIONS: {
         List<Competition> activeCompetitions = competitionService.getActiveCompetitions();

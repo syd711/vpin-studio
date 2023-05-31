@@ -2,6 +2,7 @@ package de.mephisto.vpin.server.discord;
 
 import de.mephisto.vpin.restclient.CompetitionType;
 import de.mephisto.vpin.restclient.util.DateUtil;
+import de.mephisto.vpin.server.backup.adapters.vpbm.VpbmService;
 import de.mephisto.vpin.server.competitions.Competition;
 import de.mephisto.vpin.server.competitions.RankedPlayer;
 import de.mephisto.vpin.server.competitions.ScoreSummary;
@@ -12,10 +13,6 @@ import de.mephisto.vpin.server.players.Player;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.time.LocalDate;
-import java.time.ZoneId;
-import java.time.format.DateTimeFormatter;
-import java.time.temporal.ChronoUnit;
 import java.util.Date;
 import java.util.List;
 
@@ -223,6 +220,15 @@ public class DiscordBotCommandResponseFactory {
       builder.append(score);
       builder.append("\n");
     }
+    return builder.toString();
+  }
+
+  public static String createVPBMStatusMessage(VpbmService vpbmService) {
+    StringBuilder builder = new StringBuilder();
+    builder.append("VPBM " + vpbmService.getVersion());
+    builder.append("\n");
+    builder.append("Internal Host Id: ```" + vpbmService.getHostIds().getInternalHostId() + "```");
+    builder.append("\n");
     return builder.toString();
   }
 }
