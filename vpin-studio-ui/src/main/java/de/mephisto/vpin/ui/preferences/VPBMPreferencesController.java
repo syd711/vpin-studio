@@ -66,7 +66,8 @@ public class VPBMPreferencesController implements Initializable {
         boolean canUpdate = Studio.client.getSystemService().isLocal() && Studio.client.getVpbmService().isUpdateAvailable();
         updateBtn.setDisable(!canUpdate);
 
-        validationError.setVisible(!Studio.client.getSystemService().isDotNetInstalled());
+        //current .net check not applicable
+//        validationError.setVisible(!Studio.client.getSystemService().isDotNetInstalled());
       });
     }).start();
   }

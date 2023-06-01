@@ -9,9 +9,10 @@
 
 <header>
     <hr>
-	<a href="main.html"><img style="float: left; padding: 6px 0px 0px 0px;" src="./img/logo.png" alt="VPBM Logo" width="60" height="60"></a>
+    <a href="main.html">
+        <img style="float: left; padding: 6px 0px 0px 0px;" src="./img/logo.png" alt="VPBM Logo" width="60" height="60"></a>
     <h2><span>&nbsp;&nbsp;Installed Games Panel</span></h2>
-	<p><span class="vpbm">Virtual Pinball Backup Manager</span> - managing your backups, one game at a time</p>
+    <p><span class="vpbm">Virtual Pinball Backup Manager</span> - managing your backups, one game at a time</p>
     <hr>
 </header>
 
@@ -22,7 +23,6 @@
     <p>Entries within this list are colour coded to indicate the status of backups for the corresponding game. Users may select one or more rows in this table to operate on using the buttons seen across the top of the table. The most recently selected row is treated as the primary row selection and information about this row is displayed in other panels within the application.</p>
     <p>Selected rows will be highlighted in a highlight colour, this will be described in more details along with colour coding rules below.&nbsp;</p>
     <p>Jump straight to <a href="#gameListControlButtons">Games List Control Buttons</a> if you want to jump straight into using the tool.</p>
-
     <hr>
 
     <h3><span>&nbsp;&nbsp;Colour Coding Rules</span></h3>
@@ -99,11 +99,11 @@
     <hr>
 
     <h3><span>&nbsp;&nbsp;<a name="gameListControlButtons">Games List Control Buttons</a></span></h3>
-    <p>Five buttons residing across the top of the <strong>Installed Games</strong> panel provide the key operations that are perfomed within <span class="vpbm">VPBM</span>, these operations are described below.</p>
+    <p>Five buttons residing across the top of the <strong>Installed Games</strong> panel provide the key operations that are perfomed within <span class="vpbm">VPBM</span>. These operations are performed on all selected games and described below:</p>
     <br />
     <img alt="Installed Games Buttons" src="img/InstalledGamesButtons.jpg">
     <dl>
-        <dt><strong>Backup Game</strong></dt>
+        <dt><strong>Backup Games</strong></dt>
         <dd>Pressing this button triggers processing to loop through all selected games and generate new backup files for them, these backup files will be stored within the configured backup directory within a subdirectory based on the games emulator. Backup files contain a full set of fiels and metadata used to restore the game when required, this content includes:
             <ol>
                 <li>All emulator specific game files, such as (for VPX) rom files, backglass and POV files, and (for Future Pinball) BAM config files. These files will vary by emulator.</li>
@@ -115,21 +115,30 @@
                 <li>A custom file paths file (<strong>customFilePaths.json</strong>) which stores filter information to locate and additional 'game specific' emualtor files to be stored.</li>
             </ol>
         </dd>
-        <dt><strong>Restore Game</strong></dt>
+        <dt><strong>Restore Games</strong></dt>
         <dd>Pressing this button triggers processing to loop through all selected games and restoring them to a state consistant with the backup file. This action effectively performs the reverse of the <strong>Backup Selected</strong> button. All game and pinup files are restored, additionally the pinup database is updated to match the stored content and and registry settings defined for the game are also updated.</dd>
-        <dt><strong>Delete Game</strong></dt>
+        <dt><strong>Delete Games</strong></dt>
         <dd>Pressing this button deletes the game content, removing the game entirely from the current system for all selected games. Any backup files are NOT deleted meaning that they can be re-imported if required. This is achieved using the <strong>Import/Export</strong> -> <strong>Import New</strong> menu option. A warning dialog is provided to ensure that users confirm the delete action is required.</dd>
-        <dt><strong>Delete Backup</strong></dt>
+        <dt><strong>Delete Backups</strong></dt>
         <dd>Pressing this button deletes all selected game backups, however gamre content is left as is.</dd>
-        <dt><strong>Export Backup</strong></dt>
+        <dt><strong>Export Backups</strong></dt>
         <dd>This button is only enabled if two pre-conditions are met:
-			<ol>
-				<li>An <strong>Export Path</strong> value has been configured in settings to specify where exporeted backups should be placed.</li>
-				<li>An <strong>Export Host Identifier</strong> value has been configured in settings to specify which host to generate exported backups for.</li>
-			</ol>
-			If clicked, existing backups for all selected games will be processed, with new copies made encoded for export to the intended <strong>Export Host Identifier</strong>. Once generated, these exports can be copied onto media and transferred to the export host.
-		</dd>
+            <ol>
+                <li>An <strong>Export Path</strong> value has been configured in settings to specify where exporeted backups should be placed.</li>
+                <li>An <strong>Export Host Identifier</strong> value has been configured in settings to specify which host to generate exported backups for.</li>
+            </ol>
+            If clicked, existing backups for all selected games will be processed, with new copies made encoded for export to the intended <strong>Export Host Identifier</strong>. Once generated, these exports can be copied onto media and transferred to the export host.
+        </dd>
     </dl>
+    <hr />
+
+    <h3><span>&nbsp;&nbsp;Installed Games Context Menu</span></h3>
+    <p>The five operations provides in the <strong>Games List Control Buttons</strong> section above are also available via a right mouse button context menu within the <strong>Games List</strong> for the row that the mouse button is clicked in. Available context menu items are limited to those relevant to the selected row.</p>
+    <p>In the image below, the selected row does not have a backup, so the <strong>Restore Game</strong>, <strong>Delete Backup</strong>, and <strong>Export Backup</strong> options are not provided.</p>
+    <p>In addition to the row based commands, the context menu also provides acces to the <strong></strong> and <strong></strong> commands from the <a href="./importMenu.html">Import / Restore Menu</a>.</p>
+    <br />
+    <img src="img/InstalledGamesContextMenu.jpg" alt="Context Menu">
+    <br />
     <hr>
 
     <h3><span>&nbsp;&nbsp;Progress Reporting</span></h3>
@@ -140,14 +149,14 @@
 </body>
 
 <footer>
-	<br/>
+    <br />
     <hr>
     <tbody>
         <tr style="padding: 10px; border: 1px solid black;">
             <td>
                 <span class="vpbm">Virtual Pinball Backup Manager</span> is provided free for personal use. Use of <span class="vpbm">VPBM</span> for commercial purposes is strictly prohibited.
-				<br>
-				Users wishing to donate to the ongoing support, development and upkeep may use the donate button. Thanks for your support and I hope this tool helps.
+                <br />
+                Users wishing to donate to the ongoing support, development and upkeep may use the donate button. Thanks for your support and I hope this tool helps.
             </td>
             <td>
                 <form action="https://www.paypal.com/donate" method="post" target="_top" style="float: right;">

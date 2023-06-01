@@ -21,8 +21,6 @@
     <p>
         Functionality exists to import new games into the system. This allows game backups, not currently stored by <span class="vpbm">VPBM</span> to be copied
         to <span class="vpbm">VPBMs</span> backup folder structure, and to be restored from there - effectively performing an install of the games.
-        Imported backups cannot already reside in the <span class="vpbm">VPBMs</span> backup folder structure, these backups can be restored using
-        the <a href="./restoreDeletedGames.html">Restore Game Backups</a> functionality, found in the <a href="./importMenu.html">Import Menu</a>.
     </p>
     <hr>
 
@@ -32,7 +30,7 @@
         <dt><strong>Import Games Using Import Menu</strong></dt>
         <dd>The following steps are used to import new games using menu options.
             <ol>
-                <li>Select the <strong>Import New Games</strong> option from the <a href="./importMenu.html">Import Menu</a>.</li>
+                <li>Select the <strong>Import New Games</strong> option from the <a href="./importMenu.html">Import / Restore Menu</a>.</li>
                 <li>In the resulting <strong>Import Pinball Backups</strong> dialog, select one or more backups to restore.</li>
                 <li>Press the <strong>Open</strong> button to trigger the import.</li>
             </ol>
@@ -49,19 +47,19 @@
                     trigger the import.</li>
             </ol>
         </dd>
-        <img src="img/vpbmDropFiles.jpg" alt="Drop Files">
+        <img src="img/vpbmDropFiles.jpg" alt="Drop Files" width="800" height="435">
     </dl>
     <hr>
 
     <h3><span>&nbsp;&nbsp;What Happens During an Import</span></h3>
-    <p>The import process adds one step to the process performed by the <a href="./restoreDeletedGames.html">Restore Deleted Games</a> functionality, in that prior to the game being restored it is copied into the appropriate backup folder. As such, the full import process is:</p>
+    <p>The import process adds one step to the process performed by the <a href="./restoreGameBackups.html">Restore Game Backups</a> functionality, in that prior to the game being restored it is copied into the appropriate backup folder. As such, the full import process is:</p>
     <ol>
         <li>Select the files to import.</li>
         <li>Validate the files and copy the valid backups to the appropriate backup folder, based on emulator and game name extracted from the file.</li>
         <li>Restore the game to disk.</li>
     </ol>
     <p style="color: red">
-        NOTE: Should the imported game correspond to a game already found in the Pinup System database, the game will be copied into the backup directory, but not restored - this allows <span class="vpbm">VPBM</span> to highlight any differences between the imported backup and the game as installed as is described in <a href="./installedGames.html">Installed Games</a>.
+        NOTE: Should the imported game correspond to a game already found in the Pinup System database, the game will not be installed.
     </p>
 
 </body>

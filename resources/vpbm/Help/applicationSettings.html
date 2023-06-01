@@ -37,7 +37,7 @@
         <dt><strong>Export Path</strong></dt>
 		<dd>This optional value is stored in the settings file as <strong>ExportPath</strong>. Only use this field if <span class="vpbm">VPBM</span> is being used to generate backups for a second 'target' machine. When this is the case a directory structure is setup to mimic the <strong>BackupPath</strong> structure, however all backups stored here are encoded for the target machine. Example values for this include: <strong>D:\\exports</strong> and <strong>\\mynetworkserver\\C$\\pinballExports</strong>, where the first example uses an export folder on the D drive, and the second option connects to a network drive.<br/>The <strong>ExportPath</strong> is only of use if an explicit <strong>Export Host Identifier</strong> value has been set.</dd>
         <dt><strong>Export Host Identifier</strong></dt>
-		<dd>This optional value is not stored in the settings file. Only use this field if <span class="vpbm">VPBM</span> is being used to generate backups for a second 'target' machine. The value used to populate this field is a code representing the host machine for which exported backups will be generated. To obtain the code to use to support exporting of backups to a given host, a copy of <span class="vpbm">VPBM</span> must be installed on the intended target host (which is required to process backups regardless). Open the <span class="vpbm">VPBM</span> instance on the other host and open the corresponding <strong>Settings</strong> dialog (this dialog). Once on the <strong>Settings</strong> dialog, select and copy the (green) <strong>This Host Identifier</strong> text value and copy this text to this machine (via email, USR, or similar means). The value obtained can then be pasted into the <strong>Export Host Identifier</strong> text field to specify this host as the target of export files.<br/>
+		<dd>This optional value is not stored in the settings file. Only use this field if <span class="vpbm">VPBM</span> is being used to generate backups for a second 'target' machine. The value used to populate this field is a code representing the host machine for which exported backups will be generated. To obtain the code to use to support exporting of backups to a given host, a copy of <span class="vpbm">VPBM</span> must be installed on the intended target host (which is required to process backups regardless). Open the <span class="vpbm">VPBM</span> instance on the other host and open the corresponding <strong>Settings</strong> dialog (this dialog). Once on the <strong>Settings</strong> dialog, select and copy the (green) <strong>This Host Identifier</strong> text value and copy this text to this machine (via email, USB, or similar means). The value obtained can then be pasted into the <strong>Export Host Identifier</strong> text field to specify this host as the target of export files.<br/>
 		The <strong>Export Host Identifier</strong> will be shown shaded red if the current value is determined to be invalid. To test how this setting works, copy the local host identifier into the export host identifier and confirm that the created file can be opened on this machine.<br/>
 		<span style="color: red";>WARNING: Updating the <strong>Export Host Identifier</strong> value will result in all existing export files being deleted as they will not be valid with a new <strong>Export Host Identifier</strong>.</span>
 		</dd>
@@ -65,24 +65,26 @@
     <p>The basic content of a <span class="vpbm">VPBM</span> settings file is:</p>
     <dl>
         <dt><strong>VpinballBasePath</strong></dt>
-        <dd>This value represents the base of the Pinup Popper "Baller Installer" installation. Baller Installer installs all emulators plus the Pinup System software in a common base directory, which by default is <strong>C:\\vPinball</strong>. This value should only need to change if the Baller Installer installation path was altered.</dd>
+        <dd>This value corresponds to the value <strong>Visual Pinball Base Path</strong> described above in the<strong> Settings Menu</strong> section above.</dd>
         <dt><strong>BackupPath</strong></dt>
-        <dd>This path represents the path that backups will be stored in. By default it is set to sit inside the <strong>VpinballBasePath</strong>, however in normally operation this is unlikely as backups will generally be stored on a separate disk, or even network drive. Example values for this include: <strong>D:\\backups</strong> and <strong>\\mynetworkserver\\C$\\pinballBackups</strong>, where the first example uses a backup folder on the D drive, and the second option connects to a network drive.</dd>
+        <dd>This value corresponds to the value <strong>Backup Path</strong> described in the<strong> Settings Menu</strong> section above.</dd>
         <dt><strong>ExportPath</strong></dt>
-        <dd>This path is optional, and only of use if <span class="vpbm">VPBM</span> is being used to generate backups for a second 'target' machine. When this is the case a directory structure is setup to mimic the <strong>BackupPath</strong> structure, however all backups stored here are encoded for the target machine. Example values for this include: <strong>D:\\exports</strong> and <strong>\\mynetworkserver\\C$\\pinballExports</strong>, where the first example uses an export folder on the D drive, and the second option connects to a network drive.<br />The <strong>ExportPath</strong> is only of use if an explicit <strong>Export Host Identifier</strong> value has been set.</dd>
+        <dd>This value corresponds to the value <strong>Export Path</strong> described in the<strong> Settings Menu</strong> section above.</dd>
         <dt><strong>Emulators</strong></dt>
-        <dd>The emulators block contains a list of all supported emulators, identified by the name of the emulator - as it is known within the <strong>Emulator Setup</strong> page of the <strong>Pinup Popper Setup</strong> application.
-		  While each emulator block only contains the emulator name empty by default, the  blocks are designed to allow additional advanced settings to be added as needed. Refer to <a href="#anchor-advanced-settings">Advanced Settings</a> below for additional settings that can be added here.
+        <dd>
+            The emulators block contains a list of all supported emulators identified by the name of the emulator - as it is known within the <strong>Emulator Setup</strong> page of the <strong>Pinup Popper Setup</strong> application shown <a href="https://www.nailbuster.com/wikipinup/doku.php?id=getting_started">here</a>.<br />
+            While each emulator block only contains the emulator name by default, the blocks are designed to allow additional advanced settings to be added as needed. Refer to <a href="#anchor-advanced-settings">Advanced Settings</a> below for additional settings that can be added here.
         </dd>
         <dt><strong>Pinup</strong></dt>
-        <dd>The Pinup block, is provided to explicitly define the location of the Pinup System application. Like each emulator block, the Pinup block is designed o allow additional advanced settings to be added as needed. Refer to <a href="#anchor-advanced-settings">Advanced Settings</a> below for additional settings that can be added here.
-	  </br>
-	  The <strong>PinupDir</strong> value may be absolute or relative (the default), when set to relative, the path is relative to the value of <strong>VpinballBasePath</strong>.
+        <dd>
+            The Pinup block, is provided to explicitly define the location of the <strong>Pinup System</strong> application. Like each emulator block, the Pinup block is designed to allow additional advanced settings to be added as needed. Refer to <a href="#anchor-advanced-settings">Advanced Settings</a> below for additional settings that can be added here.
+            </br>
+            The <strong>PinupDir</strong> value may be absolute or relative (the default), when set to relative, the path is relative to the value of <strong>VpinballBasePath</strong>.
         </dd>
         <dt><strong>LogLevel</strong></dt>
-        <dd>Provides the ability to alter the level of log detail produced. There are 6 levels available, in order from most granular to least, they are: Verbose, Debug, Information, Warning, Error, Fatal. The default level of Information is generally a suitable level to use, Verbose, or Debug would generally only be used by developers, while setting logging to Warning, Error, Fatal will reduce logging to only log in cases where abnormal events have occurred.</dd>
+        <dd>This value corresponds to the value <strong>Logging Level</strong> described in the <strong>Settings Menu</strong> section above.</dd>
         <dt><strong>LogRotationSizeMb</strong></dt>
-        <dd>All log files are rotated daily. This value allows users to rotate logs based on the size of the log, such that when logs reach the specified size, the active log file is stored and a new log file initiated. A value of 0 indicates that no size based rotation will take place. Any other value indicates the size (in Mb) at which the log will be rotated. A maximum value of 200 is allowed.</dd>
+        <dd>This value corresponds to the value <strong>Log Rotation Size (Mb)</strong> described in the <strong>Settings Menu</strong> section above.</dd>
     </dl>
     <hr>
 
@@ -90,20 +92,54 @@
     <h3>&nbsp;&nbsp;<span>Advanced Settings</span></h3>
     <img style="float: right; padding: 0px 24px 0px 0px" src="./img/FullConfig.jpg" alt="settings JSON">
 
-	<p>Advanced settings are only intended to be updated by users with an advanced knowledge of <span class="vpbm">VPBM</span> configuraiton, and allow a mechanism to add new global filtering rules for emulators.</p>
-    <p>By default, each emulator configuration in the <strong>Emulators</strong> configuration block contains only a <strong>Name</strong> value, providing a way for <span class="vpbm">VPBM</span> to identify the pinball emulators that it supports, similarly the <strong>Pinup</strong> configuration block contains only a <strong>PinupDir</strong> value indicating the location of the base Pinup System directory.</p>
-    <p>Advanced users can add configuration elements to these configuration blocks to alter the way the <span class="vpbm">VPBM</span> manages the backup/restore process. The core function performed by <span class="vpbm">VPBM</span> is to search for all files associated with an individual game and package these files up into a standalone game backup, this process is driven by a set of <strong>filters</strong> defined for each emulator type and pinup system which are used to identify files that match individual games.</p>
+	<p>Advanced settings are only intended to be updated by users with an advanced knowledge of <span class="vpbm">VPBM</span> configuration and allow a mechanism to add new global filtering rules for emulators.</p>
+    <p>By default, each emulator configuration in the <strong>Emulators</strong> configuration block contains only a <strong>Name</strong> value, providing a way for <span class="vpbm">VPBM</span> to identify the pinball emulators that it supports, similarly the <strong>Pinup</strong> configuration block contains only a <strong>PinupDir</strong> value indicating the location of the base <strong>Pinup System</strong> directory.</p>
+    <p>Advanced users can add configuration elements to these configuration blocks to alter the way the <span class="vpbm">VPBM</span> manages the backup/restore process. The core function performed by <span class="vpbm">VPBM</span> is to search for all files associated with an individual game and package these files up into a standalone game backup, this process is driven by a set of <strong>filters</strong> defined for each emulator type and <strong>Pinup System</strong> which are used to identify files that match individual games.</p>
+    <p>Embedded within each emulator configuration is an additional <strong>PathFilters</strong> block, which by default is not used. This block however can be added to allow users to specify additional file filters that should be applied globally for a specific emulator, or <strong>Pinup System</strong>. This functionality should only be used where a new filter is to be applied to all games for a given emulator, in cases where a single game requires additional filters, refer to <a href="./customFileFilters.html">Custom File Filters</a>.</strong></p>
+    <p>Filters make use of some <span class="vpbm">VPBM</span> variables, and allow <span class="vpbm">VPBM</span> to calculate their values at runtime, which are:</p>
+    <dl>
+        <dt><strong>[GAMENAME]</strong></dt>
+        <dd>The name of the game as found on disk, minus the game extension.</dd>
+        <dt><strong>[GAMECODE]</strong></dt>
+        <dd>A game 'code' extracted from the game script. This corresponds to the <strong>cGameName</strong> value for VPX games and the <strong>cPuPPack</strong> value for Future Pinball games. It is the name used to create a Pup Pack folder for each game in Pinup System.</dd>
+        <dt><strong>[REALROM]</strong></dt>
+        <dd>VPX games that share a common ROM but require their own individual <strong>cGameName</strong> related files use an alias entry in the <strong>VPMAlias.txt</strong> file that maps <strong>cGameName</strong> values to the ROM to use. This value represents the ROM being mapped to. For games without a  <strong>VPMAlias.txt</strong> entry, the value will match <strong>[GAMECODE]</strong>. Further information on <strong>VPMAlias.txt</strong> can be found in the following link <a href="https://www.youtube.com/watch?v=6NhWvUN9_so">VPM Alias Revisted</a></dd>
+        <dt><strong>[VPREGCODE]</strong></dt>
+        <dd>Some VPX games store settings or content such as high score entries in the <strong>VPReg.stg</strong> file. A key is used to identify the block of storage in this file containing the data. This key is set in the corresponding game script with a call to <strong>SaveValue</strong> and this variable captures that value if it exists.</dd>
+        <dt><strong>[USERTXT]</strong> </dt>
+        <dd>Some VPX games store content in general text files within the <strong>User</strong> directory. Games using this feature make call to write to <strong>UserDirectory</strong> with a filename (minus the <strong>.txt</strong> extension) and this variable captures that value if it exists.</dd>
+        <dt><strong>[POPPERMEDIADIR]</strong></dt>
+        <dd>The subdirectory within the Pinup Popper <strong>POPMedia</strong> directory allocated to the given emulator.</dd>
+    </dl>
+
+    <p>The example image adds two new "example" filters which would allow additional files to be added for games, they are:</p>
+    <li><strong>For Visual Pinball X:</strong> A filter that would find any files in the Tables folder matching the table file, but with a ".dat" extension.</li>
+    <li><strong>For Pinup System:</strong> A filter that would support a new Pinup Display (<strong>HighScores</strong>) used to display high scores.</li>
+    <br/>
+    <p>The filters in the example image identify the key fields that are populated for a new filter, they are:</p>
+    <li><strong>Path</strong>: The base path of the filter, starting at the application (emulator or Pinup Systems) base path. This may not include wildcards but can make use of the <span class="vpbm">VPBM</span> variables described above.</li>
+    <li><strong>Filters</strong>: This is a comma separated list of filters to append to the value of <strong>Path</strong> to define the entire filter, which can point to either a file or directory. This may include wildcards (*) and can make use of the <span class="vpbm">VPBM</span> variables described above.</li>
+    <li><strong>ShowState</strong>: This field is optional, but if added, the text in it is used to add an additional quick reference panel to the top of the <a href="./selectedGameContent.html">Selected Game Content</a> panel.</li>
+    <li><strong>Mandatory</strong>: Not shown in the example is a final field, which if added needs to be set to either <strong>true</strong> or <strong>false</strong> to highlight whether the file is required by the game. If using this field, then <strong>ShowState</strong> must also be set. Mandatory games show up red in the quick reference panel to the top of the <a href="./selectedGameContent.html">Selected Game Content</a> panel.</li>
+    <hr>
+
+    <a class="anchor" id="anchor-advanced-settings"></a>
+    <h3>&nbsp;&nbsp;<span>Inbuilt Filters</span></h3>
     <p>The following built-in filters exist by default for <span class="vpbm">VPBM</span>.</p>
     <dl>
         <dt><strong>Visual Pinball X</strong></dt>
         <dd><strong>Path</strong>=<i>Tables</i>, <strong>Filters</strong>=<i>[GAMENAME].vpx</i></dd>
         <dd><strong>Path</strong>=<i>Tables</i>, <strong>Filters</strong>=<i>[GAMENAME].directb2s</i></dd>
         <dd><strong>Path</strong>=<i>Tables</i>, <strong>Filters</strong>=<i>[GAMENAME].pov</i></dd>
-        <dd><strong>Path</strong>=<i>Tables</i>, <strong>Filters</strong>=<i>[GAMECODE]</i></dd>
+        <dd><strong>Path</strong>=<i>Tables</i>, <strong>Filters</strong>=<i>[GAMECODE].UltraDMD</i></dd>
+        <dd><strong>Path</strong>=<i>Tables\B2STableSettings.xml</i>, <strong>Filters</strong>=<i>[GAMECODE]</i>, <strong>Type</strong>=<i>XML Lookup</i></dd>
+        <dd><strong>Path</strong>=<i>VPinMAME\VPMAlias.txt</i>, <strong>Filters</strong>=<i>/0/[GAMECODE]</i>, <strong>Type</strong>=<i>CSV Lookup</i></dd>
         <dd><strong>Path</strong>=<i>VPinMAME\altcolor</i>, <strong>Filters</strong>=<i>[GAMECODE]</i></dd>
         <dd><strong>Path</strong>=<i>VPinMAME\altsound</i>, <strong>Filters</strong>=<i>[GAMECODE]</i></dd>
         <dd><strong>Path</strong>=<i>VPinMAME\nvram</i>, <strong>Filters</strong>=<i>[GAMECODE].nvram, [GAMECODE].nv</i></dd>
-        <dd><strong>Path</strong>=<i>VPinMAME\roms</i>, <strong>Filters</strong>=<i>@"[GAMECODE].zip"</i></dd>
+        <dd><strong>Path</strong>=<i>VPinMAME\roms</i>, <strong>Filters</strong>=<i>"[GAMECODE].zip"</i></dd>
+        <dd><strong>Path</strong>=<i>VPinMAME\VPReg.stg</i>, <strong>Filters</strong>=<i>"[GAMEVRREGCODE]"</i>, <strong>Type</strong>=<i>CSV Lookup</i></dd></dd>
+        <dd><strong>Path</strong>=<i>User</i>, <strong>Filters</strong>=<i>[USERTXT]</i>, <strong>Type</strong>=<i>User Text File Lookup</i></dd></dd>
         <dt><strong>Future Pinball</strong></dt>
         <dd><strong>Path</strong>=<i>Tables</i>, <strong>Filters</strong>=<i>[GAMENAME].fpt</i></dd>
         <dd><strong>Path</strong>=<i>BAM\cfg</i>, <strong>Filters</strong>=<i>[GAMENAME].cfg</i></dd>
@@ -122,28 +158,6 @@
         <dd><strong>Path</strong>=<i>POPMedia\[POPPERMEDIADIR]\Topper</i>, <strong>Filters</strong>=<i>[GAMENAME].*</i></dd>
         <dd><strong>Path</strong>=<i>POPMedia\[POPPERMEDIADIR]\Wheel</i>, <strong>Filters</strong>=<i>[GAMENAME].*</i></dd>
     </dl>
-    <p>The above filters make use of some <span class="vpbm>">VPBM</span> variables, and allow <span class="vpbm">VPBM</span> to calculate their values at runtime, which are:</p>
-    <dl>
-        <dd><strong>[GAMENAME]</strong>: The name of the game as found on disk, minus the game extension.</dd>
-        <dd><strong>[GAMECODE]</strong>: A game 'code' extracted from the game script or Pinup Popper. This corresponds to the rom name of VPX games using ROMs, it also is the name used to create a Pup Pack folder for each game.</dd>
-        <dd><strong>[POPPERMEDIADIR]</strong>: The subdirectory within the Pinup Popper <strong>POPMedia</strong> directory allocated to the given emulator.</dd>
-    </dl>
-
-    <p>Embedded within each emulator configuration is an additional <strong>PathFilters</strong> block, which by default is not used. This block however can be added to allow users to specify additional file filters that should be applied globally for a specific emulator, or Pinup System. This functionality should only be used where a new filter is to be applied to all games for a given emulator, in cases where a single game requires additional filters, refer to <a href="./customFileFilters.html">Custom File Filters</a>.</strong></p>
-    <p>The example image to the right adds two new "example" filters which would allow additional files to be added for games, they are:</p>
-    <dl>
-        <dt><strong>Visual Pinball X</strong></dt>
-        <dd><strong>Path</strong>=<i>Tables</i>, <strong>Filters</strong>=<i>[GAMENAME].dat</i> - this filter would find any files in the Tables folder matching the table  file, but with a ".dat" extension.</dd>
-        <dt><strong>Pinup System</strong></dt>
-        <dd><strong>Path</strong>=<i>POPMedia\[POPPERMEDIADIR]\Wheel</i>, <strong>Filters</strong>=<i>POPMedia\[POPPERMEDIADIR]\Wheel</i> - This would support a new Pinup Display used to display high scores</dd>
-    </dl>
-    <p>The example filters in the example image identify the key fields that are populated for a new filter, they are:</p>
-    <dl>
-        <dd><strong>Path</strong>: The base path of the filter, starting at the application (emulator or Pinup Systems) base path. This may not include wildcards but can make use of the <span class="vpbm">VPBM</span> variables described above.</dd>
-        <dd><strong>Filters</strong>: This is a comma separated list of filters to append to the value of <strong>Path</strong> to define the entire filter, which can point to either a file or directory. This may include wildcards (*) and can make use of the <span class="vpbm">VPBM</span> variables described above.</dd>        <dd><strong>ShowState</strong>: This field is optional, but if added, the text in it is used to add an additional quick reference panel to the top of the <a href="./selectedGameContent.html">Selected Game Content</a> panel.</dd>
-        <dd><strong>Mandatory</strong>: Not shown in the example is a final field, which if added needs to be set to either <strong>true</strong> or <strong>false</strong> to highlight whether the file is required by the game. If using this field, then <strong>ShowState</strong> must also be set. Mandatory games show up red in the quick reference panel to the top of the <a href="./selectedGameContent.html">Selected Game Content</a> panel</dd>
-    </dl>
-    <p>Adding multiple <strong>PathFilter</strong> entries is possible, with each entry separated with a comma.</p>
 </body>
 
 <footer>

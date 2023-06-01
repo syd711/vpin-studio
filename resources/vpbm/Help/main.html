@@ -18,42 +18,71 @@
 
 <body>
     <h3><span>&nbsp;&nbsp;What is Virtual Pinball Backup Manager</span></h3>
-    <img src="img/vpbmFullScreen.jpg" alt="VPBM" style="float: right;">
-    <p>Virtual Pinball Backup Manager  (<span class="vpbm">VPBM</span>) processes a variety of game content including:</p>
-    <ol>
-        <li>Game scripts/files</li>
-        <li>Backglass files, POV files, ROM and NVRAM files as well as alt colour/sound files (VPX)</li>
-        <li>Game libraries required by game scripts (Future Pinball)</li>
-        <li>Game specific Pinup Player Pup Packs</li>
-        <li>Game specific Pinup Popper front end media files</li>
-        <li>Copies of all stored game database settings</li>
-        <li>Copies of any game specific registry settings (VPX)</li>
-    </ol>
-    <p>The contents of a games backup can easily be viewed within the application using the tree view, while an integrated <strong>Quick View</strong> bar provides users a quick visual indication of the presence of critical files - as shown in the screenshot provided. Additionally, a <strong>Pinup View</strong> displays Pinup media, in a manner consistent with how media is displayed within Pinup Menu Setup.</p>
-    <p><span class="vpbm">VPBM</span> is not designed to replace Pinup System, in fact it depends on it to function - rather it tries to add features that make managing game files and settings easier. I found myself storing all files used by a game in a backup folder and then having to manually copy these files when I felt the need to update my system, <span class="vpbm">VPBM</span> automates this process.</p>
+    <img src="img/vpbmFullScreen.jpg" alt="VPBM" width="800" height="435" style="float: right;">
+    <p>Virtual Pinball Backup Manager (<span class="vpbm">VPBM</span>) is designed to manage backups of individual Virtual Pinball games within a Pinup System/Baller Installer installation.</p>
+    <p><span class="vpbm">VPBM</span> currently supports Visual Pinball (VPX) and Future Pinball emulators.</p>
+    <p><span class="vpbm">VPBM</span> supports backup and restore of a wide range of game related content, including:
+    <ul>
+        <li>Game files</li>
+        <li>Game specific Pup Packs</li>
+        <li>Game specific Pinup media files</li>
+        <li>Game specific Pinup database settings</li>
+        <li>VPX specific
+            <ul>
+                <li>B2S (backglass) files</li>
+                <li>Game specific B2S settings</li>
+                <li>POV (point-of-view) files</li>
+                <li>Flex DMD/Ultra DMD files and folders</li>
+                <li>VPReg.stg entries</li>
+                <li>Custom user text files</li>
+                <li>VPinMAME ROMs</li>
+                <li>VpinMAME VPMAlias.txt entries</li>
+                <li>VPinMAME altcolor and altsound</li>
+                <li>VPinMAME NVRAM (including offset handling)</li>
+                <li>All stored game specific registry settings found in 'Computer\HKEY_CURRENT_USER\SOFTWARE\Freeware\Visual PinMame'</li>
+            </ul>
+        </li>
+        <li>Future Pinball specific
+            <ul>
+                <li>Game libraries - (via custom filters)</li>
+            </ul>
+        </li>
+        <li><strong>NOTE: Additional filter rules can be setup by users to include additional content not met by the default rules</strong></li>
+    </ul>
+    <p>The contents of a games backup can easily be viewed within the application using the tree view, while an integrated <strong>Quick View</strong> bar provides users a quick visual indication of the presence of critical files.</p>
+    <p>Pinup database game details are displayed, as is Pinup media, in a manner consistent with how media is displayed within Pinup Menu Setup.</p>
+    <p><span class="vpbm">VPBM</span> is not designed to replace <a href="https://www.nailbuster.com/wikipinup/doku.php?id=start">Pinup System</a>, in fact it depends on it to function - rather it tries to add features that make managing game files and settings easier by providing an individual game backup and support for comparing this backup to the installed game.</p>
     <p><span class="vpbm">VPBM</span> has been designed to quickly highlight to users when a games backup has fallen out of synch with the currently installed version of the game, allowing users to use the functions provides to address the inconsistencies.</p>
-    <p><span class="vpbm">VPBM</span> backup files are encrypted and locked to the machine that they were created on, however a mechanism is provided to export games to a known external system. For infromation on this feature, refer to the <strong>Export Path</strong> and <strong>Export Host Identifier</strong> settings described at <a href="./applicationSettings.html">Application Settings</a>. This process does not a llow games to be exported and shared universally.</p>
+    <p><span class="vpbm">VPBM</span> backup files are encrypted and locked to the machine that they were created on, however a mechanism is provided to export games to a known external system. For infromation on this feature, refer to the <strong>Export Path</strong> and <strong>Export Host Identifier</strong> settings described at <a href="./applicationSettings.html">Application Settings</a>. This process does not allow games to be exported and shared universally.</p>
     <p>Integrated help is provided, with the various menus and application panels making up the application each having their own help buttons. Quick links to this help is provided below.</p>
     <dl>
         <dt><strong>Help Quick Links</strong></dt>
         <dd>
-            <ol>
-                <li><a href="./applicationSettings.html">Application Settings</a> help</li>
-                <li><a href="./fileMenu.html">File</a> menu help</li>
-                <li><a href="./importMenu.html">Import</a> menu help</li>
-                <li><a href="./helpMenu.html">Help</a> menu help</li>
-                <li><a href="./installedGames.html">Installed Games</a> panel help</li>
-                <li><a href="./selectedGameDisplayControl.html">Selected Game Display Control</a> panel help</li>
-                <li><a href="./selectedGameContent.html">Selected Game Content</a> panel help</li>
-                <li><a href="./selectedGameDetails.html">Selected Game Details</a> panel help</li>
-                <li><a href="./selectedGamePinupMedia.html">Selected Game Pinup Media</a> panel help</li>
-                <li><a href="./customFileFilters.html">Custom File Filters</a> panel help</li>
-                <li><a href="./restoreDeletedGames.html">Restoring Deleted Games</a> help</li>
-                <li><a href="./importNewGames.html">Importing New Games</a> help</li>
-            </ol>
+            <ul>
+                <li><a href="./applicationSettings.html">Application Settings</a></li>
+                <li><a href="./fileMenu.html">File Menu</a></li>
+                <li><a href="./importMenu.html">Import / Restore Menu</a></li>
+                <li><a href="./helpMenu.html">Help Menu</a></li>
+                <li><a href="./installedGames.html">Installed Games Panel</a></li>
+                <li><a href="./selectedGameDisplayControl.html">Selected Game Display Control Panel</a></li>
+                <li><a href="./selectedGameContent.html">Selected Game Content Panel</a></li>
+                <li><a href="./selectedGameDetails.html">Selected Game Details Panel</a></li>
+                <li><a href="./selectedGamePinupMedia.html">Selected Game Pinup Media Panel</a></li>
+                <li><a href="./filterVariables.html">Filter Variables Panel</a></li>
+                <li><a href="./customFileFilters.html">Custom File Filters Panel</a></li>
+                <li><a href="./restoreGameBackups.html">Restore Game Backups Form</a></li>
+                <li><a href="./importNewGames.html">Import New Games Form</a></li>
+            </ul>
         </dd>
     </dl>
+    <hr>
 
+    <h3><span>&nbsp;&nbsp;Installing Updates</span></h3>
+    <p><span class="vpbm">VPBM</span> contains built in update functionality. At startup, if connected to the internet, <span class="vpbm">VPBM</span> searches for any available updates. If an update is found, VPBM displays an indication of the update in the status bar.</p>
+    <img src="img/applicationUpdate.jpg" alt="update">
+    <p>Clicking on the red text in the status bar will trigger a dialog confirming you wish to proceed with the update.</p>
+    <img src="img/applicationUpdateConfirmation.jpg" alt="update confirmation">
+    <p>Clicking OK launches the auto updater. As per the description the updater will take several minutes to complete (depending on internet speed). During this time <span class="vpbm">VPBM</span> will download the appropriate update zip (as found <a href="https://github.com/mmattner/vPinBackupManagerApp/releases/latest">here</a>) before shutting down, unzipping the update and restarting.</p>
 </body>
 
 <footer>

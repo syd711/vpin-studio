@@ -18,7 +18,9 @@
 
 <body>
     <h3><span>&nbsp;&nbsp;Refresh Menu Option</span></h3>
-    <p>The <strong>Refresh</strong> menu option performs a full refresh of all data stored within the <span class="vpbm">VPBM</span> effectively providing the same effect as re-starting the application. This includes:</p>
+    <p>The <strong>Refresh</strong> menu option performs a full refresh of all data stored within the <span class="vpbm">VPBM</span> effectively providing the same effect as re-starting the application.</p>
+    <p>The <strong>Refresh</strong> menu option will not generally be required to be called but is of use if underlying game files or database settings may have been changed external to <span class="vpbm">VPBM</span> while the application is running. An example of this would be the case where Pinup was used to import new games and media without having restarted <span class="vpbm">VPBM</span>.</p>
+    <p>The refresh includes the following items:</p>
     <dl>
         <dt><strong>Pinup Database</strong></dt>
         <dd>The underlying Pinup Database is re-queried to get a list of all installed games and enabled emulators.  Additionally the database is queried for any configured custom file filters defined for installed games, used to add additional (non-standard) files to the files associated with a game.</dd>
@@ -29,9 +31,6 @@
         <dt><strong>Game Backups</strong></dt>
         <dd>The <span class="vpbm">VPBM</span> backup folder structures are scanned for game backups. Backups will either match to installed games, and hence show up in the main game list, or not match live games, in which case the <strong>Import</strong> menu contains a <strong>Restore From Backup</strong> option allowing the game to be re-installed should the user  wish to.</dd>
     </dl>
-    <p>
-        The <strong>Refresh</strong> menu option will not generally be required to be called but is of use if underlying game files or database settings may have been changed external to <span class="vpbm">VPBM</span> while the application is running. An example of this would be the case where Pinup was used to import new games and media without having first restarted <span class="vpbm">VPBM</span>.
-    </p>
     <hr>
 
 
