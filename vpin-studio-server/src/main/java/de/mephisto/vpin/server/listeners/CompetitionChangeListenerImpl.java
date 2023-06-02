@@ -161,6 +161,9 @@ public class CompetitionChangeListenerImpl implements InitializingBean, Competit
             discordService.sendMessage(serverId, channelId, message, image, competition.getName() + ".png", null);
           }
         }
+        else {
+          LOG.warn("Skipped finish notification for " + competition + ", invalid Discord configuration.");
+        }
       }
 
       if (competition.getType().equals(CompetitionType.DISCORD.name())) {
@@ -169,6 +172,9 @@ public class CompetitionChangeListenerImpl implements InitializingBean, Competit
           String message = discordChannelMessageFactory.createCompetitionFinishedMessage(competition, winner, game, scoreSummary);
           long msgId = discordService.sendMessage(serverId, channelId, message);
           discordService.finishCompetition(serverId, channelId, msgId);
+        }
+        else {
+          LOG.warn("Skipped finish notification, you are not the owner of " + competition);
         }
       }
     }
