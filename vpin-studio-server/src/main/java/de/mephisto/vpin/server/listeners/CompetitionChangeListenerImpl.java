@@ -95,13 +95,13 @@ public class CompetitionChangeListenerImpl implements InitializingBean, Competit
             String message = DiscordOfflineChannelMessageFactory.createOfflineCompetitionCreatedMessage(competition, game);
             String subText = "This is an offline competition. Other player bots can't join.";
             if (competition.isHighscoreReset()) {
-              subText += "\nThe highscore of this table has been resetted.";
+              subText += "\n\nThe highscore of this table has been resetted.";
             }
             else {
               subText += "\nThe highscore of this table has not been resetted.";
               Optional<Highscore> hs = highscoreService.getOrCreateHighscore(game);
               if (hs.isPresent() && !StringUtils.isEmpty(hs.get().getRaw())) {
-                subText += " Here is the current highscore:\n" + hs.get().getRaw();
+                subText += "\nHere is the current highscore:\n\n```" + hs.get().getRaw() + "```";
               }
             }
             discordService.sendMessage(serverId, channelId, message, image, competition.getName() + ".png", subText);

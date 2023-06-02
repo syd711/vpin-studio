@@ -7,7 +7,6 @@ import de.mephisto.vpin.commons.utils.SystemCommandExecutor;
 import de.mephisto.vpin.commons.utils.SystemCommandOutput;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.VpbmHosts;
-import de.mephisto.vpin.server.VPinStudioException;
 import de.mephisto.vpin.server.backup.adapters.vpbm.config.VPinBackupManagerConfig;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.popper.PinUPConnector;
@@ -23,7 +22,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -158,9 +156,23 @@ public class VpbmService implements InitializingBean {
   private void refreshConfig() {
     try {
       File configFileFolder = new File(VPBM_FOLDER);
-      File configJson = new File(configFileFolder, "vPinBackupManager.json");
+      File configJsonFile = new File(configFileFolder, "vPinBackupManager.json");
       File archives = new File(SystemService.ARCHIVES_FOLDER);
-      archives.mkdirs();
+      if (!archives.exists()) {
+        archives.mkdirs();
+      }
+
+
+      File exportFolder = new File(SystemService.ARCHIVES_FOLDER, "exports");
+      if (!exportFolder.exists()) {
+        exportFolder.mkdirs();
+      }
+
+
+      File backupsFolder = new File(SystemService.ARCHIVES_FOLDER, "backups");
+      if (!backupsFolder.exists()) {
+        backupsFolder.mkdirs();
+      }
 
       ObjectMapper objectMapper = new ObjectMapper();
       objectMapper.enable(SerializationFeature.INDENT_OUTPUT);
@@ -168,15 +180,13 @@ public class VpbmService implements InitializingBean {
 
 
       VPinBackupManagerConfig config = new VPinBackupManagerConfig();
-      if (configJson.exists()) {
-        config = objectMapper.readValue(configJson, VPinBackupManagerConfig.class);
+      if (configJsonFile.exists()) {
+        config = objectMapper.readValue(configJsonFile, VPinBackupManagerConfig.class);
       }
 
       boolean dirty = false;
       File exportPath = new File(config.getExportPath());
       if (!exportPath.getAbsolutePath().equals(getExportFolder().getParentFile().getAbsolutePath())) {
-        File exportFolder = new File(SystemService.ARCHIVES_FOLDER, "exports");
-        exportFolder.mkdirs();
         config.setExportPath(exportFolder.getAbsolutePath());
         LOG.info("Updated VPBM export path to " + exportFolder.getAbsolutePath());
         dirty = true;
@@ -184,8 +194,6 @@ public class VpbmService implements InitializingBean {
 
       File backUpPath = new File(config.getBackupPath());
       if (!backUpPath.getAbsolutePath().equals(getArchiveFolder().getParentFile().getAbsolutePath())) {
-        File backupsFolder = new File(SystemService.ARCHIVES_FOLDER, "backups");
-        backupsFolder.mkdirs();
         config.setBackupPath(backupsFolder.getAbsolutePath());
         LOG.info("Updated VPBM backup path to " + backupsFolder.getAbsolutePath());
         dirty = true;
@@ -210,9 +218,9 @@ public class VpbmService implements InitializingBean {
         dirty = true;
       }
 
-      if (dirty) {
-        objectMapper.writeValue(configJson, config);
-        LOG.info("Written updated VPBM config " + configJson.getAbsolutePath());
+      if (dirty || !configJsonFile.exists()) {
+        objectMapper.writeValue(configJsonFile, config);
+        LOG.info("Written updated VPBM config " + configJsonFile.getAbsolutePath());
       }
 
       String internalHostId = preferencesService.getPreferences().getVpbmInternalHostId();

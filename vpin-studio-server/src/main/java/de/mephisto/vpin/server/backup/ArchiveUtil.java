@@ -62,6 +62,11 @@ public class ArchiveUtil {
 
   public static void exportArchiveDescriptor(ArchiveDescriptor descriptor) {
     try {
+      File targetFolder = new File(descriptor.getSource().getLocation());
+      if(!targetFolder.exists()) {
+        targetFolder.mkdirs();
+      }
+
       ObjectMapper objectMapper = new ObjectMapper();
       objectMapper.enable(SerializationFeature.INDENT_OUTPUT);
       objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);

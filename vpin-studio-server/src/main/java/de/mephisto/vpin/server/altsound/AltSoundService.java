@@ -21,10 +21,8 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * ID,CHANNEL,DUCK,GAIN,LOOP,STOP,NAME,FNAME,GROUP,SHAKER,SERIAL,PRELOAD,STOPCMD
@@ -38,7 +36,7 @@ public class AltSoundService implements InitializingBean {
   @Autowired
   private SystemService systemService;
 
-  private final Map<String, File> altSounds = new HashMap<>();
+  private final Map<String, File> altSounds = new ConcurrentHashMap<>();
 
   public boolean isAltSoundAvailable(@NonNull Game game) {
     return getAltSoundCsvFile(game) != null;
@@ -207,23 +205,26 @@ public class AltSoundService implements InitializingBean {
 
   @Override
   public void afterPropertiesSet() {
-    long start = System.currentTimeMillis();
-    File altSoundsFolder = systemService.getAltSoundFolder();
-    if (altSoundsFolder.exists()) {
-      File[] altSoundFolder = altSoundsFolder.listFiles((dir, name) -> new File(dir, name).isDirectory());
-      if (altSoundFolder != null) {
-        for (File altSound : altSoundFolder) {
-          File csv = new File(altSound, "altsound.csv");
-          if (csv.exists()) {
-            this.altSounds.put(altSound.getName(), csv);
+    new Thread(() -> {
+      long start = System.currentTimeMillis();
+      File altSoundsFolder = systemService.getAltSoundFolder();
+      if (altSoundsFolder.exists()) {
+        File[] altSoundFolder = altSoundsFolder.listFiles((dir, name) -> new File(dir, name).isDirectory());
+        if (altSoundFolder != null) {
+          for (File altSound : altSoundFolder) {
+            File csv = new File(altSound, "altsound.csv");
+            if (csv.exists()) {
+              this.altSounds.put(altSound.getName(), csv);
+            }
           }
         }
       }
-    }
-    else {
-      LOG.error("altsound folder " + altSoundsFolder.getAbsolutePath() + " does not exist.");
-    }
-    long end = System.currentTimeMillis();
-    LOG.info("Finished altsound pack scan, found " + altSounds.size() + " alt sound packs (" + (end - start) + "ms)");
+      else {
+        LOG.error("altsound folder " + altSoundsFolder.getAbsolutePath() + " does not exist.");
+      }
+      long end = System.currentTimeMillis();
+      LOG.info("Finished altsound pack scan, found " + altSounds.size() + " alt sound packs (" + (end - start) + "ms)");
+    }).start();
+
   }
 }

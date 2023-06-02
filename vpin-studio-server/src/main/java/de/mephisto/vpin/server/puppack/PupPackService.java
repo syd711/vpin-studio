@@ -1,9 +1,7 @@
 package de.mephisto.vpin.server.puppack;
 
 import de.mephisto.vpin.server.games.Game;
-import de.mephisto.vpin.server.games.puppack.PupDefaultVideoResolver;
 import de.mephisto.vpin.server.games.puppack.PupPack;
-import de.mephisto.vpin.server.system.JCodec;
 import de.mephisto.vpin.server.system.SystemService;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
@@ -42,23 +40,26 @@ public class PupPackService implements InitializingBean {
 
   @Override
   public void afterPropertiesSet() {
-    long start = System.currentTimeMillis();
-    File pupPackFolder = new File(systemService.getPinUPSystemFolder(), "PUPVideos");
-    if (pupPackFolder.exists()) {
-      File[] pupPacks = pupPackFolder.listFiles((dir, name) -> new File(dir, name).isDirectory());
-      if (pupPacks != null) {
-        for (File packFolder : pupPacks) {
-          Collection<File> files = FileUtils.listFiles(packFolder, new String[]{"mp4"}, true);
-          if (!files.isEmpty()) {
-            pupPackFolders.put(packFolder.getName(), new PupPack(packFolder));
+    new Thread(() -> {
+      Thread.currentThread().setName("PUP Pack Scanner");
+      long start = System.currentTimeMillis();
+      File pupPackFolder = new File(systemService.getPinUPSystemFolder(), "PUPVideos");
+      if (pupPackFolder.exists()) {
+        File[] pupPacks = pupPackFolder.listFiles((dir, name) -> new File(dir, name).isDirectory());
+        if (pupPacks != null) {
+          for (File packFolder : pupPacks) {
+            Collection<File> files = FileUtils.listFiles(packFolder, new String[]{"mp4"}, true);
+            if (!files.isEmpty()) {
+              pupPackFolders.put(packFolder.getName(), new PupPack(packFolder));
+            }
           }
         }
       }
-    }
-    else {
-      LOG.error("PUP pack folder " + pupPackFolder.getAbsolutePath() + " does not exist.");
-    }
-    long end = System.currentTimeMillis();
-    LOG.info("Finished PUP pack scan, found " + pupPackFolders.size() + " packs (" + (end - start) + "ms)");
+      else {
+        LOG.error("PUP pack folder " + pupPackFolder.getAbsolutePath() + " does not exist.");
+      }
+      long end = System.currentTimeMillis();
+      LOG.info("Finished PUP pack scan, found " + pupPackFolders.size() + " packs (" + (end - start) + "ms)");
+    }).start();
   }
 }

@@ -2,6 +2,7 @@ package de.mephisto.vpin.server.games;
 
 import de.mephisto.vpin.restclient.PopperScreen;
 import de.mephisto.vpin.restclient.ValidationCode;
+import de.mephisto.vpin.server.altsound.AltSoundService;
 import de.mephisto.vpin.server.popper.Emulator;
 import de.mephisto.vpin.server.preferences.Preferences;
 import de.mephisto.vpin.server.preferences.PreferencesService;
@@ -44,6 +45,9 @@ public class GameValidator implements InitializingBean {
 
   @Autowired
   private PreferencesService preferencesService;
+
+  @Autowired
+  private AltSoundService altSoundService;
 
   private Preferences preferences;
 
@@ -160,12 +164,11 @@ public class GameValidator implements InitializingBean {
       }
     }
 
-    //TODO
-//    if (isValidationEnabled(game, CODE_ALT_SOUND_NOT_ENABLED)) {
-//      if (game.isAltSoundAvailable() && !game.isAltSoundEnabled()) {
-//        return ValidationCode.CODE_ALT_SOUND_NOT_ENABLED;
-//      }
-//    }
+    if (isValidationEnabled(game, CODE_ALT_SOUND_NOT_ENABLED)) {
+      if (game.isAltSoundAvailable() && !altSoundService.isAltSoundEnabled(game)) {
+        return ValidationCode.CODE_ALT_SOUND_NOT_ENABLED;
+      }
+    }
 
     return -1;
   }
