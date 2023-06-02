@@ -625,6 +625,7 @@ public class PinUPConnector implements InitializingBean {
     List<Game> results = new ArrayList<>();
     try {
       Statement statement = connect.createStatement();
+      //ResultSet rs = statement.executeQuery("SELECT * from GAMES g LEFT JOIN GamesStats stats ON stats.GameID = g.GameID  WHERE g.EMUID = 1;");
       ResultSet rs = statement.executeQuery("SELECT * FROM Games WHERE EMUID = 1;");
       while (rs.next()) {
         Game info = createGame(connect, rs);
