@@ -130,6 +130,7 @@ public class CompetitionDiscordDialogController implements Initializable, Dialog
     competition.setName(UIDefaults.DEFAULT_COMPETITION_NAME);
     competition.setUuid(UUID.randomUUID().toString());
     competition.setOwner(String.valueOf(botStatus.getBotId()));
+    competition.setHighscoreReset(true);
 
     Date end = Date.from(LocalDate.now().plus(7, ChronoUnit.DAYS).atStartOfDay(ZoneId.systemDefault()).toInstant());
     competition.setStartDate(Date.from(LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant()));
@@ -197,7 +198,7 @@ public class CompetitionDiscordDialogController implements Initializable, Dialog
       validate();
     });
 
-    List<GameRepresentation> games = client.getGameService().getGames();
+    List<GameRepresentation> games = client.getGameService().getGamesCached();
     List<GameRepresentation> filtered = new ArrayList<>();
     for (GameRepresentation game : games) {
       if (StringUtils.isEmpty(game.getRom())) {

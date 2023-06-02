@@ -2,7 +2,6 @@ package de.mephisto.vpin.server.games;
 
 import de.mephisto.vpin.restclient.PopperScreen;
 import de.mephisto.vpin.restclient.ValidationCode;
-import de.mephisto.vpin.server.highscores.HighscoreMetadata;
 import de.mephisto.vpin.server.popper.Emulator;
 import de.mephisto.vpin.server.preferences.Preferences;
 import de.mephisto.vpin.server.preferences.PreferencesService;
@@ -76,96 +75,97 @@ public class GameValidator implements InitializingBean {
       }
     }
 
-    File audio = game.getPinUPMedia(PopperScreen.Audio);
-    File audioLaunch = game.getPinUPMedia(PopperScreen.AudioLaunch);
-    File apron = game.getPinUPMedia(PopperScreen.Menu);
-    File info = game.getPinUPMedia(PopperScreen.GameInfo);
-    File help = game.getPinUPMedia(PopperScreen.GameHelp);
-    File topper = game.getPinUPMedia(PopperScreen.Topper);
-    File backglass = game.getPinUPMedia(PopperScreen.BackGlass);
-    File dmd = game.getPinUPMedia(PopperScreen.DMD);
-    File playfield = game.getPinUPMedia(PopperScreen.PlayField);
-    File loading = game.getPinUPMedia(PopperScreen.Loading);
-    File other2 = game.getPinUPMedia(PopperScreen.Other2);
-    File wheel = game.getPinUPMedia(PopperScreen.Wheel);
 
     if (isValidationEnabled(game, CODE_NO_AUDIO)) {
+      File audio = game.getPinUPMedia(PopperScreen.Audio);
       if (audio == null || !audio.exists()) {
         return CODE_NO_AUDIO;
       }
     }
 
     if (isValidationEnabled(game, CODE_NO_AUDIO_LAUNCH)) {
+      File audioLaunch = game.getPinUPMedia(PopperScreen.AudioLaunch);
       if (audioLaunch == null || !audioLaunch.exists()) {
         return CODE_NO_AUDIO_LAUNCH;
       }
     }
 
     if (isValidationEnabled(game, CODE_NO_APRON)) {
+      File apron = game.getPinUPMedia(PopperScreen.Menu);
       if (apron == null || !apron.exists()) {
         return CODE_NO_APRON;
       }
     }
 
     if (isValidationEnabled(game, ValidationCode.CODE_NO_INFO)) {
+      File info = game.getPinUPMedia(PopperScreen.GameInfo);
       if (info == null || !info.exists()) {
         return ValidationCode.CODE_NO_INFO;
       }
     }
 
     if (isValidationEnabled(game, ValidationCode.CODE_NO_HELP)) {
+      File help = game.getPinUPMedia(PopperScreen.GameHelp);
       if (help == null || !help.exists()) {
         return ValidationCode.CODE_NO_HELP;
       }
     }
 
     if (isValidationEnabled(game, ValidationCode.CODE_NO_TOPPER)) {
+      File topper = game.getPinUPMedia(PopperScreen.Topper);
       if (topper == null || !topper.exists()) {
         return ValidationCode.CODE_NO_TOPPER;
       }
     }
 
     if (isValidationEnabled(game, ValidationCode.CODE_NO_BACKGLASS)) {
+      File backglass = game.getPinUPMedia(PopperScreen.BackGlass);
       if (backglass == null || !backglass.exists()) {
         return ValidationCode.CODE_NO_BACKGLASS;
       }
     }
 
     if (isValidationEnabled(game, ValidationCode.CODE_NO_DMD)) {
+      File dmd = game.getPinUPMedia(PopperScreen.DMD);
       if (dmd == null || !dmd.exists()) {
         return ValidationCode.CODE_NO_DMD;
       }
     }
 
     if (isValidationEnabled(game, ValidationCode.CODE_NO_PLAYFIELD)) {
+      File playfield = game.getPinUPMedia(PopperScreen.PlayField);
       if (playfield == null || !playfield.exists()) {
         return ValidationCode.CODE_NO_PLAYFIELD;
       }
     }
 
     if (isValidationEnabled(game, ValidationCode.CODE_NO_LOADING)) {
+      File loading = game.getPinUPMedia(PopperScreen.Loading);
       if (loading == null || !loading.exists()) {
         return ValidationCode.CODE_NO_LOADING;
       }
     }
 
     if (isValidationEnabled(game, ValidationCode.CODE_NO_OTHER2)) {
+      File other2 = game.getPinUPMedia(PopperScreen.Other2);
       if (other2 == null || !other2.exists()) {
         return ValidationCode.CODE_NO_OTHER2;
       }
     }
 
     if (isValidationEnabled(game, ValidationCode.CODE_NO_WHEEL_IMAGE)) {
+      File wheel = game.getPinUPMedia(PopperScreen.Wheel);
       if (wheel == null || !wheel.exists()) {
         return ValidationCode.CODE_NO_WHEEL_IMAGE;
       }
     }
 
-    if (isValidationEnabled(game, CODE_ALT_SOUND_NOT_ENABLED)) {
-      if (game.isAltSoundAvailable() && !game.isAltSoundEnabled()) {
-        return ValidationCode.CODE_ALT_SOUND_NOT_ENABLED;
-      }
-    }
+    //TODO
+//    if (isValidationEnabled(game, CODE_ALT_SOUND_NOT_ENABLED)) {
+//      if (game.isAltSoundAvailable() && !game.isAltSoundEnabled()) {
+//        return ValidationCode.CODE_ALT_SOUND_NOT_ENABLED;
+//      }
+//    }
 
     return -1;
   }

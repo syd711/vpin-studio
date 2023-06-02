@@ -3,7 +3,6 @@ package de.mephisto.vpin.ui.tables;
 import de.mephisto.vpin.commons.utils.FileUtils;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.AltSound;
-import de.mephisto.vpin.restclient.client.VPinStudioClient;
 import de.mephisto.vpin.restclient.representations.GameRepresentation;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.util.Dialogs;
@@ -65,12 +64,7 @@ public class TablesSidebarAudioController implements Initializable {
   private void onAltSoundEnable() {
     if (game.isPresent() && game.get().isAltSoundAvailable()) {
       GameRepresentation g = game.get();
-      g.setAltSoundEnabled(enabledCheckbox.isSelected());
-      try {
-        Studio.client.getGameService().saveGame(g);
-      } catch (Exception e) {
-        WidgetFactory.showAlert(Studio.stage, e.getMessage());
-      }
+      Studio.client.getAltSoundService().setAltSoundEnabled(game.get().getId(), enabledCheckbox.isSelected());
     }
   }
 
@@ -110,7 +104,7 @@ public class TablesSidebarAudioController implements Initializable {
 
       if (game.isAltSoundAvailable()) {
         altSound = Studio.client.getAltSoundService().getAltSound(game.getId());
-        enabledCheckbox.setSelected(game.isAltSoundEnabled());
+        enabledCheckbox.setSelected(Studio.client.getAltSoundService().isAltSoundEnabled(game.getId()));
 
         entriesLabel.setText(String.valueOf(altSound.getEntries().size()));
         filesLabel.setText(String.valueOf(altSound.getFiles()));

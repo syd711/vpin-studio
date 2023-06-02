@@ -42,6 +42,16 @@ public class CompetitionRepresentation {
 
   private boolean started;
 
+  private boolean highscoreReset;
+
+  public boolean isHighscoreReset() {
+    return highscoreReset;
+  }
+
+  public void setHighscoreReset(boolean highscoreReset) {
+    this.highscoreReset = highscoreReset;
+  }
+
   private String joinMode = JoinMode.STRICT.name();
 
   public String getJoinMode() {
@@ -171,6 +181,7 @@ public class CompetitionRepresentation {
   public void setEndDate(Date endDate) {
     this.endDate = endDate;
   }
+
 
   @Override
   public boolean equals(Object o) {

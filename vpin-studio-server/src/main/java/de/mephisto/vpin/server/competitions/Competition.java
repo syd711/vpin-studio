@@ -31,6 +31,17 @@ public class Competition {
   @GeneratedValue(strategy = GenerationType.AUTO)
   private Long id;
 
+  @Column(name = "highscoreReset", nullable = false, columnDefinition = "boolean default true")
+  private boolean highscoreReset;
+
+  public boolean isHighscoreReset() {
+    return highscoreReset;
+  }
+
+  public void setHighscoreReset(boolean highscoreReset) {
+    this.highscoreReset = highscoreReset;
+  }
+
   private String uuid = UUID.randomUUID().toString();
 
   private String winnerInitials;

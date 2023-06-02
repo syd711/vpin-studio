@@ -2,18 +2,22 @@ package de.mephisto.vpin.server.games;
 
 import de.mephisto.vpin.commons.HighscoreType;
 import de.mephisto.vpin.commons.utils.FileUtils;
+import de.mephisto.vpin.restclient.AltSound;
 import de.mephisto.vpin.restclient.PopperScreen;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.descriptors.DeleteDescriptor;
+import de.mephisto.vpin.server.altsound.AltSoundService;
 import de.mephisto.vpin.server.assets.Asset;
 import de.mephisto.vpin.server.assets.AssetRepository;
 import de.mephisto.vpin.server.competitions.ScoreSummary;
+import de.mephisto.vpin.server.games.puppack.PupPack;
 import de.mephisto.vpin.server.highscores.*;
 import de.mephisto.vpin.server.highscores.cards.CardService;
 import de.mephisto.vpin.server.popper.Emulator;
 import de.mephisto.vpin.server.popper.GameMediaItem;
 import de.mephisto.vpin.server.popper.PinUPConnector;
 import de.mephisto.vpin.server.preferences.PreferencesService;
+import de.mephisto.vpin.server.puppack.PupPackService;
 import de.mephisto.vpin.server.roms.RomService;
 import de.mephisto.vpin.server.roms.ScanResult;
 import edu.umd.cs.findbugs.annotations.NonNull;
@@ -58,6 +62,12 @@ public class GameService {
   @Autowired
   private AssetRepository assetRepository;
 
+  @Autowired
+  private PupPackService pupPackService;
+
+  @Autowired
+  private AltSoundService altSoundService;
+
 
   @SuppressWarnings("unused")
   public List<Game> getGames() {
@@ -70,15 +80,6 @@ public class GameService {
     }
     LOG.info("Game details fetch took " + (System.currentTimeMillis() - start) + "ms.");
     return games;
-  }
-
-  public List<Game> getGamesByRom(String rom) {
-    List<Game> result = new ArrayList<>();
-    List<GameDetails> details = gameDetailsRepository.findByRomNameOrTableName(rom, rom);
-    for (GameDetails detail : details) {
-      result.add(getGame(detail.getPupId()));
-    }
-    return result;
   }
 
   public boolean resetGame(int gameId) {
@@ -127,7 +128,8 @@ public class GameService {
     }
 
     if (descriptor.isDeletePupPack()) {
-      if (game.getPupPack().getPupPackFolder() != null && !FileUtils.deleteFolder(game.getPupPack().getPupPackFolder())) {
+      PupPack pupPack = game.getPupPack();
+      if (pupPack != null && !pupPack.delete()) {
         success = false;
       }
     }
@@ -143,7 +145,7 @@ public class GameService {
     }
 
     if (descriptor.isDeleteAltSound()) {
-      if (game.getAltSoundFolder() != null && !FileUtils.deleteFolder(game.getAltSoundFolder())) {
+      if (altSoundService.delete(game)) {
         success = false;
       }
     }
@@ -199,24 +201,8 @@ public class GameService {
     return success;
   }
 
-  public int getGameCount() {
-    return this.pinUPConnector.getGameCount();
-  }
-
   public List<Integer> getGameId() {
     return this.pinUPConnector.getGameIds();
-  }
-
-  /**
-   * Used for creating the highscore cards combo.
-   * We only want to use tables there, that can show a highscore.
-   */
-  public List<Game> getGamesWithScore() {
-    List<Game> games = getGames();
-    return games.stream().filter(g -> {
-      Optional<Highscore> highscore = highscoreService.getOrCreateHighscore(g);
-      return highscore.isPresent() && !StringUtils.isEmpty(highscore.get().getRaw());
-    }).collect(Collectors.toList());
   }
 
   @SuppressWarnings("unused")
@@ -370,12 +356,12 @@ public class GameService {
 
     game.setRom(gameDetails.getRomName());
     game.setNvOffset(gameDetails.getNvOffset());
-    game.setAssets(gameDetails.getAssets());
     game.setOriginalRom(romService.getOriginalRom(game.getRom()));
     game.setHsFileName(gameDetails.getHsFileName());
     game.setTableName(gameDetails.getTableName());
+    game.setPupPack(pupPackService.getPupPack(game));
     game.setIgnoredValidations(gameDetails.getIgnoredValidations());
-    game.setAltSoundEnabled(game.getSystemService().isAltSoundEnabled(game.getRom()));
+    game.setAltSoundAvailable(altSoundService.isAltSoundAvailable(game));
 
     Optional<Highscore> highscore = this.highscoreService.getOrCreateHighscore(game);
     highscore.ifPresent(value -> game.setHighscoreType(value.getType() != null ? HighscoreType.valueOf(value.getType()) : null));
@@ -396,14 +382,6 @@ public class GameService {
     gameDetailsRepository.saveAndFlush(gameDetails);
 
     Game original = getGame(game.getId());
-    if (original != null) {
-      if (original.isAltSoundEnabled() != game.isAltSoundEnabled()) {
-        original.getSystemService().setAltSoundEnabled(game.getRom(), game.isAltSoundEnabled());
-        LOG.info("Updated ALT sound setting for " + game.getRom() + ": " + original.getSystemService().isAltSoundEnabled(game.getRom()));
-      }
-    }
-
-
     //TODO check rom name import vs. scan
     //check if there is mismatch in the ROM name, overwrite popper value
     if (original != null && !StringUtils.isEmpty(original.getRom()) && !StringUtils.isEmpty(game.getRom()) && !original.getRom().equals(game.getRom())) {

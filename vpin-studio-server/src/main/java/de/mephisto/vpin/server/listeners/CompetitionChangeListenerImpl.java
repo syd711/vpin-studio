@@ -13,11 +13,13 @@ import de.mephisto.vpin.server.discord.DiscordOfflineChannelMessageFactory;
 import de.mephisto.vpin.server.discord.DiscordService;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameService;
+import de.mephisto.vpin.server.highscores.Highscore;
 import de.mephisto.vpin.server.highscores.HighscoreService;
 import de.mephisto.vpin.server.players.Player;
 import de.mephisto.vpin.server.popper.PopperService;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
@@ -25,6 +27,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -90,7 +93,22 @@ public class CompetitionChangeListenerImpl implements InitializingBean, Competit
           if (serverId > 0 && channelId > 0 && bot != null) {
             byte[] image = assetService.getCompetitionStartedCard(competition, game);
             String message = DiscordOfflineChannelMessageFactory.createOfflineCompetitionCreatedMessage(competition, game);
-            discordService.sendMessage(serverId, channelId, message, image, competition.getName() + ".png", "This is an offline competition. Other player bots can't join.");
+            String subText = "This is an offline competition. Other player bots can't join.";
+            if (competition.isHighscoreReset()) {
+              subText += "\nThe highscore of this table has been resetted.";
+            }
+            else {
+              subText += "\nThe highscore of this table has not been resetted.";
+              Optional<Highscore> hs = highscoreService.getOrCreateHighscore(game);
+              if (hs.isPresent() && !StringUtils.isEmpty(hs.get().getRaw())) {
+                subText += " Here is the current highscore:\n" + hs.get().getRaw();
+              }
+            }
+            discordService.sendMessage(serverId, channelId, message, image, competition.getName() + ".png", subText);
+          }
+
+          if (competition.isHighscoreReset()) {
+            highscoreService.resetHighscore(game);
           }
         }
       }

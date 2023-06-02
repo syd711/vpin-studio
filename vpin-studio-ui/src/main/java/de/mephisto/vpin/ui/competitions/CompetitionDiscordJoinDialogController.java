@@ -117,6 +117,7 @@ public class CompetitionDiscordJoinDialogController implements Initializable, Di
     competition.setStartDate(this.discordCompetitionData.getSdt());
     competition.setEndDate(this.discordCompetitionData.getEdt());
     competition.setJoinMode(this.discordCompetitionData.getMode());
+    competition.setHighscoreReset(true);
 
     competition.setBadge(this.competitionIconCombo.getValue());
     competition.setGameId(this.tableCombo.getValue().getId());

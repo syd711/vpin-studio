@@ -41,15 +41,6 @@ public class GameRepresentation {
   private String assets;
   private boolean defaultBackgroundAvailable;
   private boolean altSoundAvailable;
-  private boolean altSoundEnabled;
-
-  public boolean isAltSoundEnabled() {
-    return altSoundEnabled;
-  }
-
-  public void setAltSoundEnabled(boolean altSoundEnabled) {
-    this.altSoundEnabled = altSoundEnabled;
-  }
 
   public boolean isAltSoundAvailable() {
     return altSoundAvailable;

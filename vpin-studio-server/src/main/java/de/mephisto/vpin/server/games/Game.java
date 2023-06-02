@@ -35,12 +35,12 @@ public class Game {
   private int validationState;
   private String ignoredValidations;
   private HighscoreType highscoreType;
-  private boolean altSoundEnabled;
+  private boolean altSoundAvailable;
 
   private String assets;
+  private PupPack pupPack;
 
   private SystemService systemService;
-  private PupPack pupPack;
 
   public Game() {
 
@@ -50,19 +50,25 @@ public class Game {
     this.systemService = systemService;
   }
 
+  @JsonIgnore
+  @Nullable
+  public PupPack getPupPack() {
+    return pupPack;
+  }
+
+  public void setPupPack(PupPack pupPack) {
+    this.pupPack = pupPack;
+  }
+
+  public boolean isPupPackAvailable() {
+    return pupPack != null;
+  }
+
   public long getGameFileSize() {
     if (this.getGameFile().exists()) {
       return this.getGameFile().length();
     }
     return -1;
-  }
-
-  public boolean isAltSoundEnabled() {
-    return altSoundEnabled;
-  }
-
-  public void setAltSoundEnabled(boolean altSoundEnabled) {
-    this.altSoundEnabled = altSoundEnabled;
   }
 
   public HighscoreType getHighscoreType() {
@@ -235,6 +241,10 @@ public class Game {
     return rom;
   }
 
+  public void setRom(String rom) {
+    this.rom = rom;
+  }
+
   public boolean isDirectB2SAvailable() {
     String name = FilenameUtils.getBaseName(this.getGameFileName());
     String directB2SName = name + ".directb2s";
@@ -245,33 +255,12 @@ public class Game {
     return this.getGameFile().exists();
   }
 
-  public boolean isDefaultBackgroundAvailable() {
-    return this.getRawDefaultPicture() != null && this.getRawDefaultPicture().exists();
-  }
-
-  @JsonIgnore
-  @NonNull
-  public PupPack getPupPack() {
-    if (pupPack == null) {
-      pupPack = new PupPack(systemService, this);
-    }
-    return pupPack;
-  }
-
-  public boolean isPupPackAvailable() {
-    return this.getPupPack().isAvailable();
-  }
-
   public String getHsFileName() {
     return hsFileName;
   }
 
   public void setHsFileName(String hsFileName) {
     this.hsFileName = hsFileName;
-  }
-
-  public void setRom(String rom) {
-    this.rom = rom;
   }
 
   public String getGameDisplayName() {
@@ -331,13 +320,12 @@ public class Game {
     return null;
   }
 
+  public void setAltSoundAvailable(boolean altSoundAvailable) {
+    this.altSoundAvailable = altSoundAvailable;
+  }
+
   public boolean isAltSoundAvailable() {
-    File altSoundFolder = getAltSoundFolder();
-    if (altSoundFolder != null && altSoundFolder.exists()) {
-      File[] files = altSoundFolder.listFiles((dir, name) -> name.endsWith(".csv"));
-      return files != null && files.length > 0;
-    }
-    return false;
+    return this.altSoundAvailable;
   }
 
   @Nullable
@@ -349,18 +337,6 @@ public class Game {
     return null;
   }
 
-  @Nullable
-  @JsonIgnore
-  public File getAltSoundCsv() {
-    if (!StringUtils.isEmpty(this.getRom())) {
-      File altSoundFolder = this.getAltSoundFolder();
-      File[] files = altSoundFolder.listFiles((dir, name) -> name.endsWith(".csv"));
-      if (files != null) {
-        return files[0];
-      }
-    }
-    return null;
-  }
 
   @Nullable
   @JsonIgnore
@@ -391,7 +367,8 @@ public class Game {
   }
 
   public boolean isRomExists() {
-    return getRomFile() != null && getRomFile().exists();
+    File romFile = getRomFile();
+    return romFile != null && romFile.exists();
   }
 
   @NonNull

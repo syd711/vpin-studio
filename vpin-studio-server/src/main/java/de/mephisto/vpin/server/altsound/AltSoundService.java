@@ -1,17 +1,19 @@
 package de.mephisto.vpin.server.altsound;
 
+import de.mephisto.vpin.commons.utils.FileUtils;
 import de.mephisto.vpin.restclient.AltSound;
 import de.mephisto.vpin.restclient.AltSoundEntry;
 import de.mephisto.vpin.server.games.Game;
-import de.mephisto.vpin.server.games.GameService;
+import de.mephisto.vpin.server.system.SystemService;
 import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVRecord;
 import org.apache.commons.csv.QuoteMode;
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -29,25 +31,31 @@ import java.util.Map;
  * 0x0002,0,100,85,100,0,"normal_prelaunch","0x0002-normal_prelaunch.ogg",1,,,0,
  */
 @Service
-public class AltSoundService {
+public class AltSoundService implements InitializingBean {
   private final static Logger LOG = LoggerFactory.getLogger(AltSoundService.class);
+  public static final String SOUND_MODE = "sound_mode";
 
   @Autowired
-  private GameService gameService;
+  private SystemService systemService;
 
-  @NonNull
-  public AltSound getAltSound(int id) {
-    Game game = gameService.getGame(id);
-    if (game != null && game.isAltSoundAvailable()) {
-      return getAltSound(game);
+  private final Map<String, File> altSounds = new HashMap<>();
+
+  public boolean isAltSoundAvailable(@NonNull Game game) {
+    return getAltSoundCsvFile(game) != null;
+  }
+
+  public boolean delete(@NonNull Game game) {
+    File altSoundCsvFile = getAltSoundCsvFile(game);
+    if (altSoundCsvFile != null && altSoundCsvFile.exists()) {
+      return FileUtils.deleteFolder(altSoundCsvFile.getParentFile());
     }
-    return new AltSound();
+    return true;
   }
 
   @NonNull
   public AltSound getAltSound(@NonNull Game game) {
     AltSound altSound = new AltSound();
-    File csvFile = game.getAltSoundCsv();
+    File csvFile = this.getAltSoundCsvFile(game);
     if (csvFile == null) {
       return altSound;
     }
@@ -72,7 +80,7 @@ public class AltSoundService {
 
       while (iterator.hasNext()) {
         CSVRecord record = iterator.next();
-        File audioFile = new File(game.getAltSoundFolder(), record.get(7).replaceAll("\"", ""));
+        File audioFile = new File(csvFile.getParentFile(), record.get(7).replaceAll("\"", ""));
 
         AltSoundEntry entry = new AltSoundEntry();
         entry.setId(record.get(0));
@@ -90,12 +98,12 @@ public class AltSoundService {
         entry.setPreload(record.isSet(11) ? getInt(record.get(11)) : 0);
         entry.setStopCmd(record.isSet(12) ? record.get(12) : "");
 
-        if(audioFile.exists()) {
+        if (audioFile.exists()) {
           entry.setSize(audioFile.length());
         }
 
 
-        File soundFile = new File(game.getAltSoundFolder(), entry.getFilename());
+        File soundFile = new File(csvFile.getParentFile(), entry.getFilename());
         if (soundFile.exists()) {
           audioFiles.put(entry.getFilename(), entry.getFilename());
           size += soundFile.length();
@@ -122,26 +130,25 @@ public class AltSoundService {
     return Integer.parseInt(value.trim());
   }
 
-  public AltSound save(int id, AltSound altSound) {
-    Game game = gameService.getGame(id);
-    if (game != null && game.isAltSoundAvailable()) {
-      File altSoundCsv = game.getAltSoundCsv();
+  public AltSound save(@NonNull Game game, @NonNull AltSound altSound) {
+    if (game.isAltSoundAvailable()) {
+      File altSoundCsv = this.getAltSoundCsvFile(game);
       try {
-        FileUtils.writeStringToFile(altSoundCsv, altSound.toCSV(), StandardCharsets.UTF_8);
+        org.apache.commons.io.FileUtils.writeStringToFile(altSoundCsv, altSound.toCSV(), StandardCharsets.UTF_8);
         LOG.info("Written ALTSound for " + game.getGameDisplayName());
         return null;
       } catch (Exception e) {
         LOG.error("Error writing CSV " + altSoundCsv.getAbsolutePath() + ": " + e.getMessage(), e);
       }
     }
-    return this.getAltSound(id);
+    return this.getAltSound(game);
   }
 
   public File getOrCreateBackup(@NonNull File csvFile) {
     File backup = new File(csvFile.getParentFile(), csvFile.getName() + ".bak");
     if (!backup.exists()) {
       try {
-        FileUtils.copyFile(csvFile, backup);
+        org.apache.commons.io.FileUtils.copyFile(csvFile, backup);
       } catch (IOException e) {
         LOG.error("Error creating CSV backup: " + e.getMessage(), e);
       }
@@ -149,22 +156,74 @@ public class AltSoundService {
     return backup;
   }
 
-  public AltSound restore(int id) {
-    Game game = gameService.getGame(id);
-    if (game != null && game.isAltSoundAvailable()) {
-      try {
-        File altSoundCsv = game.getAltSoundCsv();
+  public AltSound restore(@NonNull Game game) {
+    try {
+      File altSoundCsv = this.getAltSoundCsvFile(game);
+      if (altSoundCsv != null && altSoundCsv.exists()) {
         File backup = getOrCreateBackup(altSoundCsv);
         if (backup.exists()) {
-          FileUtils.copyFile(backup, altSoundCsv);
+          org.apache.commons.io.FileUtils.copyFile(backup, altSoundCsv);
         }
         else {
           LOG.error("Failed to restore ALT sound backup, the backup file " + backup.getAbsolutePath() + " does not exists.");
         }
-      } catch (IOException e) {
-        LOG.error("Error restoring CSV backup: " + e.getMessage(), e);
+      }
+    } catch (IOException e) {
+      LOG.error("Error restoring CSV backup: " + e.getMessage(), e);
+    }
+    return null;
+  }
+
+  private File getAltSoundCsvFile(@NonNull Game game) {
+    if (!StringUtils.isEmpty(game.getRom()) && this.altSounds.containsKey(game.getRom())) {
+      return this.altSounds.get(game.getRom());
+    }
+    if (!StringUtils.isEmpty(game.getTableName()) && this.altSounds.containsKey(game.getTableName())) {
+      return this.altSounds.get(game.getTableName());
+    }
+    return null;
+  }
+
+  public boolean setAltSoundEnabled(@NonNull Game game, boolean b) {
+    String rom = game.getRom();
+    if (!StringUtils.isEmpty(rom)) {
+      if (b) {
+        systemService.writeRegistry(SystemService.MAME_REG_KEY + rom, SOUND_MODE, 1);
+      }
+      else {
+        systemService.writeRegistry(SystemService.MAME_REG_KEY + rom, SOUND_MODE, 0);
       }
     }
-    return this.getAltSound(id);
+    return b;
+  }
+
+  public boolean isAltSoundEnabled(@NonNull Game game) {
+    if (!StringUtils.isEmpty(game.getRom())) {
+      String sound_mode = systemService.getMameRegistryValue(game.getRom(), SOUND_MODE);
+      return String.valueOf(sound_mode).equals("0x1") || String.valueOf(sound_mode).equals("1");
+    }
+    return false;
+  }
+
+  @Override
+  public void afterPropertiesSet() {
+    long start = System.currentTimeMillis();
+    File altSoundsFolder = systemService.getAltSoundFolder();
+    if (altSoundsFolder.exists()) {
+      File[] altSoundFolder = altSoundsFolder.listFiles((dir, name) -> new File(dir, name).isDirectory());
+      if (altSoundFolder != null) {
+        for (File altSound : altSoundFolder) {
+          File csv = new File(altSound, "altsound.csv");
+          if (csv.exists()) {
+            this.altSounds.put(altSound.getName(), csv);
+          }
+        }
+      }
+    }
+    else {
+      LOG.error("altsound folder " + altSoundsFolder.getAbsolutePath() + " does not exist.");
+    }
+    long end = System.currentTimeMillis();
+    LOG.info("Finished altsound pack scan, found " + altSounds.size() + " alt sound packs (" + (end - start) + "ms)");
   }
 }

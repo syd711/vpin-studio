@@ -27,7 +27,7 @@ class HighscoreResolver {
   private List<String> supportedRoms;
   private final SystemService systemService;
 
-  public HighscoreResolver(SystemService systemService) {
+  public HighscoreResolver(@NonNull SystemService systemService) {
     this.systemService = systemService;
     this.loadSupportedScores();
   }

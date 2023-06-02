@@ -8,6 +8,7 @@ import de.mephisto.vpin.restclient.representations.GameRepresentation;
 import de.mephisto.vpin.restclient.representations.HighscoreMetadataRepresentation;
 import de.mephisto.vpin.restclient.representations.ScoreListRepresentation;
 import de.mephisto.vpin.restclient.representations.ScoreSummaryRepresentation;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpMethod;
@@ -15,6 +16,7 @@ import org.springframework.lang.NonNull;
 import org.springframework.web.client.RestTemplate;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -26,8 +28,19 @@ import java.util.List;
 public class GamesServiceClient extends VPinStudioClientService {
   private final static Logger LOG = LoggerFactory.getLogger(VPinStudioClient.class);
 
+  private List<GameRepresentation> games = new ArrayList<>();
+
   GamesServiceClient(VPinStudioClient client) {
     super(client);
+  }
+
+
+  public void clearCache() {
+    this.games = new ArrayList<>();
+  }
+
+  public void invalidate(int id) {
+    this.getGame(id);
   }
 
 
@@ -50,12 +63,15 @@ public class GamesServiceClient extends VPinStudioClientService {
   }
 
   public List<GameRepresentation> getGamesByRom(String rom) {
-    try {
-      return Arrays.asList(getRestClient().get(API + "games/rom/" + rom, GameRepresentation[].class));
-    } catch (Exception e) {
-      LOG.error("Failed to read games for " + rom + ": " + e.getMessage());
+    List<GameRepresentation> gameList = this.getGamesCached();
+    List<GameRepresentation> result = new ArrayList<>();
+    for (GameRepresentation gameRepresentation : gameList) {
+      if ((!StringUtils.isEmpty(gameRepresentation.getRom()) && gameRepresentation.getRom().equals(rom)) ||
+          (!StringUtils.isEmpty(gameRepresentation.getTableName()) && gameRepresentation.getTableName().equals(rom))) {
+        result.add(gameRepresentation);
+      }
     }
-    return null;
+    return result;
   }
 
 
@@ -66,16 +82,6 @@ public class GamesServiceClient extends VPinStudioClientService {
       LOG.error("Failed to read game " + id + ": " + e.getMessage());
     }
     return null;
-  }
-
-  public int getGameCount() {
-    try {
-      final RestTemplate restTemplate = new RestTemplate();
-      return restTemplate.getForObject(getRestClient().getBaseUrl() + API + "games/count", Integer.class);
-    } catch (Exception e) {
-      LOG.error("Failed to read game count: " + e.getMessage(), e);
-    }
-    return 0;
   }
 
   public List<Integer> getGameIds() {
@@ -125,7 +131,20 @@ public class GamesServiceClient extends VPinStudioClientService {
 
   public List<GameRepresentation> getGames() {
     try {
-      return Arrays.asList(getRestClient().get(API + "games", GameRepresentation[].class));
+      this.games = Arrays.asList(getRestClient().get(API + "games", GameRepresentation[].class));
+      return this.games;
+    } catch (Exception e) {
+      LOG.error("Failed to save game: " + e.getMessage(), e);
+      throw e;
+    }
+  }
+
+  public List<GameRepresentation> getGamesCached() {
+    try {
+      if (this.games == null || this.games.isEmpty()) {
+        this.games = this.getGames();
+      }
+      return this.games;
     } catch (Exception e) {
       LOG.error("Failed to save game: " + e.getMessage(), e);
       throw e;
@@ -133,7 +152,14 @@ public class GamesServiceClient extends VPinStudioClientService {
   }
 
   public List<GameRepresentation> getGamesWithScores() {
-    return Arrays.asList(getRestClient().get(API + "games/scoredgames", GameRepresentation[].class));
+    List<GameRepresentation> gameList = this.getGamesCached();
+    List<GameRepresentation> result = new ArrayList<>();
+    for (GameRepresentation gameRepresentation : gameList) {
+      if (!StringUtils.isEmpty(gameRepresentation.getHighscoreType())) {
+        result.add(gameRepresentation);
+      }
+    }
+    return result;
   }
 
   public ScoreSummaryRepresentation getRecentlyPlayedGames(int count) {
@@ -143,4 +169,5 @@ public class GamesServiceClient extends VPinStudioClientService {
   public boolean resetHighscore(ResetHighscoreDescriptor descriptor) throws Exception {
     return getRestClient().post(API + "games/reset", descriptor, Boolean.class);
   }
+
 }

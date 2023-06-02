@@ -204,9 +204,6 @@ public class VPinStudioClient implements ObservedPropertyChangeListener, Overlay
     return restClient;
   }
 
-  public void clearTableCache() {
-    restClient.clearCache("games/");
-  }
 
   public void clearDiscordCache() {
     restClient.clearCache("discord/");
@@ -269,6 +266,7 @@ public class VPinStudioClient implements ObservedPropertyChangeListener, Overlay
   public void clearCache() {
     getDiscordService().clearCache();
     getImageCache().clearCache();
+    getGameService().clearCache();
   }
 
   public void clearWheelCache() {

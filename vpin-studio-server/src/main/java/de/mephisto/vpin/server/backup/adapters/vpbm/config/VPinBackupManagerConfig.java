@@ -1,19 +1,21 @@
 package de.mephisto.vpin.server.backup.adapters.vpbm.config;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import de.mephisto.vpin.server.system.SystemService;
 
+import java.io.File;
 import java.util.Arrays;
 import java.util.List;
 
 public class VPinBackupManagerConfig {
   @JsonProperty("VpinballBasePath")
-  private String vpinballBasePath;
+  private String vpinballBasePath = "C:\\vPinball";
 
   @JsonProperty("BackupPath")
-  private String backupPath;
+  private String backupPath = new File(SystemService.ARCHIVES_FOLDER, "backups").getAbsolutePath();
 
   @JsonProperty("ExportPath")
-  private String exportPath;
+  private String exportPath = new File(SystemService.ARCHIVES_FOLDER, "exports").getAbsolutePath();
 
   @JsonProperty("Emulators")
   private List<Emulator> emulators = Arrays.asList(new Emulator("Visual Pinball X"), new Emulator("Future Pinball"));

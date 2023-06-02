@@ -1,17 +1,15 @@
 package de.mephisto.vpin.server.games.puppack;
 
+import de.mephisto.vpin.commons.utils.FileUtils;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.system.JCodec;
 import de.mephisto.vpin.server.system.SystemService;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
-import java.util.Collection;
 
 public class PupPack {
   private final static Logger LOG = LoggerFactory.getLogger(PupPack.class);
@@ -19,73 +17,57 @@ public class PupPack {
   public static final String SCREENS_PUP = "screens.pup";
   public static final String TRIGGERS_PUP = "triggers.pup";
 
-  private final SystemService systemService;
-  private final Game game;
+  private final String name;
+  private final File screensPup;
+  private final File triggersPup;
+  private final File packFolder;
 
-  public PupPack(@NonNull SystemService systemService, @NonNull Game game) {
-    this.systemService = systemService;
-    this.game = game;
-  }
-
-  public boolean isAvailable() {
-    if (StringUtils.isEmpty(game.getRom())) {
-      return false;
-    }
-    return (getScreensPup().exists() && getTriggersPup().exists()) || containsVideos();
-  }
-
-  private boolean containsVideos() {
-    if (getPupPackFolder().exists()) {
-      Collection<File> files = FileUtils.listFiles(getPupPackFolder(), new String[]{"mp4"}, true);
-      return !files.isEmpty();
-    }
-    return false;
-  }
-
-  public File getPupPackFolder() {
-    if (game.getRom() == null) {
-      return null;
-    }
-    return new File(new File(systemService.getPinUPSystemFolder(), "PUPVideos"), game.getRom());
+  public PupPack(@NonNull File packFolder) {
+    this.name = packFolder.getName();
+    screensPup = new File(packFolder, SCREENS_PUP);
+    triggersPup = new File(packFolder, TRIGGERS_PUP);
+    this.packFolder = packFolder;
   }
 
   public File getScreensPup() {
-    return new File(getPupPackFolder(), SCREENS_PUP);
+    return screensPup;
   }
 
   public File getTriggersPup() {
-    return new File(getPupPackFolder(), TRIGGERS_PUP);
+    return triggersPup;
   }
 
-  @Override
-  public String toString() {
-    return "PUP Pack for \"" + game.getGameDisplayName() + "\"";
-  }
-
-  @Nullable
-  public File exportDefaultPicture() {
-    if (isAvailable()) {
-      File mediaFolder = new File(systemService.getB2SImageExtractionFolder(), game.getRom());
-      File defaultPicture = new File(mediaFolder, SystemService.DEFAULT_BACKGROUND);
-      if (defaultPicture.exists() && defaultPicture.length() > 0) {
-        return defaultPicture;
-      }
-
-      if (defaultPicture.exists() && defaultPicture.length() == 0) {
-        return null;
-      }
-
-      if (!mediaFolder.exists()) {
-        mediaFolder.mkdirs();
-      }
-
-      return resolveDefaultPictureFromPupVideo(defaultPicture);
+  public boolean delete() {
+    if (packFolder.exists()) {
+      return FileUtils.deleteFolder(packFolder);
     }
-    return null;
+    return true;
+  }
+
+  public File getPupPackFolder() {
+    return this.packFolder;
   }
 
   @Nullable
-  private File resolveDefaultPictureFromPupVideo(@NonNull File defaultPicture) {
+  public File exportDefaultPicture(@NonNull Game game, @NonNull File target) {
+    File defaultPicture = new File(target, SystemService.DEFAULT_BACKGROUND);
+    if (defaultPicture.exists() && defaultPicture.length() > 0) {
+      return defaultPicture;
+    }
+
+    if (defaultPicture.exists() && defaultPicture.length() == 0) {
+      return null;
+    }
+
+    if (!target.exists()) {
+      target.mkdirs();
+    }
+
+    return resolveDefaultPictureFromPupVideo(game, defaultPicture);
+  }
+
+  @Nullable
+  private File resolveDefaultPictureFromPupVideo(@NonNull Game game, @NonNull File defaultPicture) {
     PupDefaultVideoResolver resolver = new PupDefaultVideoResolver(this);
     File defaultVideo = resolver.findDefaultVideo();
     if (defaultVideo != null && defaultVideo.exists()) {
@@ -96,5 +78,10 @@ public class PupPack {
       }
     }
     return null;
+  }
+
+  @Override
+  public String toString() {
+    return "PUP Pack for \"" + name + "\"";
   }
 }

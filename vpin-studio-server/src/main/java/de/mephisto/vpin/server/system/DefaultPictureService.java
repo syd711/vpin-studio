@@ -5,6 +5,8 @@ import de.mephisto.vpin.server.VPinStudioException;
 import de.mephisto.vpin.server.directb2s.DirectB2SImageExtractor;
 import de.mephisto.vpin.server.directb2s.DirectB2SImageRatio;
 import de.mephisto.vpin.server.games.Game;
+import de.mephisto.vpin.server.games.puppack.PupPack;
+import de.mephisto.vpin.server.puppack.PupPackService;
 import de.mephisto.vpin.server.util.ImageUtil;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
@@ -12,6 +14,7 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.imageio.ImageIO;
@@ -26,6 +29,9 @@ public class DefaultPictureService {
 
   public final static int DEFAULT_MEDIA_SIZE = 1280;
   private final static DirectB2SImageRatio DEFAULT_MEDIA_RATIO = DirectB2SImageRatio.RATIO_16X9;
+
+  @Autowired
+  private PupPackService pupPackService;
 
   public DefaultPictureService() {
 
@@ -71,21 +77,21 @@ public class DefaultPictureService {
       }
     }
 
-
-    if (game.getPupPack().isAvailable()) {
-      game.getPupPack().exportDefaultPicture();
+    PupPack pupPack = game.getPupPack();
+    if(pupPack != null) {
+      pupPack.exportDefaultPicture(game, target);
     }
   }
 
   public void deleteDefaultPictures(@NonNull Game game) {
     if (game.getCroppedDefaultPicture() != null && game.getCroppedDefaultPicture().exists()) {
-      if(game.getCroppedDefaultPicture().delete()) {
+      if (game.getCroppedDefaultPicture().delete()) {
         LOG.info("Deleted " + game.getCroppedDefaultPicture().getAbsolutePath());
       }
     }
 
     if (game.getRawDefaultPicture() != null && !game.getRawDefaultPicture().exists()) {
-      if(game.getRawDefaultPicture().delete()) {
+      if (game.getRawDefaultPicture().delete()) {
         LOG.info("Deleted " + game.getCroppedDefaultPicture().getAbsolutePath());
       }
     }

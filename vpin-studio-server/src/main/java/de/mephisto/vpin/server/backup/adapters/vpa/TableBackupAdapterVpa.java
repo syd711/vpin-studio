@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import de.mephisto.vpin.commons.HighscoreType;
 import de.mephisto.vpin.commons.utils.FileUtils;
 import de.mephisto.vpin.restclient.*;
+import de.mephisto.vpin.server.altsound.AltSoundService;
 import de.mephisto.vpin.server.backup.ArchiveDescriptor;
 import de.mephisto.vpin.server.backup.ArchiveSourceAdapter;
 import de.mephisto.vpin.server.backup.ArchiveUtil;
@@ -178,7 +179,7 @@ public class TableBackupAdapterVpa implements TableBackupAdapter, Job {
       }
 
       // Music and sounds
-      if (game.getAltSoundFolder() != null && game.getAltSoundFolder().exists()) {
+      if (game.isAltSoundAvailable()) {
         packageInfo.setAltSound(true);
         zipFile(game.getAltSoundFolder(), getGameFolderName() + "/VPinMAME/altsound/" + game.getAltSoundFolder().getName(), zipOut);
       }
@@ -293,7 +294,7 @@ public class TableBackupAdapterVpa implements TableBackupAdapter, Job {
         totalSizeExpected += gameMediaItem.getFile().length();
       }
     }
-    if (game.getPupPack().getPupPackFolder() != null && game.getPupPack().getPupPackFolder().exists()) {
+    if (game.getPupPack() != null && game.getPupPack().getPupPackFolder() != null && game.getPupPack().getPupPackFolder().exists()) {
       totalSizeExpected += org.apache.commons.io.FileUtils.sizeOfDirectory(game.getPupPack().getPupPackFolder());
     }
     if (game.getGameFile().exists()) {

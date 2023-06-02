@@ -40,7 +40,6 @@ public class SystemService extends SystemInfo implements InitializingBean {
   public static final String COMPETITION_BADGES = "competition-badges";
 
   private final static String VPREG_STG = "VPReg.stg";
-  public static final String SOUND_MODE = "sound_mode";
 
   public static String PINEMHI_FOLDER = RESOURCES + "pinemhi";
   public static String ARCHIVES_FOLDER = RESOURCES + "archives";
@@ -248,25 +247,6 @@ public class SystemService extends SystemInfo implements InitializingBean {
 
   private String formatPathLog(String label, File file) {
     return formatPathLog(label, file.getAbsolutePath(), file.exists(), file.canRead());
-  }
-
-  public boolean isAltSoundEnabled(@Nullable String rom) {
-    if (!StringUtils.isEmpty(rom)) {
-      String sound_mode = getMameRegistryValue(rom, SOUND_MODE);
-      return String.valueOf(sound_mode).equals("0x1") || String.valueOf(sound_mode).equals("1");
-    }
-    return false;
-  }
-
-  public void setAltSoundEnabled(@Nullable String rom, boolean b) {
-    if (!StringUtils.isEmpty(rom)) {
-      if (b) {
-        writeRegistry(MAME_REG_KEY + rom, SOUND_MODE, 1);
-      }
-      else {
-        writeRegistry(MAME_REG_KEY + rom, SOUND_MODE, 0);
-      }
-    }
   }
 
   public void setMameRegistryValue(@NonNull String rom, @NonNull String key, int value) {

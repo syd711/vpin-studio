@@ -263,37 +263,40 @@ public class TablesSidebarController implements Initializable {
   }
 
   private void refreshView(Optional<GameRepresentation> g) {
-    if (titledPaneMedia.isExpanded()) {
-      this.tablesSidebarMediaController.setGame(g, mediaPreviewCheckbox.isSelected());
-    }
-    else {
-      tablesSidebarMediaController.resetMedia();
-    }
+    Platform.runLater(() -> {
+      if (titledPaneMedia.isExpanded()) {
+        this.tablesSidebarMediaController.setGame(g, mediaPreviewCheckbox.isSelected());
+      }
+      else {
+        tablesSidebarMediaController.resetMedia();
+      }
 
-    if (titledPaneMetadata.isExpanded()) {
-      this.tablesSidebarMetadataController.setGame(g);
-    }
-    if (titledPanePUPPack.isExpanded()) {
-      this.tablesSidebarPUPPackController.setGame(g);
-    }
-    if (titledPaneDirectB2s.isExpanded()) {
-      this.tablesSidebarDirectB2SController.setGame(g);
-    }
-    if (titledPaneAudio.isExpanded()) {
-      this.tablesSidebarAudioController.setGame(g);
-    }
-    if (titledPaneHighscores.isExpanded()) {
-      this.tablesSidebarHighscoresController.setGame(g);
-    }
-    if (titledPaneDefaultBackground.isExpanded()) {
-      this.tablesSidebarDefaultBackgroundController.setGame(g);
-    }
-    if (titledPanePov.isExpanded()) {
-      this.tablesSidebarPovController.setGame(g);
-    }
-    if (titledPanePopper.isExpanded()) {
-      this.tablesSidebarPopperController.setGame(g);
-    }
+      if (titledPaneMetadata.isExpanded()) {
+        this.tablesSidebarMetadataController.setGame(g);
+      }
+      if (titledPanePUPPack.isExpanded()) {
+        this.tablesSidebarPUPPackController.setGame(g);
+      }
+      if (titledPaneDirectB2s.isExpanded()) {
+        this.tablesSidebarDirectB2SController.setGame(g);
+      }
+      if (titledPaneAudio.isExpanded()) {
+        this.tablesSidebarAudioController.setGame(g);
+      }
+      if (titledPaneHighscores.isExpanded()) {
+        this.tablesSidebarHighscoresController.setGame(g);
+      }
+      if (titledPaneDefaultBackground.isExpanded()) {
+        this.tablesSidebarDefaultBackgroundController.setGame(g);
+      }
+      if (titledPanePov.isExpanded()) {
+        this.tablesSidebarPovController.setGame(g);
+      }
+      if (titledPanePopper.isExpanded()) {
+        this.tablesSidebarPopperController.setGame(g);
+      }
+    });
+
   }
 
   public TablesSidebarAudioController getTablesSidebarAudioController() {

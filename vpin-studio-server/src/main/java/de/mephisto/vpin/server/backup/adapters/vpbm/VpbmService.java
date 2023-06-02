@@ -162,16 +162,15 @@ public class VpbmService implements InitializingBean {
       File archives = new File(SystemService.ARCHIVES_FOLDER);
       archives.mkdirs();
 
-      if (!configJson.exists()) {
-        throw new FileNotFoundException(VPBM_FOLDER + " file (" + configJson.getAbsolutePath() + ") not found.");
-      }
-
       ObjectMapper objectMapper = new ObjectMapper();
       objectMapper.enable(SerializationFeature.INDENT_OUTPUT);
       objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 
-      VPinBackupManagerConfig config = objectMapper.readValue(configJson, VPinBackupManagerConfig.class);
 
+      VPinBackupManagerConfig config = new VPinBackupManagerConfig();
+      if (configJson.exists()) {
+        config = objectMapper.readValue(configJson, VPinBackupManagerConfig.class);
+      }
 
       boolean dirty = false;
       File exportPath = new File(config.getExportPath());

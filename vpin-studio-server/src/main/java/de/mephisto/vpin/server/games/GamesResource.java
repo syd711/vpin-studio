@@ -1,30 +1,30 @@
   package de.mephisto.vpin.server.games;
 
-import de.mephisto.vpin.commons.utils.FileUtils;
-import de.mephisto.vpin.restclient.TableDetails;
-import de.mephisto.vpin.restclient.descriptors.DeleteDescriptor;
-import de.mephisto.vpin.restclient.descriptors.ResetHighscoreDescriptor;
-import de.mephisto.vpin.restclient.descriptors.TableUploadDescriptor;
-import de.mephisto.vpin.server.competitions.ScoreSummary;
-import de.mephisto.vpin.server.highscores.HighscoreMetadata;
-import de.mephisto.vpin.server.highscores.ScoreList;
-import de.mephisto.vpin.server.popper.PopperService;
-import de.mephisto.vpin.server.system.SystemService;
-import de.mephisto.vpin.server.util.UploadUtil;
-import org.apache.commons.io.FilenameUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.server.ResponseStatusException;
+  import de.mephisto.vpin.commons.utils.FileUtils;
+  import de.mephisto.vpin.restclient.TableDetails;
+  import de.mephisto.vpin.restclient.descriptors.DeleteDescriptor;
+  import de.mephisto.vpin.restclient.descriptors.ResetHighscoreDescriptor;
+  import de.mephisto.vpin.restclient.descriptors.TableUploadDescriptor;
+  import de.mephisto.vpin.server.competitions.ScoreSummary;
+  import de.mephisto.vpin.server.highscores.HighscoreMetadata;
+  import de.mephisto.vpin.server.highscores.ScoreList;
+  import de.mephisto.vpin.server.popper.PopperService;
+  import de.mephisto.vpin.server.system.SystemService;
+  import de.mephisto.vpin.server.util.UploadUtil;
+  import org.apache.commons.io.FilenameUtils;
+  import org.slf4j.Logger;
+  import org.slf4j.LoggerFactory;
+  import org.springframework.beans.factory.annotation.Autowired;
+  import org.springframework.web.bind.annotation.*;
+  import org.springframework.web.multipart.MultipartFile;
+  import org.springframework.web.server.ResponseStatusException;
 
-import java.io.File;
-import java.util.List;
+  import java.io.File;
+  import java.util.List;
 
-import static de.mephisto.vpin.server.VPinStudioServer.API_SEGMENT;
-import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
-import static org.springframework.http.HttpStatus.NOT_FOUND;
+  import static de.mephisto.vpin.server.VPinStudioServer.API_SEGMENT;
+  import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
+  import static org.springframework.http.HttpStatus.NOT_FOUND;
 
 @RestController
 @RequestMapping(API_SEGMENT + "games")
@@ -45,11 +45,6 @@ public class GamesResource {
     return gameService.getGames();
   }
 
-  @GetMapping("/count")
-  public int getGameCount() {
-    return gameService.getGameCount();
-  }
-
   @GetMapping("/ids")
   public List<Integer> getGameId() {
     return gameService.getGameId();
@@ -58,11 +53,6 @@ public class GamesResource {
   @GetMapping("/recent/{count}")
   public ScoreSummary getRecentHighscores(@PathVariable("count") int count) {
     return gameService.getRecentHighscores(count);
-  }
-
-  @GetMapping("/scoredgames")
-  public List<Game> getGamesWithScore() {
-    return gameService.getGamesWithScore();
   }
 
   @GetMapping("/{id}")
@@ -108,11 +98,6 @@ public class GamesResource {
   @PostMapping("/save")
   public Game save(@RequestBody Game game) throws Exception {
     return gameService.save(game);
-  }
-
-  @GetMapping("/rom/{rom}")
-  public List<Game> findByRom(@PathVariable("rom") String rom) {
-    return gameService.getGamesByRom(rom);
   }
 
   @PostMapping("/upload/rom")
