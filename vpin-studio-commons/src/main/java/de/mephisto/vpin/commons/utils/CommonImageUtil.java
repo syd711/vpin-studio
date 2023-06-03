@@ -13,13 +13,14 @@ import org.slf4j.LoggerFactory;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
+import java.awt.geom.Ellipse2D;
 import java.awt.image.BufferedImage;
 import java.io.*;
 
-public class ImageUtil {
-  private final static Logger LOG = LoggerFactory.getLogger(ImageUtil.class);
+public class CommonImageUtil {
+  private final static Logger LOG = LoggerFactory.getLogger(CommonImageUtil.class);
 
-  public static void setClippedImage(ImageView imageView, int radius) {
+  public static Image setClippedImage(ImageView imageView, int radius) {
     javafx.scene.shape.Rectangle clip = new javafx.scene.shape.Rectangle(
         imageView.getFitWidth(), imageView.getFitHeight()
     );
@@ -37,6 +38,7 @@ public class ImageUtil {
 
     // store the rounded image in the imageView.
     imageView.setImage(clipped);
+    return clipped;
   }
 
   public static Image createAvatar(String initials) {
@@ -52,6 +54,27 @@ public class ImageUtil {
       int y = image.getHeight() / 2 + 14;
       int x = image.getWidth() / 2 - g.getFontMetrics().stringWidth(initials) / 2;
       g.drawString(initials, x, y);
+
+
+      return SwingFXUtils.toFXImage(image, null);
+    } catch (IOException e) {
+      LOG.error("Failed to generate avatar image: " + e.getMessage(), e);
+    }
+    return null;
+  }
+
+  public static Image createAvatarFromUrl(String url) {
+    try {
+      BufferedImage image = ImageIO.read(OverlayWindowFX.class.getResourceAsStream("avatar-blank.png"));
+      Graphics2D g = (Graphics2D) image.getGraphics();
+      setRendingHints(g);
+
+      int offset = 0;
+      Image fxImage = new Image(url);
+      BufferedImage avatarImage = SwingFXUtils.fromFXImage(fxImage, null);
+      int width = avatarImage.getWidth() - offset;
+      g.setClip(new Ellipse2D.Float(0, 0, width, width));
+//      g.drawImage(avatarImage, offset, offset, width, width, null);
 
 
       return SwingFXUtils.toFXImage(image, null);

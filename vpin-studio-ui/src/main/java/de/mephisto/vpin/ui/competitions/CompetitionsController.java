@@ -1,7 +1,7 @@
 package de.mephisto.vpin.ui.competitions;
 
 import de.mephisto.vpin.commons.fx.discord.DiscordUserEntryController;
-import de.mephisto.vpin.commons.utils.ImageUtil;
+import de.mephisto.vpin.commons.utils.CommonImageUtil;
 import de.mephisto.vpin.commons.utils.ScoreGraphUtil;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.CompetitionType;
@@ -184,7 +184,7 @@ public class CompetitionsController implements Initializable, StudioFXController
           Label label = new Label(discordServer.getName());
           label.setStyle("-fx-font-size: 14px;");
 
-          ImageUtil.setClippedImage(view, (int) (image.getWidth() / 2));
+          CommonImageUtil.setClippedImage(view, (int) (image.getWidth() / 2));
           serverBox.getChildren().addAll(view, label);
         }
 
@@ -207,7 +207,7 @@ public class CompetitionsController implements Initializable, StudioFXController
           Label label = new Label(discordPlayer.getName());
           label.setStyle("-fx-font-size: 14px;");
 
-          ImageUtil.setClippedImage(view, (int) (image.getWidth() / 2));
+          CommonImageUtil.setClippedImage(view, (int) (image.getWidth() / 2));
           ownerBox.getChildren().addAll(view, label);
         }
 

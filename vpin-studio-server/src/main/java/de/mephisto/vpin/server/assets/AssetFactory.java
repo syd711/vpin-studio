@@ -1,5 +1,7 @@
 package de.mephisto.vpin.server.assets;
 
+import de.mephisto.vpin.commons.fx.OverlayWindowFX;
+import de.mephisto.vpin.commons.utils.CommonImageUtil;
 import de.mephisto.vpin.restclient.PlayerDomain;
 import de.mephisto.vpin.restclient.PopperScreen;
 import de.mephisto.vpin.restclient.util.DateUtil;
@@ -8,12 +10,10 @@ import de.mephisto.vpin.server.competitions.ScoreSummary;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.players.Player;
 import de.mephisto.vpin.server.util.ImageUtil;
-import de.mephisto.vpin.server.util.ScoreHelper;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,14 +21,20 @@ import org.slf4j.LoggerFactory;
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.InputStream;
+import java.io.*;
 import java.net.URL;
 
 public class AssetFactory {
   private final static Logger LOG = LoggerFactory.getLogger(AssetFactory.class);
+
+  static {
+    try {
+      GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
+      ge.registerFont(Font.createFont(Font.TRUETYPE_FONT, OverlayWindowFX.class.getResourceAsStream("digital_counter_7.ttf")));
+    } catch (Exception e) {
+      LOG.error("Error loading font: " + e.getMessage(), e);
+    }
+  }
 
   public static byte[] createCompetitionStartedCard(@NonNull Asset asset, @NonNull Game game, @NonNull Competition competition) {
     final int HEADLINE_SIZE = 18;
@@ -113,7 +119,7 @@ public class AssetFactory {
 
   public static byte[] createCompetitionFinishedCard(Asset asset, @NonNull Game game, @NonNull Competition competition, @Nullable Player winner, @NonNull ScoreSummary summary) {
     final int HEADLINE_SIZE = 18;
-    final int SEPARATOR = 30;
+    final int SEPARATOR = 12;
     final int IMAGE_WIDTH = 180;
 
     try {
@@ -127,9 +133,9 @@ public class AssetFactory {
         }
       }
 
-      String first = ScoreHelper.formatScoreEntry(summary, 1);
-      String second = ScoreHelper.formatScoreEntry(summary, 1);
-      String third = ScoreHelper.formatScoreEntry(summary, 2);
+      String first = "1. " + summary.getScores().get(0).getPlayerInitials() + "  " + summary.getScores().get(0).getScore();
+      String second = "2. " + summary.getScores().get(1).getPlayerInitials() + "  " + summary.getScores().get(1).getScore();
+      String third = "3. " + summary.getScores().get(2).getPlayerInitials() + "  " + summary.getScores().get(2).getScore();
 
 
       byte[] data = asset.getData();
@@ -150,80 +156,101 @@ public class AssetFactory {
         table = table.substring(0, 35) + "...";
       }
 
-
+      //wheel icon
       File wheelIconFile = game.getPinUPMedia(PopperScreen.Wheel);
       if (wheelIconFile != null && wheelIconFile.exists()) {
         BufferedImage image = ImageUtil.loadImage(wheelIconFile);
         BufferedImage resizedImage = ImageUtil.resizeImage(image, IMAGE_WIDTH);
-        graphics.drawImage(resizedImage, null, background.getWidth() - 200, 16);
+        graphics.drawImage(resizedImage, null, background.getWidth() - IMAGE_WIDTH, 0);
       }
 
       BufferedImage image = null;
-      if (!StringUtils.isEmpty(winner.getAvatarUrl())) {
-        Image fxImage = new Image(winner.getAvatarUrl());
-        ImageView view = new ImageView();
-        view.setPreserveRatio(true);
-        view.setFitWidth(IMAGE_WIDTH);
-        view.setFitHeight(IMAGE_WIDTH);
-        de.mephisto.vpin.commons.utils.ImageUtil.setClippedImage(view, (int) (fxImage.getWidth() / 2));
-        image = SwingFXUtils.fromFXImage(view.getImage(), null);
+      if (winner != null && !StringUtils.isEmpty(winner.getAvatarUrl())) {
+        Image avatarFromUrl = CommonImageUtil.createAvatarFromUrl(winner.getAvatarUrl());
+        image = SwingFXUtils.fromFXImage(avatarFromUrl, null);
+        image = ImageUtil.resizeImage(image, IMAGE_WIDTH- 100);
       }
-      else if (winner.getAvatar() != null && winner.getAvatar().getData() != null) {
+      else if (winner != null && winner.getAvatar() != null && winner.getAvatar().getData() != null) {
         InputStream is = new ByteArrayInputStream(winner.getAvatar().getData());
         image = ImageIO.read(is);
+
       }
       else {
-        Image avatar = de.mephisto.vpin.commons.utils.ImageUtil.createAvatar(winner.getInitials());
+        String initials = summary.getScores().get(0).getPlayerInitials();
+        if(winner != null)  {
+          initials = winner.getInitials();
+        }
+        Image avatar = CommonImageUtil.createAvatar(initials);
         image = SwingFXUtils.fromFXImage(avatar, null);
       }
-      graphics.drawImage(image, null, 16, 16);
+      image = ImageUtil.resizeImage(image, IMAGE_WIDTH);
+      graphics.drawImage(image, null, 16, 0);
 
 
-      int yOffset = 6;
+      int yOffset = 0;
       int xOffset = 24;
       int imageY = 0;
-      Font font = new Font("System", Font.BOLD, 24);
+      Font font = new Font("System", Font.BOLD, 28);
       graphics.setFont(font);
-      int textWidget = graphics.getFontMetrics().stringWidth("Congratulations");
-      graphics.drawString("Congratulations", background.getWidth() / 2 - textWidget / 2, yOffset += 48);
+      int textWidth = graphics.getFontMetrics().stringWidth("Congratulations!");
+      graphics.drawString("Congratulations!", background.getWidth() / 2 - textWidth / 2, yOffset += 28 + SEPARATOR);
 
-      //TABLE
-      font = new Font("System", Font.PLAIN, HEADLINE_SIZE);
+      //Name
+      int nameSize = 70;
+      font = new Font("System", Font.PLAIN, nameSize);
       graphics.setFont(font);
-      graphics.drawString("Table", xOffset, yOffset += 48);
+      textWidth = graphics.getFontMetrics().stringWidth(winnerName);
+      while(textWidth > 400) {
+        font = new Font("System", Font.PLAIN, nameSize--);
+        graphics.setFont(font);
+        textWidth = graphics.getFontMetrics().stringWidth(winnerName);
+      }
+      graphics.drawString(winnerName, background.getWidth() / 2 - textWidth / 2, yOffset += nameSize +SEPARATOR);
 
-      font = new Font("System", Font.BOLD, 30);
+      //is the winner
+      font = new Font("System", Font.PLAIN, 20);
       graphics.setFont(font);
-      graphics.drawString(winnerName, xOffset, yOffset += HEADLINE_SIZE + 12);
-      imageY = yOffset;
+      textWidth = graphics.getFontMetrics().stringWidth("is the winner of the");
+      graphics.drawString("is the winner of the", background.getWidth() / 2 - textWidth / 2, yOffset += 20 + SEPARATOR);
 
+      //competitions name
+      int competitionNameSize = 28;
+      String cName = "\"" + competition.getName() + "\"";
+      font = new Font("System", Font.BOLD, competitionNameSize);
+      graphics.setFont(font);
+      textWidth = graphics.getFontMetrics().stringWidth(cName);
+      while(textWidth > 400) {
+        font = new Font("System", Font.BOLD, competitionNameSize--);
+        graphics.setFont(font);
+        textWidth = graphics.getFontMetrics().stringWidth(cName);
+      }
+      graphics.drawString(cName, background.getWidth() / 2 - textWidth / 2, yOffset += competitionNameSize + SEPARATOR);
+
+      //competition
+      font = new Font("System", Font.PLAIN, 20);
+      graphics.setFont(font);
+      textWidth = graphics.getFontMetrics().stringWidth("competition!");
+      graphics.drawString("competition!", background.getWidth() / 2 - textWidth / 2, yOffset += 20 + SEPARATOR);
 
       //1.
-      font = new Font("System", Font.PLAIN, HEADLINE_SIZE);
+      font = new Font("Digital Counter 7", Font.PLAIN, 40);
       graphics.setFont(font);
-      graphics.drawString("", xOffset, yOffset += SEPARATOR);
+      textWidth = graphics.getFontMetrics().stringWidth(first);
+      graphics.drawString(first, background.getWidth() / 2 - textWidth / 2, yOffset += 40 + SEPARATOR);
 
-      font = new Font("System", Font.BOLD, 30);
-      graphics.setFont(font);
-      graphics.drawString(first, xOffset, yOffset += HEADLINE_SIZE + 12);
 
       //2.
-      font = new Font("System", Font.PLAIN, HEADLINE_SIZE);
+      font = new Font("Digital Counter 7", Font.PLAIN, 32);
       graphics.setFont(font);
-      graphics.drawString("", xOffset, yOffset += SEPARATOR);
+      textWidth = graphics.getFontMetrics().stringWidth(second);
+      graphics.drawString(second, background.getWidth() / 2 - textWidth / 2, yOffset += 32 + SEPARATOR);
 
-      font = new Font("System", Font.BOLD, 30);
-      graphics.setFont(font);
-      graphics.drawString(second, xOffset, yOffset += HEADLINE_SIZE + 12);
 
       //3.
-      font = new Font("System", Font.PLAIN, HEADLINE_SIZE);
+      font = new Font("Digital Counter 7", Font.PLAIN, 28);
       graphics.setFont(font);
-      graphics.drawString("", xOffset, yOffset += SEPARATOR);
-
-      font = new Font("System", Font.BOLD, 30);
-      graphics.setFont(font);
-      graphics.drawString(third, xOffset, yOffset += HEADLINE_SIZE + 12);
+      textWidth = graphics.getFontMetrics().stringWidth(third);
+      graphics.drawString(third, background.getWidth() / 2 - textWidth / 2, yOffset += 28 + SEPARATOR);
 
 
       return ImageUtil.toBytes(background);

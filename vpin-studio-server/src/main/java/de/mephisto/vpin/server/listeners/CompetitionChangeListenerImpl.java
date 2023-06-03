@@ -19,6 +19,7 @@ import de.mephisto.vpin.server.players.Player;
 import de.mephisto.vpin.server.popper.PopperService;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
+import javafx.application.Platform;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -157,8 +158,10 @@ public class CompetitionChangeListenerImpl implements InitializingBean, Competit
             discordService.sendMessage(serverId, channelId, message);
           }
           else {
-            byte[] image = assetService.getCompetitionFinishedCard(competition, game, winner, scoreSummary);
-            discordService.sendMessage(serverId, channelId, message, image, competition.getName() + ".png", null);
+            Platform.runLater(() -> {
+              byte[] image = assetService.getCompetitionFinishedCard(competition, game, winner, scoreSummary);
+              discordService.sendMessage(serverId, channelId, message, image, competition.getName() + ".png", null);
+            });
           }
         }
         else {

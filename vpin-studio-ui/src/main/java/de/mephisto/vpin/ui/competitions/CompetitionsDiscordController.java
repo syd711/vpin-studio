@@ -2,7 +2,7 @@ package de.mephisto.vpin.ui.competitions;
 
 import de.mephisto.vpin.commons.fx.OverlayWindowFX;
 import de.mephisto.vpin.commons.fx.widgets.WidgetCompetitionSummaryController;
-import de.mephisto.vpin.commons.utils.ImageUtil;
+import de.mephisto.vpin.commons.utils.CommonImageUtil;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.CompetitionType;
 import de.mephisto.vpin.restclient.PopperScreen;
@@ -378,7 +378,7 @@ public class CompetitionsDiscordController implements Initializable, StudioFXCon
         view.setFitWidth(50);
         view.setFitHeight(50);
 
-        ImageUtil.setClippedImage(view, (int) (image.getWidth() / 2));
+        CommonImageUtil.setClippedImage(view, (int) (image.getWidth() / 2));
         Label label = new Label(discordServer.getName());
         if (value.isActive()) {
           label.setStyle("-fx-font-color: #33CC00;-fx-text-fill:#33CC00;");
@@ -401,7 +401,7 @@ public class CompetitionsDiscordController implements Initializable, StudioFXCon
         view.setPreserveRatio(true);
         view.setFitWidth(50);
         view.setFitHeight(50);
-        ImageUtil.setClippedImage(view, (int) (image.getWidth() / 2));
+        CommonImageUtil.setClippedImage(view, (int) (image.getWidth() / 2));
 
         Label label = new Label(discordPlayer.getName());
         if (value.isActive()) {

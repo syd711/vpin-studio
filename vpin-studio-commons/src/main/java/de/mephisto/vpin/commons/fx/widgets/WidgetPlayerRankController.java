@@ -2,7 +2,7 @@ package de.mephisto.vpin.commons.fx.widgets;
 
 import de.mephisto.vpin.commons.fx.LoadingOverlayController;
 import de.mephisto.vpin.commons.fx.OverlayWindowFX;
-import de.mephisto.vpin.commons.utils.ImageUtil;
+import de.mephisto.vpin.commons.utils.CommonImageUtil;
 import de.mephisto.vpin.restclient.AssetType;
 import de.mephisto.vpin.restclient.representations.RankedPlayerRepresentation;
 import javafx.application.Platform;
@@ -110,7 +110,7 @@ public class WidgetPlayerRankController extends WidgetController implements Init
       view.setPreserveRatio(true);
       view.setFitWidth(50);
       view.setFitHeight(50);
-      ImageUtil.setClippedImage(view, (int) (image.getWidth() / 2));
+      CommonImageUtil.setClippedImage(view, (int) (image.getWidth() / 2));
 
       hBox.setAlignment(Pos.CENTER_LEFT);
       hBox.getChildren().add(view);

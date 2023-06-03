@@ -1,6 +1,6 @@
 package de.mephisto.vpin.ui.players;
 
-import de.mephisto.vpin.commons.utils.ImageUtil;
+import de.mephisto.vpin.commons.utils.CommonImageUtil;
 import de.mephisto.vpin.restclient.PlayerDomain;
 import de.mephisto.vpin.restclient.representations.PlayerRepresentation;
 import de.mephisto.vpin.ui.NavigationController;
@@ -82,7 +82,7 @@ public class DiscordPlayersController implements Initializable {
       view.setPreserveRatio(true);
       view.setFitWidth(50);
       view.setFitHeight(50);
-      ImageUtil.setClippedImage(view, (int) (image.getWidth() / 2));
+      CommonImageUtil.setClippedImage(view, (int) (image.getWidth() / 2));
       return new SimpleObjectProperty(view);
     });
     initialsColumn.setCellValueFactory(cellData -> {

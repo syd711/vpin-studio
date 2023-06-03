@@ -88,7 +88,10 @@ public class DiscordService implements InitializingBean, PreferenceChangedListen
   @Nullable
   public Player getPlayer(long serverId, long memberId) {
     if (this.discordClient != null) {
-      return toPlayer(this.discordClient.getMember(serverId, memberId));
+      DiscordMember member = this.discordClient.getMember(serverId, memberId);
+      if (member != null) {
+        return toPlayer(member);
+      }
     }
     return null;
   }
@@ -441,14 +444,14 @@ public class DiscordService implements InitializingBean, PreferenceChangedListen
   }
 
   public boolean isCompetitionActive(long serverId, long channelId, String uuid) {
-    if(this.discordClient == null) {
+    if (this.discordClient == null) {
       return true;
     }
 
     //well, we abuse this as a connection check.
     String topic = this.discordClient.getTopic(serverId, channelId);
     //null means there are problem during reading from Discord, so let's assume everything is ok
-    if(topic == null) {
+    if (topic == null) {
       return true;
     }
 
@@ -459,7 +462,7 @@ public class DiscordService implements InitializingBean, PreferenceChangedListen
 
     for (DiscordMessage pinnedMessage : pinnedMessages) {
       if (pinnedMessage.getRaw().contains(DiscordChannelMessageFactory.FINISHED_INDICATOR)
-      || pinnedMessage.getRaw().contains(DiscordChannelMessageFactory.CANCEL_INDICATOR)) {
+          || pinnedMessage.getRaw().contains(DiscordChannelMessageFactory.CANCEL_INDICATOR)) {
         LOG.info("Found finished or canceled message indicator for competition " + uuid);
         return false;
       }
@@ -470,7 +473,7 @@ public class DiscordService implements InitializingBean, PreferenceChangedListen
   }
 
   public void addCompetitionPlayer(long serverId, long channelId, long msgId) {
-    if(this.discordClient != null) {
+    if (this.discordClient != null) {
       List<DiscordMessage> pinnedMessages = discordClient.getPinnedMessages(serverId, channelId);
       if (pinnedMessages.size() < 50) {
         discordClient.pinMessage(serverId, channelId, msgId);
@@ -482,7 +485,7 @@ public class DiscordService implements InitializingBean, PreferenceChangedListen
   }
 
   public void removeCompetitionPlayer(long serverId, long channelId) {
-    if(this.discordClient != null) {
+    if (this.discordClient != null) {
       long botId = getBotId();
       List<DiscordMessage> pinnedMessages = discordClient.getPinnedMessages(serverId, channelId);
       for (DiscordMessage pinnedMessage : pinnedMessages) {
@@ -499,7 +502,7 @@ public class DiscordService implements InitializingBean, PreferenceChangedListen
   }
 
   public boolean clearCache() {
-    if(this.discordClient != null) {
+    if (this.discordClient != null) {
       this.discordClient.clearCache();
     }
     return true;

@@ -2,7 +2,7 @@ package de.mephisto.vpin.ui.archiving;
 
 import de.mephisto.vpin.commons.ArchiveSourceType;
 import de.mephisto.vpin.commons.utils.FileUtils;
-import de.mephisto.vpin.commons.utils.ImageUtil;
+import de.mephisto.vpin.commons.utils.CommonImageUtil;
 import de.mephisto.vpin.commons.utils.SystemCommandExecutor;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.representations.ArchiveDescriptorRepresentation;
@@ -299,7 +299,7 @@ public class RepositoryController implements Initializable, StudioEventListener 
           view.setPreserveRatio(true);
           view.setFitWidth(80);
           view.setFitHeight(80);
-          ImageUtil.setClippedImage(view, (int) (wheel.getWidth() / 2));
+          CommonImageUtil.setClippedImage(view, (int) (wheel.getWidth() / 2));
           return new SimpleObjectProperty(view);
         }
       }

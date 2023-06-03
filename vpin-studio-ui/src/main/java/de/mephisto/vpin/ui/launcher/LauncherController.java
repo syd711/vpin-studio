@@ -3,7 +3,7 @@ package de.mephisto.vpin.ui.launcher;
 import de.mephisto.vpin.commons.ServerInstallationUtil;
 import de.mephisto.vpin.commons.fx.LoadingOverlayController;
 import de.mephisto.vpin.commons.fx.UIDefaults;
-import de.mephisto.vpin.commons.utils.ImageUtil;
+import de.mephisto.vpin.commons.utils.CommonImageUtil;
 import de.mephisto.vpin.commons.utils.PropertiesStore;
 import de.mephisto.vpin.commons.utils.Updater;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
@@ -261,7 +261,7 @@ public class LauncherController implements Initializable {
       view.setPreserveRatio(true);
       view.setFitWidth(50);
       view.setFitHeight(50);
-      ImageUtil.setClippedImage(view, (int) (value.getAvatar().getWidth() / 2));
+      CommonImageUtil.setClippedImage(view, (int) (value.getAvatar().getWidth() / 2));
       return new SimpleObjectProperty(view);
     });
 

@@ -123,8 +123,11 @@ public class PlayerService {
 
       if (initials.containsKey(player.getInitials())) {
         Player duplicate = initials.get(player.getInitials());
-        duplicate.setDuplicatePlayerName(player.getName());
-        player.setDuplicatePlayerName(duplicate.getName());
+
+        if(duplicate.getDomain() == null && player.getDomain() == null) {
+          duplicate.setDuplicatePlayerName(player.getName());
+          player.setDuplicatePlayerName(duplicate.getName());
+        }
       }
       else {
         initials.put(player.getInitials(), player);

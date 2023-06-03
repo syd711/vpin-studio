@@ -1,6 +1,6 @@
 package de.mephisto.vpin.ui.players;
 
-import de.mephisto.vpin.commons.utils.ImageUtil;
+import de.mephisto.vpin.commons.utils.CommonImageUtil;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.AssetType;
 import de.mephisto.vpin.restclient.representations.PlayerRepresentation;
@@ -179,7 +179,7 @@ public class BuiltInPlayersController implements Initializable {
       view.setPreserveRatio(true);
       view.setFitWidth(50);
       view.setFitHeight(50);
-      ImageUtil.setClippedImage(view, (int) (image.getWidth() / 2));
+      CommonImageUtil.setClippedImage(view, (int) (image.getWidth() / 2));
       return new SimpleObjectProperty(view);
     });
     initialsColumn.setCellValueFactory(cellData -> {
