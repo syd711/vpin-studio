@@ -179,6 +179,21 @@ public class DiscordClient {
 
         DiscordMessage msg = toMessage(getMessage(serverId, channelId, messageId));
         this.pinnedMessagesCache.get(channelId).getMessages().add(msg);
+
+        new Thread(() -> {
+          try {
+            Thread.currentThread().setName("Pinned Messsages Cleanup");
+            MessageHistory complete = MessageHistory.getHistoryAfter(channel, String.valueOf(messageId)).complete();
+            List<Message> retrievedHistory = complete.getRetrievedHistory();
+            for (Message message : retrievedHistory) {
+              if (message.getType().equals(MessageType.CHANNEL_PINNED_ADD)) {
+                channel.deleteMessageById(message.getId()).complete();
+              }
+            }
+          } catch (Exception e) {
+            LOG.error("Failed to cleanup pin messages: " + e.getMessage(), e);
+          }
+        }).start();
       }
       else {
         LOG.error("No discord channel found for id '" + channelId + "'");
