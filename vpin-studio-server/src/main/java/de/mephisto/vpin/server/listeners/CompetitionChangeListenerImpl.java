@@ -77,7 +77,8 @@ public class CompetitionChangeListenerImpl implements InitializingBean, Competit
           LOG.info("The " + competition + " is still available and active, skipping init process.");
         }
         else if (isOwner) {
-          String description = "This is an online competition. Player bots can join this competition. Use the **initials of your** bot when you create a new highscore.\nCompetition updates are pinned on this channel.\n\n";
+          String description = "This is an online competition. Player bots can join this competition.\nUse the **initials of your bot** when you create a new highscore. " +
+              "Only these will be submitted to the competition.\nCompetition updates are pinned on this channel.\n\n";
           String base64Data = CompetitionDataHelper.DATA_INDICATOR + CompetitionDataHelper.toBase64(competition, game);
           byte[] image = assetService.getCompetitionStartedCard(competition, game);
           String message = discordChannelMessageFactory.createDiscordCompetitionCreatedMessage(competition.getDiscordServerId(), botId, competition.getUuid());
