@@ -5,6 +5,15 @@ public class DiscordMember {
   private String name;
   private String initials;
   private String avatarUrl;
+  private boolean bot;
+
+  public boolean isBot() {
+    return bot;
+  }
+
+  public void setBot(boolean bot) {
+    this.bot = bot;
+  }
 
   public String getName() {
     return name;

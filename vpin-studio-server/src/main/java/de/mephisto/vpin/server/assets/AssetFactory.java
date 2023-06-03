@@ -2,7 +2,6 @@ package de.mephisto.vpin.server.assets;
 
 import de.mephisto.vpin.commons.fx.OverlayWindowFX;
 import de.mephisto.vpin.commons.utils.CommonImageUtil;
-import de.mephisto.vpin.restclient.PlayerDomain;
 import de.mephisto.vpin.restclient.PopperScreen;
 import de.mephisto.vpin.restclient.util.DateUtil;
 import de.mephisto.vpin.server.competitions.Competition;
@@ -21,7 +20,10 @@ import org.slf4j.LoggerFactory;
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.io.*;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.InputStream;
 import java.net.URL;
 
 public class AssetFactory {
@@ -118,19 +120,14 @@ public class AssetFactory {
   }
 
   public static byte[] createCompetitionFinishedCard(Asset asset, @NonNull Game game, @NonNull Competition competition, @Nullable Player winner, @NonNull ScoreSummary summary) {
-    final int HEADLINE_SIZE = 18;
-    final int SEPARATOR = 12;
+    final int SEPARATOR = 10;
     final int IMAGE_WIDTH = 180;
 
     try {
+
       String winnerName = competition.getWinnerInitials();
-      String winnerRaw = competition.getWinnerInitials();
       if (winner != null) {
         winnerName = winner.getName();
-        winnerRaw = winner.getName();
-        if (PlayerDomain.DISCORD.name().equals(winner.getDomain())) {
-          winnerRaw = "<@" + winner.getId() + ">";
-        }
       }
 
       String first = "1. " + summary.getScores().get(0).getPlayerInitials() + "  " + summary.getScores().get(0).getScore();
@@ -168,44 +165,44 @@ public class AssetFactory {
       if (winner != null && !StringUtils.isEmpty(winner.getAvatarUrl())) {
         Image avatarFromUrl = CommonImageUtil.createAvatarFromUrl(winner.getAvatarUrl());
         image = SwingFXUtils.fromFXImage(avatarFromUrl, null);
-        image = ImageUtil.resizeImage(image, IMAGE_WIDTH- 100);
+        image = ImageUtil.resizeImage(image, IMAGE_WIDTH - 24);
       }
       else if (winner != null && winner.getAvatar() != null && winner.getAvatar().getData() != null) {
-        InputStream is = new ByteArrayInputStream(winner.getAvatar().getData());
-        image = ImageIO.read(is);
-
+        Image avatarFromUrl = CommonImageUtil.createAvatarFromBytes(winner.getAvatar().getData());
+        image = SwingFXUtils.fromFXImage(avatarFromUrl, null);
+        image = ImageUtil.resizeImage(image, IMAGE_WIDTH - 24);
       }
       else {
         String initials = summary.getScores().get(0).getPlayerInitials();
-        if(winner != null)  {
+        if (winner != null) {
           initials = winner.getInitials();
         }
         Image avatar = CommonImageUtil.createAvatar(initials);
         image = SwingFXUtils.fromFXImage(avatar, null);
+        image = ImageUtil.resizeImage(image, IMAGE_WIDTH - 24);
       }
-      image = ImageUtil.resizeImage(image, IMAGE_WIDTH);
-      graphics.drawImage(image, null, 16, 0);
+      graphics.drawImage(image, null, 12, 12);
 
 
       int yOffset = 0;
       int xOffset = 24;
       int imageY = 0;
-      Font font = new Font("System", Font.BOLD, 28);
+      Font font = new Font("System", Font.PLAIN, 20);
       graphics.setFont(font);
       int textWidth = graphics.getFontMetrics().stringWidth("Congratulations!");
       graphics.drawString("Congratulations!", background.getWidth() / 2 - textWidth / 2, yOffset += 28 + SEPARATOR);
 
       //Name
-      int nameSize = 70;
-      font = new Font("System", Font.PLAIN, nameSize);
+      int nameSize = 56;
+      font = new Font("System", Font.BOLD, nameSize);
       graphics.setFont(font);
       textWidth = graphics.getFontMetrics().stringWidth(winnerName);
-      while(textWidth > 400) {
-        font = new Font("System", Font.PLAIN, nameSize--);
+      while (textWidth > 400) {
+        font = new Font("System", Font.BOLD, nameSize--);
         graphics.setFont(font);
         textWidth = graphics.getFontMetrics().stringWidth(winnerName);
       }
-      graphics.drawString(winnerName, background.getWidth() / 2 - textWidth / 2, yOffset += nameSize +SEPARATOR);
+      graphics.drawString(winnerName, background.getWidth() / 2 - textWidth / 2, yOffset += nameSize + SEPARATOR);
 
       //is the winner
       font = new Font("System", Font.PLAIN, 20);
@@ -219,7 +216,7 @@ public class AssetFactory {
       font = new Font("System", Font.BOLD, competitionNameSize);
       graphics.setFont(font);
       textWidth = graphics.getFontMetrics().stringWidth(cName);
-      while(textWidth > 400) {
+      while (textWidth > 400) {
         font = new Font("System", Font.BOLD, competitionNameSize--);
         graphics.setFont(font);
         textWidth = graphics.getFontMetrics().stringWidth(cName);

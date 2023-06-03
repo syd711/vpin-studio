@@ -63,22 +63,43 @@ public class CommonImageUtil {
     return null;
   }
 
+  public static Image createAvatarFromBytes(byte[] data) {
+    try {
+      BufferedImage image = ImageIO.read(OverlayWindowFX.class.getResourceAsStream("avatar-blank.png"));
+      Graphics2D g = (Graphics2D) image.getGraphics();
+      setRendingHints(g);
+
+      int offset = 24;
+      Image fxImage = new Image(new ByteArrayInputStream(data));
+      BufferedImage avatarImage = SwingFXUtils.fromFXImage(fxImage, null);
+      avatarImage = resizeImage(avatarImage, image.getWidth() - offset, image.getHeight() - offset);
+      int width = avatarImage.getWidth();
+      g.setClip(new Ellipse2D.Float(offset/2, offset/2, width, width));
+      g.drawImage(avatarImage, offset/2, offset/2, width, width, null);
+
+      return SwingFXUtils.toFXImage(image, null);
+    } catch (Exception e) {
+      LOG.error("Failed to generate avatar image: " + e.getMessage(), e);
+    }
+    return null;
+  }
+
   public static Image createAvatarFromUrl(String url) {
     try {
       BufferedImage image = ImageIO.read(OverlayWindowFX.class.getResourceAsStream("avatar-blank.png"));
       Graphics2D g = (Graphics2D) image.getGraphics();
       setRendingHints(g);
 
-      int offset = 0;
+      int offset = 24;
       Image fxImage = new Image(url);
       BufferedImage avatarImage = SwingFXUtils.fromFXImage(fxImage, null);
-      int width = avatarImage.getWidth() - offset;
-      g.setClip(new Ellipse2D.Float(0, 0, width, width));
-//      g.drawImage(avatarImage, offset, offset, width, width, null);
-
+      avatarImage = resizeImage(avatarImage, image.getWidth() - offset, image.getHeight() - offset);
+      int width = avatarImage.getWidth();
+      g.setClip(new Ellipse2D.Float(offset/2, offset/2, width, width));
+      g.drawImage(avatarImage, offset/2, offset/2, width, width, null);
 
       return SwingFXUtils.toFXImage(image, null);
-    } catch (IOException e) {
+    } catch (Exception e) {
       LOG.error("Failed to generate avatar image: " + e.getMessage(), e);
     }
     return null;
@@ -92,6 +113,9 @@ public class CommonImageUtil {
     g2d.setRenderingHint(
         RenderingHints.KEY_TEXT_ANTIALIASING,
         RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+    g2d.setRenderingHint(
+        RenderingHints.KEY_ANTIALIASING,
+        RenderingHints.VALUE_ANTIALIAS_ON);
   }
 
   @SuppressWarnings("unused")

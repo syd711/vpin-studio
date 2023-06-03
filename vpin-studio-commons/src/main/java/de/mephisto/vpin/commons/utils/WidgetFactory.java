@@ -65,6 +65,15 @@ public class WidgetFactory {
     return fontIcon;
   }
 
+
+  public static FontIcon createBotIcon() {
+    FontIcon fontIcon = new FontIcon();
+    fontIcon.setIconSize(18);
+    fontIcon.setIconColor(Paint.valueOf("#5865F2"));
+    fontIcon.setIconLiteral("mdi2r-robot");
+    return fontIcon;
+  }
+
   public static FontIcon createCheckboxIcon() {
     FontIcon fontIcon = new FontIcon();
     fontIcon.setIconSize(18);

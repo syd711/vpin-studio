@@ -20,6 +20,7 @@
                     <columns>
                   <TableColumn fx:id="avatarColumn" minWidth="0.0" prefWidth="111.20007634162903" style="-fx-alignment: CENTER;" text="Avatar" />
                         <TableColumn fx:id="nameColumn" prefWidth="358.40000915527344" style="-fx-alignment: BASELINE_LEFT;" text="Name" />
+                  <TableColumn fx:id="botColumn" minWidth="0.0" prefWidth="92.800048828125" style="-fx-alignment: CENTER;" text="BOT" />
                   <TableColumn fx:id="initialsColumn" minWidth="0.0" prefWidth="92.800048828125" style="-fx-alignment: CENTER;" text="Initials" />
                     </columns>
                 </TableView>

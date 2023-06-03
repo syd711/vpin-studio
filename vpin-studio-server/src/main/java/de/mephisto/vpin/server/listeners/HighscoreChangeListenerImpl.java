@@ -95,15 +95,15 @@ public class HighscoreChangeListenerImpl implements InitializingBean, HighscoreC
 
     long discordServerId = competition.getDiscordServerId();
     long discordChannelId = competition.getDiscordChannelId();
-    DiscordBotStatus status = discordService.getStatus(competition.getDiscordServerId());
+    DiscordBotStatus botStatus = discordService.getStatus(competition.getDiscordServerId());
 
     LOG.info("****** Processing Discord Highscore Change Event for " + game.getGameDisplayName() + " *********");
     LOG.info("The new score: " + newScore);
     if (newScore.getPlayerInitials().contains("?")) {
       LOG.info("Highscore update has been skipped, initials with '?' are filtered.");
     }
-    else if (!newScore.getPlayerInitials().equalsIgnoreCase(status.getBotInitials())) {
-      LOG.info("Highscore update has been skipped, the initials '" + newScore.getPlayerInitials() + "' do not belong to the our bot ('" + status.getBotInitials() + "').");
+    else if (!newScore.getPlayerInitials().equalsIgnoreCase(botStatus.getBotInitials())) {
+      LOG.info("Highscore update has been skipped, the initials '" + newScore.getPlayerInitials() + "' do not belong to the our bot ('" + botStatus.getBotInitials() + "').");
     }
     else {
       ScoreSummary scoreSummary = discordService.getScoreSummary(highscoreParser, competition.getUuid(), discordServerId, discordChannelId);

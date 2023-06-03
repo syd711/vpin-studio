@@ -2,6 +2,7 @@ package de.mephisto.vpin.server.listeners;
 
 import de.mephisto.vpin.connectors.discord.DiscordMember;
 import de.mephisto.vpin.restclient.CompetitionType;
+import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.server.assets.AssetService;
 import de.mephisto.vpin.server.competitions.Competition;
 import de.mephisto.vpin.server.competitions.CompetitionChangeListener;
@@ -17,6 +18,7 @@ import de.mephisto.vpin.server.highscores.Highscore;
 import de.mephisto.vpin.server.highscores.HighscoreService;
 import de.mephisto.vpin.server.players.Player;
 import de.mephisto.vpin.server.popper.PopperService;
+import de.mephisto.vpin.server.preferences.PreferencesService;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import javafx.application.Platform;
@@ -37,6 +39,9 @@ public class CompetitionChangeListenerImpl implements InitializingBean, Competit
 
   @Autowired
   private CompetitionService competitionService;
+
+  @Autowired
+  private PreferencesService preferencesService;
 
   @Autowired
   private HighscoreService highscoreService;
@@ -72,11 +77,12 @@ public class CompetitionChangeListenerImpl implements InitializingBean, Competit
           LOG.info("The " + competition + " is still available and active, skipping init process.");
         }
         else if (isOwner) {
+          String description = "This is an online competition. Player bots can join this competition. Use the **initials of your** bot when you create a new highscore.\nCompetition updates are pinned on this channel.\n\n";
           String base64Data = CompetitionDataHelper.DATA_INDICATOR + CompetitionDataHelper.toBase64(competition, game);
           byte[] image = assetService.getCompetitionStartedCard(competition, game);
           String message = discordChannelMessageFactory.createDiscordCompetitionCreatedMessage(competition.getDiscordServerId(), botId, competition.getUuid());
 
-          long messageId = discordService.sendMessage(serverId, channelId, message, image, competition.getName() + ".png", base64Data);
+          long messageId = discordService.sendMessage(serverId, channelId, message, image, competition.getName() + ".png", description + base64Data);
           discordService.initCompetition(serverId, channelId, messageId);
           LOG.info("Finished Discord update of \"" + competition.getName() + "\"");
         }
@@ -94,7 +100,8 @@ public class CompetitionChangeListenerImpl implements InitializingBean, Competit
           if (serverId > 0 && channelId > 0 && bot != null) {
             byte[] image = assetService.getCompetitionStartedCard(competition, game);
             String message = DiscordOfflineChannelMessageFactory.createOfflineCompetitionCreatedMessage(competition, game);
-            String subText = "This is an offline competition. Other player bots can't join.";
+            String vPinName = (String) preferencesService.getPreferenceValue(PreferenceNames.SYSTEM_NAME, "?");
+            String subText = "This is an offline competition. Only players on \"" + vPinName + "\" can participate.";
             if (competition.isHighscoreReset()) {
               subText += "\n\nThe highscore of this table has been resetted.";
             }

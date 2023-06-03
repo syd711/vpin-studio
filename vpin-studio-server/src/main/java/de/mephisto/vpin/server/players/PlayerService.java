@@ -49,9 +49,7 @@ public class PlayerService {
   public List<Player> getPlayersForDomain(PlayerDomain domain) {
     if (domain.equals(PlayerDomain.DISCORD) && discordService.isEnabled()) {
       List<Player> players = discordService.getPlayers();
-      List<Player> all = new ArrayList<>(playerRepository.findAll());
-      all.addAll(players);
-      duplicatesCheck(all);
+      duplicatesCheck(players);
       return players;
     }
     return Collections.emptyList();

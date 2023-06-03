@@ -1,6 +1,7 @@
 package de.mephisto.vpin.ui.players;
 
 import de.mephisto.vpin.commons.utils.CommonImageUtil;
+import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.PlayerDomain;
 import de.mephisto.vpin.restclient.representations.PlayerRepresentation;
 import de.mephisto.vpin.ui.NavigationController;
@@ -29,6 +30,9 @@ public class DiscordPlayersController implements Initializable {
 
   @FXML
   private TableView<PlayerRepresentation> tableView;
+
+  @FXML
+  private TableColumn<PlayerRepresentation, String> botColumn;
 
   @FXML
   private TableColumn<PlayerRepresentation, String> nameColumn;
@@ -84,6 +88,14 @@ public class DiscordPlayersController implements Initializable {
       view.setFitHeight(50);
       CommonImageUtil.setClippedImage(view, (int) (image.getWidth() / 2));
       return new SimpleObjectProperty(view);
+    });
+    botColumn.setCellValueFactory(cellData -> {
+      PlayerRepresentation value = cellData.getValue();
+      if (!value.isBot()) {
+        return new SimpleObjectProperty("");
+      }
+
+      return new SimpleObjectProperty(WidgetFactory.createBotIcon());
     });
     initialsColumn.setCellValueFactory(cellData -> {
       PlayerRepresentation value = cellData.getValue();

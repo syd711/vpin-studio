@@ -22,6 +22,16 @@ public class PlayerRepresentation {
 
   private String duplicatePlayerName;
 
+  private boolean bot;
+
+  public boolean isBot() {
+    return bot;
+  }
+
+  public void setBot(boolean bot) {
+    this.bot = bot;
+  }
+
   public String getDuplicatePlayerName() {
     return duplicatePlayerName;
   }

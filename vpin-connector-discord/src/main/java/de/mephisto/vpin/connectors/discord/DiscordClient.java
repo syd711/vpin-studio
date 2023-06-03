@@ -388,6 +388,7 @@ public class DiscordClient {
     discordMember.setId(member.getIdLong());
     discordMember.setName(name);
     discordMember.setInitials(initials);
+    discordMember.setBot(member.getUser().isBot());
     discordMember.setAvatarUrl(member.getEffectiveAvatarUrl());
     return discordMember;
   }

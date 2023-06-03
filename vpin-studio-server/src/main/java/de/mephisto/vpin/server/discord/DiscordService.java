@@ -335,9 +335,25 @@ public class DiscordService implements InitializingBean, PreferenceChangedListen
 
   public Player getPlayerByInitials(long serverId, String initials) {
     if (serverId > 0) {
+      List<DiscordMember> results = new ArrayList<>();
       for (DiscordMember member : this.getMembers(serverId)) {
         if (!StringUtils.isEmpty(member.getInitials()) && member.getInitials().equalsIgnoreCase(initials.toUpperCase())) {
-          return toPlayer(member);
+          results.add(member);
+        }
+      }
+
+      if (results.size() == 1) {
+        return toPlayer(results.get(0));
+      }
+      else if (results.size() > 1) {
+        Optional<DiscordMember> realPlayer = results.stream().filter(member -> !member.isBot()).findFirst();
+        if (realPlayer.isPresent()) {
+          return toPlayer(realPlayer.get());
+        }
+
+        Optional<DiscordMember> bot = results.stream().filter(DiscordMember::isBot).findFirst();
+        if (bot.isPresent()) {
+          return toPlayer(bot.get());
         }
       }
     }
@@ -382,12 +398,13 @@ public class DiscordService implements InitializingBean, PreferenceChangedListen
   }
 
   private Player toPlayer(@NonNull DiscordMember member) {
-    Player player = new Player();
+    DiscordPlayer player = new DiscordPlayer();
     player.setId(member.getId());
     player.setName(member.getName());
     player.setInitials(member.getInitials());
     player.setAvatarUrl(member.getAvatarUrl());
     player.setDomain(PlayerDomain.DISCORD.name());
+    player.setBot(member.isBot());
     return player;
   }
 
