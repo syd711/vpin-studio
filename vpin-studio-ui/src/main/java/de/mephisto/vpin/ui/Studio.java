@@ -80,6 +80,13 @@ public class Studio extends Application {
       Studio.stage = stage;
       Rectangle2D screenBounds = Screen.getPrimary().getBounds();
 
+      if (screenBounds.getWidth() > screenBounds.getHeight()) {
+        LOG.info("Window Mode: Landscape");
+      }
+      else {
+        LOG.info("Window Mode: Portrait");
+      }
+
       //replace the OverlayFX client with the Studio one
       Studio.client = client;
       OverlayWindowFX.client = Studio.client;

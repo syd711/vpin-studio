@@ -5,13 +5,15 @@ import de.mephisto.vpin.commons.fx.UIDefaults;
 import de.mephisto.vpin.commons.utils.PropertiesStore;
 import de.mephisto.vpin.commons.utils.SystemCommandExecutor;
 import de.mephisto.vpin.restclient.RestClient;
+import de.mephisto.vpin.restclient.ScreenInfo;
 import de.mephisto.vpin.server.VPinStudioException;
 import de.mephisto.vpin.server.VPinStudioServer;
 import de.mephisto.vpin.server.backup.adapters.ArchiveType;
 import de.mephisto.vpin.server.resources.ResourceLoader;
 import de.mephisto.vpin.server.util.SystemUtil;
 import edu.umd.cs.findbugs.annotations.NonNull;
-import edu.umd.cs.findbugs.annotations.Nullable;
+import javafx.geometry.Rectangle2D;
+import javafx.stage.Screen;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
@@ -513,5 +515,12 @@ public class SystemService extends SystemInfo implements InitializingBean {
 
   public ArchiveType getArchiveType() {
     return archiveType;
+  }
+
+  public ScreenInfo getScreenInfo() {
+    ScreenInfo info = new ScreenInfo();
+    Rectangle2D screenBounds = Screen.getPrimary().getBounds();
+    info.setPortraitMode(screenBounds.getWidth() < screenBounds.getHeight());
+    return info;
   }
 }

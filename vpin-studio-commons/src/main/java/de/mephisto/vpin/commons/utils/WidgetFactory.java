@@ -21,6 +21,7 @@ import javafx.scene.media.MediaPlayer;
 import javafx.scene.media.MediaView;
 import javafx.scene.paint.Paint;
 import javafx.stage.Modality;
+import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import org.kordamp.ikonli.javafx.FontIcon;
@@ -155,7 +156,7 @@ public class WidgetFactory {
   public static Optional<ButtonType> showConfirmation(Stage owner, String text, String help1, String help2, String btnText) {
     Stage stage = createDialogStage(ConfirmationDialogController.class, owner, "Confirmation", "dialog-confirmation.fxml");
     ConfirmationDialogController controller = (ConfirmationDialogController) stage.getUserData();
-    controller.initDialog(stage, null, btnText,  text, help1, help2);
+    controller.initDialog(stage, null, btnText, text, help1, help2);
     stage.showAndWait();
     return controller.getResult();
   }
@@ -246,7 +247,7 @@ public class WidgetFactory {
     label.setUserData(mediaItem);
     label.setStyle("-fx-font-size: 14px;-fx-text-fill: #444444;");
 
-    if(mediaItem != null) {
+    if (mediaItem != null) {
       label.setStyle("-fx-font-color: #33CC00;-fx-text-fill:#33CC00; -fx-font-weight: bold;");
     }
 
@@ -276,6 +277,8 @@ public class WidgetFactory {
   }
 
   public static Node addMediaItemToBorderPane(VPinStudioClient client, GameMediaItemRepresentation mediaItem, BorderPane parent) {
+    boolean portraitMode = client.getSystemService().getScreenInfo().isPortraitMode();
+
     String mimeType = mediaItem.getMimeType();
     String baseType = mimeType.split("/")[0];
     String url = client.getURL(mediaItem.getUri());
@@ -316,17 +319,23 @@ public class WidgetFactory {
       mediaView.setPreserveRatio(true);
 
       if (parent.getId().equals("screenPlayField")) {
-        mediaView.rotateProperty().set(90);
-        mediaView.setFitWidth(440);
-        mediaView.setX(0);
-        mediaView.setY(0);
-        mediaView.translateXProperty().set(mediaView.translateXProperty().get() - 96);
+        mediaView.setFitWidth(250);
+        if (!portraitMode) {
+          mediaView.rotateProperty().set(90);
+          mediaView.setFitWidth(440);
+          mediaView.setX(0);
+          mediaView.setY(0);
+          mediaView.translateXProperty().set(mediaView.translateXProperty().get() - 96);
+        }
       }
       else if (parent.getId().equals("screenLoading")) {
-        mediaView.rotateProperty().set(90);
-        mediaView.setFitWidth(70);
-        mediaView.setX(0);
-        mediaView.setY(0);
+        mediaView.setFitWidth(150);
+        if (!portraitMode) {
+          mediaView.rotateProperty().set(90);
+          mediaView.setFitWidth(70);
+          mediaView.setX(0);
+          mediaView.setY(0);
+        }
       }
       else if (baseType.equals("video")) {
         mediaView.setFitWidth(parent.getPrefWidth() - 12);

@@ -1,5 +1,6 @@
 package de.mephisto.vpin.restclient.client;
 
+import de.mephisto.vpin.restclient.ScreenInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.client.RestTemplate;
@@ -11,6 +12,8 @@ import java.util.Date;
  ********************************************************************************************************************/
 public class SystemServiceClient extends VPinStudioClientService {
   private final static Logger LOG = LoggerFactory.getLogger(VPinStudioClient.class);
+
+  private ScreenInfo screenInfo;
 
   SystemServiceClient(VPinStudioClient client) {
     super(client);
@@ -78,5 +81,22 @@ public class SystemServiceClient extends VPinStudioClientService {
       LOG.error("Get version failed for " + getRestClient().getBaseUrl());
     }
     return null;
+  }
+
+  public ScreenInfo getScreenInfo() {
+    try {
+      if (screenInfo == null) {
+        screenInfo = getRestClient().getCached(API + "system/screens", ScreenInfo.class);
+      }
+      return screenInfo;
+    } catch (Exception e) {
+      LOG.error("Failed to read screen info: " + e.getMessage());
+    }
+    return null;
+  }
+
+  public void clearCache() {
+    this.screenInfo = null;
+    getScreenInfo();
   }
 }

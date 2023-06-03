@@ -2,6 +2,7 @@ package de.mephisto.vpin.server.system;
 
 import de.mephisto.vpin.commons.ServerInstallationUtil;
 import de.mephisto.vpin.commons.utils.Updater;
+import de.mephisto.vpin.restclient.ScreenInfo;
 import de.mephisto.vpin.server.util.RequestUtil;
 import org.apache.commons.io.FilenameUtils;
 import org.slf4j.Logger;
@@ -100,6 +101,10 @@ public class SystemResource {
     return systemService.isDotNetInstalled();
   }
 
+  @GetMapping("/screens")
+  public ScreenInfo screens() {
+    return systemService.getScreenInfo();
+  }
 
   @GetMapping("/badge/{name}")
   public ResponseEntity<byte[]> getBadge(@PathVariable("name") String imageName) throws Exception {
