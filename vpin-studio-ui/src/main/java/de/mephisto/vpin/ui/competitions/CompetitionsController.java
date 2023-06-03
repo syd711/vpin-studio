@@ -223,13 +223,27 @@ public class CompetitionsController implements Initializable, StudioFXController
     scorePane.setDisable(cp.isEmpty());
 
     if (cp.isPresent()) {
-      competitionMembersPane.setDisable(!cp.get().getType().equals(CompetitionType.DISCORD.name()));
-      metaDataPane.setDisable(!cp.get().getType().equals(CompetitionType.DISCORD.name()));
-
-      scorePane.setDisable(!cp.get().getType().equals(CompetitionType.OFFLINE.name()));
-
-      scorePane.setExpanded(cp.get().getType().equals(CompetitionType.OFFLINE.name()));
-      competitionMembersPane.setExpanded(cp.get().getType().equals(CompetitionType.DISCORD.name()));
+      CompetitionType competitionType = CompetitionType.valueOf(cp.get().getType());
+      switch (competitionType) {
+        case DISCORD: {
+          competitionMembersPane.setDisable(false);
+          competitionMembersPane.setExpanded(true);
+          metaDataPane.setDisable(false);
+          metaDataPane.setExpanded(false);
+          scorePane.setDisable(true);
+          scorePane.setExpanded(false);
+          break;
+        }
+        case OFFLINE: {
+          competitionMembersPane.setDisable(true);
+          competitionMembersPane.setExpanded(false);
+          metaDataPane.setDisable(true);
+          metaDataPane.setExpanded(false);
+          scorePane.setDisable(false);
+          scorePane.setExpanded(true);
+          break;
+        }
+      }
     }
   }
 
