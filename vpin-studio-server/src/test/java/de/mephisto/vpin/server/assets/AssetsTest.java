@@ -39,7 +39,7 @@ public class AssetsTest extends AbstractVPinServerTest {
 
   @Test
   public void testFinishMessage() throws Exception {
-    Competition competition = competitionService.getCompetition(1652l);
+    Competition competition = competitionService.getCompetition(1661);
     competition.setWinnerInitials("FFF");
     Game game = gameService.getGame(competition.getGameId());
     ScoreSummary scoreSummary = highscoreService.getScoreSummary(TEST_SERVER_ID, competition.getGameId(), null);
@@ -47,7 +47,7 @@ public class AssetsTest extends AbstractVPinServerTest {
     Player player = new Player();
     player.setInitials("FFF");
 //    player.setAvatarUrl("https://cdn.discordapp.com/avatars/1095393211545042974/53e91c60c464fad3e596496477ddcca9.png");
-    player.setName("Matthias");
+    player.setName("Matthias [MFA]");
     player.setAvatar(assetService.getById(1193));
 
 

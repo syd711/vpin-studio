@@ -185,12 +185,10 @@ public class AssetFactory {
 
 
       int yOffset = 0;
-      int xOffset = 24;
-      int imageY = 0;
       Font font = new Font("System", Font.PLAIN, 20);
       graphics.setFont(font);
       int textWidth = graphics.getFontMetrics().stringWidth("Congratulations!");
-      graphics.drawString("Congratulations!", background.getWidth() / 2 - textWidth / 2, yOffset += 28 + SEPARATOR);
+      graphics.drawString("Congratulations!", background.getWidth() / 2 - textWidth / 2, yOffset += 20 + SEPARATOR);
 
       //Name
       int nameSize = 56;
@@ -202,13 +200,13 @@ public class AssetFactory {
         graphics.setFont(font);
         textWidth = graphics.getFontMetrics().stringWidth(winnerName);
       }
-      graphics.drawString(winnerName, background.getWidth() / 2 - textWidth / 2, yOffset += nameSize + SEPARATOR);
+      graphics.drawString(winnerName, background.getWidth() / 2 - textWidth / 2, yOffset += nameSize + SEPARATOR - 8);
 
       //is the winner
       font = new Font("System", Font.PLAIN, 20);
       graphics.setFont(font);
       textWidth = graphics.getFontMetrics().stringWidth("is the winner of the");
-      graphics.drawString("is the winner of the", background.getWidth() / 2 - textWidth / 2, yOffset += 20 + SEPARATOR);
+      graphics.drawString("is the winner of the", background.getWidth() / 2 - textWidth / 2, yOffset += 20 + SEPARATOR + 8);
 
       //competitions name
       int competitionNameSize = 28;
