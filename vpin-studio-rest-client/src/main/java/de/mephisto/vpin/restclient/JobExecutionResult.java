@@ -5,9 +5,8 @@ import org.apache.commons.lang3.StringUtils;
 import java.util.UUID;
 
 public class JobExecutionResult {
-  private String uuid;
+  private final String uuid;
   private int gameId;
-  private String resourceId;
   private String error;
 
   public JobExecutionResult() {
@@ -18,20 +17,8 @@ public class JobExecutionResult {
     return uuid;
   }
 
-  public void setUuid(String uuid) {
-    this.uuid = uuid;
-  }
-
-  public String getResourceId() {
-    return resourceId;
-  }
-
   public boolean isErrorneous() {
     return !StringUtils.isEmpty(error);
-  }
-
-  public void setResourceId(String resourceId) {
-    this.resourceId = resourceId;
   }
 
   public int getGameId() {

@@ -6,6 +6,7 @@ public enum AssetType {
   VPIN_AVATAR,
   TABLE,
   DIRECT_B2S,
+  ALT_SOUND,
   ROM,
   ARCHIVE,
   DEFAULT_BACKGROUND,

@@ -3,10 +3,11 @@ package de.mephisto.vpin.server.altsound;
 import de.mephisto.vpin.commons.utils.FileUtils;
 import de.mephisto.vpin.restclient.AltSound;
 import de.mephisto.vpin.restclient.AltSoundEntry;
+import de.mephisto.vpin.restclient.JobExecutionResult;
+import de.mephisto.vpin.restclient.JobExecutionResultFactory;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.system.SystemService;
 import edu.umd.cs.findbugs.annotations.NonNull;
-import edu.umd.cs.findbugs.annotations.Nullable;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVRecord;
 import org.apache.commons.csv.QuoteMode;
@@ -21,7 +22,10 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.util.*;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -206,25 +210,49 @@ public class AltSoundService implements InitializingBean {
   @Override
   public void afterPropertiesSet() {
     new Thread(() -> {
-      long start = System.currentTimeMillis();
-      File altSoundsFolder = systemService.getAltSoundFolder();
-      if (altSoundsFolder.exists()) {
-        File[] altSoundFolder = altSoundsFolder.listFiles((dir, name) -> new File(dir, name).isDirectory());
-        if (altSoundFolder != null) {
-          for (File altSound : altSoundFolder) {
-            File csv = new File(altSound, "altsound.csv");
-            if (csv.exists()) {
-              this.altSounds.put(altSound.getName(), csv);
-            }
+      clearCache();
+    }).start();
+  }
+
+  public boolean clearCache() {
+    long start = System.currentTimeMillis();
+    File altSoundsFolder = systemService.getAltSoundFolder();
+    if (altSoundsFolder.exists()) {
+      File[] altSoundFolder = altSoundsFolder.listFiles((dir, name) -> new File(dir, name).isDirectory());
+      if (altSoundFolder != null) {
+        for (File altSound : altSoundFolder) {
+          File csv = new File(altSound, "altsound.csv");
+          if (csv.exists()) {
+            this.altSounds.put(altSound.getName(), csv);
           }
         }
       }
-      else {
-        LOG.error("altsound folder " + altSoundsFolder.getAbsolutePath() + " does not exist.");
-      }
-      long end = System.currentTimeMillis();
-      LOG.info("Finished altsound pack scan, found " + altSounds.size() + " alt sound packs (" + (end - start) + "ms)");
-    }).start();
+    }
+    else {
+      LOG.error("altsound folder " + altSoundsFolder.getAbsolutePath() + " does not exist.");
+    }
+    long end = System.currentTimeMillis();
+    LOG.info("Finished altsound pack scan, found " + altSounds.size() + " alt sound packs (" + (end - start) + "ms)");
+    return true;
+  }
 
+  public JobExecutionResult installAltSound(Game game, File out) {
+    File altSoundFolder = game.getAltSoundFolder();
+    if (altSoundFolder != null) {
+      LOG.info("Extracting archive to " + altSoundFolder.getAbsolutePath());
+      if (!altSoundFolder.exists()) {
+        if (!altSoundFolder.mkdirs()) {
+          return JobExecutionResultFactory.create("Failed to create ALT sound directory " + altSoundFolder.getAbsolutePath());
+        }
+      }
+
+      AltSoundUtil.unzip(out, altSoundFolder);
+      if (!out.delete()) {
+        return JobExecutionResultFactory.create("Failed to delete temporary file.");
+      }
+      clearCache();
+      setAltSoundEnabled(game, true);
+    }
+    return JobExecutionResultFactory.empty();
   }
 }

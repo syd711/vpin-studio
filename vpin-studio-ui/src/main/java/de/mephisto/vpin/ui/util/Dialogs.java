@@ -16,6 +16,7 @@ import de.mephisto.vpin.ui.competitions.CompetitionOfflineDialogController;
 import de.mephisto.vpin.ui.launcher.InstallationController;
 import de.mephisto.vpin.ui.players.PlayerDialogController;
 import de.mephisto.vpin.ui.tables.TablesController;
+import de.mephisto.vpin.ui.tables.TablesSidebarController;
 import de.mephisto.vpin.ui.tables.dialogs.*;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import javafx.collections.ObservableList;
@@ -96,6 +97,16 @@ public class Dialogs {
     stage.showAndWait();
 
     return controller.getCompetition();
+  }
+
+  public static boolean openAltSoundUploadDialog(TablesSidebarController tablesSidebarController, GameRepresentation game) {
+    Stage stage = createStudioDialogStage(DirectB2SUploadController.class, "dialog-altsound-upload.fxml", "ALT Sound Upload");
+    AltSoundUploadController controller = (AltSoundUploadController) stage.getUserData();
+    controller.setGame(game);
+    controller.setTableSidebarController(tablesSidebarController);
+    stage.showAndWait();
+
+    return controller.uploadFinished();
   }
 
   public static boolean openDirectB2SUploadDialog(GameRepresentation game) {

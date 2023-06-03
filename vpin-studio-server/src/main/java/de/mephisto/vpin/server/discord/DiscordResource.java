@@ -78,6 +78,7 @@ public class DiscordResource {
                                      @PathVariable("uuid") String uuid) {
     return discordService.isCompetitionActive(serverId, channelId, uuid);
   }
+
   @GetMapping("/clearcache")
   public boolean clearCache() {
     return discordService.clearCache();

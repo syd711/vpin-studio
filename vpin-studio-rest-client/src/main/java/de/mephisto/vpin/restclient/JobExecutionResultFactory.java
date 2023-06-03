@@ -19,4 +19,8 @@ public class JobExecutionResultFactory {
     result.setGameId(gameId);
     return result;
   }
+
+  public static JobExecutionResult empty() {
+    return new JobExecutionResult();
+  }
 }

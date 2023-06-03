@@ -393,7 +393,8 @@
 }
 
 .hyperlink, .hyperlink:hover {
-    -fx-font-size : 12px;
+    -fx-font-size : 14px;
+    -fx-text-fill: white;
     -fx-border-color: transparent;
     -fx-font-weight: normal;
     -fx-underline: true;

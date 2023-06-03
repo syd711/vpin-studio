@@ -6,15 +6,19 @@ import de.mephisto.vpin.restclient.AltSound;
 import de.mephisto.vpin.restclient.representations.GameRepresentation;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.util.Dialogs;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
-import javafx.scene.control.ButtonType;
-import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
+import javafx.scene.control.*;
+import javafx.scene.layout.VBox;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.awt.*;
+import java.net.URI;
 import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.Optional;
@@ -28,6 +32,9 @@ public class TablesSidebarAudioController implements Initializable {
 
   @FXML
   private Button restoreBtn;
+
+  @FXML
+  private Button uploadBtn;
 
   @FXML
   private Label entriesLabel;
@@ -44,6 +51,15 @@ public class TablesSidebarAudioController implements Initializable {
   @FXML
   private CheckBox enabledCheckbox;
 
+  @FXML
+  private VBox dataRoot;
+
+  @FXML
+  private VBox emptyDataBox;
+
+  @FXML
+  private VBox dataBox;
+
   private Optional<GameRepresentation> game = Optional.empty();
 
   private TablesSidebarController tablesSidebarController;
@@ -51,6 +67,28 @@ public class TablesSidebarAudioController implements Initializable {
 
   // Add a public no-args constructor
   public TablesSidebarAudioController() {
+  }
+
+  @FXML
+  private void onLink(ActionEvent e) {
+    Hyperlink link = (Hyperlink) e.getSource();
+    if (Desktop.getDesktop().isSupported(Desktop.Action.BROWSE)) {
+      try {
+        Desktop.getDesktop().browse(new URI(link.getText()));
+      } catch (Exception ex) {
+        LOG.error("Failed to open link: " + ex.getMessage(), ex);
+      }
+    }
+  }
+
+  @FXML
+  private void onUpload() {
+    if (game.isPresent()) {
+      boolean uploaded = Dialogs.openAltSoundUploadDialog(tablesSidebarController, game.get());
+      if (uploaded) {
+        this.tablesSidebarController.getTablesController().onReload();
+      }
+    }
   }
 
   @FXML
@@ -80,7 +118,10 @@ public class TablesSidebarAudioController implements Initializable {
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
-
+    dataBox.managedProperty().bindBidirectional(dataBox.visibleProperty());
+    emptyDataBox.managedProperty().bindBidirectional(emptyDataBox.visibleProperty());
+    dataBox.setVisible(false);
+    emptyDataBox.setVisible(true);
   }
 
   public void setGame(Optional<GameRepresentation> game) {
@@ -89,10 +130,12 @@ public class TablesSidebarAudioController implements Initializable {
   }
 
   public void refreshView(Optional<GameRepresentation> g) {
-    altSoundBtn.setDisable(!game.isPresent() || !game.get().isAltSoundAvailable());
-    restoreBtn.setDisable(!game.isPresent() || !game.get().isAltSoundAvailable());
-    enabledCheckbox.setDisable(!game.isPresent() || !game.get().isAltSoundAvailable());
-    enabledCheckbox.setSelected(false);
+    altSoundBtn.setDisable(true);
+    restoreBtn.setDisable(true);
+    enabledCheckbox.setDisable(true);
+    dataBox.setVisible(false);
+    emptyDataBox.setVisible(true);
+    uploadBtn.setDisable(true);
 
     entriesLabel.setText("-");
     bundleSizeLabel.setText("-");
@@ -101,8 +144,18 @@ public class TablesSidebarAudioController implements Initializable {
 
     if (g.isPresent()) {
       GameRepresentation game = g.get();
+      boolean altSoundAvailable = game.isAltSoundAvailable();
 
-      if (game.isAltSoundAvailable()) {
+      dataBox.setVisible(altSoundAvailable);
+      emptyDataBox.setVisible(!altSoundAvailable);
+
+      uploadBtn.setDisable(StringUtils.isEmpty(game.getRom()));
+      altSoundBtn.setDisable(!altSoundAvailable);
+      restoreBtn.setDisable(!altSoundAvailable);
+      enabledCheckbox.setDisable(!altSoundAvailable);
+      enabledCheckbox.setSelected(false);
+
+      if (altSoundAvailable) {
         altSound = Studio.client.getAltSoundService().getAltSound(game.getId());
         enabledCheckbox.setSelected(Studio.client.getAltSoundService().isAltSoundEnabled(game.getId()));
 

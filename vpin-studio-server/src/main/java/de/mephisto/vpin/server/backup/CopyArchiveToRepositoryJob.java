@@ -44,7 +44,7 @@ public class CopyArchiveToRepositoryJob implements Job {
         }
 
         if (!overwrite) {
-          return new JobExecutionResult();
+          return JobExecutionResultFactory.empty();
         }
       }
 

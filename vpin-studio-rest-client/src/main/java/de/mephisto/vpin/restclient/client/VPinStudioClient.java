@@ -268,6 +268,7 @@ public class VPinStudioClient implements ObservedPropertyChangeListener, Overlay
     getImageCache().clearCache();
     getGameService().clearCache();
     getSystemService().clearCache();
+    getAltSoundService().clearCache();
   }
 
   public void clearWheelCache() {

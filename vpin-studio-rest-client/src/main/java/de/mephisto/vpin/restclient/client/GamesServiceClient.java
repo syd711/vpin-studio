@@ -39,11 +39,6 @@ public class GamesServiceClient extends VPinStudioClientService {
     this.games = new ArrayList<>();
   }
 
-  public void invalidate(int id) {
-    this.getGame(id);
-  }
-
-
   public boolean uploadRom(File file, FileUploadProgressListener listener) throws Exception {
     try {
       String url = getRestClient().getBaseUrl() + API + "games/upload/rom";
@@ -74,12 +69,12 @@ public class GamesServiceClient extends VPinStudioClientService {
     return result;
   }
 
-
   public GameRepresentation getGame(int id) {
-    try {
-      return getRestClient().getCached(API + "games/" + id, GameRepresentation.class);
-    } catch (Exception e) {
-      LOG.error("Failed to read game " + id + ": " + e.getMessage());
+    List<GameRepresentation> gameList = this.getGamesCached();
+    for (GameRepresentation gameRepresentation : gameList) {
+      if (gameRepresentation.getId() == id) {
+        return gameRepresentation;
+      }
     }
     return null;
   }
