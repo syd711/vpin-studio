@@ -1,6 +1,7 @@
 package de.mephisto.vpin.server.discord;
 
 import de.mephisto.vpin.connectors.discord.DiscordMember;
+import de.mephisto.vpin.restclient.CompetitionType;
 import de.mephisto.vpin.restclient.PlayerDomain;
 import de.mephisto.vpin.server.competitions.Competition;
 import de.mephisto.vpin.server.competitions.ScoreSummary;
@@ -34,19 +35,8 @@ public class DiscordChannelMessageFactory {
   private static final String COMPETITION_FINISHED_INCOMPLETE = "The competition \"%s\" has been " + DiscordChannelMessageFactory.FINISHED_INDICATOR + ", " +
       "but no winner could be determined:\n" +
       "No scores have been found.\n(ID: %s)";
-  private static final String COMPETITION_FINISHED_TEMPLATE = "Congratulation %s!\n(ID: %s)\n" +
-      "```" +
-      "The competition \"%s\" has been finished!\n" +
-      "And the winner is...\n" +
-      "\n" +
-      "        %s\n" +
-      "\n" +
-      "Table: %s\n" +
-      "Score: %s\n" +
-      "\n" +
-      "%s\n" +
-      "%s\n" +
-      "```";
+  private static final String COMPETITION_FINISHED_TEMPLATE =
+      "The competition \"%s\" has been finished!\n(ID: %s)";
 
   @Autowired
   private PlayerService playerService;
@@ -88,34 +78,12 @@ public class DiscordChannelMessageFactory {
     return msg + "\nHere is the " + HIGHSCORE_INDICATOR + ":" + createHighscoreList(updatedScores);
   }
 
-  public String createCompetitionFinishedMessage(@NonNull Competition competition, @Nullable Player winner, Game game, ScoreSummary summary) {
+  public String createCompetitionFinishedMessage(@NonNull Competition competition, ScoreSummary summary) {
     if (summary.getScores().isEmpty()) {
       return String.format(COMPETITION_FINISHED_INCOMPLETE, competition.getName(), competition.getUuid());
     }
 
-    String winnerName = competition.getWinnerInitials();
-    String winnerRaw = competition.getWinnerInitials();
-    if (winner != null) {
-      winnerName = winner.getName();
-      winnerRaw = winner.getName();
-      if (PlayerDomain.DISCORD.name().equals(winner.getDomain())) {
-        winnerName = "<@" + winner.getId() + ">";
-      }
-    }
-
-    String second = ScoreHelper.formatScoreEntry(summary, 1);
-    String third = ScoreHelper.formatScoreEntry(summary, 2);
-
-    String competitionName = competition.getName();
-    return String.format(COMPETITION_FINISHED_TEMPLATE,
-        winnerName,
-        competition.getUuid(),
-        competitionName,
-        winnerRaw,
-        game.getGameDisplayName(),
-        summary.getScores().get(0).getScore(),
-        second,
-        third);
+    return String.format(COMPETITION_FINISHED_TEMPLATE, competition.getName(), competition.getUuid());
   }
 
   public String createCompetitionCancelledMessage(Player player, Competition competition) {

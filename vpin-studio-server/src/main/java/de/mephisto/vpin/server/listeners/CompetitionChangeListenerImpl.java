@@ -77,7 +77,7 @@ public class CompetitionChangeListenerImpl implements InitializingBean, Competit
           LOG.info("The " + competition + " is still available and active, skipping init process.");
         }
         else if (isOwner) {
-          String description = "This is an online competition. Player bots can join this competition.\nUse the **initials of your bot** when you create a new highscore. " +
+          String description = "This is an online competition and player bots can join it.\nUse the **initials of your bot** when you create a new highscore.\n" +
               "Only these will be submitted to the competition.\nCompetition updates are pinned on this channel.\n\n";
           String base64Data = CompetitionDataHelper.DATA_INDICATOR + CompetitionDataHelper.toBase64(competition, game);
           byte[] image = assetService.getCompetitionStartedCard(competition, game);
@@ -180,9 +180,20 @@ public class CompetitionChangeListenerImpl implements InitializingBean, Competit
       if (competition.getType().equals(CompetitionType.DISCORD.name())) {
         //only the owner can perform additional actions
         if (competition.getOwner().equals(String.valueOf(discordService.getBotId()))) {
-          String message = discordChannelMessageFactory.createCompetitionFinishedMessage(competition, winner, game, scoreSummary);
-          long msgId = discordService.sendMessage(serverId, channelId, message);
-          discordService.finishCompetition(serverId, channelId, msgId);
+          boolean noWinner = scoreSummary.getScores().isEmpty();
+          String message = discordChannelMessageFactory.createCompetitionFinishedMessage(competition, scoreSummary);
+          //check if a winner card should be generated
+          if (noWinner) {
+            long msgId = discordService.sendMessage(serverId, channelId, message);
+            discordService.finishCompetition(serverId, channelId, msgId);
+          }
+          else {
+            Platform.runLater(() -> {
+              byte[] image = assetService.getCompetitionFinishedCard(competition, game, winner, scoreSummary);
+              long msgId = discordService.sendMessage(serverId, channelId, message, image, competition.getName() + ".png", null);
+              discordService.finishCompetition(serverId, channelId, msgId);
+            });
+          }
         }
         else {
           LOG.warn("Skipped finish notification, you are not the owner of " + competition);

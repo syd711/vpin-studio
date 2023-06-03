@@ -91,10 +91,6 @@ public class DiscordOfflineChannelMessageFactory {
     }
 
     String competitionName = competition.getName();
-    if (competition.getType().equals(CompetitionType.DISCORD.name())) {
-      competitionName = competitionName + " (" + competition.getUuid() + ")";
-    }
-
     return String.format(COMPETITION_FINISHED_TEMPLATE, competitionName);
   }
 

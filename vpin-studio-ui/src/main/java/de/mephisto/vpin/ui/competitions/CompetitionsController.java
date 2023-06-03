@@ -283,7 +283,7 @@ public class CompetitionsController implements Initializable, StudioFXController
         }
 
         ScoreListRepresentation competitionScores = client.getCompetitionScoreList(competition.getId());
-        if (!competitionScores.getScores().isEmpty()) {
+        if (!competitionScores.getScores().isEmpty() && scoreGraphBox != null) {
           highscoresGraphTile = ScoreGraphUtil.createGraph(competitionScores);
           scoreGraphBox.setCenter(highscoresGraphTile);
           scoreGraphBox.getCenter().setVisible(true);
