@@ -255,6 +255,10 @@ public class Game {
     return this.getGameFile().exists();
   }
 
+  public boolean isDefaultBackgroundAvailable() {
+    return this.getRawDefaultPicture() != null && this.getRawDefaultPicture().exists();
+  }
+
   public String getHsFileName() {
     return hsFileName;
   }

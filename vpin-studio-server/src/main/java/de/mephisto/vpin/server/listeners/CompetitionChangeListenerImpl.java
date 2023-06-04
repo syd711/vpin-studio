@@ -101,7 +101,7 @@ public class CompetitionChangeListenerImpl implements InitializingBean, Competit
           if (serverId > 0 && channelId > 0 && bot != null) {
             byte[] image = assetService.getCompetitionStartedCard(competition, game);
             String message = DiscordOfflineChannelMessageFactory.createOfflineCompetitionCreatedMessage(competition, game);
-            String vPinName = (String) preferencesService.getPreferenceValue(PreferenceNames.SYSTEM_NAME, "?");
+            String vPinName = (String) preferencesService.getPreferenceValue(PreferenceNames.SYSTEM_NAME, "My VPin");
             String subText = "This is an offline competition. Only players on \"" + vPinName + "\" can participate.";
             if (competition.isHighscoreReset()) {
               subText += "\n\nThe highscore of this table has been resetted.";
