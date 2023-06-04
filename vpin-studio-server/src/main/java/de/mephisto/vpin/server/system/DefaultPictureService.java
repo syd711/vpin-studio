@@ -6,7 +6,7 @@ import de.mephisto.vpin.server.directb2s.DirectB2SImageExtractor;
 import de.mephisto.vpin.server.directb2s.DirectB2SImageRatio;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.puppack.PupPack;
-import de.mephisto.vpin.server.puppack.PupPackService;
+import de.mephisto.vpin.server.puppack.PupPacksService;
 import de.mephisto.vpin.server.util.ImageUtil;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
@@ -31,7 +31,7 @@ public class DefaultPictureService {
   private final static DirectB2SImageRatio DEFAULT_MEDIA_RATIO = DirectB2SImageRatio.RATIO_16X9;
 
   @Autowired
-  private PupPackService pupPackService;
+  private PupPacksService pupPackService;
 
   public DefaultPictureService() {
 

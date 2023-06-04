@@ -7,6 +7,7 @@ public enum AssetType {
   TABLE,
   DIRECT_B2S,
   ALT_SOUND,
+  PUP_PACK,
   ROM,
   ARCHIVE,
   DEFAULT_BACKGROUND,

@@ -332,7 +332,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
 
   @FXML
   public void onReload() {
-    Studio.client.clearCache();
+   // Studio.client.clearCache();
 
     this.textfieldSearch.setDisable(true);
     this.reloadBtn.setDisable(true);

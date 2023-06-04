@@ -100,8 +100,18 @@ public class Dialogs {
   }
 
   public static boolean openAltSoundUploadDialog(TablesSidebarController tablesSidebarController, GameRepresentation game) {
-    Stage stage = createStudioDialogStage(DirectB2SUploadController.class, "dialog-altsound-upload.fxml", "ALT Sound Upload");
+    Stage stage = createStudioDialogStage(AltSoundUploadController.class, "dialog-altsound-upload.fxml", "ALT Sound Upload");
     AltSoundUploadController controller = (AltSoundUploadController) stage.getUserData();
+    controller.setGame(game);
+    controller.setTableSidebarController(tablesSidebarController);
+    stage.showAndWait();
+
+    return controller.uploadFinished();
+  }
+
+  public static boolean openPupPackUploadDialog(TablesSidebarController tablesSidebarController, GameRepresentation game) {
+    Stage stage = createStudioDialogStage(PupPackUploadController.class, "dialog-puppack-upload.fxml", "PUP Pack Upload");
+    PupPackUploadController controller = (PupPackUploadController) stage.getUserData();
     controller.setGame(game);
     controller.setTableSidebarController(tablesSidebarController);
     stage.showAndWait();

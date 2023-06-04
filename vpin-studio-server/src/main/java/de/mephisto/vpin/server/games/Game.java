@@ -360,6 +360,15 @@ public class Game {
     return null;
   }
 
+  @Nullable
+  @JsonIgnore
+  public File getPupPackFolder() {
+    if (!StringUtils.isEmpty(this.getRom())) {
+      return new File(new File(systemService.getPinUPSystemFolder(), "PUPVideos"), this.getRom());
+    }
+    return null;
+  }
+
 
   @Nullable
   @JsonIgnore

@@ -162,7 +162,7 @@
    <top>
       <ToolBar prefHeight="40.0" prefWidth="200.0" BorderPane.alignment="CENTER">
         <items>
-          <Button fx:id="uploadBtn" mnemonicParsing="false" onAction="#onUpload" text="Upload DirectB2S">
+          <Button fx:id="uploadBtn" mnemonicParsing="false" onAction="#onUpload" text="Upload">
                <graphic>
                   <FontIcon iconColor="WHITE" iconLiteral="mdi2u-upload" />
                </graphic>

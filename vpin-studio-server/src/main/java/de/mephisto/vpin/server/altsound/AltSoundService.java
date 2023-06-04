@@ -207,13 +207,6 @@ public class AltSoundService implements InitializingBean {
     return false;
   }
 
-  @Override
-  public void afterPropertiesSet() {
-    new Thread(() -> {
-      clearCache();
-    }).start();
-  }
-
   public boolean clearCache() {
     long start = System.currentTimeMillis();
     File altSoundsFolder = systemService.getAltSoundFolder();
@@ -254,5 +247,12 @@ public class AltSoundService implements InitializingBean {
       setAltSoundEnabled(game, true);
     }
     return JobExecutionResultFactory.empty();
+  }
+
+  @Override
+  public void afterPropertiesSet() {
+    new Thread(() -> {
+      clearCache();
+    }).start();
   }
 }

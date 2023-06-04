@@ -1,13 +1,27 @@
 package de.mephisto.vpin.ui.tables;
 
+import de.mephisto.vpin.commons.utils.FileUtils;
 import de.mephisto.vpin.restclient.client.VPinStudioClient;
 import de.mephisto.vpin.restclient.representations.GameRepresentation;
+import de.mephisto.vpin.restclient.representations.PupPackRepresentation;
 import de.mephisto.vpin.ui.Studio;
+import de.mephisto.vpin.ui.util.Dialogs;
+import javafx.event.ActionEvent;
+import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
+import javafx.scene.control.Hyperlink;
+import javafx.scene.control.Label;
+import javafx.scene.layout.VBox;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.awt.*;
+import java.net.URI;
 import java.net.URL;
+import java.text.SimpleDateFormat;
 import java.util.Optional;
 import java.util.ResourceBundle;
 
@@ -16,16 +30,68 @@ public class TablesSidebarPUPPackController implements Initializable {
 
   private Optional<GameRepresentation> game = Optional.empty();
 
+  @FXML
+  private Button uploadBtn;
+
+  @FXML
+  private Label lastModifiedLabel;
+
+  @FXML
+  private Label bundleSizeLabel;
+
+  @FXML
+  private VBox emptyDataBox;
+
+  @FXML
+  private VBox dataBox;
+
+  @FXML
+  private CheckBox enabledCheckbox;
+
   private TablesSidebarController tablesSidebarController;
 
   // Add a public no-args constructor
   public TablesSidebarPUPPackController() {
   }
 
-  @Override
-  public void initialize(URL url, ResourceBundle resourceBundle) {
+  @FXML
+  private void onLink(ActionEvent e) {
+    Hyperlink link = (Hyperlink) e.getSource();
+    if (Desktop.getDesktop().isSupported(Desktop.Action.BROWSE)) {
+      try {
+        Desktop.getDesktop().browse(new URI(link.getText()));
+      } catch (Exception ex) {
+        LOG.error("Failed to open link: " + ex.getMessage(), ex);
+      }
+    }
   }
 
+  @FXML
+  private void onPupPackEnable() {
+    if (game.isPresent() && game.get().isPupPackAvailable()) {
+      GameRepresentation g = game.get();
+      Studio.client.getPupPackService().setPupPackEnabled(g.getId(), enabledCheckbox.isSelected());
+    }
+  }
+
+
+  @FXML
+  private void onUpload() {
+    if (game.isPresent()) {
+      boolean uploaded = Dialogs.openPupPackUploadDialog(tablesSidebarController, game.get());
+      if (uploaded) {
+        this.tablesSidebarController.getTablesController().onReload();
+      }
+    }
+  }
+
+  @Override
+  public void initialize(URL url, ResourceBundle resourceBundle) {
+    dataBox.managedProperty().bindBidirectional(dataBox.visibleProperty());
+    emptyDataBox.managedProperty().bindBidirectional(emptyDataBox.visibleProperty());
+    dataBox.setVisible(false);
+    emptyDataBox.setVisible(true);
+  }
 
   public void setGame(Optional<GameRepresentation> game) {
     this.game = game;
@@ -33,6 +99,33 @@ public class TablesSidebarPUPPackController implements Initializable {
   }
 
   public void refreshView(Optional<GameRepresentation> g) {
+    enabledCheckbox.setDisable(true);
+    dataBox.setVisible(false);
+    emptyDataBox.setVisible(true);
+    uploadBtn.setDisable(true);
+
+    bundleSizeLabel.setText("-");
+    lastModifiedLabel.setText("-");
+
+    if (g.isPresent()) {
+      GameRepresentation game = g.get();
+      boolean pupPackAvailable = game.isPupPackAvailable();
+
+      dataBox.setVisible(pupPackAvailable);
+      emptyDataBox.setVisible(!pupPackAvailable);
+
+      uploadBtn.setDisable(StringUtils.isEmpty(game.getRom()));
+      enabledCheckbox.setDisable(!pupPackAvailable);
+      enabledCheckbox.setSelected(false);
+
+      if (pupPackAvailable) {
+        PupPackRepresentation pupPack = Studio.client.getPupPackService().getPupPack(game.getId());
+        enabledCheckbox.setSelected(pupPack.isEnabled());
+
+        bundleSizeLabel.setText(FileUtils.readableFileSize(pupPack.getSize()));
+        lastModifiedLabel.setText(SimpleDateFormat.getDateTimeInstance().format(pupPack.getModificationDate()));
+      }
+    }
   }
 
   public void setSidebarController(TablesSidebarController tablesSidebarController) {

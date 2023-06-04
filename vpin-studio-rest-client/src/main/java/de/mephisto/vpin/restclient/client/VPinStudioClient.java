@@ -39,6 +39,7 @@ public class VPinStudioClient implements ObservedPropertyChangeListener, Overlay
   private final PlayersServiceClient playersServiceClient;
   private final PinUPPopperServiceClient pinUPPopperServiceClient;
   private final PreferencesServiceClient preferencesServiceClient;
+  private final PupPackServiceClient pupPackServiceClient;
   private final SystemServiceClient systemServiceClient;
   private final TableManagerServiceClient tableManagerServiceClient;
   private final VpxServiceClient vpxServiceClient;
@@ -59,12 +60,17 @@ public class VPinStudioClient implements ObservedPropertyChangeListener, Overlay
     this.imageCache = new ImageCache(this);
     this.jobsServiceClient = new JobsServiceClient(this);
     this.playersServiceClient = new PlayersServiceClient(this);
+    this.pupPackServiceClient = new PupPackServiceClient(this);
     this.pinUPPopperServiceClient = new PinUPPopperServiceClient(this);
     this.preferencesServiceClient = new PreferencesServiceClient(this);
     this.systemServiceClient = new SystemServiceClient(this);
     this.tableManagerServiceClient = new TableManagerServiceClient(this);
     this.vpxServiceClient = new VpxServiceClient(this);
     this.vpbmServiceClient = new VpbmServiceClient(this);
+  }
+
+  public PupPackServiceClient getPupPackService() {
+    return pupPackServiceClient;
   }
 
   public AltSoundServiceClient getAltSoundService() {
@@ -269,6 +275,7 @@ public class VPinStudioClient implements ObservedPropertyChangeListener, Overlay
     getGameService().clearCache();
     getSystemService().clearCache();
     getAltSoundService().clearCache();
+    getPupPackService().clearCache();
   }
 
   public void clearWheelCache() {

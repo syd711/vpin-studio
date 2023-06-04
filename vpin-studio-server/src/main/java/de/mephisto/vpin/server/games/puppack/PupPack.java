@@ -22,11 +22,19 @@ public class PupPack {
   private final File triggersPup;
   private final File packFolder;
 
+  private long size;
+
   public PupPack(@NonNull File packFolder) {
     this.name = packFolder.getName();
     screensPup = new File(packFolder, SCREENS_PUP);
     triggersPup = new File(packFolder, TRIGGERS_PUP);
     this.packFolder = packFolder;
+
+    this.size = org.apache.commons.io.FileUtils.sizeOfDirectory(packFolder);
+  }
+
+  public long getSize() {
+    return size;
   }
 
   public File getScreensPup() {

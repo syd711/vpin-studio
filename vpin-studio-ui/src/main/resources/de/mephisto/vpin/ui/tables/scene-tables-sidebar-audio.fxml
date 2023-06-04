@@ -17,7 +17,7 @@
 
 <BorderPane fx:id="defaultBackgroundBorderPane" prefWidth="600.0" styleClass="accordion-container" stylesheets="@../stylesheet.css" BorderPane.alignment="CENTER" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.tables.TablesSidebarAudioController">
     <center>
-      <VBox fx:id="dataRoot" prefHeight="250.0" BorderPane.alignment="CENTER">
+      <VBox fx:id="dataRoot" BorderPane.alignment="CENTER">
          <BorderPane.margin>
             <Insets bottom="12.0" left="12.0" right="12.0" />
          </BorderPane.margin>
@@ -85,6 +85,9 @@
                            </font>
                         </Label>
                      </children>
+                     <VBox.margin>
+                        <Insets top="6.0" />
+                     </VBox.margin>
                   </GridPane>
                   </children>
                <VBox.margin>

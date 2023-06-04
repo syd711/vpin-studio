@@ -2,7 +2,6 @@ package de.mephisto.vpin.server.games;
 
 import de.mephisto.vpin.commons.HighscoreType;
 import de.mephisto.vpin.commons.utils.FileUtils;
-import de.mephisto.vpin.restclient.AltSound;
 import de.mephisto.vpin.restclient.PopperScreen;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.descriptors.DeleteDescriptor;
@@ -17,7 +16,7 @@ import de.mephisto.vpin.server.popper.Emulator;
 import de.mephisto.vpin.server.popper.GameMediaItem;
 import de.mephisto.vpin.server.popper.PinUPConnector;
 import de.mephisto.vpin.server.preferences.PreferencesService;
-import de.mephisto.vpin.server.puppack.PupPackService;
+import de.mephisto.vpin.server.puppack.PupPacksService;
 import de.mephisto.vpin.server.roms.RomService;
 import de.mephisto.vpin.server.roms.ScanResult;
 import edu.umd.cs.findbugs.annotations.NonNull;
@@ -63,7 +62,7 @@ public class GameService {
   private AssetRepository assetRepository;
 
   @Autowired
-  private PupPackService pupPackService;
+  private PupPacksService pupPackService;
 
   @Autowired
   private AltSoundService altSoundService;
