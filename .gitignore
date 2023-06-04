@@ -52,8 +52,10 @@ hs_err_pid*
 /resources/b2s-cropped/*
 /resources/overlay.png
 /resources/overlay.jpg
+/resources/pinemhi/pinemhi.ini
 /resources/VPReg/*
 /resources/vpa2/*
+/resources/vpbm/vPinBackupManager.json
 /.idea/
 /VPReg/
 /target/

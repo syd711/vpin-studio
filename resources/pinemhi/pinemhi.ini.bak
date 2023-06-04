@@ -23,8 +23,8 @@ buyins=1
 
 ; *** use the website http://www.pinemhi.com/hiscores.php to register your name and get a code ***
 [user]
-name=Syd711
-code=gcnrra
+name=XXXXXX
+code=YYYYYY
 
 
 [keys]
@@ -43,7 +43,7 @@ key=L
 challengekey=L
 
 ; ***     weeklychallenge shows what game it is for this week and interim scores and winner previous week    ***
-weeklychallengekey=w
+weeklychallengekey=]
 
 ; ***    This key activates 5-minute mode, this will stop gameplay after 5 minutes if game is compatible     ***
 ; ***                5-minute mode can only be activated and deactivated outside of a game                   ***

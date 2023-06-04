@@ -326,6 +326,8 @@
                                     </includes>
                                     <excludes>
                                         <exclude>vpbm/identifiers.dat</exclude>
+                                        <exclude>pinemhi/pinemhi.ini</exclude>
+                                        <exclude>pinemhi/pinemhi.ini.bak</exclude>
                                     </excludes>
                                 </resource>
                             </resources>
@@ -375,6 +377,26 @@
 
                 </executions>
 
+            </plugin>
+
+
+            <plugin>
+                <groupId>com.coderplus.maven.plugins</groupId>
+                <artifactId>copy-rename-maven-plugin</artifactId>
+                <version>1.0.1</version>
+                <executions>
+                    <execution>
+                        <id>rename-pinemhi-ini</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>copy</goal>
+                        </goals>
+                        <configuration>
+                            <sourceFile>../resources/pinemhi/pinemhi.ini.bak</sourceFile>
+                            <destinationFile>${basedir}/../Output/VPin-Studio/resources/pinemhi/pinemhi.ini</destinationFile>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
 
         </plugins>
