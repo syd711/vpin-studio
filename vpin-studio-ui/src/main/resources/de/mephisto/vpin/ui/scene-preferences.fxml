@@ -27,7 +27,7 @@
             <Insets top="42.0" />
          </BorderPane.margin>
          <center>
-            <ScrollPane vbarPolicy="NEVER">
+            <ScrollPane hbarPolicy="NEVER" styleClass="base-component">
                <content>
                   <VBox alignment="TOP_RIGHT" fillWidth="false" prefWidth="400.0">
                      <children>
