@@ -55,11 +55,6 @@ public class PreferencesController implements Initializable {
   }
 
   @FXML
-  private void onVPinName(ActionEvent event) throws IOException {
-    load("preference-vpin-name.fxml", event);
-  }
-
-  @FXML
   private void onMediaValidation(ActionEvent event) throws IOException {
     load("preference-validators-pinuppopper.fxml", event);
   }
