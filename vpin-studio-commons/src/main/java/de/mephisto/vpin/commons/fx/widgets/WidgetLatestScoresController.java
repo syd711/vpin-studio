@@ -83,6 +83,10 @@ public class WidgetLatestScoresController extends WidgetController implements In
           else {
             for (ScoreRepresentation score : scores) {
               GameRepresentation game = OverlayWindowFX.client.getGame(score.getGameId());
+              if(game == null) {
+                continue;
+              }
+
               GameMediaRepresentation gameMedia = game.getGameMedia();
               GameMediaItemRepresentation wheelMedia = gameMedia.getMedia().get(PopperScreen.Wheel.name());
               if (wheelMedia == null) {

@@ -3,6 +3,7 @@ package de.mephisto.vpin.ui.tables.dialogs;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.JobExecutionResult;
 import de.mephisto.vpin.ui.Studio;
+import de.mephisto.vpin.ui.jobs.JobPoller;
 import de.mephisto.vpin.ui.tables.TablesSidebarController;
 import de.mephisto.vpin.ui.util.ProgressModel;
 import de.mephisto.vpin.ui.util.ProgressResultModel;
@@ -64,7 +65,7 @@ public class PupPackUploadProgressModel extends ProgressModel<File> {
       }
       else {
         Platform.runLater(() -> {
-          tablesSidebarController.getTablesController().onReload();
+          JobPoller.getInstance().setPolling();
         });
       }
       progressResultModel.addProcessed();

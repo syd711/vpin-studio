@@ -106,7 +106,7 @@ public class TableRepositoriesPreferencesController implements Initializable {
     List<ArchiveSourceRepresentation> sources = client.getArchiveService().getArchiveSources();
     tableView.setItems(FXCollections.observableList(sources));
     tableView.refresh();
-    EventManager.getInstance().notifyArchiveSourceUpdate();
+    EventManager.getInstance().notifyRepositoryUpdate();
   }
 
   @Override

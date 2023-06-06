@@ -1,18 +1,19 @@
 package de.mephisto.vpin.ui.archiving;
 
 import de.mephisto.vpin.commons.ArchiveSourceType;
-import de.mephisto.vpin.commons.utils.FileUtils;
 import de.mephisto.vpin.commons.utils.CommonImageUtil;
+import de.mephisto.vpin.commons.utils.FileUtils;
 import de.mephisto.vpin.commons.utils.SystemCommandExecutor;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
+import de.mephisto.vpin.restclient.JobType;
 import de.mephisto.vpin.restclient.representations.ArchiveDescriptorRepresentation;
 import de.mephisto.vpin.restclient.representations.ArchiveSourceRepresentation;
 import de.mephisto.vpin.restclient.representations.GameRepresentation;
 import de.mephisto.vpin.ui.NavigationController;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.WaitOverlayController;
-import de.mephisto.vpin.ui.events.ArchiveInstalledEvent;
 import de.mephisto.vpin.ui.events.EventManager;
+import de.mephisto.vpin.ui.events.JobFinishedEvent;
 import de.mephisto.vpin.ui.events.StudioEventListener;
 import de.mephisto.vpin.ui.tables.TablesController;
 import de.mephisto.vpin.ui.util.Dialogs;
@@ -490,24 +491,22 @@ public class RepositoryController implements Initializable, StudioEventListener 
   }
 
   @Override
-  public void onArchiveSourceUpdate() {
+  public void jobFinished(@NonNull JobFinishedEvent event) {
+    JobType jobType = event.getJobType();
+    if(jobType.equals(JobType.ARCHIVE_INSTALL)
+        || jobType.equals(JobType.ARCHIVE_DOWNLOAD_TO_REPOSITORY)
+        || jobType.equals(JobType.ARCHIVE_DOWNLOAD_TO_FILESYSTEM)
+    ) {
+      Platform.runLater(() -> {
+        onReload();
+      });
+    }
+  }
+
+  public void repositoryUpdated() {
     Platform.runLater(() -> {
       refreshRepositoryCombo();
       doReload();
-    });
-  }
-
-  @Override
-  public void onArchiveCopiedToRepository() {
-    Platform.runLater(() -> {
-      onReload();
-    });
-  }
-
-  @Override
-  public void onArchiveInstalled(@NonNull ArchiveInstalledEvent event) {
-    Platform.runLater(() -> {
-      onReload();
     });
   }
 

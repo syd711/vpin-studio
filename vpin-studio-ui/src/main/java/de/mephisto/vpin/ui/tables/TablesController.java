@@ -1,13 +1,13 @@
 package de.mephisto.vpin.ui.tables;
 
+import de.mephisto.vpin.restclient.JobType;
 import de.mephisto.vpin.ui.NavigationController;
 import de.mephisto.vpin.ui.StudioFXController;
 import de.mephisto.vpin.ui.archiving.RepositoryController;
 import de.mephisto.vpin.ui.archiving.RepositorySidebarController;
 import de.mephisto.vpin.ui.events.EventManager;
+import de.mephisto.vpin.ui.events.JobFinishedEvent;
 import de.mephisto.vpin.ui.events.StudioEventListener;
-import de.mephisto.vpin.ui.events.TableBackedUpEvent;
-import de.mephisto.vpin.ui.events.ArchiveInstalledEvent;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
@@ -111,16 +111,14 @@ public class TablesController implements Initializable, StudioFXController, Stud
   }
 
   @Override
-  public void onTableBackedUp(@NonNull TableBackedUpEvent event) {
-    Platform.runLater(() -> {
-      repositoryController.doReload();
-    });
-  }
-
-  @Override
-  public void onArchiveInstalled(@NonNull ArchiveInstalledEvent event) {
-    Platform.runLater(() -> {
-      tableOverviewController.onReload();
-    });
+  public void jobFinished(@NonNull JobFinishedEvent event) {
+    JobType jobType = event.getJobType();
+    if(jobType.equals(JobType.TABLE_BACKUP)
+        || jobType.equals(JobType.ARCHIVE_INSTALL)
+    ) {
+      Platform.runLater(() -> {
+        repositoryController.doReload();
+      });
+    }
   }
 }

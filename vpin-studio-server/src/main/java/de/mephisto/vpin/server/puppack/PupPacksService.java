@@ -2,7 +2,10 @@ package de.mephisto.vpin.server.puppack;
 
 import de.mephisto.vpin.restclient.JobExecutionResult;
 import de.mephisto.vpin.restclient.JobExecutionResultFactory;
+import de.mephisto.vpin.restclient.JobType;
+import de.mephisto.vpin.restclient.descriptors.JobDescriptor;
 import de.mephisto.vpin.server.games.Game;
+import de.mephisto.vpin.server.jobs.JobQueue;
 import de.mephisto.vpin.server.system.SystemService;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
@@ -17,6 +20,7 @@ import org.springframework.stereotype.Service;
 
 import java.io.File;
 import java.util.Map;
+import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Service
@@ -25,6 +29,9 @@ public class PupPacksService implements InitializingBean {
 
   @Autowired
   private SystemService systemService;
+
+  @Autowired
+  private JobQueue jobQueue;
 
   private final Map<String, PupPack> pupPackFolders = new ConcurrentHashMap<>();
 
@@ -58,7 +65,7 @@ public class PupPacksService implements InitializingBean {
     LOG.info("Finished PUP pack scan, found " + pupPackFolders.size() + " packs (" + (end - start) + "ms)");
   }
 
-  private void addPupPack(File packFolder) {
+  public void addPupPack(File packFolder) {
     PupPack pupPack = new PupPack(packFolder);
     if (pupPack.getScreensPup().exists() || pupPack.getTriggersPup().exists() || !FileUtils.listFiles(packFolder, new String[]{"mp4"}, true).isEmpty()) {
       pupPack.setSize(org.apache.commons.io.FileUtils.sizeOfDirectory(packFolder));
@@ -98,15 +105,17 @@ public class PupPacksService implements InitializingBean {
       }
     }
 
-    JobExecutionResult unzip = PupPackUtil.unzip(out, pupPackFolder, game.getRom());
-    if (!out.delete() && unzip.getError() == null) {
-      return JobExecutionResultFactory.create("Failed to delete temporary file.");
-    }
+    PupPackInstallerJob job = new PupPackInstallerJob(this, out, pupPackFolder, game);
+    JobDescriptor jobDescriptor = new JobDescriptor(JobType.PUP_INSTALL, UUID.randomUUID().toString());
 
-    if (StringUtils.isEmpty(unzip.getError())) {
-      addPupPack(pupPackFolder);
-    }
-    return unzip;
+    jobDescriptor.setTitle("Installing PUP pack for \"" + game.getGameDisplayName() + "\"");
+    jobDescriptor.setDescription("Unzipping " + out.getName());
+    jobDescriptor.setJob(job);
+    jobDescriptor.setStatus(job.getStatus());
+
+    jobQueue.offer(jobDescriptor);
+
+    return JobExecutionResultFactory.empty();
   }
 
   public boolean clearCache() {
