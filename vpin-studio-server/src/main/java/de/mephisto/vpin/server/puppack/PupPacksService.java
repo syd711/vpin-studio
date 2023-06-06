@@ -40,13 +40,14 @@ public class PupPacksService implements InitializingBean {
   }
 
   private void refresh() {
+    this.pupPackFolders.clear();
     long start = System.currentTimeMillis();
     File pupPackFolder = new File(systemService.getPinUPSystemFolder(), "PUPVideos");
     if (pupPackFolder.exists()) {
       File[] pupPacks = pupPackFolder.listFiles((dir, name) -> new File(dir, name).isDirectory());
       if (pupPacks != null) {
         for (File packFolder : pupPacks) {
-          buildPupPack(packFolder);
+          addPupPack(packFolder);
         }
       }
     }
@@ -57,7 +58,7 @@ public class PupPacksService implements InitializingBean {
     LOG.info("Finished PUP pack scan, found " + pupPackFolders.size() + " packs (" + (end - start) + "ms)");
   }
 
-  private void buildPupPack(File packFolder) {
+  private void addPupPack(File packFolder) {
     PupPack pupPack = new PupPack(packFolder);
     if (pupPack.getScreensPup().exists() || pupPack.getTriggersPup().exists() || !FileUtils.listFiles(packFolder, new String[]{"mp4"}, true).isEmpty()) {
       pupPack.setSize(org.apache.commons.io.FileUtils.sizeOfDirectory(packFolder));
@@ -101,7 +102,10 @@ public class PupPacksService implements InitializingBean {
     if (!out.delete() && unzip.getError() == null) {
       return JobExecutionResultFactory.create("Failed to delete temporary file.");
     }
-    this.pupPackFolders.put(pupPackFolder.getName(), new PupPack(pupPackFolder));
+
+    if (StringUtils.isEmpty(unzip.getError())) {
+      addPupPack(pupPackFolder);
+    }
     return unzip;
   }
 

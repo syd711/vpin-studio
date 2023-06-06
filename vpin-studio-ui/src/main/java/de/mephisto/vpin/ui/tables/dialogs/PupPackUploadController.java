@@ -61,7 +61,7 @@ public class PupPackUploadController implements Initializable, DialogController 
   private void onUploadClick(ActionEvent event) {
     Stage stage = (Stage) ((Button) event.getSource()).getScene().getWindow();
     if (selection != null && selection.exists()) {
-      result = true;
+      result = false;
       stage.close();
 
       Platform.runLater(() -> {

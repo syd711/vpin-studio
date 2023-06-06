@@ -3,6 +3,7 @@ package de.mephisto.vpin.restclient.client;
 import de.mephisto.vpin.restclient.AssetType;
 import de.mephisto.vpin.restclient.FileUploadProgressListener;
 import de.mephisto.vpin.restclient.JobExecutionResult;
+import de.mephisto.vpin.restclient.representations.GameRepresentation;
 import de.mephisto.vpin.restclient.representations.PupPackRepresentation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,6 +36,10 @@ public class PupPackServiceClient extends VPinStudioClientService {
 
   public boolean isPupPackEnabled(int gameId) {
     return getRestClient().get(API + "puppacks/enabled/" + gameId, Boolean.class);
+  }
+
+  public JobExecutionResult option(int gameId, String option) {
+    return getRestClient().get(API + "puppacks/option/" + gameId + "/" + option, JobExecutionResult.class);
   }
 
   public JobExecutionResult uploadPupPack(File file, String uploadType, int gameId, FileUploadProgressListener listener) throws Exception {

@@ -68,6 +68,12 @@ public class PupPacksResource {
     return pupPacksService.clearCache();
   }
 
+  @GetMapping("/option/{id}/{option}")
+  public JobExecutionResult option(@PathVariable("id") Integer id,
+                                   @PathVariable("option") String option) {
+    return JobExecutionResultFactory.empty();
+  }
+
   @PostMapping("/upload")
   public JobExecutionResult upload(@RequestParam(value = "file", required = false) MultipartFile file,
                                    @RequestParam(value = "uploadType", required = false) String uploadType,
@@ -97,6 +103,7 @@ public class PupPacksResource {
     PupPackRepresentation representation = new PupPackRepresentation();
     representation.setSize(pupPack.getSize());
     representation.setModificationDate(new Date(pupPack.getPupPackFolder().lastModified()));
+    representation.setOptions(pupPack.getOptions());
     return representation;
   }
 }
