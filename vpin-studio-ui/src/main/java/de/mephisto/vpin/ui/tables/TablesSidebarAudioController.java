@@ -132,7 +132,7 @@ public class TablesSidebarAudioController implements Initializable {
   public void refreshView(Optional<GameRepresentation> g) {
     altSoundBtn.setDisable(true);
     restoreBtn.setDisable(true);
-    enabledCheckbox.setDisable(true);
+    enabledCheckbox.setVisible(false);
     dataBox.setVisible(false);
     emptyDataBox.setVisible(true);
     uploadBtn.setDisable(true);
@@ -153,7 +153,7 @@ public class TablesSidebarAudioController implements Initializable {
       altSoundBtn.setDisable(!altSoundAvailable);
       restoreBtn.setDisable(!altSoundAvailable);
       enabledCheckbox.setDisable(!altSoundAvailable);
-      enabledCheckbox.setSelected(false);
+      enabledCheckbox.setVisible(altSoundAvailable);
 
       if (altSoundAvailable) {
         altSound = Studio.client.getAltSoundService().getAltSound(game.getId());

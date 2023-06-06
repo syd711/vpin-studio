@@ -1,7 +1,7 @@
 package de.mephisto.vpin.ui.tables;
 
 import de.mephisto.vpin.commons.utils.FileUtils;
-import de.mephisto.vpin.restclient.client.VPinStudioClient;
+import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.representations.GameRepresentation;
 import de.mephisto.vpin.restclient.representations.PupPackRepresentation;
 import de.mephisto.vpin.ui.Studio;
@@ -78,6 +78,12 @@ public class TablesSidebarPUPPackController implements Initializable {
   @FXML
   private void onUpload() {
     if (game.isPresent()) {
+      GameRepresentation g = game.get();
+      if (StringUtils.isEmpty(g.getRom())) {
+        WidgetFactory.showAlert(Studio.stage, "No ROM name found for \"" + g.getGameDisplayName() + "\".", "To upload a PUP pack, a ROM name must have been resolved for the table.");
+        return;
+      }
+
       boolean uploaded = Dialogs.openPupPackUploadDialog(tablesSidebarController, game.get());
       if (uploaded) {
         this.tablesSidebarController.getTablesController().onReload();
@@ -99,7 +105,7 @@ public class TablesSidebarPUPPackController implements Initializable {
   }
 
   public void refreshView(Optional<GameRepresentation> g) {
-    enabledCheckbox.setDisable(true);
+    enabledCheckbox.setVisible(false);
     dataBox.setVisible(false);
     emptyDataBox.setVisible(true);
     uploadBtn.setDisable(true);
@@ -115,7 +121,6 @@ public class TablesSidebarPUPPackController implements Initializable {
       emptyDataBox.setVisible(!pupPackAvailable);
 
       uploadBtn.setDisable(StringUtils.isEmpty(game.getRom()));
-      enabledCheckbox.setDisable(!pupPackAvailable);
       enabledCheckbox.setSelected(false);
 
       if (pupPackAvailable) {

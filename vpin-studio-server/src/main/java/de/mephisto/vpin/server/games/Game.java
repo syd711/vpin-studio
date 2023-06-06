@@ -3,7 +3,7 @@ package de.mephisto.vpin.server.games;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import de.mephisto.vpin.commons.HighscoreType;
 import de.mephisto.vpin.restclient.PopperScreen;
-import de.mephisto.vpin.server.games.puppack.PupPack;
+import de.mephisto.vpin.server.puppack.PupPack;
 import de.mephisto.vpin.server.popper.Emulator;
 import de.mephisto.vpin.server.popper.GameMedia;
 import de.mephisto.vpin.server.popper.GameMediaItem;
@@ -23,6 +23,8 @@ public class Game {
   private String gameDisplayName;
   private String gameFileName;
   private String tableName;
+  private String custom2;
+  private String custom3;
   private int id;
   private int nvOffset;
   private String hsFileName;
@@ -62,6 +64,22 @@ public class Game {
 
   public boolean isPupPackAvailable() {
     return pupPack != null;
+  }
+
+  public String getCustom2() {
+    return custom2;
+  }
+
+  public void setCustom2(String custom2) {
+    this.custom2 = custom2;
+  }
+
+  public String getCustom3() {
+    return custom3;
+  }
+
+  public void setCustom3(String custom3) {
+    this.custom3 = custom3;
   }
 
   public long getGameFileSize() {

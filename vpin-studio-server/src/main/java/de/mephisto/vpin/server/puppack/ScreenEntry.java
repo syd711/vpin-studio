@@ -1,14 +1,14 @@
-package de.mephisto.vpin.server.games.puppack;
+package de.mephisto.vpin.server.puppack;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 import org.apache.commons.csv.CSVRecord;
 import org.apache.commons.lang3.StringUtils;
 
-public class TriggerEntry {
+public class ScreenEntry {
 
-  private final CSVRecord record;
+  private CSVRecord record;
 
-  public TriggerEntry(@NonNull CSVRecord record) {
+  public ScreenEntry(@NonNull CSVRecord record) {
     this.record = record;
   }
 
@@ -21,10 +21,10 @@ public class TriggerEntry {
   }
 
   public String getPlayList() {
-    return record.get(5);
+    return record.get(2);
   }
 
   public String getPlayFile() {
-    return record.get(6);
+    return record.get(3);
   }
 }

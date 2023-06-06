@@ -6,6 +6,7 @@
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
 <BorderPane styleClass="base-component" stylesheets="@../../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.tables.dialogs.PupPackUploadController">
@@ -27,7 +28,7 @@
                               <Font size="14.0" />
                            </font>
                         </TextField>
-                        <Button mnemonicParsing="false" onAction="#onFileSelect" prefHeight="26.0" prefWidth="99.0" text="Select File...">
+                        <Button fx:id="fileBtn" mnemonicParsing="false" onAction="#onFileSelect" prefHeight="26.0" prefWidth="99.0" text="Select File...">
                            <font>
                               <Font size="14.0" />
                            </font>
@@ -51,18 +52,22 @@
                   <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
                </BorderPane.margin>
                <bottom>
-                  <Label styleClass="preference-description" text="The file will be uploaded and installed for the selected table." BorderPane.alignment="TOP_LEFT">
+                  <VBox BorderPane.alignment="TOP_LEFT">
                      <BorderPane.margin>
                         <Insets top="12.0" />
                      </BorderPane.margin>
-                  </Label>
+                     <children>
+                        <Label styleClass="preference-description" text="Download a PUP pack and upload it here." />
+                        <Label layoutX="10.0" layoutY="10.0" styleClass="preference-description" text="The file will be analyzed and extracted into the correct folder." />
+                     </children>
+                  </VBox>
                </bottom>
             </BorderPane>
          </top>
          <bottom>
             <HBox alignment="BASELINE_RIGHT" BorderPane.alignment="CENTER">
                <children>
-                <Button fx:id="cancelButton" mnemonicParsing="false" onAction="#onCancelClick" styleClass="default-button" text="Cancel">
+                <Button fx:id="cancelBtn" mnemonicParsing="false" onAction="#onCancelClick" styleClass="default-button" text="Cancel">
                      <HBox.margin>
                         <Insets right="12.0" />
                      </HBox.margin>

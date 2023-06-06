@@ -15,8 +15,8 @@ import java.io.File;
 import java.util.Collections;
 import java.util.Iterator;
 
-public class PackPackUploadProgressModel extends ProgressModel<File> {
-  private final static Logger LOG = LoggerFactory.getLogger(PackPackUploadProgressModel.class);
+public class PupPackUploadProgressModel extends ProgressModel<File> {
+  private final static Logger LOG = LoggerFactory.getLogger(PupPackUploadProgressModel.class);
 
   private final Iterator<File> iterator;
   private final TablesSidebarController tablesSidebarController;
@@ -24,7 +24,7 @@ public class PackPackUploadProgressModel extends ProgressModel<File> {
   private final File file;
   private final String pupPackType;
 
-  public PackPackUploadProgressModel(TablesSidebarController tablesSidebarController, int gameId, String title, File file, String pupPackType) {
+  public PupPackUploadProgressModel(TablesSidebarController tablesSidebarController, int gameId, String title, File file, String pupPackType) {
     super(title);
     this.tablesSidebarController = tablesSidebarController;
     this.gameId = gameId;

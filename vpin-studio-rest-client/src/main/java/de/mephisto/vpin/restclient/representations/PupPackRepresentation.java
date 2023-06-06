@@ -1,11 +1,22 @@
 package de.mephisto.vpin.restclient.representations;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 public class PupPackRepresentation {
   private long size;
   private Date modificationDate;
   private boolean enabled;
+  private List<String> options = new ArrayList<>();
+
+  public List<String> getOptions() {
+    return options;
+  }
+
+  public void setOptions(List<String> options) {
+    this.options = options;
+  }
 
   public boolean isEnabled() {
     return enabled;

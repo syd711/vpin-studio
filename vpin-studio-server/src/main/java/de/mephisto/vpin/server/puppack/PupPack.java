@@ -1,4 +1,4 @@
-package de.mephisto.vpin.server.games.puppack;
+package de.mephisto.vpin.server.puppack;
 
 import de.mephisto.vpin.commons.utils.FileUtils;
 import de.mephisto.vpin.server.games.Game;
@@ -10,6 +10,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 public class PupPack {
   private final static Logger LOG = LoggerFactory.getLogger(PupPack.class);
@@ -21,6 +23,7 @@ public class PupPack {
   private final File screensPup;
   private final File triggersPup;
   private final File packFolder;
+  private List<String> options = new ArrayList<>();
 
   private long size;
 
@@ -29,8 +32,18 @@ public class PupPack {
     screensPup = new File(packFolder, SCREENS_PUP);
     triggersPup = new File(packFolder, TRIGGERS_PUP);
     this.packFolder = packFolder;
+  }
 
-    this.size = org.apache.commons.io.FileUtils.sizeOfDirectory(packFolder);
+  public List<String> getOptions() {
+    return options;
+  }
+
+  public void setOptions(List<String> options) {
+    this.options = options;
+  }
+
+  public void setSize(long size) {
+    this.size = size;
   }
 
   public long getSize() {

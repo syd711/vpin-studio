@@ -738,6 +738,9 @@ public class PinUPConnector implements InitializingBean {
     String gameDisplayName = rs.getString("GameDisplay");
     game.setGameDisplayName(gameDisplayName);
 
+    game.setCustom2(rs.getString("CUSTOM2"));
+    game.setCustom3(rs.getString("CUSTOM3"));
+
     int emuId = rs.getInt("EMUID");
     Emulator emulator = emulators.get(emuId);
     game.setEmulator(emulator);

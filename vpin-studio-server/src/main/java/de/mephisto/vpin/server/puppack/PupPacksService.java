@@ -2,26 +2,22 @@ package de.mephisto.vpin.server.puppack;
 
 import de.mephisto.vpin.restclient.JobExecutionResult;
 import de.mephisto.vpin.restclient.JobExecutionResultFactory;
-import de.mephisto.vpin.server.altsound.AltSoundUtil;
 import de.mephisto.vpin.server.games.Game;
-import de.mephisto.vpin.server.games.puppack.PupPack;
 import de.mephisto.vpin.server.system.SystemService;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 
 import java.io.File;
-import java.util.Collection;
-import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 @Service
 public class PupPacksService implements InitializingBean {
@@ -30,7 +26,7 @@ public class PupPacksService implements InitializingBean {
   @Autowired
   private SystemService systemService;
 
-  private Map<String, PupPack> pupPackFolders = new HashMap<>();
+  private final Map<String, PupPack> pupPackFolders = new ConcurrentHashMap<>();
 
   @Nullable
   public PupPack getPupPack(@NonNull Game game) {
@@ -50,10 +46,7 @@ public class PupPacksService implements InitializingBean {
       File[] pupPacks = pupPackFolder.listFiles((dir, name) -> new File(dir, name).isDirectory());
       if (pupPacks != null) {
         for (File packFolder : pupPacks) {
-          Collection<File> files = FileUtils.listFiles(packFolder, new String[]{"mp4"}, true);
-          if (!files.isEmpty()) {
-            pupPackFolders.put(packFolder.getName(), new PupPack(packFolder));
-          }
+          buildPupPack(packFolder);
         }
       }
     }
@@ -62,6 +55,22 @@ public class PupPacksService implements InitializingBean {
     }
     long end = System.currentTimeMillis();
     LOG.info("Finished PUP pack scan, found " + pupPackFolders.size() + " packs (" + (end - start) + "ms)");
+  }
+
+  private void buildPupPack(File packFolder) {
+    PupPack pupPack = new PupPack(packFolder);
+    if (pupPack.getScreensPup().exists() || pupPack.getTriggersPup().exists() || !FileUtils.listFiles(packFolder, new String[]{"mp4"}, true).isEmpty()) {
+      pupPack.setSize(org.apache.commons.io.FileUtils.sizeOfDirectory(packFolder));
+
+      String[] list = packFolder.list((dir, name) -> name.endsWith(".bat"));
+      if (list != null) {
+        for (String s : list) {
+          String name = FilenameUtils.getBaseName(s);
+          pupPack.getOptions().add(name);
+        }
+      }
+      pupPackFolders.put(packFolder.getName(), pupPack);
+    }
   }
 
   public boolean setPupPackEnabled(Game game, boolean enable) {
@@ -88,12 +97,12 @@ public class PupPacksService implements InitializingBean {
       }
     }
 
-    AltSoundUtil.unzip(out, pupPackFolder);
-    if (!out.delete()) {
+    JobExecutionResult unzip = PupPackUtil.unzip(out, pupPackFolder, game.getRom());
+    if (!out.delete() && unzip.getError() == null) {
       return JobExecutionResultFactory.create("Failed to delete temporary file.");
     }
     this.pupPackFolders.put(pupPackFolder.getName(), new PupPack(pupPackFolder));
-    return JobExecutionResultFactory.empty();
+    return unzip;
   }
 
   public boolean clearCache() {

@@ -1,5 +1,7 @@
 package de.mephisto.vpin.server.puppack;
 
+import de.mephisto.vpin.restclient.JobExecutionResult;
+import de.mephisto.vpin.restclient.JobExecutionResultFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -13,7 +15,8 @@ import java.util.zip.ZipInputStream;
 public class PupPackUtil {
   private final static Logger LOG = LoggerFactory.getLogger(PupPackUtil.class);
 
-  public static void unzip(File archiveFile, File destinationDir) {
+  public static JobExecutionResult unzip(File archiveFile, File destinationDir, String rom) {
+    boolean folderMatch = false;
     try {
       ZipFile zf = new ZipFile(archiveFile);
       int totalCount = zf.size();
@@ -25,12 +28,26 @@ public class PupPackUtil {
       ZipEntry zipEntry = zis.getNextEntry();
 
       while (zipEntry != null) {
+        String name = zipEntry.getName();
         if (zipEntry.isDirectory()) {
-          //ignore
+          if(!folderMatch) {
+            String folderName = name;
+            if (folderName.contains("/")) {
+              String[] segments = folderName.split("/");
+              folderName = segments[segments.length-1];
+            }
+
+            if (folderName.equals(rom)) {
+              folderMatch = true;
+              LOG.info("Found matching ROM \"" + rom + "\" in pup pack archive.");
+            }
+            else {
+              LOG.info("Missing ROM name match: " + folderName);
+            }
+          }
         }
         else {
-          String name = zipEntry.getName();
-          if (name.endsWith(".ogg") || name.endsWith(".mp3") || name.endsWith(".csv")) {
+          if (folderMatch) {
             // fix for Windows-created archives
             if (name.contains("/")) {
               name = name.substring(name.lastIndexOf("/") + 1);
@@ -53,6 +70,12 @@ public class PupPackUtil {
       zis.close();
     } catch (Exception e) {
       LOG.error("Unzipping of " + archiveFile.getAbsolutePath() + " failed: " + e.getMessage(), e);
+      return JobExecutionResultFactory.create("Unzipping of " + archiveFile.getAbsolutePath() + " failed: " + e.getMessage());
     }
+
+    if (!folderMatch) {
+      return JobExecutionResultFactory.create("Selected PUP pack is not applicable for ROM '" + rom + "'");
+    }
+    return JobExecutionResultFactory.empty();
   }
 }

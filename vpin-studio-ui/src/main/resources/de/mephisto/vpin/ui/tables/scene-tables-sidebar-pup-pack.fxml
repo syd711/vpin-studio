@@ -79,12 +79,13 @@
                         <Font name="System Bold" size="14.0" />
                      </font>
                   </Label>
-                  <Label styleClass="preference-description" text="You can download PUP packs here:">
+                  <Label styleClass="preference-description" text="You can search for PUP pack downloads here:">
                      <VBox.margin>
                         <Insets top="12.0" />
                      </VBox.margin>
                   </Label>
-                  <Hyperlink onAction="#onLink" text="https://vpuniverse.com/files/category/120-pup-packs/" />
+                  <Hyperlink onAction="#onLink" text="https://virtual-pinball-spreadsheet.web.app/" />
+                  <Hyperlink layoutX="10.0" layoutY="64.0" onAction="#onLink" text="https://vpuniverse.com/files/category/120-pup-packs/" />
                </children>
                <VBox.margin>
                   <Insets bottom="24.0" />
@@ -108,16 +109,11 @@
                </graphic>
             </Button>
             <Separator layoutX="233.0" layoutY="10.0" orientation="VERTICAL" prefWidth="12.0" />
-            <CheckBox fx:id="enabledCheckbox" mnemonicParsing="false" onAction="#onPupPackEnable" textFill="WHITE">
+            <CheckBox fx:id="enabledCheckbox" mnemonicParsing="false" onAction="#onPupPackEnable" text="PUP Pack Enabled" textFill="WHITE">
                <font>
                   <Font size="14.0" />
                </font>
             </CheckBox>
-            <Label text="PUP Pack Enabled" textFill="WHITE">
-               <font>
-                  <Font size="14.0" />
-               </font>
-            </Label>
          </items>
       </ToolBar>
    </top>

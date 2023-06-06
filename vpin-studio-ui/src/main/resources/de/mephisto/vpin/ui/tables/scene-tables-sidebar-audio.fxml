@@ -101,11 +101,11 @@
                         <Font name="System Bold" size="14.0" />
                      </font>
                   </Label>
-                  <Label styleClass="preference-description" text="You can download ALT sound packages here:">
+                  <Label styleClass="preference-description" text="You can search for ALT sound downloads here:">
                      <VBox.margin>
                         <Insets top="12.0" />
                      </VBox.margin></Label>
-                  <Hyperlink onAction="#onLink" text="http://altsound.vpin24.com/">
+                  <Hyperlink onAction="#onLink" text="https://virtual-pinball-spreadsheet.web.app/">
                      <font>
                         <Font size="14.0" />
                      </font>
@@ -114,6 +114,11 @@
                      </VBox.margin>
                   </Hyperlink>
                   <Hyperlink onAction="#onLink" text="https://vpuniverse.com/files/category/113-altsound/" />
+                  <Hyperlink layoutX="10.0" layoutY="64.0" onAction="#onLink" text="http://altsound.vpin24.com/">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                  </Hyperlink>
                </children>
                <VBox.margin>
                   <Insets top="12.0" />
@@ -151,16 +156,11 @@
                </graphic>
             </Button>
             <Separator layoutX="233.0" layoutY="10.0" orientation="VERTICAL" prefWidth="12.0" />
-            <CheckBox fx:id="enabledCheckbox" mnemonicParsing="false" onAction="#onAltSoundEnable" textFill="WHITE">
+            <CheckBox fx:id="enabledCheckbox" mnemonicParsing="false" onAction="#onAltSoundEnable" text="ALT Sound Enabled" textFill="WHITE">
                <font>
                   <Font size="14.0" />
                </font>
             </CheckBox>
-            <Label text="ALT Sound Enabled" textFill="WHITE">
-               <font>
-                  <Font size="14.0" />
-               </font>
-            </Label>
         </items>
       </ToolBar>
    </top>

@@ -1,4 +1,4 @@
-package de.mephisto.vpin.server.games.puppack;
+package de.mephisto.vpin.server.puppack;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
