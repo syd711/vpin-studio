@@ -2,7 +2,6 @@ package de.mephisto.vpin.ui.tables;
 
 import de.mephisto.vpin.commons.EmulatorType;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
-import de.mephisto.vpin.restclient.client.VPinStudioClient;
 import de.mephisto.vpin.restclient.ValidationCode;
 import de.mephisto.vpin.restclient.representations.GameRepresentation;
 import de.mephisto.vpin.ui.NavigationController;
@@ -332,7 +331,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
 
   @FXML
   public void onReload() {
-   // Studio.client.clearCache();
+    // Studio.client.clearCache();
 
     this.textfieldSearch.setDisable(true);
     this.reloadBtn.setDisable(true);
@@ -359,7 +358,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
 
         if (selection != null) {
           final GameRepresentation updatedGame = Studio.client.getGame(selection.getId());
-          if(updatedGame != null) {
+          if (updatedGame != null) {
             tableView.getSelectionModel().select(updatedGame);
             this.playBtn.setDisable(!updatedGame.isGameFileAvailable());
             this.backupBtn.setDisable(!updatedGame.isGameFileAvailable());
@@ -553,9 +552,9 @@ public class TableOverviewController implements Initializable, StudioFXControlle
   private void filterGames(List<GameRepresentation> games) {
     List<GameRepresentation> filtered = new ArrayList<>();
     String filterValue = textfieldSearch.textProperty().getValue();
-    String emulatorValue = EmulatorType.VISUAL_PINBALL_X;//emulatorTypeCombo.getValue();
     for (GameRepresentation game : games) {
-      if (!StringUtils.isEmpty(emulatorValue) && !game.getEmulator().getName().equals(emulatorValue)) {
+      String gameEmuType = game.getEmulator().getName();
+      if (!gameEmuType.equals(EmulatorType.VISUAL_PINBALL_X) && !gameEmuType.equals(EmulatorType.VISUAL_PINBALL)) {
         continue;
       }
 
