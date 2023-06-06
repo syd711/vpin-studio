@@ -113,11 +113,14 @@ public class TablesController implements Initializable, StudioFXController, Stud
   @Override
   public void jobFinished(@NonNull JobFinishedEvent event) {
     JobType jobType = event.getJobType();
-    if(jobType.equals(JobType.TABLE_BACKUP)
-        || jobType.equals(JobType.ARCHIVE_INSTALL)
-    ) {
+    if (jobType.equals(JobType.TABLE_BACKUP) || jobType.equals(JobType.ARCHIVE_INSTALL)) {
       Platform.runLater(() -> {
         repositoryController.doReload();
+      });
+    }
+    else if (jobType.equals(JobType.PUP_INSTALL)) {
+      Platform.runLater(() -> {
+        this.tableOverviewController.onReload();
       });
     }
   }
