@@ -27,7 +27,7 @@
                               <Font size="14.0" />
                            </font>
                         </TextField>
-                        <Button mnemonicParsing="false" onAction="#onFileSelect" prefHeight="26.0" prefWidth="99.0" text="Select File...">
+                        <Button fx:id="fileBtn" mnemonicParsing="false" onAction="#onFileSelect" prefHeight="26.0" prefWidth="99.0" text="Select File...">
                            <font>
                               <Font size="14.0" />
                            </font>
@@ -62,7 +62,7 @@
          <bottom>
             <HBox alignment="BASELINE_RIGHT" BorderPane.alignment="CENTER">
                <children>
-                <Button fx:id="cancelButton" mnemonicParsing="false" onAction="#onCancelClick" styleClass="default-button" text="Cancel">
+                <Button fx:id="cancelBtn" mnemonicParsing="false" onAction="#onCancelClick" styleClass="default-button" text="Cancel">
                      <HBox.margin>
                         <Insets right="12.0" />
                      </HBox.margin>

@@ -15,10 +15,6 @@ public class AltSoundUtil {
 
   public static void unzip(File archiveFile, File destinationDir) {
     try {
-      ZipFile zf = new ZipFile(archiveFile);
-      int totalCount = zf.size();
-      zf.close();
-
       byte[] buffer = new byte[1024];
       FileInputStream fileInputStream = new FileInputStream(archiveFile);
       ZipInputStream zis = new ZipInputStream(fileInputStream);

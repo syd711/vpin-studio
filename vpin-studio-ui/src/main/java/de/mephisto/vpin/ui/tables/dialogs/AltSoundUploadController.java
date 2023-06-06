@@ -1,7 +1,11 @@
 package de.mephisto.vpin.ui.tables.dialogs;
 
 import de.mephisto.vpin.commons.fx.DialogController;
+import de.mephisto.vpin.commons.utils.AltSoundAnalyzer;
+import de.mephisto.vpin.commons.utils.PupPackAnalyzer;
+import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.representations.GameRepresentation;
+import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.tables.TablesSidebarController;
 import de.mephisto.vpin.ui.util.Dialogs;
 import javafx.application.Platform;
@@ -35,6 +39,12 @@ public class AltSoundUploadController implements Initializable, DialogController
   private Button uploadBtn;
 
   @FXML
+  private Button cancelBtn;
+
+  @FXML
+  private Button fileBtn;
+
+  @FXML
   private Label titleLabel;
 
   private File selection;
@@ -51,9 +61,9 @@ public class AltSoundUploadController implements Initializable, DialogController
 
   @FXML
   private void onUploadClick(ActionEvent event) {
+    Stage stage = (Stage) ((Button) event.getSource()).getScene().getWindow();
     if (selection != null && selection.exists()) {
-      Stage stage = (Stage) ((Button) event.getSource()).getScene().getWindow();
-      result = true;
+      result = false;
       stage.close();
 
       Platform.runLater(() -> {
@@ -65,6 +75,8 @@ public class AltSoundUploadController implements Initializable, DialogController
 
   @FXML
   private void onFileSelect() {
+    this.uploadBtn.setDisable(true);
+
     FileChooser fileChooser = new FileChooser();
     fileChooser.setTitle("Select ALT Sound");
     fileChooser.getExtensionFilters().addAll(
@@ -78,7 +90,26 @@ public class AltSoundUploadController implements Initializable, DialogController
     this.uploadBtn.setDisable(selection == null);
     if (this.selection != null) {
       AltSoundUploadController.lastFolderSelection = this.selection.getParentFile();
-      this.fileNameField.setText(this.selection.getAbsolutePath());
+      this.fileNameField.setText("Analyzing \"" + selection.getName() + "\"...");
+      this.fileNameField.setDisable(true);
+      this.fileBtn.setDisable(true);
+      this.cancelBtn.setDisable(true);
+
+
+      Platform.runLater(() -> {
+        String analyze = AltSoundAnalyzer.analyze(selection);
+        this.fileNameField.setText(this.selection.getAbsolutePath());
+        this.fileNameField.setDisable(false);
+        this.fileBtn.setDisable(false);
+        this.cancelBtn.setDisable(false);
+
+        if (analyze != null) {
+          result = false;
+          WidgetFactory.showAlert(Studio.stage, analyze);
+          return;
+        }
+        this.uploadBtn.setDisable(false);
+      });
     }
     else {
       this.fileNameField.setText("");
@@ -89,9 +120,7 @@ public class AltSoundUploadController implements Initializable, DialogController
   public void initialize(URL url, ResourceBundle resourceBundle) {
     this.result = false;
     this.selection = null;
-
     this.uploadBtn.setDisable(true);
-    this.fileNameField.textProperty().addListener((observableValue, s, t1) -> uploadBtn.setDisable(StringUtils.isEmpty(t1)));
   }
 
   @Override

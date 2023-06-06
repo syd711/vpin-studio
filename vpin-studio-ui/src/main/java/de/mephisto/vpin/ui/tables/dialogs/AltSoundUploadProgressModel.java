@@ -3,6 +3,7 @@ package de.mephisto.vpin.ui.tables.dialogs;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.JobExecutionResult;
 import de.mephisto.vpin.ui.Studio;
+import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.tables.TablesSidebarController;
 import de.mephisto.vpin.ui.util.ProgressModel;
 import de.mephisto.vpin.ui.util.ProgressResultModel;
@@ -14,6 +15,8 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.util.Collections;
 import java.util.Iterator;
+
+import static de.mephisto.vpin.restclient.JobType.ALTSOUND_INSTALL;
 
 public class AltSoundUploadProgressModel extends ProgressModel<File> {
   private final static Logger LOG = LoggerFactory.getLogger(AltSoundUploadProgressModel.class);
@@ -57,14 +60,14 @@ public class AltSoundUploadProgressModel extends ProgressModel<File> {
   public void processNext(ProgressResultModel progressResultModel, File next) {
     try {
       JobExecutionResult result = Studio.client.getAltSoundService().uploadAltSound(next, altSoundType, gameId, percent -> progressResultModel.setProgress(percent));
-      if(!StringUtils.isEmpty(result.getError())) {
+      if (!StringUtils.isEmpty(result.getError())) {
         Platform.runLater(() -> {
           WidgetFactory.showAlert(Studio.stage, "Error", result.getError());
         });
       }
       else {
         Platform.runLater(() -> {
-          tablesSidebarController.getTablesController().onReload();
+          EventManager.getInstance().notifyJobFinished(ALTSOUND_INSTALL);
         });
       }
       progressResultModel.addProcessed();

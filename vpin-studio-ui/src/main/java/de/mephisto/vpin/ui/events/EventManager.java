@@ -23,6 +23,10 @@ public class EventManager {
 
   public void notifyJobFinished(JobDescriptor descriptor) {
     JobType type = descriptor.getJobType();
+    notifyJobFinished(type);
+  }
+
+  public void notifyJobFinished(JobType type) {
     JobFinishedEvent event = new JobFinishedEvent(type);
     new Thread(() -> {
       for (StudioEventListener listener : listeners) {
