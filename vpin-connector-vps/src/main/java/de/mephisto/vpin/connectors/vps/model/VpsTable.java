@@ -7,8 +7,8 @@ public class VpsTable {
   private List<String> features;
   private List<VpsAuthoredUrls> povFiles;
   private boolean broken;
-  private List<VpsUrl> altColorFiles;
-  private List<VpsUrl> altSoundFiles;
+  private List<VpsAuthoredUrls> altColorFiles;
+  private List<VpsAuthoredUrls> altSoundFiles;
   private List<VpsAuthoredUrls> soundFiles;
   private List<VpsAuthoredUrls> romFiles;
   private List<VpsAuthoredUrls> pupPackFiles;
@@ -21,7 +21,7 @@ public class VpsTable {
   private int players;
   private String type;
   private int year;
-  private long updated;
+  private long updatedAt;
 
   public String getIpdbUrl() {
     return ipdbUrl;
@@ -63,12 +63,12 @@ public class VpsTable {
     this.year = year;
   }
 
-  public long getUpdated() {
-    return updated;
+  public long getUpdatedAt() {
+    return updatedAt;
   }
 
-  public void setUpdated(long updated) {
-    this.updated = updated;
+  public void setUpdatedAt(long updatedAt) {
+    this.updatedAt = updatedAt;
   }
 
   public List<VpsAuthoredUrls> getWheelArtFiles() {
@@ -119,19 +119,19 @@ public class VpsTable {
     this.soundFiles = soundFiles;
   }
 
-  public List<VpsUrl> getAltSoundFiles() {
+  public List<VpsAuthoredUrls> getAltSoundFiles() {
     return altSoundFiles;
   }
 
-  public void setAltSoundFiles(List<VpsUrl> altSoundFiles) {
+  public void setAltSoundFiles(List<VpsAuthoredUrls> altSoundFiles) {
     this.altSoundFiles = altSoundFiles;
   }
 
-  public List<VpsUrl> getAltColorFiles() {
+  public List<VpsAuthoredUrls> getAltColorFiles() {
     return altColorFiles;
   }
 
-  public void setAltColorFiles(List<VpsUrl> altColorFiles) {
+  public void setAltColorFiles(List<VpsAuthoredUrls> altColorFiles) {
     this.altColorFiles = altColorFiles;
   }
 
@@ -165,5 +165,10 @@ public class VpsTable {
 
   public void setPovFiles(List<VpsAuthoredUrls> povFiles) {
     this.povFiles = povFiles;
+  }
+
+  @Override
+  public String toString() {
+    return this.getName();
   }
 }

@@ -59,6 +59,11 @@
             <artifactId>vpin-connector-discord</artifactId>
             <version>${project.version}</version>
         </dependency>
+        <dependency>
+            <groupId>de.mephisto.vpin</groupId>
+            <artifactId>vpin-connector-vps</artifactId>
+            <version>${project.version}</version>
+        </dependency>
 
 
         <dependency>

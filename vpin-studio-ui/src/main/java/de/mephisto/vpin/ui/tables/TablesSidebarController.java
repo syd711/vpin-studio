@@ -15,7 +15,9 @@ import javafx.scene.control.TitledPane;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.awt.*;
 import java.io.IOException;
+import java.net.URI;
 import java.net.URL;
 import java.util.Optional;
 import java.util.ResourceBundle;
@@ -104,6 +106,17 @@ public class TablesSidebarController implements Initializable {
 
   // Add a public no-args constructor
   public TablesSidebarController() {
+  }
+
+  @FXML
+  private void onVpsBtn() {
+    if (Desktop.getDesktop().isSupported(Desktop.Action.BROWSE)) {
+      try {
+        Desktop.getDesktop().browse(new URI("https://virtual-pinball-spreadsheet.web.app/"));
+      } catch (Exception ex) {
+        LOG.error("Failed to open link: " + ex.getMessage(), ex);
+      }
+    }
   }
 
   @Override

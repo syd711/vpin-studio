@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Hyperlink?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
@@ -11,49 +13,108 @@
 
 <BorderPane fx:id="defaultBackgroundBorderPane" prefWidth="600.0" styleClass="accordion-container" stylesheets="@../stylesheet.css" BorderPane.alignment="CENTER" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.tables.TablesSidebarVpsController">
     <center>
-      <VBox fx:id="dataRoot" BorderPane.alignment="CENTER">
+      <ScrollPane hbarPolicy="NEVER" BorderPane.alignment="CENTER">
          <BorderPane.margin>
-            <Insets bottom="12.0" left="12.0" right="12.0" />
+            <Insets />
          </BorderPane.margin>
-         <children>
-              <VBox fx:id="dataBox">
-                  <children>
-                  <GridPane>
-                    <columnConstraints>
-                      <ColumnConstraints hgrow="SOMETIMES" maxWidth="282.199951171875" minWidth="10.0" prefWidth="164.000048828125" />
-                      <ColumnConstraints hgrow="SOMETIMES" maxWidth="410.399951171875" minWidth="10.0" prefWidth="410.399951171875" />
-                    </columnConstraints>
-                    <rowConstraints>
-                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                    </rowConstraints>
+         <content>
+            <VBox>
+               <children>
+                  <VBox fx:id="detailsBox">
                      <children>
-                        <Label fx:id="lastModifiedLabel" layoutX="175.0" layoutY="76.0" text="-" textFill="WHITE" GridPane.columnIndex="1">
+                        <Label text="Sheet Data" textFill="WHITE">
                            <font>
-                              <Font size="14.0" />
+                              <Font name="System Bold" size="14.0" />
                            </font>
                         </Label>
-                        <Label layoutX="10.0" layoutY="45.0" text="Last Modified:" textFill="WHITE">
-                           <font>
-                              <Font size="14.0" />
-                           </font>
-                        </Label>
+                        <GridPane>
+                          <columnConstraints>
+                            <ColumnConstraints hgrow="SOMETIMES" maxWidth="282.199951171875" minWidth="10.0" prefWidth="128.5999755859375" />
+                              <ColumnConstraints hgrow="SOMETIMES" maxWidth="446.2000732421875" minWidth="10.0" prefWidth="445.4000244140625" />
+                          </columnConstraints>
+                          <rowConstraints>
+                            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                          </rowConstraints>
+                           <VBox.margin>
+                              <Insets top="6.0" />
+                           </VBox.margin>
+                           <children>
+                              <Label text="Name:" textFill="WHITE">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </Label>
+                              <Label layoutX="10.0" layoutY="15.0" text="IPDB Url:" textFill="WHITE" GridPane.rowIndex="2">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </Label>
+                              <Label layoutX="10.0" layoutY="49.0" text="Manufacturer:" textFill="WHITE" GridPane.rowIndex="1">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </Label>
+                              <Label layoutX="10.0" layoutY="116.0" text="Players:" textFill="WHITE" GridPane.rowIndex="4">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </Label>
+                              <Label layoutX="10.0" layoutY="150.0" text="Updated:" textFill="WHITE" GridPane.rowIndex="5">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </Label>
+                              <Label layoutX="10.0" layoutY="116.0" text="Year:" textFill="WHITE" GridPane.rowIndex="3">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </Label>
+                              <Label fx:id="nameLabel" layoutX="10.0" layoutY="15.0" text="-" textFill="WHITE" GridPane.columnIndex="1">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </Label>
+                              <Label fx:id="manufacturerLabel" layoutX="139.0" layoutY="15.0" text="-" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </Label>
+                              <Label fx:id="yearLabel" layoutX="139.0" layoutY="116.0" text="-" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="3">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </Label>
+                              <Label fx:id="playersLabel" layoutX="139.0" layoutY="150.0" text="-" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="4">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </Label>
+                              <Label fx:id="updatedLabel" layoutX="139.0" layoutY="184.0" text="-" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="5">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </Label>
+                              <Hyperlink fx:id="ipdbLink" onAction="#onIpdbLink" text="-" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                           </children>
+                        </GridPane>
                      </children>
                      <VBox.margin>
-                        <Insets top="6.0" />
+                        <Insets />
                      </VBox.margin>
-                  </GridPane>
-                  </children>
-               <VBox.margin>
-                  <Insets />
-               </VBox.margin>
-              </VBox>
-            <VBox fx:id="emptyDataBox">
-               <VBox.margin>
-                  <Insets top="12.0" />
-               </VBox.margin>
+                  </VBox>
+                  <VBox fx:id="dataRoot" prefHeight="200.0" prefWidth="100.0" />
+               </children>
+               <padding>
+                  <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
+               </padding>
             </VBox>
-         </children>
-      </VBox>
+         </content>
+      </ScrollPane>
     </center>
    <padding>
       <Insets left="1.0" right="1.0" />

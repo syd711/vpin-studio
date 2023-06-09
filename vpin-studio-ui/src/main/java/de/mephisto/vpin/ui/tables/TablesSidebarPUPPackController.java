@@ -9,11 +9,8 @@ import de.mephisto.vpin.restclient.representations.PupPackRepresentation;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.util.Dialogs;
 import javafx.collections.FXCollections;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
 import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
 import org.apache.commons.lang3.StringUtils;
@@ -21,8 +18,6 @@ import org.kordamp.ikonli.javafx.FontIcon;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.awt.*;
-import java.net.URI;
 import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.List;
@@ -113,18 +108,6 @@ public class TablesSidebarPUPPackController implements Initializable {
       }
     }
   }
-
-//  @FXML
-//  private void onLink(ActionEvent e) {
-//    Hyperlink link = (Hyperlink) e.getSource();
-//    if (Desktop.getDesktop().isSupported(Desktop.Action.BROWSE)) {
-//      try {
-//        Desktop.getDesktop().browse(new URI(link.getText()));
-//      } catch (Exception ex) {
-//        LOG.error("Failed to open link: " + ex.getMessage(), ex);
-//      }
-//    }
-//  }
 
   @FXML
   private void onPupPackEnable() {

@@ -22,6 +22,15 @@ public class VPS {
 
   private List<VpsTable> tables;
 
+  private static VPS instance;
+
+  public static VPS getInstance() {
+    if (instance == null) {
+      instance = new VPS();
+    }
+    return instance;
+  }
+
   public VPS() {
     objectMapper = new ObjectMapper();
     objectMapper.enable(SerializationFeature.INDENT_OUTPUT);
@@ -34,14 +43,40 @@ public class VPS {
   }
 
   public List<VpsTable> find(String term) {
+    term = term.replaceAll("_", " ");
+    term = term.replaceAll("'", " ");
+    term = term.replaceAll("\\.", " ");
+    if (term.contains("(")) {
+      term = term.substring(0, term.indexOf("("));
+    }
+    term = term.toLowerCase().trim();
+
+    List<VpsTable> results = findInternal(term);
+
+    while (results.isEmpty()) {
+      if (term.contains(" ")) {
+        term = term.substring(0, term.lastIndexOf(" "));
+      }
+      else {
+        break;
+      }
+      results = findInternal(term);
+    }
+    return results;
+  }
+
+  private List<VpsTable> findInternal(String term) {
     List<VpsTable> results = new ArrayList<>();
     for (VpsTable table : this.tables) {
-      if(!table.getName().contains(term)) {
+      String name = table.getName().toLowerCase();
+      name = name.replaceAll("-", " ");
+      name = name.replaceAll("'", " ");
+      if (!name.contains(term)) {
         continue;
       }
-
       results.add(table);
     }
+
     return results;
   }
 
@@ -53,7 +88,7 @@ public class VPS {
           .filter(t -> t.getFeatures().contains(VpsFeatures.VPX))
           .collect(Collectors.toList());
     } catch (Exception e) {
-      LOG.error("Failed to load VPS json: " +e.getMessage(), e);
+      LOG.error("Failed to load VPS json: " + e.getMessage(), e);
     }
     return Collections.emptyList();
   }

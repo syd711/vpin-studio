@@ -23,6 +23,7 @@ module de.mephisto.vpin.ui {
   requires javafx.swing;
 
   requires de.mephisto.vpin.connectors.discord;
+  requires de.mephisto.vpin.connectors.vps;
   requires de.mephisto.vpin.restclient;
   requires de.mephisto.vpin.commons;
 

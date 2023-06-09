@@ -14,6 +14,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.VBox;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -65,6 +66,12 @@ public class TablesSidebarDirectB2SController implements Initializable {
   @FXML
   private Button uploadBtn;
 
+  @FXML
+  private VBox dataBox;
+
+  @FXML
+  private VBox emptyDataBox;
+
   private Optional<GameRepresentation> game = Optional.empty();
 
   private TablesSidebarController tablesSidebarController;
@@ -94,7 +101,11 @@ public class TablesSidebarDirectB2SController implements Initializable {
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
+    dataBox.managedProperty().bindBidirectional(dataBox.visibleProperty());
+    emptyDataBox.managedProperty().bindBidirectional(emptyDataBox.visibleProperty());
 
+    dataBox.setVisible(false);
+    emptyDataBox.setVisible(true);
   }
 
   public void setGame(Optional<GameRepresentation> game) {
@@ -105,6 +116,8 @@ public class TablesSidebarDirectB2SController implements Initializable {
   public void refreshView(Optional<GameRepresentation> g) {
     openDefaultPictureBtn.setDisable(!g.isPresent() || !g.get().isDirectB2SAvailable());
     uploadBtn.setDisable(!g.isPresent());
+    dataBox.setVisible(g.isPresent() && g.get().isDirectB2SAvailable());
+    emptyDataBox.setVisible(!g.isPresent() || !g.get().isDirectB2SAvailable());
 
     if (g.isPresent() && g.get().isDirectB2SAvailable()) {
       new Thread(() -> {

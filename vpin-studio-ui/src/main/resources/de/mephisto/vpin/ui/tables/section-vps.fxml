@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefWidth="576.0" styleClass="base-component" stylesheets="@../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1">
+   <children>
+      <Label fx:id="sectionName" text="SECTION" textFill="WHITE">
+         <font>
+            <Font name="System Bold" size="14.0" />
+         </font>
+      </Label>
+      <HBox style="-fx-border-color: transparent transparent #C7C3C3 transparent;">
+         <children>
+            <Label prefWidth="80.0" text="Version" textFill="#b0abab">
+               <font>
+                  <Font name="System Bold" size="14.0" />
+               </font>
+               <padding>
+                  <Insets left="3.0" />
+               </padding>
+            </Label>
+            <Label layoutX="10.0" layoutY="10.0" prefWidth="326.0" text="Authors" textFill="#b0abab">
+               <font>
+                  <Font name="System Bold" size="14.0" />
+               </font>
+               <padding>
+                  <Insets bottom="6.0" />
+               </padding>
+            </Label>
+            <Label layoutX="56.0" layoutY="10.0" prefWidth="50.0" text="  URL" textFill="#b0abab">
+               <font>
+                  <Font name="System Bold" size="14.0" />
+               </font>
+            </Label>
+            <Label alignment="BASELINE_RIGHT" contentDisplay="RIGHT" layoutX="103.0" layoutY="10.0" prefWidth="100.0" text="Last Update" textAlignment="RIGHT" textFill="#b0abab">
+               <font>
+                  <Font name="System Bold" size="14.0" />
+               </font>
+               <padding>
+                  <Insets right="3.0" />
+               </padding>
+            </Label>
+         </children>
+         <VBox.margin>
+            <Insets bottom="6.0" right="20.0" top="12.0" />
+         </VBox.margin>
+      </HBox>
+   </children>
+   <padding>
+      <Insets top="24.0" />
+   </padding>
+</VBox>

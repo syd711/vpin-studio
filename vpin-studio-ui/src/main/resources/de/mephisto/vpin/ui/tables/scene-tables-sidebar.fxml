@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.scene.control.Accordion?>
+<?import javafx.scene.control.Button?>
 <?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.TitledPane?>
@@ -38,7 +39,24 @@
                 <TitledPane fx:id="titledPanePov" expanded="false" text="Point Of View (POV)" />
                 <TitledPane fx:id="titledPaneHighscores" expanded="false" text="Highscores" />
                 <TitledPane fx:id="titledPaneMetadata" expanded="false" text="Script Details" />
-            <TitledPane fx:id="titledPaneVps" expanded="false" layoutX="10.0" layoutY="262.0" text="Virtual Pinball Spreadsheet" />
+            <TitledPane fx:id="titledPaneVps" expanded="false" layoutX="10.0" layoutY="262.0">
+               <graphic>
+                  <BorderPane minWidth="564.0">
+                     <left>
+                        <Label text="Virtual Pinball Spreadsheet" BorderPane.alignment="CENTER" />
+                     </left>
+                     <right>
+                        <Button mnemonicParsing="false" onAction="#onVpsBtn" BorderPane.alignment="CENTER">
+                           <font>
+                              <Font size="10.0" />
+                           </font>
+                           <graphic>
+                              <FontIcon iconColor="WHITE" iconLiteral="mdi2o-open-in-new" />
+                           </graphic>
+                        </Button>
+                     </right>
+                  </BorderPane>
+               </graphic></TitledPane>
                 <TitledPane fx:id="titledPaneDefaultBackground" expanded="false" layoutX="10.0" layoutY="104.0" prefWidth="600.0">
                     <graphic>
                         <BorderPane prefWidth="560.0">
