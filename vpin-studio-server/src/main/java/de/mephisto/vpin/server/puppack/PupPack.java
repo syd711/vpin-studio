@@ -5,6 +5,7 @@ import de.mephisto.vpin.restclient.popper.PopperScreen;
 import de.mephisto.vpin.restclient.popper.ScreenMode;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -19,6 +20,7 @@ public class PupPack {
 
   private final File packFolder;
   private List<String> options = new ArrayList<>();
+  private List<String> missingResources = new ArrayList<>();
 
   private long size;
 
@@ -27,6 +29,14 @@ public class PupPack {
     triggersPup = new TriggersPup(new File(packFolder, TRIGGERS_PUP));
 
     this.packFolder = packFolder;
+  }
+
+  public List<String> getMissingResources() {
+    return missingResources;
+  }
+
+  public void setMissingResources(List<String> missingResources) {
+    this.missingResources = missingResources;
   }
 
   public List<String> getOptions() {
@@ -78,6 +88,19 @@ public class PupPack {
           String name = FilenameUtils.getBaseName(s);
           getOptions().add(name);
         }
+      }
+    }
+
+    List<TriggerEntry> entries = getTriggersPup().getEntries();
+    for (TriggerEntry entry : entries) {
+      String path = entry.getPlayList();
+      String file = entry.getPlayFile();
+      if(!StringUtils.isEmpty(file)) {
+        path = path + "/" + file;
+      }
+      File resource = new File(packFolder, path);
+      if (!resource.exists()) {
+        missingResources.add(path);
       }
     }
   }

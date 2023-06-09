@@ -3,6 +3,7 @@ package de.mephisto.vpin.server.games;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import de.mephisto.vpin.commons.HighscoreType;
 import de.mephisto.vpin.restclient.popper.PopperScreen;
+import de.mephisto.vpin.restclient.representations.ValidationState;
 import de.mephisto.vpin.server.puppack.PupPack;
 import de.mephisto.vpin.server.popper.Emulator;
 import de.mephisto.vpin.server.popper.GameMedia;
@@ -34,7 +35,7 @@ public class Game {
 
   private Date lastPlayed;
   private int numberPlays;
-  private int validationState;
+  private ValidationState validationState;
   private String ignoredValidations;
   private HighscoreType highscoreType;
   private boolean altSoundAvailable;
@@ -325,11 +326,11 @@ public class Game {
     this.nvOffset = nvOffset;
   }
 
-  public int getValidationState() {
+  public ValidationState getValidationState() {
     return validationState;
   }
 
-  public void setValidationState(int validationState) {
+  public void setValidationState(ValidationState validationState) {
     this.validationState = validationState;
   }
 

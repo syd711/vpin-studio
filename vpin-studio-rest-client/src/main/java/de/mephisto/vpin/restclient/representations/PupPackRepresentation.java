@@ -17,6 +17,16 @@ public class PupPackRepresentation {
   private ScreenMode screenFullDMDMode;
   private ScreenMode screenTopperMode;
 
+  private List<String> missingResources = new ArrayList<>();
+
+  public List<String> getMissingResources() {
+    return missingResources;
+  }
+
+  public void setMissingResources(List<String> missingResources) {
+    this.missingResources = missingResources;
+  }
+
   public ScreenMode getScreenBackglassMode() {
     return screenBackglassMode;
   }

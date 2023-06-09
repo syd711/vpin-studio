@@ -30,7 +30,7 @@ public class GameRepresentation {
   private boolean directB2SAvailable;
   private boolean gameFileAvailable;
   private boolean pupPackAvailable;
-  private int validationState;
+  private ValidationState validationState;
   private String hsFileName;
   private boolean romExists;
   private String ignoredValidations;
@@ -170,11 +170,11 @@ public class GameRepresentation {
     this.hsFileName = hsFileName;
   }
 
-  public int getValidationState() {
+  public ValidationState getValidationState() {
     return validationState;
   }
 
-  public void setValidationState(int validationState) {
+  public void setValidationState(ValidationState validationState) {
     this.validationState = validationState;
   }
 

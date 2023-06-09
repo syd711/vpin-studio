@@ -41,7 +41,10 @@ public class PupPacksResource {
   public PupPackRepresentation getPupPack(@PathVariable("gameId") int gameId) {
     Game game = gameService.getGame(gameId);
     if (game != null) {
-      return toPupPackRepresentation(pupPacksService.getPupPack(game));
+      PupPack pupPack = pupPacksService.getPupPack(game);
+      if (pupPack != null) {
+        return toPupPackRepresentation(pupPack);
+      }
     }
     return null;
   }
@@ -115,6 +118,7 @@ public class PupPacksResource {
     representation.setScreenBackglassMode(pupPack.getScreenMode(PopperScreen.BackGlass));
     representation.setScreenTopperMode(pupPack.getScreenMode(PopperScreen.Topper));
     representation.setScreenFullDMDMode(pupPack.getScreenMode(PopperScreen.FullDMD));
+    representation.setMissingResources(pupPack.getMissingResources());
     return representation;
   }
 }

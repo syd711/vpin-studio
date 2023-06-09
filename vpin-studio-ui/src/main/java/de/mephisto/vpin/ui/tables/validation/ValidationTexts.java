@@ -1,7 +1,10 @@
 package de.mephisto.vpin.ui.tables.validation;
 
 import de.mephisto.vpin.restclient.representations.GameRepresentation;
+import de.mephisto.vpin.restclient.representations.ValidationState;
 import edu.umd.cs.findbugs.annotations.NonNull;
+
+import java.util.List;
 
 import static de.mephisto.vpin.restclient.ValidationCode.*;
 
@@ -16,7 +19,8 @@ public class ValidationTexts {
     String label = null;
     String text = null;
 
-    int code = game.getValidationState();
+    ValidationState state = game.getValidationState();
+    int code = state.getCode();
     switch (code) {
       case CODE_VPX_NOT_EXISTS: {
         label = "VPX file \"" + game.getGameFileName() + "\" does not exist.";
@@ -106,6 +110,20 @@ public class ValidationTexts {
       case CODE_ALT_SOUND_FILE_MISSING: {
         label = "ALT sound audio file(s) missing.";
         text = "Audio files of this ALT sound package are missing. Open the ALT sound editor for details.";
+        break;
+      }
+      case CODE_PUP_PACK_FILE_MISSING: {
+        label = "PUP pack media file missing.";
+        if (state.getOptions().size() > 1) {
+          label = "PUP pack media files missing.";
+        }
+        if(state.getOptions().size() > 2) {
+          List<String> entries = state.getOptions().subList(0, 2);
+          text = "The trigger.pup file references invalid files: \"" + String.join("\", \"", entries) + "\" (+" + (state.getOptions().size() - 2) + " more entries)";
+        }
+        else {
+          text = "The trigger.pup file references invalid files: \"" + String.join("\", \"", state.getOptions()) + "\"";
+        }
         break;
       }
       default: {

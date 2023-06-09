@@ -22,4 +22,6 @@ public interface ValidationCode {
 
   int CODE_ALT_SOUND_NOT_ENABLED = 50;
   int CODE_ALT_SOUND_FILE_MISSING = 51;
+
+  int CODE_PUP_PACK_FILE_MISSING = 60;
 }

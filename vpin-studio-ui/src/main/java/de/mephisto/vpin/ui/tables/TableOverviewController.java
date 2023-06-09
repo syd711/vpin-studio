@@ -4,6 +4,7 @@ import de.mephisto.vpin.commons.EmulatorType;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.ValidationCode;
 import de.mephisto.vpin.restclient.representations.GameRepresentation;
+import de.mephisto.vpin.restclient.representations.ValidationState;
 import de.mephisto.vpin.ui.NavigationController;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.StudioFXController;
@@ -507,8 +508,8 @@ public class TableOverviewController implements Initializable, StudioFXControlle
 
     columnStatus.setCellValueFactory(cellData -> {
       GameRepresentation value = cellData.getValue();
-      int validationState = value.getValidationState();
-      if (validationState > 0) {
+      ValidationState validationState = value.getValidationState();
+      if (validationState.getCode() > 0) {
         return new SimpleObjectProperty(WidgetFactory.createExclamationIcon());
       }
 
@@ -587,8 +588,8 @@ public class TableOverviewController implements Initializable, StudioFXControlle
     this.tablesController.getTablesSideBarController().setGame(g);
     if (g.isPresent()) {
       GameRepresentation game = g.get();
-      validationError.setVisible(game.getValidationState() > 0);
-      if (game.getValidationState() > 0) {
+      validationError.setVisible(game.getValidationState().getCode() > 0);
+      if (game.getValidationState().getCode() > 0) {
         ValidationResult validationMessage = ValidationTexts.validate(game);
         validationErrorLabel.setText(validationMessage.getLabel());
         validationErrorText.setText(validationMessage.getText());

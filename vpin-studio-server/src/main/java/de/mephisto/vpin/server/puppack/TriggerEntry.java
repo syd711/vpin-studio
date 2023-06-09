@@ -4,6 +4,8 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 import org.apache.commons.csv.CSVRecord;
 import org.apache.commons.lang3.StringUtils;
 
+import java.io.File;
+
 public class TriggerEntry {
 
   private final CSVRecord record;
