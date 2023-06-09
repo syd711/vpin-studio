@@ -88,13 +88,13 @@ public class AltSoundResource {
     try {
       if (file == null) {
         LOG.error("Upload request did not contain a file object.");
-        return JobExecutionResultFactory.create("Upload request did not contain a file object.");
+        return JobExecutionResultFactory.error("Upload request did not contain a file object.");
       }
 
       Game game = gameService.getGame(gameId);
       if (game == null) {
         LOG.error("No game found for alt sound upload.");
-        return JobExecutionResultFactory.create("No game found for alt sound upload.");
+        return JobExecutionResultFactory.error("No game found for alt sound upload.");
       }
 
       File out = File.createTempFile(FilenameUtils.getBaseName(file.getOriginalFilename()), ".zip");

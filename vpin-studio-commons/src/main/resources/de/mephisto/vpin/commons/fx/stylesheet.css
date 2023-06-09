@@ -519,8 +519,6 @@
 	-fx-background-color: white;
 }
 
-
-
 .scroll-pane > .viewport {
    -fx-background-color: transparent;
 }
@@ -529,5 +527,9 @@
    -fx-background-color: transparent;
 }
 
+.text-area {
+    -fx-text-fill: -fx-base-1;
+    -fx-font-size: 13px;
+}
 
 

@@ -40,7 +40,7 @@ public class CopyArchiveToRepositoryJob implements Job {
       }
       if (archiveTarget.exists()) {
         if (overwrite && !archiveTarget.delete()) {
-          return JobExecutionResultFactory.create("Failed to delete existing archive " + archiveTarget.getAbsolutePath());
+          return JobExecutionResultFactory.error("Failed to delete existing archive " + archiveTarget.getAbsolutePath());
         }
 
         if (!overwrite) {
@@ -55,7 +55,7 @@ public class CopyArchiveToRepositoryJob implements Job {
       boolean renamed = temp.renameTo(archiveTarget);
       if (!renamed) {
         LOG.error("Failed to rename downloaded file " + temp.getAbsolutePath());
-        return JobExecutionResultFactory.create("Failed to rename downloaded file " + temp.getAbsolutePath());
+        return JobExecutionResultFactory.error("Failed to rename downloaded file " + temp.getAbsolutePath());
       }
 
       File descriptorTarget = new File(archiveTarget.getParentFile(), FilenameUtils.getBaseName(archiveDescriptor.getFilename()) + ".json");
@@ -72,12 +72,12 @@ public class CopyArchiveToRepositoryJob implements Job {
       renamed = temp.renameTo(descriptorTarget);
       if (!renamed) {
         LOG.error("Failed to rename downloaded file " + temp.getAbsolutePath());
-        return JobExecutionResultFactory.create("Failed to rename downloaded file " + temp.getAbsolutePath());
+        return JobExecutionResultFactory.error("Failed to rename downloaded file " + temp.getAbsolutePath());
       }
 
     } catch (Exception e) {
       LOG.error("Download of \"" + archiveDescriptor.getFilename() + "\" failed: " + e.getMessage(), e);
-      return JobExecutionResultFactory.create("Download of \"" + archiveDescriptor.getFilename() + "\" failed: " + e.getMessage());
+      return JobExecutionResultFactory.error("Download of \"" + archiveDescriptor.getFilename() + "\" failed: " + e.getMessage());
     }
     return new JobExecutionResult();
   }

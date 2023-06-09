@@ -57,7 +57,7 @@ public class PupPackUtil {
       zis.close();
     } catch (Exception e) {
       LOG.error("Unzipping of " + archiveFile.getAbsolutePath() + " failed: " + e.getMessage(), e);
-      return JobExecutionResultFactory.create("Unzipping of " + archiveFile.getAbsolutePath() + " failed: " + e.getMessage());
+      return JobExecutionResultFactory.error("Unzipping of " + archiveFile.getAbsolutePath() + " failed: " + e.getMessage());
     }
     return JobExecutionResultFactory.empty();
   }

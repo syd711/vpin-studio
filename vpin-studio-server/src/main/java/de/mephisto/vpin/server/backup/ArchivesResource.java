@@ -188,9 +188,9 @@ public class ArchivesResource {
       }
     } catch (Exception e) {
       LOG.error("Archive upload failed: " + e.getMessage(), e);
-      return JobExecutionResultFactory.create("Archive upload failed: " + e.getMessage());
+      return JobExecutionResultFactory.error("Archive upload failed: " + e.getMessage());
     }
-    return JobExecutionResultFactory.create(null);
+    return JobExecutionResultFactory.error(null);
   }
 
   @PostMapping("/save")

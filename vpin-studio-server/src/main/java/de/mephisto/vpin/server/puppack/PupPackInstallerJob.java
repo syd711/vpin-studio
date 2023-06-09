@@ -27,11 +27,11 @@ public class PupPackInstallerJob implements Job {
   public JobExecutionResult execute() {
     JobExecutionResult unzip = PupPackUtil.unzip(out, pupPackFolder, game.getRom());
     if (!out.delete() && unzip.getError() == null) {
-      return JobExecutionResultFactory.create("Failed to delete temporary file.");
+      return JobExecutionResultFactory.error("Failed to delete temporary file.");
     }
 
     if (StringUtils.isEmpty(unzip.getError())) {
-      pupPacksService.addPupPack(pupPackFolder);
+      pupPacksService.loadPupPack(pupPackFolder);
     }
     return unzip;
   }

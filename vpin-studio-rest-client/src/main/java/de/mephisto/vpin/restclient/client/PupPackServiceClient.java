@@ -37,8 +37,10 @@ public class PupPackServiceClient extends VPinStudioClientService {
     return getRestClient().get(API + "puppacks/enabled/" + gameId, Boolean.class);
   }
 
-  public JobExecutionResult option(int gameId, String option) {
-    return getRestClient().get(API + "puppacks/option/" + gameId + "/" + option, JobExecutionResult.class);
+  public JobExecutionResult option(int gameId, String option) throws Exception {
+    CommandOption o = new CommandOption();
+    o.setCommand(option);
+    return getRestClient().post(API + "puppacks/option/" + gameId, o, JobExecutionResult.class);
   }
 
   public JobExecutionResult uploadPupPack(File file, String uploadType, int gameId, FileUploadProgressListener listener) throws Exception {

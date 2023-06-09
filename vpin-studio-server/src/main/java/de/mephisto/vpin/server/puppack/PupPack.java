@@ -82,6 +82,10 @@ public class PupPack {
     }
   }
 
+  public File getOptionFile(String option) {
+    return new File(packFolder, option + ".bat");
+  }
+
   @Override
   public String toString() {
     return "PUP Pack for \"" + packFolder.getName() + "\"";

@@ -165,7 +165,9 @@ public class CompetitionService implements InitializingBean {
   public void runCompetitionsFinishedAndStartedCheck() {
     //check all competitions for their finish state, this includes Discord ones, since the date can't be changed
     List<Competition> openCompetitions = getCompetitionToBeFinished();
-    LOG.info("Running automated competition status check, found " + openCompetitions.size() + " candidates.");
+    if(!openCompetitions.isEmpty()) {
+      LOG.info("Running automated competition status check, found " + openCompetitions.size() + " candidates.");
+    }
     for (Competition openCompetition : openCompetitions) {
       LOG.info("Finishing " + openCompetition);
       finishCompetition(openCompetition);

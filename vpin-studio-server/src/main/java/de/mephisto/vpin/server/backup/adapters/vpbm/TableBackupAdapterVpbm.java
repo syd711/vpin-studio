@@ -60,7 +60,7 @@ public class TableBackupAdapterVpbm implements TableBackupAdapter, Job {
 
     status = "Creating backup of \"" + game.getGameDisplayName() + "\"";
 
-    JobExecutionResult result = JobExecutionResultFactory.create(vpbmService.backup(game.getId()));
+    JobExecutionResult result = JobExecutionResultFactory.error(vpbmService.backup(game.getId()));
 
     File archiveFile = new File(this.archiveSourceAdapter.getArchiveSource().getLocation(), tableDetails.getGameName() + ".vpinzip");
 

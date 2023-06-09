@@ -2,6 +2,7 @@ package de.mephisto.vpin.ui.tables;
 
 import de.mephisto.vpin.commons.utils.FileUtils;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
+import de.mephisto.vpin.restclient.jobs.JobExecutionResult;
 import de.mephisto.vpin.restclient.popper.ScreenMode;
 import de.mephisto.vpin.restclient.representations.GameRepresentation;
 import de.mephisto.vpin.restclient.representations.PupPackRepresentation;
@@ -11,9 +12,9 @@ import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.*;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
 import org.apache.commons.lang3.StringUtils;
 import org.kordamp.ikonli.javafx.FontIcon;
@@ -24,7 +25,6 @@ import java.awt.*;
 import java.net.URI;
 import java.net.URL;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
@@ -68,16 +68,16 @@ public class TablesSidebarPUPPackController implements Initializable {
   private FontIcon screenTopper;
 
   @FXML
-  private Label screenBackglassLabel;
+  private Tooltip screenBackglassTooltip;
 
   @FXML
-  private Label screenDMDLabel;
+  private Tooltip screenDMDTooltip;
 
   @FXML
-  private Label screenFullDMDLabel;
+  private Tooltip screenFullDMDTooltip;
 
   @FXML
-  private Label screenTopperLabel;
+  private Tooltip screenTopperTooltip;
 
   @FXML
   private Button applyBtn;
@@ -90,7 +90,28 @@ public class TablesSidebarPUPPackController implements Initializable {
 
   @FXML
   private void onOptionApply() {
+    String option = optionsCombo.getValue();
+    if (!StringUtils.isEmpty(option)) {
+      Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Apply \"" + option + "\"?", "The existing settings will be overwritten.");
+      if (result.isPresent() && result.get().equals(ButtonType.OK)) {
+        JobExecutionResult jobExecutionResult = null;
+        try {
+          jobExecutionResult = Studio.client.getPupPackService().option(game.get().getId(), option);
+          refreshView(game);
 
+          if (!StringUtils.isEmpty(jobExecutionResult.getError())) {
+            WidgetFactory.showAlert(Studio.stage, "Option Execution Failed", jobExecutionResult.getError());
+          }
+
+          if (!StringUtils.isEmpty(jobExecutionResult.getMessage())) {
+            WidgetFactory.showOutputDialog(Studio.stage, "Option Command Result", option, "The command returned this output:", jobExecutionResult.getMessage());
+          }
+        } catch (Exception e) {
+          LOG.error("Failed to execute PUP command: " + e.getMessage(), e);
+          WidgetFactory.showAlert(Studio.stage, "Option Execution Failed", e.getMessage());
+        }
+      }
+    }
   }
 
   @FXML
@@ -136,6 +157,8 @@ public class TablesSidebarPUPPackController implements Initializable {
     emptyDataBox.managedProperty().bindBidirectional(emptyDataBox.visibleProperty());
     dataBox.setVisible(false);
     emptyDataBox.setVisible(true);
+
+    optionsCombo.valueProperty().addListener((observable, oldValue, newValue) -> applyBtn.setDisable(StringUtils.isEmpty(newValue)));
   }
 
   public void setGame(Optional<GameRepresentation> game) {
@@ -162,10 +185,10 @@ public class TablesSidebarPUPPackController implements Initializable {
     screenTopper.setVisible(false);
     screenFullDMD.setVisible(false);
 
-    screenBackglassLabel.setText("-");
-    screenDMDLabel.setText("-");
-    screenTopperLabel.setText("-");
-    screenFullDMDLabel.setText("-");
+    screenBackglassTooltip.setText("");
+    screenDMDTooltip.setText("");
+    screenTopperTooltip.setText("");
+    screenFullDMDTooltip.setText("");
 
     if (g.isPresent()) {
       GameRepresentation game = g.get();
@@ -185,25 +208,25 @@ public class TablesSidebarPUPPackController implements Initializable {
         List<String> options = pupPack.getOptions();
         optionsCombo.setItems(FXCollections.observableList(options));
         optionsCombo.setDisable(options.isEmpty());
-        applyBtn.setDisable(options.isEmpty());
+        applyBtn.setDisable(true);
 
-        if(!pupPack.getScreenBackglassMode().equals(ScreenMode.off)) {
-          screenBackglassLabel.setText("(" + pupPack.getScreenBackglassMode().name() + ")");
+        if (!pupPack.getScreenBackglassMode().equals(ScreenMode.off)) {
+          screenBackglassTooltip.setText(pupPack.getScreenBackglassMode().name());
           screenBackglass.setVisible(true);
         }
 
-        if(!pupPack.getScreenDMDMode().equals(ScreenMode.off)) {
-          screenDMDLabel.setText("(" + pupPack.getScreenDMDMode().name() + ")");
+        if (!pupPack.getScreenDMDMode().equals(ScreenMode.off)) {
+          screenDMDTooltip.setText(pupPack.getScreenDMDMode().name());
           screenDMD.setVisible(true);
         }
 
-        if(!pupPack.getScreenFullDMDMode().equals(ScreenMode.off)) {
-          screenFullDMD.setText("(" + pupPack.getScreenFullDMDMode().name() + ")");
-          screenFullDMDLabel.setVisible(true);
+        if (!pupPack.getScreenFullDMDMode().equals(ScreenMode.off)) {
+          screenFullDMDTooltip.setText(pupPack.getScreenFullDMDMode().name());
+          screenFullDMD.setVisible(true);
         }
 
-        if(!pupPack.getScreenTopperMode().equals(ScreenMode.off)) {
-          screenTopperLabel.setText("(" + pupPack.getScreenTopperMode().name() + ")");
+        if (!pupPack.getScreenTopperMode().equals(ScreenMode.off)) {
+          screenTopperTooltip.setText(pupPack.getScreenTopperMode().name());
           screenTopper.setVisible(true);
         }
 

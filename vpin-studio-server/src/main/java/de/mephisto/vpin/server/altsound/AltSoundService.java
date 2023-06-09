@@ -238,13 +238,13 @@ public class AltSoundService implements InitializingBean {
       LOG.info("Extracting archive to " + altSoundFolder.getAbsolutePath());
       if (!altSoundFolder.exists()) {
         if (!altSoundFolder.mkdirs()) {
-          return JobExecutionResultFactory.create("Failed to create ALT sound directory " + altSoundFolder.getAbsolutePath());
+          return JobExecutionResultFactory.error("Failed to create ALT sound directory " + altSoundFolder.getAbsolutePath());
         }
       }
 
       AltSoundUtil.unzip(out, altSoundFolder);
       if (!out.delete()) {
-        return JobExecutionResultFactory.create("Failed to delete temporary file.");
+        return JobExecutionResultFactory.error("Failed to delete temporary file.");
       }
       clearCache();
       setAltSoundEnabled(game, true);

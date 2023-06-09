@@ -1,5 +1,6 @@
 package de.mephisto.vpin.server.puppack;
 
+import de.mephisto.vpin.restclient.client.CommandOption;
 import de.mephisto.vpin.restclient.jobs.JobExecutionResult;
 import de.mephisto.vpin.restclient.jobs.JobExecutionResultFactory;
 import de.mephisto.vpin.restclient.popper.PopperScreen;
@@ -69,9 +70,14 @@ public class PupPacksResource {
     return pupPacksService.clearCache();
   }
 
-  @GetMapping("/option/{id}/{option}")
+  @PostMapping("/option/{id}")
   public JobExecutionResult option(@PathVariable("id") Integer id,
-                                   @PathVariable("option") String option) {
+                                   @RequestBody CommandOption option) {
+
+    Game game = gameService.getGame(id);
+    if (game != null) {
+      return pupPacksService.option(game, option.getCommand());
+    }
     return JobExecutionResultFactory.empty();
   }
 
@@ -82,13 +88,13 @@ public class PupPacksResource {
     try {
       if (file == null) {
         LOG.error("Upload request did not contain a file object.");
-        return JobExecutionResultFactory.create("Upload request did not contain a file object.");
+        return JobExecutionResultFactory.error("Upload request did not contain a file object.");
       }
 
       Game game = gameService.getGame(gameId);
       if (game == null) {
         LOG.error("No game found for PUP pack upload.");
-        return JobExecutionResultFactory.create("No game found for PUP pack upload.");
+        return JobExecutionResultFactory.error("No game found for PUP pack upload.");
       }
 
       File out = File.createTempFile(FilenameUtils.getBaseName(file.getOriginalFilename()), ".zip");

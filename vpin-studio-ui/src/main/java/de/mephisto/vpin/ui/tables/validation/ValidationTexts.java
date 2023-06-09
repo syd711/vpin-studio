@@ -49,7 +49,7 @@ public class ValidationTexts {
         break;
       }
       case CODE_NO_APRON: {
-        label = "No apron media set.";
+        label = "No full DMD media set.";
         text = NO_MEDIA_TEXT;
         break;
       }

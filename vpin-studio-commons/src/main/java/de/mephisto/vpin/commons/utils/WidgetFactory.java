@@ -199,7 +199,7 @@ public class WidgetFactory {
   }
 
   public static String showInputDialog(Stage owner, String dialogTitle, String innerTitle, String description, String helpText, String defaultValue) {
-    Stage stage = createDialogStage(ConfirmationDialogController.class, owner, dialogTitle, "dialog-input.fxml");
+    Stage stage = createDialogStage(InputDialogController.class, owner, dialogTitle, "dialog-input.fxml");
     InputDialogController controller = (InputDialogController) stage.getUserData();
     controller.initDialog(stage, innerTitle, description, helpText, defaultValue);
     stage.showAndWait();
@@ -209,6 +209,13 @@ public class WidgetFactory {
     }
 
     return null;
+  }
+
+  public static void showOutputDialog(Stage owner, String dialogTitle, String innerTitle, String description, String defaultValue) {
+    Stage stage = createDialogStage(OutputDialogController.class, owner, dialogTitle, "dialog-output.fxml");
+    OutputDialogController controller = (OutputDialogController) stage.getUserData();
+    controller.initDialog(stage, innerTitle, description, defaultValue);
+    stage.showAndWait();
   }
 
   public static class RationListCell extends ListCell<String> {

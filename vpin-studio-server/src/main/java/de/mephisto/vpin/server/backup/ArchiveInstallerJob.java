@@ -92,7 +92,7 @@ public class ArchiveInstallerJob implements Job {
       if (result != null) {
         return result;
       }
-      return JobExecutionResultFactory.create("Failed to install archive: " + e.getMessage());
+      return JobExecutionResultFactory.error("Failed to install archive: " + e.getMessage());
     }
   }
 }

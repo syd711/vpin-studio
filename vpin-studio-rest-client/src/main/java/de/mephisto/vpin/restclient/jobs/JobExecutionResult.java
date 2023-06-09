@@ -8,9 +8,18 @@ public class JobExecutionResult {
   private final String uuid;
   private int gameId;
   private String error;
+  private String message;
 
   public JobExecutionResult() {
     this.uuid = UUID.randomUUID().toString();
+  }
+
+  public String getMessage() {
+    return message;
+  }
+
+  public void setMessage(String message) {
+    this.message = message;
   }
 
   public String getUuid() {
