@@ -56,6 +56,12 @@ public class TablesSidebarController implements Initializable {
   private TitledPane titledPanePopper;
 
   @FXML
+  private TitledPane titledPaneVps;
+
+  @FXML
+  private TitledPane titledPaneAltColor;
+
+  @FXML
   private CheckBox mediaPreviewCheckbox;
 
   @FXML
@@ -85,6 +91,12 @@ public class TablesSidebarController implements Initializable {
   @FXML
   private TablesSidebarPopperController tablesSidebarPopperController; //fxml magic! Not unused
 
+  @FXML
+  private TablesSidebarVpsController tablesSidebarVpsController; //fxml magic! Not unused
+
+  @FXML
+  private TablesSidebarAltColorController tablesSidebarAltColorController; //fxml magic! Not unused
+
   private Optional<GameRepresentation> game = Optional.empty();
 
   private TableOverviewController tablesController;
@@ -104,6 +116,26 @@ public class TablesSidebarController implements Initializable {
       tablesSidebarAudioController = loader.getController();
       tablesSidebarAudioController.setSidebarController(this);
       titledPaneAudio.setContent(tablesRoot);
+    } catch (IOException e) {
+      LOG.error("Failed loading sidebar controller: " + e.getMessage(), e);
+    }
+
+    try {
+      FXMLLoader loader = new FXMLLoader(TablesSidebarAltSoundController.class.getResource("scene-tables-sidebar-altcolor.fxml"));
+      Parent tablesRoot = loader.load();
+      tablesSidebarAltColorController = loader.getController();
+      tablesSidebarAltColorController.setSidebarController(this);
+      titledPaneAltColor.setContent(tablesRoot);
+    } catch (IOException e) {
+      LOG.error("Failed loading sidebar controller: " + e.getMessage(), e);
+    }
+
+    try {
+      FXMLLoader loader = new FXMLLoader(TablesSidebarAltSoundController.class.getResource("scene-tables-sidebar-vps.fxml"));
+      Parent tablesRoot = loader.load();
+      tablesSidebarVpsController = loader.getController();
+      tablesSidebarVpsController.setSidebarController(this);
+      titledPaneVps.setContent(tablesRoot);
     } catch (IOException e) {
       LOG.error("Failed loading sidebar controller: " + e.getMessage(), e);
     }
@@ -241,6 +273,17 @@ public class TablesSidebarController implements Initializable {
         refreshView(game);
       }
     });
+    titledPaneVps.expandedProperty().addListener((observableValue, aBoolean, expanded) -> {
+      if (expanded) {
+        refreshView(game);
+      }
+    });
+    titledPaneAltColor.expandedProperty().addListener((observableValue, aBoolean, expanded) -> {
+      if (expanded) {
+        refreshView(game);
+      }
+    });
+
 
     mediaPreviewCheckbox.selectedProperty().addListener((observable, oldValue, newValue) -> {
       client.getPreferenceService().setPreference(PreferenceNames.PREVIEW_ENABLED, newValue);
@@ -294,6 +337,12 @@ public class TablesSidebarController implements Initializable {
       }
       if (titledPanePopper.isExpanded()) {
         this.tablesSidebarPopperController.setGame(g);
+      }
+      if (titledPaneVps.isExpanded()) {
+        this.tablesSidebarVpsController.setGame(g);
+      }
+      if (titledPaneAltColor.isExpanded()) {
+        this.tablesSidebarAltColorController.setGame(g);
       }
     });
 

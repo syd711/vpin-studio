@@ -310,7 +310,7 @@
     <top>
         <ToolBar prefHeight="40.0" prefWidth="200.0" BorderPane.alignment="CENTER">
             <items>
-                <Button fx:id="tableEditBtn" mnemonicParsing="false" onAction="#onTableEdit" text="Edit Table Data" textFill="WHITE">
+                <Button fx:id="tableEditBtn" mnemonicParsing="false" onAction="#onTableEdit" text="Edit" textFill="WHITE">
                     <font>
                         <Font size="14.0" />
                     </font>
