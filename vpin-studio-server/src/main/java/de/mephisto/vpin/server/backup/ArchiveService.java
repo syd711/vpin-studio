@@ -1,6 +1,6 @@
 package de.mephisto.vpin.server.backup;
 
-import de.mephisto.vpin.restclient.TableDetails;
+import de.mephisto.vpin.restclient.popper.TableDetails;
 import de.mephisto.vpin.restclient.representations.ArchiveSourceRepresentation;
 import de.mephisto.vpin.server.backup.adapters.ArchiveType;
 import de.mephisto.vpin.server.backup.adapters.vpa.VpaArchiveSource;
@@ -13,7 +13,6 @@ import de.mephisto.vpin.server.games.GameService;
 import de.mephisto.vpin.server.system.SystemService;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
-import org.apache.commons.io.FilenameUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;

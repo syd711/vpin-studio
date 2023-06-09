@@ -1,7 +1,7 @@
 package de.mephisto.vpin.ui.tables.dialogs;
 
 import de.mephisto.vpin.commons.utils.WidgetFactory;
-import de.mephisto.vpin.restclient.JobExecutionResult;
+import de.mephisto.vpin.restclient.jobs.JobExecutionResult;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.tables.TablesSidebarController;
@@ -16,7 +16,7 @@ import java.io.File;
 import java.util.Collections;
 import java.util.Iterator;
 
-import static de.mephisto.vpin.restclient.JobType.ALTSOUND_INSTALL;
+import static de.mephisto.vpin.restclient.jobs.JobType.ALTSOUND_INSTALL;
 
 public class AltSoundUploadProgressModel extends ProgressModel<File> {
   private final static Logger LOG = LoggerFactory.getLogger(AltSoundUploadProgressModel.class);

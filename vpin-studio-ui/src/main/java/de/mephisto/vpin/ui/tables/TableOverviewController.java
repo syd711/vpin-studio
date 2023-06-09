@@ -96,7 +96,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
   private Button deleteBtn;
 
   @FXML
-  private Button scanBtn;
+  private SplitMenuButton scanBtn;
 
   @FXML
   private Button playBtn;
@@ -281,6 +281,18 @@ public class TableOverviewController implements Initializable, StudioFXControlle
         "Re-scanning will overwrite some of the existing metadata properties.", null, "Start Scan");
     if (result.isPresent() && result.get().equals(ButtonType.OK)) {
       Dialogs.createProgressDialog(new TableScanProgressModel("Scanning Tables", selectedItems));
+      this.onReload();
+    }
+  }
+
+  @FXML
+  private void onTablesScanAll() {
+    String title = "Re-scan all " + games.size() + " tables?";
+    Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, title,
+        "Re-scanning will overwrite some of the existing metadata properties.", null, "Start Scan");
+    if (result.isPresent() && result.get().equals(ButtonType.OK)) {
+      Studio.client.clearCache();
+      Dialogs.createProgressDialog(new TableScanProgressModel("Scanning Tables", this.games));
       this.onReload();
     }
   }

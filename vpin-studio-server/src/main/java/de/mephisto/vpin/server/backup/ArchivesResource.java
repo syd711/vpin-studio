@@ -1,7 +1,7 @@
 package de.mephisto.vpin.server.backup;
 
-import de.mephisto.vpin.restclient.JobExecutionResult;
-import de.mephisto.vpin.restclient.JobExecutionResultFactory;
+import de.mephisto.vpin.restclient.jobs.JobExecutionResult;
+import de.mephisto.vpin.restclient.jobs.JobExecutionResultFactory;
 import de.mephisto.vpin.restclient.representations.ArchiveDescriptorRepresentation;
 import de.mephisto.vpin.restclient.representations.ArchiveSourceRepresentation;
 import de.mephisto.vpin.server.system.SystemService;

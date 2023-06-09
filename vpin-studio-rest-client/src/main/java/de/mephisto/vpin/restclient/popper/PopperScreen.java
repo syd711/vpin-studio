@@ -1,4 +1,4 @@
-package de.mephisto.vpin.restclient;
+package de.mephisto.vpin.restclient.popper;
 
 public enum PopperScreen {
   Audio,
@@ -8,11 +8,11 @@ public enum PopperScreen {
   GameHelp,
   Topper,
   BackGlass,
+  FullDMD,
   DMD,
   Loading,
   Wheel,
-  PlayField,
-  Menu;
+  PlayField;
 
   public static int toId(PopperScreen screen) {
     switch (screen) {
@@ -28,7 +28,7 @@ public enum PopperScreen {
       case PlayField: {
         return 3;
       }
-      case Menu: {
+      case FullDMD: {
         return 5;
       }
       default: {

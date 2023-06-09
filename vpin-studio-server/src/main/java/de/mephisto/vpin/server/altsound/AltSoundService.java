@@ -3,8 +3,8 @@ package de.mephisto.vpin.server.altsound;
 import de.mephisto.vpin.commons.utils.FileUtils;
 import de.mephisto.vpin.restclient.AltSound;
 import de.mephisto.vpin.restclient.AltSoundEntry;
-import de.mephisto.vpin.restclient.JobExecutionResult;
-import de.mephisto.vpin.restclient.JobExecutionResultFactory;
+import de.mephisto.vpin.restclient.jobs.JobExecutionResult;
+import de.mephisto.vpin.restclient.jobs.JobExecutionResultFactory;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.system.SystemService;
 import edu.umd.cs.findbugs.annotations.NonNull;
@@ -109,6 +109,9 @@ public class AltSoundService implements InitializingBean {
         if (soundFile.exists()) {
           audioFiles.put(entry.getFilename(), entry.getFilename());
           size += soundFile.length();
+        }
+        else {
+          altSound.setMissingAudioFiles(true);
         }
 
         altSound.getEntries().add(entry);

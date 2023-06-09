@@ -1,6 +1,6 @@
 package de.mephisto.vpin.server.highscores.cards;
 
-import de.mephisto.vpin.restclient.PopperScreen;
+import de.mephisto.vpin.restclient.popper.PopperScreen;
 import de.mephisto.vpin.server.competitions.ScoreSummary;
 import de.mephisto.vpin.server.directb2s.DirectB2SImageRatio;
 import de.mephisto.vpin.server.games.Game;

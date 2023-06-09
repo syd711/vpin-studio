@@ -12,4 +12,8 @@ public interface StudioEventListener {
   default void repositoryUpdated() {
 
   }
+
+  default void preferencesChanged() {
+
+  }
 }

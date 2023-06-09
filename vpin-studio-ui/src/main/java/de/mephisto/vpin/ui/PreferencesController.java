@@ -1,5 +1,6 @@
 package de.mephisto.vpin.ui;
 
+import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.preferences.ScreensPreferencesController;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -47,6 +48,7 @@ public class PreferencesController implements Initializable {
     StackPane stack = (StackPane) main.getCenter();
     stack.getChildren().remove(1);
     NavigationController.refreshControllerCache();
+    EventManager.getInstance().notifyPreferenceChanged();
   }
 
   @FXML

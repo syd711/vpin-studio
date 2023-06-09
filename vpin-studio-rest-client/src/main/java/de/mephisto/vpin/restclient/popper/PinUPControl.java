@@ -1,4 +1,4 @@
-package de.mephisto.vpin.restclient;
+package de.mephisto.vpin.restclient.popper;
 
 public class PinUPControl {
   public static String FUNCTION_SHOW_OTHER = "Show Other";

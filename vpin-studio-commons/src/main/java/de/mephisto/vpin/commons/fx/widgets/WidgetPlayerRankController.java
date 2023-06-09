@@ -30,10 +30,14 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
 import java.util.List;
 import java.util.ResourceBundle;
+
+import static de.mephisto.vpin.commons.fx.OverlayWindowFX.client;
 
 public class WidgetPlayerRankController extends WidgetController implements Initializable {
   private final static Logger LOG = LoggerFactory.getLogger(WidgetPlayerRankController.class);
@@ -98,19 +102,12 @@ public class WidgetPlayerRankController extends WidgetController implements Init
       RankedPlayerRepresentation value = cellData.getValue();
       HBox hBox = new HBox();
 
-      Image image = null;
-      if (!StringUtils.isEmpty(value.getAvatarUrl())) {
-        image = new Image(value.getAvatarUrl());
-      }
-      else if (value.getAvatarUuid() != null) {
-        image = new Image(OverlayWindowFX.client.getAsset(AssetType.AVATAR, value.getAvatarUuid()));
-      }
-
+      Image image = new Image(OverlayWindowFX.class.getResourceAsStream("avatar-blank.png"));
       ImageView view = new ImageView(image);
+
       view.setPreserveRatio(true);
       view.setFitWidth(50);
       view.setFitHeight(50);
-      CommonImageUtil.setClippedImage(view, (int) (image.getWidth() / 2));
 
       hBox.setAlignment(Pos.CENTER_LEFT);
       hBox.getChildren().add(view);
@@ -121,14 +118,32 @@ public class WidgetPlayerRankController extends WidgetController implements Init
       label.setFont(defaultFont);
       hBox.getChildren().add(label);
 
+      new Thread(() -> {
+        InputStream in = null;
+        if (!StringUtils.isEmpty(value.getAvatarUrl())) {
+          in = client.getCachedUrlImage(value.getAvatarUrl());
+        }
+        else if (value.getAvatarUuid() != null) {
+          in = new ByteArrayInputStream(client.getAsset(AssetType.AVATAR, value.getAvatarUuid()).readAllBytes());
+        }
+
+        final InputStream data = in;
+        if(data != null) {
+          Platform.runLater(() -> {
+            Image i = new Image(data);
+            view.setImage(i);
+            CommonImageUtil.setClippedImage(view, (int) (image.getWidth() / 2));
+          });
+        }
+      }).start();
       return new SimpleObjectProperty(hBox);
     });
 
     Rectangle2D screenBounds = Screen.getPrimary().getBounds();
-    if(screenBounds.getWidth() < 2600) {
+    if (screenBounds.getWidth() < 2600) {
       columnName.setPrefWidth(280);
     }
-    if(screenBounds.getWidth() < 2000) {
+    if (screenBounds.getWidth() < 2000) {
       columnName.setPrefWidth(260);
     }
 
@@ -177,7 +192,7 @@ public class WidgetPlayerRankController extends WidgetController implements Init
   public void refresh() {
     tableStack.getChildren().add(loadingOverlay);
     new Thread(() -> {
-      List<RankedPlayerRepresentation> rankedPlayers = OverlayWindowFX.client.getRankedPlayers();
+      List<RankedPlayerRepresentation> rankedPlayers = client.getRankedPlayers();
 
       Platform.runLater(() -> {
         ObservableList<RankedPlayerRepresentation> data = FXCollections.observableList(rankedPlayers);

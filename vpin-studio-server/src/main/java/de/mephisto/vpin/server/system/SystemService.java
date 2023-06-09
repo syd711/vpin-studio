@@ -472,6 +472,7 @@ public class SystemService extends SystemInfo implements InitializingBean {
                     p.info().command().get().contains("PinUpDisplay") ||
                     p.info().command().get().contains("PinUpPlayer") ||
                     p.info().command().get().contains("VPXStarter") ||
+                    p.info().command().get().contains("PinUpPackEditor") ||
                     p.info().command().get().contains("VPinballX") ||
                     p.info().command().get().contains("B2SBackglassServerEXE") ||
                     p.info().command().get().contains("DOF")))

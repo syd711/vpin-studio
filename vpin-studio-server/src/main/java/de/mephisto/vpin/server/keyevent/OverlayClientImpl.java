@@ -5,7 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import de.mephisto.vpin.restclient.AssetType;
 import de.mephisto.vpin.restclient.CompetitionType;
 import de.mephisto.vpin.restclient.OverlayClient;
-import de.mephisto.vpin.restclient.PopperScreen;
+import de.mephisto.vpin.restclient.popper.PopperScreen;
 import de.mephisto.vpin.restclient.discord.DiscordServer;
 import de.mephisto.vpin.restclient.representations.*;
 import de.mephisto.vpin.server.assets.Asset;

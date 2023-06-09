@@ -1,6 +1,6 @@
 package de.mephisto.vpin.ui.events;
 
-import de.mephisto.vpin.restclient.JobType;
+import de.mephisto.vpin.restclient.jobs.JobType;
 import de.mephisto.vpin.restclient.descriptors.JobDescriptor;
 import edu.umd.cs.findbugs.annotations.NonNull;
 
@@ -39,6 +39,14 @@ public class EventManager {
     new Thread(() -> {
       for (StudioEventListener listener : listeners) {
         listener.repositoryUpdated();
+      }
+    }).start();
+  }
+
+  public void notifyPreferenceChanged() {
+    new Thread(() -> {
+      for (StudioEventListener listener : listeners) {
+        listener.preferencesChanged();
       }
     }).start();
   }

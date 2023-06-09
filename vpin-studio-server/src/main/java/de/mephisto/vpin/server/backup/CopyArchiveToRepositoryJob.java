@@ -1,8 +1,8 @@
 package de.mephisto.vpin.server.backup;
 
-import de.mephisto.vpin.restclient.Job;
-import de.mephisto.vpin.restclient.JobExecutionResult;
-import de.mephisto.vpin.restclient.JobExecutionResultFactory;
+import de.mephisto.vpin.restclient.jobs.Job;
+import de.mephisto.vpin.restclient.jobs.JobExecutionResult;
+import de.mephisto.vpin.restclient.jobs.JobExecutionResultFactory;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import org.apache.commons.io.FilenameUtils;
 import org.slf4j.Logger;

@@ -1,7 +1,7 @@
   package de.mephisto.vpin.server.games;
 
   import de.mephisto.vpin.commons.utils.FileUtils;
-  import de.mephisto.vpin.restclient.TableDetails;
+  import de.mephisto.vpin.restclient.popper.TableDetails;
   import de.mephisto.vpin.restclient.descriptors.DeleteDescriptor;
   import de.mephisto.vpin.restclient.descriptors.ResetHighscoreDescriptor;
   import de.mephisto.vpin.restclient.descriptors.TableUploadDescriptor;

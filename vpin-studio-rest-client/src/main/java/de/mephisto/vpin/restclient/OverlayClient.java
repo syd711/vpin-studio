@@ -1,6 +1,7 @@
 package de.mephisto.vpin.restclient;
 
 import de.mephisto.vpin.restclient.discord.DiscordServer;
+import de.mephisto.vpin.restclient.popper.PopperScreen;
 import de.mephisto.vpin.restclient.representations.*;
 
 import java.io.ByteArrayInputStream;

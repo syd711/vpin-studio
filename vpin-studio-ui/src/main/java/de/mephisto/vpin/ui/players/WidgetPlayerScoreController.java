@@ -2,7 +2,7 @@ package de.mephisto.vpin.ui.players;
 
 import de.mephisto.vpin.commons.fx.OverlayWindowFX;
 import de.mephisto.vpin.commons.fx.widgets.WidgetController;
-import de.mephisto.vpin.restclient.PopperScreen;
+import de.mephisto.vpin.restclient.popper.PopperScreen;
 import de.mephisto.vpin.restclient.representations.*;
 import de.mephisto.vpin.ui.Studio;
 import javafx.fxml.FXML;
@@ -16,8 +16,6 @@ import java.io.ByteArrayInputStream;
 import java.net.URL;
 import java.text.DateFormat;
 import java.util.ResourceBundle;
-
-import static de.mephisto.vpin.ui.Studio.client;
 
 public class WidgetPlayerScoreController extends WidgetController implements Initializable  {
 

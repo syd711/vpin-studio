@@ -1,6 +1,6 @@
 package de.mephisto.vpin.server.backup.adapters;
 
-import de.mephisto.vpin.restclient.TableDetails;
+import de.mephisto.vpin.restclient.popper.TableDetails;
 import de.mephisto.vpin.server.backup.ArchiveSourceAdapter;
 import de.mephisto.vpin.server.backup.adapters.vpa.TableBackupAdapterVpa;
 import de.mephisto.vpin.server.backup.adapters.vpbm.TableBackupAdapterVpbm;

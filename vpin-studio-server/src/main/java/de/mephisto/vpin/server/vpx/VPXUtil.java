@@ -12,6 +12,11 @@ public class VPXUtil {
   private final static Logger LOG = LoggerFactory.getLogger(VPXFileScanner.class);
 
   public static String readScript(@NonNull File file) {
+    return new String(readBytes(file));
+  }
+
+  public static byte[] readBytes(@NonNull File file) {
+    byte[] content = new byte[0];
     POIFSFileSystem fs = null;
     try {
       fs = new POIFSFileSystem(file, true);
@@ -21,10 +26,8 @@ public class VPXUtil {
 
       POIFSDocument document = new POIFSDocument(gameData);
       DocumentInputStream documentInputStream = new DocumentInputStream(document);
-      byte[] content = new byte[ documentInputStream.available() ];
+      content = new byte[ documentInputStream.available() ];
       documentInputStream.read(content);
-
-      return new String(content);
     } catch (Exception e) {
       LOG.error("Reading script failed for " + file.getAbsolutePath() + " failed: " + e.getMessage(), e);
       return null;
@@ -38,5 +41,7 @@ public class VPXUtil {
         LOG.error("Failed to close vpx file stream: " + e.getMessage(), e);
       }
     }
+
+    return content;
   }
 }

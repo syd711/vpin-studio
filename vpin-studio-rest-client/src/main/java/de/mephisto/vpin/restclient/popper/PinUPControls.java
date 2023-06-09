@@ -1,4 +1,4 @@
-package de.mephisto.vpin.restclient;
+package de.mephisto.vpin.restclient.popper;
 
 import java.util.HashMap;
 import java.util.Map;

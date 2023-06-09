@@ -1,6 +1,10 @@
 package de.mephisto.vpin.server.popper;
 
 import de.mephisto.vpin.restclient.*;
+import de.mephisto.vpin.restclient.popper.PinUPControl;
+import de.mephisto.vpin.restclient.popper.PinUPControls;
+import de.mephisto.vpin.restclient.popper.PopperScreen;
+import de.mephisto.vpin.restclient.popper.TableDetails;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 

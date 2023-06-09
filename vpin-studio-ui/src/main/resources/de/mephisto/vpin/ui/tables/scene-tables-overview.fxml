@@ -7,6 +7,7 @@
 <?import javafx.scene.control.MenuButton?>
 <?import javafx.scene.control.MenuItem?>
 <?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.SplitMenuButton?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.control.TextField?>
@@ -139,14 +140,29 @@
                            </graphic>
                                 </MenuButton>
                                 <Separator layoutX="682.0" layoutY="10.0" orientation="VERTICAL" prefHeight="30.0" prefWidth="12.0" />
-                                <Button fx:id="scanBtn" mnemonicParsing="false" onAction="#onTablesScan" text="Scan" textFill="WHITE">
-                                    <font>
-                                        <Font size="14.0" />
-                                    </font>
-                                    <graphic>
-                                        <FontIcon iconColor="WHITE" iconLiteral="mdi2m-map-search-outline" />
-                                    </graphic>
-                                </Button>
+                        <SplitMenuButton fx:id="scanBtn" mnemonicParsing="false" onAction="#onTablesScan" text="Scan">
+                          <items>
+                            <MenuItem mnemonicParsing="false" onAction="#onTablesScanAll" text="Scan All">
+                                 <graphic>
+                                    <FontIcon iconColor="WHITE" iconLiteral="mdi2m-map-search-outline">
+                                       <font>
+                                          <Font size="14.0" />
+                                       </font>
+                                    </FontIcon>
+                                 </graphic>
+                              </MenuItem>
+                          </items>
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                           <graphic>
+                              <FontIcon iconColor="WHITE" iconLiteral="mdi2m-map-search-outline">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </FontIcon>
+                           </graphic>
+                        </SplitMenuButton>
                                 <Button fx:id="validateBtn" mnemonicParsing="false" onAction="#onValidate" text="Validate" textFill="WHITE">
                                     <font>
                                         <Font size="14.0" />
@@ -167,7 +183,7 @@
                                         <FontIcon iconColor="WHITE" iconLiteral="mdi2p-play" />
                                     </graphic>
                                     <tooltip>
-                                        <Tooltip text="Open the table script for the selected table." />
+                                        <Tooltip text="Launch VPX with the selected table." />
                                     </tooltip>
                                 </Button>
                                 <Button fx:id="stopBtn" layoutX="700.0" layoutY="11.0" mnemonicParsing="false" onAction="#onStop" text="Stop" textFill="WHITE">
@@ -178,7 +194,7 @@
                                         <FontIcon iconColor="WHITE" iconLiteral="mdi2s-stop" />
                                     </graphic>
                                     <tooltip>
-                                        <Tooltip text="Open the table script for the selected table." />
+                                        <Tooltip text="Kill all VPX and PinUP Popper processes." />
                                     </tooltip>
                                 </Button>
                                 <Separator layoutX="788.0" layoutY="10.0" orientation="VERTICAL" prefHeight="30.0" prefWidth="12.0" />

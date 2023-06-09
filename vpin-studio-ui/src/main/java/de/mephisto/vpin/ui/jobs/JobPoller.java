@@ -1,6 +1,6 @@
 package de.mephisto.vpin.ui.jobs;
 
-import de.mephisto.vpin.restclient.JobExecutionResult;
+import de.mephisto.vpin.restclient.jobs.JobExecutionResult;
 import de.mephisto.vpin.restclient.descriptors.JobDescriptor;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.events.EventManager;

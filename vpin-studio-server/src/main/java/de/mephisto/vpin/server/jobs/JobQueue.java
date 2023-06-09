@@ -1,6 +1,6 @@
 package de.mephisto.vpin.server.jobs;
 
-import de.mephisto.vpin.restclient.JobExecutionResult;
+import de.mephisto.vpin.restclient.jobs.JobExecutionResult;
 import de.mephisto.vpin.restclient.descriptors.JobDescriptor;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;

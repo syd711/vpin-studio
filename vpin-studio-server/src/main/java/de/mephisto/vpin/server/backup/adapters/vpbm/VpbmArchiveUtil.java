@@ -1,7 +1,7 @@
 package de.mephisto.vpin.server.backup.adapters.vpbm;
 
 import de.mephisto.vpin.restclient.ArchivePackageInfo;
-import de.mephisto.vpin.restclient.TableDetails;
+import de.mephisto.vpin.restclient.popper.TableDetails;
 import de.mephisto.vpin.server.util.ImageUtil;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;

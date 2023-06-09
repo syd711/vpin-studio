@@ -2,6 +2,9 @@ package de.mephisto.vpin.server.backup.adapters.vpa;
 
 import de.mephisto.vpin.commons.EmulatorType;
 import de.mephisto.vpin.restclient.*;
+import de.mephisto.vpin.restclient.jobs.Job;
+import de.mephisto.vpin.restclient.jobs.JobExecutionResult;
+import de.mephisto.vpin.restclient.popper.TableDetails;
 import de.mephisto.vpin.server.backup.ArchiveDescriptor;
 import de.mephisto.vpin.server.backup.adapters.TableInstallerAdapter;
 import de.mephisto.vpin.server.games.Game;

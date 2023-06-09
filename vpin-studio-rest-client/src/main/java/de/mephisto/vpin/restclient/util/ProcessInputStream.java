@@ -1,4 +1,6 @@
-package de.mephisto.vpin.restclient;
+package de.mephisto.vpin.restclient.util;
+
+import de.mephisto.vpin.restclient.FileUploadProgressListener;
 
 import java.io.IOException;
 import java.io.InputStream;

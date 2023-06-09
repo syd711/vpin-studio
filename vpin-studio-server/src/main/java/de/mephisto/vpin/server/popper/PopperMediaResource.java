@@ -1,6 +1,6 @@
 package de.mephisto.vpin.server.popper;
 
-import de.mephisto.vpin.restclient.PopperScreen;
+import de.mephisto.vpin.restclient.popper.PopperScreen;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameService;
 import org.apache.commons.io.IOUtils;

@@ -1,5 +1,6 @@
 package de.mephisto.vpin.restclient;
 
+import de.mephisto.vpin.restclient.util.ProcessInputStream;
 import org.springframework.core.io.FileSystemResource;
 
 import java.io.File;

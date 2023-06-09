@@ -1,4 +1,4 @@
-package de.mephisto.vpin.restclient;
+package de.mephisto.vpin.restclient.jobs;
 
 public enum JobType {
   TABLE_BACKUP,

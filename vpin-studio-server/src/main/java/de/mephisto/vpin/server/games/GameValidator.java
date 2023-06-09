@@ -1,6 +1,6 @@
 package de.mephisto.vpin.server.games;
 
-import de.mephisto.vpin.restclient.PopperScreen;
+import de.mephisto.vpin.restclient.popper.PopperScreen;
 import de.mephisto.vpin.restclient.ValidationCode;
 import de.mephisto.vpin.server.altsound.AltSoundService;
 import de.mephisto.vpin.server.popper.Emulator;
@@ -31,7 +31,7 @@ public class GameValidator implements InitializingBean {
   static {
     mediaCodeToScreen.put(CODE_NO_AUDIO, PopperScreen.Audio);
     mediaCodeToScreen.put(CODE_NO_AUDIO_LAUNCH, PopperScreen.AudioLaunch);
-    mediaCodeToScreen.put(CODE_NO_APRON, PopperScreen.Menu);
+    mediaCodeToScreen.put(CODE_NO_APRON, PopperScreen.FullDMD);
     mediaCodeToScreen.put(CODE_NO_INFO, PopperScreen.GameInfo);
     mediaCodeToScreen.put(CODE_NO_HELP, PopperScreen.GameHelp);
     mediaCodeToScreen.put(CODE_NO_TOPPER, PopperScreen.Topper);
@@ -95,7 +95,7 @@ public class GameValidator implements InitializingBean {
     }
 
     if (isValidationEnabled(game, CODE_NO_APRON)) {
-      File apron = game.getPinUPMedia(PopperScreen.Menu);
+      File apron = game.getPinUPMedia(PopperScreen.FullDMD);
       if (apron == null || !apron.exists()) {
         return CODE_NO_APRON;
       }
@@ -167,6 +167,12 @@ public class GameValidator implements InitializingBean {
     if (isValidationEnabled(game, CODE_ALT_SOUND_NOT_ENABLED)) {
       if (game.isAltSoundAvailable() && !altSoundService.isAltSoundEnabled(game)) {
         return ValidationCode.CODE_ALT_SOUND_NOT_ENABLED;
+      }
+    }
+
+    if (isValidationEnabled(game, CODE_ALT_SOUND_FILE_MISSING)) {
+      if (game.isAltSoundAvailable() && altSoundService.getAltSound(game).isMissingAudioFiles()) {
+        return ValidationCode.CODE_ALT_SOUND_FILE_MISSING;
       }
     }
 

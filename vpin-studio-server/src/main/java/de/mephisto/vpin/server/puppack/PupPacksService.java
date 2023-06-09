@@ -1,16 +1,17 @@
 package de.mephisto.vpin.server.puppack;
 
-import de.mephisto.vpin.restclient.JobExecutionResult;
-import de.mephisto.vpin.restclient.JobExecutionResultFactory;
-import de.mephisto.vpin.restclient.JobType;
+import de.mephisto.vpin.commons.OrbitalPins;
 import de.mephisto.vpin.restclient.descriptors.JobDescriptor;
+import de.mephisto.vpin.restclient.jobs.JobExecutionResult;
+import de.mephisto.vpin.restclient.jobs.JobExecutionResultFactory;
+import de.mephisto.vpin.restclient.jobs.JobType;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.jobs.JobQueue;
+import de.mephisto.vpin.server.system.JCodec;
 import de.mephisto.vpin.server.system.SystemService;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -66,17 +67,14 @@ public class PupPacksService implements InitializingBean {
   }
 
   public void addPupPack(File packFolder) {
-    PupPack pupPack = new PupPack(packFolder);
-    if (pupPack.getScreensPup().exists() || pupPack.getTriggersPup().exists() || !FileUtils.listFiles(packFolder, new String[]{"mp4"}, true).isEmpty()) {
-      pupPack.setSize(org.apache.commons.io.FileUtils.sizeOfDirectory(packFolder));
+    if (new File(packFolder, "scriptonly.txt").exists()) {
+      return;
+    }
 
-      String[] list = packFolder.list((dir, name) -> name.endsWith(".bat"));
-      if (list != null) {
-        for (String s : list) {
-          String name = FilenameUtils.getBaseName(s);
-          pupPack.getOptions().add(name);
-        }
-      }
+    PupPack pupPack = new PupPack(packFolder);
+    if ((pupPack.getScreensPup().exists() && pupPack.getTriggersPup().exists()) ||
+        (OrbitalPins.isOrbitalPin(packFolder.getName()) && !FileUtils.listFiles(packFolder, new String[]{"mp4"}, true).isEmpty())) {
+      pupPack.load();
       pupPackFolders.put(packFolder.getName(), pupPack);
     }
   }
@@ -116,6 +114,34 @@ public class PupPacksService implements InitializingBean {
     jobQueue.offer(jobDescriptor);
 
     return JobExecutionResultFactory.empty();
+  }
+
+
+  @Nullable
+  public File exportDefaultPicture(@NonNull PupPack pupPack, @NonNull File target) {
+    File defaultPicture = new File(target, SystemService.DEFAULT_BACKGROUND);
+    if (defaultPicture.exists() && defaultPicture.length() > 0) {
+      return defaultPicture;
+    }
+
+    if (defaultPicture.exists() && defaultPicture.length() == 0) {
+      return null;
+    }
+
+    if (!target.exists()) {
+      target.mkdirs();
+    }
+
+    PupDefaultVideoResolver resolver = new PupDefaultVideoResolver(pupPack);
+    File defaultVideo = resolver.findDefaultVideo();
+    if (defaultVideo != null && defaultVideo.exists()) {
+      boolean success = JCodec.export(defaultVideo, defaultPicture);
+      if (success) {
+        LOG.info("Successfully extracted default background image " + defaultPicture.getAbsolutePath());
+        return defaultPicture;
+      }
+    }
+    return null;
   }
 
   public boolean clearCache() {

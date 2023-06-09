@@ -1,6 +1,6 @@
 package de.mephisto.vpin.ui.tables;
 
-import de.mephisto.vpin.restclient.JobType;
+import de.mephisto.vpin.restclient.jobs.JobType;
 import de.mephisto.vpin.ui.NavigationController;
 import de.mephisto.vpin.ui.StudioFXController;
 import de.mephisto.vpin.ui.archiving.RepositoryController;
@@ -123,5 +123,12 @@ public class TablesController implements Initializable, StudioFXController, Stud
         this.tableOverviewController.onReload();
       });
     }
+  }
+
+  @Override
+  public void preferencesChanged() {
+    Platform.runLater(() -> {
+      this.tableOverviewController.onReload();
+    });
   }
 }

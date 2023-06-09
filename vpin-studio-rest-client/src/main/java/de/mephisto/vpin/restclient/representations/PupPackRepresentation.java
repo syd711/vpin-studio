@@ -1,5 +1,7 @@
 package de.mephisto.vpin.restclient.representations;
 
+import de.mephisto.vpin.restclient.popper.ScreenMode;
+
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -9,6 +11,43 @@ public class PupPackRepresentation {
   private Date modificationDate;
   private boolean enabled;
   private List<String> options = new ArrayList<>();
+
+  private ScreenMode screenBackglassMode;
+  private ScreenMode screenDMDMode;
+  private ScreenMode screenFullDMDMode;
+  private ScreenMode screenTopperMode;
+
+  public ScreenMode getScreenBackglassMode() {
+    return screenBackglassMode;
+  }
+
+  public void setScreenBackglassMode(ScreenMode screenBackglassMode) {
+    this.screenBackglassMode = screenBackglassMode;
+  }
+
+  public ScreenMode getScreenDMDMode() {
+    return screenDMDMode;
+  }
+
+  public void setScreenDMDMode(ScreenMode screenDMDMode) {
+    this.screenDMDMode = screenDMDMode;
+  }
+
+  public ScreenMode getScreenFullDMDMode() {
+    return screenFullDMDMode;
+  }
+
+  public void setScreenFullDMDMode(ScreenMode screenFullDMDMode) {
+    this.screenFullDMDMode = screenFullDMDMode;
+  }
+
+  public ScreenMode getScreenTopperMode() {
+    return screenTopperMode;
+  }
+
+  public void setScreenTopperMode(ScreenMode screenTopperMode) {
+    this.screenTopperMode = screenTopperMode;
+  }
 
   public List<String> getOptions() {
     return options;

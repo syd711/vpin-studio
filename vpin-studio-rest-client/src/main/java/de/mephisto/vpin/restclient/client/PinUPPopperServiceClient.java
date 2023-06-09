@@ -1,9 +1,9 @@
 package de.mephisto.vpin.restclient.client;
 
-import de.mephisto.vpin.restclient.PinUPControl;
-import de.mephisto.vpin.restclient.PinUPControls;
-import de.mephisto.vpin.restclient.PopperScreen;
-import de.mephisto.vpin.restclient.TableDetails;
+import de.mephisto.vpin.restclient.popper.PinUPControl;
+import de.mephisto.vpin.restclient.popper.PinUPControls;
+import de.mephisto.vpin.restclient.popper.PopperScreen;
+import de.mephisto.vpin.restclient.popper.TableDetails;
 import de.mephisto.vpin.restclient.representations.PlaylistRepresentation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

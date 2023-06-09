@@ -11,4 +11,6 @@ open module de.mephisto.vpin.restclient {
   exports de.mephisto.vpin.restclient.util;
   exports de.mephisto.vpin.restclient.descriptors;
   exports de.mephisto.vpin.restclient.client;
+  exports de.mephisto.vpin.restclient.jobs;
+  exports de.mephisto.vpin.restclient.popper;
 }

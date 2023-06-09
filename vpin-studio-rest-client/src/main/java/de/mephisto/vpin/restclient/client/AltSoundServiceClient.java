@@ -3,7 +3,7 @@ package de.mephisto.vpin.restclient.client;
 import de.mephisto.vpin.restclient.AltSound;
 import de.mephisto.vpin.restclient.AssetType;
 import de.mephisto.vpin.restclient.FileUploadProgressListener;
-import de.mephisto.vpin.restclient.JobExecutionResult;
+import de.mephisto.vpin.restclient.jobs.JobExecutionResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpMethod;

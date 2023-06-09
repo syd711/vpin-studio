@@ -2,7 +2,7 @@ package de.mephisto.vpin.ui.archiving;
 
 import de.mephisto.vpin.commons.utils.FileUtils;
 import de.mephisto.vpin.restclient.ArchivePackageInfo;
-import de.mephisto.vpin.restclient.TableDetails;
+import de.mephisto.vpin.restclient.popper.TableDetails;
 import de.mephisto.vpin.restclient.representations.ArchiveDescriptorRepresentation;
 import de.mephisto.vpin.ui.StudioFXController;
 import javafx.fxml.FXML;

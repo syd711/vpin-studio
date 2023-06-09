@@ -1,6 +1,6 @@
 package de.mephisto.vpin.server.jobs;
 
-import de.mephisto.vpin.restclient.JobExecutionResult;
+import de.mephisto.vpin.restclient.jobs.JobExecutionResult;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;

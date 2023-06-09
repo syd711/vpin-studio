@@ -1,6 +1,6 @@
 package de.mephisto.vpin.server.system;
 
-import de.mephisto.vpin.restclient.PopperScreen;
+import de.mephisto.vpin.restclient.popper.PopperScreen;
 import de.mephisto.vpin.server.VPinStudioException;
 import de.mephisto.vpin.server.directb2s.DirectB2SImageExtractor;
 import de.mephisto.vpin.server.directb2s.DirectB2SImageRatio;
@@ -79,7 +79,7 @@ public class DefaultPictureService {
 
     PupPack pupPack = game.getPupPack();
     if(pupPack != null) {
-      pupPack.exportDefaultPicture(game, target);
+      pupPackService.exportDefaultPicture(pupPack, target);
     }
   }
 

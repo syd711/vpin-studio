@@ -1,7 +1,7 @@
 package de.mephisto.vpin.server.popper;
 
-import de.mephisto.vpin.restclient.PinUPControl;
-import de.mephisto.vpin.restclient.PopperScreen;
+import de.mephisto.vpin.restclient.popper.PinUPControl;
+import de.mephisto.vpin.restclient.popper.PopperScreen;
 import de.mephisto.vpin.server.AbstractVPinServerTest;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

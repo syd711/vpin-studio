@@ -1,10 +1,10 @@
 package de.mephisto.vpin.server.popper;
 
 import de.mephisto.vpin.commons.EmulatorType;
-import de.mephisto.vpin.restclient.PinUPControl;
-import de.mephisto.vpin.restclient.PinUPControls;
-import de.mephisto.vpin.restclient.PopperScreen;
-import de.mephisto.vpin.restclient.TableDetails;
+import de.mephisto.vpin.restclient.popper.PinUPControl;
+import de.mephisto.vpin.restclient.popper.PinUPControls;
+import de.mephisto.vpin.restclient.popper.PopperScreen;
+import de.mephisto.vpin.restclient.popper.TableDetails;
 import de.mephisto.vpin.server.backup.ArchiveUtil;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.system.SystemService;

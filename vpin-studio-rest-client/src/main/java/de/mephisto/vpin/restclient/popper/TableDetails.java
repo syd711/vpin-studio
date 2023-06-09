@@ -1,4 +1,4 @@
-package de.mephisto.vpin.restclient;
+package de.mephisto.vpin.restclient.popper;
 
 public class TableDetails {
   public final static String ARCHIVE_FILENAME = "table-details.json";

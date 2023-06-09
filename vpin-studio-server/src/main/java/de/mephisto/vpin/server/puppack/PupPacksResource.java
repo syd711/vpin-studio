@@ -1,7 +1,8 @@
 package de.mephisto.vpin.server.puppack;
 
-import de.mephisto.vpin.restclient.JobExecutionResult;
-import de.mephisto.vpin.restclient.JobExecutionResultFactory;
+import de.mephisto.vpin.restclient.jobs.JobExecutionResult;
+import de.mephisto.vpin.restclient.jobs.JobExecutionResultFactory;
+import de.mephisto.vpin.restclient.popper.PopperScreen;
 import de.mephisto.vpin.restclient.representations.PupPackRepresentation;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameService;
@@ -104,6 +105,10 @@ public class PupPacksResource {
     representation.setSize(pupPack.getSize());
     representation.setModificationDate(new Date(pupPack.getPupPackFolder().lastModified()));
     representation.setOptions(pupPack.getOptions());
+    representation.setScreenDMDMode(pupPack.getScreenMode(PopperScreen.DMD));
+    representation.setScreenBackglassMode(pupPack.getScreenMode(PopperScreen.BackGlass));
+    representation.setScreenTopperMode(pupPack.getScreenMode(PopperScreen.Topper));
+    representation.setScreenFullDMDMode(pupPack.getScreenMode(PopperScreen.FullDMD));
     return representation;
   }
 }

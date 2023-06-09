@@ -3,7 +3,7 @@ package de.mephisto.vpin.server.backup.adapters.vpa;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import de.mephisto.vpin.restclient.ArchivePackageInfo;
-import de.mephisto.vpin.restclient.TableDetails;
+import de.mephisto.vpin.restclient.popper.TableDetails;
 import de.mephisto.vpin.server.util.vpreg.VPReg;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

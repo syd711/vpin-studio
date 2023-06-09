@@ -2,7 +2,7 @@ package de.mephisto.vpin.restclient.client;
 
 import de.mephisto.vpin.restclient.AssetType;
 import de.mephisto.vpin.restclient.FileUploadProgressListener;
-import de.mephisto.vpin.restclient.JobExecutionResult;
+import de.mephisto.vpin.restclient.jobs.JobExecutionResult;
 import de.mephisto.vpin.restclient.descriptors.ArchiveBundleDescriptor;
 import de.mephisto.vpin.restclient.descriptors.ArchiveCopyToRepositoryDescriptor;
 import de.mephisto.vpin.restclient.descriptors.ArchiveRestoreDescriptor;

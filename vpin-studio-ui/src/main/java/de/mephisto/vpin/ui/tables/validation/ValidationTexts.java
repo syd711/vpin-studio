@@ -19,7 +19,7 @@ public class ValidationTexts {
     int code = game.getValidationState();
     switch (code) {
       case CODE_VPX_NOT_EXISTS: {
-        label = "VPX file '" + game.getGameFileName() + "' does not exist.";
+        label = "VPX file \"" + game.getGameFileName() + "\" does not exist.";
         text = "Fix the configuration for this table in PinUP Popper or delete it.";
         break;
       }
@@ -35,7 +35,7 @@ public class ValidationTexts {
       }
       case CODE_NO_DIRECTB2S_OR_PUPPACK: {
         label = "No PUP pack and no directb2s file found.";
-        text = "No additional media has been found for this table. Download a 'directb2s' file for this table.";
+        text = "No additional media has been found for this table. Download a \"directb2s\" file for this table.";
         break;
       }
       case CODE_NO_AUDIO: {
@@ -89,7 +89,7 @@ public class ValidationTexts {
         break;
       }
       case CODE_NO_OTHER2: {
-        label = "No media for 'Other2' set.";
+        label = "No media for \"Other2\" set.";
         text = NO_MEDIA_TEXT;
         break;
       }
@@ -101,6 +101,11 @@ public class ValidationTexts {
       case CODE_ALT_SOUND_NOT_ENABLED: {
         label = "ALT sound not enabled.";
         text = "The table has an ALT sound package, but it's not enabled in VPin MAME.";
+        break;
+      }
+      case CODE_ALT_SOUND_FILE_MISSING: {
+        label = "ALT sound audio file(s) missing.";
+        text = "Audio files of this ALT sound package are missing. Open the ALT sound editor for details.";
         break;
       }
       default: {

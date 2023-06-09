@@ -8,7 +8,7 @@ import org.springframework.lang.NonNull;
 import java.io.File;
 import java.util.UUID;
 
-import static de.mephisto.vpin.restclient.JobType.ARCHIVE_DOWNLOAD_TO_FILESYSTEM;
+import static de.mephisto.vpin.restclient.jobs.JobType.ARCHIVE_DOWNLOAD_TO_FILESYSTEM;
 
 public class DownloadJobDescriptor extends JobDescriptor {
   private final static Logger LOG = LoggerFactory.getLogger(DownloadJobDescriptor.class);

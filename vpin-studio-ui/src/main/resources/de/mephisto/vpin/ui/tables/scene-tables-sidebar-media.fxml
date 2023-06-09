@@ -117,7 +117,7 @@
                                 </Button>
                             </top>
                         </BorderPane>
-                        <BorderPane fx:id="screenMenu" layoutX="3.0" layoutY="234.0" prefHeight="180.0" prefWidth="150.0" styleClass="media-container">
+                        <BorderPane fx:id="screenFullDMD" layoutX="3.0" layoutY="234.0" prefHeight="180.0" prefWidth="150.0" styleClass="media-container">
                             <bottom>
                                 <Label text="Apron/Full DMD" textFill="WHITE" BorderPane.alignment="CENTER" />
                             </bottom>

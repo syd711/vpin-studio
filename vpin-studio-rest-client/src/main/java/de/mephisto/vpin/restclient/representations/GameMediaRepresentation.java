@@ -1,6 +1,6 @@
 package de.mephisto.vpin.restclient.representations;
 
-import de.mephisto.vpin.restclient.PopperScreen;
+import de.mephisto.vpin.restclient.popper.PopperScreen;
 
 import java.util.HashMap;
 import java.util.Map;

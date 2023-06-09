@@ -1,9 +1,8 @@
 package de.mephisto.vpin.ui.tables;
 
 import de.mephisto.vpin.commons.utils.WidgetFactory;
-import de.mephisto.vpin.restclient.PopperScreen;
+import de.mephisto.vpin.restclient.popper.PopperScreen;
 import de.mephisto.vpin.restclient.PreferenceNames;
-import de.mephisto.vpin.restclient.client.VPinStudioClient;
 import de.mephisto.vpin.restclient.representations.GameMediaItemRepresentation;
 import de.mephisto.vpin.restclient.representations.GameMediaRepresentation;
 import de.mephisto.vpin.restclient.representations.GameRepresentation;
@@ -47,7 +46,7 @@ public class TablesSidebarMediaController implements Initializable {
   private BorderPane screenPlayField;
 
   @FXML
-  private BorderPane screenMenu;
+  private BorderPane screenFullDMD;
 
   @FXML
   private BorderPane screenOther2;
@@ -171,7 +170,7 @@ public class TablesSidebarMediaController implements Initializable {
     disposeMediaPane(screenDMD);
     disposeMediaPane(screenBackGlass);
     disposeMediaPane(screenTopper);
-    disposeMediaPane(screenMenu);
+    disposeMediaPane(screenFullDMD);
     disposeMediaPane(screenPlayField);
     disposeMediaPane(screenOther2);
     disposeMediaPane(screenWheel);

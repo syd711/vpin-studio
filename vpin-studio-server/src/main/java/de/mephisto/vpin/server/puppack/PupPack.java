@@ -1,36 +1,31 @@
 package de.mephisto.vpin.server.puppack;
 
 import de.mephisto.vpin.commons.utils.FileUtils;
-import de.mephisto.vpin.server.games.Game;
-import de.mephisto.vpin.server.system.JCodec;
-import de.mephisto.vpin.server.system.SystemService;
+import de.mephisto.vpin.restclient.popper.PopperScreen;
+import de.mephisto.vpin.restclient.popper.ScreenMode;
 import edu.umd.cs.findbugs.annotations.NonNull;
-import edu.umd.cs.findbugs.annotations.Nullable;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.commons.io.FilenameUtils;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
 public class PupPack {
-  private final static Logger LOG = LoggerFactory.getLogger(PupPack.class);
-
   public static final String SCREENS_PUP = "screens.pup";
   public static final String TRIGGERS_PUP = "triggers.pup";
 
-  private final String name;
-  private final File screensPup;
-  private final File triggersPup;
+  private final ScreensPub screensPup;
+  private final TriggersPup triggersPup;
+
   private final File packFolder;
   private List<String> options = new ArrayList<>();
 
   private long size;
 
   public PupPack(@NonNull File packFolder) {
-    this.name = packFolder.getName();
-    screensPup = new File(packFolder, SCREENS_PUP);
-    triggersPup = new File(packFolder, TRIGGERS_PUP);
+    screensPup = new ScreensPub(new File(packFolder, SCREENS_PUP));
+    triggersPup = new TriggersPup(new File(packFolder, TRIGGERS_PUP));
+
     this.packFolder = packFolder;
   }
 
@@ -50,11 +45,11 @@ public class PupPack {
     return size;
   }
 
-  public File getScreensPup() {
+  public ScreensPub getScreensPup() {
     return screensPup;
   }
 
-  public File getTriggersPup() {
+  public TriggersPup getTriggersPup() {
     return triggersPup;
   }
 
@@ -69,40 +64,26 @@ public class PupPack {
     return this.packFolder;
   }
 
-  @Nullable
-  public File exportDefaultPicture(@NonNull Game game, @NonNull File target) {
-    File defaultPicture = new File(target, SystemService.DEFAULT_BACKGROUND);
-    if (defaultPicture.exists() && defaultPicture.length() > 0) {
-      return defaultPicture;
-    }
-
-    if (defaultPicture.exists() && defaultPicture.length() == 0) {
-      return null;
-    }
-
-    if (!target.exists()) {
-      target.mkdirs();
-    }
-
-    return resolveDefaultPictureFromPupVideo(game, defaultPicture);
+  public ScreenMode getScreenMode(PopperScreen dmd) {
+    return this.screensPup.getScreenMode(dmd);
   }
 
-  @Nullable
-  private File resolveDefaultPictureFromPupVideo(@NonNull Game game, @NonNull File defaultPicture) {
-    PupDefaultVideoResolver resolver = new PupDefaultVideoResolver(this);
-    File defaultVideo = resolver.findDefaultVideo();
-    if (defaultVideo != null && defaultVideo.exists()) {
-      boolean success = JCodec.export(defaultVideo, defaultPicture);
-      if (success) {
-        LOG.info("Successfully extracted default background image " + defaultPicture.getAbsolutePath());
-        return defaultPicture;
+  public void load() {
+    setSize(org.apache.commons.io.FileUtils.sizeOfDirectory(packFolder));
+
+    String[] list = packFolder.list((dir, name) -> name.endsWith(".bat"));
+    if (list != null) {
+      for (String s : list) {
+        if (s.toLowerCase().contains("option")) {
+          String name = FilenameUtils.getBaseName(s);
+          getOptions().add(name);
+        }
       }
     }
-    return null;
   }
 
   @Override
   public String toString() {
-    return "PUP Pack for \"" + name + "\"";
+    return "PUP Pack for \"" + packFolder.getName() + "\"";
   }
 }

@@ -11,6 +11,15 @@ public class AltSound {
   private long filesize;
   private Date modificationDate;
   private List<Integer> channels = new ArrayList<>();
+  private boolean missingAudioFiles;
+
+  public boolean isMissingAudioFiles() {
+    return missingAudioFiles;
+  }
+
+  public void setMissingAudioFiles(boolean missingAudioFiles) {
+    this.missingAudioFiles = missingAudioFiles;
+  }
 
   public List<String> getHeaders() {
     return headers;

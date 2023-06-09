@@ -1,7 +1,7 @@
 package de.mephisto.vpin.restclient.representations;
 
 import de.mephisto.vpin.restclient.ArchivePackageInfo;
-import de.mephisto.vpin.restclient.TableDetails;
+import de.mephisto.vpin.restclient.popper.TableDetails;
 
 import java.util.Date;
 import java.util.Objects;

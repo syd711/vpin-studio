@@ -21,4 +21,5 @@ public interface ValidationCode {
   int CODE_NO_WHEEL_IMAGE = 41;
 
   int CODE_ALT_SOUND_NOT_ENABLED = 50;
+  int CODE_ALT_SOUND_FILE_MISSING = 51;
 }

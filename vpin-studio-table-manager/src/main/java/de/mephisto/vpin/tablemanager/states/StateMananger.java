@@ -1,9 +1,9 @@
 package de.mephisto.vpin.tablemanager.states;
 
 import de.mephisto.vpin.restclient.descriptors.JobDescriptor;
-import de.mephisto.vpin.restclient.JobType;
-import de.mephisto.vpin.restclient.PinUPControl;
-import de.mephisto.vpin.restclient.PinUPControls;
+import de.mephisto.vpin.restclient.jobs.JobType;
+import de.mephisto.vpin.restclient.popper.PinUPControl;
+import de.mephisto.vpin.restclient.popper.PinUPControls;
 import de.mephisto.vpin.tablemanager.JobListener;
 import de.mephisto.vpin.tablemanager.Menu;
 import de.mephisto.vpin.tablemanager.MenuController;

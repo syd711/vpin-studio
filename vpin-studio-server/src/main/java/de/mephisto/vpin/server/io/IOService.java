@@ -1,7 +1,7 @@
 package de.mephisto.vpin.server.io;
 
-import de.mephisto.vpin.restclient.JobType;
-import de.mephisto.vpin.restclient.PopperScreen;
+import de.mephisto.vpin.restclient.jobs.JobType;
+import de.mephisto.vpin.restclient.popper.PopperScreen;
 import de.mephisto.vpin.restclient.descriptors.*;
 import de.mephisto.vpin.server.backup.*;
 import de.mephisto.vpin.server.backup.adapters.TableBackupAdapter;

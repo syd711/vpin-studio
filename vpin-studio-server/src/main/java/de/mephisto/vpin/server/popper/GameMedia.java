@@ -1,6 +1,6 @@
 package de.mephisto.vpin.server.popper;
 
-import de.mephisto.vpin.restclient.PopperScreen;
+import de.mephisto.vpin.restclient.popper.PopperScreen;
 import edu.umd.cs.findbugs.annotations.Nullable;
 
 import java.util.HashMap;

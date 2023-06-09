@@ -2,17 +2,12 @@ package de.mephisto.vpin.server.puppack;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
-import org.apache.commons.csv.CSVFormat;
-import org.apache.commons.csv.CSVRecord;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
-import java.io.Reader;
-import java.util.Iterator;
+import java.util.List;
 
 public class PupDefaultVideoResolver {
   private final static Logger LOG = LoggerFactory.getLogger(PupDefaultVideoResolver.class);
@@ -27,85 +22,29 @@ public class PupDefaultVideoResolver {
   public File findDefaultVideo() {
     File video = findVideoFromScreens();
     if (video == null) {
-      video = findVideoFromTriggers();
+      List<TriggerEntry> entries = pupPack.getTriggersPup().getEntries();
+      for (TriggerEntry entry : entries) {
+        if (entry.getScreenNum() == 2) {
+          String playList = entry.getPlayList();
+          String playFile = entry.getPlayFile();
+          video = resolveFile(playList, playFile);
+          break;
+        }
+      }
     }
-
     return video;
   }
 
   @Nullable
-  private File findVideoFromTriggers() {
-    Reader in = null;
-    try {
-      File csvFile = pupPack.getTriggersPup();
-      if (!csvFile.exists()) {
-        return null;
-      }
-
-      in = new FileReader(csvFile);
-      Iterable<CSVRecord> records = CSVFormat.RFC4180.parse(in);
-      Iterator<CSVRecord> iterator = records.iterator();
-      iterator.next();
-
-      while (iterator.hasNext()) {
-        CSVRecord record = iterator.next();
-        TriggerEntry entry = new TriggerEntry(record);
-        if (entry.getScreenNum() == 2) {
-          String playList = entry.getPlayList();
-          String playFile = entry.getPlayFile();
-          File video = resolveFile(playList, playFile);
-          if (video != null) {
-            return video;
-          }
-        }
-      }
-    } catch (Exception e) {
-      LOG.error("Failed to resolve default trigger video for " + pupPack + ": " + e.getMessage(), e);
-    } finally {
-      if (in != null) {
-        try {
-          in.close();
-        } catch (IOException e) {
-          //ignore
-        }
-      }
-    }
-    return null;
-  }
-
-  @Nullable
   private File findVideoFromScreens() {
-    Reader in = null;
-    try {
-      File csvFile = pupPack.getScreensPup();
-      if (!csvFile.exists()) {
-        return null;
-      }
+    List<ScreenEntry> entries = pupPack.getScreensPup().getEntries();
+    for (ScreenEntry entry : entries) {
 
-      in = new FileReader(csvFile);
-      Iterable<CSVRecord> records = CSVFormat.RFC4180.parse(in);
-      Iterator<CSVRecord> iterator = records.iterator();
-      iterator.next();
-
-      while (iterator.hasNext()) {
-        CSVRecord record = iterator.next();
-        ScreenEntry entry = new ScreenEntry(record);
-        String playList = entry.getPlayList();
-        String playFile = entry.getPlayFile();
-        File video = resolveFile(playList, playFile);
-        if (video != null) {
-          return video;
-        }
-      }
-    } catch (Exception e) {
-      LOG.error("Failed to resolve default screen video for " + pupPack + ": " + e.getMessage(), e);
-    } finally {
-      if (in != null) {
-        try {
-          in.close();
-        } catch (IOException e) {
-          //ignore
-        }
+      String playList = entry.getPlayList();
+      String playFile = entry.getPlayFile();
+      File video = resolveFile(playList, playFile);
+      if (video != null) {
+        return video;
       }
     }
     return null;
