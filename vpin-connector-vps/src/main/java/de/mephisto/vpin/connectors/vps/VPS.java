@@ -9,6 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -19,14 +20,33 @@ public class VPS {
 
   private final ObjectMapper objectMapper;
 
+  private List<VpsTable> tables;
+
   public VPS() {
     objectMapper = new ObjectMapper();
     objectMapper.enable(SerializationFeature.INDENT_OUTPUT);
     objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+    this.tables = loadTables();
+  }
+
+  public List<VpsTable> getTables() {
+    return tables;
+  }
+
+  public List<VpsTable> find(String term) {
+    List<VpsTable> results = new ArrayList<>();
+    for (VpsTable table : this.tables) {
+      if(!table.getName().contains(term)) {
+        continue;
+      }
+
+      results.add(table);
+    }
+    return results;
   }
 
 
-  public List<VpsTable> getTables() {
+  private List<VpsTable> loadTables() {
     try {
       VpsTable[] vpsTables = objectMapper.readValue(new File("E:\\Development\\workspace\\vpin-studio\\resources\\", "vpsdb.json"), VpsTable[].class);
       return Arrays.stream(vpsTables)

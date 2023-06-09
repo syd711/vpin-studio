@@ -4,7 +4,6 @@
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.ComboBox?>
-<?import javafx.scene.control.Hyperlink?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.Separator?>
 <?import javafx.scene.control.ToolBar?>
@@ -219,13 +218,12 @@
                         <Font name="System Bold" size="14.0" />
                      </font>
                   </Label>
-                  <Label styleClass="preference-description" text="You can search for PUP pack downloads here:">
+                  <Label styleClass="preference-description" text="Open the &quot;Visual Pinball Spreadsheet&quot; section to find additional resources.">
                      <VBox.margin>
                         <Insets top="12.0" />
                      </VBox.margin>
                   </Label>
-                  <Hyperlink onAction="#onLink" text="https://virtual-pinball-spreadsheet.web.app/" />
-                  <Hyperlink layoutX="10.0" layoutY="64.0" onAction="#onLink" text="https://vpuniverse.com/files/category/120-pup-packs/" />
+                  <Label layoutX="10.0" layoutY="42.0" styleClass="preference-description" text="Upload downloaded resources here." />
                </children>
                <VBox.margin>
                   <Insets bottom="24.0" />

@@ -24,8 +24,8 @@ import java.text.SimpleDateFormat;
 import java.util.Optional;
 import java.util.ResourceBundle;
 
-public class TablesSidebarAudioController implements Initializable {
-  private final static Logger LOG = LoggerFactory.getLogger(TablesSidebarAudioController.class);
+public class TablesSidebarAltSoundController implements Initializable {
+  private final static Logger LOG = LoggerFactory.getLogger(TablesSidebarAltSoundController.class);
 
   @FXML
   private Button altSoundBtn;
@@ -66,19 +66,7 @@ public class TablesSidebarAudioController implements Initializable {
   private AltSound altSound;
 
   // Add a public no-args constructor
-  public TablesSidebarAudioController() {
-  }
-
-  @FXML
-  private void onLink(ActionEvent e) {
-    Hyperlink link = (Hyperlink) e.getSource();
-    if (Desktop.getDesktop().isSupported(Desktop.Action.BROWSE)) {
-      try {
-        Desktop.getDesktop().browse(new URI(link.getText()));
-      } catch (Exception ex) {
-        LOG.error("Failed to open link: " + ex.getMessage(), ex);
-      }
-    }
+  public TablesSidebarAltSoundController() {
   }
 
   @FXML

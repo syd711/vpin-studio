@@ -59,7 +59,7 @@ public class TablesSidebarController implements Initializable {
   private CheckBox mediaPreviewCheckbox;
 
   @FXML
-  private TablesSidebarAudioController tablesSidebarAudioController; //fxml magic! Not unused
+  private TablesSidebarAltSoundController tablesSidebarAudioController; //fxml magic! Not unused
 
   @FXML
   private TablesSidebarDefaultBackgroundController tablesSidebarDefaultBackgroundController; //fxml magic! Not unused
@@ -99,7 +99,7 @@ public class TablesSidebarController implements Initializable {
     tableAccordion.managedProperty().bindBidirectional(tableAccordion.visibleProperty());
 
     try {
-      FXMLLoader loader = new FXMLLoader(TablesSidebarAudioController.class.getResource("scene-tables-sidebar-audio.fxml"));
+      FXMLLoader loader = new FXMLLoader(TablesSidebarAltSoundController.class.getResource("scene-tables-sidebar-altsound.fxml"));
       Parent tablesRoot = loader.load();
       tablesSidebarAudioController = loader.getController();
       tablesSidebarAudioController.setSidebarController(this);
@@ -299,7 +299,7 @@ public class TablesSidebarController implements Initializable {
 
   }
 
-  public TablesSidebarAudioController getTablesSidebarAudioController() {
+  public TablesSidebarAltSoundController getTablesSidebarAudioController() {
     return tablesSidebarAudioController;
   }
 

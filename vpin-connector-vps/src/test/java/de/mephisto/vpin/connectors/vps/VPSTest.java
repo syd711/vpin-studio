@@ -11,8 +11,13 @@ public class VPSTest {
 
   @Test
   public void testTableLoading() {
-    List<VpsTable> tables = new VPS().getTables();
+    VPS vps = new VPS();
+    List<VpsTable> tables = vps.getTables();
     assertFalse(tables.isEmpty());
     System.out.println(tables.size() + " tables loaded.");
+
+    List<VpsTable> vpsTables = vps.find("007");
+    System.out.println(vpsTables);
+    assertFalse(vpsTables.isEmpty());
   }
 }

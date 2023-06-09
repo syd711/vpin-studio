@@ -114,17 +114,17 @@ public class TablesSidebarPUPPackController implements Initializable {
     }
   }
 
-  @FXML
-  private void onLink(ActionEvent e) {
-    Hyperlink link = (Hyperlink) e.getSource();
-    if (Desktop.getDesktop().isSupported(Desktop.Action.BROWSE)) {
-      try {
-        Desktop.getDesktop().browse(new URI(link.getText()));
-      } catch (Exception ex) {
-        LOG.error("Failed to open link: " + ex.getMessage(), ex);
-      }
-    }
-  }
+//  @FXML
+//  private void onLink(ActionEvent e) {
+//    Hyperlink link = (Hyperlink) e.getSource();
+//    if (Desktop.getDesktop().isSupported(Desktop.Action.BROWSE)) {
+//      try {
+//        Desktop.getDesktop().browse(new URI(link.getText()));
+//      } catch (Exception ex) {
+//        LOG.error("Failed to open link: " + ex.getMessage(), ex);
+//      }
+//    }
+//  }
 
   @FXML
   private void onPupPackEnable() {
