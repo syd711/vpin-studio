@@ -1,8 +1,10 @@
 package de.mephisto.vpin.connectors.vps.model;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class VpsTable {
+  private String id;
   private String name;
   private List<String> features;
   private List<VpsAuthoredUrls> povFiles;
@@ -15,6 +17,7 @@ public class VpsTable {
   private List<VpsTableFile> tableFiles;
   private List<VpsAuthoredUrls> topperFiles;
   private List<VpsAuthoredUrls> wheelArtFiles;
+  private List<VpsBackglassFile> b2sFiles;
 
   private String ipdbUrl;
   private String manufacturer;
@@ -22,6 +25,14 @@ public class VpsTable {
   private String type;
   private int year;
   private long updatedAt;
+
+  public String getId() {
+    return id;
+  }
+
+  public void setId(String id) {
+    this.id = id;
+  }
 
   public String getIpdbUrl() {
     return ipdbUrl;
@@ -37,6 +48,14 @@ public class VpsTable {
 
   public void setManufacturer(String manufacturer) {
     this.manufacturer = manufacturer;
+  }
+
+  public List<VpsBackglassFile> getB2sFiles() {
+    return b2sFiles;
+  }
+
+  public void setB2sFiles(List<VpsBackglassFile> b2sFiles) {
+    this.b2sFiles = b2sFiles;
   }
 
   public int getPlayers() {
@@ -89,6 +108,10 @@ public class VpsTable {
 
   public List<VpsTableFile> getTableFiles() {
     return tableFiles;
+  }
+
+  public List<VpsTableFile> getTableFilesForFormat(String tableFormat) {
+    return tableFiles.stream().filter(t -> t.getTableFormat() != null && t.getTableFormat().equals(tableFormat) && !(t.getUrls() == null || t.getUrls().isEmpty())).collect(Collectors.toList());
   }
 
   public void setTableFiles(List<VpsTableFile> tableFiles) {

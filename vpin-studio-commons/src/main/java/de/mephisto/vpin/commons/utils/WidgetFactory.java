@@ -16,6 +16,7 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.VBox;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.scene.media.MediaView;
@@ -32,6 +33,7 @@ import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 import java.util.Optional;
 
 public class WidgetFactory {
@@ -411,6 +413,39 @@ public class WidgetFactory {
         int height = (int) (image.getHeight() * percentageWidth / 100);
         imageView.setFitHeight(height);
         setGraphic(imageView);
+        setText(item);
+      }
+    }
+  }
+
+  public static class VpsTableListCell extends ListCell<String> {
+
+    private final String comment;
+    private final List<String> authors;
+    private final String version;
+    private final List<String> features;
+
+    public VpsTableListCell(String comment, List<String> authors, String version, List<String> features ) {
+      this.comment = comment;
+      this.authors = authors;
+      this.version = version;
+      this.features = features;
+    }
+
+    protected void updateItem(String item, boolean empty) {
+      super.updateItem(item, empty);
+      setGraphic(null);
+      setText(null);
+      if (item != null) {
+        VBox root = new VBox();
+        root.setStyle("-fx-padding: 3 3 3 3");
+
+        if(comment != null) {
+          Label label = new Label(comment);
+          root.getChildren().add(label);
+        }
+
+        setGraphic(root);
         setText(item);
       }
     }

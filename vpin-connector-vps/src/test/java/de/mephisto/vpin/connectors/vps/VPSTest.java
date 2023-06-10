@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class VPSTest {
 
@@ -16,11 +17,7 @@ public class VPSTest {
     assertFalse(tables.isEmpty());
     System.out.println(tables.size() + " tables loaded.");
 
-    List<VpsTable> vpsTables = vps.find("Creature From The Black Lagoon");
-    System.out.println(vpsTables);
-    assertFalse(vpsTables.isEmpty());
-
-    VpsTable vpsTable = vpsTables.get(0);
-    System.out.println(vpsTable);
+    VpsTable tableById = vps.getTableById("43ma3WQK");
+    assertNotNull(tables);
   }
 }

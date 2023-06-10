@@ -1,36 +1,16 @@
 package de.mephisto.vpin.connectors.vps.model;
 
-import java.util.List;
 import java.util.Objects;
 
-public class VpsTableFile extends VpsAuthoredUrls {
+public class VpsBackglassFile extends VpsAuthoredUrls {
   private String id;
   private String comment;
-  private List<String> features;
-  private String tableFormat;
-
-  public String getTableFormat() {
-    return tableFormat;
-  }
-
-  public void setTableFormat(String tableFormat) {
-    this.tableFormat = tableFormat;
-  }
-
   public String getId() {
     return id;
   }
 
   public void setId(String id) {
     this.id = id;
-  }
-
-  public List<String> getFeatures() {
-    return features;
-  }
-
-  public void setFeatures(List<String> features) {
-    this.features = features;
   }
 
   public String getComment() {
@@ -66,9 +46,9 @@ public class VpsTableFile extends VpsAuthoredUrls {
   @Override
   public boolean equals(Object o) {
     if (this == o) return true;
-    if (!(o instanceof VpsTableFile)) return false;
+    if (!(o instanceof VpsBackglassFile)) return false;
 
-    VpsTableFile that = (VpsTableFile) o;
+    VpsBackglassFile that = (VpsBackglassFile) o;
 
     return Objects.equals(id, that.id);
   }

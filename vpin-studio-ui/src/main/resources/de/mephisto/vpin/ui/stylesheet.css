@@ -650,3 +650,23 @@
 .menu-item:focused {
     -fx-background-color: -fx-base-5;
 }
+
+
+.vps-button {
+    -fx-cursor: hand;
+    -fx-font-color: white;
+    -fx-font-weight : bold;
+    -fx-font-size : 11px;
+    -fx-border-style: hidden hidden hidden hidden;
+    -fx-background-radius: 3 3 3 3;
+    -fx-padding: 2 2 2 2;
+}
+
+.vps-badge {
+    -fx-font-color: white;
+    -fx-font-weight : bold;
+    -fx-font-size : 11px;
+    -fx-border-style: hidden hidden hidden hidden;
+    -fx-background-radius: 3 3 3 3;
+    -fx-padding: 2 4 2 4;
+}

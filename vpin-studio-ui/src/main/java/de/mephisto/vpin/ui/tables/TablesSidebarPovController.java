@@ -2,7 +2,6 @@ package de.mephisto.vpin.ui.tables;
 
 import de.mephisto.vpin.commons.POV;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
-import de.mephisto.vpin.restclient.client.VPinStudioClient;
 import de.mephisto.vpin.restclient.representations.GameRepresentation;
 import de.mephisto.vpin.restclient.representations.POVRepresentation;
 import de.mephisto.vpin.ui.Studio;
@@ -264,10 +263,10 @@ public class TablesSidebarPovController implements Initializable {
       GameRepresentation game = g.get();
       povExportBtn.setDisable(!game.isGameFileAvailable());
 
-      povSettingsPane.setVisible(game.isPov());
-      povCreatePane.setVisible(!game.isPov());
+      povSettingsPane.setVisible(game.isPovAvailable());
+      povCreatePane.setVisible(!game.isPovAvailable());
 
-      if (game.isPov()) {
+      if (game.isPovAvailable()) {
         pov = Studio.client.getVpxService().getPOV(game.getId());
 
         povSSAACombo.valueProperty().setValue(POVComboModel.forValue(pov.getValue(POV.SSAA)));

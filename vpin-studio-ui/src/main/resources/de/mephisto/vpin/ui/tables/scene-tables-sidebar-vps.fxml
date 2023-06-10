@@ -1,15 +1,23 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Hyperlink?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.ToolBar?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
+<?import org.kordamp.ikonli.javafx.FontIcon?>
 
 <BorderPane fx:id="defaultBackgroundBorderPane" prefWidth="600.0" styleClass="accordion-container" stylesheets="@../stylesheet.css" BorderPane.alignment="CENTER" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.tables.TablesSidebarVpsController">
     <center>
@@ -22,20 +30,18 @@
                <children>
                   <VBox fx:id="detailsBox">
                      <children>
-                        <Label text="Sheet Data" textFill="WHITE">
-                           <font>
-                              <Font name="System Bold" size="14.0" />
-                           </font>
-                        </Label>
                         <GridPane>
                           <columnConstraints>
                             <ColumnConstraints hgrow="SOMETIMES" maxWidth="282.199951171875" minWidth="10.0" prefWidth="128.5999755859375" />
-                              <ColumnConstraints hgrow="SOMETIMES" maxWidth="446.2000732421875" minWidth="10.0" prefWidth="445.4000244140625" />
+                              <ColumnConstraints hgrow="SOMETIMES" maxWidth="446.2000732421875" minWidth="10.0" prefWidth="420.0" />
+                              <ColumnConstraints hgrow="SOMETIMES" maxWidth="459.1999755859375" minWidth="10.0" prefWidth="20.0" />
                           </columnConstraints>
                           <rowConstraints>
                             <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                             <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                             <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                               <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                               <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                               <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
@@ -49,12 +55,12 @@
                                     <Font size="14.0" />
                                  </font>
                               </Label>
-                              <Label layoutX="10.0" layoutY="15.0" text="IPDB Url:" textFill="WHITE" GridPane.rowIndex="2">
+                              <Label layoutX="10.0" layoutY="15.0" text="IPDB Url:" textFill="WHITE" GridPane.rowIndex="1">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
                               </Label>
-                              <Label layoutX="10.0" layoutY="49.0" text="Manufacturer:" textFill="WHITE" GridPane.rowIndex="1">
+                              <Label layoutX="10.0" layoutY="49.0" text="Manufacturer:" textFill="WHITE" GridPane.rowIndex="2">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
@@ -74,12 +80,7 @@
                                     <Font size="14.0" />
                                  </font>
                               </Label>
-                              <Label fx:id="nameLabel" layoutX="10.0" layoutY="15.0" text="-" textFill="WHITE" GridPane.columnIndex="1">
-                                 <font>
-                                    <Font size="14.0" />
-                                 </font>
-                              </Label>
-                              <Label fx:id="manufacturerLabel" layoutX="139.0" layoutY="15.0" text="-" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                              <Label fx:id="manufacturerLabel" layoutX="139.0" layoutY="15.0" text="-" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="2">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
@@ -99,7 +100,39 @@
                                     <Font size="14.0" />
                                  </font>
                               </Label>
-                              <Hyperlink fx:id="ipdbLink" onAction="#onIpdbLink" text="-" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                              <Hyperlink fx:id="ipdbLink" onAction="#onIpdbLink" text="-" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                              <TextField fx:id="nameField" promptText="Enter Table Name..." GridPane.columnIndex="1">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </TextField>
+                              <Label layoutX="10.0" layoutY="168.0" text="Your Table Version:" textFill="WHITE" GridPane.rowIndex="6">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </Label>
+                              <ComboBox fx:id="tablesCombo" prefWidth="487.0" GridPane.columnIndex="1" GridPane.rowIndex="6" />
+                              <Label layoutX="10.0" layoutY="198.0" text="Features:" textFill="WHITE" GridPane.rowIndex="7">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </Label>
+                              <HBox fx:id="featureBox" alignment="BASELINE_LEFT" nodeOrientation="LEFT_TO_RIGHT" prefWidth="200.0" spacing="6.0" GridPane.columnIndex="1" GridPane.rowIndex="7">
+                                 <opaqueInsets>
+                                    <Insets />
+                                 </opaqueInsets>
+                                 <GridPane.margin>
+                                    <Insets top="6.0" />
+                                 </GridPane.margin>
+                              </HBox>
+                              <Label alignment="CENTER_RIGHT" contentDisplay="RIGHT" textAlignment="JUSTIFY" textFill="WHITE" GridPane.columnIndex="1" GridPane.halignment="RIGHT">
+                                 <graphic>
+                                    <FontIcon iconLiteral="mdi2d-database-search-outline" iconSize="18" />
+                                 </graphic>
+                                 <GridPane.margin>
+                                    <Insets right="6.0" />
+                                 </GridPane.margin>
+                              </Label>
                            </children>
                         </GridPane>
                      </children>
@@ -119,4 +152,24 @@
    <padding>
       <Insets left="1.0" right="1.0" />
    </padding>
+   <top>
+      <ToolBar prefHeight="40.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+        <items>
+          <Button mnemonicParsing="false" onAction="#onUpdate" text="Update DB">
+               <font>
+                  <Font size="14.0" />
+               </font>
+               <graphic>
+                  <FontIcon iconColor="WHITE" iconLiteral="mdi2u-update" />
+               </graphic>
+            </Button>
+            <Separator orientation="VERTICAL" />
+            <CheckBox fx:id="filterCheckbox" mnemonicParsing="false" text="Filter Existing Resources" textFill="WHITE">
+               <font>
+                  <Font size="14.0" />
+               </font>
+            </CheckBox>
+        </items>
+      </ToolBar>
+   </top>
 </BorderPane>

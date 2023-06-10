@@ -35,12 +35,30 @@ public class GameRepresentation {
   private boolean romExists;
   private String ignoredValidations;
   private String highscoreType;
-  private boolean pov;
+  private boolean povAvailable;
   private boolean selected;
   private boolean romRequired;
   private String assets;
   private boolean defaultBackgroundAvailable;
   private boolean altSoundAvailable;
+  private String extTableId;
+  private String extTableVersionId;
+
+  public String getExtTableId() {
+    return extTableId;
+  }
+
+  public void setExtTableId(String extTableId) {
+    this.extTableId = extTableId;
+  }
+
+  public String getExtTableVersionId() {
+    return extTableVersionId;
+  }
+
+  public void setExtTableVersionId(String extTableVersionId) {
+    this.extTableVersionId = extTableVersionId;
+  }
 
   public boolean isAltSoundAvailable() {
     return altSoundAvailable;
@@ -114,12 +132,12 @@ public class GameRepresentation {
     this.modified = modified;
   }
 
-  public boolean isPov() {
-    return pov;
+  public boolean isPovAvailable() {
+    return povAvailable;
   }
 
-  public void setPov(boolean pov) {
-    this.pov = pov;
+  public void setPovAvailable(boolean povAvailable) {
+    this.povAvailable = povAvailable;
   }
 
   public String getTableName() {

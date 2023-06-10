@@ -323,6 +323,7 @@
                                         <include>card-generator.properties</include>
                                         <include>empty-b2s-preview.png</include>
                                         <include>vpbm-128.png</include>
+                                        <include>vpsdb.json</include>
                                     </includes>
                                     <excludes>
                                         <exclude>vpbm/identifiers.dat</exclude>

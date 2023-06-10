@@ -44,6 +44,8 @@ public class Game {
   private PupPack pupPack;
 
   private SystemService systemService;
+  private String extTableId;
+  private String extTableVersionId;
 
   public Game() {
 
@@ -51,6 +53,22 @@ public class Game {
 
   public Game(@NonNull SystemService systemService) {
     this.systemService = systemService;
+  }
+
+  public String getExtTableId() {
+    return extTableId;
+  }
+
+  public void setExtTableId(String extTableId) {
+    this.extTableId = extTableId;
+  }
+
+  public String getExtTableVersionId() {
+    return extTableVersionId;
+  }
+
+  public void setExtTableVersionId(String extTableVersionId) {
+    this.extTableVersionId = extTableVersionId;
   }
 
   @JsonIgnore
@@ -248,7 +266,7 @@ public class Game {
     return null;
   }
 
-  public boolean isPOV() {
+  public boolean isPovAvailable() {
     return this.getPOVFile().exists();
   }
 

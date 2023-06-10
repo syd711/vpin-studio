@@ -12,6 +12,9 @@
          <font>
             <Font name="System Bold" size="14.0" />
          </font>
+         <VBox.margin>
+            <Insets left="3.0" />
+         </VBox.margin>
       </Label>
       <HBox style="-fx-border-color: transparent transparent #C7C3C3 transparent;">
          <children>
@@ -31,7 +34,7 @@
                   <Insets bottom="6.0" />
                </padding>
             </Label>
-            <Label layoutX="56.0" layoutY="10.0" prefWidth="50.0" text="  URL" textFill="#b0abab">
+            <Label layoutX="56.0" layoutY="10.0" prefWidth="50.0" text="URL" textFill="#b0abab">
                <font>
                   <Font name="System Bold" size="14.0" />
                </font>
@@ -46,7 +49,7 @@
             </Label>
          </children>
          <VBox.margin>
-            <Insets bottom="6.0" right="20.0" top="12.0" />
+            <Insets bottom="4.0" right="20.0" />
          </VBox.margin>
       </HBox>
    </children>

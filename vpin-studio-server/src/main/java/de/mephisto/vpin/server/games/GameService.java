@@ -358,6 +358,8 @@ public class GameService {
     game.setOriginalRom(romService.getOriginalRom(game.getRom()));
     game.setHsFileName(gameDetails.getHsFileName());
     game.setTableName(gameDetails.getTableName());
+    game.setExtTableId(gameDetails.getExtTableId());
+    game.setExtTableVersionId(gameDetails.getExtTableVersionId());
     game.setPupPack(pupPackService.getPupPack(game));
     game.setIgnoredValidations(gameDetails.getIgnoredValidations());
     game.setAltSoundAvailable(altSoundService.isAltSoundAvailable(game));
@@ -378,6 +380,8 @@ public class GameService {
     gameDetails.setHsFileName(game.getHsFileName());
     gameDetails.setTableName(game.getTableName());
     gameDetails.setIgnoredValidations(game.getIgnoredValidations());
+    gameDetails.setExtTableId(game.getExtTableId());
+    gameDetails.setExtTableVersionId(game.getExtTableVersionId());
     gameDetailsRepository.saveAndFlush(gameDetails);
 
     Game original = getGame(game.getId());

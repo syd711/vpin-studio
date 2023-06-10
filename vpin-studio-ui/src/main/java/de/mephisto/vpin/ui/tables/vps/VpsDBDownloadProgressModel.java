@@ -1,0 +1,69 @@
+package de.mephisto.vpin.ui.tables.vps;
+
+import de.mephisto.vpin.commons.utils.WidgetFactory;
+import de.mephisto.vpin.connectors.vps.VPS;
+import de.mephisto.vpin.ui.Studio;
+import de.mephisto.vpin.ui.util.ProgressModel;
+import de.mephisto.vpin.ui.util.ProgressResultModel;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.io.BufferedInputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.util.Iterator;
+import java.util.List;
+
+public class VpsDBDownloadProgressModel extends ProgressModel<File> {
+  private final static Logger LOG = LoggerFactory.getLogger(VpsDBDownloadProgressModel.class);
+
+  private final Iterator<File> iterator;
+
+  public VpsDBDownloadProgressModel(String title, List<File> files) {
+    super(title);
+    this.iterator = files.iterator();
+  }
+
+  @Override
+  public boolean isShowSummary() {
+    return false;
+  }
+
+  @Override
+  public File getNext() {
+    return iterator.next();
+  }
+
+  @Override
+  public boolean isIndeterminate() {
+    return true;
+  }
+
+  @Override
+  public String nextToString(File file) {
+    return "Download VPS Database";
+  }
+
+  @Override
+  public int getMax() {
+    return 1;
+  }
+
+  @Override
+  public void processNext(ProgressResultModel progressResultModel, File next) {
+    try {
+      VPS.getInstance().download();
+      VPS.getInstance().reload();
+    } catch (Exception e) {
+      LOG.error("VPS database download failed: " + e.getMessage(), e);
+      WidgetFactory.showAlert(Studio.stage, "Download Failed", "VPS database download failed: " + e.getMessage());
+    }
+  }
+
+  @Override
+  public boolean hasNext() {
+    return iterator.hasNext();
+  }
+}

@@ -483,7 +483,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
 
     columnPOV.setCellValueFactory(cellData -> {
       GameRepresentation value = cellData.getValue();
-      if (value.isPov()) {
+      if (value.isPovAvailable()) {
         return new SimpleObjectProperty(WidgetFactory.createCheckboxIcon());
       }
       return new SimpleStringProperty("");
