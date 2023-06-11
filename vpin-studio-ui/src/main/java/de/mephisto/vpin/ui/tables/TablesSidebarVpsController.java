@@ -19,6 +19,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.control.*;
@@ -34,7 +35,6 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URL;
 import java.text.DateFormat;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -77,11 +77,27 @@ public class TablesSidebarVpsController implements Initializable, AutoCompleteTe
   private CheckBox filterCheckbox;
 
   @FXML
+  private Button openBtn;
+
+  @FXML
   private Hyperlink ipdbLink;
   private AutoCompleteTextField autoCompleteNameField;
 
   // Add a public no-args constructor
   public TablesSidebarVpsController() {
+  }
+
+  @FXML
+  private void onOpen() {
+    Desktop desktop = Desktop.isDesktopSupported() ? Desktop.getDesktop() : null;
+    if (desktop != null && desktop.isSupported(Desktop.Action.BROWSE)) {
+      try {
+        desktop.browse(new URI("https://virtual-pinball-spreadsheet.web.app/game/" + game.get().getExtTableId() + "/"));
+      } catch (Exception e) {
+        LOG.error("Failed to open link: " + e.getMessage());
+        ipdbLink.setDisable(true);
+      }
+    }
   }
 
   @FXML
@@ -164,9 +180,12 @@ public class TablesSidebarVpsController implements Initializable, AutoCompleteTe
     playersLabel.setText("-");
     updatedLabel.setText("-");
     ipdbLink.setText("");
+    openBtn.setDisable(true);
 
     if (g.isPresent()) {
       GameRepresentation game = g.get();
+
+      openBtn.setDisable(StringUtils.isEmpty(game.getExtTableId()));
 
       if (!StringUtils.isEmpty(game.getExtTableId())) {
         VpsTable tableById = VPS.getInstance().getTableById(game.getExtTableId());

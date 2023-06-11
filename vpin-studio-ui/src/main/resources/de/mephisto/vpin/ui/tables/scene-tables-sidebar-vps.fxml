@@ -33,8 +33,8 @@
                         <GridPane>
                           <columnConstraints>
                             <ColumnConstraints hgrow="SOMETIMES" maxWidth="282.199951171875" minWidth="10.0" prefWidth="128.5999755859375" />
-                              <ColumnConstraints hgrow="SOMETIMES" maxWidth="446.2000732421875" minWidth="10.0" prefWidth="420.0" />
-                              <ColumnConstraints hgrow="SOMETIMES" maxWidth="459.1999755859375" minWidth="10.0" prefWidth="20.0" />
+                              <ColumnConstraints hgrow="SOMETIMES" maxWidth="446.2000732421875" minWidth="10.0" prefWidth="433.5999267578125" />
+                              <ColumnConstraints hgrow="SOMETIMES" maxWidth="459.1999755859375" minWidth="1.6000488281249545" prefWidth="8.000073242187455" />
                           </columnConstraints>
                           <rowConstraints>
                             <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
@@ -101,11 +101,26 @@
                                  </font>
                               </Label>
                               <Hyperlink fx:id="ipdbLink" onAction="#onIpdbLink" text="-" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-                              <TextField fx:id="nameField" promptText="Enter Table Name..." GridPane.columnIndex="1">
-                                 <font>
-                                    <Font size="14.0" />
-                                 </font>
-                              </TextField>
+                              <HBox GridPane.columnIndex="1">
+                                 <children>
+                                    <TextField fx:id="nameField" alignment="BASELINE_LEFT" prefHeight="30.0" prefWidth="392.0" promptText="Enter Table Name...">
+                                       <font>
+                                          <Font size="14.0" />
+                                       </font>
+                                    </TextField>
+                                    <Button fx:id="openBtn" mnemonicParsing="false" onAction="#onOpen">
+                                       <graphic>
+                                          <FontIcon iconColor="WHITE" iconLiteral="mdi2o-open-in-new" iconSize="16" />
+                                       </graphic>
+                                       <font>
+                                          <Font size="14.0" />
+                                       </font>
+                                       <HBox.margin>
+                                          <Insets left="4.0" top="1.0" />
+                                       </HBox.margin>
+                                    </Button>
+                                 </children>
+                              </HBox>
                               <Label layoutX="10.0" layoutY="168.0" text="Your Table Version:" textFill="WHITE" GridPane.rowIndex="6">
                                  <font>
                                     <Font size="14.0" />
@@ -130,7 +145,7 @@
                                     <FontIcon iconLiteral="mdi2d-database-search-outline" iconSize="18" />
                                  </graphic>
                                  <GridPane.margin>
-                                    <Insets right="6.0" />
+                                    <Insets right="47.0" />
                                  </GridPane.margin>
                               </Label>
                            </children>

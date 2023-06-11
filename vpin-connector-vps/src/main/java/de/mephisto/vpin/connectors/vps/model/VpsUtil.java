@@ -27,7 +27,7 @@ public class VpsUtil {
   }
 
   public static String getFeatureColor(String abb) {
-    return "#3182ce";
+    return "#338033";
   }
 
   public static String getIconClass(String abb) {

@@ -9,6 +9,8 @@ import javafx.scene.control.ContextMenu;
 import javafx.scene.control.CustomMenuItem;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -25,6 +27,8 @@ public class AutoCompleteTextField {
   private final TextField textField;
 
   private boolean changedEnabled;
+
+  private String defaultValue;
 
   /**
    * Construct a new AutoCompleteTextField.
@@ -68,6 +72,24 @@ public class AutoCompleteTextField {
         entriesPopup.hide();
       }
     });
+
+    textField.setOnKeyPressed(new EventHandler<KeyEvent>() {
+      @Override
+      public void handle(KeyEvent event) {
+        if (event.getCode() == KeyCode.ESCAPE) {
+          setText(defaultValue);
+        }
+      }
+    });
+
+    textField.focusedProperty().addListener(new ChangeListener<Boolean>() {
+      @Override
+      public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+        if(!newValue) {
+          setText(defaultValue);
+        }
+      }
+    });
   }
 
   public void setChangeEnabled(boolean b) {
@@ -102,6 +124,7 @@ public class AutoCompleteTextField {
         public void handle(ActionEvent actionEvent) {
           textField.setText(result);
           entriesPopup.hide();
+          defaultValue = result;
           listener.onChange(result);
         }
       });
@@ -121,6 +144,7 @@ public class AutoCompleteTextField {
   public void setText(String name) {
     setChangeEnabled(false);
     textField.setText(name);
+    defaultValue = name;
     setChangeEnabled(true);
   }
 }

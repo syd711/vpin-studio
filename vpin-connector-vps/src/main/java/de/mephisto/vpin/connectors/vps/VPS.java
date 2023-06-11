@@ -131,6 +131,10 @@ public class VPS {
       }
       in.close();
       fileOutputStream.close();
+
+      if(getVpsDbFile().exists() && !getVpsDbFile().delete()) {
+        LOG.error("Failed to delete vpsdb.json");
+      }
       if (!tmp.renameTo(getVpsDbFile())) {
         LOG.error("Failed to rename vpsdb.json");
         return;
