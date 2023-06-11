@@ -193,7 +193,8 @@ public class TablesSidebarPUPPackController implements Initializable {
 
     if (g.isPresent()) {
       GameRepresentation game = g.get();
-      boolean pupPackAvailable = game.isPupPackAvailable();
+      PupPackRepresentation pupPack = Studio.client.getPupPackService().getPupPack(game.getId());
+      boolean pupPackAvailable = pupPack != null;
 
       reloadBtn.setDisable(!pupPackAvailable);
       dataBox.setVisible(pupPackAvailable);
@@ -203,7 +204,6 @@ public class TablesSidebarPUPPackController implements Initializable {
       enabledCheckbox.setSelected(false);
 
       if (pupPackAvailable) {
-        PupPackRepresentation pupPack = Studio.client.getPupPackService().getPupPack(game.getId());
         enabledCheckbox.setSelected(pupPack.isEnabled());
 
         List<String> options = pupPack.getOptions();

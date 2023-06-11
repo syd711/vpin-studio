@@ -1,7 +1,6 @@
 package de.mephisto.vpin.server.puppack;
 
 import de.mephisto.vpin.commons.OrbitalPins;
-import de.mephisto.vpin.commons.utils.SystemCommandExecutor;
 import de.mephisto.vpin.restclient.descriptors.JobDescriptor;
 import de.mephisto.vpin.restclient.jobs.JobExecutionResult;
 import de.mephisto.vpin.restclient.jobs.JobExecutionResultFactory;
@@ -13,7 +12,6 @@ import de.mephisto.vpin.server.system.SystemService;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,8 +20,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
-import java.nio.charset.Charset;
-import java.util.Arrays;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
@@ -76,53 +72,23 @@ public class PupPacksService implements InitializingBean {
     }
 
     PupPack pupPack = new PupPack(packFolder);
+    pupPack.load();
+
+    if (!pupPack.getScreensPup().exists() && !pupPack.getOptions().isEmpty()) {
+      LOG.info("No config files found for pup pack \"" + packFolder.getName() + "\", executing first option.");
+      String s = pupPack.getOptions().get(0);
+      pupPack.executeOption(s);
+    }
+
     if ((pupPack.getScreensPup().exists() && pupPack.getTriggersPup().exists()) ||
         (OrbitalPins.isOrbitalPin(packFolder.getName()) && !FileUtils.listFiles(packFolder, new String[]{"mp4"}, true).isEmpty())) {
-      pupPack.load();
       pupPackFolders.put(packFolder.getName(), pupPack);
     }
   }
 
   public JobExecutionResult option(Game game, String option) {
     PupPack pupPack = getPupPack(game);
-    File file = pupPack.getOptionFile(option);
-    if (file.exists()) {
-      try {
-        LOG.info("Executing PUP pack option \"" + option + "\"");
-
-        String batFile = FileUtils.readFileToString(file, Charset.defaultCharset());
-        boolean tmpCreated = false;
-        if (batFile.contains("@pause")) {
-          batFile = batFile.replaceAll("@pause", "");
-          file = File.createTempFile(FilenameUtils.getBaseName(file.getName()), ".bat", pupPack.getPupPackFolder());
-          file.deleteOnExit();
-          FileUtils.writeStringToFile(file, batFile, Charset.defaultCharset());
-          tmpCreated = true;
-        }
-
-        SystemCommandExecutor executor = new SystemCommandExecutor(Arrays.asList("\"" + file.getName() + "\""));
-        executor.setDir(pupPack.getPupPackFolder());
-        executor.executeCommand();
-
-        if (tmpCreated) {
-          file.delete();
-        }
-
-        loadPupPack(pupPack.getPupPackFolder());
-
-        String out = executor.getStandardOutputFromCommand().toString();
-        String err = executor.getStandardErrorFromCommand().toString();
-        if (!StringUtils.isEmpty(err)) {
-          LOG.error("Error executing PUP option " + file.getAbsolutePath() + ": " + err);
-          return JobExecutionResultFactory.error(err, out, game.getId());
-        }
-        return JobExecutionResultFactory.ok(out, game.getId());
-      } catch (Exception e) {
-        LOG.error("Error executing shutdown: " + e.getMessage(), e);
-        return JobExecutionResultFactory.error("Error executing shutdown: " + e.getMessage(), game.getId());
-      }
-    }
-    return JobExecutionResultFactory.error("Option command file " + file.getAbsolutePath() + " not found.");
+    return pupPack.executeOption(option);
   }
 
   public boolean setPupPackEnabled(Game game, boolean enable) {

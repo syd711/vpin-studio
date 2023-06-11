@@ -35,6 +35,14 @@ public class JobExecutionResultFactory {
     return result;
   }
 
+  public static JobExecutionResult error(String error, String ok) {
+    JobExecutionResult result = new JobExecutionResult();
+    result.setError(error);
+    result.setMessage(ok);
+    result.setGameId(-1);
+    return result;
+  }
+
   public static JobExecutionResult empty() {
     return new JobExecutionResult();
   }

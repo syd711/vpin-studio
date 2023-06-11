@@ -26,9 +26,9 @@ public class PupPackUtil {
       while (zipEntry != null) {
         String name = zipEntry.getName();
         File newFile = new File(destinationDir.getParentFile(), toTargetName(name, rom));
-        boolean isInPupPack = name.contains("/" + rom + "/");
+        boolean isInPupPack = name.contains(rom + "/");
         if (!isInPupPack) {
-          LOG.info("Skipping extraction of " + zipEntry.getName());
+          LOG.info("Skipping extraction of " + newFile.getAbsolutePath());
         }
         else if (zipEntry.isDirectory()) {
           if (!newFile.isDirectory() && !newFile.mkdirs()) {
