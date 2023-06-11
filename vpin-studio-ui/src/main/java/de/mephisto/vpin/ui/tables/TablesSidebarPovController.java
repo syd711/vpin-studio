@@ -12,7 +12,6 @@ import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
-import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,13 +26,22 @@ public class TablesSidebarPovController implements Initializable {
   private final static Logger LOG = LoggerFactory.getLogger(TablesSidebarPovController.class);
 
   @FXML
-  private Pane povSettingsPane;
+  private VBox emptyDataBox;
 
   @FXML
-  private VBox povCreatePane;
+  private VBox dataBox;
 
   @FXML
   private Button povExportBtn;
+
+  @FXML
+  private Button uploadBtn;
+
+  @FXML
+  private Button deleteBtn;
+
+  @FXML
+  private Button reloadBtn;
 
   @FXML
   private ComboBox<POVComboModel> povSSAACombo;
@@ -95,7 +103,8 @@ public class TablesSidebarPovController implements Initializable {
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
-    povCreatePane.managedProperty().bind(povCreatePane.visibleProperty());
+    emptyDataBox.managedProperty().bind(emptyDataBox.visibleProperty());
+    dataBox.managedProperty().bind(dataBox.visibleProperty());
 
     povSSAACombo.setItems(FXCollections.observableList(POVComboModel.MODELS));
     povSSAACombo.valueProperty().addListener((observable, oldValue, newValue) -> Studio.client.getVpxService().setPOVPreference(game.get().getId(), getPOV(), POV.SSAA, newValue.getValue()));
@@ -200,19 +209,15 @@ public class TablesSidebarPovController implements Initializable {
     });
   }
 
+  @FXML
+  private void onPOVUpload() {
+
+  }
+
 
   @FXML
   private void onPOVReload() {
     this.refreshView(this.game);
-  }
-
-  @FXML
-  private void onPOVReExport() {
-    Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Re-Export POV file for table '" + this.game.get().getGameDisplayName() + "'?", "This will overwrite the POV file with the table values.");
-    if (result.isPresent() && result.get().equals(ButtonType.OK)) {
-      Studio.client.getVpxService().deletePOV(this.game.get().getId());
-      this.onPOVExport();
-    }
   }
 
   @FXML
@@ -230,6 +235,13 @@ public class TablesSidebarPovController implements Initializable {
       GameRepresentation g = game.get();
       if (!g.isGameFileAvailable()) {
         return;
+      }
+
+      if (g.isPovAvailable()) {
+        Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Re-Export POV file for table '" + this.game.get().getGameDisplayName() + "'?", "This will overwrite the POV file with the table values.");
+        if (result.isPresent() && !result.get().equals(ButtonType.OK)) {
+          return;
+        }
       }
 
       ProgressResultModel resultModel = Dialogs.createProgressDialog(new POVExportProgressModel("Export POV Settings", g));
@@ -252,9 +264,11 @@ public class TablesSidebarPovController implements Initializable {
   }
 
   public void refreshView(Optional<GameRepresentation> g) {
-    povSettingsPane.setVisible(!g.isEmpty());
-    povCreatePane.setVisible(g.isEmpty());
+    dataBox.setVisible(false);
+    emptyDataBox.setVisible(true);
     povExportBtn.setDisable(true);
+    deleteBtn.setDisable(true);
+    reloadBtn.setDisable(true);
 
     povSoundVolumeSlider.setDisable(true);
     povMusicVolumeSlider.setDisable(true);
@@ -263,8 +277,9 @@ public class TablesSidebarPovController implements Initializable {
       GameRepresentation game = g.get();
       povExportBtn.setDisable(!game.isGameFileAvailable());
 
-      povSettingsPane.setVisible(game.isPovAvailable());
-      povCreatePane.setVisible(!game.isPovAvailable());
+      deleteBtn.setDisable(!game.isPovAvailable());
+      dataBox.setVisible(game.isPovAvailable());
+      emptyDataBox.setVisible(!game.isPovAvailable());
 
       if (game.isPovAvailable()) {
         pov = Studio.client.getVpxService().getPOV(game.getId());

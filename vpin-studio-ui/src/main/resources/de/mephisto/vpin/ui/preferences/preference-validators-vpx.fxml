@@ -33,6 +33,7 @@
                   <RowConstraints maxHeight="1.7976931348623157E308" minHeight="10.0" prefHeight="60.0" valignment="BASELINE" vgrow="SOMETIMES" />
                   <RowConstraints maxHeight="1.7976931348623157E308" minHeight="10.0" prefHeight="60.0" valignment="BASELINE" vgrow="SOMETIMES" />
                   <RowConstraints maxHeight="1.7976931348623157E308" minHeight="10.0" prefHeight="60.0" valignment="BASELINE" vgrow="SOMETIMES" />
+                  <RowConstraints maxHeight="1.7976931348623157E308" minHeight="10.0" prefHeight="60.0" valignment="BASELINE" vgrow="SOMETIMES" />
                </rowConstraints>
                <children>
                   <VBox GridPane.columnIndex="1">
@@ -104,6 +105,17 @@
                         <Label styleClass="preference-description" text="Checks if audio files for ALT Sound packages are missing." textFill="WHITE" />
                      </children>
                   </VBox>
+                  <VBox alignment="CENTER_LEFT" layoutX="40.0" layoutY="325.0" GridPane.columnIndex="1" GridPane.rowIndex="6">
+                     <children>
+                        <Label prefHeight="20.0" styleClass="preference-label" text="PUP Pack Files Missing" textFill="WHITE">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Label>
+                        <Label styleClass="preference-description" text="Checks if files for PUP packs are missing." textFill="WHITE" />
+                     </children>
+                  </VBox>
+                  <CheckBox fx:id="pref_60" layoutX="11.0" layoutY="336.0" mnemonicParsing="false" onAction="#onPreferenceChange" GridPane.rowIndex="6" />
                </children>
                <VBox.margin>
                   <Insets top="12.0" />

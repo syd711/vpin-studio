@@ -19,13 +19,74 @@
 <?import org.kordamp.ikonli.javafx.FontIcon?>
 
 <BorderPane fx:id="defaultBackgroundBorderPane" prefWidth="600.0" styleClass="accordion-container" stylesheets="@../stylesheet.css" BorderPane.alignment="CENTER" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.tables.TablesSidebarPovController">
-    <center>
-        <BorderPane fx:id="povSettingsPane" BorderPane.alignment="CENTER">
-            <BorderPane.margin>
-                <Insets />
-            </BorderPane.margin>
-            <center>
-                <VBox>
+    <padding>
+        <Insets left="1.0" right="1.0" />
+    </padding>
+   <top>
+          <ToolBar prefHeight="40.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+              <items>
+            <Button fx:id="uploadBtn" layoutX="10.0" layoutY="11.0" mnemonicParsing="false" onAction="#onPOVUpload" text="Upload">
+               <font>
+                  <Font size="14.0" />
+               </font>
+               <graphic>
+                  <FontIcon iconColor="WHITE" iconLiteral="mdi2u-upload" />
+               </graphic>
+            </Button>
+            <Separator layoutX="180.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
+                <Button fx:id="povExportBtn" mnemonicParsing="false" onAction="#onPOVExport" text="Export POV File">
+                    <font>
+                        <Font size="14.0" />
+                    </font>
+                    <graphic>
+                        <FontIcon iconColor="WHITE" iconLiteral="mdi2d-download" />
+                    </graphic>
+                </Button>
+                  <Button fx:id="reloadBtn" mnemonicParsing="false" onAction="#onPOVReload" text="Reload">
+                      <font>
+                          <Font size="14.0" />
+                      </font>
+                      <graphic>
+                          <FontIcon iconColor="WHITE" iconLiteral="sil-reload" />
+                      </graphic>
+                  </Button>
+                  <Separator orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
+                  <Button fx:id="deleteBtn" layoutX="212.0" layoutY="11.0" mnemonicParsing="false" onAction="#onPOVDelete" text="Delete" textFill="#ff3333">
+                      <font>
+                          <Font size="14.0" />
+                      </font>
+                      <graphic>
+                          <FontIcon iconColor="#ff3333" iconLiteral="mdi2d-delete-outline" />
+                      </graphic>
+                  </Button>
+              </items>
+              <BorderPane.margin>
+                  <Insets />
+              </BorderPane.margin>
+          </ToolBar>
+   </top>
+   <center>
+      <VBox BorderPane.alignment="CENTER">
+         <BorderPane.margin>
+            <Insets />
+         </BorderPane.margin>
+         <children>
+            <VBox fx:id="emptyDataBox">
+               <children>
+                  <Label text="No POV file found." textFill="WHITE">
+                     <font>
+                        <Font name="System Bold" size="14.0" />
+                     </font>
+                  </Label>
+                  <Label styleClass="preference-description" text="Open the &quot;Visual Pinball Spreadsheet&quot; section to find additional resources.">
+                     <VBox.margin>
+                        <Insets top="12.0" />
+                     </VBox.margin>
+                  </Label>
+                  <Label layoutX="10.0" layoutY="42.0" styleClass="preference-description" text="Upload downloaded resources here or export and edit a POV file." />
+               </children>
+            </VBox>
+                <VBox fx:id="dataBox">
                     <children>
                         <GridPane vgap="3.0">
                             <columnConstraints>
@@ -236,81 +297,11 @@
                             </VBox.margin>
                         </GridPane>
                     </children>
-                    <BorderPane.margin>
-                        <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
-                    </BorderPane.margin>
                 </VBox>
-            </center>
-            <top>
-                <ToolBar prefHeight="40.0" prefWidth="200.0" BorderPane.alignment="CENTER_LEFT">
-                    <items>
-                        <Button mnemonicParsing="false" onAction="#onPOVReload" text="Reload">
-                            <font>
-                                <Font size="14.0" />
-                            </font>
-                            <graphic>
-                                <FontIcon iconColor="WHITE" iconLiteral="sil-reload" />
-                            </graphic>
-                        </Button>
-                        <Separator orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
-                        <Button layoutX="10.0" layoutY="11.0" mnemonicParsing="false" onAction="#onPOVReExport" text="Re-Export">
-                            <font>
-                                <Font size="14.0" />
-                            </font>
-                            <graphic>
-                                <FontIcon iconColor="WHITE" iconLiteral="mdi2d-download" />
-                            </graphic>
-                        </Button>
-                        <Button layoutX="212.0" layoutY="11.0" mnemonicParsing="false" onAction="#onPOVDelete" text="Delete" textFill="#ff3333">
-                            <font>
-                                <Font size="14.0" />
-                            </font>
-                            <graphic>
-                                <FontIcon iconColor="#ff3333" iconLiteral="mdi2d-delete-outline" />
-                            </graphic>
-                        </Button>
-                    </items>
-                    <BorderPane.margin>
-                        <Insets />
-                    </BorderPane.margin>
-                </ToolBar>
-            </top>
-        </BorderPane>
-    </center>
-    <top>
-        <VBox fx:id="povCreatePane" BorderPane.alignment="TOP_LEFT">
-            <children>
-                <Label layoutX="22.0" layoutY="22.0" text="This table does not have a POV file.">
-                    <font>
-                        <Font size="14.0" />
-                    </font>
-                </Label>
-                <Label text="You can export a POV file to customize settings of the table without modifying the VPX file.">
-                    <font>
-                        <Font size="14.0" />
-                    </font>
-                </Label>
-                <Button fx:id="povExportBtn" mnemonicParsing="false" onAction="#onPOVExport" text="Export POV File">
-                    <font>
-                        <Font size="14.0" />
-                    </font>
-                    <VBox.margin>
-                        <Insets top="12.0" />
-                    </VBox.margin>
-                    <graphic>
-                        <FontIcon iconColor="WHITE" iconLiteral="mdi2d-download" />
-                    </graphic>
-                </Button>
-            </children>
-            <BorderPane.margin>
-                <Insets />
-            </BorderPane.margin>
-            <padding>
-                <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
-            </padding>
-        </VBox>
-    </top>
-    <padding>
-        <Insets left="1.0" right="1.0" />
-    </padding>
+         </children>
+         <padding>
+            <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
+         </padding>
+      </VBox>
+   </center>
 </BorderPane>

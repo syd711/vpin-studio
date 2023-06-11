@@ -275,17 +275,19 @@ public class TablesSidebarVpsController implements Initializable, AutoCompleteTe
 
     List<Node> entries = new ArrayList<>();
     for (VpsAuthoredUrls authoredUrl : urls) {
-      List<VpsUrl> urls1 = authoredUrl.getUrls();
-      String version = authoredUrl.getVersion();
-      long updatedAt = authoredUrl.getUpdatedAt();
-      List<String> authors = authoredUrl.getAuthors();
+      List<VpsUrl> authoredUrlUrls = authoredUrl.getUrls();
+      if (authoredUrlUrls != null && !authoredUrlUrls.isEmpty()) {
+        String version = authoredUrl.getVersion();
+        long updatedAt = authoredUrl.getUpdatedAt();
+        List<String> authors = authoredUrl.getAuthors();
 
-      for (VpsUrl vpsUrl : urls1) {
-        String url = vpsUrl.getUrl();
-        if (vpsUrl.isBroken()) {
-          url = "";
+        for (VpsUrl vpsUrl : authoredUrlUrls) {
+          String url = vpsUrl.getUrl();
+          if (vpsUrl.isBroken()) {
+            url = "";
+          }
+          entries.add(new VpsEntry(version, authors, url, updatedAt));
         }
-        entries.add(new VpsEntry(version, authors, url, updatedAt));
 
         if (authoredUrl instanceof VpsBackglassFile) {
           VpsBackglassFile backglassFile = (VpsBackglassFile) authoredUrl;
