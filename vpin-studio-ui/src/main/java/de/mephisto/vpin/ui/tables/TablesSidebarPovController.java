@@ -211,7 +211,9 @@ public class TablesSidebarPovController implements Initializable {
 
   @FXML
   private void onPOVUpload() {
-
+    if (game.isPresent()) {
+      Dialogs.openPovUploadDialog(tablesSidebarController, game.get());
+    }
   }
 
 

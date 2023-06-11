@@ -1,10 +1,15 @@
 package de.mephisto.vpin.restclient.client;
 
+import de.mephisto.vpin.restclient.AssetType;
+import de.mephisto.vpin.restclient.FileUploadProgressListener;
+import de.mephisto.vpin.restclient.jobs.JobExecutionResult;
 import de.mephisto.vpin.restclient.representations.GameRepresentation;
 import de.mephisto.vpin.restclient.representations.POVRepresentation;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 
 import java.io.File;
@@ -92,5 +97,16 @@ public class VpxServiceClient extends VPinStudioClientService {
       }
     }
     return null;
+  }
+
+  public JobExecutionResult uploadPov(File file, String uploadType, int gameId, FileUploadProgressListener listener) throws Exception {
+    try {
+      String url = getRestClient().getBaseUrl() + API + "vpx/pov/upload";
+      ResponseEntity<JobExecutionResult> exchange = new RestTemplate().exchange(url, HttpMethod.POST, createUpload(file, gameId, uploadType, AssetType.POV, listener), JobExecutionResult.class);
+      return exchange.getBody();
+    } catch (Exception e) {
+      LOG.error("POV upload failed: " + e.getMessage(), e);
+      throw e;
+    }
   }
 }

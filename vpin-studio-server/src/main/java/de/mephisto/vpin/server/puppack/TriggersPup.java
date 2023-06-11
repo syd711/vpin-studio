@@ -49,6 +49,10 @@ public class TriggersPup {
     }
   }
 
+  public long length() {
+    return triggersPupFile.length();
+  }
+
   public boolean exists() {
     return triggersPupFile.exists();
   }

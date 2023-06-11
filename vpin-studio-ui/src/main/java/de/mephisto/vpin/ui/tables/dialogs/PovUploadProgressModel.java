@@ -17,9 +17,10 @@ import java.util.Collections;
 import java.util.Iterator;
 
 import static de.mephisto.vpin.restclient.jobs.JobType.ALTSOUND_INSTALL;
+import static de.mephisto.vpin.restclient.jobs.JobType.POV_INSTALL;
 
-public class AltSoundUploadProgressModel extends ProgressModel<File> {
-  private final static Logger LOG = LoggerFactory.getLogger(AltSoundUploadProgressModel.class);
+public class PovUploadProgressModel extends ProgressModel<File> {
+  private final static Logger LOG = LoggerFactory.getLogger(PovUploadProgressModel.class);
 
   private final Iterator<File> iterator;
   private final TablesSidebarController tablesSidebarController;
@@ -27,12 +28,12 @@ public class AltSoundUploadProgressModel extends ProgressModel<File> {
   private final File file;
   private final String altSoundType;
 
-  public AltSoundUploadProgressModel(TablesSidebarController tablesSidebarController, int gameId, String title, File file, String altSoundType) {
+  public PovUploadProgressModel(TablesSidebarController tablesSidebarController, int gameId, String title, File file, String fileType) {
     super(title);
     this.tablesSidebarController = tablesSidebarController;
     this.gameId = gameId;
     this.file = file;
-    this.altSoundType = altSoundType;
+    this.altSoundType = fileType;
     this.iterator = Collections.singletonList(this.file).iterator();
   }
 
@@ -59,7 +60,7 @@ public class AltSoundUploadProgressModel extends ProgressModel<File> {
   @Override
   public void processNext(ProgressResultModel progressResultModel, File next) {
     try {
-      JobExecutionResult result = Studio.client.getAltSoundService().uploadAltSound(next, altSoundType, gameId, percent -> progressResultModel.setProgress(percent));
+      JobExecutionResult result = Studio.client.getVpxService().uploadPov(next, altSoundType, gameId, percent -> progressResultModel.setProgress(percent));
       if (!StringUtils.isEmpty(result.getError())) {
         Platform.runLater(() -> {
           WidgetFactory.showAlert(Studio.stage, "Error", result.getError());
@@ -67,12 +68,12 @@ public class AltSoundUploadProgressModel extends ProgressModel<File> {
       }
       else {
         Platform.runLater(() -> {
-          EventManager.getInstance().notifyJobFinished(ALTSOUND_INSTALL);
+          EventManager.getInstance().notifyJobFinished(POV_INSTALL);
         });
       }
       progressResultModel.addProcessed();
     } catch (Exception e) {
-      LOG.error("Alt sound upload failed: " + e.getMessage(), e);
+      LOG.error("POV upload failed: " + e.getMessage(), e);
     }
   }
 

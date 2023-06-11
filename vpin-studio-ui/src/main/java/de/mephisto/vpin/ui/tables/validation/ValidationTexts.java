@@ -119,10 +119,10 @@ public class ValidationTexts {
         }
         if(state.getOptions().size() > 2) {
           List<String> entries = state.getOptions().subList(0, 2);
-          text = "The trigger.pup file references invalid files: \"" + String.join("\", \"", entries) + "\" (+" + (state.getOptions().size() - 2) + " more entries)";
+          text = "The trigger.pup file references invalid file(s): \"" + String.join("\", \"", entries) + "\" (+" + (state.getOptions().size() - 2) + " more entries)";
         }
         else {
-          text = "The trigger.pup file references invalid files: \"" + String.join("\", \"", state.getOptions()) + "\"";
+          text = "The trigger.pup file references invalid file(s): \"" + String.join("\", \"", state.getOptions()) + "\"";
         }
         break;
       }

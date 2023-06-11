@@ -72,10 +72,7 @@ public class TablesSidebarAltSoundController implements Initializable {
   @FXML
   private void onUpload() {
     if (game.isPresent()) {
-      boolean uploaded = Dialogs.openAltSoundUploadDialog(tablesSidebarController, game.get());
-      if (uploaded) {
-        this.tablesSidebarController.getTablesController().onReload();
-      }
+      Dialogs.openAltSoundUploadDialog(tablesSidebarController, game.get());
     }
   }
 

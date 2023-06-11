@@ -22,6 +22,11 @@ public class TriggerEntry {
     return Integer.parseInt(num);
   }
 
+  public boolean isActive() {
+    String s = record.get(1);
+    return !StringUtils.isEmpty(s) && s.equals("1");
+  }
+
   public String getPlayList() {
     return record.get(5);
   }

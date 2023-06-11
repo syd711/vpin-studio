@@ -8,6 +8,7 @@ import de.mephisto.vpin.restclient.representations.GameRepresentation;
 import de.mephisto.vpin.restclient.representations.PupPackRepresentation;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.util.Dialogs;
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -31,6 +32,9 @@ public class TablesSidebarPUPPackController implements Initializable {
 
   @FXML
   private Button uploadBtn;
+
+  @FXML
+  private Button reloadBtn;
 
   @FXML
   private Label lastModifiedLabel;
@@ -117,6 +121,21 @@ public class TablesSidebarPUPPackController implements Initializable {
     }
   }
 
+  @FXML
+  private void onReload() {
+    this.reloadBtn.setDisable(true);
+
+    Platform.runLater(() -> {
+      new Thread(() -> {
+        Studio.client.getPupPackService().clearCache();
+
+        Platform.runLater(() -> {
+          this.reloadBtn.setDisable(false);
+          this.refreshView(this.game);
+        });
+      }).start();
+    });
+  }
 
   @FXML
   private void onUpload() {
@@ -127,10 +146,7 @@ public class TablesSidebarPUPPackController implements Initializable {
         return;
       }
 
-      boolean uploaded = Dialogs.openPupPackUploadDialog(tablesSidebarController, game.get());
-      if (uploaded) {
-        this.tablesSidebarController.getTablesController().onReload();
-      }
+      Dialogs.openPupPackUploadDialog(tablesSidebarController, game.get());
     }
   }
 
@@ -150,6 +166,8 @@ public class TablesSidebarPUPPackController implements Initializable {
   }
 
   public void refreshView(Optional<GameRepresentation> g) {
+    reloadBtn.setDisable(g.isEmpty());
+
     enabledCheckbox.setVisible(false);
     dataBox.setVisible(false);
     emptyDataBox.setVisible(true);
@@ -177,7 +195,7 @@ public class TablesSidebarPUPPackController implements Initializable {
       GameRepresentation game = g.get();
       boolean pupPackAvailable = game.isPupPackAvailable();
 
-
+      reloadBtn.setDisable(!pupPackAvailable);
       dataBox.setVisible(pupPackAvailable);
       emptyDataBox.setVisible(!pupPackAvailable);
 
@@ -191,7 +209,12 @@ public class TablesSidebarPUPPackController implements Initializable {
         List<String> options = pupPack.getOptions();
         optionsCombo.setItems(FXCollections.observableList(options));
         optionsCombo.setDisable(options.isEmpty());
+
         applyBtn.setDisable(true);
+        if (!StringUtils.isEmpty(pupPack.getSelectedOption())) {
+          optionsCombo.setValue(pupPack.getSelectedOption());
+          applyBtn.setDisable(true);
+        }
 
         if (!pupPack.getScreenBackglassMode().equals(ScreenMode.off)) {
           screenBackglassTooltip.setText(pupPack.getScreenBackglassMode().name());

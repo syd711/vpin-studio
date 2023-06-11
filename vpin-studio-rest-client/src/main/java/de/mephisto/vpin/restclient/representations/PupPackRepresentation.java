@@ -17,6 +17,16 @@ public class PupPackRepresentation {
   private ScreenMode screenFullDMDMode;
   private ScreenMode screenTopperMode;
 
+  private String selectedOption;
+
+  public String getSelectedOption() {
+    return selectedOption;
+  }
+
+  public void setSelectedOption(String selectedOption) {
+    this.selectedOption = selectedOption;
+  }
+
   private List<String> missingResources = new ArrayList<>();
 
   public List<String> getMissingResources() {

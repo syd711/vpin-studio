@@ -1,6 +1,8 @@
 package de.mephisto.vpin.server.directb2s;
 
 import de.mephisto.vpin.restclient.DirectB2SData;
+import de.mephisto.vpin.restclient.jobs.JobExecutionResult;
+import de.mephisto.vpin.restclient.jobs.JobExecutionResultFactory;
 import de.mephisto.vpin.server.VPinStudioServer;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameService;
@@ -38,25 +40,33 @@ public class DirectB2SResource {
   }
 
   @PostMapping("/upload")
-  public Boolean directb2supload(@RequestParam(value = "file", required = false) MultipartFile file,
-                                 @RequestParam(value = "uploadType", required = false) String uploadType,
-                                 @RequestParam("objectId") Integer gameId) {
+  public JobExecutionResult directb2supload(@RequestParam(value = "file", required = false) MultipartFile file,
+                                            @RequestParam(value = "uploadType", required = false) String uploadType,
+                                            @RequestParam("objectId") Integer gameId) {
     try {
       if (file == null) {
         LOG.error("Upload request did not contain a file object.");
-        return false;
+        return JobExecutionResultFactory.error("Upload request did not contain a file object.");
       }
 
       Game game = gameService.getGame(gameId);
       if (game == null) {
         LOG.error("No game found for upload.");
-        return false;
+        return JobExecutionResultFactory.error("No game found for upload.");
       }
       File out = game.getDirectB2SFile();
+      if(out.exists() && !out.delete()) {
+        return JobExecutionResultFactory.error("Failed to delete " + out.getAbsolutePath());
+      }
+
       LOG.info("Uploading " + out.getAbsolutePath());
-      return UploadUtil.upload(file, out);
+      boolean upload = UploadUtil.upload(file, out);
+      if(!upload) {
+        return JobExecutionResultFactory.error("Upload failed, check logs for details.");
+      }
     } catch (Exception e) {
       throw new ResponseStatusException(INTERNAL_SERVER_ERROR, "DirectB2S upload failed: " + e.getMessage());
     }
+    return JobExecutionResultFactory.empty();
   }
 }

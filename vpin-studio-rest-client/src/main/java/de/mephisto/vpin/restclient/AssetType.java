@@ -9,6 +9,7 @@ public enum AssetType {
   ALT_SOUND,
   PUP_PACK,
   ROM,
+  POV,
   ARCHIVE,
   DEFAULT_BACKGROUND,
   CARD_BACKGROUND,

@@ -78,6 +78,20 @@
                                     <Font size="14.0" />
                                  </font>
                               </Button>
+                              <Label textFill="WHITE">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                                 <graphic>
+                                    <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="16" />
+                                 </graphic>
+                                 <tooltip>
+                                    <Tooltip prefWidth="300.0" text="The selected option is only shown if the options are located in the &quot;PuP-Pack_Options&quot; folder." wrapText="true" />
+                                 </tooltip>
+                                 <HBox.margin>
+                                    <Insets left="6.0" top="5.0" />
+                                 </HBox.margin>
+                              </Label>
                            </children>
                         </HBox>
                      </children>
@@ -247,6 +261,15 @@
                </graphic>
             </Button>
             <Separator layoutX="233.0" layoutY="10.0" orientation="VERTICAL" prefWidth="12.0" />
+            <Button fx:id="reloadBtn" mnemonicParsing="false" onAction="#onReload" text="Reload">
+               <font>
+                  <Font size="14.0" />
+               </font>
+               <graphic>
+                  <FontIcon iconColor="WHITE" iconLiteral="sil-reload" />
+               </graphic>
+            </Button>
+            <Separator layoutX="96.0" layoutY="10.0" orientation="VERTICAL" prefWidth="12.0" />
             <CheckBox fx:id="enabledCheckbox" mnemonicParsing="false" onAction="#onPupPackEnable" text="PUP Pack Enabled" textFill="WHITE">
                <font>
                   <Font size="14.0" />

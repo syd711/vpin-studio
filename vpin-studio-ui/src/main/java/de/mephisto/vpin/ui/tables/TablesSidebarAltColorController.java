@@ -7,7 +7,6 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.VBox;
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -41,10 +40,7 @@ public class TablesSidebarAltColorController implements Initializable {
   @FXML
   private void onUpload() {
     if (game.isPresent()) {
-      boolean uploaded = Dialogs.openAltSoundUploadDialog(tablesSidebarController, game.get());
-      if (uploaded) {
-        this.tablesSidebarController.getTablesController().onReload();
-      }
+      Dialogs.openAltSoundUploadDialog(tablesSidebarController, game.get());
     }
   }
 

@@ -52,6 +52,10 @@ public class ScreensPub {
     }
   }
 
+  public long length() {
+    return screensPupFile.length();
+  }
+
   public boolean exists() {
     return screensPupFile.exists();
   }

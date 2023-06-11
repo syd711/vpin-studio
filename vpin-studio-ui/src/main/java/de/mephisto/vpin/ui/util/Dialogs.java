@@ -109,6 +109,16 @@ public class Dialogs {
     return controller.uploadFinished();
   }
 
+  public static boolean openPovUploadDialog(TablesSidebarController tablesSidebarController, GameRepresentation game) {
+    Stage stage = createStudioDialogStage(PovUploadController.class, "dialog-pov-upload.fxml", "POV File Upload");
+    PovUploadController controller = (PovUploadController) stage.getUserData();
+    controller.setGame(game);
+    controller.setTableSidebarController(tablesSidebarController);
+    stage.showAndWait();
+
+    return controller.uploadFinished();
+  }
+
   public static boolean openPupPackUploadDialog(TablesSidebarController tablesSidebarController, GameRepresentation game) {
     Stage stage = createStudioDialogStage(PupPackUploadController.class, "dialog-puppack-upload.fxml", "PUP Pack Upload");
     PupPackUploadController controller = (PupPackUploadController) stage.getUserData();

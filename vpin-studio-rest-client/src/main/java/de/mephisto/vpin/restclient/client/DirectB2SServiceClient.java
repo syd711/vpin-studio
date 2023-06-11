@@ -3,10 +3,12 @@ package de.mephisto.vpin.restclient.client;
 import de.mephisto.vpin.restclient.AssetType;
 import de.mephisto.vpin.restclient.DirectB2SData;
 import de.mephisto.vpin.restclient.FileUploadProgressListener;
+import de.mephisto.vpin.restclient.jobs.JobExecutionResult;
 import de.mephisto.vpin.restclient.representations.GameRepresentation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 
 import java.io.ByteArrayInputStream;
@@ -35,11 +37,11 @@ public class DirectB2SServiceClient extends VPinStudioClientService {
     return getRestClient().get(API + "directb2s/" + gameId, DirectB2SData.class);
   }
 
-  public boolean uploadDirectB2SFile(File file, String uploadType, int gameId, FileUploadProgressListener listener) throws Exception {
+  public JobExecutionResult uploadDirectB2SFile(File file, String uploadType, int gameId, FileUploadProgressListener listener) throws Exception {
     try {
       String url = getRestClient().getBaseUrl() + API + "directb2s/upload";
-      new RestTemplate().exchange(url, HttpMethod.POST, createUpload(file, gameId, uploadType, AssetType.DIRECT_B2S, listener), Boolean.class);
-      return true;
+      ResponseEntity<JobExecutionResult> exchange = new RestTemplate().exchange(url, HttpMethod.POST, createUpload(file, gameId, uploadType, AssetType.DIRECT_B2S, listener), JobExecutionResult.class);
+      return exchange.getBody();
     } catch (Exception e) {
       LOG.error("Directb2s upload failed: " + e.getMessage(), e);
       throw e;

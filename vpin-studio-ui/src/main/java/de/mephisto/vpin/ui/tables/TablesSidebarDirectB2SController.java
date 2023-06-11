@@ -84,10 +84,7 @@ public class TablesSidebarDirectB2SController implements Initializable {
   @FXML
   private void onUpload() {
     if (game.isPresent()) {
-      boolean uploaded = Dialogs.openDirectB2SUploadDialog(game.get());
-      if (uploaded) {
-        this.tablesSidebarController.getTablesController().onReload();
-      }
+      Dialogs.openDirectB2SUploadDialog(game.get());
     }
   }
 

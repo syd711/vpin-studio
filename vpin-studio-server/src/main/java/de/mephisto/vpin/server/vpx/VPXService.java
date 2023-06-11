@@ -145,7 +145,8 @@ public class VPXService {
       if (povFile.exists()) {
         LOG.info("Deleting " + povFile.getAbsolutePath());
         return povFile.delete();
-      } else {
+      }
+      else {
         LOG.info("POV file " + povFile.getAbsolutePath() + " does not exist for deletion");
       }
     }

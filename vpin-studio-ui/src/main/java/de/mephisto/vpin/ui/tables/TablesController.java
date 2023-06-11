@@ -118,7 +118,8 @@ public class TablesController implements Initializable, StudioFXController, Stud
         repositoryController.doReload();
       });
     }
-    else if (jobType.equals(JobType.PUP_INSTALL)) {
+    else if (jobType.equals(JobType.PUP_INSTALL) || jobType.equals(JobType.POV_INSTALL)
+        || jobType.equals(JobType.ALTSOUND_INSTALL) || jobType.equals(JobType.DIRECTB2S_INSTALL)) {
       Platform.runLater(() -> {
         this.tableOverviewController.onReload();
       });
