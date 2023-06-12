@@ -2,6 +2,8 @@ package de.mephisto.vpin.commons.fx.widgets;
 
 import de.mephisto.vpin.commons.fx.OverlayWindowFX;
 import de.mephisto.vpin.restclient.popper.PopperScreen;
+import de.mephisto.vpin.restclient.representations.GameMediaItemRepresentation;
+import de.mephisto.vpin.restclient.representations.GameMediaRepresentation;
 import de.mephisto.vpin.restclient.representations.GameRepresentation;
 import de.mephisto.vpin.restclient.representations.ScoreRepresentation;
 import javafx.fxml.FXML;
@@ -55,6 +57,12 @@ public class WidgetLatestScoreItemController extends WidgetController implements
   public void setData(GameRepresentation game, ScoreRepresentation score) {
     ByteArrayInputStream gameMediaItem = OverlayWindowFX.client.getGameMediaItem(game.getId(), PopperScreen.Wheel);
     Image image = new Image(gameMediaItem);
+
+    GameMediaRepresentation gameMedia = game.getGameMedia();
+    GameMediaItemRepresentation wheelMedia = gameMedia.getMedia().get(PopperScreen.Wheel.name());
+    if (wheelMedia == null) {
+      image = new Image(OverlayWindowFX.class.getResourceAsStream("avatar-blank.png"));
+    }
 
     wheelImageView.setImage(image);
 

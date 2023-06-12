@@ -87,12 +87,6 @@ public class WidgetLatestScoresController extends WidgetController implements In
                 continue;
               }
 
-              GameMediaRepresentation gameMedia = game.getGameMedia();
-              GameMediaItemRepresentation wheelMedia = gameMedia.getMedia().get(PopperScreen.Wheel.name());
-              if (wheelMedia == null) {
-                continue;
-              }
-
               FXMLLoader loader = new FXMLLoader(WidgetLatestScoreItemController.class.getResource("widget-latest-score-item.fxml"));
               Pane row = loader.load();
               row.setPrefWidth(root.getPrefWidth() - 24);
