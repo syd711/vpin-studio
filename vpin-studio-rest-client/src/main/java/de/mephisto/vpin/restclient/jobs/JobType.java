@@ -2,6 +2,7 @@ package de.mephisto.vpin.restclient.jobs;
 
 public enum JobType {
   TABLE_BACKUP,
+  TABLE_IMPORT,
   PUP_INSTALL,
   POV_INSTALL,
   DIRECTB2S_INSTALL,

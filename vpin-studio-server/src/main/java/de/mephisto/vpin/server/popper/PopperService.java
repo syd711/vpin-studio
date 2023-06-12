@@ -2,7 +2,10 @@ package de.mephisto.vpin.server.popper;
 
 import de.mephisto.vpin.commons.EmulatorType;
 import de.mephisto.vpin.commons.fx.UIDefaults;
-import de.mephisto.vpin.restclient.*;
+import de.mephisto.vpin.restclient.ResourceList;
+import de.mephisto.vpin.restclient.TableManagerSettings;
+import de.mephisto.vpin.restclient.jobs.JobExecutionResult;
+import de.mephisto.vpin.restclient.jobs.JobExecutionResultFactory;
 import de.mephisto.vpin.restclient.popper.PinUPControl;
 import de.mephisto.vpin.restclient.popper.PinUPControls;
 import de.mephisto.vpin.restclient.popper.PopperScreen;
@@ -23,6 +26,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class PopperService implements InitializingBean {
@@ -51,6 +55,38 @@ public class PopperService implements InitializingBean {
   @SuppressWarnings("unused")
   public void addPopperStatusChangeListener(PopperStatusChangeListener listener) {
     this.listeners.add(listener);
+  }
+
+  public ResourceList getImportTables() {
+    ResourceList list = new ResourceList();
+    File vpxTablesFolder = systemService.getVPXTablesFolder();
+    File[] files = vpxTablesFolder.listFiles((dir, name) -> name.endsWith(".vpx"));
+    if (files != null) {
+      List<Game> games = pinUPConnector.getGames();
+      List<String> filesNames = games.stream().map(Game::getGameFileName).collect(Collectors.toList());
+      for (File file : files) {
+        if (!filesNames.contains(file.getName())) {
+          list.getItems().add(file.getName());
+        }
+      }
+    }
+    return list;
+  }
+
+  public JobExecutionResult importTables(ResourceList resourceList) {
+    List<String> items = resourceList.getItems();
+    int count = 0;
+    for (String item : items) {
+      File tableFile = new File(systemService.getVPXTablesFolder(), item);
+      if (tableFile.exists()) {
+        int result = importVPXGame(tableFile, true, -1);
+        if (result > 0) {
+          count++;
+        }
+      }
+    }
+
+    return JobExecutionResultFactory.ok("Imported " + count + " tables", -1);
   }
 
   public int importVPXGame(File file, boolean importToPopper, int playListId) {

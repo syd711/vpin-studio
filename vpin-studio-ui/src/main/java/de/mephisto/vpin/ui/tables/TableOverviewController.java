@@ -105,8 +105,8 @@ public class TableOverviewController implements Initializable, StudioFXControlle
   @FXML
   private Button stopBtn;
 
-//  @FXML
-//  private Button importBtn;
+  @FXML
+  private Button importBtn;
 
   @FXML
   private Button backupBtn;
@@ -299,6 +299,11 @@ public class TableOverviewController implements Initializable, StudioFXControlle
   }
 
   @FXML
+  private void onImport() {
+    Dialogs.openTableImportDialog();
+  }
+
+  @FXML
   private void onValidate() {
     GameRepresentation game = tableView.getSelectionModel().getSelectedItem();
     Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Re-validate table \"" + game.getGameDisplayName() + "\"?",
@@ -356,6 +361,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
     this.uploadRomItem.setDisable(true);
     this.backupBtn.setDisable(true);
     this.uploadMenuBtn.setDisable(true);
+    this.importBtn.setDisable(true);
 
     tableView.setVisible(false);
     tableStack.getChildren().add(tablesLoadingOverlay);
@@ -389,6 +395,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
           this.uploadRomItem.setDisable(false);
         }
 
+        this.importBtn.setDisable(false);
         this.textfieldSearch.setDisable(false);
         this.reloadBtn.setDisable(false);
         this.scanBtn.setDisable(false);

@@ -186,6 +186,12 @@ public class Dialogs {
     stage.showAndWait();
   }
 
+  public static void openTableImportDialog() {
+    Stage stage = createStudioDialogStage(TableImportController.class, "dialog-table-import.fxml", "Table Import");
+    TableImportController controller = (TableImportController) stage.getUserData();
+    stage.showAndWait();
+  }
+
   public static void openTableInstallationDialog(TablesController tablesController, List<ArchiveDescriptorRepresentation> descriptorRepresentations) {
     Stage stage = createStudioDialogStage(TableRestoreController.class, "dialog-table-restore.fxml", "Restore Tables");
     TableRestoreController controller = (TableRestoreController) stage.getUserData();

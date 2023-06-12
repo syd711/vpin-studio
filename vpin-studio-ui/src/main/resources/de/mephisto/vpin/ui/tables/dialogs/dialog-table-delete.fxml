@@ -55,9 +55,9 @@
                           <rowConstraints>
                               <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                               <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                              <RowConstraints minHeight="10.0" prefHeight="40.0" valignment="TOP" vgrow="SOMETIMES" />
                             <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                             <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                               <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                               <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                               <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
@@ -67,16 +67,19 @@
                               <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                           </rowConstraints>
                            <children>
-                              <HBox alignment="CENTER_LEFT" GridPane.columnIndex="1" GridPane.rowIndex="4">
+                              <HBox alignment="CENTER_LEFT" GridPane.columnIndex="1" GridPane.rowIndex="2" GridPane.valignment="TOP">
                                  <children>
                                     <CheckBox fx:id="popperCheckbox" mnemonicParsing="false" selected="true">
                                        <font>
                                           <Font size="14.0" />
                                        </font>
+                                       <padding>
+                                          <Insets bottom="20.0" />
+                                       </padding>
                                     </CheckBox>
                                  </children>
                               </HBox>
-                              <Label layoutX="253.0" layoutY="16.0" textFill="WHITE" GridPane.rowIndex="2">
+                              <Label layoutX="253.0" layoutY="16.0" textFill="WHITE" GridPane.rowIndex="3">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
@@ -84,27 +87,27 @@
                                     <Tooltip text="Every table will be added to the first playlist that is found." />
                                  </tooltip>
                               </Label>
-                              <Label text="Delete directb2s File:" GridPane.rowIndex="3">
+                              <Label text="Delete directb2s File:" GridPane.rowIndex="4">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
                               </Label>
-                              <Label layoutX="10.0" layoutY="15.0" text="Delete from PinUP Popper:" GridPane.rowIndex="4">
+                              <Label layoutX="10.0" layoutY="15.0" text="Remove from PinUP Popper:" GridPane.rowIndex="2">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
                               </Label>
-                              <CheckBox fx:id="vpxFileCheckbox" mnemonicParsing="false" selected="true" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                              <CheckBox fx:id="vpxFileCheckbox" mnemonicParsing="false" GridPane.columnIndex="1" GridPane.rowIndex="3">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
                               </CheckBox>
-                              <Label layoutX="10.0" layoutY="15.0" text="Delete Game Files (.vpx, .pov, .res): " GridPane.rowIndex="2">
+                              <Label layoutX="10.0" layoutY="15.0" text="Delete Game Files (.vpx, .pov, .res): " GridPane.rowIndex="3">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
                               </Label>
-                              <CheckBox fx:id="directb2sCheckbox" mnemonicParsing="false" selected="true" GridPane.columnIndex="1" GridPane.rowIndex="3">
+                              <CheckBox fx:id="directb2sCheckbox" mnemonicParsing="false" GridPane.columnIndex="1" GridPane.rowIndex="4">
                                  <font>
                                     <Font size="14.0" />
                                  </font>

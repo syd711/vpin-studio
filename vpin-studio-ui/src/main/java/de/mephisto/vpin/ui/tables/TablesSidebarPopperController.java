@@ -31,6 +31,9 @@ public class TablesSidebarPopperController implements Initializable, ChangeListe
   private Button tableEditBtn;
 
   @FXML
+  private Button editScreensBtn;
+
+  @FXML
   private Slider volumeSlider;
 
   @FXML
@@ -153,6 +156,7 @@ public class TablesSidebarPopperController implements Initializable, ChangeListe
 
   public void refreshView(Optional<GameRepresentation> g) {
     this.tableEditBtn.setDisable(g.isEmpty());
+    this.editScreensBtn.setDisable(g.isEmpty());
     volumeSlider.setDisable(g.isEmpty());
 
     if (g.isPresent()) {

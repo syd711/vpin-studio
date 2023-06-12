@@ -147,4 +147,8 @@ public class AutoCompleteTextField {
     defaultValue = name;
     setChangeEnabled(true);
   }
+
+  public void setDisable(boolean b) {
+    textField.setDisable(b);
+  }
 }

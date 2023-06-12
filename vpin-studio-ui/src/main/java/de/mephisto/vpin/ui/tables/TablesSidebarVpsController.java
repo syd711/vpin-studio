@@ -174,6 +174,8 @@ public class TablesSidebarVpsController implements Initializable, AutoCompleteTe
     tablesCombo.setItems(FXCollections.emptyObservableList());
 
     autoCompleteNameField.reset();
+    autoCompleteNameField.setDisable(g.isEmpty());
+    tablesCombo.setDisable(g.isEmpty());
 
     yearLabel.setText("-");
     manufacturerLabel.setText("-");
