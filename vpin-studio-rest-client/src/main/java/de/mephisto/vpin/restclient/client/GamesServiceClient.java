@@ -53,7 +53,7 @@ public class GamesServiceClient extends VPinStudioClientService {
     try {
       getRestClient().post(API + "games/delete", descriptor, Boolean.class);
     } catch (Exception e) {
-      LOG.error("Failed to delete game " + descriptor.getGameId() + ": " + e.getMessage(), e);
+      LOG.error("Failed to delete games " + descriptor.getGameIds() + ": " + e.getMessage(), e);
     }
   }
 

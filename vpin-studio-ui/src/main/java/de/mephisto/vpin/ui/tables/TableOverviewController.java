@@ -237,24 +237,18 @@ public class TableOverviewController implements Initializable, StudioFXControlle
   }
 
   private void deleteSelection() {
-    GameRepresentation game = tableView.getSelectionModel().getSelectedItem();
-    if (game != null) {
-      if (Studio.client.getCompetitionService().isGameReferencedByCompetitions(game.getId())) {
-        WidgetFactory.showAlert(Studio.stage, "The table \"" + game.getGameDisplayName()
-            + "\" is used by at least one competition.", "Delete all competitions for this table first.");
-        return;
-      }
-
-      boolean hasVariants = false;
-
-      if (!StringUtils.isEmpty(game.getRom())) {
-        String rom = game.getRom();
-        List<GameRepresentation> collect = games.stream().filter(g -> rom.equals(g.getRom())).collect(Collectors.toList());
-        hasVariants = collect.size() > 1;
+    List<GameRepresentation> selectedGames = new ArrayList<>(tableView.getSelectionModel().getSelectedItems());
+    if (selectedGames != null && !selectedGames.isEmpty()) {
+      for (GameRepresentation game : selectedGames) {
+        if (Studio.client.getCompetitionService().isGameReferencedByCompetitions(game.getId())) {
+          WidgetFactory.showAlert(Studio.stage, "The table \"" + game.getGameDisplayName()
+              + "\" is used by at least one competition.", "Delete all competitions for this table first.");
+          return;
+        }
       }
 
       tableView.getSelectionModel().clearSelection();
-      boolean b = Dialogs.openTableDeleteDialog(game, hasVariants);
+      boolean b = Dialogs.openTableDeleteDialog(selectedGames, this.games);
       if (b) {
         this.onReload();
       }
@@ -362,6 +356,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
     this.backupBtn.setDisable(true);
     this.uploadMenuBtn.setDisable(true);
     this.importBtn.setDisable(true);
+    this.stopBtn.setDisable(true);
 
     tableView.setVisible(false);
     tableStack.getChildren().add(tablesLoadingOverlay);
@@ -396,6 +391,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
         }
 
         this.importBtn.setDisable(false);
+        this.stopBtn.setDisable(false);
         this.textfieldSearch.setDisable(false);
         this.reloadBtn.setDisable(false);
         this.scanBtn.setDisable(false);
@@ -529,7 +525,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
     tableView.getSelectionModel().getSelectedItems().addListener((ListChangeListener<GameRepresentation>) c -> {
       boolean disable = c.getList().isEmpty() || c.getList().size() > 1;
       validateBtn.setDisable(disable);
-      deleteBtn.setDisable(disable);
+      deleteBtn.setDisable(c.getList().isEmpty());
       backupBtn.setDisable(true);
       playBtn.setDisable(disable);
 

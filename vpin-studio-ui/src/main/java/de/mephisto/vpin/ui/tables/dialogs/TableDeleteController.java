@@ -1,11 +1,7 @@
 package de.mephisto.vpin.ui.tables.dialogs;
 
 import de.mephisto.vpin.commons.fx.DialogController;
-import de.mephisto.vpin.commons.fx.OverlayWindowFX;
 import de.mephisto.vpin.restclient.descriptors.DeleteDescriptor;
-import de.mephisto.vpin.restclient.popper.PopperScreen;
-import de.mephisto.vpin.restclient.representations.GameMediaItemRepresentation;
-import de.mephisto.vpin.restclient.representations.GameMediaRepresentation;
 import de.mephisto.vpin.restclient.representations.GameRepresentation;
 import de.mephisto.vpin.ui.Studio;
 import javafx.event.ActionEvent;
@@ -14,25 +10,22 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.ByteArrayInputStream;
 import java.net.URL;
+import java.util.List;
 import java.util.ResourceBundle;
+import java.util.stream.Collectors;
 
 public class TableDeleteController implements Initializable, DialogController {
   private final static Logger LOG = LoggerFactory.getLogger(TableDeleteController.class);
 
   @FXML
   private Label titleLabel;
-
-  @FXML
-  private ImageView imageView;
 
   @FXML
   private Button deleteBtn;
@@ -83,7 +76,7 @@ public class TableDeleteController implements Initializable, DialogController {
   private Label validationDescription;
 
   private boolean result = false;
-  private GameRepresentation game;
+  private List<GameRepresentation> games;
 
   @FXML
   private void onDeleteClick(ActionEvent e) {
@@ -100,7 +93,7 @@ public class TableDeleteController implements Initializable, DialogController {
     descriptor.setDeleteAltSound(altSoundCheckbox.isSelected());
     descriptor.setDeleteAltColor(altColorCheckbox.isSelected());
     descriptor.setDeleteCfg(mameConfigCheckbox.isSelected());
-    descriptor.setGameId(game.getId());
+    descriptor.setGameIds(games.stream().map(GameRepresentation::getId).collect(Collectors.toList()));
 
     Studio.client.getGameService().deleteGame(descriptor);
     result = true;
@@ -142,35 +135,62 @@ public class TableDeleteController implements Initializable, DialogController {
     return result;
   }
 
-  public void setGame(GameRepresentation game, boolean hasVariants) {
-    this.game = game;
-    this.titleLabel.setText("Delete \"" + game.getGameDisplayName() + "\"");
-
-    this.deleteAllCheckbox.setDisable(hasVariants);
-    pupPackCheckbox.setDisable(hasVariants);
-    dmdCheckbox.setDisable(hasVariants);
-    musicCheckbox.setDisable(hasVariants);
-    mameConfigCheckbox.setDisable(hasVariants);
-    highscoreCheckbox.setDisable(hasVariants);
-    altSoundCheckbox.setDisable(hasVariants);
-    altColorCheckbox.setDisable(hasVariants);
-
-    GameMediaRepresentation gameMedia = game.getGameMedia();
-    GameMediaItemRepresentation wheelMedia = gameMedia.getMedia().get(PopperScreen.Wheel.name());
-    if (wheelMedia != null) {
-      ByteArrayInputStream gameMediaItem = OverlayWindowFX.client.getGameMediaItem(game.getId(), PopperScreen.Wheel);
-      Image image = new Image(gameMediaItem);
-      imageView.setImage(image);
+  public void setGames(List<GameRepresentation> selectedGames, List<GameRepresentation> allGames) {
+    this.games = selectedGames;
+    if (selectedGames.size() == 1) {
+      this.titleLabel.setText("Delete \"" + selectedGames.get(0).getGameDisplayName() + "\"?");
     }
     else {
-      Image wheel = new Image(Studio.class.getResourceAsStream("avatar-blank.png"));
-      imageView.setImage(wheel);
+      this.titleLabel.setText("Delete " + selectedGames.size() + " Tables?");
     }
 
-    boolean hasNoArchives = Studio.client.getArchiveService().getArchiveDescriptorsForGame(game.getId()).isEmpty();
-    this.validationContainer.setVisible(hasNoArchives || hasVariants);
+    this.validationContainer.setVisible(false);
+    this.validationTitle.setVisible(false);
+    this.validationDescription.setVisible(false);
 
-    this.validationTitle.setVisible(hasVariants);
-    this.validationDescription.setVisible(hasNoArchives);
+    refreshVariantsCheck(selectedGames, allGames);
+    refreshArchivesCheck(selectedGames, allGames);
+  }
+
+  private void refreshArchivesCheck(List<GameRepresentation> selectedGames, List<GameRepresentation> allGames) {
+    for (GameRepresentation selectedGame : selectedGames) {
+      boolean hasNoArchives = Studio.client.getArchiveService().getArchiveDescriptorsForGame(selectedGame.getId()).isEmpty();
+      if (hasNoArchives) {
+        this.validationContainer.setVisible(true);
+        this.validationDescription.setVisible(true);
+        return;
+      }
+    }
+  }
+
+  private void refreshVariantsCheck(List<GameRepresentation> selectedGames, List<GameRepresentation> allGames) {
+    boolean hasNonSelectedVariant = false;
+    for (GameRepresentation selectedGame : selectedGames) {
+      if (hasNonSelectedVariant) {
+        break;
+      }
+
+      if (!StringUtils.isEmpty(selectedGame.getRom())) {
+        String rom = selectedGame.getRom();
+        List<GameRepresentation> variants = allGames.stream().filter(g -> rom.equals(g.getRom())).collect(Collectors.toList());
+        for (GameRepresentation variant : variants) {
+          if (!selectedGames.contains(variant)) {
+            hasNonSelectedVariant = true;
+            this.validationContainer.setVisible(true);
+            this.validationTitle.setVisible(true);
+          }
+        }
+      }
+    }
+
+
+    this.deleteAllCheckbox.setDisable(hasNonSelectedVariant);
+    pupPackCheckbox.setDisable(hasNonSelectedVariant);
+    dmdCheckbox.setDisable(hasNonSelectedVariant);
+    musicCheckbox.setDisable(hasNonSelectedVariant);
+    mameConfigCheckbox.setDisable(hasNonSelectedVariant);
+    highscoreCheckbox.setDisable(hasNonSelectedVariant);
+    altSoundCheckbox.setDisable(hasNonSelectedVariant);
+    altColorCheckbox.setDisable(hasNonSelectedVariant);
   }
 }

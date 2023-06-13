@@ -90,113 +90,117 @@ public class GameService {
   }
 
   public boolean deleteGame(@NonNull DeleteDescriptor descriptor) {
-    Game game = this.getGame(descriptor.getGameId());
-    if (game == null) {
-      return false;
-    }
-
-    if (descriptor.isDeleteHighscores()) {
-      resetGame(game.getId());
-    }
-
+    List<Integer> gameIds = descriptor.getGameIds();
     boolean success = true;
-    if (descriptor.isDeleteTable()) {
-      if (!FileUtils.delete(game.getGameFile())) {
-        success = false;
+
+    for (Integer gameId : gameIds) {
+      Game game = this.getGame(gameId);
+      if (game == null) {
+        return false;
       }
 
-      if (!FileUtils.delete(game.getPOVFile())) {
-        success = false;
+      if (descriptor.isDeleteHighscores()) {
+        resetGame(game.getId());
       }
 
-      if (!FileUtils.delete(game.getResFile())) {
-        success = false;
-      }
-    }
+      if (descriptor.isDeleteTable()) {
+        if (!FileUtils.delete(game.getGameFile())) {
+          success = false;
+        }
 
-    if (descriptor.isDeleteDirectB2s()) {
-      if (!FileUtils.delete(game.getCroppedDefaultPicture())) {
-        success = false;
-      }
-      if (!FileUtils.delete(game.getRawDefaultPicture())) {
-        success = false;
-      }
-      if (!FileUtils.delete(game.getDirectB2SFile())) {
-        success = false;
-      }
-    }
+        if (!FileUtils.delete(game.getPOVFile())) {
+          success = false;
+        }
 
-    if (descriptor.isDeletePupPack()) {
-      PupPack pupPack = game.getPupPack();
-      if (pupPack != null && !pupPack.delete()) {
-        success = false;
-      }
-    }
-
-    if (descriptor.isDeleteDMDs()) {
-      if (!FileUtils.deleteFolder(game.getFlexDMDFolder())) {
-        success = false;
+        if (!FileUtils.delete(game.getResFile())) {
+          success = false;
+        }
       }
 
-      if (!FileUtils.deleteFolder(game.getUltraDMDFolder())) {
-        success = false;
-      }
-    }
-
-    if (descriptor.isDeleteAltSound()) {
-      if (altSoundService.delete(game)) {
-        success = false;
-      }
-    }
-
-
-    if (descriptor.isDeleteAltColor()) {
-      if (game.getAltColorFolder() != null && !FileUtils.deleteFolder(game.getAltColorFolder())) {
-        success = false;
-      }
-    }
-
-    if (descriptor.isDeleteCfg()) {
-      if (game.getCfgFile() != null && !FileUtils.delete(game.getCfgFile())) {
-        success = false;
-      }
-    }
-
-
-    if (descriptor.isDeleteMusic()) {
-      if (game.getMusicFolder() != null && !FileUtils.deleteFolder(game.getMusicFolder())) {
-        success = false;
-      }
-    }
-
-    GameDetails byPupId = gameDetailsRepository.findByPupId(game.getId());
-    if (byPupId != null) {
-      gameDetailsRepository.delete(byPupId);
-    }
-
-    if (descriptor.isDeleteFromPopper()) {
-      if (!pinUPConnector.deleteGame(descriptor.getGameId())) {
-        success = false;
+      if (descriptor.isDeleteDirectB2s()) {
+        if (!FileUtils.delete(game.getCroppedDefaultPicture())) {
+          success = false;
+        }
+        if (!FileUtils.delete(game.getRawDefaultPicture())) {
+          success = false;
+        }
+        if (!FileUtils.delete(game.getDirectB2SFile())) {
+          success = false;
+        }
       }
 
-      highscoreService.deleteScores(game.getId());
+      if (descriptor.isDeletePupPack()) {
+        PupPack pupPack = game.getPupPack();
+        if (pupPack != null && !pupPack.delete()) {
+          success = false;
+        }
+      }
 
-      PopperScreen[] values = PopperScreen.values();
-      for (PopperScreen originalScreenValue : values) {
-        GameMediaItem gameMediaItem = game.getGameMedia().get(originalScreenValue);
-        if (gameMediaItem != null && gameMediaItem.getFile().exists()) {
-          File mediaFile = gameMediaItem.getFile();
-          if (!mediaFile.delete() && success) {
-            success = false;
+      if (descriptor.isDeleteDMDs()) {
+        if (!FileUtils.deleteFolder(game.getFlexDMDFolder())) {
+          success = false;
+        }
+
+        if (!FileUtils.deleteFolder(game.getUltraDMDFolder())) {
+          success = false;
+        }
+      }
+
+      if (descriptor.isDeleteAltSound()) {
+        if (altSoundService.delete(game)) {
+          success = false;
+        }
+      }
+
+
+      if (descriptor.isDeleteAltColor()) {
+        if (game.getAltColorFolder() != null && !FileUtils.deleteFolder(game.getAltColorFolder())) {
+          success = false;
+        }
+      }
+
+      if (descriptor.isDeleteCfg()) {
+        if (game.getCfgFile() != null && !FileUtils.delete(game.getCfgFile())) {
+          success = false;
+        }
+      }
+
+
+      if (descriptor.isDeleteMusic()) {
+        if (game.getMusicFolder() != null && !FileUtils.deleteFolder(game.getMusicFolder())) {
+          success = false;
+        }
+      }
+
+      GameDetails byPupId = gameDetailsRepository.findByPupId(game.getId());
+      if (byPupId != null) {
+        gameDetailsRepository.delete(byPupId);
+      }
+
+      if (descriptor.isDeleteFromPopper()) {
+        if (!pinUPConnector.deleteGame(gameId)) {
+          success = false;
+        }
+
+        highscoreService.deleteScores(game.getId());
+
+        PopperScreen[] values = PopperScreen.values();
+        for (PopperScreen originalScreenValue : values) {
+          GameMediaItem gameMediaItem = game.getGameMedia().get(originalScreenValue);
+          if (gameMediaItem != null && gameMediaItem.getFile().exists()) {
+            File mediaFile = gameMediaItem.getFile();
+            if (!mediaFile.delete() && success) {
+              success = false;
+            }
           }
         }
       }
+
+      Optional<Asset> byId = assetRepository.findByExternalId(String.valueOf(gameId));
+      byId.ifPresent(asset -> assetRepository.delete(asset));
+
+      LOG.info("Deleted " + game.getGameDisplayName());
     }
-
-    Optional<Asset> byId = assetRepository.findByExternalId(String.valueOf(descriptor.getGameId()));
-    byId.ifPresent(asset -> assetRepository.delete(asset));
-
-    LOG.info("Deleted " + game.getGameDisplayName());
     return success;
   }
 

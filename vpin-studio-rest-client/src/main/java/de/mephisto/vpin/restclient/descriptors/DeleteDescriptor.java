@@ -1,5 +1,8 @@
 package de.mephisto.vpin.restclient.descriptors;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class DeleteDescriptor {
   private boolean deleteTable;
   private boolean deleteDirectB2s;
@@ -12,14 +15,14 @@ public class DeleteDescriptor {
   private boolean deleteAltColor;
   private boolean deleteCfg;
 
-  private int gameId;
+  private List<Integer> gameIds = new ArrayList<>();
 
-  public int getGameId() {
-    return gameId;
+  public List<Integer> getGameIds() {
+    return gameIds;
   }
 
-  public void setGameId(int gameId) {
-    this.gameId = gameId;
+  public void setGameIds(List<Integer> gameIds) {
+    this.gameIds = gameIds;
   }
 
   public boolean isDeleteAltColor() {

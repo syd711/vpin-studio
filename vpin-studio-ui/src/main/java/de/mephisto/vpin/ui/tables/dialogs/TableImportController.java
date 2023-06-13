@@ -40,12 +40,12 @@ public class TableImportController implements Initializable, DialogController {
   private void onSaveClick(ActionEvent e) {
     ResourceList importList = new ResourceList();
     for (CheckBox checkBox : checkBoxes) {
-      if(checkBox.isSelected()) {
+      if (checkBox.isSelected()) {
         importList.getItems().add(checkBox.getText());
       }
     }
 
-    if(importList.getItems().isEmpty()) {
+    if (importList.getItems().isEmpty()) {
       return;
     }
 
@@ -53,7 +53,6 @@ public class TableImportController implements Initializable, DialogController {
     try {
       JobExecutionResult jobExecutionResult = client.getPinUPPopperService().importTables(importList);
       if (!jobExecutionResult.isErrorneous()) {
-        WidgetFactory.showConfirmation(Studio.stage, "Import Finished", jobExecutionResult.getMessage());
         EventManager.getInstance().notifyJobFinished(JobType.TABLE_IMPORT);
       }
     } catch (Exception ex) {

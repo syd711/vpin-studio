@@ -2,9 +2,9 @@ package de.mephisto.vpin.ui.util;
 
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.AltSound;
-import de.mephisto.vpin.restclient.popper.PopperScreen;
-import de.mephisto.vpin.restclient.descriptors.ResetHighscoreDescriptor;
 import de.mephisto.vpin.restclient.client.VPinStudioClient;
+import de.mephisto.vpin.restclient.descriptors.ResetHighscoreDescriptor;
+import de.mephisto.vpin.restclient.popper.PopperScreen;
 import de.mephisto.vpin.restclient.representations.*;
 import de.mephisto.vpin.ui.ProgressDialogController;
 import de.mephisto.vpin.ui.Studio;
@@ -66,7 +66,7 @@ public class Dialogs {
     if (selection == null) {
       title = "Add Competition";
     }
-    else if(selection.getId() == null) {
+    else if (selection.getId() == null) {
       title = "Duplicate Competition";
     }
 
@@ -85,7 +85,7 @@ public class Dialogs {
     if (selection == null) {
       title = "Add Competition";
     }
-    else if(selection.getId() == null) {
+    else if (selection.getId() == null) {
       title = "Duplicate Competition";
     }
 
@@ -156,10 +156,10 @@ public class Dialogs {
     return controller.uploadFinished();
   }
 
-  public static boolean openTableDeleteDialog(GameRepresentation game, boolean hasVariants) {
+  public static boolean openTableDeleteDialog(List<GameRepresentation> selectedGames, List<GameRepresentation> allGames) {
     Stage stage = createStudioDialogStage(TableDeleteController.class, "dialog-table-delete.fxml", "Delete");
     TableDeleteController controller = (TableDeleteController) stage.getUserData();
-    controller.setGame(game, hasVariants);
+    controller.setGames(selectedGames, allGames);
     stage.showAndWait();
 
     return controller.tableDeleted();
