@@ -87,7 +87,7 @@ public class PupPackUploadController implements Initializable, DialogController 
     this.selection = fileChooser.showOpenDialog(stage);
     if (this.selection != null) {
       PupPackUploadController.lastFolderSelection = this.selection.getParentFile();
-      this.fileNameField.setText("Analyzing \"" + selection.getName() + "\"...");
+      this.fileNameField.setText("Analyzing \"" + selection.getName() + "\", please wait...");
       this.fileNameField.setDisable(true);
       this.fileBtn.setDisable(true);
       this.cancelBtn.setDisable(true);

@@ -3,11 +3,13 @@ package de.mephisto.vpin.restclient.client;
 import de.mephisto.vpin.restclient.AssetType;
 import de.mephisto.vpin.restclient.FileUploadProgressListener;
 import de.mephisto.vpin.restclient.jobs.JobExecutionResult;
+import de.mephisto.vpin.restclient.jobs.JobExecutionResultFactory;
 import de.mephisto.vpin.restclient.representations.PupPackRepresentation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.client.SimpleClientHttpRequestFactory;
 import org.springframework.web.client.RestTemplate;
 
 import java.io.File;
@@ -43,14 +45,14 @@ public class PupPackServiceClient extends VPinStudioClientService {
     return getRestClient().post(API + "puppacks/option/" + gameId, o, JobExecutionResult.class);
   }
 
-  public JobExecutionResult uploadPupPack(File file, String uploadType, int gameId, FileUploadProgressListener listener) throws Exception {
+  public JobExecutionResult uploadPupPack(File file, String uploadType, int gameId, FileUploadProgressListener listener) {
     try {
       String url = getRestClient().getBaseUrl() + API + "puppacks/upload";
-      ResponseEntity<JobExecutionResult> exchange = new RestTemplate().exchange(url, HttpMethod.POST, createUpload(file, gameId, uploadType, AssetType.PUP_PACK, listener), JobExecutionResult.class);
+      ResponseEntity<JobExecutionResult> exchange = createUploadTemplate().exchange(url, HttpMethod.POST, createUpload(file, gameId, uploadType, AssetType.PUP_PACK, listener), JobExecutionResult.class);
       return exchange.getBody();
     } catch (Exception e) {
       LOG.error("ALT sound upload failed: " + e.getMessage(), e);
-      throw e;
+      return JobExecutionResultFactory.error("ALT sound upload failed: " + e.getMessage());
     }
   }
 }

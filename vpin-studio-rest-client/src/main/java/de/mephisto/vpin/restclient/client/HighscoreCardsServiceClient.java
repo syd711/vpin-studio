@@ -88,7 +88,7 @@ public class HighscoreCardsServiceClient extends VPinStudioClientService {
       LinkedMultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
       map.add("mode", tableUploadDescriptor.name());
       map.add("gameId", gameId);
-      new RestTemplate().exchange(url, HttpMethod.POST, createUpload(map, file, -1, null, AssetType.TABLE, listener), Boolean.class);
+      createUploadTemplate().exchange(url, HttpMethod.POST, createUpload(map, file, -1, null, AssetType.TABLE, listener), Boolean.class);
       return true;
     } catch (Exception e) {
       LOG.error("Table upload failed: " + e.getMessage(), e);

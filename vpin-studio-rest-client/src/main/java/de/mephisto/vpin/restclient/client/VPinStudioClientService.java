@@ -7,7 +7,9 @@ import de.mephisto.vpin.restclient.RestClient;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
+import org.springframework.http.client.SimpleClientHttpRequestFactory;
 import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.web.client.RestTemplate;
 
 import java.io.File;
 
@@ -41,5 +43,12 @@ public class VPinStudioClientService {
     map.add("uploadType", uploadType);
     map.add("assetType", assetType.name());
     return new HttpEntity<>(map, headers);
+  }
+
+  protected RestTemplate createUploadTemplate() {
+    String url = getRestClient().getBaseUrl() + API + "puppacks/upload";
+    SimpleClientHttpRequestFactory rf = new SimpleClientHttpRequestFactory();
+    rf.setBufferRequestBody(false);
+    return new RestTemplate(rf);
   }
 }

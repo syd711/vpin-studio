@@ -102,7 +102,7 @@ public class VpxServiceClient extends VPinStudioClientService {
   public JobExecutionResult uploadPov(File file, String uploadType, int gameId, FileUploadProgressListener listener) throws Exception {
     try {
       String url = getRestClient().getBaseUrl() + API + "vpx/pov/upload";
-      ResponseEntity<JobExecutionResult> exchange = new RestTemplate().exchange(url, HttpMethod.POST, createUpload(file, gameId, uploadType, AssetType.POV, listener), JobExecutionResult.class);
+      ResponseEntity<JobExecutionResult> exchange = createUploadTemplate().exchange(url, HttpMethod.POST, createUpload(file, gameId, uploadType, AssetType.POV, listener), JobExecutionResult.class);
       return exchange.getBody();
     } catch (Exception e) {
       LOG.error("POV upload failed: " + e.getMessage(), e);

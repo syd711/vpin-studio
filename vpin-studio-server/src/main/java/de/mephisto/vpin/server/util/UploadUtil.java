@@ -8,9 +8,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
+import java.io.*;
 
 public class UploadUtil {
   private final static Logger LOG = LoggerFactory.getLogger(UploadUtil.class);
@@ -18,13 +16,14 @@ public class UploadUtil {
   public static Boolean upload(MultipartFile file, File target) throws Exception {
     byte[] bytes = new byte[0];
     try {
-      bytes = file.getBytes();
       if (target.exists() && !target.delete()) {
         throw new UnsupportedOperationException("Failed to delete existing target file " + target.getAbsolutePath());
       }
 
+      BufferedInputStream in = new BufferedInputStream(file.getInputStream());
       FileOutputStream fileOutputStream = new FileOutputStream(target);
-      IOUtils.write(bytes, fileOutputStream);
+      IOUtils.copy(in, fileOutputStream);
+      in.close();
       fileOutputStream.close();
       LOG.info("Written uploaded file: " + target.getAbsolutePath() + ", byte size was " + FileUtils.readableFileSize(bytes.length));
     } catch (Exception e) {

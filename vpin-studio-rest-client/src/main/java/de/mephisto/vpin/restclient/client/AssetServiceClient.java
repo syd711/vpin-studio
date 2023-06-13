@@ -67,7 +67,7 @@ public class AssetServiceClient extends VPinStudioClientService {
     try {
       String url = getRestClient().getBaseUrl() + API + "assets/" + id + "/upload/" + maxSize;
       LOG.info("HTTP POST " + url);
-      ResponseEntity<AssetRepresentation> exchange = new RestTemplate().exchange(url, HttpMethod.POST, createUpload(file, -1, null, assetType, listener), AssetRepresentation.class);
+      ResponseEntity<AssetRepresentation> exchange = createUploadTemplate().exchange(url, HttpMethod.POST, createUpload(file, -1, null, assetType, listener), AssetRepresentation.class);
       return exchange.getBody();
     } catch (Exception e) {
       LOG.error("Asset upload failed: " + e.getMessage(), e);

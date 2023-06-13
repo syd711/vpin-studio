@@ -105,7 +105,7 @@ public class PupPacksResource {
       UploadUtil.upload(file, out);
       return pupPacksService.installPupPack(game, out);
     } catch (Exception e) {
-      throw new ResponseStatusException(INTERNAL_SERVER_ERROR, "ALT sound upload failed: " + e.getMessage());
+      throw new ResponseStatusException(INTERNAL_SERVER_ERROR, "PUP pack upload failed: " + e.getMessage());
     }
   }
 

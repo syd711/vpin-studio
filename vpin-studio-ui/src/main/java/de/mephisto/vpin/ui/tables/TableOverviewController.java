@@ -37,7 +37,6 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.net.URL;
 import java.util.*;
-import java.util.stream.Collectors;
 
 public class TableOverviewController implements Initializable, StudioFXController {
   private final static Logger LOG = LoggerFactory.getLogger(TableOverviewController.class);
@@ -294,7 +293,16 @@ public class TableOverviewController implements Initializable, StudioFXControlle
 
   @FXML
   private void onImport() {
-    Dialogs.openTableImportDialog();
+    if (Studio.client.getPinUPPopperService().isPinUPPopperRunning()) {
+      Optional<ButtonType> buttonType = Dialogs.openPopperRunningWarning(Studio.stage);
+      if (buttonType.isPresent() && buttonType.get().equals(ButtonType.APPLY)) {
+        Studio.client.getPinUPPopperService().terminatePopper();
+        Dialogs.openTableImportDialog();
+      }
+    }
+    else {
+      Dialogs.openTableImportDialog();
+    }
   }
 
   @FXML
