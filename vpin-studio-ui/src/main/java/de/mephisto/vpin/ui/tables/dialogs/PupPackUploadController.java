@@ -4,7 +4,6 @@ import de.mephisto.vpin.commons.fx.DialogController;
 import de.mephisto.vpin.commons.utils.PupPackAnalyzer;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.representations.GameRepresentation;
-import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.tables.TablesSidebarController;
 import de.mephisto.vpin.ui.util.Dialogs;
 import javafx.application.Platform;
@@ -51,8 +50,15 @@ public class PupPackUploadController implements Initializable, DialogController 
   private GameRepresentation game;
   private TablesSidebarController tablesSidebarController;
 
+  private PupPackAnalyzer pupPackAnalyzer;
+
   @FXML
   private void onCancelClick(ActionEvent e) {
+    if (pupPackAnalyzer != null) {
+      pupPackAnalyzer.cancel();
+      return;
+    }
+
     Stage stage = (Stage) ((Button) e.getSource()).getScene().getWindow();
     stage.close();
   }
@@ -90,22 +96,30 @@ public class PupPackUploadController implements Initializable, DialogController 
       this.fileNameField.setText("Analyzing \"" + selection.getName() + "\", please wait...");
       this.fileNameField.setDisable(true);
       this.fileBtn.setDisable(true);
-      this.cancelBtn.setDisable(true);
 
-      Platform.runLater(() -> {
-        String analyze = PupPackAnalyzer.analyze(selection, game.getRom());
-        this.fileNameField.setText(this.selection.getAbsolutePath());
-        this.fileNameField.setDisable(false);
-        this.fileBtn.setDisable(false);
-        this.cancelBtn.setDisable(false);
+      new Thread(() -> {
+        Platform.runLater(() -> {
+          try {
+            pupPackAnalyzer = new PupPackAnalyzer();
+            String analyze = pupPackAnalyzer.analyze(selection, game.getRom());
+            this.fileNameField.setText(this.selection.getAbsolutePath());
+            this.fileNameField.setDisable(false);
+            this.fileBtn.setDisable(false);
+            this.cancelBtn.setDisable(false);
 
-        if (analyze != null) {
-          result = false;
-          WidgetFactory.showAlert(Studio.stage, analyze);
-          return;
-        }
-        this.uploadBtn.setDisable(false);
-      });
+            if (analyze != null) {
+              result = false;
+              WidgetFactory.showAlert(stage, analyze);
+              return;
+            }
+            this.uploadBtn.setDisable(false);
+          } catch (Exception e) {
+          }
+          finally {
+            pupPackAnalyzer = null;
+          }
+        });
+      }).start();
     }
     else {
       this.fileNameField.setText("");

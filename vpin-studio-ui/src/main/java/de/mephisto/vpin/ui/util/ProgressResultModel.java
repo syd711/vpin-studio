@@ -18,7 +18,9 @@ public class ProgressResultModel {
   }
 
   public void setProgress(double progress) {
-    this.progressBar.setProgress(progress);
+    if(this.progressBar.isVisible()) {
+      this.progressBar.setProgress(progress);
+    }
   }
 
   public void setIndeterminate() {

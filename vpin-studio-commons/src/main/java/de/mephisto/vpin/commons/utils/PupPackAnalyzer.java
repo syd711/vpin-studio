@@ -12,7 +12,9 @@ import java.util.zip.ZipInputStream;
 public class PupPackAnalyzer {
   private final static Logger LOG = LoggerFactory.getLogger(PupPackAnalyzer.class);
 
-  public static String analyze(File archiveFile, String rom) {
+  private boolean canceled = false;
+
+  public String analyze(File archiveFile, String rom) {
     boolean foundFolderMatchingRom = false;
     boolean screensPupFound = false;
     String actualPupPackRomName = null;
@@ -26,7 +28,7 @@ public class PupPackAnalyzer {
       ZipInputStream zis = new ZipInputStream(fileInputStream);
       ZipEntry zipEntry = zis.getNextEntry();
 
-      while (zipEntry != null) {
+      while (zipEntry != null && !canceled) {
         String name = zipEntry.getName();
         if (zipEntry.isDirectory()) {
           if (!foundFolderMatchingRom) {
@@ -71,5 +73,9 @@ public class PupPackAnalyzer {
     }
 
     return null;
+  }
+
+  public void cancel() {
+    canceled = true;
   }
 }
