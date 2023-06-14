@@ -328,17 +328,17 @@ public class TableOverviewController implements Initializable, StudioFXControlle
     Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Ignore this warning for future validations of table '" + game.getGameDisplayName() + "?",
         "The warning can be re-enabled by validating the table again.");
     if (result.isPresent() && result.get().equals(ButtonType.OK)) {
-      String validationState = String.valueOf(game.getValidationState());
-      String ignoredValidations = game.getIgnoredValidations();
+      ValidationState validationState = game.getValidationState();
+      List<Integer> ignoredValidations = game.getIgnoredValidations();
       if (ignoredValidations == null) {
-        ignoredValidations = "";
-      }
-      List<String> gameIgnoreList = new ArrayList<>(Arrays.asList(ignoredValidations.split(",")));
-      if (!gameIgnoreList.contains(validationState)) {
-        gameIgnoreList.add(validationState);
+        ignoredValidations = new ArrayList<>();
       }
 
-      game.setIgnoredValidations(StringUtils.join(gameIgnoreList, ","));
+      if (!ignoredValidations.contains(validationState.getCode())) {
+        ignoredValidations.add(validationState.getCode());
+      }
+
+      game.setIgnoredValidations(ignoredValidations);
 
       try {
         Studio.client.getGameService().saveGame(game);
@@ -460,11 +460,11 @@ public class TableOverviewController implements Initializable, StudioFXControlle
         rom = value.getOriginalRom();
       }
 
-      List<String> ignoredValidations = Collections.emptyList();
+      List<Integer> ignoredValidations = Collections.emptyList();
       if (value.getIgnoredValidations() != null) {
-        ignoredValidations = Arrays.asList(value.getIgnoredValidations().split(","));
+        ignoredValidations = value.getIgnoredValidations();
       }
-      if (!value.isRomExists() && value.isRomRequired() && !ignoredValidations.contains(String.valueOf(ValidationCode.CODE_ROM_NOT_EXISTS))) {
+      if (!value.isRomExists() && value.isRomRequired() && !ignoredValidations.contains(ValidationCode.CODE_ROM_NOT_EXISTS)) {
         Label label = new Label(rom);
         String color = "#FF3333";
         label.setStyle("-fx-font-color: " + color + ";-fx-text-fill: " + color + ";-fx-font-weight: bold;");

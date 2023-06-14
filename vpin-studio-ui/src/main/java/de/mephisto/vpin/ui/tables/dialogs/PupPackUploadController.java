@@ -1,11 +1,11 @@
 package de.mephisto.vpin.ui.tables.dialogs;
 
 import de.mephisto.vpin.commons.fx.DialogController;
-import de.mephisto.vpin.commons.utils.PupPackAnalyzer;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.representations.GameRepresentation;
 import de.mephisto.vpin.ui.tables.TablesSidebarController;
 import de.mephisto.vpin.ui.util.Dialogs;
+import de.mephisto.vpin.ui.util.ProgressResultModel;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -50,15 +50,8 @@ public class PupPackUploadController implements Initializable, DialogController 
   private GameRepresentation game;
   private TablesSidebarController tablesSidebarController;
 
-  private PupPackAnalyzer pupPackAnalyzer;
-
   @FXML
   private void onCancelClick(ActionEvent e) {
-    if (pupPackAnalyzer != null) {
-      pupPackAnalyzer.cancel();
-      return;
-    }
-
     Stage stage = (Stage) ((Button) e.getSource()).getScene().getWindow();
     stage.close();
   }
@@ -78,7 +71,8 @@ public class PupPackUploadController implements Initializable, DialogController 
   }
 
   @FXML
-  private void onFileSelect() {
+  private void onFileSelect(ActionEvent e) {
+    Stage stage = (Stage) ((Button) e.getSource()).getScene().getWindow();
     this.uploadBtn.setDisable(true);
 
     FileChooser fileChooser = new FileChooser();
@@ -96,33 +90,27 @@ public class PupPackUploadController implements Initializable, DialogController 
       this.fileNameField.setText("Analyzing \"" + selection.getName() + "\", please wait...");
       this.fileNameField.setDisable(true);
       this.fileBtn.setDisable(true);
+      this.cancelBtn.setDisable(true);
 
-      new Thread(() -> {
-        Platform.runLater(() -> {
-          try {
-            pupPackAnalyzer = new PupPackAnalyzer();
-            String analyze = pupPackAnalyzer.analyze(selection, game.getRom());
-            this.fileNameField.setText(this.selection.getAbsolutePath());
-            this.fileNameField.setDisable(false);
-            this.fileBtn.setDisable(false);
-            this.cancelBtn.setDisable(false);
 
-            if (analyze != null) {
-              result = false;
-              WidgetFactory.showAlert(stage, analyze);
-              return;
-            }
-            this.uploadBtn.setDisable(false);
-          } catch (Exception e) {
-          }
-          finally {
-            pupPackAnalyzer = null;
-          }
-        });
-      }).start();
-    }
-    else {
-      this.fileNameField.setText("");
+      ProgressResultModel resultModel = Dialogs.createProgressDialog(new PupPackAnalyzeProgressModel(this.game.getRom(), "PUP Pack Analysis", this.selection));
+
+      if (!resultModel.getResults().isEmpty()) {
+        result = false;
+        WidgetFactory.showAlert(stage, String.valueOf(resultModel.getResults().get(0)));
+        this.fileNameField.setText("");
+        this.fileBtn.setDisable(false);
+        this.fileNameField.setDisable(false);
+        this.cancelBtn.setDisable(false);
+      }
+      else {
+        this.fileNameField.setText(this.selection.getAbsolutePath());
+        this.fileNameField.setDisable(false);
+        this.fileBtn.setDisable(false);
+        this.cancelBtn.setDisable(false);
+        this.uploadBtn.setDisable(false);
+        this.cancelBtn.setDisable(false);
+      }
     }
   }
 

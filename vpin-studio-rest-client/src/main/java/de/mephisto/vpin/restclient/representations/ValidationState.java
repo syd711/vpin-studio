@@ -1,7 +1,11 @@
 package de.mephisto.vpin.restclient.representations;
 
+import org.apache.commons.lang3.StringUtils;
+
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class ValidationState {
   private int code;
@@ -21,5 +25,28 @@ public class ValidationState {
 
   public void setOptions(List<String> options) {
     this.options = options;
+  }
+
+  public static String toIdString(List<Integer> ignoredValidations) {
+    if(ignoredValidations == null) {
+      return "";
+    }
+    return ignoredValidations.stream().map(String::valueOf).collect(Collectors.joining(","));
+  }
+
+  public static List<Integer> toIds(String idsString) {
+    List<Integer> ignoredIds = new ArrayList<>();
+    if(!StringUtils.isEmpty(idsString)) {
+      String[] split = idsString.split(",");
+      for (String s : split) {
+        try {
+          ignoredIds.add(Integer.parseInt(s));
+        }
+        catch (Exception e) {
+          //ignore
+        }
+      }
+    }
+    return ignoredIds;
   }
 }

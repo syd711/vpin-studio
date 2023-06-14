@@ -14,10 +14,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 import static de.mephisto.vpin.restclient.ValidationCode.*;
 
@@ -195,28 +193,19 @@ public class GameValidator implements InitializingBean {
       }
     }
 
-    String ignoredValidations = game.getIgnoredValidations();
-    if (containsIgnoreCode(code, ignoredValidations)) {
+    List<Integer> ignoredValidations = game.getIgnoredValidations();
+    if (ignoredValidations.contains(code)) {
       return false;
     }
 
     String ignoredPrefValidations = preferences.getIgnoredValidations();
-    if (containsIgnoreCode(code, ignoredPrefValidations)) {
+    List<Integer> ignoredIds = ValidationState.toIds(ignoredPrefValidations);
+
+    if (ignoredIds.contains(code)) {
       return false;
     }
 
     return true;
-  }
-
-  private boolean containsIgnoreCode(int code, String ignoredValidations) {
-    if (!StringUtils.isEmpty(ignoredValidations)) {
-      String[] split = ignoredValidations.split(",");
-      List<String> ignoreList = Arrays.asList(split);
-      if (ignoreList.contains(String.valueOf(code))) {
-        return true;
-      }
-    }
-    return false;
   }
 
   @Override

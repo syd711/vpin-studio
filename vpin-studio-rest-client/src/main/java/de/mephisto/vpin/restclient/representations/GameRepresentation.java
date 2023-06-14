@@ -1,6 +1,7 @@
 package de.mephisto.vpin.restclient.representations;
 
 import java.util.Date;
+import java.util.List;
 
 /**
  * {
@@ -33,7 +34,7 @@ public class GameRepresentation {
   private ValidationState validationState;
   private String hsFileName;
   private boolean romExists;
-  private String ignoredValidations;
+  private List<Integer> ignoredValidations;
   private String highscoreType;
   private boolean povAvailable;
   private boolean selected;
@@ -164,11 +165,11 @@ public class GameRepresentation {
     this.emulator = emulator;
   }
 
-  public String getIgnoredValidations() {
+  public List<Integer> getIgnoredValidations() {
     return ignoredValidations;
   }
 
-  public void setIgnoredValidations(String ignoredValidations) {
+  public void setIgnoredValidations(List<Integer> ignoredValidations) {
     this.ignoredValidations = ignoredValidations;
   }
 

@@ -33,6 +33,7 @@ public class ProgressDialogController implements Initializable, DialogController
 
   private Service service;
   private ProgressResultModel progressResultModel;
+  private ProgressModel model;
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -40,6 +41,7 @@ public class ProgressDialogController implements Initializable, DialogController
   }
 
   public void setProgressModel(Stage stage, ProgressModel model) {
+    this.model = model;
     titleLabel.setText(model.getTitle());
 
     if (model.isIndeterminate()) {
@@ -117,6 +119,10 @@ public class ProgressDialogController implements Initializable, DialogController
   @Override
   public void onDialogCancel() {
     service.cancel();
+
+    if(this.model != null) {
+      model.cancel();
+    }
   }
 
   public ProgressResultModel getProgressResult() {

@@ -5,6 +5,7 @@ import de.mephisto.vpin.commons.utils.FileUtils;
 import de.mephisto.vpin.restclient.popper.PopperScreen;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.descriptors.DeleteDescriptor;
+import de.mephisto.vpin.restclient.representations.ValidationState;
 import de.mephisto.vpin.server.altsound.AltSoundService;
 import de.mephisto.vpin.server.assets.Asset;
 import de.mephisto.vpin.server.assets.AssetRepository;
@@ -365,7 +366,7 @@ public class GameService {
     game.setExtTableId(gameDetails.getExtTableId());
     game.setExtTableVersionId(gameDetails.getExtTableVersionId());
     game.setPupPack(pupPackService.getPupPack(game));
-    game.setIgnoredValidations(gameDetails.getIgnoredValidations());
+    game.setIgnoredValidations(ValidationState.toIds(gameDetails.getIgnoredValidations()));
     game.setAltSoundAvailable(altSoundService.isAltSoundAvailable(game));
 
     Optional<Highscore> highscore = this.highscoreService.getOrCreateHighscore(game);
@@ -383,7 +384,7 @@ public class GameService {
     gameDetails.setRomName(game.getRom());
     gameDetails.setHsFileName(game.getHsFileName());
     gameDetails.setTableName(game.getTableName());
-    gameDetails.setIgnoredValidations(game.getIgnoredValidations());
+    gameDetails.setIgnoredValidations(ValidationState.toIdString(game.getIgnoredValidations()));
     gameDetails.setExtTableId(game.getExtTableId());
     gameDetails.setExtTableVersionId(game.getExtTableVersionId());
     gameDetailsRepository.saveAndFlush(gameDetails);

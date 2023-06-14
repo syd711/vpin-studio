@@ -1,4 +1,4 @@
-package de.mephisto.vpin.commons.utils;
+package de.mephisto.vpin.ui.util;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,10 +14,9 @@ public class PupPackAnalyzer {
 
   private boolean canceled = false;
 
-  public String analyze(File archiveFile, String rom) {
+  public String analyze(File archiveFile, String rom, ProgressResultModel progressResultModel) {
     boolean foundFolderMatchingRom = false;
     boolean screensPupFound = false;
-    String actualPupPackRomName = null;
     try {
       ZipFile zf = new ZipFile(archiveFile);
       int totalCount = zf.size();
@@ -28,8 +27,14 @@ public class PupPackAnalyzer {
       ZipInputStream zis = new ZipInputStream(fileInputStream);
       ZipEntry zipEntry = zis.getNextEntry();
 
+      int count = 0;
       while (zipEntry != null && !canceled) {
+        count++;
         String name = zipEntry.getName();
+
+        double progress = count * 100 / totalCount;
+        progressResultModel.setProgress(progress / 100);
+
         if (zipEntry.isDirectory()) {
           if (!foundFolderMatchingRom) {
             String folderName = name;
@@ -47,12 +52,14 @@ public class PupPackAnalyzer {
         else {
           if (name.contains("screens.pup")) {
             screensPupFound = true;
-            if (actualPupPackRomName == null || actualPupPackRomName.length() > name.length()) {
-              actualPupPackRomName = name;
-            }
           }
         }
         zis.closeEntry();
+
+        if (screensPupFound && foundFolderMatchingRom) {
+          break;
+        }
+
         zipEntry = zis.getNextEntry();
       }
       fileInputStream.close();
@@ -63,13 +70,11 @@ public class PupPackAnalyzer {
     }
 
     if (!screensPupFound) {
-      return "The selected file is not a valid PUP pack.";
+      progressResultModel.getResults().add("The selected file is not a valid PUP pack.");
     }
 
     if (!foundFolderMatchingRom) {
-      String[] segments = actualPupPackRomName.split("/");
-      String romFound = segments[segments.length - 2];
-      return "Selected PUP pack is not applicable for ROM \"" + rom + "\", but for tables with ROM \"" + romFound + "\".";
+      progressResultModel.getResults().add("Selected PUP pack is not applicable for ROM \"" + rom + "\".");
     }
 
     return null;

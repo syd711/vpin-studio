@@ -51,7 +51,7 @@ public class PupPackServiceClient extends VPinStudioClientService {
       ResponseEntity<JobExecutionResult> exchange = createUploadTemplate().exchange(url, HttpMethod.POST, createUpload(file, gameId, uploadType, AssetType.PUP_PACK, listener), JobExecutionResult.class);
       return exchange.getBody();
     } catch (Exception e) {
-      LOG.error("ALT sound upload failed: " + e.getMessage(), e);
+      LOG.error("PUP pack upload failed: " + e.getMessage(), e);
       return JobExecutionResultFactory.error("ALT sound upload failed: " + e.getMessage());
     }
   }

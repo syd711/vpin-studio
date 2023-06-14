@@ -57,7 +57,10 @@ public class PupPackUploadProgressModel extends ProgressModel<File> {
   @Override
   public void processNext(ProgressResultModel progressResultModel, File next) {
     try {
-      JobExecutionResult result = Studio.client.getPupPackService().uploadPupPack(next, pupPackType, gameId, percent -> progressResultModel.setProgress(percent));
+      JobExecutionResult result = Studio.client.getPupPackService().uploadPupPack(next, pupPackType, gameId, percent ->
+          Platform.runLater(() -> {
+            progressResultModel.setProgress(percent);
+          }));
       if(!StringUtils.isEmpty(result.getError())) {
         Platform.runLater(() -> {
           WidgetFactory.showAlert(Studio.stage, "Error", result.getError());

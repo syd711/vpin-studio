@@ -29,4 +29,8 @@ abstract public class ProgressModel<T> {
   abstract public void processNext(ProgressResultModel progressResultModel, T next) throws Exception;
 
   abstract public boolean hasNext();
+
+  public void cancel() {
+
+  }
 }

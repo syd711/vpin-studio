@@ -303,6 +303,7 @@ public class Dialogs {
 
   public static ProgressResultModel createProgressDialog(ProgressModel model) {
     Stage stage = createStudioDialogStage("dialog-progress.fxml", model.getTitle());
+    stage.setAlwaysOnTop(true);
     ProgressDialogController controller = (ProgressDialogController) stage.getUserData();
     controller.setProgressModel(stage, model);
     stage.showAndWait();

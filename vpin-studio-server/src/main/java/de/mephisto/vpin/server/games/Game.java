@@ -16,6 +16,7 @@ import org.apache.commons.lang3.StringUtils;
 
 import java.io.File;
 import java.util.Date;
+import java.util.List;
 
 public class Game {
 
@@ -36,7 +37,7 @@ public class Game {
   private Date lastPlayed;
   private int numberPlays;
   private ValidationState validationState;
-  private String ignoredValidations;
+  private List<Integer> ignoredValidations;
   private HighscoreType highscoreType;
   private boolean altSoundAvailable;
 
@@ -160,11 +161,11 @@ public class Game {
     this.lastPlayed = lastPlayed;
   }
 
-  public String getIgnoredValidations() {
+  public List<Integer> getIgnoredValidations() {
     return ignoredValidations;
   }
 
-  public void setIgnoredValidations(String ignoredValidations) {
+  public void setIgnoredValidations(List<Integer> ignoredValidations) {
     this.ignoredValidations = ignoredValidations;
   }
 
