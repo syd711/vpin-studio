@@ -17,6 +17,7 @@ import java.io.File;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 
 public class PupPack {
@@ -34,6 +35,7 @@ public class PupPack {
 
   private final File packFolder;
   private List<String> options = new ArrayList<>();
+  private List<String> txtFiles = new ArrayList<>();
   private String selectedOption = null;
   private List<String> missingResources = new ArrayList<>();
 
@@ -42,6 +44,14 @@ public class PupPack {
   public PupPack(@NonNull File packFolder) {
     playlistPup = new File(packFolder, PLAYLISTS_PUP);
     this.packFolder = packFolder;
+  }
+
+  public List<String> getTxtFiles() {
+    return txtFiles;
+  }
+
+  public void setTxtFiles(List<String> txtFiles) {
+    this.txtFiles = txtFiles;
   }
 
   public List<String> getMissingResources() {
@@ -92,62 +102,76 @@ public class PupPack {
   }
 
   public void load() {
-    screensPup = new ScreensPub(new File(packFolder, SCREENS_PUP));
-    triggersPup = new TriggersPup(new File(packFolder, TRIGGERS_PUP));
+    try {
+      screensPup = new ScreensPub(new File(packFolder, SCREENS_PUP));
+      triggersPup = new TriggersPup(new File(packFolder, TRIGGERS_PUP));
 
-    setSize(org.apache.commons.io.FileUtils.sizeOfDirectory(packFolder));
+      setSize(org.apache.commons.io.FileUtils.sizeOfDirectory(packFolder));
 
-    this.getOptions().clear();
-    this.getMissingResources().clear();
-    this.selectedOption = null;
-
-    String[] optionsBat = packFolder.list((dir, name) -> name.endsWith(".bat"));
-    if (optionsBat != null) {
-      for (String optionBat : optionsBat) {
-        if (optionBat.toLowerCase().contains("option")) {
-          String name = FilenameUtils.getBaseName(optionBat);
-          getOptions().add(name);
+      Collection<File> txtFiles = org.apache.commons.io.FileUtils.listFiles(packFolder, new String[]{"txt"}, true);
+      for (File txtFile : txtFiles) {
+        if(txtFile.length() > 0) {
+          String path = txtFile.getAbsolutePath().replaceAll("\\\\", "/");
+          path = path.substring(path.indexOf(packFolder.getName()) + packFolder.getName().length() +1);
+          getTxtFiles().add(path);
         }
       }
 
-      File optionsFolder = new File(packFolder, "PuP-Pack_Options");
-      if (optionsFolder.exists()) {
-        for (String option : getOptions()) {
-          File optionFolder = new File(optionsFolder, option);
 
-          if (optionFolder.exists()) {
-            File screensPup = new File(optionFolder, SCREENS_PUP);
-            File triggersPup = new File(optionFolder, TRIGGERS_PUP);
-            File playlistsPup = new File(optionFolder, PLAYLISTS_PUP);
+      this.getOptions().clear();
+      this.getMissingResources().clear();
+      this.selectedOption = null;
 
-            if (screensPup.exists() && triggersPup.exists() && playlistsPup.exists()
-                && this.screensPup.exists() && this.triggersPup.exists() && this.playlistPup.exists()) {
-              long length = screensPup.length() + triggersPup.length() + playlistsPup.length();
-              if (length == this.playlistPup.length() + this.screensPup.length() + this.triggersPup.length()) {
-                selectedOption = option;
-                break;
+      String[] optionsBat = packFolder.list((dir, name) -> name.endsWith(".bat"));
+      if (optionsBat != null) {
+        for (String optionBat : optionsBat) {
+          if (optionBat.toLowerCase().contains("option")) {
+            String name = FilenameUtils.getBaseName(optionBat);
+            getOptions().add(name);
+          }
+        }
+
+        File optionsFolder = new File(packFolder, "PuP-Pack_Options");
+        if (optionsFolder.exists()) {
+          for (String option : getOptions()) {
+            File optionFolder = new File(optionsFolder, option);
+
+            if (optionFolder.exists()) {
+              File screensPup = new File(optionFolder, SCREENS_PUP);
+              File triggersPup = new File(optionFolder, TRIGGERS_PUP);
+              File playlistsPup = new File(optionFolder, PLAYLISTS_PUP);
+
+              if (screensPup.exists() && triggersPup.exists() && playlistsPup.exists()
+                  && this.screensPup.exists() && this.triggersPup.exists() && this.playlistPup.exists()) {
+                long length = screensPup.length() + triggersPup.length() + playlistsPup.length();
+                if (length == this.playlistPup.length() + this.screensPup.length() + this.triggersPup.length()) {
+                  selectedOption = option;
+                  break;
+                }
               }
             }
           }
         }
       }
-    }
 
-    if(getTriggersPup().exists()) {
-      List<TriggerEntry> entries = getTriggersPup().getEntries();
-      for (TriggerEntry entry : entries) {
-        if (entry.isActive()) {
-          String path = entry.getPlayList();
-          String file = entry.getPlayFile();
-          if (!StringUtils.isEmpty(file)) {
-            path = path + "/" + file;
-          }
-          File resource = new File(packFolder, path);
-          if (!resource.exists()) {
-            missingResources.add(path);
+      if (getTriggersPup().exists()) {
+        List<TriggerEntry> entries = getTriggersPup().getEntries();
+        for (TriggerEntry entry : entries) {
+          if (entry.isActive()) {
+            String path = entry.getPlayList();
+            String file = entry.getPlayFile();
+            if (!StringUtils.isEmpty(file)) {
+              path = path + "/" + file;
+            }
+            File resource = new File(packFolder, path);
+            if (!resource.exists()) {
+              missingResources.add(path);
+            }
           }
         }
       }
+    } catch (Exception e) {
+      LOG.error("Failed to load PUP pack \"" + packFolder.getAbsolutePath() + "\": " + e.getMessage(), e);
     }
   }
 
@@ -186,8 +210,7 @@ public class PupPack {
       } catch (Exception e) {
         LOG.error("Error executing shutdown: " + e.getMessage(), e);
         return JobExecutionResultFactory.error("Error executing shutdown: " + e.getMessage());
-      }
-      finally {
+      } finally {
         this.load();
       }
     }

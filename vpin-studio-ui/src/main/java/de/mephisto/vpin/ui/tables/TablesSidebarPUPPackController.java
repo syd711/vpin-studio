@@ -9,9 +9,13 @@ import de.mephisto.vpin.restclient.representations.PupPackRepresentation;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.util.Dialogs;
 import javafx.application.Platform;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
 import org.apache.commons.lang3.StringUtils;
@@ -19,6 +23,8 @@ import org.kordamp.ikonli.javafx.FontIcon;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.awt.*;
+import java.io.File;
 import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.List;
@@ -37,6 +43,9 @@ public class TablesSidebarPUPPackController implements Initializable {
   private Button reloadBtn;
 
   @FXML
+  private Button openBtn;
+
+  @FXML
   private Label lastModifiedLabel;
 
   @FXML
@@ -50,6 +59,9 @@ public class TablesSidebarPUPPackController implements Initializable {
 
   @FXML
   private ComboBox<String> optionsCombo;
+
+  @FXML
+  private ComboBox<String> txtsCombo;
 
   @FXML
   private CheckBox enabledCheckbox;
@@ -82,6 +94,7 @@ public class TablesSidebarPUPPackController implements Initializable {
   private Button applyBtn;
 
   private TablesSidebarController tablesSidebarController;
+  private PupPackRepresentation pupPack;
 
   // Add a public no-args constructor
   public TablesSidebarPUPPackController() {
@@ -138,6 +151,24 @@ public class TablesSidebarPUPPackController implements Initializable {
   }
 
   @FXML
+  private void onOpen() {
+    String value = txtsCombo.getValue();
+    if (!StringUtils.isEmpty(value)) {
+      if (Studio.client.getSystemService().isLocal()) {
+        Desktop desktop = Desktop.isDesktopSupported() ? Desktop.getDesktop() : null;
+        if (desktop != null && desktop.isSupported(Desktop.Action.OPEN)) {
+          try {
+            File file = new File(pupPack.getPath(), value);
+            desktop.open(file);
+          } catch (Exception e) {
+            LOG.error("Failed to open discord link: " + e.getMessage(), e);
+          }
+        }
+      }
+    }
+  }
+
+  @FXML
   private void onUpload() {
     if (game.isPresent()) {
       GameRepresentation g = game.get();
@@ -158,6 +189,7 @@ public class TablesSidebarPUPPackController implements Initializable {
     emptyDataBox.setVisible(true);
 
     optionsCombo.valueProperty().addListener((observable, oldValue, newValue) -> applyBtn.setDisable(StringUtils.isEmpty(newValue)));
+    txtsCombo.valueProperty().addListener((observable, oldValue, newValue) -> openBtn.setDisable(StringUtils.isEmpty(newValue)));
   }
 
   public void setGame(Optional<GameRepresentation> game) {
@@ -166,12 +198,18 @@ public class TablesSidebarPUPPackController implements Initializable {
   }
 
   public void refreshView(Optional<GameRepresentation> g) {
+    this.pupPack = null;
     reloadBtn.setDisable(g.isEmpty());
 
     enabledCheckbox.setVisible(false);
     dataBox.setVisible(false);
     emptyDataBox.setVisible(true);
     uploadBtn.setDisable(true);
+    openBtn.setDisable(true);
+
+    txtsCombo.getItems().clear();
+    txtsCombo.setItems(FXCollections.emptyObservableList());
+    txtsCombo.setDisable(true);
 
     bundleSizeLabel.setText("-");
     lastModifiedLabel.setText("-");
@@ -193,7 +231,7 @@ public class TablesSidebarPUPPackController implements Initializable {
 
     if (g.isPresent()) {
       GameRepresentation game = g.get();
-      PupPackRepresentation pupPack = Studio.client.getPupPackService().getPupPack(game.getId());
+      pupPack = Studio.client.getPupPackService().getPupPack(game.getId());
       boolean pupPackAvailable = pupPack != null;
 
       reloadBtn.setDisable(!pupPackAvailable);
@@ -209,6 +247,10 @@ public class TablesSidebarPUPPackController implements Initializable {
         List<String> options = pupPack.getOptions();
         optionsCombo.setItems(FXCollections.observableList(options));
         optionsCombo.setDisable(options.isEmpty());
+
+        List<String> txts = pupPack.getTxtFiles();
+        txtsCombo.setItems(FXCollections.observableList(txts));
+        txtsCombo.setDisable(txts.isEmpty());
 
         applyBtn.setDisable(true);
         if (!StringUtils.isEmpty(pupPack.getSelectedOption())) {

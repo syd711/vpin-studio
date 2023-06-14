@@ -11,6 +11,8 @@ public class PupPackRepresentation {
   private Date modificationDate;
   private boolean enabled;
   private List<String> options = new ArrayList<>();
+  private List<String> txtFiles = new ArrayList<>();
+  private String path;
 
   private ScreenMode screenBackglassMode;
   private ScreenMode screenDMDMode;
@@ -18,6 +20,22 @@ public class PupPackRepresentation {
   private ScreenMode screenTopperMode;
 
   private String selectedOption;
+
+  public String getPath() {
+    return path;
+  }
+
+  public void setPath(String path) {
+    this.path = path;
+  }
+
+  public List<String> getTxtFiles() {
+    return txtFiles;
+  }
+
+  public void setTxtFiles(List<String> txtFiles) {
+    this.txtFiles = txtFiles;
+  }
 
   public String getSelectedOption() {
     return selectedOption;

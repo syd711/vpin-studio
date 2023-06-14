@@ -112,6 +112,7 @@ public class PupPacksResource {
   private PupPackRepresentation toPupPackRepresentation(@NonNull PupPack pupPack) {
     PupPackRepresentation representation = new PupPackRepresentation();
     representation.setSize(pupPack.getSize());
+    representation.setPath(pupPack.getPupPackFolder().getPath());
     representation.setModificationDate(new Date(pupPack.getPupPackFolder().lastModified()));
     representation.setOptions(pupPack.getOptions());
     representation.setScreenDMDMode(pupPack.getScreenMode(PopperScreen.DMD));
@@ -120,6 +121,7 @@ public class PupPacksResource {
     representation.setScreenFullDMDMode(pupPack.getScreenMode(PopperScreen.FullDMD));
     representation.setMissingResources(pupPack.getMissingResources());
     representation.setSelectedOption(pupPack.getSelectedOption());
+    representation.setTxtFiles(pupPack.getTxtFiles());
     return representation;
   }
 }
