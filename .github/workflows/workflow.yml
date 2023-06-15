@@ -42,7 +42,9 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: VPin-Studio-Server.zip
-          path: ${{ github.workspace }}/Output/VPin-Studio/
+          path: |
+            ${{ github.workspace }}/Output/VPin-Studio/*Installer*.exe
+            ${{ github.workspace }}/Output/VPin-Studio/*.zip
           if-no-files-found: error
 
       - name: Draft Release
