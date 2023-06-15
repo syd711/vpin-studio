@@ -2,7 +2,7 @@ package de.mephisto.vpin.ui.tables.dialogs;
 
 import de.mephisto.vpin.commons.fx.DialogController;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
-import de.mephisto.vpin.restclient.ResourceList;
+import de.mephisto.vpin.restclient.SystemData;
 import de.mephisto.vpin.restclient.jobs.JobExecutionResult;
 import de.mephisto.vpin.restclient.jobs.JobType;
 import de.mephisto.vpin.ui.Studio;
@@ -38,7 +38,7 @@ public class TableImportController implements Initializable, DialogController {
 
   @FXML
   private void onSaveClick(ActionEvent e) {
-    ResourceList importList = new ResourceList();
+    SystemData importList = new SystemData();
     for (CheckBox checkBox : checkBoxes) {
       if (checkBox.isSelected()) {
         importList.getItems().add(checkBox.getText());
@@ -69,7 +69,7 @@ public class TableImportController implements Initializable, DialogController {
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
-    ResourceList importableTables = client.getPinUPPopperService().getImportableTables();
+    SystemData importableTables = client.getPinUPPopperService().getImportableTables();
     List<String> items = importableTables.getItems();
     saveBtn.setDisable(items.isEmpty());
 

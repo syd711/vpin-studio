@@ -3,7 +3,9 @@ package de.mephisto.vpin.server.system;
 import de.mephisto.vpin.commons.ServerInstallationUtil;
 import de.mephisto.vpin.commons.utils.Updater;
 import de.mephisto.vpin.restclient.ScreenInfo;
+import de.mephisto.vpin.restclient.SystemData;
 import de.mephisto.vpin.server.util.RequestUtil;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,7 +15,9 @@ import org.springframework.web.bind.annotation.*;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URLDecoder;
 import java.net.URLEncoder;
+import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -104,6 +108,20 @@ public class SystemResource {
   @GetMapping("/screens")
   public ScreenInfo screens() {
     return systemService.getScreenInfo();
+  }
+
+  @PostMapping("/text")
+  public String getText(@RequestBody SystemData data) {
+    File file = new File(data.getPath());
+    if (file.exists()) {
+      try {
+        return FileUtils.readFileToString(file, Charset.defaultCharset());
+      } catch (IOException e) {
+        LOG.error("Failed to read file " + data.getPath() + ": " + e.getMessage(), e);
+      }
+    }
+    LOG.warn("File " + data.getPath() + " does not exists.");
+    return "";
   }
 
   @GetMapping("/badge/{name}")

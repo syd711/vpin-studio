@@ -1,6 +1,6 @@
 package de.mephisto.vpin.restclient.client;
 
-import de.mephisto.vpin.restclient.ResourceList;
+import de.mephisto.vpin.restclient.SystemData;
 import de.mephisto.vpin.restclient.jobs.JobExecutionResult;
 import de.mephisto.vpin.restclient.popper.PinUPControl;
 import de.mephisto.vpin.restclient.popper.PinUPControls;
@@ -23,11 +23,11 @@ public class PinUPPopperServiceClient extends VPinStudioClientService {
     super(client);
   }
 
-  public ResourceList getImportableTables() {
-    return getRestClient().get(API + "popper/imports", ResourceList.class);
+  public SystemData getImportableTables() {
+    return getRestClient().get(API + "popper/imports", SystemData.class);
   }
 
-  public JobExecutionResult importTables(ResourceList resourceList) throws Exception {
+  public JobExecutionResult importTables(SystemData resourceList) throws Exception {
     try {
       return getRestClient().post(API + "popper/import", resourceList, JobExecutionResult.class);
     } catch (Exception e) {

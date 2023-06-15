@@ -1,6 +1,7 @@
 package de.mephisto.vpin.restclient.client;
 
 import de.mephisto.vpin.restclient.ScreenInfo;
+import de.mephisto.vpin.restclient.SystemData;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.client.RestTemplate;
@@ -93,6 +94,17 @@ public class SystemServiceClient extends VPinStudioClientService {
       LOG.error("Failed to read screen info: " + e.getMessage());
     }
     return null;
+  }
+
+  public String getText(String filename) {
+    try {
+      SystemData data = new SystemData();
+      data.setPath(filename);
+      return getRestClient().post(API + "system/text", filename, String.class);
+    } catch (Exception e) {
+      LOG.error("Failed to read system file: " + e.getMessage(), e);
+    }
+    return "";
   }
 
   public void clearCache() {

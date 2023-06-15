@@ -2,7 +2,7 @@ package de.mephisto.vpin.server.popper;
 
 import de.mephisto.vpin.commons.EmulatorType;
 import de.mephisto.vpin.commons.fx.UIDefaults;
-import de.mephisto.vpin.restclient.ResourceList;
+import de.mephisto.vpin.restclient.SystemData;
 import de.mephisto.vpin.restclient.TableManagerSettings;
 import de.mephisto.vpin.restclient.jobs.JobExecutionResult;
 import de.mephisto.vpin.restclient.jobs.JobExecutionResultFactory;
@@ -57,8 +57,8 @@ public class PopperService implements InitializingBean {
     this.listeners.add(listener);
   }
 
-  public ResourceList getImportTables() {
-    ResourceList list = new ResourceList();
+  public SystemData getImportTables() {
+    SystemData list = new SystemData();
     File vpxTablesFolder = systemService.getVPXTablesFolder();
     File[] files = vpxTablesFolder.listFiles((dir, name) -> name.endsWith(".vpx"));
     if (files != null) {
@@ -73,7 +73,7 @@ public class PopperService implements InitializingBean {
     return list;
   }
 
-  public JobExecutionResult importTables(ResourceList resourceList) {
+  public JobExecutionResult importTables(SystemData resourceList) {
     List<String> items = resourceList.getItems();
     int count = 0;
     for (String item : items) {

@@ -18,6 +18,7 @@ import de.mephisto.vpin.ui.players.PlayerDialogController;
 import de.mephisto.vpin.ui.tables.TablesController;
 import de.mephisto.vpin.ui.tables.TablesSidebarController;
 import de.mephisto.vpin.ui.tables.dialogs.*;
+import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXMLLoader;
@@ -29,12 +30,20 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import java.awt.*;
+import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 import java.util.Optional;
 
 public class Dialogs {
+  private final static Logger LOG = LoggerFactory.getLogger(Dialogs.class);
 
   public static PlayerRepresentation openPlayerDialog(PlayerRepresentation selection) {
     String title = "Add New Player";
@@ -300,6 +309,32 @@ public class Dialogs {
     stage.showAndWait();
     return true;
   }
+
+  public static void openFile(@NonNull File file) {
+    if (Studio.client.getSystemService().isLocal()) {
+      try {
+        String content= Studio.client.getSystemService().getText(file.getAbsolutePath().replaceAll("\\\\", "/"));
+        file = File.createTempFile(file.getName(), ".txt");
+        file.deleteOnExit();
+        Path path = Paths.get(file.toURI());
+        Files.write(path, content.getBytes());
+      } catch (IOException e) {
+        LOG.error("Failed to create temporary file for text file: " + e.getMessage());
+        WidgetFactory.showAlert(Studio.stage, "Error", "Failed to create temporary file for text file: " + e.getMessage());
+        return;
+      }
+    }
+
+    Desktop desktop = Desktop.isDesktopSupported() ? Desktop.getDesktop() : null;
+    if (desktop != null && desktop.isSupported(Desktop.Action.OPEN)) {
+      try {
+        desktop.open(file);
+      } catch (Exception e) {
+        LOG.error("Failed to open discord link: " + e.getMessage(), e);
+      }
+    }
+  }
+
 
   public static ProgressResultModel createProgressDialog(ProgressModel model) {
     Stage stage = createStudioDialogStage("dialog-progress.fxml", model.getTitle());

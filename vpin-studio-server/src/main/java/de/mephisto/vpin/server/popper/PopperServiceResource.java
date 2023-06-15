@@ -6,7 +6,6 @@ import de.mephisto.vpin.restclient.popper.PinUPControl;
 import de.mephisto.vpin.restclient.popper.PinUPControls;
 import de.mephisto.vpin.restclient.popper.PopperScreen;
 import de.mephisto.vpin.restclient.popper.TableDetails;
-import de.mephisto.vpin.server.system.SystemService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -25,12 +24,12 @@ public class PopperServiceResource {
   private PopperService popperService;
 
   @GetMapping("/imports")
-  public ResourceList getImportTables() {
+  public SystemData getImportTables() {
     return popperService.getImportTables();
   }
 
   @PostMapping("/import")
-  public JobExecutionResult importTables(@RequestBody ResourceList resourceList) {
+  public JobExecutionResult importTables(@RequestBody SystemData resourceList) {
     return popperService.importTables(resourceList);
   }
 

@@ -112,7 +112,7 @@ public class PupPacksResource {
   private PupPackRepresentation toPupPackRepresentation(@NonNull PupPack pupPack) {
     PupPackRepresentation representation = new PupPackRepresentation();
     representation.setSize(pupPack.getSize());
-    representation.setPath(pupPack.getPupPackFolder().getPath());
+    representation.setPath(pupPack.getPupPackFolder().getPath().replaceAll("\\\\", "/"));
     representation.setModificationDate(new Date(pupPack.getPupPackFolder().lastModified()));
     representation.setOptions(pupPack.getOptions());
     representation.setScreenDMDMode(pupPack.getScreenMode(PopperScreen.DMD));

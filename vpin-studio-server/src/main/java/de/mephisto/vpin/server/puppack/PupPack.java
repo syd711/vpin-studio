@@ -117,7 +117,6 @@ public class PupPack {
         }
       }
 
-
       this.getOptions().clear();
       this.getMissingResources().clear();
       this.selectedOption = null;

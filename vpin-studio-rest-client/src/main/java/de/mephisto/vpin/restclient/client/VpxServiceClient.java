@@ -85,12 +85,12 @@ public class VpxServiceClient extends VPinStudioClientService {
     if (!StringUtils.isEmpty(src)) {
       try {
         File tmp = File.createTempFile(game.getGameDisplayName() + "-script-src", ".txt");
+        tmp.deleteOnExit();
 
         Path path = Paths.get(tmp.toURI());
         byte[] strToBytes = src.getBytes();
         Files.write(path, strToBytes);
 
-        tmp.deleteOnExit();
         return tmp;
       } catch (IOException e) {
         LOG.error("Failed to create temp file for script: " + e.getMessage(), e);

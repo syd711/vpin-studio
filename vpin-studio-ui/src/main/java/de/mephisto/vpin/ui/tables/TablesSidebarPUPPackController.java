@@ -9,13 +9,9 @@ import de.mephisto.vpin.restclient.representations.PupPackRepresentation;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.util.Dialogs;
 import javafx.application.Platform;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
 import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
 import org.apache.commons.lang3.StringUtils;
@@ -23,7 +19,6 @@ import org.kordamp.ikonli.javafx.FontIcon;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.awt.*;
 import java.io.File;
 import java.net.URL;
 import java.text.SimpleDateFormat;
@@ -154,17 +149,8 @@ public class TablesSidebarPUPPackController implements Initializable {
   private void onOpen() {
     String value = txtsCombo.getValue();
     if (!StringUtils.isEmpty(value)) {
-      if (Studio.client.getSystemService().isLocal()) {
-        Desktop desktop = Desktop.isDesktopSupported() ? Desktop.getDesktop() : null;
-        if (desktop != null && desktop.isSupported(Desktop.Action.OPEN)) {
-          try {
-            File file = new File(pupPack.getPath(), value);
-            desktop.open(file);
-          } catch (Exception e) {
-            LOG.error("Failed to open discord link: " + e.getMessage(), e);
-          }
-        }
-      }
+      File file = new File(pupPack.getPath(), value);
+      Dialogs.openFile(file);
     }
   }
 
