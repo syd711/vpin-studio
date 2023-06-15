@@ -12,3 +12,4 @@
 - Fixed issues with older PinUP Popper installation where emulator names where different.
 - Added detection of portrait modes.
 - Reordered table overview sections.
+- Added github workflow for release generation.
