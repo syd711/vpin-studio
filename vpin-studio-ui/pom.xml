@@ -293,31 +293,50 @@
             </plugin>
 
             <plugin>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <version>1.8</version>
+                <executions>
+                    <execution>
+                        <phase>generate-resources</phase>
+                        <configuration>
+                            <tasks>
+                                <echo message="Unzipping JDK" />
+                                <unzip src="../jdk-11.0.17+8-jre.zip" dest="../Output/VPin-Studio/win32/java/" />
+                            </tasks>
+                        </configuration>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
                 <!-- This copies the JRE used to do the build from java.home - should be 32 bit Windows JRE -->
                 <artifactId>maven-resources-plugin</artifactId>
                 <version>2.6</version>
                 <executions>
-                    <execution>
-                        <id>copy-from-jdk</id>
-                        <!-- here the phase you need -->
-                        <phase>package</phase>
-                        <goals>
-                            <goal>copy-resources</goal>
-                        </goals>
-                        <configuration>
-                            <outputDirectory>${basedir}/../Output/VPin-Studio/win32/java</outputDirectory>
-                            <resources>
-                                <!-- //TODO use java home -->
-                                <resource>
-                                    <!--                                    <directory>${java.home}</directory>-->
-                                    <directory>E:/Development/tools/jdk-11.0.17+8-jre</directory>
-                                    <excludes>
-                                        <exclude>**/*.zip</exclude>
-                                    </excludes>
-                                </resource>
-                            </resources>
-                        </configuration>
-                    </execution>
+<!--                    <execution>-->
+<!--                        <id>copy-from-jdk</id>-->
+<!--                        &lt;!&ndash; here the phase you need &ndash;&gt;-->
+<!--                        <phase>package</phase>-->
+<!--                        <goals>-->
+<!--                            <goal>copy-resources</goal>-->
+<!--                        </goals>-->
+<!--                        <configuration>-->
+<!--                            <outputDirectory>${basedir}/../Output/VPin-Studio/win32/java</outputDirectory>-->
+<!--                            <resources>-->
+<!--                                &lt;!&ndash; //TODO use java home &ndash;&gt;-->
+<!--                                <resource>-->
+<!--                                    &lt;!&ndash;                                    <directory>${java.home}</directory>&ndash;&gt;-->
+<!--                                    <directory>E:/Development/tools/jdk-11.0.17+8-jre</directory>-->
+<!--                                    <excludes>-->
+<!--                                        <exclude>**/*.zip</exclude>-->
+<!--                                    </excludes>-->
+<!--                                </resource>-->
+<!--                            </resources>-->
+<!--                        </configuration>-->
+<!--                    </execution>-->
 
                     <execution>
                         <id>copy-exe</id>

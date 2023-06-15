@@ -122,27 +122,27 @@
         </executions>
       </plugin>
       <plugin>
+        <artifactId>maven-antrun-plugin</artifactId>
+        <version>1.8</version>
+        <executions>
+          <execution>
+            <phase>generate-resources</phase>
+            <goals>
+              <goal>run</goal>
+            </goals>
+            <configuration>
+              <tasks>
+                <echo />
+                <unzip />
+              </tasks>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
         <artifactId>maven-resources-plugin</artifactId>
         <version>2.6</version>
         <executions>
-          <execution>
-            <id>copy-from-jdk</id>
-            <phase>package</phase>
-            <goals>
-              <goal>copy-resources</goal>
-            </goals>
-            <configuration>
-              <outputDirectory>${basedir}/../Output/VPin-Studio/win32/java</outputDirectory>
-              <resources>
-                <resource>
-                  <directory>E:/Development/tools/jdk-11.0.17+8-jre</directory>
-                  <excludes>
-                    <exclude>**/*.zip</exclude>
-                  </excludes>
-                </resource>
-              </resources>
-            </configuration>
-          </execution>
           <execution>
             <id>copy-exe</id>
             <phase>package</phase>
