@@ -56,7 +56,7 @@ jobs:
           # with permissions to create releases in the other repo
           token: ${{ secrets.CUSTOM_GITHUB_TOKEN }}
           files: |
-            ${{ github.workspace }}/Output/VPin-Studio/VPin-Studio-Client-Installer*.exe
-            ${{ github.workspace }}/Output/VPin-Studio/VPin-Studio-Server.zip
+            ./Output/VPin-Studio/VPin-Studio-Client-Installer*.exe
+            ./Output/VPin-Studio/VPin-Studio-Server.zip
         env:
           GITHUB_REPOSITORY: https://github.com/syd711/vpin-studio
