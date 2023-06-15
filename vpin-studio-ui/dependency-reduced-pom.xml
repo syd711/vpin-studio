@@ -122,19 +122,22 @@
         </executions>
       </plugin>
       <plugin>
-        <artifactId>maven-antrun-plugin</artifactId>
-        <version>1.8</version>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>exec-maven-plugin</artifactId>
         <executions>
           <execution>
-            <phase>generate-resources</phase>
+            <id>unzip jdk</id>
+            <phase>package</phase>
             <goals>
-              <goal>run</goal>
+              <goal>exec</goal>
             </goals>
             <configuration>
-              <tasks>
-                <echo />
-                <unzip />
-              </tasks>
+              <executable>${basedir}/../resources/7z.exe</executable>
+              <arguments>
+                <argument>x</argument>
+                <argument>../jdk-11.0.17+8-jre.7z</argument>
+                <argument>-o../Output/VPin-Studio/win32/java/</argument>
+              </arguments>
             </configuration>
           </execution>
         </executions>

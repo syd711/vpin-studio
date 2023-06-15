@@ -292,21 +292,43 @@
                 </executions>
             </plugin>
 
+<!--            <plugin>-->
+<!--                <artifactId>maven-antrun-plugin</artifactId>-->
+<!--                <version>1.8</version>-->
+<!--                <executions>-->
+<!--                    <execution>-->
+<!--                        <phase>generate-resources</phase>-->
+<!--                        <configuration>-->
+<!--                            <tasks>-->
+<!--                                <echo message="Unzipping JDK" />-->
+<!--                                <unzip src="../jdk-11.0.17+8-jre.zip" dest="../Output/VPin-Studio/win32/java/" />-->
+<!--                            </tasks>-->
+<!--                        </configuration>-->
+<!--                        <goals>-->
+<!--                            <goal>run</goal>-->
+<!--                        </goals>-->
+<!--                    </execution>-->
+<!--                </executions>-->
+<!--            </plugin>-->
+
             <plugin>
-                <artifactId>maven-antrun-plugin</artifactId>
-                <version>1.8</version>
+                <artifactId>exec-maven-plugin</artifactId>
+                <groupId>org.codehaus.mojo</groupId>
                 <executions>
                     <execution>
-                        <phase>generate-resources</phase>
-                        <configuration>
-                            <tasks>
-                                <echo message="Unzipping JDK" />
-                                <unzip src="../jdk-11.0.17+8-jre.zip" dest="../Output/VPin-Studio/win32/java/" />
-                            </tasks>
-                        </configuration>
+                        <id>unzip jdk</id>
+                        <phase>package</phase>
                         <goals>
-                            <goal>run</goal>
+                            <goal>exec</goal>
                         </goals>
+                        <configuration>
+                            <executable>7z.exe</executable>
+                            <arguments>
+                                <argument>x</argument>
+                                <argument>../jdk-11.0.17+8-jre.7z</argument>
+                                <argument>-o../Output/VPin-Studio/win32/java/</argument>
+                            </arguments>
+                        </configuration>
                     </execution>
                 </executions>
             </plugin>
