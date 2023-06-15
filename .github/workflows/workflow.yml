@@ -38,13 +38,20 @@ jobs:
       - name: Build with Maven
         run: mvn --batch-mode --update-snapshots clean package -DskipTests
 
-      - name: Upload Build Artifacts
+      - name: Upload Server Update
         uses: actions/upload-artifact@v2
         with:
           name: VPin-Studio-Server.zip
           path: |
-            ${{ github.workspace }}/Output/VPin-Studio/*Installer*.exe
-            ${{ github.workspace }}/Output/VPin-Studio/*.zip
+            ${{ github.workspace }}/Output/VPin-Studio/VPin-Studio-Server.zip
+          if-no-files-found: error
+
+      - name: Upload UI Update
+        uses: actions/upload-artifact@v2
+        with:
+          name: VPin-Studio.zip
+          path: |
+            ${{ github.workspace }}/Output/VPin-Studio/VPin-Studio.zip
           if-no-files-found: error
 
       - name: Draft Release
