@@ -122,30 +122,27 @@
         </executions>
       </plugin>
       <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>exec-maven-plugin</artifactId>
-        <executions>
-          <execution>
-            <id>unzip jdk</id>
-            <phase>package</phase>
-            <goals>
-              <goal>exec</goal>
-            </goals>
-            <configuration>
-              <executable>${basedir}/../resources/7z.exe</executable>
-              <arguments>
-                <argument>x</argument>
-                <argument>../jdk-11.0.17+8-jre.7z</argument>
-                <argument>-o../Output/VPin-Studio/win32/java/</argument>
-              </arguments>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
-      <plugin>
         <artifactId>maven-resources-plugin</artifactId>
         <version>2.6</version>
         <executions>
+          <execution>
+            <id>copy-from-jdk</id>
+            <phase>package</phase>
+            <goals>
+              <goal>copy-resources</goal>
+            </goals>
+            <configuration>
+              <outputDirectory>${basedir}/../Output/VPin-Studio/win32/java</outputDirectory>
+              <resources>
+                <resource>
+                  <directory>${basedir}/../jdk-11.0.17+8-jre</directory>
+                  <excludes>
+                    <exclude>**/*.zip</exclude>
+                  </excludes>
+                </resource>
+              </resources>
+            </configuration>
+          </execution>
           <execution>
             <id>copy-exe</id>
             <phase>package</phase>
