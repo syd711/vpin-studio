@@ -51,9 +51,12 @@ jobs:
         with:
           body_path: RELEASE_NOTES.md
           draft: true
+          name: ${{ steps.set-release-version.outputs.version }}
           tag_name: ${{ steps.set-release-version.outputs.version }}
           files: |
             ./Output/VPin-Studio/VPin-Studio-Client-Installer*.exe
+            ./Output/VPin-Studio/VPin-Studio-Full-Installer*.exe
             ./Output/VPin-Studio/VPin-Studio-Server.zip
+            ./Output/VPin-Studio/VPin-Studio.zip
         env:
           GITHUB_REPOSITORY: https://github.com/syd711/vpin-studio
