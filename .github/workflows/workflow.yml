@@ -23,5 +23,8 @@ jobs:
           key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
           restore-keys: |
             ${{ runner.os }}-maven-
+      - name: List files in the repository
+        run: |
+          ls ${{ github.workspace }}
       - name: Build with Maven
         run: mvn --batch-mode --update-snapshots clean package -DskipTests
