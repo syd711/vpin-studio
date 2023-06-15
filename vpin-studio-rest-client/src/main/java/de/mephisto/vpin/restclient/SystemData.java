@@ -5,7 +5,16 @@ import java.util.List;
 
 public class SystemData {
   private String path;
+  private String data;
   private List<String> items = new ArrayList<>();
+
+  public String getData() {
+    return data;
+  }
+
+  public void setData(String data) {
+    this.data = data;
+  }
 
   public String getPath() {
     return path;

@@ -96,15 +96,15 @@ public class SystemServiceClient extends VPinStudioClientService {
     return null;
   }
 
-  public String getText(String filename) {
+  public SystemData getSystemData(String filename) {
     try {
       SystemData data = new SystemData();
       data.setPath(filename);
-      return getRestClient().post(API + "system/text", filename, String.class);
+      return getRestClient().post(API + "system/text", data, SystemData.class);
     } catch (Exception e) {
       LOG.error("Failed to read system file: " + e.getMessage(), e);
     }
-    return "";
+    return null;
   }
 
   public void clearCache() {

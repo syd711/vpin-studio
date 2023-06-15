@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
@@ -111,17 +110,19 @@ public class SystemResource {
   }
 
   @PostMapping("/text")
-  public String getText(@RequestBody SystemData data) {
+  public SystemData getText(@RequestBody SystemData data) {
     File file = new File(data.getPath());
     if (file.exists()) {
       try {
-        return FileUtils.readFileToString(file, Charset.defaultCharset());
+        String s = FileUtils.readFileToString(file, Charset.defaultCharset());
+        data.setData(s);
+        return data;
       } catch (IOException e) {
         LOG.error("Failed to read file " + data.getPath() + ": " + e.getMessage(), e);
       }
     }
     LOG.warn("File " + data.getPath() + " does not exists.");
-    return "";
+    return data;
   }
 
   @GetMapping("/badge/{name}")

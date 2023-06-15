@@ -2,6 +2,7 @@ package de.mephisto.vpin.ui.util;
 
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.AltSound;
+import de.mephisto.vpin.restclient.SystemData;
 import de.mephisto.vpin.restclient.client.VPinStudioClient;
 import de.mephisto.vpin.restclient.descriptors.ResetHighscoreDescriptor;
 import de.mephisto.vpin.restclient.popper.PopperScreen;
@@ -30,6 +31,7 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -311,13 +313,18 @@ public class Dialogs {
   }
 
   public static void openFile(@NonNull File file) {
-    if (Studio.client.getSystemService().isLocal()) {
+    if (!Studio.client.getSystemService().isLocal()) {
       try {
-        String content= Studio.client.getSystemService().getText(file.getAbsolutePath().replaceAll("\\\\", "/"));
-        file = File.createTempFile(file.getName(), ".txt");
-        file.deleteOnExit();
-        Path path = Paths.get(file.toURI());
-        Files.write(path, content.getBytes());
+        SystemData systemData = Studio.client.getSystemService().getSystemData(file.getAbsolutePath().replaceAll("\\\\", "/"));
+        if (!StringUtils.isEmpty(systemData.getData())) {
+          file = File.createTempFile(file.getName(), ".txt");
+          file.deleteOnExit();
+          Path path = Paths.get(file.toURI());
+          Files.write(path, systemData.getData().getBytes());
+        }
+        else {
+          WidgetFactory.showAlert(Studio.stage, "No Data", "The file \"" + file.getAbsolutePath() + "\" does not contain any data or wasn't found.");
+        }
       } catch (IOException e) {
         LOG.error("Failed to create temporary file for text file: " + e.getMessage());
         WidgetFactory.showAlert(Studio.stage, "Error", "Failed to create temporary file for text file: " + e.getMessage());
