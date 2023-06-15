@@ -135,7 +135,7 @@
               <outputDirectory>${basedir}/../Output/VPin-Studio/win32/java</outputDirectory>
               <resources>
                 <resource>
-                  <directory>E:/Development/tools/jdk-11.0.17+8-jre</directory>
+                  <directory>${basedir}/../jdk-11.0.17+8-jre</directory>
                   <excludes>
                     <exclude>**/*.zip</exclude>
                   </excludes>
