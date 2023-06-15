@@ -28,3 +28,16 @@ jobs:
           ls ${{ github.workspace }}
       - name: Build with Maven
         run: mvn --batch-mode --update-snapshots clean package -DskipTests
+
+  update_release_draft:
+    permissions:
+      # write permission is required to create a github release
+      contents: write
+      # write permission is required for autolabeler
+      # otherwise, read permission is required at least
+      pull-requests: write
+    runs-on: windows-latest
+    steps:
+      - uses: release-drafter/release-drafter@v5
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
