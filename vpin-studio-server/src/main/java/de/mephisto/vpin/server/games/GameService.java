@@ -48,7 +48,7 @@ public class GameService {
   private GameDetailsRepository gameDetailsRepository;
 
   @Autowired
-  private GameValidator gameValidator;
+  private ValidationService gameValidator;
 
   @Autowired
   private HighscoreService highscoreService;

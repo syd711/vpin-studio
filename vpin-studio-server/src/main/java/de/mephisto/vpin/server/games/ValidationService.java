@@ -15,7 +15,6 @@ import org.springframework.stereotype.Service;
 
 import java.io.File;
 import java.util.*;
-import java.util.stream.Collectors;
 
 import static de.mephisto.vpin.restclient.ValidationCode.*;
 
@@ -23,7 +22,7 @@ import static de.mephisto.vpin.restclient.ValidationCode.*;
  * See ValidationTexts
  */
 @Service
-public class GameValidator implements InitializingBean {
+public class ValidationService implements InitializingBean {
 
   private static Map<Integer, PopperScreen> mediaCodeToScreen = new HashMap<>();
 
@@ -182,6 +181,17 @@ public class GameValidator implements InitializingBean {
     }
 
     return ValidationStateFactory.empty();
+  }
+
+  public List<ValidationState> validatePupPack(Game game) {
+    List<ValidationState> result = new ArrayList<>();
+    if (isValidationEnabled(game, CODE_PUP_PACK_FILE_MISSING)) {
+      if (game.isPupPackAvailable() && !game.getPupPack().getMissingResources().isEmpty()) {
+        ValidationState validationState = ValidationStateFactory.create(CODE_PUP_PACK_FILE_MISSING, game.getPupPack().getMissingResources());
+        result.add(validationState);
+      }
+    }
+    return result;
   }
 
 

@@ -6,7 +6,10 @@ import de.mephisto.vpin.restclient.jobs.JobExecutionResult;
 import de.mephisto.vpin.restclient.popper.ScreenMode;
 import de.mephisto.vpin.restclient.representations.GameRepresentation;
 import de.mephisto.vpin.restclient.representations.PupPackRepresentation;
+import de.mephisto.vpin.restclient.representations.ValidationState;
 import de.mephisto.vpin.ui.Studio;
+import de.mephisto.vpin.ui.tables.validation.LocalizedValidation;
+import de.mephisto.vpin.ui.tables.validation.ValidationTexts;
 import de.mephisto.vpin.ui.util.Dialogs;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
@@ -22,6 +25,7 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.net.URL;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
@@ -86,7 +90,16 @@ public class TablesSidebarPUPPackController implements Initializable {
   private Tooltip screenTopperTooltip;
 
   @FXML
+  private VBox errorBox;
+
+  @FXML
   private Button applyBtn;
+
+  @FXML
+  private Label errorTitle;
+
+  @FXML
+  private Label errorText;
 
   private TablesSidebarController tablesSidebarController;
   private PupPackRepresentation pupPack;
@@ -154,6 +167,34 @@ public class TablesSidebarPUPPackController implements Initializable {
     }
   }
 
+
+  @FXML
+  private void onDismiss() {
+    GameRepresentation g = game.get();
+    Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Ignore this warning for future validations of table '" + g.getGameDisplayName() + "?",
+        "The warning can be re-enabled by validating the table again.");
+    if (result.isPresent() && result.get().equals(ButtonType.OK)) {
+      ValidationState validationState = g.getValidationState();
+      List<Integer> ignoredValidations = g.getIgnoredValidations();
+      if (ignoredValidations == null) {
+        ignoredValidations = new ArrayList<>();
+      }
+
+      if (!ignoredValidations.contains(validationState.getCode())) {
+        ignoredValidations.add(validationState.getCode());
+      }
+
+      g.setIgnoredValidations(ignoredValidations);
+
+      try {
+        Studio.client.getGameService().saveGame(g);
+      } catch (Exception e) {
+        WidgetFactory.showAlert(Studio.stage, e.getMessage());
+      }
+      tablesSidebarController.getTablesController().onReload();
+    }
+  }
+
   @FXML
   private void onUpload() {
     if (game.isPresent()) {
@@ -171,8 +212,15 @@ public class TablesSidebarPUPPackController implements Initializable {
   public void initialize(URL url, ResourceBundle resourceBundle) {
     dataBox.managedProperty().bindBidirectional(dataBox.visibleProperty());
     emptyDataBox.managedProperty().bindBidirectional(emptyDataBox.visibleProperty());
+    errorBox.managedProperty().bindBidirectional(errorBox.visibleProperty());
+    errorBox.setVisible(false);
     dataBox.setVisible(false);
     emptyDataBox.setVisible(true);
+
+    openBtn.setText("View");
+    if(Studio.client.getSystemService().isLocal()) {
+      openBtn.setText("Edit");
+    }
 
     optionsCombo.valueProperty().addListener((observable, oldValue, newValue) -> applyBtn.setDisable(StringUtils.isEmpty(newValue)));
     txtsCombo.valueProperty().addListener((observable, oldValue, newValue) -> openBtn.setDisable(StringUtils.isEmpty(newValue)));
@@ -214,6 +262,8 @@ public class TablesSidebarPUPPackController implements Initializable {
     screenDMDTooltip.setText("");
     screenTopperTooltip.setText("");
     screenFullDMDTooltip.setText("");
+
+    errorBox.setVisible(false);
 
     if (g.isPresent()) {
       GameRepresentation game = g.get();
@@ -266,6 +316,14 @@ public class TablesSidebarPUPPackController implements Initializable {
 
         bundleSizeLabel.setText(FileUtils.readableFileSize(pupPack.getSize()));
         lastModifiedLabel.setText(SimpleDateFormat.getDateTimeInstance().format(pupPack.getModificationDate()));
+
+        List<ValidationState> validationStates = pupPack.getValidationStates();
+        errorBox.setVisible(!validationStates.isEmpty());
+        if (!validationStates.isEmpty()) {
+          LocalizedValidation validationResult = ValidationTexts.getValidationResult(game, validationStates.get(0));
+          errorTitle.setText(validationResult.getLabel());
+          errorText.setText(validationResult.getText());
+        }
       }
     }
   }

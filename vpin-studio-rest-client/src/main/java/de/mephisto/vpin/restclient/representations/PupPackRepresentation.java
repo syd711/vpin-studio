@@ -13,6 +13,7 @@ public class PupPackRepresentation {
   private List<String> options = new ArrayList<>();
   private List<String> txtFiles = new ArrayList<>();
   private String path;
+  private List<ValidationState> validationStates;
 
   private ScreenMode screenBackglassMode;
   private ScreenMode screenDMDMode;
@@ -20,6 +21,14 @@ public class PupPackRepresentation {
   private ScreenMode screenTopperMode;
 
   private String selectedOption;
+
+  public List<ValidationState> getValidationStates() {
+    return validationStates;
+  }
+
+  public void setValidationStates(List<ValidationState> validationStates) {
+    this.validationStates = validationStates;
+  }
 
   public String getPath() {
     return path;

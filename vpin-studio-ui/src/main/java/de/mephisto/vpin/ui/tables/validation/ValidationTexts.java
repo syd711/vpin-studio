@@ -3,6 +3,7 @@ package de.mephisto.vpin.ui.tables.validation;
 import de.mephisto.vpin.restclient.representations.GameRepresentation;
 import de.mephisto.vpin.restclient.representations.ValidationState;
 import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
 
 import java.util.List;
 
@@ -15,11 +16,18 @@ public class ValidationTexts {
 
   private final static String NO_MEDIA_TEXT = "Dismiss this message if the table does not support this media or disable the screen in the preferences.";
 
-  public static ValidationResult validate(@NonNull GameRepresentation game) {
+  public static LocalizedValidation validate(@NonNull GameRepresentation game) {
     String label = null;
     String text = null;
 
     ValidationState state = game.getValidationState();
+    return getValidationResult(game, state);
+  }
+
+  @Nullable
+  public static LocalizedValidation getValidationResult(@NonNull GameRepresentation game, ValidationState state) {
+    String text;
+    String label;
     int code = state.getCode();
     switch (code) {
       case CODE_VPX_NOT_EXISTS: {
@@ -132,6 +140,6 @@ public class ValidationTexts {
     }
 
 
-    return new ValidationResult(label, text);
+    return new LocalizedValidation(label, text);
   }
 }

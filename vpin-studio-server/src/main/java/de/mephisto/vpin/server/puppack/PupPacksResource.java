@@ -7,6 +7,7 @@ import de.mephisto.vpin.restclient.popper.PopperScreen;
 import de.mephisto.vpin.restclient.representations.PupPackRepresentation;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameService;
+import de.mephisto.vpin.server.games.ValidationService;
 import de.mephisto.vpin.server.util.UploadUtil;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import org.apache.commons.io.FilenameUtils;
@@ -37,13 +38,16 @@ public class PupPacksResource {
   @Autowired
   private GameService gameService;
 
+  @Autowired
+  private ValidationService validationService;
+
   @GetMapping("/{gameId}")
   public PupPackRepresentation getPupPack(@PathVariable("gameId") int gameId) {
     Game game = gameService.getGame(gameId);
     if (game != null) {
       PupPack pupPack = pupPacksService.getPupPack(game);
       if (pupPack != null) {
-        return toPupPackRepresentation(pupPack);
+        return toPupPackRepresentation(game, pupPack);
       }
     }
     return null;
@@ -109,7 +113,7 @@ public class PupPacksResource {
     }
   }
 
-  private PupPackRepresentation toPupPackRepresentation(@NonNull PupPack pupPack) {
+  private PupPackRepresentation toPupPackRepresentation(Game game, @NonNull PupPack pupPack) {
     PupPackRepresentation representation = new PupPackRepresentation();
     representation.setSize(pupPack.getSize());
     representation.setPath(pupPack.getPupPackFolder().getPath().replaceAll("\\\\", "/"));
@@ -122,6 +126,7 @@ public class PupPacksResource {
     representation.setMissingResources(pupPack.getMissingResources());
     representation.setSelectedOption(pupPack.getSelectedOption());
     representation.setTxtFiles(pupPack.getTxtFiles());
+    representation.setValidationStates(validationService.validatePupPack(game));
     return representation;
   }
 }

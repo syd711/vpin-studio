@@ -9,7 +9,7 @@ import de.mephisto.vpin.ui.NavigationController;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.StudioFXController;
 import de.mephisto.vpin.ui.WaitOverlayController;
-import de.mephisto.vpin.ui.tables.validation.ValidationResult;
+import de.mephisto.vpin.ui.tables.validation.LocalizedValidation;
 import de.mephisto.vpin.ui.tables.validation.ValidationTexts;
 import de.mephisto.vpin.ui.util.Dialogs;
 import javafx.application.Platform;
@@ -601,7 +601,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
       GameRepresentation game = g.get();
       validationError.setVisible(game.getValidationState().getCode() > 0);
       if (game.getValidationState().getCode() > 0) {
-        ValidationResult validationMessage = ValidationTexts.validate(game);
+        LocalizedValidation validationMessage = ValidationTexts.validate(game);
         validationErrorLabel.setText(validationMessage.getLabel());
         validationErrorText.setText(validationMessage.getText());
       }

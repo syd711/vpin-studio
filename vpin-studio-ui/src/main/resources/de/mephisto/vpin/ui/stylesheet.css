@@ -48,6 +48,31 @@
     -fx-font-size : 12px;
 }
 
+.error-container {
+    -fx-padding: 6 12 6 12;
+    -fx-background-color: #FF3333;
+    -fx-text-fill: #FFFFFF;
+    -fx-font-size : 14px;
+    -fx-font-weight : bold;
+}
+
+.error-title {
+    -fx-background-color: #FF3333;
+    -fx-text-fill: #FFFFFF;
+    -fx-background-radius: 3 3 3 3;
+    -fx-font-size : 14px;
+    -fx-font-weight : bold;
+}
+
+.error-message {
+    -fx-background-color: #FF3333;
+    -fx-text-fill: #FFFFFF;
+    -fx-background-radius: 3 3 3 3;
+    -fx-font-size : 14px;
+    -fx-font-weight : normal;
+}
+
+
 #validationContainer {
     -fx-background-color: #FF3333;
     -fx-text-fill: #FFFFFF;
