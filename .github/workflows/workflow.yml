@@ -44,7 +44,7 @@ jobs:
 
       - name: Set Release Version
         id: set-release-version
-        run: version=$(mvn "--batch-mode" org.apache.maven.plugins:maven-help-plugin:3.2.0:evaluate -Dexpression=project.version -q -DforceStdout)
+        run: version=$(mvn "--batch-mode" org.apache.maven.plugins:maven-help-plugin:3.2.0:evaluate "-Dexpression=project.version" "-q" "-DforceStdout")
 
       - name: Draft Release
         uses: softprops/action-gh-release@v1
