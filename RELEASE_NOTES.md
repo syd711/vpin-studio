@@ -3,15 +3,19 @@
 - **Settings** have been reorganized: Trying to reduce the preferences cluttering.
 - **ALT Sound**: added archive file format validator before upload.
 - **ALT Sound**: added CSV validator for ALT sound packs.
+- **ALT Sound**: added ALT sound validator messages directly into the section
+- **ALT Color**: preparing section, currently work in progress...
 - **PUP Pack**: added initial version with "option" selection, validation and upload.
+- **PUP Pack**: added PUP pack validator messages directly into the section
 - **VPX Validators**: redesigned VPX validator preferences.
 - **VPX Validators**: added ALT sound validator option.
 - **VPX Validators**: added PUP pack validator option.
 - **POV**: added upload option and streamlined layout to the one of the other sections.
-- Added new section: **Visual Pinball Spreadsheet**: You get all available table resources with one click now. How awesome is that!?
+- Added new section: **Visual Pinball Spreadsheet**: You get all available table resources with one click now. How awesome is that!? The name of the table is resolved automatically and may not match in some cases. But you have an autocomplete function and the selected table will be persisted. 
 - **Dashboard**: Added asynchronous loading and caching of Discord avatars, should make Dashboard loading more fluent.
 - Fixed issue for older PinUP Popper installations where "Visual Pinball X" is named "Visual Pinball".
-- Fixed tooltips of table overview toolbar buttons.
-- Added **Scan All** action to the tables section toolbar.
-- Added bulk **Import** action to add tables to PinUP Popper that are already in the "Tables" folder.
-- Added bulk **Delete** action: the existing delete action does support multi-selection now.
+- **Table Overview**: Added detection of portrait mode for displaying the playfield video.
+- **Table Overview**: Fixed tooltips of table overview toolbar buttons.
+- **Table Overview**: Added **Scan All** action to the tables section toolbar.
+- **Table Overview**: Added bulk **Import** action to add tables to PinUP Popper that are already in the "Tables" folder.
+- **Table Overview**: Added bulk **Delete** action: the existing delete action does support multi-selection now.
