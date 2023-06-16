@@ -1,6 +1,11 @@
 name: Build
-run-name: Windows Build
-on: [push]
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
 
 jobs:
   build:
@@ -48,6 +53,7 @@ jobs:
 
       - name: Draft Release
         uses: softprops/action-gh-release@v1
+        if: github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main'
         with:
           body_path: RELEASE_NOTES.md
           draft: true
