@@ -58,7 +58,7 @@ jobs:
         with:
           body_path: RELEASE_NOTES.md
           draft: true
-          tag_name: v${{ steps.set-release-version.outputs.version }}
+          tag_name: ${{ steps.set-release-version.outputs.version }}
           files: |
             ./Output/VPin-Studio/VPin-Studio-Client-Installer*.exe
             ./Output/VPin-Studio/VPin-Studio-Full-Installer*.exe
