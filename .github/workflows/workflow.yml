@@ -1,6 +1,9 @@
 name: Build
-run-name: Windows Build
-on: [push]
+
+on:
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
 
 jobs:
   build:
@@ -44,14 +47,17 @@ jobs:
 
       - name: Set Release Version
         id: set-release-version
-        run: Set-Variable -Name "version" -Value (mvn "--batch-mode" org.apache.maven.plugins:maven-help-plugin:3.2.0:evaluate "-Dexpression=project.version" "-q" "-DforceStdout")
+        if: github.event_name == 'pull_request' || (github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main')
+        run:  | 
+          $version = mvn "--batch-mode" org.apache.maven.plugins:maven-help-plugin:3.2.0:evaluate "-Dexpression=project.version" "-q" "-DforceStdout"
+          echo "::set-output name=version::${version}"
 
       - name: Draft Release
         uses: softprops/action-gh-release@v1
+        if: github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main'
         with:
           body_path: RELEASE_NOTES.md
           draft: true
-          name: ${{ steps.set-release-version.outputs.version }}
           tag_name: ${{ steps.set-release-version.outputs.version }}
           files: |
             ./Output/VPin-Studio/VPin-Studio-Client-Installer*.exe
