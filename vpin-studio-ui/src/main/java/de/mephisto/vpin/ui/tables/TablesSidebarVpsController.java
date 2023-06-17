@@ -14,6 +14,8 @@ import de.mephisto.vpin.ui.tables.vps.VpsEntryComment;
 import de.mephisto.vpin.ui.util.AutoCompleteTextField;
 import de.mephisto.vpin.ui.util.AutoCompleteTextFieldChangeListener;
 import de.mephisto.vpin.ui.util.Dialogs;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -80,6 +82,9 @@ public class TablesSidebarVpsController implements Initializable, AutoCompleteTe
   private Button openBtn;
 
   @FXML
+  private Button openTableBtn;
+
+  @FXML
   private Hyperlink ipdbLink;
   private AutoCompleteTextField autoCompleteNameField;
 
@@ -93,6 +98,22 @@ public class TablesSidebarVpsController implements Initializable, AutoCompleteTe
     if (desktop != null && desktop.isSupported(Desktop.Action.BROWSE)) {
       try {
         desktop.browse(new URI("https://virtual-pinball-spreadsheet.web.app/game/" + game.get().getExtTableId() + "/"));
+      } catch (Exception e) {
+        LOG.error("Failed to open link: " + e.getMessage());
+        ipdbLink.setDisable(true);
+      }
+    }
+  }
+
+
+  @FXML
+  private void onTableOpen() {
+    Desktop desktop = Desktop.isDesktopSupported() ? Desktop.getDesktop() : null;
+    if (desktop != null && desktop.isSupported(Desktop.Action.BROWSE)) {
+      try {
+        VpsTableFile value = this.tablesCombo.getValue();
+        VpsUrl vpsUrl = value.getUrls().get(0);
+        desktop.browse(new URI(vpsUrl.getUrl()));
       } catch (Exception e) {
         LOG.error("Failed to open link: " + e.getMessage());
         ipdbLink.setDisable(true);
@@ -128,6 +149,9 @@ public class TablesSidebarVpsController implements Initializable, AutoCompleteTe
     detailsBox.managedProperty().bindBidirectional(detailsBox.visibleProperty());
     dataRoot.managedProperty().bindBidirectional(dataRoot.visibleProperty());
 
+    openTableBtn.setDisable(true);
+
+    tablesCombo.valueProperty().addListener((observable, oldValue, newValue) -> openTableBtn.setDisable(newValue == null || newValue.getUrls().isEmpty()));
     filterCheckbox.selectedProperty().addListener((observable, oldValue, newValue) -> refreshView(game));
 
     List<VpsTable> tables = VPS.getInstance().getTables();

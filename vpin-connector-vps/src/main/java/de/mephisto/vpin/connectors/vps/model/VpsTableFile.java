@@ -1,5 +1,7 @@
 package de.mephisto.vpin.connectors.vps.model;
 
+import java.text.DateFormat;
+import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 
@@ -57,6 +59,8 @@ public class VpsTableFile extends VpsAuthoredUrls {
       builder.append("(");
       builder.append("Version ");
       builder.append(getVersion());
+      builder.append(", ");
+      builder.append(DateFormat.getDateInstance().format(new Date(getUpdatedAt())));
       builder.append(")");
     }
 

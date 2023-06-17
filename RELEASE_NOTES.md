@@ -1,3 +1,5 @@
 ## Release Notes
 
-- **Settings**: The settings have been reorganized: Trying to reduce the preferences cluttering.
+- **Virtual Pinball Spreadsheet**: Added missing "open" link for the table selection.
+- **Virtual Pinball Spreadsheet**: Added update date to table selection.
+- 
