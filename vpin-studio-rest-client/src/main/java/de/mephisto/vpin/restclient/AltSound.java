@@ -1,5 +1,7 @@
 package de.mephisto.vpin.restclient;
 
+import de.mephisto.vpin.restclient.representations.ValidationState;
+
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -12,6 +14,15 @@ public class AltSound {
   private Date modificationDate;
   private List<Integer> channels = new ArrayList<>();
   private boolean missingAudioFiles;
+  private List<ValidationState> validationStates;
+
+  public List<ValidationState> getValidationStates() {
+    return validationStates;
+  }
+
+  public void setValidationStates(List<ValidationState> validationStates) {
+    this.validationStates = validationStates;
+  }
 
   public boolean isMissingAudioFiles() {
     return missingAudioFiles;

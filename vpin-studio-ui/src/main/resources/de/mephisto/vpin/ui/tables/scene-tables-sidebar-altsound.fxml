@@ -3,6 +3,7 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.Hyperlink?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.Separator?>
 <?import javafx.scene.control.ToolBar?>
@@ -18,14 +19,27 @@
     <center>
       <VBox fx:id="dataRoot" BorderPane.alignment="CENTER">
          <BorderPane.margin>
-            <Insets bottom="12.0" left="12.0" right="12.0" />
+            <Insets />
          </BorderPane.margin>
          <children>
+            <VBox fx:id="errorBox" styleClass="error-container">
+               <children>
+                  <BorderPane>
+                     <left>
+                        <Label fx:id="errorTitle" nodeOrientation="LEFT_TO_RIGHT" styleClass="error-title" text="Label" wrapText="true" BorderPane.alignment="CENTER" />
+                     </left>
+                     <right>
+                        <Hyperlink onAction="#onDismiss" text="Dismiss" BorderPane.alignment="CENTER" />
+                     </right>
+                  </BorderPane>
+                  <Label fx:id="errorText" layoutX="22.0" layoutY="22.0" styleClass="error-message" text="Label" wrapText="true" />
+               </children>
+            </VBox>
               <VBox fx:id="dataBox">
                   <children>
                   <Label text="ALT Sound Data" textFill="WHITE">
                      <VBox.margin>
-                        <Insets top="12.0" />
+                        <Insets />
                      </VBox.margin>
                      <font>
                         <Font name="System Bold" size="14.0" />
@@ -90,7 +104,7 @@
                   </GridPane>
                   </children>
                <VBox.margin>
-                  <Insets />
+                  <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
                </VBox.margin>
               </VBox>
             <VBox fx:id="emptyDataBox">
@@ -107,7 +121,7 @@
                   <Label layoutX="10.0" layoutY="42.0" styleClass="preference-description" text="Upload downloaded resources here." />
                </children>
                <VBox.margin>
-                  <Insets top="12.0" />
+                  <Insets bottom="24.0" left="12.0" right="12.0" top="12.0" />
                </VBox.margin>
             </VBox>
          </children>

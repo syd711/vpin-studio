@@ -60,7 +60,7 @@
               </VBox>
             <VBox fx:id="emptyDataBox">
                <children>
-                  <Label text="No ALT color files found." textFill="WHITE">
+                  <Label text="WORK IN PROGRESS (not supported yet) No ALT color files found." textFill="WHITE">
                      <font>
                         <Font name="System Bold" size="14.0" />
                      </font>

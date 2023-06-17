@@ -124,6 +124,7 @@ public class AltSoundService implements InitializingBean {
     } catch (Exception e) {
       LOG.error("Failed to read altsound CSV " + csvFile.getAbsolutePath() + ": " + e.getMessage(), e);
     }
+
     return altSound;
   }
 

@@ -4,7 +4,10 @@ import de.mephisto.vpin.commons.utils.FileUtils;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.AltSound;
 import de.mephisto.vpin.restclient.representations.GameRepresentation;
+import de.mephisto.vpin.restclient.representations.ValidationState;
 import de.mephisto.vpin.ui.Studio;
+import de.mephisto.vpin.ui.tables.validation.LocalizedValidation;
+import de.mephisto.vpin.ui.tables.validation.ValidationTexts;
 import de.mephisto.vpin.ui.util.Dialogs;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -21,6 +24,7 @@ import java.awt.*;
 import java.net.URI;
 import java.net.URL;
 import java.text.SimpleDateFormat;
+import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
 
@@ -60,10 +64,20 @@ public class TablesSidebarAltSoundController implements Initializable {
   @FXML
   private VBox dataBox;
 
+  @FXML
+  private VBox errorBox;
+
+  @FXML
+  private Label errorTitle;
+
+  @FXML
+  private Label errorText;
+
   private Optional<GameRepresentation> game = Optional.empty();
 
   private TablesSidebarController tablesSidebarController;
   private AltSound altSound;
+  private ValidationState validationState;
 
   // Add a public no-args constructor
   public TablesSidebarAltSoundController() {
@@ -92,6 +106,12 @@ public class TablesSidebarAltSoundController implements Initializable {
   }
 
   @FXML
+  private void onDismiss() {
+    GameRepresentation g = game.get();
+    tablesSidebarController.getTablesController().dismissValidation(g, this.validationState);
+  }
+
+  @FXML
   private void onRestore() {
     if (game.isPresent() && game.get().isAltSoundAvailable()) {
       Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Restore Backup?", "Revert all changes and restore the original ALT sound backup?", null, "Yes, restore backup");
@@ -105,6 +125,7 @@ public class TablesSidebarAltSoundController implements Initializable {
   public void initialize(URL url, ResourceBundle resourceBundle) {
     dataBox.managedProperty().bindBidirectional(dataBox.visibleProperty());
     emptyDataBox.managedProperty().bindBidirectional(emptyDataBox.visibleProperty());
+    errorBox.managedProperty().bindBidirectional(errorBox.visibleProperty());
     dataBox.setVisible(false);
     emptyDataBox.setVisible(true);
   }
@@ -115,6 +136,8 @@ public class TablesSidebarAltSoundController implements Initializable {
   }
 
   public void refreshView(Optional<GameRepresentation> g) {
+    this.validationState = null;
+
     altSoundBtn.setDisable(true);
     restoreBtn.setDisable(true);
     enabledCheckbox.setVisible(false);
@@ -126,6 +149,8 @@ public class TablesSidebarAltSoundController implements Initializable {
     bundleSizeLabel.setText("-");
     filesLabel.setText("-");
     lastModifiedLabel.setText("-");
+
+    errorBox.setVisible(false);
 
     if (g.isPresent()) {
       GameRepresentation game = g.get();
@@ -148,6 +173,15 @@ public class TablesSidebarAltSoundController implements Initializable {
         filesLabel.setText(String.valueOf(altSound.getFiles()));
         bundleSizeLabel.setText(FileUtils.readableFileSize(altSound.getFilesize()));
         lastModifiedLabel.setText(SimpleDateFormat.getDateTimeInstance().format(altSound.getModificationDate()));
+
+        List<ValidationState> validationStates = altSound.getValidationStates();
+        errorBox.setVisible(!validationStates.isEmpty());
+        if (!validationStates.isEmpty()) {
+          validationState = validationStates.get(0);
+          LocalizedValidation validationResult = ValidationTexts.getValidationResult(game, validationState);
+          errorTitle.setText(validationResult.getLabel());
+          errorText.setText(validationResult.getText());
+        }
       }
     }
   }

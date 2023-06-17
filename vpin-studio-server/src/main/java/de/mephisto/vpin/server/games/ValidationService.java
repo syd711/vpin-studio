@@ -194,6 +194,21 @@ public class ValidationService implements InitializingBean {
     return result;
   }
 
+  public List<ValidationState> validateAltSound(Game game) {
+    List<ValidationState> result = new ArrayList<>();
+    if (isValidationEnabled(game, CODE_ALT_SOUND_NOT_ENABLED)) {
+      if (game.isAltSoundAvailable() && !altSoundService.isAltSoundEnabled(game)) {
+        result.add(ValidationStateFactory.create(ValidationCode.CODE_ALT_SOUND_NOT_ENABLED));
+      }
+    }
+
+    if (isValidationEnabled(game, CODE_ALT_SOUND_FILE_MISSING)) {
+      if (game.isAltSoundAvailable() && altSoundService.getAltSound(game).isMissingAudioFiles()) {
+        result.add(ValidationStateFactory.create(ValidationCode.CODE_ALT_SOUND_FILE_MISSING));
+      }
+    }
+    return result;
+  }
 
   private boolean isValidationEnabled(@NonNull Game game, int code) {
     if (mediaCodeToScreen.containsKey(code)) {

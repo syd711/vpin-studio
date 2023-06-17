@@ -5,7 +5,9 @@ import de.mephisto.vpin.restclient.jobs.JobExecutionResult;
 import de.mephisto.vpin.restclient.jobs.JobExecutionResultFactory;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameService;
+import de.mephisto.vpin.server.games.ValidationService;
 import de.mephisto.vpin.server.util.UploadUtil;
+import edu.umd.cs.findbugs.annotations.NonNull;
 import org.apache.commons.io.FilenameUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,11 +32,14 @@ public class AltSoundResource {
   @Autowired
   private GameService gameService;
 
+  @Autowired
+  private ValidationService validationService;
+
   @GetMapping("{id}")
   public AltSound csv(@PathVariable("id") int id) {
     Game game = gameService.getGame(id);
     if (game != null) {
-      return altSoundService.getAltSound(game);
+      return getAltSound(game);
     }
     return new AltSound();
   }
@@ -43,7 +48,8 @@ public class AltSoundResource {
   public AltSound save(@PathVariable("id") int id, @RequestBody AltSound altSound) throws Exception {
     Game game = gameService.getGame(id);
     if (game != null) {
-      return altSoundService.save(game, altSound);
+      altSoundService.save(game, altSound);
+      return getAltSound(game);
     }
     return new AltSound();
   }
@@ -52,7 +58,8 @@ public class AltSoundResource {
   public AltSound restore(@PathVariable("id") int id) {
     Game game = gameService.getGame(id);
     if (game != null) {
-      return altSoundService.restore(game);
+      altSoundService.restore(game);
+      return getAltSound(game);
     }
     return new AltSound();
   }
@@ -104,5 +111,11 @@ public class AltSoundResource {
     } catch (Exception e) {
       throw new ResponseStatusException(INTERNAL_SERVER_ERROR, "ALT sound upload failed: " + e.getMessage());
     }
+  }
+
+  private AltSound getAltSound(@NonNull Game game) {
+    AltSound altSound = altSoundService.getAltSound(game);
+    altSound.setValidationStates(validationService.validateAltSound(game));
+    return altSound;
   }
 }

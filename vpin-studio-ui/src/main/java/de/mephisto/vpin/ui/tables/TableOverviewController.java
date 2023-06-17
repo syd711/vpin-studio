@@ -12,6 +12,7 @@ import de.mephisto.vpin.ui.WaitOverlayController;
 import de.mephisto.vpin.ui.tables.validation.LocalizedValidation;
 import de.mephisto.vpin.ui.tables.validation.ValidationTexts;
 import de.mephisto.vpin.ui.util.Dialogs;
+import edu.umd.cs.findbugs.annotations.NonNull;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
@@ -325,10 +326,14 @@ public class TableOverviewController implements Initializable, StudioFXControlle
   @FXML
   private void onDismiss() {
     GameRepresentation game = tableView.getSelectionModel().getSelectedItem();
+    ValidationState validationState = game.getValidationState();
+    dismissValidation(game, validationState);
+  }
+
+  public void dismissValidation(@NonNull GameRepresentation game, @NonNull ValidationState validationState) {
     Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Ignore this warning for future validations of table '" + game.getGameDisplayName() + "?",
         "The warning can be re-enabled by validating the table again.");
     if (result.isPresent() && result.get().equals(ButtonType.OK)) {
-      ValidationState validationState = game.getValidationState();
       List<Integer> ignoredValidations = game.getIgnoredValidations();
       if (ignoredValidations == null) {
         ignoredValidations = new ArrayList<>();

@@ -24,7 +24,7 @@ public class ValidationTexts {
     return getValidationResult(game, state);
   }
 
-  @Nullable
+  @NonNull
   public static LocalizedValidation getValidationResult(@NonNull GameRepresentation game, ValidationState state) {
     String text;
     String label;
@@ -135,7 +135,7 @@ public class ValidationTexts {
         break;
       }
       default: {
-        return null;
+        throw new UnsupportedOperationException("unmapped validation state");
       }
     }
 

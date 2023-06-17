@@ -25,7 +25,6 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.net.URL;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
@@ -90,10 +89,10 @@ public class TablesSidebarPUPPackController implements Initializable {
   private Tooltip screenTopperTooltip;
 
   @FXML
-  private VBox errorBox;
+  private Button applyBtn;
 
   @FXML
-  private Button applyBtn;
+  private VBox errorBox;
 
   @FXML
   private Label errorTitle;
@@ -103,6 +102,7 @@ public class TablesSidebarPUPPackController implements Initializable {
 
   private TablesSidebarController tablesSidebarController;
   private PupPackRepresentation pupPack;
+  private ValidationState validationState;
 
   // Add a public no-args constructor
   public TablesSidebarPUPPackController() {
@@ -171,28 +171,7 @@ public class TablesSidebarPUPPackController implements Initializable {
   @FXML
   private void onDismiss() {
     GameRepresentation g = game.get();
-    Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Ignore this warning for future validations of table '" + g.getGameDisplayName() + "?",
-        "The warning can be re-enabled by validating the table again.");
-    if (result.isPresent() && result.get().equals(ButtonType.OK)) {
-      ValidationState validationState = g.getValidationState();
-      List<Integer> ignoredValidations = g.getIgnoredValidations();
-      if (ignoredValidations == null) {
-        ignoredValidations = new ArrayList<>();
-      }
-
-      if (!ignoredValidations.contains(validationState.getCode())) {
-        ignoredValidations.add(validationState.getCode());
-      }
-
-      g.setIgnoredValidations(ignoredValidations);
-
-      try {
-        Studio.client.getGameService().saveGame(g);
-      } catch (Exception e) {
-        WidgetFactory.showAlert(Studio.stage, e.getMessage());
-      }
-      tablesSidebarController.getTablesController().onReload();
-    }
+    tablesSidebarController.getTablesController().dismissValidation(g, this.validationState);
   }
 
   @FXML
@@ -233,6 +212,7 @@ public class TablesSidebarPUPPackController implements Initializable {
 
   public void refreshView(Optional<GameRepresentation> g) {
     this.pupPack = null;
+    this.validationState = null;
     reloadBtn.setDisable(g.isEmpty());
 
     enabledCheckbox.setVisible(false);
@@ -320,7 +300,8 @@ public class TablesSidebarPUPPackController implements Initializable {
         List<ValidationState> validationStates = pupPack.getValidationStates();
         errorBox.setVisible(!validationStates.isEmpty());
         if (!validationStates.isEmpty()) {
-          LocalizedValidation validationResult = ValidationTexts.getValidationResult(game, validationStates.get(0));
+          validationState = validationStates.get(0);
+          LocalizedValidation validationResult = ValidationTexts.getValidationResult(game, validationState);
           errorTitle.setText(validationResult.getLabel());
           errorText.setText(validationResult.getText());
         }
