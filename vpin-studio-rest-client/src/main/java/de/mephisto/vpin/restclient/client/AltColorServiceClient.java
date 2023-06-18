@@ -1,7 +1,6 @@
 package de.mephisto.vpin.restclient.client;
 
-import de.mephisto.vpin.restclient.AssetType;
-import de.mephisto.vpin.restclient.FileUploadProgressListener;
+import de.mephisto.vpin.restclient.*;
 import de.mephisto.vpin.restclient.jobs.JobExecutionResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,6 +20,9 @@ public class AltColorServiceClient extends VPinStudioClientService {
     super(client);
   }
 
+  public AltColor getAltColor(int gameId) {
+    return getRestClient().get(API + "altcolor/" + gameId, AltColor.class);
+  }
 
   public JobExecutionResult uploadAltColor(File file, String uploadType, int gameId, FileUploadProgressListener listener) throws Exception {
     try {

@@ -7,8 +7,17 @@ import java.util.List;
 
 public class AltColor {
   private String name;
+  private AltColorTypes altColorType;
   private Date modificationDate;
   private List<ValidationState> validationStates;
+
+  public AltColorTypes getAltColorType() {
+    return altColorType;
+  }
+
+  public void setAltColorType(AltColorTypes altColorType) {
+    this.altColorType = altColorType;
+  }
 
   public String getName() {
     return name;

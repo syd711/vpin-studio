@@ -210,6 +210,11 @@ public class ValidationService implements InitializingBean {
     return result;
   }
 
+  public List<ValidationState> validateAltColor(Game game) {
+    List<ValidationState> result = new ArrayList<>();
+    return result;
+  }
+
   private boolean isValidationEnabled(@NonNull Game game, int code) {
     if (mediaCodeToScreen.containsKey(code)) {
       PopperScreen popperScreen = mediaCodeToScreen.get(code);

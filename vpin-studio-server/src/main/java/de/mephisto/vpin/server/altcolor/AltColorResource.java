@@ -1,10 +1,8 @@
 package de.mephisto.vpin.server.altcolor;
 
 import de.mephisto.vpin.restclient.AltColor;
-import de.mephisto.vpin.restclient.AltSound;
 import de.mephisto.vpin.restclient.jobs.JobExecutionResult;
 import de.mephisto.vpin.restclient.jobs.JobExecutionResultFactory;
-import de.mephisto.vpin.server.altsound.AltSoundService;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameService;
 import de.mephisto.vpin.server.games.ValidationService;
@@ -41,7 +39,7 @@ public class AltColorResource {
   public AltColor get(@PathVariable("id") int id) {
     Game game = gameService.getGame(id);
     if (game != null) {
-      return getAltSound(game);
+      return getAltColor(game);
     }
     return new AltColor();
   }
@@ -83,7 +81,7 @@ public class AltColorResource {
       Game game = gameService.getGame(gameId);
       if (game == null) {
         LOG.error("No game found for alt color upload.");
-        return JobExecutionResultFactory.error("No game found for alt sound upload.");
+        return JobExecutionResultFactory.error("No game found for alt color upload.");
       }
 
       File out = File.createTempFile(FilenameUtils.getBaseName(file.getOriginalFilename()), ".zip");
@@ -91,13 +89,15 @@ public class AltColorResource {
       UploadUtil.upload(file, out);
       return altColorService.installAltColor(game, out);
     } catch (Exception e) {
-      throw new ResponseStatusException(INTERNAL_SERVER_ERROR, "ALT sound upload failed: " + e.getMessage());
+      throw new ResponseStatusException(INTERNAL_SERVER_ERROR, "ALT color upload failed: " + e.getMessage());
     }
   }
 
-  private AltColor getAltSound(@NonNull Game game) {
+  private AltColor getAltColor(@NonNull Game game) {
     AltColor altColor = altColorService.getAltColor(game);
-    altColor.setValidationStates(validationService.validateAltSound(game));
+    if(altColor != null) {
+      altColor.setValidationStates(validationService.validateAltColor(game));
+    }
     return altColor;
   }
 }

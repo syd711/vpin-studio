@@ -120,7 +120,7 @@ public class TablesController implements Initializable, StudioFXController, Stud
     }
     else if (jobType.equals(JobType.PUP_INSTALL) || jobType.equals(JobType.POV_INSTALL)
         || jobType.equals(JobType.ALTSOUND_INSTALL) || jobType.equals(JobType.DIRECTB2S_INSTALL)
-        || jobType.equals(JobType.TABLE_IMPORT)) {
+        || jobType.equals(JobType.TABLE_IMPORT) || jobType.equals(JobType.ALTCOLOR_INSTALL)) {
       Platform.runLater(() -> {
         this.tableOverviewController.onReload();
       });

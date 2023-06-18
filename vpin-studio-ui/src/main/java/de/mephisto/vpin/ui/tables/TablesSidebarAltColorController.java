@@ -1,16 +1,20 @@
 package de.mephisto.vpin.ui.tables;
 
+import de.mephisto.vpin.restclient.AltColor;
 import de.mephisto.vpin.restclient.representations.GameRepresentation;
+import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.util.Dialogs;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.VBox;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.net.URL;
+import java.text.SimpleDateFormat;
 import java.util.Optional;
 import java.util.ResourceBundle;
 
@@ -24,10 +28,15 @@ public class TablesSidebarAltColorController implements Initializable {
   private Label lastModifiedLabel;
 
   @FXML
+  private Label typeLabel;
+
+  @FXML
   private VBox emptyDataBox;
 
   @FXML
   private VBox dataBox;
+
+  private AltColor altColor;
 
   private Optional<GameRepresentation> game = Optional.empty();
 
@@ -40,7 +49,7 @@ public class TablesSidebarAltColorController implements Initializable {
   @FXML
   private void onUpload() {
     if (game.isPresent()) {
-      Dialogs.openAltSoundUploadDialog(tablesSidebarController, game.get());
+      Dialogs.openAltColorUploadDialog(tablesSidebarController, game.get());
     }
   }
 
@@ -59,26 +68,30 @@ public class TablesSidebarAltColorController implements Initializable {
   }
 
   public void refreshView(Optional<GameRepresentation> g) {
+    this.altColor = null;
+
     dataBox.setVisible(false);
     emptyDataBox.setVisible(true);
     uploadBtn.setDisable(true);
 
     lastModifiedLabel.setText("-");
+    typeLabel.setText("-");
 
-//    if (g.isPresent()) {
-//      GameRepresentation game = g.get();
-//      boolean altColorAvailable = game.isAltSoundAvailable();
-//
-//      dataBox.setVisible(altColorAvailable);
-//      emptyDataBox.setVisible(!altColorAvailable);
-//
-//      uploadBtn.setDisable(StringUtils.isEmpty(game.getRom()));
-//
-//      if (altColorAvailable) {
-////        altSound = Studio.client.getAltSoundService().getAltSound(game.getId());
-////        lastModifiedLabel.setText(SimpleDateFormat.getDateTimeInstance().format(altSound.getModificationDate()));
-//      }
-//    }
+    if (g.isPresent()) {
+      GameRepresentation game = g.get();
+      boolean altColorAvailable = game.isAltColorAvailable();
+
+      dataBox.setVisible(altColorAvailable);
+      emptyDataBox.setVisible(!altColorAvailable);
+
+      uploadBtn.setDisable(StringUtils.isEmpty(game.getRom()));
+
+      if (altColorAvailable) {
+        altColor = Studio.client.getAltColorService().getAltColor(game.getId());
+        lastModifiedLabel.setText(SimpleDateFormat.getDateInstance().format(altColor.getModificationDate()));
+        typeLabel.setText(altColor.getAltColorType().name());
+      }
+    }
   }
 
   public void setSidebarController(TablesSidebarController tablesSidebarController) {

@@ -36,14 +36,26 @@
                     </columnConstraints>
                     <rowConstraints>
                         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                     </rowConstraints>
                      <children>
-                        <Label fx:id="lastModifiedLabel" layoutX="175.0" layoutY="76.0" text="-" textFill="WHITE" GridPane.columnIndex="1">
+                        <Label fx:id="lastModifiedLabel" layoutX="175.0" layoutY="76.0" text="-" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="1">
                            <font>
                               <Font size="14.0" />
                            </font>
                         </Label>
-                        <Label layoutX="10.0" layoutY="45.0" text="Last Modified:" textFill="WHITE">
+                        <Label layoutX="10.0" layoutY="45.0" text="Last Modified:" textFill="WHITE" GridPane.rowIndex="1">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Label>
+                        <Label layoutX="10.0" layoutY="45.0" text="Type:" textFill="WHITE">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Label>
+                        <Label fx:id="typeLabel" layoutX="175.0" layoutY="45.0" text="-" textFill="WHITE" GridPane.columnIndex="1">
                            <font>
                               <Font size="14.0" />
                            </font>
@@ -60,7 +72,7 @@
               </VBox>
             <VBox fx:id="emptyDataBox">
                <children>
-                  <Label text="WORK IN PROGRESS (not supported yet) No ALT color files found." textFill="WHITE">
+                  <Label text="No ALT color files found." textFill="WHITE">
                      <font>
                         <Font name="System Bold" size="14.0" />
                      </font>

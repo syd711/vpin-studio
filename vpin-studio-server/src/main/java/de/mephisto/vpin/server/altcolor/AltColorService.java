@@ -1,6 +1,7 @@
 package de.mephisto.vpin.server.altcolor;
 
 import de.mephisto.vpin.restclient.AltColor;
+import de.mephisto.vpin.restclient.AltColorTypes;
 import de.mephisto.vpin.restclient.jobs.JobExecutionResult;
 import de.mephisto.vpin.restclient.jobs.JobExecutionResultFactory;
 import de.mephisto.vpin.server.games.Game;
@@ -16,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -99,6 +101,23 @@ public class AltColorService implements InitializingBean {
           if (altColorFiles != null && altColorFiles.length > 0) {
             AltColor altColor = new AltColor();
             altColor.setName(altColorFolder.getName());
+
+            AltColorTypes type = AltColorTypes.mame;
+            boolean lucky1 = Arrays.stream(altColorFiles).anyMatch(f -> f.getName().endsWith(".pac"));
+            boolean freezy = Arrays.stream(altColorFiles).anyMatch(f -> f.getName().endsWith(".pal"));
+            boolean serum = Arrays.stream(altColorFiles).anyMatch(f -> f.getName().endsWith(".cRZ"));
+
+            if(lucky1) {
+              type = AltColorTypes.lucky1;
+            }
+            else if(freezy) {
+              type = AltColorTypes.freezy;
+            }
+            else if(serum) {
+              type = AltColorTypes.serum;
+            }
+
+            altColor.setAltColorType(type);
             altColor.setModificationDate(new Date(altColorFolder.lastModified()));
             this.altColors.put(altColorFolder.getName(), altColor);
           }

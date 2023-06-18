@@ -120,6 +120,16 @@ public class Dialogs {
     return controller.uploadFinished();
   }
 
+  public static boolean openAltColorUploadDialog(TablesSidebarController tablesSidebarController, GameRepresentation game) {
+    Stage stage = createStudioDialogStage(AltColorUploadController.class, "dialog-altcolor-upload.fxml", "ALT Color Upload");
+    AltColorUploadController controller = (AltColorUploadController) stage.getUserData();
+    controller.setGame(game);
+    controller.setTableSidebarController(tablesSidebarController);
+    stage.showAndWait();
+
+    return controller.uploadFinished();
+  }
+
   public static boolean openPovUploadDialog(TablesSidebarController tablesSidebarController, GameRepresentation game) {
     Stage stage = createStudioDialogStage(PovUploadController.class, "dialog-pov-upload.fxml", "POV File Upload");
     PovUploadController controller = (PovUploadController) stage.getUserData();
