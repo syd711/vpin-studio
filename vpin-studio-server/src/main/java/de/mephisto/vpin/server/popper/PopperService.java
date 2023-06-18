@@ -11,6 +11,7 @@ import de.mephisto.vpin.restclient.popper.PinUPControls;
 import de.mephisto.vpin.restclient.popper.PopperScreen;
 import de.mephisto.vpin.restclient.popper.TableDetails;
 import de.mephisto.vpin.server.games.Game;
+import de.mephisto.vpin.server.games.GameService;
 import de.mephisto.vpin.server.system.SystemService;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import org.apache.commons.io.FileUtils;
@@ -36,6 +37,9 @@ public class PopperService implements InitializingBean {
 
   @Autowired
   private SystemService systemService;
+
+  @Autowired
+  private GameService gameService;
 
   @Autowired
   private PinUPConnector pinUPConnector;
@@ -81,6 +85,7 @@ public class PopperService implements InitializingBean {
       if (tableFile.exists()) {
         int result = importVPXGame(tableFile, true, -1);
         if (result > 0) {
+          gameService.scanGame(result);
           count++;
         }
       }

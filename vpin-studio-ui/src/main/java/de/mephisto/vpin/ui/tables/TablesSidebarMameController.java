@@ -62,13 +62,36 @@ public class TablesSidebarMameController implements Initializable {
   @FXML
   private CheckBox colorizeDmd;
 
+  @FXML
+  private Button applyDefaultsBtn;
+
   private Optional<GameRepresentation> game = Optional.empty();
 
   private TablesSidebarController tablesSidebarController;
   private MameOptions options;
 
+  private boolean saveDisabled = false;
+
   // Add a public no-args constructor
   public TablesSidebarMameController() {
+  }
+
+  @FXML
+  private void onApplyDefaults() {
+    MameOptions defaultOptions = Studio.client.getMameService().getOptions(MameOptions.DEFAULT_KEY);
+
+    saveDisabled = true;
+    skipPinballStartupTest.setSelected(defaultOptions.isSkipPinballStartupTest());
+    useSound.setSelected(defaultOptions.isUseSound());
+    useSamples.setSelected(defaultOptions.isUseSamples());
+    ignoreRomCrcError.setSelected(defaultOptions.isIgnoreRomCrcError());
+    cabinetMode.setSelected(defaultOptions.isCabinetMode());
+    showDmd.setSelected(defaultOptions.isShowDmd());
+    useExternalDmd.setSelected(defaultOptions.isUseExternalDmd());
+    colorizeDmd.setSelected(defaultOptions.isColorizeDmd());
+
+    saveDisabled = false;
+    saveOptions();
   }
 
   @FXML
@@ -83,12 +106,23 @@ public class TablesSidebarMameController implements Initializable {
     emptyDataBox.managedProperty().bindBidirectional(emptyDataBox.visibleProperty());
     errorBox.managedProperty().bindBidirectional(errorBox.visibleProperty());
     errorBox.setVisible(false);
+
+    skipPinballStartupTest.selectedProperty().addListener((observable, oldValue, newValue) -> saveOptions());
+    useSound.selectedProperty().addListener((observable, oldValue, newValue) -> saveOptions());
+    useSamples.selectedProperty().addListener((observable, oldValue, newValue) -> saveOptions());
+    ignoreRomCrcError.selectedProperty().addListener((observable, oldValue, newValue) -> saveOptions());
+    cabinetMode.selectedProperty().addListener((observable, oldValue, newValue) -> saveOptions());
+    showDmd.selectedProperty().addListener((observable, oldValue, newValue) -> saveOptions());
+    useExternalDmd.selectedProperty().addListener((observable, oldValue, newValue) -> saveOptions());
+    colorizeDmd.selectedProperty().addListener((observable, oldValue, newValue) -> saveOptions());
   }
 
 
   public void setGame(Optional<GameRepresentation> game) {
     this.game = game;
+    saveDisabled = true;
     this.refreshView(game);
+    saveDisabled = false;
   }
 
   public void refreshView(Optional<GameRepresentation> g) {
@@ -112,6 +146,7 @@ public class TablesSidebarMameController implements Initializable {
     if (g.isPresent()) {
       GameRepresentation game = g.get();
       options = Studio.client.getMameService().getOptions(game.getRom());
+
       if (options != null) {
         skipPinballStartupTest.setSelected(options.isSkipPinballStartupTest());
         useSound.setSelected(options.isUseSound());
@@ -135,8 +170,12 @@ public class TablesSidebarMameController implements Initializable {
   }
 
   private void saveOptions() {
+    if(saveDisabled) {
+      return;
+    }
+
     MameOptions options = new MameOptions();
-    options.setRom(MameOptions.DEFAULT_KEY);
+    options.setRom(game.get().getRom());
 
     options.setIgnoreRomCrcError(ignoreRomCrcError.isSelected());
     options.setSkipPinballStartupTest(skipPinballStartupTest.isSelected());
