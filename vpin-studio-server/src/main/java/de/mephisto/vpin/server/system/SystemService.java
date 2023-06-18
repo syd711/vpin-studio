@@ -260,6 +260,17 @@ public class SystemService extends SystemInfo implements InitializingBean {
     return extractRegistryValue(s);
   }
 
+  public boolean isMameRegistryEntryPresent(@NonNull String rom) {
+    String s = readRegistry(MAME_REG_KEY + rom, null);
+    return !StringUtils.isEmpty(s);
+  }
+
+  public boolean getMameRegistryBooleanValue(@NonNull String rom, @NonNull String key) {
+    String s = readRegistry(MAME_REG_KEY + rom, key);
+    String value =  extractRegistryValue(s);
+    return String.valueOf(value).equals("0x1") || String.valueOf(value).equals("1");
+  }
+
   public File getVPMAliasFile() {
     return new File(this.getMameFolder(), VPM_ALIAS);
   }
@@ -334,6 +345,11 @@ public class SystemService extends SystemInfo implements InitializingBean {
   @NonNull
   public File getAltSoundFolder() {
     return new File(getMameFolder(), "altsound/");
+  }
+
+  @NonNull
+  public File getAltColorFolder() {
+    return new File(getMameFolder(), "altcolor/");
   }
 
   public File[] getVPXTables() {

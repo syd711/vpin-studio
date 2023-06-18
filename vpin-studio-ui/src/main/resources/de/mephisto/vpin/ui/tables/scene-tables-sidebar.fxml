@@ -39,6 +39,7 @@
                 <TitledPane fx:id="titledPanePov" expanded="false" text="Point Of View (POV)" />
                 <TitledPane fx:id="titledPaneHighscores" expanded="false" text="Highscores" />
                 <TitledPane fx:id="titledPaneMetadata" expanded="false" text="Script Details" />
+            <TitledPane fx:id="titledPaneMame" expanded="false" layoutX="10.0" layoutY="260.0" text="VPin Mame" />
             <TitledPane fx:id="titledPaneVps" expanded="false" layoutX="10.0" layoutY="262.0">
                <graphic>
                   <BorderPane minWidth="564.0">

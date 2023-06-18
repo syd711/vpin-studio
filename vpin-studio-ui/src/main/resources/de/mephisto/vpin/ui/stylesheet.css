@@ -116,7 +116,7 @@
     -fx-font-color: -fx-base-2;
     -fx-text-fill: -fx-base-2;
     -fx-font-size : 13px;
-    -fx-padding: 0 8 3 6;
+    -fx-padding: 0 8 3 4;
     -fx-pref-width: 250;
  }
 
@@ -156,7 +156,7 @@
     -fx-background-radius: 4 4 4 4;
     -fx-text-fill: -fx-font-1;
     -fx-pref-width: 250;
-    -fx-padding: 6px;
+    -fx-padding: 4px;
 }
 
 .preference-button:hover {
@@ -427,7 +427,7 @@
 
 .check-box:disabled, .check-box:disabled > * {
   -fx-opacity: 0.8 ;
-  -fx-background-color: #B0ABAB;
+  -fx-background-color: transparent;
   -fx-background-insets: 2, 2, 2;
   -fx-background-radius: 2px;
 }
@@ -694,4 +694,16 @@
     -fx-border-style: hidden hidden hidden hidden;
     -fx-background-radius: 3 3 3 3;
     -fx-padding: 2 4 2 4;
+}
+
+.preference-checkbox {
+    -fx-padding: 12 0 0 0;
+}
+
+
+.checkbox-description {
+    -fx-font-color: -fx-font-2;
+    -fx-text-fill: -fx-font-2;
+    -fx-font-size : 15px;
+    -fx-padding: 0 0 0 26;
 }

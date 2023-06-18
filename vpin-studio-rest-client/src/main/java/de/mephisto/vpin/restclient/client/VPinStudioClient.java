@@ -28,6 +28,7 @@ public class VPinStudioClient implements ObservedPropertyChangeListener, Overlay
   private final String host;
 
   private final AltSoundServiceClient altSoundServiceClient;
+  private final AltColorServiceClient altColorServiceClient;
   private final ArchiveServiceClient archiveServiceClient;
   private final AssetServiceClient assetServiceClient;
   private final CompetitionsServiceClient competitions;
@@ -42,6 +43,7 @@ public class VPinStudioClient implements ObservedPropertyChangeListener, Overlay
   private final PreferencesServiceClient preferencesServiceClient;
   private final PupPackServiceClient pupPackServiceClient;
   private final SystemServiceClient systemServiceClient;
+  private final MameServiceClient mameServiceClient;
   private final TableManagerServiceClient tableManagerServiceClient;
   private final VpxServiceClient vpxServiceClient;
   private final VpbmServiceClient vpbmServiceClient;
@@ -50,6 +52,7 @@ public class VPinStudioClient implements ObservedPropertyChangeListener, Overlay
     this.host = host;
     restClient = RestClient.createInstance(host);
 
+    this.altColorServiceClient = new AltColorServiceClient(this);
     this.altSoundServiceClient = new AltSoundServiceClient(this);
     this.archiveServiceClient = new ArchiveServiceClient(this);
     this.assetServiceClient = new AssetServiceClient(this);
@@ -60,6 +63,7 @@ public class VPinStudioClient implements ObservedPropertyChangeListener, Overlay
     this.highscoreCardsServiceClient = new HighscoreCardsServiceClient(this);
     this.imageCache = new ImageCache(this);
     this.jobsServiceClient = new JobsServiceClient(this);
+    this.mameServiceClient = new MameServiceClient(this);
     this.playersServiceClient = new PlayersServiceClient(this);
     this.pupPackServiceClient = new PupPackServiceClient(this);
     this.pinUPPopperServiceClient = new PinUPPopperServiceClient(this);
@@ -68,6 +72,14 @@ public class VPinStudioClient implements ObservedPropertyChangeListener, Overlay
     this.tableManagerServiceClient = new TableManagerServiceClient(this);
     this.vpxServiceClient = new VpxServiceClient(this);
     this.vpbmServiceClient = new VpbmServiceClient(this);
+  }
+
+  public AltColorServiceClient getAltColorService() {
+    return altColorServiceClient;
+  }
+
+  public MameServiceClient getMameService() {
+    return mameServiceClient;
   }
 
   public PupPackServiceClient getPupPackService() {

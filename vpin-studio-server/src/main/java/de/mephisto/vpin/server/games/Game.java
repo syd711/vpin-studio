@@ -40,6 +40,7 @@ public class Game {
   private List<Integer> ignoredValidations;
   private HighscoreType highscoreType;
   private boolean altSoundAvailable;
+  private boolean altColorAvailable;
 
   private String assets;
   private PupPack pupPack;
@@ -360,6 +361,14 @@ public class Game {
       return new File(systemService.getMameRomFolder(), this.getRom() + ".zip");
     }
     return null;
+  }
+
+  public boolean isAltColorAvailable() {
+    return altColorAvailable;
+  }
+
+  public void setAltColorAvailable(boolean altColorAvailable) {
+    this.altColorAvailable = altColorAvailable;
   }
 
   public void setAltSoundAvailable(boolean altSoundAvailable) {

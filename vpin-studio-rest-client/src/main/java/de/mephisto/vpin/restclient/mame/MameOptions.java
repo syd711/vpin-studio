@@ -1,0 +1,112 @@
+package de.mephisto.vpin.restclient.mame;
+
+import de.mephisto.vpin.restclient.representations.ValidationState;
+
+import java.util.List;
+
+public class MameOptions {
+  public final static String DEFAULT_KEY = "default";
+
+  private String rom;
+
+  private boolean skipPinballStartupTest;
+  private boolean useSound;
+  private boolean useSamples;
+  private boolean ignoreRomCrcError;
+  private boolean cabinetMode;
+  private boolean showDmd;
+  private boolean useExternalDmd;
+  private boolean colorizeDmd;
+
+  private boolean existInRegistry;
+
+  public boolean isExistInRegistry() {
+    return existInRegistry;
+  }
+
+  public void setExistInRegistry(boolean existInRegistry) {
+    this.existInRegistry = existInRegistry;
+  }
+
+  private List<ValidationState> validationStates;
+
+  public List<ValidationState> getValidationStates() {
+    return validationStates;
+  }
+
+  public void setValidationStates(List<ValidationState> validationStates) {
+    this.validationStates = validationStates;
+  }
+
+  public String getRom() {
+    return rom;
+  }
+
+  public void setRom(String rom) {
+    this.rom = rom;
+  }
+
+  public boolean isSkipPinballStartupTest() {
+    return skipPinballStartupTest;
+  }
+
+  public void setSkipPinballStartupTest(boolean skipPinballStartupTest) {
+    this.skipPinballStartupTest = skipPinballStartupTest;
+  }
+
+  public boolean isUseSound() {
+    return useSound;
+  }
+
+  public void setUseSound(boolean useSound) {
+    this.useSound = useSound;
+  }
+
+  public boolean isUseSamples() {
+    return useSamples;
+  }
+
+  public void setUseSamples(boolean useSamples) {
+    this.useSamples = useSamples;
+  }
+
+  public boolean isIgnoreRomCrcError() {
+    return ignoreRomCrcError;
+  }
+
+  public void setIgnoreRomCrcError(boolean ignoreRomCrcError) {
+    this.ignoreRomCrcError = ignoreRomCrcError;
+  }
+
+  public boolean isCabinetMode() {
+    return cabinetMode;
+  }
+
+  public void setCabinetMode(boolean cabinetMode) {
+    this.cabinetMode = cabinetMode;
+  }
+
+  public boolean isShowDmd() {
+    return showDmd;
+  }
+
+  public void setShowDmd(boolean showDmd) {
+    this.showDmd = showDmd;
+  }
+
+  public boolean isUseExternalDmd() {
+    return useExternalDmd;
+  }
+
+  public void setUseExternalDmd(boolean useExternalDmd) {
+    this.useExternalDmd = useExternalDmd;
+  }
+
+  public boolean isColorizeDmd() {
+    return colorizeDmd;
+  }
+
+  public void setColorizeDmd(boolean colorizeDmd) {
+    this.colorizeDmd = colorizeDmd;
+  }
+}

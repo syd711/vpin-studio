@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<BorderPane styleClass="base-component" stylesheets="@../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.preferences.MamePreferencesController">
+   <top>
+      <VBox fx:id="preferenceList" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" styleClass="subpanel" BorderPane.alignment="TOP_LEFT">
+         <children>
+            <Label styleClass="preference-title" text="VPIN PREFERENCES" textFill="WHITE" />
+            <Label styleClass="preference-subtitle" text="VPin Mame">
+               <VBox.margin>
+                  <Insets />
+               </VBox.margin>
+            </Label>
+            <Label styleClass="preference-subtitle" text="Default Options" textFill="WHITE">
+               <font>
+                  <Font name="System Bold" size="14.0" />
+               </font>
+               <VBox.margin>
+                  <Insets top="24.0" />
+               </VBox.margin>
+            </Label>
+            <Label layoutX="34.0" layoutY="167.0" styleClass="preference-description" text="This section configures the default options set for every VPX table." textFill="WHITE" />
+            <Label styleClass="preference-description" text="These settings can be customized for every table in the table overview." textFill="WHITE">
+               <VBox.margin>
+                  <Insets />
+               </VBox.margin>
+            </Label>
+            <VBox>
+               <children>
+                  <CheckBox fx:id="skipPinballStartupTest" mnemonicParsing="false" styleClass="preference-checkbox" text="Skip Pinball Startup Test" textFill="WHITE">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                  </CheckBox>
+                  <Label styleClass="checkbox-description" text="Skips the inital ROM test after startup. (This may not work for every table.)" textFill="WHITE" wrapText="true">
+                     <VBox.margin>
+                        <Insets bottom="6.0" />
+                     </VBox.margin>
+                  </Label>
+                  <CheckBox fx:id="useSound" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" styleClass="preference-checkbox" text="Use Sound" textFill="WHITE">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                  </CheckBox>
+                  <Label layoutX="10.0" layoutY="36.0" styleClass="checkbox-description" text="If enabled, the original sound from the table rom will be used." textFill="WHITE" wrapText="true" />
+                  <CheckBox fx:id="useSamples" layoutX="10.0" layoutY="30.0" mnemonicParsing="false" styleClass="preference-checkbox" text="Use Samples" textFill="WHITE">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                  </CheckBox>
+                  <Label layoutX="10.0" layoutY="97.0" styleClass="checkbox-description" text="-" textFill="WHITE" wrapText="true" />
+                  <CheckBox fx:id="ignoreRomCrcError" layoutX="10.0" layoutY="50.0" mnemonicParsing="false" styleClass="preference-checkbox" text="Ignore ROM CRC Errors" textFill="WHITE">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                  </CheckBox>
+                  <Label layoutX="10.0" layoutY="152.0" styleClass="checkbox-description" text="-" textFill="WHITE" wrapText="true" />
+                  <CheckBox fx:id="cabinetMode" layoutX="10.0" layoutY="106.0" mnemonicParsing="false" styleClass="preference-checkbox" text="Cabinet Mode" textFill="WHITE">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                  </CheckBox>
+                  <Label layoutX="10.0" layoutY="206.0" styleClass="checkbox-description" text="-" textFill="WHITE" wrapText="true" />
+                  <CheckBox fx:id="showDmd" layoutX="10.0" layoutY="138.0" mnemonicParsing="false" styleClass="preference-checkbox" text="Show DMD / Display Window" textFill="WHITE">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                  </CheckBox>
+                  <Label layoutX="10.0" layoutY="260.0" styleClass="checkbox-description" text="-" textFill="WHITE" wrapText="true" />
+                  <CheckBox fx:id="useExternalDmd" layoutX="10.0" layoutY="170.0" mnemonicParsing="false" styleClass="preference-checkbox" text="User External DMD (dll)" textFill="WHITE">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                  </CheckBox>
+                  <Label layoutX="10.0" layoutY="315.0" styleClass="checkbox-description" text="-" textFill="WHITE" wrapText="true" />
+                  <CheckBox fx:id="colorizeDmd" layoutX="10.0" layoutY="202.0" mnemonicParsing="false" styleClass="preference-checkbox" text="Colorize DMD (4 colors)" textFill="WHITE">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                  </CheckBox>
+                  <Label layoutX="10.0" layoutY="369.0" styleClass="checkbox-description" text="-" textFill="WHITE" wrapText="true" />
+               </children>
+               <VBox.margin>
+                  <Insets top="12.0" />
+               </VBox.margin>
+            </VBox>
+         </children>
+         <padding>
+            <Insets bottom="24.0" left="24.0" right="24.0" top="24.0" />
+         </padding>
+      </VBox>
+   </top>
+</BorderPane>

@@ -58,6 +58,9 @@ public class TablesSidebarController implements Initializable {
   private TitledPane titledPanePopper;
 
   @FXML
+  private TitledPane titledPaneMame;
+
+  @FXML
   private TitledPane titledPaneVps;
 
   @FXML
@@ -95,6 +98,9 @@ public class TablesSidebarController implements Initializable {
 
   @FXML
   private TablesSidebarVpsController tablesSidebarVpsController; //fxml magic! Not unused
+
+  @FXML
+  private TablesSidebarMameController tablesSidebarMameController; //fxml magic! Not unused
 
   @FXML
   private TablesSidebarAltColorController tablesSidebarAltColorController; //fxml magic! Not unused
@@ -233,6 +239,16 @@ public class TablesSidebarController implements Initializable {
       LOG.error("Failed loading sidebar controller: " + e.getMessage(), e);
     }
 
+    try {
+      FXMLLoader loader = new FXMLLoader(TablesSidebarMameController.class.getResource("scene-tables-sidebar-mame.fxml"));
+      Parent tablesRoot = loader.load();
+      tablesSidebarMameController = loader.getController();
+      tablesSidebarMameController.setSidebarController(this);
+      titledPaneMame.setContent(tablesRoot);
+    } catch (IOException e) {
+      LOG.error("Failed loading sidebar controller: " + e.getMessage(), e);
+    }
+
     PreferenceEntryRepresentation preference = client.getPreference(PreferenceNames.PREVIEW_ENABLED);
     mediaPreviewCheckbox.setSelected(preference.getBooleanValue());
 
@@ -292,6 +308,11 @@ public class TablesSidebarController implements Initializable {
       }
     });
     titledPaneAltColor.expandedProperty().addListener((observableValue, aBoolean, expanded) -> {
+      if (expanded) {
+        refreshView(game);
+      }
+    });
+    titledPaneMame.expandedProperty().addListener((observableValue, aBoolean, expanded) -> {
       if (expanded) {
         refreshView(game);
       }
@@ -356,6 +377,9 @@ public class TablesSidebarController implements Initializable {
       }
       if (titledPaneAltColor.isExpanded()) {
         this.tablesSidebarAltColorController.setGame(g);
+      }
+      if (titledPaneMame.isExpanded()) {
+        this.tablesSidebarMameController.setGame(g);
       }
     });
 

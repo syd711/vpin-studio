@@ -212,6 +212,7 @@ public class AltSoundService implements InitializingBean {
   }
 
   public boolean clearCache() {
+    this.altSounds.clear();
     long start = System.currentTimeMillis();
     File altSoundsFolder = systemService.getAltSoundFolder();
     if (altSoundsFolder.exists()) {

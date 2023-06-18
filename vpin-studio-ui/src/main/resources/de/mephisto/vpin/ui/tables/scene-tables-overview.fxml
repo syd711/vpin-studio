@@ -38,8 +38,9 @@
                                         <TableColumn fx:id="columnEmulator" minWidth="10.4000244140625" prefWidth="126.4000244140625" style="-fx-alignment: BASELINE_LEFT;" text="Emulator" visible="false" />
                                         <TableColumn fx:id="columnB2S" minWidth="51.199951171875" prefWidth="90.0" style="-fx-alignment: CENTER;" text="DirectB2S" />
                                         <TableColumn fx:id="columnPUPPack" minWidth="57.5999755859375" prefWidth="90.0" style="-fx-alignment: CENTER;" text="PUP Pack" />
-                                        <TableColumn fx:id="columnPOV" minWidth="57.5999755859375" prefWidth="90.0" style="-fx-alignment: CENTER;" text="POV" />
+                                        <TableColumn fx:id="columnPOV" minWidth="57.5999755859375" prefWidth="64.0" style="-fx-alignment: CENTER;" text="POV" />
                                         <TableColumn fx:id="columnAltSound" minWidth="10.4000244140625" prefWidth="90.0" style="-fx-alignment: CENTER;" text="ALT Sound" />
+                              <TableColumn fx:id="columnAltColor" minWidth="10.4000244140625" prefWidth="90.0" style="-fx-alignment: CENTER;" text="ALT Color" />
                                         <TableColumn fx:id="columnRom" minWidth="10.4000244140625" prefWidth="140.0" style="-fx-alignment: BASELINE_LEFT;" text="ROM" />
                                         <TableColumn fx:id="columnHSType" minWidth="10.4000244140625" prefWidth="130.0" style="-fx-alignment: BASELINE_LEFT;" text="Highscore Type" />
                                     </columns>

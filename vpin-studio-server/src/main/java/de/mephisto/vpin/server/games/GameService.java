@@ -6,6 +6,7 @@ import de.mephisto.vpin.restclient.popper.PopperScreen;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.descriptors.DeleteDescriptor;
 import de.mephisto.vpin.restclient.representations.ValidationState;
+import de.mephisto.vpin.server.altcolor.AltColorService;
 import de.mephisto.vpin.server.altsound.AltSoundService;
 import de.mephisto.vpin.server.assets.Asset;
 import de.mephisto.vpin.server.assets.AssetRepository;
@@ -67,6 +68,9 @@ public class GameService {
 
   @Autowired
   private AltSoundService altSoundService;
+
+  @Autowired
+  private AltColorService altColorService;
 
 
   @SuppressWarnings("unused")
@@ -368,6 +372,7 @@ public class GameService {
     game.setPupPack(pupPackService.getPupPack(game));
     game.setIgnoredValidations(ValidationState.toIds(gameDetails.getIgnoredValidations()));
     game.setAltSoundAvailable(altSoundService.isAltSoundAvailable(game));
+    game.setAltColorAvailable(altColorService.isAltColorAvailable(game));
 
     Optional<Highscore> highscore = this.highscoreService.getOrCreateHighscore(game);
     highscore.ifPresent(value -> game.setHighscoreType(value.getType() != null ? HighscoreType.valueOf(value.getType()) : null));

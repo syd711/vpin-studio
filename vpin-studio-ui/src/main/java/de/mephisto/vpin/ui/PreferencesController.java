@@ -82,6 +82,11 @@ public class PreferencesController implements Initializable {
   }
 
   @FXML
+  private void onMame(ActionEvent event) throws IOException {
+    load("preference-mame.fxml", event);
+  }
+
+  @FXML
   private void onReset(ActionEvent event) throws IOException {
     load("preference-reset.fxml", event);
   }

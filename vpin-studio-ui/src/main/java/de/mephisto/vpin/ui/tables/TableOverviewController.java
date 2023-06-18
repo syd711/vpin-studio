@@ -67,6 +67,9 @@ public class TableOverviewController implements Initializable, StudioFXControlle
   private TableColumn<GameRepresentation, String> columnAltSound;
 
   @FXML
+  private TableColumn<GameRepresentation, String> columnAltColor;
+
+  @FXML
   private TableColumn<GameRepresentation, String> columnPOV;
 
   @FXML
@@ -508,6 +511,14 @@ public class TableOverviewController implements Initializable, StudioFXControlle
     columnAltSound.setCellValueFactory(cellData -> {
       GameRepresentation value = cellData.getValue();
       if (value.isAltSoundAvailable()) {
+        return new SimpleObjectProperty(WidgetFactory.createCheckboxIcon());
+      }
+      return new SimpleStringProperty("");
+    });
+
+    columnAltColor.setCellValueFactory(cellData -> {
+      GameRepresentation value = cellData.getValue();
+      if (value.isAltColorAvailable()) {
         return new SimpleObjectProperty(WidgetFactory.createCheckboxIcon());
       }
       return new SimpleStringProperty("");

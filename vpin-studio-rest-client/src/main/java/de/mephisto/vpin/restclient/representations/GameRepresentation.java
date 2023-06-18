@@ -42,8 +42,17 @@ public class GameRepresentation {
   private String assets;
   private boolean defaultBackgroundAvailable;
   private boolean altSoundAvailable;
+  private boolean altColorAvailable;
   private String extTableId;
   private String extTableVersionId;
+
+  public boolean isAltColorAvailable() {
+    return altColorAvailable;
+  }
+
+  public void setAltColorAvailable(boolean altColorAvailable) {
+    this.altColorAvailable = altColorAvailable;
+  }
 
   public String getExtTableId() {
     return extTableId;
