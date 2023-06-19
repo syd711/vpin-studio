@@ -1,6 +1,5 @@
 package de.mephisto.vpin.server.util;
 
-import de.mephisto.vpin.commons.utils.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
@@ -8,13 +7,15 @@ import org.slf4j.LoggerFactory;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.awt.image.BufferedImage;
-import java.io.*;
+import java.io.BufferedInputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 
 public class UploadUtil {
   private final static Logger LOG = LoggerFactory.getLogger(UploadUtil.class);
 
   public static Boolean upload(MultipartFile file, File target) throws Exception {
-    byte[] bytes = new byte[0];
     try {
       if (target.exists() && !target.delete()) {
         throw new UnsupportedOperationException("Failed to delete existing target file " + target.getAbsolutePath());
@@ -25,9 +26,9 @@ public class UploadUtil {
       IOUtils.copy(in, fileOutputStream);
       in.close();
       fileOutputStream.close();
-      LOG.info("Written uploaded file: " + target.getAbsolutePath() + ", byte size was " + FileUtils.readableFileSize(bytes.length));
+      LOG.info("Written uploaded file: " + target.getAbsolutePath());
     } catch (Exception e) {
-      LOG.error("Failed to store asset: " + e.getMessage() + ", byte size was " + bytes.length, e);
+      LOG.error("Failed to store asset: " + e.getMessage(), e);
       throw e;
     }
     return true;

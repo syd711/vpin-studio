@@ -44,25 +44,6 @@ public class AltColorResource {
     return new AltColor();
   }
 
-  @GetMapping("/enabled/{id}")
-  public boolean enable(@PathVariable("id") int id) {
-    Game game = gameService.getGame(id);
-    if (game != null) {
-      return altColorService.isAltColorEnabled(game);
-    }
-    return false;
-  }
-
-  @GetMapping("/set/{id}/{enable}")
-  public boolean enable(@PathVariable("id") int id,
-                        @PathVariable("enable") boolean enable) {
-    Game game = gameService.getGame(id);
-    if (game != null) {
-      return altColorService.setAltColorEnabled(game, enable);
-    }
-    return false;
-  }
-
   @GetMapping("/clearcache")
   public boolean clearCache() {
     return altColorService.clearCache();
@@ -84,7 +65,9 @@ public class AltColorResource {
         return JobExecutionResultFactory.error("No game found for alt color upload.");
       }
 
-      File out = File.createTempFile(FilenameUtils.getBaseName(file.getOriginalFilename()), ".zip");
+      String name = FilenameUtils.getBaseName(file.getOriginalFilename());
+      String ext = FilenameUtils.getExtension(file.getOriginalFilename());
+      File out = File.createTempFile(name, "." + ext);
       LOG.info("Uploading " + out.getAbsolutePath());
       UploadUtil.upload(file, out);
       return altColorService.installAltColor(game, out);

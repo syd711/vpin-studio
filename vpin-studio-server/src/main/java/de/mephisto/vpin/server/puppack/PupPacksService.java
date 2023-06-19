@@ -38,11 +38,11 @@ public class PupPacksService implements InitializingBean {
 
   @Nullable
   public PupPack getPupPack(@NonNull Game game) {
-    if (!StringUtils.isEmpty(game.getRom()) && pupPackFolders.containsKey(game.getRom())) {
-      return pupPackFolders.get(game.getRom());
+    if (!StringUtils.isEmpty(game.getRom()) && pupPackFolders.containsKey(game.getRom().toLowerCase())) {
+      return pupPackFolders.get(game.getRom().toLowerCase());
     }
-    if (!StringUtils.isEmpty(game.getTableName()) && pupPackFolders.containsKey(game.getTableName())) {
-      return pupPackFolders.get(game.getTableName());
+    if (!StringUtils.isEmpty(game.getTableName()) && pupPackFolders.containsKey(game.getTableName().toLowerCase())) {
+      return pupPackFolders.get(game.getTableName().toLowerCase());
     }
     return null;
   }
@@ -82,7 +82,7 @@ public class PupPacksService implements InitializingBean {
 
     if ((pupPack.getScreensPup().exists() && pupPack.getTriggersPup().exists()) ||
         (OrbitalPins.isOrbitalPin(packFolder.getName()) && !FileUtils.listFiles(packFolder, new String[]{"mp4"}, true).isEmpty())) {
-      pupPackFolders.put(packFolder.getName(), pupPack);
+      pupPackFolders.put(packFolder.getName().toLowerCase(), pupPack);
     }
   }
 

@@ -181,11 +181,11 @@ public class AltSoundService implements InitializingBean {
   }
 
   private File getAltSoundCsvFile(@NonNull Game game) {
-    if (!StringUtils.isEmpty(game.getRom()) && this.altSounds.containsKey(game.getRom())) {
-      return this.altSounds.get(game.getRom());
+    if (!StringUtils.isEmpty(game.getRom()) && this.altSounds.containsKey(game.getRom().toLowerCase())) {
+      return this.altSounds.get(game.getRom().toLowerCase());
     }
-    if (!StringUtils.isEmpty(game.getTableName()) && this.altSounds.containsKey(game.getTableName())) {
-      return this.altSounds.get(game.getTableName());
+    if (!StringUtils.isEmpty(game.getTableName()) && this.altSounds.containsKey(game.getTableName().toLowerCase())) {
+      return this.altSounds.get(game.getTableName().toLowerCase());
     }
     return null;
   }
@@ -221,7 +221,7 @@ public class AltSoundService implements InitializingBean {
         for (File altSound : altSoundFolder) {
           File csv = new File(altSound, "altsound.csv");
           if (csv.exists()) {
-            this.altSounds.put(altSound.getName(), csv);
+            this.altSounds.put(altSound.getName().toLowerCase(), csv);
           }
         }
       }

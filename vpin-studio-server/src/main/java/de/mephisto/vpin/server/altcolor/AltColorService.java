@@ -17,10 +17,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 
 /**
  *
@@ -58,35 +60,14 @@ public class AltColorService implements InitializingBean {
   public AltColor getAltColor(@NonNull Game game) {
     String rom = game.getRom();
     String tableName = game.getTableName();
-    if (!StringUtils.isEmpty(rom) && altColors.containsKey(rom)) {
-      return altColors.get(rom);
+    if (!StringUtils.isEmpty(rom) && altColors.containsKey(rom.toLowerCase())) {
+      return altColors.get(rom.toLowerCase());
     }
 
-    if (!StringUtils.isEmpty(tableName) && altColors.containsKey(tableName)) {
-      return altColors.get(tableName);
+    if (!StringUtils.isEmpty(tableName) && altColors.containsKey(tableName.toLowerCase())) {
+      return altColors.get(tableName.toLowerCase());
     }
     return null;
-  }
-
-  public boolean setAltColorEnabled(@NonNull Game game, boolean b) {
-    String rom = game.getRom();
-    if (!StringUtils.isEmpty(rom)) {
-      if (b) {
-//        systemService.writeRegistry(SystemService.MAME_REG_KEY + rom, SOUND_MODE, 1);
-      }
-      else {
-//        systemService.writeRegistry(SystemService.MAME_REG_KEY + rom, SOUND_MODE, 0);
-      }
-    }
-    return b;
-  }
-
-  public boolean isAltColorEnabled(@NonNull Game game) {
-    if (!StringUtils.isEmpty(game.getRom())) {
-//      String sound_mode = systemService.getMameRegistryValue(game.getRom(), SOUND_MODE);
-//      return String.valueOf(sound_mode).equals("0x1") || String.valueOf(sound_mode).equals("1");
-    }
-    return false;
   }
 
   public boolean clearCache() {
@@ -101,17 +82,18 @@ public class AltColorService implements InitializingBean {
           if (altColorFiles != null && altColorFiles.length > 0) {
             AltColor altColor = new AltColor();
             altColor.setName(altColorFolder.getName());
+            altColor.setFiles(Arrays.stream(altColorFiles).map(File::getName).collect(Collectors.toList()));
 
             AltColorTypes type = AltColorTypes.mame;
-            boolean lucky1 = Arrays.stream(altColorFiles).anyMatch(f -> f.getName().endsWith(".pac"));
-            boolean freezy = Arrays.stream(altColorFiles).anyMatch(f -> f.getName().endsWith(".pal"));
+            boolean pac = Arrays.stream(altColorFiles).anyMatch(f -> f.getName().endsWith(".pac"));
+            boolean pal = Arrays.stream(altColorFiles).anyMatch(f -> f.getName().endsWith(".pal"));
             boolean serum = Arrays.stream(altColorFiles).anyMatch(f -> f.getName().endsWith(".cRZ"));
 
-            if(lucky1) {
-              type = AltColorTypes.lucky1;
+            if(pac) {
+              type = AltColorTypes.pac;
             }
-            else if(freezy) {
-              type = AltColorTypes.freezy;
+            else if(pal) {
+              type = AltColorTypes.pal;
             }
             else if(serum) {
               type = AltColorTypes.serum;
@@ -119,7 +101,7 @@ public class AltColorService implements InitializingBean {
 
             altColor.setAltColorType(type);
             altColor.setModificationDate(new Date(altColorFolder.lastModified()));
-            this.altColors.put(altColorFolder.getName(), altColor);
+            this.altColors.put(altColorFolder.getName().toLowerCase(), altColor);
           }
         }
       }
@@ -142,12 +124,31 @@ public class AltColorService implements InitializingBean {
         }
       }
 
-      AltColorUtil.unzip(out, folder);
+      String name = out.getName();
+      if(name.endsWith(".zip")) {
+        AltColorUtil.unzip(out, folder);
+      }
+      else if(name.endsWith(".pac")) {
+        try {
+          FileUtils.copyFile(out, new File(game.getAltColorFolder(),"pin2dmd.pac"));
+        } catch (IOException e) {
+          LOG.error("Failed to copy pac file: " + e.getMessage(), e);
+          return JobExecutionResultFactory.error("Failed to copy pac file: " + e.getMessage());
+        }
+      }
+      else if(name.endsWith(".cRZ")) {
+        try {
+          FileUtils.copyFile(out, new File(game.getAltColorFolder(),game.getRom() + ".cRZ"));
+        } catch (IOException e) {
+          LOG.error("Failed to copy cRZ file: " + e.getMessage(), e);
+          return JobExecutionResultFactory.error("Failed to copy cRZ file: " + e.getMessage());
+        }
+      }
+
       if (!out.delete()) {
         return JobExecutionResultFactory.error("Failed to delete temporary file.");
       }
       clearCache();
-      setAltColorEnabled(game, true);
     }
     return JobExecutionResultFactory.empty();
   }

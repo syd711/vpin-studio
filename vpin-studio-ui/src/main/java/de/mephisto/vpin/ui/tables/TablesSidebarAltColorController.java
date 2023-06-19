@@ -15,6 +15,7 @@ import org.slf4j.LoggerFactory;
 
 import java.net.URL;
 import java.text.SimpleDateFormat;
+import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
 
@@ -29,6 +30,9 @@ public class TablesSidebarAltColorController implements Initializable {
 
   @FXML
   private Label typeLabel;
+
+  @FXML
+  private Label filesLabel;
 
   @FXML
   private VBox emptyDataBox;
@@ -76,6 +80,7 @@ public class TablesSidebarAltColorController implements Initializable {
 
     lastModifiedLabel.setText("-");
     typeLabel.setText("-");
+    filesLabel.setText("-");
 
     if (g.isPresent()) {
       GameRepresentation game = g.get();
@@ -90,6 +95,9 @@ public class TablesSidebarAltColorController implements Initializable {
         altColor = Studio.client.getAltColorService().getAltColor(game.getId());
         lastModifiedLabel.setText(SimpleDateFormat.getDateInstance().format(altColor.getModificationDate()));
         typeLabel.setText(altColor.getAltColorType().name());
+
+        List<String> files = altColor.getFiles();
+        filesLabel.setText(String.join(", ", files));
       }
     }
   }
