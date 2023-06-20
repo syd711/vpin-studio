@@ -8,13 +8,13 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
-import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class ImageCache {
   private final static Logger LOG = LoggerFactory.getLogger(ImageCache.class);
 
-  private final Map<String, byte[]> imageCache = new HashMap<>();
+  private final Map<String, byte[]> imageCache = new ConcurrentHashMap<>();
 
   public InputStream getCachedUrlImage(String imageUrl) {
     try {
@@ -34,7 +34,7 @@ public class ImageCache {
 
         byte[] bytes = bis.toByteArray();
         imageCache.put(imageUrl, bytes);
-        LOG.info("Cached image URL " + imageUrl);
+        LOG.info("Cached image URL " + imageUrl + ", cache size: " + imageCache.size());
       }
     } catch (IOException e) {
       LOG.error("Failed to read image from URL: " + e.getMessage(), e);

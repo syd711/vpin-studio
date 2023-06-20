@@ -21,7 +21,7 @@ public class ImageCache extends VPinStudioClientService {
     super(client);
   }
 
-  public InputStream getCachedUrlImage(String imageUrl) {
+  public synchronized InputStream getCachedUrlImage(String imageUrl) {
     try {
       if (!imageCache.containsKey(imageUrl)) {
         URL url = new URL(imageUrl);
@@ -39,7 +39,7 @@ public class ImageCache extends VPinStudioClientService {
 
         byte[] bytes = bis.toByteArray();
         imageCache.put(imageUrl, bytes);
-        LOG.info("Cached image URL " + imageUrl);
+        LOG.info("Cached image URL " + imageUrl + ", cache size: " + imageCache.size());
       }
     } catch (IOException e) {
       LOG.error("Failed to read image from URL: " + e.getMessage(), e);

@@ -252,8 +252,8 @@ public class GameService {
 
     //check if the actual game still exists
     for (Score version : allHighscoreVersions) {
-      Game game = getGame(version.getGameId());
-      if (game != null) {
+      Game rawGame = pinUPConnector.getGame(version.getGameId());
+      if (rawGame != null) {
         scores.add(version);
       }
 
