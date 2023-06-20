@@ -1,16 +1,21 @@
 package de.mephisto.vpin.server.mame;
 
-import de.mephisto.vpin.restclient.client.AltSoundServiceClient;
 import de.mephisto.vpin.restclient.mame.MameOptions;
 import de.mephisto.vpin.server.system.SystemService;
+import de.mephisto.vpin.server.util.WinRegistry;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+
 @Service
-public class MameService {
+public class MameService implements InitializingBean {
   private final static Logger LOG = LoggerFactory.getLogger(MameService.class);
 
   private final static String KEY_SKIP_STARTUP_TEST = "cheat";
@@ -22,40 +27,75 @@ public class MameService {
   private final static String KEY_USER_EXTERNAL_DMD = "showpindmd";
   private final static String KEY_COLORIZE_DMD = "dmd_colorize";
 
-  @Autowired
-  private SystemService systemService;
+  public final static String MAME_REG_FOLDER_KEY = "SOFTWARE\\Freeware\\Visual PinMame\\";
+
+  private final Map<String, MameOptions> mameCache = new ConcurrentHashMap<>();
+
+  public boolean clearCache() {
+    long l = System.currentTimeMillis();
+    mameCache.clear();
+    List<String> romFolders = WinRegistry.getKeys(MAME_REG_FOLDER_KEY);
+    for (String romFolder : romFolders) {
+      mameCache.put(romFolder.toLowerCase(), getOptions(romFolder));
+    }
+    LOG.info("Read " + this.mameCache.size() + " mame options (" + (System.currentTimeMillis() - l) + "ms)");
+    return true;
+  }
 
   public MameOptions getOptions(@NonNull String rom) {
-    MameOptions options = new MameOptions();
-    options.setRom(rom);
-
-    boolean mameRegistryEntryPresent = systemService.isMameRegistryEntryPresent(rom);
-    options.setExistInRegistry(mameRegistryEntryPresent);
-    if(mameRegistryEntryPresent) {
-      options.setSkipPinballStartupTest(systemService.getMameRegistryBooleanValue(rom, KEY_SKIP_STARTUP_TEST));
-      options.setUseSound(systemService.getMameRegistryBooleanValue(rom, KEY_USE_SOUND));
-      options.setUseSamples(systemService.getMameRegistryBooleanValue(rom, KEY_USE_SAMPLES));
-      options.setIgnoreRomCrcError(systemService.getMameRegistryBooleanValue(rom, KEY_IGNORE_ROM_ERRORS));
-      options.setCabinetMode(systemService.getMameRegistryBooleanValue(rom, KEY_CABINET_MODE));
-      options.setShowDmd(systemService.getMameRegistryBooleanValue(rom, KEY_SHOW_DMD));
-      options.setUseExternalDmd(systemService.getMameRegistryBooleanValue(rom, KEY_USER_EXTERNAL_DMD));
-      options.setColorizeDmd(systemService.getMameRegistryBooleanValue(rom, KEY_COLORIZE_DMD));
+    if(mameCache.containsKey(rom.toLowerCase())) {
+      return mameCache.get(rom.toLowerCase());
     }
 
+    List<String> romFolders = WinRegistry.getKeys(MAME_REG_FOLDER_KEY);
+    MameOptions options = new MameOptions();
+    options.setRom(rom);
+    options.setExistInRegistry(romFolders.contains(rom.toLowerCase()));
+    
+    if(options.isExistInRegistry()) {
+      Map<String, Object> values = WinRegistry.getValues(MAME_REG_FOLDER_KEY + rom);
+
+      options.setSkipPinballStartupTest(getBoolean(values, KEY_SKIP_STARTUP_TEST));
+      options.setUseSound(getBoolean(values, KEY_USE_SOUND));
+      options.setUseSamples(getBoolean(values, KEY_USE_SAMPLES));
+      options.setIgnoreRomCrcError(getBoolean(values, KEY_IGNORE_ROM_ERRORS));
+      options.setCabinetMode(getBoolean(values, KEY_CABINET_MODE));
+      options.setShowDmd(getBoolean(values, KEY_SHOW_DMD));
+      options.setUseExternalDmd(getBoolean(values, KEY_USER_EXTERNAL_DMD));
+      options.setColorizeDmd(getBoolean(values, KEY_COLORIZE_DMD));
+    }
+
+    mameCache.put(options.getRom().toLowerCase(), options);
     return options;
   }
 
   public MameOptions saveOptions(@NonNull MameOptions options) {
     String rom = options.getRom();
 
-    systemService.writeRegistry(SystemService.MAME_REG_KEY + rom, KEY_SKIP_STARTUP_TEST, options.isSkipPinballStartupTest() ? 1 : 0);
-    systemService.writeRegistry(SystemService.MAME_REG_KEY + rom, KEY_USE_SOUND, options.isUseSound() ? 1 : 0);
-    systemService.writeRegistry(SystemService.MAME_REG_KEY + rom, KEY_USE_SAMPLES, options.isUseSamples() ? 1 : 0);
-    systemService.writeRegistry(SystemService.MAME_REG_KEY + rom, KEY_IGNORE_ROM_ERRORS, options.isIgnoreRomCrcError() ? 1 : 0);
-    systemService.writeRegistry(SystemService.MAME_REG_KEY + rom, KEY_CABINET_MODE, options.isCabinetMode() ? 1 : 0);
-    systemService.writeRegistry(SystemService.MAME_REG_KEY + rom, KEY_SHOW_DMD, options.isShowDmd() ? 1 : 0);
-    systemService.writeRegistry(SystemService.MAME_REG_KEY + rom, KEY_USER_EXTERNAL_DMD, options.isUseExternalDmd() ? 1 : 0);
-    systemService.writeRegistry(SystemService.MAME_REG_KEY + rom, KEY_COLORIZE_DMD, options.isColorizeDmd() ? 1 : 0);
+    if(!options.isExistInRegistry()) {
+      WinRegistry.createKey(MAME_REG_FOLDER_KEY + rom);
+    }
+    WinRegistry.setIntValue(MAME_REG_FOLDER_KEY + rom, KEY_SKIP_STARTUP_TEST, options.isSkipPinballStartupTest() ? 1 : 0);
+    WinRegistry.setIntValue(MAME_REG_FOLDER_KEY + rom, KEY_USE_SOUND, options.isUseSound() ? 1 : 0);
+    WinRegistry.setIntValue(MAME_REG_FOLDER_KEY + rom, KEY_USE_SAMPLES, options.isUseSamples() ? 1 : 0);
+    WinRegistry.setIntValue(MAME_REG_FOLDER_KEY + rom, KEY_IGNORE_ROM_ERRORS, options.isIgnoreRomCrcError() ? 1 : 0);
+    WinRegistry.setIntValue(MAME_REG_FOLDER_KEY + rom, KEY_CABINET_MODE, options.isCabinetMode() ? 1 : 0);
+    WinRegistry.setIntValue(MAME_REG_FOLDER_KEY + rom, KEY_SHOW_DMD, options.isShowDmd() ? 1 : 0);
+    WinRegistry.setIntValue(MAME_REG_FOLDER_KEY + rom, KEY_USER_EXTERNAL_DMD, options.isUseExternalDmd() ? 1 : 0);
+    WinRegistry.setIntValue(MAME_REG_FOLDER_KEY + rom, KEY_COLORIZE_DMD, options.isColorizeDmd() ? 1 : 0);
+
+    mameCache.put(options.getRom().toLowerCase(), options);
     return getOptions(rom);
+  }
+
+  private boolean getBoolean(Map<String,Object> values, String key) {
+    return values.containsKey(key) && values.get(key) instanceof Integer && (((Integer)values.get(key)) == 1);
+  }
+
+  @Override
+  public void afterPropertiesSet() {
+    new Thread(() -> {
+      clearCache();
+    }).start();
   }
 }

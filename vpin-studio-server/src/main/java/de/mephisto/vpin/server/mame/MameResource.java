@@ -22,4 +22,9 @@ public class MameResource {
   public MameOptions saveOptions(@RequestBody MameOptions options) {
     return mameService.saveOptions(options);
   }
+
+  @GetMapping("/clearcache")
+  public boolean clearCache() {
+    return mameService.clearCache();
+  }
 }

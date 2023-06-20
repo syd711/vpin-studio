@@ -122,7 +122,7 @@ public class PupPacksResource {
     representation.setScreenDMDMode(pupPack.getScreenMode(PopperScreen.DMD));
     representation.setScreenBackglassMode(pupPack.getScreenMode(PopperScreen.BackGlass));
     representation.setScreenTopperMode(pupPack.getScreenMode(PopperScreen.Topper));
-    representation.setScreenFullDMDMode(pupPack.getScreenMode(PopperScreen.FullDMD));
+    representation.setScreenFullDMDMode(pupPack.getScreenMode(PopperScreen.Menu));
     representation.setMissingResources(pupPack.getMissingResources());
     representation.setSelectedOption(pupPack.getSelectedOption());
     representation.setTxtFiles(pupPack.getTxtFiles());

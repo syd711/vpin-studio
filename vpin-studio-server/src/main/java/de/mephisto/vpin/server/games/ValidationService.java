@@ -1,9 +1,14 @@
 package de.mephisto.vpin.server.games;
 
+import de.mephisto.vpin.restclient.AltColor;
+import de.mephisto.vpin.restclient.AltColorTypes;
 import de.mephisto.vpin.restclient.ValidationCode;
+import de.mephisto.vpin.restclient.mame.MameOptions;
 import de.mephisto.vpin.restclient.popper.PopperScreen;
 import de.mephisto.vpin.restclient.representations.ValidationState;
+import de.mephisto.vpin.server.altcolor.AltColorService;
 import de.mephisto.vpin.server.altsound.AltSoundService;
+import de.mephisto.vpin.server.mame.MameService;
 import de.mephisto.vpin.server.popper.Emulator;
 import de.mephisto.vpin.server.preferences.Preferences;
 import de.mephisto.vpin.server.preferences.PreferencesService;
@@ -29,7 +34,7 @@ public class ValidationService implements InitializingBean {
   static {
     mediaCodeToScreen.put(CODE_NO_AUDIO, PopperScreen.Audio);
     mediaCodeToScreen.put(CODE_NO_AUDIO_LAUNCH, PopperScreen.AudioLaunch);
-    mediaCodeToScreen.put(CODE_NO_APRON, PopperScreen.FullDMD);
+    mediaCodeToScreen.put(CODE_NO_APRON, PopperScreen.Menu);
     mediaCodeToScreen.put(CODE_NO_INFO, PopperScreen.GameInfo);
     mediaCodeToScreen.put(CODE_NO_HELP, PopperScreen.GameHelp);
     mediaCodeToScreen.put(CODE_NO_TOPPER, PopperScreen.Topper);
@@ -46,6 +51,12 @@ public class ValidationService implements InitializingBean {
 
   @Autowired
   private AltSoundService altSoundService;
+
+  @Autowired
+  private AltColorService altColorService;
+
+  @Autowired
+  private MameService mameService;
 
   private Preferences preferences;
 
@@ -93,7 +104,7 @@ public class ValidationService implements InitializingBean {
     }
 
     if (isValidationEnabled(game, CODE_NO_APRON)) {
-      File apron = game.getPinUPMedia(PopperScreen.FullDMD);
+      File apron = game.getPinUPMedia(PopperScreen.Menu);
       if (apron == null || !apron.exists()) {
         return ValidationStateFactory.create(CODE_NO_APRON);
       }
@@ -162,17 +173,6 @@ public class ValidationService implements InitializingBean {
       }
     }
 
-    if (isValidationEnabled(game, CODE_ALT_SOUND_NOT_ENABLED)) {
-      if (game.isAltSoundAvailable() && !altSoundService.isAltSoundEnabled(game)) {
-        return ValidationStateFactory.create(ValidationCode.CODE_ALT_SOUND_NOT_ENABLED);
-      }
-    }
-
-    if (isValidationEnabled(game, CODE_ALT_SOUND_FILE_MISSING)) {
-      if (game.isAltSoundAvailable() && altSoundService.getAltSound(game).isMissingAudioFiles()) {
-        return ValidationStateFactory.create(ValidationCode.CODE_ALT_SOUND_FILE_MISSING);
-      }
-    }
 
     if (isValidationEnabled(game, CODE_PUP_PACK_FILE_MISSING)) {
       if (game.isPupPackAvailable() && !game.getPupPack().getMissingResources().isEmpty()) {
@@ -180,21 +180,72 @@ public class ValidationService implements InitializingBean {
       }
     }
 
+
+    List<ValidationState> validationStates = validateAltSound(game);
+    if (!validationStates.isEmpty()) {
+      return validationStates.get(0);
+    }
+
+
+    validationStates = validateAltColor(game);
+    if (!validationStates.isEmpty()) {
+      return validationStates.get(0);
+    }
+
     return ValidationStateFactory.empty();
   }
 
-  public List<ValidationState> validatePupPack(Game game) {
+  public List<ValidationState> validateAltColor(Game game) {
+    if (!game.isAltColorAvailable()) {
+      return Collections.emptyList();
+    }
     List<ValidationState> result = new ArrayList<>();
-    if (isValidationEnabled(game, CODE_PUP_PACK_FILE_MISSING)) {
-      if (game.isPupPackAvailable() && !game.getPupPack().getMissingResources().isEmpty()) {
-        ValidationState validationState = ValidationStateFactory.create(CODE_PUP_PACK_FILE_MISSING, game.getPupPack().getMissingResources());
-        result.add(validationState);
+
+    MameOptions options = mameService.getOptions(MameOptions.DEFAULT_KEY);
+    MameOptions gameOptions = mameService.getOptions(game.getRom());
+
+    AltColor altColor = altColorService.getAltColor(game);
+    AltColorTypes altColorType = altColor.getAltColorType();
+    if(altColorType == null) {
+      return Collections.emptyList();
+    }
+
+    switch (altColorType) {
+      case pal: {
+        List<String> files = altColor.getFiles();
+        if (!files.contains("pin2dmd.pal") || !files.contains("pin2dmd.vni")) {
+          result.add(ValidationStateFactory.create(CODE_ALT_COLOR_VNI_PAL_MISSING));
+        }
+        break;
+      }
+      default: {
+        //ignore
+      }
+    }
+
+    if (gameOptions.isExistInRegistry()) {
+      //no in registry, so check against defaults
+      if (!gameOptions.isColorizeDmd()) {
+        result.add(ValidationStateFactory.create(CODE_ALT_COLOR_COLORIZE_DMD_ENABLED));
+      }
+      if (!gameOptions.isUseExternalDmd()) {
+        result.add(ValidationStateFactory.create(CODE_ALT_COLOR_EXTERNAL_DMD_NOT_ENABLED));
+      }
+    }
+    else {
+      //no in registry, so check against defaults
+      if (!options.isColorizeDmd()) {
+        result.add(ValidationStateFactory.create(CODE_ALT_COLOR_COLORIZE_DMD_ENABLED));
+      }
+      if (!options.isUseExternalDmd()) {
+        result.add(ValidationStateFactory.create(CODE_ALT_COLOR_EXTERNAL_DMD_NOT_ENABLED));
       }
     }
     return result;
   }
 
   public List<ValidationState> validateAltSound(Game game) {
+    System.out.println("validating " + game);
     List<ValidationState> result = new ArrayList<>();
     if (isValidationEnabled(game, CODE_ALT_SOUND_NOT_ENABLED)) {
       if (game.isAltSoundAvailable() && !altSoundService.isAltSoundEnabled(game)) {
@@ -210,8 +261,14 @@ public class ValidationService implements InitializingBean {
     return result;
   }
 
-  public List<ValidationState> validateAltColor(Game game) {
+  public List<ValidationState> validatePupPack(Game game) {
     List<ValidationState> result = new ArrayList<>();
+    if (isValidationEnabled(game, CODE_PUP_PACK_FILE_MISSING)) {
+      if (game.isPupPackAvailable() && !game.getPupPack().getMissingResources().isEmpty()) {
+        ValidationState validationState = ValidationStateFactory.create(CODE_PUP_PACK_FILE_MISSING, game.getPupPack().getMissingResources());
+        result.add(validationState);
+      }
+    }
     return result;
   }
 

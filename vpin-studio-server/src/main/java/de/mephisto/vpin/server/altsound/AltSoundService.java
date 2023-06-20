@@ -6,7 +6,9 @@ import de.mephisto.vpin.restclient.AltSoundEntry;
 import de.mephisto.vpin.restclient.jobs.JobExecutionResult;
 import de.mephisto.vpin.restclient.jobs.JobExecutionResultFactory;
 import de.mephisto.vpin.server.games.Game;
+import de.mephisto.vpin.server.mame.MameService;
 import de.mephisto.vpin.server.system.SystemService;
+import de.mephisto.vpin.server.util.WinRegistry;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVRecord;
@@ -193,20 +195,15 @@ public class AltSoundService implements InitializingBean {
   public boolean setAltSoundEnabled(@NonNull Game game, boolean b) {
     String rom = game.getRom();
     if (!StringUtils.isEmpty(rom)) {
-      if (b) {
-        systemService.writeRegistry(SystemService.MAME_REG_KEY + rom, SOUND_MODE, 1);
-      }
-      else {
-        systemService.writeRegistry(SystemService.MAME_REG_KEY + rom, SOUND_MODE, 0);
-      }
+      WinRegistry.createKey(MameService.MAME_REG_FOLDER_KEY + game.getRom());
+      WinRegistry.setIntValue(MameService.MAME_REG_FOLDER_KEY + game.getRom(), SOUND_MODE, b ? 1 : 0);
     }
     return b;
   }
 
   public boolean isAltSoundEnabled(@NonNull Game game) {
     if (!StringUtils.isEmpty(game.getRom())) {
-      String sound_mode = systemService.getMameRegistryValue(game.getRom(), SOUND_MODE);
-      return String.valueOf(sound_mode).equals("0x1") || String.valueOf(sound_mode).equals("1");
+      return WinRegistry.getIntValue(MameService.MAME_REG_FOLDER_KEY + game.getRom(), SOUND_MODE) == 1;
     }
     return false;
   }

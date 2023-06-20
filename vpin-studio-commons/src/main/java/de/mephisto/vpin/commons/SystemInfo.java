@@ -25,7 +25,7 @@ public class SystemInfo {
 
   private final static String VPX_REG_KEY = "HKEY_CURRENT_USER\\SOFTWARE\\Visual Pinball\\VP10\\RecentDir";
   private final static String POPPER_REG_KEY = "HKEY_LOCAL_MACHINE\\SYSTEM\\ControlSet001\\Control\\Session Manager\\Environment";
-  public final static String MAME_REG_KEY = "HKEY_CURRENT_USER\\SOFTWARE\\Freeware\\Visual PinMame\\";
+
 
   @NonNull
   public File resolvePinUPSystemInstallationFolder() {
@@ -62,7 +62,7 @@ public class SystemInfo {
       String tablesDir = readRegistry(VPX_REG_KEY, "LoadDir");
       if (tablesDir != null) {
         tablesDir = extractRegistryValue(tablesDir);
-        if(tablesDir == null) {
+        if (tablesDir == null) {
           return file;
         }
         LOG.info("Resolve Visual Pinball tables folder " + tablesDir);
@@ -117,6 +117,7 @@ public class SystemInfo {
 
   /**
    * REG ADD "HKEY_CURRENT_USER\SOFTWARE\Freeware\Visual PinMame\tz_94ch" /v sound_mode /t REG_DWORD /d 1 /f
+   *
    * @param location
    * @param key
    * @param value
@@ -141,7 +142,7 @@ public class SystemInfo {
     result = result.replace("\n", "").replace("\r", "").trim();
 
     String[] s = result.split("    ");
-    if(s.length >= 4) {
+    if (s.length >= 4) {
       return s[3];
     }
     return null;

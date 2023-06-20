@@ -8,7 +8,7 @@ public enum PopperScreen {
   GameHelp,
   Topper,
   BackGlass,
-  FullDMD,
+  Menu,
   DMD,
   Loading,
   Wheel,
@@ -28,7 +28,7 @@ public enum PopperScreen {
       case PlayField: {
         return 3;
       }
-      case FullDMD: {
+      case Menu: {
         return 5;
       }
       default: {

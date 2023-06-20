@@ -46,7 +46,7 @@ public class TablesSidebarMediaController implements Initializable {
   private BorderPane screenPlayField;
 
   @FXML
-  private BorderPane screenFullDMD;
+  private BorderPane screenMenu;
 
   @FXML
   private BorderPane screenOther2;
@@ -170,7 +170,7 @@ public class TablesSidebarMediaController implements Initializable {
     disposeMediaPane(screenDMD);
     disposeMediaPane(screenBackGlass);
     disposeMediaPane(screenTopper);
-    disposeMediaPane(screenFullDMD);
+    disposeMediaPane(screenMenu);
     disposeMediaPane(screenPlayField);
     disposeMediaPane(screenOther2);
     disposeMediaPane(screenWheel);

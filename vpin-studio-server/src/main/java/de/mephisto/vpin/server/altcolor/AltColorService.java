@@ -67,7 +67,7 @@ public class AltColorService implements InitializingBean {
     if (!StringUtils.isEmpty(tableName) && altColors.containsKey(tableName.toLowerCase())) {
       return altColors.get(tableName.toLowerCase());
     }
-    return null;
+    return new AltColor();
   }
 
   public boolean clearCache() {
