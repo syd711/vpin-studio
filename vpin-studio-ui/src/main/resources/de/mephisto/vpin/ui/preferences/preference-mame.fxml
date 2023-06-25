@@ -54,37 +54,55 @@
                         <Font size="14.0" />
                      </font>
                   </CheckBox>
-                  <Label layoutX="10.0" layoutY="97.0" styleClass="checkbox-description" text="-" textFill="WHITE" wrapText="true" />
+                  <Label layoutX="10.0" layoutY="97.0" styleClass="checkbox-description" text="Toggles pre-recorded samples used by some machines." textFill="WHITE" wrapText="true" />
+                  <CheckBox fx:id="compactDisplay" layoutX="10.0" layoutY="124.0" mnemonicParsing="false" styleClass="preference-checkbox" text="Compact Display" textFill="WHITE">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                  </CheckBox>
+                  <Label layoutX="10.0" layoutY="156.0" styleClass="checkbox-description" text="Smallest window output, with no empty space inbetween dots/pixels." textFill="WHITE" wrapText="true" />
+                  <CheckBox fx:id="doubleDisplaySize" layoutX="10.0" layoutY="177.0" mnemonicParsing="false" styleClass="preference-checkbox" text="Double Display Size" textFill="WHITE">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                  </CheckBox>
+                  <Label layoutX="10.0" layoutY="209.0" styleClass="checkbox-description" text="Doubles every DMD pixel in x and y direction, e.g. a very simplistic output scale." textFill="WHITE" wrapText="true" />
                   <CheckBox fx:id="ignoreRomCrcError" layoutX="10.0" layoutY="50.0" mnemonicParsing="false" styleClass="preference-checkbox" text="Ignore ROM CRC Errors" textFill="WHITE">
                      <font>
                         <Font size="14.0" />
                      </font>
                   </CheckBox>
-                  <Label layoutX="10.0" layoutY="152.0" styleClass="checkbox-description" text="-" textFill="WHITE" wrapText="true" />
+                  <Label layoutX="10.0" layoutY="152.0" styleClass="checkbox-description" text="Will ignore wrong, broken or modified ROMs and start the emulation anyway. Useful when MODs are used that are not yet in the PinMAME list." textFill="WHITE" wrapText="true" />
                   <CheckBox fx:id="cabinetMode" layoutX="10.0" layoutY="106.0" mnemonicParsing="false" styleClass="preference-checkbox" text="Cabinet Mode" textFill="WHITE">
                      <font>
                         <Font size="14.0" />
                      </font>
                   </CheckBox>
-                  <Label layoutX="10.0" layoutY="206.0" styleClass="checkbox-description" text="-" textFill="WHITE" wrapText="true" />
+                  <Label layoutX="10.0" layoutY="206.0" styleClass="checkbox-description" text="If set, the initial disclaimer screen is not shown anymore and the output window can be positioned more freely." textFill="WHITE" wrapText="true" />
                   <CheckBox fx:id="showDmd" layoutX="10.0" layoutY="138.0" mnemonicParsing="false" styleClass="preference-checkbox" text="Show DMD / Display Window" textFill="WHITE">
                      <font>
                         <Font size="14.0" />
                      </font>
                   </CheckBox>
-                  <Label layoutX="10.0" layoutY="260.0" styleClass="checkbox-description" text="-" textFill="WHITE" wrapText="true" />
+                  <Label layoutX="10.0" layoutY="260.0" styleClass="checkbox-description" text="Toggles the visibility of the DMD window. If set, the DMD should be visible an can be repositioned via drag and drop." textFill="WHITE" wrapText="true" />
                   <CheckBox fx:id="useExternalDmd" layoutX="10.0" layoutY="170.0" mnemonicParsing="false" styleClass="preference-checkbox" text="User External DMD (dll)" textFill="WHITE">
                      <font>
                         <Font size="14.0" />
                      </font>
                   </CheckBox>
-                  <Label layoutX="10.0" layoutY="315.0" styleClass="checkbox-description" text="-" textFill="WHITE" wrapText="true" />
+                  <Label layoutX="10.0" layoutY="315.0" styleClass="checkbox-description" text="Allows to display external DMDs (e.g. FlexDMD) by allowing additional dll files to be loaded." textFill="WHITE" wrapText="true" />
                   <CheckBox fx:id="colorizeDmd" layoutX="10.0" layoutY="202.0" mnemonicParsing="false" styleClass="preference-checkbox" text="Colorize DMD (4 colors)" textFill="WHITE">
                      <font>
                         <Font size="14.0" />
                      </font>
                   </CheckBox>
-                  <Label layoutX="10.0" layoutY="369.0" styleClass="checkbox-description" text="-" textFill="WHITE" wrapText="true" />
+                  <Label layoutX="10.0" layoutY="369.0" styleClass="checkbox-description" text="Enables basic DMD colorization by VPin Mame. This flag must also be checked for other colorization frameworks." textFill="WHITE" wrapText="true" />
+                  <CheckBox fx:id="soundMode" layoutX="10.0" layoutY="499.0" mnemonicParsing="false" styleClass="preference-checkbox" text="Sound Mode" textFill="WHITE">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                  </CheckBox>
+                  <Label layoutX="10.0" layoutY="531.0" styleClass="checkbox-description" text="This can enable the use of alternative, external sound package recordings." textFill="WHITE" wrapText="true" />
                </children>
                <VBox.margin>
                   <Insets top="12.0" />

@@ -12,13 +12,40 @@ public class MameOptions {
   private boolean skipPinballStartupTest;
   private boolean useSound;
   private boolean useSamples;
+  private boolean compactDisplay;
+  private boolean doubleDisplaySize;
   private boolean ignoreRomCrcError;
   private boolean cabinetMode;
   private boolean showDmd;
   private boolean useExternalDmd;
   private boolean colorizeDmd;
+  private boolean soundMode;
 
   private boolean existInRegistry;
+
+  public boolean isCompactDisplay() {
+    return compactDisplay;
+  }
+
+  public void setCompactDisplay(boolean compactDisplay) {
+    this.compactDisplay = compactDisplay;
+  }
+
+  public boolean isDoubleDisplaySize() {
+    return doubleDisplaySize;
+  }
+
+  public void setDoubleDisplaySize(boolean doubleDisplaySize) {
+    this.doubleDisplaySize = doubleDisplaySize;
+  }
+
+  public boolean isSoundMode() {
+    return soundMode;
+  }
+
+  public void setSoundMode(boolean soundMode) {
+    this.soundMode = soundMode;
+  }
 
   public boolean isExistInRegistry() {
     return existInRegistry;

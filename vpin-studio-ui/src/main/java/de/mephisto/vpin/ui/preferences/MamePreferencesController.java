@@ -28,6 +28,12 @@ public class MamePreferencesController implements Initializable {
   private CheckBox useSamples;
 
   @FXML
+  private CheckBox compactDisplay;
+
+  @FXML
+  private CheckBox doubleDisplaySize;
+
+  @FXML
   private CheckBox ignoreRomCrcError;
 
   @FXML
@@ -42,6 +48,9 @@ public class MamePreferencesController implements Initializable {
   @FXML
   private CheckBox colorizeDmd;
 
+  @FXML
+  private CheckBox soundMode;
+
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
     MameOptions options = Studio.client.getMameService().getOptions(MameOptions.DEFAULT_KEY);
@@ -52,6 +61,10 @@ public class MamePreferencesController implements Initializable {
     useSound.selectedProperty().addListener((observable, oldValue, newValue) -> saveOptions());
     useSamples.setSelected(options.isUseSamples());
     useSamples.selectedProperty().addListener((observable, oldValue, newValue) -> saveOptions());
+    compactDisplay.setSelected(options.isUseSamples());
+    compactDisplay.selectedProperty().addListener((observable, oldValue, newValue) -> saveOptions());
+    doubleDisplaySize.setSelected(options.isUseSamples());
+    doubleDisplaySize.selectedProperty().addListener((observable, oldValue, newValue) -> saveOptions());
     ignoreRomCrcError.setSelected(options.isIgnoreRomCrcError());
     ignoreRomCrcError.selectedProperty().addListener((observable, oldValue, newValue) -> saveOptions());
     cabinetMode.setSelected(options.isCabinetMode());
@@ -62,6 +75,8 @@ public class MamePreferencesController implements Initializable {
     useExternalDmd.selectedProperty().addListener((observable, oldValue, newValue) -> saveOptions());
     colorizeDmd.setSelected(options.isColorizeDmd());
     colorizeDmd.selectedProperty().addListener((observable, oldValue, newValue) -> saveOptions());
+    soundMode.setSelected(options.isColorizeDmd());
+    soundMode.selectedProperty().addListener((observable, oldValue, newValue) -> saveOptions());
   }
 
   private void saveOptions() {
@@ -72,10 +87,14 @@ public class MamePreferencesController implements Initializable {
     options.setSkipPinballStartupTest(skipPinballStartupTest.isSelected());
     options.setUseSamples(useSamples.isSelected());
     options.setUseSound(useSound.isSelected());
+    options.setCompactDisplay(compactDisplay.isSelected());
+    options.setDoubleDisplaySize(doubleDisplaySize.isSelected());
+    options.setUseSound(useSound.isSelected());
     options.setShowDmd(showDmd.isSelected());
     options.setUseExternalDmd(useExternalDmd.isSelected());
     options.setCabinetMode(cabinetMode.isSelected());
     options.setColorizeDmd(colorizeDmd.isSelected());
+    options.setSoundMode(soundMode.isSelected());
 
     try {
       Studio.client.getMameService().saveOptions(options);
