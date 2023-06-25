@@ -6,6 +6,7 @@ import de.mephisto.vpin.restclient.AltSound;
 import de.mephisto.vpin.restclient.representations.GameRepresentation;
 import de.mephisto.vpin.restclient.representations.ValidationState;
 import de.mephisto.vpin.ui.Studio;
+import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.tables.validation.LocalizedValidation;
 import de.mephisto.vpin.ui.tables.validation.ValidationTexts;
 import de.mephisto.vpin.ui.util.Dialogs;
@@ -100,8 +101,8 @@ public class TablesSidebarAltSoundController implements Initializable {
   @FXML
   private void onAltSoundEnable() {
     if (game.isPresent() && game.get().isAltSoundAvailable()) {
-      GameRepresentation g = game.get();
       Studio.client.getAltSoundService().setAltSoundEnabled(game.get().getId(), enabledCheckbox.isSelected());
+      EventManager.getInstance().notifyPreferenceChanged();
     }
   }
 

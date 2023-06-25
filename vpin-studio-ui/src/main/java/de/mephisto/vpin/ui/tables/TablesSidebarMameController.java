@@ -1,5 +1,6 @@
 package de.mephisto.vpin.ui.tables;
 
+import de.mephisto.vpin.commons.HighscoreType;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.mame.MameOptions;
 import de.mephisto.vpin.restclient.representations.GameRepresentation;
@@ -28,6 +29,9 @@ public class TablesSidebarMameController implements Initializable {
 
   @FXML
   private VBox emptyDataBox;
+
+  @FXML
+  private VBox invalidDataBox;
 
   @FXML
   private VBox errorBox;
@@ -116,8 +120,10 @@ public class TablesSidebarMameController implements Initializable {
   public void initialize(URL url, ResourceBundle resourceBundle) {
     dataBox.managedProperty().bindBidirectional(dataBox.visibleProperty());
     emptyDataBox.managedProperty().bindBidirectional(emptyDataBox.visibleProperty());
+    invalidDataBox.managedProperty().bindBidirectional(invalidDataBox.visibleProperty());
     errorBox.managedProperty().bindBidirectional(errorBox.visibleProperty());
     errorBox.setVisible(false);
+    invalidDataBox.setVisible(false);
 
     skipPinballStartupTest.selectedProperty().addListener((observable, oldValue, newValue) -> saveOptions());
     useSound.selectedProperty().addListener((observable, oldValue, newValue) -> saveOptions());
@@ -143,6 +149,7 @@ public class TablesSidebarMameController implements Initializable {
   public void refreshView(Optional<GameRepresentation> g) {
     this.options = null;
 
+    invalidDataBox.setVisible(false);
     emptyDataBox.setVisible(g.isEmpty());
     dataBox.setVisible(g.isPresent());
 
@@ -159,10 +166,19 @@ public class TablesSidebarMameController implements Initializable {
     soundMode.setSelected(false);
 
     this.errorBox.setVisible(false);
-
+    this.applyDefaultsBtn.setDisable(!g.isPresent());
 
     if (g.isPresent()) {
       GameRepresentation game = g.get();
+
+      invalidDataBox.setVisible(HighscoreType.VPReg.name().equals(game.getHighscoreType()));
+      if(invalidDataBox.isVisible()) {
+        applyDefaultsBtn.setDisable(true);
+        dataBox.setVisible(false);
+        errorBox.setVisible(false);
+        return;
+      }
+
       options = Studio.client.getMameService().getOptions(game.getRom());
 
       if (options != null) {
