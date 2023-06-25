@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
@@ -37,7 +38,8 @@ public class AltColorService implements InitializingBean {
   private final Map<String, AltColor> altColors = new ConcurrentHashMap<>();
 
   public boolean isAltColorAvailable(@NonNull Game game) {
-    return getAltColor(game) != null;
+    AltColor altColor = getAltColor(game);
+    return altColor != null && !altColor.getFiles().isEmpty();
   }
 
   public boolean delete(@NonNull Game game) {
@@ -81,26 +83,29 @@ public class AltColorService implements InitializingBean {
           File[] altColorFiles = altColorFolder.listFiles((dir, name) -> new File(dir, name).isFile());
           if (altColorFiles != null && altColorFiles.length > 0) {
             AltColor altColor = new AltColor();
+            altColor.setModificationDate(new Date(altColorFolder.lastModified()));
             altColor.setName(altColorFolder.getName());
             altColor.setFiles(Arrays.stream(altColorFiles).map(File::getName).collect(Collectors.toList()));
 
             AltColorTypes type = AltColorTypes.mame;
-            boolean pac = Arrays.stream(altColorFiles).anyMatch(f -> f.getName().endsWith(".pac"));
-            boolean pal = Arrays.stream(altColorFiles).anyMatch(f -> f.getName().endsWith(".pal"));
-            boolean serum = Arrays.stream(altColorFiles).anyMatch(f -> f.getName().endsWith(".cRZ"));
+            Optional<File> pacFile = Arrays.stream(altColorFiles).filter(f -> f.getName().endsWith(".pac")).findFirst();
+            Optional<File> palFile = Arrays.stream(altColorFiles).filter(f -> f.getName().endsWith(".pal")).findFirst();
+            Optional<File> crzFile = Arrays.stream(altColorFiles).filter(f -> f.getName().endsWith(".cRZ")).findFirst();
 
-            if(pac) {
+            if(pacFile.isPresent()) {
+              altColor.setModificationDate(new Date(pacFile.get().lastModified()));
               type = AltColorTypes.pac;
             }
-            else if(pal) {
+            else if(palFile.isPresent()) {
+              altColor.setModificationDate(new Date(palFile.get().lastModified()));
               type = AltColorTypes.pal;
             }
-            else if(serum) {
+            else if(crzFile.isPresent()) {
+              altColor.setModificationDate(new Date(crzFile.get().lastModified()));
               type = AltColorTypes.serum;
             }
 
             altColor.setAltColorType(type);
-            altColor.setModificationDate(new Date(altColorFolder.lastModified()));
             this.altColors.put(altColorFolder.getName().toLowerCase(), altColor);
           }
         }

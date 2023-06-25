@@ -93,7 +93,7 @@ public class TablesSidebarAltColorController implements Initializable {
 
       if (altColorAvailable) {
         altColor = Studio.client.getAltColorService().getAltColor(game.getId());
-        lastModifiedLabel.setText(SimpleDateFormat.getDateInstance().format(altColor.getModificationDate()));
+        lastModifiedLabel.setText(SimpleDateFormat.getDateTimeInstance().format(altColor.getModificationDate()));
         typeLabel.setText(altColor.getAltColorType().name());
 
         List<String> files = altColor.getFiles();

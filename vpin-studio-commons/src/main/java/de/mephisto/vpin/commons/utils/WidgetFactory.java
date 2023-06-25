@@ -1,8 +1,8 @@
 package de.mephisto.vpin.commons.utils;
 
 import de.mephisto.vpin.commons.fx.*;
-import de.mephisto.vpin.restclient.popper.PopperScreen;
 import de.mephisto.vpin.restclient.client.VPinStudioClient;
+import de.mephisto.vpin.restclient.popper.PopperScreen;
 import de.mephisto.vpin.restclient.representations.GameMediaItemRepresentation;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.fxml.FXMLLoader;
@@ -35,6 +35,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.*;
 
 public class WidgetFactory {
   private final static Logger LOG = LoggerFactory.getLogger(WidgetFactory.class);
@@ -373,8 +374,18 @@ public class WidgetFactory {
       if (center instanceof MediaView) {
         MediaView view = (MediaView) center;
         if (view.getMediaPlayer() != null) {
+          String source = view.getMediaPlayer().getMedia().getSource();
           view.getMediaPlayer().stop();
-          view.getMediaPlayer().dispose();
+          final ExecutorService executor = Executors.newFixedThreadPool(1);
+          final Future<?> future = executor.submit(() -> {
+            view.getMediaPlayer().dispose();
+          });
+          try {
+            future.get(500, TimeUnit.MILLISECONDS);
+          } catch (Exception e) {
+            LOG.error("Error disposing media view (" + source + "): " + e.getMessage());
+          }
+          executor.shutdownNow();
         }
         node.setCenter(null);
       }
@@ -425,7 +436,7 @@ public class WidgetFactory {
     private final String version;
     private final List<String> features;
 
-    public VpsTableListCell(String comment, List<String> authors, String version, List<String> features ) {
+    public VpsTableListCell(String comment, List<String> authors, String version, List<String> features) {
       this.comment = comment;
       this.authors = authors;
       this.version = version;
@@ -440,7 +451,7 @@ public class WidgetFactory {
         VBox root = new VBox();
         root.setStyle("-fx-padding: 3 3 3 3");
 
-        if(comment != null) {
+        if (comment != null) {
           Label label = new Label(comment);
           root.getChildren().add(label);
         }

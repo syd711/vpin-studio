@@ -58,7 +58,7 @@
                         <Font size="14.0" />
                      </font>
                   </Label>
-                  <Label layoutX="10.0" layoutY="43.0" prefHeight="20.0" styleClass="preference-label" text="Apron" textFill="WHITE" GridPane.rowIndex="2">
+                  <Label layoutX="10.0" layoutY="43.0" prefHeight="20.0" styleClass="preference-label" text="Apron / Full DMD" textFill="WHITE" GridPane.rowIndex="2">
                      <font>
                         <Font size="14.0" />
                      </font>
