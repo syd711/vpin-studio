@@ -48,6 +48,12 @@ public class TablesSidebarMameController implements Initializable {
   private CheckBox useSamples;
 
   @FXML
+  private CheckBox compactDisplay;
+
+  @FXML
+  private CheckBox doubleDisplaySize;
+
+  @FXML
   private CheckBox ignoreRomCrcError;
 
   @FXML
@@ -61,6 +67,9 @@ public class TablesSidebarMameController implements Initializable {
 
   @FXML
   private CheckBox colorizeDmd;
+
+  @FXML
+  private CheckBox soundMode;
 
   @FXML
   private Button applyDefaultsBtn;
@@ -84,11 +93,14 @@ public class TablesSidebarMameController implements Initializable {
     skipPinballStartupTest.setSelected(defaultOptions.isSkipPinballStartupTest());
     useSound.setSelected(defaultOptions.isUseSound());
     useSamples.setSelected(defaultOptions.isUseSamples());
+    compactDisplay.setSelected(defaultOptions.isCompactDisplay());
+    doubleDisplaySize.setSelected(defaultOptions.isDoubleDisplaySize());
     ignoreRomCrcError.setSelected(defaultOptions.isIgnoreRomCrcError());
     cabinetMode.setSelected(defaultOptions.isCabinetMode());
     showDmd.setSelected(defaultOptions.isShowDmd());
     useExternalDmd.setSelected(defaultOptions.isUseExternalDmd());
     colorizeDmd.setSelected(defaultOptions.isColorizeDmd());
+    soundMode.setSelected(defaultOptions.isSoundMode());
 
     saveDisabled = false;
     saveOptions();
@@ -110,11 +122,14 @@ public class TablesSidebarMameController implements Initializable {
     skipPinballStartupTest.selectedProperty().addListener((observable, oldValue, newValue) -> saveOptions());
     useSound.selectedProperty().addListener((observable, oldValue, newValue) -> saveOptions());
     useSamples.selectedProperty().addListener((observable, oldValue, newValue) -> saveOptions());
+    compactDisplay.selectedProperty().addListener((observable, oldValue, newValue) -> saveOptions());
+    doubleDisplaySize.selectedProperty().addListener((observable, oldValue, newValue) -> saveOptions());
     ignoreRomCrcError.selectedProperty().addListener((observable, oldValue, newValue) -> saveOptions());
     cabinetMode.selectedProperty().addListener((observable, oldValue, newValue) -> saveOptions());
     showDmd.selectedProperty().addListener((observable, oldValue, newValue) -> saveOptions());
     useExternalDmd.selectedProperty().addListener((observable, oldValue, newValue) -> saveOptions());
     colorizeDmd.selectedProperty().addListener((observable, oldValue, newValue) -> saveOptions());
+    soundMode.selectedProperty().addListener((observable, oldValue, newValue) -> saveOptions());
   }
 
 
@@ -134,11 +149,14 @@ public class TablesSidebarMameController implements Initializable {
     skipPinballStartupTest.setSelected(false);
     useSound.setSelected(false);
     useSamples.setSelected(false);
+    compactDisplay.setSelected(false);
+    doubleDisplaySize.setSelected(false);
     ignoreRomCrcError.setSelected(false);
     cabinetMode.setSelected(false);
     showDmd.setSelected(false);
     useExternalDmd.setSelected(false);
     colorizeDmd.setSelected(false);
+    soundMode.setSelected(false);
 
     this.errorBox.setVisible(false);
 
@@ -151,11 +169,14 @@ public class TablesSidebarMameController implements Initializable {
         skipPinballStartupTest.setSelected(options.isSkipPinballStartupTest());
         useSound.setSelected(options.isUseSound());
         useSamples.setSelected(options.isUseSamples());
+        compactDisplay.setSelected(options.isCompactDisplay());
+        doubleDisplaySize.setSelected(options.isDoubleDisplaySize());
         ignoreRomCrcError.setSelected(options.isIgnoreRomCrcError());
         cabinetMode.setSelected(options.isCabinetMode());
         showDmd.setSelected(options.isShowDmd());
         useExternalDmd.setSelected(options.isUseExternalDmd());
         colorizeDmd.setSelected(options.isColorizeDmd());
+        soundMode.setSelected(options.isSoundMode());
 
         if (options.getValidationStates() != null && !options.getValidationStates().isEmpty()) {
           ValidationState validationState = options.getValidationStates().get(0);
@@ -181,10 +202,13 @@ public class TablesSidebarMameController implements Initializable {
     options.setSkipPinballStartupTest(skipPinballStartupTest.isSelected());
     options.setUseSamples(useSamples.isSelected());
     options.setUseSound(useSound.isSelected());
+    options.setCompactDisplay(compactDisplay.isSelected());
+    options.setDoubleDisplaySize(doubleDisplaySize.isSelected());
     options.setShowDmd(showDmd.isSelected());
     options.setUseExternalDmd(useExternalDmd.isSelected());
     options.setCabinetMode(cabinetMode.isSelected());
     options.setColorizeDmd(colorizeDmd.isSelected());
+    options.setSoundMode(soundMode.isSelected());
 
     try {
       Studio.client.getMameService().saveOptions(options);

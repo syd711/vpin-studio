@@ -12,6 +12,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+/**
+ * See https://www.vpforums.org/index.php?showtopic=37182
+ */
 @Service
 public class MameService implements InitializingBean {
   private final static Logger LOG = LoggerFactory.getLogger(MameService.class);
@@ -43,6 +46,7 @@ public class MameService implements InitializingBean {
     return true;
   }
 
+  @NonNull
   public MameOptions getOptions(@NonNull String rom) {
     if(mameCache.containsKey(rom.toLowerCase())) {
       return mameCache.get(rom.toLowerCase());

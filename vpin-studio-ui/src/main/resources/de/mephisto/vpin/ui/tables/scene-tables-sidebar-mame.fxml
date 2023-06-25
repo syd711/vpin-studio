@@ -59,6 +59,9 @@
                         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                     </rowConstraints>
                      <children>
                         <Label fx:id="lastModifiedLabel" layoutX="175.0" layoutY="76.0" textFill="WHITE" GridPane.columnIndex="1">
@@ -81,27 +84,42 @@
                               <Font size="14.0" />
                            </font>
                         </CheckBox>
-                        <CheckBox fx:id="ignoreRomCrcError" layoutX="10.0" layoutY="45.0" mnemonicParsing="false" text="Ignore ROM CRC Errors" textFill="WHITE" GridPane.rowIndex="3">
+                        <CheckBox fx:id="ignoreRomCrcError" layoutX="10.0" layoutY="45.0" mnemonicParsing="false" text="Ignore ROM CRC Errors" textFill="WHITE" GridPane.rowIndex="5">
                            <font>
                               <Font size="14.0" />
                            </font>
                         </CheckBox>
-                        <CheckBox fx:id="cabinetMode" layoutX="10.0" layoutY="106.0" mnemonicParsing="false" text="Cabinet Mode" textFill="WHITE" GridPane.rowIndex="4">
+                        <CheckBox fx:id="cabinetMode" layoutX="10.0" layoutY="106.0" mnemonicParsing="false" text="Cabinet Mode" textFill="WHITE" GridPane.rowIndex="6">
                            <font>
                               <Font size="14.0" />
                            </font>
                         </CheckBox>
-                        <CheckBox fx:id="showDmd" layoutX="10.0" layoutY="137.0" mnemonicParsing="false" text="Show DMD / Display Window" textFill="WHITE" GridPane.rowIndex="5">
+                        <CheckBox fx:id="showDmd" layoutX="10.0" layoutY="137.0" mnemonicParsing="false" text="Show DMD / Display Window" textFill="WHITE" GridPane.rowIndex="7">
                            <font>
                               <Font size="14.0" />
                            </font>
                         </CheckBox>
-                        <CheckBox fx:id="useExternalDmd" layoutX="10.0" layoutY="168.0" mnemonicParsing="false" text="User External DMD (dll)" textFill="WHITE" GridPane.rowIndex="6">
+                        <CheckBox fx:id="useExternalDmd" layoutX="10.0" layoutY="168.0" mnemonicParsing="false" text="User External DMD (dll)" textFill="WHITE" GridPane.rowIndex="8">
                            <font>
                               <Font size="14.0" />
                            </font>
                         </CheckBox>
-                        <CheckBox fx:id="colorizeDmd" layoutX="10.0" layoutY="198.0" mnemonicParsing="false" text="Colorize DMD (4 colors)" textFill="WHITE" GridPane.rowIndex="7">
+                        <CheckBox fx:id="colorizeDmd" layoutX="10.0" layoutY="198.0" mnemonicParsing="false" text="Colorize DMD (4 colors)" textFill="WHITE" GridPane.rowIndex="9">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </CheckBox>
+                        <CheckBox fx:id="compactDisplay" layoutX="10.0" layoutY="83.0" mnemonicParsing="false" text="Compact Display" textFill="WHITE" GridPane.rowIndex="3">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </CheckBox>
+                        <CheckBox fx:id="doubleDisplaySize" layoutX="10.0" layoutY="116.0" mnemonicParsing="false" text="Double Display Size" textFill="WHITE" GridPane.rowIndex="4">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </CheckBox>
+                        <CheckBox fx:id="soundMode" layoutX="10.0" layoutY="318.0" mnemonicParsing="false" text="Sound Mode" textFill="WHITE" GridPane.rowIndex="10">
                            <font>
                               <Font size="14.0" />
                            </font>

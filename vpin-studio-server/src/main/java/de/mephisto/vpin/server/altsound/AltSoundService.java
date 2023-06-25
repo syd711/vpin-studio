@@ -5,6 +5,7 @@ import de.mephisto.vpin.restclient.AltSound;
 import de.mephisto.vpin.restclient.AltSoundEntry;
 import de.mephisto.vpin.restclient.jobs.JobExecutionResult;
 import de.mephisto.vpin.restclient.jobs.JobExecutionResultFactory;
+import de.mephisto.vpin.restclient.mame.MameOptions;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.mame.MameService;
 import de.mephisto.vpin.server.system.SystemService;
@@ -37,10 +38,12 @@ import java.util.concurrent.ConcurrentHashMap;
 @Service
 public class AltSoundService implements InitializingBean {
   private final static Logger LOG = LoggerFactory.getLogger(AltSoundService.class);
-  public static final String SOUND_MODE = "sound_mode";
 
   @Autowired
   private SystemService systemService;
+
+  @Autowired
+  private MameService mameService;
 
   private final Map<String, File> altSounds = new ConcurrentHashMap<>();
 
@@ -195,15 +198,17 @@ public class AltSoundService implements InitializingBean {
   public boolean setAltSoundEnabled(@NonNull Game game, boolean b) {
     String rom = game.getRom();
     if (!StringUtils.isEmpty(rom)) {
-      WinRegistry.createKey(MameService.MAME_REG_FOLDER_KEY + game.getRom());
-      WinRegistry.setIntValue(MameService.MAME_REG_FOLDER_KEY + game.getRom(), SOUND_MODE, b ? 1 : 0);
+      MameOptions options = mameService.getOptions(rom);
+      options.setSoundMode(b);
+      mameService.saveOptions(options);
     }
     return b;
   }
 
   public boolean isAltSoundEnabled(@NonNull Game game) {
     if (!StringUtils.isEmpty(game.getRom())) {
-      return WinRegistry.getIntValue(MameService.MAME_REG_FOLDER_KEY + game.getRom(), SOUND_MODE) == 1;
+      MameOptions options = mameService.getOptions(game.getRom());
+      return options.isSoundMode();
     }
     return false;
   }
