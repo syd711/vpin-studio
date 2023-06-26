@@ -10,19 +10,18 @@ import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.tables.validation.LocalizedValidation;
 import de.mephisto.vpin.ui.tables.validation.ValidationTexts;
 import de.mephisto.vpin.ui.util.Dialogs;
-import javafx.event.ActionEvent;
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
-import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.awt.*;
-import java.net.URI;
 import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.List;
@@ -34,6 +33,9 @@ public class TablesSidebarAltSoundController implements Initializable {
 
   @FXML
   private Button altSoundBtn;
+
+  @FXML
+  private Button reloadBtn;
 
   @FXML
   private Button restoreBtn;
@@ -112,6 +114,23 @@ public class TablesSidebarAltSoundController implements Initializable {
     tablesSidebarController.getTablesController().dismissValidation(g, this.validationState);
   }
 
+
+  @FXML
+  private void onReload() {
+    this.reloadBtn.setDisable(true);
+
+    Platform.runLater(() -> {
+      new Thread(() -> {
+        Studio.client.getAltSoundService().clearCache();
+
+        Platform.runLater(() -> {
+          this.reloadBtn.setDisable(false);
+          this.refreshView(this.game);
+        });
+      }).start();
+    });
+  }
+
   @FXML
   private void onRestore() {
     if (game.isPresent() && game.get().isAltSoundAvailable()) {
@@ -138,6 +157,7 @@ public class TablesSidebarAltSoundController implements Initializable {
 
   public void refreshView(Optional<GameRepresentation> g) {
     this.validationState = null;
+    reloadBtn.setDisable(g.isEmpty());
 
     altSoundBtn.setDisable(true);
     restoreBtn.setDisable(true);
@@ -156,6 +176,7 @@ public class TablesSidebarAltSoundController implements Initializable {
     if (g.isPresent()) {
       GameRepresentation game = g.get();
       boolean altSoundAvailable = game.isAltSoundAvailable();
+      reloadBtn.setDisable(!altSoundAvailable);
 
       dataBox.setVisible(altSoundAvailable);
       emptyDataBox.setVisible(!altSoundAvailable);

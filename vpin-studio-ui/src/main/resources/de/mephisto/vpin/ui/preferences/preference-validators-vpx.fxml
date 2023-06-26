@@ -34,9 +34,9 @@
             <CheckBox fx:id="pref_82" layoutX="34.0" layoutY="920.0" mnemonicParsing="false" onAction="#onPreferenceChange" styleClass="preference-checkbox" text="ALT Color Files Missing" />
             <Label styleClass="checkbox-description" text="Checks if files for ALT Color folders are missing." textFill="WHITE" />
             <CheckBox fx:id="pref_80" layoutX="34.0" layoutY="592.0" mnemonicParsing="false" onAction="#onPreferenceChange" styleClass="preference-checkbox" text="Colorize DMD Not Enabled" />
-            <Label layoutX="34.0" layoutY="630.0" styleClass="checkbox-description" text="Checks if the &quot;Colorize DMD&quot; property is set in the VPin Mame settings." textFill="WHITE" />
+            <Label layoutX="34.0" layoutY="630.0" styleClass="checkbox-description" text="Checks if the &quot;Colorize DMD&quot; property is set in the VPin Mame settings when ALT Color is available." textFill="WHITE" />
             <CheckBox fx:id="pref_81" layoutX="34.0" layoutY="652.0" mnemonicParsing="false" onAction="#onPreferenceChange" styleClass="preference-checkbox" text="External DMD Not Enabled" />
-            <Label layoutX="34.0" layoutY="690.0" styleClass="checkbox-description" text="Checks if the &quot;External DMD&quot; property is set in the VPin Mame settings." textFill="WHITE" />
+            <Label layoutX="34.0" layoutY="690.0" styleClass="checkbox-description" text="Checks if the &quot;External DMD&quot; property is set in the VPin Mame settings when ALT Color is available." textFill="WHITE" />
          </children>
          <padding>
             <Insets bottom="24.0" left="24.0" right="24.0" top="24.0" />

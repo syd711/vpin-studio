@@ -1,9 +1,14 @@
 package de.mephisto.vpin.ui.tables;
 
+import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.AltColor;
 import de.mephisto.vpin.restclient.representations.GameRepresentation;
+import de.mephisto.vpin.restclient.representations.ValidationState;
 import de.mephisto.vpin.ui.Studio;
+import de.mephisto.vpin.ui.tables.validation.LocalizedValidation;
+import de.mephisto.vpin.ui.tables.validation.ValidationTexts;
 import de.mephisto.vpin.ui.util.Dialogs;
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
@@ -13,6 +18,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.awt.*;
+import java.io.File;
 import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.List;
@@ -24,6 +31,12 @@ public class TablesSidebarAltColorController implements Initializable {
 
   @FXML
   private Button uploadBtn;
+
+  @FXML
+  private Button reloadBtn;
+
+  @FXML
+  private Button flexDMDUIBtn;
 
   @FXML
   private Label lastModifiedLabel;
@@ -40,7 +53,17 @@ public class TablesSidebarAltColorController implements Initializable {
   @FXML
   private VBox dataBox;
 
+  @FXML
+  private VBox errorBox;
+
+  @FXML
+  private Label errorTitle;
+
+  @FXML
+  private Label errorText;
+
   private AltColor altColor;
+  private ValidationState validationState;
 
   private Optional<GameRepresentation> game = Optional.empty();
 
@@ -57,13 +80,56 @@ public class TablesSidebarAltColorController implements Initializable {
     }
   }
 
+  @FXML
+  private void onFlexDMDUI() {
+    Desktop desktop = Desktop.isDesktopSupported() ? Desktop.getDesktop() : null;
+    if (desktop != null && desktop.isSupported(Desktop.Action.OPEN)) {
+      try {
+        File file = new File("C:\\vPinball\\VisualPinball\\VPinMAME\\FlexDMDUI.exe");
+        if (!file.exists()) {
+          WidgetFactory.showAlert(Studio.stage, "Did not find FlexDMD UI", "The exe file " + file.getAbsolutePath() + " was not found.");
+        }
+        else {
+          desktop.open(file);
+        }
+      } catch (Exception e) {
+        LOG.error("Failed to open FlexDMD UI: " + e.getMessage(), e);
+      }
+    }
+  }
+
+  @FXML
+  private void onReload() {
+    this.reloadBtn.setDisable(true);
+
+    Platform.runLater(() -> {
+      new Thread(() -> {
+        Studio.client.getAltColorService().clearCache();
+
+        Platform.runLater(() -> {
+          this.reloadBtn.setDisable(false);
+          this.refreshView(this.game);
+        });
+      }).start();
+    });
+  }
+
+  @FXML
+  private void onDismiss() {
+    GameRepresentation g = game.get();
+    tablesSidebarController.getTablesController().dismissValidation(g, this.validationState);
+  }
+
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
     dataBox.managedProperty().bindBidirectional(dataBox.visibleProperty());
     emptyDataBox.managedProperty().bindBidirectional(emptyDataBox.visibleProperty());
+    errorBox.managedProperty().bindBidirectional(errorBox.visibleProperty());
     dataBox.setVisible(false);
     emptyDataBox.setVisible(true);
     uploadBtn.setDisable(true);
+
+    flexDMDUIBtn.setDisable(!Studio.client.getSystemService().isLocal());
   }
 
   public void setGame(Optional<GameRepresentation> game) {
@@ -73,6 +139,8 @@ public class TablesSidebarAltColorController implements Initializable {
 
   public void refreshView(Optional<GameRepresentation> g) {
     this.altColor = null;
+    this.validationState = null;
+    reloadBtn.setDisable(g.isEmpty());
 
     dataBox.setVisible(false);
     emptyDataBox.setVisible(true);
@@ -82,9 +150,12 @@ public class TablesSidebarAltColorController implements Initializable {
     typeLabel.setText("-");
     filesLabel.setText("-");
 
+    errorBox.setVisible(false);
+
     if (g.isPresent()) {
       GameRepresentation game = g.get();
       boolean altColorAvailable = game.isAltColorAvailable();
+      reloadBtn.setDisable(!altColorAvailable);
 
       dataBox.setVisible(altColorAvailable);
       emptyDataBox.setVisible(!altColorAvailable);
@@ -98,6 +169,16 @@ public class TablesSidebarAltColorController implements Initializable {
 
         List<String> files = altColor.getFiles();
         filesLabel.setText(String.join(", ", files));
+
+
+        List<ValidationState> validationStates = altColor.getValidationStates();
+        errorBox.setVisible(!validationStates.isEmpty());
+        if (!validationStates.isEmpty()) {
+          validationState = validationStates.get(0);
+          LocalizedValidation validationResult = ValidationTexts.getValidationResult(game, validationState);
+          errorTitle.setText(validationResult.getLabel());
+          errorText.setText(validationResult.getText());
+        }
       }
     }
   }

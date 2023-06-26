@@ -2,7 +2,9 @@
 
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Hyperlink?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Separator?>
 <?import javafx.scene.control.ToolBar?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.ColumnConstraints?>
@@ -16,9 +18,25 @@
     <center>
       <VBox fx:id="dataRoot" BorderPane.alignment="CENTER">
          <BorderPane.margin>
-            <Insets bottom="12.0" left="12.0" right="12.0" />
+            <Insets />
          </BorderPane.margin>
          <children>
+            <VBox fx:id="errorBox" styleClass="error-container">
+               <children>
+                  <BorderPane>
+                     <left>
+                        <Label fx:id="errorTitle" nodeOrientation="LEFT_TO_RIGHT" styleClass="error-title" text="Label" wrapText="true" BorderPane.alignment="CENTER" />
+                     </left>
+                     <right>
+                        <Hyperlink onAction="#onDismiss" text="Dismiss" BorderPane.alignment="CENTER" />
+                     </right>
+                  </BorderPane>
+                  <Label fx:id="errorText" layoutX="22.0" layoutY="22.0" styleClass="error-message" text="Label" wrapText="true" />
+               </children>
+               <VBox.margin>
+                  <Insets />
+               </VBox.margin>
+            </VBox>
               <VBox fx:id="dataBox">
                   <children>
                   <Label text="ALT Color Data" textFill="WHITE">
@@ -78,7 +96,7 @@
                   </GridPane>
                   </children>
                <VBox.margin>
-                  <Insets />
+                  <Insets bottom="12.0" left="12.0" right="12.0" />
                </VBox.margin>
               </VBox>
             <VBox fx:id="emptyDataBox">
@@ -95,7 +113,7 @@
                   <Label layoutX="10.0" layoutY="42.0" styleClass="preference-description" text="Upload downloaded resources here." />
                </children>
                <VBox.margin>
-                  <Insets top="12.0" />
+                  <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
                </VBox.margin>
             </VBox>
          </children>
@@ -110,6 +128,24 @@
                </font>
                <graphic>
                   <FontIcon iconColor="WHITE" iconLiteral="mdi2u-upload" />
+               </graphic>
+            </Button>
+            <Separator orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
+            <Button fx:id="reloadBtn" mnemonicParsing="false" onAction="#onReload" text="Reload">
+               <font>
+                  <Font size="14.0" />
+               </font>
+               <graphic>
+                  <FontIcon iconColor="WHITE" iconLiteral="sil-reload" />
+               </graphic>
+            </Button>
+            <Separator layoutX="96.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
+            <Button fx:id="flexDMDUIBtn" layoutX="112.0" layoutY="11.0" mnemonicParsing="false" onAction="#onFlexDMDUI" text="FlexDMD UI">
+               <font>
+                  <Font size="14.0" />
+               </font>
+               <graphic>
+                  <FontIcon iconColor="WHITE" iconLiteral="mdi2m-monitor-clean" />
                </graphic>
             </Button>
         </items>

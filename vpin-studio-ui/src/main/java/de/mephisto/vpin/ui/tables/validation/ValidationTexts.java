@@ -3,7 +3,6 @@ package de.mephisto.vpin.ui.tables.validation;
 import de.mephisto.vpin.restclient.representations.GameRepresentation;
 import de.mephisto.vpin.restclient.representations.ValidationState;
 import edu.umd.cs.findbugs.annotations.NonNull;
-import edu.umd.cs.findbugs.annotations.Nullable;
 
 import java.util.List;
 
@@ -132,6 +131,21 @@ public class ValidationTexts {
         else {
           text = "The trigger.pup file references invalid file(s): \"" + String.join("\", \"", state.getOptions()) + "\"";
         }
+        break;
+      }
+      case CODE_ALT_COLOR_FILES_MISSING: {
+        label = "ALT Sound files missing.";
+        text = "ALT Sound files missing.";
+        break;
+      }
+      case CODE_ALT_COLOR_EXTERNAL_DMD_NOT_ENABLED: {
+        label = "External DMD not enabled.";
+        text = "The table contains an ALT Color file, but the external DMD is not enabled in the VPin Mame settings.";
+        break;
+      }
+      case CODE_ALT_COLOR_COLORIZE_DMD_ENABLED: {
+        label = "Colorize DMD not enabled.";
+        text = "The table contains an ALT Color file, but the DMD colorization is not enabled in the VPin Mame settings.";
         break;
       }
       default: {

@@ -1,7 +1,10 @@
 package de.mephisto.vpin.ui.tables.dialogs;
 
 import de.mephisto.vpin.commons.fx.DialogController;
+import de.mephisto.vpin.commons.utils.AltColorAnalyzer;
+import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.representations.GameRepresentation;
+import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.tables.TablesSidebarController;
 import de.mephisto.vpin.ui.util.Dialogs;
 import javafx.application.Platform;
@@ -85,9 +88,26 @@ public class AltColorUploadController implements Initializable, DialogController
     this.uploadBtn.setDisable(selection == null);
     if (this.selection != null) {
       AltColorUploadController.lastFolderSelection = this.selection.getParentFile();
-      this.fileNameField.setText(this.selection.getAbsolutePath());
-      this.fileBtn.setDisable(false);
-      this.uploadBtn.setDisable(false);
+      this.fileNameField.setText("Analyzing \"" + selection.getName() + "\"...");
+      this.fileNameField.setDisable(true);
+      this.fileBtn.setDisable(true);
+      this.cancelBtn.setDisable(true);
+
+
+      Platform.runLater(() -> {
+        String analyze = AltColorAnalyzer.analyze(selection);
+        this.fileNameField.setText(this.selection.getAbsolutePath());
+        this.fileNameField.setDisable(false);
+        this.fileBtn.setDisable(false);
+        this.cancelBtn.setDisable(false);
+
+        if (analyze != null) {
+          result = false;
+          WidgetFactory.showAlert(Studio.stage, analyze);
+          return;
+        }
+        this.uploadBtn.setDisable(false);
+      });
     }
     else {
       this.fileNameField.setText("");

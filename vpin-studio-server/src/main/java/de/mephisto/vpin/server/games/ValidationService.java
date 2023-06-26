@@ -1,5 +1,6 @@
 package de.mephisto.vpin.server.games;
 
+import de.mephisto.vpin.commons.utils.AltColorAnalyzer;
 import de.mephisto.vpin.restclient.AltColor;
 import de.mephisto.vpin.restclient.AltColorTypes;
 import de.mephisto.vpin.restclient.ValidationCode;
@@ -12,6 +13,7 @@ import de.mephisto.vpin.server.mame.MameService;
 import de.mephisto.vpin.server.popper.Emulator;
 import de.mephisto.vpin.server.preferences.Preferences;
 import de.mephisto.vpin.server.preferences.PreferencesService;
+import de.mephisto.vpin.server.system.SystemService;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.InitializingBean;
@@ -57,6 +59,9 @@ public class ValidationService implements InitializingBean {
 
   @Autowired
   private MameService mameService;
+
+  @Autowired
+  private SystemService systemService;
 
   private Preferences preferences;
 
@@ -206,16 +211,52 @@ public class ValidationService implements InitializingBean {
 
     AltColor altColor = altColorService.getAltColor(game);
     AltColorTypes altColorType = altColor.getAltColorType();
-    if(altColorType == null) {
+    if (altColorType == null) {
       return Collections.emptyList();
     }
 
+    File dmdDevicedll = new File(systemService.getMameFolder(), "DmdDevice.dll");
+    File dmdDevice64dll = new File(systemService.getMameFolder(), "DmdDevice64.dll");
+    File dmdextexe = new File(systemService.getMameFolder(), "dmdext.exe");
+    File dmdDeviceIni = new File(systemService.getMameFolder(), "DmdDevice.ini");
+
+
+    if (!dmdDevicedll.exists() && !dmdDevice64dll.exists()) {
+      result.add(ValidationStateFactory.create(CODE_ALT_COLOR_DMDDEVICE_FILES_MISSING, dmdDevicedll.getName()));
+    }
+
+    if(!dmdextexe.exists()) {
+      result.add(ValidationStateFactory.create(CODE_ALT_COLOR_DMDDEVICE_FILES_MISSING, dmdextexe.getName()));
+    }
+
+    if(!dmdDeviceIni.exists()) {
+      result.add(ValidationStateFactory.create(CODE_ALT_COLOR_DMDDEVICE_FILES_MISSING, dmdDeviceIni.getName()));
+    }
+
+    List<String> files = altColor.getFiles();
     switch (altColorType) {
       case pal: {
-        List<String> files = altColor.getFiles();
-        if (!files.contains("pin2dmd.pal") || !files.contains("pin2dmd.vni")) {
-          result.add(ValidationStateFactory.create(CODE_ALT_COLOR_VNI_PAL_MISSING));
+        if (!files.contains("pin2dmd.pal") && !files.contains("pin2dmd.vni")) {
+          result.add(ValidationStateFactory.create(CODE_ALT_COLOR_FILES_MISSING, "pin2dmd.vni"));
         }
+        else if (files.contains("pin2dmd.pal") && files.contains("pin2dmd.vni")) {
+          result.add(ValidationStateFactory.create(CODE_ALT_COLOR_FILES_MISSING, "pin2dmd.pal"));
+        }
+        break;
+      }
+      case serum: {
+        String name = game.getRom() + AltColorAnalyzer.SERUM_SUFFIX;
+        if (!files.contains(name)) {
+          result.add(ValidationStateFactory.create(CODE_ALT_COLOR_FILES_MISSING, name));
+        }
+
+        File serumdll = new File(systemService.getMameFolder(), "Serum.dll");
+        File serum64dll = new File(systemService.getMameFolder(), "Serum64.dll");
+
+        if (!serumdll.exists() && !serum64dll.exists()) {
+          result.add(ValidationStateFactory.create(CODE_ALT_COLOR_SERUM_INSTALLATION_FILES_MISSING));
+        }
+
         break;
       }
       default: {

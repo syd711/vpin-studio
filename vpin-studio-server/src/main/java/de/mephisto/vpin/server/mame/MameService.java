@@ -80,6 +80,7 @@ public class MameService implements InitializingBean {
 
   public MameOptions saveOptions(@NonNull MameOptions options) {
     String rom = options.getRom();
+    options.setExistInRegistry(true);
 
     if(!options.isExistInRegistry()) {
       WinRegistry.createKey(MAME_REG_FOLDER_KEY + rom);

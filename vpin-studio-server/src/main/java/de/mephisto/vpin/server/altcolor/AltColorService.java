@@ -25,6 +25,8 @@ import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
+import static de.mephisto.vpin.commons.utils.AltColorAnalyzer.*;
+
 /**
  *
  */
@@ -88,19 +90,19 @@ public class AltColorService implements InitializingBean {
             altColor.setFiles(Arrays.stream(altColorFiles).map(File::getName).collect(Collectors.toList()));
 
             AltColorTypes type = AltColorTypes.mame;
-            Optional<File> pacFile = Arrays.stream(altColorFiles).filter(f -> f.getName().endsWith(".pac")).findFirst();
-            Optional<File> palFile = Arrays.stream(altColorFiles).filter(f -> f.getName().endsWith(".pal")).findFirst();
-            Optional<File> crzFile = Arrays.stream(altColorFiles).filter(f -> f.getName().endsWith(".cRZ")).findFirst();
+            Optional<File> pacFile = Arrays.stream(altColorFiles).filter(f -> f.getName().endsWith(PAC_SUFFIX)).findFirst();
+            Optional<File> palFile = Arrays.stream(altColorFiles).filter(f -> f.getName().endsWith(PAL_SUFFIX)).findFirst();
+            Optional<File> crzFile = Arrays.stream(altColorFiles).filter(f -> f.getName().endsWith(SERUM_SUFFIX)).findFirst();
 
-            if(pacFile.isPresent()) {
+            if (pacFile.isPresent()) {
               altColor.setModificationDate(new Date(pacFile.get().lastModified()));
               type = AltColorTypes.pac;
             }
-            else if(palFile.isPresent()) {
+            else if (palFile.isPresent()) {
               altColor.setModificationDate(new Date(palFile.get().lastModified()));
               type = AltColorTypes.pal;
             }
-            else if(crzFile.isPresent()) {
+            else if (crzFile.isPresent()) {
               altColor.setModificationDate(new Date(crzFile.get().lastModified()));
               type = AltColorTypes.serum;
             }
@@ -130,20 +132,20 @@ public class AltColorService implements InitializingBean {
       }
 
       String name = out.getName();
-      if(name.endsWith(".zip")) {
+      if (name.endsWith(".zip")) {
         AltColorUtil.unzip(out, folder);
       }
-      else if(name.endsWith(".pac")) {
+      else if (name.endsWith(PAC_SUFFIX)) {
         try {
-          FileUtils.copyFile(out, new File(game.getAltColorFolder(),"pin2dmd.pac"));
+          FileUtils.copyFile(out, new File(game.getAltColorFolder(), "pin2dmd.pac"));
         } catch (IOException e) {
           LOG.error("Failed to copy pac file: " + e.getMessage(), e);
           return JobExecutionResultFactory.error("Failed to copy pac file: " + e.getMessage());
         }
       }
-      else if(name.endsWith(".cRZ")) {
+      else if (name.endsWith(SERUM_SUFFIX)) {
         try {
-          FileUtils.copyFile(out, new File(game.getAltColorFolder(),game.getRom() + ".cRZ"));
+          FileUtils.copyFile(out, new File(game.getAltColorFolder(), game.getRom() + SERUM_SUFFIX));
         } catch (IOException e) {
           LOG.error("Failed to copy cRZ file: " + e.getMessage(), e);
           return JobExecutionResultFactory.error("Failed to copy cRZ file: " + e.getMessage());
