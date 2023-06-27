@@ -108,7 +108,7 @@
                                           <Font size="14.0" />
                                        </font>
                                     </TextField>
-                                    <Button fx:id="openBtn" mnemonicParsing="false" onAction="#onOpen">
+                                    <Button fx:id="openBtn" mnemonicParsing="false" onAction="#onOpen" styleClass="external-component">
                                        <graphic>
                                           <FontIcon iconColor="WHITE" iconLiteral="mdi2o-open-in-new" iconSize="16" />
                                        </graphic>
@@ -129,7 +129,7 @@
                               <HBox GridPane.columnIndex="1" GridPane.rowIndex="6">
                                  <children>
                                     <ComboBox fx:id="tablesCombo" prefWidth="487.0" />
-                                    <Button fx:id="openTableBtn" mnemonicParsing="false" onAction="#onTableOpen">
+                                    <Button fx:id="openTableBtn" mnemonicParsing="false" onAction="#onTableOpen" styleClass="external-component">
                                        <graphic>
                                           <FontIcon iconColor="WHITE" iconLiteral="mdi2o-open-in-new" iconSize="16" />
                                        </graphic>

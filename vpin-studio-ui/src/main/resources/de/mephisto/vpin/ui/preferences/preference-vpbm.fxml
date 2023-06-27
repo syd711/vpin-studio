@@ -134,7 +134,7 @@
                   </VBox>
                   <HBox alignment="BASELINE_LEFT" spacing="3.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
                      <children>
-                        <Button fx:id="vpbmBtbn" mnemonicParsing="false" onAction="#onVPBM" text="VPBM" textFill="WHITE">
+                        <Button fx:id="vpbmBtbn" mnemonicParsing="false" onAction="#onVPBM" styleClass="external-component" text="VPBM" textFill="WHITE">
                            <font>
                               <Font size="14.0" />
                            </font>

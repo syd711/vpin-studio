@@ -15,7 +15,7 @@
 <?import javafx.scene.text.Font?>
 <?import org.kordamp.ikonli.javafx.FontIcon?>
 
-<StackPane fx:id="tableStack" stylesheets="@../stylesheet.css" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.archiving.RepositoryController">
+<StackPane fx:id="tableStack" stylesheets="@../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.archiving.RepositoryController">
     <children>
         <BorderPane>
             <center>
@@ -53,7 +53,7 @@
                         <FontIcon iconColor="WHITE" iconLiteral="sil-reload" />
                      </graphic>
                   </Button>
-                  <Button fx:id="vpbmBtbn" layoutX="553.0" layoutY="11.0" mnemonicParsing="false" onAction="#onVPBM" text="VPBM" textFill="WHITE">
+                  <Button fx:id="vpbmBtbn" layoutX="553.0" layoutY="11.0" mnemonicParsing="false" onAction="#onVPBM" styleClass="external-component" text="VPBM" textFill="WHITE">
                      <font>
                         <Font size="14.0" />
                      </font>

@@ -709,3 +709,8 @@
     -fx-font-size : 15px;
     -fx-padding: 0 0 0 26;
 }
+
+.external-component {
+    -fx-text-fill: #FFFFFF;
+    -fx-base : #338800;
+}

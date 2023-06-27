@@ -4,6 +4,7 @@ import de.mephisto.vpin.commons.ServerInstallationUtil;
 import de.mephisto.vpin.commons.utils.Updater;
 import de.mephisto.vpin.restclient.ScreenInfo;
 import de.mephisto.vpin.restclient.SystemData;
+import de.mephisto.vpin.restclient.SystemSummary;
 import de.mephisto.vpin.server.util.RequestUtil;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
@@ -51,6 +52,12 @@ public class SystemResource {
       LOG.error("Error reading log: " + e.getMessage(), e);
     }
     return "";
+  }
+
+  @GetMapping("/info")
+  @ResponseBody
+  public SystemSummary info() {
+    return systemService.getSystemSummary();
   }
 
   @GetMapping("/shutdown")
@@ -102,11 +109,6 @@ public class SystemResource {
   @GetMapping("/dotnet")
   public boolean isDotNetInstalled() {
     return systemService.isDotNetInstalled();
-  }
-
-  @GetMapping("/screens")
-  public ScreenInfo screens() {
-    return systemService.getScreenInfo();
   }
 
   @PostMapping("/text")

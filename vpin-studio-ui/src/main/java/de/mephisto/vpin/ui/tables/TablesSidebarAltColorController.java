@@ -2,6 +2,7 @@ package de.mephisto.vpin.ui.tables;
 
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.AltColor;
+import de.mephisto.vpin.restclient.SystemSummary;
 import de.mephisto.vpin.restclient.representations.GameRepresentation;
 import de.mephisto.vpin.restclient.representations.ValidationState;
 import de.mephisto.vpin.ui.Studio;
@@ -85,7 +86,8 @@ public class TablesSidebarAltColorController implements Initializable {
     Desktop desktop = Desktop.isDesktopSupported() ? Desktop.getDesktop() : null;
     if (desktop != null && desktop.isSupported(Desktop.Action.OPEN)) {
       try {
-        File file = new File("C:\\vPinball\\VisualPinball\\VPinMAME\\FlexDMDUI.exe");
+        SystemSummary systemSummary = Studio.client.getSystemService().getSystemSummary();
+        File file = new File(systemSummary.getVpinMameDirectory(), "FlexDMDUI.exe");
         if (!file.exists()) {
           WidgetFactory.showAlert(Studio.stage, "Did not find FlexDMD UI", "The exe file " + file.getAbsolutePath() + " was not found.");
         }

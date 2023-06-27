@@ -140,12 +140,12 @@
                </graphic>
             </Button>
             <Separator layoutX="96.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
-            <Button fx:id="flexDMDUIBtn" layoutX="112.0" layoutY="11.0" mnemonicParsing="false" onAction="#onFlexDMDUI" text="FlexDMD UI">
+            <Button fx:id="flexDMDUIBtn" layoutX="112.0" layoutY="11.0" mnemonicParsing="false" onAction="#onFlexDMDUI" styleClass="external-component" text="FlexDMD UI">
                <font>
                   <Font size="14.0" />
                </font>
                <graphic>
-                  <FontIcon iconColor="WHITE" iconLiteral="mdi2m-monitor-clean" />
+                  <FontIcon iconColor="WHITE" iconLiteral="mdi2l-laptop" />
                </graphic>
             </Button>
         </items>

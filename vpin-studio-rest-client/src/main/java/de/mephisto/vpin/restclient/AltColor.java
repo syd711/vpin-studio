@@ -52,4 +52,14 @@ public class AltColor {
   public void setValidationStates(List<ValidationState> validationStates) {
     this.validationStates = validationStates;
   }
+
+  public boolean contains(String name) {
+    for (String file : files) {
+      if(file.equalsIgnoreCase(name)) {
+        return true;
+      }
+    }
+
+    return false;
+  }
 }

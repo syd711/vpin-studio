@@ -2,6 +2,7 @@ package de.mephisto.vpin.ui.tables;
 
 import de.mephisto.vpin.commons.utils.FileUtils;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
+import de.mephisto.vpin.restclient.SystemSummary;
 import de.mephisto.vpin.restclient.jobs.JobExecutionResult;
 import de.mephisto.vpin.restclient.popper.ScreenMode;
 import de.mephisto.vpin.restclient.representations.GameRepresentation;
@@ -15,6 +16,8 @@ import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
 import org.apache.commons.lang3.StringUtils;
@@ -22,6 +25,7 @@ import org.kordamp.ikonli.javafx.FontIcon;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.awt.*;
 import java.io.File;
 import java.net.URL;
 import java.text.SimpleDateFormat;
@@ -100,6 +104,9 @@ public class TablesSidebarPUPPackController implements Initializable {
   @FXML
   private Label errorText;
 
+  @FXML
+  private Button pupPackEditorBtn;
+
   private TablesSidebarController tablesSidebarController;
   private PupPackRepresentation pupPack;
   private ValidationState validationState;
@@ -167,6 +174,24 @@ public class TablesSidebarPUPPackController implements Initializable {
     }
   }
 
+  @FXML
+  private void onPupPackEditor() {
+    Desktop desktop = Desktop.isDesktopSupported() ? Desktop.getDesktop() : null;
+    if (desktop != null && desktop.isSupported(Desktop.Action.OPEN)) {
+      try {
+        SystemSummary systemSummary = Studio.client.getSystemService().getSystemSummary();
+        File file = new File(systemSummary.getPinupSystemDirectory(), "PinUpPackEditor.exe");
+        if (!file.exists()) {
+          WidgetFactory.showAlert(Studio.stage, "Did not find PinUpPackEditor.exe", "The exe file " + file.getAbsolutePath() + " was not found.");
+        }
+        else {
+          desktop.open(file);
+        }
+      } catch (Exception e) {
+        LOG.error("Failed to open PinUpPackEditor: " + e.getMessage(), e);
+      }
+    }
+  }
 
   @FXML
   private void onDismiss() {
@@ -200,6 +225,8 @@ public class TablesSidebarPUPPackController implements Initializable {
     if(Studio.client.getSystemService().isLocal()) {
       openBtn.setText("Edit");
     }
+
+    pupPackEditorBtn.setDisable(!Studio.client.getSystemService().isLocal());
 
     optionsCombo.valueProperty().addListener((observable, oldValue, newValue) -> applyBtn.setDisable(StringUtils.isEmpty(newValue)));
     txtsCombo.valueProperty().addListener((observable, oldValue, newValue) -> openBtn.setDisable(StringUtils.isEmpty(newValue)));

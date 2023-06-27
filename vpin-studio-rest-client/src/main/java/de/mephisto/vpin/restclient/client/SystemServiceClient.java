@@ -2,6 +2,7 @@ package de.mephisto.vpin.restclient.client;
 
 import de.mephisto.vpin.restclient.ScreenInfo;
 import de.mephisto.vpin.restclient.SystemData;
+import de.mephisto.vpin.restclient.SystemSummary;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.client.RestTemplate;
@@ -14,7 +15,7 @@ import java.util.Date;
 public class SystemServiceClient extends VPinStudioClientService {
   private final static Logger LOG = LoggerFactory.getLogger(VPinStudioClient.class);
 
-  private ScreenInfo screenInfo;
+  private SystemSummary systemSummary;
 
   SystemServiceClient(VPinStudioClient client) {
     super(client);
@@ -84,16 +85,12 @@ public class SystemServiceClient extends VPinStudioClientService {
     return null;
   }
 
+  public SystemSummary getSystemSummary() {
+    return getRestClient().getCached(API + "system/info", SystemSummary.class);
+  }
+
   public ScreenInfo getScreenInfo() {
-    try {
-      if (screenInfo == null) {
-        screenInfo = getRestClient().getCached(API + "system/screens", ScreenInfo.class);
-      }
-      return screenInfo;
-    } catch (Exception e) {
-      LOG.error("Failed to read screen info: " + e.getMessage());
-    }
-    return null;
+    return getRestClient().getCached(API + "system/info", SystemSummary.class).getScreenInfo();
   }
 
   public SystemData getSystemData(String filename) {
@@ -108,7 +105,6 @@ public class SystemServiceClient extends VPinStudioClientService {
   }
 
   public void clearCache() {
-    this.screenInfo = null;
-    getScreenInfo();
+    getRestClient().clearCache(API + "system/info");
   }
 }

@@ -236,17 +236,17 @@ public class ValidationService implements InitializingBean {
     List<String> files = altColor.getFiles();
     switch (altColorType) {
       case pal: {
-        if (!files.contains("pin2dmd.pal") && !files.contains("pin2dmd.vni")) {
+        if (altColor.contains("pin2dmd.pal") && !altColor.contains("pin2dmd.vni")) {
           result.add(ValidationStateFactory.create(CODE_ALT_COLOR_FILES_MISSING, "pin2dmd.vni"));
         }
-        else if (files.contains("pin2dmd.pal") && files.contains("pin2dmd.vni")) {
+        else if (!altColor.contains("pin2dmd.pal") && altColor.contains("pin2dmd.vni")) {
           result.add(ValidationStateFactory.create(CODE_ALT_COLOR_FILES_MISSING, "pin2dmd.pal"));
         }
         break;
       }
       case serum: {
         String name = game.getRom() + AltColorAnalyzer.SERUM_SUFFIX;
-        if (!files.contains(name)) {
+        if (!altColor.contains(name)) {
           result.add(ValidationStateFactory.create(CODE_ALT_COLOR_FILES_MISSING, name));
         }
 
@@ -286,7 +286,6 @@ public class ValidationService implements InitializingBean {
   }
 
   public List<ValidationState> validateAltSound(Game game) {
-    System.out.println("validating " + game);
     List<ValidationState> result = new ArrayList<>();
     if (isValidationEnabled(game, CODE_ALT_SOUND_NOT_ENABLED)) {
       if (game.isAltSoundAvailable() && !altSoundService.isAltSoundEnabled(game)) {

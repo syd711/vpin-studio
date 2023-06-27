@@ -5,6 +5,7 @@
 <?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.Hyperlink?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Separator?>
 <?import javafx.scene.control.ToolBar?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.ColumnConstraints?>
@@ -157,6 +158,15 @@
                </font>
                <graphic>
                   <FontIcon iconColor="WHITE" iconLiteral="mdi2c-content-save-move-outline" />
+               </graphic>
+            </Button>
+            <Separator orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
+            <Button fx:id="mameBtn" layoutX="10.0" layoutY="11.0" mnemonicParsing="false" onAction="#onMameSetup" styleClass="external-component" text="Mame Setup" textFill="WHITE">
+               <font>
+                  <Font size="14.0" />
+               </font>
+               <graphic>
+                  <FontIcon iconColor="WHITE" iconLiteral="mdi2l-laptop" />
                </graphic>
             </Button>
          </items>

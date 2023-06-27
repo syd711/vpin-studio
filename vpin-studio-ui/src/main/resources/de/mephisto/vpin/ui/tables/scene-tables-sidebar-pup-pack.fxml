@@ -319,7 +319,16 @@
                   <FontIcon iconColor="WHITE" iconLiteral="sil-reload" />
                </graphic>
             </Button>
-            <Separator layoutX="96.0" layoutY="10.0" orientation="VERTICAL" prefWidth="12.0" />
+            <Separator layoutX="336.0" layoutY="10.0" orientation="VERTICAL" prefWidth="12.0" />
+            <Button fx:id="pupPackEditorBtn" layoutX="112.0" layoutY="11.0" mnemonicParsing="false" onAction="#onPupPackEditor" styleClass="external-component" text="PUP Pack Editor">
+               <font>
+                  <Font size="14.0" />
+               </font>
+               <graphic>
+                  <FontIcon iconColor="WHITE" iconLiteral="mdi2l-laptop" />
+               </graphic>
+            </Button>
+            <Separator layoutX="196.0" layoutY="10.0" orientation="VERTICAL" prefWidth="12.0" />
             <CheckBox fx:id="enabledCheckbox" mnemonicParsing="false" onAction="#onPupPackEnable" text="PUP Pack Enabled" textFill="WHITE">
                <font>
                   <Font size="14.0" />

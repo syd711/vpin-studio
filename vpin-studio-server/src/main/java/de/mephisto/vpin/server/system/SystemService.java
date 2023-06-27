@@ -6,6 +6,7 @@ import de.mephisto.vpin.commons.utils.PropertiesStore;
 import de.mephisto.vpin.commons.utils.SystemCommandExecutor;
 import de.mephisto.vpin.restclient.RestClient;
 import de.mephisto.vpin.restclient.ScreenInfo;
+import de.mephisto.vpin.restclient.SystemSummary;
 import de.mephisto.vpin.server.VPinStudioException;
 import de.mephisto.vpin.server.VPinStudioServer;
 import de.mephisto.vpin.server.backup.adapters.ArchiveType;
@@ -261,6 +262,15 @@ public class SystemService extends SystemInfo implements InitializingBean {
 
   public File getB2SCroppedImageFolder() {
     return new File(RESOURCES, "b2s-cropped/");
+  }
+
+  public SystemSummary getSystemSummary() {
+    SystemSummary info = new SystemSummary();
+    info.setPinupSystemDirectory(getPinUPSystemFolder().getAbsolutePath());
+    info.setVisualPinballDirectory(getVisualPinballInstallationFolder().getAbsolutePath());
+    info.setVpinMameDirectory(getMameFolder().getAbsolutePath());
+    info.setScreenInfo(getScreenInfo());
+    return info;
   }
 
   private String formatPathLog(String label, String value, Boolean exists, Boolean readable) {
