@@ -187,7 +187,7 @@
                                     </tooltip>
                                 </Button>
                                 <Separator layoutX="768.0" layoutY="10.0" orientation="VERTICAL" prefHeight="30.0" prefWidth="12.0" />
-                                <Button fx:id="playBtn" layoutX="703.0" layoutY="11.0" mnemonicParsing="false" onAction="#onPlay" text="Play" textFill="WHITE">
+                                <Button fx:id="playBtn" layoutX="703.0" layoutY="11.0" mnemonicParsing="false" onAction="#onPlay" styleClass="external-component" text="Play" textFill="WHITE">
                                     <font>
                                         <Font size="14.0" />
                                     </font>

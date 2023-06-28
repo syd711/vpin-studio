@@ -1,21 +1,27 @@
 package de.mephisto.vpin.ui.tables;
 
+import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.PreferenceNames;
+import de.mephisto.vpin.restclient.SystemSummary;
 import de.mephisto.vpin.restclient.representations.GameRepresentation;
 import de.mephisto.vpin.restclient.representations.POVRepresentation;
 import de.mephisto.vpin.restclient.representations.PreferenceEntryRepresentation;
+import de.mephisto.vpin.ui.Studio;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.control.Accordion;
+import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.TitledPane;
+import javafx.scene.layout.HBox;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.awt.*;
+import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URL;
@@ -68,6 +74,12 @@ public class TablesSidebarController implements Initializable {
 
   @FXML
   private CheckBox mediaPreviewCheckbox;
+
+  @FXML
+  private Button popperConfigBtn;
+
+  @FXML
+  private HBox popperTitleButtonArea;
 
   @FXML
   private TablesSidebarAltSoundController tablesSidebarAudioController; //fxml magic! Not unused
@@ -125,9 +137,30 @@ public class TablesSidebarController implements Initializable {
     }
   }
 
+  @FXML
+  private void onPopperBtn() {
+    Desktop desktop = Desktop.isDesktopSupported() ? Desktop.getDesktop() : null;
+    if (desktop != null && desktop.isSupported(Desktop.Action.OPEN)) {
+      try {
+        SystemSummary systemSummary = Studio.client.getSystemService().getSystemSummary();
+        File file = new File(systemSummary.getPinupSystemDirectory(), "PinUpMenuSetup.exe");
+        if (!file.exists()) {
+          WidgetFactory.showAlert(Studio.stage, "Did not find PinUpMenuSetup.exe", "The exe file " + file.getAbsolutePath() + " was not found.");
+        }
+        else {
+          desktop.open(file);
+        }
+      } catch (Exception e) {
+        LOG.error("Failed to open PinUpMenuSetup: " + e.getMessage(), e);
+      }
+    }
+  }
+
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
     tableAccordion.managedProperty().bindBidirectional(tableAccordion.visibleProperty());
+    popperTitleButtonArea.managedProperty().bindBidirectional(popperTitleButtonArea.visibleProperty());
+    popperTitleButtonArea.setVisible(client.getSystemService().isLocal());
 
     try {
       FXMLLoader loader = new FXMLLoader(TablesSidebarAltSoundController.class.getResource("scene-tables-sidebar-altsound.fxml"));

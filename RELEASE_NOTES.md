@@ -9,4 +9,4 @@
 - **VPin Mame**: Added "VPin Mame" section which shows Windows registry settings from VPin Mame of the selected table.
 - **ALT Sound**: Added reload button to invalidate ALT Sound cache.
 - **ALT Color**: Implemented first version of ALT Color support, including some validations and upload function. The section support all ALT Color formats: pac, pal and serum. (I hope a got everything right here, confusing stuff with a long history it seems).
-
+- Added miscellaneous buttons for external tools (green buttons).
