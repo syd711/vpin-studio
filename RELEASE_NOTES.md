@@ -2,7 +2,7 @@
 
 - **Virtual Pinball Spreadsheet**: Added missing "open" link for the table selection.
 - **Virtual Pinball Spreadsheet**: Added update date to table selection.
-- **Preferences**: Added **VPin Mame** section.
+- **Preferences**: Added **VPin Preferences -> VPin Mame** section.
 - **Preferences**: Added miscellaneous **ALT Color** validators.
 - **PUP Pack**: Added validation message section.
 - **Popper Media View**: Fixed missing Apron/Full DMD media view.
