@@ -143,6 +143,22 @@ public class AltColorService implements InitializingBean {
           return JobExecutionResultFactory.error("Failed to copy pac file: " + e.getMessage());
         }
       }
+      else if (name.endsWith(PAL_SUFFIX)) {
+        try {
+          FileUtils.copyFile(out, new File(game.getAltColorFolder(), "pin2dmd.pal"));
+        } catch (IOException e) {
+          LOG.error("Failed to copy pal file: " + e.getMessage(), e);
+          return JobExecutionResultFactory.error("Failed to copy pal file: " + e.getMessage());
+        }
+      }
+      else if (name.endsWith(VNI_SUFFIX)) {
+        try {
+          FileUtils.copyFile(out, new File(game.getAltColorFolder(), "pin2dmd.vni"));
+        } catch (IOException e) {
+          LOG.error("Failed to copy vni file: " + e.getMessage(), e);
+          return JobExecutionResultFactory.error("Failed to copy vni file: " + e.getMessage());
+        }
+      }
       else if (name.endsWith(SERUM_SUFFIX)) {
         try {
           FileUtils.copyFile(out, new File(game.getAltColorFolder(), game.getRom() + SERUM_SUFFIX));

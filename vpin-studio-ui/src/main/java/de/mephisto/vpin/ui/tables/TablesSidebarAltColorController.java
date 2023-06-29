@@ -6,6 +6,7 @@ import de.mephisto.vpin.restclient.SystemSummary;
 import de.mephisto.vpin.restclient.representations.GameRepresentation;
 import de.mephisto.vpin.restclient.representations.ValidationState;
 import de.mephisto.vpin.ui.Studio;
+import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.tables.validation.LocalizedValidation;
 import de.mephisto.vpin.ui.tables.validation.ValidationTexts;
 import de.mephisto.vpin.ui.util.Dialogs;
@@ -110,7 +111,7 @@ public class TablesSidebarAltColorController implements Initializable {
 
         Platform.runLater(() -> {
           this.reloadBtn.setDisable(false);
-          this.refreshView(this.game);
+          EventManager.getInstance().notifyRepositoryUpdate();
         });
       }).start();
     });

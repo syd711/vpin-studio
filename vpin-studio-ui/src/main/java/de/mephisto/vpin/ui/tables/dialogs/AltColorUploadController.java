@@ -16,6 +16,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+import org.apache.commons.io.FilenameUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -78,7 +79,7 @@ public class AltColorUploadController implements Initializable, DialogController
     FileChooser fileChooser = new FileChooser();
     fileChooser.setTitle("Select ALT Color");
     fileChooser.getExtensionFilters().addAll(
-        new FileChooser.ExtensionFilter("ALT Color (Package)", "*.zip", "*.pac", "*.cRZ"));
+        new FileChooser.ExtensionFilter("ALT Color (Package)", "*.zip", "*.pac", "*.vni", "*.pal", "*.cRZ"));
 
     if (AltColorUploadController.lastFolderSelection != null) {
       fileChooser.setInitialDirectory(AltColorUploadController.lastFolderSelection);
@@ -87,27 +88,34 @@ public class AltColorUploadController implements Initializable, DialogController
     this.selection = fileChooser.showOpenDialog(stage);
     this.uploadBtn.setDisable(selection == null);
     if (this.selection != null) {
-      AltColorUploadController.lastFolderSelection = this.selection.getParentFile();
-      this.fileNameField.setText("Analyzing \"" + selection.getName() + "\"...");
-      this.fileNameField.setDisable(true);
-      this.fileBtn.setDisable(true);
-      this.cancelBtn.setDisable(true);
+      if(selection.getName().toLowerCase().endsWith(".zip")) {
+        AltColorUploadController.lastFolderSelection = this.selection.getParentFile();
+        this.fileNameField.setText("Analyzing \"" + selection.getName() + "\"...");
+        this.fileNameField.setDisable(true);
+        this.fileBtn.setDisable(true);
+        this.cancelBtn.setDisable(true);
 
+        Platform.runLater(() -> {
+          String analyze = AltColorAnalyzer.analyze(selection);
+          this.fileNameField.setText(this.selection.getAbsolutePath());
+          this.fileNameField.setDisable(false);
+          this.fileBtn.setDisable(false);
+          this.cancelBtn.setDisable(false);
 
-      Platform.runLater(() -> {
-        String analyze = AltColorAnalyzer.analyze(selection);
+          if (analyze != null) {
+            result = false;
+            WidgetFactory.showAlert(Studio.stage, analyze);
+            return;
+          }
+          this.uploadBtn.setDisable(false);
+        });
+      }
+      else {
         this.fileNameField.setText(this.selection.getAbsolutePath());
-        this.fileNameField.setDisable(false);
         this.fileBtn.setDisable(false);
         this.cancelBtn.setDisable(false);
+      }
 
-        if (analyze != null) {
-          result = false;
-          WidgetFactory.showAlert(Studio.stage, analyze);
-          return;
-        }
-        this.uploadBtn.setDisable(false);
-      });
     }
     else {
       this.fileNameField.setText("");

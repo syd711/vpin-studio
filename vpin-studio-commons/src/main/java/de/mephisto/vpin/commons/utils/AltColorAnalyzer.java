@@ -13,6 +13,7 @@ public class AltColorAnalyzer {
   private final static Logger LOG = LoggerFactory.getLogger(AltColorAnalyzer.class);
 
   public final static String PAL_SUFFIX = ".pal";
+  public final static String VNI_SUFFIX = ".vni";
   public final static String PAC_SUFFIX = ".pac";
   public final static String SERUM_SUFFIX = ".cRZ";
 

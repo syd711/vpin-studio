@@ -37,6 +37,6 @@ public class AltColorServiceClient extends VPinStudioClientService {
 
   public boolean clearCache() {
     final RestTemplate restTemplate = new RestTemplate();
-    return restTemplate.getForObject(getRestClient().getBaseUrl() + API + "altsound/clearcache", Boolean.class);
+    return restTemplate.getForObject(getRestClient().getBaseUrl() + API + "altcolor/clearcache", Boolean.class);
   }
 }

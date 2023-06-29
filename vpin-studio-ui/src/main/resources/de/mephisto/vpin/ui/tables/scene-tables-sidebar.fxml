@@ -56,8 +56,52 @@
                 <TitledPane fx:id="titledPanePopper" expanded="false" text="PinUP Popper Table Data" />
                 <TitledPane fx:id="titledPaneDirectB2s" expanded="false" text="DirectB2S" />
                 <TitledPane fx:id="titledPanePUPPack" expanded="false" text="PUP Pack" />
-                <TitledPane fx:id="titledPaneAudio" expanded="false" text="ALT Sound" />
-            <TitledPane fx:id="titledPaneAltColor" expanded="false" layoutX="10.0" layoutY="228.0" text="ALT Color" />
+                <TitledPane fx:id="titledPaneAudio" expanded="false">
+               <graphic>
+                  <BorderPane prefWidth="560.0">
+                     <right>
+                        <Button fx:id="altSoundExplorerBtn" mnemonicParsing="false" onAction="#onAltSound" styleClass="external-component" BorderPane.alignment="CENTER">
+                           <font>
+                              <Font size="10.0" />
+                           </font>
+                           <graphic>
+                              <FontIcon iconColor="WHITE" iconLiteral="mdi2o-open-in-new" />
+                           </graphic>
+                           <tooltip>
+                              <Tooltip text="ALT Sound Folder" />
+                           </tooltip>
+                        </Button>
+                     </right>
+                     <left>
+                        <Label text="ALT Sound" BorderPane.alignment="CENTER" />
+                     </left>
+                  </BorderPane>
+               </graphic></TitledPane>
+            <TitledPane fx:id="titledPaneAltColor" expanded="false">
+               <graphic>
+                  <BorderPane prefWidth="560.0">
+                     <right>
+                        <Button fx:id="altColorExplorerBtn" mnemonicParsing="false" onAction="#onAltColor" styleClass="external-component" BorderPane.alignment="CENTER">
+                           <graphic>
+                              <FontIcon iconColor="WHITE" iconLiteral="mdi2o-open-in-new" />
+                           </graphic>
+                           <tooltip>
+                              <Tooltip text="ALT Color Folder" />
+                           </tooltip>
+                           <font>
+                              <Font size="10.0" />
+                           </font>
+                        </Button>
+                     </right>
+                     <left>
+                        <Label text="ALT Color" textFill="WHITE" BorderPane.alignment="CENTER">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Label>
+                     </left>
+                  </BorderPane>
+               </graphic></TitledPane>
                 <TitledPane fx:id="titledPanePov" expanded="false" text="Point Of View (POV)" />
                 <TitledPane fx:id="titledPaneHighscores" expanded="false" text="Highscores" />
                 <TitledPane fx:id="titledPaneMetadata" expanded="false" text="Script Details" />
@@ -69,7 +113,7 @@
                         <Label text="Virtual Pinball Spreadsheet" BorderPane.alignment="CENTER" />
                      </left>
                      <right>
-                        <Button mnemonicParsing="false" onAction="#onVpsBtn" BorderPane.alignment="CENTER">
+                        <Button mnemonicParsing="false" onAction="#onVpsBtn" styleClass="external-component" BorderPane.alignment="CENTER">
                            <font>
                               <Font size="10.0" />
                            </font>

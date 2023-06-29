@@ -76,7 +76,10 @@ public class TablesSidebarController implements Initializable {
   private CheckBox mediaPreviewCheckbox;
 
   @FXML
-  private Button popperConfigBtn;
+  private Button altSoundExplorerBtn;
+
+  @FXML
+  private Button altColorExplorerBtn;
 
   @FXML
   private HBox popperTitleButtonArea;
@@ -138,6 +141,26 @@ public class TablesSidebarController implements Initializable {
   }
 
   @FXML
+  private void onAltSound() {
+    try {
+      SystemSummary systemSummary = Studio.client.getSystemService().getSystemSummary();
+      new ProcessBuilder("explorer.exe", new File(systemSummary.getVpinMameDirectory(), "altsound").getAbsolutePath()).start();
+    } catch (Exception e) {
+      LOG.error("Failed to open Explorer: " + e.getMessage(), e);
+    }
+  }
+
+  @FXML
+  private void onAltColor() {
+    try {
+      SystemSummary systemSummary = Studio.client.getSystemService().getSystemSummary();
+      new ProcessBuilder("explorer.exe", new File(systemSummary.getVpinMameDirectory(), "altcolor").getAbsolutePath()).start();
+    } catch (Exception e) {
+      LOG.error("Failed to open Explorer: " + e.getMessage(), e);
+    }
+  }
+
+  @FXML
   private void onPopperBtn() {
     Desktop desktop = Desktop.isDesktopSupported() ? Desktop.getDesktop() : null;
     if (desktop != null && desktop.isSupported(Desktop.Action.OPEN)) {
@@ -161,6 +184,8 @@ public class TablesSidebarController implements Initializable {
     tableAccordion.managedProperty().bindBidirectional(tableAccordion.visibleProperty());
     popperTitleButtonArea.managedProperty().bindBidirectional(popperTitleButtonArea.visibleProperty());
     popperTitleButtonArea.setVisible(client.getSystemService().isLocal());
+    altSoundExplorerBtn.setVisible(client.getSystemService().isLocal());
+    altColorExplorerBtn.setVisible(client.getSystemService().isLocal());
 
     try {
       FXMLLoader loader = new FXMLLoader(TablesSidebarAltSoundController.class.getResource("scene-tables-sidebar-altsound.fxml"));
