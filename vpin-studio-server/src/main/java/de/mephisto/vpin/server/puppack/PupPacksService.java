@@ -140,8 +140,8 @@ public class PupPacksService implements InitializingBean {
       return null;
     }
 
-    if (!target.exists()) {
-      target.mkdirs();
+    if (!target.getParentFile().exists()) {
+      target.getParentFile().mkdirs();
     }
 
     PupDefaultVideoResolver resolver = new PupDefaultVideoResolver(pupPack);

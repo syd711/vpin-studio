@@ -45,7 +45,12 @@ public class ImageUtil {
     if (!file.exists()) {
       throw new FileNotFoundException("File not found " + file.getAbsolutePath());
     }
-    return ImageIO.read(file);
+    try {
+      return ImageIO.read(file);
+    } catch (IOException e) {
+      LOG.error("Failed to read " + file.getAbsolutePath() + ": " + e.getMessage(), e);
+      throw e;
+    }
   }
 
   @SuppressWarnings("unused")
