@@ -43,7 +43,11 @@ public class DiscordListenerAdapter extends ListenerAdapter {
 
       String name = event.getAuthor().getName();
       String id = event.getAuthor().getId();
-      return commandsAllowList.contains(name) || commandsAllowList.contains(id);
+      boolean isAllowed = commandsAllowList.contains(name) || commandsAllowList.contains(id);
+      if(!isAllowed) {
+        LOG.info("Discord message has been filtered by the allow list.");
+      }
+      return isAllowed;
     }
 
     return false;

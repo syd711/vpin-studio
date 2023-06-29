@@ -390,6 +390,9 @@ public class DiscordService implements InitializingBean, PreferenceChangedListen
         String[] split = whiteList.split(",");
         this.discordClient.setCommandsAllowList(Arrays.asList(split));
       }
+      else {
+        this.discordClient.setCommandsAllowList(Collections.emptyList());
+      }
 
       if (!StringUtils.isEmpty(guildId)) {
         this.discordClient.setDefaultGuildId(Long.parseLong(guildId));
