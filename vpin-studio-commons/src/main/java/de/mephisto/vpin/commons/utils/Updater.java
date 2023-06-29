@@ -84,7 +84,7 @@ public class Updater {
   }
 
   public static boolean installServerUpdate() throws IOException {
-    FileUtils.writeBatch("update-server.bat", "timeout /T 4 /nobreak\nresources\\7z.exe -aoa x \"VPin-Studio-Server.zip\"\ntimeout /T 4 /nobreak\ndel VPin-Studio-Server.zip\nserver.vbs\nexit");
+    FileUtils.writeBatch("update-server.bat", "timeout /T 8 /nobreak\nresources\\7z.exe -aoa x \"VPin-Studio-Server.zip\"\ntimeout /T 4 /nobreak\ndel VPin-Studio-Server.zip\nserver.vbs\nexit");
     List<String> commands = Arrays.asList("cmd", "/c", "start", "update-server.bat");
     SystemCommandExecutor executor = new SystemCommandExecutor(commands);
     executor.setDir(getBasePath());
