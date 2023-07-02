@@ -8,7 +8,10 @@ import javafx.embed.swing.SwingFXUtils;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.*;
-import javafx.scene.control.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
+import javafx.scene.control.Label;
+import javafx.scene.control.ListCell;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.image.WritableImage;
@@ -35,7 +38,10 @@ import java.io.File;
 import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
-import java.util.concurrent.*;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
 
 public class WidgetFactory {
   private final static Logger LOG = LoggerFactory.getLogger(WidgetFactory.class);
@@ -235,57 +241,49 @@ public class WidgetFactory {
     }
   }
 
-  public static Node createMediaContainer(VPinStudioClient client, BorderPane parent, GameMediaItemRepresentation mediaItem, boolean ignored, boolean previewEnabled) {
+  public static void createMediaContainer(VPinStudioClient client, BorderPane parent, GameMediaItemRepresentation mediaItem, boolean ignored, boolean previewEnabled) {
     if (parent.getCenter() != null) {
       disposeMediaBorderPane(parent);
     }
 
-    Node top = parent.getTop();
-    if (top != null) {
-      top.setVisible(mediaItem != null);
-    }
-
-    if (ignored && mediaItem == null) {
+    if (ignored) {
       Label label = new Label("Screen is ignored");
       label.setStyle("-fx-font-size: 14px;-fx-text-fill: #444444;");
       parent.setCenter(label);
-      return parent;
-    }
-
-    Label label = new Label("Preview disabled");
-    label.setUserData(mediaItem);
-    label.setStyle("-fx-font-size: 14px;-fx-text-fill: #444444;");
-
-    if (mediaItem != null) {
-      label.setStyle("-fx-font-color: #33CC00;-fx-text-fill:#33CC00; -fx-font-weight: bold;");
-    }
-
-    parent.setCenter(label);
-
-    if (!previewEnabled) {
-      Button playButton = (Button) parent.getTop();
-      if (playButton != null) {
-        playButton.setVisible(false);
-      }
-      return parent;
     }
 
     if (mediaItem == null) {
-      label.setText("No media found");
-      return parent;
+      Label label = new Label("No media found");
+      label.setStyle("-fx-font-size: 14px;-fx-text-fill: #444444;");
+      parent.setCenter(label);
     }
 
-    return addMediaItemToBorderPane(client, mediaItem, parent);
+    if (!previewEnabled) {
+      Label label = new Label("Preview disabled");
+      if (mediaItem == null) {
+        label.setText("No media found");
+      }
+      label.setUserData(mediaItem);
+      label.setStyle("-fx-font-size: 14px;-fx-text-fill: #444444;");
+
+      if (mediaItem != null) {
+        label.setStyle("-fx-font-color: #33CC00;-fx-text-fill:#33CC00; -fx-font-weight: bold;");
+      }
+      parent.setCenter(label);
+    }
+
+    if (!ignored && previewEnabled && mediaItem != null) {
+      addMediaItemToBorderPane(client, mediaItem, parent);
+    }
+
+    if (parent.getId().equalsIgnoreCase("screenAudioLaunch") || parent.getId().equalsIgnoreCase("screenAudio")) {
+      VBox bottom = (VBox) parent.getBottom();
+      Button playButton = (Button) bottom.getChildren().get(0);
+      playButton.setVisible(!ignored && previewEnabled && mediaItem != null);
+    }
   }
 
-  public static TextField createCopyableLabel(String text) {
-    TextField copyable = new TextField(text);
-    copyable.setEditable(false);
-    copyable.getStyleClass().add("copyable-label");
-    return copyable;
-  }
-
-  public static Node addMediaItemToBorderPane(VPinStudioClient client, GameMediaItemRepresentation mediaItem, BorderPane parent) {
+  public static void addMediaItemToBorderPane(VPinStudioClient client, GameMediaItemRepresentation mediaItem, BorderPane parent) {
     boolean portraitMode = client.getSystemService().getScreenInfo().isPortraitMode();
 
     String mimeType = mediaItem.getMimeType();
@@ -304,9 +302,36 @@ public class WidgetFactory {
       imageView.setUserData(mediaItem);
 
       parent.setCenter(imageView);
-      return imageView;
     }
-    else if (baseType.equals("video") || baseType.equals("audio")) {
+    else if (baseType.equals("audio")) {
+      Media media = new Media(url);
+      MediaPlayer mediaPlayer = new MediaPlayer(media);
+      mediaPlayer.setAutoPlay(false);
+      mediaPlayer.setCycleCount(-1);
+      mediaPlayer.setMute(true);
+      mediaPlayer.setOnError(() -> {
+        LOG.error("Media player error: " + mediaPlayer.getError());
+        mediaPlayer.stop();
+        mediaPlayer.dispose();
+
+        Label label = new Label("Media Error");
+        label.setStyle("-fx-font-size: 14px;-fx-text-fill: #444444;");
+        label.setUserData(mediaItem);
+        parent.setCenter(label);
+      });
+
+      mediaPlayer.setOnEndOfMedia(() -> {
+        VBox bottom = (VBox) parent.getBottom();
+        Button playButton = (Button) bottom.getChildren().get(0);
+        playButton.setVisible(true);
+        FontIcon icon = (FontIcon) playButton.getChildrenUnmodifiable().get(0);
+        icon.setIconLiteral("bi-play");
+      });
+
+      MediaView mediaView = new MediaView(mediaPlayer);
+      parent.setCenter(mediaView);
+    }
+    else if (baseType.equals("video")) {
       Media media = new Media(url);
       MediaPlayer mediaPlayer = new MediaPlayer(media);
       mediaPlayer.setAutoPlay(baseType.equals("video"));
@@ -346,22 +371,12 @@ public class WidgetFactory {
           mediaView.setY(0);
         }
       }
-      else if (baseType.equals("video")) {
+      else {
         mediaView.setFitWidth(parent.getPrefWidth() - 12);
         mediaView.setFitHeight(parent.getPrefHeight() - 50);
       }
-      else if (baseType.equals("audio")) {
-        mediaPlayer.setOnEndOfMedia(() -> {
-          Button playButton = (Button) parent.getTop();
-          playButton.setVisible(true);
-          FontIcon icon = (FontIcon) playButton.getChildrenUnmodifiable().get(0);
-          icon.setIconLiteral("bi-play");
-        });
-      }
 
       parent.setCenter(mediaView);
-
-      return mediaView;
     }
     else {
       throw new UnsupportedOperationException("Invalid media mime type " + mimeType);
@@ -393,13 +408,8 @@ public class WidgetFactory {
         ImageView view = (ImageView) center;
         view.setImage(null);
       }
-    }
-
-    Node top = node.getTop();
-    if (top != null) {
-      if (top instanceof Button) {
-        Button button = (Button) top;
-        button.setVisible(false);
+      else {
+        node.setCenter(null);
       }
     }
   }

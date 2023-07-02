@@ -8,6 +8,7 @@ public enum AssetType {
   DIRECT_B2S,
   ALT_SOUND,
   PUP_PACK,
+  POPPER_MEDIA,
   ROM,
   POV,
   ARCHIVE,

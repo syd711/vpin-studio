@@ -110,6 +110,16 @@ public class Dialogs {
     return controller.getCompetition();
   }
 
+  public static boolean openMediaUploadDialog(TablesSidebarController tablesSidebarController, GameRepresentation game, PopperScreen screen) {
+    Stage stage = createStudioDialogStage(TableMediaUploadController.class, "dialog-media-upload.fxml", "Table Media Upload");
+    TableMediaUploadController controller = (TableMediaUploadController) stage.getUserData();
+    controller.setGame(game, screen);
+    controller.setTableSidebarController(tablesSidebarController);
+    stage.showAndWait();
+
+    return controller.uploadFinished();
+  }
+
   public static boolean openAltSoundUploadDialog(TablesSidebarController tablesSidebarController, GameRepresentation game) {
     Stage stage = createStudioDialogStage(AltSoundUploadController.class, "dialog-altsound-upload.fxml", "ALT Sound Upload");
     AltSoundUploadController controller = (AltSoundUploadController) stage.getUserData();

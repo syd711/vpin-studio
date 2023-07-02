@@ -649,4 +649,8 @@ public class TableOverviewController implements Initializable, StudioFXControlle
       NavigationController.setBreadCrumb(Arrays.asList("Tables", game.getGameDisplayName()));
     }
   }
+
+  public GameRepresentation getSelection() {
+    return tableView.getSelectionModel().getSelectedItem();
+  }
 }

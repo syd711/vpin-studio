@@ -2,6 +2,7 @@ package de.mephisto.vpin.ui.tables;
 
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.PreferenceNames;
+import de.mephisto.vpin.restclient.SystemSummary;
 import de.mephisto.vpin.restclient.popper.PopperScreen;
 import de.mephisto.vpin.restclient.representations.GameMediaItemRepresentation;
 import de.mephisto.vpin.restclient.representations.GameMediaRepresentation;
@@ -9,6 +10,8 @@ import de.mephisto.vpin.restclient.representations.GameRepresentation;
 import de.mephisto.vpin.restclient.representations.PreferenceEntryRepresentation;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.util.Dialogs;
+import de.mephisto.vpin.ui.util.FileDragEventHandler;
+import de.mephisto.vpin.ui.util.VisibilityHoverListener;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -22,6 +25,7 @@ import org.kordamp.ikonli.javafx.FontIcon;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.File;
 import java.net.URL;
 import java.util.List;
 import java.util.Optional;
@@ -70,7 +74,28 @@ public class TablesSidebarMediaController implements Initializable {
   private BorderPane screenAudioLaunch;
 
   @FXML
-  private Button playfieldViewBtn;
+  private Button btn_Audio;
+
+  @FXML
+  private Button btn_upload_Audio;
+
+  @FXML
+  private Button btn_AudioLaunch;
+
+  @FXML
+  private Node top_AudioLaunch;
+
+  @FXML
+  private Button btn_upload_AudioLaunch;
+
+  @FXML
+  private Button btn_Topper;
+
+  @FXML
+  private Button btn_edit_Topper;
+
+  @FXML
+  private Button btn_upload_Topper;
 
   private Optional<GameRepresentation> game = Optional.empty();
 
@@ -82,19 +107,74 @@ public class TablesSidebarMediaController implements Initializable {
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
+    btn_AudioLaunch.setVisible(Studio.client.getSystemService().isLocal());
+    btn_Audio.setVisible(Studio.client.getSystemService().isLocal());
 
+
+    SystemSummary systemSummary = Studio.client.getSystemService().getSystemSummary();
+    File folder = new File(systemSummary.getPinupSystemDirectory() + "/POPMedia/Visual Pinball X");
+    File audio = new File(folder, "Audio");
+
+    screenAudio.setOnDragOver(new FileDragEventHandler(screenAudio));
+    screenAudio.setOnDragDropped(new TableMediaFileDropEventHandler(audio, tablesSidebarController, PopperScreen.Audio, ".mp3"));
+
+    top_AudioLaunch.setVisible(false);
+    screenAudioLaunch.hoverProperty().addListener(new VisibilityHoverListener(top_AudioLaunch));
   }
 
+  @FXML
+  private void onMediaEdit(ActionEvent e) {
+    if (game.isPresent()) {
+      Button source = (Button) e.getSource();
+      String id = source.getId();
+      String screen = id.substring(id.lastIndexOf("_") + 1);
+      PopperScreen popperScreen = PopperScreen.valueOf(screen);
+
+      Dialogs.openMediaUploadDialog(tablesSidebarController, game.get(), popperScreen);
+    }
+  }
+
+  @FXML
+  private void onMediaUpload(ActionEvent e) {
+    if (game.isPresent()) {
+      Button source = (Button) e.getSource();
+      String id = source.getId();
+      String screen = id.substring(id.lastIndexOf("_") + 1);
+
+      PopperScreen popperScreen = PopperScreen.valueOf(screen);
+      Dialogs.openMediaUploadDialog(tablesSidebarController, game.get(), popperScreen);
+    }
+  }
+
+  @FXML
+  private void onMediaFolderOpenClick(ActionEvent e) {
+    Button source = (Button) e.getSource();
+    String id = source.getId();
+    String screen = id.substring(id.indexOf("_") + 1);
+
+    GameRepresentation selection = tablesSidebarController.getTablesController().getSelection();
+    if (selection != null) {
+      File emulatorFolder = new File(selection.getEmulator().getMediaDir());
+      SystemSummary systemSummary = Studio.client.getSystemService().getSystemSummary();
+      File file = new File(systemSummary.getPinupSystemDirectory() + "/POPMedia/" + emulatorFolder.getName() + "/" + screen);
+      if (!file.exists()) {
+        WidgetFactory.showAlert(Studio.stage, "Did not PinUP Popper media folder for screen \"" + screen + "\"");
+        return;
+      }
+
+      try {
+        new ProcessBuilder("explorer.exe", file.getAbsolutePath()).start();
+      } catch (Exception ex) {
+        LOG.error("Failed to open Explorer: " + ex.getMessage(), e);
+      }
+    }
+  }
 
   @FXML
   private void onMediaViewClick(ActionEvent e) {
     Button source = (Button) e.getSource();
-    BorderPane borderPane = (BorderPane) source.getParent();
+    BorderPane borderPane = (BorderPane) source.getParent().getParent().getParent();
     Node center = borderPane.getCenter();
-    if (center == null) {
-      center = screenPlayField.getCenter();
-    }
-
     GameMediaItemRepresentation mediaItem = (GameMediaItemRepresentation) center.getUserData();
     if (mediaItem != null) {
       GameRepresentation gameRepresentation = game.get();
@@ -105,7 +185,7 @@ public class TablesSidebarMediaController implements Initializable {
   @FXML
   private void onPlayClick(ActionEvent e) {
     Button source = (Button) e.getSource();
-    BorderPane borderPane = (BorderPane) source.getParent();
+    BorderPane borderPane = (BorderPane) source.getParent().getParent();
     MediaView mediaView = (MediaView) borderPane.getCenter();
 
     FontIcon icon = (FontIcon) source.getChildrenUnmodifiable().get(0);
@@ -122,6 +202,11 @@ public class TablesSidebarMediaController implements Initializable {
     }
   }
 
+  @FXML
+  private void onMediaDrop() {
+
+  }
+
   public void setGame(Optional<GameRepresentation> game, boolean preview) {
     this.game = game;
     this.refreshView(game, preview);
@@ -131,10 +216,6 @@ public class TablesSidebarMediaController implements Initializable {
     if (g.isPresent()) {
       GameRepresentation game = g.get();
       GameMediaRepresentation gameMedia = game.getGameMedia();
-
-      GameMediaItemRepresentation item = gameMedia.getItem(PopperScreen.PlayField);
-      playfieldViewBtn.setVisible(item != null);
-
       refreshMedia(gameMedia, preview);
     }
     else {

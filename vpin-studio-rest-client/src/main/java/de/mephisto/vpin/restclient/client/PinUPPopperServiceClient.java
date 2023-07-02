@@ -1,5 +1,7 @@
 package de.mephisto.vpin.restclient.client;
 
+import de.mephisto.vpin.restclient.AssetType;
+import de.mephisto.vpin.restclient.FileUploadProgressListener;
 import de.mephisto.vpin.restclient.SystemData;
 import de.mephisto.vpin.restclient.jobs.JobExecutionResult;
 import de.mephisto.vpin.restclient.popper.PinUPControl;
@@ -9,7 +11,11 @@ import de.mephisto.vpin.restclient.popper.TableDetails;
 import de.mephisto.vpin.restclient.representations.PlaylistRepresentation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.client.RestTemplate;
 
+import java.io.File;
 import java.util.Arrays;
 import java.util.List;
 
@@ -73,4 +79,14 @@ public class PinUPPopperServiceClient extends VPinStudioClientService {
     }
   }
 
+  public JobExecutionResult uploadMedia(File file, String uploadType, int gameId, PopperScreen screen, FileUploadProgressListener listener) throws Exception {
+    try {
+      String url = getRestClient().getBaseUrl() + API + "popper/upload/" + screen.name();
+      ResponseEntity<JobExecutionResult> exchange = new RestTemplate().exchange(url, HttpMethod.POST, createUpload(file, gameId, uploadType, AssetType.POPPER_MEDIA, listener), JobExecutionResult.class);
+      return exchange.getBody();
+    } catch (Exception e) {
+      LOG.error("Popper media upload failed: " + e.getMessage(), e);
+      throw e;
+    }
+  }
 }
