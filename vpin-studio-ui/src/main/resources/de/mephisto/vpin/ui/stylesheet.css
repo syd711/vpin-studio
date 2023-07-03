@@ -530,13 +530,25 @@
 }
 
 .list-view .list-cell:odd {
+    -fx-font-size: 14px;
+    -fx-text-fill: white;
     -fx-background-color: #93f9b911;
 }
 .list-view .list-cell:even {
+    -fx-font-size: 14px;
+    -fx-text-fill: white;
     -fx-background-color: #1dbbdd11;
 }
 
 .list-view .list-cell:selected {
+    -fx-font-size: 14px;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+}
+
+.list-view .list-cell:hover {
+    -fx-font-size: 14px;
+    -fx-text-fill: blue;
     -fx-font-weight: bold;
 }
 

@@ -29,6 +29,14 @@
                      <top>
                         <ToolBar prefHeight="40.0" prefWidth="500.0" BorderPane.alignment="CENTER">
                           <items>
+                              <Button fx:id="addToPlaylistBtn1" layoutX="10.0" layoutY="11.0" mnemonicParsing="false" onAction="#onPlaylistAdd" text="Reload" textFill="WHITE">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                                 <graphic>
+                                    <FontIcon iconColor="WHITE" iconLiteral="sil-reload" />
+                                 </graphic>
+                              </Button>
                             <Button fx:id="addToPlaylistBtn" mnemonicParsing="false" onAction="#onPlaylistAdd" text="Add To Playlist" textFill="WHITE">
                                  <font>
                                     <Font size="14.0" />
