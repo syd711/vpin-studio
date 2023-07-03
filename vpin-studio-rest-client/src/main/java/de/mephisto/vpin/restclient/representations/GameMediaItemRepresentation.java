@@ -5,6 +5,15 @@ public class GameMediaItemRepresentation {
   private String uri;
   private String screen;
   private int gameId;
+  private String name;
+
+  public String getName() {
+    return name;
+  }
+
+  public void setName(String name) {
+    this.name = name;
+  }
 
   public int getGameId() {
     return gameId;
@@ -36,5 +45,10 @@ public class GameMediaItemRepresentation {
 
   public void setScreen(String screen) {
     this.screen = screen;
+  }
+
+  @Override
+  public String toString() {
+    return this.name;
   }
 }

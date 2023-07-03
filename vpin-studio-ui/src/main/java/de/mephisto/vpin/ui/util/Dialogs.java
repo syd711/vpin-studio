@@ -120,6 +120,17 @@ public class Dialogs {
     return controller.uploadFinished();
   }
 
+
+  public static boolean openMediaAdminDialog(TablesSidebarController tablesSidebarController, GameRepresentation game, PopperScreen screen) {
+    Stage stage = createStudioDialogStage(TableMediaAdminController.class, "dialog-media-admin.fxml", "Assets for Screen \"" + screen.name() + "\"");
+    TableMediaAdminController controller = (TableMediaAdminController) stage.getUserData();
+    controller.setGame(game, screen);
+    controller.setTableSidebarController(tablesSidebarController);
+    stage.showAndWait();
+
+    return true;
+  }
+
   public static boolean openAltSoundUploadDialog(TablesSidebarController tablesSidebarController, GameRepresentation game) {
     Stage stage = createStudioDialogStage(AltSoundUploadController.class, "dialog-altsound-upload.fxml", "ALT Sound Upload");
     AltSoundUploadController controller = (AltSoundUploadController) stage.getUserData();

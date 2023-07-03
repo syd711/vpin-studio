@@ -62,6 +62,10 @@ public class GameMediaItem {
     this.mimeType = mimeType;
   }
 
+  public String getName() {
+    return this.file.getName();
+  }
+
   public int getGameId() {
     return gameId;
   }

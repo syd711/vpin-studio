@@ -30,6 +30,7 @@ import java.net.URL;
 import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
+import java.util.function.Predicate;
 
 public class TablesSidebarMediaController implements Initializable {
   private final static Logger LOG = LoggerFactory.getLogger(TablesSidebarMediaController.class);
@@ -48,6 +49,9 @@ public class TablesSidebarMediaController implements Initializable {
 
   @FXML
   private BorderPane screenPlayField;
+
+  @FXML
+  private BorderPane playfieldRoot;
 
   @FXML
   private BorderPane screenMenu;
@@ -73,29 +77,185 @@ public class TablesSidebarMediaController implements Initializable {
   @FXML
   private BorderPane screenAudioLaunch;
 
-  @FXML
-  private Button btn_Audio;
 
   @FXML
-  private Button btn_upload_Audio;
+  private Button btn_edit_Audio;
 
   @FXML
-  private Button btn_AudioLaunch;
-
-  @FXML
-  private Node top_AudioLaunch;
-
-  @FXML
-  private Button btn_upload_AudioLaunch;
-
-  @FXML
-  private Button btn_Topper;
+  private Button btn_edit_AudioLaunch;
 
   @FXML
   private Button btn_edit_Topper;
 
   @FXML
-  private Button btn_upload_Topper;
+  private Button btn_edit_Menu;
+
+  @FXML
+  private Button btn_edit_BackGlass;
+
+  @FXML
+  private Button btn_edit_Loading;
+
+  @FXML
+  private Button btn_edit_GameInfo;
+
+  @FXML
+  private Button btn_edit_DMD;
+
+  @FXML
+  private Button btn_edit_Other2;
+
+  @FXML
+  private Button btn_edit_GameHelp;
+
+  @FXML
+  private Button btn_edit_PlayField;
+
+  @FXML
+  private Button btn_edit_Wheel;
+
+
+  @FXML
+  private Button btn_Audio;
+
+  @FXML
+  private Button btn_AudioLaunch;
+
+  @FXML
+  private Button btn_Topper;
+
+  @FXML
+  private Button btn_Menu;
+
+  @FXML
+  private Button btn_BackGlass;
+
+  @FXML
+  private Button btn_Loading;
+
+  @FXML
+  private Button btn_GameInfo;
+
+  @FXML
+  private Button btn_DMD;
+
+  @FXML
+  private Button btn_Other2;
+
+  @FXML
+  private Button btn_GameHelp;
+
+  @FXML
+  private Button btn_PlayField;
+
+  @FXML
+  private Button btn_Wheel;
+
+
+  @FXML
+  private Button btn_view_Topper;
+
+  @FXML
+  private Button btn_view_Menu;
+
+  @FXML
+  private Button btn_view_BackGlass;
+
+  @FXML
+  private Button btn_view_Loading;
+
+  @FXML
+  private Button btn_view_GameInfo;
+
+  @FXML
+  private Button btn_view_DMD;
+
+  @FXML
+  private Button btn_view_Other2;
+
+  @FXML
+  private Button btn_view_GameHelp;
+
+  @FXML
+  private Button btn_view_PlayField;
+
+  @FXML
+  private Button btn_view_Wheel;
+
+
+
+  @FXML
+  private Node top_Audio;
+
+  @FXML
+  private Node top_AudioLaunch;
+
+  @FXML
+  private Node top_Topper;
+
+  @FXML
+  private Node top_Loading;
+
+  @FXML
+  private Node top_PlayField;
+
+  @FXML
+  private Node top_BackGlass;
+
+  @FXML
+  private Node top_GameInfo;
+
+  @FXML
+  private Node top_GameHelp;
+
+  @FXML
+  private Node top_DMD;
+
+  @FXML
+  private Node top_Menu;
+
+  @FXML
+  private Node top_Other2;
+
+  @FXML
+  private Node top_Wheel;
+
+//  @FXML
+//  private Node hbox_Audio;
+//
+//  @FXML
+//  private Node hbox_AudioLaunch;
+//
+//  @FXML
+//  private Node hbox_Topper;
+//
+//  @FXML
+//  private Node hbox_Loading;
+//
+//  @FXML
+//  private Node hbox_PlayField;
+//
+//  @FXML
+//  private Node hbox_BackGlass;
+//
+//  @FXML
+//  private Node hbox_GameInfo;
+//
+//  @FXML
+//  private Node hbox_GameHelp;
+//
+//  @FXML
+//  private Node hbox_DMD;
+//
+//  @FXML
+//  private Node hbox_Menu;
+//
+//  @FXML
+//  private Node hbox_Other2;
+//
+//  @FXML
+//  private Node hbox_Wheel;
+
 
   private Optional<GameRepresentation> game = Optional.empty();
 
@@ -107,19 +267,58 @@ public class TablesSidebarMediaController implements Initializable {
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
-    btn_AudioLaunch.setVisible(Studio.client.getSystemService().isLocal());
-    btn_Audio.setVisible(Studio.client.getSystemService().isLocal());
-
-
     SystemSummary systemSummary = Studio.client.getSystemService().getSystemSummary();
-    File folder = new File(systemSummary.getPinupSystemDirectory() + "/POPMedia/Visual Pinball X");
+    File folder = new File(systemSummary.getPinupSystemDirectory() + "/POPMedia/Visual Pinball X"); //TODO
     File audio = new File(folder, "Audio");
 
     screenAudio.setOnDragOver(new FileDragEventHandler(screenAudio));
     screenAudio.setOnDragDropped(new TableMediaFileDropEventHandler(audio, tablesSidebarController, PopperScreen.Audio, ".mp3"));
 
+    top_Audio.setVisible(false);
     top_AudioLaunch.setVisible(false);
-    screenAudioLaunch.hoverProperty().addListener(new VisibilityHoverListener(top_AudioLaunch));
+    top_Topper.setVisible(false);
+    top_Loading.setVisible(false);
+    top_PlayField.setVisible(false);
+    top_BackGlass.setVisible(false);
+    top_GameInfo.setVisible(false);
+    top_GameHelp.setVisible(false);
+    top_Menu.setVisible(false);
+    top_DMD.setVisible(false);
+    top_Other2.setVisible(false);
+    top_Wheel.setVisible(false);
+
+    boolean isLocal = Studio.client.getSystemService().isLocal();
+    btn_Audio.setVisible(isLocal);
+    btn_AudioLaunch.setVisible(isLocal);
+    btn_Topper.setVisible(isLocal);
+    btn_Loading.setVisible(isLocal);
+    btn_PlayField.setVisible(isLocal);
+    btn_BackGlass.setVisible(isLocal);
+    btn_GameInfo.setVisible(isLocal);
+    btn_GameHelp.setVisible(isLocal);
+    btn_Menu.setVisible(isLocal);
+    btn_DMD.setVisible(isLocal);
+    btn_Other2.setVisible(isLocal);
+    btn_Wheel.setVisible(isLocal);
+
+
+    Predicate showPredicate = o -> tablesSidebarController.getTablesController().getSelection() != null;
+
+    screenAudio.hoverProperty().addListener(new VisibilityHoverListener(top_Audio, showPredicate));
+    screenAudioLaunch.hoverProperty().addListener(new VisibilityHoverListener(top_AudioLaunch, showPredicate));
+    screenDMD.hoverProperty().addListener(new VisibilityHoverListener(top_DMD, showPredicate));
+    screenBackGlass.hoverProperty().addListener(new VisibilityHoverListener(top_BackGlass, showPredicate));
+    screenMenu.hoverProperty().addListener(new VisibilityHoverListener(top_Menu, showPredicate));
+    screenGameInfo.hoverProperty().addListener(new VisibilityHoverListener(top_GameInfo, showPredicate));
+    screenGameHelp.hoverProperty().addListener(new VisibilityHoverListener(top_GameHelp, showPredicate));
+    screenLoading.hoverProperty().addListener(new VisibilityHoverListener(top_Loading, showPredicate));
+    screenBackGlass.hoverProperty().addListener(new VisibilityHoverListener(top_BackGlass, showPredicate));
+    screenPlayField.hoverProperty().addListener(new VisibilityHoverListener(top_PlayField, showPredicate));
+    top_PlayField.hoverProperty().addListener(new VisibilityHoverListener(top_PlayField, showPredicate));
+    playfieldRoot.hoverProperty().addListener(new VisibilityHoverListener(top_PlayField, showPredicate));
+    screenTopper.hoverProperty().addListener(new VisibilityHoverListener(top_Topper, showPredicate));
+    screenOther2.hoverProperty().addListener(new VisibilityHoverListener(top_Other2, showPredicate));
+    screenWheel.hoverProperty().addListener(new VisibilityHoverListener(top_Wheel, showPredicate));
   }
 
   @FXML
@@ -130,7 +329,7 @@ public class TablesSidebarMediaController implements Initializable {
       String screen = id.substring(id.lastIndexOf("_") + 1);
       PopperScreen popperScreen = PopperScreen.valueOf(screen);
 
-      Dialogs.openMediaUploadDialog(tablesSidebarController, game.get(), popperScreen);
+      Dialogs.openMediaAdminDialog(tablesSidebarController, game.get(), popperScreen);
     }
   }
 
@@ -175,6 +374,9 @@ public class TablesSidebarMediaController implements Initializable {
     Button source = (Button) e.getSource();
     BorderPane borderPane = (BorderPane) source.getParent().getParent().getParent();
     Node center = borderPane.getCenter();
+    if (center == null) {
+      center = screenPlayField.getCenter();
+    }
     GameMediaItemRepresentation mediaItem = (GameMediaItemRepresentation) center.getUserData();
     if (mediaItem != null) {
       GameRepresentation gameRepresentation = game.get();
@@ -213,6 +415,30 @@ public class TablesSidebarMediaController implements Initializable {
   }
 
   public void refreshView(Optional<GameRepresentation> g, boolean preview) {
+    btn_edit_Audio.setDisable(g.isEmpty() || g.get().getGameMedia().getItem(PopperScreen.Audio) == null);
+    btn_edit_AudioLaunch.setDisable(g.isEmpty() || g.get().getGameMedia().getItem(PopperScreen.AudioLaunch) == null);
+    btn_edit_Topper.setDisable(g.isEmpty() || g.get().getGameMedia().getItem(PopperScreen.Topper) == null);
+    btn_edit_Menu.setDisable(g.isEmpty() || g.get().getGameMedia().getItem(PopperScreen.Menu) == null);
+    btn_edit_BackGlass.setDisable(g.isEmpty() || g.get().getGameMedia().getItem(PopperScreen.BackGlass) == null);
+    btn_edit_Loading.setDisable(g.isEmpty() || g.get().getGameMedia().getItem(PopperScreen.Loading) == null);
+    btn_edit_GameInfo.setDisable(g.isEmpty() || g.get().getGameMedia().getItem(PopperScreen.GameInfo) == null);
+    btn_edit_DMD.setDisable(g.isEmpty() || g.get().getGameMedia().getItem(PopperScreen.DMD) == null);
+    btn_edit_Other2.setDisable(g.isEmpty() || g.get().getGameMedia().getItem(PopperScreen.Other2) == null);
+    btn_edit_GameHelp.setDisable(g.isEmpty() || g.get().getGameMedia().getItem(PopperScreen.GameHelp) == null);
+    btn_edit_PlayField.setDisable(g.isEmpty() || g.get().getGameMedia().getItem(PopperScreen.PlayField) == null);
+    btn_edit_Wheel.setDisable(g.isEmpty() || g.get().getGameMedia().getItem(PopperScreen.Wheel) == null);
+
+    btn_view_Topper.setDisable(g.isEmpty() || g.get().getGameMedia().getItem(PopperScreen.Topper) == null);
+    btn_view_Menu.setDisable(g.isEmpty() || g.get().getGameMedia().getItem(PopperScreen.Menu) == null);
+    btn_view_BackGlass.setDisable(g.isEmpty() || g.get().getGameMedia().getItem(PopperScreen.BackGlass) == null);
+    btn_view_Loading.setDisable(g.isEmpty() || g.get().getGameMedia().getItem(PopperScreen.Loading) == null);
+    btn_view_GameInfo.setDisable(g.isEmpty() || g.get().getGameMedia().getItem(PopperScreen.GameInfo) == null);
+    btn_view_DMD.setDisable(g.isEmpty() || g.get().getGameMedia().getItem(PopperScreen.DMD) == null);
+    btn_view_Other2.setDisable(g.isEmpty() || g.get().getGameMedia().getItem(PopperScreen.Other2) == null);
+    btn_view_GameHelp.setDisable(g.isEmpty() || g.get().getGameMedia().getItem(PopperScreen.GameHelp) == null);
+    btn_view_PlayField.setDisable(g.isEmpty() || g.get().getGameMedia().getItem(PopperScreen.PlayField) == null);
+    btn_view_Wheel.setDisable(g.isEmpty() || g.get().getGameMedia().getItem(PopperScreen.Wheel) == null);
+
     if (g.isPresent()) {
       GameRepresentation game = g.get();
       GameMediaRepresentation gameMedia = game.getGameMedia();

@@ -518,6 +518,29 @@
 }
 
 /**
+ * List View
+ */
+.list-view {
+    -fx-font-size: 14px;
+    -fx-text-fill: white;
+    -fx-text-background-color: #FFFFFF;
+    -fx-border-style: solid solid solid solid;
+    -fx-border-color: #111111;
+    -fx-border-width: 1;
+}
+
+.list-view .list-cell:odd {
+    -fx-background-color: #93f9b911;
+}
+.list-view .list-cell:even {
+    -fx-background-color: #1dbbdd11;
+}
+
+.list-view .list-cell:selected {
+    -fx-font-weight: bold;
+}
+
+/**
  * Accordion & Titled Pane
  */
 
