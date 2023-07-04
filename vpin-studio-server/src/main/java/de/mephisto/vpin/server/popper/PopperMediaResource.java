@@ -50,7 +50,7 @@ public class PopperMediaResource {
     Game game = gameService.getGame(id);
     if (game != null) {
       GameMedia gameMedia = game.getGameMedia();
-      GameMediaItem gameMediaItem = gameMedia.get(popperScreen);
+      GameMediaItem gameMediaItem = gameMedia.getDefaultMediaItem(popperScreen);
       if (gameMediaItem != null) {
         File file = gameMediaItem.getFile();
         FileInputStream in = new FileInputStream(file);

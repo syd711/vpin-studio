@@ -164,7 +164,7 @@ public class PopperService implements InitializingBean {
   }
 
   public void augmentWheel(Game game, String badge) {
-    GameMediaItem gameMediaItem = game.getGameMedia().get(PopperScreen.Wheel);
+    GameMediaItem gameMediaItem = game.getGameMedia().getDefaultMediaItem(PopperScreen.Wheel);
     if (gameMediaItem != null) {
       File wheelIcon = gameMediaItem.getFile();
       WheelAugmenter augmenter = new WheelAugmenter(wheelIcon);
@@ -177,7 +177,7 @@ public class PopperService implements InitializingBean {
   }
 
   public void deAugmentWheel(Game game) {
-    GameMediaItem gameMediaItem = game.getGameMedia().get(PopperScreen.Wheel);
+    GameMediaItem gameMediaItem = game.getGameMedia().getDefaultMediaItem(PopperScreen.Wheel);
     if (gameMediaItem != null) {
       File wheelIcon = gameMediaItem.getFile();
       WheelAugmenter augmenter = new WheelAugmenter(wheelIcon);
@@ -215,7 +215,7 @@ public class PopperService implements InitializingBean {
     PopperScreen[] values = PopperScreen.values();
     for (PopperScreen originalScreenValue : values) {
       try {
-        GameMediaItem gameMediaItem = original.getGameMedia().get(originalScreenValue);
+        GameMediaItem gameMediaItem = original.getGameMedia().getDefaultMediaItem(originalScreenValue);
         if (gameMediaItem != null && gameMediaItem.getFile().exists()) {
           File mediaFile = gameMediaItem.getFile();
           String suffix = FilenameUtils.getExtension(mediaFile.getName());

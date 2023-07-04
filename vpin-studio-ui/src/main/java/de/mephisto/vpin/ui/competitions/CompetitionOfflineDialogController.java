@@ -206,7 +206,7 @@ public class CompetitionOfflineDialogController implements Initializable, Dialog
 
     if (game != null) {
       GameMediaRepresentation gameMedia = game.getGameMedia();
-      GameMediaItemRepresentation mediaItem = gameMedia.getMedia().get(PopperScreen.Wheel.name());
+      GameMediaItemRepresentation mediaItem = gameMedia.getDefaultMediaItem(PopperScreen.Wheel);
       if (mediaItem != null) {
         ByteArrayInputStream gameMediaItem = client.getGameMediaItem(game.getId(), PopperScreen.Wheel);
         Image image = new Image(gameMediaItem);

@@ -191,9 +191,9 @@ public class GameService {
 
         PopperScreen[] values = PopperScreen.values();
         for (PopperScreen originalScreenValue : values) {
-          GameMediaItem gameMediaItem = game.getGameMedia().get(originalScreenValue);
-          if (gameMediaItem != null && gameMediaItem.getFile().exists()) {
-            File mediaFile = gameMediaItem.getFile();
+          List<GameMediaItem> gameMediaItem = game.getGameMedia().getMediaItems(originalScreenValue);
+          for (GameMediaItem mediaItem : gameMediaItem) {
+            File mediaFile = mediaItem.getFile();
             if (!mediaFile.delete() && success) {
               success = false;
             }

@@ -5,6 +5,7 @@ import de.mephisto.vpin.server.competitions.ScoreSummary;
 import de.mephisto.vpin.server.directb2s.DirectB2SImageRatio;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.highscores.Score;
+import de.mephisto.vpin.server.popper.GameMediaItem;
 import de.mephisto.vpin.server.popper.WheelAugmenter;
 import de.mephisto.vpin.server.system.DefaultPictureService;
 import de.mephisto.vpin.server.system.SystemService;
@@ -162,11 +163,14 @@ public class CardGraphics {
     tableNameY = tableNameY + TABLE_FONT_SIZE / 2;
 
     //draw wheel icon
-    File wheelIconFile = game.getPinUPMedia(PopperScreen.Wheel);
     int wheelY = tableNameY + ROW_SEPARATOR;
     int wheelSize = 3 * SCORE_FONT_SIZE + 3 * ROW_SEPARATOR;
-    if (wheelIconFile != null && wheelIconFile.exists()) {
-      WheelAugmenter augmenter = new WheelAugmenter(wheelIconFile);
+
+
+    GameMediaItem defaultMediaItem = game.getGameMedia().getDefaultMediaItem(PopperScreen.Wheel);
+    if (defaultMediaItem != null && defaultMediaItem.getFile().exists()) {
+      File wheelIconFile = defaultMediaItem.getFile();
+      WheelAugmenter augmenter = new WheelAugmenter(defaultMediaItem.getFile());
       if (augmenter.getBackupWheelIcon().exists()) {
         wheelIconFile = augmenter.getBackupWheelIcon();
       }
@@ -218,14 +222,16 @@ public class CardGraphics {
 
     int x = 0;
     int wheelWidth = PADDING * 2 + TABLE_FONT_SIZE * 2;
-    File wheelIconFile = game.getPinUPMedia(PopperScreen.Wheel);
+
     boolean renderWheel = remainingXSpace > (wheelWidth + PADDING);
     if (remainingXSpace > 250) {
       wheelWidth = 250;
     }
 
     //file exists && there is place to render it
-    if (wheelIconFile != null && wheelIconFile.exists() && renderWheel) {
+    GameMediaItem defaultMediaItem = game.getGameMedia().getDefaultMediaItem(PopperScreen.Wheel);
+    if (defaultMediaItem != null && defaultMediaItem.getFile().exists() && renderWheel) {
+      File wheelIconFile = defaultMediaItem.getFile();
       WheelAugmenter augmenter = new WheelAugmenter(wheelIconFile);
       if (augmenter.getBackupWheelIcon().exists()) {
         wheelIconFile = augmenter.getBackupWheelIcon();

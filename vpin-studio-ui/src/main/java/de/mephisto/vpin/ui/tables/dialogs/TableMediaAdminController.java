@@ -27,7 +27,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.ByteArrayInputStream;
 import java.net.URL;
-import java.util.Collections;
+import java.util.List;
 import java.util.ResourceBundle;
 
 import static de.mephisto.vpin.ui.Studio.client;
@@ -130,11 +130,11 @@ public class TableMediaAdminController implements Initializable, DialogControlle
     this.game = game;
     this.screen = screen;
 
-    GameMediaItemRepresentation item = this.game.getGameMedia().getItem(screen);
-    if (item != null) {
-      ObservableList<GameMediaItemRepresentation> assets = FXCollections.observableList(Collections.singletonList(item));
-      assetList.setItems(assets);
+    List<GameMediaItemRepresentation> items = this.game.getGameMedia().getMediaItems(screen);
+    ObservableList<GameMediaItemRepresentation> assets = FXCollections.observableList(items);
+    assetList.setItems(assets);
 
+    if (!items.isEmpty()) {
       assetList.getSelectionModel().select(0);
     }
   }

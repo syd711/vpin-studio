@@ -415,29 +415,29 @@ public class TablesSidebarMediaController implements Initializable {
   }
 
   public void refreshView(Optional<GameRepresentation> g, boolean preview) {
-    btn_edit_Audio.setDisable(g.isEmpty() || g.get().getGameMedia().getItem(PopperScreen.Audio) == null);
-    btn_edit_AudioLaunch.setDisable(g.isEmpty() || g.get().getGameMedia().getItem(PopperScreen.AudioLaunch) == null);
-    btn_edit_Topper.setDisable(g.isEmpty() || g.get().getGameMedia().getItem(PopperScreen.Topper) == null);
-    btn_edit_Menu.setDisable(g.isEmpty() || g.get().getGameMedia().getItem(PopperScreen.Menu) == null);
-    btn_edit_BackGlass.setDisable(g.isEmpty() || g.get().getGameMedia().getItem(PopperScreen.BackGlass) == null);
-    btn_edit_Loading.setDisable(g.isEmpty() || g.get().getGameMedia().getItem(PopperScreen.Loading) == null);
-    btn_edit_GameInfo.setDisable(g.isEmpty() || g.get().getGameMedia().getItem(PopperScreen.GameInfo) == null);
-    btn_edit_DMD.setDisable(g.isEmpty() || g.get().getGameMedia().getItem(PopperScreen.DMD) == null);
-    btn_edit_Other2.setDisable(g.isEmpty() || g.get().getGameMedia().getItem(PopperScreen.Other2) == null);
-    btn_edit_GameHelp.setDisable(g.isEmpty() || g.get().getGameMedia().getItem(PopperScreen.GameHelp) == null);
-    btn_edit_PlayField.setDisable(g.isEmpty() || g.get().getGameMedia().getItem(PopperScreen.PlayField) == null);
-    btn_edit_Wheel.setDisable(g.isEmpty() || g.get().getGameMedia().getItem(PopperScreen.Wheel) == null);
+    btn_edit_Audio.setDisable(g.isEmpty() || g.get().getGameMedia().getMediaItems(PopperScreen.Audio) == null);
+    btn_edit_AudioLaunch.setDisable(g.isEmpty() || g.get().getGameMedia().getMediaItems(PopperScreen.AudioLaunch) == null);
+    btn_edit_Topper.setDisable(g.isEmpty() || g.get().getGameMedia().getMediaItems(PopperScreen.Topper) == null);
+    btn_edit_Menu.setDisable(g.isEmpty() || g.get().getGameMedia().getMediaItems(PopperScreen.Menu) == null);
+    btn_edit_BackGlass.setDisable(g.isEmpty() || g.get().getGameMedia().getMediaItems(PopperScreen.BackGlass) == null);
+    btn_edit_Loading.setDisable(g.isEmpty() || g.get().getGameMedia().getMediaItems(PopperScreen.Loading) == null);
+    btn_edit_GameInfo.setDisable(g.isEmpty() || g.get().getGameMedia().getMediaItems(PopperScreen.GameInfo) == null);
+    btn_edit_DMD.setDisable(g.isEmpty() || g.get().getGameMedia().getMediaItems(PopperScreen.DMD) == null);
+    btn_edit_Other2.setDisable(g.isEmpty() || g.get().getGameMedia().getMediaItems(PopperScreen.Other2) == null);
+    btn_edit_GameHelp.setDisable(g.isEmpty() || g.get().getGameMedia().getMediaItems(PopperScreen.GameHelp) == null);
+    btn_edit_PlayField.setDisable(g.isEmpty() || g.get().getGameMedia().getMediaItems(PopperScreen.PlayField) == null);
+    btn_edit_Wheel.setDisable(g.isEmpty() || g.get().getGameMedia().getMediaItems(PopperScreen.Wheel) == null);
 
-    btn_view_Topper.setDisable(g.isEmpty() || g.get().getGameMedia().getItem(PopperScreen.Topper) == null);
-    btn_view_Menu.setDisable(g.isEmpty() || g.get().getGameMedia().getItem(PopperScreen.Menu) == null);
-    btn_view_BackGlass.setDisable(g.isEmpty() || g.get().getGameMedia().getItem(PopperScreen.BackGlass) == null);
-    btn_view_Loading.setDisable(g.isEmpty() || g.get().getGameMedia().getItem(PopperScreen.Loading) == null);
-    btn_view_GameInfo.setDisable(g.isEmpty() || g.get().getGameMedia().getItem(PopperScreen.GameInfo) == null);
-    btn_view_DMD.setDisable(g.isEmpty() || g.get().getGameMedia().getItem(PopperScreen.DMD) == null);
-    btn_view_Other2.setDisable(g.isEmpty() || g.get().getGameMedia().getItem(PopperScreen.Other2) == null);
-    btn_view_GameHelp.setDisable(g.isEmpty() || g.get().getGameMedia().getItem(PopperScreen.GameHelp) == null);
-    btn_view_PlayField.setDisable(g.isEmpty() || g.get().getGameMedia().getItem(PopperScreen.PlayField) == null);
-    btn_view_Wheel.setDisable(g.isEmpty() || g.get().getGameMedia().getItem(PopperScreen.Wheel) == null);
+    btn_view_Topper.setDisable(g.isEmpty() || g.get().getGameMedia().getMediaItems(PopperScreen.Topper) == null);
+    btn_view_Menu.setDisable(g.isEmpty() || g.get().getGameMedia().getMediaItems(PopperScreen.Menu) == null);
+    btn_view_BackGlass.setDisable(g.isEmpty() || g.get().getGameMedia().getMediaItems(PopperScreen.BackGlass) == null);
+    btn_view_Loading.setDisable(g.isEmpty() || g.get().getGameMedia().getMediaItems(PopperScreen.Loading) == null);
+    btn_view_GameInfo.setDisable(g.isEmpty() || g.get().getGameMedia().getMediaItems(PopperScreen.GameInfo) == null);
+    btn_view_DMD.setDisable(g.isEmpty() || g.get().getGameMedia().getMediaItems(PopperScreen.DMD) == null);
+    btn_view_Other2.setDisable(g.isEmpty() || g.get().getGameMedia().getMediaItems(PopperScreen.Other2) == null);
+    btn_view_GameHelp.setDisable(g.isEmpty() || g.get().getGameMedia().getMediaItems(PopperScreen.GameHelp) == null);
+    btn_view_PlayField.setDisable(g.isEmpty() || g.get().getGameMedia().getMediaItems(PopperScreen.PlayField) == null);
+    btn_view_Wheel.setDisable(g.isEmpty() || g.get().getGameMedia().getMediaItems(PopperScreen.Wheel) == null);
 
     if (g.isPresent()) {
       GameRepresentation game = g.get();
@@ -458,7 +458,7 @@ public class TablesSidebarMediaController implements Initializable {
       for (PopperScreen value : values) {
         BorderPane screen = this.getScreenBorderPaneFor(value);
         boolean ignored = ignoreScreenNames.contains(value.name());
-        GameMediaItemRepresentation item = gameMedia.getItem(value);
+        GameMediaItemRepresentation item = gameMedia.getDefaultMediaItem(value);
         WidgetFactory.createMediaContainer(Studio.client, screen, item, ignored, preview);
       }
     });

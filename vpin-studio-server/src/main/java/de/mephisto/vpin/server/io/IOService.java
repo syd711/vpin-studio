@@ -150,7 +150,7 @@ public class IOService {
 
     descriptor.setJob(new TableBackupJob(pinUPConnector, sourceAdapter, adapter, exportDescriptor, game.getId()));
 
-    GameMediaItem mediaItem = game.getGameMedia().get(PopperScreen.Wheel);
+    GameMediaItem mediaItem = game.getGameMedia().getDefaultMediaItem(PopperScreen.Wheel);
     if (mediaItem != null) {
       descriptor.setImageUrl(mediaItem.getUri());
     }

@@ -59,7 +59,7 @@ public class WidgetLatestScoreItemController extends WidgetController implements
     Image image = new Image(gameMediaItem);
 
     GameMediaRepresentation gameMedia = game.getGameMedia();
-    GameMediaItemRepresentation wheelMedia = gameMedia.getMedia().get(PopperScreen.Wheel.name());
+    GameMediaItemRepresentation wheelMedia = gameMedia.getDefaultMediaItem(PopperScreen.Wheel);
     if (wheelMedia == null) {
       image = new Image(OverlayWindowFX.class.getResourceAsStream("avatar-blank.png"));
     }

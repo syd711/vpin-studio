@@ -4,10 +4,10 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import de.mephisto.vpin.commons.HighscoreType;
 import de.mephisto.vpin.restclient.popper.PopperScreen;
 import de.mephisto.vpin.restclient.representations.ValidationState;
-import de.mephisto.vpin.server.puppack.PupPack;
 import de.mephisto.vpin.server.popper.Emulator;
 import de.mephisto.vpin.server.popper.GameMedia;
 import de.mephisto.vpin.server.popper.GameMediaItem;
+import de.mephisto.vpin.server.puppack.PupPack;
 import de.mephisto.vpin.server.system.SystemService;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
@@ -15,8 +15,7 @@ import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.File;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 public class Game {
 
@@ -200,20 +199,20 @@ public class Game {
     return new File(this.getGameFile().getParentFile(), folderName);
   }
 
-  @Nullable
-  public File getPinUPMedia(@NonNull PopperScreen screen) {
+  @NonNull
+  public List<File> getPinUPMedia(@NonNull PopperScreen screen) {
     String baseName = FilenameUtils.getBaseName(getGameFileName());
     File[] mediaFiles = getPinUPMediaFolder(screen).listFiles((dir, name) -> FilenameUtils.getBaseName(name).equals(baseName));
     if (mediaFiles != null && mediaFiles.length > 0) {
-      return mediaFiles[0];
+      return Arrays.asList(mediaFiles);
     }
 
     String screenNameSuffix = "(SCREEN";
     mediaFiles = getPinUPMediaFolder(screen).listFiles((dir, name) -> FilenameUtils.getBaseName(name).startsWith(baseName) && FilenameUtils.getBaseName(name).contains(screenNameSuffix));
     if (mediaFiles != null && mediaFiles.length > 0) {
-      return mediaFiles[0];
+      return Arrays.asList(mediaFiles);
     }
-    return null;
+    return Collections.emptyList();
   }
 
   @NonNull
@@ -221,11 +220,13 @@ public class Game {
     GameMedia gameMedia = new GameMedia();
     PopperScreen[] screens = PopperScreen.values();
     for (PopperScreen screen : screens) {
-      File mediaFile = getPinUPMedia(screen);
-      if (mediaFile != null) {
-        GameMediaItem item = new GameMediaItem(this, screen, mediaFile);
-        gameMedia.getMedia().put(screen.name(), item);
+      List<GameMediaItem> itemList = new ArrayList<>();
+      List<File> pinUPMedia = getPinUPMedia(screen);
+      for (File file : pinUPMedia) {
+        GameMediaItem item = new GameMediaItem(this, screen, file);
+        itemList.add(item);
       }
+      gameMedia.getMedia().put(screen.name(), itemList);
     }
     return gameMedia;
   }

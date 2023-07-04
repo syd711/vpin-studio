@@ -177,9 +177,9 @@ public class OverlayClientImpl implements OverlayClient, InitializingBean {
   public ByteArrayInputStream getGameMediaItem(int id, PopperScreen screen) {
     try {
       Game game = gameService.getGame(id);
-      GameMediaItem gameMediaItem = game.getGameMedia().get(screen);
-      if (gameMediaItem != null) {
-        File file = gameMediaItem.getFile();
+      GameMediaItem defaultMediaItem = game.getGameMedia().getDefaultMediaItem(screen);
+      if (defaultMediaItem != null && defaultMediaItem.getFile().exists()) {
+        File file = defaultMediaItem.getFile();
         FileInputStream fileInputStream = new FileInputStream(file);
         byte[] bytes = IOUtils.toByteArray(fileInputStream);
         fileInputStream.close();

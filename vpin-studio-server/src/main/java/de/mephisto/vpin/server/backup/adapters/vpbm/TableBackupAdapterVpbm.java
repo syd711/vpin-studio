@@ -71,7 +71,7 @@ public class TableBackupAdapterVpbm implements TableBackupAdapter, Job {
     archiveDescriptor.setSource(archiveSourceAdapter.getArchiveSource());
 
     File wheelIcon = null;
-    GameMediaItem gameMediaItem = game.getGameMedia().get(PopperScreen.Wheel);
+    GameMediaItem gameMediaItem = game.getGameMedia().getDefaultMediaItem(PopperScreen.Wheel);
     if (gameMediaItem != null) {
       wheelIcon = gameMediaItem.getFile();
     }

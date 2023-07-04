@@ -154,6 +154,7 @@ public class RestClient implements ClientHttpRequestInterceptor {
       HttpURLConnection con = (HttpURLConnection) url.openConnection();
       int responseCode = con.getResponseCode();
       if (responseCode == 404) {
+        LOG.warn("URL not found: " + url);
         return null;
       }
 

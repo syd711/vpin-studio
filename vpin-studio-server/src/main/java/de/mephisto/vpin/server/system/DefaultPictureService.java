@@ -5,6 +5,7 @@ import de.mephisto.vpin.server.VPinStudioException;
 import de.mephisto.vpin.server.directb2s.DirectB2SImageExtractor;
 import de.mephisto.vpin.server.directb2s.DirectB2SImageRatio;
 import de.mephisto.vpin.server.games.Game;
+import de.mephisto.vpin.server.popper.GameMediaItem;
 import de.mephisto.vpin.server.puppack.PupPack;
 import de.mephisto.vpin.server.puppack.PupPacksService;
 import de.mephisto.vpin.server.util.ImageUtil;
@@ -59,19 +60,19 @@ public class DefaultPictureService {
       }
     }
 
-    File backGlass = game.getPinUPMedia(PopperScreen.BackGlass);
-    if (backGlass != null && backGlass.exists()) {
-      String name = backGlass.getName();
+    GameMediaItem backGlassItem = game.getGameMedia().getDefaultMediaItem(PopperScreen.BackGlass);
+    if (backGlassItem != null && backGlassItem.getFile().exists()) {
+      String name = backGlassItem.getFile().getName();
       if (name.endsWith(".png") || name.endsWith(".jpg") || name.endsWith(".jpeg")) {
         try {
-          FileUtils.copyFile(backGlass, target);
+          FileUtils.copyFile(backGlassItem.getFile(), target);
           return;
         } catch (IOException e) {
           LOG.error("Failed to copy popper resource file as background: " + e.getMessage(), e);
         }
       }
       else if (name.endsWith(".mp4") || name.endsWith(".m4v") || name.endsWith(".mov")) {
-        if (JCodec.export(backGlass, target)) {
+        if (JCodec.export(backGlassItem.getFile(), target)) {
           return;
         }
       }

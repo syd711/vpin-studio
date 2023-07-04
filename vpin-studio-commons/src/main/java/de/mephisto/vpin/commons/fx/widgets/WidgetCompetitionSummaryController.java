@@ -161,7 +161,7 @@ public class WidgetCompetitionSummaryController extends WidgetController impleme
         }
       }
 
-      GameMediaItemRepresentation item = gameMedia.getItem(PopperScreen.Wheel);
+      GameMediaItemRepresentation item = gameMedia.getDefaultMediaItem(PopperScreen.Wheel);
       if (item != null) {
         ByteArrayInputStream gameMediaItem = OverlayWindowFX.client.getGameMediaItem(competition.getGameId(), PopperScreen.Wheel);
         Image image = new Image(gameMediaItem);

@@ -8,6 +8,7 @@ import de.mephisto.vpin.server.competitions.Competition;
 import de.mephisto.vpin.server.competitions.ScoreSummary;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.players.Player;
+import de.mephisto.vpin.server.popper.GameMediaItem;
 import de.mephisto.vpin.server.util.ImageUtil;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
@@ -105,9 +106,9 @@ public class AssetFactory {
       graphics.setFont(font);
       graphics.drawString(DateUtil.formatDuration(competition.getStartDate(), competition.getEndDate()), xOffset, yOffset += HEADLINE_SIZE + 12);
 
-      File wheelIconFile = game.getPinUPMedia(PopperScreen.Wheel);
-      if (wheelIconFile != null && wheelIconFile.exists()) {
-        BufferedImage image = ImageUtil.loadImage(wheelIconFile);
+      GameMediaItem defaultMediaItem = game.getGameMedia().getDefaultMediaItem(PopperScreen.Wheel);
+      if (defaultMediaItem != null && defaultMediaItem.getFile().exists()) {
+        BufferedImage image = ImageUtil.loadImage(defaultMediaItem.getFile());
         BufferedImage resizedImage = ImageUtil.resizeImage(image, 190);
         graphics.drawImage(resizedImage, null, background.getWidth() - 200, imageY);
       }
@@ -154,9 +155,9 @@ public class AssetFactory {
       }
 
       //wheel icon
-      File wheelIconFile = game.getPinUPMedia(PopperScreen.Wheel);
-      if (wheelIconFile != null && wheelIconFile.exists()) {
-        BufferedImage image = ImageUtil.loadImage(wheelIconFile);
+      GameMediaItem defaultMediaItem = game.getGameMedia().getDefaultMediaItem(PopperScreen.Wheel);
+      if (defaultMediaItem != null && defaultMediaItem.getFile().exists()) {
+        BufferedImage image = ImageUtil.loadImage(defaultMediaItem.getFile());
         BufferedImage resizedImage = ImageUtil.resizeImage(image, IMAGE_WIDTH);
         graphics.drawImage(resizedImage, null, background.getWidth() - IMAGE_WIDTH, 0);
       }

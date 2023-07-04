@@ -34,6 +34,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.util.Base64;
 import java.util.Date;
+import java.util.List;
 import java.util.zip.ZipOutputStream;
 
 public class TableBackupAdapterVpa implements TableBackupAdapter, Job {
@@ -293,9 +294,9 @@ public class TableBackupAdapterVpa implements TableBackupAdapter, Job {
 
     PopperScreen[] values = PopperScreen.values();
     for (PopperScreen value : values) {
-      GameMediaItem gameMediaItem = game.getGameMedia().get(value);
-      if (gameMediaItem != null && gameMediaItem.getFile().exists()) {
-        totalSizeExpected += gameMediaItem.getFile().length();
+      List<GameMediaItem> items = game.getGameMedia().getMediaItems(value);
+      for (GameMediaItem mediaItem : items) {
+        totalSizeExpected += mediaItem.getFile().length();
       }
     }
     if (game.getPupPack() != null && game.getPupPack().getPupPackFolder() != null && game.getPupPack().getPupPackFolder().exists()) {
@@ -315,19 +316,21 @@ public class TableBackupAdapterVpa implements TableBackupAdapter, Job {
     packageInfo.setPopperMedia(true);
     PopperScreen[] values = PopperScreen.values();
     for (PopperScreen value : values) {
-      GameMediaItem gameMediaItem = game.getGameMedia().get(value);
-      if (gameMediaItem != null && gameMediaItem.getFile().exists()) {
-        LOG.info("Packing " + gameMediaItem.getFile().getAbsolutePath());
-        File mediaFile = gameMediaItem.getFile();
+      List<GameMediaItem> items = game.getGameMedia().getMediaItems(value);
+      for (GameMediaItem item : items) {
+        if (item.getFile().exists()) {
+          LOG.info("Packing " + item.getFile().getAbsolutePath());
+          File mediaFile = item.getFile();
 
-        //do not archive augmented icons
-        if (value.equals(PopperScreen.Wheel)) {
-          WheelAugmenter augmenter = new WheelAugmenter(gameMediaItem.getFile());
-          if (augmenter.getBackupWheelIcon().exists()) {
-            mediaFile = augmenter.getBackupWheelIcon();
+          //do not archive augmented icons
+          if (value.equals(PopperScreen.Wheel)) {
+            WheelAugmenter augmenter = new WheelAugmenter(item.getFile());
+            if (augmenter.getBackupWheelIcon().exists()) {
+              mediaFile = augmenter.getBackupWheelIcon();
+            }
           }
+          zipFile(mediaFile, "PinUPSystem/POPMedia/" + getPupUpMediaFolderName() + "/" + value.name() + "/" + mediaFile.getName(), zipOut);
         }
-        zipFile(mediaFile, "PinUPSystem/POPMedia/" + getPupUpMediaFolderName() + "/" + value.name() + "/" + mediaFile.getName(), zipOut);
       }
     }
   }
@@ -345,7 +348,7 @@ public class TableBackupAdapterVpa implements TableBackupAdapter, Job {
 
   private void zipPackageInfo(ZipOutputStream zipOut, ArchivePackageInfo packageInfo) throws IOException {
     //store wheel icon as archive preview
-    GameMediaItem mediaItem = game.getGameMedia().get(PopperScreen.Wheel);
+    GameMediaItem mediaItem = game.getGameMedia().getDefaultMediaItem(PopperScreen.Wheel);
     if (mediaItem != null) {
       File mediaFile = mediaItem.getFile();
       //do not archive augmented icons

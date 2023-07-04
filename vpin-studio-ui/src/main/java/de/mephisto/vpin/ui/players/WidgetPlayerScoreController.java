@@ -51,7 +51,7 @@ public class WidgetPlayerScoreController extends WidgetController implements Ini
 
   public void setData(PlayerRepresentation player, GameRepresentation game, ScoreRepresentation score) {
     GameMediaRepresentation gameMedia = game.getGameMedia();
-    GameMediaItemRepresentation item = gameMedia.getItem(PopperScreen.Wheel);
+    GameMediaItemRepresentation item = gameMedia.getDefaultMediaItem(PopperScreen.Wheel);
     if(item != null) {
       ByteArrayInputStream gameMediaItem = OverlayWindowFX.client.getGameMediaItem(score.getGameId(), PopperScreen.Wheel);
       Image image = new Image(gameMediaItem);

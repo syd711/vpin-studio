@@ -14,8 +14,6 @@ import de.mephisto.vpin.ui.tables.vps.VpsEntryComment;
 import de.mephisto.vpin.ui.util.AutoCompleteTextField;
 import de.mephisto.vpin.ui.util.AutoCompleteTextFieldChangeListener;
 import de.mephisto.vpin.ui.util.Dialogs;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -279,13 +277,13 @@ public class TablesSidebarVpsController implements Initializable, AutoCompleteTe
     addSection("Sound", vpsTable.getSoundFiles());
 
     GameMediaRepresentation gameMedia = game.get().getGameMedia();
-    GameMediaItemRepresentation item = gameMedia.getItem(PopperScreen.Topper);
-    if (!doFilter || item == null) {
+    List<GameMediaItemRepresentation> items = gameMedia.getMediaItems(PopperScreen.Topper);
+    if (!doFilter || items.isEmpty()) {
       addSection("Topper", vpsTable.getTopperFiles());
     }
 
-    item = gameMedia.getItem(PopperScreen.Wheel);
-    if (!doFilter || item == null) {
+    items = gameMedia.getMediaItems(PopperScreen.Wheel);
+    if (!doFilter || items.isEmpty()) {
       addSection("Wheel Art", vpsTable.getWheelArtFiles());
     }
 

@@ -95,85 +95,85 @@ public class ValidationService implements InitializingBean {
 
 
     if (isValidationEnabled(game, CODE_NO_AUDIO)) {
-      File audio = game.getPinUPMedia(PopperScreen.Audio);
-      if (audio == null || !audio.exists()) {
+      List<File> audio = game.getPinUPMedia(PopperScreen.Audio);
+      if (audio.isEmpty()) {
         return ValidationStateFactory.create(CODE_NO_AUDIO);
       }
     }
 
     if (isValidationEnabled(game, CODE_NO_AUDIO_LAUNCH)) {
-      File audioLaunch = game.getPinUPMedia(PopperScreen.AudioLaunch);
-      if (audioLaunch == null || !audioLaunch.exists()) {
+      List<File> audioLaunch = game.getPinUPMedia(PopperScreen.AudioLaunch);
+      if (audioLaunch.isEmpty()) {
         return ValidationStateFactory.create(CODE_NO_AUDIO_LAUNCH);
       }
     }
 
     if (isValidationEnabled(game, CODE_NO_APRON)) {
-      File apron = game.getPinUPMedia(PopperScreen.Menu);
-      if (apron == null || !apron.exists()) {
+      List<File> apron = game.getPinUPMedia(PopperScreen.Menu);
+      if (apron.isEmpty()) {
         return ValidationStateFactory.create(CODE_NO_APRON);
       }
     }
 
     if (isValidationEnabled(game, ValidationCode.CODE_NO_INFO)) {
-      File info = game.getPinUPMedia(PopperScreen.GameInfo);
-      if (info == null || !info.exists()) {
+      List<File> info = game.getPinUPMedia(PopperScreen.GameInfo);
+      if (info.isEmpty()) {
         return ValidationStateFactory.create(ValidationCode.CODE_NO_INFO);
       }
     }
 
     if (isValidationEnabled(game, ValidationCode.CODE_NO_HELP)) {
-      File help = game.getPinUPMedia(PopperScreen.GameHelp);
-      if (help == null || !help.exists()) {
+      List<File> help = game.getPinUPMedia(PopperScreen.GameHelp);
+      if (help.isEmpty()) {
         return ValidationStateFactory.create(ValidationCode.CODE_NO_HELP);
       }
     }
 
     if (isValidationEnabled(game, ValidationCode.CODE_NO_TOPPER)) {
-      File topper = game.getPinUPMedia(PopperScreen.Topper);
-      if (topper == null || !topper.exists()) {
+      List<File> topper = game.getPinUPMedia(PopperScreen.Topper);
+      if (topper.isEmpty()) {
         return ValidationStateFactory.create(ValidationCode.CODE_NO_TOPPER);
       }
     }
 
     if (isValidationEnabled(game, ValidationCode.CODE_NO_BACKGLASS)) {
-      File backglass = game.getPinUPMedia(PopperScreen.BackGlass);
-      if (backglass == null || !backglass.exists()) {
+      List<File> backglass = game.getPinUPMedia(PopperScreen.BackGlass);
+      if (backglass.isEmpty()) {
         return ValidationStateFactory.create(ValidationCode.CODE_NO_BACKGLASS);
       }
     }
 
     if (isValidationEnabled(game, ValidationCode.CODE_NO_DMD)) {
-      File dmd = game.getPinUPMedia(PopperScreen.DMD);
-      if (dmd == null || !dmd.exists()) {
+      List<File> dmd = game.getPinUPMedia(PopperScreen.DMD);
+      if (dmd.isEmpty()) {
         return ValidationStateFactory.create(ValidationCode.CODE_NO_DMD);
       }
     }
 
     if (isValidationEnabled(game, ValidationCode.CODE_NO_PLAYFIELD)) {
-      File playfield = game.getPinUPMedia(PopperScreen.PlayField);
-      if (playfield == null || !playfield.exists()) {
+      List<File> playfield = game.getPinUPMedia(PopperScreen.PlayField);
+      if (playfield.isEmpty()) {
         return ValidationStateFactory.create(ValidationCode.CODE_NO_PLAYFIELD);
       }
     }
 
     if (isValidationEnabled(game, ValidationCode.CODE_NO_LOADING)) {
-      File loading = game.getPinUPMedia(PopperScreen.Loading);
-      if (loading == null || !loading.exists()) {
+      List<File> loading = game.getPinUPMedia(PopperScreen.Loading);
+      if (loading.isEmpty()) {
         return ValidationStateFactory.create(ValidationCode.CODE_NO_LOADING);
       }
     }
 
     if (isValidationEnabled(game, ValidationCode.CODE_NO_OTHER2)) {
-      File other2 = game.getPinUPMedia(PopperScreen.Other2);
-      if (other2 == null || !other2.exists()) {
+      List<File> other2 = game.getPinUPMedia(PopperScreen.Other2);
+      if (other2.isEmpty()) {
         return ValidationStateFactory.create(ValidationCode.CODE_NO_OTHER2);
       }
     }
 
     if (isValidationEnabled(game, ValidationCode.CODE_NO_WHEEL_IMAGE)) {
-      File wheel = game.getPinUPMedia(PopperScreen.Wheel);
-      if (wheel == null || !wheel.exists()) {
+      List<File> wheels = game.getPinUPMedia(PopperScreen.Wheel);
+      if (wheels.isEmpty()) {
         return ValidationStateFactory.create(ValidationCode.CODE_NO_WHEEL_IMAGE);
       }
     }

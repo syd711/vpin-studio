@@ -3,12 +3,12 @@ package de.mephisto.vpin.ui.competitions;
 import de.mephisto.vpin.commons.fx.DialogController;
 import de.mephisto.vpin.restclient.CompetitionType;
 import de.mephisto.vpin.restclient.JoinMode;
-import de.mephisto.vpin.restclient.popper.PopperScreen;
 import de.mephisto.vpin.restclient.client.VPinStudioClient;
 import de.mephisto.vpin.restclient.discord.DiscordBotStatus;
 import de.mephisto.vpin.restclient.discord.DiscordChannel;
 import de.mephisto.vpin.restclient.discord.DiscordCompetitionData;
 import de.mephisto.vpin.restclient.discord.DiscordServer;
+import de.mephisto.vpin.restclient.popper.PopperScreen;
 import de.mephisto.vpin.restclient.representations.*;
 import de.mephisto.vpin.restclient.util.DateUtil;
 import edu.umd.cs.findbugs.annotations.Nullable;
@@ -168,7 +168,7 @@ public class CompetitionDiscordJoinDialogController implements Initializable, Di
   private void refreshPreview(@Nullable GameRepresentation game, @Nullable String badge) {
     if (game != null) {
       GameMediaRepresentation gameMedia = game.getGameMedia();
-      GameMediaItemRepresentation mediaItem = gameMedia.getMedia().get(PopperScreen.Wheel.name());
+      GameMediaItemRepresentation mediaItem = gameMedia.getDefaultMediaItem(PopperScreen.Wheel);
       if (mediaItem != null) {
         ByteArrayInputStream gameMediaItem = client.getGameMediaItem(game.getId(), PopperScreen.Wheel);
         Image image = new Image(gameMediaItem);

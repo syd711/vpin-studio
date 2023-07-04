@@ -382,7 +382,7 @@ public class MenuController implements Initializable {
     if (o instanceof GameRepresentation) {
       GameRepresentation game = (GameRepresentation) o;
       GameMediaRepresentation gameMedia = game.getGameMedia();
-      GameMediaItemRepresentation item = gameMedia.getItem(PopperScreen.Wheel);
+      GameMediaItemRepresentation item = gameMedia.getDefaultMediaItem(PopperScreen.Wheel);
       if (item == null) {
         text = game.getGameDisplayName();
         wheel = new Image(Menu.class.getResourceAsStream("avatar-blank.png"));
