@@ -202,13 +202,8 @@ public class Game {
   @NonNull
   public List<File> getPinUPMedia(@NonNull PopperScreen screen) {
     String baseName = FilenameUtils.getBaseName(getGameFileName());
-    File[] mediaFiles = getPinUPMediaFolder(screen).listFiles((dir, name) -> FilenameUtils.getBaseName(name).equals(baseName));
-    if (mediaFiles != null && mediaFiles.length > 0) {
-      return Arrays.asList(mediaFiles);
-    }
+    File[] mediaFiles = getPinUPMediaFolder(screen).listFiles((dir, name) -> name.startsWith(baseName));
 
-    String screenNameSuffix = "(SCREEN";
-    mediaFiles = getPinUPMediaFolder(screen).listFiles((dir, name) -> FilenameUtils.getBaseName(name).startsWith(baseName) && FilenameUtils.getBaseName(name).contains(screenNameSuffix));
     if (mediaFiles != null && mediaFiles.length > 0) {
       return Arrays.asList(mediaFiles);
     }

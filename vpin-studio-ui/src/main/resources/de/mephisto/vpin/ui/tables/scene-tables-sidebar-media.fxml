@@ -45,7 +45,7 @@
                                                       <FontIcon iconColor="WHITE" iconLiteral="mdi2u-upload" />
                                                   </graphic>
                                               </Button>
-                                                <Button fx:id="btn_edit_PlayField" mnemonicParsing="false" onAction="#onMediaEdit">
+                                                <Button fx:id="btn_edit_PlayField" mnemonicParsing="false" onAction="#onMediaEdit" textFill="WHITE">
                                                     <graphic>
                                                         <FontIcon iconColor="WHITE" iconLiteral="mdi2m-movie-edit-outline" />
                                                     </graphic>
@@ -89,7 +89,7 @@
                                                       <FontIcon iconColor="WHITE" iconLiteral="mdi2u-upload" />
                                                   </graphic>
                                               </Button>
-                                                <Button fx:id="btn_edit_GameHelp" mnemonicParsing="false" onAction="#onMediaEdit">
+                                                <Button fx:id="btn_edit_GameHelp" mnemonicParsing="false" onAction="#onMediaEdit" textFill="WHITE">
                                                     <graphic>
                                                         <FontIcon iconColor="WHITE" iconLiteral="mdi2m-movie-edit-outline" />
                                                     </graphic>
@@ -134,7 +134,7 @@
                                                       <FontIcon iconColor="WHITE" iconLiteral="mdi2u-upload" />
                                                   </graphic>
                                               </Button>
-                                                <Button fx:id="btn_edit_GameInfo" mnemonicParsing="false" onAction="#onMediaEdit">
+                                                <Button fx:id="btn_edit_GameInfo" mnemonicParsing="false" onAction="#onMediaEdit" textFill="WHITE">
                                                     <graphic>
                                                         <FontIcon iconColor="WHITE" iconLiteral="mdi2m-movie-edit-outline" />
                                                     </graphic>
@@ -178,7 +178,7 @@
                                                       <FontIcon iconColor="WHITE" iconLiteral="mdi2u-upload" />
                                                   </graphic>
                                               </Button>
-                                                <Button fx:id="btn_edit_DMD" mnemonicParsing="false" onAction="#onMediaEdit">
+                                                <Button fx:id="btn_edit_DMD" mnemonicParsing="false" onAction="#onMediaEdit" textFill="WHITE">
                                                     <graphic>
                                                         <FontIcon iconColor="WHITE" iconLiteral="mdi2m-movie-edit-outline" />
                                                     </graphic>
@@ -222,7 +222,7 @@
                                                       <FontIcon iconColor="WHITE" iconLiteral="mdi2u-upload" />
                                                   </graphic>
                                               </Button>
-                                                <Button fx:id="btn_edit_Topper" mnemonicParsing="false" onAction="#onMediaEdit">
+                                                <Button fx:id="btn_edit_Topper" mnemonicParsing="false" onAction="#onMediaEdit" textFill="WHITE">
                                                     <graphic>
                                                         <FontIcon iconColor="WHITE" iconLiteral="mdi2m-movie-edit-outline" />
                                                     </graphic>
@@ -266,7 +266,7 @@
                                                       <FontIcon iconColor="WHITE" iconLiteral="mdi2u-upload" />
                                                   </graphic>
                                               </Button>
-                                                <Button fx:id="btn_edit_BackGlass" mnemonicParsing="false" onAction="#onMediaEdit">
+                                                <Button fx:id="btn_edit_BackGlass" mnemonicParsing="false" onAction="#onMediaEdit" textFill="WHITE">
                                                     <graphic>
                                                         <FontIcon iconColor="WHITE" iconLiteral="mdi2m-movie-edit-outline" />
                                                     </graphic>
@@ -310,7 +310,7 @@
                                                       <FontIcon iconColor="WHITE" iconLiteral="mdi2u-upload" />
                                                   </graphic>
                                               </Button>
-                                                <Button fx:id="btn_edit_Loading" mnemonicParsing="false" onAction="#onMediaEdit">
+                                                <Button fx:id="btn_edit_Loading" mnemonicParsing="false" onAction="#onMediaEdit" textFill="WHITE">
                                                     <graphic>
                                                         <FontIcon iconColor="WHITE" iconLiteral="mdi2m-movie-edit-outline" />
                                                     </graphic>
@@ -354,7 +354,7 @@
                                                       <FontIcon iconColor="WHITE" iconLiteral="mdi2u-upload" />
                                                   </graphic>
                                               </Button>
-                                                <Button fx:id="btn_edit_Menu" mnemonicParsing="false" onAction="#onMediaEdit">
+                                                <Button fx:id="btn_edit_Menu" mnemonicParsing="false" onAction="#onMediaEdit" textFill="WHITE">
                                                     <graphic>
                                                         <FontIcon iconColor="WHITE" iconLiteral="mdi2m-movie-edit-outline" />
                                                     </graphic>
@@ -398,7 +398,7 @@
                                                       <FontIcon iconColor="WHITE" iconLiteral="mdi2u-upload" />
                                                   </graphic>
                                               </Button>
-                                                <Button fx:id="btn_edit_Other2" mnemonicParsing="false" onAction="#onMediaEdit">
+                                                <Button fx:id="btn_edit_Other2" mnemonicParsing="false" onAction="#onMediaEdit" textFill="WHITE">
                                                     <graphic>
                                                         <FontIcon iconColor="WHITE" iconLiteral="mdi2m-movie-edit-outline" />
                                                     </graphic>
@@ -442,7 +442,7 @@
                                                       <FontIcon iconColor="WHITE" iconLiteral="mdi2u-upload" />
                                                   </graphic>
                                               </Button>
-                                                <Button fx:id="btn_edit_Wheel" mnemonicParsing="false" onAction="#onMediaEdit">
+                                                <Button fx:id="btn_edit_Wheel" mnemonicParsing="false" onAction="#onMediaEdit" textFill="WHITE">
                                                     <graphic>
                                                         <FontIcon iconColor="WHITE" iconLiteral="mdi2m-movie-edit-outline" />
                                                     </graphic>
@@ -502,7 +502,7 @@
                                                       <FontIcon iconColor="WHITE" iconLiteral="mdi2u-upload" />
                                                   </graphic>
                                               </Button>
-                                                <Button fx:id="btn_edit_AudioLaunch" mnemonicParsing="false" onAction="#onMediaEdit">
+                                                <Button fx:id="btn_edit_AudioLaunch" mnemonicParsing="false" onAction="#onMediaEdit" textFill="WHITE">
                                                     <graphic>
                                                         <FontIcon iconColor="WHITE" iconLiteral="mdi2m-movie-edit-outline" />
                                                     </graphic>
@@ -567,7 +567,7 @@
                                                       <FontIcon iconColor="WHITE" iconLiteral="mdi2u-upload" />
                                                   </graphic>
                                               </Button>
-                                                <Button fx:id="btn_edit_Audio" mnemonicParsing="false" onAction="#onMediaEdit">
+                                                <Button fx:id="btn_edit_Audio" mnemonicParsing="false" onAction="#onMediaEdit" textFill="WHITE">
                                                     <graphic>
                                                         <FontIcon iconColor="WHITE" iconLiteral="mdi2m-movie-edit-outline" />
                                                     </graphic>

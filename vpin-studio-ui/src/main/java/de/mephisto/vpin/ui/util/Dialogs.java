@@ -110,8 +110,8 @@ public class Dialogs {
     return controller.getCompetition();
   }
 
-  public static boolean openMediaUploadDialog(TablesSidebarController tablesSidebarController, GameRepresentation game, PopperScreen screen) {
-    Stage stage = createStudioDialogStage(TableMediaUploadController.class, "dialog-media-upload.fxml", "Table Media Upload");
+  public static boolean openMediaUploadDialog(Stage parentStage, TablesSidebarController tablesSidebarController, GameRepresentation game, PopperScreen screen) {
+    Stage stage = createStudioDialogStage(parentStage, TableMediaUploadController.class, "dialog-media-upload.fxml", "Table Media Upload");
     TableMediaUploadController controller = (TableMediaUploadController) stage.getUserData();
     controller.setGame(game, screen);
     controller.setTableSidebarController(tablesSidebarController);
@@ -419,6 +419,11 @@ public class Dialogs {
   private static Stage createStudioDialogStage(String fxml, String title) {
     FXMLLoader fxmlLoader = new FXMLLoader(Studio.class.getResource(fxml));
     return WidgetFactory.createDialogStage(fxmlLoader, Studio.stage, title);
+  }
+
+  private static Stage createStudioDialogStage(Stage stage, Class clazz, String fxml, String title) {
+    FXMLLoader fxmlLoader = new FXMLLoader(clazz.getResource(fxml));
+    return WidgetFactory.createDialogStage(fxmlLoader, stage, title);
   }
 
   private static Stage createStudioDialogStage(Class clazz, String fxml, String title) {

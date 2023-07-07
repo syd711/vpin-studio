@@ -1,8 +1,13 @@
 package de.mephisto.vpin.server.popper;
 
+import de.mephisto.vpin.restclient.jobs.JobExecutionResult;
+import de.mephisto.vpin.restclient.jobs.JobExecutionResultFactory;
 import de.mephisto.vpin.restclient.popper.PopperScreen;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameService;
+import de.mephisto.vpin.server.resources.ResourceLoader;
+import de.mephisto.vpin.server.util.UploadUtil;
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -11,19 +16,18 @@ import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
+import java.io.*;
+import java.util.List;
+import java.util.Map;
 
 import static de.mephisto.vpin.server.VPinStudioServer.API_SEGMENT;
 import static de.mephisto.vpin.server.util.RequestUtil.CONTENT_LENGTH;
 import static de.mephisto.vpin.server.util.RequestUtil.CONTENT_TYPE;
+import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 
 @RestController
@@ -69,5 +73,120 @@ public class PopperMediaResource {
     }
 
     return ResponseEntity.notFound().build();
+  }
+
+  @PostMapping("/upload/{screen}")
+  public JobExecutionResult upload(@PathVariable("screen") PopperScreen popperScreen,
+                                   @RequestParam(value = "file", required = false) MultipartFile file,
+                                   @RequestParam(value = "uploadType", required = false) String uploadType,
+                                   @RequestParam("objectId") Integer gameId) {
+    try {
+      if (file == null) {
+        LOG.error("Upload request did not contain a file object.");
+        return JobExecutionResultFactory.error("Upload request did not contain a file object.");
+      }
+
+      Game game = gameService.getGame(gameId);
+      if (game == null) {
+        LOG.error("No game found for popper media upload.");
+        return JobExecutionResultFactory.error("No game found for PinUP Popper media upload.");
+      }
+
+      File pinUPMediaFolder = game.getPinUPMediaFolder(popperScreen);
+      String filename = game.getGameDisplayName();
+      String suffix = FilenameUtils.getExtension(file.getOriginalFilename());
+
+      File out = new File(pinUPMediaFolder, filename + "." + suffix);
+      if (out.exists()) {
+        String nameIndex = "01";
+        out = new File(pinUPMediaFolder, filename + nameIndex + "." + suffix);
+      }
+
+      int index = 1;
+      while (out.exists()) {
+        index++;
+        String nameIndex = index <= 9 ? "0" + index : String.valueOf(index);
+        out = new File(pinUPMediaFolder, filename + nameIndex + "." + suffix);
+      }
+
+      LOG.info("Uploading " + out.getAbsolutePath());
+      UploadUtil.upload(file, out);
+
+      return JobExecutionResultFactory.empty();
+    } catch (Exception e) {
+      throw new ResponseStatusException(INTERNAL_SERVER_ERROR, "ALT sound upload failed: " + e.getMessage());
+    }
+  }
+
+  @DeleteMapping("/media/{gameId}/{screen}/{file}")
+  public boolean deleteMedia(@PathVariable("gameId") int gameId, @PathVariable("screen") PopperScreen screen, @PathVariable("file") String filename) {
+    Game game = gameService.getGame(gameId);
+    File pinUPMediaFolder = game.getPinUPMediaFolder(screen);
+    File media = new File(pinUPMediaFolder, filename);
+    if (media.exists()) {
+      return media.delete();
+    }
+    return false;
+  }
+
+  @PutMapping("/media/{gameId}/{screen}")
+  public boolean doPut(@PathVariable("gameId") int gameId, @PathVariable("screen") PopperScreen screen, @RequestBody Map<String, String> data) throws Exception {
+    if (data.containsKey("fullscreen")) {
+      return toFullscreenMedia(gameId, screen);
+    }
+
+    return renameMedia(gameId, screen, data);
+  }
+
+  private boolean toFullscreenMedia(int gameId, PopperScreen screen) throws IOException {
+    Game game = gameService.getGame(gameId);
+    List<File> pinUPMedia = game.getPinUPMedia(screen);
+    if (pinUPMedia.size() == 1) {
+      File mediaFile = pinUPMedia.get(0);
+      String name = mediaFile.getName();
+      String baseName = FilenameUtils.getBaseName(name);
+      String suffix = FilenameUtils.getExtension(name);
+      String updatedBaseName = baseName + "(SCREEN3)." + suffix;
+
+      LOG.info("Renaming " + mediaFile.getAbsolutePath() + " to '" + updatedBaseName + "'");
+      mediaFile.renameTo(new File(mediaFile.getParentFile(), updatedBaseName));
+
+      File target = new File(mediaFile.getParentFile(), name);
+
+      LOG.info("Copying blank video to " + target.getAbsolutePath());
+      InputStream resourceAsStream = ResourceLoader.class.getResourceAsStream("blank.mp4");
+      OutputStream out = new BufferedOutputStream(new FileOutputStream(target));
+      IOUtils.copy(resourceAsStream, out);
+      resourceAsStream.close();
+      out.close();
+
+      return true;
+    }
+    return false;
+  }
+
+  private boolean renameMedia(int gameId, PopperScreen screen, Map<String, String> data) {
+    Game game = gameService.getGame(gameId);
+    File pinUPMediaFolder = game.getPinUPMediaFolder(screen);
+
+    String oldName = data.get("oldName");
+    String newName = data.get("newName");
+
+    File media = new File(pinUPMediaFolder, oldName);
+    String gameBaseName = FilenameUtils.getBaseName(game.getGameFileName());
+    if (media.exists() && newName.startsWith(gameBaseName)) {
+      String suffix = FilenameUtils.getExtension(media.getName());
+      if (!newName.endsWith("." + suffix)) {
+        newName = newName + "." + suffix;
+      }
+
+      File target = new File(pinUPMediaFolder, newName);
+      LOG.info("Renaming " + media.getAbsolutePath() + " to " + target.getAbsolutePath());
+      return media.renameTo(target);
+    }
+    else {
+      LOG.warn("Invalid target name '" + newName + "' should start with '" + gameBaseName + "'");
+    }
+    return false;
   }
 }

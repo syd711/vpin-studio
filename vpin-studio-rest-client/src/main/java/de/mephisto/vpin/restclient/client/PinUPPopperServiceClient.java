@@ -8,6 +8,7 @@ import de.mephisto.vpin.restclient.popper.PinUPControl;
 import de.mephisto.vpin.restclient.popper.PinUPControls;
 import de.mephisto.vpin.restclient.popper.PopperScreen;
 import de.mephisto.vpin.restclient.popper.TableDetails;
+import de.mephisto.vpin.restclient.representations.GameMediaRepresentation;
 import de.mephisto.vpin.restclient.representations.PlaylistRepresentation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,7 +18,9 @@ import org.springframework.web.client.RestTemplate;
 
 import java.io.File;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /*********************************************************************************************************************
  * Popper
@@ -79,13 +82,44 @@ public class PinUPPopperServiceClient extends VPinStudioClientService {
     }
   }
 
+  public boolean deleteMedia(int gameId, PopperScreen screen, String name) {
+    return getRestClient().delete(API + "poppermedia/media/" + gameId + "/" + screen.name() + "/" + name);
+  }
+
+  public GameMediaRepresentation getGameMedia(int gameId) {
+    return getRestClient().get(API + "poppermedia/" + gameId, GameMediaRepresentation.class);
+  }
+
   public JobExecutionResult uploadMedia(File file, String uploadType, int gameId, PopperScreen screen, FileUploadProgressListener listener) throws Exception {
     try {
-      String url = getRestClient().getBaseUrl() + API + "popper/upload/" + screen.name();
+      String url = getRestClient().getBaseUrl() + API + "poppermedia/upload/" + screen.name();
       ResponseEntity<JobExecutionResult> exchange = new RestTemplate().exchange(url, HttpMethod.POST, createUpload(file, gameId, uploadType, AssetType.POPPER_MEDIA, listener), JobExecutionResult.class);
       return exchange.getBody();
     } catch (Exception e) {
       LOG.error("Popper media upload failed: " + e.getMessage(), e);
+      throw e;
+    }
+  }
+
+  public boolean rename(int gameId, PopperScreen screen, String name, String newName) throws Exception {
+    try {
+      Map<String, Object> values = new HashMap<>();
+      values.put("oldName", name);
+      values.put("newName", newName);
+      return getRestClient().put(API + "poppermedia/media/" + gameId + "/" + screen.name(), values);
+    } catch (Exception e) {
+      LOG.error("Renaming failed: " + e.getMessage(), e);
+      throw e;
+    }
+  }
+
+  public boolean toFullScreen(int gameId, PopperScreen screen) throws Exception {
+    try {
+      Map<String, Object> values = new HashMap<>();
+      values.put("fullscreen", "true");
+      return getRestClient().put(API + "poppermedia/media/" + gameId + "/" + screen.name(), values);
+    } catch (Exception e) {
+      LOG.error("Applying fullscreen mode failed: " + e.getMessage(), e);
       throw e;
     }
   }

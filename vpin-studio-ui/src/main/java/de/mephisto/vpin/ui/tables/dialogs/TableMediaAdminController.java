@@ -1,10 +1,19 @@
 package de.mephisto.vpin.ui.tables.dialogs;
 
 import de.mephisto.vpin.commons.fx.DialogController;
+import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.popper.PopperScreen;
 import de.mephisto.vpin.restclient.representations.GameMediaItemRepresentation;
+import de.mephisto.vpin.restclient.representations.GameMediaRepresentation;
 import de.mephisto.vpin.restclient.representations.GameRepresentation;
+import de.mephisto.vpin.ui.Studio;
+import de.mephisto.vpin.ui.events.EventManager;
+import de.mephisto.vpin.ui.events.JobFinishedEvent;
+import de.mephisto.vpin.ui.events.StudioEventListener;
 import de.mephisto.vpin.ui.tables.TablesSidebarController;
+import de.mephisto.vpin.ui.util.Dialogs;
+import edu.umd.cs.findbugs.annotations.NonNull;
+import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
@@ -13,26 +22,33 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.VBox;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.scene.media.MediaView;
 import javafx.stage.Stage;
+import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.awt.*;
 import java.io.ByteArrayInputStream;
+import java.net.URI;
 import java.net.URL;
 import java.util.List;
+import java.util.Optional;
 import java.util.ResourceBundle;
 
 import static de.mephisto.vpin.ui.Studio.client;
 
-public class TableMediaAdminController implements Initializable, DialogController {
+public class TableMediaAdminController implements Initializable, DialogController, StudioEventListener {
   private final static Logger LOG = LoggerFactory.getLogger(TableMediaAdminController.class);
 
   @FXML
@@ -42,37 +58,122 @@ public class TableMediaAdminController implements Initializable, DialogControlle
   private Button addToPlaylistBtn;
 
   @FXML
+  private Button deleteBtn;
+
+  @FXML
+  private Button renameBtn;
+
+  @FXML
+  private VBox helpBox;
+
+
+  @FXML
   private ListView<GameMediaItemRepresentation> assetList;
 
-  private boolean result = false;
   private GameRepresentation game;
   private PopperScreen screen;
   private TablesSidebarController tablesSidebarController;
 
   @FXML
   private void onPlaylistAdd() {
-
+    GameMediaItemRepresentation selectedItem = assetList.getSelectionModel().getSelectedItem();
+    if (selectedItem != null) {
+      try {
+        client.getPinUPPopperService().toFullScreen(game.getId(), screen);
+      } catch (Exception e) {
+        WidgetFactory.showAlert(Studio.stage, "Error", "Fullscreen switch failed: " + e.getMessage());
+      }
+      refresh();
+    }
   }
 
   @FXML
-  private void onDelete() {
+  private void onRename() {
+    GameMediaItemRepresentation selectedItem = assetList.getSelectionModel().getSelectedItem();
+    if (selectedItem != null) {
+      String name = FilenameUtils.getBaseName(selectedItem.getName());
+      String newName = WidgetFactory.showInputDialog(Studio.stage, "Rename", "New Media Name",
+          "Enter the new name of the media item \"" + selectedItem.getName() + "\".", null, name);
+      if (!StringUtils.isEmpty(newName) && !newName.equalsIgnoreCase(selectedItem.getName())) {
+        try {
+          client.getPinUPPopperService().rename(game.getId(), screen, selectedItem.getName() , newName);
+        } catch (Exception e) {
+          WidgetFactory.showAlert(Studio.stage, "Error", "Renaming failed: " + e.getMessage());
+        }
+        refresh();
+      }
+    }
+  }
 
+  @FXML
+  private void onReload() {
+    refresh();
+  }
+
+  @FXML
+  private void onMediaUpload(ActionEvent e) {
+    Stage stage = (Stage) ((Button) e.getSource()).getScene().getWindow();
+    Dialogs.openMediaUploadDialog(stage, tablesSidebarController, game, screen);
+    refresh();
+  }
+
+  @FXML
+  private void onDelete(ActionEvent e) {
+    Stage stage = (Stage) ((Button) e.getSource()).getScene().getWindow();
+    GameMediaItemRepresentation selectedItem = assetList.getSelectionModel().getSelectedItem();
+    if (selectedItem != null) {
+      Optional<ButtonType> result = WidgetFactory.showConfirmation(stage, "Delete \"" + selectedItem.getName() + "\"?", "The selected media will be deleted.", "You have to use PinUP Popper to add new media assets.");
+      if (result.isPresent() && result.get().equals(ButtonType.OK)) {
+        client.getPinUPPopperService().deleteMedia(game.getId(), screen, selectedItem.getName());
+        refresh();
+      }
+    }
+  }
+
+  @FXML
+  private void onHelpLink() {
+    if (Desktop.getDesktop().isSupported(Desktop.Action.BROWSE)) {
+      try {
+        Desktop.getDesktop().browse(new URI("https://www.nailbuster.com/wikipinup/doku.php?id=loading_video"));
+      } catch (Exception ex) {
+        LOG.error("Failed to open link: " + ex.getMessage(), ex);
+      }
+    }
   }
 
   @FXML
   private void onCancel(ActionEvent e) {
+    EventManager.getInstance().removeListener(this);
     Stage stage = (Stage) ((Button) e.getSource()).getScene().getWindow();
     stage.close();
   }
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
-    this.result = false;
+    this.deleteBtn.setDisable(true);
+    this.helpBox.setVisible(false);
+    this.addToPlaylistBtn.setDisable(true);
+    this.addToPlaylistBtn.setVisible(false);
+    this.renameBtn.setDisable(true);
+
+    helpBox.managedProperty().bindBidirectional(helpBox.visibleProperty());
+
+    EventManager.getInstance().addListener(this);
 
     this.assetList.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<GameMediaItemRepresentation>() {
       @Override
       public void changed(ObservableValue<? extends GameMediaItemRepresentation> observable, GameMediaItemRepresentation oldValue, GameMediaItemRepresentation mediaItem) {
         mediaPane.setCenter(null);
+        deleteBtn.setDisable(mediaItem == null);
+        renameBtn.setDisable(mediaItem == null);
+
+        if (mediaItem == null) {
+          Label label = new Label("No media selected");
+          label.setStyle("-fx-font-size: 14px;-fx-text-fill: #444444;");
+          label.setUserData(mediaItem);
+          mediaPane.setCenter(label);
+          return;
+        }
 
         String mimeType = mediaItem.getMimeType();
         String baseType = mimeType.split("/")[0];
@@ -102,7 +203,7 @@ public class TableMediaAdminController implements Initializable, DialogControlle
             mediaPlayer.stop();
             mediaPlayer.dispose();
 
-            Label label = new Label("Media Error");
+            Label label = new Label("Media Error, try to reload");
             label.setStyle("-fx-font-size: 14px;-fx-text-fill: #444444;");
             label.setUserData(mediaItem);
             mediaPane.setCenter(label);
@@ -122,7 +223,7 @@ public class TableMediaAdminController implements Initializable, DialogControlle
 
   @Override
   public void onDialogCancel() {
-
+    EventManager.getInstance().removeListener(this);
   }
 
 
@@ -130,16 +231,38 @@ public class TableMediaAdminController implements Initializable, DialogControlle
     this.game = game;
     this.screen = screen;
 
-    List<GameMediaItemRepresentation> items = this.game.getGameMedia().getMediaItems(screen);
+    refresh();
+  }
+
+  private void refresh() {
+    this.addToPlaylistBtn.setVisible(screen.equals(PopperScreen.Loading));
+    this.addToPlaylistBtn.setDisable(true);
+
+    GameMediaRepresentation gameMedia = client.getPinUPPopperService().getGameMedia(this.game.getId());
+    List<GameMediaItemRepresentation> items = gameMedia.getMediaItems(screen);
     ObservableList<GameMediaItemRepresentation> assets = FXCollections.observableList(items);
+    assetList.getItems().removeAll(assetList.getItems());
     assetList.setItems(assets);
+    assetList.refresh();
 
     if (!items.isEmpty()) {
       assetList.getSelectionModel().select(0);
     }
+
+    boolean convertable = items.size() == 1 && !items.get(0).getName().contains("(SCREEN");
+    this.addToPlaylistBtn.setDisable(!convertable);
+
+    helpBox.setVisible(screen != null && screen.equals(PopperScreen.Loading));
   }
 
   public void setTableSidebarController(TablesSidebarController tablesSidebarController) {
     this.tablesSidebarController = tablesSidebarController;
+  }
+
+  @Override
+  public void jobFinished(@NonNull JobFinishedEvent event) {
+    Platform.runLater(() -> {
+      refresh();
+    });
   }
 }

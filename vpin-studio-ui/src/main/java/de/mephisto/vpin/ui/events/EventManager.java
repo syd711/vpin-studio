@@ -1,7 +1,7 @@
 package de.mephisto.vpin.ui.events;
 
-import de.mephisto.vpin.restclient.jobs.JobType;
 import de.mephisto.vpin.restclient.descriptors.JobDescriptor;
+import de.mephisto.vpin.restclient.jobs.JobType;
 import edu.umd.cs.findbugs.annotations.NonNull;
 
 import java.util.ArrayList;
@@ -49,5 +49,9 @@ public class EventManager {
         listener.preferencesChanged();
       }
     }).start();
+  }
+
+  public void removeListener(StudioEventListener listener) {
+    this.listeners.remove(listener);
   }
 }
