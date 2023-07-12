@@ -282,7 +282,7 @@
                                 </BorderPane>
                             </top>
                         </BorderPane>
-                        <BorderPane fx:id="screenLoading" layoutX="411.0" layoutY="234.0" prefHeight="170.0" prefWidth="150.0" styleClass="media-container">
+                        <BorderPane fx:id="screenLoading" layoutX="411.0" layoutY="234.0" prefHeight="180.0" prefWidth="150.0" styleClass="media-container">
                             <bottom>
                                 <Label text="Loading" textFill="WHITE" BorderPane.alignment="CENTER" />
                             </bottom>
@@ -370,7 +370,7 @@
                                 </BorderPane>
                             </top>
                         </BorderPane>
-                        <BorderPane fx:id="screenOther2" layoutX="411.0" layoutY="441.0" prefHeight="180.0" prefWidth="150.0" styleClass="media-container">
+                        <BorderPane fx:id="screenOther2" layoutX="411.0" layoutY="444.0" prefHeight="180.0" prefWidth="150.0" styleClass="media-container">
                             <bottom>
                                 <Label text="Other2" textFill="WHITE" BorderPane.alignment="CENTER" />
                             </bottom>
@@ -458,7 +458,7 @@
                                 </BorderPane>
                             </top>
                         </BorderPane>
-                        <BorderPane fx:id="screenAudioLaunch" layoutX="3.0" layoutY="16.0" prefHeight="135.0" prefWidth="150.0" styleClass="media-container">
+                        <BorderPane fx:id="screenAudioLaunch" layoutX="3.0" layoutY="32.0" prefHeight="135.0" prefWidth="150.0" styleClass="media-container">
                             <bottom>
                                 <VBox alignment="CENTER" prefHeight="60.0" BorderPane.alignment="CENTER">
                                     <BorderPane.margin>
@@ -523,7 +523,7 @@
                                 </Label>
                             </center>
                         </BorderPane>
-                        <BorderPane fx:id="screenAudio" layoutX="411.0" layoutY="16.0" prefHeight="135.0" prefWidth="150.0" styleClass="media-container">
+                        <BorderPane fx:id="screenAudio" layoutX="411.0" layoutY="32.0" prefHeight="135.0" prefWidth="150.0" styleClass="media-container">
                             <bottom>
                                 <VBox alignment="CENTER" prefHeight="60.0" BorderPane.alignment="CENTER">
                                     <BorderPane.margin>

@@ -268,13 +268,10 @@ public class TablesSidebarMediaController implements Initializable {
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
-
     SystemSummary systemSummary = Studio.client.getSystemService().getSystemSummary();
-    File folder = new File(systemSummary.getPinupSystemDirectory() + "/POPMedia/Visual Pinball X"); //TODO
-    File audio = new File(folder, "Audio");
 
     screenAudio.setOnDragOver(new FileDragEventHandler(screenAudio));
-    screenAudio.setOnDragDropped(new TableMediaFileDropEventHandler(audio, tablesSidebarController, PopperScreen.Audio, ".mp3"));
+    screenAudio.setOnDragDropped(new TableMediaFileDropEventHandler(systemSummary, tablesSidebarController, PopperScreen.Audio, ".mp3"));
 
     top_Audio.setVisible(false);
     top_AudioLaunch.setVisible(false);

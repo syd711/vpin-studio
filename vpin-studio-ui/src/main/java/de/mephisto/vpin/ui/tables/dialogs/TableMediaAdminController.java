@@ -21,6 +21,8 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.geometry.Pos;
+import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
@@ -32,9 +34,11 @@ import javafx.scene.layout.VBox;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.scene.media.MediaView;
+import javafx.scene.paint.Paint;
 import javafx.stage.Stage;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.kordamp.ikonli.javafx.FontIcon;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -42,6 +46,8 @@ import java.awt.*;
 import java.io.ByteArrayInputStream;
 import java.net.URI;
 import java.net.URL;
+import java.net.URLEncoder;
+import java.nio.charset.Charset;
 import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
@@ -96,7 +102,10 @@ public class TableMediaAdminController implements Initializable, DialogControlle
           "Enter the new name of the media item \"" + selectedItem.getName() + "\".", null, name);
       if (!StringUtils.isEmpty(newName) && !newName.equalsIgnoreCase(selectedItem.getName())) {
         try {
-          client.getPinUPPopperService().rename(game.getId(), screen, selectedItem.getName() , newName);
+          boolean rename = client.getPinUPPopperService().rename(game.getId(), screen, selectedItem.getName(), newName);
+          if (!rename) {
+            WidgetFactory.showAlert(Studio.stage, "Error", "Renaming failed, invalid name used?");
+          }
         } catch (Exception e) {
           WidgetFactory.showAlert(Studio.stage, "Error", "Renaming failed: " + e.getMessage());
         }
@@ -163,7 +172,8 @@ public class TableMediaAdminController implements Initializable, DialogControlle
     this.assetList.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<GameMediaItemRepresentation>() {
       @Override
       public void changed(ObservableValue<? extends GameMediaItemRepresentation> observable, GameMediaItemRepresentation oldValue, GameMediaItemRepresentation mediaItem) {
-        mediaPane.setCenter(null);
+        disposeAll();
+
         deleteBtn.setDisable(mediaItem == null);
         renameBtn.setDisable(mediaItem == null);
 
@@ -177,7 +187,8 @@ public class TableMediaAdminController implements Initializable, DialogControlle
 
         String mimeType = mediaItem.getMimeType();
         String baseType = mimeType.split("/")[0];
-        String url = client.getURL(mediaItem.getUri());
+        String url = client.getURL(mediaItem.getUri()) + "/" + URLEncoder.encode(mediaItem.getName(), Charset.defaultCharset());
+        LOG.info("Loading " + url);
 
         if (baseType.equals("image")) {
           ImageView imageView = new ImageView();
@@ -192,6 +203,60 @@ public class TableMediaAdminController implements Initializable, DialogControlle
 
           mediaPane.setCenter(imageView);
         }
+        else if (baseType.equals("audio")) {
+          VBox vBox = new VBox();
+          vBox.setAlignment(Pos.BASELINE_CENTER);
+
+          FontIcon fontIcon = new FontIcon();
+          fontIcon.setIconSize(48);
+          fontIcon.setIconColor(Paint.valueOf("#FFFFFF"));
+          fontIcon.setIconLiteral("bi-play");
+
+          Button playBtn = new Button();
+          playBtn.setGraphic(fontIcon);
+          vBox.getChildren().add(playBtn);
+
+          Media media = new Media(url);
+          MediaPlayer mediaPlayer = new MediaPlayer(media);
+          mediaPlayer.setAutoPlay(false);
+          mediaPlayer.setCycleCount(-1);
+          mediaPlayer.setMute(true);
+          mediaPlayer.setOnError(() -> {
+            LOG.error("Media player error: " + mediaPlayer.getError());
+            mediaPlayer.stop();
+            mediaPlayer.dispose();
+
+            Label label = new Label("Media Error");
+            label.setStyle("-fx-font-size: 14px;-fx-text-fill: #444444;");
+            label.setUserData(mediaItem);
+            vBox.getChildren().add(label);
+            mediaPane.setCenter(label);
+          });
+
+
+          MediaView mediaView = new MediaView(mediaPlayer);
+          vBox.getChildren().add(mediaView);
+          mediaPane.setCenter(vBox);
+
+          mediaPlayer.setOnEndOfMedia(() -> {
+            fontIcon.setIconLiteral("bi-play");
+          });
+
+          playBtn.setOnAction(event -> {
+            String iconLiteral = fontIcon.getIconLiteral();
+            if (iconLiteral.equals("bi-play")) {
+              mediaView.getMediaPlayer().setMute(false);
+              mediaView.getMediaPlayer().setCycleCount(1);
+              mediaView.getMediaPlayer().play();
+              fontIcon.setIconLiteral("bi-stop");
+            }
+            else {
+              mediaView.getMediaPlayer().stop();
+              fontIcon.setIconLiteral("bi-play");
+            }
+          });
+
+        }
         else if (baseType.equals("video")) {
           Media media = new Media(url);
           MediaPlayer mediaPlayer = new MediaPlayer(media);
@@ -199,7 +264,7 @@ public class TableMediaAdminController implements Initializable, DialogControlle
           mediaPlayer.setCycleCount(-1);
           mediaPlayer.setMute(true);
           mediaPlayer.setOnError(() -> {
-            LOG.error("Media player error: " + mediaPlayer.getError());
+            LOG.error("Media player error: " + mediaPlayer.getError() + ", URL: " + url);
             mediaPlayer.stop();
             mediaPlayer.dispose();
 
@@ -219,6 +284,22 @@ public class TableMediaAdminController implements Initializable, DialogControlle
         }
       }
     });
+  }
+
+  private void disposeAll() {
+    Node center = mediaPane.getCenter();
+    if (center instanceof MediaView) {
+      MediaView mediaView = (MediaView) center;
+      mediaView.getMediaPlayer().stop();
+      mediaView.getMediaPlayer().dispose();
+    }
+    else if (center instanceof VBox) {
+      MediaView mediaView = (MediaView) ((VBox) center).getChildren().get(1);
+      mediaView.getMediaPlayer().stop();
+      mediaView.getMediaPlayer().dispose();
+    }
+
+    mediaPane.setCenter(null);
   }
 
   @Override

@@ -35,11 +35,30 @@ public class GameMedia {
     GameMediaItem fallback = null;
     for (GameMediaItem gameMediaItem : gameMediaItems) {
       fallback = gameMediaItem;
-      if (gameMediaItem.getName().contains("[SCREEN")) {
+      if (gameMediaItem.getName().contains("(SCREEN")) {
         return gameMediaItem;
       }
     }
 
     return fallback;
+  }
+
+  public GameMediaItem getMediaItem(@NonNull PopperScreen screen, @NonNull String name) {
+    if (!media.containsKey(screen.name())) {
+      return null;
+    }
+
+    List<GameMediaItem> gameMediaItems = media.get(screen.name());
+    if (media.isEmpty()) {
+      return null;
+    }
+
+    for (GameMediaItem gameMediaItem : gameMediaItems) {
+      if (gameMediaItem.getName().equals(name)) {
+        return gameMediaItem;
+      }
+    }
+
+    return null;
   }
 }

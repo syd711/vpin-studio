@@ -5,10 +5,10 @@ import de.mephisto.vpin.restclient.jobs.JobExecutionResultFactory;
 import de.mephisto.vpin.restclient.popper.PopperScreen;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameService;
-import de.mephisto.vpin.server.resources.ResourceLoader;
 import de.mephisto.vpin.server.util.UploadUtil;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,7 +20,13 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.net.URLDecoder;
+import java.nio.charset.Charset;
+import java.util.Base64;
 import java.util.List;
 import java.util.Map;
 
@@ -48,13 +54,19 @@ public class PopperMediaResource {
     return game.getGameMedia();
   }
 
-  @GetMapping("/{id}/{screen}")
-  public ResponseEntity<Resource> handleRequest(@PathVariable("id") int id, @PathVariable("screen") String screen) throws IOException {
+
+  @GetMapping("/{id}/{screen}/{name}")
+  public ResponseEntity<Resource> handleRequestWithName(@PathVariable("id") int id, @PathVariable("screen") String screen, @PathVariable("name") String name) throws IOException {
     PopperScreen popperScreen = PopperScreen.valueOf(screen);
     Game game = gameService.getGame(id);
     if (game != null) {
       GameMedia gameMedia = game.getGameMedia();
       GameMediaItem gameMediaItem = gameMedia.getDefaultMediaItem(popperScreen);
+      if (!StringUtils.isEmpty(name)) {
+        name = URLDecoder.decode(name, Charset.defaultCharset());
+        gameMediaItem = gameMedia.getMediaItem(popperScreen, name);
+      }
+
       if (gameMediaItem != null) {
         File file = gameMediaItem.getFile();
         FileInputStream in = new FileInputStream(file);
@@ -73,6 +85,11 @@ public class PopperMediaResource {
     }
 
     return ResponseEntity.notFound().build();
+  }
+
+  @GetMapping("/{id}/{screen}")
+  public ResponseEntity<Resource> handleRequest(@PathVariable("id") int id, @PathVariable("screen") String screen) throws IOException {
+    return handleRequestWithName(id, screen, null);
   }
 
   @PostMapping("/upload/{screen}")
@@ -149,15 +166,18 @@ public class PopperMediaResource {
       String updatedBaseName = baseName + "(SCREEN3)." + suffix;
 
       LOG.info("Renaming " + mediaFile.getAbsolutePath() + " to '" + updatedBaseName + "'");
-      mediaFile.renameTo(new File(mediaFile.getParentFile(), updatedBaseName));
+      boolean renamed = mediaFile.renameTo(new File(mediaFile.getParentFile(), updatedBaseName));
+      if (!renamed) {
+        LOG.error("Renaming to " + updatedBaseName + " failed.");
+        return false;
+      }
 
       File target = new File(mediaFile.getParentFile(), name);
 
       LOG.info("Copying blank video to " + target.getAbsolutePath());
-      InputStream resourceAsStream = ResourceLoader.class.getResourceAsStream("blank.mp4");
-      OutputStream out = new BufferedOutputStream(new FileOutputStream(target));
-      IOUtils.copy(resourceAsStream, out);
-      resourceAsStream.close();
+      FileOutputStream out = new FileOutputStream(target);
+      byte[] bytesEncoded = org.apache.commons.codec.binary.Base64.decodeBase64("AAAAGGZ0eXBtcDQyAAAAAG1wNDFpc29tBNjldm1kYXQAAAAAAAAAEAA=");
+      IOUtils.write(bytesEncoded, out);
       out.close();
 
       return true;
