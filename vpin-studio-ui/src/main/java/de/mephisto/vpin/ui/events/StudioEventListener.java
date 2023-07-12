@@ -8,6 +8,9 @@ public interface StudioEventListener {
 
   }
 
+  default void tableChanged(int id) {
+
+  }
 
   default void repositoryUpdated() {
 

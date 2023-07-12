@@ -52,6 +52,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
 
+import static de.mephisto.vpin.restclient.jobs.JobType.POPPER_MEDIA_INSTALL;
 import static de.mephisto.vpin.ui.Studio.client;
 
 public class TableMediaAdminController implements Initializable, DialogController, StudioEventListener {
@@ -135,6 +136,10 @@ public class TableMediaAdminController implements Initializable, DialogControlle
       if (result.isPresent() && result.get().equals(ButtonType.OK)) {
         client.getPinUPPopperService().deleteMedia(game.getId(), screen, selectedItem.getName());
         refresh();
+
+        Platform.runLater(() -> {
+          EventManager.getInstance().notifyJobFinished(POPPER_MEDIA_INSTALL);
+        });
       }
     }
   }

@@ -21,6 +21,14 @@ public class EventManager {
     this.listeners.add(listener);
   }
 
+  public void notifyTableChange(int tableId) {
+    new Thread(() -> {
+      for (StudioEventListener listener : listeners) {
+        listener.tableChanged(tableId);
+      }
+    }).start();
+  }
+
   public void notifyJobFinished(JobDescriptor descriptor) {
     JobType type = descriptor.getJobType();
     notifyJobFinished(type);

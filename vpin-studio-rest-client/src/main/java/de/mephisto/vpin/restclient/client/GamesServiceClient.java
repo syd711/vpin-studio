@@ -70,13 +70,15 @@ public class GamesServiceClient extends VPinStudioClientService {
   }
 
   public GameRepresentation getGame(int id) {
-    List<GameRepresentation> gameList = this.getGamesCached();
-    for (GameRepresentation gameRepresentation : gameList) {
-      if (gameRepresentation.getId() == id) {
-        return gameRepresentation;
+    GameRepresentation gameRepresentation = getRestClient().get(API + "games/" + id, GameRepresentation.class);
+    if(gameRepresentation != null && !this.games.isEmpty()) {
+      int index = this.games.indexOf(gameRepresentation);
+      if(index != -1) {
+        this.games.remove(index);
+        this.games.add(index, gameRepresentation);
       }
     }
-    return null;
+    return gameRepresentation;
   }
 
   public List<Integer> getGameIds() {
@@ -126,19 +128,7 @@ public class GamesServiceClient extends VPinStudioClientService {
 
   public List<GameRepresentation> getGames() {
     try {
-      this.games = Arrays.asList(getRestClient().get(API + "games", GameRepresentation[].class));
-      return this.games;
-    } catch (Exception e) {
-      LOG.error("Failed to save game: " + e.getMessage(), e);
-      throw e;
-    }
-  }
-
-  public List<GameRepresentation> getGamesCached() {
-    try {
-      if (this.games == null || this.games.isEmpty()) {
-        this.games = this.getGames();
-      }
+      this.games = new ArrayList<>(Arrays.asList(getRestClient().get(API + "games", GameRepresentation[].class)));
       return this.games;
     } catch (Exception e) {
       LOG.error("Failed to save game: " + e.getMessage(), e);
@@ -155,6 +145,18 @@ public class GamesServiceClient extends VPinStudioClientService {
       }
     }
     return result;
+  }
+
+  public List<GameRepresentation> getGamesCached() {
+    try {
+      if (this.games == null || this.games.isEmpty()) {
+        this.games = this.getGames();
+      }
+      return this.games;
+    } catch (Exception e) {
+      LOG.error("Failed to save game: " + e.getMessage(), e);
+      throw e;
+    }
   }
 
   public ScoreSummaryRepresentation getRecentlyPlayedGames(int count) {

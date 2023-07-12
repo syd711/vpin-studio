@@ -128,6 +128,11 @@ public class TablesController implements Initializable, StudioFXController, Stud
   }
 
   @Override
+  public void tableChanged(int id) {
+    this.tableOverviewController.reload(id);
+  }
+
+  @Override
   public void preferencesChanged() {
     Platform.runLater(() -> {
       this.tableOverviewController.onReload();

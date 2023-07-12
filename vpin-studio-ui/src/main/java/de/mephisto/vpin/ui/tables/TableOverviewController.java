@@ -9,6 +9,7 @@ import de.mephisto.vpin.ui.NavigationController;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.StudioFXController;
 import de.mephisto.vpin.ui.WaitOverlayController;
+import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.tables.validation.LocalizedValidation;
 import de.mephisto.vpin.ui.tables.validation.ValidationTexts;
 import de.mephisto.vpin.ui.util.Dialogs;
@@ -38,6 +39,8 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.net.URL;
 import java.util.*;
+
+import static de.mephisto.vpin.ui.Studio.client;
 
 public class TableOverviewController implements Initializable, StudioFXController {
   private final static Logger LOG = LoggerFactory.getLogger(TableOverviewController.class);
@@ -160,7 +163,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
       Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Start playing table \"" + game.getGameDisplayName() + "\"?",
           "All existing VPX and Popper processes will be terminated.");
       if (result.isPresent() && result.get().equals(ButtonType.OK)) {
-        Studio.client.getVpxService().playGame(game.getId());
+        client.getVpxService().playGame(game.getId());
       }
     }
   }
@@ -171,7 +174,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
     if (game != null) {
       Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Stop all VPX and PinUP Popper processes?");
       if (result.isPresent() && result.get().equals(ButtonType.OK)) {
-        Studio.client.getPinUPPopperService().terminatePopper();
+        client.getPinUPPopperService().terminatePopper();
       }
     }
   }
@@ -205,10 +208,10 @@ public class TableOverviewController implements Initializable, StudioFXControlle
 
   @FXML
   private void onTableUpload() {
-    if (Studio.client.getPinUPPopperService().isPinUPPopperRunning()) {
+    if (client.getPinUPPopperService().isPinUPPopperRunning()) {
       Optional<ButtonType> buttonType = Dialogs.openPopperRunningWarning(Studio.stage);
       if (buttonType.isPresent() && buttonType.get().equals(ButtonType.APPLY)) {
-        Studio.client.getPinUPPopperService().terminatePopper();
+        client.getPinUPPopperService().terminatePopper();
         openUploadDialog();
       }
       return;
@@ -227,10 +230,10 @@ public class TableOverviewController implements Initializable, StudioFXControlle
 
   @FXML
   private void onDelete() {
-    if (Studio.client.getPinUPPopperService().isPinUPPopperRunning()) {
+    if (client.getPinUPPopperService().isPinUPPopperRunning()) {
       Optional<ButtonType> buttonType = Dialogs.openPopperRunningWarning(Studio.stage);
       if (buttonType.isPresent() && buttonType.get().equals(ButtonType.APPLY)) {
-        Studio.client.getPinUPPopperService().terminatePopper();
+        client.getPinUPPopperService().terminatePopper();
         deleteSelection();
       }
       return;
@@ -243,7 +246,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
     List<GameRepresentation> selectedGames = new ArrayList<>(tableView.getSelectionModel().getSelectedItems());
     if (selectedGames != null && !selectedGames.isEmpty()) {
       for (GameRepresentation game : selectedGames) {
-        if (Studio.client.getCompetitionService().isGameReferencedByCompetitions(game.getId())) {
+        if (client.getCompetitionService().isGameReferencedByCompetitions(game.getId())) {
           WidgetFactory.showAlert(Studio.stage, "The table \"" + game.getGameDisplayName()
               + "\" is used by at least one competition.", "Delete all competitions for this table first.");
           return;
@@ -289,7 +292,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
     Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, title,
         "Re-scanning will overwrite some of the existing metadata properties.", null, "Start Scan");
     if (result.isPresent() && result.get().equals(ButtonType.OK)) {
-      Studio.client.clearCache();
+      client.clearCache();
       Dialogs.createProgressDialog(new TableScanProgressModel("Scanning Tables", this.games));
       this.onReload();
     }
@@ -297,10 +300,10 @@ public class TableOverviewController implements Initializable, StudioFXControlle
 
   @FXML
   private void onImport() {
-    if (Studio.client.getPinUPPopperService().isPinUPPopperRunning()) {
+    if (client.getPinUPPopperService().isPinUPPopperRunning()) {
       Optional<ButtonType> buttonType = Dialogs.openPopperRunningWarning(Studio.stage);
       if (buttonType.isPresent() && buttonType.get().equals(ButtonType.APPLY)) {
-        Studio.client.getPinUPPopperService().terminatePopper();
+        client.getPinUPPopperService().terminatePopper();
         Dialogs.openTableImportDialog();
       }
     }
@@ -318,7 +321,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
       game.setIgnoredValidations(null);
 
       try {
-        Studio.client.getGameService().saveGame(game);
+        client.getGameService().saveGame(game);
       } catch (Exception e) {
         WidgetFactory.showAlert(Studio.stage, e.getMessage());
       }
@@ -349,18 +352,34 @@ public class TableOverviewController implements Initializable, StudioFXControlle
       game.setIgnoredValidations(ignoredValidations);
 
       try {
-        Studio.client.getGameService().saveGame(game);
+        client.getGameService().saveGame(game);
       } catch (Exception e) {
         WidgetFactory.showAlert(Studio.stage, e.getMessage());
       }
-      onReload();
+      EventManager.getInstance().notifyTableChange(game.getId());
     }
+  }
+
+  public void reload(int id) {
+    GameRepresentation refreshedGame = client.getGameService().getGame(id);
+
+    Platform.runLater(() -> {
+      GameRepresentation selection = tableView.getSelectionModel().getSelectedItem();
+      tableView.getSelectionModel().clearSelection();
+
+      int index = data.indexOf(refreshedGame);
+      data.remove(index);
+      data.add(index, refreshedGame);
+
+      if (selection != null) {
+        tableView.getSelectionModel().select(refreshedGame);
+      }
+      tableView.refresh();
+    });
   }
 
   @FXML
   public void onReload() {
-    // Studio.client.clearCache();
-
     this.textfieldSearch.setDisable(true);
     this.reloadBtn.setDisable(true);
     this.scanBtn.setDisable(true);
@@ -379,7 +398,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
 
     new Thread(() -> {
       GameRepresentation selection = tableView.getSelectionModel().getSelectedItem();
-      games = Studio.client.getGameService().getGames();
+      games = client.getGameService().getGames();
       filterGames(games);
 
       Platform.runLater(() -> {
@@ -387,7 +406,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
         tableView.refresh();
 
         if (selection != null) {
-          final GameRepresentation updatedGame = Studio.client.getGame(selection.getId());
+          final GameRepresentation updatedGame = client.getGame(selection.getId());
           if (updatedGame != null) {
             tableView.getSelectionModel().select(updatedGame);
             this.playBtn.setDisable(!updatedGame.isGameFileAvailable());
@@ -653,4 +672,5 @@ public class TableOverviewController implements Initializable, StudioFXControlle
   public GameRepresentation getSelection() {
     return tableView.getSelectionModel().getSelectedItem();
   }
+
 }

@@ -16,8 +16,10 @@ public class FileDragEventHandler implements EventHandler<DragEvent> {
   @Override
   public void handle(DragEvent event) {
     if (event.getGestureSource() != node && event.getDragboard().hasFiles()) {
-      event.acceptTransferModes(TransferMode.COPY_OR_MOVE);
+      event.acceptTransferModes(TransferMode.COPY);
     }
-    event.consume();
+    else {
+      event.consume();
+    }
   }
 }

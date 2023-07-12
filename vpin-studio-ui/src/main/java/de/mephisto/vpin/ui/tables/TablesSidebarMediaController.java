@@ -268,11 +268,6 @@ public class TablesSidebarMediaController implements Initializable {
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
-    SystemSummary systemSummary = Studio.client.getSystemService().getSystemSummary();
-
-    screenAudio.setOnDragOver(new FileDragEventHandler(screenAudio));
-    screenAudio.setOnDragDropped(new TableMediaFileDropEventHandler(systemSummary, tablesSidebarController, PopperScreen.Audio, ".mp3"));
-
     top_Audio.setVisible(false);
     top_AudioLaunch.setVisible(false);
     top_Topper.setVisible(false);
@@ -492,6 +487,31 @@ public class TablesSidebarMediaController implements Initializable {
 
   public void setSidebarController(TablesSidebarController tablesSidebarController) {
     this.tablesSidebarController = tablesSidebarController;
+
+    screenAudio.setOnDragOver(new FileDragEventHandler(screenAudio));
+    screenAudio.setOnDragDropped(new TableMediaFileDropEventHandler(tablesSidebarController, PopperScreen.Audio, "mp3"));
+    screenAudioLaunch.setOnDragOver(new FileDragEventHandler(screenAudioLaunch));
+    screenAudioLaunch.setOnDragDropped(new TableMediaFileDropEventHandler(tablesSidebarController, PopperScreen.AudioLaunch, "mp3"));
+    screenTopper.setOnDragOver(new FileDragEventHandler(screenTopper));
+    screenTopper.setOnDragDropped(new TableMediaFileDropEventHandler(tablesSidebarController, PopperScreen.Topper, "mp4", "png", "jpg"));
+    screenLoading.setOnDragOver(new FileDragEventHandler(screenLoading));
+    screenLoading.setOnDragDropped(new TableMediaFileDropEventHandler(tablesSidebarController, PopperScreen.Loading, "mp4"));
+    screenPlayField.setOnDragOver(new FileDragEventHandler(screenPlayField));
+    screenPlayField.setOnDragDropped(new TableMediaFileDropEventHandler(tablesSidebarController, PopperScreen.PlayField, "mp4"));
+    screenBackGlass.setOnDragOver(new FileDragEventHandler(screenBackGlass));
+    screenBackGlass.setOnDragDropped(new TableMediaFileDropEventHandler(tablesSidebarController, PopperScreen.BackGlass, "mp4", "png", "jpg"));
+    screenGameInfo.setOnDragOver(new FileDragEventHandler(screenGameInfo));
+    screenGameInfo.setOnDragDropped(new TableMediaFileDropEventHandler(tablesSidebarController, PopperScreen.GameInfo,  "png", "jpg"));
+    screenGameHelp.setOnDragOver(new FileDragEventHandler(screenGameHelp));
+    screenGameHelp.setOnDragDropped(new TableMediaFileDropEventHandler(tablesSidebarController, PopperScreen.GameHelp,  "png", "jpg"));
+    screenMenu.setOnDragOver(new FileDragEventHandler(screenMenu));
+    screenMenu.setOnDragDropped(new TableMediaFileDropEventHandler(tablesSidebarController, PopperScreen.Menu, "mp4", "png", "jpg"));
+    screenDMD.setOnDragOver(new FileDragEventHandler(screenDMD));
+    screenDMD.setOnDragDropped(new TableMediaFileDropEventHandler(tablesSidebarController, PopperScreen.DMD, "mp4", "png", "jpg"));
+    screenOther2.setOnDragOver(new FileDragEventHandler(screenOther2));
+    screenOther2.setOnDragDropped(new TableMediaFileDropEventHandler(tablesSidebarController, PopperScreen.Other2, "mp4", "png", "jpg"));
+    screenWheel.setOnDragOver(new FileDragEventHandler(screenWheel));
+    screenWheel.setOnDragDropped(new TableMediaFileDropEventHandler(tablesSidebarController, PopperScreen.Wheel, "png", "apng"));
   }
 
   public void resetMedia() {
