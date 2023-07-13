@@ -152,6 +152,23 @@ public class VPXService {
     return null;
   }
 
+  public boolean saveSources(int gameId, String base64Source) {
+    Game game = gameService.getGame(gameId);
+    if (game != null) {
+      File gameFile = game.getGameFile();
+      if (gameFile.exists()) {
+        try {
+          byte[] decoded = Base64.getDecoder().decode(base64Source);
+          VPXUtil.writeBytes(gameFile, decoded);
+          return true;
+        } catch (IOException e) {
+          //already logged
+        }
+      }
+    }
+    return false;
+  }
+
   public boolean delete(int id) {
     Game game = gameService.getGame(id);
     if (game != null) {

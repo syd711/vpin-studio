@@ -42,6 +42,12 @@ public class VPXResource {
     return vpxService.getSources(id);
   }
 
+  @PutMapping("/sources/{id}")
+  public boolean saveSources(@PathVariable("id") int id, @RequestBody Map<String, Object> values) {
+    String base64Source = (String) values.get("source");
+    return vpxService.saveSources(id, base64Source);
+  }
+
   @GetMapping("/pov/{id}")
   public POV getPov(@PathVariable("id") int id) {
     return vpxService.getPOV(id);

@@ -6,7 +6,9 @@ import org.apache.poi.poifs.filesystem.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
+import java.io.IOException;
 
 public class VPXUtil {
   private final static Logger LOG = LoggerFactory.getLogger(VPXFileScanner.class);
@@ -43,5 +45,32 @@ public class VPXUtil {
     }
 
     return content;
+  }
+
+  public static void writeBytes(@NonNull File file, byte[] decoded) throws IOException {
+    POIFSFileSystem fs = null;
+    try {
+      fs = new POIFSFileSystem(file, true);
+      DirectoryEntry root = fs.getRoot();
+      DirectoryEntry gameStg = (DirectoryEntry) root.getEntry("GameStg");
+      DocumentNode gameData = (DocumentNode) gameStg.getEntry("GameData");
+
+      POIFSDocument scoreDocument = new POIFSDocument(gameData);
+      scoreDocument.replaceContents(new ByteArrayInputStream(decoded));
+
+      fs.writeFilesystem();
+    } catch (Exception e) {
+      LOG.error("Writing script failed for " + file.getAbsolutePath() + " failed: " + e.getMessage(), e);
+      throw e;
+    }
+    finally {
+      try {
+        if (fs != null) {
+          fs.close();
+        }
+      } catch (Exception e) {
+        LOG.error("Failed to close vpx file stream: " + e.getMessage(), e);
+      }
+    }
   }
 }

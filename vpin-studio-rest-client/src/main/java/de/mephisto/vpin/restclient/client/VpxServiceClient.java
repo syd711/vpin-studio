@@ -5,7 +5,6 @@ import de.mephisto.vpin.restclient.FileUploadProgressListener;
 import de.mephisto.vpin.restclient.jobs.JobExecutionResult;
 import de.mephisto.vpin.restclient.representations.GameRepresentation;
 import de.mephisto.vpin.restclient.representations.POVRepresentation;
-import de.mephisto.vpin.restclient.representations.ScoreSummaryRepresentation;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,6 +17,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Base64;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -83,6 +83,16 @@ public class VpxServiceClient extends VPinStudioClientService {
   public String getTableSource(GameRepresentation game) {
     final RestTemplate restTemplate = new RestTemplate();
     return restTemplate.getForObject(getRestClient().getBaseUrl() + API + "vpx/sources/" + game.getId(), String.class);
+  }
+
+  public void saveTableSource(GameRepresentation game, String sources) {
+    try {
+      Map<String, Object> data = new HashMap<>();
+      data.put("source", Base64.getEncoder().encodeToString(sources.getBytes()));
+      getRestClient().put(API + "vpx/sources/" + game.getId(), data);
+    } catch (Exception e) {
+      LOG.error("Failed to save script data: " + e.getMessage(), e);
+    }
   }
 
   public File getTableScript(GameRepresentation game) {

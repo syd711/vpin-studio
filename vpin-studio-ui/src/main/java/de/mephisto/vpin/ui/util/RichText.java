@@ -191,7 +191,7 @@ public class RichText {
 
 
   private class DefaultContextMenu extends ContextMenu {
-    private MenuItem fold, unfold, print;
+    private MenuItem fold, unfold;
 
     public DefaultContextMenu() {
       fold = new MenuItem("Fold selected text");
@@ -206,13 +206,7 @@ public class RichText {
         unfold();
       });
 
-      print = new MenuItem("Print");
-      print.setOnAction(AE -> {
-        hide();
-        print();
-      });
-
-      getItems().addAll(fold, unfold, print);
+      getItems().addAll(fold, unfold);
     }
 
     /**

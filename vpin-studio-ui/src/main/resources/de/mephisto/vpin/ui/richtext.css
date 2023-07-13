@@ -39,3 +39,7 @@
 .styled-text-area .text {
     -rtfx-background-color: #FFF8F8;
 }
+
+ParagraphText {
+  -fx-tab-size: 2;
+}
