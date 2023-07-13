@@ -138,7 +138,7 @@ public class TableMediaAdminController implements Initializable, DialogControlle
         refresh();
 
         Platform.runLater(() -> {
-          EventManager.getInstance().notifyJobFinished(POPPER_MEDIA_INSTALL);
+          EventManager.getInstance().notifyJobFinished(POPPER_MEDIA_INSTALL, this.game.getId());
         });
       }
     }

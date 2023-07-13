@@ -5,6 +5,7 @@ import de.mephisto.vpin.restclient.FileUploadProgressListener;
 import de.mephisto.vpin.restclient.jobs.JobExecutionResult;
 import de.mephisto.vpin.restclient.representations.GameRepresentation;
 import de.mephisto.vpin.restclient.representations.POVRepresentation;
+import de.mephisto.vpin.restclient.representations.ScoreSummaryRepresentation;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -77,6 +78,11 @@ public class VpxServiceClient extends VPinStudioClientService {
 
   public boolean deletePOV(int gameId) {
     return getRestClient().delete(API + "vpx/pov/" + gameId);
+  }
+
+  public String getTableSource(GameRepresentation game) {
+    final RestTemplate restTemplate = new RestTemplate();
+    return restTemplate.getForObject(getRestClient().getBaseUrl() + API + "vpx/sources/" + game.getId(), String.class);
   }
 
   public File getTableScript(GameRepresentation game) {

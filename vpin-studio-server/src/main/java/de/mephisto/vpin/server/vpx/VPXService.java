@@ -19,6 +19,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Base64;
 import java.util.Map;
 
 import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
@@ -135,6 +136,19 @@ public class VPXService {
 
     }
     LOG.error("No game found for script extraction, id " + gameId);
+    return null;
+  }
+
+  public String getSources(int gameId) {
+    Game game = gameService.getGame(gameId);
+    if (game != null) {
+      File gameFile = game.getGameFile();
+      if (gameFile.exists()) {
+        byte[] sources = VPXUtil.readBytes(gameFile);
+        return Base64.getEncoder().encodeToString(sources);
+      }
+    }
+    LOG.error("No game found for table sources, id " + gameId);
     return null;
   }
 

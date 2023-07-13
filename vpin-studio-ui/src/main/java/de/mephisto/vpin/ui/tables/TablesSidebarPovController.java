@@ -5,6 +5,7 @@ import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.representations.GameRepresentation;
 import de.mephisto.vpin.restclient.representations.POVRepresentation;
 import de.mephisto.vpin.ui.Studio;
+import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.tables.dialogs.POVExportProgressModel;
 import de.mephisto.vpin.ui.util.Dialogs;
 import de.mephisto.vpin.ui.util.ProgressResultModel;
@@ -227,7 +228,7 @@ public class TablesSidebarPovController implements Initializable {
     Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Delete POV file for table '" + this.game.get().getGameDisplayName() + "'?");
     if (result.isPresent() && result.get().equals(ButtonType.OK)) {
       Studio.client.getVpxService().deletePOV(this.game.get().getId());
-      this.tablesSidebarController.getTablesController().onReload();
+      EventManager.getInstance().notifyTableChange(this.game.get().getId());
     }
   }
 
@@ -248,7 +249,7 @@ public class TablesSidebarPovController implements Initializable {
 
       ProgressResultModel resultModel = Dialogs.createProgressDialog(new POVExportProgressModel("Export POV Settings", g));
       if (!resultModel.getResults().isEmpty()) {
-        tablesSidebarController.getTablesController().onReload();
+        EventManager.getInstance().notifyTableChange(g.getId());
       }
       else {
         WidgetFactory.showAlert(Studio.stage, "POV export failed, check log for details.");

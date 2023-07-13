@@ -37,6 +37,11 @@ public class VPXResource {
     return vpxService.getScript(id);
   }
 
+  @GetMapping("/sources/{id}")
+  public String sources(@PathVariable("id") int id) {
+    return vpxService.getSources(id);
+  }
+
   @GetMapping("/pov/{id}")
   public POV getPov(@PathVariable("id") int id) {
     return vpxService.getPOV(id);

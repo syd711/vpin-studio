@@ -13,6 +13,7 @@ import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.tables.validation.LocalizedValidation;
 import de.mephisto.vpin.ui.tables.validation.ValidationTexts;
 import de.mephisto.vpin.ui.util.Dialogs;
+import de.mephisto.vpin.ui.util.RichText;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleObjectProperty;
@@ -31,13 +32,16 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.StackPane;
 import org.apache.commons.lang3.StringUtils;
+import org.fxmisc.flowless.VirtualizedScrollPane;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.net.URL;
+import java.nio.charset.Charset;
 import java.util.*;
 
 import static de.mephisto.vpin.ui.Studio.client;
@@ -376,6 +380,18 @@ public class TableOverviewController implements Initializable, StudioFXControlle
       }
       tableView.refresh();
     });
+  }
+
+  public void showEditor(GameRepresentation game) {
+    String tableSource = client.getVpxService().getTableSource(game);
+    if (!StringUtils.isEmpty(tableSource)) {
+      String source = new String(Base64.getDecoder().decode(tableSource), Charset.forName("utf8"));
+      RichText richText = new RichText(source);
+
+      StackPane editorRootStack = tablesController.getEditorRootStack();
+      VirtualizedScrollPane scrollPane = new VirtualizedScrollPane(richText.getCodeArea());
+      editorRootStack.getChildren().add(scrollPane);
+    }
   }
 
   @FXML

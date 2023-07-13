@@ -66,7 +66,7 @@ public class DirectB2SUploadProgressModel extends ProgressModel<File> {
       }
       else {
         Platform.runLater(() -> {
-          EventManager.getInstance().notifyJobFinished(DIRECTB2S_INSTALL);
+          EventManager.getInstance().notifyJobFinished(DIRECTB2S_INSTALL, gameId);
         });
       }
       progressResultModel.addProcessed();

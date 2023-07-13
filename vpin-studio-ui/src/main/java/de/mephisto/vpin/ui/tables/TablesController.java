@@ -16,6 +16,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
+import javafx.scene.layout.StackPane;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -44,6 +45,9 @@ public class TablesController implements Initializable, StudioFXController, Stud
 
   @FXML
   private RepositorySidebarController repositorySideBarController; //fxml magic! Not unused
+
+  @FXML
+  private StackPane editorRootStack;
 
   @Override
   public void onViewActivated() {
@@ -122,7 +126,12 @@ public class TablesController implements Initializable, StudioFXController, Stud
         || jobType.equals(JobType.ALTSOUND_INSTALL) || jobType.equals(JobType.DIRECTB2S_INSTALL)
         || jobType.equals(JobType.TABLE_IMPORT) || jobType.equals(JobType.ALTCOLOR_INSTALL)) {
       Platform.runLater(() -> {
-        this.tableOverviewController.onReload();
+        if(event.getGameId() >= 0) {
+          EventManager.getInstance().notifyTableChange(event.getGameId());
+        }
+        else {
+          this.tableOverviewController.onReload();
+        }
       });
     }
   }
@@ -130,6 +139,10 @@ public class TablesController implements Initializable, StudioFXController, Stud
   @Override
   public void tableChanged(int id) {
     this.tableOverviewController.reload(id);
+  }
+
+  public StackPane getEditorRootStack() {
+    return editorRootStack;
   }
 
   @Override

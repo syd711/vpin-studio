@@ -68,7 +68,7 @@ public class PovUploadProgressModel extends ProgressModel<File> {
       }
       else {
         Platform.runLater(() -> {
-          EventManager.getInstance().notifyJobFinished(POV_INSTALL);
+          EventManager.getInstance().notifyJobFinished(POV_INSTALL, gameId);
         });
       }
       progressResultModel.addProcessed();

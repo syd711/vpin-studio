@@ -43,6 +43,15 @@ public class EventManager {
     }).start();
   }
 
+  public void notifyJobFinished(JobType type, int gameId) {
+    JobFinishedEvent event = new JobFinishedEvent(type, gameId);
+    new Thread(() -> {
+      for (StudioEventListener listener : listeners) {
+        listener.jobFinished(event);
+      }
+    }).start();
+  }
+
   public void notifyRepositoryUpdate() {
     new Thread(() -> {
       for (StudioEventListener listener : listeners) {

@@ -70,7 +70,7 @@ public class TableMediaUploadProgressModel extends ProgressModel<File> {
       }
       else if (!iterator.hasNext()) {
         Platform.runLater(() -> {
-          EventManager.getInstance().notifyJobFinished(POPPER_MEDIA_INSTALL);
+          EventManager.getInstance().notifyJobFinished(POPPER_MEDIA_INSTALL, gameId);
         });
       }
       progressResultModel.addProcessed();

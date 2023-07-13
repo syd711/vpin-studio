@@ -10,4 +10,4 @@
 
 **Miscellaneous**
 
-- Optimized table reload: Instead of reloading all, only the selected table will be refreshed on changed. 
+- Optimized table reload: Instead of reloading all, only the selected table will be refreshed most changes. 

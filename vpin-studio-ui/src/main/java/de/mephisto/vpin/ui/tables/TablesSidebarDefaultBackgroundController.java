@@ -4,6 +4,7 @@ import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.client.VPinStudioClient;
 import de.mephisto.vpin.restclient.representations.GameRepresentation;
 import de.mephisto.vpin.ui.Studio;
+import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.util.Dialogs;
 import de.mephisto.vpin.ui.util.MediaUtil;
 import javafx.application.Platform;
@@ -67,7 +68,7 @@ public class TablesSidebarDefaultBackgroundController implements Initializable {
     if (this.game.isPresent()) {
       boolean uploaded = Dialogs.openDefaultBackgroundUploadDialog(this.game.get());
       if (uploaded) {
-        tablesSidebarController.getTablesController().onReload();
+        EventManager.getInstance().notifyTableChange(this.game.get().getId());
       }
     }
   }

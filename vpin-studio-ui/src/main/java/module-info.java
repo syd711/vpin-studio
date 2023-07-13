@@ -9,6 +9,7 @@ module de.mephisto.vpin.ui {
   requires com.github.spotbugs.annotations;
   requires java.desktop;
   requires org.slf4j;
+  requires org.fxmisc.richtext;
   requires imgscalr.lib;
   requires org.apache.commons.lang3;
   requires org.apache.commons.io;

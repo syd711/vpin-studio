@@ -67,7 +67,7 @@ public class AltSoundUploadProgressModel extends ProgressModel<File> {
       }
       else {
         Platform.runLater(() -> {
-          EventManager.getInstance().notifyJobFinished(ALTSOUND_INSTALL);
+          EventManager.getInstance().notifyJobFinished(ALTSOUND_INSTALL, gameId);
         });
       }
       progressResultModel.addProcessed();

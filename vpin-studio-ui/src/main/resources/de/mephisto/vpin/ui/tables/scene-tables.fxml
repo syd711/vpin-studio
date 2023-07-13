@@ -1,40 +1,46 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import java.net.URL?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Tab?>
 <?import javafx.scene.control.TabPane?>
 <?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 <?import org.kordamp.ikonli.javafx.FontIcon?>
 
-<BorderPane styleClass="base-component" stylesheets="@../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.tables.TablesController">
+<BorderPane styleClass="base-component" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.tables.TablesController">
 
     <center>
         <BorderPane styleClass="subpanel" BorderPane.alignment="CENTER">
             <center>
-                <TabPane fx:id="tabPane" tabClosingPolicy="UNAVAILABLE" BorderPane.alignment="CENTER">
-                    <tabs>
-                        <Tab fx:id="tablesTab" closable="false" text=" Tables">
-                            <content>
-                                <BorderPane prefHeight="200.0" prefWidth="200.0" />
-                            </content>
-                            <graphic>
-                                <FontIcon iconColor="WHITE" iconLiteral="bi-card-list" iconSize="12" text="" />
-                            </graphic>
-                        </Tab>
-                        <Tab fx:id="tableRepositoryTab" text="Table Repository">
-                            <content>
-                                <BorderPane prefHeight="200.0" prefWidth="200.0" />
-                            </content>
-                            <graphic>
-                                <FontIcon iconColor="WHITE" iconLiteral="mdi2a-archive-outline" />
-                            </graphic>
-                        </Tab>
-                    </tabs>
-                    <BorderPane.margin>
-                        <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
-                    </BorderPane.margin>
-                </TabPane>
+            <StackPane fx:id="editorRootStack" BorderPane.alignment="CENTER">
+               <BorderPane.margin>
+                  <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
+               </BorderPane.margin>
+               <children>
+                      <TabPane fx:id="tabPane" tabClosingPolicy="UNAVAILABLE">
+                          <tabs>
+                              <Tab fx:id="tablesTab" closable="false" text=" Tables">
+                                  <content>
+                                      <BorderPane prefHeight="200.0" prefWidth="200.0" />
+                                  </content>
+                                  <graphic>
+                                      <FontIcon iconColor="WHITE" iconLiteral="bi-card-list" iconSize="12" text="" />
+                                  </graphic>
+                              </Tab>
+                              <Tab fx:id="tableRepositoryTab" text="Table Repository">
+                                  <content>
+                                      <BorderPane prefHeight="200.0" prefWidth="200.0" />
+                                  </content>
+                                  <graphic>
+                                      <FontIcon iconColor="WHITE" iconLiteral="mdi2a-archive-outline" />
+                                  </graphic>
+                              </Tab>
+                          </tabs>
+                      </TabPane>
+               </children>
+            </StackPane>
             </center>
             <BorderPane.margin>
                 <Insets right="12.0" />
@@ -49,4 +55,8 @@
          </children>
       </VBox>
    </right>
+   <stylesheets>
+      <URL value="@../stylesheet.css" />
+      <URL value="@../richtext.css" />
+   </stylesheets>
 </BorderPane>

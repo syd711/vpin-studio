@@ -68,7 +68,7 @@ public class AltColorUploadProgressModel extends ProgressModel<File> {
       }
       else {
         Platform.runLater(() -> {
-          EventManager.getInstance().notifyJobFinished(ALTCOLOR_INSTALL);
+          EventManager.getInstance().notifyJobFinished(ALTCOLOR_INSTALL, gameId);
         });
       }
       progressResultModel.addProcessed();

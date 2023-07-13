@@ -4,6 +4,7 @@ import de.mephisto.vpin.commons.utils.FileUtils;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.representations.GameRepresentation;
 import de.mephisto.vpin.ui.Studio;
+import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.tables.dialogs.ScriptDownloadProgressModel;
 import de.mephisto.vpin.ui.util.Dialogs;
 import de.mephisto.vpin.ui.util.ProgressResultModel;
@@ -64,6 +65,9 @@ public class TablesSidebarScriptDataController implements Initializable {
   private Button inspectBtn;
 
   @FXML
+  private Button editBtn;
+
+  @FXML
   private Button editTableNameBtn;
 
   private Optional<GameRepresentation> game = Optional.empty();
@@ -97,7 +101,14 @@ public class TablesSidebarScriptDataController implements Initializable {
       } catch (Exception e) {
         WidgetFactory.showAlert(Studio.stage, e.getMessage());
       }
-      tablesSidebarController.getTablesController().onReload();
+      EventManager.getInstance().notifyTableChange(gameRepresentation.getId());
+    }
+  }
+
+  @FXML
+  public void onEdit() {
+    if(this.game.isPresent()) {
+      tablesSidebarController.getTablesController().showEditor(this.game.get());
     }
   }
 
@@ -124,7 +135,7 @@ public class TablesSidebarScriptDataController implements Initializable {
       } catch (Exception e) {
         WidgetFactory.showAlert(Studio.stage, e.getMessage());
       }
-      tablesSidebarController.getTablesController().onReload();
+      EventManager.getInstance().notifyTableChange(gameRepresentation.getId());
     }
   }
 
@@ -140,7 +151,7 @@ public class TablesSidebarScriptDataController implements Initializable {
       } catch (Exception e) {
         WidgetFactory.showAlert(Studio.stage, e.getMessage());
       }
-      tablesSidebarController.getTablesController().onReload();
+      EventManager.getInstance().notifyTableChange(gameRepresentation.getId());
     }
   }
 
@@ -174,6 +185,7 @@ public class TablesSidebarScriptDataController implements Initializable {
     editTableNameBtn.setDisable(g.isEmpty());
     romUploadBtn.setDisable(g.isEmpty());
     inspectBtn.setDisable(g.isEmpty() || !g.get().isGameFileAvailable());
+    editBtn.setDisable(g.isEmpty() || !g.get().isGameFileAvailable());
 
     if (g.isPresent()) {
       GameRepresentation game = g.get();
