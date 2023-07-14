@@ -529,8 +529,12 @@ public class DiscordService implements InitializingBean, PreferenceChangedListen
   }
 
   @Override
-  public void afterPropertiesSet() throws Exception {
-    preferencesService.addChangeListener(this);
-    this.recreateDiscordClient();
+  public void afterPropertiesSet() {
+    try {
+      preferencesService.addChangeListener(this);
+      this.recreateDiscordClient();
+    } catch (Exception e) {
+      LOG.error("Failed to initialize Discord Service: " + e.getMessage(), e);
+    }
   }
 }

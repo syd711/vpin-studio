@@ -31,7 +31,7 @@ public class DiscordTest extends AbstractVPinServerTest {
   private DiscordService discordService;
 
   @Test
-  public void testMessageHistory() throws InterruptedException {
+  public void testMessageHistory() throws Exception {
     String token = System.getenv("BOT_TOKEN");
     DiscordClient client = new DiscordClient(token, new DiscordCommandResolver() {
       @Override

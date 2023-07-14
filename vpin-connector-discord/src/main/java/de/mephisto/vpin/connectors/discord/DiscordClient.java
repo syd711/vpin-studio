@@ -35,7 +35,7 @@ public class DiscordClient {
 
   private final Map<Long, PinnedMessages> pinnedMessagesCache = new HashMap<>();
 
-  public DiscordClient(String botToken, DiscordCommandResolver commandResolver) throws InterruptedException {
+  public DiscordClient(String botToken, DiscordCommandResolver commandResolver) throws Exception {
     this.listenerAdapter = new DiscordListenerAdapter(this, commandResolver);
     this.botToken = botToken;
 
