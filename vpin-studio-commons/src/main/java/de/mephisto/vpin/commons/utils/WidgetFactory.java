@@ -292,7 +292,6 @@ public class WidgetFactory {
 
     if (baseType.equals("image")) {
       ImageView imageView = new ImageView();
-      System.out.println(parent.getId() + ": " + parent.getPrefWidth() + "/" + parent.getPrefHeight());
       imageView.setFitWidth(parent.getPrefWidth() - 10);
       imageView.setFitHeight(parent.getPrefHeight() - 60);
       imageView.setPreserveRatio(true);
