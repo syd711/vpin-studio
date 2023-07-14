@@ -330,7 +330,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
       } catch (Exception e) {
         WidgetFactory.showAlert(Studio.stage, e.getMessage());
       }
-      onReload();
+      EventManager.getInstance().notifyTableChange(game.getId());
     }
   }
 

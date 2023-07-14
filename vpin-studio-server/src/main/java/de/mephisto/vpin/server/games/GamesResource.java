@@ -122,19 +122,25 @@ public class GamesResource {
         LOG.error("Table upload request did not contain a file object.");
         return false;
       }
-      File uploadFile = new File(systemService.getVPXTablesFolder(), file.getOriginalFilename());
-      uploadFile = FileUtils.uniqueFile(uploadFile);
+      File originalFile = new File(systemService.getVPXTablesFolder(), file.getOriginalFilename());
+      File uploadFile = FileUtils.uniqueFile(originalFile);
 
       TableUploadDescriptor mode = TableUploadDescriptor.valueOf(modeString);
       if (gameId > 0) {
+        Game game = gameService.getGame(gameId);
+        File gameFile = game.getGameFile();
+
         if (mode.equals(TableUploadDescriptor.uploadAndReplace)) {
-          if (!uploadFile.delete()) {
+          if (!gameFile.delete()) {
+            LOG.error("Table upload failed: existing table could not be deleted.");
             throw new ResponseStatusException(INTERNAL_SERVER_ERROR, "Table upload failed: existing table could not be deleted.");
           }
+          uploadFile = gameFile;
         }
         else if (mode.equals(TableUploadDescriptor.uploadAndClone)) {
         }
       }
+
 
       if (UploadUtil.upload(file, uploadFile)) {
         switch (mode) {

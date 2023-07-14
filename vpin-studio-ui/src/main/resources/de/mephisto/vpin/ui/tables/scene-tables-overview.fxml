@@ -128,7 +128,7 @@
                               <FontIcon iconColor="WHITE" iconLiteral="mdi2d-database-import-outline" iconSize="14" />
                            </graphic>
                            <tooltip>
-                              <Tooltip text="Resets the dismissed validations and revalidates the table configuration." />
+                              <Tooltip text="Imports existing VPX files into PinUP Popper" />
                            </tooltip>
                         </Button>
                                 <MenuButton fx:id="uploadMenuBtn" mnemonicParsing="false" text="Upload">

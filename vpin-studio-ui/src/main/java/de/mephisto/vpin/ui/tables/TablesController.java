@@ -126,7 +126,7 @@ public class TablesController implements Initializable, StudioFXController, Stud
         || jobType.equals(JobType.ALTSOUND_INSTALL) || jobType.equals(JobType.DIRECTB2S_INSTALL)
         || jobType.equals(JobType.TABLE_IMPORT) || jobType.equals(JobType.ALTCOLOR_INSTALL)) {
       Platform.runLater(() -> {
-        if(event.getGameId() >= 0) {
+        if(event.getGameId() > 0) {
           EventManager.getInstance().notifyTableChange(event.getGameId());
         }
         else {
