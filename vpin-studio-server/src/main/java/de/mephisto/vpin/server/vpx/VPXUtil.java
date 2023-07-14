@@ -10,7 +10,9 @@ import org.slf4j.LoggerFactory;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 public class VPXUtil {
   private final static Logger LOG = LoggerFactory.getLogger(VPXFileScanner.class);
@@ -18,25 +20,15 @@ public class VPXUtil {
   public static String readScript(@NonNull File file) {
     byte[] content = readBytes(file);
 
-    int startIndex = 0;
-    int endIndex = 0;
-
     int index = 0;
+    List<Integer> indexes = new ArrayList<>();
     for (byte b : content) {
       if (b == 4) {
-        if (startIndex == 0) {
-          index++;
-          startIndex = index;
-          continue;
-        }
-
-        endIndex = index;
-        break;
+        indexes.add(index);
       }
       index++;
     }
-
-    byte[] scriptData = Arrays.copyOfRange(content, startIndex, endIndex);
+    byte[] scriptData = Arrays.copyOfRange(content, indexes.get(indexes.size()-2)+12, indexes.get(indexes.size()-1));
     return new String(scriptData);
   }
 
@@ -75,19 +67,17 @@ public class VPXUtil {
     POIFSFileSystem fs = null;
     try {
       byte[] content = readBytes(file);
-
-      byte[] headerBytes = new byte[0];
-      int index = 1;
-      do {
-        headerBytes = Arrays.copyOfRange(content, 0, index);
+      int index = 0;
+      List<Integer> indexes = new ArrayList<>();
+      for (byte b : content) {
+        if (b == 4) {
+          indexes.add(index);
+        }
         index++;
       }
-      while (headerBytes[headerBytes.length - 1] != 4);
 
-      byte[] footerBytes = content;
-      while (footerBytes[0] != 4) {
-        footerBytes = Arrays.copyOfRange(footerBytes, 1, footerBytes.length);
-      }
+      byte[] headerBytes = Arrays.copyOfRange(content, 0, indexes.get(indexes.size()-2)+12);
+      byte[] footerBytes = Arrays.copyOfRange(content, indexes.get(indexes.size()-1), content.length);
 
       byte[] documentBytes = ArrayUtils.addAll(headerBytes, decoded);
       documentBytes = ArrayUtils.addAll(documentBytes, footerBytes);

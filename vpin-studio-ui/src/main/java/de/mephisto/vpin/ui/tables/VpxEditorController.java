@@ -4,6 +4,7 @@ import de.mephisto.vpin.restclient.representations.GameRepresentation;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.util.RichText;
 import edu.umd.cs.findbugs.annotations.NonNull;
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
@@ -14,11 +15,14 @@ import javafx.scene.layout.BorderPane;
 import org.apache.commons.lang3.StringUtils;
 import org.fxmisc.flowless.VirtualizedScrollPane;
 import org.fxmisc.richtext.CodeArea;
+import org.fxmisc.richtext.model.RichTextChange;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.net.URL;
+import java.util.Collection;
 import java.util.ResourceBundle;
+import java.util.function.Consumer;
 
 public class VpxEditorController implements Initializable {
   private final static Logger LOG = LoggerFactory.getLogger(VpxEditorController.class);
@@ -59,8 +63,6 @@ public class VpxEditorController implements Initializable {
     String text = codeArea.getText();
     Studio.client.getVpxService().saveTableSource(game, text);
 
-    this.saveBtn.setDisable(false);
-    this.saveAndCloseBtn.setDisable(false);
     this.closeBtn.setDisable(false);
   }
 
@@ -72,9 +74,8 @@ public class VpxEditorController implements Initializable {
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
-    textfieldSearch.textProperty().addListener((observableValue, s, filterValue) -> {
-
-    });
+    this.saveBtn.setDisable(true);
+    this.saveAndCloseBtn.setDisable(true);
   }
 
   @FXML
@@ -105,6 +106,7 @@ public class VpxEditorController implements Initializable {
   public void setGame(@NonNull GameRepresentation game, String source) {
     this.game = game;
     richText = new RichText(source);
+
     VirtualizedScrollPane scrollPane = new VirtualizedScrollPane(richText.getCodeArea());
     centerPane.setCenter(scrollPane);
   }

@@ -161,6 +161,7 @@ public class VPXService {
         try {
           byte[] decoded = Base64.getDecoder().decode(base64Source);
           VPXUtil.writeGameData(gameFile, decoded);
+          LOG.info("Written table sources " + gameFile.getAbsolutePath());
           return true;
         } catch (IOException e) {
           //already logged

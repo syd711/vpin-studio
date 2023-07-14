@@ -292,8 +292,9 @@ public class WidgetFactory {
 
     if (baseType.equals("image")) {
       ImageView imageView = new ImageView();
+      System.out.println(parent.getId() + ": " + parent.getPrefWidth() + "/" + parent.getPrefHeight());
       imageView.setFitWidth(parent.getPrefWidth() - 10);
-      imageView.setFitHeight(parent.getPrefWidth() - 20);
+      imageView.setFitHeight(parent.getPrefHeight() - 60);
       imageView.setPreserveRatio(true);
 
       ByteArrayInputStream gameMediaItem = client.getAssetService().getGameMediaItem(mediaItem.getGameId(), PopperScreen.valueOf(mediaItem.getScreen()));
