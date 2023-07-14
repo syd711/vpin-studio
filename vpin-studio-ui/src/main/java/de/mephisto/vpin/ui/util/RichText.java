@@ -20,6 +20,9 @@ import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+/**
+ *
+ */
 public class RichText {
 
 
@@ -63,8 +66,9 @@ public class RichText {
   private static final String BRACKET_PATTERN = "\\[|\\]";
   private static final String SEMICOLON_PATTERN = "\\;";
   private static final String STRING_PATTERN = "\"([^\"\\\\]|\\\\.)*\"";
-  private static final String COMMENT_PATTERN = "//[^\n]*" + "|" + "/\\*(.|\\R)*?\\*/"   // for whole text processing (text blocks)
-      + "|" + "/\\*[^\\v]*" + "|" + "^\\h*\\*([^\\v]*|/)";  // for visible paragraph processing (line by line)
+  private static final String COMMENT_PATTERN = "^(\\'[^\\r\\n]+)$|(''[^\\r\\n]+)$\n";
+//  private static final String COMMENT_PATTERN = "//[^\n]*" + "|" + "/\\*(.|\\R)*?\\*/"   // for whole text processing (text blocks)
+//      + "|" + "/\\*[^\\v]*" + "|" + "^\\h*\\*([^\\v]*|/)";  // for visible paragraph processing (line by line)
 
   private static final Pattern PATTERN = Pattern.compile(
       "(?<KEYWORD>" + KEYWORD_PATTERN + ")"

@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.net.URL?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.ToolBar?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.text.Font?>
+<?import org.kordamp.ikonli.javafx.FontIcon?>
+
+<BorderPane fx:id="root" styleClass="subpanel" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.tables.VpxEditorController">
+
+    <center>
+        <BorderPane fx:id="centerPane" styleClass="subpanel" BorderPane.alignment="CENTER">
+            <BorderPane.margin>
+                <Insets />
+            </BorderPane.margin>
+        </BorderPane>
+    </center>
+   <stylesheets>
+      <URL value="@../stylesheet.css" />
+      <URL value="@../richtext.css" />
+   </stylesheets>
+   <top>
+      <ToolBar BorderPane.alignment="CENTER">
+         <BorderPane.margin>
+            <Insets bottom="6.0" left="6.0" right="6.0" />
+         </BorderPane.margin>
+         <items>
+            <TextField fx:id="textfieldSearch" onKeyPressed="#onSearchKeyPressed" prefHeight="30.0" prefWidth="215.0" promptText="Search...">
+               <font>
+                  <Font size="14.0" />
+               </font>
+            </TextField>
+         </items>
+      </ToolBar>
+   </top>
+   <bottom>
+      <ToolBar nodeOrientation="RIGHT_TO_LEFT" prefHeight="40.0" prefWidth="1233.0" BorderPane.alignment="CENTER">
+        <items>
+            <Button fx:id="saveBtn" alignment="CENTER_RIGHT" contentDisplay="RIGHT" layoutX="115.0" layoutY="11.0" mnemonicParsing="false" onAction="#onSave" text="Save" textFill="WHITE">
+               <font>
+                  <Font size="14.0" />
+               </font>
+               <graphic>
+                  <FontIcon iconColor="WHITE" iconLiteral="mdi2c-content-save" />
+               </graphic>
+            </Button>
+          <Button fx:id="saveAndCloseBtn" alignment="CENTER_RIGHT" contentDisplay="RIGHT" mnemonicParsing="false" onAction="#onSaveAndClose" text="Save &amp; Close" textFill="WHITE">
+               <font>
+                  <Font size="14.0" />
+               </font>
+            </Button>
+            <Separator orientation="VERTICAL" prefHeight="0.0" prefWidth="0.0" />
+            <Button fx:id="closeBtn" alignment="CENTER_RIGHT" contentDisplay="RIGHT" layoutX="10.0" layoutY="11.0" mnemonicParsing="false" onAction="#onClose" text="Close" textFill="WHITE">
+               <font>
+                  <Font size="14.0" />
+               </font>
+            </Button>
+        </items>
+      </ToolBar>
+   </bottom>
+</BorderPane>

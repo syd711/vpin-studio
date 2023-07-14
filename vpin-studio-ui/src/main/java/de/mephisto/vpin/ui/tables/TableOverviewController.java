@@ -1,6 +1,7 @@
 package de.mephisto.vpin.ui.tables;
 
 import de.mephisto.vpin.commons.EmulatorType;
+import de.mephisto.vpin.commons.fx.widgets.WidgetLatestScoresController;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.ValidationCode;
 import de.mephisto.vpin.restclient.representations.GameRepresentation;
@@ -385,12 +386,22 @@ public class TableOverviewController implements Initializable, StudioFXControlle
   public void showEditor(GameRepresentation game) {
     String tableSource = client.getVpxService().getTableSource(game);
     if (!StringUtils.isEmpty(tableSource)) {
-      String source = new String(Base64.getDecoder().decode(tableSource), Charset.forName("utf8"));
-      RichText richText = new RichText(source);
+      try {
+        FXMLLoader loader = new FXMLLoader(VpxEditorController.class.getResource("vpx-editor.fxml"));
+        BorderPane root = loader.load();
+        root.setMaxWidth(Double.MAX_VALUE);
 
-      StackPane editorRootStack = tablesController.getEditorRootStack();
-      VirtualizedScrollPane scrollPane = new VirtualizedScrollPane(richText.getCodeArea());
-      editorRootStack.getChildren().add(scrollPane);
+        StackPane editorRootStack = tablesController.getEditorRootStack();
+        editorRootStack.getChildren().add(root);
+
+        VpxEditorController editorController = loader.getController();
+
+        String source = new String(Base64.getDecoder().decode(tableSource), Charset.forName("utf8"));
+        editorController.setGame(game, source);
+        editorController.setTablesController(tablesController);
+      } catch (IOException e) {
+        LOG.error("Failed to load VPX Editor: " + e.getMessage(), e);
+      }
     }
   }
 

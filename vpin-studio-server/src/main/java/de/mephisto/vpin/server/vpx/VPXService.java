@@ -19,6 +19,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Arrays;
 import java.util.Base64;
 import java.util.Map;
 
@@ -144,8 +145,8 @@ public class VPXService {
     if (game != null) {
       File gameFile = game.getGameFile();
       if (gameFile.exists()) {
-        byte[] sources = VPXUtil.readBytes(gameFile);
-        return Base64.getEncoder().encodeToString(sources);
+        String sources = VPXUtil.readScript(gameFile);
+        return Base64.getEncoder().encodeToString(sources.getBytes());
       }
     }
     LOG.error("No game found for table sources, id " + gameId);
@@ -159,7 +160,7 @@ public class VPXService {
       if (gameFile.exists()) {
         try {
           byte[] decoded = Base64.getDecoder().decode(base64Source);
-          VPXUtil.writeBytes(gameFile, decoded);
+          VPXUtil.writeGameData(gameFile, decoded);
           return true;
         } catch (IOException e) {
           //already logged

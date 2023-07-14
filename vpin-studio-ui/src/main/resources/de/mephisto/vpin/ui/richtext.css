@@ -22,18 +22,17 @@
 }
 
 .comment {
-	-fx-fill: cadetblue;
+	-fx-fill: darkgreen;
 }
 
 .paragraph-box:has-caret {
-    -fx-background-color: #f2f9fc;
+    -fx-background-color: #e2e9ec;
 }
 
 .styled-text-area {
     /* set the entire area's font size to the given size */
     -fx-font-size: 14;
     -fx-font-color: #C7C3C3;
-    -fx-text-fill: #C7C3C3;
 }
 
 .styled-text-area .text {
