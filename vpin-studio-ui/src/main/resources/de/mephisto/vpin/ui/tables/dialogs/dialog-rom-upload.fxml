@@ -6,6 +6,7 @@
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
 <BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" styleClass="base-component" stylesheets="@../../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.tables.dialogs.ROMUploadController">
@@ -32,11 +33,11 @@
       </HBox>
    </bottom>
    <center>
-      <BorderPane BorderPane.alignment="CENTER">
+      <BorderPane prefWidth="520.0" BorderPane.alignment="CENTER">
          <center>
             <HBox>
                <children>
-                  <TextField fx:id="fileNameField" editable="false" prefHeight="26.0" prefWidth="375.0">
+                  <TextField fx:id="fileNameField" editable="false" prefHeight="30.0" prefWidth="401.0">
                      <HBox.margin>
                         <Insets right="12.0" />
                      </HBox.margin>
@@ -52,14 +53,19 @@
             </HBox>
          </center>
          <top>
-            <Label fx:id="titleLabel" text="ROM File:" textFill="WHITE" BorderPane.alignment="TOP_LEFT">
-               <font>
-                  <Font size="14.0" />
-               </font>
+            <VBox BorderPane.alignment="TOP_LEFT">
                <BorderPane.margin>
-                  <Insets bottom="6.0" />
+                  <Insets bottom="12.0" />
                </BorderPane.margin>
-            </Label>
+               <children>
+                  <Label fx:id="titleLabel" text="ROM Upload" textFill="WHITE">
+                     <font>
+                        <Font size="18.0" />
+                     </font>
+                  </Label>
+                  <Label styleClass="preference-description" text="The selected zip files will be uploaded into the &quot;roms&quot; folder of VPinMAME." />
+               </children>
+            </VBox>
          </top>
          <BorderPane.margin>
             <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />

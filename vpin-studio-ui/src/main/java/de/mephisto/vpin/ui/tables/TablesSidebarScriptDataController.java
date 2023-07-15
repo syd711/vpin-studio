@@ -115,7 +115,10 @@ public class TablesSidebarScriptDataController implements Initializable {
   @FXML
   public void onAliasEdit() {
     if (this.game.isPresent()) {
-
+      GameRepresentation g = this.game.get();
+      String alias = g.getRom();
+      String rom = g.getOriginalRom();
+      Dialogs.openAliasMappingDialog(g, alias, rom);
     }
   }
 

@@ -47,6 +47,7 @@ public class VPinStudioClient implements ObservedPropertyChangeListener, Overlay
   private final TableManagerServiceClient tableManagerServiceClient;
   private final VpxServiceClient vpxServiceClient;
   private final VpbmServiceClient vpbmServiceClient;
+  private final RomServiceClient romServiceClient;
 
   public VPinStudioClient(String host) {
     this.host = host;
@@ -72,6 +73,11 @@ public class VPinStudioClient implements ObservedPropertyChangeListener, Overlay
     this.tableManagerServiceClient = new TableManagerServiceClient(this);
     this.vpxServiceClient = new VpxServiceClient(this);
     this.vpbmServiceClient = new VpbmServiceClient(this);
+    this.romServiceClient = new RomServiceClient(this);
+  }
+
+  public RomServiceClient getRomService() {
+    return romServiceClient;
   }
 
   public AltColorServiceClient getAltColorService() {

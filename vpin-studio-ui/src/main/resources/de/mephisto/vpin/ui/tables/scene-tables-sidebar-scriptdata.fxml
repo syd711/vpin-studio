@@ -44,7 +44,7 @@
                                 <Font name="System Bold" size="14.0" />
                             </font>
                         </Label>
-                        <Label layoutX="10.0" layoutY="31.0" text="Rom Name:" textFill="WHITE" GridPane.rowIndex="3">
+                        <Label layoutX="10.0" layoutY="31.0" text="Effective Rom Name:" textFill="WHITE" GridPane.rowIndex="3">
                             <font>
                                 <Font name="System Bold" size="14.0" />
                             </font>
@@ -81,14 +81,6 @@
                         </Label>
                         <HBox alignment="CENTER_RIGHT" spacing="6.0" GridPane.columnIndex="2" GridPane.rowIndex="3">
                             <children>
-                                <Button fx:id="editRomNameBtn" mnemonicParsing="false" onAction="#onRomEdit">
-                                    <graphic>
-                                        <FontIcon iconColor="WHITE" iconLiteral="mdi2d-database-edit-outline" />
-                                    </graphic>
-                                    <tooltip>
-                                        <Tooltip text="Update the ROM name for this table." />
-                                    </tooltip>
-                                </Button>
                                 <Button fx:id="romUploadBtn" mnemonicParsing="false" onAction="#onRomUpload">
                                     <graphic>
                                         <FontIcon iconColor="WHITE" iconLiteral="mdi2u-upload" />
@@ -96,6 +88,14 @@
                                     <HBox.margin>
                                         <Insets />
                                     </HBox.margin>
+                                </Button>
+                                <Button fx:id="editRomNameBtn" mnemonicParsing="false" onAction="#onRomEdit">
+                                    <graphic>
+                                        <FontIcon iconColor="WHITE" iconLiteral="mdi2d-database-edit-outline" />
+                                    </graphic>
+                                    <tooltip>
+                                        <Tooltip text="Update the ROM name for this table." />
+                                    </tooltip>
                                 </Button>
                                 <Label>
                                     <font>

@@ -6,6 +6,7 @@ import de.mephisto.vpin.server.system.SystemService;
 import de.mephisto.vpin.server.util.VPXFileScanner;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,10 +17,9 @@ import org.springframework.stereotype.Service;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.nio.charset.Charset;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class RomService implements InitializingBean {
@@ -35,8 +35,8 @@ public class RomService implements InitializingBean {
 
   @NonNull
   public ScanResult scanGameFile(@NonNull Game game) {
-    if(game.getEmulator().getName().equalsIgnoreCase(Emulator.VISUAL_PINBALL_X) || game.getEmulator().getName().equalsIgnoreCase(Emulator.VISUAL_PINBALL)) {
-      if(game.getGameFile().exists()) {
+    if (game.getEmulator().getName().equalsIgnoreCase(Emulator.VISUAL_PINBALL_X) || game.getEmulator().getName().equalsIgnoreCase(Emulator.VISUAL_PINBALL)) {
+      if (game.getGameFile().exists()) {
         return VPXFileScanner.scan(game.getGameFile());
       }
 
@@ -55,6 +55,29 @@ public class RomService implements InitializingBean {
     return null;
   }
 
+  public boolean clearCache() {
+    this.aliasMapping.clear();
+    this.loadAliasMapping();
+    return true;
+  }
+
+  public boolean saveAliasMapping(Map<String, Object> values) throws IOException {
+    Set<Map.Entry<String, Object>> entries = values.entrySet();
+    for (Map.Entry<String, Object> entry : entries) {
+      String alias = entry.getKey();
+      String romName = (String) entry.getValue();
+
+      if (!aliasMapping.containsValue(alias)) {
+        aliasMapping.put(alias.trim(), romName.trim());
+      }
+    }
+
+    String mapAsString = aliasMapping.keySet().stream().map(key -> key.trim() + "," + aliasMapping.get(key).trim()).sorted().collect(Collectors.joining("\n"));
+    File vpmAliasFile = systemService.getVPMAliasFile();
+    FileUtils.writeStringToFile(vpmAliasFile, mapAsString, Charset.defaultCharset());
+    loadAliasMapping();
+    return true;
+  }
 
   private void loadAliasMapping() {
     File vpmAliasFile = systemService.getVPMAliasFile();
@@ -75,6 +98,7 @@ public class RomService implements InitializingBean {
             }
           }
         }
+        LOG.info("Loaded " + aliasMapping.size() + " alias mappings.");
       }
     } catch (IOException e) {
       LOG.error("Error loading " + vpmAliasFile.getAbsolutePath() + ": " + e.getMessage(), e);

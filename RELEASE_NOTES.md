@@ -7,3 +7,4 @@
 - Added alias mapping editor.
 - Added alias mapping help.
 - Added nvoffset help.
+- Renamed "Rom Name" label to "Effective Rom Name": Since the name can be aliased, the ROM name here may to differ to the one of the actual file.

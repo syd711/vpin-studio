@@ -304,6 +304,14 @@ public class Dialogs {
     return controller.uploadFinished();
   }
 
+  public static boolean openAliasMappingDialog(GameRepresentation game, String alias, String rom) {
+    Stage stage = createStudioDialogStage(AliasMappingController.class, "dialog-alias-mapping.fxml", "Alias Mapping");
+    AliasMappingController controller = (AliasMappingController) stage.getUserData();
+    controller.setValues(game, alias, rom);
+    stage.showAndWait();
+    return true;
+  }
+
   public static boolean openInstallerDialog() {
     Stage stage = createStudioDialogStage(InstallationController.class, "dialog-installer.fxml", "Visual Studio Server Installation");
     InstallationController controller = (InstallationController) stage.getUserData();

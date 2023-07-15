@@ -422,9 +422,22 @@ public class Game {
     return null;
   }
 
+  @Nullable
+  public String getEffectiveRom() {
+    if (!StringUtils.isEmpty(this.getOriginalRom())) {
+      return this.getOriginalRom();
+    }
+    return this.getRom();
+  }
+
   public boolean isRomExists() {
-    File romFile = getRomFile();
-    return romFile != null && romFile.exists();
+    if (!StringUtils.isEmpty(this.getEffectiveRom())) {
+      File romFile = new File(systemService.getMameRomFolder(), this.getEffectiveRom() + ".zip");
+      if (romFile.exists()) {
+        return true;
+      }
+    }
+    return false;
   }
 
   @NonNull
