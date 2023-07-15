@@ -4,7 +4,6 @@ import de.mephisto.vpin.restclient.representations.GameRepresentation;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.util.RichText;
 import edu.umd.cs.findbugs.annotations.NonNull;
-import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
@@ -15,14 +14,11 @@ import javafx.scene.layout.BorderPane;
 import org.apache.commons.lang3.StringUtils;
 import org.fxmisc.flowless.VirtualizedScrollPane;
 import org.fxmisc.richtext.CodeArea;
-import org.fxmisc.richtext.model.RichTextChange;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.net.URL;
-import java.util.Collection;
 import java.util.ResourceBundle;
-import java.util.function.Consumer;
 
 public class VpxEditorController implements Initializable {
   private final static Logger LOG = LoggerFactory.getLogger(VpxEditorController.class);

@@ -82,6 +82,9 @@ public class TablesSidebarController implements Initializable {
   private Button altColorExplorerBtn;
 
   @FXML
+  private Button scriptBtn;
+
+  @FXML
   private HBox popperTitleButtonArea;
 
   @FXML
@@ -161,6 +164,25 @@ public class TablesSidebarController implements Initializable {
   }
 
   @FXML
+  private void onScript() {
+    try {
+      if (this.game.isPresent()) {
+        GameRepresentation game = this.game.get();
+        SystemSummary systemSummary = Studio.client.getSystemService().getSystemSummary();
+        String vpxFilePath = "\"" + new File(systemSummary.getVisualPinballDirectory(), "Tables/" + game.getGameFileName()).getAbsolutePath() + "\"";
+        String vpxExePath = new File(systemSummary.getVisualPinballDirectory(), "VPinballX.exe").getAbsolutePath();
+        ProcessBuilder builder = new ProcessBuilder(vpxExePath, "-Edit", vpxFilePath);
+        builder.directory(new File(systemSummary.getVisualPinballDirectory()));
+        builder.start();
+      }
+    } catch (Exception e) {
+      LOG.error("Failed to open VPX: " + e.getMessage(), e);
+      WidgetFactory.showAlert(Studio.stage, "Error", "Failed to open VPX: " + e.getMessage());
+    }
+  }
+
+
+  @FXML
   private void onPopperBtn() {
     Desktop desktop = Desktop.isDesktopSupported() ? Desktop.getDesktop() : null;
     if (desktop != null && desktop.isSupported(Desktop.Action.OPEN)) {
@@ -186,6 +208,7 @@ public class TablesSidebarController implements Initializable {
     popperTitleButtonArea.setVisible(client.getSystemService().isLocal());
     altSoundExplorerBtn.setVisible(client.getSystemService().isLocal());
     altColorExplorerBtn.setVisible(client.getSystemService().isLocal());
+    scriptBtn.setVisible(client.getSystemService().isLocal());
 
     try {
       FXMLLoader loader = new FXMLLoader(TablesSidebarAltSoundController.class.getResource("scene-tables-sidebar-altsound.fxml"));

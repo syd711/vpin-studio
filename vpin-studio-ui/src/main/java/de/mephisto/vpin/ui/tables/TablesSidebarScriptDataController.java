@@ -22,6 +22,7 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.text.DateFormat;
+import java.util.Arrays;
 import java.util.Optional;
 import java.util.ResourceBundle;
 
@@ -68,6 +69,12 @@ public class TablesSidebarScriptDataController implements Initializable {
   private Button editBtn;
 
   @FXML
+  private Button scanBtn;
+
+  @FXML
+  private Button editAliasBtn;
+
+  @FXML
   private Button editTableNameBtn;
 
   private Optional<GameRepresentation> game = Optional.empty();
@@ -106,9 +113,25 @@ public class TablesSidebarScriptDataController implements Initializable {
   }
 
   @FXML
+  public void onAliasEdit() {
+    if (this.game.isPresent()) {
+
+    }
+  }
+
+
+  @FXML
   public void onEdit() {
-    if(this.game.isPresent()) {
+    if (this.game.isPresent()) {
       tablesSidebarController.getTablesController().showEditor(this.game.get());
+    }
+  }
+
+  @FXML
+  public void onScan() {
+    if (this.game.isPresent()) {
+      Dialogs.createProgressDialog(new TableScanProgressModel("Scanning Table \"" + this.game.get().getGameDisplayName() + "\"", Arrays.asList(this.game.get())));
+      EventManager.getInstance().notifyTableChange(this.game.get().getId());
     }
   }
 
@@ -186,6 +209,8 @@ public class TablesSidebarScriptDataController implements Initializable {
     romUploadBtn.setDisable(g.isEmpty());
     inspectBtn.setDisable(g.isEmpty() || !g.get().isGameFileAvailable());
     editBtn.setDisable(g.isEmpty() || !g.get().isGameFileAvailable());
+    scanBtn.setDisable(g.isEmpty() || !g.get().isGameFileAvailable());
+    editAliasBtn.setDisable(g.isEmpty() || !g.get().isGameFileAvailable());
 
     if (g.isPresent()) {
       GameRepresentation game = g.get();
