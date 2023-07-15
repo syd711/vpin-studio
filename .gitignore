@@ -29,7 +29,6 @@ vpin-studio-ui/target/
 .mtj.tmp/
 
 # Package Files #
-*.jar
 *.war
 *.nar
 *.ear
