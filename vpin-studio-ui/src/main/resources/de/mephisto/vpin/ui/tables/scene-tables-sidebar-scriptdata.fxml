@@ -64,7 +64,7 @@
                                 <Font size="14.0" />
                             </font>
                         </Label>
-                        <Label layoutX="10.0" layoutY="56.0" text="Rom Alias:" textFill="WHITE" GridPane.rowIndex="4">
+                        <Label layoutX="10.0" layoutY="56.0" text="ROM Alias:" textFill="WHITE" GridPane.rowIndex="4">
                             <font>
                                 <Font name="System Bold" size="14.0" />
                             </font>

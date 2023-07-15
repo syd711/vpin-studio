@@ -41,7 +41,7 @@ public class DefaultPictureService {
   public void extractDefaultPicture(@NonNull Game game) {
     DirectB2SImageExtractor extractor = new DirectB2SImageExtractor();
 
-    if (StringUtils.isEmpty(game.getRom())) {
+    if (StringUtils.isEmpty(game.getEffectiveRom())) {
       return;
     }
 
@@ -136,10 +136,10 @@ public class DefaultPictureService {
 
         if (target.getParentFile().exists() && target.getParentFile().canWrite()) {
           ImageUtil.write(resized, target);
-          LOG.info("Written cropped default background for " + game.getRom());
+          LOG.info("Written cropped default background for " + game.getEffectiveRom());
         }
         else {
-          LOG.error("No permission to write cropped default picture, folder " + game.getRom() + " does not exist.");
+          LOG.error("No permission to write cropped default picture, folder " + game.getEffectiveRom() + " does not exist.");
         }
         return target;
       }

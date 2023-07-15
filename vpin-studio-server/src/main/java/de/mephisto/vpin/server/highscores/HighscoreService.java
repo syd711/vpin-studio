@@ -287,7 +287,7 @@ public class HighscoreService implements InitializingBean {
   @Nullable
   public Optional<Highscore> getOrCreateHighscore(@NonNull Game game) {
     Optional<Highscore> highscore = highscoreRepository.findByGameId(game.getId());
-    if (highscore.isEmpty() && !StringUtils.isEmpty(game.getRom())) {
+    if (highscore.isEmpty() && !StringUtils.isEmpty(game.getEffectiveRom())) {
       HighscoreMetadata metadata = scanScore(game);
       return updateHighscore(game, metadata);
     }
@@ -364,7 +364,7 @@ public class HighscoreService implements InitializingBean {
     }
 
     if (oldRaw.equals(newRaw)) {
-      LOG.info("Skipped highscore change event for {} because the no score change for rom '{}' detected.", game, game.getRom());
+      LOG.info("Skipped highscore change event for {} because the no score change for rom '{}' detected.", game, game.getEffectiveRom());
       return Optional.of(oldHighscore);
     }
 
@@ -378,11 +378,11 @@ public class HighscoreService implements InitializingBean {
 
     List<Integer> changedPositions = calculateChangedPositions(oldScores, newScores);
     if (changedPositions.isEmpty()) {
-      LOG.info("No highscore change of rom '" + game.getRom() + "' detected for " + game + ", skipping notification event.");
+      LOG.info("No highscore change of rom '" + game.getEffectiveRom() + "' detected for " + game + ", skipping notification event.");
       return Optional.of(oldHighscore);
     }
 
-    LOG.info("Calculated changed positions for '" + game.getRom() + "': " + changedPositions);
+    LOG.info("Calculated changed positions for '" + game.getEffectiveRom() + "': " + changedPositions);
     for (Integer changedPosition : changedPositions) {
       //so we have a highscore update, let's decide the distribution
       Score oldScore = oldScores.get(changedPosition - 1);

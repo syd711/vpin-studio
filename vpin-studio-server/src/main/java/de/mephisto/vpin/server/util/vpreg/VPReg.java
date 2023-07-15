@@ -284,8 +284,8 @@ public class VPReg {
    * @throws FileNotFoundException
    */
   private DirectoryEntry getGameDirectory(DirectoryEntry root) throws FileNotFoundException {
-    if (root.hasEntry(game.getRom())) {
-      return (DirectoryEntry) root.getEntry(game.getRom());
+    if (root.hasEntry(game.getEffectiveRom())) {
+      return (DirectoryEntry) root.getEntry(game.getEffectiveRom());
     }
 
     if (game.getTableName() != null && root.hasEntry(game.getTableName())) {
@@ -302,14 +302,14 @@ public class VPReg {
    * @throws FileNotFoundException
    */
   private DirectoryEntry getOrCreateGameDirectory(DirectoryEntry root) throws IOException {
-    if (root.hasEntry(game.getRom())) {
-      return (DirectoryEntry) root.getEntry(game.getRom());
+    if (root.hasEntry(game.getEffectiveRom())) {
+      return (DirectoryEntry) root.getEntry(game.getEffectiveRom());
     }
 
     if (game.getTableName() != null && root.hasEntry(game.getTableName())) {
       return (DirectoryEntry) root.getEntry(game.getTableName());
     }
 
-    return root.createDirectory(game.getRom());
+    return root.createDirectory(game.getEffectiveRom());
   }
 }

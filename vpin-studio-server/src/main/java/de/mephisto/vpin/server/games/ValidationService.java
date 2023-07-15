@@ -76,7 +76,7 @@ public class ValidationService implements InitializingBean {
     }
 
     if (isVPX && isValidationEnabled(game, ValidationCode.CODE_NO_ROM)) {
-      if (StringUtils.isEmpty(game.getRom())) {
+      if (StringUtils.isEmpty(game.getEffectiveRom())) {
         return ValidationStateFactory.create(ValidationCode.CODE_NO_ROM);
       }
     }
@@ -207,7 +207,7 @@ public class ValidationService implements InitializingBean {
     List<ValidationState> result = new ArrayList<>();
 
     MameOptions options = mameService.getOptions(MameOptions.DEFAULT_KEY);
-    MameOptions gameOptions = mameService.getOptions(game.getRom());
+    MameOptions gameOptions = mameService.getOptions(game.getEffectiveRom());
 
     AltColor altColor = altColorService.getAltColor(game);
     AltColorTypes altColorType = altColor.getAltColorType();
@@ -245,7 +245,7 @@ public class ValidationService implements InitializingBean {
         break;
       }
       case serum: {
-        String name = game.getRom() + AltColorAnalyzer.SERUM_SUFFIX;
+        String name = game.getEffectiveRom() + AltColorAnalyzer.SERUM_SUFFIX;
         if (!altColor.contains(name)) {
           result.add(ValidationStateFactory.create(CODE_ALT_COLOR_FILES_MISSING, name));
         }

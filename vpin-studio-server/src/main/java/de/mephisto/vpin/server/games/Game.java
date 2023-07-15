@@ -188,14 +188,14 @@ public class Game {
   @JsonIgnore
   @NonNull
   public File getUltraDMDFolder() {
-    String folderName = this.getRom() + ".UltraDMD";
+    String folderName = this.getEffectiveRom() + ".UltraDMD";
     return new File(this.getGameFile().getParentFile(), folderName);
   }
 
   @JsonIgnore
   @NonNull
   public File getFlexDMDFolder() {
-    String folderName = getRom() + ".FlexDMD";
+    String folderName = getEffectiveRom() + ".FlexDMD";
     return new File(this.getGameFile().getParentFile(), folderName);
   }
 
@@ -353,8 +353,8 @@ public class Game {
   @Nullable
   @JsonIgnore
   public File getRomFile() {
-    if (!StringUtils.isEmpty(this.getRom())) {
-      return new File(systemService.getMameRomFolder(), this.getRom() + ".zip");
+    if (!StringUtils.isEmpty(this.getEffectiveRom())) {
+      return new File(systemService.getMameRomFolder(), this.getEffectiveRom() + ".zip");
     }
     return null;
   }
@@ -378,8 +378,8 @@ public class Game {
   @Nullable
   @JsonIgnore
   public File getAltSoundFolder() {
-    if (!StringUtils.isEmpty(this.getRom())) {
-      return new File(systemService.getAltSoundFolder(), this.getRom());
+    if (!StringUtils.isEmpty(this.getEffectiveRom())) {
+      return new File(systemService.getAltSoundFolder(), this.getEffectiveRom());
     }
     return null;
   }
@@ -388,8 +388,8 @@ public class Game {
   @Nullable
   @JsonIgnore
   public File getCfgFile() {
-    if (!StringUtils.isEmpty(this.getRom())) {
-      return new File(new File(systemService.getMameFolder(), "cfg"), this.getRom() + ".cfg");
+    if (!StringUtils.isEmpty(this.getEffectiveRom())) {
+      return new File(new File(systemService.getMameFolder(), "cfg"), this.getEffectiveRom() + ".cfg");
     }
     return null;
   }
@@ -397,8 +397,8 @@ public class Game {
   @Nullable
   @JsonIgnore
   public File getAltColorFolder() {
-    if (!StringUtils.isEmpty(this.getRom())) {
-      return new File(new File(systemService.getMameFolder(), "altcolor"), this.getRom());
+    if (!StringUtils.isEmpty(this.getEffectiveRom())) {
+      return new File(new File(systemService.getMameFolder(), "altcolor"), this.getEffectiveRom());
     }
     return null;
   }
@@ -406,8 +406,8 @@ public class Game {
   @Nullable
   @JsonIgnore
   public File getPupPackFolder() {
-    if (!StringUtils.isEmpty(this.getRom())) {
-      return new File(new File(systemService.getPinUPSystemFolder(), "PUPVideos"), this.getRom());
+    if (!StringUtils.isEmpty(this.getEffectiveRom())) {
+      return new File(new File(systemService.getPinUPSystemFolder(), "PUPVideos"), this.getEffectiveRom());
     }
     return null;
   }
@@ -416,8 +416,8 @@ public class Game {
   @Nullable
   @JsonIgnore
   public File getMusicFolder() {
-    if (!StringUtils.isEmpty(this.getRom())) {
-      return new File(systemService.getVPXMusicFolder(), this.getRom());
+    if (!StringUtils.isEmpty(this.getEffectiveRom())) {
+      return new File(systemService.getVPXMusicFolder(), this.getEffectiveRom());
     }
     return null;
   }
@@ -450,8 +450,8 @@ public class Game {
   @Nullable
   @JsonIgnore
   public File getCroppedDefaultPicture() {
-    if (this.getRom() != null) {
-      File subFolder = new File(systemService.getB2SCroppedImageFolder(), this.getRom());
+    if (this.getEffectiveRom() != null) {
+      File subFolder = new File(systemService.getB2SCroppedImageFolder(), this.getEffectiveRom());
       return new File(subFolder, SystemService.DEFAULT_BACKGROUND);
     }
     return null;
@@ -487,8 +487,8 @@ public class Game {
   @Nullable
   @JsonIgnore
   public File getRawDefaultPicture() {
-    if (this.getRom() != null) {
-      File subFolder = new File(systemService.getB2SImageExtractionFolder(), this.getRom());
+    if (this.getEffectiveRom() != null) {
+      File subFolder = new File(systemService.getB2SImageExtractionFolder(), this.getEffectiveRom());
       return new File(subFolder, SystemService.DEFAULT_BACKGROUND);
     }
     return null;

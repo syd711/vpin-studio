@@ -186,8 +186,8 @@ public class AltSoundService implements InitializingBean {
   }
 
   private File getAltSoundCsvFile(@NonNull Game game) {
-    if (!StringUtils.isEmpty(game.getRom()) && this.altSounds.containsKey(game.getRom().toLowerCase())) {
-      return this.altSounds.get(game.getRom().toLowerCase());
+    if (!StringUtils.isEmpty(game.getEffectiveRom()) && this.altSounds.containsKey(game.getEffectiveRom().toLowerCase())) {
+      return this.altSounds.get(game.getEffectiveRom().toLowerCase());
     }
     if (!StringUtils.isEmpty(game.getTableName()) && this.altSounds.containsKey(game.getTableName().toLowerCase())) {
       return this.altSounds.get(game.getTableName().toLowerCase());
@@ -196,7 +196,7 @@ public class AltSoundService implements InitializingBean {
   }
 
   public boolean setAltSoundEnabled(@NonNull Game game, boolean b) {
-    String rom = game.getRom();
+    String rom = game.getEffectiveRom();
     if (!StringUtils.isEmpty(rom)) {
       MameOptions options = mameService.getOptions(rom);
       options.setSoundMode(b);
@@ -206,8 +206,8 @@ public class AltSoundService implements InitializingBean {
   }
 
   public boolean isAltSoundEnabled(@NonNull Game game) {
-    if (!StringUtils.isEmpty(game.getRom())) {
-      MameOptions options = mameService.getOptions(game.getRom());
+    if (!StringUtils.isEmpty(game.getEffectiveRom())) {
+      MameOptions options = mameService.getOptions(game.getEffectiveRom());
       return options.isSoundMode();
     }
     return false;
