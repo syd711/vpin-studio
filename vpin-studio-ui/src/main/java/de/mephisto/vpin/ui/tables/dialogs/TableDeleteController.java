@@ -170,9 +170,9 @@ public class TableDeleteController implements Initializable, DialogController {
         break;
       }
 
-      if (!StringUtils.isEmpty(selectedGame.getRom())) {
-        String rom = selectedGame.getRom();
-        List<GameRepresentation> variants = allGames.stream().filter(g -> rom.equals(g.getRom())).collect(Collectors.toList());
+      if (!StringUtils.isEmpty(selectedGame.getEffectiveRom())) {
+        String rom = selectedGame.getExtTableVersionId();
+        List<GameRepresentation> variants = allGames.stream().filter(g -> rom.equals(g.getEffectiveRom())).collect(Collectors.toList());
         for (GameRepresentation variant : variants) {
           if (!selectedGames.contains(variant)) {
             hasNonSelectedVariant = true;

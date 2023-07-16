@@ -168,7 +168,7 @@ public class TablesSidebarScriptDataController implements Initializable {
   @FXML
   private void onRomEdit() {
     GameRepresentation gameRepresentation = game.get();
-    String romName = WidgetFactory.showInputDialog(Studio.stage, "ROM Name", "ROM Name", "The ROM name will be used for highscore and PUP pack resolving.", "Open the VPX table script editor to search for the ROM name.", gameRepresentation.getRom());
+    String romName = WidgetFactory.showInputDialog(Studio.stage, "ROM Name", "ROM Name", "The ROM name will be used for highscore and PUP pack resolving.", "Open the VPX table script editor to search for the ROM name.", gameRepresentation.getEffectiveRom());
     if (romName != null) {
       gameRepresentation.setRom(romName);
       try {

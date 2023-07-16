@@ -53,10 +53,10 @@ public class ResetHighscoreDialogController implements DialogController {
     okButton.setDisable(true);
 
     this.textLabel.setText("Reset the highscore of \"" + game.getGameDisplayName() + "\"?");
-    this.descriptionLabel.setText("Enter the ROM name (\"" + game.getRom() + "\") to confirm the reset:");
+    this.descriptionLabel.setText("Enter the ROM name (\"" + game.getEffectiveRom() + "\") to confirm the reset:");
     textField.requestFocus();
     textField.textProperty().addListener((observable, oldValue, newValue) -> {
-      String romName = game.getRom();
+      String romName = game.getEffectiveRom();
       boolean match = String.valueOf(newValue).trim().equals(romName);
       okButton.setDisable(!match);
     });

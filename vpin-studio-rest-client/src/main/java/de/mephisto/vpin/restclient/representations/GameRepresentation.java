@@ -1,5 +1,8 @@
 package de.mephisto.vpin.restclient.representations;
 
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.lang.Nullable;
+
 import java.util.Date;
 import java.util.List;
 
@@ -224,6 +227,14 @@ public class GameRepresentation {
 
   public String getRom() {
     return rom;
+  }
+
+  @Nullable
+  public String getEffectiveRom() {
+    if (!StringUtils.isEmpty(this.getOriginalRom())) {
+      return this.getOriginalRom();
+    }
+    return this.getRom();
   }
 
   public void setRom(String rom) {

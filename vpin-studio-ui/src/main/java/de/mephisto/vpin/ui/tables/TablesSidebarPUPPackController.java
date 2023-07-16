@@ -203,7 +203,7 @@ public class TablesSidebarPUPPackController implements Initializable {
   private void onUpload() {
     if (game.isPresent()) {
       GameRepresentation g = game.get();
-      if (StringUtils.isEmpty(g.getRom())) {
+      if (StringUtils.isEmpty(g.getEffectiveRom())) {
         WidgetFactory.showAlert(Studio.stage, "No ROM name found for \"" + g.getGameDisplayName() + "\".", "To upload a PUP pack, a ROM name must have been resolved for the table.");
         return;
       }
@@ -241,8 +241,8 @@ public class TablesSidebarPUPPackController implements Initializable {
     this.pupPack = null;
     this.validationState = null;
     reloadBtn.setDisable(g.isEmpty());
+    enabledCheckbox.setDisable(g.isEmpty());
 
-    enabledCheckbox.setVisible(false);
     dataBox.setVisible(false);
     emptyDataBox.setVisible(true);
     uploadBtn.setDisable(true);
@@ -276,12 +276,13 @@ public class TablesSidebarPUPPackController implements Initializable {
       GameRepresentation game = g.get();
       pupPack = Studio.client.getPupPackService().getPupPack(game.getId());
       boolean pupPackAvailable = pupPack != null;
+      enabledCheckbox.setDisable(!pupPackAvailable || StringUtils.isEmpty(game.getEffectiveRom()));
 
       reloadBtn.setDisable(!pupPackAvailable);
       dataBox.setVisible(pupPackAvailable);
       emptyDataBox.setVisible(!pupPackAvailable);
 
-      uploadBtn.setDisable(StringUtils.isEmpty(game.getRom()));
+      uploadBtn.setDisable(StringUtils.isEmpty(game.getEffectiveRom()));
       enabledCheckbox.setSelected(false);
 
       if (pupPackAvailable) {

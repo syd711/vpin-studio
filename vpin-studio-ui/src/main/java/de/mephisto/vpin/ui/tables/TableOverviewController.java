@@ -647,7 +647,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
       if (game.getGameDisplayName().toLowerCase().contains(filterValue.toLowerCase())) {
         filtered.add(game);
       }
-      else if (!StringUtils.isEmpty(game.getRom()) && game.getRom().toLowerCase().contains(filterValue.toLowerCase())) {
+      else if (!StringUtils.isEmpty(game.getEffectiveRom()) && game.getEffectiveRom().toLowerCase().contains(filterValue.toLowerCase())) {
         filtered.add(game);
       }
     }

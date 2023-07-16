@@ -35,8 +35,8 @@
                         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="ALWAYS" />
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                     </rowConstraints>
                     <children>
                         <Label text="Table Filename:" textFill="WHITE">
@@ -49,7 +49,7 @@
                                 <Font name="System Bold" size="14.0" />
                             </font>
                         </Label>
-                        <Label layoutX="10.0" layoutY="45.0" text="NVOffset:" textFill="WHITE" GridPane.rowIndex="6">
+                        <Label layoutX="10.0" layoutY="45.0" text="NVOffset:" textFill="WHITE" GridPane.rowIndex="7">
                             <font>
                                 <Font name="System Bold" size="14.0" />
                             </font>
@@ -74,7 +74,7 @@
                                 <Font size="14.0" />
                             </font>
                         </Label>
-                        <Label fx:id="labelNVOffset" layoutX="130.0" layoutY="78.0" text="-" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="6">
+                        <Label fx:id="labelNVOffset" layoutX="130.0" layoutY="78.0" text="-" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="7">
                             <font>
                                 <Font size="14.0" />
                             </font>
@@ -110,12 +110,12 @@
                                 </Label>
                             </children>
                         </HBox>
-                        <Label layoutX="10.0" layoutY="198.0" text="EM Highscore Filename:" textFill="WHITE" GridPane.rowIndex="7">
+                        <Label layoutX="10.0" layoutY="198.0" text="EM Highscore Filename:" textFill="WHITE" GridPane.rowIndex="6">
                             <font>
                                 <Font name="System Bold" size="14.0" />
                             </font>
                         </Label>
-                        <HBox alignment="CENTER_RIGHT" spacing="6.0" GridPane.columnIndex="2" GridPane.rowIndex="7">
+                        <HBox alignment="CENTER_RIGHT" spacing="6.0" GridPane.columnIndex="2" GridPane.rowIndex="6">
                             <children>
                                 <Button fx:id="editHsFileNameBtn" mnemonicParsing="false" onAction="#onHsFileNameEdit">
                                     <graphic>
@@ -138,7 +138,7 @@
                                 </Label>
                             </children>
                         </HBox>
-                        <Label fx:id="labelHSFilename" text="-" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="7">
+                        <Label fx:id="labelHSFilename" text="-" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="6">
                             <font>
                                 <Font size="14.0" />
                             </font>
@@ -219,7 +219,7 @@
                         </Label>
                      </children>
                   </HBox>
-                  <HBox alignment="CENTER_RIGHT" prefHeight="100.0" prefWidth="200.0" GridPane.columnIndex="2" GridPane.rowIndex="6">
+                  <HBox alignment="CENTER_RIGHT" prefHeight="100.0" prefWidth="200.0" GridPane.columnIndex="2" GridPane.rowIndex="7">
                      <children>
                         <Label prefHeight="40.0" prefWidth="18.0">
                            <font>
