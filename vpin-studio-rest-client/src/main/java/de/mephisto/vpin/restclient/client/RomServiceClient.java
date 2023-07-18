@@ -28,6 +28,11 @@ public class RomServiceClient extends VPinStudioClientService {
     }
   }
 
+
+  public void deleteAliasMapping(String alias) {
+    getRestClient().delete(API + "rom/mapping/" + alias);
+  }
+
   public boolean clearCache() {
     final RestTemplate restTemplate = new RestTemplate();
     return restTemplate.getForObject(getRestClient().getBaseUrl() + API + "rom/clearcache", Boolean.class);

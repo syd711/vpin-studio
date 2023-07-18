@@ -30,6 +30,16 @@ public class RomResource {
     }
   }
 
+  @DeleteMapping("/mapping/{alias}")
+  public boolean saveAliasMapping(@PathVariable("alias") String alias) {
+    try {
+      return romService.deleteAliasMapping(alias);
+    } catch (IOException e) {
+      LOG.error("Saving alias mapping failed: " + e.getMessage(), e);
+      throw new ResponseStatusException(INTERNAL_SERVER_ERROR, "Delete alias mapping failed: " + e.getMessage());
+    }
+  }
+
   @GetMapping("/clearcache")
   public boolean clearCache() {
     return romService.clearCache();

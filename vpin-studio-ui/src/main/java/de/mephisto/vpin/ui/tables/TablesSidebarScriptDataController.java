@@ -75,6 +75,9 @@ public class TablesSidebarScriptDataController implements Initializable {
   private Button editAliasBtn;
 
   @FXML
+  private Button deleteAliasBtn;
+
+  @FXML
   private Button editTableNameBtn;
 
   private Optional<GameRepresentation> game = Optional.empty();
@@ -119,6 +122,21 @@ public class TablesSidebarScriptDataController implements Initializable {
       String rom = g.getRom();
       String alias = g.getRomAlias();
       Dialogs.openAliasMappingDialog(g, alias, rom);
+    }
+  }
+
+
+  @FXML
+  public void onDeleteAlias() {
+    if (this.game.isPresent()) {
+      GameRepresentation g = this.game.get();
+      String alias = g.getRomAlias();
+
+      Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Delete Alias", "Delete alias \"" + alias + "\" for ROM \"" + g.getRom() + "\"?");
+      if (result.isPresent() && result.get().equals(ButtonType.OK)) {
+        Studio.client.getRomService().deleteAliasMapping(alias);
+        EventManager.getInstance().notifyTableChange(g.getId());
+      }
     }
   }
 
@@ -214,6 +232,7 @@ public class TablesSidebarScriptDataController implements Initializable {
     editBtn.setDisable(g.isEmpty() || !g.get().isGameFileAvailable());
     scanBtn.setDisable(g.isEmpty() || !g.get().isGameFileAvailable());
     editAliasBtn.setDisable(g.isEmpty() || !g.get().isGameFileAvailable());
+    deleteAliasBtn.setDisable(g.isEmpty() || !g.get().isGameFileAvailable());
 
     if (g.isPresent()) {
       GameRepresentation game = g.get();
@@ -222,6 +241,7 @@ public class TablesSidebarScriptDataController implements Initializable {
       editRomNameBtn.setDisable(!game.getEmulator().isVisualPinball());
       editTableNameBtn.setDisable(!game.getEmulator().isVisualPinball());
       romUploadBtn.setDisable(!game.getEmulator().isVisualPinball());
+      deleteAliasBtn.setDisable(StringUtils.isEmpty(game.getRomAlias()));
 
       labelRom.setText(!StringUtils.isEmpty(game.getRom()) ? game.getRom() : "-");
       labelRomAlias.setText(!StringUtils.isEmpty(game.getRomAlias()) ? game.getRomAlias() : "-");

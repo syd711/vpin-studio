@@ -89,6 +89,15 @@ public class RomService implements InitializingBean {
     return true;
   }
 
+  public boolean deleteAliasMapping(String alias) throws IOException {
+    if (!StringUtils.isEmpty(alias) && aliasToRomMapping.containsKey(alias)) {
+      aliasToRomMapping.remove(alias);
+      LOG.info("Removed alias mapping '" + alias + "'");
+      saveMapping();
+    }
+    return false;
+  }
+
   public boolean saveAliasMapping(Map<String, Object> values) throws IOException {
     String oldValue = (String) values.get("#oldValue");
     System.out.println(values);
@@ -109,11 +118,15 @@ public class RomService implements InitializingBean {
       }
     }
 
+    saveMapping();
+    return true;
+  }
+
+  private void saveMapping() throws IOException {
     String mapAsString = aliasToRomMapping.keySet().stream().map(key -> key.trim() + "," + aliasToRomMapping.get(key).trim()).sorted().collect(Collectors.joining("\n"));
     File vpmAliasFile = systemService.getVPMAliasFile();
     FileUtils.writeStringToFile(vpmAliasFile, mapAsString, Charset.defaultCharset());
     loadAliasMapping();
-    return true;
   }
 
   private void loadAliasMapping() {
