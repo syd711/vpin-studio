@@ -83,16 +83,10 @@ public class VpxEditorController implements Initializable {
         String text = codeArea.getText();
 
         int pos = codeArea.getCaretPosition();
-        String relativeText = text.substring(pos);
+        String relativeText = text.substring(pos + term.length());
         int i = relativeText.indexOf(term);
         if (i != -1) {
-          codeArea.moveTo(i);
-        }
-        else {
-          i = text.indexOf(term);
-          if (i != -1) {
-            codeArea.moveTo(i);
-          }
+          codeArea.moveTo(pos + i);
         }
       }
     }
@@ -105,6 +99,9 @@ public class VpxEditorController implements Initializable {
 
     VirtualizedScrollPane scrollPane = new VirtualizedScrollPane(richText.getCodeArea());
     centerPane.setCenter(scrollPane);
+
+    CodeArea codeArea = richText.getCodeArea();
+    codeArea.moveTo(0);
   }
 
   public void setTablesController(TablesController tablesController) {

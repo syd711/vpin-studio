@@ -7,6 +7,7 @@ import de.mephisto.vpin.restclient.jobs.JobExecutionResultFactory;
 import de.mephisto.vpin.restclient.jobs.JobType;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.jobs.JobQueue;
+import de.mephisto.vpin.server.popper.PinUPConnector;
 import de.mephisto.vpin.server.system.JCodec;
 import de.mephisto.vpin.server.system.SystemService;
 import edu.umd.cs.findbugs.annotations.NonNull;
@@ -20,6 +21,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
@@ -30,6 +32,9 @@ public class PupPacksService implements InitializingBean {
 
   @Autowired
   private SystemService systemService;
+
+  @Autowired
+  private PinUPConnector pinUPConnector;
 
   @Autowired
   private JobQueue jobQueue;
@@ -43,6 +48,13 @@ public class PupPacksService implements InitializingBean {
     }
     if (!StringUtils.isEmpty(game.getTableName()) && pupPackFolders.containsKey(game.getTableName().toLowerCase())) {
       return pupPackFolders.get(game.getTableName().toLowerCase());
+    }
+    return null;
+  }
+
+  private PupPack getPupPack(@NonNull String rom) {
+    if (!StringUtils.isEmpty(rom) && pupPackFolders.containsKey(rom.toLowerCase())) {
+      return pupPackFolders.get(rom.toLowerCase());
     }
     return null;
   }
@@ -92,14 +104,50 @@ public class PupPacksService implements InitializingBean {
   }
 
   public boolean setPupPackEnabled(Game game, boolean enable) {
-    return false;
+    if (enable) {
+      pinUPConnector.updateGamesField(game, "LaunchCustomVar", "");
+    }
+    else {
+      pinUPConnector.updateRom(game, game.getEffectiveRom());
+      pinUPConnector.updateGamesField(game, "LaunchCustomVar", "HIDEPUP");
+    }
+    return true;
   }
 
-  public boolean isPupPackEnabled(Game game) {
-    if (!StringUtils.isEmpty(game.getEffectiveRom())) {
-
+  public boolean isPupPackDisabled(@Nullable Game game) {
+    if (game == null) {
+      return false;
     }
-    return false;
+
+    String effectiveRom = game.getEffectiveRom();
+    if (StringUtils.isEmpty(effectiveRom)) {
+      return false;
+    }
+
+    String rom = pinUPConnector.getGamesStringValue(game, "ROM");
+    String custom = pinUPConnector.getGamesStringValue(game, "LaunchCustomVar");
+    return rom != null && !StringUtils.isEmpty(custom) && custom.equals("HIDEPUP");
+  }
+
+  public void writePUPHideNext(Game game) {
+    try {
+      PupPack pupPack = getPupPack(game);
+      if (pupPack != null) {
+        File pupPackFolder = pupPack.getPupPackFolder();
+        if (pupPackFolder.exists()) {
+          File hideNextFile = new File(pupPackFolder, "PUPHideNext.txt");
+          if (!hideNextFile.exists()) {
+            FileUtils.touch(hideNextFile);
+            LOG.info("Written PUPHideNext.txt for " + game.getEffectiveRom());
+          }
+          else {
+            LOG.info("PUPHideNext.txt already exists for " + game.getEffectiveRom());
+          }
+        }
+      }
+    } catch (Exception e) {
+      LOG.error("Failed to create PUPHideNext.txt for " + game.getGameDisplayName() + ": " + e.getMessage(), e);
+    }
   }
 
   public JobExecutionResult installPupPack(Game game, File out) {

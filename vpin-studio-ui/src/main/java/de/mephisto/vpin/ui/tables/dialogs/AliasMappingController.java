@@ -32,6 +32,7 @@ public class AliasMappingController implements Initializable, DialogController {
 
   private boolean result = false;
   private GameRepresentation game;
+  private String existingAlias;
 
   @FXML
   private void onCancelClick(ActionEvent e) {
@@ -44,8 +45,7 @@ public class AliasMappingController implements Initializable, DialogController {
     String romName = this.romNameField.getText();
     String aliasName = this.aliasNameField.getText();
 
-    Studio.client.getRomService().saveAliasMapping(aliasName, romName);
-    Studio.client.getGameService().scanGame(game.getId());
+    Studio.client.getRomService().saveAliasMapping(existingAlias, aliasName, romName);
 
     EventManager.getInstance().notifyTableChange(game.getId());
 
@@ -64,21 +64,25 @@ public class AliasMappingController implements Initializable, DialogController {
   private void validate() {
     String romName = this.romNameField.getText();
     String aliasName = this.aliasNameField.getText();
+
+    saveBtn.setDisable(StringUtils.isEmpty(romName) || StringUtils.isEmpty(aliasName));
   }
 
-  public void setValues(GameRepresentation game, String alias, String rom) {
+  public void setValues(GameRepresentation game, String existingAlias, String rom) {
     this.game = game;
     if (StringUtils.isEmpty(rom)) {
-      rom = alias;
-      alias = null;
+      rom = existingAlias;
+      existingAlias = null;
     }
 
-    if (alias != null) {
-      this.aliasNameField.setText(alias);
+    if (existingAlias != null) {
+      this.aliasNameField.setText(existingAlias);
     }
     if (rom != null) {
       this.romNameField.setText(rom);
     }
+
+    this.existingAlias  = this.aliasNameField.getText();
   }
 
   @Override

@@ -53,13 +53,10 @@ public class PupPacksResource {
     return null;
   }
 
-  @GetMapping("/enabled/{id}")
+  @GetMapping("/enabled/{rom}")
   public boolean enable(@PathVariable("id") int id) {
     Game game = gameService.getGame(id);
-    if (game != null) {
-      return pupPacksService.isPupPackEnabled(game);
-    }
-    return false;
+    return !pupPacksService.isPupPackDisabled(game);
   }
 
   @GetMapping("/set/{id}/{enable}")
@@ -126,6 +123,7 @@ public class PupPacksResource {
     representation.setMissingResources(pupPack.getMissingResources());
     representation.setSelectedOption(pupPack.getSelectedOption());
     representation.setTxtFiles(pupPack.getTxtFiles());
+    representation.setEnabled(!pupPacksService.isPupPackDisabled(game));
     representation.setValidationStates(validationService.validatePupPack(game));
     return representation;
   }

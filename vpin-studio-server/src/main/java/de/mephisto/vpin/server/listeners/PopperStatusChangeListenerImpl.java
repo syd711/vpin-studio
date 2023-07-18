@@ -9,6 +9,7 @@ import de.mephisto.vpin.server.popper.PopperService;
 import de.mephisto.vpin.server.popper.PopperStatusChangeListener;
 import de.mephisto.vpin.server.popper.TableStatusChangedEvent;
 import de.mephisto.vpin.server.preferences.PreferencesService;
+import de.mephisto.vpin.server.puppack.PupPacksService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
@@ -35,9 +36,18 @@ public class PopperStatusChangeListenerImpl implements InitializingBean, PopperS
   @Autowired
   private GameService gameService;
 
+  @Autowired
+  private PupPacksService pupPacksService;
+
   @Override
   public void tableLaunched(TableStatusChangedEvent event) {
     Game game = event.getGame();
+
+    boolean pupPackDisabled = pupPacksService.isPupPackDisabled(game);
+    if (pupPackDisabled) {
+      pupPacksService.writePUPHideNext(game);
+    }
+
     discordService.setActivity(game.getGameDisplayName());
     highscoreService.scanScore(game);
 

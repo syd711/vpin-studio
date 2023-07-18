@@ -8,6 +8,7 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
@@ -25,7 +26,7 @@ import java.util.stream.Collectors;
 public class RomService implements InitializingBean {
   private final static Logger LOG = LoggerFactory.getLogger(RomService.class);
 
-  private Map<String, String> aliasMapping = new HashMap<>();
+  private Map<String, String> aliasToRomMapping = new HashMap<>();
 
   public RomService() {
   }
@@ -49,30 +50,36 @@ public class RomService implements InitializingBean {
 
   @Nullable
   public String getOriginalRom(@Nullable String rom) {
-    if (rom != null && this.aliasMapping.containsKey(rom)) {
-      return aliasMapping.get(rom);
+    if (rom != null && this.aliasToRomMapping.containsKey(rom)) {
+      return aliasToRomMapping.get(rom);
     }
     return null;
   }
 
   public boolean clearCache() {
-    this.aliasMapping.clear();
+    this.aliasToRomMapping.clear();
     this.loadAliasMapping();
     return true;
   }
 
   public boolean saveAliasMapping(Map<String, Object> values) throws IOException {
+    String oldValue = (String) values.get("#oldValue");
+    if (!StringUtils.isEmpty(oldValue) && aliasToRomMapping.containsKey(oldValue)) {
+      aliasToRomMapping.remove(oldValue);
+      LOG.info("Removed old alias mapping '" + oldValue + "'");
+    }
+
     Set<Map.Entry<String, Object>> entries = values.entrySet();
     for (Map.Entry<String, Object> entry : entries) {
       String alias = entry.getKey();
       String romName = (String) entry.getValue();
 
-      if (!aliasMapping.containsValue(alias)) {
-        aliasMapping.put(alias.trim(), romName.trim());
+      if (!aliasToRomMapping.containsValue(alias)) {
+        aliasToRomMapping.put(alias.trim(), romName.trim());
       }
     }
 
-    String mapAsString = aliasMapping.keySet().stream().map(key -> key.trim() + "," + aliasMapping.get(key).trim()).sorted().collect(Collectors.joining("\n"));
+    String mapAsString = aliasToRomMapping.keySet().stream().map(key -> key.trim() + "," + aliasToRomMapping.get(key).trim()).sorted().collect(Collectors.joining("\n"));
     File vpmAliasFile = systemService.getVPMAliasFile();
     FileUtils.writeStringToFile(vpmAliasFile, mapAsString, Charset.defaultCharset());
     loadAliasMapping();
@@ -94,11 +101,11 @@ public class RomService implements InitializingBean {
             String originalRom = split[split.length - 1];
 
             for (String alias : aliases) {
-              aliasMapping.put(alias, originalRom);
+              aliasToRomMapping.put(alias, originalRom);
             }
           }
         }
-        LOG.info("Loaded " + aliasMapping.size() + " alias mappings.");
+        LOG.info("Loaded " + aliasToRomMapping.size() + " alias mappings.");
       }
     } catch (IOException e) {
       LOG.error("Error loading " + vpmAliasFile.getAbsolutePath() + ": " + e.getMessage(), e);

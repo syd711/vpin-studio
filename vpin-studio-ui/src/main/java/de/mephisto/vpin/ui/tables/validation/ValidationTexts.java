@@ -49,6 +49,11 @@ public class ValidationTexts {
         text = "No additional media has been found for this table. Download a \"directb2s\" file for this table.";
         break;
       }
+      case CODE_NO_DIRECTB2S_AND_PUPPACK_DISABLED: {
+        label = "PUP Pack not enabled.";
+        text = "The table does not have a backglass and the PUP pack is not enabled.";
+        break;
+      }
       case CODE_NO_AUDIO: {
         label = "No audio media set.";
         text = NO_MEDIA_TEXT;

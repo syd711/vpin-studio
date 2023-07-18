@@ -13,6 +13,7 @@ import de.mephisto.vpin.server.mame.MameService;
 import de.mephisto.vpin.server.popper.Emulator;
 import de.mephisto.vpin.server.preferences.Preferences;
 import de.mephisto.vpin.server.preferences.PreferencesService;
+import de.mephisto.vpin.server.puppack.PupPacksService;
 import de.mephisto.vpin.server.system.SystemService;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import org.apache.commons.lang3.StringUtils;
@@ -58,6 +59,9 @@ public class ValidationService implements InitializingBean {
   private AltColorService altColorService;
 
   @Autowired
+  private PupPacksService pupPacksService;
+
+  @Autowired
   private MameService mameService;
 
   @Autowired
@@ -90,6 +94,10 @@ public class ValidationService implements InitializingBean {
     if (isValidationEnabled(game, ValidationCode.CODE_NO_DIRECTB2S_OR_PUPPACK)) {
       if (!game.isDirectB2SAvailable() && !game.isPupPackAvailable()) {
         return ValidationStateFactory.create(ValidationCode.CODE_NO_DIRECTB2S_OR_PUPPACK);
+      }
+
+      if (!game.isDirectB2SAvailable() && game.getPupPack() != null && pupPacksService.isPupPackDisabled(game)) {
+        return ValidationStateFactory.create(ValidationCode.CODE_NO_DIRECTB2S_AND_PUPPACK_DISABLED);
       }
     }
 
@@ -308,6 +316,11 @@ public class ValidationService implements InitializingBean {
         ValidationState validationState = ValidationStateFactory.create(CODE_PUP_PACK_FILE_MISSING, game.getPupPack().getMissingResources());
         result.add(validationState);
       }
+    }
+
+    if (!game.isDirectB2SAvailable() && game.getPupPack() != null && pupPacksService.isPupPackDisabled(game)) {
+      ValidationState validationState = ValidationStateFactory.create(CODE_NO_DIRECTB2S_AND_PUPPACK_DISABLED);
+      result.add(validationState);
     }
     return result;
   }

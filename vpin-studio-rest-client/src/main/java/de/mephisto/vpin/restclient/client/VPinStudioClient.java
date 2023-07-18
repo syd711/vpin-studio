@@ -296,6 +296,7 @@ public class VPinStudioClient implements ObservedPropertyChangeListener, Overlay
     getAltSoundService().clearCache();
     getAltColorService().clearCache();
     getPupPackService().clearCache();
+    getRomService().clearCache();
   }
 
   public void clearWheelCache() {

@@ -93,6 +93,10 @@ public class PupPack {
     return true;
   }
 
+  public String getName() {
+    return this.packFolder.getName();
+  }
+
   public File getPupPackFolder() {
     return this.packFolder;
   }

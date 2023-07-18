@@ -416,11 +416,15 @@ public class DiscordClient {
    * Updates the online status with the active game info.
    */
   public void setActivity(String status) {
-    if (status == null) {
-      this.jda.getPresence().setActivity(null);
-    }
-    else {
-      this.jda.getPresence().setActivity(Activity.playing("\"" + status + "\""));
+    try {
+      if (status == null) {
+        this.jda.getPresence().setActivity(null);
+      }
+      else {
+        this.jda.getPresence().setActivity(Activity.playing("\"" + status + "\""));
+      }
+    } catch (Exception e) {
+      LOG.error("Discord activity update failed: " + e.getMessage());
     }
   }
 

@@ -11,7 +11,7 @@
 
 **PUP Pack Section**
 
-- Added option to disable PUP pack.
+- Added option to disable PUP packs.
 
 **Bug Fixes**
 

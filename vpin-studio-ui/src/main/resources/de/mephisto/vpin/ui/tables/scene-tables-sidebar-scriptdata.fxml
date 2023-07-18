@@ -245,12 +245,12 @@
    <top>
       <ToolBar prefHeight="40.0" prefWidth="200.0" BorderPane.alignment="CENTER">
          <items>
-            <Button fx:id="editBtn" layoutX="20.0" layoutY="11.0" mnemonicParsing="false" onAction="#onEdit" text="Edit Script" textFill="WHITE">
+            <Button fx:id="editBtn" layoutX="20.0" layoutY="11.0" mnemonicParsing="false" onAction="#onEdit" text="View Script" textFill="WHITE">
                <font>
                   <Font size="14.0" />
                </font>
                <graphic>
-                  <FontIcon iconColor="WHITE" iconLiteral="mdi2d-database-edit-outline" />
+                  <FontIcon iconColor="WHITE" iconLiteral="mdi2s-script-text-outline" />
                </graphic>
                <tooltip>
                   <Tooltip text="Open the table script for the selected table." />

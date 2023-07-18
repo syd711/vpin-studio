@@ -223,7 +223,7 @@ public class TablesSidebarScriptDataController implements Initializable {
       editTableNameBtn.setDisable(!game.getEmulator().isVisualPinball());
       romUploadBtn.setDisable(!game.getEmulator().isVisualPinball());
 
-      labelRom.setText(game.getOriginalRom() != null ? game.getOriginalRom() : game.getRom());
+      labelRom.setText(game.getEffectiveRom() != null ? game.getEffectiveRom() : "-");
       labelRomAlias.setText(game.getOriginalRom() != null ? game.getRom() : "-");
       labelNVOffset.setText(game.getNvOffset() > 0 ? String.valueOf(game.getNvOffset()) : "-");
       labelFilename.setText(game.getGameFileName() != null ? game.getGameFileName() : "-");

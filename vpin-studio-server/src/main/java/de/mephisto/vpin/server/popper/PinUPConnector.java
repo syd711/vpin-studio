@@ -266,6 +266,44 @@ public class PinUPConnector implements InitializingBean {
     }
   }
 
+  public void updateGamesField(@NonNull Game game, String field, String value) {
+    Connection connect = this.connect();
+    try {
+      PreparedStatement preparedStatement = connect.prepareStatement("UPDATE Games SET '" + field + "'=? WHERE GameID=?");
+      preparedStatement.setString(1, value);
+      preparedStatement.setInt(2, game.getId());
+      preparedStatement.executeUpdate();
+      preparedStatement.close();
+      LOG.info("Updated of \"" + field + "\" of \"" + game + "\" to \"" + value + "\"");
+    } catch (Exception e) {
+      LOG.error("Failed to update \"" + field + "\2: " + e.getMessage(), e);
+    } finally {
+      this.disconnect(connect);
+    }
+  }
+
+
+  @Nullable
+  public String getGamesStringValue(@NonNull Game game, @NonNull String field) {
+    String value = null;
+    Connection connect = this.connect();
+    try {
+      PreparedStatement statement = connect.prepareStatement("SELECT * FROM Games where GameID = ?");
+      statement.setInt(1, game.getId());
+      ResultSet rs = statement.executeQuery();
+      if (rs.next()) {
+        value = rs.getString(field);
+      }
+      rs.close();
+      statement.close();
+    } catch (SQLException e) {
+      LOG.error("Failed to read field value \"" + field + "\": " + e.getMessage(), e);
+    } finally {
+      this.disconnect(connect);
+    }
+    return value;
+  }
+
   public void updateVolume(@NonNull Game game, int volume) {
     Connection connect = this.connect();
     try {

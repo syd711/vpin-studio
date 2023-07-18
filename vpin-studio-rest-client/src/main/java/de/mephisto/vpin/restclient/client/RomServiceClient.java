@@ -17,9 +17,10 @@ public class RomServiceClient extends VPinStudioClientService {
     super(client);
   }
 
-  public void saveAliasMapping(String key, String value) {
+  public void saveAliasMapping(String existingAlias, String key, String value) {
     Map<String, Object> values = new HashMap<>();
     values.put(key, value);
+    values.put("#oldValue", existingAlias);
     try {
       getRestClient().put(API + "rom/mapping", values);
     } catch (Exception e) {
