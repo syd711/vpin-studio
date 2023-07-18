@@ -5,9 +5,10 @@
 - Added green "Open" button on the header which will directly open the script in VPX.
 - Added additional "Scan" button on the Script section toolbar for convenience.
 - Added alias mapping editor.
+- Added alias mapping delete button.
 - Added alias mapping help.
 - Added nvoffset help.
-- Renamed "Rom Name" label to "Effective Rom Name": Since the name can be aliased, the ROM name here may to differ to the one of the actual file.
+- Added script view: This way you can have a quick look on how the actual VPX script looks like. The view works way faster than the old script export functionality. Unfortunately I'm not able to save the script yet.
 
 **PUP Pack Section**
 
