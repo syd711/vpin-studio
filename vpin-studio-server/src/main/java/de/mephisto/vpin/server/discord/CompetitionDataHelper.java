@@ -39,7 +39,7 @@ public class CompetitionDataHelper {
       data.setEdt(competition.getEndDate());
       data.setFs(game.getGameFileSize());
       data.setUuid(competition.getUuid());
-      data.setRom(game.getEffectiveRom());
+      data.setRom(game.getRom());
       data.setOwner(competition.getOwner());
 
       String json = objectMapper.writeValueAsString(data);

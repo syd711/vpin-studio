@@ -1,8 +1,5 @@
 package de.mephisto.vpin.restclient.representations;
 
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.lang.Nullable;
-
 import java.util.Date;
 import java.util.List;
 
@@ -19,7 +16,7 @@ import java.util.List;
  */
 public class GameRepresentation {
   private String rom;
-  private String originalRom;
+  private String romAlias;
   private int nvOffset;
   private String gameDisplayName;
   private String gameFileName;
@@ -229,14 +226,6 @@ public class GameRepresentation {
     return rom;
   }
 
-  @Nullable
-  public String getEffectiveRom() {
-    if (!StringUtils.isEmpty(this.getOriginalRom())) {
-      return this.getOriginalRom();
-    }
-    return this.getRom();
-  }
-
   public void setRom(String rom) {
     this.rom = rom;
   }
@@ -281,12 +270,12 @@ public class GameRepresentation {
     this.nvOffset = nvOffset;
   }
 
-  public String getOriginalRom() {
-    return originalRom;
+  public String getRomAlias() {
+    return romAlias;
   }
 
-  public void setOriginalRom(String originalRom) {
-    this.originalRom = originalRom;
+  public void setRomAlias(String romAlias) {
+    this.romAlias = romAlias;
   }
 
   public String getGameFileName() {

@@ -49,7 +49,7 @@ class HighscoreResolver {
     HighscoreMetadata metadata = new HighscoreMetadata();
     metadata.setScanned(new Date());
     try {
-      String romName = game.getEffectiveRom();
+      String romName = game.getRom();
       if (StringUtils.isEmpty(romName)) {
         String msg = "No rom name found.";
         metadata.setStatus(msg);
@@ -147,7 +147,7 @@ class HighscoreResolver {
       }
       return metadata.getRaw();
     }
-    LOG.debug("No VPReg highscore file found for '" + game.getEffectiveRom() + "'");
+    LOG.debug("No VPReg highscore file found for '" + game.getRom() + "'");
     return null;
   }
 

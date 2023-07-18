@@ -43,8 +43,8 @@ public class PupPacksService implements InitializingBean {
 
   @Nullable
   public PupPack getPupPack(@NonNull Game game) {
-    if (!StringUtils.isEmpty(game.getEffectiveRom()) && pupPackFolders.containsKey(game.getEffectiveRom().toLowerCase())) {
-      return pupPackFolders.get(game.getEffectiveRom().toLowerCase());
+    if (!StringUtils.isEmpty(game.getRom()) && pupPackFolders.containsKey(game.getRom().toLowerCase())) {
+      return pupPackFolders.get(game.getRom().toLowerCase());
     }
     if (!StringUtils.isEmpty(game.getTableName()) && pupPackFolders.containsKey(game.getTableName().toLowerCase())) {
       return pupPackFolders.get(game.getTableName().toLowerCase());
@@ -108,7 +108,7 @@ public class PupPacksService implements InitializingBean {
       pinUPConnector.updateGamesField(game, "LaunchCustomVar", "");
     }
     else {
-      pinUPConnector.updateRom(game, game.getEffectiveRom());
+      pinUPConnector.updateRom(game, game.getRom());
       pinUPConnector.updateGamesField(game, "LaunchCustomVar", "HIDEPUP");
     }
     return true;
@@ -119,7 +119,7 @@ public class PupPacksService implements InitializingBean {
       return false;
     }
 
-    String effectiveRom = game.getEffectiveRom();
+    String effectiveRom = game.getRom();
     if (StringUtils.isEmpty(effectiveRom)) {
       return false;
     }
@@ -138,10 +138,10 @@ public class PupPacksService implements InitializingBean {
           File hideNextFile = new File(pupPackFolder, "PUPHideNext.txt");
           if (!hideNextFile.exists()) {
             FileUtils.touch(hideNextFile);
-            LOG.info("Written PUPHideNext.txt for " + game.getEffectiveRom());
+            LOG.info("Written PUPHideNext.txt for " + game.getRom());
           }
           else {
-            LOG.info("PUPHideNext.txt already exists for " + game.getEffectiveRom());
+            LOG.info("PUPHideNext.txt already exists for " + game.getRom());
           }
         }
       }

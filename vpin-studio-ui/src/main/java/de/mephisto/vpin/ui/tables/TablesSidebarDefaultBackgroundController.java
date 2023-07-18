@@ -104,7 +104,7 @@ public class TablesSidebarDefaultBackgroundController implements Initializable {
     if (game.isPresent()) {
       GameRepresentation g = game.get();
 
-      defaultPictureUploadBtn.setDisable(StringUtils.isEmpty(g.getEffectiveRom()));
+      defaultPictureUploadBtn.setDisable(StringUtils.isEmpty(g.getRom()));
       resetBackgroundBtn.setDisable(!g.isDefaultBackgroundAvailable());
       openDefaultPictureBtn.setDisable(!g.isDefaultBackgroundAvailable());
 

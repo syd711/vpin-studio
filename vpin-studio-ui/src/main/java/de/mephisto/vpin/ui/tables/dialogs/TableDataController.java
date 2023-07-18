@@ -149,7 +149,7 @@ public class TableDataController implements Initializable, DialogController {
       }
     });
 
-    romName.setText(game.getEffectiveRom());
+    romName.setText(game.getRom());
     romName.textProperty().addListener((observable, oldValue, newValue) -> manifest.setRomName(newValue));
 
     romUrl.setText(manifest.getRomUrl());

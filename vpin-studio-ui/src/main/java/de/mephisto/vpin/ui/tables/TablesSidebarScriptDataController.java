@@ -116,8 +116,8 @@ public class TablesSidebarScriptDataController implements Initializable {
   public void onAliasEdit() {
     if (this.game.isPresent()) {
       GameRepresentation g = this.game.get();
-      String alias = g.getRom();
-      String rom = g.getOriginalRom();
+      String rom = g.getRom();
+      String alias = g.getRomAlias();
       Dialogs.openAliasMappingDialog(g, alias, rom);
     }
   }
@@ -168,7 +168,7 @@ public class TablesSidebarScriptDataController implements Initializable {
   @FXML
   private void onRomEdit() {
     GameRepresentation gameRepresentation = game.get();
-    String romName = WidgetFactory.showInputDialog(Studio.stage, "ROM Name", "ROM Name", "The ROM name will be used for highscore and PUP pack resolving.", "Open the VPX table script editor to search for the ROM name.", gameRepresentation.getEffectiveRom());
+    String romName = WidgetFactory.showInputDialog(Studio.stage, "ROM Name", "ROM Name", "The ROM name will be used for highscore and PUP pack resolving.", "Open the VPX table script editor to search for the ROM name.", gameRepresentation.getRom());
     if (romName != null) {
       gameRepresentation.setRom(romName);
       try {
@@ -223,12 +223,12 @@ public class TablesSidebarScriptDataController implements Initializable {
       editTableNameBtn.setDisable(!game.getEmulator().isVisualPinball());
       romUploadBtn.setDisable(!game.getEmulator().isVisualPinball());
 
-      labelRom.setText(game.getEffectiveRom() != null ? game.getEffectiveRom() : "-");
-      labelRomAlias.setText(game.getOriginalRom() != null ? game.getRom() : "-");
+      labelRom.setText(!StringUtils.isEmpty(game.getRom()) ? game.getRom() : "-");
+      labelRomAlias.setText(!StringUtils.isEmpty(game.getRomAlias()) ? game.getRomAlias() : "-");
       labelNVOffset.setText(game.getNvOffset() > 0 ? String.valueOf(game.getNvOffset()) : "-");
       labelFilename.setText(game.getGameFileName() != null ? game.getGameFileName() : "-");
       labelFilesize.setText(game.getGameFileSize() > 0 ? FileUtils.readableFileSize(game.getGameFileSize()) : "-");
-      labelTableName.setText(game.getTableName() != null ? game.getTableName() : "-");
+      labelTableName.setText(!StringUtils.isEmpty(game.getTableName()) ? game.getTableName() : "-");
       labelLastModified.setText(game.getModified() != null ? DateFormat.getDateTimeInstance().format(game.getModified()) : "-");
       if (!StringUtils.isEmpty(game.getHsFileName())) {
         labelHSFilename.setText(game.getHsFileName());

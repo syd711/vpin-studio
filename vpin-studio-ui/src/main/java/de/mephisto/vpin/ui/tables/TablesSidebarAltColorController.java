@@ -163,7 +163,7 @@ public class TablesSidebarAltColorController implements Initializable {
       dataBox.setVisible(altColorAvailable);
       emptyDataBox.setVisible(!altColorAvailable);
 
-      uploadBtn.setDisable(StringUtils.isEmpty(game.getEffectiveRom()));
+      uploadBtn.setDisable(StringUtils.isEmpty(game.getRom()));
 
       if (altColorAvailable) {
         altColor = Studio.client.getAltColorService().getAltColor(game.getId());

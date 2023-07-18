@@ -2,22 +2,22 @@ package de.mephisto.vpin.server.games;
 
 import de.mephisto.vpin.commons.HighscoreType;
 import de.mephisto.vpin.commons.utils.FileUtils;
-import de.mephisto.vpin.restclient.popper.PopperScreen;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.descriptors.DeleteDescriptor;
+import de.mephisto.vpin.restclient.popper.PopperScreen;
 import de.mephisto.vpin.restclient.representations.ValidationState;
 import de.mephisto.vpin.server.altcolor.AltColorService;
 import de.mephisto.vpin.server.altsound.AltSoundService;
 import de.mephisto.vpin.server.assets.Asset;
 import de.mephisto.vpin.server.assets.AssetRepository;
 import de.mephisto.vpin.server.competitions.ScoreSummary;
-import de.mephisto.vpin.server.puppack.PupPack;
 import de.mephisto.vpin.server.highscores.*;
 import de.mephisto.vpin.server.highscores.cards.CardService;
 import de.mephisto.vpin.server.popper.Emulator;
 import de.mephisto.vpin.server.popper.GameMediaItem;
 import de.mephisto.vpin.server.popper.PinUPConnector;
 import de.mephisto.vpin.server.preferences.PreferencesService;
+import de.mephisto.vpin.server.puppack.PupPack;
 import de.mephisto.vpin.server.puppack.PupPacksService;
 import de.mephisto.vpin.server.roms.RomService;
 import de.mephisto.vpin.server.roms.ScanResult;
@@ -362,9 +362,18 @@ public class GameService {
       LOG.info("Created GameDetails for " + game.getGameDisplayName());
     }
 
-    game.setRom(gameDetails.getRomName());
+
+    //use the script ROM name to check if it is an original or a mapping
+    String originalRom = romService.getRomForAlias(gameDetails.getRomName());
+    if (!StringUtils.isEmpty(originalRom)) {
+      game.setRom(originalRom);
+      game.setRomAlias(gameDetails.getRomName());
+    }
+    else {
+      game.setRom(gameDetails.getRomName());
+    }
+
     game.setNvOffset(gameDetails.getNvOffset());
-    game.setOriginalRom(romService.getOriginalRom(game.getRom()));
     game.setHsFileName(gameDetails.getHsFileName());
     game.setTableName(gameDetails.getTableName());
     game.setExtTableId(gameDetails.getExtTableId());

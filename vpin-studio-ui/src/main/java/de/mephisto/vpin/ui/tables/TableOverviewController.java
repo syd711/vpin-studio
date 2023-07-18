@@ -1,7 +1,6 @@
 package de.mephisto.vpin.ui.tables;
 
 import de.mephisto.vpin.commons.EmulatorType;
-import de.mephisto.vpin.commons.fx.widgets.WidgetLatestScoresController;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.ValidationCode;
 import de.mephisto.vpin.restclient.representations.GameRepresentation;
@@ -14,7 +13,6 @@ import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.tables.validation.LocalizedValidation;
 import de.mephisto.vpin.ui.tables.validation.ValidationTexts;
 import de.mephisto.vpin.ui.util.Dialogs;
-import de.mephisto.vpin.ui.util.RichText;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleObjectProperty;
@@ -36,7 +34,6 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.StackPane;
 import org.apache.commons.lang3.StringUtils;
-import org.fxmisc.flowless.VirtualizedScrollPane;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -510,10 +507,6 @@ public class TableOverviewController implements Initializable, StudioFXControlle
     columnRom.setCellValueFactory(cellData -> {
       GameRepresentation value = cellData.getValue();
       String rom = value.getRom();
-      if (!StringUtils.isEmpty(value.getOriginalRom())) {
-        rom = value.getOriginalRom();
-      }
-
       List<Integer> ignoredValidations = Collections.emptyList();
       if (value.getIgnoredValidations() != null) {
         ignoredValidations = value.getIgnoredValidations();
@@ -647,7 +640,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
       if (game.getGameDisplayName().toLowerCase().contains(filterValue.toLowerCase())) {
         filtered.add(game);
       }
-      else if (!StringUtils.isEmpty(game.getEffectiveRom()) && game.getEffectiveRom().toLowerCase().contains(filterValue.toLowerCase())) {
+      else if (!StringUtils.isEmpty(game.getRom()) && game.getRom().toLowerCase().contains(filterValue.toLowerCase())) {
         filtered.add(game);
       }
     }

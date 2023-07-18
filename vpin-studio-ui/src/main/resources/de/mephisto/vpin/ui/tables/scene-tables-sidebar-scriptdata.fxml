@@ -44,7 +44,7 @@
                                 <Font name="System Bold" size="14.0" />
                             </font>
                         </Label>
-                        <Label layoutX="10.0" layoutY="31.0" text="Effective Rom Name:" textFill="WHITE" GridPane.rowIndex="3">
+                        <Label layoutX="10.0" layoutY="31.0" text="Rom Name:" textFill="WHITE" GridPane.rowIndex="3">
                             <font>
                                 <Font name="System Bold" size="14.0" />
                             </font>

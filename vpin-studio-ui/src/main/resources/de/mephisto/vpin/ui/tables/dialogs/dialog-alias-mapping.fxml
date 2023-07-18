@@ -60,12 +60,12 @@
                         <Font size="14.0" />
                      </font>
                   </Label>
-                  <Label fx:id="titleLabel1" layoutX="10.0" layoutY="15.0" text="Actual ROM Name:" textFill="WHITE" GridPane.rowIndex="2">
+                  <Label fx:id="titleLabel1" layoutX="10.0" layoutY="15.0" text="Original ROM Name:" textFill="WHITE" GridPane.rowIndex="2">
                      <font>
                         <Font size="14.0" />
                      </font>
                   </Label>
-                  <TextField fx:id="romNameField" disable="true" layoutX="158.0" layoutY="10.0" prefHeight="30.0" prefWidth="500.0" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                  <TextField fx:id="romNameField" layoutX="158.0" layoutY="10.0" prefHeight="30.0" prefWidth="500.0" GridPane.columnIndex="1" GridPane.rowIndex="2">
                      <font>
                         <Font size="14.0" />
                      </font>

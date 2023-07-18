@@ -62,7 +62,7 @@ public class AltColorService implements InitializingBean {
 
   @Nullable
   public AltColor getAltColor(@NonNull Game game) {
-    String rom = game.getEffectiveRom();
+    String rom = game.getRom();
     String tableName = game.getTableName();
     if (!StringUtils.isEmpty(rom) && altColors.containsKey(rom.toLowerCase())) {
       return altColors.get(rom.toLowerCase());
@@ -161,7 +161,7 @@ public class AltColorService implements InitializingBean {
       }
       else if (name.endsWith(SERUM_SUFFIX)) {
         try {
-          FileUtils.copyFile(out, new File(game.getAltColorFolder(), game.getEffectiveRom() + SERUM_SUFFIX));
+          FileUtils.copyFile(out, new File(game.getAltColorFolder(), game.getRom() + SERUM_SUFFIX));
         } catch (IOException e) {
           LOG.error("Failed to copy cRZ file: " + e.getMessage(), e);
           return JobExecutionResultFactory.error("Failed to copy cRZ file: " + e.getMessage());

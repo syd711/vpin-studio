@@ -181,7 +181,7 @@ public class TablesSidebarAltSoundController implements Initializable {
       dataBox.setVisible(altSoundAvailable);
       emptyDataBox.setVisible(!altSoundAvailable);
 
-      uploadBtn.setDisable(StringUtils.isEmpty(game.getEffectiveRom()));
+      uploadBtn.setDisable(StringUtils.isEmpty(game.getRom()));
       altSoundBtn.setDisable(!altSoundAvailable);
       restoreBtn.setDisable(!altSoundAvailable);
       enabledCheckbox.setDisable(!altSoundAvailable);

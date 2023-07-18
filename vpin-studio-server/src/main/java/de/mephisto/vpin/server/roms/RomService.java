@@ -49,9 +49,36 @@ public class RomService implements InitializingBean {
   }
 
   @Nullable
-  public String getOriginalRom(@Nullable String rom) {
-    if (rom != null && this.aliasToRomMapping.containsKey(rom)) {
-      return aliasToRomMapping.get(rom);
+  public String getRomAlias(@Nullable String rom) {
+    if (rom == null) {
+      return null;
+    }
+
+    Set<Map.Entry<String, String>> entries = aliasToRomMapping.entrySet();
+    for (Map.Entry<String, String> entry : entries) {
+      String alias = entry.getKey();
+      String romName = entry.getValue();
+
+      if (romName.equals(rom)) {
+        return alias;
+      }
+    }
+    return null;
+  }
+
+  public String getRomForAlias(@Nullable String romAlias) {
+    if (romAlias == null) {
+      return null;
+    }
+
+    Set<Map.Entry<String, String>> entries = aliasToRomMapping.entrySet();
+    for (Map.Entry<String, String> entry : entries) {
+      String alias = entry.getKey();
+      String romName = entry.getValue();
+
+      if (alias.equals(romAlias)) {
+        return romName;
+      }
     }
     return null;
   }
@@ -64,10 +91,13 @@ public class RomService implements InitializingBean {
 
   public boolean saveAliasMapping(Map<String, Object> values) throws IOException {
     String oldValue = (String) values.get("#oldValue");
+    System.out.println(values);
     if (!StringUtils.isEmpty(oldValue) && aliasToRomMapping.containsKey(oldValue)) {
       aliasToRomMapping.remove(oldValue);
       LOG.info("Removed old alias mapping '" + oldValue + "'");
     }
+    values.remove("#oldValue");
+
 
     Set<Map.Entry<String, Object>> entries = values.entrySet();
     for (Map.Entry<String, Object> entry : entries) {

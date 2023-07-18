@@ -201,7 +201,7 @@ public class CompetitionDiscordDialogController implements Initializable, Dialog
     List<GameRepresentation> games = client.getGameService().getGamesCached();
     List<GameRepresentation> filtered = new ArrayList<>();
     for (GameRepresentation game : games) {
-      if (StringUtils.isEmpty(game.getEffectiveRom())) {
+      if (StringUtils.isEmpty(game.getRom())) {
         continue;
       }
       if (game.getEmulator().getName().equals(EmulatorType.VISUAL_PINBALL_X)) {

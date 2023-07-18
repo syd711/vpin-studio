@@ -205,7 +205,7 @@ public class TablesSidebarMameController implements Initializable {
         return;
       }
 
-      options = Studio.client.getMameService().getOptions(game.getEffectiveRom());
+      options = Studio.client.getMameService().getOptions(game.getRom());
 
       if (options != null) {
         skipPinballStartupTest.setSelected(options.isSkipPinballStartupTest());
@@ -238,7 +238,7 @@ public class TablesSidebarMameController implements Initializable {
     }
 
     MameOptions options = new MameOptions();
-    options.setRom(game.get().getEffectiveRom());
+    options.setRom(game.get().getRom());
 
     options.setIgnoreRomCrcError(ignoreRomCrcError.isSelected());
     options.setSkipPinballStartupTest(skipPinballStartupTest.isSelected());
