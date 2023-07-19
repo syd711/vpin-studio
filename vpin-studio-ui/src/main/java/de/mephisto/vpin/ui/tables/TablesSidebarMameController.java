@@ -7,6 +7,7 @@ import de.mephisto.vpin.restclient.mame.MameOptions;
 import de.mephisto.vpin.restclient.representations.GameRepresentation;
 import de.mephisto.vpin.restclient.representations.ValidationState;
 import de.mephisto.vpin.ui.Studio;
+import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.tables.validation.LocalizedValidation;
 import de.mephisto.vpin.ui.tables.validation.ValidationTexts;
 import javafx.fxml.FXML;
@@ -254,6 +255,7 @@ public class TablesSidebarMameController implements Initializable {
 
     try {
       Studio.client.getMameService().saveOptions(options);
+      EventManager.getInstance().notifyTableChange(this.game.get().getId());
     } catch (Exception e) {
       LOG.error("Failed to save mame settings: " + e.getMessage(), e);
       WidgetFactory.showAlert(Studio.stage, "Error", "Failed to save mame settings: " + e.getMessage());
