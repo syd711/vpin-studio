@@ -6,9 +6,15 @@ public interface PopperStatusChangeListener {
 
   void tableExited(TableStatusChangedEvent event);
 
-  void popperLaunched();
+  default void popperLaunched() {
 
-  void popperExited();
+  }
 
-  void popperRestarted();
+  default void popperExited() {
+
+  }
+
+  default void popperRestarted() {
+
+  }
 }
