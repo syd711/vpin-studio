@@ -87,6 +87,9 @@ public class TablesSidebarScriptDataController implements Initializable {
   private Button editTableNameBtn;
 
   @FXML
+  private Button vpSaveEditBtn;
+
+  @FXML
   private VBox errorBox;
 
   @FXML
@@ -108,6 +111,7 @@ public class TablesSidebarScriptDataController implements Initializable {
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
     errorBox.managedProperty().bindBidirectional(errorBox.visibleProperty());
+    vpSaveEditBtn.setDisable(!Studio.client.getSystemService().isLocal());
   }
 
   public void setGame(Optional<GameRepresentation> game) {

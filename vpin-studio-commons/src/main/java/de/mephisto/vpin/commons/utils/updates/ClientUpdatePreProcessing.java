@@ -5,12 +5,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 public class ClientUpdatePreProcessing {
   private final static Logger LOG = LoggerFactory.getLogger(ClientUpdatePreProcessing.class);
-  private static List<String> resources = Arrays.asList("VPSaveEdit.exe");
+  private static List<String> resources = Collections.emptyList();
 
   public static void execute() {
     runResourcesCheck();

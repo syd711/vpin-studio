@@ -39,7 +39,6 @@ Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{
 [Files]
 Source: "..\..\..\..\vpin-studio\Output\VPin-Studio\{#MyAppExeName}"; DestDir: "{app}"; Flags: ignoreversion
 Source: "..\..\..\..\vpin-studio\Output\VPin-Studio\resources\7z.exe"; DestDir: "{app}\resources"; Flags: ignoreversion
-Source: "..\..\..\..\vpin-studio\Output\VPin-Studio\resources\VPSaveEdit.exe"; DestDir: "{app}\resources"; Flags: ignoreversion
 Source: "..\..\..\..\vpin-studio\Output\VPin-Studio\resources\vpsdb.json"; DestDir: "{app}\resources"; Flags: ignoreversion
 Source: "..\..\..\..\vpin-studio\Output\VPin-Studio\config\info.txt"; DestDir: "{app}\config"; Flags: ignoreversion recursesubdirs createallsubdirs
 Source: "..\..\..\..\vpin-studio\Output\Vpin-Studio\win32\*"; DestDir: "{app}\win32"; Flags: ignoreversion recursesubdirs createallsubdirs

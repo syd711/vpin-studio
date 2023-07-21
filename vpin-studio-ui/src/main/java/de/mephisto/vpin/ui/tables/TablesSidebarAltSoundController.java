@@ -103,8 +103,9 @@ public class TablesSidebarAltSoundController implements Initializable {
   @FXML
   private void onAltSoundEnable() {
     if (game.isPresent() && game.get().isAltSoundAvailable()) {
+      GameRepresentation g = game.get();
       Studio.client.getAltSoundService().setAltSoundEnabled(game.get().getId(), enabledCheckbox.isSelected());
-      EventManager.getInstance().notifyPreferenceChanged();
+      EventManager.getInstance().notifyTableChange(g.getId(), g.getRom());
     }
   }
 
