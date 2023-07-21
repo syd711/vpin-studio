@@ -1,5 +1,7 @@
 package de.mephisto.vpin.commons.utils;
 
+import de.mephisto.vpin.commons.utils.updates.ClientUpdatePreProcessing;
+import de.mephisto.vpin.commons.utils.updates.ServerUpdatePreProcessing;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -55,7 +57,7 @@ public class Updater {
     return percentage;
   }
 
-  private static void download(String downloadUrl, File target) {
+  public static void download(String downloadUrl, File target) {
     new Thread(() -> {
       try {
         LOG.info("Downloading " + downloadUrl);
@@ -76,14 +78,15 @@ public class Updater {
         in.close();
         fileOutputStream.close();
         tmp.renameTo(target);
-        LOG.info("Downloaded update file " + target.getAbsolutePath());
+        LOG.info("Downloaded file " + target.getAbsolutePath());
       } catch (Exception e) {
-        LOG.error("Failed to execute update: " + e.getMessage(), e);
+        LOG.error("Failed to execute download: " + e.getMessage(), e);
       }
     }).start();
   }
 
   public static boolean installServerUpdate() throws IOException {
+    ServerUpdatePreProcessing.execute();
     FileUtils.writeBatch("update-server.bat", "timeout /T 8 /nobreak\nresources\\7z.exe -aoa x \"VPin-Studio-Server.zip\"\ntimeout /T 4 /nobreak\ndel VPin-Studio-Server.zip\nserver.vbs\nexit");
     List<String> commands = Arrays.asList("cmd", "/c", "start", "update-server.bat");
     SystemCommandExecutor executor = new SystemCommandExecutor(commands);
@@ -102,6 +105,7 @@ public class Updater {
   }
 
   public static boolean installClientUpdate() throws IOException {
+    ClientUpdatePreProcessing.execute();
     String cmds = "timeout /T 4 /nobreak\nresources\\7z.exe -aoa x \"VPin-Studio.zip\"\ntimeout /T 4 /nobreak\ndel VPin-Studio.zip\nVPin-Studio.exe\nexit";
     FileUtils.writeBatch("update-client.bat", cmds);
     LOG.info("Written temporary batch: " + cmds);

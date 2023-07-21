@@ -454,14 +454,14 @@ public class Game {
   public File getNvRamFile() {
     File nvRamFolder = new File(systemService.getMameFolder(), "nvram");
 
-    String aliasedRom = getRomAlias() != null ? getRomAlias() : getRom();
-    File defaultNVFile = new File(nvRamFolder, aliasedRom + ".nv");
-    if (getNvOffset() == 0) {
-      return defaultNVFile;
+    String rom = getRom();
+    File aliasedNvFile = new File(nvRamFolder, rom + ".nv");
+    if (aliasedNvFile.exists() && getNvOffset() == 0) {
+      return aliasedNvFile;
     }
 
     //else, we can check if a nv file with the alias and version exists
-    File versionNVAliasedFile = new File(systemService.getMameFolder(), aliasedRom + " v" + getNvOffset() + ".nv");
+    File versionNVAliasedFile = new File(systemService.getMameFolder(), rom + " v" + getNvOffset() + ".nv");
     if (versionNVAliasedFile.exists()) {
       return versionNVAliasedFile;
     }
@@ -472,7 +472,7 @@ public class Game {
       return versionTextFile;
     }
 
-    return defaultNVFile;
+    return aliasedNvFile;
   }
 
 

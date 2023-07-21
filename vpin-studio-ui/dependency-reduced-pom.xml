@@ -3,7 +3,7 @@
   <parent>
     <artifactId>studio</artifactId>
     <groupId>de.mephisto.vpin</groupId>
-    <version>1.3.2</version>
+    <version>1.3.3</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <artifactId>vpin-studio-ui</artifactId>
@@ -240,6 +240,24 @@
                 <argument>-t7z</argument>
                 <argument>VPin-Studio.zip</argument>
                 <argument>VPin-Studio.exe</argument>
+                <argument>${basedir}/../resources/VPSaveEdit.exe</argument>
+              </arguments>
+            </configuration>
+          </execution>
+          <execution>
+            <id>move-zipped-exe</id>
+            <phase>package</phase>
+            <goals>
+              <goal>exec</goal>
+            </goals>
+            <configuration>
+              <executable>${basedir}/../Output/VPin-Studio/resources/7z.exe</executable>
+              <workingDirectory>${basedir}/../Output/VPin-Studio/</workingDirectory>
+              <arguments>
+                <argument>rn</argument>
+                <argument>VPin-Studio.zip</argument>
+                <argument>VPin-VPSaveEdit.exe</argument>
+                <argument>resources/VPSaveEdit.exe</argument>
               </arguments>
             </configuration>
           </execution>

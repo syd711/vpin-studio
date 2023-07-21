@@ -276,6 +276,18 @@
                   <Tooltip text="Open the table script for the selected table." />
                </tooltip>
             </Button>
+            <Separator layoutX="120.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
+            <Button layoutX="136.0" layoutY="11.0" mnemonicParsing="false" onAction="#onVPSaveEdit" styleClass="external-component" text="VPSaveEdit" textFill="WHITE">
+               <font>
+                  <Font size="14.0" />
+               </font>
+               <graphic>
+                  <FontIcon iconColor="WHITE" iconLiteral="mdi2o-open-in-new" />
+               </graphic>
+               <tooltip>
+                  <Tooltip text="Open the table script for the selected table." />
+               </tooltip>
+            </Button>
             <Button fx:id="inspectBtn" mnemonicParsing="false" onAction="#onInspect" text="Inspect Script" textFill="WHITE" visible="false">
                <font>
                   <Font size="14.0" />

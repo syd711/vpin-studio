@@ -2,6 +2,7 @@ package de.mephisto.vpin.ui.tables;
 
 import de.mephisto.vpin.commons.utils.FileUtils;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
+import de.mephisto.vpin.restclient.SystemSummary;
 import de.mephisto.vpin.restclient.representations.GameRepresentation;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.events.EventManager;
@@ -153,6 +154,19 @@ public class TablesSidebarScriptDataController implements Initializable {
     if (this.game.isPresent()) {
       Dialogs.createProgressDialog(new TableScanProgressModel("Scanning Table \"" + this.game.get().getGameDisplayName() + "\"", Arrays.asList(this.game.get())));
       EventManager.getInstance().notifyTableChange(this.game.get().getId());
+    }
+  }
+
+  @FXML
+  public void onVPSaveEdit() {
+    try {
+      SystemSummary systemSummary = Studio.client.getSystemService().getSystemSummary();
+      ProcessBuilder builder = new ProcessBuilder(new File("resources", "VPSaveEdit.exe").getAbsolutePath());
+      builder.directory(new File("resources"));
+      builder.start();
+    } catch (IOException e) {
+      LOG.error("Failed to open VPSaveEdit: " + e.getMessage(), e);
+      WidgetFactory.showAlert(Studio.stage, "Error", "Failed to open VPSaveEdit: " + e.getMessage());
     }
   }
 
