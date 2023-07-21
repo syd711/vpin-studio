@@ -208,6 +208,22 @@ public class ValidationService implements InitializingBean {
     return ValidationStateFactory.empty();
   }
 
+  public List<ValidationState> validateRom(Game game) {
+    List<ValidationState> result = new ArrayList<>();
+    if (isValidationEnabled(game, ValidationCode.CODE_NO_ROM)) {
+      if (StringUtils.isEmpty(game.getRom())) {
+        result.add(ValidationStateFactory.create(ValidationCode.CODE_NO_ROM));
+      }
+    }
+
+    if (isValidationEnabled(game, ValidationCode.CODE_ROM_NOT_EXISTS)) {
+      if (!game.isRomExists() && game.isRomRequired()) {
+        result.add(ValidationStateFactory.create(ValidationCode.CODE_ROM_NOT_EXISTS));
+      }
+    }
+    return result;
+  }
+
   public List<ValidationState> validateAltColor(Game game) {
     if (!game.isAltColorAvailable()) {
       return Collections.emptyList();
@@ -233,11 +249,11 @@ public class ValidationService implements InitializingBean {
       result.add(ValidationStateFactory.create(CODE_ALT_COLOR_DMDDEVICE_FILES_MISSING, dmdDevicedll.getName()));
     }
 
-    if(!dmdextexe.exists()) {
+    if (!dmdextexe.exists()) {
       result.add(ValidationStateFactory.create(CODE_ALT_COLOR_DMDDEVICE_FILES_MISSING, dmdextexe.getName()));
     }
 
-    if(!dmdDeviceIni.exists()) {
+    if (!dmdDeviceIni.exists()) {
       result.add(ValidationStateFactory.create(CODE_ALT_COLOR_DMDDEVICE_FILES_MISSING, dmdDeviceIni.getName()));
     }
 

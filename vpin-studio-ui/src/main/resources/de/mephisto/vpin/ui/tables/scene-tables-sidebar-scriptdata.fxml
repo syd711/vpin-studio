@@ -2,6 +2,7 @@
 
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Hyperlink?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.Separator?>
 <?import javafx.scene.control.ToolBar?>
@@ -22,231 +23,254 @@
     <center>
         <VBox prefWidth="574.0" BorderPane.alignment="CENTER">
             <children>
-                <GridPane vgap="3.0">
-                    <columnConstraints>
-                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="282.199951171875" minWidth="10.0" prefWidth="177.4000244140625" />
-                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="497.40007324218755" minWidth="10.0" prefWidth="298.39995117187493" />
-                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="460.800048828125" minWidth="10.0" prefWidth="100.00004882812505" />
-                    </columnConstraints>
-                    <rowConstraints>
-                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="ALWAYS" />
-                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                    </rowConstraints>
-                    <children>
-                        <Label text="Table Filename:" textFill="WHITE">
-                            <font>
-                                <Font name="System Bold" size="14.0" />
-                            </font>
-                        </Label>
-                        <Label layoutX="10.0" layoutY="31.0" text="Rom Name:" textFill="WHITE" GridPane.rowIndex="3">
-                            <font>
-                                <Font name="System Bold" size="14.0" />
-                            </font>
-                        </Label>
-                        <Label layoutX="10.0" layoutY="45.0" text="NVOffset:" textFill="WHITE" GridPane.rowIndex="7">
-                            <font>
-                                <Font name="System Bold" size="14.0" />
-                            </font>
-                        </Label>
-                        <Label fx:id="labelFilename" layoutX="130.0" layoutY="12.0" text="-" textFill="WHITE" GridPane.columnIndex="1">
-                            <font>
-                                <Font size="14.0" />
-                            </font>
-                        </Label>
-                        <Label fx:id="labelRom" layoutX="130.0" layoutY="38.0" text="-" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="3">
-                            <font>
-                                <Font size="14.0" />
-                            </font>
-                        </Label>
-                        <Label layoutX="10.0" layoutY="56.0" text="ROM Alias:" textFill="WHITE" GridPane.rowIndex="4">
-                            <font>
-                                <Font name="System Bold" size="14.0" />
-                            </font>
-                        </Label>
-                        <Label fx:id="labelRomAlias" layoutX="130.0" layoutY="56.0" text="-" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="4">
-                            <font>
-                                <Font size="14.0" />
-                            </font>
-                        </Label>
-                        <Label fx:id="labelNVOffset" layoutX="130.0" layoutY="78.0" text="-" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="7">
-                            <font>
-                                <Font size="14.0" />
-                            </font>
-                        </Label>
-                        <HBox alignment="CENTER_RIGHT" spacing="6.0" GridPane.columnIndex="2" GridPane.rowIndex="3">
-                            <children>
-                                <Button fx:id="romUploadBtn" mnemonicParsing="false" onAction="#onRomUpload">
-                                    <graphic>
-                                        <FontIcon iconColor="WHITE" iconLiteral="mdi2u-upload" />
-                                    </graphic>
-                                    <HBox.margin>
-                                        <Insets />
-                                    </HBox.margin>
-                                </Button>
-                                <Button fx:id="editRomNameBtn" mnemonicParsing="false" onAction="#onRomEdit">
-                                    <graphic>
-                                        <FontIcon iconColor="WHITE" iconLiteral="mdi2d-database-edit-outline" />
-                                    </graphic>
-                                    <tooltip>
-                                        <Tooltip text="Update the ROM name for this table." />
-                                    </tooltip>
-                                </Button>
-                                <Label>
-                                    <font>
-                                        <Font size="14.0" />
-                                    </font>
-                                    <graphic>
-                                        <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
-                                    </graphic>
-                                    <tooltip>
-                                        <Tooltip prefWidth="300.0" text="The ROM name usually also defines the folder name of the PUP pack and the highscore file. Check the table sources if this value does not match." wrapText="true" />
-                                    </tooltip>
-                                </Label>
-                            </children>
+            <VBox fx:id="errorBox" styleClass="error-container">
+               <children>
+                  <BorderPane>
+                     <left>
+                        <Label fx:id="errorTitle" nodeOrientation="LEFT_TO_RIGHT" styleClass="error-title" text="Label" wrapText="true" BorderPane.alignment="CENTER" />
+                     </left>
+                     <right>
+                        <Hyperlink onAction="#onDismiss" text="Dismiss" BorderPane.alignment="CENTER" />
+                     </right>
+                  </BorderPane>
+                  <Label fx:id="errorText" layoutX="22.0" layoutY="22.0" styleClass="error-message" text="Label" wrapText="true" />
+               </children>
+               <VBox.margin>
+                  <Insets />
+               </VBox.margin>
+            </VBox>
+            <VBox>
+               <children>
+                      <GridPane vgap="3.0">
+                          <columnConstraints>
+                              <ColumnConstraints hgrow="SOMETIMES" maxWidth="282.199951171875" minWidth="10.0" prefWidth="177.4000244140625" />
+                              <ColumnConstraints hgrow="SOMETIMES" maxWidth="497.40007324218755" minWidth="10.0" prefWidth="298.39995117187493" />
+                              <ColumnConstraints hgrow="SOMETIMES" maxWidth="460.800048828125" minWidth="10.0" prefWidth="100.00004882812505" />
+                          </columnConstraints>
+                          <rowConstraints>
+                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="ALWAYS" />
+                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                          </rowConstraints>
+                          <children>
+                              <Label text="Table Filename:" textFill="WHITE">
+                                  <font>
+                                      <Font name="System Bold" size="14.0" />
+                                  </font>
+                              </Label>
+                              <Label layoutX="10.0" layoutY="31.0" text="Rom Name:" textFill="WHITE" GridPane.rowIndex="3">
+                                  <font>
+                                      <Font name="System Bold" size="14.0" />
+                                  </font>
+                              </Label>
+                              <Label layoutX="10.0" layoutY="45.0" text="NVOffset:" textFill="WHITE" GridPane.rowIndex="7">
+                                  <font>
+                                      <Font name="System Bold" size="14.0" />
+                                  </font>
+                              </Label>
+                              <Label fx:id="labelFilename" layoutX="130.0" layoutY="12.0" text="-" textFill="WHITE" GridPane.columnIndex="1">
+                                  <font>
+                                      <Font size="14.0" />
+                                  </font>
+                              </Label>
+                              <Label fx:id="labelRom" layoutX="130.0" layoutY="38.0" text="-" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="3">
+                                  <font>
+                                      <Font size="14.0" />
+                                  </font>
+                              </Label>
+                              <Label layoutX="10.0" layoutY="56.0" text="ROM Alias:" textFill="WHITE" GridPane.rowIndex="4">
+                                  <font>
+                                      <Font name="System Bold" size="14.0" />
+                                  </font>
+                              </Label>
+                              <Label fx:id="labelRomAlias" layoutX="130.0" layoutY="56.0" text="-" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="4">
+                                  <font>
+                                      <Font size="14.0" />
+                                  </font>
+                              </Label>
+                              <Label fx:id="labelNVOffset" layoutX="130.0" layoutY="78.0" text="-" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="7">
+                                  <font>
+                                      <Font size="14.0" />
+                                  </font>
+                              </Label>
+                              <HBox alignment="CENTER_RIGHT" spacing="6.0" GridPane.columnIndex="2" GridPane.rowIndex="3">
+                                  <children>
+                                      <Button fx:id="romUploadBtn" mnemonicParsing="false" onAction="#onRomUpload">
+                                          <graphic>
+                                              <FontIcon iconColor="WHITE" iconLiteral="mdi2u-upload" />
+                                          </graphic>
+                                          <HBox.margin>
+                                              <Insets />
+                                          </HBox.margin>
+                                      </Button>
+                                      <Button fx:id="editRomNameBtn" mnemonicParsing="false" onAction="#onRomEdit">
+                                          <graphic>
+                                              <FontIcon iconColor="WHITE" iconLiteral="mdi2d-database-edit-outline" />
+                                          </graphic>
+                                          <tooltip>
+                                              <Tooltip text="Update the ROM name for this table." />
+                                          </tooltip>
+                                      </Button>
+                                      <Label>
+                                          <font>
+                                              <Font size="14.0" />
+                                          </font>
+                                          <graphic>
+                                              <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
+                                          </graphic>
+                                          <tooltip>
+                                              <Tooltip prefWidth="300.0" text="The ROM name usually also defines the folder name of the PUP pack and the highscore file. Check the table sources if this value does not match." wrapText="true" />
+                                          </tooltip>
+                                      </Label>
+                                  </children>
+                              </HBox>
+                              <Label layoutX="10.0" layoutY="198.0" text="EM Highscore Filename:" textFill="WHITE" GridPane.rowIndex="6">
+                                  <font>
+                                      <Font name="System Bold" size="14.0" />
+                                  </font>
+                              </Label>
+                              <HBox alignment="CENTER_RIGHT" spacing="6.0" GridPane.columnIndex="2" GridPane.rowIndex="6">
+                                  <children>
+                                      <Button fx:id="editHsFileNameBtn" mnemonicParsing="false" onAction="#onHsFileNameEdit">
+                                          <graphic>
+                                              <FontIcon iconColor="WHITE" iconLiteral="mdi2d-database-edit-outline" />
+                                          </graphic>
+                                          <tooltip>
+                                              <Tooltip text="Set EM highscore filename manually." />
+                                          </tooltip>
+                                      </Button>
+                                      <Label>
+                                          <font>
+                                              <Font size="14.0" />
+                                          </font>
+                                          <tooltip>
+                                              <Tooltip prefWidth="300.0" text="The value is read from EM table scripts and defines the highscore filename, located in &quot;VisualPinball\User&quot;." wrapText="true" />
+                                          </tooltip>
+                                          <graphic>
+                                              <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
+                                          </graphic>
+                                      </Label>
+                                  </children>
+                              </HBox>
+                              <Label fx:id="labelHSFilename" text="-" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="6">
+                                  <font>
+                                      <Font size="14.0" />
+                                  </font>
+                              </Label>
+                              <Label layoutX="10.0" layoutY="110.0" text="Tablename:" textFill="WHITE" GridPane.rowIndex="5">
+                                  <font>
+                                      <Font name="System Bold" size="14.0" />
+                                  </font>
+                              </Label>
+                              <Label fx:id="labelTableName" layoutX="188.0" layoutY="110.0" text="-" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="5">
+                                  <font>
+                                      <Font size="14.0" />
+                                  </font>
+                              </Label>
+                              <HBox alignment="CENTER_RIGHT" spacing="6.0" GridPane.columnIndex="2" GridPane.rowIndex="5">
+                                  <children>
+                                      <Button fx:id="editTableNameBtn" mnemonicParsing="false" onAction="#onTableNameEdit">
+                                          <graphic>
+                                              <FontIcon iconColor="WHITE" iconLiteral="mdi2d-database-edit-outline" />
+                                          </graphic>
+                                          <tooltip>
+                                              <Tooltip text="Update the table name of this game. This value may match the VReg highscore filename value." />
+                                          </tooltip>
+                                      </Button>
+                                      <Label>
+                                          <font>
+                                              <Font size="14.0" />
+                                          </font>
+                                          <tooltip>
+                                              <Tooltip prefWidth="300.0" text="This property is defined for some tables and used as an alternative ROM name during the highscore lookup." wrapText="true" />
+                                          </tooltip>
+                                          <graphic>
+                                              <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
+                                          </graphic>
+                                      </Label>
+                                  </children>
+                              </HBox>
+                              <Label layoutX="10.0" layoutY="45.0" text="Last Modified:" textFill="WHITE" GridPane.rowIndex="2">
+                                  <font>
+                                      <Font name="System Bold" size="14.0" />
+                                  </font>
+                              </Label>
+                              <Label fx:id="labelLastModified" layoutX="188.0" layoutY="45.0" text="-" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                                  <font>
+                                      <Font size="14.0" />
+                                  </font>
+                              </Label>
+                              <Label layoutX="10.0" layoutY="45.0" text="File Size:" textFill="WHITE" GridPane.rowIndex="1">
+                                  <font>
+                                      <Font name="System Bold" size="14.0" />
+                                  </font>
+                              </Label>
+                              <Label fx:id="labelFilesize" layoutX="187.0" layoutY="45.0" text="-" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                                  <font>
+                                      <Font size="14.0" />
+                                  </font>
+                              </Label>
+                        <HBox alignment="CENTER_RIGHT" spacing="6.0" GridPane.columnIndex="2" GridPane.rowIndex="4">
+                           <children>
+                              <Button fx:id="deleteAliasBtn" layoutX="57.0" layoutY="13.0" mnemonicParsing="false" onAction="#onDeleteAlias">
+                                 <graphic>
+                                    <FontIcon iconColor="#ff3333" iconLiteral="mdi2d-delete-outline" />
+                                 </graphic>
+                                 <tooltip>
+                                    <Tooltip text="Update the ROM name for this table." />
+                                 </tooltip>
+                              </Button>
+                              <Button fx:id="editAliasBtn" mnemonicParsing="false" onAction="#onAliasEdit">
+                                 <graphic>
+                                    <FontIcon iconColor="WHITE" iconLiteral="mdi2d-database-edit-outline" />
+                                 </graphic>
+                                 <tooltip>
+                                    <Tooltip text="Update the ROM name for this table." />
+                                 </tooltip>
+                              </Button>
+                              <Label>
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                                 <graphic>
+                                    <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
+                                 </graphic>
+                                 <tooltip>
+                                    <Tooltip prefWidth="300.0" text="In Visual PinMAME (VPinMAME), the VpmAlias mapping feature is used to associate multiple ROM names with a single pinball machine. It is particularly useful when different versions or revisions of a pinball machine exist, and you want to consolidate them under a single entry in Visual Pinball X (VPX)." wrapText="true" />
+                                 </tooltip>
+                              </Label>
+                           </children>
                         </HBox>
-                        <Label layoutX="10.0" layoutY="198.0" text="EM Highscore Filename:" textFill="WHITE" GridPane.rowIndex="6">
-                            <font>
-                                <Font name="System Bold" size="14.0" />
-                            </font>
-                        </Label>
-                        <HBox alignment="CENTER_RIGHT" spacing="6.0" GridPane.columnIndex="2" GridPane.rowIndex="6">
-                            <children>
-                                <Button fx:id="editHsFileNameBtn" mnemonicParsing="false" onAction="#onHsFileNameEdit">
-                                    <graphic>
-                                        <FontIcon iconColor="WHITE" iconLiteral="mdi2d-database-edit-outline" />
-                                    </graphic>
-                                    <tooltip>
-                                        <Tooltip text="Set EM highscore filename manually." />
-                                    </tooltip>
-                                </Button>
-                                <Label>
-                                    <font>
-                                        <Font size="14.0" />
-                                    </font>
-                                    <tooltip>
-                                        <Tooltip prefWidth="300.0" text="The value is read from EM table scripts and defines the highscore filename, located in &quot;VisualPinball\User&quot;." wrapText="true" />
-                                    </tooltip>
-                                    <graphic>
-                                        <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
-                                    </graphic>
-                                </Label>
-                            </children>
+                        <HBox alignment="CENTER_RIGHT" prefHeight="100.0" prefWidth="200.0" GridPane.columnIndex="2" GridPane.rowIndex="7">
+                           <children>
+                              <Label prefHeight="40.0" prefWidth="18.0">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                                 <tooltip>
+                                    <Tooltip prefWidth="300.0" text="In Visual Pinball X (VPX), the NVOffset field in the game's script can be used to apply a different NVRAM (Non-Volatile Random Access Memory) name for a specific pinball machine. The NVRAM name determines the file where the machine's state and high scores are stored." wrapText="true" />
+                                 </tooltip>
+                                 <graphic>
+                                    <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
+                                 </graphic>
+                              </Label>
+                           </children>
                         </HBox>
-                        <Label fx:id="labelHSFilename" text="-" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="6">
-                            <font>
-                                <Font size="14.0" />
-                            </font>
-                        </Label>
-                        <Label layoutX="10.0" layoutY="110.0" text="Tablename:" textFill="WHITE" GridPane.rowIndex="5">
-                            <font>
-                                <Font name="System Bold" size="14.0" />
-                            </font>
-                        </Label>
-                        <Label fx:id="labelTableName" layoutX="188.0" layoutY="110.0" text="-" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="5">
-                            <font>
-                                <Font size="14.0" />
-                            </font>
-                        </Label>
-                        <HBox alignment="CENTER_RIGHT" spacing="6.0" GridPane.columnIndex="2" GridPane.rowIndex="5">
-                            <children>
-                                <Button fx:id="editTableNameBtn" mnemonicParsing="false" onAction="#onTableNameEdit">
-                                    <graphic>
-                                        <FontIcon iconColor="WHITE" iconLiteral="mdi2d-database-edit-outline" />
-                                    </graphic>
-                                    <tooltip>
-                                        <Tooltip text="Update the table name of this game. This value may match the VReg highscore filename value." />
-                                    </tooltip>
-                                </Button>
-                                <Label>
-                                    <font>
-                                        <Font size="14.0" />
-                                    </font>
-                                    <tooltip>
-                                        <Tooltip prefWidth="300.0" text="This property is defined for some tables and used as an alternative ROM name during the highscore lookup." wrapText="true" />
-                                    </tooltip>
-                                    <graphic>
-                                        <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
-                                    </graphic>
-                                </Label>
-                            </children>
-                        </HBox>
-                        <Label layoutX="10.0" layoutY="45.0" text="Last Modified:" textFill="WHITE" GridPane.rowIndex="2">
-                            <font>
-                                <Font name="System Bold" size="14.0" />
-                            </font>
-                        </Label>
-                        <Label fx:id="labelLastModified" layoutX="188.0" layoutY="45.0" text="-" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="2">
-                            <font>
-                                <Font size="14.0" />
-                            </font>
-                        </Label>
-                        <Label layoutX="10.0" layoutY="45.0" text="File Size:" textFill="WHITE" GridPane.rowIndex="1">
-                            <font>
-                                <Font name="System Bold" size="14.0" />
-                            </font>
-                        </Label>
-                        <Label fx:id="labelFilesize" layoutX="187.0" layoutY="45.0" text="-" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="1">
-                            <font>
-                                <Font size="14.0" />
-                            </font>
-                        </Label>
-                  <HBox alignment="CENTER_RIGHT" spacing="6.0" GridPane.columnIndex="2" GridPane.rowIndex="4">
-                     <children>
-                        <Button fx:id="deleteAliasBtn" layoutX="57.0" layoutY="13.0" mnemonicParsing="false" onAction="#onDeleteAlias">
-                           <graphic>
-                              <FontIcon iconColor="#ff3333" iconLiteral="mdi2d-delete-outline" />
-                           </graphic>
-                           <tooltip>
-                              <Tooltip text="Update the ROM name for this table." />
-                           </tooltip>
-                        </Button>
-                        <Button fx:id="editAliasBtn" mnemonicParsing="false" onAction="#onAliasEdit">
-                           <graphic>
-                              <FontIcon iconColor="WHITE" iconLiteral="mdi2d-database-edit-outline" />
-                           </graphic>
-                           <tooltip>
-                              <Tooltip text="Update the ROM name for this table." />
-                           </tooltip>
-                        </Button>
-                        <Label>
-                           <font>
-                              <Font size="14.0" />
-                           </font>
-                           <graphic>
-                              <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
-                           </graphic>
-                           <tooltip>
-                              <Tooltip prefWidth="300.0" text="In Visual PinMAME (VPinMAME), the VpmAlias mapping feature is used to associate multiple ROM names with a single pinball machine. It is particularly useful when different versions or revisions of a pinball machine exist, and you want to consolidate them under a single entry in Visual Pinball X (VPX)." wrapText="true" />
-                           </tooltip>
-                        </Label>
-                     </children>
-                  </HBox>
-                  <HBox alignment="CENTER_RIGHT" prefHeight="100.0" prefWidth="200.0" GridPane.columnIndex="2" GridPane.rowIndex="7">
-                     <children>
-                        <Label prefHeight="40.0" prefWidth="18.0">
-                           <font>
-                              <Font size="14.0" />
-                           </font>
-                           <tooltip>
-                              <Tooltip prefWidth="300.0" text="In Visual Pinball X (VPX), the NVOffset field in the game's script can be used to apply a different NVRAM (Non-Volatile Random Access Memory) name for a specific pinball machine. The NVRAM name determines the file where the machine's state and high scores are stored." wrapText="true" />
-                           </tooltip>
-                           <graphic>
-                              <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
-                           </graphic>
-                        </Label>
-                     </children>
-                  </HBox>
-                    </children>
-                </GridPane>
+                          </children>
+                      </GridPane>
+               </children>
+               <VBox.margin>
+                  <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
+               </VBox.margin>
+            </VBox>
             </children>
          <BorderPane.margin>
-            <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
+            <Insets />
          </BorderPane.margin>
         </VBox>
     </center>

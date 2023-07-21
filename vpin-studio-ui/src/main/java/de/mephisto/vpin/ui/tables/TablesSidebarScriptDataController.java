@@ -4,9 +4,12 @@ import de.mephisto.vpin.commons.utils.FileUtils;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.SystemSummary;
 import de.mephisto.vpin.restclient.representations.GameRepresentation;
+import de.mephisto.vpin.restclient.representations.ValidationState;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.tables.dialogs.ScriptDownloadProgressModel;
+import de.mephisto.vpin.ui.tables.validation.LocalizedValidation;
+import de.mephisto.vpin.ui.tables.validation.ValidationTexts;
 import de.mephisto.vpin.ui.util.Dialogs;
 import de.mephisto.vpin.ui.util.ProgressResultModel;
 import javafx.fxml.FXML;
@@ -14,6 +17,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
+import javafx.scene.layout.VBox;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,6 +28,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.text.DateFormat;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
 
@@ -81,9 +86,20 @@ public class TablesSidebarScriptDataController implements Initializable {
   @FXML
   private Button editTableNameBtn;
 
+  @FXML
+  private VBox errorBox;
+
+  @FXML
+  private Label errorTitle;
+
+  @FXML
+  private Label errorText;
+
   private Optional<GameRepresentation> game = Optional.empty();
 
   private TablesSidebarController tablesSidebarController;
+
+  private ValidationState validationState;
 
   // Add a public no-args constructor
   public TablesSidebarScriptDataController() {
@@ -91,6 +107,7 @@ public class TablesSidebarScriptDataController implements Initializable {
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
+    errorBox.managedProperty().bindBidirectional(errorBox.visibleProperty());
   }
 
   public void setGame(Optional<GameRepresentation> game) {
@@ -237,11 +254,20 @@ public class TablesSidebarScriptDataController implements Initializable {
     }
   }
 
+  @FXML
+  private void onDismiss() {
+    GameRepresentation g = game.get();
+    tablesSidebarController.getTablesController().dismissValidation(g, this.validationState);
+  }
+
   public void refreshView(Optional<GameRepresentation> g) {
+    errorBox.setVisible(false);
+
     editHsFileNameBtn.setDisable(g.isEmpty());
     editRomNameBtn.setDisable(g.isEmpty());
     editTableNameBtn.setDisable(g.isEmpty());
     romUploadBtn.setDisable(g.isEmpty());
+
     inspectBtn.setDisable(g.isEmpty() || !g.get().isGameFileAvailable());
     editBtn.setDisable(g.isEmpty() || !g.get().isGameFileAvailable());
     scanBtn.setDisable(g.isEmpty() || !g.get().isGameFileAvailable());
@@ -269,6 +295,15 @@ public class TablesSidebarScriptDataController implements Initializable {
       }
       else {
         labelHSFilename.setText("-");
+      }
+
+      List<ValidationState> validationStates = Studio.client.getGameService().getRomValidations(game.getId());
+      errorBox.setVisible(!validationStates.isEmpty());
+      if (!validationStates.isEmpty()) {
+        validationState = validationStates.get(0);
+        LocalizedValidation validationResult = ValidationTexts.getValidationResult(game, validationState);
+        errorTitle.setText(validationResult.getLabel());
+        errorText.setText(validationResult.getText());
       }
     }
     else {

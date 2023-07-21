@@ -10,6 +10,7 @@
 - Added nvoffset help.
 - Added script view: This way you can have a quick look on how the actual VPX script looks like. The view works way faster than the old script export functionality. Unfortunately I'm not able to save the script yet.
 - Added button to open **VPSaveEdit.exe**: It's an external tool that was shipped anyway and is useful to modify some table data that are not part of the script.
+- Added validation header for script related validation issues.
 
 **PUP Pack Section**
 
