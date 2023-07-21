@@ -1,7 +1,9 @@
 package de.mephisto.vpin.ui.tables;
 
 import de.mephisto.vpin.restclient.jobs.JobType;
+import de.mephisto.vpin.restclient.representations.GameRepresentation;
 import de.mephisto.vpin.ui.NavigationController;
+import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.StudioFXController;
 import de.mephisto.vpin.ui.archiving.RepositoryController;
 import de.mephisto.vpin.ui.archiving.RepositorySidebarController;
@@ -17,6 +19,7 @@ import javafx.scene.Parent;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.layout.StackPane;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -122,12 +125,28 @@ public class TablesController implements Initializable, StudioFXController, Stud
         repositoryController.doReload();
       });
     }
-    else if (jobType.equals(JobType.PUP_INSTALL) || jobType.equals(JobType.POV_INSTALL)  || jobType.equals(JobType.POPPER_MEDIA_INSTALL)
-        || jobType.equals(JobType.ALTSOUND_INSTALL) || jobType.equals(JobType.DIRECTB2S_INSTALL)
-        || jobType.equals(JobType.TABLE_IMPORT) || jobType.equals(JobType.ALTCOLOR_INSTALL)) {
+    else if (jobType.equals(JobType.PUP_INSTALL) || jobType.equals(JobType.ALTSOUND_INSTALL) || jobType.equals(JobType.ALTCOLOR_INSTALL)) {
       Platform.runLater(() -> {
-        if(event.getGameId() > 0) {
-          EventManager.getInstance().notifyTableChange(event.getGameId());
+        if (event.getGameId() > 0) {
+          GameRepresentation game = Studio.client.getGameService().getGame(event.getGameId());
+          String rom = null;
+          if (game != null) {
+            rom = game.getRom();
+          }
+          EventManager.getInstance().notifyTableChange(event.getGameId(), rom);
+        }
+        else {
+          this.tableOverviewController.onReload();
+        }
+      });
+    }
+    else if (jobType.equals(JobType.POV_INSTALL)
+        || jobType.equals(JobType.POPPER_MEDIA_INSTALL)
+        || jobType.equals(JobType.DIRECTB2S_INSTALL)
+        || jobType.equals(JobType.TABLE_IMPORT)) {
+      Platform.runLater(() -> {
+        if (event.getGameId() > 0) {
+          EventManager.getInstance().notifyTableChange(event.getGameId(), null);
         }
         else {
           this.tableOverviewController.onReload();
@@ -137,8 +156,13 @@ public class TablesController implements Initializable, StudioFXController, Stud
   }
 
   @Override
-  public void tableChanged(int id) {
-    this.tableOverviewController.reload(id);
+  public void tableChanged(int id, String rom) {
+    if (StringUtils.isEmpty(rom)) {
+      this.tableOverviewController.reload(id);
+    }
+    else {
+      this.tableOverviewController.reload(rom);
+    }
   }
 
   public StackPane getEditorRootStack() {

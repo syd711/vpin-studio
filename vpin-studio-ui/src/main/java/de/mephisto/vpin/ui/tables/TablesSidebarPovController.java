@@ -228,7 +228,7 @@ public class TablesSidebarPovController implements Initializable {
     Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Delete POV file for table '" + this.game.get().getGameDisplayName() + "'?");
     if (result.isPresent() && result.get().equals(ButtonType.OK)) {
       Studio.client.getVpxService().deletePOV(this.game.get().getId());
-      EventManager.getInstance().notifyTableChange(this.game.get().getId());
+      EventManager.getInstance().notifyTableChange(this.game.get().getId(), null);
     }
   }
 
@@ -249,7 +249,7 @@ public class TablesSidebarPovController implements Initializable {
 
       ProgressResultModel resultModel = Dialogs.createProgressDialog(new POVExportProgressModel("Export POV Settings", g));
       if (!resultModel.getResults().isEmpty()) {
-        EventManager.getInstance().notifyTableChange(g.getId());
+        EventManager.getInstance().notifyTableChange(g.getId(), null);
       }
       else {
         WidgetFactory.showAlert(Studio.stage, "POV export failed, check log for details.");

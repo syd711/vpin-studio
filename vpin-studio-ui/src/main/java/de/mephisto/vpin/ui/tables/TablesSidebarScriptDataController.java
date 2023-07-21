@@ -129,7 +129,7 @@ public class TablesSidebarScriptDataController implements Initializable {
       } catch (Exception e) {
         WidgetFactory.showAlert(Studio.stage, e.getMessage());
       }
-      EventManager.getInstance().notifyTableChange(gameRepresentation.getId());
+      EventManager.getInstance().notifyTableChange(gameRepresentation.getId(), null);
     }
   }
 
@@ -153,7 +153,7 @@ public class TablesSidebarScriptDataController implements Initializable {
       Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Delete Alias", "Delete alias \"" + alias + "\" for ROM \"" + g.getRom() + "\"?");
       if (result.isPresent() && result.get().equals(ButtonType.OK)) {
         Studio.client.getRomService().deleteAliasMapping(alias);
-        EventManager.getInstance().notifyTableChange(g.getId());
+        EventManager.getInstance().notifyTableChange(g.getId(), g.getRom());
       }
     }
   }
@@ -170,7 +170,7 @@ public class TablesSidebarScriptDataController implements Initializable {
   public void onScan() {
     if (this.game.isPresent()) {
       Dialogs.createProgressDialog(new TableScanProgressModel("Scanning Table \"" + this.game.get().getGameDisplayName() + "\"", Arrays.asList(this.game.get())));
-      EventManager.getInstance().notifyTableChange(this.game.get().getId());
+      EventManager.getInstance().notifyTableChange(this.game.get().getId(), null);
     }
   }
 
@@ -210,7 +210,7 @@ public class TablesSidebarScriptDataController implements Initializable {
       } catch (Exception e) {
         WidgetFactory.showAlert(Studio.stage, e.getMessage());
       }
-      EventManager.getInstance().notifyTableChange(gameRepresentation.getId());
+      EventManager.getInstance().notifyTableChange(gameRepresentation.getId(), null);
     }
   }
 
@@ -226,7 +226,7 @@ public class TablesSidebarScriptDataController implements Initializable {
       } catch (Exception e) {
         WidgetFactory.showAlert(Studio.stage, e.getMessage());
       }
-      EventManager.getInstance().notifyTableChange(gameRepresentation.getId());
+      EventManager.getInstance().notifyTableChange(gameRepresentation.getId(), null);
     }
   }
 

@@ -3,6 +3,7 @@ package de.mephisto.vpin.ui.events;
 import de.mephisto.vpin.restclient.descriptors.JobDescriptor;
 import de.mephisto.vpin.restclient.jobs.JobType;
 import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,10 +22,15 @@ public class EventManager {
     this.listeners.add(listener);
   }
 
-  public void notifyTableChange(int tableId) {
+  /**
+   * If the ROM name is set, all tables with this ROM name are invalidated.
+   * @param tableId the id of the table
+   * @param rom the ROM name of the table
+   */
+  public void notifyTableChange(int tableId, @Nullable String rom) {
     new Thread(() -> {
       for (StudioEventListener listener : listeners) {
-        listener.tableChanged(tableId);
+        listener.tableChanged(tableId, rom);
       }
     }).start();
   }
