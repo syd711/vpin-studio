@@ -16,6 +16,10 @@
 
 - Added option to disable PUP packs.
 
+**PinVol Support**
+
+- Added PinVol support: The exe file shipped together with the server and can be enabled/disabled in the preferences of the VPin Studio.
+
 **Bug Fixes**
 
 - Changed most ROM read accesses to the effective ROM name: E.g. when an alias was defined and the script does contain this alias, the ROM name from the script was taken to look up ALTColor, ALTSound, etc.. Instead the actual mapped ROM name is used now.

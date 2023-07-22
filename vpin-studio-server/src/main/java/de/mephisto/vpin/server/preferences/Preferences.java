@@ -86,6 +86,10 @@ public class Preferences {
     this.pinVolAutoStartEnabled = pinVolAutoStartEnabled;
   }
 
+  public boolean getPreviewEnabled() {
+    return previewEnabled;
+  }
+
   public void setPreviewEnabled(boolean previewEnabled) {
     this.previewEnabled = previewEnabled;
   }

@@ -30,6 +30,8 @@ public class PinVolPreferencesController implements Initializable {
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
+    openBtn.setDisable(!Studio.client.getSystemService().isLocal());
+
     toggleAutoStart.setSelected(Studio.client.getPinVolService().isAutoStartEnabled());
     toggleAutoStart.selectedProperty().addListener(new ChangeListener<Boolean>() {
       @Override
@@ -64,7 +66,7 @@ public class PinVolPreferencesController implements Initializable {
         boolean running = Studio.client.getPinVolService().isRunning();
         if (running) {
           Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "PinVol Running", "The \"PinVol.exe\" is currently running. To open the UI, the process will be terminated.",
-              "The process has to be started with the \"Start\" button afterwards.", "Kill Process");
+              "The process has to be restarted afterwards.", "Kill Process");
           if (result.isPresent() && result.get().equals(ButtonType.OK)) {
             Studio.client.getPinVolService().kill();
           }
