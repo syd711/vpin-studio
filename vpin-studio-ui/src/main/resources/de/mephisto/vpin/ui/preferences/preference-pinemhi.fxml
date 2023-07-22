@@ -1,0 +1,524 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+<?import org.kordamp.ikonli.javafx.FontIcon?>
+
+<BorderPane styleClass="base-component" stylesheets="@../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.preferences.PINemHiPreferencesController">
+   <center>
+      <ScrollPane hbarPolicy="NEVER" BorderPane.alignment="CENTER">
+         <content>
+            <VBox fx:id="preferenceList" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" styleClass="subpanel">
+               <children>
+                  <Label styleClass="preference-title" text="VPIN PREFERENCES" textFill="WHITE" />
+                  <Label styleClass="preference-subtitle" text="PINemHi Settings">
+                     <VBox.margin>
+                        <Insets />
+                     </VBox.margin>
+                  </Label>
+                  <Label layoutX="34.0" layoutY="104.0" styleClass="preference-description" text="This section configures all configuration option for PINemHi challanges." textFill="WHITE" />
+                  <Label layoutX="34.0" layoutY="167.0" styleClass="preference-description" text="Note that all text here were copied from the original settings documentation." textFill="WHITE" />
+                  <CheckBox fx:id="autoStart" mnemonicParsing="false" onAction="#onStartToggle" styleClass="preference-checkbox" text="Auto-start PINemHi Rom Monitor" textFill="WHITE">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                  </CheckBox>
+                  <Label styleClass="checkbox-description" text="If enabled, the monitor process will automatically be launched with the VPin Server." textFill="WHITE" wrapText="true" />
+                  <HBox spacing="6.0">
+                     <VBox.margin>
+                        <Insets top="24.0" />
+                     </VBox.margin>
+                     <children>
+                        <Button fx:id="editBtn" mnemonicParsing="false" onAction="#onEdit" styleClass="external-component" text="Edit pinemhi.ini" textFill="WHITE">
+                           <graphic>
+                              <FontIcon iconColor="WHITE" iconLiteral="mdi2o-open-in-new" />
+                           </graphic>
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Button>
+                        <Button fx:id="restartBtn" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" onAction="#onRestart" text="(Re)start PINemHi Monitor" textFill="WHITE">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Button>
+                     </children>
+                  </HBox>
+                  <Label styleClass="preference-subtitle" text="Options" textFill="WHITE">
+                     <font>
+                        <Font name="System Bold" size="14.0" />
+                     </font>
+                     <VBox.margin>
+                        <Insets top="24.0" />
+                     </VBox.margin>
+                  </Label>
+                  <Label layoutX="34.0" layoutY="167.0" styleClass="preference-description" text="Enable these if you want to see them in your output." textFill="WHITE" />
+                  <VBox>
+                     <children>
+                        <CheckBox fx:id="replays" mnemonicParsing="false" styleClass="preference-checkbox" text="Replays" textFill="WHITE">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                           <VBox.margin>
+                              <Insets top="-12.0" />
+                           </VBox.margin>
+                        </CheckBox>
+                        <CheckBox fx:id="hiscores" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" styleClass="preference-checkbox" text="Hiscores" textFill="WHITE">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </CheckBox>
+                        <CheckBox fx:id="buyins" layoutX="10.0" layoutY="30.0" mnemonicParsing="false" styleClass="preference-checkbox" text="Buyins" textFill="WHITE">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </CheckBox>
+                        <Label styleClass="preference-subtitle" text="User Credentials" textFill="WHITE">
+                           <font>
+                              <Font name="System Bold" size="14.0" />
+                           </font>
+                           <VBox.margin>
+                              <Insets top="12.0" />
+                           </VBox.margin>
+                        </Label>
+                        <Label styleClass="preference-description" text="Use the website http://www.pinemhi.com/hiscores.php to register your name and get a code." textFill="WHITE" />
+                        <GridPane vgap="3.0">
+                          <columnConstraints>
+                            <ColumnConstraints hgrow="SOMETIMES" maxWidth="482.1999816894531" minWidth="10.0" prefWidth="150.0" />
+                            <ColumnConstraints hgrow="SOMETIMES" maxWidth="765.3999938964844" minWidth="10.0" prefWidth="447.4000244140625" />
+                              <ColumnConstraints hgrow="SOMETIMES" maxWidth="765.3999938964844" minWidth="10.0" prefWidth="250.79995117187502" />
+                          </columnConstraints>
+                          <rowConstraints>
+                            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                          </rowConstraints>
+                           <children>
+                              <TextField fx:id="nameField" prefHeight="30.0" prefWidth="614.0" GridPane.columnIndex="1">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </TextField>
+                              <TextField fx:id="codeField" prefHeight="30.0" prefWidth="613.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </TextField>
+                              <Label text="Name:" textFill="WHITE">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </Label>
+                              <Label layoutX="10.0" layoutY="15.0" text="Code:" textFill="WHITE" GridPane.rowIndex="1">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </Label>
+                           </children>
+                           <VBox.margin>
+                              <Insets top="6.0" />
+                           </VBox.margin>
+                        </GridPane>
+                        <Label layoutX="10.0" layoutY="125.0" styleClass="preference-subtitle" text="Keys" textFill="WHITE">
+                           <font>
+                              <Font name="System Bold" size="14.0" />
+                           </font>
+                           <VBox.margin>
+                              <Insets top="12.0" />
+                           </VBox.margin>
+                        </Label>
+                        <Label layoutX="10.0" layoutY="164.0" styleClass="preference-description" text="You could map the challenge and key to the same button/key if you want." textFill="WHITE">
+                           <VBox.margin>
+                              <Insets top="6.0" />
+                           </VBox.margin>
+                        </Label>
+                        <Label layoutX="10.0" layoutY="306.0" styleClass="preference-description" text="You can also use joystickbuttons here , Joy1 , Joy2 or Joy3 etc." textFill="WHITE" />
+                        <Label layoutX="10.0" layoutY="328.0" styleClass="preference-description" text="To change the key to display the popup, don't use a key that is used by the frontend or visual pinball." textFill="WHITE" />
+                        <Label layoutX="10.0" layoutY="349.0" styleClass="preference-description" text="Press this key multiple times to cycle through the different popups." textFill="WHITE" />
+                        <Label layoutX="10.0" layoutY="371.0" styleClass="preference-description" text="This key can only be used ingame." textFill="WHITE" />
+                        <GridPane vgap="3.0">
+                           <columnConstraints>
+                              <ColumnConstraints hgrow="SOMETIMES" maxWidth="482.1999816894531" minWidth="10.0" prefWidth="150.0" />
+                              <ColumnConstraints hgrow="SOMETIMES" maxWidth="765.3999938964844" minWidth="10.0" prefWidth="700.0" />
+                           </columnConstraints>
+                           <rowConstraints>
+                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                           </rowConstraints>
+                           <children>
+                              <Label text="Key:" textFill="WHITE">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </Label>
+                              <ComboBox fx:id="keyKey" prefHeight="30.0" prefWidth="104.0" GridPane.columnIndex="1" />
+                           </children>
+                           <VBox.margin>
+                              <Insets top="6.0" />
+                           </VBox.margin>
+                        </GridPane>
+                        <Label layoutX="10.0" layoutY="392.0" styleClass="preference-description" text="The &quot;Challenge Key&quot; is to start the challenges, don't use a key that is used by the frontend or visual pinball." textFill="WHITE">
+                           <VBox.margin>
+                              <Insets top="24.0" />
+                           </VBox.margin>
+                        </Label>
+                        <Label layoutX="10.0" layoutY="451.0" styleClass="preference-description" text="This key can only be used when not playing a game." textFill="WHITE" />
+                        <Label layoutX="10.0" layoutY="472.0" styleClass="preference-description" text="I would suggest using the backtick (accent grave in europe) for this key (key left from the 1)" textFill="WHITE" />
+                        <Label layoutX="10.0" layoutY="494.0" styleClass="preference-description" text="because if the pinemhi_rom_monitor runs this key can't be used for anything other." textFill="WHITE" />
+                        <Label layoutX="10.0" layoutY="528.0" styleClass="preference-description" text="This is especially true when you start pinemhi_rom_monitor on windows startup." textFill="WHITE" />
+                        <GridPane vgap="3.0">
+                           <columnConstraints>
+                              <ColumnConstraints hgrow="SOMETIMES" maxWidth="482.1999816894531" minWidth="10.0" prefWidth="150.0" />
+                              <ColumnConstraints hgrow="SOMETIMES" maxWidth="765.3999938964844" minWidth="10.0" prefWidth="703.200048828125" />
+                           </columnConstraints>
+                           <rowConstraints>
+                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                           </rowConstraints>
+                           <children>
+                              <Label text="Challange Key:" textFill="WHITE">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </Label>
+                              <ComboBox fx:id="keyChallange" prefHeight="30.0" prefWidth="93.0" GridPane.columnIndex="1" />
+                           </children>
+                           <VBox.margin>
+                              <Insets top="6.0" />
+                           </VBox.margin>
+                        </GridPane>
+                        <Label layoutX="10.0" layoutY="463.0" styleClass="preference-description" text="The &quot;Weekly Challenge Key&quot; shows what game it is for this week and interim scores and winner previous week." textFill="WHITE">
+                           <VBox.margin>
+                              <Insets top="24.0" />
+                           </VBox.margin>
+                        </Label>
+                        <GridPane vgap="3.0">
+                           <columnConstraints>
+                              <ColumnConstraints hgrow="SOMETIMES" maxWidth="482.1999816894531" minWidth="10.0" prefWidth="150.0" />
+                              <ColumnConstraints hgrow="SOMETIMES" maxWidth="765.3999938964844" minWidth="10.0" prefWidth="703.200048828125" />
+                           </columnConstraints>
+                           <rowConstraints>
+                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                           </rowConstraints>
+                           <children>
+                              <Label text="Weekly Challenge Key:" textFill="WHITE">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </Label>
+                              <ComboBox fx:id="keyWeeklyChallange" prefHeight="30.0" prefWidth="93.0" GridPane.columnIndex="1" />
+                           </children>
+                           <VBox.margin>
+                              <Insets top="6.0" />
+                           </VBox.margin>
+                        </GridPane>
+                        <Label layoutX="10.0" layoutY="620.0" styleClass="preference-description" text="This key activates 5-minute mode, this will stop gameplay after 5 minutes if game is compatible." textFill="WHITE">
+                           <VBox.margin>
+                              <Insets top="24.0" />
+                           </VBox.margin>
+                        </Label>
+                        <Label layoutX="10.0" layoutY="678.0" styleClass="preference-description" text="5-minute mode can only be activated and deactivated outside of a game." textFill="WHITE" />
+                        <Label layoutX="10.0" layoutY="700.0" styleClass="preference-description" text="If using pinup system as frontend, set the exit key you use (this to make 5-minute mode work properly)." textFill="WHITE" />
+                        <GridPane layoutX="10.0" layoutY="678.0" vgap="3.0">
+                           <columnConstraints>
+                              <ColumnConstraints hgrow="SOMETIMES" maxWidth="482.1999816894531" minWidth="10.0" prefWidth="150.0" />
+                              <ColumnConstraints hgrow="SOMETIMES" maxWidth="765.3999938964844" minWidth="10.0" prefWidth="703.200048828125" />
+                           </columnConstraints>
+                           <rowConstraints>
+                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                           </rowConstraints>
+                           <children>
+                              <Label text="5 Minutes Key" textFill="WHITE">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </Label>
+                              <ComboBox fx:id="key5Minutes" prefHeight="30.0" prefWidth="93.0" GridPane.columnIndex="1" />
+                           </children>
+                           <VBox.margin>
+                              <Insets top="6.0" />
+                           </VBox.margin>
+                        </GridPane>
+                        <GridPane layoutX="10.0" layoutY="804.0" vgap="3.0">
+                           <columnConstraints>
+                              <ColumnConstraints hgrow="SOMETIMES" maxWidth="482.1999816894531" minWidth="10.0" prefWidth="150.0" />
+                              <ColumnConstraints hgrow="SOMETIMES" maxWidth="765.3999938964844" minWidth="10.0" prefWidth="703.200048828125" />
+                           </columnConstraints>
+                           <rowConstraints>
+                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                           </rowConstraints>
+                           <children>
+                              <Label text="PINUp System Exit Key:" textFill="WHITE">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </Label>
+                              <ComboBox fx:id="keyExit" prefHeight="30.0" prefWidth="93.0" GridPane.columnIndex="1" />
+                           </children>
+                           <VBox.margin>
+                              <Insets top="24.0" />
+                           </VBox.margin>
+                        </GridPane>
+                        <Label layoutX="10.0" layoutY="268.0" styleClass="preference-subtitle" text="Sounds" textFill="WHITE">
+                           <font>
+                              <Font name="System Bold" size="14.0" />
+                           </font>
+                           <VBox.margin>
+                              <Insets top="12.0" />
+                           </VBox.margin>
+                        </Label>
+                        <CheckBox fx:id="sound5MinStatus" layoutX="10.0" layoutY="124.0" mnemonicParsing="false" styleClass="preference-checkbox" text="5 minutes mode status" textFill="WHITE">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </CheckBox>
+                        <Label layoutX="10.0" layoutY="156.0" styleClass="checkbox-description" text="Will tell you when you turn 5minute mode on or off." textFill="WHITE" wrapText="true" />
+                        <CheckBox fx:id="sound5MinWarning" layoutX="10.0" layoutY="177.0" mnemonicParsing="false" styleClass="preference-checkbox" text="5 minutes mode game warning" textFill="WHITE">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </CheckBox>
+                        <Label layoutX="10.0" layoutY="977.0" styleClass="checkbox-description" text="At the start of a game this will warn you that you are about to play in 5-minute mode if enabled." textFill="WHITE" wrapText="true" />
+                        <Label layoutX="10.0" layoutY="776.0" styleClass="preference-description" text="Choose which voice you want to use." textFill="WHITE">
+                           <VBox.margin>
+                              <Insets top="12.0" />
+                           </VBox.margin>
+                        </Label>
+                        <GridPane layoutX="10.0" layoutY="427.0" vgap="3.0">
+                           <columnConstraints>
+                              <ColumnConstraints hgrow="SOMETIMES" maxWidth="482.1999816894531" minWidth="10.0" prefWidth="150.0" />
+                              <ColumnConstraints hgrow="SOMETIMES" maxWidth="765.3999938964844" minWidth="10.0" prefWidth="700.0" />
+                           </columnConstraints>
+                           <rowConstraints>
+                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                           </rowConstraints>
+                           <children>
+                              <Label text="Voice:" textFill="WHITE">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </Label>
+                              <ComboBox fx:id="voice" prefHeight="30.0" prefWidth="282.0" GridPane.columnIndex="1" />
+                           </children>
+                           <VBox.margin>
+                              <Insets top="6.0" />
+                           </VBox.margin>
+                        </GridPane>
+                        <Label layoutX="10.0" layoutY="900.0" styleClass="preference-subtitle" text="Online" textFill="WHITE">
+                           <font>
+                              <Font name="System Bold" size="14.0" />
+                           </font>
+                           <VBox.margin>
+                              <Insets top="12.0" />
+                           </VBox.margin>
+                        </Label>
+                        <CheckBox fx:id="onlinePersonalScores" layoutX="10.0" layoutY="939.0" mnemonicParsing="false" styleClass="preference-checkbox" text="Personal Scores" textFill="WHITE">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </CheckBox>
+                        <Label layoutX="10.0" layoutY="977.0" styleClass="checkbox-description" text="Personal scores gives the top 10 from your scores on the table." textFill="WHITE" wrapText="true" />
+                        <CheckBox fx:id="onlinePersonalSpecialScores" layoutX="10.0" layoutY="1168.0" mnemonicParsing="false" styleClass="preference-checkbox" text="Personal Special Scores" textFill="WHITE">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </CheckBox>
+                        <Label layoutX="10.0" layoutY="1206.0" styleClass="checkbox-description" text="Personal special scores gives the special scores you made for the table." textFill="WHITE" wrapText="true" />
+                        <CheckBox fx:id="onlineBestScore" layoutX="10.0" layoutY="1228.0" mnemonicParsing="false" styleClass="preference-checkbox" text="Best Scores" textFill="WHITE">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </CheckBox>
+                        <Label layoutX="10.0" layoutY="1266.0" styleClass="checkbox-description" text="Best scores gives the top 10 best scores for the table." textFill="WHITE" wrapText="true" />
+                        <CheckBox fx:id="onlineFriendScores" layoutX="10.0" layoutY="1288.0" mnemonicParsing="false" styleClass="preference-checkbox" text="Friend Scores" textFill="WHITE">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </CheckBox>
+                        <Label layoutX="10.0" layoutY="1326.0" styleClass="checkbox-description" text="Friend scores gives the top 10 best scores from you and your friend(s)." textFill="WHITE" wrapText="true" />
+                        <CheckBox fx:id="onlineCubScores" layoutX="10.0" layoutY="1348.0" mnemonicParsing="false" styleClass="preference-checkbox" text="Cup Scores" textFill="WHITE">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </CheckBox>
+                        <Label layoutX="10.0" layoutY="1386.0" styleClass="checkbox-description" text="Cup scores gives the top 10 cup standings and your position in it." textFill="WHITE" wrapText="true" />
+                        <CheckBox fx:id="onlineBadges" layoutX="10.0" layoutY="1420.0" mnemonicParsing="false" styleClass="preference-checkbox" text="Badges" textFill="WHITE">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </CheckBox>
+                        <Label layoutX="10.0" layoutY="1458.0" styleClass="checkbox-description" text="Badges gives you the badges you've earned for the table." textFill="WHITE" wrapText="true" />
+                        <GridPane layoutX="10.0" layoutY="1099.0" vgap="3.0">
+                           <columnConstraints>
+                              <ColumnConstraints hgrow="SOMETIMES" maxWidth="482.1999816894531" minWidth="10.0" prefWidth="150.0" />
+                              <ColumnConstraints hgrow="SOMETIMES" maxWidth="765.3999938964844" minWidth="10.0" prefWidth="700.0" />
+                           </columnConstraints>
+                           <rowConstraints>
+                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                           </rowConstraints>
+                           <children>
+                              <Label text="Challanges Skill:" textFill="WHITE">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </Label>
+                              <ComboBox fx:id="challengesSkill" prefHeight="30.0" prefWidth="134.0" GridPane.columnIndex="1" />
+                           </children>
+                           <VBox.margin>
+                              <Insets top="12.0" />
+                           </VBox.margin>
+                        </GridPane>
+                        <Label styleClass="preference-subtitle" text="Friends" textFill="WHITE">
+                           <font>
+                              <Font name="System Bold" size="14.0" />
+                           </font>
+                           <VBox.margin>
+                              <Insets top="12.0" />
+                           </VBox.margin>
+                        </Label>
+                        <Label layoutX="10.0" layoutY="776.0" styleClass="preference-description" text="Add your friend(s) (maximum is 9) using their PINemHi Leaderboard name." textFill="WHITE">
+                           <VBox.margin>
+                              <Insets top="6.0" />
+                           </VBox.margin>
+                        </Label>
+                        <GridPane layoutX="10.0" layoutY="192.0" vgap="3.0">
+                           <columnConstraints>
+                              <ColumnConstraints hgrow="SOMETIMES" maxWidth="482.1999816894531" minWidth="10.0" prefWidth="100.0" />
+                              <ColumnConstraints hgrow="SOMETIMES" maxWidth="765.3999938964844" minWidth="10.0" prefWidth="447.4000244140625" />
+                              <ColumnConstraints hgrow="SOMETIMES" maxWidth="765.3999938964844" minWidth="10.0" prefWidth="250.79995117187502" />
+                           </columnConstraints>
+                           <rowConstraints>
+                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                           </rowConstraints>
+                           <children>
+                              <TextField fx:id="friend1" prefHeight="30.0" prefWidth="614.0" GridPane.columnIndex="1">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </TextField>
+                              <TextField fx:id="friend2" prefHeight="30.0" prefWidth="613.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </TextField>
+                              <Label text="Friend 1:" textFill="WHITE">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </Label>
+                              <TextField fx:id="friend3" layoutX="163.0" layoutY="10.0" prefHeight="30.0" prefWidth="614.0" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </TextField>
+                              <TextField fx:id="friend4" layoutX="163.0" layoutY="77.0" prefHeight="30.0" prefWidth="614.0" GridPane.columnIndex="1" GridPane.rowIndex="3">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </TextField>
+                              <TextField fx:id="friend5" layoutX="163.0" layoutY="111.0" prefHeight="30.0" prefWidth="614.0" GridPane.columnIndex="1" GridPane.rowIndex="4">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </TextField>
+                              <TextField fx:id="friend7" layoutX="163.0" layoutY="144.0" prefHeight="30.0" prefWidth="614.0" GridPane.columnIndex="1" GridPane.rowIndex="6">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </TextField>
+                              <Label layoutX="10.0" layoutY="15.0" text="Friend 2:" textFill="WHITE" GridPane.rowIndex="1">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </Label>
+                              <Label layoutX="10.0" layoutY="49.0" text="Friend 3:" textFill="WHITE" GridPane.rowIndex="2">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </Label>
+                              <Label layoutX="10.0" layoutY="83.0" text="Friend 4:" textFill="WHITE" GridPane.rowIndex="3">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </Label>
+                              <Label layoutX="10.0" layoutY="116.0" text="Friend 6:" textFill="WHITE" GridPane.rowIndex="5">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </Label>
+                              <Label layoutX="10.0" layoutY="184.0" text="Friend 5:" textFill="WHITE" GridPane.rowIndex="4">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </Label>
+                              <Label text="Friend 1:" textFill="WHITE">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </Label>
+                              <TextField fx:id="friend6" layoutX="163.0" layoutY="144.0" prefHeight="30.0" prefWidth="614.0" GridPane.columnIndex="1" GridPane.rowIndex="5">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </TextField>
+                              <TextField fx:id="friend8" layoutX="163.0" layoutY="178.0" prefHeight="30.0" prefWidth="614.0" GridPane.columnIndex="1" GridPane.rowIndex="7">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </TextField>
+                              <TextField fx:id="friend9" layoutX="163.0" layoutY="245.0" prefHeight="30.0" prefWidth="614.0" GridPane.columnIndex="1" GridPane.rowIndex="8">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </TextField>
+                              <Label layoutX="10.0" layoutY="184.0" text="Friend 7:" textFill="WHITE" GridPane.rowIndex="6">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </Label>
+                              <Label layoutX="10.0" layoutY="217.0" text="Friend 8:" textFill="WHITE" GridPane.rowIndex="7">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </Label>
+                              <Label layoutX="10.0" layoutY="251.0" text="Friend 9:" textFill="WHITE" GridPane.rowIndex="8">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </Label>
+                           </children>
+                           <VBox.margin>
+                              <Insets top="6.0" />
+                           </VBox.margin>
+                        </GridPane>
+                     </children>
+                     <VBox.margin>
+                        <Insets top="12.0" />
+                     </VBox.margin>
+                  </VBox>
+               </children>
+               <padding>
+                  <Insets bottom="24.0" left="24.0" right="24.0" top="24.0" />
+               </padding>
+            </VBox>
+         </content>
+      </ScrollPane>
+   </center>
+</BorderPane>

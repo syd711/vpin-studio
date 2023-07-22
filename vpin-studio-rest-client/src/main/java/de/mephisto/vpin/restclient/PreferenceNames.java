@@ -19,6 +19,7 @@ public interface PreferenceNames {
   String ACTIVE_GAME = "activeGame";
   String PREVIEW_ENABLED = "previewEnabled";
   String PINVOL_AUTOSTART_ENABLED = "pinVolAutoStartEnabled";
+  String PINEMHI_AUTOSTART_ENABLED = "pinemhiAutoStartEnabled";
   String VPBM_INTERNAL_HOST_IDENTIFIER = "vpbmInternalHostId";
   String VPBM_EXTERNAL_HOST_IDENTIFIER = "vpbmExternalHostId";
 }

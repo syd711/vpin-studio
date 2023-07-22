@@ -92,6 +92,11 @@ public class PreferencesController implements Initializable {
   }
 
   @FXML
+  private void onPINemHi(ActionEvent event) throws IOException {
+    load("preference-pinemhi.fxml", event);
+  }
+
+  @FXML
   private void onReset(ActionEvent event) throws IOException {
     load("preference-reset.fxml", event);
   }

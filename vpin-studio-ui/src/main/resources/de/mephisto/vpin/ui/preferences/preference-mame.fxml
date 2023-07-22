@@ -12,7 +12,7 @@
       <VBox fx:id="preferenceList" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" styleClass="subpanel" BorderPane.alignment="TOP_LEFT">
          <children>
             <Label styleClass="preference-title" text="VPIN PREFERENCES" textFill="WHITE" />
-            <Label styleClass="preference-subtitle" text="VPin Mame">
+            <Label styleClass="preference-subtitle" text="VPin MAME">
                <VBox.margin>
                   <Insets />
                </VBox.margin>
