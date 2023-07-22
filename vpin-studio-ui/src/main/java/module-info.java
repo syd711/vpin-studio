@@ -10,6 +10,8 @@ module de.mephisto.vpin.ui {
   requires java.desktop;
   requires org.slf4j;
   requires org.fxmisc.richtext;
+  requires org.fxmisc.flowless;
+  requires reactfx;
   requires imgscalr.lib;
   requires org.apache.commons.lang3;
   requires org.apache.commons.io;
@@ -22,6 +24,8 @@ module de.mephisto.vpin.ui {
   requires filters;
   requires javafx.media;
   requires javafx.swing;
+
+  requires javafx.base;
 
   requires de.mephisto.vpin.connectors.discord;
   requires de.mephisto.vpin.connectors.vps;

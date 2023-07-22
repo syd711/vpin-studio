@@ -97,7 +97,7 @@
         <dependency>
             <groupId>org.openjfx</groupId>
             <artifactId>javafx-swing</artifactId>
-            <version>11-ea+24</version>
+            <version>17.0.2</version>
         </dependency>
 
 

@@ -1,4 +1,4 @@
-package de.mephisto.vpin.commons.utils.updates;
+package de.mephisto.vpin.server;
 
 import de.mephisto.vpin.commons.utils.Updater;
 import org.slf4j.Logger;
@@ -8,9 +8,9 @@ import java.io.File;
 import java.util.Collections;
 import java.util.List;
 
-public class ClientUpdatePreProcessing {
-  private final static Logger LOG = LoggerFactory.getLogger(ClientUpdatePreProcessing.class);
-  private static List<String> resources = Collections.emptyList();
+public class ServerUpdatePreProcessing {
+  private final static Logger LOG = LoggerFactory.getLogger(ServerUpdatePreProcessing.class);
+  private final static List<String> resources = Collections.emptyList();
 
   public static void execute() {
     runResourcesCheck();
@@ -24,5 +24,6 @@ public class ClientUpdatePreProcessing {
         Updater.download("https://raw.githubusercontent.com/syd711/vpin-studio/main/resources/" + resource, check);
       }
     }
+    LOG.info("Finished resource updates check.");
   }
 }
