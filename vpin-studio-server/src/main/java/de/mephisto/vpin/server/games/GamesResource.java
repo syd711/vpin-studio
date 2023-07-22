@@ -5,6 +5,7 @@
   import de.mephisto.vpin.restclient.descriptors.DeleteDescriptor;
   import de.mephisto.vpin.restclient.descriptors.ResetHighscoreDescriptor;
   import de.mephisto.vpin.restclient.descriptors.TableUploadDescriptor;
+  import de.mephisto.vpin.restclient.representations.ValidationState;
   import de.mephisto.vpin.server.competitions.ScoreSummary;
   import de.mephisto.vpin.server.highscores.HighscoreMetadata;
   import de.mephisto.vpin.server.highscores.ScoreList;
@@ -20,6 +21,8 @@
   import org.springframework.web.server.ResponseStatusException;
 
   import java.io.File;
+  import java.util.Collection;
+  import java.util.Collections;
   import java.util.List;
 
   import static de.mephisto.vpin.server.VPinStudioServer.API_SEGMENT;
@@ -62,6 +65,16 @@ public class GamesResource {
       throw new ResponseStatusException(NOT_FOUND, "Not game found for id " + id);
     }
     return game;
+  }
+
+
+  @GetMapping("/validations/rom/{id}")
+  public List<ValidationState> getRomValidations(@PathVariable("id") int id) {
+    Game game = gameService.getGame(id);
+    if (game == null) {
+      return Collections.emptyList();
+    }
+    return gameService.getRomValidations(game);
   }
 
   @GetMapping("/scores/{id}")

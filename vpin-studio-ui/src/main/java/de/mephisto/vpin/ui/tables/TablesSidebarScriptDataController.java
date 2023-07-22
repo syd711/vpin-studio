@@ -2,10 +2,14 @@ package de.mephisto.vpin.ui.tables;
 
 import de.mephisto.vpin.commons.utils.FileUtils;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
+import de.mephisto.vpin.restclient.SystemSummary;
 import de.mephisto.vpin.restclient.representations.GameRepresentation;
+import de.mephisto.vpin.restclient.representations.ValidationState;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.tables.dialogs.ScriptDownloadProgressModel;
+import de.mephisto.vpin.ui.tables.validation.LocalizedValidation;
+import de.mephisto.vpin.ui.tables.validation.ValidationTexts;
 import de.mephisto.vpin.ui.util.Dialogs;
 import de.mephisto.vpin.ui.util.ProgressResultModel;
 import javafx.fxml.FXML;
@@ -13,6 +17,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
+import javafx.scene.layout.VBox;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,6 +28,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.text.DateFormat;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
 
@@ -80,9 +86,23 @@ public class TablesSidebarScriptDataController implements Initializable {
   @FXML
   private Button editTableNameBtn;
 
+  @FXML
+  private Button vpSaveEditBtn;
+
+  @FXML
+  private VBox errorBox;
+
+  @FXML
+  private Label errorTitle;
+
+  @FXML
+  private Label errorText;
+
   private Optional<GameRepresentation> game = Optional.empty();
 
   private TablesSidebarController tablesSidebarController;
+
+  private ValidationState validationState;
 
   // Add a public no-args constructor
   public TablesSidebarScriptDataController() {
@@ -90,6 +110,8 @@ public class TablesSidebarScriptDataController implements Initializable {
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
+    errorBox.managedProperty().bindBidirectional(errorBox.visibleProperty());
+    vpSaveEditBtn.setDisable(!Studio.client.getSystemService().isLocal());
   }
 
   public void setGame(Optional<GameRepresentation> game) {
@@ -111,7 +133,7 @@ public class TablesSidebarScriptDataController implements Initializable {
       } catch (Exception e) {
         WidgetFactory.showAlert(Studio.stage, e.getMessage());
       }
-      EventManager.getInstance().notifyTableChange(gameRepresentation.getId());
+      EventManager.getInstance().notifyTableChange(gameRepresentation.getId(), null);
     }
   }
 
@@ -135,7 +157,7 @@ public class TablesSidebarScriptDataController implements Initializable {
       Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Delete Alias", "Delete alias \"" + alias + "\" for ROM \"" + g.getRom() + "\"?");
       if (result.isPresent() && result.get().equals(ButtonType.OK)) {
         Studio.client.getRomService().deleteAliasMapping(alias);
-        EventManager.getInstance().notifyTableChange(g.getId());
+        EventManager.getInstance().notifyTableChange(g.getId(), g.getRom());
       }
     }
   }
@@ -152,7 +174,20 @@ public class TablesSidebarScriptDataController implements Initializable {
   public void onScan() {
     if (this.game.isPresent()) {
       Dialogs.createProgressDialog(new TableScanProgressModel("Scanning Table \"" + this.game.get().getGameDisplayName() + "\"", Arrays.asList(this.game.get())));
-      EventManager.getInstance().notifyTableChange(this.game.get().getId());
+      EventManager.getInstance().notifyTableChange(this.game.get().getId(), null);
+    }
+  }
+
+  @FXML
+  public void onVPSaveEdit() {
+    try {
+      SystemSummary systemSummary = Studio.client.getSystemService().getSystemSummary();
+      ProcessBuilder builder = new ProcessBuilder(new File("resources", "VPSaveEdit.exe").getAbsolutePath());
+      builder.directory(new File("resources"));
+      builder.start();
+    } catch (IOException e) {
+      LOG.error("Failed to open VPSaveEdit: " + e.getMessage(), e);
+      WidgetFactory.showAlert(Studio.stage, "Error", "Failed to open VPSaveEdit: " + e.getMessage());
     }
   }
 
@@ -179,7 +214,7 @@ public class TablesSidebarScriptDataController implements Initializable {
       } catch (Exception e) {
         WidgetFactory.showAlert(Studio.stage, e.getMessage());
       }
-      EventManager.getInstance().notifyTableChange(gameRepresentation.getId());
+      EventManager.getInstance().notifyTableChange(gameRepresentation.getId(), null);
     }
   }
 
@@ -195,7 +230,7 @@ public class TablesSidebarScriptDataController implements Initializable {
       } catch (Exception e) {
         WidgetFactory.showAlert(Studio.stage, e.getMessage());
       }
-      EventManager.getInstance().notifyTableChange(gameRepresentation.getId());
+      EventManager.getInstance().notifyTableChange(gameRepresentation.getId(), null);
     }
   }
 
@@ -223,11 +258,20 @@ public class TablesSidebarScriptDataController implements Initializable {
     }
   }
 
+  @FXML
+  private void onDismiss() {
+    GameRepresentation g = game.get();
+    tablesSidebarController.getTablesController().dismissValidation(g, this.validationState);
+  }
+
   public void refreshView(Optional<GameRepresentation> g) {
+    errorBox.setVisible(false);
+
     editHsFileNameBtn.setDisable(g.isEmpty());
     editRomNameBtn.setDisable(g.isEmpty());
     editTableNameBtn.setDisable(g.isEmpty());
     romUploadBtn.setDisable(g.isEmpty());
+
     inspectBtn.setDisable(g.isEmpty() || !g.get().isGameFileAvailable());
     editBtn.setDisable(g.isEmpty() || !g.get().isGameFileAvailable());
     scanBtn.setDisable(g.isEmpty() || !g.get().isGameFileAvailable());
@@ -255,6 +299,15 @@ public class TablesSidebarScriptDataController implements Initializable {
       }
       else {
         labelHSFilename.setText("-");
+      }
+
+      List<ValidationState> validationStates = Studio.client.getGameService().getRomValidations(game.getId());
+      errorBox.setVisible(!validationStates.isEmpty());
+      if (!validationStates.isEmpty()) {
+        validationState = validationStates.get(0);
+        LocalizedValidation validationResult = ValidationTexts.getValidationResult(game, validationState);
+        errorTitle.setText(validationResult.getLabel());
+        errorText.setText(validationResult.getText());
       }
     }
     else {

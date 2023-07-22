@@ -92,16 +92,12 @@ public class VpxEditorController implements Initializable {
     }
   }
 
-
   public void setGame(@NonNull GameRepresentation game, String source) {
     this.game = game;
     richText = new RichText(source);
 
     VirtualizedScrollPane scrollPane = new VirtualizedScrollPane(richText.getCodeArea());
     centerPane.setCenter(scrollPane);
-
-    CodeArea codeArea = richText.getCodeArea();
-    codeArea.moveTo(0);
   }
 
   public void setTablesController(TablesController tablesController) {

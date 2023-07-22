@@ -390,6 +390,11 @@ public class GameService {
     game.setValidationState(gameValidator.validate(game));
   }
 
+
+  public List<ValidationState> getRomValidations(Game game) {
+    return gameValidator.validateRom(game);
+  }
+
   public Game save(Game game) throws Exception {
     GameDetails gameDetails = gameDetailsRepository.findByPupId(game.getId());
     String existingRom = String.valueOf(gameDetails.getRomName());

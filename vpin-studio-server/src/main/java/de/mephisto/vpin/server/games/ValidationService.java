@@ -208,6 +208,22 @@ public class ValidationService implements InitializingBean {
     return ValidationStateFactory.empty();
   }
 
+  public List<ValidationState> validateRom(Game game) {
+    List<ValidationState> result = new ArrayList<>();
+    if (isValidationEnabled(game, ValidationCode.CODE_NO_ROM)) {
+      if (StringUtils.isEmpty(game.getRom())) {
+        result.add(ValidationStateFactory.create(ValidationCode.CODE_NO_ROM));
+      }
+    }
+
+    if (isValidationEnabled(game, ValidationCode.CODE_ROM_NOT_EXISTS)) {
+      if (!game.isRomExists() && game.isRomRequired()) {
+        result.add(ValidationStateFactory.create(ValidationCode.CODE_ROM_NOT_EXISTS));
+      }
+    }
+    return result;
+  }
+
   public List<ValidationState> validateAltColor(Game game) {
     if (!game.isAltColorAvailable()) {
       return Collections.emptyList();
@@ -228,40 +244,44 @@ public class ValidationService implements InitializingBean {
     File dmdextexe = new File(systemService.getMameFolder(), "dmdext.exe");
     File dmdDeviceIni = new File(systemService.getMameFolder(), "DmdDevice.ini");
 
+    if (isValidationEnabled(game, CODE_ALT_COLOR_DMDDEVICE_FILES_MISSING)) {
+      if (!dmdDevicedll.exists() && !dmdDevice64dll.exists()) {
+        result.add(ValidationStateFactory.create(CODE_ALT_COLOR_DMDDEVICE_FILES_MISSING, dmdDevicedll.getName()));
+      }
 
-    if (!dmdDevicedll.exists() && !dmdDevice64dll.exists()) {
-      result.add(ValidationStateFactory.create(CODE_ALT_COLOR_DMDDEVICE_FILES_MISSING, dmdDevicedll.getName()));
+      if (!dmdextexe.exists()) {
+        result.add(ValidationStateFactory.create(CODE_ALT_COLOR_DMDDEVICE_FILES_MISSING, dmdextexe.getName()));
+      }
+
+      if (!dmdDeviceIni.exists()) {
+        result.add(ValidationStateFactory.create(CODE_ALT_COLOR_DMDDEVICE_FILES_MISSING, dmdDeviceIni.getName()));
+      }
     }
 
-    if(!dmdextexe.exists()) {
-      result.add(ValidationStateFactory.create(CODE_ALT_COLOR_DMDDEVICE_FILES_MISSING, dmdextexe.getName()));
-    }
-
-    if(!dmdDeviceIni.exists()) {
-      result.add(ValidationStateFactory.create(CODE_ALT_COLOR_DMDDEVICE_FILES_MISSING, dmdDeviceIni.getName()));
-    }
 
     List<String> files = altColor.getFiles();
     switch (altColorType) {
       case pal: {
-        if (altColor.contains("pin2dmd.pal") && !altColor.contains("pin2dmd.vni")) {
-          result.add(ValidationStateFactory.create(CODE_ALT_COLOR_FILES_MISSING, "pin2dmd.vni"));
-        }
-        else if (!altColor.contains("pin2dmd.pal") && altColor.contains("pin2dmd.vni")) {
-          result.add(ValidationStateFactory.create(CODE_ALT_COLOR_FILES_MISSING, "pin2dmd.pal"));
+        if (isValidationEnabled(game, CODE_ALT_COLOR_FILES_MISSING)) {
+          if (altColor.contains("pin2dmd.pal") && !altColor.contains("pin2dmd.vni")) {
+            result.add(ValidationStateFactory.create(CODE_ALT_COLOR_FILES_MISSING, "pin2dmd.vni"));
+          }
+          else if (!altColor.contains("pin2dmd.pal") && altColor.contains("pin2dmd.vni")) {
+            result.add(ValidationStateFactory.create(CODE_ALT_COLOR_FILES_MISSING, "pin2dmd.pal"));
+          }
         }
         break;
       }
       case serum: {
         String name = game.getRom() + AltColorAnalyzer.SERUM_SUFFIX;
-        if (!altColor.contains(name)) {
+        if (isValidationEnabled(game, CODE_ALT_COLOR_FILES_MISSING) && !altColor.contains(name)) {
           result.add(ValidationStateFactory.create(CODE_ALT_COLOR_FILES_MISSING, name));
         }
 
         File serumdll = new File(systemService.getMameFolder(), "Serum.dll");
         File serum64dll = new File(systemService.getMameFolder(), "Serum64.dll");
 
-        if (!serumdll.exists() && !serum64dll.exists()) {
+        if (isValidationEnabled(game, CODE_ALT_COLOR_SERUM_INSTALLATION_FILES_MISSING) && !serumdll.exists() && !serum64dll.exists()) {
           result.add(ValidationStateFactory.create(CODE_ALT_COLOR_SERUM_INSTALLATION_FILES_MISSING));
         }
 
@@ -274,19 +294,19 @@ public class ValidationService implements InitializingBean {
 
     if (gameOptions.isExistInRegistry()) {
       //no in registry, so check against defaults
-      if (!gameOptions.isColorizeDmd()) {
+      if (isValidationEnabled(game, CODE_ALT_COLOR_COLORIZE_DMD_ENABLED) && !gameOptions.isColorizeDmd()) {
         result.add(ValidationStateFactory.create(CODE_ALT_COLOR_COLORIZE_DMD_ENABLED));
       }
-      if (!gameOptions.isUseExternalDmd()) {
+      if (isValidationEnabled(game, CODE_ALT_COLOR_EXTERNAL_DMD_NOT_ENABLED) && !gameOptions.isUseExternalDmd()) {
         result.add(ValidationStateFactory.create(CODE_ALT_COLOR_EXTERNAL_DMD_NOT_ENABLED));
       }
     }
     else {
       //no in registry, so check against defaults
-      if (!options.isColorizeDmd()) {
+      if (isValidationEnabled(game, CODE_ALT_COLOR_COLORIZE_DMD_ENABLED) && !options.isColorizeDmd()) {
         result.add(ValidationStateFactory.create(CODE_ALT_COLOR_COLORIZE_DMD_ENABLED));
       }
-      if (!options.isUseExternalDmd()) {
+      if (isValidationEnabled(game, CODE_ALT_COLOR_EXTERNAL_DMD_NOT_ENABLED) && !options.isUseExternalDmd()) {
         result.add(ValidationStateFactory.create(CODE_ALT_COLOR_EXTERNAL_DMD_NOT_ENABLED));
       }
     }

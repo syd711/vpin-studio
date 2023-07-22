@@ -4,10 +4,7 @@ import de.mephisto.vpin.restclient.AssetType;
 import de.mephisto.vpin.restclient.FileUploadProgressListener;
 import de.mephisto.vpin.restclient.descriptors.DeleteDescriptor;
 import de.mephisto.vpin.restclient.descriptors.ResetHighscoreDescriptor;
-import de.mephisto.vpin.restclient.representations.GameRepresentation;
-import de.mephisto.vpin.restclient.representations.HighscoreMetadataRepresentation;
-import de.mephisto.vpin.restclient.representations.ScoreListRepresentation;
-import de.mephisto.vpin.restclient.representations.ScoreSummaryRepresentation;
+import de.mephisto.vpin.restclient.representations.*;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -69,11 +66,16 @@ public class GamesServiceClient extends VPinStudioClientService {
     return result;
   }
 
+
+  public List<ValidationState> getRomValidations(int gameId) {
+    return Arrays.asList(getRestClient().get(API + "games/validations/rom/" + gameId, ValidationState[].class));
+  }
+
   public GameRepresentation getGame(int id) {
     GameRepresentation gameRepresentation = getRestClient().get(API + "games/" + id, GameRepresentation.class);
-    if(gameRepresentation != null && !this.games.isEmpty()) {
+    if (gameRepresentation != null && !this.games.isEmpty()) {
       int index = this.games.indexOf(gameRepresentation);
-      if(index != -1) {
+      if (index != -1) {
         this.games.remove(index);
         this.games.add(index, gameRepresentation);
       }

@@ -55,7 +55,7 @@ public class Updater {
     return percentage;
   }
 
-  private static void download(String downloadUrl, File target) {
+  public static void download(String downloadUrl, File target) {
     new Thread(() -> {
       try {
         LOG.info("Downloading " + downloadUrl);
@@ -76,9 +76,9 @@ public class Updater {
         in.close();
         fileOutputStream.close();
         tmp.renameTo(target);
-        LOG.info("Downloaded update file " + target.getAbsolutePath());
+        LOG.info("Downloaded file " + target.getAbsolutePath());
       } catch (Exception e) {
-        LOG.error("Failed to execute update: " + e.getMessage(), e);
+        LOG.error("Failed to execute download: " + e.getMessage(), e);
       }
     }).start();
   }

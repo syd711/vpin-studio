@@ -255,7 +255,7 @@ public class TablesSidebarMameController implements Initializable {
 
     try {
       Studio.client.getMameService().saveOptions(options);
-      EventManager.getInstance().notifyTableChange(this.game.get().getId());
+      EventManager.getInstance().notifyTableChange(this.game.get().getId(), this.game.get().getRom());
     } catch (Exception e) {
       LOG.error("Failed to save mame settings: " + e.getMessage(), e);
       WidgetFactory.showAlert(Studio.stage, "Error", "Failed to save mame settings: " + e.getMessage());

@@ -13,6 +13,7 @@ import org.fxmisc.richtext.model.StyleSpans;
 import org.fxmisc.richtext.model.StyleSpansBuilder;
 import org.reactfx.collection.ListModification;
 
+import java.awt.*;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.function.Consumer;
@@ -134,6 +135,26 @@ public class RichText {
 
 
     codeArea.replaceText(0, 0, source);
+
+    new Thread(() -> {
+      try {
+        Thread.sleep(100);
+      } catch (InterruptedException e) {
+        throw new RuntimeException(e);
+      }
+//      scrollPane.scrollToPixel(0, 1000);
+      Platform.runLater(() -> {
+        try {
+          codeArea.requestFocus();
+          codeArea.moveTo(1);
+          Robot robot = new Robot();
+          robot.keyPress(java.awt.event.KeyEvent.VK_LEFT);
+        } catch (AWTException e) {
+          //ignore
+        }
+      });
+
+    }).start();
   }
 
   private StyleSpans<Collection<String>> computeHighlighting(String text) {

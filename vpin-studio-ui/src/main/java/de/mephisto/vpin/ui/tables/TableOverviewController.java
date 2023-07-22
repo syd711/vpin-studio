@@ -327,7 +327,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
       } catch (Exception e) {
         WidgetFactory.showAlert(Studio.stage, e.getMessage());
       }
-      EventManager.getInstance().notifyTableChange(game.getId());
+      EventManager.getInstance().notifyTableChange(game.getId(), null);
     }
   }
 
@@ -358,8 +358,29 @@ public class TableOverviewController implements Initializable, StudioFXControlle
       } catch (Exception e) {
         WidgetFactory.showAlert(Studio.stage, e.getMessage());
       }
-      EventManager.getInstance().notifyTableChange(game.getId());
+      EventManager.getInstance().notifyTableChange(game.getId(), null);
     }
+  }
+
+
+  public void reload(String rom) {
+    List<GameRepresentation> gamesByRom = client.getGameService().getGamesByRom(rom);
+    Platform.runLater(() -> {
+      GameRepresentation selection = tableView.getSelectionModel().getSelectedItem();
+      tableView.getSelectionModel().clearSelection();
+
+      for (GameRepresentation g : gamesByRom) {
+        GameRepresentation refreshedGame = client.getGameService().getGame(g.getId());
+        int index = data.indexOf(refreshedGame);
+        data.remove(index);
+        data.add(index, refreshedGame);
+      }
+
+      if (selection != null) {
+        tableView.getSelectionModel().select(selection);
+      }
+      tableView.refresh();
+    });
   }
 
   public void reload(int id) {
@@ -692,5 +713,4 @@ public class TableOverviewController implements Initializable, StudioFXControlle
   public GameRepresentation getSelection() {
     return tableView.getSelectionModel().getSelectedItem();
   }
-
 }

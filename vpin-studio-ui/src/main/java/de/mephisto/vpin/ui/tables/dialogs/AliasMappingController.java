@@ -46,8 +46,9 @@ public class AliasMappingController implements Initializable, DialogController {
     String aliasName = this.aliasNameField.getText();
 
     Studio.client.getRomService().saveAliasMapping(existingAlias, aliasName, romName);
+    EventManager.getInstance().notifyTableChange(game.getId(), null);
 
-    EventManager.getInstance().notifyTableChange(game.getId());
+    EventManager.getInstance().notifyTableChange(game.getId(), romName);
 
     Stage stage = (Stage) ((Button) e.getSource()).getScene().getWindow();
     stage.close();

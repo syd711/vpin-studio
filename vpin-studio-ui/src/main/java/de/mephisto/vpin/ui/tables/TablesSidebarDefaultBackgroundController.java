@@ -68,7 +68,7 @@ public class TablesSidebarDefaultBackgroundController implements Initializable {
     if (this.game.isPresent()) {
       boolean uploaded = Dialogs.openDefaultBackgroundUploadDialog(this.game.get());
       if (uploaded) {
-        EventManager.getInstance().notifyTableChange(this.game.get().getId());
+        EventManager.getInstance().notifyTableChange(this.game.get().getId(), this.game.get().getRom());
       }
     }
   }
