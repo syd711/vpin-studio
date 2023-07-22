@@ -3,6 +3,7 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.Hyperlink?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
@@ -20,11 +21,13 @@
                   <Insets />
                </VBox.margin>
             </Label>
-            <Label styleClass="preference-description" text="Settings for the PinVol service." textFill="WHITE">
+            <Label layoutX="34.0" layoutY="104.0" styleClass="preference-description" text="Settings for the PinVol service." textFill="WHITE" />
+            <Label styleClass="preference-description" text="For more information, visit" textFill="WHITE">
                <VBox.margin>
                   <Insets />
                </VBox.margin>
             </Label>
+            <Hyperlink onAction="#onLink" text="http://mjrnet.org/pinscape/PinVol.html" />
             <VBox>
                <children>
                   <CheckBox fx:id="toggleAutoStart" mnemonicParsing="false" styleClass="preference-checkbox" text="Auto-Start PinVol with VPin Server" textFill="WHITE">

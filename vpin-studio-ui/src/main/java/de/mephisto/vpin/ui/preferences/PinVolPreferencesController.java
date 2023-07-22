@@ -14,6 +14,7 @@ import org.slf4j.LoggerFactory;
 
 import java.awt.*;
 import java.io.File;
+import java.net.URI;
 import java.net.URL;
 import java.util.Optional;
 import java.util.ResourceBundle;
@@ -43,6 +44,17 @@ public class PinVolPreferencesController implements Initializable {
     Studio.client.getPinVolService().restart();
   }
 
+  @FXML
+  private void onLink() {
+    Desktop desktop = Desktop.isDesktopSupported() ? Desktop.getDesktop() : null;
+    if (desktop != null && desktop.isSupported(Desktop.Action.BROWSE)) {
+      try {
+        desktop.browse(new URI("http://mjrnet.org/pinscape/PinVol.html"));
+      } catch (Exception e) {
+        LOG.error("Failed to open link: " + e.getMessage());
+      }
+    }
+  }
 
   @FXML
   private void onOpen() {

@@ -75,7 +75,6 @@ public class KeyEventService implements InitializingBean, NativeKeyListener, Pop
     overlayWindowFX.client = overlayClient;
     overlayWindowFX = OverlayWindowFX.waitForOverlay();
     LOG.info("Finished initialization of OverlayWindowFX");
-
     afterStartup();
   }
 
@@ -103,7 +102,7 @@ public class KeyEventService implements InitializingBean, NativeKeyListener, Pop
       }
     }
 
-    if(!StringUtils.isEmpty(resetKey)) {
+    if (!StringUtils.isEmpty(resetKey)) {
       KeyChecker keyChecker = new KeyChecker(resetKey);
       if (keyChecker.matches(nativeKeyEvent)) {
         new Thread(() -> {
@@ -112,8 +111,6 @@ public class KeyEventService implements InitializingBean, NativeKeyListener, Pop
         }).start();
       }
     }
-
-    pinVolService.process(nativeKeyEvent);
   }
 
   @Override

@@ -1,6 +1,8 @@
 package de.mephisto.vpin.server.pinvol;
 
 import de.mephisto.vpin.commons.utils.PropertiesStore;
+import de.mephisto.vpin.server.util.KeyChecker;
+import org.jnativehook.keyboard.NativeKeyEvent;
 
 import java.io.File;
 
@@ -22,6 +24,11 @@ public class PinVolKeyManager {
       localVolUp = store.getString("localVolUp");
       localVolDown = store.getString("localVolDown");
     }
+  }
+
+  public boolean isPinVolKey(NativeKeyEvent event) {
+    KeyChecker checker = new KeyChecker(globalVolDown);
+    return true;
   }
 
   private File getPinVolSettingsIni() {

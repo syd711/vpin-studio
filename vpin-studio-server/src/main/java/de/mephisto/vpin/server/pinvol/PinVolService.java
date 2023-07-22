@@ -2,8 +2,10 @@ package de.mephisto.vpin.server.pinvol;
 
 import de.mephisto.vpin.commons.utils.SystemCommandExecutor;
 import de.mephisto.vpin.restclient.PreferenceNames;
+import de.mephisto.vpin.restclient.client.PinVolServiceClient;
 import de.mephisto.vpin.server.preferences.PreferencesService;
 import de.mephisto.vpin.server.system.SystemService;
+import de.mephisto.vpin.server.util.KeyChecker;
 import org.apache.commons.lang3.StringUtils;
 import org.jnativehook.keyboard.NativeKeyEvent;
 import org.slf4j.Logger;
@@ -27,6 +29,8 @@ public class PinVolService implements InitializingBean {
   private SystemService systemService;
 
   private boolean enabled = false;
+
+  private PinVolKeyManager keyManager = new PinVolKeyManager();
 
   public boolean getPinVolAutoStart() {
     return preferencesService.getPreferences().getPinVolAutoStartEnabled();
@@ -69,11 +73,11 @@ public class PinVolService implements InitializingBean {
     LOG.info("Executed PinVol command: " + String.join(" ", commands));
   }
 
-  public void process(NativeKeyEvent event) {
+  public boolean isPinVolKey(NativeKeyEvent event) {
     if(enabled) {
-      String keyText = NativeKeyEvent.getKeyText(event.getKeyCode());
-      System.out.println("Key: " + keyText + "/" + event.getKeyCode());
+      return keyManager.isPinVolKey(event);
     }
+    return false;
   }
 
   public boolean restart() {
