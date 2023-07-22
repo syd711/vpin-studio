@@ -474,6 +474,13 @@ public class SystemService extends SystemInfo implements InitializingBean {
     return success;
   }
 
+  public boolean isProcessRunning(String name) {
+    List<ProcessHandle> filteredProceses = ProcessHandle.allProcesses()
+        .filter(p -> p.info().command().isPresent() && (p.info().command().get().contains(name)))
+        .collect(Collectors.toList());
+    return !filteredProceses.isEmpty();
+  }
+
   public boolean killPopper() {
     List<ProcessHandle> pinUpProcesses = ProcessHandle
         .allProcesses()

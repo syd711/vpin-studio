@@ -23,6 +23,16 @@ public class PinVolResource {
     return pinVolService.getPinVolAutoStart();
   }
 
+  @GetMapping("/running")
+  public boolean isProcessRunning() {
+    return pinVolService.isRunning();
+  }
+
+  @GetMapping("/restart")
+  public boolean restart() {
+    return pinVolService.restart();
+  }
+
   @GetMapping("/autostart/toggle")
   public boolean toggleAutoStart() {
     return pinVolService.toggleAutoStart();

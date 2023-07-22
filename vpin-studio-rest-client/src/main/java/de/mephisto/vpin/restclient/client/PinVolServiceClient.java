@@ -24,4 +24,12 @@ public class PinVolServiceClient extends VPinStudioClientService {
   public boolean kill() {
     return getRestClient().get(API + "pinvol/kill", Boolean.class);
   }
+
+  public boolean isRunning() {
+    return getRestClient().get(API + "pinvol/running", Boolean.class);
+  }
+
+  public boolean restart() {
+    return getRestClient().get(API + "pinvol/restart", Boolean.class);
+  }
 }

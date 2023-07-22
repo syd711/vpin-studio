@@ -1,13 +1,13 @@
 package de.mephisto.vpin.ui.preferences;
 
 import de.mephisto.vpin.commons.utils.WidgetFactory;
-import de.mephisto.vpin.restclient.SystemSummary;
 import de.mephisto.vpin.ui.Studio;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.CheckBox;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,6 +15,7 @@ import org.slf4j.LoggerFactory;
 import java.awt.*;
 import java.io.File;
 import java.net.URL;
+import java.util.Optional;
 import java.util.ResourceBundle;
 
 public class PinVolPreferencesController implements Initializable {
@@ -38,11 +39,28 @@ public class PinVolPreferencesController implements Initializable {
   }
 
   @FXML
+  private void onRestart() {
+    Studio.client.getPinVolService().restart();
+  }
+
+
+  @FXML
   private void onOpen() {
     Desktop desktop = Desktop.isDesktopSupported() ? Desktop.getDesktop() : null;
     if (desktop != null && desktop.isSupported(Desktop.Action.OPEN)) {
       try {
-        Studio.client.getPinVolService().kill();
+        boolean running = Studio.client.getPinVolService().isRunning();
+        if (running) {
+          Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "PinVol Running", "The \"PinVol.exe\" is currently running. To open the UI, the process will be terminated.",
+              "The process has to be started with the \"Start\" button afterwards.", "Kill Process");
+          if (result.isPresent() && result.get().equals(ButtonType.OK)) {
+            Studio.client.getPinVolService().kill();
+          }
+          else {
+            return;
+          }
+        }
+
         File file = new File("resources", "PinVol.exe");
         if (!file.exists()) {
           WidgetFactory.showAlert(Studio.stage, "Did not find PinVol.exe", "The exe file " + file.getAbsolutePath() + " was not found.");

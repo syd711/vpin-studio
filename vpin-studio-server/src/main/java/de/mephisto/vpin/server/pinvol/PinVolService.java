@@ -4,6 +4,8 @@ import de.mephisto.vpin.commons.utils.SystemCommandExecutor;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.server.preferences.PreferencesService;
 import de.mephisto.vpin.server.system.SystemService;
+import org.apache.commons.lang3.StringUtils;
+import org.jnativehook.keyboard.NativeKeyEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
@@ -24,19 +26,25 @@ public class PinVolService implements InitializingBean {
   @Autowired
   private SystemService systemService;
 
+  private boolean enabled = false;
+
   public boolean getPinVolAutoStart() {
     return preferencesService.getPreferences().getPinVolAutoStartEnabled();
   }
 
   public boolean toggleAutoStart() {
     try {
-      boolean autoStart = getPinVolAutoStart();
-      preferencesService.savePreference(PreferenceNames.PINVOL_AUTOSTART_ENABLED, !autoStart);
-      return !autoStart;
+      this.enabled = !enabled;
+      preferencesService.savePreference(PreferenceNames.PINVOL_AUTOSTART_ENABLED, enabled);
+      return enabled;
     } catch (Exception e) {
       LOG.error("Failed to set PinVol autostart flag: " + e.getMessage(), e);
     }
     return false;
+  }
+
+  public boolean isRunning() {
+    return systemService.isProcessRunning("PinVol");
   }
 
   public boolean killPinVol() {
@@ -45,15 +53,32 @@ public class PinVolService implements InitializingBean {
 
   @Override
   public void afterPropertiesSet() throws Exception {
-    boolean autoStart = getPinVolAutoStart();
-    if (autoStart) {
-      File exe = new File("resources", "PinVol.exe");
-
-      List<String> commands = Arrays.asList("start", "/min", exe.getAbsolutePath());
-      SystemCommandExecutor executor = new SystemCommandExecutor(commands);
-      executor.setDir(new File("resources"));
-      executor.executeCommandAsync();
+    this.enabled = getPinVolAutoStart();
+    if (enabled) {
+      startPinVol();
       LOG.info("Auto-started PinVol");
     }
+  }
+
+  private static void startPinVol() {
+    File exe = new File("resources", "PinVol.exe");
+    List<String> commands = Arrays.asList("start", "/min", exe.getAbsolutePath());
+    SystemCommandExecutor executor = new SystemCommandExecutor(commands);
+    executor.setDir(new File("resources"));
+    executor.executeCommandAsync();
+    LOG.info("Executed PinVol command: " + String.join(" ", commands));
+  }
+
+  public void process(NativeKeyEvent event) {
+    if(enabled) {
+      String keyText = NativeKeyEvent.getKeyText(event.getKeyCode());
+      System.out.println("Key: " + keyText + "/" + event.getKeyCode());
+    }
+  }
+
+  public boolean restart() {
+    killPinVol();
+    startPinVol();
+    return true;
   }
 }
