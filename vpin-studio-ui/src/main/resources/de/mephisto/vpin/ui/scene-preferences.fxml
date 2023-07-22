@@ -42,6 +42,7 @@
                               <Insets />
                            </VBox.margin>
                         </Button>
+                        <Button alignment="BASELINE_LEFT" contentDisplay="RIGHT" layoutX="160.0" layoutY="100.0" mnemonicParsing="false" onAction="#onPinVol" styleClass="preference-button" text="PinVol" />
                         <Button alignment="BASELINE_LEFT" contentDisplay="RIGHT" layoutX="160.0" layoutY="75.0" mnemonicParsing="false" onAction="#onMame" styleClass="preference-button" text="VPin Mame" />
                         <Label alignment="BASELINE_LEFT" layoutX="210.0" layoutY="10.0" styleClass="preference-section" text="PINUP POPPER SETTINGS">
                            <font>

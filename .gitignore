@@ -91,3 +91,4 @@ yarn-error.log*
 /resources/PinVolSettings.ini
 /resources/PinVolTables.ini
 /resources/PinVolVol.ini
+/PinVolTables.ini

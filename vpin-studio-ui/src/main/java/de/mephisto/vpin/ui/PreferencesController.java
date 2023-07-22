@@ -87,6 +87,11 @@ public class PreferencesController implements Initializable {
   }
 
   @FXML
+  private void onPinVol(ActionEvent event) throws IOException {
+    load("preference-pinvol.fxml", event);
+  }
+
+  @FXML
   private void onReset(ActionEvent event) throws IOException {
     load("preference-reset.fxml", event);
   }

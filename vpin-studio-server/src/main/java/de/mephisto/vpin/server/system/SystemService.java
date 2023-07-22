@@ -458,15 +458,20 @@ public class SystemService extends SystemInfo implements InitializingBean {
     return new File(folder, badge + ".png");
   }
 
-  public void killProcesses(String name) {
-    List<ProcessHandle> pinUpProcesses = ProcessHandle.allProcesses()
+  public boolean killProcesses(String name) {
+    List<ProcessHandle> filteredProceses = ProcessHandle.allProcesses()
         .filter(p -> p.info().command().isPresent() && (p.info().command().get().contains(name)))
         .collect(Collectors.toList());
-    for (ProcessHandle pinUpProcess : pinUpProcesses) {
-      String cmd = pinUpProcess.info().command().get();
-      boolean b = pinUpProcess.destroyForcibly();
+    boolean success = false;
+    for (ProcessHandle process : filteredProceses) {
+      String cmd = process.info().command().get();
+      boolean b = process.destroyForcibly();
       LOG.info("Destroyed process '" + cmd + "', result: " + b);
+      if(!success && b) {
+        success = true;
+      }
     }
+    return success;
   }
 
   public boolean killPopper() {

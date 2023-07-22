@@ -48,6 +48,7 @@ public class VPinStudioClient implements ObservedPropertyChangeListener, Overlay
   private final VpxServiceClient vpxServiceClient;
   private final VpbmServiceClient vpbmServiceClient;
   private final RomServiceClient romServiceClient;
+  private final PinVolServiceClient pinVolServiceClient;
 
   public VPinStudioClient(String host) {
     this.host = host;
@@ -74,6 +75,11 @@ public class VPinStudioClient implements ObservedPropertyChangeListener, Overlay
     this.vpxServiceClient = new VpxServiceClient(this);
     this.vpbmServiceClient = new VpbmServiceClient(this);
     this.romServiceClient = new RomServiceClient(this);
+    this.pinVolServiceClient = new PinVolServiceClient(this);
+  }
+
+  public PinVolServiceClient getPinVolService() {
+    return pinVolServiceClient;
   }
 
   public RomServiceClient getRomService() {
