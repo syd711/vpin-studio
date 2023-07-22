@@ -88,3 +88,6 @@ yarn-error.log*
 /vpin-studio-server/resources/system.properties
 /resources/archives/**
 /resources/vpbm/identifiers.dat
+/resources/PinVolSettings.ini
+/resources/PinVolTables.ini
+/resources/PinVolVol.ini
