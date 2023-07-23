@@ -30,7 +30,7 @@
                   </Label>
                   <Label layoutX="34.0" layoutY="104.0" styleClass="preference-description" text="This section configures all configuration option for PINemHi challanges." textFill="WHITE" />
                   <Label layoutX="34.0" layoutY="167.0" styleClass="preference-description" text="Note that all text here were copied from the original settings documentation." textFill="WHITE" />
-                  <CheckBox fx:id="autoStart" mnemonicParsing="false" onAction="#onStartToggle" styleClass="preference-checkbox" text="Auto-start PINemHi Rom Monitor" textFill="WHITE">
+                  <CheckBox fx:id="autoStart" mnemonicParsing="false" styleClass="preference-checkbox" text="Auto-start PINemHi Rom Monitor" textFill="WHITE">
                      <font>
                         <Font size="14.0" />
                      </font>

@@ -10,6 +10,7 @@ import de.mephisto.vpin.restclient.SystemSummary;
 import de.mephisto.vpin.server.VPinStudioException;
 import de.mephisto.vpin.server.VPinStudioServer;
 import de.mephisto.vpin.server.backup.adapters.ArchiveType;
+import de.mephisto.vpin.server.pinemhi.PINemHiService;
 import de.mephisto.vpin.server.resources.ResourceLoader;
 import de.mephisto.vpin.server.util.SystemUtil;
 import edu.umd.cs.findbugs.annotations.NonNull;
@@ -44,10 +45,7 @@ public class SystemService extends SystemInfo implements InitializingBean {
 
   private final static String VPREG_STG = "VPReg.stg";
 
-  public static String PINEMHI_FOLDER = RESOURCES + "pinemhi";
   public static String ARCHIVES_FOLDER = RESOURCES + "archives";
-  private final static String PINEMHI_COMMAND = "PINemHi.exe";
-  private final static String PINEMHI_INI = "pinemhi.ini";
   private final static String VPM_ALIAS = "VPMAlias.txt";
   private static final String SYSTEM_PROPERTIES = "system";
   public static final String DEFAULT_BACKGROUND = "background.png";
@@ -58,15 +56,13 @@ public class SystemService extends SystemInfo implements InitializingBean {
   private File vpxTablesFolder;
   private File mameFolder;
   private File userFolder;
-
-  private File pinemhiNvRamFolder;
+  private File pinemhiCommandFile;
 
   private ArchiveType archiveType = ArchiveType.VPBM;
 
   @Override
   public void afterPropertiesSet() throws Exception {
     initBaseFolders();
-    initPinemHiFolders();
     initVPinTableManagerIcon();
 
     if (!getPinUPSystemFolder().exists()) {
@@ -193,7 +189,6 @@ public class SystemService extends SystemInfo implements InitializingBean {
     LOG.info(formatPathLog("Mame Folder", this.getMameFolder()));
     LOG.info(formatPathLog("ROM Folder", this.getMameRomFolder()));
     LOG.info(formatPathLog("NVRam Folder", this.getNvramFolder()));
-    LOG.info(formatPathLog("Pinemhi NVRam Folder", this.pinemhiNvRamFolder));
     LOG.info(formatPathLog("Pinemhi Command", this.getPinemhiCommandFile()));
     LOG.info(formatPathLog("VPReg File", this.getVPRegFile()));
     LOG.info(formatPathLog("B2S Extraction Folder", this.getB2SImageExtractionFolder()));
@@ -203,52 +198,11 @@ public class SystemService extends SystemInfo implements InitializingBean {
     LOG.info("*******************************************************************************************************");
   }
 
-  private void initPinemHiFolders() throws VPinStudioException {
-    try {
-      File file = new File(PINEMHI_FOLDER, PINEMHI_INI);
-      if (!file.exists()) {
-        throw new FileNotFoundException("pinemhi.ini file (" + file.getAbsolutePath() + ") not found.");
-      }
-
-      FileInputStream fileInputStream = new FileInputStream(file);
-      java.util.List<String> lines = IOUtils.readLines(fileInputStream, StandardCharsets.UTF_8);
-      fileInputStream.close();
-
-      boolean writeUpdates = false;
-      List<String> updatedLines = new ArrayList<>();
-      for (String line : lines) {
-        if (line.startsWith("VP=")) {
-          String vpValue = line.split("=")[1];
-          pinemhiNvRamFolder = new File(vpValue);
-          if (!pinemhiNvRamFolder.exists()) {
-            pinemhiNvRamFolder = getNvramFolder();
-            line = "VP=" + pinemhiNvRamFolder.getAbsolutePath() + "\\";
-            writeUpdates = true;
-          }
-        }
-        updatedLines.add(line);
-      }
-
-      if (writeUpdates) {
-        FileOutputStream out = new FileOutputStream(file);
-        IOUtils.writeLines(updatedLines, "\n", out, StandardCharsets.UTF_8);
-        out.close();
-        LOG.info("Written updates to " + file.getAbsolutePath());
-      }
-
-      LOG.info("Finished pinemhi installation check.");
-    } catch (Exception e) {
-      String msg = "Failed to run installation for pinemhi: " + e.getMessage();
-      LOG.error(msg, e);
-      throw new VPinStudioException(msg, e);
-    }
-  }
-
-  private String formatPathLog(String label, String value) {
+  public static String formatPathLog(String label, String value) {
     return formatPathLog(label, value, null, null);
   }
 
-  private String formatPathLog(String label, File file) {
+  private static String formatPathLog(String label, File file) {
     return formatPathLog(label, file.getAbsolutePath(), file.exists(), file.canRead());
   }
 
@@ -273,7 +227,7 @@ public class SystemService extends SystemInfo implements InitializingBean {
     return info;
   }
 
-  private String formatPathLog(String label, String value, Boolean exists, Boolean readable) {
+  private static String formatPathLog(String label, String value, Boolean exists, Boolean readable) {
     StringBuilder b = new StringBuilder(label);
     b.append(":");
     while (b.length() < 33) {
@@ -300,7 +254,7 @@ public class SystemService extends SystemInfo implements InitializingBean {
 
   @NonNull
   public File getPinemhiCommandFile() {
-    return new File(PINEMHI_FOLDER, PINEMHI_COMMAND);
+    return new File(PINemHiService.PINEMHI_FOLDER, PINemHiService.PINEMHI_COMMAND);
   }
 
   @SuppressWarnings("unused")

@@ -8,8 +8,8 @@
 
 ; *** use this section to set the paths to FP fpram's and VP nvram's ***
 [paths]
-VP=C:\vPinball\VisualPinball\VPinMAME\nvram\
-FP=C:\vPinball\Future Pinball\fpRAM\
+VP=C:\vPinball\VisualPinball\VPinMAME\nvram
+FP=C:\vPinball\Future Pinball\fpRAM
 
 [options]
 ; *** Set these to 1 if you want to see them in your output - 1 means its on , 0 means its off ***

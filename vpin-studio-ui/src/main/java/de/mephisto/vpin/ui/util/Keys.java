@@ -47,6 +47,22 @@ public class Keys {
       KeyEvent.VK_7,
       KeyEvent.VK_8,
       KeyEvent.VK_9,
+      KeyEvent.VK_LEFT,
+      KeyEvent.VK_RIGHT,
+      KeyEvent.VK_UP,
+      KeyEvent.VK_DOWN,
+      KeyEvent.VK_ADD,
+      KeyEvent.VK_SUBTRACT,
+      KeyEvent.VK_MULTIPLY,
+      KeyEvent.VK_DIVIDE,
+      KeyEvent.VK_ALT,
+      KeyEvent.VK_AMPERSAND,
+      KeyEvent.VK_ASTERISK,
+      KeyEvent.VK_ESCAPE,
+      KeyEvent.VK_END,
+      KeyEvent.VK_STOP,
+      KeyEvent.VK_ENTER,
+      KeyEvent.VK_SPACE
   };
 
   public static List<String> getKeyNames() {
@@ -54,6 +70,15 @@ public class Keys {
     for (int keyCode : KEY_CODES) {
       result.add(getKeyDisplayName(keyCode));
     }
+    return result;
+  }
+
+  public static List<String> getUIKeyNames() {
+    List<String> result = new ArrayList<>();
+    for (int keyCode : KEY_CODES) {
+      result.add(getKeyDisplayName(keyCode));
+    }
+    result.add(0, "");
     return result;
   }
 

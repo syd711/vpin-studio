@@ -1,5 +1,6 @@
 package de.mephisto.vpin.restclient.client;
 
+import de.mephisto.vpin.restclient.IniSettings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -19,8 +20,8 @@ public class PINemHiServiceClient extends VPinStudioClientService {
     return getRestClient().get(API + "pinemhi/autostart", Boolean.class);
   }
 
-  public HashMap<Object, Object> getSettings() {
-    return getRestClient().get(API + "pinemhi/settings", HashMap.class);
+  public IniSettings getSettings() {
+    return new IniSettings(getRestClient().get(API + "pinemhi/settings", HashMap.class));
   }
 
   public boolean toggleAutoStart() {
@@ -37,5 +38,13 @@ public class PINemHiServiceClient extends VPinStudioClientService {
 
   public boolean restart() {
     return getRestClient().get(API + "pinemhi/restart", Boolean.class);
+  }
+
+  public void save(IniSettings settings) throws Exception {
+    try {
+      getRestClient().post(API + "pinemhi/save", settings.getSettings(), HashMap.class);
+    } catch (Exception e) {
+      throw e;
+    }
   }
 }

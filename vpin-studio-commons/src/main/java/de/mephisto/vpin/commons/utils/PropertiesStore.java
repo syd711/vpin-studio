@@ -137,7 +137,7 @@ public class PropertiesStore {
     this.set(key, String.valueOf(value));
   }
 
-  public void set(Map<String, String> values) {
+  public void set(Map<String, Object> values) {
     properties.putAll(values);
     save();
   }
