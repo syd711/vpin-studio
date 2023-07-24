@@ -1,5 +1,7 @@
 package de.mephisto.vpin.restclient.popper;
 
+import java.util.Date;
+
 public class TableDetails {
   public final static String ARCHIVE_FILENAME = "table-details.json";
 
@@ -7,6 +9,7 @@ public class TableDetails {
   private String gameName;
   private String gameFileName;
   private String gameDisplayName;
+  private Date dateAdded;
   private String gameTheme;
   private String notes;
   private int gameYear;
@@ -26,6 +29,14 @@ public class TableDetails {
   private String altRunMode;
   private String url;
   private String designedBy;
+
+  public Date getDateAdded() {
+    return dateAdded;
+  }
+
+  public void setDateAdded(Date dateAdded) {
+    this.dateAdded = dateAdded;
+  }
 
   public String getCategory() {
     return category;

@@ -19,6 +19,7 @@ import org.slf4j.LoggerFactory;
 
 import java.net.URL;
 import java.text.DateFormat;
+import java.time.format.DateTimeFormatter;
 import java.util.Optional;
 import java.util.ResourceBundle;
 
@@ -53,6 +54,9 @@ public class TablesSidebarPopperController implements Initializable, ChangeListe
 
   @FXML
   private Label gameYear;
+
+  @FXML
+  private Label dateAdded;
 
   @FXML
   private Label romName;
@@ -178,6 +182,7 @@ public class TablesSidebarPopperController implements Initializable, ChangeListe
       gameName.setText(StringUtils.isEmpty(manifest.getGameName()) ? "-" : manifest.getGameName());
       gameFileName.setText(StringUtils.isEmpty(manifest.getGameFileName()) ? "-" : manifest.getGameFileName());
       gameDisplayName.setText(StringUtils.isEmpty(manifest.getGameDisplayName()) ? "-" : manifest.getGameDisplayName());
+      dateAdded.setText(manifest.getDateAdded() == null ? "-" : DateFormat.getDateTimeInstance().format(manifest.getDateAdded()));
       gameYear.setText(manifest.getGameYear() == 0 ? "-" : String.valueOf(manifest.getGameYear()));
       romName.setText(StringUtils.isEmpty(manifest.getRomName()) ? "-" : manifest.getRomName());
       romUrl.setText(StringUtils.isEmpty(manifest.getRomUrl()) ? "-" : manifest.getRomUrl());
@@ -202,6 +207,7 @@ public class TablesSidebarPopperController implements Initializable, ChangeListe
       labelLastPlayed.setText("-");
       labelTimesPlayed.setText("-");
 
+      dateAdded.setText("-");
       gameName.setText("-");
       gameFileName.setText("-");
       gameDisplayName.setText("-");

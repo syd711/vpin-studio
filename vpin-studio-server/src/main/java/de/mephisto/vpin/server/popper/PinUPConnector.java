@@ -138,6 +138,7 @@ public class PinUPConnector implements InitializingBean {
         manifest.setGameName(rs.getString("GameName"));
         manifest.setGameFileName(rs.getString("GameFileName"));
         manifest.setGameDisplayName(rs.getString("GameDisplay"));
+        manifest.setDateAdded(rs.getTimestamp("DateAdded"));
         manifest.setNotes(rs.getString("Notes"));
         manifest.setGameYear(rs.getInt("GameYear"));
         manifest.setRomName(rs.getString("ROM"));
@@ -338,14 +339,15 @@ public class PinUPConnector implements InitializingBean {
     Connection connect = this.connect();
     int emulatorId = getEmulatorId(emulator);
     try {
-      PreparedStatement preparedStatement = connect.prepareStatement("INSERT INTO Games (EMUID, GameName, GameFileName, GameDisplay, Visible, LaunchCustomVar) VALUES (?,?,?,?,?,?)", Statement.RETURN_GENERATED_KEYS);
+      PreparedStatement preparedStatement = connect.prepareStatement("INSERT INTO Games (EMUID, GameName, GameFileName, GameDisplay, Visible, LaunchCustomVar, DateAdded) VALUES (?,?,?,?,?,?,?)", Statement.RETURN_GENERATED_KEYS);
       preparedStatement.setInt(1, emulatorId);
       preparedStatement.setString(2, gameName);
       preparedStatement.setString(3, gameFileName);
       preparedStatement.setString(4, gameDisplayName);
       preparedStatement.setInt(5, 1);
       preparedStatement.setString(6, launchCustomVar);
-//      preparedStatement.setTimestamp(6, new java.sql.Timestamp(System.currentTimeMillis()));
+//      preparedStatement.setDate(7, new Date(new java.util.Date().getTime()));
+      preparedStatement.setTimestamp(7, new java.sql.Timestamp(System.currentTimeMillis()));
       int affectedRows = preparedStatement.executeUpdate();
       preparedStatement.close();
 
