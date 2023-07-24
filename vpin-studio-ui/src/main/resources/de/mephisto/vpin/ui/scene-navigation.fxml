@@ -1,30 +1,32 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.geometry.Insets?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
-<?import javafx.scene.text.*?>
-<?import org.kordamp.ikonli.javafx.*?>
-<BorderPane prefWidth="130.0" stylesheets="@stylesheet.css" xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.NavigationController">
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+<?import org.kordamp.ikonli.javafx.FontIcon?>
+
+<BorderPane prefWidth="130.0" stylesheets="@stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.NavigationController">
    <top>
       <BorderPane BorderPane.alignment="CENTER">
          <center>
           <VBox alignment="TOP_CENTER" spacing="12.0">
               <children>
-                  <VBox fx:id="dashboardBtn" alignment="CENTER" onMousePressed="#onDashboardClick" styleClass="navigation-button">
+                  <VBox fx:id="tablesBtn" alignment="CENTER" onMousePressed="#onTablesClick" styleClass="navigation-button">
                      <children>
-                        <FontIcon iconColor="WHITE" iconLiteral="bi-grid" iconSize="24" />
-                        <Label text="Dashboard" textFill="WHITE">
+                        <FontIcon iconColor="WHITE" iconLiteral="bi-card-list" iconSize="24" />
+                        <Label text="Tables" textFill="WHITE">
                            <font>
                               <Font size="14.0" />
                            </font>
                         </Label>
                      </children>
                   </VBox>
-                  <VBox alignment="CENTER" onMousePressed="#onTablesClick" styleClass="navigation-button">
+                  <VBox fx:id="dashboardBtn" alignment="CENTER" onMousePressed="#onDashboardClick" styleClass="navigation-button">
                      <children>
-                        <FontIcon iconColor="WHITE" iconLiteral="bi-card-list" iconSize="24" />
-                        <Label text="Tables" textFill="WHITE">
+                        <FontIcon iconColor="WHITE" iconLiteral="bi-grid" iconSize="24" />
+                        <Label text="Dashboard" textFill="WHITE">
                            <font>
                               <Font size="14.0" />
                            </font>

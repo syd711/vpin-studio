@@ -94,7 +94,6 @@ public class DashboardController implements Initializable, StudioFXController {
       LOG.error("Failed to load finished players widget: " + e.getMessage(), e);
     }
 
-    NavigationController.setInitialController("scene-dashboard.fxml", this);
     onViewActivated();
   }
 

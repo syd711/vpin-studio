@@ -1,5 +1,8 @@
 ## Release Notes
 
+**UI**
+ - The **Tables** administration is now the default entry screen when you open the UI. The dashboard has been moved below. 
+
 **Script Details Section**
 
 - Added green "Open" button on the header which will directly open the script in VPX.
@@ -14,11 +17,15 @@
 
 **PUP Pack Section**
 
-- Added option to disable PUP packs.
+- Added option to disable PUP packs. This is solved through an existing PINUp Popper feature, see https://www.nailbuster.com/wikipinup/doku.php?id=pinup_optional#option_2note_this_requires_pinupmenu_v141_to_work_correcty
 
 **PinVol Support**
 
 - Added PinVol support: The exe file shipped together with the server and can be enabled/disabled in the preferences of the VPin Studio.
+
+**PINemHi**
+
+- It took a while, but since I already ship the **PINemHi Leaderboard**, it was time to build the integration for it too. You'll find the configuration for you _pinemhi.ini_ in the preferences section. I hope everything works as expected as there was a lot of fields to configure. Note that when running, the key bindings are intercepted my may disturb working with the VPin Studio when launched on the cab.
 
 **Bug Fixes**
 
@@ -27,3 +34,5 @@
 - Fixed wrong nvram read for aliased ROMs.
 - Fixed ignoring ignored MAME validators.
 - Add "ROM"-based table refresh: Some table changes, like the MAME settings, result in changes for multiple tables. All tables which are affected by these type of changes are refreshed now.
+- https://github.com/syd711/vpin-studio/issues/2: _Client starts bigger than screen size_: Fixed initial window size for smaller resolution while checking also the windows scaling. There is still room for improvement, but right now the window shouldn't exceed the actual screen size anymore.
+- https://github.com/syd711/vpin-studio/issues/5: _Complains about loading video missing if check disabled_: Fixed mixed up validator ids between the loading screen validator and the playfield screen validator. 
