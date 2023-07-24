@@ -115,8 +115,8 @@
                   <CheckBox fx:id="Topper_35" layoutX="364.0" layoutY="116.0" mnemonicParsing="false" onAction="#onPreferenceChange" GridPane.columnIndex="1" GridPane.rowIndex="5" />
                   <CheckBox fx:id="BackGlass_36" layoutX="364.0" layoutY="141.0" mnemonicParsing="false" onAction="#onPreferenceChange" GridPane.columnIndex="1" GridPane.rowIndex="6" />
                   <CheckBox fx:id="DMD_37" layoutX="364.0" layoutY="166.0" mnemonicParsing="false" onAction="#onPreferenceChange" GridPane.columnIndex="1" GridPane.rowIndex="7" />
-                  <CheckBox fx:id="Loading_38" layoutX="364.0" layoutY="192.0" mnemonicParsing="false" onAction="#onPreferenceChange" GridPane.columnIndex="1" GridPane.rowIndex="9" />
-                  <CheckBox fx:id="PlayField_39" layoutX="10.0" layoutY="14.0" mnemonicParsing="false" onAction="#onPreferenceChange" GridPane.columnIndex="1" GridPane.rowIndex="8" />
+                  <CheckBox fx:id="Loading_39" layoutX="364.0" layoutY="192.0" mnemonicParsing="false" onAction="#onPreferenceChange" GridPane.columnIndex="1" GridPane.rowIndex="9" />
+                  <CheckBox fx:id="PlayField_38" layoutX="10.0" layoutY="14.0" mnemonicParsing="false" onAction="#onPreferenceChange" GridPane.columnIndex="1" GridPane.rowIndex="8" />
                   <CheckBox fx:id="Other2_40" layoutX="364.0" layoutY="243.0" mnemonicParsing="false" onAction="#onPreferenceChange" GridPane.columnIndex="1" GridPane.rowIndex="10" />
                   <CheckBox fx:id="Wheel_41" layoutX="364.0" layoutY="268.0" mnemonicParsing="false" onAction="#onPreferenceChange" GridPane.columnIndex="1" GridPane.rowIndex="11" />
                </children>
