@@ -85,6 +85,7 @@ public class PINemHiService implements InitializingBean {
 
   public Map<String, Object> save(Map<String, Object> settings) {
     try {
+      int changeCounter = 0;
       Set<Map.Entry<String, Object>> entries = settings.entrySet();
       for (Map.Entry<String, Object> entry : entries) {
         String key = entry.getKey();
@@ -92,6 +93,7 @@ public class PINemHiService implements InitializingBean {
         Collection<Profile.Section> sections = ini.values();
         for (Profile.Section section : sections) {
           if (section.containsKey(key)) {
+            changeCounter++;
             section.put(key, entry.getValue());
             break;
           }
@@ -99,6 +101,7 @@ public class PINemHiService implements InitializingBean {
       }
 
       ini.store();
+      LOG.info("Written " + changeCounter + " entries to pinemhi.ini.");
     } catch (IOException e) {
       LOG.error("Failed to save pinemhi.ini: " + e.getMessage(), e);
     }

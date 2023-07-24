@@ -3,7 +3,6 @@ package de.mephisto.vpin.ui.preferences;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.IniSettings;
 import de.mephisto.vpin.restclient.IniSettingsChangeListener;
-import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.util.Keys;
 import javafx.collections.FXCollections;
@@ -16,6 +15,8 @@ import javafx.scene.control.TextField;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.awt.*;
+import java.io.File;
 import java.net.URL;
 import java.util.Arrays;
 import java.util.List;
@@ -293,7 +294,14 @@ public class PINemHiPreferencesController implements Initializable, IniSettingsC
 
   @FXML
   private void onEdit() {
-
+    Desktop desktop = Desktop.isDesktopSupported() ? Desktop.getDesktop() : null;
+    if (desktop != null && desktop.isSupported(Desktop.Action.EDIT)) {
+      try {
+        desktop.edit(new File("resources/pinemhi", "pinemhi.ini"));
+      } catch (Exception e) {
+        LOG.error("Failed to open pinemhi.ini: " + e.getMessage(), e);
+      }
+    }
   }
 
   @FXML

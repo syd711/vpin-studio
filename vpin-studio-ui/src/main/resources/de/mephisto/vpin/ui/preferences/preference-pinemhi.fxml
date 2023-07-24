@@ -36,6 +36,10 @@
                      </font>
                   </CheckBox>
                   <Label styleClass="checkbox-description" text="If enabled, the monitor process will automatically be launched with the VPin Server." textFill="WHITE" wrapText="true" />
+                  <Label styleClass="checkbox-description" text="Note that the monitor will consume key events while working with the VPin Studio on the cabinet." textFill="WHITE" wrapText="true">
+                     <font>
+                        <Font name="System Bold" size="12.0" />
+                     </font></Label>
                   <HBox spacing="6.0">
                      <VBox.margin>
                         <Insets top="24.0" />
