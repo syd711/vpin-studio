@@ -141,9 +141,15 @@ public class PinUPConnector implements InitializingBean {
         manifest.setDateAdded(rs.getTimestamp("DateAdded"));
         manifest.setNotes(rs.getString("Notes"));
         manifest.setGameYear(rs.getInt("GameYear"));
+        if (rs.wasNull()) {
+          manifest.setGameYear(null);
+        }
         manifest.setRomName(rs.getString("ROM"));
         manifest.setManufacturer(rs.getString("Manufact"));
         manifest.setNumberOfPlayers(rs.getInt("NumPlayers"));
+        if (rs.wasNull()) {
+          manifest.setNumberOfPlayers(null);
+        }
         manifest.setTags(rs.getString("TAGS"));
         manifest.setVolume(rs.getString("sysVolume"));
         manifest.setCategory(rs.getString("Category"));
@@ -152,6 +158,9 @@ public class PinUPConnector implements InitializingBean {
         manifest.setKeepDisplays(rs.getString("GKeepDisplays"));
         manifest.setGameTheme(rs.getString("GameTheme"));
         manifest.setGameRating(rs.getInt("GameRating"));
+        if (rs.wasNull()) {
+          manifest.setGameRating(null);
+        }
         manifest.setDof(rs.getString("DOFStuff"));
         manifest.setIPDBNum(rs.getString("IPDBNum"));
         manifest.setAltRunMode(rs.getString("AltRunMode"));

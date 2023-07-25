@@ -19,7 +19,6 @@ import org.slf4j.LoggerFactory;
 
 import java.net.URL;
 import java.text.DateFormat;
-import java.time.format.DateTimeFormatter;
 import java.util.Optional;
 import java.util.ResourceBundle;
 
@@ -183,17 +182,17 @@ public class TablesSidebarPopperController implements Initializable, ChangeListe
       gameFileName.setText(StringUtils.isEmpty(manifest.getGameFileName()) ? "-" : manifest.getGameFileName());
       gameDisplayName.setText(StringUtils.isEmpty(manifest.getGameDisplayName()) ? "-" : manifest.getGameDisplayName());
       dateAdded.setText(manifest.getDateAdded() == null ? "-" : DateFormat.getDateTimeInstance().format(manifest.getDateAdded()));
-      gameYear.setText(manifest.getGameYear() == 0 ? "-" : String.valueOf(manifest.getGameYear()));
+      gameYear.setText(manifest.getGameYear() == null ? "-" : String.valueOf(manifest.getGameYear()));
       romName.setText(StringUtils.isEmpty(manifest.getRomName()) ? "-" : manifest.getRomName());
       romUrl.setText(StringUtils.isEmpty(manifest.getRomUrl()) ? "-" : manifest.getRomUrl());
       manufacturer.setText(StringUtils.isEmpty(manifest.getManufacturer()) ? "-" : manifest.getManufacturer());
-      numberOfPlayers.setText(manifest.getNumberOfPlayers() == 0 ? "-" : String.valueOf(manifest.getNumberOfPlayers()));
+      numberOfPlayers.setText(manifest.getNumberOfPlayers() == null ? "-" : String.valueOf(manifest.getNumberOfPlayers()));
       tags.setText(StringUtils.isEmpty(manifest.getTags()) ? "-" : manifest.getTags());
       category.setText(StringUtils.isEmpty(manifest.getCategory()) ? "-" : manifest.getCategory());
       author.setText(StringUtils.isEmpty(manifest.getAuthor()) ? "-" : manifest.getAuthor());
       launchCustomVar.setText(StringUtils.isEmpty(manifest.getLaunchCustomVar()) ? "-" : manifest.getLaunchCustomVar());
       keepDisplays.setText(StringUtils.isEmpty(manifest.getKeepDisplays()) ? "-" : manifest.getKeepDisplays());
-      gameRating.setText(manifest.getGameRating() > 0 ? String.valueOf(manifest.getGameRating()) : "-");
+      gameRating.setText(manifest.getGameRating() == null ? "-" : String.valueOf(manifest.getGameRating()));
       dof.setText(StringUtils.isEmpty(manifest.getDof()) ? "-" : manifest.getDof());
       IPDBNum.setText(StringUtils.isEmpty(manifest.getIPDBNum()) ? "-" : manifest.getIPDBNum());
       altRunMode.setText(StringUtils.isEmpty(manifest.getAltRunMode()) ? "-" : manifest.getAltRunMode());
