@@ -34,8 +34,15 @@ public class GameMediaItem {
       this.mimeType = Files.probeContentType(file.toPath());
       if (this.mimeType == null) {
         String suffix = FilenameUtils.getExtension(file.getName()).toLowerCase();
-        if (suffix.equals("apng")) {
+        if (suffix.endsWith("apng")) {
           this.mimeType = "image/apng";
+        }
+
+        if(this.mimeType == null && suffix.endsWith("png")) {
+          this.mimeType = "image/png";
+        }
+        else if(this.mimeType == null && suffix.endsWith("mp4")) {
+          this.mimeType = "video/mp4";
         }
       }
     } catch (IOException e) {

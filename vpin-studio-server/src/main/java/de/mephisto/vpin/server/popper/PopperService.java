@@ -215,19 +215,23 @@ public class PopperService implements InitializingBean {
     PopperScreen[] values = PopperScreen.values();
     for (PopperScreen originalScreenValue : values) {
       try {
-        GameMediaItem gameMediaItem = original.getGameMedia().getDefaultMediaItem(originalScreenValue);
-        if (gameMediaItem != null && gameMediaItem.getFile().exists()) {
-          File mediaFile = gameMediaItem.getFile();
-          String suffix = FilenameUtils.getExtension(mediaFile.getName());
-          String name = FilenameUtils.getBaseName(clone.getGameFileName());
+        List<GameMediaItem> gameMediaItems = original.getGameMedia().getMediaItems(originalScreenValue);
+        for (GameMediaItem gameMediaItem : gameMediaItems) {
+          if (gameMediaItem.getFile().exists()) {
+            File mediaFile = gameMediaItem.getFile();
+            String suffix = FilenameUtils.getExtension(mediaFile.getName());
+            String originalName = FilenameUtils.getBaseName(mediaFile.getName());
+            String targetName = FilenameUtils.getBaseName(clone.getGameFileName());
+            String name = originalName.replace(FilenameUtils.getBaseName(original.getGameFileName()), targetName);
 
-          File cloneTarget = new File(clone.getPinUPMediaFolder(originalScreenValue), name + "." + suffix);
-          if (cloneTarget.exists()) {
-            cloneTarget.delete();
+            File cloneTarget = new File(clone.getPinUPMediaFolder(originalScreenValue), name + "." + suffix);
+            if (cloneTarget.exists()) {
+              cloneTarget.delete();
+            }
+
+            FileUtils.copyFile(mediaFile, cloneTarget);
+            LOG.info("Cloned PinUP Popper media: " + mediaFile.getAbsolutePath() + " to " + cloneTarget.getAbsolutePath());
           }
-
-          FileUtils.copyFile(mediaFile, cloneTarget);
-          LOG.info("Cloned PinUP Popper media: " + cloneTarget.getAbsolutePath());
         }
       } catch (IOException e) {
         LOG.info("Failed to clone popper media: " + e.getMessage(), e);
