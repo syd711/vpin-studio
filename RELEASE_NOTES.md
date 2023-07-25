@@ -25,7 +25,7 @@
 
 **PINemHi**
 
-- It took a while, but since I already ship the **PINemHi Leaderboard**, it was time to build the integration for it too. You'll find the configuration for you _pinemhi.ini_ in the preferences section. I hope everything works as expected as there was a lot of fields to configure. Note that when running, the key bindings are intercepted my may disturb working with the VPin Studio when launched on the cab.
+- It took a while, but since I already ship the **PINemHi Leaderboard**, it was time to build the integration for it too. You'll find the configuration for you _pinemhi.ini_ in the preferences section. I hope everything works as expected as there was a lot of fields to configure. Note that when running, the key bindings are intercepted may disturb working with the VPin Studio when launched on the cab.
 
 **Bug Fixes**
 
