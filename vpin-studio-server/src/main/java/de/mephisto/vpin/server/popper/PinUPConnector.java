@@ -21,6 +21,7 @@ import org.springframework.stereotype.Service;
 import java.io.File;
 import java.sql.Date;
 import java.sql.*;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 @Service
@@ -356,7 +357,11 @@ public class PinUPConnector implements InitializingBean {
       preparedStatement.setInt(5, 1);
       preparedStatement.setString(6, launchCustomVar);
 //      preparedStatement.setDate(7, new Date(new java.util.Date().getTime()));
-      preparedStatement.setTimestamp(7, new java.sql.Timestamp(System.currentTimeMillis()));
+
+      SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+      Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+      String ts = sdf.format(timestamp);
+      preparedStatement.setString(7, ts);
       int affectedRows = preparedStatement.executeUpdate();
       preparedStatement.close();
 
