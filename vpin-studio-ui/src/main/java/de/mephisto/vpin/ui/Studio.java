@@ -21,6 +21,7 @@ import org.slf4j.LoggerFactory;
 import java.awt.*;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Locale;
 import java.util.Properties;
 
 public class Studio extends Application {
@@ -37,6 +38,7 @@ public class Studio extends Application {
   @Override
   public void start(Stage stage) throws IOException {
     Studio.stage = stage;
+    Locale.setDefault(Locale.ENGLISH);
 
     //replace the OverlayFX client with the Studio one
     Studio.client = new VPinStudioClient("localhost");

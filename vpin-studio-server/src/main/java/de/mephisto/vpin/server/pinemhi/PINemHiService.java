@@ -44,14 +44,6 @@ public class PINemHiService implements InitializingBean {
     try {
       this.enabled = !enabled;
       preferencesService.savePreference(PreferenceNames.PINEMHI_AUTOSTART_ENABLED, enabled);
-
-      if (!enabled) {
-        kill();
-      }
-      else {
-        startMonitor();
-      }
-
       return enabled;
     } catch (Exception e) {
       LOG.error("Failed to set PINemHi autostart flag: " + e.getMessage(), e);

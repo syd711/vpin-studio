@@ -40,14 +40,6 @@ public class PinVolService implements InitializingBean {
     try {
       this.enabled = !enabled;
       preferencesService.savePreference(PreferenceNames.PINVOL_AUTOSTART_ENABLED, enabled);
-
-      if(!enabled) {
-        killPinVol();
-      }
-      else {
-        startPinVol();
-      }
-
       return enabled;
     } catch (Exception e) {
       LOG.error("Failed to set PinVol autostart flag: " + e.getMessage(), e);

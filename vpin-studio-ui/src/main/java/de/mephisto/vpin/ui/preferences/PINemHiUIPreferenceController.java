@@ -19,6 +19,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontPosture;
 import javafx.stage.Stage;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -162,6 +163,11 @@ public class PINemHiUIPreferenceController implements Initializable, DialogContr
   @FXML
   private ComboBox<ScreenInfo> screenInfoComboBox;
 
+  @FXML
+  private Button restartBtn;
+
+  @FXML
+  private Button stopBtn;
 
   private IniSettings settings;
 
@@ -201,7 +207,7 @@ public class PINemHiUIPreferenceController implements Initializable, DialogContr
             special = "bold";
           }
 
-          Map<String,Object> values = new HashMap<>();
+          Map<String, Object> values = new HashMap<>();
 
           values.put(SETTING_FONT, result.getFamily());
           values.put(SETTING_FONTSIZE, "s" + (int) result.getSize());
@@ -209,9 +215,13 @@ public class PINemHiUIPreferenceController implements Initializable, DialogContr
 
           settings.setValues(values);
 
+          if(StringUtils.isEmpty(special)) {
+            special = "regular";
+          }
+
           Font labelFont = Font.font(result.getFamily(), FontPosture.findByName(result.getStyle()), 14);
           sampleLabel.setFont(labelFont);
-          String labelText = result.getFamily() + ", " + result.getStyle() + ", " + result.getSize() + "px";
+          String labelText = result.getFamily() + ", " + special + ", " + (int) result.getSize() + "px";
           Platform.runLater(() -> {
             sampleLabel.setText(labelText);
             sampleLabel.setTooltip(new Tooltip(labelText));
@@ -221,13 +231,54 @@ public class PINemHiUIPreferenceController implements Initializable, DialogContr
     });
   }
 
+  @FXML
+  private void onRestart() {
+    restartBtn.setDisable(true);
+    Platform.runLater(() -> {
+      stopBtn.setDisable(!Studio.client.getPINemHiService().restart());
+      stopBtn.setDisable(false);
+      restartBtn.setDisable(false);
+    });
+  }
+
+  @FXML
+  private void onStop() {
+    stopBtn.setDisable(!Studio.client.getPINemHiService().kill());
+    stopBtn.setDisable(true);
+  }
+
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
-
+    stopBtn.setDisable(!Studio.client.getPINemHiService().isRunning());
   }
 
   public void setSettings(IniSettings settings) {
     this.settings = settings;
+
+    String fontSize = settings.getString(SETTING_FONTSIZE).substring(1);
+    String fontFamily = settings.getString(SETTING_FONT);
+    String special = settings.getString(SETTING_FONTSPECIAL);
+    FontPosture posture = null;
+    if (!StringUtils.isEmpty(special) && !special.equals("bold")) {
+      special = StringUtils.capitalize(special);
+      posture = FontPosture.findByName(special);
+
+      if (posture == null) {
+        posture = FontPosture.REGULAR;
+      }
+    }
+
+    if (StringUtils.isEmpty(special)) {
+      special = "regular";
+    }
+
+    Font labelFont = Font.font(fontFamily, posture, 14);
+    sampleLabel.setFont(labelFont);
+    String labelText = fontFamily + ", " + special + ", " + fontSize + "px";
+    Platform.runLater(() -> {
+      sampleLabel.setText(labelText);
+      sampleLabel.setTooltip(new Tooltip(labelText));
+    });
 
     SystemSummary systemSummary = Studio.client.getSystemService().getSystemSummary();
     screenInfoComboBox.setItems(FXCollections.observableList(systemSummary.getScreenInfos()));

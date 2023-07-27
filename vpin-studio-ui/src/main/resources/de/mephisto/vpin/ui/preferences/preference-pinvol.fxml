@@ -45,7 +45,7 @@
                         <Insets top="24.0" />
                      </VBox.margin>
                      <children>
-                        <Button fx:id="openBtn" mnemonicParsing="false" onAction="#onOpen" styleClass="external-component" text="PinVol UI">
+                        <Button fx:id="openBtn" mnemonicParsing="false" onAction="#onOpen" styleClass="external-component" text="Open PinVol UI">
                            <font>
                               <Font size="14.0" />
                            </font>
@@ -57,6 +57,17 @@
                            <font>
                               <Font size="14.0" />
                            </font>
+                           <graphic>
+                              <FontIcon iconColor="WHITE" iconLiteral="mdi2r-restart" />
+                           </graphic>
+                        </Button>
+                        <Button fx:id="stopBtn" mnemonicParsing="false" onAction="#onStop" text="Stop PinVol" textFill="WHITE">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                           <graphic>
+                              <FontIcon iconColor="WHITE" iconLiteral="mdi2s-skull-crossbones-outline" />
+                           </graphic>
                         </Button>
                      </children>
                   </HBox>

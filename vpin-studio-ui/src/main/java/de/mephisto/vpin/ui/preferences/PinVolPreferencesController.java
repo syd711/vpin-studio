@@ -2,6 +2,7 @@ package de.mephisto.vpin.ui.preferences;
 
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.ui.Studio;
+import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
@@ -28,9 +29,16 @@ public class PinVolPreferencesController implements Initializable {
   @FXML
   private Button openBtn;
 
+  @FXML
+  private Button restartBtn;
+
+  @FXML
+  private Button stopBtn;
+
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
     openBtn.setDisable(!Studio.client.getSystemService().isLocal());
+    stopBtn.setDisable(!Studio.client.getPinVolService().isRunning());
 
     toggleAutoStart.setSelected(Studio.client.getPinVolService().isAutoStartEnabled());
     toggleAutoStart.selectedProperty().addListener(new ChangeListener<Boolean>() {
@@ -43,7 +51,18 @@ public class PinVolPreferencesController implements Initializable {
 
   @FXML
   private void onRestart() {
-    Studio.client.getPinVolService().restart();
+    restartBtn.setDisable(true);
+    Platform.runLater(() -> {
+      stopBtn.setDisable(!Studio.client.getPinVolService().restart());
+      stopBtn.setDisable(false);
+      restartBtn.setDisable(false);
+    });
+  }
+
+  @FXML
+  private void onStop() {
+    stopBtn.setDisable(!Studio.client.getPinVolService().kill());
+    stopBtn.setDisable(true);
   }
 
   @FXML

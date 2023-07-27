@@ -6,6 +6,7 @@ import de.mephisto.vpin.restclient.IniSettingsChangeListener;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.util.Dialogs;
 import de.mephisto.vpin.ui.util.Keys;
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -17,7 +18,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.awt.*;
+import java.awt.event.KeyEvent;
 import java.io.File;
+import java.net.URI;
 import java.net.URL;
 import java.util.Arrays;
 import java.util.List;
@@ -165,12 +168,17 @@ public class PINemHiPreferencesController implements Initializable, IniSettingsC
   private TextField friend9;
 
   @FXML
+  private Button stopBtn;
+
+  @FXML
   private Button restartBtn;
 
   private IniSettings settings;
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
+    stopBtn.setDisable(!Studio.client.getPINemHiService().isRunning());
+
     editBtn.setDisable(!Studio.client.getSystemService().isLocal());
 
     settings = Studio.client.getPINemHiService().getSettings();
@@ -197,23 +205,23 @@ public class PINemHiPreferencesController implements Initializable, IniSettingsC
     List<String> keyNames = Keys.getUIKeyNames();
     keyKey.setItems(FXCollections.observableList(keyNames));
     keyKey.setValue(settings.getString(SETTING_KEY));
-    keyKey.valueProperty().addListener((observableValue, aBoolean, t1) -> settings.set(SETTING_KEY, t1));
+    keyKey.valueProperty().addListener((observableValue, aBoolean, t1) -> settings.set(SETTING_KEY, toKeyValue(t1)));
 
     keyChallange.setItems(FXCollections.observableList(keyNames));
     keyChallange.setValue(settings.getString(SETTING_CHALLENGE_KEY));
-    keyChallange.valueProperty().addListener((observableValue, aBoolean, t1) -> settings.set(SETTING_CHALLENGE_KEY, t1));
+    keyChallange.valueProperty().addListener((observableValue, aBoolean, t1) -> settings.set(SETTING_CHALLENGE_KEY, toKeyValue(t1)));
 
     keyWeeklyChallange.setItems(FXCollections.observableList(keyNames));
     keyWeeklyChallange.setValue(settings.getString(SETTING_WEEKLY_CHALLENGE_KEY));
-    keyWeeklyChallange.valueProperty().addListener((observableValue, aBoolean, t1) -> settings.set(SETTING_WEEKLY_CHALLENGE_KEY, t1));
+    keyWeeklyChallange.valueProperty().addListener((observableValue, aBoolean, t1) -> settings.set(SETTING_WEEKLY_CHALLENGE_KEY, toKeyValue(t1)));
 
     key5Minutes.setItems(FXCollections.observableList(keyNames));
     key5Minutes.setValue(settings.getString(SETTING_5MIN_KEY));
-    key5Minutes.valueProperty().addListener((observableValue, aBoolean, t1) -> settings.set(SETTING_5MIN_KEY, t1));
+    key5Minutes.valueProperty().addListener((observableValue, aBoolean, t1) -> settings.set(SETTING_5MIN_KEY, toKeyValue(t1)));
 
     keyExit.setItems(FXCollections.observableList(keyNames));
     keyExit.setValue(settings.getString(SETTING_EXIT_KEY));
-    keyExit.valueProperty().addListener((observableValue, aBoolean, t1) -> settings.set(SETTING_EXIT_KEY, t1));
+    keyExit.valueProperty().addListener((observableValue, aBoolean, t1) -> settings.set(SETTING_EXIT_KEY, toKeyValue(t1)));
 
     sound5MinStatus.setSelected(settings.getBoolean(SETTING_5MIN_MODE_STATUS));
     sound5MinStatus.selectedProperty().addListener((observableValue, aBoolean, t1) -> settings.set(SETTING_5MIN_MODE_STATUS, t1));
@@ -293,11 +301,42 @@ public class PINemHiPreferencesController implements Initializable, IniSettingsC
     }, 300));
   }
 
+  private String toKeyValue(String value) {
+    return Keys.toKeyValue(value);
+  }
+
+  @FXML
+  private void onLink() {
+    Desktop desktop = Desktop.isDesktopSupported() ? Desktop.getDesktop() : null;
+    if (desktop != null && desktop.isSupported(Desktop.Action.BROWSE)) {
+      try {
+        desktop.browse(new URI("http://pinemhi.com/hiscores.php"));
+      } catch (Exception e) {
+        LOG.error("Failed to open link: " + e.getMessage());
+      }
+    }
+  }
+
+  @FXML
+  private void onStop() {
+    stopBtn.setDisable(!Studio.client.getPINemHiService().kill());
+    stopBtn.setDisable(true);
+  }
+
+  @FXML
+  private void onRestart() {
+    restartBtn.setDisable(true);
+    Platform.runLater(() -> {
+      stopBtn.setDisable(!Studio.client.getPINemHiService().restart());
+      stopBtn.setDisable(false);
+      restartBtn.setDisable(false);
+    });
+  }
+
   @FXML
   private void onUIEdit() {
     Dialogs.openPINemHiUIDialog(settings);
   }
-
 
   @FXML
   private void onEdit() {
@@ -310,12 +349,6 @@ public class PINemHiPreferencesController implements Initializable, IniSettingsC
       }
     }
   }
-
-  @FXML
-  private void onRestart() {
-    Studio.client.getPINemHiService().restart();
-  }
-
 
   @Override
   public void changed(String key, Object value) {

@@ -17,23 +17,41 @@
 <?import javafx.scene.text.Font?>
 <?import org.kordamp.ikonli.javafx.FontIcon?>
 
-<BorderPane prefHeight="1300.0" prefWidth="900.0" styleClass="base-component" stylesheets="@../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.preferences.PINemHiUIPreferenceController">
+<BorderPane prefHeight="1000.0" prefWidth="900.0" styleClass="base-component" stylesheets="@../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.preferences.PINemHiUIPreferenceController">
    <top>
       <fx:include fx:id="header" source="/de/mephisto/vpin/commons/fx/scene-dialog-header.fxml" />
    </top>
    <bottom>
-      <HBox alignment="BASELINE_RIGHT" spacing="6.0" BorderPane.alignment="CENTER">
-         <children>
-            <Button fx:id="cancelBtn" mnemonicParsing="false" onAction="#onCancelClick" styleClass="default-button" text="Close">
-               <HBox.margin>
-                  <Insets right="12.0" />
-               </HBox.margin>
-            </Button>
-         </children>
+      <BorderPane BorderPane.alignment="CENTER">
          <BorderPane.margin>
             <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
          </BorderPane.margin>
-      </HBox>
+         <right>
+            <Button fx:id="cancelBtn" mnemonicParsing="false" onAction="#onCancelClick" styleClass="default-button" text="Close" BorderPane.alignment="CENTER" />
+         </right>
+         <left>
+            <HBox spacing="6.0" BorderPane.alignment="CENTER">
+               <children>
+                  <Button fx:id="restartBtn" mnemonicParsing="false" onAction="#onRestart" text="(Re)start PINemHi Monitor" textFill="WHITE">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                     <graphic>
+                        <FontIcon iconColor="WHITE" iconLiteral="mdi2r-restart" />
+                     </graphic>
+                  </Button>
+                  <Button fx:id="stopBtn" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" onAction="#onStop" text="Stop PINemHi Monitor" textFill="WHITE">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                     <graphic>
+                        <FontIcon iconColor="WHITE" iconLiteral="mdi2s-skull-crossbones-outline" />
+                     </graphic>
+                  </Button>
+               </children>
+            </HBox>
+         </left>
+      </BorderPane>
    </bottom>
    <center>
       <ScrollPane hbarPolicy="NEVER" prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">

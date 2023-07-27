@@ -61,9 +61,49 @@ public class Keys {
       KeyEvent.VK_ESCAPE,
       KeyEvent.VK_END,
       KeyEvent.VK_STOP,
+      KeyEvent.VK_BRACELEFT,
+      KeyEvent.VK_BRACERIGHT,
+      KeyEvent.VK_OPEN_BRACKET,
+      KeyEvent.VK_CLOSE_BRACKET,
       KeyEvent.VK_ENTER,
       KeyEvent.VK_SPACE
   };
+
+  public static String toKeyValue(String value) {
+    if(value.length() > 1) {
+      if(value.equals(KeyEvent.getKeyText(KeyEvent.VK_CLOSE_BRACKET))) {
+        return "]";
+      }
+      else if(value.equals(KeyEvent.getKeyText(KeyEvent.VK_OPEN_BRACKET))) {
+        return "[";
+      }
+      else if(value.equals(KeyEvent.getKeyText(KeyEvent.VK_BRACELEFT))) {
+        return "{";
+      }
+      else if(value.equals(KeyEvent.getKeyText(KeyEvent.VK_BRACERIGHT))) {
+        return "}";
+      }
+      else if(value.equals(KeyEvent.getKeyText(KeyEvent.VK_ASTERISK))) {
+        return "*";
+      }
+      else if(value.equals(KeyEvent.getKeyText(KeyEvent.VK_DIVIDE))) {
+        return "/";
+      }
+      else if(value.equals(KeyEvent.getKeyText(KeyEvent.VK_ADD))) {
+        return "+";
+      }
+      else if(value.equals(KeyEvent.getKeyText(KeyEvent.VK_SUBTRACT))) {
+        return "+";
+      }
+      else if(value.equals(KeyEvent.getKeyText(KeyEvent.VK_MULTIPLY))) {
+        return "+";
+      }
+      else if(value.equals(KeyEvent.getKeyText(KeyEvent.VK_SLASH))) {
+        return "/";
+      }
+    }
+    return value;
+  }
 
   public static List<String> getKeyNames() {
     List<String> result = new ArrayList<>();
