@@ -25,7 +25,7 @@ public class IniSettings {
 
   public int getInt(String key, int defaultValue) {
     if (settings.containsKey(key)) {
-      String value = ((String) settings.get(key)).trim();
+      String value = String.valueOf(settings.get(key)).trim();
       if (value.length() > 0) {
         return Integer.parseInt(value);
       }
@@ -35,7 +35,7 @@ public class IniSettings {
 
   public boolean getBoolean(String key) {
     if (settings.containsKey(key)) {
-      String value = ((String) settings.get(key)).trim();
+      String value = String.valueOf(settings.get(key)).trim();
       if (value.length() > 0) {
         return Integer.parseInt(value) == 1;
       }
@@ -66,7 +66,7 @@ public class IniSettings {
 
   public int getInt(String key) {
     if (settings.containsKey(key)) {
-      String value = ((String) settings.get(key)).trim();
+      String value = String.valueOf(settings.get(key)).trim();
       if (value.length() > 0) {
         return Integer.parseInt(value);
       }
@@ -74,9 +74,14 @@ public class IniSettings {
     return -1;
   }
 
+  public void setValues(Map<String, Object> values) {
+    this.settings.putAll(values);
+    changeListener.changed("", values);
+  }
+
   public String getString(String key) {
     if (settings.containsKey(key)) {
-      return  ((String) settings.get(key)).trim();
+      return String.valueOf(settings.get(key)).trim();
     }
     return "";
   }

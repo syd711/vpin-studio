@@ -53,6 +53,11 @@
                               <Font size="14.0" />
                            </font>
                         </Button>
+                        <Button layoutX="149.0" layoutY="10.0" mnemonicParsing="false" onAction="#onUIEdit" text="Edit PINemHi UI" textFill="WHITE">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Button>
                         <Button fx:id="restartBtn" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" onAction="#onRestart" text="(Re)start PINemHi Monitor" textFill="WHITE">
                            <font>
                               <Font size="14.0" />

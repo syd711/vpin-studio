@@ -14,6 +14,7 @@ import de.mephisto.vpin.server.pinemhi.PINemHiService;
 import de.mephisto.vpin.server.resources.ResourceLoader;
 import de.mephisto.vpin.server.util.SystemUtil;
 import edu.umd.cs.findbugs.annotations.NonNull;
+import javafx.collections.ObservableList;
 import javafx.geometry.Rectangle2D;
 import javafx.stage.Screen;
 import org.apache.commons.io.FileUtils;
@@ -34,6 +35,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Service
 public class SystemService extends SystemInfo implements InitializingBean {
@@ -223,7 +225,7 @@ public class SystemService extends SystemInfo implements InitializingBean {
     info.setPinupSystemDirectory(getPinUPSystemFolder().getAbsolutePath());
     info.setVisualPinballDirectory(getVisualPinballInstallationFolder().getAbsolutePath());
     info.setVpinMameDirectory(getMameFolder().getAbsolutePath());
-    info.setScreenInfo(getScreenInfo());
+    info.setScreenInfos(getScreenInfos());
     return info;
   }
 
@@ -490,10 +492,37 @@ public class SystemService extends SystemInfo implements InitializingBean {
     return archiveType;
   }
 
-  public ScreenInfo getScreenInfo() {
+  public List<ScreenInfo> getScreenInfos() {
+    List<ScreenInfo> result = new ArrayList<>();
+
+    Screen primary = Screen.getPrimary();
     ScreenInfo info = new ScreenInfo();
-    Rectangle2D screenBounds = Screen.getPrimary().getBounds();
+    Rectangle2D screenBounds = primary.getBounds();
     info.setPortraitMode(screenBounds.getWidth() < screenBounds.getHeight());
-    return info;
+    info.setPrimary(true);
+    info.setHeight((int) screenBounds.getHeight());
+    info.setWidth((int) screenBounds.getWidth());
+    info.setId(1);
+    result.add(info);
+
+    int index = 2;
+    ObservableList<Screen> screens = Screen.getScreens();
+    for (Screen screen : screens) {
+      if(screen.equals(Screen.getPrimary())) {
+        continue;
+      }
+
+      info = new ScreenInfo();
+      screenBounds = Screen.getPrimary().getBounds();
+      info.setPortraitMode(screenBounds.getWidth() < screenBounds.getHeight());
+      info.setPrimary(false);
+      info.setHeight((int) screenBounds.getHeight());
+      info.setWidth((int) screenBounds.getWidth());
+      info.setId(index);
+
+      result.add(info);
+      index++;
+    }
+    return result;
   }
 }

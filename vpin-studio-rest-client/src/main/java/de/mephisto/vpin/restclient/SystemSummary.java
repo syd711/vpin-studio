@@ -1,18 +1,20 @@
 package de.mephisto.vpin.restclient;
 
+import java.util.List;
+
 public class SystemSummary {
   private String pinupSystemDirectory;
   private String visualPinballDirectory;
   private String vpinMameDirectory;
 
-  private ScreenInfo screenInfo;
+  private List<ScreenInfo> screenInfos;
 
-  public ScreenInfo getScreenInfo() {
-    return screenInfo;
+  public List<ScreenInfo> getScreenInfos() {
+    return screenInfos;
   }
 
-  public void setScreenInfo(ScreenInfo screenInfo) {
-    this.screenInfo = screenInfo;
+  public void setScreenInfos(List<ScreenInfo> screenInfos) {
+    this.screenInfos = screenInfos;
   }
 
   public String getPinupSystemDirectory() {
@@ -37,5 +39,23 @@ public class SystemSummary {
 
   public void setVpinMameDirectory(String vpinMameDirectory) {
     this.vpinMameDirectory = vpinMameDirectory;
+  }
+
+  public ScreenInfo getMainScreenInfo() {
+    for (ScreenInfo screenInfo : screenInfos) {
+      if (screenInfo.isPrimary()) {
+        return screenInfo;
+      }
+    }
+    return screenInfos.get(0);
+  }
+
+  public ScreenInfo getScreenInfo(int id) {
+    for (ScreenInfo screenInfo : screenInfos) {
+      if (screenInfo.getId() == id) {
+        return screenInfo;
+      }
+    }
+    return null;
   }
 }
