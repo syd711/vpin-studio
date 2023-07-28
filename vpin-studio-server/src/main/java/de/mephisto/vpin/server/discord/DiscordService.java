@@ -372,12 +372,16 @@ public class DiscordService implements InitializingBean, PreferenceChangedListen
 
   @Override
   public void preferenceChanged(String propertyName, Object oldValue, Object newValue) throws Exception {
-    if (propertyName.equals(PreferenceNames.DISCORD_BOT_TOKEN)) {
-      LOG.info("Detected Discord config change, updating BOT.");
-      this.discordClient = recreateDiscordClient();
-    }
-    else if (propertyName.equals(PreferenceNames.DISCORD_GUILD_ID) || propertyName.equals(PreferenceNames.DISCORD_BOT_ALLOW_LIST)) {
-      this.applyDefaultDiscordSettings();
+    try {
+      if (propertyName.equals(PreferenceNames.DISCORD_BOT_TOKEN)) {
+        LOG.info("Detected Discord config change, updating BOT.");
+        this.discordClient = recreateDiscordClient();
+      }
+      else if (propertyName.equals(PreferenceNames.DISCORD_GUILD_ID) || propertyName.equals(PreferenceNames.DISCORD_BOT_ALLOW_LIST)) {
+        this.applyDefaultDiscordSettings();
+      }
+    } catch (Exception e) {
+      LOG.error("Failed to update discord preferences: " + e.getMessage());
     }
   }
 
@@ -534,7 +538,7 @@ public class DiscordService implements InitializingBean, PreferenceChangedListen
       preferencesService.addChangeListener(this);
       this.recreateDiscordClient();
     } catch (Exception e) {
-      LOG.error("Failed to initialize Discord Service: " + e.getMessage(), e);
+      LOG.error("Failed to initialize Discord Service: " + e.getMessage());
     }
   }
 }
