@@ -90,7 +90,8 @@ public class SystemServiceClient extends VPinStudioClientService {
   }
 
   public ScreenInfo getScreenInfo() {
-    return getRestClient().getCached(API + "system/info", SystemSummary.class).getScreenInfo();
+    SystemSummary summary = getRestClient().getCached(API + "system/info", SystemSummary.class);
+    return summary.getMainScreenInfo();
   }
 
   public SystemData getSystemData(String filename) {

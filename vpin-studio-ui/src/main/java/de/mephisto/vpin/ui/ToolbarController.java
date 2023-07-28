@@ -93,12 +93,17 @@ public class ToolbarController implements Initializable {
       }
     }
 
-    new Thread(() -> {
-      String s = Updater.checkForUpdate(Studio.getVersion());
-      Platform.runLater(() -> {
-        updateBtn.setVisible(!StringUtils.isEmpty(s));
-      });
-    }).start();
+    updateBtn.setVisible(false);
+    String os = System.getProperty("os.name");
+    if(os.contains("Windows")) {
+      new Thread(() -> {
+        String s = Updater.checkForUpdate(Studio.getVersion());
+        Platform.runLater(() -> {
+          updateBtn.setVisible(!StringUtils.isEmpty(s));
+        });
+      }).start();
+    }
+
 
     JobPoller.getInstance().setPolling();
 

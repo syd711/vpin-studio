@@ -55,6 +55,9 @@ public class TablesSidebarPopperController implements Initializable, ChangeListe
   private Label gameYear;
 
   @FXML
+  private Label dateAdded;
+
+  @FXML
   private Label romName;
 
   @FXML
@@ -178,17 +181,18 @@ public class TablesSidebarPopperController implements Initializable, ChangeListe
       gameName.setText(StringUtils.isEmpty(manifest.getGameName()) ? "-" : manifest.getGameName());
       gameFileName.setText(StringUtils.isEmpty(manifest.getGameFileName()) ? "-" : manifest.getGameFileName());
       gameDisplayName.setText(StringUtils.isEmpty(manifest.getGameDisplayName()) ? "-" : manifest.getGameDisplayName());
-      gameYear.setText(manifest.getGameYear() == 0 ? "-" : String.valueOf(manifest.getGameYear()));
+      dateAdded.setText(manifest.getDateAdded() == null ? "-" : DateFormat.getDateTimeInstance().format(manifest.getDateAdded()));
+      gameYear.setText(manifest.getGameYear() == null ? "-" : String.valueOf(manifest.getGameYear()));
       romName.setText(StringUtils.isEmpty(manifest.getRomName()) ? "-" : manifest.getRomName());
       romUrl.setText(StringUtils.isEmpty(manifest.getRomUrl()) ? "-" : manifest.getRomUrl());
       manufacturer.setText(StringUtils.isEmpty(manifest.getManufacturer()) ? "-" : manifest.getManufacturer());
-      numberOfPlayers.setText(manifest.getNumberOfPlayers() == 0 ? "-" : String.valueOf(manifest.getNumberOfPlayers()));
+      numberOfPlayers.setText(manifest.getNumberOfPlayers() == null ? "-" : String.valueOf(manifest.getNumberOfPlayers()));
       tags.setText(StringUtils.isEmpty(manifest.getTags()) ? "-" : manifest.getTags());
       category.setText(StringUtils.isEmpty(manifest.getCategory()) ? "-" : manifest.getCategory());
       author.setText(StringUtils.isEmpty(manifest.getAuthor()) ? "-" : manifest.getAuthor());
       launchCustomVar.setText(StringUtils.isEmpty(manifest.getLaunchCustomVar()) ? "-" : manifest.getLaunchCustomVar());
       keepDisplays.setText(StringUtils.isEmpty(manifest.getKeepDisplays()) ? "-" : manifest.getKeepDisplays());
-      gameRating.setText(manifest.getGameRating() > 0 ? String.valueOf(manifest.getGameRating()) : "-");
+      gameRating.setText(manifest.getGameRating() == null ? "-" : String.valueOf(manifest.getGameRating()));
       dof.setText(StringUtils.isEmpty(manifest.getDof()) ? "-" : manifest.getDof());
       IPDBNum.setText(StringUtils.isEmpty(manifest.getIPDBNum()) ? "-" : manifest.getIPDBNum());
       altRunMode.setText(StringUtils.isEmpty(manifest.getAltRunMode()) ? "-" : manifest.getAltRunMode());
@@ -202,6 +206,7 @@ public class TablesSidebarPopperController implements Initializable, ChangeListe
       labelLastPlayed.setText("-");
       labelTimesPlayed.setText("-");
 
+      dateAdded.setText("-");
       gameName.setText("-");
       gameFileName.setText("-");
       gameDisplayName.setText("-");

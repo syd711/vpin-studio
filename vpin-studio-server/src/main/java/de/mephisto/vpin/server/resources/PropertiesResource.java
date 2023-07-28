@@ -29,7 +29,7 @@ public class PropertiesResource {
   }
 
   @PutMapping("/{properties}")
-  public boolean put(@PathVariable("properties") String properties, @RequestBody Map<String, String> values) {
+  public boolean put(@PathVariable("properties") String properties, @RequestBody Map<String, Object> values) {
     PropertiesStore store = Config.getConfig(properties);
     store.set(values);
     return true;

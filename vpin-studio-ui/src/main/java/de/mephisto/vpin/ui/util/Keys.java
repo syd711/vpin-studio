@@ -2,6 +2,7 @@ package de.mephisto.vpin.ui.util;
 
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -47,13 +48,86 @@ public class Keys {
       KeyEvent.VK_7,
       KeyEvent.VK_8,
       KeyEvent.VK_9,
+      KeyEvent.VK_LEFT,
+      KeyEvent.VK_RIGHT,
+      KeyEvent.VK_UP,
+      KeyEvent.VK_DOWN,
+      KeyEvent.VK_ADD,
+      KeyEvent.VK_SUBTRACT,
+      KeyEvent.VK_MULTIPLY,
+      KeyEvent.VK_DIVIDE,
+      KeyEvent.VK_ALT,
+      KeyEvent.VK_AMPERSAND,
+      KeyEvent.VK_ASTERISK,
+      KeyEvent.VK_ESCAPE,
+      KeyEvent.VK_END,
+      KeyEvent.VK_STOP,
+      KeyEvent.VK_BRACELEFT,
+      KeyEvent.VK_BRACERIGHT,
+      KeyEvent.VK_OPEN_BRACKET,
+      KeyEvent.VK_CLOSE_BRACKET,
+      KeyEvent.VK_ENTER,
+      KeyEvent.VK_SPACE
   };
+
+  public static String toKeyValue(String value) {
+    if(value.length() > 1) {
+      if(value.equals(KeyEvent.getKeyText(KeyEvent.VK_CLOSE_BRACKET))) {
+        return "]";
+      }
+      else if(value.equals(KeyEvent.getKeyText(KeyEvent.VK_OPEN_BRACKET))) {
+        return "[";
+      }
+      else if(value.equals(KeyEvent.getKeyText(KeyEvent.VK_BRACELEFT))) {
+        return "{";
+      }
+      else if(value.equals(KeyEvent.getKeyText(KeyEvent.VK_BRACERIGHT))) {
+        return "}";
+      }
+      else if(value.equals(KeyEvent.getKeyText(KeyEvent.VK_ASTERISK))) {
+        return "*";
+      }
+      else if(value.equals(KeyEvent.getKeyText(KeyEvent.VK_DIVIDE))) {
+        return "/";
+      }
+      else if(value.equals(KeyEvent.getKeyText(KeyEvent.VK_ADD))) {
+        return "+";
+      }
+      else if(value.equals(KeyEvent.getKeyText(KeyEvent.VK_SUBTRACT))) {
+        return "+";
+      }
+      else if(value.equals(KeyEvent.getKeyText(KeyEvent.VK_MULTIPLY))) {
+        return "+";
+      }
+      else if(value.equals(KeyEvent.getKeyText(KeyEvent.VK_SLASH))) {
+        return "/";
+      }
+      else if(value.equals(KeyEvent.getKeyText(KeyEvent.VK_AMPERSAND))) {
+        return "*";
+      }
+      else if(value.equals(KeyEvent.getKeyText(KeyEvent.VK_ESCAPE))) {
+        return "Esc";
+      }
+    }
+    return value;
+  }
 
   public static List<String> getKeyNames() {
     List<String> result = new ArrayList<>();
     for (int keyCode : KEY_CODES) {
       result.add(getKeyDisplayName(keyCode));
     }
+    Collections.sort(result);
+    return result;
+  }
+
+  public static List<String> getUIKeyNames() {
+    List<String> result = new ArrayList<>();
+    for (int keyCode : KEY_CODES) {
+      result.add(getKeyDisplayName(keyCode));
+    }
+    result.add(0, "");
+    Collections.sort(result);
     return result;
   }
 

@@ -75,6 +75,28 @@ public class Preferences {
   @Column(name = "previewEnabled", nullable = false, columnDefinition = "boolean default true")
   private boolean previewEnabled;
 
+  @Column(name = "pinVolAutoStartEnabled", nullable = false, columnDefinition = "boolean default false")
+  private boolean pinVolAutoStartEnabled;
+
+  @Column(name = "pinemhiAutoStartEnabled", nullable = false, columnDefinition = "boolean default false")
+  private boolean pinemhiAutoStartEnabled;
+
+  public boolean getPinemhiAutoStartEnabled() {
+    return pinVolAutoStartEnabled;
+  }
+
+  public void setPinemhiAutoStartEnabled(boolean enabled) {
+    this.pinemhiAutoStartEnabled = enabled;
+  }
+
+  public boolean getPinVolAutoStartEnabled() {
+    return pinVolAutoStartEnabled;
+  }
+
+  public void setPinVolAutoStartEnabled(boolean pinVolAutoStartEnabled) {
+    this.pinVolAutoStartEnabled = pinVolAutoStartEnabled;
+  }
+
   public boolean getPreviewEnabled() {
     return previewEnabled;
   }

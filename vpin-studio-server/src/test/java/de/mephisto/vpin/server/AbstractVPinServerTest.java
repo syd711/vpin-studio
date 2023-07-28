@@ -10,6 +10,5 @@ abstract public class AbstractVPinServerTest {
   @BeforeAll
   public static void before() {
     SystemService.RESOURCES = "../resources/";
-    SystemService.PINEMHI_FOLDER =  SystemService.RESOURCES + "pinemhi";
   }
 }

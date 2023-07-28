@@ -18,8 +18,10 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.awt.*;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Locale;
 import java.util.Properties;
 
 public class Studio extends Application {
@@ -36,6 +38,7 @@ public class Studio extends Application {
   @Override
   public void start(Stage stage) throws IOException {
     Studio.stage = stage;
+    Locale.setDefault(Locale.ENGLISH);
 
     //replace the OverlayFX client with the Studio one
     Studio.client = new VPinStudioClient("localhost");
@@ -94,14 +97,29 @@ public class Studio extends Application {
       FXMLLoader loader = new FXMLLoader(Studio.class.getResource("scene-root.fxml"));
       Parent root = loader.load();
 
-      int width = 1920;
-      int height = 1080;
+      double screenResolution = Toolkit.getDefaultToolkit().getScreenResolution();
+      double width = 1920 * (screenResolution / 100);
+      double height = 1080 * (screenResolution / 100);
+
+      if (screenResolution > 100) {
+        double screenWidth = screenBounds.getWidth() * (screenResolution / 100);
+        if (width > screenWidth) {
+          width = screenWidth - (screenWidth * (screenResolution - 100) / 100);
+        }
+
+        double screenHeight = screenBounds.getHeight() * (screenResolution / 100);
+        if (height > screenHeight) {
+          height = screenHeight - (screenHeight * (screenResolution - 100) / 100);
+        }
+      }
+
       if (screenBounds.getHeight() > 1280) {
         height = 1300;
       }
       if (screenBounds.getHeight() >= 1480) {
         height = 1400;
       }
+
 
       Scene scene = new Scene(root, width, height);
       scene.setFill(Paint.valueOf("#212529"));

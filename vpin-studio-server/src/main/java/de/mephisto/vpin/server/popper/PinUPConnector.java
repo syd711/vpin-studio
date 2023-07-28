@@ -21,6 +21,7 @@ import org.springframework.stereotype.Service;
 import java.io.File;
 import java.sql.Date;
 import java.sql.*;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 @Service
@@ -138,11 +139,18 @@ public class PinUPConnector implements InitializingBean {
         manifest.setGameName(rs.getString("GameName"));
         manifest.setGameFileName(rs.getString("GameFileName"));
         manifest.setGameDisplayName(rs.getString("GameDisplay"));
+        manifest.setDateAdded(rs.getTimestamp("DateAdded"));
         manifest.setNotes(rs.getString("Notes"));
         manifest.setGameYear(rs.getInt("GameYear"));
+        if (rs.wasNull()) {
+          manifest.setGameYear(null);
+        }
         manifest.setRomName(rs.getString("ROM"));
         manifest.setManufacturer(rs.getString("Manufact"));
         manifest.setNumberOfPlayers(rs.getInt("NumPlayers"));
+        if (rs.wasNull()) {
+          manifest.setNumberOfPlayers(null);
+        }
         manifest.setTags(rs.getString("TAGS"));
         manifest.setVolume(rs.getString("sysVolume"));
         manifest.setCategory(rs.getString("Category"));
@@ -151,6 +159,9 @@ public class PinUPConnector implements InitializingBean {
         manifest.setKeepDisplays(rs.getString("GKeepDisplays"));
         manifest.setGameTheme(rs.getString("GameTheme"));
         manifest.setGameRating(rs.getInt("GameRating"));
+        if (rs.wasNull()) {
+          manifest.setGameRating(null);
+        }
         manifest.setDof(rs.getString("DOFStuff"));
         manifest.setIPDBNum(rs.getString("IPDBNum"));
         manifest.setAltRunMode(rs.getString("AltRunMode"));
@@ -338,14 +349,19 @@ public class PinUPConnector implements InitializingBean {
     Connection connect = this.connect();
     int emulatorId = getEmulatorId(emulator);
     try {
-      PreparedStatement preparedStatement = connect.prepareStatement("INSERT INTO Games (EMUID, GameName, GameFileName, GameDisplay, Visible, LaunchCustomVar) VALUES (?,?,?,?,?,?)", Statement.RETURN_GENERATED_KEYS);
+      PreparedStatement preparedStatement = connect.prepareStatement("INSERT INTO Games (EMUID, GameName, GameFileName, GameDisplay, Visible, LaunchCustomVar, DateAdded) VALUES (?,?,?,?,?,?,?)", Statement.RETURN_GENERATED_KEYS);
       preparedStatement.setInt(1, emulatorId);
       preparedStatement.setString(2, gameName);
       preparedStatement.setString(3, gameFileName);
       preparedStatement.setString(4, gameDisplayName);
       preparedStatement.setInt(5, 1);
       preparedStatement.setString(6, launchCustomVar);
-//      preparedStatement.setTimestamp(6, new java.sql.Timestamp(System.currentTimeMillis()));
+//      preparedStatement.setDate(7, new Date(new java.util.Date().getTime()));
+
+      SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+      Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+      String ts = sdf.format(timestamp);
+      preparedStatement.setString(7, ts);
       int affectedRows = preparedStatement.executeUpdate();
       preparedStatement.close();
 

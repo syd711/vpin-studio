@@ -2,6 +2,7 @@ package de.mephisto.vpin.ui.util;
 
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.AltSound;
+import de.mephisto.vpin.restclient.IniSettings;
 import de.mephisto.vpin.restclient.SystemData;
 import de.mephisto.vpin.restclient.client.VPinStudioClient;
 import de.mephisto.vpin.restclient.descriptors.ResetHighscoreDescriptor;
@@ -16,6 +17,7 @@ import de.mephisto.vpin.ui.competitions.CompetitionDiscordJoinDialogController;
 import de.mephisto.vpin.ui.competitions.CompetitionOfflineDialogController;
 import de.mephisto.vpin.ui.launcher.InstallationController;
 import de.mephisto.vpin.ui.players.PlayerDialogController;
+import de.mephisto.vpin.ui.preferences.PINemHiUIPreferenceController;
 import de.mephisto.vpin.ui.tables.TablesController;
 import de.mephisto.vpin.ui.tables.TablesSidebarController;
 import de.mephisto.vpin.ui.tables.dialogs.*;
@@ -341,6 +343,13 @@ public class Dialogs {
 
   public static void openBotTutorial() {
     Stage stage = createStudioDialogStage("dialog-bot-tutorial.fxml", "Discord Bot Instructions");
+    stage.showAndWait();
+  }
+
+  public static void openPINemHiUIDialog(IniSettings settings) {
+    Stage stage = createStudioDialogStage(PINemHiUIPreferenceController.class, "preference-pinemhi-ui.fxml", "PINemHi UI Settings");
+    PINemHiUIPreferenceController controller = (PINemHiUIPreferenceController) stage.getUserData();
+    controller.setSettings(settings);
     stage.showAndWait();
   }
 

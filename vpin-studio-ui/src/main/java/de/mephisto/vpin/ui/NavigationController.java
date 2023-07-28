@@ -44,12 +44,12 @@ public class NavigationController implements Initializable {
   private BorderPane avatarPane;
 
   @FXML
-  private Pane dashboardBtn;
+  private Pane tablesBtn;
 
   public static StudioFXController activeController;
 
   private static BorderPane staticAvatarPane;
-  private static String activeScreenId = "scene-dashboard.fxml";
+  private static String activeScreenId = "scene-tables.fxml";
 
   private static Map<String, Parent> viewCache = new HashMap<>();
   private static Map<String, StudioFXController> controllerCache = new HashMap<>();
@@ -102,7 +102,8 @@ public class NavigationController implements Initializable {
     loadScreen(null, studioFXController.getClass(), activeScreenId);
   }
 
-  public static void setInitialController(String key, StudioFXController controller) {
+  public static void setInitialController(String key, StudioFXController controller, Parent root) {
+    viewCache.put(key, root);
     controllerCache.put(key, controller);
   }
 
@@ -146,7 +147,7 @@ public class NavigationController implements Initializable {
     staticAvatarPane = this.avatarPane;
     refreshAvatar();
 
-    dashboardBtn.getStyleClass().add("navigation-button-selected");
+    tablesBtn.getStyleClass().add("navigation-button-selected");
   }
 
   private static void refreshAvatar() {

@@ -1,5 +1,7 @@
 package de.mephisto.vpin.restclient.popper;
 
+import java.util.Date;
+
 public class TableDetails {
   public final static String ARCHIVE_FILENAME = "table-details.json";
 
@@ -7,25 +9,58 @@ public class TableDetails {
   private String gameName;
   private String gameFileName;
   private String gameDisplayName;
+  private Date dateAdded;
   private String gameTheme;
   private String notes;
-  private int gameYear;
+  private Integer gameYear;
   private String romName;
   private String romUrl;
   private String manufacturer;
-  private int numberOfPlayers;
+  private Integer numberOfPlayers;
   private String tags;
   private String category;
   private String author;
   private String volume;
   private String launchCustomVar;
   private String keepDisplays;
-  private int gameRating;
+  private Integer gameRating;
   private String dof;
   private String IPDBNum;
   private String altRunMode;
   private String url;
   private String designedBy;
+
+  public Integer getGameYear() {
+    return gameYear;
+  }
+
+  public void setGameYear(Integer gameYear) {
+    this.gameYear = gameYear;
+  }
+
+  public Integer getNumberOfPlayers() {
+    return numberOfPlayers;
+  }
+
+  public void setNumberOfPlayers(Integer numberOfPlayers) {
+    this.numberOfPlayers = numberOfPlayers;
+  }
+
+  public Integer getGameRating() {
+    return gameRating;
+  }
+
+  public void setGameRating(Integer gameRating) {
+    this.gameRating = gameRating;
+  }
+
+  public Date getDateAdded() {
+    return dateAdded;
+  }
+
+  public void setDateAdded(Date dateAdded) {
+    this.dateAdded = dateAdded;
+  }
 
   public String getCategory() {
     return category;
@@ -83,14 +118,6 @@ public class TableDetails {
     this.notes = notes;
   }
 
-  public int getGameYear() {
-    return gameYear;
-  }
-
-  public void setGameYear(int gameYear) {
-    this.gameYear = gameYear;
-  }
-
   public String getRomName() {
     return romName;
   }
@@ -113,14 +140,6 @@ public class TableDetails {
 
   public void setManufacturer(String manufacturer) {
     this.manufacturer = manufacturer;
-  }
-
-  public int getNumberOfPlayers() {
-    return numberOfPlayers;
-  }
-
-  public void setNumberOfPlayers(int numberOfPlayers) {
-    this.numberOfPlayers = numberOfPlayers;
   }
 
   public String getTags() {
@@ -161,14 +180,6 @@ public class TableDetails {
 
   public void setKeepDisplays(String keepDisplays) {
     this.keepDisplays = keepDisplays;
-  }
-
-  public int getGameRating() {
-    return gameRating;
-  }
-
-  public void setGameRating(int gameRating) {
-    this.gameRating = gameRating;
   }
 
   public String getDof() {

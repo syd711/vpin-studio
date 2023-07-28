@@ -129,7 +129,7 @@
                      </right>
                   </BorderPane>
                </graphic></TitledPane>
-            <TitledPane fx:id="titledPaneMame" expanded="false" layoutX="10.0" layoutY="260.0" text="VPin Mame" />
+            <TitledPane fx:id="titledPaneMame" expanded="false" layoutX="10.0" layoutY="260.0" text="VPin MAME" />
             <TitledPane fx:id="titledPaneVps" expanded="false" layoutX="10.0" layoutY="262.0">
                <graphic>
                   <BorderPane prefWidth="560.0">

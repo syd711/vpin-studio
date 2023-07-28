@@ -133,7 +133,7 @@ public class GamesServiceClient extends VPinStudioClientService {
       this.games = new ArrayList<>(Arrays.asList(getRestClient().get(API + "games", GameRepresentation[].class)));
       return this.games;
     } catch (Exception e) {
-      LOG.error("Failed to save game: " + e.getMessage(), e);
+      LOG.error("Failed to get games: " + e.getMessage(), e);
       throw e;
     }
   }
@@ -150,15 +150,10 @@ public class GamesServiceClient extends VPinStudioClientService {
   }
 
   public List<GameRepresentation> getGamesCached() {
-    try {
-      if (this.games == null || this.games.isEmpty()) {
-        this.games = this.getGames();
-      }
-      return this.games;
-    } catch (Exception e) {
-      LOG.error("Failed to save game: " + e.getMessage(), e);
-      throw e;
+    if (this.games == null || this.games.isEmpty()) {
+      this.games = this.getGames();
     }
+    return this.games;
   }
 
   public ScoreSummaryRepresentation getRecentlyPlayedGames(int count) {

@@ -385,6 +385,25 @@
                     </execution>
 
                     <execution>
+                        <id>copy-scripts</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${basedir}/../Output/VPin-Studio/</outputDirectory>
+                            <resources>
+                                <resource>
+                                    <directory>./</directory>
+                                    <includes>
+                                        <include>VPin-Studio.sh</include>
+                                    </includes>
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </execution>
+
+                    <execution>
                         <id>copy-config</id>
                         <phase>package</phase>
                         <goals>
@@ -460,6 +479,25 @@
                                 <argument>-t7z</argument>
                                 <argument>VPin-Studio.zip</argument>
                                 <argument>VPin-Studio.exe</argument>
+                            </arguments>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>zip-ui-jar</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>exec</goal>
+                        </goals>
+                        <configuration>
+                            <!-- define the command to execute -->
+                            <executable>${basedir}/../Output/VPin-Studio/resources/7z.exe</executable>
+                            <workingDirectory>${basedir}/../Output/VPin-Studio/</workingDirectory>
+                            <arguments>
+                                <argument>a</argument>
+                                <argument>-t7z</argument>
+                                <argument>VPin-Studio-Client.zip</argument>
+                                <argument>vpin-studio-ui.jar</argument>
+                                <argument>VPin-Studio.sh</argument>
                             </arguments>
                         </configuration>
                     </execution>

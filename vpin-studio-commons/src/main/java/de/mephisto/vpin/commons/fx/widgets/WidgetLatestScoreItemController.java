@@ -14,6 +14,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 
 import java.io.ByteArrayInputStream;
+import java.io.InputStream;
 import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.ResourceBundle;
@@ -55,7 +56,10 @@ public class WidgetLatestScoreItemController extends WidgetController implements
   }
 
   public void setData(GameRepresentation game, ScoreRepresentation score) {
-    ByteArrayInputStream gameMediaItem = OverlayWindowFX.client.getGameMediaItem(game.getId(), PopperScreen.Wheel);
+    InputStream gameMediaItem = OverlayWindowFX.client.getGameMediaItem(game.getId(), PopperScreen.Wheel);
+    if(gameMediaItem == null) {
+      gameMediaItem = OverlayWindowFX.class.getResourceAsStream("avatar-blank.png");
+    }
     Image image = new Image(gameMediaItem);
 
     GameMediaRepresentation gameMedia = game.getGameMedia();

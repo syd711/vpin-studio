@@ -3,6 +3,7 @@ package de.mephisto.vpin.server.keyevent;
 import de.mephisto.vpin.commons.fx.OverlayWindowFX;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.server.VPinStudioServerTray;
+import de.mephisto.vpin.server.pinvol.PinVolService;
 import de.mephisto.vpin.server.popper.PopperService;
 import de.mephisto.vpin.server.popper.PopperStatusChangeListener;
 import de.mephisto.vpin.server.popper.TableStatusChangedEvent;
@@ -41,6 +42,9 @@ public class KeyEventService implements InitializingBean, NativeKeyListener, Pop
   @Autowired
   private SystemService systemService;
 
+  @Autowired
+  private PinVolService pinVolService;
+
   private boolean visible;
 
   private OverlayWindowFX overlayWindowFX;
@@ -71,7 +75,6 @@ public class KeyEventService implements InitializingBean, NativeKeyListener, Pop
     overlayWindowFX.client = overlayClient;
     overlayWindowFX = OverlayWindowFX.waitForOverlay();
     LOG.info("Finished initialization of OverlayWindowFX");
-
     afterStartup();
   }
 
@@ -99,14 +102,13 @@ public class KeyEventService implements InitializingBean, NativeKeyListener, Pop
       }
     }
 
-    if(!StringUtils.isEmpty(resetKey)) {
+    if (!StringUtils.isEmpty(resetKey)) {
       KeyChecker keyChecker = new KeyChecker(resetKey);
       if (keyChecker.matches(nativeKeyEvent)) {
         new Thread(() -> {
           systemService.restartPopper();
           popperService.notifyPopperRestart();
         }).start();
-
       }
     }
   }

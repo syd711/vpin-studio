@@ -160,7 +160,7 @@ public class TableDataController implements Initializable, DialogController {
 
     SpinnerValueFactory.IntegerSpinnerValueFactory factory = new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 4, 0);
     numberOfPlayers.setValueFactory(factory);
-    if (manifest.getNumberOfPlayers() > 0) {
+    if (manifest.getNumberOfPlayers() != null) {
       numberOfPlayers.getValueFactory().setValue(manifest.getNumberOfPlayers());
     }
     numberOfPlayers.getValueFactory().valueProperty().addListener((observable, oldValue, newValue) -> manifest.setNumberOfPlayers(Integer.parseInt(String.valueOf(newValue))));
@@ -182,7 +182,7 @@ public class TableDataController implements Initializable, DialogController {
 
     SpinnerValueFactory.IntegerSpinnerValueFactory ratingFactory = new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 10, 0);
     gameRating.setValueFactory(ratingFactory);
-    if (manifest.getGameRating() > 0) {
+    if (manifest.getGameRating() != null) {
       gameRating.getValueFactory().setValue(manifest.getGameRating());
     }
     gameRating.getValueFactory().valueProperty().addListener((observable, oldValue, newValue) -> manifest.setGameRating(Integer.parseInt(String.valueOf(newValue))));
