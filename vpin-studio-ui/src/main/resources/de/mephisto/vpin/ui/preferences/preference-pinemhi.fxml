@@ -48,14 +48,6 @@
                         <Insets top="24.0" />
                      </VBox.margin>
                      <children>
-                        <Button fx:id="editBtn" mnemonicParsing="false" onAction="#onEdit" styleClass="external-component" text="Edit pinemhi.ini" textFill="WHITE">
-                           <graphic>
-                              <FontIcon iconColor="WHITE" iconLiteral="mdi2o-open-in-new" />
-                           </graphic>
-                           <font>
-                              <Font size="14.0" />
-                           </font>
-                        </Button>
                         <Button fx:id="restartBtn" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" onAction="#onRestart" text="(Re)start PINemHi Monitor" textFill="WHITE">
                            <font>
                               <Font size="14.0" />
@@ -71,6 +63,14 @@
                            <graphic>
                               <FontIcon iconColor="WHITE" iconLiteral="mdi2s-skull-crossbones-outline" />
                            </graphic>
+                        </Button>
+                        <Button fx:id="editBtn" mnemonicParsing="false" onAction="#onEdit" styleClass="external-component" text="Edit pinemhi.ini" textFill="WHITE" visible="false">
+                           <graphic>
+                              <FontIcon iconColor="WHITE" iconLiteral="mdi2o-open-in-new" />
+                           </graphic>
+                           <font>
+                              <Font size="14.0" />
+                           </font>
                         </Button>
                      </children>
                   </HBox>

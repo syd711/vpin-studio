@@ -412,7 +412,13 @@ public class PINemHiUIPreferenceController implements Initializable, DialogContr
     }, SPINNER_DELAY));
 
     extraBackground.setSelected(settings.getBoolean(SETTING_EXTRA_BACKGROUND));
-    extraBackground.selectedProperty().addListener((observableValue, aBoolean, t1) -> settings.set(SETTING_EXTRA_BACKGROUND, t1));
+    extraBackground.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
+      settings.set(SETTING_EXTRA_BACKGROUND, t1);
+      xPos.setDisable(!t1);
+      yPos.setDisable(!t1);
+      xSize.setDisable(!t1);
+      ySize.setDisable(!t1);
+    });
 
     onBetweenRotation.setSelected(settings.getBoolean(SETTING_ON_BETWEEN_ROTATION));
     onBetweenRotation.selectedProperty().addListener((observableValue, aBoolean, t1) -> settings.set(SETTING_ON_BETWEEN_ROTATION, t1));
@@ -446,6 +452,13 @@ public class PINemHiUIPreferenceController implements Initializable, DialogContr
       settings.set(SETTING_Y_SIZE, value1);
     }, SPINNER_DELAY));
 
+
+    screenInfoComboBox.setDisable(manualOffset.isSelected() || manualoffsetXCentered.isSelected() || manualoffsetYCentered.isSelected());
+
+    xPos.setDisable(!extraBackground.isSelected());
+    yPos.setDisable(!extraBackground.isSelected());
+    xSize.setDisable(!extraBackground.isSelected());
+    ySize.setDisable(!extraBackground.isSelected());
   }
 
   @Override
