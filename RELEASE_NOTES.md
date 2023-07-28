@@ -27,7 +27,7 @@
 
 - It took a while, but since I already ship the **PINemHi Leaderboard**, it was time to build the integration for it too. You'll find the configuration for you _pinemhi.ini_ in the preferences section. I hope everything works as expected as there was **a lot** of fields to configure. Note that when running, the key bindings are intercepted may disturb working with the VPin Studio when launched on the cab. For the leaderboard users out there: let me know if something is missing or not working as expected!
 
-**Linux/MacOS Support (experimental)**
+**Linux/MacOS Client Support (experimental)**
 
 - The release build comes with a **VPin-Studio-Client.zip** now that **should** be executeable on Linux and Mac:
   - Unzip the file.

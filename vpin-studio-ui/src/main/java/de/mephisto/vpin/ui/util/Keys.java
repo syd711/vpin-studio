@@ -2,6 +2,7 @@ package de.mephisto.vpin.ui.util;
 
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -101,6 +102,12 @@ public class Keys {
       else if(value.equals(KeyEvent.getKeyText(KeyEvent.VK_SLASH))) {
         return "/";
       }
+      else if(value.equals(KeyEvent.getKeyText(KeyEvent.VK_AMPERSAND))) {
+        return "*";
+      }
+      else if(value.equals(KeyEvent.getKeyText(KeyEvent.VK_ESCAPE))) {
+        return "Esc";
+      }
     }
     return value;
   }
@@ -110,6 +117,7 @@ public class Keys {
     for (int keyCode : KEY_CODES) {
       result.add(getKeyDisplayName(keyCode));
     }
+    Collections.sort(result);
     return result;
   }
 
@@ -119,6 +127,7 @@ public class Keys {
       result.add(getKeyDisplayName(keyCode));
     }
     result.add(0, "");
+    Collections.sort(result);
     return result;
   }
 
