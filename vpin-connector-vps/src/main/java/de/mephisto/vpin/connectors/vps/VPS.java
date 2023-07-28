@@ -42,6 +42,9 @@ public class VPS {
 
     if (!this.getVpsDbFile().exists()) {
       try {
+        if(this.getVpsDbFile().getParentFile().exists()) {
+          this.getVpsDbFile().getParentFile().mkdirs();
+        }
         download();
       } catch (Exception e) {
         LOG.error("Failed to initialize VPS db: " + e.getMessage(), e);
