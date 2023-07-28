@@ -29,7 +29,7 @@ public class TableManagerPreferencesController implements Initializable {
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
-    List<PlaylistRepresentation> playlists = new ArrayList<>(client.getPinUPPopperService().getPlaylists());
+    List<PlaylistRepresentation> playlists = new ArrayList<>(client.getPlaylistsService().getStaticPlaylists());
     playlists.add(0, null);
     ObservableList<PlaylistRepresentation> data = FXCollections.observableList(playlists);
     this.playlistCombo.setItems(data);

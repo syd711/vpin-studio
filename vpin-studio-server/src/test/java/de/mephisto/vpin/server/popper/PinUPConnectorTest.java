@@ -17,13 +17,6 @@ public class PinUPConnectorTest extends AbstractVPinServerTest {
   @Autowired
   private PinUPConnector connector;
 
-
-  @Test
-  public void testPlaylists() {
-    List<Playlist> playLists = connector.getPlayLists();
-    assertFalse(playLists.isEmpty());
-  }
-
   @Test
   public void testGameAdding() {
     File file = new File("src/test/resources/Aces High (1965).vpx");

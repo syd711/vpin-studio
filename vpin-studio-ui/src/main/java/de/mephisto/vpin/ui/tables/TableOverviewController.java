@@ -4,6 +4,7 @@ import de.mephisto.vpin.commons.EmulatorType;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.ValidationCode;
 import de.mephisto.vpin.restclient.representations.GameRepresentation;
+import de.mephisto.vpin.restclient.representations.PlaylistRepresentation;
 import de.mephisto.vpin.restclient.representations.ValidationState;
 import de.mephisto.vpin.ui.NavigationController;
 import de.mephisto.vpin.ui.Studio;
@@ -32,6 +33,7 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -81,6 +83,9 @@ public class TableOverviewController implements Initializable, StudioFXControlle
   private TableColumn<GameRepresentation, String> columnHSType;
 
   @FXML
+  private TableColumn<GameRepresentation, String> columnPlaylists;
+
+  @FXML
   private TableView<GameRepresentation> tableView;
 
   @FXML
@@ -105,7 +110,10 @@ public class TableOverviewController implements Initializable, StudioFXControlle
   private Button deleteBtn;
 
   @FXML
-  private SplitMenuButton scanBtn;
+  private Button scanBtn;
+
+  @FXML
+  private Button scanAllBtn;
 
   @FXML
   private Button playBtn;
@@ -120,13 +128,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
   private Button backupBtn;
 
   @FXML
-  private MenuButton uploadMenuBtn;
-
-  @FXML
-  private MenuItem uploadTableItem;
-
-  @FXML
-  private MenuItem uploadRomItem;
+  private Button uploadTableBtn;
 
   @FXML
   private Button reloadBtn;
@@ -135,10 +137,14 @@ public class TableOverviewController implements Initializable, StudioFXControlle
   private ComboBox<String> emulatorTypeCombo;
 
   @FXML
+  private ComboBox<PlaylistRepresentation> playlistCombo;
+
+  @FXML
   private StackPane tableStack;
 
   private Parent tablesLoadingOverlay;
   private TablesController tablesController;
+  private List<PlaylistRepresentation> playlists;
 
   // Add a public no-args constructor
   public TableOverviewController() {
@@ -180,20 +186,6 @@ public class TableOverviewController implements Initializable, StudioFXControlle
       }
     }
   }
-
-//  @FXML
-//  private void onImport() {
-//    if (client.isPinUPPopperRunning()) {
-//      Optional<ButtonType> buttonType = Dialogs.openPopperRunningWarning(Studio.stage);
-//      if (buttonType.isPresent() && buttonType.get().equals(ButtonType.APPLY)) {
-//        Studio.client.terminatePopper();
-//        Dialogs.openTableImportDialog(this);
-//      }
-//    }
-//    else {
-//      Dialogs.openTableImportDialog(this);
-//    }
-//  }
 
   @FXML
   private void onEmulatorSelect() {
@@ -428,13 +420,12 @@ public class TableOverviewController implements Initializable, StudioFXControlle
     this.textfieldSearch.setDisable(true);
     this.reloadBtn.setDisable(true);
     this.scanBtn.setDisable(true);
+    this.scanAllBtn.setDisable(true);
     this.playBtn.setDisable(true);
     this.validateBtn.setDisable(true);
     this.deleteBtn.setDisable(true);
-    this.uploadTableItem.setDisable(true);
-    this.uploadRomItem.setDisable(true);
+    this.uploadTableBtn.setDisable(true);
     this.backupBtn.setDisable(true);
-    this.uploadMenuBtn.setDisable(true);
     this.importBtn.setDisable(true);
     this.stopBtn.setDisable(true);
 
@@ -467,7 +458,6 @@ public class TableOverviewController implements Initializable, StudioFXControlle
         if (!games.isEmpty()) {
           this.validateBtn.setDisable(false);
           this.deleteBtn.setDisable(false);
-          this.uploadRomItem.setDisable(false);
         }
 
         this.importBtn.setDisable(false);
@@ -475,8 +465,8 @@ public class TableOverviewController implements Initializable, StudioFXControlle
         this.textfieldSearch.setDisable(false);
         this.reloadBtn.setDisable(false);
         this.scanBtn.setDisable(false);
-        this.uploadTableItem.setDisable(false);
-        this.uploadMenuBtn.setDisable(false);
+        this.scanAllBtn.setDisable(false);
+        this.uploadTableBtn.setDisable(false);
 
         tableView.setVisible(true);
         labelTableCount.setText(games.size() + " tables");
@@ -495,8 +485,18 @@ public class TableOverviewController implements Initializable, StudioFXControlle
       LOG.error("Failed to load loading overlay: " + e.getMessage());
     }
 
+    playlists = client.getPlaylistsService().getPlaylists();
+
+    playlistCombo.setCellFactory(c -> new WidgetFactory.PlaylistBackgroundImageListCell());
+    playlistCombo.setButtonCell(new WidgetFactory.PlaylistBackgroundImageListCell());
+
+    List<PlaylistRepresentation> pl = new ArrayList<>(playlists);
+    pl.add(0, null);
+    playlistCombo.setItems(FXCollections.observableList(pl));
+
     bindTable();
     bindSearchField();
+
   }
 
   private void bindSearchField() {
@@ -603,6 +603,17 @@ public class TableOverviewController implements Initializable, StudioFXControlle
       return new SimpleObjectProperty(WidgetFactory.createCheckIcon());
     });
 
+    columnPlaylists.setCellValueFactory(cellData -> {
+      GameRepresentation value = cellData.getValue();
+      HBox box = new HBox();
+      for (PlaylistRepresentation playlist : playlists) {
+        if (playlist.getGameIds().contains(value.getId())) {
+          box.getChildren().add(WidgetFactory.createPlaylistIcon(playlist));
+        }
+      }
+      return new SimpleObjectProperty(box);
+    });
+
 
     tableView.setItems(data);
     tableView.setEditable(true);
@@ -612,6 +623,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
       deleteBtn.setDisable(c.getList().isEmpty());
       backupBtn.setDisable(true);
       playBtn.setDisable(disable);
+      scanBtn.setDisable(c.getList().isEmpty());
 
       if (c.getList().isEmpty()) {
         refreshView(Optional.empty());

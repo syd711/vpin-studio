@@ -43,6 +43,7 @@ public class Game {
 
   private String assets;
   private PupPack pupPack;
+  private List<Integer> playlists;
 
   private SystemService systemService;
   private String extTableId;
@@ -54,6 +55,14 @@ public class Game {
 
   public Game(@NonNull SystemService systemService) {
     this.systemService = systemService;
+  }
+
+  public List<Integer> getPlaylists() {
+    return playlists;
+  }
+
+  public void setPlaylists(List<Integer> playlists) {
+    this.playlists = playlists;
   }
 
   public String getExtTableId() {

@@ -2,12 +2,10 @@
 
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Hyperlink?>
 <?import javafx.scene.control.Label?>
-<?import javafx.scene.control.MenuButton?>
-<?import javafx.scene.control.MenuItem?>
 <?import javafx.scene.control.Separator?>
-<?import javafx.scene.control.SplitMenuButton?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.control.TextField?>
@@ -35,6 +33,7 @@
                                         <TableColumn fx:id="columnId" minWidth="35.99993896484375" prefWidth="58.399959564208984" style="-fx-alignment: baseline-right;" text="ID" />
                                         <TableColumn fx:id="columnStatus" minWidth="32.79998779296875" prefWidth="53.5999755859375" style="-fx-alignment: CENTER;" text="Status" />
                                         <TableColumn fx:id="columnDisplayName" minWidth="100.0" prefWidth="306.40003204345703" style="-fx-alignment: BASELINE_LEFT;" text="Display Name" />
+                              <TableColumn fx:id="columnPlaylists" minWidth="51.199951171875" prefWidth="90.0" style="-fx-alignment: BASELINE_CENTER;" text="Playlists" />
                                         <TableColumn fx:id="columnEmulator" minWidth="10.4000244140625" prefWidth="126.4000244140625" style="-fx-alignment: BASELINE_LEFT;" text="Emulator" visible="false" />
                                         <TableColumn fx:id="columnB2S" minWidth="51.199951171875" prefWidth="90.0" style="-fx-alignment: CENTER;" text="DirectB2S" />
                                         <TableColumn fx:id="columnPUPPack" minWidth="57.5999755859375" prefWidth="90.0" style="-fx-alignment: CENTER;" text="PUP Pack" />
@@ -111,124 +110,121 @@
                                     </font>
                                 </TextField>
                                 <Separator orientation="VERTICAL" prefHeight="0.0" prefWidth="0.0" />
-                                <Button fx:id="reloadBtn" mnemonicParsing="false" onAction="#onReload" text="Reload" textFill="WHITE">
+                                <Button fx:id="reloadBtn" mnemonicParsing="false" onAction="#onReload" textFill="WHITE">
                                     <font>
                                         <Font size="14.0" />
                                     </font>
                                     <graphic>
                                         <FontIcon iconColor="WHITE" iconLiteral="sil-reload" />
                                     </graphic>
+                           <tooltip>
+                              <Tooltip text="Reload all table data" />
+                           </tooltip>
                                 </Button>
                                 <Separator orientation="VERTICAL" prefHeight="30.0" prefWidth="12.0" />
-                        <Button fx:id="importBtn" layoutX="560.0" layoutY="11.0" mnemonicParsing="false" onAction="#onImport" text="Import" textFill="WHITE">
+                        <ComboBox fx:id="playlistCombo" prefHeight="30.0" prefWidth="288.0" />
+                        <Separator layoutX="277.0" layoutY="10.0" orientation="VERTICAL" prefHeight="30.0" prefWidth="12.0" />
+                        <Button fx:id="importBtn" layoutX="560.0" layoutY="11.0" mnemonicParsing="false" onAction="#onImport" textFill="WHITE">
                            <font>
                               <Font size="14.0" />
                            </font>
                            <graphic>
-                              <FontIcon iconColor="WHITE" iconLiteral="mdi2d-database-import-outline" iconSize="14" />
+                              <FontIcon iconColor="WHITE" iconLiteral="mdi2d-database-import-outline" iconSize="16" />
                            </graphic>
                            <tooltip>
-                              <Tooltip text="Imports existing VPX files into PinUP Popper" />
+                              <Tooltip text="Import existing VPX files into PinUP Popper" />
                            </tooltip>
                         </Button>
-                                <MenuButton fx:id="uploadMenuBtn" mnemonicParsing="false" text="Upload">
-                                    <items>
-                                        <MenuItem fx:id="uploadTableItem" mnemonicParsing="false" onAction="#onTableUpload" text="Upload VPX Table">
-                                            <graphic>
-                                                <FontIcon iconColor="WHITE" iconLiteral="mdi2u-upload" />
-                                            </graphic>
-                                        </MenuItem>
-                                        <MenuItem fx:id="uploadRomItem" mnemonicParsing="false" onAction="#onRomUpload" text="Upload ROMs">
-                                            <graphic>
-                                                <FontIcon iconColor="WHITE" iconLiteral="mdi2u-upload" />
-                                            </graphic>
-                                        </MenuItem>
-                                    </items>
-                                    <font>
-                                        <Font size="14.0" />
-                                    </font>
-                           <graphic>
-                              <FontIcon iconColor="WHITE" iconLiteral="mdi2u-upload" />
-                           </graphic>
-                                </MenuButton>
-                                <Separator layoutX="682.0" layoutY="10.0" orientation="VERTICAL" prefHeight="30.0" prefWidth="12.0" />
-                        <SplitMenuButton fx:id="scanBtn" mnemonicParsing="false" onAction="#onTablesScan" text="Scan">
-                          <items>
-                            <MenuItem mnemonicParsing="false" onAction="#onTablesScanAll" text="Scan All">
-                                 <graphic>
-                                    <FontIcon iconColor="WHITE" iconLiteral="mdi2m-map-search-outline">
-                                       <font>
-                                          <Font size="14.0" />
-                                       </font>
-                                    </FontIcon>
-                                 </graphic>
-                              </MenuItem>
-                          </items>
+                        <Button fx:id="uploadTableBtn" layoutX="493.0" layoutY="11.0" mnemonicParsing="false" onAction="#onTableUpload" textFill="WHITE">
                            <font>
                               <Font size="14.0" />
                            </font>
                            <graphic>
-                              <FontIcon iconColor="WHITE" iconLiteral="mdi2m-map-search-outline">
-                                 <font>
-                                    <Font size="14.0" />
-                                 </font>
-                              </FontIcon>
+                              <FontIcon iconColor="WHITE" iconLiteral="mdi2u-upload" iconSize="16" />
                            </graphic>
-                        </SplitMenuButton>
-                                <Button fx:id="validateBtn" mnemonicParsing="false" onAction="#onValidate" text="Validate" textFill="WHITE">
+                           <tooltip>
+                              <Tooltip text="Upload VPX files to PinUP Popper" />
+                           </tooltip>
+                        </Button>
+                                <Button fx:id="deleteBtn" mnemonicParsing="false" onAction="#onDelete" textFill="#ff3333">
                                     <font>
                                         <Font size="14.0" />
                                     </font>
                                     <graphic>
-                                        <FontIcon iconColor="WHITE" iconLiteral="sil-magnifier" />
+                                        <FontIcon iconColor="#ff3333" iconLiteral="mdi2d-delete-outline" iconSize="16" text="󰧧" />
+                                    </graphic>
+                           <tooltip>
+                              <Tooltip text="Delete table and assets" />
+                           </tooltip>
+                                </Button>
+                                <Separator layoutX="682.0" layoutY="10.0" orientation="VERTICAL" prefHeight="30.0" prefWidth="12.0" />
+                                <Button fx:id="validateBtn" mnemonicParsing="false" onAction="#onValidate" textFill="WHITE">
+                                    <font>
+                                        <Font size="14.0" />
+                                    </font>
+                                    <graphic>
+                                        <FontIcon iconColor="WHITE" iconLiteral="sil-magnifier" iconSize="16" />
                                     </graphic>
                                     <tooltip>
                                         <Tooltip text="Resets the dismissed validations and revalidates the table configuration." />
                                     </tooltip>
                                 </Button>
+                        <Button fx:id="scanBtn" layoutX="592.0" layoutY="11.0" mnemonicParsing="false" onAction="#onTablesScan" textFill="WHITE">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                           <graphic>
+                              <FontIcon iconColor="WHITE" iconLiteral="mdi2m-map-search-outline" iconSize="16" />
+                           </graphic>
+                           <tooltip>
+                              <Tooltip text="Scans the selected tables to extract metadata" />
+                           </tooltip>
+                        </Button>
+                        <Button fx:id="scanAllBtn" layoutX="632.0" layoutY="11.0" mnemonicParsing="false" onAction="#onTablesScanAll" textFill="WHITE">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                           <graphic>
+                              <FontIcon iconColor="WHITE" iconLiteral="mdi2m-map-search" iconSize="16" />
+                           </graphic>
+                           <tooltip>
+                              <Tooltip text="Run table scan for all tables" />
+                           </tooltip>
+                        </Button>
                                 <Separator layoutX="768.0" layoutY="10.0" orientation="VERTICAL" prefHeight="30.0" prefWidth="12.0" />
-                                <Button fx:id="playBtn" layoutX="703.0" layoutY="11.0" mnemonicParsing="false" onAction="#onPlay" styleClass="external-component" text="Play" textFill="WHITE">
+                                <Button fx:id="playBtn" layoutX="703.0" layoutY="11.0" mnemonicParsing="false" onAction="#onPlay" styleClass="external-component" textFill="WHITE">
                                     <font>
                                         <Font size="14.0" />
                                     </font>
                                     <graphic>
-                                        <FontIcon iconColor="WHITE" iconLiteral="mdi2p-play" />
+                                        <FontIcon iconColor="WHITE" iconLiteral="mdi2p-play" iconSize="16" />
                                     </graphic>
                                     <tooltip>
                                         <Tooltip text="Launch VPX with the selected table." />
                                     </tooltip>
                                 </Button>
-                                <Button fx:id="stopBtn" layoutX="700.0" layoutY="11.0" mnemonicParsing="false" onAction="#onStop" text="Stop" textFill="WHITE">
+                                <Button fx:id="stopBtn" layoutX="700.0" layoutY="11.0" mnemonicParsing="false" onAction="#onStop" textFill="#ff3333">
                                     <font>
                                         <Font size="14.0" />
                                     </font>
                                     <graphic>
-                                        <FontIcon iconColor="WHITE" iconLiteral="mdi2s-stop" />
+                                        <FontIcon iconColor="#ff3333" iconLiteral="mdi2s-stop" iconSize="16" />
                                     </graphic>
                                     <tooltip>
                                         <Tooltip text="Kill all VPX and PinUP Popper processes." />
                                     </tooltip>
                                 </Button>
                                 <Separator layoutX="788.0" layoutY="10.0" orientation="VERTICAL" prefHeight="30.0" prefWidth="12.0" />
-                                <Button fx:id="backupBtn" layoutX="596.0" layoutY="11.0" mnemonicParsing="false" onAction="#onBackup" text="Backup" textFill="WHITE">
+                                <Button fx:id="backupBtn" layoutX="596.0" layoutY="11.0" mnemonicParsing="false" onAction="#onBackup" textFill="WHITE">
                                     <font>
                                         <Font size="14.0" />
                                     </font>
                                     <graphic>
-                                        <FontIcon iconColor="WHITE" iconLiteral="mdi2e-export" />
+                                        <FontIcon iconColor="WHITE" iconLiteral="mdi2e-export" iconSize="16" />
                                     </graphic>
                                     <tooltip>
                                         <Tooltip text="Exports the selected table into the local repository." />
                                     </tooltip>
-                                </Button>
-                                <Separator layoutX="938.0" layoutY="10.0" orientation="VERTICAL" prefHeight="30.0" prefWidth="12.0" />
-                                <Button fx:id="deleteBtn" mnemonicParsing="false" onAction="#onDelete" text="Delete" textFill="#ff3333">
-                                    <font>
-                                        <Font size="14.0" />
-                                    </font>
-                                    <graphic>
-                                        <FontIcon iconColor="#ff3333" iconLiteral="mdi2d-delete-outline" text="󰧧" />
-                                    </graphic>
                                 </Button>
                             </items>
                             <BorderPane.margin>

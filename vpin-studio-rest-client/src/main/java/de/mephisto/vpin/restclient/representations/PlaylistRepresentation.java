@@ -1,8 +1,38 @@
 package de.mephisto.vpin.restclient.representations;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class PlaylistRepresentation {
   private int id;
   private String name;
+  private Integer menuColor;
+  private boolean sqlPlayList;
+  private List<Integer> gameIds = new ArrayList<>();
+
+  public boolean isSqlPlayList() {
+    return sqlPlayList;
+  }
+
+  public void setSqlPlayList(boolean sqlPlayList) {
+    this.sqlPlayList = sqlPlayList;
+  }
+
+  public List<Integer> getGameIds() {
+    return gameIds;
+  }
+
+  public void setGameIds(List<Integer> gameIds) {
+    this.gameIds = gameIds;
+  }
+
+  public Integer getMenuColor() {
+    return menuColor;
+  }
+
+  public void setMenuColor(Integer menuColor) {
+    this.menuColor = menuColor;
+  }
 
   public int getId() {
     return id;
@@ -22,7 +52,7 @@ public class PlaylistRepresentation {
 
   @Override
   public String toString() {
-    return this.name;
+    return this.name + " (" + this.gameIds.size() + ")";
   }
 
   @Override

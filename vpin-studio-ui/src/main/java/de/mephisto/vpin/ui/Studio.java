@@ -120,7 +120,6 @@ public class Studio extends Application {
         height = 1400;
       }
 
-
       Scene scene = new Scene(root, width, height);
       scene.setFill(Paint.valueOf("#212529"));
       stage.getIcons().add(new Image(Studio.class.getResourceAsStream("logo-128.png")));

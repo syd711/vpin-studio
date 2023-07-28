@@ -4,14 +4,12 @@ import de.mephisto.vpin.commons.fx.*;
 import de.mephisto.vpin.restclient.client.VPinStudioClient;
 import de.mephisto.vpin.restclient.popper.PopperScreen;
 import de.mephisto.vpin.restclient.representations.GameMediaItemRepresentation;
+import de.mephisto.vpin.restclient.representations.PlaylistRepresentation;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.*;
-import javafx.scene.control.Button;
-import javafx.scene.control.ButtonType;
-import javafx.scene.control.Label;
-import javafx.scene.control.ListCell;
+import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.image.WritableImage;
@@ -94,10 +92,23 @@ public class WidgetFactory {
   public static FontIcon createExclamationIcon() {
     FontIcon fontIcon = new FontIcon();
     fontIcon.setIconSize(18);
-    fontIcon.setCursor(Cursor.HAND);
     fontIcon.setIconColor(Paint.valueOf("#FF3333"));
     fontIcon.setIconLiteral("bi-exclamation-circle");
     return fontIcon;
+  }
+
+  public static Label createPlaylistIcon(PlaylistRepresentation playlist) {
+    Label label = new Label();
+    label.setTooltip(new Tooltip(playlist.getName()));
+    FontIcon fontIcon = new FontIcon();
+    fontIcon.setIconSize(24);
+    fontIcon.setIconColor(Paint.valueOf("#FFFFFF"));
+    if(playlist.getMenuColor() != null) {
+      fontIcon.setIconColor(Paint.valueOf("#" + Integer.toHexString(playlist.getMenuColor())));
+    }
+    fontIcon.setIconLiteral("mdi2v-view-list");
+    label.setGraphic(fontIcon);
+    return label;
   }
 
   public static Stage createStage() {
@@ -410,6 +421,32 @@ public class WidgetFactory {
       }
       else {
         node.setCenter(null);
+      }
+    }
+  }
+
+  public static class PlaylistBackgroundImageListCell extends ListCell<PlaylistRepresentation> {
+
+    public PlaylistBackgroundImageListCell() {
+    }
+
+    protected void updateItem(PlaylistRepresentation item, boolean empty) {
+      super.updateItem(item, empty);
+      setGraphic(null);
+      setText(null);
+      if (item != null) {
+        String hex = "#FFFFFF";
+        if (item.getMenuColor() != null) {
+          hex = "#" + Integer.toHexString(item.getMenuColor());
+        }
+
+        FontIcon fontIcon = new FontIcon();
+        fontIcon.setIconSize(24);
+        fontIcon.setIconColor(Paint.valueOf(hex));
+        fontIcon.setIconLiteral("mdi2v-view-list");
+        setGraphic(fontIcon);
+
+        setText(" " + item.toString());
       }
     }
   }

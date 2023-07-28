@@ -428,7 +428,7 @@ public class PinUPConnector implements InitializingBean {
   }
 
   @NonNull
-  public List<Playlist> getPlayLists() {
+  public List<Playlist> getPlayLists(boolean excludeSqlLists) {
     Connection connect = this.connect();
     List<Playlist> result = new ArrayList<>();
     try {
@@ -436,13 +436,31 @@ public class PinUPConnector implements InitializingBean {
       ResultSet rs = statement.executeQuery("SELECT * FROM Playlists WHERE Visible = 1;");
       while (rs.next()) {
         String sql = rs.getString("PlayListSQL");
-        if (!StringUtils.isEmpty(sql)) {
+        String name  = rs.getString("PlayName");
+        boolean sqlPlaylist = rs.getInt("PlayListType") == 1;
+
+        if (excludeSqlLists && sqlPlaylist) {
           continue;
         }
 
         Playlist playlist = new Playlist();
         playlist.setId(rs.getInt("PlayListID"));
-        playlist.setName(rs.getString("PlayName"));
+        playlist.setName(name);
+        playlist.setPlayListSQL(sql);
+
+        playlist.setMenuColor(rs.getInt("MenuColor"));
+        if (rs.wasNull()) {
+          playlist.setMenuColor(null);
+        }
+        playlist.setSqlPlayList(sqlPlaylist);
+
+        if(sqlPlaylist) {
+          playlist.setGameIds(getGameIdsFromSqlPlaylist(sql));
+        }
+        else {
+          playlist.setGameIds(getGameIdsFromPlaylist(playlist.getId()));
+        }
+
         result.add(playlist);
       }
       rs.close();
@@ -722,6 +740,52 @@ public class PinUPConnector implements InitializingBean {
     return result;
   }
 
+  @NonNull
+  private List<Integer> getGameIdsFromPlaylist(int id) {
+    List<Integer> result = new ArrayList<>();
+    Connection connect = connect();
+    try {
+      Statement statement = connect.createStatement();
+      ResultSet rs = statement.executeQuery("SELECT * FROM PlayListDetails WHERE PlayListID = " + id);
+
+      while (rs.next()) {
+        int gameId = rs.getInt("GameID");
+        result.add(gameId);
+      }
+
+      rs.close();
+      statement.close();
+    } catch (SQLException e) {
+      LOG.error("Failed to read playlists: " + e.getMessage(), e);
+    } finally {
+      disconnect(connect);
+    }
+    return result;
+  }
+
+
+  private List<Integer> getGameIdsFromSqlPlaylist(String sql) {
+    List<Integer> result = new ArrayList<>();
+    Connection connect = connect();
+    try {
+      Statement statement = connect.createStatement();
+      ResultSet rs = statement.executeQuery(sql);
+
+      while (rs.next()) {
+        int gameId = rs.getInt("GameID");
+        result.add(gameId);
+      }
+
+      rs.close();
+      statement.close();
+    } catch (SQLException e) {
+      LOG.error("Failed to read playlists: " + e.getMessage(), e);
+    } finally {
+      disconnect(connect);
+    }
+    return result;
+  }
+
   @Nullable
   public String getEmulatorStartupScript(@NonNull String emuName) {
     String script = null;
@@ -843,7 +907,6 @@ public class PinUPConnector implements InitializingBean {
     throw new UnsupportedOperationException("Failed to determine emulator id for '" + name + "'");
   }
 
-
   public void saveTableDetails(Game game, TableDetails manifest) {
     int id = game.getId();
     importManifestValue(id, "GameName", manifest.getGameName());
@@ -887,4 +950,5 @@ public class PinUPConnector implements InitializingBean {
       this.disconnect(connect);
     }
   }
+
 }

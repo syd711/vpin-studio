@@ -52,11 +52,6 @@ public class PopperServiceResource {
     return popperService.getPinUPControls();
   }
 
-  @GetMapping("/playlists")
-  public List<Playlist> getPlaylists() {
-    return popperService.getPlaylists();
-  }
-
   @GetMapping("/running")
   public boolean isRunning() {
     return popperService.isPinUPRunning();

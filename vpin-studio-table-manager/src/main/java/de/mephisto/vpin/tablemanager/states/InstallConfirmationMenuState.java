@@ -28,7 +28,7 @@ public class InstallConfirmationMenuState extends MenuState {
 
   @Override
   MenuState enter() {
-    List<PlaylistRepresentation> playlists = Menu.client.getPinUPPopperService().getPlaylists();
+    List<PlaylistRepresentation> playlists = Menu.client.getPlaylistsService().getStaticPlaylists();
     if(!playlists.isEmpty()) {
       return new PlaylistSelectionMenuState(this, menuController);
     }

@@ -13,9 +13,11 @@ import de.mephisto.vpin.server.assets.AssetRepository;
 import de.mephisto.vpin.server.competitions.ScoreSummary;
 import de.mephisto.vpin.server.highscores.*;
 import de.mephisto.vpin.server.highscores.cards.CardService;
+import de.mephisto.vpin.server.playlists.PlaylistService;
 import de.mephisto.vpin.server.popper.Emulator;
 import de.mephisto.vpin.server.popper.GameMediaItem;
 import de.mephisto.vpin.server.popper.PinUPConnector;
+import de.mephisto.vpin.server.popper.Playlist;
 import de.mephisto.vpin.server.preferences.PreferencesService;
 import de.mephisto.vpin.server.puppack.PupPack;
 import de.mephisto.vpin.server.puppack.PupPacksService;
@@ -72,13 +74,13 @@ public class GameService {
   @Autowired
   private AltColorService altColorService;
 
-
   @SuppressWarnings("unused")
   public List<Game> getGames() {
     long start = System.currentTimeMillis();
     List<Game> games = pinUPConnector.getGames();
     LOG.info("Game fetch took " + (System.currentTimeMillis() - start) + "ms., returned " + games.size() + " tables.");
     start = System.currentTimeMillis();
+
     for (Game game : games) {
       applyGameDetails(game, false);
     }
@@ -389,7 +391,6 @@ public class GameService {
     //run validations at the end!!!
     game.setValidationState(gameValidator.validate(game));
   }
-
 
   public List<ValidationState> getRomValidations(Game game) {
     return gameValidator.validateRom(game);

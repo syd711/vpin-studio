@@ -52,10 +52,6 @@ public class PopperService implements InitializingBean {
     return pinUPConnector.getControls();
   }
 
-  public List<Playlist> getPlaylists() {
-    return pinUPConnector.getPlayLists();
-  }
-
   @SuppressWarnings("unused")
   public void addPopperStatusChangeListener(PopperStatusChangeListener listener) {
     this.listeners.add(listener);

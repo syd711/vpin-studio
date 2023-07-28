@@ -53,10 +53,6 @@ public class PinUPPopperServiceClient extends VPinStudioClientService {
     return getRestClient().get(API + "popper/pincontrols", PinUPControls.class);
   }
 
-  public List<PlaylistRepresentation> getPlaylists() {
-    return Arrays.asList(getRestClient().get(API + "popper/playlists", PlaylistRepresentation[].class));
-  }
-
   public boolean isPinUPPopperRunning() {
     return getRestClient().get(API + "popper/running", Boolean.class);
   }

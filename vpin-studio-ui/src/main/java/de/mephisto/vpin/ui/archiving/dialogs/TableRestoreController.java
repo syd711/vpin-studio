@@ -76,7 +76,7 @@ public class TableRestoreController implements Initializable, DialogController {
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
-    List<PlaylistRepresentation> playlists = client.getPinUPPopperService().getPlaylists();
+    List<PlaylistRepresentation> playlists = client.getPlaylistsService().getStaticPlaylists();
     ObservableList<PlaylistRepresentation> data = FXCollections.observableList(playlists);
     this.playlistCombo.setItems(data);
     this.playlistCombo.setDisable(false);
