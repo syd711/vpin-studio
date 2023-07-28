@@ -116,6 +116,7 @@ public class ResizeHelper {
               double height = stage.getY() - mouseEvent.getScreenY() + stage.getHeight() + sceneOffsetY;
               double y = mouseEvent.getScreenY() - sceneOffsetY;
 
+              System.out.println(height + "/" + y);
               stage.setHeight(height);
               stage.setY(y);
             }

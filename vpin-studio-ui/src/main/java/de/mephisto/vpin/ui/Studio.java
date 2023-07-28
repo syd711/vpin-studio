@@ -3,7 +3,7 @@ package de.mephisto.vpin.ui;
 import de.mephisto.vpin.commons.fx.OverlayWindowFX;
 import de.mephisto.vpin.restclient.client.VPinStudioClient;
 import de.mephisto.vpin.ui.launcher.LauncherController;
-import de.mephisto.vpin.ui.util.ResizeHelper;
+import de.mephisto.vpin.ui.util.FXResizeHelper;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Rectangle2D;
@@ -125,13 +125,15 @@ public class Studio extends Application {
       stage.getIcons().add(new Image(Studio.class.getResourceAsStream("logo-128.png")));
       stage.setScene(scene);
       stage.setResizable(true);
-      stage.setMinWidth(1780);
-      stage.setMinHeight(1200);
+      stage.setMinWidth(1580);
+      stage.setMinHeight(1000);
       stage.initStyle(StageStyle.UNDECORATED);
 
       stage.setX((screenBounds.getWidth() / 2) - (width / 2));
       stage.setY((screenBounds.getHeight() / 2) - (height / 2));
-      ResizeHelper.addResizeListener(stage);
+//      ResizeHelper.addResizeListener(stage);
+      FXResizeHelper fxResizeHelper = new FXResizeHelper(stage, 12, 12);
+      stage.setUserData(fxResizeHelper);
 
       stage.show();
     } catch (IOException e) {
