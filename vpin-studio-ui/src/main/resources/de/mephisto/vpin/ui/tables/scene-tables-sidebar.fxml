@@ -54,6 +54,7 @@
                     </graphic>
                 </TitledPane>
                 <TitledPane fx:id="titledPanePopper" expanded="false" text="PinUP Popper Table Data" />
+            <TitledPane fx:id="titledPanePlaylists" expanded="false" text="Playlists" />
                 <TitledPane fx:id="titledPaneDirectB2s" expanded="false" text="DirectB2S" />
                 <TitledPane fx:id="titledPanePUPPack" expanded="false" text="PUP Pack" />
                 <TitledPane fx:id="titledPaneAudio" expanded="false">

@@ -417,6 +417,8 @@ public class TableOverviewController implements Initializable, StudioFXControlle
 
   @FXML
   public void onReload() {
+    refreshPlaylists();
+
     this.textfieldSearch.setDisable(true);
     this.reloadBtn.setDisable(true);
     this.scanBtn.setDisable(true);
@@ -433,6 +435,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
     tableStack.getChildren().add(tablesLoadingOverlay);
 
     new Thread(() -> {
+
       GameRepresentation selection = tableView.getSelectionModel().getSelectedItem();
       games = client.getGameService().getGames();
       filterGames(games);
@@ -485,18 +488,21 @@ public class TableOverviewController implements Initializable, StudioFXControlle
       LOG.error("Failed to load loading overlay: " + e.getMessage());
     }
 
-    playlists = client.getPlaylistsService().getPlaylists();
 
     playlistCombo.setCellFactory(c -> new WidgetFactory.PlaylistBackgroundImageListCell());
     playlistCombo.setButtonCell(new WidgetFactory.PlaylistBackgroundImageListCell());
 
+    bindTable();
+    bindSearchField();
+  }
+
+  private void refreshPlaylists() {
+    this.playlistCombo.setDisable(true);
+    playlists = client.getPlaylistsService().getPlaylists();
     List<PlaylistRepresentation> pl = new ArrayList<>(playlists);
     pl.add(0, null);
     playlistCombo.setItems(FXCollections.observableList(pl));
-
-    bindTable();
-    bindSearchField();
-
+    this.playlistCombo.setDisable(false);
   }
 
   private void bindSearchField() {
@@ -606,9 +612,20 @@ public class TableOverviewController implements Initializable, StudioFXControlle
     columnPlaylists.setCellValueFactory(cellData -> {
       GameRepresentation value = cellData.getValue();
       HBox box = new HBox();
+      List<PlaylistRepresentation> matches = new ArrayList<>();
       for (PlaylistRepresentation playlist : playlists) {
         if (playlist.getGameIds().contains(value.getId())) {
-          box.getChildren().add(WidgetFactory.createPlaylistIcon(playlist));
+         matches.add(playlist);
+        }
+      }
+
+      for (PlaylistRepresentation match : matches) {
+        box.getChildren().add(WidgetFactory.createPlaylistIcon(match));
+        if(box.getChildren().size() == 3 && matches.size() > box.getChildren().size()) {
+          Label label = new Label("+" + (matches.size()-box.getChildren().size()));
+          label.setStyle("-fx-font-size: 14px;-fx-font-weight: bold; -fx-padding: 1 0 0 0;");
+          box.getChildren().add(label);
+          break;
         }
       }
       return new SimpleObjectProperty(box);
@@ -724,5 +741,9 @@ public class TableOverviewController implements Initializable, StudioFXControlle
 
   public GameRepresentation getSelection() {
     return tableView.getSelectionModel().getSelectedItem();
+  }
+
+  public List<PlaylistRepresentation> getPlaylists() {
+    return this.playlists;
   }
 }

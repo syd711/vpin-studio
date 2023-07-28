@@ -53,6 +53,9 @@
               <fx:include fx:id="tablesSideBar" source="scene-tables-sidebar.fxml" />
               <fx:include fx:id="repositorySideBar" source="../archiving/scene-repository-sidebar.fxml" />
          </children>
+         <padding>
+            <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
+         </padding>
       </VBox>
    </right>
    <stylesheets>

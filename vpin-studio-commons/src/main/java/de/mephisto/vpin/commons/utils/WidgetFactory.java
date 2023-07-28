@@ -8,7 +8,10 @@ import de.mephisto.vpin.restclient.representations.PlaylistRepresentation;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Rectangle2D;
-import javafx.scene.*;
+import javafx.scene.Node;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.scene.SnapshotParameters;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -103,9 +106,16 @@ public class WidgetFactory {
     FontIcon fontIcon = new FontIcon();
     fontIcon.setIconSize(24);
     fontIcon.setIconColor(Paint.valueOf("#FFFFFF"));
-    if(playlist.getMenuColor() != null) {
-      fontIcon.setIconColor(Paint.valueOf("#" + Integer.toHexString(playlist.getMenuColor())));
+    String hex = "#FFFFFF";
+    if (playlist.getMenuColor() != null) {
+      if(playlist.getMenuColor() == 0) {
+        hex = "#000000";
+      }
+      else {
+        hex = "#" + Integer.toHexString(playlist.getMenuColor());
+      }
     }
+    fontIcon.setIconColor(Paint.valueOf(hex));
     fontIcon.setIconLiteral("mdi2v-view-list");
     label.setGraphic(fontIcon);
     return label;
@@ -437,7 +447,12 @@ public class WidgetFactory {
       if (item != null) {
         String hex = "#FFFFFF";
         if (item.getMenuColor() != null) {
-          hex = "#" + Integer.toHexString(item.getMenuColor());
+          if(item.getMenuColor() == 0) {
+            hex = "#000000";
+          }
+          else {
+            hex = "#" + Integer.toHexString(item.getMenuColor());
+          }
         }
 
         FontIcon fontIcon = new FontIcon();

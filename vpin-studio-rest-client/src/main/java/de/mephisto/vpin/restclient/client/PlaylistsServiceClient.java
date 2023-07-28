@@ -1,5 +1,6 @@
 package de.mephisto.vpin.restclient.client;
 
+import de.mephisto.vpin.restclient.representations.GameRepresentation;
 import de.mephisto.vpin.restclient.representations.PlaylistRepresentation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,5 +25,17 @@ public class PlaylistsServiceClient extends VPinStudioClientService {
 
   public List<PlaylistRepresentation> getPlaylists() {
     return Arrays.asList(getRestClient().get(API + "playlists", PlaylistRepresentation[].class));
+  }
+
+  public void removeFromPlaylist(PlaylistRepresentation playlist, GameRepresentation game) {
+    System.out.println(playlist + "/" + game.getGameDisplayName());
+  }
+
+  public void addToPlaylist(PlaylistRepresentation playlist, GameRepresentation game) {
+
+  }
+
+  public void setPlaylistColor(PlaylistRepresentation playlist, String colorhex) {
+
   }
 }

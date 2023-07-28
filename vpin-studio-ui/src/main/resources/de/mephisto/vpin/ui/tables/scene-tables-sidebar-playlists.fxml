@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Hyperlink?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.VBox?>
+
+<BorderPane fx:id="defaultBackgroundBorderPane" prefWidth="600.0" styleClass="accordion-container" stylesheets="@../stylesheet.css" BorderPane.alignment="CENTER" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.tables.TablesSidebarPlaylistsController">
+   <padding>
+      <Insets left="1.0" right="1.0" />
+   </padding>
+   <top>
+      <VBox fx:id="dataRoot" BorderPane.alignment="CENTER">
+         <BorderPane.margin>
+            <Insets />
+         </BorderPane.margin>
+         <children>
+            <VBox fx:id="errorBox" styleClass="error-container">
+               <children>
+                  <BorderPane>
+                     <left>
+                        <Label fx:id="errorTitle" nodeOrientation="LEFT_TO_RIGHT" styleClass="error-title" text="Label" wrapText="true" BorderPane.alignment="CENTER" />
+                     </left>
+                     <right>
+                        <Hyperlink onAction="#onDismiss" text="Dismiss" BorderPane.alignment="CENTER" />
+                     </right>
+                  </BorderPane>
+                  <Label fx:id="errorText" layoutX="22.0" layoutY="22.0" styleClass="error-message" text="Label" wrapText="true" />
+               </children>
+            </VBox>
+            <VBox fx:id="emptyDataBox">
+               <children>
+                  <Label styleClass="preference-description" text="No table selected." />
+               </children>
+               <VBox.margin>
+                  <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
+               </VBox.margin>
+            </VBox>
+         </children>
+      </VBox>
+   </top>
+   <center>
+      <VBox BorderPane.alignment="TOP_LEFT">
+         <children>
+            <VBox>
+               <children>
+                  <Label styleClass="preference-description" text="Tables can only be assigned to static playlists." />
+                  <Label layoutX="10.0" layoutY="10.0" styleClass="preference-description" text="The color assignment will be stored as menu color in PinUP Popper." />
+               </children>
+               <VBox.margin>
+                  <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
+               </VBox.margin>
+            </VBox>
+            <ScrollPane hbarPolicy="NEVER">
+               <content>
+                    <VBox fx:id="dataBox">
+                     <padding>
+                        <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
+                     </padding>
+                    </VBox>
+               </content>
+            </ScrollPane>
+         </children>
+      </VBox>
+   </center>
+</BorderPane>

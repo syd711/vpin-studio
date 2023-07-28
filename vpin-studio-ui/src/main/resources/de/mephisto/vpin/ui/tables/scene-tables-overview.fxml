@@ -32,16 +32,16 @@
                                     <columns>
                                         <TableColumn fx:id="columnId" minWidth="35.99993896484375" prefWidth="58.399959564208984" style="-fx-alignment: baseline-right;" text="ID" />
                                         <TableColumn fx:id="columnStatus" minWidth="32.79998779296875" prefWidth="53.5999755859375" style="-fx-alignment: CENTER;" text="Status" />
-                                        <TableColumn fx:id="columnDisplayName" minWidth="100.0" prefWidth="306.40003204345703" style="-fx-alignment: BASELINE_LEFT;" text="Display Name" />
-                              <TableColumn fx:id="columnPlaylists" minWidth="51.199951171875" prefWidth="90.0" style="-fx-alignment: BASELINE_CENTER;" text="Playlists" />
+                                        <TableColumn fx:id="columnDisplayName" minWidth="100.0" prefWidth="290.0" style="-fx-alignment: BASELINE_LEFT;" text="Display Name" />
+                              <TableColumn fx:id="columnPlaylists" minWidth="51.199951171875" prefWidth="130.0" style="-fx-alignment: BASELINE_CENTER;" text="Playlists" />
                                         <TableColumn fx:id="columnEmulator" minWidth="10.4000244140625" prefWidth="126.4000244140625" style="-fx-alignment: BASELINE_LEFT;" text="Emulator" visible="false" />
                                         <TableColumn fx:id="columnB2S" minWidth="51.199951171875" prefWidth="90.0" style="-fx-alignment: CENTER;" text="DirectB2S" />
-                                        <TableColumn fx:id="columnPUPPack" minWidth="57.5999755859375" prefWidth="90.0" style="-fx-alignment: CENTER;" text="PUP Pack" />
+                                        <TableColumn fx:id="columnPUPPack" minWidth="57.5999755859375" prefWidth="85.0" style="-fx-alignment: CENTER;" text="PUP Pack" />
                                         <TableColumn fx:id="columnPOV" minWidth="57.5999755859375" prefWidth="64.0" style="-fx-alignment: CENTER;" text="POV" />
-                                        <TableColumn fx:id="columnAltSound" minWidth="10.4000244140625" prefWidth="90.0" style="-fx-alignment: CENTER;" text="ALT Sound" />
-                              <TableColumn fx:id="columnAltColor" minWidth="10.4000244140625" prefWidth="90.0" style="-fx-alignment: CENTER;" text="ALT Color" />
+                                        <TableColumn fx:id="columnAltSound" minWidth="10.4000244140625" prefWidth="85.0" style="-fx-alignment: CENTER;" text="ALT Sound" />
+                              <TableColumn fx:id="columnAltColor" minWidth="10.4000244140625" prefWidth="85.0" style="-fx-alignment: CENTER;" text="ALT Color" />
                                         <TableColumn fx:id="columnRom" minWidth="10.4000244140625" prefWidth="140.0" style="-fx-alignment: BASELINE_LEFT;" text="ROM" />
-                                        <TableColumn fx:id="columnHSType" minWidth="10.4000244140625" prefWidth="130.0" style="-fx-alignment: BASELINE_LEFT;" text="Highscore Type" />
+                                        <TableColumn fx:id="columnHSType" minWidth="10.4000244140625" prefWidth="115.0" style="-fx-alignment: BASELINE_LEFT;" text="Highscore Type" />
                                     </columns>
                                 </TableView>
                             </children>
@@ -122,7 +122,7 @@
                            </tooltip>
                                 </Button>
                                 <Separator orientation="VERTICAL" prefHeight="30.0" prefWidth="12.0" />
-                        <ComboBox fx:id="playlistCombo" prefHeight="30.0" prefWidth="288.0" />
+                        <ComboBox fx:id="playlistCombo" prefHeight="30.0" prefWidth="229.0" />
                         <Separator layoutX="277.0" layoutY="10.0" orientation="VERTICAL" prefHeight="30.0" prefWidth="12.0" />
                         <Button fx:id="importBtn" layoutX="560.0" layoutY="11.0" mnemonicParsing="false" onAction="#onImport" textFill="WHITE">
                            <font>
