@@ -6,6 +6,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 
 /*********************************************************************************************************************
@@ -27,15 +28,25 @@ public class PlaylistsServiceClient extends VPinStudioClientService {
     return Arrays.asList(getRestClient().get(API + "playlists", PlaylistRepresentation[].class));
   }
 
-  public void removeFromPlaylist(PlaylistRepresentation playlist, GameRepresentation game) {
-    System.out.println(playlist + "/" + game.getGameDisplayName());
+  public PlaylistRepresentation getPlaylist(int playlistId) {
+    return getRestClient().get(API + "playlists/" + playlistId, PlaylistRepresentation.class);
   }
 
-  public void addToPlaylist(PlaylistRepresentation playlist, GameRepresentation game) {
 
+  public PlaylistRepresentation removeFromPlaylist(PlaylistRepresentation playlist, GameRepresentation game) {
+    getRestClient().delete(API + "playlists/" + playlist.getId() + "/" + game.getId(), new HashMap<>());
+    return getPlaylist(playlist.getId());
   }
 
-  public void setPlaylistColor(PlaylistRepresentation playlist, String colorhex) {
+  public PlaylistRepresentation addToPlaylist(PlaylistRepresentation playlist, GameRepresentation game) throws Exception {
+    return getRestClient().put(API + "playlists/" + playlist.getId() + "/" + game.getId(), new HashMap<>(), PlaylistRepresentation.class);
+  }
 
+  public PlaylistRepresentation setPlaylistColor(PlaylistRepresentation playlist, String colorhex) throws Exception {
+    if (colorhex.startsWith("#")) {
+      colorhex = colorhex.substring(1);
+    }
+    long color = Long.parseLong(colorhex, 16);
+    return getRestClient().put(API + "playlists/" + playlist.getId() + "/color/" + color, new HashMap<>(), PlaylistRepresentation.class);
   }
 }

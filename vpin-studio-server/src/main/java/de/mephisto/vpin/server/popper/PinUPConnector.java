@@ -427,6 +427,46 @@ public class PinUPConnector implements InitializingBean {
     }
   }
 
+
+
+  @NonNull
+  public Playlist getPlayList(int id) {
+    Playlist playlist = new Playlist();
+    Connection connect = this.connect();
+    try {
+      Statement statement = connect.createStatement();
+      ResultSet rs = statement.executeQuery("SELECT * FROM Playlists WHERE Visible = 1 AND PlayListID = " + id + ";");
+      while (rs.next()) {
+        String sql = rs.getString("PlayListSQL");
+        String name  = rs.getString("PlayName");
+        boolean sqlPlaylist = rs.getInt("PlayListType") == 1;
+        playlist.setId(rs.getInt("PlayListID"));
+        playlist.setName(name);
+        playlist.setPlayListSQL(sql);
+
+        playlist.setMenuColor(rs.getInt("MenuColor"));
+        if (rs.wasNull()) {
+          playlist.setMenuColor(null);
+        }
+        playlist.setSqlPlayList(sqlPlaylist);
+
+        if(sqlPlaylist) {
+          playlist.setGameIds(getGameIdsFromSqlPlaylist(sql));
+        }
+        else {
+          playlist.setGameIds(getGameIdsFromPlaylist(playlist.getId()));
+        }
+      }
+      rs.close();
+      statement.close();
+    } catch (SQLException e) {
+      LOG.error("Failed to get playlist: " + e.getMessage(), e);
+    } finally {
+      this.disconnect(connect);
+    }
+    return playlist;
+  }
+
   @NonNull
   public List<Playlist> getPlayLists(boolean excludeSqlLists) {
     Connection connect = this.connect();
@@ -473,7 +513,21 @@ public class PinUPConnector implements InitializingBean {
     return result;
   }
 
-  public void addToPlaylist(int gameId, int playlistId) {
+  public void setPlaylistColor(int playlistId, long color) {
+    Connection connect = this.connect();
+    String sql = "UPDATE PlayLists SET 'MenuColor'=" + color + " WHERE PlayListID = " + playlistId + ";";
+    try {
+      Statement stmt = connect.createStatement();
+      stmt.executeUpdate(sql);
+      stmt.close();
+    } catch (Exception e) {
+      LOG.error("Failed to update PlayList: " + e.getMessage(), e);
+    } finally {
+      this.disconnect(connect);
+    }
+  }
+
+  public void addToPlaylist(int playlistId, int gameId) {
     Connection connect = this.connect();
     try {
       PreparedStatement preparedStatement = connect.prepareStatement("INSERT INTO PlayListDetails (PlayListID, GameID, Visible, DisplayOrder, NumPlayed) VALUES (?,?,?,?,?)");
@@ -502,6 +556,23 @@ public class PinUPConnector implements InitializingBean {
       preparedStatement.close();
 
       LOG.info("Removed game " + gameId + " from all playlists");
+    } catch (SQLException e) {
+      LOG.error("Failed to update playlist details: " + e.getMessage(), e);
+    } finally {
+      this.disconnect(connect);
+    }
+  }
+
+  public void deleteFromPlaylist(int playlistId, int gameId) {
+    Connection connect = this.connect();
+    try {
+      PreparedStatement preparedStatement = connect.prepareStatement("DELETE FROM PlayListDetails WHERE GameID = ? AND PlayListID = ?");
+      preparedStatement.setInt(1, gameId);
+      preparedStatement.setInt(2, playlistId);
+      preparedStatement.executeUpdate();
+      preparedStatement.close();
+
+      LOG.info("Removed game " + gameId + " from playlist");
     } catch (SQLException e) {
       LOG.error("Failed to update playlist details: " + e.getMessage(), e);
     } finally {

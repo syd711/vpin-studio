@@ -84,7 +84,7 @@ public class ArchiveInstallerJob implements Job {
         }
 
         if (installDescriptor.getPlaylistId() != -1) {
-          pinUPConnector.addToPlaylist(game.getId(), installDescriptor.getPlaylistId());
+          pinUPConnector.addToPlaylist(installDescriptor.getPlaylistId(), game.getId());
         }
       }
       return result;

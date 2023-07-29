@@ -94,7 +94,7 @@ public class PopperService implements InitializingBean {
     if (importToPopper) {
       int gameId = pinUPConnector.importGame(file);
       if (gameId >= 0 && playListId >= 0) {
-        pinUPConnector.addToPlaylist(gameId, playListId);
+        pinUPConnector.addToPlaylist(playListId, gameId);
       }
       return gameId;
     }
@@ -187,7 +187,7 @@ public class PopperService implements InitializingBean {
       File file = systemService.getVPinStudioMenuExe();
       int newGameId = pinUPConnector.importGame(EmulatorType.PC_GAMES, UIDefaults.MANAGER_TITLE, file.getAbsolutePath(),
           UIDefaults.MANAGER_TITLE, UIDefaults.MANAGER_TITLE);
-      pinUPConnector.addToPlaylist(newGameId, archiveManagerDescriptor.getPlaylistId());
+      pinUPConnector.addToPlaylist(archiveManagerDescriptor.getPlaylistId(), newGameId);
     }
     else {
       File file = systemService.getVPinStudioMenuExe();

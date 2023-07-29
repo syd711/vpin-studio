@@ -18,6 +18,8 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
@@ -383,8 +385,10 @@ public class TableOverviewController implements Initializable, StudioFXControlle
       tableView.getSelectionModel().clearSelection();
 
       int index = data.indexOf(refreshedGame);
-      data.remove(index);
-      data.add(index, refreshedGame);
+      if(index != -1) {
+        data.remove(index);
+        data.add(index, refreshedGame);
+      }
 
       if (selection != null) {
         tableView.getSelectionModel().select(refreshedGame);
@@ -491,6 +495,20 @@ public class TableOverviewController implements Initializable, StudioFXControlle
 
     playlistCombo.setCellFactory(c -> new WidgetFactory.PlaylistBackgroundImageListCell());
     playlistCombo.setButtonCell(new WidgetFactory.PlaylistBackgroundImageListCell());
+    playlistCombo.valueProperty().addListener(new ChangeListener<PlaylistRepresentation>() {
+      @Override
+      public void changed(ObservableValue<? extends PlaylistRepresentation> observableValue, PlaylistRepresentation playlistRepresentation, PlaylistRepresentation t1) {
+        tableView.getSelectionModel().clearSelection();
+        refreshView(Optional.empty());
+
+        filterGames(games);
+        tableView.setItems(data);
+
+        if (!data.isEmpty()) {
+          tableView.getSelectionModel().select(0);
+        }
+      }
+    });
 
     bindTable();
     bindSearchField();
@@ -498,7 +516,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
 
   private void refreshPlaylists() {
     this.playlistCombo.setDisable(true);
-    playlists = client.getPlaylistsService().getPlaylists();
+    playlists = new ArrayList<>(client.getPlaylistsService().getPlaylists());
     List<PlaylistRepresentation> pl = new ArrayList<>(playlists);
     pl.add(0, null);
     playlistCombo.setItems(FXCollections.observableList(pl));
@@ -615,14 +633,14 @@ public class TableOverviewController implements Initializable, StudioFXControlle
       List<PlaylistRepresentation> matches = new ArrayList<>();
       for (PlaylistRepresentation playlist : playlists) {
         if (playlist.getGameIds().contains(value.getId())) {
-         matches.add(playlist);
+          matches.add(playlist);
         }
       }
 
       for (PlaylistRepresentation match : matches) {
         box.getChildren().add(WidgetFactory.createPlaylistIcon(match));
-        if(box.getChildren().size() == 3 && matches.size() > box.getChildren().size()) {
-          Label label = new Label("+" + (matches.size()-box.getChildren().size()));
+        if (box.getChildren().size() == 3 && matches.size() > box.getChildren().size()) {
+          Label label = new Label("+" + (matches.size() - box.getChildren().size()));
           label.setStyle("-fx-font-size: 14px;-fx-font-weight: bold; -fx-padding: 1 0 0 0;");
           box.getChildren().add(label);
           break;
@@ -681,9 +699,16 @@ public class TableOverviewController implements Initializable, StudioFXControlle
   private void filterGames(List<GameRepresentation> games) {
     List<GameRepresentation> filtered = new ArrayList<>();
     String filterValue = textfieldSearch.textProperty().getValue();
+
+    PlaylistRepresentation playlist = playlistCombo.getValue();
+
     for (GameRepresentation game : games) {
       String gameEmuType = game.getEmulator().getName();
       if (!gameEmuType.equals(EmulatorType.VISUAL_PINBALL_X) && !gameEmuType.equals(EmulatorType.VISUAL_PINBALL)) {
+        continue;
+      }
+
+      if (playlist != null && !playlist.getGameIds().contains(game.getId())) {
         continue;
       }
 
@@ -745,5 +770,23 @@ public class TableOverviewController implements Initializable, StudioFXControlle
 
   public List<PlaylistRepresentation> getPlaylists() {
     return this.playlists;
+  }
+
+  public void updatePlaylist(PlaylistRepresentation update) {
+    GameRepresentation selectedItem = this.tableView.getSelectionModel().getSelectedItem();
+    if(selectedItem != null) {
+      EventManager.getInstance().notifyTableChange(selectedItem.getId(), null);
+    }
+
+    int pos = this.playlists.indexOf(update);
+    this.playlists.remove(update);
+    this.playlists.add(pos, update);
+
+    List<PlaylistRepresentation> refreshedData = new ArrayList<>(this.playlists);
+    refreshedData.add(0, null);
+    this.playlistCombo.setItems(FXCollections.observableList(refreshedData));
+
+    filterGames(games);
+    tableView.setItems(data);
   }
 }

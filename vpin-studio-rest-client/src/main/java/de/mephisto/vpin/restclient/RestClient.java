@@ -120,6 +120,14 @@ public class RestClient implements ClientHttpRequestInterceptor {
     return exchange(url, HttpMethod.PUT, entity, Boolean.class);
   }
 
+  public <T> T put(String url, Map<String, Object> model, Class <T> entityType) throws Exception {
+    LOG.info("HTTP PUT " + url + " " + model);
+    HttpHeaders headers = new HttpHeaders();
+    headers.setContentType(MediaType.APPLICATION_JSON);
+    HttpEntity<Map> entity = new HttpEntity<>(model, headers);
+    return exchange(url, HttpMethod.PUT, entity, entityType);
+  }
+
   public <T> T exchange(String path, HttpMethod method, HttpEntity requestEntity, Class<T> entityClass) throws Exception {
     String url = baseUrl + path;
     ResponseEntity<T> response = restTemplate.exchange(url, method, requestEntity, entityClass);

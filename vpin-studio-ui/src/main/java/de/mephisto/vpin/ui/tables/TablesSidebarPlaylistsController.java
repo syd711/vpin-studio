@@ -1,10 +1,9 @@
 package de.mephisto.vpin.ui.tables;
 
 import de.mephisto.vpin.commons.utils.WidgetFactory;
-import de.mephisto.vpin.restclient.mame.MameOptions;
 import de.mephisto.vpin.restclient.representations.GameRepresentation;
 import de.mephisto.vpin.restclient.representations.PlaylistRepresentation;
-import de.mephisto.vpin.ui.Studio;
+import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.util.BindingUtil;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -17,7 +16,6 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
-import javafx.scene.paint.Paint;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -25,6 +23,9 @@ import java.net.URL;
 import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
+
+import static de.mephisto.vpin.ui.Studio.client;
+import static de.mephisto.vpin.ui.Studio.stage;
 
 public class TablesSidebarPlaylistsController implements Initializable {
   private final static Logger LOG = LoggerFactory.getLogger(TablesSidebarPlaylistsController.class);
@@ -90,24 +91,32 @@ public class TablesSidebarPlaylistsController implements Initializable {
         root.setSpacing(3);
         CheckBox checkBox = new CheckBox();
         checkBox.setUserData(playlist);
-        checkBox.selectedProperty().addListener(new ChangeListener<Boolean>() {
-          @Override
-          public void changed(ObservableValue<? extends Boolean> observableValue, Boolean aBoolean, Boolean t1) {
-            if(t1) {
-              Studio.client.getPlaylistsService().addToPlaylist(playlist, game);
-            }
-            else {
-              Studio.client.getPlaylistsService().removeFromPlaylist(playlist, game);
-            }
-          }
-        });
         checkBox.setSelected(playlist.getGameIds().contains(game.getId()));
         checkBox.setDisable(playlist.isSqlPlayList());
         checkBox.setStyle("-fx-font-size: 14px;-fx-text-fill: white;");
 
+        checkBox.selectedProperty().addListener(new ChangeListener<Boolean>() {
+          @Override
+          public void changed(ObservableValue<? extends Boolean> observableValue, Boolean aBoolean, Boolean t1) {
+            try {
+              if (t1) {
+                PlaylistRepresentation update = client.getPlaylistsService().addToPlaylist(playlist, game);
+                refreshPlaylist(update);
+              }
+              else {
+                PlaylistRepresentation update = client.getPlaylistsService().removeFromPlaylist(playlist, game);
+                refreshPlaylist(update);
+              }
+            } catch (Exception e) {
+              LOG.error("Failed to update playlists: " + e.getMessage(), e);
+              WidgetFactory.showAlert(stage, "Error", "Failed to update playlists: " + e.getMessage());
+            }
+          }
+        });
+
         String hex = "#FFFFFF";
         if (playlist.getMenuColor() != null) {
-          if(playlist.getMenuColor() == 0) {
+          if (playlist.getMenuColor() == 0) {
             hex = "#000000";
           }
           else {
@@ -118,10 +127,15 @@ public class TablesSidebarPlaylistsController implements Initializable {
         colorPicker.valueProperty().addListener(new ChangeListener<Color>() {
           @Override
           public void changed(ObservableValue<? extends Color> observableValue, Color color, Color t1) {
-            Studio.client.getPlaylistsService().setPlaylistColor(playlist, BindingUtil.toHexString(t1));
+            try {
+              PlaylistRepresentation update = client.getPlaylistsService().setPlaylistColor(playlist, BindingUtil.toHexString(t1));
+              refreshPlaylist(update);
+            } catch (Exception e) {
+              LOG.error("Failed to update playlists: " + e.getMessage(), e);
+              WidgetFactory.showAlert(stage, "Error", "Failed to update playlists: " + e.getMessage());
+            }
           }
         });
-
         Label name = new Label(playlist.getName());
         name.setStyle("-fx-font-size: 14px;-fx-text-fill: white;-fx-padding: 0 0 0 6;");
         name.setPrefWidth(370);
@@ -136,6 +150,10 @@ public class TablesSidebarPlaylistsController implements Initializable {
       }
 
     }
+  }
+
+  private void refreshPlaylist(PlaylistRepresentation update) {
+    tablesSidebarController.getTablesController().updatePlaylist(update);
   }
 
   public void setSidebarController(TablesSidebarController tablesSidebarController) {
