@@ -114,16 +114,7 @@ public class TablesSidebarPlaylistsController implements Initializable {
           }
         });
 
-        String hex = "#FFFFFF";
-        if (playlist.getMenuColor() != null) {
-          if (playlist.getMenuColor() == 0) {
-            hex = "#000000";
-          }
-          else {
-            hex = "#" + Integer.toHexString(playlist.getMenuColor());
-          }
-        }
-        ColorPicker colorPicker = new ColorPicker(Color.web(hex));
+        ColorPicker colorPicker = new ColorPicker(Color.web(WidgetFactory.hexColor(playlist.getMenuColor())));
         colorPicker.valueProperty().addListener(new ChangeListener<Color>() {
           @Override
           public void changed(ObservableValue<? extends Color> observableValue, Color color, Color t1) {

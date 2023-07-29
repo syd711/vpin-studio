@@ -100,22 +100,28 @@ public class WidgetFactory {
     return fontIcon;
   }
 
+  public static String hexColor(Integer color) {
+    String hex = "FFFFFF";
+    if (color != null) {
+      if (color == 0) {
+        hex = "000000";
+      }
+      else {
+        hex = "" + Integer.toHexString(color);
+      }
+    }
+    while (hex.length() < 6) {
+      hex = "0" + hex;
+    }
+    return "#" + hex;
+  }
+
   public static Label createPlaylistIcon(PlaylistRepresentation playlist) {
     Label label = new Label();
     label.setTooltip(new Tooltip(playlist.getName()));
     FontIcon fontIcon = new FontIcon();
     fontIcon.setIconSize(24);
-    fontIcon.setIconColor(Paint.valueOf("#FFFFFF"));
-    String hex = "#FFFFFF";
-    if (playlist.getMenuColor() != null) {
-      if(playlist.getMenuColor() == 0) {
-        hex = "#000000";
-      }
-      else {
-        hex = "#" + Integer.toHexString(playlist.getMenuColor());
-      }
-    }
-    fontIcon.setIconColor(Paint.valueOf(hex));
+    fontIcon.setIconColor(Paint.valueOf(hexColor(playlist.getMenuColor())));
     fontIcon.setIconLiteral("mdi2v-view-list");
     label.setGraphic(fontIcon);
     return label;
@@ -445,19 +451,9 @@ public class WidgetFactory {
       setGraphic(null);
       setText(null);
       if (item != null) {
-        String hex = "#FFFFFF";
-        if (item.getMenuColor() != null) {
-          if(item.getMenuColor() == 0) {
-            hex = "#000000";
-          }
-          else {
-            hex = "#" + Integer.toHexString(item.getMenuColor());
-          }
-        }
-
         FontIcon fontIcon = new FontIcon();
         fontIcon.setIconSize(24);
-        fontIcon.setIconColor(Paint.valueOf(hex));
+        fontIcon.setIconColor(Paint.valueOf(WidgetFactory.hexColor(item.getMenuColor())));
         fontIcon.setIconLiteral("mdi2v-view-list");
         setGraphic(fontIcon);
 
