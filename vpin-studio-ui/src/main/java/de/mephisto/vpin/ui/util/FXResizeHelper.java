@@ -180,16 +180,36 @@ public class FXResizeHelper {
       boolean u_trigger = sy < SCENE.getHeight() && sy > SCENE.getHeight() - TR;
       boolean d_trigger = sy > 0 && sy < TR;
 
-      if (l_trigger && d_trigger) fireAction(Cursor.NW_RESIZE);
-      else if (l_trigger && u_trigger) fireAction(Cursor.NE_RESIZE);
-      else if (r_trigger && d_trigger) fireAction(Cursor.SW_RESIZE);
-      else if (r_trigger && u_trigger) fireAction(Cursor.SE_RESIZE);
-      else if (l_trigger) fireAction(Cursor.E_RESIZE);
-      else if (r_trigger) fireAction(Cursor.W_RESIZE);
-      else if (d_trigger) fireAction(Cursor.N_RESIZE);
-      else if (sy < TM && !u_trigger) fireAction(Cursor.OPEN_HAND);
-      else if (u_trigger) fireAction(Cursor.S_RESIZE);
-      else fireAction(Cursor.DEFAULT);
+      if (l_trigger && d_trigger) {
+        fireAction(Cursor.NW_RESIZE);
+      }
+      else if (l_trigger && u_trigger) {
+        fireAction(Cursor.NE_RESIZE);
+      }
+      else if (r_trigger && d_trigger) {
+        fireAction(Cursor.SW_RESIZE);
+      }
+      else if (r_trigger && u_trigger) {
+        fireAction(Cursor.SE_RESIZE);
+      }
+      else if (l_trigger) {
+        fireAction(Cursor.E_RESIZE);
+      }
+      else if (r_trigger) {
+        fireAction(Cursor.W_RESIZE);
+      }
+      else if (d_trigger) {
+        fireAction(Cursor.N_RESIZE);
+      }
+      else if (sy < TM && !u_trigger) {
+        fireAction(Cursor.OPEN_HAND);
+      }
+      else if (u_trigger) {
+        fireAction(Cursor.S_RESIZE);
+      }
+      else {
+        fireAction(Cursor.DEFAULT);
+      }
     });
   }
 
