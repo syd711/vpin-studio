@@ -16,6 +16,7 @@ import de.mephisto.vpin.ui.tables.validation.ValidationTexts;
 import de.mephisto.vpin.ui.util.Dialogs;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import javafx.application.Platform;
+import javafx.beans.binding.Bindings;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.value.ChangeListener;
@@ -23,6 +24,8 @@ import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -654,21 +657,62 @@ public class TableOverviewController implements Initializable, StudioFXControlle
     tableView.setEditable(true);
     tableView.getSelectionModel().getSelectedItems().addListener(this);
 
-//    tableView.setRowFactory(
-//        tableView -> {
-//          final TableRow<GameRepresentation> row = new TableRow<>();
-//          final ContextMenu rowMenu = new ContextMenu();
-//          MenuItem editItem = new MenuItem("Edit");
-//          MenuItem removeItem = new MenuItem("Delete");
-//          rowMenu.getItems().addAll(editItem, removeItem);
-//
-//          // only display context menu for non-empty rows:
-//          row.contextMenuProperty().bind(
-//              Bindings.when(row.emptyProperty())
-//                  .then((ContextMenu) null)
-//                  .otherwise(rowMenu));
-//          return row;
-//        });
+    tableView.setRowFactory(
+        tableView -> {
+          final TableRow<GameRepresentation> row = new TableRow<>();
+          final ContextMenu rowMenu = new ContextMenu();
+
+          MenuItem scanItem = new MenuItem("Scan");
+          scanItem.setGraphic(WidgetFactory.createIcon("mdi2m-map-search-outline"));
+          scanItem.setOnAction(actionEvent -> onTablesScan());
+          scanItem.setDisable(tableView.getSelectionModel().isEmpty());
+          rowMenu.getItems().add(scanItem);
+
+          MenuItem scanAllItem = new MenuItem("Scan All");
+          scanAllItem.setGraphic(WidgetFactory.createIcon("mdi2m-map-search"));
+          scanAllItem.setOnAction(actionEvent -> onTablesScanAll());
+          rowMenu.getItems().add(scanAllItem);
+
+          rowMenu.getItems().add(new SeparatorMenuItem());
+
+          MenuItem validateItem = new MenuItem("Validate");
+          validateItem.setGraphic(WidgetFactory.createIcon("sil-magnifier"));
+          validateItem.setDisable(tableView.getSelectionModel().isEmpty());
+          validateItem.setOnAction(actionEvent -> onValidate());
+          rowMenu.getItems().add(validateItem);
+
+          rowMenu.getItems().add(new SeparatorMenuItem());
+
+          MenuItem launchItem = new MenuItem("Launch");
+          launchItem.setGraphic(WidgetFactory.createGreenIcon("mdi2p-play"));
+          launchItem.setDisable(tableView.getSelectionModel().isEmpty());
+          launchItem.setOnAction(actionEvent -> onPlay());
+          rowMenu.getItems().add(launchItem);
+
+          rowMenu.getItems().add(new SeparatorMenuItem());
+
+          MenuItem exportItem = new MenuItem("Export");
+          exportItem.setGraphic(WidgetFactory.createIcon("mdi2e-export"));
+          exportItem.setDisable(tableView.getSelectionModel().isEmpty());
+          exportItem.setOnAction(actionEvent -> onBackup());
+          rowMenu.getItems().add(exportItem);
+
+          rowMenu.getItems().add(new SeparatorMenuItem());
+
+
+          MenuItem removeItem = new MenuItem("Delete");
+          removeItem.setOnAction(actionEvent -> onDelete());
+          removeItem.setDisable(tableView.getSelectionModel().isEmpty());
+          removeItem.setGraphic(WidgetFactory.createAlertIcon("mdi2d-delete-outline"));
+          rowMenu.getItems().add(removeItem);
+
+          // only display context menu for non-empty rows:
+          row.contextMenuProperty().bind(
+              Bindings.when(row.emptyProperty())
+                  .then((ContextMenu) null)
+                  .otherwise(rowMenu));
+          return row;
+        });
 
 
 //    emulatorTypeCombo.setItems(FXCollections.observableList(Arrays.asList("", EmulatorTypes.VISUAL_PINBALL_X, EmulatorTypes.PINBALL_FX3, EmulatorTypes.FUTURE_PINBALL)));

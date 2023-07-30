@@ -84,6 +84,30 @@ public class WidgetFactory {
     return fontIcon;
   }
 
+  public static FontIcon createAlertIcon(String s) {
+    FontIcon fontIcon = new FontIcon();
+    fontIcon.setIconSize(18);
+    fontIcon.setIconColor(Paint.valueOf("#FF3333"));
+    fontIcon.setIconLiteral(s);
+    return fontIcon;
+  }
+
+  public static FontIcon createGreenIcon(String s) {
+    FontIcon fontIcon = new FontIcon();
+    fontIcon.setIconSize(18);
+    fontIcon.setIconColor(Paint.valueOf("#66FF66"));
+    fontIcon.setIconLiteral(s);
+    return fontIcon;
+  }
+
+  public static FontIcon createIcon(String s) {
+    FontIcon fontIcon = new FontIcon();
+    fontIcon.setIconSize(18);
+    fontIcon.setIconColor(Paint.valueOf("#FFFFFF"));
+    fontIcon.setIconLiteral(s);
+    return fontIcon;
+  }
+
   public static FontIcon createCheckboxIcon() {
     FontIcon fontIcon = new FontIcon();
     fontIcon.setIconSize(18);
