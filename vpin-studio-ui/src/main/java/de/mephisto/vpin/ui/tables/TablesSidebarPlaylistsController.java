@@ -3,6 +3,7 @@ package de.mephisto.vpin.ui.tables;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.representations.GameRepresentation;
 import de.mephisto.vpin.restclient.representations.PlaylistRepresentation;
+import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.util.BindingUtil;
 import javafx.beans.value.ChangeListener;
@@ -10,8 +11,10 @@ import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Pos;
+import javafx.scene.Node;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ColorPicker;
+import javafx.scene.control.Hyperlink;
 import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
@@ -45,6 +48,12 @@ public class TablesSidebarPlaylistsController implements Initializable {
   @FXML
   private Label errorText;
 
+  @FXML
+  private Node dataRoot;
+
+  @FXML
+  private Hyperlink dismissLink;
+
   private Optional<GameRepresentation> game = Optional.empty();
 
   private TablesSidebarController tablesSidebarController;
@@ -59,6 +68,8 @@ public class TablesSidebarPlaylistsController implements Initializable {
     emptyDataBox.managedProperty().bindBidirectional(emptyDataBox.visibleProperty());
     errorBox.managedProperty().bindBidirectional(errorBox.visibleProperty());
     errorBox.setVisible(false);
+
+    dismissLink.setVisible(false);
   }
 
   @FXML
@@ -75,6 +86,10 @@ public class TablesSidebarPlaylistsController implements Initializable {
   public void refreshView(Optional<GameRepresentation> g) {
     dataBox.getChildren().removeAll(dataBox.getChildren());
 
+    emptyDataBox.setVisible(true);
+    dataRoot.setVisible(true);
+    errorBox.setVisible(false);
+
     List<PlaylistRepresentation> playlists = this.tablesSidebarController.getTablesController().getPlaylists();
 
     emptyDataBox.setVisible(g.isEmpty());
@@ -83,6 +98,16 @@ public class TablesSidebarPlaylistsController implements Initializable {
     this.errorBox.setVisible(false);
     if (g.isPresent()) {
       GameRepresentation game = g.get();
+
+      boolean locked= client.getPinUPPopperService().isPinUPPopperRunning();
+      if(locked) {
+        emptyDataBox.setVisible(false);
+        dataRoot.setVisible(false);
+        errorBox.setVisible(true);
+        errorTitle.setText("The database is currently locked.");
+        errorText.setText("Exit PinUP Popper to modify playlists.");
+        return;
+      }
 
       for (PlaylistRepresentation playlist : playlists) {
         HBox root = new HBox();

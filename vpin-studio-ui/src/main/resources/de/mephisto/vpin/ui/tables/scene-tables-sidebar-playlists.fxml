@@ -24,7 +24,7 @@
                         <Label fx:id="errorTitle" nodeOrientation="LEFT_TO_RIGHT" styleClass="error-title" text="Label" wrapText="true" BorderPane.alignment="CENTER" />
                      </left>
                      <right>
-                        <Hyperlink onAction="#onDismiss" text="Dismiss" BorderPane.alignment="CENTER" />
+                        <Hyperlink fx:id="dismissLink" onAction="#onDismiss" text="Dismiss" BorderPane.alignment="CENTER" />
                      </right>
                   </BorderPane>
                   <Label fx:id="errorText" layoutX="22.0" layoutY="22.0" styleClass="error-message" text="Label" wrapText="true" />
@@ -42,7 +42,7 @@
       </VBox>
    </top>
    <center>
-      <VBox BorderPane.alignment="TOP_LEFT">
+      <VBox fx:id="dataRoot" BorderPane.alignment="TOP_LEFT">
          <children>
             <VBox>
                <children>

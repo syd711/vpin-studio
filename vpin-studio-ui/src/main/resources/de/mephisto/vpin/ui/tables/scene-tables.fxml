@@ -54,7 +54,7 @@
               <fx:include fx:id="repositorySideBar" source="../archiving/scene-repository-sidebar.fxml" />
          </children>
          <padding>
-            <Insets bottom="4.0" right="4.0" />
+            <Insets bottom="7.0" right="7.0" />
          </padding>
       </VBox>
    </right>

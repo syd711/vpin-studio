@@ -48,7 +48,7 @@ import java.util.*;
 
 import static de.mephisto.vpin.ui.Studio.client;
 
-public class TableOverviewController implements Initializable, StudioFXController {
+public class TableOverviewController implements Initializable, StudioFXController, ListChangeListener<GameRepresentation> {
   private final static Logger LOG = LoggerFactory.getLogger(TableOverviewController.class);
 
   @FXML
@@ -381,16 +381,18 @@ public class TableOverviewController implements Initializable, StudioFXControlle
     GameRepresentation refreshedGame = client.getGameService().getGame(id);
 
     Platform.runLater(() -> {
+      tableView.getSelectionModel().getSelectedItems().removeListener(this);
       GameRepresentation selection = tableView.getSelectionModel().getSelectedItem();
       tableView.getSelectionModel().clearSelection();
 
       int index = data.indexOf(refreshedGame);
-      if(index != -1) {
+      if (index != -1) {
         data.remove(index);
         data.add(index, refreshedGame);
       }
+      tableView.getSelectionModel().getSelectedItems().addListener(this);
 
-      if (selection != null) {
+      if (selection != null && data.contains(refreshedGame)) {
         tableView.getSelectionModel().select(refreshedGame);
       }
       tableView.refresh();
@@ -499,8 +501,6 @@ public class TableOverviewController implements Initializable, StudioFXControlle
       @Override
       public void changed(ObservableValue<? extends PlaylistRepresentation> observableValue, PlaylistRepresentation playlistRepresentation, PlaylistRepresentation t1) {
         tableView.getSelectionModel().clearSelection();
-        refreshView(Optional.empty());
-
         filterGames(games);
         tableView.setItems(data);
 
@@ -652,24 +652,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
 
     tableView.setItems(data);
     tableView.setEditable(true);
-    tableView.getSelectionModel().getSelectedItems().addListener((ListChangeListener<GameRepresentation>) c -> {
-      boolean disable = c.getList().isEmpty() || c.getList().size() > 1;
-      validateBtn.setDisable(disable);
-      deleteBtn.setDisable(c.getList().isEmpty());
-      backupBtn.setDisable(true);
-      playBtn.setDisable(disable);
-      scanBtn.setDisable(c.getList().isEmpty());
-
-      if (c.getList().isEmpty()) {
-        refreshView(Optional.empty());
-      }
-      else {
-        GameRepresentation gameRepresentation = c.getList().get(0);
-        backupBtn.setDisable(!gameRepresentation.isGameFileAvailable());
-        playBtn.setDisable(!gameRepresentation.isGameFileAvailable());
-        refreshView(Optional.ofNullable(gameRepresentation));
-      }
-    });
+    tableView.getSelectionModel().getSelectedItems().addListener(this);
 
 //    tableView.setRowFactory(
 //        tableView -> {
@@ -773,11 +756,6 @@ public class TableOverviewController implements Initializable, StudioFXControlle
   }
 
   public void updatePlaylist(PlaylistRepresentation update) {
-    GameRepresentation selectedItem = this.tableView.getSelectionModel().getSelectedItem();
-    if(selectedItem != null) {
-      EventManager.getInstance().notifyTableChange(selectedItem.getId(), null);
-    }
-
     int pos = this.playlists.indexOf(update);
     this.playlists.remove(update);
     this.playlists.add(pos, update);
@@ -786,7 +764,29 @@ public class TableOverviewController implements Initializable, StudioFXControlle
     refreshedData.add(0, null);
     this.playlistCombo.setItems(FXCollections.observableList(refreshedData));
 
-    filterGames(games);
-    tableView.setItems(data);
+    GameRepresentation selectedItem = this.tableView.getSelectionModel().getSelectedItem();
+    if (selectedItem != null) {
+      EventManager.getInstance().notifyTableChange(selectedItem.getId(), null);
+    }
+  }
+
+  @Override
+  public void onChanged(Change<? extends GameRepresentation> c) {
+    boolean disable = c.getList().isEmpty() || c.getList().size() > 1;
+    validateBtn.setDisable(disable);
+    deleteBtn.setDisable(c.getList().isEmpty());
+    backupBtn.setDisable(true);
+    playBtn.setDisable(disable);
+    scanBtn.setDisable(c.getList().isEmpty());
+
+    if (c.getList().isEmpty()) {
+      refreshView(Optional.empty());
+    }
+    else {
+      GameRepresentation gameRepresentation = c.getList().get(0);
+      backupBtn.setDisable(!gameRepresentation.isGameFileAvailable());
+      playBtn.setDisable(!gameRepresentation.isGameFileAvailable());
+      refreshView(Optional.ofNullable(gameRepresentation));
+    }
   }
 }
