@@ -47,7 +47,7 @@ jobs:
 
       - name: Set Release Version
         id: set-release-version
-        if: github.event_name == 'pull_request' || (github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main')
+        if: github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main'
         run:  | 
           $version = mvn "--batch-mode" org.apache.maven.plugins:maven-help-plugin:3.2.0:evaluate "-Dexpression=project.version" "-q" "-DforceStdout"
           echo "::set-output name=version::${version}"
