@@ -5,6 +5,7 @@ import de.mephisto.vpin.commons.utils.FileUtils;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.descriptors.DeleteDescriptor;
 import de.mephisto.vpin.restclient.popper.PopperScreen;
+import de.mephisto.vpin.restclient.popper.TableDetails;
 import de.mephisto.vpin.restclient.representations.ValidationState;
 import de.mephisto.vpin.server.altcolor.AltColorService;
 import de.mephisto.vpin.server.altsound.AltSoundService;
@@ -13,11 +14,10 @@ import de.mephisto.vpin.server.assets.AssetRepository;
 import de.mephisto.vpin.server.competitions.ScoreSummary;
 import de.mephisto.vpin.server.highscores.*;
 import de.mephisto.vpin.server.highscores.cards.CardService;
-import de.mephisto.vpin.server.playlists.PlaylistService;
 import de.mephisto.vpin.server.popper.Emulator;
 import de.mephisto.vpin.server.popper.GameMediaItem;
 import de.mephisto.vpin.server.popper.PinUPConnector;
-import de.mephisto.vpin.server.popper.Playlist;
+import de.mephisto.vpin.server.popper.PopperService;
 import de.mephisto.vpin.server.preferences.PreferencesService;
 import de.mephisto.vpin.server.puppack.PupPack;
 import de.mephisto.vpin.server.puppack.PupPacksService;
@@ -25,6 +25,7 @@ import de.mephisto.vpin.server.roms.RomService;
 import de.mephisto.vpin.server.roms.ScanResult;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -394,6 +395,45 @@ public class GameService {
 
   public List<ValidationState> getRomValidations(Game game) {
     return gameValidator.validateRom(game);
+  }
+
+  //TODO mpf
+  public boolean rename(PopperService popperService, Game game) {
+    String gameFilename = game.getGameFileName();
+    if (!gameFilename.endsWith(".vpx")) {
+      gameFilename = gameFilename + ".vpx";
+    }
+
+    TableDetails original = pinUPConnector.getTableDetails(game.getId());
+    Game originalGame = getGame(game.getId());
+    if (original != null && originalGame != null) {
+      if (!original.getGameDisplayName().equals(game.getGameDisplayName())) {
+        original.setGameDisplayName(game.getGameDisplayName());
+        pinUPConnector.saveTableDetails(game, original);
+        LOG.info("Finished game display name renmaing to " + game.getGameDisplayName());
+        return true;
+      }
+      else if (!original.getGameFileName().equals(gameFilename)) {
+        String originalFileName = original.getGameFileName();
+        original.setGameFileName(game.getGameFileName());
+        pinUPConnector.saveTableDetails(game, original);
+
+        //rename popper media
+        String originalName = FilenameUtils.getBaseName(originalFileName);
+        String newName = FilenameUtils.getBaseName(gameFilename);
+        popperService.renameGameMedia(originalGame, originalName, newName);
+
+        //rename additional files
+        String name = FilenameUtils.getBaseName(gameFilename);
+        FileUtils.rename(originalGame.getGameFile(), name);
+        FileUtils.rename(originalGame.getDirectB2SFile(), name);
+        FileUtils.rename(originalGame.getPOVFile(), name);
+        FileUtils.rename(originalGame.getResFile(), name);
+        LOG.info("Finished game file renaming to " + game.getGameFileName());
+        return true;
+      }
+    }
+    return false;
   }
 
   public Game save(Game game) throws Exception {

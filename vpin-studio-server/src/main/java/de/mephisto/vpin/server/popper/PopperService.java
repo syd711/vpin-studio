@@ -235,6 +235,28 @@ public class PopperService implements InitializingBean {
     }
   }
 
+  public void renameGameMedia(Game game, String oldName, String newBaseName) {
+    PopperScreen[] values = PopperScreen.values();
+    for (PopperScreen originalScreenValue : values) {
+
+      List<GameMediaItem> gameMediaItems = game.getGameMedia().getMediaItems(originalScreenValue);
+      for (GameMediaItem gameMediaItem : gameMediaItems) {
+        File gameMediaFile = gameMediaItem.getFile();
+        if (gameMediaFile.exists()) {
+          String name = gameMediaFile.getName();
+          String newName = name.replace(oldName, newBaseName);
+          File target = new File(gameMediaFile.getParentFile(), newName);
+          if (gameMediaFile.renameTo(target)) {
+            LOG.info("Renamed PinUP Popper media from " + gameMediaFile.getAbsolutePath() + " to " + target.getAbsolutePath());
+          }
+          else {
+            LOG.warn("Renaming PinUP Popper media from " + gameMediaFile.getAbsolutePath() + " to " + target.getName() + " failed.");
+          }
+        }
+      }
+    }
+  }
+
   @Override
   public void afterPropertiesSet() throws Exception {
     Thread shutdownHook = new Thread(this::notifyPopperExit);

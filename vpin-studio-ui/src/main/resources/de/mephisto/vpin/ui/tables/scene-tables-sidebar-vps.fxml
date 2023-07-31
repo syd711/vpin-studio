@@ -185,7 +185,7 @@
    <top>
       <ToolBar prefHeight="40.0" prefWidth="200.0" BorderPane.alignment="CENTER">
         <items>
-          <Button mnemonicParsing="false" onAction="#onUpdate" text="Update DB">
+          <Button mnemonicParsing="false" onAction="#onUpdate" text="Refresh Sheet Data">
                <font>
                   <Font size="14.0" />
                </font>

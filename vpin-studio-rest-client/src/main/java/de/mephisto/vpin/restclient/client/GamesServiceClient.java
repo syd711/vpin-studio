@@ -128,6 +128,16 @@ public class GamesServiceClient extends VPinStudioClientService {
     }
   }
 
+
+  public boolean rename(GameRepresentation game) throws Exception {
+    try {
+      return getRestClient().post(API + "games/rename", game, Boolean.class);
+    } catch (Exception e) {
+      LOG.error("Failed to save rename: " + e.getMessage(), e);
+      throw e;
+    }
+  }
+
   public List<GameRepresentation> getGames() {
     try {
       this.games = new ArrayList<>(Arrays.asList(getRestClient().get(API + "games", GameRepresentation[].class)));

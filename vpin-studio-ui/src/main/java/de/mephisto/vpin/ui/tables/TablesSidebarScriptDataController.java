@@ -90,6 +90,12 @@ public class TablesSidebarScriptDataController implements Initializable {
   private Button vpSaveEditBtn;
 
   @FXML
+  private Button openTablesFolderBtn;
+
+  @FXML
+  private Button renameBtn;
+
+  @FXML
   private VBox errorBox;
 
   @FXML
@@ -117,6 +123,21 @@ public class TablesSidebarScriptDataController implements Initializable {
   public void setGame(Optional<GameRepresentation> game) {
     this.game = game;
     this.refreshView(game);
+  }
+
+  @FXML
+  private void onTablesFolderOpen() {
+    try {
+      SystemSummary systemSummary = Studio.client.getSystemService().getSystemSummary();
+      new ProcessBuilder("explorer.exe", new File(systemSummary.getVisualPinballDirectory(), "tables").getAbsolutePath()).start();
+    } catch (Exception e) {
+      LOG.error("Failed to open Explorer: " + e.getMessage(), e);
+    }
+  }
+
+  @FXML
+  private void onRename() {
+    tablesSidebarController.getTablesController().onAssetsRename();
   }
 
   @FXML
@@ -271,6 +292,8 @@ public class TablesSidebarScriptDataController implements Initializable {
     editRomNameBtn.setDisable(g.isEmpty());
     editTableNameBtn.setDisable(g.isEmpty());
     romUploadBtn.setDisable(g.isEmpty());
+    renameBtn.setDisable(g.isEmpty() || !g.get().isGameFileAvailable());
+    openTablesFolderBtn.setVisible(Studio.client.getSystemService().isLocal());
 
     inspectBtn.setDisable(g.isEmpty() || !g.get().isGameFileAvailable());
     editBtn.setDisable(g.isEmpty() || !g.get().isGameFileAvailable());

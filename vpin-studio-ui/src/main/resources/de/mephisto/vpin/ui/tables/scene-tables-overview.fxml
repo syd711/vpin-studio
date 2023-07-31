@@ -158,17 +158,40 @@
                            </tooltip>
                                 </Button>
                                 <Separator layoutX="682.0" layoutY="10.0" orientation="VERTICAL" prefHeight="30.0" prefWidth="12.0" />
-                                <Button fx:id="validateBtn" mnemonicParsing="false" onAction="#onValidate" textFill="WHITE">
+                                <Button fx:id="renameBtn" mnemonicParsing="false" onAction="#onRename" textFill="WHITE">
                                     <font>
                                         <Font size="14.0" />
                                     </font>
                                     <graphic>
-                                        <FontIcon iconColor="WHITE" iconLiteral="sil-magnifier" iconSize="16" />
+                                        <FontIcon iconColor="WHITE" iconLiteral="mdi2f-file-document-edit-outline" iconSize="16" />
                                     </graphic>
                                     <tooltip>
-                                        <Tooltip text="Resets the dismissed validations and revalidates the table configuration." />
+                                        <Tooltip text="Rename the displayed name of the table" />
                                     </tooltip>
                                 </Button>
+                        <Button fx:id="renameAssetsBtn" layoutX="676.0" layoutY="11.0" mnemonicParsing="false" onAction="#onAssetsRename" textFill="WHITE">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                           <graphic>
+                              <FontIcon iconColor="WHITE" iconLiteral="mdi2f-file-document-edit" iconSize="16" />
+                           </graphic>
+                           <tooltip>
+                              <Tooltip text="Rename the VPX file and affected assets" />
+                           </tooltip>
+                        </Button>
+                        <Separator layoutX="716.0" layoutY="10.0" orientation="VERTICAL" prefHeight="30.0" prefWidth="12.0" />
+                        <Button fx:id="validateBtn" layoutX="692.0" layoutY="11.0" mnemonicParsing="false" onAction="#onValidate" textFill="WHITE">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                           <graphic>
+                              <FontIcon iconColor="WHITE" iconLiteral="sil-magnifier" iconSize="16" />
+                           </graphic>
+                           <tooltip>
+                              <Tooltip text="Resets the dismissed validations and revalidates the table configuration." />
+                           </tooltip>
+                        </Button>
                         <Button fx:id="scanBtn" layoutX="592.0" layoutY="11.0" mnemonicParsing="false" onAction="#onTablesScan" textFill="WHITE">
                            <font>
                               <Font size="14.0" />

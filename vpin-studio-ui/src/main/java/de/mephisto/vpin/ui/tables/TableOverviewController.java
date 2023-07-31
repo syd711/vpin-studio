@@ -1,6 +1,7 @@
 package de.mephisto.vpin.ui.tables;
 
 import de.mephisto.vpin.commons.EmulatorType;
+import de.mephisto.vpin.commons.utils.FileUtils;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.ValidationCode;
 import de.mephisto.vpin.restclient.representations.GameRepresentation;
@@ -24,8 +25,6 @@ import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -110,6 +109,12 @@ public class TableOverviewController implements Initializable, StudioFXControlle
 
   @FXML
   private Button validateBtn;
+
+  @FXML
+  private Button renameBtn;
+
+  @FXML
+  private Button renameAssetsBtn;
 
   @FXML
   private Button deleteBtn;
@@ -335,6 +340,79 @@ public class TableOverviewController implements Initializable, StudioFXControlle
     dismissValidation(game, validationState);
   }
 
+  @FXML
+  public void onRename() {
+    if (client.getPinUPPopperService().isPinUPPopperRunning()) {
+      Optional<ButtonType> buttonType = Dialogs.openPopperRunningWarning(Studio.stage);
+      if (buttonType.isPresent() && buttonType.get().equals(ButtonType.APPLY)) {
+        client.getPinUPPopperService().terminatePopper();
+        doRename();
+      }
+    }
+    else {
+      doRename();
+    }
+  }
+
+  private void doRename() {
+    GameRepresentation game = tableView.getSelectionModel().getSelectedItem();
+    if (game != null) {
+      String updatedName = WidgetFactory.showInputDialog(Studio.stage, "Rename Display Name",
+          "Rename \"" + game.getGameDisplayName() + "\"",
+          "Renames the display name that is used for the PinUP Popper menu.",
+          null, game.getGameDisplayName());
+      if (!StringUtils.isEmpty(updatedName)) {
+        if (!FileUtils.isValidFilename(updatedName)) {
+          WidgetFactory.showAlert(Studio.stage, "Invalid Filename", "The entered filename \"" + updatedName + "\" is not a valid filename.");
+        }
+        else {
+          game.setGameDisplayName(updatedName);
+          try {
+            client.getGameService().rename(game);
+            EventManager.getInstance().notifyTableChange(game.getId(), null);
+          } catch (Exception e) {
+            LOG.error("Failed to rename \"" + game.getGameDisplayName() + "\": " + e.getMessage(), e);
+            WidgetFactory.showAlert(Studio.stage, "Renaming Failed", "Failed to rename \"" + game.getGameDisplayName() + "\": " + e.getMessage());
+          }
+        }
+      }
+    }
+  }
+
+  @FXML
+  public void onAssetsRename() {
+    if (client.getPinUPPopperService().isPinUPPopperRunning()) {
+      Optional<ButtonType> buttonType = Dialogs.openPopperRunningWarning(Studio.stage);
+      if (buttonType.isPresent() && buttonType.get().equals(ButtonType.APPLY)) {
+        client.getPinUPPopperService().terminatePopper();
+        doRenameAssets();
+      }
+    }
+    else {
+      doRenameAssets();
+    }
+  }
+
+  private void doRenameAssets() {
+    GameRepresentation game = tableView.getSelectionModel().getSelectedItem();
+    if (game != null) {
+      String updatedName = WidgetFactory.showInputDialog(Studio.stage, "Rename VPX File",
+          "Rename VPX File \"" + game.getGameFileName() + "\"",
+          "Renames the VPX file and all affected assets (.directb2, .pov, etc.).",
+          "Files like the backglass or PinUP Popper assets must match with the VPX filename and will be renamed too.", game.getGameFileName());
+      if (!StringUtils.isEmpty(updatedName)) {
+        game.setGameFileName(updatedName);
+        try {
+          client.getGameService().rename(game);
+          EventManager.getInstance().notifyTableChange(game.getId(), null);
+        } catch (Exception e) {
+          LOG.error("Failed to rename \"" + game.getGameDisplayName() + "\": " + e.getMessage(), e);
+          WidgetFactory.showAlert(Studio.stage, "Renaming Failed", "Failed to rename \"" + game.getGameDisplayName() + "\": " + e.getMessage());
+        }
+      }
+    }
+  }
+
   public void dismissValidation(@NonNull GameRepresentation game, @NonNull ValidationState validationState) {
     Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Ignore this warning for future validations of table '" + game.getGameDisplayName() + "?",
         "The warning can be re-enabled by validating the table again.");
@@ -435,6 +513,8 @@ public class TableOverviewController implements Initializable, StudioFXControlle
     this.playBtn.setDisable(true);
     this.validateBtn.setDisable(true);
     this.deleteBtn.setDisable(true);
+    this.renameBtn.setDisable(true);
+    this.renameAssetsBtn.setDisable(true);
     this.uploadTableBtn.setDisable(true);
     this.backupBtn.setDisable(true);
     this.importBtn.setDisable(true);
@@ -479,6 +559,8 @@ public class TableOverviewController implements Initializable, StudioFXControlle
         this.scanBtn.setDisable(false);
         this.scanAllBtn.setDisable(false);
         this.uploadTableBtn.setDisable(false);
+        this.renameBtn.setDisable(false);
+        this.renameAssetsBtn.setDisable(games.isEmpty() || !games.get(0).isGameFileAvailable());
 
         tableView.setVisible(true);
         labelTableCount.setText(games.size() + " tables");
@@ -630,6 +712,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
       return new SimpleObjectProperty(WidgetFactory.createCheckIcon());
     });
 
+    columnPlaylists.setSortable(false);
     columnPlaylists.setCellValueFactory(cellData -> {
       GameRepresentation value = cellData.getValue();
       HBox box = new HBox();
@@ -661,6 +744,20 @@ public class TableOverviewController implements Initializable, StudioFXControlle
         tableView -> {
           final TableRow<GameRepresentation> row = new TableRow<>();
           final ContextMenu rowMenu = new ContextMenu();
+
+          MenuItem renameItem = new MenuItem("Edit Display Name");
+          renameItem.setGraphic(WidgetFactory.createIcon("mdi2f-file-document-edit-outline"));
+          renameItem.setOnAction(actionEvent -> onRename());
+          renameItem.setDisable(tableView.getSelectionModel().isEmpty());
+          rowMenu.getItems().add(renameItem);
+
+          MenuItem renameAssetsItem = new MenuItem("Edit File Name");
+          renameAssetsItem.setGraphic(WidgetFactory.createIcon("mdi2f-file-document-edit"));
+          renameAssetsItem.setOnAction(actionEvent -> onAssetsRename());
+          renameAssetsItem.setDisable(tableView.getSelectionModel().isEmpty());
+          rowMenu.getItems().add(renameAssetsItem);
+
+          rowMenu.getItems().add(new SeparatorMenuItem());
 
           MenuItem scanItem = new MenuItem("Scan");
           scanItem.setGraphic(WidgetFactory.createIcon("mdi2m-map-search-outline"));
@@ -822,6 +919,8 @@ public class TableOverviewController implements Initializable, StudioFXControlle
     backupBtn.setDisable(true);
     playBtn.setDisable(disable);
     scanBtn.setDisable(c.getList().isEmpty());
+    renameBtn.setDisable(disable);
+    renameAssetsBtn.setDisable(disable || !c.getList().get(0).isGameFileAvailable());
 
     if (c.getList().isEmpty()) {
       refreshView(Optional.empty());

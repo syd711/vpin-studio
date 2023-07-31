@@ -126,6 +126,12 @@ public class GamesResource {
     }
   }
 
+  @PostMapping("/rename")
+  public boolean rename(@RequestBody Game game) throws Exception {
+    return gameService.rename(popperService, game);
+  }
+
+
   @PostMapping("/upload/table")
   public Boolean uploadTable(@RequestParam(value = "file") MultipartFile file,
                              @RequestParam(value = "gameId") int gameId,
@@ -193,14 +199,10 @@ public class GamesResource {
               Game original = getGame(gameId);
               popperService.cloneGameMedia(original, importedGame);
 
-              //clone backglass
-              File directB2SFile = original.getDirectB2SFile();
-              if(directB2SFile.exists()) {
-                String directB2SFileName = FilenameUtils.getBaseName(importedGame.getGameFileName()) + ".directb2s";
-                File clonedDirectB2s = new File(directB2SFile.getParentFile(), directB2SFileName);
-                org.apache.commons.io.FileUtils.copyFile(directB2SFile, clonedDirectB2s);
-                LOG.info("Cloned " + clonedDirectB2s.getAbsolutePath());
-              }
+              //clone additional files
+              FileUtils.cloneFile(original.getDirectB2SFile(), importedGame.getGameFileName());
+              FileUtils.cloneFile(original.getPOVFile(), importedGame.getGameFileName());
+              FileUtils.cloneFile(original.getResFile(), importedGame.getGameFileName());
             }
             return true;
           }
