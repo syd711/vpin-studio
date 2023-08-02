@@ -67,6 +67,11 @@ public class DiscordResource {
     return discordService.getServer(serverId);
   }
 
+  @GetMapping("/users/{serverId}")
+  public List<Player> getPlayers(@PathVariable("serverId") long serverId) {
+    return discordService.getPlayers(serverId);
+  }
+
   @GetMapping("/servers")
   public List<DiscordServer> getServers() {
     return discordService.getServers();

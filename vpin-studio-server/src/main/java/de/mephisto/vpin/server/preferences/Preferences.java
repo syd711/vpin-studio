@@ -81,6 +81,17 @@ public class Preferences {
   @Column(name = "pinemhiAutoStartEnabled", nullable = false, columnDefinition = "boolean default false")
   private boolean pinemhiAutoStartEnabled;
 
+  @Column(name = "discordBotCommandsEnabled", nullable = false, columnDefinition = "boolean default true")
+  private boolean discordBotCommandsEnabled;
+
+  public boolean isDiscordBotCommandsEnabled() {
+    return discordBotCommandsEnabled;
+  }
+
+  public void setDiscordBotCommandsEnabled(boolean discordBotCommandsEnabled) {
+    this.discordBotCommandsEnabled = discordBotCommandsEnabled;
+  }
+
   public boolean getPinemhiAutoStartEnabled() {
     return pinVolAutoStartEnabled;
   }

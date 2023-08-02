@@ -360,6 +360,17 @@ public class DiscordService implements InitializingBean, PreferenceChangedListen
     return null;
   }
 
+
+  public List<Player> getPlayers(long serverId) {
+    List<Player> players = new ArrayList<>();
+    for (DiscordMember member : this.getMembers(serverId)) {
+      Player player = toPlayer(member);
+      players.add(player);
+    }
+    players.sort(Comparator.comparing(Player::getName));
+    return players;
+  }
+
   public List<Player> getPlayers() {
     List<Player> players = new ArrayList<>();
     for (DiscordMember member : this.getMembers()) {

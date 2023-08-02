@@ -6,6 +6,7 @@ import de.mephisto.vpin.restclient.discord.DiscordChannel;
 import de.mephisto.vpin.restclient.discord.DiscordCompetitionData;
 import de.mephisto.vpin.restclient.discord.DiscordServer;
 import de.mephisto.vpin.restclient.representations.PlayerRepresentation;
+import de.mephisto.vpin.restclient.representations.PlaylistRepresentation;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.Arrays;
@@ -56,5 +57,9 @@ public class DiscordServiceClient extends VPinStudioClientService {
   public boolean isCompetitionActive(long discordServerId, long discordChannelId, String uuid) {
     final RestTemplate restTemplate = new RestTemplate();
     return restTemplate.getForObject(getRestClient().getBaseUrl() + API + "discord/competition/isactive/" + discordServerId + "/" + discordChannelId + "/" + uuid, Boolean.class);
+  }
+
+  public List<PlayerRepresentation> getDiscordUsers(long serverId) {
+    return Arrays.asList(getRestClient().get(API + "discord/users/" + serverId, PlayerRepresentation[].class));
   }
 }

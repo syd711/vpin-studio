@@ -17,6 +17,7 @@ import de.mephisto.vpin.ui.competitions.CompetitionDiscordJoinDialogController;
 import de.mephisto.vpin.ui.competitions.CompetitionOfflineDialogController;
 import de.mephisto.vpin.ui.launcher.InstallationController;
 import de.mephisto.vpin.ui.players.PlayerDialogController;
+import de.mephisto.vpin.ui.preferences.DiscordBotAllowListDialogController;
 import de.mephisto.vpin.ui.preferences.PINemHiUIPreferenceController;
 import de.mephisto.vpin.ui.tables.TablesController;
 import de.mephisto.vpin.ui.tables.TablesSidebarController;
@@ -233,6 +234,12 @@ public class Dialogs {
   public static void openTableImportDialog() {
     Stage stage = createStudioDialogStage(TableImportController.class, "dialog-table-import.fxml", "Table Import");
     TableImportController controller = (TableImportController) stage.getUserData();
+    stage.showAndWait();
+  }
+
+  public static void openBotWhitelistDialog() {
+    Stage stage = createStudioDialogStage(DiscordBotAllowListDialogController.class, "preference-bow-allowlist-dialog.fxml", "Bot Allow-List");
+    DiscordBotAllowListDialogController controller = (DiscordBotAllowListDialogController) stage.getUserData();
     stage.showAndWait();
   }
 
