@@ -273,8 +273,8 @@ public class TableMediaAdminController implements Initializable, DialogControlle
             mediaPlayer.stop();
             mediaPlayer.dispose();
 
-            Label label = new Label("Media Error, try to reload");
-            label.setStyle("-fx-font-size: 14px;-fx-text-fill: #444444;");
+            Label label = new Label("  Media available\n(but not playable)");
+            label.setStyle("-fx-font-color: #33CC00;-fx-text-fill:#33CC00; -fx-font-weight: bold;");
             label.setUserData(mediaItem);
             mediaPane.setCenter(label);
           });

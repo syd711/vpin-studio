@@ -5,8 +5,10 @@ import de.mephisto.vpin.restclient.client.VPinStudioClient;
 import de.mephisto.vpin.restclient.popper.PopperScreen;
 import de.mephisto.vpin.restclient.representations.GameMediaItemRepresentation;
 import de.mephisto.vpin.restclient.representations.PlaylistRepresentation;
+import javafx.application.Platform;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Pos;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Node;
 import javafx.scene.Parent;
@@ -361,7 +363,7 @@ public class WidgetFactory {
       mediaPlayer.setCycleCount(-1);
       mediaPlayer.setMute(true);
       mediaPlayer.setOnError(() -> {
-        LOG.error("Media player error: " + mediaPlayer.getError());
+        LOG.error("Media player error: " + mediaPlayer.getError() + ", URL: " + url);
         mediaPlayer.stop();
         mediaPlayer.dispose();
 
@@ -389,12 +391,12 @@ public class WidgetFactory {
       mediaPlayer.setCycleCount(-1);
       mediaPlayer.setMute(true);
       mediaPlayer.setOnError(() -> {
-        LOG.error("Media player error: " + mediaPlayer.getError());
+        LOG.error("Media player error: " + mediaPlayer.getError() + ", URL: " + url);
         mediaPlayer.stop();
         mediaPlayer.dispose();
 
-        Label label = new Label("Media Error");
-        label.setStyle("-fx-font-size: 14px;-fx-text-fill: #444444;");
+        Label label = new Label("  Media available\n(but not playable)");
+        label.setStyle("-fx-font-color: #33CC00;-fx-text-fill:#33CC00; -fx-font-weight: bold;");
         label.setUserData(mediaItem);
         parent.setCenter(label);
       });
