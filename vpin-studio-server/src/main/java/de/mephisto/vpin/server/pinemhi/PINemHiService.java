@@ -138,14 +138,6 @@ public class PINemHiService implements InitializingBean {
 
     loadSettings();
 
-    File vpPath = new File(ini.get("paths", "VP"));
-    if (!vpPath.exists()) {
-      ini.get("paths").put("VP", systemService.getNvramFolder().getAbsolutePath());
-      ini.store();
-    }
-
-    loadSettings();
-
     this.enabled = getAutoStart();
     if (enabled) {
       startMonitor();
