@@ -18,6 +18,7 @@ import de.mephisto.vpin.ui.competitions.CompetitionOfflineDialogController;
 import de.mephisto.vpin.ui.launcher.InstallationController;
 import de.mephisto.vpin.ui.players.PlayerDialogController;
 import de.mephisto.vpin.ui.preferences.DiscordBotAllowListDialogController;
+import de.mephisto.vpin.ui.preferences.DiscordBotPreferencesController;
 import de.mephisto.vpin.ui.preferences.PINemHiUIPreferenceController;
 import de.mephisto.vpin.ui.tables.TablesController;
 import de.mephisto.vpin.ui.tables.TablesSidebarController;
@@ -237,9 +238,10 @@ public class Dialogs {
     stage.showAndWait();
   }
 
-  public static void openBotWhitelistDialog() {
+  public static void openBotWhitelistDialog(DiscordBotPreferencesController preferencesController) {
     Stage stage = createStudioDialogStage(DiscordBotAllowListDialogController.class, "preference-bow-allowlist-dialog.fxml", "Bot Allow-List");
     DiscordBotAllowListDialogController controller = (DiscordBotAllowListDialogController) stage.getUserData();
+    controller.setPreferencesController(preferencesController);
     stage.showAndWait();
   }
 

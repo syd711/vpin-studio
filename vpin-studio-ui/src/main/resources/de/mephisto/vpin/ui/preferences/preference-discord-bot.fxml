@@ -184,10 +184,16 @@
                      <font>
                         <Font size="14.0" />
                      </font>
+                     <BorderPane.margin>
+                        <Insets top="6.0" />
+                     </BorderPane.margin>
                   </Label>
                </left>
                <center>
-                  <VBox fx:id="allowListPane" prefHeight="200.0" prefWidth="100.0" BorderPane.alignment="CENTER" />
+                  <VBox fx:id="allowListPane" prefHeight="200.0" prefWidth="100.0" BorderPane.alignment="TOP_LEFT">
+                     <BorderPane.margin>
+                        <Insets top="9.0" />
+                     </BorderPane.margin></VBox>
                </center>
             </BorderPane>
          </children>

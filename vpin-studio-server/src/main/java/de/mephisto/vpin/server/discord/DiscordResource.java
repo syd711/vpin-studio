@@ -71,6 +71,10 @@ public class DiscordResource {
   public List<Player> getPlayers(@PathVariable("serverId") long serverId) {
     return discordService.getPlayers(serverId);
   }
+  @GetMapping("/allowlist")
+  public List<Player> getAllowList() {
+    return discordService.getAllowList();
+  }
 
   @GetMapping("/servers")
   public List<DiscordServer> getServers() {

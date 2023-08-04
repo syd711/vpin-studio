@@ -3,9 +3,18 @@ package de.mephisto.vpin.connectors.discord;
 public class DiscordMember {
   private long id;
   private String name;
+  private String displayName;
   private String initials;
   private String avatarUrl;
   private boolean bot;
+
+  public String getDisplayName() {
+    return displayName;
+  }
+
+  public void setDisplayName(String displayName) {
+    this.displayName = displayName;
+  }
 
   public boolean isBot() {
     return bot;

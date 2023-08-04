@@ -62,4 +62,8 @@ public class DiscordServiceClient extends VPinStudioClientService {
   public List<PlayerRepresentation> getDiscordUsers(long serverId) {
     return Arrays.asList(getRestClient().get(API + "discord/users/" + serverId, PlayerRepresentation[].class));
   }
+
+  public List<PlayerRepresentation> getAllowList() {
+    return Arrays.asList(getRestClient().get(API + "discord/allowlist", PlayerRepresentation[].class));
+  }
 }
