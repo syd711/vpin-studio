@@ -2,10 +2,11 @@ package de.mephisto.vpin.ui.tables;
 
 import de.mephisto.vpin.commons.utils.FileUtils;
 import de.mephisto.vpin.restclient.DirectB2SData;
-import de.mephisto.vpin.restclient.client.VPinStudioClient;
 import de.mephisto.vpin.restclient.representations.GameRepresentation;
 import de.mephisto.vpin.ui.Studio;
+import de.mephisto.vpin.ui.tables.drophandler.DirectB2SFileDropEventHandler;
 import de.mephisto.vpin.ui.util.Dialogs;
+import de.mephisto.vpin.ui.util.FileDragEventHandler;
 import de.mephisto.vpin.ui.util.MediaUtil;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
@@ -14,6 +15,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -72,6 +74,9 @@ public class TablesSidebarDirectB2SController implements Initializable {
   @FXML
   private VBox emptyDataBox;
 
+  @FXML
+  private Pane directb2sRoot;
+
   private Optional<GameRepresentation> game = Optional.empty();
 
   private TablesSidebarController tablesSidebarController;
@@ -84,7 +89,7 @@ public class TablesSidebarDirectB2SController implements Initializable {
   @FXML
   private void onUpload() {
     if (game.isPresent()) {
-      Dialogs.openDirectB2SUploadDialog(game.get());
+      Dialogs.openDirectB2SUploadDialog(game.get(), null);
     }
   }
 
@@ -160,6 +165,9 @@ public class TablesSidebarDirectB2SController implements Initializable {
 
   public void setSidebarController(TablesSidebarController tablesSidebarController) {
     this.tablesSidebarController = tablesSidebarController;
+
+    directb2sRoot.setOnDragOver(new FileDragEventHandler(directb2sRoot, true, "directb2s"));
+    directb2sRoot.setOnDragDropped(new DirectB2SFileDropEventHandler(tablesSidebarController));
   }
 
   private String getTableType(int type) {

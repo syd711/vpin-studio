@@ -1,10 +1,9 @@
-package de.mephisto.vpin.ui.tables;
+package de.mephisto.vpin.ui.tables.drophandler;
 
 import de.mephisto.vpin.commons.utils.WidgetFactory;
-import de.mephisto.vpin.restclient.popper.PopperScreen;
 import de.mephisto.vpin.restclient.representations.GameRepresentation;
 import de.mephisto.vpin.ui.Studio;
-import de.mephisto.vpin.ui.tables.dialogs.TableMediaUploadProgressModel;
+import de.mephisto.vpin.ui.tables.TablesSidebarController;
 import de.mephisto.vpin.ui.util.Dialogs;
 import javafx.application.Platform;
 import javafx.event.EventHandler;
@@ -16,16 +15,14 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class TableMediaFileDropEventHandler implements EventHandler<DragEvent> {
+public class PupPackFileDropEventHandler implements EventHandler<DragEvent> {
 
-  private final PopperScreen screen;
   private final List<String> suffixes;
   private final TablesSidebarController tablesSidebarController;
 
-  public TableMediaFileDropEventHandler(TablesSidebarController tablesSidebarController, PopperScreen screen, String... suffix) {
+  public PupPackFileDropEventHandler(TablesSidebarController tablesSidebarController) {
     this.tablesSidebarController = tablesSidebarController;
-    this.screen = screen;
-    this.suffixes = Arrays.asList(suffix);
+    this.suffixes = Arrays.asList("zip");
   }
 
   @Override
@@ -45,9 +42,7 @@ public class TableMediaFileDropEventHandler implements EventHandler<DragEvent> {
             "Only files with extension(s) \"" + String.join("\", \"", suffixes) + "\" are accepted here.");
       }
       else {
-        TableMediaUploadProgressModel model = new TableMediaUploadProgressModel(tablesSidebarController, game.getId(),
-            "Popper Media Upload", filtered, "popperMedia", screen);
-        Dialogs.createProgressDialog(model);
+        Dialogs.openPupPackUploadDialog(tablesSidebarController, game, filtered.get(0));
       }
     });
   }

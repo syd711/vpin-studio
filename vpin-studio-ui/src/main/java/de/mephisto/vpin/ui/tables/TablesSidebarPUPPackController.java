@@ -10,9 +10,12 @@ import de.mephisto.vpin.restclient.representations.PupPackRepresentation;
 import de.mephisto.vpin.restclient.representations.ValidationState;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.events.EventManager;
+import de.mephisto.vpin.ui.tables.drophandler.DirectB2SFileDropEventHandler;
+import de.mephisto.vpin.ui.tables.drophandler.PupPackFileDropEventHandler;
 import de.mephisto.vpin.ui.tables.validation.LocalizedValidation;
 import de.mephisto.vpin.ui.tables.validation.ValidationTexts;
 import de.mephisto.vpin.ui.util.Dialogs;
+import de.mephisto.vpin.ui.util.FileDragEventHandler;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
@@ -20,6 +23,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.*;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import org.apache.commons.lang3.StringUtils;
 import org.kordamp.ikonli.javafx.FontIcon;
@@ -107,6 +111,9 @@ public class TablesSidebarPUPPackController implements Initializable {
 
   @FXML
   private Button pupPackEditorBtn;
+
+  @FXML
+  private Pane pupRoot;
 
   private TablesSidebarController tablesSidebarController;
   private PupPackRepresentation pupPack;
@@ -210,7 +217,7 @@ public class TablesSidebarPUPPackController implements Initializable {
         return;
       }
 
-      Dialogs.openPupPackUploadDialog(tablesSidebarController, game.get());
+      Dialogs.openPupPackUploadDialog(tablesSidebarController, game.get(), null);
     }
   }
 
@@ -341,5 +348,8 @@ public class TablesSidebarPUPPackController implements Initializable {
 
   public void setSidebarController(TablesSidebarController tablesSidebarController) {
     this.tablesSidebarController = tablesSidebarController;
+
+    pupRoot.setOnDragOver(new FileDragEventHandler(pupRoot, true, "zip"));
+    pupRoot.setOnDragDropped(new PupPackFileDropEventHandler(tablesSidebarController));
   }
 }

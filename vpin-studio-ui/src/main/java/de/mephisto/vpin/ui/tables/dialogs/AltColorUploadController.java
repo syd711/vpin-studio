@@ -88,37 +88,43 @@ public class AltColorUploadController implements Initializable, DialogController
     this.selection = fileChooser.showOpenDialog(stage);
     this.uploadBtn.setDisable(selection == null);
     if (this.selection != null) {
-      if(selection.getName().toLowerCase().endsWith(".zip")) {
-        AltColorUploadController.lastFolderSelection = this.selection.getParentFile();
-        this.fileNameField.setText("Analyzing \"" + selection.getName() + "\"...");
-        this.fileNameField.setDisable(true);
-        this.fileBtn.setDisable(true);
-        this.cancelBtn.setDisable(true);
-
-        Platform.runLater(() -> {
-          String analyze = AltColorAnalyzer.analyze(selection);
-          this.fileNameField.setText(this.selection.getAbsolutePath());
-          this.fileNameField.setDisable(false);
-          this.fileBtn.setDisable(false);
-          this.cancelBtn.setDisable(false);
-
-          if (analyze != null) {
-            result = false;
-            WidgetFactory.showAlert(Studio.stage, analyze);
-            return;
-          }
-          this.uploadBtn.setDisable(false);
-        });
-      }
-      else {
-        this.fileNameField.setText(this.selection.getAbsolutePath());
-        this.fileBtn.setDisable(false);
-        this.cancelBtn.setDisable(false);
-      }
+      refreshSelection();
 
     }
     else {
       this.fileNameField.setText("");
+    }
+  }
+
+  private void refreshSelection() {
+    this.uploadBtn.setDisable(selection == null);
+
+    if(selection.getName().toLowerCase().endsWith(".zip")) {
+      AltColorUploadController.lastFolderSelection = this.selection.getParentFile();
+      this.fileNameField.setText("Analyzing \"" + selection.getName() + "\"...");
+      this.fileNameField.setDisable(true);
+      this.fileBtn.setDisable(true);
+      this.cancelBtn.setDisable(true);
+
+      Platform.runLater(() -> {
+        String analyze = AltColorAnalyzer.analyze(selection);
+        this.fileNameField.setText(this.selection.getAbsolutePath());
+        this.fileNameField.setDisable(false);
+        this.fileBtn.setDisable(false);
+        this.cancelBtn.setDisable(false);
+
+        if (analyze != null) {
+          result = false;
+          WidgetFactory.showAlert(Studio.stage, analyze);
+          return;
+        }
+        this.uploadBtn.setDisable(false);
+      });
+    }
+    else {
+      this.fileNameField.setText(this.selection.getAbsolutePath());
+      this.fileBtn.setDisable(false);
+      this.cancelBtn.setDisable(false);
     }
   }
 
@@ -145,5 +151,14 @@ public class AltColorUploadController implements Initializable, DialogController
 
   public void setTableSidebarController(TablesSidebarController tablesSidebarController) {
     this.tablesSidebarController = tablesSidebarController;
+  }
+
+  public void setFile(File file) {
+    this.selection = file;
+    if(selection != null) {
+      Platform.runLater(() -> {
+        refreshSelection();
+      });
+    }
   }
 }

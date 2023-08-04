@@ -135,21 +135,23 @@ public class Dialogs {
     return true;
   }
 
-  public static boolean openAltSoundUploadDialog(TablesSidebarController tablesSidebarController, GameRepresentation game) {
+  public static boolean openAltSoundUploadDialog(TablesSidebarController tablesSidebarController, GameRepresentation game, File file) {
     Stage stage = createStudioDialogStage(AltSoundUploadController.class, "dialog-altsound-upload.fxml", "ALT Sound Upload");
     AltSoundUploadController controller = (AltSoundUploadController) stage.getUserData();
     controller.setGame(game);
     controller.setTableSidebarController(tablesSidebarController);
+    controller.setFile(file);
     stage.showAndWait();
 
     return controller.uploadFinished();
   }
 
-  public static boolean openAltColorUploadDialog(TablesSidebarController tablesSidebarController, GameRepresentation game) {
+  public static boolean openAltColorUploadDialog(TablesSidebarController tablesSidebarController, GameRepresentation game, File file) {
     Stage stage = createStudioDialogStage(AltColorUploadController.class, "dialog-altcolor-upload.fxml", "ALT Color Upload");
     AltColorUploadController controller = (AltColorUploadController) stage.getUserData();
     controller.setGame(game);
     controller.setTableSidebarController(tablesSidebarController);
+    controller.setFile(file);
     stage.showAndWait();
 
     return controller.uploadFinished();
@@ -165,20 +167,21 @@ public class Dialogs {
     return controller.uploadFinished();
   }
 
-  public static boolean openPupPackUploadDialog(TablesSidebarController tablesSidebarController, GameRepresentation game) {
+  public static boolean openPupPackUploadDialog(TablesSidebarController tablesSidebarController, GameRepresentation game, File file) {
     Stage stage = createStudioDialogStage(PupPackUploadController.class, "dialog-puppack-upload.fxml", "PUP Pack Upload");
     PupPackUploadController controller = (PupPackUploadController) stage.getUserData();
     controller.setGame(game);
     controller.setTableSidebarController(tablesSidebarController);
+    controller.setFile(file, stage);
     stage.showAndWait();
 
     return controller.uploadFinished();
   }
 
-  public static boolean openDirectB2SUploadDialog(GameRepresentation game) {
+  public static boolean openDirectB2SUploadDialog(GameRepresentation game, File file) {
     Stage stage = createStudioDialogStage(DirectB2SUploadController.class, "dialog-directb2s-upload.fxml", "DirectB2S File Upload");
     DirectB2SUploadController controller = (DirectB2SUploadController) stage.getUserData();
-    controller.setGame(game);
+    controller.setData(game, file);
     stage.showAndWait();
 
     return controller.uploadFinished();

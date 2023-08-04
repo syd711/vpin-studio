@@ -3,6 +3,7 @@ package de.mephisto.vpin.ui.tables.dialogs;
 import de.mephisto.vpin.commons.fx.DialogController;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.representations.GameRepresentation;
+import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.tables.TablesSidebarController;
 import de.mephisto.vpin.ui.util.Dialogs;
 import de.mephisto.vpin.ui.util.ProgressResultModel;
@@ -21,8 +22,6 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.net.URL;
 import java.util.ResourceBundle;
-
-import static de.mephisto.vpin.ui.Studio.stage;
 
 public class PupPackUploadController implements Initializable, DialogController {
   private final static Logger LOG = LoggerFactory.getLogger(PupPackUploadController.class);
@@ -86,31 +85,35 @@ public class PupPackUploadController implements Initializable, DialogController 
 
     this.selection = fileChooser.showOpenDialog(stage);
     if (this.selection != null) {
-      PupPackUploadController.lastFolderSelection = this.selection.getParentFile();
-      this.fileNameField.setText("Analyzing \"" + selection.getName() + "\", please wait...");
-      this.fileNameField.setDisable(true);
-      this.fileBtn.setDisable(true);
-      this.cancelBtn.setDisable(true);
+      refreshSelection(stage);
+    }
+  }
+
+  private void refreshSelection(Stage stage) {
+    PupPackUploadController.lastFolderSelection = this.selection.getParentFile();
+    this.fileNameField.setText("Analyzing \"" + selection.getName() + "\", please wait...");
+    this.fileNameField.setDisable(true);
+    this.fileBtn.setDisable(true);
+    this.cancelBtn.setDisable(true);
 
 
-      ProgressResultModel resultModel = Dialogs.createProgressDialog(new PupPackAnalyzeProgressModel(this.game.getRom(), "PUP Pack Analysis", this.selection));
+    ProgressResultModel resultModel = Dialogs.createProgressDialog(new PupPackAnalyzeProgressModel(this.game.getRom(), "PUP Pack Analysis", this.selection));
 
-      if (!resultModel.getResults().isEmpty()) {
-        result = false;
-        WidgetFactory.showAlert(stage, String.valueOf(resultModel.getResults().get(0)));
-        this.fileNameField.setText("");
-        this.fileBtn.setDisable(false);
-        this.fileNameField.setDisable(false);
-        this.cancelBtn.setDisable(false);
-      }
-      else {
-        this.fileNameField.setText(this.selection.getAbsolutePath());
-        this.fileNameField.setDisable(false);
-        this.fileBtn.setDisable(false);
-        this.cancelBtn.setDisable(false);
-        this.uploadBtn.setDisable(false);
-        this.cancelBtn.setDisable(false);
-      }
+    if (!resultModel.getResults().isEmpty()) {
+      result = false;
+      WidgetFactory.showAlert(stage, String.valueOf(resultModel.getResults().get(0)));
+      this.fileNameField.setText("");
+      this.fileBtn.setDisable(false);
+      this.fileNameField.setDisable(false);
+      this.cancelBtn.setDisable(false);
+    }
+    else {
+      this.fileNameField.setText(this.selection.getAbsolutePath());
+      this.fileNameField.setDisable(false);
+      this.fileBtn.setDisable(false);
+      this.cancelBtn.setDisable(false);
+      this.uploadBtn.setDisable(false);
+      this.cancelBtn.setDisable(false);
     }
   }
 
@@ -137,5 +140,14 @@ public class PupPackUploadController implements Initializable, DialogController 
 
   public void setTableSidebarController(TablesSidebarController tablesSidebarController) {
     this.tablesSidebarController = tablesSidebarController;
+  }
+
+  public void setFile(File file, Stage stage) {
+    this.selection = file;
+    if(selection != null) {
+      Platform.runLater(() -> {
+        refreshSelection(stage);
+      });
+    }
   }
 }

@@ -107,8 +107,14 @@ public class DirectB2SUploadController implements Initializable, DialogControlle
     return result;
   }
 
-  public void setGame(GameRepresentation game) {
+  public void setData(GameRepresentation game, File file) {
     this.game = game;
     this.titleLabel.setText("Select directb2s file for \"" + game.getGameDisplayName() + "\":");
+
+    if (file != null) {
+      this.selection = file;
+      DirectB2SUploadController.lastFolderSelection = this.selection.getParentFile();
+      this.fileNameField.setText(this.selection.getAbsolutePath());
+    }
   }
 }

@@ -7,14 +7,18 @@ import de.mephisto.vpin.restclient.representations.GameRepresentation;
 import de.mephisto.vpin.restclient.representations.ValidationState;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.events.EventManager;
+import de.mephisto.vpin.ui.tables.drophandler.AltColorFileDropEventHandler;
+import de.mephisto.vpin.ui.tables.drophandler.PupPackFileDropEventHandler;
 import de.mephisto.vpin.ui.tables.validation.LocalizedValidation;
 import de.mephisto.vpin.ui.tables.validation.ValidationTexts;
 import de.mephisto.vpin.ui.util.Dialogs;
+import de.mephisto.vpin.ui.util.FileDragEventHandler;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -64,6 +68,9 @@ public class TablesSidebarAltColorController implements Initializable {
   @FXML
   private Label errorText;
 
+  @FXML
+  private Pane altColorRoot;
+
   private AltColor altColor;
   private ValidationState validationState;
 
@@ -78,7 +85,7 @@ public class TablesSidebarAltColorController implements Initializable {
   @FXML
   private void onUpload() {
     if (game.isPresent()) {
-      Dialogs.openAltColorUploadDialog(tablesSidebarController, game.get());
+      Dialogs.openAltColorUploadDialog(tablesSidebarController, game.get(), null);
     }
   }
 
@@ -188,5 +195,8 @@ public class TablesSidebarAltColorController implements Initializable {
 
   public void setSidebarController(TablesSidebarController tablesSidebarController) {
     this.tablesSidebarController = tablesSidebarController;
+
+    altColorRoot.setOnDragOver(new FileDragEventHandler(altColorRoot, true, "zip", "pac", "vni", "pal", "cRZ"));
+    altColorRoot.setOnDragDropped(new AltColorFileDropEventHandler(tablesSidebarController));
   }
 }

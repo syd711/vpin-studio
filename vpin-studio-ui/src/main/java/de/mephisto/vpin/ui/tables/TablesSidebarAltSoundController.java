@@ -7,9 +7,12 @@ import de.mephisto.vpin.restclient.representations.GameRepresentation;
 import de.mephisto.vpin.restclient.representations.ValidationState;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.events.EventManager;
+import de.mephisto.vpin.ui.tables.drophandler.AltSoundFileDropEventHandler;
+import de.mephisto.vpin.ui.tables.drophandler.PupPackFileDropEventHandler;
 import de.mephisto.vpin.ui.tables.validation.LocalizedValidation;
 import de.mephisto.vpin.ui.tables.validation.ValidationTexts;
 import de.mephisto.vpin.ui.util.Dialogs;
+import de.mephisto.vpin.ui.util.FileDragEventHandler;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -17,6 +20,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -76,6 +80,9 @@ public class TablesSidebarAltSoundController implements Initializable {
   @FXML
   private Label errorText;
 
+  @FXML
+  private Pane altSoundRoot;
+
   private Optional<GameRepresentation> game = Optional.empty();
 
   private TablesSidebarController tablesSidebarController;
@@ -89,7 +96,7 @@ public class TablesSidebarAltSoundController implements Initializable {
   @FXML
   private void onUpload() {
     if (game.isPresent()) {
-      Dialogs.openAltSoundUploadDialog(tablesSidebarController, game.get());
+      Dialogs.openAltSoundUploadDialog(tablesSidebarController, game.get(), null);
     }
   }
 
@@ -211,5 +218,8 @@ public class TablesSidebarAltSoundController implements Initializable {
 
   public void setSidebarController(TablesSidebarController tablesSidebarController) {
     this.tablesSidebarController = tablesSidebarController;
+
+    altSoundRoot.setOnDragOver(new FileDragEventHandler(altSoundRoot, true, "zip"));
+    altSoundRoot.setOnDragDropped(new AltSoundFileDropEventHandler(tablesSidebarController));
   }
 }
