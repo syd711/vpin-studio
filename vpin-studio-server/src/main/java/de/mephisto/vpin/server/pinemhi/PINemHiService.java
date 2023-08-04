@@ -138,14 +138,6 @@ public class PINemHiService implements InitializingBean {
 
     loadSettings();
 
-    File vpPath = new File(ini.get("paths", "VP"));
-    if (!vpPath.exists()) {
-      ini.get("paths").put("VP", systemService.getNvramFolder().getAbsolutePath());
-      ini.store();
-    }
-
-    loadSettings();
-
     this.enabled = getAutoStart();
     if (enabled) {
       startMonitor();
@@ -170,19 +162,19 @@ public class PINemHiService implements InitializingBean {
         if (line.startsWith("VP=")) {
           String vpValue = line.split("=")[1];
           File pinemhiNvRamFolder = new File(vpValue);
-          if (!pinemhiNvRamFolder.exists() || line.endsWith("\\")) {
+          if (!pinemhiNvRamFolder.exists() || line.contains("\\")) {
             LOG.info("Found errorneous VP path entry in pinemhi.ini, updating file.");
             pinemhiNvRamFolder = systemService.getNvramFolder();
-            line = "VP=" + pinemhiNvRamFolder.getAbsolutePath();
+            line = "VP=" + pinemhiNvRamFolder.getAbsolutePath().replaceAll("\\\\", "/") + "/";
             writeUpdates = true;
           }
         }
 
         if (line.startsWith("FP=")) {
           String fpValue = line.split("=")[1];
-          if (line.endsWith("\\")) {
+          if (line.contains("\\")) {
             LOG.info("Found errorneous FP path entry in pinemhi.ini, updating file.");
-            line = "FP=" + new File(fpValue).getAbsolutePath();
+            line = "FP=" + new File(fpValue).getAbsolutePath().replaceAll("\\\\", "/") + "/";
             writeUpdates = true;
           }
         }

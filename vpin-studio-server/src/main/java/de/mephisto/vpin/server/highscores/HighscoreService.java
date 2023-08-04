@@ -376,40 +376,43 @@ public class HighscoreService implements InitializingBean {
     List<Score> newScores = highscoreParser.parseScores(newHighscore.getLastModified(), newHighscore.getRaw(), game.getId(), serverId);
     List<Score> oldScores = getOrCloneOldHighscores(oldHighscore, game, oldRaw, serverId, newScores);
 
-    List<Integer> changedPositions = calculateChangedPositions(oldScores, newScores);
-    if (changedPositions.isEmpty()) {
-      LOG.info("No highscore change of rom '" + game.getRom() + "' detected for " + game + ", skipping notification event.");
-      return Optional.of(oldHighscore);
-    }
-
-    LOG.info("Calculated changed positions for '" + game.getRom() + "': " + changedPositions);
-    for (Integer changedPosition : changedPositions) {
-      //so we have a highscore update, let's decide the distribution
-      Score oldScore = oldScores.get(changedPosition - 1);
-      Score newScore = newScores.get(changedPosition - 1);
-
-      //archive old existingScore only if it had actual data
-      if (!StringUtils.isEmpty(oldRaw)) {
-        HighscoreVersion version = oldHighscore.toVersion(changedPosition, newRaw);
-        highscoreVersionRepository.saveAndFlush(version);
-        LOG.info("Created highscore version for " + game + ", changed position " + changedPosition);
+    if(!oldScores.isEmpty()) {
+      List<Integer> changedPositions = calculateChangedPositions(oldScores, newScores);
+      if (changedPositions.isEmpty()) {
+        LOG.info("No highscore change of rom '" + game.getRom() + "' detected for " + game + ", skipping notification event.");
+        return Optional.of(oldHighscore);
       }
 
-      //update existing one
-      oldHighscore.setRaw(newHighscore.getRaw());
-      oldHighscore.setType(newHighscore.getType());
-      oldHighscore.setLastScanned(newHighscore.getLastScanned());
-      oldHighscore.setLastModified(newHighscore.getLastModified());
-      oldHighscore.setFilename(newHighscore.getFilename());
-      oldHighscore.setStatus(null);
-      oldHighscore.setDisplayName(newHighscore.getDisplayName());
-      highscoreRepository.saveAndFlush(oldHighscore);
-      LOG.info("Saved updated highscore for " + game);
+      LOG.info("Calculated changed positions for '" + game.getRom() + "': " + changedPositions);
+      for (Integer changedPosition : changedPositions) {
+        //so we have a highscore update, let's decide the distribution
+        Score oldScore = oldScores.get(changedPosition - 1);
+        Score newScore = newScores.get(changedPosition - 1);
 
-      //finally, fire the update event to notify all listeners
-      HighscoreChangeEvent event = new HighscoreChangeEvent(game, oldScore, newScore, oldScores.size(), initialScore);
-      triggerHighscoreChange(event);
+        //archive old existingScore only if it had actual data
+        if (!StringUtils.isEmpty(oldRaw)) {
+          HighscoreVersion version = oldHighscore.toVersion(changedPosition, newRaw);
+          highscoreVersionRepository.saveAndFlush(version);
+          LOG.info("Created highscore version for " + game + ", changed position " + changedPosition);
+        }
+
+        //update existing one
+        oldHighscore.setRaw(newHighscore.getRaw());
+        oldHighscore.setType(newHighscore.getType());
+        oldHighscore.setLastScanned(newHighscore.getLastScanned());
+        oldHighscore.setLastModified(newHighscore.getLastModified());
+        oldHighscore.setFilename(newHighscore.getFilename());
+        oldHighscore.setStatus(null);
+        oldHighscore.setDisplayName(newHighscore.getDisplayName());
+        highscoreRepository.saveAndFlush(oldHighscore);
+        LOG.info("Saved updated highscore for " + game);
+
+        //finally, fire the update event to notify all listeners
+        HighscoreChangeEvent event = new HighscoreChangeEvent(game, oldScore, newScore, oldScores.size(), initialScore);
+        triggerHighscoreChange(event);
+      }
     }
+
     return Optional.of(oldHighscore);
   }
 

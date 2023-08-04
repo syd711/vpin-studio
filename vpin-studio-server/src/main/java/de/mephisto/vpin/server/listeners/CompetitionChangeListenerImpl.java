@@ -189,8 +189,9 @@ public class CompetitionChangeListenerImpl implements InitializingBean, Competit
           }
           else {
             Platform.runLater(() -> {
+              String description = "You can duplicate the competition to continue it with another table or duration.";
               byte[] image = assetService.getCompetitionFinishedCard(competition, game, winner, scoreSummary);
-              long msgId = discordService.sendMessage(serverId, channelId, message, image, competition.getName() + ".png", null);
+              long msgId = discordService.sendMessage(serverId, channelId, message, image, competition.getName() + ".png", description);
               discordService.finishCompetition(serverId, channelId, msgId);
             });
           }

@@ -274,31 +274,32 @@ public class CompetitionOfflineDialogController implements Initializable, Dialog
     return competition;
   }
 
-  public void setCompetition(List<CompetitionRepresentation> all, CompetitionRepresentation c) {
-    if (c != null) {
-      this.competition = c;
-      GameRepresentation game = client.getGame(c.getGameId());
+  public void setCompetition(List<CompetitionRepresentation> all, CompetitionRepresentation selectedCompetition) {
+    if (selectedCompetition != null) {
+      GameRepresentation game = client.getGame(selectedCompetition.getGameId());
 
-      nameField.setText(this.competition.getName());
-      this.startDatePicker.setValue(this.competition.getStartDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate());
-      this.startDatePicker.setDisable(this.competition.isFinished());
-      this.startTime.setValue(DateUtil.formatTimeString(this.competition.getStartDate()));
+      nameField.setText(selectedCompetition.getName());
+      this.startDatePicker.setValue(selectedCompetition.getStartDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate());
+      this.startDatePicker.setDisable(selectedCompetition.isFinished());
+      this.startTime.setValue(DateUtil.formatTimeString(selectedCompetition.getStartDate()));
 
-      this.endDatePicker.setValue(this.competition.getEndDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate());
-      this.endDatePicker.setDisable(this.competition.isFinished());
-      this.endTime.setValue(DateUtil.formatTimeString(this.competition.getEndDate()));
+      this.endDatePicker.setValue(selectedCompetition.getEndDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate());
+      this.endDatePicker.setDisable(selectedCompetition.isFinished());
+      this.endTime.setValue(DateUtil.formatTimeString(selectedCompetition.getEndDate()));
 
       this.tableCombo.setValue(game);
-      this.tableCombo.setDisable((this.competition.getId() != null && !this.competition.isPlanned()) || this.competition.isFinished());
+      this.tableCombo.setDisable((selectedCompetition.getId() != null && !selectedCompetition.isPlanned()) || selectedCompetition.isFinished());
 
 
-      Optional<DiscordChannel> channelOpt = getDiscordChannels().stream().filter(channel -> channel.getId() == c.getDiscordChannelId()).findFirst();
+      Optional<DiscordChannel> channelOpt = getDiscordChannels().stream().filter(channel -> channel.getId() == selectedCompetition.getDiscordChannelId()).findFirst();
       channelOpt.ifPresent(discordChannel -> this.channelsCombo.setValue(discordChannel));
-      this.channelsCombo.setDisable(this.competition.isFinished());
+      this.channelsCombo.setDisable(selectedCompetition.isFinished());
 
-      this.competitionIconCombo.setValue(c.getBadge());
-      this.competitionIconCombo.setDisable(this.competition.isFinished());
-      String badge = c.getBadge();
+      this.competitionIconCombo.setValue(selectedCompetition.getBadge());
+      this.competitionIconCombo.setDisable(selectedCompetition.isFinished());
+
+      this.competition = selectedCompetition;
+      String badge = selectedCompetition.getBadge();
       refreshPreview(game, badge);
     }
   }

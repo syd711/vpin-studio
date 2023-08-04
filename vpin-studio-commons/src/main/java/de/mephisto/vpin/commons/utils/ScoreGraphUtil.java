@@ -22,6 +22,10 @@ public class ScoreGraphUtil {
     if (!list.getScores().isEmpty()) {
       List<XYChart.Series> series = new ArrayList<>();
       ScoreSummaryRepresentation firstEntry = list.getScores().get(0);
+      if(firstEntry == null) {
+        return null;
+      }
+
       List<ScoreRepresentation> scoreList = firstEntry.getScores();
       for (int i = 0; i < scoreList.size(); i++) {
         XYChart.Series<String, Number> scoreGraph = new XYChart.Series();

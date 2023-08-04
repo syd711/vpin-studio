@@ -132,7 +132,7 @@ public class Studio extends Application {
       stage.setX((screenBounds.getWidth() / 2) - (width / 2));
       stage.setY((screenBounds.getHeight() / 2) - (height / 2));
 //      ResizeHelper.addResizeListener(stage);
-      FXResizeHelper fxResizeHelper = new FXResizeHelper(stage, 6, 6);
+      FXResizeHelper fxResizeHelper = new FXResizeHelper(stage, 30, 6);
       stage.setUserData(fxResizeHelper);
 
       stage.show();

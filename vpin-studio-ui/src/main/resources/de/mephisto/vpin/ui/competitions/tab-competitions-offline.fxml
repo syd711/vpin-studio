@@ -22,10 +22,10 @@
                         <TableView fx:id="tableView" style="-fx-background-color: #2a2a2a;" styleClass="base-component">
                             <columns>
                                 <TableColumn fx:id="columnTable" prefWidth="280.8000183105469" style="-fx-alignment: BASELINE_LEFT;" text="Table" />
-                                <TableColumn fx:id="columnName" prefWidth="280.0" style="-fx-alignment: BASELINE_LEFT;" text="Name" />
-                                <TableColumn fx:id="columnStatus" minWidth="0.0" prefWidth="150.0" style="-fx-alignment: CENTER;" text="Status" />
-                                <TableColumn fx:id="columnStartDate" prefWidth="160.0" style="-fx-alignment: CENTER;" text="Start Date" />
-                                <TableColumn fx:id="columnEndDate" prefWidth="160.0" style="-fx-alignment: CENTER;" text="End Date" />
+                                <TableColumn fx:id="columnName" prefWidth="240.0" style="-fx-alignment: BASELINE_LEFT;" text="Name" />
+                                <TableColumn fx:id="columnStatus" minWidth="0.0" prefWidth="130.0" style="-fx-alignment: CENTER;" text="Status" />
+                                <TableColumn fx:id="columnStartDate" prefWidth="180.0" style="-fx-alignment: CENTER;" text="Start Date" />
+                                <TableColumn fx:id="columnEndDate" prefWidth="180.0" style="-fx-alignment: CENTER;" text="End Date" />
                                 <TableColumn fx:id="columnWinner" prefWidth="140.0" style="-fx-alignment: CENTER;" text="Winner" />
                             </columns>
                         </TableView>
