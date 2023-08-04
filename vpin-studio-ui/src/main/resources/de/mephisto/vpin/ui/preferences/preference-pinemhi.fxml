@@ -109,11 +109,6 @@
                               <Insets top="-12.0" />
                            </VBox.margin>
                         </CheckBox>
-                        <CheckBox fx:id="hiscores" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" styleClass="preference-checkbox" text="Hiscores" textFill="WHITE">
-                           <font>
-                              <Font size="14.0" />
-                           </font>
-                        </CheckBox>
                         <CheckBox fx:id="buyins" layoutX="10.0" layoutY="30.0" mnemonicParsing="false" styleClass="preference-checkbox" text="Buyins" textFill="WHITE">
                            <font>
                               <Font size="14.0" />

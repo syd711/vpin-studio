@@ -32,7 +32,6 @@ public class PINemHiPreferencesController implements Initializable, IniSettingsC
   private final static Logger LOG = LoggerFactory.getLogger(PINemHiPreferencesController.class);
 
   private final static String SETTING_REPLAYS = "replays";
-  private final static String SETTING_HIGHSCORES = "hiscores";
   private final static String SETTING_BUYINS = "buyins";
   private final static String SETTING_NAME = "name";
   private final static String SETTING_CODE = "code";
@@ -82,9 +81,6 @@ public class PINemHiPreferencesController implements Initializable, IniSettingsC
 
   @FXML
   private CheckBox replays;
-
-  @FXML
-  private CheckBox hiscores;
 
   @FXML
   private CheckBox buyins;
@@ -189,9 +185,6 @@ public class PINemHiPreferencesController implements Initializable, IniSettingsC
 
     replays.setSelected(settings.getBoolean(SETTING_REPLAYS));
     replays.selectedProperty().addListener((observableValue, aBoolean, t1) -> settings.set(SETTING_REPLAYS, t1));
-
-    hiscores.setSelected(settings.getBoolean(SETTING_HIGHSCORES));
-    hiscores.selectedProperty().addListener((observableValue, aBoolean, t1) -> settings.set(SETTING_HIGHSCORES, t1));
 
     buyins.setSelected(settings.getBoolean(SETTING_BUYINS));
     buyins.selectedProperty().addListener((observableValue, aBoolean, t1) -> settings.set(SETTING_BUYINS, t1));
