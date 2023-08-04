@@ -360,6 +360,17 @@ public class DiscordService implements InitializingBean, PreferenceChangedListen
     return null;
   }
 
+
+  public List<Player> getPlayers(long serverId) {
+    List<Player> players = new ArrayList<>();
+    for (DiscordMember member : this.getMembers(serverId)) {
+      Player player = toPlayer(member);
+      players.add(player);
+    }
+    players.sort(Comparator.comparing(Player::getName));
+    return players;
+  }
+
   public List<Player> getPlayers() {
     List<Player> players = new ArrayList<>();
     for (DiscordMember member : this.getMembers()) {
@@ -379,6 +390,7 @@ public class DiscordService implements InitializingBean, PreferenceChangedListen
       }
       else if (propertyName.equals(PreferenceNames.DISCORD_GUILD_ID) || propertyName.equals(PreferenceNames.DISCORD_BOT_ALLOW_LIST)) {
         this.applyDefaultDiscordSettings();
+        LOG.info("Re-applied discord settings.");
       }
     } catch (Exception e) {
       LOG.error("Failed to update discord preferences: " + e.getMessage());
@@ -387,16 +399,9 @@ public class DiscordService implements InitializingBean, PreferenceChangedListen
 
   private void applyDefaultDiscordSettings() {
     String guildId = (String) preferencesService.getPreferenceValue(PreferenceNames.DISCORD_GUILD_ID);
-    String whiteList = (String) preferencesService.getPreferenceValue(PreferenceNames.DISCORD_BOT_ALLOW_LIST);
-
     if (this.discordClient != null) {
-      if (!StringUtils.isEmpty(whiteList)) {
-        String[] split = whiteList.split(",");
-        this.discordClient.setCommandsAllowList(Arrays.asList(split));
-      }
-      else {
-        this.discordClient.setCommandsAllowList(Collections.emptyList());
-      }
+      List<Long> allowList = getAllowList().stream().map(player -> player.getId()).collect(Collectors.toList());
+      this.discordClient.setCommandsAllowList(allowList);
 
       if (!StringUtils.isEmpty(guildId)) {
         this.discordClient.setDefaultGuildId(Long.parseLong(guildId));
@@ -408,6 +413,7 @@ public class DiscordService implements InitializingBean, PreferenceChangedListen
     DiscordPlayer player = new DiscordPlayer();
     player.setId(member.getId());
     player.setName(member.getName());
+    player.setDisplayName(member.getDisplayName());
     player.setInitials(member.getInitials());
     player.setAvatarUrl(member.getAvatarUrl());
     player.setDomain(PlayerDomain.DISCORD.name());
@@ -523,6 +529,29 @@ public class DiscordService implements InitializingBean, PreferenceChangedListen
         }
       }
     }
+  }
+
+  public List<Player> getAllowList() {
+    List<Player> result = new ArrayList<>();
+    String allowList = (String) preferencesService.getPreferenceValue(PreferenceNames.DISCORD_BOT_ALLOW_LIST);
+    String[] split = allowList.split(",");
+
+    if(this.discordClient != null) {
+      for (String item : split) {
+        try {
+          long id = Long.parseLong(item);
+          DiscordMember member = this.discordClient.getMember(id);
+          if(member != null) {
+            result.add(toPlayer(member));
+          }
+        }
+        catch (Exception e) {
+          //ignore
+        }
+      }
+    }
+
+    return result;
   }
 
   public boolean clearCache() {

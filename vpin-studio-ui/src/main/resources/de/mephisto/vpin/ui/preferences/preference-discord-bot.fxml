@@ -2,9 +2,9 @@
 
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
-<?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
@@ -123,12 +123,8 @@
                   <Insets top="24.0" />
                </VBox.margin>
             </Label>
-            <Label layoutX="34.0" layoutY="355.0" styleClass="preference-description" text="Enter the name or ID of users that are allowed to write bot commands." textFill="WHITE">
-               <VBox.margin>
-                  <Insets bottom="6.0" />
-               </VBox.margin>
-            </Label>
-            <GridPane layoutX="34.0" layoutY="375.0">
+            <Label layoutX="34.0" layoutY="526.0" styleClass="preference-description" text="You can disable them entirely or configure an allow list." textFill="WHITE" />
+            <GridPane layoutX="34.0" layoutY="487.0">
                <columnConstraints>
                   <ColumnConstraints hgrow="SOMETIMES" maxWidth="446.2000732421875" minWidth="10.0" prefWidth="201.599951171875" />
                   <ColumnConstraints hgrow="SOMETIMES" maxWidth="763.7999267578125" minWidth="10.0" prefWidth="701.600048828125" />
@@ -139,23 +135,67 @@
                   <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                </rowConstraints>
                <children>
+                  <Label prefHeight="20.0" styleClass="preference-label" text="Disable Bot Commands:" textFill="WHITE" GridPane.rowIndex="1">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                  </Label>
+                  <HBox alignment="BASELINE_LEFT" prefHeight="100.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                  <CheckBox fx:id="disableCheckbox" mnemonicParsing="false" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                  </CheckBox>
+               </children>
+            </GridPane>
+            <Label layoutX="34.0" layoutY="355.0" styleClass="preference-description" text="Select users that are allowed to write bot commands." textFill="WHITE">
+               <VBox.margin>
+                  <Insets bottom="6.0" />
+               </VBox.margin>
+            </Label>
+            <GridPane layoutX="34.0" layoutY="375.0">
+               <columnConstraints>
+                  <ColumnConstraints hgrow="SOMETIMES" maxWidth="446.2000732421875" minWidth="10.0" prefWidth="200.0" />
+                  <ColumnConstraints hgrow="SOMETIMES" maxWidth="763.7999267578125" minWidth="10.0" prefWidth="701.600048828125" />
+               </columnConstraints>
+               <rowConstraints>
+                  <RowConstraints />
+                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+               </rowConstraints>
+               <children>
                   <Label prefHeight="20.0" styleClass="preference-label" text="Bot Users Allow List:" textFill="WHITE" GridPane.rowIndex="1">
                      <font>
                         <Font size="14.0" />
                      </font>
                   </Label>
-                  <TextField fx:id="botChannelAllowList" prefHeight="30.0" prefWidth="701.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                  <Button fx:id="selectUsersBtn" mnemonicParsing="false" onAction="#onUserSelect" text="Select Users" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="1">
                      <font>
                         <Font size="14.0" />
                      </font>
-                  </TextField>
-                  <HBox alignment="BASELINE_LEFT" prefHeight="100.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="2">
-                     <children>
-                        <Label text="(comma separated value)" />
-                     </children>
-                  </HBox>
+                     <graphic>
+                        <FontIcon iconColor="WHITE" iconLiteral="mdi2d-database-edit-outline" />
+                     </graphic>
+                  </Button>
                </children>
             </GridPane>
+            <BorderPane prefHeight="300.0" prefWidth="200.0">
+               <left>
+                  <Label prefHeight="20.0" prefWidth="200.0" styleClass="preference-label" text="Selected Users:" textFill="WHITE" BorderPane.alignment="TOP_LEFT">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                     <BorderPane.margin>
+                        <Insets top="6.0" />
+                     </BorderPane.margin>
+                  </Label>
+               </left>
+               <center>
+                  <VBox fx:id="allowListPane" prefHeight="200.0" prefWidth="100.0" BorderPane.alignment="TOP_LEFT">
+                     <BorderPane.margin>
+                        <Insets top="9.0" />
+                     </BorderPane.margin></VBox>
+               </center>
+            </BorderPane>
          </children>
          <padding>
             <Insets bottom="24.0" left="24.0" right="24.0" top="24.0" />

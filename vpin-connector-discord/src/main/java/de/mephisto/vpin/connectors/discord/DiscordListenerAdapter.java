@@ -18,7 +18,7 @@ import java.util.List;
 public class DiscordListenerAdapter extends ListenerAdapter {
   private final static Logger LOG = LoggerFactory.getLogger(DiscordListenerAdapter.class);
 
-  private List<String> commandsAllowList = new ArrayList<>();
+  private List<Long> commandsAllowList = new ArrayList<>();
   private final DiscordClient discordClient;
   private final DiscordCommandResolver commandResolver;
 
@@ -27,7 +27,7 @@ public class DiscordListenerAdapter extends ListenerAdapter {
     this.commandResolver = commandResolver;
   }
 
-  public void setCommandsAllowList(List<String> commandsAllowList) {
+  public void setCommandsAllowList(List<Long> commandsAllowList) {
     this.commandsAllowList = commandsAllowList;
   }
 
@@ -41,15 +41,14 @@ public class DiscordListenerAdapter extends ListenerAdapter {
         return true;
       }
 
-      String name = event.getAuthor().getName();
-      String id = event.getAuthor().getId();
-      boolean isAllowed = commandsAllowList.contains(name) || commandsAllowList.contains(id);
-      if(!isAllowed) {
-        LOG.info("Discord message has been filtered by the allow list.");
+      long id = event.getAuthor().getIdLong();
+      boolean isAllowed = commandsAllowList.contains(id);
+      if (isAllowed) {
+        return true;
       }
-      return isAllowed;
     }
 
+    LOG.info("Discord message has been filtered by the allow list.");
     return false;
   }
 

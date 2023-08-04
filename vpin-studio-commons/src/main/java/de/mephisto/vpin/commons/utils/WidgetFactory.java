@@ -363,7 +363,7 @@ public class WidgetFactory {
       mediaPlayer.setCycleCount(-1);
       mediaPlayer.setMute(true);
       mediaPlayer.setOnError(() -> {
-        LOG.error("Media player error: " + mediaPlayer.getError() + ", URL: " + url);
+        LOG.error("Media player error for URL {}: {}", url, mediaPlayer.getError() + ", URL: " + url);
         mediaPlayer.stop();
         mediaPlayer.dispose();
 

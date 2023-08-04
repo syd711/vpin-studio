@@ -6,19 +6,26 @@ import de.mephisto.vpin.connectors.discord.GuildInfo;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.discord.DiscordChannel;
 import de.mephisto.vpin.restclient.discord.DiscordServer;
+import de.mephisto.vpin.restclient.representations.PlayerRepresentation;
 import de.mephisto.vpin.restclient.representations.PreferenceEntryRepresentation;
 import de.mephisto.vpin.ui.Studio;
-import de.mephisto.vpin.ui.util.BindingUtil;
+import de.mephisto.vpin.ui.util.Dialogs;
 import javafx.application.Platform;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.geometry.Pos;
 import javafx.scene.Cursor;
 import javafx.scene.control.*;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 import org.apache.commons.lang3.StringUtils;
 
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
@@ -30,9 +37,6 @@ public class DiscordBotPreferencesController implements Initializable {
   private Label botTokenLabel;
 
   @FXML
-  private TextField botChannelAllowList;
-
-  @FXML
   private Button resetBtn;
 
   @FXML
@@ -40,6 +44,15 @@ public class DiscordBotPreferencesController implements Initializable {
 
   @FXML
   private ComboBox<DiscordChannel> channelCombo;
+
+  @FXML
+  private VBox allowListPane;
+
+  @FXML
+  private CheckBox disableCheckbox;
+
+  @FXML
+  private Button selectUsersBtn;
 
   @FXML
   private void onReset() {
@@ -54,6 +67,11 @@ public class DiscordBotPreferencesController implements Initializable {
       this.channelCombo.setDisable(true);
       this.channelCombo.setValue(null);
     }
+  }
+
+  @FXML
+  private void onUserSelect() {
+    Dialogs.openBotWhitelistDialog(this);
   }
 
   @FXML
@@ -115,7 +133,16 @@ public class DiscordBotPreferencesController implements Initializable {
       resetBtn.setDisable(false);
     }
 
-    BindingUtil.bindTextField(botChannelAllowList, PreferenceNames.DISCORD_BOT_ALLOW_LIST, "");
+    preference = client.getPreference(PreferenceNames.DISCORD_BOT_COMMANDS_ENABLED);
+    selectUsersBtn.setDisable(!preference.getBooleanValue());
+    disableCheckbox.setSelected(preference.getBooleanValue());
+    disableCheckbox.selectedProperty().addListener(new ChangeListener<Boolean>() {
+      @Override
+      public void changed(ObservableValue<? extends Boolean> observableValue, Boolean aBoolean, Boolean t1) {
+        client.getPreferenceService().setPreference(PreferenceNames.DISCORD_BOT_COMMANDS_ENABLED, t1);
+        selectUsersBtn.setDisable(!t1);
+      }
+    });
 
     validateDefaultChannel();
 
@@ -137,6 +164,30 @@ public class DiscordBotPreferencesController implements Initializable {
         client.getPreferenceService().setPreference(PreferenceNames.DISCORD_CHANNEL_ID, "");
       }
     });
+
+    refreshAllowList();
+  }
+
+  public void refreshAllowList() {
+    allowListPane.getChildren().removeAll(allowListPane.getChildren());
+
+    List<PlayerRepresentation> allowList = new ArrayList<>(client.getDiscordService().getAllowList());
+    for (PlayerRepresentation user : allowList) {
+      HBox root = new HBox();
+      root.setStyle("-fx-padding: 3 0 3 0;");
+      root.setAlignment(Pos.BASELINE_LEFT);
+      root.setSpacing(3);
+      Label label = new Label("\u2023 " + user.getName());
+      label.setStyle("-fx-font-size: 14px;-fx-text-fill: white;");
+      root.getChildren().add(label);
+      allowListPane.getChildren().add(root);
+    }
+
+    if (allowList.isEmpty()) {
+      Label label = new Label("No users are filtered. All server members can execute bot commands.");
+      label.setStyle("-fx-font-size: 14px;-fx-text-fill: white;");
+      allowListPane.getChildren().add(label);
+    }
   }
 
   private void validateDefaultChannel() {

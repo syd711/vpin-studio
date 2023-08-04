@@ -15,6 +15,7 @@ public interface PreferenceNames {
   String DISCORD_GUILD_ID = "discordGuildId";
   String DISCORD_CHANNEL_ID = "discordChannelId";
   String DISCORD_BOT_ALLOW_LIST = "discordBotAllowList";
+  String DISCORD_BOT_COMMANDS_ENABLED = "discordBotCommandsEnabled";
   String RANKING_POINTS = "rankingPoints";
   String ACTIVE_GAME = "activeGame";
   String PREVIEW_ENABLED = "previewEnabled";

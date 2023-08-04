@@ -262,6 +262,14 @@ public class DiscordClient {
     return null;
   }
 
+  public DiscordMember getMember(long memberId) {
+    User user = this.jda.getUserById(memberId);
+      if (user != null) {
+        return toMember(user);
+      }
+    return null;
+  }
+
   public List<DiscordTextChannel> getChannels() {
     return getChannels(-1);
   }
@@ -387,8 +395,22 @@ public class DiscordClient {
     DiscordMember discordMember = new DiscordMember();
     discordMember.setId(member.getIdLong());
     discordMember.setName(name);
+    discordMember.setDisplayName(member.getEffectiveName());
     discordMember.setInitials(initials);
     discordMember.setBot(member.getUser().isBot());
+    discordMember.setAvatarUrl(member.getEffectiveAvatarUrl());
+    return discordMember;
+  }
+
+  private DiscordMember toMember(User member) {
+    String name = member.getName();
+    String initials = resolveInitials(name);
+
+    DiscordMember discordMember = new DiscordMember();
+    discordMember.setId(member.getIdLong());
+    discordMember.setName(name);
+    discordMember.setInitials(initials);
+    discordMember.setBot(member.isBot());
     discordMember.setAvatarUrl(member.getEffectiveAvatarUrl());
     return discordMember;
   }
@@ -428,7 +450,7 @@ public class DiscordClient {
     }
   }
 
-  public void setCommandsAllowList(List<String> commandsAllowList) {
+  public void setCommandsAllowList(List<Long> commandsAllowList) {
     this.listenerAdapter.setCommandsAllowList(commandsAllowList);
   }
 
