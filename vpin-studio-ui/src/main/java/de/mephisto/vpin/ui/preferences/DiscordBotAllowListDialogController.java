@@ -104,6 +104,7 @@ public class DiscordBotAllowListDialogController implements Initializable, Dialo
                 List<String> updatedList = allowList.stream().map(playerRepresentation -> String.valueOf(playerRepresentation.getId())).collect(Collectors.toList());
                 String pref = String.join(",", updatedList);
                 client.getPreferenceService().setPreference(PreferenceNames.DISCORD_BOT_ALLOW_LIST, pref);
+                preferencesController.refreshAllowList();
               } catch (Exception e) {
                 LOG.error("Failed to update playlists: " + e.getMessage(), e);
                 WidgetFactory.showAlert(stage, "Error", "Failed to update playlists: " + e.getMessage());
@@ -117,6 +118,10 @@ public class DiscordBotAllowListDialogController implements Initializable, Dialo
         usersLabel.setText("Resolved Users (" + count + "):");
       }
     });
+
+    if(!discordServers.isEmpty()) {
+      serverCombo.setValue(discordServers.get(0));
+    }
   }
 
 

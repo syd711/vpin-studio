@@ -178,7 +178,7 @@
                   </Button>
                </children>
             </GridPane>
-            <BorderPane prefHeight="200.0" prefWidth="200.0">
+            <BorderPane prefHeight="300.0" prefWidth="200.0">
                <left>
                   <Label prefHeight="20.0" prefWidth="200.0" styleClass="preference-label" text="Selected Users:" textFill="WHITE" BorderPane.alignment="TOP_LEFT">
                      <font>
