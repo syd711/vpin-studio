@@ -3,6 +3,7 @@ package de.mephisto.vpin.restclient.util;
 import org.apache.commons.lang3.time.DurationFormatUtils;
 
 import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
@@ -24,14 +25,8 @@ public class DateUtil {
   }
 
   public static String formatTimeString(Date date) {
-    Calendar calendar = Calendar.getInstance();
-    calendar.setTime(date);
-    int hours = calendar.get(Calendar.HOUR_OF_DAY);
-    int minutes = calendar.get(Calendar.MINUTE);
-
-    long ms = hours * 60 * 60 * 1000;
-    ms += minutes * 60 * 1000;
-    return DurationFormatUtils.formatDuration(ms, "HH:mm", true);
+    SimpleDateFormat df = new SimpleDateFormat("HH:mm");
+    return df.format(date);
   }
 
   public static String formatDateTime(Date date) {

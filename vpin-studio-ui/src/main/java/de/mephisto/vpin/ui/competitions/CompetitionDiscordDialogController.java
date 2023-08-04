@@ -383,37 +383,36 @@ public class CompetitionDiscordDialogController implements Initializable, Dialog
     return competition;
   }
 
-  public void setCompetition(List<CompetitionRepresentation> all, CompetitionRepresentation c) {
+  public void setCompetition(List<CompetitionRepresentation> all, CompetitionRepresentation selectedCompetition) {
     this.allCompetitions = all;
 
-    if (c != null) {
-      this.competition = c;
-      this.resetCheckbox.setDisable(c.getId() != null);
-      this.resetCheckbox.setSelected(c.getId() != null);
+    if (selectedCompetition != null) {
+      this.resetCheckbox.setDisable(selectedCompetition.getId() != null);
+      this.resetCheckbox.setSelected(selectedCompetition.getId() != null);
 
-      GameRepresentation game = client.getGame(c.getGameId());
-      DiscordServer discordServer = client.getDiscordServer(competition.getDiscordServerId());
+      GameRepresentation game = client.getGame(selectedCompetition.getGameId());
+      DiscordServer discordServer = client.getDiscordServer(selectedCompetition.getDiscordServerId());
       List<DiscordChannel> serverChannels = client.getDiscordService().getDiscordChannels(discordServer.getId());
 
       String botId = String.valueOf(botStatus.getBotId());
-      boolean isOwner = c.getOwner().equals(botId);
-      boolean editable = isOwner && !c.isStarted();
+      boolean isOwner = selectedCompetition.getOwner().equals(botId);
+      boolean editable = isOwner && !selectedCompetition.isStarted();
 
       channelsCombo.setDisable(!editable);
       serversCombo.setDisable(!editable);
       competitionIconCombo.setDisable(!editable);
 
-      this.nameField.setText(this.competition.getName());
+      this.nameField.setText(selectedCompetition.getName());
       this.nameField.setDisable(!editable);
 
-      this.startDatePicker.setValue(this.competition.getStartDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate());
+      this.startDatePicker.setValue(selectedCompetition.getStartDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate());
       this.startDatePicker.setDisable(!editable);
-      this.startTime.setValue(DateUtil.formatTimeString(this.competition.getStartDate()));
+      this.startTime.setValue(DateUtil.formatTimeString(selectedCompetition.getStartDate()));
       this.startTime.setDisable(!editable);
 
-      this.endDatePicker.setValue(this.competition.getEndDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate());
+      this.endDatePicker.setValue(selectedCompetition.getEndDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate());
       this.endDatePicker.setDisable(!editable);
-      this.endTime.setValue(DateUtil.formatTimeString(this.competition.getEndDate()));
+      this.endTime.setValue(DateUtil.formatTimeString(selectedCompetition.getEndDate()));
       this.endTime.setDisable(!editable);
 
       this.strictCheckCheckbox.setDisable(!editable);
@@ -426,21 +425,23 @@ public class CompetitionDiscordDialogController implements Initializable, Dialog
       this.serversCombo.setValue(discordServer);
 
       //the id is null when we want to duplicate an existing competition
-      if (competition.getId() != null) {
-        Optional<DiscordChannel> first = serverChannels.stream().filter(channel -> channel.getId() == competition.getId()).findFirst();
+      if (selectedCompetition.getId() != null) {
+        Optional<DiscordChannel> first = serverChannels.stream().filter(channel -> channel.getId() == selectedCompetition.getId()).findFirst();
         first.ifPresent(discordChannel -> this.channelsCombo.setValue(discordChannel));
       }
 
       ObservableList<DiscordChannel> items = this.channelsCombo.getItems();
       for (DiscordChannel item : items) {
-        if (item.getId() == c.getDiscordChannelId()) {
+        if (item.getId() == selectedCompetition.getDiscordChannelId()) {
           this.channelsCombo.setValue(item);
           break;
         }
       }
 
-      this.competitionIconCombo.setValue(c.getBadge());
-      String badge = c.getBadge();
+      this.competitionIconCombo.setValue(selectedCompetition.getBadge());
+      String badge = selectedCompetition.getBadge();
+
+      this.competition = selectedCompetition;
       refreshPreview(game, badge);
     }
   }
