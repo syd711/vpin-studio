@@ -2,22 +2,21 @@ package de.mephisto.vpin.server.pinemhi;
 
 import de.mephisto.vpin.commons.utils.SystemCommandExecutor;
 import de.mephisto.vpin.restclient.PreferenceNames;
-import de.mephisto.vpin.server.VPinStudioException;
 import de.mephisto.vpin.server.preferences.PreferencesService;
 import de.mephisto.vpin.server.system.SystemService;
-import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.ini4j.Config;
-import org.ini4j.Ini;
-import org.ini4j.Profile;
+import org.apache.commons.configuration2.INIConfiguration;
+import org.apache.commons.configuration2.SubnodeConfiguration;
+import org.apache.commons.configuration2.ex.ConfigurationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.io.*;
-import java.nio.charset.StandardCharsets;
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.*;
 
 @Service
@@ -37,7 +36,7 @@ public class PINemHiService implements InitializingBean {
   private SystemService systemService;
 
   private boolean enabled = false;
-  private Ini ini;
+  private INIConfiguration iniConfiguration;
 
   public boolean getAutoStart() {
     return preferencesService.getPreferences().getPinemhiAutoStartEnabled();
@@ -85,42 +84,67 @@ public class PINemHiService implements InitializingBean {
       for (Map.Entry<String, Object> entry : entries) {
         String key = entry.getKey();
 
-        Collection<Profile.Section> sections = ini.values();
-        for (Profile.Section section : sections) {
-          if (section.containsKey(key)) {
+        Set<String> sections = iniConfiguration.getSections();
+        for (String section : sections) {
+          if ("romfind".equals(section)) {
+            continue;
+          }
+
+          SubnodeConfiguration s = iniConfiguration.getSection(section);
+          if (s.containsKey(key)) {
             changeCounter++;
-            section.put(key, entry.getValue());
+            s.setProperty(key, entry.getValue());
             break;
           }
         }
       }
 
-      ini.store();
-      LOG.info("Written " + changeCounter + " entries to pinemhi.ini.");
-    } catch (IOException e) {
+      saveIni();
+    } catch (Exception e) {
       LOG.error("Failed to save pinemhi.ini: " + e.getMessage(), e);
     }
     return settings;
   }
 
+  private void saveIni() throws IOException, ConfigurationException {
+    File pinEmHiIni = new File(PINEMHI_FOLDER, PINEMHI_INI);
+    FileWriter fileWriter = new FileWriter(pinEmHiIni);
+    iniConfiguration.write(fileWriter);
+    fileWriter.close();
+  }
+
   public Map<String, Object> loadSettings() {
     try {
+      iniConfiguration = new INIConfiguration();
+      iniConfiguration.setCommentLeadingCharsUsedInInput(";");
+      iniConfiguration.setSeparatorUsedInOutput("=");
+      iniConfiguration.setSeparatorUsedInInput("=");
+
       File pinEmHiIni = new File(PINEMHI_FOLDER, PINEMHI_INI);
 
-      ini = new Ini(pinEmHiIni);
+      try (FileReader fileReader = new FileReader(pinEmHiIni)) {
+        iniConfiguration.read(fileReader);
+      }
+
+
       Map<String, Object> entries = new HashMap<>();
-      Collection<Profile.Section> values = ini.values();
-      for (Profile.Section value : values) {
-        Set<Map.Entry<String, String>> entrySet = value.entrySet();
-        for (Map.Entry<String, String> e : entrySet) {
-          String v = e.getValue();
-          if (!v.endsWith(".nv")) {
-            entries.put(e.getKey(), e.getValue());
+      Set<String> sections = iniConfiguration.getSections();
+      for (String section : sections) {
+        if ("romfind".equals(section)) {
+          continue;
+        }
+
+        SubnodeConfiguration s = iniConfiguration.getSection(section);
+        Iterator<String> keys = s.getKeys();
+        while (keys.hasNext()) {
+          String key = keys.next();
+          if (!key.endsWith(".nv")) {
+            entries.put(key, s.getString(key));
           }
         }
       }
       return entries;
-    } catch (IOException e) {
+    } catch (Exception e) {
       LOG.error("Failed to load pinemhi.ini: " + e.getMessage(), e);
     }
     return Collections.emptyMap();
@@ -129,70 +153,24 @@ public class PINemHiService implements InitializingBean {
 
   @Override
   public void afterPropertiesSet() throws Exception {
-    initPinemHiFolders();
-
-    Config.getGlobal().setEscape(false);
-    Config.getGlobal().setStrictOperator(true);
-    Config.getGlobal().setEmptySection(true);
-    Config.getGlobal().setHeaderComment(true);
-
     loadSettings();
-
     this.enabled = getAutoStart();
     if (enabled) {
       startMonitor();
       LOG.info("Auto-started " + PROCESS_NAME);
     }
-  }
 
-  private void initPinemHiFolders() throws VPinStudioException {
     try {
-      File file = new File(PINEMHI_FOLDER, PINEMHI_INI);
-      if (!file.exists()) {
-        throw new FileNotFoundException("pinemhi.ini file (" + file.getAbsolutePath() + ") not found.");
+      String vpPath = (String) iniConfiguration.getSection("paths").getProperty("VP");
+      File vp = new File(vpPath);
+      if (!vp.exists() || !vpPath.endsWith("/")) {
+        vp = new File(systemService.getNvramFolder().getAbsolutePath());
+        iniConfiguration.getSection("paths").setProperty("VP", vp.getAbsolutePath().replaceAll("\\\\", "/") + "/");
+        saveIni();
+        LOG.info("Changed VP path to " + vp.getAbsolutePath());
       }
-
-      FileInputStream fileInputStream = new FileInputStream(file);
-      java.util.List<String> lines = IOUtils.readLines(fileInputStream, StandardCharsets.UTF_8);
-      fileInputStream.close();
-
-      boolean writeUpdates = false;
-      List<String> updatedLines = new ArrayList<>();
-      for (String line : lines) {
-        if (line.startsWith("VP=")) {
-          String vpValue = line.split("=")[1];
-          File pinemhiNvRamFolder = new File(vpValue);
-          if (!pinemhiNvRamFolder.exists() || line.contains("\\")) {
-            LOG.info("Found errorneous VP path entry in pinemhi.ini, updating file.");
-            pinemhiNvRamFolder = systemService.getNvramFolder();
-            line = "VP=" + pinemhiNvRamFolder.getAbsolutePath().replaceAll("\\\\", "/") + "/";
-            writeUpdates = true;
-          }
-        }
-
-        if (line.startsWith("FP=")) {
-          String fpValue = line.split("=")[1];
-          if (line.contains("\\")) {
-            LOG.info("Found errorneous FP path entry in pinemhi.ini, updating file.");
-            line = "FP=" + new File(fpValue).getAbsolutePath().replaceAll("\\\\", "/") + "/";
-            writeUpdates = true;
-          }
-        }
-        updatedLines.add(line);
-      }
-
-      if (writeUpdates) {
-        FileOutputStream out = new FileOutputStream(file);
-        IOUtils.writeLines(updatedLines, "\n", out, StandardCharsets.UTF_8);
-        out.close();
-        LOG.info("Written updates to " + file.getAbsolutePath());
-      }
-
-      LOG.info("Finished pinemhi installation check.");
     } catch (Exception e) {
-      String msg = "Failed to run installation for pinemhi: " + e.getMessage();
-      LOG.error(msg, e);
-      throw new VPinStudioException(msg, e);
+      LOG.error("Failed to update VP path in pinemhi.ini: " + e.getMessage(), e);
     }
   }
 }
