@@ -1,4 +1,4 @@
-package de.mephisto.vpin.ui.competitions;
+package de.mephisto.vpin.ui.competitions.dialogs;
 
 import de.mephisto.vpin.commons.fx.DialogController;
 import de.mephisto.vpin.restclient.CompetitionType;

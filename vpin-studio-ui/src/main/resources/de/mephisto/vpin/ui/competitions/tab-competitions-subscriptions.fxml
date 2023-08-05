@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.ToolBar?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.text.Font?>
+<?import org.kordamp.ikonli.javafx.FontIcon?>
+
+<BorderPane styleClass="base-component" stylesheets="@../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.competitions.TableSubscriptionsController">
+    <center>
+
+        <BorderPane BorderPane.alignment="CENTER">
+            <center>
+                <StackPane fx:id="tableStack">
+                    <children>
+                        <TableView fx:id="tableView" style="-fx-background-color: #2a2a2a;" styleClass="base-component">
+                            <columns>
+                                <TableColumn fx:id="columnTable" prefWidth="350.0" style="-fx-alignment: BASELINE_LEFT;" text="Table" />
+                                <TableColumn fx:id="columnName" prefWidth="228.800048828125" style="-fx-alignment: BASELINE_LEFT;" text="Channel Name" />
+                                <TableColumn fx:id="columnStatus" minWidth="0.0" prefWidth="123.19984436035156" style="-fx-alignment: CENTER;" text="Status" />
+                        <TableColumn fx:id="columnServer" prefWidth="192.0" style="-fx-alignment: CENTER;" text="Server" />
+                        <TableColumn fx:id="columnCompetitionOwner" prefWidth="156.0" style="-fx-alignment: CENTER;" text="Subscription Owner" />
+                            </columns>
+                        </TableView>
+                    </children>
+                </StackPane>
+            </center>
+            <top>
+                <ToolBar prefHeight="40.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+                    <items>
+                        <TextField fx:id="textfieldSearch" prefHeight="26.0" prefWidth="250.0" promptText="Subscription Search...">
+                            <font>
+                                <Font size="14.0" />
+                            </font>
+                        </TextField>
+                        <Separator layoutX="320.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
+                        <Button fx:id="reloadBtn" layoutX="280.0" layoutY="12.0" mnemonicParsing="false" onAction="#onReload" text="Reload" textFill="WHITE">
+                            <font>
+                                <Font size="14.0" />
+                            </font>
+                            <graphic>
+                                <FontIcon iconColor="WHITE" iconLiteral="sil-reload" />
+                            </graphic>
+                        </Button>
+                        <Separator orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
+                        <Button fx:id="addBtn" layoutX="280.0" layoutY="11.0" mnemonicParsing="false" onAction="#onCompetitionCreate" text="Add" textFill="WHITE">
+                            <font>
+                                <Font size="14.0" />
+                            </font>
+                            <graphic>
+                                <FontIcon iconColor="WHITE" iconLiteral="mdi2p-plus-circle-outline" />
+                            </graphic>
+                        </Button>
+                  <Button fx:id="joinBtn" layoutX="380.0" layoutY="11.0" mnemonicParsing="false" onAction="#onJoin" text="Join" textFill="WHITE">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                     <graphic>
+                        <FontIcon iconColor="WHITE" iconLiteral="mdi2l-lan-connect" />
+                     </graphic>
+                  </Button>
+                        <Separator layoutX="364.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
+                        <Button fx:id="editBtn" layoutX="280.0" layoutY="11.0" mnemonicParsing="false" onAction="#onEdit" text="Edit" textFill="WHITE">
+                            <font>
+                                <Font size="14.0" />
+                            </font>
+                            <graphic>
+                                <FontIcon iconColor="WHITE" iconLiteral="mdi2d-database-edit-outline" />
+                            </graphic>
+                        </Button>
+                        <Separator layoutX="448.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
+                        <Button fx:id="deleteBtn" layoutX="464.0" layoutY="11.0" mnemonicParsing="false" onAction="#onDelete" text="Delete" textFill="#ff3333">
+                            <font>
+                                <Font size="14.0" />
+                            </font>
+                            <graphic>
+                                <FontIcon iconColor="#ff3333" iconLiteral="mdi2d-delete-outline" />
+                            </graphic>
+                        </Button>
+                    </items>
+                </ToolBar>
+            </top>
+        </BorderPane>
+    </center>
+    <BorderPane.margin>
+        <Insets right="12.0" />
+    </BorderPane.margin>
+    <top>
+        <BorderPane fx:id="competitionWidget" BorderPane.alignment="CENTER" />
+    </top>
+</BorderPane>

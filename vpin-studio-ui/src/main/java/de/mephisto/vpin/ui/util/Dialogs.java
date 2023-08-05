@@ -12,9 +12,10 @@ import de.mephisto.vpin.ui.ProgressDialogController;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.UpdateDialogController;
 import de.mephisto.vpin.ui.archiving.dialogs.*;
-import de.mephisto.vpin.ui.competitions.CompetitionDiscordDialogController;
-import de.mephisto.vpin.ui.competitions.CompetitionDiscordJoinDialogController;
-import de.mephisto.vpin.ui.competitions.CompetitionOfflineDialogController;
+import de.mephisto.vpin.ui.competitions.dialogs.CompetitionDiscordDialogController;
+import de.mephisto.vpin.ui.competitions.dialogs.CompetitionDiscordJoinDialogController;
+import de.mephisto.vpin.ui.competitions.dialogs.CompetitionOfflineDialogController;
+import de.mephisto.vpin.ui.competitions.dialogs.SubscriptionDialogController;
 import de.mephisto.vpin.ui.launcher.InstallationController;
 import de.mephisto.vpin.ui.players.PlayerDialogController;
 import de.mephisto.vpin.ui.preferences.DiscordBotAllowListDialogController;
@@ -88,6 +89,17 @@ public class Dialogs {
     FXMLLoader fxmlLoader = new FXMLLoader(CompetitionDiscordDialogController.class.getResource("dialog-discord-competition-edit.fxml"));
     Stage stage = WidgetFactory.createDialogStage(fxmlLoader, Studio.stage, title);
     CompetitionDiscordDialogController controller = (CompetitionDiscordDialogController) stage.getUserData();
+    controller.setCompetition(all, selection);
+    stage.showAndWait();
+
+    return controller.getCompetition();
+  }
+
+  public static CompetitionRepresentation openSubscriptionDialog(List<CompetitionRepresentation> all, @Nullable CompetitionRepresentation selection) {
+    String title = "Add Subscription";
+    FXMLLoader fxmlLoader = new FXMLLoader(SubscriptionDialogController.class.getResource("dialog-subscription-edit.fxml"));
+    Stage stage = WidgetFactory.createDialogStage(fxmlLoader, Studio.stage, title);
+    SubscriptionDialogController controller = (SubscriptionDialogController) stage.getUserData();
     controller.setCompetition(all, selection);
     stage.showAndWait();
 

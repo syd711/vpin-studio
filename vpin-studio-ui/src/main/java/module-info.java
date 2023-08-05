@@ -60,4 +60,6 @@ module de.mephisto.vpin.ui {
   opens de.mephisto.vpin.ui.tables.vps to javafx.fxml;
   exports de.mephisto.vpin.ui.tables.drophandler;
   opens de.mephisto.vpin.ui.tables.drophandler to javafx.fxml;
+  exports de.mephisto.vpin.ui.competitions.dialogs;
+  opens de.mephisto.vpin.ui.competitions.dialogs to javafx.fxml;
 }

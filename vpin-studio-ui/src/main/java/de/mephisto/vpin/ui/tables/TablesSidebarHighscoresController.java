@@ -7,6 +7,7 @@ import de.mephisto.vpin.restclient.descriptors.ResetHighscoreDescriptor;
 import de.mephisto.vpin.restclient.client.VPinStudioClient;
 import de.mephisto.vpin.restclient.representations.*;
 import de.mephisto.vpin.ui.Studio;
+import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.util.Dialogs;
 import de.mephisto.vpin.ui.util.MediaUtil;
 import eu.hansolo.tilesfx.Tile;
@@ -167,6 +168,7 @@ public class TablesSidebarHighscoresController implements Initializable {
       HighscoreMetadataRepresentation metadata = summary.getMetadata();
       if (forceRescan) {
         metadata = Studio.client.getGameService().scanGameScore(game.getId());
+        EventManager.getInstance().notifyTableChange(game.getId(), game.getRom());
       }
 
       ScoreListRepresentation scoreHistory = Studio.client.getGameService().getScoreHistory(game.getId());

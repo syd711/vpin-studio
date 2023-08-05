@@ -52,6 +52,9 @@ public class CompetitionsController implements Initializable, StudioFXController
   private Tab onlineTab;
 
   @FXML
+  private Tab tableSubscriptionsTab;
+
+  @FXML
   private Label createdAtLabel;
 
   @FXML
@@ -96,6 +99,7 @@ public class CompetitionsController implements Initializable, StudioFXController
 
   private CompetitionsOfflineController offlineController;
   private CompetitionsDiscordController discordController;
+  private TableSubscriptionsController tableSubscriptionsController;
 
   private Tile highscoresGraphTile;
 
@@ -115,6 +119,7 @@ public class CompetitionsController implements Initializable, StudioFXController
 
     offlineController.onViewActivated();
     discordController.onViewActivated();
+    tableSubscriptionsController.onViewActivated();
   }
 
   @Override
@@ -243,6 +248,18 @@ public class CompetitionsController implements Initializable, StudioFXController
           scorePane.setExpanded(true);
           break;
         }
+        case SUBSCRIPTION: {
+          competitionMembersPane.setDisable(true);
+          competitionMembersPane.setExpanded(false);
+          metaDataPane.setDisable(true);
+          metaDataPane.setExpanded(false);
+          scorePane.setDisable(true);
+          scorePane.setExpanded(false);
+          break;
+        }
+        default: {
+          throw new UnsupportedOperationException("Competition type " + competitionType + " is not mapped.");
+        }
       }
     }
   }
@@ -257,13 +274,24 @@ public class CompetitionsController implements Initializable, StudioFXController
         NavigationController.setBreadCrumb(Arrays.asList("Competitions", "Offline Competitions"));
       }
     }
-    else {
+    else if (index == 1) {
       if (competitionRepresentation.isPresent()) {
         NavigationController.setBreadCrumb(Arrays.asList("Competitions", "Discord Competitions", competitionRepresentation.get().getName()));
       }
       else {
         NavigationController.setBreadCrumb(Arrays.asList("Competitions", "Discord Competitions"));
       }
+    }
+    else if (index == 2) {
+      if (competitionRepresentation.isPresent()) {
+        NavigationController.setBreadCrumb(Arrays.asList("Competitions", "Table Subscriptions", competitionRepresentation.get().getName()));
+      }
+      else {
+        NavigationController.setBreadCrumb(Arrays.asList("Competitions", "Table Subscriptions"));
+      }
+    }
+    else {
+      throw new UnsupportedOperationException("Invalid tab.");
     }
   }
 
@@ -334,22 +362,32 @@ public class CompetitionsController implements Initializable, StudioFXController
   private void loadTabs() {
     try {
       FXMLLoader loader = new FXMLLoader(CompetitionsOfflineController.class.getResource("tab-competitions-offline.fxml"));
-      Parent offline = loader.load();
+      Parent parent = loader.load();
       offlineController = loader.getController();
       offlineController.setCompetitionsController(this);
-      offlineTab.setContent(offline);
+      offlineTab.setContent(parent);
     } catch (IOException e) {
-      LOG.error("failed to load buildIn players: " + e.getMessage(), e);
+      LOG.error("failed to load offline: " + e.getMessage(), e);
     }
 
     try {
       FXMLLoader loader = new FXMLLoader(CompetitionsDiscordController.class.getResource("tab-competitions-discord.fxml"));
-      Parent offline = loader.load();
+      Parent parent = loader.load();
       discordController = loader.getController();
       discordController.setCompetitionsController(this);
-      onlineTab.setContent(offline);
+      onlineTab.setContent(parent);
     } catch (IOException e) {
-      LOG.error("failed to load buildIn players: " + e.getMessage(), e);
+      LOG.error("failed to load online: " + e.getMessage(), e);
+    }
+
+    try {
+      FXMLLoader loader = new FXMLLoader(TableSubscriptionsController.class.getResource("tab-competitions-subscriptions.fxml"));
+      Parent parent = loader.load();
+      tableSubscriptionsController = loader.getController();
+      tableSubscriptionsController.setCompetitionsController(this);
+      tableSubscriptionsTab.setContent(parent);
+    } catch (IOException e) {
+      LOG.error("failed to load subscriptions: " + e.getMessage(), e);
     }
   }
 

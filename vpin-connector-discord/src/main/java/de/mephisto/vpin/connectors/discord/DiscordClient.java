@@ -3,6 +3,7 @@ package de.mephisto.vpin.connectors.discord;
 
 import net.dv8tion.jda.api.*;
 import net.dv8tion.jda.api.entities.*;
+import net.dv8tion.jda.api.entities.channel.concrete.Category;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.entities.channel.middleman.GuildChannel;
 import net.dv8tion.jda.api.requests.GatewayIntent;
@@ -64,6 +65,15 @@ public class DiscordClient {
       }
     }
     return false;
+  }
+
+  public List<DiscordCategory> getCategories(long serverId) {
+    Guild guild = getGuild(serverId);
+    if (guild != null) {
+      List<Category> categories = guild.getCategories();
+      return categories.stream().map(category -> toCategory(category)).collect(Collectors.toList());
+    }
+    return Collections.emptyList();
   }
 
   public DiscordMember getBot() {
@@ -413,6 +423,13 @@ public class DiscordClient {
     discordMember.setBot(member.isBot());
     discordMember.setAvatarUrl(member.getEffectiveAvatarUrl());
     return discordMember;
+  }
+
+  private DiscordCategory toCategory(Category category) {
+    DiscordCategory c = new DiscordCategory();
+    c.setId(category.getIdLong());
+    c.setName(category.getName());
+    return c;
   }
 
   /**
