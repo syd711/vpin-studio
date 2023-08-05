@@ -50,6 +50,37 @@ public class Preferences {
 
   private String rankingPoints;
 
+  @Column(length = 1024)
+  private String highscoreTitles;
+
+  private int idleTimeout;
+
+  @Column(name = "activeGame", nullable = false, columnDefinition = "int default -1")
+  private int activeGame = -1;
+
+  @Column(name = "previewEnabled", nullable = false, columnDefinition = "boolean default true")
+  private boolean previewEnabled;
+
+  @Column(name = "pinVolAutoStartEnabled", nullable = false, columnDefinition = "boolean default false")
+  private boolean pinVolAutoStartEnabled;
+
+  @Column(name = "pinemhiAutoStartEnabled", nullable = false, columnDefinition = "boolean default false")
+  private boolean pinemhiAutoStartEnabled;
+
+  @Column(name = "discordBotCommandsEnabled", nullable = false, columnDefinition = "boolean default true")
+  private boolean discordBotCommandsEnabled;
+
+  @Column(name = "discordDynamicSubscriptions", nullable = false, columnDefinition = "boolean default false")
+  private boolean discordDynamicSubscriptions;
+
+  public boolean getDiscordDynamicSubscriptions() {
+    return discordDynamicSubscriptions;
+  }
+
+  public void setDiscordDynamicSubscriptions(boolean discordDynamicSubscriptions) {
+    this.discordBotCommandsEnabled = discordDynamicSubscriptions;
+  }
+
   public String getDiscordCategoryId() {
     return discordCategoryId;
   }
@@ -73,26 +104,6 @@ public class Preferences {
   public void setVpbmExternalHostId(String vpbmExternalHostId) {
     this.vpbmExternalHostId = vpbmExternalHostId;
   }
-
-  @Column(length = 1024)
-  private String highscoreTitles;
-
-  private int idleTimeout;
-
-  @Column(name = "activeGame", nullable = false, columnDefinition = "int default -1")
-  private int activeGame = -1;
-
-  @Column(name = "previewEnabled", nullable = false, columnDefinition = "boolean default true")
-  private boolean previewEnabled;
-
-  @Column(name = "pinVolAutoStartEnabled", nullable = false, columnDefinition = "boolean default false")
-  private boolean pinVolAutoStartEnabled;
-
-  @Column(name = "pinemhiAutoStartEnabled", nullable = false, columnDefinition = "boolean default false")
-  private boolean pinemhiAutoStartEnabled;
-
-  @Column(name = "discordBotCommandsEnabled", nullable = false, columnDefinition = "boolean default true")
-  private boolean discordBotCommandsEnabled;
 
   public boolean isDiscordBotCommandsEnabled() {
     return discordBotCommandsEnabled;

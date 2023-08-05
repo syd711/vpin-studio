@@ -56,6 +56,9 @@ public class DiscordBotPreferencesController implements Initializable {
   private CheckBox disableCheckbox;
 
   @FXML
+  private CheckBox dynamicSubscriptions;
+
+  @FXML
   private Button selectUsersBtn;
 
   @FXML
@@ -73,6 +76,7 @@ public class DiscordBotPreferencesController implements Initializable {
       this.channelCombo.setValue(null);
       this.categoryCombo.setDisable(true);
       this.categoryCombo.setValue(null);
+      this.dynamicSubscriptions.setDisable(true);
     }
   }
 
@@ -110,6 +114,7 @@ public class DiscordBotPreferencesController implements Initializable {
           serverCombo.setDisable(false);
           channelCombo.setDisable(true);
           categoryCombo.setDisable(true);
+          dynamicSubscriptions.setDisable(false);
           resetBtn.setDisable(false);
           validateDefaultChannel();
         });
@@ -182,6 +187,15 @@ public class DiscordBotPreferencesController implements Initializable {
       }
     });
 
+    PreferenceEntryRepresentation dynamicSubscriptionsPreference = client.getPreference(PreferenceNames.DISCORD_DYNAMIC_SUBSCRIPTIONS);
+    dynamicSubscriptions.setSelected(dynamicSubscriptionsPreference.getBooleanValue());
+    dynamicSubscriptions.selectedProperty().addListener(new ChangeListener<Boolean>() {
+      @Override
+      public void changed(ObservableValue<? extends Boolean> observableValue, Boolean aBoolean, Boolean t1) {
+        client.getPreferenceService().setPreference(PreferenceNames.DISCORD_DYNAMIC_SUBSCRIPTIONS, t1);
+      }
+    });
+
     refreshAllowList();
   }
 
@@ -194,7 +208,7 @@ public class DiscordBotPreferencesController implements Initializable {
       root.setStyle("-fx-padding: 3 0 3 0;");
       root.setAlignment(Pos.BASELINE_LEFT);
       root.setSpacing(3);
-      Label label = new Label("\u2023 " + user.getName());
+      Label label = new Label("- " + user.getName());
       label.setStyle("-fx-font-size: 14px;-fx-text-fill: white;");
       root.getChildren().add(label);
       allowListPane.getChildren().add(root);
