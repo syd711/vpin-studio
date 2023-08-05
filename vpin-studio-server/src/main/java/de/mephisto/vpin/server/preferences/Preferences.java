@@ -38,6 +38,8 @@ public class Preferences {
 
   private String discordChannelId;
 
+  private String discordCategoryId;
+
   private String discordBotToken;
 
   private String discordBotAllowList;
@@ -47,6 +49,14 @@ public class Preferences {
   private String vpbmExternalHostId;
 
   private String rankingPoints;
+
+  public String getDiscordCategoryId() {
+    return discordCategoryId;
+  }
+
+  public void setDiscordCategoryId(String discordCategoryId) {
+    this.discordCategoryId = discordCategoryId;
+  }
 
   public String getVpbmInternalHostId() {
     return vpbmInternalHostId;

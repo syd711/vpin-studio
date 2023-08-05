@@ -1,12 +1,8 @@
 package de.mephisto.vpin.restclient.client;
 
 
-import de.mephisto.vpin.restclient.discord.DiscordBotStatus;
-import de.mephisto.vpin.restclient.discord.DiscordChannel;
-import de.mephisto.vpin.restclient.discord.DiscordCompetitionData;
-import de.mephisto.vpin.restclient.discord.DiscordServer;
+import de.mephisto.vpin.restclient.discord.*;
 import de.mephisto.vpin.restclient.representations.PlayerRepresentation;
-import de.mephisto.vpin.restclient.representations.PlaylistRepresentation;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.Arrays;

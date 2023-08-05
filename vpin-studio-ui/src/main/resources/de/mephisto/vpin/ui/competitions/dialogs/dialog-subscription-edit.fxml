@@ -54,11 +54,12 @@
                   </Label>
                   <GridPane vgap="3.0">
                     <columnConstraints>
-                      <ColumnConstraints hgrow="SOMETIMES" maxWidth="355.0" minWidth="10.0" prefWidth="185.80009765625" />
+                      <ColumnConstraints hgrow="SOMETIMES" maxWidth="355.0" minWidth="10.0" prefWidth="190.0" />
                       <ColumnConstraints hgrow="SOMETIMES" maxWidth="552.6001129150391" minWidth="10.0" prefWidth="280.0" />
                         <ColumnConstraints hgrow="SOMETIMES" maxWidth="552.6001129150391" minWidth="10.0" prefWidth="30.0" />
                         <ColumnConstraints hgrow="SOMETIMES" maxWidth="552.6001129150391" minWidth="10.0" prefWidth="100.0" />
                         <ColumnConstraints hgrow="SOMETIMES" maxWidth="552.6001129150391" minWidth="10.0" prefWidth="30.0" />
+                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="552.6001129150391" minWidth="10.0" prefWidth="36.0" />
                     </columnConstraints>
                     <rowConstraints>
                         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
@@ -90,7 +91,7 @@
                            </font>
                         </Label>
                         <ComboBox fx:id="tableCombo" prefWidth="280.0" GridPane.columnIndex="1" />
-                        <Label layoutX="10.0" layoutY="15.0" styleClass="default-text" text=" | [" textFill="WHITE" GridPane.columnIndex="2" GridPane.rowIndex="2">
+                        <Label layoutX="10.0" layoutY="15.0" styleClass="default-text" text="  | [" textFill="WHITE" GridPane.columnIndex="2" GridPane.rowIndex="2">
                            <font>
                               <Font size="14.0" />
                            </font>
@@ -100,7 +101,7 @@
                               <Font size="14.0" />
                            </font>
                         </Label>
-                        <TextField fx:id="nameField1" disable="true" editable="false" layoutX="185.0" layoutY="44.0" GridPane.columnIndex="3" GridPane.rowIndex="2">
+                        <TextField fx:id="suffixField" disable="true" editable="false" layoutX="185.0" layoutY="44.0" GridPane.columnIndex="3" GridPane.rowIndex="2">
                            <font>
                               <Font size="14.0" />
                            </font>
@@ -115,6 +116,17 @@
                               <Label styleClass="help-text" text="ROM Suffix" />
                            </children>
                         </HBox>
+                        <Label textFill="WHITE" GridPane.columnIndex="5" GridPane.rowIndex="2">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                           <graphic>
+                              <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
+                           </graphic>
+                           <tooltip>
+                              <Tooltip prefWidth="300.0" text="The ROM name will be automatically appended and is required for the name. The actual name of the channel should not be longer than 26 characters." wrapText="true" />
+                           </tooltip>
+                        </Label>
                      </children>
                      <VBox.margin>
                         <Insets top="12.0" />

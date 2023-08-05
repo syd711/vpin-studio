@@ -1,10 +1,21 @@
 package de.mephisto.vpin.restclient.discord;
 
+import java.util.List;
+
 public class DiscordServer {
   private String name;
   private long id;
   private String avatarUrl;
   private long ownerId;
+  private List<DiscordCategory> categories;
+
+  public List<DiscordCategory> getCategories() {
+    return categories;
+  }
+
+  public void setCategories(List<DiscordCategory> categories) {
+    this.categories = categories;
+  }
 
   public long getOwnerId() {
     return ownerId;

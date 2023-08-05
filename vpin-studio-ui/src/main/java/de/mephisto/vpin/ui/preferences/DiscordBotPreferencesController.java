@@ -4,6 +4,7 @@ import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.connectors.discord.DiscordClient;
 import de.mephisto.vpin.connectors.discord.GuildInfo;
 import de.mephisto.vpin.restclient.PreferenceNames;
+import de.mephisto.vpin.restclient.discord.DiscordCategory;
 import de.mephisto.vpin.restclient.discord.DiscordChannel;
 import de.mephisto.vpin.restclient.discord.DiscordServer;
 import de.mephisto.vpin.restclient.representations.PlayerRepresentation;
@@ -46,6 +47,9 @@ public class DiscordBotPreferencesController implements Initializable {
   private ComboBox<DiscordChannel> channelCombo;
 
   @FXML
+  private ComboBox<DiscordCategory> categoryCombo;
+
+  @FXML
   private VBox allowListPane;
 
   @FXML
@@ -61,11 +65,14 @@ public class DiscordBotPreferencesController implements Initializable {
         "Yes, delete token");
     if (result.get().equals(ButtonType.OK)) {
       client.getPreferenceService().setPreference(PreferenceNames.DISCORD_BOT_TOKEN, "");
+
       botTokenLabel.setText("-");
       this.serverCombo.setDisable(true);
       this.serverCombo.setValue(null);
       this.channelCombo.setDisable(true);
       this.channelCombo.setValue(null);
+      this.categoryCombo.setDisable(true);
+      this.categoryCombo.setValue(null);
     }
   }
 
@@ -101,7 +108,8 @@ public class DiscordBotPreferencesController implements Initializable {
           client.getPreferenceService().setPreference(PreferenceNames.DISCORD_BOT_TOKEN, token.trim());
           botTokenLabel.setText(token.trim());
           serverCombo.setDisable(false);
-          channelCombo.setDisable(false);
+          channelCombo.setDisable(true);
+          categoryCombo.setDisable(true);
           resetBtn.setDisable(false);
           validateDefaultChannel();
         });
@@ -122,6 +130,7 @@ public class DiscordBotPreferencesController implements Initializable {
   public void initialize(URL url, ResourceBundle resourceBundle) {
     serverCombo.setDisable(true);
     channelCombo.setDisable(true);
+    categoryCombo.setDisable(true);
     resetBtn.setDisable(true);
 
     PreferenceEntryRepresentation preference = client.getPreference(PreferenceNames.DISCORD_BOT_TOKEN);
@@ -129,7 +138,6 @@ public class DiscordBotPreferencesController implements Initializable {
     botTokenLabel.setText(token);
     if (!StringUtils.isEmpty(token)) {
       serverCombo.setDisable(false);
-      channelCombo.setDisable(false);
       resetBtn.setDisable(false);
     }
 
@@ -162,6 +170,15 @@ public class DiscordBotPreferencesController implements Initializable {
       }
       else {
         client.getPreferenceService().setPreference(PreferenceNames.DISCORD_CHANNEL_ID, "");
+      }
+    });
+
+    categoryCombo.valueProperty().addListener((observable, oldValue, newValue) -> {
+      if (newValue != null) {
+        client.getPreferenceService().setPreference(PreferenceNames.DISCORD_CATEGORY_ID, newValue.getId());
+      }
+      else {
+        client.getPreferenceService().setPreference(PreferenceNames.DISCORD_CATEGORY_ID, "");
       }
     });
 
@@ -199,19 +216,31 @@ public class DiscordBotPreferencesController implements Initializable {
 
     PreferenceEntryRepresentation preference = client.getPreference(PreferenceNames.DISCORD_GUILD_ID);
     PreferenceEntryRepresentation channelPreference = client.getPreference(PreferenceNames.DISCORD_CHANNEL_ID);
+    PreferenceEntryRepresentation categoryPreference = client.getPreference(PreferenceNames.DISCORD_CATEGORY_ID);
 
     long serverId = preference.getLongValue();
     if (serverId > 0) {
       DiscordServer discordServer = client.getDiscordServer(serverId);
       if (discordServer != null) {
+        channelCombo.setDisable(false);
+        categoryCombo.setDisable(false);
+
         serverCombo.setValue(discordServer);
+
         List<DiscordChannel> discordChannels = client.getDiscordService().getDiscordChannels(discordServer.getId());
         channelCombo.setItems(FXCollections.observableArrayList(discordChannels));
-
         long channelId = channelPreference.getLongValue();
         if (channelId > 0) {
           Optional<DiscordChannel> first = discordChannels.stream().filter(channel -> channel.getId() == channelId).findFirst();
           first.ifPresent(discordChannel -> channelCombo.setValue(discordChannel));
+        }
+
+        List<DiscordCategory> discordCategories = discordServer.getCategories();
+        categoryCombo.setItems(FXCollections.observableArrayList(discordCategories));
+        long categoryId = categoryPreference.getLongValue();
+        if (categoryId > 0) {
+          Optional<DiscordCategory> first = discordCategories.stream().filter(category -> category.getId() == categoryId).findFirst();
+          first.ifPresent(category -> categoryCombo.setValue(category));
         }
       }
     }

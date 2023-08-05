@@ -4,6 +4,7 @@ import de.mephisto.vpin.connectors.discord.*;
 import de.mephisto.vpin.restclient.PlayerDomain;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.discord.DiscordBotStatus;
+import de.mephisto.vpin.restclient.discord.DiscordCategory;
 import de.mephisto.vpin.restclient.discord.DiscordChannel;
 import de.mephisto.vpin.restclient.discord.DiscordCompetitionData;
 import de.mephisto.vpin.restclient.discord.DiscordServer;
@@ -316,7 +317,8 @@ public class DiscordService implements InitializingBean, PreferenceChangedListen
     if (this.discordClient != null) {
       GuildInfo guild = this.discordClient.getGuildById(serverId);
       if (guild != null) {
-        return toServer(guild);
+        List<de.mephisto.vpin.connectors.discord.DiscordCategory> categories = this.discordClient.getCategories(serverId);
+        return toServer(guild, categories);
       }
     }
     return null;
@@ -327,7 +329,8 @@ public class DiscordService implements InitializingBean, PreferenceChangedListen
     if (this.discordClient != null) {
       List<GuildInfo> guilds = this.discordClient.getGuilds();
       for (GuildInfo guild : guilds) {
-        result.add(toServer(guild));
+        List<de.mephisto.vpin.connectors.discord.DiscordCategory> categories = this.discordClient.getCategories(guild.getId());
+        result.add(toServer(guild, categories));
       }
     }
     return result;
@@ -421,13 +424,21 @@ public class DiscordService implements InitializingBean, PreferenceChangedListen
     return player;
   }
 
-  private DiscordServer toServer(@NonNull GuildInfo guild) {
+  private DiscordServer toServer(@NonNull GuildInfo guild, List<de.mephisto.vpin.connectors.discord.DiscordCategory> categories) {
     DiscordServer s = new DiscordServer();
     s.setOwnerId(guild.getOwnerId());
     s.setId(guild.getId());
     s.setName(guild.getName());
     s.setAvatarUrl(guild.getAvatarUrl());
+    s.setCategories(categories.stream().map(this::toCategory).collect(Collectors.toList()));
     return s;
+  }
+
+  private DiscordCategory toCategory(de.mephisto.vpin.connectors.discord.DiscordCategory c) {
+    DiscordCategory category =new DiscordCategory();
+    category.setId(c.getId());
+    category.setName(c.getName());
+    return category;
   }
 
   private ScoreSummary toScoreSummary(@NonNull HighscoreParser highscoreParser, @NonNull DiscordMessage message) {
@@ -529,6 +540,14 @@ public class DiscordService implements InitializingBean, PreferenceChangedListen
         }
       }
     }
+  }
+
+  public List<DiscordCategory> getCategories(long serverId) {
+    if (this.discordClient != null) {
+      List<de.mephisto.vpin.connectors.discord.DiscordCategory> categories = this.discordClient.getCategories(serverId);
+      return categories.stream().map(c -> toCategory(c)).collect(Collectors.toList());
+    }
+    return Collections.emptyList();
   }
 
   public List<Player> getAllowList() {

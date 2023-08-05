@@ -1,9 +1,6 @@
 package de.mephisto.vpin.server.discord;
 
-import de.mephisto.vpin.restclient.discord.DiscordBotStatus;
-import de.mephisto.vpin.restclient.discord.DiscordChannel;
-import de.mephisto.vpin.restclient.discord.DiscordCompetitionData;
-import de.mephisto.vpin.restclient.discord.DiscordServer;
+import de.mephisto.vpin.restclient.discord.*;
 import de.mephisto.vpin.server.players.Player;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;

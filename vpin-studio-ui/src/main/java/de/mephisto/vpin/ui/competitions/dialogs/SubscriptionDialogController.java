@@ -5,19 +5,12 @@ import de.mephisto.vpin.commons.fx.Debouncer;
 import de.mephisto.vpin.commons.fx.DialogController;
 import de.mephisto.vpin.commons.fx.UIDefaults;
 import de.mephisto.vpin.restclient.CompetitionType;
-import de.mephisto.vpin.restclient.JoinMode;
 import de.mephisto.vpin.restclient.PreferenceNames;
-import de.mephisto.vpin.restclient.client.VPinStudioClient;
 import de.mephisto.vpin.restclient.discord.DiscordBotStatus;
 import de.mephisto.vpin.restclient.discord.DiscordChannel;
-import de.mephisto.vpin.restclient.discord.DiscordCompetitionData;
 import de.mephisto.vpin.restclient.discord.DiscordServer;
-import de.mephisto.vpin.restclient.popper.PopperScreen;
 import de.mephisto.vpin.restclient.representations.CompetitionRepresentation;
-import de.mephisto.vpin.restclient.representations.GameMediaItemRepresentation;
-import de.mephisto.vpin.restclient.representations.GameMediaRepresentation;
 import de.mephisto.vpin.restclient.representations.GameRepresentation;
-import de.mephisto.vpin.restclient.util.DateUtil;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -25,15 +18,12 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.ByteArrayInputStream;
 import java.net.URL;
 import java.time.LocalDate;
 import java.time.ZoneId;
@@ -51,9 +41,6 @@ public class SubscriptionDialogController implements Initializable, DialogContro
   private ComboBox<GameRepresentation> tableCombo;
 
   @FXML
-  private ComboBox<DiscordChannel> channelsCombo;
-
-  @FXML
   private ComboBox<DiscordServer> serversCombo;
 
   @FXML
@@ -61,6 +48,9 @@ public class SubscriptionDialogController implements Initializable, DialogContro
 
   @FXML
   private TextField nameField;
+
+  @FXML
+  private TextField suffixField;
 
   @FXML
   private Pane validationContainer;
@@ -77,8 +67,6 @@ public class SubscriptionDialogController implements Initializable, DialogContro
   private CompetitionRepresentation competition;
 
   private DiscordBotStatus botStatus = null;
-
-  private List<CompetitionRepresentation> allCompetitions;
 
   @FXML
   private void onCancelClick(ActionEvent e) {
@@ -129,16 +117,6 @@ public class SubscriptionDialogController implements Initializable, DialogContro
     serversCombo.getItems().addAll(discordServers);
     serversCombo.valueProperty().addListener((observableValue, gameRepresentation, t1) -> {
       competition.setDiscordServerId(t1.getId());
-
-      channelsCombo.setItems(FXCollections.observableArrayList(client.getDiscordService().getDiscordChannels(t1.getId())));
-      validate();
-    });
-
-
-    ObservableList<DiscordChannel> discordChannels = FXCollections.observableArrayList(new ArrayList<>());
-    channelsCombo.getItems().addAll(discordChannels);
-    channelsCombo.valueProperty().addListener((observableValue, gameRepresentation, t1) -> {
-      competition.setDiscordChannelId(t1.getId());
       validate();
     });
 
@@ -223,8 +201,6 @@ public class SubscriptionDialogController implements Initializable, DialogContro
   }
 
   public void setCompetition(List<CompetitionRepresentation> all, CompetitionRepresentation selectedCompetition) {
-    this.allCompetitions = all;
-
     if (selectedCompetition != null) {
       this.resetCheckbox.setDisable(selectedCompetition.getId() != null);
       this.resetCheckbox.setSelected(selectedCompetition.getId() != null);
@@ -237,7 +213,6 @@ public class SubscriptionDialogController implements Initializable, DialogContro
       boolean isOwner = selectedCompetition.getOwner().equals(botId);
       boolean editable = isOwner && !selectedCompetition.isStarted();
 
-      channelsCombo.setDisable(!editable);
       serversCombo.setDisable(!editable);
 
       this.nameField.setText(selectedCompetition.getName());
@@ -248,22 +223,8 @@ public class SubscriptionDialogController implements Initializable, DialogContro
       this.tableCombo.setDisable(!editable);
 
 
-      this.channelsCombo.setItems(FXCollections.observableList(serverChannels));
       this.serversCombo.setValue(discordServer);
 
-      //the id is null when we want to duplicate an existing competition
-      if (selectedCompetition.getId() != null) {
-        Optional<DiscordChannel> first = serverChannels.stream().filter(channel -> channel.getId() == selectedCompetition.getId()).findFirst();
-        first.ifPresent(discordChannel -> this.channelsCombo.setValue(discordChannel));
-      }
-
-      ObservableList<DiscordChannel> items = this.channelsCombo.getItems();
-      for (DiscordChannel item : items) {
-        if (item.getId() == selectedCompetition.getDiscordChannelId()) {
-          this.channelsCombo.setValue(item);
-          break;
-        }
-      }
       this.competition = selectedCompetition;
     }
   }
