@@ -131,13 +131,24 @@ public class CompetitionsController implements Initializable, StudioFXController
         updateSelection(selection);
         offlineController.onReload();
       }
-      else {
+      else if (t1.intValue() == 1) {
         if (discordController != null) {
           NavigationController.setBreadCrumb(Arrays.asList("Competitions", "Discord Competitions"));
           Optional<CompetitionRepresentation> selection = discordController.getSelection();
           updateSelection(selection);
           discordController.onReload();
         }
+      }
+      else if (t1.intValue() == 2) {
+        if (tableSubscriptionsController != null) {
+          NavigationController.setBreadCrumb(Arrays.asList("Competitions", "Table Subscriptions"));
+          Optional<CompetitionRepresentation> selection = tableSubscriptionsController.getSelection();
+          updateSelection(selection);
+          tableSubscriptionsController.onReload();
+        }
+      }
+      else {
+        throw new UnsupportedOperationException("Invalid tab id");
       }
     });
 
@@ -310,15 +321,15 @@ public class CompetitionsController implements Initializable, StudioFXController
           return;
         }
 
-        ScoreListRepresentation competitionScores = client.getCompetitionScoreList(competition.getId());
-        if (!competitionScores.getScores().isEmpty() && scoreGraphBox != null) {
-          highscoresGraphTile = ScoreGraphUtil.createGraph(competitionScores);
-          scoreGraphBox.setCenter(highscoresGraphTile);
-          scoreGraphBox.getCenter().setVisible(true);
-        }
-        else {
-          statusLabel.setText("No scores have been submitted yet.");
-        }
+//        ScoreListRepresentation competitionScores = client.getCompetitionScoreList(competition.getId());
+//        if (!competitionScores.getScores().isEmpty() && scoreGraphBox != null) {
+//          highscoresGraphTile = ScoreGraphUtil.createGraph(competitionScores);
+//          scoreGraphBox.setCenter(highscoresGraphTile);
+//          scoreGraphBox.getCenter().setVisible(true);
+//        }
+//        else {
+//          statusLabel.setText("No scores have been submitted yet.");
+//        }
       } catch (Exception e) {
         LOG.error("Failed to update score graph: " + e.getMessage(), e);
       }

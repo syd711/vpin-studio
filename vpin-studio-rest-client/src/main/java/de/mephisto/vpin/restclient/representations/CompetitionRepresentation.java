@@ -1,5 +1,6 @@
 package de.mephisto.vpin.restclient.representations;
 
+import de.mephisto.vpin.restclient.CompetitionType;
 import de.mephisto.vpin.restclient.JoinMode;
 import de.mephisto.vpin.restclient.util.DateUtil;
 import org.apache.commons.lang3.StringUtils;
@@ -225,6 +226,10 @@ public class CompetitionRepresentation {
       return false;
     }
 
+    if (getType().equals(CompetitionType.SUBSCRIPTION.name())) {
+      return true;
+    }
+
     long now = new Date().getTime();
     long start = getStartDate().getTime();
     long end = getEndDate().getTime();
@@ -232,6 +237,9 @@ public class CompetitionRepresentation {
   }
 
   public boolean isPlanned() {
+    if (getType().equals(CompetitionType.SUBSCRIPTION.name())) {
+      return false;
+    }
     return getStartDate().after(new Date());
   }
 

@@ -1,6 +1,7 @@
 package de.mephisto.vpin.server.competitions;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import de.mephisto.vpin.restclient.CompetitionType;
 import de.mephisto.vpin.restclient.util.DateUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.annotation.CreatedDate;
@@ -209,6 +210,10 @@ public class Competition {
   public boolean isActive() {
     if(!StringUtils.isEmpty(getWinnerInitials())) {
       return false;
+    }
+
+    if (getType().equals(CompetitionType.SUBSCRIPTION.name())) {
+      return true;
     }
 
     long now = new Date().getTime();

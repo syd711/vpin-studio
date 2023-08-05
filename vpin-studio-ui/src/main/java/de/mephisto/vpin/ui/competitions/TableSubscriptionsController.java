@@ -32,14 +32,12 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.net.URL;
-import java.text.DateFormat;
 import java.util.*;
 
 import static de.mephisto.vpin.ui.Studio.client;
@@ -55,9 +53,6 @@ public class TableSubscriptionsController implements Initializable, StudioFXCont
 
   @FXML
   private TableColumn<CompetitionRepresentation, String> columnTable;
-
-  @FXML
-  private TableColumn<CompetitionRepresentation, String> columnStatus;
 
   @FXML
   private TableColumn<CompetitionRepresentation, String> columnCompetitionOwner;
@@ -163,23 +158,16 @@ public class TableSubscriptionsController implements Initializable, StudioFXCont
     CompetitionRepresentation selection = tableView.getSelectionModel().getSelectedItem();
     if (selection != null) {
       boolean isOwner = selection.getOwner().equals(String.valueOf(client.getDiscordService().getDiscordStatus(selection.getDiscordServerId()).getBotId()));
+      String help = "You are the owner of this subscription.";
+      String help2 = "The subscription and the corresponding channel will be deleted.";
 
-      String help = null;
-      String help2 = null;
-      String remainingDayMsg = selection.remainingDays() == 1 ? "The competition is active for another day." :
-          "The competition is still active for another " + selection.remainingDays() + " days.";
-
-      if (isOwner && selection.isActive()) {
-        help = remainingDayMsg;
-        help2 = "This will cancel the competition, no winner will be announced.";
-      }
-      else if (!isOwner && selection.isActive()) {
-        help = "You are a member of this competition. The competition information will be removed from your VPin.";
-        help2 = remainingDayMsg;
+      if(!isOwner) {
+        help = "You are not the owner of this subscription.";
+        help2 = "The subscription will be deleted and none of your highscores will be pushed there anymore.";
       }
 
-      Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Delete Competition '" + selection.getName() + "'?",
-          help, help2);
+      Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Delete Subscription '" + selection.getName() + "'?",
+          help, help2, "Delete Subscription");
       if (result.isPresent() && result.get().equals(ButtonType.OK)) {
         tableView.getSelectionModel().clearSelection();
         client.getCompetitionService().deleteCompetition(selection);
@@ -210,7 +198,7 @@ public class TableSubscriptionsController implements Initializable, StudioFXCont
       tableView.setVisible(true);
       tableStack.getChildren().remove(loadingOverlay);
 
-      if(competitionWidget != null) {
+      if (competitionWidget != null) {
         competitionWidget.setVisible(false);
       }
 
@@ -221,7 +209,7 @@ public class TableSubscriptionsController implements Initializable, StudioFXCont
 
     new Thread(() -> {
       CompetitionRepresentation selection = tableView.getSelectionModel().getSelectedItem();
-      competitions = client.getCompetitionService().getDiscordCompetitions();
+      competitions = client.getCompetitionService().getSubscriptions();
       filterCompetitions(competitions);
       data = FXCollections.observableList(competitions);
 
@@ -272,10 +260,6 @@ public class TableSubscriptionsController implements Initializable, StudioFXCont
     columnName.setCellValueFactory(cellData -> {
       CompetitionRepresentation value = cellData.getValue();
       Label label = new Label(value.getName());
-
-      if (value.isActive()) {
-        label.setStyle("-fx-font-color: #33CC00;-fx-text-fill:#33CC00;");
-      }
       return new SimpleObjectProperty(label);
     });
 
@@ -287,11 +271,6 @@ public class TableSubscriptionsController implements Initializable, StudioFXCont
       if (game != null) {
         label = new Label(game.getGameDisplayName());
       }
-
-      if (value.isActive()) {
-        label.setStyle("-fx-font-color: #33CC00;-fx-text-fill:#33CC00;");
-      }
-
       HBox hBox = new HBox(6);
       hBox.setAlignment(Pos.CENTER_LEFT);
 
@@ -330,9 +309,6 @@ public class TableSubscriptionsController implements Initializable, StudioFXCont
 
         CommonImageUtil.setClippedImage(view, (int) (image.getWidth() / 2));
         Label label = new Label(discordServer.getName());
-        if (value.isActive()) {
-          label.setStyle("-fx-font-color: #33CC00;-fx-text-fill:#33CC00;");
-        }
         hBox.getChildren().addAll(view, label);
       }
 
@@ -354,34 +330,14 @@ public class TableSubscriptionsController implements Initializable, StudioFXCont
         CommonImageUtil.setClippedImage(view, (int) (image.getWidth() / 2));
 
         Label label = new Label(discordPlayer.getName());
-        if (value.isActive()) {
-          label.setStyle("-fx-font-color: #33CC00;-fx-text-fill:#33CC00;");
-        }
         hBox.getChildren().addAll(view, label);
       }
 
       return new SimpleObjectProperty(hBox);
     });
 
-    columnStatus.setCellValueFactory(cellData -> {
-      CompetitionRepresentation value = cellData.getValue();
-      String status = "FINISHED";
-      if (value.isActive()) {
-        status = "ACTIVE";
-      }
-      else if (value.isPlanned()) {
-        status = "PLANNED";
-      }
-
-      Label label = new Label(status);
-      if (value.isActive()) {
-        label.setStyle("-fx-font-color: #33CC00;-fx-text-fill:#33CC00;");
-      }
-      return new SimpleObjectProperty(label);
-    });
-
-    tableView.setPlaceholder(new Label("            Mmmh, not up for a challange yet?\n" +
-        "Create a new competition by pressing the '+' button."));
+    tableView.setPlaceholder(new Label("            Try table subscriptions!\n" +
+        "Create a new subscription by pressing the '+' button."));
     tableView.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
       refreshView(Optional.ofNullable(newSelection));
     });

@@ -142,6 +142,11 @@ public class AssetService {
   }
 
 
+  public byte[] getSubscriptionCard(@NonNull Competition competition, @NonNull Game game) {
+    Asset asset = getCompetitionBackground(competition.getGameId());
+    return AssetFactory.createSubscriptionCard(asset, game, competition);
+  }
+
   public byte[] getCompetitionStartedCard(@NonNull Competition competition, @NonNull Game game) {
     Asset asset = getCompetitionBackground(competition.getGameId());
     return AssetFactory.createCompetitionStartedCard(asset, game, competition);

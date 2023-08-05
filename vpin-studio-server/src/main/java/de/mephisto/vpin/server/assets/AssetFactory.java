@@ -39,6 +39,61 @@ public class AssetFactory {
     }
   }
 
+
+  public static byte[] createSubscriptionCard(@NonNull Asset asset, @NonNull Game game, @NonNull Competition competition) {
+    final int HEADLINE_SIZE = 18;
+    final int SEPARATOR = 30;
+
+    try {
+      byte[] data = asset.getData();
+      BufferedImage background = ImageIO.read(new ByteArrayInputStream(data));
+      Graphics2D graphics = (Graphics2D) background.getGraphics();
+      graphics.setRenderingHint(
+          RenderingHints.KEY_TEXT_ANTIALIASING,
+          RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+      graphics.setColor(Color.WHITE);
+
+      String name = competition.getName();
+      if (name.length() > 35) {
+        name = name.substring(0, 34) + "...";
+      }
+
+      String table = game.getGameDisplayName();
+      if (table.length() > 36) {
+        table = table.substring(0, 35) + "...";
+      }
+
+      int yOffset = 6;
+      int xOffset = 24;
+      int imageY = 0;
+      Font font = new Font("System", Font.BOLD, 38);
+      graphics.setFont(font);
+      graphics.drawString(name, xOffset, yOffset += 48);
+
+      //TABLE
+      font = new Font("System", Font.PLAIN, HEADLINE_SIZE);
+      graphics.setFont(font);
+      graphics.drawString("Table", xOffset, yOffset += 48);
+
+      font = new Font("System", Font.BOLD, 30);
+      graphics.setFont(font);
+      graphics.drawString(table, xOffset, yOffset += HEADLINE_SIZE + 12);
+      imageY = yOffset;
+
+      GameMediaItem defaultMediaItem = game.getGameMedia().getDefaultMediaItem(PopperScreen.Wheel);
+      if (defaultMediaItem != null && defaultMediaItem.getFile().exists()) {
+        BufferedImage image = ImageUtil.loadImage(defaultMediaItem.getFile());
+        BufferedImage resizedImage = ImageUtil.resizeImage(image, 190);
+        graphics.drawImage(resizedImage, null, background.getWidth() - 200, imageY);
+      }
+
+      return ImageUtil.toBytes(background);
+    } catch (Exception e) {
+      LOG.error("Failed to get subscription background " + e.getMessage(), e);
+    }
+    return null;
+  }
+
   public static byte[] createCompetitionStartedCard(@NonNull Asset asset, @NonNull Game game, @NonNull Competition competition) {
     final int HEADLINE_SIZE = 18;
     final int SEPARATOR = 30;

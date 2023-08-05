@@ -34,6 +34,11 @@ public class DiscordResource {
     return discordService.hasManagePermissions(serverId, channelId, discordService.getBotId());
   }
 
+  @GetMapping("/permissions/competitions/manage/{serverId}")
+  public boolean hasManagePermissions(@PathVariable("serverId") long serverId) {
+    return discordService.hasManagePermissions(serverId, discordService.getBotId());
+  }
+
   /**
    * Used for the competition joining, find the latest competition for the given channel
    *

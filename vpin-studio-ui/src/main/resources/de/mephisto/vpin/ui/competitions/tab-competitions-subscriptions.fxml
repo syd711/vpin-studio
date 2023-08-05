@@ -22,10 +22,9 @@
                         <TableView fx:id="tableView" style="-fx-background-color: #2a2a2a;" styleClass="base-component">
                             <columns>
                                 <TableColumn fx:id="columnTable" prefWidth="350.0" style="-fx-alignment: BASELINE_LEFT;" text="Table" />
-                                <TableColumn fx:id="columnName" prefWidth="228.800048828125" style="-fx-alignment: BASELINE_LEFT;" text="Channel Name" />
-                                <TableColumn fx:id="columnStatus" minWidth="0.0" prefWidth="123.19984436035156" style="-fx-alignment: CENTER;" text="Status" />
-                        <TableColumn fx:id="columnServer" prefWidth="192.0" style="-fx-alignment: CENTER;" text="Server" />
-                        <TableColumn fx:id="columnCompetitionOwner" prefWidth="156.0" style="-fx-alignment: CENTER;" text="Subscription Owner" />
+                                <TableColumn fx:id="columnName" prefWidth="250.0" style="-fx-alignment: BASELINE_LEFT;" text="Channel Name" />
+                        <TableColumn fx:id="columnServer" prefWidth="200.0" style="-fx-alignment: CENTER;" text="Server" />
+                        <TableColumn fx:id="columnCompetitionOwner" prefWidth="250.0" style="-fx-alignment: CENTER;" text="Subscription Owner" />
                             </columns>
                         </TableView>
                     </children>

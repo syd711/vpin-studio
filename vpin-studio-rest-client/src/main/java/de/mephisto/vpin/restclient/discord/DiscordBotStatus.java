@@ -6,6 +6,15 @@ public class DiscordBotStatus {
   private boolean valid;
   private boolean validDefaultChannel;
   private long serverId;
+  private long categoryId;
+
+  public long getCategoryId() {
+    return categoryId;
+  }
+
+  public void setCategoryId(long categoryId) {
+    this.categoryId = categoryId;
+  }
 
   public long getServerId() {
     return serverId;

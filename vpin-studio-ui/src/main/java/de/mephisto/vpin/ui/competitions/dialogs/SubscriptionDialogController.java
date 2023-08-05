@@ -3,15 +3,16 @@ package de.mephisto.vpin.ui.competitions.dialogs;
 import de.mephisto.vpin.commons.EmulatorType;
 import de.mephisto.vpin.commons.fx.Debouncer;
 import de.mephisto.vpin.commons.fx.DialogController;
-import de.mephisto.vpin.commons.fx.UIDefaults;
+import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.CompetitionType;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.discord.DiscordBotStatus;
-import de.mephisto.vpin.restclient.discord.DiscordChannel;
-import de.mephisto.vpin.restclient.discord.DiscordServer;
 import de.mephisto.vpin.restclient.representations.CompetitionRepresentation;
 import de.mephisto.vpin.restclient.representations.GameRepresentation;
+import de.mephisto.vpin.ui.Studio;
 import javafx.application.Platform;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -20,15 +21,16 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.net.URL;
-import java.time.LocalDate;
-import java.time.ZoneId;
-import java.time.temporal.ChronoUnit;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.ResourceBundle;
+import java.util.UUID;
 
 import static de.mephisto.vpin.ui.Studio.client;
 
@@ -39,9 +41,6 @@ public class SubscriptionDialogController implements Initializable, DialogContro
 
   @FXML
   private ComboBox<GameRepresentation> tableCombo;
-
-  @FXML
-  private ComboBox<DiscordServer> serversCombo;
 
   @FXML
   private Button saveBtn;
@@ -87,15 +86,11 @@ public class SubscriptionDialogController implements Initializable, DialogContro
     this.botStatus = client.getDiscordService().getDiscordStatus(guildId);
 
     competition = new CompetitionRepresentation();
-    competition.setType(CompetitionType.DISCORD.name());
-    competition.setName(UIDefaults.DEFAULT_COMPETITION_NAME);
+    competition.setType(CompetitionType.SUBSCRIPTION.name());
+    competition.setName("");
     competition.setUuid(UUID.randomUUID().toString());
     competition.setOwner(String.valueOf(botStatus.getBotId()));
-    competition.setHighscoreReset(true);
-
-    Date end = Date.from(LocalDate.now().plus(7, ChronoUnit.DAYS).atStartOfDay(ZoneId.systemDefault()).toInstant());
-    competition.setStartDate(Date.from(LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant()));
-    competition.setEndDate(end);
+    competition.setDiscordServerId(this.botStatus.getServerId());
 
     saveBtn.setDisable(true);
 
@@ -112,14 +107,6 @@ public class SubscriptionDialogController implements Initializable, DialogContro
     }, 500));
 
 
-    List<DiscordServer> servers = client.getDiscordService().getDiscordServers();
-    ObservableList<DiscordServer> discordServers = FXCollections.observableArrayList(servers);
-    serversCombo.getItems().addAll(discordServers);
-    serversCombo.valueProperty().addListener((observableValue, gameRepresentation, t1) -> {
-      competition.setDiscordServerId(t1.getId());
-      validate();
-    });
-
     List<GameRepresentation> games = client.getGameService().getGamesCached();
     List<GameRepresentation> filtered = new ArrayList<>();
     for (GameRepresentation game : games) {
@@ -134,8 +121,22 @@ public class SubscriptionDialogController implements Initializable, DialogContro
     ObservableList<GameRepresentation> gameRepresentations = FXCollections.observableArrayList(filtered);
     tableCombo.getItems().addAll(gameRepresentations);
     tableCombo.valueProperty().addListener((observableValue, gameRepresentation, t1) -> {
-      competition.setGameId(t1.getId());
+      if (t1 != null) {
+        competition.setGameId(t1.getId());
+        String name = t1.getGameDisplayName();
+        String rom = t1.getRom();
+        nameField.setText(name);
+        suffixField.setText(rom);
+      }
       validate();
+
+    });
+
+    resetCheckbox.selectedProperty().addListener(new ChangeListener<Boolean>() {
+      @Override
+      public void changed(ObservableValue<? extends Boolean> observableValue, Boolean aBoolean, Boolean t1) {
+        competition.setHighscoreReset(t1);
+      }
     });
 
     validate();
@@ -145,15 +146,16 @@ public class SubscriptionDialogController implements Initializable, DialogContro
     validationContainer.setVisible(true);
     this.saveBtn.setDisable(true);
 
-    if (StringUtils.isEmpty(competition.getName())) {
-      validationTitle.setText("No competition name set.");
-      validationDescription.setText("Define a meaningful competition name.");
+    //check table selection
+    if (this.tableCombo.getValue() == null) {
+      validationTitle.setText("No table selected.");
+      validationDescription.setText("Select a table for the subscription.");
       return;
     }
 
-    if (competition.getDiscordServerId() == 0) {
-      validationTitle.setText("No discord server selected.");
-      validationDescription.setText("Select a discord server where the competition takes place.");
+    if (StringUtils.isEmpty(competition.getName())) {
+      validationTitle.setText("No channel name set.");
+      validationDescription.setText("The channel name must be set and should match the name of the table.");
       return;
     }
 
@@ -161,29 +163,22 @@ public class SubscriptionDialogController implements Initializable, DialogContro
       this.botStatus = client.getDiscordService().getDiscordStatus(competition.getDiscordServerId());
     }
 
-    if (botStatus == null || StringUtils.isEmpty(botStatus.getBotInitials())) {
-      validationTitle.setText("Invalid BOT nickname.");
-      validationDescription.setText("Please set a valid nickname for your BOT on the selected server.");
+    if (this.botStatus.getServerId() == 0) {
+      validationTitle.setText("No Discord server selected.");
+      validationDescription.setText("Select a default server in the bot preferences.");
       return;
     }
 
-    if (competition.getDiscordChannelId() == 0) {
-      validationTitle.setText("No discord channel selected.");
-      validationDescription.setText("Select a discord channel for competition updates.");
+    if (this.botStatus.getCategoryId() == 0) {
+      validationTitle.setText("No category selected.");
+      validationDescription.setText("Select a category used for subscriptions in the bot preferences.");
       return;
     }
 
     //check Discord permissions
-    if (!client.getCompetitionService().hasManagePermissions(competition.getDiscordServerId(), competition.getDiscordChannelId())) {
+    if (!client.getCompetitionService().hasManagePermissions(competition.getDiscordServerId())) {
       validationTitle.setText("Insufficient Permissions");
-      validationDescription.setText("Your Discord bot has insufficient permissions to join a competition. Please check the documentation for details.");
-      return;
-    }
-
-    //check table selection
-    if (this.tableCombo.getValue() == null) {
-      validationTitle.setText("No table selected.");
-      validationDescription.setText("Select a table for the competition.");
+      validationDescription.setText("Your Discord bot has insufficient permissions to create a subscription. Please check the documentation for details.");
       return;
     }
 
@@ -201,31 +196,25 @@ public class SubscriptionDialogController implements Initializable, DialogContro
   }
 
   public void setCompetition(List<CompetitionRepresentation> all, CompetitionRepresentation selectedCompetition) {
-    if (selectedCompetition != null) {
-      this.resetCheckbox.setDisable(selectedCompetition.getId() != null);
-      this.resetCheckbox.setSelected(selectedCompetition.getId() != null);
-
-      GameRepresentation game = client.getGame(selectedCompetition.getGameId());
-      DiscordServer discordServer = client.getDiscordServer(selectedCompetition.getDiscordServerId());
-      List<DiscordChannel> serverChannels = client.getDiscordService().getDiscordChannels(discordServer.getId());
-
-      String botId = String.valueOf(botStatus.getBotId());
-      boolean isOwner = selectedCompetition.getOwner().equals(botId);
-      boolean editable = isOwner && !selectedCompetition.isStarted();
-
-      serversCombo.setDisable(!editable);
-
-      this.nameField.setText(selectedCompetition.getName());
-      this.nameField.setDisable(!editable);
-
-
-            this.tableCombo.setValue(game);
-      this.tableCombo.setDisable(!editable);
-
-
-      this.serversCombo.setValue(discordServer);
-
-      this.competition = selectedCompetition;
-    }
+//    if (selectedCompetition != null) {
+//      this.resetCheckbox.setDisable(selectedCompetition.getId() != null);
+//      this.resetCheckbox.setSelected(selectedCompetition.getId() != null);
+//
+//      GameRepresentation game = client.getGame(selectedCompetition.getGameId());
+//
+//      String botId = String.valueOf(botStatus.getBotId());
+//      boolean isOwner = selectedCompetition.getOwner().equals(botId);
+//      boolean editable = isOwner && !selectedCompetition.isStarted();
+//
+//      this.nameField.setText(selectedCompetition.getName());
+//      this.nameField.setDisable(!editable);
+//
+//
+//      this.tableCombo.setValue(game);
+//      this.tableCombo.setDisable(!editable);
+//
+//
+//      this.competition = selectedCompetition;
+//    }
   }
 }
