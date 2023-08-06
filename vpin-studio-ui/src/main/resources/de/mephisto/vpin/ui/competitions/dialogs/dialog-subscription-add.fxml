@@ -159,7 +159,7 @@
                                     <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
                                  </graphic>
                                  <tooltip>
-                                    <Tooltip prefWidth="300.0" text="The reset is recommended in case your highscore is already higher than the others. You can backup your table to restore them after the competition is finished." wrapText="true" />
+                                    <Tooltip prefWidth="300.0" text="The reset is recommended in case your highscore is already higher than the others." wrapText="true" />
                                  </tooltip>
                               </Label>
                            </children>

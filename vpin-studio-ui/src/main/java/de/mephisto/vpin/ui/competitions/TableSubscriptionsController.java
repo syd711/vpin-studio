@@ -115,7 +115,7 @@ public class TableSubscriptionsController implements Initializable, StudioFXCont
   @FXML
   private void onJoin() {
     client.clearDiscordCache();
-    CompetitionRepresentation c = Dialogs.openDiscordJoinCompetitionDialog();
+    CompetitionRepresentation c = Dialogs.openJoinSubscriptionDialog(this.competitions);
     if (c != null) {
       try {
         CompetitionRepresentation newCmp = client.getCompetitionService().saveCompetition(c);
