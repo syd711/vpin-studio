@@ -447,6 +447,8 @@
     -fx-background-insets: 0 1 0 1,0,0;
 }
 .tab-pane .tab {
+    -fx-border-style: solid solid solid solid;
+    -fx-border-color:-fx-base-5;
 }
 
 .tab-pane .tab:selected {
