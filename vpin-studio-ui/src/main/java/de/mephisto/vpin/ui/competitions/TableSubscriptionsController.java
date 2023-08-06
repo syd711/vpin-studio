@@ -92,6 +92,7 @@ public class TableSubscriptionsController implements Initializable, StudioFXCont
   private WaitOverlayController loaderController;
 
   private long discordBotId;
+  private DiscordBotStatus discordStatus;
 
   // Add a public no-args constructor
   public TableSubscriptionsController() {
@@ -99,6 +100,13 @@ public class TableSubscriptionsController implements Initializable, StudioFXCont
 
   @FXML
   private void onCompetitionCreate() {
+    long guildId = client.getPreference(PreferenceNames.DISCORD_GUILD_ID).getLongValue();
+    discordStatus = client.getDiscordService().getDiscordStatus(guildId);
+    if(discordStatus.getServerId() == 0 || discordStatus.getCategoryId() == 0) {
+      WidgetFactory.showAlert(Studio.stage, "Invalid Discord Configuration", "No default Discord server and category for subscriptions found.", "Open the Bot Settings in the preferences to configure the subscription settings.");
+      return;
+    }
+
     CompetitionRepresentation c = Dialogs.openSubscriptionDialog(this.competitions, null);
     if (c != null) {
       CompetitionRepresentation newCmp = null;
@@ -148,7 +156,7 @@ public class TableSubscriptionsController implements Initializable, StudioFXCont
       if (result.isPresent() && result.get().equals(ButtonType.OK)) {
         tableView.getSelectionModel().clearSelection();
         client.getCompetitionService().deleteCompetition(selection);
-        NavigationController.setBreadCrumb(Arrays.asList("Competitions", "Discord Competitions"));
+        NavigationController.setBreadCrumb(Arrays.asList("Competitions", "Table Subscriptions"));
         onReload();
       }
     }
@@ -162,7 +170,7 @@ public class TableSubscriptionsController implements Initializable, StudioFXCont
     tableStack.getChildren().add(loadingOverlay);
 
     long guildId = client.getPreference(PreferenceNames.DISCORD_GUILD_ID).getLongValue();
-    DiscordBotStatus discordStatus = client.getDiscordService().getDiscordStatus(guildId);
+    discordStatus = client.getDiscordService().getDiscordStatus(guildId);
     if (!discordStatus.isValid()) {
       textfieldSearch.setDisable(true);
       addBtn.setDisable(true);
@@ -373,8 +381,8 @@ public class TableSubscriptionsController implements Initializable, StudioFXCont
     }
 
     boolean disable = newSelection == null;
-    boolean isOwner = newSelection != null && newSelection.getOwner().equals(String.valueOf(this.discordBotId));
-    deleteBtn.setDisable(disable || !isOwner);
+//    boolean isOwner = newSelection != null && newSelection.getOwner().equals(String.valueOf(discordStatus.getBotId()));
+    deleteBtn.setDisable(disable);
     reloadBtn.setDisable(this.discordBotId <= 0);
     addBtn.setDisable(this.discordBotId <= 0);
     joinBtn.setDisable(this.discordBotId <= 0);

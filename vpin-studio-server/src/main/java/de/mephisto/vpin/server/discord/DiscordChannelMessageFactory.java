@@ -20,7 +20,7 @@ import java.util.List;
 
 @Service
 public class DiscordChannelMessageFactory {
-  public static final String START_INDICATOR = "started a new competition";
+  public static final String START_INDICATOR = "started a new";
   public static final String CANCEL_INDICATOR = " cancelled";
   public static final String JOIN_INDICATOR = " joined";
   public static final String FINISHED_INDICATOR = " finished";

@@ -3,6 +3,7 @@ package de.mephisto.vpin.server.discord;
 import de.mephisto.vpin.connectors.discord.*;
 import de.mephisto.vpin.restclient.PlayerDomain;
 import de.mephisto.vpin.restclient.PreferenceNames;
+import de.mephisto.vpin.restclient.SubscriptionInfo;
 import de.mephisto.vpin.restclient.discord.DiscordCategory;
 import de.mephisto.vpin.restclient.discord.*;
 import de.mephisto.vpin.server.competitions.Competition;
@@ -145,7 +146,7 @@ public class DiscordService implements InitializingBean, PreferenceChangedListen
   }
 
   public void deleteChannel(long serverId, long channelId) {
-   this.discordClient.deleteChannel(serverId, channelId);
+    this.discordClient.deleteChannel(serverId, channelId);
   }
 
   public boolean hasJoinPermissions(long serverId, long channelId, long memberId) {
@@ -226,10 +227,10 @@ public class DiscordService implements InitializingBean, PreferenceChangedListen
 
   public void sendDefaultHighscoreMessage(String message) {
     if (this.discordClient != null) {
-      long serverId = Long.parseLong(String.valueOf(preferencesService.getPreferenceValue(PreferenceNames.DISCORD_GUILD_ID, -1)));
-      long channelId = Long.parseLong(String.valueOf(preferencesService.getPreferenceValue(PreferenceNames.DISCORD_CHANNEL_ID, -1)));
-      if (serverId > 0 && channelId > 0) {
-        this.sendMessage(serverId, channelId, message);
+      String guildId = (String) preferencesService.getPreferenceValue(PreferenceNames.DISCORD_GUILD_ID);
+      String defaultChannelId = (String) preferencesService.getPreferenceValue(PreferenceNames.DISCORD_CHANNEL_ID);
+      if(!StringUtils.isEmpty(guildId) && !StringUtils.isEmpty(defaultChannelId)) {
+        this.sendMessage(Long.parseLong(guildId), Long.parseLong(defaultChannelId), message);
       }
     }
   }
@@ -483,37 +484,45 @@ public class DiscordService implements InitializingBean, PreferenceChangedListen
   }
 
   public void initCompetition(long serverId, long channelId, long messageId) {
-    //delete existing pins for new competition starts
-    clearPinnedMessages(serverId, channelId);
-    //use the slow mode to avoid concurrent pinning of new highscores
-    discordClient.setSlowMode(serverId, channelId, 5);
-    discordClient.pinMessage(serverId, channelId, messageId);
+    if (this.discordClient != null) {
+      //delete existing pins for new competition starts
+      clearPinnedMessages(serverId, channelId);
+      //use the slow mode to avoid concurrent pinning of new highscores
+      discordClient.setSlowMode(serverId, channelId, 5);
+      discordClient.pinMessage(serverId, channelId, messageId);
+    }
   }
 
   public void updateHighscoreMessage(long serverId, long channelId, long msgId) {
-    List<DiscordMessage> pinnedMessages = discordClient.getPinnedMessages(serverId, channelId);
-    for (DiscordMessage pinnedMessage : pinnedMessages) {
-      if (pinnedMessage.getRaw().contains(DiscordChannelMessageFactory.HIGHSCORE_INDICATOR)) {
-        discordClient.unpinMessage(serverId, channelId, pinnedMessage.getId());
+    if (this.discordClient != null) {
+      List<DiscordMessage> pinnedMessages = discordClient.getPinnedMessages(serverId, channelId);
+      for (DiscordMessage pinnedMessage : pinnedMessages) {
+        if (pinnedMessage.getRaw().contains(DiscordChannelMessageFactory.HIGHSCORE_INDICATOR)) {
+          discordClient.unpinMessage(serverId, channelId, pinnedMessage.getId());
+        }
       }
+      discordClient.pinMessage(serverId, channelId, msgId);
     }
-    discordClient.pinMessage(serverId, channelId, msgId);
   }
 
   public void finishCompetition(long serverId, long channelId, long msgId) {
-    this.discordClient.pinMessage(serverId, channelId, msgId);
-    List<DiscordMessage> pinnedMessages = discordClient.getPinnedMessages(serverId, channelId);
-    for (DiscordMessage pinnedMessage : pinnedMessages) {
-      if (pinnedMessage.getRaw().contains(DiscordChannelMessageFactory.JOIN_INDICATOR)) {
-        discordClient.unpinMessage(serverId, channelId, pinnedMessage.getId());
+    if (this.discordClient != null) {
+      this.discordClient.pinMessage(serverId, channelId, msgId);
+      List<DiscordMessage> pinnedMessages = discordClient.getPinnedMessages(serverId, channelId);
+      for (DiscordMessage pinnedMessage : pinnedMessages) {
+        if (pinnedMessage.getRaw().contains(DiscordChannelMessageFactory.JOIN_INDICATOR)) {
+          discordClient.unpinMessage(serverId, channelId, pinnedMessage.getId());
+        }
       }
     }
   }
 
   public void clearPinnedMessages(long serverId, long channelId) {
-    List<DiscordMessage> pinnedMessages = discordClient.getPinnedMessages(serverId, channelId);
-    for (DiscordMessage pinnedMessage : pinnedMessages) {
-      discordClient.unpinMessage(serverId, channelId, pinnedMessage.getId());
+    if (this.discordClient != null) {
+      List<DiscordMessage> pinnedMessages = discordClient.getPinnedMessages(serverId, channelId);
+      for (DiscordMessage pinnedMessage : pinnedMessages) {
+        discordClient.unpinMessage(serverId, channelId, pinnedMessage.getId());
+      }
     }
   }
 
@@ -601,6 +610,27 @@ public class DiscordService implements InitializingBean, PreferenceChangedListen
       DiscordTextChannel c = this.discordClient.createChannel(serverId, Long.parseLong(categoryId), name, topic);
 
       return toChannel(c);
+    }
+    return null;
+  }
+
+  public SubscriptionInfo getSubscriptionInfo(long serverId, long channelId) {
+    if (this.discordClient != null) {
+      List<DiscordMessage> pinnedMessages = discordClient.getPinnedMessages(serverId, channelId);
+      for (DiscordMessage pinnedMessage : pinnedMessages) {
+        if (pinnedMessage.getRaw().contains(DiscordChannelMessageFactory.START_INDICATOR)) {
+          String raw = pinnedMessage.getRaw();
+          String uuid = raw.substring(raw.indexOf("ID:")+3);
+          uuid = uuid.substring(0, uuid.indexOf(")")).trim();
+
+          SubscriptionInfo info = new SubscriptionInfo();
+          info.setServerId(serverId);
+          info.setChannelId(channelId);
+          info.setOwnerId(pinnedMessage.getMember().getId());
+          info.setUuid(uuid);
+          return info;
+        }
+      }
     }
     return null;
   }

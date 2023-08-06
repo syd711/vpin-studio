@@ -5,11 +5,13 @@ import de.mephisto.vpin.commons.fx.Debouncer;
 import de.mephisto.vpin.commons.fx.DialogController;
 import de.mephisto.vpin.restclient.CompetitionType;
 import de.mephisto.vpin.restclient.PreferenceNames;
+import de.mephisto.vpin.restclient.SubscriptionInfo;
 import de.mephisto.vpin.restclient.discord.DiscordBotStatus;
 import de.mephisto.vpin.restclient.discord.DiscordChannel;
 import de.mephisto.vpin.restclient.discord.DiscordServer;
 import de.mephisto.vpin.restclient.representations.CompetitionRepresentation;
 import de.mephisto.vpin.restclient.representations.GameRepresentation;
+import de.mephisto.vpin.ui.Studio;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -89,8 +91,6 @@ public class JoinSubscriptionDialogController implements Initializable, DialogCo
     competition = new CompetitionRepresentation();
     competition.setType(CompetitionType.SUBSCRIPTION.name());
     competition.setName("");
-    competition.setUuid(UUID.randomUUID().toString());
-    competition.setOwner(String.valueOf(botStatus.getBotId()));
     competition.setDiscordServerId(this.botStatus.getServerId());
 
     saveBtn.setDisable(true);
@@ -122,6 +122,11 @@ public class JoinSubscriptionDialogController implements Initializable, DialogCo
       tableCombo.setDisable(t1 == null);
       if (t1 != null) {
         competition.setDiscordChannelId(t1.getId());
+
+        SubscriptionInfo subscriptionInfo = client.getDiscordService().getSubscriptionInfo(competition.getDiscordServerId(), t1.getId());
+        competition.setOwner(String.valueOf(subscriptionInfo.getOwnerId()));
+        competition.setUuid(String.valueOf(subscriptionInfo.getUuid()));
+
         String rom = t1.getName().substring(t1.getName().lastIndexOf("§") + 1);
         refreshTables(rom);
       }
@@ -221,7 +226,8 @@ public class JoinSubscriptionDialogController implements Initializable, DialogCo
         continue;
       }
 
-      if (allCompetitions.stream().anyMatch(c -> game.getRom().equals(c.getRom()))) {
+      //filter subscription for the same table on the same server!
+      if (allCompetitions.stream().anyMatch(c -> game.getRom().equals(c.getRom()) && c.getDiscordServerId() == competition.getDiscordServerId())) {
         continue;
       }
 

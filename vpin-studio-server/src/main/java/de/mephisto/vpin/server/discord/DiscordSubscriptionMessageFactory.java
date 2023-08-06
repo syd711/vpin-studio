@@ -14,55 +14,51 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+import static de.mephisto.vpin.server.discord.DiscordChannelMessageFactory.HIGHSCORE_INDICATOR;
+import static de.mephisto.vpin.server.discord.DiscordChannelMessageFactory.JOIN_INDICATOR;
+
 @Service
 public class DiscordSubscriptionMessageFactory {
-  public static final String START_INDICATOR = "started a new competition";
-  public static final String CANCEL_INDICATOR = " cancelled";
-  public static final String JOIN_INDICATOR = " joined";
-  public static final String FINISHED_INDICATOR = " finished";
-  public static final String HIGHSCORE_INDICATOR = "updated highscore list";
 
-  private static final String DISCORD_COMPETITION_CREATED_TEMPLATE = "%s started a new subscription!";
+  private static final String DISCORD_COMPETITION_CREATED_TEMPLATE = "%s started a new subscription!\n(ID: %s)";
 
-  private static final String COMPETITION_JOINED_TEMPLATE = "%s has " + JOIN_INDICATOR + " the competition \"%s\".";
+  private static final String COMPETITION_JOINED_TEMPLATE = "%s has " + JOIN_INDICATOR + " the subscription channel.";
 
   @Autowired
   private PlayerService playerService;
 
-  public String createSubscriptionCreatedMessage(long serverId, long initiatorId) {
+  public String createSubscriptionCreatedMessage(long serverId, long initiatorId, String uuid) {
     String userId = "<@" + initiatorId + ">";
 
-    return String.format(DISCORD_COMPETITION_CREATED_TEMPLATE, userId);
+    return String.format(DISCORD_COMPETITION_CREATED_TEMPLATE, userId, uuid);
   }
 
   public String createFirstSubscriptionHighscoreMessage(@NonNull Game game,
                                                         @NonNull Competition competition,
-                                                        @NonNull String rawScore) {
-    String template = "The subscription channel for \"%s\" has been started.\n" +
-        "Here is the " + HIGHSCORE_INDICATOR + ":\n" +
-        "```%s\n" +
-        "```";
-    return String.format(template, game.getGameDisplayName(), rawScore);
+                                                        @NonNull List<Score> scores) {
+    String template = "Here is the " + HIGHSCORE_INDICATOR + "\n(ID: %s)\n";
+    String msg = String.format(template, competition.getUuid());
+    return msg + createInitialHighscoreList(scores);
   }
 
-  public String createCompetitionHighscoreCreatedMessage(@NonNull Game game,
-                                                         @NonNull Competition competition,
-                                                         @NonNull Score oldScore,
-                                                         @NonNull Score newScore,
-                                                         List<Score> updatedScores) {
+  public String createSubscriptionHighscoreCreatedMessage(@NonNull Game game,
+                                                          @NonNull Competition competition,
+                                                          @NonNull Score oldScore,
+                                                          @NonNull Score newScore,
+                                                          List<Score> updatedScores) {
     String playerName = resolvePlayerName(competition.getDiscordServerId(), newScore);
-    String template = "**%s created a new highscore for the \"%s\" competition.**\n(ID: %s)\n" +
+    String template = "**%s created a new highscore!**\n(ID: %s)\n" +
         "```%s\n" +
         "```";
-    String msg = String.format(template, playerName, game.getGameDisplayName(), competition.getUuid(), newScore);
+    String msg = String.format(template, playerName, competition.getUuid(), newScore);
     msg = msg + getBeatenMessage(competition.getDiscordServerId(), oldScore, newScore);
 
     return msg + "\nHere is the " + HIGHSCORE_INDICATOR + ":" + createHighscoreList(updatedScores);
   }
 
-  public String createCompetitionJoinedMessage(@NonNull Competition competition, @NonNull DiscordMember bot) {
+  public String createSubscriptionJoinedMessage(@NonNull Competition competition, @NonNull DiscordMember bot) {
     String playerName = "<@" + bot.getId() + ">";
-    return String.format(COMPETITION_JOINED_TEMPLATE, playerName, competition.getName(), competition.getUuid());
+    return String.format(COMPETITION_JOINED_TEMPLATE, playerName, competition.getUuid());
   }
 
   private String resolvePlayerName(long serverId, Score newScore) {
@@ -119,25 +115,18 @@ public class DiscordSubscriptionMessageFactory {
     return builder.toString();
   }
 
-  private static String createInitialHighscoreList(Score score, int length) {
+  private static String createInitialHighscoreList(List<Score> scores) {
     StringBuilder builder = new StringBuilder();
     builder.append("```");
     builder.append("Pos   Initials           Score\n");
     builder.append("------------------------------\n");
-    builder.append("#1");
-    builder.append("   ");
-    builder.append(String.format("%4.4s", score.getPlayerInitials()));
-    builder.append("       ");
-    builder.append(String.format("%14.12s", score.getScore()));
-    builder.append("\n");
-
-    for (int i = 0; i < length; i++) {
+    for (Score score : scores) {
       builder.append("#");
-      builder.append((i + 2));
+      builder.append(score.getPosition());
       builder.append("   ");
-      builder.append(String.format("%4.4s", "???"));
+      builder.append(String.format("%4.4s", score.getPlayerInitials()));
       builder.append("       ");
-      builder.append(String.format("%14.12s", "0"));
+      builder.append(String.format("%14.12s", score.getScore()));
       builder.append("\n");
     }
     builder.append("```");

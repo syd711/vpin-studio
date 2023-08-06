@@ -1,6 +1,10 @@
 package de.mephisto.vpin.server.discord;
 
-import de.mephisto.vpin.restclient.discord.*;
+import de.mephisto.vpin.restclient.SubscriptionInfo;
+import de.mephisto.vpin.restclient.discord.DiscordBotStatus;
+import de.mephisto.vpin.restclient.discord.DiscordChannel;
+import de.mephisto.vpin.restclient.discord.DiscordCompetitionData;
+import de.mephisto.vpin.restclient.discord.DiscordServer;
 import de.mephisto.vpin.server.players.Player;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -69,10 +73,18 @@ public class DiscordResource {
     return discordService.getServer(serverId);
   }
 
+
+  @GetMapping("/subscription/info/{serverId}/{channelId}")
+  public SubscriptionInfo getSubscriptionInfo(@PathVariable("serverId") long serverId,
+                                              @PathVariable("channelId") long channelId) {
+    return discordService.getSubscriptionInfo(serverId, channelId);
+  }
+
   @GetMapping("/users/{serverId}")
   public List<Player> getPlayers(@PathVariable("serverId") long serverId) {
     return discordService.getPlayers(serverId);
   }
+
   @GetMapping("/allowlist")
   public List<Player> getAllowList() {
     return discordService.getAllowList();

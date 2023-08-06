@@ -284,7 +284,7 @@ public class HighscoreService implements InitializingBean {
   }
 
 
-  @Nullable
+  @NonNull
   public Optional<Highscore> getOrCreateHighscore(@NonNull Game game) {
     Optional<Highscore> highscore = highscoreRepository.findByGameId(game.getId());
     if (highscore.isEmpty() && !StringUtils.isEmpty(game.getRom())) {

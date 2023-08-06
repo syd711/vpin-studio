@@ -58,7 +58,7 @@ public class AssetFactory {
         name = name.substring(0, 34) + "...";
       }
 
-      String table = game.getGameDisplayName();
+      String table = game.getGameFileName();
       if (table.length() > 36) {
         table = table.substring(0, 35) + "...";
       }
@@ -73,12 +73,21 @@ public class AssetFactory {
       //TABLE
       font = new Font("System", Font.PLAIN, HEADLINE_SIZE);
       graphics.setFont(font);
-      graphics.drawString("Table", xOffset, yOffset += 48);
+      graphics.drawString("Created For", xOffset, yOffset += 48);
 
       font = new Font("System", Font.BOLD, 30);
       graphics.setFont(font);
       graphics.drawString(table, xOffset, yOffset += HEADLINE_SIZE + 12);
       imageY = yOffset;
+
+      //TABLE
+      font = new Font("System", Font.PLAIN, HEADLINE_SIZE);
+      graphics.setFont(font);
+      graphics.drawString("Applied for Tables with ROM:", xOffset, yOffset += 48);
+
+      font = new Font("System", Font.BOLD, 30);
+      graphics.setFont(font);
+      graphics.drawString(game.getRom(), xOffset, yOffset += HEADLINE_SIZE + 12);
 
       GameMediaItem defaultMediaItem = game.getGameMedia().getDefaultMediaItem(PopperScreen.Wheel);
       if (defaultMediaItem != null && defaultMediaItem.getFile().exists()) {

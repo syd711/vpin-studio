@@ -116,7 +116,7 @@ public class WidgetCompetitionSummaryController extends WidgetController impleme
 
       if(competitionType.equals(CompetitionType.SUBSCRIPTION)) {
         durationLabel.setText("Table Subscription");
-        tableNameLabel.setText("Latest Scores");
+        tableNameLabel.setText("Current Scores");
       }
       else {
         durationLabel.setText("Duration: " + DateUtil.formatDuration(competition.getStartDate(), competition.getEndDate()));

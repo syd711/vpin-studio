@@ -92,59 +92,69 @@
                                           <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                           <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                         <RowConstraints minHeight="30.0" vgrow="SOMETIMES" />
-                                          <RowConstraints minHeight="30.0" vgrow="SOMETIMES" />
-                                          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                          <RowConstraints minHeight="60.0" vgrow="SOMETIMES" />
+                                          <RowConstraints minHeight="60.0" vgrow="SOMETIMES" />
                                           <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                       </rowConstraints>
                                        <children>
-                                          <Label layoutX="10.0" layoutY="15.0" text="Created At:">
+                                          <Label text="UUID:">
                                              <font>
                                                 <Font name="System Bold" size="14.0" />
                                              </font>
                                           </Label>
-                                          <Label layoutX="10.0" layoutY="45.0" text="Owner:" GridPane.rowIndex="3">
+                                          <Label layoutX="10.0" layoutY="15.0" text="Created At:" GridPane.rowIndex="1">
                                              <font>
                                                 <Font name="System Bold" size="14.0" />
                                              </font>
                                           </Label>
-                                          <Label fx:id="createdAtLabel" layoutX="116.0" layoutY="15.0" text="-" GridPane.columnIndex="1">
+                                          <Label layoutX="10.0" layoutY="45.0" text="Owner:" GridPane.rowIndex="4">
+                                             <font>
+                                                <Font name="System Bold" size="14.0" />
+                                             </font>
+                                          </Label>
+                                          <Label fx:id="uuidLabel" text="-" GridPane.columnIndex="1">
                                              <font>
                                                 <Font size="14.0" />
                                              </font>
                                           </Label>
-                                          <Label layoutX="10.0" layoutY="76.0" text="Discord Server:" GridPane.rowIndex="4">
-                                             <font>
-                                                <Font name="System Bold" size="14.0" />
-                                             </font>
-                                          </Label>
-                                          <HBox fx:id="ownerBox" alignment="CENTER_LEFT" spacing="6.0" GridPane.columnIndex="1" GridPane.rowIndex="3" />
-                                          <Label layoutX="10.0" layoutY="49.0" text="Start Date:" GridPane.rowIndex="1">
-                                             <font>
-                                                <Font name="System Bold" size="14.0" />
-                                             </font>
-                                          </Label>
-                                          <Label layoutX="10.0" layoutY="83.0" prefHeight="0.0" prefWidth="70.0" text="End Date:" GridPane.rowIndex="2">
-                                             <font>
-                                                <Font name="System Bold" size="14.0" />
-                                             </font>
-                                          </Label>
-                                          <HBox fx:id="serverBox" alignment="CENTER_LEFT" spacing="6.0" GridPane.columnIndex="1" GridPane.rowIndex="4" />
-                                          <Label fx:id="startLabel" layoutX="154.0" layoutY="49.0" text="-" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                                          <Label fx:id="createdAtLabel" layoutX="116.0" layoutY="15.0" text="-" GridPane.columnIndex="1" GridPane.rowIndex="1">
                                              <font>
                                                 <Font size="14.0" />
                                              </font>
                                           </Label>
-                                          <Label fx:id="endLabel" layoutX="154.0" layoutY="83.0" text="-" GridPane.columnIndex="1" GridPane.rowIndex="2">
-                                             <font>
-                                                <Font size="14.0" />
-                                             </font>
-                                          </Label>
-                                          <Label layoutX="10.0" layoutY="168.0" text="Discord Channel:" GridPane.rowIndex="5">
+                                          <Label layoutX="10.0" layoutY="76.0" text="Discord Server:" GridPane.rowIndex="5">
                                              <font>
                                                 <Font name="System Bold" size="14.0" />
                                              </font>
                                           </Label>
-                                          <Label fx:id="channelLabel" layoutX="154.0" layoutY="116.0" text="-" GridPane.columnIndex="1" GridPane.rowIndex="5">
+                                          <HBox fx:id="ownerBox" alignment="CENTER_LEFT" spacing="6.0" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+                                          <Label layoutX="10.0" layoutY="49.0" text="Start Date:" GridPane.rowIndex="2">
+                                             <font>
+                                                <Font name="System Bold" size="14.0" />
+                                             </font>
+                                          </Label>
+                                          <Label layoutX="10.0" layoutY="83.0" prefHeight="0.0" prefWidth="70.0" text="End Date:" GridPane.rowIndex="3">
+                                             <font>
+                                                <Font name="System Bold" size="14.0" />
+                                             </font>
+                                          </Label>
+                                          <HBox fx:id="serverBox" alignment="CENTER_LEFT" spacing="6.0" GridPane.columnIndex="1" GridPane.rowIndex="5" />
+                                          <Label fx:id="startLabel" layoutX="154.0" layoutY="49.0" text="-" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                                             <font>
+                                                <Font size="14.0" />
+                                             </font>
+                                          </Label>
+                                          <Label fx:id="endLabel" layoutX="154.0" layoutY="83.0" text="-" GridPane.columnIndex="1" GridPane.rowIndex="3">
+                                             <font>
+                                                <Font size="14.0" />
+                                             </font>
+                                          </Label>
+                                          <Label layoutX="10.0" layoutY="168.0" text="Discord Channel:" GridPane.rowIndex="6">
+                                             <font>
+                                                <Font name="System Bold" size="14.0" />
+                                             </font>
+                                          </Label>
+                                          <Label fx:id="channelLabel" layoutX="154.0" layoutY="116.0" text="-" GridPane.columnIndex="1" GridPane.rowIndex="6">
                                              <font>
                                                 <Font size="14.0" />
                                              </font>

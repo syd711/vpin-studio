@@ -78,7 +78,7 @@ public class Preferences {
   }
 
   public void setDiscordDynamicSubscriptions(boolean discordDynamicSubscriptions) {
-    this.discordBotCommandsEnabled = discordDynamicSubscriptions;
+    this.discordDynamicSubscriptions = discordDynamicSubscriptions;
   }
 
   public String getDiscordCategoryId() {

@@ -54,6 +54,9 @@ public class CompetitionsController implements Initializable, StudioFXController
   private Label createdAtLabel;
 
   @FXML
+  private Label uuidLabel;
+
+  @FXML
   private Label startLabel;
 
   @FXML
@@ -150,11 +153,16 @@ public class CompetitionsController implements Initializable, StudioFXController
   }
 
   private void refreshMetaData(Optional<CompetitionRepresentation> competitionRepresentation) {
+    uuidLabel.setText("-");
+    startLabel.setText("-");
+    endLabel.setText("-");
+
     if (competitionRepresentation.isPresent()) {
       String type = competitionRepresentation.get().getType();
       if (type.equals(CompetitionType.DISCORD.name()) || type.equals(CompetitionType.SUBSCRIPTION.name())) {
         CompetitionRepresentation competition = competitionRepresentation.get();
         if (metaDataPane.isVisible()) {
+          uuidLabel.setText(competition.getUuid());
           serverBox.getChildren().removeAll(serverBox.getChildren());
           ownerBox.getChildren().removeAll(ownerBox.getChildren());
 
@@ -206,8 +214,6 @@ public class CompetitionsController implements Initializable, StudioFXController
             ownerBox.getChildren().addAll(view, label);
           }
 
-          startLabel.setText("-");
-          endLabel.setText("-");
           if(competition.getStartDate() != null) {
             startLabel.setText(DateFormat.getDateInstance().format(competition.getStartDate()));
             endLabel.setText(DateFormat.getDateInstance().format(competition.getEndDate()));

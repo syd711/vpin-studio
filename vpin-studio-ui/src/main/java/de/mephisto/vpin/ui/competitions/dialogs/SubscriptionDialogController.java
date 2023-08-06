@@ -4,6 +4,7 @@ import de.mephisto.vpin.commons.EmulatorType;
 import de.mephisto.vpin.commons.fx.Debouncer;
 import de.mephisto.vpin.commons.fx.DialogController;
 import de.mephisto.vpin.restclient.CompetitionType;
+import de.mephisto.vpin.restclient.JoinMode;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.discord.DiscordBotStatus;
 import de.mephisto.vpin.restclient.representations.CompetitionRepresentation;
@@ -85,6 +86,7 @@ public class SubscriptionDialogController implements Initializable, DialogContro
     competition = new CompetitionRepresentation();
     competition.setType(CompetitionType.SUBSCRIPTION.name());
     competition.setName("");
+    competition.setJoinMode(JoinMode.ROM_ONLY.name());
     competition.setUuid(UUID.randomUUID().toString());
     competition.setOwner(String.valueOf(botStatus.getBotId()));
     competition.setDiscordServerId(this.botStatus.getServerId());

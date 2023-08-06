@@ -83,6 +83,10 @@ public class CompetitionService implements InitializingBean {
     return competitionsRepository.findByTypeOrderByEndDateDesc(CompetitionType.SUBSCRIPTION.name());
   }
 
+  public List<Competition> getSubscriptions(String rom) {
+    return competitionsRepository.findByTypeAndRomOrderByName(CompetitionType.SUBSCRIPTION.name(), rom);
+  }
+
   public List<Player> getDiscordCompetitionPlayers(long competitionId) {
     Competition competition = this.getCompetition(competitionId);
     if (competition != null) {
