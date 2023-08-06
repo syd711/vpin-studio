@@ -71,6 +71,16 @@ public class Competition {
 
   private String joinMode;
 
+  private String rom;
+
+  public String getRom() {
+    return rom;
+  }
+
+  public void setRom(String rom) {
+    this.rom = rom;
+  }
+
   public String getJoinMode() {
     return joinMode;
   }

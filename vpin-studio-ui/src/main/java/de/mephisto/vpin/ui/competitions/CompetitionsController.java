@@ -2,18 +2,15 @@ package de.mephisto.vpin.ui.competitions;
 
 import de.mephisto.vpin.commons.fx.discord.DiscordUserEntryController;
 import de.mephisto.vpin.commons.utils.CommonImageUtil;
-import de.mephisto.vpin.commons.utils.ScoreGraphUtil;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.CompetitionType;
 import de.mephisto.vpin.restclient.discord.DiscordChannel;
 import de.mephisto.vpin.restclient.discord.DiscordServer;
 import de.mephisto.vpin.restclient.representations.CompetitionRepresentation;
 import de.mephisto.vpin.restclient.representations.PlayerRepresentation;
-import de.mephisto.vpin.restclient.representations.ScoreListRepresentation;
 import de.mephisto.vpin.ui.NavigationController;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.StudioFXController;
-import eu.hansolo.tilesfx.Tile;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -22,7 +19,6 @@ import javafx.scene.Parent;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import org.slf4j.Logger;
@@ -58,9 +54,6 @@ public class CompetitionsController implements Initializable, StudioFXController
   private Label createdAtLabel;
 
   @FXML
-  private Label uuidLabel;
-
-  @FXML
   private Label startLabel;
 
   @FXML
@@ -76,9 +69,6 @@ public class CompetitionsController implements Initializable, StudioFXController
   private HBox ownerBox;
 
   @FXML
-  private TitledPane scorePane;
-
-  @FXML
   private TitledPane metaDataPane;
 
   @FXML
@@ -88,20 +78,12 @@ public class CompetitionsController implements Initializable, StudioFXController
   private VBox membersBox;
 
   @FXML
-  private BorderPane scoreGraphBox;
-
-  @FXML
   private Accordion accordion;
-
-  @FXML
-  private Label statusLabel;
 
 
   private CompetitionsOfflineController offlineController;
   private CompetitionsDiscordController discordController;
   private TableSubscriptionsController tableSubscriptionsController;
-
-  private Tile highscoresGraphTile;
 
   private Optional<CompetitionRepresentation> competition = Optional.empty();
 
@@ -113,7 +95,6 @@ public class CompetitionsController implements Initializable, StudioFXController
   @Override
   public void onViewActivated() {
     refreshUsers(competition);
-    scorePane.setExpanded(competition.isPresent() && competition.get().getType().equals(CompetitionType.OFFLINE.name()));
     competitionMembersPane.setExpanded(competition.isPresent() && competition.get().getType().equals(CompetitionType.DISCORD.name()));
     discordController.onReload();
 
@@ -155,7 +136,7 @@ public class CompetitionsController implements Initializable, StudioFXController
     loadTabs();
     updateSelection(Optional.empty());
 
-    accordion.setExpandedPane(scorePane);
+    accordion.setExpandedPane(metaDataPane);
   }
 
   public void setCompetition(CompetitionRepresentation competition) {
@@ -165,70 +146,71 @@ public class CompetitionsController implements Initializable, StudioFXController
 
   private void updateSelection(Optional<CompetitionRepresentation> competitionRepresentation) {
     checkTitledPanes(competitionRepresentation);
-    refreshScoreGraph(competitionRepresentation);
     refreshUsers(competitionRepresentation);
     refreshMetaData(competitionRepresentation);
     updateForTabSelection(competitionRepresentation);
   }
 
   private void refreshMetaData(Optional<CompetitionRepresentation> competitionRepresentation) {
-    if (competitionRepresentation.isPresent() && competitionRepresentation.get().getType().equals(CompetitionType.DISCORD.name())) {
-      CompetitionRepresentation competition = competitionRepresentation.get();
-      if (metaDataPane.isVisible()) {
-        uuidLabel.setText(competition.getUuid());
-        serverBox.getChildren().removeAll(serverBox.getChildren());
-        ownerBox.getChildren().removeAll(ownerBox.getChildren());
-
-        createdAtLabel.setText(SimpleDateFormat.getDateTimeInstance().format(competition.getCreatedAt()));
-
-        DiscordServer discordServer = client.getDiscordServer(competition.getDiscordServerId());
-        if (discordServer != null) {
-          String avatarUrl = discordServer.getAvatarUrl();
-          Image image = null;
-          if (avatarUrl == null) {
-            image = new Image(Studio.class.getResourceAsStream("avatar-blank.png"));
-          }
-          else {
-            image = new Image(avatarUrl);
-          }
-
-          ImageView view = new ImageView(image);
-          view.setPreserveRatio(true);
-          view.setFitWidth(50);
-          view.setFitHeight(50);
+    if (competitionRepresentation.isPresent()) {
+      String type = competitionRepresentation.get().getType();
+      if (type.equals(CompetitionType.DISCORD.name()) || type.equals(CompetitionType.SUBSCRIPTION.name())) {
+        CompetitionRepresentation competition = competitionRepresentation.get();
+        if (metaDataPane.isVisible()) {
           serverBox.getChildren().removeAll(serverBox.getChildren());
-          Label label = new Label(discordServer.getName());
-          label.setStyle("-fx-font-size: 14px;");
-
-          CommonImageUtil.setClippedImage(view, (int) (image.getWidth() / 2));
-          serverBox.getChildren().addAll(view, label);
-        }
-
-        List<DiscordChannel> discordChannels = client.getDiscordService().getDiscordChannels(competition.getDiscordServerId());
-        Optional<DiscordChannel> first = discordChannels.stream().filter(channel -> channel.getId() == competition.getDiscordChannelId()).findFirst();
-        first.ifPresent(discordChannel -> channelLabel.setText(discordChannel.getName()));
-
-        PlayerRepresentation discordPlayer = client.getDiscordService().getDiscordPlayer(competition.getDiscordServerId(), Long.valueOf(competition.getOwner()));
-        if (discordPlayer != null) {
-          HBox hBox = new HBox(6);
-          hBox.setAlignment(Pos.CENTER_LEFT);
-          hBox = new HBox(6);
-          hBox.setAlignment(Pos.CENTER_LEFT);
-          Image image = new Image(client.getCachedUrlImage(discordPlayer.getAvatarUrl()));
-          ImageView view = new ImageView(image);
-          view.setPreserveRatio(true);
-          view.setFitWidth(50);
-          view.setFitHeight(50);
           ownerBox.getChildren().removeAll(ownerBox.getChildren());
-          Label label = new Label(discordPlayer.getName());
-          label.setStyle("-fx-font-size: 14px;");
 
-          CommonImageUtil.setClippedImage(view, (int) (image.getWidth() / 2));
-          ownerBox.getChildren().addAll(view, label);
+          createdAtLabel.setText(SimpleDateFormat.getDateTimeInstance().format(competition.getCreatedAt()));
+
+          DiscordServer discordServer = client.getDiscordServer(competition.getDiscordServerId());
+          if (discordServer != null) {
+            String avatarUrl = discordServer.getAvatarUrl();
+            Image image = null;
+            if (avatarUrl == null) {
+              image = new Image(Studio.class.getResourceAsStream("avatar-blank.png"));
+            }
+            else {
+              image = new Image(avatarUrl);
+            }
+
+            ImageView view = new ImageView(image);
+            view.setPreserveRatio(true);
+            view.setFitWidth(50);
+            view.setFitHeight(50);
+            serverBox.getChildren().removeAll(serverBox.getChildren());
+            Label label = new Label(discordServer.getName());
+            label.setStyle("-fx-font-size: 14px;");
+
+            CommonImageUtil.setClippedImage(view, (int) (image.getWidth() / 2));
+            serverBox.getChildren().addAll(view, label);
+          }
+
+          List<DiscordChannel> discordChannels = client.getDiscordService().getDiscordChannels(competition.getDiscordServerId());
+          Optional<DiscordChannel> first = discordChannels.stream().filter(channel -> channel.getId() == competition.getDiscordChannelId()).findFirst();
+          first.ifPresent(discordChannel -> channelLabel.setText(discordChannel.getName()));
+
+          PlayerRepresentation discordPlayer = client.getDiscordService().getDiscordPlayer(competition.getDiscordServerId(), Long.valueOf(competition.getOwner()));
+          if (discordPlayer != null) {
+            HBox hBox = new HBox(6);
+            hBox.setAlignment(Pos.CENTER_LEFT);
+            hBox = new HBox(6);
+            hBox.setAlignment(Pos.CENTER_LEFT);
+            Image image = new Image(client.getCachedUrlImage(discordPlayer.getAvatarUrl()));
+            ImageView view = new ImageView(image);
+            view.setPreserveRatio(true);
+            view.setFitWidth(50);
+            view.setFitHeight(50);
+            ownerBox.getChildren().removeAll(ownerBox.getChildren());
+            Label label = new Label(discordPlayer.getName());
+            label.setStyle("-fx-font-size: 14px;");
+
+            CommonImageUtil.setClippedImage(view, (int) (image.getWidth() / 2));
+            ownerBox.getChildren().addAll(view, label);
+          }
+
+          startLabel.setText(DateFormat.getDateInstance().format(competition.getStartDate()));
+          endLabel.setText(DateFormat.getDateInstance().format(competition.getEndDate()));
         }
-
-        startLabel.setText(DateFormat.getDateInstance().format(competition.getStartDate()));
-        endLabel.setText(DateFormat.getDateInstance().format(competition.getEndDate()));
       }
     }
   }
@@ -236,7 +218,6 @@ public class CompetitionsController implements Initializable, StudioFXController
   private void checkTitledPanes(Optional<CompetitionRepresentation> cp) {
     competitionMembersPane.setDisable(cp.isEmpty());
     metaDataPane.setDisable(cp.isEmpty());
-    scorePane.setDisable(cp.isEmpty());
 
     if (cp.isPresent()) {
       CompetitionType competitionType = CompetitionType.valueOf(cp.get().getType());
@@ -246,8 +227,6 @@ public class CompetitionsController implements Initializable, StudioFXController
           competitionMembersPane.setExpanded(true);
           metaDataPane.setDisable(false);
           metaDataPane.setExpanded(false);
-          scorePane.setDisable(true);
-          scorePane.setExpanded(false);
           break;
         }
         case OFFLINE: {
@@ -255,17 +234,13 @@ public class CompetitionsController implements Initializable, StudioFXController
           competitionMembersPane.setExpanded(false);
           metaDataPane.setDisable(true);
           metaDataPane.setExpanded(false);
-          scorePane.setDisable(false);
-          scorePane.setExpanded(true);
           break;
         }
         case SUBSCRIPTION: {
-          competitionMembersPane.setDisable(true);
-          competitionMembersPane.setExpanded(false);
-          metaDataPane.setDisable(true);
+          competitionMembersPane.setDisable(false);
+          competitionMembersPane.setExpanded(true);
+          metaDataPane.setDisable(false);
           metaDataPane.setExpanded(false);
-          scorePane.setDisable(true);
-          scorePane.setExpanded(false);
           break;
         }
         default: {
@@ -303,39 +278,6 @@ public class CompetitionsController implements Initializable, StudioFXController
     }
     else {
       throw new UnsupportedOperationException("Invalid tab.");
-    }
-  }
-
-  private void refreshScoreGraph(Optional<CompetitionRepresentation> cp) {
-    statusLabel.setText("");
-    if (scoreGraphBox.getCenter() != null) {
-      scoreGraphBox.getCenter().setVisible(false);
-    }
-
-    if (cp.isPresent()) {
-      try {
-        CompetitionRepresentation competition = cp.get();
-
-        if (!competition.isActive()) {
-          statusLabel.setText("The graph is only calculated for active competitions.");
-          return;
-        }
-
-//        ScoreListRepresentation competitionScores = client.getCompetitionScoreList(competition.getId());
-//        if (!competitionScores.getScores().isEmpty() && scoreGraphBox != null) {
-//          highscoresGraphTile = ScoreGraphUtil.createGraph(competitionScores);
-//          scoreGraphBox.setCenter(highscoresGraphTile);
-//          scoreGraphBox.getCenter().setVisible(true);
-//        }
-//        else {
-//          statusLabel.setText("No scores have been submitted yet.");
-//        }
-      } catch (Exception e) {
-        LOG.error("Failed to update score graph: " + e.getMessage(), e);
-      }
-    }
-    else {
-      statusLabel.setText("The graph is only calculated for active competitions.");
     }
   }
 

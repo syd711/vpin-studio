@@ -11,6 +11,7 @@ import de.mephisto.vpin.server.discord.DiscordService;
 import de.mephisto.vpin.server.discord.DiscordSubscriptionMessageFactory;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameService;
+import de.mephisto.vpin.server.highscores.Highscore;
 import de.mephisto.vpin.server.highscores.HighscoreService;
 import de.mephisto.vpin.server.popper.PopperService;
 import edu.umd.cs.findbugs.annotations.NonNull;
@@ -21,6 +22,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class SubscriptionCompetitionChangeListenerImpl extends DefaultCompetitionChangeListener implements InitializingBean {
@@ -70,10 +72,17 @@ public class SubscriptionCompetitionChangeListenerImpl extends DefaultCompetitio
             long channelId = subscriptionChannel.getId();
 
             byte[] image = assetService.getSubscriptionCard(competition, game);
-            String message = discordSubscriptionMessageFactory.createSubscriptionCreatedMessage(competition.getDiscordServerId(), botId, competition.getUuid());
+            String message = discordSubscriptionMessageFactory.createSubscriptionCreatedMessage(competition.getDiscordServerId(), botId);
 
             long messageId = discordService.sendMessage(serverId, channelId, message, image, competition.getName() + ".png", "The latest highscores will be pinned on this channel.");
             discordService.initCompetition(serverId, channelId, messageId);
+
+            Optional<Highscore> highscore = highscoreService.getOrCreateHighscore(game);
+            if(highscore.isPresent()) {
+              String msg = discordSubscriptionMessageFactory.createFirstSubscriptionHighscoreMessage(game, competition, highscore.get().getRaw());
+              long newHighscoreMessageId = discordService.sendMessage(serverId, channelId, msg);
+              discordService.updateHighscoreMessage(serverId, channelId, newHighscoreMessageId);
+            }
           }
         }
       }

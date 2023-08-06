@@ -3,13 +3,11 @@ package de.mephisto.vpin.ui.competitions.dialogs;
 import de.mephisto.vpin.commons.EmulatorType;
 import de.mephisto.vpin.commons.fx.Debouncer;
 import de.mephisto.vpin.commons.fx.DialogController;
-import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.CompetitionType;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.discord.DiscordBotStatus;
 import de.mephisto.vpin.restclient.representations.CompetitionRepresentation;
 import de.mephisto.vpin.restclient.representations.GameRepresentation;
-import de.mephisto.vpin.ui.Studio;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -21,7 +19,6 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
-import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -107,29 +104,16 @@ public class SubscriptionDialogController implements Initializable, DialogContro
     }, 500));
 
 
-    List<GameRepresentation> games = client.getGameService().getGamesCached();
-    List<GameRepresentation> filtered = new ArrayList<>();
-    for (GameRepresentation game : games) {
-      if (StringUtils.isEmpty(game.getRom())) {
-        continue;
-      }
-      if (game.getEmulator().getName().equals(EmulatorType.VISUAL_PINBALL_X)) {
-        filtered.add(game);
-      }
-    }
-
-    ObservableList<GameRepresentation> gameRepresentations = FXCollections.observableArrayList(filtered);
-    tableCombo.getItems().addAll(gameRepresentations);
     tableCombo.valueProperty().addListener((observableValue, gameRepresentation, t1) -> {
       if (t1 != null) {
         competition.setGameId(t1.getId());
+        competition.setRom(t1.getRom());
         String name = t1.getGameDisplayName();
         String rom = t1.getRom();
         nameField.setText(name);
         suffixField.setText(rom);
       }
       validate();
-
     });
 
     resetCheckbox.selectedProperty().addListener(new ChangeListener<Boolean>() {
@@ -196,6 +180,25 @@ public class SubscriptionDialogController implements Initializable, DialogContro
   }
 
   public void setCompetition(List<CompetitionRepresentation> all, CompetitionRepresentation selectedCompetition) {
+    List<GameRepresentation> games = client.getGameService().getGamesCached();
+    List<GameRepresentation> filtered = new ArrayList<>();
+    for (GameRepresentation game : games) {
+      if (StringUtils.isEmpty(game.getRom())) {
+        continue;
+      }
+
+      if (all.stream().anyMatch(c -> game.getRom().equals(c.getRom()))) {
+        continue;
+      }
+
+      if (game.getEmulator().getName().equals(EmulatorType.VISUAL_PINBALL_X)) {
+        filtered.add(game);
+      }
+    }
+
+    ObservableList<GameRepresentation> gameRepresentations = FXCollections.observableArrayList(filtered);
+    tableCombo.getItems().addAll(gameRepresentations);
+
 //    if (selectedCompetition != null) {
 //      this.resetCheckbox.setDisable(selectedCompetition.getId() != null);
 //      this.resetCheckbox.setSelected(selectedCompetition.getId() != null);

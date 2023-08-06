@@ -65,15 +65,6 @@
                      </graphic>
                   </Button>
                         <Separator layoutX="364.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
-                        <Button fx:id="editBtn" layoutX="280.0" layoutY="11.0" mnemonicParsing="false" onAction="#onEdit" text="Edit" textFill="WHITE">
-                            <font>
-                                <Font size="14.0" />
-                            </font>
-                            <graphic>
-                                <FontIcon iconColor="WHITE" iconLiteral="mdi2d-database-edit-outline" />
-                            </graphic>
-                        </Button>
-                        <Separator layoutX="448.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
                         <Button fx:id="deleteBtn" layoutX="464.0" layoutY="11.0" mnemonicParsing="false" onAction="#onDelete" text="Delete" textFill="#ff3333">
                             <font>
                                 <Font size="14.0" />

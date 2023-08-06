@@ -61,9 +61,6 @@ public class TableSubscriptionsController implements Initializable, StudioFXCont
   private TableColumn<CompetitionRepresentation, String> columnServer;
 
   @FXML
-  private Button editBtn;
-
-  @FXML
   private Button deleteBtn;
 
   @FXML
@@ -134,26 +131,6 @@ public class TableSubscriptionsController implements Initializable, StudioFXCont
   }
 
   @FXML
-  private void onEdit() {
-    CompetitionRepresentation selection = tableView.getSelectionModel().getSelectedItem();
-    if (selection != null) {
-      CompetitionRepresentation c = Dialogs.openDiscordCompetitionDialog(this.competitions, selection);
-      if (c != null) {
-        try {
-          CompetitionRepresentation newCmp = client.getCompetitionService().saveCompetition(c);
-          onReload();
-          tableView.getSelectionModel().select(newCmp);
-        } catch (Exception e) {
-          WidgetFactory.showAlert(Studio.stage, e.getMessage());
-        }
-      }
-      else {
-        onReload();
-      }
-    }
-  }
-
-  @FXML
   private void onDelete() {
     CompetitionRepresentation selection = tableView.getSelectionModel().getSelectedItem();
     if (selection != null) {
@@ -161,7 +138,7 @@ public class TableSubscriptionsController implements Initializable, StudioFXCont
       String help = "You are the owner of this subscription.";
       String help2 = "The subscription and the corresponding channel will be deleted.";
 
-      if(!isOwner) {
+      if (!isOwner) {
         help = "You are not the owner of this subscription.";
         help2 = "The subscription will be deleted and none of your highscores will be pushed there anymore.";
       }
@@ -189,7 +166,6 @@ public class TableSubscriptionsController implements Initializable, StudioFXCont
     if (!discordStatus.isValid()) {
       textfieldSearch.setDisable(true);
       addBtn.setDisable(true);
-      editBtn.setDisable(true);
       deleteBtn.setDisable(true);
       reloadBtn.setDisable(true);
       joinBtn.setDisable(true);
@@ -357,7 +333,7 @@ public class TableSubscriptionsController implements Initializable, StudioFXCont
       TableRow<CompetitionRepresentation> row = new TableRow<>();
       row.setOnMouseClicked(event -> {
         if (event.getClickCount() == 2 && (!row.isEmpty())) {
-          onEdit();
+//          onEdit();
         }
       });
       return row;
@@ -398,8 +374,7 @@ public class TableSubscriptionsController implements Initializable, StudioFXCont
 
     boolean disable = newSelection == null;
     boolean isOwner = newSelection != null && newSelection.getOwner().equals(String.valueOf(this.discordBotId));
-    editBtn.setDisable(disable || !isOwner || newSelection.isActive() || newSelection.isFinished());
-    deleteBtn.setDisable(disable);
+    deleteBtn.setDisable(disable || !isOwner);
     reloadBtn.setDisable(this.discordBotId <= 0);
     addBtn.setDisable(this.discordBotId <= 0);
     joinBtn.setDisable(this.discordBotId <= 0);
@@ -408,13 +383,13 @@ public class TableSubscriptionsController implements Initializable, StudioFXCont
       if (competitionWidget.getTop() != null) {
         competitionWidget.getTop().setVisible(true);
       }
-      competitionWidgetController.setCompetition(CompetitionType.DISCORD, competition.get());
+      competitionWidgetController.setCompetition(CompetitionType.SUBSCRIPTION, competition.get());
     }
     else {
       if (competitionWidget.getTop() != null) {
         competitionWidget.getTop().setVisible(false);
       }
-      competitionWidgetController.setCompetition(CompetitionType.DISCORD, null);
+      competitionWidgetController.setCompetition(CompetitionType.SUBSCRIPTION, null);
     }
     competitionsController.setCompetition(competition.orElse(null));
   }

@@ -45,6 +45,16 @@ public class CompetitionRepresentation {
 
   private boolean highscoreReset;
 
+  private String rom;
+
+  public String getRom() {
+    return rom;
+  }
+
+  public void setRom(String rom) {
+    this.rom = rom;
+  }
+
   public boolean isHighscoreReset() {
     return highscoreReset;
   }
