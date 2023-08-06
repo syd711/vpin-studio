@@ -87,7 +87,6 @@ public class CompetitionsController implements Initializable, StudioFXController
 
   private Optional<CompetitionRepresentation> competition = Optional.empty();
 
-
   // Add a public no-args constructor
   public CompetitionsController() {
   }
@@ -96,15 +95,18 @@ public class CompetitionsController implements Initializable, StudioFXController
   public void onViewActivated() {
     refreshUsers(competition);
     competitionMembersPane.setExpanded(competition.isPresent() && competition.get().getType().equals(CompetitionType.DISCORD.name()));
-    discordController.onReload();
+//    discordController.onReload();
+//    tableSubscriptionsController.onReload();
 
-    offlineController.onViewActivated();
-    discordController.onViewActivated();
-    tableSubscriptionsController.onViewActivated();
+//    offlineController.onViewActivated();
+//    discordController.onViewActivated();
+//    tableSubscriptionsController.onViewActivated();
   }
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
+    loadTabs();
+    updateSelection(Optional.empty());
     tabPane.getSelectionModel().selectedIndexProperty().addListener((observableValue, number, t1) -> {
       if (t1.intValue() == 0) {
         NavigationController.setBreadCrumb(Arrays.asList("Competitions", "Offline Competitions"));
@@ -132,10 +134,6 @@ public class CompetitionsController implements Initializable, StudioFXController
         throw new UnsupportedOperationException("Invalid tab id");
       }
     });
-
-    loadTabs();
-    updateSelection(Optional.empty());
-
     accordion.setExpandedPane(metaDataPane);
   }
 
@@ -208,8 +206,12 @@ public class CompetitionsController implements Initializable, StudioFXController
             ownerBox.getChildren().addAll(view, label);
           }
 
-          startLabel.setText(DateFormat.getDateInstance().format(competition.getStartDate()));
-          endLabel.setText(DateFormat.getDateInstance().format(competition.getEndDate()));
+          startLabel.setText("-");
+          endLabel.setText("-");
+          if(competition.getStartDate() != null) {
+            startLabel.setText(DateFormat.getDateInstance().format(competition.getStartDate()));
+            endLabel.setText(DateFormat.getDateInstance().format(competition.getEndDate()));
+          }
         }
       }
     }
@@ -229,17 +231,17 @@ public class CompetitionsController implements Initializable, StudioFXController
           metaDataPane.setExpanded(false);
           break;
         }
-        case OFFLINE: {
-          competitionMembersPane.setDisable(true);
-          competitionMembersPane.setExpanded(false);
-          metaDataPane.setDisable(true);
-          metaDataPane.setExpanded(false);
-          break;
-        }
         case SUBSCRIPTION: {
           competitionMembersPane.setDisable(false);
           competitionMembersPane.setExpanded(true);
           metaDataPane.setDisable(false);
+          metaDataPane.setExpanded(false);
+          break;
+        }
+        case OFFLINE: {
+          competitionMembersPane.setDisable(true);
+          competitionMembersPane.setExpanded(false);
+          metaDataPane.setDisable(true);
           metaDataPane.setExpanded(false);
           break;
         }

@@ -114,9 +114,16 @@ public class WidgetCompetitionSummaryController extends WidgetController impleme
       GameRepresentation game = OverlayWindowFX.client.getGame(competition.getGameId());
       GameMediaRepresentation gameMedia = game.getGameMedia();
 
-      durationLabel.setText("Duration: " + DateUtil.formatDuration(competition.getStartDate(), competition.getEndDate()));
+      if(competitionType.equals(CompetitionType.SUBSCRIPTION)) {
+        durationLabel.setText("Table Subscription");
+        tableNameLabel.setText("Latest Scores");
+      }
+      else {
+        durationLabel.setText("Duration: " + DateUtil.formatDuration(competition.getStartDate(), competition.getEndDate()));
+        tableNameLabel.setText(game.getGameDisplayName());
+      }
+
       competitionLabel.setText(competition.getName());
-      tableNameLabel.setText(game.getGameDisplayName());
 
       boolean isActive = competition.isActive();
       firstLabel.setVisible(isActive);
