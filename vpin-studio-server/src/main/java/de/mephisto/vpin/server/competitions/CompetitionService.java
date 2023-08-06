@@ -142,7 +142,8 @@ public class CompetitionService implements InitializingBean {
     long serverId = competition.getDiscordServerId();
     long channelId = competition.getDiscordChannelId();
 
-    if (competition.getType().equals(CompetitionType.DISCORD.name())) {
+    String type = competition.getType();
+    if (type.equals(CompetitionType.DISCORD.name()) || type.equals(CompetitionType.SUBSCRIPTION.name())) {
       return discordService.getScoreSummary(highscoreParser, competition.getUuid(), serverId, channelId);
     }
 
