@@ -12,9 +12,7 @@ import de.mephisto.vpin.ui.ProgressDialogController;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.UpdateDialogController;
 import de.mephisto.vpin.ui.archiving.dialogs.*;
-import de.mephisto.vpin.ui.competitions.CompetitionDiscordDialogController;
-import de.mephisto.vpin.ui.competitions.CompetitionDiscordJoinDialogController;
-import de.mephisto.vpin.ui.competitions.CompetitionOfflineDialogController;
+import de.mephisto.vpin.ui.competitions.dialogs.*;
 import de.mephisto.vpin.ui.launcher.InstallationController;
 import de.mephisto.vpin.ui.players.PlayerDialogController;
 import de.mephisto.vpin.ui.preferences.DiscordBotAllowListDialogController;
@@ -89,6 +87,29 @@ public class Dialogs {
     Stage stage = WidgetFactory.createDialogStage(fxmlLoader, Studio.stage, title);
     CompetitionDiscordDialogController controller = (CompetitionDiscordDialogController) stage.getUserData();
     controller.setCompetition(all, selection);
+    stage.showAndWait();
+
+    return controller.getCompetition();
+  }
+
+  public static CompetitionRepresentation openSubscriptionDialog(List<CompetitionRepresentation> all, @Nullable CompetitionRepresentation selection) {
+    String title = "Add Subscription";
+    FXMLLoader fxmlLoader = new FXMLLoader(SubscriptionDialogController.class.getResource("dialog-subscription-add.fxml"));
+    Stage stage = WidgetFactory.createDialogStage(fxmlLoader, Studio.stage, title);
+    SubscriptionDialogController controller = (SubscriptionDialogController) stage.getUserData();
+    controller.setCompetition(all, selection);
+    stage.showAndWait();
+
+    return controller.getCompetition();
+  }
+
+
+  public static CompetitionRepresentation openJoinSubscriptionDialog(List<CompetitionRepresentation> all) {
+    String title = "Join Subscription";
+    FXMLLoader fxmlLoader = new FXMLLoader(JoinSubscriptionDialogController.class.getResource("dialog-subscription-join.fxml"));
+    Stage stage = WidgetFactory.createDialogStage(fxmlLoader, Studio.stage, title);
+    JoinSubscriptionDialogController controller = (JoinSubscriptionDialogController) stage.getUserData();
+    controller.setCompetition(all);
     stage.showAndWait();
 
     return controller.getCompetition();

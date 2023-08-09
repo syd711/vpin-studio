@@ -1,6 +1,7 @@
 package de.mephisto.vpin.server.competitions;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import de.mephisto.vpin.restclient.CompetitionType;
 import de.mephisto.vpin.restclient.util.DateUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.annotation.CreatedDate;
@@ -69,6 +70,16 @@ public class Competition {
   private String score;
 
   private String joinMode;
+
+  private String rom;
+
+  public String getRom() {
+    return rom;
+  }
+
+  public void setRom(String rom) {
+    this.rom = rom;
+  }
 
   public String getJoinMode() {
     return joinMode;
@@ -211,6 +222,10 @@ public class Competition {
       return false;
     }
 
+    if (getType().equals(CompetitionType.SUBSCRIPTION.name())) {
+      return true;
+    }
+
     long now = new Date().getTime();
     long start = getStartDate().getTime();
     long end = getEndDate().getTime();
@@ -234,6 +249,6 @@ public class Competition {
 
   @Override
   public String toString() {
-    return this.getType() + " Competition '" + this.getName() + "'";
+    return this.getType() + " '" + this.getName() + "'";
   }
 }

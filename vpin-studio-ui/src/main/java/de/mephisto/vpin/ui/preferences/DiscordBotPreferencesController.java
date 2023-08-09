@@ -4,6 +4,7 @@ import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.connectors.discord.DiscordClient;
 import de.mephisto.vpin.connectors.discord.GuildInfo;
 import de.mephisto.vpin.restclient.PreferenceNames;
+import de.mephisto.vpin.restclient.discord.DiscordCategory;
 import de.mephisto.vpin.restclient.discord.DiscordChannel;
 import de.mephisto.vpin.restclient.discord.DiscordServer;
 import de.mephisto.vpin.restclient.representations.PlayerRepresentation;
@@ -46,10 +47,16 @@ public class DiscordBotPreferencesController implements Initializable {
   private ComboBox<DiscordChannel> channelCombo;
 
   @FXML
+  private ComboBox<DiscordCategory> categoryCombo;
+
+  @FXML
   private VBox allowListPane;
 
   @FXML
   private CheckBox disableCheckbox;
+
+  @FXML
+  private CheckBox dynamicSubscriptions;
 
   @FXML
   private Button selectUsersBtn;
@@ -61,11 +68,15 @@ public class DiscordBotPreferencesController implements Initializable {
         "Yes, delete token");
     if (result.get().equals(ButtonType.OK)) {
       client.getPreferenceService().setPreference(PreferenceNames.DISCORD_BOT_TOKEN, "");
+
       botTokenLabel.setText("-");
       this.serverCombo.setDisable(true);
       this.serverCombo.setValue(null);
       this.channelCombo.setDisable(true);
       this.channelCombo.setValue(null);
+      this.categoryCombo.setDisable(true);
+      this.categoryCombo.setValue(null);
+      this.dynamicSubscriptions.setDisable(true);
     }
   }
 
@@ -101,7 +112,9 @@ public class DiscordBotPreferencesController implements Initializable {
           client.getPreferenceService().setPreference(PreferenceNames.DISCORD_BOT_TOKEN, token.trim());
           botTokenLabel.setText(token.trim());
           serverCombo.setDisable(false);
-          channelCombo.setDisable(false);
+          channelCombo.setDisable(true);
+          categoryCombo.setDisable(true);
+          dynamicSubscriptions.setDisable(false);
           resetBtn.setDisable(false);
           validateDefaultChannel();
         });
@@ -122,6 +135,7 @@ public class DiscordBotPreferencesController implements Initializable {
   public void initialize(URL url, ResourceBundle resourceBundle) {
     serverCombo.setDisable(true);
     channelCombo.setDisable(true);
+    categoryCombo.setDisable(true);
     resetBtn.setDisable(true);
 
     PreferenceEntryRepresentation preference = client.getPreference(PreferenceNames.DISCORD_BOT_TOKEN);
@@ -129,7 +143,6 @@ public class DiscordBotPreferencesController implements Initializable {
     botTokenLabel.setText(token);
     if (!StringUtils.isEmpty(token)) {
       serverCombo.setDisable(false);
-      channelCombo.setDisable(false);
       resetBtn.setDisable(false);
     }
 
@@ -165,6 +178,24 @@ public class DiscordBotPreferencesController implements Initializable {
       }
     });
 
+    categoryCombo.valueProperty().addListener((observable, oldValue, newValue) -> {
+      if (newValue != null) {
+        client.getPreferenceService().setPreference(PreferenceNames.DISCORD_CATEGORY_ID, newValue.getId());
+      }
+      else {
+        client.getPreferenceService().setPreference(PreferenceNames.DISCORD_CATEGORY_ID, "");
+      }
+    });
+
+    PreferenceEntryRepresentation dynamicSubscriptionsPreference = client.getPreference(PreferenceNames.DISCORD_DYNAMIC_SUBSCRIPTIONS);
+    dynamicSubscriptions.setSelected(dynamicSubscriptionsPreference.getBooleanValue());
+    dynamicSubscriptions.selectedProperty().addListener(new ChangeListener<Boolean>() {
+      @Override
+      public void changed(ObservableValue<? extends Boolean> observableValue, Boolean aBoolean, Boolean t1) {
+        client.getPreferenceService().setPreference(PreferenceNames.DISCORD_DYNAMIC_SUBSCRIPTIONS, t1);
+      }
+    });
+
     refreshAllowList();
   }
 
@@ -177,7 +208,7 @@ public class DiscordBotPreferencesController implements Initializable {
       root.setStyle("-fx-padding: 3 0 3 0;");
       root.setAlignment(Pos.BASELINE_LEFT);
       root.setSpacing(3);
-      Label label = new Label("\u2023 " + user.getName());
+      Label label = new Label("- " + user.getName());
       label.setStyle("-fx-font-size: 14px;-fx-text-fill: white;");
       root.getChildren().add(label);
       allowListPane.getChildren().add(root);
@@ -199,19 +230,31 @@ public class DiscordBotPreferencesController implements Initializable {
 
     PreferenceEntryRepresentation preference = client.getPreference(PreferenceNames.DISCORD_GUILD_ID);
     PreferenceEntryRepresentation channelPreference = client.getPreference(PreferenceNames.DISCORD_CHANNEL_ID);
+    PreferenceEntryRepresentation categoryPreference = client.getPreference(PreferenceNames.DISCORD_CATEGORY_ID);
 
     long serverId = preference.getLongValue();
     if (serverId > 0) {
       DiscordServer discordServer = client.getDiscordServer(serverId);
       if (discordServer != null) {
+        channelCombo.setDisable(false);
+        categoryCombo.setDisable(false);
+
         serverCombo.setValue(discordServer);
+
         List<DiscordChannel> discordChannels = client.getDiscordService().getDiscordChannels(discordServer.getId());
         channelCombo.setItems(FXCollections.observableArrayList(discordChannels));
-
         long channelId = channelPreference.getLongValue();
         if (channelId > 0) {
           Optional<DiscordChannel> first = discordChannels.stream().filter(channel -> channel.getId() == channelId).findFirst();
           first.ifPresent(discordChannel -> channelCombo.setValue(discordChannel));
+        }
+
+        List<DiscordCategory> discordCategories = discordServer.getCategories();
+        categoryCombo.setItems(FXCollections.observableArrayList(discordCategories));
+        long categoryId = categoryPreference.getLongValue();
+        if (categoryId > 0) {
+          Optional<DiscordCategory> first = discordCategories.stream().filter(category -> category.getId() == categoryId).findFirst();
+          first.ifPresent(category -> categoryCombo.setValue(category));
         }
       }
     }

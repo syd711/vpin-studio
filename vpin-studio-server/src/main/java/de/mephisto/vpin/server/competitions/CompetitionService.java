@@ -79,6 +79,14 @@ public class CompetitionService implements InitializingBean {
     return competitionsRepository.findByTypeOrderByEndDateDesc(CompetitionType.DISCORD.name());
   }
 
+  public List<Competition> getSubscriptions() {
+    return competitionsRepository.findByTypeOrderByEndDateDesc(CompetitionType.SUBSCRIPTION.name());
+  }
+
+  public List<Competition> getSubscriptions(String rom) {
+    return competitionsRepository.findByTypeAndRomOrderByName(CompetitionType.SUBSCRIPTION.name(), rom);
+  }
+
   public List<Player> getDiscordCompetitionPlayers(long competitionId) {
     Competition competition = this.getCompetition(competitionId);
     if (competition != null) {
@@ -134,7 +142,8 @@ public class CompetitionService implements InitializingBean {
     long serverId = competition.getDiscordServerId();
     long channelId = competition.getDiscordChannelId();
 
-    if (competition.getType().equals(CompetitionType.DISCORD.name())) {
+    String type = competition.getType();
+    if (type.equals(CompetitionType.DISCORD.name()) || type.equals(CompetitionType.SUBSCRIPTION.name())) {
       return discordService.getScoreSummary(highscoreParser, competition.getUuid(), serverId, channelId);
     }
 

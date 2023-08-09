@@ -57,7 +57,7 @@ public class TablesController implements Initializable, StudioFXController, Stud
 
   @Override
   public void onViewActivated() {
-
+    refreshTabSelection(tabPane.getSelectionModel().getSelectedIndex());
   }
 
   @Override
@@ -90,24 +90,28 @@ public class TablesController implements Initializable, StudioFXController, Stud
 
 
     tabPane.getSelectionModel().selectedIndexProperty().addListener((observableValue, number, t1) -> {
-      Platform.runLater(() -> {
-        if (t1.intValue() == 0) {
-          NavigationController.setBreadCrumb(Arrays.asList("Tables"));
-          tablesSideBarController.setVisible(true);
-          repositorySideBarController.setVisible(false);
-          tableOverviewController.initSelection();
-        }
-        else {
-          NavigationController.setBreadCrumb(Arrays.asList("Table Repository"));
-          tablesSideBarController.setVisible(false);
-          repositorySideBarController.setVisible(true);
-          repositoryController.initSelection();
-        }
-      });
+      refreshTabSelection(t1);
     });
 
     tablesSideBarController.setVisible(true);
     repositorySideBarController.setVisible(false);
+  }
+
+  private void refreshTabSelection(Number t1) {
+    Platform.runLater(() -> {
+      if (t1.intValue() == 0) {
+        NavigationController.setBreadCrumb(Arrays.asList("Tables"));
+        tablesSideBarController.setVisible(true);
+        repositorySideBarController.setVisible(false);
+        tableOverviewController.initSelection();
+      }
+      else {
+        NavigationController.setBreadCrumb(Arrays.asList("Table Repository"));
+        tablesSideBarController.setVisible(false);
+        repositorySideBarController.setVisible(true);
+        repositoryController.initSelection();
+      }
+    });
   }
 
   public TablesSidebarController getTablesSideBarController() {

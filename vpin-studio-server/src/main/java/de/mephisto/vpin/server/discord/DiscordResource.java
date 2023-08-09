@@ -1,5 +1,6 @@
 package de.mephisto.vpin.server.discord;
 
+import de.mephisto.vpin.restclient.SubscriptionInfo;
 import de.mephisto.vpin.restclient.discord.DiscordBotStatus;
 import de.mephisto.vpin.restclient.discord.DiscordChannel;
 import de.mephisto.vpin.restclient.discord.DiscordCompetitionData;
@@ -37,6 +38,11 @@ public class DiscordResource {
     return discordService.hasManagePermissions(serverId, channelId, discordService.getBotId());
   }
 
+  @GetMapping("/permissions/competitions/manage/{serverId}")
+  public boolean hasManagePermissions(@PathVariable("serverId") long serverId) {
+    return discordService.hasManagePermissions(serverId, discordService.getBotId());
+  }
+
   /**
    * Used for the competition joining, find the latest competition for the given channel
    *
@@ -67,10 +73,18 @@ public class DiscordResource {
     return discordService.getServer(serverId);
   }
 
+
+  @GetMapping("/subscription/info/{serverId}/{channelId}")
+  public SubscriptionInfo getSubscriptionInfo(@PathVariable("serverId") long serverId,
+                                              @PathVariable("channelId") long channelId) {
+    return discordService.getSubscriptionInfo(serverId, channelId);
+  }
+
   @GetMapping("/users/{serverId}")
   public List<Player> getPlayers(@PathVariable("serverId") long serverId) {
     return discordService.getPlayers(serverId);
   }
+
   @GetMapping("/allowlist")
   public List<Player> getAllowList() {
     return discordService.getAllowList();

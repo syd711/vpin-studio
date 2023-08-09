@@ -447,6 +447,8 @@
     -fx-background-insets: 0 1 0 1,0,0;
 }
 .tab-pane .tab {
+    -fx-border-style: solid solid solid solid;
+    -fx-border-color:-fx-base-5;
 }
 
 .tab-pane .tab:selected {
@@ -748,4 +750,20 @@
 .external-component {
     -fx-text-fill: #FFFFFF;
     -fx-base : #338800;
+}
+
+.default-text {
+    -fx-text-fill: #FFFFFF;
+    -fx-font-size : 14px;
+}
+
+.default-title {
+    -fx-text-fill: #FFFFFF;
+    -fx-font-size : 18px;
+    -fx-font-weight : bold;
+}
+
+.help-text {
+    -fx-text-fill: #FFFFFF;
+    -fx-font-size : 12px;
 }

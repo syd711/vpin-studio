@@ -1,12 +1,14 @@
 package de.mephisto.vpin.restclient.client;
 
 
+import de.mephisto.vpin.restclient.SubscriptionInfo;
 import de.mephisto.vpin.restclient.discord.DiscordBotStatus;
 import de.mephisto.vpin.restclient.discord.DiscordChannel;
 import de.mephisto.vpin.restclient.discord.DiscordCompetitionData;
 import de.mephisto.vpin.restclient.discord.DiscordServer;
 import de.mephisto.vpin.restclient.representations.PlayerRepresentation;
-import de.mephisto.vpin.restclient.representations.PlaylistRepresentation;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.Arrays;
@@ -16,6 +18,7 @@ import java.util.List;
  * Discord
  ********************************************************************************************************************/
 public class DiscordServiceClient extends VPinStudioClientService {
+  private final static Logger LOG = LoggerFactory.getLogger(DiscordServiceClient.class);
 
   DiscordServiceClient(VPinStudioClient client) {
     super(client);
@@ -56,7 +59,13 @@ public class DiscordServiceClient extends VPinStudioClientService {
 
   public boolean isCompetitionActive(long discordServerId, long discordChannelId, String uuid) {
     final RestTemplate restTemplate = new RestTemplate();
-    return restTemplate.getForObject(getRestClient().getBaseUrl() + API + "discord/competition/isactive/" + discordServerId + "/" + discordChannelId + "/" + uuid, Boolean.class);
+    String url = getRestClient().getBaseUrl() + API + "discord/competition/isactive/" + discordServerId + "/" + discordChannelId + "/" + uuid;
+    LOG.info("HTTP GET " + url);
+    return restTemplate.getForObject(url, Boolean.class);
+  }
+
+  public SubscriptionInfo getSubscriptionInfo(long discordServerId, long discordChannelId) {
+    return getRestClient().getCached(API + "discord/subscription/info/" + discordServerId + "/" + discordChannelId, SubscriptionInfo.class);
   }
 
   public List<PlayerRepresentation> getDiscordUsers(long serverId) {

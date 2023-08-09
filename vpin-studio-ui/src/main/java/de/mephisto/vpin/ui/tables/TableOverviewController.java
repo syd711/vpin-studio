@@ -869,7 +869,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
 
   @Override
   public void onViewActivated() {
-
+    NavigationController.setBreadCrumb(Arrays.asList("Tables"));
   }
 
   public void setRootController(TablesController tablesController) {

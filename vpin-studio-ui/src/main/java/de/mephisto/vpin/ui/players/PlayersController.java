@@ -173,23 +173,27 @@ public class PlayersController implements Initializable, StudioFXController {
     }
 
     tabPane.getSelectionModel().selectedIndexProperty().addListener((observableValue, number, t1) -> {
-      if (t1.intValue() == 0) {
-        NavigationController.setBreadCrumb(Arrays.asList("Players", "Build-In Players"));
-        Optional<PlayerRepresentation> selection = builtInPlayersController.getSelection();
-        updateSelection(selection);
-      }
-      else {
-        NavigationController.setBreadCrumb(Arrays.asList("Players", "Discord Players"));
-        Optional<PlayerRepresentation> selection = discordPlayersController.getSelection();
-        updateSelection(selection);
-      }
+      refreshTabSelection(t1);
     });
 
     updateForTabSelection(Optional.empty());
   }
 
+  private void refreshTabSelection(Number t1) {
+    if (t1.intValue() == 0) {
+      NavigationController.setBreadCrumb(Arrays.asList("Players", "Build-In Players"));
+      Optional<PlayerRepresentation> selection = builtInPlayersController.getSelection();
+      updateSelection(selection);
+    }
+    else {
+      NavigationController.setBreadCrumb(Arrays.asList("Players", "Discord Players"));
+      Optional<PlayerRepresentation> selection = discordPlayersController.getSelection();
+      updateSelection(selection);
+    }
+  }
+
   @Override
   public void onViewActivated() {
-
+    refreshTabSelection(tabPane.getSelectionModel().getSelectedIndex());
   }
 }

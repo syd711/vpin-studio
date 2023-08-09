@@ -27,4 +27,6 @@ public interface CompetitionsRepository extends JpaRepository<Competition, Long>
   List<Competition> findByGameId(int id);
 
   Optional<Competition> findByUuid(String id);
+
+  List<Competition> findByTypeAndRomOrderByName(String type, String rom);
 }

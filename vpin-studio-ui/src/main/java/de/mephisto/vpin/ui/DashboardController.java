@@ -108,6 +108,8 @@ public class DashboardController implements Initializable, StudioFXController {
 
       c = client.getActiveCompetition(CompetitionType.DISCORD);
       discordCompetitionWidgetController.refresh(c);
+
+      NavigationController.setBreadCrumb(Arrays.asList("Dashboard"));
     });
   }
 }

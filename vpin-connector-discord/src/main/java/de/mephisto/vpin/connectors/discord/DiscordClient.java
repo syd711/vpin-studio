@@ -3,9 +3,11 @@ package de.mephisto.vpin.connectors.discord;
 
 import net.dv8tion.jda.api.*;
 import net.dv8tion.jda.api.entities.*;
+import net.dv8tion.jda.api.entities.channel.concrete.Category;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.entities.channel.middleman.GuildChannel;
 import net.dv8tion.jda.api.requests.GatewayIntent;
+import net.dv8tion.jda.api.requests.restaction.ChannelAction;
 import net.dv8tion.jda.api.utils.FileUpload;
 import net.dv8tion.jda.api.utils.MemberCachePolicy;
 import net.dv8tion.jda.internal.utils.PermissionUtil;
@@ -64,6 +66,55 @@ public class DiscordClient {
       }
     }
     return false;
+  }
+
+  public boolean hasPermissions(long serverId, long memberId, Permissions... permissions) {
+    Guild guild = getGuild(serverId);
+    if (guild != null) {
+      Member member = guild.getMemberById(memberId);
+      if (member != null) {
+        List<Permission> permissionList = Arrays.stream(permissions).map(Permissions::toPermission).collect(Collectors.toList());
+        return PermissionUtil.checkPermission(member, permissionList.toArray(new Permission[0]));
+      }
+    }
+    return false;
+  }
+
+  public List<DiscordCategory> getCategories(long serverId) {
+    Guild guild = getGuild(serverId);
+    if (guild != null) {
+      List<Category> categories = guild.getCategories();
+      return categories.stream().map(category -> toCategory(category)).collect(Collectors.toList());
+    }
+    return Collections.emptyList();
+  }
+
+  public Category getCategory(long serverId, long categoryId) {
+    Guild guild = getGuild(serverId);
+    if (guild != null) {
+      return guild.getCategoryById(categoryId);
+    }
+    return null;
+  }
+
+  public DiscordTextChannel createChannel(long serverId, long categoryId, String name, String topic) {
+    Guild guild = getGuild(serverId);
+    if (guild != null) {
+      Category category = getCategory(serverId, categoryId);
+      ChannelAction<TextChannel> textChannel = guild.createTextChannel(name, category);
+      try {
+        TextChannel channel = textChannel.submit().get();
+        channel.getManager().setTopic(topic).queue();
+
+        DiscordTextChannel t = new DiscordTextChannel();
+        t.setId(channel.getIdLong());
+        t.setName(channel.getName());
+        return t;
+      } catch (Exception e) {
+        LOG.error("Failed to create text channel \"" + name + "\": " + e.getMessage(), e);
+      }
+    }
+    return null;
   }
 
   public DiscordMember getBot() {
@@ -264,14 +315,21 @@ public class DiscordClient {
 
   public DiscordMember getMember(long memberId) {
     User user = this.jda.getUserById(memberId);
-      if (user != null) {
-        return toMember(user);
-      }
+    if (user != null) {
+      return toMember(user);
+    }
     return null;
   }
 
   public List<DiscordTextChannel> getChannels() {
     return getChannels(-1);
+  }
+
+  public void deleteChannel(long serverId, long channelId) {
+    Guild guild = this.getGuild(serverId);
+    if(guild != null) {
+      guild.getTextChannelById(channelId).delete().complete();
+    }
   }
 
   public List<DiscordTextChannel> getChannels(long serverId) {
@@ -413,6 +471,13 @@ public class DiscordClient {
     discordMember.setBot(member.isBot());
     discordMember.setAvatarUrl(member.getEffectiveAvatarUrl());
     return discordMember;
+  }
+
+  private DiscordCategory toCategory(Category category) {
+    DiscordCategory c = new DiscordCategory();
+    c.setId(category.getIdLong());
+    c.setName(category.getName());
+    return c;
   }
 
   /**

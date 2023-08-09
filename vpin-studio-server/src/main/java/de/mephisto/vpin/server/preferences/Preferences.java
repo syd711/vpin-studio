@@ -38,6 +38,8 @@ public class Preferences {
 
   private String discordChannelId;
 
+  private String discordCategoryId;
+
   private String discordBotToken;
 
   private String discordBotAllowList;
@@ -47,22 +49,6 @@ public class Preferences {
   private String vpbmExternalHostId;
 
   private String rankingPoints;
-
-  public String getVpbmInternalHostId() {
-    return vpbmInternalHostId;
-  }
-
-  public void setVpbmInternalHostId(String vpbmInternalHostId) {
-    this.vpbmInternalHostId = vpbmInternalHostId;
-  }
-
-  public String getVpbmExternalHostId() {
-    return vpbmExternalHostId;
-  }
-
-  public void setVpbmExternalHostId(String vpbmExternalHostId) {
-    this.vpbmExternalHostId = vpbmExternalHostId;
-  }
 
   @Column(length = 1024)
   private String highscoreTitles;
@@ -83,6 +69,41 @@ public class Preferences {
 
   @Column(name = "discordBotCommandsEnabled", nullable = false, columnDefinition = "boolean default true")
   private boolean discordBotCommandsEnabled;
+
+  @Column(name = "discordDynamicSubscriptions", nullable = false, columnDefinition = "boolean default false")
+  private boolean discordDynamicSubscriptions;
+
+  public boolean getDiscordDynamicSubscriptions() {
+    return discordDynamicSubscriptions;
+  }
+
+  public void setDiscordDynamicSubscriptions(boolean discordDynamicSubscriptions) {
+    this.discordDynamicSubscriptions = discordDynamicSubscriptions;
+  }
+
+  public String getDiscordCategoryId() {
+    return discordCategoryId;
+  }
+
+  public void setDiscordCategoryId(String discordCategoryId) {
+    this.discordCategoryId = discordCategoryId;
+  }
+
+  public String getVpbmInternalHostId() {
+    return vpbmInternalHostId;
+  }
+
+  public void setVpbmInternalHostId(String vpbmInternalHostId) {
+    this.vpbmInternalHostId = vpbmInternalHostId;
+  }
+
+  public String getVpbmExternalHostId() {
+    return vpbmExternalHostId;
+  }
+
+  public void setVpbmExternalHostId(String vpbmExternalHostId) {
+    this.vpbmExternalHostId = vpbmExternalHostId;
+  }
 
   public boolean isDiscordBotCommandsEnabled() {
     return discordBotCommandsEnabled;

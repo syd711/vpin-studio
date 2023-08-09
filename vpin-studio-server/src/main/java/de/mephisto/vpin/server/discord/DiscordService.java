@@ -3,11 +3,12 @@ package de.mephisto.vpin.server.discord;
 import de.mephisto.vpin.connectors.discord.*;
 import de.mephisto.vpin.restclient.PlayerDomain;
 import de.mephisto.vpin.restclient.PreferenceNames;
-import de.mephisto.vpin.restclient.discord.DiscordBotStatus;
-import de.mephisto.vpin.restclient.discord.DiscordChannel;
-import de.mephisto.vpin.restclient.discord.DiscordCompetitionData;
-import de.mephisto.vpin.restclient.discord.DiscordServer;
+import de.mephisto.vpin.restclient.SubscriptionInfo;
+import de.mephisto.vpin.restclient.discord.DiscordCategory;
+import de.mephisto.vpin.restclient.discord.*;
+import de.mephisto.vpin.server.competitions.Competition;
 import de.mephisto.vpin.server.competitions.ScoreSummary;
+import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.highscores.HighscoreParser;
 import de.mephisto.vpin.server.highscores.Score;
 import de.mephisto.vpin.server.players.Player;
@@ -42,6 +43,7 @@ public class DiscordService implements InitializingBean, PreferenceChangedListen
   public DiscordBotStatus getStatus(long serverId) {
     String guildId = (String) preferencesService.getPreferenceValue(PreferenceNames.DISCORD_GUILD_ID);
     String defaultChannelId = (String) preferencesService.getPreferenceValue(PreferenceNames.DISCORD_CHANNEL_ID);
+    String defaultCategoryId = (String) preferencesService.getPreferenceValue(PreferenceNames.DISCORD_CATEGORY_ID);
     long botId = this.getBotId();
 
     DiscordBotStatus status = new DiscordBotStatus();
@@ -63,6 +65,13 @@ public class DiscordService implements InitializingBean, PreferenceChangedListen
         status.setValidDefaultChannel(!StringUtils.isEmpty(defaultChannelId) && this.discordClient != null && this.getChannel(Long.parseLong(guildId), channelId) != null);
       } catch (Exception e) {
         status.setValidDefaultChannel(false);
+      }
+
+      try {
+        long categoryId = Long.parseLong(defaultCategoryId);
+        status.setCategoryId(categoryId);
+      } catch (Exception e) {
+        //ignore
       }
     }
 
@@ -136,6 +145,10 @@ public class DiscordService implements InitializingBean, PreferenceChangedListen
     return Collections.emptyList();
   }
 
+  public void deleteChannel(long serverId, long channelId) {
+    this.discordClient.deleteChannel(serverId, channelId);
+  }
+
   public boolean hasJoinPermissions(long serverId, long channelId, long memberId) {
     if (this.discordClient != null) {
       return this.discordClient.hasPermissions(serverId, channelId, memberId,
@@ -153,6 +166,21 @@ public class DiscordService implements InitializingBean, PreferenceChangedListen
   public boolean hasManagePermissions(long serverId, long channelId, long memberId) {
     if (this.discordClient != null) {
       return this.discordClient.hasPermissions(serverId, channelId, memberId,
+          MANAGE_CHANNEL,
+          VIEW_CHANNEL,
+          MESSAGE_SEND,
+          MESSAGE_MANAGE,
+          MESSAGE_EMBED_LINKS,
+          MESSAGE_ATTACH_FILES,
+          MESSAGE_HISTORY);
+    }
+    return false;
+  }
+
+
+  public boolean hasManagePermissions(long serverId, long memberId) {
+    if (this.discordClient != null) {
+      return this.discordClient.hasPermissions(serverId, memberId,
           MANAGE_CHANNEL,
           VIEW_CHANNEL,
           MESSAGE_SEND,
@@ -199,10 +227,10 @@ public class DiscordService implements InitializingBean, PreferenceChangedListen
 
   public void sendDefaultHighscoreMessage(String message) {
     if (this.discordClient != null) {
-      long serverId = Long.parseLong(String.valueOf(preferencesService.getPreferenceValue(PreferenceNames.DISCORD_GUILD_ID, -1)));
-      long channelId = Long.parseLong(String.valueOf(preferencesService.getPreferenceValue(PreferenceNames.DISCORD_CHANNEL_ID, -1)));
-      if (serverId > 0 && channelId > 0) {
-        this.sendMessage(serverId, channelId, message);
+      String guildId = (String) preferencesService.getPreferenceValue(PreferenceNames.DISCORD_GUILD_ID);
+      String defaultChannelId = (String) preferencesService.getPreferenceValue(PreferenceNames.DISCORD_CHANNEL_ID);
+      if (!StringUtils.isEmpty(guildId) && !StringUtils.isEmpty(defaultChannelId)) {
+        this.sendMessage(Long.parseLong(guildId), Long.parseLong(defaultChannelId), message);
       }
     }
   }
@@ -316,7 +344,8 @@ public class DiscordService implements InitializingBean, PreferenceChangedListen
     if (this.discordClient != null) {
       GuildInfo guild = this.discordClient.getGuildById(serverId);
       if (guild != null) {
-        return toServer(guild);
+        List<de.mephisto.vpin.connectors.discord.DiscordCategory> categories = this.discordClient.getCategories(serverId);
+        return toServer(guild, categories);
       }
     }
     return null;
@@ -327,7 +356,8 @@ public class DiscordService implements InitializingBean, PreferenceChangedListen
     if (this.discordClient != null) {
       List<GuildInfo> guilds = this.discordClient.getGuilds();
       for (GuildInfo guild : guilds) {
-        result.add(toServer(guild));
+        List<de.mephisto.vpin.connectors.discord.DiscordCategory> categories = this.discordClient.getCategories(guild.getId());
+        result.add(toServer(guild, categories));
       }
     }
     return result;
@@ -421,13 +451,28 @@ public class DiscordService implements InitializingBean, PreferenceChangedListen
     return player;
   }
 
-  private DiscordServer toServer(@NonNull GuildInfo guild) {
+  private DiscordServer toServer(@NonNull GuildInfo guild, List<de.mephisto.vpin.connectors.discord.DiscordCategory> categories) {
     DiscordServer s = new DiscordServer();
     s.setOwnerId(guild.getOwnerId());
     s.setId(guild.getId());
     s.setName(guild.getName());
     s.setAvatarUrl(guild.getAvatarUrl());
+    s.setCategories(categories.stream().map(this::toCategory).collect(Collectors.toList()));
     return s;
+  }
+
+  private DiscordChannel toChannel(@NonNull DiscordTextChannel channel) {
+    DiscordChannel s = new DiscordChannel();
+    s.setId(channel.getId());
+    s.setName(channel.getName());
+    return s;
+  }
+
+  private DiscordCategory toCategory(de.mephisto.vpin.connectors.discord.DiscordCategory c) {
+    DiscordCategory category = new DiscordCategory();
+    category.setId(c.getId());
+    category.setName(c.getName());
+    return category;
   }
 
   private ScoreSummary toScoreSummary(@NonNull HighscoreParser highscoreParser, @NonNull DiscordMessage message) {
@@ -439,37 +484,45 @@ public class DiscordService implements InitializingBean, PreferenceChangedListen
   }
 
   public void initCompetition(long serverId, long channelId, long messageId) {
-    //delete existing pins for new competition starts
-    clearPinnedMessages(serverId, channelId);
-    //use the slow mode to avoid concurrent pinning of new highscores
-    discordClient.setSlowMode(serverId, channelId, 5);
-    discordClient.pinMessage(serverId, channelId, messageId);
+    if (this.discordClient != null) {
+      //delete existing pins for new competition starts
+      clearPinnedMessages(serverId, channelId);
+      //use the slow mode to avoid concurrent pinning of new highscores
+      discordClient.setSlowMode(serverId, channelId, 5);
+      discordClient.pinMessage(serverId, channelId, messageId);
+    }
   }
 
   public void updateHighscoreMessage(long serverId, long channelId, long msgId) {
-    List<DiscordMessage> pinnedMessages = discordClient.getPinnedMessages(serverId, channelId);
-    for (DiscordMessage pinnedMessage : pinnedMessages) {
-      if (pinnedMessage.getRaw().contains(DiscordChannelMessageFactory.HIGHSCORE_INDICATOR)) {
-        discordClient.unpinMessage(serverId, channelId, pinnedMessage.getId());
+    if (this.discordClient != null) {
+      List<DiscordMessage> pinnedMessages = discordClient.getPinnedMessages(serverId, channelId);
+      for (DiscordMessage pinnedMessage : pinnedMessages) {
+        if (pinnedMessage.getRaw().contains(DiscordChannelMessageFactory.HIGHSCORE_INDICATOR)) {
+          discordClient.unpinMessage(serverId, channelId, pinnedMessage.getId());
+        }
       }
+      discordClient.pinMessage(serverId, channelId, msgId);
     }
-    discordClient.pinMessage(serverId, channelId, msgId);
   }
 
   public void finishCompetition(long serverId, long channelId, long msgId) {
-    this.discordClient.pinMessage(serverId, channelId, msgId);
-    List<DiscordMessage> pinnedMessages = discordClient.getPinnedMessages(serverId, channelId);
-    for (DiscordMessage pinnedMessage : pinnedMessages) {
-      if (pinnedMessage.getRaw().contains(DiscordChannelMessageFactory.JOIN_INDICATOR)) {
-        discordClient.unpinMessage(serverId, channelId, pinnedMessage.getId());
+    if (this.discordClient != null) {
+      this.discordClient.pinMessage(serverId, channelId, msgId);
+      List<DiscordMessage> pinnedMessages = discordClient.getPinnedMessages(serverId, channelId);
+      for (DiscordMessage pinnedMessage : pinnedMessages) {
+        if (pinnedMessage.getRaw().contains(DiscordChannelMessageFactory.JOIN_INDICATOR)) {
+          discordClient.unpinMessage(serverId, channelId, pinnedMessage.getId());
+        }
       }
     }
   }
 
   public void clearPinnedMessages(long serverId, long channelId) {
-    List<DiscordMessage> pinnedMessages = discordClient.getPinnedMessages(serverId, channelId);
-    for (DiscordMessage pinnedMessage : pinnedMessages) {
-      discordClient.unpinMessage(serverId, channelId, pinnedMessage.getId());
+    if (this.discordClient != null) {
+      List<DiscordMessage> pinnedMessages = discordClient.getPinnedMessages(serverId, channelId);
+      for (DiscordMessage pinnedMessage : pinnedMessages) {
+        discordClient.unpinMessage(serverId, channelId, pinnedMessage.getId());
+      }
     }
   }
 
@@ -531,26 +584,77 @@ public class DiscordService implements InitializingBean, PreferenceChangedListen
     }
   }
 
-  public List<Player> getAllowList() {
-    List<Player> result = new ArrayList<>();
-    String allowList = (String) preferencesService.getPreferenceValue(PreferenceNames.DISCORD_BOT_ALLOW_LIST);
-    String[] split = allowList.split(",");
+  public List<DiscordCategory> getCategories(long serverId) {
+    if (this.discordClient != null) {
+      List<de.mephisto.vpin.connectors.discord.DiscordCategory> categories = this.discordClient.getCategories(serverId);
+      return categories.stream().map(c -> toCategory(c)).collect(Collectors.toList());
+    }
+    return Collections.emptyList();
+  }
 
-    if(this.discordClient != null) {
-      for (String item : split) {
-        try {
-          long id = Long.parseLong(item);
-          DiscordMember member = this.discordClient.getMember(id);
-          if(member != null) {
-            result.add(toPlayer(member));
-          }
+  public DiscordChannel createSubscriptionChannel(Competition competition, Game game) {
+    if (this.discordClient != null) {
+      long serverId = competition.getDiscordServerId();
+      List<DiscordTextChannel> channels = this.discordClient.getChannels(serverId);
+      for (DiscordTextChannel c : channels) {
+        String name = c.getName();
+        if (name.endsWith("§" + game.getRom())) {
+          LOG.warn("Text channel \"" + name + "\" already exists for table \"" + game.getGameDisplayName() + "\"");
+          return toChannel(c);
         }
-        catch (Exception e) {
-          //ignore
+      }
+
+      String categoryId = (String) preferencesService.getPreferenceValue(PreferenceNames.DISCORD_CATEGORY_ID);
+      String name = competition.getName() + "§" + game.getRom();
+      String topic = "Channel for highscores of table \"" + game.getGameDisplayName() + "\"";
+      DiscordTextChannel c = this.discordClient.createChannel(serverId, Long.parseLong(categoryId), name, topic);
+
+      return toChannel(c);
+    }
+    return null;
+  }
+
+  public SubscriptionInfo getSubscriptionInfo(long serverId, long channelId) {
+    if (this.discordClient != null) {
+      List<DiscordMessage> pinnedMessages = discordClient.getPinnedMessages(serverId, channelId);
+      for (DiscordMessage pinnedMessage : pinnedMessages) {
+        if (pinnedMessage.getRaw().contains(DiscordChannelMessageFactory.START_INDICATOR)) {
+          String raw = pinnedMessage.getRaw();
+          String uuid = raw.substring(raw.indexOf("ID:") + 3);
+          uuid = uuid.substring(0, uuid.indexOf(")")).trim();
+
+          SubscriptionInfo info = new SubscriptionInfo();
+          info.setServerId(serverId);
+          info.setChannelId(channelId);
+          info.setOwnerId(pinnedMessage.getMember().getId());
+          info.setUuid(uuid);
+          return info;
         }
       }
     }
+    return null;
+  }
 
+  public List<Player> getAllowList() {
+    List<Player> result = new ArrayList<>();
+    String allowList = (String) preferencesService.getPreferenceValue(PreferenceNames.DISCORD_BOT_ALLOW_LIST);
+    if (!StringUtils.isEmpty(allowList)) {
+      String[] split = allowList.split(",");
+
+      if (this.discordClient != null) {
+        for (String item : split) {
+          try {
+            long id = Long.parseLong(item);
+            DiscordMember member = this.discordClient.getMember(id);
+            if (member != null) {
+              result.add(toPlayer(member));
+            }
+          } catch (Exception e) {
+            //ignore
+          }
+        }
+      }
+    }
     return result;
   }
 

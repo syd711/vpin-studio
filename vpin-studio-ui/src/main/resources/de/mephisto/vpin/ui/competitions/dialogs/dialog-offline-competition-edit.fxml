@@ -18,7 +18,7 @@
 <?import javafx.scene.text.Font?>
 <?import org.kordamp.ikonli.javafx.FontIcon?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefWidth="700.0" styleClass="base-component" stylesheets="@../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.competitions.CompetitionOfflineDialogController">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefWidth="700.0" styleClass="base-component" stylesheets="@../../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.competitions.dialogs.CompetitionOfflineDialogController">
    <top>
       <fx:include fx:id="header" source="/de/mephisto/vpin/commons/fx/scene-dialog-header.fxml" />
    </top>
@@ -49,9 +49,9 @@
          <center>
             <VBox>
                <children>
-                  <Label text="Competition Settings">
+                  <Label text="Competition Settings" textFill="WHITE">
                      <font>
-                        <Font name="System Bold" size="14.0" />
+                        <Font name="System Bold" size="18.0" />
                      </font>
                   </Label>
                   <GridPane vgap="3.0">
@@ -85,7 +85,7 @@
                         </Label>
                         <HBox alignment="CENTER_LEFT" GridPane.columnIndex="1" GridPane.rowIndex="1">
                            <children>
-                              <ComboBox fx:id="tableCombo" prefHeight="30.0" prefWidth="280.0" />
+                              <ComboBox fx:id="tableCombo" prefHeight="30.0" prefWidth="310.0" />
                               <Label textFill="WHITE">
                                  <font>
                                     <Font size="14.0" />
@@ -132,10 +132,13 @@
                            </font>
                         </Label>
                      </children>
+                     <VBox.margin>
+                        <Insets top="12.0" />
+                     </VBox.margin>
                   </GridPane>
-                  <Label text="Notification Settings">
+                  <Label text="Notification Settings" textFill="WHITE">
                      <font>
-                        <Font name="System Bold" size="14.0" />
+                        <Font name="System Bold" size="18.0" />
                      </font>
                   </Label>
                   <GridPane vgap="3.0">
@@ -167,10 +170,13 @@
                            </children>
                         </HBox>
                      </children>
+                     <VBox.margin>
+                        <Insets top="12.0" />
+                     </VBox.margin>
                   </GridPane>
-                  <Label layoutX="10.0" layoutY="329.0" text="Your VPin Settings">
+                  <Label layoutX="10.0" layoutY="329.0" text="Your VPin Settings" textFill="WHITE">
                      <font>
-                        <Font name="System Bold" size="14.0" />
+                        <Font name="System Bold" size="18.0" />
                      </font>
                   </Label>
                   <GridPane vgap="3.0">
@@ -207,6 +213,9 @@
                            </font>
                         </Label>
                      </children>
+                     <VBox.margin>
+                        <Insets top="12.0" />
+                     </VBox.margin>
                   </GridPane>
                   <StackPane alignment="TOP_LEFT">
                      <VBox.margin>

@@ -29,6 +29,11 @@ public class CompetitionResource {
     return competitionService.getDiscordCompetitions();
   }
 
+  @GetMapping("/subscriptions")
+  public List<Competition> getSubscriptions() {
+    return competitionService.getSubscriptions();
+  }
+
   @GetMapping("/{id}")
   public Competition getCompetition(@PathVariable("id") int id) {
     Competition c = competitionService.getCompetition(id);
