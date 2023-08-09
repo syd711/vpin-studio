@@ -229,7 +229,7 @@ public class DiscordService implements InitializingBean, PreferenceChangedListen
     if (this.discordClient != null) {
       String guildId = (String) preferencesService.getPreferenceValue(PreferenceNames.DISCORD_GUILD_ID);
       String defaultChannelId = (String) preferencesService.getPreferenceValue(PreferenceNames.DISCORD_CHANNEL_ID);
-      if(!StringUtils.isEmpty(guildId) && !StringUtils.isEmpty(defaultChannelId)) {
+      if (!StringUtils.isEmpty(guildId) && !StringUtils.isEmpty(defaultChannelId)) {
         this.sendMessage(Long.parseLong(guildId), Long.parseLong(defaultChannelId), message);
       }
     }
@@ -620,7 +620,7 @@ public class DiscordService implements InitializingBean, PreferenceChangedListen
       for (DiscordMessage pinnedMessage : pinnedMessages) {
         if (pinnedMessage.getRaw().contains(DiscordChannelMessageFactory.START_INDICATOR)) {
           String raw = pinnedMessage.getRaw();
-          String uuid = raw.substring(raw.indexOf("ID:")+3);
+          String uuid = raw.substring(raw.indexOf("ID:") + 3);
           uuid = uuid.substring(0, uuid.indexOf(")")).trim();
 
           SubscriptionInfo info = new SubscriptionInfo();
@@ -638,22 +638,23 @@ public class DiscordService implements InitializingBean, PreferenceChangedListen
   public List<Player> getAllowList() {
     List<Player> result = new ArrayList<>();
     String allowList = (String) preferencesService.getPreferenceValue(PreferenceNames.DISCORD_BOT_ALLOW_LIST);
-    String[] split = allowList.split(",");
+    if (!StringUtils.isEmpty(allowList)) {
+      String[] split = allowList.split(",");
 
-    if (this.discordClient != null) {
-      for (String item : split) {
-        try {
-          long id = Long.parseLong(item);
-          DiscordMember member = this.discordClient.getMember(id);
-          if (member != null) {
-            result.add(toPlayer(member));
+      if (this.discordClient != null) {
+        for (String item : split) {
+          try {
+            long id = Long.parseLong(item);
+            DiscordMember member = this.discordClient.getMember(id);
+            if (member != null) {
+              result.add(toPlayer(member));
+            }
+          } catch (Exception e) {
+            //ignore
           }
-        } catch (Exception e) {
-          //ignore
         }
       }
     }
-
     return result;
   }
 
