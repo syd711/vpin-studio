@@ -98,6 +98,7 @@ public class CompetitionsController implements Initializable, StudioFXController
   public void onViewActivated() {
     refreshUsers(competition);
     competitionMembersPane.setExpanded(competition.isPresent() && competition.get().getType().equals(CompetitionType.DISCORD.name()));
+    refreshView(tabPane.getSelectionModel().selectedIndexProperty().get());
 //    discordController.onReload();
 //    tableSubscriptionsController.onReload();
 
@@ -111,33 +112,37 @@ public class CompetitionsController implements Initializable, StudioFXController
     loadTabs();
     updateSelection(Optional.empty());
     tabPane.getSelectionModel().selectedIndexProperty().addListener((observableValue, number, t1) -> {
-      if (t1.intValue() == 0) {
-        NavigationController.setBreadCrumb(Arrays.asList("Competitions", "Offline Competitions"));
-        Optional<CompetitionRepresentation> selection = offlineController.getSelection();
-        updateSelection(selection);
-        offlineController.onReload();
-      }
-      else if (t1.intValue() == 1) {
-        if (discordController != null) {
-          NavigationController.setBreadCrumb(Arrays.asList("Competitions", "Discord Competitions"));
-          Optional<CompetitionRepresentation> selection = discordController.getSelection();
-          updateSelection(selection);
-          discordController.onReload();
-        }
-      }
-      else if (t1.intValue() == 2) {
-        if (tableSubscriptionsController != null) {
-          NavigationController.setBreadCrumb(Arrays.asList("Competitions", "Table Subscriptions"));
-          Optional<CompetitionRepresentation> selection = tableSubscriptionsController.getSelection();
-          updateSelection(selection);
-          tableSubscriptionsController.onReload();
-        }
-      }
-      else {
-        throw new UnsupportedOperationException("Invalid tab id");
-      }
+      refreshView(t1);
     });
     accordion.setExpandedPane(metaDataPane);
+  }
+
+  private void refreshView(Number t1) {
+    if (t1.intValue() == 0) {
+      NavigationController.setBreadCrumb(Arrays.asList("Competitions", "Offline Competitions"));
+      Optional<CompetitionRepresentation> selection = offlineController.getSelection();
+      updateSelection(selection);
+      offlineController.onReload();
+    }
+    else if (t1.intValue() == 1) {
+      if (discordController != null) {
+        NavigationController.setBreadCrumb(Arrays.asList("Competitions", "Discord Competitions"));
+        Optional<CompetitionRepresentation> selection = discordController.getSelection();
+        updateSelection(selection);
+        discordController.onReload();
+      }
+    }
+    else if (t1.intValue() == 2) {
+      if (tableSubscriptionsController != null) {
+        NavigationController.setBreadCrumb(Arrays.asList("Competitions", "Table Subscriptions"));
+        Optional<CompetitionRepresentation> selection = tableSubscriptionsController.getSelection();
+        updateSelection(selection);
+        tableSubscriptionsController.onReload();
+      }
+    }
+    else {
+      throw new UnsupportedOperationException("Invalid tab id");
+    }
   }
 
   public void setCompetition(CompetitionRepresentation competition) {

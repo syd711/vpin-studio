@@ -436,6 +436,6 @@ public class HighscoreCardsController implements Initializable, ObservedProperty
 
   @Override
   public void onViewActivated() {
-
+    NavigationController.setBreadCrumb(Arrays.asList("Highscore Cards"));
   }
 }
