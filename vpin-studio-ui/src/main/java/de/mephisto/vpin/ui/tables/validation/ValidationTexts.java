@@ -139,8 +139,8 @@ public class ValidationTexts {
         break;
       }
       case CODE_ALT_COLOR_FILES_MISSING: {
-        label = "ALT Sound files missing.";
-        text = "An ALT Sound file is missing: " + state.getOptions().get(0);
+        label = "ALT Color files missing.";
+        text = "An ALT Color file is missing: " + state.getOptions().get(0);
         break;
       }
       case CODE_ALT_COLOR_EXTERNAL_DMD_NOT_ENABLED: {
