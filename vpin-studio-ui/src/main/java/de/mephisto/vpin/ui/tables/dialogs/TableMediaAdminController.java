@@ -35,7 +35,6 @@ import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.scene.media.MediaView;
 import javafx.scene.paint.Paint;
-import javafx.scene.web.WebView;
 import javafx.stage.Stage;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -264,31 +263,27 @@ public class TableMediaAdminController implements Initializable, DialogControlle
 
         }
         else if (baseType.equals("video")) {
-//          Media media = new Media(url);
-//          MediaPlayer mediaPlayer = new MediaPlayer(media);
-//          mediaPlayer.setAutoPlay(true);
-//          mediaPlayer.setCycleCount(-1);
-//          mediaPlayer.setMute(true);
-//          mediaPlayer.setOnError(() -> {
-//            LOG.error("Media player error: " + mediaPlayer.getError() + ", URL: " + url);
-//            mediaPlayer.stop();
-//            mediaPlayer.dispose();
-//
-//            Label label = new Label("  Media available\n(but not playable)");
-//            label.setStyle("-fx-font-color: #33CC00;-fx-text-fill:#33CC00; -fx-font-weight: bold;");
-//            label.setUserData(mediaItem);
-//            mediaPane.setCenter(label);
-//          });
-//
-//          MediaView mediaView = new MediaView(mediaPlayer);
-//          mediaView.setUserData(mediaItem);
-//          mediaView.setPreserveRatio(true);
+          Media media = new Media(url);
+          MediaPlayer mediaPlayer = new MediaPlayer(media);
+          mediaPlayer.setAutoPlay(true);
+          mediaPlayer.setCycleCount(-1);
+          mediaPlayer.setMute(true);
+          mediaPlayer.setOnError(() -> {
+            LOG.error("Media player error: " + mediaPlayer.getError() + ", URL: " + url);
+            mediaPlayer.stop();
+            mediaPlayer.dispose();
 
-          String html = "<html><body><video width=\"390\" src=\"" + url + "\" /></body></html>";
-          WebView mediaView = new WebView();
-          mediaView.getEngine().loadContent(html , "text/html");
-          mediaView.setPrefWidth(400 - 10);
-          mediaView.setPrefHeight(500 - 20);
+            Label label = new Label("  Media available\n(but not playable)");
+            label.setStyle("-fx-font-color: #33CC00;-fx-text-fill:#33CC00; -fx-font-weight: bold;");
+            label.setUserData(mediaItem);
+            mediaPane.setCenter(label);
+          });
+
+          MediaView mediaView = new MediaView(mediaPlayer);
+          mediaView.setUserData(mediaItem);
+          mediaView.setPreserveRatio(true);
+          mediaView.setFitWidth(400 - 10);
+          mediaView.setFitHeight(500 - 20);
 
           mediaPane.setCenter(mediaView);
         }
