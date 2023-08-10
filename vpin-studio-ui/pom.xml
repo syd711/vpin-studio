@@ -78,6 +78,11 @@
 
 
         <dependency>
+            <groupId>uk.co.caprica</groupId>
+            <artifactId>vlcj</artifactId>
+            <version>3.12.1</version>
+        </dependency>
+        <dependency>
             <groupId>org.reactfx</groupId>
             <artifactId>reactfx</artifactId>
             <version>2.0-M5</version>
