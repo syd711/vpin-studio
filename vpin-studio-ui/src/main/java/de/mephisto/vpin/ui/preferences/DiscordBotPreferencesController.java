@@ -53,7 +53,7 @@ public class DiscordBotPreferencesController implements Initializable {
   private VBox allowListPane;
 
   @FXML
-  private CheckBox disableCheckbox;
+  private CheckBox commandsEnabledCheckbox;
 
   @FXML
   private CheckBox dynamicSubscriptions;
@@ -148,8 +148,8 @@ public class DiscordBotPreferencesController implements Initializable {
 
     preference = client.getPreference(PreferenceNames.DISCORD_BOT_COMMANDS_ENABLED);
     selectUsersBtn.setDisable(!preference.getBooleanValue());
-    disableCheckbox.setSelected(preference.getBooleanValue());
-    disableCheckbox.selectedProperty().addListener(new ChangeListener<Boolean>() {
+    commandsEnabledCheckbox.setSelected(preference.getBooleanValue());
+    commandsEnabledCheckbox.selectedProperty().addListener(new ChangeListener<Boolean>() {
       @Override
       public void changed(ObservableValue<? extends Boolean> observableValue, Boolean aBoolean, Boolean t1) {
         client.getPreferenceService().setPreference(PreferenceNames.DISCORD_BOT_COMMANDS_ENABLED, t1);

@@ -173,13 +173,13 @@
                   <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                </rowConstraints>
                <children>
-                  <Label prefHeight="20.0" styleClass="preference-label" text="Disable Bot Commands:" textFill="WHITE" GridPane.rowIndex="1">
+                  <Label prefHeight="20.0" styleClass="preference-label" text="Bot Commands Enabled:" textFill="WHITE" GridPane.rowIndex="1">
                      <font>
                         <Font size="14.0" />
                      </font>
                   </Label>
                   <HBox alignment="BASELINE_LEFT" prefHeight="100.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-                  <CheckBox fx:id="disableCheckbox" mnemonicParsing="false" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                  <CheckBox fx:id="commandsEnabledCheckbox" mnemonicParsing="false" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="1">
                      <font>
                         <Font size="14.0" />
                      </font>
