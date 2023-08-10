@@ -258,7 +258,7 @@
                 </BorderPane>
             </center>
             <BorderPane.margin>
-                <Insets right="12.0" />
+                <Insets />
             </BorderPane.margin>
         </BorderPane>
     </center>
