@@ -137,7 +137,7 @@ public class TableDataController implements Initializable, DialogController {
         gameYear.setText(s);
       }
     });
-    if (manifest.getGameYear() > 0) {
+    if (manifest.getGameYear() != null && manifest.getGameYear() > 0) {
       gameYear.setText(String.valueOf(manifest.getGameYear()));
     }
     gameYear.textProperty().addListener((observable, oldValue, newValue) -> {
