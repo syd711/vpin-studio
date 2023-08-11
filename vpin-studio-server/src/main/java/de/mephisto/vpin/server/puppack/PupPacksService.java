@@ -176,16 +176,14 @@ public class PupPacksService implements InitializingBean {
     return JobExecutionResultFactory.empty();
   }
 
-
-  @Nullable
-  public File exportDefaultPicture(@NonNull PupPack pupPack, @NonNull File target) {
+  public void exportDefaultPicture(@NonNull PupPack pupPack, @NonNull File target) {
     File defaultPicture = new File(target.getParentFile(), SystemService.DEFAULT_BACKGROUND);
     if (defaultPicture.exists() && defaultPicture.length() > 0) {
-      return defaultPicture;
+      return;
     }
 
     if (defaultPicture.exists() && defaultPicture.length() == 0) {
-      return null;
+      return;
     }
 
     if (!target.getParentFile().exists()) {
@@ -195,13 +193,19 @@ public class PupPacksService implements InitializingBean {
     PupDefaultVideoResolver resolver = new PupDefaultVideoResolver(pupPack);
     File defaultVideo = resolver.findDefaultVideo();
     if (defaultVideo != null && defaultVideo.exists()) {
-      boolean success = JCodec.export(defaultVideo, defaultPicture);
-      if (success) {
-        LOG.info("Successfully extracted default background image " + defaultPicture.getAbsolutePath());
-        return defaultPicture;
+      if (defaultVideo.getName().endsWith(".png") || defaultVideo.getName().endsWith(".jpg") || defaultVideo.getName().endsWith(".jpeg")) {
+        try {
+          FileUtils.copyFile(defaultVideo, defaultPicture);
+        } catch (IOException e) {
+          LOG.error("failed to copy: " + e.getMessage());
+        }
+      }
+      else {
+        if (JCodec.export(defaultVideo, defaultPicture)) {
+          LOG.info("Successfully extracted default background image " + defaultPicture.getAbsolutePath());
+        }
       }
     }
-    return null;
   }
 
   public boolean clearCache() {

@@ -19,4 +19,5 @@
 - Updated JavaFX: I noted that this update resulted in a reliable playback of videos.
 - Fixed errorneous time field initialization for existing competition dialogs.  
 - Reenabled and fixed pinemhi settings.
-- Fixed wrong ALT color validation message text. 
+- Fixed wrong ALT color validation message text.
+- Fixed and improved default image extraction.
