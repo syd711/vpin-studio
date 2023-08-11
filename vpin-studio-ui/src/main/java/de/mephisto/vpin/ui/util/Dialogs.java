@@ -486,16 +486,29 @@ public class Dialogs {
   }
 
   public static boolean openPopperRunningWarning(Stage stage) {
-    ConfirmationResult confirmationResult = WidgetFactory.showAlertOptionWithCheckbox(stage, "PinUP Popper is running.", "Close PinUP Popper", "Cancel",
-        "PinUP Popper is running. To perform this operation, you have to close it.",
-        "This will also KILL the current emulator process!", "Switch cabinet to maintenance mode");
-    if (confirmationResult.isApplied()) {
-      client.getPinUPPopperService().terminatePopper();
-      if(confirmationResult.isChecked()) {
-        EventManager.getInstance().notifyMaintenanceMode(true);
+    boolean local = client.getSystemService().isLocal();
+    if (!local) {
+      ConfirmationResult confirmationResult = WidgetFactory.showAlertOptionWithCheckbox(stage, "PinUP Popper is running.", "Close PinUP Popper", "Cancel",
+          "PinUP Popper is running. To perform this operation, you have to close it.",
+          "This will also KILL the current emulator process!", "Switch cabinet to maintenance mode");
+      if (confirmationResult.isApplied()) {
+        client.getPinUPPopperService().terminatePopper();
+        if (confirmationResult.isChecked()) {
+          EventManager.getInstance().notifyMaintenanceMode(true);
+        }
+        return true;
       }
-      return true;
+      return false;
     }
-    return false;
+    else {
+      Optional<ButtonType> buttonType = WidgetFactory.showAlertOption(stage, "PinUP Popper is running.", "Close PinUP Popper", "Cancel",
+          "PinUP Popper is running. To perform this operation, you have to close it.",
+          "This will also KILL the the current emulator process!");
+      if (buttonType.isPresent() && buttonType.get().equals(ButtonType.APPLY)) {
+        client.getPinUPPopperService().terminatePopper();
+        return true;
+      }
+      return false;
+    }
   }
 }

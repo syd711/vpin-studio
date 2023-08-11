@@ -66,11 +66,13 @@ public class ToolbarController implements Initializable, StudioEventListener {
 
   @Override
   public void maintenanceEnabled(boolean b) {
-    if (b) {
-      maintenanceBtn.getStyleClass().add("maintenance-selected");
-    }
-    else {
-      maintenanceBtn.getStyleClass().remove("maintenance-selected");
+    if (maintenanceBtn.isVisible()) {
+      if (b) {
+        maintenanceBtn.getStyleClass().add("maintenance-selected");
+      }
+      else {
+        maintenanceBtn.getStyleClass().remove("maintenance-selected");
+      }
     }
   }
 
@@ -110,6 +112,7 @@ public class ToolbarController implements Initializable, StudioEventListener {
   public void initialize(URL url, ResourceBundle resourceBundle) {
     this.jobBtn.setDisable(true);
     this.messagesBtn.setDisable(true);
+    this.maintenanceBtn.setVisible(!client.getSystemService().isLocal());
 
     EventManager.getInstance().addListener(this);
 
