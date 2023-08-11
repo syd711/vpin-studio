@@ -535,6 +535,9 @@ public class SystemService extends SystemInfo implements InitializingBean {
     if (enabled) {
       killPopper();
     }
+    else {
+      restartPopper();
+    }
 
     return enabled;
   }
