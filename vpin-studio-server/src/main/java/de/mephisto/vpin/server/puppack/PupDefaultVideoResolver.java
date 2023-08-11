@@ -28,7 +28,31 @@ public class PupDefaultVideoResolver {
           String playList = entry.getPlayList();
           String playFile = entry.getPlayFile();
           video = resolveFile(playList, playFile);
-          break;
+          if (video != null) {
+            return video;
+          }
+        }
+      }
+
+      for (TriggerEntry entry : entries) {
+        if (entry.getScreenNum() == 0) {
+          String playList = entry.getPlayList();
+          String playFile = entry.getPlayFile();
+          video = resolveFile(playList, playFile);
+          if (video != null) {
+            return video;
+          }
+        }
+      }
+
+      for (TriggerEntry entry : entries) {
+        if (entry.getScreenNum() == 1) {
+          String playList = entry.getPlayList();
+          String playFile = entry.getPlayFile();
+          video = resolveFile(playList, playFile);
+          if (video != null) {
+            return video;
+          }
         }
       }
     }

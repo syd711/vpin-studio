@@ -19,7 +19,11 @@ public class TriggerEntry {
     if(StringUtils.isEmpty(num)) {
       return -1;
     }
-    return Integer.parseInt(num);
+    try {
+      return Integer.parseInt(num);
+    } catch (NumberFormatException e) {
+      return -1;
+    }
   }
 
   public boolean isActive() {

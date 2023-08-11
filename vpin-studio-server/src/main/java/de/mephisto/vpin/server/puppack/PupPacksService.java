@@ -179,7 +179,7 @@ public class PupPacksService implements InitializingBean {
 
   @Nullable
   public File exportDefaultPicture(@NonNull PupPack pupPack, @NonNull File target) {
-    File defaultPicture = new File(target, SystemService.DEFAULT_BACKGROUND);
+    File defaultPicture = new File(target.getParentFile(), SystemService.DEFAULT_BACKGROUND);
     if (defaultPicture.exists() && defaultPicture.length() > 0) {
       return defaultPicture;
     }
