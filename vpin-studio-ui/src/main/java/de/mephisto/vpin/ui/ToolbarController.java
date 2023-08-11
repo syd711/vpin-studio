@@ -2,6 +2,8 @@ package de.mephisto.vpin.ui;
 
 import de.mephisto.vpin.commons.utils.Updater;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
+import de.mephisto.vpin.ui.events.EventManager;
+import de.mephisto.vpin.ui.events.StudioEventListener;
 import de.mephisto.vpin.ui.jobs.JobPoller;
 import de.mephisto.vpin.ui.util.Dialogs;
 import javafx.application.Platform;
@@ -13,6 +15,7 @@ import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.MenuButton;
+import javafx.scene.control.ToggleButton;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
@@ -27,7 +30,7 @@ import java.util.ResourceBundle;
 
 import static de.mephisto.vpin.ui.Studio.client;
 
-public class ToolbarController implements Initializable {
+public class ToolbarController implements Initializable, StudioEventListener {
   private final static Logger LOG = LoggerFactory.getLogger(ToolbarController.class);
 
   @FXML
@@ -37,12 +40,38 @@ public class ToolbarController implements Initializable {
   private MenuButton jobBtn;
 
   @FXML
+  private ToggleButton maintenanceBtn;
+
+  @FXML
   private MenuButton messagesBtn;
 
   private Node preferencesRoot;
 
   // Add a public no-args constructor
   public ToolbarController() {
+  }
+
+  @FXML
+  private void onMaintenance() {
+    boolean maintenanceMode = EventManager.getInstance().isMaintenanceMode();
+    if (!maintenanceMode) {
+      Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Maintenance Mode", "Switch cabinet to maintenance mode?",
+          "The maintenance mode will be automatically turned off on disconnect or exit.", "Enable Maintenance Mode");
+      if (!result.isPresent() || !result.get().equals(ButtonType.OK)) {
+        return;
+      }
+    }
+    EventManager.getInstance().notifyMaintenanceMode(!maintenanceMode);
+  }
+
+  @Override
+  public void maintenanceEnabled(boolean b) {
+    if (b) {
+      maintenanceBtn.getStyleClass().add("maintenance-selected");
+    }
+    else {
+      maintenanceBtn.getStyleClass().remove("maintenance-selected");
+    }
   }
 
   @FXML
@@ -56,6 +85,7 @@ public class ToolbarController implements Initializable {
 
   @FXML
   private void onDisconnect() {
+    client.getSystemService().setMaintenanceMode(false);
     Studio.stage.close();
     NavigationController.refreshControllerCache();
     NavigationController.refreshViewCache();
@@ -81,6 +111,8 @@ public class ToolbarController implements Initializable {
     this.jobBtn.setDisable(true);
     this.messagesBtn.setDisable(true);
 
+    EventManager.getInstance().addListener(this);
+
     JobPoller.destroy();
     JobPoller.create(this.jobBtn, this.messagesBtn);
 
@@ -95,7 +127,7 @@ public class ToolbarController implements Initializable {
 
     updateBtn.setVisible(false);
     String os = System.getProperty("os.name");
-    if(os.contains("Windows")) {
+    if (os.contains("Windows")) {
       new Thread(() -> {
         String s = Updater.checkForUpdate(Studio.getVersion());
         Platform.runLater(() -> {

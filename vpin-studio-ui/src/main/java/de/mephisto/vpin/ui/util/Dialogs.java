@@ -1,5 +1,6 @@
 package de.mephisto.vpin.ui.util;
 
+import de.mephisto.vpin.commons.fx.ConfirmationResult;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.AltSound;
 import de.mephisto.vpin.restclient.IniSettings;
@@ -13,6 +14,7 @@ import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.UpdateDialogController;
 import de.mephisto.vpin.ui.archiving.dialogs.*;
 import de.mephisto.vpin.ui.competitions.dialogs.*;
+import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.launcher.InstallationController;
 import de.mephisto.vpin.ui.players.PlayerDialogController;
 import de.mephisto.vpin.ui.preferences.DiscordBotAllowListDialogController;
@@ -45,6 +47,8 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
 import java.util.Optional;
+
+import static de.mephisto.vpin.ui.Studio.client;
 
 public class Dialogs {
   private final static Logger LOG = LoggerFactory.getLogger(Dialogs.class);
@@ -481,9 +485,17 @@ public class Dialogs {
     return WidgetFactory.createDialogStage(fxmlLoader, Studio.stage, title);
   }
 
-  public static Optional<ButtonType> openPopperRunningWarning(Stage stage) {
-    return WidgetFactory.showAlertOption(stage, "PinUP Popper is running.", "Close PinUP Popper", "Cancel",
+  public static boolean openPopperRunningWarning(Stage stage) {
+    ConfirmationResult confirmationResult = WidgetFactory.showAlertOptionWithCheckbox(stage, "PinUP Popper is running.", "Close PinUP Popper", "Cancel",
         "PinUP Popper is running. To perform this operation, you have to close it.",
-        "This will also KILL the the current emulator process!");
+        "This will also KILL the current emulator process!", "Switch cabinet to maintenance mode");
+    if (confirmationResult.isApplied()) {
+      client.getPinUPPopperService().terminatePopper();
+      if(confirmationResult.isChecked()) {
+        EventManager.getInstance().notifyMaintenanceMode(true);
+      }
+      return true;
+    }
+    return false;
   }
 }

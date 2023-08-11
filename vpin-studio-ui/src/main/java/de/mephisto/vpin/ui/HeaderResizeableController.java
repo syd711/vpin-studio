@@ -48,6 +48,7 @@ public class HeaderResizeableController implements Initializable {
 
   @FXML
   private void onCloseClick() {
+    client.getSystemService().setMaintenanceMode(false);
     if (JobPoller.getInstance().isPolling()) {
       Optional<ButtonType> result = WidgetFactory.showConfirmation(stage, "Jobs Running", "There are still jobs running.", "These jobs will continue after quitting.", "Got it, continue");
       if (result.isPresent() && result.get().equals(ButtonType.OK)) {

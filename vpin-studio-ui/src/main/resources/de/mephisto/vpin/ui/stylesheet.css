@@ -767,3 +767,16 @@
     -fx-text-fill: #FFFFFF;
     -fx-font-size : 12px;
 }
+
+.maintenance-selected {
+    -fx-text-fill: #FFFFFF;
+    -fx-background-color: #FF3333;
+    -fx-border-color: #990000;
+    -fx-border-radius: 2 2 2 2;
+    -fx-border-style: solid solid solid solid;
+    -fx-border-width: 2;
+    -fx-border-insets: 0 0 0 0;
+    -fx-padding: 3 6 3 6;
+    -fx-background-radius: 2px;
+
+}

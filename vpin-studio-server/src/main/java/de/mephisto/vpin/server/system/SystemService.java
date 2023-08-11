@@ -1,6 +1,7 @@
 package de.mephisto.vpin.server.system;
 
 import de.mephisto.vpin.commons.SystemInfo;
+import de.mephisto.vpin.commons.fx.OverlayWindowFX;
 import de.mephisto.vpin.commons.fx.UIDefaults;
 import de.mephisto.vpin.commons.utils.PropertiesStore;
 import de.mephisto.vpin.commons.utils.SystemCommandExecutor;
@@ -14,12 +15,12 @@ import de.mephisto.vpin.server.pinemhi.PINemHiService;
 import de.mephisto.vpin.server.resources.ResourceLoader;
 import de.mephisto.vpin.server.util.SystemUtil;
 import edu.umd.cs.findbugs.annotations.NonNull;
+import javafx.application.Platform;
 import javafx.collections.ObservableList;
 import javafx.geometry.Rectangle2D;
 import javafx.stage.Screen;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,15 +28,16 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.stereotype.Service;
 
 import java.awt.*;
-import java.io.*;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
 import java.net.DatagramSocket;
 import java.net.ServerSocket;
 import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.*;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 @Service
 public class SystemService extends SystemInfo implements InitializingBean {
@@ -423,7 +425,7 @@ public class SystemService extends SystemInfo implements InitializingBean {
       String cmd = process.info().command().get();
       boolean b = process.destroyForcibly();
       LOG.info("Destroyed process '" + cmd + "', result: " + b);
-      if(!success && b) {
+      if (!success && b) {
         success = true;
       }
     }
@@ -508,7 +510,7 @@ public class SystemService extends SystemInfo implements InitializingBean {
     int index = 2;
     ObservableList<Screen> screens = Screen.getScreens();
     for (Screen screen : screens) {
-      if(screen.equals(Screen.getPrimary())) {
+      if (screen.equals(Screen.getPrimary())) {
         continue;
       }
 
@@ -524,5 +526,16 @@ public class SystemService extends SystemInfo implements InitializingBean {
       index++;
     }
     return result;
+  }
+
+  public boolean setMaintenanceMode(boolean enabled) {
+    Platform.runLater(() -> {
+      OverlayWindowFX.getInstance().setMaintenanceVisible(enabled);
+    });
+    if (enabled) {
+      killPopper();
+    }
+
+    return enabled;
   }
 }

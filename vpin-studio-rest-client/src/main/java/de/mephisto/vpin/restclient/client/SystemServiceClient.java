@@ -89,6 +89,13 @@ public class SystemServiceClient extends VPinStudioClientService {
     return getRestClient().getCached(API + "system/info", SystemSummary.class);
   }
 
+  public void setMaintenanceMode(boolean maintenanceMode) {
+    final RestTemplate restTemplate = new RestTemplate();
+    String url = getRestClient().getBaseUrl() + API + "system/maintenance/" + maintenanceMode;
+    LOG.info("HTTP GET " + url);
+    restTemplate.getForObject(getRestClient().getBaseUrl() + API + "system/maintenance/" + maintenanceMode, Boolean.class);
+  }
+
   public ScreenInfo getScreenInfo() {
     SystemSummary summary = getRestClient().getCached(API + "system/info", SystemSummary.class);
     return summary.getMainScreenInfo();

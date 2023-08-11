@@ -66,6 +66,11 @@ public class SystemResource {
     return true;
   }
 
+  @GetMapping("/maintenance/{enabled}")
+  public boolean setMaintenanceMode(@PathVariable("enabled") boolean enabled) {
+    return systemService.setMaintenanceMode(enabled);
+  }
+
   @GetMapping("/update/{version}/download/start")
   public boolean downloadUpdate(@PathVariable("version") String version) {
     return Updater.downloadUpdate(version, Updater.SERVER_ZIP);

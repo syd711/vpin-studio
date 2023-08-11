@@ -10,7 +10,7 @@ import java.util.List;
 
 public class ServerUpdatePreProcessing {
   private final static Logger LOG = LoggerFactory.getLogger(ServerUpdatePreProcessing.class);
-  private final static List<String> resources = Arrays.asList("PinVol.exe");
+  private final static List<String> resources = Arrays.asList("PinVol.exe", "maintenance.jpg");
 
   public static void execute() {
     runResourcesCheck();

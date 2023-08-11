@@ -47,8 +47,6 @@ public class KeyEventService implements InitializingBean, NativeKeyListener, Pop
 
   private boolean visible;
 
-  private OverlayWindowFX overlayWindowFX;
-
   private ShutdownThread shutdownThread;
 
   @Override
@@ -72,8 +70,8 @@ public class KeyEventService implements InitializingBean, NativeKeyListener, Pop
     shutdownThread = new ShutdownThread(preferencesService);
     shutdownThread.start();
 
-    overlayWindowFX.client = overlayClient;
-    overlayWindowFX = OverlayWindowFX.waitForOverlay();
+    OverlayWindowFX.client = overlayClient;
+    OverlayWindowFX.waitForOverlay();
     LOG.info("Finished initialization of OverlayWindowFX");
     afterStartup();
   }
@@ -97,7 +95,7 @@ public class KeyEventService implements InitializingBean, NativeKeyListener, Pop
         this.visible = !visible;
         Platform.runLater(() -> {
           LOG.info("Toggle show (Key " + hotkey + ")");
-          overlayWindowFX.setVisible(visible);
+          OverlayWindowFX.getInstance().setVisible(visible);
         });
       }
     }
@@ -124,7 +122,7 @@ public class KeyEventService implements InitializingBean, NativeKeyListener, Pop
       Boolean startupLaunch = (Boolean) preferencesService.getPreferenceValue(PreferenceNames.SHOW_OVERLAY_ON_STARTUP);
       if (startupLaunch != null && startupLaunch) {
         this.visible = !visible;
-        overlayWindowFX.setVisible(visible);
+        OverlayWindowFX.getInstance().setVisible(visible);
       }
     });
   }

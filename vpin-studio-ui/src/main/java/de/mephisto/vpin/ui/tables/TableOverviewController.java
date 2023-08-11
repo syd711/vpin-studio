@@ -213,9 +213,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
   @FXML
   private void onTableUpload() {
     if (client.getPinUPPopperService().isPinUPPopperRunning()) {
-      Optional<ButtonType> buttonType = Dialogs.openPopperRunningWarning(Studio.stage);
-      if (buttonType.isPresent() && buttonType.get().equals(ButtonType.APPLY)) {
-        client.getPinUPPopperService().terminatePopper();
+      if (Dialogs.openPopperRunningWarning(Studio.stage)) {
         openUploadDialog();
       }
       return;
@@ -235,9 +233,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
   @FXML
   private void onDelete() {
     if (client.getPinUPPopperService().isPinUPPopperRunning()) {
-      Optional<ButtonType> buttonType = Dialogs.openPopperRunningWarning(Studio.stage);
-      if (buttonType.isPresent() && buttonType.get().equals(ButtonType.APPLY)) {
-        client.getPinUPPopperService().terminatePopper();
+      if (Dialogs.openPopperRunningWarning(Studio.stage)) {
         deleteSelection();
       }
       return;
@@ -305,9 +301,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
   @FXML
   private void onImport() {
     if (client.getPinUPPopperService().isPinUPPopperRunning()) {
-      Optional<ButtonType> buttonType = Dialogs.openPopperRunningWarning(Studio.stage);
-      if (buttonType.isPresent() && buttonType.get().equals(ButtonType.APPLY)) {
-        client.getPinUPPopperService().terminatePopper();
+      if (Dialogs.openPopperRunningWarning(Studio.stage)) {
         Dialogs.openTableImportDialog();
       }
     }
@@ -343,9 +337,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
   @FXML
   public void onRename() {
     if (client.getPinUPPopperService().isPinUPPopperRunning()) {
-      Optional<ButtonType> buttonType = Dialogs.openPopperRunningWarning(Studio.stage);
-      if (buttonType.isPresent() && buttonType.get().equals(ButtonType.APPLY)) {
-        client.getPinUPPopperService().terminatePopper();
+      if (Dialogs.openPopperRunningWarning(Studio.stage)) {
         doRename();
       }
     }
@@ -382,9 +374,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
   @FXML
   public void onAssetsRename() {
     if (client.getPinUPPopperService().isPinUPPopperRunning()) {
-      Optional<ButtonType> buttonType = Dialogs.openPopperRunningWarning(Studio.stage);
-      if (buttonType.isPresent() && buttonType.get().equals(ButtonType.APPLY)) {
-        client.getPinUPPopperService().terminatePopper();
+      if (Dialogs.openPopperRunningWarning(Studio.stage)) {
         doRenameAssets();
       }
     }

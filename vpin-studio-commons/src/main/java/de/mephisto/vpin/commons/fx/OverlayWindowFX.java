@@ -29,8 +29,6 @@ public class OverlayWindowFX extends Application {
   private final static org.slf4j.Logger LOG = LoggerFactory.getLogger(OverlayWindowFX.class);
 
   public static final CountDownLatch latch = new CountDownLatch(1);
-  public static OverlayWindowFX overlayFX = null;
-
   private Stage stage;
 
   private BorderPane root;
@@ -38,18 +36,24 @@ public class OverlayWindowFX extends Application {
   public static OverlayClient client;
   private OverlayController overlayController;
 
+  private static OverlayWindowFX INSTANCE = null;
+  private Stage maintenanceStage;
+
+  public static OverlayWindowFX getInstance() {
+    return INSTANCE;
+  }
+
   public static void main(String[] args) {
     Application.launch(args);
   }
 
-  public static OverlayWindowFX waitForOverlay() {
+  public static void waitForOverlay() {
     try {
       latch.await();
       LOG.info("OverlayFX creation finished.");
     } catch (InterruptedException e) {
       e.printStackTrace();
     }
-    return overlayFX;
   }
 
   public void setVisible(boolean b) {
@@ -62,8 +66,53 @@ public class OverlayWindowFX extends Application {
     }
   }
 
+  public void setMaintenanceVisible(boolean b) {
+    if(maintenanceStage != null) {
+      if(b) {
+        maintenanceStage.setFullScreen(true);
+        maintenanceStage.show();
+      }
+      else {
+        maintenanceStage.hide();
+      }
+      return;
+    }
+
+    BorderPane root = new BorderPane();
+    Screen screen = Screen.getPrimary();
+    final Scene scene = new Scene(root, screen.getVisualBounds().getWidth(), screen.getVisualBounds().getHeight(), true, SceneAntialiasing.BALANCED);
+
+    maintenanceStage = new Stage();
+    Rectangle2D bounds = screen.getVisualBounds();
+    maintenanceStage.setX(bounds.getMinX());
+    maintenanceStage.setY(bounds.getMinY());
+
+    maintenanceStage.setScene(scene);
+    maintenanceStage.setFullScreenExitHint("");
+    maintenanceStage.setAlwaysOnTop(true);
+    maintenanceStage.setFullScreen(true);
+    maintenanceStage.getScene().getStylesheets().add(OverlayWindowFX.class.getResource("stylesheet.css").toExternalForm());
+
+    try {
+      String resource = "scene-maintenance.fxml";
+      FXMLLoader loader = new FXMLLoader(MaintenanceController.class.getResource(resource));
+      Parent widgetRoot = loader.load();
+      MaintenanceController controller = loader.getController();
+      root.setCenter(widgetRoot);
+    } catch (IOException e) {
+      LOG.error("Failed to init dashboard: " + e.getMessage(), e);
+    }
+
+    if(b) {
+      maintenanceStage.setFullScreen(true);
+      maintenanceStage.show();
+    }
+  }
+
   @Override
   public void start(Stage primaryStage) throws Exception {
+    INSTANCE = this;
+
     this.stage = primaryStage;
     Platform.setImplicitExit(false);
 
@@ -82,8 +131,6 @@ public class OverlayWindowFX extends Application {
 //    stage.initStyle(StageStyle.UNDECORATED);
 //    scene.setFill(Color.web("#272b2f"));
     stage.getScene().getStylesheets().add(OverlayWindowFX.class.getResource("stylesheet.css").toExternalForm());
-
-    overlayFX = this;
 
     try {
       String resource = "scene-overlay-uhd.fxml";

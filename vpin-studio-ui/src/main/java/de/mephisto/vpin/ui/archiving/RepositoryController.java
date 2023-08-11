@@ -163,9 +163,7 @@ public class RepositoryController implements Initializable, StudioEventListener 
 
 
       if (client.getPinUPPopperService().isPinUPPopperRunning()) {
-        Optional<ButtonType> buttonType = Dialogs.openPopperRunningWarning(Studio.stage);
-        if (buttonType.isPresent() && buttonType.get().equals(ButtonType.APPLY)) {
-          Studio.client.getPinUPPopperService().terminatePopper();
+        if (Dialogs.openPopperRunningWarning(Studio.stage)) {
           Dialogs.openTableInstallationDialog(tablesController, selectedItems);
         }
       }
@@ -493,7 +491,7 @@ public class RepositoryController implements Initializable, StudioEventListener 
   @Override
   public void jobFinished(@NonNull JobFinishedEvent event) {
     JobType jobType = event.getJobType();
-    if(jobType.equals(JobType.ARCHIVE_INSTALL)
+    if (jobType.equals(JobType.ARCHIVE_INSTALL)
         || jobType.equals(JobType.ARCHIVE_DOWNLOAD_TO_REPOSITORY)
         || jobType.equals(JobType.ARCHIVE_DOWNLOAD_TO_FILESYSTEM)
     ) {

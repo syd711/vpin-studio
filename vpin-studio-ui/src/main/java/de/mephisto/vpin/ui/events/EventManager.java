@@ -8,6 +8,8 @@ import edu.umd.cs.findbugs.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
+import static de.mephisto.vpin.ui.Studio.client;
+
 public class EventManager {
 
   private static EventManager instance = new EventManager();
@@ -22,10 +24,27 @@ public class EventManager {
     this.listeners.add(listener);
   }
 
+  private boolean maintenanceMode = false;
+
+  public boolean isMaintenanceMode() {
+    return maintenanceMode;
+  }
+
+  public void notifyMaintenanceMode(boolean enabled) {
+    maintenanceMode = enabled;
+    client.getSystemService().setMaintenanceMode(maintenanceMode);
+    new Thread(() -> {
+      for (StudioEventListener listener : listeners) {
+        listener.maintenanceEnabled(enabled);
+      }
+    }).start();
+  }
+
   /**
    * If the ROM name is set, all tables with this ROM name are invalidated.
+   *
    * @param tableId the id of the table
-   * @param rom the ROM name of the table
+   * @param rom     the ROM name of the table
    */
   public void notifyTableChange(int tableId, @Nullable String rom) {
     new Thread(() -> {

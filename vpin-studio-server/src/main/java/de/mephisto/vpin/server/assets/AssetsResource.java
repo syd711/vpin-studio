@@ -2,6 +2,8 @@ package de.mephisto.vpin.server.assets;
 
 import de.mephisto.vpin.server.util.RequestUtil;
 import de.mephisto.vpin.server.util.UploadUtil;
+import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,6 +14,8 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -36,6 +40,10 @@ public class AssetsResource {
     return assetService.getAssets();
   }
 
+  @GetMapping("/maintenance")
+  public ResponseEntity<byte[]> getMaintenanceBackground() {
+    return serializeFile(new File("resources/maintenance.jpg"));
+  }
 
   @GetMapping("/competition/{gameId}")
   public ResponseEntity<byte[]> getCompetitionBackground(@PathVariable("gameId") int gameId) {
@@ -113,5 +121,21 @@ public class AssetsResource {
         .contentLength(asset.getData().length)
         .cacheControl(CacheControl.maxAge(3600 * 24 * 7, TimeUnit.SECONDS).cachePublic())
         .body(asset.getData());
+  }
+
+  public ResponseEntity serializeFile(File file) {
+    try {
+      String suffix = FilenameUtils.getExtension(file.getName());
+      String mimeType = "image/" + suffix;
+      return ResponseEntity.ok()
+          .lastModified(file.lastModified())
+          .contentType(MediaType.parseMediaType(mimeType))
+          .contentLength(file.length())
+          .cacheControl(CacheControl.maxAge(3600 * 24 * 7, TimeUnit.SECONDS).cachePublic())
+          .body(IOUtils.toByteArray(new FileInputStream(file)));
+    } catch (IOException e) {
+      LOG.error("Faild to serialize file " + file.getAbsolutePath() + ": " + e.getMessage(), e);
+    }
+    return null;
   }
 }

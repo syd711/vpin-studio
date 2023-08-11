@@ -6,6 +6,7 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.MenuButton?>
 <?import javafx.scene.control.ProgressIndicator?>
+<?import javafx.scene.control.ToggleButton?>
 <?import javafx.scene.control.Tooltip?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
@@ -24,7 +25,7 @@
                   <Insets right="6.0" top="6.0" />
                </padding>
                <right>
-                  <HBox spacing="6.0" BorderPane.alignment="CENTER">
+                  <HBox alignment="BASELINE_LEFT" spacing="6.0" BorderPane.alignment="CENTER">
                      <BorderPane.margin>
                         <Insets bottom="6.0" right="6.0" />
                      </BorderPane.margin>
@@ -43,6 +44,11 @@
                               <Insets />
                            </HBox.margin>
                         </Button>
+                        <ToggleButton fx:id="maintenanceBtn" maxWidth="150.0" mnemonicParsing="false" onAction="#onMaintenance" text="Maintenance Mode">
+                           <HBox.margin>
+                              <Insets />
+                           </HBox.margin>
+                        </ToggleButton>
                         <MenuButton fx:id="jobBtn" mnemonicParsing="false" prefWidth="160.0" text="No active jobs">
                            <tooltip>
                               <Tooltip text="Job Overview" />
@@ -55,7 +61,7 @@
                               </ProgressIndicator>
                            </graphic>
                            <HBox.margin>
-                              <Insets top="1.0" />
+                              <Insets />
                            </HBox.margin>
                         </MenuButton>
                         <MenuButton fx:id="messagesBtn" mnemonicParsing="false">

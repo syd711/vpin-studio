@@ -117,9 +117,7 @@ public class TablesSidebarPopperController implements Initializable, ChangeListe
   @FXML
   private void onTableEdit() {
     if (Studio.client.getPinUPPopperService().isPinUPPopperRunning()) {
-      Optional<ButtonType> buttonType = Dialogs.openPopperRunningWarning(Studio.stage);
-      if (buttonType.isPresent() && buttonType.get().equals(ButtonType.APPLY)) {
-        Studio.client.getPinUPPopperService().terminatePopper();
+      if (Dialogs.openPopperRunningWarning(Studio.stage)) {
         Dialogs.openTableDataDialog(this.game.get());
         this.refreshView(this.game);
       }
@@ -133,9 +131,7 @@ public class TablesSidebarPopperController implements Initializable, ChangeListe
   @FXML
   private void onScreenEdit() {
     if (Studio.client.getPinUPPopperService().isPinUPPopperRunning()) {
-      Optional<ButtonType> buttonType = Dialogs.openPopperRunningWarning(Studio.stage);
-      if (buttonType.isPresent() && buttonType.get().equals(ButtonType.APPLY)) {
-        Studio.client.getPinUPPopperService().terminatePopper();
+      if (Dialogs.openPopperRunningWarning(Studio.stage)) {
         Dialogs.openPopperScreensDialog(this.game.get());
         this.refreshView(this.game);
       }

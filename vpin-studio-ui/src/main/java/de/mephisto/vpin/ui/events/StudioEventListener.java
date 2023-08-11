@@ -20,4 +20,8 @@ public interface StudioEventListener {
   default void preferencesChanged() {
 
   }
+
+  default void maintenanceEnabled(boolean b) {
+
+  }
 }
