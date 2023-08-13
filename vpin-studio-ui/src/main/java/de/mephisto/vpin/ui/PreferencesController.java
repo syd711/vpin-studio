@@ -102,6 +102,11 @@ public class PreferencesController implements Initializable {
   }
 
   @FXML
+  private void onCustomOptions(ActionEvent event) throws IOException {
+    load("preference-popper-custom-options.fxml", event);
+  }
+
+  @FXML
   private void onVPBM(ActionEvent event) throws IOException {
     load("preference-vpbm.fxml", event);
   }

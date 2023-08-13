@@ -54,6 +54,7 @@
                            </VBox.margin>
                         </Label>
                         <Button alignment="BASELINE_LEFT" contentDisplay="RIGHT" layoutX="250.0" layoutY="45.0" mnemonicParsing="false" onAction="#onScreens" prefHeight="35.0" prefWidth="212.0" styleClass="preference-button" text="Screens" />
+                        <Button alignment="BASELINE_LEFT" contentDisplay="RIGHT" layoutX="160.0" layoutY="282.0" mnemonicParsing="false" onAction="#onCustomOptions" prefHeight="35.0" prefWidth="212.0" styleClass="preference-button" text="Custom Options" />
                         <Button alignment="BASELINE_LEFT" contentDisplay="RIGHT" layoutX="160.0" layoutY="159.0" mnemonicParsing="false" onAction="#onReset" prefHeight="35.0" prefWidth="212.0" styleClass="preference-button" text="Reset Options" />
                         <Label alignment="BASELINE_LEFT" layoutX="210.0" layoutY="256.0" styleClass="preference-section" text="VALIDATORS">
                            <font>
