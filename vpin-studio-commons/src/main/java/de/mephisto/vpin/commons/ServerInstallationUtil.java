@@ -22,7 +22,7 @@ public class ServerInstallationUtil {
       LOG.info("Written autostart file " + getAutostartFile().getAbsolutePath());
       return getAutostartFile().exists();
     } catch (IOException e) {
-      LOG.error("Failed to install service: " + e.getMessage(), e);
+      LOG.error("Failed to install autostart file \"" + getAutostartFile().getAbsolutePath() + "\": " + e.getMessage(), e);
     }
     return false;
   }
