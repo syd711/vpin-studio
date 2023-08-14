@@ -532,13 +532,6 @@ public class SystemService extends SystemInfo implements InitializingBean {
     Platform.runLater(() -> {
       OverlayWindowFX.getInstance().setMaintenanceVisible(enabled);
     });
-    if (enabled) {
-      killPopper();
-    }
-    else {
-      restartPopper();
-    }
-
     return enabled;
   }
 }

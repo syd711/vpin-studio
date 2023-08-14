@@ -2,7 +2,6 @@ package de.mephisto.vpin.server.system;
 
 import de.mephisto.vpin.commons.ServerInstallationUtil;
 import de.mephisto.vpin.commons.utils.Updater;
-import de.mephisto.vpin.restclient.ScreenInfo;
 import de.mephisto.vpin.restclient.SystemData;
 import de.mephisto.vpin.restclient.SystemSummary;
 import de.mephisto.vpin.server.util.RequestUtil;
@@ -14,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import java.io.File;
 import java.io.IOException;
 import java.net.URLEncoder;
@@ -67,8 +67,19 @@ public class SystemResource {
   }
 
   @GetMapping("/maintenance/{enabled}")
-  public boolean setMaintenanceMode(@PathVariable("enabled") boolean enabled) {
-    return systemService.setMaintenanceMode(enabled);
+  public boolean setMaintenanceMode(@PathVariable("enabled") boolean enabled, HttpServletRequest request) {
+    boolean b = systemService.setMaintenanceMode(enabled);
+    if (enabled) {
+      systemService.killPopper();
+    }
+    else {
+      String url = request.getRequestURL().toString();
+      boolean remote = !url.contains("localhost") && !url.contains("127.0.0.1");
+      if (remote) {
+        systemService.restartPopper();
+      }
+    }
+    return b;
   }
 
   @GetMapping("/update/{version}/download/start")
