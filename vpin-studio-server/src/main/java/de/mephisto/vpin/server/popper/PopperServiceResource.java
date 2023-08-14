@@ -1,5 +1,6 @@
 package de.mephisto.vpin.server.popper;
 
+import de.mephisto.vpin.restclient.PopperCustomOptions;
 import de.mephisto.vpin.restclient.SystemData;
 import de.mephisto.vpin.restclient.TableManagerSettings;
 import de.mephisto.vpin.restclient.jobs.JobExecutionResult;
@@ -31,6 +32,16 @@ public class PopperServiceResource {
   @Autowired
   private GameService gameService;
 
+  @GetMapping("/custompoptions")
+  public PopperCustomOptions getCustomOptions() {
+    return popperService.getCustomOptions();
+  }
+
+
+  @PostMapping("/custompoptions")
+  public PopperCustomOptions saveCustomOptions(@RequestBody PopperCustomOptions option) {
+    return popperService.saveCustomOptions(option);
+  }
 
   @GetMapping("/imports")
   public SystemData getImportTables() {

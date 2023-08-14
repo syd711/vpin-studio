@@ -2,6 +2,7 @@ package de.mephisto.vpin.server.popper;
 
 import de.mephisto.vpin.commons.EmulatorType;
 import de.mephisto.vpin.commons.fx.UIDefaults;
+import de.mephisto.vpin.restclient.PopperCustomOptions;
 import de.mephisto.vpin.restclient.SystemData;
 import de.mephisto.vpin.restclient.TableManagerSettings;
 import de.mephisto.vpin.restclient.jobs.JobExecutionResult;
@@ -255,6 +256,15 @@ public class PopperService implements InitializingBean {
         }
       }
     }
+  }
+
+  public PopperCustomOptions getCustomOptions() {
+    return pinUPConnector.getCustomOptions();
+  }
+
+  public PopperCustomOptions saveCustomOptions(PopperCustomOptions options) {
+    pinUPConnector.updateCustomOptions(options);
+    return options;
   }
 
   @Override

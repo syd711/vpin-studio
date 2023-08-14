@@ -1,6 +1,7 @@
 package de.mephisto.vpin.server.popper;
 
 import de.mephisto.vpin.commons.EmulatorType;
+import de.mephisto.vpin.restclient.PopperCustomOptions;
 import de.mephisto.vpin.restclient.popper.PinUPControl;
 import de.mephisto.vpin.restclient.popper.PinUPControls;
 import de.mephisto.vpin.restclient.popper.PopperScreen;
@@ -11,7 +12,6 @@ import de.mephisto.vpin.server.system.SystemService;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import org.apache.commons.io.FilenameUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
@@ -261,6 +261,42 @@ public class PinUPConnector implements InitializingBean {
     }
   }
 
+  public PopperCustomOptions getCustomOptions() {
+    Connection connect = connect();
+    PopperCustomOptions options = null;
+    try {
+      PreparedStatement statement = connect.prepareStatement("SELECT * FROM GlobalSettings");
+      ResultSet rs = statement.executeQuery();
+      if (rs.next()) {
+        String optionString = rs.getString("GlobalOptions");
+        options = new PopperCustomOptions();
+        options.setScriptData(optionString);
+      }
+      rs.close();
+      statement.close();
+    } catch (SQLException e) {
+      LOG.error("Failed get custom options: " + e.getMessage(), e);
+    } finally {
+      disconnect(connect);
+    }
+    return options;
+  }
+
+  public void updateCustomOptions(@NonNull PopperCustomOptions options) {
+    Connection connect = this.connect();
+    try {
+      PreparedStatement preparedStatement = connect.prepareStatement("UPDATE GlobalSettings SET 'GlobalOptions'=?");
+      preparedStatement.setString(1, options.toString());
+      preparedStatement.executeUpdate();
+      preparedStatement.close();
+      LOG.info("Updated of custom options");
+    } catch (Exception e) {
+      LOG.error("Failed to update custom options:" + e.getMessage(), e);
+    } finally {
+      this.disconnect(connect);
+    }
+  }
+
   public void updateRom(@NonNull Game game, String rom) {
     Connection connect = this.connect();
     try {
@@ -428,7 +464,6 @@ public class PinUPConnector implements InitializingBean {
   }
 
 
-
   @NonNull
   public Playlist getPlayList(int id) {
     Playlist playlist = new Playlist();
@@ -438,7 +473,7 @@ public class PinUPConnector implements InitializingBean {
       ResultSet rs = statement.executeQuery("SELECT * FROM Playlists WHERE Visible = 1 AND PlayListID = " + id + ";");
       while (rs.next()) {
         String sql = rs.getString("PlayListSQL");
-        String name  = rs.getString("PlayName");
+        String name = rs.getString("PlayName");
         boolean sqlPlaylist = rs.getInt("PlayListType") == 1;
         playlist.setId(rs.getInt("PlayListID"));
         playlist.setName(name);
@@ -450,7 +485,7 @@ public class PinUPConnector implements InitializingBean {
         }
         playlist.setSqlPlayList(sqlPlaylist);
 
-        if(sqlPlaylist) {
+        if (sqlPlaylist) {
           playlist.setGameIds(getGameIdsFromSqlPlaylist(sql));
         }
         else {
@@ -476,7 +511,7 @@ public class PinUPConnector implements InitializingBean {
       ResultSet rs = statement.executeQuery("SELECT * FROM Playlists WHERE Visible = 1;");
       while (rs.next()) {
         String sql = rs.getString("PlayListSQL");
-        String name  = rs.getString("PlayName");
+        String name = rs.getString("PlayName");
         boolean sqlPlaylist = rs.getInt("PlayListType") == 1;
 
         if (excludeSqlLists && sqlPlaylist) {
@@ -494,7 +529,7 @@ public class PinUPConnector implements InitializingBean {
         }
         playlist.setSqlPlayList(sqlPlaylist);
 
-        if(sqlPlaylist) {
+        if (sqlPlaylist) {
           playlist.setGameIds(getGameIdsFromSqlPlaylist(sql));
         }
         else {
@@ -1021,5 +1056,4 @@ public class PinUPConnector implements InitializingBean {
       this.disconnect(connect);
     }
   }
-
 }

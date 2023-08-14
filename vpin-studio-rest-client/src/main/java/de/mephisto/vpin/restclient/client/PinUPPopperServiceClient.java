@@ -2,6 +2,7 @@ package de.mephisto.vpin.restclient.client;
 
 import de.mephisto.vpin.restclient.AssetType;
 import de.mephisto.vpin.restclient.FileUploadProgressListener;
+import de.mephisto.vpin.restclient.PopperCustomOptions;
 import de.mephisto.vpin.restclient.SystemData;
 import de.mephisto.vpin.restclient.jobs.JobExecutionResult;
 import de.mephisto.vpin.restclient.popper.PinUPControl;
@@ -77,6 +78,18 @@ public class PinUPPopperServiceClient extends VPinStudioClientService {
       throw e;
     }
   }
+  public PopperCustomOptions saveCustomOptions(PopperCustomOptions options) throws Exception {
+    try {
+      return getRestClient().post(API + "popper/custompoptions", options, PopperCustomOptions.class);
+    } catch (Exception e) {
+      LOG.error("Failed save custom options: " + e.getMessage(), e);
+      throw e;
+    }
+  }
+
+  public PopperCustomOptions getCustomOptions() {
+    return getRestClient().get(API + "popper/custompoptions", PopperCustomOptions.class);
+  }
 
   public boolean deleteMedia(int gameId, PopperScreen screen, String name) {
     return getRestClient().delete(API + "poppermedia/media/" + gameId + "/" + screen.name() + "/" + name);
@@ -85,6 +98,7 @@ public class PinUPPopperServiceClient extends VPinStudioClientService {
   public GameMediaRepresentation getGameMedia(int gameId) {
     return getRestClient().get(API + "poppermedia/" + gameId, GameMediaRepresentation.class);
   }
+
 
   public JobExecutionResult uploadMedia(File file, String uploadType, int gameId, PopperScreen screen, FileUploadProgressListener listener) throws Exception {
     try {
