@@ -6,6 +6,15 @@ public class SystemSummary {
   private String pinupSystemDirectory;
   private String visualPinballDirectory;
   private String vpinMameDirectory;
+  private ArchiveType archiveType;
+
+  public ArchiveType getArchiveType() {
+    return archiveType;
+  }
+
+  public void setArchiveType(ArchiveType archiveType) {
+    this.archiveType = archiveType;
+  }
 
   private List<ScreenInfo> screenInfos;
 
