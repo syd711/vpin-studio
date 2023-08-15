@@ -186,7 +186,7 @@ public class ArchiveService implements InitializingBean {
   public void afterPropertiesSet() {
     //VPA
     if (systemService.getArchiveType().equals(ArchiveType.VPA)) {
-      ArchiveSource archiveSource = new VpaArchiveSource(systemService.getArchivesFolder());
+      ArchiveSource archiveSource = new VpaArchiveSource();
       this.defaultArchiveSourceAdapter = new VpaArchiveSourceAdapter(archiveSource);
       this.adapterCache.put(archiveSource.getId(), this.defaultArchiveSourceAdapter);
     }
@@ -219,7 +219,7 @@ public class ArchiveService implements InitializingBean {
         return new File(vpbmService.getArchiveFolder(), archiveDescriptor.getFilename());
       }
       case VPA: {
-        return new File(systemService.getArchivesFolder(), archiveDescriptor.getFilename());
+        return new File(VpaArchiveSource.FOLDER, archiveDescriptor.getFilename());
       }
     }
     return null;

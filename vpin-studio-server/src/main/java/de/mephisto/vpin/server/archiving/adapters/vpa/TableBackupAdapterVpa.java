@@ -96,7 +96,7 @@ public class TableBackupAdapterVpa implements TableBackupAdapter, Job {
     LOG.info("Calculated total approx. size of " + FileUtils.readableFileSize(totalSizeExpected) + " for the archive of " + game.getGameDisplayName());
 
     String baseName = FilenameUtils.getBaseName(game.getGameFileName());
-    File target = new File(systemService.getArchivesFolder(), baseName + ".vpa");
+    File target = new File(VpaArchiveSource.FOLDER, baseName + ".vpa");
     target = FileUtils.uniqueFile(target);
     archiveDescriptor.setFilename(target.getName());
 
@@ -339,7 +339,7 @@ public class TableBackupAdapterVpa implements TableBackupAdapter, Job {
    * Archives the PUP pack
    */
   private void zipPupPack(ArchivePackageInfo packageInfo, ZipOutputStream zipOut) throws IOException {
-    if (game.getPupPack().getPupPackFolder() != null && game.getPupPack().getPupPackFolder().exists()) {
+    if (game.getPupPack() != null && game.getPupPack().getPupPackFolder() != null && game.getPupPack().getPupPackFolder().exists()) {
       packageInfo.setPupPack(true);
       LOG.info("Packing " + game.getPupPack().getPupPackFolder().getAbsolutePath());
       zipFile(game.getPupPack().getPupPackFolder(), "PinUPSystem/PUPVideos/" + game.getPupPack().getPupPackFolder().getName(), zipOut);

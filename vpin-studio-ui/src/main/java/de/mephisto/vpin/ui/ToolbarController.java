@@ -17,6 +17,7 @@ import javafx.scene.control.ButtonType;
 import javafx.scene.control.MenuButton;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 import org.apache.commons.lang3.StringUtils;
@@ -44,6 +45,9 @@ public class ToolbarController implements Initializable, StudioEventListener {
 
   @FXML
   private MenuButton messagesBtn;
+
+  @FXML
+  private HBox toolbarHBox;
 
   private Node preferencesRoot;
 
@@ -110,6 +114,9 @@ public class ToolbarController implements Initializable, StudioEventListener {
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
+    maintenanceBtn.managedProperty().bindBidirectional(maintenanceBtn.visibleProperty());
+    updateBtn.managedProperty().bindBidirectional(updateBtn.visibleProperty());
+
     this.jobBtn.setDisable(true);
     this.messagesBtn.setDisable(true);
     this.maintenanceBtn.setVisible(!client.getSystemService().isLocal());

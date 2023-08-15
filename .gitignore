@@ -54,6 +54,7 @@ hs_err_pid*
 /resources/pinemhi/pinemhi.ini
 /resources/VPReg/*
 /resources/vpa2/*
+/resources/vpa/*
 /resources/vpbm/vPinBackupManager.json
 /.idea/
 /VPReg/

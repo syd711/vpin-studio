@@ -5,6 +5,8 @@ import de.mephisto.vpin.commons.utils.CommonImageUtil;
 import de.mephisto.vpin.commons.utils.FileUtils;
 import de.mephisto.vpin.commons.utils.SystemCommandExecutor;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
+import de.mephisto.vpin.restclient.ArchiveType;
+import de.mephisto.vpin.restclient.SystemSummary;
 import de.mephisto.vpin.restclient.jobs.JobType;
 import de.mephisto.vpin.restclient.representations.ArchiveDescriptorRepresentation;
 import de.mephisto.vpin.restclient.representations.ArchiveSourceRepresentation;
@@ -116,6 +118,7 @@ public class RepositoryController implements Initializable, StudioEventListener 
   private List<ArchiveDescriptorRepresentation> archives;
   private TablesController tablesController;
   private ChangeListener<ArchiveSourceRepresentation> sourceComboChangeListener;
+  private SystemSummary systemSummary;
 
   // Add a public no-args constructor
   public RepositoryController() {
@@ -160,7 +163,6 @@ public class RepositoryController implements Initializable, StudioEventListener 
           return;
         }
       }
-
 
       if (client.getPinUPPopperService().isPinUPPopperRunning()) {
         if (Dialogs.openPopperRunningWarning(Studio.stage)) {
@@ -276,6 +278,11 @@ public class RepositoryController implements Initializable, StudioEventListener 
   public void initialize(URL url, ResourceBundle resourceBundle) {
     NavigationController.setBreadCrumb(Arrays.asList("Table Repository"));
     tableView.setPlaceholder(new Label("The list of archived tables is shown here."));
+
+    vpbmBtbn.managedProperty().bindBidirectional(vpbmBtbn.visibleProperty());
+
+    systemSummary = client.getSystemService().getSystemSummary();
+    vpbmBtbn.setVisible(systemSummary.getArchiveType().equals(ArchiveType.VPBM));
 
 
     try {
@@ -471,10 +478,16 @@ public class RepositoryController implements Initializable, StudioEventListener 
       filterValue = "";
     }
 
-    ArchiveSourceRepresentation selectedItem = sourceCombo.getSelectionModel().getSelectedItem();
     for (ArchiveDescriptorRepresentation archive : archives) {
-      if (archive.getFilename() != null && archive.getFilename().toLowerCase().contains(filterValue.toLowerCase())) {
-        filtered.add(archive);
+      if (archive.getFilename() != null) {
+        String filename = archive.getFilename().toLowerCase();
+        if (!filename.endsWith(systemSummary.getArchiveType().name().toLowerCase())) {
+          continue;
+        }
+
+        if (filename.contains(filterValue.toLowerCase())) {
+          filtered.add(archive);
+        }
       }
     }
     return filtered;
