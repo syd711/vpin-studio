@@ -1,7 +1,6 @@
 package de.mephisto.vpin.ui.competitions.dialogs;
 
 import de.mephisto.vpin.commons.EmulatorType;
-import de.mephisto.vpin.commons.fx.Debouncer;
 import de.mephisto.vpin.commons.fx.DialogController;
 import de.mephisto.vpin.restclient.CompetitionType;
 import de.mephisto.vpin.restclient.PreferenceNames;
@@ -11,7 +10,6 @@ import de.mephisto.vpin.restclient.discord.DiscordChannel;
 import de.mephisto.vpin.restclient.discord.DiscordServer;
 import de.mephisto.vpin.restclient.representations.CompetitionRepresentation;
 import de.mephisto.vpin.restclient.representations.GameRepresentation;
-import de.mephisto.vpin.ui.Studio;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -31,15 +29,16 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.net.URL;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.ResourceBundle;
 import java.util.stream.Collectors;
 
 import static de.mephisto.vpin.ui.Studio.client;
 
 public class JoinSubscriptionDialogController implements Initializable, DialogController {
   private final static Logger LOG = LoggerFactory.getLogger(JoinSubscriptionDialogController.class);
-
-  private final Debouncer debouncer = new Debouncer();
 
   @FXML
   private ComboBox<GameRepresentation> tableCombo;
@@ -121,9 +120,18 @@ public class JoinSubscriptionDialogController implements Initializable, DialogCo
     channelCombo.valueProperty().addListener((observableValue, gameRepresentation, t1) -> {
       tableCombo.setDisable(t1 == null);
       if (t1 != null) {
-        competition.setDiscordChannelId(t1.getId());
-
         SubscriptionInfo subscriptionInfo = client.getDiscordService().getSubscriptionInfo(competition.getDiscordServerId(), t1.getId());
+        if(subscriptionInfo == null) {
+          tableCombo.setDisable(true);
+          validationContainer.setVisible(true);
+          this.saveBtn.setDisable(true);
+
+          validationTitle.setText("Not a subscription channel");
+          validationDescription.setText("No subscription data was found in the pinned messages of this channel.");
+          return;
+        }
+
+        competition.setDiscordChannelId(t1.getId());
         competition.setOwner(String.valueOf(subscriptionInfo.getOwnerId()));
         competition.setUuid(String.valueOf(subscriptionInfo.getUuid()));
 

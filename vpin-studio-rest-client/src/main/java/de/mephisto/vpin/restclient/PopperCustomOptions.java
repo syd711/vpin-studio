@@ -18,7 +18,7 @@ public class PopperCustomOptions {
   private boolean popUPHideAnykey = false;
   private int rapidFireCount = 6;
   private boolean pauseOnLoad = false;
-  private boolean pauseOnLoadPF = false;
+  private boolean pauseOnLoadPF = true;
   private int autoExitEmuSeconds = 0;
   private int introSkipSeconds = 0;
   private boolean attractOnStart = false;

@@ -282,7 +282,7 @@ public class PinUPConnector implements InitializingBean {
     return options;
   }
 
-  public void updateCustomOptions(@NonNull PopperCustomOptions options) {
+  public void updateCustomOptions(@NonNull PopperCustomOptions options) throws SQLException {
     Connection connect = this.connect();
     try {
       PreparedStatement preparedStatement = connect.prepareStatement("UPDATE GlobalSettings SET 'GlobalOptions'=?");
@@ -292,6 +292,7 @@ public class PinUPConnector implements InitializingBean {
       LOG.info("Updated of custom options");
     } catch (Exception e) {
       LOG.error("Failed to update custom options:" + e.getMessage(), e);
+      throw e;
     } finally {
       this.disconnect(connect);
     }

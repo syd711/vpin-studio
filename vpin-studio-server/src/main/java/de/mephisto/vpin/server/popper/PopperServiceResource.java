@@ -13,10 +13,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
+import java.sql.SQLException;
 import java.util.List;
 
 import static de.mephisto.vpin.server.VPinStudioServer.API_SEGMENT;
+import static org.springframework.http.HttpStatus.CONFLICT;
+import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 
 /**
  *
@@ -40,7 +44,11 @@ public class PopperServiceResource {
 
   @PostMapping("/custompoptions")
   public PopperCustomOptions saveCustomOptions(@RequestBody PopperCustomOptions option) {
-    return popperService.saveCustomOptions(option);
+    try {
+      return popperService.saveCustomOptions(option);
+    } catch (Exception e) {
+      throw new ResponseStatusException(CONFLICT, "Saving custom options failed: " + e.getMessage());
+    }
   }
 
   @GetMapping("/imports")

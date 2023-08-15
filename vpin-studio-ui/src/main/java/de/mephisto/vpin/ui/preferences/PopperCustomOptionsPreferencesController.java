@@ -1,8 +1,11 @@
 package de.mephisto.vpin.ui.preferences;
 
+import de.mephisto.vpin.commons.fx.Debouncer;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
+import de.mephisto.vpin.restclient.DatabaseLockException;
 import de.mephisto.vpin.restclient.PopperCustomOptions;
 import de.mephisto.vpin.ui.Studio;
+import de.mephisto.vpin.ui.util.Dialogs;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -20,6 +23,9 @@ import java.util.ResourceBundle;
 
 public class PopperCustomOptionsPreferencesController implements Initializable {
   private final static Logger LOG = LoggerFactory.getLogger(PopperCustomOptionsPreferencesController.class);
+  public static final int DEBOUNCE_MS = 500;
+
+  private final Debouncer debouncer = new Debouncer();
 
   private final static List<FadeoutLoading> FADEOUT_LOADINGS = Arrays.asList(new FadeoutLoading(0, "Normal"),
       new FadeoutLoading(1, "Fade out video and audio"),
@@ -88,6 +94,7 @@ public class PopperCustomOptionsPreferencesController implements Initializable {
 
   @FXML
   private CheckBox volumeChange;
+
   private PopperCustomOptions customOptions;
 
 
@@ -99,14 +106,18 @@ public class PopperCustomOptionsPreferencesController implements Initializable {
     delayReturn.setValueFactory(factory);
     factory.valueProperty().set(customOptions.getDelayReturn());
     factory.valueProperty().addListener((observableValue, integer, t1) -> {
-      customOptions.setDelayReturn(t1);
-      save();
+      debouncer.debounce("customOptions", () -> {
+        customOptions.setDelayReturn(t1);
+        save();
+      }, DEBOUNCE_MS);
     });
 
     returnNext.setSelected(customOptions.isReturnNext());
     returnNext.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
-      customOptions.setReturnNext(t1);
-      save();
+      debouncer.debounce("returnNext", () -> {
+        customOptions.setReturnNext(t1);
+        save();
+      }, DEBOUNCE_MS);
     });
 
     noSysFavs.setSelected(customOptions.isNoSysFavs());
@@ -126,8 +137,10 @@ public class PopperCustomOptionsPreferencesController implements Initializable {
     emuExitCount.setValueFactory(factory);
     factory.valueProperty().set(customOptions.getEmuExitCount());
     factory.valueProperty().addListener((observableValue, integer, t1) -> {
-      customOptions.setEmuExitCount(t1);
-      save();
+      debouncer.debounce("emuExitCount", () -> {
+        customOptions.setEmuExitCount(t1);
+        save();
+      }, DEBOUNCE_MS);
     });
 
     playOnlyMode.setSelected(customOptions.isPlayOnlyMode());
@@ -136,12 +149,14 @@ public class PopperCustomOptionsPreferencesController implements Initializable {
       save();
     });
 
-    factory = new SpinnerValueFactory.IntegerSpinnerValueFactory(1, 1000, 300);
+    factory = new SpinnerValueFactory.IntegerSpinnerValueFactory(1, 1000, DEBOUNCE_MS);
     wheelAniTimeMS.setValueFactory(factory);
     factory.valueProperty().set(customOptions.getWheelAniTimeMS());
     factory.valueProperty().addListener((observableValue, integer, t1) -> {
-      customOptions.setWheelAniTimeMS(t1);
-      save();
+      debouncer.debounce("wheelAniTimeMS", () -> {
+        customOptions.setWheelAniTimeMS(t1);
+        save();
+      }, DEBOUNCE_MS);
     });
 
     showInfoInGame.setSelected(customOptions.isShowInfoInGame());
@@ -161,8 +176,10 @@ public class PopperCustomOptionsPreferencesController implements Initializable {
     rapidFireCount.setValueFactory(factory);
     factory.valueProperty().set(customOptions.getRapidFireCount());
     factory.valueProperty().addListener((observableValue, integer, t1) -> {
-      customOptions.setRapidFireCount(t1);
-      save();
+      debouncer.debounce("rapidFireCount", () -> {
+        customOptions.setRapidFireCount(t1);
+        save();
+      }, DEBOUNCE_MS);
     });
 
     pauseOnLoad.setSelected(customOptions.isPauseOnLoad());
@@ -181,8 +198,10 @@ public class PopperCustomOptionsPreferencesController implements Initializable {
     autoExitEmuSeconds.setValueFactory(factory);
     factory.valueProperty().set(customOptions.getAutoExitEmuSeconds());
     factory.valueProperty().addListener((observableValue, integer, t1) -> {
-      customOptions.setAutoExitEmuSeconds(t1);
-      save();
+      debouncer.debounce("autoExitEmuSeconds", () -> {
+        customOptions.setAutoExitEmuSeconds(t1);
+        save();
+      }, DEBOUNCE_MS);
     });
 
     factory = new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 30, 0);
@@ -209,8 +228,10 @@ public class PopperCustomOptionsPreferencesController implements Initializable {
     wheelUpdateMS.setValueFactory(factory);
     factory.valueProperty().set(customOptions.getWheelUpdateMS());
     factory.valueProperty().addListener((observableValue, integer, t1) -> {
-      customOptions.setWheelUpdateMS(t1);
-      save();
+      debouncer.debounce("wheelUpdateMS", () -> {
+        customOptions.setWheelUpdateMS(t1);
+        save();
+      }, DEBOUNCE_MS);
     });
 
     fadeoutLoading.setItems(FXCollections.observableList(FADEOUT_LOADINGS));
@@ -225,8 +246,10 @@ public class PopperCustomOptionsPreferencesController implements Initializable {
     launchTimeoutSecs.setValueFactory(factory);
     factory.valueProperty().set(customOptions.getLaunchTimeoutSecs());
     factory.valueProperty().addListener((observableValue, integer, t1) -> {
-      customOptions.setLaunchTimeoutSecs(t1);
-      save();
+      debouncer.debounce("launchTimeoutSecs", () -> {
+        customOptions.setLaunchTimeoutSecs(t1);
+        save();
+      }, DEBOUNCE_MS);
     });
 
     joyAxisMove.setSelected(customOptions.isJoyAxisMove());
@@ -245,10 +268,38 @@ public class PopperCustomOptionsPreferencesController implements Initializable {
   private void save() {
     try {
       Studio.client.getPinUPPopperService().saveCustomOptions(customOptions);
+    } catch (DatabaseLockException e) {
+      if (!Dialogs.openPopperRunningWarning(Studio.stage)) {
+        this.setDisabled(true);
+      }
     } catch (Exception e) {
-      LOG.error("Failed to save PinUP Popper custom options: " +e.getMessage(), e);
-      WidgetFactory.showAlert(Studio.stage, "Error", "Failed to save PinUP Popper custom options: " +e.getMessage());
+      LOG.error("Failed to save PinUP Popper custom options: " + e.getMessage(), e);
+      WidgetFactory.showAlert(Studio.stage, "Error", "Failed to save PinUP Popper custom options: " + e.getMessage());
     }
+  }
+
+  private void setDisabled(boolean b) {
+    delayReturn.setDisable(b);
+    returnNext.setDisable(b);
+    noSysFavs.setDisable(b);
+    noSysLists.setDisable(b);
+    emuExitCount.setDisable(b);
+    playOnlyMode.setDisable(b);
+    wheelAniTimeMS.setDisable(b);
+    showInfoInGame.setDisable(b);
+    popUPHideAnykey.setDisable(b);
+    rapidFireCount.setDisable(b);
+    pauseOnLoad.setDisable(b);
+    pauseOnLoadPF.setDisable(b);
+    autoExitEmuSeconds.setDisable(b);
+    introSkipSeconds.setDisable(b);
+    attractOnStart.setDisable(b);
+    muteLaunchAudio.setDisable(b);
+    fadeoutLoading.setDisable(b);
+    launchTimeoutSecs.setDisable(b);
+    wheelUpdateMS.setDisable(b);
+    joyAxisMove.setDisable(b);
+    volumeChange.setDisable(b);
   }
 
   static class FadeoutLoading {

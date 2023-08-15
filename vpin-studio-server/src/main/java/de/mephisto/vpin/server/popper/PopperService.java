@@ -25,6 +25,7 @@ import org.springframework.stereotype.Service;
 
 import java.io.File;
 import java.io.IOException;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -262,7 +263,7 @@ public class PopperService implements InitializingBean {
     return pinUPConnector.getCustomOptions();
   }
 
-  public PopperCustomOptions saveCustomOptions(PopperCustomOptions options) {
+  public PopperCustomOptions saveCustomOptions(PopperCustomOptions options) throws SQLException {
     pinUPConnector.updateCustomOptions(options);
     return options;
   }

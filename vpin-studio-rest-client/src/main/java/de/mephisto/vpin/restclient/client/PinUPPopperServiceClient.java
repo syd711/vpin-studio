@@ -1,26 +1,22 @@
 package de.mephisto.vpin.restclient.client;
 
-import de.mephisto.vpin.restclient.AssetType;
-import de.mephisto.vpin.restclient.FileUploadProgressListener;
-import de.mephisto.vpin.restclient.PopperCustomOptions;
-import de.mephisto.vpin.restclient.SystemData;
+import de.mephisto.vpin.restclient.*;
 import de.mephisto.vpin.restclient.jobs.JobExecutionResult;
 import de.mephisto.vpin.restclient.popper.PinUPControl;
 import de.mephisto.vpin.restclient.popper.PinUPControls;
 import de.mephisto.vpin.restclient.popper.PopperScreen;
 import de.mephisto.vpin.restclient.popper.TableDetails;
 import de.mephisto.vpin.restclient.representations.GameMediaRepresentation;
-import de.mephisto.vpin.restclient.representations.PlaylistRepresentation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.RestTemplate;
 
 import java.io.File;
-import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /*********************************************************************************************************************
@@ -78,9 +74,15 @@ public class PinUPPopperServiceClient extends VPinStudioClientService {
       throw e;
     }
   }
+
   public PopperCustomOptions saveCustomOptions(PopperCustomOptions options) throws Exception {
     try {
       return getRestClient().post(API + "popper/custompoptions", options, PopperCustomOptions.class);
+    } catch (HttpClientErrorException e) {
+      if (e.getStatusCode().is4xxClientError()) {
+        throw new DatabaseLockException(e);
+      }
+      throw e;
     } catch (Exception e) {
       LOG.error("Failed save custom options: " + e.getMessage(), e);
       throw e;
