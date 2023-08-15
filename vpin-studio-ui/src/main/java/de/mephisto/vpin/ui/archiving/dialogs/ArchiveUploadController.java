@@ -74,7 +74,9 @@ public class ArchiveUploadController implements Initializable, DialogController 
   }
 
   @FXML
-  private void onFileSelect() {
+  private void onFileSelect(ActionEvent event) {
+    Stage stage = (Stage) ((Button) event.getSource()).getScene().getWindow();
+
     FileChooser fileChooser = new FileChooser();
     fileChooser.setTitle("Select Archive or Bundle Files");
     fileChooser.getExtensionFilters().addAll(

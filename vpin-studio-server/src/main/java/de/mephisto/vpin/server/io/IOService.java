@@ -143,6 +143,7 @@ public class IOService {
   private boolean backupTable(@NonNull Game game, @NonNull BackupDescriptor exportDescriptor) {
     JobDescriptor descriptor = new JobDescriptor(JobType.TABLE_BACKUP, UUID.randomUUID().toString());
     descriptor.setTitle("Backup of \"" + game.getGameDisplayName() + "\"");
+    descriptor.setGameId(game.getId());
     descriptor.setDescription("Creating backup of \"" + game.getGameDisplayName() + "\"");
 
     ArchiveSourceAdapter sourceAdapter = archiveService.getDefaultArchiveSourceAdapter();

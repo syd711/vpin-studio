@@ -69,7 +69,9 @@ public class DirectB2SUploadController implements Initializable, DialogControlle
   }
 
   @FXML
-  private void onFileSelect() throws IOException {
+  private void onFileSelect(ActionEvent event) {
+    Stage stage = (Stage) ((Button) event.getSource()).getScene().getWindow();
+
     FileChooser fileChooser = new FileChooser();
     fileChooser.setTitle("Select DirectB2S File");
     fileChooser.getExtensionFilters().addAll(

@@ -72,6 +72,7 @@ public class PupPackUploadController implements Initializable, DialogController 
   @FXML
   private void onFileSelect(ActionEvent e) {
     Stage stage = (Stage) ((Button) e.getSource()).getScene().getWindow();
+
     this.uploadBtn.setDisable(true);
 
     FileChooser fileChooser = new FileChooser();

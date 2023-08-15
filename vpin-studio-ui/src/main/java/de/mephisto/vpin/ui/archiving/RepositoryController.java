@@ -410,10 +410,10 @@ public class RepositoryController implements Initializable, StudioEventListener 
     tableView.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
       ArchiveSourceRepresentation archiveSource = sourceCombo.getValue();
 
-      deleteBtn.setDisable(!archiveSource.getType().equals(ArchiveSourceType.File.name()));
+      deleteBtn.setDisable(!archiveSource.getType().equals(ArchiveSourceType.File.name()) || newSelection == null);
       addArchiveBtn.setDisable(!archiveSource.getType().equals(ArchiveSourceType.File.name()));
-      restoreBtn.setDisable(!archiveSource.getType().equals(ArchiveSourceType.File.name()));
-      bundleBtn.setDisable(!archiveSource.getType().equals(ArchiveSourceType.File.name()));
+      restoreBtn.setDisable(!archiveSource.getType().equals(ArchiveSourceType.File.name()) || newSelection == null);
+      bundleBtn.setDisable(!archiveSource.getType().equals(ArchiveSourceType.File.name()) || newSelection == null);
       copyToRepositoryBtn.setDisable(!archiveSource.getType().equals(ArchiveSourceType.Http.name()));
 
 
@@ -511,6 +511,10 @@ public class RepositoryController implements Initializable, StudioEventListener 
       Platform.runLater(() -> {
         onReload();
       });
+    }
+
+    if (jobType.equals(JobType.TABLE_BACKUP)) {
+      EventManager.getInstance().notifyTableChange(event.getGameId(), null);
     }
   }
 

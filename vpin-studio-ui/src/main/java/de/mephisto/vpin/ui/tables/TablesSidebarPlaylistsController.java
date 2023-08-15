@@ -90,7 +90,7 @@ public class TablesSidebarPlaylistsController implements Initializable {
     dataRoot.setVisible(true);
     errorBox.setVisible(false);
 
-    List<PlaylistRepresentation> playlists = this.tablesSidebarController.getTablesController().getPlaylists();
+    List<PlaylistRepresentation> playlists = client.getPlaylistsService().getPlaylists();
 
     emptyDataBox.setVisible(g.isEmpty());
     dataBox.setVisible(g.isPresent());

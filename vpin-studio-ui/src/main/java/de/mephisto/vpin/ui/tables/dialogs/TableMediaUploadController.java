@@ -79,7 +79,9 @@ public class TableMediaUploadController implements Initializable, DialogControll
   }
 
   @FXML
-  private void onFileSelect() {
+  private void onFileSelect(ActionEvent event) {
+    Stage stage = (Stage) ((Button) event.getSource()).getScene().getWindow();
+
     this.uploadBtn.setDisable(true);
 
     FileChooser fileChooser = new FileChooser();

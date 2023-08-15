@@ -103,7 +103,9 @@ public class PlayerDialogController implements Initializable, DialogController {
   }
 
   @FXML
-  private void onFileSelect() {
+  private void onFileSelect(ActionEvent event) {
+    Stage stage = (Stage) ((Button) event.getSource()).getScene().getWindow();
+
     FileChooser fileChooser = new FileChooser();
     if (PlayerDialogController.lastFolderSelection != null) {
       fileChooser.setInitialDirectory(PlayerDialogController.lastFolderSelection);

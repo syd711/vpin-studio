@@ -56,7 +56,7 @@ public class EventManager {
 
   public void notifyJobFinished(JobDescriptor descriptor) {
     JobType type = descriptor.getJobType();
-    notifyJobFinished(type);
+    notifyJobFinished(type, descriptor.getGameId());
   }
 
   public void notifyJobFinished(JobType type) {

@@ -69,7 +69,9 @@ public class DefaultBackgroundUploadController implements Initializable, DialogC
   }
 
   @FXML
-  private void onFileSelect() throws IOException {
+  private void onFileSelect(ActionEvent event) {
+    Stage stage = (Stage) ((Button) event.getSource()).getScene().getWindow();
+
     FileChooser fileChooser = new FileChooser();
     fileChooser.setTitle("Select Picture File");
     fileChooser.getExtensionFilters().addAll(

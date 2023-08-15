@@ -13,6 +13,7 @@ public class JobDescriptor {
   private JobType jobType;
   private double progress;
   private String status;
+  private int gameId;
 
   @JsonIgnore
   private Job job;
@@ -24,6 +25,14 @@ public class JobDescriptor {
   public JobDescriptor(JobType jobType, String uuid) {
     this.jobType = jobType;
     this.uuid = uuid;
+  }
+
+  public int getGameId() {
+    return gameId;
+  }
+
+  public void setGameId(int gameId) {
+    this.gameId = gameId;
   }
 
   public double getProgress() {
