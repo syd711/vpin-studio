@@ -8,7 +8,6 @@ import de.mephisto.vpin.restclient.representations.ValidationState;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.tables.drophandler.AltSoundFileDropEventHandler;
-import de.mephisto.vpin.ui.tables.drophandler.PupPackFileDropEventHandler;
 import de.mephisto.vpin.ui.tables.validation.LocalizedValidation;
 import de.mephisto.vpin.ui.tables.validation.ValidationTexts;
 import de.mephisto.vpin.ui.util.Dialogs;
@@ -131,6 +130,8 @@ public class TablesSidebarAltSoundController implements Initializable {
       new Thread(() -> {
         Studio.client.getAltSoundService().clearCache();
 
+        this.game.ifPresent(gameRepresentation -> EventManager.getInstance().notifyTableChange(gameRepresentation.getId(), gameRepresentation.getRom()));
+
         Platform.runLater(() -> {
           this.reloadBtn.setDisable(false);
           this.refreshView(this.game);
@@ -184,7 +185,6 @@ public class TablesSidebarAltSoundController implements Initializable {
     if (g.isPresent()) {
       GameRepresentation game = g.get();
       boolean altSoundAvailable = game.isAltSoundAvailable();
-      reloadBtn.setDisable(!altSoundAvailable);
 
       dataBox.setVisible(altSoundAvailable);
       emptyDataBox.setVisible(!altSoundAvailable);

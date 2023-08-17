@@ -116,6 +116,8 @@ public class TablesSidebarAltColorController implements Initializable {
       new Thread(() -> {
         Studio.client.getAltColorService().clearCache();
 
+        this.game.ifPresent(gameRepresentation -> EventManager.getInstance().notifyTableChange(gameRepresentation.getId(), gameRepresentation.getRom()));
+
         Platform.runLater(() -> {
           this.reloadBtn.setDisable(false);
           EventManager.getInstance().notifyRepositoryUpdate();
@@ -165,7 +167,6 @@ public class TablesSidebarAltColorController implements Initializable {
     if (g.isPresent()) {
       GameRepresentation game = g.get();
       boolean altColorAvailable = game.isAltColorAvailable();
-      reloadBtn.setDisable(!altColorAvailable);
 
       dataBox.setVisible(altColorAvailable);
       emptyDataBox.setVisible(!altColorAvailable);
