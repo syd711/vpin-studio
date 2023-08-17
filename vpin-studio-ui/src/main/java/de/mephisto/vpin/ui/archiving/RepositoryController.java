@@ -229,6 +229,10 @@ public class RepositoryController implements Initializable, StudioEventListener 
     final ArchiveDescriptorRepresentation selection = tableView.getSelectionModel().getSelectedItem();
     tableView.getSelectionModel().clearSelection();
     boolean disable = selection == null;
+    if (sourceCombo.getValue() != null) {
+      disable = sourceCombo.getValue().getId() != -1;
+    }
+
     deleteBtn.setDisable(disable);
     restoreBtn.setDisable(disable);
 
@@ -249,8 +253,8 @@ public class RepositoryController implements Initializable, StudioEventListener 
         tableView.refresh();
         if (data.contains(selection)) {
           tableView.getSelectionModel().select(selection);
-          deleteBtn.setDisable(false);
-          restoreBtn.setDisable(false);
+          deleteBtn.setDisable(sourceCombo.getValue() != null && sourceCombo.getValue().getId() != -1);
+          restoreBtn.setDisable(sourceCombo.getValue() != null && sourceCombo.getValue().getId() != -1);
         }
 
         this.searchTextField.setDisable(false);

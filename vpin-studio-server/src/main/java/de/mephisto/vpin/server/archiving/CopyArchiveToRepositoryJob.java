@@ -58,6 +58,12 @@ public class CopyArchiveToRepositoryJob implements Job {
         return JobExecutionResultFactory.error("Failed to rename downloaded file " + temp.getAbsolutePath());
       }
 
+      if(archiveDescriptor.getFilename().endsWith(".vpa")) {
+        return null;
+      }
+
+
+      //TODO well, this whole method should be cleaned up a bit
       File descriptorTarget = new File(archiveTarget.getParentFile(), FilenameUtils.getBaseName(archiveDescriptor.getFilename()) + ".json");
       temp = new File(descriptorTarget.getParentFile(), descriptorTarget.getName() + ".bak");
       if (temp.exists()) {

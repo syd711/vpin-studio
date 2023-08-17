@@ -90,7 +90,7 @@ public class ArchiveSourceAdapterHttpServer implements ArchiveSourceAdapter {
       fout.close();
       conn.disconnect();
     } catch (IOException e) {
-      LOG.error("Failed to download " + descriptor.getFilename() + ": " + e.getMessage());
+      LOG.error("Failed to download descriptor file " + descriptor.getFilename() + ": " + e.getMessage());
     }
   }
 
