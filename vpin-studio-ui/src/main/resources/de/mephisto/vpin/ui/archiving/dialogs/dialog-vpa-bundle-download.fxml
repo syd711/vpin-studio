@@ -12,7 +12,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane styleClass="base-component" stylesheets="@../../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.archiving.dialogs.ArchiveBundleDialogController">
+<BorderPane styleClass="base-component" stylesheets="@../../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.archiving.dialogs.VpaArchiveBundleDialogController">
    <top>
       <fx:include fx:id="header" source="/de/mephisto/vpin/commons/fx/scene-dialog-header.fxml" />
    </top>
@@ -32,7 +32,7 @@
                         <Insets bottom="12.0" />
                      </VBox.margin>
                   </Label>
-                  <Label styleClass="preference-description" text="Bundles can be extracted into the &quot;resources/vpbm/backup&quot; folder of other VPins, " textFill="WHITE">
+                  <Label styleClass="preference-description" text="Bundles can be extracted into the &quot;resources/vpa&quot; folder of other VPins, " textFill="WHITE">
                      <font>
                         <Font size="14.0" />
                      </font>
@@ -53,11 +53,10 @@
                               <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
                            </columnConstraints>
                            <rowConstraints>
-                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                               <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
                            </rowConstraints>
                            <children>
-                              <HBox alignment="CENTER_LEFT" spacing="6.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                              <HBox alignment="CENTER_LEFT" spacing="6.0" GridPane.columnIndex="1">
                                  <children>
                                     <TextField fx:id="fileNameField" editable="false" prefWidth="350.0">
                                        <HBox.margin>
@@ -77,21 +76,11 @@
                                     </Button>
                                  </children>
                               </HBox>
-                              <Label text="Target Folder:" textFill="WHITE" GridPane.rowIndex="1">
+                              <Label text="Target Folder:" textFill="WHITE">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
                               </Label>
-                              <Label layoutX="10.0" layoutY="48.0" text="Export Host Id:" textFill="WHITE">
-                                 <font>
-                                    <Font size="14.0" />
-                                 </font>
-                              </Label>
-                              <TextField fx:id="exportHostId" GridPane.columnIndex="1">
-                                 <font>
-                                    <Font size="14.0" />
-                                 </font>
-                              </TextField>
                            </children>
                         </GridPane>
                      </center>

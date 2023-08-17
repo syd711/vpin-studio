@@ -128,7 +128,7 @@ public class ArchivesResource {
     InputStream in = null;
     OutputStream out = null;
     String filename = URLDecoder.decode(fn, StandardCharsets.UTF_8);
-    File bundleFile = new File(systemService.getBundlesFolder(), filename);
+    File bundleFile = new File(archiveService.getArchivesFolder(), filename);
 
     try {
       in = new BufferedInputStream(new FileInputStream(bundleFile));

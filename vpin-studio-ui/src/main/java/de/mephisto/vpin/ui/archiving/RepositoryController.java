@@ -195,7 +195,12 @@ public class RepositoryController implements Initializable, StudioEventListener 
   private void onBundle() {
     ObservableList<ArchiveDescriptorRepresentation> selectedItems = tableView.getSelectionModel().getSelectedItems();
     if (!selectedItems.isEmpty()) {
-      Dialogs.openArchiveBundleDialog(selectedItems);
+      if (systemSummary.getArchiveType().equals(ArchiveType.VPA)) {
+        Dialogs.openVpaArchiveBundleDialog(selectedItems);
+      }
+      else {
+        Dialogs.openVpbmArchiveBundleDialog(selectedItems);
+      }
     }
   }
 
@@ -261,7 +266,7 @@ public class RepositoryController implements Initializable, StudioEventListener 
   private void onDelete() {
     ArchiveDescriptorRepresentation selection = tableView.getSelectionModel().getSelectedItem();
     if (selection != null) {
-      Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Delete Archive '" + selection.getFilename() + "'?", null, null, "Delete");
+      Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Delete Archive \"" + selection.getFilename() + "\"?", null, null, "Delete");
       if (result.isPresent() && result.get().equals(ButtonType.OK)) {
         try {
           client.getArchiveService().deleteArchive(selection.getSource().getId(), selection.getFilename());

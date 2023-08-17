@@ -29,8 +29,8 @@ import java.util.ResourceBundle;
 import static de.mephisto.vpin.ui.Studio.client;
 import static de.mephisto.vpin.ui.Studio.stage;
 
-public class ArchiveBundleDialogController implements Initializable, DialogController {
-  private final static Logger LOG = LoggerFactory.getLogger(ArchiveBundleDialogController.class);
+public class VpbmArchiveBundleDialogController implements Initializable, DialogController {
+  private final static Logger LOG = LoggerFactory.getLogger(VpbmArchiveBundleDialogController.class);
 
   private static File lastFolderSelection;
 
@@ -86,13 +86,13 @@ public class ArchiveBundleDialogController implements Initializable, DialogContr
   private void onFileSelect() {
     DirectoryChooser chooser = new DirectoryChooser();
     chooser.setTitle("Select Target Folder");
-    if (ArchiveBundleDialogController.lastFolderSelection != null) {
-      chooser.setInitialDirectory(ArchiveBundleDialogController.lastFolderSelection);
+    if (VpbmArchiveBundleDialogController.lastFolderSelection != null) {
+      chooser.setInitialDirectory(VpbmArchiveBundleDialogController.lastFolderSelection);
     }
 
     this.targetFolder = chooser.showDialog(stage);
     if (this.targetFolder != null) {
-      ArchiveBundleDialogController.lastFolderSelection = this.targetFolder;
+      VpbmArchiveBundleDialogController.lastFolderSelection = this.targetFolder;
       this.fileNameField.setText(this.targetFolder.getAbsolutePath());
     }
     else {
@@ -107,8 +107,8 @@ public class ArchiveBundleDialogController implements Initializable, DialogContr
 
     this.downloadBtn.setDisable(true);
     this.fileNameField.textProperty().addListener((observableValue, s, t1) -> downloadBtn.setDisable(StringUtils.isEmpty(t1)));
-    if (ArchiveBundleDialogController.lastFolderSelection != null) {
-      fileNameField.setText(ArchiveBundleDialogController.lastFolderSelection.getAbsolutePath());
+    if (VpbmArchiveBundleDialogController.lastFolderSelection != null) {
+      fileNameField.setText(VpbmArchiveBundleDialogController.lastFolderSelection.getAbsolutePath());
     }
 
     PreferenceEntryRepresentation preference = client.getPreference(PreferenceNames.VPBM_EXTERNAL_HOST_IDENTIFIER);

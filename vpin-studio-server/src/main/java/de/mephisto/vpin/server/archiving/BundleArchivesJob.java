@@ -30,8 +30,8 @@ public class BundleArchivesJob implements Job {
   private int processed;
 
   private File temp;
-  private File tempFile;
   private File target;
+  private File tempFile;
 
   public BundleArchivesJob(@NonNull ArchiveService archiveService,
                            @NonNull SystemService systemService,
@@ -53,8 +53,8 @@ public class BundleArchivesJob implements Job {
 
     String prefix = FilenameUtils.getBaseName(archiveDescriptors.get(0).getFilename()).replaceAll(" ", "-");
     String targetName = prefix + "-bundle-" + System.currentTimeMillis() + ".zip";
-    target = new File(systemService.getBundlesFolder(), targetName);
-    File tempFile = new File(systemService.getBundlesFolder(), targetName + ".bak");
+    target = new File(archiveService.getArchivesFolder(), targetName);
+    File tempFile = new File(archiveService.getArchivesFolder(), targetName + ".bak");
 
     List<ArchiveDescriptor> exportedDescriptors = new ArrayList<>();
 

@@ -26,10 +26,12 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import static de.mephisto.vpin.commons.SystemInfo.RESOURCES;
+
 @Service
 public class VpbmService implements InitializingBean {
   private final static Logger LOG = LoggerFactory.getLogger(VpbmService.class);
-  public static String VPBM_FOLDER = SystemService.RESOURCES + "vpbm";
+  public static String VPBM_FOLDER = RESOURCES + "vpbm";
 
   @Autowired
   private SystemService systemService;
@@ -41,11 +43,27 @@ public class VpbmService implements InitializingBean {
   private PinUPConnector pinUPConnector;
 
   public File getArchiveFolder() {
-    return new File(systemService.getArchivesFolder(), "backups/Visual Pinball X/");
+    return new File(getArchivesFolder(), "backups/Visual Pinball X/");
   }
 
   public File getExportFolder() {
-    return new File(systemService.getArchivesFolder(), "exports/Visual Pinball X/");
+    return new File(getArchivesFolder(), "exports/Visual Pinball X/");
+  }
+
+  public File getArchivesFolder() {
+    File file = new File(RESOURCES, "archives/");
+    if (!file.exists()) {
+      file.mkdirs();
+    }
+    return file;
+  }
+
+  public File getBundlesFolder() {
+    File file = new File(getArchivesFolder(), "bundles/");
+    if (!file.exists()) {
+      file.mkdirs();
+    }
+    return file;
   }
 
   public String backup(int tableId) {
@@ -122,7 +140,7 @@ public class VpbmService implements InitializingBean {
   private SystemCommandOutput executeVPBM(List<String> options) {
     SystemCommandOutput out = new SystemCommandOutput();
     try {
-      File dir = new File(SystemService.RESOURCES, VpbmArchiveSource.FOLDER_NAME);
+      File dir = new File(RESOURCES, VpbmArchiveSource.FOLDER_NAME);
       File exe = new File(dir, "vPinBackupManager.exe");
       List<String> commands = new ArrayList<>(Arrays.asList(exe.getAbsolutePath()));
       commands.addAll(options);

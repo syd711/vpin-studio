@@ -369,21 +369,6 @@ public class SystemService extends SystemInfo implements InitializingBean {
     return new File(getPinUPSystemFolder(), "PUPDatabase.db");
   }
 
-  public File getArchivesFolder() {
-    File file = new File(RESOURCES, "archives/");
-    if (!file.exists()) {
-      file.mkdirs();
-    }
-    return file;
-  }
-
-  public File getBundlesFolder() {
-    File file = new File(getArchivesFolder(), "bundles/");
-    if (!file.exists()) {
-      file.mkdirs();
-    }
-    return file;
-  }
 
   public String getVersion() {
     return SystemUtil.getVersion();

@@ -23,6 +23,8 @@ import java.io.File;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static de.mephisto.vpin.commons.SystemInfo.RESOURCES;
+
 @Service
 public class ArchiveService implements InitializingBean {
   private final static Logger LOG = LoggerFactory.getLogger(ArchiveService.class);
@@ -210,7 +212,7 @@ public class ArchiveService implements InitializingBean {
   public File getTargetFile(ArchiveDescriptor archiveDescriptor) {
     String descriptorFilename = archiveDescriptor.getFilename();
     ArchiveType archiveType = ArchiveType.VPA;
-    if(descriptorFilename.endsWith("vpinzip")) {
+    if (descriptorFilename.endsWith("vpinzip")) {
       archiveType = ArchiveType.VPBM;
     }
 
@@ -220,6 +222,19 @@ public class ArchiveService implements InitializingBean {
       }
       case VPA: {
         return new File(VpaArchiveSource.FOLDER, archiveDescriptor.getFilename());
+      }
+    }
+    return null;
+  }
+
+  public File getArchivesFolder() {
+    ArchiveType archiveType = systemService.getArchiveType();
+    switch (archiveType) {
+      case VPBM: {
+        return vpbmService.getBundlesFolder();
+      }
+      case VPA: {
+        return new File(RESOURCES, "vpa");
       }
     }
     return null;
