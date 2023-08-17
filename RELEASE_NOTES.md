@@ -33,8 +33,10 @@ The background image used here can be customized (see https://github.com/syd711/
 
 **Bug Fixes**
 
-- Updated JavaFX: I noted that this update resulted in a reliable playback of videos.
+- Updated JavaFX: I noted that this update resulted in a more reliable playback of videos. Note that videos with an alpha channel (like used in some loading videos) are still not supported.
 - Fixed erroneous time field initialization for existing competition dialogs.  
 - Re-enabled and fixed pinemhi settings.
 - Fixed wrong ALT color validation message text.
 - Fixed and improved default image extraction.
+- Fixed modal mode of all upload dialogs.
+- Fixed refresh/reload issues with PUP packs, ALT sound and ALT color.

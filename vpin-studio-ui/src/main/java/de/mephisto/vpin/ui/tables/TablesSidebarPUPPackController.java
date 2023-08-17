@@ -166,6 +166,8 @@ public class TablesSidebarPUPPackController implements Initializable {
       new Thread(() -> {
         Studio.client.getPupPackService().clearCache();
 
+        this.game.ifPresent(gameRepresentation -> EventManager.getInstance().notifyTableChange(gameRepresentation.getId(), gameRepresentation.getRom()));
+
         Platform.runLater(() -> {
           this.reloadBtn.setDisable(false);
           this.refreshView(this.game);
@@ -287,7 +289,6 @@ public class TablesSidebarPUPPackController implements Initializable {
       boolean pupPackAvailable = pupPack != null;
       enabledCheckbox.setDisable(!pupPackAvailable || StringUtils.isEmpty(game.getRom()));
 
-      reloadBtn.setDisable(!pupPackAvailable);
       dataBox.setVisible(pupPackAvailable);
       emptyDataBox.setVisible(!pupPackAvailable);
 

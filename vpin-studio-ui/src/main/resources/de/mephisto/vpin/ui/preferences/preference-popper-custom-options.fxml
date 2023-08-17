@@ -360,7 +360,7 @@
                         </VBox>
                         <HBox alignment="BASELINE_LEFT" spacing="3.0" GridPane.columnIndex="1">
                            <children>
-                              <ComboBox fx:id="fadeoutLoading" prefWidth="150.0" />
+                              <ComboBox fx:id="fadeoutLoading" prefWidth="430.0" />
                            </children>
                         </HBox>
                      </children>

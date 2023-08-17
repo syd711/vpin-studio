@@ -25,7 +25,7 @@
                   <Insets right="6.0" top="6.0" />
                </padding>
                <right>
-                  <HBox alignment="BASELINE_LEFT" spacing="6.0" BorderPane.alignment="CENTER">
+                  <HBox fx:id="toolbarHBox" alignment="BASELINE_LEFT" spacing="6.0" BorderPane.alignment="CENTER">
                      <BorderPane.margin>
                         <Insets bottom="6.0" right="6.0" />
                      </BorderPane.margin>

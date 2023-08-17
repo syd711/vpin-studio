@@ -3,11 +3,11 @@ package de.mephisto.vpin.server.io;
 import de.mephisto.vpin.restclient.jobs.JobType;
 import de.mephisto.vpin.restclient.popper.PopperScreen;
 import de.mephisto.vpin.restclient.descriptors.*;
-import de.mephisto.vpin.server.backup.*;
-import de.mephisto.vpin.server.backup.adapters.TableBackupAdapter;
-import de.mephisto.vpin.server.backup.adapters.TableBackupAdapterFactory;
-import de.mephisto.vpin.server.backup.adapters.TableInstallerAdapter;
-import de.mephisto.vpin.server.backup.adapters.TableInstallerAdapterFactory;
+import de.mephisto.vpin.server.archiving.*;
+import de.mephisto.vpin.server.archiving.adapters.TableBackupAdapter;
+import de.mephisto.vpin.server.archiving.adapters.TableBackupAdapterFactory;
+import de.mephisto.vpin.server.archiving.adapters.TableInstallerAdapter;
+import de.mephisto.vpin.server.archiving.adapters.TableInstallerAdapterFactory;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameService;
 import de.mephisto.vpin.server.highscores.cards.CardService;
@@ -143,6 +143,7 @@ public class IOService {
   private boolean backupTable(@NonNull Game game, @NonNull BackupDescriptor exportDescriptor) {
     JobDescriptor descriptor = new JobDescriptor(JobType.TABLE_BACKUP, UUID.randomUUID().toString());
     descriptor.setTitle("Backup of \"" + game.getGameDisplayName() + "\"");
+    descriptor.setGameId(game.getId());
     descriptor.setDescription("Creating backup of \"" + game.getGameDisplayName() + "\"");
 
     ArchiveSourceAdapter sourceAdapter = archiveService.getDefaultArchiveSourceAdapter();

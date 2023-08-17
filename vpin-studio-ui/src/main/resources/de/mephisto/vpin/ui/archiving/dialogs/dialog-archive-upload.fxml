@@ -41,7 +41,7 @@
          <center>
             <VBox>
                <children>
-                  <Label text="Backup and Bundle Upload" textFill="WHITE">
+                  <Label text="Backup Upload" textFill="WHITE">
                      <font>
                         <Font size="18.0" />
                      </font>
@@ -81,7 +81,7 @@
                               <Font size="14.0" />
                            </font>
                         </Label>
-                        <Label layoutX="10.0" layoutY="15.0" text="Backup/Bundle Files:" textFill="WHITE" GridPane.rowIndex="1">
+                        <Label layoutX="10.0" layoutY="15.0" text="Archive Files:" textFill="WHITE" GridPane.rowIndex="1">
                            <font>
                               <Font size="14.0" />
                            </font>

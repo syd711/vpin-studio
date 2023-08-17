@@ -5,6 +5,8 @@ import de.mephisto.vpin.commons.utils.CommonImageUtil;
 import de.mephisto.vpin.commons.utils.FileUtils;
 import de.mephisto.vpin.commons.utils.SystemCommandExecutor;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
+import de.mephisto.vpin.restclient.ArchiveType;
+import de.mephisto.vpin.restclient.SystemSummary;
 import de.mephisto.vpin.restclient.jobs.JobType;
 import de.mephisto.vpin.restclient.representations.ArchiveDescriptorRepresentation;
 import de.mephisto.vpin.restclient.representations.ArchiveSourceRepresentation;
@@ -116,6 +118,7 @@ public class RepositoryController implements Initializable, StudioEventListener 
   private List<ArchiveDescriptorRepresentation> archives;
   private TablesController tablesController;
   private ChangeListener<ArchiveSourceRepresentation> sourceComboChangeListener;
+  private SystemSummary systemSummary;
 
   // Add a public no-args constructor
   public RepositoryController() {
@@ -161,7 +164,6 @@ public class RepositoryController implements Initializable, StudioEventListener 
         }
       }
 
-
       if (client.getPinUPPopperService().isPinUPPopperRunning()) {
         if (Dialogs.openPopperRunningWarning(Studio.stage)) {
           Dialogs.openTableInstallationDialog(tablesController, selectedItems);
@@ -193,7 +195,12 @@ public class RepositoryController implements Initializable, StudioEventListener 
   private void onBundle() {
     ObservableList<ArchiveDescriptorRepresentation> selectedItems = tableView.getSelectionModel().getSelectedItems();
     if (!selectedItems.isEmpty()) {
-      Dialogs.openArchiveBundleDialog(selectedItems);
+      if (systemSummary.getArchiveType().equals(ArchiveType.VPA)) {
+        Dialogs.openVpaArchiveBundleDialog(selectedItems);
+      }
+      else {
+        Dialogs.openVpbmArchiveBundleDialog(selectedItems);
+      }
     }
   }
 
@@ -222,6 +229,10 @@ public class RepositoryController implements Initializable, StudioEventListener 
     final ArchiveDescriptorRepresentation selection = tableView.getSelectionModel().getSelectedItem();
     tableView.getSelectionModel().clearSelection();
     boolean disable = selection == null;
+    if (sourceCombo.getValue() != null) {
+      disable = sourceCombo.getValue().getId() != -1;
+    }
+
     deleteBtn.setDisable(disable);
     restoreBtn.setDisable(disable);
 
@@ -242,8 +253,8 @@ public class RepositoryController implements Initializable, StudioEventListener 
         tableView.refresh();
         if (data.contains(selection)) {
           tableView.getSelectionModel().select(selection);
-          deleteBtn.setDisable(false);
-          restoreBtn.setDisable(false);
+          deleteBtn.setDisable(sourceCombo.getValue() != null && sourceCombo.getValue().getId() != -1);
+          restoreBtn.setDisable(sourceCombo.getValue() != null && sourceCombo.getValue().getId() != -1);
         }
 
         this.searchTextField.setDisable(false);
@@ -259,7 +270,7 @@ public class RepositoryController implements Initializable, StudioEventListener 
   private void onDelete() {
     ArchiveDescriptorRepresentation selection = tableView.getSelectionModel().getSelectedItem();
     if (selection != null) {
-      Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Delete Archive '" + selection.getFilename() + "'?", null, null, "Delete");
+      Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Delete Archive \"" + selection.getFilename() + "\"?", null, null, "Delete");
       if (result.isPresent() && result.get().equals(ButtonType.OK)) {
         try {
           client.getArchiveService().deleteArchive(selection.getSource().getId(), selection.getFilename());
@@ -276,6 +287,11 @@ public class RepositoryController implements Initializable, StudioEventListener 
   public void initialize(URL url, ResourceBundle resourceBundle) {
     NavigationController.setBreadCrumb(Arrays.asList("Table Repository"));
     tableView.setPlaceholder(new Label("The list of archived tables is shown here."));
+
+    vpbmBtbn.managedProperty().bindBidirectional(vpbmBtbn.visibleProperty());
+
+    systemSummary = client.getSystemService().getSystemSummary();
+    vpbmBtbn.setVisible(systemSummary.getArchiveType().equals(ArchiveType.VPBM));
 
 
     try {
@@ -403,10 +419,10 @@ public class RepositoryController implements Initializable, StudioEventListener 
     tableView.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
       ArchiveSourceRepresentation archiveSource = sourceCombo.getValue();
 
-      deleteBtn.setDisable(!archiveSource.getType().equals(ArchiveSourceType.File.name()));
+      deleteBtn.setDisable(!archiveSource.getType().equals(ArchiveSourceType.File.name()) || newSelection == null);
       addArchiveBtn.setDisable(!archiveSource.getType().equals(ArchiveSourceType.File.name()));
-      restoreBtn.setDisable(!archiveSource.getType().equals(ArchiveSourceType.File.name()));
-      bundleBtn.setDisable(!archiveSource.getType().equals(ArchiveSourceType.File.name()));
+      restoreBtn.setDisable(!archiveSource.getType().equals(ArchiveSourceType.File.name()) || newSelection == null);
+      bundleBtn.setDisable(!archiveSource.getType().equals(ArchiveSourceType.File.name()) || newSelection == null);
       copyToRepositoryBtn.setDisable(!archiveSource.getType().equals(ArchiveSourceType.Http.name()));
 
 
@@ -471,10 +487,16 @@ public class RepositoryController implements Initializable, StudioEventListener 
       filterValue = "";
     }
 
-    ArchiveSourceRepresentation selectedItem = sourceCombo.getSelectionModel().getSelectedItem();
     for (ArchiveDescriptorRepresentation archive : archives) {
-      if (archive.getFilename() != null && archive.getFilename().toLowerCase().contains(filterValue.toLowerCase())) {
-        filtered.add(archive);
+      if (archive.getFilename() != null) {
+        String filename = archive.getFilename().toLowerCase();
+        if (!filename.endsWith(systemSummary.getArchiveType().name().toLowerCase())) {
+          continue;
+        }
+
+        if (filename.contains(filterValue.toLowerCase())) {
+          filtered.add(archive);
+        }
       }
     }
     return filtered;
@@ -498,6 +520,10 @@ public class RepositoryController implements Initializable, StudioEventListener 
       Platform.runLater(() -> {
         onReload();
       });
+    }
+
+    if (jobType.equals(JobType.TABLE_BACKUP)) {
+      EventManager.getInstance().notifyTableChange(event.getGameId(), null);
     }
   }
 

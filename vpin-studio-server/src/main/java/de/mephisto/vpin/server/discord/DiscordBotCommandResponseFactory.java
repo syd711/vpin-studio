@@ -2,7 +2,7 @@ package de.mephisto.vpin.server.discord;
 
 import de.mephisto.vpin.restclient.CompetitionType;
 import de.mephisto.vpin.restclient.util.DateUtil;
-import de.mephisto.vpin.server.backup.adapters.vpbm.VpbmService;
+import de.mephisto.vpin.server.archiving.adapters.vpbm.VpbmService;
 import de.mephisto.vpin.server.competitions.Competition;
 import de.mephisto.vpin.server.competitions.RankedPlayer;
 import de.mephisto.vpin.server.competitions.ScoreSummary;

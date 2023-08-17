@@ -321,9 +321,16 @@ public class Dialogs {
     stage.showAndWait();
   }
 
-  public static void openArchiveBundleDialog(ObservableList<ArchiveDescriptorRepresentation> selectedItems) {
-    Stage stage = createStudioDialogStage(ArchiveBundleDialogController.class, "dialog-bundle-download.fxml", "Archive Bundle");
-    ArchiveBundleDialogController controller = (ArchiveBundleDialogController) stage.getUserData();
+  public static void openVpbmArchiveBundleDialog(ObservableList<ArchiveDescriptorRepresentation> selectedItems) {
+    Stage stage = createStudioDialogStage(VpbmArchiveBundleDialogController.class, "dialog-vpbm-bundle-download.fxml", "Archive Bundle");
+    VpbmArchiveBundleDialogController controller = (VpbmArchiveBundleDialogController) stage.getUserData();
+    controller.setData(selectedItems);
+    stage.showAndWait();
+  }
+
+  public static void openVpaArchiveBundleDialog(ObservableList<ArchiveDescriptorRepresentation> selectedItems) {
+    Stage stage = createStudioDialogStage(VpaArchiveBundleDialogController.class, "dialog-vpa-bundle-download.fxml", "Archive Bundle");
+    VpaArchiveBundleDialogController controller = (VpaArchiveBundleDialogController) stage.getUserData();
     controller.setData(selectedItems);
     stage.showAndWait();
   }

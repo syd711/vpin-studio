@@ -167,7 +167,9 @@ public class TablesController implements Initializable, StudioFXController, Stud
   @Override
   public void tableChanged(int id, String rom) {
     if (StringUtils.isEmpty(rom)) {
-      this.tableOverviewController.reload(id);
+      if (id > 0) {
+        this.tableOverviewController.reload(id);
+      }
     }
     else {
       this.tableOverviewController.reload(rom);

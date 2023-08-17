@@ -72,7 +72,9 @@ public class AltSoundUploadController implements Initializable, DialogController
   }
 
   @FXML
-  private void onFileSelect() {
+  private void onFileSelect(ActionEvent event) {
+    Stage stage = (Stage) ((Button) event.getSource()).getScene().getWindow();
+
     this.uploadBtn.setDisable(true);
 
     FileChooser fileChooser = new FileChooser();

@@ -3,6 +3,8 @@ package de.mephisto.vpin.ui.archiving.dialogs;
 import de.mephisto.vpin.commons.ArchiveSourceType;
 import de.mephisto.vpin.commons.fx.DialogController;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
+import de.mephisto.vpin.restclient.ArchiveType;
+import de.mephisto.vpin.restclient.SystemSummary;
 import de.mephisto.vpin.restclient.representations.ArchiveSourceRepresentation;
 import de.mephisto.vpin.ui.util.Dialogs;
 import javafx.application.Platform;
@@ -22,6 +24,7 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.ResourceBundle;
 import java.util.stream.Collectors;
@@ -58,7 +61,7 @@ public class ArchiveUploadController implements Initializable, DialogController 
     if (selection != null && !selection.isEmpty()) {
       result = true;
       try {
-        Platform.runLater(()-> {
+        Platform.runLater(() -> {
           Stage stage = (Stage) ((Button) event.getSource()).getScene().getWindow();
           stage.close();
         });
@@ -74,11 +77,20 @@ public class ArchiveUploadController implements Initializable, DialogController 
   }
 
   @FXML
-  private void onFileSelect() {
+  private void onFileSelect(ActionEvent event) {
+    Stage stage = (Stage) ((Button) event.getSource()).getScene().getWindow();
+
+    SystemSummary systemSummary = client.getSystemService().getSystemSummary();
+
+    List<String> filters = Arrays.asList("*.vpinzip", "*.zip");
+    if (systemSummary.getArchiveType().equals(ArchiveType.VPA)) {
+      filters = Arrays.asList("*.vpa");
+    }
+
     FileChooser fileChooser = new FileChooser();
-    fileChooser.setTitle("Select Archive or Bundle Files");
+    fileChooser.setTitle("Select Archives");
     fileChooser.getExtensionFilters().addAll(
-        new FileChooser.ExtensionFilter("Visual Pinball Archive", "*.vpinzip", "*.zip"));
+        new FileChooser.ExtensionFilter("Visual Pinball Archive", filters));
 
     if (ArchiveUploadController.lastFolderSelection != null) {
       fileChooser.setInitialDirectory(ArchiveUploadController.lastFolderSelection);

@@ -102,7 +102,9 @@ public class TableUploadController implements Initializable, DialogController {
   }
 
   @FXML
-  private void onFileSelect() {
+  private void onFileSelect(ActionEvent event) {
+    Stage stage = (Stage) ((Button) event.getSource()).getScene().getWindow();
+
     FileChooser fileChooser = new FileChooser();
     fileChooser.setTitle("Select VPX File");
     fileChooser.getExtensionFilters().addAll(

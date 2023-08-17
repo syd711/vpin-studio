@@ -5,12 +5,12 @@ import de.mephisto.vpin.commons.fx.OverlayWindowFX;
 import de.mephisto.vpin.commons.fx.UIDefaults;
 import de.mephisto.vpin.commons.utils.PropertiesStore;
 import de.mephisto.vpin.commons.utils.SystemCommandExecutor;
+import de.mephisto.vpin.restclient.ArchiveType;
 import de.mephisto.vpin.restclient.RestClient;
 import de.mephisto.vpin.restclient.ScreenInfo;
 import de.mephisto.vpin.restclient.SystemSummary;
 import de.mephisto.vpin.server.VPinStudioException;
 import de.mephisto.vpin.server.VPinStudioServer;
-import de.mephisto.vpin.server.backup.adapters.ArchiveType;
 import de.mephisto.vpin.server.pinemhi.PINemHiService;
 import de.mephisto.vpin.server.resources.ResourceLoader;
 import de.mephisto.vpin.server.util.SystemUtil;
@@ -60,9 +60,8 @@ public class SystemService extends SystemInfo implements InitializingBean {
   private File vpxTablesFolder;
   private File mameFolder;
   private File userFolder;
-  private File pinemhiCommandFile;
 
-  private ArchiveType archiveType = ArchiveType.VPBM;
+  private ArchiveType archiveType = ArchiveType.VPA;
 
   @Override
   public void afterPropertiesSet() throws Exception {
@@ -228,6 +227,7 @@ public class SystemService extends SystemInfo implements InitializingBean {
     info.setVisualPinballDirectory(getVisualPinballInstallationFolder().getAbsolutePath());
     info.setVpinMameDirectory(getMameFolder().getAbsolutePath());
     info.setScreenInfos(getScreenInfos());
+    info.setArchiveType(this.getArchiveType());
     return info;
   }
 
@@ -369,21 +369,6 @@ public class SystemService extends SystemInfo implements InitializingBean {
     return new File(getPinUPSystemFolder(), "PUPDatabase.db");
   }
 
-  public File getArchivesFolder() {
-    File file = new File(RESOURCES, "archives/");
-    if (!file.exists()) {
-      file.mkdirs();
-    }
-    return file;
-  }
-
-  public File getBundlesFolder() {
-    File file = new File(getArchivesFolder(), "bundles/");
-    if (!file.exists()) {
-      file.mkdirs();
-    }
-    return file;
-  }
 
   public String getVersion() {
     return SystemUtil.getVersion();

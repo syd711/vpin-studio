@@ -3,7 +3,7 @@ package de.mephisto.vpin.server.discord;
 import de.mephisto.vpin.connectors.discord.BotCommand;
 import de.mephisto.vpin.connectors.discord.BotCommandResponse;
 import de.mephisto.vpin.restclient.CompetitionType;
-import de.mephisto.vpin.server.backup.adapters.vpbm.VpbmService;
+import de.mephisto.vpin.server.archiving.adapters.vpbm.VpbmService;
 import de.mephisto.vpin.server.competitions.Competition;
 import de.mephisto.vpin.server.competitions.CompetitionService;
 import de.mephisto.vpin.server.competitions.RankedPlayer;
