@@ -40,3 +40,4 @@ The background image used here can be customized (see https://github.com/syd711/
 - Fixed and improved default image extraction.
 - Fixed modal mode of all upload dialogs.
 - Fixed refresh/reload issues with PUP packs, ALT sound and ALT color.
+- Fixed error handling for NVOffset parsing.
