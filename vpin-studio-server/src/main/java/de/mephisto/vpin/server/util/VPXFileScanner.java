@@ -195,9 +195,15 @@ public class VPXFileScanner {
       return;
     }
 
-    if (line.trim().startsWith("NVOffset")) {
-      String nvOffsetString = line.substring(line.indexOf("(") + 1, line.lastIndexOf(")"));
-      result.setNvOffset(Integer.parseInt(nvOffsetString));
+    if (line.trim().startsWith("NVOffset") && line.contains("(") && line.contains(")")) {
+      String nvOffsetString = null;
+      try {
+        nvOffsetString = line.substring(line.indexOf("(") + 1, line.indexOf(")"));
+        result.setNvOffset(Integer.parseInt(nvOffsetString));
+      }
+      catch (Exception e) {
+        LOG.error("Failed to read NVOffset from line \"" + line + "\" and segment \"" + nvOffsetString + "\": " + e.getMessage());
+      }
     }
   }
 

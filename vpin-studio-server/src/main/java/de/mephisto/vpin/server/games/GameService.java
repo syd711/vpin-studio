@@ -275,8 +275,9 @@ public class GameService {
    */
   @Nullable
   public Game scanGame(int gameId) {
+    Game game = null;
     try {
-      Game game = getGame(gameId);
+      game = getGame(gameId);
       if (game != null) {
         Emulator emulator = game.getEmulator();
         if (!emulator.getName().equalsIgnoreCase(Emulator.VISUAL_PINBALL_X)) {
@@ -292,9 +293,14 @@ public class GameService {
         LOG.error("No game found to be scanned with ID '" + gameId + "'");
       }
     } catch (Exception e) {
-      LOG.error("Game scan for game " + gameId + " failed: " + e.getMessage(), e);
+      if (game != null) {
+        LOG.error("Game scan for \"" + game.getGameDisplayName() + "\" (" + gameId + ") failed: " + e.getMessage(), e);
+      }
+      else {
+        LOG.error("Game scan for game " + gameId + " failed: " + e.getMessage(), e);
+      }
     }
-    return null;
+    return game;
   }
 
   @Nullable

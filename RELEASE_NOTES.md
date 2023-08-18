@@ -12,9 +12,9 @@ Added a new preferences section for the custom options of PinUP Popper, because.
 
 **Table Management**
 
- Added file drop support for the section: DirectB2, PUP Pack, ALT Color, ALT Sound.
+ Added file drop support for the sections: DirectB2, PUP Pack, ALT Color, ALT Sound.
 
-**Competitions: Table Subscription**
+**Competitions: Table Subscriptions**
 
 The competitions section has a new tab now: "Table Subscriptions".
 These combine the best of both worlds: offline competitions and Discord competitions.
