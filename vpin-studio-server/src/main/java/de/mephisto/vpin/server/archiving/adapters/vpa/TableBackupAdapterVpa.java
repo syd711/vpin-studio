@@ -2,7 +2,7 @@ package de.mephisto.vpin.server.archiving.adapters.vpa;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
-import de.mephisto.vpin.commons.HighscoreType;
+import de.mephisto.vpin.restclient.HighscoreType;
 import de.mephisto.vpin.commons.utils.FileUtils;
 import de.mephisto.vpin.restclient.*;
 import de.mephisto.vpin.restclient.jobs.Job;
@@ -136,7 +136,7 @@ public class TableBackupAdapterVpa implements TableBackupAdapter, Job {
       if (HighscoreType.VPReg.equals(game.getHighscoreType())) {
         packageInfo.setHighscore(true);
         File vprRegFile = systemService.getVPRegFile();
-        VPReg reg = new VPReg(vprRegFile, game);
+        VPReg reg = new VPReg(vprRegFile, game.getRom(), game.getTableName());
         String gameData = reg.toJson();
         if (gameData != null) {
           File regBackupTemp = File.createTempFile("vpreg-stg", "json");

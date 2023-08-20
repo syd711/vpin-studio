@@ -1,6 +1,7 @@
 package de.mephisto.vpin.server.archiving;
 
 import de.mephisto.vpin.restclient.ArchiveType;
+import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.popper.TableDetails;
 import de.mephisto.vpin.restclient.representations.ArchiveSourceRepresentation;
 import de.mephisto.vpin.server.archiving.adapters.vpa.VpaArchiveSource;
@@ -10,9 +11,12 @@ import de.mephisto.vpin.server.archiving.adapters.vpbm.VpbmArchiveSourceAdapter;
 import de.mephisto.vpin.server.archiving.adapters.vpbm.VpbmService;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameService;
+import de.mephisto.vpin.server.preferences.PreferencesService;
 import de.mephisto.vpin.server.system.SystemService;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.poi.util.StringUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
@@ -40,6 +44,9 @@ public class ArchiveService implements InitializingBean {
 
   @Autowired
   private VpbmService vpbmService;
+
+  @Autowired
+  private PreferencesService preferencesService;
 
   private ArchiveSourceAdapter defaultArchiveSourceAdapter;
 
@@ -184,31 +191,6 @@ public class ArchiveService implements InitializingBean {
     return updatedSource;
   }
 
-  @Override
-  public void afterPropertiesSet() {
-    //VPA
-    if (systemService.getArchiveType().equals(ArchiveType.VPA)) {
-      ArchiveSource archiveSource = new VpaArchiveSource();
-      this.defaultArchiveSourceAdapter = new VpaArchiveSourceAdapter(archiveSource);
-      this.adapterCache.put(archiveSource.getId(), this.defaultArchiveSourceAdapter);
-    }
-
-    //VPBM
-    if (systemService.getArchiveType().equals(ArchiveType.VPBM)) {
-      File vpbmArchiveFolder = vpbmService.getArchiveFolder();
-      ArchiveSource archiveSource = new VpbmArchiveSource(vpbmArchiveFolder);
-      this.defaultArchiveSourceAdapter = new VpbmArchiveSourceAdapter(archiveSource, vpbmService);
-      this.adapterCache.put(archiveSource.getId(), this.defaultArchiveSourceAdapter);
-    }
-
-    //EXTERNAL
-    List<ArchiveSource> all = archiveSourceRepository.findAll();
-    for (ArchiveSource as : all) {
-      ArchiveSourceAdapter vpaSourceAdapter = ArchiveSourceAdapterFactory.create(this, as);
-      this.adapterCache.put(as.getId(), vpaSourceAdapter);
-    }
-  }
-
   public File getTargetFile(ArchiveDescriptor archiveDescriptor) {
     String descriptorFilename = archiveDescriptor.getFilename();
     ArchiveType archiveType = ArchiveType.VPA;
@@ -238,5 +220,36 @@ public class ArchiveService implements InitializingBean {
       }
     }
     return null;
+  }
+
+  @Override
+  public void afterPropertiesSet() {
+    String systemName = (String) preferencesService.getPreferenceValue(PreferenceNames.SYSTEM_NAME);
+    if(!StringUtils.isEmpty(systemName) && systemName.contains("Syd")) {
+      systemService.setArchiveType(ArchiveType.VPA);
+      LOG.info("Switched archiving mode to VPA.");
+    }
+
+    //VPA
+    if (systemService.getArchiveType().equals(ArchiveType.VPA)) {
+      ArchiveSource archiveSource = new VpaArchiveSource();
+      this.defaultArchiveSourceAdapter = new VpaArchiveSourceAdapter(archiveSource);
+      this.adapterCache.put(archiveSource.getId(), this.defaultArchiveSourceAdapter);
+    }
+
+    //VPBM
+    if (systemService.getArchiveType().equals(ArchiveType.VPBM)) {
+      File vpbmArchiveFolder = vpbmService.getArchiveFolder();
+      ArchiveSource archiveSource = new VpbmArchiveSource(vpbmArchiveFolder);
+      this.defaultArchiveSourceAdapter = new VpbmArchiveSourceAdapter(archiveSource, vpbmService);
+      this.adapterCache.put(archiveSource.getId(), this.defaultArchiveSourceAdapter);
+    }
+
+    //EXTERNAL
+    List<ArchiveSource> all = archiveSourceRepository.findAll();
+    for (ArchiveSource as : all) {
+      ArchiveSourceAdapter vpaSourceAdapter = ArchiveSourceAdapterFactory.create(this, as);
+      this.adapterCache.put(as.getId(), vpaSourceAdapter);
+    }
   }
 }

@@ -27,7 +27,7 @@ public class VPRegTest extends AbstractVPinServerTest {
     File file = new File(VPREG_FILE);
     Game game = gameService.getGameByFilename(VPX);
 
-    VPReg reg = new VPReg(file, game);
+    VPReg reg = new VPReg(file, game.getRom(), game.getTableName());
     VPRegScoreSummary summary = reg.readHighscores();
     String initialRaw = summary.toRaw();
     reg.resetHighscores();
@@ -42,7 +42,7 @@ public class VPRegTest extends AbstractVPinServerTest {
     File file = new File(VPREG_FILE);
     Game game = gameService.getGameByFilename(VPX);
 
-    VPReg reg = new VPReg(file, game);
+    VPReg reg = new VPReg(file, game.getRom(), game.getTableName());
     String data = reg.toJson();
     reg.restore(data);
     String restoredData = reg.toJson();

@@ -4,7 +4,6 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.thoughtworks.xstream.core.util.Base64Encoder;
-import de.mephisto.vpin.server.games.Game;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.poifs.filesystem.*;
@@ -27,11 +26,13 @@ public class VPReg {
   public static final String HIGH_SCORE = "HighScore";
 
   private final File vpregFile;
-  private final Game game;
+  private final String rom;
+  private final String tablename;
 
-  public VPReg(File vpregFile, Game game) {
+  public VPReg(File vpregFile, String rom, String tablename) {
     this.vpregFile = vpregFile;
-    this.game = game;
+    this.rom = rom;
+    this.tablename = tablename;
   }
 
   public boolean containsGame() {
@@ -284,12 +285,12 @@ public class VPReg {
    * @throws FileNotFoundException
    */
   private DirectoryEntry getGameDirectory(DirectoryEntry root) throws FileNotFoundException {
-    if (root.hasEntry(game.getRom())) {
-      return (DirectoryEntry) root.getEntry(game.getRom());
+    if (root.hasEntry(rom)) {
+      return (DirectoryEntry) root.getEntry(rom);
     }
 
-    if (game.getTableName() != null && root.hasEntry(game.getTableName())) {
-      return (DirectoryEntry) root.getEntry(game.getTableName());
+    if (tablename != null && root.hasEntry(tablename)) {
+      return (DirectoryEntry) root.getEntry(tablename);
     }
 
     return null;
@@ -302,14 +303,14 @@ public class VPReg {
    * @throws FileNotFoundException
    */
   private DirectoryEntry getOrCreateGameDirectory(DirectoryEntry root) throws IOException {
-    if (root.hasEntry(game.getRom())) {
-      return (DirectoryEntry) root.getEntry(game.getRom());
+    if (root.hasEntry(rom)) {
+      return (DirectoryEntry) root.getEntry(rom);
     }
 
-    if (game.getTableName() != null && root.hasEntry(game.getTableName())) {
-      return (DirectoryEntry) root.getEntry(game.getTableName());
+    if (tablename != null && root.hasEntry(tablename)) {
+      return (DirectoryEntry) root.getEntry(tablename);
     }
 
-    return root.createDirectory(game.getRom());
+    return root.createDirectory(rom);
   }
 }

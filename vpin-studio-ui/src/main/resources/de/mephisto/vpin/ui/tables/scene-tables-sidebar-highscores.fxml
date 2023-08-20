@@ -1,14 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.*?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
-<?import javafx.scene.text.*?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.ToolBar?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
 <?import org.kordamp.ikonli.javafx.FontIcon?>
-<BorderPane fx:id="defaultBackgroundBorderPane" prefWidth="600.0" styleClass="accordion-container"
-            stylesheets="@../stylesheet.css" BorderPane.alignment="CENTER" xmlns="http://javafx.com/javafx/18"
-            xmlns:fx="http://javafx.com/fxml/1"
-            fx:controller="de.mephisto.vpin.ui.tables.TablesSidebarHighscoresController">
+
+<BorderPane fx:id="defaultBackgroundBorderPane" prefWidth="600.0" styleClass="accordion-container" stylesheets="@../stylesheet.css" BorderPane.alignment="CENTER" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.tables.TablesSidebarHighscoresController">
     <center>
         <ScrollPane hbarPolicy="NEVER">
             <content>
@@ -18,240 +25,224 @@
                             <children>
                                 <GridPane>
                                     <columnConstraints>
-                                        <ColumnConstraints hgrow="SOMETIMES"
-                                                           maxWidth="297.4000732421875"
-                                                           minWidth="104.8000244140625"
-                                                           prefWidth="116.8000732421875"/>
-                                        <ColumnConstraints hgrow="SOMETIMES"
-                                                           maxWidth="469.1999755859375"
-                                                           minWidth="277.39992675781247"
-                                                           prefWidth="458.3999267578125"/>
+                                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="297.4000732421875" minWidth="104.8000244140625" prefWidth="123.99990234375" />
+                                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="469.1999755859375" minWidth="277.39992675781247" prefWidth="452.00009765625" />
                                     </columnConstraints>
                                     <rowConstraints>
-                                        <RowConstraints minHeight="10.0" prefHeight="30.0"
-                                                        vgrow="SOMETIMES"/>
-                                        <RowConstraints minHeight="10.0" prefHeight="30.0"
-                                                        vgrow="SOMETIMES"/>
-                                        <RowConstraints minHeight="10.0" prefHeight="30.0"
-                                                        vgrow="SOMETIMES"/>
-                                        <RowConstraints minHeight="10.0" prefHeight="30.0"
-                                                        vgrow="SOMETIMES"/>
-                                        <RowConstraints minHeight="10.0" prefHeight="30.0"
-                                                        vgrow="SOMETIMES"/>
-                                        <RowConstraints minHeight="10.0" prefHeight="30.0"
-                                                        vgrow="SOMETIMES"/>
+                                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                     </rowConstraints>
                                     <children>
                                         <Label text="Type:" textFill="WHITE">
                                             <font>
-                                                <Font size="14.0"/>
+                                                <Font size="14.0" />
                                             </font>
                                         </Label>
-                                        <Label layoutX="10.0" layoutY="15.0" text="File:"
-                                               textFill="WHITE" GridPane.rowIndex="1">
+                                        <Label layoutX="10.0" layoutY="15.0" text="File:" textFill="WHITE" GridPane.rowIndex="1">
                                             <font>
-                                                <Font size="14.0"/>
+                                                <Font size="14.0" />
                                             </font>
                                         </Label>
-                                        <Label layoutX="10.0" layoutY="45.0"
-                                               text="Last Modified:" textFill="WHITE"
-                                               GridPane.rowIndex="3">
+                                        <Label layoutX="10.0" layoutY="45.0" text="Last Modified:" textFill="WHITE" GridPane.rowIndex="4">
                                             <font>
-                                                <Font size="14.0"/>
+                                                <Font size="14.0" />
                                             </font>
                                         </Label>
-                                        <Label layoutX="10.0" layoutY="76.0" text="Status:"
-                                               textFill="WHITE" GridPane.rowIndex="5">
+                                        <Label layoutX="10.0" layoutY="76.0" text="Status:" textFill="WHITE" GridPane.rowIndex="6">
                                             <font>
-                                                <Font size="14.0"/>
+                                                <Font size="14.0" />
                                             </font>
                                         </Label>
-                                        <Label fx:id="hsTypeLabel" layoutX="10.0" layoutY="15.0"
-                                               text="-" textFill="WHITE"
-                                               GridPane.columnIndex="1">
+                                        <Label fx:id="hsTypeLabel" layoutX="10.0" layoutY="15.0" text="-" textFill="WHITE" GridPane.columnIndex="1">
                                             <font>
-                                                <Font size="14.0"/>
+                                                <Font size="14.0" />
                                             </font>
                                         </Label>
-                                        <Label fx:id="hsFileLabel" layoutX="102.0"
-                                               layoutY="15.0" text="-" textFill="WHITE"
-                                               GridPane.columnIndex="1" GridPane.rowIndex="1">
+                                        <Label fx:id="hsFileLabel" layoutX="102.0" layoutY="15.0" text="-" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="1">
                                             <font>
-                                                <Font size="14.0"/>
+                                                <Font size="14.0" />
                                             </font>
                                         </Label>
-                                        <Label fx:id="hsLastModifiedLabel" layoutX="102.0"
-                                               layoutY="45.0" text="-" textFill="WHITE"
-                                               GridPane.columnIndex="1" GridPane.rowIndex="3">
+                                        <Label fx:id="hsLastModifiedLabel" layoutX="102.0" layoutY="45.0" text="-" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="4">
                                             <font>
-                                                <Font size="14.0"/>
+                                                <Font size="14.0" />
                                             </font>
                                         </Label>
-                                        <Label fx:id="hsStatusLabel" layoutX="102.0"
-                                               layoutY="76.0" text="-" textFill="WHITE"
-                                               GridPane.columnIndex="1" GridPane.rowIndex="5">
+                                        <Label fx:id="hsStatusLabel" layoutX="102.0" layoutY="76.0" text="-" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="6">
                                             <font>
-                                                <Font size="14.0"/>
+                                                <Font size="14.0" />
                                             </font>
                                         </Label>
-                                        <Label layoutX="10.0" layoutY="76.0"
-                                               text="Last Scanned:" textFill="WHITE"
-                                               GridPane.rowIndex="4">
+                                        <Label layoutX="10.0" layoutY="76.0" text="Last Scanned:" textFill="WHITE" GridPane.rowIndex="5">
                                             <font>
-                                                <Font size="14.0"/>
+                                                <Font size="14.0" />
                                             </font>
                                         </Label>
-                                        <Label fx:id="hsLastScannedLabel" layoutX="110.0"
-                                               layoutY="76.0" text="-" textFill="WHITE"
-                                               GridPane.columnIndex="1" GridPane.rowIndex="4">
+                                        <Label fx:id="hsLastScannedLabel" layoutX="110.0" layoutY="76.0" text="-" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="5">
                                             <font>
-                                                <Font size="14.0"/>
+                                                <Font size="14.0" />
                                             </font>
                                         </Label>
-                                        <Label layoutX="10.0" layoutY="137.0"
-                                               text="Recorded Scores:" textFill="WHITE"
-                                               GridPane.rowIndex="2">
+                                        <Label layoutX="10.0" layoutY="137.0" text="Recorded Scores:" textFill="WHITE" GridPane.rowIndex="3">
                                             <font>
-                                                <Font size="14.0"/>
+                                                <Font size="14.0" />
                                             </font>
                                         </Label>
-                                        <Label fx:id="hsRecordLabel" layoutX="128.0"
-                                               layoutY="137.0" text="-" textFill="WHITE"
-                                               GridPane.columnIndex="1" GridPane.rowIndex="2">
+                                        <Label fx:id="hsRecordLabel" layoutX="128.0" layoutY="137.0" text="-" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="3">
                                             <font>
-                                                <Font size="14.0"/>
+                                                <Font size="14.0" />
                                             </font>
                                         </Label>
+                              <Label layoutX="10.0" layoutY="45.0" text="Available Backups:" textFill="WHITE" GridPane.rowIndex="2">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </Label>
+                              <Label fx:id="backupCountLabel" layoutX="128.0" layoutY="45.0" text="-" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </Label>
                                     </children>
                                 </GridPane>
                                 <Label fx:id="rawTitleLabel" text="Raw Highscore">
                                     <font>
-                                        <Font name="System Bold" size="14.0"/>
+                                        <Font name="System Bold" size="14.0" />
                                     </font>
                                     <VBox.margin>
-                                        <Insets top="24.0"/>
+                                        <Insets top="24.0" />
                                     </VBox.margin>
                                 </Label>
                                 <VBox fx:id="rawScoreWrapper" styleClass="media-container">
                                     <VBox.margin>
-                                        <Insets top="12.0"/>
+                                        <Insets top="12.0" />
                                     </VBox.margin>
                                     <children>
-                                        <ScrollPane prefHeight="350.0"
-                                                    styleClass="media-parent">
+                                        <ScrollPane prefHeight="350.0" styleClass="media-parent">
                                             <content>
-                                                <Label fx:id="rawScoreLabel" text="Label"
-                                                       textFill="WHITE">
+                                                <Label fx:id="rawScoreLabel" text="Label" textFill="WHITE">
                                                     <font>
-                                                        <Font size="14.0"/>
+                                                        <Font size="14.0" />
                                                     </font>
                                                 </Label>
                                             </content>
                                             <padding>
-                                                <Insets bottom="6.0" left="6.0" right="6.0"
-                                                        top="6.0"/>
+                                                <Insets bottom="6.0" left="6.0" right="6.0" top="6.0" />
                                             </padding>
                                         </ScrollPane>
                                     </children>
                                 </VBox>
-                                <Label fx:id="formattedTitleLabel" text="Formatted List"
-                                       textFill="WHITE">
+                                <Label fx:id="formattedTitleLabel" text="Formatted List" textFill="WHITE">
                                     <font>
-                                        <Font name="System Bold" size="14.0"/>
+                                        <Font name="System Bold" size="14.0" />
                                     </font>
                                     <VBox.margin>
-                                        <Insets top="24.0"/>
+                                        <Insets top="24.0" />
                                     </VBox.margin>
                                 </Label>
-                                <VBox fx:id="formattedScoreWrapper"
-                                      styleClass="media-container">
+                                <VBox fx:id="formattedScoreWrapper" styleClass="media-container">
                                     <VBox.margin>
-                                        <Insets top="12.0"/>
+                                        <Insets top="12.0" />
                                     </VBox.margin>
                                     <children>
-                                        <Label fx:id="formattedScoreLabel" text="Label"
-                                               textFill="WHITE">
+                                        <Label fx:id="formattedScoreLabel" text="Label" textFill="WHITE">
                                             <font>
-                                                <Font size="14.0"/>
+                                                <Font size="14.0" />
                                             </font>
                                             <padding>
-                                                <Insets bottom="6.0" left="6.0" right="6.0"
-                                                        top="6.0"/>
+                                                <Insets bottom="6.0" left="6.0" right="6.0" top="6.0" />
                                             </padding>
                                         </Label>
                                     </children>
                                     <padding>
-                                        <Insets bottom="6.0" left="6.0" right="6.0" top="6.0"/>
+                                        <Insets bottom="6.0" left="6.0" right="6.0" top="6.0" />
                                     </padding>
                                 </VBox>
                                 <VBox fx:id="scoreGraphWrapper">
                                     <VBox.margin>
-                                        <Insets top="24.0"/>
+                                        <Insets top="24.0" />
                                     </VBox.margin>
                                     <children>
-                                        <Label fx:id="formattedTitleLabel1" text="Score Graph"
-                                               textFill="WHITE">
+                                        <Label fx:id="formattedTitleLabel1" text="Score Graph" textFill="WHITE">
                                             <font>
-                                                <Font name="System Bold" size="14.0"/>
+                                                <Font name="System Bold" size="14.0" />
                                             </font>
                                         </Label>
                                         <BorderPane fx:id="scoreGraph">
                                             <VBox.margin>
-                                                <Insets top="12.0"/>
+                                                <Insets top="12.0" />
                                             </VBox.margin>
                                         </BorderPane>
                                     </children>
                                 </VBox>
                             </children>
                             <padding>
-                                <Insets bottom="12.0" left="12.0" right="12.0" top="12.0"/>
+                                <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
                             </padding>
                         </VBox>
                     </children>
                 </AnchorPane>
             </content>
             <padding>
-                <Insets right="12.0"/>
+                <Insets right="12.0" />
             </padding>
         </ScrollPane>
     </center>
     <top>
         <ToolBar prefHeight="40.0" prefWidth="200.0" BorderPane.alignment="CENTER">
             <items>
-                <Button fx:id="scanHighscoreBtn" mnemonicParsing="false" onAction="#onScan" text="Scan"
-                        textFill="WHITE">
+                <Button fx:id="scanHighscoreBtn" mnemonicParsing="false" onAction="#onScan" text="Scan" textFill="WHITE">
                     <graphic>
-                        <FontIcon iconColor="WHITE" iconLiteral="sil-refresh"/>
+                        <FontIcon iconColor="WHITE" iconLiteral="sil-refresh" />
                     </graphic>
                     <font>
-                        <Font size="14.0"/>
+                        <Font size="14.0" />
                     </font>
                 </Button>
-                <Separator orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0"/>
-                <Button fx:id="cardBtn" layoutX="10.0" layoutY="11.0" mnemonicParsing="false"
-                        onAction="#onCard" text="Card" textFill="WHITE">
+                <Separator orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
+                <Button fx:id="cardBtn" layoutX="10.0" layoutY="11.0" mnemonicParsing="false" onAction="#onCard" text="Card" textFill="WHITE">
                     <graphic>
-                        <FontIcon iconColor="WHITE" iconLiteral="bi-list-ol"/>
+                        <FontIcon iconColor="WHITE" iconLiteral="bi-list-ol" />
                     </graphic>
                     <font>
-                        <Font size="14.0"/>
+                        <Font size="14.0" />
                     </font>
                 </Button>
-                <Separator layoutX="80.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0"
-                           prefWidth="12.0"/>
-                <Button fx:id="resetBtn" layoutX="96.0" layoutY="11.0" mnemonicParsing="false"
-                        onAction="#onScoreReset" text="Reset" textFill="#ff3333">
+            <Separator layoutX="253.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
+            <Button fx:id="backupBtn" layoutX="96.0" layoutY="11.0" mnemonicParsing="false" onAction="#onBackup" text="Backup" textFill="WHITE">
+               <graphic>
+                  <FontIcon iconColor="WHITE" iconLiteral="mdi2a-archive-arrow-down-outline" />
+               </graphic>
+               <font>
+                  <Font size="14.0" />
+               </font>
+            </Button>
+            <Button fx:id="restoreBtn" layoutX="183.0" layoutY="11.0" mnemonicParsing="false" onAction="#onRestore" text="Restore" textFill="WHITE">
+               <graphic>
+                  <FontIcon iconColor="WHITE" iconLiteral="mdi2a-archive-arrow-up-outline" />
+               </graphic>
+               <font>
+                  <Font size="14.0" />
+               </font>
+            </Button>
+            <Separator layoutX="167.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
+                <Button fx:id="resetBtn" layoutX="96.0" layoutY="11.0" mnemonicParsing="false" onAction="#onScoreReset" text="Reset" textFill="#ff3333">
                     <graphic>
-                        <FontIcon iconColor="#ff3333" iconLiteral="mdi2d-delete-outline"/>
+                        <FontIcon iconColor="#ff3333" iconLiteral="mdi2d-delete-outline" />
                     </graphic>
                     <font>
-                        <Font size="14.0"/>
+                        <Font size="14.0" />
                     </font>
                 </Button>
             </items>
         </ToolBar>
     </top>
     <padding>
-        <Insets left="1.0" right="1.0"/>
+        <Insets left="1.0" right="1.0" />
     </padding>
 </BorderPane>
