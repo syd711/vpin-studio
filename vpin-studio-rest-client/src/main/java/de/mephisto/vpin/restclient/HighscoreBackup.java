@@ -7,10 +7,19 @@ import java.util.Date;
 
 public class HighscoreBackup {
   private String filename;
+  private String highscoreFilename;
   private Date creationDate;
   private String raw;
   private String rom;
   private HighscoreType highscoreType;
+
+  public String getHighscoreFilename() {
+    return highscoreFilename;
+  }
+
+  public void setHighscoreFilename(String highscoreFilename) {
+    this.highscoreFilename = highscoreFilename;
+  }
 
   public String getRom() {
     return rom;

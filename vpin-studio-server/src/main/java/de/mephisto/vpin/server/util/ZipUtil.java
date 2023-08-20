@@ -99,7 +99,7 @@ public class ZipUtil {
 
   public static String readZipFile(@NonNull File file, @NonNull String filename) {
     boolean descriptorFound = false;
-    String json = null;
+    String fileToString = null;
     try {
       byte[] buffer = new byte[1024];
       FileInputStream fileInputStream = new FileInputStream(file);
@@ -121,7 +121,7 @@ public class ZipUtil {
               baos.write(buffer, 0, len);
             }
             baos.close();
-            json = baos.toString();
+            fileToString = baos.toString();
           }
         }
         zis.closeEntry();
@@ -135,8 +135,52 @@ public class ZipUtil {
     }
 
     if (!descriptorFound) {
-      return "The selected archive does not contain file \"" + filename + "\"";
+      LOG.info("The selected archive does not contain file \"" + filename + "\"");
     }
-    return json;
+    return fileToString;
+  }
+
+  public static boolean writeZippedFile(@NonNull File file, @NonNull String filename, @NonNull File target) {
+    boolean descriptorFound = false;
+    try {
+      byte[] buffer = new byte[1024];
+      FileInputStream fileInputStream = new FileInputStream(file);
+      ZipInputStream zis = new ZipInputStream(fileInputStream);
+      ZipEntry zipEntry = zis.getNextEntry();
+
+      while (zipEntry != null) {
+        if (zipEntry.isDirectory()) {
+          //ignore
+        }
+        else {
+          String name = zipEntry.getName();
+          if (name.equals(filename)) {
+            descriptorFound = true;
+
+            FileOutputStream fileOutputStream = new FileOutputStream(target);
+            int len;
+            while ((len = zis.read(buffer)) > 0) {
+              fileOutputStream.write(buffer, 0, len);
+            }
+            fileOutputStream.close();
+            LOG.info("Written archived file " + target.getAbsolutePath());
+          }
+        }
+        zis.closeEntry();
+        zipEntry = zis.getNextEntry();
+      }
+      fileInputStream.close();
+      zis.closeEntry();
+      zis.close();
+
+      return true;
+    } catch (Exception e) {
+      LOG.error("Reading of " + file.getAbsolutePath() + " failed: " + e.getMessage(), e);
+    }
+
+    if (!descriptorFound) {
+      LOG.info("The selected archive does not contain file \"" + filename + "\"");
+    }
+    return false;
   }
 }

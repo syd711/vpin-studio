@@ -1,7 +1,7 @@
 package de.mephisto.vpin.server.games;
 
-import de.mephisto.vpin.restclient.HighscoreType;
 import de.mephisto.vpin.commons.utils.FileUtils;
+import de.mephisto.vpin.restclient.HighscoreType;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.descriptors.DeleteDescriptor;
 import de.mephisto.vpin.restclient.popper.PopperScreen;
@@ -86,6 +86,19 @@ public class GameService {
       applyGameDetails(game, false);
     }
     LOG.info("Game details fetch took " + (System.currentTimeMillis() - start) + "ms.");
+    return games;
+  }
+
+  public List<Game> getGamesByRom(@NonNull String rom) {
+    List<Game> games = this.getGames()
+        .stream()
+        .filter(g ->
+            (!StringUtils.isEmpty(g.getRom()) && g.getRom().equals(rom)) ||
+                (!StringUtils.isEmpty(g.getTableName()) && g.getTableName().equals(rom)))
+        .collect(Collectors.toList());
+    for (Game game : games) {
+      applyGameDetails(game, false);
+    }
     return games;
   }
 
@@ -256,7 +269,7 @@ public class GameService {
     //check if the actual game still exists
     for (Score version : allHighscoreVersions) {
       Game rawGame = pinUPConnector.getGame(version.getGameId());
-      if (rawGame != null) {
+      if (rawGame != null && !scores.contains(version)) {
         scores.add(version);
       }
 

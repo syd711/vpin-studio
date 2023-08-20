@@ -68,7 +68,16 @@ public class HighscoreBackupService implements InitializingBean {
 
   public boolean restore(@NonNull String rom, @NonNull String filename) {
     File backupRomFolder = new File(systemService.getBackupFolder(), rom);
-    return HighscoreBackupUtil.restoreBackupFile(systemService, backupRomFolder, filename);
+    boolean result = HighscoreBackupUtil.restoreBackupFile(systemService, backupRomFolder, filename);
+    if (result) {
+      highscoreService.setPauseChangeEvents(true);
+      List<Game> gamesByRom = gameService.getGamesByRom(rom);
+      for (Game game : gamesByRom) {
+        highscoreService.scanScore(game);
+      }
+      highscoreService.setPauseChangeEvents(false);
+    }
+    return result;
   }
 
   @Override

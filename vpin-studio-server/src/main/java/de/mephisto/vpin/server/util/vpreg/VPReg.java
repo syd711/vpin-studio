@@ -185,7 +185,7 @@ public class VPReg {
       };
       HashMap<String, String> values = objectMapper.readValue(data, typeRef);
 
-      fs = new POIFSFileSystem(vpregFile, true);
+      fs = new POIFSFileSystem(vpregFile, false);
       DirectoryEntry root = fs.getRoot();
       DirectoryEntry gameFolder = getOrCreateGameDirectory(root);
       Set<String> entryNames = gameFolder.getEntryNames();
@@ -203,6 +203,8 @@ public class VPReg {
           gameFolder.createDocument(entry.getKey(), new ByteArrayInputStream(value));
         }
       }
+
+      fs.writeFilesystem();
     } catch (IOException e) {
       LOG.error("Failed to read VPReg.stg: " + e.getMessage(), e);
     } finally {

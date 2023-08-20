@@ -77,6 +77,8 @@ public class AssetService {
   }
 
   public boolean deleteDefaultBackground(int gameId) {
+    assetRepository.deleteByExternalId(String.valueOf(gameId));
+
     Game game = gameService.getGame(gameId);
     if (game != null) {
       if (game.getCroppedDefaultPicture() != null && game.getCroppedDefaultPicture().exists()) {

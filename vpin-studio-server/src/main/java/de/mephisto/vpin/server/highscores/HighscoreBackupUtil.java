@@ -48,6 +48,39 @@ public class HighscoreBackupUtil {
     return null;
   }
 
+  private static File writeDescriptorJson(Game game, File folder, Highscore highscore, String filename) throws IOException {
+    ObjectMapper objectMapper = new ObjectMapper();
+    objectMapper.enable(SerializationFeature.INDENT_OUTPUT);
+    objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+
+    HighscoreBackup backup = new HighscoreBackup();
+    backup.setCreationDate(new Date());
+    backup.setHighscoreType(game.getHighscoreType());
+    backup.setRaw(highscore.getRaw());
+    backup.setFilename(filename);
+
+    String rom = game.getRom();
+    if (StringUtils.isEmpty(rom)) {
+      rom = game.getTableName();
+    }
+    backup.setRom(rom);
+    backup.setHighscoreFilename(new File(highscore.getFilename()).getName());
+
+    if (!folder.exists() && !folder.mkdirs()) {
+      LOG.error("Failed to create " + folder.getAbsolutePath());
+    }
+
+    File descriptorFile = new File(folder, DESCRIPTOR_JSON);
+    if (descriptorFile.exists()) {
+      descriptorFile.delete();
+    }
+
+    String json = objectMapper.writeValueAsString(backup);
+    Files.write(descriptorFile.toPath(), json.getBytes());
+    LOG.error("Written temporary highscore export descriptor file " + descriptorFile.getAbsolutePath());
+    return descriptorFile;
+  }
+
   public static boolean writeBackupFile(@NonNull HighscoreService highscoreService, @NonNull SystemService systemService, @NonNull Game game, @NonNull File romBackupFolder) throws Exception {
     Optional<Highscore> hs = highscoreService.getOrCreateHighscore(game);
     if (hs.isPresent()) {
@@ -136,58 +169,32 @@ public class HighscoreBackupUtil {
     return false;
   }
 
-  private static File writeDescriptorJson(Game game, File folder, Highscore highscore, String filename) throws IOException {
-    ObjectMapper objectMapper = new ObjectMapper();
-    objectMapper.enable(SerializationFeature.INDENT_OUTPUT);
-    objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-
-    HighscoreBackup backup = new HighscoreBackup();
-    backup.setCreationDate(new Date());
-    backup.setHighscoreType(game.getHighscoreType());
-    backup.setRaw(highscore.getRaw());
-    backup.setFilename(filename);
-
-    String rom = game.getRom();
-    if (StringUtils.isEmpty(rom)) {
-      rom = game.getTableName();
-    }
-    backup.setRom(rom);
-
-    if (!folder.exists() && !folder.mkdirs()) {
-      LOG.error("Failed to create " + folder.getAbsolutePath());
-    }
-
-    File descriptorFile = new File(folder, DESCRIPTOR_JSON);
-    if (descriptorFile.exists()) {
-      descriptorFile.delete();
-    }
-
-    String json = objectMapper.writeValueAsString(backup);
-    Files.write(descriptorFile.toPath(), json.getBytes());
-    LOG.error("Written temporary highscore export descriptor file " + descriptorFile.getAbsolutePath());
-    return descriptorFile;
-  }
-
   public static boolean restoreBackupFile(@NonNull SystemService systemService, @NonNull File backupRomFolder, @NonNull String filename) {
     File archiveFile = new File(backupRomFolder, filename);
     HighscoreBackup highscoreBackup = readBackupFile(archiveFile);
     HighscoreType highscoreType = highscoreBackup.getHighscoreType();
+    String rom = highscoreBackup.getRom();
 
     switch (highscoreType) {
       case NVRam: {
-        break;
+        File target = new File(systemService.getNvramFolder(), highscoreBackup.getHighscoreFilename());
+        ZipUtil.writeZippedFile(archiveFile, highscoreBackup.getHighscoreFilename(), target);
+        return true;
       }
       case EM: {
-        break;
+        File target = new File(systemService.getVisualPinballUserFolder(), highscoreBackup.getHighscoreFilename());
+        ZipUtil.writeZippedFile(archiveFile, highscoreBackup.getHighscoreFilename(), target);
+        return true;
       }
       case VPReg: {
         try {
           String json = ZipUtil.readZipFile(archiveFile, VPREG_STG_JSON);
-          VPReg vpReg = new VPReg(systemService.getVPRegFile(), backupRomFolder.getName(), null);
+          VPReg vpReg = new VPReg(systemService.getVPRegFile(), rom, null);
           vpReg.restore(json);
           LOG.info("Imported VPReg.stg data from " + backupRomFolder.getAbsolutePath());
+          return true;
         } catch (Exception e) {
-          LOG.error("Failed to restore backup for VPReg.stg file and rom " + backupRomFolder + ": " + e.getMessage(), e);
+          LOG.error("Failed to restore backup for VPReg.stg file and rom " + rom + ": " + e.getMessage(), e);
         }
         break;
       }

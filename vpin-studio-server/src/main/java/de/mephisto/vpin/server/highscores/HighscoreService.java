@@ -46,6 +46,8 @@ public class HighscoreService implements InitializingBean {
   @Autowired
   private PreferencesService preferencesService;
 
+  private boolean pauseChangeEvents;
+
   private HighscoreResolver highscoreResolver;
 
   private final List<HighscoreChangeListener> listeners = new ArrayList<>();
@@ -478,7 +480,17 @@ public class HighscoreService implements InitializingBean {
     return -1;
   }
 
+  public void setPauseChangeEvents(boolean pauseChangeEvents) {
+    this.pauseChangeEvents = pauseChangeEvents;
+    LOG.info("Setting highscore change events to: " + pauseChangeEvents);
+  }
+
   private void triggerHighscoreChange(@NonNull HighscoreChangeEvent event) {
+    if (pauseChangeEvents) {
+      LOG.info("Skipping highscore change event because change events are paused.");
+      return;
+    }
+
     for (HighscoreChangeListener listener : listeners) {
       listener.highscoreChanged(event);
     }
