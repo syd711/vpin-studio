@@ -86,7 +86,15 @@ public class SystemService extends SystemInfo implements InitializingBean {
   private void initBaseFolders() throws VPinStudioException {
     try {
       PropertiesStore store = PropertiesStore.create(SystemService.RESOURCES, systemProperties);
-      this.archiveType = !store.containsKey(ARCHIVE_TYPE) || store.get(ARCHIVE_TYPE).equals(ArchiveType.VPBM.name().toLowerCase()) ? ArchiveType.VPBM : ArchiveType.VPA;
+      this.archiveType = ArchiveType.VPA;
+
+      //check test run
+      if (!systemProperties.contains("-test")) {
+        if (!store.containsKey(ARCHIVE_TYPE) || store.get(ARCHIVE_TYPE).equals(ArchiveType.VPBM.name().toLowerCase())) {
+          archiveType = ArchiveType.VPBM;
+        }
+      }
+
 
       //PinUP Popper Folder
       this.pinUPSystemInstallationFolder = this.resolvePinUPSystemInstallationFolder();

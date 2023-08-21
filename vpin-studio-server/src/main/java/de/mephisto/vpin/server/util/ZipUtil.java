@@ -183,4 +183,41 @@ public class ZipUtil {
     }
     return false;
   }
+
+  public static boolean contains(@NonNull File file, @NonNull String filename) {
+    boolean fileFound = false;
+    try {
+      byte[] buffer = new byte[1024];
+      FileInputStream fileInputStream = new FileInputStream(file);
+      ZipInputStream zis = new ZipInputStream(fileInputStream);
+      ZipEntry zipEntry = zis.getNextEntry();
+
+      while (zipEntry != null) {
+        if (zipEntry.isDirectory()) {
+          //ignore
+        }
+        else {
+          String name = zipEntry.getName();
+          if (name.endsWith(filename)) {
+            fileFound = true;
+          }
+        }
+        zis.closeEntry();
+
+        if(fileFound) {
+          break;
+        }
+
+        zipEntry = zis.getNextEntry();
+      }
+      fileInputStream.close();
+      zis.closeEntry();
+      zis.close();
+    } catch (Exception e) {
+      LOG.error("Unzipping of " + file.getAbsolutePath() + " failed: " + e.getMessage(), e);
+      return false;
+    }
+
+    return fileFound;
+  }
 }
