@@ -29,6 +29,10 @@ New highscores will be posted there so you can always check your current score o
 **Also**, other players can subscribe to the channel. By doing this, their highscores will compete with yours.
 More details about this can be found here: https://www.youtube.com/@vpin-studio/videos
 
+**Competitions: Offline Competitions**
+
+Added highscore reset for offline competitions.
+
 **Maintenance Mode**
 
 Added maintenance mode when VPin Studio is used from remote. If enabled, a full screen window will
