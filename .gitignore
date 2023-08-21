@@ -93,3 +93,4 @@ yarn-error.log*
 /resources/PinVolTables.ini
 /resources/PinVolVol.ini
 /PinVolTables.ini
+/testsystem/vpin-studio.db
