@@ -55,6 +55,7 @@ hs_err_pid*
 /resources/VPReg/*
 /resources/vpa2/*
 /resources/vpa/*
+/resources/backups/*
 /resources/vpbm/vPinBackupManager.json
 /.idea/
 /VPReg/

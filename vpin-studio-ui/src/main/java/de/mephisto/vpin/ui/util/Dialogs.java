@@ -160,6 +160,16 @@ public class Dialogs {
     return true;
   }
 
+  public static boolean openHighscoresAdminDialog(TablesSidebarController tablesSidebarController, GameRepresentation game) {
+    Stage stage = createStudioDialogStage(TableHighscoresAdminController.class, "dialog-highscores-admin.fxml", "Archived Highscores \"" + game.getGameDisplayName() + "\"");
+    TableHighscoresAdminController controller = (TableHighscoresAdminController) stage.getUserData();
+    controller.setGame(game);
+    controller.setTableSidebarController(tablesSidebarController);
+    stage.showAndWait();
+
+    return true;
+  }
+
   public static boolean openAltSoundUploadDialog(TablesSidebarController tablesSidebarController, GameRepresentation game, File file) {
     Stage stage = createStudioDialogStage(AltSoundUploadController.class, "dialog-altsound-upload.fxml", "ALT Sound Upload");
     AltSoundUploadController controller = (AltSoundUploadController) stage.getUserData();

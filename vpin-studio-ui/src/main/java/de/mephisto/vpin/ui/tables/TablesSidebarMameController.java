@@ -1,6 +1,6 @@
 package de.mephisto.vpin.ui.tables;
 
-import de.mephisto.vpin.commons.HighscoreType;
+import de.mephisto.vpin.restclient.HighscoreType;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.SystemSummary;
 import de.mephisto.vpin.restclient.mame.MameOptions;

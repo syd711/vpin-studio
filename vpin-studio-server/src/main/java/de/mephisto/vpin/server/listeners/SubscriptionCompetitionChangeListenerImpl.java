@@ -16,6 +16,7 @@ import de.mephisto.vpin.server.highscores.HighscoreService;
 import de.mephisto.vpin.server.highscores.Score;
 import de.mephisto.vpin.server.popper.PopperService;
 import edu.umd.cs.findbugs.annotations.NonNull;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
@@ -119,12 +120,19 @@ public class SubscriptionCompetitionChangeListenerImpl extends DefaultCompetitio
         if (isOwner) {
           int count = 0;
           String rom = game.getRom();
+          if(StringUtils.isEmpty(rom)) {
+            rom = game.getTableName();
+          }
 
           List<Competition> subscriptions = this.competitionService.getSubscriptions();
           for (Competition subscription : subscriptions) {
             Game g = gameService.getGame(subscription.getGameId());
             if (g != null) {
               String subscriptionRom = g.getRom();
+              if(StringUtils.isEmpty(subscriptionRom)) {
+                subscriptionRom = g.getTableName();
+              }
+
               if (subscriptionRom != null && subscriptionRom.equals(rom)) {
                 count++;
               }
@@ -139,7 +147,7 @@ public class SubscriptionCompetitionChangeListenerImpl extends DefaultCompetitio
           List<DiscordChannel> channels = discordService.getChannels(competition.getDiscordServerId());
           for (DiscordChannel channel : channels) {
             String channelName = channel.getName();
-            if (channelName.endsWith("§" + game.getRom())) {
+            if (channelName.endsWith("§" + rom.toLowerCase())) {
               discordService.deleteChannel(serverId, channel.getId());
             }
           }

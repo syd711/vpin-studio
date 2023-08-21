@@ -81,6 +81,9 @@ public class CompetitionOfflineDialogController implements Initializable, Dialog
   private Label validationTitle;
 
   @FXML
+  private CheckBox resetCheckbox;
+
+  @FXML
   private Label validationDescription;
 
   private CompetitionRepresentation competition;
@@ -197,6 +200,11 @@ public class CompetitionOfflineDialogController implements Initializable, Dialog
       validate();
     });
 
+    this.resetCheckbox.selectedProperty().addListener((observable, oldValue, newValue) -> {
+      this.competition.setHighscoreReset(newValue);
+      validate();
+    });
+
     validate();
   }
 
@@ -290,6 +298,8 @@ public class CompetitionOfflineDialogController implements Initializable, Dialog
       this.tableCombo.setValue(game);
       this.tableCombo.setDisable((selectedCompetition.getId() != null && !selectedCompetition.isPlanned()) || selectedCompetition.isFinished());
 
+      this.resetCheckbox.setDisable(tableCombo.isDisable());
+      this.resetCheckbox.setSelected(selectedCompetition.isHighscoreReset());
 
       Optional<DiscordChannel> channelOpt = getDiscordChannels().stream().filter(channel -> channel.getId() == selectedCompetition.getDiscordChannelId()).findFirst();
       channelOpt.ifPresent(discordChannel -> this.channelsCombo.setValue(discordChannel));

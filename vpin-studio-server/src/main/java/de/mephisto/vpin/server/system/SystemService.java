@@ -61,6 +61,7 @@ public class SystemService extends SystemInfo implements InitializingBean {
   private File vpxTablesFolder;
   private File mameFolder;
   private File userFolder;
+  private File backupFolder;
 
   private ArchiveType archiveType = ArchiveType.VPA;
 
@@ -155,6 +156,11 @@ public class SystemService extends SystemInfo implements InitializingBean {
           LOG.error("Failed to create b2s crops directory " + getB2SCroppedImageFolder().getAbsolutePath());
         }
       }
+
+      this.backupFolder = new File(SystemInfo.RESOURCES, "backups");
+      if (!this.backupFolder.exists() && !this.backupFolder.mkdirs()) {
+        LOG.error("Failed to create backup folder " + this.backupFolder.getAbsolutePath());
+      }
     } catch (Exception e) {
       String msg = "Failed to initialize base folders: " + e.getMessage();
       LOG.error(msg, e);
@@ -223,6 +229,10 @@ public class SystemService extends SystemInfo implements InitializingBean {
 
   public File getB2SCroppedImageFolder() {
     return new File(RESOURCES, "b2s-cropped/");
+  }
+
+  public File getBackupFolder() {
+    return backupFolder;
   }
 
   public SystemSummary getSystemSummary() {
@@ -481,6 +491,10 @@ public class SystemService extends SystemInfo implements InitializingBean {
 
   public ArchiveType getArchiveType() {
     return archiveType;
+  }
+
+  public void setArchiveType(ArchiveType archiveType) {
+    this.archiveType = archiveType;
   }
 
   public List<ScreenInfo> getScreenInfos() {

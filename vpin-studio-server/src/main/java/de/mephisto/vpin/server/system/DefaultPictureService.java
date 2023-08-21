@@ -163,7 +163,13 @@ public class DefaultPictureService {
 
       BufferedImage image = ImageIO.read(backgroundImageFile);
 
+      if(image.getWidth() < image.getHeight()) {
+        image = ImageUtil.crop(image, DirectB2SImageRatio.RATIO_16X9.getXRatio(), DirectB2SImageRatio.RATIO_16X9.getYRatio());
+      }
+
+
       BufferedImage resized = ImageUtil.resizeImage(image, cropWidth);
+      LOG.info("Resized to " + resized.getWidth() + "x" + resized.getHeight());
       BufferedImage crop = resized.getSubimage(0, 0, cropWidth, cropHeight);
       BufferedImage blurred = ImageUtil.blurImage(crop, 8);
 //          ImageUtil.applyAlphaComposites(blurred, 0f, 10f);
@@ -173,7 +179,7 @@ public class DefaultPictureService {
       ImageUtil.gradient(blurred, cropHeight, cropWidth, start, end);
       return blurred;
     } catch (Exception e) {
-      LOG.warn("Error creating competition image: " + e.getMessage());
+      LOG.warn("Error creating competition image: " + e.getMessage(), e);
     }
     return null;
   }
