@@ -12,7 +12,12 @@ Added a new preferences section for the custom options of PinUP Popper, because.
 
 **Table Management**
 
- Added file drop support for the sections: DirectB2, PUP Pack, ALT Color, ALT Sound.
+Added file drop support for the sections: DirectB2, PUP Pack, ALT Color, ALT Sound.
+
+**Table Management: Highscores**
+
+Added backup/restore option for highscores. This way, the highscore can be archived before joining a competition and restored afterwards.
+The backup files are stored inside the _resources/_ folder of the VPin-Studio server.
 
 **Competitions: Table Subscriptions**
 
