@@ -69,7 +69,7 @@ public class OfflineCompetitionChangeListenerImpl extends DefaultCompetitionChan
             String vPinName = (String) preferencesService.getPreferenceValue(PreferenceNames.SYSTEM_NAME, "My VPin");
             String subText = "This is an offline competition. Only players on \"" + vPinName + "\" can participate.";
             if (competition.isHighscoreReset()) {
-              subText += "\n\nThe highscore of this table has been resetted.";
+              subText += "\nThe highscore of this table has been resetted.";
             }
             else {
               subText += "\nThe highscore of this table has not been resetted.";
