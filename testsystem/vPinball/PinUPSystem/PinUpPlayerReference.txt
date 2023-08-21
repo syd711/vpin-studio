@@ -1,0 +1,197 @@
+PinUp Player Reference :
+
+Put this into the top of your VPX script:
+
+
+'**************************
+'   PinUp Player Config
+'   Change HasPuP = True if using PinUp Player Videos
+'**************************
+
+Const HasPuP = True
+
+if HasPuP Then
+	Dim PuPlayer
+        Const pTopper = 0
+
+
+	Set PuPlayer = CreateObject("PinUpPlayer.PinDisplay")   
+
+	PuPlayer.Init pTopper,"mySample"
+
+	PuPlayer.playlistadd pTopper,"Toppers",    1 , 5       '5 second rest is demo only, should be 30-60
+	PuPlayer.playlistadd pTopper,"TopperBack", 1 , 5
+	PuPlayer.playlistadd pTopper,"winning",    1 , 5
+
+'SetBackground
+	PuPlayer.playlistplay pTopper,"TopperBack"      'random file from topperback playlist/folder
+        PuPlayer.setbackground pTopper, 1               'make current video background   
+	
+End if
+
+
+in above example:  
+
+for all functions you'll need to specify display# at first parameter (0=topper, 1=dmd, 2=bg, 3=playfield)  
+
+***NOTE IF YOU ARE USING MULTIPLE DISPLAYS See Advanced example later in readme....
+Init is the root folder of where all video files are located for this table. 
+Then you can add playlists (unlimited) that are really just subfolders of your table root that contain videos.
+playlistadd  (<display#>  <folder name>,  <sort/shuffle>, <restSeconds>);
+pretty self explaining...  the PinUpPlayer(PUP) will manage playlists and shuffle them.  RestSeconds is what I use to 'limit' the amount of videos being played.  So lets say you want a ramp video to play, but since I set it to 60... you can hit that ramp multiple times but no videos will play until the restSeconds time has passed since last video played.
+<Sort 1=shuffle, 0 = alpha>  So if you want to progress game videos you could name the first one 001.mp4, 002.mp4...099.mp4  That way alpha sort will play in your order.
+
+
+now anywhere else in the code you trigger videos like this for example:
+
+ 
+if HasPuP Then PuPlayer.playlistplay pTopper,"ramps"
+..
+..
+if HasPuP Then PuPlayer.playlistplay pTopper,"multi"
+..
+..
+
+
+PUP will play the next media file in the playlist...and take note of restSeconds within each different playlist.
+ 
+You also can call directly a more 'controlled' play like this:
+
+PuPlayer.playlistplayex pTopper,"ramps","avatar.mp4",100,1 
+
+
+playlistplayex (<display#>,<playlistname>, <filename>, <volume>, <priority>)
+ 
+priority(0=none, 1..9) will override the restSeconds....so for a drain or something similar
+if filename="" then will play next file in playlist (don't have to specify filename, only playlist).
+ 
+also PUP will expose lots of media methods:  .stop, resume, volume...etc
+ 
+what's nice about this way.  Lets say for my Football ("soccer") table I can just copy 10 new video files into "football/goals" sub-folder and without changing any scripts/vpx the videos will be auto-added to the playlist for goals!
+
+
+
+Working with Video Files:
+
+So for example if you want to have Topper videos for STARTREK.  You just create a a folder inside TopperVideos called StarTrek;
+Now you can create sub-folders within STARTREK called whatever you wish to 'group' your videos by.
+Lets say we make a folder for RAMP, one for DRAIN, one for MultiBall...etc.  
+You also can copy general videos (usually called directly to play, not in a playlist) into the root "StarTrek".
+
+See Thread on vpforums for help....
+
+http://www.vpforums.org/index.php?showtopic=38979
+
+
+**********  advanced example when working with multiple screens (DMD, Topper,BackGlass...etc)
+
+
+'**************************
+'   PinUp Player Config  '
+'   Change HasPuP = True if using PinUp Player Videos
+'   Advanced Sample with using multiple screens
+'**************************
+
+Const HasPuP = True
+
+if HasPuP Then
+	Dim PuPlayer
+    	Const pTopper=0
+    	Const pDMD=1
+    	Const pBackglass=2
+    	Const pPlayfield=3
+    	Const pMusic=4
+
+
+	Set PuPlayer = CreateObject("PinUpPlayer.PinDisplay")   
+
+	PuPlayer.Init pTopper,"mySample"          'must call init per each screen in use Before any other methods!
+        PuPlayer.Init pDMD,"mySample"
+        PuPlayer.Init pBackglass,"mySample"
+
+	PuPlayer.playlistadd pTopper,"Toppers",    1 , 5       '5 second rest is demo only, should be 30-60
+	PuPlayer.playlistadd pTopper,"TopperBack", 1 , 5
+	PuPlayer.playlistadd pTopper,"winning",    1 , 5
+
+        PuPlayer.playlistadd pDMD, "DMD"    , 1, 5   'add playlist for DMD screen (could be many)
+        PuPlayer.playlistadd pDMD, "DMDBack", 1, 5   'add playlist for DMD screen (could be many)
+
+
+        PuPlayer.playlistadd pBackglass, "Backglass", 1, 5
+
+
+'SetBackgrounds
+	PuPlayer.playlistplay pTopper,"TopperBack"      'random file from topperback playlist/folder
+        PuPlayer.setbackground pTopper, 1               'make current video background   
+
+'Note background can be images or videos but you SHOULD create them with no audio track/sound!
+'but you can overrid with playlistplayex
+
+        PuPlayer.playlistplayex pDMD,"DMDBack","popeye5.mp4", 0, 0     ' if you want to play exact filename (should try and avoid)    
+        PuPlayer.setbackground pDMD, 1               			'make current video background   
+
+End if
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+All functions that you can SET.  (note you shouldn't change the height/wide/position/etc as the user will configure that outside of VPX!!)
+
+   
+    Init(DisplayNum: Integer; const RootDir: WideString); 
+	
+	
+    playlistadd(DisplayNum: Integer; folder: WideString; sort,restSeconds: Integer);
+	
+	
+    playlistplay(DisplayNum: Integer; playlist: WideString); 
+	
+	
+    playlistplayex(DisplayNum: Integer; playlist, playfilename: WideString; volume, priority: Integer); 
+	
+	
+    playpause(DisplayNum: Integer); 
+	
+	
+    playresume(DisplayNum: Integer); 
+	
+	
+    playstop(DisplayNum: Integer); 
+	
+	
+    setAspect(DisplayNum: Integer; aspectWide, aspectHigh: Integer); 
+	  **** Set 0,0 to fittoscreen.
+	
+	
+    setVolume(DisplayNum: Integer;vol: Integer); 
+	
+	
+    SetLength(DisplayNum: Integer;StopSecs: Integer); 
+	    after you play a file call setlength if you want it to stop.  so setlength(5) will stop video at 5 seconds mark.
+	
+	
+    SetLoop(DisplayNum: Integer;LoopState: Integer); 
+	     if you set LoopState=1,  it will loop the currently playing file.  0=cancel loop
+	
+	
+    SetBackGround(DisplayNum: Integer;Mode: Integer); 
+	     if you set Mode=1, it will set current playing file as background (loop it always).  Mode=0 to cancel background.  Note if user has 'POP-UP' mode this will be disabled automagically (you don't need to worry about it).
+
+	
+	
+	
+	
+	
+	
+	
+	

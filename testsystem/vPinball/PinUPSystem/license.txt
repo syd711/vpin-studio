@@ -1,0 +1,10 @@
+License
+
+(c) 2018 NailBuster Software Inc.
+
+PinUp System/Player is free for DIY private NON COMMERCIAL use and released under a Creative Commons Attribution-NonCommercial- ShareAlike 4.0 International License.
+
+http://creativecommons.org/licenses/by-nc-sa/4.0/
+
+
+contact:  david@nailbuster.com

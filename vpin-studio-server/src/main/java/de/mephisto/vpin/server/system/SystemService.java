@@ -25,6 +25,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.awt.*;
@@ -51,7 +52,7 @@ public class SystemService extends SystemInfo implements InitializingBean {
 
   public static String ARCHIVES_FOLDER = RESOURCES + "archives";
   private final static String VPM_ALIAS = "VPMAlias.txt";
-  private static final String SYSTEM_PROPERTIES = "system";
+
   public static final String DEFAULT_BACKGROUND = "background.png";
 
   private File pinUPSystemInstallationFolder;
@@ -62,6 +63,9 @@ public class SystemService extends SystemInfo implements InitializingBean {
   private File userFolder;
 
   private ArchiveType archiveType = ArchiveType.VPA;
+
+  @Value("${system.properties}")
+  private String systemProperties;
 
   @Override
   public void afterPropertiesSet() throws Exception {
@@ -80,7 +84,7 @@ public class SystemService extends SystemInfo implements InitializingBean {
 
   private void initBaseFolders() throws VPinStudioException {
     try {
-      PropertiesStore store = PropertiesStore.create(SystemService.RESOURCES, SYSTEM_PROPERTIES);
+      PropertiesStore store = PropertiesStore.create(SystemService.RESOURCES, systemProperties);
       this.archiveType = !store.containsKey(ARCHIVE_TYPE) || store.get(ARCHIVE_TYPE).equals(ArchiveType.VPBM.name().toLowerCase()) ? ArchiveType.VPBM : ArchiveType.VPA;
 
       //PinUP Popper Folder

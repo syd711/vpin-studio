@@ -1,0 +1,899 @@
+// PinUP Popper Menu Script: THEME OPTIONS v1.4.0
+// March 2019
+// Script by: Nailbuster and TerryRed
+
+// NOTE: This is using JAVASCRIPT
+
+// Everything is case sensitive!
+// All command lines end with ;		
+// Lines with comments start with a minimum of //
+// Some characters can't be used in Custom Text!
+
+
+///////////////// POPPER THEME OPTIONS ///////////////////////////
+
+
+//  This file is where all the THEME related settings are located. Users can make changes to:
+
+// - Text Zones
+// - Fonts
+// - Text Colours
+// - Text Size
+// - Text Positions
+// - Text Alignment
+// - Database Content that is displayed
+// - Prefix Text
+// - Max Characters
+// - Custom Text
+// - Game Details
+
+
+///////////////////////////////////////////
+
+
+// THEME: T-BAR (Tarcisio/TerryRed/Text-ARC)
+// LAYOUT OPTION: 1
+// THEME CONFIG: TerryRed
+// VERSION: 1.0
+
+// MENU TYPE: BAR
+// LAYOUT: Desktop, Single Screen
+// ORIENTATION: Landscape
+
+// ARC Image by: Tarcisio Caleiro
+
+
+///////////////////////////////////////////
+
+
+///////////// POPPER TEXT ZONES: USER OPTIONS /////////////////////////
+
+
+// DATABASE CONTENT // =======================================
+
+// Choose what Popper DATABASE CONTENT is displayed in each Text Zone.
+
+// GAME Text Zones: CONTENT
+
+// These will display when a Game Wheel is Highlighted.
+
+	dbContent1G = [""] ;
+	dbContent2G = [""] ;
+	dbContent3G = ["Game"] ;
+	dbContent4G = ["Count"] ;
+	dbContent5G = [""] ;
+	dbContent6G = [""] ;
+	dbContent7G = ["Playlist_Current"] ;
+	dbContent8G = ["Emulator"] ;
+
+// Below are your Content options. These are only used for Game Text Zones!
+// Copy your Content options to the dbContent_xG variables above.
+// It MUST be exact (case sensitive), and placed within [""]. Example ["GameYear"]
+// If you are NOT using any Database Content in a Text Zone, it MUST have [""]
+
+	//	Game
+	//	Manufact
+	//	GameYear
+	//	Count
+	//	Emulator
+	//	GAMEVER
+	//	NumPlayers
+	//	GameType
+	//	Author
+	//	GameTheme
+	//	GameRating
+	//	IPDBNum
+	//	Category
+	//	TAGS
+	//	GameName
+	//	GameFileName
+	//	ROM
+	//	Playlist_Highlighted
+	//	Playlist_Current
+	//	Time
+	//	Custom_Text
+	
+
+// FUNCTION Text Zones: CONTENT
+
+// These will display while in a Game Menu Menu.
+
+	dbContent1F = [""] ;
+	dbContent2F = [""] ;
+	dbContent3F = ["Function"] ;
+	dbContent4F = ["Author"] ;
+	dbContent5F = ["GAMEVER"] ;
+	dbContent6F = ["GameType"] ;
+	dbContent7F = [""] ;
+	dbContent8F = [""] ;
+
+// Below are your Content options. These are only used for Function Text Zones!
+// Copy your Content options to the dbContent_xF variables above.
+// It MUST be exact (case sensitive) and placed within [""]. Example ["GameYear"]
+// If you are NOT using any Database Content in a Text Zone, it MUST have [""]
+
+	//	Function
+	//	Manufact
+	//	GameYear
+	//	Count
+	//	Emulator
+	//	GAMEVER
+	//	NumPlayers
+	//	GameType
+	//	Author
+	//	GameTheme
+	//	GameRating
+	//	IPDBNum
+	//	Category
+	//	TAGS
+	//	GameName
+	//	GameFileName
+	//	ROM
+	//	Playlist_Highlighted
+	//	Playlist_Current
+	//	Time
+	//	Custom_Text
+	
+
+// PLAYLIST Text Zones: CONTENT
+
+// These will display while a Playlist Wheel is highlighted.
+
+	dbContent1P = [""] ;
+	dbContent2P = [""] ;
+	dbContent3P = ["Playlist_Highlighted"]  ;
+	dbContent4P = [""]  ;
+	dbContent5P = [""] ;
+	dbContent6P = [""] ;
+	dbContent7P = [""] ;
+	dbContent8P = [""] ;
+
+// Below are your Content options. These are only used for Playlist Text Zones!
+// Copy your Content options to the dbContent_xP variables above.
+// It MUST be exact (case sensitive) and placed within [""]. Example ["Time"]
+// If you are NOT using any Database Content in a Text Zone, it MUST have [""]
+
+	//	Playlist_Highlighted
+	//	Playlist_Current
+	//	Time
+	//	Custom_Text
+
+
+// HOME SCREEN Text Zones: CONTENT
+
+// These will display while in on the Home Screen with a Playlist Wheel highlighted.
+
+	dbContent1H = [""] ;
+	dbContent2H = [""] ;
+	dbContent3H = ["Playlist_Highlighted"] ;
+	dbContent4H = ["Custom_Text"] ;
+	dbContent5H = [""] ;
+	dbContent6H = [""] ;
+	dbContent7H = [""] ;
+	dbContent8H = [""] ;
+
+// Below are your Content options. These are only used for Home Screen Text Zones!
+// Copy your Content options to the dbContent_xH variables above.
+// It MUST be exact (case sensitive) and placed within [""]. Example ["GameYear"]
+// If you are NOT using any Database Content in a Text Zone, it MUST have [""]
+
+	//	Playlist_Highlighted
+	//	Playlist_Current
+	//	Time
+	//	Custom_Text
+
+
+// CUSTOM TEXT // =======================================
+
+// Choose what Custom Text you want to display in each Text Zone (instead of Database Content)
+
+// Custom Text MUST be in quotes. Example "WELCOME TO PINUP POPPER!"
+// The DATABASE CONTENT for the Text Zone MUST be set to ["Custom_Text"]
+// For NO Custom Text, you MUST use empty quotes. Example ""
+
+// HOME SCREEN Text Zones: CUSTOM TEXT
+
+// These will display while in on the Home Screen with a Playlist Wheel highlighted.
+
+	text_1H = "" ;
+	text_2H = "" ;
+	text_3H = "" ;
+	text_4H = "WELCOME TO PINUP POPPER 1.4" ;
+	text_5H = "" ;
+	text_6H = "" ;
+	text_7H = "" ;
+	text_8H = "" ;
+
+// GAME Text Zones: CUSTOM TEXT
+
+// These will display when a Game Wheel is Highlighted.
+
+	text_1G = "" ;
+	text_2G = "" ;
+	text_3G = "" ;
+	text_4G = "" ;
+	text_5G = "" ;
+	text_6G = "" ;
+	text_7G = "" ;
+	text_8G = "" ;
+
+// FUNCTION Text Zones: CUSTOM TEXT
+
+// These will display while in a Game Menu Menu.
+
+	text_1F = "" ;
+	text_2F = "" ;
+	text_3F = "" ;
+	text_4F = "" ;
+	text_5F = "" ;
+	text_6F = "" ;
+	text_7F = "" ;
+	text_8F = "" ;
+
+// PLAYLIST Text Zones: CUSTOM TEXT
+
+// These will display while a Playlist Wheel is highlighted.
+
+	text_1P = "" ;
+	text_2P = "" ;
+	text_3P = "" ;
+	text_4P = "" ;
+	text_5P = "" ;
+	text_6P = "" ;
+	text_7P = "" ;
+	text_8P = "" ;
+
+
+// PREFIXES // =======================================
+
+  // Examples...
+
+  // AUTHORS: G5K, Sliderpoint
+  // VERSION: 1.2
+  // TYPE: EM
+  // TAGS: SSF, PUP-PACK
+  // WITH 69 GAMES
+  // PLAYERS: 4
+
+  // could be changed to...
+
+  // AUTH: G5K, Sliderpoint
+  // VER: 1.2
+  // MACHINE TYPE: EM
+  // FEATURES: SSF, PUP-PACK
+  // FEATURING 69 TABLES
+  // PL: 4
+
+  // Prefix Text MUST be in quotes. Example "PLAYERS: "
+
+  // For NO Prefix Text, you MUST use empty quotes. Example ""
+
+  // MISC PREFIXES
+
+	text_count_1 =  "WITH " ;    	// the first word in "With" xxxx Games
+	text_count_2 =  " GAMES" ;		// the second word in With xxxx "Games"
+
+  // GAME TEXT Zone PREFIXES (When a Game Wheel is Highlighted)
+
+	prefix1G = "" ;
+	prefix2G = "" ;
+	prefix3G = "" ;
+	prefix4G = "" ;
+	prefix5G = "" ;
+	prefix6G = "" ;
+	prefix7G = "" ;
+	prefix8G = "" ;
+
+  // FUNCTION Text Zone PREFIXES (When in a Game Menu)
+
+	prefix1F = "" ;
+	prefix2F = "" ;
+	prefix3F = "" ;
+	prefix4F = "AUTHORS: " ;
+	prefix5F = "VERSION: " ;
+	prefix6F = "TYPE: " ;
+	prefix7F = "" ;
+	prefix8F = "" ;
+
+  // HOME SCREEN Text Zone PREFIXES (While on Home Screen and Playlist Wheel is highlighted)
+
+	prefix1H = "" ;
+	prefix2H = "" ;
+	prefix3H = "" ;
+	prefix4H = "" ;
+	prefix5H = "" ;
+	prefix6H = "" ;
+	prefix7H = "" ;
+	prefix8H = "" ;
+
+  // PLAYLIST Text Zones: PREFIXES (Highlighting a Playlist)
+
+	prefix1P = "" ;
+	prefix2P = "" ;
+	prefix3P = "" ;
+	prefix4P = "" ;
+	prefix5P = "" ;
+	prefix6P = "" ;
+	prefix7P = "" ;
+	prefix8P = "" ;
+
+
+// TEXT ZONES // =======================================
+
+  // Enable or Disable Text Zones. Enable = 1, Disable = 0
+
+  // GAME TEXT ZONES: displays text when a Game wheel is highlighted 
+
+  pShow_Text_Zone1G = 1 ;	// 
+  pShow_Text_Zone2G = 1 ;	// 
+  pShow_Text_Zone3G = 1 ;	// (Game Display - Screen Name)
+  pShow_Text_Zone4G = 1 ;	// (Count of Games)
+  pShow_Text_Zone5G = 1 ;	
+  pShow_Text_Zone6G = 1 ;	
+  pShow_Text_Zone7G = 1 ;	// (Current Playlist)
+  pShow_Text_Zone8G = 1 ;	// (Emulator)
+
+  // PLAYLIST TEXT ZONES: displays text when a Playlist wheel is highlighted 
+
+  pShow_Text_Zone1P = 1 ;	
+  pShow_Text_Zone2P = 1 ;	
+  pShow_Text_Zone3P = 1 ;	// (Playlist)
+  pShow_Text_Zone4P = 1 ;	
+  pShow_Text_Zone5P = 1 ;	
+  pShow_Text_Zone6P = 1 ;	
+  pShow_Text_Zone7P = 1 ;	
+  pShow_Text_Zone8P = 1 ;	
+  
+  // FUNCTION TEXT ZONES: (when in a Game or System Menu)
+
+  pShow_Text_Zone1F = 1 ;	
+  pShow_Text_Zone2F = 1 ;	
+  pShow_Text_Zone3F = 1 ;	// (Function)(Start Game, etc)
+  pShow_Text_Zone4F = 1 ;	
+  pShow_Text_Zone5F = 1 ;	
+  pShow_Text_Zone6F = 1 ;	
+  pShow_Text_Zone7F = 1 ;	
+  pShow_Text_Zone8F = 1 ;	
+  
+  // HOME SCREEN TEXT ZONES: displays custom text when on the HOME Screen and a Playlist Wheel is highlighted
+
+  pShow_Text_Zone1H = 1 ;	
+  pShow_Text_Zone2H = 1 ;	
+  pShow_Text_Zone3H = 1 ;	// (Highlighted Playlist)
+  pShow_Text_Zone4H = 1 ;	
+  pShow_Text_Zone5H = 1 ;	
+  pShow_Text_Zone6H = 1 ;	
+  pShow_Text_Zone7H = 1 ;	
+  pShow_Text_Zone8H = 1 ;	
+
+
+// FONT COLOURS // =======================================
+
+  // Set the colour for each Zone's fonts. 
+  
+  // It can be any value between 0 to 16777215. (integer value of windows color)
+  
+  // GAME TEXT Zones: FONT COLOURS
+
+  Colour_Zone1G = 16438789 ;	
+  Colour_Zone2G = 16438789 ;	
+  Colour_Zone3G = 16777215 ;	// (Game Display)
+  Colour_Zone4G = 16438789 ;	// (Count of Games)
+  Colour_Zone5G = 16438789 ;	
+  Colour_Zone6G = 16438789 ;	 
+  Colour_Zone7G = 16438789 ;	// (Current Playlist)
+  Colour_Zone8G = 16438789 ;	// (Emulator)
+
+  // PLAYLIST Text Zones: FONT COLOURS
+
+  Colour_Zone1P = 16777215 ;	
+  Colour_Zone2P = 16438789 ;	
+  Colour_Zone3P = 16777215 ;	
+  Colour_Zone4P = 16438789 ;	
+  Colour_Zone5P = 16438789 ;	
+  Colour_Zone6P = 16438789 ;	
+  Colour_Zone7P = 16438789 ;	
+  Colour_Zone8P = 16438789 ;	
+
+  // FUNCTION Text Zones: FONT COLOURS (when in a Game or System Menu)
+
+  Colour_Zone1F = 16777215 ;	
+  Colour_Zone2F = 16438789 ;	
+  Colour_Zone3F = 16777215 ;	
+  Colour_Zone4F = 16438789 ;	
+  Colour_Zone5F = 16438789 ;	
+  Colour_Zone6F = 16438789 ;	
+  Colour_Zone7F = 16438789 ;	
+  Colour_Zone8F = 16438789 ;	
+  
+  // HOME SCREEN Text Zones: FONT COLOURS
+
+  Colour_Zone1H = 16777215 ;	
+  Colour_Zone2H = 16438789 ;	
+  Colour_Zone3H = 16777215 ;	
+  Colour_Zone4H = 65535 ;	
+  Colour_Zone5H = 16438789 ;	
+  Colour_Zone6H = 16438789 ;	
+  Colour_Zone7H = 16438789 ;	
+  Colour_Zone8H = 16438789 ;	
+  
+  //  PRESET COLOUR VALUES FOR TEXT
+
+  //  Default = 16438789
+  //  Red = 255
+  //  Green = 65280
+  //  Blue = 16711680
+  //  Cyan = 16776960
+  //  Magenta = 16711935
+  //  Yellow = 65535
+  //  Orange = 33023
+  //  Purple = 16711808
+  //  White = 16777215
+  //  Black = 0
+
+
+// MAX CHARACTERS // ======================================= 
+
+  // maximum characters displayed for each text zone
+
+  // GAME TEXT Zones: MAX CHARACTERS
+
+  FontMaxChar_Zone1G = 18 ;		
+  FontMaxChar_Zone2G = 5 ;		
+  FontMaxChar_Zone3G = 52 ;		// (Game Display)
+  FontMaxChar_Zone4G = 15 ;		// (Count of Games)
+  FontMaxChar_Zone5G = 12 ;		
+  FontMaxChar_Zone6G = 12 ;		
+  FontMaxChar_Zone7G = 26 ;		// (Current Playlist)
+  FontMaxChar_Zone8G = 26 ;		// (Emulator)
+
+  // PLAYLIST Text Zones: MAX CHARACTERS
+
+  FontMaxChar_Zone1P = 20 ;		
+  FontMaxChar_Zone2P = 5 ;		
+  FontMaxChar_Zone3P = 52 ;		
+  FontMaxChar_Zone4P = 60 ;		
+  FontMaxChar_Zone5P = 12 ;		
+  FontMaxChar_Zone6P = 12 ;		
+  FontMaxChar_Zone7P = 26 ;		
+  FontMaxChar_Zone8P = 26 ;		
+
+  // FUNCTION Text Zones: MAX CHARACTERS (when in a Game or System Menu)
+
+  FontMaxChar_Zone1F = 18 ;		
+  FontMaxChar_Zone2F = 5 ;		
+  FontMaxChar_Zone3F = 42 ;		
+  FontMaxChar_Zone4F = 76 ;		
+  FontMaxChar_Zone5F = 22 ;		
+  FontMaxChar_Zone6F = 22 ;		
+  FontMaxChar_Zone7F = 40 ;		
+  FontMaxChar_Zone8F = 22 ;		
+  
+  // HOME SCREEN Text Zones: MAX CHARACTERS
+
+  FontMaxChar_Zone1H = 20 ;		
+  FontMaxChar_Zone2H = 5 ;		
+  FontMaxChar_Zone3H = 52 ;		
+  FontMaxChar_Zone4H = 60 ;		
+  FontMaxChar_Zone5H = 12 ;		
+  FontMaxChar_Zone6H = 12 ;		
+  FontMaxChar_Zone7H = 22 ;		
+  FontMaxChar_Zone8H = 22 ;		
+
+
+// FONTS // =======================================
+
+  // What font will be used for each text zone.
+
+  // It's best to have the font files installed in your Windows system fonts. (Popper loads faster)
+  // Otherwise, the font files must be in the "PUPVideos\pinupmenu\FONTS" folder!
+  // If you are using custom TTF fonts then double check the name of font names.
+
+  // GAME TEXT Zones: FONTS
+
+  Font_Zone1G = "Digital-7 Italic" ;		
+  Font_Zone2G = "Digital-7 Italic" ;		
+  Font_Zone3G = "Digital-7 Italic" ;		// (Game Display)
+  Font_Zone4G = "Digital-7 Italic" ;		// (Count of Games)
+  Font_Zone5G = "Digital-7 Italic" ;		
+  Font_Zone6G = "Digital-7 Italic" ;		
+  Font_Zone7G = "Digital-7 Italic" ;		// (Playlist)
+  Font_Zone8G = "Digital-7 Italic" ;		// (Emulator)
+
+  // PLAYLIST Text Zones: FONTS
+
+  Font_Zone1P = "Digital-7 Italic" ;		
+  Font_Zone2P = "Digital-7 Italic" ;		
+  Font_Zone3P = "Digital-7 Italic" ;		
+  Font_Zone4P = "Digital-7 Italic" ;		
+  Font_Zone5P = "Digital-7 Italic" ;		
+  Font_Zone6P = "Digital-7 Italic" ;		
+  Font_Zone7P = "Digital-7 Italic" ;		
+  Font_Zone8P = "Digital-7 Italic" ;		
+
+  // FUNCTION Text Zones: FONTS (when in a Game or System Menu)
+
+  Font_Zone1F = "Digital-7 Italic" ;		
+  Font_Zone2F = "Digital-7 Italic" ;		
+  Font_Zone3F = "Digital-7 Italic" ;		
+  Font_Zone4F = "Digital-7 Italic" ;		
+  Font_Zone5F = "Digital-7 Italic" ;		
+  Font_Zone6F = "Digital-7 Italic" ;		
+  Font_Zone7F = "Digital-7 Italic" ;		
+  Font_Zone8F = "Digital-7 Italic" ;		
+  
+  // HOME SCREEN Text Zones: FONTS
+
+  Font_Zone1H = "Digital-7 Italic" ;		
+  Font_Zone2H = "Digital-7 Italic" ;		
+  Font_Zone3H = "Digital-7 Italic" ;		
+  Font_Zone4H = "Digital-7 Italic" ;		
+  Font_Zone5H = "Digital-7 Italic" ;		
+  Font_Zone6H = "Digital-7 Italic" ;		
+  Font_Zone7H = "Digital-7 Italic" ;		
+  Font_Zone8H = "Digital-7 Italic" ;		
+
+
+// FONT SIZE // =======================================
+
+  // set font size for each text zone. Height as a percent of display height. 
+  
+  // 20=20% of screen height. No decimals.
+
+  // GAME TEXT Zones: FONT SIZE
+
+  FontSize_Zone1G = 3 ;		
+  FontSize_Zone2G = 3 ;		
+  FontSize_Zone3G = 3 ;		// (Game Display)
+  FontSize_Zone4G = 2 ;		// (Count of Games)
+  FontSize_Zone5G = 3 ;		
+  FontSize_Zone6G = 3 ;		 
+  FontSize_Zone7G = 3 ;		// (Playlist)
+  FontSize_Zone8G = 3 ;		// (Emulator)
+  
+  // PLAYLIST Text Zones: FONT SIZE
+ 
+  FontSize_Zone1P = 3 ;		
+  FontSize_Zone2P = 3 ;		
+  FontSize_Zone3P = 3 ;		
+  FontSize_Zone4P = 3 ;		
+  FontSize_Zone5P = 3 ;		
+  FontSize_Zone6P = 3 ;		
+  FontSize_Zone7P = 3 ;		
+  FontSize_Zone8P = 3 ;		
+
+  // FUNCTION Text Zones: FONT SIZE (when in a Game or System Menu)
+
+  FontSize_Zone1F = 3 ;		
+  FontSize_Zone2F = 3 ;		
+  FontSize_Zone3F = 3 ;		
+  FontSize_Zone4F = 3 ;		
+  FontSize_Zone5F = 3 ;		
+  FontSize_Zone6F = 3 ;		
+  FontSize_Zone7F = 3 ;		
+  FontSize_Zone8F = 3 ;		
+  
+  // HOME SCREEN Text Zones: FONT SIZE
+
+  FontSize_Zone1H = 3 ;		
+  FontSize_Zone2H = 3 ;		
+  FontSize_Zone3H = 3 ;		
+  FontSize_Zone4H = 3 ;		
+  FontSize_Zone5H = 3 ;		
+  FontSize_Zone6H = 3 ;		
+  FontSize_Zone7H = 3 ;		
+  FontSize_Zone8H = 3 ;		
+
+
+// FONT ROTATION // =======================================
+
+  // set the rotation for all fonts. Degrees in tenths. (900=90 degrees) Landscape = 900. Portrait = 0
+
+  FontRotation_ZonesALL = 0 ;
+
+
+// X and Y ALIGNMENT // ======================================= 
+
+  // X and Y Alignment of each Text Zone
+
+  // xAlign, 0 = horizontal left align, 1 = center horizontal, 2 = right horizontal
+  // yAlign, 0 = top, 1 = center, 2=bottom vertical alignment
+
+  // GAME Text Zones: X and Y ALIGNMENT
+
+  Zone1G_xAlign = 1 ;
+  Zone1G_yAlign = 0 ;
+  Zone2G_xAlign = 1 ;
+  Zone2G_yAlign = 0 ;  
+  Zone3G_xAlign = 1 ;			
+  Zone3G_yAlign = 0 ;
+  Zone4G_xAlign = 1 ;		
+  Zone4G_yAlign = 0 ;
+  Zone5G_xAlign = 0 ;			
+  Zone5G_yAlign = 0 ;		
+  Zone6G_xAlign = 2 ;			
+  Zone6G_yAlign = 0 ;		
+  Zone7G_xAlign = 0 ;		
+  Zone7G_yAlign = 0 ;			
+  Zone8G_xAlign = 2 ;		
+  Zone8G_yAlign = 0 ;			
+
+  // PLAYLIST Text Zones: X and Y ALIGNMENT
+
+  Zone1P_xAlign = 1 ;
+  Zone1P_yAlign = 0 ;
+  Zone2P_xAlign = 1 ;
+  Zone2P_yAlign = 0 ;  
+  Zone3P_xAlign = 1 ;			
+  Zone3P_yAlign = 0 ;
+  Zone4P_xAlign = 1 ;		
+  Zone4P_yAlign = 0 ;
+  Zone5P_xAlign = 0 ;			
+  Zone5P_yAlign = 0 ;		
+  Zone6P_xAlign = 2 ;			
+  Zone6P_yAlign = 0 ;		
+  Zone7P_xAlign = 0 ;		
+  Zone7P_yAlign = 0 ;			
+  Zone8P_xAlign = 2 ;		
+  Zone8P_yAlign = 0 ;				
+
+  // FUNCTION Text Zones: X and Y ALIGNMENT
+
+  Zone1F_xAlign = 1 ;
+  Zone1F_yAlign = 0 ;
+  Zone2F_xAlign = 1 ;
+  Zone2F_yAlign = 0 ;  
+  Zone3F_xAlign = 1 ;			
+  Zone3F_yAlign = 0 ;
+  Zone4F_xAlign = 1 ;		
+  Zone4F_yAlign = 0 ;
+  Zone5F_xAlign = 0 ;			
+  Zone5F_yAlign = 0 ;		
+  Zone6F_xAlign = 2 ;			
+  Zone6F_yAlign = 0 ;		
+  Zone7F_xAlign = 0 ;		
+  Zone7F_yAlign = 0 ;			
+  Zone8F_xAlign = 2 ;		
+  Zone8F_yAlign = 0 ;			
+
+  // HOME SCREEN Text Zones: X and Y ALIGNMENT
+
+  Zone1H_xAlign = 1 ;
+  Zone1H_yAlign = 0 ;
+  Zone2H_xAlign = 1 ;
+  Zone2H_yAlign = 0 ;  
+  Zone3H_xAlign = 1 ;			
+  Zone3H_yAlign = 0 ;
+  Zone4H_xAlign = 1 ;		
+  Zone4H_yAlign = 0 ;
+  Zone5H_xAlign = 0 ;			
+  Zone5H_yAlign = 0 ;		
+  Zone6H_xAlign = 2 ;			
+  Zone6H_yAlign = 0 ;		
+  Zone7H_xAlign = 0 ;		
+  Zone7H_yAlign = 0 ;			
+  Zone8H_xAlign = 2 ;		
+  Zone8H_yAlign = 0 ;			
+  
+// X and Y POSITIONS // =======================================
+
+  // Position of each Text Zone
+
+  // values are a % of horizontal width, or % of vertical height. (20=20%)
+
+  // GAME TEXT Zones: X and Y POSITIONS
+
+  Zone1G_xpoz = 0 ;
+  Zone1G_ypoz = 66.3 ;
+  Zone2G_xpoz = 0 ;
+  Zone2G_ypoz = 72 ;
+  Zone3G_xpoz = 64 ;
+  Zone3G_ypoz = 91.5 ;
+  Zone4G_xpoz = 64 ;
+  Zone4G_ypoz = 96.5 ;
+  Zone5G_xpoz = 39.4 ;
+  Zone5G_ypoz = 91.5 ;
+  Zone6G_xpoz = 89 ;
+  Zone6G_ypoz = 91.5 ;
+  Zone7G_xpoz = 33.5 ;
+  Zone7G_ypoz = 96.0 ;
+  Zone8G_xpoz = 95 ;
+  Zone8G_ypoz = 96.0 ;		
+
+  // PLAYLIST Text Zones: X and Y POSITIONS
+
+  Zone1P_xpoz = 0 ;
+  Zone1P_ypoz = 66.3 ;
+  Zone2P_xpoz = 0 ;
+  Zone2P_ypoz = 72 ;
+  Zone3P_xpoz = 64 ;
+  Zone3P_ypoz = 91.5 ;
+  Zone4P_xpoz = 64 ;
+  Zone4P_ypoz = 96.0 ;
+  Zone5P_xpoz = 39.4 ;
+  Zone5P_ypoz = 91.5 ;
+  Zone6P_xpoz = 89 ;
+  Zone6P_ypoz = 91.5 ;
+  Zone7P_xpoz = 33.5 ;
+  Zone7P_ypoz = 96.0 ;
+  Zone8P_xpoz = 95 ;
+  Zone8P_ypoz = 96.0 ;			
+
+  // FUNCTION Text Zones: X and Y POSITIONS
+
+  Zone1F_xpoz = 0 ;
+  Zone1F_ypoz = 66.3 ;
+  Zone2F_xpoz = 0 ;
+  Zone2F_ypoz = 72 ;
+  Zone3F_xpoz = 64 ;
+  Zone3F_ypoz = 91.5 ;
+  Zone4F_xpoz = 64 ;
+  Zone4F_ypoz = 96.0 ;
+  Zone5F_xpoz = 39.4 ;
+  Zone5F_ypoz = 91.5 ;
+  Zone6F_xpoz = 89 ;
+  Zone6F_ypoz = 91.5 ;
+  Zone7F_xpoz = 33.5 ;
+  Zone7F_ypoz = 96.0 ;
+  Zone8F_xpoz = 95 ;
+  Zone8F_ypoz = 96.0 ;
+
+  // HOME SCREEN Text Zones: X and Y POSITIONS
+
+  Zone1H_xpoz = 0 ;
+  Zone1H_ypoz = 66.3 ;
+  Zone2H_xpoz = 0 ;
+  Zone2H_ypoz = 72 ;
+  Zone3H_xpoz = 64 ;
+  Zone3H_ypoz = 91.5 ;
+  Zone4H_xpoz = 64 ;
+  Zone4H_ypoz = 96.0 ;
+  Zone5H_xpoz = 39.4 ;
+  Zone5H_ypoz = 91.5 ;
+  Zone6H_xpoz = 89 ;
+  Zone6H_ypoz = 91.5 ;
+  Zone7H_xpoz = 33.5 ;
+  Zone7H_ypoz = 96.0 ;
+  Zone8H_xpoz = 95 ;
+  Zone8H_ypoz = 96.0 ;
+
+///////////// END of POPPER TEXT ZONES: USER OPTIONS /////////////////////////
+
+
+
+
+///////////// GAME DETAILS PAGE: TEXT //////////////////
+
+// This will list the game's Database Details when "Game Details" Wheel is highlighted
+
+  // Screen that Game Details is Displayed On
+
+  pGameDetails = 3 ; 
+
+  // FONT SIZE
+
+  FontSize_GameDetails = 4 ;
+	
+  // FONT	
+
+  Font_GameDetails = "Digital-7 Italic" ;	
+
+  // PREFIXES
+
+  prefix_GameDetails1 = "GAME NAME:  " ;
+  prefix_GameDetails2 = "MANUFACTURER:  " ;
+  prefix_GameDetails3 = "YEAR:  " ;
+  prefix_GameDetails4 = "PLAYLIST:  " ;
+  prefix_GameDetails5 = "EMULATOR:  " ;
+  prefix_GameDetails6 = "VERSION:  " ;
+  prefix_GameDetails7 = "PLAYERS:  " ;
+  prefix_GameDetails8 = "MACHINE TYPE:  " ;
+  prefix_GameDetails9 = "AUTHORS:  " ;
+  prefix_GameDetails10 = "THEME:  " ;
+  prefix_GameDetails11 = "RATING:  " ;
+  prefix_GameDetails12 = "IPDB:  " ;
+  prefix_GameDetails13 = "CATEGORY:  " ;
+  prefix_GameDetails14 = "FEATURES:  " ;
+  prefix_GameDetails15 = "FILENAME:  " ;
+  prefix_GameDetails16 = "ROM:  " ;
+  prefix_GameDetails17 = "CUSTOM 1:  " ;
+  prefix_GameDetails18 = "CUSTOM 2:  " ;
+  prefix_GameDetails19 = "CUSTOM 3:  " ;
+  prefix_GameDetails20 = "ALT RUN:  " ;
+
+  // FONT COLOUR
+
+	Colour_GameDetails = 65535 ;	
+
+  // MAX CHARACTERS
+
+  MaxChar_GameDetails1 = 54 ;		
+  MaxChar_GameDetails2 = 54 ;		
+  MaxChar_GameDetails3 = 54 ;		
+  MaxChar_GameDetails4 = 54 ;		
+  MaxChar_GameDetails5 = 54 ;		
+  MaxChar_GameDetails6 = 54 ;		
+  MaxChar_GameDetails7 = 54 ;		
+  MaxChar_GameDetails8 = 54 ;		
+  MaxChar_GameDetails9 = 100 ;		
+  MaxChar_GameDetails10 = 54 ;		
+  MaxChar_GameDetails11 = 54 ;		
+  MaxChar_GameDetails12 = 54 ;		
+  MaxChar_GameDetails13 = 54 ;		
+  MaxChar_GameDetails14 = 54 ;		
+  MaxChar_GameDetails15 = 54 ;		
+  MaxChar_GameDetails16 = 54 ;
+  MaxChar_GameDetails17 = 54 ;		
+  MaxChar_GameDetails18 = 54 ;		
+  MaxChar_GameDetails19 = 54 ;		
+  MaxChar_GameDetails20 = 54 ;		
+  
+  // ROTATION
+
+  FontRotation_GameDetails = 0 ;
+
+  // X and Y ALIGNMENT
+
+  GameDetails_xAlign = 0 ;
+  GameDetails_yAlign = 2 ;
+
+
+  // X and Y POSITIONS
+
+  GameDetails1_xpoz = 5 ;
+  GameDetails2_xpoz = 5 ;
+  GameDetails3_xpoz = 5 ;			
+  GameDetails4_xpoz = 5 ;		
+  GameDetails5_xpoz = 5 ;			
+  GameDetails6_xpoz = 5 ;			
+  GameDetails7_xpoz = 5 ;		
+  GameDetails8_xpoz = 5 ;		
+  GameDetails9_xpoz = 5 ;
+  GameDetails10_xpoz = 5 ;
+  GameDetails11_xpoz = 5 ;			
+  GameDetails12_xpoz = 5 ;		
+  GameDetails13_xpoz = 5 ;			
+  GameDetails14_xpoz = 5 ;			
+  GameDetails15_xpoz = 5 ;		
+  GameDetails16_xpoz = 5 ;		
+  GameDetails17_xpoz = 5 ;			
+  GameDetails18_xpoz = 5 ;			
+  GameDetails19_xpoz = 5 ;		
+  GameDetails20_xpoz = 5 ;		
+
+  GameDetails1_ypoz = 8 ;
+  GameDetails2_ypoz = 12 ;  
+  GameDetails3_ypoz = 16 ;
+  GameDetails4_ypoz = 20 ;
+  GameDetails5_ypoz = 24 ;		
+  GameDetails6_ypoz = 28 ;		
+  GameDetails7_ypoz = 32 ;			
+  GameDetails8_ypoz = 36 ;		
+  GameDetails9_ypoz = 40 ;
+  GameDetails10_ypoz = 44 ;  
+  GameDetails11_ypoz = 48 ;
+  GameDetails12_ypoz = 52 ;
+  GameDetails13_ypoz = 56 ;		
+  GameDetails14_ypoz = 60 ;		
+  GameDetails15_ypoz = 64 ;			
+  GameDetails16_ypoz = 68 ;		
+  GameDetails17_ypoz = 72 ;		
+  GameDetails18_ypoz = 76 ;		
+  GameDetails19_ypoz = 80 ;			
+  GameDetails20_ypoz = 84 ;
+
+
+////////// END of GAME DETAILS //////////////
+
+/////// THEME and LAYOUT SETTINGS - DO NOT MODIFY !!! /////////////////////////////////////
+// These settings are required for this Theme and Layout. They are not to be modfified! ///
+
+	if (ShowAllText==1) {(pGameInfo = 2);}        // change pGameInfo to the screen you want to display text Zones on.  
+	else if (ShowAllText==0) {(pGameInfo = -1);}  // (0=topper, 1=DMD, 2=BG, 3=playfield) -1 means OFF!
+
+	pGameDetails = 3 ;                            // screen that Game Details Text is Displayed On.
+	SplashText_Font = "Digital-7 Italic";     // set the Splash Text font
+	pSplashInfo = -1 ;                            // set this to 2 to show splash text on the Backglass screen. -1 means OFF!
+
+	pfallback_function_Text = 3 ;                 // set the Fallback Default Text Zone to display Popper functions on
+

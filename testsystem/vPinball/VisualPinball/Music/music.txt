@@ -1,0 +1,1 @@
+Music files (.MP3,.OGG,etc) go in this directory
