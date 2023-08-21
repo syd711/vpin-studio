@@ -824,6 +824,19 @@ public class PinUPConnector implements InitializingBean {
     return results;
   }
 
+  public void deleteGames() {
+    Connection connect = this.connect();
+    try {
+      Statement statement = connect.createStatement();
+      statement.execute("DELETE FROM Games WHERE EMUID = 1;");
+      statement.close();
+    } catch (SQLException e) {
+      LOG.error("Failed to delete games: " + e.getMessage(), e);
+    } finally {
+      this.disconnect(connect);
+    }
+  }
+
   @NonNull
   public List<Integer> getGameIdsFromPlaylists() {
     List<Integer> result = new ArrayList<>();

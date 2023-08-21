@@ -23,7 +23,7 @@ public class OfflineCompetitionsTest extends AbstractVPinServerTest {
 
   @Test
   public void testCompetitions() {
-    Game game = gameService.getGameByFilename(AbstractVPinServerTest.TEST_GAME_FILENAME);
+    Game game = null;// gameService.getGameByFilename(AbstractVPinServerTest.TEST_GAME_FILENAME);
 
     Competition competition = new Competition();
     competition.setGameId(game.getId());

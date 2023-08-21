@@ -259,6 +259,12 @@ public class AltSoundService implements InitializingBean {
 
   @Override
   public void afterPropertiesSet() {
+    File altSoundFolder = systemService.getAltSoundFolder();
+    if (!altSoundFolder.exists() && altSoundFolder.getParentFile().exists()) {
+      if (!altSoundFolder.mkdirs()) {
+        LOG.error("Failed to create altsound folder " + altSoundFolder.getName());
+      }
+    }
     new Thread(() -> {
       clearCache();
     }).start();

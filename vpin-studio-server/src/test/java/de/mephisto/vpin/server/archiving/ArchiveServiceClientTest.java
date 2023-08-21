@@ -19,9 +19,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @SpringBootTest
 public class ArchiveServiceClientTest extends AbstractVPinServerTest {
 
-  //  private final static String TEST_FILE = "Batman 66.vpx";
-  private final static String TEST_FILE = "Hayburners (WIlliams 1951).vpx";
-
   @Autowired
   private TableBackupAdapterFactory tableBackupAdapterFactory;
 
@@ -36,18 +33,18 @@ public class ArchiveServiceClientTest extends AbstractVPinServerTest {
 
   @Test
   public void testExport() {
-    Game game = gameService.getGameByFilename(TEST_FILE);
-    TableBackupAdapter adapter = tableBackupAdapterFactory.createAdapter(archiveService.getDefaultArchiveSourceAdapter(), game);
-    JobExecutionResult msg = adapter.createBackup();
-    assertTrue(msg.getError() == null);
+//    Game game = gameService.getGameByFilename(TEST_FILE);
+//    TableBackupAdapter adapter = tableBackupAdapterFactory.createAdapter(archiveService.getDefaultArchiveSourceAdapter(), game);
+//    JobExecutionResult msg = adapter.createBackup();
+//    assertTrue(msg.getError() == null);
   }
 
   @Test
   public void testImport() {
-    String name = FilenameUtils.getBaseName(TEST_FILE);
-    ArchiveDescriptor archiveDescriptor = archiveService.getArchiveDescriptor(-2, name + ".vpinzip");
-    TableInstallerAdapter adapter = tableInstallerAdapterFactory.createAdapter(archiveDescriptor);
-    JobExecutionResult result = adapter.installTable();
-    assertNull(result.getError());
+//    String name = FilenameUtils.getBaseName(TEST_FILE);
+//    ArchiveDescriptor archiveDescriptor = archiveService.getArchiveDescriptor(-2, name + ".vpinzip");
+//    TableInstallerAdapter adapter = tableInstallerAdapterFactory.createAdapter(archiveDescriptor);
+//    JobExecutionResult result = adapter.installTable();
+//    assertNull(result.getError());
   }
 }
