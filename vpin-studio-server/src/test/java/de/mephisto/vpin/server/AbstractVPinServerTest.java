@@ -1,9 +1,12 @@
 package de.mephisto.vpin.server;
 
 import de.mephisto.vpin.restclient.ArchiveType;
+import de.mephisto.vpin.server.assets.AssetService;
+import de.mephisto.vpin.server.competitions.CompetitionService;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameDetailsRepository;
 import de.mephisto.vpin.server.games.GameService;
+import de.mephisto.vpin.server.highscores.HighscoreService;
 import de.mephisto.vpin.server.popper.PinUPConnector;
 import de.mephisto.vpin.server.system.SystemService;
 import org.junit.jupiter.api.TestInstance;
@@ -41,6 +44,15 @@ abstract public class AbstractVPinServerTest {
 
   @Autowired
   protected SystemService systemService;
+
+  @Autowired
+  protected CompetitionService competitionService;
+
+  @Autowired
+  protected AssetService assetService;
+
+  @Autowired
+  protected HighscoreService highscoreService;
 
   public void setupSystem() {
     pinUPConnector.deleteGames();

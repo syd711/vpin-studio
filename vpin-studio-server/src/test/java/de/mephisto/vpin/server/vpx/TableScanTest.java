@@ -1,22 +1,24 @@
 package de.mephisto.vpin.server.vpx;
 
+import de.mephisto.vpin.server.AbstractUnitTest;
+import de.mephisto.vpin.server.AbstractVPinServerTest;
 import de.mephisto.vpin.server.roms.ScanResult;
 import de.mephisto.vpin.server.util.VPXFileScanner;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
 
+import static de.mephisto.vpin.server.AbstractVPinServerTest.EM_TABLE_NAME;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class TableScanTest {
+public class TableScanTest extends AbstractUnitTest {
 
   @Test
   public void testTableScan1() {
-    File table = new File("C:\\vPinball\\VisualPinball\\Tables\\Hayburners (WIlliams 1951).vpx");
-    ScanResult scan = VPXFileScanner.scan(table);
-    assertEquals("Hayburners_51VPX.txt", scan.getHsFileName());
-    assertEquals("Hayburners_1951", scan.getRom());
-    assertEquals("Hayburners_1951", scan.getTableName());
+    ScanResult scan = VPXFileScanner.scan(new File("../testsystem/vPinball/VisualPinball/Tables/" + EM_TABLE_NAME));
+    assertEquals("Baseball_70VPX.txt", scan.getHsFileName());
+    assertEquals("Baseball_1970", scan.getRom());
+    assertEquals("Baseball_1970", scan.getTableName());
   }
 
   @Test
