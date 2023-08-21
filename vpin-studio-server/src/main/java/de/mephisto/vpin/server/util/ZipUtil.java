@@ -163,7 +163,7 @@ public class ZipUtil {
               fileOutputStream.write(buffer, 0, len);
             }
             fileOutputStream.close();
-            LOG.info("Written archived file " + target.getAbsolutePath());
+            LOG.info("Written \"" + target.getAbsolutePath() + "\" from zip file \"" + file.getAbsolutePath() + "\"");
           }
         }
         zis.closeEntry();

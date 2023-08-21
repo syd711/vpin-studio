@@ -64,6 +64,7 @@ public class TableHighscoresAdminController implements Initializable, DialogCont
             rom = this.game.getTableName();
           }
           client.getHigscoreBackupService().restore(rom, selectedItem.getFilename());
+          EventManager.getInstance().notifyTableChange(this.game.getId(), rom);
         } catch (Exception ex) {
           LOG.error("Failed to restore highscore: " + ex.getMessage(), ex);
           WidgetFactory.showAlert(Studio.stage, "Error", "Failed to restore highscore backup: " + ex.getMessage() );
@@ -85,6 +86,7 @@ public class TableHighscoresAdminController implements Initializable, DialogCont
           rom = this.game.getTableName();
         }
         client.getHigscoreBackupService().delete(rom, selectedItem.getFilename());
+        EventManager.getInstance().notifyTableChange(this.game.getId(), rom);
         refresh();
       }
     }
@@ -92,12 +94,6 @@ public class TableHighscoresAdminController implements Initializable, DialogCont
 
   @FXML
   private void onCancel(ActionEvent e) {
-    String rom = this.game.getRom();
-    if(StringUtils.isEmpty(rom)) {
-      rom = this.game.getTableName();
-    }
-    EventManager.getInstance().notifyTableChange(this.game.getId(), rom);
-
     Stage stage = (Stage) ((Button) e.getSource()).getScene().getWindow();
     stage.close();
   }
