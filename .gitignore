@@ -95,3 +95,8 @@ yarn-error.log*
 /resources/PinVolTables.ini
 /resources/PinVolVol.ini
 /PinVolTables.ini
+
+
+/testsystem/vPinball/**/*.png
+/testsystem/vPinball/**/*.mp3
+/testsystem/vPinball/**/*.mp4
