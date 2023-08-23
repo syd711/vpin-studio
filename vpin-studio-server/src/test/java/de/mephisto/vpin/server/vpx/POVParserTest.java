@@ -12,7 +12,7 @@ public class POVParserTest {
 
   @Test
   public void testParser() throws VPinStudioException {
-    File pov = new File("src/test/resources/test.pov");
+    File pov = new File("../testsystem/vPinball/VisualPinball/Tables/test.pov");
     POV settings = POVParser.parse(pov, -1);
     assertTrue(settings.getBallReflection() > 0);
     assertTrue(settings.getBallTrail() > 0);

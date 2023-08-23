@@ -2,6 +2,9 @@ package de.mephisto.vpin.server;
 
 import de.mephisto.vpin.restclient.ArchiveType;
 import de.mephisto.vpin.restclient.CompetitionType;
+import de.mephisto.vpin.server.archiving.ArchiveService;
+import de.mephisto.vpin.server.archiving.adapters.TableBackupAdapterFactory;
+import de.mephisto.vpin.server.archiving.adapters.TableInstallerAdapterFactory;
 import de.mephisto.vpin.server.assets.AssetRepository;
 import de.mephisto.vpin.server.assets.AssetService;
 import de.mephisto.vpin.server.competitions.Competition;
@@ -43,6 +46,7 @@ abstract public class AbstractVPinServerTest {
   public static final File NVRAM_TABLE = new File("testsystem/vPinball/VisualPinball/Tables/" + NVRAM_TABLE_NAME);
 
   public static final List<String> ROM = Arrays.asList(EM_ROM_NAME, VPREG_ROM_NAME, NVRAM_ROM_NAME);
+  public static final List<String> TABLE_NAMES = Arrays.asList(EM_TABLE_NAME, VPREG_TABLE_NAME, NVRAM_TABLE_NAME);
 
   static {
     SystemService.RESOURCES = "../resources/";
@@ -86,6 +90,15 @@ abstract public class AbstractVPinServerTest {
 
   @Autowired
   protected PopperServiceResource popperServiceResource;
+
+  @Autowired
+  protected TableBackupAdapterFactory tableBackupAdapterFactory;
+
+  @Autowired
+  protected TableInstallerAdapterFactory tableInstallerAdapterFactory;
+
+  @Autowired
+  protected ArchiveService archiveService;
 
   public void setupSystem() {
     pinUPConnector.deleteGames();

@@ -100,7 +100,11 @@ public class VPS {
   }
 
   public File getVpsDbFile() {
-    return new File("./resources", "vpsdb.json");
+    File folder = new File("./resources");
+    if(!folder.exists()) {
+      folder = new File("../resources");
+    }
+    return new File(folder, "vpsdb.json");
   }
 
   private List<VpsTable> loadTables() {

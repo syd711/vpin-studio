@@ -33,24 +33,4 @@ public class VPBMTest extends AbstractVPinServerTest {
   public void testUpdate() {
     assertFalse(vpbmService.isUpdateAvailable());
   }
-
-//  public static void main(String[] args) throws Exception {
-//    List<String> objects = new ArrayList<>();
-//    objects.add("D:/workspace/vpin-studio/resources/vpbm/vPinBackupManager.exe");
-//    objects.add("-v");
-//    ProcessBuilder pb = new ProcessBuilder(objects);
-//    pb.directory(new File("D:/workspace/vpin-studio/resources/vpbm/"));
-//    pb.redirectErrorStream(true);
-//    Process process = pb.start();
-//    BufferedReader reader = new BufferedReader(
-//      new InputStreamReader(process.getInputStream()));
-//    String line;
-//    while ((line = reader.readLine()) != null) {
-//      System.out.println(line);
-//    }
-//    reader.close();
-//
-//
-//    process.waitFor();
-//  }
 }

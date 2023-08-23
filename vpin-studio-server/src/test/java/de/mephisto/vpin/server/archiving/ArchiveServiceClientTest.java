@@ -23,16 +23,6 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest
 public class ArchiveServiceClientTest extends AbstractVPinServerTest {
 
-  @Autowired
-  private TableBackupAdapterFactory tableBackupAdapterFactory;
-
-  @Autowired
-  private TableInstallerAdapterFactory tableInstallerAdapterFactory;
-
-
-  @Autowired
-  private ArchiveService archiveService;
-
   @BeforeAll
   public void init() {
     setupSystem();

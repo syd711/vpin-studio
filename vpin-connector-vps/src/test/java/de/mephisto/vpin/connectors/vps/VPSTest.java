@@ -15,9 +15,8 @@ public class VPSTest {
     VPS vps = VPS.getInstance();
     List<VpsTable> tables = vps.getTables();
     assertFalse(tables.isEmpty());
-    System.out.println(tables.size() + " tables loaded.");
-
     VpsTable tableById = vps.getTableById("43ma3WQK");
     assertNotNull(tables);
+    assertNotNull(tableById);
   }
 }

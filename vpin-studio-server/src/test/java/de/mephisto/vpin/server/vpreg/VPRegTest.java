@@ -13,25 +13,18 @@ import java.io.File;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-@SpringBootTest
-public class VPRegTest extends AbstractVPinServerTest {
-
-  public static final String VPX = "Batman 66.vpx";
-  public static final String VPREG_FILE = "C:\\vPinball\\VisualPinball\\User\\VPReg.stg";
-
-  @Autowired
-  private GameService gameService;
+public class VPRegTest {
 
   @Test
   public void readFile() {
-    File file = new File(VPREG_FILE);
-    Game game = gameService.getGameByFilename(VPX);
+    File vpRegFile = new File("../testsystem/vPinball/VisualPinball/User/VPReg.stg");
 
-    VPReg reg = new VPReg(file, game.getRom(), game.getTableName());
+    VPReg reg = new VPReg(vpRegFile, "JAWSHighScore", AbstractVPinServerTest.VPREG_TABLE_NAME);
     VPRegScoreSummary summary = reg.readHighscores();
     String initialRaw = summary.toRaw();
     reg.resetHighscores();
     reg.restoreHighscore(summary);
+
     VPRegScoreSummary resettedSummary = reg.readHighscores();
     assertEquals(initialRaw, resettedSummary.toRaw());
     assertFalse(summary.getScores().isEmpty());
@@ -39,10 +32,9 @@ public class VPRegTest extends AbstractVPinServerTest {
 
   @Test
   public void fullReadAndRestore() {
-    File file = new File(VPREG_FILE);
-    Game game = gameService.getGameByFilename(VPX);
+    File vpRegFile = new File("../testsystem/vPinball/VisualPinball/User/VPReg.stg");
 
-    VPReg reg = new VPReg(file, game.getRom(), game.getTableName());
+    VPReg reg = new VPReg(vpRegFile, "JAWSHighScore", AbstractVPinServerTest.VPREG_TABLE_NAME);
     String data = reg.toJson();
     reg.restore(data);
     String restoredData = reg.toJson();

@@ -1,21 +1,37 @@
 package de.mephisto.vpin.server.system;
 
-import com.sun.jna.Library;
-import com.sun.jna.Native;
-import com.sun.jna.win32.W32APIOptions;
-import javafx.application.Platform;
-import javafx.geometry.Rectangle2D;
-import javafx.stage.Screen;
+import de.mephisto.vpin.server.AbstractVPinServerTest;
 import org.junit.jupiter.api.Test;
+import org.springframework.boot.test.context.SpringBootTest;
 
-public class SystemTest {
+import static org.junit.jupiter.api.Assertions.*;
 
-  public static interface User32 extends Library {
-    User32 INSTANCE = (User32) Native.loadLibrary("user32",User32.class, W32APIOptions.DEFAULT_OPTIONS);
-    boolean SystemParametersInfo (int one, int two, String s ,int three);
-  }
+@SpringBootTest
+public class SystemTest extends AbstractVPinServerTest {
+
   @Test
   public void testMaintenanceMode() {
-//    User32.INSTANCE.SystemParametersInfo(0x0014, 0, "E:\\downloads\\background.jpg" , 1);
+    assertTrue(systemService.getNvramFolder().exists());
+    assertTrue(systemService.getPinUPSystemFolder().exists());
+    assertTrue(systemService.getMameFolder().exists());
+    assertTrue(systemService.getVPXTablesFolder().exists());
+    assertTrue(systemService.getVisualPinballInstallationFolder().exists());
+    assertTrue(systemService.getMameRomFolder().exists());
+    assertTrue(systemService.getAltColorFolder().exists());
+    assertTrue(systemService.getAltSoundFolder().exists());
+    assertTrue(systemService.getVisualPinballUserFolder().exists());
+    assertTrue(systemService.getVPXExe().exists());
+    assertTrue(systemService.getVPMAliasFile().exists());
+    assertTrue(systemService.getVPXMusicFolder().exists());
+    assertTrue(systemService.getVPRegFile().exists());
+    assertTrue(systemService.getPinUPDatabaseFile().exists());
+    assertTrue(systemService.getPinemhiCommandFile().exists());
+    assertTrue(systemService.getBackupFolder().exists());
+
+    assertNotNull(systemService.getSystemSummary());
+    assertNotNull(systemService.getArchiveType());
+
+    assertFalse(systemService.getScreenInfos().isEmpty());
+    assertFalse(systemService.getCompetitionBadges().isEmpty());
   }
 }

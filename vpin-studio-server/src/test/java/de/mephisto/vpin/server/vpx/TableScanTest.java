@@ -1,17 +1,15 @@
 package de.mephisto.vpin.server.vpx;
 
-import de.mephisto.vpin.server.AbstractUnitTest;
-import de.mephisto.vpin.server.AbstractVPinServerTest;
 import de.mephisto.vpin.server.roms.ScanResult;
 import de.mephisto.vpin.server.util.VPXFileScanner;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
 
-import static de.mephisto.vpin.server.AbstractVPinServerTest.EM_TABLE_NAME;
+import static de.mephisto.vpin.server.AbstractVPinServerTest.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class TableScanTest extends AbstractUnitTest {
+public class TableScanTest {
 
   @Test
   public void testTableScan1() {
@@ -23,17 +21,16 @@ public class TableScanTest extends AbstractUnitTest {
 
   @Test
   public void testTableScan2() {
-    long start = System.currentTimeMillis();
-    File table = new File("C:\\vPinball\\VisualPinball\\Tables\\Batman 66.vpx");
+    File table = new File("../testsystem/vPinball/VisualPinball/Tables/" + VPREG_TABLE_NAME);
     ScanResult scan = VPXFileScanner.scan(table);
-    assertEquals("b66_orig", scan.getRom());
+    assertEquals(VPREG_ROM_NAME, scan.getRom());
   }
 
   @Test
   public void testTableScan3() throws Exception {
-    File table = new File("C:\\vPinball\\VisualPinball\\Tables\\Algar (1980).vpx");
+    File table = new File("../testsystem/vPinball/VisualPinball/Tables/" + NVRAM_TABLE_NAME);
     ScanResult scan = VPXFileScanner.scan(table);
-    assertEquals("algar_l1", scan.getRom());
+    assertEquals(NVRAM_ROM_NAME, scan.getRom());
   }
 
 }
