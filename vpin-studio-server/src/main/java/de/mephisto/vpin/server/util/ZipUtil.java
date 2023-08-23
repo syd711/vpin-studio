@@ -2,11 +2,9 @@ package de.mephisto.vpin.server.util;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.lang.NonNull;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
+import java.io.*;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import java.util.zip.ZipInputStream;
@@ -96,5 +94,130 @@ public class ZipUtil {
     }
     zipOut.closeEntry();
     fis.close();
+  }
+
+
+  public static String readZipFile(@NonNull File file, @NonNull String filename) {
+    boolean descriptorFound = false;
+    String fileToString = null;
+    try {
+      byte[] buffer = new byte[1024];
+      FileInputStream fileInputStream = new FileInputStream(file);
+      ZipInputStream zis = new ZipInputStream(fileInputStream);
+      ZipEntry zipEntry = zis.getNextEntry();
+
+      while (zipEntry != null) {
+        if (zipEntry.isDirectory()) {
+          //ignore
+        }
+        else {
+          String name = zipEntry.getName();
+          if (name.equals(filename)) {
+            descriptorFound = true;
+
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            int len;
+            while ((len = zis.read(buffer)) > 0) {
+              baos.write(buffer, 0, len);
+            }
+            baos.close();
+            fileToString = baos.toString();
+          }
+        }
+        zis.closeEntry();
+        zipEntry = zis.getNextEntry();
+      }
+      fileInputStream.close();
+      zis.closeEntry();
+      zis.close();
+    } catch (Exception e) {
+      LOG.error("Reading of " + file.getAbsolutePath() + " failed: " + e.getMessage(), e);
+    }
+
+    if (!descriptorFound) {
+      LOG.info("The selected archive does not contain file \"" + filename + "\"");
+    }
+    return fileToString;
+  }
+
+  public static boolean writeZippedFile(@NonNull File file, @NonNull String filename, @NonNull File target) {
+    boolean descriptorFound = false;
+    try {
+      byte[] buffer = new byte[1024];
+      FileInputStream fileInputStream = new FileInputStream(file);
+      ZipInputStream zis = new ZipInputStream(fileInputStream);
+      ZipEntry zipEntry = zis.getNextEntry();
+
+      while (zipEntry != null) {
+        if (zipEntry.isDirectory()) {
+          //ignore
+        }
+        else {
+          String name = zipEntry.getName();
+          if (name.equals(filename)) {
+            descriptorFound = true;
+
+            FileOutputStream fileOutputStream = new FileOutputStream(target);
+            int len;
+            while ((len = zis.read(buffer)) > 0) {
+              fileOutputStream.write(buffer, 0, len);
+            }
+            fileOutputStream.close();
+            LOG.info("Written \"" + target.getAbsolutePath() + "\" from zip file \"" + file.getAbsolutePath() + "\"");
+          }
+        }
+        zis.closeEntry();
+        zipEntry = zis.getNextEntry();
+      }
+      fileInputStream.close();
+      zis.closeEntry();
+      zis.close();
+
+      return true;
+    } catch (Exception e) {
+      LOG.error("Reading of " + file.getAbsolutePath() + " failed: " + e.getMessage(), e);
+    }
+
+    if (!descriptorFound) {
+      LOG.info("The selected archive does not contain file \"" + filename + "\"");
+    }
+    return false;
+  }
+
+  public static boolean contains(@NonNull File file, @NonNull String filename) {
+    boolean fileFound = false;
+    try {
+      byte[] buffer = new byte[1024];
+      FileInputStream fileInputStream = new FileInputStream(file);
+      ZipInputStream zis = new ZipInputStream(fileInputStream);
+      ZipEntry zipEntry = zis.getNextEntry();
+
+      while (zipEntry != null) {
+        if (zipEntry.isDirectory()) {
+          //ignore
+        }
+        else {
+          String name = zipEntry.getName();
+          if (name.endsWith(filename)) {
+            fileFound = true;
+          }
+        }
+        zis.closeEntry();
+
+        if(fileFound) {
+          break;
+        }
+
+        zipEntry = zis.getNextEntry();
+      }
+      fileInputStream.close();
+      zis.closeEntry();
+      zis.close();
+    } catch (Exception e) {
+      LOG.error("Unzipping of " + file.getAbsolutePath() + " failed: " + e.getMessage(), e);
+      return false;
+    }
+
+    return fileFound;
   }
 }

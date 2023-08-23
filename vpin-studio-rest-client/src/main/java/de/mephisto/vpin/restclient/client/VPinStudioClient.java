@@ -51,6 +51,7 @@ public class VPinStudioClient implements ObservedPropertyChangeListener, Overlay
   private final PinVolServiceClient pinVolServiceClient;
   private final PINemHiServiceClient pinemHiServiceClient;
   private final PlaylistsServiceClient playlistsServiceClient;
+  private final HigscoreBackupServiceClient higscoreBackupServiceClient;
 
   public VPinStudioClient(String host) {
     this.host = host;
@@ -80,6 +81,11 @@ public class VPinStudioClient implements ObservedPropertyChangeListener, Overlay
     this.pinVolServiceClient = new PinVolServiceClient(this);
     this.pinemHiServiceClient = new PINemHiServiceClient(this);
     this.playlistsServiceClient = new PlaylistsServiceClient(this);
+    this.higscoreBackupServiceClient = new HigscoreBackupServiceClient(this);
+  }
+
+  public HigscoreBackupServiceClient getHigscoreBackupService() {
+    return higscoreBackupServiceClient;
   }
 
   public PlaylistsServiceClient getPlaylistsService() {

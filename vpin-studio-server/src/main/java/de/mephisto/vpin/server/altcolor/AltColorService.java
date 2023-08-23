@@ -178,6 +178,13 @@ public class AltColorService implements InitializingBean {
 
   @Override
   public void afterPropertiesSet() {
+    File altColorFolder = systemService.getAltColorFolder();
+    if (!altColorFolder.exists() && altColorFolder.getParentFile().exists()) {
+      if (!altColorFolder.mkdirs()) {
+        LOG.error("Failed to create altcolor folder " + altColorFolder.getName());
+      }
+    }
+
     new Thread(() -> {
       clearCache();
     }).start();

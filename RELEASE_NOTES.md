@@ -12,7 +12,12 @@ Added a new preferences section for the custom options of PinUP Popper, because.
 
 **Table Management**
 
- Added file drop support for the sections: DirectB2, PUP Pack, ALT Color, ALT Sound.
+Added file drop support for the sections: DirectB2, PUP Pack, ALT Color, ALT Sound.
+
+**Table Management: Highscores**
+
+Added backup/restore option for highscores. This way, the highscore can be archived before joining a competition and restored afterwards.
+The backup files are stored inside the _resources/_ folder of the VPin-Studio server.
 
 **Competitions: Table Subscriptions**
 
@@ -23,6 +28,10 @@ New highscores will be posted there so you can always check your current score o
 
 **Also**, other players can subscribe to the channel. By doing this, their highscores will compete with yours.
 More details about this can be found here: https://www.youtube.com/@vpin-studio/videos
+
+**Competitions: Offline Competitions**
+
+Added highscore reset for offline competitions.
 
 **Maintenance Mode**
 

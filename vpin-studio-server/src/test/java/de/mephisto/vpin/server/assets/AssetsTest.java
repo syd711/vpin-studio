@@ -22,27 +22,13 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @SpringBootTest
 public class AssetsTest extends AbstractVPinServerTest {
-  private final static long TEST_SERVER_ID = 1043199618172858500l;
-
-  @Autowired
-  private CompetitionService competitionService;
-
-  @Autowired
-  private AssetService assetService;
-
-  @Autowired
-  private GameService gameService;
-
-  @Autowired
-  private HighscoreService highscoreService;
-
 
   @Test
   public void testFinishMessage() throws Exception {
     Competition competition = competitionService.getCompetition(1661);
     competition.setWinnerInitials("FFF");
     Game game = gameService.getGame(competition.getGameId());
-    ScoreSummary scoreSummary = highscoreService.getScoreSummary(TEST_SERVER_ID, competition.getGameId(), null);
+    ScoreSummary scoreSummary = highscoreService.getScoreSummary(0, competition.getGameId(), null);
 
     Player player = new Player();
     player.setInitials("FFF");

@@ -256,7 +256,7 @@
                                     <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
                                  </graphic>
                                  <tooltip>
-                                    <Tooltip prefWidth="300.0" text="The reset is required in case your highscore is already higher than the others. You can backup your table to restore them after the competition is finished." wrapText="true" />
+                                    <Tooltip prefWidth="300.0" text="The reset is required in case your highscore is already higher than the others. You can backup your existing highscore to restore it after the competition is finished." wrapText="true" />
                                  </tooltip>
                               </Label>
                            </children>

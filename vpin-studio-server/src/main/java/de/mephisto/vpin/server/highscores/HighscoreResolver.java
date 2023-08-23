@@ -1,6 +1,6 @@
 package de.mephisto.vpin.server.highscores;
 
-import de.mephisto.vpin.commons.HighscoreType;
+import de.mephisto.vpin.restclient.HighscoreType;
 import de.mephisto.vpin.commons.utils.SystemCommandExecutor;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.system.SystemService;
@@ -130,7 +130,7 @@ class HighscoreResolver {
    * We use the manual set rom name to find the highscore in the "/User/VPReg.stg" file.
    */
   private String readVPRegHighscore(Game game, HighscoreMetadata metadata) throws IOException {
-    VPReg reg = new VPReg(systemService.getVPRegFile(), game);
+    VPReg reg = new VPReg(systemService.getVPRegFile(), game.getRom(), game.getTableName());
 
     //TODO cleanup metadata usage
     if (reg.containsGame()) {

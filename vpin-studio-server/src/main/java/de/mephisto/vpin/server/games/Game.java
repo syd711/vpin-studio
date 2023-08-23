@@ -1,7 +1,7 @@
 package de.mephisto.vpin.server.games;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import de.mephisto.vpin.commons.HighscoreType;
+import de.mephisto.vpin.restclient.HighscoreType;
 import de.mephisto.vpin.restclient.popper.PopperScreen;
 import de.mephisto.vpin.restclient.representations.ValidationState;
 import de.mephisto.vpin.server.popper.Emulator;

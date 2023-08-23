@@ -83,6 +83,7 @@ public class VpaArchiveSourceAdapter implements ArchiveSourceAdapter {
   public void invalidate() {
     cache.clear();
     ArchiveUtil.exportDescriptorJson(this);
+    getArchiveDescriptors();
     LOG.info("Invalidated archive source \"" + this.getArchiveSource() + "\"");
   }
 }

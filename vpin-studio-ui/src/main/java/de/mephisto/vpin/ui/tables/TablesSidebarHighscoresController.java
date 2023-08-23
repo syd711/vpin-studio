@@ -3,8 +3,8 @@ package de.mephisto.vpin.ui.tables;
 import de.mephisto.vpin.commons.fx.widgets.WidgetController;
 import de.mephisto.vpin.commons.utils.ScoreGraphUtil;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
+import de.mephisto.vpin.restclient.HighscoreBackup;
 import de.mephisto.vpin.restclient.descriptors.ResetHighscoreDescriptor;
-import de.mephisto.vpin.restclient.client.VPinStudioClient;
 import de.mephisto.vpin.restclient.representations.*;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.events.EventManager;
@@ -14,15 +14,18 @@ import eu.hansolo.tilesfx.Tile;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.ByteArrayInputStream;
 import java.net.URL;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
@@ -67,6 +70,12 @@ public class TablesSidebarHighscoresController implements Initializable {
   private Button cardBtn;
 
   @FXML
+  private Button backupBtn;
+
+  @FXML
+  private Button restoreBtn;
+
+  @FXML
   private Label rawScoreLabel;
 
   @FXML
@@ -79,11 +88,15 @@ public class TablesSidebarHighscoresController implements Initializable {
   private Label formattedTitleLabel;
 
   @FXML
+  private Label backupCountLabel;
+
+  @FXML
   private BorderPane scoreGraph;
 
   private Optional<GameRepresentation> game = Optional.empty();
 
   private TablesSidebarController tablesSidebarController;
+  private List<HighscoreBackup> highscoreBackups;
 
   // Add a public no-args constructor
   public TablesSidebarHighscoresController() {
@@ -117,6 +130,47 @@ public class TablesSidebarHighscoresController implements Initializable {
   }
 
   @FXML
+  private void onBackup() {
+    if (this.game.isPresent()) {
+      GameRepresentation g = this.game.get();
+      String last = null;
+      if (!this.highscoreBackups.isEmpty()) {
+        last = "The last backup was created at " + this.highscoreBackups.get(0);
+      }
+
+      Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Create highscore backup for table \"" + g.getGameDisplayName() + "\"?", last);
+      if (result.isPresent() && result.get().equals(ButtonType.OK)) {
+        String rom = g.getRom();
+        if (StringUtils.isEmpty(rom)) {
+          rom = g.getTableName();
+        }
+        try {
+          Studio.client.getHigscoreBackupService().backup(rom, g.getId());
+        } catch (Exception e) {
+          LOG.error("Failed to back highscore: " + e.getMessage(), e);
+          WidgetFactory.showAlert(Studio.stage, "Error", "Failed create highscore backup: " + e.getMessage());
+        }
+        EventManager.getInstance().notifyTableChange(g.getId(), rom);
+      }
+    }
+  }
+
+  @FXML
+  private void onRestore() {
+    if (this.game.isPresent()) {
+      GameRepresentation g = this.game.get();
+      if (StringUtils.isEmpty(g.getRom()) && StringUtils.isEmpty(g.getTableName())) {
+        WidgetFactory.showAlert(Studio.stage, "ROM name is missing.",
+            "To backup the the highscore of a table, the ROM name or tablename must have been resolved.",
+            "You can enter the values for this manually in the \"Script Details\" section.");
+      }
+      else {
+        Dialogs.openHighscoresAdminDialog(tablesSidebarController, this.game.get());
+      }
+    }
+  }
+
+  @FXML
   private void onScoreReset() {
     if (this.game.isPresent()) {
       GameRepresentation g = this.game.get();
@@ -134,6 +188,7 @@ public class TablesSidebarHighscoresController implements Initializable {
   }
 
   public void setGame(Optional<GameRepresentation> game) {
+    this.highscoreBackups = new ArrayList<>();
     this.game = game;
     this.refreshView(game, false);
   }
@@ -148,6 +203,7 @@ public class TablesSidebarHighscoresController implements Initializable {
     this.hsLastModifiedLabel.setText("-");
     this.hsLastScannedLabel.setText("-");
     this.hsRecordLabel.setText("-");
+    this.backupCountLabel.setText("-");
 
     rawTitleLabel.setVisible(false);
     formattedTitleLabel.setVisible(false);
@@ -160,9 +216,28 @@ public class TablesSidebarHighscoresController implements Initializable {
     cardBtn.setDisable(true);
     resetBtn.setDisable(true);
 
+    backupBtn.setDisable(true);
+    restoreBtn.setText("Restore");
+
     if (g.isPresent()) {
       GameRepresentation game = g.get();
       scanHighscoreBtn.setDisable(false);
+      restoreBtn.setDisable(false);
+
+      String rom = game.getRom();
+      if (StringUtils.isEmpty(rom)) {
+        rom = game.getTableName();
+      }
+      if (StringUtils.isEmpty(rom)) {
+        backupCountLabel.setText("0");
+      }
+      else {
+        highscoreBackups = Studio.client.getHigscoreBackupService().get(rom);
+        backupCountLabel.setText(String.valueOf(highscoreBackups.size()));
+        if (!highscoreBackups.isEmpty()) {
+          restoreBtn.setText("Restore (" + highscoreBackups.size() + ")");
+        }
+      }
 
       ScoreSummaryRepresentation summary = Studio.client.getGameService().getGameScores(game.getId());
       HighscoreMetadataRepresentation metadata = summary.getMetadata();
@@ -179,6 +254,8 @@ public class TablesSidebarHighscoresController implements Initializable {
       }
 
       if (metadata != null) {
+        backupBtn.setDisable(false);
+
         if (metadata.getFilename() != null) {
           this.hsFileLabel.setText(metadata.getFilename());
         }

@@ -1,7 +1,7 @@
 package de.mephisto.vpin.server.highscores;
 
 import com.google.common.annotations.VisibleForTesting;
-import de.mephisto.vpin.commons.HighscoreType;
+import de.mephisto.vpin.restclient.HighscoreType;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.server.competitions.CompetitionsRepository;
 import de.mephisto.vpin.server.competitions.RankedPlayer;
@@ -46,6 +46,8 @@ public class HighscoreService implements InitializingBean {
   @Autowired
   private PreferencesService preferencesService;
 
+  private boolean pauseChangeEvents;
+
   private HighscoreResolver highscoreResolver;
 
   private final List<HighscoreChangeListener> listeners = new ArrayList<>();
@@ -64,7 +66,7 @@ public class HighscoreService implements InitializingBean {
           break;
         }
         case VPReg: {
-          VPReg reg = new VPReg(systemService.getVPRegFile(), game);
+          VPReg reg = new VPReg(systemService.getVPRegFile(), game.getRom(), game.getTableName());
           result = reg.resetHighscores();
           break;
         }
@@ -376,7 +378,7 @@ public class HighscoreService implements InitializingBean {
     List<Score> newScores = highscoreParser.parseScores(newHighscore.getLastModified(), newHighscore.getRaw(), game.getId(), serverId);
     List<Score> oldScores = getOrCloneOldHighscores(oldHighscore, game, oldRaw, serverId, newScores);
 
-    if(!oldScores.isEmpty()) {
+    if (!oldScores.isEmpty()) {
       List<Integer> changedPositions = calculateChangedPositions(oldScores, newScores);
       if (changedPositions.isEmpty()) {
         LOG.info("No highscore change of rom '" + game.getRom() + "' detected for " + game + ", skipping notification event.");
@@ -478,7 +480,17 @@ public class HighscoreService implements InitializingBean {
     return -1;
   }
 
+  public void setPauseChangeEvents(boolean pauseChangeEvents) {
+    this.pauseChangeEvents = pauseChangeEvents;
+    LOG.info("Setting highscore change events to: " + pauseChangeEvents);
+  }
+
   private void triggerHighscoreChange(@NonNull HighscoreChangeEvent event) {
+    if (pauseChangeEvents) {
+      LOG.info("Skipping highscore change event because change events are paused.");
+      return;
+    }
+
     for (HighscoreChangeListener listener : listeners) {
       listener.highscoreChanged(event);
     }

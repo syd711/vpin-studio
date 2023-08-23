@@ -55,12 +55,14 @@ hs_err_pid*
 /resources/VPReg/*
 /resources/vpa2/*
 /resources/vpa/*
+/resources/backups/*
 /resources/vpbm/vPinBackupManager.json
 /.idea/
 /VPReg/
 /target/
 /dependency-reduced-pom.xml
-/resources/*.properties
+/resources/system.properties
+/resources/card-generator.properties
 /resources/*.db-journal
 /resources/*.sqbpro
 /resources/b2s/*.png
@@ -93,3 +95,8 @@ yarn-error.log*
 /resources/PinVolTables.ini
 /resources/PinVolVol.ini
 /PinVolTables.ini
+
+
+/testsystem/vPinball/**/*.png
+/testsystem/vPinball/**/*.mp3
+/testsystem/vPinball/**/*.mp4
