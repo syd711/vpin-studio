@@ -332,18 +332,6 @@ public class GameService {
     return games.stream().filter(g -> gameIdsFromPlaylists.contains(g.getId())).collect(Collectors.toList());
   }
 
-  @SuppressWarnings("unused")
-  @Nullable
-  public Game getGameByVpxFilename(@NonNull String filename) {
-    List<Game> games = pinUPConnector.getGames();
-    for (Game game : games) {
-      if (game.getGameFile().getName().equals(filename)) {
-        return game;
-      }
-    }
-    return null;
-  }
-
   public Game getGameByFilename(String name) {
     Game game = this.pinUPConnector.getGameByFilename(name);
     if (game != null) {

@@ -9,14 +9,11 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 public class HighscoreParserTest extends AbstractVPinServerTest {
 
-  @Autowired
-  private HighscoreParser highscoreParser;
 
   private String RAW1 = "5 MULTIBALLS CHAMPS\n" +
       "1) JEK\n" +
@@ -200,24 +197,24 @@ public class HighscoreParserTest extends AbstractVPinServerTest {
     assertTrue(test.size() > 3);
 
     Score score = test.get(0);
-    assertTrue(score.getScore().equals("75.000.000"));
-    assertTrue(score.getPlayerInitials().equals("OPT"));
+    assertEquals("75.000.000", score.getScore());
+    assertEquals("OPT", score.getPlayerInitials());
 
     score = test.get(1);
-    assertTrue(score.getScore().equals("55.000.000"));
-    assertTrue(score.getPlayerInitials().equals("JAZ"));
+    assertEquals("55.000.000", score.getScore());
+    assertEquals("JAZ", score.getPlayerInitials());
 
     score = test.get(2);
-    assertTrue(score.getScore().equals("40.000.000"));
-    assertTrue(score.getPlayerInitials().equals("PWL"));
+    assertEquals("40.000.000", score.getScore());
+    assertEquals("PWL", score.getPlayerInitials());
 
     score = test.get(3);
-    assertTrue(score.getScore().equals("30.000.000"));
-    assertTrue(score.getPlayerInitials().equals("IRN"));
+    assertEquals("30.000.000", score.getScore());
+    assertEquals("IRN", score.getPlayerInitials());
 
     score = test.get(4);
-    assertTrue(score.getScore().equals("25.000.000"));
-    assertTrue(score.getPlayerInitials().equals("BEE"));
+    assertEquals("25.000.000", score.getScore());
+    assertEquals("BEE", score.getPlayerInitials());
 
   }
 }

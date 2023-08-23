@@ -10,20 +10,15 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest
 public class PopperResourceTest extends AbstractVPinServerTest {
 
-
-  @Autowired
-  private PopperResource popperResource;
-
   @Test
   public void testStartExit() {
-    boolean result = popperResource.gameLaunch("bubu");
-    assertFalse(result);
+    super.setupSystem();
 
-    result = popperResource.gameExit("bubu");
-    assertFalse(result);
+    boolean result = popperResource.gameLaunch(EM_TABLE_NAME);
+    assertTrue(result);
 
-//    result = popperResource.gameLaunch(AbstractVPinServerTest.TEST_GAME_FILENAME);
-//    assertTrue(result);
+    result = popperResource.gameLaunch("bubu");
+    assertFalse(result);
 
     assertTrue(popperResource.popperLaunch());
   }

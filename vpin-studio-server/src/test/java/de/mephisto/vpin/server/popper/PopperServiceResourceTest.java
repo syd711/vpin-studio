@@ -12,19 +12,15 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest
 public class PopperServiceResourceTest extends AbstractVPinServerTest {
 
-
-  @Autowired
-  private PopperServiceResource popperResource;
-
   @Test
   public void testControl() {
-    PinUPControl control = popperResource.getPinUPControlFor(PopperScreen.Other2.name());
+    PinUPControl control = popperServiceResource.getPinUPControlFor(PopperScreen.Other2.name());
     assertEquals(control.getDescription(), "Show Other");
 
-    control = popperResource.getPinUPControlFor(PopperScreen.GameHelp.name());
+    control = popperServiceResource.getPinUPControlFor(PopperScreen.GameHelp.name());
     assertEquals(control.getDescription(), "Game Help");
 
-    control = popperResource.getPinUPControlFor(PopperScreen.GameInfo.name());
+    control = popperServiceResource.getPinUPControlFor(PopperScreen.GameInfo.name());
     assertEquals(control.getDescription(), "Game Info/Flyer");
   }
 }

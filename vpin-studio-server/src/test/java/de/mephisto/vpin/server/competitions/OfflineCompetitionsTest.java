@@ -1,14 +1,8 @@
 package de.mephisto.vpin.server.competitions;
 
-import de.mephisto.vpin.restclient.CompetitionType;
 import de.mephisto.vpin.server.AbstractVPinServerTest;
-import de.mephisto.vpin.server.games.Game;
-import de.mephisto.vpin.server.games.GameService;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-
-import java.util.Date;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -17,24 +11,17 @@ public class OfflineCompetitionsTest extends AbstractVPinServerTest {
 
   @Test
   public void testCompetitions() {
-    Game game = null;// gameService.getGameByFilename(AbstractVPinServerTest.TEST_GAME_FILENAME);
-
-    Competition competition = new Competition();
-    competition.setGameId(game.getId());
-    competition.setType(CompetitionType.OFFLINE.name());
-    competition.setName(String.valueOf(new Date().getTime()));
-    competition.setStartDate(new Date());
-    competition.setEndDate(new Date());
-
-    Competition save = competitionService.save(competition);
+    Competition save = super.createOfflineCompetition(AbstractVPinServerTest.EM_TABLE_NAME);
     assertNotNull(save);
     assertFalse(save.isActive());
     assertNotNull(save.getCreatedAt());
+    assertNotNull(save.getEndDate());
+    assertNotNull(save.getStartDate());
+    assertNotNull(save.getName());
 
-    Competition finished = competitionService.finishCompetition(competition);
+    Competition finished = competitionService.finishCompetition(save);
+
     assertNotNull(finished.getWinnerInitials());
-
-    boolean delete = competitionService.delete(save.getId());
-    assertTrue(delete);
+    assertTrue(competitionService.delete(save.getId()));
   }
 }

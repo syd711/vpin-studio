@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class HighscoreTest {
@@ -52,8 +53,8 @@ public class HighscoreTest {
     newScores.add(new Score(new Date(), -1, "DDD", null, "6000", 6000, 5));
 
     List<Integer>  changedPositions = highscoreService.calculateChangedPositions(oldScores, newScores);
-    assertTrue(changedPositions.size() == 1);
-    assertTrue(changedPositions.get(0).equals(1));
+    assertEquals(1, changedPositions.size());
+    assertEquals(1, (int) changedPositions.get(0));
   }
 
   @Test
@@ -75,9 +76,9 @@ public class HighscoreTest {
     newScores.add(new Score(new Date(), -1, "DDD", null, "6001", 6001, 5));
 
     List<Integer>  changedPositions = highscoreService.calculateChangedPositions(oldScores, newScores);
-    assertTrue(changedPositions.size() == 2);
-    assertTrue(changedPositions.get(0).equals(1));
-    assertTrue(changedPositions.get(1).equals(5));
+    assertEquals(2, changedPositions.size());
+    assertEquals(1, (int) changedPositions.get(0));
+    assertEquals(5, (int) changedPositions.get(1));
   }
 
   @Test
@@ -99,9 +100,9 @@ public class HighscoreTest {
     newScores.add(new Score(new Date(), -1, "CCC", null, "7000", 7000, 5));
 
     List<Integer>  changedPositions = highscoreService.calculateChangedPositions(oldScores, newScores);
-    assertTrue(changedPositions.size() == 3);
-    assertTrue(changedPositions.get(0).equals(1));
-    assertTrue(changedPositions.get(1).equals(2));
-    assertTrue(changedPositions.get(2).equals(3));
+    assertEquals(3, changedPositions.size());
+    assertEquals(1, (int) changedPositions.get(0));
+    assertEquals(2, (int) changedPositions.get(1));
+    assertEquals(3, (int) changedPositions.get(2));
   }
 }

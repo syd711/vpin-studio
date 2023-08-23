@@ -19,8 +19,7 @@ public class PinUPConnectorTest extends AbstractVPinServerTest {
 
   @Test
   public void testGameAdding() {
-    File file = new File("src/test/resources/Aces High (1965).vpx");
-    int l = connector.importGame(file);
+    int l = connector.importGame(EM_TABLE);
     if (l > 0) {
       assertTrue(connector.deleteGame(l));
     }
