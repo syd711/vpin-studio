@@ -5,6 +5,7 @@ import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameService;
 import de.mephisto.vpin.server.system.SystemService;
 import edu.umd.cs.findbugs.annotations.NonNull;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
@@ -60,8 +61,11 @@ public class HighscoreBackupService implements InitializingBean {
     return result;
   }
 
-  public boolean backup(@NonNull String rom, int gameId) throws Exception {
-    Game game = gameService.getGame(gameId);
+  public boolean backup(Game game) {
+    String rom = game.getRom();
+    if (StringUtils.isEmpty(rom)) {
+      rom = game.getTableName();
+    }
     File folder = new File(systemService.getBackupFolder(), rom);
     return HighscoreBackupUtil.writeBackupFile(highscoreService, systemService, game, folder);
   }

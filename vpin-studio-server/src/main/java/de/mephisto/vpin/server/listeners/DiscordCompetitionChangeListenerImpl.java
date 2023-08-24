@@ -11,6 +11,7 @@ import de.mephisto.vpin.server.discord.DiscordChannelMessageFactory;
 import de.mephisto.vpin.server.discord.DiscordService;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameService;
+import de.mephisto.vpin.server.highscores.HighscoreBackupService;
 import de.mephisto.vpin.server.highscores.HighscoreService;
 import de.mephisto.vpin.server.players.Player;
 import de.mephisto.vpin.server.popper.PopperService;
@@ -50,42 +51,51 @@ public class DiscordCompetitionChangeListenerImpl extends DefaultCompetitionChan
   private AssetService assetService;
 
   @Autowired
+  private HighscoreBackupService highscoreBackupService;
+
+  @Autowired
   private DiscordChannelMessageFactory discordChannelMessageFactory;
 
   @Override
   public void competitionStarted(@NonNull Competition competition) {
     if (competition.getType().equals(CompetitionType.DISCORD.name())) {
-      Game game = gameService.getGame(competition.getGameId());
-      if (game != null) {
+      try {
+        Game game = gameService.getGame(competition.getGameId());
+        if (game != null) {
 
-        boolean isOwner = competition.getOwner().equals(String.valueOf(discordService.getBotId()));
-        long serverId = competition.getDiscordServerId();
-        long channelId = competition.getDiscordChannelId();
-        long botId = discordService.getBotId();
+          boolean isOwner = competition.getOwner().equals(String.valueOf(discordService.getBotId()));
+          long serverId = competition.getDiscordServerId();
+          long channelId = competition.getDiscordChannelId();
+          long botId = discordService.getBotId();
 
-        //check if the database has been resetted and we only join a competition that we created earlier
-        boolean active = discordService.isCompetitionActive(serverId, channelId, competition.getUuid());
-        if (active) {
-          LOG.info("The " + competition + " is still available and active, skipping init process.");
+          //check if the database has been resetted and we only join a competition that we created earlier
+          boolean active = discordService.isCompetitionActive(serverId, channelId, competition.getUuid());
+          if (active) {
+            LOG.info("The " + competition + " is still available and active, skipping init process.");
+          }
+          else if (isOwner) {
+            String description = "This is an online competition and player bots can join it.\nUse the **initials of your bot** when you create a new highscore.\n" +
+                "Only these will be submitted to the competition.\nCompetition updates are pinned on this channel.\n\n";
+            String base64Data = CompetitionDataHelper.DATA_INDICATOR + CompetitionDataHelper.toBase64(competition, game);
+            byte[] image = assetService.getCompetitionStartedCard(competition, game);
+            String message = discordChannelMessageFactory.createDiscordCompetitionCreatedMessage(competition.getDiscordServerId(), botId, competition.getUuid());
+
+            long messageId = discordService.sendMessage(serverId, channelId, message, image, competition.getName() + ".png", description + base64Data);
+            discordService.initCompetition(serverId, channelId, messageId);
+            LOG.info("Finished Discord update of \"" + competition.getName() + "\"");
+          }
+
+          if (highscoreBackupService.backup(game)) {
+            highscoreService.resetHighscore(game);
+          }
+          LOG.info("Resetted highscores of " + game.getGameDisplayName() + " for " + competition);
         }
-        else if (isOwner) {
-          String description = "This is an online competition and player bots can join it.\nUse the **initials of your bot** when you create a new highscore.\n" +
-              "Only these will be submitted to the competition.\nCompetition updates are pinned on this channel.\n\n";
-          String base64Data = CompetitionDataHelper.DATA_INDICATOR + CompetitionDataHelper.toBase64(competition, game);
-          byte[] image = assetService.getCompetitionStartedCard(competition, game);
-          String message = discordChannelMessageFactory.createDiscordCompetitionCreatedMessage(competition.getDiscordServerId(), botId, competition.getUuid());
 
-          long messageId = discordService.sendMessage(serverId, channelId, message, image, competition.getName() + ".png", description + base64Data);
-          discordService.initCompetition(serverId, channelId, messageId);
-          LOG.info("Finished Discord update of \"" + competition.getName() + "\"");
+        if (competition.getBadge() != null && competition.isActive()) {
+          popperService.augmentWheel(game, competition.getBadge());
         }
-
-        highscoreService.resetHighscore(game);
-        LOG.info("Resetted highscores of " + game.getGameDisplayName() + " for " + competition);
-      }
-
-      if (competition.getBadge() != null && competition.isActive()) {
-        popperService.augmentWheel(game, competition.getBadge());
+      } catch (Exception e) {
+        LOG.error("Error starting discord competition: " + e.getMessage(), e);
       }
     }
   }
@@ -93,18 +103,26 @@ public class DiscordCompetitionChangeListenerImpl extends DefaultCompetitionChan
   @Override
   public void competitionCreated(@NonNull Competition competition) {
     if (competition.getType().equals(CompetitionType.DISCORD.name())) {
-      Game game = gameService.getGame(competition.getGameId());
-      boolean isOwner = competition.getOwner().equals(String.valueOf(discordService.getBotId()));
-      DiscordMember bot = discordService.getBot();
-      if (game != null && !isOwner && bot != null) {
-        highscoreService.resetHighscore(game);
+      try {
+        Game game = gameService.getGame(competition.getGameId());
+        boolean isOwner = competition.getOwner().equals(String.valueOf(discordService.getBotId()));
+        DiscordMember bot = discordService.getBot();
 
-        long discordServerId = competition.getDiscordServerId();
-        long discordChannelId = competition.getDiscordChannelId();
-        long msgId = discordService.sendMessage(discordServerId, discordChannelId, discordChannelMessageFactory.createCompetitionJoinedMessage(competition, bot));
-        discordService.addCompetitionPlayer(discordServerId, discordChannelId, msgId);
+        //this is the situation where a player joined a competition
+        if (game != null && !isOwner && bot != null) {
+          if (highscoreBackupService.backup(game)) {
+            highscoreService.resetHighscore(game);
+          }
 
-        LOG.info("Discord bot \"" + bot + "\" has joined \"" + competition + "\"");
+          long discordServerId = competition.getDiscordServerId();
+          long discordChannelId = competition.getDiscordChannelId();
+          long msgId = discordService.sendMessage(discordServerId, discordChannelId, discordChannelMessageFactory.createCompetitionJoinedMessage(competition, bot));
+          discordService.addCompetitionPlayer(discordServerId, discordChannelId, msgId);
+
+          LOG.info("Discord bot \"" + bot + "\" has joined \"" + competition + "\"");
+        }
+      } catch (Exception e) {
+        LOG.error("Error creating discord competition: " + e.getMessage(), e);
       }
     }
   }

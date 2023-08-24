@@ -81,12 +81,78 @@ public class HighscoreBackupUtil {
     return descriptorFile;
   }
 
-  public static boolean writeBackupFile(@NonNull HighscoreService highscoreService, @NonNull SystemService systemService, @NonNull Game game, @NonNull File romBackupFolder) throws Exception {
+  private static boolean writeHighscoreBackup(Game game, Highscore highscore, SystemService systemService, File romBackupFolder, File tempFile, String filename) {
+    FileOutputStream fos = null;
+    ZipOutputStream zipOut = null;
+
+    boolean highscoreWritten = false;
+
+    try {
+      File descriptorJsonFile = writeDescriptorJson(game, romBackupFolder, highscore, filename);
+
+      fos = new FileOutputStream(tempFile);
+      zipOut = new ZipOutputStream(fos);
+
+      ZipUtil.zipFile(descriptorJsonFile, descriptorJsonFile.getName(), zipOut);
+
+      //store highscore
+      //zip EM file
+      if (game.getEMHighscoreFile() != null && game.getEMHighscoreFile().exists()) {
+        ZipUtil.zipFile(game.getEMHighscoreFile(), game.getEMHighscoreFile().getName(), zipOut);
+        highscoreWritten = true;
+      }
+
+      //zip nvram file
+      if (game.getNvRamFile().exists()) {
+        ZipUtil.zipFile(game.getNvRamFile(), game.getNvRamFile().getName(), zipOut);
+        highscoreWritten = true;
+      }
+
+      //write VPReg.stg data
+      if (HighscoreType.VPReg.equals(game.getHighscoreType())) {
+        File vprRegFile = systemService.getVPRegFile();
+        VPReg reg = new VPReg(vprRegFile, game.getRom(), game.getTableName());
+        String gameData = reg.toJson();
+        if (gameData != null) {
+          File regBackupTemp = File.createTempFile("vpreg-stg", "json");
+          regBackupTemp.deleteOnExit();
+          Files.write(regBackupTemp.toPath(), gameData.getBytes());
+          ZipUtil.zipFile(regBackupTemp, VPReg.ARCHIVE_FILENAME, zipOut);
+          if (!regBackupTemp.delete()) {
+            throw new UnsupportedEncodingException("Failed to delete " + regBackupTemp.getAbsolutePath());
+          }
+          highscoreWritten = true;
+        }
+      }
+
+      if (!descriptorJsonFile.delete()) {
+        throw new UnsupportedEncodingException("Failed to delete " + descriptorJsonFile.getAbsolutePath());
+      }
+    } catch (Exception e) {
+      LOG.error("Failed to create highscore archive file: " + e.getMessage(), e);
+    } finally {
+      try {
+        if (zipOut != null) {
+          zipOut.close();
+        }
+      } catch (IOException e) {
+        //ignore
+      }
+
+      try {
+        if (fos != null) {
+          fos.close();
+        }
+      } catch (IOException e) {
+        //ignore
+      }
+    }
+    return highscoreWritten;
+  }
+
+  public static boolean writeBackupFile(@NonNull HighscoreService highscoreService, @NonNull SystemService systemService, @NonNull Game game, @NonNull File romBackupFolder) {
     Optional<Highscore> hs = highscoreService.getOrCreateHighscore(game);
     if (hs.isPresent()) {
-      FileOutputStream fos = null;
-      ZipOutputStream zipOut = null;
-
       String filename = dateFormatter.format(new Date());
       filename = filename + "." + FILE_SUFFIX;
 
@@ -96,80 +162,34 @@ public class HighscoreBackupUtil {
       File tempFile = new File(target.getParentFile(), target.getName() + ".bak");
       LOG.info("Creating temporary archive file " + tempFile.getAbsolutePath());
 
-      try {
-        Highscore highscore = hs.get();
-        File descriptorJsonFile = writeDescriptorJson(game, romBackupFolder, highscore, filename);
+      boolean written = writeHighscoreBackup(game, hs.get(), systemService, romBackupFolder, tempFile, filename);
+      if (written && !tempFile.renameTo(target)) {
+        LOG.error("Failed to rename highscore zip file " + tempFile.getAbsolutePath());
+        return false;
+      }
 
-        fos = new FileOutputStream(tempFile);
-        zipOut = new ZipOutputStream(fos);
+      if (!written && !tempFile.delete()) {
+        LOG.error("No data written backup and deletion of temp data failed: " + tempFile.getAbsolutePath());
+        return false;
+      }
 
-        ZipUtil.zipFile(descriptorJsonFile, descriptorJsonFile.getName(), zipOut);
-
-        //store highscore
-        //zip EM file
-        if (game.getEMHighscoreFile() != null && game.getEMHighscoreFile().exists()) {
-          ZipUtil.zipFile(game.getEMHighscoreFile(), game.getEMHighscoreFile().getName(), zipOut);
-        }
-
-        //zip nvram file
-        if (game.getNvRamFile().exists()) {
-          ZipUtil.zipFile(game.getNvRamFile(), game.getNvRamFile().getName(), zipOut);
-        }
-
-        //write VPReg.stg data
-        if (HighscoreType.VPReg.equals(game.getHighscoreType())) {
-          File vprRegFile = systemService.getVPRegFile();
-          VPReg reg = new VPReg(vprRegFile, game.getRom(), game.getTableName());
-          String gameData = reg.toJson();
-          if (gameData != null) {
-            File regBackupTemp = File.createTempFile("vpreg-stg", "json");
-            regBackupTemp.deleteOnExit();
-            Files.write(regBackupTemp.toPath(), gameData.getBytes());
-            ZipUtil.zipFile(regBackupTemp, VPReg.ARCHIVE_FILENAME, zipOut);
-            if (!regBackupTemp.delete()) {
-              throw new UnsupportedEncodingException("Failed to delete " + regBackupTemp.getAbsolutePath());
-            }
-
-          }
-        }
-
-        if (!descriptorJsonFile.delete()) {
-          throw new UnsupportedEncodingException("Failed to delete " + descriptorJsonFile.getAbsolutePath());
-        }
-
-        return true;
-      } catch (Exception e) {
-        LOG.error("Failed to create highscore archive file: " + e.getMessage(), e);
-        throw e;
-      } finally {
-        try {
-          if (zipOut != null) {
-            zipOut.close();
-          }
-        } catch (IOException e) {
-          //ignore
-        }
-
-        try {
-          if (fos != null) {
-            fos.close();
-          }
-        } catch (IOException e) {
-          //ignore
-        }
-
-        if (!tempFile.renameTo(target)) {
-          LOG.error("Failed to rename highscore zip file " + tempFile.getAbsolutePath());
-          throw new Exception("Failed to rename highscore zip file " + tempFile.getAbsolutePath());
-        }
+      if(written) {
         LOG.info("Written highscore backup " + target.getAbsolutePath());
       }
-    }
+      else {
+        LOG.info("No highscore backup created, no matching source found for \"" + game.getRom() + "\"");
+      }
 
+      return written;
+    }
+    else {
+      LOG.info("Skipped creating highscore backup of \"" + game.getGameDisplayName() + "\", no existing highscore data found.");
+    }
     return false;
   }
 
-  public static boolean restoreBackupFile(@NonNull SystemService systemService, @NonNull File backupRomFolder, @NonNull String filename) {
+  public static boolean restoreBackupFile(@NonNull SystemService systemService, @NonNull File
+      backupRomFolder, @NonNull String filename) {
     File archiveFile = new File(backupRomFolder, filename);
     HighscoreBackup highscoreBackup = readBackupFile(archiveFile);
     HighscoreType highscoreType = highscoreBackup.getHighscoreType();

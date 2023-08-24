@@ -140,17 +140,13 @@ public class TablesSidebarHighscoresController implements Initializable {
 
       Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Create highscore backup for table \"" + g.getGameDisplayName() + "\"?", last);
       if (result.isPresent() && result.get().equals(ButtonType.OK)) {
-        String rom = g.getRom();
-        if (StringUtils.isEmpty(rom)) {
-          rom = g.getTableName();
-        }
         try {
-          Studio.client.getHigscoreBackupService().backup(rom, g.getId());
+          Studio.client.getHigscoreBackupService().backup(g.getId());
         } catch (Exception e) {
           LOG.error("Failed to back highscore: " + e.getMessage(), e);
           WidgetFactory.showAlert(Studio.stage, "Error", "Failed create highscore backup: " + e.getMessage());
         }
-        EventManager.getInstance().notifyTableChange(g.getId(), rom);
+        EventManager.getInstance().notifyTableChange(g.getId(), g.getRom());
       }
     }
   }
@@ -254,7 +250,8 @@ public class TablesSidebarHighscoresController implements Initializable {
       }
 
       if (metadata != null) {
-        backupBtn.setDisable(false);
+        backupBtn.setDisable(metadata.getType() == null);
+        restoreBtn.setDisable(metadata.getType() == null && highscoreBackups.isEmpty());
 
         if (metadata.getFilename() != null) {
           this.hsFileLabel.setText(metadata.getFilename());

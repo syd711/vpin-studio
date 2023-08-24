@@ -1,6 +1,8 @@
 package de.mephisto.vpin.server.highscores;
 
 import de.mephisto.vpin.restclient.HighscoreBackup;
+import de.mephisto.vpin.server.games.Game;
+import de.mephisto.vpin.server.games.GameService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,15 +22,19 @@ public class HighscoreBackupResources {
   @Autowired
   private HighscoreBackupService highscoreBackupService;
 
+  @Autowired
+  private GameService gameService;
+
   @GetMapping("{rom}")
   public List<HighscoreBackup> get(@PathVariable("rom") String rom) {
     return highscoreBackupService.getBackups(rom);
   }
 
-  @PutMapping("backup/{rom}/{gameId}")
-  public boolean backup(@PathVariable("rom") String rom, @PathVariable("gameId") int gameId) {
+  @PutMapping("backup/{gameId}")
+  public boolean backup(@PathVariable("gameId") int gameId) {
     try {
-      return highscoreBackupService.backup(rom, gameId);
+      Game game = gameService.getGame(gameId);
+      return highscoreBackupService.backup(game);
     } catch (Exception e) {
       throw new ResponseStatusException(INTERNAL_SERVER_ERROR, "Creating backup failed: " + e.getMessage());
     }

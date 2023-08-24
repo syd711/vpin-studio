@@ -10,10 +10,7 @@ import de.mephisto.vpin.server.discord.DiscordService;
 import de.mephisto.vpin.server.discord.DiscordSubscriptionMessageFactory;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameService;
-import de.mephisto.vpin.server.highscores.Highscore;
-import de.mephisto.vpin.server.highscores.HighscoreParser;
-import de.mephisto.vpin.server.highscores.HighscoreService;
-import de.mephisto.vpin.server.highscores.Score;
+import de.mephisto.vpin.server.highscores.*;
 import de.mephisto.vpin.server.popper.PopperService;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import org.apache.commons.lang3.StringUtils;
@@ -54,56 +51,65 @@ public class SubscriptionCompetitionChangeListenerImpl extends DefaultCompetitio
   @Autowired
   private HighscoreParser highscoreParser;
 
+  @Autowired
+  private HighscoreBackupService highscoreBackupService;
+
   @Override
   public void competitionCreated(@NonNull Competition competition) {
     if (competition.getType().equals(CompetitionType.SUBSCRIPTION.name())) {
-      Game game = gameService.getGame(competition.getGameId());
-      boolean isOwner = competition.getOwner().equals(String.valueOf(discordService.getBotId()));
-      DiscordMember bot = discordService.getBot();
-      if (game != null && bot != null) {
-        if (competition.isHighscoreReset()) {
-          highscoreService.resetHighscore(game);
-        }
+      try {
+        Game game = gameService.getGame(competition.getGameId());
+        boolean isOwner = competition.getOwner().equals(String.valueOf(discordService.getBotId()));
+        DiscordMember bot = discordService.getBot();
+        if (game != null && bot != null) {
+          if (competition.isHighscoreReset()) {
+            if (highscoreBackupService.backup(game)) {
+              highscoreService.resetHighscore(game);
+            }
+          }
 
-        long botId = discordService.getBotId();
-        long serverId = competition.getDiscordServerId();
+          long botId = discordService.getBotId();
+          long serverId = competition.getDiscordServerId();
 
-        if (isOwner) {
-          DiscordChannel subscriptionChannel = discordService.createSubscriptionChannel(competition, game);
+          if (isOwner) {
+            DiscordChannel subscriptionChannel = discordService.createSubscriptionChannel(competition, game);
 
-          LOG.info("Created text channel " + subscriptionChannel);
-          if (subscriptionChannel != null) {
-            long channelId = subscriptionChannel.getId();
+            LOG.info("Created text channel " + subscriptionChannel);
+            if (subscriptionChannel != null) {
+              long channelId = subscriptionChannel.getId();
 
-            competition.setDiscordChannelId(subscriptionChannel.getId());
-            competitionService.save(competition);
+              competition.setDiscordChannelId(subscriptionChannel.getId());
+              competitionService.save(competition);
 
-            byte[] image = assetService.getSubscriptionCard(competition, game);
-            String message = discordSubscriptionMessageFactory.createSubscriptionCreatedMessage(competition.getDiscordServerId(), botId, competition.getUuid());
+              byte[] image = assetService.getSubscriptionCard(competition, game);
+              String message = discordSubscriptionMessageFactory.createSubscriptionCreatedMessage(competition.getDiscordServerId(), botId, competition.getUuid());
 
-            long messageId = discordService.sendMessage(serverId, channelId, message, image, competition.getName() + ".png", "The subscription channel for table \"" + competition.getName() + "\" has been created.\n" +
-                "New highscores for this table will be posted here.\nOther player bots can subscribe to this channel.\nTheir highscores will compete with yours.");
-            discordService.initCompetition(serverId, channelId, messageId);
+              long messageId = discordService.sendMessage(serverId, channelId, message, image, competition.getName() + ".png", "The subscription channel for table \"" + competition.getName() + "\" has been created.\n" +
+                  "New highscores for this table will be posted here.\nOther player bots can subscribe to this channel.\nTheir highscores will compete with yours.");
+              discordService.initCompetition(serverId, channelId, messageId);
 
-            if (!competition.isHighscoreReset()) {
-              Optional<Highscore> highscore = highscoreService.getOrCreateHighscore(game);
-              if (highscore.isPresent()) {
-                Highscore hs = highscore.get();
-                List<Score> scores = highscoreParser.parseScores(hs.getCreatedAt(), hs.getRaw(), competition.getGameId(), serverId);
+              if (!competition.isHighscoreReset()) {
+                Optional<Highscore> highscore = highscoreService.getOrCreateHighscore(game);
+                if (highscore.isPresent()) {
+                  Highscore hs = highscore.get();
+                  List<Score> scores = highscoreParser.parseScores(hs.getCreatedAt(), hs.getRaw(), competition.getGameId(), serverId);
 
-                String msg = discordSubscriptionMessageFactory.createFirstSubscriptionHighscoreMessage(game, competition, scores);
-                long newHighscoreMessageId = discordService.sendMessage(serverId, channelId, msg);
-                discordService.updateHighscoreMessage(serverId, channelId, newHighscoreMessageId);
+                  String msg = discordSubscriptionMessageFactory.createFirstSubscriptionHighscoreMessage(game, competition, scores);
+                  long newHighscoreMessageId = discordService.sendMessage(serverId, channelId, msg);
+                  discordService.updateHighscoreMessage(serverId, channelId, newHighscoreMessageId);
+                }
               }
             }
           }
+          else {
+            //the bot is not the owner, so it has joined the subscription
+            long msgId = discordService.sendMessage(competition.getDiscordServerId(), competition.getDiscordChannelId(), discordSubscriptionMessageFactory.createSubscriptionJoinedMessage(competition, bot));
+            discordService.addCompetitionPlayer(competition.getDiscordServerId(), competition.getDiscordChannelId(), msgId);
+            LOG.info("Discord bot \"" + bot + "\" has joined \"" + competition + "\"");
+          }
         }
-        else {
-          //the bot is not the owner, so it has joined the subscription
-          long msgId = discordService.sendMessage(competition.getDiscordServerId(), competition.getDiscordChannelId(), discordSubscriptionMessageFactory.createSubscriptionJoinedMessage(competition, bot));
-          discordService.addCompetitionPlayer(competition.getDiscordServerId(), competition.getDiscordChannelId(), msgId);
-          LOG.info("Discord bot \"" + bot + "\" has joined \"" + competition + "\"");
-        }
+      } catch (Exception e) {
+        LOG.error("Error creating table subscription: " + e.getMessage(), e);
       }
     }
   }
@@ -120,7 +126,7 @@ public class SubscriptionCompetitionChangeListenerImpl extends DefaultCompetitio
         if (isOwner) {
           int count = 0;
           String rom = game.getRom();
-          if(StringUtils.isEmpty(rom)) {
+          if (StringUtils.isEmpty(rom)) {
             rom = game.getTableName();
           }
 
@@ -129,7 +135,7 @@ public class SubscriptionCompetitionChangeListenerImpl extends DefaultCompetitio
             Game g = gameService.getGame(subscription.getGameId());
             if (g != null) {
               String subscriptionRom = g.getRom();
-              if(StringUtils.isEmpty(subscriptionRom)) {
+              if (StringUtils.isEmpty(subscriptionRom)) {
                 subscriptionRom = g.getTableName();
               }
 

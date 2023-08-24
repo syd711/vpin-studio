@@ -12,6 +12,7 @@ import de.mephisto.vpin.server.discord.DiscordService;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameService;
 import de.mephisto.vpin.server.highscores.Highscore;
+import de.mephisto.vpin.server.highscores.HighscoreBackupService;
 import de.mephisto.vpin.server.highscores.HighscoreService;
 import de.mephisto.vpin.server.players.Player;
 import de.mephisto.vpin.server.popper.PopperService;
@@ -53,42 +54,51 @@ public class OfflineCompetitionChangeListenerImpl extends DefaultCompetitionChan
   @Autowired
   private AssetService assetService;
 
+  @Autowired
+  private HighscoreBackupService highscoreBackupService;
+
   @Override
   public void competitionStarted(@NonNull Competition competition) {
     if (competition.getType().equals(CompetitionType.OFFLINE.name())) {
-      Game game = gameService.getGame(competition.getGameId());
-      if (game != null) {
-        if (competition.getDiscordChannelId() > 0 && competition.isActive()) {
-          long serverId = competition.getDiscordServerId();
-          long channelId = competition.getDiscordChannelId();
+      try {
+        Game game = gameService.getGame(competition.getGameId());
+        if (game != null) {
+          if (competition.getDiscordChannelId() > 0 && competition.isActive()) {
+            long serverId = competition.getDiscordServerId();
+            long channelId = competition.getDiscordChannelId();
 
-          DiscordMember bot = discordService.getBot();
-          if (serverId > 0 && channelId > 0 && bot != null) {
-            byte[] image = assetService.getCompetitionStartedCard(competition, game);
-            String message = DiscordOfflineChannelMessageFactory.createOfflineCompetitionCreatedMessage(competition, game);
-            String vPinName = (String) preferencesService.getPreferenceValue(PreferenceNames.SYSTEM_NAME, "My VPin");
-            String subText = "This is an offline competition. Only players on \"" + vPinName + "\" can participate.";
-            if (competition.isHighscoreReset()) {
-              subText += "\nThe highscore of this table has been resetted.";
+            DiscordMember bot = discordService.getBot();
+            if (serverId > 0 && channelId > 0 && bot != null) {
+              byte[] image = assetService.getCompetitionStartedCard(competition, game);
+              String message = DiscordOfflineChannelMessageFactory.createOfflineCompetitionCreatedMessage(competition, game);
+              String vPinName = (String) preferencesService.getPreferenceValue(PreferenceNames.SYSTEM_NAME, "My VPin");
+              String subText = "This is an offline competition. Only players on \"" + vPinName + "\" can participate.";
+              if (competition.isHighscoreReset()) {
+                subText += "\nThe highscore of this table has been resetted.";
+              }
+              else {
+                subText += "\nThe highscore of this table has not been resetted.";
+                Optional<Highscore> hs = highscoreService.getOrCreateHighscore(game);
+                if (hs.isPresent() && !StringUtils.isEmpty(hs.get().getRaw())) {
+                  subText += "\nHere is the current highscore:\n\n```" + hs.get().getRaw() + "```";
+                }
+              }
+              discordService.sendMessage(serverId, channelId, message, image, competition.getName() + ".png", subText);
             }
-            else {
-              subText += "\nThe highscore of this table has not been resetted.";
-              Optional<Highscore> hs = highscoreService.getOrCreateHighscore(game);
-              if (hs.isPresent() && !StringUtils.isEmpty(hs.get().getRaw())) {
-                subText += "\nHere is the current highscore:\n\n```" + hs.get().getRaw() + "```";
+
+            if (competition.isHighscoreReset()) {
+              if (highscoreBackupService.backup(game)) {
+                highscoreService.resetHighscore(game);
               }
             }
-            discordService.sendMessage(serverId, channelId, message, image, competition.getName() + ".png", subText);
-          }
-
-          if (competition.isHighscoreReset()) {
-            highscoreService.resetHighscore(game);
           }
         }
-      }
 
-      if (competition.getBadge() != null && competition.isActive()) {
-        popperService.augmentWheel(game, competition.getBadge());
+        if (competition.getBadge() != null && competition.isActive()) {
+          popperService.augmentWheel(game, competition.getBadge());
+        }
+      } catch (Exception e) {
+        LOG.error("Error creating offline competition: " + e.getMessage(), e);
       }
     }
   }

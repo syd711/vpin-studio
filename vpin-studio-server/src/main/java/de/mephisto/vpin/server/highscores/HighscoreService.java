@@ -53,33 +53,38 @@ public class HighscoreService implements InitializingBean {
   private final List<HighscoreChangeListener> listeners = new ArrayList<>();
 
   public boolean resetHighscore(@NonNull Game game) {
-    HighscoreType highscoreType = game.getHighscoreType();
-    boolean result = false;
-    if (highscoreType != null) {
-      switch (highscoreType) {
-        case EM: {
-          result = game.getEMHighscoreFile() != null && game.getEMHighscoreFile().exists() && game.getEMHighscoreFile().delete();
-          break;
-        }
-        case NVRam: {
-          result = game.getNvRamFile().exists() && game.getNvRamFile().delete();
-          break;
-        }
-        case VPReg: {
-          VPReg reg = new VPReg(systemService.getVPRegFile(), game.getRom(), game.getTableName());
-          result = reg.resetHighscores();
-          break;
-        }
-        default: {
-          LOG.error("No matching highscore type found for '" + highscoreType + "'");
+    try {
+      HighscoreType highscoreType = game.getHighscoreType();
+      boolean result = false;
+      if (highscoreType != null) {
+        switch (highscoreType) {
+          case EM: {
+            result = game.getEMHighscoreFile() != null && game.getEMHighscoreFile().exists() && game.getEMHighscoreFile().delete();
+            break;
+          }
+          case NVRam: {
+            result = game.getNvRamFile().exists() && game.getNvRamFile().delete();
+            break;
+          }
+          case VPReg: {
+            VPReg reg = new VPReg(systemService.getVPRegFile(), game.getRom(), game.getTableName());
+            result = reg.resetHighscores();
+            break;
+          }
+          default: {
+            LOG.error("No matching highscore type found for '" + highscoreType + "'");
+          }
         }
       }
+      else {
+        result = true;
+      }
+      deleteScores(game.getId());
+      return result;
+    } catch (Exception e) {
+      LOG.error("Failed to reset highscore: " + e.getMessage(), e);
     }
-    else {
-      result = true;
-    }
-    deleteScores(game.getId());
-    return result;
+    return false;
   }
 
   @NonNull

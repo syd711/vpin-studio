@@ -3,8 +3,6 @@ package de.mephisto.vpin.restclient.client;
 import de.mephisto.vpin.restclient.HighscoreBackup;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.client.RestTemplate;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -25,11 +23,11 @@ public class HigscoreBackupServiceClient extends VPinStudioClientService {
     return getRestClient().delete(API + "highscorebackups/" + rom + "/" + filename);
   }
 
-  public boolean backup(@PathVariable("rom") String rom, @PathVariable("gameId") int gameId) throws Exception {
-    return getRestClient().put(API + "highscorebackups/backup/" + rom + "/" + gameId, new HashMap<>(), Boolean.class);
+  public boolean backup(int gameId) throws Exception {
+    return getRestClient().put(API + "highscorebackups/backup/" + gameId, new HashMap<>(), Boolean.class);
   }
 
-  public boolean restore(@PathVariable("rom") String rom, @PathVariable("filename") String filename) throws Exception {
+  public boolean restore(String rom, String filename) throws Exception {
     return getRestClient().put(API + "highscorebackups/restore/" + rom + "/" + filename, new HashMap<>(), Boolean.class);
   }
 }
