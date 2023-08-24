@@ -33,6 +33,10 @@ More details about this can be found here: https://www.youtube.com/@vpin-studio/
 
 Added highscore reset for offline competitions.
 
+**Competitions: Highscore Resets**
+
+Highscore backups are created automatically for every competition now (if resetting was selected).
+
 **Maintenance Mode**
 
 Added maintenance mode when VPin Studio is used from remote. If enabled, a full screen window will
