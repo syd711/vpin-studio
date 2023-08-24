@@ -135,7 +135,7 @@
                                     <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
                                  </graphic>
                                  <tooltip>
-                                    <Tooltip prefWidth="300.0" text="The reset is recommended in case your highscore is already higher than the others. " wrapText="true" />
+                                    <Tooltip prefWidth="300.0" text="The reset is required in case your highscore is already higher than the others. A backup will be automatically created before the subscription is created." wrapText="true" />
                                  </tooltip>
                               </Label>
                            </children>
