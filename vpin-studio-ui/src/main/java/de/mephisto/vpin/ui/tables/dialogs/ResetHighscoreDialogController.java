@@ -9,6 +9,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
+import org.apache.commons.lang3.StringUtils;
 
 public class ResetHighscoreDialogController implements DialogController {
 
@@ -52,8 +53,13 @@ public class ResetHighscoreDialogController implements DialogController {
     this.game = game;
     okButton.setDisable(true);
 
+    String rom = game.getRom();
+    if (!StringUtils.isEmpty(rom)) {
+      rom = game.getTableName();
+    }
+
     this.textLabel.setText("Reset the highscore of \"" + game.getGameDisplayName() + "\"?");
-    this.descriptionLabel.setText("Enter the ROM name (\"" + game.getRom() + "\") to confirm the reset:");
+    this.descriptionLabel.setText("Enter the ROM name (\"" + rom  + "\") to confirm the reset:");
     textField.requestFocus();
     textField.textProperty().addListener((observable, oldValue, newValue) -> {
       String romName = game.getRom();

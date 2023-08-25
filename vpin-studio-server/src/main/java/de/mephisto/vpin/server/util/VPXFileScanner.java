@@ -4,6 +4,7 @@ import de.mephisto.vpin.server.roms.ScanResult;
 import de.mephisto.vpin.server.vpx.VPXUtil;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
@@ -56,14 +57,19 @@ public class VPXFileScanner {
     Collections.reverse(split);
     scanLines(gameFile, start, result, split);
 
-    if(StringUtils.isEmpty(result.getRom())) {
+    if (StringUtils.isEmpty(result.getRom())) {
       LOG.info("Regular scan failed, running deep scan for " + gameFile.getAbsolutePath());
       runDeepScan(gameFile, result);
     }
 
     if (!StringUtils.isEmpty(result.getRom())) {
       LOG.info("Finished scan of table " + gameFile.getAbsolutePath() + ", found ROM '" + result.getRom() + "', took " + (System.currentTimeMillis() - start) + " ms.");
-    } else {
+    }
+    else if(StringUtils.isEmpty(result.getRom()) && StringUtils.isEmpty(result.getTableName()) && !StringUtils.isEmpty(result.getHsFileName())) {
+      result.setTableName(FilenameUtils.getBaseName(result.getHsFileName()));
+      LOG.info("Finished scan of table " + gameFile.getAbsolutePath() + ", found EM highscore filename '" + result.getHsFileName() + "', took " + (System.currentTimeMillis() - start) + " ms.");
+    }
+    else {
       LOG.info("Finished scan of table " + gameFile.getAbsolutePath() + ", no ROM found" + "', took " + (System.currentTimeMillis() - start) + " ms.");
     }
     return result;
@@ -99,6 +105,7 @@ public class VPXFileScanner {
         lineSearchNvOffset(result, line);
         lineSearchHsFileName(result, line);
         lineSearchAsset(gameFile, result, line);
+        lineSearchEMHighscore(gameFile, result, line);
       }
     } catch (Exception e) {
       LOG.error("Failed to read rom line '" + line + "' for  " + gameFile.getAbsolutePath() + ": " + e.getMessage(), e);
@@ -113,6 +120,16 @@ public class VPXFileScanner {
         }
       } catch (Exception e) {
         LOG.error("Failed to close vpx file stream: " + e.getMessage(), e);
+      }
+    }
+  }
+
+  private static void lineSearchEMHighscore(File gameFile, ScanResult result, String line) {
+    if (!StringUtils.isEmpty(line) && line.contains(".txt\"")) {
+      String emFilename = line.substring(0, line.lastIndexOf(".txt\"") + 4);
+      emFilename = emFilename.substring(emFilename.lastIndexOf("\"") + 1);
+      if (result.getHsFileName() == null) {
+        result.setHsFileName(emFilename);
       }
     }
   }
@@ -200,8 +217,7 @@ public class VPXFileScanner {
       try {
         nvOffsetString = line.substring(line.indexOf("(") + 1, line.indexOf(")"));
         result.setNvOffset(Integer.parseInt(nvOffsetString));
-      }
-      catch (Exception e) {
+      } catch (Exception e) {
         LOG.error("Failed to read NVOffset from line \"" + line + "\" and segment \"" + nvOffsetString + "\": " + e.getMessage());
       }
     }

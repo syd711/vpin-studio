@@ -275,7 +275,7 @@ public class TablesSidebarHighscoresController implements Initializable {
 
         if (!summary.getScores().isEmpty()) {
           cardBtn.setDisable(false);
-          resetBtn.setDisable(false);
+          resetBtn.setDisable(StringUtils.isEmpty(rom));
 
           rawTitleLabel.setVisible(true);
           rawScoreWrapper.setVisible(true);

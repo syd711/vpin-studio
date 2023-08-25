@@ -1,7 +1,7 @@
 package de.mephisto.vpin.server.highscores;
 
-import de.mephisto.vpin.restclient.HighscoreType;
 import de.mephisto.vpin.commons.utils.SystemCommandExecutor;
+import de.mephisto.vpin.restclient.HighscoreType;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.system.SystemService;
 import de.mephisto.vpin.server.util.vpreg.VPReg;
@@ -14,7 +14,9 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.nio.charset.Charset;
 import java.util.Arrays;
 import java.util.Date;
@@ -51,7 +53,11 @@ class HighscoreResolver {
     try {
       String romName = game.getRom();
       if (StringUtils.isEmpty(romName)) {
-        String msg = "No rom name found.";
+        romName = game.getTableName();
+      }
+
+      if (StringUtils.isEmpty(romName)) {
+        String msg = "No rom or table name found.";
         metadata.setStatus(msg);
         return metadata;
       }
@@ -112,6 +118,26 @@ class HighscoreResolver {
 
             index++;
           }
+          return builder.toString();
+        }
+        else if (lines.size() == 8) {
+          StringBuilder builder = new StringBuilder("HIGHEST SCORES\n");
+
+          String score1 = lines.get(1);
+          String score2 = lines.get(2);
+          builder.append("#1");
+          builder.append(" ");
+          builder.append("???");
+          builder.append("   ");
+          builder.append(score2);
+          builder.append("\n");
+
+          builder.append("#2");
+          builder.append(" ");
+          builder.append("???");
+          builder.append("   ");
+          builder.append(score1);
+          builder.append("\n");
 
           return builder.toString();
         }
@@ -198,7 +224,7 @@ class HighscoreResolver {
       StringBuilder standardOutputFromCommand = executor.getStandardOutputFromCommand();
       StringBuilder standardErrorFromCommand = executor.getStandardErrorFromCommand();
       if (!StringUtils.isEmpty(standardErrorFromCommand.toString())) {
-        String error = "Pinemhi command (" + commandFile.getCanonicalPath() + " "+ nvRamFileName + ") failed: " + standardErrorFromCommand;
+        String error = "Pinemhi command (" + commandFile.getCanonicalPath() + " " + nvRamFileName + ") failed: " + standardErrorFromCommand;
         LOG.error(error);
         metadata.setStatus(error);
         throw new Exception(error);
