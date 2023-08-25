@@ -55,7 +55,28 @@
                 </TitledPane>
                 <TitledPane fx:id="titledPanePopper" expanded="false" text="PinUP Popper Table Data" />
             <TitledPane fx:id="titledPanePlaylists" expanded="false" text="Playlists" />
-                <TitledPane fx:id="titledPaneDirectB2s" expanded="false" text="DirectB2S" />
+                <TitledPane fx:id="titledPaneDirectB2s" expanded="false">
+                    <graphic>
+                        <BorderPane prefWidth="560.0">
+                            <right>
+                                <Button fx:id="directb2sBtn" mnemonicParsing="false" onAction="#onDirectB2S" styleClass="external-component" BorderPane.alignment="CENTER">
+                                    <font>
+                                        <Font size="10.0" />
+                                    </font>
+                                    <graphic>
+                                        <FontIcon iconColor="WHITE" iconLiteral="mdi2o-open-in-new" />
+                                    </graphic>
+                                    <tooltip>
+                                        <Tooltip text="DirectB2S Folder" />
+                                    </tooltip>
+                                </Button>
+                            </right>
+                            <left>
+                                <Label text="DirectB2S" BorderPane.alignment="CENTER" />
+                            </left>
+                        </BorderPane>
+                    </graphic>
+                </TitledPane>
                 <TitledPane fx:id="titledPanePUPPack" expanded="false" text="PUP Pack" />
                 <TitledPane fx:id="titledPaneAudio" expanded="false">
                <graphic>

@@ -82,6 +82,9 @@ public class TablesSidebarController implements Initializable {
   private Button altSoundExplorerBtn;
 
   @FXML
+  private Button directb2sBtn;
+
+  @FXML
   private Button altColorExplorerBtn;
 
   @FXML
@@ -160,6 +163,16 @@ public class TablesSidebarController implements Initializable {
   }
 
   @FXML
+  private void onDirectB2S() {
+    try {
+      SystemSummary systemSummary = Studio.client.getSystemService().getSystemSummary();
+      new ProcessBuilder("explorer.exe", new File(systemSummary.getVisualPinballDirectory(), "Tables").getAbsolutePath()).start();
+    } catch (Exception e) {
+      LOG.error("Failed to open Explorer: " + e.getMessage(), e);
+    }
+  }
+
+  @FXML
   private void onAltColor() {
     try {
       SystemSummary systemSummary = Studio.client.getSystemService().getSystemSummary();
@@ -214,6 +227,7 @@ public class TablesSidebarController implements Initializable {
     popperTitleButtonArea.setVisible(client.getSystemService().isLocal());
     altSoundExplorerBtn.setVisible(client.getSystemService().isLocal());
     altColorExplorerBtn.setVisible(client.getSystemService().isLocal());
+    directb2sBtn.setVisible(client.getSystemService().isLocal());
     scriptBtn.setVisible(client.getSystemService().isLocal());
 
     try {
