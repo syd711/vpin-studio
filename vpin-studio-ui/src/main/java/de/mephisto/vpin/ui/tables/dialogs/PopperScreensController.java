@@ -5,6 +5,7 @@ import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.popper.TableDetails;
 import de.mephisto.vpin.restclient.representations.GameRepresentation;
 import de.mephisto.vpin.ui.Studio;
+import de.mephisto.vpin.ui.events.EventManager;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -93,6 +94,7 @@ public class PopperScreensController implements Initializable, DialogController 
     manifest.setKeepDisplays(value);
     try {
       Studio.client.getPinUPPopperService().saveTableDetails(manifest, game.getId());
+      EventManager.getInstance().notifyTableChange(game.getId(), null);
     } catch (Exception ex) {
       WidgetFactory.showAlert(Studio.stage, "Error", "Failed to save table manifest: " + ex.getMessage());
     }

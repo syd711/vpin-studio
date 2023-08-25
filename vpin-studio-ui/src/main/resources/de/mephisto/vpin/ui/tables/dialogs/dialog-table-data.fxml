@@ -40,7 +40,7 @@
    <center>
       <BorderPane BorderPane.alignment="CENTER">
          <center>
-            <VBox>
+            <VBox prefHeight="680.0">
                <children>
                   <GridPane vgap="3.0">
                     <columnConstraints>
@@ -78,7 +78,7 @@
                               <Tooltip text="Every table will be added to the first playlist that is found." />
                            </tooltip>
                         </Label>
-                        <Label text="Game Display Name:" GridPane.rowIndex="1">
+                        <Label text="Game Display Name:" textFill="WHITE" GridPane.rowIndex="1">
                            <font>
                               <Font size="14.0" />
                            </font>
@@ -98,7 +98,7 @@
                               <Font size="14.0" />
                            </font>
                         </Label>
-                        <Label layoutX="10.0" layoutY="15.0" text="Game Name:">
+                        <Label layoutX="10.0" layoutY="15.0" text="Game Name:" textFill="WHITE">
                            <font>
                               <Font size="14.0" />
                            </font>
