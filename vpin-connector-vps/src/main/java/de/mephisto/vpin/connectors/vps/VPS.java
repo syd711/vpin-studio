@@ -42,7 +42,7 @@ public class VPS {
 
     if (!this.getVpsDbFile().exists()) {
       try {
-        if(this.getVpsDbFile().getParentFile().exists()) {
+        if (this.getVpsDbFile().getParentFile().exists()) {
           this.getVpsDbFile().getParentFile().mkdirs();
         }
         download();
@@ -61,10 +61,14 @@ public class VPS {
     return tables;
   }
 
-  public List<VpsTable> find(String term) {
+  public List<VpsTable> find(String searchTerm) {
+    String term = searchTerm;
     term = term.replaceAll("_", " ");
     term = term.replaceAll("'", " ");
+    term = term.replaceAll("-", " ");
     term = term.replaceAll("\\.", " ");
+    term = term.replaceAll("The ", "");
+    term = term.replaceAll(", The", "");
     if (term.contains("(")) {
       term = term.substring(0, term.indexOf("("));
     }
@@ -81,6 +85,16 @@ public class VPS {
       }
       results = findInternal(term);
     }
+
+//    if (results.isEmpty()) {
+//      String[] segments = searchTerm.split(" ");
+//      for (String segment : segments) {
+//        if (results.isEmpty() && segment.length() >= 4) {
+//          results = findInternal(term);
+//        }
+//      }
+//    }
+
     return results;
   }
 
@@ -101,7 +115,7 @@ public class VPS {
 
   public File getVpsDbFile() {
     File folder = new File("./resources");
-    if(!folder.exists()) {
+    if (!folder.exists()) {
       folder = new File("../resources");
     }
     return new File(folder, "vpsdb.json");
@@ -139,7 +153,7 @@ public class VPS {
       in.close();
       fileOutputStream.close();
 
-      if(getVpsDbFile().exists() && !getVpsDbFile().delete()) {
+      if (getVpsDbFile().exists() && !getVpsDbFile().delete()) {
         LOG.error("Failed to delete vpsdb.json");
       }
       if (!tmp.renameTo(getVpsDbFile())) {

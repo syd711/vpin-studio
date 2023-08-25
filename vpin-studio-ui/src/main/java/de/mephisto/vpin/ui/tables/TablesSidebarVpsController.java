@@ -83,6 +83,12 @@ public class TablesSidebarVpsController implements Initializable, AutoCompleteTe
   private Button openTableBtn;
 
   @FXML
+  private Label entriesLabel;
+
+  @FXML
+  private Label updateDateLabel;
+
+  @FXML
   private Hyperlink ipdbLink;
   private AutoCompleteTextField autoCompleteNameField;
 
@@ -136,42 +142,12 @@ public class TablesSidebarVpsController implements Initializable, AutoCompleteTe
   private void onUpdate() {
     Date changeDate = VPS.getInstance().getChangeDate();
     String msg = "Download latest version of the Visual Pinball Spreadsheet database?";
-    Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Virtual Pinball Spreadsheet Update", msg, "Your database last update was on " + DateFormat.getDateInstance().format(changeDate) + ".");
+    Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Virtual Pinball Spreadsheet Update", msg, "Your database last update was on " + DateFormat.getDateTimeInstance().format(changeDate) + ".");
     if (result.isPresent() && result.get().equals(ButtonType.OK)) {
       Dialogs.createProgressDialog(new VpsDBDownloadProgressModel("Download VPS Database", Arrays.asList(VPS.getInstance().getVpsDbFile())));
+      List<VpsTable> tables = VPS.getInstance().getTables();
+      refreshSheetData(tables);
     }
-  }
-
-  @Override
-  public void initialize(URL url, ResourceBundle resourceBundle) {
-    detailsBox.managedProperty().bindBidirectional(detailsBox.visibleProperty());
-    dataRoot.managedProperty().bindBidirectional(dataRoot.visibleProperty());
-
-    openTableBtn.setDisable(true);
-
-    tablesCombo.valueProperty().addListener((observable, oldValue, newValue) -> openTableBtn.setDisable(newValue == null || newValue.getUrls().isEmpty()));
-    filterCheckbox.selectedProperty().addListener((observable, oldValue, newValue) -> refreshView(game));
-
-    List<VpsTable> tables = VPS.getInstance().getTables();
-    TreeSet<String> collect = new TreeSet<>(tables.stream().map(t -> t.getName()).collect(Collectors.toSet()));
-    autoCompleteNameField = new AutoCompleteTextField(this.nameField, this, collect);
-
-    tablesCombo.valueProperty().addListener((observable, oldValue, newValue) -> {
-      featureBox.getChildren().removeAll(featureBox.getChildren());
-      if (newValue != null) {
-        List<String> features = newValue.getFeatures();
-        if (features != null) {
-          for (String feature : features) {
-            Label badge = new Label(feature);
-            badge.getStyleClass().add("vps-badge");
-            badge.setStyle("-fx-background-color: " + VpsUtil.getFeatureColor(feature) + ";");
-            featureBox.getChildren().add(badge);
-          }
-        }
-
-        saveExternalTableVersionId(newValue.getId());
-      }
-    });
   }
 
   public void setGame(Optional<GameRepresentation> game) {
@@ -368,5 +344,44 @@ public class TablesSidebarVpsController implements Initializable, AutoCompleteTe
       LOG.error("Failed to set external game id: " + e.getMessage(), e);
       WidgetFactory.showAlert(Studio.stage, "Error", "Error updating external game reference: " + e.getMessage());
     }
+  }
+
+  private void refreshSheetData(List<VpsTable> tables) {
+    entriesLabel.setText(String.valueOf(tables.size()));
+    Date changeDate = VPS.getInstance().getChangeDate();
+    updateDateLabel.setText(DateFormat.getDateTimeInstance().format(changeDate));
+  }
+
+  @Override
+  public void initialize(URL url, ResourceBundle resourceBundle) {
+    detailsBox.managedProperty().bindBidirectional(detailsBox.visibleProperty());
+    dataRoot.managedProperty().bindBidirectional(dataRoot.visibleProperty());
+
+    openTableBtn.setDisable(true);
+
+    tablesCombo.valueProperty().addListener((observable, oldValue, newValue) -> openTableBtn.setDisable(newValue == null || newValue.getUrls().isEmpty()));
+    filterCheckbox.selectedProperty().addListener((observable, oldValue, newValue) -> refreshView(game));
+
+    List<VpsTable> tables = VPS.getInstance().getTables();
+    refreshSheetData(tables);
+    TreeSet<String> collect = new TreeSet<>(tables.stream().map(t -> t.getName()).collect(Collectors.toSet()));
+    autoCompleteNameField = new AutoCompleteTextField(this.nameField, this, collect);
+
+    tablesCombo.valueProperty().addListener((observable, oldValue, newValue) -> {
+      featureBox.getChildren().removeAll(featureBox.getChildren());
+      if (newValue != null) {
+        List<String> features = newValue.getFeatures();
+        if (features != null) {
+          for (String feature : features) {
+            Label badge = new Label(feature);
+            badge.getStyleClass().add("vps-badge");
+            badge.setStyle("-fx-background-color: " + VpsUtil.getFeatureColor(feature) + ";");
+            featureBox.getChildren().add(badge);
+          }
+        }
+
+        saveExternalTableVersionId(newValue.getId());
+      }
+    });
   }
 }
