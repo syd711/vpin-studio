@@ -124,21 +124,46 @@
                                     <Font name="System Bold" size="14.0" />
                                  </font>
                               </Label>
-                              <CheckBox mnemonicParsing="false" GridPane.columnIndex="1" GridPane.rowIndex="3" />
-                              <ComboBox prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-                              <ComboBox prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-                              <Spinner GridPane.columnIndex="1" GridPane.rowIndex="4" />
-                              <Spinner layoutX="173.0" layoutY="147.0" GridPane.columnIndex="1" GridPane.rowIndex="5" />
-                              <Spinner layoutX="173.0" layoutY="180.0" GridPane.columnIndex="1" GridPane.rowIndex="6" />
-                              <Spinner layoutX="173.0" layoutY="214.0" GridPane.columnIndex="1" GridPane.rowIndex="7" />
-                              <ComboBox layoutX="173.0" layoutY="78.0" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="13" />
-                              <CheckBox layoutX="173.0" layoutY="117.0" mnemonicParsing="false" GridPane.columnIndex="1" GridPane.rowIndex="15" />
+                              <CheckBox fx:id="hideDMD" mnemonicParsing="false" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                              <ComboBox fx:id="hideGrill" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                              <ComboBox fx:id="hideB2SDMD" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                              <Spinner fx:id="skipLampFrames" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+                              <Spinner fx:id="skipGIFrames" layoutX="173.0" layoutY="147.0" GridPane.columnIndex="1" GridPane.rowIndex="5" />
+                              <Spinner fx:id="skipSolenoidFrames" layoutX="173.0" layoutY="180.0" GridPane.columnIndex="1" GridPane.rowIndex="6" />
+                              <Spinner fx:id="skipLEDFrames" layoutX="173.0" layoutY="214.0" GridPane.columnIndex="1" GridPane.rowIndex="7" />
+                              <ComboBox fx:id="startupMode" layoutX="173.0" layoutY="78.0" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="13" />
+                              <CheckBox fx:id="bringBGFromTop" layoutX="173.0" layoutY="117.0" mnemonicParsing="false" GridPane.columnIndex="1" GridPane.rowIndex="15" />
                               <Label layoutX="10.0" layoutY="385.0" text="Glowing:" textFill="WHITE" GridPane.rowIndex="12">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
                               </Label>
-                              <ComboBox layoutX="173.0" layoutY="380.0" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="12" />
+                              <ComboBox fx:id="glowing" layoutX="173.0" layoutY="380.0" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="12" />
+                              <Label layoutX="10.0" layoutY="251.0" text="Use Simple LEDs:" textFill="WHITE" GridPane.rowIndex="8">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </Label>
+                              <Label layoutX="10.0" layoutY="284.0" text="Use &quot;Dream7&quot; LEDs:" textFill="WHITE" GridPane.rowIndex="9">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </Label>
+                              <Label layoutX="10.0" layoutY="318.0" text="LED Wireframe On:" textFill="WHITE" GridPane.rowIndex="10">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </Label>
+                              <Label layoutX="10.0" layoutY="352.0" text="LED Bulb Light On:" textFill="WHITE" GridPane.rowIndex="11">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </Label>
+                              <CheckBox fx:id="useSimpleLeds" layoutX="176.0" layoutY="117.0" mnemonicParsing="false" GridPane.columnIndex="1" GridPane.rowIndex="8" />
+                              <CheckBox fx:id="useDream7Leds" layoutX="176.0" layoutY="285.0" mnemonicParsing="false" GridPane.columnIndex="1" GridPane.rowIndex="9" />
+                              <CheckBox fx:id="wireFrameOn" layoutX="176.0" layoutY="319.0" mnemonicParsing="false" GridPane.columnIndex="1" GridPane.rowIndex="10" />
+                              <CheckBox fx:id="lightBulbOn" layoutX="176.0" layoutY="352.0" mnemonicParsing="false" GridPane.columnIndex="1" GridPane.rowIndex="11" />
+                              <CheckBox fx:id="startBackground" layoutX="176.0" layoutY="520.0" mnemonicParsing="false" GridPane.columnIndex="1" GridPane.rowIndex="14" />
                            </children>
                         </GridPane>
                         <GridPane vgap="3.0">

@@ -11,9 +11,7 @@ import de.mephisto.vpin.ui.util.MediaUtil;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.ScrollPane;
+import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
@@ -80,6 +78,53 @@ public class TablesSidebarDirectB2SController implements Initializable {
 
   @FXML
   private ScrollPane dataBoxScrollPane;
+
+  //-- Editors
+
+  @FXML
+  private ComboBox hideGrill;
+
+  @FXML
+  private ComboBox hideB2SDMD;
+
+  @FXML
+  private CheckBox hideDMD;
+
+  @FXML
+  private Spinner<Integer> skipLampFrames;
+
+  @FXML
+  private Spinner<Integer> skipGIFrames;
+
+  @FXML
+  private Spinner<Integer> skipSolenoidFrames;
+
+  @FXML
+  private Spinner<Integer> skipLEDFrames;
+
+  @FXML
+  private CheckBox useSimpleLeds;
+
+  @FXML
+  private CheckBox useDream7Leds;
+
+  @FXML
+  private CheckBox wireFrameOn;
+
+  @FXML
+  private CheckBox lightBulbOn;
+
+  @FXML
+  private ComboBox glowing;
+
+  @FXML
+  private ComboBox startupMode;
+
+  @FXML
+  private CheckBox startBackground;
+
+  @FXML
+  private CheckBox bringBGFromTop;
 
   private Optional<GameRepresentation> game = Optional.empty();
 
