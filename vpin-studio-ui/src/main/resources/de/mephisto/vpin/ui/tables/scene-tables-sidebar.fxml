@@ -72,7 +72,7 @@
                                 </Button>
                             </right>
                             <left>
-                                <Label text="DirectB2S" BorderPane.alignment="CENTER" />
+                                <Label text="Backglass" BorderPane.alignment="CENTER" />
                             </left>
                         </BorderPane>
                     </graphic>

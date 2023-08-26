@@ -13,6 +13,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
@@ -77,6 +78,9 @@ public class TablesSidebarDirectB2SController implements Initializable {
   @FXML
   private Pane directb2sRoot;
 
+  @FXML
+  private ScrollPane dataBoxScrollPane;
+
   private Optional<GameRepresentation> game = Optional.empty();
 
   private TablesSidebarController tablesSidebarController;
@@ -103,10 +107,10 @@ public class TablesSidebarDirectB2SController implements Initializable {
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
-    dataBox.managedProperty().bindBidirectional(dataBox.visibleProperty());
+    dataBoxScrollPane.managedProperty().bindBidirectional(dataBoxScrollPane.visibleProperty());
     emptyDataBox.managedProperty().bindBidirectional(emptyDataBox.visibleProperty());
 
-    dataBox.setVisible(false);
+    dataBoxScrollPane.setVisible(false);
     emptyDataBox.setVisible(true);
   }
 
@@ -118,7 +122,7 @@ public class TablesSidebarDirectB2SController implements Initializable {
   public void refreshView(Optional<GameRepresentation> g) {
     openDefaultPictureBtn.setDisable(!g.isPresent() || !g.get().isDirectB2SAvailable());
     uploadBtn.setDisable(!g.isPresent());
-    dataBox.setVisible(g.isPresent() && g.get().isDirectB2SAvailable());
+    dataBoxScrollPane.setVisible(g.isPresent() && g.get().isDirectB2SAvailable());
     emptyDataBox.setVisible(!g.isPresent() || !g.get().isDirectB2SAvailable());
 
     if (g.isPresent() && g.get().isDirectB2SAvailable()) {
