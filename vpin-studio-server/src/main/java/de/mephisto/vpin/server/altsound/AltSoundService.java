@@ -1,5 +1,6 @@
 package de.mephisto.vpin.server.altsound;
 
+import com.google.common.annotations.VisibleForTesting;
 import de.mephisto.vpin.commons.utils.FileUtils;
 import de.mephisto.vpin.restclient.AltSound;
 import de.mephisto.vpin.restclient.AltSoundEntry;
@@ -25,10 +26,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -59,6 +57,10 @@ public class AltSoundService implements InitializingBean {
     return true;
   }
 
+  public Collection<File> getCsvFiles() {
+    return altSounds.values();
+  }
+
   @NonNull
   public AltSound getAltSound(@NonNull Game game) {
     AltSound altSound = new AltSound();
@@ -66,6 +68,12 @@ public class AltSoundService implements InitializingBean {
     if (csvFile == null) {
       return altSound;
     }
+    return  getAltSound(csvFile);
+  }
+
+  @NonNull
+  public AltSound getAltSound(@NonNull File csvFile) {
+    AltSound altSound = new AltSound();
     altSound.setModificationDate(new Date(csvFile.lastModified()));
 
     //make sure a backup is there
