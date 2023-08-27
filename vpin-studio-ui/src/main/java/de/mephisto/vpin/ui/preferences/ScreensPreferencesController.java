@@ -3,6 +3,7 @@ package de.mephisto.vpin.ui.preferences;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.client.VPinStudioClient;
 import de.mephisto.vpin.restclient.representations.PreferenceEntryRepresentation;
+import de.mephisto.vpin.ui.PreferencesController;
 import de.mephisto.vpin.ui.Studio;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -43,6 +44,8 @@ public class ScreensPreferencesController implements Initializable {
     Map<String, Object> prefs = new HashMap<>();
     prefs.put(PreferenceNames.IGNORED_MEDIA, value);
     Studio.client.getPreferenceService().setPreferences(prefs);
+
+    PreferencesController.markDirty();
   }
 
   @Override

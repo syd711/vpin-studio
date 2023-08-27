@@ -3,6 +3,7 @@ package de.mephisto.vpin.ui;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.preferences.ScreensPreferencesController;
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -55,6 +56,7 @@ public class PreferencesController implements Initializable {
 
   private static VBox navBox;
 
+  private static boolean dirty = false;
 
   static {
     if (preferencesRoot == null) {
@@ -65,6 +67,10 @@ public class PreferencesController implements Initializable {
         LOG.error("Failed to load preferences: " + e.getMessage(), e);
       }
     }
+  }
+
+  public static void markDirty() {
+    dirty = true;
   }
 
   public static void open() {
@@ -80,8 +86,13 @@ public class PreferencesController implements Initializable {
     BorderPane main = (BorderPane) lookup;
     StackPane stack = (StackPane) main.getCenter();
     stack.getChildren().remove(1);
+
     NavigationController.refreshControllerCache();
-    EventManager.getInstance().notifyPreferenceChanged();
+
+    if (dirty) {
+      dirty = false;
+      EventManager.getInstance().notifyPreferenceChanged();
+    }
   }
 
   @FXML
@@ -196,7 +207,9 @@ public class PreferencesController implements Initializable {
 
   public static void open(String preferenceType) {
     open();
-    load("preference-" + preferenceType + ".fxml", null, preferenceType);
+    Platform.runLater(() -> {
+      load("preference-" + preferenceType + ".fxml", null, preferenceType);
+    });
   }
 
   @FXML
@@ -216,20 +229,20 @@ public class PreferencesController implements Initializable {
   }
 
   private static void load(String screen, ActionEvent event, String btnId) {
-    if(lastSelection != null) {
+    if (lastSelection != null) {
       lastSelection.getStyleClass().remove("preference-button-selected");
     }
     else {
       avatarButton.getStyleClass().remove("preference-button-selected");
     }
 
-    if(event != null) {
+    if (event != null) {
       lastSelection = (Button) event.getSource();
       lastSelection.getStyleClass().add("preference-button-selected");
     }
     else {
       Optional<Node> first = navBox.getChildren().stream().filter(b -> btnId.equals(b.getId())).findFirst();
-      if(first.isPresent()) {
+      if (first.isPresent()) {
         lastSelection = (Button) first.get();
         lastSelection.getStyleClass().add("preference-button-selected");
       }
@@ -239,7 +252,8 @@ public class PreferencesController implements Initializable {
       FXMLLoader loader = new FXMLLoader(ScreensPreferencesController.class.getResource(screen));
       Node node = loader.load();
       prefsMain.setCenter(node);
-    } catch (IOException e) {
+    } catch (Exception e) {
+      LOG.error("Failed to loading settings view: " + e.getMessage(), e);
       WidgetFactory.showAlert(Studio.stage, "Error", e.getMessage());
     }
   }
