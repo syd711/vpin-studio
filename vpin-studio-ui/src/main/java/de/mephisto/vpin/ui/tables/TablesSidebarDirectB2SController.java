@@ -85,10 +85,10 @@ public class TablesSidebarDirectB2SController implements Initializable {
   private ComboBox hideGrill;
 
   @FXML
-  private ComboBox hideB2SDMD;
+  private CheckBox hideB2SDMD;
 
   @FXML
-  private CheckBox hideDMD;
+  private ComboBox hideDMD;
 
   @FXML
   private Spinner<Integer> skipLampFrames;
@@ -157,6 +157,7 @@ public class TablesSidebarDirectB2SController implements Initializable {
 
     dataBoxScrollPane.setVisible(false);
     emptyDataBox.setVisible(true);
+
   }
 
   public void setGame(Optional<GameRepresentation> game) {

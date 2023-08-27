@@ -1,6 +1,8 @@
 package de.mephisto.vpin.server.directb2s;
 
 import de.mephisto.vpin.restclient.DirectB2SData;
+import de.mephisto.vpin.restclient.DirectB2STableSettings;
+import de.mephisto.vpin.restclient.PopperCustomOptions;
 import de.mephisto.vpin.restclient.jobs.JobExecutionResult;
 import de.mephisto.vpin.restclient.jobs.JobExecutionResultFactory;
 import de.mephisto.vpin.server.VPinStudioServer;
@@ -16,6 +18,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.io.File;
 
+import static org.springframework.http.HttpStatus.CONFLICT;
 import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 
 /**
@@ -26,17 +29,16 @@ import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 public class DirectB2SResource {
   private final static Logger LOG = LoggerFactory.getLogger(DirectB2SResource.class);
 
+
+  @Autowired
+  private BackglassService backglassService;
+
   @Autowired
   private GameService gameService;
 
   @GetMapping("/{id}")
   public DirectB2SData getData(@PathVariable("id") int id) {
-    Game game = gameService.getGame(id);
-    if(game != null && game.isDirectB2SAvailable()) {
-      DirectB2SDataExtractor extractor = new DirectB2SDataExtractor();
-      return extractor.extractData(game.getDirectB2SFile());
-    }
-    return new DirectB2SData();
+    return backglassService.getDirectB2SData(id);
   }
 
   @PostMapping("/upload")
@@ -68,5 +70,20 @@ public class DirectB2SResource {
       throw new ResponseStatusException(INTERNAL_SERVER_ERROR, "DirectB2S upload failed: " + e.getMessage());
     }
     return JobExecutionResultFactory.empty();
+  }
+
+  @GetMapping("/tablesettings/{id}")
+  public DirectB2STableSettings getTableSettings(@PathVariable("id") int id) {
+    return backglassService.getTableSettings(id);
+  }
+
+  @PostMapping("/tablesettings/{id}")
+  public DirectB2STableSettings saveSettings(@PathVariable("id") int id,
+                                             @RequestBody DirectB2STableSettings settings) {
+    try {
+      return backglassService.saveTableSettings(id, settings);
+    } catch (Exception e) {
+      throw new ResponseStatusException(CONFLICT, "Saving custom options failed: " + e.getMessage());
+    }
   }
 }

@@ -124,9 +124,8 @@
                                     <Font name="System Bold" size="14.0" />
                                  </font>
                               </Label>
-                              <CheckBox fx:id="hideDMD" mnemonicParsing="false" GridPane.columnIndex="1" GridPane.rowIndex="3" />
                               <ComboBox fx:id="hideGrill" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-                              <ComboBox fx:id="hideB2SDMD" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                              <ComboBox fx:id="hideDMD" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="3" />
                               <Spinner fx:id="skipLampFrames" GridPane.columnIndex="1" GridPane.rowIndex="4" />
                               <Spinner fx:id="skipGIFrames" layoutX="173.0" layoutY="147.0" GridPane.columnIndex="1" GridPane.rowIndex="5" />
                               <Spinner fx:id="skipSolenoidFrames" layoutX="173.0" layoutY="180.0" GridPane.columnIndex="1" GridPane.rowIndex="6" />
@@ -164,6 +163,7 @@
                               <CheckBox fx:id="wireFrameOn" layoutX="176.0" layoutY="319.0" mnemonicParsing="false" GridPane.columnIndex="1" GridPane.rowIndex="10" />
                               <CheckBox fx:id="lightBulbOn" layoutX="176.0" layoutY="352.0" mnemonicParsing="false" GridPane.columnIndex="1" GridPane.rowIndex="11" />
                               <CheckBox fx:id="startBackground" layoutX="176.0" layoutY="520.0" mnemonicParsing="false" GridPane.columnIndex="1" GridPane.rowIndex="14" />
+                              <CheckBox fx:id="hideB2SDMD" mnemonicParsing="false" GridPane.columnIndex="1" GridPane.rowIndex="2" />
                            </children>
                         </GridPane>
                         <GridPane vgap="3.0">

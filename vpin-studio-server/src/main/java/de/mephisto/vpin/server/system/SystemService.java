@@ -354,6 +354,9 @@ public class SystemService extends SystemInfo implements InitializingBean {
     return pinUPSystemInstallationFolder;
   }
 
+  public File getB2STableSettingsXml() {
+    return new File(getVPXTablesFolder(), "B2STableSettings.xml");
+  }
 
   /**
    * Checks to see if a specific port is available.

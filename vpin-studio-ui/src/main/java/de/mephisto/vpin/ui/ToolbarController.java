@@ -49,8 +49,6 @@ public class ToolbarController implements Initializable, StudioEventListener {
   @FXML
   private HBox toolbarHBox;
 
-  private Node preferencesRoot;
-
   // Add a public no-args constructor
   public ToolbarController() {
   }
@@ -99,11 +97,8 @@ public class ToolbarController implements Initializable, StudioEventListener {
   }
 
   @FXML
-  private void onSettings(ActionEvent event) throws IOException {
-    Node lookup = Studio.stage.getScene().lookup("#root");
-    BorderPane main = (BorderPane) lookup;
-    StackPane stack = (StackPane) main.getCenter();
-    stack.getChildren().add(preferencesRoot);
+  private void onSettings(ActionEvent event) {
+    PreferencesController.open();
   }
 
 
@@ -125,15 +120,6 @@ public class ToolbarController implements Initializable, StudioEventListener {
 
     JobPoller.destroy();
     JobPoller.create(this.jobBtn, this.messagesBtn);
-
-    if (preferencesRoot == null) {
-      try {
-        FXMLLoader loader = new FXMLLoader(NavigationController.class.getResource("scene-preferences.fxml"));
-        preferencesRoot = loader.load();
-      } catch (IOException e) {
-        LOG.error("Failed to load preferences: " + e.getMessage(), e);
-      }
-    }
 
     updateBtn.setVisible(false);
     String os = System.getProperty("os.name");

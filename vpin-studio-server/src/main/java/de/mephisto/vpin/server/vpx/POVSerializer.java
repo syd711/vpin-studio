@@ -72,7 +72,7 @@ public class POVSerializer {
 
       write(povFile, doc);
     } catch (Exception e) {
-      String msg = "Failed to parse pov file '" + povFile.getAbsolutePath() + "': " + e.getMessage();
+      String msg = "Failed to write pov file '" + povFile.getAbsolutePath() + "': " + e.getMessage();
       LOG.error(msg, e);
       throw new VPinStudioException(msg, e);
     }
