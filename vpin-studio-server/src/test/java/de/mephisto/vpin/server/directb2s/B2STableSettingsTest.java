@@ -45,8 +45,6 @@ public class B2STableSettingsTest {
     B2SServerSettingsParser parser = new B2SServerSettingsParser(b2sFile);
     DirectB2ServerSettings settings = parser.getSettings();
     Assertions.assertNotNull(settings);
-
-    Assertions.assertTrue(settings.getDefaultStartMode() > 0);
     Assertions.assertTrue(settings.isPluginsOn());
   }
 

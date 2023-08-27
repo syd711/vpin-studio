@@ -76,42 +76,42 @@ public class B2SServerSettingsSerializer {
         node.setTextContent(intValue(settings.isPluginsOn()));
         break;
       }
-      case "DefaultStartMode": {
-        node.setTextContent(String.valueOf(settings.getDefaultStartMode()));
-        break;
-      }
-      case "DisableFuzzyMatching": {
-        node.setTextContent(intValue(settings.isDisableFuzzyMatching()));
-        break;
-      }
-      case "IsLampsStateLogOn": {
-        node.setTextContent(intValue(settings.isLampsStateLogOn()));
-        break;
-      }
-      case "IsSolenoidsStateLogOn": {
-        node.setTextContent(intValue(settings.isSolenoidsStateLogOn()));
-        break;
-      }
-      case "IsGIStringsStateLogOn": {
-        node.setTextContent(intValue(settings.isGiStringsStateLogOn()));
-        break;
-      }
-      case "IsLEDsStateLogOn": {
-        node.setTextContent(intValue(settings.isLedsStateLogOn()));
-        break;
-      }
-      case "IsPaintingLogOn": {
-        node.setTextContent(intValue(settings.isPaintingLogOn()));
-        break;
-      }
-      case "IsStatisticsBackglassOn": {
-        node.setTextContent(intValue(settings.isStatisticsBackglassOn()));
-        break;
-      }
-      case "FormToFront": {
-        node.setTextContent(intValue(settings.isFormToFront()));
-        break;
-      }
+//      case "DefaultStartMode": {
+//        node.setTextContent(String.valueOf(settings.getDefaultStartMode()));
+//        break;
+//      }
+//      case "DisableFuzzyMatching": {
+//        node.setTextContent(intValue(settings.isDisableFuzzyMatching()));
+//        break;
+//      }
+//      case "IsLampsStateLogOn": {
+//        node.setTextContent(intValue(settings.isLampsStateLogOn()));
+//        break;
+//      }
+//      case "IsSolenoidsStateLogOn": {
+//        node.setTextContent(intValue(settings.isSolenoidsStateLogOn()));
+//        break;
+//      }
+//      case "IsGIStringsStateLogOn": {
+//        node.setTextContent(intValue(settings.isGiStringsStateLogOn()));
+//        break;
+//      }
+//      case "IsLEDsStateLogOn": {
+//        node.setTextContent(intValue(settings.isLedsStateLogOn()));
+//        break;
+//      }
+//      case "IsPaintingLogOn": {
+//        node.setTextContent(intValue(settings.isPaintingLogOn()));
+//        break;
+//      }
+//      case "IsStatisticsBackglassOn": {
+//        node.setTextContent(intValue(settings.isStatisticsBackglassOn()));
+//        break;
+//      }
+//      case "FormToFront": {
+//        node.setTextContent(intValue(settings.isFormToFront()));
+//        break;
+//      }
       case "ShowStartupError": {
         node.setTextContent(intValue(settings.isShowStartupError()));
         break;
