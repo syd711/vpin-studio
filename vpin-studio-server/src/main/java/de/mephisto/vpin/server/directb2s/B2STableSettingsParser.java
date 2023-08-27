@@ -1,8 +1,6 @@
 package de.mephisto.vpin.server.directb2s;
 
-import de.mephisto.vpin.commons.POV;
 import de.mephisto.vpin.restclient.DirectB2STableSettings;
-import de.mephisto.vpin.server.VPinStudioException;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import org.slf4j.Logger;

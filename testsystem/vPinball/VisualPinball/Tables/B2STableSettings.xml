@@ -30,7 +30,7 @@
     <StartAsEXE>1</StartAsEXE>
     <StartBackground>0</StartBackground>
     <FormToFront>0</FormToFront>
-    <Animations />
+    <Animations/>
   </avr_200>
   <apollo13>
     <HideGrill>2</HideGrill>
@@ -46,7 +46,7 @@
     <StartAsEXE>1</StartAsEXE>
     <StartBackground>0</StartBackground>
     <FormToFront>0</FormToFront>
-    <Animations />
+    <Animations/>
   </apollo13>
   <PUPafm_113b>
     <HideGrill>2</HideGrill>
@@ -62,7 +62,7 @@
     <StartAsEXE>1</StartAsEXE>
     <StartBackground>0</StartBackground>
     <FormToFront>0</FormToFront>
-    <Animations />
+    <Animations/>
   </PUPafm_113b>
   <gldneye>
     <HideGrill>2</HideGrill>
@@ -78,6 +78,6 @@
     <StartAsEXE>1</StartAsEXE>
     <StartBackground>0</StartBackground>
     <FormToFront>0</FormToFront>
-    <Animations />
+    <Animations/>
   </gldneye>
 </B2STableSettings>

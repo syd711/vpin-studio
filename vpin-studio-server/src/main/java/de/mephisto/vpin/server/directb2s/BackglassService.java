@@ -2,6 +2,7 @@ package de.mephisto.vpin.server.directb2s;
 
 import de.mephisto.vpin.restclient.DirectB2SData;
 import de.mephisto.vpin.restclient.DirectB2STableSettings;
+import de.mephisto.vpin.restclient.DirectB2ServerSettings;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameService;
 import de.mephisto.vpin.server.system.SystemService;
@@ -24,7 +25,10 @@ public class BackglassService implements InitializingBean {
   @Autowired
   private SystemService systemService;
 
-  private B2STableSettingsParser parser;
+  private B2STableSettingsParser tableSettingsParser;
+  private B2STableSettingsSerializer tableSettingsSerializer;
+  private B2SServerSettingsParser serverSettingsParser;
+  private B2SServerSettingsSerializer serverSettingsSerializer;
 
   public DirectB2SData getDirectB2SData(int id) {
     Game game = gameService.getGame(id);
@@ -35,18 +39,26 @@ public class BackglassService implements InitializingBean {
     return new DirectB2SData();
   }
 
-  public DirectB2STableSettings saveTableSettings(int id, DirectB2STableSettings settings) {
-    return null;
+  public DirectB2STableSettings saveTableSettings(DirectB2STableSettings settings) {
+    if (tableSettingsSerializer == null) {
+      throw new UnsupportedOperationException("No B2STableSettings.xml found");
+    }
+
+    tableSettingsSerializer.serialize(settings);
+    return settings;
   }
 
   public DirectB2STableSettings getTableSettings(int id) {
-    Game game = gameService.getGame(id);
+    if (tableSettingsParser == null) {
+      throw new UnsupportedOperationException("No B2STableSettings.xml found");
+    }
 
+    Game game = gameService.getGame(id);
     String rom = game.getRom();
     if (!StringUtils.isEmpty(game.getRomAlias())) {
       rom = game.getRomAlias();
     }
-    DirectB2STableSettings entry = parser.getEntry(rom);
+    DirectB2STableSettings entry = tableSettingsParser.getEntry(rom);
 
     if (entry == null) {
       entry = new DirectB2STableSettings();
@@ -55,11 +67,24 @@ public class BackglassService implements InitializingBean {
     return entry;
   }
 
+  public DirectB2ServerSettings getServerSettings() {
+    return serverSettingsParser.getSettings();
+  }
+
+  public DirectB2ServerSettings saveServerSettings(DirectB2ServerSettings settings) {
+    serverSettingsSerializer.serialize(settings);
+    return getServerSettings();
+  }
+
   @Override
   public void afterPropertiesSet() {
     File settingsXml = systemService.getB2STableSettingsXml();
     if (settingsXml.exists()) {
-      this.parser = new B2STableSettingsParser(systemService.getB2STableSettingsXml());
+      this.tableSettingsParser = new B2STableSettingsParser(systemService.getB2STableSettingsXml());
+      this.tableSettingsSerializer = new B2STableSettingsSerializer(systemService.getB2STableSettingsXml());
+
+      this.serverSettingsParser = new B2SServerSettingsParser(systemService.getB2STableSettingsXml());
+      this.serverSettingsSerializer = new B2SServerSettingsSerializer(systemService.getB2STableSettingsXml());
     }
     else {
       LOG.error(settingsXml.getAbsolutePath() + " not found.");

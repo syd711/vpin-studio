@@ -174,7 +174,7 @@ public class TablesSidebarDirectB2SController implements Initializable {
     if (g.isPresent() && g.get().isDirectB2SAvailable()) {
       new Thread(() -> {
         Platform.runLater(() -> {
-          data = Studio.client.getDirectB2SService().getDirectB2SData(g.get().getId());
+          data = Studio.client.getBackglassServiceClient().getDirectB2SData(g.get().getId());
           nameLabel.setText(data.getName());
           typeLabel.setText(this.getTableType(data.getTableType()));
           authorLabel.setText(data.getAuthor());

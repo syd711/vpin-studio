@@ -32,7 +32,7 @@ public class VPinStudioClient implements ObservedPropertyChangeListener, Overlay
   private final ArchiveServiceClient archiveServiceClient;
   private final AssetServiceClient assetServiceClient;
   private final CompetitionsServiceClient competitions;
-  private final DirectB2SServiceClient directB2SServiceClient;
+  private final BackglassServiceClient backglassServiceClient;
   private final DiscordServiceClient discordServiceClient;
   private final GamesServiceClient gamesServiceClient;
   private final HighscoreCardsServiceClient highscoreCardsServiceClient;
@@ -62,7 +62,7 @@ public class VPinStudioClient implements ObservedPropertyChangeListener, Overlay
     this.archiveServiceClient = new ArchiveServiceClient(this);
     this.assetServiceClient = new AssetServiceClient(this);
     this.competitions = new CompetitionsServiceClient(this);
-    this.directB2SServiceClient = new DirectB2SServiceClient(this);
+    this.backglassServiceClient = new BackglassServiceClient(this);
     this.discordServiceClient = new DiscordServiceClient(this);
     this.gamesServiceClient = new GamesServiceClient(this);
     this.highscoreCardsServiceClient = new HighscoreCardsServiceClient(this);
@@ -132,8 +132,8 @@ public class VPinStudioClient implements ObservedPropertyChangeListener, Overlay
     return competitions;
   }
 
-  public DirectB2SServiceClient getDirectB2SService() {
-    return directB2SServiceClient;
+  public BackglassServiceClient getBackglassServiceClient() {
+    return backglassServiceClient;
   }
 
   public DiscordServiceClient getDiscordService() {

@@ -15,7 +15,6 @@ import java.io.File;
 import java.util.Collections;
 import java.util.Iterator;
 
-import static de.mephisto.vpin.restclient.jobs.JobType.ALTSOUND_INSTALL;
 import static de.mephisto.vpin.restclient.jobs.JobType.DIRECTB2S_INSTALL;
 
 public class DirectB2SUploadProgressModel extends ProgressModel<File> {
@@ -57,7 +56,7 @@ public class DirectB2SUploadProgressModel extends ProgressModel<File> {
   @Override
   public void processNext(ProgressResultModel progressResultModel, File next) {
     try {
-      JobExecutionResult result = Studio.client.getDirectB2SService().uploadDirectB2SFile(next, directB2SType, gameId, percent -> progressResultModel.setProgress(percent));
+      JobExecutionResult result = Studio.client.getBackglassServiceClient().uploadDirectB2SFile(next, directB2SType, gameId, percent -> progressResultModel.setProgress(percent));
       progressResultModel.addProcessed();
       if (!StringUtils.isEmpty(result.getError())) {
         Platform.runLater(() -> {

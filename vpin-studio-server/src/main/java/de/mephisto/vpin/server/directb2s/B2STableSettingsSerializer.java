@@ -39,7 +39,6 @@ public class B2STableSettingsSerializer {
     try {
       DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
       dbf.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
-      dbf.setFeature(OutputKeys.OMIT_XML_DECLARATION, true);
 
       DocumentBuilder db = dbf.newDocumentBuilder();
       Document doc = db.parse(xmlFile);
@@ -83,6 +82,7 @@ public class B2STableSettingsSerializer {
   private static void write(File povFile, Document doc) throws IOException, TransformerException {
     TransformerFactory transformerFactory = TransformerFactory.newInstance();
     Transformer transformer = transformerFactory.newTransformer();
+    transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
     DOMSource source = new DOMSource(doc);
     FileWriter writer = new FileWriter(povFile);
     StreamResult result = new StreamResult(writer);
