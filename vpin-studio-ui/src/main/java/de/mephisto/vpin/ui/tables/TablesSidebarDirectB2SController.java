@@ -5,7 +5,6 @@ import de.mephisto.vpin.commons.utils.FileUtils;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.DirectB2SData;
 import de.mephisto.vpin.restclient.DirectB2STableSettings;
-import de.mephisto.vpin.restclient.DirectB2ServerSettings;
 import de.mephisto.vpin.restclient.representations.GameRepresentation;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.tables.drophandler.DirectB2SFileDropEventHandler;
@@ -149,7 +148,6 @@ public class TablesSidebarDirectB2SController implements Initializable {
   private TablesSidebarController tablesSidebarController;
 
   private DirectB2SData tableData;
-  private DirectB2ServerSettings serverSettings;
   private DirectB2STableSettings tableSettings;
   private boolean saveEnabled;
 
@@ -291,7 +289,6 @@ public class TablesSidebarDirectB2SController implements Initializable {
     this.saveEnabled = false;
 
     this.tableSettings = null;
-    this.serverSettings = null;
 
     nameLabel.setText("-");
     typeLabel.setText("-");
@@ -309,7 +306,6 @@ public class TablesSidebarDirectB2SController implements Initializable {
     if (g.isPresent()) {
       if (g.get().isDirectB2SAvailable()) {
         new Thread(() -> {
-          this.serverSettings = Studio.client.getBackglassServiceClient().getServerSettings();
           this.tableSettings = Studio.client.getBackglassServiceClient().getTableSettings(g.get().getId());
           this.tableData = Studio.client.getBackglassServiceClient().getDirectB2SData(g.get().getId());
 

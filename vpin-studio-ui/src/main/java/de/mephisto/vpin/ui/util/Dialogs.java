@@ -277,7 +277,7 @@ public class Dialogs {
   }
 
   public static void openBotWhitelistDialog(DiscordBotPreferencesController preferencesController) {
-    Stage stage = createStudioDialogStage(DiscordBotAllowListDialogController.class, "preference-bow-allowlist-dialog.fxml", "Bot Allow-List");
+    Stage stage = createStudioDialogStage(DiscordBotAllowListDialogController.class, "preference-bot-allowlist-dialog.fxml", "Bot Allow-List");
     DiscordBotAllowListDialogController controller = (DiscordBotAllowListDialogController) stage.getUserData();
     controller.setPreferencesController(preferencesController);
     stage.showAndWait();

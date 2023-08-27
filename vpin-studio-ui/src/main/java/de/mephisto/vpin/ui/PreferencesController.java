@@ -1,5 +1,6 @@
 package de.mephisto.vpin.ui;
 
+import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.preferences.ScreensPreferencesController;
 import javafx.event.ActionEvent;
@@ -11,6 +12,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -18,6 +20,7 @@ import java.awt.*;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URL;
+import java.util.Optional;
 import java.util.ResourceBundle;
 
 public class PreferencesController implements Initializable {
@@ -39,10 +42,19 @@ public class PreferencesController implements Initializable {
   @FXML
   private BorderPane preferencesMain;
 
-  private Button lastSelection;
+  @FXML
+  private VBox navigationBox;
 
+  private static Button lastSelection;
 
   private static Node preferencesRoot;
+
+  private static Button avatarButton;
+
+  private static BorderPane prefsMain;
+
+  private static VBox navBox;
+
 
   static {
     if (preferencesRoot == null) {
@@ -63,7 +75,7 @@ public class PreferencesController implements Initializable {
   }
 
   @FXML
-  private void onClose(ActionEvent event) throws IOException {
+  private void onClose(ActionEvent event) {
     Node lookup = Studio.stage.getScene().lookup("#root");
     BorderPane main = (BorderPane) lookup;
     StackPane stack = (StackPane) main.getCenter();
@@ -79,12 +91,12 @@ public class PreferencesController implements Initializable {
 
   @FXML
   private void onMediaValidation(ActionEvent event) throws IOException {
-    load("preference-validators-pinuppopper.fxml", event);
+    load("preference-validators_pinuppopper.fxml", event);
   }
 
   @FXML
   private void onVPXValidation(ActionEvent event) throws IOException {
-    load("preference-validators-vpx.fxml", event);
+    load("preference-validators_vpx.fxml", event);
   }
 
   @FXML
@@ -94,7 +106,7 @@ public class PreferencesController implements Initializable {
 
   @FXML
   private void onArchiveManager(ActionEvent event) throws IOException {
-    load("preference-table-manager.fxml", event);
+    load("preference-table_manager.fxml", event);
   }
 
   @FXML
@@ -118,13 +130,18 @@ public class PreferencesController implements Initializable {
   }
 
   @FXML
+  private void onBackglassServer(ActionEvent event) throws IOException {
+    load("preference-backglass.fxml", event);
+  }
+
+  @FXML
   private void onReset(ActionEvent event) throws IOException {
     load("preference-reset.fxml", event);
   }
 
   @FXML
   private void onCustomOptions(ActionEvent event) throws IOException {
-    load("preference-popper-custom-options.fxml", event);
+    load("preference-popper_custom_options.fxml", event);
   }
 
   @FXML
@@ -139,7 +156,7 @@ public class PreferencesController implements Initializable {
 
   @FXML
   private void onHighscoreCards(ActionEvent event) throws IOException {
-    load("preference-highscore-cards.fxml", event);
+    load("preference-highscore_cards.fxml", event);
   }
 
   @FXML
@@ -149,12 +166,12 @@ public class PreferencesController implements Initializable {
 
   @FXML
   private void onRankings(ActionEvent event) throws IOException {
-    load("preference-player-rankings.fxml", event);
+    load("preference-player_rankings.fxml", event);
   }
 
   @FXML
   private void onServiceInfo(ActionEvent event) throws IOException {
-    load("preference-service-info.fxml", event);
+    load("preference-service_info.fxml", event);
   }
 
   @FXML
@@ -164,17 +181,22 @@ public class PreferencesController implements Initializable {
 
   @FXML
   private void onDiscordBot(ActionEvent event) throws IOException {
-    load("preference-discord-bot.fxml", event);
+    load("preference-discord_bot.fxml", event);
   }
 
   @FXML
   private void onDiscordBotFaq(ActionEvent event) throws IOException {
-    load("preference-discord-faq.fxml", event);
+    load("preference-discord_faq.fxml", event);
   }
 
   @FXML
   private void onDiscordWebhook(ActionEvent event) throws IOException {
-    load("preference-discord-webhook.fxml", event);
+    load("preference-discord_webhook.fxml", event);
+  }
+
+  public static void open(String preferenceType) {
+    open();
+    load("preference-" + preferenceType + ".fxml", null, preferenceType);
   }
 
   @FXML
@@ -190,23 +212,44 @@ public class PreferencesController implements Initializable {
   }
 
   private void load(String screen, ActionEvent event) throws IOException {
+    load(screen, event, null);
+  }
+
+  private static void load(String screen, ActionEvent event, String btnId) {
     if(lastSelection != null) {
       lastSelection.getStyleClass().remove("preference-button-selected");
     }
     else {
-      avatarBtn.getStyleClass().remove("preference-button-selected");
+      avatarButton.getStyleClass().remove("preference-button-selected");
     }
 
-    lastSelection = (Button) event.getSource();
-    lastSelection.getStyleClass().add("preference-button-selected");
+    if(event != null) {
+      lastSelection = (Button) event.getSource();
+      lastSelection.getStyleClass().add("preference-button-selected");
+    }
+    else {
+      Optional<Node> first = navBox.getChildren().stream().filter(b -> btnId.equals(b.getId())).findFirst();
+      if(first.isPresent()) {
+        lastSelection = (Button) first.get();
+        lastSelection.getStyleClass().add("preference-button-selected");
+      }
+    }
 
-    FXMLLoader loader = new FXMLLoader(ScreensPreferencesController.class.getResource(screen));
-    Node node = loader.load();
-    preferencesMain.setCenter(node);
+    try {
+      FXMLLoader loader = new FXMLLoader(ScreensPreferencesController.class.getResource(screen));
+      Node node = loader.load();
+      prefsMain.setCenter(node);
+    } catch (IOException e) {
+      WidgetFactory.showAlert(Studio.stage, "Error", e.getMessage());
+    }
   }
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
+    avatarButton = avatarBtn;
+    prefsMain = preferencesMain;
+    navBox = navigationBox;
+
     avatarBtn.getStyleClass().add("preference-button-selected");
     versionLabel.setText("VPin Studio Version " + Studio.getVersion());
     hostLabel.setText(System.getProperty("os.name"));

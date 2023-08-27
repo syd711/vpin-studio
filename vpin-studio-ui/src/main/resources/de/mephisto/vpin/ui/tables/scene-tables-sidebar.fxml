@@ -37,6 +37,17 @@
                                     <Tooltip text="PinUP Popper Setup" />
                                  </tooltip>
                               </Button>
+                              <Button layoutX="10.0" layoutY="10.0" mnemonicParsing="false" onAction="#onPrefsPopper">
+                                 <font>
+                                    <Font size="10.0" />
+                                 </font>
+                                 <graphic>
+                                    <FontIcon iconColor="WHITE" iconLiteral="sil-settings" />
+                                 </graphic>
+                                 <tooltip>
+                                    <Tooltip text="Open PinUP Popper setup" />
+                                 </tooltip>
+                              </Button>
                            </children>
                            <BorderPane.margin>
                               <Insets left="6.0" />
@@ -59,17 +70,32 @@
                     <graphic>
                         <BorderPane prefWidth="560.0">
                             <right>
-                                <Button fx:id="directb2sBtn" mnemonicParsing="false" onAction="#onDirectB2S" styleClass="external-component" BorderPane.alignment="CENTER">
-                                    <font>
-                                        <Font size="10.0" />
-                                    </font>
-                                    <graphic>
-                                        <FontIcon iconColor="WHITE" iconLiteral="mdi2o-open-in-new" />
-                                    </graphic>
-                                    <tooltip>
-                                        <Tooltip text="DirectB2S Folder" />
-                                    </tooltip>
-                                </Button>
+                        <HBox alignment="CENTER_RIGHT" spacing="6.0" BorderPane.alignment="CENTER">
+                           <children>
+                                      <Button fx:id="directb2sBtn" mnemonicParsing="false" onAction="#onDirectB2S" styleClass="external-component">
+                                          <font>
+                                              <Font size="10.0" />
+                                          </font>
+                                          <graphic>
+                                              <FontIcon iconColor="WHITE" iconLiteral="mdi2o-open-in-new" />
+                                          </graphic>
+                                          <tooltip>
+                                              <Tooltip text="DirectB2S Folder" />
+                                          </tooltip>
+                                      </Button>
+                              <Button mnemonicParsing="false" onAction="#onPrefsBackglass">
+                                 <font>
+                                    <Font size="10.0" />
+                                 </font>
+                                 <graphic>
+                                    <FontIcon iconColor="WHITE" iconLiteral="sil-settings" />
+                                 </graphic>
+                                 <tooltip>
+                                    <Tooltip text="Open backglass server settings" />
+                                 </tooltip>
+                              </Button>
+                           </children>
+                        </HBox>
                             </right>
                             <left>
                                 <Label text="Backglass" BorderPane.alignment="CENTER" />
@@ -125,7 +151,32 @@
                   </BorderPane>
                </graphic></TitledPane>
                 <TitledPane fx:id="titledPanePov" expanded="false" text="Point Of View (POV)" />
-                <TitledPane fx:id="titledPaneHighscores" expanded="false" text="Highscores" />
+                <TitledPane fx:id="titledPaneHighscores" expanded="false">
+                    <graphic>
+                        <BorderPane prefWidth="560.0">
+                            <left>
+                                <Label text="Highscores" BorderPane.alignment="CENTER" />
+                            </left>
+                            <right>
+                        <HBox BorderPane.alignment="CENTER_RIGHT">
+                           <children>
+                              <Button mnemonicParsing="false" onAction="#onPrefsHighscore">
+                                 <font>
+                                    <Font size="10.0" />
+                                 </font>
+                                 <graphic>
+                                    <FontIcon iconColor="WHITE" iconLiteral="sil-settings" />
+                                 </graphic>
+                                 <tooltip>
+                                    <Tooltip text="Open highscore settings" />
+                                 </tooltip>
+                              </Button>
+                           </children>
+                        </HBox>
+                            </right>
+                        </BorderPane>
+                    </graphic>
+                </TitledPane>
                 <TitledPane fx:id="titledPaneMetadata" expanded="false">
                <graphic>
                   <BorderPane prefWidth="560.0">
@@ -151,7 +202,32 @@
                      </right>
                   </BorderPane>
                </graphic></TitledPane>
-            <TitledPane fx:id="titledPaneMame" expanded="false" layoutX="10.0" layoutY="260.0" text="VPin MAME" />
+            <TitledPane fx:id="titledPaneMame" expanded="false" layoutX="10.0" layoutY="260.0">
+                <graphic>
+                    <BorderPane prefWidth="560.0">
+                        <left>
+                            <Label text="VPin MAME" BorderPane.alignment="CENTER" />
+                        </left>
+                        <right>
+                        <HBox BorderPane.alignment="CENTER_RIGHT">
+                           <children>
+                              <Button mnemonicParsing="false" onAction="#onPrefsMame">
+                                 <font>
+                                    <Font size="10.0" />
+                                 </font>
+                                 <graphic>
+                                    <FontIcon iconColor="WHITE" iconLiteral="sil-settings" />
+                                 </graphic>
+                                 <tooltip>
+                                    <Tooltip text="Open VPin MAME settings" />
+                                 </tooltip>
+                              </Button>
+                           </children>
+                        </HBox>
+                        </right>
+                    </BorderPane>
+                </graphic>
+            </TitledPane>
             <TitledPane fx:id="titledPaneVps" expanded="false" layoutX="10.0" layoutY="262.0">
                <graphic>
                   <BorderPane prefWidth="560.0">

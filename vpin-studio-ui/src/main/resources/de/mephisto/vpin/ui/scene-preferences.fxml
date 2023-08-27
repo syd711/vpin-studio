@@ -29,7 +29,7 @@
          <center>
             <ScrollPane hbarPolicy="NEVER" styleClass="base-component">
                <content>
-                  <VBox alignment="TOP_RIGHT" fillWidth="false" prefWidth="400.0">
+                  <VBox fx:id="navigationBox" alignment="TOP_RIGHT" fillWidth="false" prefWidth="400.0">
                      <children>
                         <Label alignment="BASELINE_LEFT" styleClass="preference-section" text="VPIN PREFRENCES">
                            <font>
@@ -44,7 +44,8 @@
                         </Button>
                         <Button alignment="BASELINE_LEFT" contentDisplay="RIGHT" layoutX="160.0" layoutY="100.0" mnemonicParsing="false" onAction="#onPinVol" styleClass="preference-button" text="PinVol" />
                         <Button alignment="BASELINE_LEFT" contentDisplay="RIGHT" layoutX="160.0" layoutY="133.0" mnemonicParsing="false" onAction="#onPINemHi" styleClass="preference-button" text="PINemHi" />
-                        <Button alignment="BASELINE_LEFT" contentDisplay="RIGHT" layoutX="160.0" layoutY="75.0" mnemonicParsing="false" onAction="#onMame" styleClass="preference-button" text="VPin MAME" />
+                        <Button fx:id="backglass" alignment="BASELINE_LEFT" contentDisplay="RIGHT" layoutX="160.0" layoutY="167.0" mnemonicParsing="false" onAction="#onBackglassServer" styleClass="preference-button" text="Backglass Server" />
+                        <Button fx:id="mame" alignment="BASELINE_LEFT" contentDisplay="RIGHT" layoutX="160.0" layoutY="75.0" mnemonicParsing="false" onAction="#onMame" styleClass="preference-button" text="VPin MAME" />
                         <Label alignment="BASELINE_LEFT" layoutX="210.0" layoutY="10.0" styleClass="preference-section" text="PINUP POPPER SETTINGS">
                            <font>
                               <Font size="13.0" />
@@ -64,7 +65,7 @@
                               <Insets top="24.0" />
                            </VBox.margin>
                         </Label>
-                        <Button alignment="BASELINE_LEFT" contentDisplay="RIGHT" layoutX="160.0" layoutY="282.0" mnemonicParsing="false" onAction="#onMediaValidation" styleClass="preference-button" text="PinUP Popper Validators" />
+                        <Button fx:id="validators_pinuppopper" alignment="BASELINE_LEFT" contentDisplay="RIGHT" layoutX="160.0" layoutY="282.0" mnemonicParsing="false" onAction="#onMediaValidation" styleClass="preference-button" text="PinUP Popper Validators" />
                         <Button alignment="BASELINE_LEFT" contentDisplay="RIGHT" layoutX="250.0" layoutY="10.0" mnemonicParsing="false" onAction="#onVPXValidation" styleClass="preference-button" text="VPX Validators" />
                         <Label alignment="BASELINE_LEFT" layoutX="210.0" layoutY="133.0" styleClass="preference-section" text="HIGHSCORE PREFERENCES">
                            <font>
@@ -74,7 +75,7 @@
                               <Insets top="24.0" />
                            </VBox.margin>
                         </Label>
-                        <Button alignment="BASELINE_LEFT" contentDisplay="RIGHT" layoutX="160.0" layoutY="409.0" mnemonicParsing="false" onAction="#onScoreFormat" styleClass="preference-button" text="Score Format" />
+                        <Button fx:id="highscores" alignment="BASELINE_LEFT" contentDisplay="RIGHT" layoutX="160.0" layoutY="409.0" mnemonicParsing="false" onAction="#onScoreFormat" styleClass="preference-button" text="Score Format" />
                         <Button alignment="BASELINE_LEFT" contentDisplay="RIGHT" layoutX="125.0" layoutY="10.0" mnemonicParsing="false" onAction="#onHighscoreCards" styleClass="preference-button" text="Highscore Card Settings">
                            <VBox.margin>
                               <Insets top="4.0" />
