@@ -9,6 +9,7 @@
 <?import javafx.scene.control.Separator?>
 <?import javafx.scene.control.Spinner?>
 <?import javafx.scene.control.ToolBar?>
+<?import javafx.scene.control.Tooltip?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.ColumnConstraints?>
@@ -64,22 +65,19 @@
                               <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                               <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                               <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                           </rowConstraints>
                            <children>
-                              <Label text="Hide Grill:" textFill="WHITE" GridPane.rowIndex="1">
+                              <Label text="Grill Visibility:" textFill="WHITE" GridPane.rowIndex="1">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
                               </Label>
-                              <Label layoutX="10.0" layoutY="15.0" text="Hide B2S DMD:" textFill="WHITE" GridPane.rowIndex="2">
+                              <Label layoutX="10.0" layoutY="15.0" text="B2S DMD Visibile:" textFill="WHITE" GridPane.rowIndex="2">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
                               </Label>
-                              <Label layoutX="10.0" layoutY="49.0" text="Hide DMD:" textFill="WHITE" GridPane.rowIndex="3">
+                              <Label layoutX="10.0" layoutY="49.0" text="DMD Visibility:" textFill="WHITE" GridPane.rowIndex="3">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
@@ -104,17 +102,12 @@
                                     <Font size="14.0" />
                                  </font>
                               </Label>
-                              <Label layoutX="10.0" layoutY="217.0" text="Startup Mode:" textFill="WHITE" GridPane.rowIndex="13">
+                              <Label layoutX="10.0" layoutY="251.0" text="Start Background:" textFill="WHITE" GridPane.rowIndex="11">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
                               </Label>
-                              <Label layoutX="10.0" layoutY="251.0" text="Start Background:" textFill="WHITE" GridPane.rowIndex="14">
-                                 <font>
-                                    <Font size="14.0" />
-                                 </font>
-                              </Label>
-                              <Label layoutX="10.0" layoutY="284.0" text="Bring BG Form To Top:" textFill="WHITE" GridPane.rowIndex="15">
+                              <Label layoutX="10.0" layoutY="284.0" text="Bring BG Form To Top:" textFill="WHITE" GridPane.rowIndex="12">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
@@ -130,40 +123,71 @@
                               <Spinner fx:id="skipGIFrames" layoutX="173.0" layoutY="147.0" GridPane.columnIndex="1" GridPane.rowIndex="5" />
                               <Spinner fx:id="skipSolenoidFrames" layoutX="173.0" layoutY="180.0" GridPane.columnIndex="1" GridPane.rowIndex="6" />
                               <Spinner fx:id="skipLEDFrames" layoutX="173.0" layoutY="214.0" GridPane.columnIndex="1" GridPane.rowIndex="7" />
-                              <ComboBox fx:id="startupMode" layoutX="173.0" layoutY="78.0" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="13" />
-                              <CheckBox fx:id="bringBGFromTop" layoutX="173.0" layoutY="117.0" mnemonicParsing="false" GridPane.columnIndex="1" GridPane.rowIndex="15" />
-                              <Label layoutX="10.0" layoutY="385.0" text="Glowing:" textFill="WHITE" GridPane.rowIndex="12">
+                              <CheckBox fx:id="bringBGFromTop" layoutX="173.0" layoutY="117.0" mnemonicParsing="false" GridPane.columnIndex="1" GridPane.rowIndex="12" />
+                              <Label layoutX="10.0" layoutY="385.0" text="Glowing:" textFill="WHITE" GridPane.rowIndex="10">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
                               </Label>
-                              <ComboBox fx:id="glowing" layoutX="173.0" layoutY="380.0" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="12" />
-                              <Label layoutX="10.0" layoutY="251.0" text="Use Simple LEDs:" textFill="WHITE" GridPane.rowIndex="8">
+                              <ComboBox fx:id="glowing" layoutX="173.0" layoutY="380.0" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="10" />
+                              <Label layoutX="10.0" layoutY="251.0" text="Used LED Type:" textFill="WHITE" GridPane.rowIndex="8">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
                               </Label>
-                              <Label layoutX="10.0" layoutY="284.0" text="Use &quot;Dream7&quot; LEDs:" textFill="WHITE" GridPane.rowIndex="9">
+                              <Label layoutX="10.0" layoutY="352.0" text="LED Bulb Light On:" textFill="WHITE" GridPane.rowIndex="9">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
                               </Label>
-                              <Label layoutX="10.0" layoutY="318.0" text="LED Wireframe On:" textFill="WHITE" GridPane.rowIndex="10">
-                                 <font>
-                                    <Font size="14.0" />
-                                 </font>
-                              </Label>
-                              <Label layoutX="10.0" layoutY="352.0" text="LED Bulb Light On:" textFill="WHITE" GridPane.rowIndex="11">
-                                 <font>
-                                    <Font size="14.0" />
-                                 </font>
-                              </Label>
-                              <CheckBox fx:id="useSimpleLeds" layoutX="176.0" layoutY="117.0" mnemonicParsing="false" GridPane.columnIndex="1" GridPane.rowIndex="8" />
-                              <CheckBox fx:id="useDream7Leds" layoutX="176.0" layoutY="285.0" mnemonicParsing="false" GridPane.columnIndex="1" GridPane.rowIndex="9" />
-                              <CheckBox fx:id="wireFrameOn" layoutX="176.0" layoutY="319.0" mnemonicParsing="false" GridPane.columnIndex="1" GridPane.rowIndex="10" />
-                              <CheckBox fx:id="lightBulbOn" layoutX="176.0" layoutY="352.0" mnemonicParsing="false" GridPane.columnIndex="1" GridPane.rowIndex="11" />
-                              <CheckBox fx:id="startBackground" layoutX="176.0" layoutY="520.0" mnemonicParsing="false" GridPane.columnIndex="1" GridPane.rowIndex="14" />
+                              <CheckBox fx:id="lightBulbOn" layoutX="176.0" layoutY="352.0" mnemonicParsing="false" GridPane.columnIndex="1" GridPane.rowIndex="9" />
+                              <CheckBox fx:id="startBackground" layoutX="176.0" layoutY="520.0" mnemonicParsing="false" GridPane.columnIndex="1" GridPane.rowIndex="11" />
                               <CheckBox fx:id="hideB2SDMD" mnemonicParsing="false" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                              <ComboBox fx:id="usedLEDType" layoutX="176.0" layoutY="44.0" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="8" />
+                              <Label GridPane.columnIndex="2" GridPane.rowIndex="4">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                                 <graphic>
+                                    <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
+                                 </graphic>
+                                 <tooltip>
+                                    <Tooltip prefWidth="300.0" text="Only enabled for backglasses with illuminations." wrapText="true" />
+                                 </tooltip>
+                              </Label>
+                              <Label layoutX="540.0" layoutY="150.0" GridPane.columnIndex="2" GridPane.rowIndex="5">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                                 <graphic>
+                                    <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
+                                 </graphic>
+                                 <tooltip>
+                                    <Tooltip prefWidth="300.0" text="Only enabled for backglasses with illuminations." wrapText="true" />
+                                 </tooltip>
+                              </Label>
+                              <Label layoutX="540.0" layoutY="184.0" GridPane.columnIndex="2" GridPane.rowIndex="6">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                                 <graphic>
+                                    <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
+                                 </graphic>
+                                 <tooltip>
+                                    <Tooltip prefWidth="300.0" text="Only enabled for backglasses with illuminations." wrapText="true" />
+                                 </tooltip>
+                              </Label>
+                              <Label layoutX="540.0" layoutY="217.0" GridPane.columnIndex="2" GridPane.rowIndex="7">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                                 <graphic>
+                                    <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
+                                 </graphic>
+                                 <tooltip>
+                                    <Tooltip prefWidth="300.0" text="Only enabled for backglasses with illuminations." wrapText="true" />
+                                 </tooltip>
+                              </Label>
                            </children>
                         </GridPane>
                         <GridPane vgap="3.0">
@@ -176,6 +200,7 @@
                               <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                             <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                             <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                               <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                               <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                               <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
@@ -209,17 +234,17 @@
                                     <Font size="14.0" />
                                  </font>
                               </Label>
-                              <Label layoutX="10.0" layoutY="184.0" text="Number of Players:" textFill="WHITE" GridPane.rowIndex="7">
+                              <Label layoutX="10.0" layoutY="184.0" text="Number of Players:" textFill="WHITE" GridPane.rowIndex="8">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
                               </Label>
-                              <Label layoutX="10.0" layoutY="217.0" text="File Size:" textFill="WHITE" GridPane.rowIndex="8">
+                              <Label layoutX="10.0" layoutY="217.0" text="File Size:" textFill="WHITE" GridPane.rowIndex="9">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
                               </Label>
-                              <Label layoutX="10.0" layoutY="251.0" text="Modification Date:" textFill="WHITE" GridPane.rowIndex="9">
+                              <Label layoutX="10.0" layoutY="251.0" text="Modification Date:" textFill="WHITE" GridPane.rowIndex="10">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
@@ -249,17 +274,17 @@
                                     <Font size="14.0" />
                                  </font>
                               </Label>
-                              <Label fx:id="playersLabel" layoutX="150.0" layoutY="150.0" text="-" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="7">
+                              <Label fx:id="playersLabel" layoutX="150.0" layoutY="150.0" text="-" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="8">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
                               </Label>
-                              <Label fx:id="filesizeLabel" layoutX="150.0" layoutY="184.0" text="-" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="8">
+                              <Label fx:id="filesizeLabel" layoutX="150.0" layoutY="184.0" text="-" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="9">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
                               </Label>
-                              <Label fx:id="modificationDateLabel" layoutX="150.0" layoutY="217.0" text="-" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="9">
+                              <Label fx:id="modificationDateLabel" layoutX="150.0" layoutY="217.0" text="-" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="10">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
@@ -277,6 +302,16 @@
                               <Label text="DirectB2S File Metadata" textFill="WHITE">
                                  <font>
                                     <Font name="System Bold" size="14.0" />
+                                 </font>
+                              </Label>
+                              <Label layoutX="10.0" layoutY="217.0" text="Bulbs:" textFill="WHITE" GridPane.rowIndex="7">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </Label>
+                              <Label fx:id="bulbsLabel" layoutX="180.0" layoutY="217.0" text="-" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="7">
+                                 <font>
+                                    <Font size="14.0" />
                                  </font>
                               </Label>
                            </children>

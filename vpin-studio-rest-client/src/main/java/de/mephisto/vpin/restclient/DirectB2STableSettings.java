@@ -105,14 +105,6 @@ public class DirectB2STableSettings {
     this.glowIndex = glowIndex;
   }
 
-  public boolean isStartAsEXE() {
-    return startAsEXE;
-  }
-
-  public void setStartAsEXE(boolean startAsEXE) {
-    this.startAsEXE = startAsEXE;
-  }
-
   public boolean isStartBackground() {
     return startBackground;
   }

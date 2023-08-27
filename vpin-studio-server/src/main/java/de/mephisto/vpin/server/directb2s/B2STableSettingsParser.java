@@ -38,7 +38,7 @@ public class B2STableSettingsParser extends DefaultHandler {
       doc.getDocumentElement().normalize();
 
       NodeList list = doc.getElementsByTagName(rom);
-      if(list.getLength() == 0) {
+      if (list == null || list.getLength() == 0) {
         return null;
       }
 
@@ -108,10 +108,10 @@ public class B2STableSettingsParser extends DefaultHandler {
         settings.setGlowIndex(Integer.parseInt(node.getTextContent().trim()));
         break;
       }
-      case "StartAsEXE": {
-        settings.setStartAsEXE(Integer.parseInt(node.getTextContent().trim()) == 1);
-        break;
-      }
+//      case "StartAsEXE": {
+//        settings.setStartAsEXE(Integer.parseInt(node.getTextContent().trim()) == 1);
+//        break;
+//      }
       case "StartBackground": {
         settings.setStartBackground(Integer.parseInt(node.getTextContent().trim()) == 1);
         break;
