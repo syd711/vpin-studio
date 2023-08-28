@@ -27,3 +27,6 @@
 
 - Slightly improved EM table scanning.
 
+**Table Management: ALT Sound**
+
+- The altsound editor is not opened as a dialog anymore. Instead, the view is embedded as an overlay in the main area.

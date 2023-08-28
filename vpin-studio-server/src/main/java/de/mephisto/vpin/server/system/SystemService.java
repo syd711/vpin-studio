@@ -62,6 +62,7 @@ public class SystemService extends SystemInfo implements InitializingBean {
   private File mameFolder;
   private File userFolder;
   private File backupFolder;
+  private String mameVersion;
 
   private ArchiveType archiveType = ArchiveType.VPA;
 
@@ -72,6 +73,7 @@ public class SystemService extends SystemInfo implements InitializingBean {
   public void afterPropertiesSet() throws Exception {
     initBaseFolders();
     initVPinTableManagerIcon();
+    initProgramVersions();
 
     if (!getPinUPSystemFolder().exists()) {
       throw new FileNotFoundException("Wrong PinUP Popper installation folder: " + getPinUPSystemFolder().getAbsolutePath() + ".\nPlease fix the PinUP Popper installation path in file ./resources/system.properties");
@@ -80,6 +82,29 @@ public class SystemService extends SystemInfo implements InitializingBean {
       throw new FileNotFoundException("Wrong Visual Pinball installation folder: " + getVisualPinballInstallationFolder().getAbsolutePath() + ".\nPlease fix the Visual Pinball installation path in file ./resources/system.properties");
     }
     logSystemInfo();
+  }
+
+  private void initProgramVersions() {
+    try {
+      File mameExe = new File(getMameFolder(), "PinMAME.exe");
+      if(!mameExe.exists()) {
+        throw new UnsupportedOperationException("No PinMAME.exe file found.");
+      }
+
+      SystemCommandExecutor executor = new SystemCommandExecutor(Arrays.asList(mameExe.getAbsolutePath()));
+      executor.setDir(mameExe.getParentFile());
+      executor.executeCommand();
+
+      StringBuilder standardOutputFromCommand = executor.getStandardOutputFromCommand();
+      if(standardOutputFromCommand != null){
+        String[] split = standardOutputFromCommand.toString().split("\n");
+        String versionString = split[0];
+        String[] versionSegments = versionString.split(" ");
+        this.mameVersion = versionSegments[1];
+      }
+    } catch (Exception e) {
+      LOG.error("Unable to determine VPin MAME version: " + e.getMessage(), e);
+    }
   }
 
 
@@ -215,6 +240,7 @@ public class SystemService extends SystemInfo implements InitializingBean {
     LOG.info(formatPathLog("B2S Extraction Folder", this.getB2SImageExtractionFolder()));
     LOG.info(formatPathLog("B2S Cropped Folder", this.getB2SCroppedImageFolder()));
     LOG.info(formatPathLog("VPX Files", String.valueOf(this.getVPXTables().length)));
+    LOG.info(formatPathLog("VPin MAME Version", this.mameVersion));
     LOG.info(formatPathLog("Service Version", VPinStudioServer.class.getPackage().getImplementationVersion()));
     LOG.info("*******************************************************************************************************");
   }
@@ -276,6 +302,10 @@ public class SystemService extends SystemInfo implements InitializingBean {
       }
     }
     return b.toString();
+  }
+
+  public String getMameVersion() {
+    return mameVersion;
   }
 
   @NonNull
