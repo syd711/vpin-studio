@@ -23,6 +23,7 @@ import de.mephisto.vpin.ui.preferences.PINemHiUIPreferenceController;
 import de.mephisto.vpin.ui.tables.TablesController;
 import de.mephisto.vpin.ui.tables.TablesSidebarController;
 import de.mephisto.vpin.ui.tables.dialogs.*;
+import de.mephisto.vpin.ui.tables.editors.AltSoundEditorController;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import javafx.collections.ObservableList;
@@ -374,15 +375,6 @@ public class Dialogs {
     controller.setStage(stage);
     stage.showAndWait();
     return controller.install();
-  }
-
-  public static boolean openAltSoundEditor(GameRepresentation game, AltSound altSound) {
-    Stage stage = createStudioDialogStage(ROMUploadController.class, "dialog-alt-sound-editor.fxml", "ALT Sound Editor");
-    AltSoundEditorController controller = (AltSoundEditorController) stage.getUserData();
-    controller.setAltSound(game, altSound);
-    stage.showAndWait();
-
-    return true;
   }
 
   public static void openBotServerIdTutorial() {

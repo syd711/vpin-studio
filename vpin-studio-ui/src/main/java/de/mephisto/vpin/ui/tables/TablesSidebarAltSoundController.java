@@ -102,7 +102,7 @@ public class TablesSidebarAltSoundController implements Initializable {
   @FXML
   private void onAltSoundEdit() {
     if (game.isPresent() && game.get().isAltSoundAvailable()) {
-      Dialogs.openAltSoundEditor(game.get(), altSound);
+      tablesSidebarController.getTablesController().showAltSoundEditor(this.game.get(), altSound);
     }
   }
 

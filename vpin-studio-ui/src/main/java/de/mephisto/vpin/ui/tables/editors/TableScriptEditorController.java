@@ -1,7 +1,8 @@
-package de.mephisto.vpin.ui.tables;
+package de.mephisto.vpin.ui.tables.editors;
 
 import de.mephisto.vpin.restclient.representations.GameRepresentation;
 import de.mephisto.vpin.ui.Studio;
+import de.mephisto.vpin.ui.tables.TablesController;
 import de.mephisto.vpin.ui.util.RichText;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import javafx.fxml.FXML;
@@ -20,8 +21,8 @@ import org.slf4j.LoggerFactory;
 import java.net.URL;
 import java.util.ResourceBundle;
 
-public class VpxEditorController implements Initializable {
-  private final static Logger LOG = LoggerFactory.getLogger(VpxEditorController.class);
+public class TableScriptEditorController implements Initializable {
+  private final static Logger LOG = LoggerFactory.getLogger(TableScriptEditorController.class);
 
   @FXML
   private BorderPane root;

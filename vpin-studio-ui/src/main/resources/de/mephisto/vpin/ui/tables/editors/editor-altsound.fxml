@@ -22,14 +22,11 @@
 <?import javafx.scene.text.Font?>
 <?import org.kordamp.ikonli.javafx.FontIcon?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="960.0" styleClass="base-component" stylesheets="@../../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.tables.dialogs.AltSoundEditorController">
-   <top>
-      <fx:include fx:id="header" source="/de/mephisto/vpin/commons/fx/scene-dialog-header.fxml" />
-   </top>
+<BorderPane fx:id="root" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" styleClass="subpanel" stylesheets="@../../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.tables.editors.AltSoundEditorController">
    <bottom>
       <HBox alignment="BASELINE_RIGHT" spacing="12.0" BorderPane.alignment="CENTER">
          <children>
-          <Button fx:id="cancelButton" mnemonicParsing="false" onAction="#onCancelClick" styleClass="default-button" text="Cancel">
+          <Button fx:id="cancelButton" mnemonicParsing="false" onAction="#onCancelClick" styleClass="default-button" text="Close">
                <HBox.margin>
                   <Insets right="12.0" />
                </HBox.margin>
@@ -47,83 +44,38 @@
       </HBox>
    </bottom>
    <center>
-      <BorderPane prefWidth="1100.0" BorderPane.alignment="CENTER">
+      <BorderPane minHeight="400.0" BorderPane.alignment="CENTER">
          <BorderPane.margin>
-            <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
+            <Insets />
          </BorderPane.margin>
          <center>
-            <BorderPane prefWidth="1200.0" styleClass="media-parent" BorderPane.alignment="CENTER">
-               <center>
-                  <StackPane styleClass="media-parent">
-                     <children>
-                        <TableView fx:id="tableView" prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #2a2a2a;" styleClass="base-component">
-                          <columns>
-                            <TableColumn fx:id="columnId" prefWidth="75.0" style="-fx-alignment: BASELINE_LEFT;" text="ID" />
-                              <TableColumn fx:id="columnName" prefWidth="260.0" style="-fx-alignment: BASELINE_LEFT;" text="Name" />
-                            <TableColumn fx:id="columnChannel" prefWidth="75.0" style="-fx-alignment: CENTER;" text="Channel" />
-                              <TableColumn fx:id="columnDuck" prefWidth="75.0" style="-fx-alignment: CENTER;" text="Duck" />
-                              <TableColumn fx:id="columnGain" prefWidth="75.0" style="-fx-alignment: CENTER;" text="Gain" />
-                              <TableColumn fx:id="columnLoop" prefWidth="75.0" style="-fx-alignment: CENTER;" text="Loop" />
-                              <TableColumn fx:id="columnStop" prefWidth="75.0" style="-fx-alignment: CENTER;" text="Stop" />
-                              <TableColumn fx:id="columnFilename" prefWidth="260.0" style="-fx-alignment: BASELINE_LEFT;" text="Filename" />
-                              <TableColumn fx:id="columnFilesize" prefWidth="100.0" style="-fx-alignment: CENTER;" text="Filesize" />
-                          </columns>
-                        </TableView>
-                     </children>
-                  </StackPane>
-               </center>
-               <top>
-                  <ToolBar prefHeight="40.0" prefWidth="200.0" BorderPane.alignment="CENTER">
-                     <items>
-                        <TextField fx:id="searchText" promptText="Entry Search...">
-                           <font>
-                              <Font size="14.0" />
-                           </font>
-                        </TextField>
-                        <Separator layoutX="316.0" layoutY="10.0" orientation="VERTICAL" prefWidth="12.0" />
-                        <Label layoutX="10.0" layoutY="16.0" text="Name:" textFill="WHITE">
-                           <font>
-                              <Font size="14.0" />
-                           </font>
-                           <padding>
-                              <Insets right="6.0" />
-                           </padding>
-                        </Label>
-                        <ComboBox fx:id="nameFilterCombo" layoutX="74.0" layoutY="11.0" prefWidth="200.0" />
-                        <Separator layoutX="228.0" layoutY="10.0" orientation="VERTICAL" prefWidth="12.0" />
-                        <Label layoutX="244.0" layoutY="16.0" text="Filename:" textFill="WHITE">
-                           <font>
-                              <Font size="14.0" />
-                           </font>
-                           <padding>
-                              <Insets right="6.0" />
-                           </padding>
-                        </Label>
-                        <ComboBox fx:id="filenameFilterCombo" layoutX="296.0" layoutY="11.0" prefWidth="240.0" />
-                        <Separator layoutX="450.0" layoutY="10.0" orientation="VERTICAL" prefWidth="12.0" />
-                        <Label layoutX="466.0" layoutY="16.0" text="Looped:" textFill="WHITE">
-                           <font>
-                              <Font size="14.0" />
-                           </font>
-                           <padding>
-                              <Insets right="6.0" />
-                           </padding>
-                        </Label>
-                        <ComboBox fx:id="loopedFilterCombo" layoutX="535.0" layoutY="11.0" prefHeight="30.0" prefWidth="80.0" />
-                     </items>
-                  </ToolBar>
-               </top>
-            </BorderPane>
+            <StackPane styleClass="media-parent" BorderPane.alignment="CENTER">
+               <children>
+                  <TableView fx:id="tableView" style="-fx-background-color: #2a2a2a;" styleClass="base-component">
+                    <columns>
+                      <TableColumn fx:id="columnId" prefWidth="75.0" style="-fx-alignment: BASELINE_LEFT;" text="ID" />
+                        <TableColumn fx:id="columnName" prefWidth="260.0" style="-fx-alignment: BASELINE_LEFT;" text="Name" />
+                      <TableColumn fx:id="columnChannel" prefWidth="75.0" style="-fx-alignment: CENTER;" text="Channel" />
+                        <TableColumn fx:id="columnDuck" prefWidth="75.0" style="-fx-alignment: CENTER;" text="Duck" />
+                        <TableColumn fx:id="columnGain" prefWidth="75.0" style="-fx-alignment: CENTER;" text="Gain" />
+                        <TableColumn fx:id="columnLoop" prefWidth="75.0" style="-fx-alignment: CENTER;" text="Loop" />
+                        <TableColumn fx:id="columnStop" prefWidth="75.0" style="-fx-alignment: CENTER;" text="Stop" />
+                        <TableColumn fx:id="columnFilename" prefWidth="260.0" style="-fx-alignment: BASELINE_LEFT;" text="Filename" />
+                        <TableColumn fx:id="columnFilesize" prefWidth="100.0" style="-fx-alignment: CENTER;" text="Filesize" />
+                    </columns>
+                  </TableView>
+               </children>
+            </StackPane>
          </center>
       </BorderPane>
    </center>
    <right>
-      <BorderPane prefWidth="280.0" BorderPane.alignment="CENTER">
+      <BorderPane styleClass="accordion-container" BorderPane.alignment="CENTER">
          <BorderPane.margin>
-            <Insets bottom="12.0" right="12.0" top="12.0" />
+            <Insets />
          </BorderPane.margin>
          <center>
-            <VBox prefHeight="200.0" prefWidth="100.0" styleClass="subpanel" BorderPane.alignment="CENTER">
+            <VBox BorderPane.alignment="CENTER">
                <children>
                   <GridPane vgap="3.0">
                     <columnConstraints>
@@ -308,13 +260,51 @@
                   </GridPane>
                </children>
                <BorderPane.margin>
-                  <Insets />
-               </BorderPane.margin>
-               <padding>
                   <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
-               </padding>
+               </BorderPane.margin>
             </VBox>
          </center>
       </BorderPane>
    </right>
+   <top>
+      <ToolBar BorderPane.alignment="CENTER">
+         <items>
+            <TextField fx:id="searchText" promptText="Entry Search...">
+               <font>
+                  <Font size="14.0" />
+               </font>
+            </TextField>
+            <Separator layoutX="316.0" layoutY="10.0" orientation="VERTICAL" prefWidth="12.0" />
+            <Label layoutX="10.0" layoutY="16.0" text="Name:" textFill="WHITE">
+               <font>
+                  <Font size="14.0" />
+               </font>
+               <padding>
+                  <Insets right="6.0" />
+               </padding>
+            </Label>
+            <ComboBox fx:id="nameFilterCombo" layoutX="74.0" layoutY="11.0" prefWidth="200.0" />
+            <Separator layoutX="228.0" layoutY="10.0" orientation="VERTICAL" prefWidth="12.0" />
+            <Label layoutX="244.0" layoutY="16.0" text="Filename:" textFill="WHITE">
+               <font>
+                  <Font size="14.0" />
+               </font>
+               <padding>
+                  <Insets right="6.0" />
+               </padding>
+            </Label>
+            <ComboBox fx:id="filenameFilterCombo" layoutX="296.0" layoutY="11.0" prefWidth="240.0" />
+            <Separator layoutX="450.0" layoutY="10.0" orientation="VERTICAL" prefWidth="12.0" />
+            <Label layoutX="466.0" layoutY="16.0" text="Looped:" textFill="WHITE">
+               <font>
+                  <Font size="14.0" />
+               </font>
+               <padding>
+                  <Insets right="6.0" />
+               </padding>
+            </Label>
+            <ComboBox fx:id="loopedFilterCombo" layoutX="535.0" layoutY="11.0" prefHeight="30.0" prefWidth="80.0" />
+         </items>
+      </ToolBar>
+   </top>
 </BorderPane>

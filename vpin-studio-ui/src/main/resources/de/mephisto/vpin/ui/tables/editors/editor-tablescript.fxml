@@ -9,7 +9,7 @@
 <?import javafx.scene.text.Font?>
 <?import org.kordamp.ikonli.javafx.FontIcon?>
 
-<BorderPane fx:id="root" styleClass="subpanel" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.tables.VpxEditorController">
+<BorderPane fx:id="root" styleClass="subpanel" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.tables.editors.TableScriptEditorController">
 
     <center>
         <BorderPane fx:id="centerPane" styleClass="subpanel" BorderPane.alignment="CENTER">
@@ -18,10 +18,6 @@
             </BorderPane.margin>
         </BorderPane>
     </center>
-   <stylesheets>
-      <URL value="@../stylesheet.css" />
-      <URL value="@../richtext.css" />
-   </stylesheets>
    <top>
       <ToolBar BorderPane.alignment="CENTER">
          <BorderPane.margin>
@@ -60,4 +56,8 @@
         </items>
       </ToolBar>
    </bottom>
+   <stylesheets>
+      <URL value="@../../stylesheet.css" />
+      <URL value="@../../richtext.css" />
+   </stylesheets>
 </BorderPane>

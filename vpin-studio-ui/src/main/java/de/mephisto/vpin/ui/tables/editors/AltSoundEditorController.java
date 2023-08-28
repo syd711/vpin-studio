@@ -1,12 +1,12 @@
-package de.mephisto.vpin.ui.tables.dialogs;
+package de.mephisto.vpin.ui.tables.editors;
 
-import de.mephisto.vpin.commons.fx.DialogController;
 import de.mephisto.vpin.commons.utils.FileUtils;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.AltSound;
 import de.mephisto.vpin.restclient.AltSoundEntry;
 import de.mephisto.vpin.restclient.representations.GameRepresentation;
 import de.mephisto.vpin.ui.Studio;
+import de.mephisto.vpin.ui.tables.TablesController;
 import javafx.beans.property.*;
 import javafx.beans.value.ChangeListener;
 import javafx.collections.FXCollections;
@@ -16,6 +16,7 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
+import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -24,12 +25,14 @@ import org.slf4j.LoggerFactory;
 import java.net.URL;
 import java.util.*;
 
-public class AltSoundEditorController implements Initializable, DialogController {
+public class AltSoundEditorController implements Initializable {
   private final static Logger LOG = LoggerFactory.getLogger(AltSoundEditorController.class);
 
   private GameRepresentation game;
   private AltSound altSound;
-  private boolean result = false;
+
+  @FXML
+  private BorderPane root;
 
   @FXML
   private TableView<AltSoundEntryModel> tableView;
@@ -103,16 +106,11 @@ public class AltSoundEditorController implements Initializable, DialogController
   private ChangeListener<String> channelFieldChangeListener;
   private ChangeListener<Boolean> loopCheckboxChangeListener;
   private ChangeListener<Boolean> stopCheckboxChangeListener;
-
-  @Override
-  public void onDialogCancel() {
-    result = false;
-  }
+  private TablesController tablesController;
 
   @FXML
   private void onCancelClick(ActionEvent e) {
-    Stage stage = (Stage) ((Button) e.getSource()).getScene().getWindow();
-    stage.close();
+    this.tablesController.getEditorRootStack().getChildren().remove(root);
   }
 
   @FXML
@@ -403,5 +401,9 @@ public class AltSoundEditorController implements Initializable, DialogController
       this.gain = new SimpleIntegerProperty(entry.getGain());
       this.gain.addListener((observable, oldValue, newValue) -> entry.setGain((Integer) newValue));
     }
+  }
+
+  public void setTablesController(TablesController tablesController) {
+    this.tablesController = tablesController;
   }
 }
