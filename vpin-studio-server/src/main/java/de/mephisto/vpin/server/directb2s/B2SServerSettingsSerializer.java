@@ -61,6 +61,7 @@ public class B2SServerSettingsSerializer {
     TransformerFactory transformerFactory = TransformerFactory.newInstance();
     Transformer transformer = transformerFactory.newTransformer();
     transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
+    transformerFactory.setAttribute("indent-number", 2);
     DOMSource source = new DOMSource(doc);
     FileWriter writer = new FileWriter(povFile);
     StreamResult result = new StreamResult(writer);

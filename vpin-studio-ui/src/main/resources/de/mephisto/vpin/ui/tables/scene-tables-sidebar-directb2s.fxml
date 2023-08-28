@@ -71,7 +71,7 @@
                                     <Font size="14.0" />
                                  </font>
                               </Label>
-                              <Label layoutX="10.0" layoutY="15.0" text="B2S DMD Visibile:" textFill="WHITE" GridPane.rowIndex="2">
+                              <Label layoutX="10.0" layoutY="15.0" text="B2S DMD Hidden:" textFill="WHITE" GridPane.rowIndex="2">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
