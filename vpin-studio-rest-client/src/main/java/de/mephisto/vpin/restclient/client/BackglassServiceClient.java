@@ -1,15 +1,12 @@
 package de.mephisto.vpin.restclient.client;
 
-import de.mephisto.vpin.restclient.AssetType;
-import de.mephisto.vpin.restclient.DirectB2SData;
-import de.mephisto.vpin.restclient.FileUploadProgressListener;
+import de.mephisto.vpin.restclient.*;
 import de.mephisto.vpin.restclient.jobs.JobExecutionResult;
 import de.mephisto.vpin.restclient.representations.GameRepresentation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.client.RestTemplate;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -17,10 +14,10 @@ import java.io.File;
 /*********************************************************************************************************************
  * DirectB2S
  ********************************************************************************************************************/
-public class DirectB2SServiceClient extends VPinStudioClientService {
+public class BackglassServiceClient extends VPinStudioClientService {
   private final static Logger LOG = LoggerFactory.getLogger(VPinStudioClient.class);
 
-  DirectB2SServiceClient(VPinStudioClient client) {
+  BackglassServiceClient(VPinStudioClient client) {
     super(client);
   }
 
@@ -35,6 +32,41 @@ public class DirectB2SServiceClient extends VPinStudioClientService {
 
   public DirectB2SData getDirectB2SData(int gameId) {
     return getRestClient().get(API + "directb2s/" + gameId, DirectB2SData.class);
+  }
+
+  public DirectB2ServerSettings getServerSettings() {
+    return getRestClient().get(API + "directb2s/serversettings", DirectB2ServerSettings.class);
+  }
+
+  public DirectB2STableSettings getTableSettings(int gameId) {
+    return getRestClient().get(API + "directb2s/tablesettings/" + gameId, DirectB2STableSettings.class);
+  }
+
+  public DirectB2ServerSettings saveServerSettings(DirectB2ServerSettings settings) throws Exception {
+    try {
+      return getRestClient().post(API + "directb2s/serversettings", settings, DirectB2ServerSettings.class);
+    } catch (Exception e) {
+      LOG.error("Failed to save b2s server settings: " + e.getMessage(), e);
+      throw e;
+    }
+  }
+
+  public DirectB2STableSettings saveTableSettings(DirectB2STableSettings settings) throws Exception {
+    try {
+      return getRestClient().post(API + "directb2s/tablesettings", settings, DirectB2STableSettings.class);
+    } catch (Exception e) {
+      LOG.error("Failed to save b2s table settings: " + e.getMessage(), e);
+      throw e;
+    }
+  }
+
+  public GameRepresentation saveGame(GameRepresentation game) throws Exception {
+    try {
+      return getRestClient().post(API + "games/save", game, GameRepresentation.class);
+    } catch (Exception e) {
+      LOG.error("Failed to save game: " + e.getMessage(), e);
+      throw e;
+    }
   }
 
   public JobExecutionResult uploadDirectB2SFile(File file, String uploadType, int gameId, FileUploadProgressListener listener) throws Exception {

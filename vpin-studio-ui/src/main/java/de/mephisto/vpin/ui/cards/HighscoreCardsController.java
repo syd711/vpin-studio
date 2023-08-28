@@ -4,7 +4,6 @@ package de.mephisto.vpin.ui.cards;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.ObservedProperties;
 import de.mephisto.vpin.restclient.ObservedPropertyChangeListener;
-import de.mephisto.vpin.restclient.client.VPinStudioClient;
 import de.mephisto.vpin.restclient.representations.GameRepresentation;
 import de.mephisto.vpin.ui.NavigationController;
 import de.mephisto.vpin.ui.Studio;
@@ -266,7 +265,7 @@ public class HighscoreCardsController implements Initializable, ObservedProperty
   private void onOpenDefaultPicture() {
     GameRepresentation game = tableCombo.getValue();
     if (game != null) {
-      ByteArrayInputStream s = Studio.client.getDirectB2SService().getDefaultPicture(game);
+      ByteArrayInputStream s = Studio.client.getBackglassServiceClient().getDefaultPicture(game);
       MediaUtil.openMedia(s);
     }
   }
@@ -361,7 +360,7 @@ public class HighscoreCardsController implements Initializable, ObservedProperty
 
       if (game.isPresent()) {
         openDefaultPictureBtn.setTooltip(new Tooltip("Open directb2s image"));
-        InputStream input = Studio.client.getDirectB2SService().getDefaultPicture(game.get());
+        InputStream input = Studio.client.getBackglassServiceClient().getDefaultPicture(game.get());
         Image image = new Image(input);
         rawDirectB2SImage.setImage(image);
         input.close();

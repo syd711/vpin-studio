@@ -1,7 +1,6 @@
 package de.mephisto.vpin.server.directb2s;
 
 import de.mephisto.vpin.restclient.DirectB2SData;
-import de.mephisto.vpin.server.VPinStudioException;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -93,6 +92,10 @@ public class DirectB2SDataExtractor extends DefaultHandler {
         if (!StringUtils.isEmpty(value)) {
           data.setNumberOfPlayers(Integer.parseInt(value));
         }
+        break;
+      }
+      case "Bulb": {
+        data.setIlluminations(data.getIlluminations() + 1);
         break;
       }
       case "BackglassImage": {

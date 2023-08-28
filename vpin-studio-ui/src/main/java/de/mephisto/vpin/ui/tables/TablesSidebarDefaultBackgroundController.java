@@ -1,7 +1,6 @@
 package de.mephisto.vpin.ui.tables;
 
 import de.mephisto.vpin.commons.utils.WidgetFactory;
-import de.mephisto.vpin.restclient.client.VPinStudioClient;
 import de.mephisto.vpin.restclient.representations.GameRepresentation;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.events.EventManager;
@@ -89,7 +88,7 @@ public class TablesSidebarDefaultBackgroundController implements Initializable {
   @FXML
   private void onDefaultBackgroundView() {
     if (game.isPresent()) {
-      ByteArrayInputStream image = Studio.client.getDirectB2SService().getDefaultPicture(game.get());
+      ByteArrayInputStream image = Studio.client.getBackglassServiceClient().getDefaultPicture(game.get());
       MediaUtil.openMedia(image);
     }
   }
@@ -111,7 +110,7 @@ public class TablesSidebarDefaultBackgroundController implements Initializable {
       new Thread(() -> {
         Platform.runLater(() -> {
           try {
-            InputStream input = Studio.client.getDirectB2SService().getDefaultPicture(game.get());
+            InputStream input = Studio.client.getBackglassServiceClient().getDefaultPicture(game.get());
             Image image = new Image(input);
             rawDefaultBackgroundImage.setVisible(true);
             rawDefaultBackgroundImage.setImage(image);

@@ -6,6 +6,7 @@ import de.mephisto.vpin.restclient.SystemSummary;
 import de.mephisto.vpin.restclient.representations.GameRepresentation;
 import de.mephisto.vpin.restclient.representations.POVRepresentation;
 import de.mephisto.vpin.restclient.representations.PreferenceEntryRepresentation;
+import de.mephisto.vpin.ui.PreferencesController;
 import de.mephisto.vpin.ui.Studio;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
@@ -218,6 +219,28 @@ public class TablesSidebarController implements Initializable {
         LOG.error("Failed to open PinUpMenuSetup: " + e.getMessage(), e);
       }
     }
+  }
+
+  @FXML
+  private void onPrefsMame() {
+    PreferencesController.open("mame");
+  }
+
+  @FXML
+  private void onPrefsPopper() {
+    PreferencesController.open("validators_pinuppopper");
+
+  }
+
+  @FXML
+  private void onPrefsBackglass() {
+    PreferencesController.open("backglass");
+
+  }
+
+  @FXML
+  private void onPrefsHighscore() {
+    PreferencesController.open("highscores");
   }
 
   @Override

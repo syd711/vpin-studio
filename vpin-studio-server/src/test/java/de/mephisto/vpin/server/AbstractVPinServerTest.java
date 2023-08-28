@@ -2,6 +2,7 @@ package de.mephisto.vpin.server;
 
 import de.mephisto.vpin.restclient.ArchiveType;
 import de.mephisto.vpin.restclient.CompetitionType;
+import de.mephisto.vpin.server.altsound.AltSoundService;
 import de.mephisto.vpin.server.archiving.ArchiveService;
 import de.mephisto.vpin.server.archiving.adapters.TableBackupAdapterFactory;
 import de.mephisto.vpin.server.archiving.adapters.TableInstallerAdapterFactory;
@@ -99,6 +100,9 @@ abstract public class AbstractVPinServerTest {
 
   @Autowired
   protected ArchiveService archiveService;
+
+  @Autowired
+  protected AltSoundService altSoundService;
 
   public void setupSystem() {
     pinUPConnector.deleteGames();

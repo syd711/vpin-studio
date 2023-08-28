@@ -17,6 +17,15 @@ public class DirectB2SData {
   private Date modificationDate;
 
   private String thumbnailBase64;
+  private int illuminations;
+
+  public int getIlluminations() {
+    return illuminations;
+  }
+
+  public void setIlluminations(int illuminations) {
+    this.illuminations = illuminations;
+  }
 
   public String getThumbnailBase64() {
     return thumbnailBase64;
