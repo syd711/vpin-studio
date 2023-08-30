@@ -89,15 +89,6 @@ public class Updater {
     SystemCommandExecutor executor = new SystemCommandExecutor(commands);
     executor.setDir(getBasePath());
     executor.executeCommandAsync();
-
-    new Thread(() -> {
-      try {
-        Thread.sleep(2000);
-        System.exit(0);
-      } catch (InterruptedException e) {
-        //ignore
-      }
-    }).start();
     return true;
   }
 

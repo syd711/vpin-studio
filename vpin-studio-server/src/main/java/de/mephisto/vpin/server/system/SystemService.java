@@ -24,8 +24,12 @@ import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.stereotype.Service;
 
 import java.awt.*;
@@ -41,7 +45,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
-public class SystemService extends SystemInfo implements InitializingBean {
+public class SystemService extends SystemInfo implements InitializingBean, ApplicationContextAware {
   private final static Logger LOG = LoggerFactory.getLogger(SystemService.class);
 
   public final static int SERVER_PORT = RestClient.PORT;
@@ -68,20 +72,10 @@ public class SystemService extends SystemInfo implements InitializingBean {
   @Value("${system.properties}")
   private String systemProperties;
 
-  @Override
-  public void afterPropertiesSet() throws Exception {
-    initBaseFolders();
-    initVPinTableManagerIcon();
+  @Value("${server.port}")
+  private int port;
 
-    if (!getPinUPSystemFolder().exists()) {
-      throw new FileNotFoundException("Wrong PinUP Popper installation folder: " + getPinUPSystemFolder().getAbsolutePath() + ".\nPlease fix the PinUP Popper installation path in file ./resources/system.properties");
-    }
-    if (!getVisualPinballInstallationFolder().exists()) {
-      throw new FileNotFoundException("Wrong Visual Pinball installation folder: " + getVisualPinballInstallationFolder().getAbsolutePath() + ".\nPlease fix the Visual Pinball installation path in file ./resources/system.properties");
-    }
-    logSystemInfo();
-  }
-
+  private ApplicationContext context;
 
   private void initBaseFolders() throws VPinStudioException {
     try {
@@ -542,10 +536,74 @@ public class SystemService extends SystemInfo implements InitializingBean {
     return result;
   }
 
+  /**
+   * Checks to see if a specific port is available.
+   *
+   * @param port the port to check for availability
+   */
+  public static boolean available(int port) {
+    ServerSocket ss = null;
+    DatagramSocket ds = null;
+    try {
+      ss = new ServerSocket(port);
+      ss.setReuseAddress(true);
+      ds = new DatagramSocket(port);
+      ds.setReuseAddress(true);
+      return true;
+    } catch (IOException e) {
+    } finally {
+      if (ds != null) {
+        ds.close();
+      }
+
+      if (ss != null) {
+        try {
+          ss.close();
+        } catch (IOException e) {
+          /* should not be thrown */
+        }
+      }
+    }
+
+    return false;
+  }
+
   public boolean setMaintenanceMode(boolean enabled) {
     Platform.runLater(() -> {
       OverlayWindowFX.getInstance().setMaintenanceVisible(enabled);
     });
     return enabled;
+  }
+
+  public void shutdown() {
+    ((ConfigurableApplicationContext) context).close();
+    System.exit(0);
+  }
+
+  @Override
+  public void afterPropertiesSet() throws Exception {
+    if (!available(port)) {
+      LOG.warn("----------------------------------------------");
+      LOG.warn("Instance already running, terminating server.");
+      LOG.warn("==============================================");
+      this.shutdown();
+      return;
+    }
+
+    initBaseFolders();
+    initVPinTableManagerIcon();
+
+    if (!getPinUPSystemFolder().exists()) {
+      throw new FileNotFoundException("Wrong PinUP Popper installation folder: " + getPinUPSystemFolder().getAbsolutePath() + ".\nPlease fix the PinUP Popper installation path in file ./resources/system.properties");
+    }
+    if (!getVisualPinballInstallationFolder().exists()) {
+      throw new FileNotFoundException("Wrong Visual Pinball installation folder: " + getVisualPinballInstallationFolder().getAbsolutePath() + ".\nPlease fix the Visual Pinball installation path in file ./resources/system.properties");
+    }
+    logSystemInfo();
+  }
+
+  @Override
+  public void setApplicationContext(ApplicationContext context) throws BeansException {
+    this.context = context;
   }
 }

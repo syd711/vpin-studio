@@ -1,9 +1,9 @@
 package de.mephisto.vpin.ui.tables;
 
-import de.mephisto.vpin.commons.EmulatorType;
 import de.mephisto.vpin.commons.utils.FileUtils;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.ValidationCode;
+import de.mephisto.vpin.restclient.popper.Emulator;
 import de.mephisto.vpin.restclient.representations.GameRepresentation;
 import de.mephisto.vpin.restclient.representations.PlaylistRepresentation;
 import de.mephisto.vpin.restclient.representations.ValidationState;
@@ -818,7 +818,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
 
     for (GameRepresentation game : games) {
       String gameEmuType = game.getEmulator().getName();
-      if (!gameEmuType.equals(EmulatorType.VISUAL_PINBALL_X) && !gameEmuType.equals(EmulatorType.VISUAL_PINBALL)) {
+      if (!Emulator.isVisualPinball(gameEmuType)) {
         continue;
       }
 

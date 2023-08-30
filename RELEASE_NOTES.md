@@ -23,7 +23,9 @@
 - Added an "Open Folder" button for the DirectB2S section.
 - Added options to edit the backglass settings. This way, the table don't need to be started to configure it.
 
-**Table Management: Script Details**
+**Bugfixes**
 
 - Slightly improved EM table scanning.
-
+- Added running check, so that duplicate instances terminate more graceful.
+- Improved logging for failed table scan failing, caused by invalid emulator names.
+- Improved "Visual Pinball" emulator name matching.

@@ -1,11 +1,7 @@
 package de.mephisto.vpin.server.popper;
 
-import de.mephisto.vpin.commons.EmulatorType;
 import de.mephisto.vpin.restclient.PopperCustomOptions;
-import de.mephisto.vpin.restclient.popper.PinUPControl;
-import de.mephisto.vpin.restclient.popper.PinUPControls;
-import de.mephisto.vpin.restclient.popper.PopperScreen;
-import de.mephisto.vpin.restclient.popper.TableDetails;
+import de.mephisto.vpin.restclient.popper.*;
 import de.mephisto.vpin.server.archiving.ArchiveUtil;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.system.SystemService;
@@ -54,7 +50,7 @@ public class PinUPConnector implements InitializingBean {
       emulators.put(emulator.getId(), emulator);
 
       String name = emulator.getName();
-      if (name.equals(Emulator.VISUAL_PINBALL) || name.equals(Emulator.VISUAL_PINBALL_X) || name.equals(Emulator.FUTURE_PINBALL) || name.equals(Emulator.PINBALL_FX3)) {
+      if (Emulator.isVisualPinball(name)) {
         initVisualPinballXScripts(emulator);
       }
     }
@@ -674,7 +670,7 @@ public class PinUPConnector implements InitializingBean {
     }
 
     Connection connect = this.connect();
-    String sql = "UPDATE Emulators SET 'VISIBLE'=1 WHERE EmuName = '" + Emulator.PC_GAMES + "';";
+    String sql = "UPDATE Emulators SET 'VISIBLE'=1 WHERE EmuName = '" + EmulatorType.PC_GAMES + "';";
     try {
       Statement stmt = connect.createStatement();
       stmt.executeUpdate(sql);
@@ -808,9 +804,16 @@ public class PinUPConnector implements InitializingBean {
       ResultSet rs = statement.executeQuery("SELECT * FROM Games WHERE EMUID = 1;");
       while (rs.next()) {
         Game info = createGame(connect, rs);
-        if (info != null) {
-          results.add(info);
+        if(info == null) {
+          continue;
         }
+
+        if (!Emulator.isVisualPinball(info.getEmulator().getName())) {
+          LOG.warn("Loaded \"" + info.getGameDisplayName() + ", but it has wrong emulator name '" + info.getEmulator().getName() + "', skipped table.");
+          continue;
+        }
+
+        results.add(info);
       }
       rs.close();
       statement.close();
@@ -983,11 +986,11 @@ public class PinUPConnector implements InitializingBean {
     Emulator emulator = emulators.get(emuId);
     game.setEmulator(emulator);
 
-    if (emulator.getName().equalsIgnoreCase(Emulator.VISUAL_PINBALL_X) || emulator.getName().equalsIgnoreCase(Emulator.VISUAL_PINBALL)) {
+    if (Emulator.isVisualPinball(emulator.getName())) {
       File vpxFile = new File(systemService.getVPXTablesFolder(), gameFileName);
       game.setGameFile(vpxFile);
     }
-    else if (emulator.getName().equalsIgnoreCase(Emulator.FUTURE_PINBALL)) {
+    else if (emulator.getName().equalsIgnoreCase(EmulatorType.FUTURE_PINBALL)) {
       File fpFile = new File(systemService.getFuturePinballTablesFolder(), gameFileName);
       if (!fpFile.exists()) {
         return null;

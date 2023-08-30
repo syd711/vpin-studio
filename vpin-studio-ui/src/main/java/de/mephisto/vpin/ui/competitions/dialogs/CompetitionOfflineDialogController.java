@@ -1,6 +1,6 @@
 package de.mephisto.vpin.ui.competitions.dialogs;
 
-import de.mephisto.vpin.commons.EmulatorType;
+import de.mephisto.vpin.restclient.popper.EmulatorType;
 import de.mephisto.vpin.commons.fx.DialogController;
 import de.mephisto.vpin.restclient.CompetitionType;
 import de.mephisto.vpin.restclient.popper.PopperScreen;

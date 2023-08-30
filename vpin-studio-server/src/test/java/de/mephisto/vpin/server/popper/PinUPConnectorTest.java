@@ -1,12 +1,13 @@
 package de.mephisto.vpin.server.popper;
 
+import de.mephisto.vpin.restclient.popper.Emulator;
+import de.mephisto.vpin.restclient.popper.EmulatorType;
 import de.mephisto.vpin.server.AbstractVPinServerTest;
 import de.mephisto.vpin.server.games.Game;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import java.io.File;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -43,10 +44,10 @@ public class PinUPConnectorTest extends AbstractVPinServerTest {
     assertNotEquals(connector.getGameCount(), 0);
 
     assertNotNull(connector.getStartupScript());
-    assertNotNull(connector.getEmulatorExitScript(Emulator.VISUAL_PINBALL_X));
-    assertNotNull(connector.getEmulatorExitScript(Emulator.FUTURE_PINBALL));
-    assertNotNull(connector.getEmulatorStartupScript(Emulator.VISUAL_PINBALL_X));
-    assertNotNull(connector.getEmulatorStartupScript(Emulator.FUTURE_PINBALL));
+    assertNotNull(connector.getEmulatorExitScript(EmulatorType.VISUAL_PINBALL_X));
+    assertNotNull(connector.getEmulatorExitScript(EmulatorType.FUTURE_PINBALL));
+    assertNotNull(connector.getEmulatorStartupScript(EmulatorType.VISUAL_PINBALL_X));
+    assertNotNull(connector.getEmulatorStartupScript(EmulatorType.FUTURE_PINBALL));
   }
 
 }

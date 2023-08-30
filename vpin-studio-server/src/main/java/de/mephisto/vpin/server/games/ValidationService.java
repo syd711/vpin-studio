@@ -5,12 +5,13 @@ import de.mephisto.vpin.restclient.AltColor;
 import de.mephisto.vpin.restclient.AltColorTypes;
 import de.mephisto.vpin.restclient.ValidationCode;
 import de.mephisto.vpin.restclient.mame.MameOptions;
+import de.mephisto.vpin.restclient.popper.EmulatorType;
 import de.mephisto.vpin.restclient.popper.PopperScreen;
 import de.mephisto.vpin.restclient.representations.ValidationState;
 import de.mephisto.vpin.server.altcolor.AltColorService;
 import de.mephisto.vpin.server.altsound.AltSoundService;
 import de.mephisto.vpin.server.mame.MameService;
-import de.mephisto.vpin.server.popper.Emulator;
+import de.mephisto.vpin.restclient.popper.Emulator;
 import de.mephisto.vpin.server.preferences.Preferences;
 import de.mephisto.vpin.server.preferences.PreferencesService;
 import de.mephisto.vpin.server.puppack.PupPacksService;
@@ -70,8 +71,8 @@ public class ValidationService implements InitializingBean {
   private Preferences preferences;
 
   public ValidationState validate(@NonNull Game game) {
-    boolean isVPX = game.getEmulator().getName().equals(Emulator.VISUAL_PINBALL_X) || game.getEmulator().getName().equals(Emulator.VISUAL_PINBALL);
-    boolean isFP = game.getEmulator().getName().equals(Emulator.FUTURE_PINBALL);
+    boolean isVPX = Emulator.isVisualPinball(game.getEmulator().getName());
+    boolean isFP = game.getEmulator().getName().equals(EmulatorType.FUTURE_PINBALL);
 
     if (isVPX && isValidationEnabled(game, CODE_VPX_NOT_EXISTS)) {
       if (!game.getGameFile().exists()) {

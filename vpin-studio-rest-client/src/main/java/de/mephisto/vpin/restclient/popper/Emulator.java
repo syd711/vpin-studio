@@ -1,13 +1,6 @@
-package de.mephisto.vpin.server.popper;
-
-import de.mephisto.vpin.commons.EmulatorType;
+package de.mephisto.vpin.restclient.popper;
 
 public class Emulator {
-  public final static String VISUAL_PINBALL_X = EmulatorType.VISUAL_PINBALL_X;
-  public final static String VISUAL_PINBALL = EmulatorType.VISUAL_PINBALL;
-  public final static String PINBALL_FX3 = EmulatorType.PINBALL_FX3;
-  public final static String FUTURE_PINBALL = EmulatorType.FUTURE_PINBALL;
-  public final static String PC_GAMES = EmulatorType.PC_GAMES;
 
   private String name;
   private int id;
@@ -47,6 +40,13 @@ public class Emulator {
   }
 
   public boolean isVisualPinball() {
-    return VISUAL_PINBALL_X.equals(this.name) || VISUAL_PINBALL.equals(this.name);
+    return isVisualPinball(this.name);
+  }
+
+  public static boolean isVisualPinball(String name) {
+    return EmulatorType.VISUAL_PINBALL_X.equalsIgnoreCase(name)
+        || EmulatorType.VISUAL_PINBALL.equalsIgnoreCase(name)
+        || EmulatorType.VISUALPINBALL.equalsIgnoreCase(name)
+        || EmulatorType.VISUALPINBALLX.equalsIgnoreCase(name);
   }
 }
