@@ -44,7 +44,7 @@ public class RomService implements InitializingBean {
       LOG.info("Skipped reading of " + game.getGameDisplayName() + ", VPX file '" + game.getGameFile().getAbsolutePath() + "' does not exist.");
       return new ScanResult();
     }
-    LOG.info("Skipped reading of " + game.getGameDisplayName() + ", only VPX tables can be scanned.");
+    LOG.info("Skipped reading of " + game.getGameDisplayName() + " (emulator '" + game.getEmulator() + "'), only VPX tables can be scanned.");
     return new ScanResult();
   }
 
