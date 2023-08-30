@@ -26,17 +26,17 @@
    <bottom>
       <HBox alignment="BASELINE_RIGHT" spacing="12.0" BorderPane.alignment="CENTER">
          <children>
-            <Button fx:id="revertBtn" layoutX="418.0" layoutY="10.0" mnemonicParsing="false" onAction="#onRestoreClick" styleClass="default-button" text="Revert Changes">
+          <Button fx:id="cancelButton" mnemonicParsing="false" onAction="#onCancelClick" styleClass="default-button" text="Close">
                <HBox.margin>
                   <Insets right="12.0" />
                </HBox.margin>
             </Button>
-            <Button fx:id="saveBtn" layoutX="84.0" layoutY="10.0" mnemonicParsing="false" onAction="#onSaveClick" styleClass="submit-button" text="Save" />
-          <Button fx:id="cancelButton" mnemonicParsing="false" onAction="#onCancelClick" styleClass="default-button" text="Close">
+            <Button fx:id="revertBtn" layoutX="418.0" layoutY="10.0" mnemonicParsing="false" onAction="#onRestoreClick" styleClass="default-button" text="Revert Changes">
                <HBox.margin>
                   <Insets />
                </HBox.margin>
             </Button>
+            <Button fx:id="saveBtn" layoutX="84.0" layoutY="10.0" mnemonicParsing="false" onAction="#onSaveClick" styleClass="submit-button" text="Save" />
          </children>
          <BorderPane.margin>
             <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />

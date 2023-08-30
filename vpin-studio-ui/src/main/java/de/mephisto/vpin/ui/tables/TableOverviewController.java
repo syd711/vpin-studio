@@ -3,7 +3,7 @@ package de.mephisto.vpin.ui.tables;
 import de.mephisto.vpin.commons.EmulatorType;
 import de.mephisto.vpin.commons.utils.FileUtils;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
-import de.mephisto.vpin.restclient.AltSound;
+import de.mephisto.vpin.restclient.altsound.AltSound;
 import de.mephisto.vpin.restclient.ValidationCode;
 import de.mephisto.vpin.restclient.representations.GameRepresentation;
 import de.mephisto.vpin.restclient.representations.PlaylistRepresentation;
@@ -13,6 +13,7 @@ import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.StudioFXController;
 import de.mephisto.vpin.ui.WaitOverlayController;
 import de.mephisto.vpin.ui.events.EventManager;
+import de.mephisto.vpin.ui.tables.editors.AltSound2EditorController;
 import de.mephisto.vpin.ui.tables.editors.AltSoundEditorController;
 import de.mephisto.vpin.ui.tables.editors.TableScriptEditorController;
 import de.mephisto.vpin.ui.tables.validation.LocalizedValidation;
@@ -512,6 +513,27 @@ public class TableOverviewController implements Initializable, StudioFXControlle
         editorController.setTablesController(tablesController);
       } catch (IOException e) {
         LOG.error("Failed to load alt sound editor: " + e.getMessage(), e);
+      }
+    }
+  }
+
+  public void showAltSound2Editor(GameRepresentation game, AltSound altSound) {
+    String tableSource = client.getVpxService().getTableSource(game);
+    if (!StringUtils.isEmpty(tableSource)) {
+      try {
+        FXMLLoader loader = new FXMLLoader(AltSound2EditorController.class.getResource("editor-altsound2.fxml"));
+        BorderPane root = loader.load();
+        root.setMaxWidth(Double.MAX_VALUE);
+        root.setMaxHeight(Double.MAX_VALUE);
+
+        StackPane editorRootStack = tablesController.getEditorRootStack();
+        editorRootStack.getChildren().add(root);
+
+        AltSound2EditorController editorController = loader.getController();
+        editorController.setAltSound(game, altSound);
+        editorController.setTablesController(tablesController);
+      } catch (IOException e) {
+        LOG.error("Failed to load alt sound2 editor: " + e.getMessage(), e);
       }
     }
   }

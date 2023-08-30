@@ -1,6 +1,6 @@
 package de.mephisto.vpin.server.altsound;
 
-import de.mephisto.vpin.restclient.AltSound;
+import de.mephisto.vpin.restclient.altsound.AltSound;
 import de.mephisto.vpin.restclient.jobs.JobExecutionResult;
 import de.mephisto.vpin.restclient.jobs.JobExecutionResultFactory;
 import de.mephisto.vpin.server.games.Game;
@@ -57,11 +57,7 @@ public class AltSoundResource {
   @GetMapping("/restore/{id}")
   public AltSound restore(@PathVariable("id") int id) {
     Game game = gameService.getGame(id);
-    if (game != null) {
-      altSoundService.restore(game);
-      return getAltSound(game);
-    }
-    return new AltSound();
+    return altSoundService.restore(game);
   }
 
   @GetMapping("/enabled/{id}")

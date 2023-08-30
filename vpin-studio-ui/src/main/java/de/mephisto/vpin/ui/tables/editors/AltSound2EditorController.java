@@ -25,8 +25,8 @@ import org.slf4j.LoggerFactory;
 import java.net.URL;
 import java.util.*;
 
-public class AltSoundEditorController implements Initializable {
-  private final static Logger LOG = LoggerFactory.getLogger(AltSoundEditorController.class);
+public class AltSound2EditorController implements Initializable {
+  private final static Logger LOG = LoggerFactory.getLogger(AltSound2EditorController.class);
 
   private GameRepresentation game;
   private AltSound altSound;

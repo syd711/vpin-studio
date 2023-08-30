@@ -102,7 +102,10 @@ public class TablesSidebarMameController implements Initializable {
     if (desktop != null && desktop.isSupported(Desktop.Action.OPEN)) {
       try {
         SystemSummary systemSummary = Studio.client.getSystemService().getSystemSummary();
-        File file = new File(systemSummary.getVpinMameDirectory(), "Setup.exe");
+        File file = new File(systemSummary.getVpinMameDirectory(), "Setup64.exe");
+        if (!file.exists()) {
+          file = new File(systemSummary.getVpinMameDirectory(), "Setup.exe");
+        }
         if (!file.exists()) {
           WidgetFactory.showAlert(Studio.stage, "Did not find Setup.exe", "The exe file " + file.getAbsolutePath() + " was not found.");
         }
