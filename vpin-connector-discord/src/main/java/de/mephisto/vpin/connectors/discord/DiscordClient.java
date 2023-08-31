@@ -61,7 +61,8 @@ public class DiscordClient {
         Member member = guild.getMemberById(memberId);
         if (member != null) {
           List<Permission> permissionList = Arrays.stream(permissions).map(Permissions::toPermission).collect(Collectors.toList());
-          return PermissionUtil.checkPermission(channel.getPermissionContainer(), member, permissionList.toArray(new Permission[0]));
+          boolean isAdmin = PermissionUtil.checkPermission(member, Permission.ADMINISTRATOR);
+          return isAdmin || PermissionUtil.checkPermission(channel.getPermissionContainer(), member, permissionList.toArray(new Permission[0]));
         }
       }
     }
@@ -74,7 +75,8 @@ public class DiscordClient {
       Member member = guild.getMemberById(memberId);
       if (member != null) {
         List<Permission> permissionList = Arrays.stream(permissions).map(Permissions::toPermission).collect(Collectors.toList());
-        return PermissionUtil.checkPermission(member, permissionList.toArray(new Permission[0]));
+        boolean isAdmin = PermissionUtil.checkPermission(member, Permission.ADMINISTRATOR);
+        return isAdmin || PermissionUtil.checkPermission(member, permissionList.toArray(new Permission[0]));
       }
     }
     return false;
@@ -147,7 +149,8 @@ public class DiscordClient {
   public GuildInfo getGuildById(long guildId) {
     Guild guild = getGuild(guildId);
     if (guild != null) {
-      return new GuildInfo(guild);
+      Member memberById = guild.getMemberById(botId);
+      return new GuildInfo(guild, PermissionUtil.checkPermission(memberById, Permission.ADMINISTRATOR));
     }
     return null;
   }
@@ -169,7 +172,18 @@ public class DiscordClient {
   }
 
   public List<GuildInfo> getGuilds() {
-    return jda.getGuilds().stream().map(GuildInfo::new).collect(Collectors.toList());
+    return jda.getGuilds().stream().map(guild -> {
+      Member memberById = guild.getMemberById(botId);
+      return new GuildInfo(guild, PermissionUtil.checkPermission(memberById, Permission.ADMINISTRATOR));
+    }).collect(Collectors.toList());
+  }
+
+  public List<GuildInfo> getAdministratedGuilds() {
+    long botId = jda.getSelfUser().getIdLong();
+    return jda.getGuilds().stream().filter(guild -> {
+      Member memberById = guild.getMemberById(botId);
+      return PermissionUtil.checkPermission(memberById, Permission.ADMINISTRATOR);
+    }).map(guild -> new GuildInfo(guild, true)).collect(Collectors.toList());
   }
 
   public long getBotId() {
@@ -327,7 +341,7 @@ public class DiscordClient {
 
   public void deleteChannel(long serverId, long channelId) {
     Guild guild = this.getGuild(serverId);
-    if(guild != null) {
+    if (guild != null) {
       guild.getTextChannelById(channelId).delete().complete();
     }
   }

@@ -224,7 +224,7 @@ public class DiscordBotPreferencesController implements Initializable {
   private void validateDefaultChannel() {
     client.clearDiscordCache();
 
-    List<DiscordServer> servers = client.getDiscordService().getDiscordServers();
+    List<DiscordServer> servers = client.getDiscordService().getAdministratedDiscordServers();
     ObservableList<DiscordServer> discordServers = FXCollections.observableArrayList(servers);
     serverCombo.setItems(FXCollections.observableList(discordServers));
 

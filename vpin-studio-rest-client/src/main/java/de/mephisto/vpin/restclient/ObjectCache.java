@@ -1,10 +1,14 @@
 package de.mephisto.vpin.restclient;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class ObjectCache<T> {
+  private final static Logger LOG = LoggerFactory.getLogger(ObjectCache.class);
 
   private final Map<String, T> objectById = new ConcurrentHashMap<>();
 
@@ -21,6 +25,7 @@ public class ObjectCache<T> {
 
   public void invalidate(String key) {
     objectById.remove(key);
+    LOG.info("Invalidated " + key);
   }
 
   public void invalidateAll() {
