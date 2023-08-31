@@ -25,6 +25,7 @@ This means:
 
 A Discord server administrator has to ensure that only bots with **regular** rights are added to the server.
 
-Details are documented here:
+Details are documented here: https://github.com/syd711/vpin-studio/wiki/Discord-Integration
+
 
 Tired of reading? Watch a summary about this here: 
