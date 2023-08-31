@@ -1,6 +1,9 @@
 package de.mephisto.vpin.connectors.assets;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class AssetAdapters {
 
-  private Asse
+  private List<AssetAdapter> adapters = new ArrayList<>();
 }
