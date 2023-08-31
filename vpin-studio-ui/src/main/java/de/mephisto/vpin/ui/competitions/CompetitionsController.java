@@ -103,8 +103,8 @@ public class CompetitionsController implements Initializable, StudioFXController
 //    tableSubscriptionsController.onReload();
 
 //    offlineController.onViewActivated();
-//    discordController.onViewActivated();
-//    tableSubscriptionsController.onViewActivated();
+    discordController.onViewActivated();
+    tableSubscriptionsController.onViewActivated();
   }
 
   @Override
