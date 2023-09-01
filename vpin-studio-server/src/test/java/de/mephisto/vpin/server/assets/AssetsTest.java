@@ -39,11 +39,11 @@ public class AssetsTest extends AbstractVPinServerTest {
 
     byte[] competitionFinishedCard = assetService.getCompetitionFinishedCard(competition, game, player, scoreSummary);
     assertTrue(competitionFinishedCard.length > 0);
-//    File out = new File("E:\\temp\\out.png");
-//    if(out.exists()) {
-//      out.delete();
-//    }
-//    IOUtils.write(competitionFinishedCard, new FileOutputStream(out));
+    File out = new File("E:\\temp\\out.png");
+    if(out.exists()) {
+      out.delete();
+    }
+    IOUtils.write(competitionFinishedCard, new FileOutputStream(out));
   }
 
 }
