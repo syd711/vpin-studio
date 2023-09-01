@@ -133,6 +133,8 @@ public class DiscordBotPreferencesController implements Initializable {
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
+    Studio.client.getDiscordService().clearCache();
+
     serverCombo.setDisable(true);
     channelCombo.setDisable(true);
     categoryCombo.setDisable(true);

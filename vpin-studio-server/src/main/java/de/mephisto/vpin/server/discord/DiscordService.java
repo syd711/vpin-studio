@@ -673,6 +673,23 @@ public class DiscordService implements InitializingBean, PreferenceChangedListen
   public boolean clearCache() {
     if (this.discordClient != null) {
       this.discordClient.clearCache();
+
+      try {
+        String guildId = (String) preferencesService.getPreferenceValue(PreferenceNames.DISCORD_GUILD_ID);
+        if (!StringUtils.isEmpty(guildId)) {
+          long id = Long.parseLong(guildId);
+          GuildInfo guildById = this.discordClient.getGuildById(id);
+          if (guildById == null) {
+            LOG.warn("Invalid Discord settings found, resetting values.");
+            preferencesService.savePreference(PreferenceNames.DISCORD_GUILD_ID, null);
+            preferencesService.savePreference(PreferenceNames.DISCORD_CATEGORY_ID, null);
+            preferencesService.savePreference(PreferenceNames.DISCORD_CHANNEL_ID, null);
+            preferencesService.savePreference(PreferenceNames.DISCORD_DYNAMIC_SUBSCRIPTIONS, false);
+          }
+        }
+      } catch (Exception e) {
+        LOG.error("Discord preferences check failed: " + e.getMessage(), e);
+      }
     }
     return true;
   }
@@ -682,6 +699,7 @@ public class DiscordService implements InitializingBean, PreferenceChangedListen
     try {
       preferencesService.addChangeListener(this);
       this.recreateDiscordClient();
+      this.clearCache();
     } catch (Exception e) {
       LOG.error("Failed to initialize Discord Service: " + e.getMessage());
     }
