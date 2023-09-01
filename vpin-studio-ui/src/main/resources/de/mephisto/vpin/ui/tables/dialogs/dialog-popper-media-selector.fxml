@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.ProgressBar?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.ToolBar?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+<?import org.kordamp.ikonli.javafx.FontIcon?>
+
+<BorderPane maxHeight="700.0" styleClass="base-component" stylesheets="@../../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.tables.dialogs.TablePopperMediaSelectionController">
+   <top>
+      <fx:include fx:id="header" source="/de/mephisto/vpin/commons/fx/scene-dialog-header.fxml" />
+   </top>
+   <center>
+      <BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minWidth="-Infinity">
+         <top>
+            <BorderPane BorderPane.alignment="CENTER">
+               <BorderPane.margin>
+                  <Insets left="12.0" right="12.0" top="12.0" />
+               </BorderPane.margin>
+               <left>
+                  <ListView fx:id="assetList" prefWidth="500.0" BorderPane.alignment="CENTER" />
+               </left>
+               <center>
+                  <BorderPane BorderPane.alignment="CENTER">
+                     <center>
+                        <BorderPane fx:id="mediaPane" maxHeight="400.0" maxWidth="400.0" prefHeight="400.0" prefWidth="400.0" styleClass="media-container" BorderPane.alignment="CENTER" />
+                     </center>
+                  </BorderPane>
+               </center>
+               <top>
+                  <ToolBar prefHeight="40.0" prefWidth="500.0" BorderPane.alignment="CENTER">
+                    <items>
+                        <TextField fx:id="searchField" prefHeight="30.0" prefWidth="405.0">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </TextField>
+                      <Button fx:id="searchBtn" mnemonicParsing="false" onAction="#onSearch" text="Search" textFill="WHITE">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                           <graphic>
+                              <FontIcon iconColor="WHITE" iconLiteral="mdi2s-search-web" />
+                           </graphic>
+                        </Button>
+                        <Separator orientation="VERTICAL" prefHeight="0.0" prefWidth="0.0" />
+                        <Button fx:id="previewBtn" layoutX="398.0" layoutY="11.0" mnemonicParsing="false" onAction="#onPreview" text="Preview" textFill="WHITE">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                           <graphic>
+                              <FontIcon iconColor="WHITE" iconLiteral="mdi2e-eye-outline" />
+                           </graphic>
+                        </Button>
+                    </items>
+                  </ToolBar>
+               </top>
+            </BorderPane>
+         </top>
+         <bottom>
+            <VBox fx:id="helpBox" BorderPane.alignment="CENTER">
+               <opaqueInsets>
+                  <Insets />
+               </opaqueInsets>
+               <BorderPane.margin>
+                  <Insets bottom="6.0" left="12.0" right="12.0" top="6.0" />
+               </BorderPane.margin>
+            </VBox>
+         </bottom>
+      </BorderPane>
+   </center>
+   <bottom>
+      <BorderPane BorderPane.alignment="CENTER">
+         <right>
+            <Button fx:id="cancelBtn" mnemonicParsing="false" onAction="#onCancel" styleClass="submit-button" text="Close" BorderPane.alignment="CENTER" />
+         </right>
+         <left>
+            <HBox spacing="6.0" BorderPane.alignment="CENTER_LEFT">
+               <children>
+                  <ProgressBar fx:id="progressBar" prefWidth="393.0" progress="0.0">
+                     <HBox.margin>
+                        <Insets top="5.0" />
+                     </HBox.margin>
+                  </ProgressBar>
+                  <Button fx:id="downloadBtn" mnemonicParsing="false" onAction="#onDownload" text="Download" textFill="WHITE">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                     <graphic>
+                        <FontIcon iconColor="WHITE" iconLiteral="mdi2c-cloud-download-outline" />
+                     </graphic>
+                  </Button>
+               </children>
+            </HBox>
+         </left>
+         <BorderPane.margin>
+            <Insets bottom="12.0" left="12.0" right="12.0" />
+         </BorderPane.margin>
+         <top>
+            <HBox BorderPane.alignment="CENTER">
+               <children>
+                  <Label text="Double-click to preview">
+                     <HBox.margin>
+                        <Insets bottom="12.0" left="180.0" />
+                     </HBox.margin>
+                  </Label>
+               </children>
+            </HBox>
+         </top>
+      </BorderPane>
+   </bottom>
+</BorderPane>

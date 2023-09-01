@@ -150,6 +150,17 @@ public class Dialogs {
   }
 
 
+  public static boolean openPopperMediaSelectionDialog(TablesSidebarController tablesSidebarController, GameRepresentation game, PopperScreen screen) {
+    Stage stage = createStudioDialogStage(TablePopperMediaSelectionController.class, "dialog-popper-media-selector.fxml", "Asset Selector for Screen \"" + screen.name() + "\"");
+    TablePopperMediaSelectionController controller = (TablePopperMediaSelectionController) stage.getUserData();
+    controller.setGame(game, screen);
+    controller.setTableSidebarController(tablesSidebarController);
+    stage.showAndWait();
+
+    return true;
+  }
+
+
   public static boolean openMediaAdminDialog(TablesSidebarController tablesSidebarController, GameRepresentation game, PopperScreen screen) {
     Stage stage = createStudioDialogStage(TableMediaAdminController.class, "dialog-media-admin.fxml", "Assets for Screen \"" + screen.name() + "\"");
     TableMediaAdminController controller = (TableMediaAdminController) stage.getUserData();

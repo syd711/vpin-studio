@@ -326,14 +326,14 @@ public class TablesSidebarMediaController implements Initializable {
   }
 
   @FXML
-  private void onMediaUpload(ActionEvent e) {
+  private void onPopperMediaSelection(ActionEvent e) {
     if (game.isPresent()) {
       Button source = (Button) e.getSource();
       String id = source.getId();
       String screen = id.substring(id.lastIndexOf("_") + 1);
 
       PopperScreen popperScreen = PopperScreen.valueOf(screen);
-      Dialogs.openMediaUploadDialog(Studio.stage, tablesSidebarController, game.get(), popperScreen);
+      Dialogs.openPopperMediaSelectionDialog(tablesSidebarController, game.get(), popperScreen);
     }
   }
 
