@@ -7,6 +7,7 @@
 - Fixed authentication check: Discord API did not return *true* for regular permission checks for bots with admin rights (why???).
 - Improved invalid bot name error message in "Discord Competition" dialogs: It should be more clear now what action to take to fix it.
 - Changed "Competition Finished" card to 5 players (if available).
+- Added "Clear Cache" button which clears the Discord data cache, in case the server or channel settings have been changed in parallel.
 
 **Preferences: Bot Settings**
 
