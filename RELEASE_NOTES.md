@@ -1,11 +1,12 @@
 ## Release Notes
 
 
-**Competitions: Discord Competitions**
+**Competitions: (Discord) Competitions**
 
 - Fixed Competitions button refresh: After applying a bot token, the button are now enabled (no restart required anymore).
 - Fixed authentication check: Discord API did not return *true* for regular permission checks for bots with admin rights (why???).
 - Improved invalid bot name error message in "Discord Competition" dialogs: It should be more clear now what action to take to fix it.
+- Changed "Competition Finished" card to 5 players (if available).
 
 **Preferences: Bot Settings**
 
