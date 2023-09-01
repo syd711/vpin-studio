@@ -73,6 +73,9 @@ public class TableSubscriptionsController implements Initializable, StudioFXCont
   private Button joinBtn;
 
   @FXML
+  private Button clearCacheBtn;
+
+  @FXML
   private TextField textfieldSearch;
 
   @FXML
@@ -137,6 +140,16 @@ public class TableSubscriptionsController implements Initializable, StudioFXCont
       onReload();
     }
   }
+
+  @FXML
+  private void onClearCache() {
+    clearCacheBtn.setDisable(true);
+    client.getDiscordService().clearCache();
+    clearCacheBtn.setDisable(false);
+
+    onReload();
+  }
+
 
   @FXML
   private void onDelete() {

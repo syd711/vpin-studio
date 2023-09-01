@@ -93,6 +93,9 @@ public class CompetitionsDiscordController implements Initializable, StudioFXCon
   private Button reloadBtn;
 
   @FXML
+  private Button clearCacheBtn;
+
+  @FXML
   private Button joinBtn;
 
   @FXML
@@ -151,6 +154,15 @@ public class CompetitionsDiscordController implements Initializable, StudioFXCon
         }
       }
     }
+  }
+
+  @FXML
+  private void onClearCache() {
+    clearCacheBtn.setDisable(true);
+    client.getDiscordService().clearCache();
+    clearCacheBtn.setDisable(false);
+
+    onReload();
   }
 
   @FXML

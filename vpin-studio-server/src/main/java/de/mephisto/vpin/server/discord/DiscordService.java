@@ -166,7 +166,7 @@ public class DiscordService implements InitializingBean, PreferenceChangedListen
   public boolean hasManagePermissions(long serverId, long channelId, long memberId) {
     if (this.discordClient != null) {
       return this.discordClient.hasPermissions(serverId, channelId, memberId,
-          MANAGE_CHANNEL,
+//          MANAGE_CHANNEL,
           VIEW_CHANNEL,
           MESSAGE_SEND,
           MESSAGE_MANAGE,
@@ -181,7 +181,7 @@ public class DiscordService implements InitializingBean, PreferenceChangedListen
   public boolean hasManagePermissions(long serverId, long memberId) {
     if (this.discordClient != null) {
       return this.discordClient.hasPermissions(serverId, memberId,
-          MANAGE_CHANNEL,
+//          MANAGE_CHANNEL,
           VIEW_CHANNEL,
           MESSAGE_SEND,
           MESSAGE_MANAGE,

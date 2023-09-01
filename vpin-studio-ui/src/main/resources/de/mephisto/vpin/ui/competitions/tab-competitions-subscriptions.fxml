@@ -7,6 +7,7 @@
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.control.ToolBar?>
+<?import javafx.scene.control.Tooltip?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.text.Font?>
@@ -73,6 +74,17 @@
                                 <FontIcon iconColor="#ff3333" iconLiteral="mdi2d-delete-outline" />
                             </graphic>
                         </Button>
+                  <Button fx:id="clearCacheBtn" mnemonicParsing="false" onAction="#onClearCache" text="Clear Cache" textFill="WHITE">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                     <graphic>
+                        <FontIcon iconColor="WHITE" iconLiteral="sil-refresh" />
+                     </graphic>
+                     <tooltip>
+                        <Tooltip text="Clears cached Discord data" />
+                     </tooltip>
+                  </Button>
                     </items>
                 </ToolBar>
             </top>
