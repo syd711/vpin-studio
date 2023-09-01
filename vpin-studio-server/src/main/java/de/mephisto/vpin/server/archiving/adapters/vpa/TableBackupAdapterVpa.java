@@ -118,18 +118,20 @@ public class TableBackupAdapterVpa implements TableBackupAdapter, Job {
       LOG.info("Creating temporary archive file " + tempFile.getAbsolutePath());
       fos = new FileOutputStream(tempFile);
       zipOut = new ZipOutputStream(fos);
+      
+      String gameFolderName = systemService.getPupUpMediaFolderName(game);
 
       //store highscore
       //zip EM file
       if (game.getEMHighscoreFile() != null && game.getEMHighscoreFile().exists()) {
         packageInfo.setHighscore(true);
-        zipFile(game.getEMHighscoreFile(), getGameFolderName() + "/User/" + game.getEMHighscoreFile().getName(), zipOut);
+        zipFile(game.getEMHighscoreFile(), gameFolderName + "/User/" + game.getEMHighscoreFile().getName(), zipOut);
       }
 
       //zip nvram file
       if (game.getNvRamFile().exists()) {
         packageInfo.setHighscore(true);
-        zipFile(game.getNvRamFile(), getGameFolderName() + "/VPinMAME/nvram/" + game.getNvRamFile().getName(), zipOut);
+        zipFile(game.getNvRamFile(), gameFolderName + "/VPinMAME/nvram/" + game.getNvRamFile().getName(), zipOut);
       }
 
       //write VPReg.stg data
@@ -149,62 +151,62 @@ public class TableBackupAdapterVpa implements TableBackupAdapter, Job {
 
       if (game.getRomFile() != null && game.getRomFile().exists()) {
         packageInfo.setRom(true);
-        zipFile(game.getRomFile(), getGameFolderName() + "/VPinMAME/roms/" + game.getRomFile().getName(), zipOut);
+        zipFile(game.getRomFile(), gameFolderName + "/VPinMAME/roms/" + game.getRomFile().getName(), zipOut);
       }
 
       if (game.getPOVFile().exists()) {
         packageInfo.setPov(true);
-        zipFile(game.getPOVFile(), getGameFolderName() + "/Tables/" + game.getPOVFile().getName(), zipOut);
+        zipFile(game.getPOVFile(), gameFolderName + "/Tables/" + game.getPOVFile().getName(), zipOut);
       }
 
       if (game.getResFile().exists()) {
         packageInfo.setRes(true);
-        zipFile(game.getResFile(), getGameFolderName() + "/Tables/" + game.getResFile().getName(), zipOut);
+        zipFile(game.getResFile(), gameFolderName + "/Tables/" + game.getResFile().getName(), zipOut);
       }
 
       if (game.getGameFile().exists()) {
         packageInfo.setVpx(true);
-        zipFile(game.getGameFile(), getGameFolderName() + "/Tables/" + game.getGameFile().getName(), zipOut);
+        zipFile(game.getGameFile(), gameFolderName + "/Tables/" + game.getGameFile().getName(), zipOut);
       }
 
       if (game.getDirectB2SFile().exists()) {
         packageInfo.setDirectb2s(true);
-        zipFile(game.getDirectB2SFile(), getGameFolderName() + "/Tables/" + game.getDirectB2SFile().getName(), zipOut);
+        zipFile(game.getDirectB2SFile(), gameFolderName + "/Tables/" + game.getDirectB2SFile().getName(), zipOut);
       }
 
       // DMDs
       if (game.getUltraDMDFolder().exists()) {
         packageInfo.setUltraDMD(true);
-        zipFile(game.getUltraDMDFolder(), getGameFolderName() + "/Tables/" + game.getUltraDMDFolder().getName(), zipOut);
+        zipFile(game.getUltraDMDFolder(), gameFolderName + "/Tables/" + game.getUltraDMDFolder().getName(), zipOut);
       }
 
       if (game.getFlexDMDFolder().exists()) {
         packageInfo.setFlexDMD(true);
-        zipFile(game.getFlexDMDFolder(), getGameFolderName() + "/Tables/" + game.getFlexDMDFolder().getName(), zipOut);
+        zipFile(game.getFlexDMDFolder(), gameFolderName + "/Tables/" + game.getFlexDMDFolder().getName(), zipOut);
       }
 
       // Music and sounds
       if (game.isAltSoundAvailable()) {
         packageInfo.setAltSound(true);
-        zipFile(game.getAltSoundFolder(), getGameFolderName() + "/VPinMAME/altsound/" + game.getAltSoundFolder().getName(), zipOut);
+        zipFile(game.getAltSoundFolder(), gameFolderName + "/VPinMAME/altsound/" + game.getAltSoundFolder().getName(), zipOut);
       }
 
       // Cfg
       if (game.getCfgFile() != null && game.getCfgFile().exists()) {
         packageInfo.setCfg(true);
-        zipFile(game.getCfgFile(), getGameFolderName() + "/VPinMAME/cfg/" + game.getCfgFile().getName(), zipOut);
+        zipFile(game.getCfgFile(), gameFolderName + "/VPinMAME/cfg/" + game.getCfgFile().getName(), zipOut);
       }
 
       //colored DMD
       if (game.getAltColorFolder() != null && game.getAltColorFolder().exists()) {
         packageInfo.setAltColor(true);
-        zipFile(game.getAltColorFolder(), getGameFolderName() + "/VPinMAME/altcolor/" + game.getAltColorFolder().getName(), zipOut);
+        zipFile(game.getAltColorFolder(), gameFolderName + "/VPinMAME/altcolor/" + game.getAltColorFolder().getName(), zipOut);
       }
 
       //always zip music files if they are in a ROM named folder
       if (game.getMusicFolder() != null && game.getMusicFolder().exists()) {
         packageInfo.setMusic(true);
-        zipFile(game.getMusicFolder(), getGameFolderName() + "/Music/" + game.getMusicFolder().getName(), zipOut);
+        zipFile(game.getMusicFolder(), gameFolderName + "/Music/" + game.getMusicFolder().getName(), zipOut);
       }
       else {
         String assets = game.getAssets();
@@ -216,7 +218,7 @@ public class TableBackupAdapterVpa implements TableBackupAdapter, Job {
             if (findAudioMatch(files, tableMusic)) {
               packageInfo.setMusic(true);
               for (File file : files) {
-                zipFile(file, getGameFolderName() + "/Music/" + file.getName(), zipOut);
+                zipFile(file, gameFolderName + "/Music/" + file.getName(), zipOut);
               }
             }
           }
@@ -329,7 +331,7 @@ public class TableBackupAdapterVpa implements TableBackupAdapter, Job {
               mediaFile = augmenter.getBackupWheelIcon();
             }
           }
-          zipFile(mediaFile, "PinUPSystem/POPMedia/" + getPupUpMediaFolderName() + "/" + value.name() + "/" + mediaFile.getName(), zipOut);
+          zipFile(mediaFile, "PinUPSystem/POPMedia/" + systemService.getPupUpMediaFolderName(game) + "/" + value.name() + "/" + mediaFile.getName(), zipOut);
         }
       }
     }
@@ -403,31 +405,5 @@ public class TableBackupAdapterVpa implements TableBackupAdapter, Job {
     }
 
     ZipUtil.zipFile(fileToZip, fileName, zipOut);
-  }
-
-  private String getGameFolderName() {
-    String filename = game.getGameFile().getName();
-    if (filename.endsWith(".fp")) {
-      return "FuturePinball";
-    }
-
-    if (filename.endsWith(".fx")) {
-      return "Pinball FX3";
-    }
-
-    return "VisualPinball";
-  }
-
-  private String getPupUpMediaFolderName() {
-    String filename = game.getGameFile().getName();
-    if (filename.endsWith(".fp")) {
-      return "Future Pinball";
-    }
-
-    if (filename.endsWith(".fx")) {
-      return "Pinball FX3";
-    }
-
-    return "Visual Pinball X";
   }
 }

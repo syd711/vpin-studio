@@ -1,5 +1,6 @@
 package de.mephisto.vpin.restclient.client;
 
+import de.mephisto.vpin.connectors.assets.TableAsset;
 import de.mephisto.vpin.restclient.*;
 import de.mephisto.vpin.restclient.jobs.JobExecutionResult;
 import de.mephisto.vpin.restclient.popper.PinUPControl;
@@ -7,16 +8,19 @@ import de.mephisto.vpin.restclient.popper.PinUPControls;
 import de.mephisto.vpin.restclient.popper.PopperScreen;
 import de.mephisto.vpin.restclient.popper.TableDetails;
 import de.mephisto.vpin.restclient.representations.GameMediaRepresentation;
+import de.mephisto.vpin.restclient.representations.GameRepresentation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
+import org.springframework.lang.NonNull;
 import org.springframework.web.client.HttpClientErrorException;
-import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.RestTemplate;
 
 import java.io.File;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /*********************************************************************************************************************
@@ -132,6 +136,21 @@ public class PinUPPopperServiceClient extends VPinStudioClientService {
       return getRestClient().put(API + "poppermedia/media/" + gameId + "/" + screen.name(), values);
     } catch (Exception e) {
       LOG.error("Applying fullscreen mode failed: " + e.getMessage(), e);
+      throw e;
+    }
+  }
+
+  //---------------- Assets---------------------------------------------------------------------------------------------
+
+  public List<TableAsset> searchTableAsset(PopperScreen screen, String term) {
+    return Arrays.asList(getRestClient().get(API + "assets/search/" + screen + "/" + term, TableAsset[].class));
+  }
+
+  public boolean downloadAsset(TableAsset tableAsset, PopperScreen screen, GameRepresentation game) throws Exception {
+    try {
+      return getRestClient().post(API + "assets/download/" +game.getId() + "/" + screen.name() , tableAsset, Boolean.class);
+    } catch (Exception e) {
+      LOG.error("Failed to save b2s server settings: " + e.getMessage(), e);
       throw e;
     }
   }

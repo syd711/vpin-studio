@@ -4,7 +4,7 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 
 import java.util.List;
 
-public interface AssetAdapter {
+public interface TableAssetsAdapter {
 
-  List<Asset> search(@NonNull String term);
+  List<TableAsset> search(String screen, @NonNull String term);
 }

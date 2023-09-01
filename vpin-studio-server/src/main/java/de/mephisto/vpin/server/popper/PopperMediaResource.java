@@ -1,16 +1,21 @@
 package de.mephisto.vpin.server.popper;
 
+import de.mephisto.vpin.connectors.assets.TableAsset;
+import de.mephisto.vpin.connectors.assets.TableAssetsService;
+import de.mephisto.vpin.popper.PopperAssetAdapter;
 import de.mephisto.vpin.restclient.jobs.JobExecutionResult;
 import de.mephisto.vpin.restclient.jobs.JobExecutionResultFactory;
 import de.mephisto.vpin.restclient.popper.PopperScreen;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameService;
+import de.mephisto.vpin.server.system.SystemService;
 import de.mephisto.vpin.server.util.UploadUtil;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.Resource;
@@ -38,12 +43,16 @@ import static org.springframework.http.HttpStatus.NOT_FOUND;
 
 @RestController
 @RequestMapping(API_SEGMENT + "poppermedia")
-public class PopperMediaResource {
+public class PopperMediaResource implements InitializingBean {
   private final static Logger LOG = LoggerFactory.getLogger(PopperResource.class);
 
   @Autowired
   private GameService gameService;
 
+  @Autowired
+  private SystemService systemService;
+
+  private TableAssetsService tableAssetsService;
 
   @GetMapping("/{id}")
   public GameMedia getGameMedia(@PathVariable("id") int id) {
@@ -54,6 +63,23 @@ public class PopperMediaResource {
     return game.getGameMedia();
   }
 
+  @GetMapping("/assets/search/{screen}/{term}")
+  public List<TableAsset> searchTableAssets(@PathVariable("screen") String screen,
+                                            @PathVariable("term") String term) {
+    return tableAssetsService.search(screen, term);
+  }
+
+  @PostMapping("/assets/download/{gameId}/{screen}")
+  public boolean downloadTableAsset(@PathVariable("gameId") int gameId,
+                                    @PathVariable("screen") String screen,
+                                    @RequestBody TableAsset asset) {
+    Game game = gameService.getGame(gameId);
+    PopperScreen s = PopperScreen.valueOf(screen);
+    File pinpuSystemFolder = new File(systemService.getPinUPSystemFolder(), "POPMedia/" + systemService.getPupUpMediaFolderName(game) + "/" + s.name());
+    File target = new File(pinpuSystemFolder, asset.getId());
+    tableAssetsService.download(asset, target);
+    return true;
+  }
 
   @GetMapping("/{id}/{screen}/{name}")
   public ResponseEntity<Resource> handleRequestWithName(@PathVariable("id") int id, @PathVariable("screen") String screen, @PathVariable("name") String name) throws IOException {
@@ -209,5 +235,11 @@ public class PopperMediaResource {
       LOG.warn("Invalid target name '" + newName + "' should start with '" + gameBaseName + "'");
     }
     return false;
+  }
+
+  @Override
+  public void afterPropertiesSet() throws Exception {
+    tableAssetsService = new TableAssetsService();
+    tableAssetsService.registerAdapter(new PopperAssetAdapter());
   }
 }

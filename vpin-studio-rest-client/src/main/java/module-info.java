@@ -5,6 +5,8 @@ open module de.mephisto.vpin.restclient {
   requires spring.core;
   requires com.fasterxml.jackson.databind;
 
+  requires de.mephisto.vpin.connectors.assets;
+
   exports de.mephisto.vpin.restclient;
   exports de.mephisto.vpin.restclient.representations;
   exports de.mephisto.vpin.restclient.discord;

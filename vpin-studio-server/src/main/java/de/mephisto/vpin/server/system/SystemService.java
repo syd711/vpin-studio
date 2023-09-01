@@ -11,6 +11,7 @@ import de.mephisto.vpin.restclient.ScreenInfo;
 import de.mephisto.vpin.restclient.SystemSummary;
 import de.mephisto.vpin.server.VPinStudioException;
 import de.mephisto.vpin.server.VPinStudioServer;
+import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.pinemhi.PINemHiService;
 import de.mephisto.vpin.server.resources.ResourceLoader;
 import de.mephisto.vpin.server.util.SystemUtil;
@@ -168,6 +169,19 @@ public class SystemService extends SystemInfo implements InitializingBean, Appli
       LOG.error(msg, e);
       throw new VPinStudioException(msg, e);
     }
+  }
+
+  public String getPupUpMediaFolderName(Game game) {
+    String filename = game.getGameFile().getName();
+    if (filename.endsWith(".fp")) {
+      return "Future Pinball";
+    }
+
+    if (filename.endsWith(".fx")) {
+      return "Pinball FX3";
+    }
+
+    return "Visual Pinball X";
   }
 
   /**
