@@ -283,7 +283,7 @@ public class CompetitionDiscordDialogController implements Initializable, Dialog
 
     if (botStatus == null || StringUtils.isEmpty(botStatus.getBotInitials())) {
       validationTitle.setText("Invalid BOT nickname.");
-      validationDescription.setText("Please set a valid nickname for your BOT on the selected server.");
+      validationDescription.setText("To submit highscores, your bot must have the name pattern \"<NAME> | [<INITIALS>]\" on the selected server.");
       return;
     }
 

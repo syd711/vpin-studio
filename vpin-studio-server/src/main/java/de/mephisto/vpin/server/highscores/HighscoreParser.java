@@ -165,7 +165,7 @@ public class HighscoreParser {
       String cleanScore = score.trim().replaceAll("\\.", "").replaceAll(",", "");
       return Double.parseDouble(cleanScore);
     } catch (NumberFormatException e) {
-      LOG.warn("Failed to parse highscore string '" + score + "', ignoring segment '" + score + "'");
+      LOG.info("Failed to parse highscore string '" + score + "', ignoring segment '" + score + "'");
       return -1;
     }
   }

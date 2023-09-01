@@ -144,7 +144,7 @@ public class PupPack {
               File triggersPup = new File(optionFolder, TRIGGERS_PUP);
               File playlistsPup = new File(optionFolder, PLAYLISTS_PUP);
 
-              if (screensPup.exists() && triggersPup.exists() && playlistsPup.exists()
+              if (screensPup.exists() && triggersPup.exists() && triggersPup.canRead() && playlistsPup.exists()
                   && this.screensPup.exists() && this.triggersPup.exists() && this.playlistPup.exists()) {
                 long length = screensPup.length() + triggersPup.length() + playlistsPup.length();
                 if (length == this.playlistPup.length() + this.screensPup.length() + this.triggersPup.length()) {
@@ -174,7 +174,7 @@ public class PupPack {
         }
       }
     } catch (Exception e) {
-      LOG.error("Failed to load PUP pack \"" + packFolder.getAbsolutePath() + "\": " + e.getMessage(), e);
+      LOG.error("Failed to load PUP pack \"" + packFolder.getAbsolutePath() + "\": " + e.getMessage());
     }
   }
 

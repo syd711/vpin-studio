@@ -363,6 +363,18 @@ public class DiscordService implements InitializingBean, PreferenceChangedListen
     return result;
   }
 
+  public List<DiscordServer> getAdministratedServers() {
+    List<DiscordServer> result = new ArrayList<>();
+    if (this.discordClient != null) {
+      List<GuildInfo> guilds = this.discordClient.getAdministratedGuilds();
+      for (GuildInfo guild : guilds) {
+        List<de.mephisto.vpin.connectors.discord.DiscordCategory> categories = this.discordClient.getCategories(guild.getId());
+        result.add(toServer(guild, categories));
+      }
+    }
+    return result;
+  }
+
   public Player getPlayerByInitials(long serverId, String initials) {
     if (serverId > 0) {
       List<DiscordMember> results = new ArrayList<>();

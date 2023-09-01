@@ -26,6 +26,7 @@ public class DiscordServiceClient extends VPinStudioClientService {
 
   public boolean clearCache() {
     final RestTemplate restTemplate = new RestTemplate();
+    client.clearDiscordCache();
     return restTemplate.getForObject(getRestClient().getBaseUrl() + API + "discord/clearcache", Boolean.class);
   }
 
@@ -55,6 +56,10 @@ public class DiscordServiceClient extends VPinStudioClientService {
 
   public List<DiscordServer> getDiscordServers() {
     return Arrays.asList(getRestClient().getCached(API + "discord/servers", DiscordServer[].class));
+  }
+
+  public List<DiscordServer> getAdministratedDiscordServers() {
+    return Arrays.asList(getRestClient().getCached(API + "discord/myservers", DiscordServer[].class));
   }
 
   public boolean isCompetitionActive(long discordServerId, long discordChannelId, String uuid) {

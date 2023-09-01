@@ -69,7 +69,7 @@ public class DiscordResource {
   }
 
   @GetMapping("/server/{serverId}")
-  public DiscordServer getServers(@PathVariable("serverId") long serverId) {
+  public DiscordServer getServer(@PathVariable("serverId") long serverId) {
     return discordService.getServer(serverId);
   }
 
@@ -93,6 +93,11 @@ public class DiscordResource {
   @GetMapping("/servers")
   public List<DiscordServer> getServers() {
     return discordService.getServers();
+  }
+
+  @GetMapping("/myservers")
+  public List<DiscordServer> getAdministratedServers() {
+    return discordService.getAdministratedServers();
   }
 
   @GetMapping("/competition/isactive/{serverId}/{channelId}/{uuid}")

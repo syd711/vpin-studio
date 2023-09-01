@@ -1,31 +1,32 @@
 ## Release Notes
 
-**Table Management**
 
-- Added preference button for different section that point directly to the matching preferences section.
+**Competitions: (Discord) Competitions**
 
-**Preferences**
+- Fixed Competitions button refresh: After applying a bot token, the button are now enabled (no restart required anymore).
+- Fixed authentication check: Discord API did not return *true* for regular permission checks for bots with admin rights (why???).
+- Improved invalid bot name error message in "Discord Competition" dialogs: It should be more clear now what action to take to fix it.
+- Changed "Competition Finished" card to 5 players (if available).
 
-- Added dirty check, so that the tables are only reloaded after preferences changes if required.
+**Preferences: Bot Settings**
 
-**Preferences: Backglass Server**
+**Problem:** If every VPin Studio bot on a server has every permission, everyones highscore for every table could be posted (spammed) into text channels and everyone could create subscriptions.
 
-- Added new preference section "Backglass Server" that configures the basic attributes for the backglass server.
+The problem has been solved filtering servers by their bot "administration" permissions.
+This means:
 
-**Table Management: Virtual Pinball Spreadsheet**
+- Only player bots with **administrator** rights can create a Discord competition.
+- Only player bots with **administrator** rights can create a channel subscription.
+- Only player bots with **administrator** rights can can post "casual" highscore notifications into a text channel.
 
-- Labels about the sheet metadata have been added (number of entries and last update).
-- Improved VPS filename matching (fixed hyphen problem).
 
-**Table Management: Directb2s/Backglass**
+**Regular** player bots, that have been added by the server administrator can only
+- join a Discord competition and post updates there.
+- join a table subscription and post updates there.
 
-- Renamed "Directb2s" section to "Backglass".
-- Added an "Open Folder" button for the DirectB2S section.
-- Added options to edit the backglass settings. This way, the table don't need to be started to configure it.
+A Discord server administrator has to ensure that only bots with **regular** rights are added to the server.
 
-**Bugfixes**
+Details are documented here: https://github.com/syd711/vpin-studio/wiki/Discord-Integration
 
-- Slightly improved EM table scanning.
-- Added running check, so that duplicate instances terminate more graceful.
-- Improved logging for failed table scan failing, caused by invalid emulator names.
-- Improved "Visual Pinball" emulator name matching.
+
+Tired of reading? Watch a summary about this here: 
