@@ -33,23 +33,13 @@
                         <Insets />
                      </BorderPane.margin>
                      <left>
-                        <ListView fx:id="serverAssetsList" prefWidth="400.0" BorderPane.alignment="CENTER" />
+                        <ListView fx:id="serverAssetsList" prefWidth="600.0" BorderPane.alignment="CENTER" />
                      </left>
                      <center>
                         <BorderPane styleClass="media-container" BorderPane.alignment="CENTER">
                            <center>
                               <BorderPane fx:id="serverAssetMediaPane" maxHeight="300.0" maxWidth="300.0" prefHeight="300.0" prefWidth="300.0" styleClass="media-container" BorderPane.alignment="CENTER" />
                            </center>
-                           <top>
-                              <HBox alignment="CENTER" styleClass="media-container" BorderPane.alignment="CENTER">
-                                 <padding>
-                                    <Insets left="6.0" right="6.0" top="6.0" />
-                                 </padding>
-                                 <children>
-                                    <Label fx:id="assetLabel" textFill="WHITE" />
-                                 </children>
-                              </HBox>
-                           </top>
                            <bottom>
                               <HBox alignment="CENTER" BorderPane.alignment="CENTER">
                                  <children>
@@ -111,7 +101,7 @@
                         <children>
                            <Label text="Double-click to preview">
                               <HBox.margin>
-                                 <Insets bottom="12.0" left="120.0" />
+                                 <Insets bottom="12.0" left="210.0" />
                               </HBox.margin>
                            </Label>
                         </children>
@@ -131,7 +121,7 @@
                         <Insets />
                      </BorderPane.margin>
                      <left>
-                        <ListView fx:id="assetList" prefHeight="250.0" prefWidth="400.0" BorderPane.alignment="CENTER" />
+                        <ListView fx:id="assetList" prefHeight="250.0" prefWidth="600.0" BorderPane.alignment="CENTER" />
                      </left>
                      <center>
                         <BorderPane BorderPane.alignment="CENTER">

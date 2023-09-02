@@ -19,12 +19,12 @@ public class TableAssetsService {
 
   private final static String DOWNLOAD_SUFFIX = ".assetDwnld";
 
-  public List<TableAsset> search(@NonNull String screen, @NonNull String term) {
+  public List<TableAsset> search(@NonNull String key, @NonNull String screen, @NonNull String term) throws Exception {
     List<TableAsset> assets = new ArrayList<>();
     for (TableAssetsAdapter adapter : adapters) {
-      assets.addAll(adapter.search(screen, term));
+      assets.addAll(adapter.search(EncryptDecrypt.SECRET_KEY_1, screen, term));
     }
-    return assets;
+      return assets;
   }
 
   public void registerAdapter(@NonNull TableAssetsAdapter adapter) {

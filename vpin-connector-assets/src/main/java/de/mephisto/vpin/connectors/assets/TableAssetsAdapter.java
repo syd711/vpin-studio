@@ -6,5 +6,5 @@ import java.util.List;
 
 public interface TableAssetsAdapter {
 
-  List<TableAsset> search(String screen, @NonNull String term);
+  List<TableAsset> search(@NonNull String key, @NonNull String screen, @NonNull String term) throws Exception;
 }

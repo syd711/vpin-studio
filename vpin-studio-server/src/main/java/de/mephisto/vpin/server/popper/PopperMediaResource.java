@@ -1,5 +1,6 @@
 package de.mephisto.vpin.server.popper;
 
+import de.mephisto.vpin.connectors.assets.EncryptDecrypt;
 import de.mephisto.vpin.connectors.assets.TableAsset;
 import de.mephisto.vpin.connectors.assets.TableAssetsService;
 import de.mephisto.vpin.popper.PopperAssetAdapter;
@@ -31,9 +32,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.URLDecoder;
 import java.nio.charset.Charset;
-import java.util.Base64;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static de.mephisto.vpin.server.VPinStudioServer.API_SEGMENT;
 import static de.mephisto.vpin.server.util.RequestUtil.CONTENT_LENGTH;
@@ -66,7 +65,12 @@ public class PopperMediaResource implements InitializingBean {
   @GetMapping("/assets/search/{screen}/{term}")
   public List<TableAsset> searchTableAssets(@PathVariable("screen") String screen,
                                             @PathVariable("term") String term) {
-    return tableAssetsService.search(screen, term);
+    try {
+      return tableAssetsService.search(EncryptDecrypt.SECRET_KEY_1, screen, term);
+    } catch (Exception e) {
+      LOG.error("Asset search failed: " + e.getMessage(), e);
+    }
+    return Collections.emptyList();
   }
 
   @PostMapping("/assets/download/{gameId}/{screen}")

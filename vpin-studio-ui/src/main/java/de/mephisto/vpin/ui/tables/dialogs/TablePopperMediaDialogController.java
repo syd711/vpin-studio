@@ -2,6 +2,7 @@ package de.mephisto.vpin.ui.tables.dialogs;
 
 import de.mephisto.vpin.commons.fx.DialogController;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
+import de.mephisto.vpin.connectors.assets.EncryptDecrypt;
 import de.mephisto.vpin.connectors.assets.TableAsset;
 import de.mephisto.vpin.connectors.assets.TableAssetsService;
 import de.mephisto.vpin.popper.PopperAssetAdapter;
@@ -46,12 +47,19 @@ import org.kordamp.ikonli.javafx.FontIcon;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.crypto.BadPaddingException;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
 import java.awt.*;
 import java.io.ByteArrayInputStream;
+import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.nio.charset.Charset;
+import java.security.InvalidAlgorithmParameterException;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -63,7 +71,7 @@ import static de.mephisto.vpin.ui.Studio.client;
 
 public class TablePopperMediaDialogController implements Initializable, DialogController, StudioEventListener {
   private final static Logger LOG = LoggerFactory.getLogger(TablePopperMediaDialogController.class);
-  public static final int MEDIA_SIZE = 300;
+  public static final int MEDIA_SIZE = 280;
 
   @FXML
   private BorderPane serverAssetMediaPane;
@@ -76,9 +84,6 @@ public class TablePopperMediaDialogController implements Initializable, DialogCo
 
   @FXML
   private TextField searchField;
-
-  @FXML
-  private Label assetLabel;
 
   @FXML
   private BorderPane mediaPane;
@@ -105,6 +110,7 @@ public class TablePopperMediaDialogController implements Initializable, DialogCo
   private PopperScreen screen;
   private TablesSidebarController tablesSidebarController;
   private TableAssetsService tableAssetsService;
+  private EncryptDecrypt encryptDecrypt;
 
 
   @FXML
@@ -194,7 +200,7 @@ public class TablePopperMediaDialogController implements Initializable, DialogCo
     }
     else {
       serverAssetsList.getItems().removeAll(serverAssetsList.getItems());
-      serverAssetsList.setItems(FXCollections.emptyObservableList());
+      serverAssetsList.setItems(FXCollections.observableList(new ArrayList<>()));
       serverAssetsList.refresh();
     }
   }
@@ -206,18 +212,30 @@ public class TablePopperMediaDialogController implements Initializable, DialogCo
       return;
     }
     downloadBtn.setVisible(true);
-    assetLabel.setText(tableAsset.toString());
-
     String mimeType = tableAsset.getMimeType();
     String baseType = mimeType.split("/")[0];
+    String assetUrl = null;
+    try {
+      assetUrl = this.encryptDecrypt.decrypt(tableAsset.getUrl());
+      assetUrl = assetUrl.replaceAll(" ", "%20");
+      System.out.println(assetUrl);
+    } catch (InvalidAlgorithmParameterException e) {
+      throw new RuntimeException(e);
+    } catch (InvalidKeyException e) {
+      throw new RuntimeException(e);
+    } catch (BadPaddingException e) {
+      throw new RuntimeException(e);
+    } catch (IllegalBlockSizeException e) {
+      throw new RuntimeException(e);
+    }
 
     if (baseType.equals("image")) {
       ImageView imageView = new ImageView();
-      imageView.setFitWidth(MEDIA_SIZE - 10);
-      imageView.setFitHeight(500 - 20);
+      imageView.setFitWidth(MEDIA_SIZE);
+      imageView.setFitHeight(MEDIA_SIZE);
       imageView.setPreserveRatio(true);
 
-      Image image = new Image(tableAsset.getUrl());
+      Image image = new Image(assetUrl);
       imageView.setImage(image);
       imageView.setUserData(tableAsset);
 
@@ -236,7 +254,7 @@ public class TablePopperMediaDialogController implements Initializable, DialogCo
       playBtn.setGraphic(fontIcon);
       vBox.getChildren().add(playBtn);
 
-      Media media = new Media(tableAsset.getUrl());
+      Media media = new Media(assetUrl);
       MediaPlayer mediaPlayer = new MediaPlayer(media);
       mediaPlayer.setAutoPlay(true);
       mediaPlayer.setCycleCount(-1);
@@ -278,14 +296,14 @@ public class TablePopperMediaDialogController implements Initializable, DialogCo
 
     }
     else if (baseType.equals("video")) {
-      Media media = new Media(tableAsset.getUrl());
+      Media media = new Media(assetUrl);
       MediaPlayer mediaPlayer = new MediaPlayer(media);
       mediaPlayer.setAutoPlay(true);
       mediaPlayer.setStopTime(Duration.seconds(5));
       mediaPlayer.setCycleCount(-1);
       mediaPlayer.setMute(true);
       mediaPlayer.setOnError(() -> {
-        LOG.error("Media player error: " + mediaPlayer.getError() + ", URL: " + tableAsset.getUrl());
+        LOG.error("Media player error: " + mediaPlayer.getError());
         mediaPlayer.stop();
         mediaPlayer.dispose();
 
@@ -298,8 +316,8 @@ public class TablePopperMediaDialogController implements Initializable, DialogCo
       MediaView mediaView = new MediaView(mediaPlayer);
       mediaView.setUserData(tableAsset);
       mediaView.setPreserveRatio(true);
-      mediaView.setFitWidth(MEDIA_SIZE - 10);
-      mediaView.setFitHeight(MEDIA_SIZE - 10);
+      mediaView.setFitWidth(MEDIA_SIZE);
+      mediaView.setFitHeight(MEDIA_SIZE);
 
       serverAssetMediaPane.setCenter(mediaView);
     }
@@ -325,6 +343,16 @@ public class TablePopperMediaDialogController implements Initializable, DialogCo
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
+    try {
+      encryptDecrypt = new EncryptDecrypt(EncryptDecrypt.SECRET_KEY_1);
+    } catch (UnsupportedEncodingException e) {
+      throw new RuntimeException(e);
+    } catch (NoSuchPaddingException e) {
+      throw new RuntimeException(e);
+    } catch (NoSuchAlgorithmException e) {
+      throw new RuntimeException(e);
+    }
+
     previewBtn.setDisable(true);
     downloadBtn.setVisible(false);
 
@@ -349,7 +377,6 @@ public class TablePopperMediaDialogController implements Initializable, DialogCo
       @Override
       public void changed(ObservableValue<? extends TableAsset> observable, TableAsset oldValue, TableAsset tableAsset) {
         disposeServerAssetPreview();
-        assetLabel.setText("");
         previewBtn.setDisable(tableAsset == null);
         downloadBtn.setVisible(false);
 
@@ -389,8 +416,8 @@ public class TablePopperMediaDialogController implements Initializable, DialogCo
 
         if (baseType.equals("image")) {
           ImageView imageView = new ImageView();
-          imageView.setFitWidth(MEDIA_SIZE - 10);
-          imageView.setFitHeight(MEDIA_SIZE - 10);
+          imageView.setFitWidth(MEDIA_SIZE);
+          imageView.setFitHeight(MEDIA_SIZE);
           imageView.setPreserveRatio(true);
 
           ByteArrayInputStream gameMediaItem = client.getAssetService().getGameMediaItem(mediaItem.getGameId(), PopperScreen.valueOf(mediaItem.getScreen()));
@@ -474,8 +501,8 @@ public class TablePopperMediaDialogController implements Initializable, DialogCo
           MediaView mediaView = new MediaView(mediaPlayer);
           mediaView.setUserData(mediaItem);
           mediaView.setPreserveRatio(true);
-          mediaView.setFitWidth(MEDIA_SIZE - 10);
-          mediaView.setFitHeight(MEDIA_SIZE - 10);
+          mediaView.setFitWidth(MEDIA_SIZE);
+          mediaView.setFitHeight(MEDIA_SIZE);
 
           mediaPane.setCenter(mediaView);
         }
