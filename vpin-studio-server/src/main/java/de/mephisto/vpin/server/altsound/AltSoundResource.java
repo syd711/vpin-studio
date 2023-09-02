@@ -36,7 +36,7 @@ public class AltSoundResource {
   private ValidationService validationService;
 
   @GetMapping("{id}")
-  public AltSound csv(@PathVariable("id") int id) {
+  public AltSound getAltSound(@PathVariable("id") int id) {
     Game game = gameService.getGame(id);
     if (game != null) {
       return getAltSound(game);
@@ -81,7 +81,7 @@ public class AltSoundResource {
 
   @GetMapping("/clearcache")
   public boolean clearCache() {
-    return altSoundService.clearCache();
+    return true;
   }
 
   @PostMapping("/upload")

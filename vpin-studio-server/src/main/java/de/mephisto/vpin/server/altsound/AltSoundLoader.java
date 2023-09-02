@@ -3,10 +3,7 @@ package de.mephisto.vpin.server.altsound;
 import de.mephisto.vpin.restclient.altsound.AltSound;
 import de.mephisto.vpin.restclient.altsound.AltSoundEntry;
 import de.mephisto.vpin.restclient.altsound.AltSoundFormats;
-import de.mephisto.vpin.server.games.Game;
 import edu.umd.cs.findbugs.annotations.NonNull;
-import org.apache.commons.configuration2.INIConfiguration;
-import org.apache.commons.configuration2.SubnodeConfiguration;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVRecord;
 import org.apache.commons.csv.QuoteMode;
@@ -23,54 +20,18 @@ import java.util.Map;
 
 public class AltSoundLoader {
   private final static Logger LOG = LoggerFactory.getLogger(AltSoundLoader.class);
-  private File altSoundFolder;
 
-  public AltSoundLoader(@NonNull Game altSoundFolder) {
-    this.altSoundFolder = altSoundFolder;
+  private final File csvFile;
+
+  AltSoundLoader(@NonNull File csvFile) {
+    this.csvFile = csvFile;
   }
 
   @NonNull
   public AltSound load() {
-    try {
-      File ini = new File(altSoundFolder, "altsound.ini");
-      File gSoundCsv = new File(altSoundFolder, "g-sound.csv");
-      File altSoundCsv = new File(altSoundFolder, "altsound.csv");
-
-      if (ini.exists()) {
-        INIConfiguration iniConfiguration = new INIConfiguration();
-        iniConfiguration.setCommentLeadingCharsUsedInInput(";");
-        iniConfiguration.setSeparatorUsedInOutput("=");
-        iniConfiguration.setSeparatorUsedInInput("=");
-
-        FileReader fileReader = new FileReader(ini);
-        iniConfiguration.read(fileReader);
-
-        SubnodeConfiguration formatNode = iniConfiguration.getSection("format");
-        if (formatNode != null) {
-          String format = formatNode.getString("format");
-          if (format.equals(AltSoundFormats.gsound) && gSoundCsv.exists()) {
-            return loadAltSound2(iniConfiguration, gSoundCsv);
-          }
-          else if (altSoundCsv.exists()) {
-            return loadAltSound(altSoundCsv);
-          }
-        }
-      }
-      else if (altSoundCsv.exists()) {
-        return loadAltSound(altSoundCsv);
-      }
-    } catch (Exception e) {
-      LOG.error("Failed to load altsound: " + e.getMessage(), e);
-    }
-
-    LOG.warn("Failed to resolve altsound for folder " + altSoundFolder.getAbsolutePath());
-    return new AltSound();
-  }
-
-  @NonNull
-  private AltSound loadAltSound(File csvFile) {
     AltSound altSound = new AltSound();
     altSound.setFormat(AltSoundFormats.altsound);
+    altSound.setCsvFile(csvFile);
     altSound.setModificationDate(new Date(csvFile.lastModified()));
 
     long size = csvFile.length();
@@ -133,16 +94,6 @@ public class AltSoundLoader {
     }
     return altSound;
   }
-
-  @NonNull
-  private AltSound loadAltSound2(INIConfiguration iniConfiguration, File gSoundCsv) {
-    AltSound altSound = new AltSound();
-    altSound.setFormat(AltSoundFormats.gsound);
-    altSound.setModificationDate(new Date(gSoundCsv.lastModified()));
-    return altSound;
-  }
-
-
 
   private int getInt(String value) {
     if (StringUtils.isEmpty(value)) {

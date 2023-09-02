@@ -14,17 +14,17 @@ public class AltSoundWriter {
 
   private final File gameAltSoundFolder;
 
-  public AltSoundWriter(@NonNull Game gameAltSoundFolder) {
+  public AltSoundWriter(@NonNull File gameAltSoundFolder) {
     this.gameAltSoundFolder = gameAltSoundFolder;
   }
 
-  public void save(@NonNull AltSound altSound) {
+  public AltSound write(@NonNull AltSound altSound) {
     try {
-      org.apache.commons.io.FileUtils.writeStringToFile(altSoundCsv, altSound.toCSV(), StandardCharsets.UTF_8);
-      LOG.info("Written ALTSound for " + game.getGameDisplayName());
-      return null;
+      org.apache.commons.io.FileUtils.writeStringToFile(altSound.getCsvFile(), altSound.toCSV(), StandardCharsets.UTF_8);
+      LOG.info("Written ALTSound " + altSound.getCsvFile());
     } catch (Exception e) {
-      LOG.error("Error writing CSV " + altSoundCsv.getAbsolutePath() + ": " + e.getMessage(), e);
+      LOG.error("Error writing CSV " + altSound.getCsvFile() + ": " + e.getMessage(), e);
     }
+    return altSound;
   }
 }

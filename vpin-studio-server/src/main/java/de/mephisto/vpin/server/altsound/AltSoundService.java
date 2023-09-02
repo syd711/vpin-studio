@@ -1,5 +1,6 @@
 package de.mephisto.vpin.server.altsound;
 
+import de.mephisto.vpin.commons.utils.FileUtils;
 import de.mephisto.vpin.restclient.altsound.AltSound;
 import de.mephisto.vpin.restclient.jobs.JobExecutionResult;
 import de.mephisto.vpin.restclient.jobs.JobExecutionResultFactory;
@@ -41,20 +42,27 @@ public class AltSoundService implements InitializingBean {
   }
 
   public boolean delete(@NonNull Game game) {
-    return getAltSound(game).delete();
+    AltSound altSound = getAltSound(game);
+    if (altSound.getCsvFile() != null) {
+      return FileUtils.deleteFolder(altSound.getCsvFile().getParentFile());
+    }
+    return false;
   }
 
   @NonNull
   public AltSound getAltSound(@NonNull Game game) {
     altSoundBackupService.getOrCreateBackup(game);
-    return new AltSoundLoader(game).load();
+    if(game.isAltSoundAvailable()) {
+      return new AltSoundLoaderFactory(game.getAltSoundFolder()).load();
+    }
+    return new AltSound();
   }
 
   public AltSound save(@NonNull Game game, @NonNull AltSound altSound) {
     if (game.isAltSoundAvailable()) {
-      new AltSoundWriter(game).write(altSound);
+      return new AltSoundWriter(game.getAltSoundFolder()).write(altSound);
     }
-    return this.getAltSound(game);
+    return new AltSound();
   }
 
   public boolean setAltSoundEnabled(@NonNull Game game, boolean b) {

@@ -1,6 +1,9 @@
 package de.mephisto.vpin.restclient.altsound;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import de.mephisto.vpin.restclient.representations.ValidationState;
+import org.springframework.lang.Nullable;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -21,6 +24,8 @@ public class AltSound {
   private boolean recordSoundCmds;
   private boolean romVolumeControl;
 
+  private File csvFile;
+
   private AltSound2Group music;
   private List<AltSound2DuckingProfile> musicDuckingProfiles;
 
@@ -35,6 +40,16 @@ public class AltSound {
 
   private AltSound2Group overlay;
   private List<AltSound2DuckingProfile> overlayDuckingProfiles;
+
+  @JsonIgnore
+  @Nullable
+  public File getCsvFile() {
+    return csvFile;
+  }
+
+  public void setCsvFile(File csvFile) {
+    this.csvFile = csvFile;
+  }
 
   public boolean isRecordSoundCmds() {
     return recordSoundCmds;
@@ -209,13 +224,5 @@ public class AltSound {
     }
 
     return builder.toString();
-  }
-
-  public boolean delete() {
-    File altSoundCsvFile = getAltSoundCsvFile(game);
-    if (altSoundCsvFile != null && altSoundCsvFile.exists()) {
-      return FileUtils.deleteFolder(altSoundCsvFile.getParentFile());
-    }
-    return true;
   }
 }

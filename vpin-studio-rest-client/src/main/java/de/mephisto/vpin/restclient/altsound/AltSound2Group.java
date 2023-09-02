@@ -7,7 +7,7 @@ public class AltSound2Group {
   private List<AltSound2SampleType> ducks;
   private List<AltSound2SampleType> pauses;
   private List<AltSound2SampleType> stops;
-  private int groupVol;
+  private Integer groupVol;
   private List<AltSound2DuckingProfile> profiles;
 
   public String getName() {
@@ -42,11 +42,11 @@ public class AltSound2Group {
     this.stops = stops;
   }
 
-  public int getGroupVol() {
+  public Integer getGroupVol() {
     return groupVol;
   }
 
-  public void setGroupVol(int groupVol) {
+  public void setGroupVol(Integer groupVol) {
     this.groupVol = groupVol;
   }
 
