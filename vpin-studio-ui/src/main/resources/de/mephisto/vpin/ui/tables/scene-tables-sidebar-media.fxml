@@ -40,11 +40,6 @@
                                     <left>
                               <HBox spacing="3.0" BorderPane.alignment="CENTER">
                                  <children>
-                                              <Button fx:id="btn_upload_PlayField" alignment="CENTER_RIGHT" contentDisplay="RIGHT" mnemonicParsing="false" onAction="#onPopperMediaSelection">
-                                                  <graphic>
-                                                      <FontIcon iconColor="WHITE" iconLiteral="mdi2c-cloud-download-outline" />
-                                                  </graphic>
-                                              </Button>
                                                 <Button fx:id="btn_edit_PlayField" mnemonicParsing="false" onAction="#onMediaEdit" textFill="WHITE">
                                                     <graphic>
                                                         <FontIcon iconColor="WHITE" iconLiteral="mdi2m-movie-edit-outline" />
@@ -84,11 +79,6 @@
                                     <left>
                               <HBox spacing="3.0" BorderPane.alignment="CENTER">
                                  <children>
-                                              <Button fx:id="btn_upload_GameHelp" alignment="CENTER_RIGHT" contentDisplay="RIGHT" mnemonicParsing="false" onAction="#onPopperMediaSelection">
-                                                  <graphic>
-                                                      <FontIcon iconColor="WHITE" iconLiteral="mdi2c-cloud-download-outline" />
-                                                  </graphic>
-                                              </Button>
                                                 <Button fx:id="btn_edit_GameHelp" mnemonicParsing="false" onAction="#onMediaEdit" textFill="WHITE">
                                                     <graphic>
                                                         <FontIcon iconColor="WHITE" iconLiteral="mdi2m-movie-edit-outline" />
@@ -129,11 +119,6 @@
                                     <left>
                               <HBox spacing="3.0" BorderPane.alignment="CENTER">
                                  <children>
-                                              <Button fx:id="btn_upload_GameInfo" alignment="CENTER_RIGHT" contentDisplay="RIGHT" mnemonicParsing="false" onAction="#onPopperMediaSelection">
-                                                  <graphic>
-                                                      <FontIcon iconColor="WHITE" iconLiteral="mdi2c-cloud-download-outline" />
-                                                  </graphic>
-                                              </Button>
                                                 <Button fx:id="btn_edit_GameInfo" mnemonicParsing="false" onAction="#onMediaEdit" textFill="WHITE">
                                                     <graphic>
                                                         <FontIcon iconColor="WHITE" iconLiteral="mdi2m-movie-edit-outline" />
@@ -173,11 +158,6 @@
                                     <left>
                               <HBox spacing="3.0" BorderPane.alignment="CENTER">
                                  <children>
-                                              <Button fx:id="btn_upload_DMD" alignment="CENTER_RIGHT" contentDisplay="RIGHT" mnemonicParsing="false" onAction="#onPopperMediaSelection">
-                                                  <graphic>
-                                                      <FontIcon iconColor="WHITE" iconLiteral="mdi2c-cloud-download-outline" />
-                                                  </graphic>
-                                              </Button>
                                                 <Button fx:id="btn_edit_DMD" mnemonicParsing="false" onAction="#onMediaEdit" textFill="WHITE">
                                                     <graphic>
                                                         <FontIcon iconColor="WHITE" iconLiteral="mdi2m-movie-edit-outline" />
@@ -217,11 +197,6 @@
                                     <left>
                               <HBox spacing="3.0" BorderPane.alignment="CENTER">
                                  <children>
-                                              <Button fx:id="btn_upload_Topper" alignment="CENTER_RIGHT" contentDisplay="RIGHT" mnemonicParsing="false" onAction="#onPopperMediaSelection">
-                                                  <graphic>
-                                                      <FontIcon iconColor="WHITE" iconLiteral="mdi2c-cloud-download-outline" iconSize="12" />
-                                                  </graphic>
-                                              </Button>
                                                 <Button fx:id="btn_edit_Topper" mnemonicParsing="false" onAction="#onMediaEdit" textFill="WHITE">
                                                     <graphic>
                                                         <FontIcon iconColor="WHITE" iconLiteral="mdi2m-movie-edit-outline" />
@@ -261,11 +236,6 @@
                                     <left>
                               <HBox spacing="3.0" BorderPane.alignment="CENTER">
                                  <children>
-                                              <Button fx:id="btn_upload_BackGlass" alignment="CENTER_RIGHT" contentDisplay="RIGHT" mnemonicParsing="false" onAction="#onPopperMediaSelection">
-                                                  <graphic>
-                                                      <FontIcon iconColor="WHITE" iconLiteral="mdi2c-cloud-download-outline" />
-                                                  </graphic>
-                                              </Button>
                                                 <Button fx:id="btn_edit_BackGlass" mnemonicParsing="false" onAction="#onMediaEdit" textFill="WHITE">
                                                     <graphic>
                                                         <FontIcon iconColor="WHITE" iconLiteral="mdi2m-movie-edit-outline" />
@@ -305,11 +275,6 @@
                                     <left>
                               <HBox spacing="3.0" BorderPane.alignment="CENTER">
                                  <children>
-                                              <Button fx:id="btn_upload_Loading" alignment="CENTER_RIGHT" contentDisplay="RIGHT" mnemonicParsing="false" onAction="#onPopperMediaSelection">
-                                                  <graphic>
-                                                      <FontIcon iconColor="WHITE" iconLiteral="mdi2c-cloud-download-outline" />
-                                                  </graphic>
-                                              </Button>
                                                 <Button fx:id="btn_edit_Loading" mnemonicParsing="false" onAction="#onMediaEdit" textFill="WHITE">
                                                     <graphic>
                                                         <FontIcon iconColor="WHITE" iconLiteral="mdi2m-movie-edit-outline" />
@@ -349,11 +314,6 @@
                                     <left>
                               <HBox spacing="3.0" BorderPane.alignment="CENTER">
                                  <children>
-                                              <Button fx:id="btn_upload_Menu" alignment="CENTER_RIGHT" contentDisplay="RIGHT" mnemonicParsing="false" onAction="#onPopperMediaSelection">
-                                                  <graphic>
-                                                      <FontIcon iconColor="WHITE" iconLiteral="mdi2c-cloud-download-outline" />
-                                                  </graphic>
-                                              </Button>
                                                 <Button fx:id="btn_edit_Menu" mnemonicParsing="false" onAction="#onMediaEdit" textFill="WHITE">
                                                     <graphic>
                                                         <FontIcon iconColor="WHITE" iconLiteral="mdi2m-movie-edit-outline" />
@@ -393,11 +353,6 @@
                                     <left>
                               <HBox spacing="3.0" BorderPane.alignment="CENTER">
                                  <children>
-                                              <Button fx:id="btn_upload_Other2" alignment="CENTER_RIGHT" contentDisplay="RIGHT" mnemonicParsing="false" onAction="#onPopperMediaSelection">
-                                                  <graphic>
-                                                      <FontIcon iconColor="WHITE" iconLiteral="mdi2c-cloud-download-outline" />
-                                                  </graphic>
-                                              </Button>
                                                 <Button fx:id="btn_edit_Other2" mnemonicParsing="false" onAction="#onMediaEdit" textFill="WHITE">
                                                     <graphic>
                                                         <FontIcon iconColor="WHITE" iconLiteral="mdi2m-movie-edit-outline" />
@@ -437,11 +392,6 @@
                                     <left>
                               <HBox spacing="3.0" BorderPane.alignment="CENTER">
                                  <children>
-                                              <Button fx:id="btn_upload_Wheel" alignment="CENTER_RIGHT" contentDisplay="RIGHT" mnemonicParsing="false" onAction="#onPopperMediaSelection">
-                                                  <graphic>
-                                                      <FontIcon iconColor="WHITE" iconLiteral="mdi2c-cloud-download-outline" />
-                                                  </graphic>
-                                              </Button>
                                                 <Button fx:id="btn_edit_Wheel" mnemonicParsing="false" onAction="#onMediaEdit" textFill="WHITE">
                                                     <graphic>
                                                         <FontIcon iconColor="WHITE" iconLiteral="mdi2m-movie-edit-outline" />
@@ -497,11 +447,6 @@
                                     <left>
                               <HBox spacing="3.0" BorderPane.alignment="CENTER">
                                  <children>
-                                              <Button fx:id="btn_upload_AudioLaunch" alignment="CENTER_RIGHT" contentDisplay="RIGHT" mnemonicParsing="false" onAction="#onPopperMediaSelection">
-                                                  <graphic>
-                                                      <FontIcon iconColor="WHITE" iconLiteral="mdi2c-cloud-download-outline" />
-                                                  </graphic>
-                                              </Button>
                                                 <Button fx:id="btn_edit_AudioLaunch" mnemonicParsing="false" onAction="#onMediaEdit" textFill="WHITE">
                                                     <graphic>
                                                         <FontIcon iconColor="WHITE" iconLiteral="mdi2m-movie-edit-outline" />
@@ -562,11 +507,6 @@
                                     <left>
                               <HBox spacing="3.0" BorderPane.alignment="CENTER">
                                  <children>
-                                              <Button fx:id="btn_upload_Audio" alignment="CENTER_RIGHT" contentDisplay="RIGHT" mnemonicParsing="false" onAction="#onPopperMediaSelection">
-                                                  <graphic>
-                                                      <FontIcon iconColor="WHITE" iconLiteral="mdi2c-cloud-download-outline" />
-                                                  </graphic>
-                                              </Button>
                                                 <Button fx:id="btn_edit_Audio" mnemonicParsing="false" onAction="#onMediaEdit" textFill="WHITE">
                                                     <graphic>
                                                         <FontIcon iconColor="WHITE" iconLiteral="mdi2m-movie-edit-outline" />

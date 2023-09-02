@@ -2,6 +2,7 @@
 
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Hyperlink?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ListView?>
 <?import javafx.scene.control.Separator?>
@@ -13,95 +14,205 @@
 <?import javafx.scene.text.Font?>
 <?import org.kordamp.ikonli.javafx.FontIcon?>
 
-<BorderPane maxHeight="700.0" styleClass="base-component" stylesheets="@../../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.tables.dialogs.TablePopperMediaSelectionController">
+<BorderPane maxHeight="700.0" styleClass="base-component" stylesheets="@../../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.tables.dialogs.TablePopperMediaDialogController">
    <top>
       <fx:include fx:id="header" source="/de/mephisto/vpin/commons/fx/scene-dialog-header.fxml" />
    </top>
    <center>
-      <BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minWidth="-Infinity">
-         <top>
-            <BorderPane BorderPane.alignment="CENTER">
-               <BorderPane.margin>
-                  <Insets left="12.0" right="12.0" top="12.0" />
-               </BorderPane.margin>
-               <left>
-                  <ListView fx:id="assetList" prefWidth="500.0" BorderPane.alignment="CENTER" />
-               </left>
-               <center>
-                  <BorderPane styleClass="media-container" BorderPane.alignment="CENTER">
+      <VBox>
+         <children>
+            <Label styleClass="default-title" text="PinUP Popper Assets Search">
+               <VBox.margin>
+                  <Insets bottom="6.0" top="6.0" />
+               </VBox.margin>
+            </Label>
+            <BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minWidth="-Infinity">
+               <top>
+                  <BorderPane BorderPane.alignment="CENTER">
+                     <BorderPane.margin>
+                        <Insets />
+                     </BorderPane.margin>
+                     <left>
+                        <ListView fx:id="serverAssetsList" prefWidth="400.0" BorderPane.alignment="CENTER" />
+                     </left>
                      <center>
-                        <BorderPane fx:id="mediaPane" maxHeight="400.0" maxWidth="400.0" prefHeight="400.0" prefWidth="400.0" styleClass="media-container" BorderPane.alignment="CENTER" />
+                        <BorderPane styleClass="media-container" BorderPane.alignment="CENTER">
+                           <center>
+                              <BorderPane fx:id="serverAssetMediaPane" maxHeight="300.0" maxWidth="300.0" prefHeight="300.0" prefWidth="300.0" styleClass="media-container" BorderPane.alignment="CENTER" />
+                           </center>
+                           <top>
+                              <HBox alignment="CENTER" styleClass="media-container" BorderPane.alignment="CENTER">
+                                 <padding>
+                                    <Insets left="6.0" right="6.0" top="6.0" />
+                                 </padding>
+                                 <children>
+                                    <Label fx:id="assetLabel" textFill="WHITE" />
+                                 </children>
+                              </HBox>
+                           </top>
+                           <bottom>
+                              <HBox alignment="CENTER" BorderPane.alignment="CENTER">
+                                 <children>
+                                    <Button fx:id="downloadBtn" mnemonicParsing="false" onAction="#onDownload" text="Download" textFill="WHITE">
+                                       <font>
+                                          <Font size="14.0" />
+                                       </font>
+                                       <graphic>
+                                          <FontIcon iconColor="WHITE" iconLiteral="mdi2c-cloud-download-outline" />
+                                       </graphic>
+                                       <HBox.margin>
+                                          <Insets bottom="3.0" />
+                                       </HBox.margin>
+                                    </Button>
+                                 </children>
+                              </HBox>
+                           </bottom>
+                        </BorderPane>
                      </center>
                      <top>
-                        <HBox alignment="CENTER" styleClass="media-container" BorderPane.alignment="CENTER">
-                           <padding>
-                              <Insets bottom="6.0" left="6.0" right="6.0" top="6.0" />
-                           </padding>
-                           <children>
-                              <Label fx:id="assetLabel" textFill="WHITE" />
-                           </children>
-                        </HBox>
-                     </top>
-                     <bottom>
-                        <HBox alignment="CENTER" BorderPane.alignment="CENTER">
-                           <children>
-                              <Button fx:id="downloadBtn" mnemonicParsing="false" onAction="#onDownload" text="Download" textFill="WHITE">
+                        <ToolBar prefHeight="40.0" prefWidth="500.0" BorderPane.alignment="CENTER">
+                          <items>
+                              <TextField fx:id="searchField" prefHeight="30.0" prefWidth="285.0">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </TextField>
+                            <Button mnemonicParsing="false" onAction="#onSearch" text="Search" textFill="WHITE">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
                                  <graphic>
-                                    <FontIcon iconColor="WHITE" iconLiteral="mdi2c-cloud-download-outline" />
+                                    <FontIcon iconColor="WHITE" iconLiteral="mdi2s-search-web" />
                                  </graphic>
-                                 <HBox.margin>
-                                    <Insets bottom="3.0" />
-                                 </HBox.margin>
                               </Button>
-                           </children>
-                        </HBox>
-                     </bottom>
+                              <Separator orientation="VERTICAL" prefHeight="0.0" prefWidth="0.0" />
+                              <Button fx:id="previewBtn" layoutX="398.0" layoutY="11.0" mnemonicParsing="false" onAction="#onPreview" text="Preview" textFill="WHITE">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                                 <graphic>
+                                    <FontIcon iconColor="WHITE" iconLiteral="mdi2e-eye-outline" />
+                                 </graphic>
+                              </Button>
+                          </items>
+                        </ToolBar>
+                     </top>
                   </BorderPane>
-               </center>
-               <top>
-                  <ToolBar prefHeight="40.0" prefWidth="500.0" BorderPane.alignment="CENTER">
-                    <items>
-                        <TextField fx:id="searchField" prefHeight="30.0" prefWidth="307.0">
-                           <font>
-                              <Font size="14.0" />
-                           </font>
-                        </TextField>
-                      <Button fx:id="searchBtn" mnemonicParsing="false" onAction="#onSearch" text="Search" textFill="WHITE">
-                           <font>
-                              <Font size="14.0" />
-                           </font>
-                           <graphic>
-                              <FontIcon iconColor="WHITE" iconLiteral="mdi2s-search-web" />
-                           </graphic>
-                        </Button>
-                        <Separator orientation="VERTICAL" prefHeight="0.0" prefWidth="0.0" />
-                        <Button fx:id="previewBtn" layoutX="398.0" layoutY="11.0" mnemonicParsing="false" onAction="#onPreview" text="Preview" textFill="WHITE">
-                           <font>
-                              <Font size="14.0" />
-                           </font>
-                           <graphic>
-                              <FontIcon iconColor="WHITE" iconLiteral="mdi2e-eye-outline" />
-                           </graphic>
-                        </Button>
-                    </items>
-                  </ToolBar>
                </top>
+               <bottom>
+                  <VBox fx:id="helpBox" BorderPane.alignment="CENTER">
+                     <opaqueInsets>
+                        <Insets />
+                     </opaqueInsets>
+                     <BorderPane.margin>
+                        <Insets bottom="6.0" left="12.0" right="12.0" top="6.0" />
+                     </BorderPane.margin>
+                     <HBox>
+                        <children>
+                           <Label text="Double-click to preview">
+                              <HBox.margin>
+                                 <Insets bottom="12.0" left="120.0" />
+                              </HBox.margin>
+                           </Label>
+                        </children>
+                     </HBox>
+                  </VBox>
+               </bottom>
             </BorderPane>
-         </top>
-         <bottom>
-            <VBox fx:id="helpBox" BorderPane.alignment="CENTER">
-               <opaqueInsets>
+            <Label layoutX="10.0" layoutY="10.0" styleClass="default-title" text="Table Assets">
+               <VBox.margin>
+                  <Insets bottom="6.0" top="6.0" />
+               </VBox.margin>
+            </Label>
+            <BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minWidth="-Infinity">
+               <top>
+                  <BorderPane BorderPane.alignment="CENTER">
+                     <BorderPane.margin>
+                        <Insets />
+                     </BorderPane.margin>
+                     <left>
+                        <ListView fx:id="assetList" prefHeight="250.0" prefWidth="400.0" BorderPane.alignment="CENTER" />
+                     </left>
+                     <center>
+                        <BorderPane BorderPane.alignment="CENTER">
+                           <center>
+                              <BorderPane fx:id="mediaPane" maxHeight="300.0" maxWidth="300.0" prefHeight="300.0" prefWidth="300.0" styleClass="media-container" BorderPane.alignment="CENTER" />
+                           </center>
+                        </BorderPane>
+                     </center>
+                     <top>
+                        <ToolBar BorderPane.alignment="CENTER">
+                           <items>
+                              <Button fx:id="uploadBtn" layoutX="10.0" layoutY="11.0" mnemonicParsing="false" onAction="#onMediaUpload" text="Upload" textFill="WHITE">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                                 <graphic>
+                                    <FontIcon iconColor="WHITE" iconLiteral="mdi2u-upload" />
+                                 </graphic>
+                              </Button>
+                              <Separator layoutX="311.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
+                              <Button fx:id="reloadBtn" layoutX="10.0" layoutY="11.0" mnemonicParsing="false" onAction="#onReload" text="Reload" textFill="WHITE">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                                 <graphic>
+                                    <FontIcon iconColor="WHITE" iconLiteral="sil-reload" />
+                                 </graphic>
+                              </Button>
+                              <Button fx:id="renameBtn" layoutX="112.0" layoutY="11.0" mnemonicParsing="false" onAction="#onRename" text="Rename" textFill="WHITE">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                                 <graphic>
+                                    <FontIcon iconColor="WHITE" iconLiteral="mdi2c-content-save-edit-outline" />
+                                 </graphic>
+                              </Button>
+                              <Separator orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
+                              <Button fx:id="deleteBtn" mnemonicParsing="false" onAction="#onDelete" text="Delete" textFill="#ff3333">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                                 <graphic>
+                                    <FontIcon iconColor="#ff3333" iconLiteral="mdi2d-delete-outline" />
+                                 </graphic>
+                              </Button>
+                              <Button fx:id="addToPlaylistBtn" mnemonicParsing="false" onAction="#onPlaylistAdd" text="Fullscreen" textFill="WHITE">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                                 <graphic>
+                                    <FontIcon iconColor="WHITE" iconLiteral="mdi2f-fullscreen" />
+                                 </graphic>
+                              </Button>
+                           </items>
+                        </ToolBar>
+                     </top>
+                  </BorderPane>
+               </top>
+               <bottom>
+                  <VBox fx:id="helpBox" BorderPane.alignment="CENTER">
+                     <children>
+                        <Label fx:id="helpLabel" styleClass="preference-description" text="Need more help with &quot;Loading&quot; videos?" />
+                        <Hyperlink fx:id="helpLink" onAction="#onHelpLink" text="https://www.nailbuster.com/wikipinup/doku.php?id=loading_video" />
+                     </children>
+                     <opaqueInsets>
+                        <Insets />
+                     </opaqueInsets>
+                     <BorderPane.margin>
+                        <Insets bottom="6.0" left="12.0" right="12.0" top="6.0" />
+                     </BorderPane.margin>
+                  </VBox>
+               </bottom>
+               <VBox.margin>
                   <Insets />
-               </opaqueInsets>
-               <BorderPane.margin>
-                  <Insets bottom="6.0" left="12.0" right="12.0" top="6.0" />
-               </BorderPane.margin>
-            </VBox>
-         </bottom>
-      </BorderPane>
+               </VBox.margin>
+            </BorderPane>
+         </children>
+         <BorderPane.margin>
+            <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
+         </BorderPane.margin>
+      </VBox>
    </center>
    <bottom>
       <BorderPane BorderPane.alignment="CENTER">
@@ -111,17 +222,6 @@
          <BorderPane.margin>
             <Insets bottom="12.0" left="12.0" right="12.0" />
          </BorderPane.margin>
-         <top>
-            <HBox BorderPane.alignment="CENTER">
-               <children>
-                  <Label text="Double-click to preview">
-                     <HBox.margin>
-                        <Insets bottom="12.0" left="180.0" />
-                     </HBox.margin>
-                  </Label>
-               </children>
-            </HBox>
-         </top>
       </BorderPane>
    </bottom>
 </BorderPane>
