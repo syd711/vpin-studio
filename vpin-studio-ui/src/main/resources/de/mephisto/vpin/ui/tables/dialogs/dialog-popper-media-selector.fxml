@@ -4,7 +4,6 @@
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ListView?>
-<?import javafx.scene.control.ProgressBar?>
 <?import javafx.scene.control.Separator?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.control.ToolBar?>
@@ -29,16 +28,43 @@
                   <ListView fx:id="assetList" prefWidth="500.0" BorderPane.alignment="CENTER" />
                </left>
                <center>
-                  <BorderPane BorderPane.alignment="CENTER">
+                  <BorderPane styleClass="media-container" BorderPane.alignment="CENTER">
                      <center>
                         <BorderPane fx:id="mediaPane" maxHeight="400.0" maxWidth="400.0" prefHeight="400.0" prefWidth="400.0" styleClass="media-container" BorderPane.alignment="CENTER" />
                      </center>
+                     <top>
+                        <HBox alignment="CENTER" styleClass="media-container" BorderPane.alignment="CENTER">
+                           <padding>
+                              <Insets bottom="6.0" left="6.0" right="6.0" top="6.0" />
+                           </padding>
+                           <children>
+                              <Label fx:id="assetLabel" textFill="WHITE" />
+                           </children>
+                        </HBox>
+                     </top>
+                     <bottom>
+                        <HBox alignment="CENTER" BorderPane.alignment="CENTER">
+                           <children>
+                              <Button fx:id="downloadBtn" mnemonicParsing="false" onAction="#onDownload" text="Download" textFill="WHITE">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                                 <graphic>
+                                    <FontIcon iconColor="WHITE" iconLiteral="mdi2c-cloud-download-outline" />
+                                 </graphic>
+                                 <HBox.margin>
+                                    <Insets bottom="3.0" />
+                                 </HBox.margin>
+                              </Button>
+                           </children>
+                        </HBox>
+                     </bottom>
                   </BorderPane>
                </center>
                <top>
                   <ToolBar prefHeight="40.0" prefWidth="500.0" BorderPane.alignment="CENTER">
                     <items>
-                        <TextField fx:id="searchField" prefHeight="30.0" prefWidth="405.0">
+                        <TextField fx:id="searchField" prefHeight="30.0" prefWidth="307.0">
                            <font>
                               <Font size="14.0" />
                            </font>
@@ -82,25 +108,6 @@
          <right>
             <Button fx:id="cancelBtn" mnemonicParsing="false" onAction="#onCancel" styleClass="submit-button" text="Close" BorderPane.alignment="CENTER" />
          </right>
-         <left>
-            <HBox spacing="6.0" BorderPane.alignment="CENTER_LEFT">
-               <children>
-                  <ProgressBar fx:id="progressBar" prefWidth="393.0" progress="0.0">
-                     <HBox.margin>
-                        <Insets top="5.0" />
-                     </HBox.margin>
-                  </ProgressBar>
-                  <Button fx:id="downloadBtn" mnemonicParsing="false" onAction="#onDownload" text="Download" textFill="WHITE">
-                     <font>
-                        <Font size="14.0" />
-                     </font>
-                     <graphic>
-                        <FontIcon iconColor="WHITE" iconLiteral="mdi2c-cloud-download-outline" />
-                     </graphic>
-                  </Button>
-               </children>
-            </HBox>
-         </left>
          <BorderPane.margin>
             <Insets bottom="12.0" left="12.0" right="12.0" />
          </BorderPane.margin>

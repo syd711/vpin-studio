@@ -33,31 +33,35 @@ public class TableAssetsService {
 
   public void download(@NonNull TableAsset asset, @NonNull File target) {
     String downloadUrl = asset.getUrl();
-    new Thread(() -> {
-      try {
-        LOG.info("Downloading " + downloadUrl);
-        URL url = new URL(downloadUrl);
-        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-        connection.setDoOutput(true);
-        BufferedInputStream in = new BufferedInputStream(url.openStream());
-        File tmp = new File(target.getParentFile(), target.getName() + DOWNLOAD_SUFFIX);
-        if (tmp.exists()) {
-          tmp.delete();
-        }
-
-        FileOutputStream fileOutputStream = new FileOutputStream(tmp);
-        byte dataBuffer[] = new byte[1024];
-        int bytesRead;
-        while ((bytesRead = in.read(dataBuffer, 0, 1024)) != -1) {
-          fileOutputStream.write(dataBuffer, 0, bytesRead);
-        }
-        in.close();
-        fileOutputStream.close();
-        tmp.renameTo(target);
-        LOG.info("Downloaded file " + target.getAbsolutePath());
-      } catch (Exception e) {
-        LOG.error("Failed to execute download: " + e.getMessage(), e);
+    try {
+      LOG.info("Downloading " + downloadUrl);
+      URL url = new URL(downloadUrl);
+      HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+      connection.setDoOutput(true);
+      BufferedInputStream in = new BufferedInputStream(url.openStream());
+      File tmp = new File(target.getParentFile(), target.getName() + DOWNLOAD_SUFFIX);
+      if (tmp.exists()) {
+        tmp.delete();
       }
-    }).start();
+
+      FileOutputStream fileOutputStream = new FileOutputStream(tmp);
+      byte dataBuffer[] = new byte[1024];
+      int bytesRead;
+      while ((bytesRead = in.read(dataBuffer, 0, 1024)) != -1) {
+        fileOutputStream.write(dataBuffer, 0, bytesRead);
+      }
+      in.close();
+      fileOutputStream.close();
+      if (target.exists() && !target.delete()) {
+        LOG.error("Failed to delete existing asset " + target.getAbsolutePath());
+      }
+
+      if (!tmp.renameTo(target)) {
+        LOG.error("Failed to rename " + tmp.getAbsolutePath());
+      }
+      LOG.info("Downloaded file " + target.getAbsolutePath());
+    } catch (Exception e) {
+      LOG.error("Failed to execute download: " + e.getMessage(), e);
+    }
   }
 }

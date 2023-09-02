@@ -13,7 +13,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
-import org.springframework.lang.NonNull;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
@@ -143,12 +142,12 @@ public class PinUPPopperServiceClient extends VPinStudioClientService {
   //---------------- Assets---------------------------------------------------------------------------------------------
 
   public List<TableAsset> searchTableAsset(PopperScreen screen, String term) {
-    return Arrays.asList(getRestClient().get(API + "assets/search/" + screen + "/" + term, TableAsset[].class));
+    return Arrays.asList(getRestClient().get(API + "poppermedia/assets/search/" + screen + "/" + term, TableAsset[].class));
   }
 
-  public boolean downloadAsset(TableAsset tableAsset, PopperScreen screen, GameRepresentation game) throws Exception {
+  public boolean downloadTableAsset(TableAsset tableAsset, PopperScreen screen, GameRepresentation game) throws Exception {
     try {
-      return getRestClient().post(API + "assets/download/" +game.getId() + "/" + screen.name() , tableAsset, Boolean.class);
+      return getRestClient().post(API + "poppermedia/assets/download/" +game.getId() + "/" + screen.name() , tableAsset, Boolean.class);
     } catch (Exception e) {
       LOG.error("Failed to save b2s server settings: " + e.getMessage(), e);
       throw e;

@@ -48,7 +48,6 @@ public class ProgressDialogController implements Initializable, DialogController
       progressBar.setProgress(ProgressBar.INDETERMINATE_PROGRESS);
     }
 
-
     progressResultModel = new ProgressResultModel(progressBar);
     progressBarLabel.setText("");
     service = new Service() {
