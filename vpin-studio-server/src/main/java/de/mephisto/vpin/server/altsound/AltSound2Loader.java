@@ -112,13 +112,16 @@ public class AltSound2Loader {
       return profiles;
     }
 
+    AltSound2SampleType sampleType = AltSound2SampleType.valueOf(profileName.substring(0, profileName.indexOf("_")));
+
     SubnodeConfiguration section = iniConfiguration.getSection(profileName);
     int index = 1;
     String key = "ducking_profile" + index;
     while (section.containsKey(key)) {
       String profileValue = section.getString(key);
       AltSound2DuckingProfile profile = new AltSound2DuckingProfile();
-      profile.setName(key);
+      profile.setId(index);
+      profile.setType(sampleType);
       profile.setValues(toDuckingProfileValues(profileValue));
 
       profiles.add(profile);

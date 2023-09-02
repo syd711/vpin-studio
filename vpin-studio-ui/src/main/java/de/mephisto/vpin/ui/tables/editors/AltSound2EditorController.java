@@ -3,18 +3,23 @@ package de.mephisto.vpin.ui.tables.editors;
 import de.mephisto.vpin.commons.utils.FileUtils;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.altsound.AltSound;
+import de.mephisto.vpin.restclient.altsound.AltSound2DuckingProfile;
+import de.mephisto.vpin.restclient.altsound.AltSound2SampleType;
 import de.mephisto.vpin.restclient.altsound.AltSoundEntry;
 import de.mephisto.vpin.restclient.representations.GameRepresentation;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.tables.TablesController;
+import javafx.beans.binding.Bindings;
 import javafx.beans.property.*;
 import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
@@ -41,22 +46,13 @@ public class AltSound2EditorController implements Initializable {
   private TableColumn<AltSoundEntryModel, String> columnId;
 
   @FXML
-  private TableColumn<AltSoundEntryModel, String> columnName;
-
-  @FXML
-  private TableColumn<AltSoundEntryModel, String> columnChannel;
+  private TableColumn<AltSoundEntryModel, StringProperty> columnType;
 
   @FXML
   private TableColumn<AltSoundEntryModel, Number> columnDuck;
 
   @FXML
   private TableColumn<AltSoundEntryModel, Number> columnGain;
-
-  @FXML
-  private TableColumn<AltSoundEntryModel, String> columnLoop;
-
-  @FXML
-  private TableColumn<AltSoundEntryModel, String> columnStop;
 
   @FXML
   private TableColumn<AltSoundEntryModel, String> columnFilename;
@@ -68,13 +64,13 @@ public class AltSound2EditorController implements Initializable {
   private TextField searchText;
 
   @FXML
-  private ComboBox<String> nameFilterCombo;
+  private ComboBox<String> typeFilterCombo;
 
   @FXML
   private ComboBox<String> filenameFilterCombo;
 
   @FXML
-  private ComboBox<String> loopedFilterCombo;
+  private ComboBox<AltSound2DuckingProfile> profilesCombo;
 
   @FXML
   private TextField channelField;
@@ -83,29 +79,15 @@ public class AltSound2EditorController implements Initializable {
   private Label entriesLabel;
 
   @FXML
-  private Label duckLabel;
-
-  @FXML
   private Label gainLabel;
-
-  @FXML
-  private Slider duckVolume;
 
   @FXML
   private Slider gainVolume;
 
   @FXML
-  private CheckBox loopedCheckbox;
-
-  @FXML
-  private CheckBox stopCheckbox;
-
-  @FXML
   private Button saveBtn;
 
   private ChangeListener<String> channelFieldChangeListener;
-  private ChangeListener<Boolean> loopCheckboxChangeListener;
-  private ChangeListener<Boolean> stopCheckboxChangeListener;
   private TablesController tablesController;
 
   @FXML
@@ -138,14 +120,26 @@ public class AltSound2EditorController implements Initializable {
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
     columnId.setCellValueFactory(cellData -> cellData.getValue().id);
-    columnName.setCellValueFactory(cellData -> cellData.getValue().name);
-    columnChannel.setCellValueFactory(cellData -> {
+    columnType.setCellValueFactory(cellData -> {
       AltSoundEntryModel entry = cellData.getValue();
-      if (entry.channel.get() == null) {
-        return new SimpleObjectProperty("");
-      }
-      return new SimpleObjectProperty(entry.channel.get());
+      final StringProperty value = entry.channel;
+      return Bindings.createObjectBinding(() -> value);
     });
+    columnType.setCellFactory(col -> {
+      TableCell<AltSoundEntryModel, StringProperty> c = new TableCell<>();
+      final ComboBox<String> comboBox = new ComboBox<>(FXCollections.observableList(AltSound2SampleType.toStringValues()));
+      c.itemProperty().addListener((observable, oldValue, newValue) -> {
+        if (oldValue != null) {
+          comboBox.valueProperty().unbindBidirectional(oldValue);
+        }
+        if (newValue != null) {
+          comboBox.valueProperty().bindBidirectional(newValue);
+        }
+      });
+      c.graphicProperty().bind(Bindings.when(c.emptyProperty()).then((Node) null).otherwise(comboBox));
+      return c;
+    });
+
     columnDuck.setCellValueFactory(cellData -> cellData.getValue().duck);
     columnGain.setCellValueFactory(cellData -> cellData.getValue().gain);
     columnFilesize.setCellValueFactory(cellData -> cellData.getValue().size);
@@ -158,27 +152,10 @@ public class AltSound2EditorController implements Initializable {
       }
       return new SimpleObjectProperty(label);
     });
-
-    columnLoop.setCellValueFactory(cellData -> {
-      AltSoundEntryModel value = cellData.getValue();
-      if (value.looped.get()) {
-        return new SimpleObjectProperty(WidgetFactory.createCheckboxIcon());
-      }
-      return new SimpleStringProperty("");
-    });
-
-    columnStop.setCellValueFactory(cellData -> {
-      AltSoundEntryModel value = cellData.getValue();
-      if (value.stop.get()) {
-        return new SimpleObjectProperty(WidgetFactory.createCheckboxIcon());
-      }
-      return new SimpleStringProperty("");
-    });
     tableView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
 
-    loopedFilterCombo.setItems(FXCollections.observableList(Arrays.asList(null, "Yes", "No")));
-    loopedFilterCombo.valueProperty().addListener((observable, oldValue, newValue) -> refresh());
-    nameFilterCombo.valueProperty().addListener((observable, oldValue, newValue) -> refresh());
+    profilesCombo.valueProperty().addListener((observable, oldValue, newValue) -> refresh());
+    typeFilterCombo.valueProperty().addListener((observable, oldValue, newValue) -> refresh());
     filenameFilterCombo.valueProperty().addListener((observable, oldValue, newValue) -> refresh());
     searchText.textProperty().addListener((observable, oldValue, newValue) -> refresh());
 
@@ -207,30 +184,6 @@ public class AltSound2EditorController implements Initializable {
       }
     };
     channelField.textProperty().addListener(channelFieldChangeListener);
-
-    loopCheckboxChangeListener = (observable, oldValue, newValue) -> {
-      ObservableList<AltSoundEntryModel> selectedItems = tableView.getSelectionModel().getSelectedItems();
-      selectedItems.forEach(i -> i.looped.set(newValue));
-      tableView.refresh();
-    };
-    loopedCheckbox.selectedProperty().addListener(loopCheckboxChangeListener);
-
-    stopCheckboxChangeListener = (observable, oldValue, newValue) -> {
-      ObservableList<AltSoundEntryModel> selectedItems = tableView.getSelectionModel().getSelectedItems();
-      selectedItems.forEach(i -> i.stop.set(newValue));
-      tableView.refresh();
-    };
-    stopCheckbox.selectedProperty().addListener(stopCheckboxChangeListener);
-
-    duckVolume.valueProperty().addListener((observable, oldValue, newValue) -> {
-      ObservableList<AltSoundEntryModel> selectedItems = tableView.getSelectionModel().getSelectedItems();
-      int value1 = ((Double) newValue).intValue();
-      selectedItems.forEach(i -> {
-        i.duck.set(value1);
-      });
-      duckLabel.setText(String.valueOf(value1));
-      tableView.refresh();
-    });
 
     gainVolume.valueProperty().addListener((observable, oldValue, newValue) -> {
       ObservableList<AltSoundEntryModel> selectedItems = tableView.getSelectionModel().getSelectedItems();
@@ -264,20 +217,31 @@ public class AltSound2EditorController implements Initializable {
       }
     }
 
-    nameFilterCombo.setItems(FXCollections.observableList(names));
+    typeFilterCombo.setItems(FXCollections.observableList(AltSound2SampleType.toStringValues()));
     filenameFilterCombo.setItems(FXCollections.observableList(filenames));
 
+    refreshProfiles();
     refresh();
     tableView.getSelectionModel().clearSelection();
+  }
+
+  private void refreshProfiles() {
+    List<AltSound2DuckingProfile> profiles = new ArrayList<>();
+    profiles.addAll(altSound.getCalloutDuckingProfiles());
+    profiles.addAll(altSound.getMusicDuckingProfiles());
+    profiles.addAll(altSound.getOverlayDuckingProfiles());
+    profiles.addAll(altSound.getSfxDuckingProfiles());
+    profiles.addAll(altSound.getSoloDuckingProfiles());
+    profilesCombo.setItems(FXCollections.observableList(profiles));
   }
 
   private void refresh() {
     List<AltSoundEntryModel> filtered = new ArrayList<>();
     List<AltSoundEntry> allEntries = altSound.getEntries();
 
-    String nameFilter = this.nameFilterCombo.getValue();
+    String typeFilter = this.typeFilterCombo.getValue();
     String filenameFiler = this.filenameFilterCombo.getValue();
-    String loopedFilter = this.loopedFilterCombo.getValue();
+    AltSound2DuckingProfile value = this.profilesCombo.getValue();
     String term = this.searchText.getText();
 
     for (AltSoundEntry entry : allEntries) {
@@ -285,7 +249,7 @@ public class AltSound2EditorController implements Initializable {
         continue;
       }
 
-      if (nameFilter != null && !entry.getName().equals(nameFilter)) {
+      if (typeFilter != null && !entry.getChannel().equalsIgnoreCase(typeFilter)) {
         continue;
       }
 
@@ -293,10 +257,11 @@ public class AltSound2EditorController implements Initializable {
         continue;
       }
 
-      if (loopedFilter != null) {
-        if (loopedFilter.equals("Yes") && entry.getLoop() != 100) {
-          continue;
-        }
+      if (value != null) {
+        entry.getChannel();
+//        if (entry.getDuck()) {
+//          continue;
+//        }
       }
       filtered.add(new AltSoundEntryModel(entry));
     }
@@ -313,82 +278,42 @@ public class AltSound2EditorController implements Initializable {
     entriesLabel.setText(String.valueOf(selectedItems.size()));
 
     channelField.textProperty().removeListener(channelFieldChangeListener);
-    loopedCheckbox.selectedProperty().removeListener(loopCheckboxChangeListener);
-    stopCheckbox.selectedProperty().removeListener(stopCheckboxChangeListener);
 
     gainVolume.setDisable(selectedItems.isEmpty());
     gainLabel.setDisable(selectedItems.isEmpty());
-    duckVolume.setDisable(selectedItems.isEmpty());
-    duckLabel.setDisable(selectedItems.isEmpty());
 
-    loopedCheckbox.setDisable(selectedItems.isEmpty());
-    stopCheckbox.setDisable(selectedItems.isEmpty());
     channelField.setDisable(selectedItems.isEmpty());
 
     if (!selectedItems.isEmpty()) {
       AltSoundEntryModel altSoundEntryModel = selectedItems.get(0);
       gainVolume.valueProperty().set(altSoundEntryModel.gain.get());
       gainLabel.setText("" + altSoundEntryModel.gain.getValue());
-      duckVolume.valueProperty().set(altSoundEntryModel.duck.get());
-      duckLabel.setText("" + altSoundEntryModel.duck.getValue());
 
       channelField.setText(altSoundEntryModel.channel.get() == null ? "" : altSoundEntryModel.channel.getValue());
-      loopedCheckbox.selectedProperty().set(altSoundEntryModel.looped.getValue());
-      stopCheckbox.selectedProperty().set(altSoundEntryModel.stop.getValue());
     }
     else {
       gainVolume.valueProperty().set(0);
       gainLabel.setText("-");
-      duckVolume.valueProperty().set(0);
-      duckLabel.setText("-");
-
       channelField.setText("");
-      loopedCheckbox.setSelected(false);
-      stopCheckbox.setSelected(false);
     }
 
     channelField.textProperty().addListener(channelFieldChangeListener);
-    loopedCheckbox.selectedProperty().addListener(loopCheckboxChangeListener);
-    stopCheckbox.selectedProperty().addListener(stopCheckboxChangeListener);
   }
 
   private static class AltSoundEntryModel {
     private final StringProperty id;
-    private final StringProperty name;
     private final StringProperty filename;
     private final IntegerProperty duck;
     private final IntegerProperty gain;
     private final SimpleStringProperty channel;
-    private final BooleanProperty looped;
-    private final BooleanProperty stop;
     private final BooleanProperty exists;
     private final StringProperty size;
 
     private AltSoundEntryModel(AltSoundEntry entry) {
       this.id = new SimpleStringProperty(entry.getId());
-      this.name = new SimpleStringProperty(entry.getName());
       this.filename = new SimpleStringProperty(entry.getFilename());
-      this.looped = new SimpleBooleanProperty(entry.getLoop() == 100);
-      this.stop = new SimpleBooleanProperty(entry.getStop() == 1);
       this.size= new SimpleStringProperty(FileUtils.readableFileSize(entry.getSize()));
       this.exists = new SimpleBooleanProperty(entry.isExists());
-      this.looped.addListener((observable, oldValue, newValue) -> {
-        if (newValue) {
-          entry.setLoop(100);
-        }
-        else {
-          entry.setLoop(0);
-        }
-      });
-
-      this.stop.addListener((observable, oldValue, newValue) -> {
-        if (newValue) {
-          entry.setStop(1);
-        }
-        else {
-          entry.setStop(0);
-        }
-      });
 
       this.channel = new SimpleStringProperty(entry.getChannel());
       this.channel.addListener((observable, oldValue, newValue) -> {
