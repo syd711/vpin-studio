@@ -7,6 +7,7 @@ import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.CompetitionType;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.discord.DiscordBotStatus;
+import de.mephisto.vpin.restclient.discord.DiscordChannel;
 import de.mephisto.vpin.restclient.discord.DiscordServer;
 import de.mephisto.vpin.restclient.popper.PopperScreen;
 import de.mephisto.vpin.restclient.representations.CompetitionRepresentation;
@@ -68,6 +69,9 @@ public class CompetitionsDiscordController implements Initializable, StudioFXCon
 
   @FXML
   private TableColumn<CompetitionRepresentation, String> columnServer;
+
+  @FXML
+  private TableColumn<CompetitionRepresentation, String> columnChannel;
 
   @FXML
   private TableColumn<CompetitionRepresentation, String> columnStartDate;
@@ -378,12 +382,11 @@ public class CompetitionsDiscordController implements Initializable, StudioFXCon
 
     columnServer.setCellValueFactory(cellData -> {
       CompetitionRepresentation value = cellData.getValue();
-
-      HBox hBox = new HBox(6);
-      hBox.setAlignment(Pos.CENTER_LEFT);
-
       DiscordServer discordServer = client.getDiscordServer(value.getDiscordServerId());
       if (discordServer != null) {
+        HBox hBox = new HBox(6);
+        hBox.setAlignment(Pos.CENTER_LEFT);
+
         String avatarUrl = discordServer.getAvatarUrl();
         Image image = null;
         if (avatarUrl == null) {
@@ -401,9 +404,26 @@ public class CompetitionsDiscordController implements Initializable, StudioFXCon
         Label label = new Label(discordServer.getName());
         label.setStyle(getLabelCss(value));
         hBox.getChildren().addAll(view, label);
+
+        return new SimpleObjectProperty(hBox);
       }
 
-      return new SimpleObjectProperty(hBox);
+      Label label = new Label("- Not Found -");
+      label.setStyle(getLabelCss(value));
+      return new SimpleObjectProperty(label);
+    });
+
+    columnChannel.setCellValueFactory(cellData -> {
+      CompetitionRepresentation value = cellData.getValue();
+      List<DiscordChannel> discordChannels = client.getDiscordService().getDiscordChannels(value.getDiscordServerId());
+      Optional<DiscordChannel> first = discordChannels.stream().filter(channel -> channel.getId() == value.getDiscordChannelId()).findFirst();
+      String status = "- Not Found -";
+      if(first.isPresent()) {
+        status = first.get().getName();
+      }
+      Label label = new Label(status);
+      label.setStyle(getLabelCss(value));
+      return new SimpleObjectProperty(label);
     });
 
     columnCompetitionOwner.setCellValueFactory(cellData -> {

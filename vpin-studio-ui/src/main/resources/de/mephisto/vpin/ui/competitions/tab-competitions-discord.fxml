@@ -26,8 +26,9 @@
                             <columns>
                                 <TableColumn fx:id="columnTable" prefWidth="300.0" style="-fx-alignment: BASELINE_LEFT;" text="Table" />
                                 <TableColumn fx:id="columnName" prefWidth="232.80005192756653" style="-fx-alignment: BASELINE_LEFT;" text="Name" />
-                                <TableColumn fx:id="columnStatus" minWidth="0.0" prefWidth="123.19984436035156" style="-fx-alignment: CENTER;" text="Status" />
+                                <TableColumn fx:id="columnStatus" minWidth="0.0" prefWidth="110.0" style="-fx-alignment: CENTER;" text="Status" />
                         <TableColumn fx:id="columnServer" prefWidth="192.0" style="-fx-alignment: CENTER;" text="Server" />
+                        <TableColumn fx:id="columnChannel" prefWidth="192.0" style="-fx-alignment: CENTER;" text="Channel" />
                                 <TableColumn fx:id="columnStartDate" prefWidth="160.0" style="-fx-alignment: CENTER;" text="Start Date" />
                                 <TableColumn fx:id="columnEndDate" prefWidth="160.0" style="-fx-alignment: CENTER;" text="End Date" />
                         <TableColumn fx:id="columnWinner" prefWidth="150.0" style="-fx-alignment: CENTER;" text="Winner" />
