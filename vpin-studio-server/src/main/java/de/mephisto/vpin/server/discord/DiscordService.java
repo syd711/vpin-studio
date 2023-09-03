@@ -108,7 +108,7 @@ public class DiscordService implements InitializingBean, PreferenceChangedListen
   @Nullable
   public DiscordChannel getChannel(long serverId, long channelId) {
     if (this.discordClient != null) {
-      List<DiscordChannel> collect = this.discordClient.getChannels(serverId).stream().filter(c -> c.getId() != channelId).map(c -> {
+      List<DiscordChannel> collect = this.discordClient.getChannels(serverId).stream().filter(c -> c.getId() == channelId).map(c -> {
         DiscordChannel ct = new DiscordChannel();
         ct.setName(c.getName());
         ct.setId(c.getId());

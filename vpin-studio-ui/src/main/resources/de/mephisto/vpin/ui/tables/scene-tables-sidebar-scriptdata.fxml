@@ -136,6 +136,14 @@
                               </Label>
                               <HBox alignment="CENTER_RIGHT" spacing="6.0" GridPane.columnIndex="2" GridPane.rowIndex="6">
                                   <children>
+                              <Button fx:id="openEMHighscoreBtn" mnemonicParsing="false" onAction="#onEMHighscore" styleClass="external-component">
+                                 <graphic>
+                                    <FontIcon iconColor="WHITE" iconLiteral="mdi2o-open-in-new" />
+                                 </graphic>
+                                 <tooltip>
+                                    <Tooltip text="Open the &quot;tables&quot; folder of VPX" />
+                                 </tooltip>
+                              </Button>
                                       <Button fx:id="editHsFileNameBtn" mnemonicParsing="false" onAction="#onHsFileNameEdit">
                                           <graphic>
                                               <FontIcon iconColor="WHITE" iconLiteral="mdi2d-database-edit-outline" />

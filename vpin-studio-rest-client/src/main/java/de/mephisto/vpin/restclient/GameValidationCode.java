@@ -1,6 +1,6 @@
 package de.mephisto.vpin.restclient;
 
-public interface ValidationCode {
+public interface GameValidationCode {
   int CODE_NO_ROM = 1;
   int CODE_ROM_NOT_EXISTS = 3;
   int CODE_VPX_NOT_EXISTS = 4;

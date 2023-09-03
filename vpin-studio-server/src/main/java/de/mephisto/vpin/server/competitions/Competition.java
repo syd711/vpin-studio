@@ -2,6 +2,7 @@ package de.mephisto.vpin.server.competitions;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import de.mephisto.vpin.restclient.CompetitionType;
+import de.mephisto.vpin.restclient.representations.ValidationState;
 import de.mephisto.vpin.restclient.util.DateUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.annotation.CreatedDate;
@@ -35,13 +36,6 @@ public class Competition {
   @Column(name = "highscoreReset", nullable = false, columnDefinition = "boolean default true")
   private boolean highscoreReset;
 
-  public boolean isHighscoreReset() {
-    return highscoreReset;
-  }
-
-  public void setHighscoreReset(boolean highscoreReset) {
-    this.highscoreReset = highscoreReset;
-  }
 
   private String uuid = UUID.randomUUID().toString();
 
@@ -72,6 +66,25 @@ public class Competition {
   private String joinMode;
 
   private String rom;
+
+  @Transient
+  private ValidationState validationState;
+
+  public ValidationState getValidationState() {
+    return validationState;
+  }
+
+  public void setValidationState(ValidationState validationState) {
+    this.validationState = validationState;
+  }
+
+  public boolean isHighscoreReset() {
+    return highscoreReset;
+  }
+
+  public void setHighscoreReset(boolean highscoreReset) {
+    this.highscoreReset = highscoreReset;
+  }
 
   public String getRom() {
     return rom;

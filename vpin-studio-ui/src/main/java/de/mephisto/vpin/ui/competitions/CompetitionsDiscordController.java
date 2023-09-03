@@ -5,10 +5,10 @@ import de.mephisto.vpin.commons.fx.widgets.WidgetCompetitionSummaryController;
 import de.mephisto.vpin.commons.utils.CommonImageUtil;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.CompetitionType;
-import de.mephisto.vpin.restclient.popper.PopperScreen;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.discord.DiscordBotStatus;
 import de.mephisto.vpin.restclient.discord.DiscordServer;
+import de.mephisto.vpin.restclient.popper.PopperScreen;
 import de.mephisto.vpin.restclient.representations.CompetitionRepresentation;
 import de.mephisto.vpin.restclient.representations.GameRepresentation;
 import de.mephisto.vpin.restclient.representations.PlayerRepresentation;
@@ -16,7 +16,10 @@ import de.mephisto.vpin.ui.NavigationController;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.StudioFXController;
 import de.mephisto.vpin.ui.WaitOverlayController;
+import de.mephisto.vpin.ui.competitions.validation.CompetitionValidationTexts;
+import de.mephisto.vpin.ui.tables.validation.GameValidationTexts;
 import de.mephisto.vpin.ui.util.Dialogs;
+import de.mephisto.vpin.ui.util.LocalizedValidation;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
@@ -25,6 +28,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.geometry.Pos;
+import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
@@ -106,6 +110,15 @@ public class CompetitionsDiscordController implements Initializable, StudioFXCon
 
   @FXML
   private StackPane tableStack;
+
+  @FXML
+  private Label validationErrorLabel;
+
+  @FXML
+  private Label validationErrorText;
+
+  @FXML
+  private Node validationError;
 
   private Parent loadingOverlay;
   private WidgetCompetitionSummaryController competitionWidgetController;
@@ -272,7 +285,7 @@ public class CompetitionsDiscordController implements Initializable, StudioFXCon
       tableView.setVisible(true);
       tableStack.getChildren().remove(loadingOverlay);
 
-      if(competitionWidget != null) {
+      if (competitionWidget != null) {
         competitionWidget.setVisible(false);
       }
 
@@ -334,10 +347,7 @@ public class CompetitionsDiscordController implements Initializable, StudioFXCon
     columnName.setCellValueFactory(cellData -> {
       CompetitionRepresentation value = cellData.getValue();
       Label label = new Label(value.getName());
-
-      if (value.isActive()) {
-        label.setStyle("-fx-font-color: #33CC00;-fx-text-fill:#33CC00;");
-      }
+      label.setStyle(getLabelCss(value));
       return new SimpleObjectProperty(label);
     });
 
@@ -349,10 +359,7 @@ public class CompetitionsDiscordController implements Initializable, StudioFXCon
       if (game != null) {
         label = new Label(game.getGameDisplayName());
       }
-
-      if (value.isActive()) {
-        label.setStyle("-fx-font-color: #33CC00;-fx-text-fill:#33CC00;");
-      }
+      label.setStyle(getLabelCss(value));
 
       HBox hBox = new HBox(6);
       hBox.setAlignment(Pos.CENTER_LEFT);
@@ -392,9 +399,7 @@ public class CompetitionsDiscordController implements Initializable, StudioFXCon
 
         CommonImageUtil.setClippedImage(view, (int) (image.getWidth() / 2));
         Label label = new Label(discordServer.getName());
-        if (value.isActive()) {
-          label.setStyle("-fx-font-color: #33CC00;-fx-text-fill:#33CC00;");
-        }
+        label.setStyle(getLabelCss(value));
         hBox.getChildren().addAll(view, label);
       }
 
@@ -416,9 +421,7 @@ public class CompetitionsDiscordController implements Initializable, StudioFXCon
         CommonImageUtil.setClippedImage(view, (int) (image.getWidth() / 2));
 
         Label label = new Label(discordPlayer.getName());
-        if (value.isActive()) {
-          label.setStyle("-fx-font-color: #33CC00;-fx-text-fill:#33CC00;");
-        }
+        label.setStyle(getLabelCss(value));
         hBox.getChildren().addAll(view, label);
       }
 
@@ -428,7 +431,10 @@ public class CompetitionsDiscordController implements Initializable, StudioFXCon
     columnStatus.setCellValueFactory(cellData -> {
       CompetitionRepresentation value = cellData.getValue();
       String status = "FINISHED";
-      if (value.isActive()) {
+      if (value.getValidationState().getCode() > 0) {
+        status = "INVALID";
+      }
+      else if (value.isActive()) {
         status = "ACTIVE";
       }
       else if (value.isPlanned()) {
@@ -436,27 +442,21 @@ public class CompetitionsDiscordController implements Initializable, StudioFXCon
       }
 
       Label label = new Label(status);
-      if (value.isActive()) {
-        label.setStyle("-fx-font-color: #33CC00;-fx-text-fill:#33CC00;");
-      }
+      label.setStyle(getLabelCss(value));
       return new SimpleObjectProperty(label);
     });
 
     columnStartDate.setCellValueFactory(cellData -> {
       CompetitionRepresentation value = cellData.getValue();
       Label label = new Label(DateFormat.getDateTimeInstance().format(value.getStartDate()));
-      if (value.isActive()) {
-        label.setStyle("-fx-font-color: #33CC00;-fx-text-fill:#33CC00;");
-      }
+      label.setStyle(getLabelCss(value));
       return new SimpleObjectProperty(label);
     });
 
     columnEndDate.setCellValueFactory(cellData -> {
       CompetitionRepresentation value = cellData.getValue();
       Label label = new Label(DateFormat.getDateTimeInstance().format(value.getEndDate()));
-      if (value.isActive()) {
-        label.setStyle("-fx-font-color: #33CC00;-fx-text-fill:#33CC00;");
-      }
+      label.setStyle(getLabelCss(value));
       return new SimpleObjectProperty(label);
     });
 
@@ -501,6 +501,7 @@ public class CompetitionsDiscordController implements Initializable, StudioFXCon
       return row;
     });
 
+    validationError.setVisible(false);
     bindSearchField();
     onViewActivated();
   }
@@ -528,7 +529,22 @@ public class CompetitionsDiscordController implements Initializable, StudioFXCon
     data = FXCollections.observableList(filtered);
   }
 
+  private String getLabelCss(CompetitionRepresentation value) {
+    String status = "";
+    if (value.getValidationState().getCode() > 0) {
+      status = "-fx-font-color: #FF3333;-fx-text-fill:#FF3333;";
+    }
+    else if (value.isActive()) {
+      status = "-fx-font-color: #33CC00;-fx-text-fill:#33CC00;";
+    }
+    else if (value.isPlanned()) {
+      status = "";
+    }
+    return status;
+  }
+
   private void refreshView(Optional<CompetitionRepresentation> competition) {
+    validationError.setVisible(false);
     CompetitionRepresentation newSelection = null;
     if (competition.isPresent()) {
       newSelection = competition.get();
@@ -545,6 +561,13 @@ public class CompetitionsDiscordController implements Initializable, StudioFXCon
     joinBtn.setDisable(this.discordBotId <= 0);
 
     if (competition.isPresent()) {
+      validationError.setVisible(newSelection.getValidationState().getCode() > 0);
+      if (newSelection.getValidationState().getCode() > 0) {
+        LocalizedValidation validationResult = CompetitionValidationTexts.getValidationResult(newSelection);
+        validationErrorLabel.setText(validationResult.getLabel());
+        validationErrorText.setText(validationResult.getText());
+      }
+
       if (competitionWidget.getTop() != null) {
         competitionWidget.getTop().setVisible(true);
       }

@@ -47,6 +47,16 @@ public class CompetitionRepresentation {
 
   private String rom;
 
+  private ValidationState validationState = new ValidationState();
+
+  public ValidationState getValidationState() {
+    return validationState;
+  }
+
+  public void setValidationState(ValidationState validationState) {
+    this.validationState = validationState;
+  }
+
   public String getRom() {
     return rom;
   }
@@ -63,7 +73,7 @@ public class CompetitionRepresentation {
     this.highscoreReset = highscoreReset;
   }
 
-  private String joinMode = JoinMode.STRICT.name();
+  private String joinMode = JoinMode.ROM_ONLY.name();
 
   public String getJoinMode() {
     return joinMode;
@@ -229,6 +239,13 @@ public class CompetitionRepresentation {
     clone.setUuid(UUID.randomUUID().toString());
     clone.setGameId(this.getGameId());
     return clone;
+  }
+
+  public boolean isValid() {
+    if (getType() != null && getType().equals(CompetitionType.DISCORD.name())) {
+      return discordServerId > 0 && discordChannelId > 0;
+    }
+    return true;
   }
 
   public boolean isActive() {

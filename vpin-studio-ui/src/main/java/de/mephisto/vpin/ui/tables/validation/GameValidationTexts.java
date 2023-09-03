@@ -2,16 +2,17 @@ package de.mephisto.vpin.ui.tables.validation;
 
 import de.mephisto.vpin.restclient.representations.GameRepresentation;
 import de.mephisto.vpin.restclient.representations.ValidationState;
+import de.mephisto.vpin.ui.util.LocalizedValidation;
 import edu.umd.cs.findbugs.annotations.NonNull;
 
 import java.util.List;
 
-import static de.mephisto.vpin.restclient.ValidationCode.*;
+import static de.mephisto.vpin.restclient.GameValidationCode.*;
 
 /**
  * See GameValidator
  */
-public class ValidationTexts {
+public class GameValidationTexts {
 
   private final static String NO_MEDIA_TEXT = "Dismiss this message if the table does not support this media or disable the screen in the preferences.";
 

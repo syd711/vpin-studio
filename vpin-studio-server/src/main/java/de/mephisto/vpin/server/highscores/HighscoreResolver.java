@@ -100,6 +100,10 @@ class HighscoreResolver {
       try {
         fileInputStream = new FileInputStream(hsFile);
         List<String> lines = IOUtils.readLines(fileInputStream, Charset.defaultCharset());
+        if(lines.size() == 16) {
+          lines = lines.subList(1, lines.size());
+        }
+
         if (lines.size() >= 15) {
           StringBuilder builder = new StringBuilder("HIGHEST SCORES\n");
 

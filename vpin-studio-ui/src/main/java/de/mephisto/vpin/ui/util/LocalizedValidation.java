@@ -1,8 +1,8 @@
-package de.mephisto.vpin.ui.tables.validation;
+package de.mephisto.vpin.ui.util;
 
 public class LocalizedValidation {
-  private String label;
-  private String text;
+  private final String label;
+  private final String text;
 
   public LocalizedValidation(String label, String text) {
     this.label = label;

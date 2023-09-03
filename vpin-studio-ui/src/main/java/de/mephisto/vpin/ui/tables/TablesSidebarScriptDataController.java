@@ -8,8 +8,8 @@ import de.mephisto.vpin.restclient.representations.ValidationState;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.tables.dialogs.ScriptDownloadProgressModel;
-import de.mephisto.vpin.ui.tables.validation.LocalizedValidation;
-import de.mephisto.vpin.ui.tables.validation.ValidationTexts;
+import de.mephisto.vpin.ui.util.LocalizedValidation;
+import de.mephisto.vpin.ui.tables.validation.GameValidationTexts;
 import de.mephisto.vpin.ui.util.Dialogs;
 import de.mephisto.vpin.ui.util.ProgressResultModel;
 import javafx.fxml.FXML;
@@ -78,6 +78,9 @@ public class TablesSidebarScriptDataController implements Initializable {
   private Button scanBtn;
 
   @FXML
+  private Button openEMHighscoreBtn;
+
+  @FXML
   private Button editAliasBtn;
 
   @FXML
@@ -109,15 +112,10 @@ public class TablesSidebarScriptDataController implements Initializable {
   private TablesSidebarController tablesSidebarController;
 
   private ValidationState validationState;
+  private SystemSummary systemSummary;
 
   // Add a public no-args constructor
   public TablesSidebarScriptDataController() {
-  }
-
-  @Override
-  public void initialize(URL url, ResourceBundle resourceBundle) {
-    errorBox.managedProperty().bindBidirectional(errorBox.visibleProperty());
-    vpSaveEditBtn.setDisable(!Studio.client.getSystemService().isLocal());
   }
 
   public void setGame(Optional<GameRepresentation> game) {
@@ -256,6 +254,19 @@ public class TablesSidebarScriptDataController implements Initializable {
   }
 
   @FXML
+  private void onEMHighscore() {
+    File folder = new File(systemSummary.getVisualPinballDirectory(), "User");
+    File file = new File(folder, game.get().getHsFileName());
+    if (file.exists()) {
+      try {
+        Desktop.getDesktop().open(file);
+      } catch (IOException e) {
+        WidgetFactory.showAlert(Studio.stage, "Error", "Failed to open EM highscore file \"" + game.get().getHsFileName() + "\": " + e.getMessage());
+      }
+    }
+  }
+
+  @FXML
   private void onInspect() {
     if (game.isPresent()) {
       Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Inspect script of table\"" + game.get().getGameDisplayName() + "\"?",
@@ -294,6 +305,8 @@ public class TablesSidebarScriptDataController implements Initializable {
     romUploadBtn.setDisable(g.isEmpty());
     renameBtn.setDisable(g.isEmpty() || !g.get().isGameFileAvailable());
     openTablesFolderBtn.setVisible(Studio.client.getSystemService().isLocal());
+    openEMHighscoreBtn.setVisible(Studio.client.getSystemService().isLocal());
+    openEMHighscoreBtn.setDisable(true);
 
     inspectBtn.setDisable(g.isEmpty() || !g.get().isGameFileAvailable());
     editBtn.setDisable(g.isEmpty() || !g.get().isGameFileAvailable());
@@ -309,6 +322,14 @@ public class TablesSidebarScriptDataController implements Initializable {
       editTableNameBtn.setDisable(!game.getEmulator().isVisualPinball());
       romUploadBtn.setDisable(!game.getEmulator().isVisualPinball());
       deleteAliasBtn.setDisable(StringUtils.isEmpty(game.getRomAlias()));
+
+      if (Studio.client.getSystemService().isLocal()) {
+        if (!StringUtils.isEmpty(game.getHsFileName())) {
+          File folder = new File(systemSummary.getVisualPinballDirectory(), "User");
+          File file = new File(folder, game.getHsFileName());
+          openEMHighscoreBtn.setDisable(!file.exists());
+        }
+      }
 
       labelRom.setText(!StringUtils.isEmpty(game.getRom()) ? game.getRom() : "-");
       labelRomAlias.setText(!StringUtils.isEmpty(game.getRomAlias()) ? game.getRomAlias() : "-");
@@ -328,7 +349,7 @@ public class TablesSidebarScriptDataController implements Initializable {
       errorBox.setVisible(!validationStates.isEmpty());
       if (!validationStates.isEmpty()) {
         validationState = validationStates.get(0);
-        LocalizedValidation validationResult = ValidationTexts.getValidationResult(game, validationState);
+        LocalizedValidation validationResult = GameValidationTexts.getValidationResult(game, validationState);
         errorTitle.setText(validationResult.getLabel());
         errorText.setText(validationResult.getText());
       }
@@ -347,6 +368,13 @@ public class TablesSidebarScriptDataController implements Initializable {
 
   public void setSidebarController(TablesSidebarController tablesSidebarController) {
     this.tablesSidebarController = tablesSidebarController;
+  }
+
+  @Override
+  public void initialize(URL url, ResourceBundle resourceBundle) {
+    systemSummary = Studio.client.getSystemService().getSystemSummary();
+    errorBox.managedProperty().bindBidirectional(errorBox.visibleProperty());
+    vpSaveEditBtn.setDisable(!Studio.client.getSystemService().isLocal());
   }
 
 }

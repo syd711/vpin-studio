@@ -2,7 +2,7 @@ package de.mephisto.vpin.ui.tables;
 
 import de.mephisto.vpin.commons.utils.FileUtils;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
-import de.mephisto.vpin.restclient.ValidationCode;
+import de.mephisto.vpin.restclient.GameValidationCode;
 import de.mephisto.vpin.restclient.popper.Emulator;
 import de.mephisto.vpin.restclient.representations.GameRepresentation;
 import de.mephisto.vpin.restclient.representations.PlaylistRepresentation;
@@ -12,8 +12,8 @@ import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.StudioFXController;
 import de.mephisto.vpin.ui.WaitOverlayController;
 import de.mephisto.vpin.ui.events.EventManager;
-import de.mephisto.vpin.ui.tables.validation.LocalizedValidation;
-import de.mephisto.vpin.ui.tables.validation.ValidationTexts;
+import de.mephisto.vpin.ui.util.LocalizedValidation;
+import de.mephisto.vpin.ui.tables.validation.GameValidationTexts;
 import de.mephisto.vpin.ui.util.Dialogs;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import javafx.application.Platform;
@@ -631,7 +631,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
       if (value.getIgnoredValidations() != null) {
         ignoredValidations = value.getIgnoredValidations();
       }
-      if (!value.isRomExists() && value.isRomRequired() && !ignoredValidations.contains(ValidationCode.CODE_ROM_NOT_EXISTS)) {
+      if (!value.isRomExists() && value.isRomRequired() && !ignoredValidations.contains(GameValidationCode.CODE_ROM_NOT_EXISTS)) {
         Label label = new Label(rom);
         String color = "#FF3333";
         label.setStyle("-fx-font-color: " + color + ";-fx-text-fill: " + color + ";-fx-font-weight: bold;");
@@ -845,7 +845,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
       GameRepresentation game = g.get();
       validationError.setVisible(game.getValidationState().getCode() > 0);
       if (game.getValidationState().getCode() > 0) {
-        LocalizedValidation validationMessage = ValidationTexts.validate(game);
+        LocalizedValidation validationMessage = GameValidationTexts.validate(game);
         validationErrorLabel.setText(validationMessage.getLabel());
         validationErrorText.setText(validationMessage.getText());
       }

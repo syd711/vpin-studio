@@ -5,7 +5,7 @@ import de.mephisto.vpin.restclient.representations.ValidationState;
 import java.util.Arrays;
 import java.util.List;
 
-public class ValidationStateFactory {
+public class GameValidationStateFactory {
 
   public static ValidationState create(int code) {
     ValidationState state = new ValidationState();

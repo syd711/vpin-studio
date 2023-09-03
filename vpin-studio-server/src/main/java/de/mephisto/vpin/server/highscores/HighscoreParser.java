@@ -1,5 +1,6 @@
 package de.mephisto.vpin.server.highscores;
 
+import de.mephisto.vpin.restclient.DefaultHighscoresTitles;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.server.players.Player;
 import de.mephisto.vpin.server.players.PlayerService;
@@ -12,7 +13,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.List;
 import java.util.stream.Collectors;
 
 /**
@@ -145,7 +149,7 @@ public class HighscoreParser {
   private List<String> getTitleList() {
     String titles = (String) preferencesService.getPreferenceValue(PreferenceNames.HIGHSCORE_TITLES);
     if (StringUtils.isEmpty(titles)) {
-      titles = "GRAND CHAMPION,WORLD RECORD"; //always valid
+      titles = "";
     }
 
     List<String> titleList = new ArrayList<>();
@@ -155,6 +159,12 @@ public class HighscoreParser {
         if (title.length() > 0) {
           titleList.add(title);
         }
+      }
+    }
+
+    for (String defaultTitle : DefaultHighscoresTitles.DEFAULT_TITLES) {
+      if (!titleList.contains(defaultTitle)) {
+        titleList.add(defaultTitle);
       }
     }
     return titleList;

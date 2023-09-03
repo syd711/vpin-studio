@@ -266,7 +266,7 @@ public class CompetitionDiscordJoinDialogController implements Initializable, Di
     this.nameLabel.setText(this.discordCompetitionData.getName());
 
     String mode = this.discordCompetitionData.getMode();
-    if (mode != null && JoinMode.valueOf(mode).equals(JoinMode.STRICT)) {
+    if (!StringUtils.isEmpty(mode) && JoinMode.valueOf(mode).equals(JoinMode.STRICT)) {
       this.joinMode.setIconLiteral("bi-check-circle");
     }
     else {

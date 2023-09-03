@@ -3,31 +3,22 @@
 
 **Competitions: (Discord) Competitions**
 
-- Fixed Competitions button refresh: After applying a bot token, the button are now enabled (no restart required anymore).
-- Fixed authentication check: Discord API did not return *true* for regular permission checks for bots with admin rights (why???).
-- Improved invalid bot name error message in "Discord Competition" dialogs: It should be more clear now what action to take to fix it.
-- Changed "Competition Finished" card to 5 players (if available).
-- Added "Clear Cache" button which clears the Discord data cache, in case the server or channel settings have been changed in parallel.
+- "Strict Table Checking" is not enabled anymore by default for online competitions.
+- Added "Invalid" status for competitions, e.g. if a channel is on longer valid.
+- Added validation section for competitions. 
 
-**Preferences: Bot Settings**
+**Preferences: Highscores**
 
-**Problem:** If every VPin Studio bot on a server has every permission, everyones highscore for every table could be posted (spammed) into text channels and everyone could create subscriptions.
+- Added miscellaneous new score card titles to the preferences. For some highscore cards the first place is only detected by setting these special labels. Note that this value can be updated in the "Score Format" settings anytime. Please let me know if there are other cards with special titles to improve these defaults! The affected tables are:
+  - Bram Stoker's Dracula
+  - Whirlwind
+  - Theater of Magic
 
-The problem has been solved filtering servers by their bot "administration" permissions.
-This means:
+**Table Management: Script Details**
 
-- Only player bots with **administrator** rights can create a Discord competition.
-- Only player bots with **administrator** rights can create a channel subscription.
-- Only player bots with **administrator** rights can can post "casual" highscore notifications into a text channel.
+- Added open button for EM highscore files (if the text file is available).
 
+**Bugfixes**
 
-**Regular** player bots, that have been added by the server administrator can only
-- join a Discord competition and post updates there.
-- join a table subscription and post updates there.
-
-A Discord server administrator has to ensure that only bots with **regular** rights are added to the server.
-
-Details are documented here: https://github.com/syd711/vpin-studio/wiki/Discord-Integration
-
-
-Tired of reading? Watch a summary about this here: 
+- Fixed EM highscore file parsing: tables writing 16 lines highscore files were one line off, e.g. 2001 (Gottlieb). Thanks you for this hint, @rubadub-github!
+- Fixed issue in Discord configuration validation.

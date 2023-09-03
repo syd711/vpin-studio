@@ -5,7 +5,7 @@ import de.mephisto.vpin.restclient.jobs.JobExecutionResult;
 import de.mephisto.vpin.restclient.jobs.JobExecutionResultFactory;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameService;
-import de.mephisto.vpin.server.games.ValidationService;
+import de.mephisto.vpin.server.games.GameValidationService;
 import de.mephisto.vpin.server.util.UploadUtil;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import org.apache.commons.io.FilenameUtils;
@@ -33,7 +33,7 @@ public class AltSoundResource {
   private GameService gameService;
 
   @Autowired
-  private ValidationService validationService;
+  private GameValidationService validationService;
 
   @GetMapping("{id}")
   public AltSound csv(@PathVariable("id") int id) {

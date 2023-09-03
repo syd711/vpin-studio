@@ -16,7 +16,9 @@ import de.mephisto.vpin.ui.NavigationController;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.StudioFXController;
 import de.mephisto.vpin.ui.WaitOverlayController;
+import de.mephisto.vpin.ui.competitions.validation.CompetitionValidationTexts;
 import de.mephisto.vpin.ui.util.Dialogs;
+import de.mephisto.vpin.ui.util.LocalizedValidation;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
@@ -25,6 +27,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.geometry.Pos;
+import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
@@ -83,6 +86,15 @@ public class TableSubscriptionsController implements Initializable, StudioFXCont
 
   @FXML
   private StackPane tableStack;
+
+  @FXML
+  private Label validationErrorLabel;
+
+  @FXML
+  private Label validationErrorText;
+
+  @FXML
+  private Node validationError;
 
   private Parent loadingOverlay;
   private WidgetCompetitionSummaryController competitionWidgetController;
@@ -360,6 +372,7 @@ public class TableSubscriptionsController implements Initializable, StudioFXCont
       return row;
     });
 
+    validationError.setVisible(false);
     bindSearchField();
     onViewActivated();
   }
@@ -388,6 +401,7 @@ public class TableSubscriptionsController implements Initializable, StudioFXCont
   }
 
   private void refreshView(Optional<CompetitionRepresentation> competition) {
+    validationError.setVisible(false);
     CompetitionRepresentation newSelection = null;
     if (competition.isPresent()) {
       newSelection = competition.get();
@@ -401,6 +415,13 @@ public class TableSubscriptionsController implements Initializable, StudioFXCont
     joinBtn.setDisable(this.discordBotId <= 0);
 
     if (competition.isPresent()) {
+      validationError.setVisible(newSelection.getValidationState().getCode() > 0);
+      if (newSelection.getValidationState().getCode() > 0) {
+        LocalizedValidation validationResult = CompetitionValidationTexts.getValidationResult(newSelection);
+        validationErrorLabel.setText(validationResult.getLabel());
+        validationErrorText.setText(validationResult.getText());
+      }
+
       if (competitionWidget.getTop() != null) {
         competitionWidget.getTop().setVisible(true);
       }
