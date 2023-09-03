@@ -1,18 +1,21 @@
 package de.mephisto.vpin.ui.competitions.dialogs;
 
-import de.mephisto.vpin.restclient.popper.EmulatorType;
 import de.mephisto.vpin.commons.fx.Debouncer;
 import de.mephisto.vpin.commons.fx.DialogController;
 import de.mephisto.vpin.commons.fx.UIDefaults;
+import de.mephisto.vpin.connectors.vps.VPS;
+import de.mephisto.vpin.connectors.vps.model.VpsTable;
+import de.mephisto.vpin.connectors.vps.model.VpsTableFile;
 import de.mephisto.vpin.restclient.CompetitionType;
 import de.mephisto.vpin.restclient.JoinMode;
-import de.mephisto.vpin.restclient.popper.PopperScreen;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.client.VPinStudioClient;
 import de.mephisto.vpin.restclient.discord.DiscordBotStatus;
 import de.mephisto.vpin.restclient.discord.DiscordChannel;
 import de.mephisto.vpin.restclient.discord.DiscordCompetitionData;
 import de.mephisto.vpin.restclient.discord.DiscordServer;
+import de.mephisto.vpin.restclient.popper.EmulatorType;
+import de.mephisto.vpin.restclient.popper.PopperScreen;
 import de.mephisto.vpin.restclient.representations.CompetitionRepresentation;
 import de.mephisto.vpin.restclient.representations.GameMediaItemRepresentation;
 import de.mephisto.vpin.restclient.representations.GameMediaRepresentation;
@@ -76,6 +79,12 @@ public class CompetitionDiscordDialogController implements Initializable, Dialog
 
   @FXML
   private TextField nameField;
+
+  @FXML
+  private TextField vpsLinkField;
+
+  @FXML
+  private TextField downloadLinkField;
 
   @FXML
   private Label durationLabel;
@@ -214,6 +223,7 @@ public class CompetitionDiscordDialogController implements Initializable, Dialog
     tableCombo.valueProperty().addListener((observableValue, gameRepresentation, t1) -> {
       competition.setGameId(t1.getId());
       refreshPreview(t1, competitionIconCombo.getValue());
+      refreshVPS(t1);
       validate();
     });
     ArrayList<String> badges = new ArrayList<>(client.getCompetitionService().getCompetitionBadges());
@@ -370,6 +380,12 @@ public class CompetitionDiscordDialogController implements Initializable, Dialog
       return;
     }
 
+    GameRepresentation game = this.tableCombo.getValue();
+    if(StringUtils.isEmpty(game.getExtTableId()) || StringUtils.isEmpty(game.getExtTableVersionId())) {
+      validationTitle.setText("No VPS data set for selected table");
+      validationDescription.setText("The data is not required. But this way competitions know what table version is played.");
+    }
+
     validationContainer.setVisible(false);
     this.saveBtn.setDisable(false);
   }
@@ -420,6 +436,7 @@ public class CompetitionDiscordDialogController implements Initializable, Dialog
       this.tableCombo.setValue(game);
       this.tableCombo.setDisable(!editable);
 
+      refreshVPS(game);
 
       this.channelsCombo.setItems(FXCollections.observableList(serverChannels));
       this.serversCombo.setValue(discordServer);
@@ -443,6 +460,21 @@ public class CompetitionDiscordDialogController implements Initializable, Dialog
 
       this.competition = selectedCompetition;
       refreshPreview(game, badge);
+    }
+  }
+
+  private void refreshVPS(GameRepresentation game) {
+    if (!StringUtils.isEmpty(game.getExtTableId())) {
+      VpsTable vpsTable = VPS.getInstance().getTableById(game.getExtTableId());
+      vpsLinkField.setText("https://virtual-pinball-spreadsheet.web.app/game/" + game.getExtTableId() + "/");
+
+      if (!StringUtils.isEmpty(game.getExtTableVersionId())) {
+        List<VpsTableFile> tableFiles = vpsTable.getTableFiles();
+        Optional<VpsTableFile> tableVersion = tableFiles.stream().filter(t -> t.getId().equals(game.getExtTableVersionId())).findFirst();
+        if (tableVersion.isPresent() && !tableVersion.get().getUrls().isEmpty()) {
+          downloadLinkField.setText(tableVersion.get().getUrls().get(0).getUrl());
+        }
+      }
     }
   }
 

@@ -6,6 +6,11 @@
 - "Strict Table Checking" is not enabled anymore by default for online competitions.
 - Added "Invalid" status for competitions, e.g. if a channel is on longer valid.
 - Added validation section for competitions and new status type "Invalid". This way, errors can be displayed, e.g. if a competition was created for a game or Discord channel that no longer exists.
+- Added "VPS Link" and "Download Link" fields for online competitions. If set, this information will be rendered with the competition card and metadata, so players can download the correct version of the table.
+
+**Preferences: Discord Bot**
+
+- Added validation button for the configuration. This one checks if the configured server, channel and category still exist.
 
 **Preferences: Highscores**
 
@@ -16,7 +21,7 @@
 
 **Table Management: Script Details**
 
-- Added open button for EM highscore files (if the text file is available).
+- Added green open button for EM highscore files (if the text file is available).
 
 **Bugfixes**
 
