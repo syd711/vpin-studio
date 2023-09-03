@@ -26,7 +26,7 @@ public class DiscordChannelMessageFactory {
   public static final String FINISHED_INDICATOR = " finished";
   public static final String HIGHSCORE_INDICATOR = "updated highscore list";
 
-  private static final String DISCORD_COMPETITION_CREATED_TEMPLATE = "%s " + START_INDICATOR + "!\n(ID: %s)";
+  private static final String DISCORD_COMPETITION_CREATED_TEMPLATE = "%s " + START_INDICATOR + " competition!\n(ID: %s)";
 
 
   private static final String COMPETITION_CANCELLED_TEMPLATE = "%s has " + CANCEL_INDICATOR + " the competition \"%s\".";

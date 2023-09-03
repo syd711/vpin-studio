@@ -267,10 +267,10 @@ public class CompetitionDiscordJoinDialogController implements Initializable, Di
 
     String mode = this.discordCompetitionData.getMode();
     if (!StringUtils.isEmpty(mode) && JoinMode.valueOf(mode).equals(JoinMode.STRICT)) {
-      this.joinMode.setIconLiteral("bi-check-circle");
+      this.joinMode.setIconLiteral("mdi2c-checkbox-intermediate");
     }
     else {
-      this.joinMode.setIconLiteral("");
+      this.joinMode.setIconLiteral("mdi2c-checkbox-blank-outline");
     }
 
     PlayerRepresentation discordPlayer = client.getDiscordService().getDiscordPlayer(server.getId(), Long.parseLong(this.discordCompetitionData.getOwner()));

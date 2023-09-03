@@ -380,13 +380,16 @@ public class CompetitionDiscordDialogController implements Initializable, Dialog
       return;
     }
 
+    //optional stuff, ensure visibility again
+    validationContainer.setVisible(false);
+
     GameRepresentation game = this.tableCombo.getValue();
-    if(StringUtils.isEmpty(game.getExtTableId()) || StringUtils.isEmpty(game.getExtTableVersionId())) {
+    if (StringUtils.isEmpty(game.getExtTableId()) || StringUtils.isEmpty(game.getExtTableVersionId())) {
       validationTitle.setText("No VPS data set for selected table");
-      validationDescription.setText("The data is not required. But this way competitions know what table version is played.");
+      validationDescription.setText("The data is not required. But this way competition members know what table version is played.");
+      validationContainer.setVisible(true);
     }
 
-    validationContainer.setVisible(false);
     this.saveBtn.setDisable(false);
   }
 
@@ -464,6 +467,9 @@ public class CompetitionDiscordDialogController implements Initializable, Dialog
   }
 
   private void refreshVPS(GameRepresentation game) {
+    this.downloadLinkField.setText("");
+    this.vpsLinkField.setText("");
+
     if (!StringUtils.isEmpty(game.getExtTableId())) {
       VpsTable vpsTable = VPS.getInstance().getTableById(game.getExtTableId());
       vpsLinkField.setText("https://virtual-pinball-spreadsheet.web.app/game/" + game.getExtTableId() + "/");

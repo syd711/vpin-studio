@@ -28,3 +28,4 @@
 
 - Fixed EM highscore file parsing: tables writing 16 lines highscore files were one line off, e.g. 2001 (Gottlieb). Thanks you for this hint, @rubadub-github!
 - Fixed issue in Discord configuration validation.
+- Fixed wrong Discord notification for new competitions (_"started a new!"_). 
