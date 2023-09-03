@@ -631,7 +631,7 @@ public class DiscordService implements InitializingBean, PreferenceChangedListen
     if (this.discordClient != null) {
       List<DiscordMessage> pinnedMessages = discordClient.getPinnedMessages(serverId, channelId);
       for (DiscordMessage pinnedMessage : pinnedMessages) {
-        if (pinnedMessage.getRaw().contains(DiscordChannelMessageFactory.START_INDICATOR)) {
+        if (pinnedMessage.getRaw().contains(DiscordChannelMessageFactory.START_INDICATOR) && pinnedMessage.getMember() != null) {
           String raw = pinnedMessage.getRaw();
           String uuid = raw.substring(raw.indexOf("ID:") + 3);
           uuid = uuid.substring(0, uuid.indexOf(")")).trim();
