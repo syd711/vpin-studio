@@ -103,6 +103,7 @@
                   <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                   <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                   <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
               </rowConstraints>
                <children>
                   <Label prefHeight="20.0" styleClass="preference-label" text="Default Server:" textFill="WHITE">
@@ -123,6 +124,14 @@
                      </font>
                   </Label>
                   <ComboBox fx:id="categoryCombo" layoutX="208.0" layoutY="44.0" prefHeight="30.0" prefWidth="240.0" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                  <Button fx:id="validateBtn" mnemonicParsing="false" onAction="#onValidate" text="Validate Settings" GridPane.columnIndex="1" GridPane.rowIndex="3">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                     <graphic>
+                        <FontIcon iconColor="WHITE" iconLiteral="mdi2c-check-bold" />
+                     </graphic>
+                  </Button>
                </children>
             </GridPane>
             <Label layoutX="34.0" layoutY="471.0" styleClass="preference-description" text="With dynamic subscriptions, a new text channel will be created under the &quot;Subscriptions Category&quot; when the first highscore is created." textFill="WHITE">

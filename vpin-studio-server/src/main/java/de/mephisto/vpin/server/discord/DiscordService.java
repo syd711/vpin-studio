@@ -16,6 +16,7 @@ import de.mephisto.vpin.server.preferences.PreferenceChangedListener;
 import de.mephisto.vpin.server.preferences.PreferencesService;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
+import net.dv8tion.jda.api.entities.channel.concrete.Category;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -673,23 +674,52 @@ public class DiscordService implements InitializingBean, PreferenceChangedListen
   public boolean clearCache() {
     if (this.discordClient != null) {
       this.discordClient.clearCache();
+    }
+    return true;
+  }
 
-      try {
-        String guildId = (String) preferencesService.getPreferenceValue(PreferenceNames.DISCORD_GUILD_ID);
-        if (!StringUtils.isEmpty(guildId)) {
-          long id = Long.parseLong(guildId);
-          GuildInfo guildById = this.discordClient.getGuildById(id);
-          if (guildById == null) {
-            LOG.warn("Invalid Discord settings found, resetting values.");
-            preferencesService.savePreference(PreferenceNames.DISCORD_GUILD_ID, null);
+  public boolean validateSettings() {
+    try {
+      this.recreateDiscordClient();
+    } catch (Exception e) {
+      return false;
+    }
+
+    String serverId = (String) preferencesService.getPreferenceValue(PreferenceNames.DISCORD_GUILD_ID);
+    String channelId = (String) preferencesService.getPreferenceValue(PreferenceNames.DISCORD_CHANNEL_ID);
+    String categoryId = (String) preferencesService.getPreferenceValue(PreferenceNames.DISCORD_CATEGORY_ID);
+
+    try {
+      if (this.discordClient != null && !StringUtils.isEmpty(serverId)) {
+        long id = Long.parseLong(serverId);
+        GuildInfo guild = this.discordClient.getGuildById(id);
+        if (guild == null) {
+          preferencesService.savePreference(PreferenceNames.DISCORD_GUILD_ID, null);
+          preferencesService.savePreference(PreferenceNames.DISCORD_CATEGORY_ID, null);
+          preferencesService.savePreference(PreferenceNames.DISCORD_CHANNEL_ID, null);
+          preferencesService.savePreference(PreferenceNames.DISCORD_DYNAMIC_SUBSCRIPTIONS, false);
+          return false;
+        }
+
+        if (!StringUtils.isEmpty(channelId)) {
+          DiscordChannel channel = this.getChannel(Long.parseLong(serverId), Long.parseLong(channelId));
+          if (channel == null) {
             preferencesService.savePreference(PreferenceNames.DISCORD_CATEGORY_ID, null);
-            preferencesService.savePreference(PreferenceNames.DISCORD_CHANNEL_ID, null);
-            preferencesService.savePreference(PreferenceNames.DISCORD_DYNAMIC_SUBSCRIPTIONS, false);
+            return false;
           }
         }
-      } catch (Exception e) {
-        LOG.error("Discord preferences check failed: " + e.getMessage(), e);
+
+        if (!StringUtils.isEmpty(categoryId)) {
+          Category category = this.discordClient.getCategory(Long.parseLong(serverId), Long.parseLong(categoryId));
+          if (category == null) {
+            preferencesService.savePreference(PreferenceNames.DISCORD_CHANNEL_ID, null);
+            return false;
+          }
+        }
       }
+    } catch (Exception e) {
+      LOG.error("Failed to validate Discord settings: " + e.getMessage(), e);
+      return false;
     }
     return true;
   }

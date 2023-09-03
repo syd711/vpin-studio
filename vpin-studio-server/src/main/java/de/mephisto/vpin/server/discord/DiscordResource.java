@@ -28,6 +28,12 @@ public class DiscordResource {
     return discordService.getStatus(serverId);
   }
 
+  //TODO duplicate
+  @GetMapping("/validate")
+  public boolean validateSettings() {
+    return discordService.validateSettings();
+  }
+
   @GetMapping("/permissions/competitions/join/{serverId}/{channelId}")
   public boolean hasJoinPermissions(@PathVariable("serverId") long serverId, @PathVariable("channelId") long channelId) {
     return discordService.hasJoinPermissions(serverId, channelId, discordService.getBotId());
