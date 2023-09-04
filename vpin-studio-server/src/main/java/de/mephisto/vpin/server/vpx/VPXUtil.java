@@ -10,9 +10,7 @@ import org.slf4j.LoggerFactory;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
 public class VPXUtil {
   private final static Logger LOG = LoggerFactory.getLogger(VPXFileScanner.class);
@@ -28,8 +26,51 @@ public class VPXUtil {
       }
       index++;
     }
-    byte[] scriptData = Arrays.copyOfRange(content, indexes.get(indexes.size()-2)+12, indexes.get(indexes.size()-1));
+    byte[] scriptData = Arrays.copyOfRange(content, indexes.get(indexes.size() - 2) + 12, indexes.get(indexes.size() - 1));
     return new String(scriptData);
+  }
+
+  public static Map<String, String> readTableInfo(@NonNull File file) {
+    Map<String, String> result = new HashMap<>();
+    POIFSFileSystem fs = null;
+    try {
+      fs = new POIFSFileSystem(file, true);
+      DirectoryEntry root = fs.getRoot();
+      DirectoryEntry tableInfo = (DirectoryEntry) root.getEntry("TableInfo");
+      Set<String> infoEntries = tableInfo.getEntryNames();
+      for (String infoEntry : infoEntries) {
+        DocumentNode infoNode = (DocumentNode) tableInfo.getEntry(infoEntry);
+        POIFSDocument document = new POIFSDocument(infoNode);
+        DocumentInputStream documentInputStream = new DocumentInputStream(document);
+        byte[] infoContent = new byte[documentInputStream.available()];
+        documentInputStream.read(infoContent);
+
+        List<Byte> collect = new ArrayList<>();
+        for (byte b : infoContent) {
+          if (b == 0) {
+            continue;
+          }
+          collect.add(b);
+        }
+
+        Byte[] bytes = collect.toArray(new Byte[collect.size()]);
+        byte[] primitive = ArrayUtils.toPrimitive(bytes);
+        result.put(infoEntry, new String(primitive));
+      }
+    } catch (Exception e) {
+      LOG.error("Reading table info failed for " + file.getAbsolutePath() + ", cause: " + e.getMessage(), e);
+      return null;
+    } finally {
+      try {
+        if (fs != null) {
+          fs.close();
+        }
+      } catch (Exception e) {
+        LOG.error("Failed to close vpx file stream: " + e.getMessage(), e);
+      }
+    }
+
+    return result;
   }
 
   public static byte[] readBytes(@NonNull File file) {
@@ -76,8 +117,8 @@ public class VPXUtil {
         index++;
       }
 
-      byte[] headerBytes = Arrays.copyOfRange(content, 0, indexes.get(indexes.size()-2)+12);
-      byte[] footerBytes = Arrays.copyOfRange(content, indexes.get(indexes.size()-1), content.length);
+      byte[] headerBytes = Arrays.copyOfRange(content, 0, indexes.get(indexes.size() - 2) + 12);
+      byte[] footerBytes = Arrays.copyOfRange(content, indexes.get(indexes.size() - 1), content.length);
 
       byte[] documentBytes = ArrayUtils.addAll(headerBytes, decoded);
       documentBytes = ArrayUtils.addAll(documentBytes, footerBytes);
