@@ -17,9 +17,11 @@ import de.mephisto.vpin.ui.NavigationController;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.StudioFXController;
 import de.mephisto.vpin.ui.WaitOverlayController;
+import de.mephisto.vpin.ui.competitions.dialogs.CompetitionCreationProgressModel;
 import de.mephisto.vpin.ui.competitions.validation.CompetitionValidationTexts;
 import de.mephisto.vpin.ui.util.Dialogs;
 import de.mephisto.vpin.ui.util.LocalizedValidation;
+import de.mephisto.vpin.ui.util.ProgressResultModel;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
@@ -144,9 +146,11 @@ public class CompetitionsDiscordController implements Initializable, StudioFXCon
     CompetitionRepresentation c = Dialogs.openDiscordCompetitionDialog(this.competitions, null);
     if (c != null) {
       try {
-        CompetitionRepresentation newCmp = client.getCompetitionService().saveCompetition(c);
-        onReload();
-        tableView.getSelectionModel().select(newCmp);
+        ProgressResultModel resultModel = Dialogs.createProgressDialog(new CompetitionCreationProgressModel("Creating Competition", c));
+        Platform.runLater(() -> {
+          onReload();
+          tableView.getSelectionModel().select((CompetitionRepresentation) resultModel.results.get(0));
+        });
       } catch (Exception e) {
         WidgetFactory.showAlert(Studio.stage, e.getMessage());
       }
@@ -161,9 +165,9 @@ public class CompetitionsDiscordController implements Initializable, StudioFXCon
       CompetitionRepresentation c = Dialogs.openDiscordCompetitionDialog(this.competitions, clone);
       if (c != null) {
         try {
-          CompetitionRepresentation newCmp = client.getCompetitionService().saveCompetition(c);
+          ProgressResultModel resultModel = Dialogs.createProgressDialog(new CompetitionCreationProgressModel("Creating Competition", c));
           onReload();
-          tableView.getSelectionModel().select(newCmp);
+          tableView.getSelectionModel().select((CompetitionRepresentation) resultModel.results.get(0));
         } catch (Exception e) {
           WidgetFactory.showAlert(Studio.stage, e.getMessage());
         }
