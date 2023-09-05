@@ -5,7 +5,9 @@
 <?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.DatePicker?>
+<?import javafx.scene.control.Hyperlink?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Spinner?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.control.Tooltip?>
 <?import javafx.scene.image.ImageView?>
@@ -57,8 +59,8 @@
                   </Label>
                   <GridPane vgap="3.0">
                     <columnConstraints>
-                      <ColumnConstraints hgrow="SOMETIMES" maxWidth="355.0" minWidth="10.0" prefWidth="164.4000244140625" />
-                      <ColumnConstraints hgrow="SOMETIMES" maxWidth="672.39990234375" minWidth="10.0" prefWidth="523.5999755859375" />
+                      <ColumnConstraints hgrow="SOMETIMES" maxWidth="355.0" minWidth="10.0" prefWidth="178.2000244140625" />
+                      <ColumnConstraints hgrow="SOMETIMES" maxWidth="672.39990234375" minWidth="10.0" prefWidth="508.59997558593744" />
                         <ColumnConstraints hgrow="SOMETIMES" maxWidth="552.6001129150391" minWidth="10.0" prefWidth="40.4000244140625" />
                     </columnConstraints>
                     <rowConstraints>
@@ -66,7 +68,7 @@
                       <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                       <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="10.0" prefHeight="12.0" vgrow="SOMETIMES" />
                     </rowConstraints>
                      <children>
                         <Label text="Competition Name:" textFill="WHITE">
@@ -97,111 +99,36 @@
                         <Insets top="12.0" />
                      </VBox.margin>
                   </GridPane>
-                  <Label text="Competition Settings" textFill="WHITE">
+                  <Label text="Table Selection" textFill="WHITE">
                      <font>
                         <Font name="System Bold" size="18.0" />
                      </font>
                   </Label>
-                  <GridPane vgap="3.0">
+                  <GridPane>
                     <columnConstraints>
-                      <ColumnConstraints hgrow="SOMETIMES" maxWidth="1.7976931348623157E308" minWidth="164.4000244140625" prefWidth="164.4000244140625" />
-                      <ColumnConstraints hgrow="SOMETIMES" maxWidth="551.0000152587891" minWidth="10.0" prefWidth="522.9999755859375" />
-                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="551.0000152587891" minWidth="10.0" prefWidth="40.0" />
+                      <ColumnConstraints hgrow="SOMETIMES" maxWidth="358.199951171875" minWidth="10.0" prefWidth="181.7999755859375" />
+                      <ColumnConstraints hgrow="SOMETIMES" maxWidth="575.0" minWidth="10.0" prefWidth="503.40002441406256" />
+                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="575.0" minWidth="10.0" prefWidth="43.39999999999998" />
                     </columnConstraints>
                     <rowConstraints>
                       <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                       <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                       <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                        <RowConstraints maxHeight="30.400000000000006" minHeight="10.0" prefHeight="30.400000000000006" vgrow="SOMETIMES" />
+                        <RowConstraints maxHeight="30.400000000000006" minHeight="10.0" prefHeight="12.0" vgrow="SOMETIMES" />
                     </rowConstraints>
                      <children>
-                        <ComboBox fx:id="tableCombo" prefWidth="310.0" GridPane.columnIndex="1" />
                         <Label text="Table:" textFill="WHITE">
                            <font>
                               <Font size="14.0" />
                            </font>
                         </Label>
-                        <Label text="Start Date:" textFill="WHITE" GridPane.rowIndex="4">
+                        <ComboBox fx:id="tableCombo" prefWidth="310.0" GridPane.columnIndex="1" />
+                        <Label text="VPS Link:" textFill="WHITE" GridPane.rowIndex="1">
                            <font>
                               <Font size="14.0" />
                            </font>
                         </Label>
-                        <Label text="End Date:" textFill="WHITE" GridPane.rowIndex="5">
-                           <font>
-                              <Font size="14.0" />
-                           </font>
-                        </Label>
-                        <HBox alignment="CENTER_LEFT" spacing="6.0" GridPane.columnIndex="1" GridPane.rowIndex="4">
-                           <children>
-                              <DatePicker fx:id="startDatePicker" />
-                              <ComboBox fx:id="startTime" prefWidth="100.0" />
-                           </children>
-                        </HBox>
-                        <HBox alignment="CENTER_LEFT" spacing="6.0" GridPane.columnIndex="1" GridPane.rowIndex="5">
-                           <children>
-                              <DatePicker fx:id="endDatePicker" />
-                              <ComboBox fx:id="endTime" prefWidth="100.0" />
-                           </children>
-                        </HBox>
-                        <Label text="Duration:" textFill="WHITE" GridPane.rowIndex="6">
-                           <font>
-                              <Font size="14.0" />
-                           </font>
-                        </Label>
-                        <Label fx:id="durationLabel" text="-" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="6">
-                           <font>
-                              <Font size="14.0" />
-                           </font>
-                        </Label>
-                        <Label layoutX="10.0" layoutY="15.0" text="Strict Table Checking:" textFill="WHITE" GridPane.rowIndex="3">
-                           <font>
-                              <Font size="14.0" />
-                           </font>
-                        </Label>
-                        <HBox alignment="CENTER_LEFT" spacing="6.0" GridPane.columnIndex="1" GridPane.rowIndex="3">
-                           <children>
-                              <CheckBox fx:id="strictCheckCheckbox" mnemonicParsing="false" textFill="WHITE">
-                                 <font>
-                                    <Font size="14.0" />
-                                 </font>
-                              </CheckBox>
-                              <Label textFill="WHITE">
-                                 <font>
-                                    <Font size="14.0" />
-                                 </font>
-                                 <graphic>
-                                    <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
-                                 </graphic>
-                                 <tooltip>
-                                    <Tooltip prefWidth="300.0" text="If checked, the table filesize must match with selected table +/- 1kb. Otherwise it is only checked if players playing the competition with a table, that has the same ROM name." wrapText="true" />
-                                 </tooltip>
-                              </Label>
-                           </children>
-                        </HBox>
-                        <Label layoutX="10.0" layoutY="150.0" text="VPS Link:" textFill="WHITE" GridPane.rowIndex="1">
-                           <font>
-                              <Font size="14.0" />
-                           </font>
-                        </Label>
-                        <Label layoutX="10.0" layoutY="184.0" text="Download Link:" textFill="WHITE" GridPane.rowIndex="2">
-                           <font>
-                              <Font size="14.0" />
-                           </font>
-                        </Label>
-                        <TextField fx:id="downloadLinkField" editable="false" GridPane.columnIndex="1" GridPane.rowIndex="2">
-                           <font>
-                              <Font size="14.0" />
-                           </font>
-                        </TextField>
-                        <TextField fx:id="vpsLinkField" editable="false" layoutX="189.0" layoutY="212.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
-                           <font>
-                              <Font size="14.0" />
-                           </font>
-                        </TextField>
                         <Label textFill="WHITE" GridPane.columnIndex="2" GridPane.rowIndex="1">
                            <font>
                               <Font size="14.0" />
@@ -216,6 +143,11 @@
                               <Insets left="6.0" />
                            </GridPane.margin>
                         </Label>
+                        <Label text="Download Link:" textFill="WHITE" GridPane.rowIndex="2">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Label>
                         <Label textFill="WHITE" GridPane.columnIndex="2" GridPane.rowIndex="2">
                            <font>
                               <Font size="14.0" />
@@ -229,6 +161,96 @@
                            <GridPane.margin>
                               <Insets left="6.0" />
                            </GridPane.margin>
+                        </Label>
+                        <Hyperlink fx:id="vpsLinkField" onAction="#onLinkClick" text="Hyperlink" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                        <Hyperlink fx:id="downloadLinkField" onAction="#onLinkClick" text="Hyperlink" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                     </children>
+                  </GridPane>
+                  <Label layoutX="10.0" layoutY="214.0" text="Score Settings" textFill="WHITE">
+                     <font>
+                        <Font name="System Bold" size="18.0" />
+                     </font>
+                  </Label>
+                  <GridPane>
+                    <columnConstraints>
+                      <ColumnConstraints hgrow="SOMETIMES" maxWidth="358.2000732421875" minWidth="10.0" prefWidth="178.4" />
+                      <ColumnConstraints hgrow="SOMETIMES" maxWidth="548.0" minWidth="10.0" prefWidth="548.0" />
+                    </columnConstraints>
+                    <rowConstraints>
+                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="10.0" prefHeight="12.0" vgrow="SOMETIMES" />
+                    </rowConstraints>
+                     <children>
+                        <Label text="Score Validation:" textFill="WHITE">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Label>
+                        <HBox alignment="CENTER_LEFT" spacing="6.0" GridPane.columnIndex="1">
+                           <children>
+                              <ComboBox fx:id="scoreValidation" prefHeight="30.0" prefWidth="511.0" />
+                           </children>
+                        </HBox>
+                        <Label layoutX="10.0" layoutY="15.0" text="Score Limit:" textFill="WHITE" GridPane.rowIndex="1">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Label>
+                        <Label styleClass="preference-description" text="Selects the amount of scores to be stored for the competition." textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                        <Spinner fx:id="scoreLimit" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                     </children>
+                  </GridPane>
+                  <Label layoutX="10.0" layoutY="214.0" text="Duration" textFill="WHITE">
+                     <font>
+                        <Font name="System Bold" size="18.0" />
+                     </font>
+                  </Label>
+                  <GridPane vgap="3.0">
+                    <columnConstraints>
+                      <ColumnConstraints hgrow="SOMETIMES" maxWidth="1.7976931348623157E308" minWidth="164.4000244140625" prefWidth="177.600048828125" />
+                      <ColumnConstraints hgrow="SOMETIMES" maxWidth="551.0000152587891" minWidth="10.0" prefWidth="509.399951171875" />
+                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="551.0000152587891" minWidth="10.0" prefWidth="40.0" />
+                    </columnConstraints>
+                    <rowConstraints>
+                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="10.0" prefHeight="24.0" vgrow="SOMETIMES" />
+                    </rowConstraints>
+                     <children>
+                        <Label text="Start Date:" textFill="WHITE">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Label>
+                        <Label text="End Date:" textFill="WHITE" GridPane.rowIndex="1">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Label>
+                        <HBox alignment="CENTER_LEFT" spacing="6.0" GridPane.columnIndex="1">
+                           <children>
+                              <DatePicker fx:id="startDatePicker" />
+                              <ComboBox fx:id="startTime" prefWidth="100.0" />
+                           </children>
+                        </HBox>
+                        <HBox alignment="CENTER_LEFT" spacing="6.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                           <children>
+                              <DatePicker fx:id="endDatePicker" />
+                              <ComboBox fx:id="endTime" prefWidth="100.0" />
+                           </children>
+                        </HBox>
+                        <Label text="Duration:" textFill="WHITE" GridPane.rowIndex="2">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Label>
+                        <Label fx:id="durationLabel" text="-" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
                         </Label>
                      </children>
                      <VBox.margin>

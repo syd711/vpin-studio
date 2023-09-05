@@ -18,7 +18,6 @@ import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.StudioFXController;
 import de.mephisto.vpin.ui.WaitOverlayController;
 import de.mephisto.vpin.ui.competitions.validation.CompetitionValidationTexts;
-import de.mephisto.vpin.ui.tables.validation.GameValidationTexts;
 import de.mephisto.vpin.ui.util.Dialogs;
 import de.mephisto.vpin.ui.util.LocalizedValidation;
 import javafx.application.Platform;
@@ -144,14 +143,13 @@ public class CompetitionsDiscordController implements Initializable, StudioFXCon
   private void onCompetitionCreate() {
     CompetitionRepresentation c = Dialogs.openDiscordCompetitionDialog(this.competitions, null);
     if (c != null) {
-      CompetitionRepresentation newCmp = null;
       try {
-        newCmp = client.getCompetitionService().saveCompetition(c);
+        CompetitionRepresentation newCmp = client.getCompetitionService().saveCompetition(c);
+        onReload();
+        tableView.getSelectionModel().select(newCmp);
       } catch (Exception e) {
         WidgetFactory.showAlert(Studio.stage, e.getMessage());
       }
-      onReload();
-      tableView.getSelectionModel().select(newCmp);
     }
   }
 
@@ -418,7 +416,7 @@ public class CompetitionsDiscordController implements Initializable, StudioFXCon
       List<DiscordChannel> discordChannels = client.getDiscordService().getDiscordChannels(value.getDiscordServerId());
       Optional<DiscordChannel> first = discordChannels.stream().filter(channel -> channel.getId() == value.getDiscordChannelId()).findFirst();
       String status = "- Not Found -";
-      if(first.isPresent()) {
+      if (first.isPresent()) {
         status = first.get().getName();
       }
       Label label = new Label(status);
@@ -572,7 +570,7 @@ public class CompetitionsDiscordController implements Initializable, StudioFXCon
 
     boolean disable = newSelection == null;
     boolean isOwner = newSelection != null && newSelection.getOwner().equals(String.valueOf(this.discordBotId));
-    editBtn.setDisable(disable || !isOwner || newSelection.isActive() || newSelection.isFinished());
+    editBtn.setDisable(disable || !isOwner || newSelection.isFinished());
     finishBtn.setDisable(disable || !isOwner || !newSelection.isActive());
     deleteBtn.setDisable(disable);
     duplicateBtn.setDisable(disable || !isOwner);

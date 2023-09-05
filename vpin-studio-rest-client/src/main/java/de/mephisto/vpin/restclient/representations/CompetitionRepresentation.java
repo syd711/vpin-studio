@@ -19,6 +19,8 @@ public class CompetitionRepresentation {
 
   private int gameId;
 
+  private int scoreLimit;
+
   private String badge;
 
   private String type;
@@ -46,6 +48,14 @@ public class CompetitionRepresentation {
   private boolean highscoreReset;
 
   private String rom;
+
+  public int getScoreLimit() {
+    return scoreLimit;
+  }
+
+  public void setScoreLimit(int scoreLimit) {
+    this.scoreLimit = scoreLimit;
+  }
 
   private ValidationState validationState = new ValidationState();
 

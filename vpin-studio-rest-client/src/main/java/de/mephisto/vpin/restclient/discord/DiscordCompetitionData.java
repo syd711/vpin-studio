@@ -15,6 +15,24 @@ public class DiscordCompetitionData {
   private String tname;
   private String mode;
   private long msgId;
+  private int scrL;
+  private String chksm;
+
+  public String getChksm() {
+    return chksm;
+  }
+
+  public void setChksm(String chksm) {
+    this.chksm = chksm;
+  }
+
+  public int getScrL() {
+    return scrL;
+  }
+
+  public void setScrL(int scrL) {
+    this.scrL = scrL;
+  }
 
   public String getMode() {
     return mode;

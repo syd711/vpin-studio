@@ -36,12 +36,14 @@ public class Competition {
   @Column(name = "highscoreReset", nullable = false, columnDefinition = "boolean default true")
   private boolean highscoreReset;
 
-
   private String uuid = UUID.randomUUID().toString();
 
   private String winnerInitials;
 
   private int gameId;
+
+  @Column(name = "scoreLimit", nullable = false, columnDefinition = "integer default 5")
+  private int scoreLimit;
 
   private String type;
 
@@ -69,6 +71,14 @@ public class Competition {
 
   @Transient
   private ValidationState validationState;
+
+  public int getScoreLimit() {
+    return scoreLimit;
+  }
+
+  public void setScoreLimit(int scoreLimit) {
+    this.scoreLimit = scoreLimit;
+  }
 
   public ValidationState getValidationState() {
     return validationState;

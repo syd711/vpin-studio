@@ -110,7 +110,7 @@ public class TablesSidebarMameController implements Initializable {
           desktop.open(file);
         }
       } catch (Exception e) {
-        LOG.error("Failed to open Mame Setup: " + e.getMessage(), e);
+        LOG.error("Failed to open Mame Setup: " + e.getMessage());
       }
     }
   }

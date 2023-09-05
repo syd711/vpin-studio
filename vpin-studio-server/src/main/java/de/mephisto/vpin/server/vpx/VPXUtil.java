@@ -1,5 +1,7 @@
 package de.mephisto.vpin.server.vpx;
 
+import de.mephisto.vpin.server.games.Game;
+import de.mephisto.vpin.server.util.MD5ChecksumUtil;
 import de.mephisto.vpin.server.util.VPXFileScanner;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import org.apache.commons.lang3.ArrayUtils;
@@ -143,6 +145,14 @@ public class VPXUtil {
         LOG.error("Failed to close vpx file stream: " + e.getMessage(), e);
       }
     }
+  }
+
+  public static String getChecksum(File gameFile) {
+    if (gameFile.exists()) {
+      String s = readScript(gameFile);
+      return MD5ChecksumUtil.checksum(s);
+    }
+    throw new UnsupportedOperationException("No game file found");
   }
 
 

@@ -76,10 +76,13 @@ public class CompetitionDiscordJoinDialogController implements Initializable, Di
   private Label startDateLabel;
 
   @FXML
-  private Label endDateLabel;
+  private Label scoreLimitLabel;
 
   @FXML
-  private FontIcon joinMode;
+  private Label scoreValidationLabel;
+
+  @FXML
+  private Label endDateLabel;
 
   @FXML
   private Pane validationContainer;
@@ -266,12 +269,24 @@ public class CompetitionDiscordJoinDialogController implements Initializable, Di
     this.nameLabel.setText(this.discordCompetitionData.getName());
 
     String mode = this.discordCompetitionData.getMode();
-    if (!StringUtils.isEmpty(mode) && JoinMode.valueOf(mode).equals(JoinMode.STRICT)) {
-      this.joinMode.setIconLiteral("mdi2c-checkbox-intermediate");
+    if(StringUtils.isEmpty(mode)) {
+      this.scoreValidationLabel.setText(CompetitionDiscordDialogController.ROM_DESCRIPTION);
     }
-    else {
-      this.joinMode.setIconLiteral("mdi2c-checkbox-blank-outline");
+    else{
+      JoinMode m = JoinMode.valueOf(mode);
+      if(m.equals(JoinMode.ROM_ONLY)) {
+        this.scoreValidationLabel.setText(CompetitionDiscordDialogController.ROM_DESCRIPTION);
+      }
+      else if(m.equals(JoinMode.STRICT)) {
+        this.scoreValidationLabel.setText(CompetitionDiscordDialogController.STRICT_DESCRIPTION);
+      }
+      else {
+        this.scoreValidationLabel.setText(CompetitionDiscordDialogController.CHECKSUM_DESCRIPTION);
+      }
     }
+
+
+    this.scoreLimitLabel.setText(String.valueOf(this.discordCompetitionData.getScrL()));
 
     PlayerRepresentation discordPlayer = client.getDiscordService().getDiscordPlayer(server.getId(), Long.parseLong(this.discordCompetitionData.getOwner()));
     if (discordPlayer != null) {

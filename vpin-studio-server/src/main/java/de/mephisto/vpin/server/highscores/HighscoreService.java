@@ -293,10 +293,15 @@ public class HighscoreService implements InitializingBean {
 
   @NonNull
   public Optional<Highscore> getOrCreateHighscore(@NonNull Game game) {
-    Optional<Highscore> highscore = highscoreRepository.findByGameId(game.getId());
-    if (highscore.isEmpty() && !StringUtils.isEmpty(game.getRom())) {
-      HighscoreMetadata metadata = scanScore(game);
-      return updateHighscore(game, metadata);
+    Optional<Highscore> highscore = Optional.empty();
+    try {
+      highscore = highscoreRepository.findByGameId(game.getId());
+      if (highscore.isEmpty() && !StringUtils.isEmpty(game.getRom())) {
+        HighscoreMetadata metadata = scanScore(game);
+        return updateHighscore(game, metadata);
+      }
+    } catch (Exception e) {
+      LOG.error("Error updating highscores for \"" + game.getGameDisplayName() + "\"/" + game.getId() + ": " + e.getMessage(), e);
     }
     return highscore;
   }
@@ -346,7 +351,7 @@ public class HighscoreService implements InitializingBean {
         emptyRaw.append("\n");
       }
       newHighscore.setRaw(emptyRaw.toString());
-      Highscore updatedNewHighScore = highscoreRepository.save(newHighscore);
+      Highscore updatedNewHighScore = highscoreRepository.saveAndFlush(newHighscore);
 
       HighscoreVersion highscoreVersion = newHighscore.toVersion(-1, emptyRaw.toString());
       //!!! this is the first highscore version, so the old RAW value must be corrected to NULL
