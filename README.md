@@ -22,6 +22,8 @@ Please see:
 
 https://github.com/syd711/vpin-studio/wiki#getting-started
 
+https://www.youtube.com/playlist?list=PLAj7pVPcXGXah8oIOxPeHaZwwPB0XvE5b
+
 ## How To Update
 
 Please see: 
