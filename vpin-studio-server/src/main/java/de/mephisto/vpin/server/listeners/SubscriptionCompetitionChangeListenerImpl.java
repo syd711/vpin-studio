@@ -139,7 +139,7 @@ public class SubscriptionCompetitionChangeListenerImpl extends DefaultCompetitio
                 subscriptionRom = g.getTableName();
               }
 
-              if (subscriptionRom != null && subscriptionRom.equals(rom)) {
+              if (subscriptionRom != null && subscriptionRom.equalsIgnoreCase(rom)) {
                 count++;
               }
             }
