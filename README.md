@@ -22,7 +22,7 @@ Please see:
 
 https://github.com/syd711/vpin-studio/wiki#getting-started
 
-https://www.youtube.com/playlist?list=PLAj7pVPcXGXah8oIOxPeHaZwwPB0XvE5b
+<iframe width="560" height="315" src="https://www.youtube.com/embed/videoseries?si=lQ7azsP0VVE0cFZJ&amp;list=PLAj7pVPcXGXah8oIOxPeHaZwwPB0XvE5b" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
 
 ## How To Update
 
