@@ -93,15 +93,27 @@ public class HighscoreParser {
 
   @Nullable
   private Score createTitledScore(@NonNull Date createdAt, @NonNull String line, int gameId, long serverId) {
-    String initials = line.trim().substring(0, 3);
-    String scoreString = line.substring(4).trim();
-    double scoreValue = toNumericScore(scoreString);
+    String initials = "???";
+    if (line.trim().length() >= 3) {
+      initials = line.trim().substring(0, 3);
+
+      String scoreString = line.substring(4).trim();
+      double scoreValue = toNumericScore(scoreString);
+      if (scoreValue == -1) {
+        return null;
+      }
+
+      Player player = playerService.getPlayerForInitials(serverId, initials);
+      return new Score(createdAt, gameId, initials, player, scoreString, scoreValue, 1);
+    }
+
+    double scoreValue = toNumericScore(line.trim());
     if (scoreValue == -1) {
       return null;
     }
 
     Player player = playerService.getPlayerForInitials(serverId, initials);
-    return new Score(createdAt, gameId, initials, player, scoreString, scoreValue, 1);
+    return new Score(createdAt, gameId, initials, player, line.trim(), scoreValue, 1);
   }
 
   @Nullable

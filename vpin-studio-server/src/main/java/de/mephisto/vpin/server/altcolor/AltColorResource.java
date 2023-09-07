@@ -1,6 +1,6 @@
 package de.mephisto.vpin.server.altcolor;
 
-import de.mephisto.vpin.restclient.AltColor;
+import de.mephisto.vpin.restclient.representations.altcolor.AltColor;
 import de.mephisto.vpin.restclient.jobs.JobExecutionResult;
 import de.mephisto.vpin.restclient.jobs.JobExecutionResultFactory;
 import de.mephisto.vpin.server.games.Game;

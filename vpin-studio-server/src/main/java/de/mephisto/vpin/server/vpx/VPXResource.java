@@ -3,6 +3,7 @@ package de.mephisto.vpin.server.vpx;
 import de.mephisto.vpin.commons.POV;
 import de.mephisto.vpin.restclient.jobs.JobExecutionResult;
 import de.mephisto.vpin.restclient.jobs.JobExecutionResultFactory;
+import de.mephisto.vpin.restclient.representations.vpx.TableInfo;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameService;
 import de.mephisto.vpin.server.util.UploadUtil;
@@ -35,6 +36,11 @@ public class VPXResource {
   @GetMapping("/script/{id}")
   public String script(@PathVariable("id") int id) {
     return vpxService.getScript(id);
+  }
+
+  @GetMapping("/tableinfo/{id}")
+  public TableInfo tableInfo(@PathVariable("id") int id) {
+    return vpxService.getTableInfo(id);
   }
 
   @GetMapping("/sources/{id}")

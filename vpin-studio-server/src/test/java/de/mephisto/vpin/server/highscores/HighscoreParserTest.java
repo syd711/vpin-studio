@@ -14,7 +14,6 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest
 public class HighscoreParserTest extends AbstractVPinServerTest {
 
-
   private String RAW1 = "5 MULTIBALLS CHAMPS\n" +
       "1) JEK\n" +
       "2) JEK\n" +
@@ -172,6 +171,15 @@ public class HighscoreParserTest extends AbstractVPinServerTest {
       "BEST COMBO CHAMPION\n" +
       "LON   5-WAY\n";
 
+  private String blankValues = "CHAMPION\n" +
+      "               0\n" +
+      "\n" +
+      "HIGHEST SCORES\n" +
+      "1) JCY    6,000,000\n" +
+      "2) JRK    5,500,000\n" +
+      "3) CPG    5,000,000\n" +
+      "4) PFZ    4,500,000";
+
   private final List<String> testlings = Arrays.asList(RAW1, RAW2, RAW3, RAW4, RAW5);
 
   @Test
@@ -186,6 +194,13 @@ public class HighscoreParserTest extends AbstractVPinServerTest {
   @Test
   public void testSingleton() {
     List<Score> test = highscoreParser.parseScores(new Date(), singleton, -1, -1l);
+    assertFalse(test.isEmpty());
+    assertTrue(test.size() > 3);
+  }
+
+  @Test
+  public void testBlankScores() {
+    List<Score> test = highscoreParser.parseScores(new Date(), blankValues, -1, -1l);
     assertFalse(test.isEmpty());
     assertTrue(test.size() > 3);
   }

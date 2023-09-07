@@ -2,7 +2,7 @@ package de.mephisto.vpin.ui.tables;
 
 import de.mephisto.vpin.commons.utils.FileUtils;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
-import de.mephisto.vpin.restclient.AltSound;
+import de.mephisto.vpin.restclient.representations.altsound.AltSound;
 import de.mephisto.vpin.restclient.representations.GameRepresentation;
 import de.mephisto.vpin.restclient.representations.ValidationState;
 import de.mephisto.vpin.ui.Studio;

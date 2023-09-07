@@ -1,8 +1,8 @@
 package de.mephisto.vpin.server.games;
 
 import de.mephisto.vpin.commons.utils.AltColorAnalyzer;
-import de.mephisto.vpin.restclient.AltColor;
-import de.mephisto.vpin.restclient.AltColorTypes;
+import de.mephisto.vpin.restclient.representations.altcolor.AltColor;
+import de.mephisto.vpin.restclient.representations.altcolor.AltColorTypes;
 import de.mephisto.vpin.restclient.GameValidationCode;
 import de.mephisto.vpin.restclient.mame.MameOptions;
 import de.mephisto.vpin.restclient.popper.EmulatorType;

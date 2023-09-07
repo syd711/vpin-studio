@@ -1,7 +1,7 @@
 package de.mephisto.vpin.ui.tables;
 
 import de.mephisto.vpin.commons.utils.WidgetFactory;
-import de.mephisto.vpin.restclient.AltColor;
+import de.mephisto.vpin.restclient.representations.altcolor.AltColor;
 import de.mephisto.vpin.restclient.SystemSummary;
 import de.mephisto.vpin.restclient.representations.GameRepresentation;
 import de.mephisto.vpin.restclient.representations.ValidationState;

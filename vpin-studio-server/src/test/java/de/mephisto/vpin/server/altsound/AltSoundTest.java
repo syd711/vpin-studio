@@ -1,7 +1,7 @@
 package de.mephisto.vpin.server.altsound;
 
-import de.mephisto.vpin.restclient.AltSound;
-import de.mephisto.vpin.restclient.AltSoundEntry;
+import de.mephisto.vpin.restclient.representations.altsound.AltSound;
+import de.mephisto.vpin.restclient.representations.altsound.AltSoundEntry;
 import org.junit.Before;
 import org.junit.Test;
 

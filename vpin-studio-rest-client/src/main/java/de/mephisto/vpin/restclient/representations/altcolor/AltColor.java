@@ -1,4 +1,4 @@
-package de.mephisto.vpin.restclient;
+package de.mephisto.vpin.restclient.representations.altcolor;
 
 import de.mephisto.vpin.restclient.representations.ValidationState;
 

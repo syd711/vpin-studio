@@ -14,4 +14,8 @@
 
 **Bugfixes**
 
-- Fixed database lock exception: Fixed an exception that occured for competitions with VPReg.stg scores.
+- Fixed database lock exception: Fixed possible error on competitions creations.
+- Fixed table overview refresh error, that happen when a table was selected and the highscore was re-scanned.
+- Fixed wrong ERROR message on highscore exports.
+- Fixed highscore parsing issue when the first place was resetted to an empty value (no name at all).
+- 

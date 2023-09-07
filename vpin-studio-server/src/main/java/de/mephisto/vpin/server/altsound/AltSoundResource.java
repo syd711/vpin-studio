@@ -1,6 +1,6 @@
 package de.mephisto.vpin.server.altsound;
 
-import de.mephisto.vpin.restclient.AltSound;
+import de.mephisto.vpin.restclient.representations.altsound.AltSound;
 import de.mephisto.vpin.restclient.jobs.JobExecutionResult;
 import de.mephisto.vpin.restclient.jobs.JobExecutionResultFactory;
 import de.mephisto.vpin.server.games.Game;

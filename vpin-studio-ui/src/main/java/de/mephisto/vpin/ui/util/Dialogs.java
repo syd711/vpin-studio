@@ -2,7 +2,7 @@ package de.mephisto.vpin.ui.util;
 
 import de.mephisto.vpin.commons.fx.ConfirmationResult;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
-import de.mephisto.vpin.restclient.AltSound;
+import de.mephisto.vpin.restclient.representations.altsound.AltSound;
 import de.mephisto.vpin.restclient.IniSettings;
 import de.mephisto.vpin.restclient.SystemData;
 import de.mephisto.vpin.restclient.client.VPinStudioClient;

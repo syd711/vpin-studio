@@ -1,4 +1,4 @@
-package de.mephisto.vpin.restclient;
+package de.mephisto.vpin.restclient.representations.altsound;
 
 import org.apache.commons.lang3.StringUtils;
 

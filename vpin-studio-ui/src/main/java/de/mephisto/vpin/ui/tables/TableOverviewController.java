@@ -437,8 +437,10 @@ public class TableOverviewController implements Initializable, StudioFXControlle
       for (GameRepresentation g : gamesByRom) {
         GameRepresentation refreshedGame = client.getGameService().getGame(g.getId());
         int index = data.indexOf(refreshedGame);
-        data.remove(index);
-        data.add(index, refreshedGame);
+        if(index != -1) {
+          data.remove(index);
+          data.add(index, refreshedGame);
+        }
       }
 
       if (selection != null) {

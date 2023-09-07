@@ -2,6 +2,7 @@ package de.mephisto.vpin.server.vpx;
 
 import de.mephisto.vpin.commons.POV;
 import de.mephisto.vpin.commons.utils.FileUtils;
+import de.mephisto.vpin.restclient.representations.vpx.TableInfo;
 import de.mephisto.vpin.server.VPinStudioException;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameService;
@@ -137,6 +138,19 @@ public class VPXService {
 
     }
     LOG.error("No game found for script extraction, id " + gameId);
+    return null;
+  }
+
+  public TableInfo getTableInfo(int gameId) {
+    Game game = gameService.getGame(gameId);
+    if (game != null) {
+      File gameFile = game.getGameFile();
+      if (gameFile.exists()) {
+        Map<String, String> values = VPXUtil.readTableInfo(gameFile);
+        return new TableInfo(values);
+      }
+    }
+    LOG.error("No game found for table info, id " + gameId);
     return null;
   }
 
