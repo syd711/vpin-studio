@@ -158,7 +158,7 @@ public class TablesSidebarVpsController implements Initializable, AutoCompleteTe
   @Override
   public void onChange(String value) {
     List<VpsTable> tables = VPS.getInstance().getTables();
-    Optional<VpsTable> selectedEntry = tables.stream().filter(t -> t.getName().equals(value)).findFirst();
+    Optional<VpsTable> selectedEntry = tables.stream().filter(t -> t.getName().equalsIgnoreCase(value)).findFirst();
     if (selectedEntry.isPresent()) {
       VpsTable vpsTable = selectedEntry.get();
       refreshTableView(vpsTable);

@@ -190,7 +190,7 @@
                         </Label>
                         <HBox alignment="CENTER_LEFT" spacing="6.0" GridPane.columnIndex="1">
                            <children>
-                              <ComboBox fx:id="scoreValidation" prefHeight="30.0" prefWidth="511.0" />
+                              <ComboBox fx:id="scoreValidation" prefHeight="30.0" prefWidth="331.0" />
                            </children>
                         </HBox>
                         <Label layoutX="10.0" layoutY="15.0" text="Score Limit:" textFill="WHITE" GridPane.rowIndex="1">

@@ -189,11 +189,11 @@ public class SubscriptionDialogController implements Initializable, DialogContro
         continue;
       }
 
-      if (all.stream().anyMatch(c -> game.getRom().equals(c.getRom()))) {
+      if (all.stream().anyMatch(c -> game.getRom().equalsIgnoreCase(c.getRom()))) {
         continue;
       }
 
-      if (game.getEmulator().getName().equals(EmulatorType.VISUAL_PINBALL_X)) {
+      if (game.getEmulator().getName().equalsIgnoreCase(EmulatorType.VISUAL_PINBALL_X)) {
         filtered.add(game);
       }
     }

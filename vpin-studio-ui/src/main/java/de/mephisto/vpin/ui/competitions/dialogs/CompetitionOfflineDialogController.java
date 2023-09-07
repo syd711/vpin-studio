@@ -160,7 +160,7 @@ public class CompetitionOfflineDialogController implements Initializable, Dialog
     List<GameRepresentation> games = client.getGameService().getGamesCached();
     List<GameRepresentation> filtered = new ArrayList<>();
     for (GameRepresentation game : games) {
-      if (game.getEmulator().getName().equals(EmulatorType.VISUAL_PINBALL_X)) {
+      if (game.getEmulator().getName().equalsIgnoreCase(EmulatorType.VISUAL_PINBALL_X)) {
         filtered.add(game);
       }
     }

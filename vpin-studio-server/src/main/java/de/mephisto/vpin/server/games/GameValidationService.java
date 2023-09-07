@@ -72,7 +72,7 @@ public class GameValidationService implements InitializingBean {
 
   public ValidationState validate(@NonNull Game game) {
     boolean isVPX = Emulator.isVisualPinball(game.getEmulator().getName());
-    boolean isFP = game.getEmulator().getName().equals(EmulatorType.FUTURE_PINBALL);
+    boolean isFP = game.getEmulator().getName().equalsIgnoreCase(EmulatorType.FUTURE_PINBALL);
 
     if (isVPX && isValidationEnabled(game, CODE_VPX_NOT_EXISTS)) {
       if (!game.getGameFile().exists()) {

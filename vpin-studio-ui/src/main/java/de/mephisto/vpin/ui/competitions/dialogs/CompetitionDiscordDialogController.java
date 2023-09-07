@@ -59,7 +59,7 @@ public class CompetitionDiscordDialogController implements Initializable, Dialog
   private final Debouncer debouncer = new Debouncer();
 
   public final static String ROM_DESCRIPTION = "ROM Name Check";
-  public final static String STRICT_DESCRIPTION = "ROM Name and VPX File Size Check (+/- 1kb)";
+  public final static String STRICT_DESCRIPTION = "ROM Name and VPX File Size Check (+/- 1MB)";
   public final static String CHECKSUM_DESCRIPTION = "ROM Name and VPX Script Checksum Check";
 
   public final static JoinModel ROM_ONLY = new JoinModel(JoinMode.ROM_ONLY, ROM_DESCRIPTION);
@@ -395,6 +395,7 @@ public class CompetitionDiscordDialogController implements Initializable, Dialog
 
       this.validationContainer.setVisible(editable);
     }
+    validate();
   }
 
   private void refreshVPS(GameRepresentation game) {
@@ -509,7 +510,7 @@ public class CompetitionDiscordDialogController implements Initializable, Dialog
       if (StringUtils.isEmpty(game.getRom())) {
         continue;
       }
-      if (game.getEmulator().getName().equals(EmulatorType.VISUAL_PINBALL_X)) {
+      if (game.getEmulator().getName().equalsIgnoreCase(EmulatorType.VISUAL_PINBALL_X)) {
         filtered.add(game);
       }
     }

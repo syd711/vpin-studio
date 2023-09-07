@@ -245,6 +245,7 @@ public class CompetitionRepresentation {
     clone.setBadge(this.getBadge());
     clone.setType(this.getType());
     clone.setOwner(this.getOwner());
+    clone.setDiscordServerId(this.getDiscordServerId());
     clone.setDiscordChannelId(this.getDiscordChannelId());
     clone.setUuid(UUID.randomUUID().toString());
     clone.setGameId(this.getGameId());

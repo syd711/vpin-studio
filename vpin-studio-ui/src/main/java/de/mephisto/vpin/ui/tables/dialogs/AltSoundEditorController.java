@@ -287,11 +287,11 @@ public class AltSoundEditorController implements Initializable, DialogController
         continue;
       }
 
-      if (nameFilter != null && !entry.getName().equals(nameFilter)) {
+      if (nameFilter != null && !entry.getName().equalsIgnoreCase(nameFilter)) {
         continue;
       }
 
-      if (filenameFiler != null && !entry.getFilename().equals(filenameFiler)) {
+      if (filenameFiler != null && !entry.getFilename().equalsIgnoreCase(filenameFiler)) {
         continue;
       }
 

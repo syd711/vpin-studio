@@ -93,8 +93,8 @@ public class GameService {
     List<Game> games = this.getGames()
         .stream()
         .filter(g ->
-            (!StringUtils.isEmpty(g.getRom()) && g.getRom().equals(rom)) ||
-                (!StringUtils.isEmpty(g.getTableName()) && g.getTableName().equals(rom)))
+            (!StringUtils.isEmpty(g.getRom()) && g.getRom().equalsIgnoreCase(rom)) ||
+                (!StringUtils.isEmpty(g.getTableName()) && g.getTableName().equalsIgnoreCase(rom)))
         .collect(Collectors.toList());
     for (Game game : games) {
       applyGameDetails(game, false);
@@ -459,7 +459,7 @@ public class GameService {
     Game original = getGame(game.getId());
     //TODO check rom name import vs. scan
     //check if there is mismatch in the ROM name, overwrite popper value
-    if (original != null && !StringUtils.isEmpty(original.getRom()) && !StringUtils.isEmpty(game.getRom()) && !original.getRom().equals(game.getRom())) {
+    if (original != null && !StringUtils.isEmpty(original.getRom()) && !StringUtils.isEmpty(game.getRom()) && !original.getRom().equalsIgnoreCase(game.getRom())) {
       pinUPConnector.updateRom(game, game.getRom());
     }
 
