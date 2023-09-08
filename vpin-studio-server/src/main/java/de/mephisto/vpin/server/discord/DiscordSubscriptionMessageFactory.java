@@ -35,10 +35,11 @@ public class DiscordSubscriptionMessageFactory {
 
   public String createFirstSubscriptionHighscoreMessage(@NonNull Game game,
                                                         @NonNull Competition competition,
-                                                        @NonNull List<Score> scores) {
+                                                        @NonNull Score newScore,
+                                                        int scoreLimit) {
     String template = "Here is the " + HIGHSCORE_INDICATOR + "\n(ID: %s)\n";
     String msg = String.format(template, competition.getUuid());
-    return msg + createInitialHighscoreList(scores);
+    return msg + DiscordChannelMessageFactory.createInitialHighscoreList(newScore, scoreLimit);
   }
 
   public String createSubscriptionHighscoreCreatedMessage(@NonNull Game game,
@@ -53,7 +54,7 @@ public class DiscordSubscriptionMessageFactory {
     String msg = String.format(template, playerName, competition.getUuid(), newScore);
     msg = msg + getBeatenMessage(competition.getDiscordServerId(), oldScore, newScore);
 
-    return msg + "\nHere is the " + HIGHSCORE_INDICATOR + ":" + createHighscoreList(updatedScores);
+    return msg + "\nHere is the " + HIGHSCORE_INDICATOR + ":" + DiscordChannelMessageFactory.createHighscoreList(updatedScores);
   }
 
   public String createSubscriptionJoinedMessage(@NonNull Competition competition, @NonNull DiscordMember bot) {
@@ -92,45 +93,5 @@ public class DiscordSubscriptionMessageFactory {
 
     String beatenMessageTemplate = "%s, your highscore of %s points has been beaten.";
     return String.format(beatenMessageTemplate, oldName, oldScore.getScore());
-  }
-
-  private static String createHighscoreList(List<Score> scores) {
-    StringBuilder builder = new StringBuilder();
-    builder.append("```");
-    builder.append("Pos   Initials           Score\n");
-    builder.append("------------------------------\n");
-    int index = 0;
-    for (Score score : scores) {
-      index++;
-      builder.append("#");
-      builder.append(score.getPosition());
-      builder.append("   ");
-      builder.append(String.format("%4.4s", score.getPlayerInitials()));
-      builder.append("       ");
-      builder.append(String.format("%14.12s", score.getScore()));
-      builder.append("\n");
-    }
-    builder.append("```");
-
-    return builder.toString();
-  }
-
-  private static String createInitialHighscoreList(List<Score> scores) {
-    StringBuilder builder = new StringBuilder();
-    builder.append("```");
-    builder.append("Pos   Initials           Score\n");
-    builder.append("------------------------------\n");
-    for (Score score : scores) {
-      builder.append("#");
-      builder.append(score.getPosition());
-      builder.append("   ");
-      builder.append(String.format("%4.4s", score.getPlayerInitials()));
-      builder.append("       ");
-      builder.append(String.format("%14.12s", score.getScore()));
-      builder.append("\n");
-    }
-    builder.append("```");
-
-    return builder.toString();
   }
 }

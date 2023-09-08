@@ -37,6 +37,9 @@ public class DiscordCompetitionService {
   private DiscordChannelMessageFactory discordChannelMessageFactory;
 
   @Autowired
+  private DiscordSubscriptionMessageFactory discordSubscriptionMessageFactory;
+
+  @Autowired
   private HighscoreService highscoreService;
 
   @Autowired
@@ -65,83 +68,83 @@ public class DiscordCompetitionService {
    * @param competition     the online competition the score is for
    * @param competitionData the data stored on the channel
    */
-  public void runDiscordServerUpdate(@NotNull Game game, @NonNull Score newScore, @NonNull Competition competition, @Nullable DiscordCompetitionData competitionData) {
-    long discordServerId = competition.getDiscordServerId();
-    long discordChannelId = competition.getDiscordChannelId();
+  public void runDiscordServerUpdate(@NonNull Game game, @NonNull Score newScore, @NonNull Competition competition, @Nullable DiscordCompetitionData competitionData) {
     DiscordBotStatus botStatus = discordService.getStatus(competition.getDiscordServerId());
 
-    LOG.info("****** Processing Discord Highscore Change Event for " + game.getGameDisplayName() + " *********");
+    LOG.info("****** Processing Discord Highscore Change Event for " + game.getGameDisplayName() + " | " + competition.getType() + " *********");
     LOG.info("The new score: " + newScore);
-    if (competitionData == null) {
-      LOG.error("Failed to submit highscore, because no competion data was found.");
-      return;
-    }
-
-    String validationMsg = CompetitionScoreValidator.validate(competitionData, game);
+    String validationMsg = CompetitionScoreValidator.validate(competitionData, game, competition, newScore, botStatus);
     if (validationMsg != null) {
       LOG.error("Highscore Validation Error: " + validationMsg);
       return;
     }
 
-    if (newScore.getPlayerInitials().contains("?")) {
-      LOG.info("Highscore update has been skipped, initials with '?' are filtered.");
-    }
-    else if (!newScore.getPlayerInitials().equalsIgnoreCase(botStatus.getBotInitials())) {
-      LOG.info("Highscore update has been skipped, the initials '" + newScore.getPlayerInitials() + "' do not belong to the our bot ('" + botStatus.getBotInitials() + "').");
+    long discordServerId = competition.getDiscordServerId();
+    long discordChannelId = competition.getDiscordChannelId();
+    ScoreSummary discordScoreSummary = discordService.getScoreSummary(highscoreParser, competition.getUuid(), discordServerId, discordChannelId);
+    if (discordScoreSummary.getScores().isEmpty()) {
+      LOG.info("Emitting initial highscore message for " + competition);
+      int scoreLimit = 5;
+      if (competition.getScoreLimit() > 0) {
+        scoreLimit = competition.getScoreLimit();
+      }
+      String msg = createInitialHighscoreMessage(game, newScore, competition, scoreLimit);
+      long newHighscoreMessageId = discordService.sendMessage(discordServerId, discordChannelId, msg);
+      discordService.updateHighscoreMessage(discordServerId, discordChannelId, newHighscoreMessageId);
     }
     else {
-      ScoreSummary discordScoreSummary = discordService.getScoreSummary(highscoreParser, competition.getUuid(), discordServerId, discordChannelId);
-      if (discordScoreSummary.getScores().isEmpty()) {
-        LOG.info("Emitting initial highscore message for " + competition);
-        int scoreLimit = 5;
-        if (competition.getScoreLimit() > 0) {
-          scoreLimit = competition.getScoreLimit();
-        }
-        String msg = discordChannelMessageFactory.createFirstCompetitionHighscoreCreatedMessage(game, competition, newScore, scoreLimit);
-        long newHighscoreMessageId = discordService.sendMessage(discordServerId, discordChannelId, msg);
-        discordService.updateHighscoreMessage(discordServerId, discordChannelId, newHighscoreMessageId);
+      List<Score> oldScores = discordScoreSummary.getScores();
+      LOG.info("The current online score for " + competition + " (" + oldScores.size() + " entries):");
+      for (Score oldScore : oldScores) {
+        LOG.info("[" + oldScore + "]");
+      }
+
+      if (discordScoreSummary.contains(newScore)) {
+        LOG.info("The score " + newScore + " already exists in channels highscore list, skipping update");
+        return;
+      }
+
+      int position = highscoreService.calculateChangedPositionByScore(oldScores, newScore);
+      if (position == -1) {
+        LOG.info("No highscore change detected for " + game + " of discord competition '" + competition.getName() + "', skipping highscore message.");
       }
       else {
-        List<Score> oldScores = discordScoreSummary.getScores();
-        LOG.info("The current online score for " + competition + " (" + oldScores.size() + " entries):");
-        for (Score oldScore : oldScores) {
-          LOG.info("[" + oldScore + "]");
-        }
+        List<Score> updatedScores = new ArrayList<>(oldScores);
+        Score oldScore = oldScores.get(position - 1);
+        updatedScores.add(position - 1, newScore);
 
-        if(discordScoreSummary.contains(newScore)) {
-          LOG.info("The score " + newScore + " already exists in channels highscore list, skipping update");
-          return;
-        }
+        updatedScores = sanitizeScoreList(competition, updatedScores);
 
-        int position = highscoreService.calculateChangedPositionByScore(oldScores, newScore);
-        if (position == -1) {
-          LOG.info("No highscore change detected for " + game + " of discord competition '" + competition.getName() + "', skipping highscore message.");
-        }
-        else {
-          List<Score> updatedScores = new ArrayList<>(oldScores);
-          Score oldScore = oldScores.get(position - 1);
-          updatedScores.add(position - 1, newScore);
+        //update the player info for the server the message is emitted to
+        Player player = this.discordService.getPlayerByInitials(discordServerId, newScore.getPlayerInitials());
+        newScore.setPlayer(player);
 
-          updatedScores = sanitizeScoreList(competition, updatedScores);
-
-          //update the player info for the server the message is emitted to
-          Player player = this.discordService.getPlayerByInitials(discordServerId, newScore.getPlayerInitials());
-          newScore.setPlayer(player);
-
-          LOG.info("Emitting Discord highscore changed message for discord competition " + competition);
-          String msg = discordChannelMessageFactory.createCompetitionHighscoreCreatedMessage(game, competition, oldScore, newScore, updatedScores);
-          long newHighscoreMessageId = discordService.sendMessage(discordServerId, discordChannelId, msg);
-          discordService.updateHighscoreMessage(discordServerId, discordChannelId, newHighscoreMessageId);
-        }
+        LOG.info("Emitting Discord highscore changed message for discord competition " + competition);
+        String msg = createHighscoreMessage(game, newScore, competition, updatedScores, oldScore);
+        long newHighscoreMessageId = discordService.sendMessage(discordServerId, discordChannelId, msg);
+        discordService.updateHighscoreMessage(discordServerId, discordChannelId, newHighscoreMessageId);
       }
     }
     LOG.info("***************** / Finished Discord Highscore Processing *********************");
   }
 
+  private String createHighscoreMessage(@NotNull Game game, @NotNull Score newScore, @NotNull Competition competition, List<Score> updatedScores, Score oldScore) {
+    if (competition.getType().equalsIgnoreCase(CompetitionType.SUBSCRIPTION.name())) {
+      return discordSubscriptionMessageFactory.createSubscriptionHighscoreCreatedMessage(game, competition, oldScore, newScore, updatedScores);
+    }
+    return discordChannelMessageFactory.createCompetitionHighscoreCreatedMessage(game, competition, oldScore, newScore, updatedScores);
+  }
+
+  private String createInitialHighscoreMessage(@NotNull Game game, @NotNull Score newScore, @NotNull Competition competition, int scoreLimit) {
+    if (competition.getType().equalsIgnoreCase(CompetitionType.SUBSCRIPTION.name())) {
+      return discordSubscriptionMessageFactory.createFirstSubscriptionHighscoreMessage(game, competition,  newScore, scoreLimit);
+    }
+    return discordChannelMessageFactory.createFirstCompetitionHighscoreCreatedMessage(game, competition, newScore, scoreLimit);
+  }
+
 
   private List<Score> sanitizeScoreList(Competition competition, List<Score> updatedScores) {
     int index = 1;
-    int originalScoreCount = updatedScores.size();
 
     //filter duplicates
     List<Score> sanitized = new ArrayList<>();

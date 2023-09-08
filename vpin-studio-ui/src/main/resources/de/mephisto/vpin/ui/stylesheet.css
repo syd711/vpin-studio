@@ -599,9 +599,9 @@
  */
 .info-container {
     -fx-border-style: solid solid solid solid;
-    -fx-border-color: #000000;
+    -fx-border-color: #FFFFFF;
     -fx-border-width: 1;
-    -fx-padding: 12 12 12 12;
+    -fx-border-radius: 3px;
     -fx-background-color: -fx-info-background;
 }
 

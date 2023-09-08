@@ -337,7 +337,8 @@ public class CompetitionDiscordDialogController implements Initializable, Dialog
       competitionIconCombo.setDisable(!editable);
       scoreValidation.setDisable(!editable);
 
-      String joinMode = this.competition.getJoinMode();
+
+      String joinMode = selectedCompetition.getJoinMode();
       if (StringUtils.isEmpty(joinMode)) {
         this.scoreValidation.setValue(ROM_ONLY);
       }
@@ -355,6 +356,7 @@ public class CompetitionDiscordDialogController implements Initializable, Dialog
       }
 
       scoreLimit.setDisable(!editable);
+      scoreLimit.getValueFactory().valueProperty().set(selectedCompetition.getScoreLimit());
 
       this.nameField.setText(selectedCompetition.getName());
       this.nameField.setDisable(!editable);

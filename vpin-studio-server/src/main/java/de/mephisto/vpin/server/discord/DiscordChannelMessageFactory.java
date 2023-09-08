@@ -131,7 +131,7 @@ public class DiscordChannelMessageFactory {
     return String.format(beatenMessageTemplate, oldName, oldScore.getScore());
   }
 
-  private static String createHighscoreList(List<Score> scores) {
+  public static String createHighscoreList(List<Score> scores) {
     StringBuilder builder = new StringBuilder();
     builder.append("```");
     builder.append("Pos   Initials           Score\n");
@@ -153,7 +153,7 @@ public class DiscordChannelMessageFactory {
     return builder.toString();
   }
 
-  private static String createInitialHighscoreList(Score score, int length) {
+  public static String createInitialHighscoreList(Score score, int length) {
     StringBuilder builder = new StringBuilder();
     builder.append("```");
     builder.append("Pos   Initials           Score\n");

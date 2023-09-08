@@ -5,7 +5,6 @@
 <?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
-<?import javafx.scene.control.TitledPane?>
 <?import javafx.scene.control.Tooltip?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.BorderPane?>
@@ -344,18 +343,21 @@
             </BorderPane>
          </bottom>
          <top>
-            <TitledPane text="Rules" BorderPane.alignment="CENTER">
-               <content>
-                  <VBox styleClass="info-container">
-                     <children>
-                        <Label styleClass="default-text" text="• Your competition membership will be stored on the Discord channel." />
-                        <Label layoutX="22.0" layoutY="49.0" styleClass="default-text" text="• New highscores will only be posted to the competitions channel if your Discord bot has your initials." />
-                        <Label layoutX="22.0" layoutY="69.0" styleClass="default-text" text="• New highscores will only be submitted if the &quot;Score Settings&quot; criteria are met." />
-                        <Label layoutX="22.0" layoutY="89.0" styleClass="default-text" text="• New highscores will be submitted a few seconds after you exited the table through PinUP Popper." />
-                     </children>
-                  </VBox>
-               </content>
-            </TitledPane>
+            <VBox styleClass="info-container" BorderPane.alignment="CENTER">
+               <children>
+                  <Label layoutX="20.0" layoutY="20.0" styleClass="default-title" text="Rules" />
+                  <Label styleClass="default-text" text="• Your competition membership will be stored on the Discord channel." />
+                  <Label layoutX="22.0" layoutY="49.0" styleClass="default-text" text="• New highscores will only be posted to the competitions channel if your Discord bot has your initials." />
+                  <Label layoutX="22.0" layoutY="69.0" styleClass="default-text" text="• New highscores will only be submitted if the &quot;Score Settings&quot; criteria are met." />
+                  <Label layoutX="22.0" layoutY="89.0" styleClass="default-text" text="• New highscores will be submitted a few seconds after you exited the table through PinUP Popper." />
+               </children>
+               <BorderPane.margin>
+                  <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
+               </BorderPane.margin>
+               <padding>
+                  <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
+               </padding>
+            </VBox>
          </top>
       </BorderPane>
    </center>
