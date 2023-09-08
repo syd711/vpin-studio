@@ -9,6 +9,7 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.Spinner?>
 <?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.TitledPane?>
 <?import javafx.scene.control.Tooltip?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.BorderPane?>
@@ -297,7 +298,7 @@
                                     <Insets left="6.0" />
                                  </HBox.margin>
                                  <tooltip>
-                                    <Tooltip prefWidth="300.0" text="The competition badge will be added to the wheel icon. After the competition is finished, the original icon will be restored." />
+                                    <Tooltip prefWidth="300.0" text="The competition badge will be added to the wheel icon. After the competition is finished, the original icon will be restored." wrapText="true" />
                                  </tooltip>
                               </Label>
                               <Label layoutX="226.0" layoutY="16.0" textFill="WHITE">
@@ -379,6 +380,20 @@
                </padding>
             </BorderPane>
          </bottom>
+         <top>
+            <TitledPane text="Rules" BorderPane.alignment="CENTER">
+               <content>
+                  <VBox styleClass="info-container">
+                     <children>
+                        <Label styleClass="default-text" text="• Competitions are created and stored on the selected Discord channel." />
+                        <Label layoutX="22.0" layoutY="49.0" styleClass="default-text" text="• New highscores will only be posted to the competitions channel if your Discord bot has your initials." />
+                        <Label layoutX="22.0" layoutY="69.0" styleClass="default-text" text="• New highscores will only be submitted if the &quot;Score Settings&quot; criteria are met." />
+                        <Label layoutX="22.0" layoutY="89.0" styleClass="default-text" text="• New highscores will be submitted a few seconds after you exited the table through PinUP Popper." />
+                     </children>
+                  </VBox>
+               </content>
+            </TitledPane>
+         </top>
       </BorderPane>
    </center>
 </BorderPane>

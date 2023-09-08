@@ -90,6 +90,11 @@ public class VpxServiceClient extends VPinStudioClientService {
     return getRestClient().get(API + "vpx/tableinfo/" + game.getId(), TableInfo.class);
   }
 
+  public String getCheckSum(GameRepresentation game) {
+    final RestTemplate restTemplate = new RestTemplate();
+    return restTemplate.getForObject(getRestClient().getBaseUrl() + API + "vpx/checksum/" + game.getId(), String.class);
+  }
+
   public void saveTableSource(GameRepresentation game, String sources) {
     try {
       Map<String, Object> data = new HashMap<>();

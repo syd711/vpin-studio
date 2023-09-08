@@ -81,7 +81,7 @@ public class HighscoreChangeListenerImpl implements InitializingBean, HighscoreC
         boolean subscriptionUpdated = competitionForRom.stream().anyMatch(c -> c.getDiscordServerId() == Long.parseLong(defaultDiscordServerId));
 
         //if the dynamic subscriptions are enabled and no competition has been created yet, we must create a new one.
-        if (!subscriptionUpdated && dynamicSubscriptionsEnabled) {
+        if (!subscriptionUpdated) {
           Competition competition = new Competition();
           competition.setType(CompetitionType.SUBSCRIPTION.name());
           competition.setHighscoreReset(false);

@@ -5,6 +5,7 @@
 <?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TitledPane?>
 <?import javafx.scene.control.Tooltip?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.BorderPane?>
@@ -48,19 +49,6 @@
          <center>
             <VBox fx:id="mainColumn">
                <children>
-                  <Label layoutX="10.0" layoutY="30.0" styleClass="preference-description" text="Select a Discord server and channel to participate in an existing competition.">
-                     <font>
-                        <Font name="System Bold" size="14.0" />
-                     </font>
-                  </Label>
-                  <Label layoutX="10.0" layoutY="10.0" styleClass="preference-description" text="The server list is resolved by your VPin bot which must be a member of the server.">
-                     <font>
-                        <Font name="System Bold" size="14.0" />
-                     </font>
-                     <VBox.margin>
-                        <Insets bottom="12.0" />
-                     </VBox.margin>
-                  </Label>
                   <Label text="Server Settings" textFill="WHITE">
                      <font>
                         <Font name="System Bold" size="18.0" />
@@ -281,7 +269,7 @@
                                     <Insets left="6.0" />
                                  </HBox.margin>
                                  <tooltip>
-                                    <Tooltip text="The competition badge will be added to the wheel icon. After the competition is finished, the original icon will be restored." />
+                                    <Tooltip prefWidth="300.0" text="The competition badge will be added to the wheel icon. After the competition is finished, the original icon will be restored." wrapText="true" />
                                  </tooltip>
                               </Label>
                            </children>
@@ -301,7 +289,7 @@
                                     <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
                                  </graphic>
                                  <tooltip>
-                                    <Tooltip text="The reset is required in case your highscore is already higher than the others. A backup will be automatically created when the competition is created." />
+                                    <Tooltip prefWidth="300.0" text="The reset is required in case your highscore is already higher than the others. A backup will be automatically created when the competition is created." wrapText="true" />
                                  </tooltip>
                               </Label>
                            </children>
@@ -355,6 +343,20 @@
                </padding>
             </BorderPane>
          </bottom>
+         <top>
+            <TitledPane text="Rules" BorderPane.alignment="CENTER">
+               <content>
+                  <VBox styleClass="info-container">
+                     <children>
+                        <Label styleClass="default-text" text="• Your competition membership will be stored on the Discord channel." />
+                        <Label layoutX="22.0" layoutY="49.0" styleClass="default-text" text="• New highscores will only be posted to the competitions channel if your Discord bot has your initials." />
+                        <Label layoutX="22.0" layoutY="69.0" styleClass="default-text" text="• New highscores will only be submitted if the &quot;Score Settings&quot; criteria are met." />
+                        <Label layoutX="22.0" layoutY="89.0" styleClass="default-text" text="• New highscores will be submitted a few seconds after you exited the table through PinUP Popper." />
+                     </children>
+                  </VBox>
+               </content>
+            </TitledPane>
+         </top>
       </BorderPane>
    </center>
 </BorderPane>

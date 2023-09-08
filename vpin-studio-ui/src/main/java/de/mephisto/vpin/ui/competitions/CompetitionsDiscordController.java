@@ -516,7 +516,7 @@ public class CompetitionsDiscordController implements Initializable, StudioFXCon
     tableView.setRowFactory(tv -> {
       TableRow<CompetitionRepresentation> row = new TableRow<>();
       row.setOnMouseClicked(event -> {
-        if (event.getClickCount() == 2 && (!row.isEmpty())) {
+        if (event.getClickCount() == 2 && (!row.isEmpty()) && !editBtn.isDisabled()) {
           onEdit();
         }
       });
@@ -583,6 +583,10 @@ public class CompetitionsDiscordController implements Initializable, StudioFXCon
     joinBtn.setDisable(this.discordBotId <= 0);
 
     if (competition.isPresent()) {
+      if (!editBtn.isDisabled()) {
+        editBtn.setDisable(newSelection.getValidationState().getCode() > 0);
+      }
+
       validationError.setVisible(newSelection.getValidationState().getCode() > 0);
       if (newSelection.getValidationState().getCode() > 0) {
         LocalizedValidation validationResult = CompetitionValidationTexts.getValidationResult(newSelection);

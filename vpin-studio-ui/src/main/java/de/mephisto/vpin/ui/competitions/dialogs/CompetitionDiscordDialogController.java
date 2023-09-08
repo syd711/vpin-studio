@@ -214,18 +214,22 @@ public class CompetitionDiscordDialogController implements Initializable, Dialog
       return;
     }
 
-    if (competition.getDiscordChannelId() == 0) {
+    if (competition.getDiscordChannelId() == 0 || channelsCombo.getValue() == null) {
       validationTitle.setText("No discord channel selected.");
       validationDescription.setText("Select a discord channel for competition updates.");
       return;
     }
 
     //check Discord permissions
-    if (!client.getCompetitionService().hasManagePermissions(competition.getDiscordServerId(), competition.getDiscordChannelId())) {
-      validationTitle.setText("Insufficient Permissions");
-      validationDescription.setText("Your Discord bot has insufficient permissions to join a competition. Please check the documentation for details.");
-      return;
+    DiscordChannel value = channelsCombo.getValue();
+    if(value != null) {
+      if (!client.getCompetitionService().hasManagePermissions(competition.getDiscordServerId(), competition.getDiscordChannelId())) {
+        validationTitle.setText("Insufficient Permissions");
+        validationDescription.setText("Your Discord bot has insufficient permissions to join a competition. Please check the documentation for details.");
+        return;
+      }
     }
+
 
     if (startDate == null || endDate == null || startDate.getTime() >= endDate.getTime()) {
       validationTitle.setText("Invalid start/end date set.");
@@ -246,7 +250,7 @@ public class CompetitionDiscordDialogController implements Initializable, Dialog
 
     //check if another active competition on this channel is active during the selected time span
     for (CompetitionRepresentation existingCompetition : allCompetitions) {
-      if (existingCompetition.isFinished()) {
+      if (existingCompetition.isFinished() || existingCompetition.getValidationState().getCode() > 0) {
         continue;
       }
 

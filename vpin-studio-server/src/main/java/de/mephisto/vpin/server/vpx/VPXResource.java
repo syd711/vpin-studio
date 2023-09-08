@@ -38,6 +38,11 @@ public class VPXResource {
     return vpxService.getScript(id);
   }
 
+  @GetMapping("/checksum/{id}")
+  public String checksum(@PathVariable("id") int id) {
+    return vpxService.getChecksum(id);
+  }
+
   @GetMapping("/tableinfo/{id}")
   public TableInfo tableInfo(@PathVariable("id") int id) {
     return vpxService.getTableInfo(id);
