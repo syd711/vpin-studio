@@ -4,18 +4,18 @@ import de.mephisto.vpin.restclient.CompetitionType;
 import de.mephisto.vpin.restclient.JoinMode;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.discord.DiscordBotStatus;
+import de.mephisto.vpin.restclient.discord.DiscordCompetitionData;
 import de.mephisto.vpin.server.competitions.Competition;
+import de.mephisto.vpin.server.competitions.CompetitionScoreValidator;
 import de.mephisto.vpin.server.competitions.CompetitionService;
 import de.mephisto.vpin.server.competitions.ScoreSummary;
-import de.mephisto.vpin.server.discord.DiscordChannelMessageFactory;
-import de.mephisto.vpin.server.discord.DiscordOfflineChannelMessageFactory;
-import de.mephisto.vpin.server.discord.DiscordService;
-import de.mephisto.vpin.server.discord.DiscordSubscriptionMessageFactory;
+import de.mephisto.vpin.server.discord.*;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.highscores.*;
 import de.mephisto.vpin.server.players.Player;
 import de.mephisto.vpin.server.preferences.PreferencesService;
 import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
@@ -24,10 +24,7 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 @Service
 public class HighscoreChangeListenerImpl implements InitializingBean, HighscoreChangeListener {
@@ -49,7 +46,7 @@ public class HighscoreChangeListenerImpl implements InitializingBean, HighscoreC
   private PreferencesService preferencesService;
 
   @Autowired
-  private DiscordChannelMessageFactory discordChannelMessageFactory;
+  private DiscordCompetitionService discordCompetitionService;
 
   @Autowired
   private DiscordSubscriptionMessageFactory discordSubscriptionMessageFactory;
@@ -116,7 +113,8 @@ public class HighscoreChangeListenerImpl implements InitializingBean, HighscoreC
         }
         else if (competition.getType().equals(CompetitionType.DISCORD.name())) {
           if (discordService.isCompetitionActive(discordServerId, discordChannelId, competition.getUuid())) {
-            discordCompetitionHighscoreChanged(event, competition);
+            DiscordCompetitionData competitionData = discordService.getCompetitionData(discordServerId, discordChannelId);
+            discordCompetitionService.runDiscordServerUpdate(event.getGame(), event.getNewScore(), competition, competitionData);
           }
           else {
             LOG.warn("Skipping Discord highscore update for " + competition.getName() + ", no or invalid competition data found.");
@@ -133,75 +131,6 @@ public class HighscoreChangeListenerImpl implements InitializingBean, HighscoreC
       discordService.sendDefaultHighscoreMessage(DiscordOfflineChannelMessageFactory.createHighscoreCreatedMessage(event, raw));
     }
   }
-
-  /**
-   * Up til now we only THAT the score has changed, but not how.
-   *
-   * @param event       the highscore change event with the updated score
-   * @param competition the online competition the score is for
-   */
-  private void discordCompetitionHighscoreChanged(@NotNull HighscoreChangeEvent event, @NonNull Competition competition) {
-    Game game = event.getGame();
-    Score newScore = event.getNewScore();
-
-    long discordServerId = competition.getDiscordServerId();
-    long discordChannelId = competition.getDiscordChannelId();
-    DiscordBotStatus botStatus = discordService.getStatus(competition.getDiscordServerId());
-
-    LOG.info("****** Processing Discord Highscore Change Event for " + game.getGameDisplayName() + " *********");
-    LOG.info("The new score: " + newScore);
-    if (newScore.getPlayerInitials().contains("?")) {
-      LOG.info("Highscore update has been skipped, initials with '?' are filtered.");
-    }
-    else if (!newScore.getPlayerInitials().equalsIgnoreCase(botStatus.getBotInitials())) {
-      LOG.info("Highscore update has been skipped, the initials '" + newScore.getPlayerInitials() + "' do not belong to the our bot ('" + botStatus.getBotInitials() + "').");
-    }
-    else {
-      ScoreSummary scoreSummary = discordService.getScoreSummary(highscoreParser, competition.getUuid(), discordServerId, discordChannelId);
-      if (scoreSummary.getScores().isEmpty()) {
-        LOG.info("Emitting initial highscore message for " + competition);
-        String msg = discordChannelMessageFactory.createFirstCompetitionHighscoreCreatedMessage(game, competition, newScore, event.getScoreCount());
-        long newHighscoreMessageId = discordService.sendMessage(discordServerId, discordChannelId, msg);
-        discordService.updateHighscoreMessage(discordServerId, discordChannelId, newHighscoreMessageId);
-      }
-      else {
-        List<Score> oldScores = scoreSummary.getScores();
-        LOG.info("The current online score for " + competition + " (" + oldScores.size() + " entries):");
-        for (Score oldScore : oldScores) {
-          LOG.info("[" + oldScore + "]");
-        }
-
-        int position = highscoreService.calculateChangedPositionByScore(oldScores, newScore);
-        if (position == -1) {
-          LOG.info("No highscore change detected for " + game + " of discord competition '" + competition.getName() + "', skipping highscore message.");
-        }
-        else {
-          List<Score> updatedScores = new ArrayList<>(oldScores);
-          Score oldScore = oldScores.get(position - 1);
-          updatedScores.add(position - 1, newScore);
-          updatedScores = updatedScores.subList(0, updatedScores.size() - 1);
-
-          LOG.info("Updated score post:");
-          for (int i = 0; i < updatedScores.size(); i++) {
-            Score s = updatedScores.get(i);
-            s.setPosition(i + 1);
-            LOG.info("[" + s + "]");
-          }
-
-          //update the player info for the server the message is emitted to
-          Player player  = this.discordService.getPlayerByInitials(discordServerId, newScore.getPlayerInitials());
-          newScore.setPlayer(player);
-
-          LOG.info("Emitting Discord highscore changed message for discord competition " + competition);
-          String msg = discordChannelMessageFactory.createCompetitionHighscoreCreatedMessage(game, competition, oldScore, newScore, updatedScores);
-          long newHighscoreMessageId = discordService.sendMessage(discordServerId, discordChannelId, msg);
-          discordService.updateHighscoreMessage(discordServerId, discordChannelId, newHighscoreMessageId);
-        }
-      }
-    }
-    LOG.info("***************** / Finished Discord Highscore Processing *********************");
-  }
-
 
   /**
    * Up til now we only THAT the score has changed, but not how.
@@ -263,7 +192,7 @@ public class HighscoreChangeListenerImpl implements InitializingBean, HighscoreC
           }
 
           //update the player info for the server the message is emitted to
-          Player player  = this.discordService.getPlayerByInitials(discordServerId, newScore.getPlayerInitials());
+          Player player = this.discordService.getPlayerByInitials(discordServerId, newScore.getPlayerInitials());
           newScore.setPlayer(player);
 
           LOG.info("Emitting Discord highscore changed message for subscription " + competition);

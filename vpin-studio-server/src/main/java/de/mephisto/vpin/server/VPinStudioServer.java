@@ -13,7 +13,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 @SpringBootApplication
 @EnableTransactionManagement
-@EnableJpaRepositories
+@EnableJpaRepositories(enableDefaultTransactions = false)
 @EnableJpaAuditing
 @EnableCaching
 public class VPinStudioServer extends SpringBootServletInitializer {

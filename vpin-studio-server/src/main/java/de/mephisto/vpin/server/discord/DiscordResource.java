@@ -23,6 +23,9 @@ public class DiscordResource {
   @Autowired
   private DiscordService discordService;
 
+  @Autowired
+  private DiscordCompetitionService discordCompetitionService;
+
   @GetMapping("/status/{serverId}")
   public DiscordBotStatus getStatus(@PathVariable("serverId") long serverId) {
     return discordService.getStatus(serverId);
@@ -84,6 +87,11 @@ public class DiscordResource {
   public SubscriptionInfo getSubscriptionInfo(@PathVariable("serverId") long serverId,
                                               @PathVariable("channelId") long channelId) {
     return discordService.getSubscriptionInfo(serverId, channelId);
+  }
+
+  @GetMapping("/competition/check/{id}")
+  public boolean checkCompetitionScores(@PathVariable("id") int id) {
+    return discordCompetitionService.runCompetitionCheck(id);
   }
 
   @GetMapping("/users/{serverId}")

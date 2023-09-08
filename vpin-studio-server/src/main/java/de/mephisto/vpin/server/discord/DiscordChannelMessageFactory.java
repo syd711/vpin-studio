@@ -141,7 +141,7 @@ public class DiscordChannelMessageFactory {
     for (Score score : scores) {
       index++;
       builder.append("#");
-      builder.append(score.getPosition());
+      builder.append(String.format("%4.4s", score.getPosition()));
       builder.append("   ");
       builder.append(String.format("%4.4s", score.getPlayerInitials()));
       builder.append("       ");

@@ -225,7 +225,7 @@ public class CompetitionDiscordDialogController implements Initializable, Dialog
     if(value != null) {
       if (!client.getCompetitionService().hasManagePermissions(competition.getDiscordServerId(), competition.getDiscordChannelId())) {
         validationTitle.setText("Insufficient Permissions");
-        validationDescription.setText("Your Discord bot has insufficient permissions to join a competition. Please check the documentation for details.");
+        validationDescription.setText("Your Discord bot has insufficient permissions for this channel. Please check the documentation for details.");
         return;
       }
     }

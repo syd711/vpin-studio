@@ -107,6 +107,17 @@
                                 <FontIcon iconColor="#ff3333" iconLiteral="mdi2d-delete-outline" />
                             </graphic>
                         </Button>
+                  <Button fx:id="validateBtn" layoutX="885.0" layoutY="11.0" mnemonicParsing="false" onAction="#onCompetitionValidate" text="Validate" textFill="WHITE">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                     <graphic>
+                        <FontIcon iconColor="WHITE" iconLiteral="sil-refresh" />
+                     </graphic>
+                     <tooltip>
+                        <Tooltip text="Clears cached Discord data" />
+                     </tooltip>
+                  </Button>
                   <Button fx:id="clearCacheBtn" layoutX="280.0" layoutY="11.0" mnemonicParsing="false" onAction="#onClearCache" text="Clear Cache" textFill="WHITE">
                      <font>
                         <Font size="14.0" />

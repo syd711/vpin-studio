@@ -17,7 +17,7 @@ import de.mephisto.vpin.ui.NavigationController;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.StudioFXController;
 import de.mephisto.vpin.ui.WaitOverlayController;
-import de.mephisto.vpin.ui.competitions.dialogs.CompetitionCreationProgressModel;
+import de.mephisto.vpin.ui.competitions.dialogs.CompetitionSavingProgressModel;
 import de.mephisto.vpin.ui.competitions.validation.CompetitionValidationTexts;
 import de.mephisto.vpin.ui.util.Dialogs;
 import de.mephisto.vpin.ui.util.LocalizedValidation;
@@ -105,6 +105,9 @@ public class CompetitionsDiscordController implements Initializable, StudioFXCon
   private Button clearCacheBtn;
 
   @FXML
+  private Button validateBtn;
+
+  @FXML
   private Button joinBtn;
 
   @FXML
@@ -142,11 +145,24 @@ public class CompetitionsDiscordController implements Initializable, StudioFXCon
   }
 
   @FXML
+  private void onCompetitionValidate() {
+    CompetitionRepresentation selectedItem = this.tableView.getSelectionModel().getSelectedItem();
+    if(selectedItem != null) {
+      Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Validate Competition", "This will re-check your local highscores against the Discord server data.");
+      if (result.get().equals(ButtonType.OK)) {
+        client.getDiscordService().checkCompetition(selectedItem);
+      }
+    }
+  }
+
+
+  @FXML
   private void onCompetitionCreate() {
+    client.getDiscordService().clearCache();
     CompetitionRepresentation c = Dialogs.openDiscordCompetitionDialog(this.competitions, null);
     if (c != null) {
       try {
-        ProgressResultModel resultModel = Dialogs.createProgressDialog(new CompetitionCreationProgressModel("Creating Competition", c));
+        ProgressResultModel resultModel = Dialogs.createProgressDialog(new CompetitionSavingProgressModel("Creating Competition", c));
         Platform.runLater(() -> {
           onReload();
           tableView.getSelectionModel().select((CompetitionRepresentation) resultModel.results.get(0));
@@ -159,13 +175,14 @@ public class CompetitionsDiscordController implements Initializable, StudioFXCon
 
   @FXML
   private void onDuplicate() {
+    client.getDiscordService().clearCache();
     CompetitionRepresentation selection = tableView.getSelectionModel().getSelectedItem();
     if (selection != null) {
       CompetitionRepresentation clone = selection.cloneCompetition();
       CompetitionRepresentation c = Dialogs.openDiscordCompetitionDialog(this.competitions, clone);
       if (c != null) {
         try {
-          ProgressResultModel resultModel = Dialogs.createProgressDialog(new CompetitionCreationProgressModel("Creating Competition", c));
+          ProgressResultModel resultModel = Dialogs.createProgressDialog(new CompetitionSavingProgressModel("Creating Competition", c));
           onReload();
           tableView.getSelectionModel().select((CompetitionRepresentation) resultModel.results.get(0));
         } catch (Exception e) {
@@ -190,9 +207,9 @@ public class CompetitionsDiscordController implements Initializable, StudioFXCon
     CompetitionRepresentation c = Dialogs.openDiscordJoinCompetitionDialog();
     if (c != null) {
       try {
-        CompetitionRepresentation newCmp = client.getCompetitionService().saveCompetition(c);
+        ProgressResultModel resultModel = Dialogs.createProgressDialog(new CompetitionSavingProgressModel("Joining Competition", c));
         onReload();
-        tableView.getSelectionModel().select(newCmp);
+        tableView.getSelectionModel().select((CompetitionRepresentation) resultModel.results.get(0));
       } catch (Exception e) {
         WidgetFactory.showAlert(Studio.stage, e.getMessage());
       }
@@ -204,6 +221,7 @@ public class CompetitionsDiscordController implements Initializable, StudioFXCon
 
   @FXML
   private void onEdit() {
+    client.getDiscordService().clearCache();
     CompetitionRepresentation selection = tableView.getSelectionModel().getSelectedItem();
     if (selection != null) {
       CompetitionRepresentation c = Dialogs.openDiscordCompetitionDialog(this.competitions, selection);
