@@ -79,7 +79,7 @@ public class HighscoreService implements InitializingBean {
       else {
         result = true;
       }
-      deleteScores(game.getId());
+      deleteScores(game.getId(), true);
       return result;
     } catch (Exception e) {
       LOG.error("Failed to reset highscore: " + e.getMessage(), e);
@@ -319,12 +319,15 @@ public class HighscoreService implements InitializingBean {
    * - for the first record Highscore, a version is created too with an empty OLD value
    * - for every newly recorded Highscore, an additional version is stored
    *
+   *
+   * The method must be synchronized because multiple UI threads access it after a competition creation.
+   *
    * @param game     the game to update the highscore for
    * @param metadata the extracted metadata from the system
    * @return the highscore optional if a score could be extracted
    */
   @VisibleForTesting
-  protected Optional<Highscore> updateHighscore(@NonNull Game game, @NonNull HighscoreMetadata metadata) {
+  protected synchronized Optional<Highscore> updateHighscore(@NonNull Game game, @NonNull HighscoreMetadata metadata) {
     //we don't do anything if not value is extract, this may lead to superflous system calls, but we have time
     if (StringUtils.isEmpty(metadata.getRaw())) {
       return Optional.empty();
@@ -358,8 +361,6 @@ public class HighscoreService implements InitializingBean {
       highscoreVersion.setOldRaw(null);
       highscoreVersionRepository.saveAndFlush(highscoreVersion);
 
-//      //we are finished here since we cannot calculate any difference for the first score
-//      return Optional.of(updatedNewHighScore);
       existingHighscore = Optional.of(updatedNewHighScore);
     }
 
@@ -446,14 +447,16 @@ public class HighscoreService implements InitializingBean {
     return oldScores;
   }
 
-  public void deleteScores(int gameId) {
+  public void deleteScores(int gameId, boolean deleteVersions) {
     Optional<Highscore> byGameId = highscoreRepository.findByGameId(gameId);
-    byGameId.ifPresent(highscore -> highscoreRepository.delete(highscore));
+    byGameId.ifPresent(highscore -> highscoreRepository.deleteById(highscore.getId()));
     LOG.info("Deleted latest highscore for " + gameId);
 
-    List<HighscoreVersion> versions = highscoreVersionRepository.findByGameId(gameId);
-    highscoreVersionRepository.deleteAll(versions);
-    LOG.info("Deleted all highscore versions for " + gameId);
+    if(deleteVersions) {
+      List<HighscoreVersion> versions = highscoreVersionRepository.findByGameId(gameId);
+      highscoreVersionRepository.deleteAll(versions);
+      LOG.info("Deleted all highscore versions for " + gameId);
+    }
   }
 
   /**

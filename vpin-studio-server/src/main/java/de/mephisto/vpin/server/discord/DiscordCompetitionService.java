@@ -9,7 +9,6 @@ import de.mephisto.vpin.server.competitions.CompetitionService;
 import de.mephisto.vpin.server.competitions.ScoreSummary;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameService;
-import de.mephisto.vpin.server.highscores.HighscoreMetadata;
 import de.mephisto.vpin.server.highscores.HighscoreParser;
 import de.mephisto.vpin.server.highscores.HighscoreService;
 import de.mephisto.vpin.server.highscores.Score;
@@ -22,10 +21,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 public class DiscordCompetitionService {
@@ -49,15 +45,16 @@ public class DiscordCompetitionService {
   @Autowired
   private GameService gameService;
 
-  public boolean runCompetitionCheck(long id) {
+  public List<Score> runCompetitionCheck(long id) {
     Competition competition = competitionService.getCompetition(id);
     if (competition != null) {
       if (competition.getType().equals(CompetitionType.DISCORD.name())) {
         Game game = gameService.getGame(competition.getGameId());
-
+        highscoreService.deleteScores(game.getId(), false);
+        highscoreService.scanScore(game);
       }
     }
-    return true;
+    return Collections.emptyList();
   }
 
   /**
@@ -93,8 +90,8 @@ public class DiscordCompetitionService {
       LOG.info("Highscore update has been skipped, the initials '" + newScore.getPlayerInitials() + "' do not belong to the our bot ('" + botStatus.getBotInitials() + "').");
     }
     else {
-      ScoreSummary scoreSummary = discordService.getScoreSummary(highscoreParser, competition.getUuid(), discordServerId, discordChannelId);
-      if (scoreSummary.getScores().isEmpty()) {
+      ScoreSummary discordScoreSummary = discordService.getScoreSummary(highscoreParser, competition.getUuid(), discordServerId, discordChannelId);
+      if (discordScoreSummary.getScores().isEmpty()) {
         LOG.info("Emitting initial highscore message for " + competition);
         int scoreLimit = 5;
         if (competition.getScoreLimit() > 0) {
@@ -105,10 +102,15 @@ public class DiscordCompetitionService {
         discordService.updateHighscoreMessage(discordServerId, discordChannelId, newHighscoreMessageId);
       }
       else {
-        List<Score> oldScores = scoreSummary.getScores();
+        List<Score> oldScores = discordScoreSummary.getScores();
         LOG.info("The current online score for " + competition + " (" + oldScores.size() + " entries):");
         for (Score oldScore : oldScores) {
           LOG.info("[" + oldScore + "]");
+        }
+
+        if(discordScoreSummary.contains(newScore)) {
+          LOG.info("The score " + newScore + " already exists in channels highscore list, skipping update");
+          return;
         }
 
         int position = highscoreService.calculateChangedPositionByScore(oldScores, newScore);

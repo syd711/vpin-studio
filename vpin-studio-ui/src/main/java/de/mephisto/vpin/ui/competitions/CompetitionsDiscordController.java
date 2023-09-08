@@ -147,7 +147,7 @@ public class CompetitionsDiscordController implements Initializable, StudioFXCon
   @FXML
   private void onCompetitionValidate() {
     CompetitionRepresentation selectedItem = this.tableView.getSelectionModel().getSelectedItem();
-    if(selectedItem != null) {
+    if (selectedItem != null) {
       Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Validate Competition", "This will re-check your local highscores against the Discord server data.");
       if (result.get().equals(ButtonType.OK)) {
         client.getDiscordService().checkCompetition(selectedItem);
@@ -164,8 +164,10 @@ public class CompetitionsDiscordController implements Initializable, StudioFXCon
       try {
         ProgressResultModel resultModel = Dialogs.createProgressDialog(new CompetitionSavingProgressModel("Creating Competition", c));
         Platform.runLater(() -> {
-          onReload();
-          tableView.getSelectionModel().select((CompetitionRepresentation) resultModel.results.get(0));
+          Platform.runLater(() -> {
+            onReload();
+            tableView.getSelectionModel().select((CompetitionRepresentation) resultModel.results.get(0));
+          });
         });
       } catch (Exception e) {
         WidgetFactory.showAlert(Studio.stage, e.getMessage());
@@ -183,8 +185,10 @@ public class CompetitionsDiscordController implements Initializable, StudioFXCon
       if (c != null) {
         try {
           ProgressResultModel resultModel = Dialogs.createProgressDialog(new CompetitionSavingProgressModel("Creating Competition", c));
-          onReload();
-          tableView.getSelectionModel().select((CompetitionRepresentation) resultModel.results.get(0));
+          Platform.runLater(() -> {
+            onReload();
+            tableView.getSelectionModel().select((CompetitionRepresentation) resultModel.results.get(0));
+          });
         } catch (Exception e) {
           WidgetFactory.showAlert(Studio.stage, e.getMessage());
         }
@@ -299,6 +303,7 @@ public class CompetitionsDiscordController implements Initializable, StudioFXCon
       textfieldSearch.setDisable(true);
       addBtn.setDisable(true);
       editBtn.setDisable(true);
+      validateBtn.setVisible(true);
       deleteBtn.setDisable(true);
       duplicateBtn.setDisable(true);
       finishBtn.setDisable(true);
@@ -593,6 +598,7 @@ public class CompetitionsDiscordController implements Initializable, StudioFXCon
     boolean disable = newSelection == null;
     boolean isOwner = newSelection != null && newSelection.getOwner().equals(String.valueOf(this.discordBotId));
     editBtn.setDisable(disable || !isOwner || newSelection.isFinished());
+    validateBtn.setDisable(disable || newSelection.isFinished());
     finishBtn.setDisable(disable || !isOwner || !newSelection.isActive());
     deleteBtn.setDisable(disable);
     duplicateBtn.setDisable(disable || !isOwner);
@@ -603,6 +609,9 @@ public class CompetitionsDiscordController implements Initializable, StudioFXCon
     if (competition.isPresent()) {
       if (!editBtn.isDisabled()) {
         editBtn.setDisable(newSelection.getValidationState().getCode() > 0);
+      }
+      if (!validateBtn.isDisabled()) {
+        validateBtn.setDisable(newSelection.getValidationState().getCode() > 0);
       }
 
       validationError.setVisible(newSelection.getValidationState().getCode() > 0);

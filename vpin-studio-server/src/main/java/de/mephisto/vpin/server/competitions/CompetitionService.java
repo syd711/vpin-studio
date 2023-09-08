@@ -1,7 +1,6 @@
 package de.mephisto.vpin.server.competitions;
 
 import de.mephisto.vpin.restclient.CompetitionType;
-import de.mephisto.vpin.restclient.discord.DiscordServer;
 import de.mephisto.vpin.server.discord.DiscordService;
 import de.mephisto.vpin.server.highscores.HighscoreParser;
 import de.mephisto.vpin.server.highscores.HighscoreService;
@@ -126,7 +125,12 @@ public class CompetitionService implements InitializingBean {
   }
 
   public List<Competition> getCompetitionToBeFinished() {
-    return competitionsRepository.findByWinnerInitialsIsNullAndEndDateLessThanEqualOrderByEndDate(new Date());
+    try {
+      return competitionsRepository.findByWinnerInitialsIsNullAndEndDateLessThanEqualOrderByEndDate(new Date());
+    } catch (Exception e) {
+      LOG.error("Failed to read competitions: " + e.getMessage());
+      return Collections.emptyList();
+    }
   }
 
   public ScoreList getCompetitionScores(long id) {
@@ -191,7 +195,7 @@ public class CompetitionService implements InitializingBean {
   public void runCompetitionsFinishedAndStartedCheck() {
     //check all competitions for their finish state, this includes Discord ones, since the date can't be changed
     List<Competition> openCompetitions = getCompetitionToBeFinished();
-    if(!openCompetitions.isEmpty()) {
+    if (!openCompetitions.isEmpty()) {
       LOG.info("Running automated competition status check, found " + openCompetitions.size() + " candidates.");
     }
     for (Competition openCompetition : openCompetitions) {

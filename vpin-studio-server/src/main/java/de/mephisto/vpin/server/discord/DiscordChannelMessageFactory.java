@@ -1,7 +1,6 @@
 package de.mephisto.vpin.server.discord;
 
 import de.mephisto.vpin.connectors.discord.DiscordMember;
-import de.mephisto.vpin.restclient.CompetitionType;
 import de.mephisto.vpin.restclient.PlayerDomain;
 import de.mephisto.vpin.server.competitions.Competition;
 import de.mephisto.vpin.server.competitions.ScoreSummary;
@@ -9,9 +8,7 @@ import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.highscores.Score;
 import de.mephisto.vpin.server.players.Player;
 import de.mephisto.vpin.server.players.PlayerService;
-import de.mephisto.vpin.server.util.ScoreHelper;
 import edu.umd.cs.findbugs.annotations.NonNull;
-import edu.umd.cs.findbugs.annotations.Nullable;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -83,7 +80,9 @@ public class DiscordChannelMessageFactory {
       return String.format(COMPETITION_FINISHED_INCOMPLETE, competition.getName(), competition.getUuid());
     }
 
-    return String.format(COMPETITION_FINISHED_TEMPLATE, competition.getName(), competition.getUuid());
+    String msg = String.format(COMPETITION_FINISHED_TEMPLATE, competition.getName(), competition.getUuid());
+    msg = msg + "\nHere are the final results:\n" + createHighscoreList(summary.getScores());
+    return msg;
   }
 
   public String createCompetitionCancelledMessage(Player player, Competition competition) {
@@ -137,12 +136,13 @@ public class DiscordChannelMessageFactory {
     builder.append("```");
     builder.append("Pos   Initials           Score\n");
     builder.append("------------------------------\n");
-    int index = 0;
     for (Score score : scores) {
-      index++;
       builder.append("#");
-      builder.append(String.format("%4.4s", score.getPosition()));
-      builder.append("   ");
+      builder.append(score.getPosition());
+      if (String.valueOf(score.getPosition()).length() == 1) {
+        builder.append(" ");
+      }
+      builder.append("  ");
       builder.append(String.format("%4.4s", score.getPlayerInitials()));
       builder.append("       ");
       builder.append(String.format("%14.12s", score.getScore()));
@@ -166,9 +166,13 @@ public class DiscordChannelMessageFactory {
     builder.append("\n");
 
     for (int i = 0; i < length; i++) {
+      int pos = i + 2;
       builder.append("#");
-      builder.append((i + 2));
-      builder.append("   ");
+      builder.append(pos);
+      if (pos < 10) {
+        builder.append(" ");
+      }
+      builder.append("  ");
       builder.append(String.format("%4.4s", "???"));
       builder.append("       ");
       builder.append(String.format("%14.12s", "0"));

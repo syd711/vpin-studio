@@ -544,13 +544,6 @@ public class DiscordService implements InitializingBean, PreferenceChangedListen
       return true;
     }
 
-    //well, we abuse this as a connection check.
-    String topic = this.discordClient.getTopic(serverId, channelId);
-    //null means there are problem during reading from Discord, so let's assume everything is ok
-    if (topic == null) {
-      return true;
-    }
-
     List<DiscordMessage> pinnedMessages = this.discordClient.getPinnedMessages(serverId, channelId);
     if (pinnedMessages.isEmpty()) {
       return false;

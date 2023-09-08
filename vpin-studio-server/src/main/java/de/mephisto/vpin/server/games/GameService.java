@@ -203,7 +203,7 @@ public class GameService {
           success = false;
         }
 
-        highscoreService.deleteScores(game.getId());
+        highscoreService.deleteScores(game.getId(), true);
 
         PopperScreen[] values = PopperScreen.values();
         for (PopperScreen originalScreenValue : values) {

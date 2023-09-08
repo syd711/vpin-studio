@@ -288,17 +288,18 @@ public class AssetFactory {
       graphics.drawString("competition!", background.getWidth() / 2 - textWidth / 2, yOffset += 18 + SEPARATOR);
 
       yOffset+=6;
-      for(int i=0; i<5; i++) {
-        if(i >= summary.getScores().size()) {
-          break;
-        }
-        String place = (i+1) + ". " + summary.getScores().get(i).getPlayerInitials() + "  " + summary.getScores().get(i).getScore();
-        font = new Font("Digital Counter 7", Font.PLAIN, 24);
+      int scoreSize = 140;
+      font = new Font("Digital Counter 7", Font.PLAIN, scoreSize);
+      graphics.setFont(font);
+      String score = summary.getScores().get(0).getScore();
+      textWidth = graphics.getFontMetrics().stringWidth(score);
+      while (textWidth > 500) {
+        font = new Font("Digital Counter 7", Font.PLAIN, scoreSize--);
         graphics.setFont(font);
-        textWidth = graphics.getFontMetrics().stringWidth(place);
-        graphics.drawString(place, background.getWidth() / 2 - textWidth / 2, yOffset += 20 + SEPARATOR);
-
+        textWidth = graphics.getFontMetrics().stringWidth(score);
       }
+      yOffset+=scoreSize;
+      graphics.drawString(score, background.getWidth() / 2 - textWidth / 2, yOffset);
 
       return ImageUtil.toBytes(background);
     } catch (Exception e) {

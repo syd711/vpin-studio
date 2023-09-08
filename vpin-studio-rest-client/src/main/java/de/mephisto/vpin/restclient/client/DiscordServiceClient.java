@@ -8,6 +8,7 @@ import de.mephisto.vpin.restclient.discord.DiscordCompetitionData;
 import de.mephisto.vpin.restclient.discord.DiscordServer;
 import de.mephisto.vpin.restclient.representations.CompetitionRepresentation;
 import de.mephisto.vpin.restclient.representations.PlayerRepresentation;
+import de.mephisto.vpin.restclient.representations.ScoreRepresentation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.client.RestTemplate;
@@ -86,7 +87,7 @@ public class DiscordServiceClient extends VPinStudioClientService {
     return Arrays.asList(getRestClient().get(API + "discord/allowlist", PlayerRepresentation[].class));
   }
 
-  public boolean checkCompetition(CompetitionRepresentation selectedItem) {
-    return getRestClient().get(API + "discord/competition/check/" + selectedItem.getId(), Boolean.class);
+  public List<ScoreRepresentation> checkCompetition(CompetitionRepresentation selectedItem) {
+    return Arrays.asList(getRestClient().get(API + "discord/competition/check/" + selectedItem.getId(), ScoreRepresentation[].class));
   }
 }

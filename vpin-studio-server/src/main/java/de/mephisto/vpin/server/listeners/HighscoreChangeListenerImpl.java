@@ -52,7 +52,7 @@ public class HighscoreChangeListenerImpl implements InitializingBean, HighscoreC
   private DiscordSubscriptionMessageFactory discordSubscriptionMessageFactory;
 
   @Override
-  public void highscoreChanged(@NotNull HighscoreChangeEvent event) {
+  public synchronized void highscoreChanged(@NotNull HighscoreChangeEvent event) {
     Game game = event.getGame();
 
     String raw = null;

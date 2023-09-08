@@ -5,6 +5,7 @@ import de.mephisto.vpin.restclient.discord.DiscordBotStatus;
 import de.mephisto.vpin.restclient.discord.DiscordChannel;
 import de.mephisto.vpin.restclient.discord.DiscordCompetitionData;
 import de.mephisto.vpin.restclient.discord.DiscordServer;
+import de.mephisto.vpin.server.highscores.Score;
 import de.mephisto.vpin.server.players.Player;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -90,7 +91,7 @@ public class DiscordResource {
   }
 
   @GetMapping("/competition/check/{id}")
-  public boolean checkCompetitionScores(@PathVariable("id") int id) {
+  public List<Score> checkCompetitionScores(@PathVariable("id") int id) {
     return discordCompetitionService.runCompetitionCheck(id);
   }
 

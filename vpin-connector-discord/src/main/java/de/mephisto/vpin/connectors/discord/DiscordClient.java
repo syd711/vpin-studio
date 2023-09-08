@@ -49,6 +49,7 @@ public class DiscordClient {
         .addEventListeners(this.listenerAdapter)
         .build();
     jda.awaitReady();
+
     this.botId = jda.getSelfUser().getIdLong();
     this.loadMembers();
   }
@@ -198,7 +199,6 @@ public class DiscordClient {
     if (pinnedMessagesCache.containsKey(channelId)) {
       return new ArrayList<>(pinnedMessagesCache.get(channelId).getMessages());
     }
-
     Guild guild = getGuild(serverId);
     if (guild != null) {
       TextChannel channel = guild.getChannelById(TextChannel.class, channelId);
@@ -245,20 +245,18 @@ public class DiscordClient {
         DiscordMessage msg = toMessage(getMessage(serverId, channelId, messageId));
         this.pinnedMessagesCache.get(channelId).getMessages().add(msg);
 
-        new Thread(() -> {
-          try {
-            Thread.currentThread().setName("Pinned Messsages Cleanup");
-            MessageHistory complete = MessageHistory.getHistoryAfter(channel, String.valueOf(messageId)).complete();
-            List<Message> retrievedHistory = complete.getRetrievedHistory();
-            for (Message message : retrievedHistory) {
-              if (message.getType().equals(MessageType.CHANNEL_PINNED_ADD)) {
-                channel.deleteMessageById(message.getId()).complete();
-              }
+        try {
+          MessageHistory complete = MessageHistory.getHistoryAfter(channel, String.valueOf(messageId)).complete();
+          List<Message> retrievedHistory = complete.getRetrievedHistory();
+          for (Message message : retrievedHistory) {
+            if (message.getType().equals(MessageType.CHANNEL_PINNED_ADD)) {
+              channel.deleteMessageById(message.getId()).complete();
             }
-          } catch (Exception e) {
-            LOG.error("Failed to cleanup pin messages: " + e.getMessage(), e);
           }
-        }).start();
+          invalidateMessageCache(channelId, -1);
+        } catch (Exception e) {
+          LOG.error("Failed to cleanup pin messages: " + e.getMessage(), e);
+        }
       }
       else {
         LOG.error("No discord channel found for id '" + channelId + "'");
@@ -310,7 +308,7 @@ public class DiscordClient {
     if (botId != originUserId) {
       if (pinnedMessagesCache.containsKey(channelId)) {
         pinnedMessagesCache.remove(channelId);
-        LOG.info("Invalidated Discord pinned messages cache for " + channelId);
+        LOG.info("Invalidated Discord pinned messages cache for channel " + channelId);
       }
     }
   }
