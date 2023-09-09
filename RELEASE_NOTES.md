@@ -14,6 +14,7 @@ Thanks to @ed209, @Meatballsaucey, @TryToTilt and his server members making the 
  - Added sanity check for new highscores submissions which filters duplicates.
  - Added new button in Discord Competition overview tab called **Synchronize**: If you achieved a new highscore and the internet was broken (or the highscore parsing failed), you can re-evaluate your highscores of the selected competition. This way, highscores can be submitted after technical problems. 
  - Changed competition finished card to show only the winner highscore. But additionally, the full highscore list is posted with this finished message now.
+ - Started building up a repository with **empty nvrams**. (this is work in progress, they are not utilized yet)
 
 **Redesign of the Discord competitions dialogs:**
 
@@ -46,3 +47,4 @@ Here it comes...
 - Fixed timing issues with pinned message updates which caused invalid highscore postings.
 - Fixed score formatting of Discord messages for lists larger than nine entries.
 - Fixed **duplicate score submissions** for subscriptions.
+- Fixed miscellaneous issues with bot command responses.
