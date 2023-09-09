@@ -163,7 +163,7 @@ public class DiscordChannelMessageFactory {
     builder.append(String.format("%14.12s", score.getScore()));
     builder.append("\n");
 
-    for (int i = 0; i < length; i++) {
+    for (int i = 0; i < length-1; i++) {
       int pos = i + 2;
       builder.append("#");
       builder.append(pos);

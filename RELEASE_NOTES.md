@@ -25,6 +25,7 @@ Thanks to @ed209 making the whole competition stuff better!
 
 - Changed the new score limit parameter subscription with a default value of "10". (Only applied for new subscription channels).
 - Merged the code base with the one of online competitions. So they now really work the same, but only use ROM name checking.
+- Added competition validation here too, so that when a subscription was deleted by the administrator, this gets indicated for other members.
 
 ### Table Management: Script Details
 

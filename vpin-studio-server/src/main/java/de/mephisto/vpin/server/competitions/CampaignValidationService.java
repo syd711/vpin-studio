@@ -24,7 +24,7 @@ public class CampaignValidationService {
   public Competition validate(@NonNull Competition competition) {
     ValidationState validationState = new ValidationState();
     competition.setValidationState(validationState);
-    if (competition.getType() != null && competition.getType().equals(CompetitionType.DISCORD.name())) {
+    if (competition.getType() != null && competition.getType().equals(CompetitionType.DISCORD.name()) || competition.getType().equals(CompetitionType.SUBSCRIPTION.name())) {
       DiscordServer server = discordService.getServer(competition.getDiscordServerId());
       if (server == null) {
         validationState.setCode(CompetitionValidationCode.DISCORD_SERVER_NOT_FOUND);

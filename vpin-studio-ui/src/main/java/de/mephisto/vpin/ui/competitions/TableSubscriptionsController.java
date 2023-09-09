@@ -46,6 +46,7 @@ import java.net.URL;
 import java.util.*;
 
 import static de.mephisto.vpin.ui.Studio.client;
+import static de.mephisto.vpin.ui.competitions.CompetitionsDiscordController.getLabelCss;
 
 public class TableSubscriptionsController implements Initializable, StudioFXController {
   private final static Logger LOG = LoggerFactory.getLogger(TableSubscriptionsController.class);
@@ -76,6 +77,9 @@ public class TableSubscriptionsController implements Initializable, StudioFXCont
 
   @FXML
   private Button joinBtn;
+
+  @FXML
+  private Button validateBtn;
 
   @FXML
   private Button clearCacheBtn;
@@ -113,6 +117,19 @@ public class TableSubscriptionsController implements Initializable, StudioFXCont
 
   // Add a public no-args constructor
   public TableSubscriptionsController() {
+  }
+
+  @FXML
+  private void onCompetitionValidate() {
+    CompetitionRepresentation selectedItem = this.tableView.getSelectionModel().getSelectedItem();
+    if (selectedItem != null) {
+      Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Synchronize Subscription", "This will re-check your local highscores against the Discord server data.");
+      if (result.get().equals(ButtonType.OK)) {
+        client.getDiscordService().clearCache();
+        client.getDiscordService().checkCompetition(selectedItem);
+        this.onReload();
+      }
+    }
   }
 
   @FXML
@@ -206,6 +223,7 @@ public class TableSubscriptionsController implements Initializable, StudioFXCont
       textfieldSearch.setDisable(true);
       addBtn.setDisable(true);
       deleteBtn.setDisable(true);
+      validateBtn.setDisable(true);
       reloadBtn.setDisable(true);
       joinBtn.setDisable(true);
 
@@ -275,6 +293,7 @@ public class TableSubscriptionsController implements Initializable, StudioFXCont
     columnName.setCellValueFactory(cellData -> {
       CompetitionRepresentation value = cellData.getValue();
       Label label = new Label(value.getName());
+      label.setStyle(getLabelCss(value));
       return new SimpleObjectProperty(label);
     });
 
@@ -283,9 +302,11 @@ public class TableSubscriptionsController implements Initializable, StudioFXCont
       CompetitionRepresentation value = cellData.getValue();
       GameRepresentation game = client.getGame(value.getGameId());
       Label label = new Label("- not available anymore -");
+      label.setStyle(getLabelCss(value));
       if (game != null) {
         label = new Label(game.getGameDisplayName());
       }
+
       HBox hBox = new HBox(6);
       hBox.setAlignment(Pos.CENTER_LEFT);
 
@@ -324,6 +345,7 @@ public class TableSubscriptionsController implements Initializable, StudioFXCont
 
         CommonImageUtil.setClippedImage(view, (int) (image.getWidth() / 2));
         Label label = new Label(discordServer.getName());
+        label.setStyle(getLabelCss(value));
         hBox.getChildren().addAll(view, label);
       }
 
@@ -345,6 +367,7 @@ public class TableSubscriptionsController implements Initializable, StudioFXCont
         CommonImageUtil.setClippedImage(view, (int) (image.getWidth() / 2));
 
         Label label = new Label(discordPlayer.getName());
+        label.setStyle(getLabelCss(value));
         hBox.getChildren().addAll(view, label);
       }
 
@@ -419,9 +442,15 @@ public class TableSubscriptionsController implements Initializable, StudioFXCont
     reloadBtn.setDisable(this.discordBotId <= 0);
     addBtn.setDisable(this.discordBotId <= 0);
     joinBtn.setDisable(this.discordBotId <= 0);
+    validateBtn.setDisable(this.discordBotId <= 0);
 
     if (competition.isPresent()) {
       validationError.setVisible(newSelection.getValidationState().getCode() > 0);
+
+      if (!validateBtn.isDisabled()) {
+        validateBtn.setDisable(newSelection.getValidationState().getCode() > 0);
+      }
+
       if (newSelection.getValidationState().getCode() > 0) {
         LocalizedValidation validationResult = CompetitionValidationTexts.getValidationResult(newSelection);
         validationErrorLabel.setText(validationResult.getLabel());

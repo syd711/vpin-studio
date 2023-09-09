@@ -305,7 +305,7 @@ public class CompetitionsDiscordController implements Initializable, StudioFXCon
       textfieldSearch.setDisable(true);
       addBtn.setDisable(true);
       editBtn.setDisable(true);
-      validateBtn.setVisible(true);
+      validateBtn.setDisable(true);
       deleteBtn.setDisable(true);
       duplicateBtn.setDisable(true);
       finishBtn.setDisable(true);
@@ -576,7 +576,7 @@ public class CompetitionsDiscordController implements Initializable, StudioFXCon
     data = FXCollections.observableList(filtered);
   }
 
-  private String getLabelCss(CompetitionRepresentation value) {
+  public static String getLabelCss(CompetitionRepresentation value) {
     String status = "";
     if (value.getValidationState().getCode() > 0) {
       status = "-fx-font-color: #FF3333;-fx-text-fill:#FF3333;";
