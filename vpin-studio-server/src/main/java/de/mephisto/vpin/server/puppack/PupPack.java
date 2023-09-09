@@ -9,7 +9,6 @@ import de.mephisto.vpin.restclient.popper.ScreenMode;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -178,7 +177,7 @@ public class PupPack {
     }
   }
 
-  @NotNull
+  @NonNull
   public JobExecutionResult executeOption(String option) {
     File file = getOptionFile(option);
     if (file.exists()) {

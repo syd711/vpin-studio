@@ -14,7 +14,6 @@ import de.mephisto.vpin.server.util.vpreg.VPReg;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import org.apache.commons.lang3.StringUtils;
-import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
@@ -432,7 +431,7 @@ public class HighscoreService implements InitializingBean {
   /**
    * The old highscore may be empty if a competitions did reset them.
    */
-  @NotNull
+  @NonNull
   private List<Score> getOrCloneOldHighscores(Highscore oldHighscore, Game game, String oldRaw, long serverId, List<Score> newScores) {
     List<Score> oldScores = new ArrayList<>();
     if (oldRaw != null) {

@@ -3,6 +3,7 @@ package de.mephisto.vpin.server.listeners;
 import de.mephisto.vpin.restclient.CompetitionType;
 import de.mephisto.vpin.restclient.JoinMode;
 import de.mephisto.vpin.restclient.PreferenceNames;
+import de.mephisto.vpin.restclient.SubscriptionInfo;
 import de.mephisto.vpin.restclient.discord.DiscordCompetitionData;
 import de.mephisto.vpin.server.competitions.Competition;
 import de.mephisto.vpin.server.competitions.CompetitionService;
@@ -123,7 +124,7 @@ public class HighscoreChangeListenerImpl implements InitializingBean, HighscoreC
           competition.setRom(game.getRom());
           competition.setUuid(UUID.randomUUID().toString());
           competition.setGameId(game.getId());
-          competition.setScoreLimit(10);
+          competition.setScoreLimit(SubscriptionInfo.DEFAULT_SCORE_LIMIT);
           competition.setName(game.getGameDisplayName());
           competition.setJoinMode(JoinMode.ROM_ONLY.name());
           return Optional.of(competitionService.save(competition));

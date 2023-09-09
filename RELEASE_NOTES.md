@@ -19,7 +19,6 @@ Thanks to @ed209 making the whole competition stuff better!
 
  - Added separate sections for the settings of a competition.
  - The **VPS Data** is not a label, not a textfield, which was confusing.
- - Added **Rules** header which explains the basic rules of online competitions. 
  - Added **Score Limit** field for the new limit option.
 
 ### Competitions: Table Subscriptions

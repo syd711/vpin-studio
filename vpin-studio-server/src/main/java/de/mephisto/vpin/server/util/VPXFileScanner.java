@@ -6,7 +6,6 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -134,7 +133,7 @@ public class VPXFileScanner {
     }
   }
 
-  private static void scanLines(@NotNull File gameFile, long start, ScanResult result, List<String> split) {
+  private static void scanLines(@NonNull File gameFile, long start, ScanResult result, List<String> split) {
     String l;
     for (String line : split) {
       l = line;

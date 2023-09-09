@@ -15,7 +15,6 @@ import de.mephisto.vpin.server.util.ImageUtil;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
@@ -108,7 +107,7 @@ public class CardService implements InitializingBean, HighscoreChangeListener {
 
 
   @Override
-  public void highscoreChanged(@NotNull HighscoreChangeEvent event) {
+  public void highscoreChanged(@NonNull HighscoreChangeEvent event) {
     try {
       generateCard(event.getGame(), false);
     } catch (Exception e) {

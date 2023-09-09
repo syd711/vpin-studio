@@ -1,6 +1,7 @@
 package de.mephisto.vpin.server.discord;
 
 import de.mephisto.vpin.restclient.CompetitionType;
+import de.mephisto.vpin.restclient.SubscriptionInfo;
 import de.mephisto.vpin.restclient.discord.DiscordBotStatus;
 import de.mephisto.vpin.restclient.discord.DiscordCompetitionData;
 import de.mephisto.vpin.server.competitions.Competition;
@@ -15,7 +16,6 @@ import de.mephisto.vpin.server.highscores.Score;
 import de.mephisto.vpin.server.players.Player;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
-import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -84,10 +84,7 @@ public class DiscordCompetitionService {
     ScoreSummary discordScoreSummary = discordService.getScoreSummary(highscoreParser, competition.getUuid(), discordServerId, discordChannelId);
     if (discordScoreSummary.getScores().isEmpty()) {
       LOG.info("Emitting initial highscore message for " + competition);
-      int scoreLimit = 5;
-      if (competition.getScoreLimit() > 0) {
-        scoreLimit = competition.getScoreLimit();
-      }
+      int scoreLimit = resolveScoreLimit(competition, competitionData);
       String msg = createInitialHighscoreMessage(game, newScore, competition, scoreLimit);
       long newHighscoreMessageId = discordService.sendMessage(discordServerId, discordChannelId, msg);
       discordService.updateHighscoreMessage(discordServerId, discordChannelId, newHighscoreMessageId);
@@ -113,7 +110,7 @@ public class DiscordCompetitionService {
         Score oldScore = oldScores.get(position - 1);
         updatedScores.add(position - 1, newScore);
 
-        updatedScores = sanitizeScoreList(competition, updatedScores);
+        updatedScores = sanitizeScoreList(competition, updatedScores, competitionData);
 
         //update the player info for the server the message is emitted to
         Player player = this.discordService.getPlayerByInitials(discordServerId, newScore.getPlayerInitials());
@@ -128,14 +125,14 @@ public class DiscordCompetitionService {
     LOG.info("***************** / Finished Discord Highscore Processing *********************");
   }
 
-  private String createHighscoreMessage(@NotNull Game game, @NotNull Score newScore, @NotNull Competition competition, List<Score> updatedScores, Score oldScore) {
+  private String createHighscoreMessage(@NonNull Game game, @NonNull Score newScore, @NonNull Competition competition, List<Score> updatedScores, Score oldScore) {
     if (competition.getType().equalsIgnoreCase(CompetitionType.SUBSCRIPTION.name())) {
       return discordSubscriptionMessageFactory.createSubscriptionHighscoreCreatedMessage(game, competition, oldScore, newScore, updatedScores);
     }
     return discordChannelMessageFactory.createCompetitionHighscoreCreatedMessage(game, competition, oldScore, newScore, updatedScores);
   }
 
-  private String createInitialHighscoreMessage(@NotNull Game game, @NotNull Score newScore, @NotNull Competition competition, int scoreLimit) {
+  private String createInitialHighscoreMessage(@NonNull Game game, @NonNull Score newScore, @NonNull Competition competition, int scoreLimit) {
     if (competition.getType().equalsIgnoreCase(CompetitionType.SUBSCRIPTION.name())) {
       return discordSubscriptionMessageFactory.createFirstSubscriptionHighscoreMessage(game, competition,  newScore, scoreLimit);
     }
@@ -143,7 +140,7 @@ public class DiscordCompetitionService {
   }
 
 
-  private List<Score> sanitizeScoreList(Competition competition, List<Score> updatedScores) {
+  private List<Score> sanitizeScoreList(@NonNull Competition competition, @NonNull List<Score> updatedScores, @Nullable DiscordCompetitionData competitionData) {
     int index = 1;
 
     //filter duplicates
@@ -160,8 +157,8 @@ public class DiscordCompetitionService {
     }
 
     //append results until the score limit is met
-    if (competition.getScoreLimit() > 0) {
-      int scoreCount = competition.getScoreLimit();
+    if (competitionData != null && competitionData.getScrL() > 0) {
+      int scoreCount = competitionData.getScrL();
       while (sanitized.size() <= scoreCount) {
         Score score = new Score(new Date(), competition.getGameId(), "???", null, "0", 0, index);
         sanitized.add(score);
@@ -171,10 +168,7 @@ public class DiscordCompetitionService {
     }
 
     //check if the list was too long from the start
-    int scoreLimit = 5;
-    if (competition.getScoreLimit() > 0) {
-      scoreLimit = competition.getScoreLimit();
-    }
+    int scoreLimit = resolveScoreLimit(competition, competitionData);
 
     if (sanitized.size() > scoreLimit) {
       sanitized = sanitized.subList(0, scoreLimit);
@@ -188,6 +182,17 @@ public class DiscordCompetitionService {
     }
 
     return sanitized;
+  }
+
+  private static int resolveScoreLimit(@NonNull Competition competition, @Nullable DiscordCompetitionData competitionData) {
+    int scoreLimit = 5;
+    if(competitionData != null && competitionData.getScrL() > 0) {
+      scoreLimit = competitionData.getScrL();
+    }
+    else if(competition.getType().equals(CompetitionType.SUBSCRIPTION.name())) {
+      scoreLimit = SubscriptionInfo.DEFAULT_SCORE_LIMIT;
+    }
+    return scoreLimit;
   }
 
 }

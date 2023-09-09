@@ -1,5 +1,6 @@
 package de.mephisto.vpin.ui.competitions.dialogs;
 
+import de.mephisto.vpin.restclient.SubscriptionInfo;
 import de.mephisto.vpin.restclient.popper.EmulatorType;
 import de.mephisto.vpin.commons.fx.Debouncer;
 import de.mephisto.vpin.commons.fx.DialogController;
@@ -87,7 +88,7 @@ public class SubscriptionDialogController implements Initializable, DialogContro
     competition.setType(CompetitionType.SUBSCRIPTION.name());
     competition.setName("");
     competition.setJoinMode(JoinMode.ROM_ONLY.name());
-    competition.setScoreLimit(10);
+    competition.setScoreLimit(SubscriptionInfo.DEFAULT_SCORE_LIMIT);
     competition.setUuid(UUID.randomUUID().toString());
     competition.setOwner(String.valueOf(botStatus.getBotId()));
     competition.setDiscordServerId(this.botStatus.getServerId());
