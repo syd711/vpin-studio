@@ -2,6 +2,7 @@ package de.mephisto.vpin.server.vpx;
 
 import de.mephisto.vpin.commons.POV;
 import de.mephisto.vpin.commons.utils.FileUtils;
+import de.mephisto.vpin.restclient.representations.vpx.TableInfo;
 import de.mephisto.vpin.server.VPinStudioException;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameService;
@@ -19,7 +20,6 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Arrays;
 import java.util.Base64;
 import java.util.Map;
 
@@ -140,6 +140,19 @@ public class VPXService {
     return null;
   }
 
+  public TableInfo getTableInfo(int gameId) {
+    Game game = gameService.getGame(gameId);
+    if (game != null) {
+      File gameFile = game.getGameFile();
+      if (gameFile.exists()) {
+        Map<String, String> values = VPXUtil.readTableInfo(gameFile);
+        return new TableInfo(values);
+      }
+    }
+    LOG.error("No game found for table info, id " + gameId);
+    return null;
+  }
+
   public String getSources(int gameId) {
     Game game = gameService.getGame(gameId);
     if (game != null) {
@@ -194,5 +207,20 @@ public class VPXService {
       return vpxCommandLineService.execute(game, "-Play");
     }
     return false;
+  }
+
+  public String getChecksum(int id) {
+    Game game = gameService.getGame(id);
+    if (game != null) {
+      File gameFile = game.getGameFile();
+      if (gameFile.exists()) {
+        return VPXUtil.getChecksum(gameFile);
+      }
+      else {
+        LOG.info("Game file " + gameFile.getAbsolutePath() + " does not exist for reading the checksum.");
+      }
+    }
+    LOG.error("No game found reading checksum " + id);
+    return null;
   }
 }

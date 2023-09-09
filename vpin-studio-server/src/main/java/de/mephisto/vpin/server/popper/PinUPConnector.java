@@ -664,7 +664,7 @@ public class PinUPConnector implements InitializingBean {
   public void enablePCGameEmulator() {
     List<Emulator> ems = this.getEmulators();
     for (Emulator em : ems) {
-      if (em.getName().equals(EmulatorType.PC_GAMES) && em.isVisible()) {
+      if (em.getName().equalsIgnoreCase(EmulatorType.PC_GAMES) && em.isVisible()) {
         return;
       }
     }

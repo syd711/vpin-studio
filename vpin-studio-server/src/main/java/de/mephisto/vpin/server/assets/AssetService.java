@@ -41,7 +41,7 @@ public class AssetService {
   private DefaultPictureService defaultPictureService;
 
   public Asset save(Asset asset) {
-    return assetRepository.save(asset);
+    return assetRepository.saveAndFlush(asset);
   }
 
   public Asset getById(long id) {

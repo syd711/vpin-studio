@@ -1,6 +1,8 @@
 package de.mephisto.vpin.restclient;
 
 public class SubscriptionInfo {
+  public final static int DEFAULT_SCORE_LIMIT = 10;
+
   private long serverId;
   private long channelId;
   private long ownerId;

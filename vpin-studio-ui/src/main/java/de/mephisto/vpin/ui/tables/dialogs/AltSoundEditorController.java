@@ -3,8 +3,8 @@ package de.mephisto.vpin.ui.tables.dialogs;
 import de.mephisto.vpin.commons.fx.DialogController;
 import de.mephisto.vpin.commons.utils.FileUtils;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
-import de.mephisto.vpin.restclient.AltSound;
-import de.mephisto.vpin.restclient.AltSoundEntry;
+import de.mephisto.vpin.restclient.representations.altsound.AltSound;
+import de.mephisto.vpin.restclient.representations.altsound.AltSoundEntry;
 import de.mephisto.vpin.restclient.representations.GameRepresentation;
 import de.mephisto.vpin.ui.Studio;
 import javafx.beans.property.*;
@@ -287,11 +287,11 @@ public class AltSoundEditorController implements Initializable, DialogController
         continue;
       }
 
-      if (nameFilter != null && !entry.getName().equals(nameFilter)) {
+      if (nameFilter != null && !entry.getName().equalsIgnoreCase(nameFilter)) {
         continue;
       }
 
-      if (filenameFiler != null && !entry.getFilename().equals(filenameFiler)) {
+      if (filenameFiler != null && !entry.getFilename().equalsIgnoreCase(filenameFiler)) {
         continue;
       }
 

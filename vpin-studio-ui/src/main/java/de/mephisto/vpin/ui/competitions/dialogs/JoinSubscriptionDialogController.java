@@ -230,16 +230,16 @@ public class JoinSubscriptionDialogController implements Initializable, DialogCo
         continue;
       }
 
-      if (!game.getRom().equals(filterRom)) {
+      if (!game.getRom().equalsIgnoreCase(filterRom)) {
         continue;
       }
 
       //filter subscription for the same table on the same server!
-      if (allCompetitions.stream().anyMatch(c -> game.getRom().equals(c.getRom()) && c.getDiscordServerId() == competition.getDiscordServerId())) {
+      if (allCompetitions.stream().anyMatch(c -> game.getRom().equalsIgnoreCase(c.getRom()) && c.getDiscordServerId() == competition.getDiscordServerId())) {
         continue;
       }
 
-      if (game.getEmulator().getName().equals(EmulatorType.VISUAL_PINBALL_X)) {
+      if (game.getEmulator().getName().equalsIgnoreCase(EmulatorType.VISUAL_PINBALL_X)) {
         filtered.add(game);
       }
     }

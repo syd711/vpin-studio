@@ -6,7 +6,9 @@ import de.mephisto.vpin.restclient.discord.DiscordBotStatus;
 import de.mephisto.vpin.restclient.discord.DiscordChannel;
 import de.mephisto.vpin.restclient.discord.DiscordCompetitionData;
 import de.mephisto.vpin.restclient.discord.DiscordServer;
+import de.mephisto.vpin.restclient.representations.CompetitionRepresentation;
 import de.mephisto.vpin.restclient.representations.PlayerRepresentation;
+import de.mephisto.vpin.restclient.representations.ScoreRepresentation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.client.RestTemplate;
@@ -32,6 +34,10 @@ public class DiscordServiceClient extends VPinStudioClientService {
 
   public DiscordCompetitionData getDiscordCompetitionData(long serverId, long channelId) {
     return getRestClient().get(API + "discord/competition/" + serverId + "/" + channelId, DiscordCompetitionData.class);
+  }
+
+  public boolean validateSettings() {
+    return getRestClient().get(API + "discord/validate", Boolean.class);
   }
 
   public DiscordBotStatus getDiscordStatus(long serverId) {
@@ -79,5 +85,9 @@ public class DiscordServiceClient extends VPinStudioClientService {
 
   public List<PlayerRepresentation> getAllowList() {
     return Arrays.asList(getRestClient().get(API + "discord/allowlist", PlayerRepresentation[].class));
+  }
+
+  public List<ScoreRepresentation> checkCompetition(CompetitionRepresentation selectedItem) {
+    return Arrays.asList(getRestClient().get(API + "discord/competition/check/" + selectedItem.getId(), ScoreRepresentation[].class));
   }
 }

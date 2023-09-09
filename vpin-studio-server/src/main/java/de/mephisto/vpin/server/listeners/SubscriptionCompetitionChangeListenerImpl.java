@@ -94,9 +94,12 @@ public class SubscriptionCompetitionChangeListenerImpl extends DefaultCompetitio
                   Highscore hs = highscore.get();
                   List<Score> scores = highscoreParser.parseScores(hs.getCreatedAt(), hs.getRaw(), competition.getGameId(), serverId);
 
-                  String msg = discordSubscriptionMessageFactory.createFirstSubscriptionHighscoreMessage(game, competition, scores);
-                  long newHighscoreMessageId = discordService.sendMessage(serverId, channelId, msg);
-                  discordService.updateHighscoreMessage(serverId, channelId, newHighscoreMessageId);
+                  if(!scores.isEmpty()) {
+                    String msg = discordSubscriptionMessageFactory.createFirstSubscriptionHighscoreMessage(game, competition, scores.get(0), competition.getScoreLimit());
+                    long newHighscoreMessageId = discordService.sendMessage(serverId, channelId, msg);
+                    discordService.updateHighscoreMessage(serverId, channelId, newHighscoreMessageId);
+                  }
+
                 }
               }
             }
@@ -139,7 +142,7 @@ public class SubscriptionCompetitionChangeListenerImpl extends DefaultCompetitio
                 subscriptionRom = g.getTableName();
               }
 
-              if (subscriptionRom != null && subscriptionRom.equals(rom)) {
+              if (subscriptionRom != null && subscriptionRom.equalsIgnoreCase(rom)) {
                 count++;
               }
             }

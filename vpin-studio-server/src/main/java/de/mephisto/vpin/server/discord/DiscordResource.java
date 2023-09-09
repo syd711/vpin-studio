@@ -5,6 +5,7 @@ import de.mephisto.vpin.restclient.discord.DiscordBotStatus;
 import de.mephisto.vpin.restclient.discord.DiscordChannel;
 import de.mephisto.vpin.restclient.discord.DiscordCompetitionData;
 import de.mephisto.vpin.restclient.discord.DiscordServer;
+import de.mephisto.vpin.server.highscores.Score;
 import de.mephisto.vpin.server.players.Player;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -23,9 +24,18 @@ public class DiscordResource {
   @Autowired
   private DiscordService discordService;
 
+  @Autowired
+  private DiscordCompetitionService discordCompetitionService;
+
   @GetMapping("/status/{serverId}")
   public DiscordBotStatus getStatus(@PathVariable("serverId") long serverId) {
     return discordService.getStatus(serverId);
+  }
+
+  //TODO duplicate?
+  @GetMapping("/validate")
+  public boolean validateSettings() {
+    return discordService.validateSettings();
   }
 
   @GetMapping("/permissions/competitions/join/{serverId}/{channelId}")
@@ -78,6 +88,11 @@ public class DiscordResource {
   public SubscriptionInfo getSubscriptionInfo(@PathVariable("serverId") long serverId,
                                               @PathVariable("channelId") long channelId) {
     return discordService.getSubscriptionInfo(serverId, channelId);
+  }
+
+  @GetMapping("/competition/check/{id}")
+  public List<Score> checkCompetitionScores(@PathVariable("id") int id) {
+    return discordCompetitionService.runCompetitionCheck(id);
   }
 
   @GetMapping("/users/{serverId}")

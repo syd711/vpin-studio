@@ -19,6 +19,8 @@ public class CompetitionRepresentation {
 
   private int gameId;
 
+  private int scoreLimit;
+
   private String badge;
 
   private String type;
@@ -47,6 +49,24 @@ public class CompetitionRepresentation {
 
   private String rom;
 
+  public int getScoreLimit() {
+    return scoreLimit;
+  }
+
+  public void setScoreLimit(int scoreLimit) {
+    this.scoreLimit = scoreLimit;
+  }
+
+  private ValidationState validationState = new ValidationState();
+
+  public ValidationState getValidationState() {
+    return validationState;
+  }
+
+  public void setValidationState(ValidationState validationState) {
+    this.validationState = validationState;
+  }
+
   public String getRom() {
     return rom;
   }
@@ -63,7 +83,7 @@ public class CompetitionRepresentation {
     this.highscoreReset = highscoreReset;
   }
 
-  private String joinMode = JoinMode.STRICT.name();
+  private String joinMode = JoinMode.ROM_ONLY.name();
 
   public String getJoinMode() {
     return joinMode;
@@ -225,10 +245,20 @@ public class CompetitionRepresentation {
     clone.setBadge(this.getBadge());
     clone.setType(this.getType());
     clone.setOwner(this.getOwner());
+    clone.setScoreLimit(this.getScoreLimit());
+    clone.setJoinMode(this.getJoinMode());
+    clone.setDiscordServerId(this.getDiscordServerId());
     clone.setDiscordChannelId(this.getDiscordChannelId());
     clone.setUuid(UUID.randomUUID().toString());
     clone.setGameId(this.getGameId());
     return clone;
+  }
+
+  public boolean isValid() {
+    if (getType() != null && getType().equals(CompetitionType.DISCORD.name())) {
+      return discordServerId > 0 && discordChannelId > 0;
+    }
+    return true;
   }
 
   public boolean isActive() {

@@ -1,7 +1,6 @@
 package de.mephisto.vpin.server.discord;
 
 import de.mephisto.vpin.connectors.discord.DiscordMember;
-import de.mephisto.vpin.restclient.CompetitionType;
 import de.mephisto.vpin.restclient.PlayerDomain;
 import de.mephisto.vpin.server.competitions.Competition;
 import de.mephisto.vpin.server.competitions.ScoreSummary;
@@ -9,9 +8,7 @@ import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.highscores.Score;
 import de.mephisto.vpin.server.players.Player;
 import de.mephisto.vpin.server.players.PlayerService;
-import de.mephisto.vpin.server.util.ScoreHelper;
 import edu.umd.cs.findbugs.annotations.NonNull;
-import edu.umd.cs.findbugs.annotations.Nullable;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -26,7 +23,7 @@ public class DiscordChannelMessageFactory {
   public static final String FINISHED_INDICATOR = " finished";
   public static final String HIGHSCORE_INDICATOR = "updated highscore list";
 
-  private static final String DISCORD_COMPETITION_CREATED_TEMPLATE = "%s " + START_INDICATOR + "!\n(ID: %s)";
+  private static final String DISCORD_COMPETITION_CREATED_TEMPLATE = "%s " + START_INDICATOR + " competition!\n(ID: %s)";
 
 
   private static final String COMPETITION_CANCELLED_TEMPLATE = "%s has " + CANCEL_INDICATOR + " the competition \"%s\".";
@@ -132,17 +129,18 @@ public class DiscordChannelMessageFactory {
     return String.format(beatenMessageTemplate, oldName, oldScore.getScore());
   }
 
-  private static String createHighscoreList(List<Score> scores) {
+  public static String createHighscoreList(List<Score> scores) {
     StringBuilder builder = new StringBuilder();
     builder.append("```");
     builder.append("Pos   Initials           Score\n");
     builder.append("------------------------------\n");
-    int index = 0;
     for (Score score : scores) {
-      index++;
       builder.append("#");
       builder.append(score.getPosition());
-      builder.append("   ");
+      if (String.valueOf(score.getPosition()).length() == 1) {
+        builder.append(" ");
+      }
+      builder.append("  ");
       builder.append(String.format("%4.4s", score.getPlayerInitials()));
       builder.append("       ");
       builder.append(String.format("%14.12s", score.getScore()));
@@ -153,7 +151,7 @@ public class DiscordChannelMessageFactory {
     return builder.toString();
   }
 
-  private static String createInitialHighscoreList(Score score, int length) {
+  public static String createInitialHighscoreList(Score score, int length) {
     StringBuilder builder = new StringBuilder();
     builder.append("```");
     builder.append("Pos   Initials           Score\n");
@@ -165,10 +163,14 @@ public class DiscordChannelMessageFactory {
     builder.append(String.format("%14.12s", score.getScore()));
     builder.append("\n");
 
-    for (int i = 0; i < length; i++) {
+    for (int i = 0; i < length-1; i++) {
+      int pos = i + 2;
       builder.append("#");
-      builder.append((i + 2));
-      builder.append("   ");
+      builder.append(pos);
+      if (pos < 10) {
+        builder.append(" ");
+      }
+      builder.append("  ");
       builder.append(String.format("%4.4s", "???"));
       builder.append("       ");
       builder.append(String.format("%14.12s", "0"));

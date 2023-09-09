@@ -268,7 +268,7 @@ public class TableBackupAdapterVpa implements TableBackupAdapter, Job {
     if (allMusicFiles != null) {
       for (File file : allMusicFiles) {
         for (String tableMusicFile : audioAssets) {
-          if (file.getName().equals(tableMusicFile)) {
+          if (file.getName().equalsIgnoreCase(tableMusicFile)) {
             return true;
           }
         }

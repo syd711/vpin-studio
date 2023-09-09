@@ -1,29 +1,37 @@
 package de.mephisto.vpin.ui.competitions.dialogs;
 
-import de.mephisto.vpin.restclient.popper.EmulatorType;
 import de.mephisto.vpin.commons.fx.Debouncer;
 import de.mephisto.vpin.commons.fx.DialogController;
 import de.mephisto.vpin.commons.fx.UIDefaults;
+import de.mephisto.vpin.connectors.vps.VPS;
+import de.mephisto.vpin.connectors.vps.model.VpsTable;
+import de.mephisto.vpin.connectors.vps.model.VpsTableFile;
 import de.mephisto.vpin.restclient.CompetitionType;
 import de.mephisto.vpin.restclient.JoinMode;
-import de.mephisto.vpin.restclient.popper.PopperScreen;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.client.VPinStudioClient;
 import de.mephisto.vpin.restclient.discord.DiscordBotStatus;
 import de.mephisto.vpin.restclient.discord.DiscordChannel;
 import de.mephisto.vpin.restclient.discord.DiscordCompetitionData;
 import de.mephisto.vpin.restclient.discord.DiscordServer;
+import de.mephisto.vpin.restclient.popper.EmulatorType;
+import de.mephisto.vpin.restclient.popper.PopperScreen;
 import de.mephisto.vpin.restclient.representations.CompetitionRepresentation;
 import de.mephisto.vpin.restclient.representations.GameMediaItemRepresentation;
 import de.mephisto.vpin.restclient.representations.GameMediaRepresentation;
 import de.mephisto.vpin.restclient.representations.GameRepresentation;
 import de.mephisto.vpin.restclient.util.DateUtil;
 import javafx.application.Platform;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -33,11 +41,14 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.awt.*;
 import java.io.ByteArrayInputStream;
+import java.net.URI;
 import java.net.URL;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
+import java.util.List;
 import java.util.*;
 
 import static de.mephisto.vpin.ui.Studio.client;
@@ -46,6 +57,16 @@ public class CompetitionDiscordDialogController implements Initializable, Dialog
   private final static Logger LOG = LoggerFactory.getLogger(CompetitionDiscordDialogController.class);
 
   private final Debouncer debouncer = new Debouncer();
+
+  public final static String ROM_DESCRIPTION = "ROM Name Check";
+  public final static String STRICT_DESCRIPTION = "ROM Name and VPX File Size Check (+/- 1MB)";
+  public final static String CHECKSUM_DESCRIPTION = "ROM Name and VPX Script Checksum Check";
+
+  public final static JoinModel ROM_ONLY = new JoinModel(JoinMode.ROM_ONLY, ROM_DESCRIPTION);
+  public final static JoinModel STRICT = new JoinModel(JoinMode.STRICT, STRICT_DESCRIPTION);
+  public final static JoinModel CHECKSUM = new JoinModel(JoinMode.CHECKSUM, CHECKSUM_DESCRIPTION);
+
+  private final static List<JoinModel> JOIN_MODELS = Arrays.asList(ROM_ONLY, STRICT, CHECKSUM);
 
   @FXML
   private ImageView iconPreview;
@@ -72,10 +93,22 @@ public class CompetitionDiscordDialogController implements Initializable, Dialog
   private ComboBox<String> endTime;
 
   @FXML
+  private ComboBox<JoinModel> scoreValidation;
+
+  @FXML
+  private Spinner<Integer> scoreLimit;
+
+  @FXML
   private Button saveBtn;
 
   @FXML
   private TextField nameField;
+
+  @FXML
+  private Hyperlink vpsLinkField;
+
+  @FXML
+  private Hyperlink downloadLinkField;
 
   @FXML
   private Label durationLabel;
@@ -98,9 +131,6 @@ public class CompetitionDiscordDialogController implements Initializable, Dialog
   @FXML
   private CheckBox resetCheckbox;
 
-  @FXML
-  private CheckBox strictCheckCheckbox;
-
   private CompetitionRepresentation competition;
 
   private DiscordBotStatus botStatus = null;
@@ -120,121 +150,18 @@ public class CompetitionDiscordDialogController implements Initializable, Dialog
     stage.close();
   }
 
-  @Override
-  public void initialize(URL url, ResourceBundle resourceBundle) {
-    long guildId = client.getPreference(PreferenceNames.DISCORD_GUILD_ID).getLongValue();
-    this.botStatus = client.getDiscordService().getDiscordStatus(guildId);
-
-    competition = new CompetitionRepresentation();
-    competition.setType(CompetitionType.DISCORD.name());
-    competition.setName(UIDefaults.DEFAULT_COMPETITION_NAME);
-    competition.setUuid(UUID.randomUUID().toString());
-    competition.setOwner(String.valueOf(botStatus.getBotId()));
-    competition.setHighscoreReset(true);
-
-    Date end = Date.from(LocalDate.now().plus(7, ChronoUnit.DAYS).atStartOfDay(ZoneId.systemDefault()).toInstant());
-    competition.setStartDate(Date.from(LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant()));
-    competition.setEndDate(end);
-
-    saveBtn.setDisable(true);
-
-    nameField.setText(competition.getName());
-    nameField.textProperty().addListener((observableValue, s, t1) -> debouncer.debounce("nameField", () -> {
-      Platform.runLater(() -> {
-        if (nameField.getText().length() > 40) {
-          String sub = nameField.getText().substring(0, 40);
-          nameField.setText(sub);
-        }
-        competition.setName(nameField.getText());
-        validate();
-      });
-    }, 500));
-
-
-    List<DiscordServer> servers = client.getDiscordService().getDiscordServers();
-    ObservableList<DiscordServer> discordServers = FXCollections.observableArrayList(servers);
-    serversCombo.getItems().addAll(discordServers);
-    serversCombo.valueProperty().addListener((observableValue, gameRepresentation, t1) -> {
-      competition.setDiscordServerId(t1.getId());
-
-      channelsCombo.setItems(FXCollections.observableArrayList(client.getDiscordService().getDiscordChannels(t1.getId())));
-      validate();
-    });
-
-
-    ObservableList<DiscordChannel> discordChannels = FXCollections.observableArrayList(new ArrayList<>());
-    channelsCombo.getItems().addAll(discordChannels);
-    channelsCombo.valueProperty().addListener((observableValue, gameRepresentation, t1) -> {
-      competition.setDiscordChannelId(t1.getId());
-      validate();
-    });
-
-
-    startDatePicker.setValue(LocalDate.now());
-    startDatePicker.valueProperty().addListener((observableValue, localDate, t1) -> {
-      Date date = DateUtil.formatDate(startDatePicker.getValue(), startTime.getValue());
-      competition.setStartDate(date);
-      validate();
-    });
-    startTime.setItems(FXCollections.observableList(DateUtil.TIMES));
-    startTime.setValue("00:00");
-    startTime.valueProperty().addListener((observable, oldValue, newValue) -> {
-      Date date = DateUtil.formatDate(startDatePicker.getValue(), startTime.getValue());
-      competition.setStartDate(date);
-      validate();
-    });
-
-    endDatePicker.setValue(LocalDate.now().plus(7, ChronoUnit.DAYS));
-    endDatePicker.valueProperty().addListener((observableValue, localDate, t1) -> {
-      Date date = DateUtil.formatDate(endDatePicker.getValue(), endTime.getValue());
-      competition.setEndDate(date);
-      validate();
-    });
-    endTime.setItems(FXCollections.observableList(DateUtil.TIMES));
-    endTime.setValue("00:00");
-    endTime.valueProperty().addListener((observable, oldValue, newValue) -> {
-      Date date = DateUtil.formatDate(endDatePicker.getValue(), endTime.getValue());
-      competition.setEndDate(date);
-      validate();
-    });
-
-    List<GameRepresentation> games = client.getGameService().getGamesCached();
-    List<GameRepresentation> filtered = new ArrayList<>();
-    for (GameRepresentation game : games) {
-      if (StringUtils.isEmpty(game.getRom())) {
-        continue;
-      }
-      if (game.getEmulator().getName().equals(EmulatorType.VISUAL_PINBALL_X)) {
-        filtered.add(game);
+  @FXML
+  private void onLinkClick(ActionEvent event) {
+    Hyperlink link = (Hyperlink) event.getSource();
+    String linkText = link.getText();
+    Desktop desktop = Desktop.isDesktopSupported() ? Desktop.getDesktop() : null;
+    if (linkText != null && linkText.startsWith("http") && desktop != null && desktop.isSupported(Desktop.Action.BROWSE)) {
+      try {
+        desktop.browse(new URI(linkText));
+      } catch (Exception e) {
+        LOG.error("Failed to open link: " + e.getMessage());
       }
     }
-
-    ObservableList<GameRepresentation> gameRepresentations = FXCollections.observableArrayList(filtered);
-    tableCombo.getItems().addAll(gameRepresentations);
-    tableCombo.valueProperty().addListener((observableValue, gameRepresentation, t1) -> {
-      competition.setGameId(t1.getId());
-      refreshPreview(t1, competitionIconCombo.getValue());
-      validate();
-    });
-    ArrayList<String> badges = new ArrayList<>(client.getCompetitionService().getCompetitionBadges());
-    badges.add(0, null);
-    ObservableList<String> imageList = FXCollections.observableList(badges);
-    competitionIconCombo.setItems(imageList);
-    competitionIconCombo.setCellFactory(c -> new CompetitionImageListCell(client));
-    competitionIconCombo.valueProperty().addListener((observableValue, s, t1) -> {
-      competition.setBadge(t1);
-      refreshPreview(tableCombo.getValue(), t1);
-      validate();
-    });
-
-    this.resetCheckbox.selectedProperty().addListener((observable, oldValue, newValue) -> validate());
-    this.strictCheckCheckbox.setSelected(this.competition.getJoinMode() != null && this.competition.getJoinMode().equals(JoinMode.STRICT.name()));
-    this.strictCheckCheckbox.selectedProperty().addListener((observable, oldValue, newValue) -> {
-      this.competition.setJoinMode(newValue ? JoinMode.STRICT.name() : JoinMode.ROM_ONLY.name());
-      validate();
-    });
-
-    validate();
   }
 
   private void refreshPreview(GameRepresentation game, String badge) {
@@ -287,18 +214,22 @@ public class CompetitionDiscordDialogController implements Initializable, Dialog
       return;
     }
 
-    if (competition.getDiscordChannelId() == 0) {
+    if (competition.getDiscordChannelId() == 0 || channelsCombo.getValue() == null) {
       validationTitle.setText("No discord channel selected.");
       validationDescription.setText("Select a discord channel for competition updates.");
       return;
     }
 
     //check Discord permissions
-    if (!client.getCompetitionService().hasManagePermissions(competition.getDiscordServerId(), competition.getDiscordChannelId())) {
-      validationTitle.setText("Insufficient Permissions");
-      validationDescription.setText("Your Discord bot has insufficient permissions to join a competition. Please check the documentation for details.");
-      return;
+    DiscordChannel value = channelsCombo.getValue();
+    if(value != null) {
+      if (!client.getCompetitionService().hasManagePermissions(competition.getDiscordServerId(), competition.getDiscordChannelId())) {
+        validationTitle.setText("Insufficient Permissions");
+        validationDescription.setText("Your Discord bot has insufficient permissions for this channel. Please check the documentation for details.");
+        return;
+      }
     }
+
 
     if (startDate == null || endDate == null || startDate.getTime() >= endDate.getTime()) {
       validationTitle.setText("Invalid start/end date set.");
@@ -319,7 +250,7 @@ public class CompetitionDiscordDialogController implements Initializable, Dialog
 
     //check if another active competition on this channel is active during the selected time span
     for (CompetitionRepresentation existingCompetition : allCompetitions) {
-      if (existingCompetition.isFinished()) {
+      if (existingCompetition.isFinished() || existingCompetition.getValidationState().getCode() > 0) {
         continue;
       }
 
@@ -385,6 +316,8 @@ public class CompetitionDiscordDialogController implements Initializable, Dialog
 
   public void setCompetition(List<CompetitionRepresentation> all, CompetitionRepresentation selectedCompetition) {
     this.allCompetitions = all;
+    this.vpsLinkField.setText("-");
+    this.downloadLinkField.setText("-");
 
     if (selectedCompetition != null) {
       this.resetCheckbox.setDisable(selectedCompetition.getId() != null);
@@ -400,7 +333,30 @@ public class CompetitionDiscordDialogController implements Initializable, Dialog
 
       channelsCombo.setDisable(!editable);
       serversCombo.setDisable(!editable);
+
       competitionIconCombo.setDisable(!editable);
+      scoreValidation.setDisable(!editable);
+
+
+      String joinMode = selectedCompetition.getJoinMode();
+      if (StringUtils.isEmpty(joinMode)) {
+        this.scoreValidation.setValue(ROM_ONLY);
+      }
+      else {
+        JoinMode mode = JoinMode.valueOf(joinMode);
+        if (mode.equals(JoinMode.ROM_ONLY)) {
+          this.scoreValidation.setValue(ROM_ONLY);
+        }
+        else if (mode.equals(JoinMode.STRICT)) {
+          this.scoreValidation.setValue(STRICT);
+        }
+        else {
+          this.scoreValidation.setValue(CHECKSUM);
+        }
+      }
+
+      scoreLimit.setDisable(!editable);
+      scoreLimit.getValueFactory().valueProperty().set(selectedCompetition.getScoreLimit());
 
       this.nameField.setText(selectedCompetition.getName());
       this.nameField.setDisable(!editable);
@@ -415,11 +371,10 @@ public class CompetitionDiscordDialogController implements Initializable, Dialog
       this.endTime.setValue(DateUtil.formatTimeString(selectedCompetition.getEndDate()));
       this.endTime.setDisable(!editable);
 
-      this.strictCheckCheckbox.setDisable(!editable);
-
       this.tableCombo.setValue(game);
       this.tableCombo.setDisable(!editable);
 
+      refreshVPS(game);
 
       this.channelsCombo.setItems(FXCollections.observableList(serverChannels));
       this.serversCombo.setValue(discordServer);
@@ -443,11 +398,157 @@ public class CompetitionDiscordDialogController implements Initializable, Dialog
 
       this.competition = selectedCompetition;
       refreshPreview(game, badge);
+
+      this.validationContainer.setVisible(editable);
+    }
+    validate();
+  }
+
+  private void refreshVPS(GameRepresentation game) {
+    this.downloadLinkField.setText("-");
+    this.vpsLinkField.setText("-");
+
+    if (!StringUtils.isEmpty(game.getExtTableId())) {
+      VpsTable vpsTable = VPS.getInstance().getTableById(game.getExtTableId());
+      vpsLinkField.setText("https://virtual-pinball-spreadsheet.web.app/game/" + game.getExtTableId() + "/");
+
+      if (!StringUtils.isEmpty(game.getExtTableVersionId())) {
+        List<VpsTableFile> tableFiles = vpsTable.getTableFiles();
+        Optional<VpsTableFile> tableVersion = tableFiles.stream().filter(t -> t.getId().equals(game.getExtTableVersionId())).findFirst();
+        if (tableVersion.isPresent() && !tableVersion.get().getUrls().isEmpty()) {
+          downloadLinkField.setText(tableVersion.get().getUrls().get(0).getUrl());
+        }
+      }
     }
   }
 
+  @Override
+  public void initialize(URL url, ResourceBundle resourceBundle) {
+    long guildId = client.getPreference(PreferenceNames.DISCORD_GUILD_ID).getLongValue();
+    this.botStatus = client.getDiscordService().getDiscordStatus(guildId);
 
-  public static class CompetitionImageListCell extends ListCell<String> {
+    competition = new CompetitionRepresentation();
+    competition.setScoreLimit(5);
+    competition.setType(CompetitionType.DISCORD.name());
+    competition.setName(UIDefaults.DEFAULT_COMPETITION_NAME);
+    competition.setUuid(UUID.randomUUID().toString());
+    competition.setOwner(String.valueOf(botStatus.getBotId()));
+    competition.setHighscoreReset(true);
+
+    Date end = Date.from(LocalDate.now().plus(7, ChronoUnit.DAYS).atStartOfDay(ZoneId.systemDefault()).toInstant());
+    competition.setStartDate(Date.from(LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant()));
+    competition.setEndDate(end);
+
+    saveBtn.setDisable(true);
+
+    nameField.setText(competition.getName());
+    nameField.textProperty().addListener((observableValue, s, t1) -> debouncer.debounce("nameField", () -> {
+      Platform.runLater(() -> {
+        if (nameField.getText().length() > 40) {
+          String sub = nameField.getText().substring(0, 40);
+          nameField.setText(sub);
+        }
+        competition.setName(nameField.getText());
+        validate();
+      });
+    }, 500));
+
+
+    List<DiscordServer> servers = client.getDiscordService().getDiscordServers();
+    ObservableList<DiscordServer> discordServers = FXCollections.observableArrayList(servers);
+    serversCombo.getItems().addAll(discordServers);
+    serversCombo.valueProperty().addListener((observableValue, gameRepresentation, t1) -> {
+      competition.setDiscordServerId(t1.getId());
+
+      channelsCombo.setItems(FXCollections.observableArrayList(client.getDiscordService().getDiscordChannels(t1.getId())));
+      validate();
+    });
+
+
+    ObservableList<DiscordChannel> discordChannels = FXCollections.observableArrayList(new ArrayList<>());
+    channelsCombo.getItems().addAll(discordChannels);
+    channelsCombo.valueProperty().addListener((observableValue, gameRepresentation, t1) -> {
+      competition.setDiscordChannelId(t1.getId());
+      validate();
+    });
+
+    SpinnerValueFactory.IntegerSpinnerValueFactory factory = new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 100, competition.getScoreLimit());
+    scoreLimit.setValueFactory(factory);
+    factory.valueProperty().addListener((observableValue, integer, t1) -> {
+      competition.setScoreLimit(t1);
+    });
+
+    scoreValidation.setItems(FXCollections.observableList(JOIN_MODELS));
+    scoreValidation.valueProperty().addListener((observableValue, joinModel, t1) -> competition.setJoinMode(t1.getMode().name()));
+    scoreValidation.setValue(ROM_ONLY);
+
+    startDatePicker.setValue(LocalDate.now());
+    startDatePicker.valueProperty().addListener((observableValue, localDate, t1) -> {
+      Date date = DateUtil.formatDate(startDatePicker.getValue(), startTime.getValue());
+      competition.setStartDate(date);
+      validate();
+    });
+    startTime.setItems(FXCollections.observableList(DateUtil.TIMES));
+    startTime.setValue("00:00");
+    startTime.valueProperty().addListener((observable, oldValue, newValue) -> {
+      Date date = DateUtil.formatDate(startDatePicker.getValue(), startTime.getValue());
+      competition.setStartDate(date);
+      validate();
+    });
+
+    endDatePicker.setValue(LocalDate.now().plus(7, ChronoUnit.DAYS));
+    endDatePicker.valueProperty().addListener((observableValue, localDate, t1) -> {
+      Date date = DateUtil.formatDate(endDatePicker.getValue(), endTime.getValue());
+      competition.setEndDate(date);
+      validate();
+    });
+    endTime.setItems(FXCollections.observableList(DateUtil.TIMES));
+    endTime.setValue("00:00");
+    endTime.valueProperty().addListener((observable, oldValue, newValue) -> {
+      Date date = DateUtil.formatDate(endDatePicker.getValue(), endTime.getValue());
+      competition.setEndDate(date);
+      validate();
+    });
+
+    List<GameRepresentation> games = client.getGameService().getGamesCached();
+    List<GameRepresentation> filtered = new ArrayList<>();
+    for (GameRepresentation game : games) {
+      if (StringUtils.isEmpty(game.getRom())) {
+        continue;
+      }
+      if (game.getEmulator().getName().equalsIgnoreCase(EmulatorType.VISUAL_PINBALL_X)) {
+        filtered.add(game);
+      }
+    }
+
+    ObservableList<GameRepresentation> gameRepresentations = FXCollections.observableArrayList(filtered);
+    tableCombo.getItems().addAll(gameRepresentations);
+    tableCombo.valueProperty().addListener((observableValue, gameRepresentation, t1) -> {
+      competition.setGameId(t1.getId());
+      refreshPreview(t1, competitionIconCombo.getValue());
+      refreshVPS(t1);
+      validate();
+    });
+
+    List<String> badges = new ArrayList<>(client.getCompetitionService().getCompetitionBadges());
+    badges.add(0, null);
+    ObservableList<String> imageList = FXCollections.observableList(badges);
+    competitionIconCombo.setItems(imageList);
+    competitionIconCombo.setCellFactory(c -> new CompetitionImageListCell(client));
+    competitionIconCombo.valueProperty().addListener((observableValue, s, t1) -> {
+      competition.setBadge(t1);
+      refreshPreview(tableCombo.getValue(), t1);
+      validate();
+    });
+
+    this.resetCheckbox.selectedProperty().addListener((observable, oldValue, newValue) -> validate());
+    this.scoreLimit.getValueFactory().setValue(this.competition.getScoreLimit());
+
+    validate();
+  }
+
+  static class CompetitionImageListCell extends ListCell<String> {
+
     private final VPinStudioClient client;
 
     public CompetitionImageListCell(VPinStudioClient client) {
@@ -469,6 +570,44 @@ public class CompetitionDiscordDialogController implements Initializable, Dialog
         setGraphic(imageView);
         setText(item);
       }
+    }
+  }
+
+  static class JoinModel {
+    private JoinMode mode;
+    private String description;
+
+    public JoinModel(JoinMode mode, String description) {
+      this.mode = mode;
+      this.description = description;
+    }
+
+    public JoinMode getMode() {
+      return mode;
+    }
+
+    public String getDescription() {
+      return description;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+      if (this == o) return true;
+      if (!(o instanceof JoinModel)) return false;
+
+      JoinModel joinModel = (JoinModel) o;
+
+      return mode == joinModel.mode;
+    }
+
+    @Override
+    public int hashCode() {
+      return mode.hashCode();
+    }
+
+    @Override
+    public String toString() {
+      return description;
     }
   }
 }

@@ -48,4 +48,8 @@ public class ScoreSummary {
   public void setScores(List<Score> scores) {
     this.scores = scores;
   }
+
+  public boolean contains(Score newScore) {
+    return scores.stream().anyMatch(s -> s.matches(newScore));
+  }
 }

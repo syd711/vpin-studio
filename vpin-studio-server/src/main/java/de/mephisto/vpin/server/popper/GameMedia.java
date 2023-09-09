@@ -54,7 +54,7 @@ public class GameMedia {
     }
 
     for (GameMediaItem gameMediaItem : gameMediaItems) {
-      if (gameMediaItem.getName().equals(name)) {
+      if (gameMediaItem.getName().equalsIgnoreCase(name)) {
         return gameMediaItem;
       }
     }

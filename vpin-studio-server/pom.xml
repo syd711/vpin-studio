@@ -6,7 +6,7 @@
 
     <groupId>de.mephisto.vpin</groupId>
     <artifactId>vpin-studio-server</artifactId>
-    <version>1.4.1</version>
+    <version>1.4.4</version>
 
     <parent>
         <groupId>org.springframework.boot</groupId>
@@ -70,6 +70,11 @@
         <dependency>
             <groupId>de.mephisto.vpin</groupId>
             <artifactId>vpin-studio-rest-client</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>de.mephisto.vpin</groupId>
+            <artifactId>vpin-connector-vps</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>

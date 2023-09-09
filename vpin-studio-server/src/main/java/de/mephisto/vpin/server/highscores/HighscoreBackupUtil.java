@@ -77,7 +77,7 @@ public class HighscoreBackupUtil {
 
     String json = objectMapper.writeValueAsString(backup);
     Files.write(descriptorFile.toPath(), json.getBytes());
-    LOG.error("Written temporary highscore export descriptor file " + descriptorFile.getAbsolutePath());
+    LOG.info("Written temporary highscore export descriptor file " + descriptorFile.getAbsolutePath());
     return descriptorFile;
   }
 

@@ -81,7 +81,7 @@ public class DiscordBotCommandResponseFactory {
     }
 
     if (scores.isEmpty()) {
-      msgBuilder.append("No score has been record yet.\n");
+      msgBuilder.append("No scores have been record yet.\n");
     }
     msgBuilder.append("------------------------------------------------------```");
     return msgBuilder.toString();
@@ -163,7 +163,12 @@ public class DiscordBotCommandResponseFactory {
     builder.append("'\n");
     builder.append("---------------------------------------------------\n");
     for (Score score : highscores.getScores()) {
-      String table = gameService.getGame(score.getGameId()).getGameDisplayName();
+      Game game = gameService.getGame(score.getGameId());
+      if(game == null) {
+        continue;
+      }
+
+      String table = game.getGameDisplayName();
       if (table.length() > 30) {
         table = table.substring(0, 25) + "...  ";
       }
@@ -206,7 +211,7 @@ public class DiscordBotCommandResponseFactory {
       return "No scores recorded yet.";
     }
 
-    StringBuilder builder = new StringBuilder();
+    StringBuilder builder = new StringBuilder("```");
     for (Score score : scores) {
       Game game = gameService.getGame(score.getGameId());
       if(game == null) {
@@ -220,6 +225,7 @@ public class DiscordBotCommandResponseFactory {
       builder.append(score);
       builder.append("\n");
     }
+    builder.append("```");
     return builder.toString();
   }
 

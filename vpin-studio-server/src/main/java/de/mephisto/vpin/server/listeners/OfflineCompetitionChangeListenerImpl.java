@@ -125,7 +125,8 @@ public class OfflineCompetitionChangeListenerImpl extends DefaultCompetitionChan
             else {
               Platform.runLater(() -> {
                 byte[] image = assetService.getCompetitionFinishedCard(competition, game, winner, scoreSummary);
-                discordService.sendMessage(serverId, channelId, message, image, competition.getName() + ".png", null);
+                String imageMessage = "Here are the final results:\n```" + scoreSummary.getRaw() + "```You can duplicate the competition to continue it with another table or duration.";
+                discordService.sendMessage(serverId, channelId, message, image, competition.getName() + ".png", imageMessage);
               });
             }
           }

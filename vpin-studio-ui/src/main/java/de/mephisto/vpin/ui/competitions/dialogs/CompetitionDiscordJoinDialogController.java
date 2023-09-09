@@ -1,6 +1,7 @@
 package de.mephisto.vpin.ui.competitions.dialogs;
 
 import de.mephisto.vpin.commons.fx.DialogController;
+import de.mephisto.vpin.commons.utils.FileUtils;
 import de.mephisto.vpin.restclient.CompetitionType;
 import de.mephisto.vpin.restclient.JoinMode;
 import de.mephisto.vpin.restclient.client.VPinStudioClient;
@@ -11,6 +12,7 @@ import de.mephisto.vpin.restclient.discord.DiscordServer;
 import de.mephisto.vpin.restclient.popper.PopperScreen;
 import de.mephisto.vpin.restclient.representations.*;
 import de.mephisto.vpin.restclient.util.DateUtil;
+import de.mephisto.vpin.ui.Studio;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -76,10 +78,13 @@ public class CompetitionDiscordJoinDialogController implements Initializable, Di
   private Label startDateLabel;
 
   @FXML
-  private Label endDateLabel;
+  private Label scoreLimitLabel;
 
   @FXML
-  private FontIcon joinMode;
+  private Label scoreValidationLabel;
+
+  @FXML
+  private Label endDateLabel;
 
   @FXML
   private Pane validationContainer;
@@ -266,12 +271,24 @@ public class CompetitionDiscordJoinDialogController implements Initializable, Di
     this.nameLabel.setText(this.discordCompetitionData.getName());
 
     String mode = this.discordCompetitionData.getMode();
-    if (mode != null && JoinMode.valueOf(mode).equals(JoinMode.STRICT)) {
-      this.joinMode.setIconLiteral("bi-check-circle");
+    if(StringUtils.isEmpty(mode)) {
+      this.scoreValidationLabel.setText(CompetitionDiscordDialogController.ROM_DESCRIPTION);
     }
-    else {
-      this.joinMode.setIconLiteral("");
+    else{
+      JoinMode m = JoinMode.valueOf(mode);
+      if(m.equals(JoinMode.ROM_ONLY)) {
+        this.scoreValidationLabel.setText(CompetitionDiscordDialogController.ROM_DESCRIPTION);
+      }
+      else if(m.equals(JoinMode.STRICT)) {
+        this.scoreValidationLabel.setText(CompetitionDiscordDialogController.STRICT_DESCRIPTION);
+      }
+      else {
+        this.scoreValidationLabel.setText(CompetitionDiscordDialogController.CHECKSUM_DESCRIPTION);
+      }
     }
+
+
+    this.scoreLimitLabel.setText(String.valueOf(this.discordCompetitionData.getScrL()));
 
     PlayerRepresentation discordPlayer = client.getDiscordService().getDiscordPlayer(server.getId(), Long.parseLong(this.discordCompetitionData.getOwner()));
     if (discordPlayer != null) {
@@ -291,6 +308,7 @@ public class CompetitionDiscordJoinDialogController implements Initializable, Di
       validationDescription.setText("You already joined this competition.");
       return;
     }
+
     if (this.discordCompetitionData.getEdt().before(DateUtil.today())) {
       validationTitle.setText("Invalid competition data");
       validationDescription.setText("Ups, looks like the selected competition wasn't reset. It's already finished.");
@@ -306,15 +324,33 @@ public class CompetitionDiscordJoinDialogController implements Initializable, Di
     this.tableCombo.setDisable(false);
 
     GameRepresentation game = this.tableCombo.getValue();
-    if (game != null) {
-      long tableSize = game.getGameFileSize();
-      long competitionTableSize = this.discordCompetitionData.getFs();
-      long min = competitionTableSize - 1024;
-      long max = competitionTableSize + 1024;
-      if (tableSize < min || tableSize > max) {
-        validationTitle.setText("Invalid table version");
-        validationDescription.setText("The file size of the matching table does not match the competed one.");
-        return;
+    if(StringUtils.isEmpty(mode)) {
+      //ignore, the rom check is already done here
+    }
+    else{
+      JoinMode m = JoinMode.valueOf(mode);
+      if(m.equals(JoinMode.ROM_ONLY)) {
+        //ignore, the rom check is already done here
+      }
+      else if(m.equals(JoinMode.STRICT)) {
+        long tableSize = game.getGameFileSize();
+        long competitionTableSize = this.discordCompetitionData.getFs();
+        long min = competitionTableSize - (1024*1024);
+        long max = competitionTableSize + (1024*1024);
+        if (tableSize < min || tableSize > max) {
+          validationTitle.setText("The table file size does not match.");
+          validationDescription.setText("The size of your VPX file differs by ~" + FileUtils.readableFileSize(competitionTableSize-tableSize) + ".");
+          return;
+        }
+      }
+      else if(m.equals(JoinMode.CHECKSUM)) {
+        String checksum = client.getVpxService().getCheckSum(game);
+        String chksm = discordCompetitionData.getChksm();
+        if(!chksm.equalsIgnoreCase(checksum)) {
+          validationTitle.setText("The checksum does not match with the one of the competition.");
+          validationDescription.setText("This mean the script of your VPX file and that of the competition owner differs.");
+          return;
+        }
       }
     }
 

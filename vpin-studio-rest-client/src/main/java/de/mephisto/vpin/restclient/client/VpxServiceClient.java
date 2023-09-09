@@ -5,6 +5,7 @@ import de.mephisto.vpin.restclient.FileUploadProgressListener;
 import de.mephisto.vpin.restclient.jobs.JobExecutionResult;
 import de.mephisto.vpin.restclient.representations.GameRepresentation;
 import de.mephisto.vpin.restclient.representations.POVRepresentation;
+import de.mephisto.vpin.restclient.representations.vpx.TableInfo;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -83,6 +84,15 @@ public class VpxServiceClient extends VPinStudioClientService {
   public String getTableSource(GameRepresentation game) {
     final RestTemplate restTemplate = new RestTemplate();
     return restTemplate.getForObject(getRestClient().getBaseUrl() + API + "vpx/sources/" + game.getId(), String.class);
+  }
+
+  public TableInfo getTableInfo(GameRepresentation game) {
+    return getRestClient().get(API + "vpx/tableinfo/" + game.getId(), TableInfo.class);
+  }
+
+  public String getCheckSum(GameRepresentation game) {
+    final RestTemplate restTemplate = new RestTemplate();
+    return restTemplate.getForObject(getRestClient().getBaseUrl() + API + "vpx/checksum/" + game.getId(), String.class);
   }
 
   public void saveTableSource(GameRepresentation game, String sources) {

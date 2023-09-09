@@ -7,7 +7,7 @@ import de.mephisto.vpin.restclient.popper.PopperScreen;
 import de.mephisto.vpin.restclient.representations.PupPackRepresentation;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameService;
-import de.mephisto.vpin.server.games.ValidationService;
+import de.mephisto.vpin.server.games.GameValidationService;
 import de.mephisto.vpin.server.util.UploadUtil;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import org.apache.commons.io.FilenameUtils;
@@ -39,7 +39,7 @@ public class PupPacksResource {
   private GameService gameService;
 
   @Autowired
-  private ValidationService validationService;
+  private GameValidationService validationService;
 
   @GetMapping("/{gameId}")
   public PupPackRepresentation getPupPack(@PathVariable("gameId") int gameId) {

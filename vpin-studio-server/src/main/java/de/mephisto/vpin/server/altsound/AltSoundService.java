@@ -1,16 +1,14 @@
 package de.mephisto.vpin.server.altsound;
 
-import com.google.common.annotations.VisibleForTesting;
 import de.mephisto.vpin.commons.utils.FileUtils;
-import de.mephisto.vpin.restclient.AltSound;
-import de.mephisto.vpin.restclient.AltSoundEntry;
+import de.mephisto.vpin.restclient.representations.altsound.AltSound;
+import de.mephisto.vpin.restclient.representations.altsound.AltSoundEntry;
 import de.mephisto.vpin.restclient.jobs.JobExecutionResult;
 import de.mephisto.vpin.restclient.jobs.JobExecutionResultFactory;
 import de.mephisto.vpin.restclient.mame.MameOptions;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.mame.MameService;
 import de.mephisto.vpin.server.system.SystemService;
-import de.mephisto.vpin.server.util.WinRegistry;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVRecord;
