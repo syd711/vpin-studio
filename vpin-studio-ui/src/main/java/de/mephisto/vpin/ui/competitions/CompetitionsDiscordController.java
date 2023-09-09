@@ -576,7 +576,7 @@ public class CompetitionsDiscordController implements Initializable, StudioFXCon
     data = FXCollections.observableList(filtered);
   }
 
-  public static String getLabelCss(CompetitionRepresentation value) {
+  private String getLabelCss(CompetitionRepresentation value) {
     String status = "";
     if (value.getValidationState().getCode() > 0) {
       status = "-fx-font-color: #FF3333;-fx-text-fill:#FF3333;";

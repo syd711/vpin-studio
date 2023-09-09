@@ -46,7 +46,6 @@ import java.net.URL;
 import java.util.*;
 
 import static de.mephisto.vpin.ui.Studio.client;
-import static de.mephisto.vpin.ui.competitions.CompetitionsDiscordController.getLabelCss;
 
 public class TableSubscriptionsController implements Initializable, StudioFXController {
   private final static Logger LOG = LoggerFactory.getLogger(TableSubscriptionsController.class);
@@ -136,7 +135,7 @@ public class TableSubscriptionsController implements Initializable, StudioFXCont
   private void onCompetitionCreate() {
     long guildId = client.getPreference(PreferenceNames.DISCORD_GUILD_ID).getLongValue();
     discordStatus = client.getDiscordService().getDiscordStatus(guildId);
-    if(discordStatus.getServerId() == 0 || discordStatus.getCategoryId() == 0) {
+    if (discordStatus.getServerId() == 0 || discordStatus.getCategoryId() == 0) {
       WidgetFactory.showAlert(Studio.stage, "Invalid Discord Configuration", "No default Discord server and category for subscriptions found.", "Open the Bot Settings in the preferences to configure the subscription settings.");
       return;
     }
@@ -146,9 +145,9 @@ public class TableSubscriptionsController implements Initializable, StudioFXCont
       CompetitionRepresentation newCmp = null;
       try {
         ProgressResultModel resultModel = Dialogs.createProgressDialog(new CompetitionSavingProgressModel("Creating Subscription", c));
-          Platform.runLater(() -> {
-            onReload();
-            tableView.getSelectionModel().select((CompetitionRepresentation) resultModel.results.get(0));
+        Platform.runLater(() -> {
+          onReload();
+          tableView.getSelectionModel().select((CompetitionRepresentation) resultModel.results.get(0));
         });
       } catch (Exception e) {
         WidgetFactory.showAlert(Studio.stage, e.getMessage());
@@ -490,5 +489,13 @@ public class TableSubscriptionsController implements Initializable, StudioFXCont
       return Optional.of(selection);
     }
     return Optional.empty();
+  }
+
+  public static String getLabelCss(CompetitionRepresentation value) {
+    String status = "";
+    if (value.getValidationState().getCode() > 0) {
+      status = "-fx-font-color: #FF3333;-fx-text-fill:#FF3333;";
+    }
+    return status;
   }
 }
