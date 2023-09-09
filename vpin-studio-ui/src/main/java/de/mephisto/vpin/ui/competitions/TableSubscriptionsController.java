@@ -16,9 +16,11 @@ import de.mephisto.vpin.ui.NavigationController;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.StudioFXController;
 import de.mephisto.vpin.ui.WaitOverlayController;
+import de.mephisto.vpin.ui.competitions.dialogs.CompetitionSavingProgressModel;
 import de.mephisto.vpin.ui.competitions.validation.CompetitionValidationTexts;
 import de.mephisto.vpin.ui.util.Dialogs;
 import de.mephisto.vpin.ui.util.LocalizedValidation;
+import de.mephisto.vpin.ui.util.ProgressResultModel;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
@@ -126,7 +128,11 @@ public class TableSubscriptionsController implements Initializable, StudioFXCont
     if (c != null) {
       CompetitionRepresentation newCmp = null;
       try {
-        newCmp = client.getCompetitionService().saveCompetition(c);
+        ProgressResultModel resultModel = Dialogs.createProgressDialog(new CompetitionSavingProgressModel("Creating Subscription", c));
+          Platform.runLater(() -> {
+            onReload();
+            tableView.getSelectionModel().select((CompetitionRepresentation) resultModel.results.get(0));
+        });
       } catch (Exception e) {
         WidgetFactory.showAlert(Studio.stage, e.getMessage());
       }
