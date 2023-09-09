@@ -32,7 +32,7 @@ public class DiscordResource {
     return discordService.getStatus(serverId);
   }
 
-  //TODO duplicate
+  //TODO duplicate?
   @GetMapping("/validate")
   public boolean validateSettings() {
     return discordService.validateSettings();

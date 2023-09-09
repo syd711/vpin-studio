@@ -107,7 +107,7 @@ public class DiscordListenerAdapter extends ListenerAdapter {
       BotCommandResponse response = command.execute();
       if (response != null) {
         String result = response.toDiscordMarkup();
-        if (result != null) {
+        if (result != null && result.trim().length() > 0) {
           MessageChannel channel = event.getChannel();
           channel.sendMessage(result).queue();
         }

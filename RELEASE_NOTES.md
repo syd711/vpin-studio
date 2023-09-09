@@ -1,6 +1,6 @@
 ## Release Notes
 
-Thanks to @ed209, @Meatballsaucey, @TryToTilt his server members making the whole competition stuff better!
+Thanks to @ed209, @Meatballsaucey, @TryToTilt and his server members making the whole competition stuff better!
 
 ### Competitions: Discord Competitions
 

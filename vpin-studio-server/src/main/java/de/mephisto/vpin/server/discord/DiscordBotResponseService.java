@@ -79,10 +79,8 @@ public class DiscordBotResponseService implements DiscordBotCommandListener, Ini
           if (game != null) {
             if (activeCompetition.getType().equals(CompetitionType.DISCORD.name())) {
               ScoreSummary scoreSummary = discordService.getScoreSummary(highscoreParser, activeCompetition.getUuid(), activeCompetition.getDiscordServerId(), activeCompetition.getDiscordChannelId());
-              if (!scoreSummary.getScores().isEmpty()) {
-                String msg = DiscordBotCommandResponseFactory.createActiveCompetitionMessage(activeCompetition, game, scoreSummary);
-                builder.append(msg);
-              }
+              String msg = DiscordBotCommandResponseFactory.createActiveCompetitionMessage(activeCompetition, game, scoreSummary);
+              builder.append(msg);
             }
             else {
               ScoreSummary highscores = highscoreService.getScoreSummary(cmd.getServerId(), game.getId(), game.getGameDisplayName());
@@ -91,7 +89,13 @@ public class DiscordBotResponseService implements DiscordBotCommandListener, Ini
             }
           }
         }
-        return builder::toString;
+
+        String result = builder.toString();
+        if (StringUtils.isEmpty(result)) {
+          return () -> "No active competitions found.";
+        }
+
+        return () -> result;
       }
       case BotCommand.CMD_RECENT: {
         ScoreSummary recentHighscores = gameService.getRecentHighscores(10);
