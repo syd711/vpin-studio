@@ -170,7 +170,11 @@ public class DiscordCompetitionChangeListenerImpl extends DefaultCompetitionChan
             }
             else {
               Platform.runLater(() -> {
-                String description = "You can duplicate the competition to continue it with another table or duration.";
+                String description = "";
+                if(!scoreSummary.getScores().isEmpty()) {
+                  description = "Here are the final results:\n" + DiscordChannelMessageFactory.createHighscoreList(scoreSummary.getScores());
+                }
+                description = description + "\nYou can duplicate the competition to continue it with another table or duration.";
                 byte[] image = assetService.getCompetitionFinishedCard(competition, game, winner, scoreSummary);
                 long msgId = discordService.sendMessage(serverId, channelId, message, image, competition.getName() + ".png", description);
                 discordService.finishCompetition(serverId, channelId, msgId);

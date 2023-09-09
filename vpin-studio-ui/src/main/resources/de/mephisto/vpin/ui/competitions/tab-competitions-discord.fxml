@@ -98,7 +98,7 @@
                                 <FontIcon iconColor="WHITE" iconLiteral="bi-stop" />
                             </graphic>
                         </Button>
-                  <Button fx:id="validateBtn" layoutX="885.0" layoutY="11.0" mnemonicParsing="false" onAction="#onCompetitionValidate" text="Validate" textFill="WHITE">
+                  <Button fx:id="validateBtn" layoutX="885.0" layoutY="11.0" mnemonicParsing="false" onAction="#onCompetitionValidate" text="Synchronize" textFill="WHITE">
                      <font>
                         <Font size="14.0" />
                      </font>

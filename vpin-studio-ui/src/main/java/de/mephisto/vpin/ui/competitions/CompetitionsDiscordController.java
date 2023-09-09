@@ -148,9 +148,11 @@ public class CompetitionsDiscordController implements Initializable, StudioFXCon
   private void onCompetitionValidate() {
     CompetitionRepresentation selectedItem = this.tableView.getSelectionModel().getSelectedItem();
     if (selectedItem != null) {
-      Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Validate Competition", "This will re-check your local highscores against the Discord server data.");
+      Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Synchronize Competition", "This will re-check your local highscores against the Discord server data.");
       if (result.get().equals(ButtonType.OK)) {
+        client.getDiscordService().clearCache();
         client.getDiscordService().checkCompetition(selectedItem);
+        this.onReload();
       }
     }
   }

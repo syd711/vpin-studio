@@ -251,7 +251,7 @@ public class AssetFactory {
       graphics.drawString("Congratulations!", background.getWidth() / 2 - textWidth / 2, yOffset += 20 + SEPARATOR);
 
       //Name
-      int nameSize = 36;
+      int nameSize = 46;
       font = new Font("System", Font.BOLD, nameSize);
       graphics.setFont(font);
       textWidth = graphics.getFontMetrics().stringWidth(winnerName);

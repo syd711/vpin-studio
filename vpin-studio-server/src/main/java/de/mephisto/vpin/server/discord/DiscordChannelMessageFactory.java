@@ -80,9 +80,7 @@ public class DiscordChannelMessageFactory {
       return String.format(COMPETITION_FINISHED_INCOMPLETE, competition.getName(), competition.getUuid());
     }
 
-    String msg = String.format(COMPETITION_FINISHED_TEMPLATE, competition.getName(), competition.getUuid());
-    msg = msg + "\nHere are the final results:\n" + createHighscoreList(summary.getScores());
-    return msg;
+    return String.format(COMPETITION_FINISHED_TEMPLATE, competition.getName(), competition.getUuid());
   }
 
   public String createCompetitionCancelledMessage(Player player, Competition competition) {
