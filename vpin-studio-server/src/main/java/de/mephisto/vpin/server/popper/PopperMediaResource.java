@@ -82,10 +82,11 @@ public class PopperMediaResource implements InitializingBean {
                                     @PathVariable("screen") String screen,
                                     @PathVariable("append") boolean append,
                                     @RequestBody TableAsset asset) {
+    LOG.info("Starting download of " + asset.getName() + "(appending: " + append + ")");
     Game game = gameService.getGame(gameId);
     PopperScreen s = PopperScreen.valueOf(screen);
     File pinpuSystemFolder = new File(systemService.getPinUPSystemFolder(), "POPMedia/" + systemService.getPupUpMediaFolderName(game) + "/" + s.name());
-    File target = new File(pinpuSystemFolder, game.getGameDisplayName() + "." + asset.getMimeTypeSuffix());
+    File target = new File(pinpuSystemFolder, game.getGameDisplayName() + "." + asset.getFileSuffix());
     if (target.exists() && append) {
       target = FileUtils.uniquePopperAsset(target);
     }

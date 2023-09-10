@@ -60,7 +60,7 @@
                         </BorderPane>
                      </center>
                      <top>
-                        <ToolBar prefHeight="40.0" prefWidth="500.0" BorderPane.alignment="CENTER">
+                        <ToolBar BorderPane.alignment="CENTER">
                           <items>
                               <TextField fx:id="searchField" prefHeight="30.0" prefWidth="285.0">
                                  <font>

@@ -1,5 +1,7 @@
 package de.mephisto.vpin.connectors.assets;
 
+import org.apache.commons.io.FilenameUtils;
+
 public class TableAsset {
   private String name;
   private String url;
@@ -65,20 +67,8 @@ public class TableAsset {
     this.url = url;
   }
 
-  public String getMimeTypeSuffix() {
-    if (mimeType != null) {
-      String subType = mimeType.split("/")[1];
-      if (subType.equalsIgnoreCase("jpeg")) {
-        subType = "jpg";
-      }
-
-      if (mimeType.equals("audio/mpeg")) {
-        return "mp3";
-      }
-
-      return subType;
-    }
-    return null;
+  public String getFileSuffix() {
+    return FilenameUtils.getExtension(getName());
   }
 
   public String toAssetName(String gameDisplayName) {
