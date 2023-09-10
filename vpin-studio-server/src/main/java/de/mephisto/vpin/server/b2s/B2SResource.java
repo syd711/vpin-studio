@@ -21,7 +21,6 @@ public class B2SResource {
   public boolean getPinUPControlFor(@RequestParam("type") String type,
                                     @RequestParam("number") String number,
                                     @RequestParam("value") String value) {
-    System.out.println(type + "/" + number + "/"+ value);
     return true;
   }
 }

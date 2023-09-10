@@ -29,7 +29,7 @@ public class FileUtils {
     if (file.exists()) {
       String suffix = FilenameUtils.getExtension(file.getName());
       String updatedName = name + "." + suffix;
-      if(file.renameTo(new File(file.getParentFile(), updatedName))) {
+      if (file.renameTo(new File(file.getParentFile(), updatedName))) {
         LOG.info("Renamed " + file.getName() + " to " + updatedName);
       }
       else {
@@ -93,10 +93,25 @@ public class FileUtils {
   public static File uniqueFile(File target) {
     int index = 1;
     String originalBaseName = FilenameUtils.getBaseName(target.getName());
+    String suffix = FilenameUtils.getExtension(target.getName());
+
     while (target.exists()) {
-      String suffix = FilenameUtils.getExtension(target.getName());
       target = new File(target.getParentFile(), originalBaseName + " (" + index + ")." + suffix);
       index++;
+    }
+    return target;
+  }
+
+  public static File uniquePopperAsset(File target) {
+    int index = 1;
+    String segment = String.format("%02d", index);
+    String originalBaseName = FilenameUtils.getBaseName(target.getName());
+    String suffix = FilenameUtils.getExtension(target.getName());
+
+    while (target.exists()) {
+      target = new File(target.getParentFile(), originalBaseName + segment + "." + suffix);
+      index++;
+      segment = String.format("%02d", index);
     }
     return target;
   }

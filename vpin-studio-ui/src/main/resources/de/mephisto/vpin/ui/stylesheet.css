@@ -528,19 +528,19 @@
     -fx-text-fill: white;
     -fx-text-background-color: #FFFFFF;
     -fx-border-style: solid solid solid solid;
-    -fx-border-color: #111111;
-    -fx-border-width: 1;
+    /*-fx-border-color: -fx-base-5;
+    -fx-border-width: 1;*/
 }
 
 .list-view .list-cell:odd {
     -fx-font-size: 14px;
     -fx-text-fill: white;
-    -fx-background-color: #93f9b911;
+    -fx-background-color: #414141;
 }
 .list-view .list-cell:even {
     -fx-font-size: 14px;
     -fx-text-fill: white;
-    -fx-background-color: #1dbbdd11;
+    -fx-background-color: #494949;
 }
 
 .list-view .list-cell:selected {
@@ -551,8 +551,7 @@
 
 .list-view .list-cell:hover {
     -fx-font-size: 14px;
-    -fx-text-fill: blue;
-    -fx-font-weight: bold;
+    -fx-text-fill: #7381fa;
 }
 
 /**

@@ -62,7 +62,7 @@ public class ScreensPub {
 
   @NonNull
   public ScreenMode getScreenMode(@NonNull PopperScreen screen) {
-    int id = PopperScreen.toId(screen);
+    int id = screen.getCode();
     for (ScreenEntry entry : this.entries) {
       if (entry.getScreenNum() == id) {
         return entry.getScreenMode();

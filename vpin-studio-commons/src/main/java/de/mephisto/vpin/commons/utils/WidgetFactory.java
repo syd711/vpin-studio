@@ -214,6 +214,14 @@ public class WidgetFactory {
     return showConfirmation(owner, text, help1, help2, null);
   }
 
+  public static Optional<ButtonType> showConfirmationWithOption(Stage owner, String text, String help1, String help2, String btnText, String optionText) {
+    Stage stage = createDialogStage(ConfirmationDialogWithOptionController.class, owner, "Confirmation", "dialog-confirmation-with-option.fxml");
+    ConfirmationDialogWithOptionController controller = (ConfirmationDialogWithOptionController) stage.getUserData();
+    controller.initDialog(stage, optionText, btnText, text, help1, help2);
+    stage.showAndWait();
+    return controller.getResult();
+  }
+
   public static Optional<ButtonType> showConfirmation(Stage owner, String text, String help1, String help2, String btnText) {
     Stage stage = createDialogStage(ConfirmationDialogController.class, owner, "Confirmation", "dialog-confirmation.fxml");
     ConfirmationDialogController controller = (ConfirmationDialogController) stage.getUserData();
@@ -312,6 +320,9 @@ public class WidgetFactory {
     if (ignored) {
       Label label = new Label("Screen is ignored");
       label.setStyle("-fx-font-size: 14px;-fx-text-fill: #444444;");
+      if (mediaItem != null) {
+        label.setStyle("-fx-font-color: #33CC00;-fx-text-fill:#33CC00; -fx-font-weight: bold;");
+      }
       parent.setCenter(label);
     }
 
@@ -350,6 +361,11 @@ public class WidgetFactory {
     boolean portraitMode = client.getSystemService().getScreenInfo().isPortraitMode();
 
     String mimeType = mediaItem.getMimeType();
+    if(mimeType == null) {
+      LOG.info("Failed to resolve mime type for " + mediaItem);
+      return;
+    }
+
     String baseType = mimeType.split("/")[0];
     String url = client.getURL(mediaItem.getUri());
 

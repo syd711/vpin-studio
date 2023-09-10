@@ -109,7 +109,7 @@
                   </VBox>
                </bottom>
             </BorderPane>
-            <Label layoutX="10.0" layoutY="10.0" styleClass="default-title" text="Table Assets">
+            <Label layoutX="10.0" layoutY="10.0" styleClass="default-title" text="Installed Table Assets">
                <VBox.margin>
                   <Insets bottom="6.0" top="6.0" />
                </VBox.margin>

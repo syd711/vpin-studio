@@ -1,5 +1,7 @@
 package de.mephisto.vpin.restclient.representations;
 
+import org.apache.commons.io.FilenameUtils;
+
 public class GameMediaItemRepresentation {
   private String mimeType;
   private String uri;

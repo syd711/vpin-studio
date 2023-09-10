@@ -71,9 +71,22 @@ public class TableAsset {
       if (subType.equalsIgnoreCase("jpeg")) {
         subType = "jpg";
       }
+
+      if (mimeType.equals("audio/mpeg")) {
+        return "mp3";
+      }
+
       return subType;
     }
     return null;
+  }
+
+  public String toAssetName(String gameDisplayName) {
+    if (name.contains(".")) {
+      String extension = name.substring(name.lastIndexOf(".") + 1);
+      return gameDisplayName + "." + extension;
+    }
+    return gameDisplayName;
   }
 
   @Override

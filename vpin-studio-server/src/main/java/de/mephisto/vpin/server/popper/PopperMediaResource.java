@@ -1,9 +1,11 @@
 package de.mephisto.vpin.server.popper;
 
+import de.mephisto.vpin.commons.utils.FileUtils;
 import de.mephisto.vpin.connectors.assets.EncryptDecrypt;
 import de.mephisto.vpin.connectors.assets.TableAsset;
+import de.mephisto.vpin.connectors.assets.TableAssetsAdapter;
 import de.mephisto.vpin.connectors.assets.TableAssetsService;
-import de.mephisto.vpin.popper.PopperAssetAdapter;
+import de.mephisto.vpin.restclient.client.TableAssetSearch;
 import de.mephisto.vpin.restclient.jobs.JobExecutionResult;
 import de.mephisto.vpin.restclient.jobs.JobExecutionResultFactory;
 import de.mephisto.vpin.restclient.popper.PopperScreen;
@@ -32,7 +34,9 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.URLDecoder;
 import java.nio.charset.Charset;
-import java.util.*;
+import java.util.Base64;
+import java.util.List;
+import java.util.Map;
 
 import static de.mephisto.vpin.server.VPinStudioServer.API_SEGMENT;
 import static de.mephisto.vpin.server.util.RequestUtil.CONTENT_LENGTH;
@@ -62,25 +66,29 @@ public class PopperMediaResource implements InitializingBean {
     return game.getGameMedia();
   }
 
-  @GetMapping("/assets/search/{screen}/{term}")
-  public List<TableAsset> searchTableAssets(@PathVariable("screen") String screen,
-                                            @PathVariable("term") String term) {
+  @PostMapping("/assets/search")
+  public TableAssetSearch searchTableAssets(@RequestBody TableAssetSearch search) {
     try {
-      return tableAssetsService.search(EncryptDecrypt.SECRET_KEY_1, screen, term);
+      List<TableAsset> results = tableAssetsService.search(EncryptDecrypt.KEY, search.getScreen().getSegment(), search.getTerm());
+      search.setResult(results);
     } catch (Exception e) {
       LOG.error("Asset search failed: " + e.getMessage(), e);
     }
-    return Collections.emptyList();
+    return search;
   }
 
-  @PostMapping("/assets/download/{gameId}/{screen}")
+  @PostMapping("/assets/download/{gameId}/{screen}/{append}")
   public boolean downloadTableAsset(@PathVariable("gameId") int gameId,
                                     @PathVariable("screen") String screen,
+                                    @PathVariable("append") boolean append,
                                     @RequestBody TableAsset asset) {
     Game game = gameService.getGame(gameId);
     PopperScreen s = PopperScreen.valueOf(screen);
     File pinpuSystemFolder = new File(systemService.getPinUPSystemFolder(), "POPMedia/" + systemService.getPupUpMediaFolderName(game) + "/" + s.name());
     File target = new File(pinpuSystemFolder, game.getGameDisplayName() + "." + asset.getMimeTypeSuffix());
+    if (target.exists() && append) {
+      target = FileUtils.uniquePopperAsset(target);
+    }
     tableAssetsService.download(asset, target);
     return true;
   }
@@ -244,6 +252,13 @@ public class PopperMediaResource implements InitializingBean {
   @Override
   public void afterPropertiesSet() throws Exception {
     tableAssetsService = new TableAssetsService();
-    tableAssetsService.registerAdapter(new PopperAssetAdapter());
+
+    try {
+      Class<?> aClass = Class.forName("de.mephisto.vpin.popper.PopperAssetAdapter");
+      TableAssetsAdapter adapter = (TableAssetsAdapter) aClass.getDeclaredConstructor().newInstance();
+      tableAssetsService.registerAdapter(adapter);
+    } catch (Exception e) {
+      LOG.error("Unable to find PopperAssetAdapter: " + e.getMessage());
+    }
   }
 }

@@ -9,42 +9,39 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.List;
 
 public class TableAssetsService {
   private final static Logger LOG = LoggerFactory.getLogger(TableAssetsService.class);
 
-  private List<TableAssetsAdapter> adapters = new ArrayList<>();
-
-  private final static String DOWNLOAD_SUFFIX = ".assetDwnld";
+  private TableAssetsAdapter adapter = null;
 
   public List<TableAsset> search(@NonNull String key, @NonNull String screen, @NonNull String term) throws Exception {
-    List<TableAsset> assets = new ArrayList<>();
-    for (TableAssetsAdapter adapter : adapters) {
-      assets.addAll(adapter.search(EncryptDecrypt.SECRET_KEY_1, screen, term));
-    }
-      return assets;
+    return adapter.search(key, screen, term);
   }
 
   public void registerAdapter(@NonNull TableAssetsAdapter adapter) {
-    this.adapters.add(adapter);
+    this.adapter = adapter;
   }
 
   public void download(@NonNull TableAsset asset, @NonNull File target) {
     String downloadUrl = asset.getUrl();
     try {
-      LOG.info("Downloading " + downloadUrl);
-      URL url = new URL(downloadUrl);
+      String urlString = adapter.decrypt(EncryptDecrypt.KEY, downloadUrl);
+      urlString = urlString.replaceAll(" ", "%20");
+      URL url = new URL(urlString);
       HttpURLConnection connection = (HttpURLConnection) url.openConnection();
       connection.setDoOutput(true);
       BufferedInputStream in = new BufferedInputStream(url.openStream());
-      File tmp = new File(target.getParentFile(), target.getName() + DOWNLOAD_SUFFIX);
-      if (tmp.exists()) {
-        tmp.delete();
+      if (target.exists()) {
+        LOG.info("Asset " + target.getName() + " already exists and will be replaced.");
+        if (!target.delete()) {
+          LOG.error("Failed to delete existing asset " + target.getAbsolutePath());
+          return;
+        }
       }
 
-      FileOutputStream fileOutputStream = new FileOutputStream(tmp);
+      FileOutputStream fileOutputStream = new FileOutputStream(target);
       byte dataBuffer[] = new byte[1024];
       int bytesRead;
       while ((bytesRead = in.read(dataBuffer, 0, 1024)) != -1) {
@@ -52,13 +49,6 @@ public class TableAssetsService {
       }
       in.close();
       fileOutputStream.close();
-      if (target.exists() && !target.delete()) {
-        LOG.error("Failed to delete existing asset " + target.getAbsolutePath());
-      }
-
-      if (!tmp.renameTo(target)) {
-        LOG.error("Failed to rename " + tmp.getAbsolutePath());
-      }
       LOG.info("Downloaded file " + target.getAbsolutePath());
     } catch (Exception e) {
       LOG.error("Failed to execute download: " + e.getMessage(), e);

@@ -17,9 +17,7 @@ import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
 import java.io.File;
-import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /*********************************************************************************************************************
@@ -141,13 +139,16 @@ public class PinUPPopperServiceClient extends VPinStudioClientService {
 
   //---------------- Assets---------------------------------------------------------------------------------------------
 
-  public List<TableAsset> searchTableAsset(PopperScreen screen, String term) {
-    return Arrays.asList(getRestClient().get(API + "poppermedia/assets/search/" + screen + "/" + term, TableAsset[].class));
+  public TableAssetSearch searchTableAsset(PopperScreen screen, String term) throws Exception {
+    TableAssetSearch search = new TableAssetSearch();
+    search.setTerm(term);
+    search.setScreen(screen);
+    return getRestClient().post(API + "poppermedia/assets/search", search, TableAssetSearch.class);
   }
 
-  public boolean downloadTableAsset(TableAsset tableAsset, PopperScreen screen, GameRepresentation game) throws Exception {
+  public boolean downloadTableAsset(TableAsset tableAsset, PopperScreen screen, GameRepresentation game, boolean append) throws Exception {
     try {
-      return getRestClient().post(API + "poppermedia/assets/download/" +game.getId() + "/" + screen.name() , tableAsset, Boolean.class);
+      return getRestClient().post(API + "poppermedia/assets/download/" + game.getId() + "/" + screen.name() + "/" + append, tableAsset, Boolean.class);
     } catch (Exception e) {
       LOG.error("Failed to save b2s server settings: " + e.getMessage(), e);
       throw e;

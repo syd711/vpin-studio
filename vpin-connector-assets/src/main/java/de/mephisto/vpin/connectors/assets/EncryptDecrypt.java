@@ -14,7 +14,7 @@ import java.util.Base64;
 
 public class EncryptDecrypt {
 
-  public static final String SECRET_KEY_1 = "ssdkF$HUy2A#D%kd";
+  public static final String KEY = "ssdkF$HUy2A#D%kd";
   public static final String SECRET_KEY_2 = "weJiSEvR5yAC5ftB";
 
   private IvParameterSpec ivParameterSpec;

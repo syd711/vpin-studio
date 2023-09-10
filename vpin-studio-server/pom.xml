@@ -55,6 +55,7 @@
             <groupId>de.mephisto.vpin</groupId>
             <artifactId>vpin-studio-popper-client</artifactId>
             <version>1.0.0</version>
+            <scope>runtime</scope>
         </dependency>
         <dependency>
             <groupId>net.java.dev.jna</groupId>

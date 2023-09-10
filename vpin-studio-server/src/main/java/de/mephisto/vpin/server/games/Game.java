@@ -210,7 +210,7 @@ public class Game {
 
   @NonNull
   public List<File> getPinUPMedia(@NonNull PopperScreen screen) {
-    String baseName = FilenameUtils.getBaseName(getGameFileName());
+    String baseName = getGameDisplayName();
     File[] mediaFiles = getPinUPMediaFolder(screen).listFiles((dir, name) -> name.startsWith(baseName));
 
     if (mediaFiles != null && mediaFiles.length > 0) {

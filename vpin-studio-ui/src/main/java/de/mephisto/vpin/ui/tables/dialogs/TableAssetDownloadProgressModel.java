@@ -24,12 +24,14 @@ public class TableAssetDownloadProgressModel extends ProgressModel<TableAsset> {
   private final PopperScreen popperScreen;
   private final GameRepresentation game;
   private final Iterator<TableAsset> iterator;
+  private final boolean append;
 
-  public TableAssetDownloadProgressModel(PopperScreen popperScreen, GameRepresentation game, TableAsset tableAsset) {
-    super("Downloading " + tableAsset);
+  public TableAssetDownloadProgressModel(PopperScreen popperScreen, GameRepresentation game, TableAsset tableAsset, boolean append) {
+    super("Downloading " + tableAsset.getName());
     this.popperScreen = popperScreen;
     this.game = game;
     this.iterator = Arrays.asList(tableAsset).iterator();
+    this.append = append;
   }
 
   @Override
@@ -60,7 +62,7 @@ public class TableAssetDownloadProgressModel extends ProgressModel<TableAsset> {
   @Override
   public void processNext(ProgressResultModel progressResultModel, TableAsset tableAsset) {
     try {
-      client.getPinUPPopperService().downloadTableAsset(tableAsset, this.popperScreen, this.game);
+      client.getPinUPPopperService().downloadTableAsset(tableAsset, this.popperScreen, this.game, append);
     } catch (Exception e) {
       LOG.error("Asset download failed: " + e.getMessage(), e);
       WidgetFactory.showAlert(Studio.stage, "Download Failed", "Popper table asset download failed: " + e.getMessage());

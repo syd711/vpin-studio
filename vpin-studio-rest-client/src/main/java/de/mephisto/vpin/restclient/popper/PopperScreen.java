@@ -1,39 +1,32 @@
 package de.mephisto.vpin.restclient.popper;
 
 public enum PopperScreen {
-  Audio,
-  AudioLaunch,
-  Other2,
-  GameInfo,
-  GameHelp,
-  Topper,
-  BackGlass,
-  Menu,
-  DMD,
-  Loading,
-  Wheel,
-  PlayField;
+  Audio(-1, "audio"),
+  AudioLaunch(-1, "audiolaunch"),
+  Other2(-1, "GameSelect"),
+  GameInfo(-1, "GameInfo"),
+  GameHelp(-1, "GameHelp"),
+  Topper(0, "Topper"),
+  BackGlass(2, "Backglass"),
+  Menu(5, "Menu"),
+  DMD(1, "DMD"),
+  Loading(-1, "Loading"),
+  Wheel(-1, "Wheel"),
+  PlayField(3, "PlayField");
 
-  public static int toId(PopperScreen screen) {
-    switch (screen) {
-      case Topper: {
-        return 0;
-      }
-      case DMD: {
-        return 1;
-      }
-      case BackGlass: {
-        return 2;
-      }
-      case PlayField: {
-        return 3;
-      }
-      case Menu: {
-        return 5;
-      }
-      default: {
-        return -1;
-      }
-    }
+  private int code;
+  private String segment;
+
+  PopperScreen(int code, String segment) {
+    this.code = code;
+    this.segment = segment;
+  }
+
+  public String getSegment() {
+    return segment;
+  }
+
+  public int getCode() {
+    return code;
   }
 }
