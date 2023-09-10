@@ -114,6 +114,10 @@ public class TablePopperMediaDialogController implements Initializable, DialogCo
   private TableAssetsService tableAssetsService;
   private EncryptDecrypt encryptDecrypt;
 
+  @FXML
+  private void onVPSAssets() {
+    Dialogs.openVPSAssetsDialog(game);
+  }
 
   @FXML
   private void onPlaylistAdd() {

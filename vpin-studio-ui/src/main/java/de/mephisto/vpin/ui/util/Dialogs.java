@@ -316,6 +316,13 @@ public class Dialogs {
     return controller.getDescriptor();
   }
 
+  public static void openVPSAssetsDialog(GameRepresentation game) {
+    Stage stage = createStudioDialogStage(VPSAssetsDialogController.class, "dialog-vps-assets.fxml", "Virtual Pinball Spreadsheet Assets");
+    VPSAssetsDialogController controller = (VPSAssetsDialogController) stage.getUserData();
+    controller.setGame(game);
+    stage.showAndWait();
+  }
+
   public static boolean openArchiveUploadDialog() {
     Stage stage = createStudioDialogStage(ArchiveUploadController.class, "dialog-archive-upload.fxml", "Upload");
     ArchiveUploadController controller = (ArchiveUploadController) stage.getUserData();

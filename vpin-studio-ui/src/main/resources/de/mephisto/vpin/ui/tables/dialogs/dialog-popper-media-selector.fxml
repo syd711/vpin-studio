@@ -14,7 +14,7 @@
 <?import javafx.scene.text.Font?>
 <?import org.kordamp.ikonli.javafx.FontIcon?>
 
-<BorderPane maxHeight="700.0" styleClass="base-component" stylesheets="@../../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.tables.dialogs.TablePopperMediaDialogController">
+<BorderPane styleClass="base-component" stylesheets="@../../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.tables.dialogs.TablePopperMediaDialogController">
    <top>
       <fx:include fx:id="header" source="/de/mephisto/vpin/commons/fx/scene-dialog-header.fxml" />
    </top>
@@ -26,14 +26,14 @@
                   <Insets bottom="6.0" top="6.0" />
                </VBox.margin>
             </Label>
-            <BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minWidth="-Infinity">
+            <BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity">
                <top>
                   <BorderPane BorderPane.alignment="CENTER">
                      <BorderPane.margin>
                         <Insets />
                      </BorderPane.margin>
                      <left>
-                        <ListView fx:id="serverAssetsList" prefWidth="600.0" BorderPane.alignment="CENTER" />
+                        <ListView fx:id="serverAssetsList" prefHeight="300.0" prefWidth="600.0" BorderPane.alignment="CENTER" />
                      </left>
                      <center>
                         <BorderPane styleClass="media-container" BorderPane.alignment="CENTER">
@@ -82,6 +82,15 @@
                                  </font>
                                  <graphic>
                                     <FontIcon iconColor="WHITE" iconLiteral="mdi2e-eye-outline" />
+                                 </graphic>
+                              </Button>
+                              <Separator layoutX="382.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="0.0" />
+                              <Button layoutX="392.0" layoutY="11.0" mnemonicParsing="false" onAction="#onVPS" text="VPS Assets" textFill="WHITE">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                                 <graphic>
+                                    <FontIcon iconColor="WHITE" iconLiteral="mdi2d-database" />
                                  </graphic>
                               </Button>
                           </items>
@@ -184,7 +193,10 @@
                   <VBox fx:id="helpBox" BorderPane.alignment="CENTER">
                      <children>
                         <Label fx:id="helpLabel" styleClass="preference-description" text="Need more help with &quot;Loading&quot; videos?" />
-                        <Hyperlink fx:id="helpLink" onAction="#onHelpLink" text="https://www.nailbuster.com/wikipinup/doku.php?id=loading_video" />
+                        <Hyperlink fx:id="helpLink" onAction="#onHelpLink" text="https://www.nailbuster.com/wikipinup/doku.php?id=loading_video">
+                           <VBox.margin>
+                              <Insets left="-4.0" />
+                           </VBox.margin></Hyperlink>
                      </children>
                      <opaqueInsets>
                         <Insets />

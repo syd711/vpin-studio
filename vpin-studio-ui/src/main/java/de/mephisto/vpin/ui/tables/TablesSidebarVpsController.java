@@ -233,42 +233,42 @@ public class TablesSidebarVpsController implements Initializable, AutoCompleteTe
     boolean doFilter = filterCheckbox.isSelected();
 
     if (!doFilter || !game.get().isPupPackAvailable()) {
-      addSection("PUP Pack", vpsTable.getPupPackFiles());
+      addSection(dataRoot, "PUP Pack", vpsTable.getPupPackFiles());
     }
 
     if (!doFilter || !game.get().isDirectB2SAvailable()) {
-      addSection("Backglasses", vpsTable.getB2sFiles());
+      addSection(dataRoot, "Backglasses", vpsTable.getB2sFiles());
     }
 
     if (!doFilter || !game.get().isAltSoundAvailable()) {
-      addSection("ALT Sound", vpsTable.getAltSoundFiles());
+      addSection(dataRoot, "ALT Sound", vpsTable.getAltSoundFiles());
     }
 
-    addSection("ALT Color", vpsTable.getAltColorFiles());
+    addSection(dataRoot, "ALT Color", vpsTable.getAltColorFiles());
 
     if (!doFilter || !game.get().isRomExists()) {
-      addSection("ROM", vpsTable.getRomFiles());
+      addSection(dataRoot, "ROM", vpsTable.getRomFiles());
     }
 
-    addSection("Sound", vpsTable.getSoundFiles());
+    addSection(dataRoot, "Sound", vpsTable.getSoundFiles());
 
     GameMediaRepresentation gameMedia = game.get().getGameMedia();
     List<GameMediaItemRepresentation> items = gameMedia.getMediaItems(PopperScreen.Topper);
     if (!doFilter || items.isEmpty()) {
-      addSection("Topper", vpsTable.getTopperFiles());
+      addSection(dataRoot, "Topper", vpsTable.getTopperFiles());
     }
 
     items = gameMedia.getMediaItems(PopperScreen.Wheel);
     if (!doFilter || items.isEmpty()) {
-      addSection("Wheel Art", vpsTable.getWheelArtFiles());
+      addSection(dataRoot, "Wheel Art", vpsTable.getWheelArtFiles());
     }
 
     if (!doFilter || !game.get().isPovAvailable()) {
-      addSection("POV", vpsTable.getPovFiles());
+      addSection(dataRoot, "POV", vpsTable.getPovFiles());
     }
   }
 
-  private void addSection(String title, List<? extends VpsAuthoredUrls> urls) {
+  public static void addSection(VBox dataRoot, String title, List<? extends VpsAuthoredUrls> urls) {
     if (urls == null || urls.isEmpty()) {
       return;
     }
@@ -299,12 +299,12 @@ public class TablesSidebarVpsController implements Initializable, AutoCompleteTe
     }
 
     if (!entries.isEmpty()) {
-      addSectionHeader(title);
+      addSectionHeader(dataRoot, title);
       dataRoot.getChildren().addAll(entries);
     }
   }
 
-  private void addSectionHeader(String title) {
+  private static void addSectionHeader(VBox dataRoot, String title) {
     try {
       FXMLLoader loader = new FXMLLoader(TablesSidebarVpsController.class.getResource("section-vps.fxml"));
       Pane section = loader.load();

@@ -366,10 +366,11 @@ public class WidgetFactory {
       return;
     }
 
+    boolean audioOnly = parent.getId().equalsIgnoreCase("screenAudioLaunch") || parent.getId().equalsIgnoreCase("screenAudio");
     String baseType = mimeType.split("/")[0];
     String url = client.getURL(mediaItem.getUri());
 
-    if (baseType.equals("image")) {
+    if (baseType.equals("image") && !audioOnly) {
       ImageView imageView = new ImageView();
       imageView.setFitWidth(parent.getPrefWidth() - 10);
       imageView.setFitHeight(parent.getPrefHeight() - 60);
@@ -410,7 +411,7 @@ public class WidgetFactory {
       MediaView mediaView = new MediaView(mediaPlayer);
       parent.setCenter(mediaView);
     }
-    else if (baseType.equals("video")) {
+    else if (baseType.equals("video") && !audioOnly) {
       Media media = new Media(url);
       MediaPlayer mediaPlayer = new MediaPlayer(media);
       mediaPlayer.setAutoPlay(baseType.equals("video"));
@@ -458,7 +459,7 @@ public class WidgetFactory {
       parent.setCenter(mediaView);
     }
     else {
-      throw new UnsupportedOperationException("Invalid media mime type " + mimeType);
+      LOG.error("Invalid media mime type " + mimeType + " of asset used for popper media panel " + parent.getId());
     }
   }
 
