@@ -1,6 +1,6 @@
 package de.mephisto.vpin.restclient.client;
 
-import de.mephisto.vpin.restclient.representations.altsound.AltSound;
+import de.mephisto.vpin.restclient.representations.AltSound;
 import de.mephisto.vpin.restclient.AssetType;
 import de.mephisto.vpin.restclient.FileUploadProgressListener;
 import de.mephisto.vpin.restclient.jobs.JobExecutionResult;
