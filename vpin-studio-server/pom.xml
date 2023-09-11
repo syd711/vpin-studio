@@ -381,6 +381,7 @@
                                         <exclude>vpbm/identifiers.dat</exclude>
                                         <exclude>pinemhi/pinemhi.ini</exclude>
                                         <exclude>pinemhi/pinemhi.ini.bak</exclude>
+                                        <include>vpbm/Logs/*.log</include>
                                     </excludes>
                                 </resource>
                             </resources>

@@ -57,6 +57,10 @@ public class TableMediaUploadController implements Initializable, DialogControll
   private TablesSidebarController tablesSidebarController;
   private List<String> fileSelection = new ArrayList<>();
 
+  public ComboBox<PopperScreen> getScreenCombo() {
+    return screenCombo;
+  }
+
   @FXML
   private void onCancelClick(ActionEvent e) {
     Stage stage = (Stage) ((Button) e.getSource()).getScene().getWindow();

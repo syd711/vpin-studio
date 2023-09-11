@@ -51,7 +51,8 @@ public class TableAssetsService {
       fileOutputStream.close();
       LOG.info("Downloaded file " + target.getAbsolutePath());
     } catch (Exception e) {
-      LOG.error("Failed to execute download: " + e.getMessage(), e);
+      //do not log URL
+      LOG.error("Failed to execute download: " + e.getClass().getSimpleName(), e);
     }
   }
 }

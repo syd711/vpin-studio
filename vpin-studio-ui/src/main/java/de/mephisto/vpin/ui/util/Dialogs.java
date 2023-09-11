@@ -144,6 +144,7 @@ public class Dialogs {
     TableMediaUploadController controller = (TableMediaUploadController) stage.getUserData();
     controller.setGame(game, screen);
     controller.setTableSidebarController(tablesSidebarController);
+    controller.getScreenCombo().setDisable(true);
     stage.showAndWait();
 
     return controller.uploadFinished();

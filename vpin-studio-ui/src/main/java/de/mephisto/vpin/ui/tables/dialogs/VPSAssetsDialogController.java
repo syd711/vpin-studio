@@ -3,6 +3,7 @@ package de.mephisto.vpin.ui.tables.dialogs;
 import de.mephisto.vpin.commons.fx.DialogController;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.connectors.vps.VPS;
+import de.mephisto.vpin.connectors.vps.model.VpsAuthoredUrls;
 import de.mephisto.vpin.connectors.vps.model.VpsTable;
 import de.mephisto.vpin.restclient.popper.PopperScreen;
 import de.mephisto.vpin.restclient.representations.GameMediaItemRepresentation;
@@ -15,6 +16,7 @@ import de.mephisto.vpin.ui.util.AutoCompleteTextFieldChangeListener;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
@@ -109,18 +111,16 @@ public class VPSAssetsDialogController implements DialogController, AutoComplete
 
     TablesSidebarVpsController.addSection(dataRoot, "Sound", vpsTable.getSoundFiles());
 
-    GameMediaRepresentation gameMedia = game.getGameMedia();
-    List<GameMediaItemRepresentation> items = gameMedia.getMediaItems(PopperScreen.Topper);
-    if (!items.isEmpty()) {
-      TablesSidebarVpsController.addSection(dataRoot, "Topper", vpsTable.getTopperFiles());
-    }
+    TablesSidebarVpsController.addSection(dataRoot, "Topper", vpsTable.getTopperFiles());
 
-    items = gameMedia.getMediaItems(PopperScreen.Wheel);
-    if (!items.isEmpty()) {
-      TablesSidebarVpsController.addSection(dataRoot, "Wheel Art", vpsTable.getWheelArtFiles());
-    }
+    TablesSidebarVpsController.addSection(dataRoot, "Wheel Art", vpsTable.getWheelArtFiles());
 
     autoCompleteNameField.setText(vpsTable.getName());
+
+    if(dataRoot.getChildren().isEmpty()) {
+      Label emptyLabel = WidgetFactory.createDefaultLabel("No additional assets found.");
+      dataRoot.getChildren().add(emptyLabel);
+    }
   }
 
   private void saveExternalTableId(String id) {

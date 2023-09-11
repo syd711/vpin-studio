@@ -86,7 +86,8 @@ public class PopperMediaResource implements InitializingBean {
     Game game = gameService.getGame(gameId);
     PopperScreen s = PopperScreen.valueOf(screen);
     File pinpuSystemFolder = new File(systemService.getPinUPSystemFolder(), "POPMedia/" + systemService.getPupUpMediaFolderName(game) + "/" + s.name());
-    File target = new File(pinpuSystemFolder, game.getGameDisplayName() + "." + asset.getFileSuffix());
+    String baseName = FilenameUtils.getBaseName(game.getGameFileName());
+    File target = new File(pinpuSystemFolder, baseName + "." + asset.getFileSuffix());
     if (target.exists() && append) {
       target = FileUtils.uniquePopperAsset(target);
     }

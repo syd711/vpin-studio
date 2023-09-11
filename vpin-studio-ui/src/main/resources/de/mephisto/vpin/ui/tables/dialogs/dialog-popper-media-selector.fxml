@@ -85,7 +85,7 @@
                                  </graphic>
                               </Button>
                               <Separator layoutX="382.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="0.0" />
-                              <Button layoutX="392.0" layoutY="11.0" mnemonicParsing="false" onAction="#onVPS" text="VPS Assets" textFill="WHITE">
+                              <Button layoutX="392.0" layoutY="11.0" mnemonicParsing="false" onAction="#onVPSAssets" text="VPS Assets" textFill="WHITE">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
