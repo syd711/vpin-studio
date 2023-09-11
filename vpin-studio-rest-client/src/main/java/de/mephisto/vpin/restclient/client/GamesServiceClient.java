@@ -58,8 +58,8 @@ public class GamesServiceClient extends VPinStudioClientService {
     List<GameRepresentation> gameList = this.getGamesCached();
     List<GameRepresentation> result = new ArrayList<>();
     for (GameRepresentation gameRepresentation : gameList) {
-      if ((!StringUtils.isEmpty(gameRepresentation.getRom()) && gameRepresentation.getRom().equals(rom)) ||
-          (!StringUtils.isEmpty(gameRepresentation.getTableName()) && gameRepresentation.getTableName().equals(rom))) {
+      if ((!StringUtils.isEmpty(gameRepresentation.getRom()) && gameRepresentation.getRom().equalsIgnoreCase(rom)) ||
+          (!StringUtils.isEmpty(gameRepresentation.getTableName()) && gameRepresentation.getTableName().equalsIgnoreCase(rom))) {
         result.add(gameRepresentation);
       }
     }

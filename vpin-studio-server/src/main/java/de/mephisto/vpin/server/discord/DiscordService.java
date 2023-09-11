@@ -16,6 +16,7 @@ import de.mephisto.vpin.server.preferences.PreferenceChangedListener;
 import de.mephisto.vpin.server.preferences.PreferencesService;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
+import net.dv8tion.jda.api.entities.channel.concrete.Category;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -108,7 +109,7 @@ public class DiscordService implements InitializingBean, PreferenceChangedListen
   @Nullable
   public DiscordChannel getChannel(long serverId, long channelId) {
     if (this.discordClient != null) {
-      List<DiscordChannel> collect = this.discordClient.getChannels(serverId).stream().filter(c -> c.getId() != channelId).map(c -> {
+      List<DiscordChannel> collect = this.discordClient.getChannels(serverId).stream().filter(c -> c.getId() == channelId).map(c -> {
         DiscordChannel ct = new DiscordChannel();
         ct.setName(c.getName());
         ct.setId(c.getId());
@@ -166,7 +167,7 @@ public class DiscordService implements InitializingBean, PreferenceChangedListen
   public boolean hasManagePermissions(long serverId, long channelId, long memberId) {
     if (this.discordClient != null) {
       return this.discordClient.hasPermissions(serverId, channelId, memberId,
-          MANAGE_CHANNEL,
+//          MANAGE_CHANNEL,
           VIEW_CHANNEL,
           MESSAGE_SEND,
           MESSAGE_MANAGE,
@@ -181,7 +182,7 @@ public class DiscordService implements InitializingBean, PreferenceChangedListen
   public boolean hasManagePermissions(long serverId, long memberId) {
     if (this.discordClient != null) {
       return this.discordClient.hasPermissions(serverId, memberId,
-          MANAGE_CHANNEL,
+//          MANAGE_CHANNEL,
           VIEW_CHANNEL,
           MESSAGE_SEND,
           MESSAGE_MANAGE,
@@ -363,6 +364,18 @@ public class DiscordService implements InitializingBean, PreferenceChangedListen
     return result;
   }
 
+  public List<DiscordServer> getAdministratedServers() {
+    List<DiscordServer> result = new ArrayList<>();
+    if (this.discordClient != null) {
+      List<GuildInfo> guilds = this.discordClient.getAdministratedGuilds();
+      for (GuildInfo guild : guilds) {
+        List<de.mephisto.vpin.connectors.discord.DiscordCategory> categories = this.discordClient.getCategories(guild.getId());
+        result.add(toServer(guild, categories));
+      }
+    }
+    return result;
+  }
+
   public Player getPlayerByInitials(long serverId, String initials) {
     if (serverId > 0) {
       List<DiscordMember> results = new ArrayList<>();
@@ -531,13 +544,6 @@ public class DiscordService implements InitializingBean, PreferenceChangedListen
       return true;
     }
 
-    //well, we abuse this as a connection check.
-    String topic = this.discordClient.getTopic(serverId, channelId);
-    //null means there are problem during reading from Discord, so let's assume everything is ok
-    if (topic == null) {
-      return true;
-    }
-
     List<DiscordMessage> pinnedMessages = this.discordClient.getPinnedMessages(serverId, channelId);
     if (pinnedMessages.isEmpty()) {
       return false;
@@ -618,7 +624,7 @@ public class DiscordService implements InitializingBean, PreferenceChangedListen
     if (this.discordClient != null) {
       List<DiscordMessage> pinnedMessages = discordClient.getPinnedMessages(serverId, channelId);
       for (DiscordMessage pinnedMessage : pinnedMessages) {
-        if (pinnedMessage.getRaw().contains(DiscordChannelMessageFactory.START_INDICATOR)) {
+        if (pinnedMessage.getRaw().contains(DiscordChannelMessageFactory.START_INDICATOR) && pinnedMessage.getMember() != null) {
           String raw = pinnedMessage.getRaw();
           String uuid = raw.substring(raw.indexOf("ID:") + 3);
           uuid = uuid.substring(0, uuid.indexOf(")")).trim();
@@ -665,11 +671,58 @@ public class DiscordService implements InitializingBean, PreferenceChangedListen
     return true;
   }
 
+  public boolean validateSettings() {
+    try {
+      this.recreateDiscordClient();
+    } catch (Exception e) {
+      return false;
+    }
+
+    String serverId = (String) preferencesService.getPreferenceValue(PreferenceNames.DISCORD_GUILD_ID);
+    String channelId = (String) preferencesService.getPreferenceValue(PreferenceNames.DISCORD_CHANNEL_ID);
+    String categoryId = (String) preferencesService.getPreferenceValue(PreferenceNames.DISCORD_CATEGORY_ID);
+
+    try {
+      if (this.discordClient != null && !StringUtils.isEmpty(serverId)) {
+        long id = Long.parseLong(serverId);
+        GuildInfo guild = this.discordClient.getGuildById(id);
+        if (guild == null) {
+          preferencesService.savePreference(PreferenceNames.DISCORD_GUILD_ID, null);
+          preferencesService.savePreference(PreferenceNames.DISCORD_CATEGORY_ID, null);
+          preferencesService.savePreference(PreferenceNames.DISCORD_CHANNEL_ID, null);
+          preferencesService.savePreference(PreferenceNames.DISCORD_DYNAMIC_SUBSCRIPTIONS, false);
+          return false;
+        }
+
+        if (!StringUtils.isEmpty(channelId)) {
+          DiscordChannel channel = this.getChannel(Long.parseLong(serverId), Long.parseLong(channelId));
+          if (channel == null) {
+            preferencesService.savePreference(PreferenceNames.DISCORD_CATEGORY_ID, null);
+            return false;
+          }
+        }
+
+        if (!StringUtils.isEmpty(categoryId)) {
+          Category category = this.discordClient.getCategory(Long.parseLong(serverId), Long.parseLong(categoryId));
+          if (category == null) {
+            preferencesService.savePreference(PreferenceNames.DISCORD_CHANNEL_ID, null);
+            return false;
+          }
+        }
+      }
+    } catch (Exception e) {
+      LOG.error("Failed to validate Discord settings: " + e.getMessage(), e);
+      return false;
+    }
+    return true;
+  }
+
   @Override
   public void afterPropertiesSet() {
     try {
       preferencesService.addChangeListener(this);
       this.recreateDiscordClient();
+      this.clearCache();
     } catch (Exception e) {
       LOG.error("Failed to initialize Discord Service: " + e.getMessage());
     }

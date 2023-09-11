@@ -195,11 +195,6 @@ public class AssetFactory {
         winnerName = winner.getName();
       }
 
-      String first = "1. " + summary.getScores().get(0).getPlayerInitials() + "  " + summary.getScores().get(0).getScore();
-      String second = "2. " + summary.getScores().get(1).getPlayerInitials() + "  " + summary.getScores().get(1).getScore();
-      String third = "3. " + summary.getScores().get(2).getPlayerInitials() + "  " + summary.getScores().get(2).getScore();
-
-
       byte[] data = asset.getData();
       BufferedImage background = ImageIO.read(new ByteArrayInputStream(data));
       Graphics2D graphics = (Graphics2D) background.getGraphics();
@@ -256,7 +251,7 @@ public class AssetFactory {
       graphics.drawString("Congratulations!", background.getWidth() / 2 - textWidth / 2, yOffset += 20 + SEPARATOR);
 
       //Name
-      int nameSize = 56;
+      int nameSize = 46;
       font = new Font("System", Font.BOLD, nameSize);
       graphics.setFont(font);
       textWidth = graphics.getFontMetrics().stringWidth(winnerName);
@@ -268,13 +263,13 @@ public class AssetFactory {
       graphics.drawString(winnerName, background.getWidth() / 2 - textWidth / 2, yOffset += nameSize + SEPARATOR - 8);
 
       //is the winner
-      font = new Font("System", Font.PLAIN, 20);
+      font = new Font("System", Font.PLAIN, 18);
       graphics.setFont(font);
       textWidth = graphics.getFontMetrics().stringWidth("is the winner of the");
-      graphics.drawString("is the winner of the", background.getWidth() / 2 - textWidth / 2, yOffset += 20 + SEPARATOR + 8);
+      graphics.drawString("is the winner of the", background.getWidth() / 2 - textWidth / 2, yOffset += 18 + SEPARATOR + 8);
 
       //competitions name
-      int competitionNameSize = 28;
+      int competitionNameSize = 22;
       String cName = "\"" + competition.getName() + "\"";
       font = new Font("System", Font.BOLD, competitionNameSize);
       graphics.setFont(font);
@@ -287,31 +282,24 @@ public class AssetFactory {
       graphics.drawString(cName, background.getWidth() / 2 - textWidth / 2, yOffset += competitionNameSize + SEPARATOR);
 
       //competition
-      font = new Font("System", Font.PLAIN, 20);
+      font = new Font("System", Font.PLAIN, 18);
       graphics.setFont(font);
       textWidth = graphics.getFontMetrics().stringWidth("competition!");
-      graphics.drawString("competition!", background.getWidth() / 2 - textWidth / 2, yOffset += 20 + SEPARATOR);
+      graphics.drawString("competition!", background.getWidth() / 2 - textWidth / 2, yOffset += 18 + SEPARATOR);
 
-      //1.
-      font = new Font("Digital Counter 7", Font.PLAIN, 40);
+      yOffset+=6;
+      int scoreSize = 140;
+      font = new Font("Digital Counter 7", Font.PLAIN, scoreSize);
       graphics.setFont(font);
-      textWidth = graphics.getFontMetrics().stringWidth(first);
-      graphics.drawString(first, background.getWidth() / 2 - textWidth / 2, yOffset += 40 + SEPARATOR);
-
-
-      //2.
-      font = new Font("Digital Counter 7", Font.PLAIN, 32);
-      graphics.setFont(font);
-      textWidth = graphics.getFontMetrics().stringWidth(second);
-      graphics.drawString(second, background.getWidth() / 2 - textWidth / 2, yOffset += 32 + SEPARATOR);
-
-
-      //3.
-      font = new Font("Digital Counter 7", Font.PLAIN, 28);
-      graphics.setFont(font);
-      textWidth = graphics.getFontMetrics().stringWidth(third);
-      graphics.drawString(third, background.getWidth() / 2 - textWidth / 2, yOffset += 28 + SEPARATOR);
-
+      String score = summary.getScores().get(0).getScore();
+      textWidth = graphics.getFontMetrics().stringWidth(score);
+      while (textWidth > 500) {
+        font = new Font("Digital Counter 7", Font.PLAIN, scoreSize--);
+        graphics.setFont(font);
+        textWidth = graphics.getFontMetrics().stringWidth(score);
+      }
+      yOffset+=scoreSize;
+      graphics.drawString(score, background.getWidth() / 2 - textWidth / 2, yOffset);
 
       return ImageUtil.toBytes(background);
     } catch (Exception e) {

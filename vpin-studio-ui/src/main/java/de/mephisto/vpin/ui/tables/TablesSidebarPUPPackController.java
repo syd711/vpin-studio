@@ -10,10 +10,9 @@ import de.mephisto.vpin.restclient.representations.PupPackRepresentation;
 import de.mephisto.vpin.restclient.representations.ValidationState;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.events.EventManager;
-import de.mephisto.vpin.ui.tables.drophandler.DirectB2SFileDropEventHandler;
 import de.mephisto.vpin.ui.tables.drophandler.PupPackFileDropEventHandler;
-import de.mephisto.vpin.ui.tables.validation.LocalizedValidation;
-import de.mephisto.vpin.ui.tables.validation.ValidationTexts;
+import de.mephisto.vpin.ui.util.LocalizedValidation;
+import de.mephisto.vpin.ui.tables.validation.GameValidationTexts;
 import de.mephisto.vpin.ui.util.Dialogs;
 import de.mephisto.vpin.ui.util.FileDragEventHandler;
 import javafx.application.Platform;
@@ -339,7 +338,7 @@ public class TablesSidebarPUPPackController implements Initializable {
         errorBox.setVisible(!validationStates.isEmpty());
         if (!validationStates.isEmpty()) {
           validationState = validationStates.get(0);
-          LocalizedValidation validationResult = ValidationTexts.getValidationResult(game, validationState);
+          LocalizedValidation validationResult = GameValidationTexts.getValidationResult(game, validationState);
           errorTitle.setText(validationResult.getLabel());
           errorText.setText(validationResult.getText());
         }

@@ -6,7 +6,9 @@ import de.mephisto.vpin.restclient.discord.DiscordBotStatus;
 import de.mephisto.vpin.restclient.discord.DiscordChannel;
 import de.mephisto.vpin.restclient.discord.DiscordCompetitionData;
 import de.mephisto.vpin.restclient.discord.DiscordServer;
+import de.mephisto.vpin.restclient.representations.CompetitionRepresentation;
 import de.mephisto.vpin.restclient.representations.PlayerRepresentation;
+import de.mephisto.vpin.restclient.representations.ScoreRepresentation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.client.RestTemplate;
@@ -26,11 +28,16 @@ public class DiscordServiceClient extends VPinStudioClientService {
 
   public boolean clearCache() {
     final RestTemplate restTemplate = new RestTemplate();
+    client.clearDiscordCache();
     return restTemplate.getForObject(getRestClient().getBaseUrl() + API + "discord/clearcache", Boolean.class);
   }
 
   public DiscordCompetitionData getDiscordCompetitionData(long serverId, long channelId) {
     return getRestClient().get(API + "discord/competition/" + serverId + "/" + channelId, DiscordCompetitionData.class);
+  }
+
+  public boolean validateSettings() {
+    return getRestClient().get(API + "discord/validate", Boolean.class);
   }
 
   public DiscordBotStatus getDiscordStatus(long serverId) {
@@ -57,6 +64,10 @@ public class DiscordServiceClient extends VPinStudioClientService {
     return Arrays.asList(getRestClient().getCached(API + "discord/servers", DiscordServer[].class));
   }
 
+  public List<DiscordServer> getAdministratedDiscordServers() {
+    return Arrays.asList(getRestClient().getCached(API + "discord/myservers", DiscordServer[].class));
+  }
+
   public boolean isCompetitionActive(long discordServerId, long discordChannelId, String uuid) {
     final RestTemplate restTemplate = new RestTemplate();
     String url = getRestClient().getBaseUrl() + API + "discord/competition/isactive/" + discordServerId + "/" + discordChannelId + "/" + uuid;
@@ -74,5 +85,9 @@ public class DiscordServiceClient extends VPinStudioClientService {
 
   public List<PlayerRepresentation> getAllowList() {
     return Arrays.asList(getRestClient().get(API + "discord/allowlist", PlayerRepresentation[].class));
+  }
+
+  public List<ScoreRepresentation> checkCompetition(CompetitionRepresentation selectedItem) {
+    return Arrays.asList(getRestClient().get(API + "discord/competition/check/" + selectedItem.getId(), ScoreRepresentation[].class));
   }
 }

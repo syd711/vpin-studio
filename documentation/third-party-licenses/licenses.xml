@@ -165,7 +165,7 @@
     <dependency>
       <groupId>de.mephisto.vpin</groupId>
       <artifactId>vpin-connector-discord</artifactId>
-      <version>1.4.0</version>
+      <version>1.4.3</version>
       <licenses>
         <!-- No license information available. -->
       </licenses>
@@ -173,7 +173,7 @@
     <dependency>
       <groupId>de.mephisto.vpin</groupId>
       <artifactId>vpin-connector-vps</artifactId>
-      <version>1.4.0</version>
+      <version>1.4.3</version>
       <licenses>
         <!-- No license information available. -->
       </licenses>
@@ -181,7 +181,7 @@
     <dependency>
       <groupId>de.mephisto.vpin</groupId>
       <artifactId>vpin-studio-commons</artifactId>
-      <version>1.4.0</version>
+      <version>1.4.3</version>
       <licenses>
         <!-- No license information available. -->
       </licenses>
@@ -189,7 +189,7 @@
     <dependency>
       <groupId>de.mephisto.vpin</groupId>
       <artifactId>vpin-studio-rest-client</artifactId>
-      <version>1.4.0</version>
+      <version>1.4.3</version>
       <licenses>
         <!-- No license information available. -->
       </licenses>
@@ -223,6 +223,19 @@
           <url>https://oss.oracle.com/licenses/CDDL+GPL-1.1</url>
           <distribution>repo</distribution>
           <file>cddl 1.1 - cddl+gpl-1.1.txt</file>
+        </license>
+      </licenses>
+    </dependency>
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>4.12</version>
+      <licenses>
+        <license>
+          <name>Eclipse Public License 1.0</name>
+          <url>http://www.eclipse.org/legal/epl-v10.html</url>
+          <distribution>repo</distribution>
+          <file>eclipse public license - v 1.0 - epl-v10.html</file>
         </license>
       </licenses>
     </dependency>
@@ -547,6 +560,19 @@
           <url>https://spdx.org/licenses/Apache-2.0.html</url>
           <distribution>repo</distribution>
           <file>apache-2.0 - apache-2.0.html</file>
+        </license>
+      </licenses>
+    </dependency>
+    <dependency>
+      <groupId>org.mockito</groupId>
+      <artifactId>mockito-core</artifactId>
+      <version>5.5.0</version>
+      <licenses>
+        <license>
+          <name>The MIT License</name>
+          <url>https://github.com/mockito/mockito/blob/main/LICENSE</url>
+          <distribution>repo</distribution>
+          <file>the mit license - license.html</file>
         </license>
       </licenses>
     </dependency>

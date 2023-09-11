@@ -413,15 +413,16 @@
          <top>
             <ToolBar prefHeight="40.0" prefWidth="200.0" style="-fx-background-radius: 3 3 0 0;" BorderPane.alignment="CENTER">
                <items>
-                  <Label text="Sample Data:">
+                  <Label text="Sample Data:" textFill="WHITE">
                      <font>
-                        <Font size="14.0" />
+                        <Font name="System Bold" size="14.0" />
                      </font>
                      <padding>
                         <Insets left="3.0" right="3.0" />
                      </padding>
                   </Label>
                   <ComboBox fx:id="tableCombo" />
+                  <Separator layoutX="244.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
                   <Button mnemonicParsing="false" onAction="#onTableRefresh" text=" Reload">
                      <font>
                         <Font size="14.0" />

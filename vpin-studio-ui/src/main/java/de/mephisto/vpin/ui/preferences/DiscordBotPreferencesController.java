@@ -62,6 +62,9 @@ public class DiscordBotPreferencesController implements Initializable {
   private Button selectUsersBtn;
 
   @FXML
+  private Button validateBtn;
+
+  @FXML
   private void onReset() {
     Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Token Reset", "Reset this Discord bot token?",
         "If you haven't stored it elsewhere, you have to re-generate a new one using the Discord developer portal.",
@@ -77,7 +80,25 @@ public class DiscordBotPreferencesController implements Initializable {
       this.categoryCombo.setDisable(true);
       this.categoryCombo.setValue(null);
       this.dynamicSubscriptions.setDisable(true);
+      this.validateBtn.setDisable(true);
     }
+  }
+
+  @FXML
+  private void onValidate() {
+    validateBtn.setDisable(true);
+    Platform.runLater(()-> {
+      Studio.client.getDiscordService().clearCache();
+      boolean b = client.getDiscordService().validateSettings();
+      if(!b) {
+        validateDefaultSettings();
+        WidgetFactory.showAlert(Studio.stage, "Issues Detected", "There have been issues detected with you Discord settings.", "One or more values have been resetted.");
+      }
+      else {
+        WidgetFactory.showInformation(Studio.stage, "Information", "No issues found.");
+      }
+      validateBtn.setDisable(false);
+    });
   }
 
   @FXML
@@ -112,11 +133,12 @@ public class DiscordBotPreferencesController implements Initializable {
           client.getPreferenceService().setPreference(PreferenceNames.DISCORD_BOT_TOKEN, token.trim());
           botTokenLabel.setText(token.trim());
           serverCombo.setDisable(false);
+          validateBtn.setDisable(false);
           channelCombo.setDisable(true);
           categoryCombo.setDisable(true);
           dynamicSubscriptions.setDisable(false);
           resetBtn.setDisable(false);
-          validateDefaultChannel();
+          validateDefaultSettings();
         });
       } catch (Exception e) {
         if (discordClient != null) {
@@ -133,6 +155,8 @@ public class DiscordBotPreferencesController implements Initializable {
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
+    Studio.client.getDiscordService().clearCache();
+
     serverCombo.setDisable(true);
     channelCombo.setDisable(true);
     categoryCombo.setDisable(true);
@@ -157,12 +181,12 @@ public class DiscordBotPreferencesController implements Initializable {
       }
     });
 
-    validateDefaultChannel();
+    validateDefaultSettings();
 
     serverCombo.valueProperty().addListener((observable, oldValue, newValue) -> {
       if (newValue != null) {
         client.getPreferenceService().setPreference(PreferenceNames.DISCORD_GUILD_ID, newValue.getId());
-        validateDefaultChannel();
+        validateDefaultSettings();
       }
       else {
         client.getPreferenceService().setPreference(PreferenceNames.DISCORD_GUILD_ID, "");
@@ -221,10 +245,10 @@ public class DiscordBotPreferencesController implements Initializable {
     }
   }
 
-  private void validateDefaultChannel() {
+  private void validateDefaultSettings() {
     client.clearDiscordCache();
 
-    List<DiscordServer> servers = client.getDiscordService().getDiscordServers();
+    List<DiscordServer> servers = client.getDiscordService().getAdministratedDiscordServers();
     ObservableList<DiscordServer> discordServers = FXCollections.observableArrayList(servers);
     serverCombo.setItems(FXCollections.observableList(discordServers));
 

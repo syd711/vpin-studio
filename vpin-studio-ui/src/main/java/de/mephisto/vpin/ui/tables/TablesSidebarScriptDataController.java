@@ -5,18 +5,20 @@ import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.SystemSummary;
 import de.mephisto.vpin.restclient.representations.GameRepresentation;
 import de.mephisto.vpin.restclient.representations.ValidationState;
+import de.mephisto.vpin.restclient.representations.vpx.TableInfo;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.tables.dialogs.ScriptDownloadProgressModel;
-import de.mephisto.vpin.ui.tables.validation.LocalizedValidation;
-import de.mephisto.vpin.ui.tables.validation.ValidationTexts;
+import de.mephisto.vpin.ui.tables.validation.GameValidationTexts;
 import de.mephisto.vpin.ui.util.Dialogs;
+import de.mephisto.vpin.ui.util.LocalizedValidation;
 import de.mephisto.vpin.ui.util.ProgressResultModel;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
+import javafx.scene.control.TextArea;
 import javafx.scene.layout.VBox;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -26,6 +28,9 @@ import java.awt.*;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.text.DateFormat;
 import java.util.Arrays;
 import java.util.List;
@@ -78,6 +83,9 @@ public class TablesSidebarScriptDataController implements Initializable {
   private Button scanBtn;
 
   @FXML
+  private Button openEMHighscoreBtn;
+
+  @FXML
   private Button editAliasBtn;
 
   @FXML
@@ -96,6 +104,39 @@ public class TablesSidebarScriptDataController implements Initializable {
   private Button renameBtn;
 
   @FXML
+  private Button openTableDescriptionBtn;
+
+  @FXML
+  private Button openTableRulesBtn;
+
+  @FXML
+  private Label tableNameLabel;
+
+  @FXML
+  private Label authorWebsiteLabel;
+
+  @FXML
+  private Label authorNameLabel;
+
+  @FXML
+  private TextArea tableBlurbLabel;
+
+  @FXML
+  private TextArea tableRulesLabel;
+
+  @FXML
+  private TextArea tableDescriptionLabel;
+
+  @FXML
+  private Label tableVersionLabel;
+
+  @FXML
+  private Label authorEmailLabel;
+
+  @FXML
+  private Label releaseDateLabel;
+
+  @FXML
   private VBox errorBox;
 
   @FXML
@@ -109,20 +150,60 @@ public class TablesSidebarScriptDataController implements Initializable {
   private TablesSidebarController tablesSidebarController;
 
   private ValidationState validationState;
+  private SystemSummary systemSummary;
+  private TableInfo tableInfo;
 
   // Add a public no-args constructor
   public TablesSidebarScriptDataController() {
   }
 
-  @Override
-  public void initialize(URL url, ResourceBundle resourceBundle) {
-    errorBox.managedProperty().bindBidirectional(errorBox.visibleProperty());
-    vpSaveEditBtn.setDisable(!Studio.client.getSystemService().isLocal());
-  }
-
   public void setGame(Optional<GameRepresentation> game) {
     this.game = game;
     this.refreshView(game);
+  }
+
+  @FXML
+  private void onShowTableRules() {
+    if(tableInfo == null || game.isEmpty()) {
+      return;
+    }
+
+    String value = tableInfo.getTableRules();
+    if (!StringUtils.isEmpty(value)) {
+      try {
+        File tmp = File.createTempFile(game.get().getGameDisplayName() + "-rules", ".txt");
+        tmp.deleteOnExit();
+
+        Path path = Paths.get(tmp.toURI());
+        Files.write(path, value.getBytes());
+
+        Desktop.getDesktop().open(tmp);
+      } catch (IOException e) {
+        LOG.error("Failed to create temp file for rules: " + e.getMessage(), e);
+      }
+    }
+  }
+
+  @FXML
+  private void onShowTableDescription() {
+    if(tableInfo == null || game.isEmpty()) {
+      return;
+    }
+
+    String value = tableInfo.getTableDescription();
+    if (!StringUtils.isEmpty(value)) {
+      try {
+        File tmp = File.createTempFile(game.get().getGameDisplayName() + "-description", ".txt");
+        tmp.deleteOnExit();
+
+        Path path = Paths.get(tmp.toURI());
+        Files.write(path, value.getBytes());
+
+        Desktop.getDesktop().open(tmp);
+      } catch (IOException e) {
+        LOG.error("Failed to create temp file for rules: " + e.getMessage(), e);
+      }
+    }
   }
 
   @FXML
@@ -256,6 +337,19 @@ public class TablesSidebarScriptDataController implements Initializable {
   }
 
   @FXML
+  private void onEMHighscore() {
+    File folder = new File(systemSummary.getVisualPinballDirectory(), "User");
+    File file = new File(folder, game.get().getHsFileName());
+    if (file.exists()) {
+      try {
+        Desktop.getDesktop().open(file);
+      } catch (IOException e) {
+        WidgetFactory.showAlert(Studio.stage, "Error", "Failed to open EM highscore file \"" + game.get().getHsFileName() + "\": " + e.getMessage());
+      }
+    }
+  }
+
+  @FXML
   private void onInspect() {
     if (game.isPresent()) {
       Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Inspect script of table\"" + game.get().getGameDisplayName() + "\"?",
@@ -286,6 +380,7 @@ public class TablesSidebarScriptDataController implements Initializable {
   }
 
   public void refreshView(Optional<GameRepresentation> g) {
+    tableInfo = null;
     errorBox.setVisible(false);
 
     editHsFileNameBtn.setDisable(g.isEmpty());
@@ -294,6 +389,8 @@ public class TablesSidebarScriptDataController implements Initializable {
     romUploadBtn.setDisable(g.isEmpty());
     renameBtn.setDisable(g.isEmpty() || !g.get().isGameFileAvailable());
     openTablesFolderBtn.setVisible(Studio.client.getSystemService().isLocal());
+    openEMHighscoreBtn.setVisible(Studio.client.getSystemService().isLocal());
+    openEMHighscoreBtn.setDisable(true);
 
     inspectBtn.setDisable(g.isEmpty() || !g.get().isGameFileAvailable());
     editBtn.setDisable(g.isEmpty() || !g.get().isGameFileAvailable());
@@ -301,14 +398,50 @@ public class TablesSidebarScriptDataController implements Initializable {
     editAliasBtn.setDisable(g.isEmpty() || !g.get().isGameFileAvailable());
     deleteAliasBtn.setDisable(g.isEmpty() || !g.get().isGameFileAvailable());
 
+    tableNameLabel.setText("-");
+    authorWebsiteLabel.setText("-");
+    authorNameLabel.setText("-");
+    tableBlurbLabel.setText("-");
+    tableRulesLabel.setText("-");
+    tableVersionLabel.setText("-");
+    authorEmailLabel.setText("-");
+    releaseDateLabel.setText("-");
+    tableDescriptionLabel.setText("-");
+
+    openTableRulesBtn.setDisable(true);
+    openTableDescriptionBtn.setDisable(true);
+
     if (g.isPresent()) {
       GameRepresentation game = g.get();
+      tableInfo = Studio.client.getVpxService().getTableInfo(game);
+      if (tableInfo != null) {
+        tableNameLabel.setText(StringUtils.isEmpty(tableInfo.getTableName()) ? "-" : tableInfo.getTableName());
+        authorWebsiteLabel.setText(StringUtils.isEmpty(tableInfo.getAuthorWebSite()) ? "-" : tableInfo.getAuthorWebSite());
+        authorNameLabel.setText(StringUtils.isEmpty(tableInfo.getAuthorName()) ? "-" : tableInfo.getAuthorName());
+        tableVersionLabel.setText(StringUtils.isEmpty(tableInfo.getTableVersion()) ? "-" : tableInfo.getTableVersion());
+        authorEmailLabel.setText(StringUtils.isEmpty(tableInfo.getAuthorEmail()) ? "-" : tableInfo.getAuthorEmail());
+        releaseDateLabel.setText(StringUtils.isEmpty(tableInfo.getReleaseDate()) ? "-" : tableInfo.getReleaseDate());
+        tableBlurbLabel.setText(tableInfo.getTableBlurb());
+        tableRulesLabel.setText(tableInfo.getTableRules());
+        tableDescriptionLabel.setText(tableInfo.getTableDescription());
+
+        openTableRulesBtn.setDisable(StringUtils.isEmpty(tableInfo.getTableRules()));
+        openTableDescriptionBtn.setDisable(StringUtils.isEmpty(tableInfo.getTableDescription()));
+      }
 
       editHsFileNameBtn.setDisable(!game.getEmulator().isVisualPinball());
       editRomNameBtn.setDisable(!game.getEmulator().isVisualPinball());
       editTableNameBtn.setDisable(!game.getEmulator().isVisualPinball());
       romUploadBtn.setDisable(!game.getEmulator().isVisualPinball());
       deleteAliasBtn.setDisable(StringUtils.isEmpty(game.getRomAlias()));
+
+      if (Studio.client.getSystemService().isLocal()) {
+        if (!StringUtils.isEmpty(game.getHsFileName())) {
+          File folder = new File(systemSummary.getVisualPinballDirectory(), "User");
+          File file = new File(folder, game.getHsFileName());
+          openEMHighscoreBtn.setDisable(!file.exists());
+        }
+      }
 
       labelRom.setText(!StringUtils.isEmpty(game.getRom()) ? game.getRom() : "-");
       labelRomAlias.setText(!StringUtils.isEmpty(game.getRomAlias()) ? game.getRomAlias() : "-");
@@ -328,7 +461,7 @@ public class TablesSidebarScriptDataController implements Initializable {
       errorBox.setVisible(!validationStates.isEmpty());
       if (!validationStates.isEmpty()) {
         validationState = validationStates.get(0);
-        LocalizedValidation validationResult = ValidationTexts.getValidationResult(game, validationState);
+        LocalizedValidation validationResult = GameValidationTexts.getValidationResult(game, validationState);
         errorTitle.setText(validationResult.getLabel());
         errorText.setText(validationResult.getText());
       }
@@ -347,6 +480,13 @@ public class TablesSidebarScriptDataController implements Initializable {
 
   public void setSidebarController(TablesSidebarController tablesSidebarController) {
     this.tablesSidebarController = tablesSidebarController;
+  }
+
+  @Override
+  public void initialize(URL url, ResourceBundle resourceBundle) {
+    systemSummary = Studio.client.getSystemService().getSystemSummary();
+    errorBox.managedProperty().bindBidirectional(errorBox.visibleProperty());
+    vpSaveEditBtn.setDisable(!Studio.client.getSystemService().isLocal());
   }
 
 }

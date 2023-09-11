@@ -8,8 +8,8 @@ import de.mephisto.vpin.restclient.representations.GameRepresentation;
 import de.mephisto.vpin.restclient.representations.ValidationState;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.events.EventManager;
-import de.mephisto.vpin.ui.tables.validation.LocalizedValidation;
-import de.mephisto.vpin.ui.tables.validation.ValidationTexts;
+import de.mephisto.vpin.ui.util.LocalizedValidation;
+import de.mephisto.vpin.ui.tables.validation.GameValidationTexts;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
@@ -113,7 +113,7 @@ public class TablesSidebarMameController implements Initializable {
           desktop.open(file);
         }
       } catch (Exception e) {
-        LOG.error("Failed to open Mame Setup: " + e.getMessage(), e);
+        LOG.error("Failed to open Mame Setup: " + e.getMessage());
       }
     }
   }
@@ -226,7 +226,7 @@ public class TablesSidebarMameController implements Initializable {
 
         if (options.getValidationStates() != null && !options.getValidationStates().isEmpty()) {
           ValidationState validationState = options.getValidationStates().get(0);
-          LocalizedValidation validationResult = ValidationTexts.getValidationResult(game, validationState);
+          LocalizedValidation validationResult = GameValidationTexts.getValidationResult(game, validationState);
 
           this.errorBox.setVisible(true);
           this.errorTitle.setText(validationResult.getLabel());

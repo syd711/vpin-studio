@@ -8,6 +8,7 @@ import de.mephisto.vpin.connectors.discord.DiscordMessage;
 import de.mephisto.vpin.restclient.discord.DiscordCompetitionData;
 import de.mephisto.vpin.server.competitions.Competition;
 import de.mephisto.vpin.server.games.Game;
+import de.mephisto.vpin.server.vpx.VPXUtil;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import net.dv8tion.jda.api.entities.Message;
@@ -36,6 +37,8 @@ public class CompetitionDataHelper {
       data.setTname(game.getGameDisplayName());
       data.setSdt(competition.getStartDate());
       data.setMode(competition.getJoinMode());
+      data.setChksm(VPXUtil.getChecksum(game.getGameFile()));
+      data.setScrL(competition.getScoreLimit());
       data.setEdt(competition.getEndDate());
       data.setFs(game.getGameFileSize());
       data.setUuid(competition.getUuid());

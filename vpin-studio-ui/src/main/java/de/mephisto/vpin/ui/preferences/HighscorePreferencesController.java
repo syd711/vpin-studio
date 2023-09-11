@@ -1,6 +1,7 @@
 package de.mephisto.vpin.ui.preferences;
 
 import de.mephisto.vpin.commons.fx.OverlayWindowFX;
+import de.mephisto.vpin.restclient.DefaultHighscoresTitles;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.representations.PreferenceEntryRepresentation;
 import de.mephisto.vpin.ui.PreferencesController;
@@ -27,7 +28,7 @@ public class HighscorePreferencesController implements Initializable {
 
     String titles = entry.getValue();
     if (StringUtils.isEmpty(titles)) {
-      titles = "GRAND CHAMPION,WORLD RECORD"; //always valid
+      titles = String.join(",", DefaultHighscoresTitles.DEFAULT_TITLES);
     }
     titlesField.setText(titles);
 

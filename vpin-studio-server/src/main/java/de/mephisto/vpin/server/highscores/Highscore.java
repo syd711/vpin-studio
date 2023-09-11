@@ -134,7 +134,7 @@ public class Highscore {
     highscore.setCreatedAt(new Date());
     highscore.setDisplayName(game.getGameDisplayName());
 
-    if(metadata != null) {
+    if (metadata != null) {
       highscore.setRaw(metadata.getRaw());
       highscore.setFilename(metadata.getFilename());
       highscore.setType(metadata.getType() != null ? metadata.getType().name() : null);
@@ -163,7 +163,7 @@ public class Highscore {
 
     Highscore highscore = (Highscore) o;
 
-    return id.equals(highscore.id);
+    return id.equals(highscore.id) && this.gameId == ((Highscore) o).gameId;
   }
 
   @Override

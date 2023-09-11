@@ -1,6 +1,7 @@
 package de.mephisto.vpin.ui.competitions.dialogs;
 
-import de.mephisto.vpin.commons.EmulatorType;
+import de.mephisto.vpin.restclient.SubscriptionInfo;
+import de.mephisto.vpin.restclient.popper.EmulatorType;
 import de.mephisto.vpin.commons.fx.Debouncer;
 import de.mephisto.vpin.commons.fx.DialogController;
 import de.mephisto.vpin.restclient.CompetitionType;
@@ -87,6 +88,7 @@ public class SubscriptionDialogController implements Initializable, DialogContro
     competition.setType(CompetitionType.SUBSCRIPTION.name());
     competition.setName("");
     competition.setJoinMode(JoinMode.ROM_ONLY.name());
+    competition.setScoreLimit(SubscriptionInfo.DEFAULT_SCORE_LIMIT);
     competition.setUuid(UUID.randomUUID().toString());
     competition.setOwner(String.valueOf(botStatus.getBotId()));
     competition.setDiscordServerId(this.botStatus.getServerId());
@@ -189,11 +191,11 @@ public class SubscriptionDialogController implements Initializable, DialogContro
         continue;
       }
 
-      if (all.stream().anyMatch(c -> game.getRom().equals(c.getRom()))) {
+      if (all.stream().anyMatch(c -> game.getRom().equalsIgnoreCase(c.getRom()))) {
         continue;
       }
 
-      if (game.getEmulator().getName().equals(EmulatorType.VISUAL_PINBALL_X)) {
+      if (game.getEmulator().getName().equalsIgnoreCase(EmulatorType.VISUAL_PINBALL_X)) {
         filtered.add(game);
       }
     }

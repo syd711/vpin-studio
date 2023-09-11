@@ -1,7 +1,8 @@
 package de.mephisto.vpin.server.roms;
 
+import de.mephisto.vpin.restclient.popper.EmulatorType;
 import de.mephisto.vpin.server.games.Game;
-import de.mephisto.vpin.server.popper.Emulator;
+import de.mephisto.vpin.restclient.popper.Emulator;
 import de.mephisto.vpin.server.system.SystemService;
 import de.mephisto.vpin.server.util.VPXFileScanner;
 import edu.umd.cs.findbugs.annotations.NonNull;
@@ -36,7 +37,7 @@ public class RomService implements InitializingBean {
 
   @NonNull
   public ScanResult scanGameFile(@NonNull Game game) {
-    if (game.getEmulator().getName().equalsIgnoreCase(Emulator.VISUAL_PINBALL_X) || game.getEmulator().getName().equalsIgnoreCase(Emulator.VISUAL_PINBALL)) {
+    if (Emulator.isVisualPinball(game.getEmulator().getName())) {
       if (game.getGameFile().exists()) {
         return VPXFileScanner.scan(game.getGameFile());
       }
@@ -44,7 +45,7 @@ public class RomService implements InitializingBean {
       LOG.info("Skipped reading of " + game.getGameDisplayName() + ", VPX file '" + game.getGameFile().getAbsolutePath() + "' does not exist.");
       return new ScanResult();
     }
-    LOG.info("Skipped reading of " + game.getGameDisplayName() + ", only VPX tables can be scanned.");
+    LOG.info("Skipped reading of " + game.getGameDisplayName() + " (emulator '" + game.getEmulator() + "'), only VPX tables can be scanned.");
     return new ScanResult();
   }
 

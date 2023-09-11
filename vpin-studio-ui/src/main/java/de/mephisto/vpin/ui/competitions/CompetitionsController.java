@@ -4,6 +4,7 @@ import de.mephisto.vpin.commons.fx.discord.DiscordUserEntryController;
 import de.mephisto.vpin.commons.utils.CommonImageUtil;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.CompetitionType;
+import de.mephisto.vpin.restclient.JoinMode;
 import de.mephisto.vpin.restclient.discord.DiscordChannel;
 import de.mephisto.vpin.restclient.discord.DiscordServer;
 import de.mephisto.vpin.restclient.representations.CompetitionRepresentation;
@@ -11,6 +12,7 @@ import de.mephisto.vpin.restclient.representations.PlayerRepresentation;
 import de.mephisto.vpin.ui.NavigationController;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.StudioFXController;
+import de.mephisto.vpin.ui.competitions.dialogs.CompetitionDiscordDialogController;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -63,6 +65,12 @@ public class CompetitionsController implements Initializable, StudioFXController
   private Label endLabel;
 
   @FXML
+  private Label scoreLimitLabel;
+
+  @FXML
+  private Label scoreValidationLabel;
+
+  @FXML
   private Label channelLabel;
 
   @FXML
@@ -103,8 +111,8 @@ public class CompetitionsController implements Initializable, StudioFXController
 //    tableSubscriptionsController.onReload();
 
 //    offlineController.onViewActivated();
-//    discordController.onViewActivated();
-//    tableSubscriptionsController.onViewActivated();
+    discordController.onViewActivated();
+    tableSubscriptionsController.onViewActivated();
   }
 
   @Override
@@ -161,6 +169,8 @@ public class CompetitionsController implements Initializable, StudioFXController
     uuidLabel.setText("-");
     startLabel.setText("-");
     endLabel.setText("-");
+    scoreValidationLabel.setText("-");
+    scoreLimitLabel.setText("-");
 
     if (competitionRepresentation.isPresent()) {
       String type = competitionRepresentation.get().getType();
@@ -170,6 +180,33 @@ public class CompetitionsController implements Initializable, StudioFXController
           uuidLabel.setText(competition.getUuid());
           serverBox.getChildren().removeAll(serverBox.getChildren());
           ownerBox.getChildren().removeAll(ownerBox.getChildren());
+
+          if(competition.getJoinMode() != null) {
+            JoinMode joinMode = JoinMode.valueOf(competition.getJoinMode());
+            switch (joinMode) {
+              case STRICT: {
+                scoreValidationLabel.setText(CompetitionDiscordDialogController.STRICT_DESCRIPTION);
+                break;
+              }
+              case CHECKSUM: {
+                scoreValidationLabel.setText(CompetitionDiscordDialogController.CHECKSUM_DESCRIPTION);
+                break;
+              }
+              case ROM_ONLY: {
+                scoreValidationLabel.setText(CompetitionDiscordDialogController.ROM_DESCRIPTION);
+                break;
+              }
+            }
+
+          }
+
+          if(competition.getScoreLimit() == 0) {
+            scoreLimitLabel.setText("Table Defaults");
+          }
+          else {
+            scoreLimitLabel.setText(String.valueOf(competition.getScoreLimit()));
+          }
+
 
           createdAtLabel.setText(SimpleDateFormat.getDateTimeInstance().format(competition.getCreatedAt()));
 

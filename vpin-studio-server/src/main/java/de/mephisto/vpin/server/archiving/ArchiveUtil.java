@@ -3,7 +3,7 @@ package de.mephisto.vpin.server.archiving;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
-import de.mephisto.vpin.commons.EmulatorType;
+import de.mephisto.vpin.restclient.popper.EmulatorType;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;

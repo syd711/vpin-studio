@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import de.mephisto.vpin.restclient.HighscoreType;
 import de.mephisto.vpin.restclient.popper.PopperScreen;
 import de.mephisto.vpin.restclient.representations.ValidationState;
-import de.mephisto.vpin.server.popper.Emulator;
+import de.mephisto.vpin.restclient.popper.Emulator;
 import de.mephisto.vpin.server.popper.GameMedia;
 import de.mephisto.vpin.server.popper.GameMediaItem;
 import de.mephisto.vpin.server.puppack.PupPack;

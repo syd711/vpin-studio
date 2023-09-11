@@ -7,16 +7,26 @@ public class GuildInfo {
   private long id;
   private String avatarUrl;
   private long ownerId;
+  private boolean administrated;
 
-  public GuildInfo(Guild guild) {
+  public GuildInfo(Guild guild, boolean administrated) {
     this.name = guild.getName();
     this.avatarUrl = guild.getIconUrl();
     this.id = guild.getIdLong();
     this.ownerId = guild.getOwnerIdLong();
+    this.administrated = administrated;
   }
 
   public GuildInfo() {
 
+  }
+
+  public boolean isAdministrated() {
+    return administrated;
+  }
+
+  public void setAdministrated(boolean administrated) {
+    this.administrated = administrated;
   }
 
   public long getOwnerId() {

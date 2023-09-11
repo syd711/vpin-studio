@@ -62,7 +62,7 @@ public class SystemResource {
 
   @GetMapping("/shutdown")
   public boolean shutdown() {
-    System.exit(0);
+    systemService.shutdown();
     return true;
   }
 
@@ -94,7 +94,16 @@ public class SystemResource {
 
   @GetMapping("/update/install")
   public boolean installUpdate() throws IOException {
-    return Updater.installServerUpdate();
+    Updater.installServerUpdate();
+    new Thread(() -> {
+      try {
+        Thread.sleep(2000);
+        systemService.shutdown();
+      } catch (InterruptedException e) {
+        //ignore
+      }
+    }).start();
+    return true;
   }
 
   @GetMapping("/autostart/installed")

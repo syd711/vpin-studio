@@ -1,6 +1,6 @@
 package de.mephisto.vpin.server.archiving.adapters.vpa;
 
-import de.mephisto.vpin.commons.EmulatorType;
+import de.mephisto.vpin.restclient.popper.EmulatorType;
 import de.mephisto.vpin.restclient.*;
 import de.mephisto.vpin.restclient.jobs.Job;
 import de.mephisto.vpin.restclient.jobs.JobExecutionResult;

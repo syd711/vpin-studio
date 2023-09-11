@@ -1,6 +1,9 @@
 package de.mephisto.vpin.server.listeners;
 
 import de.mephisto.vpin.connectors.discord.DiscordMember;
+import de.mephisto.vpin.connectors.vps.VPS;
+import de.mephisto.vpin.connectors.vps.model.VpsTable;
+import de.mephisto.vpin.connectors.vps.model.VpsTableFile;
 import de.mephisto.vpin.restclient.CompetitionType;
 import de.mephisto.vpin.server.assets.AssetService;
 import de.mephisto.vpin.server.competitions.Competition;
@@ -19,11 +22,15 @@ import de.mephisto.vpin.server.preferences.PreferencesService;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import javafx.application.Platform;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.Optional;
 
 @Service
 public class DiscordCompetitionChangeListenerImpl extends DefaultCompetitionChangeListener implements InitializingBean {
@@ -75,12 +82,26 @@ public class DiscordCompetitionChangeListenerImpl extends DefaultCompetitionChan
           }
           else if (isOwner) {
             String description = "This is an online competition and player bots can join it.\nUse the **initials of your bot** when you create a new highscore.\n" +
-                "Only these will be submitted to the competition.\nCompetition updates are pinned on this channel.\n\n";
+                "Only these will be submitted to the competition.\nCompetition updates are pinned on this channel.";
             String base64Data = CompetitionDataHelper.DATA_INDICATOR + CompetitionDataHelper.toBase64(competition, game);
             byte[] image = assetService.getCompetitionStartedCard(competition, game);
             String message = discordChannelMessageFactory.createDiscordCompetitionCreatedMessage(competition.getDiscordServerId(), botId, competition.getUuid());
 
-            long messageId = discordService.sendMessage(serverId, channelId, message, image, competition.getName() + ".png", description + base64Data);
+            String imageMessage = description;
+            if (!StringUtils.isEmpty(game.getExtTableId())) {
+              VpsTable vpsTable = VPS.getInstance().getTableById(game.getExtTableId());
+              imageMessage += "\n\nVirtual Pinball Spreadsheet:\nhttps://virtual-pinball-spreadsheet.web.app/game/" + game.getExtTableId() + "/";
+
+              if (!StringUtils.isEmpty(game.getExtTableVersionId())) {
+                List<VpsTableFile> tableFiles = vpsTable.getTableFiles();
+                Optional<VpsTableFile> tableVersion = tableFiles.stream().filter(t -> t.getId().equals(game.getExtTableVersionId())).findFirst();
+                if (tableVersion.isPresent() && !tableVersion.get().getUrls().isEmpty()) {
+                  imageMessage += "\n\nTable Download:\n" + tableVersion.get().getUrls().get(0).getUrl();
+                }
+              }
+            }
+
+            long messageId = discordService.sendMessage(serverId, channelId, message, image, competition.getName() + ".png", imageMessage + "\n\n" + base64Data);
             discordService.initCompetition(serverId, channelId, messageId);
             LOG.info("Finished Discord update of \"" + competition.getName() + "\"");
           }
@@ -149,7 +170,11 @@ public class DiscordCompetitionChangeListenerImpl extends DefaultCompetitionChan
             }
             else {
               Platform.runLater(() -> {
-                String description = "You can duplicate the competition to continue it with another table or duration.";
+                String description = "";
+                if(!scoreSummary.getScores().isEmpty()) {
+                  description = "Here are the final results:\n" + DiscordChannelMessageFactory.createHighscoreList(scoreSummary.getScores());
+                }
+                description = description + "\nYou can duplicate the competition to continue it with another table or duration.";
                 byte[] image = assetService.getCompetitionFinishedCard(competition, game, winner, scoreSummary);
                 long msgId = discordService.sendMessage(serverId, channelId, message, image, competition.getName() + ".png", description);
                 discordService.finishCompetition(serverId, channelId, msgId);

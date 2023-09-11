@@ -56,7 +56,7 @@ public class DiscordListenerAdapter extends ListenerAdapter {
   public void onMessageDelete(MessageDeleteEvent event) {
     super.onMessageDelete(event);
     long channelId = event.getChannel().getIdLong();
-    discordClient.invalidateMessageCache(channelId, -1);
+    //don't! discordClient.invalidateMessageCache(channelId, -1);
   }
 
 
@@ -107,7 +107,7 @@ public class DiscordListenerAdapter extends ListenerAdapter {
       BotCommandResponse response = command.execute();
       if (response != null) {
         String result = response.toDiscordMarkup();
-        if (result != null) {
+        if (result != null && result.trim().length() > 0) {
           MessageChannel channel = event.getChannel();
           channel.sendMessage(result).queue();
         }

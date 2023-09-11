@@ -1,5 +1,6 @@
 package de.mephisto.vpin.server.highscores;
 
+import de.mephisto.vpin.restclient.DefaultHighscoresTitles;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.server.players.Player;
 import de.mephisto.vpin.server.players.PlayerService;
@@ -12,7 +13,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.List;
 import java.util.stream.Collectors;
 
 /**
@@ -89,15 +93,27 @@ public class HighscoreParser {
 
   @Nullable
   private Score createTitledScore(@NonNull Date createdAt, @NonNull String line, int gameId, long serverId) {
-    String initials = line.trim().substring(0, 3);
-    String scoreString = line.substring(4).trim();
-    double scoreValue = toNumericScore(scoreString);
+    String initials = "???";
+    if (line.trim().length() >= 3) {
+      initials = line.trim().substring(0, 3);
+
+      String scoreString = line.substring(4).trim();
+      double scoreValue = toNumericScore(scoreString);
+      if (scoreValue == -1) {
+        return null;
+      }
+
+      Player player = playerService.getPlayerForInitials(serverId, initials);
+      return new Score(createdAt, gameId, initials, player, scoreString, scoreValue, 1);
+    }
+
+    double scoreValue = toNumericScore(line.trim());
     if (scoreValue == -1) {
       return null;
     }
 
     Player player = playerService.getPlayerForInitials(serverId, initials);
-    return new Score(createdAt, gameId, initials, player, scoreString, scoreValue, 1);
+    return new Score(createdAt, gameId, initials, player, line.trim(), scoreValue, 1);
   }
 
   @Nullable
@@ -145,7 +161,7 @@ public class HighscoreParser {
   private List<String> getTitleList() {
     String titles = (String) preferencesService.getPreferenceValue(PreferenceNames.HIGHSCORE_TITLES);
     if (StringUtils.isEmpty(titles)) {
-      titles = "GRAND CHAMPION,WORLD RECORD"; //always valid
+      titles = "";
     }
 
     List<String> titleList = new ArrayList<>();
@@ -157,6 +173,12 @@ public class HighscoreParser {
         }
       }
     }
+
+    for (String defaultTitle : DefaultHighscoresTitles.DEFAULT_TITLES) {
+      if (!titleList.contains(defaultTitle)) {
+        titleList.add(defaultTitle);
+      }
+    }
     return titleList;
   }
 
@@ -165,7 +187,7 @@ public class HighscoreParser {
       String cleanScore = score.trim().replaceAll("\\.", "").replaceAll(",", "");
       return Double.parseDouble(cleanScore);
     } catch (NumberFormatException e) {
-      LOG.warn("Failed to parse highscore string '" + score + "', ignoring segment '" + score + "'");
+      LOG.info("Failed to parse highscore string '" + score + "', ignoring segment '" + score + "'");
       return -1;
     }
   }

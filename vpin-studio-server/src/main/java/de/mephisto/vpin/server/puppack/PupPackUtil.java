@@ -2,7 +2,7 @@ package de.mephisto.vpin.server.puppack;
 
 import de.mephisto.vpin.restclient.jobs.JobExecutionResult;
 import de.mephisto.vpin.restclient.jobs.JobExecutionResultFactory;
-import org.jetbrains.annotations.NotNull;
+import edu.umd.cs.findbugs.annotations.NonNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -62,7 +62,7 @@ public class PupPackUtil {
     return JobExecutionResultFactory.empty();
   }
 
-  @NotNull
+  @NonNull
   private static String toTargetName(String name, String rom) {
     while (!name.startsWith(rom + "/") && name.contains("/")) {
       name = name.substring(name.indexOf("/") + 1);

@@ -4,6 +4,7 @@ import de.mephisto.vpin.commons.utils.FileUtils;
 import de.mephisto.vpin.restclient.HighscoreType;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.descriptors.DeleteDescriptor;
+import de.mephisto.vpin.restclient.popper.Emulator;
 import de.mephisto.vpin.restclient.popper.PopperScreen;
 import de.mephisto.vpin.restclient.popper.TableDetails;
 import de.mephisto.vpin.restclient.representations.ValidationState;
@@ -14,7 +15,6 @@ import de.mephisto.vpin.server.assets.AssetRepository;
 import de.mephisto.vpin.server.competitions.ScoreSummary;
 import de.mephisto.vpin.server.highscores.*;
 import de.mephisto.vpin.server.highscores.cards.CardService;
-import de.mephisto.vpin.server.popper.Emulator;
 import de.mephisto.vpin.server.popper.GameMediaItem;
 import de.mephisto.vpin.server.popper.PinUPConnector;
 import de.mephisto.vpin.server.popper.PopperService;
@@ -52,7 +52,7 @@ public class GameService {
   private GameDetailsRepository gameDetailsRepository;
 
   @Autowired
-  private ValidationService gameValidator;
+  private GameValidationService gameValidator;
 
   @Autowired
   private HighscoreService highscoreService;
@@ -78,7 +78,7 @@ public class GameService {
   @SuppressWarnings("unused")
   public List<Game> getGames() {
     long start = System.currentTimeMillis();
-    List<Game> games = pinUPConnector.getGames();
+    List<Game> games = new ArrayList<>(pinUPConnector.getGames());
     LOG.info("Game fetch took " + (System.currentTimeMillis() - start) + "ms., returned " + games.size() + " tables.");
     start = System.currentTimeMillis();
 
@@ -93,8 +93,8 @@ public class GameService {
     List<Game> games = this.getGames()
         .stream()
         .filter(g ->
-            (!StringUtils.isEmpty(g.getRom()) && g.getRom().equals(rom)) ||
-                (!StringUtils.isEmpty(g.getTableName()) && g.getTableName().equals(rom)))
+            (!StringUtils.isEmpty(g.getRom()) && g.getRom().equalsIgnoreCase(rom)) ||
+                (!StringUtils.isEmpty(g.getTableName()) && g.getTableName().equalsIgnoreCase(rom)))
         .collect(Collectors.toList());
     for (Game game : games) {
       applyGameDetails(game, false);
@@ -203,7 +203,7 @@ public class GameService {
           success = false;
         }
 
-        highscoreService.deleteScores(game.getId());
+        highscoreService.deleteScores(game.getId(), true);
 
         PopperScreen[] values = PopperScreen.values();
         for (PopperScreen originalScreenValue : values) {
@@ -293,7 +293,7 @@ public class GameService {
       game = getGame(gameId);
       if (game != null) {
         Emulator emulator = game.getEmulator();
-        if (!emulator.getName().equalsIgnoreCase(Emulator.VISUAL_PINBALL_X)) {
+        if (!Emulator.isVisualPinball(emulator.getName())) {
           return game;
         }
 
@@ -459,7 +459,7 @@ public class GameService {
     Game original = getGame(game.getId());
     //TODO check rom name import vs. scan
     //check if there is mismatch in the ROM name, overwrite popper value
-    if (original != null && !StringUtils.isEmpty(original.getRom()) && !StringUtils.isEmpty(game.getRom()) && !original.getRom().equals(game.getRom())) {
+    if (original != null && !StringUtils.isEmpty(original.getRom()) && !StringUtils.isEmpty(game.getRom()) && !original.getRom().equalsIgnoreCase(game.getRom())) {
       pinUPConnector.updateRom(game, game.getRom());
     }
 

@@ -10,7 +10,6 @@ import de.mephisto.vpin.server.players.Player;
 import de.mephisto.vpin.server.popper.PopperService;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -24,12 +23,12 @@ abstract public class DefaultCompetitionChangeListener implements CompetitionCha
 
 
   @Override
-  public void competitionCreated(@NotNull Competition competition) {
+  public void competitionCreated(@NonNull Competition competition) {
 
   }
 
   @Override
-  public void competitionChanged(@NotNull Competition competition) {
+  public void competitionChanged(@NonNull Competition competition) {
 
   }
 

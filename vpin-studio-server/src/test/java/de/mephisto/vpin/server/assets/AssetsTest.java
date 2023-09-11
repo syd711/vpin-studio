@@ -28,7 +28,7 @@ public class AssetsTest extends AbstractVPinServerTest {
   public void testFinishMessage() throws Exception {
     super.clearVPinStudioDatabase();
 
-    Competition competition = super.createOfflineCompetition(AbstractVPinServerTest.EM_TABLE_NAME);
+    Competition competition = super.createOfflineCompetition(AbstractVPinServerTest.VPREG_TABLE_NAME);
     competition.setWinnerInitials("FFF");
     Game game = gameService.getGame(competition.getGameId());
     ScoreSummary scoreSummary = highscoreService.getScoreSummary(0, competition.getGameId(), null);

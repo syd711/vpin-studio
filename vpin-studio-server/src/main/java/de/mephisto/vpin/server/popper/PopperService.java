@@ -1,6 +1,6 @@
 package de.mephisto.vpin.server.popper;
 
-import de.mephisto.vpin.commons.EmulatorType;
+import de.mephisto.vpin.restclient.popper.EmulatorType;
 import de.mephisto.vpin.commons.fx.UIDefaults;
 import de.mephisto.vpin.restclient.PopperCustomOptions;
 import de.mephisto.vpin.restclient.SystemData;

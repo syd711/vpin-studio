@@ -18,6 +18,7 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class CompetitionService implements InitializingBean {
@@ -40,6 +41,9 @@ public class CompetitionService implements InitializingBean {
 
   @Autowired
   private ThreadPoolTaskScheduler scheduler;
+
+  @Autowired
+  private CampaignValidationService campaignValidationService;
 
   private final List<CompetitionChangeListener> listeners = new ArrayList<>();
 
@@ -72,19 +76,31 @@ public class CompetitionService implements InitializingBean {
   }
 
   public List<Competition> getOfflineCompetitions() {
-    return competitionsRepository.findByTypeOrderByEndDateDesc(CompetitionType.OFFLINE.name());
+    return competitionsRepository
+        .findByTypeOrderByEndDateDesc(CompetitionType.OFFLINE.name())
+        .stream().map(c -> campaignValidationService.validate(c))
+        .collect(Collectors.toList());
   }
 
   public List<Competition> getDiscordCompetitions() {
-    return competitionsRepository.findByTypeOrderByEndDateDesc(CompetitionType.DISCORD.name());
+    return competitionsRepository
+        .findByTypeOrderByEndDateDesc(CompetitionType.DISCORD.name())
+        .stream().map(c -> campaignValidationService.validate(c))
+        .collect(Collectors.toList());
   }
 
   public List<Competition> getSubscriptions() {
-    return competitionsRepository.findByTypeOrderByEndDateDesc(CompetitionType.SUBSCRIPTION.name());
+    return competitionsRepository
+        .findByTypeOrderByEndDateDesc(CompetitionType.SUBSCRIPTION.name())
+        .stream().map(c -> campaignValidationService.validate(c))
+        .collect(Collectors.toList());
   }
 
   public List<Competition> getSubscriptions(String rom) {
-    return competitionsRepository.findByTypeAndRomOrderByName(CompetitionType.SUBSCRIPTION.name(), rom);
+    return competitionsRepository
+        .findByTypeAndRomOrderByName(CompetitionType.SUBSCRIPTION.name(), rom)
+        .stream().map(c -> campaignValidationService.validate(c))
+        .collect(Collectors.toList());
   }
 
   public List<Player> getDiscordCompetitionPlayers(long competitionId) {
@@ -109,7 +125,12 @@ public class CompetitionService implements InitializingBean {
   }
 
   public List<Competition> getCompetitionToBeFinished() {
-    return competitionsRepository.findByWinnerInitialsIsNullAndEndDateLessThanEqualOrderByEndDate(new Date());
+    try {
+      return competitionsRepository.findByWinnerInitialsIsNullAndEndDateLessThanEqualOrderByEndDate(new Date());
+    } catch (Exception e) {
+      LOG.error("Failed to read competitions: " + e.getMessage());
+      return Collections.emptyList();
+    }
   }
 
   public ScoreList getCompetitionScores(long id) {
@@ -174,7 +195,7 @@ public class CompetitionService implements InitializingBean {
   public void runCompetitionsFinishedAndStartedCheck() {
     //check all competitions for their finish state, this includes Discord ones, since the date can't be changed
     List<Competition> openCompetitions = getCompetitionToBeFinished();
-    if(!openCompetitions.isEmpty()) {
+    if (!openCompetitions.isEmpty()) {
       LOG.info("Running automated competition status check, found " + openCompetitions.size() + " candidates.");
     }
     for (Competition openCompetition : openCompetitions) {
@@ -289,11 +310,6 @@ public class CompetitionService implements InitializingBean {
     return competitionsRepository.findByWinnerInitialsAndType(initials, cType.name());
   }
 
-  @Override
-  public void afterPropertiesSet() throws Exception {
-    scheduler.scheduleAtFixedRate(new CompetitionCheckRunnable(this), 1000 * 60 * 2);
-  }
-
   @NonNull
   private ScoreSummary getCompetitionsFinalScore(@NonNull Competition competition) {
     long serverId = competition.getDiscordServerId();
@@ -301,5 +317,10 @@ public class CompetitionService implements InitializingBean {
       return discordService.getScoreSummary(this.highscoreParser, competition.getUuid(), serverId, competition.getDiscordChannelId());
     }
     return highscoreService.getScoreSummary(serverId, competition.getGameId(), null);
+  }
+
+  @Override
+  public void afterPropertiesSet() throws Exception {
+    scheduler.scheduleAtFixedRate(new CompetitionCheckRunnable(this), 1000 * 60 * 2);
   }
 }
