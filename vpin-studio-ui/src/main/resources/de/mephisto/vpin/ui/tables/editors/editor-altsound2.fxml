@@ -43,7 +43,7 @@
       </HBox>
    </bottom>
    <center>
-      <BorderPane minHeight="400.0" BorderPane.alignment="CENTER">
+      <BorderPane minHeight="500.0" BorderPane.alignment="CENTER">
          <BorderPane.margin>
             <Insets />
          </BorderPane.margin>
@@ -54,10 +54,10 @@
                     <columns>
                       <TableColumn fx:id="columnId" prefWidth="75.0" style="-fx-alignment: BASELINE_LEFT;" text="ID" />
                       <TableColumn fx:id="columnType" prefWidth="140.0" style="-fx-alignment: CENTER;" text="Type" />
-                        <TableColumn fx:id="columnDuck" style="-fx-alignment: CENTER;" text="Profile" />
-                        <TableColumn fx:id="columnGain" prefWidth="71.9998779296875" style="-fx-alignment: CENTER;" text="Gain" />
-                        <TableColumn fx:id="columnFilename" prefWidth="350.0" style="-fx-alignment: BASELINE_LEFT;" text="Filename" />
-                        <TableColumn fx:id="columnFilesize" prefWidth="120.0" style="-fx-alignment: CENTER;" text="Filesize" />
+                        <TableColumn fx:id="columnDuck" prefWidth="137.59996032714844" style="-fx-alignment: CENTER;" text="Ducking Profile" />
+                        <TableColumn fx:id="columnGain" prefWidth="65.5999755859375" style="-fx-alignment: CENTER;" text="Gain" />
+                        <TableColumn fx:id="columnFilename" prefWidth="331.2000427246094" style="-fx-alignment: BASELINE_LEFT;" text="Filename" />
+                        <TableColumn fx:id="columnFilesize" prefWidth="91.2000732421875" style="-fx-alignment: CENTER;" text="Filesize" />
                     </columns>
                   </TableView>
                </children>
@@ -76,8 +76,8 @@
                   <GridPane vgap="3.0">
                     <columnConstraints>
                       <ColumnConstraints hgrow="SOMETIMES" maxWidth="170.199951171875" minWidth="10.0" prefWidth="117.6" />
-                      <ColumnConstraints hgrow="SOMETIMES" maxWidth="251.0" minWidth="10.0" prefWidth="110.4" />
-                        <ColumnConstraints halignment="RIGHT" hgrow="SOMETIMES" maxWidth="251.0" minWidth="10.0" prefWidth="57.599926757812455" />
+                      <ColumnConstraints hgrow="SOMETIMES" maxWidth="251.0" minWidth="10.0" prefWidth="140.8000244140625" />
+                        <ColumnConstraints halignment="RIGHT" hgrow="SOMETIMES" maxWidth="251.0" minWidth="10.0" prefWidth="27.199975585937523" />
                     </columnConstraints>
                     <rowConstraints>
                         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
@@ -114,14 +114,10 @@
                               <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
                            </graphic>
                            <tooltip>
-                              <Tooltip prefWidth="300.0" text="The channel that is used for playback. Usually the music is played on channel &quot;1&quot; while effects don't need a channel and will look for a free one to be played." wrapText="true" />
+                              <Tooltip prefWidth="300.0" text="Determines the ducking proifle type." wrapText="true" />
                            </tooltip>
                         </Label>
-                        <TextField fx:id="channelField" GridPane.columnIndex="1" GridPane.rowIndex="1">
-                           <font>
-                              <Font size="14.0" />
-                           </font>
-                        </TextField>
+                        <ComboBox fx:id="channelCombo" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
                      </children>
                   </GridPane>
                   <GridPane>
@@ -211,7 +207,7 @@
             </Label>
             <ComboBox fx:id="filenameFilterCombo" layoutX="296.0" layoutY="11.0" prefWidth="240.0" />
             <Separator layoutX="450.0" layoutY="10.0" orientation="VERTICAL" prefWidth="12.0" />
-            <Label layoutX="466.0" layoutY="16.0" text="Profile:" textFill="WHITE">
+            <Label layoutX="466.0" layoutY="16.0" text="Ducking Profile:" textFill="WHITE">
                <font>
                   <Font size="14.0" />
                </font>
