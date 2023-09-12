@@ -1,6 +1,7 @@
 package de.mephisto.vpin.restclient.altsound;
 
 import java.util.List;
+import java.util.Optional;
 
 public class AltSound2DuckingProfile {
   private int id;
@@ -31,9 +32,29 @@ public class AltSound2DuckingProfile {
     this.values = values;
   }
 
+  public void addProfileValue(AltSound2SampleType sample, int volume) {
+    AltSoundDuckingProfileValue value = new AltSoundDuckingProfileValue();
+    value.setVolume(volume);
+    value.setSampleType(sample);
+    if (!this.values.contains(value)) {
+      this.values.add(value);
+    }
+  }
+
+  public void removeProfileValue(AltSound2SampleType sample) {
+    AltSoundDuckingProfileValue value = new AltSoundDuckingProfileValue();
+    value.setSampleType(sample);
+    this.values.remove(value);
+  }
+
+  public AltSoundDuckingProfileValue getProfileValue(AltSound2SampleType sample) {
+    Optional<AltSoundDuckingProfileValue> first = this.values.stream().filter(value -> value.getSampleType().equals(sample)).findFirst();
+    return first.orElse(null);
+  }
+
   @Override
   public String toString() {
-    return type.name().toUpperCase() + " Profile " + id;
+    return type.name().toUpperCase() + " " + id;
   }
 
   @Override

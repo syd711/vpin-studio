@@ -4,6 +4,8 @@ import de.mephisto.vpin.commons.fx.ConfirmationResult;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.IniSettings;
 import de.mephisto.vpin.restclient.SystemData;
+import de.mephisto.vpin.restclient.altsound.AltSound;
+import de.mephisto.vpin.restclient.altsound.AltSound2DuckingProfile;
 import de.mephisto.vpin.restclient.client.VPinStudioClient;
 import de.mephisto.vpin.restclient.descriptors.ResetHighscoreDescriptor;
 import de.mephisto.vpin.restclient.popper.PopperScreen;
@@ -22,6 +24,7 @@ import de.mephisto.vpin.ui.preferences.PINemHiUIPreferenceController;
 import de.mephisto.vpin.ui.tables.TablesController;
 import de.mephisto.vpin.ui.tables.TablesSidebarController;
 import de.mephisto.vpin.ui.tables.dialogs.*;
+import de.mephisto.vpin.ui.tables.editors.dialogs.AltSound2ProfileDialogController;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import javafx.collections.ObservableList;
@@ -178,6 +181,15 @@ public class Dialogs {
     stage.showAndWait();
 
     return controller.uploadFinished();
+  }
+
+  public static AltSound2DuckingProfile openAltSound2ProfileEditor(AltSound2DuckingProfile profile) {
+    Stage stage = createStudioDialogStage(AltSound2ProfileDialogController.class, "dialog-altsound2-profile.fxml", "ALT Sound Profile");
+    AltSound2ProfileDialogController controller = (AltSound2ProfileDialogController) stage.getUserData();
+    controller.setProfile(profile);
+    stage.showAndWait();
+
+    return controller.editingFinished();
   }
 
   public static boolean openAltColorUploadDialog(TablesSidebarController tablesSidebarController, GameRepresentation game, File file) {

@@ -225,4 +225,27 @@ public class AltSound {
 
     return builder.toString();
   }
+
+  public List<AltSound2DuckingProfile> getProfiles(AltSound2SampleType sampleType) {
+    switch (sampleType) {
+      case sfx: {
+        return getSfxDuckingProfiles();
+      }
+      case music: {
+        return getMusicDuckingProfiles();
+      }
+      case callout: {
+        return getCalloutDuckingProfiles();
+      }
+      case solo: {
+        return getSoloDuckingProfiles();
+      }
+      case overlay: {
+        return getOverlayDuckingProfiles();
+      }
+      default: {
+        throw new UnsupportedOperationException("Invalid sample type");
+      }
+    }
+  }
 }

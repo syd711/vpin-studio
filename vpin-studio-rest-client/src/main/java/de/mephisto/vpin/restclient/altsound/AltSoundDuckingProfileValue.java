@@ -19,4 +19,19 @@ public class AltSoundDuckingProfileValue {
   public void setVolume(int volume) {
     this.volume = volume;
   }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) return true;
+    if (!(o instanceof AltSoundDuckingProfileValue)) return false;
+
+    AltSoundDuckingProfileValue that = (AltSoundDuckingProfileValue) o;
+
+    return sampleType == that.sampleType;
+  }
+
+  @Override
+  public int hashCode() {
+    return sampleType.hashCode();
+  }
 }

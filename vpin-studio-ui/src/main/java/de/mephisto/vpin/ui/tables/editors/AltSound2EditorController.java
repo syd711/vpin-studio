@@ -9,6 +9,7 @@ import de.mephisto.vpin.restclient.altsound.AltSoundEntry;
 import de.mephisto.vpin.restclient.representations.GameRepresentation;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.tables.TablesController;
+import de.mephisto.vpin.ui.util.Dialogs;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.*;
 import javafx.beans.value.ChangeListener;
@@ -32,7 +33,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
-import java.util.stream.Collectors;
 
 public class AltSound2EditorController implements Initializable {
   private final static Logger LOG = LoggerFactory.getLogger(AltSound2EditorController.class);
@@ -56,7 +56,7 @@ public class AltSound2EditorController implements Initializable {
   private TableColumn<AltSoundEntryModel, StringProperty> columnType;
 
   @FXML
-  private TableColumn<AltSoundEntryModel, StringProperty> columnDuck;
+  private TableColumn<AltSoundEntryModel, Number> columnDuck;
 
   @FXML
   private TableColumn<AltSoundEntryModel, Number> columnGain;
@@ -66,6 +66,9 @@ public class AltSound2EditorController implements Initializable {
 
   @FXML
   private TableColumn<AltSoundEntryModel, String> columnFilesize;
+
+  @FXML
+  private TableColumn<AltSoundEntryModel, String> columnPlay;
 
   @FXML
   private TextField searchText;
@@ -80,6 +83,9 @@ public class AltSound2EditorController implements Initializable {
   private ComboBox<AltSound2DuckingProfile> profilesCombo;
 
   @FXML
+  private ComboBox<AltSound2DuckingProfile> duckingProfileCombo;
+
+  @FXML
   private Label entriesLabel;
 
   @FXML
@@ -89,14 +95,33 @@ public class AltSound2EditorController implements Initializable {
   private Slider gainVolume;
 
   @FXML
-  private Button saveBtn;
+  private Button editBtn;
 
-  private ChangeListener<String> channelFieldChangeListener;
+  @FXML
+  private Button deleteBtn;
+
+  private ChangeListener<String> channelComboChangeListener;
+  private ChangeListener<AltSound2DuckingProfile> duckingProfileComboChangeListener;
   private TablesController tablesController;
 
   @FXML
   private void onCancelClick(ActionEvent e) {
     this.tablesController.getEditorRootStack().getChildren().remove(root);
+  }
+
+  @FXML
+  private void onProfileDelete() {
+
+  }
+
+  @FXML
+  private void onProfileEdit() {
+    Dialogs.openAltSound2ProfileEditor(this.profilesCombo.getValue());
+  }
+
+  @FXML
+  private void onProfileAdd() {
+
   }
 
   @FXML
@@ -123,6 +148,9 @@ public class AltSound2EditorController implements Initializable {
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
+    editBtn.setDisable(true);
+    deleteBtn.setDisable(true);
+
     columnId.setCellValueFactory(cellData -> cellData.getValue().id);
     columnType.setCellValueFactory(cellData -> {
       AltSoundEntryModel entry = cellData.getValue();
@@ -144,34 +172,8 @@ public class AltSound2EditorController implements Initializable {
       return c;
     });
 
-    columnDuck.setCellValueFactory(cellData -> {
-      AltSoundEntryModel entry = cellData.getValue();
-      final StringProperty value = entry.duck;
-      return Bindings.createObjectBinding(() -> value);
-    });
-    columnDuck.setCellFactory(col -> {
-      TableCell<AltSoundEntryModel, StringProperty> c = new TableCell<>();
 
-      List<String> profiles = new ArrayList<>();
-      profiles.addAll(altSound.getCalloutDuckingProfiles().stream().map(AltSound2DuckingProfile::toString).collect(Collectors.toList()));
-      profiles.addAll(altSound.getMusicDuckingProfiles().stream().map(AltSound2DuckingProfile::toString).collect(Collectors.toList()));
-      profiles.addAll(altSound.getOverlayDuckingProfiles().stream().map(AltSound2DuckingProfile::toString).collect(Collectors.toList()));
-      profiles.addAll(altSound.getSfxDuckingProfiles().stream().map(AltSound2DuckingProfile::toString).collect(Collectors.toList()));
-      profiles.addAll(altSound.getSoloDuckingProfiles().stream().map(AltSound2DuckingProfile::toString).collect(Collectors.toList()));
-      final ComboBox<String> comboBox = new ComboBox<>(FXCollections.observableList(profiles));
-      c.itemProperty().addListener((observable, oldValue, newValue) -> {
-        if (oldValue != null) {
-          comboBox.valueProperty().unbindBidirectional(oldValue);
-        }
-        if (newValue != null) {
-          comboBox.valueProperty().bindBidirectional(newValue);
-        }
-      });
-      c.graphicProperty().bind(Bindings.when(c.emptyProperty()).then((Node) null).otherwise(comboBox));
-      return c;
-    });
-
-
+    columnDuck.setCellValueFactory(cellData -> cellData.getValue().duck);
     columnGain.setCellValueFactory(cellData -> cellData.getValue().gain);
     columnFilesize.setCellValueFactory(cellData -> cellData.getValue().size);
     columnFilename.setCellValueFactory(cellData -> {
@@ -190,26 +192,31 @@ public class AltSound2EditorController implements Initializable {
     altSoundSampleTypes.add(0, null);
     typeFilterCombo.setItems(FXCollections.observableList(altSoundSampleTypes));
 
-    profilesCombo.valueProperty().addListener((observable, oldValue, newValue) -> refresh());
+    profilesCombo.valueProperty().addListener((observable, oldValue, newValue) -> {
+      editBtn.setDisable(newValue == null);
+      deleteBtn.setDisable(newValue == null);
+      refresh();
+    });
+    typeFilterCombo.valueProperty().addListener((observable, oldValue, newValue) -> refresh());
     typeFilterCombo.valueProperty().addListener((observable, oldValue, newValue) -> refresh());
     filenameFilterCombo.valueProperty().addListener((observable, oldValue, newValue) -> refresh());
     searchText.textProperty().addListener((observable, oldValue, newValue) -> refresh());
 
     channelCombo.setItems(FXCollections.observableList(AltSound2SampleType.toStringValues()));
-    channelCombo.valueProperty().addListener(new ChangeListener<String>() {
-      @Override
-      public void changed(ObservableValue<? extends String> observableValue, String s, String t1) {
-//        ObservableList<AltSoundEntryModel> selectedItems = tableView.getSelectionModel().getSelectedItems();
-//        for (AltSoundEntryModel selectedItem : selectedItems) {
-//          if (selectedItem.channel.get().equalsIgnoreCase(t1)) {
-//            selectedItem.channel.set(t1.toUpperCase());
-//          }
-//        }
-//        refresh();
-      }
-    });
+    channelComboChangeListener = (observable, oldValue, newValue) -> {
+      ObservableList<AltSoundEntryModel> selectedItems = tableView.getSelectionModel().getSelectedItems();
+      selectedItems.forEach(i -> i.channel.set(newValue));
+      tableView.refresh();
+      refreshEditorForSelection();
+    };
+    channelCombo.valueProperty().addListener(channelComboChangeListener);
 
-    tableView.getSelectionModel().getSelectedItems().addListener((ListChangeListener<AltSoundEntryModel>) c -> refreshEditorForSelection());
+    duckingProfileComboChangeListener = (observableValue, altSound2DuckingProfile, newValue) -> {
+      ObservableList<AltSoundEntryModel> selectedItems = tableView.getSelectionModel().getSelectedItems();
+      selectedItems.forEach(i -> i.duck.set(newValue != null ? newValue.getId() : 0));
+      tableView.refresh();
+    };
+    duckingProfileCombo.valueProperty().addListener(duckingProfileComboChangeListener);
 
 
     gainVolume.valueProperty().addListener((observable, oldValue, newValue) -> {
@@ -222,6 +229,7 @@ public class AltSound2EditorController implements Initializable {
       tableView.refresh();
     });
 
+    tableView.getSelectionModel().getSelectedItems().addListener((ListChangeListener<AltSoundEntryModel>) c -> refreshEditorForSelection());
     tableView.setPlaceholder(new Label("               No matching entries found!\n" +
         "Adapt the filter criteria to find matching entries."));
   }
@@ -305,6 +313,9 @@ public class AltSound2EditorController implements Initializable {
   }
 
   private void refreshEditorForSelection() {
+    duckingProfileCombo.valueProperty().removeListener(duckingProfileComboChangeListener);
+    channelCombo.valueProperty().removeListener(channelComboChangeListener);
+
     ObservableList<AltSoundEntryModel> selectedItems = tableView.getSelectionModel().getSelectedItems();
     entriesLabel.setText(String.valueOf(selectedItems.size()));
 
@@ -314,18 +325,29 @@ public class AltSound2EditorController implements Initializable {
     if (!selectedItems.isEmpty()) {
       AltSoundEntryModel altSoundEntryModel = selectedItems.get(0);
 
-      boolean allFromSameChannel = true;
+      boolean hasMismatch = false;
       if (selectedItems.size() > 1) {
-        allFromSameChannel = selectedItems.stream().anyMatch(item -> !item.channel.get().equalsIgnoreCase(altSoundEntryModel.channel.get()));
+        hasMismatch = selectedItems.stream().anyMatch(item -> !item.channel.get().equalsIgnoreCase(altSoundEntryModel.channel.get()));
       }
-      gainVolume.setDisable(!allFromSameChannel);
-      channelCombo.setDisable(!allFromSameChannel);
-      gainLabel.setDisable(!allFromSameChannel);
+      gainVolume.setDisable(hasMismatch);
+      channelCombo.setDisable(hasMismatch);
+      gainLabel.setDisable(hasMismatch);
+      duckingProfileCombo.setDisable(hasMismatch);
 
       gainVolume.valueProperty().set(altSoundEntryModel.gain.get());
-      if (allFromSameChannel) {
+      if (!hasMismatch) {
         gainLabel.setText("" + altSoundEntryModel.gain.getValue());
         channelCombo.setValue(altSoundEntryModel.channel.getValue().toUpperCase());
+
+        String name = altSoundEntryModel.channel.get();
+        AltSound2SampleType altSound2SampleType = AltSound2SampleType.valueOf(name.toLowerCase());
+        List<AltSound2DuckingProfile> profiles = new ArrayList<>(altSound.getProfiles(altSound2SampleType));
+        profiles.add(0, null);
+        duckingProfileCombo.setItems(FXCollections.observableList(profiles));
+        Optional<AltSound2DuckingProfile> first = profiles.stream().filter(p -> p != null && p.getId() == altSoundEntryModel.duck.get()).findFirst();
+        if (first.isPresent()) {
+          duckingProfileCombo.valueProperty().set(first.get());
+        }
       }
       else {
         gainLabel.setText("-");
@@ -336,12 +358,15 @@ public class AltSound2EditorController implements Initializable {
       gainVolume.valueProperty().set(0);
       gainLabel.setText("-");
     }
+
+    duckingProfileCombo.valueProperty().addListener(duckingProfileComboChangeListener);
+    channelCombo.valueProperty().addListener(channelComboChangeListener);
   }
 
   private static class AltSoundEntryModel {
     private final StringProperty id;
     private final StringProperty filename;
-    private final StringProperty duck;
+    private final IntegerProperty duck;
     private final IntegerProperty gain;
     private final SimpleStringProperty channel;
     private final BooleanProperty exists;
@@ -358,8 +383,8 @@ public class AltSound2EditorController implements Initializable {
         entry.setChannel(newValue);
       });
 
-      this.duck = new SimpleStringProperty(String.valueOf(entry.getDuck()));
-      this.duck.addListener((observable, oldValue, newValue) -> entry.setDuck(Integer.parseInt(newValue)));
+      this.duck = new SimpleIntegerProperty(entry.getDuck());
+      this.duck.addListener((observable, oldValue, newValue) -> entry.setDuck((Integer) newValue));
 
       this.gain = new SimpleIntegerProperty(entry.getGain());
       this.gain.addListener((observable, oldValue, newValue) -> entry.setGain((Integer) newValue));

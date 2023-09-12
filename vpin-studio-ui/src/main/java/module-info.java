@@ -64,4 +64,6 @@ module de.mephisto.vpin.ui {
   opens de.mephisto.vpin.ui.competitions.dialogs to javafx.fxml;
   exports de.mephisto.vpin.ui.tables.editors;
   opens de.mephisto.vpin.ui.tables.editors to javafx.fxml;
+  exports de.mephisto.vpin.ui.tables.editors.dialogs;
+  opens de.mephisto.vpin.ui.tables.editors.dialogs to javafx.fxml;
 }

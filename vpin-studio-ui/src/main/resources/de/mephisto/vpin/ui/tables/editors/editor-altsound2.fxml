@@ -57,6 +57,7 @@
                         <TableColumn fx:id="columnDuck" prefWidth="137.59996032714844" style="-fx-alignment: CENTER;" text="Ducking Profile" />
                         <TableColumn fx:id="columnGain" prefWidth="65.5999755859375" style="-fx-alignment: CENTER;" text="Gain" />
                         <TableColumn fx:id="columnFilename" prefWidth="331.2000427246094" style="-fx-alignment: BASELINE_LEFT;" text="Filename" />
+                        <TableColumn fx:id="columnPlay" prefWidth="91.2000732421875" style="-fx-alignment: CENTER;" text="Play" />
                         <TableColumn fx:id="columnFilesize" prefWidth="91.2000732421875" style="-fx-alignment: CENTER;" text="Filesize" />
                     </columns>
                   </TableView>
@@ -83,6 +84,7 @@
                         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                       <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                     </rowConstraints>
                      <children>
                         <Label layoutX="10.0" layoutY="45.0" prefHeight="20.0" prefWidth="122.0" text="Selected Entries:" textFill="WHITE">
@@ -93,7 +95,7 @@
                               <Insets right="6.0" />
                            </padding>
                         </Label>
-                        <Label layoutX="10.0" layoutY="49.0" text="Channel:" textFill="WHITE" GridPane.rowIndex="1">
+                        <Label layoutX="10.0" layoutY="49.0" text="Type:" textFill="WHITE" GridPane.rowIndex="1">
                            <font>
                               <Font size="14.0" />
                            </font>
@@ -118,6 +120,15 @@
                            </tooltip>
                         </Label>
                         <ComboBox fx:id="channelCombo" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                        <Label layoutX="10.0" layoutY="49.0" text="Ducking Profile:" textFill="WHITE" GridPane.rowIndex="2">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                           <padding>
+                              <Insets right="6.0" />
+                           </padding>
+                        </Label>
+                        <ComboBox fx:id="duckingProfileCombo" layoutX="128.0" layoutY="44.0" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="2" />
                      </children>
                   </GridPane>
                   <GridPane>
@@ -128,6 +139,7 @@
                       <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                       <RowConstraints minHeight="10.0" prefHeight="500.0" vgrow="SOMETIMES" />
                       <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                     </rowConstraints>
                      <children>
                         <Slider fx:id="gainVolume" layoutX="10.0" layoutY="35.0" orientation="VERTICAL" showTickLabels="true" showTickMarks="true" GridPane.rowIndex="1" />
@@ -216,6 +228,30 @@
                </padding>
             </Label>
             <ComboBox fx:id="profilesCombo" layoutX="535.0" layoutY="11.0" prefHeight="30.0" prefWidth="200.0" />
+            <Button fx:id="addBtn" mnemonicParsing="false" onAction="#onProfileAdd" text="Add" textFill="WHITE">
+               <font>
+                  <Font size="14.0" />
+               </font>
+               <graphic>
+                  <FontIcon iconColor="WHITE" iconLiteral="mdi2p-plus-circle-outline" />
+               </graphic>
+            </Button>
+            <Button fx:id="editBtn" mnemonicParsing="false" onAction="#onProfileEdit" text="Edit" textFill="WHITE">
+               <font>
+                  <Font size="14.0" />
+               </font>
+               <graphic>
+                  <FontIcon iconColor="WHITE" iconLiteral="mdi2d-database-edit-outline" />
+               </graphic>
+            </Button>
+            <Button fx:id="deleteBtn" mnemonicParsing="false" onAction="#onProfileDelete" text="Delete" textFill="#ff3333">
+               <font>
+                  <Font size="14.0" />
+               </font>
+               <graphic>
+                  <FontIcon iconColor="#ff3333" iconLiteral="mdi2d-delete-outline" />
+               </graphic>
+            </Button>
          </items>
       </ToolBar>
    </top>
