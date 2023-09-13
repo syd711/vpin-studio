@@ -4,6 +4,7 @@ import de.mephisto.vpin.commons.fx.DialogController;
 import de.mephisto.vpin.restclient.altsound.AltSound2DuckingProfile;
 import de.mephisto.vpin.restclient.altsound.AltSound2SampleType;
 import de.mephisto.vpin.restclient.altsound.AltSoundDuckingProfileValue;
+import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -12,17 +13,17 @@ import javafx.stage.Stage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.File;
 import java.net.URL;
 import java.util.ResourceBundle;
 
 public class AltSound2ProfileDialogController implements Initializable, DialogController {
   private final static Logger LOG = LoggerFactory.getLogger(AltSound2ProfileDialogController.class);
 
-  private static File lastFolderSelection;
+  @FXML
+  private Label sampleIdLabel;
 
   @FXML
-  private TextField fileNameField;
+  private ComboBox<String> sampleCombo;
 
   @FXML
   private Label musicLabel;
@@ -89,6 +90,9 @@ public class AltSound2ProfileDialogController implements Initializable, DialogCo
     editorProfile = new AltSound2DuckingProfile();
     sfxSlider.setDisable(true);
     sfxSlider.setDisable(true);
+
+    sampleCombo.setItems(FXCollections.observableList(AltSound2SampleType.toStringValues()));
+    sampleCombo.valueProperty().addListener((observableValue, s, t1) -> editorProfile.setType(AltSound2SampleType.valueOf(t1.toLowerCase())));
 
     musicCheckbox.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
       musicLabel.setDisable(!t1);
@@ -186,9 +190,18 @@ public class AltSound2ProfileDialogController implements Initializable, DialogCo
   }
 
   public void setProfile(AltSound2DuckingProfile profile) {
-    this.editorProfile.setType(profile.getType());
-    this.editorProfile.setId(profile.getId());
-    this.editorProfile.setValues(profile.getValues());
+    if (profile != null) {
+      this.editorProfile.setType(profile.getType());
+      this.editorProfile.setId(profile.getId());
+      this.editorProfile.setValues(profile.getValues());
+      this.sampleCombo.setValue(profile.getType().name().toUpperCase());
+      this.sampleIdLabel.setText(String.valueOf(profile.getId()));
+      this.sampleCombo.setDisable(true);
+    }
+    else {
+      this.sampleIdLabel.setText("-");
+    }
+
 
     AltSoundDuckingProfileValue profileValue = profile.getProfileValue(AltSound2SampleType.music);
     if (profileValue != null) {
