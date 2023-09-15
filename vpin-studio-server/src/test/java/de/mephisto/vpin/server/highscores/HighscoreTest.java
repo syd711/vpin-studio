@@ -75,18 +75,6 @@ public class HighscoreTest {
 
     int position = highscoreService.calculateChangedPositionByScore(oldScores, newScore);
     assertEquals(1, position);
-
-    List<Score> updatedScores = new ArrayList<>(oldScores);
-    Score oldScore = oldScores.get(position - 1);
-    updatedScores.add(position - 1, newScore);
-
-    DiscordCompetitionData data = new DiscordCompetitionData();
-    data.setScrL(5);
-    updatedScores = DiscordCompetitionService.sanitizeScoreList(-1, CompetitionType.DISCORD, updatedScores, data);
-    for (Score updatedScore : updatedScores) {
-      System.out.println(updatedScore);
-    }
-    System.out.println("old: " + oldScore);
   }
 
   @Test
