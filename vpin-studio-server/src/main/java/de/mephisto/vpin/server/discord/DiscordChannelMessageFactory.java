@@ -142,8 +142,8 @@ public class DiscordChannelMessageFactory {
       }
       builder.append("  ");
       builder.append(String.format("%4.4s", score.getPlayerInitials()));
-      builder.append("       ");
-      builder.append(String.format("%14.12s", score.getScore()));
+      builder.append("    ");
+      builder.append(String.format("%17.17s", score.getScore()));
       builder.append("\n");
     }
     builder.append("```");
@@ -159,8 +159,8 @@ public class DiscordChannelMessageFactory {
     builder.append("#1");
     builder.append("   ");
     builder.append(String.format("%4.4s", score.getPlayerInitials()));
-    builder.append("       ");
-    builder.append(String.format("%14.12s", score.getScore()));
+    builder.append("    ");
+    builder.append(String.format("%17.17s", score.getScore()));
     builder.append("\n");
 
     for (int i = 0; i < length-1; i++) {
@@ -172,8 +172,8 @@ public class DiscordChannelMessageFactory {
       }
       builder.append("  ");
       builder.append(String.format("%4.4s", "???"));
-      builder.append("       ");
-      builder.append(String.format("%14.12s", "0"));
+      builder.append("    ");
+      builder.append(String.format("%17.17s", "0"));
       builder.append("\n");
     }
     builder.append("```");
