@@ -52,15 +52,21 @@ public class ArchiveSourceAdapterHttpServer implements ArchiveSourceAdapter {
 
       IOUtils.copy(in, out);
 
-      in.close();
-
-      out.flush();
-      out.close();
-
       fout.close();
       conn.disconnect();
     } catch (IOException e) {
       LOG.error("Failed to download " + descriptor.getFilename() + ": " + e.getMessage(), e);
+      target.delete();
+    }
+    finally {
+      try {
+        in.close();
+
+        out.flush();
+        out.close();
+      } catch (IOException e) {
+        //ignore
+      }
     }
   }
 
@@ -175,7 +181,7 @@ public class ArchiveSourceAdapterHttpServer implements ArchiveSourceAdapter {
         conn.setRequestProperty("Authorization", authHeaderValue);
       }
 
-      conn.setReadTimeout(5000);
+      conn.setReadTimeout(0);
       conn.addRequestProperty("Accept-Language", "en-US,en;q=0.8");
       return conn;
     } catch (IOException e) {
