@@ -237,7 +237,11 @@ public class RepositoryController implements Initializable, StudioEventListener 
     restoreBtn.setDisable(disable);
 
     tableView.setVisible(false);
-    tableStack.getChildren().add(loadingOverlay);
+
+    if(!tableStack.getChildren().contains(loadingOverlay)) {
+      tableStack.getChildren().add(loadingOverlay);
+    }
+
 
     new Thread(() -> {
       if (selectedItem != null && invalidate) {
@@ -423,7 +427,7 @@ public class RepositoryController implements Initializable, StudioEventListener 
       addArchiveBtn.setDisable(!archiveSource.getType().equals(ArchiveSourceType.File.name()));
       restoreBtn.setDisable(!archiveSource.getType().equals(ArchiveSourceType.File.name()) || newSelection == null);
       bundleBtn.setDisable(!archiveSource.getType().equals(ArchiveSourceType.File.name()) || newSelection == null);
-      copyToRepositoryBtn.setDisable(!archiveSource.getType().equals(ArchiveSourceType.Http.name()));
+      copyToRepositoryBtn.setDisable(!archiveSource.getType().equals(ArchiveSourceType.Http.name()) || newSelection == null);
 
 
       if (oldSelection == null || !oldSelection.equals(newSelection)) {
@@ -452,7 +456,6 @@ public class RepositoryController implements Initializable, StudioEventListener 
       addArchiveBtn.setDisable(!newValue.getType().equals(ArchiveSourceType.File.name()));
       restoreBtn.setDisable(!newValue.getType().equals(ArchiveSourceType.File.name()));
       bundleBtn.setDisable(!newValue.getType().equals(ArchiveSourceType.File.name()));
-      copyToRepositoryBtn.setDisable(!newValue.getType().equals(ArchiveSourceType.Http.name()));
 
       tableView.getSelectionModel().clearSelection();
       doReload();
@@ -490,7 +493,11 @@ public class RepositoryController implements Initializable, StudioEventListener 
     for (ArchiveDescriptorRepresentation archive : archives) {
       if (archive.getFilename() != null) {
         String filename = archive.getFilename().toLowerCase();
-        if (!filename.endsWith(systemSummary.getArchiveType().name().toLowerCase())) {
+        if (systemSummary.getArchiveType().equals(ArchiveType.VPBM) && !filename.endsWith(".vpinzip")) {
+          continue;
+        }
+
+        if (systemSummary.getArchiveType().equals(ArchiveType.VPA) && !filename.endsWith(".vpa")) {
           continue;
         }
 

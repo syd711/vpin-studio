@@ -32,6 +32,7 @@
         <module>vpin-studio-server</module>
         <module>vpin-studio-rest-client</module>
         <module>vpin-studio-ui</module>
+        <module>vpin-tools</module>
     </modules>
 
     <build>
