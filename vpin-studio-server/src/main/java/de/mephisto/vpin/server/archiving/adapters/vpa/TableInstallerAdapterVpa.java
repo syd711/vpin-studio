@@ -98,7 +98,7 @@ public class TableInstallerAdapterVpa implements TableInstallerAdapter, Job {
       }
 
       status = "Importing Game to Popper";
-      pinUPConnector.saveTableDetails(game, manifest);
+      pinUPConnector.saveTableDetails(game.getId(), manifest);
 
       status = "Importing Highscores";
       importHighscore(game, archiveFile);

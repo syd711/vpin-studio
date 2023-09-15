@@ -17,6 +17,7 @@ import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
 import java.io.File;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -72,6 +73,15 @@ public class PinUPPopperServiceClient extends VPinStudioClientService {
       return getRestClient().post(API + "popper/tabledetails/" + gameId, tableDetails, TableDetails.class);
     } catch (Exception e) {
       LOG.error("Failed save table details: " + e.getMessage(), e);
+      throw e;
+    }
+  }
+
+  public TableDetails autoFillTableDetails(int gameId) throws Exception {
+    try {
+      return getRestClient().put(API + "popper/tabledetails/autofill/" + gameId, Collections.emptyMap(), TableDetails.class);
+    } catch (Exception e) {
+      LOG.error("Failed autofilling table details: " + e.getMessage(), e);
       throw e;
     }
   }

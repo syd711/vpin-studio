@@ -106,7 +106,13 @@ public class RepositorySidebarController implements Initializable, StudioFXContr
   private Label romName;
 
   @FXML
-  private Label romUrl;
+  private Label gameType;
+
+  @FXML
+  private Label gameTheme;
+
+  @FXML
+  private Label gameVersion;
 
   @FXML
   private Label manufacturer;
@@ -226,7 +232,9 @@ public class RepositorySidebarController implements Initializable, StudioFXContr
       gameDisplayName.setText(StringUtils.isEmpty(tableDetails.getGameDisplayName()) ? "-" : tableDetails.getGameDisplayName());
       gameYear.setText(tableDetails.getGameYear() == null ? "-" : String.valueOf(tableDetails.getGameYear()));
       romName.setText(StringUtils.isEmpty(tableDetails.getRomName()) ? "-" : tableDetails.getRomName());
-      romUrl.setText(StringUtils.isEmpty(tableDetails.getRomUrl()) ? "-" : tableDetails.getRomUrl());
+      gameType.setText(tableDetails.getGameType() == null ? "-" : tableDetails.getGameType().name());
+      gameVersion.setText(StringUtils.isEmpty(tableDetails.getFileVersion()) ? "-" : tableDetails.getFileVersion());
+      gameTheme.setText(StringUtils.isEmpty(tableDetails.getGameTheme()) ? "-" : tableDetails.getGameTheme());
       manufacturer.setText(StringUtils.isEmpty(tableDetails.getManufacturer()) ? "-" : tableDetails.getManufacturer());
       numberOfPlayers.setText(tableDetails.getNumberOfPlayers() == null ? "-" : String.valueOf(tableDetails.getNumberOfPlayers()));
       tags.setText(StringUtils.isEmpty(tableDetails.getTags()) ? "-" : tableDetails.getTags());

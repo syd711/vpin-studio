@@ -416,14 +416,14 @@ public class GameService {
     if (original != null && originalGame != null) {
       if (!original.getGameDisplayName().equals(game.getGameDisplayName())) {
         original.setGameDisplayName(game.getGameDisplayName());
-        pinUPConnector.saveTableDetails(game, original);
+        pinUPConnector.saveTableDetails(game.getId(), original);
         LOG.info("Finished game display name renmaing to " + game.getGameDisplayName());
         return true;
       }
       else if (!original.getGameFileName().equals(gameFilename)) {
         String originalFileName = original.getGameFileName();
         original.setGameFileName(game.getGameFileName());
-        pinUPConnector.saveTableDetails(game, original);
+        pinUPConnector.saveTableDetails(game.getId(), original);
 
         //rename popper media
         String originalName = FilenameUtils.getBaseName(originalFileName);

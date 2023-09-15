@@ -18,7 +18,6 @@ public class TableDetails {
   private String notes;
   private Integer gameYear;
   private String romName;
-  private String romUrl;
   private String manufacturer;
   private Integer numberOfPlayers;
   private String tags;
@@ -144,14 +143,6 @@ public class TableDetails {
 
   public void setRomName(String romName) {
     this.romName = romName;
-  }
-
-  public String getRomUrl() {
-    return romUrl;
-  }
-
-  public void setRomUrl(String romUrl) {
-    this.romUrl = romUrl;
   }
 
   public String getManufacturer() {

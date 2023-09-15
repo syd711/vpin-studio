@@ -1037,8 +1037,7 @@ public class PinUPConnector implements InitializingBean {
     throw new UnsupportedOperationException("Failed to determine emulator id for '" + name + "'");
   }
 
-  public void saveTableDetails(Game game, TableDetails manifest) {
-    int id = game.getId();
+  public void saveTableDetails(int id, TableDetails manifest) {
     importManifestValue(id, "GameName", manifest.getGameName());
     importManifestValue(id, "GameDisplay", manifest.getGameDisplayName());
     importManifestValue(id, "GameFileName", manifest.getGameFileName());

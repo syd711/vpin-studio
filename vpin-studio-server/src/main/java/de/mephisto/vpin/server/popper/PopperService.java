@@ -1,22 +1,27 @@
 package de.mephisto.vpin.server.popper;
 
-import de.mephisto.vpin.restclient.popper.EmulatorType;
 import de.mephisto.vpin.commons.fx.UIDefaults;
+import de.mephisto.vpin.connectors.vps.VPS;
+import de.mephisto.vpin.connectors.vps.model.VpsAuthoredUrls;
+import de.mephisto.vpin.connectors.vps.model.VpsTable;
+import de.mephisto.vpin.connectors.vps.model.VpsTableFile;
+import de.mephisto.vpin.connectors.vps.model.VpsUrl;
+import de.mephisto.vpin.restclient.GameType;
 import de.mephisto.vpin.restclient.PopperCustomOptions;
 import de.mephisto.vpin.restclient.SystemData;
 import de.mephisto.vpin.restclient.TableManagerSettings;
 import de.mephisto.vpin.restclient.jobs.JobExecutionResult;
 import de.mephisto.vpin.restclient.jobs.JobExecutionResultFactory;
-import de.mephisto.vpin.restclient.popper.PinUPControl;
-import de.mephisto.vpin.restclient.popper.PinUPControls;
-import de.mephisto.vpin.restclient.popper.PopperScreen;
-import de.mephisto.vpin.restclient.popper.TableDetails;
+import de.mephisto.vpin.restclient.popper.*;
+import de.mephisto.vpin.restclient.representations.vpx.TableInfo;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameService;
 import de.mephisto.vpin.server.system.SystemService;
+import de.mephisto.vpin.server.vpx.VPXService;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
@@ -45,6 +50,9 @@ public class PopperService implements InitializingBean {
 
   @Autowired
   private PinUPConnector pinUPConnector;
+
+  @Autowired
+  private VPXService vpxService;
 
   public PinUPControl getPinUPControlFor(PopperScreen screen) {
     return pinUPConnector.getPinUPControlFor(screen);
@@ -146,13 +154,88 @@ public class PopperService implements InitializingBean {
     }
   }
 
+  public TableDetails autofillTableDetails(Game game) {
+    TableDetails tableDetails = pinUPConnector.getTableDetails(game.getId());
+    if (tableDetails != null && !StringUtils.isEmpty(game.getExtTableId())) {
+      VpsTable tableData = VPS.getInstance().getTableById(game.getExtTableId());
+      if (tableData != null) {
+        if ((tableDetails.getGameYear() == null || tableDetails.getGameYear() == 0) && tableData.getYear() > 0) {
+          tableDetails.setGameYear(tableData.getYear());
+        }
+
+        if ((tableDetails.getNumberOfPlayers() == null || tableDetails.getNumberOfPlayers() == 0) && tableData.getPlayers() > 0) {
+          tableDetails.setNumberOfPlayers(tableData.getPlayers());
+        }
+
+        if (StringUtils.isEmpty(tableDetails.getUrl()) && !StringUtils.isEmpty(tableData.getIpdbUrl())) {
+          tableDetails.setUrl(tableData.getIpdbUrl());
+
+          String url = tableData.getIpdbUrl();
+          if (url.contains("=")) {
+            tableDetails.setIPDBNum(url.substring(url.indexOf("=") + 1));
+          }
+        }
+
+        if (StringUtils.isEmpty(tableDetails.getGameTheme()) && tableData.getTheme() != null && !tableData.getTheme().isEmpty()) {
+          tableDetails.setGameTheme(String.join(",", tableData.getTheme()));
+        }
+
+        if (StringUtils.isEmpty(tableDetails.getDesignedBy()) && tableData.getDesigners() != null && !tableData.getDesigners().isEmpty()) {
+          tableDetails.setDesignedBy(String.join(",", tableData.getDesigners()));
+        }
+
+        if (StringUtils.isEmpty(tableDetails.getManufacturer()) && !StringUtils.isEmpty(tableData.getManufacturer())) {
+          tableDetails.setManufacturer(tableData.getManufacturer());
+        }
+
+        if (tableDetails.getGameType() == null && !StringUtils.isEmpty(tableData.getType())) {
+          try {
+            GameType gameType = GameType.valueOf(tableData.getType());
+            tableDetails.setGameType(gameType);
+          } catch (Exception e) {
+            //ignore
+          }
+        }
+
+        if (!StringUtils.isEmpty(game.getExtTableVersionId())) {
+          List<VpsTableFile> tableFiles = tableData.getTableFiles();
+          Optional<VpsTableFile> tableVersion = tableFiles.stream().filter(t -> t.getId().equals(game.getExtTableVersionId())).findFirst();
+          if (tableVersion.isPresent()) {
+            VpsTableFile version = tableVersion.get();
+            if (StringUtils.isEmpty(tableDetails.getFileVersion()) && !StringUtils.isEmpty(version.getVersion())) {
+              tableDetails.setFileVersion(version.getVersion());
+            }
+          }
+        }
+
+        TableInfo tableInfo = vpxService.getTableInfo(game.getId());
+        if(tableInfo != null) {
+          if (StringUtils.isEmpty(tableDetails.getFileVersion()) && !StringUtils.isEmpty(tableInfo.getTableVersion())) {
+            tableDetails.setFileVersion(tableInfo.getTableVersion());
+          }
+
+          if (StringUtils.isEmpty(tableDetails.getAuthor()) && !StringUtils.isEmpty(tableInfo.getAuthorName())) {
+            tableDetails.setAuthor(tableInfo.getAuthorName());
+          }
+        }
+      }
+    }
+
+    if (tableDetails != null) {
+      pinUPConnector.saveTableDetails(game.getId(), tableDetails);
+    }
+
+    return tableDetails;
+  }
+
+
   public TableDetails getTableDetails(int gameId) {
     return pinUPConnector.getTableDetails(gameId);
   }
 
   public TableDetails saveTableDetails(TableDetails tableDetails, int gameId) {
     Game game = pinUPConnector.getGame(gameId);
-    pinUPConnector.saveTableDetails(game, tableDetails);
+    pinUPConnector.saveTableDetails(game.getId(), tableDetails);
     return tableDetails;
   }
 
@@ -267,6 +350,7 @@ public class PopperService implements InitializingBean {
     pinUPConnector.updateCustomOptions(options);
     return options;
   }
+
 
   @Override
   public void afterPropertiesSet() throws Exception {

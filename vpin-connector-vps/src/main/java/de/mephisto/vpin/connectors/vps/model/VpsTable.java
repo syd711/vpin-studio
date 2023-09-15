@@ -7,6 +7,8 @@ public class VpsTable {
   private String id;
   private String name;
   private List<String> features;
+  private List<String> designers;
+  private List<String> theme;
   private List<VpsAuthoredUrls> povFiles;
   private boolean broken;
   private List<VpsAuthoredUrls> altColorFiles;
@@ -25,6 +27,22 @@ public class VpsTable {
   private String type;
   private int year;
   private long updatedAt;
+
+  public List<String> getDesigners() {
+    return designers;
+  }
+
+  public void setDesigners(List<String> designers) {
+    this.designers = designers;
+  }
+
+  public List<String> getTheme() {
+    return theme;
+  }
+
+  public void setTheme(List<String> theme) {
+    this.theme = theme;
+  }
 
   public String getId() {
     return id;

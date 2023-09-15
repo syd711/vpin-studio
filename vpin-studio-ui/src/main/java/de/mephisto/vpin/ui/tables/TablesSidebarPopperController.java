@@ -4,6 +4,7 @@ import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.popper.TableDetails;
 import de.mephisto.vpin.restclient.representations.GameRepresentation;
 import de.mephisto.vpin.ui.Studio;
+import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.util.Dialogs;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -22,6 +23,7 @@ import java.text.DateFormat;
 import java.util.Optional;
 import java.util.ResourceBundle;
 
+import static de.mephisto.vpin.ui.Studio.client;
 import static de.mephisto.vpin.ui.util.BindingUtil.debouncer;
 
 public class TablesSidebarPopperController implements Initializable, ChangeListener<Number> {
@@ -29,6 +31,9 @@ public class TablesSidebarPopperController implements Initializable, ChangeListe
 
   @FXML
   private Button tableEditBtn;
+
+  @FXML
+  private Button autoFillBtn;
 
   @FXML
   private Button editScreensBtn;
@@ -68,9 +73,6 @@ public class TablesSidebarPopperController implements Initializable, ChangeListe
 
   @FXML
   private Label romName;
-
-  @FXML
-  private Label romUrl;
 
   @FXML
   private Label manufacturer;
@@ -138,6 +140,22 @@ public class TablesSidebarPopperController implements Initializable, ChangeListe
   }
 
   @FXML
+  private void onAutoFill() {
+    if (this.game.isPresent()) {
+      Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Auto Fill Data for \"" + game.get().getGameDisplayName() + "\"?",
+          "This fills missing entries with data taken from the table metadata and the Virtual Pinball Spreadsheet.", null, "Continue");
+      if (result.isPresent() && result.get().equals(ButtonType.OK)) {
+        try {
+          client.getPinUPPopperService().autoFillTableDetails(this.game.get().getId());
+          EventManager.getInstance().notifyTableChange(this.game.get().getId(), null);
+        } catch (Exception e) {
+          WidgetFactory.showAlert(Studio.stage, "Error", e.getMessage());
+        }
+      }
+    }
+  }
+
+  @FXML
   private void onScreenEdit() {
     if (Studio.client.getPinUPPopperService().isPinUPPopperRunning()) {
       if (Dialogs.openPopperRunningWarning(Studio.stage)) {
@@ -166,6 +184,7 @@ public class TablesSidebarPopperController implements Initializable, ChangeListe
     this.tableEditBtn.setDisable(g.isEmpty());
     this.editScreensBtn.setDisable(g.isEmpty());
     volumeSlider.setDisable(g.isEmpty());
+    autoFillBtn.setDisable(g.isEmpty());
 
     if (g.isPresent()) {
       GameRepresentation game = g.get();
@@ -192,7 +211,6 @@ public class TablesSidebarPopperController implements Initializable, ChangeListe
       dateAdded.setText(manifest.getDateAdded() == null ? "-" : DateFormat.getDateTimeInstance().format(manifest.getDateAdded()));
       gameYear.setText(manifest.getGameYear() == null ? "-" : String.valueOf(manifest.getGameYear()));
       romName.setText(StringUtils.isEmpty(manifest.getRomName()) ? "-" : manifest.getRomName());
-      romUrl.setText(StringUtils.isEmpty(manifest.getRomUrl()) ? "-" : manifest.getRomUrl());
       manufacturer.setText(StringUtils.isEmpty(manifest.getManufacturer()) ? "-" : manifest.getManufacturer());
       numberOfPlayers.setText(manifest.getNumberOfPlayers() == null ? "-" : String.valueOf(manifest.getNumberOfPlayers()));
       tags.setText(StringUtils.isEmpty(manifest.getTags()) ? "-" : manifest.getTags());
@@ -222,7 +240,6 @@ public class TablesSidebarPopperController implements Initializable, ChangeListe
       gameType.setText("-");
       gameTheme.setText("-");
       romName.setText("-");
-      romUrl.setText("-");
       manufacturer.setText("-");
       numberOfPlayers.setText("-");
       tags.setText("-");

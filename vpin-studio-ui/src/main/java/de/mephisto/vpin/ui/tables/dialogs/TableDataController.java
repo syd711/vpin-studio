@@ -53,9 +53,6 @@ public class TableDataController implements Initializable, DialogController {
   private TextField romName;
 
   @FXML
-  private TextField romUrl;
-
-  @FXML
   private TextField manufacturer;
 
   @FXML
@@ -177,9 +174,6 @@ public class TableDataController implements Initializable, DialogController {
 
     romName.setText(game.getRom());
     romName.textProperty().addListener((observable, oldValue, newValue) -> manifest.setRomName(newValue));
-
-    romUrl.setText(manifest.getRomUrl());
-    romUrl.textProperty().addListener((observable, oldValue, newValue) -> manifest.setRomUrl(newValue));
 
     manufacturer.setText(manifest.getManufacturer());
     manufacturer.textProperty().addListener((observable, oldValue, newValue) -> manifest.setManufacturer(newValue));
