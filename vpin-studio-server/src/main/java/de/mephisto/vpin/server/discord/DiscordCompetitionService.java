@@ -159,7 +159,7 @@ public class DiscordCompetitionService {
     //append results until the score limit is met
     if (competitionData != null && competitionData.getScrL() > 0) {
       int scoreCount = competitionData.getScrL();
-      while (sanitized.size() <= scoreCount) {
+      while (sanitized.size() < scoreCount) {
         Score score = new Score(new Date(), gameId, "???", null, "0", 0, index);
         sanitized.add(score);
         index++;
