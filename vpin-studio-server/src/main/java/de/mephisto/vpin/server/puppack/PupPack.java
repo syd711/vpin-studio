@@ -31,6 +31,8 @@ public class PupPack {
 
   private final File playlistPup;
 
+  private boolean scriptOnly = false;
+
 
   private final File packFolder;
   private List<String> options = new ArrayList<>();
@@ -43,6 +45,14 @@ public class PupPack {
   public PupPack(@NonNull File packFolder) {
     playlistPup = new File(packFolder, PLAYLISTS_PUP);
     this.packFolder = packFolder;
+  }
+
+  public boolean isScriptOnly() {
+    return scriptOnly;
+  }
+
+  public void setScriptOnly(boolean scriptOnly) {
+    this.scriptOnly = scriptOnly;
   }
 
   public List<String> getTxtFiles() {

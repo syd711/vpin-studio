@@ -53,6 +53,7 @@
                         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                     </rowConstraints>
                      <children>
                         <Label text="Last Modified:" textFill="WHITE" GridPane.rowIndex="1">
@@ -80,12 +81,12 @@
                               <Font size="14.0" />
                            </font>
                         </Label>
-                        <Label layoutX="10.0" layoutY="49.0" prefWidth="87.0" text="Options:" textFill="WHITE" GridPane.rowIndex="2">
+                        <Label layoutX="10.0" layoutY="49.0" prefWidth="87.0" text="Options:" textFill="WHITE" GridPane.rowIndex="3">
                            <font>
                               <Font size="14.0" />
                            </font>
                         </Label>
-                        <HBox spacing="6.0" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                        <HBox spacing="6.0" GridPane.columnIndex="1" GridPane.rowIndex="3">
                            <children>
                               <ComboBox fx:id="optionsCombo" prefHeight="30.0" prefWidth="300.0" />
                               <Button fx:id="applyBtn" mnemonicParsing="false" onAction="#onOptionApply" text="Apply" textFill="WHITE">
@@ -112,12 +113,12 @@
                               </Label>
                            </children>
                         </HBox>
-                        <Label layoutX="10.0" layoutY="83.0" prefHeight="20.0" prefWidth="149.0" text="Additional Files:" textFill="WHITE" GridPane.rowIndex="3">
+                        <Label layoutX="10.0" layoutY="83.0" prefHeight="20.0" prefWidth="149.0" text="Additional Files:" textFill="WHITE" GridPane.rowIndex="4">
                            <font>
                               <Font size="14.0" />
                            </font>
                         </Label>
-                        <HBox layoutX="174.0" layoutY="77.0" spacing="6.0" GridPane.columnIndex="1" GridPane.rowIndex="3">
+                        <HBox layoutX="174.0" layoutY="77.0" spacing="6.0" GridPane.columnIndex="1" GridPane.rowIndex="4">
                            <children>
                               <ComboBox fx:id="txtsCombo" prefHeight="30.0" prefWidth="300.0" />
                               <Button fx:id="openBtn" mnemonicParsing="false" onAction="#onOpen" text="Open" textFill="WHITE">
@@ -144,132 +145,146 @@
                               </Label>
                            </children>
                         </HBox>
+                        <Label layoutX="10.0" layoutY="49.0" text="Script Only:" textFill="WHITE" GridPane.rowIndex="2">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Label>
+                        <CheckBox fx:id="scriptOnlyCheckbox" disable="true" mnemonicParsing="false" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </CheckBox>
                      </children>
                      <VBox.margin>
                         <Insets top="6.0" />
                      </VBox.margin>
                   </GridPane>
-                  <HBox spacing="6.0">
+                  <VBox fx:id="screensPanel">
                      <children>
-                        <Label text="Screens" textFill="WHITE">
-                           <font>
-                              <Font name="System Bold" size="14.0" />
-                           </font>
-                        </Label>
-                        <Label>
-                           <font>
-                              <Font size="14.0" />
-                           </font>
-                           <graphic>
-                              <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
-                           </graphic>
-                           <tooltip>
-                              <Tooltip prefWidth="300.0" text="This section shows only a selection of the available screen to indicate which are used." wrapText="true">
+                        <HBox spacing="6.0">
+                           <children>
+                              <Label text="Screens" textFill="WHITE">
+                                 <font>
+                                    <Font name="System Bold" size="14.0" />
+                                 </font>
+                              </Label>
+                              <Label>
                                  <font>
                                     <Font size="14.0" />
                                  </font>
-                              </Tooltip>
-                           </tooltip>
-                        </Label>
+                                 <graphic>
+                                    <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
+                                 </graphic>
+                                 <tooltip>
+                                    <Tooltip prefWidth="300.0" text="This section shows only a selection of the available screen to indicate which are used." wrapText="true">
+                                       <font>
+                                          <Font size="14.0" />
+                                       </font>
+                                    </Tooltip>
+                                 </tooltip>
+                              </Label>
+                           </children>
+                        </HBox>
+                        <GridPane vgap="3.0">
+                          <columnConstraints>
+                            <ColumnConstraints hgrow="SOMETIMES" maxWidth="282.199951171875" minWidth="10.0" prefWidth="164.0" />
+                            <ColumnConstraints hgrow="SOMETIMES" maxWidth="488.79997558593755" minWidth="10.0" prefWidth="411.20000000000005" />
+                          </columnConstraints>
+                          <rowConstraints>
+                            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                          </rowConstraints>
+                           <VBox.margin>
+                              <Insets top="6.0" />
+                           </VBox.margin>
+                           <children>
+                              <Label text="Backglass:" textFill="WHITE">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </Label>
+                              <Label layoutX="10.0" layoutY="15.0" text="DMD:" textFill="WHITE" GridPane.rowIndex="1">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </Label>
+                              <Label layoutX="10.0" layoutY="49.0" text="Full DMD:" textFill="WHITE" GridPane.rowIndex="2">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </Label>
+                              <Label layoutX="10.0" layoutY="83.0" text="Topper:" textFill="WHITE" GridPane.rowIndex="3">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </Label>
+                              <HBox alignment="CENTER_LEFT" spacing="6.0" GridPane.columnIndex="1">
+                                 <children>
+                                    <Label textFill="WHITE">
+                                       <font>
+                                          <Font size="14.0" />
+                                       </font>
+                                       <graphic>
+                                          <FontIcon fx:id="screenBackglass" iconColor="#FFFFFF" iconLiteral="bi-check-circle" iconSize="18" />
+                                       </graphic>
+                                       <tooltip>
+                                          <Tooltip fx:id="screenBackglassTooltip" />
+                                       </tooltip>
+                                    </Label>
+                                 </children>
+                              </HBox>
+                              <HBox alignment="CENTER_LEFT" spacing="6.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                                 <children>
+                                    <Label textFill="WHITE">
+                                       <font>
+                                          <Font size="14.0" />
+                                       </font>
+                                       <graphic>
+                                          <FontIcon fx:id="screenDMD" iconColor="#FFFFFF" iconLiteral="bi-check-circle" iconSize="18" />
+                                       </graphic>
+                                       <tooltip>
+                                          <Tooltip fx:id="screenDMDTooltip" />
+                                       </tooltip>
+                                    </Label>
+                                 </children>
+                              </HBox>
+                              <HBox alignment="CENTER_LEFT" spacing="6.0" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                                 <children>
+                                    <Label textFill="WHITE">
+                                       <font>
+                                          <Font size="14.0" />
+                                       </font>
+                                       <graphic>
+                                          <FontIcon fx:id="screenFullDMD" iconColor="#FFFFFF" iconLiteral="bi-check-circle" iconSize="18" />
+                                       </graphic>
+                                       <tooltip>
+                                          <Tooltip fx:id="screenFullDMDTooltip" />
+                                       </tooltip>
+                                    </Label>
+                                 </children>
+                              </HBox>
+                              <HBox alignment="CENTER_LEFT" spacing="6.0" GridPane.columnIndex="1" GridPane.rowIndex="3">
+                                 <children>
+                                    <Label textFill="WHITE">
+                                       <font>
+                                          <Font size="14.0" />
+                                       </font>
+                                       <graphic>
+                                          <FontIcon fx:id="screenTopper" iconColor="#FFFFFF" iconLiteral="bi-check-circle" iconSize="18" />
+                                       </graphic>
+                                       <tooltip>
+                                          <Tooltip fx:id="screenTopperTooltip" />
+                                       </tooltip>
+                                    </Label>
+                                 </children>
+                              </HBox>
+                           </children>
+                        </GridPane>
                      </children>
-                  </HBox>
-                  <GridPane vgap="3.0">
-                    <columnConstraints>
-                      <ColumnConstraints hgrow="SOMETIMES" maxWidth="282.199951171875" minWidth="10.0" prefWidth="164.0" />
-                      <ColumnConstraints hgrow="SOMETIMES" maxWidth="488.79997558593755" minWidth="10.0" prefWidth="411.20000000000005" />
-                    </columnConstraints>
-                    <rowConstraints>
-                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                    </rowConstraints>
-                     <VBox.margin>
-                        <Insets top="6.0" />
-                     </VBox.margin>
-                     <children>
-                        <Label text="Backglass:" textFill="WHITE">
-                           <font>
-                              <Font size="14.0" />
-                           </font>
-                        </Label>
-                        <Label layoutX="10.0" layoutY="15.0" text="DMD:" textFill="WHITE" GridPane.rowIndex="1">
-                           <font>
-                              <Font size="14.0" />
-                           </font>
-                        </Label>
-                        <Label layoutX="10.0" layoutY="49.0" text="Full DMD:" textFill="WHITE" GridPane.rowIndex="2">
-                           <font>
-                              <Font size="14.0" />
-                           </font>
-                        </Label>
-                        <Label layoutX="10.0" layoutY="83.0" text="Topper:" textFill="WHITE" GridPane.rowIndex="3">
-                           <font>
-                              <Font size="14.0" />
-                           </font>
-                        </Label>
-                        <HBox alignment="CENTER_LEFT" spacing="6.0" GridPane.columnIndex="1">
-                           <children>
-                              <Label textFill="WHITE">
-                                 <font>
-                                    <Font size="14.0" />
-                                 </font>
-                                 <graphic>
-                                    <FontIcon fx:id="screenBackglass" iconColor="#FFFFFF" iconLiteral="bi-check-circle" iconSize="18" />
-                                 </graphic>
-                                 <tooltip>
-                                    <Tooltip fx:id="screenBackglassTooltip" />
-                                 </tooltip>
-                              </Label>
-                           </children>
-                        </HBox>
-                        <HBox alignment="CENTER_LEFT" spacing="6.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
-                           <children>
-                              <Label textFill="WHITE">
-                                 <font>
-                                    <Font size="14.0" />
-                                 </font>
-                                 <graphic>
-                                    <FontIcon fx:id="screenDMD" iconColor="#FFFFFF" iconLiteral="bi-check-circle" iconSize="18" />
-                                 </graphic>
-                                 <tooltip>
-                                    <Tooltip fx:id="screenDMDTooltip" />
-                                 </tooltip>
-                              </Label>
-                           </children>
-                        </HBox>
-                        <HBox alignment="CENTER_LEFT" spacing="6.0" GridPane.columnIndex="1" GridPane.rowIndex="2">
-                           <children>
-                              <Label textFill="WHITE">
-                                 <font>
-                                    <Font size="14.0" />
-                                 </font>
-                                 <graphic>
-                                    <FontIcon fx:id="screenFullDMD" iconColor="#FFFFFF" iconLiteral="bi-check-circle" iconSize="18" />
-                                 </graphic>
-                                 <tooltip>
-                                    <Tooltip fx:id="screenFullDMDTooltip" />
-                                 </tooltip>
-                              </Label>
-                           </children>
-                        </HBox>
-                        <HBox alignment="CENTER_LEFT" spacing="6.0" GridPane.columnIndex="1" GridPane.rowIndex="3">
-                           <children>
-                              <Label textFill="WHITE">
-                                 <font>
-                                    <Font size="14.0" />
-                                 </font>
-                                 <graphic>
-                                    <FontIcon fx:id="screenTopper" iconColor="#FFFFFF" iconLiteral="bi-check-circle" iconSize="18" />
-                                 </graphic>
-                                 <tooltip>
-                                    <Tooltip fx:id="screenTopperTooltip" />
-                                 </tooltip>
-                              </Label>
-                           </children>
-                        </HBox>
-                     </children>
-                  </GridPane>
+                  </VBox>
                </children>
                <VBox.margin>
                   <Insets bottom="24.0" left="12.0" right="12.0" top="12.0" />

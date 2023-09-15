@@ -64,6 +64,9 @@ public class TablesSidebarPUPPackController implements Initializable {
   private VBox dataBox;
 
   @FXML
+  private CheckBox scriptOnlyCheckbox;
+
+  @FXML
   private ComboBox<String> optionsCombo;
 
   @FXML
@@ -113,6 +116,9 @@ public class TablesSidebarPUPPackController implements Initializable {
 
   @FXML
   private Pane pupRoot;
+
+  @FXML
+  private VBox screensPanel;
 
   private TablesSidebarController tablesSidebarController;
   private PupPackRepresentation pupPack;
@@ -252,6 +258,9 @@ public class TablesSidebarPUPPackController implements Initializable {
     this.validationState = null;
     reloadBtn.setDisable(g.isEmpty());
     enabledCheckbox.setDisable(g.isEmpty());
+    scriptOnlyCheckbox.setSelected(false);
+
+    screensPanel.setVisible(true);
 
     dataBox.setVisible(false);
     emptyDataBox.setVisible(true);
@@ -286,6 +295,8 @@ public class TablesSidebarPUPPackController implements Initializable {
       GameRepresentation game = g.get();
       pupPack = Studio.client.getPupPackService().getPupPack(game.getId());
       boolean pupPackAvailable = pupPack != null;
+      scriptOnlyCheckbox.setSelected(pupPackAvailable && pupPack.isScriptOnly());
+      screensPanel.setVisible(pupPackAvailable && !pupPack.isScriptOnly());
       enabledCheckbox.setDisable(!pupPackAvailable || StringUtils.isEmpty(game.getRom()));
 
       dataBox.setVisible(pupPackAvailable);

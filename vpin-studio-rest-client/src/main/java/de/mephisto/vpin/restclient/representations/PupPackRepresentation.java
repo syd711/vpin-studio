@@ -19,8 +19,17 @@ public class PupPackRepresentation {
   private ScreenMode screenDMDMode;
   private ScreenMode screenFullDMDMode;
   private ScreenMode screenTopperMode;
+  private boolean scriptOnly = false;
 
   private String selectedOption;
+
+  public boolean isScriptOnly() {
+    return scriptOnly;
+  }
+
+  public void setScriptOnly(boolean scriptOnly) {
+    this.scriptOnly = scriptOnly;
+  }
 
   public List<ValidationState> getValidationStates() {
     return validationStates;

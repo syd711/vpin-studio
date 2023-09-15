@@ -79,11 +79,11 @@ public class PupPacksService implements InitializingBean {
   }
 
   public void loadPupPack(File packFolder) {
+    PupPack pupPack = new PupPack(packFolder);
     if (new File(packFolder, "scriptonly.txt").exists()) {
-      return;
+      pupPack.setScriptOnly(true);
     }
 
-    PupPack pupPack = new PupPack(packFolder);
     pupPack.load();
 
     if (!pupPack.getScreensPup().exists() && !pupPack.getOptions().isEmpty()) {

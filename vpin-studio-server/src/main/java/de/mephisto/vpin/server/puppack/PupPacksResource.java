@@ -113,8 +113,10 @@ public class PupPacksResource {
   private PupPackRepresentation toPupPackRepresentation(Game game, @NonNull PupPack pupPack) {
     PupPackRepresentation representation = new PupPackRepresentation();
     representation.setSize(pupPack.getSize());
+    representation.setScriptOnly(pupPack.isScriptOnly());
     representation.setPath(pupPack.getPupPackFolder().getPath().replaceAll("\\\\", "/"));
     representation.setModificationDate(new Date(pupPack.getPupPackFolder().lastModified()));
+    representation.setEnabled(!pupPacksService.isPupPackDisabled(game));
     representation.setOptions(pupPack.getOptions());
     representation.setScreenDMDMode(pupPack.getScreenMode(PopperScreen.DMD));
     representation.setScreenBackglassMode(pupPack.getScreenMode(PopperScreen.BackGlass));
@@ -123,7 +125,6 @@ public class PupPacksResource {
     representation.setMissingResources(pupPack.getMissingResources());
     representation.setSelectedOption(pupPack.getSelectedOption());
     representation.setTxtFiles(pupPack.getTxtFiles());
-    representation.setEnabled(!pupPacksService.isPupPackDisabled(game));
     representation.setValidationStates(validationService.validatePupPack(game));
     return representation;
   }
