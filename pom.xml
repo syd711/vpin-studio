@@ -6,7 +6,7 @@
 
     <groupId>de.mephisto.vpin</groupId>
     <artifactId>studio</artifactId>
-    <version>1.4.4</version>
+    <version>1.4.5</version>
     <packaging>pom</packaging>
 
     <properties>
@@ -31,6 +31,7 @@
         <module>vpin-studio-server</module>
         <module>vpin-studio-rest-client</module>
         <module>vpin-studio-ui</module>
+        <module>vpin-tools</module>
     </modules>
 
     <build>
