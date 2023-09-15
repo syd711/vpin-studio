@@ -18,6 +18,5 @@ open module de.mephisto.vpin.restclient {
   exports de.mephisto.vpin.restclient.popper;
   exports de.mephisto.vpin.restclient.mame;
   exports de.mephisto.vpin.restclient.representations.altcolor;
-  exports de.mephisto.vpin.restclient.representations.altsound;
   exports de.mephisto.vpin.restclient.representations.vpx;
 }

@@ -92,7 +92,7 @@ public class Score {
     Score score = (Score) obj;
     return score.getPlayerInitials().equalsIgnoreCase(this.getPlayerInitials())
         && score.getPosition() == this.getPosition()
-        && score.getScore().equalsIgnoreCase(this.getScore());
+        && score.getNumericScore() == this.getNumericScore();
   }
 
   public void setScore(String score) {
@@ -101,7 +101,7 @@ public class Score {
 
   public boolean matches(Score newScore) {
     return this.playerInitials != null && this.playerInitials.equals(newScore.getPlayerInitials())
-        && this.score != null && this.score.equals(newScore.getScore());
+        && this.score != null && this.numericScore == newScore.getNumericScore();
 
   }
 

@@ -1,5 +1,8 @@
 package de.mephisto.vpin.server.highscores;
 
+import de.mephisto.vpin.restclient.CompetitionType;
+import de.mephisto.vpin.restclient.discord.DiscordCompetitionData;
+import de.mephisto.vpin.server.discord.DiscordCompetitionService;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
@@ -40,21 +43,38 @@ public class HighscoreTest {
 
     List<Score> oldScores = new ArrayList<>();
     oldScores.add(new Score(new Date(), -1, "AAA", null, "9000", 9000, 1));
-    oldScores.add(new Score(new Date(), -1, "BBB", null, "8000", 8000, 2));
-    oldScores.add(new Score(new Date(), -1, "CCC", null, "7000", 7000, 3));
-    oldScores.add(new Score(new Date(), -1, "DDD", null, "6000", 6000, 4));
-    oldScores.add(new Score(new Date(), -1, "EEE", null, "5000", 5000, 5));
+    oldScores.add(new Score(new Date(), -1, "BBB", null, "8000", 0, 2));
+    oldScores.add(new Score(new Date(), -1, "CCC", null, "7000", 0, 3));
+    oldScores.add(new Score(new Date(), -1, "DDD", null, "6000", 0, 4));
+    oldScores.add(new Score(new Date(), -1, "EEE", null, "5000", 0, 5));
 
     List<Score> newScores = new ArrayList<>();
     newScores.add(new Score(new Date(), -1, "AAA", null, "9001", 9001, 1));
-    newScores.add(new Score(new Date(), -1, "AAA", null, "9000", 9000, 2));
-    newScores.add(new Score(new Date(), -1, "BBB", null, "8000", 8000, 3));
-    newScores.add(new Score(new Date(), -1, "CCC", null, "7000", 7000, 4));
-    newScores.add(new Score(new Date(), -1, "DDD", null, "6000", 6000, 5));
+    newScores.add(new Score(new Date(), -1, "AAA", null, "9000", 0, 2));
+    newScores.add(new Score(new Date(), -1, "BBB", null, "8000", 0, 3));
+    newScores.add(new Score(new Date(), -1, "CCC", null, "7000", 0, 4));
+    newScores.add(new Score(new Date(), -1, "DDD", null, "6000", 0, 5));
 
     List<Integer>  changedPositions = highscoreService.calculateChangedPositions(oldScores, newScores);
     assertEquals(1, changedPositions.size());
     assertEquals(1, (int) changedPositions.get(0));
+  }
+
+  @Test
+  public void testChangeByScore() {
+    HighscoreService highscoreService = new HighscoreService();
+
+    List<Score> oldScores = new ArrayList<>();
+    oldScores.add(new Score(new Date(), -1, "AAA", null, "19000", 9000, 1));
+    oldScores.add(new Score(new Date(), -1, "BBB", null, "0", 0, 2));
+    oldScores.add(new Score(new Date(), -1, "CCC", null, "0", 0, 3));
+    oldScores.add(new Score(new Date(), -1, "DDD", null, "0", 0, 4));
+    oldScores.add(new Score(new Date(), -1, "EEE", null, "0", 0, 5));
+
+    Score newScore = new Score(new Date(), -1, "AAA", null, "9001", 99001, 3);
+
+    int position = highscoreService.calculateChangedPositionByScore(oldScores, newScore);
+    assertEquals(1, position);
   }
 
   @Test

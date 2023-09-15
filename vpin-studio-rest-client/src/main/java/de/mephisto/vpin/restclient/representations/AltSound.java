@@ -1,6 +1,4 @@
-package de.mephisto.vpin.restclient.representations.altsound;
-
-import de.mephisto.vpin.restclient.representations.ValidationState;
+package de.mephisto.vpin.restclient.representations;
 
 import java.util.ArrayList;
 import java.util.Date;
