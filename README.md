@@ -37,6 +37,12 @@ https://github.com/syd711/vpin-studio/wiki
 
 ## Third Party Integrations
 
+### PinUP Virtual Pinball System
+
+https://www.nailbuster.com/wikipinup/doku.php?id=start
+
+<img src="https://www.nailbuster.com/wikipinup/lib/exe/fetch.php?media=wiki:logo.png" width="64"/> 
+
 ### Visual Pinball Backup Manager
 
 <img src="documentation/vpbm-128.png" width="64"/> 
