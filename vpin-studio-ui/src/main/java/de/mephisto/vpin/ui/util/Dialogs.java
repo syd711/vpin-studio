@@ -139,11 +139,10 @@ public class Dialogs {
     return controller.getCompetition();
   }
 
-  public static boolean openMediaUploadDialog(Stage parentStage, TablesSidebarController tablesSidebarController, GameRepresentation game, PopperScreen screen) {
+  public static boolean openMediaUploadDialog(Stage parentStage, GameRepresentation game, PopperScreen screen) {
     Stage stage = createStudioDialogStage(parentStage, TableMediaUploadController.class, "dialog-media-upload.fxml", "Table Media Upload");
     TableMediaUploadController controller = (TableMediaUploadController) stage.getUserData();
     controller.setGame(game, screen);
-    controller.setTableSidebarController(tablesSidebarController);
     controller.getScreenCombo().setDisable(true);
     stage.showAndWait();
 
@@ -151,11 +150,10 @@ public class Dialogs {
   }
 
 
-  public static boolean openPopperMediaAdminDialog(TablesSidebarController tablesSidebarController, GameRepresentation game, PopperScreen screen) {
-    Stage stage = createStudioDialogStage(TablePopperMediaDialogController.class, "dialog-popper-media-selector.fxml", "Asset Manager for Screen \"" + screen.name() + "\"");
+  public static boolean openPopperMediaAdminDialog(GameRepresentation game, PopperScreen screen) {
+    Stage stage = createStudioDialogStage(TablePopperMediaDialogController.class, "dialog-popper-media-selector.fxml", "Asset Manager");
     TablePopperMediaDialogController controller = (TablePopperMediaDialogController) stage.getUserData();
     controller.setGame(game, screen);
-    controller.setTableSidebarController(tablesSidebarController);
     stage.showAndWait();
 
     return true;

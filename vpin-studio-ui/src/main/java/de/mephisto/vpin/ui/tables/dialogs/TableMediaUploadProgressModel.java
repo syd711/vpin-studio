@@ -23,15 +23,13 @@ public class TableMediaUploadProgressModel extends ProgressModel<File> {
   private final static Logger LOG = LoggerFactory.getLogger(TableMediaUploadProgressModel.class);
 
   private final Iterator<File> iterator;
-  private final TablesSidebarController tablesSidebarController;
   private final int gameId;
   private final String mediaType;
   private final PopperScreen screen;
   private final List<File> files;
 
-  public TableMediaUploadProgressModel(TablesSidebarController tablesSidebarController, int gameId, String title, List<File> files, String mediaType, PopperScreen screen) {
+  public TableMediaUploadProgressModel(int gameId, String title, List<File> files, String mediaType, PopperScreen screen) {
     super(title);
-    this.tablesSidebarController = tablesSidebarController;
     this.gameId = gameId;
     this.files = files;
     this.mediaType = mediaType;

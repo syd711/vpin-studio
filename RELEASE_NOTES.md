@@ -2,7 +2,10 @@
 
 ### Bugfixes
 
-**Fixed Discord score submissions for scores greater than 999.999.999.**
+**Tables Management**
 
-For existing competitions unpin the message with the current scores from the Discord channel.
-Players can then use the "Synchronize" button in the competitions view to re-submit their highscores.
+- Added new toolbar button: Asset Manager
+
+**Tables Management: PinUP Popper Media**
+
+- Replace "on-hover" upload button with the new asset manager button. The button initializes the asset manager with the selected table and screen.

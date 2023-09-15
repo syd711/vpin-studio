@@ -4,6 +4,7 @@ import de.mephisto.vpin.commons.utils.FileUtils;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.GameValidationCode;
 import de.mephisto.vpin.restclient.popper.Emulator;
+import de.mephisto.vpin.restclient.popper.PopperScreen;
 import de.mephisto.vpin.restclient.representations.GameRepresentation;
 import de.mephisto.vpin.restclient.representations.PlaylistRepresentation;
 import de.mephisto.vpin.restclient.representations.ValidationState;
@@ -114,6 +115,9 @@ public class TableOverviewController implements Initializable, StudioFXControlle
   private Button renameBtn;
 
   @FXML
+  private Button assetManagerBtn;
+
+  @FXML
   private Button renameAssetsBtn;
 
   @FXML
@@ -164,8 +168,9 @@ public class TableOverviewController implements Initializable, StudioFXControlle
   private List<GameRepresentation> games;
 
   @FXML
-  private void onRomUpload() {
-    this.tablesController.getTablesSideBarController().getTablesSidebarMetadataController().onRomUpload();
+  private void onMediaEdit() {
+    GameRepresentation selectedItems = tableView.getSelectionModel().getSelectedItem();
+    Dialogs.openPopperMediaAdminDialog(selectedItems, PopperScreen.Audio);
   }
 
   @FXML
@@ -912,6 +917,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
     playBtn.setDisable(disable);
     scanBtn.setDisable(c.getList().isEmpty());
     renameBtn.setDisable(disable);
+    assetManagerBtn.setDisable(disable);
     renameAssetsBtn.setDisable(disable || !c.getList().get(0).isGameFileAvailable());
 
     if (c.getList().isEmpty()) {

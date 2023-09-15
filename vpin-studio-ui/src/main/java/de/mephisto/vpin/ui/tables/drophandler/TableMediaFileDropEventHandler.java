@@ -46,7 +46,7 @@ public class TableMediaFileDropEventHandler implements EventHandler<DragEvent> {
             "Only files with extension(s) \"" + String.join("\", \"", suffixes) + "\" are accepted here.");
       }
       else {
-        TableMediaUploadProgressModel model = new TableMediaUploadProgressModel(tablesSidebarController, game.getId(),
+        TableMediaUploadProgressModel model = new TableMediaUploadProgressModel(game.getId(),
             "Popper Media Upload", filtered, "popperMedia", screen);
         Dialogs.createProgressDialog(model);
       }

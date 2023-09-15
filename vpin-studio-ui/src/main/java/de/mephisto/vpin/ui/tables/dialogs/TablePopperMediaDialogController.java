@@ -15,7 +15,6 @@ import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.events.JobFinishedEvent;
 import de.mephisto.vpin.ui.events.StudioEventListener;
-import de.mephisto.vpin.ui.tables.TablesSidebarController;
 import de.mephisto.vpin.ui.util.Dialogs;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import javafx.application.Platform;
@@ -53,7 +52,6 @@ import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
 import java.awt.*;
-import java.io.ByteArrayInputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URL;
@@ -62,10 +60,8 @@ import java.nio.charset.Charset;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
-import java.util.ResourceBundle;
+import java.util.*;
 
 import static de.mephisto.vpin.restclient.jobs.JobType.POPPER_MEDIA_INSTALL;
 import static de.mephisto.vpin.ui.Studio.client;
@@ -76,6 +72,12 @@ public class TablePopperMediaDialogController implements Initializable, DialogCo
   public static final int MEDIA_SIZE = 280;
 
   @FXML
+  private ComboBox<GameRepresentation> tablesCombo;
+
+  @FXML
+  private ComboBox<PopperScreen> screensCombo;
+
+  @FXML
   private BorderPane serverAssetMediaPane;
 
   @FXML
@@ -83,6 +85,9 @@ public class TablePopperMediaDialogController implements Initializable, DialogCo
 
   @FXML
   private Button downloadBtn;
+
+  @FXML
+  private Button helpBtn;
 
   @FXML
   private TextField searchField;
@@ -100,9 +105,6 @@ public class TablePopperMediaDialogController implements Initializable, DialogCo
   private Button renameBtn;
 
   @FXML
-  private VBox helpBox;
-
-  @FXML
   private ListView<GameMediaItemRepresentation> assetList;
 
   @FXML
@@ -110,7 +112,6 @@ public class TablePopperMediaDialogController implements Initializable, DialogCo
 
   private GameRepresentation game;
   private PopperScreen screen;
-  private TablesSidebarController tablesSidebarController;
   private TableAssetsService tableAssetsService;
   private EncryptDecrypt encryptDecrypt;
 
@@ -129,6 +130,19 @@ public class TablePopperMediaDialogController implements Initializable, DialogCo
         WidgetFactory.showAlert(Studio.stage, "Error", "Fullscreen switch failed: " + e.getMessage());
       }
       refreshTableMediaView();
+    }
+  }
+
+  @FXML
+  private void onHelp() {
+    String loadingHelp = "https://www.nailbuster.com/wikipinup/doku.php?id=loading_video";
+    Desktop desktop = Desktop.isDesktopSupported() ? Desktop.getDesktop() : null;
+    if (desktop != null && desktop.isSupported(Desktop.Action.BROWSE)) {
+      try {
+        desktop.browse(new URI(loadingHelp));
+      } catch (Exception e) {
+        LOG.error("Failed to open help link: " + e.getMessage(), e);
+      }
     }
   }
 
@@ -163,7 +177,7 @@ public class TablePopperMediaDialogController implements Initializable, DialogCo
   @FXML
   private void onMediaUpload(ActionEvent e) {
     Stage stage = (Stage) ((Button) e.getSource()).getScene().getWindow();
-    Dialogs.openMediaUploadDialog(stage, tablesSidebarController, game, screen);
+    Dialogs.openMediaUploadDialog(stage, game, screen);
     refreshTableMediaView();
   }
 
@@ -229,7 +243,13 @@ public class TablePopperMediaDialogController implements Initializable, DialogCo
 
     Platform.runLater(() -> {
       String mimeType = tableAsset.getMimeType();
+      if(mimeType == null) {
+        LOG.info("No mimetype found for asset " + tableAsset);
+        return;
+      }
+
       String baseType = mimeType.split("/")[0];
+
       String assetUrl = null;
       try {
         assetUrl = this.encryptDecrypt.decrypt(tableAsset.getUrl());
@@ -396,10 +416,21 @@ public class TablePopperMediaDialogController implements Initializable, DialogCo
     downloadBtn.setVisible(false);
 
     this.deleteBtn.setDisable(true);
-    this.helpBox.setVisible(false);
     this.addToPlaylistBtn.setDisable(true);
     this.addToPlaylistBtn.setVisible(false);
     this.renameBtn.setDisable(true);
+
+    List<GameRepresentation> games = client.getGameService().getGamesCached();
+    ObservableList<GameRepresentation> gameRepresentations = FXCollections.observableArrayList(games);
+    tablesCombo.getItems().addAll(gameRepresentations);
+    tablesCombo.valueProperty().addListener((observableValue, gameRepresentation, t1) -> {
+      this.setGame(t1, PopperScreen.Audio);
+    });
+
+    screensCombo.setItems(FXCollections.observableList(Arrays.asList(PopperScreen.values())));
+    screensCombo.valueProperty().addListener((observable, oldValue, newValue) -> {
+      this.setGame(this.game, newValue);
+    });
 
     searchField.setOnKeyPressed(ke -> {
       if (ke.getCode().equals(KeyCode.ENTER)) {
@@ -409,8 +440,6 @@ public class TablePopperMediaDialogController implements Initializable, DialogCo
 
     serverAssetsList.setPlaceholder(new Label("No assets found."));
     assetList.setPlaceholder(new Label("No assets found."));
-
-    helpBox.managedProperty().bindBidirectional(helpBox.visibleProperty());
 
     EventManager.getInstance().addListener(this);
 
@@ -610,6 +639,9 @@ public class TablePopperMediaDialogController implements Initializable, DialogCo
   public void setGame(GameRepresentation game, PopperScreen screen) {
     this.game = game;
     this.screen = screen;
+    this.tablesCombo.setValue(game);
+    this.screensCombo.setValue(screen);
+    this.helpBtn.setDisable(!PopperScreen.Loading.equals(screen));
 
     String term = game.getGameDisplayName();
     term = term.replaceAll("the", "");
@@ -681,12 +713,6 @@ public class TablePopperMediaDialogController implements Initializable, DialogCo
 
     boolean convertable = items.size() == 1 && !items.get(0).getName().contains("(SCREEN");
     this.addToPlaylistBtn.setDisable(!convertable);
-
-    helpBox.setVisible(screen != null && screen.equals(PopperScreen.Loading));
-  }
-
-  public void setTableSidebarController(TablesSidebarController tablesSidebarController) {
-    this.tablesSidebarController = tablesSidebarController;
   }
 
   @Override

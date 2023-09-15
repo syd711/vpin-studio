@@ -321,19 +321,7 @@ public class TablesSidebarMediaController implements Initializable {
       String screen = id.substring(id.lastIndexOf("_") + 1);
       PopperScreen popperScreen = PopperScreen.valueOf(screen);
 
-      Dialogs.openPopperMediaAdminDialog(tablesSidebarController, game.get(), popperScreen);
-    }
-  }
-
-  @FXML
-  private void onPopperMediaSelection(ActionEvent e) {
-    if (game.isPresent()) {
-      Button source = (Button) e.getSource();
-      String id = source.getId();
-      String screen = id.substring(id.lastIndexOf("_") + 1);
-
-      PopperScreen popperScreen = PopperScreen.valueOf(screen);
-      Dialogs.openPopperMediaAdminDialog(tablesSidebarController, game.get(), popperScreen);
+      Dialogs.openPopperMediaAdminDialog(game.get(), popperScreen);
     }
   }
 

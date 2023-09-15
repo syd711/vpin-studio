@@ -3,7 +3,6 @@ package de.mephisto.vpin.ui.tables.dialogs;
 import de.mephisto.vpin.commons.fx.DialogController;
 import de.mephisto.vpin.restclient.popper.PopperScreen;
 import de.mephisto.vpin.restclient.representations.GameRepresentation;
-import de.mephisto.vpin.ui.tables.TablesSidebarController;
 import de.mephisto.vpin.ui.util.Dialogs;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
@@ -26,8 +25,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.ResourceBundle;
 import java.util.stream.Collectors;
-
-import static de.mephisto.vpin.ui.Studio.stage;
 
 public class TableMediaUploadController implements Initializable, DialogController {
   private final static Logger LOG = LoggerFactory.getLogger(TableMediaUploadController.class);
@@ -54,7 +51,6 @@ public class TableMediaUploadController implements Initializable, DialogControll
 
   private boolean result = false;
   private GameRepresentation game;
-  private TablesSidebarController tablesSidebarController;
   private List<String> fileSelection = new ArrayList<>();
 
   public ComboBox<PopperScreen> getScreenCombo() {
@@ -75,7 +71,7 @@ public class TableMediaUploadController implements Initializable, DialogControll
       stage.close();
 
       Platform.runLater(() -> {
-        TableMediaUploadProgressModel model = new TableMediaUploadProgressModel(tablesSidebarController, this.game.getId(),
+        TableMediaUploadProgressModel model = new TableMediaUploadProgressModel(this.game.getId(),
             "Popper Media Upload", selection, "popperMedia", screenCombo.getValue());
         Dialogs.createProgressDialog(model);
       });
@@ -150,9 +146,5 @@ public class TableMediaUploadController implements Initializable, DialogControll
     this.game = game;
     this.screenCombo.setValue(screen);
     this.titleLabel.setText("Select media for table \"" + game.getGameDisplayName() + "\" and screen \"" + screen.name() + "\".");
-  }
-
-  public void setTableSidebarController(TablesSidebarController tablesSidebarController) {
-    this.tablesSidebarController = tablesSidebarController;
   }
 }
