@@ -52,6 +52,15 @@ public class TablesSidebarPopperController implements Initializable, ChangeListe
   private Label gameDisplayName;
 
   @FXML
+  private Label gameTheme;
+
+  @FXML
+  private Label gameType;
+
+  @FXML
+  private Label gameVersion;
+
+  @FXML
   private Label gameYear;
 
   @FXML
@@ -174,9 +183,12 @@ public class TablesSidebarPopperController implements Initializable, ChangeListe
       }
       volumeSlider.valueProperty().addListener(this);
 
+      gameType.setText(manifest.getGameType() != null ? manifest.getGameType().name() : "-");
       gameName.setText(StringUtils.isEmpty(manifest.getGameName()) ? "-" : manifest.getGameName());
       gameFileName.setText(StringUtils.isEmpty(manifest.getGameFileName()) ? "-" : manifest.getGameFileName());
+      gameVersion.setText(StringUtils.isEmpty(manifest.getFileVersion()) ? "-" : manifest.getFileVersion());
       gameDisplayName.setText(StringUtils.isEmpty(manifest.getGameDisplayName()) ? "-" : manifest.getGameDisplayName());
+      gameTheme.setText(StringUtils.isEmpty(manifest.getGameTheme()) ? "-" : manifest.getGameTheme());
       dateAdded.setText(manifest.getDateAdded() == null ? "-" : DateFormat.getDateTimeInstance().format(manifest.getDateAdded()));
       gameYear.setText(manifest.getGameYear() == null ? "-" : String.valueOf(manifest.getGameYear()));
       romName.setText(StringUtils.isEmpty(manifest.getRomName()) ? "-" : manifest.getRomName());
@@ -207,6 +219,8 @@ public class TablesSidebarPopperController implements Initializable, ChangeListe
       gameFileName.setText("-");
       gameDisplayName.setText("-");
       gameYear.setText("-");
+      gameType.setText("-");
+      gameTheme.setText("-");
       romName.setText("-");
       romUrl.setText("-");
       manufacturer.setText("-");

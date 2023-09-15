@@ -1,5 +1,7 @@
 package de.mephisto.vpin.restclient.popper;
 
+import de.mephisto.vpin.restclient.GameType;
+
 import java.util.Date;
 
 public class TableDetails {
@@ -9,6 +11,8 @@ public class TableDetails {
   private String gameName;
   private String gameFileName;
   private String gameDisplayName;
+  private GameType gameType;
+  private String fileVersion;
   private Date dateAdded;
   private String gameTheme;
   private String notes;
@@ -29,6 +33,22 @@ public class TableDetails {
   private String altRunMode;
   private String url;
   private String designedBy;
+
+  public GameType getGameType() {
+    return gameType;
+  }
+
+  public void setGameType(GameType gameType) {
+    this.gameType = gameType;
+  }
+
+  public String getFileVersion() {
+    return fileVersion;
+  }
+
+  public void setFileVersion(String fileVersion) {
+    this.fileVersion = fileVersion;
+  }
 
   public Integer getGameYear() {
     return gameYear;

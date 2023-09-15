@@ -1,5 +1,6 @@
 package de.mephisto.vpin.server.popper;
 
+import de.mephisto.vpin.restclient.GameType;
 import de.mephisto.vpin.restclient.PopperCustomOptions;
 import de.mephisto.vpin.restclient.popper.*;
 import de.mephisto.vpin.server.archiving.ArchiveUtil;
@@ -135,12 +136,18 @@ public class PinUPConnector implements InitializingBean {
         manifest.setGameName(rs.getString("GameName"));
         manifest.setGameFileName(rs.getString("GameFileName"));
         manifest.setGameDisplayName(rs.getString("GameDisplay"));
+        manifest.setFileVersion(rs.getString("GAMEVER"));
         manifest.setDateAdded(rs.getTimestamp("DateAdded"));
         manifest.setNotes(rs.getString("Notes"));
         manifest.setGameYear(rs.getInt("GameYear"));
         if (rs.wasNull()) {
           manifest.setGameYear(null);
         }
+        String gameType = rs.getString("GameType");
+        if(gameType != null && (gameType.equals(GameType.SS.name()) || gameType.equals(GameType.EM.name()) || gameType.equals(GameType.Original.name()))) {
+          manifest.setGameType(GameType.valueOf(gameType));
+        }
+
         manifest.setRomName(rs.getString("ROM"));
         manifest.setManufacturer(rs.getString("Manufact"));
         manifest.setNumberOfPlayers(rs.getInt("NumPlayers"));
@@ -1048,6 +1055,8 @@ public class PinUPConnector implements InitializingBean {
     importManifestValue(id, "LaunchCustomVar", manifest.getLaunchCustomVar());
     importManifestValue(id, "GKeepDisplays", manifest.getKeepDisplays());
     importManifestValue(id, "GameRating", manifest.getGameRating());
+    importManifestValue(id, "GameType", manifest.getGameType() != null ? manifest.getGameType().name() : null);
+    importManifestValue(id, "GAMEVER", manifest.getFileVersion());
     importManifestValue(id, "DOFStuff", manifest.getDof());
     importManifestValue(id, "IPDBNum", manifest.getIPDBNum());
     importManifestValue(id, "AltRunMode", manifest.getAltRunMode());

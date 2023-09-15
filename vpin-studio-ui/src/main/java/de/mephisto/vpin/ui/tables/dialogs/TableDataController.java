@@ -2,10 +2,14 @@ package de.mephisto.vpin.ui.tables.dialogs;
 
 import de.mephisto.vpin.commons.fx.DialogController;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
+import de.mephisto.vpin.restclient.GameType;
 import de.mephisto.vpin.restclient.popper.TableDetails;
 import de.mephisto.vpin.restclient.representations.GameRepresentation;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.events.EventManager;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
+import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -15,6 +19,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.net.URL;
+import java.util.Arrays;
 import java.util.ResourceBundle;
 
 public class TableDataController implements Initializable, DialogController {
@@ -28,6 +33,15 @@ public class TableDataController implements Initializable, DialogController {
 
   @FXML
   private TextField gameFileName;
+
+  @FXML
+  private TextField gameVersion;
+
+  @FXML
+  private ComboBox<GameType> gameTypeCombo;
+
+  @FXML
+  private TextField gameTheme;
 
   @FXML
   private TextField gameDisplayName;
@@ -127,7 +141,17 @@ public class TableDataController implements Initializable, DialogController {
     gameFileName.setText(manifest.getGameFileName());
     gameDisplayName.setText(manifest.getGameDisplayName());
     gameDisplayName.textProperty().addListener((observable, oldValue, newValue) -> manifest.setGameDisplayName(newValue));
+    gameTheme.setText(manifest.getGameTheme());
+    gameTheme.textProperty().addListener((observable, oldValue, newValue) -> manifest.setGameTheme(newValue));
+    gameVersion.setText(manifest.getFileVersion());
+    gameVersion.textProperty().addListener((observable, oldValue, newValue) -> manifest.setFileVersion(newValue));
 
+    gameTypeCombo.setItems(FXCollections.observableList(Arrays.asList(GameType.values())));
+    GameType gt = manifest.getGameType();
+    if(gt != null) {
+      gameTypeCombo.valueProperty().setValue(gt);
+    }
+    gameTypeCombo.valueProperty().addListener((observableValue, gameType, t1) -> manifest.setGameType(t1));
 
     gameYear.textProperty().addListener((observable, oldValue, newValue) -> {
       if (!newValue.matches("\\d*")) {
