@@ -2,6 +2,7 @@
 
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.Separator?>
@@ -23,24 +24,39 @@
 
 <BorderPane fx:id="root" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" styleClass="subpanel" stylesheets="@../../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.tables.editors.AltSound2EditorController">
    <bottom>
-      <HBox alignment="BASELINE_RIGHT" spacing="12.0" BorderPane.alignment="CENTER">
-         <children>
-          <Button fx:id="cancelButton" mnemonicParsing="false" onAction="#onCancelClick" styleClass="default-button" text="Close">
-               <HBox.margin>
-                  <Insets right="12.0" />
-               </HBox.margin>
-            </Button>
-            <Button fx:id="revertBtn" layoutX="418.0" layoutY="10.0" mnemonicParsing="false" onAction="#onRestoreClick" styleClass="default-button" text="Revert Changes">
-               <HBox.margin>
-                  <Insets />
-               </HBox.margin>
-            </Button>
-            <Button fx:id="saveBtn" layoutX="84.0" layoutY="10.0" mnemonicParsing="false" onAction="#onSaveClick" styleClass="submit-button" text="Save" />
-         </children>
+      <BorderPane BorderPane.alignment="CENTER">
          <BorderPane.margin>
             <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
          </BorderPane.margin>
-      </HBox>
+         <center>
+            <HBox alignment="BASELINE_RIGHT" spacing="12.0">
+               <children>
+                <Button fx:id="cancelButton" mnemonicParsing="false" onAction="#onCancelClick" styleClass="default-button" text="Close">
+                     <HBox.margin>
+                        <Insets right="12.0" />
+                     </HBox.margin>
+                  </Button>
+                  <Button fx:id="revertBtn" layoutX="418.0" layoutY="10.0" mnemonicParsing="false" onAction="#onRestoreClick" styleClass="default-button" text="Revert Changes">
+                     <HBox.margin>
+                        <Insets />
+                     </HBox.margin>
+                  </Button>
+                  <Button fx:id="saveBtn" layoutX="84.0" layoutY="10.0" mnemonicParsing="false" onAction="#onSaveClick" styleClass="submit-button" text="Save" />
+               </children>
+            </HBox>
+         </center>
+         <left>
+            <HBox alignment="CENTER_LEFT" BorderPane.alignment="CENTER">
+               <children>
+                  <CheckBox fx:id="romVolCtrlCheckbox" mnemonicParsing="false" text="ROM Volume Control" textFill="WHITE">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                  </CheckBox>
+               </children>
+            </HBox>
+         </left>
+      </BorderPane>
    </bottom>
    <center>
       <BorderPane minHeight="500.0" BorderPane.alignment="CENTER">
@@ -57,7 +73,7 @@
                         <TableColumn fx:id="columnDuck" prefWidth="137.59996032714844" style="-fx-alignment: CENTER;" text="Ducking Profile" />
                         <TableColumn fx:id="columnGain" prefWidth="65.5999755859375" style="-fx-alignment: CENTER;" text="Gain" />
                         <TableColumn fx:id="columnFilename" prefWidth="331.2000427246094" style="-fx-alignment: BASELINE_LEFT;" text="Filename" />
-                        <TableColumn fx:id="columnPlay" prefWidth="91.2000732421875" style="-fx-alignment: CENTER;" text="Play" />
+                        <TableColumn fx:id="columnPlay" prefWidth="91.2000732421875" style="-fx-alignment: CENTER;" text="Play" visible="false" />
                         <TableColumn fx:id="columnFilesize" prefWidth="91.2000732421875" style="-fx-alignment: CENTER;" text="Filesize" />
                     </columns>
                   </TableView>
@@ -199,6 +215,15 @@
                </font>
             </TextField>
             <Separator layoutX="228.0" layoutY="10.0" orientation="VERTICAL" prefWidth="12.0" />
+            <Button mnemonicParsing="false" onAction="#onSampleTypes" text="Sample Types" textFill="WHITE">
+               <font>
+                  <Font size="14.0" />
+               </font>
+               <graphic>
+                  <FontIcon iconColor="WHITE" iconLiteral="mdi2s-speedometer" />
+               </graphic>
+            </Button>
+            <Separator layoutX="264.0" layoutY="10.0" orientation="VERTICAL" prefWidth="12.0" />
             <Label layoutX="244.0" layoutY="16.0" text="Filename:" textFill="WHITE">
                <font>
                   <Font size="14.0" />
@@ -209,7 +234,7 @@
             </Label>
             <ComboBox fx:id="filenameFilterCombo" layoutX="296.0" layoutY="11.0" prefWidth="240.0" />
             <Separator layoutX="316.0" layoutY="10.0" orientation="VERTICAL" prefWidth="12.0" />
-            <Label layoutX="10.0" layoutY="16.0" text="Type:" textFill="WHITE">
+            <Label layoutX="10.0" layoutY="16.0" text="Sample Type:" textFill="WHITE">
                <font>
                   <Font size="14.0" />
                </font>

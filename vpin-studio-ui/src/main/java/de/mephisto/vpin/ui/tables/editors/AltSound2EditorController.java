@@ -24,7 +24,6 @@ import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.VBox;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.scene.paint.Paint;
@@ -35,7 +34,6 @@ import org.kordamp.ikonli.javafx.FontIcon;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.File;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
@@ -110,6 +108,9 @@ public class AltSound2EditorController implements Initializable {
   @FXML
   private Button deleteBtn;
 
+  @FXML
+  private CheckBox romVolCtrlCheckbox;
+
   private ChangeListener<String> channelComboChangeListener;
   private ChangeListener<AltSound2DuckingProfile> duckingProfileComboChangeListener;
   private TablesController tablesController;
@@ -117,6 +118,11 @@ public class AltSound2EditorController implements Initializable {
   @FXML
   private void onCancelClick(ActionEvent e) {
     this.tablesController.getEditorRootStack().getChildren().remove(root);
+  }
+
+  @FXML
+  private void onSampleTypes() {
+
   }
 
   @FXML
@@ -155,7 +161,7 @@ public class AltSound2EditorController implements Initializable {
   @FXML
   private void onProfileAdd() {
     AltSound2DuckingProfile profile = Dialogs.openAltSound2ProfileEditor(altSound, null);
-    if(profile != null) {
+    if (profile != null) {
       altSound.addProfile(profile);
       refreshProfiles();
       refresh();
@@ -350,6 +356,9 @@ public class AltSound2EditorController implements Initializable {
       }
     }
     filenameFilterCombo.setItems(FXCollections.observableList(filenames));
+
+    romVolCtrlCheckbox.setSelected(altSound.isRomVolumeControl());
+    romVolCtrlCheckbox.selectedProperty().addListener((observableValue, aBoolean, t1) -> altSound.setRomVolumeControl(t1));
 
     refreshProfiles();
     refresh();

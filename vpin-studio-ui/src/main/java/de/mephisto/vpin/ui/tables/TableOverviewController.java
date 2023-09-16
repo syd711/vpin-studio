@@ -485,6 +485,10 @@ public class TableOverviewController implements Initializable, StudioFXControlle
         root.setMaxWidth(Double.MAX_VALUE);
 
         StackPane editorRootStack = tablesController.getEditorRootStack();
+        if(editorRootStack.getChildren().size() > 1) {
+          return;
+        }
+
         editorRootStack.getChildren().add(root);
 
         TableScriptEditorController editorController = loader.getController();
@@ -508,6 +512,10 @@ public class TableOverviewController implements Initializable, StudioFXControlle
         root.setMaxHeight(Double.MAX_VALUE);
 
         StackPane editorRootStack = tablesController.getEditorRootStack();
+        if(editorRootStack.getChildren().size() > 1) {
+          return;
+        }
+
         editorRootStack.getChildren().add(root);
 
         AltSoundEditorController editorController = loader.getController();
@@ -529,8 +537,11 @@ public class TableOverviewController implements Initializable, StudioFXControlle
         root.setMaxHeight(Double.MAX_VALUE);
 
         StackPane editorRootStack = tablesController.getEditorRootStack();
-        editorRootStack.getChildren().add(root);
+        if(editorRootStack.getChildren().size() > 1) {
+          return;
+        }
 
+        editorRootStack.getChildren().add(root);
         AltSound2EditorController editorController = loader.getController();
         editorController.setAltSound(game, altSound);
         editorController.setTablesController(tablesController);

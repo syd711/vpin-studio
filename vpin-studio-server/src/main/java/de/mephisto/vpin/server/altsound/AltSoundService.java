@@ -2,6 +2,7 @@ package de.mephisto.vpin.server.altsound;
 
 import de.mephisto.vpin.commons.utils.FileUtils;
 import de.mephisto.vpin.restclient.altsound.AltSound;
+import de.mephisto.vpin.restclient.altsound.AltSoundFormats;
 import de.mephisto.vpin.restclient.jobs.JobExecutionResult;
 import de.mephisto.vpin.restclient.jobs.JobExecutionResultFactory;
 import de.mephisto.vpin.restclient.mame.MameOptions;
@@ -65,9 +66,12 @@ public class AltSoundService implements InitializingBean {
 
   public AltSound save(@NonNull Game game, @NonNull AltSound altSound) {
     if (game.isAltSoundAvailable()) {
-      return new AltSoundWriter(game.getAltSoundFolder()).write(altSound);
+      if(altSound.getFormat().equals(AltSoundFormats.gsound)) {
+        new AltSound2Writer(game.getAltSoundFolder()).write(altSound);
+      }
+      new AltSoundWriter(game.getAltSoundFolder()).write(altSound);
     }
-    return new AltSound();
+    return altSound;
   }
 
   public boolean setAltSoundEnabled(@NonNull Game game, boolean b) {

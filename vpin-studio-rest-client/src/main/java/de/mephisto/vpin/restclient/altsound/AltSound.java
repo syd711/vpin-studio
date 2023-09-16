@@ -234,6 +234,20 @@ public class AltSound {
 
     return builder.toString();
   }
+  public String toGSoundCSV() {
+    StringBuilder builder = new StringBuilder();
+    builder.append("\"");
+    builder.append(String.join("\",\"", this.headers));
+    builder.append("\"");
+    builder.append("\n");
+
+    for (AltSoundEntry entry : this.entries) {
+      builder.append(entry.toGSoundCSV(this));
+      builder.append("\n");
+    }
+
+    return builder.toString();
+  }
 
   public List<AltSound2DuckingProfile> getProfiles(AltSound2SampleType sampleType) {
     switch (sampleType) {

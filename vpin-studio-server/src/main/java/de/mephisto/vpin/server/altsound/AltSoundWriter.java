@@ -18,13 +18,12 @@ public class AltSoundWriter {
     this.gameAltSoundFolder = gameAltSoundFolder;
   }
 
-  public AltSound write(@NonNull AltSound altSound) {
+  public void write(@NonNull AltSound altSound) {
     try {
       org.apache.commons.io.FileUtils.writeStringToFile(altSound.getCsvFile(), altSound.toCSV(), StandardCharsets.UTF_8);
       LOG.info("Written ALTSound " + altSound.getCsvFile());
     } catch (Exception e) {
       LOG.error("Error writing CSV " + altSound.getCsvFile() + ": " + e.getMessage(), e);
     }
-    return altSound;
   }
 }

@@ -189,4 +189,18 @@ public class AltSoundEntry {
     }
     return builder.toString();
   }
+
+  public String toGSoundCSV(AltSound altSound) {
+    StringBuilder builder = new StringBuilder();
+    builder.append(this.id);
+    builder.append(",");
+    builder.append(StringUtils.isEmpty(this.channel) ? "" : this.channel);
+    builder.append(",");
+    builder.append(this.gain);
+    builder.append(",");
+    builder.append(this.duck);
+    builder.append(",");
+    builder.append(this.filename);
+    return builder.toString();
+  }
 }
