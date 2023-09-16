@@ -28,19 +28,19 @@ public class AltSound {
   private File csvFile;
 
   private AltSound2Group music;
-  private List<AltSound2DuckingProfile> musicDuckingProfiles;
+  private List<AltSound2DuckingProfile> musicDuckingProfiles = new ArrayList<>();
 
   private AltSound2Group callout;
-  private List<AltSound2DuckingProfile> calloutDuckingProfiles;
+  private List<AltSound2DuckingProfile> calloutDuckingProfiles = new ArrayList<>();
 
   private AltSound2Group sfx;
-  private List<AltSound2DuckingProfile> sfxDuckingProfiles;
+  private List<AltSound2DuckingProfile> sfxDuckingProfiles = new ArrayList<>();
 
   private AltSound2Group solo;
-  private List<AltSound2DuckingProfile> soloDuckingProfiles;
+  private List<AltSound2DuckingProfile> soloDuckingProfiles = new ArrayList<>();
 
   private AltSound2Group overlay;
-  private List<AltSound2DuckingProfile> overlayDuckingProfiles;
+  private List<AltSound2DuckingProfile> overlayDuckingProfiles = new ArrayList<>();
 
   public String getName() {
     return name;
@@ -236,9 +236,7 @@ public class AltSound {
   }
   public String toGSoundCSV() {
     StringBuilder builder = new StringBuilder();
-    builder.append("\"");
-    builder.append(String.join("\",\"", this.headers));
-    builder.append("\"");
+    builder.append(String.join(",", this.headers));
     builder.append("\n");
 
     for (AltSoundEntry entry : this.entries) {

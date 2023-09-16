@@ -6,6 +6,7 @@ import de.mephisto.vpin.restclient.altsound.AltSound;
 import de.mephisto.vpin.restclient.altsound.AltSoundEntry;
 import de.mephisto.vpin.restclient.representations.GameRepresentation;
 import de.mephisto.vpin.ui.Studio;
+import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.tables.TablesController;
 import javafx.beans.property.*;
 import javafx.beans.value.ChangeListener;
@@ -17,13 +18,15 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.layout.BorderPane;
-import javafx.stage.Stage;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.net.URL;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.ResourceBundle;
 
 public class AltSoundEditorController implements Initializable {
   private final static Logger LOG = LoggerFactory.getLogger(AltSoundEditorController.class);
@@ -114,25 +117,14 @@ public class AltSoundEditorController implements Initializable {
   }
 
   @FXML
-  private void onRestoreClick() {
-    Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Revert Changes?", "Revert all changes and restore initial ALT sound data?", null, "Yes, revert changes");
-    if (result.isPresent() && result.get().equals(ButtonType.OK)) {
-      AltSound orig = Studio.client.getAltSoundService().getAltSound(this.game.getId());
-      this.altSound.setEntries(orig.getEntries());
-      this.refresh();
-    }
-  }
-
-  @FXML
   private void onSaveClick(ActionEvent e) {
     try {
       Studio.client.getAltSoundService().saveAltSound(game.getId(), this.altSound);
+      EventManager.getInstance().notifyTableChange(game.getId(), game.getRom());
     } catch (Exception ex) {
       LOG.error("Failed to save ALT sound: " + ex.getMessage(), ex);
       WidgetFactory.showAlert(Studio.stage, "Error", "Failed to save ALT sound: " + ex.getMessage());
     }
-    Stage stage = (Stage) ((Button) e.getSource()).getScene().getWindow();
-    stage.close();
   }
 
   @Override

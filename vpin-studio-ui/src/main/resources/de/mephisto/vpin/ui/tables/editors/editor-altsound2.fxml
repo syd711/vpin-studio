@@ -33,11 +33,6 @@
                <children>
                 <Button fx:id="cancelButton" mnemonicParsing="false" onAction="#onCancelClick" styleClass="default-button" text="Close">
                      <HBox.margin>
-                        <Insets right="12.0" />
-                     </HBox.margin>
-                  </Button>
-                  <Button fx:id="revertBtn" layoutX="418.0" layoutY="10.0" mnemonicParsing="false" onAction="#onRestoreClick" styleClass="default-button" text="Revert Changes">
-                     <HBox.margin>
                         <Insets />
                      </HBox.margin>
                   </Button>

@@ -1,14 +1,15 @@
 package de.mephisto.vpin.restclient.altsound;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class AltSound2Group {
   private String name;
-  private List<AltSound2SampleType> ducks;
-  private List<AltSound2SampleType> pauses;
-  private List<AltSound2SampleType> stops;
+  private List<AltSound2SampleType> ducks = new ArrayList<>();
+  private List<AltSound2SampleType> pauses = new ArrayList<>();
+  private List<AltSound2SampleType> stops = new ArrayList<>();
   private Integer groupVol;
-  private List<AltSound2DuckingProfile> profiles;
+  private List<AltSound2DuckingProfile> profiles = new ArrayList<>();
 
   public String getName() {
     return name;

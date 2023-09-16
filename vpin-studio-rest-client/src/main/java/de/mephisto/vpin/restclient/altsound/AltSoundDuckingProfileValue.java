@@ -34,4 +34,9 @@ public class AltSoundDuckingProfileValue {
   public int hashCode() {
     return sampleType.hashCode();
   }
+
+  @Override
+  public String toString() {
+    return sampleType.name() + ":" + volume;
+  }
 }

@@ -137,6 +137,7 @@ public class TablesSidebarAltSoundController implements Initializable {
   @FXML
   private void onReload() {
     this.reloadBtn.setDisable(true);
+    tablesSidebarController.getTablesController().closeEditors();
 
     Platform.runLater(() -> {
       new Thread(() -> {
@@ -157,7 +158,9 @@ public class TablesSidebarAltSoundController implements Initializable {
     if (game.isPresent() && game.get().isAltSoundAvailable()) {
       Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Restore Backup?", "Revert all changes and restore the original ALT sound backup?", null, "Yes, restore backup");
       if (result.isPresent() && result.get().equals(ButtonType.OK)) {
+        tablesSidebarController.getTablesController().closeEditors();
         Studio.client.getAltSoundService().restoreAltSound(game.get().getId());
+        EventManager.getInstance().notifyTableChange(game.get().getId(), game.get().getRom());
       }
     }
   }

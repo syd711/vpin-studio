@@ -69,7 +69,9 @@ public class AltSoundService implements InitializingBean {
       if(altSound.getFormat().equals(AltSoundFormats.gsound)) {
         new AltSound2Writer(game.getAltSoundFolder()).write(altSound);
       }
-      new AltSoundWriter(game.getAltSoundFolder()).write(altSound);
+      else {
+        new AltSoundWriter(game.getAltSoundFolder()).write(altSound);
+      }
     }
     return altSound;
   }

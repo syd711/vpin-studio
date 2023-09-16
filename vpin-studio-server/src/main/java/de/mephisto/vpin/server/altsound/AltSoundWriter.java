@@ -19,11 +19,12 @@ public class AltSoundWriter {
   }
 
   public void write(@NonNull AltSound altSound) {
+    File altSoundCsv = new File(gameAltSoundFolder, "altsound.csv");
     try {
-      org.apache.commons.io.FileUtils.writeStringToFile(altSound.getCsvFile(), altSound.toCSV(), StandardCharsets.UTF_8);
-      LOG.info("Written ALTSound " + altSound.getCsvFile());
+      org.apache.commons.io.FileUtils.writeStringToFile(altSoundCsv, altSound.toCSV(), StandardCharsets.UTF_8);
+      LOG.info("Written ALTSound " + altSoundCsv.getAbsolutePath());
     } catch (Exception e) {
-      LOG.error("Error writing CSV " + altSound.getCsvFile() + ": " + e.getMessage(), e);
+      LOG.error("Error writing CSV " + altSoundCsv.getAbsolutePath() + ": " + e.getMessage(), e);
     }
   }
 }

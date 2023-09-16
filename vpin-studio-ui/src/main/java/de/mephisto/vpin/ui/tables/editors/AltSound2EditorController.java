@@ -8,6 +8,7 @@ import de.mephisto.vpin.restclient.altsound.AltSound2SampleType;
 import de.mephisto.vpin.restclient.altsound.AltSoundEntry;
 import de.mephisto.vpin.restclient.representations.GameRepresentation;
 import de.mephisto.vpin.ui.Studio;
+import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.tables.TablesController;
 import de.mephisto.vpin.ui.util.Dialogs;
 import javafx.application.Platform;
@@ -27,7 +28,6 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.scene.paint.Paint;
-import javafx.stage.Stage;
 import javafx.util.Callback;
 import org.apache.commons.lang3.StringUtils;
 import org.kordamp.ikonli.javafx.FontIcon;
@@ -169,25 +169,14 @@ public class AltSound2EditorController implements Initializable {
   }
 
   @FXML
-  private void onRestoreClick() {
-    Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Revert Changes?", "Revert all changes and restore initial ALT sound data?", null, "Yes, revert changes");
-    if (result.isPresent() && result.get().equals(ButtonType.OK)) {
-      AltSound orig = client.getAltSoundService().getAltSound(this.game.getId());
-      this.altSound.setEntries(orig.getEntries());
-      this.refresh();
-    }
-  }
-
-  @FXML
   private void onSaveClick(ActionEvent e) {
     try {
       client.getAltSoundService().saveAltSound(game.getId(), this.altSound);
+      EventManager.getInstance().notifyTableChange(game.getId(), game.getRom());
     } catch (Exception ex) {
       LOG.error("Failed to save ALT sound: " + ex.getMessage(), ex);
       WidgetFactory.showAlert(Studio.stage, "Error", "Failed to save ALT sound: " + ex.getMessage());
     }
-    Stage stage = (Stage) ((Button) e.getSource()).getScene().getWindow();
-    stage.close();
   }
 
   @Override

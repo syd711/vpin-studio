@@ -981,4 +981,15 @@ public class TableOverviewController implements Initializable, StudioFXControlle
       refreshView(Optional.ofNullable(gameRepresentation));
     }
   }
+
+  public void closeEditors() {
+    StackPane editorRootStack = tablesController.getEditorRootStack();
+    List<Node> nodes = new ArrayList<>(editorRootStack.getChildren());
+    for (Node node : nodes) {
+      if(node instanceof TabPane) {
+        continue;
+      }
+      editorRootStack.getChildren().remove(node);
+    }
+  }
 }

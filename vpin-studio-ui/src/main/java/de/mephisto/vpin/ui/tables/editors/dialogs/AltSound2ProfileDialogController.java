@@ -122,6 +122,7 @@ public class AltSound2ProfileDialogController implements Initializable, DialogCo
 
       if (t1) {
         editorProfile.addProfileValue(AltSound2SampleType.music, 0);
+        musicLabel.setText(String.valueOf(editorProfile.getProfileValue(AltSound2SampleType.music).getVolume()));
       }
       else {
         musicSlider.valueProperty().set(0);
@@ -136,6 +137,7 @@ public class AltSound2ProfileDialogController implements Initializable, DialogCo
 
       if (t1) {
         editorProfile.addProfileValue(AltSound2SampleType.callout, 0);
+        calloutLabel.setText(String.valueOf(editorProfile.getProfileValue(AltSound2SampleType.callout).getVolume()));
       }
       else {
         calloutSlider.valueProperty().set(0);
@@ -149,6 +151,7 @@ public class AltSound2ProfileDialogController implements Initializable, DialogCo
       sfxSlider.setDisable(!t1);
       if (t1) {
         editorProfile.addProfileValue(AltSound2SampleType.sfx, 0);
+        sfxLabel.setText(String.valueOf(editorProfile.getProfileValue(AltSound2SampleType.sfx).getVolume()));
       }
       else {
         sfxSlider.valueProperty().set(0);
@@ -162,6 +165,7 @@ public class AltSound2ProfileDialogController implements Initializable, DialogCo
       soloSlider.setDisable(!t1);
       if (t1) {
         editorProfile.addProfileValue(AltSound2SampleType.solo, 0);
+        soloLabel.setText(String.valueOf(editorProfile.getProfileValue(AltSound2SampleType.solo).getVolume()));
       }
       else {
         soloSlider.valueProperty().set(0);
@@ -175,6 +179,7 @@ public class AltSound2ProfileDialogController implements Initializable, DialogCo
       overlaySlider.setDisable(!t1);
       if (t1) {
         editorProfile.addProfileValue(AltSound2SampleType.overlay, 0);
+        overlayLabel.setText(String.valueOf(editorProfile.getProfileValue(AltSound2SampleType.overlay).getVolume()));
       }
       else {
         overlaySlider.valueProperty().set(0);
