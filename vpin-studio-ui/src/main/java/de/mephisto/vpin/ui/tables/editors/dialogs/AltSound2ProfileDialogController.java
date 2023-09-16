@@ -1,6 +1,7 @@
 package de.mephisto.vpin.ui.tables.editors.dialogs;
 
 import de.mephisto.vpin.commons.fx.DialogController;
+import de.mephisto.vpin.restclient.altsound.AltSound;
 import de.mephisto.vpin.restclient.altsound.AltSound2DuckingProfile;
 import de.mephisto.vpin.restclient.altsound.AltSound2SampleType;
 import de.mephisto.vpin.restclient.altsound.AltSoundDuckingProfileValue;
@@ -20,7 +21,7 @@ public class AltSound2ProfileDialogController implements Initializable, DialogCo
   private final static Logger LOG = LoggerFactory.getLogger(AltSound2ProfileDialogController.class);
 
   @FXML
-  private Label sampleIdLabel;
+  private Label profileIdLabel;
 
   @FXML
   private ComboBox<String> sampleCombo;
@@ -55,7 +56,6 @@ public class AltSound2ProfileDialogController implements Initializable, DialogCo
   @FXML
   private Slider overlaySlider;
 
-
   @FXML
   private CheckBox musicCheckbox;
 
@@ -70,10 +70,16 @@ public class AltSound2ProfileDialogController implements Initializable, DialogCo
 
   @FXML
   private CheckBox overlayCheckbox;
+
+  @FXML
+  private Button saveBtn;
+
   private AltSound2DuckingProfile editorProfile;
+  private AltSound altSound;
 
   @FXML
   private void onSaveClick(ActionEvent e) {
+    //no action needed since we already have a full copy
     Stage stage = (Stage) ((Button) e.getSource()).getScene().getWindow();
     stage.close();
   }
@@ -92,7 +98,23 @@ public class AltSound2ProfileDialogController implements Initializable, DialogCo
     sfxSlider.setDisable(true);
 
     sampleCombo.setItems(FXCollections.observableList(AltSound2SampleType.toStringValues()));
-    sampleCombo.valueProperty().addListener((observableValue, s, t1) -> editorProfile.setType(AltSound2SampleType.valueOf(t1.toLowerCase())));
+    sampleCombo.valueProperty().addListener((observableValue, s, t1) -> {
+      AltSound2SampleType sampleType = AltSound2SampleType.valueOf(t1.toLowerCase());
+
+      //apply sample type
+      editorProfile.setType(sampleType);
+
+      int profileId = 1;
+      AltSound2DuckingProfile existingProfile = altSound.getProfile(sampleType, profileId);
+      while (existingProfile != null) {
+        profileId++;
+        existingProfile = altSound.getProfile(sampleType, profileId);
+      }
+
+      this.saveBtn.setDisable(false);
+      this.editorProfile.setId(profileId);
+      this.profileIdLabel.setText(String.valueOf(profileId));
+    });
 
     musicCheckbox.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
       musicLabel.setDisable(!t1);
@@ -189,49 +211,53 @@ public class AltSound2ProfileDialogController implements Initializable, DialogCo
     editorProfile = null;
   }
 
-  public void setProfile(AltSound2DuckingProfile profile) {
+  public void setProfile(AltSound altSound, AltSound2DuckingProfile profile) {
+    this.altSound = altSound;
+
     if (profile != null) {
+      //copy all values to the working copy
       this.editorProfile.setType(profile.getType());
       this.editorProfile.setId(profile.getId());
       this.editorProfile.setValues(profile.getValues());
       this.sampleCombo.setValue(profile.getType().name().toUpperCase());
-      this.sampleIdLabel.setText(String.valueOf(profile.getId()));
+      this.profileIdLabel.setText(String.valueOf(profile.getId()));
       this.sampleCombo.setDisable(true);
     }
     else {
-      this.sampleIdLabel.setText("-");
+      this.profileIdLabel.setText("-");
+      this.saveBtn.setDisable(true);
     }
 
 
-    AltSoundDuckingProfileValue profileValue = profile.getProfileValue(AltSound2SampleType.music);
+    AltSoundDuckingProfileValue profileValue = this.editorProfile.getProfileValue(AltSound2SampleType.music);
     if (profileValue != null) {
       musicSlider.setDisable(false);
       musicSlider.setValue(profileValue.getVolume());
       musicCheckbox.setSelected(true);
     }
 
-    profileValue = profile.getProfileValue(AltSound2SampleType.callout);
+    profileValue = this.editorProfile.getProfileValue(AltSound2SampleType.callout);
     if (profileValue != null) {
       calloutSlider.setDisable(false);
       calloutSlider.setValue(profileValue.getVolume());
       calloutCheckbox.setSelected(true);
     }
 
-    profileValue = profile.getProfileValue(AltSound2SampleType.solo);
+    profileValue = this.editorProfile.getProfileValue(AltSound2SampleType.solo);
     if (profileValue != null) {
       soloSlider.setDisable(false);
       soloSlider.setValue(profileValue.getVolume());
       soloCheckbox.setSelected(true);
     }
 
-    profileValue = profile.getProfileValue(AltSound2SampleType.sfx);
+    profileValue = this.editorProfile.getProfileValue(AltSound2SampleType.sfx);
     if (profileValue != null) {
       sfxSlider.setDisable(false);
       sfxSlider.setValue(profileValue.getVolume());
       sfxCheckbox.setSelected(true);
     }
 
-    profileValue = profile.getProfileValue(AltSound2SampleType.overlay);
+    profileValue = this.editorProfile.getProfileValue(AltSound2SampleType.overlay);
     if (profileValue != null) {
       overlaySlider.setDisable(false);
       overlaySlider.setValue(profileValue.getVolume());

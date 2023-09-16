@@ -26,7 +26,7 @@
                   <Insets right="12.0" />
                </HBox.margin>
             </Button>
-            <Button layoutX="418.0" layoutY="10.0" mnemonicParsing="false" onAction="#onSaveClick" styleClass="submit-button" text="Save Profile">
+            <Button fx:id="saveBtn" layoutX="418.0" layoutY="10.0" mnemonicParsing="false" onAction="#onSaveClick" styleClass="submit-button" text="Save Profile">
                <HBox.margin>
                   <Insets />
                </HBox.margin>
@@ -297,8 +297,8 @@
                      <children>
                         <Label styleClass="default-text" text="Sample Type:" textFill="WHITE" />
                         <ComboBox fx:id="sampleCombo" prefWidth="150.0" GridPane.columnIndex="1" />
-                        <Label layoutX="10.0" layoutY="15.0" styleClass="default-text" text="Sample Id:" GridPane.rowIndex="1" />
-                        <Label fx:id="sampleIdLabel" layoutX="10.0" layoutY="45.0" styleClass="default-text" text="-" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                        <Label layoutX="10.0" layoutY="15.0" styleClass="default-text" text="Profile Id:" GridPane.rowIndex="1" />
+                        <Label fx:id="profileIdLabel" layoutX="10.0" layoutY="45.0" styleClass="default-text" text="-" GridPane.columnIndex="1" GridPane.rowIndex="1" />
                      </children>
                   </GridPane>
                </children>

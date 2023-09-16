@@ -1,11 +1,12 @@
 package de.mephisto.vpin.restclient.altsound;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 public class AltSound2DuckingProfile {
   private int id;
-  private List<AltSoundDuckingProfileValue> values;
+  private List<AltSoundDuckingProfileValue> values = new ArrayList<>();
   private AltSound2SampleType type;
 
   public int getId() {

@@ -32,6 +32,7 @@ public class AltSoundLoader {
     AltSound altSound = new AltSound();
     altSound.setFormat(AltSoundFormats.altsound);
     altSound.setCsvFile(csvFile);
+    altSound.setName(csvFile.getParentFile().getName());
     altSound.setModificationDate(new Date(csvFile.lastModified()));
 
     long size = csvFile.length();

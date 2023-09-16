@@ -10,6 +10,7 @@ import de.mephisto.vpin.restclient.representations.GameRepresentation;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.tables.TablesController;
 import de.mephisto.vpin.ui.util.Dialogs;
+import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.*;
 import javafx.beans.value.ChangeListener;
@@ -23,16 +24,25 @@ import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.VBox;
+import javafx.scene.media.Media;
+import javafx.scene.media.MediaPlayer;
+import javafx.scene.paint.Paint;
 import javafx.stage.Stage;
+import javafx.util.Callback;
 import org.apache.commons.lang3.StringUtils;
+import org.kordamp.ikonli.javafx.FontIcon;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.File;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
+
+import static de.mephisto.vpin.ui.Studio.client;
 
 public class AltSound2EditorController implements Initializable {
   private final static Logger LOG = LoggerFactory.getLogger(AltSound2EditorController.class);
@@ -68,7 +78,7 @@ public class AltSound2EditorController implements Initializable {
   private TableColumn<AltSoundEntryModel, String> columnFilesize;
 
   @FXML
-  private TableColumn<AltSoundEntryModel, String> columnPlay;
+  private TableColumn<AltSoundEntryModel, AltSoundEntryModel> columnPlay;
 
   @FXML
   private TextField searchText;
@@ -111,24 +121,52 @@ public class AltSound2EditorController implements Initializable {
 
   @FXML
   private void onProfileDelete() {
+    AltSound2DuckingProfile value = this.profilesCombo.getValue();
+    if (value != null) {
+      Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Delete Profile \"" + value.getType().name().toUpperCase() + "\" " + value.getId() + "?", "All related audio files will be resetted to the default profile.", null,
+          "Delete Profile");
+      if (result.isPresent() && result.get().equals(ButtonType.OK)) {
+        altSound.getMusicDuckingProfiles().remove(value);
+        altSound.getCalloutDuckingProfiles().remove(value);
+        altSound.getSoloDuckingProfiles().remove(value);
+        altSound.getSfxDuckingProfiles().remove(value);
+        altSound.getOverlayDuckingProfiles().remove(value);
 
+        List<AltSoundEntry> entries = altSound.getEntries();
+        for (AltSoundEntry entry : entries) {
+          if (entry.getChannel().equalsIgnoreCase(value.getType().name()) && entry.getDuck() == value.getId()) {
+            entry.setDuck(0);
+            LOG.info("Setting " + entry.getFilename() + " to ducking profile 0");
+          }
+        }
+
+        refreshProfiles();
+        refresh();
+      }
+    }
   }
 
   @FXML
   private void onProfileEdit() {
-    Dialogs.openAltSound2ProfileEditor(this.profilesCombo.getValue());
+    Dialogs.openAltSound2ProfileEditor(altSound, this.profilesCombo.getValue());
+    refresh();
   }
 
   @FXML
   private void onProfileAdd() {
-
+    AltSound2DuckingProfile profile = Dialogs.openAltSound2ProfileEditor(altSound, null);
+    if(profile != null) {
+      altSound.addProfile(profile);
+      refreshProfiles();
+      refresh();
+    }
   }
 
   @FXML
   private void onRestoreClick() {
     Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Revert Changes?", "Revert all changes and restore initial ALT sound data?", null, "Yes, revert changes");
     if (result.isPresent() && result.get().equals(ButtonType.OK)) {
-      AltSound orig = Studio.client.getAltSoundService().getAltSound(this.game.getId());
+      AltSound orig = client.getAltSoundService().getAltSound(this.game.getId());
       this.altSound.setEntries(orig.getEntries());
       this.refresh();
     }
@@ -137,7 +175,7 @@ public class AltSound2EditorController implements Initializable {
   @FXML
   private void onSaveClick(ActionEvent e) {
     try {
-      Studio.client.getAltSoundService().saveAltSound(game.getId(), this.altSound);
+      client.getAltSoundService().saveAltSound(game.getId(), this.altSound);
     } catch (Exception ex) {
       LOG.error("Failed to save ALT sound: " + ex.getMessage(), ex);
       WidgetFactory.showAlert(Studio.stage, "Error", "Failed to save ALT sound: " + ex.getMessage());
@@ -160,6 +198,17 @@ public class AltSound2EditorController implements Initializable {
     columnType.setCellFactory(col -> {
       TableCell<AltSoundEntryModel, StringProperty> c = new TableCell<>();
       final ComboBox<String> comboBox = new ComboBox<>(FXCollections.observableList(AltSound2SampleType.toStringValues()));
+      comboBox.valueProperty().addListener(new ChangeListener<String>() {
+        @Override
+        public void changed(ObservableValue<? extends String> observableValue, String s, String t1) {
+          if (s != null && t1 != null && !s.equals(t1)) {
+            Platform.runLater(() -> {
+              refresh();
+            });
+          }
+        }
+      });
+
       c.itemProperty().addListener((observable, oldValue, newValue) -> {
         if (oldValue != null) {
           comboBox.valueProperty().unbindBidirectional(oldValue);
@@ -173,6 +222,55 @@ public class AltSound2EditorController implements Initializable {
     });
 
 
+    Callback<TableColumn<AltSoundEntryModel, AltSoundEntryModel>, TableCell<AltSoundEntryModel, AltSoundEntryModel>> cellFactory = new Callback<>() {
+      @Override
+      public TableCell call(final TableColumn<AltSoundEntryModel, AltSoundEntryModel> param) {
+        final TableCell<AltSoundEntryModel, AltSoundEntryModel> cell = new TableCell<>() {
+          final Button btn = new Button("");
+
+          @Override
+          public void updateItem(AltSoundEntryModel item, boolean empty) {
+            super.updateItem(item, empty);
+            FontIcon fontIcon = new FontIcon();
+            fontIcon.setIconSize(18);
+            fontIcon.setIconColor(Paint.valueOf("#FFFFFF"));
+            fontIcon.setIconLiteral("bi-play");
+            btn.setGraphic(fontIcon);
+            btn.setDisable(item == null || item.size.get().equals("0"));
+            btn.setVisible(!empty);
+            setGraphic(btn);
+            btn.setOnAction(event -> {
+              fontIcon.setIconLiteral("bi-stop");
+
+              final String fileUrl = client.getAltSoundService().getAudioUrl(altSound, item.filename.get());
+              String url = client.getURL(fileUrl);
+
+              Media media = new Media(url);
+              MediaPlayer mediaPlayer = new MediaPlayer(media);
+              mediaPlayer.setAutoPlay(true);
+              mediaPlayer.setCycleCount(0);
+              mediaPlayer.setMute(false);
+              mediaPlayer.setOnError(() -> {
+                fontIcon.setIconLiteral("bi-play");
+                LOG.error("Media player error for URL {}: {}", url, mediaPlayer.getError() + ", URL: " + url);
+                mediaPlayer.stop();
+                mediaPlayer.dispose();
+              });
+
+              mediaPlayer.setOnEndOfMedia(() -> {
+                fontIcon.setIconLiteral("bi-play");
+              });
+            });
+          }
+        };
+        return cell;
+      }
+    };
+
+    columnPlay.setCellFactory(cellFactory);
+    columnPlay.setCellValueFactory(cellData -> new SimpleObjectProperty<>(cellData.getValue()));
+
+
     columnDuck.setCellValueFactory(cellData -> cellData.getValue().duck);
     columnGain.setCellValueFactory(cellData -> cellData.getValue().gain);
     columnFilesize.setCellValueFactory(cellData -> cellData.getValue().size);
@@ -180,7 +278,7 @@ public class AltSound2EditorController implements Initializable {
       AltSoundEntryModel entry = cellData.getValue();
       Label label = new Label(entry.filename.getValue());
 
-      if (!entry.exists.getValue()) {
+      if (entry.size.get().equals("0")) {
         label.setStyle("-fx-font-color: #FF3333;-fx-text-fill:#FF3333; -fx-font-weight: bold;");
       }
       return new SimpleObjectProperty(label);
@@ -255,7 +353,10 @@ public class AltSound2EditorController implements Initializable {
 
     refreshProfiles();
     refresh();
-    tableView.getSelectionModel().clearSelection();
+
+    if (!filenames.isEmpty()) {
+      tableView.getSelectionModel().select(0);
+    }
   }
 
   private void refreshProfiles() {
@@ -342,8 +443,10 @@ public class AltSound2EditorController implements Initializable {
         String name = altSoundEntryModel.channel.get();
         AltSound2SampleType altSound2SampleType = AltSound2SampleType.valueOf(name.toLowerCase());
         List<AltSound2DuckingProfile> profiles = new ArrayList<>(altSound.getProfiles(altSound2SampleType));
+        duckingProfileCombo.setDisable(profiles.isEmpty());
         profiles.add(0, null);
         duckingProfileCombo.setItems(FXCollections.observableList(profiles));
+
         Optional<AltSound2DuckingProfile> first = profiles.stream().filter(p -> p != null && p.getId() == altSoundEntryModel.duck.get()).findFirst();
         if (first.isPresent()) {
           duckingProfileCombo.valueProperty().set(first.get());

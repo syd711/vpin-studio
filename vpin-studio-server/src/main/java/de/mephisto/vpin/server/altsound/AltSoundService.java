@@ -58,6 +58,11 @@ public class AltSoundService implements InitializingBean {
     return new AltSound();
   }
 
+  public AltSound getAltSound(String name) {
+    File folder = new File(systemService.getAltSoundFolder(), name);
+    return new AltSoundLoaderFactory(folder).load();
+  }
+
   public AltSound save(@NonNull Game game, @NonNull AltSound altSound) {
     if (game.isAltSoundAvailable()) {
       return new AltSoundWriter(game.getAltSoundFolder()).write(altSound);

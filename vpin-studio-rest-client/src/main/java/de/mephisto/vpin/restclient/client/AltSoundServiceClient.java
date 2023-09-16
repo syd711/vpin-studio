@@ -57,4 +57,8 @@ public class AltSoundServiceClient extends VPinStudioClientService {
     final RestTemplate restTemplate = new RestTemplate();
     return restTemplate.getForObject(getRestClient().getBaseUrl() + API + "altsound/clearcache", Boolean.class);
   }
+
+  public String getAudioUrl(AltSound altSound, String item) {
+    return "altsound/stream/" + altSound.getName() + "/" + item;
+  }
 }

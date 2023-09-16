@@ -183,10 +183,10 @@ public class Dialogs {
     return controller.uploadFinished();
   }
 
-  public static AltSound2DuckingProfile openAltSound2ProfileEditor(AltSound2DuckingProfile profile) {
+  public static AltSound2DuckingProfile openAltSound2ProfileEditor(AltSound altSound, AltSound2DuckingProfile profile) {
     Stage stage = createStudioDialogStage(AltSound2ProfileDialogController.class, "dialog-altsound2-profile.fxml", "ALT Sound Profile");
     AltSound2ProfileDialogController controller = (AltSound2ProfileDialogController) stage.getUserData();
-    controller.setProfile(profile);
+    controller.setProfile(altSound, profile);
     stage.showAndWait();
 
     return controller.editingFinished();

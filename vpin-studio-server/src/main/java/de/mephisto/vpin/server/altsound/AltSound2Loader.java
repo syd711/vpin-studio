@@ -31,6 +31,7 @@ public class AltSound2Loader {
   public AltSound load() {
     AltSound altSound = new AltSound();
     altSound.setCsvFile(gSoundCsv);
+    altSound.setName(gSoundCsv.getParentFile().getName());
     altSound.setFormat(AltSoundFormats.gsound);
     altSound.setModificationDate(new Date(gSoundCsv.lastModified()));
 

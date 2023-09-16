@@ -9,16 +9,25 @@ import de.mephisto.vpin.server.games.GameValidationService;
 import de.mephisto.vpin.server.util.UploadUtil;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ByteArrayResource;
+import org.springframework.core.io.Resource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 
 import static de.mephisto.vpin.server.VPinStudioServer.API_SEGMENT;
+import static de.mephisto.vpin.server.util.RequestUtil.CONTENT_LENGTH;
+import static de.mephisto.vpin.server.util.RequestUtil.CONTENT_TYPE;
 import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 
 @RestController
@@ -107,6 +116,28 @@ public class AltSoundResource {
     } catch (Exception e) {
       throw new ResponseStatusException(INTERNAL_SERVER_ERROR, "ALT sound upload failed: " + e.getMessage());
     }
+  }
+
+  @GetMapping("/stream/{name}/{filename}")
+  public ResponseEntity<Resource> handleRequestWithName(@PathVariable("name") String name, @PathVariable("filename") String filename) throws IOException {
+    AltSound altSound = altSoundService.getAltSound(name);
+    File file = new File(altSound.getCsvFile().getParentFile(), filename);
+    if (file.exists()) {
+      FileInputStream in = new FileInputStream(file);
+      byte[] bytes = IOUtils.toByteArray(in);
+      ByteArrayResource bytesResource = new ByteArrayResource(bytes);
+      in.close();
+
+      HttpHeaders responseHeaders = new HttpHeaders();
+      responseHeaders.set(CONTENT_LENGTH, String.valueOf(file.length()));
+      responseHeaders.set(CONTENT_TYPE, "audio/ogg");
+      responseHeaders.set("Access-Control-Allow-Origin", "*");
+      responseHeaders.set("Access-Control-Expose-Headers", "origin, range");
+      responseHeaders.set("Cache-Control", "public, max-age=3600");
+      return ResponseEntity.ok().headers(responseHeaders).body(bytesResource);
+    }
+
+    return ResponseEntity.notFound().build();
   }
 
   private AltSound getAltSound(@NonNull Game game) {

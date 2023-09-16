@@ -11,6 +11,7 @@ import java.util.Date;
 import java.util.List;
 
 public class AltSound {
+  private String name;
   private String format;
   private List<AltSoundEntry> entries = new ArrayList<>();
   private List<String> headers = new ArrayList<>();
@@ -40,6 +41,14 @@ public class AltSound {
 
   private AltSound2Group overlay;
   private List<AltSound2DuckingProfile> overlayDuckingProfiles;
+
+  public String getName() {
+    return name;
+  }
+
+  public void setName(String name) {
+    this.name = name;
+  }
 
   @JsonIgnore
   @Nullable
@@ -242,6 +251,57 @@ public class AltSound {
       }
       case overlay: {
         return getOverlayDuckingProfiles();
+      }
+      default: {
+        throw new UnsupportedOperationException("Invalid sample type");
+      }
+    }
+  }
+
+  public AltSound2DuckingProfile getProfile(AltSound2SampleType sampleType, int id) {
+    switch (sampleType) {
+      case sfx: {
+        return getSfxDuckingProfiles().stream().filter(p -> p.getId() == id).findFirst().orElse(null);
+      }
+      case music: {
+        return getMusicDuckingProfiles().stream().filter(p -> p.getId() == id).findFirst().orElse(null);
+      }
+      case callout: {
+        return getCalloutDuckingProfiles().stream().filter(p -> p.getId() == id).findFirst().orElse(null);
+      }
+      case solo: {
+        return getSoloDuckingProfiles().stream().filter(p -> p.getId() == id).findFirst().orElse(null);
+      }
+      case overlay: {
+        return getOverlayDuckingProfiles().stream().filter(p -> p.getId() == id).findFirst().orElse(null);
+      }
+      default: {
+        throw new UnsupportedOperationException("Invalid sample type");
+      }
+    }
+  }
+
+  public void addProfile(AltSound2DuckingProfile profile) {
+    switch (profile.getType()) {
+      case sfx: {
+        getSfxDuckingProfiles().add(profile);
+        break;
+      }
+      case music: {
+        getMusicDuckingProfiles().add(profile);
+        break;
+      }
+      case callout: {
+        getCalloutDuckingProfiles().add(profile);
+        break;
+      }
+      case solo: {
+        getSoloDuckingProfiles().add(profile);
+        break;
+      }
+      case overlay: {
+        getOverlayDuckingProfiles().add(profile);
+        break;
       }
       default: {
         throw new UnsupportedOperationException("Invalid sample type");
