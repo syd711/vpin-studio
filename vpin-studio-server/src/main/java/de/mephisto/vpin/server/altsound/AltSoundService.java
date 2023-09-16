@@ -52,7 +52,7 @@ public class AltSoundService implements InitializingBean {
 
   @NonNull
   public AltSound getAltSound(@NonNull Game game) {
-    altSoundBackupService.getOrCreateBackup(game);
+    altSoundBackupService.synchronizeBackup(game);
     if(game.isAltSoundAvailable()) {
       return new AltSoundLoaderFactory(game.getAltSoundFolder()).load();
     }

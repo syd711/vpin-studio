@@ -1,6 +1,5 @@
 package de.mephisto.vpin.server.altsound;
 
-import de.mephisto.vpin.restclient.altsound.AltSound;
 import de.mephisto.vpin.server.games.Game;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import org.slf4j.Logger;
@@ -14,43 +13,52 @@ import java.io.IOException;
 public class AltSoundBackupService {
   private final static Logger LOG = LoggerFactory.getLogger(AltSoundBackupService.class);
 
-  public File getOrCreateBackup(@NonNull Game game) {
+  public void synchronizeBackup(@NonNull Game game) {
     File altSoundFolder = game.getAltSoundFolder();
     File csvFile = new File(altSoundFolder, "altsound.csv");
-    if (!csvFile.exists()) {
-      csvFile = new File(altSoundFolder, "g-sound.csv");
-    }
-    File backup = new File(altSoundFolder, csvFile.getName() + ".bak");
-    if (!backup.exists()) {
-      try {
-        org.apache.commons.io.FileUtils.copyFile(csvFile, backup);
-      } catch (IOException e) {
-        LOG.error("Error creating CSV backup: " + e.getMessage(), e);
-      }
-    }
-    return backup;
+    checkBackup(csvFile);
+
+    File gSoundCsvFile = new File(altSoundFolder, "g-sound.csv");
+    checkBackup(gSoundCsvFile);
+
+    File gSoundIniFile = new File(altSoundFolder, "altsound.ini");
+    checkBackup(gSoundIniFile);
   }
 
-  public AltSound restore(@NonNull Game game) {
-    try {
-      File altSoundFolder = game.getAltSoundFolder();
-      File csvFile = new File(altSoundFolder, "altsound.csv");
-      File backupFile = new File(altSoundFolder, "altsound.csv.bak");
-      if (!backupFile.exists()) {
-        csvFile = new File(altSoundFolder, "g-sound.csv");
-        backupFile = new File(altSoundFolder, "g-sound.csv.bak");
+  private void checkBackup(File file) {
+    File backup = new File(file.getParentFile(), file.getName() + ".bak");
+    if (file.exists() && !backup.exists()) {
+      try {
+        org.apache.commons.io.FileUtils.copyFile(file, backup);
+      } catch (IOException e) {
+        LOG.error("Error creating alt sound backup file " + file.getAbsolutePath() + ": " + e.getMessage(), e);
       }
-
-      if (backupFile.exists()) {
-        csvFile.delete();
-        org.apache.commons.io.FileUtils.copyFile(backupFile, csvFile);
-      }
-      else {
-        LOG.error("Failed to restore ALT sound backup, the backup file " + backupFile.getAbsolutePath() + " does not exists.");
-      }
-    } catch (IOException e) {
-      LOG.error("Error restoring CSV backup: " + e.getMessage(), e);
     }
-    return null;
+  }
+
+  public void restore(@NonNull Game game) {
+    File altSoundFolder = game.getAltSoundFolder();
+    File csvFile = new File(altSoundFolder, "altsound.csv");
+    restoreBackup(csvFile);
+
+    File gSoundCsvFile = new File(altSoundFolder, "g-sound.csv");
+    restoreBackup(gSoundCsvFile);
+
+    File gSoundIniFile = new File(altSoundFolder, "altsound.ini");
+    restoreBackup(gSoundIniFile);
+  }
+
+  private void restoreBackup(File file) {
+    File backup = new File(file.getParentFile(), file.getName() + ".bak");
+    if (backup.exists()) {
+      try {
+        if(file.exists()) {
+          file.delete();
+        }
+        org.apache.commons.io.FileUtils.copyFile(backup, file);
+      } catch (IOException e) {
+        LOG.error("Error restoring backup file " + file.getAbsolutePath() + ": " + e.getMessage(), e);
+      }
+    }
   }
 }
