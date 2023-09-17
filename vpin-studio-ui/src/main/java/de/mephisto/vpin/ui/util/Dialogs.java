@@ -6,6 +6,7 @@ import de.mephisto.vpin.restclient.IniSettings;
 import de.mephisto.vpin.restclient.SystemData;
 import de.mephisto.vpin.restclient.altsound.AltSound;
 import de.mephisto.vpin.restclient.altsound.AltSound2DuckingProfile;
+import de.mephisto.vpin.restclient.altsound.AltSound2SampleType;
 import de.mephisto.vpin.restclient.client.VPinStudioClient;
 import de.mephisto.vpin.restclient.descriptors.ResetHighscoreDescriptor;
 import de.mephisto.vpin.restclient.popper.PopperScreen;
@@ -25,6 +26,7 @@ import de.mephisto.vpin.ui.tables.TablesController;
 import de.mephisto.vpin.ui.tables.TablesSidebarController;
 import de.mephisto.vpin.ui.tables.dialogs.*;
 import de.mephisto.vpin.ui.tables.editors.dialogs.AltSound2ProfileDialogController;
+import de.mephisto.vpin.ui.tables.editors.dialogs.AltSound2SampleTypeDialogController;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import javafx.collections.ObservableList;
@@ -190,6 +192,13 @@ public class Dialogs {
     stage.showAndWait();
 
     return controller.editingFinished();
+  }
+
+  public static void openAltSound2SampleTypeDialog(AltSound altSound, AltSound2SampleType sampleType) {
+    Stage stage = createStudioDialogStage(AltSound2SampleTypeDialogController.class, "dialog-altsound2-sample-type.fxml", "Sample Type Settings");
+    AltSound2SampleTypeDialogController controller = (AltSound2SampleTypeDialogController) stage.getUserData();
+    controller.setProfile(altSound, sampleType);
+    stage.showAndWait();
   }
 
   public static boolean openAltColorUploadDialog(TablesSidebarController tablesSidebarController, GameRepresentation game, File file) {

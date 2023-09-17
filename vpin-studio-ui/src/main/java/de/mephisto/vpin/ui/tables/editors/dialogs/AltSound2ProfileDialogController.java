@@ -1,10 +1,7 @@
 package de.mephisto.vpin.ui.tables.editors.dialogs;
 
 import de.mephisto.vpin.commons.fx.DialogController;
-import de.mephisto.vpin.restclient.altsound.AltSound;
-import de.mephisto.vpin.restclient.altsound.AltSound2DuckingProfile;
-import de.mephisto.vpin.restclient.altsound.AltSound2SampleType;
-import de.mephisto.vpin.restclient.altsound.AltSoundDuckingProfileValue;
+import de.mephisto.vpin.restclient.altsound.*;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -15,6 +12,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.net.URL;
+import java.util.List;
 import java.util.ResourceBundle;
 
 public class AltSound2ProfileDialogController implements Initializable, DialogController {
@@ -116,80 +114,14 @@ public class AltSound2ProfileDialogController implements Initializable, DialogCo
       this.editorProfile.setId(profileId);
       this.profileIdLabel.setText(String.valueOf(profileId));
 
+      AltSound2Group group = altSound.getGroup(sampleType);
+      List<AltSound2SampleType> ducks = group.getDucks();
+      for (AltSound2SampleType duck : ducks) {
+        editorProfile.addProfileValue(duck, 0);
+      }
+
       //disable the channel itself for selection
       refreshChannelDisable(AltSound2SampleType.valueOf(this.sampleCombo.getValue().toLowerCase()));
-    });
-
-    musicCheckbox.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
-      musicLabel.setDisable(!t1);
-      musicSlider.setDisable(!t1);
-
-      if (t1) {
-        editorProfile.addProfileValue(AltSound2SampleType.music, 0);
-        musicLabel.setText(String.valueOf(editorProfile.getProfileValue(AltSound2SampleType.music).getVolume()));
-      }
-      else {
-        musicSlider.valueProperty().set(0);
-        musicLabel.setText("-");
-        editorProfile.removeProfileValue(AltSound2SampleType.music);
-      }
-    });
-
-    calloutCheckbox.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
-      calloutLabel.setDisable(!t1);
-      calloutSlider.setDisable(!t1);
-
-      if (t1) {
-        editorProfile.addProfileValue(AltSound2SampleType.callout, 0);
-        calloutLabel.setText(String.valueOf(editorProfile.getProfileValue(AltSound2SampleType.callout).getVolume()));
-      }
-      else {
-        calloutSlider.valueProperty().set(0);
-        calloutLabel.setText("-");
-        editorProfile.removeProfileValue(AltSound2SampleType.callout);
-      }
-    });
-
-    sfxCheckbox.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
-      sfxLabel.setDisable(!t1);
-      sfxSlider.setDisable(!t1);
-      if (t1) {
-        editorProfile.addProfileValue(AltSound2SampleType.sfx, 0);
-        sfxLabel.setText(String.valueOf(editorProfile.getProfileValue(AltSound2SampleType.sfx).getVolume()));
-      }
-      else {
-        sfxSlider.valueProperty().set(0);
-        sfxLabel.setText("-");
-        editorProfile.removeProfileValue(AltSound2SampleType.sfx);
-      }
-    });
-
-    soloCheckbox.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
-      soloLabel.setDisable(!t1);
-      soloSlider.setDisable(!t1);
-      if (t1) {
-        editorProfile.addProfileValue(AltSound2SampleType.solo, 0);
-        soloLabel.setText(String.valueOf(editorProfile.getProfileValue(AltSound2SampleType.solo).getVolume()));
-      }
-      else {
-        soloSlider.valueProperty().set(0);
-        soloLabel.setText("-");
-        editorProfile.removeProfileValue(AltSound2SampleType.solo);
-      }
-    });
-
-    overlayCheckbox.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
-      overlayLabel.setDisable(!t1);
-      overlaySlider.setDisable(!t1);
-      if (t1) {
-        editorProfile.addProfileValue(AltSound2SampleType.overlay, 0);
-        overlayLabel.setText(String.valueOf(editorProfile.getProfileValue(AltSound2SampleType.overlay).getVolume()));
-      }
-      else {
-        overlaySlider.valueProperty().set(0);
-        overlayLabel.setText("-");
-        editorProfile.removeProfileValue(AltSound2SampleType.overlay);
-      }
     });
 
 
@@ -277,57 +209,82 @@ public class AltSound2ProfileDialogController implements Initializable, DialogCo
   }
 
   private void refreshChannelDisable(AltSound2SampleType sampleType) {
-    sfxCheckbox.setDisable(false);
-    musicCheckbox.setDisable(false);
-    calloutCheckbox.setDisable(false);
-    soloCheckbox.setDisable(false);
-    overlayCheckbox.setDisable(false);
+    sfxCheckbox.setSelected(false);
+    sfxSlider.setDisable(true);
+    sfxLabel.setText("-");
+    sfxLabel.setDisable(true);
 
-    switch (sampleType) {
-      case sfx: {
-        sfxSlider.setDisable(true);
-        sfxCheckbox.setSelected(false);
-        sfxCheckbox.setDisable(true);
-        sfxLabel.setText("-");
-        sfxLabel.setDisable(true);
-        break;
+    musicCheckbox.setSelected(false);
+    musicSlider.setDisable(true);
+    musicLabel.setText("-");
+    musicLabel.setDisable(true);
+
+    calloutCheckbox.setSelected(false);
+    calloutSlider.setDisable(true);
+    calloutLabel.setText("-");
+    calloutLabel.setDisable(true);
+
+    soloCheckbox.setSelected(false);
+    soloSlider.setDisable(true);
+    soloLabel.setText("-");
+    soloLabel.setDisable(true);
+
+    overlayCheckbox.setSelected(false);
+    overlaySlider.setDisable(true);
+    overlayLabel.setText("-");
+    overlayLabel.setDisable(true);
+
+    AltSound2Group group = altSound.getGroup(sampleType);
+    List<AltSound2SampleType> ducks = group.getDucks();
+    for (AltSound2SampleType duck : ducks) {
+      switch (duck) {
+        case sfx: {
+          sfxCheckbox.setSelected(true);
+          sfxLabel.setDisable(false);
+          sfxLabel.setText("0");
+          sfxSlider.setDisable(false);
+          sfxSlider.setValue(0);
+          break;
+        }
+        case music: {
+          musicCheckbox.setSelected(true);
+          musicLabel.setDisable(false);
+          musicLabel.setText("0");
+          musicSlider.setDisable(false);
+          musicSlider.setValue(0);
+          break;
+        }
+        case callout: {
+          calloutCheckbox.setSelected(true);
+          calloutLabel.setDisable(false);
+          calloutLabel.setText("0");
+          calloutSlider.setDisable(false);
+          calloutSlider.setValue(0);
+          break;
+        }
+        case solo: {
+          soloCheckbox.setSelected(true);
+          soloLabel.setDisable(false);
+          soloLabel.setText("0");
+          soloSlider.setDisable(false);
+          soloSlider.setValue(0);
+          break;
+        }
+        case overlay: {
+          overlayCheckbox.setSelected(true);
+          overlayLabel.setDisable(false);
+          overlayLabel.setText("0");
+          overlaySlider.setDisable(false);
+          overlaySlider.setValue(0);
+          break;
+        }
+        default: {
+          throw new UnsupportedOperationException("Invalid sample type");
+        }
       }
-      case music: {
-        musicSlider.setDisable(true);
-        musicCheckbox.setSelected(false);
-        musicCheckbox.setDisable(true);
-        musicLabel.setText("-");
-        musicLabel.setDisable(true);
-        break;
-      }
-      case callout: {
-        calloutSlider.setDisable(true);
-        calloutCheckbox.setSelected(false);
-        calloutCheckbox.setDisable(true);
-        calloutLabel.setText("-");
-        calloutLabel.setDisable(true);
-        break;
-      }
-      case solo: {
-        soloSlider.setDisable(true);
-        soloCheckbox.setSelected(false);
-        soloCheckbox.setDisable(true);
-        soloLabel.setText("-");
-        soloLabel.setDisable(true);
-        break;
-      }
-      case overlay: {
-        overlaySlider.setDisable(true);
-        overlayCheckbox.setSelected(false);
-        overlayCheckbox.setDisable(true);
-        overlayLabel.setText("-");
-        overlayLabel.setDisable(true);
-        break;
-      }
-      default: {
-        throw new UnsupportedOperationException("Invalid sample type");
-      }
+
     }
+
   }
 
   public AltSound2DuckingProfile editingFinished() {

@@ -168,7 +168,11 @@ public class AltSound2Loader {
 
     SubnodeConfiguration section = iniConfiguration.getSection(name);
     AltSound2Group group = new AltSound2Group();
-    group.setName(name);
+    try {
+      group.setName(AltSound2SampleType.valueOf(name));
+    } catch (Exception e) {
+      //ignore
+    }
 
     if (section.containsKey("group_vol")) {
       group.setGroupVol(section.getInt("group_vol"));

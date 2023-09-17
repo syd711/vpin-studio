@@ -124,7 +124,13 @@ public class AltSound2EditorController implements Initializable {
 
   @FXML
   private void onSampleTypes() {
-
+    String value = this.typeFilterCombo.getValue();
+    AltSound2SampleType sampleType = null;
+    if(value != null) {
+      sampleType = AltSound2SampleType.valueOf(value.toLowerCase());
+    }
+    Dialogs.openAltSound2SampleTypeDialog(altSound, sampleType);
+    this.refresh();
   }
 
   @FXML

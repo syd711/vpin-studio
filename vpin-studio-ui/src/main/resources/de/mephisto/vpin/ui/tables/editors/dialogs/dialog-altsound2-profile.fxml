@@ -61,7 +61,7 @@
                               <Insets right="16.0" top="12.0" />
                            </GridPane.margin>
                            <children>
-                              <CheckBox fx:id="musicCheckbox" mnemonicParsing="false" textFill="WHITE">
+                              <CheckBox fx:id="musicCheckbox" disable="true" mnemonicParsing="false" textFill="WHITE">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
@@ -117,7 +117,7 @@
                               <Insets right="12.0" top="12.0" />
                            </GridPane.margin>
                            <children>
-                              <CheckBox fx:id="calloutCheckbox" mnemonicParsing="false" textFill="WHITE">
+                              <CheckBox fx:id="calloutCheckbox" disable="true" mnemonicParsing="false" textFill="WHITE">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
@@ -173,7 +173,7 @@
                               <Insets right="16.0" top="12.0" />
                            </GridPane.margin>
                            <children>
-                              <CheckBox fx:id="sfxCheckbox" mnemonicParsing="false" textFill="WHITE">
+                              <CheckBox fx:id="sfxCheckbox" disable="true" mnemonicParsing="false" textFill="WHITE">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
@@ -229,7 +229,7 @@
                               <Insets right="16.0" top="12.0" />
                            </GridPane.margin>
                            <children>
-                              <CheckBox fx:id="soloCheckbox" mnemonicParsing="false" textFill="WHITE">
+                              <CheckBox fx:id="soloCheckbox" disable="true" mnemonicParsing="false" textFill="WHITE">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
@@ -285,7 +285,7 @@
                               <Insets right="16.0" top="12.0" />
                            </GridPane.margin>
                            <children>
-                              <CheckBox fx:id="overlayCheckbox" mnemonicParsing="false" textFill="WHITE">
+                              <CheckBox fx:id="overlayCheckbox" disable="true" mnemonicParsing="false" textFill="WHITE">
                                  <font>
                                     <Font size="14.0" />
                                  </font>

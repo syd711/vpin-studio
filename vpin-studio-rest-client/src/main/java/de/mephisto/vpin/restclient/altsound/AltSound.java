@@ -329,4 +329,27 @@ public class AltSound {
       }
     }
   }
+
+  public AltSound2Group getGroup(AltSound2SampleType sampleType) {
+    switch (sampleType) {
+      case sfx: {
+        return sfx;
+      }
+      case music: {
+        return music;
+      }
+      case callout: {
+        return callout;
+      }
+      case solo: {
+        return solo;
+      }
+      case overlay: {
+        return overlay;
+      }
+      default: {
+        throw new UnsupportedOperationException("Invalid sample type");
+      }
+    }
+  }
 }
